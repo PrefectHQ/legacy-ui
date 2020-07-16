@@ -129,7 +129,7 @@ export default {
               mutation: require('@/graphql/Mutations/disable-flow-lazarus-process.gql'),
               variables: {
                 input: {
-                  flowId: this.flow.id
+                  flow_id: this.flow.id
                 }
               },
               errorPolicy: 'all'
@@ -138,15 +138,15 @@ export default {
               mutation: require('@/graphql/Mutations/enable-flow-lazarus-process.gql'),
               variables: {
                 input: {
-                  flowId: this.flow.id
+                  flow_id: this.flow.id
                 }
               },
               errorPolicy: 'all'
             })
         setTimeout(() => {
           let status = updateLazarus.data
-            ? updateLazarus.data.enableFlowLazarusProcess ||
-              updateLazarus.data.disableFlowLazarusProcess
+            ? updateLazarus.data.enable_flow_lazarus_process ||
+              updateLazarus.data.disable_flow_lazarus_process
             : false
 
           if (!status || !status.success) {
