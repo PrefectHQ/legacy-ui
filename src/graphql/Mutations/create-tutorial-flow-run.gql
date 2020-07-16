@@ -5,7 +5,7 @@ mutation CreateFlowRun(
   $parameters: JSON
   $scheduledStartTime: DateTime
 ) {
-  createFlowRun(
+  create_flow_run(
     input: {
       context: $context
       flow_id: $id
