@@ -1,4 +1,4 @@
-query availableTenantsQuery {
+query AvailableTenants {
   availableTenants: tenant {
     id
     info
