@@ -149,7 +149,7 @@ export const changeStateMixin = {
             let taskState
             if (this.dialogType === 'task run' || this.dialogType == 'resume') {
               taskState = {
-                taskRunId: this.taskRun.id,
+                task_run_id: this.taskRun.id,
                 version: this.taskRun.version,
                 state: {
                   type: this.selectedState,
@@ -160,7 +160,7 @@ export const changeStateMixin = {
               taskState = this.flowRun.task_runs.map((taskRun) => {
                 return {
                   version: taskRun.version,
-                  taskRunId: taskRun.id,
+                  task_run_id: taskRun.id,
                   state: {
                     type: this.selectedState,
                     message: this.runLogMessage()
@@ -171,15 +171,11 @@ export const changeStateMixin = {
             const result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
               variables: {
-                setTaskRunStatesInput: taskState
+                input: taskState
               }
             })
             this.setStateSuccessA =
-              result &&
-              result.data &&
-              result.data.setTaskRunStates &&
-              result.data.setTaskRunStates.states &&
-              result.data.setTaskRunStates.states.length
+              result?.data?.set_task_run_states?.states?.length
             if (!this.setStateSuccessA) {
               this.setStateError = true
             }

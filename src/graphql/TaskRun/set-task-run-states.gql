@@ -1,5 +1,5 @@
-mutation($setTaskRunStatesInput: [setTaskRunStateInput!]!) {
-  setTaskRunStates(input: { states: $setTaskRunStatesInput }) {
+mutation($input: [set_task_run_states_input!]!) {
+  set_task_run_states(input: { states: $input }) {
     states {
       id
     }

@@ -33,14 +33,14 @@ export default {
             taskStates = this.utilityDownstreamTasks.map((task) => {
               return {
                 version: task.task.task_runs[0].version,
-                taskRunId: task.task.task_runs[0].id,
+                task_run_id: task.task.task_runs[0].id,
                 state: { type: 'Pending', message: this.message }
               }
             })
           } else {
             taskStates = {
               version: this.failedTaskRuns.version,
-              taskRunId: this.failedTaskRuns.id,
+              task_run_id: this.failedTaskRuns.id,
               state: { type: 'Pending', message: this.message }
             }
           }
@@ -48,10 +48,10 @@ export default {
             const result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
               variables: {
-                setTaskRunStatesInput: taskStates
+                input: taskStates
               }
             })
-            if (result && result.data && result.data.setTaskRunStates) {
+            if (result?.data?.set_task_run_states) {
               const { data } = await this.$apollo.mutate({
                 mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
                 variables: {

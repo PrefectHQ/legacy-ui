@@ -67,10 +67,10 @@ export default {
           const result = await this.$apollo.mutate({
             mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
             variables: {
-              setTaskRunStatesInput: taskStates
+              input: taskStates
             }
           })
-          if (result && result.data && result.data.setTaskRunStates) {
+          if (result?.data?.set_task_run_states) {
             const { data } = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
               variables: {
