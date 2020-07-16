@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- 
+      Changes to the Content Security Policy should only be made
+      by Code owners as they can have serious detrimental impacts 
+      which will not be seen until after deployment.
+     -->
+    <meta 
+      http-equiv="Content-Security-Policy" 
+      content="
+      default-src *;
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.lr-ingest.io https://kit.fontawesome.com https://js.stripe.com;
+      img-src * data:;
+      style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://kit-free.fontawesome.com;
+      script-src-elem 'self' 'unsafe-inline' https://cdn.lr-ingest.io https://kit.fontawesome.com https://js.stripe.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://kit-free.fontawesome.com;
+      font-src data: 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://*.fontawesome.com;
+      frame-src https://login.prefect.io https://prefect.auth0.com https://js.stripe.com;
+      prefetch-src 'self';
+      child-src data: blob:;
+      worker-src data: blob: 'self';
+    ">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="<%= BASE_URL %>/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<%= BASE_URL %>/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<%= BASE_URL %>/favicon-16x16.png">
+    <link rel="manifest" href="<%= BASE_URL %>/site.webmanifest">
+    <link rel="mask-icon" href="<%= BASE_URL %>/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Prefect</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Material+Icons|Material+Icons+Outlined"
+    />
+
+    <script
+      src="https://kit.fontawesome.com/f222ce9ce9.js"
+      crossorigin="anonymous" async></script>
+    <script src="https://js.stripe.com/v3/" async></script>
+  </head>
+  <body>
+    <noscript>
+      <strong>
+        We're sorry but the Prefect UI doesn't work properly without JavaScript
+        enabled. Please enable it to continue.
+        </strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
