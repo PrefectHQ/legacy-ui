@@ -170,7 +170,7 @@ export default {
 
       if (this.isSecretUpdate) this.isSettingSecret = false
 
-      if (secretResult?.data?.setSecret?.success) {
+      if (secretResult?.data?.set_secret?.success) {
         this.$apollo.queries.secretNames.refetch()
         this.secretModifyDialog = false
         this.resetSelectedSecret()
