@@ -155,7 +155,7 @@ export default {
         variables: { membershipId, role }
       })
 
-      if (res?.data?.setMembershipRole?.id) {
+      if (res?.data?.set_membership_role?.id) {
         this.$emit('successful-action', "The user's role has been updated")
         this.$apollo.queries.tenantUsers.refetch()
       } else {
