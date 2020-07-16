@@ -1,0 +1,36 @@
+.DS_Store
+node_modules
+/dist
+tests/__coverage__
+.firebase
+
+# Generated from integration tests
+tests/e2e/videos
+tests/e2e/screenshots
+
+# cypress
+cypress.env.json
+cypress/logs/
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
+# python
+.mypy_cache
+__pycache__/
+*.py[cod]
+*$py.class
