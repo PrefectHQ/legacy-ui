@@ -1,5 +1,0 @@
-mutation UpdateTaskTagLimit($tag: String!, $limit: Int!) {
-  updateTaskTagLimit(input: { tag: $tag, limit: $limit }) {
-    id
-  }
-}

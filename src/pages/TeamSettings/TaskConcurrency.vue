@@ -178,7 +178,7 @@ export default {
           }
         })
 
-        if (res?.data?.updateTaskTagLimit?.id) {
+        if (res?.data?.update_task_concurrency_limit?.id) {
           this.$apollo.queries?.tags?.refetch()
           this.handleSuccess(ADD_SUCCESS)
         } else {
@@ -226,7 +226,7 @@ export default {
           }
         })
 
-        if (res?.data?.updateTaskTagLimit?.id) {
+        if (res?.data?.update_task_concurrency_limit?.id) {
           this.$apollo.queries?.tags?.refetch()
           this.handleSuccess(UPDATE_SUCCESS)
         } else {
