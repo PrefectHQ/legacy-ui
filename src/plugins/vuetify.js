@@ -3,13 +3,13 @@ import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 
 // Custom icons
-import DockerIcon from '@/components/icons/Docker.vue'
-import FargateIcon from '@/components/icons/Fargate.vue'
-import KubernetesIcon from '@/components/icons/Kubernetes.vue'
-import NomadIcon from '@/components/icons/Nomad.vue'
-import PrefectIcon from '@/components/icons/Prefect.vue'
-import TwilioIcon from '@/components/icons/twilio.vue'
-import PagerDutyIcon from '@/components/icons/PagerDuty.vue'
+import DockerIcon from '@/components/Icons/Docker.vue'
+import FargateIcon from '@/components/Icons/Fargate.vue'
+import KubernetesIcon from '@/components/Icons/Kubernetes.vue'
+import NomadIcon from '@/components/Icons/Nomad.vue'
+import PrefectIcon from '@/components/Icons/Prefect.vue'
+import TwilioIcon from '@/components/Icons/twilio.vue'
+import PagerDutyIcon from '@/components/Icons/PagerDuty.vue'
 
 export const THEME_COLORS = {
   prefect: '#27b1ff', // prefect blue
