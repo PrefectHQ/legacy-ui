@@ -1,5 +1,5 @@
 mutation DeleteMembership($membershipId: UUID!) {
-  deleteMembership(input: { membershipId: $membershipId }) {
+  delete_membership(input: { membership_id: $membershipId }) {
     success
   }
 }
