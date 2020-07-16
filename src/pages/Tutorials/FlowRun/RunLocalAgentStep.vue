@@ -11,8 +11,8 @@ export default {
       agentToken: null,
       agentTokenName: null,
       agentTokenValidationRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 50) || 'Name must be less than 50 characters'
+        (v) => !!v || 'Name is required',
+        (v) => (v && v.length <= 50) || 'Name must be less than 50 characters'
       ],
       agentCommandCopied: false,
       valid: false
@@ -44,7 +44,7 @@ export default {
           }
         })
 
-        this.agentToken = response.data.createAPIToken.token
+        this.agentToken = response.data.create_api_token.token
         this.$emit('agent-token-generated', this.agentToken)
       } catch (error) {
         this.$toasted.error('Failed to generate agent token', {

@@ -1,5 +1,5 @@
 mutation CreateRunnerToken($name: String!) {
-  createAPIToken(input: { name: $name, role: RUNNER }) {
+  create_api_token(input: { name: $name, role: RUNNER }) {
     id
     token
   }
