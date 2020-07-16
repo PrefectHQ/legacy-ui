@@ -1,4 +1,6 @@
-mutation InviteMember($input: create_membership_invitation_input!) {
+mutation CreateMembershipInvitation(
+  $input: create_membership_invitation_input!
+) {
   create_membership_invitation(input: $input) {
     id
   }
