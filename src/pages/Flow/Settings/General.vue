@@ -222,7 +222,7 @@ export default {
               mutation: require('@/graphql/Mutations/disable-flow-version-locking.gql'),
               variables: {
                 input: {
-                  flowId: this.flow.id
+                  flow_id: this.flow.id
                 }
               },
               errorPolicy: 'all'
@@ -231,15 +231,15 @@ export default {
               mutation: require('@/graphql/Mutations/enable-flow-version-locking.gql'),
               variables: {
                 input: {
-                  flowId: this.flow.id
+                  flow_id: this.flow.id
                 }
               },
               errorPolicy: 'all'
             })
         setTimeout(() => {
           let status = updateVersionLocking.data
-            ? updateVersionLocking.data.enableFlowVersionLock ||
-              updateVersionLocking.data.disableFlowVersionLock
+            ? updateVersionLocking.data.enable_flow_version_lock ||
+              updateVersionLocking.data.disable_flow_version_lock
             : false
 
           if (!status || !status.success) {

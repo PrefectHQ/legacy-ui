@@ -1,5 +1,5 @@
-mutation DisableFlowVersionLock($input: disableFlowVersionLockInput!) {
-  disableFlowVersionLock(input: $input) {
+mutation DisableFlowVersionLock($input: disable_flow_version_lock_input!) {
+  disable_flow_version_lock(input: $input) {
     success
     error
   }
