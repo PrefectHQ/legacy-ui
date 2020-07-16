@@ -6,15 +6,15 @@ const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
 const prefectAuth = async (idToken) => {
   try {
     const result = await apolloClient.mutate({
-      mutation: require('@/graphql/login.gql'),
+      mutation: require('@/graphql/log-in.gql'),
       variables: {
         idToken: { idToken: idToken }
       },
       errorPolicy: 'all'
     })
-    if (result?.data?.login) {
+    if (result?.data?.log_in) {
       await apolloOnLogin(apolloClient)
-      return result.data.login
+      return result.data.log_in
     } else if (result.errors) {
       if (
         result.errors[0].message ===

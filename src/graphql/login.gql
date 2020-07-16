@@ -1,7 +1,0 @@
-mutation login($idToken: loginInput!) {
-  login(input: $idToken) {
-    accessToken
-    expiresAt
-    refreshToken
-  }
-}
