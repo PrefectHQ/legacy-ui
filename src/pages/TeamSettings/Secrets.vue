@@ -199,7 +199,7 @@ export default {
         this.isFetchingSecrets = false
       },
       update(data) {
-        return data?.secretNames?.map((name) => ({ name: name, value: null }))
+        return data?.secret_names?.map((name) => ({ name: name, value: null }))
       },
       // skip() {
       //   return this.isReadOnlyUser
