@@ -1,5 +1,5 @@
-mutation DisableFlowHeartbeat($input: disableFlowHeartbeatInput!) {
-  disableFlowHeartbeat(input: $input) {
+mutation DisableFlowHeartbeat($input: disable_flow_heartbeat_input!) {
+  disable_flow_heartbeat(input: $input) {
     success
     error
   }

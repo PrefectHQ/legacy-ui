@@ -75,7 +75,7 @@ export default {
               mutation: require('@/graphql/Mutations/disable-flow-heartbeat.gql'),
               variables: {
                 input: {
-                  flowId: this.flow.id
+                  flow_id: this.flow.id
                 }
               },
               errorPolicy: 'all'
@@ -84,7 +84,7 @@ export default {
               mutation: require('@/graphql/Mutations/enable-flow-heartbeat.gql'),
               variables: {
                 input: {
-                  flowId: this.flow.id
+                  flow_id: this.flow.id
                 }
               },
               errorPolicy: 'all'
@@ -92,8 +92,8 @@ export default {
 
         setTimeout(() => {
           let status = updateHeartbeat.data
-            ? updateHeartbeat.data.enableFlowHeartbeat ||
-              updateHeartbeat.data.disableFlowHeartbeat
+            ? updateHeartbeat.data.enable_flow_heartbeat ||
+              updateHeartbeat.data.disable_flow_heartbeat
             : false
 
           if (!status || !status.success) {
@@ -272,7 +272,7 @@ export default {
     projects: {
       query: require('@/graphql/Flow/project-names.gql'),
       pollInterval: 10000,
-      update: data => data.project
+      update: (data) => data.project
     }
   }
 }
@@ -384,8 +384,8 @@ export default {
                   :loading="loading.versionLocking"
                   :disabled="
                     isReadOnlyUser ||
-                      !versionLockingPermitted ||
-                      loading.versionLocking
+                    !versionLockingPermitted ||
+                    loading.versionLocking
                   "
                   @change="_handleVersionLockingChange"
                 >
