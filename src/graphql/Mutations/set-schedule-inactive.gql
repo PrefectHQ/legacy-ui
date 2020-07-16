@@ -1,5 +1,5 @@
 mutation SetScheduleInactive($id: UUID!) {
-  setScheduleInactive(input: { scheduleId: $id }) {
+  set_schedule_inactive(input: { schedule_id: $id }) {
     success
   }
 }
