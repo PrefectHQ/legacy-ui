@@ -287,15 +287,15 @@ const actions = {
     commit('isRefreshingAuthorization', false)
   },
   updateAuthorization({ commit }, authorization) {
-    commit('authorizationToken', authorization.accessToken)
-    commit('refreshToken', authorization.refreshToken)
+    commit('authorizationToken', authorization.access_token)
+    commit('refreshToken', authorization.refresh_token)
     commit(
       'authorizationTokenExpiry',
-      new Date(authorization.expiresAt).getTime()
+      new Date(authorization.expires_at).getTime()
     )
     commit(
       'refreshTokenExpiry',
-      jwt_decode(authorization.refreshToken).exp * 1000
+      jwt_decode(authorization.refresh_token).exp * 1000
     )
   },
   async updateAuthentication({ dispatch, commit, getters }) {

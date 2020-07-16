@@ -105,7 +105,7 @@ const actions = {
 
       await dispatch(
         'auth0/updateAuthorization',
-        getTenantToken.data.switchTenant,
+        getTenantToken.data.switch_tenant,
         {
           root: true
         }
@@ -148,7 +148,7 @@ const actions = {
 
       await dispatch(
         'auth0/updateAuthorization',
-        getTenantToken.data.switchTenant,
+        getTenantToken.data.switch_tenant,
         {
           root: true
         }
