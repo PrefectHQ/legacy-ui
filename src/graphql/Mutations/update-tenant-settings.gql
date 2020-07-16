@@ -1,5 +1,5 @@
 mutation UpdateTenantSettings($settings: JSON!) {
-  updateTenantSettings(input: { settings: $settings }) {
+  update_tenant_settings(input: { settings: $settings }) {
     id
     tenant {
       id

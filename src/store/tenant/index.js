@@ -75,7 +75,7 @@ const actions = {
         }
       })
 
-      const newSettings = response.data.updateTenantSettings.tenant.settings
+      const newSettings = response.data.update_tenant_settings.tenant.settings
       commit('updateTenantSettings', newSettings)
     } catch (error) {
       // Do nothing for now
