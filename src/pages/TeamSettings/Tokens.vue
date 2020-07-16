@@ -111,11 +111,11 @@ export default {
       })
 
       if (
-        result?.data?.createAPIToken?.id &&
-        result?.data?.createAPIToken?.token
+        result?.data?.create_api_token?.id &&
+        result?.data?.create_api_token?.token
       ) {
         this.resetNewToken()
-        this.newAPIToken = result.data.createAPIToken.token
+        this.newAPIToken = result.data.create_api_token.token
         this.createTokenDialog = false
         this.copyTokenDialog = true
         this.$apollo.queries.tokens.refetch()
@@ -171,7 +171,7 @@ export default {
         )
       },
       result({ data }) {
-        this.tokens = data.api_token.map(token => {
+        this.tokens = data.api_token.map((token) => {
           return {
             ...token,
             created_by: token.created_by ? token.created_by.username : ''
@@ -179,7 +179,7 @@ export default {
         })
         this.isFetchingTokens = false
       },
-      update: data => data
+      update: (data) => data
     }
   }
 }
@@ -526,10 +526,8 @@ export default {
       v-model="tokenToDeleteDialog"
       type="error"
       :dialog-props="{ 'max-width': '500' }"
-      :title="
-        `Are you sure you want to revoke the token
-          ${tokenToDelete.name}?`
-      "
+      :title="`Are you sure you want to revoke the token
+          ${tokenToDelete.name}?`"
       confirm-text="Revoke"
       @confirm="deleteToken(tokenToDelete)"
     >
