@@ -1,9 +1,0 @@
-query AvailableTenants {
-  availableTenants: tenant {
-    id
-    info
-    name
-    slug
-    settings
-  }
-}
