@@ -32,14 +32,12 @@ export default {
       this.$emit('cancel')
     },
     raiseWarning() {
-      const hasCachedInput =
-        this.taskRun.serialized_state &&
-        this.taskRun.serialized_state.cached_inputs &&
-        Object.keys(this.taskRun.serialized_state.cached_inputs).length
-      const hasUpstreamEdges =
-        this.taskRun.task &&
-        this.taskRun.task.upstream_edges &&
-        this.taskRun.task.upstream_edges.filter((edge) => edge.key).length
+      const hasCachedInput = Object.keys(
+        this.taskRun?.serialized_state?.cached_inputs
+      )?.length
+      const hasUpstreamEdges = this.taskRun?.task?.upstream_edges?.filter(
+        (edge) => edge.key
+      )?.length
       return !!hasUpstreamEdges && !hasCachedInput
     },
     async restart() {
