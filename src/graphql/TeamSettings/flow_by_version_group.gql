@@ -1,6 +1,0 @@
-query  ($VGI: String) {
-  flow (where: {version_group_id: {_eq: $VGI}}) {
-    id,
-    name
-  }
-}
