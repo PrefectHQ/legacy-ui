@@ -134,7 +134,7 @@ export default {
         }
       })
 
-      if (result?.data?.deleteAPIToken?.success) {
+      if (result?.data?.delete_api_token?.success) {
         this.tokenToDeleteDialog = false
         this.handleAlert('success', 'The token has been successfully revoked.')
         this.$apollo.queries.tokens.refetch()

@@ -1,5 +1,5 @@
 mutation DeleteAPIToken($id: UUID!) {
-  deleteAPIToken(input: { tokenId: $id }) {
+  delete_api_token(input: { token_id: $id }) {
     success
   }
 }

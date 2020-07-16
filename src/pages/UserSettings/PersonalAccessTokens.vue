@@ -121,7 +121,7 @@ export default {
           id: token.id
         }
       })
-      if (result.data && result.data.deleteAPIToken.success) {
+      if (result?.data?.delete_api_token?.success) {
         this.tokenToDeleteDialog = false
         this.alertShow = true
         this.alertMessage = 'Token was successfully revoked.'
