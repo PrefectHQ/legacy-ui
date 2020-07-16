@@ -181,15 +181,15 @@ export default {
           mutation: require('@/graphql/Mutations/update-flow-project.gql'),
           variables: {
             input: {
-              projectId: this.selected.projectId,
-              flowId: this.flow.id
+              project_id: this.selected.projectId,
+              flow_id: this.flow.id
             }
           },
           errorPolicy: 'all'
         })
 
         setTimeout(() => {
-          if (!changeProject.data || !changeProject.data.updateFlowProject) {
+          if (!changeProject.data || !changeProject.data.update_flow_project) {
             this.error.project = changeProject.errors[0].message
             this.loading.project = false
           } else {

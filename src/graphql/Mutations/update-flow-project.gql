@@ -1,5 +1,5 @@
-mutation UpdateFlowProject($input: updateFlowProjectInput!) {
-  updateFlowProject(input: $input) {
+mutation UpdateFlowProject($input: update_flow_project_input!) {
+  update_flow_project(input: $input) {
     id
   }
 }
