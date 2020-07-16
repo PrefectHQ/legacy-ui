@@ -1,4 +1,4 @@
-query UserDetail {
+query User {
   user {
     id
     username
