@@ -30,7 +30,7 @@ export default {
         if (logSuccess) {
           let taskStates
           if (this.utilityDownstreamTasks) {
-            taskStates = this.utilityDownstreamTasks.map((task) => {
+            taskStates = this.utilityDownstreamTasks.map(task => {
               return {
                 version: task.task.task_runs[0].version,
                 task_run_id: task.task.task_runs[0].id,
@@ -102,7 +102,7 @@ export default {
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
-        mutation: require('@/graphql/Update/write-logs.gql'),
+        mutation: require('@/graphql/Update/write-run-logs.gql'),
         variables: {
           flow_run_id: this.flowRun.id,
           name: this.name,
@@ -121,11 +121,11 @@ export default {
         }
       },
       pollInterval: 1000,
-      update: (data) => {
+      update: data => {
         if (data.task_run) {
           if (data.task_run.length > 1) {
             let taskRunString = ''
-            data.task_run.forEach((taskRun) => {
+            data.task_run.forEach(taskRun => {
               taskRunString += taskRun.task_id + ','
             })
             const failedTaskRunString = taskRunString.slice(0, -1)
@@ -149,7 +149,7 @@ export default {
         const hasFailedTRs = typeof this.failedTaskRuns === 'string'
         return !hasFailedTRs
       },
-      update: (data) => data.utility_downstream_tasks
+      update: data => data.utility_downstream_tasks
     }
   }
 }

@@ -36,7 +36,7 @@ export default {
         this.taskRun?.serialized_state?.cached_inputs
       )?.length
       const hasUpstreamEdges = this.taskRun?.task?.upstream_edges?.filter(
-        (edge) => edge.key
+        edge => edge.key
       )?.length
       return !!hasUpstreamEdges && !hasCachedInput
     },
@@ -48,7 +48,7 @@ export default {
         if (logSuccess) {
           let taskStates
           if (this.utilityDownstreamTasks.length) {
-            taskStates = this.utilityDownstreamTasks.map((task) => {
+            taskStates = this.utilityDownstreamTasks.map(task => {
               return {
                 version: task.task.task_runs[0].version,
                 taskRunId: task.task.task_runs[0].id,
@@ -116,7 +116,7 @@ export default {
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
-        mutation: require('@/graphql/Update/write-logs.gql'),
+        mutation: require('@/graphql/Update/write-run-logs.gql'),
         variables: {
           flow_run_id: this.flowRunId,
           name: this.name,
@@ -136,7 +136,7 @@ export default {
         }
       },
       pollInterval: 1000,
-      update: (data) => data.task_run_by_pk
+      update: data => data.task_run_by_pk
     },
     utilityDownstreamTasks: {
       query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
@@ -147,7 +147,7 @@ export default {
         }
       },
       pollInterval: 1000,
-      update: (data) => data.utility_downstream_tasks
+      update: data => data.utility_downstream_tasks
     }
   }
 }
