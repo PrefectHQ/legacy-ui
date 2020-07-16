@@ -124,7 +124,6 @@ window.onerror = function (error) {
 // Add Filters
 Vue.filter('duration', duration)
 Vue.filter('shorten', shorten)
-Vue.filter('number', number)
 Vue.filter('filterOnePercent', filterOnePercent)
 
 Vue.filter('roundWhole', roundWhole)
