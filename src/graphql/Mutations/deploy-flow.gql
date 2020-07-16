@@ -1,6 +1,6 @@
 mutation CreateFlow($projectId: UUID!, $serializedFlow: JSON!) {
-  createFlow(
-    input: { projectId: $projectId, serializedFlow: $serializedFlow }
+  create_flow(
+    input: { project_id: $projectId, serialized_flow: $serializedFlow }
   ) {
     id
   }
