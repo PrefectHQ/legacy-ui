@@ -1,8 +1,0 @@
-mutation updateUserDetails($firstName: String, $lastName: String) {
-  updateUserDetails(input: { firstName: $firstName, lastName: $lastName }) {
-    user {
-      first_name
-      last_name
-    }
-  }
-}

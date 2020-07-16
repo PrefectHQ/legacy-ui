@@ -1,0 +1,8 @@
+mutation UpdateUserDetails($firstName: String, $lastName: String) {
+  update_user_details(input: { first_name: $firstName, last_name: $lastName }) {
+    user {
+      first_name
+      last_name
+    }
+  }
+}
