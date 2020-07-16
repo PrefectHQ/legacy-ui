@@ -32,6 +32,9 @@ import TransitionHeight from '@/components/Functional/Transition-Height'
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
 
+// Global and functional styles
+import '@/styles/global.scss'
+
 Vue.config.productionTip = false
 Vue.config.devtools = true
 Vue.config.performance = true
