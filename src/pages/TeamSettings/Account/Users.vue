@@ -103,7 +103,7 @@ export default {
       this.loading = true
       try {
         const license = await this.$apollo.mutate({
-          mutation: require('@/graphql/License/update_self_serve_cloud_license.gql'),
+          mutation: require('@/graphql/License/update-self-serve-cloud-license.gql'),
           variables: {
             license_id: this.license.id,
             users: this.desiredUsers,
@@ -144,7 +144,7 @@ export default {
       this.users = this.license.terms.users - 1
       this.diff = 0
       const tenantMembershipId = this.user.memberships.filter(
-        membership => membership.tenant.id === this.tenant.id
+        (membership) => membership.tenant.id === this.tenant.id
       )
       await this.getTenant(tenantMembershipId[0].id)
       this.loading = false
@@ -158,7 +158,7 @@ export default {
     data-cy="users-card"
     tile
     max-width="720"
-    class=" mx-auto my-4"
+    class="mx-auto my-4"
     :loading="loading"
   >
     <v-card-title>
