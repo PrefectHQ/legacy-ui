@@ -1,6 +1,0 @@
-mutation acceptLicense($licenseID: String!, $acceptLicenseTerms: Boolean!) {
-  acceptLicense(input: { licenseId: $licenseID, acceptLicenseTerms: $acceptLicenseTerms }) {
-    success
-    error
-  }
-}
