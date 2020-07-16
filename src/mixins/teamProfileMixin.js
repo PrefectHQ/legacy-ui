@@ -179,7 +179,7 @@ export const teamProfileMixin = {
 
       this.isCheckingName = true
 
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           this.showNameIcon = true
           this.isCheckingName = false
@@ -196,7 +196,7 @@ export const teamProfileMixin = {
 
       this.isCheckingSlug = true
 
-      return new Promise(resolve => [
+      return new Promise((resolve) => [
         setTimeout(async () => {
           // Check slug uniqueness
           try {
@@ -208,8 +208,7 @@ export const teamProfileMixin = {
             })
 
             if (
-              checkSlug.data &&
-              checkSlug.data.tenant.length !== 0 &&
+              checkSlug?.data?.tenant?.length !== 0 &&
               this.slug != this.tenant.slug
             ) {
               this.slugErrors = ['Sorry, that URL slug is already in use.']
@@ -301,9 +300,8 @@ export const teamProfileMixin = {
       }
 
       if (
-        !newTenant.data ||
-        !newTenant.data.updateTenantName ||
-        !newTenant.data.updateTenantSlug
+        !newTenant?.data?.update_tenant_name ||
+        !newTenant?.data?.update_tenant_slug
       ) {
         this.handleError()
         this.updateServerError = true
@@ -311,12 +309,12 @@ export const teamProfileMixin = {
       }
 
       await this.getTenant(
-        newTenant.data.updateTenantSlug.tenant.memberships[0].id
+        newTenant.data.update_tenant_slug.tenant.memberships[0].id
       )
 
       this.$router.replace({
         name: 'account',
-        params: { tenant: newTenant.data.updateTenantSlug.tenant.slug }
+        params: { tenant: newTenant.data.update_tenant_slug.tenant.slug }
       })
 
       this.handleSuccess()

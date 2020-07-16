@@ -114,7 +114,7 @@ export default {
           })
 
           await this.getTenant(
-            newTenant.data.updateTenantSlug.tenant.memberships[0].id
+            newTenant.data.update_tenant_slug.tenant.memberships[0].id
           )
 
           await this.updateTenantSettings({
@@ -277,8 +277,8 @@ export default {
           <v-col
             v-if="
               updateServerError &&
-                nameErrors.length === 0 &&
-                slugErrors.length === 0
+              nameErrors.length === 0 &&
+              slugErrors.length === 0
             "
             key="error"
             cols="12"

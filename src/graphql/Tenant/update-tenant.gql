@@ -1,12 +1,12 @@
 mutation UpdateTenant($name: String!, $slug: String!) {
-  updateTenantName(input: { name: $name }) {
+  update_tenant_name(input: { name: $name }) {
     tenant {
       id
       slug
       name
     }
   }
-  updateTenantSlug(input: { slug: $slug }) {
+  update_tenant_slug(input: { slug: $slug }) {
     tenant {
       id
       slug
