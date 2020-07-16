@@ -8,7 +8,7 @@ const prefectAuth = async idToken => {
     const result = await apolloClient.mutate({
       mutation: require('@/graphql/log-in.gql'),
       variables: {
-        idToken: { idToken: idToken }
+        input: { id_token: idToken }
       },
       errorPolicy: 'all'
     })
