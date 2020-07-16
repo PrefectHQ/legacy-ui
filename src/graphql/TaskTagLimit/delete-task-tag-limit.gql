@@ -1,5 +1,0 @@
-mutation DeleteTaskTagLimit($limitId: UUID!) {
-  deleteTaskTagLimit(input: { limitId: $limitId }) {
-    success
-  }
-}
