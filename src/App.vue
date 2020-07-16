@@ -4,16 +4,16 @@ import { mapGetters, mapMutations } from 'vuex'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
-import SideDrawer from '@/components/SideDrawer'
-import SideDrawerOpenButton from '@/components/SideDrawerOpenButton'
+// import SideDrawer from '@/components/SideDrawer'
+// import SideDrawerOpenButton from '@/components/SideDrawerOpenButton'
 
 export default {
   components: {
     Alert,
     NavBar,
-    SideNav,
-    SideDrawer,
-    SideDrawerOpenButton
+    SideNav
+    // SideDrawer,
+    // SideDrawerOpenButton
   },
   data() {
     return {
@@ -57,10 +57,10 @@ export default {
     window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
-    ...mapMutations('sideDrawer', {
-      clearDrawer: 'clearDrawer',
-      closeSideDrawer: 'close'
-    }),
+    // ...mapMutations('sideDrawer', {
+    //   clearDrawer: 'clearDrawer',
+    //   closeSideDrawer: 'close'
+    // }),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
@@ -123,9 +123,9 @@ export default {
       :alert-link="getAlert.alertLink"
       :link-text="getAlert.linkText"
       :timeout="12000"
-    ></Alert>
-    <SideDrawer />
-    <SideDrawerOpenButton />
+    />
+    <!-- <SideDrawer /> -->
+    <!-- <SideDrawerOpenButton /> -->
   </v-app>
 </template>
 

@@ -53,7 +53,7 @@ if (process.env.NODE_ENV === 'production') {
     network: {
       // Requests in the blockedRequests list
       // will be sanitized from analytics
-      requestSanitizer: (request) => {
+      requestSanitizer: request => {
         if (request.headers['authorization']) {
           request.headers['authorization'] = ''
         }
@@ -63,7 +63,7 @@ if (process.env.NODE_ENV === 'production') {
           let res = JSON.parse(request.body)
           if (!res || !res.operationName) return request
 
-          blockedRequests.forEach((term) => {
+          blockedRequests.forEach(term => {
             if (res.operationName == term) {
               request.body = null
             }
@@ -76,13 +76,13 @@ if (process.env.NODE_ENV === 'production') {
       },
       // Responses in the blockedResponses list
       // will be sanitized from analytics
-      responseSanitizer: (response) => {
+      responseSanitizer: response => {
         if (!response.body) return response
         try {
           let res = JSON.parse(response.body)
           if (!res || !res.data) return response
 
-          blockedResponses.forEach((term) => {
+          blockedResponses.forEach(term => {
             if (res.data[term]) {
               response.body = null
             }
@@ -105,7 +105,7 @@ Vue.directive('disable-read-only-user', {
 Vue.use(Router)
 
 // Vue Global Error Handler
-Vue.config.errorHandler = function (error, vm, info) {
+Vue.config.errorHandler = function(error, vm, info) {
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
     console.log('Vue Global Error Handler', JSON.stringify({ error, vm, info }))
@@ -114,7 +114,7 @@ Vue.config.errorHandler = function (error, vm, info) {
 }
 
 // Catch the rest
-window.onerror = function (error) {
+window.onerror = function(error) {
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
     console.log('Window Error Handler', error)
@@ -142,5 +142,5 @@ new Vue({
   router,
   store,
   apolloProvider: createApolloProvider(),
-  render: (h) => h(App)
+  render: h => h(App)
 }).$mount('#app')
