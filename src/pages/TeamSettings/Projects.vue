@@ -236,7 +236,7 @@ export default {
 
       // Check project name for uniqueness
       const projectsWithName = await this.$apollo.query({
-        query: require('@/graphql/TeamSettings/getProjectByName.gql'),
+        query: require('@/graphql/TeamSettings/project.gql'),
         variables: {
           projectName: this.projectNameInput
         },
