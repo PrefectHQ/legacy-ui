@@ -1,0 +1,5 @@
+mutation DeleteProject($projectId: UUID!) {
+  deleteProject(input: { projectId: $projectId }) {
+    success
+  }
+}

@@ -1,0 +1,7 @@
+query ProjectsAggregate {
+  project_aggregate {
+    aggregate {
+      count
+    }
+  }
+}

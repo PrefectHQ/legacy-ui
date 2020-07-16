@@ -1,0 +1,8 @@
+query CloudReference {
+  reference_data {
+    cloud {
+      cloud_version
+      release_timestamp
+    }
+  }
+}

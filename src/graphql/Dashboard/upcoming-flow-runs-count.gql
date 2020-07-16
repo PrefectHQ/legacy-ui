@@ -1,0 +1,12 @@
+query UpcomingFlowRunsCount($projectId: uuid) {
+  flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      state: { _eq: "Scheduled" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+}

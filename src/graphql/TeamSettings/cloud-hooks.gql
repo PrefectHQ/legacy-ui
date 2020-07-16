@@ -1,0 +1,14 @@
+query ($searchParams: [cloud_hook_bool_exp!]) {
+  cloud_hook (where: {_or: $searchParams}) {
+    active,
+    config,
+    created,
+    id,
+    name,
+    states,
+    tenant_id,
+    type,
+    updated,
+    version_group_id
+  }
+}

@@ -1,0 +1,29 @@
+query BillingTerms {
+  billingTerms: billing_license {
+    active
+    created
+    name
+    product
+    start_date
+    end_date
+    type
+    trial_end_date
+    tenant {
+      id
+      name
+    }
+    license_terms {
+      active
+      stripe_quantity
+      stripe_status
+      stripe_subscription
+      name
+      terms
+      license {
+        product
+        name
+        active
+      }
+    }
+  }
+}

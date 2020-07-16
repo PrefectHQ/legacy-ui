@@ -1,0 +1,5 @@
+mutation DeleteAPIToken($id: UUID!) {
+  deleteAPIToken(input: { tokenId: $id }) {
+    success
+  }
+}

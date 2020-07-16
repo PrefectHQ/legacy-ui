@@ -1,0 +1,6 @@
+query Project($projectName: String!) {
+  project(where: { name: { _eq: $projectName } }) {
+    id
+    name
+  }
+}

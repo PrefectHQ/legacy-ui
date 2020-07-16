@@ -1,0 +1,7 @@
+mutation updateUserSettings($updateUserSettingsInput: JSON) {
+  updateUserSettings(input: { settings: $updateUserSettingsInput }) {
+    user {
+      settings
+    }
+  }
+}

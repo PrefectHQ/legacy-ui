@@ -1,0 +1,7 @@
+query ProjectFlowIds($projectId: uuid!) {
+  project_by_pk(id: $projectId) {
+    flows {
+      id
+    }
+  }
+}

@@ -1,0 +1,6 @@
+mutation DisableFlowLazarusProcess($input: disableFlowLazarusProcessInput!) {
+  disableFlowLazarusProcess(input: $input) {
+    success
+    error
+  }
+}

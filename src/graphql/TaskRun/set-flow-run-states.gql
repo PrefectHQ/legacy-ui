@@ -1,0 +1,13 @@
+mutation($flowRunId: UUID!, $version: Int!, $state: JSON!) {
+  setFlowRunStates(
+    input: {
+      states: [{ flowRunId: $flowRunId, state: $state, version: $version }]
+    }
+  ) {
+    states {
+      id
+      status
+      message
+    }
+  }
+}

@@ -1,0 +1,18 @@
+query UpcomingFlowRuns($flow_group_id: uuid, $flow_id: uuid) {
+  flow_run(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+      state: { _eq: "Scheduled" }
+    }
+    order_by: { scheduled_start_time: asc }
+  ) {
+    id
+    name
+    version
+    scheduled_start_time
+    task_runs {
+      id
+      version
+    }
+  }
+}

@@ -1,0 +1,5 @@
+mutation CreateCloudHook($input: create_cloud_hook_input!) {
+  create_cloud_hook(input: $input) {
+    id
+  }
+}

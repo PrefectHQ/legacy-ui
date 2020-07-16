@@ -1,0 +1,5 @@
+mutation DeleteMembership($membershipId: UUID!) {
+  deleteMembership(input: { membershipId: $membershipId }) {
+    success
+  }
+}

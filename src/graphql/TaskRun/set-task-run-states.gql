@@ -1,0 +1,7 @@
+mutation($setTaskRunStatesInput: [setTaskRunStateInput!]!) {
+  setTaskRunStates(input: { states: $setTaskRunStatesInput }) {
+    states {
+      id
+    }
+  }
+}

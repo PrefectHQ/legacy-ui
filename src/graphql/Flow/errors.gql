@@ -1,0 +1,27 @@
+query Errors(
+  $heartbeat: timestamptz_comparison_exp
+  $flow_group_id: uuid
+  $flow_id: uuid
+) {
+  flow_run(
+    where: {
+      updated: $heartbeat
+      flow: { id: { _eq: $flow_id }, flow_group_id: { _eq: $flow_group_id } }
+      logs: { level: { _in: ["CRITICAL", "ERROR"] } }
+    }
+    order_by: [{ updated: desc }]
+  ) {
+    id
+    name
+    logs(
+      limit: 1
+      where: { level: { _in: ["CRITICAL", "ERROR"] }, timestamp: $heartbeat }
+    ) {
+      id
+      level
+      message
+      name
+      timestamp
+    }
+  }
+}

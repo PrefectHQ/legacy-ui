@@ -1,0 +1,7 @@
+mutation CreateSelfServeLicense(
+  $input: create_self_serve_cloud_license_input!
+) {
+  create_self_serve_cloud_license(input: $input) {
+    id
+  }
+}

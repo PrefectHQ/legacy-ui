@@ -1,0 +1,14 @@
+query PendingInvitations($email: String!) {
+  pendingInvitations: membership_invitation(
+    where: { email: { _eq: $email } }
+  ) {
+    id
+    role
+    email
+    created
+    tenant {
+      id
+      name
+    }
+  }
+}

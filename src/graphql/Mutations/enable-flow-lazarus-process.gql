@@ -1,0 +1,6 @@
+mutation EnableFlowLazarusProcess($input: enableFlowLazarusProcessInput!) {
+  enableFlowLazarusProcess(input: $input) {
+    success
+    error
+  }
+}

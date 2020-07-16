@@ -1,0 +1,5 @@
+query Flow($id: uuid!) {
+  flow_group_by_pk(id: $id) {
+    id
+  }
+}

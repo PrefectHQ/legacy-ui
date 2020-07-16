@@ -1,0 +1,6 @@
+mutation updateLicense ($license_id: String!, $confirm: Boolean!, $users: Int  ) {
+  update_self_serve_cloud_license(input: {license_id: $license_id, confirm: $confirm, users: $users}){
+    success
+    error
+  }
+}

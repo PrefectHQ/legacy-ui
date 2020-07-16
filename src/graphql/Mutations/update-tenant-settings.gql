@@ -1,0 +1,9 @@
+mutation UpdateTenantSettings($settings: JSON!) {
+  updateTenantSettings(input: { settings: $settings }) {
+    id
+    tenant {
+      id
+      settings
+    }
+  }
+}

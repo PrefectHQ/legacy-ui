@@ -1,0 +1,9 @@
+query APITokens {
+  api_token(order_by: { created: desc }, where: { scope: { _eq: "USER" } }) {
+    id
+    name
+    created
+    expires_at
+    last_used
+  }
+}

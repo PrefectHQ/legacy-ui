@@ -1,0 +1,8 @@
+
+query {
+  flow_aggregate(distinct_on:[version_group_id], where: {archived: {_eq: false}}) {
+    aggregate {
+      count
+    }
+  }
+}

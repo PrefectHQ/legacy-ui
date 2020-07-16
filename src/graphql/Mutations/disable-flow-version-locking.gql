@@ -1,0 +1,6 @@
+mutation DisableFlowVersionLock($input: disableFlowVersionLockInput!) {
+  disableFlowVersionLock(input: $input) {
+    success
+    error
+  }
+}

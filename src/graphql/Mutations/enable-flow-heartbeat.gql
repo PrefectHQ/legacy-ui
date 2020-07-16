@@ -1,0 +1,6 @@
+mutation EnableFlowHeartbeat($input: enableFlowHeartbeatInput!) {
+  enableFlowHeartbeat(input: $input) {
+    success
+    error
+  }
+}

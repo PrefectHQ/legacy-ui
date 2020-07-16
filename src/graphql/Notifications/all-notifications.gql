@@ -1,0 +1,5 @@
+query Notifications($where: message_bool_exp) {
+  notifications: message(where: $where) {
+    id
+  }
+}

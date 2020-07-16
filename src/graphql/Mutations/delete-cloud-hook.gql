@@ -1,0 +1,6 @@
+mutation DeleteCloudHook($input: delete_cloud_hook_input!) {
+  delete_cloud_hook(input: $input) {
+    success
+    error
+  }
+}

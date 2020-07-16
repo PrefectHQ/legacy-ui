@@ -1,0 +1,8 @@
+query Project($id: uuid!) {
+  project: project_by_pk(id: $id) {
+    id
+    name
+    description
+    created
+  }
+}

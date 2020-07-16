@@ -1,0 +1,7 @@
+mutation RefreshAuth($accessToken: String!) {
+  refreshToken(input: { accessToken: $accessToken }) {
+    accessToken
+    expiresAt
+    refreshToken
+  }
+}

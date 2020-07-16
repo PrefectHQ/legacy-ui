@@ -1,0 +1,5 @@
+mutation updateCustomer($email: String!, $source: String, $name: String) {
+  update_stripe_customer(input: { email: $email, source: $source, name: $name}) {
+    id
+  }
+}

@@ -1,0 +1,22 @@
+query VersionsRuns($flow_ids: [uuid!]) {
+  flow(where: { id: { _in: $flow_ids } }) {
+    id
+    name
+    version
+
+    flow_runs(
+      where: {
+        _and: [{ state: { _neq: "Scheduled" } }, { state: { _neq: "Running" } }]
+      }
+      order_by: { updated: desc }
+      limit: 10
+    ) {
+      id
+      duration
+      name
+      start_time
+      end_time
+      state
+    }
+  }
+}

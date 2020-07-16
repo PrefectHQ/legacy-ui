@@ -1,0 +1,36 @@
+query FailDetails($heartbeat: timestamptz, $projectIds: [uuid!]) {
+  flow_run(
+    where: {
+      state: { _eq: "Failed" }
+     updated: { _gte: $heartbeat }
+      flow: { project_id: { _in: $projectIds } }
+    }
+    distinct_on: flow_id
+    order_by: [{ flow_id: asc }, { updated: desc }]
+  ) {
+    id
+    name
+    scheduled_start_time
+    start_time
+    end_time
+    duration
+    flow {
+      id
+      name
+      failed_runs_count: flow_runs_aggregate(
+        where: { state: { _eq: "Failed" },updated: { _gte: $heartbeat } }
+      ) {
+        aggregate {
+          count
+        }
+      }
+      runs_count: flow_runs_aggregate(
+        where: {updated: { _gte: $heartbeat } }
+      ) {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+}

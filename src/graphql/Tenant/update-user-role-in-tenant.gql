@@ -1,0 +1,5 @@
+mutation UpdateUserRoleInTenant($membershipId: UUID!, $role: MembershipRole!) {
+  setMembershipRole(input: { membershipId: $membershipId, role: $role }) {
+    id
+  }
+}

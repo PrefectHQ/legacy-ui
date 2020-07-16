@@ -1,0 +1,18 @@
+query($id: uuid!) {
+  billing_license_by_pk(id: $id) {
+    active
+    created
+    end_date
+    id
+    name
+    product
+    start_date
+    status
+    tenant {
+      name
+    }
+    tenant_id
+    trial_end_date
+    type
+  }
+}

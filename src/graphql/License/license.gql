@@ -1,0 +1,6 @@
+query License {
+  auth_info {
+    license
+    permissions
+  }
+}

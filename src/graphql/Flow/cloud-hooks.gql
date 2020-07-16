@@ -1,0 +1,11 @@
+query CloudHooks($id: String) {
+  cloud_hook(where: { version_group_id: { _eq: $id } }) {
+    id
+    active
+    config
+    created
+    name
+    states
+    type
+  }
+}

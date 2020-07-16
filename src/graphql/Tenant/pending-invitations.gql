@@ -1,0 +1,11 @@
+query PendingInvitations {
+  pendingInvitations: membership_invitation {
+    email
+    id
+    created
+    role
+    tenant {
+      id
+    }
+  }
+}

@@ -1,0 +1,27 @@
+query Flow($id: uuid!) {
+  flow_by_pk(id: $id) {
+    id
+    name
+    description
+    created
+    created_by {
+      username
+    }
+    archived
+    storage
+    environment
+    parameters
+    version
+    schedules {
+      id
+      active
+      schedule
+      schedule_start
+      schedule_end
+    }
+    project {
+      id
+      name
+    }
+  }
+}

@@ -1,0 +1,6 @@
+query Flow($id: uuid!) {
+  flow_by_pk(id: $id) {
+    version
+    flow_group_id
+  }
+}

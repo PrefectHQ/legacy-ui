@@ -1,0 +1,5 @@
+mutation acceptInvite($membershipInvitationId: UUID!) {
+  acceptMembershipInvitation(input: { invitationId: $membershipInvitationId }) {
+    id
+  }
+}

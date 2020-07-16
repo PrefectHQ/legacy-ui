@@ -1,0 +1,6 @@
+mutation SetFlowGroupSchedule($input: set_flow_group_schedule_input!) {
+  set_flow_group_schedule(input: $input) {
+    success
+    error
+  }
+}

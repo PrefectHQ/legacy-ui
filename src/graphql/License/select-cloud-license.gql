@@ -1,0 +1,5 @@
+mutation selectCloudLicense($input: selectCloudLicenseInput!) {
+  selectCloudLicense(input: $input) {
+    id
+  }
+}

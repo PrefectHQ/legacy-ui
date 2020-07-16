@@ -1,0 +1,14 @@
+query ($tenantId: uuid) {
+  pendingInvitations:tenant
+    (where: {
+      id: {
+        _eq: $tenantId
+      }
+    }) {
+      membership_invitations_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+}

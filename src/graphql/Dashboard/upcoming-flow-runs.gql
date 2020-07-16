@@ -1,0 +1,27 @@
+query UpcomingFlowRuns($projectId: uuid) {
+  flow_run(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      state: { _eq: "Scheduled" }
+    }
+    order_by: [{ scheduled_start_time: asc }, { flow: { name: asc } }]
+  ) {
+    id
+    name
+    state
+    scheduled_start_time
+    version
+    flow {
+      id
+      name
+      schedules { 
+        id
+        active
+      }
+    }
+    task_runs {
+      id
+      version
+    }
+  }
+}
