@@ -45,6 +45,7 @@ module.exports = {
       return args
     })
   },
+
   configureWebpack: {
     devtool: 'eval-source-map',
     optimization: {
@@ -70,6 +71,7 @@ module.exports = {
       }
     }
   },
+
   pluginOptions: {
     lintStyleOnBuild: true,
     stylelint: {},

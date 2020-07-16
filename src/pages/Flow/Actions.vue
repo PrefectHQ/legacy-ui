@@ -74,7 +74,7 @@ export default {
     }
   },
   mounted() {
-    let version = this.versions.find((v) => v.value == this.selectedVersion)
+    let version = this.versions.find(v => v.value == this.selectedVersion)
 
     if (this.selectedVersion && !version) {
       this.selectedVersion = null

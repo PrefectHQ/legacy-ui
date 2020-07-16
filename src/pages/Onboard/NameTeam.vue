@@ -277,8 +277,8 @@ export default {
           <v-col
             v-if="
               updateServerError &&
-              nameErrors.length === 0 &&
-              slugErrors.length === 0
+                nameErrors.length === 0 &&
+                slugErrors.length === 0
             "
             key="error"
             cols="12"

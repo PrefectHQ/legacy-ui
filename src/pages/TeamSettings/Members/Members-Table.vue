@@ -113,7 +113,7 @@ export default {
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
-        : this.allHeaders.filter((header) => header.mobile)
+        : this.allHeaders.filter(header => header.mobile)
     }
   },
   watch: {
@@ -180,12 +180,12 @@ export default {
         if (!data) return
 
         this.membersItems = data.tenantUsers
-          .filter((user) =>
-            user.memberships.find((mem) => mem.tenant_id == this.tenant.id)
+          .filter(user =>
+            user.memberships.find(mem => mem.tenant_id == this.tenant.id)
           )
-          .map((user) => {
+          .map(user => {
             let membership = user.memberships.find(
-              (mem) => mem.tenant_id == this.tenant.id
+              mem => mem.tenant_id == this.tenant.id
             )
             return {
               id: user.id,
@@ -200,11 +200,9 @@ export default {
           })
 
         this.$emit('load-end', {
-          fullUsers: this.membersItems.filter(
-            (m) => m.role !== 'READ_ONLY_USER'
-          ),
+          fullUsers: this.membersItems.filter(m => m.role !== 'READ_ONLY_USER'),
           readOnlyUsers: this.membersItems.filter(
-            (m) => m.role == 'READ_ONLY_USER'
+            m => m.role == 'READ_ONLY_USER'
           )
         })
         return data
@@ -351,7 +349,9 @@ export default {
       :dialog-props="{ 'max-width': '600' }"
       :disabled="isRemovingUser"
       :loading="isRemovingUser"
-      :title="`Are you sure you want to remove ${selectedUser.email} from your team?`"
+      :title="
+        `Are you sure you want to remove ${selectedUser.email} from your team?`
+      "
       @confirm="removeUser(selectedUser.membershipId)"
     >
       <span class="font-weight-bold">{{ selectedUser.username }}</span>

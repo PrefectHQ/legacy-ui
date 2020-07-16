@@ -5,8 +5,8 @@ export default {
       agentToken: null,
       agentTokenName: '',
       agentTokenRules: [
-        (v) => !!v || 'A name for your agent token is required',
-        (v) =>
+        v => !!v || 'A name for your agent token is required',
+        v =>
           (v && v.length <= 50) ||
           "The agent token's name must be less than 50 characters"
       ],

@@ -50,7 +50,7 @@ export default {
 
       // Input rules
       rules: {
-        required: (val) => !!val || 'This field is required.'
+        required: val => !!val || 'This field is required.'
       },
 
       // Dialogs
@@ -82,7 +82,7 @@ export default {
       }
 
       return this.secretNames
-        ?.map((secret) => secret.name)
+        ?.map(secret => secret.name)
         .includes(this.secretNameInput)
     }
   },
@@ -199,7 +199,7 @@ export default {
         this.isFetchingSecrets = false
       },
       update(data) {
-        return data?.secret_names?.map((name) => ({ name: name, value: null }))
+        return data?.secret_names?.map(name => ({ name: name, value: null }))
       },
       // skip() {
       //   return this.isReadOnlyUser

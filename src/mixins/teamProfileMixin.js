@@ -179,7 +179,7 @@ export const teamProfileMixin = {
 
       this.isCheckingName = true
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         setTimeout(() => {
           this.showNameIcon = true
           this.isCheckingName = false
@@ -196,7 +196,7 @@ export const teamProfileMixin = {
 
       this.isCheckingSlug = true
 
-      return new Promise((resolve) => [
+      return new Promise(resolve => [
         setTimeout(async () => {
           // Check slug uniqueness
           try {

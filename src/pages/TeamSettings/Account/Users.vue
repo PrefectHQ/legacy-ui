@@ -144,7 +144,7 @@ export default {
       this.users = this.license.terms.users - 1
       this.diff = 0
       const tenantMembershipId = this.user.memberships.filter(
-        (membership) => membership.tenant.id === this.tenant.id
+        membership => membership.tenant.id === this.tenant.id
       )
       await this.getTenant(tenantMembershipId[0].id)
       this.loading = false
