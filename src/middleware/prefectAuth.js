@@ -35,13 +35,13 @@ const prefectAuth = async (idToken) => {
 const prefectRefresh = async (accessToken) => {
   try {
     const result = await apolloClient.mutate({
-      mutation: require('@/graphql/refreshAuth.gql'),
+      mutation: require('@/graphql/refresh-token.gql'),
       variables: {
         accessToken: accessToken
       }
     })
-    if (result?.data?.refreshToken) {
-      return result.data.refreshToken
+    if (result?.data?.refresh_token) {
+      return result.data.refresh_token
     } else if (result.error) {
       throw new Error(result.error)
     } else {
