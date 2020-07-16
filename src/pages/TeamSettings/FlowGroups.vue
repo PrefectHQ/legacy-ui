@@ -105,7 +105,7 @@ export default {
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
-        : this.allHeaders.filter(header => header.mobile)
+        : this.allHeaders.filter((header) => header.mobile)
     },
     isLoadingTable() {
       return !(this.flowsLoaded && this.fvgsLoaded)
@@ -116,11 +116,11 @@ export default {
     items() {
       if (!(this.versionGroups && this.flows)) return []
 
-      return this.versionGroups.map(item => ({
+      return this.versionGroups.map((item) => ({
         ...item,
         active:
           this.flows.filter(
-            flow => flow.version_group_id === item.version_group_id
+            (flow) => flow.version_group_id === item.version_group_id
           ).length > 0
       }))
     }
@@ -208,7 +208,7 @@ export default {
       }
     },
     versionGroups: {
-      query: require('@/graphql/TeamSettings/FVG.gql'),
+      query: require('@/graphql/TeamSettings/flow-version-groups.gql'),
       result({ data }) {
         if (!data) return
         this.fvgsLoaded = true
@@ -430,9 +430,7 @@ export default {
       :dialog-props="{ 'max-width': '500' }"
       :disabled="isDeletingFvg"
       :loading="isDeletingFvg"
-      :title="
-        `Are you sure you want to delete the version group for ${selectedFvg.name}?`
-      "
+      :title="`Are you sure you want to delete the version group for ${selectedFvg.name}?`"
       @cancel="cancelFvgDelete"
       @confirm="deleteFvg"
     >

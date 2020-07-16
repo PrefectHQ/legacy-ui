@@ -1,0 +1,13 @@
+query FlowVersionGroups {
+  versionGroup: flow(distinct_on: [version_group_id]) {
+    version_group_id
+    id
+    name
+    project {
+      name
+    }
+    created_by {
+      username
+    }
+  }
+}
