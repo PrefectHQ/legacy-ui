@@ -219,7 +219,7 @@ export default {
       try {
         const updateVersionLocking = !this.selected.versionLockingEnabled
           ? await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/disable-flow-version-locking.gql'),
+              mutation: require('@/graphql/Mutations/disable-flow-version-lock.gql'),
               variables: {
                 input: {
                   flow_id: this.flow.id
@@ -228,7 +228,7 @@ export default {
               errorPolicy: 'all'
             })
           : await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/enable-flow-version-locking.gql'),
+              mutation: require('@/graphql/Mutations/enable-flow-version-lock.gql'),
               variables: {
                 input: {
                   flow_id: this.flow.id
