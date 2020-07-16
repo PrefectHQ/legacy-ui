@@ -1,5 +1,5 @@
 query TaskTagUsage($tags: [String!]) {
-  taskTagUsage(tags: $tags) {
+  task_tag_usage(tags: $tags) {
     tag
     usage
   }

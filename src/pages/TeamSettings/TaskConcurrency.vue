@@ -160,7 +160,7 @@ export default {
       update: (data) => {
         // Usage is returned as an array of objects in format { tag, usage }
         // Convert this array into object that maps tag names to usage
-        return data?.taskTagUsage?.reduce((accum, usage) => {
+        return data?.task_tag_usage?.reduce((accum, usage) => {
           accum[usage.tag] = usage.usage
           return accum
         }, {})
