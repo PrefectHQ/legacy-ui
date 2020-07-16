@@ -1,0 +1,15 @@
+mutation ModifyProject(
+  $projectId: UUID!
+  $projectName: String!
+  $projectDescription: String
+) {
+  set_project_name(input: { project_id: $projectId, name: $projectName }) {
+    id
+  }
+
+  set_project_description(
+    input: { project_id: $projectId, description: $projectDescription }
+  ) {
+    id
+  }
+}

@@ -318,7 +318,7 @@ export default {
 
       try {
         await this.$apollo.mutate({
-          mutation: require('@/graphql/TeamSettings/modifyProject.gql'),
+          mutation: require('@/graphql/TeamSettings/modify-project.gql'),
           variables: {
             projectId: this.selectedProject.id,
             projectName: this.projectNameInput,
