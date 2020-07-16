@@ -1,0 +1,180 @@
+<script>
+import { mapGetters } from 'vuex'
+
+export default {
+  props: {
+    show: {
+      type: Boolean,
+      required: true
+    }
+  },
+  data() {
+    return {
+      valid: true,
+      projectName: '',
+      nameRules: [
+        v => (v && !!v.trim()) || 'Project name is required',
+        v => !!v || 'Project name is required',
+        v =>
+          (v && v.length <= 50) ||
+          'Project name must be less than 50 characters'
+      ],
+      projectSuccess: false,
+      projectLoading: false,
+      projectError: false,
+      project: null,
+      specificProjectErrorMessage: ''
+    }
+  },
+  computed: {
+    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['role'])
+  },
+  watch: {
+    show() {
+      if (this.$refs.form) {
+        this.$refs.form.reset()
+        this.projectName = ''
+      }
+    }
+  },
+  methods: {
+    async createProject() {
+      this.projectLoading = true
+      try {
+        const { data, errors } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Projects/create-project.gql'),
+          variables: {
+            projectName: this.projectName
+          },
+          errorPolicy: 'all'
+        })
+        if (data && data.createProject) {
+          this.project = data.createProject.project
+          this.projectSuccess = true
+          this.projectLoading = false
+          //adding this here to make sure the dialog resets, even if a user clicks outside the box instead of going to the project (the persistent prop in vuetify is currently unreliable)
+          setTimeout(() => (this.projectSuccess = false), 8000)
+        }
+        if (errors) {
+          if (errors[0].message === 'Uniqueness violation.') {
+            this.specificProjectErrorMessage =
+              'That project name already exists.  Please choose a new one.'
+            this.projectLoading = false
+            setTimeout(() => (this.specificProjectErrorMessage = ''), 3000)
+          } else {
+            this.projectError = true
+            setTimeout(() => (this.projectError = false), 3000)
+          }
+        }
+      } catch (error) {
+        this.projectError = true
+        setTimeout(() => (this.projectError = false), 3000)
+        throw Error
+      }
+    },
+    goToProject() {
+      this.reset()
+      this.$router.push({
+        name: 'project',
+        params: {
+          id: this.project ? this.project.id : null,
+          name: this.project.name,
+          tenant: this.tenant.slug
+        }
+      })
+    },
+    reset() {
+      this.$emit('update:show', false)
+      this.projectName = ''
+      this.projectSuccess = false
+      this.projectLoading = false
+      this.projectError = false
+      this.specificProjectErrorMessage = ''
+    }
+  }
+}
+</script>
+
+<template>
+  <v-dialog :value="show" width="500" persistent @click:outside="reset">
+    <v-card :loading="projectLoading">
+      <v-card-title v-if="projectError || specificProjectErrorMessage">
+        Uh oh! There's a problem
+      </v-card-title>
+      <v-card-title v-else-if="projectSuccess">
+        Success!
+      </v-card-title>
+      <v-card-title v-else-if="role === 'READ_ONLY_USER'">
+        You are a Read-only user.
+      </v-card-title>
+
+      <v-card-title v-else>
+        Please give your new project a name
+      </v-card-title>
+      <v-card-text v-if="specificProjectErrorMessage">
+        {{ specificProjectErrorMessage }}
+      </v-card-text>
+      <v-card-text v-else-if="role === 'READ_ONLY_USER'">
+        Read-only users cannot create projects.
+      </v-card-text>
+      <v-card-text v-else-if="projectError">
+        It looks like your project wasn't added. Please try again. If you still
+        need help, visit our
+        <router-link to="help">Support Page</router-link>.
+      </v-card-text>
+
+      <v-card-text v-else-if="projectSuccess">
+        Your project has been added.
+      </v-card-text>
+
+      <v-card-text v-else>
+        <v-form ref="form" v-model="valid" @submit.prevent>
+          <v-text-field
+            id="name"
+            v-model="projectName"
+            autocomplete="off"
+            label="Project Name"
+            required
+            :rules="nameRules"
+            @keyup.enter="createProject"
+          />
+        </v-form>
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="projectSuccess"
+          color="primary"
+          class="white--text"
+          @click="goToProject"
+        >
+          Go to project
+        </v-btn>
+        <v-btn
+          v-if="
+            !projectSuccess && !projectError && !specificProjectErrorMessage
+          "
+          id="add"
+          v-disable-read-only-user="!valid"
+          class="ml-5"
+          color="primary"
+          @click="createProject"
+        >
+          Add Project
+        </v-btn>
+        <v-btn
+          v-if="!projectSuccess"
+          id="close"
+          text
+          data-cy="project-select-cancel"
+          @click="reset"
+          >Cancel</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>

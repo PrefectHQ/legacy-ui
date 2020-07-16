@@ -1,0 +1,276 @@
+<script>
+import CardTitle from '@/components/Card-Title'
+import { formatTime } from '@/mixins/formatTimeMixin'
+import moment from 'moment-timezone'
+
+export default {
+  //Adding duration filter here as longer flows need short hand duration
+  filters: {
+    duration: function(v) {
+      if (!v) return ''
+      let d = moment.duration(v)._data,
+        string = ''
+      if (d.days) string += ` ${d.days}d`
+      if (d.hours) string += ` ${d.hours}h`
+      if (d.minutes) string += ` ${d.minutes}m`
+      if (d.seconds) string += ` ${d.seconds}s`
+      return string
+    }
+  },
+  components: { CardTitle },
+  mixins: [formatTime],
+  props: {
+    aggregate: {
+      type: Boolean,
+      default: () => false
+    },
+    flow: {
+      required: true,
+      type: Object
+    }
+  },
+  data() {
+    return {
+      flowRuns: null,
+      flowRunsCount: null,
+      headers: [
+        {
+          text: 'Name',
+          value: 'name',
+          width: '20%'
+        },
+        {
+          text: 'Scheduled Start',
+          value: 'scheduled_start_time',
+          align: 'start',
+          width: '18%'
+        },
+        {
+          text: 'Start Time',
+          value: 'start_time',
+          align: 'start',
+          width: '18%'
+        },
+        { text: 'End Time', value: 'end_time', align: 'start', width: '18%' },
+        { text: 'Duration', value: 'duration', align: 'end', width: '15%' },
+        { text: 'State', value: 'state', align: 'end', width: '10%' }
+      ],
+      itemsPerPage: 15,
+      page: 1,
+      searchTerm: null,
+      sortBy: 'scheduled_start_time',
+      sortDesc: true
+    }
+  },
+  computed: {
+    offset() {
+      return this.itemsPerPage * (this.page - 1)
+    },
+    searchFormatted() {
+      if (!this.searchTerm) return null
+      return `%${this.searchTerm}%`
+    },
+    pollInterval() {
+      return this.flow.archived ? 0 : 5000
+    }
+  },
+  watch: {
+    flow() {
+      this.$apollo.queries.flowRuns.stopPolling()
+      this.$apollo.queries.flowRunsCount.stopPolling()
+
+      if (this.pollInterval > 0) {
+        this.$apollo.queries.flowRuns.startPolling(this.pollInterval)
+        this.$apollo.queries.flowRunsCount.startPolling(this.pollInterval)
+      } else {
+        this.$apollo.queries.flowRuns.refetch()
+        this.$apollo.queries.flowRunsCount.refetch()
+      }
+    }
+  },
+  mounted() {
+    if (this.pollInterval > 0) {
+      this.$apollo.queries.flowRuns.startPolling(this.pollInterval)
+      this.$apollo.queries.flowRunsCount.startPolling(this.pollInterval)
+    }
+  },
+  apollo: {
+    flowRuns: {
+      query: require('@/graphql/Flow/table-flow-runs.gql'),
+      variables() {
+        const orderBy = {}
+        orderBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
+
+        let variables = {
+          limit: this.itemsPerPage,
+          name: this.searchFormatted,
+          offset: this.offset,
+          orderBy
+        }
+
+        if (this.aggregate) {
+          variables.flow_group_id = this.flow.flow_group_id
+        } else {
+          variables.flow_id = this.flow.id
+        }
+
+        return variables
+      },
+      update: data => data.flow_run
+    },
+    flowRunsCount: {
+      query: require('@/graphql/Flow/table-flow-runs-count.gql'),
+      variables() {
+        let variables = { name: this.searchFormatted }
+
+        if (this.aggregate) {
+          variables.flow_group_id = this.flow.flow_group_id
+        } else {
+          variables.flow_id = this.flow.id
+        }
+
+        return variables
+      },
+      update: data =>
+        data && data.flow_run_aggregate
+          ? data.flow_run_aggregate.aggregate.count
+          : null
+    }
+  }
+}
+</script>
+
+<template>
+  <v-card class="pa-2 mt-2" tile>
+    <CardTitle title="Flow Runs" icon="pi-flow-run">
+      <v-text-field
+        slot="action"
+        v-model="searchTerm"
+        class="task-search"
+        dense
+        solo
+        prepend-inner-icon="search"
+        hide-details
+      >
+      </v-text-field>
+    </CardTitle>
+
+    <v-card-text>
+      <v-data-table
+        :footer-props="{
+          showFirstLastPage: true,
+          itemsPerPageOptions: [5, 15, 25, 50],
+          firstIcon: 'first_page',
+          lastIcon: 'last_page',
+          prevIcon: 'keyboard_arrow_left',
+          nextIcon: 'keyboard_arrow_right'
+        }"
+        :headers="headers"
+        :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+        :items="flowRuns || []"
+        :items-per-page.sync="itemsPerPage"
+        :loading="$apollo.queries.flowRuns.loading"
+        must-sort
+        :page.sync="page"
+        :server-items-length="flowRunsCount"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
+        :class="{ 'fixed-table': this.$vuetify.breakpoint.smAndUp }"
+        calculate-widths
+      >
+        <template v-slot:item.name="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <router-link
+                class="link"
+                :to="{ name: 'flow-run', params: { id: item.id } }"
+              >
+                <span v-on="on">{{ item.name }}</span>
+              </router-link>
+            </template>
+            <span>{{ item.name }}</span>
+          </v-tooltip>
+        </template>
+
+        <template v-slot:item.scheduled_start_time="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <span v-on="on">{{ formDate(item.scheduled_start_time) }}</span>
+            </template>
+            <span>{{ formatTime(item.scheduled_start_time) }}</span>
+          </v-tooltip>
+        </template>
+
+        <template v-slot:item.start_time="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <span v-on="on">{{ formDate(item.start_time) }}</span>
+            </template>
+            <span>{{ formatTime(item.start_time) }}</span>
+          </v-tooltip>
+        </template>
+
+        <template v-slot:item.end_time="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <span v-on="on">{{ formDate(item.end_time) }}</span>
+            </template>
+            <span>{{ formatTime(item.end_time) }}</span>
+          </v-tooltip>
+        </template>
+
+        <template v-slot:item.duration="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <span v-on="on">{{ item.duration | duration }}</span>
+            </template>
+            <span>{{ item.duration | duration }}</span>
+          </v-tooltip>
+        </template>
+
+        <template v-slot:item.state="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-icon class="mr-1 pointer" small :color="item.state" v-on="on">
+                brightness_1
+              </v-icon>
+            </template>
+            <span>{{ item.state }}</span>
+          </v-tooltip>
+        </template>
+      </v-data-table>
+    </v-card-text>
+  </v-card>
+</template>
+
+<style lang="scss">
+.fixed-table {
+  table {
+    table-layout: fixed;
+  }
+}
+
+.v-data-table {
+  font-size: 0.9rem !important;
+
+  td {
+    font-size: inherit !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+</style>
+
+<style lang="scss" scoped>
+.time-interval-picker {
+  font-size: 0.85rem;
+  margin: auto;
+  margin-right: 0;
+  max-width: 150px;
+}
+</style>
