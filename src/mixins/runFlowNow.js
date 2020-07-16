@@ -18,7 +18,7 @@ export const runFlowNowMixin = {
         await this.$apollo.mutate({
           mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
           variables: {
-            flowRunId: flowRunId,
+            flow_run_id: flowRunId,
             version: version,
             state: {
               type: 'Scheduled'

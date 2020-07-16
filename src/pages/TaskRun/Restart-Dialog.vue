@@ -39,7 +39,7 @@ export default {
       const hasUpstreamEdges =
         this.taskRun.task &&
         this.taskRun.task.upstream_edges &&
-        this.taskRun.task.upstream_edges.filter(edge => edge.key).length
+        this.taskRun.task.upstream_edges.filter((edge) => edge.key).length
       return !!hasUpstreamEdges && !hasCachedInput
     },
     async restart() {
@@ -50,7 +50,7 @@ export default {
         if (logSuccess) {
           let taskStates
           if (this.utilityDownstreamTasks.length) {
-            taskStates = this.utilityDownstreamTasks.map(task => {
+            taskStates = this.utilityDownstreamTasks.map((task) => {
               return {
                 version: task.task.task_runs[0].version,
                 taskRunId: task.task.task_runs[0].id,
@@ -74,12 +74,12 @@ export default {
             const { data } = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
               variables: {
-                flowRunId: this.flowRunId,
+                flow_run_id: this.flowRunId,
                 version: this.taskRun.flow_run.version,
                 state: { type: 'Scheduled', message: this.message }
               }
             })
-            if (data && data.setFlowRunStates) {
+            if (data?.set_flow_run_states) {
               this.$toasted.show('Flow has been set for restart', {
                 containerClass: 'toast-typography',
                 type: 'success',
@@ -138,7 +138,7 @@ export default {
         }
       },
       pollInterval: 1000,
-      update: data => data.task_run_by_pk
+      update: (data) => data.task_run_by_pk
     },
     utilityDownstreamTasks: {
       query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
@@ -149,7 +149,7 @@ export default {
         }
       },
       pollInterval: 1000,
-      update: data => data.utility_downstream_tasks
+      update: (data) => data.utility_downstream_tasks
     }
   }
 }

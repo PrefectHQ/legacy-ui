@@ -71,9 +71,9 @@ export const changeStateMixin = {
     ...mapGetters('tenant', ['role']),
     filteredStates() {
       if (this.dialogType === 'task run') {
-        return this.taskStates.filter(state => state !== this.taskRun.state)
+        return this.taskStates.filter((state) => state !== this.taskRun.state)
       } else {
-        return this.flowStates.filter(state => state !== this.flowRun.state)
+        return this.flowStates.filter((state) => state !== this.flowRun.state)
       }
     },
     checkVersion() {
@@ -157,7 +157,7 @@ export const changeStateMixin = {
                 }
               }
             } else {
-              taskState = this.flowRun.task_runs.map(taskRun => {
+              taskState = this.flowRun.task_runs.map((taskRun) => {
                 return {
                   version: taskRun.version,
                   taskRunId: taskRun.id,
@@ -188,7 +188,7 @@ export const changeStateMixin = {
             const result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
               variables: {
-                flowRunId: this.flowRun.id,
+                flow_run_id: this.flowRun.id,
                 version: this.flowRun.version,
                 state: {
                   type: this.selectedState,
@@ -197,11 +197,7 @@ export const changeStateMixin = {
               }
             })
             this.setStateSuccessB =
-              result &&
-              result.data &&
-              result.data.setFlowRunStates &&
-              result.data.setFlowRunStates.states &&
-              result.data.setFlowRunStates.states.length
+              result?.data?.set_flow_run_states?.states?.length
             if (!this.setStateSuccessB) {
               this.setStateError = true
             }

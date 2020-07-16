@@ -30,7 +30,7 @@ export default {
         if (logSuccess) {
           let taskStates
           if (this.utilityDownstreamTasks) {
-            taskStates = this.utilityDownstreamTasks.map(task => {
+            taskStates = this.utilityDownstreamTasks.map((task) => {
               return {
                 version: task.task.task_runs[0].version,
                 taskRunId: task.task.task_runs[0].id,
@@ -55,12 +55,12 @@ export default {
               const { data } = await this.$apollo.mutate({
                 mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
                 variables: {
-                  flowRunId: this.flowRun.id,
+                  flow_run_id: this.flowRun.id,
                   version: this.flowRun.version,
                   state: { type: 'Scheduled', message: this.message }
                 }
               })
-              if (data && data.setFlowRunStates) {
+              if (data?.set_flow_run_states) {
                 this.$toasted.show('Flow has been set for restart', {
                   containerClass: 'toast-typography',
                   type: 'success',
@@ -121,11 +121,11 @@ export default {
         }
       },
       pollInterval: 1000,
-      update: data => {
+      update: (data) => {
         if (data.task_run) {
           if (data.task_run.length > 1) {
             let taskRunString = ''
-            data.task_run.forEach(taskRun => {
+            data.task_run.forEach((taskRun) => {
               taskRunString += taskRun.task_id + ','
             })
             const failedTaskRunString = taskRunString.slice(0, -1)
@@ -149,7 +149,7 @@ export default {
         const hasFailedTRs = typeof this.failedTaskRuns === 'string'
         return !hasFailedTRs
       },
-      update: data => data.utility_downstream_tasks
+      update: (data) => data.utility_downstream_tasks
     }
   }
 }

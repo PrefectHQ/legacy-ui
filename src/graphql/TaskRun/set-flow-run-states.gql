@@ -1,7 +1,7 @@
 mutation($flowRunId: UUID!, $version: Int!, $state: JSON!) {
-  setFlowRunStates(
+  set_flow_run_states(
     input: {
-      states: [{ flowRunId: $flowRunId, state: $state, version: $version }]
+      states: [{ flow_run_id: $flowRunId, state: $state, version: $version }]
     }
   ) {
     states {
