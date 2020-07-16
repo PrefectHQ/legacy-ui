@@ -1,0 +1,309 @@
+import Router from 'vue-router'
+
+//  Nav guards
+import authNavGuard from '@/middleware/authNavGuard'
+import flowNavGuard from '@/middleware/flowNavGuard'
+import licenseNavGuard from '@/middleware/licenseNavGuard'
+import multiguard from 'vue-router-multiguard'
+import newTenantChecks from '@/middleware/newTenantChecks'
+import tenantNavGuard from '@/middleware/tenantNavGuard'
+
+export const routes = [
+  {
+    name: 'not-found',
+    path: '/404',
+    component: () =>
+      import(/* webpackChunkName: "not-found" */ '@/pages/NotFoundPage.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
+  {
+    name: 'api',
+    path: '/:tenant/api',
+    component: () =>
+      import(
+        /* webpackChunkName: "interactive-api" */ '@/pages/InteractiveAPI/InteractiveAPI.vue'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+  },
+  {
+    name: 'help',
+    path: '/help',
+    component: () =>
+      import(/* webpackChunkName: "support" */ '@/pages/Support.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+  },
+  {
+    name: 'accept',
+    path: '/accept',
+    component: () =>
+      import(
+        /* webpackChunkName: "accept" */ '@/pages/AcceptInvitationPage.vue'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
+  {
+    name: 'project',
+    path: '/:tenant/project/:id',
+    component: () =>
+      import(
+        /* webpackChunkName: "project" */ '@/pages/Dashboard/Dashboard.vue'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+  },
+  {
+    name: 'flow',
+    path: '/:tenant/flow/:id',
+    component: () =>
+      import(/* webpackChunkName: "flow" */ '@/pages/Flow/Flow.vue'),
+    beforeEnter: multiguard([
+      authNavGuard,
+      tenantNavGuard,
+      licenseNavGuard,
+      flowNavGuard
+    ])
+  },
+  {
+    name: 'flow-run',
+    path: '/:tenant/flow-run/:id',
+    component: () =>
+      import(/* webpackChunkName: "flow-run" */ '@/pages/FlowRun/FlowRun.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+  },
+  {
+    name: 'task',
+    path: '/:tenant/task/:id',
+    component: () =>
+      import(/* webpackChunkName: "task" */ '@/pages/Task/Task.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+  },
+  {
+    name: 'task-run',
+    path: '/:tenant/task-run/:id',
+    component: () =>
+      import(/* webpackChunkName: "task-run" */ '@/pages/TaskRun/TaskRun.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+  },
+  // --------------------------- //
+  //
+  // Team settings
+  //
+  // --------------------------- //
+  {
+    name: 'team',
+    path: '/:tenant/team',
+    component: () =>
+      import(
+        /* webpackChunkName: "team-settings" */ '@/pages/TeamSettings/TeamSettings.vue'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard]),
+    redirect: { name: 'account' },
+    children: [
+      {
+        name: 'account',
+        path: 'account',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--account" */ '@/pages/TeamSettings/Account/Account.vue'
+          )
+      },
+      {
+        name: 'projects',
+        path: 'projects',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--projects" */ '@/pages/TeamSettings/Projects.vue'
+          )
+      },
+      {
+        name: 'flow-groups',
+        path: 'flow-groups',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--flow-groups" */ '@/pages/TeamSettings/FlowGroups.vue'
+          )
+      },
+      {
+        name: 'task-concurrency',
+        path: 'task-concurrency',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--task-concurrency" */ '@/pages/TeamSettings/TaskConcurrency.vue'
+          )
+      },
+      {
+        name: 'members',
+        path: 'members',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--members" */ '@/pages/TeamSettings/Members.vue'
+          )
+      },
+      {
+        name: 'secrets',
+        path: 'secrets',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--secrets" */ '@/pages/TeamSettings/Secrets.vue'
+          )
+      },
+      {
+        name: 'cloud-hooks',
+        path: 'cloud-hooks',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--cloud-hooks" */ '@/pages/TeamSettings/CloudHooks.vue'
+          )
+      },
+      {
+        name: 'tokens',
+        path: 'tokens',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--tokens" */ '@/pages/TeamSettings/Tokens.vue'
+          )
+      }
+    ]
+  },
+  // --------------------------- //
+  //
+  // Onboarding
+  //
+  // --------------------------- //
+  {
+    name: 'user',
+    path: '/user',
+    component: () =>
+      import(
+        /* webpackChunkName: "user-settings" */ '@/pages/UserSettings/UserSettings.vue'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard]),
+    redirect: { name: 'profile' },
+    children: [
+      {
+        name: 'profile',
+        path: 'profile',
+        component: () =>
+          import(
+            /* webpackChunkName: "user-settings--profile" */ '@/pages/UserSettings/Profile.vue'
+          )
+      },
+      {
+        name: 'user-tokens',
+        path: 'tokens',
+        component: () =>
+          import(
+            /* webpackChunkName: "user-settings--tokens" */ '@/pages/UserSettings/Tokens.vue'
+          )
+      }
+    ]
+  },
+  // --------------------------- //
+  //
+  // Tutorials
+  //
+  // --------------------------- //
+  {
+    path: '/:tenant/welcome',
+    component: () =>
+      import(
+        /* webpackChunkName: "onboard" */ '@/pages/Onboard/Onboard-Page.vue'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard]),
+    children: [
+      {
+        name: 'welcome',
+        path: '',
+        component: () =>
+          import(
+            /* webpackChunkName: "onboard--welcome" */ '@/pages/Onboard/Welcome.vue'
+          )
+      },
+      {
+        name: 'name-team',
+        path: 'name-team',
+        component: () =>
+          import(
+            /* webpackChunkName: "onboard--name-team" */ '@/pages/Onboard/NameTeam.vue'
+          )
+      },
+      {
+        name: 'onboard-resources',
+        path: 'resources',
+        component: () =>
+          import(
+            /* webpackChunkName: "onboard--resources" */ '@/pages/Onboard/Resources.vue'
+          )
+      }
+    ]
+  },
+  // --------------------------- //
+  //
+  // Tutorials
+  //
+  // --------------------------- //
+  {
+    name: 'tutorial',
+    path: '/:tenant/tutorial',
+    component: () =>
+      import(
+        /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard]),
+    redirect: { name: 'flow-run-tutorial' },
+    children: [
+      {
+        name: 'flow-run-tutorial',
+        path: 'flow-run-tutorial',
+        component: () =>
+          import(
+            /* webpackChunkName: "tutorials--flow-run" */ '@/pages/Tutorials/FlowRun/FlowRunTutorial.vue'
+          ),
+        beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+      },
+      {
+        name: 'universal-deploy-tutorial',
+        path: 'universal-deploy-tutorial',
+        component: () =>
+          import(
+            /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/UniversalDeploy/UniversalDeployTutorial.vue'
+          ),
+        beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+      }
+    ]
+  },
+  {
+    name: 'notifications',
+    path: '/notifications',
+    component: () =>
+      import(
+        /* webpackChunkName: "notifications" */ '@/pages/Notifications/Notifications.vue'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+  },
+  {
+    name: 'dashboard',
+    alias: '/',
+    path: '/:tenant?',
+    component: () =>
+      import(
+        /* webpackChunkName: "dashboard" */ '@/pages/Dashboard/Dashboard.vue'
+      ),
+    beforeEnter: multiguard([
+      authNavGuard,
+      tenantNavGuard,
+      newTenantChecks,
+      licenseNavGuard
+    ])
+  },
+  {
+    path: '*',
+    redirect: '404'
+  }
+]
+
+const router = new Router({
+  mode: 'history',
+  routes
+})
+
+export default router
