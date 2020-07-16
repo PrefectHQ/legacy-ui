@@ -1,5 +1,7 @@
-mutation acceptInvite($membershipInvitationId: UUID!) {
-  acceptMembershipInvitation(input: { invitationId: $membershipInvitationId }) {
+mutation AcceptMembershipInvitation($membershipInvitationId: UUID!) {
+  accept_membership_invitation(
+    input: { invitation_id: $membershipInvitationId }
+  ) {
     id
   }
 }
