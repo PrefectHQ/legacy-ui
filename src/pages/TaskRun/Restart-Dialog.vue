@@ -118,14 +118,14 @@ export default {
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
-        mutation: require('@/graphql/Update/writelogs.gql'),
+        mutation: require('@/graphql/Update/write-logs.gql'),
         variables: {
-          flowRunId: this.flowRunId,
+          flow_run_id: this.flowRunId,
           name: this.name,
           message: this.message
         }
       })
-      return data && data.writeRunLogs && data.writeRunLogs.success
+      return data?.write_run_logs?.success
     }
   },
   apollo: {

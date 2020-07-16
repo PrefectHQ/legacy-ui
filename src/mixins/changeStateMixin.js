@@ -111,15 +111,17 @@ export const changeStateMixin = {
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
-        mutation: require('@/graphql/Update/writelogs.gql'),
+        mutation: require('@/graphql/Update/write-logs.gql'),
         variables: {
-          flowRunId: this.taskRun ? this.taskRun.flow_run?.id : this.flowRun.id,
-          taskRunId: this.taskRun ? this.taskRun.id : null,
+          flow_run_id: this.taskRun
+            ? this.taskRun.flow_run?.id
+            : this.flowRun.id,
+          task_run_id: this.taskRun ? this.taskRun.id : null,
           name: this.name,
           message: this.runLogMessage()
         }
       })
-      return data && data.writeRunLogs && data.writeRunLogs.success
+      return data?.write_run_logs?.success
     },
     resumeRun() {
       this.resumeLoad = this.taskRun.id
