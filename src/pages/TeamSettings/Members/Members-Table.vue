@@ -151,7 +151,7 @@ export default {
       this.isSettingRole = true
 
       const res = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tenant/update-user-role-in-tenant.gql'),
+        mutation: require('@/graphql/Tenant/set-membership-role.gql'),
         variables: { membershipId, role }
       })
 
