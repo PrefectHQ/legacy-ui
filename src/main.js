@@ -12,7 +12,6 @@ import LogRocket from 'logrocket'
 
 // Filters
 import duration from '@/filters/duration'
-import number from '@/filters/number'
 import {
   roundWhole,
   roundTenths,
