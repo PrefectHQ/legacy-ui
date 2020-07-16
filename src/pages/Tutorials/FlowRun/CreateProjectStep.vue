@@ -11,9 +11,9 @@ export default {
       // These are the rules for the form. A project name: must have a name,
       // name must be less than 50 characters, name can't already be in use
       nameRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 50) || 'Name must be less than 50 characters',
-        v => {
+        (v) => !!v || 'Name is required',
+        (v) => (v && v.length <= 50) || 'Name must be less than 50 characters',
+        (v) => {
           if (this.projectNames && this.projectNames.length) {
             if (this.projectNames.includes(v))
               return 'That project name is already taken.'
@@ -34,7 +34,7 @@ export default {
     // helps us check for an existing project name
     projectNames() {
       if (!this.projects) return
-      return this.projects.map(project => project.name)
+      return this.projects.map((project) => project.name)
     }
   },
   methods: {
@@ -51,7 +51,7 @@ export default {
           }
         })
         // extract the project id
-        this.projectId = result.data.createProject.project.id
+        this.projectId = result.data.create_project.project.id
         // emit the result of the step to the parent
         this.$emit('project-submitted', {
           projectId: this.projectId,
@@ -84,7 +84,7 @@ export default {
       }
     },
     handleProjectSelect(projectId) {
-      this.selectedProject = this.projects.find(p => p.id == projectId)
+      this.selectedProject = this.projects.find((p) => p.id == projectId)
     },
     handleProjectSubmit() {
       this.$emit('project-submitted', {
@@ -97,7 +97,7 @@ export default {
     projects: {
       query: require('@/graphql/FirstRunWorkflow/project-names.gql'),
       pollInterval: 1000,
-      update: data => {
+      update: (data) => {
         data.project.unshift({
           id: 'new-project',
           name: 'New Project'

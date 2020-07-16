@@ -13,9 +13,9 @@ export default {
       valid: true,
       projectName: '',
       nameRules: [
-        v => (v && !!v.trim()) || 'Project name is required',
-        v => !!v || 'Project name is required',
-        v =>
+        (v) => (v && !!v.trim()) || 'Project name is required',
+        (v) => !!v || 'Project name is required',
+        (v) =>
           (v && v.length <= 50) ||
           'Project name must be less than 50 characters'
       ],
@@ -49,8 +49,8 @@ export default {
           },
           errorPolicy: 'all'
         })
-        if (data && data.createProject) {
-          this.project = data.createProject.project
+        if (data && data.create_project) {
+          this.project = data.create_project.project
           this.projectSuccess = true
           this.projectLoading = false
           //adding this here to make sure the dialog resets, even if a user clicks outside the box instead of going to the project (the persistent prop in vuetify is currently unreliable)
