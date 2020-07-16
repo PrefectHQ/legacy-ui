@@ -1,0 +1,19 @@
+{
+  "auto-close-tag.enableAutoCloseSelfClosingTag": false,
+  "editor.autoIndent": "advanced",
+  "editor.detectIndentation": false,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "eslint.alwaysShowStatus": true,
+  "html.format.wrapLineLength": 80,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
+  "prettier-eslint.eslintIntegration": true,
+  "prettier.semi": false,
+  "prettier.singleQuote": true,
+  "vetur.format.defaultFormatter.html": "prettier",
+  "vetur.format.defaultFormatter.js": "prettier-eslint",
+  "vetur.grammar.customBlocks": {
+    "story": "html"
+  },
+}
