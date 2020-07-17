@@ -1,0 +1,7 @@
+mutation CreateFlow($projectId: UUID!, $serializedFlow: JSON!) {
+  create_flow(
+    input: { project_id: $projectId, serialized_flow: $serializedFlow }
+  ) {
+    id
+  }
+}

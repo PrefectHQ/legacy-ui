@@ -102,12 +102,11 @@ export default {
       })
 
       if (
-        result.data &&
-        result.data.createAPIToken.id &&
-        result.data.createAPIToken.token
+        result?.data?.create_api_token?.id &&
+        result?.data?.create_api_token?.token
       ) {
         this.resetNewToken()
-        this.newPersonalAccessToken = result.data.createAPIToken.token
+        this.newPersonalAccessToken = result.data.create_api_token.token
         this.copyTokenDialog = true
       } else {
         this.alertShow = true
@@ -122,7 +121,7 @@ export default {
           id: token.id
         }
       })
-      if (result.data && result.data.deleteAPIToken.success) {
+      if (result?.data?.delete_api_token?.success) {
         this.tokenToDeleteDialog = false
         this.alertShow = true
         this.alertMessage = 'Token was successfully revoked.'
@@ -147,7 +146,7 @@ export default {
       query: require('@/graphql/Tokens/personal-access-tokens.gql'),
       fetchPolicy: 'network-only',
       pollInterval: 1000,
-      update: data => data.api_token
+      update: (data) => data.api_token
     }
   }
 }
@@ -384,10 +383,8 @@ export default {
       v-model="tokenToDeleteDialog"
       type="error"
       :dialog-props="{ 'max-width': '500' }"
-      :title="
-        `Are you sure you want to revoke the token
-          ${tokenToDelete.name}?`
-      "
+      :title="`Are you sure you want to revoke the token
+          ${tokenToDelete.name}?`"
       confirm-text="Revoke"
       @confirm="deleteToken(tokenToDelete)"
     >

@@ -1,0 +1,21 @@
+query ProjectFlows(
+  $limit: Int!
+  $offset: Int!
+  $orderBy: [flow_order_by!]
+  $where: flow_bool_exp
+) {
+  flow(where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
+    id
+    name
+    version
+    flow_runs(
+      where: { start_time: { _is_null: false } }
+      order_by: { start_time: desc }
+      limit: 1
+    ) {
+      id
+      state
+      start_time
+    }
+  }
+}

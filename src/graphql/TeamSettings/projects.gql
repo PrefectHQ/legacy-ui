@@ -1,0 +1,18 @@
+query Projects {
+  projects: project {
+    id
+    name
+    description
+    created
+    active_flow_count: flows_aggregate(where: { archived: { _eq: false } }) {
+      aggregate {
+        count
+      }
+    }
+    archived_flow_count: flows_aggregate(where: { archived: { _eq: true } }) {
+      aggregate {
+        count
+      }
+    }
+  }
+}

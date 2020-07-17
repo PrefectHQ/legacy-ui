@@ -117,7 +117,7 @@ export default {
     headersByViewport() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.headers
-        : this.headers.filter(header => header.mobile)
+        : this.headers.filter((header) => header.mobile)
     },
     isReadOnlyUser() {
       return this.tenant.role === 'READ_ONLY_USER'
@@ -133,13 +133,13 @@ export default {
       return (
         this.projects
           // Exclude the currently-selected project
-          .filter(project => {
+          .filter((project) => {
             if (!this.selectedProject) return true
             return this.selectedProject.id !== project.id
           })
           // Transform into objects with properties "text" and "value",
           // as required by v-autocomplete.
-          .map(project => ({
+          .map((project) => ({
             text: project.name,
             value: Object.assign({}, project)
           }))
@@ -236,7 +236,7 @@ export default {
 
       // Check project name for uniqueness
       const projectsWithName = await this.$apollo.query({
-        query: require('@/graphql/TeamSettings/getProjectByName.gql'),
+        query: require('@/graphql/TeamSettings/project.gql'),
         variables: {
           projectName: this.projectNameInput
         },
@@ -318,7 +318,7 @@ export default {
 
       try {
         await this.$apollo.mutate({
-          mutation: require('@/graphql/TeamSettings/modifyProject.gql'),
+          mutation: require('@/graphql/TeamSettings/modify-project.gql'),
           variables: {
             projectId: this.selectedProject.id,
             projectName: this.projectNameInput,
@@ -392,7 +392,7 @@ export default {
       try {
         // Proceed with deleting the project
         await this.$apollo.mutate({
-          mutation: require('@/graphql/TeamSettings/deleteProject.gql'),
+          mutation: require('@/graphql/TeamSettings/delete-project.gql'),
           variables: {
             projectId: this.selectedProject.id
           }
@@ -430,7 +430,7 @@ export default {
       skip() {
         return !this.selectedProject
       },
-      update: data => {
+      update: (data) => {
         return (data && data.project_by_pk && data.project_by_pk.flows) || null
       }
     },
@@ -843,7 +843,7 @@ export default {
       <template
         v-if="
           selectedProject.activeFlowCount === 0 &&
-            selectedProject.archivedFlowCount === 0
+          selectedProject.archivedFlowCount === 0
         "
       >
         <p class="mb-2">

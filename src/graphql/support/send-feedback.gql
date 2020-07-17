@@ -1,0 +1,5 @@
+mutation($type: String!, $message: String!) {
+  send_feedback(input: { type: $type, message: $message }) {
+    success
+  }
+}

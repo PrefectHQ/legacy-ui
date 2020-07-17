@@ -38,11 +38,10 @@ export default {
       })
 
       if (
-        result.data &&
-        result.data.createAPIToken.id &&
-        result.data.createAPIToken.token
+        result?.data?.create_api_token?.id &&
+        result?.data?.create_api_token?.token
       ) {
-        this.newPersonalAccessToken = result.data.createAPIToken.token
+        this.newPersonalAccessToken = result.data.create_api_token.token
         this.$emit('set-token', this.newPersonalAccessToken)
       } else {
         this.error = true

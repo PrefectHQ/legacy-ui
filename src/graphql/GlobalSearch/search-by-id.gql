@@ -1,0 +1,53 @@
+query GlobalSearchByID($id: uuid!) {
+  flow(where: { id: { _eq: $id } }) {
+    id: flow_group_id
+    name
+    project {
+      id
+      name
+    }
+  }
+  flow_run(where: { id: { _eq: $id } }) {
+    id
+    name
+    flow {
+      id
+      name
+      project {
+        id
+        name
+      }
+    }
+  }
+  project(where: { id: { _eq: $id } }) {
+    id
+    name
+  }
+  task(where: { id: { _eq: $id } }) {
+    id
+    name
+    flow {
+      id
+      name
+      project {
+        id
+        name
+      }
+    }
+  }
+  task_run(where: { id: { _eq: $id } }) {
+    id
+    task {
+      id
+      name
+      flow {
+        id
+        name
+        project {
+          id
+          name
+        }
+      }
+    }
+  }
+}

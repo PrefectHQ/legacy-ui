@@ -1,0 +1,6 @@
+mutation SetCloudHookInactive($input: set_cloud_hook_inactive_input!) {
+  set_cloud_hook_inactive(input: $input) {
+    success
+    error
+  }
+}

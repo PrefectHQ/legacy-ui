@@ -26,12 +26,12 @@ export default {
         const result = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/deploy-flow.gql'),
           variables: {
-            projectId: this.projectId,
-            serializedFlow: flow.default
+            project_id: this.projectId,
+            serialized_flow: flow.default
           }
         })
 
-        this.flowId = result.data.createFlow.id
+        this.flowId = result.data.create_flow.id
 
         this.$emit('flow-deployed', this.flowId)
       } catch (error) {

@@ -1,0 +1,7 @@
+mutation LogIn($idToken: log_in_input!) {
+  log_in(input: $idToken) {
+    access_token
+    expires_at
+    refresh_token
+  }
+}

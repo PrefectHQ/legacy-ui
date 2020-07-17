@@ -1,0 +1,12 @@
+mutation CreateAPIToken(
+  $name: String!
+  $scope: api_token_scope
+  $expires_at: DateTime
+) {
+  create_api_token(
+    input: { name: $name, scope: $scope, expires_at: $expires_at }
+  ) {
+    id
+    token
+  }
+}

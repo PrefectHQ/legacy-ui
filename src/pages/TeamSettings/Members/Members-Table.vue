@@ -113,7 +113,7 @@ export default {
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
-        : this.allHeaders.filter(header => header.mobile)
+        : this.allHeaders.filter((header) => header.mobile)
     }
   },
   watch: {
@@ -130,7 +130,7 @@ export default {
         variables: { membershipId }
       })
 
-      if (res?.data?.deleteMembership?.success) {
+      if (res?.data?.delete_membership?.success) {
         this.$emit(
           'successful-action',
           'The user has been removed from your team.'
@@ -151,11 +151,11 @@ export default {
       this.isSettingRole = true
 
       const res = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tenant/update-user-role-in-tenant.gql'),
+        mutation: require('@/graphql/Tenant/set-membership-role.gql'),
         variables: { membershipId, role }
       })
 
-      if (res?.data?.setMembershipRole?.id) {
+      if (res?.data?.set_membership_role?.id) {
         this.$emit('successful-action', "The user's role has been updated")
         this.$apollo.queries.tenantUsers.refetch()
       } else {
@@ -180,12 +180,12 @@ export default {
         if (!data) return
 
         this.membersItems = data.tenantUsers
-          .filter(user =>
-            user.memberships.find(mem => mem.tenant_id == this.tenant.id)
+          .filter((user) =>
+            user.memberships.find((mem) => mem.tenant_id == this.tenant.id)
           )
-          .map(user => {
+          .map((user) => {
             let membership = user.memberships.find(
-              mem => mem.tenant_id == this.tenant.id
+              (mem) => mem.tenant_id == this.tenant.id
             )
             return {
               id: user.id,
@@ -200,9 +200,11 @@ export default {
           })
 
         this.$emit('load-end', {
-          fullUsers: this.membersItems.filter(m => m.role !== 'READ_ONLY_USER'),
+          fullUsers: this.membersItems.filter(
+            (m) => m.role !== 'READ_ONLY_USER'
+          ),
           readOnlyUsers: this.membersItems.filter(
-            m => m.role == 'READ_ONLY_USER'
+            (m) => m.role == 'READ_ONLY_USER'
           )
         })
         return data
@@ -349,9 +351,7 @@ export default {
       :dialog-props="{ 'max-width': '600' }"
       :disabled="isRemovingUser"
       :loading="isRemovingUser"
-      :title="
-        `Are you sure you want to remove ${selectedUser.email} from your team?`
-      "
+      :title="`Are you sure you want to remove ${selectedUser.email} from your team?`"
       @confirm="removeUser(selectedUser.membershipId)"
     >
       <span class="font-weight-bold">{{ selectedUser.username }}</span>

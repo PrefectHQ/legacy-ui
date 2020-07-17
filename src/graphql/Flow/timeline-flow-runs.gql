@@ -1,0 +1,17 @@
+query TimelineFlowRuns($flow_group_id: uuid, $flow_id: uuid) {
+  flow_run(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+    }
+    limit: 100
+    order_by: { scheduled_start_time: desc }
+  ) {
+    id
+    name
+    duration
+    end_time
+    start_time
+    scheduled_start_time
+    state
+  }
+}

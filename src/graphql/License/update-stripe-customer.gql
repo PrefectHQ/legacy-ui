@@ -1,0 +1,5 @@
+mutation UpdateStripeCustomer($input: update_stripe_customer_input!) {
+  update_stripe_customer(input: $input) {
+    id
+  }
+}

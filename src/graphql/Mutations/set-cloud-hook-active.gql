@@ -1,0 +1,6 @@
+mutation SetCloudHookActive($input: set_cloud_hook_active_input!) {
+  set_cloud_hook_active(input: $input) {
+    success
+    error
+  }
+}

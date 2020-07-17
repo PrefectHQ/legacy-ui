@@ -18,7 +18,7 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant'])
   },
-  mounted: function() {
+  mounted: function () {
     this.$nextTick(async function acceptInvitation() {
       try {
         this.loading = true
@@ -29,11 +29,7 @@ export default {
           },
           errorPolicy: 'all'
         })
-        if (
-          data &&
-          data.acceptMembershipInvitation &&
-          data.acceptMembershipInvitation.id
-        ) {
+        if (data?.accept_membership_invitation?.id) {
           //once they accept the invitation, the invitation id is removed.
           localStorage.removeItem('invitationId')
           // Sets the tenant so that they're rerouted to the correct dashboard.
@@ -89,7 +85,7 @@ export default {
         return { id: this.invitationId }
       },
       pollInterval: 1000,
-      update: data => data.membership_invitation,
+      update: (data) => data.membership_invitation,
       errorPolicy: 'all'
     }
   }

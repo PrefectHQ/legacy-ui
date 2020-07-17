@@ -1,0 +1,14 @@
+query Membership($membershipId: uuid!) {
+  membership(where: { id: { _eq: $membershipId } }) {
+    id
+    role
+    tenant {
+      id
+      name
+      slug
+      settings
+      stripe_customer
+      prefectAdminSettings: prefect_admin_settings
+    }
+  }
+}

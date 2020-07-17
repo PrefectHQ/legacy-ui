@@ -1,0 +1,7 @@
+query NotificationsCount($where: message_bool_exp) {
+  message_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+}

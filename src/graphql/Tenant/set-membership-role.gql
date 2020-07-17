@@ -1,0 +1,5 @@
+mutation SetMembershipRole($membershipId: UUID!, $role: MembershipRole!) {
+  set_membership_role(input: { membership__id: $membershipId, role: $role }) {
+    id
+  }
+}

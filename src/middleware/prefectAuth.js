@@ -3,18 +3,18 @@ import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 
 const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
 
-const prefectAuth = async idToken => {
+const prefectAuth = async (idToken) => {
   try {
     const result = await apolloClient.mutate({
-      mutation: require('@/graphql/login.gql'),
+      mutation: require('@/graphql/log-in.gql'),
       variables: {
         idToken: { idToken: idToken }
       },
       errorPolicy: 'all'
     })
-    if (result.data && result.data.login) {
+    if (result?.data?.log_in) {
       await apolloOnLogin(apolloClient)
-      return result.data.login
+      return result.data.log_in
     } else if (result.errors) {
       if (
         result.errors[0].message ===
@@ -32,16 +32,16 @@ const prefectAuth = async idToken => {
   }
 }
 
-const prefectRefresh = async accessToken => {
+const prefectRefresh = async (accessToken) => {
   try {
     const result = await apolloClient.mutate({
-      mutation: require('@/graphql/refreshAuth.gql'),
+      mutation: require('@/graphql/refresh-token.gql'),
       variables: {
         accessToken: accessToken
       }
     })
-    if (result.data && result.data.refreshToken) {
-      return result.data.refreshToken
+    if (result?.data?.refresh_token) {
+      return result.data.refresh_token
     } else if (result.error) {
       throw new Error(result.error)
     } else {

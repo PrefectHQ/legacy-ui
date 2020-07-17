@@ -1,0 +1,5 @@
+mutation DeleteTaskConcurrencyLimit($limitId: UUID!) {
+  delete_task_concurrency_limit(input: { limit_id: $limitId }) {
+    success
+  }
+}

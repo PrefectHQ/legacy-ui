@@ -1,0 +1,7 @@
+query Teams {
+  teams: tenant(order_by: { name: asc }) {
+    id
+    name
+    slug
+  }
+}

@@ -1,0 +1,189 @@
+query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
+  Success: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+     updated: { _gte: $heartbeat }
+      state: { _eq: "Success" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Running: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+     updated: { _gte: $heartbeat }
+      state: { _eq: "Running" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Pending: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+     updated: { _gte: $heartbeat }
+      state: { _eq: "Pending" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Failed: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+     updated: { _gte: $heartbeat }
+      state: { _eq: "Failed" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  ClientFailed: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+     updated: { _gte: $heartbeat }
+      state: { _eq: "ClientFailed" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Submitted: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+     updated: { _gte: $heartbeat }
+      state: { _eq: "Submitted" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Queued: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+     updated: { _gte: $heartbeat }
+      state: { _eq: "Queued" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Resume: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "Resume" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Retrying: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "Retrying" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Looped: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "Looped" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Cached: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "Cached" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Mapped: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "Mapped" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  TimedOut: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "TimedOut" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  TriggerFailed: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "TriggerFailed" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Skipped: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "Skipped" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Finished: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "Finished" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Cancelled: flow_run_aggregate(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      heartbeat: { _gte: $heartbeat }
+      state: { _eq: "Cancelled" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+}

@@ -1,0 +1,7 @@
+query NotificationsCountUnread {
+  message_aggregate(where: { read: { _eq: false } }) {
+    aggregate {
+      count
+    }
+  }
+}

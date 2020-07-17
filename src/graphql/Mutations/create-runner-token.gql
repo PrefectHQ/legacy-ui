@@ -1,0 +1,6 @@
+mutation CreateRunnerToken($name: String!) {
+  create_api_token(input: { name: $name, role: RUNNER }) {
+    id
+    token
+  }
+}

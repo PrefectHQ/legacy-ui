@@ -41,7 +41,7 @@ export default {
             }
           })
 
-          if (response.data.setScheduleInactive.success) {
+          if (response.data.set_schedule_inactive.success) {
             this.setAlert(
               {
                 alertShow: true,
@@ -65,7 +65,7 @@ export default {
             }
           })
 
-          if (response.data.setScheduleActive.success) {
+          if (response.data.set_schedule_active.success) {
             this.setAlert(
               {
                 alertShow: true,

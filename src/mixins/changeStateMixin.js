@@ -71,9 +71,9 @@ export const changeStateMixin = {
     ...mapGetters('tenant', ['role']),
     filteredStates() {
       if (this.dialogType === 'task run') {
-        return this.taskStates.filter(state => state !== this.taskRun.state)
+        return this.taskStates.filter((state) => state !== this.taskRun.state)
       } else {
-        return this.flowStates.filter(state => state !== this.flowRun.state)
+        return this.flowStates.filter((state) => state !== this.flowRun.state)
       }
     },
     checkVersion() {
@@ -111,15 +111,17 @@ export const changeStateMixin = {
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
-        mutation: require('@/graphql/Update/writelogs.gql'),
+        mutation: require('@/graphql/Update/write-logs.gql'),
         variables: {
-          flowRunId: this.taskRun ? this.taskRun.flow_run?.id : this.flowRun.id,
-          taskRunId: this.taskRun ? this.taskRun.id : null,
+          flow_run_id: this.taskRun
+            ? this.taskRun.flow_run?.id
+            : this.flowRun.id,
+          task_run_id: this.taskRun ? this.taskRun.id : null,
           name: this.name,
           message: this.runLogMessage()
         }
       })
-      return data && data.writeRunLogs && data.writeRunLogs.success
+      return data?.write_run_logs?.success
     },
     resumeRun() {
       this.resumeLoad = this.taskRun.id
@@ -149,7 +151,7 @@ export const changeStateMixin = {
             let taskState
             if (this.dialogType === 'task run' || this.dialogType == 'resume') {
               taskState = {
-                taskRunId: this.taskRun.id,
+                task_run_id: this.taskRun.id,
                 version: this.taskRun.version,
                 state: {
                   type: this.selectedState,
@@ -157,10 +159,10 @@ export const changeStateMixin = {
                 }
               }
             } else {
-              taskState = this.flowRun.task_runs.map(taskRun => {
+              taskState = this.flowRun.task_runs.map((taskRun) => {
                 return {
                   version: taskRun.version,
-                  taskRunId: taskRun.id,
+                  task_run_id: taskRun.id,
                   state: {
                     type: this.selectedState,
                     message: this.runLogMessage()
@@ -171,15 +173,11 @@ export const changeStateMixin = {
             const result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
               variables: {
-                setTaskRunStatesInput: taskState
+                input: taskState
               }
             })
             this.setStateSuccessA =
-              result &&
-              result.data &&
-              result.data.setTaskRunStates &&
-              result.data.setTaskRunStates.states &&
-              result.data.setTaskRunStates.states.length
+              result?.data?.set_task_run_states?.states?.length
             if (!this.setStateSuccessA) {
               this.setStateError = true
             }
@@ -188,7 +186,7 @@ export const changeStateMixin = {
             const result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
               variables: {
-                flowRunId: this.flowRun.id,
+                flow_run_id: this.flowRun.id,
                 version: this.flowRun.version,
                 state: {
                   type: this.selectedState,
@@ -197,11 +195,7 @@ export const changeStateMixin = {
               }
             })
             this.setStateSuccessB =
-              result &&
-              result.data &&
-              result.data.setFlowRunStates &&
-              result.data.setFlowRunStates.states &&
-              result.data.setFlowRunStates.states.length
+              result?.data?.set_flow_run_states?.states?.length
             if (!this.setStateSuccessB) {
               this.setStateError = true
             }

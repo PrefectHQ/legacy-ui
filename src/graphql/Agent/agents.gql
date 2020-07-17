@@ -1,0 +1,11 @@
+query Agents {
+  agents {
+    id
+    core_version
+    name
+    labels
+    last_queried
+    token_id
+    type
+  }
+}

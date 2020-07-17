@@ -1,0 +1,5 @@
+mutation DeleteTenant($input: delete_tenant_input!) {
+  delete_tenant(input: $input) {
+    success
+  }
+}

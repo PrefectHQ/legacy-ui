@@ -5,8 +5,8 @@ export default {
       agentToken: null,
       agentTokenName: '',
       agentTokenRules: [
-        v => !!v || 'A name for your agent token is required',
-        v =>
+        (v) => !!v || 'A name for your agent token is required',
+        (v) =>
           (v && v.length <= 50) ||
           "The agent token's name must be less than 50 characters"
       ],
@@ -37,7 +37,7 @@ export default {
           }
         })
 
-        this.agentToken = response.data.createAPIToken.token
+        this.agentToken = response.data.create_api_token.token
       } catch (error) {
         this.$toasted.error(
           'The agent token could not be created. Please try again.',

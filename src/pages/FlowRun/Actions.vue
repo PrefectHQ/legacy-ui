@@ -54,7 +54,7 @@ export default {
         await this.$apollo.mutate({
           mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
           variables: {
-            flowRunId: this.flowRun.id,
+            flow_run_id: this.flowRun.id,
             version: this.flowRun.version,
             state: {
               type: 'Scheduled'

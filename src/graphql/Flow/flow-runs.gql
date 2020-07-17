@@ -1,0 +1,79 @@
+query FlowRuns($flow_group_id: uuid, $flow_id: uuid, $heartbeat: timestamptz) {
+  Success: flow_run_aggregate(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+      updated: { _gte: $heartbeat }
+      state: { _eq: "Success" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Failed: flow_run_aggregate(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+      updated: { _gte: $heartbeat }
+      state: { _eq: "Failed" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Submitted: flow_run_aggregate(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+      updated: { _gte: $heartbeat }
+      state: { _eq: "Submitted" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Paused: flow_run_aggregate(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+      updated: { _gte: $heartbeat }
+      state: { _eq: "Paused" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Resume: flow_run_aggregate(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+      updated: { _gte: $heartbeat }
+      state: { _eq: "Resume" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Running: flow_run_aggregate(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+      updated: { _gte: $heartbeat }
+      state: { _eq: "Running" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  Cancelled: flow_run_aggregate(
+    where: {
+      flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
+      updated: { _gte: $heartbeat }
+      state: { _eq: "Cancelled" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+}

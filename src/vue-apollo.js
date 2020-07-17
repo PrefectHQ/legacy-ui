@@ -70,7 +70,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
     return
   }
 
-  if (_.operationName == 'RefreshAuth') {
+  if (_.operationName == 'RefreshToken') {
     // The refresh route requires the refresh token to be
     // sent as the authorization header, with the
     // access token as the body

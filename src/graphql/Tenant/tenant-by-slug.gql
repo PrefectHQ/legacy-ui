@@ -1,0 +1,5 @@
+query CheckTenantSlug($slug: String!) {
+  tenant(where: { slug: { _eq: $slug } }) {
+    id
+  }
+}

@@ -1,0 +1,11 @@
+mutation($projectName: String!, $projectDescription: String) {
+  create_project(
+    input: { name: $projectName, description: $projectDescription }
+  ) {
+    id
+    project {
+      name
+      id
+    }
+  }
+}

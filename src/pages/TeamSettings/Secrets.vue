@@ -50,7 +50,7 @@ export default {
 
       // Input rules
       rules: {
-        required: val => !!val || 'This field is required.'
+        required: (val) => !!val || 'This field is required.'
       },
 
       // Dialogs
@@ -82,7 +82,7 @@ export default {
       }
 
       return this.secretNames
-        ?.map(secret => secret.name)
+        ?.map((secret) => secret.name)
         .includes(this.secretNameInput)
     }
   },
@@ -102,7 +102,7 @@ export default {
         }
       })
 
-      if (secretResult?.data?.deleteSecret?.success) {
+      if (secretResult?.data?.delete_secret?.success) {
         if (!opts.isModifying) {
           this.$apollo.queries.secretNames.refetch()
           this.secretDeleteDialog = false
@@ -170,7 +170,7 @@ export default {
 
       if (this.isSecretUpdate) this.isSettingSecret = false
 
-      if (secretResult?.data?.setSecret?.success) {
+      if (secretResult?.data?.set_secret?.success) {
         this.$apollo.queries.secretNames.refetch()
         this.secretModifyDialog = false
         this.resetSelectedSecret()
@@ -199,7 +199,7 @@ export default {
         this.isFetchingSecrets = false
       },
       update(data) {
-        return data?.secretNames?.map(name => ({ name: name, value: null }))
+        return data?.secret_names?.map((name) => ({ name: name, value: null }))
       },
       // skip() {
       //   return this.isReadOnlyUser

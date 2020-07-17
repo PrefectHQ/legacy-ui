@@ -30,17 +30,17 @@ export default {
         if (logSuccess) {
           let taskStates
           if (this.utilityDownstreamTasks) {
-            taskStates = this.utilityDownstreamTasks.map(task => {
+            taskStates = this.utilityDownstreamTasks.map((task) => {
               return {
                 version: task.task.task_runs[0].version,
-                taskRunId: task.task.task_runs[0].id,
+                task_run_id: task.task.task_runs[0].id,
                 state: { type: 'Pending', message: this.message }
               }
             })
           } else {
             taskStates = {
               version: this.failedTaskRuns.version,
-              taskRunId: this.failedTaskRuns.id,
+              task_run_id: this.failedTaskRuns.id,
               state: { type: 'Pending', message: this.message }
             }
           }
@@ -48,19 +48,19 @@ export default {
             const result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
               variables: {
-                setTaskRunStatesInput: taskStates
+                input: taskStates
               }
             })
-            if (result && result.data && result.data.setTaskRunStates) {
+            if (result?.data?.set_task_run_states) {
               const { data } = await this.$apollo.mutate({
                 mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
                 variables: {
-                  flowRunId: this.flowRun.id,
+                  flow_run_id: this.flowRun.id,
                   version: this.flowRun.version,
                   state: { type: 'Scheduled', message: this.message }
                 }
               })
-              if (data && data.setFlowRunStates) {
+              if (data?.set_flow_run_states) {
                 this.$toasted.show('Flow has been set for restart', {
                   containerClass: 'toast-typography',
                   type: 'success',
@@ -102,14 +102,14 @@ export default {
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
-        mutation: require('@/graphql/Update/writelogs.gql'),
+        mutation: require('@/graphql/Update/write-logs.gql'),
         variables: {
-          flowRunId: this.flowRun.id,
+          flow_run_id: this.flowRun.id,
           name: this.name,
           message: this.message
         }
       })
-      return data && data.writeRunLogs && data.writeRunLogs.success
+      return data?.write_run_logs?.success
     }
   },
   apollo: {
@@ -121,11 +121,11 @@ export default {
         }
       },
       pollInterval: 1000,
-      update: data => {
+      update: (data) => {
         if (data.task_run) {
           if (data.task_run.length > 1) {
             let taskRunString = ''
-            data.task_run.forEach(taskRun => {
+            data.task_run.forEach((taskRun) => {
               taskRunString += taskRun.task_id + ','
             })
             const failedTaskRunString = taskRunString.slice(0, -1)
@@ -149,7 +149,7 @@ export default {
         const hasFailedTRs = typeof this.failedTaskRuns === 'string'
         return !hasFailedTRs
       },
-      update: data => data.utility_downstream_tasks
+      update: (data) => data.utility_downstream_tasks
     }
   }
 }

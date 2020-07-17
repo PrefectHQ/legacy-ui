@@ -66,9 +66,9 @@ export default {
 
       try {
         await this.$apollo.mutate({
-          mutation: require('@/graphql/User/updateUserSettings.gql'),
+          mutation: require('@/graphql/User/update-user-settings.gql'),
           variables: {
-            updateUserSettingsInput: settings
+            input: settings
           }
         })
         return true
@@ -80,7 +80,7 @@ export default {
     async updateUserDetails() {
       try {
         await this.$apollo.mutate({
-          mutation: require('@/graphql/User/updateUserDetails.gql'),
+          mutation: require('@/graphql/User/update-user-details.gql'),
           variables: {
             firstName: this.updatedFirstName,
             lastName: this.updatedLastName

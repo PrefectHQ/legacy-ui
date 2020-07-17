@@ -1,0 +1,6 @@
+mutation TestCloudHook($input: test_cloud_hook_input!) {
+  test_cloud_hook(input: $input) {
+    success
+    error
+  }
+}

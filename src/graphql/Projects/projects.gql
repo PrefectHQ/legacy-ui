@@ -1,0 +1,15 @@
+query Projects(
+  $limit: Int!
+  $offset: Int!
+  $orderBy: [project_order_by!]
+) {
+  project(limit: $limit, offset: $offset, order_by: $orderBy) {
+    id
+    name
+    flows_aggregate(where: { archived: { _eq: false } }) {
+      aggregate {
+        count
+      }
+    }
+  }
+}

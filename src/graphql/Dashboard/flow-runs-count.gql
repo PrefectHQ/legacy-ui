@@ -1,0 +1,13 @@
+query FlowRunsCount($projectIds: [uuid!], $heartbeat: timestamptz) {
+  flow_run_aggregate(
+    where: {
+      flow: { project_id: { _in: $projectIds } }
+      updated: { _gte: $heartbeat }
+      state: { _neq: "Scheduled" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+}

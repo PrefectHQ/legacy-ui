@@ -1,0 +1,20 @@
+query User {
+  user {
+    id
+    username
+    email
+    settings
+    default_membership_id
+    first_name
+    last_name
+    memberships {
+      id
+      role
+      tenant {
+        id
+        name
+        slug
+      }
+    }
+  }
+}

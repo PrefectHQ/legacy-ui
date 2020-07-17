@@ -74,7 +74,7 @@ export default {
     }
   },
   mounted() {
-    let version = this.versions.find(v => v.value == this.selectedVersion)
+    let version = this.versions.find((v) => v.value == this.selectedVersion)
 
     if (this.selectedVersion && !version) {
       this.selectedVersion = null
@@ -163,7 +163,7 @@ export default {
             }
           })
 
-          if (response.data.setScheduleInactive.success) {
+          if (response.data.set_schedule_inactive.success) {
             this.alertShow = true
             this.alertMessage = 'Schedule set to paused'
             this.alertType = 'info'
@@ -181,7 +181,7 @@ export default {
             }
           })
 
-          if (response.data.setScheduleActive.success) {
+          if (response.data.set_schedule_active.success) {
             this.alertShow = true
             this.alertMessage = 'Schedule set to active'
             this.alertType = 'info'
