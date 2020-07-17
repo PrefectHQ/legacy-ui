@@ -79,8 +79,8 @@ export default {
 
       // Input rules
       rules: {
-        required: (value) => !!value || 'This field is required.',
-        positiveOnly: (value) =>
+        required: value => !!value || 'This field is required.',
+        positiveOnly: value =>
           parseInt(value) >= 0 ||
           'The concurrency limit cannot be a negative value.'
       },
@@ -137,7 +137,7 @@ export default {
     },
     // Merge usage details into tags array
     tagsWithUsage() {
-      return this.tags.map((tag) => ({
+      return this.tags.map(tag => ({
         ...tag,
         usage: this.usage[tag.tag] || 0
       }))
@@ -154,10 +154,10 @@ export default {
     this.$apollo.addSmartQuery('usage', {
       query: require('@/graphql/TaskTagUsage/task-tag-usage.gql'),
       variables: {
-        tags: this.tags?.map((tag) => tag.tag)
+        tags: this.tags?.map(tag => tag.tag)
       },
       pollInterval: 5000,
-      update: (data) => {
+      update: data => {
         // Usage is returned as an array of objects in format { tag, usage }
         // Convert this array into object that maps tag names to usage
         return data?.task_tag_usage?.reduce((accum, usage) => {
@@ -171,7 +171,7 @@ export default {
     async addTaskTagLimit() {
       try {
         const res = await this.$apollo.mutate({
-          mutation: require('@/graphql/TaskTagLimit/update-task-tag-limit.gql'),
+          mutation: require('@/graphql/TaskTagLimit/update-task-concurrency-limit.gql'),
           variables: {
             tag: this.newTag,
             limit: Number(this.newLimit) // The API expects a type Number, so explicitly casting
@@ -219,7 +219,7 @@ export default {
     async updateTaskTagLimit() {
       try {
         const res = await this.$apollo.mutate({
-          mutation: require('@/graphql/TaskTagLimit/update-task-tag-limit.gql'),
+          mutation: require('@/graphql/TaskTagLimit/update-task-concurrency-limit.gql'),
           variables: {
             tag: this.selectedTag.tag,
             limit: Number(this.newLimit) // The API expects a type Number, so explicitly casting
@@ -277,7 +277,7 @@ export default {
         this.isFetchingTcls = false
         // TODO: Error handling
       },
-      update: (data) => data.task_tag_limit
+      update: data => data.task_tag_limit
     }
   }
 }
@@ -567,7 +567,9 @@ export default {
       v-if="selectedTag"
       v-model="showEditDialog"
       :dialog-props="{ maxWidth: '540' }"
-      :title="`Edit the concurrency limit for tasks with the tag ${selectedTag.tag}`"
+      :title="
+        `Edit the concurrency limit for tasks with the tag ${selectedTag.tag}`
+      "
       :disabled="!editValid"
       @confirm="updateTaskTagLimit"
     >
@@ -590,8 +592,10 @@ export default {
       v-if="selectedTag"
       v-model="showDeleteDialog"
       :dialog-props="{ maxWidth: '440' }"
-      :title="`Are you sure you want to remove concurrency limits for tasks with the
-          tag ${selectedTag.tag}?`"
+      :title="
+        `Are you sure you want to remove concurrency limits for tasks with the
+          tag ${selectedTag.tag}?`
+      "
       type="error"
       @confirm="deleteTaskTagLimit"
     >

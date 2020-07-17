@@ -126,8 +126,8 @@ export default {
         // We filter this because we don't want to show invitations
         // to other tenants, which are returned by this query
         this.pendingInvitationsItems = data.pendingInvitations
-          .filter((pi) => this.tenant.id == pi.tenant.id)
-          .map((invitation) => {
+          .filter(pi => this.tenant.id == pi.tenant.id)
+          .map(invitation => {
             return {
               email: invitation.email,
               membershipInvitationId: invitation.id,
@@ -140,10 +140,10 @@ export default {
         this.$emit('load-end')
         this.$emit('update-invitations', {
           fullInvitations: this.pendingInvitationsItems.filter(
-            (m) => m.role !== 'READ_ONLY_USER'
+            m => m.role !== 'READ_ONLY_USER'
           ),
           readOnlyInvitations: this.pendingInvitationsItems.filter(
-            (m) => m.role == 'READ_ONLY_USER'
+            m => m.role == 'READ_ONLY_USER'
           )
         })
         return data
@@ -237,8 +237,10 @@ export default {
       type="error"
       confirm-text="Revoke"
       :dialog-props="{ 'max-width': '660' }"
-      :title="`Are you sure you want to revoke ${selectedUser.email}'s
-            invitation to your team?`"
+      :title="
+        `Are you sure you want to revoke ${selectedUser.email}'s
+            invitation to your team?`
+      "
       :disabled="isRevokingInvitation"
       :loading="isRevokingInvitation"
       @confirm="revokeInvitation(selectedUser.membershipInvitationId)"

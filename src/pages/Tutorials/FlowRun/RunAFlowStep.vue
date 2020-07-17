@@ -72,7 +72,7 @@ export default {
         return !this.flowRunId
       },
       pollInterval: 1000,
-      update: (data) => data.flow_run_by_pk
+      update: data => data.flow_run_by_pk
     }
   }
 }
@@ -144,7 +144,11 @@ export default {
         </tbody>
       </v-simple-table>
 
-      <div style="max-width: 100%; overflow-x: scroll;">
+      <div
+        style="
+        max-width: 100%;
+        overflow-x: scroll;"
+      >
         <LogsCard
           class="mt-2 overflow-x-auto"
           entity="flow"

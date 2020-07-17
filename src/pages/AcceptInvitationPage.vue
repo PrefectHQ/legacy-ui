@@ -18,7 +18,7 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant'])
   },
-  mounted: function () {
+  mounted: function() {
     this.$nextTick(async function acceptInvitation() {
       try {
         this.loading = true
@@ -85,7 +85,7 @@ export default {
         return { id: this.invitationId }
       },
       pollInterval: 1000,
-      update: (data) => data.membership_invitation,
+      update: data => data.membership_invitation,
       errorPolicy: 'all'
     }
   }

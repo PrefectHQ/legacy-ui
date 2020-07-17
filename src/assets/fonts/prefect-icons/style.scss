@@ -1,0 +1,145 @@
+@import 'variables';
+
+@font-face {
+  font-display: block;
+  font-family: '#{$prefect-font-family}';
+  font-style: normal;
+  font-weight: normal;
+
+  // stylelint-disable
+  src: url('#{$prefect-font-path}/#{$prefect-font-family}.eot?higzvn');
+  src: url('#{$prefect-font-path}/#{$prefect-font-family}.eot?higzvn#iefix')
+      format('embedded-opentype'),
+    url('#{$prefect-font-path}/#{$prefect-font-family}.ttf?higzvn')
+      format('truetype'),
+    url('#{$prefect-font-path}/#{$prefect-font-family}.woff?higzvn')
+      format('woff'),
+    url('#{$prefect-font-path}/#{$prefect-font-family}.svg?higzvn##{$prefect-font-family}')
+      format('svg');
+  // stylelint-enable
+}
+
+[class^='pi-'],
+[class*=' pi-'] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: '#{$prefect-font-family}' !important;
+  font-size: 24px;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1rem;
+  text-transform: none;
+}
+
+// stylelint-disable a11y/content-property-no-static-value
+.pi-agent {
+  &::before {
+    content: $pi-agent;
+  }
+}
+
+.pi-flow-run {
+  &::before {
+    content: $pi-flow-run;
+  }
+}
+
+.pi-flow {
+  &::before {
+    content: $pi-flow;
+  }
+}
+
+.pi-gantt {
+  &::before {
+    content: $pi-gantt;
+  }
+}
+
+.pi-project {
+  &::before {
+    content: $pi-project;
+  }
+}
+
+.pi-schematic {
+  &::before {
+    content: $pi-schematic;
+  }
+}
+
+.pi-task-run {
+  &::before {
+    content: $pi-task-run;
+  }
+}
+
+.pi-task {
+  &::before {
+    content: $pi-task;
+  }
+}
+
+.pi-lg {
+  font-size: 1.33333em;
+  line-height: 0.75em;
+  vertical-align: -0.0667em;
+}
+
+.pi-xs {
+  font-size: 0.75em;
+}
+
+.pi-sm {
+  font-size: 0.875em;
+}
+
+.pi-1x {
+  font-size: 1em;
+}
+
+.pi-2x {
+  font-size: 2em;
+}
+
+.pi-3x {
+  font-size: 3em;
+}
+
+.pi-4x {
+  font-size: 4em;
+}
+
+.pi-5x {
+  font-size: 5em;
+}
+
+.pi-6x {
+  font-size: 6em;
+}
+
+.pi-7x {
+  font-size: 7em;
+}
+
+.pi-8x {
+  font-size: 8em;
+}
+
+.pi-9x {
+  font-size: 9em;
+}
+
+.pi-10x {
+  font-size: 10em;
+}
+
+.pi-fw {
+  text-align: center;
+  width: 1.25em;
+}

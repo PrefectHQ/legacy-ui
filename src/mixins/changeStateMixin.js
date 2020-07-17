@@ -71,9 +71,9 @@ export const changeStateMixin = {
     ...mapGetters('tenant', ['role']),
     filteredStates() {
       if (this.dialogType === 'task run') {
-        return this.taskStates.filter((state) => state !== this.taskRun.state)
+        return this.taskStates.filter(state => state !== this.taskRun.state)
       } else {
-        return this.flowStates.filter((state) => state !== this.flowRun.state)
+        return this.flowStates.filter(state => state !== this.flowRun.state)
       }
     },
     checkVersion() {
@@ -111,7 +111,7 @@ export const changeStateMixin = {
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
-        mutation: require('@/graphql/Update/write-logs.gql'),
+        mutation: require('@/graphql/Update/write-run-logs.gql'),
         variables: {
           flow_run_id: this.taskRun
             ? this.taskRun.flow_run?.id
@@ -159,7 +159,7 @@ export const changeStateMixin = {
                 }
               }
             } else {
-              taskState = this.flowRun.task_runs.map((taskRun) => {
+              taskState = this.flowRun.task_runs.map(taskRun => {
                 return {
                   version: taskRun.version,
                   task_run_id: taskRun.id,

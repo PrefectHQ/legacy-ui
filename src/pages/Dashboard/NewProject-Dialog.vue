@@ -13,9 +13,9 @@ export default {
       valid: true,
       projectName: '',
       nameRules: [
-        (v) => (v && !!v.trim()) || 'Project name is required',
-        (v) => !!v || 'Project name is required',
-        (v) =>
+        v => (v && !!v.trim()) || 'Project name is required',
+        v => !!v || 'Project name is required',
+        v =>
           (v && v.length <= 50) ||
           'Project name must be less than 50 characters'
       ],

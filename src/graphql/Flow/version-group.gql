@@ -1,0 +1,6 @@
+query FlowsByVersionGroup($versionGroupId: String) {
+  flow(where: { version_group_id: { _eq: $versionGroupId } }) {
+    name
+    id
+  }
+}

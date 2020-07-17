@@ -96,7 +96,7 @@
     "postcss-scss": ">=2.1.1",
     "pre-commit": ">=1.2.2",
     "sass": ">=1.26.8",
-    "sass-loader": ">=8.0.2",
+    "sass-loader": "^8.0.0",
     "sinon": ">=9.0.0",
     "start-server-and-test": ">=1.10.8",
     "style-loader": ">=1.2.1",

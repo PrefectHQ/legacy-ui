@@ -272,7 +272,7 @@ export default {
     projects: {
       query: require('@/graphql/Flow/project-names.gql'),
       pollInterval: 10000,
-      update: (data) => data.project
+      update: data => data.project
     }
   }
 }
@@ -384,8 +384,8 @@ export default {
                   :loading="loading.versionLocking"
                   :disabled="
                     isReadOnlyUser ||
-                    !versionLockingPermitted ||
-                    loading.versionLocking
+                      !versionLockingPermitted ||
+                      loading.versionLocking
                   "
                   @change="_handleVersionLockingChange"
                 >
