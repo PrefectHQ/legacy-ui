@@ -175,7 +175,7 @@ export const createApolloProvider = () => {
       if (navigator && !navigator.onLine) {
         this.$apollo.skipAll = true
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
-      } else if (graphQLErrors.length || networkError) {
+      } else if (graphQLErrors?.length || networkError) {
         if (
           graphQLErrors.length &&
           graphQLErrors[0].message == 'TokenExpiredError: jwt expired' &&

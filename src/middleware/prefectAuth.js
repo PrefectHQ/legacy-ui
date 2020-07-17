@@ -12,6 +12,7 @@ const prefectAuth = async idToken => {
       },
       errorPolicy: 'all'
     })
+    console.log(idToken, result)
     if (result?.data?.log_in) {
       await apolloOnLogin(apolloClient)
       return result.data.log_in
@@ -24,7 +25,7 @@ const prefectAuth = async idToken => {
       ) {
         return null
       } else {
-        throw new Error('No authorization token returned')
+        throw new Error(result.errors[0].message)
       }
     }
   } catch (error) {
@@ -37,9 +38,10 @@ const prefectRefresh = async accessToken => {
     const result = await apolloClient.mutate({
       mutation: require('@/graphql/refresh-token.gql'),
       variables: {
-        accessToken: accessToken
+        input: { access_token: accessToken }
       }
     })
+    console.log(accessToken, result)
     if (result?.data?.refresh_token) {
       return result.data.refresh_token
     } else if (result.error) {

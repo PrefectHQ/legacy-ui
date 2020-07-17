@@ -1,5 +1,5 @@
-mutation RefreshToken($accessToken: String!) {
-  refresh_token(input: { access_token: $accessToken }) {
+mutation RefreshToken($input: refresh_token_input!) {
+  refresh_token(input: $input) {
     access_token
     expires_at
     refresh_token

@@ -3,6 +3,7 @@ import { mapActions } from 'vuex'
 
 import ConfirmDialog from '@/components/ConfirmDialog'
 import CronClock from '@/components/Functional/CronClock'
+import ExternalLink from '@/components/ExternalLink'
 import IntervalClock from '@/components/Functional/IntervalClock'
 import LogRocket from 'logrocket'
 import ClockForm from '@/pages/Flow/Settings/ClockForm'
@@ -11,6 +12,7 @@ export default {
   components: {
     ConfirmDialog,
     CronClock,
+    ExternalLink,
     IntervalClock,
     ClockForm
   },
@@ -70,19 +72,19 @@ export default {
         this.clocks.push({ ...val, scheduleType: 'flow-group' })
       }
 
-      await this.modifySchedules(isNew)
+      await this.modifySchedules({ new: isNew })
       this.selectedClock = null
       this.loading = false
     },
     async deleteClock() {
       this.loading = true
       this.clocks = this.clocks.filter((clock, i) => i !== this.clockToRemove)
-      await this.modifySchedules()
+      await this.modifySchedules({ delete: true })
       this.clockToRemove = null
       this.removeScheduleDialog = false
       this.loading = false
     },
-    async modifySchedules(isNew) {
+    async modifySchedules(options) {
       this.error = false
 
       try {
@@ -111,21 +113,39 @@ export default {
             })
         ]
 
-        const result = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/set-flow-group-schedule.gql'),
-          variables: {
-            input: {
-              flow_group_id: this.flowGroup.id,
-              cron_clocks: cronClocks,
-              interval_clocks: intervalClocks
-            }
-          }
-        })
+        let result
 
-        if (result?.data?.set_flow_group_schedule?.success) {
+        if (cronClocks?.length === 0 && intervalClocks?.length === 0) {
+          result = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/delete-flow-group-schedule.gql'),
+            variables: {
+              input: {
+                flow_group_id: this.flowGroup.id
+              }
+            }
+          })
+        } else {
+          result = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/set-flow-group-schedule.gql'),
+            variables: {
+              input: {
+                flow_group_id: this.flowGroup.id,
+                cron_clocks: cronClocks,
+                interval_clocks: intervalClocks
+              }
+            }
+          })
+        }
+
+        if (
+          result?.data?.set_flow_group_schedule?.success ||
+          result?.data?.delete_flow_group_schedule?.success
+        ) {
           this.setAlert({
             alertShow: true,
-            alertMessage: `Schedule ${isNew ? 'created' : 'modified'}!`,
+            alertMessage: `Schedule ${
+              options.new ? 'created' : options.delete ? 'deleted' : 'modified'
+            }!`,
             alertType: 'success'
           })
         } else {
@@ -147,7 +167,7 @@ export default {
         this.setAlert({
           alertShow: true,
           alertMessage: `There was a problem ${
-            isNew ? 'creating' : 'modifying'
+            options.new ? 'created' : options.delete ? 'deleted' : 'modified'
           } your schedule, please try again shortly.`,
           alertType: 'error'
         })
@@ -159,250 +179,292 @@ export default {
 
 <template>
   <div class="schedule-grid my-4">
-    <v-card
-      class="clock-card"
-      :class="{ 'clock-card-large': selectedClock === -1 }"
-      :style="{ 'pointer-events': selectedClock === -1 ? 'none' : 'auto' }"
-      tile
-      :ripple="false"
-      @click.native="selectedClock = -1"
+    <div
+      class="grid-container"
+      :class="{ 'grid-container-large': selectedClock === -1 }"
     >
-      <v-card-text style="height: 100%;" :style="{ 'pointer-events': 'auto' }">
+      <v-card
+        class="clock-card"
+        :class="{ 'clock-card-large': selectedClock === -1 }"
+        :style="{ 'pointer-events': selectedClock === -1 ? 'none' : 'auto' }"
+        tile
+        :ripple="false"
+        @click.native="selectedClock = -1"
+      >
+        <v-card-text
+          style="height: 100%;"
+          :style="{ 'pointer-events': 'auto' }"
+        >
+          <v-fade-transition mode="out-in">
+            <div v-if="selectedClock == -1" key="1" style="height: 100%;">
+              <ClockForm
+                title="New schedule"
+                @cancel="selectedClock = null"
+                @confirm="createClock"
+              />
+            </div>
+            <div
+              v-else
+              key="2"
+              class="d-flex align-center justify-center flex-column"
+              style=" cursor: pointer;
+            height: 100%;
+            user-select: none;"
+            >
+              <v-icon color="codePink" x-large>alarm_add</v-icon>
+
+              <div class="text-h6 mt-2">New schedule</div>
+            </div>
+          </v-fade-transition>
+        </v-card-text>
+      </v-card>
+    </div>
+
+    <div
+      v-for="(clock, i) in clocks"
+      :key="i"
+      class="grid-container"
+      :class="{ 'grid-container-large': selectedClock === i }"
+    >
+      <v-card
+        class="clock-card text-truncate"
+        :class="{ 'clock-card-large': selectedClock === i }"
+        :color="clock.scheduleType == 'flow' ? 'grey lighten-4' : 'white'"
+        :style="{
+          'border-left':
+            clock.scheduleType == 'flow'
+              ? '4px solid var(--v-primary-base) !important'
+              : '',
+          'border-left-color': 'var(--v-primary-base) !important'
+        }"
+        tile
+      >
         <v-fade-transition mode="out-in">
-          <div v-if="selectedClock == -1" key="1" style="height: 100%;">
+          <div
+            v-if="selectedClock == i"
+            key="1"
+            style="height: 100%;
+        white-space: pre-wrap;"
+          >
             <ClockForm
-              title="New schedule"
+              :cron="clock.cron"
+              :interval="clock.interval"
+              title="Modify schedule"
               @cancel="selectedClock = null"
               @confirm="createClock"
             />
           </div>
-          <div
-            v-else
-            key="2"
-            class="d-flex align-center justify-center flex-column"
-            style=" cursor: pointer;
-            height: 100%;
-            user-select: none;"
-          >
-            <v-icon color="codePink" x-large>alarm_add</v-icon>
 
-            <div class="text-h6 mt-2">New schedule</div>
-          </div>
-        </v-fade-transition>
-      </v-card-text>
-    </v-card>
-
-    <v-card
-      v-for="(clock, i) in clocks"
-      :key="i"
-      class="clock-card text-truncate"
-      :class="{ 'clock-card-large': selectedClock === i }"
-      :color="clock.scheduleType == 'flow' ? 'grey lighten-4' : 'white'"
-      :style="{
-        'border-left':
-          clock.scheduleType == 'flow'
-            ? '4px solid var(--v-primary-base) !important'
-            : '',
-        'border-left-color': 'var(--v-primary-base) !important'
-      }"
-      tile
-    >
-      <v-fade-transition mode="out-in">
-        <div
-          v-if="selectedClock == i"
-          key="1"
-          style="height: 100%;
+          <div v-else key="2" style="height: 100%;">
+            <v-row
+              style="height: 100%;
         white-space: pre-wrap;"
-        >
-          <ClockForm
-            :cron="clock.cron"
-            :interval="clock.interval"
-            title="Modify schedule"
-            @cancel="selectedClock = null"
-            @confirm="createClock"
-          />
-        </div>
-
-        <div v-else key="2" style="height: 100%;">
-          <v-row
-            style="height: 100%;
-        white-space: pre-wrap;"
-            no-gutters
-          >
-            <v-col cols="10" class="d-flex flex-column align-start">
-              <div
-                style="height: 90%;"
-                class="d-flex align-start justify-start pa-4 font-weight-bold text-h5"
-                no-gutters
-              >
-                <CronClock
-                  v-if="clock.type == 'CronClock'"
-                  :cron="clock.cron"
-                />
-                <IntervalClock
-                  v-else-if="clock.type == 'IntervalClock'"
-                  :interval="clock.interval"
-                />
-                <div v-else>Unrecognized clock</div>
-              </div>
-
-              <div class="pb-3 pl-4 mt-auto">
-                <v-tooltip
-                  v-if="clock.scheduleType == 'flow'"
-                  max-width="300"
-                  top
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-chip
-                      class="px-2 rounded-sm mr-1"
-                      label
-                      x-small
-                      v-on="on"
-                    >
-                      Read-only
-                    </v-chip>
-                  </template>
-                  This schedule was set in your Flow's code so it can't be
-                  modifed.
-                </v-tooltip>
-
-                <v-tooltip
-                  v-if="'parameter_defaults' in clock"
-                  max-width="200"
-                  top
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-chip
-                      v-if="'parameter_defaults' in clock"
-                      class="px-2 rounded-sm mr-1"
-                      label
-                      color="codeBlue lighten-1"
-                      dark
-                      x-small
-                      v-on="on"
-                    >
-                      Default parameters
-                    </v-chip>
-                  </template>
-                  This schedule overrides default parameters.
-                </v-tooltip>
-              </div>
-            </v-col>
-            <v-col
-              cols="2"
-              class="d-flex align-center flex-column justify-end pa-1 my-auto"
-              style="border-left: 1px solid #eee;
-          height: 90%;"
+              no-gutters
             >
-              <v-tooltip max-width="300" :background-opacity="1" left>
-                <template v-slot:activator="{ on }">
-                  <a
-                    class="my-1 mb-auto d-block text-decoration-none"
-                    :href="
-                      `https://docs.prefect.io/core/concepts/schedules.html#${
-                        'cron' in clock
-                          ? 'cron'
-                          : 'date' in clock
-                          ? 'date'
-                          : 'interval'
-                      }-clocks`
-                    "
-                    target="_blank"
-                    v-on="on"
+              <v-col cols="10" class="d-flex flex-column align-start">
+                <div
+                  style="height: 90%;"
+                  class="d-flex align-start justify-start pa-4 font-weight-bold text-h5"
+                  no-gutters
+                >
+                  <CronClock
+                    v-if="clock.type == 'CronClock'"
+                    :cron="clock.cron"
+                  />
+                  <IntervalClock
+                    v-else-if="clock.type == 'IntervalClock'"
+                    :interval="clock.interval"
+                  />
+                  <div v-else>Unrecognized clock</div>
+                </div>
+
+                <div class="pb-3 pl-4 mt-auto">
+                  <v-tooltip
+                    v-if="clock.scheduleType == 'flow'"
+                    max-width="300"
+                    top
                   >
-                    <v-icon color="grey" small>
-                      info
-                    </v-icon>
-                  </a>
-                </template>
-                <div>
-                  <div v-if="clock.scheduleType == 'flow'" class="text-h6 mb-4">
+                    <template v-slot:activator="{ on }">
+                      <v-chip
+                        class="px-2 rounded-sm mr-1"
+                        label
+                        x-small
+                        v-on="on"
+                      >
+                        Read-only
+                      </v-chip>
+                    </template>
                     This schedule was set in your Flow's code so it can't be
                     modifed.
-                  </div>
-                  <div>
-                    This schedule was created as a{{
-                      'cron' in clock
-                        ? ' Cron'
-                        : 'date' in clock
-                        ? ' Date'
-                        : 'n Interval'
-                    }}
-                    clock with a value of
-                    <span class="font-weight-bold">
-                      {{ clock.cron || clock.interval || clock.date
-                      }}{{ clock.interval ? ' µs' : '' }}
-                    </span>
-                  </div>
-                  <div class="mt-1">
-                    Click to learn more about
-                    {{
-                      'cron' in clock
-                        ? 'Cron'
-                        : 'date' in clock
-                        ? 'Date'
-                        : 'Interval'
-                    }}
-                    clocks on Prefect schedules.
-                  </div>
+                  </v-tooltip>
+
+                  <v-tooltip
+                    v-if="'parameter_defaults' in clock"
+                    max-width="200"
+                    top
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-chip
+                        v-if="'parameter_defaults' in clock"
+                        class="px-2 rounded-sm mr-1"
+                        label
+                        color="codeBlue lighten-1"
+                        dark
+                        x-small
+                        v-on="on"
+                      >
+                        Default parameters
+                      </v-chip>
+                    </template>
+                    This schedule overrides default parameters.
+                  </v-tooltip>
                 </div>
-              </v-tooltip>
-
-              <v-tooltip
-                v-if="clock.scheduleType == 'flow-group'"
-                max-width="200"
-                :background-opacity="1"
-                left
+              </v-col>
+              <v-col
+                cols="2"
+                class="d-flex align-center flex-column justify-end pa-1 my-auto"
+                style="border-left: 1px solid #eee;
+          height: 90%;"
               >
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    fab
-                    class="my-1"
-                    color="primary lighten-2"
-                    x-small
-                    @click.native="selectedClock = i"
-                    v-on="on"
-                  >
-                    <v-icon>
-                      edit
-                    </v-icon>
-                  </v-btn>
-                </template>
-                Modify this schedule
-              </v-tooltip>
+                <v-menu
+                  v-model="clock.contextMenu"
+                  offset-y
+                  :close-on-content-click="false"
+                  open-on-hover
+                >
+                  <template v-slot:activator="{ on }">
+                    <div
+                      class="my-1 mb-auto d-block text-decoration-none"
+                      v-on="on"
+                      @focus="clock.contextMenu = true"
+                      @blur="clock.contextMenu = false"
+                    >
+                      <v-icon color="grey" small>
+                        info
+                      </v-icon>
+                    </div>
+                  </template>
+                  <v-card tile class="pa-0" max-width="320">
+                    <v-card-text class="pb-0">
+                      <p v-if="clock.scheduleType == 'flow'">
+                        <v-alert
+                          border="left"
+                          colored-border
+                          elevation="0"
+                          type="warning"
+                          tile
+                          icon="warning"
+                          max-width="500"
+                        >
+                          This schedule was set in your Flow's code so it can't
+                          be modifed.
+                        </v-alert>
+                      </p>
+                      <p>
+                        This schedule was created as a{{
+                          'cron' in clock
+                            ? ' Cron'
+                            : 'date' in clock
+                            ? ' Date'
+                            : 'n Interval'
+                        }}
+                        clock with a value of
+                        <span class="font-weight-bold">
+                          {{ clock.cron || clock.interval || clock.date
+                          }}{{ clock.interval ? ' µs' : '' }}
+                        </span>
+                      </p>
+                      <p class="mt-1">
+                        <ExternalLink
+                          :href="
+                            `https://docs.prefect.io/core/concepts/schedules.html#${
+                              'cron' in clock
+                                ? 'cron'
+                                : 'date' in clock
+                                ? 'date'
+                                : 'interval'
+                            }-clocks`
+                          "
+                          @click="clock.contextMenu = false"
+                        >
+                          Visit the docs
+                        </ExternalLink>
+                        to learn more about
+                        {{
+                          'cron' in clock
+                            ? 'Cron'
+                            : 'date' in clock
+                            ? 'Date'
+                            : 'Interval'
+                        }}
+                        clocks on Prefect schedules.
+                      </p>
+                    </v-card-text>
+                    <v-card-actions class="pt-0">
+                      <v-spacer></v-spacer>
+                      <v-btn small text @click="clock.contextMenu = false">
+                        Close
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-menu>
 
-              <v-tooltip
-                v-if="clock.scheduleType == 'flow-group'"
-                max-width="300"
-                :background-opacity="1"
-                left
-              >
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    fab
-                    class="mt-1"
-                    color="red lighten-2"
-                    x-small
-                    @click.native="
-                      removeScheduleDialog = true
-                      clockToRemove = i
-                    "
-                    v-on="on"
-                  >
-                    <v-icon>
-                      delete
-                    </v-icon>
-                  </v-btn>
-                </template>
-                Remove this schedule
-              </v-tooltip>
-            </v-col>
-          </v-row>
-        </div>
-      </v-fade-transition>
-    </v-card>
+                <v-tooltip
+                  v-if="clock.scheduleType == 'flow-group'"
+                  max-width="200"
+                  :background-opacity="1"
+                  left
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      icon
+                      fab
+                      class="my-1"
+                      color="primary lighten-2"
+                      x-small
+                      @click.native="selectedClock = i"
+                      v-on="on"
+                    >
+                      <v-icon>
+                        edit
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  Modify this schedule
+                </v-tooltip>
+
+                <v-tooltip
+                  v-if="clock.scheduleType == 'flow-group'"
+                  max-width="300"
+                  :background-opacity="1"
+                  left
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      icon
+                      fab
+                      class="mt-1"
+                      color="red lighten-2"
+                      x-small
+                      @click.native="
+                        removeScheduleDialog = true
+                        clockToRemove = i
+                      "
+                      v-on="on"
+                    >
+                      <v-icon>
+                        delete
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  Remove this schedule
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </div>
+        </v-fade-transition>
+      </v-card>
+    </div>
 
     <ConfirmDialog
       v-model="removeScheduleDialog"
@@ -414,52 +476,54 @@ export default {
       @cancel="clockToRemove = null"
       @confirm="deleteClock"
     >
-      This will remove any future runs that were based on this schedule (you can
-      always recreate this later).
+      You can always recreate this schedule later.
     </ConfirmDialog>
   </div>
 </template>
 
 <style lang="scss" scoped>
+$cellsize: 225px;
+$guttersize: 24px;
+
 .schedule-grid {
-  column-gap: 24px;
+  column-gap: $guttersize;
   display: grid;
   grid-auto-flow: dense;
-  grid-auto-rows: 225px;
-  grid-template-columns: repeat(auto-fill, 225px);
+  grid-auto-rows: $cellsize;
+  grid-template-columns: repeat(auto-fill, $cellsize);
   justify-content: center;
-  row-gap: 24px;
+  row-gap: $guttersize;
 }
 
-.clock-card {
-  animation-direction: normal;
-  animation-duration: 750ms;
-  animation-fill-mode: forwards;
-  animation-name: grid-transition;
-
-  height: 100%;
-  max-height: 225px;
-  max-width: 225px;
-  min-height: 225px;
-  min-width: 225px;
+.grid-container {
+  grid-column: span 1;
+  grid-row: span 1;
+  overflow: visible;
   position: relative;
-  transition: all 500ms;
-  width: 100%;
 
-  &.clock-card-large {
-    animation-name: unset;
-
+  &.grid-container-large {
     grid-column: span 3;
     grid-row: span 3;
-    max-height: 1000px;
-    max-width: 1000px;
   }
 }
 
-@keyframes grid-transition {
-  to {
-    grid-column: span 1;
-    grid-row: span 1;
+.clock-card {
+  height: 100%;
+  left: 0;
+  max-height: $cellsize + $guttersize;
+  max-width: $cellsize + $guttersize;
+  min-height: $cellsize;
+  min-width: $cellsize;
+  position: absolute;
+  top: 0;
+  transition: all 250ms;
+  width: 100%;
+
+  &.clock-card-large {
+    max-height: $cellsize * 3 + $guttersize * 3;
+    max-width: $cellsize * 3 + $guttersize * 3;
+    min-height: $cellsize * 3;
+    min-width: $cellsize * 3;
   }
 }
 </style>
