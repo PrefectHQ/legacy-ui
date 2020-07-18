@@ -12,16 +12,14 @@ const prefectAuth = async idToken => {
       },
       errorPolicy: 'all'
     })
-    console.log(idToken, result)
+
     if (result?.data?.log_in) {
       await apolloOnLogin(apolloClient)
       return result.data.log_in
     } else if (result.errors) {
       if (
         result.errors[0].message ===
-          "We get it, you're reeaally interested. Unfortunately, the timing isn't quite Prefect yet." ||
-        result.errors[0].message ===
-          'Thank you for your interest in Prefect Cloud! You have been added to our waitlist.'
+        "We get it, you're reeaally interested. Unfortunately, the timing isn't quite Prefect yet."
       ) {
         return null
       } else {

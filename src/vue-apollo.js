@@ -10,10 +10,19 @@ import LogRocket from 'logrocket'
 // Install the vue plugin
 Vue.use(VueApollo)
 
+// Name of the localStorage item
+const AUTH_TOKEN = 'authorization_token'
+
 // Http endpoint
 const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP
 // WS endpoint
 // const wsEndpoint = process.env.VUE_APP_GRAPHQL_WS
+// Files URL root
+export const filesRoot =
+  process.env.VUE_APP_FILES_ROOT ||
+  httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
+
+Vue.prototype.$filesRoot = filesRoot
 
 // FIXME This is a hack, we'll have a better way to do this when we implement subscriptions
 function checkIfOnlineUntilWeAre() {
@@ -83,7 +92,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 
   // The login route requires that no authorization header be sent
-  if (_.operationName == 'login') {
+  if (_.operationName == 'LogIn') {
     return {
       headers: {
         ...headers
@@ -119,7 +128,7 @@ export const defaultOptions = {
   wsEndpoint: null,
   //'ws://localhost:4300',
   // LocalStorage token
-  // tokenName: AUTH_TOKEN,
+  tokenName: AUTH_TOKEN,
   // Enable Automatic Query persisting with Apollo Engine
   persisting: false,
   // Use websockets for everything (no HTTP)
@@ -175,7 +184,8 @@ export const createApolloProvider = () => {
       if (navigator && !navigator.onLine) {
         this.$apollo.skipAll = true
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
-      } else if (graphQLErrors?.length || networkError) {
+      } else if (graphQLErrors.length || networkError) {
+        // FIXME This doesn't seem to be happening on its own for some reason?
         if (
           graphQLErrors.length &&
           graphQLErrors[0].message == 'TokenExpiredError: jwt expired' &&
