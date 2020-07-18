@@ -140,11 +140,14 @@ export default {
       v-html="message"
     >
     </span>
-    <v-btn v-if="alertLink" color="black" text :to="alertLink">
-      <span>{{ linkText }}</span>
-    </v-btn>
-    <v-btn :color="type" text @click="handleDismiss">
-      Dismiss
-    </v-btn>
+
+    <template v-slot:action>
+      <v-btn v-if="alertLink" color="black" text :to="alertLink">
+        <span>{{ linkText }}</span>
+      </v-btn>
+      <v-btn :color="type" text @click="handleDismiss">
+        Dismiss
+      </v-btn>
+    </template>
   </v-snackbar>
 </template>
