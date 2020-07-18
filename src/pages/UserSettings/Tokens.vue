@@ -143,7 +143,7 @@ export default {
   },
   apollo: {
     tokens: {
-      query: require('@/graphql/Tokens/personal-access-tokens.gql'),
+      query: require('@/graphql/Tokens/user-tokens.gql'),
       fetchPolicy: 'network-only',
       pollInterval: 1000,
       update: data => data.api_token
