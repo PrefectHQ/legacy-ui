@@ -212,9 +212,9 @@ export default {
               </v-list-item-title>
 
               <v-list-item-subtitle>
-                {{ failedRuns(failure) | number }}
+                {{ failedRuns(failure) }}
                 /
-                {{ totalRuns(failure) | number }}
+                {{ totalRuns(failure) }}
                 Runs failed
               </v-list-item-subtitle>
             </v-list-item-content>
