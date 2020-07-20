@@ -204,7 +204,6 @@ const actions = {
     const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
 
     try {
-      console.log(tenantId)
       const tenant = await apolloClient.query({
         query: require('@/graphql/Tenant/tenant-by-pk.gql'),
         variables: {

@@ -15,6 +15,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isServer', 'isCloud', 'backend']),
     ...mapGetters('sideDrawer', ['disableOpenButton']),
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant']),
@@ -81,6 +82,9 @@ export default {
       loadingKey: 'loading',
       update: data => data?.message_aggregate?.aggregate?.count,
       fetchPolicy: 'network-only',
+      skip() {
+        return !this.backend
+      },
       pollInterval: 10000
     },
     pendingInvitations: {
@@ -104,7 +108,9 @@ export default {
         }
       },
       skip() {
-        return !this.memberships || !this.user || !this.user.email
+        return (
+          !this.isCloud || !this.memberships || !this.user || !this.user.email
+        )
       },
       fetchPolicy: 'network-only',
       pollInterval: 10000
@@ -171,10 +177,12 @@ export default {
 
       <v-spacer />
 
-      <GlobalSearch v-if="tenant.settings.teamNamed && hasLicense" />
+      <GlobalSearch
+        v-if="isServer || (tenant.settings.teamNamed && hasLicense)"
+      />
 
       <v-btn
-        v-if="hasLicense"
+        v-if="isServer || hasLicense"
         color="white"
         text
         icon
@@ -190,6 +198,7 @@ export default {
       </v-btn>
 
       <v-menu
+        v-if="isCloud"
         v-model="menu"
         offset-y
         data-cy="nav-bar-menu"
@@ -245,6 +254,10 @@ export default {
           </v-list-item>
         </v-list>
       </v-menu>
+
+      <h6 v-else class="white--text" style="white-space: pre;">
+        {{ formatTime(time) }}
+      </h6>
     </v-app-bar>
   </v-slide-y-transition>
 </template>

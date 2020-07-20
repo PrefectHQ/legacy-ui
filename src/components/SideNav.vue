@@ -35,7 +35,6 @@ export default {
       cloudTimestamp: null,
       feedbackDialog: false,
       items: [],
-      lastDeployment_Cloud: null,
       pendingInvitations: [],
       selectedTenant: null,
       tenantMenuOpen: false,
@@ -43,21 +42,26 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['backend', 'version']),
+    ...mapGetters('api', [
+      'isServer',
+      'isCloud',
+      'version',
+      'releaseTimestamp'
+    ]),
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['memberships', 'user']),
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
-    cloud() {
-      return this.backend == 'CLOUD'
+    lastDeployment_Cloud() {
+      return moment(this.releaseTimestamp).format('MMM D [•] h:mmA')
     },
     lastDeployment_UI() {
       return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
     },
     logo() {
       return require(`@/assets/logos/${
-        this.cloud ? 'cloud' : 'core'
+        this.isCloud ? 'cloud' : 'core'
       }-logo-no-text.svg`)
     },
     open: {
@@ -122,7 +126,7 @@ export default {
         name: name
       }
 
-      if (this.cloud && tenantProtectedRoutes.includes(name)) {
+      if (this.isCloud && tenantProtectedRoutes.includes(name)) {
         route.params = { tenant: this.tenant?.slug }
       }
       return route
@@ -258,7 +262,7 @@ export default {
       },
       skip() {
         return (
-          !this.cloud || !this.memberships || !this.user || !this.user.email
+          !this.isCloud || !this.memberships || !this.user || !this.user.email
         )
       },
       fetchPolicy: 'network-only',
@@ -359,7 +363,7 @@ export default {
           </v-list-item> -->
 
           <v-list-item
-            v-if="cloud"
+            v-if="isCloud"
             active-class="primary-active-class"
             data-cy="side-nav-team-item"
             :disabled="routeDisabled"
@@ -375,7 +379,7 @@ export default {
           </v-list-item>
 
           <v-list-item
-            v-if="cloud"
+            v-if="isCloud"
             active-class="primary-active-class"
             data-cy="side-nav-user-item"
             :disabled="routeDisabled"
@@ -488,7 +492,7 @@ export default {
           </v-list-item>
 
           <v-list-item
-            v-if="cloud"
+            v-if="isCloud"
             class="tenant-switcher primary theme--dark mt-0"
             data-cy="tenant-switcher"
             two-line
@@ -553,7 +557,7 @@ export default {
       </div>
 
       <v-card
-        v-if="tenantMenuOpen && cloud && memberships"
+        v-if="tenantMenuOpen && isCloud && memberships"
         class="tenant-switcher-list elevation-4"
       >
         <v-list class="ma-2" dense flat>
@@ -617,7 +621,7 @@ export default {
       </v-card>
 
       <v-card
-        v-if="tenantMenuOpen && !cloud && tenants"
+        v-if="tenantMenuOpen && isServer && tenants"
         class="tenant-switcher-list elevation-4"
       >
         <v-list class="ma-2" dense flat>

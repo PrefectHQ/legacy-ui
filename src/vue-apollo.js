@@ -177,13 +177,9 @@ export const createApolloProvider = () => {
         errorPolicy: 'all'
       }
     },
-    async errorHandler(
-      { graphQLErrors, networkError },
-      vm,
-      key,
-      type,
-      options
-    ) {
+    async errorHandler(errors, vm, key, type, options) {
+      const { graphQLErrors, networkError } = errors
+
       if (navigator && !navigator.onLine) {
         this.$apollo.skipAll = true
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
@@ -197,6 +193,7 @@ export const createApolloProvider = () => {
         }
       } else {
         /* eslint-disable no-console */
+        console.log(errors)
         console.log('graphQLErrors', graphQLErrors)
         console.log('networkError', networkError)
         console.log('vm', vm)
