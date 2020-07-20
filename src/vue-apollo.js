@@ -13,11 +13,6 @@ Vue.use(VueApollo)
 // Name of the localStorage item
 const AUTH_TOKEN = 'authorization_token'
 
-// Http endpoint
-const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP
-// WS endpoint
-// const wsEndpoint = process.env.VUE_APP_GRAPHQL_WS
-
 // FIXME This is a hack, we'll have a better way to do this when we implement subscriptions
 function checkIfOnlineUntilWeAre() {
   if (!navigator.onLine) {
@@ -125,7 +120,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
 // Config
 export const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)
-  httpEndpoint,
+  httpEndpoint: () => store.getters['api/url'],
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
   wsEndpoint: null,

@@ -5,6 +5,7 @@ import LogRocket from 'logrocket'
 const state = {
   backend: null,
   releaseTimestamp: null,
+  url: localStorage.getItem('api_url') || process.env.VUE_APP_GRAPHQL_HTTP,
   version: null
 }
 
@@ -20,6 +21,9 @@ const getters = {
   },
   releaseTimestamp(state) {
     return state.releaseTimestamp
+  },
+  url(state) {
+    return state.url
   },
   version(state) {
     return state.version
@@ -38,6 +42,14 @@ const mutations = {
   },
   unsetReleaseTimetamp(state) {
     state.releaseTimestamp = null
+  },
+  setUrl(state, url) {
+    localStorage.setItem('api_url', url)
+    state.url = url
+  },
+  unsetUrl(state) {
+    localStorage.removeItem('api_url')
+    state.url = null
   },
   setVersion(state, version) {
     state.version = version
@@ -74,6 +86,10 @@ const actions = {
         }
       })
     }
+  },
+  async switchBackend({ commit }, url) {
+    commit('setUrl', url)
+    location.reload()
   }
 }
 

@@ -115,12 +115,19 @@ export default {
     }
   },
   methods: {
-    ...mapActions('api', ['getApi']),
+    ...mapActions('api', ['getApi', 'switchBackend']),
     ...mapMutations('sideNav', ['toggle', 'close']),
     ...mapActions('tenant', ['getTenant']),
     ...mapActions('license', ['getLicense']),
     ...mapActions('user', ['getUser']),
     ...mapActions('auth0', ['logout']),
+    async _switchBackend() {
+      if (this.isServer) {
+        this.switchBackend('https://api-dev.prefect.io/graphql')
+      } else {
+        this.switchBackend('http://localhost:4200/graphql')
+      }
+    },
     getRoute(name) {
       let route = {
         name: name
@@ -490,6 +497,18 @@ export default {
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <div class="text-center">
+            <v-btn
+              class="mb-4"
+              :color="isServer ? 'secondary' : 'secondary'"
+              tile
+              @click="_switchBackend"
+            >
+              <v-icon left>fas fa-exchange-alt</v-icon>
+              Switch backend
+            </v-btn>
+          </div>
 
           <v-list-item
             v-if="isCloud"
