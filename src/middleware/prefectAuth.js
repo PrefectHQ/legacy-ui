@@ -64,4 +64,16 @@ const prefectUser = async () => {
   }
 }
 
-export { prefectAuth, prefectRefresh, prefectUser }
+const prefectTenants = async () => {
+  try {
+    const tenants = await apolloClient.query({
+      query: require('@/graphql/Tenant/tenants.gql'),
+      fetchPolicy: 'no-cache'
+    })
+    return tenants.data.tenant
+  } catch (error) {
+    throw new Error(error.error)
+  }
+}
+
+export { prefectAuth, prefectRefresh, prefectUser, prefectTenants }

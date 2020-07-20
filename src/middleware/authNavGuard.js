@@ -9,9 +9,21 @@ const isAuthorized = () => {
   return auth
 }
 
+const backend = async () => {
+  if (!store.getters['api/backend']) {
+    await store.dispatch('api/getApi')
+  }
+  return store.getters['api/backend']
+}
+
+const isServer = () => {
+  return store.getters['api/backend'] == 'SERVER'
+}
+
 const authNavGuard = async (to, from, next) => {
-  /* eslint-disable */
-  if (true) return next()
+  await backend()
+
+  if (isServer()) return next()
 
   if (isAuthenticated() && isAuthorized() && store.getters['user/userIsSet']) {
     return next()

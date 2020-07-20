@@ -235,7 +235,9 @@ export default {
             : []
       },
       skip() {
-        return !this.memberships || !this.user || !this.user.email
+        return (
+          !this.cloud || !this.memberships || !this.user || !this.user.email
+        )
       },
       fetchPolicy: 'network-only',
       pollInterval: 2000
@@ -351,6 +353,7 @@ export default {
           </v-list-item>
 
           <v-list-item
+            v-if="cloud"
             active-class="primary-active-class"
             data-cy="side-nav-user-item"
             :disabled="routeDisabled"
@@ -463,11 +466,9 @@ export default {
           </v-list-item>
 
           <v-list-item
-            v-if="cloud"
             class="tenant-switcher primary theme--dark mt-0"
             data-cy="tenant-switcher"
             two-line
-            :disabled="!tenant.id"
             @click="handleTenantSwitcherClick"
           >
             <v-list-item-content
