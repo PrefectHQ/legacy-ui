@@ -49,12 +49,15 @@ export default {
     ...mapGetters('user', ['memberships', 'user']),
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
+    cloud() {
+      return this.backend == 'CLOUD'
+    },
     lastDeployment_UI() {
       return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
     },
     logo() {
       return require(`@/assets/logos/${
-        this.backend == 'SERVER' ? 'core' : 'cloud'
+        this.cloud ? 'cloud' : 'core'
       }-logo-no-text.svg`)
     },
     open: {
@@ -119,7 +122,7 @@ export default {
         name: name
       }
 
-      if (this.backend == 'CLOUD' && tenantProtectedRoutes.includes(name)) {
+      if (this.cloud && tenantProtectedRoutes.includes(name)) {
         route.params = { tenant: this.tenant?.slug }
       }
       return route
@@ -288,6 +291,7 @@ export default {
               <v-list-item-title>Dashboard</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
           <v-tooltip v-if="role == 'Restricted User'" top>
             <template v-slot:activator="{ on }">
               <v-list-item data-cy="sidenav-api" v-on="on">
@@ -305,6 +309,7 @@ export default {
               >Read-only users do not have access to the Interactive API</span
             >
           </v-tooltip>
+
           <v-list-item
             v-else
             active-class="primary-active-class"
@@ -330,6 +335,7 @@ export default {
           </v-list-item> -->
 
           <v-list-item
+            v-if="cloud"
             active-class="primary-active-class"
             data-cy="side-nav-team-item"
             :disabled="routeDisabled"
@@ -393,6 +399,7 @@ export default {
             </v-list-item-action>
           </v-list-item>
           <v-list-item
+            v-if="cloud"
             id="Support"
             active-class="primary-active-class"
             :to="{ name: 'help' }"
@@ -405,6 +412,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
           <v-dialog
+            v-if="cloud"
             v-model="feedbackDialog"
             max-width="560"
             @click:outside="closeDialogAndMenu"
