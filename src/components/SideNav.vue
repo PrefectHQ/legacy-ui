@@ -463,6 +463,7 @@ export default {
           </v-list-item>
 
           <v-list-item
+            v-if="cloud"
             class="tenant-switcher primary theme--dark mt-0"
             data-cy="tenant-switcher"
             two-line
