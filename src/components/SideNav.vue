@@ -7,6 +7,22 @@ import Feedback from '@/components/Feedback'
 
 const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
+const tenantProtectedRoutes = [
+  'project',
+  'flow',
+  'flow-run',
+  'task',
+  'task-run',
+  'flow-run-logs',
+  'select-plan',
+  'billing',
+  'welcome',
+  'current-plan',
+  'payment',
+  'api',
+  'name-team'
+]
+
 export default {
   components: {
     AcceptConfirmInputRow,
@@ -98,6 +114,16 @@ export default {
     ...mapActions('license', ['getLicense']),
     ...mapActions('user', ['getUser']),
     ...mapActions('auth0', ['logout']),
+    getRoute(name) {
+      let route = {
+        name: name
+      }
+
+      if (this.backend == 'CLOUD' && tenantProtectedRoutes.includes(name)) {
+        route.params = { tenant: this.tenant?.slug }
+      }
+      return route
+    },
     async handleSwitchTenant(tenant) {
       let membership = this.memberships.find(
         mem => mem.tenant.slug == tenant.slug
@@ -110,22 +136,6 @@ export default {
       await this.getTenant(membership.id)
 
       await this.getLicense()
-
-      let tenantProtectedRoutes = [
-        'project',
-        'flow',
-        'flow-run',
-        'task',
-        'task-run',
-        'flow-run-logs',
-        'select-plan',
-        'billing',
-        'welcome',
-        'current-plan',
-        'payment',
-        'api',
-        'name-team'
-      ]
 
       Object.values(this.$apollo.provider.clients).forEach(client =>
         client.cache.reset()
@@ -267,10 +277,7 @@ export default {
             active-class="primary-active-class"
             data-cy="side-nav-dashboard-item"
             :disabled="routeDisabled"
-            :to="{
-              name: tenant.id ? 'dashboard' : null,
-              params: { tenant: tenant.slug }
-            }"
+            :to="getRoute('dashboard')"
             ripple
             exact
           >
@@ -302,10 +309,7 @@ export default {
             v-else
             active-class="primary-active-class"
             :disabled="routeDisabled"
-            :to="{
-              name: tenant.id ? 'api' : null,
-              params: { tenant: tenant.slug }
-            }"
+            :to="getRoute('api')"
             ripple
           >
             <v-list-item-action>
@@ -329,10 +333,7 @@ export default {
             active-class="primary-active-class"
             data-cy="side-nav-team-item"
             :disabled="routeDisabled"
-            :to="{
-              name: tenant.id ? 'team' : null,
-              params: { tenant: tenant.slug }
-            }"
+            :to="getRoute('team')"
             ripple
           >
             <v-list-item-action>
@@ -347,7 +348,7 @@ export default {
             active-class="primary-active-class"
             data-cy="side-nav-user-item"
             :disabled="routeDisabled"
-            :to="{ name: 'user' }"
+            :to="getRoute('user')"
             ripple
           >
             <v-list-item-action>
@@ -364,10 +365,7 @@ export default {
             id="tutorial"
             active-class="primary-active-class"
             :disabled="routeDisabled"
-            :to="{
-              name: tenant.id ? 'tutorial' : null,
-              params: { tenant: tenant.slug }
-            }"
+            :to="getRoute('tutorial')"
           >
             <v-list-item-action>
               <v-icon>school</v-icon>
