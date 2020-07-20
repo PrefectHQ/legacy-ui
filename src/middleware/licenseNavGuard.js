@@ -5,8 +5,7 @@ const hasLicense = () => {
 }
 
 const licenseNavGuards = async (to, from, next) => {
-  /* eslint-disable */
-  if (true) return next()
+  if (store.getters['api/isServer']) return next()
 
   if (!hasLicense()) {
     await store.dispatch(

@@ -1,8 +1,7 @@
 import store from '@/store/index'
 
 const newTenantChecks = async (to, from, next) => {
-  /* eslint-disable */
-  if (true) return next()
+  if (store.getters['api/isServer']) return next()
 
   if (store.getters['tenant/tenant'].role !== 'TENANT_ADMIN') return next()
 
