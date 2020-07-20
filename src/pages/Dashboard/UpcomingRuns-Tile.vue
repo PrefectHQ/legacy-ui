@@ -59,7 +59,9 @@ export default {
         title =
           this.loading > 0
             ? 'Upcoming Runs'
-            : `${this.upcomingRuns.length} Upcoming Runs`
+            : `${
+                this.upcomingRuns ? this.upcomingRuns.length : 0
+              } Upcoming Runs`
       }
 
       if (this.tab == 'late') {
@@ -241,7 +243,10 @@ export default {
       <v-skeleton-loader v-if="loading > 0" type="list-item-three-line">
       </v-skeleton-loader>
 
-      <v-list-item v-else-if="loading === 0 && upcomingRuns.length === 0" dense>
+      <v-list-item
+        v-else-if="loading === 0 && upcomingRuns && upcomingRuns.length === 0"
+        dense
+      >
         <v-list-item-avatar class="mr-0">
           <v-icon class="green--text">check</v-icon>
         </v-list-item-avatar>
@@ -327,7 +332,10 @@ export default {
       >
       </v-skeleton-loader>
 
-      <v-list-item v-else-if="loading === 0 && lateRuns.length === 0" dense>
+      <v-list-item
+        v-else-if="loading === 0 && lateRuns && lateRuns.length === 0"
+        dense
+      >
         <v-list-item-avatar class="mr-0">
           <v-icon class="green--text">check</v-icon>
         </v-list-item-avatar>

@@ -67,7 +67,8 @@ export default {
       return role
     },
     routeDisabled() {
-      return !this.tenant.id || !this.tenant.settings.teamNamed
+      return false
+      // !this.tenant.id || !this.tenant.settings.teamNamed
     },
     width() {
       if (this.$vuetify.breakpoint.xsOnly) {
