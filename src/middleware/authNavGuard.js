@@ -9,7 +9,7 @@ const isAuthorized = () => {
   return auth
 }
 
-const backend = async () => {
+const getApi = async () => {
   if (!store.getters['api/backend']) {
     await store.dispatch('api/getApi')
   }
@@ -17,12 +17,14 @@ const backend = async () => {
 }
 
 const isServer = () => {
-  return store.getters['api/backend'] == 'SERVER'
+  return store.getters['api/isServer']
 }
 
 const authNavGuard = async (to, from, next) => {
-  await backend()
+  await getApi()
 
+  // If this is a Server deployment,
+  // we don't need to worry about Authentication
   if (isServer()) return next()
 
   if (isAuthenticated() && isAuthorized() && store.getters['user/userIsSet']) {
