@@ -45,7 +45,7 @@ export default {
   computed: {
     ...mapGetters('api', ['backend', 'version']),
     ...mapGetters('sideNav', ['isOpen']),
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['memberships', 'user']),
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
@@ -139,6 +139,28 @@ export default {
       await this.getTenant(membership.id)
 
       await this.getLicense()
+
+      Object.values(this.$apollo.provider.clients).forEach(client =>
+        client.cache.reset()
+      )
+      if (tenantProtectedRoutes.includes(this.$route.name)) {
+        this.$router.push({
+          name: 'dashboard',
+          params: { tenant: tenant.slug }
+        })
+      } else {
+        this.$router.push({
+          name: this.$route.name,
+          params: { ...this.$route.params, tenant: this.tenant.slug }
+        })
+      }
+    },
+    async handleSwitchServerTenant(tenant) {
+      this.tenantMenuOpen = false
+
+      if (!tenant || tenant.slug == this.tenant.slug) return
+
+      await this.getTenant(tenant.id)
 
       Object.values(this.$apollo.provider.clients).forEach(client =>
         client.cache.reset()
@@ -466,6 +488,7 @@ export default {
           </v-list-item>
 
           <v-list-item
+            v-if="cloud"
             class="tenant-switcher primary theme--dark mt-0"
             data-cy="tenant-switcher"
             two-line
@@ -500,10 +523,37 @@ export default {
               </v-icon>
             </v-list-item-action>
           </v-list-item>
+
+          <v-list-item
+            v-else
+            class="tenant-switcher primary theme--dark mt-0"
+            data-cy="tenant-switcher"
+            two-line
+            @click="handleTenantSwitcherClick"
+          >
+            <v-list-item-content
+              style="
+              max-width: 80%;
+              overflow: unset;"
+            >
+              <v-list-item-title class="tenant-title text-uppercase">
+                <div class="text text-truncate">
+                  {{ tenant.name ? tenant.name : 'UNKNOWN' }}
+                </div>
+              </v-list-item-title>
+            </v-list-item-content>
+
+            <v-list-item-action>
+              <v-icon x-large>
+                arrow_drop_up
+              </v-icon>
+            </v-list-item-action>
+          </v-list-item>
         </v-list>
       </div>
+
       <v-card
-        v-if="tenantMenuOpen && memberships"
+        v-if="tenantMenuOpen && cloud && memberships"
         class="tenant-switcher-list elevation-4"
       >
         <v-list class="ma-2" dense flat>
@@ -542,6 +592,51 @@ export default {
                 </v-list-item-title>
                 <v-list-item-subtitle
                   v-if="tenant.id == at.tenant.id"
+                  class="font-weight-light"
+                >
+                  Current
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+          <!-- Hiding this until the create new team page is finished -->
+          <v-list-item-group v-if="false" subheader>
+            <v-subheader />
+            <v-list-item @click="handleRouteToCreateTenant()">
+              <v-list-item-action>
+                <v-icon>add_circle_outline</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title class="grey--text text--darken-1">
+                  Create New Team
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-card>
+
+      <v-card
+        v-if="tenantMenuOpen && !cloud && tenants"
+        class="tenant-switcher-list elevation-4"
+      >
+        <v-list class="ma-2" dense flat>
+          <v-list-item-group subheader data-cy="switch-tenant">
+            <v-subheader>Teams</v-subheader>
+            <v-list-item
+              v-for="ten in tenants"
+              :key="ten.id"
+              two-line
+              @click="handleSwitchServerTenant(ten)"
+            >
+              <v-list-item-content>
+                <v-list-item-title
+                  :class="tenant.id == ten.id ? 'blue--text accent-4' : ''"
+                >
+                  {{ ten.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle
+                  v-if="tenant.id == ten.id"
                   class="font-weight-light"
                 >
                   Current
