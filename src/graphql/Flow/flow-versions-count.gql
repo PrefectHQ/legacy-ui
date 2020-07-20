@@ -1,4 +1,4 @@
-query VersionsCount($flow_group_id: UUID!, $search: Int) {
+query VersionsCount($flow_group_id: uuid!, $search: Int) {
   flow_group_by_pk(id: $flow_group_id) {
     id
 

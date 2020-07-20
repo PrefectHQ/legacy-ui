@@ -1,5 +1,5 @@
 mutation ModifyProject(
-  $projectId: UUID!
+  $projectId: uuid!
   $projectName: String!
   $projectDescription: String
 ) {

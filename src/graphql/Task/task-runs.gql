@@ -1,4 +1,4 @@
-query TaskRuns($taskId: UUID!, $heartbeat: timestamptz) {
+query TaskRuns($taskId: uuid!, $heartbeat: timestamptz) {
   Success: task_run_aggregate(
     where: {
       task_id: { _eq: $taskId }

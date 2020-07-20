@@ -1,4 +1,4 @@
-mutation SetMembershipRole($membershipId: UUID!, $role: MembershipRole!) {
+mutation SetMembershipRole($membershipId: uuid!, $role: MembershipRole!) {
   set_membership_role(input: { membership__id: $membershipId, role: $role }) {
     id
   }

@@ -1,4 +1,4 @@
-mutation DeleteTaskConcurrencyLimit($limitId: UUID!) {
+mutation DeleteTaskConcurrencyLimit($limitId: uuid!) {
   delete_task_concurrency_limit(input: { limit_id: $limitId }) {
     success
   }

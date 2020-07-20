@@ -1,5 +1,5 @@
 query Task(
-  $taskId: UUID!
+  $taskId: uuid!
   $limit: Int
   $offset: Int
   $orderBy: [task_run_order_by!]

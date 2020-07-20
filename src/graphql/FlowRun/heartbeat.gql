@@ -1,4 +1,4 @@
-query Heartbeat($flowRunId: UUID!, $timestamp: timestamptz, $state: String) {
+query Heartbeat($flowRunId: uuid!, $timestamp: timestamptz, $state: String) {
   task_run(
     limit: 10
     where: {

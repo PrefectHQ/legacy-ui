@@ -1,5 +1,5 @@
 query FlowRuns(
-  $taskId: UUID
+  $taskId: uuid
   $heartbeat: timestamptz
   $state: String
   $limit: Int

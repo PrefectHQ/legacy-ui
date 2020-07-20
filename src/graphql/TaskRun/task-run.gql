@@ -1,4 +1,4 @@
-query TaskRun($id: UUID!) {
+query TaskRun($id: uuid!) {
   task_run_by_pk(id: $id) {
     id
     version

@@ -1,4 +1,4 @@
-query Task($id: UUID!) {
+query Task($id: uuid!) {
   task_by_pk(id: $id) {
     id
     name

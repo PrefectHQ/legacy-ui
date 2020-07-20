@@ -1,4 +1,4 @@
-query GlobalSearchByID($id: UUID!) {
+query GlobalSearchByID($id: uuid!) {
   flow(where: { id: { _eq: $id } }) {
     id: flow_group_id
     name

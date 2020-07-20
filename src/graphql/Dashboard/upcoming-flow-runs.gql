@@ -1,4 +1,4 @@
-query UpcomingFlowRuns($projectId: UUID) {
+query UpcomingFlowRuns($projectId: uuid) {
   flow_run(
     where: {
       flow: { project_id: { _eq: $projectId } }
@@ -14,10 +14,7 @@ query UpcomingFlowRuns($projectId: UUID) {
     flow {
       id
       name
-      schedules {
-        id
-        active
-      }
+      schedule
     }
     task_runs {
       id

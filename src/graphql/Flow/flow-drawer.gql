@@ -1,4 +1,4 @@
-query Flow($id: UUID!) {
+query Flow($id: uuid!) {
   flow_by_pk(id: $id) {
     id
     name

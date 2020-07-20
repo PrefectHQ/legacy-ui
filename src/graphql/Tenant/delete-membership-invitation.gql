@@ -1,4 +1,4 @@
-mutation DeleteMembershipInvitation($membershipInvitationId: UUID!) {
+mutation DeleteMembershipInvitation($membershipInvitationId: uuid!) {
   delete_membership_invitation(
     input: { invitation_id: $membershipInvitationId }
   ) {

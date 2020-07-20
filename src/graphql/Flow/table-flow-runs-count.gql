@@ -1,4 +1,4 @@
-query TableFlowRunsCount($flow_group_id: UUID, $flow_id: UUID, $name: String) {
+query TableFlowRunsCount($flow_group_id: uuid, $flow_id: uuid, $name: String) {
   flow_run_aggregate(
     where: {
       flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }

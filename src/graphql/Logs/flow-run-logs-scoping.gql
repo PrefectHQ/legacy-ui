@@ -1,5 +1,5 @@
 query FlowRunLogsScoping(
-  $id: UUID!
+  $id: uuid!
   $limit: Int = 50
   $timestamp: timestamptz
 ) {

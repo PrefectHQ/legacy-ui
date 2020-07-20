@@ -1,4 +1,4 @@
-query FailureCount($heartbeat: timestamptz, $projectId: UUID) {
+query FailureCount($heartbeat: timestamptz, $projectId: uuid) {
   flow_aggregate(
     where: {
       flow_runs: { state: { _eq: "Failed" }, updated: { _gte: $heartbeat } }

@@ -17,12 +17,6 @@ const AUTH_TOKEN = 'authorization_token'
 const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP
 // WS endpoint
 // const wsEndpoint = process.env.VUE_APP_GRAPHQL_WS
-// Files URL root
-export const filesRoot =
-  process.env.VUE_APP_FILES_ROOT ||
-  httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
-
-Vue.prototype.$filesRoot = filesRoot
 
 // FIXME This is a hack, we'll have a better way to do this when we implement subscriptions
 function checkIfOnlineUntilWeAre() {
@@ -193,11 +187,9 @@ export const createApolloProvider = () => {
       if (navigator && !navigator.onLine) {
         this.$apollo.skipAll = true
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
-      } else if (graphQLErrors.length || networkError) {
-        // FIXME This doesn't seem to be happening on its own for some reason?
+      } else if (graphQLErrors?.length || networkError) {
         if (
-          graphQLErrors.length &&
-          graphQLErrors[0].message == 'TokenExpiredError: jwt expired' &&
+          graphQLErrors?.[0].message == 'TokenExpiredError: jwt expired' &&
           !store.getters['auth0/isRefreshingAuthorization']
         ) {
           await store.dispatch('auth0/refreshAuthorization')

@@ -1,6 +1,6 @@
 query Flows(
   $archived: Boolean
-  $projectId: UUID
+  $projectId: uuid
   $limit: Int
   $offset: Int
   $orderBy: [flow_order_by!]
@@ -24,11 +24,8 @@ query Flows(
     flow_group_id
     version
     archived
-    schedules {
-      id
-      active
-      schedule
-    }
+    schedule
+
     flow_runs(
       where: { state: { _neq: "Scheduled" } }
       order_by: { scheduled_start_time: desc }

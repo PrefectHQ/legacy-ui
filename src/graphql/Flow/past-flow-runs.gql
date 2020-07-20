@@ -1,4 +1,4 @@
-query PastFlowRuns($id: UUID!, $heartbeat: timestamptz) {
+query PastFlowRuns($id: uuid!, $heartbeat: timestamptz) {
   flow_run(
     where: {
       flow_id: { _eq: $id }

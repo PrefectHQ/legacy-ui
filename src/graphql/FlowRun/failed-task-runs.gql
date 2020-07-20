@@ -1,4 +1,4 @@
-query($flowRunId: UUID) {
+query($flowRunId: uuid) {
   task_run(
     where: {
       flow_run_id: { _eq: $flowRunId }

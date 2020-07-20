@@ -1,6 +1,6 @@
 query TaskRunLogs(
-  $id: UUID!
-  $logId: UUID
+  $id: uuid!
+  $logId: uuid
   $levels: [String!]
   $limit: Int = 100
   $offset: Int = 0

@@ -1,4 +1,4 @@
-query FailDetails($heartbeat: timestamptz, $projectIds: [UUID!]) {
+query FailDetails($heartbeat: timestamptz, $projectIds: [uuid!]) {
   flow_run(
     where: {
       state: { _eq: "Failed" }

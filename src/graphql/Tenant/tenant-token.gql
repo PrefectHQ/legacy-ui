@@ -1,4 +1,4 @@
-mutation SwitchTenant($tenantId: UUID!) {
+mutation SwitchTenant($tenantId: uuid!) {
   switch_tenant(input: { tenant_id: $tenantId }) {
     access_token
     expires_at

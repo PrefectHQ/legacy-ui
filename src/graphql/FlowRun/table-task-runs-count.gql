@@ -1,5 +1,5 @@
 query TableTaskRunsCount(
-  $flowRunId: UUID
+  $flowRunId: uuid
   $name: String
   $heartbeat: timestamptz
 ) {

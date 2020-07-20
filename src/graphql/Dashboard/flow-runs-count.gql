@@ -1,4 +1,4 @@
-query FlowRunsCount($projectIds: [UUID!], $heartbeat: timestamptz) {
+query FlowRunsCount($projectIds: [uuid!], $heartbeat: timestamptz) {
   flow_run_aggregate(
     where: {
       flow: { project_id: { _in: $projectIds } }

@@ -27,6 +27,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['backend', 'version']),
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['memberships', 'user']),
@@ -34,6 +35,11 @@ export default {
     ...mapGetters('license', ['hasLicense']),
     lastDeployment_UI() {
       return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
+    },
+    logo() {
+      return require(`@/assets/logos/${
+        this.backend == 'SERVER' ? 'core' : 'cloud'
+      }-logo-no-text.svg`)
     },
     open: {
       get() {
@@ -82,10 +88,11 @@ export default {
       this.close()
     },
     open() {
-      this.$apollo.queries.referenceData.refetch()
+      this.getApi()
     }
   },
   methods: {
+    ...mapActions('api', ['getApi']),
     ...mapMutations('sideNav', ['toggle', 'close']),
     ...mapActions('tenant', ['getTenant']),
     ...mapActions('license', ['getLicense']),
@@ -219,18 +226,6 @@ export default {
       },
       fetchPolicy: 'network-only',
       pollInterval: 2000
-    },
-    referenceData: {
-      query: require('@/graphql/version.gql'),
-      update(data) {
-        if (!data?.reference_data?.cloud?.release_timestamp) return
-        this.lastDeployment_Cloud = moment(
-          data.reference_data.cloud.release_timestamp
-        ).format('MMM D [•] h:mmA')
-        return data
-      },
-      fetchPolicy: 'network-only',
-      pollInterval: 60000
     }
   }
 }
@@ -450,10 +445,7 @@ export default {
                     <div class="truncate">{{ lastDeployment_Cloud }}</div>
                   </v-col>
                   <v-col cols="2">
-                    <img
-                      style="max-width: 100%;"
-                      src="@/assets/logos/cloud-logo-no-text.svg"
-                    />
+                    <img style="max-width: 100%;" :src="logo" />
                   </v-col>
                   <v-col cols="5" class="text-left">
                     <div class="font-weight-bold">UI</div>

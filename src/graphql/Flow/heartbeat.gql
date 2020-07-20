@@ -1,4 +1,4 @@
-query Heartbeat($flow_group_id: UUID, $flow_id: UUID, $state: String) {
+query Heartbeat($flow_group_id: uuid, $flow_id: uuid, $state: String) {
   flow_run(
     limit: 10
     where: {

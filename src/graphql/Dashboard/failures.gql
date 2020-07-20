@@ -1,4 +1,4 @@
-query Failures($heartbeat: timestamptz, $projectId: UUID) {
+query Failures($heartbeat: timestamptz, $projectId: uuid) {
   flow_run(
     where: {
       updated: { _gte: $heartbeat }

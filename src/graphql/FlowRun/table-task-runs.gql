@@ -1,5 +1,5 @@
 query TableTaskRuns(
-  $flowRunId: UUID
+  $flowRunId: uuid
   $name: String
   $limit: Int
   $offset: Int

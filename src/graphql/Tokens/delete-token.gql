@@ -1,4 +1,4 @@
-mutation DeleteAPIToken($id: UUID!) {
+mutation DeleteAPIToken($id: uuid!) {
   delete_api_token(input: { token_id: $id }) {
     success
   }

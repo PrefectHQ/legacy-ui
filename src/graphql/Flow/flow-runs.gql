@@ -1,4 +1,4 @@
-query FlowRuns($flow_group_id: UUID, $flow_id: UUID, $heartbeat: timestamptz) {
+query FlowRuns($flow_group_id: uuid, $flow_id: uuid, $heartbeat: timestamptz) {
   Success: flow_run_aggregate(
     where: {
       flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
