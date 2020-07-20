@@ -428,7 +428,7 @@ export default {
             </v-list-item-action>
           </v-list-item>
           <v-list-item
-            v-if="cloud"
+            v-if="isCloud"
             id="Support"
             active-class="primary-active-class"
             :to="{ name: 'help' }"
@@ -441,7 +441,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
           <v-dialog
-            v-if="cloud"
+            v-if="isCloud"
             v-model="feedbackDialog"
             max-width="560"
             @click:outside="closeDialogAndMenu"
