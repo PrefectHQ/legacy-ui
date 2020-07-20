@@ -12,6 +12,7 @@ export default {
     return {
       valid: true,
       projectName: '',
+      projectDescription: null,
       nameRules: [
         v => (v && !!v.trim()) || 'Project name is required',
         v => !!v || 'Project name is required',
@@ -27,8 +28,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('tenant', ['role'])
+    ...mapGetters('tenant', ['role', 'tenant'])
   },
   watch: {
     show() {
@@ -43,9 +43,11 @@ export default {
       this.projectLoading = true
       try {
         const { data, errors } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Projects/create-project.gql'),
+          mutation: require('@/graphql/Mutations/create-project.gql'),
           variables: {
-            projectName: this.projectName
+            name: this.projectName,
+            description: this.projectDescription,
+            tenantId: this.tenant.id
           },
           errorPolicy: 'all'
         })
