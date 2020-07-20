@@ -21,7 +21,11 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
     navBarColor() {
-      return this.isTransparent ? 'transparent' : 'primary'
+      return this.isTransparent
+        ? 'transparent'
+        : this.isCloud
+        ? 'primary'
+        : 'secondary'
     },
     isTransparent() {
       return this.$route.name === 'not-found'

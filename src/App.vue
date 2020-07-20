@@ -159,12 +159,22 @@ html {
   background-color: var(--v-appBackground-base) !important;
 }
 
-.theme--light.v-app-bar.primary {
-  background-image: linear-gradient(
-    165deg,
-    var(--v-primary-base),
-    var(--v-prefect-base)
-  );
+.theme--light.v-app-bar {
+  &.primary {
+    background-image: linear-gradient(
+      165deg,
+      var(--v-primary-base),
+      var(--v-prefect-base)
+    );
+  }
+
+  &.secondary {
+    background-image: linear-gradient(
+      165deg,
+      var(--v-secondary-base),
+      var(--v-secondaryGray-base)
+    );
+  }
 }
 
 .link {

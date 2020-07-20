@@ -501,7 +501,7 @@ export default {
           <div class="text-center">
             <v-btn
               class="mb-4"
-              :color="isServer ? 'secondary' : 'secondary'"
+              :color="isServer ? 'primary' : 'secondary'"
               tile
               @click="_switchBackend"
             >
@@ -513,7 +513,6 @@ export default {
           <v-list-item
             v-if="isCloud"
             class="tenant-switcher primary theme--dark mt-0"
-            data-cy="tenant-switcher"
             two-line
             @click="handleTenantSwitcherClick"
           >
@@ -542,14 +541,14 @@ export default {
 
             <v-list-item-action>
               <v-icon x-large>
-                arrow_drop_up
+                {{ tenantMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
               </v-icon>
             </v-list-item-action>
           </v-list-item>
 
           <v-list-item
             v-else
-            class="tenant-switcher primary theme--dark mt-0"
+            class="tenant-switcher secondary theme--dark mt-0"
             data-cy="tenant-switcher"
             two-line
             @click="handleTenantSwitcherClick"
@@ -568,7 +567,7 @@ export default {
 
             <v-list-item-action>
               <v-icon x-large>
-                arrow_drop_up
+                {{ tenantMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
               </v-icon>
             </v-list-item-action>
           </v-list-item>
