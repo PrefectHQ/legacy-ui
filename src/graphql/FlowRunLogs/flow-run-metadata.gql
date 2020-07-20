@@ -1,4 +1,4 @@
-query FlowRunMetadata($id: uuid!) {
+query FlowRunMetadata($id: UUID!) {
   flow_run_by_pk(id: $id) {
     id
     name

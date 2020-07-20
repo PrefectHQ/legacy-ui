@@ -1,0 +1,6 @@
+query Api {
+  api {
+    backend
+    version
+  }
+}

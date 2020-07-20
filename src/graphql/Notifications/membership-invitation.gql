@@ -1,4 +1,4 @@
-query MembershipInvitation($id: uuid!) {
+query MembershipInvitation($id: UUID!) {
   membership_invitation_by_pk(id: $id) {
     id
     role

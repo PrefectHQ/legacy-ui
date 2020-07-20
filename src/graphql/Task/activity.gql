@@ -1,6 +1,6 @@
 query Activity(
   $limit: Int
-  $taskId: uuid!
+  $taskId: UUID!
   $states: [String!]
   $timestamp: timestamptz
 ) {

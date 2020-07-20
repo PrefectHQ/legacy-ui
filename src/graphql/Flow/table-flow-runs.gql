@@ -3,8 +3,8 @@ query TableFlowRuns(
   $limit: Int
   $offset: Int
   $orderBy: [flow_run_order_by!]
-  $flow_group_id: uuid
-  $flow_id: uuid
+  $flow_group_id: UUID
+  $flow_id: UUID
 ) {
   flow_run(
     where: {

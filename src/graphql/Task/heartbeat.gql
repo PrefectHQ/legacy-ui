@@ -1,7 +1,11 @@
-query Heartbeat($taskId: uuid!, $timestamp: timestamptz, $state: String) {
+query Heartbeat($taskId: UUID!, $timestamp: timestamptz, $state: String) {
   task_run(
     limit: 10
-    where: { task_id: { _eq: $taskId }, state_timestamp: { _gte: $timestamp }, state: {_eq: $state}}
+    where: {
+      task_id: { _eq: $taskId }
+      state_timestamp: { _gte: $timestamp }
+      state: { _eq: $state }
+    }
     order_by: { updated: desc_nulls_last }
   ) {
     id

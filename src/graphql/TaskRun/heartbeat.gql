@@ -1,5 +1,5 @@
 query Heartbeat(
-  $taskRunId: uuid!
+  $taskRunId: UUID!
   $timestamp: timestamptz
   $state: String
   $limit: Int

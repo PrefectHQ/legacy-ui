@@ -63,6 +63,7 @@ export default {
   },
   computed: {
     ...mapGetters('alert', ['getAlert']),
+    ...mapGetters('api', ['backend']),
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     }
@@ -268,6 +269,7 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
+            v-if="backend !== 'SERVER'"
             slot="row-2-col-2-row-2-tile-2"
             :loading="loadedTiles < 4"
             type="image"
@@ -286,7 +288,11 @@ export default {
         <FlowTableTile class="mx-3 my-6" :project-id="projectId" />
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="agents">
+      <v-tab-item
+        v-if="backend !== 'SERVER'"
+        class="tab-full-height"
+        value="agents"
+      >
         <Agents class="mx-3 my-6" />
       </v-tab-item>
 

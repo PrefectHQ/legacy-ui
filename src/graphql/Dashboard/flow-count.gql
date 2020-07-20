@@ -1,5 +1,5 @@
 query FlowCount(
-  $projectId: uuid
+  $projectId: UUID
   $archived: Boolean
   $searchParams: [flow_bool_exp!]
 ) {

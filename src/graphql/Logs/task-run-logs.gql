@@ -1,11 +1,11 @@
 query TaskRunLogs(
-  $id: uuid!,
-  $logId: uuid,
-  $levels: [String!],
-  $limit: Int = 100,
-  $offset: Int = 0,
-  $searchText: String,
-  $timestampFrom: timestamptz,
+  $id: UUID!
+  $logId: UUID
+  $levels: [String!]
+  $limit: Int = 100
+  $offset: Int = 0
+  $searchText: String
+  $timestampFrom: timestamptz
   $timestampTo: timestamptz
 ) {
   task_run_by_pk(id: $id) {
@@ -17,8 +17,8 @@ query TaskRunLogs(
       order_by: { timestamp: desc }
       where: {
         id: { _eq: $logId }
-        level: { _in: $levels },
-        message: { _ilike: $searchText },
+        level: { _in: $levels }
+        message: { _ilike: $searchText }
         timestamp: { _gte: $timestampFrom, _lte: $timestampTo }
       }
     ) {

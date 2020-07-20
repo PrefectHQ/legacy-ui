@@ -1,4 +1,4 @@
-query tenant($id: uuid!) {
+query tenant($id: UUID!) {
   tenant_by_pk(id: $id) {
     id
     name

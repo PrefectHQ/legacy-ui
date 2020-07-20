@@ -1,8 +1,4 @@
-query FlowRunsCount(
-  $taskId: uuid
-  $heartbeat: timestamptz
-  $state: String
-) {
+query FlowRunsCount($taskId: UUID, $heartbeat: timestamptz, $state: String) {
   task_run_aggregate(
     where: {
       task_id: { _eq: $taskId }

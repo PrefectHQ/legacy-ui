@@ -1,14 +1,18 @@
-query Task($taskId: uuid!
+query Task(
+  $taskId: UUID!
   $limit: Int
   $offset: Int
   $orderBy: [task_run_order_by!]
-  $heartbeat: timestamptz) {
+  $heartbeat: timestamptz
+) {
   task_by_pk(id: $taskId) {
     id
     name
     task_runs(
-      where: { flow_run: { state: { _neq: "Scheduled" } }
-      updated: { _gte: $heartbeat } }
+      where: {
+        flow_run: { state: { _neq: "Scheduled" } }
+        updated: { _gte: $heartbeat }
+      }
       order_by: $orderBy
       limit: $limit
       offset: $offset
@@ -22,8 +26,7 @@ query Task($taskId: uuid!
       flow_run {
         name
         id
-        }
       }
     }
+  }
 }
-

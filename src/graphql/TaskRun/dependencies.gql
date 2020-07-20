@@ -1,4 +1,4 @@
-query Dependencies($taskRunId: uuid!, $flowRunId: uuid!) {
+query Dependencies($taskRunId: UUID!, $flowRunId: UUID!) {
   task_run_by_pk(id: $taskRunId) {
     id
     state

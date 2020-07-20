@@ -1,14 +1,14 @@
 query TableTaskRuns(
-  $flowRunId: uuid
+  $flowRunId: UUID
   $name: String
   $limit: Int
   $offset: Int
   $orderBy: [task_run_order_by!]
 ) {
-  flow_run(where: {id: {_eq: $flowRunId}}) {
+  flow_run(where: { id: { _eq: $flowRunId } }) {
     name
     id
-    task_runs (
+    task_runs(
       where: { task: { name: { _ilike: $name } } }
       order_by: $orderBy
       limit: $limit

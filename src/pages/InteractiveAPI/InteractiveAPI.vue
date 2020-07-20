@@ -82,7 +82,7 @@ export default {
         'authInfo',
         // *_by_pk queries are helper queries that don't have offset and limit
         // arguments since by their nature they return just 1 result using a
-        // uuid!
+        // UUID!
         '_by_pk',
         'hello',
         'taskTagUsage',

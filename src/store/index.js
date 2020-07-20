@@ -8,6 +8,7 @@ import createPlugin from 'logrocket-vuex'
 
 // Modules
 import agent from '@/store/agent'
+import api from '@/store/api'
 import auth0 from '@/store/auth0'
 import license from '@/store/license'
 import refresh from '@/store/refresh'
@@ -36,14 +37,15 @@ const logrocketPlugin = createPlugin(LogRocket, mutation => {
 const store = new Vuex.Store({
   modules: {
     agent,
+    alert,
+    api,
     auth0,
     license,
     refresh,
     sideDrawer,
     sideNav,
     tenant,
-    user,
-    alert
+    user
   },
   strict: process.env.NODE_ENV !== 'production',
   plugins: [logrocketPlugin]

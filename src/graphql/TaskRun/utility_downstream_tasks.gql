@@ -1,4 +1,4 @@
-query($flowRunId: uuid, $taskIds: _uuid) {
+query($flowRunId: UUID, $taskIds: _UUID) {
   utility_downstream_tasks(args: { start_task_ids: $taskIds }) {
     depth
     task {

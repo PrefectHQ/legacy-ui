@@ -1,4 +1,4 @@
-query Membership($membershipId: uuid!) {
+query Membership($membershipId: UUID!) {
   membership(where: { id: { _eq: $membershipId } }) {
     id
     tenant {

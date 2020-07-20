@@ -1,4 +1,4 @@
-query TimelineFlowRuns($project_id: uuid) {
+query TimelineFlowRuns($project_id: UUID) {
   flow_run(
     where: {
       flow: { project_id: { _eq: $project_id } }

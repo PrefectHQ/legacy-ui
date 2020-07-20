@@ -1,5 +1,5 @@
 query FlowRun(
-  $id: uuid!
+  $id: UUID!
   $taskRunStates: [String!]
   $taskName: String
   $sort: order_by

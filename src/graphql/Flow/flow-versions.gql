@@ -2,7 +2,7 @@ query Versions(
   $limit: Int
   $offset: Int
   $order_by: [flow_order_by!]
-  $flow_group_id: uuid!
+  $flow_group_id: UUID!
   $search: Int
 ) {
   flow_group_by_pk(id: $flow_group_id) {

@@ -1,6 +1,6 @@
 <script>
 import Alert from '@/components/Alert'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
@@ -18,17 +18,22 @@ export default {
   data() {
     return {
       error: null,
+      loadingKey: 0,
       reset: false,
       shown: true,
       wholeAppShown: true
     }
   },
   computed: {
+    ...mapGetters('api', ['backend', 'version']),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', ['tenant']),
     notFoundPage() {
       return this.$route.name === 'not-found'
+    },
+    isCloud() {
+      return this.backend == 'CLOUD'
     }
   },
   beforeDestroy() {
@@ -43,7 +48,9 @@ export default {
     window.removeEventListener('blur', this.handleVisibilityChange)
     window.removeEventListener('focus', this.handleVisibilityChange)
   },
-  created() {
+  async created() {
+    await this.getApi()
+
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
@@ -57,6 +64,7 @@ export default {
     window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
+    ...mapActions('api', ['getApi']),
     // ...mapMutations('sideDrawer', {
     //   clearDrawer: 'clearDrawer',
     //   closeSideDrawer: 'close'
@@ -100,7 +108,13 @@ export default {
 </script>
 
 <template>
-  <v-app v-if="isAuthenticated && wholeAppShown" class="app">
+  <v-app
+    v-if="
+      (isCloud && isAuthenticated && wholeAppShown) ||
+        (!isCloud && wholeAppShown)
+    "
+    class="app"
+  >
     <v-main>
       <NavBar />
       <SideNav />

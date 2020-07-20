@@ -1,4 +1,4 @@
-query ProjectFlowIds($projectId: uuid!) {
+query ProjectFlowIds($projectId: UUID!) {
   project_by_pk(id: $projectId) {
     flows {
       id

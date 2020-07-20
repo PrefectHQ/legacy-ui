@@ -1,6 +1,6 @@
 query Flows(
   $archived: Boolean
-  $projectId: uuid
+  $projectId: UUID
   $limit: Int
   $offset: Int
   $orderBy: [flow_order_by!]

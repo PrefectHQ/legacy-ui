@@ -52,6 +52,14 @@ const authMiddleware = setContext(async (_, { headers }) => {
     headers['X-Prefect-UI'] = true
   }
 
+  if (store.getters['api/backend'] === 'SERVER' || _.operationName == 'Api') {
+    return {
+      headers: {
+        ...headers
+      }
+    }
+  }
+
   const authRefreshRequired =
     store.getters['auth0/authorizationToken'] &&
     aboutToExpire(store.getters['auth0/authorizationTokenExpiry'])
@@ -70,6 +78,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
     store.getters['auth0/isLoggingInUser']
 
   if (
+    store.getters['api/backend'] !== 'SERVER' &&
     (!store.getters['auth0/idToken'] || !isAuthenticatedUser) &&
     !store.getters['isRefreshingAuthentication']
   ) {

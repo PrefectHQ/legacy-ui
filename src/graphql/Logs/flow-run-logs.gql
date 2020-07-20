@@ -1,6 +1,6 @@
 query FlowRunLogs(
-  $id: uuid!
-  $logId: uuid
+  $id: UUID!
+  $logId: UUID
   $levels: [String!]
   $limit: Int = 100
   $offset: Int = 0

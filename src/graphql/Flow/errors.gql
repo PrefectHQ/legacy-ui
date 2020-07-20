@@ -1,7 +1,7 @@
 query Errors(
   $heartbeat: timestamptz_comparison_exp
-  $flow_group_id: uuid
-  $flow_id: uuid
+  $flow_group_id: UUID
+  $flow_id: UUID
 ) {
   flow_run(
     where: {

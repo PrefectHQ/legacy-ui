@@ -1,4 +1,4 @@
-query VersionsRuns($flow_ids: [uuid!]) {
+query VersionsRuns($flow_ids: [UUID!]) {
   flow(where: { id: { _in: $flow_ids } }) {
     id
     name

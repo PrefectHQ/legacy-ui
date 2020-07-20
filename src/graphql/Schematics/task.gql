@@ -1,4 +1,4 @@
-query Task($id: uuid!) {
+query Task($id: UUID!) {
   task(where: { id: { _eq: $id } }) {
     id
     name

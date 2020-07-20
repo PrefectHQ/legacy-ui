@@ -1,4 +1,4 @@
-query Project($id: uuid!) {
+query Project($id: UUID!) {
   project: project_by_pk(id: $id) {
     id
     name
