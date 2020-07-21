@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="119px" height="84px" viewBox="0 0 119 84" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>Tangible Investment</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Design" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Landing-Page-HD-v5" transform="translate(-978.000000, -1095.000000)">
+            <g id="Tangible-Investment" transform="translate(982.000000, 1097.000000)">
+                <path d="M-8,39.4330127 L119.5,39.4330127" id="Path-16-Copy-3" stroke="#D3F5FE" stroke-width="8" stroke-linecap="round" transform="translate(56.000000, 39.433013) rotate(30.000000) translate(-56.000000, -39.433013) "></path>
+                <path d="M22.9701998,56.6830127 L86.7201998,56.6830127" id="Path-16-Copy-4" stroke="#D3F5FE" stroke-width="8" stroke-linecap="round" transform="translate(54.720200, 56.683013) rotate(30.000000) translate(-54.720200, -56.683013) "></path>
+                <path d="M23.5240474,17.6160254 L75.090787,18.0878562" id="Path-16-Copy-5" stroke="#D3F5FE" stroke-width="8" stroke-linecap="round" transform="translate(49.274047, 18.116025) rotate(30.000000) translate(-49.274047, -18.116025) "></path>
+                <polygon id="Path-17-Copy" fill="#67D8FB" points="18 78 34 78 34 61 18 61"></polygon>
+                <polygon id="Path-17-Copy-2" fill="#67D8FB" points="40 77 56 77 56 51 40 51"></polygon>
+                <polygon id="Path-17-Copy-3" fill="#67D8FB" points="62 77 78 77 78 31 62 31"></polygon>
+                <polygon id="Path-17-Copy-4" fill="#67D8FB" points="84 77 100 77 100 3 84 3"></polygon>
+                <path d="M23,69.3894081 L23,82 L103,82 L103,33 C90.5747557,48.6515192 78.6188881,58.4273447 67.1323972,62.3274767 C55.6459063,66.2276087 40.9351073,68.5815858 23,69.3894081 Z" id="Path-18" fill="#3386F7"></path>
+                <polygon id="Path-17-Copy" stroke="#003483" stroke-width="3" points="15 77 31 77 31 58 15 58"></polygon>
+                <polygon id="Path-17-Copy-2" stroke="#003483" stroke-width="3" points="37 77 53 77 53 48 37 48"></polygon>
+                <polygon id="Path-17-Copy-3" stroke="#003483" stroke-width="3" points="59 77 75 77 75 28 59 28"></polygon>
+                <polygon id="Path-17-Copy-4" stroke="#003483" stroke-width="3" points="81 77 97 77 97 -9.09494702e-13 81 -9.09494702e-13"></polygon>
+                <polyline id="Path-32" stroke="#003483" stroke-width="3" transform="translate(34.000000, 23.000000) rotate(-360.000000) translate(-34.000000, -23.000000) " points="13 36 30.0416418 19.1249255 37.9024343 26.9024343 55 10"></polyline>
+                <polygon id="Path-33" fill="#67D8FB" transform="translate(58.000000, 13.000000) rotate(-360.000000) translate(-58.000000, -13.000000) " points="52 7 64 19 64 7"></polygon>
+                <polygon id="Path-33" stroke="#003483" stroke-width="3" transform="translate(55.000000, 10.000000) rotate(-360.000000) translate(-55.000000, -10.000000) " points="49 4 61 16 61 4"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
