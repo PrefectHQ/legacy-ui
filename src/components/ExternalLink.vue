@@ -14,11 +14,11 @@ export default {
     <a :href="href" target="_blank" rel="noopener noreferrer">
       <slot></slot>
     </a>
-    <sup
-      ><v-icon x-small>
+    <sup>
+      <v-icon x-small>
         open_in_new
-      </v-icon></sup
-    >
+      </v-icon>
+    </sup>
   </span>
 </template>
 

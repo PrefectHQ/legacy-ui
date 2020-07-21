@@ -20,12 +20,24 @@ const isServer = () => {
   return store.getters['api/isServer']
 }
 
+const isCloud = () => {
+  return store.getters['api/isCloud']
+}
+
 const authNavGuard = async (to, from, next) => {
   await getApi()
 
   // If this is a Server deployment,
   // we don't need to worry about Authentication
   if (isServer()) return next()
+
+  if (!isCloud() && !store.getters['api/url'].includes('prefect.io')) {
+    // In this scenario we're unable to connect to the user-defined
+    // endpoint, so we redirect to the connection page
+    return next({
+      name: 'start'
+    })
+  }
 
   if (isAuthenticated() && isAuthorized() && store.getters['user/userIsSet']) {
     return next()

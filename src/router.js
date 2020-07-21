@@ -281,11 +281,9 @@ export const routes = [
     beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
   },
   {
-    name: 'new-tenant',
-    path: '/new-tenant',
-    component: () =>
-      import(/* webpackChunkName: "new-tenant" */ '@/pages/NewTenant.vue'),
-    beforeEnter: multiguard([authNavGuard])
+    name: 'start',
+    path: '/start',
+    component: () => import(/* webpackChunkName: "start" */ '@/pages/Start.vue')
   },
   {
     name: 'dashboard',

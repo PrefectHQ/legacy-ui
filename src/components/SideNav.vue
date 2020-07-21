@@ -158,7 +158,7 @@ export default {
         name: name
       }
 
-      if (this.isCloud && tenantProtectedRoutes.includes(name)) {
+      if (tenantProtectedRoutes.includes(name)) {
         route.params = { tenant: this.tenant?.slug }
       }
       return route
@@ -336,6 +336,22 @@ export default {
               </v-btn>
             </v-list-item-action>
           </v-list-item>
+
+          <v-list-item
+            active-class="primary-active-class"
+            data-cy="side-nav-dashboard-item"
+            :to="getRoute('start')"
+            ripple
+            exact
+          >
+            <v-list-item-action>
+              <v-icon>near_me</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Get Started</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
           <v-list-item
             active-class="primary-active-class"
             data-cy="side-nav-dashboard-item"

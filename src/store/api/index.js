@@ -10,6 +10,8 @@ const state = {
   version: null
 }
 
+console.log(state.url)
+
 const getters = {
   backend(state) {
     return state.backend
@@ -69,6 +71,8 @@ const actions = {
         query: require('@/graphql/api.gql'),
         fetchPolicy: 'no-cache'
       })
+
+      console.log(data)
 
       if (data?.api) {
         commit('setBackend', data.api.backend)
