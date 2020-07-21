@@ -1,5 +1,6 @@
 import { defaultOptions } from '@/vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
+import { prefectTenants, prefectUser } from '@/middleware/prefectAuth'
 import LogRocket from 'logrocket'
 
 const state = {
@@ -94,6 +95,10 @@ const actions = {
 
     if (getters['isCloud']) {
       await dispatch('auth0/authenticate', null, { root: true })
+      await dispatch('auth0/authorize', null, { root: true })
+      await prefectUser()
+    } else {
+      await prefectTenants()
     }
   }
 }

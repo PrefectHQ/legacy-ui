@@ -4,8 +4,10 @@ import {
   createApolloClient,
   restartWebsockets
 } from 'vue-cli-plugin-apollo/graphql-client'
-import store from './store/index'
+import store from '@/store/index'
 import { setContext } from 'apollo-link-context'
+import { ApolloLink } from 'apollo-link'
+
 import LogRocket from 'logrocket'
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -34,12 +36,25 @@ function aboutToExpire(expiry) {
   return notExpired(expiry) && new Date().getTime() + 300000 >= expiry
 }
 
+let globalClient = null
+
+const backendMiddleware = new ApolloLink((operation, forward) => {
+  const context = operation.getContext()
+  if (context.headers?.['X-Backend'] !== store.getters['api/backend']) {
+    globalClient.cache.reset()
+    return
+  }
+  return forward(operation)
+})
+
 const authMiddleware = setContext(async (_, { headers }) => {
   if (_.query && _.query.source && _.query.source == 'InteractiveAPI') {
     headers['X-Prefect-Interactive-API'] = true
   } else {
     headers['X-Prefect-UI'] = true
   }
+
+  headers['X-Backend'] = store.getters['api/backend']
 
   if (store.getters['api/backend'] === 'SERVER' || _.operationName == 'Api') {
     return {
@@ -99,6 +114,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 
   if (authRefreshRequired && !middleOfRefresh) {
+    globalClient.cache.reset()
     if (validRefreshToken) {
       await store.dispatch('auth0/refreshAuthorization')
     } else if (isAuthenticatedUser) {
@@ -116,6 +132,9 @@ const authMiddleware = setContext(async (_, { headers }) => {
     }
   }
 })
+
+// Apollo link chain; acts as middleware for GraphQL queries
+const link = ApolloLink.from([authMiddleware, backendMiddleware])
 
 // Config
 export const defaultOptions = {
@@ -138,7 +157,7 @@ export const defaultOptions = {
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
-  link: authMiddleware
+  link: link
 
   // Override default cache
   // cache: myCache
@@ -158,6 +177,7 @@ export const createApolloProvider = () => {
   const { apolloClient, wsClient } = createApolloClient({
     ...defaultOptions
   })
+  globalClient = apolloClient
   apolloClient.wsClient = wsClient
 
   // Create vue apollo provider
@@ -180,7 +200,7 @@ export const createApolloProvider = () => {
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
       } else if (graphQLErrors?.length || networkError) {
         if (
-          graphQLErrors?.[0].message == 'TokenExpiredError: jwt expired' &&
+          graphQLErrors?.[0]?.message == 'TokenExpiredError: jwt expired' &&
           !store.getters['auth0/isRefreshingAuthorization']
         ) {
           await store.dispatch('auth0/refreshAuthorization')

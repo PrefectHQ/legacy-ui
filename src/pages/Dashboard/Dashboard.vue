@@ -30,6 +30,7 @@ export default {
   },
   data() {
     return {
+      key: 0,
       loading: 0,
       loadedTiles: 0,
       numberOfTiles: 7,
@@ -63,7 +64,7 @@ export default {
   },
   computed: {
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('api', ['isCloud']),
+    ...mapGetters('api', ['backend', 'isCloud']),
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     }
@@ -90,6 +91,30 @@ export default {
       if (Object.keys(val.query).length === 0 && this.tab !== 'overview') {
         this.tab = 'overview'
       }
+    },
+    backend() {
+      let start
+      this.loadedTiles = 0
+      this.key++
+
+      const animationDuration = 250
+
+      const loadTiles = time => {
+        if (!start) start = time
+
+        const elapsed = time - start
+
+        if (elapsed > this.loadedTiles * animationDuration + 500) {
+          this.loadedTiles++
+        }
+
+        if (this.loadedTiles <= this.numberOfTiles) {
+          // eslint-disable-next-line
+          requestAnimationFrame(loadTiles)
+        }
+      }
+
+      requestAnimationFrame(loadTiles)
     }
   },
   mounted() {
@@ -240,7 +265,7 @@ export default {
             class="my-2"
             tile
           >
-            <UpcomingRunsTile :project-id="projectId" full-height />
+            <UpcomingRunsTile :key="key" :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader

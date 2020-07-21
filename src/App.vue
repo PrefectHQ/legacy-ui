@@ -25,7 +25,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['backend', 'version']),
+    ...mapGetters('api', ['backend', 'version', 'url']),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', ['tenant']),
@@ -34,6 +34,14 @@ export default {
     },
     isCloud() {
       return this.backend == 'CLOUD'
+    }
+  },
+  watch: {
+    url() {
+      this.$apollo.skipAll = true
+      setTimeout(() => {
+        this.$apollo.skipAll = false
+      }, 500)
     }
   },
   beforeDestroy() {

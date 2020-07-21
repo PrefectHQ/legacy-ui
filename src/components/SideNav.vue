@@ -35,6 +35,7 @@ export default {
       cloudTimestamp: null,
       feedbackDialog: false,
       items: [],
+      loading: false,
       pendingInvitations: [],
       selectedTenant: null,
       tenantMenuOpen: false,
@@ -69,6 +70,11 @@ export default {
       return require(`@/assets/logos/${
         this.isCloud ? 'core' : 'cloud'
       }-logo-no-text.svg`)
+    },
+    navLogo() {
+      return require(`@/assets/logos/${
+        this.isCloud ? 'cloud' : 'core'
+      }-side-nav-logo.svg`)
     },
     open: {
       get() {
@@ -122,17 +128,30 @@ export default {
   },
   methods: {
     ...mapActions('api', ['getApi', 'switchBackend']),
+    ...mapMutations('refresh', ['add']),
     ...mapMutations('sideNav', ['toggle', 'close']),
     ...mapActions('tenant', ['getTenant']),
     ...mapActions('license', ['getLicense']),
     ...mapActions('user', ['getUser']),
     ...mapActions('auth0', ['logout']),
     async _switchBackend() {
+      this.loading = true
       if (this.isServer) {
-        this.switchBackend('https://api-dev.prefect.io/graphql')
+        await this.switchBackend('https://api-dev.prefect.io/graphql')
       } else {
-        this.switchBackend('http://localhost:4200/graphql')
+        await this.switchBackend('http://localhost:4200/graphql')
       }
+
+      await this.$router
+        .push({
+          name: 'dashboard',
+          params: {
+            tenant: this.tenant.slug
+          }
+        })
+        .catch(e => e)
+
+      this.loading = false
     },
     getRoute(name) {
       let route = {
@@ -307,8 +326,8 @@ export default {
                 contain
                 class="logo"
                 position="left"
-                src="@/assets/logos/logo-full-color-horizontal.svg"
-                alt="The Prefect Logo"
+                :src="navLogo"
+                alt="Prefect Logo"
               />
             </v-list-item-content>
             <v-list-item-action>
@@ -481,6 +500,7 @@ export default {
           <v-list-item
             dense
             one-line
+            :disabled="loading"
             @mouseover="switchHovered = true"
             @mouseleave="switchHovered = false"
             @click="_switchBackend"
@@ -494,8 +514,9 @@ export default {
                         >Switch to
                         <span
                           :class="`${isServer ? 'primary' : 'secondary'}--text`"
-                          >{{ isServer ? 'Cloud' : 'Server' }}</span
-                        ></div
+                        >
+                          {{ isServer ? 'Cloud' : 'Server' }}
+                        </span></div
                       >
                     </div>
                     <div v-else key="2">
@@ -522,7 +543,7 @@ export default {
                       class="elevation-8 mx-auto"
                       style="border: 1px solid #fff;"
                     >
-                      <v-scroll-y-transition mode="out-in">
+                      <v-fade-transition mode="out-in">
                         <img
                           v-if="!switchHovered"
                           key="1"
@@ -535,7 +556,7 @@ export default {
                           style="max-width: 100%;"
                           :src="logoAlt"
                         />
-                      </v-scroll-y-transition>
+                      </v-fade-transition>
                     </v-avatar>
                   </v-col>
                   <v-col cols="5" class="text-left">
