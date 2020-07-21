@@ -38,7 +38,8 @@ export default {
       pendingInvitations: [],
       selectedTenant: null,
       tenantMenuOpen: false,
-      tzMenuOpen: false
+      tzMenuOpen: false,
+      switchHovered: false
     }
   },
   computed: {
@@ -62,6 +63,11 @@ export default {
     logo() {
       return require(`@/assets/logos/${
         this.isCloud ? 'cloud' : 'core'
+      }-logo-no-text.svg`)
+    },
+    logoAlt() {
+      return require(`@/assets/logos/${
+        this.isCloud ? 'core' : 'cloud'
       }-logo-no-text.svg`)
     },
     open: {
@@ -472,22 +478,65 @@ export default {
 
           <v-divider class="mt-4" />
 
-          <v-list-item dense one-line>
+          <v-list-item
+            dense
+            one-line
+            @mouseover="switchHovered = true"
+            @mouseleave="switchHovered = false"
+            @click="_switchBackend"
+          >
             <v-list-item-content>
               <v-list-item-title class="">
                 <div class="overline grey--text text-center">
-                  Last Deployed
+                  <v-scroll-y-transition mode="out-in">
+                    <div v-if="switchHovered" key="1">
+                      <div
+                        >Switch to
+                        <span
+                          :class="`${isServer ? 'primary' : 'secondary'}--text`"
+                          >{{ isServer ? 'Cloud' : 'Server' }}</span
+                        ></div
+                      >
+                    </div>
+                    <div v-else key="2">
+                      <div>Last Deployed</div>
+                    </div>
+                  </v-scroll-y-transition>
                 </div>
 
                 <v-row
-                  class="overline grey--text text--darken-2 d-flex justify-center align-center"
+                  class="overline grey--text text--darken-2 d-flex justify-center align-center pb-2"
+                  no-gutters
                 >
                   <v-col cols="5" class="text-right">
                     <div class="font-weight-bold">API</div>
                     <div class="truncate">{{ lastDeployment_Cloud }}</div>
                   </v-col>
-                  <v-col cols="2">
-                    <img style="max-width: 100%;" :src="logo" />
+                  <v-col cols="2" class="px-2">
+                    <v-avatar
+                      max-width="100%"
+                      min-width="20"
+                      min-height="auto"
+                      height="auto"
+                      left
+                      class="elevation-8 mx-auto"
+                      style="border: 1px solid #fff;"
+                    >
+                      <v-scroll-y-transition mode="out-in">
+                        <img
+                          v-if="!switchHovered"
+                          key="1"
+                          style="max-width: 100%;"
+                          :src="logo"
+                        />
+                        <img
+                          v-else
+                          key="2"
+                          style="max-width: 100%;"
+                          :src="logoAlt"
+                        />
+                      </v-scroll-y-transition>
+                    </v-avatar>
                   </v-col>
                   <v-col cols="5" class="text-left">
                     <div class="font-weight-bold">UI</div>
@@ -497,18 +546,6 @@ export default {
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-
-          <div class="text-center">
-            <v-btn
-              class="mb-4"
-              :color="isServer ? 'primary' : 'secondary'"
-              tile
-              @click="_switchBackend"
-            >
-              <v-icon left>fas fa-exchange-alt</v-icon>
-              Switch backend
-            </v-btn>
-          </div>
 
           <v-list-item
             v-if="isCloud"
