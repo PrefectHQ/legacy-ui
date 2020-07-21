@@ -1,5 +1,8 @@
 <script>
 import ExternalLink from '@/components/ExternalLink'
+import { mapGetters } from 'vuex'
+import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
+import { defaultOptions } from '@/vue-apollo'
 
 const exploreBlocks = [
   {
@@ -33,8 +36,35 @@ export default {
   components: { ExternalLink },
   data() {
     return {
+      exploreBlocks: exploreBlocks,
+      gettingStartedTab: this.isCloud ? 'agent' : 'infrastructure',
       sdkTab: 'pip',
-      exploreBlocks: exploreBlocks
+      serverUrl: 'http://localhost:4200/graphql'
+    }
+  },
+  computed: {
+    ...mapGetters('api', ['isCloud'])
+  },
+  mounted() {
+    console.log(defaultOptions)
+  },
+  methods: {
+    async _testUrl() {
+      console.log('testing')
+      const apolloClient = createApolloClient({
+        ...defaultOptions,
+        httpEndpoint: () => this.serverUrl
+      }).apolloClient
+
+      console.log(apolloClient)
+      // try {
+      const data = await apolloClient.query({
+        query: require('@/graphql/hello.gql')
+      })
+      console.log(data)
+      // } catch (e) {
+      //   console.log(e)
+      // }
     }
   }
 }
@@ -48,13 +78,13 @@ export default {
   >
     <v-row class="mt-8">
       <v-col>
-        <div class="text-h2 text-center">Welcome to Prefect</div>
+        <div class="text-h2 text-center">Welcome to your Prefect UI</div>
         <div
           class="text-body-1 text-center my-2 mx-auto"
           style="max-width: 600px;"
         >
-          This your command center for your workflows; deploy from Prefect Core
-          and instantly gain complete oversight and control.
+          This is the command center for your workflows; deploy from Prefect
+          Core and instantly gain complete oversight and control.
         </div>
       </v-col>
     </v-row>
@@ -66,12 +96,13 @@ export default {
             Explore the possibilities with Prefect
           </v-card-title>
           <v-card-text>
-            <v-row>
+            <v-row justify="center">
               <v-col
                 v-for="(block, i) in exploreBlocks"
                 :key="i"
                 class="d-flex flex-column text-center"
                 cols="12"
+                sm="6"
                 md="4"
               >
                 <div>
@@ -106,18 +137,92 @@ export default {
         </v-card>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col>
         <v-card tile>
           <v-card-title>
-            Connect your API
+            Connecting your infrastructure
           </v-card-title>
           <v-card-text>
-            Something about connection here
+            <div class="text-body-1"> </div>
+
+            <v-tabs
+              v-model="gettingStartedTab"
+              :background-color="isCloud ? 'primary' : 'secondary'"
+              dark
+            >
+              <v-tab key="infrastructure">Prefect Server</v-tab>
+              <v-tab key="agent">Connecting an Agent</v-tab>
+            </v-tabs>
+
+            <div class="pa-5">
+              <v-tabs-items
+                v-model="gettingStartedTab"
+                background-color="white"
+              >
+                <v-tab-item key="infrastructure" class="white">
+                  <div class="text-body-1">
+                    Before you can begin to schedule work with Prefect Server,
+                    you'll need to start the orchestration infrastructure
+                    required to manage your Flows. This includes a database,
+                    API, scheduler, and various other criticial services.
+                    Alternatively, you can use the Prefect Cloud and get started
+                    right away (it's free!)
+                  </div>
+
+                  <div class="text-h6 mt-6 mb-2">1. Start Prefect Server</div>
+                  <div
+                    class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 code-block"
+                    style="border: 1px solid #b0bec5 !important;"
+                  >
+                    <div class="">
+                      <span class="blue-grey--text text--lighten-1">$</span>
+                      <span class="primary--text font-weight-medium">
+                        prefect</span
+                      >
+                      server start
+                    </div>
+                  </div>
+
+                  <div class="text-h6 mt-6 mb-2">2. Connect the UI</div>
+                  <div
+                    class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2"
+                  >
+                    <div>Prefect Server GraphQL endpoint:</div>
+                    <v-text-field
+                      v-model="serverUrl"
+                      class="text-h5 mx-2"
+                      outlined
+                      dense
+                      hide-details
+                      placeholder="http://localhost:4200/graphql"
+                      :style="{ 'max-width': '400px' }"
+                    >
+                      <template v-slot:append-outer>
+                        <v-btn
+                          color="accentOrange"
+                          class="mt-n1"
+                          dark
+                          small
+                          depressed
+                          @click="_testUrl"
+                        >
+                          Test
+                        </v-btn>
+                      </template>
+                    </v-text-field>
+                  </div>
+
+                  <div> </div>
+                </v-tab-item>
+              </v-tabs-items>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col>
         <v-card tile>
@@ -136,7 +241,7 @@ export default {
               <ExternalLink href="https://docs.prefect.io">
                 <div class="d-inline-flex align-start justify-start ml-6">
                   <v-icon class="mr-2" small>fab fa-github</v-icon>
-                  <div>GitHub</div>
+                  <div>Visit GitHub</div>
                 </div>
               </ExternalLink>
             </div>

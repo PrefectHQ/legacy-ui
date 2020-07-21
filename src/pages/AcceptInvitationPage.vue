@@ -84,7 +84,7 @@ export default {
       variables() {
         return { id: this.invitationId }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.membership_invitation,
       errorPolicy: 'all'
     }

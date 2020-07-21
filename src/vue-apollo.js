@@ -185,8 +185,8 @@ export const createApolloProvider = () => {
     defaultClient: apolloClient,
     defaultOptions: {
       $query: {
-        // fetchPolicy: 'cache-and-network',
-        errorPolicy: 'all'
+        errorPolicy: 'all',
+        fetchPolicy: 'cache-and-network'
       },
       $subscription: {
         errorPolicy: 'all'

@@ -96,7 +96,7 @@ export default {
   apollo: {
     projects: {
       query: require('@/graphql/FirstRunWorkflow/project-names.gql'),
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => {
         data.project.unshift({
           id: 'new-project',

@@ -103,7 +103,7 @@ export default {
         }
       },
       loadingKey: 'loading',
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.task_run_by_pk
     },
     parent: {
@@ -115,7 +115,7 @@ export default {
         }
       },
       loadingKey: 'loading',
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => (data.task_run ? data.task_run.length : null)
     }
   }

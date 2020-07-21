@@ -202,7 +202,7 @@ export default {
           sort: this.sortOrder
         }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.flow_run_by_pk
     }
   }

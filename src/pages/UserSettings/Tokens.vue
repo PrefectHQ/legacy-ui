@@ -145,7 +145,7 @@ export default {
     tokens: {
       query: require('@/graphql/Tokens/user-tokens.gql'),
       fetchPolicy: 'network-only',
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.api_token
     }
   }

@@ -25,7 +25,7 @@ export default {
       variables() {
         return { id: this.genericInput.flowId }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.flow_by_pk
     }
   }

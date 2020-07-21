@@ -65,7 +65,7 @@ const mutations = {
 const actions = {
   async getApi({ commit }) {
     const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
-
+    console.log(apolloClient)
     try {
       const { data } = await apolloClient.query({
         query: require('@/graphql/api.gql'),
