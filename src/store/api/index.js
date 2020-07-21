@@ -87,9 +87,14 @@ const actions = {
       })
     }
   },
-  async switchBackend({ commit }, url) {
+  async switchBackend({ getters, commit, dispatch }, url) {
     commit('setUrl', url)
-    location.reload()
+
+    await dispatch('getApi')
+
+    if (getters['isCloud']) {
+      await dispatch('auth0/authenticate', null, { root: true })
+    }
   }
 }
 
