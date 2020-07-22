@@ -193,13 +193,8 @@ const actions = {
       })
     }
   },
-  async getServerTenant({ rootGetters, commit, dispatch }, tenantId) {
+  async getServerTenant({ rootGetters, commit, dispatch, getters }, tenantId) {
     if (!rootGetters['api/backend']) await dispatch('api/getApi')
-
-    if (rootGetters['api/backend'] == 'CLOUD') {
-      await dispatch('getTenant')
-      return
-    }
 
     const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
 
@@ -207,7 +202,7 @@ const actions = {
       const tenant = await apolloClient.query({
         query: require('@/graphql/Tenant/tenant-by-pk.gql'),
         variables: {
-          id: tenantId ? tenantId : rootGetters['tenant/tenants'][0].id
+          id: tenantId ? tenantId : getters['tenants']?.[0].id
         }
       })
 
