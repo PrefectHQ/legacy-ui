@@ -142,6 +142,10 @@ export default {
         await this.switchBackend('SERVER')
       }
 
+      Object.values(this.$apollo.provider.clients).forEach(client =>
+        client.cache.reset()
+      )
+
       await this.$router
         .push({
           name: 'dashboard',
@@ -151,6 +155,7 @@ export default {
         })
         .catch(e => e)
 
+      this.close()
       this.loading = false
     },
     getRoute(name) {
@@ -179,6 +184,7 @@ export default {
       Object.values(this.$apollo.provider.clients).forEach(client =>
         client.cache.reset()
       )
+
       if (tenantProtectedRoutes.includes(this.$route.name)) {
         this.$router.push({
           name: 'dashboard',
@@ -298,7 +304,7 @@ export default {
         )
       },
       fetchPolicy: 'network-only',
-      pollInterval: 2000
+      pollInterval: 60000
     }
   }
 }
@@ -516,7 +522,6 @@ export default {
           <v-list-item
             dense
             one-line
-            :disabled="loading"
             @mouseover="switchHovered = true"
             @mouseleave="switchHovered = false"
             @click="_switchBackend"
