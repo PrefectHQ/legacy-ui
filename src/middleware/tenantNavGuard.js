@@ -2,7 +2,7 @@ import store from '@/store/index'
 
 const getApi = async () => {
   if (!store.getters['api/backend']) {
-    await store.dispatch('api/getApi')
+    await store.dispatch('api/getApi', 'tenantnavguard')
   }
   return store.getters['api/backend']
 }
@@ -11,21 +11,22 @@ const isServer = () => {
   return store.getters['api/isServer']
 }
 
+const isConnected = () => {
+  return store.getters['api/connected']
+}
+
 const tenantNavGuard = async (to, from, next) => {
   await getApi()
+  console.log('tenant nav guard')
+  if (isServer() && !isConnected()) return next()
 
   const passedTenantSlug = to.params.tenant
 
   let tenantId
   if (isServer()) {
     if (store.getters['tenant/tenants']?.length === 0) {
+      // Attempt to get tenants if they don't exist
       await store.dispatch('tenant/getTenants')
-
-      if (store.getters['tenant/tenants']?.length === 0) {
-        return next({
-          name: 'new-tenant'
-        })
-      }
     }
 
     if (store.getters['tenant/tenantIsSet']) {
@@ -58,7 +59,7 @@ const tenantNavGuard = async (to, from, next) => {
 
         tenantId = tenant.id
       } else {
-        tenantId = store.getters['tenant/tenants']?.[0].id
+        tenantId = store.getters['tenant/tenants']?.[0]?.id
       }
     }
 
@@ -119,7 +120,7 @@ const tenantNavGuard = async (to, from, next) => {
   }
 
   /* eslint-disable require-atomic-updates */
-  to.params.tenant = store.getters['tenant/tenant'].slug
+  to.params.tenant = store.getters['tenant/tenant']?.slug
   /* eslint-enable require-atomic-updates */
 
   return next({

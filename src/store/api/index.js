@@ -1,14 +1,11 @@
-/* eslint-disable */
 import { defaultOptions } from '@/vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
-import { prefectUser } from '@/middleware/prefectAuth'
 import LogRocket from 'logrocket'
 
 const state = {
-  backend: null,
+  backend: process.env.VUE_APP_BACKEND || 'CLOUD',
   connected: true,
   releaseTimestamp: null,
-  url: localStorage.getItem('url') || process.env.VUE_APP_SERVER_URL,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   serverUrl:
     localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
@@ -23,10 +20,10 @@ const getters = {
     return state.connected
   },
   isCloud(state) {
-    return state.backend == 'CLOUD'
+    return state.backend === 'CLOUD'
   },
   isServer(state) {
-    return state.backend == 'SERVER'
+    return state.backend === 'SERVER'
   },
   releaseTimestamp(state) {
     return state.releaseTimestamp
@@ -38,7 +35,14 @@ const getters = {
     return state.serverUrl
   },
   url(state) {
-    return state.url
+    switch (state.backend) {
+      case 'CLOUD':
+        return state.cloudUrl
+      case 'SERVER':
+        return state.serverUrl
+      default:
+        return null
+    }
   },
   version(state) {
     return state.version
@@ -52,19 +56,14 @@ const mutations = {
   unsetBackend(state) {
     state.backend = null
   },
+  setConnected(state, connected) {
+    state.connected = connected
+  },
   setReleaseTimestamp(state, timestamp) {
     state.releaseTimestamp = timestamp
   },
   unsetReleaseTimetamp(state) {
     state.releaseTimestamp = null
-  },
-  setUrl(state, url) {
-    localStorage.setItem('url', url)
-    state.url = url
-  },
-  unsetUrl(state) {
-    localStorage.removeItem('url')
-    state.url = null
   },
   setServerUrl(state, url) {
     localStorage.setItem('server_url', url)
@@ -83,7 +82,8 @@ const mutations = {
 }
 
 const actions = {
-  async getApi({ commit }) {
+  async getApi({ commit }, source) {
+    console.log('getting api', source)
     const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
     try {
       const { data } = await apolloClient.query({
@@ -91,15 +91,13 @@ const actions = {
         fetchPolicy: 'no-cache'
       })
 
-      if (data?.api) {
-        commit('setBackend', data.api.backend)
-        commit('setReleaseTimestamp', data.api.release_timestamp)
-        commit('setVersion', data.api.version)
-      }
+      commit('setReleaseTimestamp', data.api.release_timestamp)
+      commit('setVersion', data.api.version)
+      commit('setConnected', true)
     } catch (error) {
-      commit('unsetBackend')
       commit('unsetReleaseTimetamp')
       commit('unsetVersion')
+      commit('setConnected', false)
 
       LogRocket.captureException(error, {
         extra: {
@@ -112,30 +110,29 @@ const actions = {
   async setServerUrl({ commit }, url) {
     commit('setServerUrl', url)
   },
-  async switchBackend({ rootGetters, getters, commit, dispatch }, backend) {
-    try {
-      if (backend == 'CLOUD') {
-        commit('setUrl', getters['cloudUrl'])
+  async switchBackend({ rootGetters, commit, dispatch }, backend) {
+    commit('setBackend', backend)
 
-        await dispatch('getApi', 'CLOUD')
-        await dispatch('auth0/authenticate', null, { root: true })
-        await dispatch('auth0/authorize', null, { root: true })
-        await dispatch('user/getUser', null, { root: true })
-        await dispatch(
-          'tenant/getTenant',
-          rootGetters['user/defaultMembershipId'],
-          {
-            root: true
-          }
-        )
-      } else if (backend == 'SERVER') {
-        commit('setUrl', getters['serverUrl'])
-
+    if (backend == 'CLOUD') {
+      await dispatch('getApi', 'CLOUD')
+      await dispatch('auth0/authenticate', null, { root: true })
+      await dispatch('auth0/authorize', null, { root: true })
+      await dispatch('user/getUser', null, { root: true })
+      await dispatch(
+        'tenant/getTenant',
+        rootGetters['user/defaultMembershipId'],
+        {
+          root: true
+        }
+      )
+    } else if (backend == 'SERVER') {
+      try {
         await dispatch('tenant/getTenants', null, { root: true })
         await dispatch('tenant/getServerTenant', null, { root: true })
+      } catch {
+        commit('tenant/unsetTenants', null, { root: true })
+        commit('tenant/unsetTenant', null, { root: true })
       }
-    } catch (e) {
-      commit('tenant/unsetTenant', null, { root: true })
     }
   }
 }

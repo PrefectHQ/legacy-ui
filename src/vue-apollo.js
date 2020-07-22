@@ -7,6 +7,7 @@ import {
 import store from '@/store/index'
 import { setContext } from 'apollo-link-context'
 import { ApolloLink } from 'apollo-link'
+import { onError } from 'apollo-link-error'
 
 import LogRocket from 'logrocket'
 // Install the vue plugin
@@ -44,7 +45,10 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
     globalClient.cache.reset()
     return
   }
-  return forward(operation)
+  return forward(operation).map(response => {
+    console.log('THIS IS A RESPONSE', response)
+    return response
+  })
 })
 
 const authMiddleware = setContext(async (_, { headers }) => {
@@ -133,13 +137,24 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 })
 
+const errorAfterware = onError(({ networkError }) => {
+  console.log('I FOUND A NETWORK ERROR', networkError)
+})
+
 // Apollo link chain; acts as middleware for GraphQL queries
-const link = ApolloLink.from([authMiddleware, backendMiddleware])
+const link = ApolloLink.from([
+  authMiddleware,
+  backendMiddleware,
+  errorAfterware
+])
 
 // Config
 export const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)
-  httpEndpoint: () => store.getters['api/url'],
+  httpEndpoint: () => {
+    console.log(store.getters['api/url'])
+    return store.getters['api/url']
+  },
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
   wsEndpoint: null,
@@ -193,9 +208,13 @@ export const createApolloProvider = () => {
         errorPolicy: 'all'
       }
     },
-    async errorHandler(errors, vm, key, type, options) {
-      const { graphQLErrors, networkError } = errors
-
+    async errorHandler(
+      { graphQLErrors, networkError },
+      vm,
+      key,
+      type,
+      options
+    ) {
       if (navigator && !navigator.onLine) {
         this.$apollo.skipAll = true
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
@@ -209,7 +228,6 @@ export const createApolloProvider = () => {
         }
       } else {
         /* eslint-disable no-console */
-        console.log(errors)
         console.log('graphQLErrors', graphQLErrors)
         console.log('networkError', networkError)
         console.log('vm', vm)

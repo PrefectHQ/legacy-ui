@@ -283,7 +283,9 @@ export const routes = [
   {
     name: 'start',
     path: '/start',
-    component: () => import(/* webpackChunkName: "start" */ '@/pages/Start.vue')
+    component: () =>
+      import(/* webpackChunkName: "start" */ '@/pages/Start.vue'),
+    beforeEnter: multiguard([authNavGuard])
   },
   {
     name: 'dashboard',

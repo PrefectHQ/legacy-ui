@@ -23,7 +23,7 @@ export default {
     navBarColor() {
       return this.isTransparent
         ? 'transparent'
-        : this.url.includes('prefect.io')
+        : this.isCloud
         ? 'primary'
         : 'secondary'
     },

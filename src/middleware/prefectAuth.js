@@ -13,10 +13,12 @@ const prefectAuth = async idToken => {
       errorPolicy: 'all'
     })
 
+    console.log('PREFECT AUTH RESULT', result)
+
     if (result?.data?.log_in) {
       await apolloOnLogin(apolloClient)
       return result.data.log_in
-    } else if (result.errors) {
+    } else if (result?.errors) {
       if (
         result.errors[0].message ===
         "We get it, you're reeaally interested. Unfortunately, the timing isn't quite Prefect yet."

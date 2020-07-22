@@ -186,7 +186,6 @@ export default {
         "
       >
         <span v-if="loading === 0">
-          {{ isCloud }}
           {{ projectId && project ? project.name : 'All Projects' }}
         </span>
         <span v-else>

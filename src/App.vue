@@ -57,7 +57,7 @@ export default {
     window.removeEventListener('focus', this.handleVisibilityChange)
   },
   async created() {
-    await this.getApi()
+    await this.getApi('app')
 
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)

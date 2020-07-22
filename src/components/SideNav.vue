@@ -123,11 +123,11 @@ export default {
       this.close()
     },
     open() {
-      this.getApi()
+      this.getApi('sidenav')
     }
   },
   methods: {
-    ...mapActions('api', ['getApi', 'switchBackend']),
+    ...mapActions('api', ['getApi', 'switchBackend', 'backend']),
     ...mapMutations('refresh', ['add']),
     ...mapMutations('sideNav', ['toggle', 'close']),
     ...mapActions('tenant', ['getTenant']),

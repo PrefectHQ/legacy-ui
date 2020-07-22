@@ -97,7 +97,8 @@ const actions = {
     }
   },
   async getTenant({ rootGetters, commit, dispatch }, membershipId) {
-    if (!rootGetters['api/backend']) await dispatch('api/getApi')
+    if (!rootGetters['api/backend'])
+      await dispatch('api/getApi', null, { root: true })
 
     if (rootGetters['api/backend'] == 'SERVER') {
       await dispatch('getTenants')
@@ -195,7 +196,10 @@ const actions = {
     }
   },
   async getServerTenant({ rootGetters, commit, dispatch, getters }, tenantId) {
-    if (!rootGetters['api/backend']) await dispatch('api/getApi')
+    if (!rootGetters['api/backend'])
+      await dispatch('api/getApi', null, {
+        root: true
+      })
 
     const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
 
@@ -212,14 +216,17 @@ const actions = {
       commit('setTenant', {
         ...tenant?.data?.tenant_by_pk
       })
-    } catch (e) {
+    } catch {
       commit('unsetTenant')
-      throw new Error(e)
     }
   },
   async getTenants({ commit }) {
-    const tenants = await prefectTenants()
-    commit('setTenants', tenants)
+    try {
+      const tenants = await prefectTenants()
+      commit('setTenants', tenants)
+    } catch {
+      commit('unsetTenants')
+    }
   }
 }
 
