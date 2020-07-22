@@ -6,6 +6,7 @@ import LogRocket from 'logrocket'
 
 const state = {
   backend: null,
+  connected: true,
   releaseTimestamp: null,
   url: localStorage.getItem('url') || process.env.VUE_APP_SERVER_URL,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
@@ -17,6 +18,9 @@ const state = {
 const getters = {
   backend(state) {
     return state.backend
+  },
+  connected(state) {
+    return state.connected
   },
   isCloud(state) {
     return state.backend == 'CLOUD'
@@ -108,19 +112,23 @@ const actions = {
   async setServerUrl({ commit }, url) {
     commit('setServerUrl', url)
   },
-  async switchBackend({ rootGetters, getters, commit, dispatch }, backend) {
-    if (backend == 'CLOUD') {
-      commit('setUrl', getters['cloudUrl'])
+  async switchBackend({ getters, commit, dispatch }, backend) {
+    try {
+      if (backend == 'CLOUD') {
+        commit('setUrl', getters['cloudUrl'])
 
-      await dispatch('getApi', 'CLOUD')
-      await dispatch('auth0/authenticate', null, { root: true })
-      await dispatch('auth0/authorize', null, { root: true })
-      await dispatch('user/getUser', null, { root: true })
-    } else if (backend == 'SERVER') {
-      commit('setUrl', getters['serverUrl'])
+        await dispatch('getApi', 'CLOUD')
+        await dispatch('auth0/authenticate', null, { root: true })
+        await dispatch('auth0/authorize', null, { root: true })
+        await dispatch('user/getUser', null, { root: true })
+      } else if (backend == 'SERVER') {
+        commit('setUrl', getters['serverUrl'])
 
-      await dispatch('tenant/getTenants', null, { root: true })
-      await dispatch('tenant/getServerTenant', null, { root: true })
+        await dispatch('tenant/getTenants', null, { root: true })
+        await dispatch('tenant/getServerTenant', null, { root: true })
+      }
+    } catch (e) {
+      //
     }
   }
 }

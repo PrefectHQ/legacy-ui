@@ -136,14 +136,14 @@ export default {
     ...mapActions('auth0', ['logout']),
     async _switchBackend() {
       this.loading = true
-      if (this.isServer) {
+      if (!this.isCloud) {
         await this.switchBackend('CLOUD')
       } else {
         await this.switchBackend('SERVER')
       }
 
       Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.cache.reset()
+        client.clearStore()
       )
 
       await this.$router
@@ -182,7 +182,7 @@ export default {
       await this.getLicense()
 
       Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.cache.reset()
+        client.clearStore()
       )
 
       if (tenantProtectedRoutes.includes(this.$route.name)) {
@@ -205,7 +205,7 @@ export default {
       await this.getTenant(tenant.id)
 
       Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.cache.reset()
+        client.clearStore()
       )
       if (tenantProtectedRoutes.includes(this.$route.name)) {
         this.$router.push({
@@ -534,9 +534,9 @@ export default {
                       <div
                         >Switch to
                         <span
-                          :class="`${isServer ? 'primary' : 'secondary'}--text`"
+                          :class="`${!isCloud ? 'primary' : 'secondary'}--text`"
                         >
-                          {{ isServer ? 'Cloud' : 'Server' }}
+                          {{ !isCloud ? 'Cloud' : 'Server' }}
                         </span></div
                       >
                     </div>

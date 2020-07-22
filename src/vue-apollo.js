@@ -157,7 +157,7 @@ export const defaultOptions = {
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
-  link: link
+  link: link,
 
   // Override default cache
   // cache: myCache
@@ -170,6 +170,7 @@ export const defaultOptions = {
 
   // Client local data (see apollo-link-state)
   // clientState: { resolvers: { ... }, defaults: { ... } }
+  queryDeduplication: true
 }
 
 // Create apollo client
@@ -226,10 +227,10 @@ export const createApolloProvider = () => {
 
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-  await apolloClient.cache.reset()
+  await apolloClient.clearStore()
 }
 
 export async function apolloOnLogout(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-  await apolloClient.cache.reset()
+  await apolloClient.clearStore()
 }
