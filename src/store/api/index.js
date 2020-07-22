@@ -10,8 +10,6 @@ const state = {
   version: null
 }
 
-console.log(state.url)
-
 const getters = {
   backend(state) {
     return state.backend
@@ -65,14 +63,11 @@ const mutations = {
 const actions = {
   async getApi({ commit }) {
     const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
-    console.log(apolloClient)
     try {
       const { data } = await apolloClient.query({
         query: require('@/graphql/api.gql'),
         fetchPolicy: 'no-cache'
       })
-
-      console.log(data)
 
       if (data?.api) {
         commit('setBackend', data.api.backend)
