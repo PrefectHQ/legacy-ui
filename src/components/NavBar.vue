@@ -15,7 +15,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isServer', 'isCloud', 'backend']),
+    ...mapGetters('api', ['isServer', 'isCloud', 'backend', 'url']),
     ...mapGetters('sideDrawer', ['disableOpenButton']),
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant']),
@@ -23,7 +23,7 @@ export default {
     navBarColor() {
       return this.isTransparent
         ? 'transparent'
-        : this.isCloud
+        : this.url.includes('prefect.io')
         ? 'primary'
         : 'secondary'
     },
