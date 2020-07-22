@@ -309,6 +309,10 @@ export default {
                     </div>
                   </ol>
                 </v-tab-item>
+
+                <v-tab-item key="agent" class="white">
+                  <span class="font-italic">Coming soon...</span>
+                </v-tab-item>
               </v-tabs-items>
             </div>
           </v-card-text>
