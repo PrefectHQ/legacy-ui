@@ -327,6 +327,10 @@ export default {
               </ExternalLink>
             </div>
 
+            <div class="text-body-1 mt-2">
+              Get the Prefect Core package and start building!
+            </div>
+
             <v-tabs
               v-model="sdkTab"
               background-color="cloudUIPrimaryBlue primary"
