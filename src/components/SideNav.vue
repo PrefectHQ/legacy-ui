@@ -121,9 +121,6 @@ export default {
   watch: {
     $route() {
       this.close()
-    },
-    open() {
-      this.getApi('sidenav')
     }
   },
   methods: {

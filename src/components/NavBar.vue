@@ -7,6 +7,7 @@ export default {
   components: { GlobalSearch },
   data() {
     return {
+      connectionMenu: false,
       loading: false,
       pendingInvitations: [],
       menu: false,
@@ -15,11 +16,23 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isServer', 'isCloud', 'backend', 'url']),
+    ...mapGetters('api', [
+      'isServer',
+      'isCloud',
+      'url',
+      'connected',
+      'connecting',
+      'retries'
+    ]),
     ...mapGetters('sideDrawer', ['disableOpenButton']),
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
+    connectedIcon() {
+      if (this.connected) return 'signal_cellular_4_bar'
+      if (this.connecting) return 'signal_cellular_null'
+      return 'signal_cellular_off'
+    },
     navBarColor() {
       return this.isTransparent
         ? 'transparent'
@@ -87,7 +100,7 @@ export default {
       update: data => data?.message_aggregate?.aggregate?.count,
       fetchPolicy: 'network-only',
       skip() {
-        return !this.backend
+        return !this.connected
       },
       pollInterval: 10000
     },
@@ -112,9 +125,7 @@ export default {
         }
       },
       skip() {
-        return (
-          !this.isCloud || !this.memberships || !this.user || !this.user.email
-        )
+        return !this.connected || this.isServer
       },
       fetchPolicy: 'network-only',
       pollInterval: 10000
@@ -185,6 +196,60 @@ export default {
         v-if="isServer || (tenant.settings.teamNamed && hasLicense)"
       />
 
+      <v-menu
+        v-model="connectionMenu"
+        :close-on-content-click="false"
+        offset-y
+        open-on-hover
+        transition="slide-y-transition"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            class="ml-2 position-relative"
+            text
+            icon
+            large
+            color="white"
+            v-on="on"
+            @focus="connectionMenu = true"
+            @blur="connectionMenu = false"
+          >
+            <v-icon>
+              {{ connectedIcon }}
+            </v-icon>
+            <v-icon
+              v-if="connecting"
+              small
+              color="primary"
+              class="position-absolute"
+              :style="{
+                bottom: '-8px',
+                right: '0'
+              }"
+            >
+              fas fa-spinner fa-pulse
+            </v-icon>
+          </v-btn>
+        </template>
+        <v-card tile class="pa-0" max-width="320">
+          <v-card-text class="pb-0">
+            <p>Retries: {{ retries }}</p>
+            <p>
+              <span v-if="connected">Connected</span>
+              <span v-else-if="connecting">Connecting</span>
+              <span v-else>Couldn't connect</span>
+              to <span class="font-weight-bold">{{ url }}</span>
+            </p>
+          </v-card-text>
+          <v-card-actions class="pt-0">
+            <v-spacer></v-spacer>
+            <v-btn small text @click="connectionMenu = false">
+              Close
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
+
       <v-btn
         v-if="isServer || hasLicense"
         color="white"
@@ -202,7 +267,6 @@ export default {
       </v-btn>
 
       <v-menu
-        v-if="isCloud"
         v-model="menu"
         offset-y
         data-cy="nav-bar-menu"
@@ -210,7 +274,12 @@ export default {
         nudge-bottom="15"
       >
         <template v-slot:activator="{ on }">
-          <v-avatar class="ml-6 cursor-pointer" size="42" v-on="on">
+          <v-avatar
+            v-if="isCloud"
+            class="ml-4 cursor-pointer"
+            size="42"
+            v-on="on"
+          >
             <img :src="auth0User.picture" :alt="auth0User.name" />
           </v-avatar>
         </template>
@@ -259,7 +328,7 @@ export default {
         </v-list>
       </v-menu>
 
-      <h6 v-else class="white--text" style="white-space: pre;">
+      <h6 v-if="isServer" class="white--text ml-4" style="white-space: pre;">
         {{ formatTime(time) }}
       </h6>
     </v-app-bar>

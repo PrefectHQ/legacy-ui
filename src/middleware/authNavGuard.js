@@ -8,21 +8,11 @@ const isAuthorized = () => {
   return store.getters['auth0/isAuthorized']
 }
 
-const getApi = async () => {
-  if (!store.getters['api/backend']) {
-    await store.dispatch('api/getApi', 'authnavguard')
-  }
-  return store.getters['api/backend']
-}
-
 const isServer = () => {
   return store.getters['api/isServer']
 }
 
 const authNavGuard = async (to, from, next) => {
-  await getApi()
-  console.log('after get api')
-
   // If this is a Server deployment,
   // we don't need to worry about Authentication
   if (isServer()) return next()
@@ -40,13 +30,6 @@ const authNavGuard = async (to, from, next) => {
     return next()
   }
 
-  console.log(
-    isAuthenticated(),
-    isAuthorized(),
-    store.getters['user/userIsSet'],
-    'break 1'
-  )
-
   if (!isAuthenticated()) {
     await store.dispatch('auth0/authenticate')
   }
@@ -58,15 +41,12 @@ const authNavGuard = async (to, from, next) => {
     }
   }
 
-  console.log('break 2')
-
   // If the user isn't authenticated or authorized
   // at this point, we abort navigation
   if (!isAuthenticated() || !isAuthorized()) {
     return next(false)
   }
 
-  console.log('break 3')
   if (!store.getters['user/userIsSet']) await store.dispatch('user/getUser')
 
   const redirectRoute = store.getters['auth0/redirectRoute']
@@ -76,8 +56,6 @@ const authNavGuard = async (to, from, next) => {
     if (to.query && to.query.state) delete to.query.state
     return next({ path: redirectRoute, params: to.params, query: to.query })
   }
-
-  console.log('getting everything')
 
   return next()
 }

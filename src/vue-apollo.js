@@ -7,6 +7,8 @@ import {
 import store from '@/store/index'
 import { setContext } from 'apollo-link-context'
 import { ApolloLink } from 'apollo-link'
+// Can return Observable.of returned from error link to supress errors
+// import { ApolloLink, Observable } from 'apollo-link'
 import { onError } from 'apollo-link-error'
 
 import LogRocket from 'logrocket'
@@ -39,6 +41,8 @@ function aboutToExpire(expiry) {
 
 let globalClient = null
 
+let errors = 0
+
 const backendMiddleware = new ApolloLink((operation, forward) => {
   const context = operation.getContext()
   if (context.headers?.['X-Backend'] !== store.getters['api/backend']) {
@@ -46,7 +50,7 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
     return
   }
   return forward(operation).map(response => {
-    console.log('THIS IS A RESPONSE', response)
+    errors = 0
     return response
   })
 })
@@ -67,17 +71,25 @@ const headerMiddleware = setContext((_, { headers }) => {
   }
 })
 
-const errorAfterware = onError(error => {
-  console.log('I FOUND A ERROR', error)
-  if (
-    store.getters['api/isCloud'] &&
-    error?.graphQLErrors?.[0].message === 'Operation timed out'
-  ) {
-    LogRocket.captureException(error, {
-      type: 'Timeout'
-    })
+const errorAfterware = onError(
+  ({ response, operation, graphQLErrors, forward }) => {
+    if (
+      store.getters['api/isCloud'] &&
+      graphQLErrors?.[0].message === 'Operation timed out'
+    ) {
+      LogRocket.captureException(operation, {
+        type: 'Timeout'
+      })
+    } else if (response) {
+      response.errors = null
+    }
+    errors++
+    if (errors > 10) {
+      globalClient.stop()
+    }
+    return forward(operation)
   }
-})
+)
 
 const authMiddleware = setContext(async (_, { headers }) => {
   if (store.getters['api/isServer'] || _.operationName == 'Api') {

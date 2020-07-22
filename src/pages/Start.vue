@@ -1,8 +1,6 @@
 <script>
 import ExternalLink from '@/components/ExternalLink'
 import { mapGetters, mapActions } from 'vuex'
-import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
-import { defaultOptions } from '@/vue-apollo'
 
 const exploreBlocks = [
   {
@@ -46,13 +44,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'url', 'serverUrl'])
+    ...mapGetters('api', ['isCloud', 'url', 'serverUrl', 'connected'])
   },
   mounted() {
     this.serverUrlInput = this.serverUrl
   },
   methods: {
-    ...mapActions('api', ['setServerUrl', 'switchBackend']),
+    ...mapActions('api', ['setServerUrl', 'getApi']),
     ...mapActions('tenant', ['updateTenantSettings']),
     _handleKeyup() {
       this.serverUrlSuccess = false
@@ -65,26 +63,13 @@ export default {
       this.serverUrlLoading = true
 
       try {
-        const apolloClient = createApolloClient({
-          ...defaultOptions,
-          httpEndpoint: () => this.serverUrlInput
-        }).apolloClient
+        console.log(this.serverUrlInput)
+        await this.setServerUrl(this.serverUrlInput)
+        await this.getApi()
 
-        const { data } = await apolloClient.query({
-          query: require('@/graphql/hello.gql'),
-          fetchPolicy: 'no-cache'
-        })
+        console.log(this.serverUrl)
 
-        this.serverUrlSuccess = data.hello
-        this.serverUrlError = !data.hello
-
-        if (this.serverUrlSuccess) {
-          await this.setServerUrl(this.serverUrlInput)
-
-          if (!this.isCloud) {
-            await this.switchBackend('SERVER')
-          }
-        }
+        this.serverUrlSuccess = this.connected
       } catch (e) {
         this.serverUrlError = true
       }

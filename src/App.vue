@@ -25,7 +25,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['backend', 'version', 'url']),
+    ...mapGetters('api', ['backend', 'version', 'url', 'connected']),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', ['tenant']),
@@ -42,6 +42,16 @@ export default {
       setTimeout(() => {
         this.$apollo.skipAll = false
       }, 500)
+    },
+    connected(val) {
+      // Stops vue-related queries by stopping the client entirely
+      // when we're not connected. This does not impact the api store,
+      // which is using a separate client to check api status.
+      if (!val) {
+        this.$apollo.provider.clients.defaultClient.stop()
+      } else {
+        this.$apollo.provider.clients.defaultClient.restore()
+      }
     }
   },
   beforeDestroy() {
@@ -57,7 +67,7 @@ export default {
     window.removeEventListener('focus', this.handleVisibilityChange)
   },
   async created() {
-    await this.getApi('app')
+    this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
@@ -72,7 +82,7 @@ export default {
     window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
-    ...mapActions('api', ['getApi']),
+    ...mapActions('api', ['getApi', 'monitorConnection']),
     // ...mapMutations('sideDrawer', {
     //   clearDrawer: 'clearDrawer',
     //   closeSideDrawer: 'close'

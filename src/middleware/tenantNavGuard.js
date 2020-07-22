@@ -1,12 +1,5 @@
 import store from '@/store/index'
 
-const getApi = async () => {
-  if (!store.getters['api/backend']) {
-    await store.dispatch('api/getApi', 'tenantnavguard')
-  }
-  return store.getters['api/backend']
-}
-
 const isServer = () => {
   return store.getters['api/isServer']
 }
@@ -16,8 +9,6 @@ const isConnected = () => {
 }
 
 const tenantNavGuard = async (to, from, next) => {
-  await getApi()
-  console.log('tenant nav guard')
   if (isServer() && !isConnected()) return next()
 
   const passedTenantSlug = to.params.tenant

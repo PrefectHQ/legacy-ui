@@ -97,9 +97,6 @@ const actions = {
     }
   },
   async getTenant({ rootGetters, commit, dispatch }, membershipId) {
-    if (!rootGetters['api/backend'])
-      await dispatch('api/getApi', null, { root: true })
-
     if (rootGetters['api/backend'] == 'SERVER') {
       await dispatch('getTenants')
       await dispatch('getServerTenant')
@@ -195,12 +192,7 @@ const actions = {
       })
     }
   },
-  async getServerTenant({ rootGetters, commit, dispatch, getters }, tenantId) {
-    if (!rootGetters['api/backend'])
-      await dispatch('api/getApi', null, {
-        root: true
-      })
-
+  async getServerTenant({ commit, getters }, tenantId) {
     const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
 
     try {

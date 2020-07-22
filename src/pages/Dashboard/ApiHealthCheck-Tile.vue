@@ -1,24 +1,22 @@
 <script>
+import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
-const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP
 
 export default {
   components: {
     CardTitle
   },
   data() {
-    return {
-      graphqlUrl: httpEndpoint,
-      connected: false,
-      error: true,
-      loading: 0,
-      maxRetries: 10,
-      retries: 0,
-      skip: false,
-      errorMessage: null
-    }
+    return {}
   },
   computed: {
+    ...mapGetters('api', [
+      'connected',
+      'connecting',
+      'backend',
+      'connectionMessage',
+      'url'
+    ]),
     cardColor() {
       if (this.connected) return 'Success'
       if (this.connecting) return 'grey'
@@ -28,42 +26,6 @@ export default {
       if (this.connected) return 'signal_cellular_4_bar'
       if (this.connecting) return 'signal_cellular_connected_no_internet_4_bar'
       return 'signal_cellular_off'
-    },
-    connecting() {
-      return this.error && this.retries <= this.maxRetries
-    }
-  },
-  apollo: {
-    hello: {
-      query: require('@/graphql/hello.gql'),
-      result(data) {
-        if (data.loading) return
-
-        this.connected = !data?.error && 'hello' in data.data
-        this.error = data?.error
-
-        if (this.error) {
-          this.errorMessage = data.error
-          if (this.retries <= this.maxRetries) {
-            this.retries++
-          } else {
-            this.skip = true
-            setTimeout(() => {
-              this.retries = 0
-              this.skip = false
-            }, 10000)
-          }
-        } else {
-          this.errorMessage = null
-        }
-      },
-      loadingKey: 'loading',
-      pollInterval: 3000,
-      skip() {
-        return this.skip
-      },
-      fetchPolicy: 'network-only',
-      returnPartialData: true
     }
   }
 }
@@ -72,7 +34,7 @@ export default {
 <template>
   <v-card tile class="py-2 position-relative">
     <v-system-bar :height="5" absolute :color="cardColor" />
-    <CardTitle :loading="loading > 0" :icon="cardIcon" :icon-color="cardColor">
+    <CardTitle :loading="connecting" :icon="cardIcon" :icon-color="cardColor">
       <v-row slot="title" no-gutters class="d-flex align-center justify-start">
         <div>API Status</div>
         <a
@@ -86,9 +48,9 @@ export default {
               <v-icon color="grey darken-1" v-on="on">info</v-icon>
             </template>
             <span>
-              <div>This is the most recent error:</div>
+              <div>This is the most recent message:</div>
               <div class="my-4 font-italic font-weight-medium">
-                {{ errorMessage }}
+                {{ connectionMessage }}
               </div>
               <div>
                 Did you set the
@@ -114,7 +76,7 @@ export default {
             :width="2"
             color="primary"
           />
-          <v-icon v-else-if="error" class="Failed--text">
+          <v-icon v-else-if="!connected" class="Failed--text">
             priority_high
           </v-icon>
           <v-icon v-else class="Success--text">
@@ -131,7 +93,7 @@ export default {
             <span v-else>Couldn't connect</span>
           </div>
           <div class="font-weight-medium">
-            {{ graphqlUrl }}
+            {{ url }}
           </div>
         </v-list-item-content>
       </v-list-item>

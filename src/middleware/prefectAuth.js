@@ -13,8 +13,6 @@ const prefectAuth = async idToken => {
       errorPolicy: 'all'
     })
 
-    console.log('PREFECT AUTH RESULT', result)
-
     if (result?.data?.log_in) {
       await apolloOnLogin(apolloClient)
       return result.data.log_in
