@@ -743,7 +743,12 @@ export default {
       <v-row> </v-row>
     </div>
   </v-container>
-  <v-container v-else fluid class="pa-0 editors–container">
+  <v-container
+    v-else
+    fluid
+    class="pa-0 editors–container"
+    style="background: #1d252b;"
+  >
     <v-row no-gutters style="height: 100%;">
       <v-col cols="12">
         <v-row
