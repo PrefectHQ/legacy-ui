@@ -39,17 +39,17 @@ export default {
       exploreBlocks: exploreBlocks,
       gettingStartedTab: this.isCloud ? 'agent' : 'infrastructure',
       sdkTab: 'pip',
-      serverUrl: this.url,
+      serverUrlInput: this.serverUrl,
       serverUrlLoading: false,
       serverUrlError: false,
       serverUrlSuccess: false
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'url'])
+    ...mapGetters('api', ['isCloud', 'url', 'serverUrl'])
   },
   mounted() {
-    this.serverUrl = this.url
+    this.serverUrlInput = this.serverUrl
   },
   methods: {
     ...mapActions('api', ['setServerUrl', 'switchBackend']),
@@ -67,7 +67,7 @@ export default {
       try {
         const apolloClient = createApolloClient({
           ...defaultOptions,
-          httpEndpoint: () => this.serverUrl
+          httpEndpoint: () => this.serverUrlInput
         }).apolloClient
 
         const { data } = await apolloClient.query({
@@ -79,7 +79,7 @@ export default {
         this.serverUrlError = !data.hello
 
         if (this.serverUrlSuccess) {
-          await this.setServerUrl(this.serverUrl)
+          await this.setServerUrl(this.serverUrlInput)
 
           if (!this.isCloud) {
             await this.switchBackend('SERVER')
@@ -235,7 +235,7 @@ export default {
                     >
                       <div>Prefect Server GraphQL endpoint:</div>
                       <v-text-field
-                        v-model="serverUrl"
+                        v-model="serverUrlInput"
                         class="text-h5 mx-2"
                         outlined
                         dense

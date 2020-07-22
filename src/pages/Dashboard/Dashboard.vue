@@ -1,6 +1,7 @@
 <script>
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
+import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
 import ErrorsTile from '@/pages/Dashboard/Errors-Tile'
 import FlowRunHeartbeatTile from '@/pages/Dashboard/FlowRunHeartbeat-Tile'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
@@ -17,6 +18,7 @@ export default {
   components: {
     Agents,
     AgentsTile,
+    ApiHealthCheckTile,
     ErrorsTile,
     FlowRunHeartbeatTile,
     FlowTableTile,
@@ -302,7 +304,6 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            v-if="isCloud"
             slot="row-2-col-2-row-2-tile-2"
             :loading="loadedTiles < 4"
             type="image"
@@ -312,7 +313,8 @@ export default {
             class="my-2"
             tile
           >
-            <AgentsTile @view-details-clicked="tab = 'agents'" />
+            <AgentsTile v-if="isCloud" @view-details-clicked="tab = 'agents'" />
+            <ApiHealthCheckTile v-else slot="row-2-col-2-row-2-tile-2" />
           </v-skeleton-loader>
         </TileLayout>
       </v-tab-item>
