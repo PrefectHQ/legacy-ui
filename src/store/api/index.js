@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { defaultOptions } from '@/vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 import { prefectTenants, prefectUser } from '@/middleware/prefectAuth'
@@ -6,7 +7,10 @@ import LogRocket from 'logrocket'
 const state = {
   backend: null,
   releaseTimestamp: null,
-  url: localStorage.getItem('api_url') || process.env.VUE_APP_GRAPHQL_HTTP,
+  url: localStorage.getItem('url') || process.env.VUE_APP_SERVER_URL,
+  cloudUrl: process.env.VUE_APP_CLOUD_URL,
+  serverUrl:
+    localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
   version: null
 }
 
@@ -22,6 +26,12 @@ const getters = {
   },
   releaseTimestamp(state) {
     return state.releaseTimestamp
+  },
+  cloudUrl(state) {
+    return state.cloudUrl
+  },
+  serverUrl(state) {
+    return state.serverUrl
   },
   url(state) {
     return state.url
@@ -45,11 +55,19 @@ const mutations = {
     state.releaseTimestamp = null
   },
   setUrl(state, url) {
-    localStorage.setItem('api_url', url)
+    localStorage.setItem('url', url)
     state.url = url
   },
   unsetUrl(state) {
-    localStorage.removeItem('api_url')
+    localStorage.removeItem('url')
+    state.url = null
+  },
+  setServerUrl(state, url) {
+    localStorage.setItem('server_url', url)
+    state.url = url
+  },
+  unsetServerUrl(state) {
+    localStorage.removeItem('server_url')
     state.url = null
   },
   setVersion(state, version) {
@@ -87,16 +105,22 @@ const actions = {
       })
     }
   },
-  async switchBackend({ getters, commit, dispatch }, url) {
-    commit('setUrl', url)
+  async setServerUrl({ commit }, url) {
+    commit('setServerUrl', url)
+  },
+  async switchBackend({ getters, commit, dispatch }, backend) {
+    commit('setBackend', backend)
 
-    await dispatch('getApi')
+    if (backend == 'CLOUD') {
+      commit('setUrl', getters['cloudUrl'])
 
-    if (getters['isCloud']) {
+      await dispatch('getApi', 'CLOUD')
       await dispatch('auth0/authenticate', null, { root: true })
       await dispatch('auth0/authorize', null, { root: true })
       await prefectUser()
-    } else {
+    } else if (backend == 'SERVER') {
+      commit('setUrl', getters['serverUrl'])
+
       await prefectTenants()
     }
   }

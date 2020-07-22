@@ -137,9 +137,9 @@ export default {
     async _switchBackend() {
       this.loading = true
       if (this.isServer) {
-        await this.switchBackend('https://api-dev.prefect.io/graphql')
+        await this.switchBackend('CLOUD')
       } else {
-        await this.switchBackend('http://localhost:4200/graphql')
+        await this.switchBackend('SERVER')
       }
 
       await this.$router

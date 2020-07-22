@@ -1,6 +1,6 @@
 <script>
 import ExternalLink from '@/components/ExternalLink'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 import { defaultOptions } from '@/vue-apollo'
 
@@ -39,16 +39,18 @@ export default {
       exploreBlocks: exploreBlocks,
       gettingStartedTab: this.isCloud ? 'agent' : 'infrastructure',
       sdkTab: 'pip',
-      serverUrl: 'http://localhost:4200/graphql',
+      serverUrl: this.url,
       serverUrlLoading: false,
       serverUrlError: false,
       serverUrlSuccess: false
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud'])
+    ...mapGetters('api', ['isCloud', 'url'])
   },
   methods: {
+    ...mapActions('api', ['setServerUrl']),
+    ...mapActions('tenant', ['updateTenantSettings']),
     _handleKeyup() {
       this.serverUrlSuccess = false
       this.serverUrlError = false
@@ -72,6 +74,10 @@ export default {
 
         this.serverUrlSuccess = data.hello
         this.serverUrlError = !data.hello
+
+        if (this.serverUrlSuccess) {
+          await this.setServerUrl(this.serverUrl)
+        }
       } catch (e) {
         this.serverUrlError = true
       }
