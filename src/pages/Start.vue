@@ -39,32 +39,39 @@ export default {
       exploreBlocks: exploreBlocks,
       gettingStartedTab: this.isCloud ? 'agent' : 'infrastructure',
       sdkTab: 'pip',
-      serverUrl: 'http://localhost:4200/graphql'
+      serverUrl: 'http://localhost:4200/graphql',
+      serverUrlLoading: false,
+      serverUrlError: false,
+      serverUrlSuccess: false
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud'])
   },
-  mounted() {
-    console.log(defaultOptions)
-  },
   methods: {
     async _testUrl() {
-      console.log('testing')
-      const apolloClient = createApolloClient({
-        ...defaultOptions,
-        httpEndpoint: () => this.serverUrl
-      }).apolloClient
+      this.serverUrlSuccess = false
+      this.serverUrlError = false
+      this.serverUrlLoading = true
 
-      console.log(apolloClient)
-      // try {
-      const data = await apolloClient.query({
-        query: require('@/graphql/hello.gql')
-      })
-      console.log(data)
-      // } catch (e) {
-      //   console.log(e)
-      // }
+      try {
+        const apolloClient = createApolloClient({
+          ...defaultOptions,
+          httpEndpoint: () => this.serverUrl
+        }).apolloClient
+
+        const { data } = await apolloClient.query({
+          query: require('@/graphql/hello.gql'),
+          fetchPolicy: 'no-cache'
+        })
+        console.log(this.serverUrl, data)
+
+        this.serverUrlSuccess = data.hello
+        this.serverUrlError = !data.hello
+      } catch (e) {
+        this.serverUrlError = true
+      }
+      this.serverUrlLoading = false
     }
   }
 }
@@ -171,50 +178,124 @@ export default {
                     right away (it's free!)
                   </div>
 
-                  <div class="text-h6 mt-6 mb-2">1. Start Prefect Server</div>
-                  <div
-                    class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 code-block"
-                    style="border: 1px solid #b0bec5 !important;"
-                  >
-                    <div class="">
-                      <span class="blue-grey--text text--lighten-1">$</span>
-                      <span class="primary--text font-weight-medium">
-                        prefect</span
-                      >
-                      server start
+                  <ol class="mt-6">
+                    <li class="text-h6">Start Prefect Server</li>
+                    <div class="text-body-1 mt-2">
+                      This command starts up the various containers that make up
+                      Prefect Server. Note that you'll need to have
+                      <ExternalLink href="https://docs.docker.com/get-started/">
+                        Docker
+                      </ExternalLink>
+                      running.
                     </div>
-                  </div>
 
-                  <div class="text-h6 mt-6 mb-2">2. Connect the UI</div>
-                  <div
-                    class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2"
-                  >
-                    <div>Prefect Server GraphQL endpoint:</div>
-                    <v-text-field
-                      v-model="serverUrl"
-                      class="text-h5 mx-2"
-                      outlined
-                      dense
-                      hide-details
-                      placeholder="http://localhost:4200/graphql"
-                      :style="{ 'max-width': '400px' }"
+                    <div
+                      class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 code-block mt-4"
+                      style="border: 1px solid #b0bec5 !important;"
                     >
-                      <template v-slot:append-outer>
-                        <v-btn
-                          color="accentOrange"
-                          class="mt-n1"
-                          dark
-                          small
-                          depressed
-                          @click="_testUrl"
+                      <div class="">
+                        <span class="blue-grey--text text--lighten-1">$</span>
+                        <span class="primary--text font-weight-medium">
+                          prefect</span
                         >
-                          Test
-                        </v-btn>
-                      </template>
-                    </v-text-field>
-                  </div>
+                        server start
+                      </div>
+                    </div>
+                  </ol>
 
-                  <div> </div>
+                  <ol class="mt-12">
+                    <li value="2" class="text-h6">Connect the UI</li>
+                    <div class="text-body-1 mt-2">
+                      The GraphQL endpoint is one of the public URLs exposed by
+                      Prefect Server that allows interaction with the API. By
+                      default it's exposed at <kbd>localhost:4200/graphql</kbd>,
+                      but you can modify this and other settings from your
+                      Server's <kbd>~/.prefect/config.toml</kbd>.
+                    </div>
+
+                    <div
+                      class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2 mt-10"
+                    >
+                      <div>Prefect Server GraphQL endpoint:</div>
+                      <v-text-field
+                        v-model="serverUrl"
+                        class="text-h5 mx-2"
+                        outlined
+                        dense
+                        hide-details
+                        placeholder="http://localhost:4200/graphql"
+                        :style="{ 'max-width': '500px' }"
+                      >
+                        <template v-slot:append>
+                          <v-fade-transition mode="out-in">
+                            <v-icon
+                              v-if="serverUrlSuccess"
+                              key="success"
+                              color="green"
+                            >
+                              check
+                            </v-icon>
+                            <v-icon
+                              v-else-if="serverUrlError"
+                              key="error"
+                              color="error"
+                            >
+                              error
+                            </v-icon>
+                          </v-fade-transition>
+                        </template>
+
+                        <template v-slot:append-outer>
+                          <div class="mt-n1">
+                            <v-btn
+                              color="primary"
+                              dark
+                              small
+                              depressed
+                              :loading="serverUrlLoading"
+                              @click="_testUrl"
+                            >
+                              Connect
+                            </v-btn>
+                          </div>
+                        </template>
+                      </v-text-field>
+                    </div>
+
+                    <v-scroll-y-transition mode="out-in">
+                      <div
+                        v-if="serverUrlSuccess"
+                        key="success"
+                        class="success--text mt-2"
+                      >
+                        Success! You've successfully connected to your Prefect
+                        Server.
+                      </div>
+                      <div
+                        v-else-if="serverUrlError"
+                        key="error"
+                        class="error--text mt-2"
+                      >
+                        Oops! It looks like something went wrong when trying to
+                        connect; make sure Prefect Server is running at the URL
+                        above and try again.
+                      </div>
+                    </v-scroll-y-transition>
+                  </ol>
+
+                  <ol class="mt-12">
+                    <li value="3" class="text-h6 mt-6 mb-2"
+                      >Register an Agent</li
+                    >
+                    <div class="text-body-1">
+                      Next you'll want to register an
+                      <ExternalLink
+                        href="https://docs.prefect.io/orchestration/agents/overview.html"
+                      >
+                        Agent </ExternalLink
+                      >, which is responsible for executing your workflows.
+                    </div>
+                  </ol>
                 </v-tab-item>
               </v-tabs-items>
             </div>

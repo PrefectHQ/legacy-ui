@@ -171,7 +171,7 @@ export default {
 
     <v-card-text class="pa-0">
       <v-data-table
-        class="ma-2"
+        class="ma-2 versions-table."
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :headers="headers"
         :items="versions"
@@ -327,7 +327,7 @@ export default {
 }
 // stylelint-enable
 
-.v-data-table {
+.versions-table.v-data-table {
   font-size: 0.9rem !important;
   overflow: initial !important;
 

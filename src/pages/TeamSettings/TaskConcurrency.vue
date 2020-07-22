@@ -277,7 +277,12 @@ export default {
         this.isFetchingTcls = false
         // TODO: Error handling
       },
-      update: data => data.task_tag_limit
+      update: data => data.task_tag_limit,
+      skip() {
+        // Skip this query if the tenant isn't eligible
+        // or the user doesn't have permission
+        return !this.isEligible || !this.hasManagementPermission
+      }
     }
   }
 }
