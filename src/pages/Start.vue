@@ -49,6 +49,11 @@ export default {
     ...mapGetters('api', ['isCloud'])
   },
   methods: {
+    _handleKeyup() {
+      this.serverUrlSuccess = false
+      this.serverUrlError = false
+      this.serverUrlLoading = false
+    },
     async _testUrl() {
       this.serverUrlSuccess = false
       this.serverUrlError = false
@@ -64,7 +69,6 @@ export default {
           query: require('@/graphql/hello.gql'),
           fetchPolicy: 'no-cache'
         })
-        console.log(this.serverUrl, data)
 
         this.serverUrlSuccess = data.hello
         this.serverUrlError = !data.hello
@@ -225,6 +229,8 @@ export default {
                         hide-details
                         placeholder="http://localhost:4200/graphql"
                         :style="{ 'max-width': '500px' }"
+                        :disabled="serverUrlLoading"
+                        @keyup="_handleKeyup"
                       >
                         <template v-slot:append>
                           <v-fade-transition mode="out-in">
