@@ -115,7 +115,7 @@ const actions = {
       await dispatch('getApi', 'CLOUD')
       await dispatch('auth0/authenticate', null, { root: true })
       await dispatch('auth0/authorize', null, { root: true })
-      await prefectUser()
+      await dispatch('user/getUser', null, { root: true })
     } else if (backend == 'SERVER') {
       commit('setUrl', getters['serverUrl'])
 
