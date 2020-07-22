@@ -112,7 +112,7 @@ const actions = {
   async setServerUrl({ commit }, url) {
     commit('setServerUrl', url)
   },
-  async switchBackend({ getters, commit, dispatch }, backend) {
+  async switchBackend({ rootGetters, getters, commit, dispatch }, backend) {
     try {
       if (backend == 'CLOUD') {
         commit('setUrl', getters['cloudUrl'])
@@ -121,6 +121,13 @@ const actions = {
         await dispatch('auth0/authenticate', null, { root: true })
         await dispatch('auth0/authorize', null, { root: true })
         await dispatch('user/getUser', null, { root: true })
+        await dispatch(
+          'tenant/getTenant',
+          rootGetters['user/defaultMembershipId'],
+          {
+            root: true
+          }
+        )
       } else if (backend == 'SERVER') {
         commit('setUrl', getters['serverUrl'])
 
@@ -128,7 +135,7 @@ const actions = {
         await dispatch('tenant/getServerTenant', null, { root: true })
       }
     } catch (e) {
-      //
+      commit('tenant/unsetTenant', null, { root: true })
     }
   }
 }

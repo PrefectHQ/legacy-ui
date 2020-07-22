@@ -186,6 +186,7 @@ export default {
         "
       >
         <span v-if="loading === 0">
+          {{ isCloud }}
           {{ projectId && project ? project.name : 'All Projects' }}
         </span>
         <span v-else>
@@ -314,7 +315,7 @@ export default {
             tile
           >
             <AgentsTile v-if="isCloud" @view-details-clicked="tab = 'agents'" />
-            <ApiHealthCheckTile v-else slot="row-2-col-2-row-2-tile-2" />
+            <ApiHealthCheckTile v-else />
           </v-skeleton-loader>
         </TileLayout>
       </v-tab-item>

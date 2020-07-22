@@ -211,9 +211,12 @@ export default {
                       style="border: 1px solid #b0bec5 !important;"
                     >
                       <div class="">
-                        <span class="blue-grey--text text--lighten-1">$</span>
-                        <span class="primary--text font-weight-medium">
-                          prefect</span
+                        <span
+                          class="blue-grey--text text--lighten-1 user-select-none"
+                          >$
+                        </span>
+                        <span class="primary--text font-weight-medium"
+                          >prefect</span
                         >
                         server start
                       </div>
@@ -377,7 +380,10 @@ export default {
               <v-tabs-items v-model="sdkTab">
                 <v-tab-item key="pip">
                   <div class="">
-                    <span class="blue-grey--text text--lighten-1">$</span> pip
+                    <span
+                      class="blue-grey--text text--lighten-1 user-select-none"
+                      >$ </span
+                    >pip
                     <span class="primary--text font-weight-medium"
                       >install</span
                     >
@@ -387,7 +393,10 @@ export default {
 
                 <v-tab-item key="conda">
                   <div class="">
-                    <span class="blue-grey--text text--lighten-1">$</span> conda
+                    <span
+                      class="blue-grey--text text--lighten-1 user-select-none"
+                      >$ </span
+                    >conda
                     <span class="primary--text font-weight-medium"
                       >install</span
                     >
@@ -397,8 +406,10 @@ export default {
 
                 <v-tab-item key="pipenv">
                   <div class="">
-                    <span class="blue-grey--text text--lighten-1">$</span>
-                    pipenv
+                    <span
+                      class="blue-grey--text text--lighten-1 user-select-none"
+                      >$ </span
+                    >pipenv
                     <span class="primary--text font-weight-medium"
                       >install</span
                     >

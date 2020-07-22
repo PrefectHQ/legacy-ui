@@ -100,7 +100,8 @@ const actions = {
     if (!rootGetters['api/backend']) await dispatch('api/getApi')
 
     if (rootGetters['api/backend'] == 'SERVER') {
-      await dispatch('setTenant')
+      await dispatch('getTenants')
+      await dispatch('getServerTenant')
       return
     }
 
@@ -206,10 +207,13 @@ const actions = {
         }
       })
 
+      console.log(tenant)
+
       commit('setTenant', {
         ...tenant?.data?.tenant_by_pk
       })
     } catch (e) {
+      commit('unsetTenant')
       throw new Error(e)
     }
   },

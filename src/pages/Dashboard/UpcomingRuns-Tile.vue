@@ -59,16 +59,14 @@ export default {
         title =
           this.loading > 0
             ? 'Upcoming Runs'
-            : `${
-                this.upcomingRuns ? this.upcomingRuns.length : 0
-              } Upcoming Runs`
+            : `${this.upcomingRuns?.length || 0} Upcoming Runs`
       }
 
       if (this.tab == 'late') {
         title =
           this.loading > 0 || this.isClearingLateRuns
             ? 'Late Runs'
-            : `${this.lateRuns.length} Late Runs`
+            : `${this.lateRuns?.length || 0} Late Runs`
       }
 
       return title
@@ -91,7 +89,7 @@ export default {
         ? 'grey'
         : this.tab == 'upcoming'
         ? 'primary'
-        : this.lateRuns && this.lateRuns.length > 0
+        : this.lateRuns?.length > 0
         ? 'deepRed'
         : 'Success'
     }
@@ -99,7 +97,7 @@ export default {
   watch: {
     upcoming(val) {
       if (!val) return
-      if (this.lateRuns.length > 0) {
+      if (this.lateRuns?.length > 0) {
         this.tab = 'late'
       }
     },
