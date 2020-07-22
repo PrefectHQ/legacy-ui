@@ -51,7 +51,7 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
   })
 })
 
-const authMiddleware = setContext(async (_, { headers }) => {
+const headerMiddleware = setContext((_, { headers }) => {
   if (_.query && _.query.source && _.query.source == 'InteractiveAPI') {
     headers['X-Prefect-Interactive-API'] = true
   } else {
@@ -60,7 +60,27 @@ const authMiddleware = setContext(async (_, { headers }) => {
 
   headers['X-Backend'] = store.getters['api/backend']
 
-  if (store.getters['api/backend'] === 'SERVER' || _.operationName == 'Api') {
+  return {
+    headers: {
+      ...headers
+    }
+  }
+})
+
+const errorAfterware = onError(error => {
+  console.log('I FOUND A ERROR', error)
+  if (
+    store.getters['api/isCloud'] &&
+    error?.graphQLErrors?.[0].message === 'Operation timed out'
+  ) {
+    LogRocket.captureException(error, {
+      type: 'Timeout'
+    })
+  }
+})
+
+const authMiddleware = setContext(async (_, { headers }) => {
+  if (store.getters['api/isServer'] || _.operationName == 'Api') {
     return {
       headers: {
         ...headers
@@ -137,13 +157,10 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 })
 
-const errorAfterware = onError(({ networkError }) => {
-  console.log('I FOUND A NETWORK ERROR', networkError)
-})
-
 // Apollo link chain; acts as middleware for GraphQL queries
 const link = ApolloLink.from([
   authMiddleware,
+  headerMiddleware,
   backendMiddleware,
   errorAfterware
 ])
@@ -151,10 +168,7 @@ const link = ApolloLink.from([
 // Config
 export const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)
-  httpEndpoint: () => {
-    console.log(store.getters['api/url'])
-    return store.getters['api/url']
-  },
+  httpEndpoint: () => store.getters['api/url'],
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
   wsEndpoint: null,
