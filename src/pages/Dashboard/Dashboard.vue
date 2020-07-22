@@ -191,7 +191,15 @@ export default {
         </span>
       </span>
       <span slot="page-actions">
-        <ProjectSelector @project-select="handleProjectSelect" />
+        <v-skeleton-loader
+          slot="row-0"
+          :loading="loadedTiles < 1"
+          type="text"
+          transition="fade"
+          tile
+        >
+          <ProjectSelector @project-select="handleProjectSelect" />
+        </v-skeleton-loader>
       </span>
     </SubPageNav>
 

@@ -37,7 +37,7 @@ export default {
     }
   },
   watch: {
-    url() {
+    backend() {
       this.$apollo.skipAll = true
       setTimeout(() => {
         this.$apollo.skipAll = false
@@ -116,13 +116,7 @@ export default {
 </script>
 
 <template>
-  <v-app
-    v-if="
-      (isCloud && isAuthenticated && wholeAppShown) ||
-        (!isCloud && wholeAppShown)
-    "
-    class="app"
-  >
+  <v-app v-if="wholeAppShown" class="app">
     <v-main>
       <NavBar />
       <SideNav />
