@@ -4,6 +4,8 @@ import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 import { prefectTenants, prefectUser } from '@/middleware/prefectAuth'
 import LogRocket from 'logrocket'
 
+console.log(localStorage.getItem('url'))
+
 const state = {
   backend: null,
   releaseTimestamp: null,
@@ -109,8 +111,6 @@ const actions = {
     commit('setServerUrl', url)
   },
   async switchBackend({ getters, commit, dispatch }, backend) {
-    commit('setBackend', backend)
-
     if (backend == 'CLOUD') {
       commit('setUrl', getters['cloudUrl'])
 

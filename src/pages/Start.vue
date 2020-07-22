@@ -48,8 +48,11 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud', 'url'])
   },
+  mounted() {
+    this.serverUrl = this.url
+  },
   methods: {
-    ...mapActions('api', ['setServerUrl']),
+    ...mapActions('api', ['setServerUrl', 'switchBackend']),
     ...mapActions('tenant', ['updateTenantSettings']),
     _handleKeyup() {
       this.serverUrlSuccess = false
@@ -77,6 +80,10 @@ export default {
 
         if (this.serverUrlSuccess) {
           await this.setServerUrl(this.serverUrl)
+
+          if (!this.isCloud) {
+            await this.switchBackend('SERVER')
+          }
         }
       } catch (e) {
         this.serverUrlError = true
@@ -233,7 +240,9 @@ export default {
                         outlined
                         dense
                         hide-details
-                        placeholder="http://localhost:4200/graphql"
+                        :placeholder="
+                          serverUrl || 'http://localhost:4200/graphql'
+                        "
                         :style="{ 'max-width': '500px' }"
                         :disabled="serverUrlLoading"
                         @keyup="_handleKeyup"
