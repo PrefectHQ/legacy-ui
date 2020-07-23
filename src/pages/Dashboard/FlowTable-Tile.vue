@@ -9,11 +9,12 @@ import moment from 'moment'
 import TimelineTooltip from '@/components/TimelineTooltip'
 
 const serverHeaders = [
-  {
-    text: 'Archived',
-    value: 'archived',
-    width: 5
-  },
+  // Can add this with icons later
+  // {
+  //   text: 'Archived',
+  //   value: 'archived',
+  //   width: 5
+  // },
   {
     text: 'Name',
     value: 'name',
