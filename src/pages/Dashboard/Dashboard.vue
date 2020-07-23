@@ -202,7 +202,7 @@ export default {
       <span slot="page-actions">
         <v-skeleton-loader
           slot="row-0"
-          :loading="loadedTiles < 1"
+          :loading="loadedTiles < 4"
           type="text"
           transition="fade"
           tile
