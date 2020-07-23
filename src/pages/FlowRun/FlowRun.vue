@@ -34,6 +34,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('api', ['isCloud']),
     flowRunId() {
       return this.$route.params.id
     },
@@ -77,7 +78,9 @@ export default {
   },
   apollo: {
     flowRun: {
-      query: require('@/graphql/FlowRun/flow-run.gql'),
+      query() {
+        return require('@/graphql/FlowRun/flow-run.js').default(this.isCloud)
+      },
       variables() {
         return {
           id: this.flowRunId

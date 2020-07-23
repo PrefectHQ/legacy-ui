@@ -1,9 +1,8 @@
 <script>
 import { STATE_COLORS, STATE_TYPES } from '@/utils/states'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 import moment from 'moment-timezone'
-import { mapGetters } from 'vuex'
 import FullPagination from '@/components/FullPagination'
 
 export default {
@@ -29,6 +28,7 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
+    ...mapGetters('api', ['isCloud']),
     tableSearchFormatted() {
       if (!this.tableSearchInput) return null
       return `%${this.tableSearchInput}%`
@@ -184,7 +184,9 @@ export default {
   },
   apollo: {
     flowRun: {
-      query: require('@/graphql/FlowRun/flow-run.gql'),
+      query() {
+        return require('@/graphql/FlowRun/flow-run.js').default(this.isCloud)
+      },
       variables() {
         let taskRunStates
         if (this.selectedActivityStateFilter.length) {
