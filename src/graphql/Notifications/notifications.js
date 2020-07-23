@@ -1,4 +1,9 @@
-query Notifications(
+import gql from 'graphql-tag'
+
+export default function(isCloud) {
+  return gql`
+
+  query Notifications(
   $limit: Int
   $offset: Int
   $orderBy: [message_order_by!]
@@ -19,9 +24,23 @@ query Notifications(
     text
     type
     updated
+
+    ${
+      isCloud
+        ? `
+        user {
+          username
+        }
+      `
+        : ''
+    }
+    
     user {
       username
     }
     user_id
   }
+}
+   
+  `
 }
