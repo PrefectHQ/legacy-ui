@@ -31,14 +31,12 @@ export default function(isCloud) {
         user {
           username
         }
+
+        user_id
       `
         : ''
     }
-    
-    user {
-      username
-    }
-    user_id
+
   }
 }
    
