@@ -154,7 +154,10 @@ export default {
       <template v-slot:activator="{ on }">
         <div v-on="on">
           <v-btn
-            v-if="tenant.prefectAdminSettings.deleteFlow"
+            v-if="
+              tenant.prefectAdminSettings &&
+                tenant.prefectAdminSettings.deleteFlow
+            "
             class="vertical-button py-1"
             text
             tile
