@@ -105,7 +105,7 @@ export default {
           orderBy
         }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => {
         return data && data.flow_run ? data.flow_run[0] : null
       }
@@ -118,7 +118,7 @@ export default {
           name: this.searchFormatted
         }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => {
         return data && data.task_run_aggregate
           ? data.task_run_aggregate.aggregate.count

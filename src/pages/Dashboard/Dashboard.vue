@@ -1,6 +1,7 @@
 <script>
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
+import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
 import ErrorsTile from '@/pages/Dashboard/Errors-Tile'
 import FlowRunHeartbeatTile from '@/pages/Dashboard/FlowRunHeartbeat-Tile'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
@@ -17,6 +18,7 @@ export default {
   components: {
     Agents,
     AgentsTile,
+    ApiHealthCheckTile,
     ErrorsTile,
     FlowRunHeartbeatTile,
     FlowTableTile,
@@ -30,6 +32,7 @@ export default {
   },
   data() {
     return {
+      key: 0,
       loading: 0,
       loadedTiles: 0,
       numberOfTiles: 7,
@@ -63,6 +66,7 @@ export default {
   },
   computed: {
     ...mapGetters('alert', ['getAlert']),
+    ...mapGetters('api', ['backend', 'isCloud']),
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     }
@@ -89,6 +93,30 @@ export default {
       if (Object.keys(val.query).length === 0 && this.tab !== 'overview') {
         this.tab = 'overview'
       }
+    },
+    backend() {
+      let start
+      this.loadedTiles = 0
+      this.key++
+
+      const animationDuration = 250
+
+      const loadTiles = time => {
+        if (!start) start = time
+
+        const elapsed = time - start
+
+        if (elapsed > this.loadedTiles * animationDuration + 500) {
+          this.loadedTiles++
+        }
+
+        if (this.loadedTiles <= this.numberOfTiles) {
+          // eslint-disable-next-line
+          requestAnimationFrame(loadTiles)
+        }
+      }
+
+      requestAnimationFrame(loadTiles)
     }
   },
   mounted() {
@@ -165,7 +193,15 @@ export default {
         </span>
       </span>
       <span slot="page-actions">
-        <ProjectSelector @project-select="handleProjectSelect" />
+        <v-skeleton-loader
+          slot="row-0"
+          :loading="loadedTiles < 1"
+          type="text"
+          transition="fade"
+          tile
+        >
+          <ProjectSelector @project-select="handleProjectSelect" />
+        </v-skeleton-loader>
       </span>
     </SubPageNav>
 
@@ -239,7 +275,7 @@ export default {
             class="my-2"
             tile
           >
-            <UpcomingRunsTile :project-id="projectId" full-height />
+            <UpcomingRunsTile :key="key" :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
@@ -277,7 +313,8 @@ export default {
             class="my-2"
             tile
           >
-            <AgentsTile @view-details-clicked="tab = 'agents'" />
+            <AgentsTile v-if="isCloud" @view-details-clicked="tab = 'agents'" />
+            <ApiHealthCheckTile v-else />
           </v-skeleton-loader>
         </TileLayout>
       </v-tab-item>
@@ -286,7 +323,7 @@ export default {
         <FlowTableTile class="mx-3 my-6" :project-id="projectId" />
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="agents">
+      <v-tab-item v-if="isCloud" class="tab-full-height" value="agents">
         <Agents class="mx-3 my-6" />
       </v-tab-item>
 

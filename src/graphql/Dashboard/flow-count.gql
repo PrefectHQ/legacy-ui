@@ -1,12 +1,11 @@
 query FlowCount(
   $projectId: uuid
   $archived: Boolean
-  $searchParams: [flow_bool_exp!]
+  $searchParams: [flow_group_bool_exp!]
 ) {
-  flowCount: flow_aggregate(
+  flowCount: flow_group_aggregate(
     where: {
-      project_id: { _eq: $projectId }
-      archived: { _eq: $archived }
+      flows: { project_id: { _eq: $projectId }, archived: { _eq: $archived } }
       _or: $searchParams
     }
   ) {

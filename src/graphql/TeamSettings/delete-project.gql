@@ -1,4 +1,4 @@
-mutation DeleteProject($projectId: UUID!) {
+mutation DeleteProject($projectId: uuid!) {
   delete_project(input: { project_id: $projectId }) {
     success
   }

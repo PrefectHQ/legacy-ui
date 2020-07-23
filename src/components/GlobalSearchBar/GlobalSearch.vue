@@ -243,14 +243,28 @@ export default {
     class="d-flex align-center justify-end global-search-container"
     :class="{ 'justify-center': active }"
   >
-    <v-icon
+    <!-- <v-icon
       color="white"
-      class="global-search-activator"
+      class="global-search-activator cursor-pointer"
       :class="{ 'mr-2': active, active: active }"
       @click.native="_activate"
     >
       search
-    </v-icon>
+    </v-icon> -->
+
+    <v-btn
+      class="global-search-activator cursor-pointer"
+      :class="{ active: active }"
+      text
+      icon
+      large
+      color="white"
+      @click.native="_activate"
+    >
+      <v-icon>
+        search
+      </v-icon>
+    </v-btn>
 
     <div class="global-search" :class="{ active: active }">
       <v-autocomplete

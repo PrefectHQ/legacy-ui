@@ -40,7 +40,8 @@ export default {
       advancedTypes: ['cron', 'interval'],
       cronModel: this.cron,
       intervalModel: this.interval,
-      simpleModel: '0 * * * *'
+      simpleModel: '0 * * * *',
+      valid: true
     }
   },
   computed: {
@@ -119,6 +120,7 @@ export default {
               v-if="advancedType == 'cron'"
               key="Cron"
               v-model="cronModel"
+              :valid.sync="valid"
               class="mt-4"
             />
             <IntervalForm
@@ -135,16 +137,18 @@ export default {
       </v-fade-transition>
     </v-card-text>
 
-    <!-- <div>
-      Run flow every 
-      <v-input type="step" />
-    </div> -->
     <div class="mt-auto text-right w-100">
       <v-btn depressed class="mx-1" @click.stop="cancel">
         Cancel
       </v-btn>
 
-      <v-btn depressed class="mx-1" color="primary" @click.stop="confirm">
+      <v-btn
+        depressed
+        class="mx-1"
+        color="primary"
+        :disabled="!valid"
+        @click.stop="confirm"
+      >
         Create
       </v-btn>
     </div>

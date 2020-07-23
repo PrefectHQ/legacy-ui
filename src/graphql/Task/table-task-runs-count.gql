@@ -1,7 +1,4 @@
-query TableFlowRuns(
-  $taskId: uuid
-  $heartbeat: timestamptz
-) {
+query TableFlowRuns($taskId: uuid, $heartbeat: timestamptz) {
   task_run_aggregate(
     where: {
       task_id: { _eq: $taskId }

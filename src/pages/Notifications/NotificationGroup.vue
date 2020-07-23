@@ -83,6 +83,7 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
+    ...mapGetters('api', ['isCloud']),
     _allSelected() {
       let selectedIds = this.selected.map(s => s.sid)
       return this.notifications?.every(n => selectedIds.includes(n.id))
@@ -220,7 +221,11 @@ export default {
   },
   apollo: {
     notifications: {
-      query: require('@/graphql/Notifications/notifications.gql'),
+      query() {
+        return require('@/graphql/Notifications/notifications.js').default(
+          this.isCloud
+        )
+      },
       variables() {
         return {
           limit: this.limit,

@@ -4,16 +4,19 @@ import {
   createApolloClient,
   restartWebsockets
 } from 'vue-cli-plugin-apollo/graphql-client'
-import store from './store/index'
+import store from '@/store/index'
 import { setContext } from 'apollo-link-context'
+import { ApolloLink } from 'apollo-link'
+// Can return Observable.of returned from error link to supress errors
+// import { ApolloLink, Observable } from 'apollo-link'
+import { onError } from 'apollo-link-error'
+
 import LogRocket from 'logrocket'
 // Install the vue plugin
 Vue.use(VueApollo)
 
-// Http endpoint
-const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP
-// WS endpoint
-// const wsEndpoint = process.env.VUE_APP_GRAPHQL_WS
+// Name of the localStorage item
+const AUTH_TOKEN = 'authorization_token'
 
 // FIXME This is a hack, we'll have a better way to do this when we implement subscriptions
 function checkIfOnlineUntilWeAre() {
@@ -36,11 +39,65 @@ function aboutToExpire(expiry) {
   return notExpired(expiry) && new Date().getTime() + 300000 >= expiry
 }
 
-const authMiddleware = setContext(async (_, { headers }) => {
+let globalClient = null
+
+let errors = 0
+
+const backendMiddleware = new ApolloLink((operation, forward) => {
+  const context = operation.getContext()
+  if (context.headers?.['X-Backend'] !== store.getters['api/backend']) {
+    globalClient.cache.reset()
+    return
+  }
+  return forward(operation).map(response => {
+    errors = 0
+    return response
+  })
+})
+
+const headerMiddleware = setContext((_, { headers }) => {
   if (_.query && _.query.source && _.query.source == 'InteractiveAPI') {
     headers['X-Prefect-Interactive-API'] = true
   } else {
     headers['X-Prefect-UI'] = true
+  }
+
+  headers['X-Backend'] = store.getters['api/backend']
+
+  return {
+    headers: {
+      ...headers
+    }
+  }
+})
+
+const errorAfterware = onError(
+  ({ response, operation, graphQLErrors, forward }) => {
+    if (
+      store.getters['api/isCloud'] &&
+      graphQLErrors?.[0].message === 'Operation timed out'
+    ) {
+      LogRocket.captureException(operation, {
+        type: 'Timeout'
+      })
+    } else if (response) {
+      response.errors = null
+    }
+    errors++
+    if (errors > 10) {
+      globalClient.stop()
+    }
+    return forward(operation)
+  }
+)
+
+const authMiddleware = setContext(async (_, { headers }) => {
+  if (store.getters['api/isServer'] || _.operationName == 'Api') {
+    return {
+      headers: {
+        ...headers
+      }
+    }
   }
 
   const authRefreshRequired =
@@ -61,6 +118,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
     store.getters['auth0/isLoggingInUser']
 
   if (
+    store.getters['api/backend'] !== 'SERVER' &&
     (!store.getters['auth0/idToken'] || !isAuthenticatedUser) &&
     !store.getters['isRefreshingAuthentication']
   ) {
@@ -83,7 +141,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 
   // The login route requires that no authorization header be sent
-  if (_.operationName == 'login') {
+  if (_.operationName == 'LogIn') {
     return {
       headers: {
         ...headers
@@ -92,6 +150,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 
   if (authRefreshRequired && !middleOfRefresh) {
+    globalClient.cache.reset()
     if (validRefreshToken) {
       await store.dispatch('auth0/refreshAuthorization')
     } else if (isAuthenticatedUser) {
@@ -110,16 +169,24 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 })
 
+// Apollo link chain; acts as middleware for GraphQL queries
+const link = ApolloLink.from([
+  authMiddleware,
+  headerMiddleware,
+  backendMiddleware,
+  errorAfterware
+])
+
 // Config
 export const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)
-  httpEndpoint,
+  httpEndpoint: () => store.getters['api/url'],
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
   wsEndpoint: null,
   //'ws://localhost:4300',
   // LocalStorage token
-  // tokenName: AUTH_TOKEN,
+  tokenName: AUTH_TOKEN,
   // Enable Automatic Query persisting with Apollo Engine
   persisting: false,
   // Use websockets for everything (no HTTP)
@@ -131,7 +198,7 @@ export const defaultOptions = {
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
-  link: authMiddleware
+  link: link,
 
   // Override default cache
   // cache: myCache
@@ -144,6 +211,7 @@ export const defaultOptions = {
 
   // Client local data (see apollo-link-state)
   // clientState: { resolvers: { ... }, defaults: { ... } }
+  queryDeduplication: true
 }
 
 // Create apollo client
@@ -151,6 +219,7 @@ export const createApolloProvider = () => {
   const { apolloClient, wsClient } = createApolloClient({
     ...defaultOptions
   })
+  globalClient = apolloClient
   apolloClient.wsClient = wsClient
 
   // Create vue apollo provider
@@ -158,8 +227,8 @@ export const createApolloProvider = () => {
     defaultClient: apolloClient,
     defaultOptions: {
       $query: {
-        // fetchPolicy: 'cache-and-network',
-        errorPolicy: 'all'
+        errorPolicy: 'all',
+        fetchPolicy: 'cache-and-network'
       },
       $subscription: {
         errorPolicy: 'all'
@@ -175,10 +244,9 @@ export const createApolloProvider = () => {
       if (navigator && !navigator.onLine) {
         this.$apollo.skipAll = true
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
-      } else if (graphQLErrors.length || networkError) {
+      } else if (graphQLErrors?.length || networkError) {
         if (
-          graphQLErrors.length &&
-          graphQLErrors[0].message == 'TokenExpiredError: jwt expired' &&
+          graphQLErrors?.[0]?.message == 'TokenExpiredError: jwt expired' &&
           !store.getters['auth0/isRefreshingAuthorization']
         ) {
           await store.dispatch('auth0/refreshAuthorization')
@@ -203,10 +271,10 @@ export const createApolloProvider = () => {
 
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-  await apolloClient.cache.reset()
+  await apolloClient.clearStore()
 }
 
 export async function apolloOnLogout(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-  await apolloClient.cache.reset()
+  await apolloClient.clearStore()
 }

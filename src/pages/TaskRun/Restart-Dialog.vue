@@ -135,7 +135,7 @@ export default {
           timestamp: this.heartbeat
         }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.task_run_by_pk
     },
     utilityDownstreamTasks: {
@@ -146,7 +146,7 @@ export default {
           flowRunId: this.flowRunId
         }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.utility_downstream_tasks
     }
   }

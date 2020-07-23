@@ -1,8 +1,7 @@
 <script>
-const regex = /([0-9]{1,2}:?[0-9]{0,2})|(?:am|pm|days|day|years|year|weeks|week|hours|hour|minutes|minute|seconds|second|monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december)/gim
-
 /* eslint-disable vue/no-v-html */
 import { intervalToEnglish } from '@/utils/dateTime'
+import { PARSED_SCHEDULE_REGEX } from '@/utils/regEx'
 
 export default {
   props: {
@@ -18,7 +17,7 @@ export default {
   },
   methods: {
     generateHighlightedText(string) {
-      return string.replace(regex, match => {
+      return string.replace(PARSED_SCHEDULE_REGEX, match => {
         return `<span class="primary--text">${match}</span>`
       })
     }

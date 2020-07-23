@@ -1,5 +1,5 @@
-query ($projectId: uuid, $heartbeat:timestamptz) {
-  flow  (where: { project_id: { _eq: $projectId }}) {
+query($projectId: uuid, $heartbeat: timestamptz) {
+  flow(where: { project_id: { _eq: $projectId } }) {
     id
     name
     archived
@@ -11,17 +11,17 @@ query ($projectId: uuid, $heartbeat:timestamptz) {
     #       }
     #     }
     # }
-    failed_count: flow_runs_aggregate(where: {state: {_eq: "Failed"}, updated: {_gte: $heartbeat}}) {
-      aggregate{
+    failed_count: flow_runs_aggregate(
+      where: { state: { _eq: "Failed" }, updated: { _gte: $heartbeat } }
+    ) {
+      aggregate {
         count
       }
     }
-    runs_count: flow_runs_aggregate(where:{ updated: {_gte: $heartbeat}}) {
-      aggregate{
+    runs_count: flow_runs_aggregate(where: { updated: { _gte: $heartbeat } }) {
+      aggregate {
         count
       }
     }
   }
 }
-
-

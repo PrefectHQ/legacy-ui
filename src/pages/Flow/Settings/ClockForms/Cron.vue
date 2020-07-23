@@ -2,6 +2,15 @@
 import CronClock from '@/components/Functional/CronClock'
 import ExternalLink from '@/components/ExternalLink'
 
+/* eslint-disable no-unused-vars */
+import {
+  CRON_MINUTE_REGEX as minute,
+  CRON_HOUR_REGEX as hour,
+  CRON_DAY_MONTH_REGEX as dayMonth,
+  CRON_MONTH_REGEX as month,
+  CRON_DAY_WEEK_REGEX as dayWeek
+} from '@/utils/regEx'
+
 const inputs = ['minute', 'hour', 'dayMonth', 'month', 'dayWeek']
 
 export default {
@@ -17,54 +26,84 @@ export default {
   },
   data() {
     return {
-      inputs: {
-        minute: null,
-        hour: null,
-        dayMonth: null,
-        month: null,
-        dayWeek: null
-      },
-      lastPosition: null
+      lastPosition: null,
+
+      // Inputs (in order)
+      minute: '*',
+      hour: '*',
+      dayMonth: '*',
+      month: '*',
+      dayWeek: '*'
     }
   },
   computed: {
     inputsTotal() {
-      return `${this.inputs.minute || '*'} ${this.inputs.hour || '*'} ${this
-        .inputs.dayMonth || '*'} ${this.inputs.month || '*'} ${this.inputs
-        .dayWeek || '*'}`
+      return `${this.minute} ${this.hour} ${this.dayMonth} ${this.month} ${this.dayWeek}`
+    },
+    valid() {
+      return (
+        this.minuteValid &&
+        this.hourValid &&
+        this.dayMonthValid &&
+        this.monthValid &&
+        this.dayWeekValid
+      )
+    },
+
+    // Input validity (in order)
+    minuteValid() {
+      return minute.test(this.minute)
+    },
+    hourValid() {
+      return hour.test(this.hour)
+    },
+    dayMonthValid() {
+      return dayMonth.test(this.dayMonth)
+    },
+    monthValid() {
+      return month.test(this.month)
+    },
+    dayWeekValid() {
+      return dayWeek.test(this.dayWeek)
     }
   },
   watch: {
     inputsTotal(val) {
       this.$emit('input', val)
     },
+    valid(val) {
+      this.$emit('update:valid', val)
+    },
     value(val) {
       const split = val?.split(' ')
       if (split?.length > 1) {
-        this.inputs.minute = split[0]
-        this.inputs.hour = split[1]
-        this.inputs.dayMonth = split[2]
-        this.inputs.month = split[3]
-        this.inputs.dayWeek = split[4]
+        this.minute = split[0]
+        this.hour = split[1]
+        this.dayMonth = split[2]
+        this.month = split[3]
+        this.dayWeek = split[4]
       }
     }
   },
   mounted() {
     const split = this.value?.split(' ')
     if (split?.length > 1) {
-      this.inputs.minute = split[0]
-      this.inputs.hour = split[1]
-      this.inputs.dayMonth = split[2]
-      this.inputs.month = split[3]
-      this.inputs.dayWeek = split[4]
+      this.minute = split[0]
+      this.hour = split[1]
+      this.dayMonth = split[2]
+      this.month = split[3]
+      this.dayWeek = split[4]
     }
+  },
+  beforeDestroy() {
+    this.$emit('update:valid', true)
   },
   methods: {
     _handleClick(e) {
       this.lastPosition = e.target.selectionStart
     },
     _handleKeypress(e) {
-      const regex = /[0-9]|[a-zA-z]|[-]|[/]|[*]/gim
+      const regex = /[0-9]|[a-zA-z]|[-]|[/]|[,]|[*]/i
       !regex.test(e.key) && e.preventDefault()
     },
     _handleKeyup(e, source) {
@@ -103,11 +142,11 @@ export default {
     _handlePaste(e) {
       const paste = e.clipboardData.getData('text')?.split(' ')
       if (paste?.length > 1) {
-        this.inputs.minute = paste[0]
-        this.inputs.hour = paste[1]
-        this.inputs.dayMonth = paste[2]
-        this.inputs.month = paste[3]
-        this.inputs.dayWeek = paste[4]
+        this.minute = paste[0]
+        this.hour = paste[1]
+        this.dayMonth = paste[2]
+        this.month = paste[3]
+        this.dayWeek = paste[4]
         e.preventDefault()
       }
     }
@@ -133,14 +172,15 @@ export default {
 
     <div class="text-h4 text-center mt-8 px-8">
       <div class="text-subtitle-2">Run this flow...</div>
-      <CronClock class="text-lowercase" :cron="inputsTotal" />
+      <CronClock v-if="valid" class="text-lowercase" :cron="inputsTotal" />
+      <span v-else class="primary--text">Invalid input</span>
     </div>
 
     <div class="megazord-input mt-8">
       <div class="zord text-h5">
         <input
           ref="minute"
-          v-model="inputs.minute"
+          v-model="minute"
           type="text"
           placeholder="*"
           name="minute"
@@ -150,13 +190,19 @@ export default {
           @keydown.space.prevent
           @keyup="_handleKeyup($event, 'minute')"
         />
-        <label class="text-subtitle-1" for="minute">Minute</label>
+        <label
+          class="text-subtitle-1"
+          :class="{ invalid: !minuteValid }"
+          for="minute"
+        >
+          Minute
+        </label>
       </div>
 
       <div class="zord text-h5">
         <input
           ref="hour"
-          v-model="inputs.hour"
+          v-model="hour"
           type="text"
           placeholder="*"
           name="hour"
@@ -166,13 +212,19 @@ export default {
           @keydown.space.prevent
           @keyup="_handleKeyup($event, 'hour')"
         />
-        <label class="text-subtitle-1" for="hour">Hour</label>
+        <label
+          class="text-subtitle-1"
+          :class="{ invalid: !hourValid }"
+          for="hour"
+        >
+          Hour
+        </label>
       </div>
 
       <div class="zord text-h5">
         <input
           ref="dayMonth"
-          v-model="inputs.dayMonth"
+          v-model="dayMonth"
           type="text"
           placeholder="*"
           name="dayMonth"
@@ -182,7 +234,11 @@ export default {
           @keydown.space.prevent
           @keyup="_handleKeyup($event, 'dayMonth')"
         />
-        <label class="text-subtitle-1" for="dayMonth">
+        <label
+          class="text-subtitle-1"
+          :class="{ invalid: !dayMonthValid }"
+          for="dayMonth"
+        >
           Day (month)
         </label>
       </div>
@@ -190,7 +246,7 @@ export default {
       <div class="zord text-h5">
         <input
           ref="month"
-          v-model="inputs.month"
+          v-model="month"
           type="text"
           placeholder="*"
           name="month"
@@ -200,13 +256,19 @@ export default {
           @keydown.space.prevent
           @keyup="_handleKeyup($event, 'month')"
         />
-        <label class="text-subtitle-1" for="month">Month</label>
+        <label
+          class="text-subtitle-1"
+          :class="{ invalid: !monthValid }"
+          for="month"
+        >
+          Month
+        </label>
       </div>
 
       <div class="zord text-h5">
         <input
           ref="dayWeek"
-          v-model="inputs.dayWeek"
+          v-model="dayWeek"
           type="text"
           placeholder="*"
           name="dayWeek"
@@ -216,7 +278,13 @@ export default {
           @keydown.space.prevent
           @keyup="_handleKeyup($event, 'dayWeek')"
         />
-        <label class="text-subtitle-1" for="dayWeek">Day (week)</label>
+        <label
+          class="text-subtitle-1"
+          :class="{ invalid: !dayWeekValid }"
+          for="dayWeek"
+        >
+          Day (week)
+        </label>
       </div>
     </div>
   </div>
@@ -287,6 +355,35 @@ export default {
     &:focus-within {
       label {
         color: var(--v-primary-base);
+      }
+    }
+
+    .invalid {
+      animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      color: var(--v-error-base) !important;
+      transform: translate(-50%) translate3d(0, 0, 0);
+    }
+
+    @keyframes shake {
+      10%,
+      90% {
+        transform: translate(-50%) translate3d(-1px, 0, 0);
+      }
+
+      20%,
+      80% {
+        transform: translate(-50%) translate3d(2px, 0, 0);
+      }
+
+      30%,
+      50%,
+      70% {
+        transform: translate(-50%) translate3d(-4px, 0, 0);
+      }
+
+      40%,
+      60% {
+        transform: translate(-50%) translate3d(4px, 0, 0);
       }
     }
   }

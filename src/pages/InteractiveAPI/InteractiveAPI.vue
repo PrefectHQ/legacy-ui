@@ -82,7 +82,7 @@ export default {
         'authInfo',
         // *_by_pk queries are helper queries that don't have offset and limit
         // arguments since by their nature they return just 1 result using a
-        // uuid!
+        // UUID!
         '_by_pk',
         'hello',
         'taskTagUsage',
@@ -743,7 +743,12 @@ export default {
       <v-row> </v-row>
     </div>
   </v-container>
-  <v-container v-else fluid class="pa-0 editors–container">
+  <v-container
+    v-else
+    fluid
+    class="pa-0 editors–container"
+    style="background: #1d252b;"
+  >
     <v-row no-gutters style="height: 100%;">
       <v-col cols="12">
         <v-row

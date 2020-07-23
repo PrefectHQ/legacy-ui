@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="47px" height="47px" viewBox="0 0 47 47" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>Core Mark Copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0.682653433 0.744252365 40.2589735 0.744252365 40.2589735 35.0057232 0.682653433 35.0057232"></polygon>
+        <polygon id="path-3" points="0.00205089014 0.0801666561 40.2405155 0.0801666561 40.2405155 35.5909091 0.00205089014 35.5909091"></polygon>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="download-prefect-HD-v1" transform="translate(-782.000000, -391.000000)">
+            <g id="Core-Mark-Copy" transform="translate(782.000000, 391.000000)">
+                <g id="Group-3" transform="translate(6.002605, 0.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Clip-2"></g>
+                    <path d="M26.9047488,20.4511354 L17.3651798,25.1350403 L36.9394613,35.0057232 C39.0342991,31.6034267 40.2619034,27.6264179 40.2619034,23.362053 C40.2619034,10.8706822 29.9342066,0.744252365 17.1981788,0.744252365 C10.7202958,0.744252365 4.86939917,3.37643447 0.682653433,7.59482239 L26.9047488,20.4511354 Z" id="Fill-1" fill="#333F48" mask="url(#mask-2)"></path>
+                </g>
+                <g id="Group-6" transform="translate(0.000000, 10.633333)">
+                    <mask id="mask-4" fill="white">
+                        <use xlink:href="#path-3"></use>
+                    </mask>
+                    <g id="Clip-5"></g>
+                    <path d="M13.5056976,14.4625028 L22.8929147,9.64597014 L3.70830236,0.0801666561 C1.3702876,3.67721291 0.00205089014,7.9614997 0.00205089014,12.5733224 C0.00205089014,25.2858103 10.323888,35.591494 23.0599158,35.591494 C29.8952397,35.591494 36.0186116,32.6056531 40.2405155,27.8914755 L13.5056976,14.4625028 Z" id="Fill-4" fill="#333F48" mask="url(#mask-4)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

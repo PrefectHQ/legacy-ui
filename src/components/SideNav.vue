@@ -7,6 +7,22 @@ import Feedback from '@/components/Feedback'
 
 const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
+const tenantProtectedRoutes = [
+  'project',
+  'flow',
+  'flow-run',
+  'task',
+  'task-run',
+  'flow-run-logs',
+  'select-plan',
+  'billing',
+  'welcome',
+  'current-plan',
+  'payment',
+  'api',
+  'name-team'
+]
+
 export default {
   components: {
     AcceptConfirmInputRow,
@@ -19,21 +35,46 @@ export default {
       cloudTimestamp: null,
       feedbackDialog: false,
       items: [],
-      lastDeployment_Cloud: null,
+      loading: false,
       pendingInvitations: [],
       selectedTenant: null,
       tenantMenuOpen: false,
-      tzMenuOpen: false
+      tzMenuOpen: false,
+      switchHovered: false
     }
   },
   computed: {
+    ...mapGetters('api', [
+      'isServer',
+      'isCloud',
+      'version',
+      'releaseTimestamp'
+    ]),
     ...mapGetters('sideNav', ['isOpen']),
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['memberships', 'user']),
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
+    lastDeployment_Cloud() {
+      return moment(this.releaseTimestamp).format('MMM D [•] h:mmA')
+    },
     lastDeployment_UI() {
       return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
+    },
+    logo() {
+      return require(`@/assets/logos/${
+        this.isCloud ? 'cloud' : 'core'
+      }-logo-no-text.svg`)
+    },
+    logoAlt() {
+      return require(`@/assets/logos/${
+        this.isCloud ? 'core' : 'cloud'
+      }-logo-no-text.svg`)
+    },
+    navLogo() {
+      return require(`@/assets/logos/${
+        this.isCloud ? 'cloud' : 'core'
+      }-side-nav-logo.svg`)
     },
     open: {
       get() {
@@ -67,7 +108,8 @@ export default {
       return role
     },
     routeDisabled() {
-      return !this.tenant.id || !this.tenant.settings.teamNamed
+      return false
+      // !this.tenant.id || !this.tenant.settings.teamNamed
     },
     width() {
       if (this.$vuetify.breakpoint.xsOnly) {
@@ -79,17 +121,50 @@ export default {
   watch: {
     $route() {
       this.close()
-    },
-    open() {
-      this.$apollo.queries.referenceData.refetch()
     }
   },
   methods: {
+    ...mapActions('api', ['getApi', 'switchBackend', 'backend']),
+    ...mapMutations('refresh', ['add']),
     ...mapMutations('sideNav', ['toggle', 'close']),
     ...mapActions('tenant', ['getTenant']),
     ...mapActions('license', ['getLicense']),
     ...mapActions('user', ['getUser']),
     ...mapActions('auth0', ['logout']),
+    async _switchBackend() {
+      this.loading = true
+      if (!this.isCloud) {
+        await this.switchBackend('CLOUD')
+      } else {
+        await this.switchBackend('SERVER')
+      }
+
+      Object.values(this.$apollo.provider.clients).forEach(client =>
+        client.clearStore()
+      )
+
+      await this.$router
+        .push({
+          name: 'dashboard',
+          params: {
+            tenant: this.tenant.slug
+          }
+        })
+        .catch(e => e)
+
+      this.close()
+      this.loading = false
+    },
+    getRoute(name) {
+      let route = {
+        name: name
+      }
+
+      if (tenantProtectedRoutes.includes(name)) {
+        route.params = { tenant: this.tenant?.slug }
+      }
+      return route
+    },
     async handleSwitchTenant(tenant) {
       let membership = this.memberships.find(
         mem => mem.tenant.slug == tenant.slug
@@ -103,24 +178,31 @@ export default {
 
       await this.getLicense()
 
-      let tenantProtectedRoutes = [
-        'project',
-        'flow',
-        'flow-run',
-        'task',
-        'task-run',
-        'flow-run-logs',
-        'select-plan',
-        'billing',
-        'welcome',
-        'current-plan',
-        'payment',
-        'api',
-        'name-team'
-      ]
+      Object.values(this.$apollo.provider.clients).forEach(client =>
+        client.clearStore()
+      )
+
+      if (tenantProtectedRoutes.includes(this.$route.name)) {
+        this.$router.push({
+          name: 'dashboard',
+          params: { tenant: tenant.slug }
+        })
+      } else {
+        this.$router.push({
+          name: this.$route.name,
+          params: { ...this.$route.params, tenant: this.tenant.slug }
+        })
+      }
+    },
+    async handleSwitchServerTenant(tenant) {
+      this.tenantMenuOpen = false
+
+      if (!tenant || tenant.slug == this.tenant.slug) return
+
+      await this.getTenant(tenant.id)
 
       Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.cache.reset()
+        client.clearStore()
       )
       if (tenantProtectedRoutes.includes(this.$route.name)) {
         this.$router.push({
@@ -214,19 +296,9 @@ export default {
             : []
       },
       skip() {
-        return !this.memberships || !this.user || !this.user.email
-      },
-      fetchPolicy: 'network-only',
-      pollInterval: 2000
-    },
-    referenceData: {
-      query: require('@/graphql/version.gql'),
-      update(data) {
-        if (!data?.reference_data?.cloud?.release_timestamp) return
-        this.lastDeployment_Cloud = moment(
-          data.reference_data.cloud.release_timestamp
-        ).format('MMM D [•] h:mmA')
-        return data
+        return (
+          !this.isCloud || !this.memberships || !this.user || !this.user.email
+        )
       },
       fetchPolicy: 'network-only',
       pollInterval: 60000
@@ -257,8 +329,8 @@ export default {
                 contain
                 class="logo"
                 position="left"
-                src="@/assets/logos/logo-full-color-horizontal.svg"
-                alt="The Prefect Logo"
+                :src="navLogo"
+                alt="Prefect Logo"
               />
             </v-list-item-content>
             <v-list-item-action>
@@ -267,14 +339,27 @@ export default {
               </v-btn>
             </v-list-item-action>
           </v-list-item>
+
+          <v-list-item
+            active-class="primary-active-class"
+            data-cy="side-nav-dashboard-item"
+            :to="getRoute('start')"
+            ripple
+            exact
+          >
+            <v-list-item-action>
+              <v-icon>near_me</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Get Started</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
           <v-list-item
             active-class="primary-active-class"
             data-cy="side-nav-dashboard-item"
             :disabled="routeDisabled"
-            :to="{
-              name: tenant.id ? 'dashboard' : null,
-              params: { tenant: tenant.slug }
-            }"
+            :to="getRoute('dashboard')"
             ripple
             exact
           >
@@ -285,6 +370,7 @@ export default {
               <v-list-item-title>Dashboard</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
           <v-tooltip v-if="role == 'Restricted User'" top>
             <template v-slot:activator="{ on }">
               <v-list-item data-cy="sidenav-api" v-on="on">
@@ -302,14 +388,12 @@ export default {
               >Read-only users do not have access to the Interactive API</span
             >
           </v-tooltip>
+
           <v-list-item
             v-else
             active-class="primary-active-class"
             :disabled="routeDisabled"
-            :to="{
-              name: tenant.id ? 'api' : null,
-              params: { tenant: tenant.slug }
-            }"
+            :to="getRoute('api')"
             ripple
           >
             <v-list-item-action>
@@ -330,13 +414,11 @@ export default {
           </v-list-item> -->
 
           <v-list-item
+            v-if="isCloud"
             active-class="primary-active-class"
             data-cy="side-nav-team-item"
             :disabled="routeDisabled"
-            :to="{
-              name: tenant.id ? 'team' : null,
-              params: { tenant: tenant.slug }
-            }"
+            :to="getRoute('team')"
             ripple
           >
             <v-list-item-action>
@@ -348,10 +430,11 @@ export default {
           </v-list-item>
 
           <v-list-item
+            v-if="isCloud"
             active-class="primary-active-class"
             data-cy="side-nav-user-item"
             :disabled="routeDisabled"
-            :to="{ name: 'user' }"
+            :to="getRoute('user')"
             ripple
           >
             <v-list-item-action>
@@ -368,10 +451,7 @@ export default {
             id="tutorial"
             active-class="primary-active-class"
             :disabled="routeDisabled"
-            :to="{
-              name: tenant.id ? 'tutorial' : null,
-              params: { tenant: tenant.slug }
-            }"
+            :to="getRoute('tutorial')"
           >
             <v-list-item-action>
               <v-icon>school</v-icon>
@@ -399,6 +479,7 @@ export default {
             </v-list-item-action>
           </v-list-item>
           <v-list-item
+            v-if="isCloud"
             id="Support"
             active-class="primary-active-class"
             :to="{ name: 'help' }"
@@ -411,6 +492,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
           <v-dialog
+            v-if="isCloud"
             v-model="feedbackDialog"
             max-width="560"
             @click:outside="closeDialogAndMenu"
@@ -434,25 +516,66 @@ export default {
 
           <v-divider class="mt-4" />
 
-          <v-list-item dense one-line>
+          <v-list-item
+            dense
+            one-line
+            @mouseover="switchHovered = true"
+            @mouseleave="switchHovered = false"
+            @click="_switchBackend"
+          >
             <v-list-item-content>
               <v-list-item-title class="">
                 <div class="overline grey--text text-center">
-                  Last Deployed
+                  <v-scroll-y-transition mode="out-in">
+                    <div v-if="switchHovered" key="1">
+                      <div
+                        >Switch to
+                        <span
+                          :class="`${!isCloud ? 'primary' : 'secondary'}--text`"
+                        >
+                          {{ !isCloud ? 'Cloud' : 'Server' }}
+                        </span></div
+                      >
+                    </div>
+                    <div v-else key="2">
+                      <div>Last Deployed</div>
+                    </div>
+                  </v-scroll-y-transition>
                 </div>
 
                 <v-row
-                  class="overline grey--text text--darken-2 d-flex justify-center align-center"
+                  class="overline grey--text text--darken-2 d-flex justify-center align-center pb-2"
+                  no-gutters
                 >
                   <v-col cols="5" class="text-right">
                     <div class="font-weight-bold">API</div>
                     <div class="truncate">{{ lastDeployment_Cloud }}</div>
                   </v-col>
-                  <v-col cols="2">
-                    <img
-                      style="max-width: 100%;"
-                      src="@/assets/logos/cloud-logo-no-text.svg"
-                    />
+                  <v-col cols="2" class="px-2">
+                    <v-avatar
+                      max-width="100%"
+                      min-width="20"
+                      min-height="auto"
+                      height="auto"
+                      left
+                      class="elevation-8 mx-auto"
+                      style="border: 1px solid #fff;"
+                    >
+                      <v-fade-transition mode="out-in">
+                        <img
+                          v-if="!switchHovered"
+                          key="1"
+                          style="max-width: 100%;"
+                          :src="logo"
+                        />
+                        <img
+                          v-else
+                          key="2"
+                          style="max-width: 100%;"
+                          :src="logoAlt"
+                        />
+                      </v-fade-transition>
+                    </v-avatar>
                   </v-col>
                   <v-col cols="5" class="text-left">
                     <div class="font-weight-bold">UI</div>
@@ -464,10 +587,9 @@ export default {
           </v-list-item>
 
           <v-list-item
+            v-if="isCloud"
             class="tenant-switcher primary theme--dark mt-0"
-            data-cy="tenant-switcher"
             two-line
-            :disabled="!tenant.id"
             @click="handleTenantSwitcherClick"
           >
             <v-list-item-content
@@ -495,14 +617,41 @@ export default {
 
             <v-list-item-action>
               <v-icon x-large>
-                arrow_drop_up
+                {{ tenantMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
+              </v-icon>
+            </v-list-item-action>
+          </v-list-item>
+
+          <v-list-item
+            v-else
+            class="tenant-switcher secondary theme--dark mt-0"
+            data-cy="tenant-switcher"
+            two-line
+            @click="handleTenantSwitcherClick"
+          >
+            <v-list-item-content
+              style="
+              max-width: 80%;
+              overflow: unset;"
+            >
+              <v-list-item-title class="tenant-title text-uppercase">
+                <div class="text text-truncate">
+                  {{ tenant.name ? tenant.name : 'UNKNOWN' }}
+                </div>
+              </v-list-item-title>
+            </v-list-item-content>
+
+            <v-list-item-action>
+              <v-icon x-large>
+                {{ tenantMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
               </v-icon>
             </v-list-item-action>
           </v-list-item>
         </v-list>
       </div>
+
       <v-card
-        v-if="tenantMenuOpen && memberships"
+        v-if="tenantMenuOpen && isCloud && memberships"
         class="tenant-switcher-list elevation-4"
       >
         <v-list class="ma-2" dense flat>
@@ -541,6 +690,51 @@ export default {
                 </v-list-item-title>
                 <v-list-item-subtitle
                   v-if="tenant.id == at.tenant.id"
+                  class="font-weight-light"
+                >
+                  Current
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+          <!-- Hiding this until the create new team page is finished -->
+          <v-list-item-group v-if="false" subheader>
+            <v-subheader />
+            <v-list-item @click="handleRouteToCreateTenant()">
+              <v-list-item-action>
+                <v-icon>add_circle_outline</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title class="grey--text text--darken-1">
+                  Create New Team
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-card>
+
+      <v-card
+        v-if="tenantMenuOpen && isServer && tenants"
+        class="tenant-switcher-list elevation-4"
+      >
+        <v-list class="ma-2" dense flat>
+          <v-list-item-group subheader data-cy="switch-tenant">
+            <v-subheader>Teams</v-subheader>
+            <v-list-item
+              v-for="ten in tenants"
+              :key="ten.id"
+              two-line
+              @click="handleSwitchServerTenant(ten)"
+            >
+              <v-list-item-content>
+                <v-list-item-title
+                  :class="tenant.id == ten.id ? 'blue--text accent-4' : ''"
+                >
+                  {{ ten.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle
+                  v-if="tenant.id == ten.id"
                   class="font-weight-light"
                 >
                   Current

@@ -1,0 +1,6 @@
+mutation DeleteFlowGroupSchedule($input: delete_flow_group_schedule_input!) {
+  delete_flow_group_schedule(input: $input) {
+    success
+    error
+  }
+}

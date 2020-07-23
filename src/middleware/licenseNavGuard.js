@@ -5,6 +5,8 @@ const hasLicense = () => {
 }
 
 const licenseNavGuards = async (to, from, next) => {
+  if (!store.getters['api/isCloud']) return next()
+
   if (!hasLicense()) {
     await store.dispatch(
       'license/getLicense',

@@ -200,6 +200,12 @@ export default {
         throw error
       } finally {
         this.scheduleLoading = false
+        this.setAlert({
+          alertShow: this.alertShow,
+          alertMessage: this.alertMessage,
+          alertType: this.alertType,
+          alertLink: this.alertLink
+        })
       }
     },
     unarchiveFlow() {}

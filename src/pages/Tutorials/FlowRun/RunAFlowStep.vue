@@ -71,7 +71,7 @@ export default {
       skip() {
         return !this.flowRunId
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.flow_run_by_pk
     }
   }

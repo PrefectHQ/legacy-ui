@@ -1,6 +1,8 @@
 import store from '@/store/index'
 
 const newTenantChecks = async (to, from, next) => {
+  if (!store.getters['api/isCloud']) return next()
+
   if (store.getters['tenant/tenant'].role !== 'TENANT_ADMIN') return next()
 
   if (!store.getters['tenant/tenant'].settings.teamNamed) {

@@ -1,5 +1,6 @@
 import { defaultOptions } from '@/vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
+import { prefectTenants } from '@/middleware/prefectAuth'
 
 const state = {
   tenant: {
@@ -13,18 +14,22 @@ const state = {
     prefectAdminSettings: {},
     stripeCustomerID: ''
   },
-  tenantIsSet: false
+  tenantIsSet: false,
+  tenants: []
 }
 
 const getters = {
+  role(state) {
+    if (state) return state.tenant.role
+  },
   tenant(state) {
     return state.tenant
   },
   tenantIsSet(state) {
     return state.tenantIsSet
   },
-  role(state) {
-    if (state) return state.tenant.role
+  tenants(state) {
+    return state.tenants
   }
 }
 
@@ -35,6 +40,12 @@ const mutations = {
     }
     state.tenant = { ...tenant }
     state.tenantIsSet = true
+  },
+  setTenants(state, tenants) {
+    if (tenants?.length === 0) {
+      throw new Error('passed invalid or empty tenant array')
+    }
+    state.tenants = tenants
   },
   unsetTenant(state) {
     state.tenant = {
@@ -49,6 +60,9 @@ const mutations = {
       stripeCustomerID: ''
     }
     state.tenantIsSet = false
+  },
+  unsetTenants(state) {
+    state.tenants = []
   },
   updateTenantSettings(state, settings) {
     if (!settings || !Object.keys(settings).length) {
@@ -83,6 +97,12 @@ const actions = {
     }
   },
   async getTenant({ rootGetters, commit, dispatch }, membershipId) {
+    if (rootGetters['api/backend'] == 'SERVER') {
+      await dispatch('getTenants')
+      await dispatch('getServerTenant')
+      return
+    }
+
     const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
     let tenantId
     try {
@@ -170,6 +190,32 @@ const actions = {
         ...membership.tenant,
         role: membership.role
       })
+    }
+  },
+  async getServerTenant({ commit, getters }, tenantId) {
+    const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
+
+    try {
+      const tenant = await apolloClient.query({
+        query: require('@/graphql/Tenant/tenant-by-pk.gql'),
+        variables: {
+          id: tenantId ? tenantId : getters['tenants']?.[0].id
+        }
+      })
+
+      commit('setTenant', {
+        ...tenant?.data?.tenant_by_pk
+      })
+    } catch {
+      commit('unsetTenant')
+    }
+  },
+  async getTenants({ commit }) {
+    try {
+      const tenants = await prefectTenants()
+      commit('setTenants', tenants)
+    } catch {
+      commit('unsetTenants')
     }
   }
 }

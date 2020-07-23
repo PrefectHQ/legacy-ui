@@ -120,7 +120,7 @@ export default {
           flowRunId: this.flowRun.id
         }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => {
         if (data.task_run) {
           if (data.task_run.length > 1) {
@@ -144,7 +144,7 @@ export default {
           flowRunId: this.flowRun.id
         }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       skip() {
         const hasFailedTRs = typeof this.failedTaskRuns === 'string'
         return !hasFailedTRs

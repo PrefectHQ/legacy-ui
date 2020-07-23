@@ -28,7 +28,7 @@ export default {
       skip() {
         return !this.genericInput
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.flow
     }
   }

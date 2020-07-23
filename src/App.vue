@@ -1,6 +1,6 @@
 <script>
 import Alert from '@/components/Alert'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
@@ -18,17 +18,40 @@ export default {
   data() {
     return {
       error: null,
+      loadingKey: 0,
       reset: false,
       shown: true,
       wholeAppShown: true
     }
   },
   computed: {
+    ...mapGetters('api', ['backend', 'version', 'url', 'connected']),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', ['tenant']),
     notFoundPage() {
       return this.$route.name === 'not-found'
+    },
+    isCloud() {
+      return this.backend == 'CLOUD'
+    }
+  },
+  watch: {
+    backend() {
+      this.$apollo.skipAll = true
+      setTimeout(() => {
+        this.$apollo.skipAll = false
+      }, 500)
+    },
+    connected(val) {
+      // Stops vue-related queries by stopping the client entirely
+      // when we're not connected. This does not impact the api store,
+      // which is using a separate client to check api status.
+      if (!val) {
+        this.$apollo.provider.clients.defaultClient.stop()
+      } else {
+        this.$apollo.provider.clients.defaultClient.restore()
+      }
     }
   },
   beforeDestroy() {
@@ -43,7 +66,9 @@ export default {
     window.removeEventListener('blur', this.handleVisibilityChange)
     window.removeEventListener('focus', this.handleVisibilityChange)
   },
-  created() {
+  async created() {
+    this.monitorConnection()
+
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
@@ -57,6 +82,7 @@ export default {
     window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
+    ...mapActions('api', ['getApi', 'monitorConnection']),
     // ...mapMutations('sideDrawer', {
     //   clearDrawer: 'clearDrawer',
     //   closeSideDrawer: 'close'
@@ -100,7 +126,7 @@ export default {
 </script>
 
 <template>
-  <v-app v-if="isAuthenticated && wholeAppShown" class="app">
+  <v-app v-if="wholeAppShown" class="app">
     <v-main>
       <NavBar />
       <SideNav />
@@ -145,12 +171,22 @@ html {
   background-color: var(--v-appBackground-base) !important;
 }
 
-.theme--light.v-app-bar.primary {
-  background-image: linear-gradient(
-    165deg,
-    var(--v-primary-base),
-    var(--v-prefect-base)
-  );
+.theme--light.v-app-bar {
+  &.primary {
+    background-image: linear-gradient(
+      165deg,
+      var(--v-primary-base),
+      var(--v-prefect-base)
+    );
+  }
+
+  &.secondary {
+    background-image: linear-gradient(
+      165deg,
+      var(--v-secondary-base),
+      var(--v-secondaryGray-base)
+    );
+  }
 }
 
 .link {

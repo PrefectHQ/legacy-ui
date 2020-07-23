@@ -14,10 +14,7 @@ query UpcomingFlowRuns($projectId: uuid) {
     flow {
       id
       name
-      schedules { 
-        id
-        active
-      }
+      schedule
     }
     task_runs {
       id

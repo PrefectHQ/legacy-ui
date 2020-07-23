@@ -1,8 +1,7 @@
 <script>
 /* eslint-disable vue/no-v-html */
 import cronstrue from 'cronstrue'
-
-const regex = /([0-9]{1,2}:?[0-9]{0,2})|(?:am|pm|days|day|years|year|weeks|week|hours|hour|minutes|minute|seconds|second|monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december)/gim
+import { PARSED_SCHEDULE_REGEX } from '@/utils/regEx'
 
 export default {
   props: {
@@ -22,7 +21,7 @@ export default {
     },
     highlightedText() {
       if (!this.parsedCron) return ''
-      return this.parsedCron.replace(regex, match => {
+      return this.parsedCron.replace(PARSED_SCHEDULE_REGEX, match => {
         return `<span class="primary--text">${match}</span>`
       })
     }

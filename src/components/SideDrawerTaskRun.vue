@@ -20,7 +20,7 @@ export default {
       variables() {
         return { id: this.genericInput.id }
       },
-      pollInterval: 1000,
+      pollInterval: 5000,
       update: data => data.task_run_by_pk
     }
   }

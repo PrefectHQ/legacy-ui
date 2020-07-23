@@ -1,0 +1,18 @@
+query LastFlowRuns($flowIds: [uuid!]) {
+  flowRuns: flow_run(
+    where: {
+      flow: { flow_group_id: { _in: $flowIds } }
+      state: { _neq: "Scheduled" }
+    }
+    limit: 10
+    order_by: { start_time: asc }
+  ) {
+    id
+    state
+    flow {
+      flow_group_id
+    }
+    end_time
+    start_time
+  }
+}

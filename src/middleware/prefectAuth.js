@@ -12,19 +12,18 @@ const prefectAuth = async idToken => {
       },
       errorPolicy: 'all'
     })
+
     if (result?.data?.log_in) {
       await apolloOnLogin(apolloClient)
       return result.data.log_in
-    } else if (result.errors) {
+    } else if (result?.errors) {
       if (
         result.errors[0].message ===
-          "We get it, you're reeaally interested. Unfortunately, the timing isn't quite Prefect yet." ||
-        result.errors[0].message ===
-          'Thank you for your interest in Prefect Cloud! You have been added to our waitlist.'
+        "We get it, you're reeaally interested. Unfortunately, the timing isn't quite Prefect yet."
       ) {
         return null
       } else {
-        throw new Error('No authorization token returned')
+        throw new Error(result.errors[0].message)
       }
     }
   } catch (error) {
@@ -37,9 +36,10 @@ const prefectRefresh = async accessToken => {
     const result = await apolloClient.mutate({
       mutation: require('@/graphql/refresh-token.gql'),
       variables: {
-        accessToken: accessToken
+        input: { access_token: accessToken }
       }
     })
+
     if (result?.data?.refresh_token) {
       return result.data.refresh_token
     } else if (result.error) {
@@ -64,4 +64,16 @@ const prefectUser = async () => {
   }
 }
 
-export { prefectAuth, prefectRefresh, prefectUser }
+const prefectTenants = async () => {
+  try {
+    const tenants = await apolloClient.query({
+      query: require('@/graphql/Tenant/tenants.gql'),
+      fetchPolicy: 'no-cache'
+    })
+    return tenants.data.tenant
+  } catch (error) {
+    throw new Error(error.error)
+  }
+}
+
+export { prefectAuth, prefectRefresh, prefectUser, prefectTenants }

@@ -171,7 +171,7 @@ export default {
 
     <v-card-text class="pa-0">
       <v-data-table
-        class="ma-2"
+        class="ma-2 versions-table."
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :headers="headers"
         :items="versions"
@@ -261,51 +261,6 @@ export default {
               class="barchart-tooltip v-tooltip__content text-left"
             >
               <TimelineTooltip :tooltip="tooltip" />
-              <!-- <div class="subtitle-2">
-                {{ tooltip.data.name }}
-              </div>
-
-              <div
-                class="d-flex align-center justify-start caption"
-                style="line-height: 0.5rem;"
-              >
-                <div :style="statusStyle(tooltip.data.state)"></div>
-                <div class="ml-2">{{ tooltip.data.state }}</div>
-              </div>
-
-              <v-divider class="my-1 white" />
-
-              <div v-if="tooltip.data.start_time" class="caption">
-                Started:
-                <span class="font-weight-black">
-                  {{ formatTime(tooltip.data.start_time) }}
-                </span>
-              </div>
-
-              <div v-if="tooltip.data.end_time" class="caption">
-                Ended:
-                <span class="font-weight-black">
-                  {{ formatTime(tooltip.data.end_time) }}
-                </span>
-              </div>
-
-              <div
-                v-if="tooltip.data.duration || tooltip.data.start_time"
-                class="caption"
-              >
-                Duration:
-                <span
-                  v-if="tooltip.data.state !== 'Running'"
-                  class="font-weight-black"
-                >
-                  {{ tooltip.data.duration | duration }}
-                </span>
-                <DurationSpan
-                  v-else-if="tooltip.data.start_time"
-                  :start-time="tooltip.data.start_time"
-                  class="font-weight-black"
-                />
-              </div> -->
             </div>
           </div>
         </template>
@@ -327,7 +282,7 @@ export default {
 }
 // stylelint-enable
 
-.v-data-table {
+.versions-table.v-data-table {
   font-size: 0.9rem !important;
   overflow: initial !important;
 

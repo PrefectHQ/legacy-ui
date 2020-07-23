@@ -18,7 +18,7 @@ export const routes = [
   },
   {
     name: 'api',
-    path: '/:tenant/api',
+    path: '/:tenant?/api',
     component: () =>
       import(
         /* webpackChunkName: "interactive-api" */ '@/pages/InteractiveAPI/InteractiveAPI.vue'
@@ -43,7 +43,7 @@ export const routes = [
   },
   {
     name: 'project',
-    path: '/:tenant/project/:id',
+    path: '/:tenant?/project/:id',
     component: () =>
       import(
         /* webpackChunkName: "project" */ '@/pages/Dashboard/Dashboard.vue'
@@ -52,7 +52,7 @@ export const routes = [
   },
   {
     name: 'flow',
-    path: '/:tenant/flow/:id',
+    path: '/:tenant?/flow/:id',
     component: () =>
       import(/* webpackChunkName: "flow" */ '@/pages/Flow/Flow.vue'),
     beforeEnter: multiguard([
@@ -64,21 +64,21 @@ export const routes = [
   },
   {
     name: 'flow-run',
-    path: '/:tenant/flow-run/:id',
+    path: '/:tenant?/flow-run/:id',
     component: () =>
       import(/* webpackChunkName: "flow-run" */ '@/pages/FlowRun/FlowRun.vue'),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
   },
   {
     name: 'task',
-    path: '/:tenant/task/:id',
+    path: '/:tenant?/task/:id',
     component: () =>
       import(/* webpackChunkName: "task" */ '@/pages/Task/Task.vue'),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
   },
   {
     name: 'task-run',
-    path: '/:tenant/task-run/:id',
+    path: '/:tenant?/task-run/:id',
     component: () =>
       import(/* webpackChunkName: "task-run" */ '@/pages/TaskRun/TaskRun.vue'),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
@@ -90,7 +90,7 @@ export const routes = [
   // --------------------------- //
   {
     name: 'team',
-    path: '/:tenant/team',
+    path: '/:tenant?/team',
     component: () =>
       import(
         /* webpackChunkName: "team-settings" */ '@/pages/TeamSettings/TeamSettings.vue'
@@ -203,7 +203,7 @@ export const routes = [
   //
   // --------------------------- //
   {
-    path: '/:tenant/welcome',
+    path: '/:tenant?/welcome',
     component: () =>
       import(
         /* webpackChunkName: "onboard" */ '@/pages/Onboard/Onboard-Page.vue'
@@ -243,7 +243,7 @@ export const routes = [
   // --------------------------- //
   {
     name: 'tutorial',
-    path: '/:tenant/tutorial',
+    path: '/:tenant?/tutorial',
     component: () =>
       import(
         /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
@@ -279,6 +279,13 @@ export const routes = [
         /* webpackChunkName: "notifications" */ '@/pages/Notifications/Notifications.vue'
       ),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard, licenseNavGuard])
+  },
+  {
+    name: 'start',
+    path: '/start',
+    component: () =>
+      import(/* webpackChunkName: "start" */ '@/pages/Start.vue'),
+    beforeEnter: multiguard([authNavGuard])
   },
   {
     name: 'dashboard',

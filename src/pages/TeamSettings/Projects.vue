@@ -278,10 +278,11 @@ export default {
 
       try {
         await this.$apollo.mutate({
-          mutation: require('@/graphql/Projects/create-project.gql'),
+          mutation: require('@/graphql/Mutations/create-project.gql'),
           variables: {
-            projectName: this.projectNameInput,
-            projectDescription: this.projectDescriptionInput
+            name: this.projectNameInput,
+            description: this.projectDescriptionInput,
+            tenantId: this.tenant.id
           }
         })
 
