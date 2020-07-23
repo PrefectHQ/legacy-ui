@@ -14,6 +14,33 @@ import TileLayout from '@/layouts/TileLayout'
 import TimelineTile from '@/pages/Dashboard/Timeline-Tile'
 import { mapGetters } from 'vuex'
 
+const serverTabs = [
+  {
+    name: 'Overview',
+    target: 'overview',
+    icon: 'view_quilt'
+  },
+  {
+    name: 'Flows',
+    target: 'flows',
+    icon: 'pi-flow'
+  }
+]
+
+const cloudTabs = [
+  {
+    name: 'Agents',
+    target: 'agents',
+    icon: 'pi-agent',
+    iconSize: 'small'
+  }
+  // {
+  //   name: 'Analytics',
+  //   target: 'analytics',
+  //   icon: 'insert_chart_outlined'
+  // }
+]
+
 export default {
   components: {
     Agents,
@@ -38,30 +65,7 @@ export default {
       numberOfTiles: 7,
       previousParams: { flows: { flows: '' }, agents: { agents: '' } },
       projectId: this.$route.params.id,
-      tab: this.getTab(),
-      tabs: [
-        {
-          name: 'Overview',
-          target: 'overview',
-          icon: 'view_quilt'
-        },
-        {
-          name: 'Flows',
-          target: 'flows',
-          icon: 'pi-flow'
-        },
-        {
-          name: 'Agents',
-          target: 'agents',
-          icon: 'pi-agent',
-          iconSize: 'small'
-        }
-        // {
-        //   name: 'Analytics',
-        //   target: 'analytics',
-        //   icon: 'insert_chart_outlined'
-        // }
-      ]
+      tab: this.getTab()
     }
   },
   computed: {
@@ -69,6 +73,9 @@ export default {
     ...mapGetters('api', ['backend', 'isCloud']),
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
+    },
+    tabs() {
+      return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
     }
   },
   watch: {
