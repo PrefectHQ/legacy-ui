@@ -63,11 +63,8 @@ export default {
       this.serverUrlLoading = true
 
       try {
-        console.log(this.serverUrlInput)
         await this.setServerUrl(this.serverUrlInput)
         await this.getApi()
-
-        console.log(this.serverUrl)
 
         this.serverUrlSuccess = this.connected
       } catch (e) {

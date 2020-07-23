@@ -9,7 +9,16 @@ const isConnected = () => {
 }
 
 const tenantNavGuard = async (to, from, next) => {
-  if (isServer() && !isConnected()) return next()
+  if (isServer() && !isConnected()) {
+    try {
+      await store.dispatch('api/getApi')
+    } catch {
+      //
+    }
+    if (!isConnected()) {
+      return next()
+    }
+  }
 
   const passedTenantSlug = to.params.tenant
 

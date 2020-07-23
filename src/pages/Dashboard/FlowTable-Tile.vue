@@ -1,16 +1,69 @@
 <script>
+import BarChart from '@/components/Visualizations/BarChart.vue'
 import CardTitle from '@/components/Card-Title'
-import LastTenRuns from '@/components/LastTenRuns'
 import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 import ScheduleToggle from '@/components/ScheduleToggle'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import moment from 'moment'
+import TimelineTooltip from '@/components/TimelineTooltip'
+
+const serverHeaders = [
+  {
+    text: 'Archived',
+    value: 'archived',
+    width: 5
+  },
+  {
+    text: 'Name',
+    value: 'name',
+    width: 20
+  },
+  {
+    text: 'Schedule',
+    value: 'schedule',
+    sortable: false,
+    align: 'center',
+    width: 20
+  },
+  {
+    text: 'Project',
+    value: 'project.name',
+    sortable: false,
+    width: 15
+  },
+  {
+    text: 'Version',
+    value: 'version',
+    sortable: false,
+    width: 10
+  }
+]
+
+const serverHeadersPost = [
+  {
+    text: 'Run History',
+    value: 'flow_runs',
+    sortable: false,
+    width: 25
+  }
+]
+
+const cloudHeaders = [
+  {
+    text: 'Created By',
+    value: 'created_by.username',
+    sortable: false,
+    width: 10
+  }
+]
 
 export default {
   components: {
+    BarChart,
     CardTitle,
-    LastTenRuns,
-    ScheduleToggle
+    ScheduleToggle,
+    TimelineTooltip
   },
   filters: {},
   mixins: [formatTime],
@@ -23,50 +76,10 @@ export default {
   },
   data() {
     return {
-      headers: [
-        {
-          text: 'Name',
-          value: 'name',
-          width: '15%'
-        },
-        {
-          text: 'Schedule',
-          value: 'schedule',
-          sortable: false,
-          align: 'center',
-          width: '10%'
-        },
-        {
-          text: 'Created By',
-          value: 'created_by.username',
-          align: 'center',
-          width: '12%'
-        },
-        {
-          text: 'Version',
-          value: 'version',
-          align: 'center',
-          width: '10%'
-        },
-        {
-          text: 'Last Run',
-          value: 'start_time',
-          // making sortable false for now as sorting by the flow_run_aggregate.max.start_time makes a really slow query
-          sortable: false,
-          align: 'center',
-          width: '12%'
-        },
-        {
-          text: 'Run History',
-          value: 'flow_runs',
-          sortable: false,
-          align: 'center',
-          width: '15%'
-        }
-      ],
       flows: [],
       limit: 10,
       loading: 0,
+      runsLoadingKey: 0,
       page: 1,
       search:
         this.$route && this.$route.query && this.$route.query.flows
@@ -75,16 +88,26 @@ export default {
       showArchived:
         this.$route && this.$route.query && this.$route.query.archived,
       sortBy: 'name',
-      sortDesc: false
+      sortDesc: false,
+      tooltip: null
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
+    headers() {
+      return [
+        ...serverHeaders,
+        ...(this.isCloud ? cloudHeaders : []),
+        ...serverHeadersPost
+      ]
+    },
     placeholderMessage() {
       if (this.$vuetify.breakpoint.mdAndUp) {
-        return 'Search by flow name, id, version group id or creator'
+        return `Search by flow name, id, ${
+          !this.isCloud ? 'or' : ''
+        } version group id ${this.isCloud ? ', or creator' : ''} `
       }
       return ''
     },
@@ -122,30 +145,89 @@ export default {
     }
   },
   methods: {
+    _barMouseout() {
+      this.tooltip = null
+    },
+    _barMouseover(d) {
+      if (d.data.end_time) {
+        d.data.display_end_time = this.formatTime(d.data.end_time)
+      }
+
+      if (d.data.start_time) {
+        d.data.display_start_time = this.formatTime(d.data.start_time)
+      }
+
+      if (d.data.scheduled_start_time) {
+        d.data.display_scheduled_start_time = this.formatTime(
+          d.data.scheduled_start_time
+        )
+      }
+
+      d.status_style = this.statusStyle(d.data.state)
+
+      this.tooltip = d
+    },
+    _barClick(d) {
+      this.$router.push({
+        name: 'flow-run',
+        params: {
+          id: d.id
+        }
+      })
+    },
     async handleTableSearchInput(e) {
       this.loading++
       this.debounceSearch(e)
     },
-    startDate(item) {
-      // As not all flow runs have a start time or heartbeat, the query returns in order by scheduled_start_time - this sort finds the latest heartbeat
-      const frs = item.flow_runs.slice()
-      frs.sort((a, b) => (a.heartbeat > b.heartbeat ? -1 : 1))
-      const time = frs[0]?.start_time
-      return this.formDate(time)
-    },
-    startTime(item) {
-      // As not all flow runs have a start time or heartbeat, the query returns in order by scheduled_start_time - this sort finds the latest heartbeat
-      const frs = item.flow_runs.slice()
-      frs.sort((a, b) => (a.heartbeat > b.heartbeat ? -1 : 1))
-      const time = frs[0]?.start_time
-      return this.formatTime(time)
-    },
-    copyTextToClipboard(text) {
-      return new Promise(res =>
-        navigator.clipboard.writeText(text).then(() => {
-          res()
+    prepFlowRuns(flowGroupId) {
+      if (!this.flowRuns) return []
+
+      const computedStyle = getComputedStyle(document.documentElement)
+
+      return this.flowRuns
+        .filter(run => run.flow.flow_group_id == flowGroupId)
+        .reverse()
+        .map(d => {
+          if (d.start_time && d.end_time) {
+            let end = new moment(d.end_time),
+              start = new moment(d.start_time)
+            d.duration = moment.duration(end.diff(start))
+          } else {
+            let now = new moment(),
+              start = new moment(d.start_time)
+            d.duration = moment.duration(now.diff(start))
+          }
+
+          d.color = computedStyle.getPropertyValue(`--v-${d.state}-base`)
+          d.opacity = 1
+          d.flow_group_id = d.flow.flow_group_id
+          return d
         })
-      )
+    },
+    formatTime(timestamp) {
+      if (!timestamp) throw new Error('Did not recieve a timestamp')
+
+      let t = moment(timestamp).tz(this.timezone),
+        shortenedTz = moment()
+          .tz(this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone)
+          .zoneAbbr()
+
+      let timeObj = t ? t : moment(timestamp)
+
+      let formatted = timeObj.calendar(null, {
+        sameDay: 'h:mma',
+        sameElse: 'MMMM D, YYYY [at] h:mma'
+      })
+      return `${formatted} ${shortenedTz}`
+    },
+    statusStyle(state) {
+      return {
+        'border-radius': '50%',
+        display: 'inline-block',
+        'background-color': `var(--v-${state}-base)`,
+        height: '1rem',
+        width: '1rem'
+      }
     },
     debounceSearch: debounce(function(e) {
       this.loading = 0
@@ -164,41 +246,84 @@ export default {
             sortBy['created_by'] = {}
             sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
           } else if (Object.keys(this.sortBy) < 1) {
-            sortBy = { name: 'asc' }
+            sortBy = { flows: { name: 'asc' } }
           } else {
             sortBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
           }
         }
 
-        // This lets us control the params we pass to the _or expression
-        let searchParams = []
-        if (this.validUUID) {
-          searchParams.push({ id: { _eq: this.search } })
-          searchParams.push({
-            flow_group_id: { _eq: this.searchFormatted }
-          })
-        }
+        let searchParams = [
+          { archived: { _eq: this.showArchived ? null : false } },
+          { project_id: { _eq: this.projectId ? this.projectId : null } }
+        ]
 
-        searchParams.push({ name: { _ilike: this.searchFormatted } })
+        let flowSearchParams = [
+          {
+            name: { _ilike: this.searchFormatted }
+          }
+        ]
+        let flowGroupSearchParams = [
+          {
+            flows: {
+              name: { _ilike: this.searchFormatted }
+            }
+          }
+        ]
+
+        // This lets us control the params we pass to the _or expression
+        // let searchParams = []
+        // if (this.validUUID) {
+        //   searchParams.push({ id: { _eq: this.search } })
+        //   searchParams.push({
+        //     id: { _eq: this.searchFormatted }
+        //   })
+        // }
+
+        // searchParams.push({
+        //   name: { _ilike: this.searchFormatted }
+        // })
 
         if (this.isCloud) {
-          searchParams.push({
+          flowSearchParams.push({
             created_by: { username: { _ilike: this.searchFormatted } }
+          })
+          flowGroupSearchParams.push({
+            flows: {
+              created_by: { username: { _ilike: this.searchFormatted } }
+            }
           })
         }
 
         return {
-          archived: this.showArchived ? null : false,
           limit: this.limit,
           offset: this.limit * (this.page - 1),
           orderBy: sortBy,
-          projectId: this.projectId ? this.projectId : null,
-          searchParams: searchParams
+          flowGroupSearchParams: {
+            flows: {
+              _and: [...searchParams, { _or: [...flowSearchParams] }]
+            }
+          },
+          flowSearchParams: {
+            _and: [...searchParams, { _or: [...flowSearchParams] }]
+          }
         }
       },
       loadingKey: 'loading',
-      pollInterval: 3000,
-      update: data => data?.flows
+      pollInterval: 60000,
+      update: data => {
+        return data?.flows.map(group => {
+          const flow = group.flows?.[0]
+          return {
+            id: group.id,
+            archived: flow.archived,
+            flow: flow,
+            flow_group: group,
+            name: flow.name,
+            project: flow.project,
+            version: flow.version
+          }
+        })
+      }
     },
     flowCount: {
       query: require('@/graphql/Dashboard/flow-count.gql'),
@@ -227,8 +352,21 @@ export default {
         }
       },
       loadingKey: 'loading',
-      pollInterval: 10000,
+      pollInterval: 60000,
       update: data => data?.flowCount?.aggregate?.count
+    },
+    flowRuns: {
+      query: require('@/graphql/Dashboard/last-flow-runs.gql'),
+      variables() {
+        return {
+          flowIds: this.flows.map(group => group.id)
+        }
+      },
+      skip() {
+        return !this.flows
+      },
+      pollInterval: 60000,
+      loadingKey: 'runsLoadingKey'
     }
   }
 }
@@ -243,8 +381,9 @@ export default {
           class="flow-search"
           dense
           hide-details
-          solo
           single-line
+          solo
+          flat
           :placeholder="placeholderMessage"
           prepend-inner-icon="search"
           autocomplete="new-password"
@@ -266,6 +405,9 @@ export default {
         :items-per-page.sync="limit"
         class="ma-2"
         must-sort
+        :no-data-text="
+          `You have no flows${projectId ? ' in this project!' : '!'}`
+        "
         :server-items-length="flowCount"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
@@ -280,60 +422,67 @@ export default {
         }"
       >
         <template v-slot:item.name="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <router-link
-                class="link"
-                :data-cy="
-                  'flow-link|' +
-                    item.name +
-                    '|' +
-                    (item.archived ? 'archived' : 'active') +
-                    '-' +
-                    item.version
-                "
-                :to="{
-                  name: 'flow',
-                  params: { id: item.flow_group_id, tenant: tenant.slug }
-                }"
-              >
-                <span v-on="on">{{ item.name }}</span>
-              </router-link>
-            </template>
-            <span>{{ item.name }}</span>
-          </v-tooltip>
+          <div class="truncate">
+            <router-link
+              class="link"
+              :data-cy="
+                'flow-link|' +
+                  item.name +
+                  '|' +
+                  (item.archived ? 'archived' : 'active') +
+                  '-' +
+                  item.version
+              "
+              :to="{
+                name: 'flow',
+                params: { id: item.id, tenant: tenant.slug }
+              }"
+            >
+              <span>{{ item.name }}</span>
+            </router-link>
+          </div>
         </template>
 
-        <template v-slot:item.archived="{ item }">
-          <v-tooltip v-if="!item.archived" top>
-            <template v-slot:activator="{ on }">
-              <v-icon small dark color="green" v-on="on">
-                pi-flow
-              </v-icon>
-            </template>
-            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
-          </v-tooltip>
-          <v-tooltip v-else top>
-            <template v-slot:activator="{ on }">
-              <v-icon small dark color="accent-pink" v-on="on">
-                archive
-              </v-icon>
-            </template>
-            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
-          </v-tooltip>
+        <template v-slot:item.schedule="{ item }">
+          <ScheduleToggle :flow="item.flow" :flow-group="item.flow_group" />
         </template>
 
-        <template v-slot:item.start_time="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <span v-on="on">
-                {{ startDate(item) }}
-              </span>
-            </template>
-            <span>
-              {{ startTime(item) }}
-            </span>
-          </v-tooltip>
+        <template v-slot:item.project="{ item }">
+          <div class="truncate">
+            <router-link
+              class="link"
+              :to="{
+                name: 'project',
+                params: { id: item.project.id, tenant: tenant.slug }
+              }"
+            >
+              <span>{{ item.project.name }}</span>
+            </router-link>
+          </div>
+        </template>
+
+        <template v-slot:item.flow_runs="{ item }">
+          <div class="position-relative allow-overflow">
+            <BarChart
+              :items="prepFlowRuns(item.id)"
+              :loading="runsLoadingKey > 0"
+              :height="50"
+              :min-bands="10"
+              normalize
+              :padding="0"
+              y-field="duration"
+              @bar-click="_barClick"
+              @bar-mouseout="_barMouseout"
+              @bar-mouseover="_barMouseover"
+            />
+
+            <div
+              v-if="tooltip && tooltip.data.flow_group_id == item.id"
+              class="barchart-tooltip v-tooltip__content text-left"
+            >
+              <TimelineTooltip :tooltip="tooltip" />
+            </div>
+          </div>
         </template>
 
         <template v-slot:item.created_by.username="{ item }">
@@ -347,71 +496,6 @@ export default {
               {{ item.created_by ? item.created_by.username : null }}
             </span>
           </v-tooltip>
-        </template>
-
-        <template v-slot:item.id="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
-                {{ item.id }}
-              </span>
-              <span v-else v-on="on"> {{ item.id.substring(0, 5) }}... </span>
-            </template>
-            <span>
-              {{ item.id }}
-            </span>
-          </v-tooltip>
-        </template>
-
-        <template v-slot:item.flow_group_id="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <div
-                class="hidewidth cursor-pointer"
-                v-on="on"
-                @click="copyTextToClipboard(item.flow_group_id)"
-              >
-                <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
-                  {{ item.flow_group_id }}
-                </span>
-                <span v-else v-on="on">
-                  {{ item.flow_group_id.substring(0, 5) }}...
-                </span>
-              </div>
-            </template>
-
-            <span>Click to copy ID</span>
-          </v-tooltip>
-        </template>
-
-        <template v-slot:item.schedule="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <span v-on="on">
-                <ScheduleToggle
-                  v-if="!item.archived"
-                  :schedules="item.schedules"
-                />
-              </span>
-            </template>
-            <span>
-              {{
-                item.schedules.length
-                  ? item.schedules[0].active
-                    ? 'Active'
-                    : 'Paused'
-                  : 'No schedule set'
-              }}
-            </span>
-          </v-tooltip>
-        </template>
-
-        <template v-slot:item.flow_runs="{ item }">
-          <LastTenRuns
-            v-if="item.flow_runs.length"
-            :flow-runs="item.flow_runs"
-            class="last-ten-runs"
-          />
         </template>
 
         <!-- eslint-disable vue/no-template-shadow -->
@@ -441,7 +525,11 @@ export default {
 .v-data-table {
   font-size: 0.9rem !important;
 
-  td,
+  // stylelint-disable-next-line
+  .v-data-table__wrapper {
+    overflow: visible !important;
+  }
+
   th {
     font-size: inherit !important;
     overflow: hidden;
@@ -449,13 +537,9 @@ export default {
     white-space: nowrap;
   }
 
-  .last-ten-runs {
-    overflow-x: scroll !important;
+  td {
+    overflow: visible !important;
   }
-}
-
-.pointer {
-  cursor: pointer;
 }
 
 .flow-search {
@@ -467,13 +551,14 @@ export default {
   }
 }
 
-.archived-checkbox {
-  label {
-    font-size: 0.9rem;
-  }
-
-  .v-icon {
-    font-size: 20px !important;
-  }
+.barchart-tooltip {
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  text-overflow: initial;
+  transform: translate(-50%);
+  user-select: none;
+  width: fit-content !important;
+  z-index: 10;
 }
 </style>

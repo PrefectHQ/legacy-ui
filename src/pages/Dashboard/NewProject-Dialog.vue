@@ -23,7 +23,7 @@ export default {
       projectSuccess: false,
       projectLoading: false,
       projectError: false,
-      project: null,
+      projectId: null,
       specificProjectErrorMessage: ''
     }
   },
@@ -51,14 +51,14 @@ export default {
           },
           errorPolicy: 'all'
         })
-        if (data && data.create_project) {
-          this.project = data.create_project.project
+        if (data?.create_project) {
+          console.log(data)
+          this.projectId = data.create_project.id
           this.projectSuccess = true
           this.projectLoading = false
           //adding this here to make sure the dialog resets, even if a user clicks outside the box instead of going to the project (the persistent prop in vuetify is currently unreliable)
           setTimeout(() => (this.projectSuccess = false), 8000)
-        }
-        if (errors) {
+        } else if (errors) {
           if (errors[0].message === 'Uniqueness violation.') {
             this.specificProjectErrorMessage =
               'That project name already exists.  Please choose a new one.'
@@ -76,15 +76,14 @@ export default {
       }
     },
     goToProject() {
-      this.reset()
       this.$router.push({
         name: 'project',
         params: {
-          id: this.project ? this.project.id : null,
-          name: this.project.name,
+          id: this.projectId,
           tenant: this.tenant.slug
         }
       })
+      this.reset()
     },
     reset() {
       this.$emit('update:show', false)
@@ -162,7 +161,8 @@ export default {
           "
           id="add"
           v-disable-read-only-user="!valid"
-          class="ml-5"
+          :disabled="!valid"
+          class="ml-5 white--text"
           color="primary"
           @click="createProject"
         >

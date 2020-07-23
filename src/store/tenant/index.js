@@ -203,8 +203,6 @@ const actions = {
         }
       })
 
-      console.log(tenant)
-
       commit('setTenant', {
         ...tenant?.data?.tenant_by_pk
       })

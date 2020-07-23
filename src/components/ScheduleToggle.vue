@@ -3,13 +3,13 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
-    schedules: {
+    flow: {
       required: true,
-      type: Array
+      type: Object
     },
-    showDescription: {
-      type: Boolean,
-      default: true
+    flowGroup: {
+      required: true,
+      type: Object
     }
   },
   data() {
@@ -18,78 +18,84 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['role']),
-    schedule() {
-      if (this.schedules.length) {
-        return this.schedules[0]
+    ...mapGetters('tenant', ['tenant', 'role']),
+    archived() {
+      return this.flow.archived
+    },
+    isReadOnlyUser() {
+      return this.role === 'READ_ONLY_USER'
+    },
+    isScheduled: {
+      get() {
+        if (this.archived) return false
+        return this.flow.is_schedule_active
+      },
+      set() {
+        return
       }
-      return null
+    },
+    schedule() {
+      return this.flow.schedule?.clocks[0] || this.flowGroup.schedule?.clocks[0]
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    async toggleScheduleActive() {
+    async scheduleFlow() {
       try {
         this.loading = true
         let response
 
-        if (this.schedule.active) {
+        if (this.isScheduled) {
           response = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/set-schedule-inactive.gql'),
             variables: {
-              id: this.schedule.id
+              id: this.flow.id
             }
           })
 
           if (response.data.set_schedule_inactive.success) {
-            this.setAlert(
-              {
-                alertShow: true,
-                alertMessage: 'Schedule set to paused.',
-                alertType: 'info'
-              },
-              3000
-            )
+            this.alertShow = true
+            this.alertMessage = 'Schedule paused'
+            this.alertType = 'info'
           } else {
-            this.setAlert({
-              alertShow: true,
-              alertMessage: 'There was a problem.  Please try again.',
-              alertType: 'error'
-            })
+            this.alertShow = true
+            this.alertMessage =
+              '"Something went wrong. Please wait a few moments and try again."'
+            this.alertType = 'error'
           }
-        } else if (!this.schedule.active) {
+        } else if (!this.isScheduled) {
           response = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/set-schedule-active.gql'),
             variables: {
-              id: this.schedule.id
+              id: this.flow.id
             }
           })
 
           if (response.data.set_schedule_active.success) {
-            this.setAlert(
-              {
-                alertShow: true,
-                alertMessage: 'Schedule set to active.',
-                alertType: 'info'
-              },
-              3000
-            )
+            this.alertShow = true
+            this.alertMessage = 'Schedule activated'
+            this.alertType = 'info'
           } else {
-            this.setAlert({
-              alertShow: true,
-              alertMessage: 'There was a problem.  Please try again.',
-              alertType: 'error'
-            })
+            this.alertShow = true
+            this.alertMessage =
+              '"Something went wrong. Please wait a few moments and try again."'
+            this.alertType = 'error'
           }
         }
       } catch (error) {
-        this.setAlert({
-          alertShow: true,
-          alertMessage: 'There was a problem.  Please try again.',
-          alertType: 'error'
-        })
+        this.alertShow = true
+        this.alertMessage =
+          '"Something went wrong. Please wait a few moments and try again."'
+        this.alertType = 'error'
+        throw error
       } finally {
         this.loading = false
+        this.setAlert({
+          alertShow: this.alertShow,
+          alertMessage: this.alertMessage,
+          alertType: this.alertType,
+          alertLink: this.alertLink
+        })
       }
     }
   }
@@ -97,36 +103,54 @@ export default {
 </script>
 
 <template>
-  <span v-if="loading" class="flex-span">
-    <v-progress-circular indeterminate color="primary" />
-  </span>
-
-  <span v-else-if="schedule" class="flex-span">
-    <v-btn
-      v-disable-read-only-user
-      class="ml-0 mr-1"
-      text
-      small
-      icon
-      @click="toggleScheduleActive"
-    >
-      <v-icon v-if="schedule.active" color="accent">
-        toggle_on
-      </v-icon>
-      <v-icon v-else-if="!schedule.active">toggle_off</v-icon>
-    </v-btn>
-  </span>
-
-  <span v-else class="flex-span">
-    <span v-if="showDescription">
-      None
+  <v-tooltip bottom>
+    <template v-slot:activator="{ on }">
+      <div v-on="on">
+        <v-badge
+          :value="schedule == null && isScheduled"
+          color="warning"
+          icon="priority_high"
+          overlap
+          top
+          left
+        >
+          <v-switch
+            v-model="isScheduled"
+            data-cy="schedule-toggle"
+            class="small-switch"
+            color="primary"
+            :loading="loading"
+            :disabled="isReadOnlyUser || archived"
+            inset
+            hide-details
+            @change="scheduleFlow"
+          >
+          </v-switch>
+        </v-badge>
+      </div>
+    </template>
+    <span v-if="isReadOnlyUser">
+      Read-only users cannot schedule flows.
     </span>
-  </span>
+    <span v-else-if="schedule == null && isScheduled">
+      This flow is trying to schedule runs but has no schedules! Visit this
+      flow's
+      <span class="font-weight-bold">Settings > Schedules</span> to set a new
+      schedule.
+    </span>
+    <span v-else-if="archived">
+      Archived flows cannot be scheduled.
+    </span>
+    <span v-else>
+      Turn {{ isScheduled ? 'off' : 'on' }} this flow's schedule
+    </span>
+  </v-tooltip>
 </template>
 
-<style lang="scss" scoped>
-.flex-span {
-  align-items: center;
-  display: inline-flex;
+<style lang="scss">
+.small-switch.v-input {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  transform: scale(0.8);
 }
 </style>
