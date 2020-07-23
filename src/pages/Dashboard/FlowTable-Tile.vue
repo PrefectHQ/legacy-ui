@@ -79,6 +79,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     placeholderMessage() {
@@ -153,11 +154,13 @@ export default {
   },
   apollo: {
     flows: {
-      query: require('@/graphql/Dashboard/flows.gql'),
+      query() {
+        return require('@/graphql/Dashboard/flows.js').default(this.isCloud)
+      },
       variables() {
         let sortBy = {}
         if (this.sortBy) {
-          if (this.sortBy.includes('created_by.username')) {
+          if (this.isCloud && this.sortBy.includes('created_by.username')) {
             sortBy['created_by'] = {}
             sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
           } else if (Object.keys(this.sortBy) < 1) {
@@ -178,9 +181,11 @@ export default {
 
         searchParams.push({ name: { _ilike: this.searchFormatted } })
 
-        searchParams.push({
-          created_by: { username: { _ilike: this.searchFormatted } }
-        })
+        if (this.isCloud) {
+          searchParams.push({
+            created_by: { username: { _ilike: this.searchFormatted } }
+          })
+        }
 
         return {
           archived: this.showArchived ? null : false,
@@ -209,9 +214,11 @@ export default {
 
         searchParams.push({ name: { _ilike: this.searchFormatted } })
 
-        searchParams.push({
-          created_by: { username: { _ilike: this.searchFormatted } }
-        })
+        if (this.isCloud) {
+          searchParams.push({
+            created_by: { username: { _ilike: this.searchFormatted } }
+          })
+        }
 
         return {
           archived: this.showArchived ? null : false,

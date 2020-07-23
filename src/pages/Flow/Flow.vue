@@ -16,6 +16,7 @@ import TileLayoutFull from '@/layouts/TileLayout-Full'
 import TimelineTile from '@/pages/Flow/Timeline-Tile'
 import UpcomingRunsTile from '@/pages/Flow/UpcomingRuns-Tile'
 import VersionsTile from '@/pages/Flow/Versions-Tile'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -44,6 +45,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     },
@@ -136,7 +138,9 @@ export default {
   },
   apollo: {
     flowGroup: {
-      query: require('@/graphql/Flow/flow.gql'),
+      query() {
+        return require('@/graphql/Flow/flow.js').default(this.isCloud)
+      },
       variables() {
         return {
           id: this.flowGroupId
