@@ -233,7 +233,6 @@ export default {
         </template>
         <v-card tile class="pa-0" max-width="320">
           <v-card-text class="pb-0">
-            <p>Retries: {{ retries }}</p>
             <p>
               <span v-if="connected">Connected</span>
               <span v-else-if="connecting">Connecting</span>
