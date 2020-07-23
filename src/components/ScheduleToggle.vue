@@ -14,7 +14,7 @@ export default {
   },
   data() {
     return {
-      loading: false
+      loading: true
     }
   },
   computed: {
@@ -44,7 +44,6 @@ export default {
       try {
         this.loading = true
         let response
-
         if (this.isScheduled) {
           response = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/set-schedule-inactive.gql'),
@@ -52,7 +51,6 @@ export default {
               id: this.flow.id
             }
           })
-
           if (response.data.set_schedule_inactive.success) {
             this.alertShow = true
             this.alertMessage = 'Schedule paused'
@@ -70,7 +68,6 @@ export default {
               id: this.flow.id
             }
           })
-
           if (response.data.set_schedule_active.success) {
             this.alertShow = true
             this.alertMessage = 'Schedule activated'
@@ -103,48 +100,51 @@ export default {
 </script>
 
 <template>
-  <v-tooltip bottom>
-    <template v-slot:activator="{ on }">
-      <div v-on="on">
-        <v-badge
-          :value="schedule == null && isScheduled"
-          color="warning"
-          icon="priority_high"
-          overlap
-          top
-          left
-        >
-          <v-switch
-            v-model="isScheduled"
-            data-cy="schedule-toggle"
-            class="small-switch"
-            color="primary"
-            :loading="loading"
-            :disabled="isReadOnlyUser || archived"
-            inset
-            hide-details
-            @change="scheduleFlow"
+  <div class="position-relative">
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on }">
+        <div class="schedule-toggle" v-on="on">
+          <v-badge
+            :value="schedule == null && isScheduled"
+            color="warning"
+            icon="priority_high"
+            overlap
+            top
+            left
           >
-          </v-switch>
-        </v-badge>
-      </div>
-    </template>
-    <span v-if="isReadOnlyUser">
-      Read-only users cannot schedule flows.
-    </span>
-    <span v-else-if="schedule == null && isScheduled">
-      This flow is trying to schedule runs but has no schedules! Visit this
-      flow's
-      <span class="font-weight-bold">Settings > Schedules</span> to set a new
-      schedule.
-    </span>
-    <span v-else-if="archived">
-      Archived flows cannot be scheduled.
-    </span>
-    <span v-else>
-      Turn {{ isScheduled ? 'off' : 'on' }} this flow's schedule
-    </span>
-  </v-tooltip>
+            <v-switch
+              v-model="isScheduled"
+              data-cy="schedule-toggle"
+              class="small-switch"
+              color="primary"
+              :loading="loading"
+              :disabled="isReadOnlyUser || archived"
+              inset
+              dense
+              hide-details
+              @change="scheduleFlow"
+            >
+            </v-switch>
+          </v-badge>
+        </div>
+      </template>
+      <span v-if="isReadOnlyUser">
+        Read-only users cannot schedule flows.
+      </span>
+      <span v-else-if="schedule == null && isScheduled">
+        This flow is trying to schedule runs but has no schedules! Visit this
+        flow's
+        <span class="font-weight-bold">Settings > Schedules</span> to set a new
+        schedule.
+      </span>
+      <span v-else-if="archived">
+        Archived flows cannot be scheduled.
+      </span>
+      <span v-else>
+        Turn {{ isScheduled ? 'off' : 'on' }} this flow's schedule
+      </span>
+    </v-tooltip>
+  </div>
 </template>
 
 <style lang="scss">
@@ -152,5 +152,12 @@ export default {
   margin-top: 0 !important;
   padding-top: 0 !important;
   transform: scale(0.8);
+}
+
+.schedule-toggle {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
