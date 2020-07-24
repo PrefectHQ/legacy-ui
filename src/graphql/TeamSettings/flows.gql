@@ -1,8 +1,8 @@
 query Flows {
   flow(distinct_on: version_group_id, where: { archived: { _eq: false } }) {
-    archived
-    version_group_id
-    name
     id
+    archived
+    name
+    version_group_id
   }
 }

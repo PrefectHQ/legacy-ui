@@ -22,6 +22,7 @@ export default function(isCloud) {
             isCloud
               ? `
               created_by {
+                id
                 username
               }`
               : ''

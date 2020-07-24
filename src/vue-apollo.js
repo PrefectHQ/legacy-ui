@@ -178,8 +178,7 @@ const link = ApolloLink.from([
 ])
 
 const inMemoryCache = new InMemoryCache({
-  resultCaching: false,
-  addTypename: false
+  resultCaching: false
 })
 
 // Config
