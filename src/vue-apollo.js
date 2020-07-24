@@ -9,6 +9,8 @@ import { setContext } from 'apollo-link-context'
 import { ApolloLink } from 'apollo-link'
 // Can return Observable.of returned from error link to supress errors
 // import { ApolloLink, Observable } from 'apollo-link'
+
+import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import LogRocket from 'logrocket'
@@ -42,6 +44,12 @@ function aboutToExpire(expiry) {
 let globalClient = null
 
 let errors = 0
+
+const batchLink = new BatchHttpLink({
+  batchMax: 20,
+  batchInterval: 1000,
+  uri: () => store.getters['api/url']
+})
 
 const backendMiddleware = new ApolloLink((operation, forward) => {
   const context = operation.getContext()
@@ -174,7 +182,8 @@ const link = ApolloLink.from([
   authMiddleware,
   headerMiddleware,
   backendMiddleware,
-  errorAfterware
+  errorAfterware,
+  batchLink
 ])
 
 const inMemoryCache = new InMemoryCache({
@@ -202,6 +211,7 @@ export const defaultOptions = {
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
+  defaultHttpLink: false,
   link: link,
 
   // Override default cache

@@ -53,9 +53,8 @@ export default {
           heartbeat: oneAgo(this.selectedDateFilter)
         }
       },
-      // skip() {},
       loadingKey: 'loading',
-      pollInterval: 10000,
+      pollInterval: 30000,
       update: data => data.flow_run
     }
   }
