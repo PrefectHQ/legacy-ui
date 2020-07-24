@@ -17,5 +17,6 @@ query Heartbeat($projectId: uuid, $timestamp: timestamptz, $state: String) {
       id
       name
     }
+    __typename
   }
 }

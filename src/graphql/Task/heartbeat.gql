@@ -19,5 +19,6 @@ query Heartbeat($taskId: uuid!, $timestamp: timestamptz, $state: String) {
       name
       max_retries
     }
+    __typename
   }
 }

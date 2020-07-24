@@ -10,7 +10,7 @@ import { ApolloLink } from 'apollo-link'
 // Can return Observable.of returned from error link to supress errors
 // import { ApolloLink, Observable } from 'apollo-link'
 import { onError } from 'apollo-link-error'
-
+import { InMemoryCache } from 'apollo-cache-inmemory'
 import LogRocket from 'logrocket'
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -177,6 +177,11 @@ const link = ApolloLink.from([
   errorAfterware
 ])
 
+const inMemoryCache = new InMemoryCache({
+  resultCaching: false,
+  addTypename: false
+})
+
 // Config
 export const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)
@@ -201,7 +206,7 @@ export const defaultOptions = {
   link: link,
 
   // Override default cache
-  // cache: myCache
+  cache: inMemoryCache,
 
   // Override the way the Authorization header is set
   // getAuth: () => ...
