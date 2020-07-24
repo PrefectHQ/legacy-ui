@@ -20,5 +20,6 @@ query Task($id: uuid!) {
     is_root_task
     is_reference_task
     is_terminal_task
+    __typename
   }
 }

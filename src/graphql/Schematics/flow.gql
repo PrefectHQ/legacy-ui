@@ -36,6 +36,8 @@ query Flow($id: uuid!) {
           name
         }
       }
+      __typename
     }
+    __typename
   }
 }
