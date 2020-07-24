@@ -5,7 +5,8 @@ import LogRocket from 'logrocket'
 const maxRetries = 3
 
 const state = {
-  backend: process.env.VUE_APP_BACKEND || 'CLOUD',
+  backend:
+    localStorage.getItem('backend') || process.env.VUE_APP_BACKEND || 'SERVER',
   connected: false,
   connectionMessage: null,
   connectionTimeout: null,
@@ -69,9 +70,11 @@ const getters = {
 const mutations = {
   setBackend(state, backend) {
     state.backend = backend
+    localStorage.setItem('backend', backend)
   },
   unsetBackend(state) {
     state.backend = null
+    localStorage.removeItem('backend')
   },
   setConnected(state, connected) {
     state.connected = connected
