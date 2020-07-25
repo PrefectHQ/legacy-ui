@@ -73,9 +73,11 @@ const headerMiddleware = setContext((_, { headers }) => {
 
 const errorAfterware = onError(
   ({ response, operation, graphQLErrors, forward }) => {
+    console.log('errorAfterware', response, operation, graphQLErrors, forward)
     if (
       store.getters['api/isCloud'] &&
       graphQLErrors?.[0].message === 'Operation timed out'
+      //I think we need to surface this better for error handling / messaging if a query times out
     ) {
       LogRocket.captureException(operation, {
         type: 'Timeout'
@@ -245,14 +247,20 @@ export const createApolloProvider = () => {
         this.$apollo.skipAll = true
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
       } else if (graphQLErrors?.length || networkError) {
-        if (
-          graphQLErrors?.[0]?.message == 'TokenExpiredError: jwt expired' &&
-          !store.getters['auth0/isRefreshingAuthorization']
-        ) {
-          await store.dispatch('auth0/refreshAuthorization')
-          this.$apollo.skipAll = true
-        }
-      } else {
+        console.log(
+          'gqlErrors in errorHandler',
+          graphQLErrors,
+          'network Errors',
+          networkError
+        )
+        // if (
+        //   graphQLErrors?.[0]?.message == 'TokenExpiredError: jwt expired' &&
+        //   !store.getters['auth0/isRefreshingAuthorization']
+        // ) {
+        //   await store.dispatch('auth0/refreshAuthorization')
+        //   this.$apollo.skipAll = true
+        // }
+        // } else {
         /* eslint-disable no-console */
         console.log('graphQLErrors', graphQLErrors)
         console.log('networkError', networkError)
