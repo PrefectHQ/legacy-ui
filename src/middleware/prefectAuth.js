@@ -48,6 +48,7 @@ const prefectRefresh = async accessToken => {
       throw new Error('No token returned')
     }
   } catch (error) {
+    console.log('error in refresh', error)
     throw new Error(error.error)
   }
 }

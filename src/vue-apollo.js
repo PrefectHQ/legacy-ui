@@ -79,6 +79,7 @@ const errorAfterware = onError(
       graphQLErrors?.[0].message === 'Operation timed out'
       //I think we need to surface this better for error handling / messaging if a query times out
     ) {
+      console.log('TIMEDOUT', graphQLErrors[0]?.path[0])
       LogRocket.captureException(operation, {
         type: 'Timeout'
       })
@@ -253,14 +254,14 @@ export const createApolloProvider = () => {
           'network Errors',
           networkError
         )
-        // if (
-        //   graphQLErrors?.[0]?.message == 'TokenExpiredError: jwt expired' &&
-        //   !store.getters['auth0/isRefreshingAuthorization']
-        // ) {
-        //   await store.dispatch('auth0/refreshAuthorization')
-        //   this.$apollo.skipAll = true
-        // }
-        // } else {
+        if (
+          graphQLErrors?.[0]?.message == 'AuthenticationError: Forbidden' &&
+          !store.getters['auth0/isRefreshingAuthorization']
+        ) {
+          console.log('trying to refresh auth')
+          await store.dispatch('auth0/refreshAuthorization')
+          this.$apollo.skipAll = true
+        }
         /* eslint-disable no-console */
         console.log('graphQLErrors', graphQLErrors)
         console.log('networkError', networkError)
