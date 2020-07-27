@@ -73,13 +73,11 @@ const headerMiddleware = setContext((_, { headers }) => {
 
 const errorAfterware = onError(
   ({ response, operation, graphQLErrors, forward }) => {
-    console.log('errorAfterware', response, operation, graphQLErrors, forward)
     if (
       store.getters['api/isCloud'] &&
       graphQLErrors?.[0].message === 'Operation timed out'
       //I think we need to surface this better for error handling / messaging if a query times out
     ) {
-      console.log('TIMEDOUT', graphQLErrors[0]?.path[0])
       LogRocket.captureException(operation, {
         type: 'Timeout'
       })
@@ -248,17 +246,10 @@ export const createApolloProvider = () => {
         this.$apollo.skipAll = true
         setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
       } else if (graphQLErrors?.length || networkError) {
-        console.log(
-          'gqlErrors in errorHandler',
-          graphQLErrors,
-          'network Errors',
-          networkError
-        )
         if (
           graphQLErrors?.[0]?.message == 'AuthenticationError: Forbidden' &&
           !store.getters['auth0/isRefreshingAuthorization']
         ) {
-          console.log('trying to refresh auth')
           await store.dispatch('auth0/refreshAuthorization')
           this.$apollo.skipAll = true
         }
