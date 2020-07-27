@@ -301,8 +301,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayout>
           <TimelineTile
@@ -350,8 +350,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="tasks"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayoutFull>
           <TasksTableTile slot="row-2-tile" :flow="selectedFlow" />
@@ -361,8 +361,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="runs"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayoutFull>
           <FlowRunTableTile
@@ -376,8 +376,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="schematic"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayoutFull>
           <SchematicTile slot="row-2-tile" :flow="selectedFlow" />
@@ -387,8 +387,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="versions"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayoutFull>
           <VersionsTile slot="row-2-tile" :flow-group-id="flowGroup.id" />
@@ -398,8 +398,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="run"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <RunTiles :flow="selectedFlow" />
       </v-tab-item>
@@ -407,8 +407,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="settings"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayoutFull>
           <Settings

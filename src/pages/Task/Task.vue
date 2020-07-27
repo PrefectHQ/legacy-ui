@@ -209,8 +209,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="runs"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayoutFull>
           <TaskRunTableTile
@@ -224,8 +224,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayoutAlternate>
           <DetailsTile

@@ -44,6 +44,21 @@
   opacity: 0;
 }
 
+.quick-fade-enter-active,
+.quick-fade-leave-active {
+  opacity: 1;
+  transition: opacity ease-in-out 150ms;
+}
+
+.quick-fade-leave-active {
+  transition: opacity ease-in-out 150ms;
+}
+
+.quick-fade-enter,
+.quick-fade-leave-to {
+  opacity: 0;
+}
+
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;

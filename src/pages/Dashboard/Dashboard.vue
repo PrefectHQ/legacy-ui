@@ -205,7 +205,7 @@ export default {
           slot="row-0"
           :loading="loadedTiles < 4"
           type="text"
-          transition="fade"
+          transition="quick-fade"
           tile
         >
           <ProjectSelector @project-select="handleProjectSelect" />
@@ -243,8 +243,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayout>
           <v-skeleton-loader
@@ -252,7 +252,7 @@ export default {
             :loading="loadedTiles < 1"
             type="image"
             height="200"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -265,7 +265,7 @@ export default {
             type="image"
             min-height="329"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -278,7 +278,7 @@ export default {
             type="image"
             min-height="329"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -291,7 +291,7 @@ export default {
             type="image"
             min-height="329"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -303,7 +303,7 @@ export default {
             :loading="loadedTiles < 5"
             type="image"
             height="300"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -316,7 +316,7 @@ export default {
             type="image"
             min-height="200px"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -329,7 +329,7 @@ export default {
             type="image"
             min-height="200px"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -342,8 +342,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="flows"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <FlowTableTile class="mx-3 my-6" :project-id="projectId" />
       </v-tab-item>
@@ -352,8 +352,8 @@ export default {
         v-if="isCloud"
         class="tab-full-height"
         value="agents"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <Agents class="mx-3 my-6" />
       </v-tab-item>
@@ -361,8 +361,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="analytics"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         Nothing to see here :)
       </v-tab-item>

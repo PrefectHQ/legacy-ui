@@ -192,8 +192,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :task-run="taskRun" />
@@ -217,8 +217,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="logs"
-        transition="fade"
-        reverse-transition="fade"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
       >
         <TileLayoutFull>
           <LogsCard
