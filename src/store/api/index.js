@@ -1,5 +1,4 @@
-import { defaultOptions } from '@/vue-apollo'
-import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
+import { fallbackApolloClient } from '@/vue-apollo'
 import LogRocket from 'logrocket'
 
 const maxRetries = 3
@@ -119,9 +118,8 @@ const mutations = {
 
 const actions = {
   async getApi({ commit, dispatch }) {
-    const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
     try {
-      const { data } = await apolloClient.query({
+      const { data } = await fallbackApolloClient.query({
         query: require('@/graphql/api.gql'),
         fetchPolicy: 'no-cache'
       })
@@ -154,9 +152,7 @@ const actions = {
       commit('setRetries', getters['retries'] + 1)
 
       try {
-        const apolloClient = createApolloClient({ ...defaultOptions })
-          .apolloClient
-        const { data } = await apolloClient.query({
+        const { data } = await fallbackApolloClient.query({
           query: require('@/graphql/api.gql'),
           fetchPolicy: 'network-only',
           errorPolicy: 'none'

@@ -284,6 +284,10 @@ export const createApolloProvider = () => {
 export const defaultApolloProvider = createApolloProvider()
 export const defaultApolloClient = defaultApolloProvider.defaultClient
 
+// This is the client we use that is not subject to the stop/restarts of the application
+export const fallbackApolloProvider = createApolloProvider()
+export const fallbackApolloClient = fallbackApolloProvider.defaultClient
+
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
   await apolloClient.clearStore()
