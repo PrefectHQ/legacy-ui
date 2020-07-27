@@ -251,18 +251,18 @@ export const createApolloProvider = () => {
         ) {
           await store.dispatch('auth0/refreshAuthorization')
           this.$apollo.skipAll = true
-        } else {
-          /* eslint-disable no-console */
-          console.log('graphQLErrors', graphQLErrors)
-          console.log('networkError', networkError)
-          console.log('vm', vm)
-          console.log('key', key)
-          console.log('type', type)
-          console.log('options', options)
-          LogRocket.captureException(graphQLErrors, networkError)
-          LogRocket.log('Related to error', vm, key, type, options)
-          /* eslint-enable no-console */
         }
+      } else {
+        /* eslint-disable no-console */
+        console.log('graphQLErrors', graphQLErrors)
+        console.log('networkError', networkError)
+        console.log('vm', vm)
+        console.log('key', key)
+        console.log('type', type)
+        console.log('options', options)
+        LogRocket.captureException(graphQLErrors, networkError)
+        LogRocket.log('Related to error', vm, key, type, options)
+        /* eslint-enable no-console */
       }
     }
   })
