@@ -199,8 +199,34 @@ export default {
         <v-icon left>insert_chart_outlined</v-icon>
         Analytics
       </v-tab> -->
+    </v-tabs>
 
-      <v-tab-item class="tab-full-height pa-0" value="overview">
+    <v-tabs-items
+      v-model="tab"
+      class="px-6 mx-auto tabs-border-bottom"
+      style="max-width: 1440px;"
+    >
+      <v-tab-item
+        class="tab-full-height"
+        value="runs"
+        transition="fade"
+        reverse-transition="fade"
+      >
+        <TileLayoutFull>
+          <TaskRunTableTile
+            slot="row-2-tile"
+            :task-id="taskId"
+            :loading="loading > 0"
+          />
+        </TileLayoutFull>
+      </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height pa-0"
+        value="overview"
+        transition="fade"
+        reverse-transition="fade"
+      >
         <TileLayoutAlternate>
           <DetailsTile
             slot="col-1-tile-1"
@@ -220,17 +246,7 @@ export default {
           />
         </TileLayoutAlternate>
       </v-tab-item>
-
-      <v-tab-item class="tab-full-height" value="runs">
-        <TileLayoutFull>
-          <TaskRunTableTile
-            slot="row-2-tile"
-            :task-id="taskId"
-            :loading="loading > 0"
-          />
-        </TileLayoutFull>
-      </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn @click="tab = 'overview'">
