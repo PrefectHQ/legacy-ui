@@ -1,7 +1,3 @@
-//Really want failed tasks //But searching by task times out the DB // So search
-by flow and flow run? But then need to re-do a lot of client side filtering and
-then re-query
-
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import { oneAgo } from '@/utils/dateTime'
