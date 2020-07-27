@@ -4,6 +4,7 @@ import moment from 'moment-timezone'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 import Feedback from '@/components/Feedback'
+import { defaultApolloClient } from '@/vue-apollo'
 
 const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
@@ -127,6 +128,7 @@ export default {
     ...mapActions('api', ['getApi', 'switchBackend', 'backend']),
     ...mapMutations('refresh', ['add']),
     ...mapMutations('sideNav', ['toggle', 'close']),
+    ...mapMutations('tenant', ['unsetTenant']),
     ...mapActions('tenant', ['getTenant']),
     ...mapActions('license', ['getLicense']),
     ...mapActions('user', ['getUser']),
@@ -139,9 +141,7 @@ export default {
         await this.switchBackend('SERVER')
       }
 
-      Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.clearStore()
-      )
+      defaultApolloClient.clearStore()
 
       await this.$router
         .push({
@@ -166,6 +166,10 @@ export default {
       return route
     },
     async handleSwitchTenant(tenant) {
+      this.close()
+
+      this.unsetTenant()
+
       let membership = this.memberships.find(
         mem => mem.tenant.slug == tenant.slug
       )
@@ -178,9 +182,7 @@ export default {
 
       await this.getLicense()
 
-      Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.clearStore()
-      )
+      defaultApolloClient.clearStore()
 
       if (tenantProtectedRoutes.includes(this.$route.name)) {
         this.$router.push({
@@ -195,15 +197,17 @@ export default {
       }
     },
     async handleSwitchServerTenant(tenant) {
+      this.close()
+
+      this.unsetTenant()
+
       this.tenantMenuOpen = false
 
       if (!tenant || tenant.slug == this.tenant.slug) return
 
       await this.getTenant(tenant.id)
 
-      Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.clearStore()
-      )
+      defaultApolloClient.clearStore()
       if (tenantProtectedRoutes.includes(this.$route.name)) {
         this.$router.push({
           name: 'dashboard',

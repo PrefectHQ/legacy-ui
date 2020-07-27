@@ -26,7 +26,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['backend', 'version', 'url', 'connected']),
+    ...mapGetters('api', [
+      'backend',
+      'version',
+      'url',
+      'connected',
+      'isServer',
+      'isCloud'
+    ]),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', ['tenant', 'tenants']),
@@ -39,57 +46,19 @@ export default {
   },
   watch: {
     backend() {
+      this.updateTenant()
       this.$apollo.skipAll = true
       setTimeout(() => {
         this.$apollo.skipAll = false
       }, 500)
     },
     async connected(val) {
-      // Stops vue-related queries by stopping the client entirely
-      // when we're not connected. This does not impact the api store,
-      // which is using a separate client to check api status.
-      if (!val) {
-        defaultApolloClient.stop()
-      } else {
-        defaultApolloClient.restore()
-        this.shown = false
-        setTimeout(() => {
-          this.shown = true
-        }, 0)
-
-        if (!this.tenant) {
-          // Attempt to get tenants if they don't exist
-          await this.getTenants()
-
-          let tenantId = this.tenants[0].id
-
-          if (!tenantId) {
-            try {
-              const tenant = await this.$apollo.mutate({
-                mutation: require('@/graphql/Mutations/create-tenant.gql'),
-                variables: {
-                  input: {
-                    name: 'default',
-                    slug: 'default'
-                  }
-                }
-              })
-              tenantId = tenant?.data?.create_tenant?.id
-            } catch (e) {
-              throw new Error(e)
-            }
-          }
-
-          await this.getServerTenant(tenantId)
-
-          this.$router.replace({
-            name: this.$route.name,
-            params: {
-              tenant: this.tenant.slug
-            }
-          })
-        }
+      if (val) {
+        this.updateTenant()
       }
+    },
+    tenant(val) {
+      this.resetClient(val?.id)
     }
   },
   beforeDestroy() {
@@ -159,6 +128,54 @@ export default {
       }
 
       this.lastInteraction = this.currentInteraction
+    },
+    resetClient(val) {
+      // Stops vue-related queries by stopping the client entirely
+      // when we're not connected. This does not impact the api store,
+      // which is using a separate client to check api status.
+      if (!val) {
+        defaultApolloClient.stop()
+      } else {
+        defaultApolloClient.restore()
+        this.shown = false
+        setTimeout(() => {
+          this.shown = true
+        }, 0)
+      }
+    },
+    async updateTenant() {
+      if (this.isServer && !this.tenant) {
+        // Attempt to get tenants if they don't exist
+        await this.getTenants()
+
+        let tenantId = this.tenants[0].id
+
+        if (!tenantId) {
+          try {
+            const tenant = await this.$apollo.mutate({
+              mutation: require('@/graphql/Mutations/create-tenant.gql'),
+              variables: {
+                input: {
+                  name: 'default',
+                  slug: 'default'
+                }
+              }
+            })
+            tenantId = tenant?.data?.create_tenant?.id
+          } catch (e) {
+            throw new Error(e)
+          }
+        }
+
+        await this.getServerTenant(tenantId)
+
+        this.$router.replace({
+          name: this.$route.name,
+          params: {
+            tenant: this.tenant.slug
+          }
+        })
+      }
     }
   }
 }

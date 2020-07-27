@@ -1,4 +1,4 @@
-<template functional>
+<template>
   <div
     class="not-found-page"
     :class="{

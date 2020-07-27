@@ -15,6 +15,7 @@ export const runFlowNowMixin = {
       try {
         // Set the flow in a Scheduled state (even if it's already Scheduled).
         // This causes the flow run to execute immediately.
+        console.log(flowRunId)
         await this.$apollo.mutate({
           mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
           variables: {

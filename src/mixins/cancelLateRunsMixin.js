@@ -27,8 +27,8 @@ export const cancelLateRunsMixin = {
     },
     IdCheck() {
       return this.lateRuns?.map(run => {
-        if (run.flow?.schedules[0]?.active) {
-          this.scheduleIds.push(run.flow?.schedules[0].id)
+        if (run.flow?.is_schedule_active) {
+          this.ids.push(run.flow?.id)
         } else {
           this.individualRuns.push(run)
         }
@@ -36,7 +36,7 @@ export const cancelLateRunsMixin = {
     },
     async runMutation(mutationType) {
       const mutation = gql`
-          mutation {
+          mutation CancelLateRuns {
             ${mutationType}
           }`
 
@@ -47,10 +47,10 @@ export const cancelLateRunsMixin = {
         this.showClearLateRunsDialog = false
         this.isClearingLateRuns = true
         if (this.scheduleIds.length > 1) {
-          const uniqueIds = [...new Set(this.scheduleIds)]
+          const uniqueIds = [...new Set(this.ids)]
           const clearMutation = uniqueIds.map(
-            (schedId, ind) => `
-            set_schedule_inactive${ind}: set_schedule_inactive(input: { schedule_id: "${schedId}" }) {
+            (id, ind) => `
+            set_schedule_inactive${ind}: set_schedule_inactive(input: { flow_id: "${id}" }) {
               success,
               error
             }`
@@ -58,8 +58,8 @@ export const cancelLateRunsMixin = {
           await this.runMutation(clearMutation)
 
           const resetMutation = uniqueIds.map(
-            (schedId, ind) => `
-            set_schedule_active${ind}: set_schedule_active(input: { schedule_id: "${schedId}" }) {
+            (id, ind) => `
+            set_schedule_active${ind}: set_schedule_active(input: { flow_id: "${id}" }) {
               success,
               error
             }`
@@ -70,17 +70,19 @@ export const cancelLateRunsMixin = {
         }
 
         if (this.individualRuns?.length > 0) {
-          const statesMutation = this.individualRuns.map(
-            (flowRun, fi) => `
-            setFlowRunStates${fi}: setFlowRunStates(
+          const statesMutation = `
+            set_flow_run_states(
               input: {
-                states: [{
-                  flowRunId: "${flowRun.id}",
-                  state: {
-                    type: "Cancelled"
-                  },
-                  version: ${flowRun.version}
-                }]
+                states: [${this.individualRuns.map(r => {
+                  return `{
+                    flow_run_id: "${r.id}",
+                    state: { 
+                      "type": "Cancelled", 
+                      "message": "This run was late and so was cancelled from the UI." 
+                    },
+                    version: ${r.version}
+                  }`
+                })}]
               }
             ) {
               states {
@@ -88,27 +90,32 @@ export const cancelLateRunsMixin = {
                 status
               }
             }
-            setTaskRunStates${fi}: setTaskRunStates(
+
+            set_task_run_states(
               input: {
-                states: [${flowRun.task_runs
-                  .map(
-                    taskRun => `{
-                    version: ${taskRun.version},
-                    taskRunId: "${taskRun.id}",
-                    state: {
-                      type: "Cancelled"
-                    }}`
-                  )
-                  .join(', ')}
-                  ]}) {
-                    states {
-                      id
-                    }
-                  }
-                  
-              `
-          )
+                states: [${this.individualRuns.map(r =>
+                  r.task_runs.map(t => {
+                    return `{
+                      task_run_id: "${t.id}",
+                      state: { 
+                        "type": "Cancelled", 
+                        "message": "This run was late and so was cancelled from the UI." 
+                      },
+                      version: ${t.version}
+                    }`
+                  })
+                )}]
+              }
+            ) {
+              states {
+                id
+              }
+            }
+          
+          `
+
           // Build mutation to delete late flow runs.
+          console.log(statesMutation)
           await this.runMutation(statesMutation)
         }
 
@@ -116,7 +123,7 @@ export const cancelLateRunsMixin = {
         await this.$apollo.queries.upcoming.refetch()
       } catch (error) {
         this.clearLateRunsError = true
-        this.setError({
+        this.setAlert({
           alertShow: true,
           alertMessage:
             'Something went wrong while trying to clear your late flow runs. Please try again later.',
