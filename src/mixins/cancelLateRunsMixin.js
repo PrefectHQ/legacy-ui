@@ -69,6 +69,7 @@ export const cancelLateRunsMixin = {
           // Cancel flow runs & task runs
         }
 
+        // There's probably a better way to handle the JSON stringy conversion here.
         if (this.individualRuns?.length > 0) {
           const statesMutation = `
             set_flow_run_states(
@@ -76,10 +77,9 @@ export const cancelLateRunsMixin = {
                 states: [${this.individualRuns.map(r => {
                   return `{
                     flow_run_id: "${r.id}",
-                    state: { 
-                      "type": "Cancelled", 
-                      "message": "This run was late and so was cancelled from the UI." 
-                    },
+                    state: ${JSON.stringify(
+                      '{"type": "Cancelled","message": "This run was late and so was cancelled from the UI."}'
+                    )},
                     version: ${r.version}
                   }`
                 })}]
@@ -97,10 +97,9 @@ export const cancelLateRunsMixin = {
                   r.task_runs.map(t => {
                     return `{
                       task_run_id: "${t.id}",
-                      state: { 
-                        "type": "Cancelled", 
-                        "message": "This run was late and so was cancelled from the UI." 
-                      },
+                      state: ${JSON.stringify(
+                        '{"type": "Cancelled","message": "This run was late and so was cancelled from the UI."}'
+                      )},
                       version: ${t.version}
                     }`
                   })
@@ -115,7 +114,6 @@ export const cancelLateRunsMixin = {
           `
 
           // Build mutation to delete late flow runs.
-          console.log(statesMutation)
           await this.runMutation(statesMutation)
         }
 
