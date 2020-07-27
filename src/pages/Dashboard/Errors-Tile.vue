@@ -28,11 +28,15 @@ export default {
     return {
       failures: [],
       flowIds: [],
-      loading: 0
+      loading: 0,
+      queryError: false
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    hasError() {
+      return this.queryError && !this.failures
+    },
     displayFailures() {
       if (!this.failures) return null
       const sorted = this.sortFailures(this.failures)
@@ -103,10 +107,10 @@ export default {
       // skip: true,
       loadingKey: 'loading',
       //Update this to be an alert!
-      error(error) {
-        console.log('error in task failures', error)
+      error() {
+        this.queryError = true
       },
-      pollInterval: 10000,
+      pollInterval: 30000,
       update: data => {
         return data.task_run
       }
@@ -116,7 +120,33 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2 position-relative" tile style="height: 100%;">
+  <v-card
+    v-if="hasError"
+    class="py-2 position-relative"
+    tile
+    style="height: 100%;"
+  >
+    <v-slide-y-reverse-transition leave-absolute group>
+      <v-list-item key="error" color="grey">
+        <v-list-item-avatar class="mr-0">
+          <v-icon class="error--text">
+            error
+          </v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content class="my-0 py-3">
+          <div
+            class="inline-block subtitle-1 font-weight-light"
+            style="line-height: 1.25rem;"
+          >
+            Something went wrong while trying to fetch Task failures
+            information. Please try refreshing your page. If this error
+            persists, return to this page after a few minutes.
+          </div>
+        </v-list-item-content>
+      </v-list-item>
+    </v-slide-y-reverse-transition>
+  </v-card>
+  <v-card v-else class="py-2 position-relative" tile style="height: 100%;">
     <v-system-bar
       :color="
         loading > 0 ? 'secondaryGray' : failureCount ? 'failRed' : 'Success'
@@ -203,6 +233,7 @@ export default {
               heartbeat: calcHeartBeat()
             }"
           >
+            <!-- eslint-disable-next-line -->
             <template v-slot="{ result: { loading, error, data } }">
               <!-- Loading -->
               <div v-if="loading" class="loading apollo"
@@ -210,9 +241,14 @@ export default {
                 </v-skeleton-loader
               ></div>
               <!-- Error -->
-              <div v-else-if="error" class="error apollo">An error occurred</div
+              <div v-else-if="error"
+                ><v-list-item class="text-truncate">
+                  <v-list-item-title class="subtitle-2 red--text">
+                    An error occurred fetching this task information.
+                  </v-list-item-title></v-list-item
+                ></div
               ><!-- Result -->
-              <div v-if="data && data.task" class="result apollo">
+              <div v-else-if="data && data.task" class="result apollo">
                 <v-list-item
                   class="text-truncate"
                   :to="{

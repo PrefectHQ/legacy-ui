@@ -23,11 +23,15 @@ export default {
   data() {
     return {
       failures: null,
-      loading: 0
+      loading: 0,
+      queryError: false
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    hasError() {
+      return this.queryError && !this.failures
+    },
     displayFailures() {
       if (!this.failures) return null
       const sorted = this.sortFailures(this.failures)
@@ -99,37 +103,49 @@ export default {
         }
       },
       loadingKey: 'loading',
-      //Update this to be an alert!
       error(error) {
         console.log('error in flow failures', error)
+        this.queryError = true
       },
-      pollInterval: 10000,
+      pollInterval: 30000,
       update: data => {
         return data && data.flow
           ? data.flow.filter(flow => flow.failed_count.aggregate.count > 0)
           : null
       }
     }
-    // failuresCount: {
-    //   query: require('@/graphql/Dashboard/failures-count.gql'),
-    //   variables() {
-    //     return {
-    //       projectId: this.projectId,
-    //       heartbeat: oneAgo(this.selectedDateFilter)
-    //     }
-    //   },
-    //   pollInterval: 10000,
-    //   update: data =>
-    //     data && data.flow_aggregate && data.flow_aggregate.aggregate
-    //       ? data.flow_aggregate.aggregate.count
-    //       : null
-    // }
   }
 }
 </script>
 
 <template>
-  <v-card class="py-2 position-relative" tile style="height: 100%;">
+  <v-card
+    v-if="hasError"
+    class="py-2 position-relative"
+    tile
+    style="height: 100%;"
+  >
+    <v-slide-y-reverse-transition leave-absolute group>
+      <v-list-item key="error" color="grey">
+        <v-list-item-avatar class="mr-0">
+          <v-icon class="error--text">
+            error
+          </v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content class="my-0 py-3">
+          <div
+            class="inline-block subtitle-1 font-weight-light"
+            style="line-height: 1.25rem;"
+          >
+            Something went wrong while trying to fetch Task failures
+            information. Please try refreshing your page. If this error
+            persists, return to this page after a few minutes.
+          </div>
+        </v-list-item-content>
+      </v-list-item>
+    </v-slide-y-reverse-transition>
+  </v-card>
+  <v-card v-else class="py-2 position-relative" tile style="height: 100%;">
     <v-system-bar
       :color="
         loading > 0 ? 'secondaryGray' : failureCount ? 'failRed' : 'Success'
@@ -155,7 +171,7 @@ export default {
             <v-select
               v-model="selectedDateFilter"
               class="time-interval-picker"
-              :items="dateFilters"
+              :items="shortDateFilters"
               dense
               solo
               item-text="name"

@@ -13,7 +13,8 @@ export const formatTime = {
       // querying failures for over 24 hours either goes into endless loading or returns a 504 so shortening for now
       shortDateFilters: [
         { name: '1 Hour', value: 'hour' },
-        { name: '24 Hours', value: 'day' }
+        { name: '24 Hours', value: 'day' },
+        { name: '7 Days', value: 'week' }
       ],
       selectedDateFilter: 'day'
     }
