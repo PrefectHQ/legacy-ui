@@ -232,8 +232,20 @@ export default {
         <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
         {{ tb.name }}
       </v-tab>
+    </v-tabs>
 
-      <v-tab-item class="tab-full-height pa-0" value="overview">
+    <v-tabs-items
+      v-model="tab"
+      class="px-6 mx-auto tabs-border-bottom"
+      style="max-width: 1440px;"
+      mandatory
+    >
+      <v-tab-item
+        class="tab-full-height pa-0"
+        value="overview"
+        transition="fade"
+        reverse-transition="fade"
+      >
         <TileLayout>
           <v-skeleton-loader
             slot="row-0"
@@ -327,18 +339,34 @@ export default {
         </TileLayout>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="flows">
+      <v-tab-item
+        class="tab-full-height"
+        value="flows"
+        transition="fade"
+        reverse-transition="fade"
+      >
         <FlowTableTile class="mx-3 my-6" :project-id="projectId" />
       </v-tab-item>
 
-      <v-tab-item v-if="isCloud" class="tab-full-height" value="agents">
+      <v-tab-item
+        v-if="isCloud"
+        class="tab-full-height"
+        value="agents"
+        transition="fade"
+        reverse-transition="fade"
+      >
         <Agents class="mx-3 my-6" />
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="analytics">
+      <v-tab-item
+        class="tab-full-height"
+        value="analytics"
+        transition="fade"
+        reverse-transition="fade"
+      >
         Nothing to see here :)
       </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn v-for="tb in tabs" :key="tb.target" @click="tab = tb.target">
