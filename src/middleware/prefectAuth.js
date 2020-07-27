@@ -1,4 +1,4 @@
-import { fallbackApolloClient } from '@/vue-apollo'
+import { fallbackApolloClient, apolloOnLogin } from '@/vue-apollo'
 
 const prefectAuth = async idToken => {
   try {
