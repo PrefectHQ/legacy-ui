@@ -52,6 +52,10 @@ export default {
         defaultApolloClient.stop()
       } else {
         defaultApolloClient.restore()
+        this.shown = false
+        setTimeout(() => {
+          this.shown = true
+        }, 0)
       }
     }
   },
