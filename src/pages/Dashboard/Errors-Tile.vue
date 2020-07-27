@@ -102,7 +102,10 @@ export default {
       },
       // skip: true,
       loadingKey: 'loading',
-      errorPolicy: 'all',
+      //Update this to be an alert!
+      error(error) {
+        console.log('error in task failures', error)
+      },
       pollInterval: 10000,
       update: data => {
         return data.task_run

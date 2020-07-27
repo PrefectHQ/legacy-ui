@@ -99,11 +99,16 @@ export default {
         }
       },
       loadingKey: 'loading',
+      //Update this to be an alert!
+      error(error) {
+        console.log('error in flow failures', error)
+      },
       pollInterval: 10000,
-      update: data =>
-        data && data.flow
+      update: data => {
+        return data && data.flow
           ? data.flow.filter(flow => flow.failed_count.aggregate.count > 0)
           : null
+      }
     }
     // failuresCount: {
     //   query: require('@/graphql/Dashboard/failures-count.gql'),
