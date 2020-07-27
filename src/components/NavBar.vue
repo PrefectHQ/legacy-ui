@@ -195,7 +195,6 @@ export default {
       <GlobalSearch
         v-if="isServer || (tenant.settings.teamNamed && hasLicense)"
       />
-
       <v-menu
         v-model="connectionMenu"
         :close-on-content-click="false"

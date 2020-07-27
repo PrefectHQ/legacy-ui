@@ -300,15 +300,21 @@ export default {
       </v-fade-transition>
 
       <v-fade-transition hide-on-leave>
-        <code v-if="tab === 'parameters'" class="code-custom pa-3 my-3">{{
-          formatJson(flowRun.parameters)
-        }}</code>
+        <div
+          v-if="tab === 'parameters'"
+          class="text-body-2 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-5 code-block"
+        >
+          {{ formatJson(flowRun.parameters) }}
+        </div>
       </v-fade-transition>
 
       <v-fade-transition hide-on-leave>
-        <code v-if="tab === 'context'" class="code-custom pa-3 my-3">{{
-          formatJson(flowRun.context)
-        }}</code>
+        <div
+          v-if="tab === 'context'"
+          class="text-body-2 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-5 code-block"
+        >
+          {{ formatJson(flowRun.context) }}
+        </div>
       </v-fade-transition>
     </v-card-text>
   </v-card>
@@ -320,18 +326,13 @@ export default {
   overflow-y: scroll;
 }
 
-.code-custom {
-  background-color: #fff;
-  border: 1px solid #dedede;
-  border-radius: 0;
-  box-shadow: none;
-  color: #666;
-  font-size: 0.85em;
-  width: 100%;
+.code-block {
+  border: 1px solid #b0bec5 !important;
+  font-family: 'Source Code Pro', monospace !important;
+  white-space: pre-wrap;
+}
 
-  &::before,
-  &::after {
-    content: '' !important;
-  }
+.w-100 {
+  width: 100% !important;
 }
 </style>

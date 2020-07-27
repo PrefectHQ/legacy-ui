@@ -3,11 +3,12 @@ import Vue from 'vue'
 import vuetify from '@/plugins/vuetify'
 import Router from 'vue-router'
 import App from '@/App.vue'
-import router from '@/router'
-import store from '@/store'
 
 // Plugins
-import { createApolloProvider } from './vue-apollo'
+import store from '@/store'
+import { defaultApolloProvider } from '@/vue-apollo'
+import router from '@/router'
+
 import LogRocket from 'logrocket'
 
 // Filters
@@ -141,6 +142,6 @@ new Vue({
   vuetify,
   router,
   store,
-  apolloProvider: createApolloProvider(),
+  apolloProvider: defaultApolloProvider,
   render: h => h(App)
 }).$mount('#app')

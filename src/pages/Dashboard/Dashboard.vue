@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
