@@ -32,7 +32,6 @@ const prefectAuth = async idToken => {
 }
 
 const prefectRefresh = async accessToken => {
-  console.log('in auth trying to refresh')
   try {
     const result = await apolloClient.mutate({
       mutation: require('@/graphql/refresh-token.gql'),
@@ -44,13 +43,11 @@ const prefectRefresh = async accessToken => {
     if (result?.data?.refresh_token) {
       return result.data.refresh_token
     } else if (result.error) {
-      console.log('refresh result.error', result)
       throw new Error(result.error)
     } else {
       throw new Error('No token returned')
     }
   } catch (error) {
-    console.log('error in refresh', error)
     throw new Error(error.error)
   }
 }
