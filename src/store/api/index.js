@@ -184,6 +184,9 @@ const actions = {
     commit('setServerUrl', url)
   },
   async switchBackend({ rootGetters, commit, dispatch }, backend) {
+    if (backend == 'CLOUD') {
+      await dispatch('auth0/authenticate', null, { root: true })
+    }
     commit('setBackend', backend)
 
     if (backend == 'CLOUD') {

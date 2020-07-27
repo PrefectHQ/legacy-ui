@@ -52,7 +52,6 @@ export default {
           errorPolicy: 'all'
         })
         if (data?.create_project) {
-          console.log(data)
           this.projectId = data.create_project.id
           this.projectSuccess = true
           this.projectLoading = false

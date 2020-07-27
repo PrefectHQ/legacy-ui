@@ -29,7 +29,7 @@ export default {
     ...mapGetters('api', ['backend', 'version', 'url', 'connected']),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -44,7 +44,7 @@ export default {
         this.$apollo.skipAll = false
       }, 500)
     },
-    connected(val) {
+    async connected(val) {
       // Stops vue-related queries by stopping the client entirely
       // when we're not connected. This does not impact the api store,
       // which is using a separate client to check api status.
@@ -56,6 +56,39 @@ export default {
         setTimeout(() => {
           this.shown = true
         }, 0)
+
+        if (!this.tenant) {
+          // Attempt to get tenants if they don't exist
+          await this.getTenants()
+
+          let tenantId = this.tenants[0].id
+
+          if (!tenantId) {
+            try {
+              const tenant = await this.$apollo.mutate({
+                mutation: require('@/graphql/Mutations/create-tenant.gql'),
+                variables: {
+                  input: {
+                    name: 'default',
+                    slug: 'default'
+                  }
+                }
+              })
+              tenantId = tenant?.data?.create_tenant?.id
+            } catch (e) {
+              throw new Error(e)
+            }
+          }
+
+          await this.getServerTenant(tenantId)
+
+          this.$router.replace({
+            name: this.$route.name,
+            params: {
+              tenant: this.tenant.slug
+            }
+          })
+        }
       }
     }
   },
@@ -88,6 +121,7 @@ export default {
   },
   methods: {
     ...mapActions('api', ['getApi', 'monitorConnection']),
+    ...mapActions('tenant', ['getTenants', 'getServerTenant']),
     // ...mapMutations('sideDrawer', {
     //   clearDrawer: 'clearDrawer',
     //   closeSideDrawer: 'close'

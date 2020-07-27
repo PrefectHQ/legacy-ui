@@ -201,8 +201,9 @@ const actions = {
       commit('setTenant', {
         ...tenant?.data?.tenant_by_pk
       })
-    } catch {
+    } catch (e) {
       commit('unsetTenant')
+      throw new Error(e)
     }
   },
   async getTenants({ commit }) {

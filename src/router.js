@@ -1,5 +1,5 @@
 import Router from 'vue-router'
-import { defaultApolloClient } from '@/vue-apollo'
+// import { defaultApolloClient } from '@/vue-apollo'
 
 //  Nav guards
 import authNavGuard from '@/middleware/authNavGuard'
@@ -286,7 +286,7 @@ export const routes = [
     path: '/start',
     component: () =>
       import(/* webpackChunkName: "start" */ '@/pages/Start.vue'),
-    beforeEnter: multiguard([authNavGuard])
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
     name: 'dashboard',
@@ -312,16 +312,6 @@ export const routes = [
 const router = new Router({
   mode: 'history',
   routes
-})
-
-let previousRouteName = null
-
-router.beforeEach((to, from, next) => {
-  if (previousRouteName !== to.name) {
-    defaultApolloClient.cache.reset()
-    previousRouteName = to.name
-  }
-  next()
 })
 
 export default router

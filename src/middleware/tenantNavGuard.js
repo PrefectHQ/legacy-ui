@@ -1,4 +1,5 @@
 import store from '@/store/index'
+import { fallbackApolloClient } from '@/vue-apollo'
 
 const isServer = () => {
   return store.getters['api/isServer']
@@ -45,6 +46,8 @@ const tenantNavGuard = async (to, from, next) => {
 
           tenantId = tenant.id
         }
+      } else {
+        tenantId = store.getters['tenant/tenant'].id
       }
     } else {
       if (passedTenantSlug) {
@@ -60,6 +63,24 @@ const tenantNavGuard = async (to, from, next) => {
         tenantId = tenant.id
       } else {
         tenantId = store.getters['tenant/tenants']?.[0]?.id
+      }
+    }
+    if (!tenantId) {
+      try {
+        const tenant = await fallbackApolloClient.mutate({
+          mutation: require('@/graphql/Mutations/create-tenant.gql'),
+          variables: {
+            input: {
+              name: 'default',
+              slug: 'default'
+            }
+          }
+        })
+        tenantId = tenant?.data?.create_tenant?.id
+      } catch (e) {
+        return next({
+          name: 'not-found'
+        })
       }
     }
 
