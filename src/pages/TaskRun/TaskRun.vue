@@ -182,8 +182,19 @@ export default {
         <v-icon left>format_align_left</v-icon>
         Logs
       </v-tab>
+    </v-tabs>
 
-      <v-tab-item class="tab-full-height pa-0" value="overview">
+    <v-tabs-items
+      v-model="tab"
+      class="px-6 mx-auto tabs-border-bottom"
+      style="max-width: 1440px;"
+    >
+      <v-tab-item
+        class="tab-full-height pa-0"
+        value="overview"
+        transition="fade"
+        reverse-transition="fade"
+      >
         <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :task-run="taskRun" />
 
@@ -203,7 +214,12 @@ export default {
         </TileLayout>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="logs">
+      <v-tab-item
+        class="tab-full-height"
+        value="logs"
+        transition="fade"
+        reverse-transition="fade"
+      >
         <TileLayoutFull>
           <LogsCard
             slot="row-2-tile"
@@ -218,7 +234,7 @@ export default {
           />
         </TileLayoutFull>
       </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn @click="tab = 'overview'">
