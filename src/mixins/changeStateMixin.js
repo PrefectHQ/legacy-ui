@@ -1,4 +1,4 @@
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export const changeStateMixin = {
   props: {
@@ -90,13 +90,16 @@ export const changeStateMixin = {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     runLogMessage() {
       if (this.dialogType == 'resume') {
         return `Task ${this.taskRun.task.name} approved by ${this.user.username}`
       } else if (this.reason) {
-        return `${this.user.username} marked ${this.dialogType} as ${this.selectedState} because "${this.reason}"`
+        return `${this.user.username || 'User'} marked ${this.dialogType} as ${
+          this.selectedState
+        } because "${this.reason}"`
       } else {
-        return `${this.user.username} marked ${this.dialogType} 
+        return `${this.user.username || 'User'} marked ${this.dialogType} 
         as ${this.selectedState}`
       }
     },
@@ -113,10 +116,8 @@ export const changeStateMixin = {
       const { data } = await this.$apollo.mutate({
         mutation: require('@/graphql/Update/write-run-logs.gql'),
         variables: {
-          flow_run_id: this.taskRun
-            ? this.taskRun.flow_run?.id
-            : this.flowRun.id,
-          task_run_id: this.taskRun ? this.taskRun.id : null,
+          flowRunId: this.taskRun ? this.taskRun.flow_run?.id : this.flowRun.id,
+          taskRunId: this.taskRun ? this.taskRun.id : null,
           name: this.name,
           message: this.runLogMessage()
         }
@@ -186,7 +187,7 @@ export const changeStateMixin = {
             const result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
               variables: {
-                flow_run_id: this.flowRun.id,
+                flowRunId: this.flowRun.id,
                 version: this.flowRun.version,
                 state: {
                   type: this.selectedState,
@@ -207,17 +208,10 @@ export const changeStateMixin = {
         this.setStateError = true
       }
       if (this.setStateError) {
-        this.$toasted.show(this.toastedMessage, {
-          containerClass: 'toast-typography',
-          type: 'error',
-          icon: 'error',
-          action: {
-            text: 'Close',
-            onClick(e, toastObject) {
-              toastObject.goAway(0)
-            }
-          },
-          duration: 3000
+        this.setAlert({
+          alertShow: true,
+          alertMessage: this.toastedMessage,
+          alertType: 'error'
         })
       }
       if (
@@ -226,21 +220,11 @@ export const changeStateMixin = {
         this.cancelLoad &&
         !this.setStateError
       ) {
-        this.$toasted.show(
-          'Flow run set for cancel.  This may take 30 seconds.',
-          {
-            containerClass: 'toast-typography',
-            type: 'success',
-            icon: 'check_circle',
-            action: {
-              text: 'Close',
-              onClick(e, toastObject) {
-                toastObject.goAway(0)
-              }
-            },
-            duration: 3000
-          }
-        )
+        this.setAlert({
+          alertShow: true,
+          alertMessage: 'Flow run set for cancel.  This may take 30 seconds.',
+          alertType: 'success'
+        })
       }
       setTimeout(() => this.reset(), 500)
     },
