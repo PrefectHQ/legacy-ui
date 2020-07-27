@@ -141,7 +141,7 @@ export default {
         </template>
 
         <template v-slot:item.max_retries="{ item }">
-          {{ item.max_retries | number }}
+          {{ item.max_retries }}
         </template>
 
         <template v-slot:item.type="{ item }">
