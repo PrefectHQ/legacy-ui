@@ -20,15 +20,6 @@ Vue.use(VueApollo)
 // Name of the localStorage item
 const AUTH_TOKEN = 'authorization_token'
 
-// FIXME This is a hack, we'll have a better way to do this when we implement subscriptions
-function checkIfOnlineUntilWeAre() {
-  if (!navigator.onLine) {
-    setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
-  } else {
-    this.$apollo.skipAll = false
-  }
-}
-
 function isExpired(expiry) {
   return new Date().getTime() > expiry
 }
