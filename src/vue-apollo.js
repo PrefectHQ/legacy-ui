@@ -6,9 +6,8 @@ import {
 } from 'vue-cli-plugin-apollo/graphql-client'
 import store from '@/store/index'
 import { setContext } from 'apollo-link-context'
-import { ApolloLink } from 'apollo-link'
-// Can return Observable.of returned from error link to supress errors
-// import { ApolloLink, Observable } from 'apollo-link'
+
+import { ApolloLink, Observable } from 'apollo-link'
 
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
@@ -79,7 +78,38 @@ const headerMiddleware = setContext((_, { headers }) => {
 })
 
 const errorAfterware = onError(
-  ({ response, operation, graphQLErrors, forward }) => {
+  ({ response, operation, graphQLErrors, networkError, forward }) => {
+    if (process.env.NODE_ENV !== 'production') {
+      /* eslint-disable no-console */
+      console.groupCollapsed(
+        `%c${operation.operationName || 'Unnamed Query'} error`,
+        'color: #D64292; font-weight:bold;'
+      )
+      console.log('Operation: ', operation)
+
+      if (graphQLErrors?.length > 0) {
+        console.group('%cGraphQL Errors', 'color: #CA9800; font-weight:bold;')
+        graphQLErrors?.forEach(error => {
+          console.group(
+            `%c${error.extensions?.code || 'ERROR'}`,
+            'color: #B11A04; font-weight:bold;'
+          )
+          console.log(`Message: ${error.message}`)
+          console.log('Full log: ', error)
+          console.groupEnd()
+        })
+        console.groupEnd()
+      }
+
+      if (networkError) {
+        console.group('%cNetwork Error', 'color: #CA9800; font-weight:bold;')
+        console.log(networkError)
+        console.groupEnd()
+      }
+      console.groupEnd()
+      /* eslint-enable no-console */
+    }
+
     if (
       store.getters['api/isCloud'] &&
       graphQLErrors?.[0].message === 'Operation timed out'
@@ -94,6 +124,10 @@ const errorAfterware = onError(
     if (errors > 10) {
       defaultApolloClient.stop()
     }
+    // Can return Observable.of returned from error link to supress errors
+    //  otherwise return forward(operation)
+    // for a single retry of the failure
+    if (process.env.NODE_ENV !== 'production') return Observable.of()
     return forward(operation)
   }
 )

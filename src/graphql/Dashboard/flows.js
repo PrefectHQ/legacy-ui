@@ -5,67 +5,59 @@ export default function(isCloud) {
     query Flows(
       $limit: Int
       $offset: Int
-      $orderBy: [flow_group_order_by!]
-      $flowGroupSearchParams: flow_group_bool_exp
-      $flowSearchParams: flow_bool_exp
+      $orderBy: [flow_order_by!]
+      $searchParams: flow_bool_exp
     ) {
-    flows: flow_group(
-        where: $flowGroupSearchParams
+    flow(
+        where: $searchParams
         limit: $limit
         offset: $offset
         order_by: $orderBy
       ) {
-        id
 
+      id
+
+      archived
+      core_version
+      created
+
+      ${
+        isCloud
+          ? `
+          created_by {
+            id
+            username
+          }`
+          : ''
+      }
+
+      description
+      environment
+
+      flow_group {
+        id
         created
         name
-
         schedule
+      }
 
-        flows(
-          where: $flowSearchParams
-        ) {
-          id
+      is_schedule_active
 
-          archived
-          core_version
-          created
+      name
+      parameters
 
-          ${
-            isCloud
-              ? `
-              created_by {
-                id
-                username
-              }`
-              : ''
-          }
+      project {
+        id
+        name
+      }
 
-          description
-          environment
-          flow_group_id
+      schedule
 
-          is_schedule_active
+      storage
 
-          name
-          parameters
-
-          project {
-            id
-            name
-          }
-
-          schedule
-
-          storage
-
-          updated
-          version
-          version_group_id
-        }
-
-        settings
-        updated
+      updated
+      version
+      version_group_id
       }
     }
 `

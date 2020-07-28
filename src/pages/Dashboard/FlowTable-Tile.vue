@@ -1,12 +1,10 @@
 <script>
-import BarChart from '@/components/Visualizations/BarChart.vue'
 import CardTitle from '@/components/Card-Title'
 import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
+import LastTenRuns from '@/components/LastTenRuns'
 import ScheduleToggle from '@/components/ScheduleToggle'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import moment from 'moment'
-import TimelineTooltip from '@/components/TimelineTooltip'
 
 const serverHeaders = [
   // Can add this with icons later
@@ -61,10 +59,9 @@ const cloudHeaders = [
 
 export default {
   components: {
-    BarChart,
     CardTitle,
-    ScheduleToggle,
-    TimelineTooltip
+    LastTenRuns,
+    ScheduleToggle
   },
   filters: {},
   mixins: [formatTime],
@@ -80,7 +77,6 @@ export default {
       flows: [],
       limit: 10,
       loading: 0,
-      runsLoadingKey: 0,
       page: 1,
       search:
         this.$route && this.$route.query && this.$route.query.flows
@@ -89,8 +85,7 @@ export default {
       showArchived:
         this.$route && this.$route.query && this.$route.query.archived,
       sortBy: 'name',
-      sortDesc: false,
-      tooltip: null
+      sortDesc: false
     }
   },
   computed: {
@@ -106,9 +101,9 @@ export default {
     },
     placeholderMessage() {
       if (this.$vuetify.breakpoint.mdAndUp) {
-        return `Search by flow name, id, ${
-          !this.isCloud ? 'or' : ''
-        } version group id ${this.isCloud ? ', or creator' : ''} `
+        return `Search by Flow, ${!this.isCloud ? 'or' : ''} Project${
+          this.isCloud ? ', or User' : ''
+        } `
       }
       return ''
     },
@@ -146,89 +141,9 @@ export default {
     }
   },
   methods: {
-    _barMouseout() {
-      this.tooltip = null
-    },
-    _barMouseover(d) {
-      if (d.data.end_time) {
-        d.data.display_end_time = this.formatTime(d.data.end_time)
-      }
-
-      if (d.data.start_time) {
-        d.data.display_start_time = this.formatTime(d.data.start_time)
-      }
-
-      if (d.data.scheduled_start_time) {
-        d.data.display_scheduled_start_time = this.formatTime(
-          d.data.scheduled_start_time
-        )
-      }
-
-      d.status_style = this.statusStyle(d.data.state)
-
-      this.tooltip = d
-    },
-    _barClick(d) {
-      this.$router.push({
-        name: 'flow-run',
-        params: {
-          id: d.id
-        }
-      })
-    },
     async handleTableSearchInput(e) {
       this.loading++
       this.debounceSearch(e)
-    },
-    prepFlowRuns(flowGroupId) {
-      if (!this.flowRuns) return []
-
-      const computedStyle = getComputedStyle(document.documentElement)
-
-      return this.flowRuns
-        .filter(run => run.flow.flow_group_id == flowGroupId)
-        .reverse()
-        .map(d => {
-          if (d.start_time && d.end_time) {
-            let end = new moment(d.end_time),
-              start = new moment(d.start_time)
-            d.duration = moment.duration(end.diff(start))
-          } else {
-            let now = new moment(),
-              start = new moment(d.start_time)
-            d.duration = moment.duration(now.diff(start))
-          }
-
-          d.color = computedStyle.getPropertyValue(`--v-${d.state}-base`)
-          d.opacity = 1
-          d.flow_group_id = d.flow.flow_group_id
-          return d
-        })
-    },
-    formatTime(timestamp) {
-      if (!timestamp) throw new Error('Did not recieve a timestamp')
-
-      let t = moment(timestamp).tz(this.timezone),
-        shortenedTz = moment()
-          .tz(this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone)
-          .zoneAbbr()
-
-      let timeObj = t ? t : moment(timestamp)
-
-      let formatted = timeObj.calendar(null, {
-        sameDay: 'h:mma',
-        sameElse: 'MMMM D, YYYY [at] h:mma'
-      })
-      return `${formatted} ${shortenedTz}`
-    },
-    statusStyle(state) {
-      return {
-        'border-radius': '50%',
-        display: 'inline-block',
-        'background-color': `var(--v-${state}-base)`,
-        height: '1rem',
-        width: '1rem'
-      }
     },
     debounceSearch: debounce(function(e) {
       this.loading = 0
@@ -247,7 +162,7 @@ export default {
             sortBy['created_by'] = {}
             sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
           } else if (Object.keys(this.sortBy) < 1) {
-            sortBy = { flows: { name: 'asc' } }
+            sortBy = { name: 'asc' }
           } else {
             sortBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
           }
@@ -258,40 +173,20 @@ export default {
           { project_id: { _eq: this.projectId ? this.projectId : null } }
         ]
 
-        let flowSearchParams = [
+        let orParams = [
           {
             name: { _ilike: this.searchFormatted }
-          }
-        ]
-        let flowGroupSearchParams = [
-          {
-            flows: {
-              name: { _ilike: this.searchFormatted }
-            }
-          }
+          },
+          { project: { name: { _ilike: this.searchFormatted } } }
         ]
 
-        // This lets us control the params we pass to the _or expression
-        // let searchParams = []
-        // if (this.validUUID) {
-        //   searchParams.push({ id: { _eq: this.search } })
-        //   searchParams.push({
-        //     id: { _eq: this.searchFormatted }
-        //   })
-        // }
-
-        // searchParams.push({
-        //   name: { _ilike: this.searchFormatted }
-        // })
+        if (this.validUUID) {
+          orParams.push({ id: { _eq: this.search } })
+        }
 
         if (this.isCloud) {
-          flowSearchParams.push({
+          orParams.push({
             created_by: { username: { _ilike: this.searchFormatted } }
-          })
-          flowGroupSearchParams.push({
-            flows: {
-              created_by: { username: { _ilike: this.searchFormatted } }
-            }
           })
         }
 
@@ -299,75 +194,49 @@ export default {
           limit: this.limit,
           offset: this.limit * (this.page - 1),
           orderBy: sortBy,
-          flowGroupSearchParams: {
-            flows: {
-              _and: [...searchParams, { _or: [...flowSearchParams] }]
-            }
-          },
-          flowSearchParams: {
-            _and: [...searchParams, { _or: [...flowSearchParams] }]
+          searchParams: {
+            _and: [...searchParams, { _or: [...orParams] }]
           }
         }
       },
       loadingKey: 'loading',
       pollInterval: 60000,
       update: data => {
-        return data?.flows.map(group => {
-          const flow = group.flows?.[0]
-          return {
-            id: group.id,
-            archived: flow.archived,
-            flow: flow,
-            flow_group: group,
-            name: flow.name,
-            project: flow.project,
-            version: flow.version
-          }
-        })
+        return data?.flow
       }
     },
     flowCount: {
       query: require('@/graphql/Dashboard/flow-count.gql'),
       variables() {
-        // This lets us control the params we pass to the _or expression
-        let searchParams = []
+        let searchParams = [
+          { archived: { _eq: this.showArchived ? null : false } },
+          { project_id: { _eq: this.projectId ? this.projectId : null } }
+        ]
+
+        let orParams = [
+          {
+            name: { _ilike: this.searchFormatted }
+          },
+          { project: { name: { _ilike: this.searchFormatted } } }
+        ]
+
         if (this.validUUID) {
-          searchParams.push({ id: { _eq: this.search } })
-          searchParams.push({
-            flow_group_id: { _eq: this.searchFormatted }
-          })
+          orParams.push({ id: { _eq: this.search } })
         }
 
-        searchParams.push({ name: { _ilike: this.searchFormatted } })
-
         if (this.isCloud) {
-          searchParams.push({
+          orParams.push({
             created_by: { username: { _ilike: this.searchFormatted } }
           })
         }
 
         return {
-          archived: this.showArchived ? null : false,
-          projectId: this.projectId ? this.projectId : null,
-          searchParams: searchParams
+          searchParams: { _and: [...searchParams, { _or: [...orParams] }] }
         }
       },
       loadingKey: 'loading',
       pollInterval: 60000,
       update: data => data?.flowCount?.aggregate?.count
-    },
-    flowRuns: {
-      query: require('@/graphql/Dashboard/last-flow-runs.gql'),
-      variables() {
-        return {
-          flowIds: this.flows.map(group => group.id)
-        }
-      },
-      skip() {
-        return !this.flows
-      },
-      pollInterval: 60000,
-      loadingKey: 'runsLoadingKey'
     }
   }
 }
@@ -445,7 +314,7 @@ export default {
         </template>
 
         <template v-slot:item.schedule="{ item }">
-          <ScheduleToggle :flow="item.flow" :flow-group="item.flow_group" />
+          <ScheduleToggle :flow="item" :flow-group="item.flow_group" />
         </template>
 
         <template v-slot:item.project="{ item }">
@@ -464,25 +333,7 @@ export default {
 
         <template v-slot:item.flow_runs="{ item }">
           <div class="position-relative allow-overflow">
-            <BarChart
-              :items="prepFlowRuns(item.id)"
-              :loading="runsLoadingKey > 0"
-              :height="50"
-              :min-bands="10"
-              normalize
-              :padding="0"
-              y-field="duration"
-              @bar-click="_barClick"
-              @bar-mouseout="_barMouseout"
-              @bar-mouseover="_barMouseover"
-            />
-
-            <div
-              v-if="tooltip && tooltip.data.flow_group_id == item.id"
-              class="barchart-tooltip v-tooltip__content text-left"
-            >
-              <TimelineTooltip :tooltip="tooltip" />
-            </div>
+            <LastTenRuns :flow-id="item.id" :archived="item.archived" />
           </div>
         </template>
 
