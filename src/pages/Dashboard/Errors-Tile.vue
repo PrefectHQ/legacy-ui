@@ -1,19 +1,20 @@
 <script>
-import CardTitle from '@/components/Card-Title'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import { oneAgo } from '@/utils/dateTime'
+import CardTitle from '@/components/Card-Title'
+import TaskItem from '@/pages/Dashboard/Task-Item'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
-    CardTitle
+    CardTitle,
+    TaskItem
   },
   mixins: [formatTime],
   props: {
     projectId: {
-      required: false,
       type: String,
-      default: () => null
+      default: null
     },
     fullHeight: {
       required: false,
@@ -23,39 +24,92 @@ export default {
   },
   data() {
     return {
-      loading: 0
+      failures: null,
+      flowIds: [],
+      loading: 0,
+      queryError: false
     }
   },
   computed: {
-    ...mapGetters('user', ['timezone']),
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('tenant', ['tenant']),
+    hasError() {
+      return this.queryError && !this.failures
+    },
+    displayFailures() {
+      if (!this.failures) return null
+      const sorted = this.sortFailures(this.failures)
+      return sorted
+    },
+    failureCount() {
+      return this.failures?.length
+    }
   },
   watch: {
     tenant(val) {
-      this.projects = []
+      this.failures = []
 
       if (val) {
-        this.loading = 1
+        this.failures = []
 
-        setTimeout(async () => {
-          await this.$apollo.queries.errors.refetch(), (this.loading = 0)
+        setTimeout(() => {
+          // this.$apollo.queries.failuresCount.refetch()
+          this.$apollo.queries.failures.refetch()
         }, 1000)
       }
     }
   },
-  methods: {},
+  methods: {
+    ...mapMutations('sideDrawer', ['openDrawer']),
+    failedRuns(failure) {
+      const failedRuns = failure.filter(run => {
+        return run.state === 'Failed'
+      })
+      return failedRuns.length
+    },
+    totalRuns(failure) {
+      return failure.length
+    },
+    sortFailures(failures) {
+      return failures.sort((flowRunA, flowRunB) => {
+        if (flowRunA?.failed_count && flowRunB?.failed_count) {
+          const aFailurePercentage =
+            flowRunA.failed_count.aggregate.count /
+            flowRunA.runs_count.aggregate.count
+          const bFailurePercentage =
+            flowRunB.failed_count.aggregate.count /
+            flowRunB.runs_count.aggregate.count
+
+          if (aFailurePercentage > bFailurePercentage) {
+            return -1
+          } else if (aFailurePercentage < bFailurePercentage) {
+            return 1
+          }
+          return 0
+        }
+        return 0
+      })
+    },
+    calcHeartBeat() {
+      return oneAgo(this.selectedDateFilter)
+    }
+  },
   apollo: {
-    errors: {
+    failures: {
       query: require('@/graphql/Dashboard/failures.gql'),
       variables() {
         return {
-          projectId: this.projectId ? this.projectId : null,
           heartbeat: oneAgo(this.selectedDateFilter)
         }
       },
       loadingKey: 'loading',
+      error() {
+        this.failures = null
+        this.queryError = true
+      },
       pollInterval: 30000,
-      update: data => data.flow_run
+      update: data => {
+        return data.task_run
+      }
     }
   }
 }
@@ -63,7 +117,34 @@ export default {
 
 <template>
   <v-card
+    v-if="hasError"
     class="py-2 position-relative"
+    tile
+    style="height: 100%;"
+  >
+    <v-slide-y-reverse-transition leave-absolute group>
+      <v-list-item key="error" color="grey">
+        <v-list-item-avatar class="mr-0">
+          <v-icon class="error--text">
+            error
+          </v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content class="my-0 py-3">
+          <div
+            class="inline-block subtitle-1 font-weight-light"
+            style="line-height: 1.25rem;"
+          >
+            Something went wrong while trying to fetch Task failures
+            information. Please try refreshing your page. If this error
+            persists, return to this page after a few minutes.
+          </div>
+        </v-list-item-content>
+      </v-list-item>
+    </v-slide-y-reverse-transition>
+  </v-card>
+  <v-card
+    v-else
+    class="py-2"
     tile
     :style="{
       height: fullHeight ? '100%' : 'auto'
@@ -71,11 +152,7 @@ export default {
   >
     <v-system-bar
       :color="
-        loading > 0
-          ? 'secondaryGray'
-          : errors && errors.length > 0
-          ? 'Failed'
-          : 'Success'
+        loading > 0 ? 'secondaryGray' : failureCount > 0 ? 'failRed' : 'Success'
       "
       :height="5"
       absolute
@@ -87,14 +164,10 @@ export default {
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <CardTitle
-          :title="`${errors ? errors.length : 0} Errors`"
-          icon="error"
+          :title="`${failureCount} Failed Tasks`"
+          icon="pi-task"
           :icon-color="
-            loading > 0
-              ? 'grey'
-              : errors && errors.length > 0
-              ? 'Failed'
-              : 'Success'
+            loading > 0 ? 'grey' : failureCount > 0 ? 'failRed' : 'Success'
           "
           :loading="loading > 0"
         >
@@ -102,7 +175,7 @@ export default {
             <v-select
               v-model="selectedDateFilter"
               class="time-interval-picker"
-              :items="dateFilters"
+              :items="shortDateFilters"
               dense
               solo
               item-text="name"
@@ -131,72 +204,22 @@ export default {
       </v-slide-y-reverse-transition>
 
       <v-slide-y-reverse-transition
-        v-else-if="errors && errors.length > 0"
+        v-else-if="failureCount > 0"
         leave-absolute
         group
       >
         <v-lazy
-          v-for="error in errors"
-          :key="error.id"
+          v-for="failure in displayFailures"
+          :key="failure.id"
           :options="{
             threshold: 0.75
           }"
           min-height="40px"
           transition="fade"
         >
-          <v-list-item
-            :to="{
-              name: 'flow-run',
-              params: { id: error.id },
-              query: {
-                logId: error.logs.length > 0 ? error.logs[0].id : null
-              }
-            }"
-          >
-            <v-list-item-content>
-              <v-list-item-subtitle class="font-weight-light">
-                <span class="overline">
-                  {{
-                    error.logs.length
-                      ? formatTimeRelative(error.logs[0].timestamp)
-                      : ''
-                  }}
-                </span>
-              </v-list-item-subtitle>
-              <v-list-item-title
-                class="subtitle-2 font-weight-light Failed--text text--darken-1"
-              >
-                {{
-                  error.logs.length
-                    ? error.logs[0].message
-                    : 'No Log associated with this error.'
-                }}
-              </v-list-item-title>
-              <v-list-item-subtitle class="font-weight-light">
-                <router-link
-                  :to="{ name: 'flow', params: { id: error.flow.id } }"
-                >
-                  {{ error.flow.name }}
-                </router-link>
-                <span class="font-weight-bold">
-                  <v-icon style="font-size: 12px;">
-                    chevron_right
-                  </v-icon>
-                </span>
-                <router-link
-                  :to="{ name: 'flow-run', params: { id: error.id } }"
-                >
-                  {{ error.name }}
-                </router-link>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-avatar
-              ><v-icon>arrow_right</v-icon></v-list-item-avatar
-            >
-          </v-list-item>
+          <TaskItem :failure="failure" :heartbeat="calcHeartBeat()" />
         </v-lazy>
       </v-slide-y-reverse-transition>
-
       <v-slide-y-transition v-else leave-absolute group>
         <v-list-item key="no-data" color="grey">
           <v-list-item-avatar class="mr-0">
@@ -207,33 +230,18 @@ export default {
               class="subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
-              No reported errors in the last {{ selectedDateFilter }}...
+              No reported failures in the last {{ selectedDateFilter }}...
               Everything looks good!
             </div>
           </v-list-item-content>
         </v-list-item>
       </v-slide-y-transition>
     </v-list>
-
-    <div v-if="errors && errors.length > 3" class="pa-0 error-footer"> </div>
+    <div v-if="failures && failures.length > 3" class="pa-0 footer"> </div>
   </v-card>
 </template>
 
 <style lang="scss" scoped>
-.error-card-content {
-  height: 254px;
-  overflow-y: scroll;
-}
-
-.error-footer {
-  background-image: linear-gradient(transparent, 60%, rgba(0, 0, 0, 0.1));
-  bottom: 6px;
-  height: 6px !important;
-  pointer-events: none;
-  position: absolute;
-  width: 100%;
-}
-
 .time-interval-picker {
   font-size: 0.85rem;
   margin: auto;
@@ -241,11 +249,17 @@ export default {
   max-width: 150px;
 }
 
-.position-relative {
-  position: relative;
+.error-card-content {
+  height: 254px;
+  overflow-y: scroll;
 }
 
-a {
-  text-decoration: none !important;
+.footer {
+  background-image: linear-gradient(transparent, 60%, rgba(0, 0, 0, 0.1));
+  bottom: 6px;
+  height: 6px !important;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
 }
 </style>

@@ -1,0 +1,11 @@
+query FailedTaskDetails($taskId: uuid, $heartbeat: timestamptz) {
+          task(where: { id: { _eq: $taskId } }) {
+            flow{
+              name
+            }
+            task_runs(where: { updated: { _gte: $heartbeat } }) {
+              id
+              state
+            }
+          }
+        }
