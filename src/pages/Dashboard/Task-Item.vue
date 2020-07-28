@@ -30,7 +30,6 @@ export default {
       return failure.length
     },
     flowName(task) {
-      console.log(task)
       return task[0].flow?.name
     }
   },
