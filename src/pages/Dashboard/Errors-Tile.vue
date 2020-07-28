@@ -39,7 +39,7 @@ export default {
       return sorted
     },
     failureCount() {
-      return this.failures.length
+      return this.failures?.length
     }
   },
   watch: {
@@ -143,10 +143,17 @@ export default {
       </v-list-item>
     </v-slide-y-reverse-transition>
   </v-card>
-  <v-card v-else class="py-2 position-relative" tile style="height: 100%;">
+  <v-card
+    v-else
+    class="py-2"
+    tile
+    :style="{
+      height: fullHeight ? '100%' : 'auto'
+    }"
+  >
     <v-system-bar
       :color="
-        loading > 0 ? 'secondaryGray' : failureCount ? 'failRed' : 'Success'
+        loading > 0 ? 'secondaryGray' : failureCount > 0 ? 'failRed' : 'Success'
       "
       :height="5"
       absolute
@@ -161,7 +168,7 @@ export default {
           :title="`${failureCount} Failed Tasks`"
           icon="pi-task"
           :icon-color="
-            loading > 0 ? 'grey' : failureCount ? 'failRed' : 'Success'
+            loading > 0 ? 'grey' : failureCount > 0 ? 'failRed' : 'Success'
           "
           :loading="loading > 0"
         >
@@ -191,14 +198,14 @@ export default {
       </span>
     </v-tooltip>
 
-    <v-list dense class="card-content">
+    <v-list dense class="error-card-content">
       <v-slide-y-reverse-transition v-if="loading > 0" leave-absolute group>
         <v-skeleton-loader key="skeleton" type="list-item-three-line">
         </v-skeleton-loader>
       </v-slide-y-reverse-transition>
 
       <v-slide-y-reverse-transition
-        v-else-if="failureCount"
+        v-else-if="failureCount > 0"
         leave-absolute
         group
       >
@@ -315,9 +322,8 @@ export default {
   max-width: 150px;
 }
 
-.card-content {
-  height: 100%;
-  max-height: 254px;
+.error-card-content {
+  height: 254px;
   overflow-y: scroll;
 }
 
