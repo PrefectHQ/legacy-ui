@@ -165,6 +165,7 @@ export default {
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
         }"
+        class="truncate-table"
         :headers="headers"
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="flowRuns || []"
@@ -182,7 +183,7 @@ export default {
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link
-                class="link"
+                class="link truncate"
                 :to="{ name: 'flow-run', params: { id: item.id } }"
               >
                 <span v-on="on">{{ item.name }}</span>
@@ -242,35 +243,3 @@ export default {
     </v-card-text>
   </v-card>
 </template>
-
-<style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  font-size: 0.9rem !important;
-
-  td {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-.pointer {
-  cursor: pointer;
-}
-</style>
-
-<style lang="scss" scoped>
-.time-interval-picker {
-  font-size: 0.85rem;
-  margin: auto;
-  margin-right: 0;
-  max-width: 150px;
-}
-</style>

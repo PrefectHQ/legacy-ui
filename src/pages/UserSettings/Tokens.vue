@@ -215,7 +215,7 @@ export default {
 
         <v-data-table
           fixed-header
-          class="elevation-2 rounded-none"
+          class="elevation-2 rounded-none truncate-table"
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :search="search"

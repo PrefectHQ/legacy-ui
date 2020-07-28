@@ -382,26 +382,7 @@ export default {
   </v-card>
 </template>
 
-<style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  font-size: 0.9rem !important;
-
-  // stylelint-disable-next-line
-  .v-data-table__wrapper {
-    overflow: visible !important;
-  }
-
-  td {
-    overflow: visible !important;
-  }
-}
-
+<style lang="scss" scoped>
 .flow-search {
   border-radius: 0 !important;
   font-size: 0.85rem;
@@ -409,16 +390,5 @@ export default {
   .v-icon {
     font-size: 20px !important;
   }
-}
-
-.barchart-tooltip {
-  left: 50%;
-  pointer-events: none;
-  position: absolute;
-  text-overflow: initial;
-  transform: translate(-50%);
-  user-select: none;
-  width: fit-content !important;
-  z-index: 10;
 }
 </style>

@@ -145,6 +145,7 @@ export default {
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
         }"
+        class="truncate-table"
         :headers="headers"
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="task ? task.task_runs : null || []"
@@ -220,29 +221,6 @@ export default {
     </v-card-text>
   </v-card>
 </template>
-
-<style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  font-size: 0.9rem !important;
-
-  td {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-.pointer {
-  cursor: pointer;
-}
-</style>
 
 <style lang="scss" scoped>
 .time-interval-picker {

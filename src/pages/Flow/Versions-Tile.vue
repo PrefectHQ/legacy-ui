@@ -270,47 +270,6 @@ export default {
 </template>
 
 <style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-// stylelint-disable
-.v-data-table__wrapper {
-  overflow: initial !important;
-}
-// stylelint-enable
-
-.versions-table.v-data-table {
-  font-size: 0.9rem !important;
-  overflow: initial !important;
-
-  tr {
-    overflow: initial !important;
-  }
-
-  td,
-  th {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  td {
-    overflow: initial !important;
-  }
-
-  .last-ten-runs {
-    overflow-x: scroll !important;
-  }
-}
-
-.pointer {
-  cursor: pointer;
-}
-
 .flow-search {
   border-radius: 0 !important;
   font-size: 0.85rem;

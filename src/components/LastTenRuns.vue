@@ -153,3 +153,16 @@ export default {
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.barchart-tooltip {
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  text-overflow: initial;
+  transform: translate(-50%);
+  user-select: none;
+  width: fit-content !important;
+  z-index: 10;
+}
+</style>
