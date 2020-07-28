@@ -104,6 +104,7 @@ export default {
       loadingKey: 'loading',
       //Update this to be an alert!
       error() {
+        this.failures = null
         this.queryError = true
       },
       pollInterval: 30000,
