@@ -1,32 +1,23 @@
-query Failures($heartbeat: timestamptz, $projectId: uuid) {
-  flow_run(
-    where: {
-      updated: { _gte: $heartbeat }
-      flow: { project_id: { _eq: $projectId } }
-      logs: { level: { _in: ["CRITICAL", "ERROR"] } }
-    }
-    distinct_on: flow_id
-    order_by: [{ flow_id: asc }, { updated: desc }]
-  ) {
-    id
-    name
-    logs(
-      limit: 1
-      where: {
-        level: { _in: ["CRITICAL", "ERROR"] }
-        timestamp: { _gte: $heartbeat }
+query FailedTasks($heartbeat: timestamptz) {
+  task_run
+    (where: {
+        _and: [{
+            state: {
+              _eq: "Failed"
+            }
+          },
+          {
+            updated: {
+              _gte: $heartbeat
+            }
+          }
+        ]
       }
-    ) {
+      distinct_on: task_id) {
       id
-      level
-      message
-      name
-      timestamp
+      task {
+        id
+        name
+      }
     }
-
-    flow {
-      id
-      name
-    }
-  }
 }
