@@ -22,7 +22,7 @@ export default {
   },
   data() {
     return {
-      failures: [],
+      failures: null,
       flowIds: [],
       loading: 0,
       queryError: false
