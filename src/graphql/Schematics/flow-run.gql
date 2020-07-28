@@ -45,7 +45,10 @@ query FlowRun($id: uuid!) {
             name
           }
         }
+        __typename
       }
+      __typename
     }
+    __typename
   }
 }

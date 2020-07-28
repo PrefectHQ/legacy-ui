@@ -6,8 +6,8 @@ query TableTaskRuns(
   $orderBy: [task_run_order_by!]
 ) {
   flow_run(where: { id: { _eq: $flowRunId } }) {
-    name
     id
+    name
     task_runs(
       where: { task: { name: { _ilike: $name } } }
       order_by: $orderBy

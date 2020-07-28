@@ -78,6 +78,7 @@ export default {
       queriesWithoutLimits: [
         'agents',
         '_aggregate',
+        'api',
         'auth_info',
         'authInfo',
         // *_by_pk queries are helper queries that don't have offset and limit

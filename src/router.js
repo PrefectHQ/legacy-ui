@@ -1,4 +1,5 @@
 import Router from 'vue-router'
+import { defaultApolloClient } from '@/vue-apollo'
 
 //  Nav guards
 import authNavGuard from '@/middleware/authNavGuard'
@@ -311,6 +312,16 @@ export const routes = [
 const router = new Router({
   mode: 'history',
   routes
+})
+
+let previousRouteName = null
+
+router.beforeEach((to, from, next) => {
+  if (previousRouteName !== to.name) {
+    defaultApolloClient.cache.reset()
+    previousRouteName = to.name
+  }
+  next()
 })
 
 export default router

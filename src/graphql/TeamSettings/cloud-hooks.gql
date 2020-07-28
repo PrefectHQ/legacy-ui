@@ -1,9 +1,9 @@
 query CloudHooks($searchParams: [cloud_hook_bool_exp!]) {
   cloud_hook(where: { _or: $searchParams }) {
+    id
     active
     config
     created
-    id
     name
     states
     tenant_id

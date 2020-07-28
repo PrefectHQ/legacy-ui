@@ -22,6 +22,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('api', ['backend']),
     sortedProjects() {
       if (!this.projects) return []
       let fullySorted = [...this.projects].sort((a, b) =>
@@ -93,6 +94,9 @@ export default {
           await this.$apollo.queries.projects.refetch(), (this.loading = false)
         }, 1000)
       }
+    },
+    backend() {
+      this.$apollo.queries.projects.refetch()
     }
   },
   methods: {

@@ -6,6 +6,7 @@ query APITokens {
     id
     name
     created_by {
+      id
       username
     }
     created

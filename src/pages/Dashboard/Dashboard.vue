@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
@@ -13,6 +14,33 @@ import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import TimelineTile from '@/pages/Dashboard/Timeline-Tile'
 import { mapGetters } from 'vuex'
+
+const serverTabs = [
+  {
+    name: 'Overview',
+    target: 'overview',
+    icon: 'view_quilt'
+  },
+  {
+    name: 'Flows',
+    target: 'flows',
+    icon: 'pi-flow'
+  }
+]
+
+const cloudTabs = [
+  {
+    name: 'Agents',
+    target: 'agents',
+    icon: 'pi-agent',
+    iconSize: 'small'
+  }
+  // {
+  //   name: 'Analytics',
+  //   target: 'analytics',
+  //   icon: 'insert_chart_outlined'
+  // }
+]
 
 export default {
   components: {
@@ -38,30 +66,7 @@ export default {
       numberOfTiles: 7,
       previousParams: { flows: { flows: '' }, agents: { agents: '' } },
       projectId: this.$route.params.id,
-      tab: this.getTab(),
-      tabs: [
-        {
-          name: 'Overview',
-          target: 'overview',
-          icon: 'view_quilt'
-        },
-        {
-          name: 'Flows',
-          target: 'flows',
-          icon: 'pi-flow'
-        },
-        {
-          name: 'Agents',
-          target: 'agents',
-          icon: 'pi-agent',
-          iconSize: 'small'
-        }
-        // {
-        //   name: 'Analytics',
-        //   target: 'analytics',
-        //   icon: 'insert_chart_outlined'
-        // }
-      ]
+      tab: this.getTab()
     }
   },
   computed: {
@@ -69,6 +74,9 @@ export default {
     ...mapGetters('api', ['backend', 'isCloud']),
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
+    },
+    tabs() {
+      return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
     }
   },
   watch: {
@@ -195,7 +203,7 @@ export default {
       <span slot="page-actions">
         <v-skeleton-loader
           slot="row-0"
-          :loading="loadedTiles < 1"
+          :loading="loadedTiles < 4"
           type="text"
           transition="fade"
           tile

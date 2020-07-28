@@ -101,7 +101,6 @@ export default {
           heartbeat: oneAgo(this.selectedDateFilter)
         }
       },
-      // skip: true,
       loadingKey: 'loading',
       error() {
         this.failures = null

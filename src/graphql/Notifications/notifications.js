@@ -15,9 +15,9 @@ export default function(isCloud) {
     offset: $offset
     order_by: $orderBy
   ) {
+    id
     content
     created
-    id
     read
     content
     tenant_id
@@ -29,6 +29,7 @@ export default function(isCloud) {
       isCloud
         ? `
         user {
+          id
           username
         }
 

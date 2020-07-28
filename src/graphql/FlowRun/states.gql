@@ -10,6 +10,7 @@ query FlowRunStates(
     order_by: $orderBy
     offset: $offset
   ) {
+    id
     state
     start_time
     timestamp

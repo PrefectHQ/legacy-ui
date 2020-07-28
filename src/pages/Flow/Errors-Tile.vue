@@ -38,7 +38,7 @@ export default {
   computed: {
     ...mapGetters('user', ['timezone']),
     pollInterval() {
-      return this.flow.archived ? 0 : 5000
+      return this.flow.archived ? 0 : 60000
     }
   },
   watch: {
@@ -140,7 +140,7 @@ export default {
               ? 'Failed'
               : 'Success'
           "
-          :loading="loading > 0"
+          :loading="!errors && loading > 0"
         >
           <div slot="action" v-on="on">
             <v-select
@@ -171,7 +171,7 @@ export default {
 
     <v-list dense class="error-card-content">
       <v-slide-y-reverse-transition
-        v-if="loading > 0"
+        v-if="!errors && loading > 0"
         mode="out-in"
         leave-absolute
         group
