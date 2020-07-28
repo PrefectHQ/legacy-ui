@@ -103,8 +103,7 @@ export default {
         }
       },
       loadingKey: 'loading',
-      error(error) {
-        console.log('error in flow failures', error)
+      error() {
         this.queryError = true
       },
       pollInterval: 30000,
