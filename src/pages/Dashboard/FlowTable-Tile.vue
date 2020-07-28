@@ -16,26 +16,26 @@ const serverHeaders = [
   {
     text: 'Name',
     value: 'name',
-    width: 20
+    width: '20%'
   },
   {
     text: 'Schedule',
     value: 'schedule',
     sortable: false,
     align: 'center',
-    width: 20
+    width: '20%'
   },
   {
     text: 'Project',
     value: 'project.name',
     sortable: false,
-    width: 15
+    width: '15%'
   },
   {
     text: 'Version',
     value: 'version',
     sortable: false,
-    width: 10
+    width: '7.5%'
   }
 ]
 
@@ -44,7 +44,7 @@ const serverHeadersPost = [
     text: 'Run History',
     value: 'flow_runs',
     sortable: false,
-    width: 25
+    width: '25%'
   }
 ]
 
@@ -53,7 +53,7 @@ const cloudHeaders = [
     text: 'Created By',
     value: 'created_by.username',
     sortable: false,
-    width: 10
+    width: '12.5%'
   }
 ]
 
@@ -274,7 +274,7 @@ export default {
         :headers="headers"
         :page.sync="page"
         :items-per-page.sync="limit"
-        class="ma-2"
+        class="ma-2 overflow-table"
         must-sort
         :no-data-text="
           `You have no flows${projectId ? ' in this project!' : '!'}`
@@ -353,16 +353,9 @@ export default {
         </template>
 
         <template v-slot:item.created_by.username="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <span v-on="on">
-                {{ item.created_by ? item.created_by.username : null }}
-              </span>
-            </template>
-            <span>
-              {{ item.created_by ? item.created_by.username : null }}
-            </span>
-          </v-tooltip>
+          <div class="truncate">
+            {{ item.created_by ? item.created_by.username : null }}
+          </div>
         </template>
 
         <!-- eslint-disable vue/no-template-shadow -->
