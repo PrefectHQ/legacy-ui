@@ -7,12 +7,6 @@ import ScheduleToggle from '@/components/ScheduleToggle'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 const serverHeaders = [
-  // Can add this with icons later
-  // {
-  //   text: 'Archived',
-  //   value: 'archived',
-  //   width: 5
-  // },
   {
     text: 'Name',
     value: 'name',
@@ -94,6 +88,15 @@ export default {
     ...mapGetters('user', ['timezone']),
     headers() {
       return [
+        ...(this.showArchived
+          ? [
+              {
+                text: '',
+                value: 'archived',
+                width: 5
+              }
+            ]
+          : []),
         ...serverHeaders,
         ...(this.isCloud ? cloudHeaders : []),
         ...serverHeadersPost
@@ -292,6 +295,25 @@ export default {
           nextIcon: 'keyboard_arrow_right'
         }"
       >
+        <template v-slot:item.archived="{ item }">
+          <v-tooltip v-if="!item.archived" top>
+            <template v-slot:activator="{ on }">
+              <v-icon small dark color="green" v-on="on">
+                pi-flow
+              </v-icon>
+            </template>
+            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
+          </v-tooltip>
+          <v-tooltip v-else top>
+            <template v-slot:activator="{ on }">
+              <v-icon small dark color="accent-pink" v-on="on">
+                archive
+              </v-icon>
+            </template>
+            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
+          </v-tooltip>
+        </template>
+
         <template v-slot:item.name="{ item }">
           <div class="truncate">
             <router-link
