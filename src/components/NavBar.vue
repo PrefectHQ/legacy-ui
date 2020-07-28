@@ -24,6 +24,7 @@ export default {
       'connecting',
       'retries'
     ]),
+    ...mapGetters('license', ['permissions']),
     ...mapGetters('sideDrawer', ['disableOpenButton']),
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant']),
@@ -100,7 +101,7 @@ export default {
       update: data => data?.message_aggregate?.aggregate?.count,
       fetchPolicy: 'network-only',
       skip() {
-        return !this.connected
+        return !this.connected || !this.permissions
       },
       pollInterval: 10000
     },
@@ -125,7 +126,13 @@ export default {
         }
       },
       skip() {
-        return !this.connected || this.isServer
+        return (
+          !this.connected ||
+          !this.isCloud ||
+          !this.memberships ||
+          !this.user ||
+          !this.user.email
+        )
       },
       fetchPolicy: 'network-only',
       pollInterval: 10000
