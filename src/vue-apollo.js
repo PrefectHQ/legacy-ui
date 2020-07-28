@@ -117,7 +117,16 @@ const errorAfterware = onError(
       LogRocket.captureException(operation, {
         type: 'Timeout'
       })
-    } else if (response) {
+      // For now we just capture Cloud errors,
+      // we can expand this if it's helpful for debugging later
+    } else if (
+      (store.getters['api/isCloud'] && graphQLErrors) ||
+      networkError
+    ) {
+      LogRocket.captureException(graphQLErrors, networkError)
+    }
+
+    if (response) {
       response.errors = null
     }
     errors++
