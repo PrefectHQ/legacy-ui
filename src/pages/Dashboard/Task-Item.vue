@@ -20,17 +20,17 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    failedRuns(failure) {
-      const failedRuns = failure.filter(run => {
+    failedRuns(task) {
+      const failedRuns = task[0]?.task_runs?.filter(run => {
         return run.state === 'Failed'
       })
       return failedRuns.length
     },
-    totalRuns(failure) {
-      return failure.length
+    totalRuns(task) {
+      return task[0]?.task_runs?.length
     },
     flowName(task) {
-      return task[0].flow?.name
+      return task[0]?.flow?.name
     }
   },
   apollo: {
@@ -96,7 +96,7 @@ export default {
         <v-list-item-subtitle>
           {{ failedRuns(task[0].task_runs) }}
           /
-          {{ totalRuns(task[0].task_runs) }}
+          {{ totalRuns(task) }}
           Runs failed
         </v-list-item-subtitle>
       </v-list-item-content>
