@@ -174,7 +174,7 @@ export default {
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <router-link
-                  class="link"
+                  class="link truncate"
                   :data-cy="'task-run-table-link|' + item.task.name"
                   :to="{ name: 'task-run', params: { id: item.id } }"
                 >
