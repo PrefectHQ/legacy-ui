@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import Actions from '@/pages/Flow/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/Flow/Details-Tile'

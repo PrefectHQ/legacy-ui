@@ -1,5 +1,4 @@
-import { defaultOptions } from '@/vue-apollo'
-import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
+import { fallbackApolloClient } from '@/vue-apollo'
 import LogRocket from 'logrocket'
 
 const state = {
@@ -39,9 +38,8 @@ const actions = {
     commit('unsetLicense')
     commit('unsetPermissions')
 
-    const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
     try {
-      const { data } = await apolloClient.query({
+      const { data } = await fallbackApolloClient.query({
         query: require('@/graphql/License/license.gql'),
         fetchPolicy: 'no-cache'
       })

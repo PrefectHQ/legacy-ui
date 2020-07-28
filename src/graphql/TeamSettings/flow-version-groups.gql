@@ -4,9 +4,11 @@ query FlowVersionGroups {
     id
     name
     project {
+      id
       name
     }
     created_by {
+      id
       username
     }
   }

@@ -1,6 +1,7 @@
 <script>
 import Alert from '@/components/Alert'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { defaultApolloClient } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
@@ -48,9 +49,9 @@ export default {
       // when we're not connected. This does not impact the api store,
       // which is using a separate client to check api status.
       if (!val) {
-        this.$apollo.provider.clients.defaultClient.stop()
+        defaultApolloClient.stop()
       } else {
-        this.$apollo.provider.clients.defaultClient.restore()
+        defaultApolloClient.restore()
       }
     }
   },

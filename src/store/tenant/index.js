@@ -1,5 +1,4 @@
-import { defaultOptions } from '@/vue-apollo'
-import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
+import { fallbackApolloClient } from '@/vue-apollo'
 import { prefectTenants } from '@/middleware/prefectAuth'
 
 const state = {
@@ -74,12 +73,11 @@ const mutations = {
 
 const actions = {
   async updateTenantSettings({ commit }, settings) {
-    const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
     try {
       if (!settings || !Object.keys(settings).length) {
         throw new Error('passed invalid or empty settings object')
       }
-      const response = await apolloClient.mutate({
+      const response = await fallbackApolloClient.mutate({
         mutation: require('@/graphql/Mutations/update-tenant-settings.gql'),
         variables: {
           settings
@@ -103,10 +101,9 @@ const actions = {
       return
     }
 
-    const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
     let tenantId
     try {
-      const tenantIDQuery = await apolloClient.query({
+      const tenantIDQuery = await fallbackApolloClient.query({
         query: require('@/graphql/Tenant/membership.gql'),
         variables: {
           membershipId: membershipId
@@ -115,7 +112,7 @@ const actions = {
       })
       tenantId = tenantIDQuery.data.membership[0].tenant.id
 
-      const getTenantToken = await apolloClient.mutate({
+      const getTenantToken = await fallbackApolloClient.mutate({
         mutation: require('@/graphql/Tenant/tenant-token.gql'),
         variables: {
           tenantId: tenantId
@@ -131,7 +128,7 @@ const actions = {
         }
       )
 
-      const membershipQuery = await apolloClient.query({
+      const membershipQuery = await fallbackApolloClient.query({
         query: require('@/graphql/Tenant/membership.gql'),
         variables: {
           membershipId: membershipId
@@ -149,7 +146,7 @@ const actions = {
       // In that case, we'll get the tenant associated
       // with their first membership and then call the switch
       // tenant route to update the default_membership_id
-      const tenantIDQuery = await apolloClient.query({
+      const tenantIDQuery = await fallbackApolloClient.query({
         query: require('@/graphql/Tenant/tenant-id-by-membership-id.gql'),
         variables: {
           membershipId: rootGetters['user/memberships'][0].id
@@ -158,7 +155,7 @@ const actions = {
       })
       tenantId = tenantIDQuery.data.membership[0].tenant.id
 
-      const getTenantToken = await apolloClient.mutate({
+      const getTenantToken = await fallbackApolloClient.mutate({
         mutation: require('@/graphql/Tenant/tenant-token.gql'),
         variables: {
           tenantId: tenantId
@@ -178,7 +175,7 @@ const actions = {
         root: true
       })
 
-      const membershipQuery = await apolloClient.query({
+      const membershipQuery = await fallbackApolloClient.query({
         query: require('@/graphql/Tenant/membership.gql'),
         variables: {
           membershipId: tenantIDQuery.data.membership[0].id
@@ -193,10 +190,8 @@ const actions = {
     }
   },
   async getServerTenant({ commit, getters }, tenantId) {
-    const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
-
     try {
-      const tenant = await apolloClient.query({
+      const tenant = await fallbackApolloClient.query({
         query: require('@/graphql/Tenant/tenant-by-pk.gql'),
         variables: {
           id: tenantId ? tenantId : getters['tenants']?.[0].id

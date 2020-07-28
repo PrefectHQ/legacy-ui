@@ -13,5 +13,6 @@ query Heartbeat($flow_group_id: uuid, $flow_id: uuid, $state: String) {
     state
     state_message
     state_timestamp
+    __typename
   }
 }

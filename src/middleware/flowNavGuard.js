@@ -1,12 +1,9 @@
-import { defaultOptions } from '@/vue-apollo'
-import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
-
-const apolloClient = createApolloClient({ ...defaultOptions }).apolloClient
+import { fallbackApolloClient } from '@/vue-apollo'
 
 const flowNavGuard = async (to, from, next) => {
   let id = to.params?.id
 
-  let group = await apolloClient.query({
+  let group = await fallbackApolloClient.query({
     query: require('@/graphql/Middleware/flow-group.gql'),
     variables: {
       id: id
@@ -15,7 +12,7 @@ const flowNavGuard = async (to, from, next) => {
 
   if (group?.data?.flow_group_by_pk?.id) return next()
 
-  let version = await apolloClient.query({
+  let version = await fallbackApolloClient.query({
     query: require('@/graphql/Middleware/flow.gql'),
     variables: {
       id: id

@@ -1,13 +1,15 @@
 query Memberships($id: uuid) {
   membership_invitation(where: { id: { _eq: $id } }) {
+    id
     created
     email
-    id
     role
     tenant {
+      id
       name
     }
     user {
+      id
       username
       email
     }

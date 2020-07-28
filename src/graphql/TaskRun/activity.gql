@@ -13,6 +13,7 @@ query Activity(
     limit: $limit
     order_by: { timestamp: desc }
   ) {
+    id
     state
     message
     result

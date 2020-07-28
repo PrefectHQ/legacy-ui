@@ -1,8 +1,8 @@
 query PendingInvitations {
   pendingInvitations: membership_invitation {
-    email
     id
     created
+    email
     role
     tenant {
       id

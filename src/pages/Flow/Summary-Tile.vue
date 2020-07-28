@@ -194,7 +194,7 @@ export default {
             <div class="text-center">
               <div class="font-weight-bold display-1" style="min-height: 36px;">
                 <v-skeleton-loader
-                  v-if="loading > 0"
+                  v-if="!filteredStateSegments && loading > 0"
                   type="heading"
                   class="centered-skeleton"
                 />
@@ -242,7 +242,7 @@ export default {
             <div class="text-center">
               <div class="font-weight-bold display-1" style="min-height: 36px;">
                 <v-skeleton-loader
-                  v-if="loading > 0"
+                  v-if="!filteredStateSegments && loading > 0"
                   type="heading"
                   class="centered-skeleton"
                 />
@@ -284,7 +284,7 @@ export default {
               </div>
               <div class="subtitle">
                 <v-skeleton-loader
-                  v-if="loading > 0"
+                  v-if="!filteredStateSegments && loading > 0"
                   type="text"
                   class="centered-skeleton"
                 />

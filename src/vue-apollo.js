@@ -9,9 +9,12 @@ import { setContext } from 'apollo-link-context'
 import { ApolloLink } from 'apollo-link'
 // Can return Observable.of returned from error link to supress errors
 // import { ApolloLink, Observable } from 'apollo-link'
-import { onError } from 'apollo-link-error'
 
+import { BatchHttpLink } from 'apollo-link-batch-http'
+import { onError } from 'apollo-link-error'
+import { InMemoryCache } from 'apollo-cache-inmemory'
 import LogRocket from 'logrocket'
+
 // Install the vue plugin
 Vue.use(VueApollo)
 
@@ -39,14 +42,18 @@ function aboutToExpire(expiry) {
   return notExpired(expiry) && new Date().getTime() + 300000 >= expiry
 }
 
-let globalClient = null
-
 let errors = 0
+
+const batchLink = new BatchHttpLink({
+  batchMax: 20,
+  batchInterval: 1000,
+  uri: () => store.getters['api/url']
+})
 
 const backendMiddleware = new ApolloLink((operation, forward) => {
   const context = operation.getContext()
   if (context.headers?.['X-Backend'] !== store.getters['api/backend']) {
-    globalClient.cache.reset()
+    defaultApolloClient.cache.reset()
     return
   }
   return forward(operation).map(response => {
@@ -85,7 +92,7 @@ const errorAfterware = onError(
     }
     errors++
     if (errors > 10) {
-      globalClient.stop()
+      defaultApolloClient.stop()
     }
     return forward(operation)
   }
@@ -150,7 +157,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 
   if (authRefreshRequired && !middleOfRefresh) {
-    globalClient.cache.reset()
+    defaultApolloClient.cache.reset()
     if (validRefreshToken) {
       await store.dispatch('auth0/refreshAuthorization')
     } else if (isAuthenticatedUser) {
@@ -174,8 +181,13 @@ const link = ApolloLink.from([
   authMiddleware,
   headerMiddleware,
   backendMiddleware,
-  errorAfterware
+  errorAfterware,
+  batchLink
 ])
+
+const inMemoryCache = new InMemoryCache({
+  resultCaching: false
+})
 
 // Config
 export const defaultOptions = {
@@ -198,10 +210,11 @@ export const defaultOptions = {
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
+  defaultHttpLink: false,
   link: link,
 
   // Override default cache
-  // cache: myCache
+  cache: inMemoryCache,
 
   // Override the way the Authorization header is set
   // getAuth: () => ...
@@ -219,7 +232,6 @@ export const createApolloProvider = () => {
   const { apolloClient, wsClient } = createApolloClient({
     ...defaultOptions
   })
-  globalClient = apolloClient
   apolloClient.wsClient = wsClient
 
   // Create vue apollo provider
@@ -268,6 +280,13 @@ export const createApolloProvider = () => {
   })
   return apolloProvider
 }
+
+export const defaultApolloProvider = createApolloProvider()
+export const defaultApolloClient = defaultApolloProvider.defaultClient
+
+// This is the client we use that is not subject to the stop/restarts of the application
+export const fallbackApolloProvider = createApolloProvider()
+export const fallbackApolloClient = fallbackApolloProvider.defaultClient
 
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)

@@ -155,7 +155,8 @@ export default {
         absolute
         bottom
       />
-      <v-btn
+
+      <v-app-bar-nav-icon
         :color="isTransparent ? 'primary' : 'white'"
         text
         data-cy="open-sidenav"
@@ -169,8 +170,7 @@ export default {
         "
         @click="open"
       >
-        <v-icon>menu</v-icon>
-      </v-btn>
+      </v-app-bar-nav-icon>
 
       <router-link :to="{ name: 'dashboard', params: { tenant: tenant.slug } }">
         <v-btn
@@ -195,7 +195,6 @@ export default {
       <GlobalSearch
         v-if="isServer || (tenant.settings.teamNamed && hasLicense)"
       />
-
       <v-menu
         v-model="connectionMenu"
         :close-on-content-click="false"
@@ -249,21 +248,23 @@ export default {
         </v-card>
       </v-menu>
 
-      <v-btn
-        v-if="isServer || hasLicense"
-        color="white"
-        text
-        icon
-        data-cy="go-to-notifications"
-        large
-        class="badge badge-left ml-4"
-        :class="
-          notificationsCount && notificationsCount > 0 ? '' : 'badge--hidden'
-        "
-        @click="goToNotifications"
-      >
-        <v-icon>notifications</v-icon>
-      </v-btn>
+      <v-scale-transition>
+        <v-btn
+          v-if="isServer || hasLicense"
+          color="white"
+          text
+          icon
+          data-cy="go-to-notifications"
+          large
+          class="badge badge-left ml-4"
+          :class="
+            notificationsCount && notificationsCount > 0 ? '' : 'badge--hidden'
+          "
+          @click="goToNotifications"
+        >
+          <v-icon>notifications</v-icon>
+        </v-btn>
+      </v-scale-transition>
 
       <v-menu
         v-model="menu"
@@ -273,14 +274,16 @@ export default {
         nudge-bottom="15"
       >
         <template v-slot:activator="{ on }">
-          <v-avatar
-            v-if="isCloud"
-            class="ml-4 cursor-pointer"
-            size="42"
-            v-on="on"
-          >
-            <img :src="auth0User.picture" :alt="auth0User.name" />
-          </v-avatar>
+          <v-scale-transition>
+            <v-avatar
+              v-if="isCloud"
+              class="ml-4 cursor-pointer"
+              size="42"
+              v-on="on"
+            >
+              <img :src="auth0User.picture" :alt="auth0User.name" />
+            </v-avatar>
+          </v-scale-transition>
         </template>
 
         <v-list class="pb-0" dense width="250">
@@ -327,9 +330,15 @@ export default {
         </v-list>
       </v-menu>
 
-      <h6 v-if="isServer" class="white--text ml-4" style="white-space: pre;">
-        {{ formatTime(time) }}
-      </h6>
+      <v-scale-transition>
+        <div
+          v-if="isServer"
+          class="white--text ml-4 text-body-1"
+          style="white-space: pre;"
+        >
+          {{ formatTime(time) }}
+        </div>
+      </v-scale-transition>
     </v-app-bar>
   </v-slide-y-transition>
 </template>
