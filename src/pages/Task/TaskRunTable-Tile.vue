@@ -47,7 +47,7 @@ export default {
       sortBy: 'start_time',
       sortDesc: true,
       taskRunDurations: {},
-      loading: false
+      loading: 0
     }
   },
   computed: {
@@ -150,7 +150,7 @@ export default {
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="task ? task.task_runs : null || []"
         :items-per-page.sync="itemsPerPage"
-        :loading="loading"
+        :loading="loading > 0"
         must-sort
         :page.sync="page"
         :server-items-length="taskRunsCount"
