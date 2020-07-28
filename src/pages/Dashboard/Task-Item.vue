@@ -82,7 +82,14 @@ export default {
               name: 'task',
               params: { id: failure.task.id }
             }"
-            >{{ failure.task.name }} ({{ flowName(task) }})
+          >
+            {{ flowName(task) }}
+            <span class="font-weight-bold">
+              <v-icon style="font-size: 12px;">
+                chevron_right
+              </v-icon>
+            </span>
+            {{ failure.task.name }}
           </router-link>
         </v-list-item-title>
 
