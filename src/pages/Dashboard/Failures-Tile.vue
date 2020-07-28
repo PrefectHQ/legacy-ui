@@ -137,9 +137,9 @@ export default {
             class="inline-block subtitle-1 font-weight-light"
             style="line-height: 1.25rem;"
           >
-            Something went wrong while trying to fetch Task failures
-            information. Please try refreshing your page. If this error
-            persists, return to this page after a few minutes.
+            Something went wrong while trying to fetch failed flow information.
+            Please try refreshing your page. If this error persists, return to
+            this page after a few minutes.
           </div>
         </v-list-item-content>
       </v-list-item>
