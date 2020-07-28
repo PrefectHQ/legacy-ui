@@ -313,6 +313,20 @@ export default {
           </div>
         </template>
 
+        <template v-slot:item.project.name="{ item }">
+          <div class="truncate">
+            <router-link
+              class="link"
+              :to="{
+                name: 'project',
+                params: { id: item.project.id, tenant: tenant.slug }
+              }"
+            >
+              <span>{{ item.project.name }}</span>
+            </router-link>
+          </div>
+        </template>
+
         <template v-slot:item.schedule="{ item }">
           <ScheduleToggle :flow="item" :flow-group="item.flow_group" />
         </template>
