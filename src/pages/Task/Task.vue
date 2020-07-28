@@ -110,6 +110,16 @@ export default {
         }
       },
       update: data => data.task_by_pk
+    },
+    lastTaskRun: {
+      query: require('@/graphql/Task/last-task-run.gql'),
+      loadingKey: 'loading',
+      variables() {
+        return {
+          id: this.taskId
+        }
+      },
+      update: data => data?.task_run?.[0]
     }
   }
 }
@@ -231,6 +241,7 @@ export default {
           <DetailsTile
             slot="col-1-tile-1"
             :task="task"
+            :last-run="lastTaskRun"
             :loading="loading > 0"
           />
 

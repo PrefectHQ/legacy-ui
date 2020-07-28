@@ -13,6 +13,11 @@ export default {
   },
   mixins: [formatTime],
   props: {
+    lastRun: {
+      type: Object,
+      required: false,
+      default: () => null
+    },
     loading: {
       type: Boolean,
       required: false,
@@ -41,14 +46,11 @@ export default {
     }"
   >
     <v-system-bar
-      :color="
-        !loading && task.task_runs.length > 0 ? task.task_runs[0].state : 'grey'
-      "
+      :color="!loading && lastRun ? lastRun.state : 'grey'"
       :height="5"
       absolute
     >
     </v-system-bar>
-
     <CardTitle
       :loading="loading"
       :title="task ? task.name : null"

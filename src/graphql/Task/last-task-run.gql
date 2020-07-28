@@ -1,0 +1,10 @@
+query LastTaskRun($id: uuid!) {
+  task_run(
+    where: { task: { id: { _eq: $id } }, state: { _neq: "Scheduled" } }
+    order_by: { state_start_time: desc }
+    limit: 1
+  ) {
+    id
+    state
+  }
+}
