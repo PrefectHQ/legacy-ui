@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       flows: [],
-      limit: 10,
+      limit: 15,
       loading: 0,
       page: 1,
       search:
@@ -146,7 +146,7 @@ export default {
       this.debounceSearch(e)
     },
     debounceSearch: debounce(function(e) {
-      this.loading = 0
+      this.loading--
       this.search = e
     }, 500)
   },
@@ -262,12 +262,13 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text class="pa-0">
+    <v-card-text class="pa-0 pl-8">
       <v-data-table
         fixed-header
         :search.sync="search"
         :mobile-breakpoint="960"
         :loading="loading > 0"
+        loading-text="Loading your flows..."
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="flows"
         :headers="headers"
@@ -285,7 +286,7 @@ export default {
         :footer-props="{
           showFirstLastPage: true,
           firstIcon: 'first_page',
-          itemsPerPageOptions: [5, 10, 15, 25, 50],
+          itemsPerPageOptions: [10, 15, 25, 50],
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
@@ -370,7 +371,7 @@ export default {
             <v-row justify="end">
               <v-switch
                 v-model="showArchived"
-                class="archived-checkbox mr-3"
+                class="archived-checkbox mr-7"
                 label="Show Archived"
               ></v-switch>
             </v-row>
@@ -394,13 +395,6 @@ export default {
   // stylelint-disable-next-line
   .v-data-table__wrapper {
     overflow: visible !important;
-  }
-
-  th {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   td {
