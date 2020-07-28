@@ -2,11 +2,13 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { oneAgo } from '@/utils/dateTime'
 import CardTitle from '@/components/Card-Title'
+import TaskItem from '@/pages/Dashboard/Task-Item'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
-    CardTitle
+    CardTitle,
+    TaskItem
   },
   mixins: [formatTime],
   props: {
@@ -96,13 +98,11 @@ export default {
       query: require('@/graphql/Dashboard/failures.gql'),
       variables() {
         return {
-          // flowIds: null,
           heartbeat: oneAgo(this.selectedDateFilter)
         }
       },
       // skip: true,
       loadingKey: 'loading',
-      //Update this to be an alert!
       error() {
         this.failures = null
         this.queryError = true
@@ -218,79 +218,7 @@ export default {
           min-height="40px"
           transition="fade"
         >
-          <ApolloQuery
-            :query="
-              gql => gql`
-                query($taskId: uuid, $heartbeat: timestamptz) {
-                  task(where: { id: { _eq: $taskId } }) {
-                    task_runs(where: { updated: { _gte: $heartbeat } }) {
-                      id
-                      state
-                    }
-                  }
-                }
-              `
-            "
-            :poll-interval="50000"
-            :variables="{
-              taskId: failure.task.id,
-              heartbeat: calcHeartBeat()
-            }"
-          >
-            <!-- eslint-disable-next-line -->
-            <template v-slot="{ result: { loading, error, data } }">
-              <!-- Loading -->
-              <div v-if="loading" class="loading apollo"
-                ><v-skeleton-loader key="skeleton" type="list-item-three-line">
-                </v-skeleton-loader
-              ></div>
-              <!-- Error -->
-              <div v-else-if="error"
-                ><v-list-item class="text-truncate">
-                  <v-list-item-title class="subtitle-2 red--text">
-                    An error occurred fetching this task information.
-                  </v-list-item-title></v-list-item
-                ></div
-              ><!-- Result -->
-              <div v-else-if="data && data.task" class="result apollo">
-                <v-list-item
-                  class="text-truncate"
-                  :to="{
-                    name: 'task',
-                    params: { id: failure.task.id }
-                  }"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title class="subtitle-2">
-                      <router-link
-                        class="link"
-                        :to="{
-                          name: 'task',
-                          params: { id: failure.task.id }
-                        }"
-                        >{{ failure.task.name }}</router-link
-                      >
-                    </v-list-item-title>
-
-                    <v-list-item-subtitle>
-                      {{ failedRuns(data.task[0].task_runs) }}
-                      /
-                      {{ totalRuns(data.task[0].task_runs) }}
-                      Runs failed
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-avatar
-                    ><v-icon>arrow_right</v-icon></v-list-item-avatar
-                  >
-                </v-list-item> </div
-              ><div v-else-if="data"> No info :(</div>
-              <!-- No result -->
-              <div v-else class="no-result apollo"
-                ><v-skeleton-loader key="skeleton" type="list-item-three-line">
-                </v-skeleton-loader
-              ></div>
-            </template>
-          </ApolloQuery>
+          <TaskItem :failure="failure" :heartbeat="calcHeartBeat()" />
         </v-lazy>
       </v-slide-y-reverse-transition>
       <v-slide-y-transition v-else leave-absolute group>

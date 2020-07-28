@@ -1,4 +1,4 @@
-query ($heartbeat: timestamptz) {
+query FailedTasks($heartbeat: timestamptz) {
   task_run
     (where: {
         _and: [{
