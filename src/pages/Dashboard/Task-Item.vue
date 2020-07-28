@@ -24,7 +24,7 @@ export default {
       const failedRuns = task[0]?.task_runs?.filter(run => {
         return run.state === 'Failed'
       })
-      return failedRuns.length
+      return failedRuns?.length
     },
     totalRuns(task) {
       return task[0]?.task_runs?.length
@@ -94,7 +94,7 @@ export default {
         </v-list-item-title>
 
         <v-list-item-subtitle>
-          {{ failedRuns(task[0].task_runs) }}
+          {{ failedRuns(task) }}
           /
           {{ totalRuns(task) }}
           Runs failed
