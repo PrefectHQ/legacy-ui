@@ -103,16 +103,15 @@ export default {
       // Server error message
       errorMessage: '',
 
-      // Loading states
-      isFetchingTcls: true,
-
       // Dialogs
       showAddDialog: false,
       showDeleteDialog: false,
       showEditDialog: false,
 
       // Search input
-      search: ''
+      search: '',
+
+      loadingKey: 0
     }
   },
   computed: {
@@ -219,14 +218,14 @@ export default {
     async updateTaskTagLimit() {
       try {
         const res = await this.$apollo.mutate({
-          mutation: require('@/graphql/TaskTagLimit/update-task-concurrency-limit.gql'),
+          mutation: require('@/graphql/TaskTagLimit/update-task-tag-limit.gql'),
           variables: {
             tag: this.selectedTag.tag,
             limit: Number(this.newLimit) // The API expects a type Number, so explicitly casting
           }
         })
 
-        if (res?.data?.update_task_concurrency_limit?.id) {
+        if (res?.data?.updateTaskTagLimit?.id) {
           this.$apollo.queries?.tags?.refetch()
           this.handleSuccess(UPDATE_SUCCESS)
         } else {
@@ -270,18 +269,11 @@ export default {
     tags: {
       query: require('@/graphql/TaskTagLimit/task-tag-limit.gql'),
       pollInterval: 5000,
-      result() {
-        this.isFetchingTcls = false
-      },
-      error() {
-        this.isFetchingTcls = false
-        // TODO: Error handling
-      },
+      loadingKey: 'loadingKey',
       update: data => data.task_tag_limit,
       skip() {
         // Skip this query if the tenant isn't eligible
-        // or the user doesn't have permission
-        return !this.isEligible || !this.hasManagementPermission
+        return !this.isEligible
       }
     }
   }
@@ -289,7 +281,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout :show="!isFetchingTcls" control-show>
+  <ManagementLayout>
     <template v-slot:title>Task Concurrency</template>
 
     <template v-slot:subtitle>
@@ -394,6 +386,7 @@ export default {
           :items="tagsWithUsage"
           :items-per-page="10"
           :search="search"
+          :loading="loadingKey > 0"
           :footer-props="{
             showFirstLastPage: true,
             firstIcon: 'first_page',
