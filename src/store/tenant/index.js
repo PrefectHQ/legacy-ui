@@ -131,7 +131,7 @@ const actions = {
           membership => membership.tenant.id == tenant.id
         )?.role
       } else {
-        tenant.role = 'Administrator'
+        tenant.role = 'TENANT_ADMIN'
       }
 
       commit('setTenant', tenant)

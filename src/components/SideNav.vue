@@ -652,6 +652,10 @@ export default {
                   {{ tenant.name ? tenant.name : 'No tenant selected' }}
                 </div>
               </v-list-item-title>
+
+              <v-list-item-subtitle>
+                {{ role }}
+              </v-list-item-subtitle>
             </v-list-item-content>
 
             <v-list-item-action>
@@ -660,8 +664,9 @@ export default {
                   transform: `rotate(${tenantMenuOpen ? '180deg' : '0'})`
                 }"
                 x-large
+                color="white"
               >
-                arrow_left
+                arrow_right
               </v-icon>
             </v-list-item-action>
           </v-list-item>
