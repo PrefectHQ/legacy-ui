@@ -603,7 +603,13 @@ export default {
 
               <v-list-item-title class="tenant-title text-uppercase">
                 <div class="text text-truncate">
-                  {{ tenant.name ? tenant.name : 'No tenant selected' }}
+                  {{
+                    tenant.name
+                      ? tenant.name
+                      : loading
+                      ? '...'
+                      : 'No team selected'
+                  }}
                 </div>
                 <div
                   v-if="pendingInvitations"
@@ -649,7 +655,13 @@ export default {
 
               <v-list-item-title class="tenant-title text-uppercase">
                 <div class="text text-truncate">
-                  {{ tenant.name ? tenant.name : 'No tenant selected' }}
+                  {{
+                    tenant.name
+                      ? tenant.name
+                      : loading
+                      ? '...'
+                      : 'No team selected'
+                  }}
                 </div>
               </v-list-item-title>
 
