@@ -1,6 +1,6 @@
 <script>
 // eslint-disable-next-line
-const stripe = Stripe(process.env.VUE_APP_STRIPE_PK)
+const stripe = Stripe(process.env.VUE_APP_STRIPE_PUBLIC_TOKEN)
 let elements = stripe.elements()
 let card = undefined
 let style = {
