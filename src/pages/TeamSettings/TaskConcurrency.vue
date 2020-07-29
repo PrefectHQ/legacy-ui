@@ -218,14 +218,14 @@ export default {
     async updateTaskTagLimit() {
       try {
         const res = await this.$apollo.mutate({
-          mutation: require('@/graphql/TaskTagLimit/update-task-tag-limit.gql'),
+          mutation: require('@/graphql/TaskTagLimit/update-task-concurrency-limit.gql'),
           variables: {
             tag: this.selectedTag.tag,
             limit: Number(this.newLimit) // The API expects a type Number, so explicitly casting
           }
         })
 
-        if (res?.data?.updateTaskTagLimit?.id) {
+        if (res?.data?.update_task_concurrency_limit?.id) {
           this.$apollo.queries?.tags?.refetch()
           this.handleSuccess(UPDATE_SUCCESS)
         } else {
