@@ -126,6 +126,12 @@ const actions = {
 
         // Get the current license
         await dispatch('license/getLicense', null, { root: true })
+
+        tenant.role = rootGetters['user/memberships'].find(
+          membership => membership.tenant.id == tenant.id
+        )?.role
+      } else {
+        tenant.role = 'Administrator'
       }
 
       commit('setTenant', tenant)
