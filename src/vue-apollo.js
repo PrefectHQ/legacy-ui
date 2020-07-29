@@ -32,7 +32,8 @@ function aboutToExpire(expiry) {
   return notExpired(expiry) && new Date().getTime() + 300000 >= expiry
 }
 
-let errors = 0
+let errors = 0,
+  apiErrors = 0
 
 const batchLink = new BatchHttpLink({
   batchMax: 20,
@@ -48,6 +49,7 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
   }
   return forward(operation).map(response => {
     errors = 0
+    apiErrors = 0
     return response
   })
 })
@@ -70,6 +72,15 @@ const headerMiddleware = setContext((_, { headers }) => {
 
 const errorAfterware = onError(
   ({ response, operation, graphQLErrors, networkError, forward }) => {
+    // Only throw the API error once in a row
+    // (prevents spamming the console when there's no connection)
+    if (operation.operationName === 'Api') {
+      if (apiErrors > 0) {
+        return Observable.of()
+      }
+      apiErrors++
+    }
+
     if (process.env.NODE_ENV !== 'production') {
       /* eslint-disable no-console */
       console.groupCollapsed(
@@ -134,7 +145,7 @@ const errorAfterware = onError(
     // Can return Observable.of returned from error link to supress errors
     //  otherwise return forward(operation)
     // for a single retry of the failure
-    if (process.env.NODE_ENV !== 'production') return Observable.of()
+    // if (process.env.NODE_ENV !== 'production') return Observable.of()
     return forward(operation)
   }
 )

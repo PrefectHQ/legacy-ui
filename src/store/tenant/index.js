@@ -84,11 +84,10 @@ const actions = {
   async getTenants({ commit, getters }) {
     try {
       const tenants = await prefectTenants()
+      console.log(tenants)
       commit('setTenants', tenants)
-    } catch (e) {
-      // Just throw this error,
-      //  the GraphQL error should be logged by Apollo afterware
-      throw new Error('Problem retrieving tenants: ', e)
+    } catch {
+      // Do nothing since the GraphQL error should be logged by Apollo afterware
     }
 
     return getters['tenants']

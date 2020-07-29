@@ -137,15 +137,17 @@ export default {
 
       await this.getTenants()
 
-      await this.setCurrentTenant(this.defaultTenant.slug)
+      if (this.defaultTenant) {
+        await this.setCurrentTenant(this.defaultTenant.slug)
 
-      if (this.isCloud && !this.tenant.settings.teamNamed) {
-        this.$router.push({
-          name: 'welcome',
-          params: {
-            tenant: this.tenant.slug
-          }
-        })
+        if (this.isCloud && !this.tenant.settings.teamNamed) {
+          this.$router.push({
+            name: 'welcome',
+            params: {
+              tenant: this.tenant.slug
+            }
+          })
+        }
       }
     },
     resetClient(val) {

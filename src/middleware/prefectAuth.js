@@ -61,15 +61,15 @@ const prefectUser = async () => {
 }
 
 const prefectTenants = async () => {
-  try {
-    const result = await fallbackApolloClient.query({
-      query: require('@/graphql/Tenant/tenants.gql'),
-      fetchPolicy: 'no-cache'
-    })
-    return result.data.tenant
-  } catch (error) {
-    throw new Error('Error retrieving tenants in prefectTenants', error)
-  }
+  // try {
+  const result = await fallbackApolloClient.query({
+    query: require('@/graphql/Tenant/tenants.gql'),
+    fetchPolicy: 'no-cache'
+  })
+  return result.data.tenant
+  // } catch (error) {
+  //   throw new Error('Error retrieving tenants in prefectTenants', error)
+  // }
 }
 
 export { prefectAuth, prefectRefresh, prefectUser, prefectTenants }
