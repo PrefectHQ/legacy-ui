@@ -1,154 +1,66 @@
 import store from '@/store/index'
-import { fallbackApolloClient } from '@/vue-apollo'
-
-const isServer = () => {
-  return store.getters['api/isServer']
-}
-
-const isConnected = () => {
-  return store.getters['api/connected']
-}
 
 const tenantNavGuard = async (to, from, next) => {
-  if (isServer() && !isConnected()) {
-    try {
-      await store.dispatch('api/getApi')
-    } catch {
-      //
-    }
-    if (!isConnected()) {
-      return next()
-    }
+  if (store.getters['tenant/tenants']?.length === 0) {
+    await store.dispatch('tenant/getTenants')
   }
 
   const passedTenantSlug = to.params.tenant
+  const tenantIsSet = store.getters['tenant/tenantIsSet']
+  const tenantExists = !!store.getters['tenant/tenants'].find(
+    tenant => tenant.slug == passedTenantSlug
+  )
+  const currentTenant = store.getters['tenant/tenant']
+  const defaultTenantSlug = store.getters['tenant/defaultTenant']?.slug
 
-  let tenantId
-  if (isServer()) {
-    if (store.getters['tenant/tenants']?.length === 0) {
-      // Attempt to get tenants if they don't exist
-      await store.dispatch('tenant/getTenants')
-    }
+  // If a slug is passed, use the slug
+  // and reset the tenant
+  if (passedTenantSlug) {
+    if (tenantIsSet && passedTenantSlug == currentTenant.slug) return next()
 
-    if (store.getters['tenant/tenantIsSet']) {
-      if (passedTenantSlug) {
-        if (passedTenantSlug == store.getters['tenant/tenant'].slug) {
-          return next()
-        } else {
-          let tenant = store.getters['tenant/tenants'].find(
-            tenant => tenant.slug == passedTenantSlug
-          )
-
-          if (!tenant)
-            return next({
-              name: 'not-found'
-            })
-
-          tenantId = tenant.id
-        }
-      } else {
-        tenantId = store.getters['tenant/tenant'].id
-      }
+    // ... but only if the tenant exists
+    if (tenantExists) {
+      await store.dispatch('tenant/setCurrentTenant', passedTenantSlug)
+      return next()
+    } else if (defaultTenantSlug) {
+      await store.dispatch('tenant/setCurrentTenant', defaultTenantSlug)
+      return next()
     } else {
-      if (passedTenantSlug) {
-        let tenant = store.getters['tenant/tenants'].find(
-          tenant => tenant.slug == passedTenantSlug
-        )
-
-        if (!tenant)
-          return next({
-            name: 'not-found'
-          })
-
-        tenantId = tenant.id
-      } else {
-        tenantId = store.getters['tenant/tenants']?.[0]?.id
-      }
+      return next({
+        name: 'start'
+      })
     }
-    if (!tenantId) {
-      try {
-        const tenant = await fallbackApolloClient.mutate({
-          mutation: require('@/graphql/Mutations/create-tenant.gql'),
-          variables: {
-            input: {
-              name: 'default',
-              slug: 'default'
-            }
-          }
-        })
-        tenantId = tenant?.data?.create_tenant?.id
-      } catch (e) {
-        return next({
-          name: 'not-found'
-        })
-      }
-    }
-
-    await store.dispatch('tenant/getServerTenant', tenantId)
-  } else {
-    // Memberships don't exist in Server
-    // so we skip this logic
-    let membershipId
-    if (store.getters['tenant/tenantIsSet']) {
-      if (passedTenantSlug) {
-        if (passedTenantSlug == store.getters['tenant/tenant'].slug) {
-          return next()
-        } else {
-          let membership = store.getters['user/memberships'].find(
-            memb => memb.tenant.slug == passedTenantSlug
-          )
-          if (!membership)
-            return next({
-              name: 'not-found'
-            })
-          membershipId = membership.id
-        }
-      } else {
-        let membership = store.getters['user/memberships'].find(
-          memb => memb.tenant.id == store.getters['tenant/tenant'].id
-        )
-        if (!membership)
-          return next({
-            name: 'not-found'
-          })
-        membershipId = membership.id
-      }
-    } else {
-      if (passedTenantSlug) {
-        let membership = store.getters['user/memberships'].find(
-          memb => memb.tenant.slug == passedTenantSlug
-        )
-        if (!membership)
-          return next({
-            name: 'not-found'
-          })
-        membershipId = membership.id
-      } else {
-        membershipId = store.getters['user/defaultMembershipId']
-      }
-    }
-
-    if (membershipId) {
-      await store.dispatch('tenant/getTenant', membershipId)
-    } else {
-      await store.dispatch(
-        'tenant/getTenant',
-        store.getters['user/memberships'][0].id
-      )
-    }
-
-    await store.dispatch('license/getLicense')
   }
 
-  /* eslint-disable require-atomic-updates */
-  to.params.tenant = store.getters['tenant/tenant']?.slug
-  /* eslint-enable require-atomic-updates */
+  // Else if a tenant is set, use the tenant
+  // the API will reset the default membership id (for Cloud)
+  if (tenantIsSet) {
+    return next({
+      name: to.name,
+      replace: true,
+      params: { ...to.params, tenant: currentTenant.slug },
+      query: to.query
+    })
+  }
 
+  // Else if a default tenant slug exists
+  // whether from the tenant associated with the default membership id or
+  // the first tenant to which we have access...
+  // use that
+  if (defaultTenantSlug) {
+    return next({
+      name: to.name,
+      replace: true,
+      params: { ...to.params, tenant: defaultTenantSlug },
+      query: to.query
+    })
+  }
+
+  // Otherwise, we direct to the get started page because we are either not
+  // connected to an API or we have no access to a tenant
+  // Note: this should only be possible in Server
   return next({
-    name: to.name,
-    replace: true,
-    params: to.params,
-    query: to.query
+    name: 'start'
   })
 }
 

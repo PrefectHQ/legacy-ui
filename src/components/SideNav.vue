@@ -24,6 +24,21 @@ const tenantProtectedRoutes = [
   'name-team'
 ]
 
+const backendProtectedRoutes = [
+  'team',
+  'account',
+  'task-concurrency',
+  'members',
+  'secrets',
+  'tokens',
+  'user',
+  'profile',
+  'user-tokens',
+  'welcome',
+  'name-team',
+  'onboard-resources'
+]
+
 export default {
   components: {
     AcceptConfirmInputRow,
@@ -57,7 +72,9 @@ export default {
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
     lastDeployment_Cloud() {
-      return moment(this.releaseTimestamp).format('MMM D [•] h:mmA')
+      return this.releaseTimestamp
+        ? moment(this.releaseTimestamp).format('MMM D [•] h:mmA')
+        : 'Unknown'
     },
     lastDeployment_UI() {
       return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
@@ -125,35 +142,29 @@ export default {
     }
   },
   methods: {
-    ...mapActions('api', ['getApi', 'switchBackend', 'backend']),
+    ...mapActions('api', ['switchBackend', 'backend']),
+    ...mapActions('auth0', ['logout']),
+    ...mapActions('license', ['getLicense']),
+    ...mapActions('tenant', ['setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     ...mapMutations('refresh', ['add']),
     ...mapMutations('sideNav', ['toggle', 'close']),
-    ...mapMutations('tenant', ['unsetTenant']),
-    ...mapActions('tenant', ['getTenant']),
-    ...mapActions('license', ['getLicense']),
-    ...mapActions('user', ['getUser']),
-    ...mapActions('auth0', ['logout']),
     async _switchBackend() {
       this.loading = true
+
+      this.stopClient()
+
       if (!this.isCloud) {
         await this.switchBackend('CLOUD')
       } else {
         await this.switchBackend('SERVER')
       }
 
-      defaultApolloClient.clearStore()
-
-      await this.$router
-        .push({
-          name: 'dashboard',
-          params: {
-            tenant: this.tenant.slug
-          }
-        })
-        .catch(e => e)
-
       this.close()
       this.loading = false
+
+      this.startClient()
+      this.handlePostTokenRouting()
     },
     getRoute(name) {
       let route = {
@@ -166,52 +177,37 @@ export default {
       return route
     },
     async handleSwitchTenant(tenant) {
-      this.close()
-
-      this.unsetTenant()
-
-      let membership = this.memberships.find(
-        mem => mem.tenant.slug == tenant.slug
-      )
-
+      this.stopClient()
       this.tenantMenuOpen = false
 
-      if (!tenant || tenant.slug == this.tenant.slug || !membership) return
+      if (tenant.slug == this.tenant.slug) return
 
-      await this.getTenant(membership.id)
+      await this.setCurrentTenant(tenant.slug)
 
-      await this.getLicense()
-
-      defaultApolloClient.clearStore()
-
-      if (tenantProtectedRoutes.includes(this.$route.name)) {
-        this.$router.push({
-          name: 'dashboard',
-          params: { tenant: tenant.slug }
-        })
-      } else {
-        this.$router.push({
-          name: this.$route.name,
-          params: { ...this.$route.params, tenant: this.tenant.slug }
-        })
-      }
+      this.close()
+      this.loading = false
+      this.startClient()
+      this.handlePostTokenRouting()
     },
-    async handleSwitchServerTenant(tenant) {
-      this.close()
+    handlePostTokenRouting() {
+      if (this.isCloud && !this.tenant.settings.teamNamed) {
+        this.$router.push({
+          name: 'welcome',
+          params: {
+            tenant: this.tenant.slug
+          }
+        })
 
-      this.unsetTenant()
+        return
+      }
 
-      this.tenantMenuOpen = false
-
-      if (!tenant || tenant.slug == this.tenant.slug) return
-
-      await this.getTenant(tenant.id)
-
-      defaultApolloClient.clearStore()
-      if (tenantProtectedRoutes.includes(this.$route.name)) {
+      if (
+        tenantProtectedRoutes.includes(this.$route.name) ||
+        (this.isServer && backendProtectedRoutes.includes(this.$route.name))
+      ) {
         this.$router.push({
           name: 'dashboard',
-          params: { tenant: tenant.slug }
+          params: { tenant: this.tenant.slug }
         })
       } else {
         this.$router.push({
@@ -272,6 +268,16 @@ export default {
     closeDialogAndMenu() {
       this.feedbackDialog = false
       this.open = false
+    },
+    startClient() {
+      defaultApolloClient.restore()
+    },
+    // Stops vue-related queries by stopping the client entirely
+    // This does not impact non-Vue queries,
+    // which use a separate client.
+    stopClient() {
+      defaultApolloClient.stop()
+      defaultApolloClient.clearStore()
     }
   },
   apollo: {
@@ -729,7 +735,7 @@ export default {
               v-for="ten in tenants"
               :key="ten.id"
               two-line
-              @click="handleSwitchServerTenant(ten)"
+              @click="handleSwitchTenant(ten)"
             >
               <v-list-item-content>
                 <v-list-item-title

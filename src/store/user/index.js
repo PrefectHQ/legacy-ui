@@ -92,9 +92,10 @@ const mutations = {
 }
 
 const actions = {
-  async getUser({ commit }) {
+  async getUser({ commit, getters }) {
     const user = await prefectUser()
     commit('user', user)
+    return getters['user']
   }
 }
 

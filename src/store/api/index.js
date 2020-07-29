@@ -6,7 +6,7 @@ const maxRetries = 3
 const state = {
   backend:
     localStorage.getItem('backend') || process.env.VUE_APP_BACKEND || 'SERVER',
-  connected: false,
+  connected: true,
   connectionMessage: null,
   connectionTimeout: null,
   releaseTimestamp: null,
@@ -183,37 +183,22 @@ const actions = {
   async setServerUrl({ commit }, url) {
     commit('setServerUrl', url)
   },
-  async switchBackend({ rootGetters, commit, dispatch }, backend) {
-    if (backend == 'CLOUD') {
-      await dispatch('auth0/authenticate', null, { root: true })
-    }
+  async switchBackend({ commit, dispatch, rootGetters }, backend) {
     commit('setBackend', backend)
+    await dispatch('getApi')
 
     if (backend == 'CLOUD') {
-      await dispatch('getApi')
       await dispatch('auth0/authenticate', null, { root: true })
       await dispatch('auth0/authorize', null, { root: true })
       await dispatch('user/getUser', null, { root: true })
-      await dispatch(
-        'tenant/getTenant',
-        rootGetters['user/defaultMembershipId'],
-        {
-          root: true
-        }
-      )
-      await dispatch('license/getLicense', rootGetters['tenant/tenant'].id, {
-        root: true
-      })
-    } else if (backend == 'SERVER') {
-      try {
-        await dispatch('getApi')
-        await dispatch('tenant/getTenants', null, { root: true })
-        await dispatch('tenant/getServerTenant', null, { root: true })
-      } catch {
-        commit('tenant/unsetTenants', null, { root: true })
-        commit('tenant/unsetTenant', null, { root: true })
-      }
     }
+
+    await dispatch('tenant/getTenants', null, { root: true })
+    await dispatch(
+      'tenant/setCurrentTenant',
+      rootGetters['tenant/defaultTenant'].slug,
+      { root: true }
+    )
 
     dispatch('monitorConnection')
   }

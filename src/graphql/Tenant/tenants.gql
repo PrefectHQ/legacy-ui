@@ -1,7 +1,10 @@
-query {
+query Tenants {
   tenant {
     id
+    created
     name
+    info
+    settings
     slug
   }
 }

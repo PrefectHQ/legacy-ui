@@ -1,4 +1,4 @@
-import { fallbackApolloClient, apolloOnLogin } from '@/vue-apollo'
+import { fallbackApolloClient } from '@/vue-apollo'
 
 const prefectAuth = async idToken => {
   try {
@@ -11,7 +11,6 @@ const prefectAuth = async idToken => {
     })
 
     if (result?.data?.log_in) {
-      await apolloOnLogin(fallbackApolloClient)
       return result.data.log_in
     } else if (result?.errors) {
       if (
@@ -24,7 +23,7 @@ const prefectAuth = async idToken => {
       }
     }
   } catch (error) {
-    throw new Error(error)
+    throw new Error('Error authorizing prefectAuth', error)
   }
 }
 
@@ -45,7 +44,7 @@ const prefectRefresh = async accessToken => {
       throw new Error('No token returned')
     }
   } catch (error) {
-    throw new Error(error.error)
+    throw new Error('Error refreshing token in prefectRefresh', error)
   }
 }
 
@@ -57,19 +56,19 @@ const prefectUser = async () => {
     })
     return user.data.user[0]
   } catch (error) {
-    throw new Error(error.error)
+    throw new Error('Error retrieving user in prefectUser', error)
   }
 }
 
 const prefectTenants = async () => {
   try {
-    const tenants = await fallbackApolloClient.query({
+    const result = await fallbackApolloClient.query({
       query: require('@/graphql/Tenant/tenants.gql'),
       fetchPolicy: 'no-cache'
     })
-    return tenants.data.tenant
+    return result.data.tenant
   } catch (error) {
-    throw new Error(error.error)
+    throw new Error('Error retrieving tenants in prefectTenants', error)
   }
 }
 

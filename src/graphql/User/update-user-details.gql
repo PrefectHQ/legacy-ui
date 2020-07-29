@@ -1,9 +1,5 @@
 mutation UpdateUserDetails($firstName: String, $lastName: String) {
   update_user_details(input: { first_name: $firstName, last_name: $lastName }) {
-    user {
-      id
-      first_name
-      last_name
-    }
+    id
   }
 }

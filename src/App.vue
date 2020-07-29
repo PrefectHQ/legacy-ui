@@ -18,6 +18,7 @@ export default {
   },
   data() {
     return {
+      appReady: false,
       error: null,
       loadingKey: 0,
       reset: false,
@@ -35,8 +36,9 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
+    ...mapGetters('apit', ['isCloud']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
-    ...mapGetters('tenant', ['tenant', 'tenants']),
+    ...mapGetters('tenant', ['tenant', 'tenants', 'defaultTenant']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -45,20 +47,12 @@ export default {
     }
   },
   watch: {
-    backend() {
-      this.updateTenant()
-      this.$apollo.skipAll = true
-      setTimeout(() => {
-        this.$apollo.skipAll = false
-      }, 500)
-    },
     async connected(val) {
-      if (val) {
-        this.updateTenant()
+      if (!val) {
+        defaultApolloClient.stop()
+      } else {
+        defaultApolloClient.restore()
       }
-    },
-    tenant(val) {
-      this.resetClient(val?.id)
     }
   },
   beforeDestroy() {
@@ -74,6 +68,9 @@ export default {
     window.removeEventListener('focus', this.handleVisibilityChange)
   },
   async created() {
+    await this.startup()
+    this.appReady = true
+
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -90,7 +87,9 @@ export default {
   },
   methods: {
     ...mapActions('api', ['getApi', 'monitorConnection']),
-    ...mapActions('tenant', ['getTenants', 'getServerTenant']),
+    ...mapActions('auth0', ['authenticate', 'authorize']),
+    ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     // ...mapMutations('sideDrawer', {
     //   clearDrawer: 'clearDrawer',
     //   closeSideDrawer: 'close'
@@ -129,52 +128,35 @@ export default {
 
       this.lastInteraction = this.currentInteraction
     },
-    resetClient(val) {
-      // Stops vue-related queries by stopping the client entirely
-      // when we're not connected. This does not impact the api store,
-      // which is using a separate client to check api status.
-      if (!val) {
-        defaultApolloClient.stop()
-      } else {
-        defaultApolloClient.restore()
-        this.shown = false
-        setTimeout(() => {
-          this.shown = true
-        }, 0)
+    async startup() {
+      if (this.isCloud) {
+        await this.authenticate()
+        await this.authorize()
+        await this.getUser()
       }
-    },
-    async updateTenant() {
-      if (this.isServer && !this.tenant) {
-        // Attempt to get tenants if they don't exist
-        await this.getTenants()
 
-        let tenantId = this.tenants[0].id
+      await this.getTenants()
 
-        if (!tenantId) {
-          try {
-            const tenant = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create-tenant.gql'),
-              variables: {
-                input: {
-                  name: 'default',
-                  slug: 'default'
-                }
-              }
-            })
-            tenantId = tenant?.data?.create_tenant?.id
-          } catch (e) {
-            throw new Error(e)
-          }
-        }
+      await this.setCurrentTenant(this.defaultTenant.slug)
 
-        await this.getServerTenant(tenantId)
-
-        this.$router.replace({
-          name: this.$route.name,
+      if (this.isCloud && !this.tenant.settings.teamNamed) {
+        this.$router.push({
+          name: 'welcome',
           params: {
             tenant: this.tenant.slug
           }
         })
+      }
+    },
+    resetClient(val) {
+      // Stops vue-related queries by stopping the client entirely
+      // This does not impact non-Vue queries,
+      // which use a separate client.
+      if (!val) {
+        defaultApolloClient.stop()
+        defaultApolloClient.clearStore()
+      } else {
+        defaultApolloClient.restore()
       }
     }
   }
@@ -182,12 +164,12 @@ export default {
 </script>
 
 <template>
-  <v-app v-if="wholeAppShown" class="app">
+  <v-app v-if="appReady" class="app">
     <v-main>
       <NavBar />
       <SideNav />
       <v-fade-transition mode="out-in">
-        <router-view v-if="shown" class="router-view" />
+        <router-view class="router-view" />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>
