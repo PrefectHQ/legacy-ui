@@ -2,6 +2,7 @@ import { fallbackApolloClient } from '@/vue-apollo'
 import { prefectTenants } from '@/middleware/prefectAuth'
 
 const state = {
+  defaultTenant: null,
   tenant: {
     id: null,
     name: null,
@@ -18,17 +19,11 @@ const state = {
 }
 
 const getters = {
-  defaultTenant(state, rootGetters) {
-    const defaultMembershipId = rootGetters['user/defaultMembershipId']
-    const defaultTenant = rootGetters['user/memberships']?.find(
-      membership => membership.id === defaultMembershipId
-    )
-    const firstTenant = rootGetters['user/memberships']?.[0] || state.tenants[0]
-    if (!defaultMembershipId || rootGetters['api/isServer']) return firstTenant
-    return defaultTenant || firstTenant
+  defaultTenant(state) {
+    return state.defaultTenant
   },
   role(state) {
-    if (state) return state.tenant.role
+    return state.tenant.role
   },
   tenant(state) {
     return state.tenant
@@ -42,6 +37,9 @@ const getters = {
 }
 
 const mutations = {
+  setDefaultTenant(state, tenant) {
+    state.defaultTenant = tenant
+  },
   setTenant(state, tenant) {
     if (!tenant || !Object.keys(tenant).length) {
       throw new Error('passed invalid or empty tenant object')
@@ -107,8 +105,6 @@ const actions = {
         throw new Error("Unable to set current tenant: tenant doesn't exist")
       }
 
-      commit('setTenant', tenant)
-
       if (rootGetters['api/isCloud']) {
         // Get our new auth token
         const tenantToken = await fallbackApolloClient.mutate({
@@ -131,6 +127,8 @@ const actions = {
         // Get the current license
         await dispatch('license/getLicense', null, { root: true })
       }
+
+      commit('setTenant', tenant)
     } catch (e) {
       throw new Error('Problem setting tenant: ', e)
     }

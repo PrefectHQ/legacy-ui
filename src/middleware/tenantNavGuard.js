@@ -5,6 +5,14 @@ const tenantNavGuard = async (to, from, next) => {
 
   if (store.getters['tenant/tenants']?.length === 0) {
     await store.dispatch('tenant/getTenants')
+
+    if (store.getters['api/isServer']) {
+      // If this is Server, there won't be a default tenant, so we'll try to set one
+      store.commit(
+        'tenant/setDefaultTenant',
+        store.getters['tenant/tenants']?.[0]
+      )
+    }
   }
 
   const passedTenantSlug = to.params.tenant
@@ -18,7 +26,7 @@ const tenantNavGuard = async (to, from, next) => {
   // If a slug is passed, use the slug
   // and reset the tenant
   if (passedTenantSlug) {
-    if (tenantIsSet && passedTenantSlug == currentTenant.slug) return next()
+    if (tenantIsSet && passedTenantSlug === currentTenant.slug) return next()
 
     // ... but only if the tenant exists
     if (tenantExists) {
@@ -26,7 +34,12 @@ const tenantNavGuard = async (to, from, next) => {
       return next()
     } else if (defaultTenantSlug) {
       await store.dispatch('tenant/setCurrentTenant', defaultTenantSlug)
-      return next()
+      return next({
+        name: to.name,
+        replace: true,
+        params: { ...to.params, tenant: defaultTenantSlug },
+        query: to.query
+      })
     } else {
       return next({
         name: 'start'

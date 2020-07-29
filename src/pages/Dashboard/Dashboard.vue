@@ -66,12 +66,14 @@ export default {
       numberOfTiles: 7,
       previousParams: { flows: { flows: '' }, agents: { agents: '' } },
       projectId: this.$route.params.id,
+      show: false,
       tab: this.getTab()
     }
   },
   computed: {
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('api', ['backend', 'isCloud']),
+    ...mapGetters('api', ['backend', 'isCloud', 'connected']),
+    ...mapGetters('tenant', ['tenant']),
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     },
@@ -103,11 +105,35 @@ export default {
       }
     },
     backend() {
-      let start
-      this.loadedTiles = 0
-      this.key++
+      this.refresh()
+    },
+    tenant(val) {
+      this.refresh()
+    }
+  },
+  mounted() {
+    this.refresh()
+  },
+  methods: {
+    handleProjectSelect(val) {
+      this.projectId = val
+      this.$apollo.queries.project.refetch()
+    },
+    getTab() {
+      if ('flows' in this.$route.query) return 'flows'
+      if ('agents' in this.$route.query) return 'agents'
+      return 'overview'
+    },
+    refresh() {
+      this.show = false
 
-      const animationDuration = 250
+      setTimeout(() => {
+        this.show = true
+      }, 150)
+      this.loadedTiles = 0
+      let start
+
+      const animationDuration = 150
 
       const loadTiles = time => {
         if (!start) start = time
@@ -125,39 +151,7 @@ export default {
       }
 
       requestAnimationFrame(loadTiles)
-    }
-  },
-  mounted() {
-    let start
-
-    const animationDuration = 150
-
-    const loadTiles = time => {
-      if (!start) start = time
-
-      const elapsed = time - start
-
-      if (elapsed > this.loadedTiles * animationDuration + 500) {
-        this.loadedTiles++
-      }
-
-      if (this.loadedTiles <= this.numberOfTiles) {
-        // eslint-disable-next-line
-        requestAnimationFrame(loadTiles)
-      }
-    }
-
-    requestAnimationFrame(loadTiles)
-  },
-  methods: {
-    handleProjectSelect(val) {
-      this.projectId = val
       this.$apollo.queries.project.refetch()
-    },
-    getTab() {
-      if ('flows' in this.$route.query) return 'flows'
-      if ('agents' in this.$route.query) return 'agents'
-      return 'overview'
     }
   },
   apollo: {
@@ -178,7 +172,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet color="appBackground">
+  <v-sheet v-if="show" color="appBackground">
     <SubPageNav>
       <span slot="page-type">Dashboard</span>
       <span
@@ -249,7 +243,7 @@ export default {
         <TileLayout>
           <v-skeleton-loader
             slot="row-0"
-            :loading="loadedTiles < 1"
+            :loading="loadedTiles < 7"
             type="image"
             height="200"
             transition="quick-fade"
@@ -287,7 +281,7 @@ export default {
 
           <v-skeleton-loader
             slot="row-1-col-3-tile-1"
-            :loading="loadedTiles < 7"
+            :loading="loadedTiles < 1"
             type="image"
             min-height="329"
             height="100%"

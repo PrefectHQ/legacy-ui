@@ -1,7 +1,7 @@
 <script>
 import Alert from '@/components/Alert'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import { defaultApolloClient } from '@/vue-apollo'
+import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
@@ -36,7 +36,7 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('apit', ['isCloud']),
+    ...mapGetters('api', ['isCloud', 'isServer']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', ['tenant', 'tenants', 'defaultTenant']),
     notFoundPage() {
@@ -49,9 +49,18 @@ export default {
   watch: {
     async connected(val) {
       if (!val) {
-        defaultApolloClient.stop()
+        stopDefaultClient()
       } else {
-        defaultApolloClient.restore()
+        refreshDefaultClient()
+      }
+    },
+    tenant(val) {
+      if (!val) {
+        this.$route.replace({
+          params: {
+            tenant: null
+          }
+        })
       }
     }
   },
@@ -90,6 +99,7 @@ export default {
     ...mapActions('auth0', ['authenticate', 'authorize']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
+    ...mapMutations('tenant', ['setDefaultTenant']),
     // ...mapMutations('sideDrawer', {
     //   clearDrawer: 'clearDrawer',
     //   closeSideDrawer: 'close'
@@ -137,6 +147,11 @@ export default {
 
       await this.getTenants()
 
+      if (this.isServer) {
+        // If this is Server, there won't be a default tenant, so we'll set one
+        this.setDefaultTenant(this.tenants?.[0])
+      }
+
       if (this.defaultTenant) {
         await this.setCurrentTenant(this.defaultTenant.slug)
 
@@ -148,17 +163,6 @@ export default {
             }
           })
         }
-      }
-    },
-    resetClient(val) {
-      // Stops vue-related queries by stopping the client entirely
-      // This does not impact non-Vue queries,
-      // which use a separate client.
-      if (!val) {
-        defaultApolloClient.stop()
-        defaultApolloClient.clearStore()
-      } else {
-        defaultApolloClient.restore()
       }
     }
   }

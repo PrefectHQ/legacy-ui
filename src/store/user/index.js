@@ -92,9 +92,25 @@ const mutations = {
 }
 
 const actions = {
-  async getUser({ commit, getters }) {
+  async setDefaultTenant({ commit, getters, rootGetters }) {
+    const defaultMembershipId = getters['defaultMembershipId']
+    const defaultTenant = getters['memberships']?.find(
+      membership => membership.id === defaultMembershipId
+    ).tenant
+
+    const firstTenant =
+      getters['memberships']?.[0] || rootGetters['tenant/tenants']
+
+    if (!defaultMembershipId || rootGetters['api/isServer']) return firstTenant
+
+    commit('tenant/setDefaultTenant', defaultTenant || firstTenant, {
+      root: true
+    })
+  },
+  async getUser({ commit, getters, dispatch }) {
     const user = await prefectUser()
     commit('user', user)
+    await dispatch('setDefaultTenant')
     return getters['user']
   }
 }

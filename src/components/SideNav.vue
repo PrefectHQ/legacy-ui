@@ -4,7 +4,7 @@ import moment from 'moment-timezone'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 import Feedback from '@/components/Feedback'
-import { defaultApolloClient } from '@/vue-apollo'
+import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
 
 const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
@@ -152,7 +152,7 @@ export default {
     async _switchBackend() {
       this.loading = true
 
-      this.stopClient()
+      stopDefaultClient()
 
       if (!this.isCloud) {
         await this.switchBackend('CLOUD')
@@ -163,7 +163,7 @@ export default {
       this.close()
       this.loading = false
 
-      this.startClient()
+      refreshDefaultClient()
       this.handlePostTokenRouting()
     },
     getRoute(name) {
@@ -177,7 +177,7 @@ export default {
       return route
     },
     async handleSwitchTenant(tenant) {
-      this.stopClient()
+      stopDefaultClient()
       this.tenantMenuOpen = false
 
       if (tenant.slug == this.tenant.slug) return
@@ -186,7 +186,7 @@ export default {
 
       this.close()
       this.loading = false
-      this.startClient()
+      refreshDefaultClient()
       this.handlePostTokenRouting()
     },
     handlePostTokenRouting() {
@@ -268,16 +268,6 @@ export default {
     closeDialogAndMenu() {
       this.feedbackDialog = false
       this.open = false
-    },
-    startClient() {
-      defaultApolloClient.restore()
-    },
-    // Stops vue-related queries by stopping the client entirely
-    // This does not impact non-Vue queries,
-    // which use a separate client.
-    stopClient() {
-      defaultApolloClient.stop()
-      defaultApolloClient.clearStore()
     }
   },
   apollo: {
@@ -609,7 +599,7 @@ export default {
             >
               <v-list-item-title class="tenant-title text-uppercase">
                 <div class="text text-truncate">
-                  {{ tenant.name ? tenant.name : 'UNKNOWN' }}
+                  {{ tenant.name ? tenant.name : 'No tenant selected' }}
                 </div>
                 <div
                   v-if="pendingInvitations"
@@ -646,7 +636,7 @@ export default {
             >
               <v-list-item-title class="tenant-title text-uppercase">
                 <div class="text text-truncate">
-                  {{ tenant.name ? tenant.name : 'UNKNOWN' }}
+                  {{ tenant.name ? tenant.name : 'No tenant selected' }}
                 </div>
               </v-list-item-title>
             </v-list-item-content>

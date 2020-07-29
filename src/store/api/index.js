@@ -186,6 +186,8 @@ const actions = {
   async switchBackend({ commit, dispatch, rootGetters }, backend) {
     commit('setBackend', backend)
     await dispatch('getApi')
+    await commit('tenant/unsetTenant', null, { root: true })
+    await commit('tenant/unsetTenants', null, { root: true })
 
     if (backend == 'CLOUD') {
       await dispatch('auth0/authenticate', null, { root: true })
@@ -194,6 +196,15 @@ const actions = {
     }
 
     await dispatch('tenant/getTenants', null, { root: true })
+
+    if (backend == 'SERVER') {
+      await commit(
+        'tenant/setDefaultTenant',
+        rootGetters['tenant/tenants']?.[0],
+        { root: true }
+      )
+    }
+
     await dispatch(
       'tenant/setCurrentTenant',
       rootGetters['tenant/defaultTenant'].slug,

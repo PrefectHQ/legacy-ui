@@ -279,9 +279,13 @@ export const defaultOptions = {
   queryDeduplication: true
 }
 
+let defaultApolloClient
+let fallbackApolloClient
+
 // Create apollo client
 export const createApolloProvider = () => {
   const { apolloClient, wsClient } = createApolloClient({
+    id: 'initial',
     ...defaultOptions
   })
   apolloClient.wsClient = wsClient
@@ -302,12 +306,24 @@ export const createApolloProvider = () => {
   return apolloProvider
 }
 
+export const stopDefaultClient = () => {
+  defaultApolloClient.stop()
+}
+
+export const refreshDefaultClient = () => {
+  defaultApolloClient.stop()
+  defaultApolloClient.resetStore()
+}
+
 export const defaultApolloProvider = createApolloProvider()
-export const defaultApolloClient = defaultApolloProvider.defaultClient
+defaultApolloClient = defaultApolloProvider.defaultClient
+export { defaultApolloClient }
 
 // This is the client we use that is not subject to the stop/restarts of the application
 export const fallbackApolloProvider = createApolloProvider()
-export const fallbackApolloClient = fallbackApolloProvider.defaultClient
+fallbackApolloClient = fallbackApolloProvider.defaultClient
+export { fallbackApolloClient }
+// export const fallbackApolloClient = fallbackApolloProvider.defaultClient
 
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
