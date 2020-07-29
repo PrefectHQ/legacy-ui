@@ -1,5 +1,4 @@
 <script>
-/* eslint-disable */
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
@@ -71,7 +70,8 @@ export default {
   },
   computed: {
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('api', ['backend', 'isCloud']),
+    ...mapGetters('api', ['backend', 'isCloud', 'connected']),
+    ...mapGetters('tenant', ['tenant']),
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     },
@@ -102,12 +102,32 @@ export default {
         this.tab = 'overview'
       }
     },
-    backend() {
-      let start
+    tenant(val) {
+      if (val?.id) {
+        this.refresh()
+      } else {
+        this.loadedTiles = 0
+      }
+    }
+  },
+  mounted() {
+    this.refresh()
+  },
+  methods: {
+    handleProjectSelect(val) {
+      this.projectId = val
+      this.$apollo.queries.project.refetch()
+    },
+    getTab() {
+      if ('flows' in this.$route.query) return 'flows'
+      if ('agents' in this.$route.query) return 'agents'
+      return 'overview'
+    },
+    refresh() {
       this.loadedTiles = 0
-      this.key++
+      let start
 
-      const animationDuration = 250
+      const animationDuration = 150
 
       const loadTiles = time => {
         if (!start) start = time
@@ -125,39 +145,7 @@ export default {
       }
 
       requestAnimationFrame(loadTiles)
-    }
-  },
-  mounted() {
-    let start
-
-    const animationDuration = 150
-
-    const loadTiles = time => {
-      if (!start) start = time
-
-      const elapsed = time - start
-
-      if (elapsed > this.loadedTiles * animationDuration + 500) {
-        this.loadedTiles++
-      }
-
-      if (this.loadedTiles <= this.numberOfTiles) {
-        // eslint-disable-next-line
-        requestAnimationFrame(loadTiles)
-      }
-    }
-
-    requestAnimationFrame(loadTiles)
-  },
-  methods: {
-    handleProjectSelect(val) {
-      this.projectId = val
       this.$apollo.queries.project.refetch()
-    },
-    getTab() {
-      if ('flows' in this.$route.query) return 'flows'
-      if ('agents' in this.$route.query) return 'agents'
-      return 'overview'
     }
   },
   apollo: {
@@ -205,7 +193,7 @@ export default {
           slot="row-0"
           :loading="loadedTiles < 4"
           type="text"
-          transition="fade"
+          transition="quick-fade"
           tile
         >
           <ProjectSelector @project-select="handleProjectSelect" />
@@ -232,15 +220,27 @@ export default {
         <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
         {{ tb.name }}
       </v-tab>
+    </v-tabs>
 
-      <v-tab-item class="tab-full-height pa-0" value="overview">
+    <v-tabs-items
+      v-model="tab"
+      class="px-6 mx-auto tabs-border-bottom"
+      style="max-width: 1440px;"
+      mandatory
+    >
+      <v-tab-item
+        class="tab-full-height pa-0"
+        value="overview"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayout>
           <v-skeleton-loader
             slot="row-0"
-            :loading="loadedTiles < 1"
+            :loading="loadedTiles < 7"
             type="image"
             height="200"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -253,7 +253,7 @@ export default {
             type="image"
             min-height="329"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -266,7 +266,7 @@ export default {
             type="image"
             min-height="329"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -275,11 +275,11 @@ export default {
 
           <v-skeleton-loader
             slot="row-1-col-3-tile-1"
-            :loading="loadedTiles < 7"
+            :loading="loadedTiles < 1"
             type="image"
             min-height="329"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -291,7 +291,7 @@ export default {
             :loading="loadedTiles < 5"
             type="image"
             height="300"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -304,7 +304,7 @@ export default {
             type="image"
             min-height="200px"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -317,7 +317,7 @@ export default {
             type="image"
             min-height="200px"
             height="100%"
-            transition="fade"
+            transition="quick-fade"
             class="my-2"
             tile
           >
@@ -327,18 +327,34 @@ export default {
         </TileLayout>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="flows">
+      <v-tab-item
+        class="tab-full-height"
+        value="flows"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <FlowTableTile class="mx-3 my-6" :project-id="projectId" />
       </v-tab-item>
 
-      <v-tab-item v-if="isCloud" class="tab-full-height" value="agents">
+      <v-tab-item
+        v-if="isCloud"
+        class="tab-full-height"
+        value="agents"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <Agents class="mx-3 my-6" />
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="analytics">
+      <v-tab-item
+        class="tab-full-height"
+        value="analytics"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         Nothing to see here :)
       </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn v-for="tb in tabs" :key="tb.target" @click="tab = tb.target">

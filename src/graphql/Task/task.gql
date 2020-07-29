@@ -8,6 +8,7 @@ query Task($id: uuid!) {
     max_retries
     trigger
     type
+
     upstream_edges {
       id
       upstream_task {
@@ -30,6 +31,7 @@ query Task($id: uuid!) {
         type
       }
     }
+
     flow {
       id
       flow_group_id
@@ -40,14 +42,6 @@ query Task($id: uuid!) {
         name
       }
       parameters
-    }
-    task_runs(
-      where: { flow_run: { state: { _neq: "Scheduled" } } }
-      order_by: { state_start_time: desc }
-      limit: 1
-    ) {
-      id
-      state
     }
   }
 }

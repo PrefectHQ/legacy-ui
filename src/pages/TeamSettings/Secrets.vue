@@ -320,7 +320,7 @@ export default {
           :items="secretNames"
           :items-per-page.sync="itemsPerPage"
           sort-by="name"
-          class="elevation-2 rounded-none"
+          class="elevation-2 rounded-none truncate-table"
           :footer-props="{
             firstIcon: 'first_page',
             itemsPerPageOptions: rowsPerPageItems,

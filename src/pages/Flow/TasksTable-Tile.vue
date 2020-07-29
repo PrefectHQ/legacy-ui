@@ -103,6 +103,7 @@ export default {
           'prev-icon': 'chevron_left',
           'next-icon': 'chevron_right'
         }"
+        class="truncate-table"
         :headers="headers"
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="tasks"
@@ -141,7 +142,7 @@ export default {
         </template>
 
         <template v-slot:item.max_retries="{ item }">
-          {{ item.max_retries | number }}
+          {{ item.max_retries }}
         </template>
 
         <template v-slot:item.type="{ item }">
@@ -162,52 +163,7 @@ export default {
   </v-card>
 </template>
 
-<style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  font-size: 0.9rem !important;
-
-  td {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-.pointer {
-  cursor: pointer;
-}
-</style>
-
-<style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  font-size: 0.9rem !important;
-
-  td,
-  th {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .last-ten-runs {
-    overflow-x: scroll !important;
-  }
-}
-
+<style lang="scss" scoped>
 .task-search {
   border-radius: 0 !important;
   font-size: 0.85rem;

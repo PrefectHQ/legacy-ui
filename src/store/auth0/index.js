@@ -242,7 +242,14 @@ const actions = {
       await dispatch('login')
     }
 
-    return isAuthenticated
+    const idTokenClaims = await auth0Client.getIdTokenClaims()
+    commit('idToken', idTokenClaims.__raw)
+    commit('idTokenExpiry', jwt_decode(idTokenClaims.__raw).exp * 1000)
+    commit('user/setAuth0User', idTokenClaims, {
+      root: true
+    })
+
+    return getters['idToken']
   },
   async authorize({ commit, getters, dispatch }) {
     if (!auth0Client) await dispatch('initAuth0')
@@ -253,17 +260,10 @@ const actions = {
     commit('user', user)
     dispatch('reportUserToLogRocket')
 
-    const idTokenClaims = await auth0Client.getIdTokenClaims()
-    commit('idToken', idTokenClaims.__raw)
-    commit('idTokenExpiry', jwt_decode(idTokenClaims.__raw).exp * 1000)
-    commit('user/setAuth0User', idTokenClaims, {
-      root: true
-    })
-
     const prefectAuthorization = await prefectAuth(getters['idToken'])
     if (prefectAuthorization) {
       // Update authorization credentials if user is authorized
-      dispatch('updateAuthorization', prefectAuthorization)
+      await dispatch('updateAuthorization', prefectAuthorization)
     } else {
       // Unset authorization if user is not authorized
       commit('unsetAuthorizationToken')
@@ -273,6 +273,7 @@ const actions = {
     }
 
     commit('isAuthorizingUser', false)
+    return getters['authorizationToken']
   },
   async refreshAuthorization({ getters, commit, dispatch }) {
     if (!auth0Client) await dispatch('initAuth0')
@@ -286,7 +287,7 @@ const actions = {
     dispatch('updateAuthorization', prefectAuthorization)
     commit('isRefreshingAuthorization', false)
   },
-  updateAuthorization({ commit }, authorization) {
+  async updateAuthorization({ commit }, authorization) {
     commit('authorizationToken', authorization.access_token)
     commit('refreshToken', authorization.refresh_token)
     commit(

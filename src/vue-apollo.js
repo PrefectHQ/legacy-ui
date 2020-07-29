@@ -6,9 +6,8 @@ import {
 } from 'vue-cli-plugin-apollo/graphql-client'
 import store from '@/store/index'
 import { setContext } from 'apollo-link-context'
-import { ApolloLink } from 'apollo-link'
-// Can return Observable.of returned from error link to supress errors
-// import { ApolloLink, Observable } from 'apollo-link'
+
+import { ApolloLink, Observable } from 'apollo-link'
 
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
@@ -20,15 +19,6 @@ Vue.use(VueApollo)
 
 // Name of the localStorage item
 const AUTH_TOKEN = 'authorization_token'
-
-// FIXME This is a hack, we'll have a better way to do this when we implement subscriptions
-function checkIfOnlineUntilWeAre() {
-  if (!navigator.onLine) {
-    setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
-  } else {
-    this.$apollo.skipAll = false
-  }
-}
 
 function isExpired(expiry) {
   return new Date().getTime() > expiry
@@ -42,11 +32,12 @@ function aboutToExpire(expiry) {
   return notExpired(expiry) && new Date().getTime() + 300000 >= expiry
 }
 
-let errors = 0
+let errors = 0,
+  apiErrors = 0
 
 const batchLink = new BatchHttpLink({
   batchMax: 20,
-  batchInterval: 1000,
+  batchInterval: 200,
   uri: () => store.getters['api/url']
 })
 
@@ -58,6 +49,7 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
   }
   return forward(operation).map(response => {
     errors = 0
+    apiErrors = 0
     return response
   })
 })
@@ -79,7 +71,47 @@ const headerMiddleware = setContext((_, { headers }) => {
 })
 
 const errorAfterware = onError(
-  ({ response, operation, graphQLErrors, forward }) => {
+  ({ response, operation, graphQLErrors, networkError, forward }) => {
+    // Only throw the API error once in a row
+    // (prevents spamming the console when there's no connection)
+    if (operation.operationName === 'Api') {
+      if (apiErrors > 0) {
+        return Observable.of()
+      }
+      apiErrors++
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      /* eslint-disable no-console */
+      console.groupCollapsed(
+        `%c${operation.operationName || 'Unnamed Query'} error`,
+        'color: #D64292; font-weight:bold;'
+      )
+      console.log('Operation: ', operation)
+
+      if (graphQLErrors?.length > 0) {
+        console.group('%cGraphQL Errors', 'color: #CA9800; font-weight:bold;')
+        graphQLErrors?.forEach(error => {
+          console.group(
+            `%c${error.extensions?.code || 'ERROR'}`,
+            'color: #B11A04; font-weight:bold;'
+          )
+          console.group(`Message: ${error.message}`)
+          console.log('Full log: ', error)
+          console.groupEnd()
+        })
+        console.groupEnd()
+      }
+
+      if (networkError) {
+        console.group('%cNetwork Error', 'color: #CA9800; font-weight:bold;')
+        console.log(networkError)
+        console.groupEnd()
+      }
+      console.groupEnd()
+      /* eslint-enable no-console */
+    }
+
     if (
       store.getters['api/isCloud'] &&
       graphQLErrors?.[0].message === 'Operation timed out'
@@ -87,13 +119,33 @@ const errorAfterware = onError(
       LogRocket.captureException(operation, {
         type: 'Timeout'
       })
-    } else if (response) {
+      // For now we just capture Cloud errors,
+      // we can expand this if it's helpful for debugging later
+    } else if (
+      (store.getters['api/isCloud'] && graphQLErrors) ||
+      networkError
+    ) {
+      if (graphQLErrors) {
+        LogRocket.captureException(graphQLErrors, {
+          type: 'GraphQL Errors'
+        })
+      } else if (networkError)
+        LogRocket.captureException(networkError, {
+          type: 'Network Error'
+        })
+    }
+
+    if (response) {
       response.errors = null
     }
     errors++
     if (errors > 10) {
       defaultApolloClient.stop()
     }
+    // Can return Observable.of returned from error link to supress errors
+    //  otherwise return forward(operation)
+    // for a single retry of the failure
+    // if (process.env.NODE_ENV !== 'production') return Observable.of()
     return forward(operation)
   }
 )
@@ -227,9 +279,13 @@ export const defaultOptions = {
   queryDeduplication: true
 }
 
+let defaultApolloClient
+let fallbackApolloClient
+
 // Create apollo client
 export const createApolloProvider = () => {
   const { apolloClient, wsClient } = createApolloClient({
+    id: 'initial',
     ...defaultOptions
   })
   apolloClient.wsClient = wsClient
@@ -245,48 +301,29 @@ export const createApolloProvider = () => {
       $subscription: {
         errorPolicy: 'all'
       }
-    },
-    async errorHandler(
-      { graphQLErrors, networkError },
-      vm,
-      key,
-      type,
-      options
-    ) {
-      if (navigator && !navigator.onLine) {
-        this.$apollo.skipAll = true
-        setTimeout(checkIfOnlineUntilWeAre.bind(this), 3000)
-      } else if (graphQLErrors?.length || networkError) {
-        if (
-          graphQLErrors?.[0]?.message == 'TokenExpiredError: jwt expired' &&
-          !store.getters['auth0/isRefreshingAuthorization']
-        ) {
-          await store.dispatch('auth0/refreshAuthorization')
-          this.$apollo.skipAll = true
-        }
-      } else {
-        /* eslint-disable no-console */
-        console.log('graphQLErrors', graphQLErrors)
-        console.log('networkError', networkError)
-        console.log('vm', vm)
-        console.log('key', key)
-        console.log('type', type)
-        console.log('options', options)
-        LogRocket.captureException(graphQLErrors, networkError)
-        LogRocket.log('Related to error', vm, key, type, options)
-        /* eslint-enable no-console */
-      }
     }
   })
   return apolloProvider
 }
 
+export const stopDefaultClient = () => {
+  defaultApolloClient.stop()
+}
+
+export const refreshDefaultClient = () => {
+  defaultApolloClient.stop()
+  defaultApolloClient.resetStore()
+}
+
 export const defaultApolloProvider = createApolloProvider()
-export const defaultApolloClient = defaultApolloProvider.defaultClient
+defaultApolloClient = defaultApolloProvider.defaultClient
+export { defaultApolloClient }
 
 // This is the client we use that is not subject to the stop/restarts of the application
 export const fallbackApolloProvider = createApolloProvider()
-export const fallbackApolloClient = fallbackApolloProvider.defaultClient
+fallbackApolloClient = fallbackApolloProvider.defaultClient
+export { fallbackApolloClient }
+// export const fallbackApolloClient = fallbackApolloProvider.defaultClient
 
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)

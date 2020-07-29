@@ -103,16 +103,15 @@ export default {
       // Server error message
       errorMessage: '',
 
-      // Loading states
-      isFetchingTcls: true,
-
       // Dialogs
       showAddDialog: false,
       showDeleteDialog: false,
       showEditDialog: false,
 
       // Search input
-      search: ''
+      search: '',
+
+      loadingKey: 0
     }
   },
   computed: {
@@ -270,18 +269,11 @@ export default {
     tags: {
       query: require('@/graphql/TaskTagLimit/task-tag-limit.gql'),
       pollInterval: 5000,
-      result() {
-        this.isFetchingTcls = false
-      },
-      error() {
-        this.isFetchingTcls = false
-        // TODO: Error handling
-      },
+      loadingKey: 'loadingKey',
       update: data => data.task_tag_limit,
       skip() {
         // Skip this query if the tenant isn't eligible
-        // or the user doesn't have permission
-        return !this.isEligible || !this.hasManagementPermission
+        return !this.isEligible
       }
     }
   }
@@ -289,7 +281,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout :show="!isFetchingTcls" control-show>
+  <ManagementLayout>
     <template v-slot:title>Task Concurrency</template>
 
     <template v-slot:subtitle>
@@ -388,12 +380,13 @@ export default {
         <v-data-table
           fixed-header
           data-cy="tag-table"
-          class="elevation-2 rounded-none"
+          class="elevation-2 rounded-none truncate-table"
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :items="tagsWithUsage"
           :items-per-page="10"
           :search="search"
+          :loading="loadingKey > 0"
           :footer-props="{
             showFirstLastPage: true,
             firstIcon: 'first_page',

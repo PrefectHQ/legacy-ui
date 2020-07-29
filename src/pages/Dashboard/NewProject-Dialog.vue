@@ -52,7 +52,6 @@ export default {
           errorPolicy: 'all'
         })
         if (data?.create_project) {
-          console.log(data)
           this.projectId = data.create_project.id
           this.projectSuccess = true
           this.projectLoading = false
@@ -162,6 +161,7 @@ export default {
           id="add"
           v-disable-read-only-user="!valid"
           :disabled="!valid"
+          :loading="projectLoading"
           class="ml-5 white--text"
           color="primary"
           @click="createProject"

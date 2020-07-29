@@ -2,6 +2,7 @@ import { fallbackApolloClient } from '@/vue-apollo'
 import { prefectTenants } from '@/middleware/prefectAuth'
 
 const state = {
+  defaultTenant: null,
   tenant: {
     id: null,
     name: null,
@@ -18,8 +19,11 @@ const state = {
 }
 
 const getters = {
+  defaultTenant(state) {
+    return state.defaultTenant
+  },
   role(state) {
-    if (state) return state.tenant.role
+    return state.tenant.role
   },
   tenant(state) {
     return state.tenant
@@ -33,6 +37,9 @@ const getters = {
 }
 
 const mutations = {
+  setDefaultTenant(state, tenant) {
+    state.defaultTenant = tenant
+  },
   setTenant(state, tenant) {
     if (!tenant || !Object.keys(tenant).length) {
       throw new Error('passed invalid or empty tenant object')
@@ -72,6 +79,67 @@ const mutations = {
 }
 
 const actions = {
+  async getTenants({ commit, getters }) {
+    try {
+      const tenants = await prefectTenants()
+      commit('setTenants', tenants)
+    } catch {
+      // Do nothing since the GraphQL error should be logged by Apollo afterware
+    }
+
+    return getters['tenants']
+  },
+  async setCurrentTenant({ commit, dispatch, getters, rootGetters }, slug) {
+    try {
+      let tenant = getters['tenants']?.find(t => t.slug === slug)
+
+      if (!tenant) {
+        // If the tenant doesn't exist
+        // try to retrieve tenants again
+        await dispatch('getTenants')
+      }
+
+      tenant = getters['tenants']?.find(t => t.slug === slug)
+
+      if (!tenant) {
+        throw new Error("Unable to set current tenant: tenant doesn't exist")
+      }
+
+      if (rootGetters['api/isCloud']) {
+        // Get our new auth token
+        const tenantToken = await fallbackApolloClient.mutate({
+          mutation: require('@/graphql/Tenant/tenant-token.gql'),
+          variables: {
+            tenantId: tenant.id
+          },
+          fetchPolicy: 'no-cache'
+        })
+
+        // Set our new auth token
+        await dispatch(
+          'auth0/updateAuthorization',
+          tenantToken.data.switch_tenant,
+          {
+            root: true
+          }
+        )
+
+        // Get the current license
+        await dispatch('license/getLicense', null, { root: true })
+
+        tenant.role = rootGetters['user/memberships'].find(
+          membership => membership.tenant.id == tenant.id
+        )?.role
+      } else {
+        tenant.role = 'TENANT_ADMIN'
+      }
+
+      commit('setTenant', tenant)
+    } catch (e) {
+      throw new Error('Problem setting tenant: ', e)
+    }
+    return getters['tenant']
+  },
   async updateTenantSettings({ commit }, settings) {
     try {
       if (!settings || !Object.keys(settings).length) {
@@ -89,128 +157,8 @@ const actions = {
 
       const newSettings = response.data.update_tenant_settings.tenant.settings
       commit('updateTenantSettings', newSettings)
-    } catch (error) {
-      // Do nothing for now
-      // throw error
-    }
-  },
-  async getTenant({ rootGetters, commit, dispatch }, membershipId) {
-    if (rootGetters['api/backend'] == 'SERVER') {
-      await dispatch('getTenants')
-      await dispatch('getServerTenant')
-      return
-    }
-
-    let tenantId
-    try {
-      const tenantIDQuery = await fallbackApolloClient.query({
-        query: require('@/graphql/Tenant/membership.gql'),
-        variables: {
-          membershipId: membershipId
-        },
-        fetchPolicy: 'no-cache'
-      })
-      tenantId = tenantIDQuery.data.membership[0].tenant.id
-
-      const getTenantToken = await fallbackApolloClient.mutate({
-        mutation: require('@/graphql/Tenant/tenant-token.gql'),
-        variables: {
-          tenantId: tenantId
-        },
-        fetchPolicy: 'no-cache'
-      })
-
-      await dispatch(
-        'auth0/updateAuthorization',
-        getTenantToken.data.switch_tenant,
-        {
-          root: true
-        }
-      )
-
-      const membershipQuery = await fallbackApolloClient.query({
-        query: require('@/graphql/Tenant/membership.gql'),
-        variables: {
-          membershipId: membershipId
-        },
-        fetchPolicy: 'no-cache'
-      })
-      const membership = membershipQuery.data.membership[0]
-      commit('setTenant', {
-        ...membership.tenant,
-        role: membership.role
-      })
-    } catch (error) {
-      // If the above failed, it's most likely because
-      // the user doesn't have a default_membership_id.
-      // In that case, we'll get the tenant associated
-      // with their first membership and then call the switch
-      // tenant route to update the default_membership_id
-      const tenantIDQuery = await fallbackApolloClient.query({
-        query: require('@/graphql/Tenant/tenant-id-by-membership-id.gql'),
-        variables: {
-          membershipId: rootGetters['user/memberships'][0].id
-        },
-        fetchPolicy: 'no-cache'
-      })
-      tenantId = tenantIDQuery.data.membership[0].tenant.id
-
-      const getTenantToken = await fallbackApolloClient.mutate({
-        mutation: require('@/graphql/Tenant/tenant-token.gql'),
-        variables: {
-          tenantId: tenantId
-        },
-        fetchPolicy: 'no-cache'
-      })
-
-      await dispatch(
-        'auth0/updateAuthorization',
-        getTenantToken.data.switch_tenant,
-        {
-          root: true
-        }
-      )
-
-      await dispatch('user/getUser', null, {
-        root: true
-      })
-
-      const membershipQuery = await fallbackApolloClient.query({
-        query: require('@/graphql/Tenant/membership.gql'),
-        variables: {
-          membershipId: tenantIDQuery.data.membership[0].id
-        },
-        fetchPolicy: 'no-cache'
-      })
-      const membership = membershipQuery.data.membership[0]
-      commit('setTenant', {
-        ...membership.tenant,
-        role: membership.role
-      })
-    }
-  },
-  async getServerTenant({ commit, getters }, tenantId) {
-    try {
-      const tenant = await fallbackApolloClient.query({
-        query: require('@/graphql/Tenant/tenant-by-pk.gql'),
-        variables: {
-          id: tenantId ? tenantId : getters['tenants']?.[0].id
-        }
-      })
-
-      commit('setTenant', {
-        ...tenant?.data?.tenant_by_pk
-      })
-    } catch {
-      commit('unsetTenant')
-    }
-  },
-  async getTenants({ commit }) {
-    try {
-      const tenants = await prefectTenants()
-      commit('setTenants', tenants)
-    } catch {
-      commit('unsetTenants')
+    } catch (e) {
+      throw new Error('Problem updating tenant settings: ', e)
     }
   }
 }

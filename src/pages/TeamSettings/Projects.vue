@@ -537,7 +537,7 @@ export default {
           :items-per-page="10"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
-          class="elevation-2 rounded-none"
+          class="elevation-2 rounded-none truncate-table"
           :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
           :footer-props="{
             showFirstLastPage: true,
@@ -573,7 +573,7 @@ export default {
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <div
-                  class="hidewidth cursor-pointer"
+                  class="cursor-pointer truncate"
                   v-on="on"
                   @click="copyTextToClipboard(item.id)"
                 >
@@ -862,9 +862,10 @@ export default {
   </ManagementLayout>
 </template>
 
-<style lang="scss">
-.cursor-pointer {
-  cursor: pointer;
+<style lang="scss" scoped>
+.flex {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .hidewidth {
@@ -872,26 +873,5 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
-}
-
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-</style>
-
-<style lang="scss" scoped>
-.flex {
-  display: flex;
-  justify-content: flex-end;
 }
 </style>

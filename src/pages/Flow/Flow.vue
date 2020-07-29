@@ -290,8 +290,20 @@ export default {
         <v-icon left>settings</v-icon>
         Settings
       </v-tab>
+    </v-tabs>
 
-      <v-tab-item class="tab-full-height pa-0" value="overview">
+    <v-tabs-items
+      v-model="tab"
+      v-if="flowGroup"
+      class="px-6 mx-auto tabs-border-bottom"
+      style="max-width: 1440px;"
+    >
+      <v-tab-item
+        class="tab-full-height pa-0"
+        value="overview"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayout>
           <TimelineTile
             slot="row-0"
@@ -335,13 +347,23 @@ export default {
         </TileLayout>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="tasks">
+      <v-tab-item
+        class="tab-full-height"
+        value="tasks"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <TasksTableTile slot="row-2-tile" :flow="selectedFlow" />
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="runs">
+      <v-tab-item
+        class="tab-full-height"
+        value="runs"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <FlowRunTableTile
             slot="row-2-tile"
@@ -351,23 +373,43 @@ export default {
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="schematic">
+      <v-tab-item
+        class="tab-full-height"
+        value="schematic"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <SchematicTile slot="row-2-tile" :flow="selectedFlow" />
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="versions">
+      <v-tab-item
+        class="tab-full-height"
+        value="versions"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <VersionsTile slot="row-2-tile" :flow-group-id="flowGroup.id" />
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="run">
+      <v-tab-item
+        class="tab-full-height"
+        value="run"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <RunTiles :flow="selectedFlow" />
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="settings">
+      <v-tab-item
+        class="tab-full-height"
+        value="settings"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <Settings
             slot="row-2-tile"
@@ -376,7 +418,7 @@ export default {
           />
         </TileLayoutFull>
       </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
 
     <v-bottom-navigation
       v-if="$vuetify.breakpoint.smAndDown"

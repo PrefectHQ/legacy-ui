@@ -110,6 +110,16 @@ export default {
         }
       },
       update: data => data.task_by_pk
+    },
+    lastTaskRun: {
+      query: require('@/graphql/Task/last-task-run.gql'),
+      loadingKey: 'loading',
+      variables() {
+        return {
+          id: this.taskId
+        }
+      },
+      update: data => data?.task_run?.[0]
     }
   }
 }
@@ -199,12 +209,39 @@ export default {
         <v-icon left>insert_chart_outlined</v-icon>
         Analytics
       </v-tab> -->
+    </v-tabs>
 
-      <v-tab-item class="tab-full-height pa-0" value="overview">
+    <v-tabs-items
+      v-model="tab"
+      class="px-6 mx-auto tabs-border-bottom"
+      style="max-width: 1440px;"
+    >
+      <v-tab-item
+        class="tab-full-height"
+        value="runs"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
+        <TileLayoutFull>
+          <TaskRunTableTile
+            slot="row-2-tile"
+            :task-id="taskId"
+            :loading="loading > 0"
+          />
+        </TileLayoutFull>
+      </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height pa-0"
+        value="overview"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutAlternate>
           <DetailsTile
             slot="col-1-tile-1"
             :task="task"
+            :last-run="lastTaskRun"
             :loading="loading > 0"
           />
 
@@ -220,17 +257,7 @@ export default {
           />
         </TileLayoutAlternate>
       </v-tab-item>
-
-      <v-tab-item class="tab-full-height" value="runs">
-        <TileLayoutFull>
-          <TaskRunTableTile
-            slot="row-2-tile"
-            :task-id="taskId"
-            :loading="loading > 0"
-          />
-        </TileLayoutFull>
-      </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn @click="tab = 'overview'">

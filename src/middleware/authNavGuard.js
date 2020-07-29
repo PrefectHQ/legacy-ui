@@ -14,18 +14,8 @@ const isServer = () => {
 
 const authNavGuard = async (to, from, next) => {
   // If this is a Server deployment,
-  // we don't need to worry about Authentication
+  // we bypass authentication
   if (isServer()) return next()
-
-  // if (!isServer()) {
-  // In this scenario we're unable to connect to the user-defined
-  // endpoint, so we redirect to the connection page
-  // return next({
-  //   name: 'start'
-  // })
-  //   return next()
-  // }
-
   if (isAuthenticated() && isAuthorized() && store.getters['user/userIsSet']) {
     return next()
   }
@@ -34,11 +24,8 @@ const authNavGuard = async (to, from, next) => {
     await store.dispatch('auth0/authenticate')
   }
 
-  if (isAuthenticated() && !isAuthorized()) {
+  if (!isAuthorized()) {
     await store.dispatch('auth0/authorize')
-    if (!isAuthorized()) {
-      return next({ path: 'thanks' })
-    }
   }
 
   // If the user isn't authenticated or authorized

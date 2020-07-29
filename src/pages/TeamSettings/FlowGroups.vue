@@ -67,8 +67,7 @@ export default {
       dialogDeleteFvg: false,
 
       // Load states
-      flowsLoaded: false,
-      fvgsLoaded: false,
+      loadingKey: 0,
       isDeletingFvg: false,
       isLoadingFvgs: false,
 
@@ -108,7 +107,7 @@ export default {
         : this.allHeaders.filter(header => header.mobile)
     },
     isLoadingTable() {
-      return !(this.flowsLoaded && this.fvgsLoaded)
+      return this.loadingKey > 0
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
@@ -201,6 +200,7 @@ export default {
       skip() {
         return !this.selectedFvg
       },
+      loadingKey: 'loadingKey',
       error() {
         this.handleError(
           'Something went wrong while trying to fetch your flows.'
@@ -209,42 +209,34 @@ export default {
     },
     versionGroups: {
       query: require('@/graphql/TeamSettings/flow-version-groups.gql'),
-      result({ data }) {
-        if (!data) return
-        this.fvgsLoaded = true
-      },
       error() {
         this.handleError(
           'Something went wrong while trying to fetch your flows.'
         )
       },
+      loadingKey: 'loadingKey',
       update(data) {
         return data.versionGroup
-      },
-      fetchPolicy: 'no-cache'
+      }
     },
     flows: {
       query: require('@/graphql/TeamSettings/flows.gql'),
-      result({ data }) {
-        if (!data) return
-        this.flowsLoaded = true
-      },
       error() {
         this.handleError(
           'Something went wrong while trying to fetch your flows.'
         )
       },
+      loadingKey: 'loadingKey',
       update(data) {
         return data.flow
-      },
-      fetchPolicy: 'no-cache'
+      }
     }
   }
 }
 </script>
 
 <template>
-  <ManagementLayout :show="!isLoadingTable" control-show>
+  <ManagementLayout>
     <template v-slot:title>Flow Groups</template>
 
     <template v-slot:subtitle>
@@ -306,8 +298,9 @@ export default {
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :items="items"
           :headers="headers"
+          :loading="loadingKey > 0"
           :items-per-page="10"
-          class="elevation-2 rounded-none"
+          class="elevation-2 rounded-none truncate-table"
           :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
           :footer-props="{
             showFirstLastPage: true,
@@ -449,9 +442,10 @@ export default {
   </ManagementLayout>
 </template>
 
-<style lang="scss">
-.cursor-pointer {
-  cursor: pointer;
+<style lang="scss" scoped>
+.flex {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .hidewidth {
@@ -459,26 +453,5 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
-}
-
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-</style>
-
-<style lang="scss" scoped>
-.flex {
-  display: flex;
-  justify-content: flex-end;
 }
 </style>

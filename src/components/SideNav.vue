@@ -4,6 +4,7 @@ import moment from 'moment-timezone'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 import Feedback from '@/components/Feedback'
+import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
 
 const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
@@ -21,6 +22,21 @@ const tenantProtectedRoutes = [
   'payment',
   'api',
   'name-team'
+]
+
+const backendProtectedRoutes = [
+  'team',
+  'account',
+  'task-concurrency',
+  'members',
+  'secrets',
+  'tokens',
+  'user',
+  'profile',
+  'user-tokens',
+  'welcome',
+  'name-team',
+  'onboard-resources'
 ]
 
 export default {
@@ -56,7 +72,9 @@ export default {
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
     lastDeployment_Cloud() {
-      return moment(this.releaseTimestamp).format('MMM D [•] h:mmA')
+      return this.releaseTimestamp
+        ? moment(this.releaseTimestamp).format('MMM D [•] h:mmA')
+        : 'Unknown'
     },
     lastDeployment_UI() {
       return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
@@ -124,36 +142,28 @@ export default {
     }
   },
   methods: {
-    ...mapActions('api', ['getApi', 'switchBackend', 'backend']),
+    ...mapActions('api', ['switchBackend', 'backend']),
+    ...mapActions('auth0', ['logout']),
+    ...mapActions('license', ['getLicense']),
+    ...mapActions('tenant', ['setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     ...mapMutations('refresh', ['add']),
     ...mapMutations('sideNav', ['toggle', 'close']),
-    ...mapActions('tenant', ['getTenant']),
-    ...mapActions('license', ['getLicense']),
-    ...mapActions('user', ['getUser']),
-    ...mapActions('auth0', ['logout']),
     async _switchBackend() {
       this.loading = true
+
+      stopDefaultClient()
+
       if (!this.isCloud) {
         await this.switchBackend('CLOUD')
       } else {
         await this.switchBackend('SERVER')
       }
 
-      Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.clearStore()
-      )
-
-      await this.$router
-        .push({
-          name: 'dashboard',
-          params: {
-            tenant: this.tenant.slug
-          }
-        })
-        .catch(e => e)
-
-      this.close()
       this.loading = false
+
+      refreshDefaultClient()
+      this.handlePostTokenRouting()
     },
     getRoute(name) {
       let route = {
@@ -166,48 +176,37 @@ export default {
       return route
     },
     async handleSwitchTenant(tenant) {
-      let membership = this.memberships.find(
-        mem => mem.tenant.slug == tenant.slug
-      )
+      this.loading = true
+      stopDefaultClient()
 
+      if (tenant.slug == this.tenant.slug) return
+
+      await this.setCurrentTenant(tenant.slug)
+
+      this.loading = false
       this.tenantMenuOpen = false
-
-      if (!tenant || tenant.slug == this.tenant.slug || !membership) return
-
-      await this.getTenant(membership.id)
-
-      await this.getLicense()
-
-      Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.clearStore()
-      )
-
-      if (tenantProtectedRoutes.includes(this.$route.name)) {
-        this.$router.push({
-          name: 'dashboard',
-          params: { tenant: tenant.slug }
-        })
-      } else {
-        this.$router.push({
-          name: this.$route.name,
-          params: { ...this.$route.params, tenant: this.tenant.slug }
-        })
-      }
+      refreshDefaultClient()
+      this.handlePostTokenRouting()
     },
-    async handleSwitchServerTenant(tenant) {
-      this.tenantMenuOpen = false
+    handlePostTokenRouting() {
+      if (this.isCloud && !this.tenant.settings.teamNamed) {
+        this.$router.push({
+          name: 'welcome',
+          params: {
+            tenant: this.tenant.slug
+          }
+        })
 
-      if (!tenant || tenant.slug == this.tenant.slug) return
+        return
+      }
 
-      await this.getTenant(tenant.id)
-
-      Object.values(this.$apollo.provider.clients).forEach(client =>
-        client.clearStore()
-      )
-      if (tenantProtectedRoutes.includes(this.$route.name)) {
+      if (
+        tenantProtectedRoutes.includes(this.$route.name) ||
+        (this.isServer && backendProtectedRoutes.includes(this.$route.name))
+      ) {
         this.$router.push({
           name: 'dashboard',
-          params: { tenant: tenant.slug }
+          params: { tenant: this.tenant.slug }
         })
       } else {
         this.$router.push({
@@ -319,6 +318,7 @@ export default {
       left
       temporary
       :width="width"
+      style="overflow: visible !important;"
     >
       <div class="lists-wrapper" @click="tenantMenuOpen = false">
         <v-list flat>
@@ -597,9 +597,19 @@ export default {
               max-width: 80%;
               overflow: unset;"
             >
+              <v-list-item-subtitle class="text-caption">
+                Current team
+              </v-list-item-subtitle>
+
               <v-list-item-title class="tenant-title text-uppercase">
                 <div class="text text-truncate">
-                  {{ tenant.name ? tenant.name : 'UNKNOWN' }}
+                  {{
+                    tenant.name
+                      ? tenant.name
+                      : loading
+                      ? '...'
+                      : 'No team selected'
+                  }}
                 </div>
                 <div
                   v-if="pendingInvitations"
@@ -616,8 +626,13 @@ export default {
             </v-list-item-content>
 
             <v-list-item-action>
-              <v-icon x-large>
-                {{ tenantMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
+              <v-icon
+                :style="{
+                  transform: `rotate(${tenantMenuOpen ? '180deg' : '0'})`
+                }"
+                x-large
+              >
+                arrow_right
               </v-icon>
             </v-list-item-action>
           </v-list-item>
@@ -634,130 +649,173 @@ export default {
               max-width: 80%;
               overflow: unset;"
             >
+              <v-list-item-subtitle class="text-caption">
+                Current team
+              </v-list-item-subtitle>
+
               <v-list-item-title class="tenant-title text-uppercase">
                 <div class="text text-truncate">
-                  {{ tenant.name ? tenant.name : 'UNKNOWN' }}
+                  {{
+                    tenant.name
+                      ? tenant.name
+                      : loading
+                      ? '...'
+                      : 'No team selected'
+                  }}
                 </div>
               </v-list-item-title>
+
+              <v-list-item-subtitle>
+                {{ role }}
+              </v-list-item-subtitle>
             </v-list-item-content>
 
             <v-list-item-action>
-              <v-icon x-large>
-                {{ tenantMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
+              <v-icon
+                :style="{
+                  transform: `rotate(${tenantMenuOpen ? '180deg' : '0'})`
+                }"
+                x-large
+                color="white"
+              >
+                arrow_right
               </v-icon>
             </v-list-item-action>
           </v-list-item>
         </v-list>
       </div>
 
-      <v-card
-        v-if="tenantMenuOpen && isCloud && memberships"
-        class="tenant-switcher-list elevation-4"
-      >
-        <v-list class="ma-2" dense flat>
-          <v-list-item-group v-if="pendingInvitations.length > 0" subheader>
-            <v-subheader>Pending Invitations</v-subheader>
-            <v-slide-x-transition v-for="pt in pendingInvitations" :key="pt.id">
-              <v-list-item two-line :ripple="false" class="disabled-list pr-0">
+      <v-expand-x-transition>
+        <v-card
+          v-if="tenantMenuOpen && isCloud && memberships"
+          key="cloudTenantMenu"
+          class="tenant-switcher-list elevation-4"
+          tile
+        >
+          <v-progress-linear
+            absolute
+            :active="loading"
+            :indeterminate="loading"
+          />
+          <v-list class="ma-2" dense flat :disabled="loading">
+            <v-list-item-group v-if="pendingInvitations.length > 0" subheader>
+              <v-subheader>Pending Invitations</v-subheader>
+              <v-slide-x-transition
+                v-for="pt in pendingInvitations"
+                :key="pt.id"
+              >
+                <v-list-item
+                  two-line
+                  :ripple="false"
+                  class="disabled-list pr-0"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <AcceptConfirmInputRow
+                        :label="pt.tenant.name"
+                        @accept="handleAcceptPendingInvitation(pt.id)"
+                        @decline="handleDeclinePendingInvitation(pt.id)"
+                      />
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-slide-x-transition>
+            </v-list-item-group>
+
+            <v-list-item-group subheader data-cy="switch-tenant">
+              <v-subheader>Active Teams</v-subheader>
+              <v-list-item
+                v-for="at in memberships"
+                :key="at.id"
+                two-line
+                @click="handleSwitchTenant(at.tenant)"
+              >
                 <v-list-item-content>
-                  <v-list-item-title>
-                    <AcceptConfirmInputRow
-                      :label="pt.tenant.name"
-                      @accept="handleAcceptPendingInvitation(pt.id)"
-                      @decline="handleDeclinePendingInvitation(pt.id)"
-                    />
+                  <v-list-item-title
+                    :class="
+                      tenant.id == at.tenant.id ? 'blue--text accent-4' : ''
+                    "
+                  >
+                    {{ at.tenant.name }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle
+                    v-if="tenant.id == at.tenant.id"
+                    class="font-weight-light"
+                  >
+                    Current
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+            <!-- Hiding this until the create new team page is finished -->
+            <v-list-item-group v-if="false" subheader>
+              <v-subheader />
+              <v-list-item @click="handleRouteToCreateTenant()">
+                <v-list-item-action>
+                  <v-icon>add_circle_outline</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text text--darken-1">
+                    Create New Team
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-            </v-slide-x-transition>
-          </v-list-item-group>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
 
-          <v-list-item-group subheader data-cy="switch-tenant">
-            <v-subheader>Active Teams</v-subheader>
-            <v-list-item
-              v-for="at in memberships"
-              :key="at.id"
-              two-line
-              @click="handleSwitchTenant(at.tenant)"
-            >
-              <v-list-item-content>
-                <v-list-item-title
-                  :class="
-                    tenant.id == at.tenant.id ? 'blue--text accent-4' : ''
-                  "
-                >
-                  {{ at.tenant.name }}
-                </v-list-item-title>
-                <v-list-item-subtitle
-                  v-if="tenant.id == at.tenant.id"
-                  class="font-weight-light"
-                >
-                  Current
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-          <!-- Hiding this until the create new team page is finished -->
-          <v-list-item-group v-if="false" subheader>
-            <v-subheader />
-            <v-list-item @click="handleRouteToCreateTenant()">
-              <v-list-item-action>
-                <v-icon>add_circle_outline</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title class="grey--text text--darken-1">
-                  Create New Team
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-card>
-
-      <v-card
-        v-if="tenantMenuOpen && isServer && tenants"
-        class="tenant-switcher-list elevation-4"
-      >
-        <v-list class="ma-2" dense flat>
-          <v-list-item-group subheader data-cy="switch-tenant">
-            <v-subheader>Teams</v-subheader>
-            <v-list-item
-              v-for="ten in tenants"
-              :key="ten.id"
-              two-line
-              @click="handleSwitchServerTenant(ten)"
-            >
-              <v-list-item-content>
-                <v-list-item-title
-                  :class="tenant.id == ten.id ? 'blue--text accent-4' : ''"
-                >
-                  {{ ten.name }}
-                </v-list-item-title>
-                <v-list-item-subtitle
-                  v-if="tenant.id == ten.id"
-                  class="font-weight-light"
-                >
-                  Current
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-          <!-- Hiding this until the create new team page is finished -->
-          <v-list-item-group v-if="false" subheader>
-            <v-subheader />
-            <v-list-item @click="handleRouteToCreateTenant()">
-              <v-list-item-action>
-                <v-icon>add_circle_outline</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title class="grey--text text--darken-1">
-                  Create New Team
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-card>
+        <v-card
+          v-else-if="tenantMenuOpen && isServer && tenants"
+          key="serverTenantMenu"
+          class="tenant-switcher-list elevation-4"
+          tile
+        >
+          <v-progress-linear
+            absolute
+            :active="loading"
+            :indeterminate="loading"
+          />
+          <v-list class="ma-2" dense flat :disabled="loading">
+            <v-list-item-group subheader data-cy="switch-tenant">
+              <v-subheader>Teams</v-subheader>
+              <v-list-item
+                v-for="ten in tenants"
+                :key="ten.id"
+                two-line
+                @click="handleSwitchTenant(ten)"
+              >
+                <v-list-item-content>
+                  <v-list-item-title
+                    :class="tenant.id == ten.id ? 'blue--text accent-4' : ''"
+                  >
+                    {{ ten.name }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle
+                    v-if="tenant.id == ten.id"
+                    class="font-weight-light"
+                  >
+                    Current
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+            <!-- Hiding this until the create new team page is finished -->
+            <v-list-item-group v-if="false" subheader>
+              <v-subheader />
+              <v-list-item @click="handleRouteToCreateTenant()">
+                <v-list-item-action>
+                  <v-icon>add_circle_outline</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text text--darken-1">
+                    Create New Team
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </v-expand-x-transition>
     </v-navigation-drawer>
   </v-expand-x-transition>
 </template>
@@ -834,11 +892,17 @@ export default {
 }
 
 .tenant-switcher-list {
-  bottom: 100px;
+  bottom: 0;
+  left: 300px;
   max-height: calc(100% - 100px);
   overflow-y: scroll;
   position: absolute;
   width: 100%;
+
+  @media screen and (max-width: 600px) {
+    bottom: 100px;
+    left: 0;
+  }
 
   .v-list {
     padding: 0;

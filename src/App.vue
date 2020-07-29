@@ -1,7 +1,7 @@
 <script>
 import Alert from '@/components/Alert'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import { defaultApolloClient } from '@/vue-apollo'
+import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
@@ -18,6 +18,7 @@ export default {
   },
   data() {
     return {
+      appReady: false,
       error: null,
       loadingKey: 0,
       reset: false,
@@ -26,10 +27,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['backend', 'version', 'url', 'connected']),
+    ...mapGetters('api', [
+      'backend',
+      'version',
+      'url',
+      'connected',
+      'isServer',
+      'isCloud'
+    ]),
     ...mapGetters('alert', ['getAlert']),
+    ...mapGetters('api', ['isCloud', 'isServer']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants', 'defaultTenant']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -38,20 +47,20 @@ export default {
     }
   },
   watch: {
-    backend() {
-      this.$apollo.skipAll = true
-      setTimeout(() => {
-        this.$apollo.skipAll = false
-      }, 500)
-    },
-    connected(val) {
-      // Stops vue-related queries by stopping the client entirely
-      // when we're not connected. This does not impact the api store,
-      // which is using a separate client to check api status.
+    async connected(val) {
       if (!val) {
-        defaultApolloClient.stop()
+        stopDefaultClient()
       } else {
-        defaultApolloClient.restore()
+        refreshDefaultClient()
+      }
+    },
+    tenant(val) {
+      if (!val) {
+        this.$route.replace({
+          params: {
+            tenant: null
+          }
+        })
       }
     }
   },
@@ -68,6 +77,9 @@ export default {
     window.removeEventListener('focus', this.handleVisibilityChange)
   },
   async created() {
+    await this.startup()
+    this.appReady = true
+
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -84,6 +96,10 @@ export default {
   },
   methods: {
     ...mapActions('api', ['getApi', 'monitorConnection']),
+    ...mapActions('auth0', ['authenticate', 'authorize']),
+    ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
+    ...mapMutations('tenant', ['setDefaultTenant']),
     // ...mapMutations('sideDrawer', {
     //   clearDrawer: 'clearDrawer',
     //   closeSideDrawer: 'close'
@@ -121,18 +137,45 @@ export default {
       }
 
       this.lastInteraction = this.currentInteraction
+    },
+    async startup() {
+      if (this.isCloud) {
+        await this.authenticate()
+        await this.authorize()
+        await this.getUser()
+      }
+
+      await this.getTenants()
+
+      if (this.isServer) {
+        // If this is Server, there won't be a default tenant, so we'll set one
+        this.setDefaultTenant(this.tenants?.[0])
+      }
+
+      if (this.defaultTenant) {
+        await this.setCurrentTenant(this.defaultTenant.slug)
+
+        if (this.isCloud && !this.tenant.settings.teamNamed) {
+          this.$router.push({
+            name: 'welcome',
+            params: {
+              tenant: this.tenant.slug
+            }
+          })
+        }
+      }
     }
   }
 }
 </script>
 
 <template>
-  <v-app v-if="wholeAppShown" class="app">
+  <v-app v-if="appReady" class="app">
     <v-main>
       <NavBar />
       <SideNav />
       <v-fade-transition mode="out-in">
-        <router-view v-if="shown" class="router-view" />
+        <router-view class="router-view" />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>

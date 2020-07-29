@@ -1,0 +1,5 @@
+mutation CreateTenant($input: create_tenant_input!) {
+  create_tenant(input: $input) {
+    id
+  }
+}

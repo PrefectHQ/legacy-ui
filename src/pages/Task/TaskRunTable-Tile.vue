@@ -47,7 +47,7 @@ export default {
       sortBy: 'start_time',
       sortDesc: true,
       taskRunDurations: {},
-      loading: false
+      loading: 0
     }
   },
   computed: {
@@ -145,11 +145,12 @@ export default {
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
         }"
+        class="truncate-table"
         :headers="headers"
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="task ? task.task_runs : null || []"
         :items-per-page.sync="itemsPerPage"
-        :loading="loading"
+        :loading="loading > 0"
         must-sort
         :page.sync="page"
         :server-items-length="taskRunsCount"
@@ -220,29 +221,6 @@ export default {
     </v-card-text>
   </v-card>
 </template>
-
-<style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  font-size: 0.9rem !important;
-
-  td {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-.pointer {
-  cursor: pointer;
-}
-</style>
 
 <style lang="scss" scoped>
 .time-interval-picker {

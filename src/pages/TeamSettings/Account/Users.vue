@@ -12,7 +12,7 @@ export default {
       desiredUsers: null,
       show: false,
       diff: 0,
-      userCost: 50,
+      userCost: 100,
       cardError: '',
       loading: false
     }

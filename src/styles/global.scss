@@ -44,6 +44,21 @@
   opacity: 0;
 }
 
+.quick-fade-enter-active,
+.quick-fade-leave-active {
+  opacity: 1;
+  transition: opacity ease-in-out 150ms;
+}
+
+.quick-fade-leave-active {
+  transition: opacity ease-in-out 150ms;
+}
+
+.quick-fade-enter,
+.quick-fade-leave-to {
+  opacity: 0;
+}
+
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -434,3 +449,26 @@
       0 12px 17px 2px rgba(0, 0, 0, 0.14), 0 5px 22px 4px rgba(0, 0, 0, 0.12) !important;
   }
 }
+
+.fixed-table {
+  table {
+    table-layout: fixed;
+  }
+}
+
+.truncate-table.v-data-table {
+  font-size: 0.9rem !important;
+
+  td {
+    font-size: inherit !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// stylelint-disable
+.overflow-table > .v-data-table__wrapper {
+  overflow: initial !important;
+}
+// stylelint-enable

@@ -1,6 +1,6 @@
 mutation WriteRunLogs(
-  $flowRunId: uuid!
-  $taskRunId: uuid
+  $flowRunId: UUID!
+  $taskRunId: UUID
   $message: String
   $name: String
 ) {

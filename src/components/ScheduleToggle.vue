@@ -35,7 +35,9 @@ export default {
       }
     },
     schedule() {
-      return this.flow.schedule?.clocks[0] || this.flowGroup.schedule?.clocks[0]
+      return (
+        this.flow.schedule?.clocks?.[0] || this.flowGroup.schedule?.clocks?.[0]
+      )
     }
   },
   methods: {

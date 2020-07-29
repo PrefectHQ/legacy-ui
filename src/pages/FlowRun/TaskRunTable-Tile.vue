@@ -155,6 +155,7 @@ export default {
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
         }"
+        class="truncate-table"
         :headers="headers"
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="flowRun ? flowRun.task_runs : [] || []"
@@ -173,7 +174,7 @@ export default {
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <router-link
-                  class="link"
+                  class="link truncate"
                   :data-cy="'task-run-table-link|' + item.task.name"
                   :to="{ name: 'task-run', params: { id: item.id } }"
                 >
@@ -257,28 +258,7 @@ export default {
   </v-card>
 </template>
 
-<style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-.v-data-table {
-  font-size: 0.9rem !important;
-
-  td {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-.pointer {
-  cursor: pointer;
-}
-
+<style lang="scss" scoped>
 .task-search {
   border-radius: 0 !important;
   font-size: 0.85rem;

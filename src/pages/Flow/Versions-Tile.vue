@@ -1,17 +1,51 @@
 <script>
-import BarChart from '@/components/Visualizations/BarChart.vue'
+import LastTenRuns from '@/components/LastTenRuns'
 import CardTitle from '@/components/Card-Title'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 import { timelineMixin } from '@/mixins/timelineMixin'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import TimelineTooltip from '@/components/TimelineTooltip'
+
+const serverHeaders = [
+  {
+    text: '',
+    value: 'archived',
+    sortable: false,
+    width: '5%'
+  },
+  {
+    text: 'Version',
+    value: 'version',
+    width: '10%'
+  },
+  {
+    text: 'Created',
+    value: 'created',
+    width: '15%'
+  }
+]
+
+const serverHeadersPost = [
+  {
+    text: 'Last runs',
+    value: 'flow_runs',
+    sortable: false,
+    width: '25%'
+  }
+]
+
+const cloudHeaders = [
+  {
+    text: 'Created By',
+    value: 'created_by.username',
+    width: '15%'
+  }
+]
 
 export default {
   components: {
-    BarChart,
     CardTitle,
-    TimelineTooltip
+    LastTenRuns
   },
   mixins: [formatTime, timelineMixin],
   props: {
@@ -22,35 +56,6 @@ export default {
   },
   data() {
     return {
-      headers: [
-        {
-          text: '',
-          value: 'archived',
-          sortable: false,
-          width: '5%'
-        },
-        {
-          text: 'Version',
-          value: 'version',
-          width: '10%'
-        },
-        {
-          text: 'Created',
-          value: 'created',
-          width: '15%'
-        },
-        {
-          text: 'Created By',
-          value: 'created_by.username',
-          width: '20%'
-        },
-        {
-          text: 'Last Runs',
-          value: 'flow_runs',
-          sortable: false,
-          width: '15%'
-        }
-      ],
       itemsPerPage: 5,
       loading: 0,
       page: 1,
@@ -62,8 +67,16 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
+    headers() {
+      return [
+        ...serverHeaders,
+        ...(this.isCloud ? cloudHeaders : []),
+        ...serverHeadersPost
+      ]
+    },
     offset() {
       return this.itemsPerPage * (this.page - 1)
     },
@@ -124,7 +137,7 @@ export default {
       },
       loadingKey: 'loading',
       update: data => data?.flow_group_by_pk?.flows,
-      pollInterval: 5000
+      pollInterval: 10000
     },
     versionsCount: {
       query: require('@/graphql/Flow/flow-versions-count.gql'),
@@ -136,18 +149,7 @@ export default {
       },
       loadingKey: 'loading',
       update: data => data?.flow_group_by_pk?.flows_aggregate?.aggregate?.count,
-      pollInterval: 5000
-    },
-    versionsRuns: {
-      query: require('@/graphql/Flow/flow-versions-runs.gql'),
-      variables() {
-        return {
-          flow_ids: this.versions?.map(v => v.id)
-        }
-      },
-      loadingKey: 'runsLoadingKey',
-      update: data => data?.flow,
-      pollInterval: 5000
+      pollInterval: 10000
     }
   }
 }
@@ -171,7 +173,7 @@ export default {
 
     <v-card-text class="pa-0">
       <v-data-table
-        class="ma-2 versions-table."
+        class="ma-2 overflow-table"
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :headers="headers"
         :items="versions"
@@ -184,7 +186,7 @@ export default {
         :items-per-page.sync="itemsPerPage"
         :footer-props="{
           showFirstLastPage: true,
-          itemsPerPageOptions: [5, 10],
+          itemsPerPageOptions: [10, 15, 20],
           firstIcon: 'first_page',
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',
@@ -242,26 +244,8 @@ export default {
         </template>
 
         <template v-slot:item.flow_runs="{ item }">
-          <div class="position-relative">
-            <BarChart
-              :items="prepFlowRuns(item.id)"
-              :loading="!getFlow(item.id) && runsLoading"
-              :height="50"
-              :min-bands="10"
-              normalize
-              :padding="0"
-              y-field="duration"
-              @bar-click="_barClick"
-              @bar-mouseout="_barMouseout"
-              @bar-mouseover="_barMouseover"
-            />
-
-            <div
-              v-if="tooltip && tooltip.data.flow_id == item.id"
-              class="barchart-tooltip v-tooltip__content text-left"
-            >
-              <TimelineTooltip :tooltip="tooltip" />
-            </div>
+          <div class="position-relative allow-overflow">
+            <LastTenRuns :flow-id="item.id" :archived="item.archived" />
           </div>
         </template>
       </v-data-table>
@@ -270,47 +254,6 @@ export default {
 </template>
 
 <style lang="scss">
-.fixed-table {
-  table {
-    table-layout: fixed;
-  }
-}
-
-// stylelint-disable
-.v-data-table__wrapper {
-  overflow: initial !important;
-}
-// stylelint-enable
-
-.versions-table.v-data-table {
-  font-size: 0.9rem !important;
-  overflow: initial !important;
-
-  tr {
-    overflow: initial !important;
-  }
-
-  td,
-  th {
-    font-size: inherit !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  td {
-    overflow: initial !important;
-  }
-
-  .last-ten-runs {
-    overflow-x: scroll !important;
-  }
-}
-
-.pointer {
-  cursor: pointer;
-}
-
 .flow-search {
   border-radius: 0 !important;
   font-size: 0.85rem;
@@ -318,16 +261,5 @@ export default {
   .v-icon {
     font-size: 20px !important;
   }
-}
-
-.barchart-tooltip {
-  left: 50%;
-  pointer-events: none;
-  position: absolute;
-  text-overflow: initial;
-  transform: translate(-50%);
-  user-select: none;
-  width: fit-content !important;
-  z-index: 10;
 }
 </style>

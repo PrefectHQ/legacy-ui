@@ -172,7 +172,7 @@ export default {
       :header-props="{ 'sort-icon': 'arrow_drop_up' }"
       :items="pendingInvitationsItems"
       :items-per-page="10"
-      class="elevation-2 rounded-none"
+      class="elevation-2 rounded-none truncate-table"
       :footer-props="{
         showFirstLastPage: true,
         firstIcon: 'first_page',
