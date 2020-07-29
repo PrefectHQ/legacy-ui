@@ -35,6 +35,10 @@ export default {
     hasError() {
       return this.queryError && !this.failures
     },
+    cardTitle() {
+      if (this.hasError) return ''
+      return `${this.failureCount} Failed Tasks`
+    },
     displayFailures() {
       if (!this.failures) return null
       const sorted = this.sortFailures(this.failures)
@@ -117,33 +121,6 @@ export default {
 
 <template>
   <v-card
-    v-if="hasError"
-    class="py-2 position-relative"
-    tile
-    style="height: 100%;"
-  >
-    <v-slide-y-reverse-transition leave-absolute group>
-      <v-list-item key="error" color="grey">
-        <v-list-item-avatar class="mr-0">
-          <v-icon class="error--text">
-            error
-          </v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content class="my-0 py-3">
-          <div
-            class="inline-block subtitle-1 font-weight-light"
-            style="line-height: 1.25rem;"
-          >
-            Something went wrong while trying to fetch Task failures
-            information. Please try refreshing your page. If this error
-            persists, return to this page after a few minutes.
-          </div>
-        </v-list-item-content>
-      </v-list-item>
-    </v-slide-y-reverse-transition>
-  </v-card>
-  <v-card
-    v-else
     class="py-2"
     tile
     :style="{
@@ -164,7 +141,7 @@ export default {
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <CardTitle
-          :title="`${failureCount} Failed Tasks`"
+          :title="cardTitle"
           icon="pi-task"
           :icon-color="
             loading > 0 ? 'grey' : failureCount > 0 ? 'failRed' : 'Success'
@@ -201,6 +178,25 @@ export default {
       <v-slide-y-reverse-transition v-if="loading > 0" leave-absolute group>
         <v-skeleton-loader key="skeleton" type="list-item-three-line">
         </v-skeleton-loader>
+      </v-slide-y-reverse-transition>
+      <v-slide-y-reverse-transition v-else-if="hasError" leave-absolute group>
+        <v-list-item key="error" color="grey">
+          <v-list-item-avatar class="mr-0">
+            <v-icon class="error--text">
+              error
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content class="my-0 py-3">
+            <div
+              class="inline-block subtitle-1 font-weight-light"
+              style="line-height: 1.25rem;"
+            >
+              Something went wrong while trying to fetch Task failures
+              information. Please try refreshing your page. If this error
+              persists, return to this page after a few minutes.
+            </div>
+          </v-list-item-content>
+        </v-list-item>
       </v-slide-y-reverse-transition>
 
       <v-slide-y-reverse-transition
