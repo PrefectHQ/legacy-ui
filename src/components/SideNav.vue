@@ -160,7 +160,6 @@ export default {
         await this.switchBackend('SERVER')
       }
 
-      this.close()
       this.loading = false
 
       refreshDefaultClient()
@@ -177,15 +176,15 @@ export default {
       return route
     },
     async handleSwitchTenant(tenant) {
+      this.loading = true
       stopDefaultClient()
-      this.tenantMenuOpen = false
 
       if (tenant.slug == this.tenant.slug) return
 
       await this.setCurrentTenant(tenant.slug)
 
-      this.close()
       this.loading = false
+      this.tenantMenuOpen = false
       refreshDefaultClient()
       this.handlePostTokenRouting()
     },
@@ -319,6 +318,7 @@ export default {
       left
       temporary
       :width="width"
+      style="overflow: visible !important;"
     >
       <div class="lists-wrapper" @click="tenantMenuOpen = false">
         <v-list flat>
@@ -597,6 +597,10 @@ export default {
               max-width: 80%;
               overflow: unset;"
             >
+              <v-list-item-subtitle class="text-caption">
+                Current team
+              </v-list-item-subtitle>
+
               <v-list-item-title class="tenant-title text-uppercase">
                 <div class="text text-truncate">
                   {{ tenant.name ? tenant.name : 'No tenant selected' }}
@@ -616,8 +620,13 @@ export default {
             </v-list-item-content>
 
             <v-list-item-action>
-              <v-icon x-large>
-                {{ tenantMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
+              <v-icon
+                :style="{
+                  transform: `rotate(${tenantMenuOpen ? '180deg' : '0'})`
+                }"
+                x-large
+              >
+                arrow_right
               </v-icon>
             </v-list-item-action>
           </v-list-item>
@@ -634,6 +643,10 @@ export default {
               max-width: 80%;
               overflow: unset;"
             >
+              <v-list-item-subtitle class="text-caption">
+                Current team
+              </v-list-item-subtitle>
+
               <v-list-item-title class="tenant-title text-uppercase">
                 <div class="text text-truncate">
                   {{ tenant.name ? tenant.name : 'No tenant selected' }}
@@ -642,122 +655,150 @@ export default {
             </v-list-item-content>
 
             <v-list-item-action>
-              <v-icon x-large>
-                {{ tenantMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
+              <v-icon
+                :style="{
+                  transform: `rotate(${tenantMenuOpen ? '180deg' : '0'})`
+                }"
+                x-large
+              >
+                arrow_left
               </v-icon>
             </v-list-item-action>
           </v-list-item>
         </v-list>
       </div>
 
-      <v-card
-        v-if="tenantMenuOpen && isCloud && memberships"
-        class="tenant-switcher-list elevation-4"
-      >
-        <v-list class="ma-2" dense flat>
-          <v-list-item-group v-if="pendingInvitations.length > 0" subheader>
-            <v-subheader>Pending Invitations</v-subheader>
-            <v-slide-x-transition v-for="pt in pendingInvitations" :key="pt.id">
-              <v-list-item two-line :ripple="false" class="disabled-list pr-0">
+      <v-expand-x-transition>
+        <v-card
+          v-if="tenantMenuOpen && isCloud && memberships"
+          key="cloudTenantMenu"
+          class="tenant-switcher-list elevation-4"
+          tile
+        >
+          <v-progress-linear
+            absolute
+            :active="loading"
+            :indeterminate="loading"
+          />
+          <v-list class="ma-2" dense flat :disabled="loading">
+            <v-list-item-group v-if="pendingInvitations.length > 0" subheader>
+              <v-subheader>Pending Invitations</v-subheader>
+              <v-slide-x-transition
+                v-for="pt in pendingInvitations"
+                :key="pt.id"
+              >
+                <v-list-item
+                  two-line
+                  :ripple="false"
+                  class="disabled-list pr-0"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <AcceptConfirmInputRow
+                        :label="pt.tenant.name"
+                        @accept="handleAcceptPendingInvitation(pt.id)"
+                        @decline="handleDeclinePendingInvitation(pt.id)"
+                      />
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-slide-x-transition>
+            </v-list-item-group>
+
+            <v-list-item-group subheader data-cy="switch-tenant">
+              <v-subheader>Active Teams</v-subheader>
+              <v-list-item
+                v-for="at in memberships"
+                :key="at.id"
+                two-line
+                @click="handleSwitchTenant(at.tenant)"
+              >
                 <v-list-item-content>
-                  <v-list-item-title>
-                    <AcceptConfirmInputRow
-                      :label="pt.tenant.name"
-                      @accept="handleAcceptPendingInvitation(pt.id)"
-                      @decline="handleDeclinePendingInvitation(pt.id)"
-                    />
+                  <v-list-item-title
+                    :class="
+                      tenant.id == at.tenant.id ? 'blue--text accent-4' : ''
+                    "
+                  >
+                    {{ at.tenant.name }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle
+                    v-if="tenant.id == at.tenant.id"
+                    class="font-weight-light"
+                  >
+                    Current
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+            <!-- Hiding this until the create new team page is finished -->
+            <v-list-item-group v-if="false" subheader>
+              <v-subheader />
+              <v-list-item @click="handleRouteToCreateTenant()">
+                <v-list-item-action>
+                  <v-icon>add_circle_outline</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text text--darken-1">
+                    Create New Team
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-            </v-slide-x-transition>
-          </v-list-item-group>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
 
-          <v-list-item-group subheader data-cy="switch-tenant">
-            <v-subheader>Active Teams</v-subheader>
-            <v-list-item
-              v-for="at in memberships"
-              :key="at.id"
-              two-line
-              @click="handleSwitchTenant(at.tenant)"
-            >
-              <v-list-item-content>
-                <v-list-item-title
-                  :class="
-                    tenant.id == at.tenant.id ? 'blue--text accent-4' : ''
-                  "
-                >
-                  {{ at.tenant.name }}
-                </v-list-item-title>
-                <v-list-item-subtitle
-                  v-if="tenant.id == at.tenant.id"
-                  class="font-weight-light"
-                >
-                  Current
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-          <!-- Hiding this until the create new team page is finished -->
-          <v-list-item-group v-if="false" subheader>
-            <v-subheader />
-            <v-list-item @click="handleRouteToCreateTenant()">
-              <v-list-item-action>
-                <v-icon>add_circle_outline</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title class="grey--text text--darken-1">
-                  Create New Team
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-card>
-
-      <v-card
-        v-if="tenantMenuOpen && isServer && tenants"
-        class="tenant-switcher-list elevation-4"
-      >
-        <v-list class="ma-2" dense flat>
-          <v-list-item-group subheader data-cy="switch-tenant">
-            <v-subheader>Teams</v-subheader>
-            <v-list-item
-              v-for="ten in tenants"
-              :key="ten.id"
-              two-line
-              @click="handleSwitchTenant(ten)"
-            >
-              <v-list-item-content>
-                <v-list-item-title
-                  :class="tenant.id == ten.id ? 'blue--text accent-4' : ''"
-                >
-                  {{ ten.name }}
-                </v-list-item-title>
-                <v-list-item-subtitle
-                  v-if="tenant.id == ten.id"
-                  class="font-weight-light"
-                >
-                  Current
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-          <!-- Hiding this until the create new team page is finished -->
-          <v-list-item-group v-if="false" subheader>
-            <v-subheader />
-            <v-list-item @click="handleRouteToCreateTenant()">
-              <v-list-item-action>
-                <v-icon>add_circle_outline</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title class="grey--text text--darken-1">
-                  Create New Team
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-card>
+        <v-card
+          v-else-if="tenantMenuOpen && isServer && tenants"
+          key="serverTenantMenu"
+          class="tenant-switcher-list elevation-4"
+          tile
+        >
+          <v-progress-linear
+            absolute
+            :active="loading"
+            :indeterminate="loading"
+          />
+          <v-list class="ma-2" dense flat :disabled="loading">
+            <v-list-item-group subheader data-cy="switch-tenant">
+              <v-subheader>Teams</v-subheader>
+              <v-list-item
+                v-for="ten in tenants"
+                :key="ten.id"
+                two-line
+                @click="handleSwitchTenant(ten)"
+              >
+                <v-list-item-content>
+                  <v-list-item-title
+                    :class="tenant.id == ten.id ? 'blue--text accent-4' : ''"
+                  >
+                    {{ ten.name }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle
+                    v-if="tenant.id == ten.id"
+                    class="font-weight-light"
+                  >
+                    Current
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+            <!-- Hiding this until the create new team page is finished -->
+            <v-list-item-group v-if="false" subheader>
+              <v-subheader />
+              <v-list-item @click="handleRouteToCreateTenant()">
+                <v-list-item-action>
+                  <v-icon>add_circle_outline</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text text--darken-1">
+                    Create New Team
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </v-expand-x-transition>
     </v-navigation-drawer>
   </v-expand-x-transition>
 </template>
@@ -834,11 +875,17 @@ export default {
 }
 
 .tenant-switcher-list {
-  bottom: 100px;
+  bottom: 0;
+  left: 300px;
   max-height: calc(100% - 100px);
   overflow-y: scroll;
   position: absolute;
   width: 100%;
+
+  @media screen and (max-width: 600px) {
+    bottom: 100px;
+    left: 0;
+  }
 
   .v-list {
     padding: 0;

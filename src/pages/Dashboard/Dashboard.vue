@@ -1,5 +1,4 @@
 <script>
-/* eslint-disable */
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
@@ -66,7 +65,6 @@ export default {
       numberOfTiles: 7,
       previousParams: { flows: { flows: '' }, agents: { agents: '' } },
       projectId: this.$route.params.id,
-      show: false,
       tab: this.getTab()
     }
   },
@@ -104,11 +102,12 @@ export default {
         this.tab = 'overview'
       }
     },
-    backend() {
-      this.refresh()
-    },
     tenant(val) {
-      this.refresh()
+      if (val?.id) {
+        this.refresh()
+      } else {
+        this.loadedTiles = 0
+      }
     }
   },
   mounted() {
@@ -125,11 +124,6 @@ export default {
       return 'overview'
     },
     refresh() {
-      this.show = false
-
-      setTimeout(() => {
-        this.show = true
-      }, 150)
       this.loadedTiles = 0
       let start
 
@@ -172,7 +166,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet v-if="show" color="appBackground">
+  <v-sheet color="appBackground">
     <SubPageNav>
       <span slot="page-type">Dashboard</span>
       <span
