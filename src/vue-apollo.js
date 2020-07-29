@@ -114,7 +114,14 @@ const errorAfterware = onError(
       (store.getters['api/isCloud'] && graphQLErrors) ||
       networkError
     ) {
-      LogRocket.captureException(graphQLErrors, networkError)
+      if (graphQLErrors) {
+        LogRocket.captureException(graphQLErrors, {
+          type: 'GraphQL Errors'
+        })
+      } else if (networkError)
+        LogRocket.captureException(networkError, {
+          type: 'Network Error'
+        })
     }
 
     if (response) {
