@@ -35,6 +35,16 @@ export default {
     hasError() {
       return this.queryError && !this.failures
     },
+    stateColor() {
+      if (this.loading > 0) return 'secondaryGray'
+      if (this.hasError) return 'gray'
+      if (this.failureCount > 0) return 'failRed'
+      return 'Success'
+    },
+    cardTitle() {
+      if (this.hasError) return 'Failed Tasks'
+      return `${this.failureCount} Failed Tasks`
+    },
     displayFailures() {
       if (!this.failures) return null
       const sorted = this.sortFailures(this.failures)
@@ -117,46 +127,13 @@ export default {
 
 <template>
   <v-card
-    v-if="hasError"
-    class="py-2 position-relative"
-    tile
-    style="height: 100%;"
-  >
-    <v-slide-y-reverse-transition leave-absolute group>
-      <v-list-item key="error" color="grey">
-        <v-list-item-avatar class="mr-0">
-          <v-icon class="error--text">
-            error
-          </v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content class="my-0 py-3">
-          <div
-            class="inline-block subtitle-1 font-weight-light"
-            style="line-height: 1.25rem;"
-          >
-            Something went wrong while trying to fetch Task failures
-            information. Please try refreshing your page. If this error
-            persists, return to this page after a few minutes.
-          </div>
-        </v-list-item-content>
-      </v-list-item>
-    </v-slide-y-reverse-transition>
-  </v-card>
-  <v-card
-    v-else
     class="py-2"
     tile
     :style="{
       height: fullHeight ? '100%' : 'auto'
     }"
   >
-    <v-system-bar
-      :color="
-        loading > 0 ? 'secondaryGray' : failureCount > 0 ? 'failRed' : 'Success'
-      "
-      :height="5"
-      absolute
-    >
+    <v-system-bar :color="stateColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->
     </v-system-bar>
@@ -164,11 +141,9 @@ export default {
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <CardTitle
-          :title="`${failureCount} Failed Tasks`"
+          :title="cardTitle"
           icon="pi-task"
-          :icon-color="
-            loading > 0 ? 'grey' : failureCount > 0 ? 'failRed' : 'Success'
-          "
+          :icon-color="stateColor"
           :loading="loading > 0"
         >
           <div slot="action" v-on="on">
@@ -201,6 +176,25 @@ export default {
       <v-slide-y-reverse-transition v-if="loading > 0" leave-absolute group>
         <v-skeleton-loader key="skeleton" type="list-item-three-line">
         </v-skeleton-loader>
+      </v-slide-y-reverse-transition>
+      <v-slide-y-reverse-transition v-else-if="hasError" leave-absolute group>
+        <v-list-item key="error" color="grey">
+          <v-list-item-avatar class="mr-0">
+            <v-icon class="error--text">
+              error
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content class="my-0 py-3">
+            <div
+              class="inline-block subtitle-1 font-weight-light"
+              style="line-height: 1.25rem;"
+            >
+              Something went wrong while trying to fetch Task failures
+              information. Please try refreshing your page. If this error
+              persists, return to this page after a few minutes.
+            </div>
+          </v-list-item-content>
+        </v-list-item>
       </v-slide-y-reverse-transition>
 
       <v-slide-y-reverse-transition

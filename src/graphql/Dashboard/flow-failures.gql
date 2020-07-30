@@ -1,4 +1,4 @@
-query($projectId: uuid, $heartbeat: timestamptz) {
+query FlowFailures ($projectId: uuid, $heartbeat: timestamptz) {
   flow(where: { project_id: { _eq: $projectId } }) {
     id
     name
