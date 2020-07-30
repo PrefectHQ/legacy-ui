@@ -214,7 +214,7 @@ const actions = {
   async initAuth0() {
     auth0Client = await createAuth0Client({
       domain: process.env.VUE_APP_AUTH0_DOMAIN,
-      client_id: process.env.VUE_APP_AUTH0_CLIENT_ID,
+      client_id: process.env.VUE_APP_AUTH0_PUBLIC_CLIENT_ID,
       redirect_uri: process.env.VUE_APP_BASE_URL,
       scope: 'openid email'
     })

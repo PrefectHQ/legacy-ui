@@ -49,7 +49,7 @@ const blockedResponses = ['createAPIToken', 'APITokens']
 const blockedRequests = ['SetSecret']
 
 if (process.env.NODE_ENV === 'production') {
-  LogRocket.init(process.env.VUE_APP_LOG_ROCKET_ID || '', {
+  LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID || '', {
     release: process.env.VUE_APP_BASE_URL,
     network: {
       // Requests in the blockedRequests list
