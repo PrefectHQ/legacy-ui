@@ -35,8 +35,14 @@ export default {
     hasError() {
       return this.queryError && !this.failures
     },
+    stateColor() {
+      if (this.loading > 0) return 'secondaryGray'
+      if (this.hasError) return 'gray'
+      if (this.failureCount > 0) return 'failRed'
+      return 'Success'
+    },
     cardTitle() {
-      if (this.hasError) return ''
+      if (this.hasError) return 'Failed Tasks'
       return `${this.failureCount} Failed Tasks`
     },
     displayFailures() {
@@ -127,13 +133,7 @@ export default {
       height: fullHeight ? '100%' : 'auto'
     }"
   >
-    <v-system-bar
-      :color="
-        loading > 0 ? 'secondaryGray' : failureCount > 0 ? 'failRed' : 'Success'
-      "
-      :height="5"
-      absolute
-    >
+    <v-system-bar :color="stateColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->
     </v-system-bar>
@@ -143,9 +143,7 @@ export default {
         <CardTitle
           :title="cardTitle"
           icon="pi-task"
-          :icon-color="
-            loading > 0 ? 'grey' : failureCount > 0 ? 'failRed' : 'Success'
-          "
+          :icon-color="stateColor"
           :loading="loading > 0"
         >
           <div slot="action" v-on="on">

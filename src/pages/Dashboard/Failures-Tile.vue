@@ -32,8 +32,14 @@ export default {
     hasError() {
       return this.queryError && !this.failures
     },
+    stateColor() {
+      if (this.loading > 0) return 'secondaryGray'
+      if (this.hasError) return 'gray'
+      if (this.failureCount > 0) return 'failRed'
+      return 'Success'
+    },
     cardTitle() {
-      if (this.hasError) return ''
+      if (this.hasError) return 'Failed Flows'
       return `${this.failureCount} Failed Flows`
     },
     displayFailures() {
@@ -123,13 +129,7 @@ export default {
 
 <template>
   <v-card class="py-2 position-relative" tile style="height: 100%;">
-    <v-system-bar
-      :color="
-        loading > 0 ? 'secondaryGray' : failureCount ? 'failRed' : 'Success'
-      "
-      :height="5"
-      absolute
-    >
+    <v-system-bar :color="stateColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->
     </v-system-bar>
@@ -139,9 +139,7 @@ export default {
         <CardTitle
           :title="cardTitle"
           icon="pi-flow"
-          :icon-color="
-            loading > 0 ? 'grey' : failureCount ? 'failRed' : 'Success'
-          "
+          :icon-color="stateColor"
           :loading="loading > 0"
         >
           <div slot="action" v-on="on">
