@@ -17,7 +17,11 @@ export default {
       queryError: false
     }
   },
-  computed: {},
+  computed: {
+    flowName() {
+      return this.flow[0]?.name
+    }
+  },
   watch: {},
   methods: {
     failedRuns(task) {
@@ -28,9 +32,6 @@ export default {
     },
     totalRuns(task) {
       return task?.task_runs?.length
-    },
-    flowName(task) {
-      return task?.flow?.name
     }
   },
   apollo: {
@@ -47,6 +48,21 @@ export default {
       },
       update: data => {
         return data.task_by_pk
+      }
+    },
+    flow: {
+      query: require('@/graphql/Dashboard/flow-by-task.gql'),
+      variables() {
+        return { taskId: this.failure.task.id, heartbeat: this.heartbeat }
+      },
+      // skip: true,
+      loadingKey: 'loading',
+      pollInterval: 0,
+      error() {
+        this.queryError = true
+      },
+      update: data => {
+        return data.flow
       }
     }
   }
@@ -81,7 +97,7 @@ export default {
               params: { id: failure.task.id }
             }"
           >
-            {{ flowName(task) }}
+            {{ flowName }}
             <span class="font-weight-bold">
               <v-icon style="font-size: 12px;">
                 chevron_right
