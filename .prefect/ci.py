@@ -37,7 +37,12 @@ class LogBuild(Task):
 
         self.logger.info(f"Branch/Tag: {ref}")
         self.logger.info(f"Environment: {env}")
-        self.logger.info(f"Environment variables: {pprint.pformat(config)}")
+        self.logger.info(
+            f"""
+          Environment variables: 
+          {pprint.pformat(config)}
+            """
+        )
 
         super(LogBuild, self).run()
 
