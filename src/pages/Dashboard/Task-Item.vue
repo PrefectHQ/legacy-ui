@@ -21,16 +21,16 @@ export default {
   watch: {},
   methods: {
     failedRuns(task) {
-      const failedRuns = task[0]?.task_runs?.filter(run => {
+      const failedRuns = task?.task_runs?.filter(run => {
         return run.state === 'Failed'
       })
       return failedRuns?.length
     },
     totalRuns(task) {
-      return task[0]?.task_runs?.length
+      return task?.task_runs?.length
     },
     flowName(task) {
-      return task[0]?.flow?.name
+      return task?.flow?.name
     }
   },
   apollo: {
@@ -44,9 +44,9 @@ export default {
       error() {
         this.queryError = true
       },
-      pollInterval: 30000,
+      pollInterval: 0,
       update: data => {
-        return data.task
+        return data.task_by_pk
       }
     }
   }
@@ -55,7 +55,7 @@ export default {
 
 <template>
   <div v-if="loading" class="loading apollo"
-    ><v-skeleton-loader key="skeleton" type="list-item-three-line">
+    ><v-skeleton-loader key="skeleton" type="list-item-two-line">
     </v-skeleton-loader
   ></div>
   <!-- Error -->
@@ -105,7 +105,7 @@ export default {
   </div>
   <!-- No result -->
   <div v-else class="no-result apollo"
-    ><v-skeleton-loader key="skeleton" type="list-item-three-line">
+    ><v-skeleton-loader key="skeleton" type="list-item-two-line">
     </v-skeleton-loader
   ></div>
 </template>

@@ -1,5 +1,5 @@
-query FailedTaskDetails($taskId: uuid, $heartbeat: timestamptz) {
-          task(where: { id: { _eq: $taskId } }) {
+query FailedTaskDetails($taskId: uuid!, $heartbeat: timestamptz) {
+          task_by_pk(id: $taskId) {
             flow{
               name
             }
