@@ -1,0 +1,6 @@
+mutation SetDefaultParams($input: set_flow_group_default_parameters_input!){
+  set_flow_group_default_parameters(input: $input) {
+    success
+    error
+  }
+}
