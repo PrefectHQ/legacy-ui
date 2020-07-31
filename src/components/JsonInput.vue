@@ -21,6 +21,11 @@ export default {
       type: String,
       default: () => '',
       required: false
+    },
+    newParameterInput: {
+      type: String,
+      default: '',
+      required: false
     }
   },
   data() {
@@ -90,14 +95,17 @@ export default {
     // JSON validation is not used within this component.
     // Parent components are responsible for imperatively validating JSON using a ref to this component.
     validateJson() {
+      if (this.newParameterInput) this.internalValue = this.newParameterInput
       try {
         // Treat empty or null inputs as valid
-        if (!this.value || (this.value && this.value.trim() === '')) {
+        if (
+          !this.internalValue ||
+          (this.internalValue && this.internalValue.trim() === '')
+        ) {
           return 'MissingError'
         }
-
         // Attempt to parse JSON and catch syntax errors
-        JSON.parse(this.value)
+        JSON.parse(this.internalValue)
         return true
       } catch (err) {
         if (err instanceof SyntaxError) {
