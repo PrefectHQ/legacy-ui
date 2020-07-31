@@ -41,6 +41,7 @@ export default {
       },
       // skip: true,
       loadingKey: 'loading',
+      pollInterval: 0,
       error() {
         this.queryError = true
       },
