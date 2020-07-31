@@ -96,7 +96,7 @@ const errorAfterware = onError(
             `%c${error.extensions?.code || 'ERROR'}`,
             'color: #B11A04; font-weight:bold;'
           )
-          console.group(`Message: ${error.message}`)
+          console.log(`Message: ${error.message}`)
           console.log('Full log: ', error)
           console.groupEnd()
         })
