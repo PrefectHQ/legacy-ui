@@ -100,7 +100,7 @@ export const parametersMixin = {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    validParameters(run) {
+    validParameters() {
       this.extraParameters = []
       this.missingRequiredParameters = []
       if (!this.$refs.parameterRef) {
@@ -151,11 +151,11 @@ export const parametersMixin = {
         return true
       }
       this.errorInParameterInput = true
-      if (this.missingRequiredParameters.length > 0 && run) {
+      if (this.missingRequiredParameters.length > 0) {
         this.setAlert({
           alertShow: true,
           alertMessage: `There are required flow parameters missing in the JSON payload.
-          Please specify values for the missing parameters before running the flow.`,
+          Please specify values for the missing parameters.`,
           alertType: 'error'
         })
       } else {

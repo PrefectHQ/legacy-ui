@@ -87,7 +87,7 @@ export default {
       try {
         const parameterInputObj = JSON.parse(this.parameterInput)
         delete parameterInputObj[param.name]
-        this.newParameterInput = JSON.stringify(parameterInputObj)
+        this.parameterInput = JSON.stringify(parameterInputObj)
         this.setDefaultParams(true)
       } catch (error) {
         const errString = toString(error)

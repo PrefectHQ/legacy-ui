@@ -70,7 +70,7 @@ export default {
     async run() {
       try {
         this.loading = true
-        if (!this.validParameters(true)) return
+        if (!this.validParameters()) return
         if (!this.validContext()) return
         const parametersToSet = this.newParameterInput || this.parameterInput
 
