@@ -44,7 +44,6 @@ export default {
       error() {
         this.queryError = true
       },
-      pollInterval: 0,
       update: data => {
         return data.task_by_pk
       }
@@ -54,18 +53,16 @@ export default {
 </script>
 
 <template>
-  <div v-if="loading" class="loading apollo"
+  <div v-if="!task && loading" class="loading apollo"
     ><v-skeleton-loader key="skeleton" type="list-item-two-line">
     </v-skeleton-loader
   ></div>
   <!-- Error -->
   <div v-else-if="queryError"
-    ><v-list-item class="text-truncate">
-      <v-list-item-title class="subtitle-2 red--text">
-        An error occurred fetching this task information.
-      </v-list-item-title></v-list-item
-    ></div
-  ><!-- Result -->
+    ><v-skeleton-loader key="skeleton" type="list-item-two-line">
+    </v-skeleton-loader>
+  </div>
+  <!-- Result -->
   <div v-else-if="task" class="result apollo">
     <v-list-item
       class="text-truncate"
