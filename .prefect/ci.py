@@ -100,7 +100,7 @@ class Authorize_GCR(ShellTask):
 class Transfer(ShellTask):
     def run(self, env):
         # Set the command arg here so we can dynamically build the strings
-        self.command = f"gsutil cp -r ui/dist/* gs://testing-dev-ui-bucket-{env}/"
+        self.command = f"npm run build:{env}"
         super(Transfer, self).run()
 
 
