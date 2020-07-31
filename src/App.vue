@@ -20,6 +20,8 @@ export default {
     return {
       appReady: false,
       error: null,
+      loadedComponents: 0,
+      numberOfComponents: 1,
       loadingKey: 0,
       reset: false,
       shown: true,
@@ -36,9 +38,13 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('api', ['isCloud', 'isServer']),
     ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
-    ...mapGetters('tenant', ['tenant', 'tenants', 'defaultTenant']),
+    ...mapGetters('tenant', [
+      'tenant',
+      'tenants',
+      'defaultTenant',
+      'tenantIsSet'
+    ]),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -47,6 +53,9 @@ export default {
     }
   },
   watch: {
+    backend() {
+      this.loadedComponents = 0
+    },
     async connected(val) {
       if (!val) {
         stopDefaultClient()
@@ -54,13 +63,9 @@ export default {
         refreshDefaultClient()
       }
     },
-    tenant(val) {
-      if (!val) {
-        this.$route.replace({
-          params: {
-            tenant: null
-          }
-        })
+    tenantIsSet(val) {
+      if (val) {
+        this.refresh()
       }
     }
   },
@@ -75,6 +80,9 @@ export default {
     )
     window.removeEventListener('blur', this.handleVisibilityChange)
     window.removeEventListener('focus', this.handleVisibilityChange)
+  },
+  mounted() {
+    this.refresh()
   },
   async created() {
     await this.startup()
@@ -164,6 +172,28 @@ export default {
           })
         }
       }
+    },
+    refresh() {
+      this.loadedComponents = 0
+      let start
+
+      const animationDuration = 150
+
+      const loadTiles = time => {
+        if (!start) start = time
+
+        const elapsed = time - start
+
+        if (elapsed > this.loadedComponents * animationDuration + 500) {
+          this.loadedComponents++
+        }
+
+        if (this.loadedComponents <= this.numberOfComponents) {
+          requestAnimationFrame(loadTiles)
+        }
+      }
+
+      requestAnimationFrame(loadTiles)
     }
   }
 }
@@ -172,7 +202,10 @@ export default {
 <template>
   <v-app v-if="appReady" class="app">
     <v-main>
-      <NavBar />
+      <v-slide-y-transition>
+        <NavBar v-if="loadedComponents > 0" />
+      </v-slide-y-transition>
+
       <SideNav />
       <v-fade-transition mode="out-in">
         <router-view class="router-view" />

@@ -1,12 +1,14 @@
 <script>
 import CloudHooks from '@/pages/Flow/Settings/CloudHooks'
 import GeneralSettings from '@/pages/Flow/Settings/General'
+import Parameters from '@/pages/Flow/Settings/DefaultParameters'
 import Schedules from '@/pages/Flow/Settings/Schedules'
 
 export default {
   components: {
     CloudHooks,
     GeneralSettings,
+    Parameters,
     Schedules
   },
   props: {
@@ -57,9 +59,9 @@ export default {
         <v-icon>schedule</v-icon>
       </v-tab>
 
-      <v-tab key="parameters" disabled data-cy="flow-settings-parameters-tab">
+      <v-tab key="parameters" data-cy="flow-settings-parameters-tab">
         Parameters
-        <v-icon>event_note</v-icon>
+        <v-icon>perm_data_setting</v-icon>
       </v-tab>
     </v-tabs>
 
@@ -75,7 +77,7 @@ export default {
         <Schedules v-if="tab == 2" :flow="flow" :flow-group="flowGroup" />
       </v-tab-item>
       <v-tab-item key="parameters">
-        Parameters
+        <Parameters :flow-group="flowGroup" />
       </v-tab-item>
     </v-tabs-items>
 
@@ -101,9 +103,9 @@ export default {
         <v-icon>schedule</v-icon>
       </v-btn>
 
-      <v-btn disabled :input-value="tab == 3" @click="tab = 3">
+      <v-btn :input-value="tab == 3" @click="tab = 3">
         Parameters
-        <v-icon>event_note</v-icon>
+        <v-icon>format_list_numbered_rtl</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-sheet>

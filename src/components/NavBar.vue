@@ -24,9 +24,9 @@ export default {
       'connecting',
       'retries'
     ]),
-    ...mapGetters('sideDrawer', ['disableOpenButton']),
     ...mapGetters('license', ['hasLicense']),
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('sideDrawer', ['disableOpenButton']),
+    ...mapGetters('tenant', ['tenant', 'tenantIsSet']),
     ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
     connectedIcon() {
       if (this.connected) return 'signal_cellular_4_bar'
@@ -98,9 +98,9 @@ export default {
       query: require('@/graphql/Notifications/notifications-count-unread.gql'),
       loadingKey: 'loading',
       update: data => data?.message_aggregate?.aggregate?.count,
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
       skip() {
-        return !this.connected
+        return !this.connected || !this.tenantIsSet
       },
       pollInterval: 10000
     },
@@ -125,9 +125,9 @@ export default {
         }
       },
       skip() {
-        return !this.connected || this.isServer
+        return !this.connected || this.isServer || !this.tenantIsSet
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
       pollInterval: 10000
     }
   }
@@ -135,212 +135,210 @@ export default {
 </script>
 
 <template>
-  <v-slide-y-transition>
-    <v-app-bar
-      v-if="!isWelcome"
-      :class="{
-        'elevation-0': isTransparent
-      }"
-      :color="navBarColor"
-      :fixed="!isTransparent"
-      clipped-right
-      clipped-left
-      :app="!isTransparent"
-    >
-      <v-progress-linear
-        :active="loading"
-        :indeterminate="loading"
-        background-color="white"
-        color="blue"
-        absolute
-        bottom
-      />
+  <v-app-bar
+    v-if="!isWelcome"
+    :class="{
+      'elevation-0': isTransparent
+    }"
+    :color="navBarColor"
+    :fixed="!isTransparent"
+    clipped-right
+    clipped-left
+    :app="!isTransparent"
+  >
+    <v-progress-linear
+      :active="loading"
+      :indeterminate="loading"
+      background-color="white"
+      color="blue"
+      absolute
+      bottom
+    />
 
-      <v-app-bar-nav-icon
-        :color="isTransparent ? 'primary' : 'white'"
+    <v-app-bar-nav-icon
+      :color="isTransparent ? 'primary' : 'white'"
+      text
+      data-cy="open-sidenav"
+      icon
+      large
+      class="badge"
+      :class="
+        pendingInvitations && pendingInvitations.length > 0
+          ? ''
+          : 'badge--hidden'
+      "
+      @click="open"
+    >
+    </v-app-bar-nav-icon>
+
+    <router-link :to="{ name: 'dashboard', params: { tenant: tenant.slug } }">
+      <v-btn
+        v-if="!isTransparent"
+        color="primary"
         text
-        data-cy="open-sidenav"
         icon
         large
-        class="badge"
-        :class="
-          pendingInvitations && pendingInvitations.length > 0
-            ? ''
-            : 'badge--hidden'
-        "
-        @click="open"
+        @click="refresh"
       >
-      </v-app-bar-nav-icon>
+        <img
+          class="logo"
+          style="pointer-events: none;"
+          src="@/assets/logos/logomark-light.svg"
+          alt="The Prefect Logo"
+        />
+      </v-btn>
+    </router-link>
 
-      <router-link :to="{ name: 'dashboard', params: { tenant: tenant.slug } }">
+    <v-spacer />
+
+    <GlobalSearch
+      v-if="isServer || (tenant.settings.teamNamed && hasLicense)"
+    />
+    <v-menu
+      v-model="connectionMenu"
+      :close-on-content-click="false"
+      offset-y
+      open-on-hover
+      transition="slide-y-transition"
+    >
+      <template v-slot:activator="{ on }">
         <v-btn
-          v-if="!isTransparent"
-          color="primary"
+          class="ml-2 position-relative"
           text
           icon
           large
-          @click="refresh"
-        >
-          <img
-            class="logo"
-            style="pointer-events: none;"
-            src="@/assets/logos/logomark-light.svg"
-            alt="The Prefect Logo"
-          />
-        </v-btn>
-      </router-link>
-
-      <v-spacer />
-
-      <GlobalSearch
-        v-if="isServer || (tenant.settings.teamNamed && hasLicense)"
-      />
-      <v-menu
-        v-model="connectionMenu"
-        :close-on-content-click="false"
-        offset-y
-        open-on-hover
-        transition="slide-y-transition"
-      >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            class="ml-2 position-relative"
-            text
-            icon
-            large
-            color="white"
-            v-on="on"
-            @focus="connectionMenu = true"
-            @blur="connectionMenu = false"
-          >
-            <v-icon>
-              {{ connectedIcon }}
-            </v-icon>
-            <v-icon
-              v-if="connecting"
-              small
-              color="primary"
-              class="position-absolute"
-              :style="{
-                bottom: '-8px',
-                right: '0'
-              }"
-            >
-              fas fa-spinner fa-pulse
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-card tile class="pa-0" max-width="320">
-          <v-card-text class="pb-0">
-            <p>
-              <span v-if="connected">Connected</span>
-              <span v-else-if="connecting">Connecting</span>
-              <span v-else>Couldn't connect</span>
-              to <span class="font-weight-bold">{{ url }}</span>
-            </p>
-          </v-card-text>
-          <v-card-actions class="pt-0">
-            <v-spacer></v-spacer>
-            <v-btn small text @click="connectionMenu = false">
-              Close
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-menu>
-
-      <v-scale-transition>
-        <v-btn
-          v-if="isServer || hasLicense"
           color="white"
-          text
-          icon
-          data-cy="go-to-notifications"
-          large
-          class="badge badge-left ml-4"
-          :class="
-            notificationsCount && notificationsCount > 0 ? '' : 'badge--hidden'
-          "
-          @click="goToNotifications"
+          v-on="on"
+          @focus="connectionMenu = true"
+          @blur="connectionMenu = false"
         >
-          <v-icon>notifications</v-icon>
-        </v-btn>
-      </v-scale-transition>
-
-      <v-menu
-        v-model="menu"
-        offset-y
-        data-cy="nav-bar-menu"
-        transition="slide-y-transition"
-        nudge-bottom="15"
-      >
-        <template v-slot:activator="{ on }">
-          <v-scale-transition>
-            <v-avatar
-              v-if="isCloud"
-              class="ml-4 cursor-pointer"
-              size="42"
-              v-on="on"
-            >
-              <img :src="auth0User.picture" :alt="auth0User.name" />
-            </v-avatar>
-          </v-scale-transition>
-        </template>
-
-        <v-list class="pb-0" dense width="250">
-          <v-list-item
-            :disabled="!tenant.settings.teamNamed && !hasLicense"
-            :to="{ name: 'user' }"
-            exact
-            three-line
-            dense
+          <v-icon>
+            {{ connectedIcon }}
+          </v-icon>
+          <v-icon
+            v-if="connecting"
+            small
+            color="primary"
+            class="position-absolute"
+            :style="{
+              bottom: '-8px',
+              right: '0'
+            }"
           >
-            <v-list-item-avatar>
-              <img :src="auth0User.picture" :alt="auth0User.name" />
-            </v-list-item-avatar>
+            fas fa-spinner fa-pulse
+          </v-icon>
+        </v-btn>
+      </template>
+      <v-card tile class="pa-0" max-width="320">
+        <v-card-text class="pb-0">
+          <p>
+            <span v-if="connected">Connected</span>
+            <span v-else-if="connecting">Connecting</span>
+            <span v-else>Couldn't connect</span>
+            to <span class="font-weight-bold">{{ url }}</span>
+          </p>
+        </v-card-text>
+        <v-card-actions class="pt-0">
+          <v-spacer></v-spacer>
+          <v-btn small text @click="connectionMenu = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-menu>
 
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ user.first_name }} {{ user.last_name }}
-              </v-list-item-title>
-              <v-list-item-subtitle>{{ auth0User.email }}</v-list-item-subtitle>
-              <v-list-item-subtitle>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span v-on="on">
-                      {{ formatTime(time) }}
-                      <v-icon class="material-icons-outlined" x-small>
-                        info
-                      </v-icon>
-                    </span>
-                  </template>
-                  System time according to your set Timezone
-                </v-tooltip>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+    <v-scale-transition>
+      <v-btn
+        v-if="isServer || hasLicense"
+        color="white"
+        text
+        icon
+        data-cy="go-to-notifications"
+        large
+        class="badge badge-left ml-4"
+        :class="
+          notificationsCount && notificationsCount > 0 ? '' : 'badge--hidden'
+        "
+        @click="goToNotifications"
+      >
+        <v-icon>notifications</v-icon>
+      </v-btn>
+    </v-scale-transition>
 
-          <v-list-item class="text-right" @click="trackAndLogout">
-            <v-list-item-content>
-              <v-list-item-title>Sign Out</v-list-item-title>
-            </v-list-item-content>
-            <v-list-item-avatar>
-              <v-icon color="primary">input</v-icon>
-            </v-list-item-avatar>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+    <v-menu
+      v-model="menu"
+      offset-y
+      data-cy="nav-bar-menu"
+      transition="slide-y-transition"
+      nudge-bottom="15"
+    >
+      <template v-slot:activator="{ on }">
+        <v-scale-transition>
+          <v-avatar
+            v-if="isCloud"
+            class="ml-4 cursor-pointer"
+            size="42"
+            v-on="on"
+          >
+            <img :src="auth0User.picture" :alt="auth0User.name" />
+          </v-avatar>
+        </v-scale-transition>
+      </template>
 
-      <v-scale-transition>
-        <div
-          v-if="isServer"
-          class="white--text ml-4 text-body-1"
-          style="white-space: pre;"
+      <v-list class="pb-0" dense width="250">
+        <v-list-item
+          :disabled="!tenant.settings.teamNamed && !hasLicense"
+          :to="{ name: 'user' }"
+          exact
+          three-line
+          dense
         >
-          {{ formatTime(time) }}
-        </div>
-      </v-scale-transition>
-    </v-app-bar>
-  </v-slide-y-transition>
+          <v-list-item-avatar>
+            <img :src="auth0User.picture" :alt="auth0User.name" />
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ user.first_name }} {{ user.last_name }}
+            </v-list-item-title>
+            <v-list-item-subtitle>{{ auth0User.email }}</v-list-item-subtitle>
+            <v-list-item-subtitle>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <span v-on="on">
+                    {{ formatTime(time) }}
+                    <v-icon class="material-icons-outlined" x-small>
+                      info
+                    </v-icon>
+                  </span>
+                </template>
+                System time according to your set Timezone
+              </v-tooltip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item class="text-right" @click="trackAndLogout">
+          <v-list-item-content>
+            <v-list-item-title>Sign Out</v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-avatar>
+            <v-icon color="primary">input</v-icon>
+          </v-list-item-avatar>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+
+    <v-scale-transition>
+      <div
+        v-if="isServer"
+        class="white--text ml-4 text-body-1"
+        style="white-space: pre;"
+      >
+        {{ formatTime(time) }}
+      </div>
+    </v-scale-transition>
+  </v-app-bar>
 </template>
 
 <style lang="scss" scoped>

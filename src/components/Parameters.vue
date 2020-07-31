@@ -15,9 +15,11 @@ export default {
     },
     parameters: {
       type: Array,
-      required: true
+      required: false,
+      default: () => []
     }
   },
+  computed: {},
   methods: {
     formatDefaultParamValue(defaultParamValue) {
       return jsBeautify(JSON.stringify(defaultParamValue), {
@@ -62,12 +64,12 @@ export default {
         <v-list-item-subtitle v-if="param.required">
           Required
         </v-list-item-subtitle>
-        <v-list-item-subtitle v-if="param.default != null">
+        <v-list-item-subtitle>
           Default:
           {{
             paramIsArray(param.default) || paramIsObject(param.default)
               ? ''
-              : param.default
+              : JSON.stringify(param.default)
           }}
         </v-list-item-subtitle>
         <code

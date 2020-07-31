@@ -401,7 +401,7 @@ export default {
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
-        <RunTiles :flow="selectedFlow" />
+        <RunTiles :flow="selectedFlow" :flow-group="flowGroup" />
       </v-tab-item>
 
       <v-tab-item

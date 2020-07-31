@@ -29,7 +29,7 @@ const getters = {
     return state.tenant
   },
   tenantIsSet(state) {
-    return state.tenantIsSet
+    return !!state.tenant?.id
   },
   tenants(state) {
     return state.tenants
@@ -45,7 +45,6 @@ const mutations = {
       throw new Error('passed invalid or empty tenant object')
     }
     state.tenant = { ...tenant }
-    state.tenantIsSet = true
   },
   setTenants(state, tenants) {
     if (tenants?.length === 0) {
@@ -65,7 +64,6 @@ const mutations = {
       prefectAdminSettings: {},
       stripeCustomerID: ''
     }
-    state.tenantIsSet = false
   },
   unsetTenants(state) {
     state.tenants = []

@@ -67,7 +67,7 @@ export default {
       'releaseTimestamp'
     ]),
     ...mapGetters('sideNav', ['isOpen']),
-    ...mapGetters('tenant', ['tenant', 'tenants']),
+    ...mapGetters('tenant', ['tenant', 'tenants', 'tenantIsSet']),
     ...mapGetters('user', ['memberships', 'user']),
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
@@ -296,7 +296,11 @@ export default {
       },
       skip() {
         return (
-          !this.isCloud || !this.memberships || !this.user || !this.user.email
+          !this.isCloud ||
+          !this.memberships ||
+          !this.user ||
+          !this.user.email ||
+          !this.tenantIsSet
         )
       },
       fetchPolicy: 'network-only',

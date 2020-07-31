@@ -8,7 +8,7 @@ export default function(isCloud) {
 
         created
         name
-
+        default_parameters
         schedule
 
         flows {

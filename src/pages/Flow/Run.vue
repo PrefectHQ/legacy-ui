@@ -1,8 +1,5 @@
 <script>
 /* eslint-disable vue/no-v-html */
-
-import difference from 'lodash.difference'
-import jsBeautify from 'js-beautify'
 import { mapGetters, mapActions } from 'vuex'
 
 import CardTitle from '@/components/Card-Title'
@@ -10,17 +7,11 @@ import JsonInput from '@/components/JsonInput'
 import Parameters from '@/components/Parameters'
 import PrefectSchedule from '@/components/PrefectSchedule'
 import DateTime from '@/components/DateTime'
-import { ERROR_MESSAGE as genericErrorMessage } from '@/utils/error'
+import { parametersMixin } from '@/mixins/parametersMixin.js'
 
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/edit/closebrackets'
 import 'codemirror/lib/codemirror.css'
-
-const jsonFormatOptions = {
-  indent_size: 2,
-  space_in_empty_paren: true,
-  preserve_newlines: false
-}
 
 export default {
   components: {
@@ -30,6 +21,7 @@ export default {
     PrefectSchedule,
     DateTime
   },
+  mixins: [parametersMixin],
   props: {
     flow: {
       required: true,
@@ -39,12 +31,8 @@ export default {
   data() {
     return {
       // Parameters
-      allParameters: null,
       errorInParameterInput: false,
-      extraRequiredParameters: [],
-      missingRequiredParameters: [],
-      parameterInput: null,
-      requiredParameters: null,
+      paramInfoOpen: false,
 
       // Context
       contextInfoOpen: false,
@@ -61,38 +49,32 @@ export default {
       flowRunId: null,
 
       // Loading state
-      loading: false
+      loading: false,
+      codeMirrorLoading: false
     }
   },
   computed: {
-    ...mapGetters('tenant', ['role']),
-    isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
-    }
+    ...mapGetters('tenant', ['role'])
   },
   watch: {
-    flow() {
-      this.setParameterInput(this.flow.parameters)
-      this.collectParameterKeys(this.flow.parameters)
+    //Makes sure that codemirror updates if new defaults are set in the settings tab
+    $route() {
+      this.codeMirrorLoading = true
+      setTimeout(() => {
+        this.codeMirrorLoading = false
+      }, 5)
     }
-  },
-  mounted() {
-    this.setParameterInput(this.flow.parameters)
-    this.collectParameterKeys(this.flow.parameters)
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     async run() {
       try {
         this.loading = true
-
-        this.extraRequiredParameters = []
-        this.missingRequiredParameters = []
-
         if (!this.validParameters()) return
         if (!this.validContext()) return
+        const parametersToSet = this.newParameterInput || this.parameterInput
 
-        const flowRunResponse = await this.$apollo.mutate({
+        const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
             context:
@@ -102,65 +84,31 @@ export default {
             id: this.flow.id,
             flowRunName: this.flowRunName || null,
             parameters:
-              this.parameterInput && this.parameterInput.trim() !== ''
-                ? JSON.parse(this.parameterInput)
+              parametersToSet && parametersToSet.trim() !== ''
+                ? JSON.parse(parametersToSet)
                 : null,
             scheduledStartTime: this.scheduledStartDateTime
-          }
+          },
+          errorPolicy: 'all'
         })
-
-        this.flowRunId = flowRunResponse.data.create_flow_run.id
-
-        this.renderSuccessAlert(this.flowRunId)
-
-        this.goToFlowRunPage()
+        if (data?.create_flow_run) {
+          this.flowRunId = data.create_flow_run.id
+          this.renderSuccessAlert(this.flowRunId)
+          this.goToFlowRunPage()
+        } else {
+          this.showErrorAlert(errors[0].message)
+        }
       } catch (error) {
-        this.showErrorAlert(genericErrorMessage)
-        throw error
+        this.showErrorAlert(error)
       } finally {
         this.loading = false
       }
-    },
-    collectParameterKeys(parameters) {
-      // Collect all parameters and sort alphabetically by name
-      this.allParameters = parameters.sort((a, b) => (a.name > b.name ? 1 : -1))
-      // Collect all required parameters
-      this.requiredParameters = parameters.reduce((accum, currentParam) => {
-        if (currentParam.required) accum.push(currentParam.name)
-        return accum
-      }, [])
-    },
-    defaultParamText(param) {
-      if (this.paramIsArray(param)) return 'Array'
-      if (this.paramIsObject(param)) return 'Object'
-      return param
-    },
-    extraParamsErrorMessage() {
-      return `
-          Extra flow parameters were supplied. Please remove the ${
-            this.extraParameters.length == 1 ? 'parameter' : 'parameters'
-          } ${this.sentencifyParamsList(this.extraParameters)} and try again.
-        `
-    },
-    formatDefaultParamValue(defaultParamValue) {
-      return jsBeautify(JSON.stringify(defaultParamValue), jsonFormatOptions)
-    },
-    formatParameterInput() {
-      this.parameterInput = jsBeautify(this.parameterInput, jsonFormatOptions)
     },
     goToFlowRunPage() {
       this.$router.push({
         name: 'flow-run',
         params: { id: this.flowRunId }
       })
-    },
-    paramIsArray(param) {
-      return Array.isArray(param)
-    },
-    paramIsObject(param) {
-      return (
-        typeof param === 'object' && param != null && !this.paramIsArray(param)
-      )
     },
     renderSuccessAlert(id) {
       this.setAlert({
@@ -172,29 +120,6 @@ export default {
           params: { id: id }
         }
       })
-    },
-    sentencifyParamsList(params) {
-      // Sort parameters alphabetically and bold each parameter.
-      const words = params.sort().map(param => `<b><i>${param}</i></b>`)
-
-      // Return a sentence version of the params list.
-      if (words.length === 1) {
-        return words[0]
-      } else if (words.length === 2) {
-        return `${words[0]} and ${words[1]}`
-      } else {
-        words[words.length - 1] = `and ${words[words.length - 1]}`
-        return words.join(', ')
-      }
-    },
-    setParameterInput(parameters) {
-      this.parameterInput = JSON.stringify(
-        parameters.reduce((accum, currentParam) => {
-          accum[currentParam.name] = currentParam.default
-          return accum
-        }, {})
-      )
-      this.formatParameterInput()
     },
     showErrorAlert(errorMessage) {
       this.setAlert({
@@ -227,63 +152,6 @@ export default {
       }
 
       return true
-    },
-    validParameters() {
-      if (!this.$refs.parameterRef) {
-        return true
-      }
-
-      // Check JSON using the JsonInput component's validation
-      const jsonValidationResult = this.$refs.parameterRef.validateJson()
-
-      if (jsonValidationResult === 'SyntaxError') {
-        this.errorInParameterInput = true
-        this.showErrorAlert(`
-          There is a syntax error in your flow parameters JSON.
-          Please correct the error and try again.
-        `)
-        return false
-      }
-
-      if (jsonValidationResult === 'MissingError') {
-        this.errorInParameterInput = true
-        this.showErrorAlert(
-          'Please enter your flow parameters as a JSON object.'
-        )
-        return false
-      }
-
-      const parameters = JSON.parse(this.parameterInput)
-
-      // Collect any missing required parameters
-      this.missingRequiredParameters = difference(
-        this.requiredParameters,
-        Object.keys(parameters)
-      )
-
-      // Collect any extra parameters.
-      this.extraParameters = difference(
-        Object.keys(parameters),
-        this.allParameters.map(param => param.name)
-      )
-
-      if (
-        this.missingRequiredParameters.length === 0 &&
-        this.extraParameters.length === 0
-      ) {
-        return true
-      }
-
-      this.errorInParameterInput = true
-      if (this.missingRequiredParameters.length > 0) {
-        this.showErrorAlert(`
-          There are required flow parameters missing in the JSON payload.
-          Please specify values for the missing parameters before running the flow.
-        `)
-      } else {
-        this.showErrorAlert(this.extraParamsErrorMessage())
-      }
-      return false
     }
   }
 }
@@ -365,19 +233,13 @@ export default {
               </div>
             </div>
             <div class="pb-6">
-              <div
-                class="pa-0 pr-3 position-relative"
-                :hide-actions="missingRequiredParameters.length > 0"
-              >
+              <div class="pa-0 pr-3 position-relative">
                 <v-subheader class="pl-0 subheader-height font-weight-bold">
                   PARAMETERS
                 </v-subheader>
               </div>
-              <div v-if="allParameters && allParameters.length > 0">
-                <Parameters
-                  :parameters="allParameters"
-                  :missing="missingRequiredParameters"
-                ></Parameters>
+              <div v-if="defaultParameters && defaultParameters.length > 0">
+                <Parameters :parameters="defaultParameters"></Parameters>
               </div>
               <div v-else>
                 No Parameters
@@ -388,8 +250,66 @@ export default {
       </v-flex>
       <v-flex xs12 sm8>
         <v-card tile class="ma-2 flow-root">
-          <CardTitle title="Parameters" icon="notes">
-            <template slot="action">
+          <CardTitle icon="perm_data_setting">
+            <template slot="title">
+              Parameters
+              <v-menu
+                v-model="paramInfoOpen"
+                offset-y
+                :close-on-content-click="false"
+                open-on-hover
+              >
+                <template v-slot:activator="{ on }">
+                  <div class="inline-block pr-4" v-on="on">
+                    <v-icon
+                      small
+                      class="material-icons-outlined"
+                      @focus="paramInfoOpen = true"
+                      @blur="paramInfoOpen = false"
+                    >
+                      info
+                    </v-icon>
+                  </div>
+                </template>
+                <v-card tile class="pa-0" max-width="320">
+                  <v-card-text class="pb-0">
+                    <p>
+                      Here you can provide
+                      <strong>run-time parameters</strong> for a flow run. If
+                      you want to update your flow group's default parameters,
+                      you can do so on the parameters tab in
+                      <router-link
+                        :to="{ name: 'flow', query: { tab: 'settings' } }"
+                        >Flow Settings</router-link
+                      >.
+                    </p>
+                    <p>
+                      Refer to the
+                      <a
+                        href="https://docs.prefect.io/core/concepts/parameters.html#parameters"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        @click="paramInfoOpen = false"
+                      >
+                        documentation</a
+                      >
+                      <sup
+                        ><v-icon x-small>
+                          open_in_new
+                        </v-icon></sup
+                      >
+                      for more details on parameters.
+                    </p>
+                  </v-card-text>
+                  <v-card-actions class="pt-0">
+                    <v-spacer></v-spacer>
+                    <v-btn small text @click="paramInfoOpen = false"
+                      >Close</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
+
               <v-fade-transition>
                 <v-icon
                   v-if="errorInParameterInput"
@@ -408,7 +328,11 @@ export default {
                 Read-only users cannot run flows from the UI.
               </div>
               <div
-                v-else-if="allParameters && allParameters.length > 0"
+                v-else-if="
+                  !codeMirrorLoading &&
+                    defaultParameters &&
+                    defaultParameters.length > 0
+                "
                 class="width-100"
                 :class="{
                   'ml-9': this.$vuetify.breakpoint.mdAndUp
@@ -417,6 +341,7 @@ export default {
                 <JsonInput
                   ref="parameterRef"
                   v-model="parameterInput"
+                  :new-parameter-input="newParameterInput"
                   :disabled="flow.archived"
                   data-cy="flow-run-parameter-input"
                   @input="errorInParameterInput = false"

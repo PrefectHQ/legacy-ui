@@ -139,7 +139,6 @@ export default {
         }
 
         if (this.loadedTiles <= this.numberOfTiles) {
-          // eslint-disable-next-line
           requestAnimationFrame(loadTiles)
         }
       }
