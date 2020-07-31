@@ -3,6 +3,8 @@ name: Create Prefect Flow Run
 on:
   push:
     branches: [master]
+  tags:
+    - cloud
   # We would only want to trigger the Flow on push
   # pull_request:
   #   branches: [dev, master]
@@ -18,8 +20,8 @@ jobs:
           https://api.prefect.io/graphql
           -H "Authorization: Bearer $PREFECT__GITHUB_ACTIONS_UI_TOKEN"
           -H "Content-type: application/json"
-          -d "{\"operationName\":\"CreateFlowRun\",\"variables\":{\"input\": {\"version_group_id\": \"<<TBD>>\", \"parameters\": { \"branch\": \"$BRANCH\" } } }, \"query\":\"mutation CreateFlowRun(\$input: create_flow_run_input!) {create_flow_run(input: \$input) { id } } \"}"
+          -d "{\"operationName\":\"CreateFlowRun\",\"variables\":{\"input\": {\"version_group_id\": \"<<TBD>>\", \"parameters\": { \"ref\": \"$REF\" } } }, \"query\":\"mutation CreateFlowRun(\$input: create_flow_run_input!) {create_flow_run(input: \$input) { id } } \"}"
 
         env:
           PREFECT__GITHUB_ACTIONS_UI_TOKEN: ${{ secrets.PREFECT__GITHUB_ACTIONS_UI_TOKEN }}
-          BRANCH: ${{ github.ref }}
+          REF: ${{ github.ref }}

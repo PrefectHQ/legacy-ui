@@ -16,4 +16,5 @@
   "vetur.grammar.customBlocks": {
     "story": "html"
   },
+  "python.pythonPath": "/Users/nicholasbrown/.conda/envs/prefect/bin/python",
 }
