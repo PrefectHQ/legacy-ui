@@ -267,8 +267,9 @@ export default {
         Read-only users cannot run flows.
       </span>
       <span v-else-if="!isQuickRunnable">
-        This flow has required parameters that must be set before a run. Select
-        the RUN tab to launch this flow.
+        This flow has required parameters that must be set before a run. Set a
+        default parameter value in the flow settings page or select the RUN tab
+        to launch this flow.
       </span>
       <span v-else-if="archived">
         This flow is archived and cannot be run.
