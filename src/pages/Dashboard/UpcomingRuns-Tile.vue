@@ -1,9 +1,10 @@
 <script>
 import moment from 'moment-timezone'
 import { mapGetters } from 'vuex'
-import ExternalLink from '@/components/ExternalLink'
 import CardTitle from '@/components/Card-Title'
+import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
+import ExternalLink from '@/components/ExternalLink'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -11,6 +12,7 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 export default {
   components: {
     CardTitle,
+    ConcurrencyInfo,
     DurationSpan,
     ExternalLink
   },
@@ -34,8 +36,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['timezone']),
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('user', ['timezone']),
     lateRuns() {
       if (!this.upcoming) return null
       return this.upcoming.filter(run => {
@@ -170,17 +173,24 @@ export default {
     <CardTitle :title="title" :icon="titleIcon" :icon-color="titleIconColor">
       <v-row slot="title" no-gutters class="d-flex align-center">
         <v-col cols="8">
-          <div
-            v-if="loading > 0 || (tab === 'late' && isClearingLateRuns)"
-            style="
+          <div>
+            <div
+              v-if="loading > 0 || (tab === 'late' && isClearingLateRuns)"
+              style="
                 display: inline-block;
                 height: 20px;
                 overflow: hidden;
                 width: 20px;"
-          >
-            <v-skeleton-loader type="avatar" tile></v-skeleton-loader>
+            >
+              <v-skeleton-loader type="avatar" tile></v-skeleton-loader>
+            </div>
+            {{ title }}
           </div>
-          {{ title }}
+          <ConcurrencyInfo
+            v-if="isCloud && tab === 'late'"
+            class="caption position-absolute"
+            style="bottom: 0;"
+          />
         </v-col>
         <v-col cols="4">
           <div class="d-flex align-end flex-column">

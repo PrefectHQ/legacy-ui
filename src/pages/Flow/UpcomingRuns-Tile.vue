@@ -4,6 +4,7 @@ import { mapGetters } from 'vuex'
 
 import Alert from '@/components/Alert'
 import CardTitle from '@/components/Card-Title'
+import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
@@ -12,6 +13,7 @@ export default {
   components: {
     Alert,
     CardTitle,
+    ConcurrencyInfo,
     DurationSpan
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin],
@@ -34,6 +36,7 @@ export default {
     return { loading: 0, tab: 'upcoming', setToRun: [] }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['timezone']),
     lateRuns() {
       if (!this.upcoming) return []
@@ -216,17 +219,24 @@ export default {
     <CardTitle :title="title" :icon="titleIcon" :icon-color="titleIconColor">
       <v-row slot="title" no-gutters class="d-flex align-center">
         <v-col cols="8">
-          <div
-            v-if="loading > 0 || (tab === 'late' && isClearingLateRuns)"
-            style="
+          <div>
+            <div
+              v-if="loading > 0 || (tab === 'late' && isClearingLateRuns)"
+              style="
                 display: inline-block;
                 height: 20px;
                 overflow: hidden;
                 width: 20px;"
-          >
-            <v-skeleton-loader type="avatar" tile></v-skeleton-loader>
+            >
+              <v-skeleton-loader type="avatar" tile></v-skeleton-loader>
+            </div>
+            {{ title }}
           </div>
-          {{ title }}
+          <ConcurrencyInfo
+            v-if="isCloud && tab === 'late'"
+            class="caption position-absolute"
+            style="bottom: 0;"
+          />
         </v-col>
         <v-col v-if="!flow.archived" cols="4">
           <div class="d-flex flex-column align-end">
