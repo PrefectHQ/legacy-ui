@@ -59,7 +59,7 @@ class Install(ShellTask):
     def run(self):
         self.log_stdout = True
         # Set the command arg here so we can dynamically build the string
-        self.command = f"cd ui && npm install"
+        self.command = f"cd ui && pnpm install"
         super(Install, self).run()
 
 
@@ -85,7 +85,7 @@ class Build(ShellTask):
     def run(self):
         self.log_stdout = True
         # Set the command arg here so we can dynamically build the string
-        self.command = f"cd ui && npm run build"
+        self.command = f"cd ui && pnpm run build:local"
         super(Build, self).run()
 
 
@@ -105,7 +105,7 @@ class Authorize_GCR(ShellTask):
 class Transfer(ShellTask):
     def run(self, env):
         # Set the command arg here so we can dynamically build the strings
-        self.command = f"npm run build:{env}"
+        self.command = f"cd ui && pnpm run deploy:{env}"
         super(Transfer, self).run()
 
 
@@ -135,7 +135,7 @@ with Flow("Prefect UI Deployment") as flow:
     authorize = Authorize_GCR()(env=env)
 
     # if any of the above tasks fail, we skip these more expensive steps and throw an alert
-    install = Install()(upstream_tasks=[clone, authorize, set_env_vars])
+    install = Install()(upstream_tasks=[clone, set_env_vars])
     build = Build()(upstream_tasks=[install, set_env_vars])
     transfer = Transfer()(env=env, upstream_tasks=[authorize, build])
 
