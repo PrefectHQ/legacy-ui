@@ -69,6 +69,8 @@ class GetEnvironment(Task):
             return "dev"
         if ref == "prod":
             return "dev"  # right now we're only returning dev so we can test builds
+        if ref == "ci-flow":
+            return "dev"
         raise ValueError(f"No environment associated with branch { ref }.")
 
 
@@ -146,5 +148,5 @@ flow.storage = Docker(
     image_name="prefect-ui-deployment",
 )
 
-flow.register(project_name="UI Flows")
+flow.register(project_name="UI Deployment")
 # flow.run()
