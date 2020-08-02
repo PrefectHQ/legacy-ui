@@ -1,34 +1,57 @@
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   data() {
     return {
       serverUrlInput: this.serverUrl,
       error: false,
       loading: false,
-      success: false,
-      tenants: []
+      success: this.tenants?.length > 0
     }
   },
+  computed: {
+    ...mapGetters('tenant', ['tenant', 'tenants'])
+  },
   methods: {
+    ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     async _refreshTenants() {
       this.success = false
       this.error = false
       this.loading = true
 
       try {
-        const { data } = await this.$apollo.query({
-          query: require('@/graphql/Tenant/tenants.gql')
-        })
+        await this.getTenants()
 
-        if (data?.tenant?.length > 0) {
-          this.tenants = data.tenant
-          // set tenant
-        } else {
+        if (this.tenants?.length === 0) {
           this.error = 'No tenants found. Did you create your default tenant?'
         }
       } catch (e) {
-        console.log(e)
+        this.error = e
       }
+
+      this.loading = false
+    },
+    async _selectTenant(slug) {
+      this.success = false
+      this.error = false
+      this.loading = true
+
+      try {
+        await this.setCurrentTenant(slug)
+
+        if (this.tenant) {
+          this.success = 'You successfully set your tenant!'
+        }
+      } catch (e) {
+        this.success = false
+        this.error =
+          'There was a problem setting your tenant... please try again.'
+
+        throw new Error(e)
+      }
+
+      this.loading = false
     }
   }
 }
@@ -63,10 +86,82 @@ export default {
     </ol>
 
     <ol class="mt-6">
-      <li value="1" class="text-h6 mt-6 mb-2">Refresh tenants</li>
-      <v-btn class="mt-4" color="primary" @click="_refreshTenants">
-        Check for new tenants
-      </v-btn>
+      <li value="1" class="text-h6 mt-6 mb-2">Select your tenant</li>
+      <div>
+        <v-btn class="my-4" color="primary" small @click="_refreshTenants">
+          <v-icon left>refresh</v-icon>Refresh tenants
+        </v-btn>
+
+        <span class="ml-2">
+          <v-fade-transition mode="out-in">
+            <span v-if="success">
+              <v-icon v-if="success" key="success" color="green">
+                check
+              </v-icon>
+              {{ success }}
+            </span>
+            <span v-else-if="error">
+              <v-icon key="error" color="error">
+                error
+              </v-icon>
+              {{ error }}
+            </span>
+          </v-fade-transition>
+        </span>
+      </div>
+
+      <v-simple-table>
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th class="text-left">Name</th>
+              <th class="text-left">Slug</th>
+              <th class="text-left"></th>
+            </tr>
+          </thead>
+
+          <tbody v-if="tenants && tenants.length > 0">
+            <tr>
+              <td
+                colspan="3"
+                class="pa-0"
+                style="
+                  border: unset !important;
+                  height: auto !important;"
+              >
+                <v-progress-linear
+                  :active="loading"
+                  indeterminate
+                  color="primary"
+                />
+              </td>
+            </tr>
+            <tr v-for="t in tenants" :key="t.id">
+              <td>{{ t.name }}</td>
+              <td>{{ t.slug }}</td>
+              <td class="text-right">
+                <v-btn
+                  color="accentOrange"
+                  :disabled="tenant && tenant.id == t.id"
+                  :dark="tenant && tenant.id !== t.id"
+                  depressed
+                  small
+                  @click="_selectTenant(t.slug)"
+                >
+                  {{ tenant && tenant.id == t.id ? 'Selected' : 'Select' }}
+                </v-btn>
+              </td>
+            </tr>
+          </tbody>
+
+          <tbody v-else>
+            <tr>
+              <td>No tenants</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
     </ol>
   </div>
 </template>
