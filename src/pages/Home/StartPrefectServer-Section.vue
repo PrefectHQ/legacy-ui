@@ -66,10 +66,10 @@ export default {
       </div>
 
       <div
-        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 code-block mt-4"
+        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
         style="border: 1px solid #b0bec5 !important;"
       >
-        <div class="">
+        <div class="code-block">
           <span class="blue-grey--text text--lighten-1 user-select-none"
             >$
           </span>

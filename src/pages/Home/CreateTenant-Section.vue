@@ -5,7 +5,8 @@ export default {
       serverUrlInput: this.serverUrl,
       error: false,
       loading: false,
-      success: false
+      success: false,
+      tenants: []
     }
   },
   methods: {
@@ -13,6 +14,21 @@ export default {
       this.success = false
       this.error = false
       this.loading = true
+
+      try {
+        const { data } = await this.$apollo.query({
+          query: require('@/graphql/Tenant/tenants.gql')
+        })
+
+        if (data?.tenant?.length > 0) {
+          this.tenants = data.tenant
+          // set tenant
+        } else {
+          this.error = 'No tenants found. Did you create your default tenant?'
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
@@ -32,10 +48,10 @@ export default {
     <ol class="mt-6">
       <li value="1" class="text-h6 mt-6 mb-2">Run the CLI Command</li>
       <div
-        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 code-block mt-4"
+        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
         style="border: 1px solid #b0bec5 !important;"
       >
-        <div class="">
+        <div class="code-block">
           <span class="blue-grey--text text--lighten-1 user-select-none"
             >$
           </span>
