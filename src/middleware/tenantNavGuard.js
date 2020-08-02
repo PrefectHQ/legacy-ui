@@ -42,7 +42,7 @@ const tenantNavGuard = async (to, from, next) => {
       })
     } else {
       return next({
-        name: 'start'
+        name: 'home'
       })
     }
   }
@@ -75,7 +75,7 @@ const tenantNavGuard = async (to, from, next) => {
   // connected to an API or we have no access to a tenant
   // Note: this should only be possible in Server
   return next({
-    name: 'start'
+    name: 'home'
   })
 }
 

@@ -347,15 +347,15 @@ export default {
           <v-list-item
             active-class="primary-active-class"
             data-cy="side-nav-dashboard-item"
-            :to="getRoute('start')"
+            :to="getRoute('home')"
             ripple
             exact
           >
             <v-list-item-action>
-              <v-icon>near_me</v-icon>
+              <v-icon>home</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>Get Started</v-list-item-title>
+              <v-list-item-title>Home</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
