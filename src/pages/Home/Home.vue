@@ -1,6 +1,11 @@
 <script>
+// Infrastructure components
+import ConnectAgentSection from '@/pages/Home/ConnectAgent-Section'
+import CreateTenantSection from '@/pages/Home/CreateTenant-Section'
+import StartPrefectServerSection from '@/pages/Home/StartPrefectServer-Section'
+
 import ExternalLink from '@/components/ExternalLink'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 const exploreBlocks = [
   {
@@ -31,48 +36,29 @@ const exploreBlocks = [
 ]
 
 export default {
-  components: { ExternalLink },
+  components: {
+    CreateTenantSection,
+    ConnectAgentSection,
+    ExternalLink,
+    StartPrefectServerSection
+  },
   data() {
     return {
       exploreBlocks: exploreBlocks,
       gettingStartedTab: this.isCloud ? 'agent' : 'infrastructure',
       sdkTab: 'pip',
-      serverUrlInput: this.serverUrl,
       serverUrlLoading: false,
       serverUrlError: false,
       serverUrlSuccess: false
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'url', 'serverUrl', 'connected'])
+    ...mapGetters('api', ['isCloud'])
   },
   mounted() {
     this.serverUrlInput = this.serverUrl
   },
-  methods: {
-    ...mapActions('api', ['setServerUrl', 'getApi']),
-    ...mapActions('tenant', ['updateTenantSettings']),
-    _handleKeyup() {
-      this.serverUrlSuccess = false
-      this.serverUrlError = false
-      this.serverUrlLoading = false
-    },
-    async _testUrl() {
-      this.serverUrlSuccess = false
-      this.serverUrlError = false
-      this.serverUrlLoading = true
-
-      try {
-        await this.setServerUrl(this.serverUrlInput)
-        await this.getApi()
-
-        this.serverUrlSuccess = this.connected
-      } catch (e) {
-        this.serverUrlError = true
-      }
-      this.serverUrlLoading = false
-    }
-  }
+  methods: {}
 }
 </script>
 
@@ -159,6 +145,7 @@ export default {
               dark
             >
               <v-tab key="infrastructure">Prefect Server</v-tab>
+              <v-tab key="tenant">Creating a tenant</v-tab>
               <v-tab key="agent">Connecting an Agent</v-tab>
             </v-tabs>
 
@@ -168,144 +155,15 @@ export default {
                 background-color="white"
               >
                 <v-tab-item key="infrastructure" class="white">
-                  <div class="text-body-1">
-                    Before you can begin to schedule work with Prefect Server,
-                    you'll need to start the orchestration infrastructure
-                    required to manage your Flows. This includes a database,
-                    API, scheduler, and various other criticial services.
-                    Alternatively, you can use the Prefect Cloud and get started
-                    right away (it's free!)
-                  </div>
+                  <StartPrefectServerSection />
+                </v-tab-item>
 
-                  <ol class="mt-6">
-                    <li class="text-h6">Start Prefect Server</li>
-                    <div class="text-body-1 mt-2">
-                      This command starts up the various containers that make up
-                      Prefect Server. Note that you'll need to have
-                      <ExternalLink href="https://docs.docker.com/get-started/">
-                        Docker
-                      </ExternalLink>
-                      running.
-                    </div>
-
-                    <div
-                      class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 code-block mt-4"
-                      style="border: 1px solid #b0bec5 !important;"
-                    >
-                      <div class="">
-                        <span
-                          class="blue-grey--text text--lighten-1 user-select-none"
-                          >$
-                        </span>
-                        <span class="primary--text font-weight-medium"
-                          >prefect</span
-                        >
-                        server start
-                      </div>
-                    </div>
-                  </ol>
-
-                  <ol class="mt-12">
-                    <li value="2" class="text-h6">Connect the UI</li>
-                    <div class="text-body-1 mt-2">
-                      The GraphQL endpoint is one of the public URLs exposed by
-                      Prefect Server that allows interaction with the API. By
-                      default it's exposed at <kbd>localhost:4200/graphql</kbd>,
-                      but you can modify this and other settings from your
-                      Server's <kbd>~/.prefect/config.toml</kbd>.
-                    </div>
-
-                    <div
-                      class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2 mt-10"
-                    >
-                      <div>Prefect Server GraphQL endpoint:</div>
-                      <v-text-field
-                        v-model="serverUrlInput"
-                        class="text-h5 mx-2"
-                        outlined
-                        dense
-                        hide-details
-                        :placeholder="
-                          serverUrl || 'http://localhost:4200/graphql'
-                        "
-                        :style="{ 'max-width': '500px' }"
-                        :disabled="serverUrlLoading"
-                        @keyup="_handleKeyup"
-                      >
-                        <template v-slot:append>
-                          <v-fade-transition mode="out-in">
-                            <v-icon
-                              v-if="serverUrlSuccess"
-                              key="success"
-                              color="green"
-                            >
-                              check
-                            </v-icon>
-                            <v-icon
-                              v-else-if="serverUrlError"
-                              key="error"
-                              color="error"
-                            >
-                              error
-                            </v-icon>
-                          </v-fade-transition>
-                        </template>
-
-                        <template v-slot:append-outer>
-                          <div class="mt-n1">
-                            <v-btn
-                              color="primary"
-                              dark
-                              small
-                              depressed
-                              :loading="serverUrlLoading"
-                              @click="_testUrl"
-                            >
-                              Connect
-                            </v-btn>
-                          </div>
-                        </template>
-                      </v-text-field>
-                    </div>
-
-                    <v-scroll-y-transition mode="out-in">
-                      <div
-                        v-if="serverUrlSuccess"
-                        key="success"
-                        class="success--text mt-2"
-                      >
-                        Success! You've successfully connected to your Prefect
-                        Server.
-                      </div>
-                      <div
-                        v-else-if="serverUrlError"
-                        key="error"
-                        class="error--text mt-2"
-                      >
-                        Oops! It looks like something went wrong when trying to
-                        connect; make sure Prefect Server is running at the URL
-                        above and try again.
-                      </div>
-                    </v-scroll-y-transition>
-                  </ol>
-
-                  <ol class="mt-12">
-                    <li value="3" class="text-h6 mt-6 mb-2"
-                      >Register an Agent</li
-                    >
-                    <div class="text-body-1">
-                      Next you'll want to register an
-                      <ExternalLink
-                        href="https://docs.prefect.io/orchestration/agents/overview.html"
-                      >
-                        Agent </ExternalLink
-                      >, which is responsible for executing your workflows.
-                    </div>
-                  </ol>
+                <v-tab-item key="tenant" class="white">
+                  <CreateTenantSection />
                 </v-tab-item>
 
                 <v-tab-item key="agent" class="white">
-                  <span class="font-italic">Coming soon...</span>
+                  <ConnectAgentSection />
                 </v-tab-item>
               </v-tabs-items>
             </div>
@@ -408,11 +266,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.code-block {
-  font-family: 'Source Code Pro', monospace !important;
-  white-space: pre-wrap;
-}
-
 .explore-image {
   height: 125px;
   max-width: 125px;
