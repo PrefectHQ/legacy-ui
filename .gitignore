@@ -8,9 +8,6 @@ tests/__coverage__
 tests/e2e/videos
 tests/e2e/screenshots
 
-# cypress
-cypress.env.json
-cypress/logs/
 
 # local env files
 .env.local
