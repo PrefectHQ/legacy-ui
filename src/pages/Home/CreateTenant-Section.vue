@@ -21,8 +21,8 @@ export default {
 <template>
   <div>
     <div class="text-body-1">
-      Tenants (or teams) are a segment Prefect Server uses to organize data such
-      as Projects and Flows. If you ran
+      Tenants (or teams) are a unit Prefect Server uses to organize data such as
+      Projects and Flows. If you ran
       <br /><kbd>prefect server start</kbd> to spin up your infrastucture, a
       default tenant was created for you automatically! If you ran the Prefect
       services separately (such as in a Kubernetes deployment), you'll need to
