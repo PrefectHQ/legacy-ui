@@ -45,18 +45,28 @@ export default {
   data() {
     return {
       exploreBlocks: exploreBlocks,
-      gettingStartedTab: this.isCloud ? 'agent' : 'infrastructure',
-      sdkTab: 'pip',
-      serverUrlLoading: false,
-      serverUrlError: false,
-      serverUrlSuccess: false
+      gettingStartedTab: null,
+      sdkTab: 'pip'
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud'])
+    ...mapGetters('api', ['isCloud', 'connected']),
+    ...mapGetters('tenant', ['tenantIsSet'])
   },
   mounted() {
-    this.serverUrlInput = this.serverUrl
+    console.log(this.isCloud, this.connected, this.tenantIsSet)
+
+    if (this.isCloud) {
+      this.gettingStartedTab = 'agent'
+    } else if (!this.connected) {
+      this.gettingStartedTab = 'infrastructure'
+    } else if (!this.tenantIsSet) {
+      this.gettingStartedTab = 'tenant'
+    } else {
+      this.gettingStartedTab = 'agent'
+    }
+
+    console.log(this.gettingStartedTab)
   },
   methods: {}
 }
@@ -144,9 +154,9 @@ export default {
               :background-color="isCloud ? 'primary' : 'secondary'"
               dark
             >
-              <v-tab key="infrastructure">Prefect Server</v-tab>
-              <v-tab key="tenant">Creating a tenant</v-tab>
-              <v-tab key="agent">Connecting an Agent</v-tab>
+              <v-tab href="#infrastructure">Prefect Server</v-tab>
+              <v-tab href="#tenant">Creating a tenant</v-tab>
+              <v-tab href="#agent">Connecting an Agent</v-tab>
             </v-tabs>
 
             <div class="pa-5">
@@ -154,15 +164,15 @@ export default {
                 v-model="gettingStartedTab"
                 background-color="white"
               >
-                <v-tab-item key="infrastructure" class="white">
+                <v-tab-item value="infrastructure" class="white">
                   <StartPrefectServerSection />
                 </v-tab-item>
 
-                <v-tab-item key="tenant" class="white">
+                <v-tab-item value="tenant" class="white">
                   <CreateTenantSection />
                 </v-tab-item>
 
-                <v-tab-item key="agent" class="white">
+                <v-tab-item value="agent" class="white">
                   <ConnectAgentSection />
                 </v-tab-item>
               </v-tabs-items>
