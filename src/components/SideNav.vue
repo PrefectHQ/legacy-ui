@@ -170,7 +170,7 @@ export default {
         name: name
       }
 
-      if (tenantProtectedRoutes.includes(name)) {
+      if (tenantProtectedRoutes.includes(name) || name == 'dashboard') {
         route.params = { tenant: this.tenant?.slug }
       }
       return route
