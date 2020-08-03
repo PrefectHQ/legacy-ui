@@ -245,13 +245,13 @@ export default {
 <style scoped>
 /*stylelint-disable */
 .StripeElement {
+  background-color: white;
+  border: 1px solid;
+  border-color: #0009;
+  border-radius: 4px;
   height: 56px;
 
-  padding: 15px 15px;
-  border-color: #0009;
-  border: 1px solid;
-  border-radius: 4px;
-  background-color: white;
+  padding: 15px;
   -webkit-transition: box-shadow 150ms ease;
   transition: box-shadow 150ms ease;
 }

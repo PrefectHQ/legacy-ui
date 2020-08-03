@@ -70,31 +70,19 @@ export default {
   },
   methods: {
     ...mapMutations('sideDrawer', ['openDrawer']),
-    failedRuns(failure) {
-      if (failure?.failed_count?.aggregate) {
-        return failure.failed_count.aggregate.count
-      }
-      return ''
-    },
-    totalRuns(failure) {
-      if (failure?.runs_count?.aggregate) {
-        return failure.runs_count.aggregate.count
-      }
-      return ''
-    },
     sortFailures(failures) {
       return failures.sort((flowRunA, flowRunB) => {
-        if (flowRunA?.failed_count && flowRunB?.failed_count) {
-          const aFailurePercentage =
-            flowRunA.failed_count.aggregate.count /
-            flowRunA.runs_count.aggregate.count
-          const bFailurePercentage =
-            flowRunB.failed_count.aggregate.count /
-            flowRunB.runs_count.aggregate.count
+        if (flowRunA?.flow_runs && flowRunB?.flow_runs) {
+          const lastUpdatedA = flowRunA.flow_runs.sort(
+            (x, y) => x.updated > y.updated
+          )[0]
+          const lastUpdatedB = flowRunB.flow_runs.sort(
+            (x, y) => x.updated > y.updated
+          )[0]
 
-          if (aFailurePercentage > bFailurePercentage) {
+          if (lastUpdatedA > lastUpdatedB) {
             return -1
-          } else if (aFailurePercentage < bFailurePercentage) {
+          } else if (lastUpdatedA < lastUpdatedB) {
             return 1
           }
           return 0
@@ -119,7 +107,7 @@ export default {
       pollInterval: 30000,
       update: data => {
         return data && data.flow
-          ? data.flow.filter(flow => flow.failed_count.aggregate.count > 0)
+          ? data.flow.filter(flow => flow.flow_runs.length > 0)
           : null
       }
     }
@@ -225,13 +213,6 @@ export default {
                   >{{ failure.name }}</router-link
                 >
               </v-list-item-title>
-
-              <v-list-item-subtitle>
-                {{ failedRuns(failure) }}
-                /
-                {{ totalRuns(failure) }}
-                Runs failed
-              </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-avatar
               ><v-icon>arrow_right</v-icon></v-list-item-avatar
