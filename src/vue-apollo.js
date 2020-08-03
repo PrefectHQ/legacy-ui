@@ -151,7 +151,7 @@ const errorAfterware = onError(
 )
 
 const authMiddleware = setContext(async (_, { headers }) => {
-  if (store.getters['api/isServer'] || _.operationName == 'Api') {
+  if (store.getters['api/isServer']) {
     return {
       headers: {
         ...headers

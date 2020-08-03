@@ -203,11 +203,13 @@ const actions = {
       })
     }
 
-    await dispatch(
-      'tenant/setCurrentTenant',
-      rootGetters['tenant/defaultTenant'].slug,
-      { root: true }
-    )
+    if (rootGetters['tenant/defaultTenant']?.slug) {
+      await dispatch(
+        'tenant/setCurrentTenant',
+        rootGetters['tenant/defaultTenant']?.slug,
+        { root: true }
+      )
+    }
 
     dispatch('monitorConnection')
   }

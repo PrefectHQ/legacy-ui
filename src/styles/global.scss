@@ -473,3 +473,8 @@
   overflow: initial !important;
 }
 // stylelint-enable
+
+.code-block {
+  font-family: 'Source Code Pro', monospace !important;
+  white-space: pre-wrap;
+}

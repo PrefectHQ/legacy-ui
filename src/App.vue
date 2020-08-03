@@ -61,6 +61,11 @@ export default {
         stopDefaultClient()
       } else {
         refreshDefaultClient()
+
+        // This catches scnearios where there's no tenant
+        if (this.loadedComponents === 0) {
+          this.refresh()
+        }
       }
     },
     tenantIsSet(val) {
@@ -160,7 +165,7 @@ export default {
         this.setDefaultTenant(this.tenants?.[0])
       }
 
-      if (this.defaultTenant) {
+      if (this.defaultTenant?.id) {
         await this.setCurrentTenant(this.defaultTenant.slug)
 
         if (this.isCloud && !this.tenant.settings.teamNamed) {
@@ -171,6 +176,10 @@ export default {
             }
           })
         }
+      } else if (this.$route.name !== 'home') {
+        this.$router.push({
+          name: 'home'
+        })
       }
     },
     refresh() {

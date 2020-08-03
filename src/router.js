@@ -275,10 +275,10 @@ export const routes = [
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
-    name: 'start',
-    path: '/start',
+    name: 'home',
+    path: '/home',
     component: () =>
-      import(/* webpackChunkName: "start" */ '@/pages/Start.vue'),
+      import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue'),
     beforeEnter: multiguard([authNavGuard])
   },
   {
