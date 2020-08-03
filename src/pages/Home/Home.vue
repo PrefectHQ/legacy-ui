@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       exploreBlocks: exploreBlocks,
-      gettingStartedTab: null,
+      gettingStartedTab: 'infrastructure',
       sdkTab: 'pip'
     }
   },
@@ -63,8 +63,7 @@ export default {
     } else {
       this.gettingStartedTab = 'agent'
     }
-  },
-  methods: {}
+  }
 }
 </script>
 
@@ -143,16 +142,18 @@ export default {
             Connecting your infrastructure
           </v-card-title>
           <v-card-text>
-            <div class="text-body-1"> </div>
-
             <v-tabs
               v-model="gettingStartedTab"
               :background-color="isCloud ? 'primary' : 'secondary'"
               dark
             >
-              <v-tab href="#infrastructure">Prefect Server</v-tab>
-              <v-tab v-if="isServer" href="#tenant">Creating a tenant</v-tab>
-              <v-tab href="#agent">Connecting an Agent</v-tab>
+              <v-tab ref="infrastructure" href="#infrastructure"
+                >Prefect Server</v-tab
+              >
+              <v-tab v-if="isServer" ref="tenant" href="#tenant"
+                >Creating a tenant</v-tab
+              >
+              <v-tab ref="agent" href="#agent">Connecting an Agent</v-tab>
             </v-tabs>
 
             <div class="pa-5">
