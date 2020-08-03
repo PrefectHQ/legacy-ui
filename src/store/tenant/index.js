@@ -88,6 +88,12 @@ const actions = {
     return getters['tenants']
   },
   async setCurrentTenant({ commit, dispatch, getters, rootGetters }, slug) {
+    if (!slug) {
+      throw new Error(
+        'No slug was provided when trying to set the current tenant'
+      )
+    }
+
     try {
       let tenant = getters['tenants']?.find(t => t.slug === slug)
 

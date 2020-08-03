@@ -171,7 +171,12 @@ export default {
     >
     </v-app-bar-nav-icon>
 
-    <router-link :to="{ name: 'dashboard', params: { tenant: tenant.slug } }">
+    <router-link
+      :to="{
+        name: 'dashboard',
+        params: { tenant: tenant ? tenant.slug : null }
+      }"
+    >
       <v-btn
         v-if="!isTransparent"
         color="primary"

@@ -1,0 +1,19 @@
+version: 2.1
+
+orbs:
+  docker: circleci/docker@1.0.0
+
+workflows:
+  version: 2
+
+  'Build and publish development UI artifacts':
+    jobs:
+      - docker/publish:
+          docker-password: DOCKER_HUB_PW
+          docker-username: DOCKER_HUB_USER
+          image: 'prefecthq/ui'
+          path: '.'
+          tag: alpha
+          filters:
+            branches:
+              only: master
