@@ -1,0 +1,109 @@
+aliases:
+
+commands:
+  prep:
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
+      - run:
+          name: NPM Install
+          command: npm install
+      - save_cache:
+          key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+  build:
+    parameters:
+      ENV:
+        type: string
+      VUE_APP_ENVIRONMENT:
+        type: string
+      VUE_APP_AUTH0_CLIENT_ID:
+        type: string
+      VUE_APP_STRIPE_PK:
+        type: string
+    steps:
+      - prep
+      - run:
+          name: NPM Build:<< parameters.ENV >>
+          command: |
+            export VUE_APP_AUTH0_CLIENT_ID=<< parameters.VUE_APP_AUTH0_CLIENT_ID >>
+            export VUE_APP_STRIPE_PK=<< parameters.VUE_APP_STRIPE_PK >>
+            export VUE_APP_RELEASE_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            export VUE_APP_ENVIRONMENT=<< parameters.VUE_APP_ENVIRONMENT >>
+            npm run build:<< parameters.ENV >>
+  deploy_env:
+    parameters:
+      ENV:
+        type: string
+    steps:
+      - run: echo ${TF_GOOGLE_APPLICATION_CREDENTIALS} | gcloud auth activate-service-account --key-file=-
+      - run: curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt install -y nodejs
+      - run: npm run deploy:<< parameters.ENV >>
+
+version: 2.1
+jobs:
+  # ----------------------------------
+  # Build
+  # ----------------------------------
+  #   If the build resource classes are upgraded/downgraded,
+  #   update the root vue.config.js terser webpack plugin
+  #   to increase/decrease parallelization
+  # ----------------------------------
+
+  build-dev:
+    resource_class: large
+    docker:
+      - image: node:13.1.0
+    steps:
+      - build:
+          ENV: dev
+          VUE_APP_ENVIRONMENT: dev
+          VUE_APP_AUTH0_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__DEV}
+          VUE_APP_STRIPE_PK: ${VUE_APP_STRIPE_PK__DEV}
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - dist
+            - package.json
+
+  # ----------------------------------
+  # Deploy
+  # ----------------------------------
+
+  deploy-dev:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: .
+      - deploy_env:
+          ENV: dev
+
+
+workflows:
+  version: 2
+
+  'Check builds':
+    jobs:
+      - build-dev:
+          filters:
+            branches:
+              ignore:
+                - master
+
+  'Deploy dev':
+    jobs:
+      - build-dev:
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-dev:
+          requires:
+            - build-dev
+          filters:
+            branches:
+              only:
+                - master
