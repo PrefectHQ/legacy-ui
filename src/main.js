@@ -45,11 +45,15 @@ if (
   Vue.config.devtools = true
 }
 
-const blockedResponses = ['createAPIToken', 'APITokens']
+const blockedResponses = ['CreateAPIToken', 'APITokens', 'CreateRunnerToken']
 const blockedRequests = ['SetSecret']
 
-if (process.env.NODE_ENV === 'production') {
-  LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID || '', {
+if (
+  process.env.NODE_ENV === 'production' &&
+  process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
+  process.env.VUE_APP_BASE_URL?.includes('cloud.prefect.io')
+) {
+  LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID, {
     release: process.env.VUE_APP_BASE_URL,
     network: {
       // Requests in the blockedRequests list
