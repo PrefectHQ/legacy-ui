@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import { oneAgo } from '@/utils/dateTime'
 import CardTitle from '@/components/Card-Title'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -69,7 +69,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('sideDrawer', ['openDrawer']),
     sortFailures(failures) {
       return failures.sort((flowRunA, flowRunB) => {
         if (flowRunA?.flow_runs && flowRunB?.flow_runs) {
