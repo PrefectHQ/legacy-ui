@@ -287,9 +287,9 @@ export default {
 
 /* stylelint-disable */
 .v-slider__tick-label {
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   top: 8px;
 }
 </style>

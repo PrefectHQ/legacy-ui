@@ -3,25 +3,9 @@ query FlowFailures ($projectId: uuid, $heartbeat: timestamptz) {
     id
     name
     archived
-    # removing for now since we filter and sort on the failures tile anyway
-    # last_failed_heartbeat: flow_runs_aggregate(where: {state: {_eq: "Failed"}, heartbeat: {_gte: $heartbeat}}) {
-    #     aggregate {
-    #       max {
-    #         heartbeat
-    #       }
-    #     }
-    # }
-    failed_count: flow_runs_aggregate(
-      where: { state: { _eq: "Failed" }, updated: { _gte: $heartbeat } }
-    ) {
-      aggregate {
-        count
-      }
-    }
-    runs_count: flow_runs_aggregate(where: { updated: { _gte: $heartbeat } }) {
-      aggregate {
-        count
-      }
+    flow_runs(where: { state: { _eq: "Failed" }, updated: { _gte: $heartbeat }}){
+        id
+        updated
     }
   }
 }
