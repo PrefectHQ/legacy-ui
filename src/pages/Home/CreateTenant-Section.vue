@@ -11,6 +11,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'tenants'])
   },
   methods: {
@@ -68,8 +69,13 @@ export default {
       create your own tenant using the steps below.
     </div>
 
-    <ol class="mt-6">
-      <li value="1" class="text-h6 mt-6 mb-2">Run the CLI Command</li>
+    <ol class="my-6">
+      <li value="1" class="text-h6 mt-6 mb-2">Set backend</li>
+      <div class="text-body-1 mt-2">
+        First, make sure Prefect is working against
+        {{ isCloud ? 'Prefect Cloud' : 'your Prefect Server' }}
+      </div>
+
       <div
         class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
         style="border: 1px solid #b0bec5 !important;"
@@ -79,14 +85,39 @@ export default {
             >$
           </span>
           <span class="primary--text font-weight-medium">prefect</span>
-          server create-default-tenant --name
-          <span class="deepRed--text font-weight-medium">default</span>
+          backend
+          <span class="deepRed--text font-weight-medium">
+            {{ isCloud ? 'cloud' : 'server' }}
+          </span>
+        </div>
+      </div>
+    </ol>
+
+    <ol class="my-12">
+      <li value="2" class="text-h6 mt-6 mb-2">Run the CLI Command</li>
+      <div
+        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
+        style="border: 1px solid #b0bec5 !important;"
+      >
+        <div class="code-block">
+          <span class="blue-grey--text text--lighten-1 user-select-none"
+            >$
+          </span>
+          <span class="primary--text font-weight-medium">prefect</span>
+          server
+          <span class="deepRed--text font-weight-medium"
+            >create-default-tenant</span
+          >
+          --name
+          <span class="yellow--text text--darken-3 font-weight-medium"
+            >default</span
+          >
         </div>
       </div>
     </ol>
 
     <ol class="mt-6">
-      <li value="1" class="text-h6 mt-6 mb-2">Select your tenant</li>
+      <li value="3" class="text-h6 mt-6 mb-2">Select your Tenant</li>
       <div>
         <v-btn class="my-4" color="primary" small @click="_refreshTenants">
           <v-icon left>refresh</v-icon>Refresh tenants

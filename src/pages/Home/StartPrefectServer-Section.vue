@@ -74,7 +74,7 @@ export default {
             >$
           </span>
           <span class="primary--text font-weight-medium">prefect</span>
-          server start
+          server <span class="deepRed--text font-weight-medium">start</span>
         </div>
       </div>
     </ol>
@@ -145,7 +145,7 @@ export default {
     <ol class="mt-12">
       <li value="3" class="text-h6 mt-6 mb-2">Register an Agent</li>
       <div class="text-body-1">
-        Next you'll want to register an
+        Next you'll want to connect an
         <ExternalLink
           href="https://docs.prefect.io/orchestration/agents/overview.html"
         >

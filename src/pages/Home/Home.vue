@@ -50,12 +50,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'connected']),
+    ...mapGetters('api', ['isCloud', 'connected', 'isServer']),
     ...mapGetters('tenant', ['tenantIsSet'])
   },
   mounted() {
-    console.log(this.isCloud, this.connected, this.tenantIsSet)
-
     if (this.isCloud) {
       this.gettingStartedTab = 'agent'
     } else if (!this.connected) {
@@ -65,8 +63,6 @@ export default {
     } else {
       this.gettingStartedTab = 'agent'
     }
-
-    console.log(this.gettingStartedTab)
   },
   methods: {}
 }
@@ -155,7 +151,7 @@ export default {
               dark
             >
               <v-tab href="#infrastructure">Prefect Server</v-tab>
-              <v-tab href="#tenant">Creating a tenant</v-tab>
+              <v-tab v-if="isServer" href="#tenant">Creating a tenant</v-tab>
               <v-tab href="#agent">Connecting an Agent</v-tab>
             </v-tabs>
 
@@ -168,7 +164,7 @@ export default {
                   <StartPrefectServerSection />
                 </v-tab-item>
 
-                <v-tab-item value="tenant" class="white">
+                <v-tab-item v-if="isServer" value="tenant" class="white">
                   <CreateTenantSection />
                 </v-tab-item>
 
