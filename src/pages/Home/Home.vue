@@ -75,14 +75,7 @@ export default {
   >
     <v-row class="mt-8">
       <v-col>
-        <div class="text-h2 text-center">Welcome to your Prefect UI</div>
-        <div
-          class="text-body-1 text-center my-2 mx-auto"
-          style="max-width: 600px;"
-        >
-          This is the command center for your workflows; deploy from Prefect
-          Core and instantly gain complete oversight and control.
-        </div>
+        <div class="text-h2 text-center mb-2">Welcome to your Prefect UI!</div>
       </v-col>
     </v-row>
 
@@ -90,7 +83,7 @@ export default {
       <v-col>
         <v-card tile>
           <v-card-title>
-            Explore the possibilities with Prefect
+            Getting started with Prefect
           </v-card-title>
           <v-card-text>
             <v-row justify="center">
@@ -183,7 +176,7 @@ export default {
       <v-col>
         <v-card tile>
           <v-card-title>
-            Prefect SDK
+            Getting the Prefect SDK
           </v-card-title>
           <v-card-text>
             <div class="text-body-1">
