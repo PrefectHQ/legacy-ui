@@ -1,23 +1,15 @@
 query FailedTasks($heartbeat: timestamptz) {
-  task_run
-    (where: {
-        _and: [{
-            state: {
-              _eq: "Failed"
-            }
-          },
-          {
-            updated: {
-              _gte: $heartbeat
-            }
-          }
-        ]
-      }
-      distinct_on: task_id) {
+  task_run(
+    where: { state: { _eq: "Failed" }, updated: { _gte: $heartbeat } }
+    distinct_on: task_id
+  ) {
+    id
+    task {
       id
-      task {
-        id
+      name
+      flow {
         name
       }
     }
+  }
 }
