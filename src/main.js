@@ -53,7 +53,6 @@ if (
   process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
   process.env.VUE_APP_BASE_URL?.includes('cloud.prefect.io')
 ) {
-  console.log('this shouldnt run')
   LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID, {
     release: process.env.VUE_APP_BASE_URL,
     network: {
