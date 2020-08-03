@@ -5,16 +5,12 @@ import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
-// import SideDrawer from '@/components/SideDrawer'
-// import SideDrawerOpenButton from '@/components/SideDrawerOpenButton'
 
 export default {
   components: {
     Alert,
     NavBar,
     SideNav
-    // SideDrawer,
-    // SideDrawerOpenButton
   },
   data() {
     return {
@@ -113,14 +109,10 @@ export default {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
     ...mapMutations('tenant', ['setDefaultTenant']),
-    // ...mapMutations('sideDrawer', {
-    //   clearDrawer: 'clearDrawer',
-    //   closeSideDrawer: 'close'
-    // }),
+
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
-        this.closeSideDrawer()
         this.closeSideNav()
       }
     },
@@ -236,8 +228,6 @@ export default {
       :link-text="getAlert.linkText"
       :timeout="12000"
     />
-    <!-- <SideDrawer /> -->
-    <!-- <SideDrawerOpenButton /> -->
   </v-app>
 </template>
 

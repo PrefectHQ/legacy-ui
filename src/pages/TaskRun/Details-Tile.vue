@@ -177,7 +177,11 @@ export default {
               <v-col cols="6">
                 Class
               </v-col>
-              <v-col cols="6" class="text-right font-weight-bold">
+              <v-col
+                v-if="taskRun.task"
+                cols="6"
+                class="text-right font-weight-bold"
+              >
                 {{ taskRun.task.type | typeClass }}
               </v-col>
             </v-row>
@@ -186,7 +190,13 @@ export default {
               <v-col cols="6">
                 Result Type
               </v-col>
-              <v-col cols="6" class="text-right font-weight-bold">
+              <v-col
+                v-if="
+                  taskRun.serialized_state && taskRun.serialized_state._result
+                "
+                cols="6"
+                class="text-right font-weight-bold"
+              >
                 {{ taskRun.serialized_state._result.type | typeClass }}
               </v-col>
             </v-row>
@@ -195,7 +205,13 @@ export default {
               <v-col cols="6">
                 Result Location
               </v-col>
-              <v-col cols="6" class="text-right font-weight-bold">
+              <v-col
+                v-if="
+                  taskRun.serialized_state && taskRun.serialized_state._result
+                "
+                cols="6"
+                class="text-right font-weight-bold"
+              >
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <span v-on="on">
@@ -213,7 +229,10 @@ export default {
       </v-list-item>
 
       <v-list-item
-        v-if="$options.filters.typeClass(taskRun.task.type) == 'Parameter'"
+        v-if="
+          taskRun.task &&
+            $options.filters.typeClass(taskRun.task.type) == 'Parameter'
+        "
         dense
         two-line
         class="px-0"
