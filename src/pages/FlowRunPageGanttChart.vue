@@ -1,6 +1,6 @@
 <script>
 import { STATE_COLORS, STATE_TYPES } from '@/utils/states'
-import { mapMutations, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 import moment from 'moment-timezone'
 import FullPagination from '@/components/FullPagination'
@@ -133,7 +133,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('sideDrawer', ['openDrawer']),
     handleChangePagination(newLimit) {
       this.limit = newLimit
     },
@@ -145,15 +144,20 @@ export default {
       }
     },
     handleDataPointSelection(event, chartContext, config) {
-      let taskRun = this.flowRun.task_runs[config.dataPointIndex]
+      /* eslint-disable-next-line */
+      console.log(event, chartContext, config)
 
-      this.openDrawer({
-        type: 'SideDrawerTaskRun',
-        title: 'Task Run Details',
-        props: {
-          id: taskRun.id
-        }
-      })
+      // Commenting this out for now, will rework when we tackle the
+      // gantt chart
+      // let taskRun = this.flowRun.task_runs[config.dataPointIndex]
+
+      // this.openDrawer({
+      //   type: 'SideDrawerTaskRun',
+      //   title: 'Task Run Details',
+      //   props: {
+      //     id: taskRun.id
+      //   }
+      // })
     },
     cursorPointer(event) {
       event.target.style.cursor = 'pointer'
