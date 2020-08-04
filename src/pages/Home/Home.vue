@@ -53,7 +53,22 @@ export default {
     ...mapGetters('api', ['isCloud', 'connected', 'isServer']),
     ...mapGetters('tenant', ['tenantIsSet'])
   },
+  watch: {
+    connected(val) {
+      if (val) {
+        // sets the default tab displayed
+        if (this.isCloud) {
+          this.gettingStartedTab = 'agent'
+        } else if (!this.tenantIsSet) {
+          this.gettingStartedTab = 'tenant'
+        } else {
+          this.gettingStartedTab = 'agent'
+        }
+      }
+    }
+  },
   mounted() {
+    // sets the default tab displayed
     if (this.isCloud) {
       this.gettingStartedTab = 'agent'
     } else if (!this.connected) {
@@ -140,10 +155,10 @@ export default {
               :background-color="isCloud ? 'primary' : 'secondary'"
               dark
             >
-              <v-tab ref="infrastructure" href="#infrastructure"
+              <v-tab v-if="isServer" ref="infrastructure" href="#infrastructure"
                 >Prefect Server</v-tab
               >
-              <v-tab v-if="isServer" ref="tenant" href="#tenant"
+              <v-tab v-if="isServer && !tenantIsSet" ref="tenant" href="#tenant"
                 >Creating a tenant</v-tab
               >
               <v-tab ref="agent" href="#agent">Connecting an Agent</v-tab>
@@ -187,10 +202,10 @@ export default {
                 </div>
               </ExternalLink>
 
-              <ExternalLink href="https://docs.prefect.io">
+              <ExternalLink href="https://github.com/PrefectHQ/prefect">
                 <div class="d-inline-flex align-start justify-start ml-6">
                   <v-icon class="mr-2" small>fab fa-github</v-icon>
-                  <div>Visit GitHub</div>
+                  <div>Visit GitHub </div>
                 </div>
               </ExternalLink>
             </div>
