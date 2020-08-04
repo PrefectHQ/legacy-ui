@@ -22,22 +22,28 @@ commands:
         type: string
       VUE_APP_ENVIRONMENT:
         type: string
-      VUE_APP_AUTH0_CLIENT_ID:
+      VUE_APP_AUTH0_PUBLIC_CLIENT_ID:
         type: string
       VUE_APP_STRIPE_PK:
         type: string
-      BUILD_MODE:
+      VUE_APP_AUTH0_DOMAIN:
+        type: string
+      VUE_APP_CLOUD_URL:
         type: string
     steps:
       - prep
       - run:
           name: NPM Build:<< parameters.ENV >>
           command: |
-            export VUE_APP_AUTH0_CLIENT_ID=<< parameters.VUE_APP_AUTH0_CLIENT_ID >>
-            export VUE_APP_STRIPE_PK=<< parameters.VUE_APP_STRIPE_PK >>
+            export VUE_APP_AUTH0_DOMAIN=<< parameters.VUE_APP_AUTH0_DOMAIN >>
+            export VUE_APP_AUTH0_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_AUTH0_PUBLIC_CLIENT_ID >>
+            export VUE_APP_STRIPE_PUBLIC_TOKEN=<< parameters.VUE_APP_STRIPE_PUBLIC_TOKEN >>
             export VUE_APP_RELEASE_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
             export VUE_APP_ENVIRONMENT=<< parameters.VUE_APP_ENVIRONMENT >>
-            vue-cli-service build --mode << parameters.BUILD_MODE >>
+            export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
+            export VUE_APP_BACKEND=CLOUD
+            export VUE_APP_BASE_URL=<< parameters.VUE_APP_BASE_URL >>
+            vue-cli-service build
   deploy_env:
     parameters:
       ENV:
@@ -58,10 +64,12 @@ jobs:
     steps:
       - build:
           ENV: dev
+          VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__DEV}
+          VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__DEV}
+          VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
           VUE_APP_ENVIRONMENT: dev
-          VUE_APP_AUTH0_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__DEV}
-          VUE_APP_STRIPE_PK: ${VUE_APP_STRIPE_PK__DEV}
-          BUILD_MODE: prefect-dev
+          VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__DEV}
+          VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__DEV}
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -80,18 +88,18 @@ jobs:
 workflows:
   version: 2
 
-  'Build and publish development UI artifacts':
+  "Build and publish development UI artifacts":
     jobs:
       - docker/publish:
           docker-password: DOCKER_HUB_PW
           docker-username: DOCKER_HUB_USER
-          image: 'prefecthq/ui'
-          path: '.'
+          image: "prefecthq/ui"
+          path: "."
           tag: alpha
           filters:
             branches:
               only: master
-  'Deploy dev':
+  "Deploy dev":
     jobs:
       - build-dev:
           filters:
