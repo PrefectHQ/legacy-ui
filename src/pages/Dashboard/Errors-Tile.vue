@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import { oneAgo } from '@/utils/dateTime'
 import CardTitle from '@/components/Card-Title'
 import TaskItem from '@/pages/Dashboard/Task-Item'
@@ -69,7 +69,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('sideDrawer', ['openDrawer']),
     failedRuns(failure) {
       const failedRuns = failure.filter(run => {
         return run.state === 'Failed'

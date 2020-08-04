@@ -25,7 +25,6 @@ export default {
       'retries'
     ]),
     ...mapGetters('license', ['hasLicense']),
-    ...mapGetters('sideDrawer', ['disableOpenButton']),
     ...mapGetters('tenant', ['tenant', 'tenantIsSet']),
     ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
     connectedIcon() {

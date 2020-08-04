@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import { oneAgo } from '@/utils/dateTime'
 import CardTitle from '@/components/Card-Title'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -62,9 +62,6 @@ export default {
         }, 1000)
       }
     }
-  },
-  methods: {
-    ...mapMutations('sideDrawer', ['openDrawer'])
   },
   apollo: {
     failures: {

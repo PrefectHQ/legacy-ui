@@ -1,7 +1,6 @@
 <script>
 import { duration } from '@/utils/moment'
 import DurationSpan from '@/components/DurationSpan'
-import { mapMutations, mapGetters } from 'vuex'
 import StackedLineChart from '@/components/Visualizations/StackedLineChart'
 import { STATE_COLORS } from '@/utils/states'
 
@@ -59,7 +58,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('sideDrawer', ['currentDrawer']),
     appliedTransform() {
       return this.transform.apply([this.nodeData.x, this.nodeData.y])
     },
@@ -152,7 +150,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('sideDrawer', ['openDrawer', 'clearDrawer']),
     _mouseOut() {
       this.scale = false
       this.$emit('mouseout', null)

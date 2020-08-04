@@ -12,6 +12,7 @@ query TaskRun($id: uuid!) {
     map_index
     run_count
     serialized_state
+
     task {
       id
       name
@@ -43,6 +44,7 @@ query TaskRun($id: uuid!) {
         }
       }
     }
+
     flow_run {
       id
       name
