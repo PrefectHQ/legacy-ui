@@ -12,7 +12,6 @@ import api from '@/store/api'
 import auth0 from '@/store/auth0'
 import license from '@/store/license'
 import refresh from '@/store/refresh'
-import sideDrawer from '@/store/sideDrawer'
 import sideNav from '@/store/sideNav'
 import tenant from '@/store/tenant'
 import user from '@/store/user'
@@ -42,7 +41,6 @@ const store = new Vuex.Store({
     auth0,
     license,
     refresh,
-    sideDrawer,
     sideNav,
     tenant,
     user

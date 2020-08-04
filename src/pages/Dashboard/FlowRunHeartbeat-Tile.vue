@@ -45,7 +45,7 @@ export default {
           state: this.checkedState
         }
       },
-      pollInterval: 5000
+      pollInterval: 30000
     }
   }
 }
@@ -74,7 +74,7 @@ export default {
     </CardTitle>
 
     <v-container class="pa-0 pr-4">
-      <HeartbeatTimeline :loading="loading" :items="heartbeat" type="flow" />
+      <HeartbeatTimeline :loading="loading" :items="heartbeat" type="project" />
     </v-container>
 
     <v-divider></v-divider>
