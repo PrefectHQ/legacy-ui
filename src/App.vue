@@ -91,12 +91,9 @@ export default {
   mounted() {
     this.refresh()
   },
-  async beforeRouteEnter(to, from, next) {
+  async beforeMount() {
     await this.startup()
     this.appReady = true
-    return next()
-  },
-  created() {
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -152,16 +149,11 @@ export default {
       this.lastInteraction = this.currentInteraction
     },
     async startup() {
-      if (this.isCloud) {
-        if (!this.isAuthenticated) await this.authenticate('app')
-        if (!this.isAuthorized) await this.authorize('app')
-        if (!this.userIsSet) await this.getUser('app')
-      }
-
       try {
+        await this.getApi()
         await this.getTenants()
 
-        if (this.isServer) {
+        if (this.isServer && this.tenants?.length) {
           // If this is Server, there won't be a default tenant, so we'll set one
           this.setDefaultTenant(this.tenants?.[0])
         }
