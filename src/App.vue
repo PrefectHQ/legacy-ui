@@ -14,13 +14,13 @@ export default {
   },
   data() {
     return {
-      appReady: false,
       error: null,
       loadedComponents: 0,
       numberOfComponents: 1,
       loadingKey: 0,
+      refreshTimeout: null,
       reset: false,
-      shown: true,
+      shown: false,
       wholeAppShown: true
     }
   },
@@ -38,7 +38,8 @@ export default {
       'isAuthenticated',
       'isAuthorized',
       'isAuthenticatingUser',
-      'isAuthorizingUser'
+      'isAuthorizingUser',
+      'isLoggingInUser'
     ]),
     ...mapGetters('tenant', [
       'tenant',
@@ -57,22 +58,33 @@ export default {
   watch: {
     backend() {
       this.loadedComponents = 0
+
+      if (this.isCloud && !this.isAuthenticated) {
+        this.shown = false
+      }
+
+      this.refreshTimeout = setTimeout(() => {
+        this.shown = true
+        this.refresh()
+        clearTimeout(this.refreshTimeout)
+      }, 1000)
     },
     async connected(val) {
       if (!val) {
         stopDefaultClient()
       } else {
         refreshDefaultClient()
-
-        // This catches scnearios where there's no tenant
-        if (this.loadedComponents === 0) {
-          this.refresh()
-        }
       }
     },
-    tenantIsSet(val) {
-      if (val) {
+    tenant(val) {
+      if (val?.id) {
+        clearTimeout(this.refreshTimeout)
         this.refresh()
+      }
+    },
+    isAuthenticated(val) {
+      if (val) {
+        this.shown = true
       }
     }
   },
@@ -89,11 +101,13 @@ export default {
     window.removeEventListener('focus', this.handleVisibilityChange)
   },
   mounted() {
+    if (!this.isCloud || this.isAuthenticated) {
+      this.shown = true
+    }
     this.refresh()
   },
   async beforeMount() {
     await this.startup()
-    this.appReady = true
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -179,7 +193,6 @@ export default {
       }
     },
     refresh() {
-      this.loadedComponents = 0
       let start
 
       const animationDuration = 150
@@ -205,15 +218,15 @@ export default {
 </script>
 
 <template>
-  <v-app v-if="appReady" class="app">
+  <v-app class="app">
     <v-main>
       <v-slide-y-transition>
-        <NavBar v-if="loadedComponents > 0" />
+        <NavBar v-if="shown && loadedComponents > 0" />
       </v-slide-y-transition>
 
-      <SideNav />
+      <SideNav v-if="shown" />
       <v-fade-transition mode="out-in">
-        <router-view class="router-view" />
+        <router-view v-if="shown" class="router-view" />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>

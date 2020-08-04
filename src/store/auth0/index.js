@@ -243,6 +243,8 @@ const actions = {
     }
 
     const idTokenClaims = await auth0Client.getIdTokenClaims()
+    if (!idTokenClaims) return
+
     commit('idToken', idTokenClaims.__raw)
     commit('idTokenExpiry', jwt_decode(idTokenClaims.__raw).exp * 1000)
     commit('user/setAuth0User', idTokenClaims, {
@@ -257,6 +259,8 @@ const actions = {
     commit('isAuthorizingUser', true)
 
     const user = await auth0Client.getUser()
+    if (!user) return
+
     commit('user', user)
     dispatch('reportUserToLogRocket')
 

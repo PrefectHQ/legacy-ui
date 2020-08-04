@@ -65,6 +65,7 @@ export default {
       numberOfTiles: 7,
       previousParams: { flows: { flows: '' }, agents: { agents: '' } },
       projectId: this.$route.params.id,
+      refreshTimeout: null,
       tab: this.getTab()
     }
   },
@@ -80,6 +81,14 @@ export default {
     }
   },
   watch: {
+    backend() {
+      this.loadedTiles = 0
+
+      this.refreshTimeout = setTimeout(() => {
+        this.refresh()
+        clearTimeout(this.refreshInterval)
+      }, 3000)
+    },
     tab(val, prev) {
       let query = {}
 
@@ -104,9 +113,8 @@ export default {
     },
     tenant(val) {
       if (val?.id) {
+        clearTimeout(this.refreshTimeout)
         this.refresh()
-      } else {
-        this.loadedTiles = 0
       }
     }
   },
@@ -124,7 +132,6 @@ export default {
       return 'overview'
     },
     refresh() {
-      this.loadedTiles = 0
       let start
 
       const animationDuration = 150
