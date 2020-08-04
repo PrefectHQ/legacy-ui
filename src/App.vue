@@ -166,28 +166,32 @@ export default {
         if (!this.userIsSet) await this.getUser('app')
       }
 
-      await this.getTenants()
+      try {
+        await this.getTenants()
 
-      if (this.isServer) {
-        // If this is Server, there won't be a default tenant, so we'll set one
-        this.setDefaultTenant(this.tenants?.[0])
-      }
+        if (this.isServer) {
+          // If this is Server, there won't be a default tenant, so we'll set one
+          this.setDefaultTenant(this.tenants?.[0])
+        }
 
-      if (this.defaultTenant?.id) {
-        await this.setCurrentTenant(this.defaultTenant.slug)
+        if (this.defaultTenant?.id) {
+          await this.setCurrentTenant(this.defaultTenant.slug)
 
-        if (this.isCloud && !this.tenant.settings.teamNamed) {
+          if (this.isCloud && !this.tenant.settings.teamNamed) {
+            this.$router.push({
+              name: 'welcome',
+              params: {
+                tenant: this.tenant.slug
+              }
+            })
+          }
+        }
+      } catch {
+        if (this.$route.name !== 'home') {
           this.$router.push({
-            name: 'welcome',
-            params: {
-              tenant: this.tenant.slug
-            }
+            name: 'home'
           })
         }
-      } else if (this.$route.name !== 'home') {
-        this.$router.push({
-          name: 'home'
-        })
       }
     },
     refresh() {

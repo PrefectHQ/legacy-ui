@@ -13,6 +13,7 @@ const isServer = () => {
 }
 
 const authNavGuard = async (to, from, next) => {
+  console.log('auth nav guard running')
   // If this is a Server deployment,
   // we bypass authentication
   if (isServer()) return next()
