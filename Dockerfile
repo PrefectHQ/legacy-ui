@@ -18,7 +18,7 @@ WORKDIR /app
 RUN npm install
 
 # Build static files
-RUN npm run build:local
+RUN npm run build
 
 FROM nginx:stable
 
