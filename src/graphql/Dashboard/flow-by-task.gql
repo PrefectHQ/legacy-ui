@@ -1,5 +1,0 @@
-query FlowByTaskId($taskId: uuid) {
-  flow (where: {tasks: {id: {_eq: $taskId}}}){
-    name
-  }
-}
