@@ -18,8 +18,6 @@ commands:
             - node_modules
   build:
     parameters:
-      ENV:
-        type: string
       VUE_APP_AUTH0_PUBLIC_CLIENT_ID:
         type: string
       VUE_APP_STRIPE_PUBLIC_TOKEN:
