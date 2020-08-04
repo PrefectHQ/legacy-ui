@@ -97,9 +97,6 @@ export default {
         }
         return 0
       })
-    },
-    calcHeartBeat() {
-      return oneAgo(this.selectedDateFilter)
     }
   },
   apollo: {
@@ -210,7 +207,7 @@ export default {
           min-height="40px"
           transition="fade"
         >
-          <TaskItem :failure="failure" :heartbeat="calcHeartBeat()" />
+          <TaskItem :failure="failure" />
         </v-lazy>
       </v-slide-y-reverse-transition>
       <v-slide-y-transition v-else leave-absolute group>

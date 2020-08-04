@@ -42,11 +42,6 @@ export default {
       if (this.hasError) return 'Failed Flows'
       return `${this.failureCount} Failed Flows`
     },
-    displayFailures() {
-      if (!this.failures) return null
-      const sorted = this.sortFailures(this.failures)
-      return sorted
-    },
     failureCount() {
       if (this.failures?.length) {
         return this.failures.length
@@ -68,28 +63,6 @@ export default {
       }
     }
   },
-  methods: {
-    sortFailures(failures) {
-      return failures.sort((flowRunA, flowRunB) => {
-        if (flowRunA?.flow_runs && flowRunB?.flow_runs) {
-          const lastUpdatedA = flowRunA.flow_runs.sort(
-            (x, y) => x.updated > y.updated
-          )[0]
-          const lastUpdatedB = flowRunB.flow_runs.sort(
-            (x, y) => x.updated > y.updated
-          )[0]
-
-          if (lastUpdatedA > lastUpdatedB) {
-            return -1
-          } else if (lastUpdatedA < lastUpdatedB) {
-            return 1
-          }
-          return 0
-        }
-        return 0
-      })
-    }
-  },
   apollo: {
     failures: {
       query: require('@/graphql/Dashboard/flow-failures.gql'),
@@ -105,9 +78,13 @@ export default {
       },
       pollInterval: 30000,
       update: data => {
-        return data && data.flow
-          ? data.flow.filter(flow => flow.flow_runs.length > 0)
-          : null
+        return data.flow_run.sort((a, b) => {
+          if (a.updated < b.updated) {
+            return -1
+          } else {
+            return 1
+          }
+        })
       }
     }
   }
@@ -186,8 +163,8 @@ export default {
         group
       >
         <v-lazy
-          v-for="failure in displayFailures"
-          :key="failure.id"
+          v-for="failure in failures"
+          :key="failure.flow_id"
           :options="{
             threshold: 0.75
           }"
@@ -198,7 +175,7 @@ export default {
             class="text-truncate"
             :to="{
               name: 'flow',
-              params: { id: failure.id }
+              params: { id: failure.flow_id }
             }"
           >
             <v-list-item-content>
@@ -207,9 +184,9 @@ export default {
                   class="link"
                   :to="{
                     name: 'flow',
-                    params: { id: failure.id }
+                    params: { id: failure.flow_id }
                   }"
-                  >{{ failure.name }}</router-link
+                  >{{ failure.flow.name }}</router-link
                 >
               </v-list-item-title>
             </v-list-item-content>

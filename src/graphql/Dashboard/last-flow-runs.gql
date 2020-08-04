@@ -1,8 +1,8 @@
 query LastFlowRuns($flowId: uuid!) {
   flow_run(
     where: { flow_id: { _eq: $flowId }, state: { _neq: "Scheduled" } }
+    order_by: { start_time: desc_nulls_last }
     limit: 10
-    order_by: { start_time: asc }
   ) {
     id
     end_time

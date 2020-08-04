@@ -1,8 +1,0 @@
-query FailedTaskDetails($taskId: uuid!, $heartbeat: timestamptz) {
-          task_by_pk(id: $taskId) {
-            task_runs(where: { updated: { _gte: $heartbeat } }) {
-              id
-              state
-            }
-          }
-        }

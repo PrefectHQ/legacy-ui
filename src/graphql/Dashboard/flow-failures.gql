@@ -1,11 +1,18 @@
-query FlowFailures ($projectId: uuid, $heartbeat: timestamptz) {
-  flow(where: { project_id: { _eq: $projectId } }) {
-    id
-    name
-    archived
-    flow_runs(where: { state: { _eq: "Failed" }, updated: { _gte: $heartbeat }}){
-        id
-        updated
+query FlowFailures($projectId: uuid, $heartbeat: timestamptz, $tenantId: uuid) {
+  flow_run(
+    where: {
+      tenant_id: { _eq: $tenantId }
+      flow: { project_id: { _eq: $projectId } }
+      state: { _eq: "Failed" }
+      updated: { _gte: $heartbeat }
     }
+    distinct_on: flow_id
+    order_by: { flow_id: asc, updated: desc }
+  ) {
+    flow_id
+    flow {
+      name
+    }
+    updated
   }
 }
