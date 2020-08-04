@@ -24,7 +24,7 @@ commands:
         type: string
       VUE_APP_AUTH0_PUBLIC_CLIENT_ID:
         type: string
-      VUE_APP_STRIPE_PK:
+      VUE_APP_STRIPE_PUBLIC_TOKEN:
         type: string
       VUE_APP_AUTH0_DOMAIN:
         type: string
