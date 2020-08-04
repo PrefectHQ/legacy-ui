@@ -30,6 +30,8 @@ commands:
         type: string
       VUE_APP_CLOUD_URL:
         type: string
+      VUE_APP_BASE_URL:
+        type: string
     steps:
       - prep
       - run:
