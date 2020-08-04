@@ -81,28 +81,28 @@ jobs:
 workflows:
   version: 2
 
-  "Build and publish development UI artifacts":
+  'Build and publish development UI artifacts':
     jobs:
       - docker/publish:
           docker-password: DOCKER_HUB_PW
           docker-username: DOCKER_HUB_USER
-          image: "prefecthq/ui"
-          path: "."
+          image: 'prefecthq/ui'
+          path: '.'
           tag: alpha
           filters:
             branches:
               only: master
-  "Deploy dev":
+  'Deploy dev':
     jobs:
       - build-dev:
           filters:
             branches:
               only:
-                - dev
+                - master
       - deploy-dev:
           requires:
             - build-dev
           filters:
             branches:
               only:
-                - dev
+                - master
