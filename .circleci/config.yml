@@ -56,7 +56,7 @@ jobs:
   build-dev:
     resource_class: large
     docker:
-      - image: node:13.1.0
+      - image: node:14.7
     steps:
       - build:
           VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__DEV}
