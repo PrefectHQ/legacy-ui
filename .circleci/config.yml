@@ -3,6 +3,80 @@ version: 2.1
 orbs:
   docker: circleci/docker@1.0.0
 
+commands:
+  prep:
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
+      - run:
+          name: NPM Install
+          command: npm install
+      - save_cache:
+          key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+  build:
+    parameters:
+      ENV:
+        type: string
+      VUE_APP_ENVIRONMENT:
+        type: string
+      VUE_APP_AUTH0_CLIENT_ID:
+        type: string
+      VUE_APP_STRIPE_PK:
+        type: string
+      BUILD_MODE:
+        type: string
+    steps:
+      - prep
+      - run:
+          name: NPM Build:<< parameters.ENV >>
+          command: |
+            export VUE_APP_AUTH0_CLIENT_ID=<< parameters.VUE_APP_AUTH0_CLIENT_ID >>
+            export VUE_APP_STRIPE_PK=<< parameters.VUE_APP_STRIPE_PK >>
+            export VUE_APP_RELEASE_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            export VUE_APP_ENVIRONMENT=<< parameters.VUE_APP_ENVIRONMENT >>
+            vue-cli-service build --mode << parameters.BUILD_MODE >>
+  deploy_env:
+    parameters:
+      ENV:
+        type: string
+      BUCKET_NAME:
+        type: string
+
+    steps:
+      - run: echo ${GCP_SERVICE_KEY} | gcloud auth activate-service-account --key-file=-
+      - run: curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt install -y nodejs
+      - run: gsutil -m cp -r dist/* gs://<< parameters.BUCKET_NAME >>/
+
+jobs:
+  build-dev:
+    resource_class: large
+    docker:
+      - image: node:13.1.0
+    steps:
+      - build:
+          ENV: dev
+          VUE_APP_ENVIRONMENT: dev
+          VUE_APP_AUTH0_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__DEV}
+          VUE_APP_STRIPE_PK: ${VUE_APP_STRIPE_PK__DEV}
+          BUILD_MODE: prefect-dev
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - dist
+            - package.json
+  deploy-dev:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: .
+      - deploy_env:
+          ENV: dev
+          BUCKET_NAME: ${GCS_BUCKET__DEV}
+
 workflows:
   version: 2
 
@@ -17,3 +91,17 @@ workflows:
           filters:
             branches:
               only: master
+  'Deploy dev':
+    jobs:
+      - build-dev:
+          filters:
+            branches:
+              only:
+                - dev
+      - deploy-dev:
+          requires:
+            - build-dev
+          filters:
+            branches:
+              only:
+                - dev
