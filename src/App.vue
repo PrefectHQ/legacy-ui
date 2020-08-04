@@ -38,13 +38,19 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
+    ...mapGetters('auth0', [
+      'isAuthenticated',
+      'isAuthorized',
+      'isAuthenticatingUser',
+      'isAuthorizingUser'
+    ]),
     ...mapGetters('tenant', [
       'tenant',
       'tenants',
       'defaultTenant',
       'tenantIsSet'
     ]),
+    ...mapGetters('user', ['userIsSet']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -89,10 +95,12 @@ export default {
   mounted() {
     this.refresh()
   },
-  async created() {
+  async beforeRouteEnter(to, from, next) {
     await this.startup()
     this.appReady = true
-
+    return next()
+  },
+  created() {
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -153,9 +161,9 @@ export default {
     },
     async startup() {
       if (this.isCloud) {
-        await this.authenticate()
-        await this.authorize()
-        await this.getUser()
+        if (!this.isAuthenticated) await this.authenticate('app')
+        if (!this.isAuthorized) await this.authorize('app')
+        if (!this.userIsSet) await this.getUser('app')
       }
 
       await this.getTenants()
