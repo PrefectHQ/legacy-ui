@@ -49,7 +49,6 @@ commands:
 
     steps:
       - run: echo ${GCP_SERVICE_KEY} | gcloud auth activate-service-account --key-file=-
-      - run: curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt install -y nodejs
       - run: gsutil -m cp -r dist/* gs://<< parameters.BUCKET_NAME >>/
 
 jobs:
