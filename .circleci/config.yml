@@ -3,17 +3,106 @@ version: 2.1
 orbs:
   docker: circleci/docker@1.0.0
 
+commands:
+  prep:
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
+      - run:
+          name: NPM Install
+          command: npm install
+      - save_cache:
+          key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+  build:
+    parameters:
+      VUE_APP_AUTH0_PUBLIC_CLIENT_ID:
+        type: string
+      VUE_APP_STRIPE_PUBLIC_TOKEN:
+        type: string
+      VUE_APP_AUTH0_DOMAIN:
+        type: string
+      VUE_APP_CLOUD_URL:
+        type: string
+      VUE_APP_BASE_URL:
+        type: string
+    steps:
+      - prep
+      - run:
+          name: NPM Build
+          command: |
+            export VUE_APP_AUTH0_DOMAIN=<< parameters.VUE_APP_AUTH0_DOMAIN >>
+            export VUE_APP_AUTH0_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_AUTH0_PUBLIC_CLIENT_ID >>
+            export VUE_APP_STRIPE_PUBLIC_TOKEN=<< parameters.VUE_APP_STRIPE_PUBLIC_TOKEN >>
+            export VUE_APP_RELEASE_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            export VUE_APP_ENVIRONMENT=production
+            export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
+            export VUE_APP_BACKEND=CLOUD
+            export VUE_APP_BASE_URL=<< parameters.VUE_APP_BASE_URL >>
+            vue-cli-service build
+  deploy_env:
+    parameters:
+      BUCKET_NAME:
+        type: string
+
+    steps:
+      - run: echo ${GCP_SERVICE_KEY} | gcloud auth activate-service-account --key-file=-
+      - run: curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt install -y nodejs
+      - run: gsutil -m cp -r dist/* gs://<< parameters.BUCKET_NAME >>/
+
+jobs:
+  build-dev:
+    resource_class: large
+    docker:
+      - image: node:13.1.0
+    steps:
+      - build:
+          VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__DEV}
+          VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__DEV}
+          VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
+          VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__DEV}
+          VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__DEV}
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - dist
+            - package.json
+  deploy-dev:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: .
+      - deploy_env:
+          BUCKET_NAME: ${GCS_BUCKET__DEV}
+
 workflows:
   version: 2
 
-  'Build and publish development UI artifacts':
+  "Build and publish development UI artifacts":
     jobs:
       - docker/publish:
           docker-password: DOCKER_HUB_PW
           docker-username: DOCKER_HUB_USER
-          image: 'prefecthq/ui'
-          path: '.'
+          image: "prefecthq/ui"
+          path: "."
           tag: alpha
           filters:
             branches:
               only: master
+  "Deploy dev":
+    jobs:
+      - build-dev:
+          filters:
+            branches:
+              only:
+                - dev
+      - deploy-dev:
+          requires:
+            - build-dev
+          filters:
+            branches:
+              only:
+                - dev
