@@ -48,7 +48,7 @@ export default {
     // We try to delete the token if it wasn't used
     if (
       this.isCloud &&
-      !this.agents.some(agent => agent.token_id == this.tokenId) &&
+      !this.agents?.some(agent => agent.token_id == this.tokenId) &&
       this.tokenId
     ) {
       try {
