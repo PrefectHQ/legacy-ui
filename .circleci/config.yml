@@ -20,8 +20,6 @@ commands:
     parameters:
       ENV:
         type: string
-      VUE_APP_ENVIRONMENT:
-        type: string
       VUE_APP_AUTH0_PUBLIC_CLIENT_ID:
         type: string
       VUE_APP_STRIPE_PUBLIC_TOKEN:
@@ -35,21 +33,19 @@ commands:
     steps:
       - prep
       - run:
-          name: NPM Build:<< parameters.ENV >>
+          name: NPM Build
           command: |
             export VUE_APP_AUTH0_DOMAIN=<< parameters.VUE_APP_AUTH0_DOMAIN >>
             export VUE_APP_AUTH0_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_AUTH0_PUBLIC_CLIENT_ID >>
             export VUE_APP_STRIPE_PUBLIC_TOKEN=<< parameters.VUE_APP_STRIPE_PUBLIC_TOKEN >>
             export VUE_APP_RELEASE_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-            export VUE_APP_ENVIRONMENT=<< parameters.VUE_APP_ENVIRONMENT >>
+            export VUE_APP_ENVIRONMENT=production
             export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
             export VUE_APP_BACKEND=CLOUD
             export VUE_APP_BASE_URL=<< parameters.VUE_APP_BASE_URL >>
             vue-cli-service build
   deploy_env:
     parameters:
-      ENV:
-        type: string
       BUCKET_NAME:
         type: string
 
@@ -65,7 +61,6 @@ jobs:
       - image: node:13.1.0
     steps:
       - build:
-          ENV: dev
           VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__DEV}
           VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__DEV}
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
@@ -84,7 +79,6 @@ jobs:
       - attach_workspace:
           at: .
       - deploy_env:
-          ENV: dev
           BUCKET_NAME: ${GCS_BUCKET__DEV}
 
 workflows:
