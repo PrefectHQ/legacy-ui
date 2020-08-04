@@ -198,7 +198,7 @@ const mutations = {
   redirectRoute(state, redirectRoute) {
     if (typeof redirectRoute !== 'string' || redirectRoute == null)
       throw new TypeError(
-        `redirectRoute must be a boolean, got ${typeof redirectRoute} instead`
+        `redirectRoute must be a string, got ${typeof redirectRoute} instead`
       )
 
     localStorage.setItem('redirectRoute', redirectRoute)
