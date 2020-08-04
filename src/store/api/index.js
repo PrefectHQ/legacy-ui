@@ -185,7 +185,6 @@ const actions = {
   },
   async switchBackend({ commit, dispatch, rootGetters }, backend) {
     commit('setBackend', backend)
-    await dispatch('getApi')
     commit('tenant/unsetTenant', null, { root: true })
     commit('tenant/unsetTenants', null, { root: true })
 
@@ -195,6 +194,7 @@ const actions = {
       await dispatch('user/getUser', null, { root: true })
     }
 
+    await dispatch('getApi')
     await dispatch('tenant/getTenants', null, { root: true })
 
     if (backend == 'SERVER') {
