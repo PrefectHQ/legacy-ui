@@ -261,15 +261,15 @@ export default {
 
           <v-skeleton-loader
             slot="row-1-col-2-tile-1"
-            :loading="loadedTiles < 3"
+            :loading="loadedTiles < 6"
             type="image"
-            min-height="329"
+            min-height="200px"
             height="100%"
             transition="quick-fade"
             class="my-2"
             tile
           >
-            <ErrorsTile :project-id="projectId" full-height />
+            <FailuresTile :project-id="projectId" />
           </v-skeleton-loader>
 
           <v-skeleton-loader
@@ -299,15 +299,15 @@ export default {
 
           <v-skeleton-loader
             slot="row-2-col-2-row-2-tile-1"
-            :loading="loadedTiles < 6"
+            :loading="loadedTiles < 3"
             type="image"
-            min-height="200px"
+            min-height="329"
             height="100%"
             transition="quick-fade"
             class="my-2"
             tile
           >
-            <FailuresTile :project-id="projectId" />
+            <ErrorsTile :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
