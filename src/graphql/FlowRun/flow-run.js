@@ -66,6 +66,8 @@ export default function(isCloud) {
         ) {
           id
           state
+          state_message
+          state_result
           state_timestamp
           start_time
           end_time
@@ -76,6 +78,8 @@ export default function(isCloud) {
             id
             name
             auto_generated
+            max_retries
+            retry_delay
           }
         }
         flow {

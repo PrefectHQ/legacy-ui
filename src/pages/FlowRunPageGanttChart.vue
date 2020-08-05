@@ -4,9 +4,10 @@ import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 import moment from 'moment-timezone'
 import FullPagination from '@/components/FullPagination'
+import DurationSpan from '@/components/DurationSpan'
 
 export default {
-  components: { FullPagination },
+  components: { DurationSpan, FullPagination },
   props: {
     flowRunId: {
       required: true,
@@ -18,10 +19,17 @@ export default {
       chartRenderColorIndex: 0,
       colors: STATE_COLORS,
       flowRun: null,
-      limit: 10,
+      limit: 25,
+      menuStyle: {},
       page: 1,
       presentStates: {},
+      positionX: null,
+      positionY: null,
       selectedActivityStateFilter: [],
+      showMenu: false,
+      showTooltip: false,
+      tooltipTaskRun: null,
+      menuTaskRun: null,
       sortOrder: 'desc',
       tableSearchInput: null
     }
@@ -70,7 +78,9 @@ export default {
           chart: {
             events: {
               dataPointSelection: this.handleDataPointSelection,
-              dataPointMouseEnter: this.cursorPointer
+              dataPointMouseEnter: this.handleDataPointMouseEnter,
+              mouseMove: this.handleDataPointMouseMove,
+              dataPointMouseLeave: this.handleDataPointMouseLeave
             },
             toolbar: {
               show: false
@@ -83,15 +93,7 @@ export default {
             }
           },
           tooltip: {
-            y: {
-              formatter: this.tooltipFormatter
-            },
-            x: {
-              formatter: this.tooltipFormatter
-            },
-            z: {
-              formatter: this.tooltipFormatter
-            }
+            enabled: false
           },
           xaxis: {
             type: 'datetime',
@@ -106,6 +108,15 @@ export default {
               : new Date().getTime()
           }
         }
+      }
+    },
+    tooltipStyle() {
+      return {
+        left: `${this.positionX}px`,
+        position: 'absolute',
+        top: `${this.positionY}px`,
+        width: '250px',
+        'z-index': 2
       }
     },
     noChartMessage() {
@@ -128,6 +139,11 @@ export default {
     }
   },
   watch: {
+    flowRun(val) {
+      if (val?.end_time) {
+        this.$apollo.queries.flowRun.stopPolling()
+      }
+    },
     selectedActivityStateFilter() {
       this.page = 1
     }
@@ -143,24 +159,47 @@ export default {
         this.sortOrder = 'asc'
       }
     },
-    handleDataPointSelection(event, chartContext, config) {
-      /* eslint-disable-next-line */
-      console.log(event, chartContext, config)
-
-      // Commenting this out for now, will rework when we tackle the
-      // gantt chart
-      // let taskRun = this.flowRun.task_runs[config.dataPointIndex]
-
-      // this.openDrawer({
-      //   type: 'SideDrawerTaskRun',
-      //   title: 'Task Run Details',
-      //   props: {
-      //     id: taskRun.id
-      //   }
-      // })
+    handleDataPointMouseLeave() {
+      this.showTooltip = false
     },
-    cursorPointer(event) {
+    handleDataPointSelection(event, chartContext, config) {
+      const taskRun = this.flowRun.task_runs[config.dataPointIndex]
+
+      if (taskRun?.id == this.menuTaskRun?.id) {
+        this.menuTaskRun = null
+        this.showMenu = false
+        return
+      }
+
+      const bounds = this.$refs.container.getBoundingClientRect()
+
+      this.menuStyle = {
+        left: `${event.clientX + 5 - bounds.left}px`,
+        position: 'absolute',
+        top: `${event.clientY + 5 - bounds.top}px`,
+        width: '250px'
+      }
+
+      this.menuTaskRun = taskRun
+
+      this.showTooltip = false
+      this.showMenu = true
+    },
+    hideMenu() {
+      this.showMenu = false
+    },
+    handleDataPointMouseMove(event) {
+      const bounds = this.$refs.container.getBoundingClientRect()
+      this.positionX = event.clientX + 5 - bounds.left
+      this.positionY = event.clientY + 5 - bounds.top
+    },
+    handleDataPointMouseEnter(event, chartContext, config) {
       event.target.style.cursor = 'pointer'
+      this.tooltipTaskRun = this.flowRun.task_runs[config.dataPointIndex]
+
+      if (this.menuTaskRun?.id !== this.tooltipTaskRun?.id) {
+        this.showTooltip = true
+      }
     },
     formatDate(value) {
       if (this.timezone) {
@@ -170,17 +209,20 @@ export default {
       }
       return moment(value).format('LTS')
     },
+    statusStyle(state) {
+      return {
+        'border-radius': '50%',
+        display: 'inline-block',
+        'background-color': `var(--v-${state}-base)`,
+        height: '0.75rem',
+        width: '0.75rem'
+      }
+    },
     taskRunNameFormatter(taskRun) {
       if (typeof taskRun.map_index === 'number' && taskRun.map_index > -1) {
         return `${taskRun.task.name} (${taskRun.map_index})`
       }
       return taskRun.task.name
-    },
-    tooltipFormatter(value) {
-      if (typeof value === 'number') {
-        return this.formatDate(value)
-      }
-      return value
     },
     handleTableSearchInput: debounce(function(e) {
       this.tableSearchInput = e
@@ -298,14 +340,194 @@ export default {
       {{ noChartMessage }}
     </v-card-text>
     <v-card-text v-else class="pt-0">
-      <div>
+      <div ref="container">
         <apexchart
+          v-click-outside="hideMenu"
           class="mt-10"
           :height="`${75 * flowRun.task_runs.length + 75}px`"
           :options="chartData.options"
           :series="chartData.series"
           type="rangeBar"
         />
+
+        <v-fade-transition mode="out-in">
+          <v-card v-if="showTooltip" :style="tooltipStyle" tile>
+            <v-card-title
+              :style="{ color: `var(--v-${tooltipTaskRun.state}-base)` }"
+              class="text-subtitle-1"
+            >
+              <div>
+                {{ tooltipTaskRun.task.name
+                }}{{
+                  tooltipTaskRun.map_index > -1
+                    ? `(${tooltipTaskRun.map_index})`
+                    : ''
+                }}
+                <div class="caption grey--text text--lighten-1">
+                  (Click for more details)
+                </div>
+              </div>
+            </v-card-title>
+            <v-card-text>
+              <div>
+                State:
+                <span :style="statusStyle(tooltipTaskRun.state)"></span>
+                <span class="font-weight-bold">
+                  {{ tooltipTaskRun.state }}</span
+                >
+              </div>
+              <div
+                v-if="tooltipTaskRun.start_time || flowRun.start_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Duration:
+
+                <DurationSpan
+                  class="font-weight-bold"
+                  :start-time="tooltipTaskRun.start_time || flowRun.start_time"
+                  :end-time="
+                    tooltipTaskRun.end_time
+                      ? tooltipTaskRun.end_time
+                      : flowRun.end_time
+                  "
+                />
+              </div>
+
+              <div
+                v-if="tooltipTaskRun.start_time || flowRun.start_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Start:
+
+                <span class="font-weight-bold">
+                  {{
+                    formatDate(tooltipTaskRun.start_time || flowRun.start_time)
+                  }}
+                </span>
+              </div>
+
+              <div
+                v-if="tooltipTaskRun.end_time || flowRun.end_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                End:
+
+                <span class="font-weight-bold">
+                  {{ formatDate(tooltipTaskRun.end_time || flowRun.end_time) }}
+                </span>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-fade-transition>
+
+        <v-expand-transition mode="out-in">
+          <v-card v-if="showMenu" :style="menuStyle" tile>
+            <v-card-title
+              :style="{ color: `var(--v-${menuTaskRun.state}-base)` }"
+              class="text-subtitle-1"
+            >
+              {{ menuTaskRun.task.name
+              }}{{
+                menuTaskRun.map_index > -1 ? `(${menuTaskRun.map_index})` : ''
+              }}
+            </v-card-title>
+            <v-card-text>
+              <div>
+                State:
+                <span :style="statusStyle(tooltipTaskRun.state)"></span>
+                <span class="font-weight-bold">
+                  {{ tooltipTaskRun.state }}</span
+                >
+              </div>
+
+              <div
+                v-if="menuTaskRun.start_time || flowRun.start_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Duration:
+
+                <DurationSpan
+                  class="font-weight-bold"
+                  :start-time="menuTaskRun.start_time || flowRun.start_time"
+                  :end-time="
+                    menuTaskRun.end_time
+                      ? menuTaskRun.end_time
+                      : flowRun.end_time
+                  "
+                />
+              </div>
+
+              <div
+                v-if="menuTaskRun.start_time || flowRun.start_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Start:
+
+                <span class="font-weight-bold">
+                  {{ formatDate(menuTaskRun.start_time || flowRun.start_time) }}
+                </span>
+              </div>
+
+              <div
+                v-if="menuTaskRun.end_time || flowRun.end_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                End:
+
+                <span class="font-weight-bold">
+                  {{ formatDate(menuTaskRun.end_time || flowRun.end_time) }}
+                </span>
+              </div>
+
+              <div
+                v-if="menuTaskRun.state_timestamp"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Updated:
+
+                <span class="font-weight-bold">
+                  {{ formatDate(menuTaskRun.state_timestamp) }}
+                </span>
+              </div>
+
+              <div class="subtitle d-flex align-end justify-space-between">
+                Max Retries:
+
+                <span class="font-weight-bold">
+                  {{ menuTaskRun.task.max_retries || 0 }}
+                </span>
+              </div>
+
+              <div class="subtitle d-flex align-end justify-space-between">
+                Retry delay:
+
+                <span class="font-weight-bold">
+                  {{ menuTaskRun.task.retry_delay || 0 }}
+                </span>
+              </div>
+
+              <v-divider class="my-2" />
+
+              <div class="text-subtitle-1">
+                <div>Message:</div>
+
+                <div class="font-weight-bold">
+                  {{ menuTaskRun.state_message || 'No message' }}
+                </div>
+              </div>
+
+              <v-divider class="my-2" />
+
+              <div class="text-subtitle-1">
+                <div>Result:</div>
+
+                <div class="font-weight-bold">
+                  {{ menuTaskRun.state_result || 'No result' }}
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-expand-transition>
 
         <FullPagination
           :count-options="[10, 25, 50, 100]"
