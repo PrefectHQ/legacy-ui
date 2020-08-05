@@ -14,13 +14,13 @@ export default {
   },
   data() {
     return {
-      appReady: false,
       error: null,
       loadedComponents: 0,
       numberOfComponents: 1,
       loadingKey: 0,
+      refreshTimeout: null,
       reset: false,
-      shown: true,
+      shown: false,
       wholeAppShown: true
     }
   },
@@ -34,13 +34,20 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('auth0', ['isAuthenticated', 'isAuthorized']),
+    ...mapGetters('auth0', [
+      'isAuthenticated',
+      'isAuthorized',
+      'isAuthenticatingUser',
+      'isAuthorizingUser',
+      'isLoggingInUser'
+    ]),
     ...mapGetters('tenant', [
       'tenant',
       'tenants',
       'defaultTenant',
       'tenantIsSet'
     ]),
+    ...mapGetters('user', ['userIsSet']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -51,22 +58,33 @@ export default {
   watch: {
     backend() {
       this.loadedComponents = 0
+
+      if (this.isCloud && !this.isAuthenticated) {
+        this.shown = false
+      }
+
+      this.refreshTimeout = setTimeout(() => {
+        this.shown = true
+        this.refresh()
+        clearTimeout(this.refreshTimeout)
+      }, 1000)
     },
     async connected(val) {
       if (!val) {
         stopDefaultClient()
       } else {
         refreshDefaultClient()
-
-        // This catches scnearios where there's no tenant
-        if (this.loadedComponents === 0) {
-          this.refresh()
-        }
       }
     },
-    tenantIsSet(val) {
-      if (val) {
+    tenant(val) {
+      if (val?.id) {
+        clearTimeout(this.refreshTimeout)
         this.refresh()
+      }
+    },
+    isAuthenticated(val) {
+      if (val) {
+        this.shown = true
       }
     }
   },
@@ -83,12 +101,13 @@ export default {
     window.removeEventListener('focus', this.handleVisibilityChange)
   },
   mounted() {
+    if (!this.isCloud || this.isAuthenticated) {
+      this.shown = true
+    }
     this.refresh()
   },
-  async created() {
+  async beforeMount() {
     await this.startup()
-    this.appReady = true
-
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -144,38 +163,36 @@ export default {
       this.lastInteraction = this.currentInteraction
     },
     async startup() {
-      if (this.isCloud) {
-        await this.authenticate()
-        await this.authorize()
-        await this.getUser()
-      }
+      try {
+        await this.getApi()
+        await this.getTenants()
 
-      await this.getTenants()
+        if (this.isServer && this.tenants?.length) {
+          // If this is Server, there won't be a default tenant, so we'll set one
+          this.setDefaultTenant(this.tenants?.[0])
+        }
 
-      if (this.isServer) {
-        // If this is Server, there won't be a default tenant, so we'll set one
-        this.setDefaultTenant(this.tenants?.[0])
-      }
+        if (this.defaultTenant?.id) {
+          await this.setCurrentTenant(this.defaultTenant.slug)
 
-      if (this.defaultTenant?.id) {
-        await this.setCurrentTenant(this.defaultTenant.slug)
-
-        if (this.isCloud && !this.tenant.settings.teamNamed) {
+          if (this.isCloud && !this.tenant.settings.teamNamed) {
+            this.$router.push({
+              name: 'welcome',
+              params: {
+                tenant: this.tenant.slug
+              }
+            })
+          }
+        }
+      } catch {
+        if (this.$route.name !== 'home') {
           this.$router.push({
-            name: 'welcome',
-            params: {
-              tenant: this.tenant.slug
-            }
+            name: 'home'
           })
         }
-      } else if (this.$route.name !== 'home') {
-        this.$router.push({
-          name: 'home'
-        })
       }
     },
     refresh() {
-      this.loadedComponents = 0
       let start
 
       const animationDuration = 150
@@ -201,15 +218,22 @@ export default {
 </script>
 
 <template>
-  <v-app v-if="appReady" class="app">
+  <v-app class="app">
     <v-main>
+      <v-progress-linear
+        absolute
+        :active="isLoggingInUser"
+        indeterminate
+        height="5"
+      />
+
       <v-slide-y-transition>
-        <NavBar v-if="loadedComponents > 0" />
+        <NavBar v-if="shown && loadedComponents > 0" />
       </v-slide-y-transition>
 
-      <SideNav />
+      <SideNav v-if="shown" />
       <v-fade-transition mode="out-in">
-        <router-view class="router-view" />
+        <router-view v-if="shown" class="router-view" />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>

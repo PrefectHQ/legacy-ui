@@ -198,7 +198,7 @@ const mutations = {
   redirectRoute(state, redirectRoute) {
     if (typeof redirectRoute !== 'string' || redirectRoute == null)
       throw new TypeError(
-        `redirectRoute must be a boolean, got ${typeof redirectRoute} instead`
+        `redirectRoute must be a string, got ${typeof redirectRoute} instead`
       )
 
     localStorage.setItem('redirectRoute', redirectRoute)
@@ -239,17 +239,14 @@ const actions = {
     }
 
     if (!isAuthenticated) {
-      await dispatch('login')
+      try {
+        await auth0Client.getTokenSilently()
+      } catch {
+        await dispatch('login')
+      }
     }
 
-    const idTokenClaims = await auth0Client.getIdTokenClaims()
-    commit('idToken', idTokenClaims.__raw)
-    commit('idTokenExpiry', jwt_decode(idTokenClaims.__raw).exp * 1000)
-    commit('user/setAuth0User', idTokenClaims, {
-      root: true
-    })
-
-    return getters['idToken']
+    return await auth0Client.isAuthenticated()
   },
   async authorize({ commit, getters, dispatch }) {
     if (!auth0Client) await dispatch('initAuth0')
@@ -257,8 +254,19 @@ const actions = {
     commit('isAuthorizingUser', true)
 
     const user = await auth0Client.getUser()
+    if (!user) return
+
     commit('user', user)
     dispatch('reportUserToLogRocket')
+
+    const idTokenClaims = await auth0Client.getIdTokenClaims()
+    if (!idTokenClaims) return
+
+    commit('idToken', idTokenClaims.__raw)
+    commit('idTokenExpiry', jwt_decode(idTokenClaims.__raw).exp * 1000)
+    commit('user/setAuth0User', idTokenClaims, {
+      root: true
+    })
 
     const prefectAuthorization = await prefectAuth(getters['idToken'])
     if (prefectAuthorization) {
@@ -307,7 +315,7 @@ const actions = {
 
     commit('isRefreshingAuthentication', true)
 
-    // This should manually updated authentication
+    // This should manually update authentication
     await auth0Client.getTokenSilently()
 
     const user = await auth0Client.getUser()
@@ -332,8 +340,13 @@ const actions = {
   },
   async login({ commit }) {
     commit('isLoggingInUser', true)
-    await auth0Client.loginWithRedirect({})
-    commit('isLoggingInUser', false)
+    // NO IDEA WHY THIS TIMEOUT IS NECESSARY
+    // the redirect "fails" (succeeds but login doesn't show, despite the DOM all being present)
+    // about 50% of the time without this timeout.
+    setTimeout(() => {
+      auth0Client.loginWithRedirect()
+      commit('isLoggingInUser', false)
+    }, 2000)
   },
   async logout({ commit }) {
     commit('unsetRedirectRoute')

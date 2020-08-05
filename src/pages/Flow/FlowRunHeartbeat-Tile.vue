@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     pollInterval() {
-      return this.flow.archived ? 0 : 5000
+      return this.flow.archived ? 0 : 10000
     }
   },
   watch: {
