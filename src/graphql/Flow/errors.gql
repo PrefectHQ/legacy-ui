@@ -9,12 +9,14 @@ query Errors(
       flow: { id: { _eq: $flow_id }, flow_group_id: { _eq: $flow_group_id } }
       logs: { level: { _in: ["CRITICAL", "ERROR"] } }
     }
+    limit: 10
     order_by: [{ updated: desc }]
   ) {
     id
     name
     logs(
       limit: 1
+      order_by: [{timestamp: desc}]
       where: { level: { _in: ["CRITICAL", "ERROR"] }, timestamp: $heartbeat }
     ) {
       id
