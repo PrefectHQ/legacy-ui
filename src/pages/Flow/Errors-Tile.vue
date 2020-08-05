@@ -39,6 +39,14 @@ export default {
     ...mapGetters('user', ['timezone']),
     pollInterval() {
       return this.flow.archived ? 0 : 60000
+    },
+    filteredErrors() {
+      return this.errors
+        ?.filter(error => {
+          return error.task_runs?.length > 0
+        })
+        .map(error => error.task_runs)
+        .flat()
     }
   },
   watch: {
@@ -133,7 +141,9 @@ export default {
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <CardTitle
-          :title="`${errors ? errors.length : 0} Recent Errors`"
+          :title="
+            `${filteredErrors ? filteredErrors.length : 0} Recent Task Failures`
+          "
           icon="error"
           :icon-color="
             flow.archived || loading > 0
@@ -189,7 +199,7 @@ export default {
         group
       >
         <v-lazy
-          v-for="error in errors"
+          v-for="error in filteredErrors"
           :key="error.id"
           :options="{
             threshold: 0.75
@@ -199,37 +209,26 @@ export default {
         >
           <v-list-item
             :to="{
-              name: 'flow-run',
-              params: { id: error.id },
-              query: {
-                logId: error.logs.length > 0 ? error.logs[0].id : null
-              }
+              name: 'task-run',
+              params: { id: error.id }
             }"
           >
             <v-list-item-content>
               <v-list-item-subtitle class="font-weight-light">
                 <span class="overline">
-                  {{
-                    error.logs.length
-                      ? formatTimeRelative(error.logs[0].timestamp)
-                      : ''
-                  }}
+                  {{ formatTimeRelative(error.state_timestamp) }}
                 </span>
               </v-list-item-subtitle>
               <v-list-item-title
                 class="subtitle-2 font-weight-light Failed--text text--darken-1"
               >
-                {{
-                  error.logs.length
-                    ? error.logs[0].message
-                    : 'No Log associated with this error.'
-                }}
+                {{ error.state_message }}
               </v-list-item-title>
               <v-list-item-subtitle class="font-weight-light">
                 <router-link
-                  :to="{ name: 'flow-run', params: { id: error.id } }"
+                  :to="{ name: 'task-run', params: { id: error.id } }"
                 >
-                  {{ error.name }}
+                  {{ error.task.name }}
                 </router-link>
               </v-list-item-subtitle>
             </v-list-item-content>
