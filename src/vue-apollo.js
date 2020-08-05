@@ -76,7 +76,9 @@ const errorAfterware = onError(
     // (prevents spamming the console when there's no connection)
     if (operation.operationName === 'Api') {
       if (apiErrors > 0) {
-        return Observable.of()
+        // TODO: fix this
+        Observable
+        // return Observable.of()
       }
       apiErrors++
     }

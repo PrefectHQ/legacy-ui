@@ -126,13 +126,15 @@ export default {
     <ol class="mt-12">
       <li :value="isCloud ? 1 : 2" class="text-h6 mt-6 mb-2">Start an Agent</li>
       <div class="text-body-1 mt-2">
-        Next, start the Agent process. The Agent process takes a number of
-        arguments and flags; you can read more about them in the
+        For your Flows to run, you'll need to start an Agent process. There are
+        many different types of Agents to choose from, each of which takes a
+        number of arguments and flags; you can read more about them in the
         <ExternalLink
           href="https://docs.prefect.io/orchestration/agents/overview.html#usage"
         >
           docs </ExternalLink
-        >.
+        >. For example, the following CLI command starts a Local Agent on your
+        local machine:
       </div>
 
       <div

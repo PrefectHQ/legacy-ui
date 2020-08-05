@@ -79,29 +79,18 @@ export default {
       return failure.length
     },
     sortFailures(failures) {
-      return failures.sort((flowRunA, flowRunB) => {
-        if (flowRunA?.failed_count && flowRunB?.failed_count) {
-          const aFailurePercentage =
-            flowRunA.failed_count.aggregate.count /
-            flowRunA.runs_count.aggregate.count
-          const bFailurePercentage =
-            flowRunB.failed_count.aggregate.count /
-            flowRunB.runs_count.aggregate.count
-
-          if (aFailurePercentage > bFailurePercentage) {
-            return -1
-          } else if (aFailurePercentage < bFailurePercentage) {
-            return 1
-          }
-          return 0
+      return failures.sort((taskRunA, taskRunB) => {
+        if (new Date(taskRunA.updated) < new Date(taskRunB.updated)) {
+          return -1
+        } else {
+          return 1
         }
-        return 0
       })
     }
   },
   apollo: {
     failures: {
-      query: require('@/graphql/Dashboard/failures.gql'),
+      query: require('@/graphql/Dashboard/task-failures.gql'),
       variables() {
         return {
           heartbeat: oneAgo(this.selectedDateFilter)

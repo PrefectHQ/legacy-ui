@@ -1,6 +1,6 @@
 <script>
 import ExternalLink from '@/components/ExternalLink'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   components: {
@@ -18,8 +18,9 @@ export default {
     ...mapGetters('api', ['isCloud', 'url', 'serverUrl', 'connected'])
   },
   methods: {
-    ...mapActions('api', ['setServerUrl', 'getApi']),
+    ...mapActions('api', ['getApi']),
     ...mapActions('tenant', ['updateTenantSettings']),
+    ...mapMutations('api', ['setServerUrl']),
     _handleKeyup() {
       this.success = false
       this.error = false
@@ -31,12 +32,15 @@ export default {
       this.loading = true
 
       try {
-        await this.setServerUrl(this.urlInput)
+        this.setServerUrl(this.urlInput)
         await this.getApi()
 
         this.success = this.connected
-      } catch (e) {
+        this.error = !this.success
+      } catch {
         this.error = true
+        this.success = false
+        this.connected = false
       }
       this.loading = false
     }
@@ -50,15 +54,16 @@ export default {
       Before you can begin to schedule work with Prefect Server, you'll need to
       start the orchestration infrastructure required to manage your Flows. This
       includes a database, API, scheduler, and various other criticial services.
-      Alternatively, you can use the Prefect Cloud and get started right away
-      (it's free!)
+      Alternatively, you can use Prefect Cloud and get started right away (it's
+      free!)
     </div>
 
     <ol class="mt-6">
       <li class="text-h6">Start Prefect Server</li>
       <div class="text-body-1 mt-2">
-        This command starts up the various containers that make up Prefect
-        Server. Note that you'll need to have
+        Once you've installed the Prefect Python package, this simple CLI
+        command starts up the various containers that make up Prefect Server.
+        Note that you'll need to have
         <ExternalLink href="https://docs.docker.com/get-started/">
           Docker
         </ExternalLink>
@@ -77,6 +82,10 @@ export default {
           server <span class="deepRed--text font-weight-medium">start</span>
         </div>
       </div>
+      <div class="text-body-1 mt-2">
+        This command has many options to customize your deployment - run it with
+        the <kbd>-h</kbd> flag to see the documentation!
+      </div>
     </ol>
 
     <ol class="mt-12">
@@ -84,8 +93,9 @@ export default {
       <div class="text-body-1 mt-2">
         The GraphQL endpoint is one of the public URLs exposed by Prefect Server
         that allows interaction with the API. By default it's exposed at
-        <kbd>localhost:4200/graphql</kbd>, but you can modify this and other
-        settings from your Server's <kbd>~/.prefect/config.toml</kbd>.
+        <kbd>http://localhost:4200/graphql</kbd>, but you can modify this and
+        other settings from your Server's <kbd>~/.prefect/config.toml</kbd> or
+        in the input box below:
       </div>
 
       <div

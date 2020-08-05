@@ -42,7 +42,7 @@ export default {
     }
   },
   watch: {
-    flow() {
+    flow(val, prevVal) {
       this.$apollo.queries.errors.stopPolling()
 
       if (this.pollInterval > 0) {
@@ -51,7 +51,9 @@ export default {
         this.$apollo.queries.errors.refetch()
       }
 
-      this.selectedDateFilter = 'day'
+      if (val.archived !== prevVal.archived && val.archived) {
+        this.selectedDateFilter = 'day'
+      }
     }
   },
   mounted() {
@@ -131,7 +133,7 @@ export default {
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <CardTitle
-          :title="`${errors ? errors.length : 0} Errors`"
+          :title="`${errors ? errors.length : 0} Recent Errors`"
           icon="error"
           :icon-color="
             flow.archived || loading > 0

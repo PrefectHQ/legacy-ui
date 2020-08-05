@@ -22,8 +22,8 @@ export default {
     <v-list-item
       class="text-truncate"
       :to="{
-        name: 'task',
-        params: { id: failure.task.id }
+        name: 'task-run',
+        params: { id: failure.id }
       }"
     >
       <v-list-item-content>
@@ -31,8 +31,8 @@ export default {
           <router-link
             class="link"
             :to="{
-              name: 'task',
-              params: { id: failure.task.id }
+              name: 'task-run',
+              params: { id: failure.id }
             }"
           >
             {{ failure.task.flow.name }}
