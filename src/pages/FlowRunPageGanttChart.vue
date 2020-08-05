@@ -115,7 +115,8 @@ export default {
         left: `${this.positionX}px`,
         position: 'absolute',
         top: `${this.positionY}px`,
-        width: '250px'
+        width: '250px',
+        'z-index': 2
       }
     },
     noChartMessage() {
@@ -349,174 +350,184 @@ export default {
           type="rangeBar"
         />
 
-        <v-card v-if="showTooltip" :style="tooltipStyle" tile>
-          <v-card-title
-            :style="{ color: `var(--v-${tooltipTaskRun.state}-base)` }"
-            class="text-subtitle-1"
-          >
-            <div>
-              {{ tooltipTaskRun.task.name
-              }}{{
-                tooltipTaskRun.map_index > -1
-                  ? `(${tooltipTaskRun.map_index})`
-                  : ''
-              }}
-              <div class="caption grey--text text--lighten-1">
-                (Click for more details)
-              </div>
-            </div>
-          </v-card-title>
-          <v-card-text>
-            <div>
-              State:
-              <span :style="statusStyle(tooltipTaskRun.state)"></span>
-              <span class="font-weight-bold"> {{ tooltipTaskRun.state }}</span>
-            </div>
-            <div
-              v-if="tooltipTaskRun.start_time || flowRun.start_time"
-              class="subtitle d-flex align-end justify-space-between"
+        <v-fade-transition mode="out-in">
+          <v-card v-if="showTooltip" :style="tooltipStyle" tile>
+            <v-card-title
+              :style="{ color: `var(--v-${tooltipTaskRun.state}-base)` }"
+              class="text-subtitle-1"
             >
-              Duration:
-
-              <DurationSpan
-                class="font-weight-bold"
-                :start-time="tooltipTaskRun.start_time || flowRun.start_time"
-                :end-time="
-                  tooltipTaskRun.end_time
-                    ? tooltipTaskRun.end_time
-                    : flowRun.end_time
-                "
-              />
-            </div>
-
-            <div
-              v-if="tooltipTaskRun.start_time || flowRun.start_time"
-              class="subtitle d-flex align-end justify-space-between"
-            >
-              Start:
-
-              <span class="font-weight-bold">
-                {{
-                  formatDate(tooltipTaskRun.start_time || flowRun.start_time)
+              <div>
+                {{ tooltipTaskRun.task.name
+                }}{{
+                  tooltipTaskRun.map_index > -1
+                    ? `(${tooltipTaskRun.map_index})`
+                    : ''
                 }}
-              </span>
-            </div>
-
-            <div
-              v-if="tooltipTaskRun.end_time || flowRun.end_time"
-              class="subtitle d-flex align-end justify-space-between"
-            >
-              End:
-
-              <span class="font-weight-bold">
-                {{ formatDate(tooltipTaskRun.end_time || flowRun.end_time) }}
-              </span>
-            </div>
-          </v-card-text>
-        </v-card>
-
-        <v-card v-if="showMenu" :style="menuStyle" tile>
-          <v-card-title
-            :style="{ color: `var(--v-${menuTaskRun.state}-base)` }"
-            class="text-subtitle-1"
-          >
-            {{ menuTaskRun.task.name
-            }}{{
-              menuTaskRun.map_index > -1 ? `(${menuTaskRun.map_index})` : ''
-            }}
-          </v-card-title>
-          <v-card-text>
-            <div>
-              State:
-              <span :style="statusStyle(tooltipTaskRun.state)"></span>
-              <span class="font-weight-bold"> {{ tooltipTaskRun.state }}</span>
-            </div>
-
-            <div
-              v-if="menuTaskRun.start_time || flowRun.start_time"
-              class="subtitle d-flex align-end justify-space-between"
-            >
-              Duration:
-
-              <DurationSpan
-                class="font-weight-bold"
-                :start-time="menuTaskRun.start_time || flowRun.start_time"
-                :end-time="
-                  menuTaskRun.end_time ? menuTaskRun.end_time : flowRun.end_time
-                "
-              />
-            </div>
-
-            <div
-              v-if="menuTaskRun.start_time || flowRun.start_time"
-              class="subtitle d-flex align-end justify-space-between"
-            >
-              Start:
-
-              <span class="font-weight-bold">
-                {{ formatDate(menuTaskRun.start_time || flowRun.start_time) }}
-              </span>
-            </div>
-
-            <div
-              v-if="menuTaskRun.end_time || flowRun.end_time"
-              class="subtitle d-flex align-end justify-space-between"
-            >
-              End:
-
-              <span class="font-weight-bold">
-                {{ formatDate(menuTaskRun.end_time || flowRun.end_time) }}
-              </span>
-            </div>
-
-            <div
-              v-if="menuTaskRun.state_timestamp"
-              class="subtitle d-flex align-end justify-space-between"
-            >
-              Updated:
-
-              <span class="font-weight-bold">
-                {{ formatDate(menuTaskRun.state_timestamp) }}
-              </span>
-            </div>
-
-            <div class="subtitle d-flex align-end justify-space-between">
-              Max Retries:
-
-              <span class="font-weight-bold">
-                {{ menuTaskRun.task.max_retries || 0 }}
-              </span>
-            </div>
-
-            <div class="subtitle d-flex align-end justify-space-between">
-              Retry delay:
-
-              <span class="font-weight-bold">
-                {{ menuTaskRun.task.retry_delay || 0 }}
-              </span>
-            </div>
-
-            <v-divider class="my-2" />
-
-            <div class="text-subtitle-1">
-              <div>Message:</div>
-
-              <div class="font-weight-bold">
-                {{ menuTaskRun.state_message || 'No message' }}
+                <div class="caption grey--text text--lighten-1">
+                  (Click for more details)
+                </div>
               </div>
-            </div>
-
-            <v-divider class="my-2" />
-
-            <div class="text-subtitle-1">
-              <div>Result:</div>
-
-              <div class="font-weight-bold">
-                {{ menuTaskRun.state_result || 'No result' }}
+            </v-card-title>
+            <v-card-text>
+              <div>
+                State:
+                <span :style="statusStyle(tooltipTaskRun.state)"></span>
+                <span class="font-weight-bold">
+                  {{ tooltipTaskRun.state }}</span
+                >
               </div>
-            </div>
-          </v-card-text>
-        </v-card>
+              <div
+                v-if="tooltipTaskRun.start_time || flowRun.start_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Duration:
+
+                <DurationSpan
+                  class="font-weight-bold"
+                  :start-time="tooltipTaskRun.start_time || flowRun.start_time"
+                  :end-time="
+                    tooltipTaskRun.end_time
+                      ? tooltipTaskRun.end_time
+                      : flowRun.end_time
+                  "
+                />
+              </div>
+
+              <div
+                v-if="tooltipTaskRun.start_time || flowRun.start_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Start:
+
+                <span class="font-weight-bold">
+                  {{
+                    formatDate(tooltipTaskRun.start_time || flowRun.start_time)
+                  }}
+                </span>
+              </div>
+
+              <div
+                v-if="tooltipTaskRun.end_time || flowRun.end_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                End:
+
+                <span class="font-weight-bold">
+                  {{ formatDate(tooltipTaskRun.end_time || flowRun.end_time) }}
+                </span>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-fade-transition>
+
+        <v-expand-transition mode="out-in">
+          <v-card v-if="showMenu" :style="menuStyle" tile>
+            <v-card-title
+              :style="{ color: `var(--v-${menuTaskRun.state}-base)` }"
+              class="text-subtitle-1"
+            >
+              {{ menuTaskRun.task.name
+              }}{{
+                menuTaskRun.map_index > -1 ? `(${menuTaskRun.map_index})` : ''
+              }}
+            </v-card-title>
+            <v-card-text>
+              <div>
+                State:
+                <span :style="statusStyle(tooltipTaskRun.state)"></span>
+                <span class="font-weight-bold">
+                  {{ tooltipTaskRun.state }}</span
+                >
+              </div>
+
+              <div
+                v-if="menuTaskRun.start_time || flowRun.start_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Duration:
+
+                <DurationSpan
+                  class="font-weight-bold"
+                  :start-time="menuTaskRun.start_time || flowRun.start_time"
+                  :end-time="
+                    menuTaskRun.end_time
+                      ? menuTaskRun.end_time
+                      : flowRun.end_time
+                  "
+                />
+              </div>
+
+              <div
+                v-if="menuTaskRun.start_time || flowRun.start_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Start:
+
+                <span class="font-weight-bold">
+                  {{ formatDate(menuTaskRun.start_time || flowRun.start_time) }}
+                </span>
+              </div>
+
+              <div
+                v-if="menuTaskRun.end_time || flowRun.end_time"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                End:
+
+                <span class="font-weight-bold">
+                  {{ formatDate(menuTaskRun.end_time || flowRun.end_time) }}
+                </span>
+              </div>
+
+              <div
+                v-if="menuTaskRun.state_timestamp"
+                class="subtitle d-flex align-end justify-space-between"
+              >
+                Updated:
+
+                <span class="font-weight-bold">
+                  {{ formatDate(menuTaskRun.state_timestamp) }}
+                </span>
+              </div>
+
+              <div class="subtitle d-flex align-end justify-space-between">
+                Max Retries:
+
+                <span class="font-weight-bold">
+                  {{ menuTaskRun.task.max_retries || 0 }}
+                </span>
+              </div>
+
+              <div class="subtitle d-flex align-end justify-space-between">
+                Retry delay:
+
+                <span class="font-weight-bold">
+                  {{ menuTaskRun.task.retry_delay || 0 }}
+                </span>
+              </div>
+
+              <v-divider class="my-2" />
+
+              <div class="text-subtitle-1">
+                <div>Message:</div>
+
+                <div class="font-weight-bold">
+                  {{ menuTaskRun.state_message || 'No message' }}
+                </div>
+              </div>
+
+              <v-divider class="my-2" />
+
+              <div class="text-subtitle-1">
+                <div>Result:</div>
+
+                <div class="font-weight-bold">
+                  {{ menuTaskRun.state_result || 'No result' }}
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-expand-transition>
 
         <FullPagination
           :count-options="[10, 25, 50, 100]"
