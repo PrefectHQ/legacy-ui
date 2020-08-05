@@ -57,6 +57,7 @@ export default {
         solo
         hide-details
         flat
+        style="max-width: 150px;"
       >
         <template v-slot:prepend-inner>
           <v-icon color="black" x-small>
@@ -66,8 +67,17 @@ export default {
       </v-select>
     </CardTitle>
 
-    <v-container class="pa-0 pr-4 pl-6">
+    <v-container class="pa-0 pr-4">
       <HeartbeatTimeline :loading="loading" :items="heartbeat" type="task" />
     </v-container>
   </v-card>
 </template>
+
+<style lang="scss" scoped>
+.state-interval-picker {
+  font-size: 0.85rem;
+  margin: auto;
+  margin-right: 0;
+  max-width: 150px;
+}
+</style>

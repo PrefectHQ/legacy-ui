@@ -60,7 +60,7 @@ export default {
       </v-select>
     </CardTitle>
 
-    <v-container class="pa-0 pr-4 pl-6">
+    <v-container class="pa-0 pr-4">
       <HeartbeatTimeline
         :loading="loading"
         :items="heartbeat"
