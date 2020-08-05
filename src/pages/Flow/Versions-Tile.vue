@@ -161,12 +161,14 @@ export default {
       <v-text-field
         slot="action"
         v-model="searchTerm"
-        class="flow-search"
+        class="search"
         dense
+        flat
         solo
         prepend-inner-icon="search"
         placeholder="Search by Version"
         hide-details
+        style="min-width: 400px;"
       >
       </v-text-field>
     </CardTitle>
@@ -253,8 +255,8 @@ export default {
   </v-card>
 </template>
 
-<style lang="scss">
-.flow-search {
+<style lang="scss" scoped>
+.search {
   border-radius: 0 !important;
   font-size: 0.85rem;
 
