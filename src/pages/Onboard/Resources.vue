@@ -70,16 +70,31 @@ export default {
 
       <v-col class="d-flex align-end justify-center" cols="12" md="2">
         <transition name="fade">
-          <v-btn
+          <!-- <v-btn
             v-if="showDashboardNavigation"
-            :to="{ name: 'dashboard' }"
+            :to="{ name: 'home' }"
             data-cy="go-to-dashboard"
-            class="dashboard-link-absolute"
+            class="dashboard-button-absolute"
             color="primary"
             x-large
           >
-            To the dashboard!
+            Let's go!
             <v-icon right>fas fa-rocket</v-icon>
+          </v-btn> -->
+
+          <v-btn
+            v-if="showDashboardNavigation"
+            :to="{ name: 'home' }"
+            class="dashboard-button-absolute vertical-button white--text ma-auto"
+            color="primary"
+            data-cy="go-to-dashboard"
+            fab
+            x-large
+          >
+            <v-icon class="mt-1">
+              fa-rocket
+            </v-icon>
+            <div>Let's go!</div>
           </v-btn>
         </transition>
       </v-col>
@@ -218,13 +233,8 @@ export default {
         no-gutters
       >
         <v-col cols="12" class="text-center py-2">
-          <v-btn
-            :to="{ name: 'dashboard' }"
-            class="mx-auto"
-            color="primary"
-            x-large
-          >
-            To the dashboard!
+          <v-btn :to="{ name: 'home' }" class="mx-auto" color="primary" x-large>
+            Let's go!
             <v-icon right>fas fa-rocket</v-icon>
           </v-btn>
         </v-col>
@@ -235,10 +245,12 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-button-absolute {
-  bottom: 5vh;
+  height: 125px;
   left: 50%;
   position: absolute;
+  top: 50%;
   transform: translate(-50%, -50%);
+  width: 125px;
   z-index: 2;
 }
 
