@@ -1,5 +1,5 @@
-query Projects {
-  project {
+query Projects($tenantId: uuid!) {
+  project(where: { tenant_id: { _eq: $tenantId } }) {
     id
     name
   }

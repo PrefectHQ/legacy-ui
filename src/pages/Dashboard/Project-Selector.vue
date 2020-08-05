@@ -122,6 +122,9 @@ export default {
     projects: {
       query: require('@/graphql/Dashboard/projects.gql'),
       fetchPolicy: 'no-cache',
+      variables() {
+        return { id: this.projectId, tenantId: this.tenant?.id }
+      },
       update: data => {
         // New Project is part of the read only user test.  If you change the name, update the test
         return data.project
