@@ -336,8 +336,7 @@ const actions = {
   },
   async login({ commit }) {
     commit('isLoggingInUser', true)
-    await auth0Client.loginWithRedirect()
-    commit('isLoggingInUser', false)
+    return await auth0Client.loginWithRedirect()
   },
   async logout({ commit }) {
     commit('unsetRedirectRoute')

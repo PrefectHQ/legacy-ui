@@ -45,7 +45,7 @@ export default {
           state: this.checkedState
         }
       },
-      pollInterval: 30000
+      pollInterval: 10000
     }
   }
 }
