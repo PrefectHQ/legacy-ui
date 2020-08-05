@@ -97,8 +97,8 @@ export default {
       'visibilitychange',
       this.handleVisibilityChange
     )
-    window.removeEventListener('blur', this.handleVisibilityChange)
-    window.removeEventListener('focus', this.handleVisibilityChange)
+    // window.removeEventListener('blur', this.handleVisibilityChange)
+    // window.removeEventListener('focus', this.handleVisibilityChange)
   },
   mounted() {
     if (!this.isCloud || this.isAuthenticated) {
@@ -119,8 +119,8 @@ export default {
       this.handleVisibilityChange,
       false
     )
-    window.addEventListener('blur', this.handleVisibilityChange, false)
-    window.addEventListener('focus', this.handleVisibilityChange, false)
+    // window.addEventListener('blur', this.handleVisibilityChange, false)
+    // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
     ...mapActions('api', ['getApi', 'monitorConnection']),
