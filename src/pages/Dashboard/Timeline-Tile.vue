@@ -40,7 +40,8 @@ export default {
       variables() {
         return {
           limit: this.scheduledFlowRuns?.length === 0 ? 100 : 90,
-          project_id: this.projectId == '' ? null : this.projectId
+          project_id: this.projectId == '' ? null : this.projectId,
+          tenant_id: this.tenant?.id
         }
       },
       pollInterval: 5000,
@@ -51,7 +52,8 @@ export default {
       query: require('@/graphql/Dashboard/timeline-scheduled-flow-runs.gql'),
       variables() {
         return {
-          project_id: this.projectId == '' ? null : this.projectId
+          project_id: this.projectId == '' ? null : this.projectId,
+          tenant_id: this.tenant?.id
         }
       },
       pollInterval: 5000,

@@ -135,7 +135,8 @@ export default {
       query: require('@/graphql/Dashboard/upcoming-flow-runs.gql'),
       variables() {
         return {
-          projectId: this.projectId ? this.projectId : null
+          projectId: this.projectId ? this.projectId : null,
+          tenantId: this.tenant?.id
         }
       },
       loadingKey: 'loading',

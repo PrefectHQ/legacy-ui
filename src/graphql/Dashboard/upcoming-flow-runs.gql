@@ -1,8 +1,9 @@
-query UpcomingFlowRuns($projectId: uuid) {
+query UpcomingFlowRuns($projectId: uuid, $tenantId: uuid) {
   flow_run(
     where: {
       flow: { project_id: { _eq: $projectId } }
       state: { _eq: "Scheduled" }
+      tenant_id: { _eq: $tenantId }
     }
     order_by: [{ scheduled_start_time: asc }, { flow: { name: asc } }]
   ) {
