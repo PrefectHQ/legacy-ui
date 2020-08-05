@@ -96,7 +96,8 @@ export default {
       variables() {
         return {
           projectId: this.projectId ? this.projectId : null,
-          heartbeat: oneAgo(this.selectedDateFilter)
+          heartbeat: oneAgo(this.selectedDateFilter),
+          tenantId: this.tenant?.id
         }
       },
       pollInterval: 3000,

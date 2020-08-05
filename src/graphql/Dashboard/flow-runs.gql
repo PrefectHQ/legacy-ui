@@ -1,7 +1,7 @@
-query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
+query FlowRuns($projectId: uuid, $heartbeat: timestamptz, $tenantId: uuid) {
   Success: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       updated: { _gte: $heartbeat }
       state: { _eq: "Success" }
     }
@@ -12,7 +12,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Running: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       updated: { _gte: $heartbeat }
       state: { _eq: "Running" }
     }
@@ -23,7 +23,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Pending: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       updated: { _gte: $heartbeat }
       state: { _eq: "Pending" }
     }
@@ -34,7 +34,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Failed: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       updated: { _gte: $heartbeat }
       state: { _eq: "Failed" }
     }
@@ -45,7 +45,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   ClientFailed: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       updated: { _gte: $heartbeat }
       state: { _eq: "ClientFailed" }
     }
@@ -56,7 +56,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Submitted: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       updated: { _gte: $heartbeat }
       state: { _eq: "Submitted" }
     }
@@ -67,7 +67,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Queued: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       updated: { _gte: $heartbeat }
       state: { _eq: "Queued" }
     }
@@ -78,7 +78,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Resume: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "Resume" }
     }
@@ -89,7 +89,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Retrying: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "Retrying" }
     }
@@ -100,7 +100,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Looped: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "Looped" }
     }
@@ -111,7 +111,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Cached: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "Cached" }
     }
@@ -122,7 +122,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Mapped: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "Mapped" }
     }
@@ -133,7 +133,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   TimedOut: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "TimedOut" }
     }
@@ -144,7 +144,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   TriggerFailed: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "TriggerFailed" }
     }
@@ -155,7 +155,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Skipped: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "Skipped" }
     }
@@ -166,7 +166,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Finished: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "Finished" }
     }
@@ -177,7 +177,7 @@ query FlowRuns($projectId: uuid, $heartbeat: timestamptz) {
   }
   Cancelled: flow_run_aggregate(
     where: {
-      flow: { project_id: { _eq: $projectId } }
+      flow: { project_id: { _eq: $projectId }, tenant_id: { _eq: $tenantId } }
       heartbeat: { _gte: $heartbeat }
       state: { _eq: "Cancelled" }
     }
