@@ -173,7 +173,10 @@ export default {
 
         let searchParams = [
           { archived: { _eq: this.showArchived ? null : false } },
-          { project_id: { _eq: this.projectId ? this.projectId : null } }
+          {
+            project_id: { _eq: this.projectId ? this.projectId : null },
+            tenant_id: { _eq: this.tenant?.id }
+          }
         ]
 
         let orParams = [
@@ -213,7 +216,10 @@ export default {
       variables() {
         let searchParams = [
           { archived: { _eq: this.showArchived ? null : false } },
-          { project_id: { _eq: this.projectId ? this.projectId : null } }
+          { project_id: { _eq: this.projectId ? this.projectId : null } },
+          {
+            tenant_id: { _eq: this.tenant?.id }
+          }
         ]
 
         let orParams = [
