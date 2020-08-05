@@ -167,7 +167,7 @@ export default {
     project: {
       query: require('@/graphql/Dashboard/project-name.gql'),
       variables() {
-        return { id: this.projectId }
+        return { id: this.projectId, tenantId: this.tenant?.id }
       },
       loadingKey: 'loading',
       update: data => (data.project ? data.project : null),

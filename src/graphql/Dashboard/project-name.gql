@@ -1,5 +1,5 @@
-query Project($id: uuid!) {
-  project: project_by_pk(id: $id) {
+query Project($id: uuid!, $tenantId: uuid!) {
+  project(where: { id: { _eq: $id }, tenant_id: { _eq: $tenantId } }) {
     id
     name
   }
