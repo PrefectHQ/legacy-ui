@@ -1,11 +1,11 @@
 query Errors(
-  $heartbeat: timestamptz_comparison_exp
+  $updated: timestamptz_comparison_exp
   $flow_group_id: uuid
   $flow_id: uuid
 ) {
   flow_run(
     where: {
-      updated: $heartbeat
+      updated: $updated
       flow: { id: { _eq: $flow_id }, flow_group_id: { _eq: $flow_group_id } }
       logs: { level: { _in: ["CRITICAL", "ERROR"] } }
     }
@@ -17,7 +17,7 @@ query Errors(
     logs(
       limit: 1
       order_by: [{timestamp: desc}]
-      where: { level: { _in: ["CRITICAL", "ERROR"] }, timestamp: $heartbeat }
+      where: { level: { _in: ["CRITICAL", "ERROR"] }, timestamp: $updated }
     ) {
       id
       level
