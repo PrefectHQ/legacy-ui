@@ -277,10 +277,9 @@ export default {
         <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
           <v-text-field
             v-model="search"
-            class="rounded-none search"
-            dense
-            flat
+            class="rounded-none elevation-1"
             solo
+            dense
             hide-details
             single-line
             placeholder="Search by flow name, project name or creator"
@@ -289,10 +288,8 @@ export default {
             :style="{
               'max-width': $vuetify.breakpoint.mdAndUp ? '420px' : null
             }"
-          />
+          ></v-text-field>
         </div>
-
-        <v-divider class="my-1 mx-3" />
 
         <!-- FVG TABLE -->
         <v-data-table
@@ -303,7 +300,7 @@ export default {
           :headers="headers"
           :loading="loadingKey > 0"
           :items-per-page="10"
-          class="rounded-none truncate-table"
+          class="elevation-2 rounded-none truncate-table"
           :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
           :footer-props="{
             showFirstLastPage: true,
@@ -456,14 +453,5 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
-}
-
-.search {
-  border-radius: 0 !important;
-  font-size: 0.85rem;
-
-  .v-icon {
-    font-size: 20px !important;
-  }
 }
 </style>
