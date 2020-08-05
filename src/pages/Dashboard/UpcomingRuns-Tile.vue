@@ -192,59 +192,56 @@ export default {
             style="bottom: 0;"
           />
         </v-col>
-        <v-col cols="4">
-          <div class="d-flex align-end flex-column">
-            <v-btn
-              depressed
-              small
-              tile
-              icon
-              class="button-transition w-100 d-flex justify-end"
-              :color="tab == 'upcoming' ? 'primary' : ''"
-              :style="{
-                'border-right': `3px solid ${
-                  tab == 'upcoming' ? 'var(--v-primary-base)' : '#fff'
-                }`,
-                'box-sizing': 'content-box'
-              }"
-              @click="tab = 'upcoming'"
-            >
-              Upcoming
-              <v-icon small>access_time</v-icon>
-            </v-btn>
-
-            <v-btn
-              depressed
-              small
-              tile
-              icon
-              class="button-transition w-100 d-flex justify-end"
-              :color="tab == 'late' ? 'primary' : ''"
-              :style="{
-                'border-right': `3px solid ${
-                  tab == 'late'
-                    ? lateRuns && lateRuns.length > 0
-                      ? 'var(--v-deepRed-base)'
-                      : 'var(--v-primary-base)'
-                    : '#fff'
-                }`,
-                'box-sizing': 'content-box'
-              }"
-              @click="tab = 'late'"
-            >
-              <v-icon
-                v-if="lateRuns && lateRuns.length > 0"
-                small
-                color="deepRed"
-              >
-                warning
-              </v-icon>
-              Late
-              <v-icon small>timelapse</v-icon>
-            </v-btn>
-          </div>
-        </v-col>
       </v-row>
+
+      <div slot="action" class="d-flex align-end flex-column">
+        <v-btn
+          depressed
+          small
+          tile
+          icon
+          class="button-transition w-100 d-flex justify-end"
+          :color="tab == 'upcoming' ? 'primary' : ''"
+          :style="{
+            'border-right': `3px solid ${
+              tab == 'upcoming' ? 'var(--v-primary-base)' : '#fff'
+            }`,
+            'box-sizing': 'content-box',
+            'min-width': '100px'
+          }"
+          @click="tab = 'upcoming'"
+        >
+          Upcoming
+          <v-icon small>access_time</v-icon>
+        </v-btn>
+
+        <v-btn
+          depressed
+          small
+          tile
+          icon
+          class="button-transition w-100 d-flex justify-end"
+          :color="tab == 'late' ? 'primary' : ''"
+          :style="{
+            'border-right': `3px solid ${
+              tab == 'late'
+                ? lateRuns && lateRuns.length > 0
+                  ? 'var(--v-deepRed-base)'
+                  : 'var(--v-primary-base)'
+                : '#fff'
+            }`,
+            'box-sizing': 'content-box',
+            'min-width': '100px'
+          }"
+          @click="tab = 'late'"
+        >
+          <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
+            warning
+          </v-icon>
+          Late
+          <v-icon small>timelapse</v-icon>
+        </v-btn>
+      </div>
     </CardTitle>
 
     <v-card-text v-if="tab == 'upcoming'" class="pa-0 card-content">

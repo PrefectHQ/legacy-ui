@@ -91,7 +91,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-3 position-relative" style="height: 330px;" tile>
+  <v-card class="py-2 position-relative" style="height: 330px;" tile>
     <v-system-bar :color="statusColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->

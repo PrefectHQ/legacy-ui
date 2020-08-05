@@ -48,27 +48,22 @@ export default {
           {{ icon }}
         </v-icon>
       </v-list-item-avatar>
-      <v-list-item-content
-        :class="$slots['title'] ? 'py-0' : ''"
-        class="position: relative;"
-      >
+      <v-list-item-content class="position: relative;">
         <v-list-item-title class="title pb-1">
-          <slot v-if="$slots['title']" name="title" />
-          <v-row
-            v-else
-            no-gutters
-            class="d-flex align-center justify-space-between"
-          >
-            <span v-if="!loading">{{ title }}</span>
+          <div v-if="$slots['title']">
+            <slot name="title" />
+          </div>
+          <div v-else>
+            <div v-if="!loading">{{ title }}</div>
             <v-skeleton-loader v-else type="heading" tile></v-skeleton-loader>
-            <div class="action-slot d-flex align-center justify-end">
-              <slot name="action" />
-            </div>
-          </v-row>
+          </div>
+          <div class="action-slot d-flex align-center justify-end">
+            <slot name="action" />
+          </div>
         </v-list-item-title>
         <v-list-item-subtitle v-if="$slots['subtitle'] || subtitle">
           <slot v-if="$slots['subtitle']" name="subtitle" />
-          <span v-else class="pb-1">{{ subtitle }}</span>
+          <div v-else class="pb-1">{{ subtitle }}</div>
         </v-list-item-subtitle>
         <v-list-item-subtitle v-if="$slots['badge']">
           <slot name="badge" />
