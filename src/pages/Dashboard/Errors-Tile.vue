@@ -157,66 +157,68 @@ export default {
       </span>
     </v-tooltip>
 
-    <v-list dense class="error-card-content">
-      <v-slide-y-reverse-transition v-if="loading > 0" leave-absolute group>
-        <v-skeleton-loader key="skeleton" type="list-item-three-line">
-        </v-skeleton-loader>
-      </v-slide-y-reverse-transition>
-      <v-slide-y-reverse-transition v-else-if="hasError" leave-absolute group>
-        <v-list-item key="error" color="grey">
-          <v-list-item-avatar class="mr-0">
-            <v-icon class="error--text">
-              error
-            </v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content class="my-0 py-3">
-            <div
-              class="inline-block subtitle-1 font-weight-light"
-              style="line-height: 1.25rem;"
-            >
-              Something went wrong while trying to fetch Task failures
-              information. Please try refreshing your page. If this error
-              persists, return to this page after a few minutes.
-            </div>
-          </v-list-item-content>
-        </v-list-item>
-      </v-slide-y-reverse-transition>
+    <v-card-text class="error-card-content pa-0">
+      <v-list dense>
+        <v-slide-y-reverse-transition v-if="loading > 0" leave-absolute group>
+          <v-skeleton-loader key="skeleton" type="list-item-three-line">
+          </v-skeleton-loader>
+        </v-slide-y-reverse-transition>
+        <v-slide-y-reverse-transition v-else-if="hasError" leave-absolute group>
+          <v-list-item key="error" color="grey">
+            <v-list-item-avatar class="mr-0">
+              <v-icon class="error--text">
+                error
+              </v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content class="my-0 py-3">
+              <div
+                class="inline-block subtitle-1 font-weight-light"
+                style="line-height: 1.25rem;"
+              >
+                Something went wrong while trying to fetch Task failures
+                information. Please try refreshing your page. If this error
+                persists, return to this page after a few minutes.
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+        </v-slide-y-reverse-transition>
 
-      <v-slide-y-reverse-transition
-        v-else-if="failureCount > 0"
-        leave-absolute
-        group
-      >
-        <v-lazy
-          v-for="failure in displayFailures"
-          :key="failure.id"
-          :options="{
-            threshold: 0.75
-          }"
-          min-height="40px"
-          transition="fade"
+        <v-slide-y-reverse-transition
+          v-else-if="failureCount > 0"
+          leave-absolute
+          group
         >
-          <TaskItem :failure="failure" />
-        </v-lazy>
-      </v-slide-y-reverse-transition>
-      <v-slide-y-transition v-else leave-absolute group>
-        <v-list-item key="no-data" color="grey">
-          <v-list-item-avatar class="mr-0">
-            <v-icon class="green--text">check</v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content class="my-0 py-0">
-            <div
-              class="subtitle-1 font-weight-light"
-              style="line-height: 1.25rem;"
-            >
-              No reported failures in the last {{ selectedDateFilter }}...
-              Everything looks good!
-            </div>
-          </v-list-item-content>
-        </v-list-item>
-      </v-slide-y-transition>
-    </v-list>
-    <div v-if="failures && failures.length > 3" class="pa-0 footer"> </div>
+          <v-lazy
+            v-for="failure in displayFailures"
+            :key="failure.id"
+            :options="{
+              threshold: 0.75
+            }"
+            min-height="40px"
+            transition="fade"
+          >
+            <TaskItem :failure="failure" />
+          </v-lazy>
+        </v-slide-y-reverse-transition>
+        <v-slide-y-transition v-else leave-absolute group>
+          <v-list-item key="no-data" color="grey">
+            <v-list-item-avatar class="mr-0">
+              <v-icon class="green--text">check</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content class="my-0 py-0">
+              <div
+                class="subtitle-1 font-weight-light"
+                style="line-height: 1.25rem;"
+              >
+                No reported failures in the last {{ selectedDateFilter }}...
+                Everything looks good!
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+        </v-slide-y-transition>
+      </v-list>
+      <div v-if="failures && failures.length > 3" class="pa-0 footer"> </div>
+    </v-card-text>
   </v-card>
 </template>
 
