@@ -79,10 +79,10 @@ export default {
       pollInterval: 30000,
       update: data => {
         return data.flow_run.sort((a, b) => {
-          if (a.updated < b.updated) {
-            return -1
-          } else {
+          if (new Date(a.state_timestamp) < new Date(b.state_timestamp)) {
             return 1
+          } else {
+            return -1
           }
         })
       }
@@ -196,6 +196,9 @@ export default {
                     >{{ failure.flow.name }}</router-link
                   >
                 </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ formatDateTime(failure.state_timestamp) }}
+                </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-avatar
                 ><v-icon>arrow_right</v-icon></v-list-item-avatar
