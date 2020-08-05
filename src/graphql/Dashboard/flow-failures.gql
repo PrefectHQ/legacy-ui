@@ -10,6 +10,7 @@ query FlowFailures($projectId: uuid, $heartbeat: timestamptz, $tenantId: uuid) {
     order_by: { flow_id: asc, updated: desc }
   ) {
     flow_id
+    state_timestamp
     flow {
       name
     }
