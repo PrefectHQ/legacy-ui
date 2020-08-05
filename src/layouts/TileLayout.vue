@@ -25,7 +25,7 @@
           'pt-0': $slots['row-0']
         }"
       >
-        <v-row :style="{ height: $vuetify.breakpoint.mdAndUp ? '351px' : '' }">
+        <v-row :style="{ height: $vuetify.breakpoint.mdAndUp ? '350px' : '' }">
           <v-col
             cols="12"
             md="4"
