@@ -4,6 +4,7 @@ query FailedTasks($heartbeat: timestamptz) {
     distinct_on: task_id
   ) {
     id
+    updated
     task {
       id
       name

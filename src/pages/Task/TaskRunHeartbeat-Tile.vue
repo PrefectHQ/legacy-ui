@@ -1,6 +1,7 @@
 <script>
 import CardTitle from '@/components/Card-Title'
 import HeartbeatTimeline from '@/components/HeartbeatTimeline'
+import { oneAgo } from '@/utils/dateTime'
 import { heartbeatMixin } from '@/mixins/heartbeatMixin.js'
 
 export default {
@@ -19,7 +20,7 @@ export default {
     timestamp: {
       type: String,
       required: false,
-      default: () => null
+      default: () => oneAgo('hour')
     }
   },
   data() {
@@ -34,7 +35,7 @@ export default {
       variables() {
         return {
           taskId: this.taskId,
-          timestamp: this.timestamp,
+          timestamp: oneAgo('hour'),
           state: this.checkedState
         }
       }
@@ -45,7 +46,7 @@ export default {
 
 <template>
   <v-card class="pa-2">
-    <CardTitle title="Activity" icon="show_chart">
+    <CardTitle title="Activity in the last hour" icon="show_chart">
       <v-select
         slot="action"
         v-model="state"
