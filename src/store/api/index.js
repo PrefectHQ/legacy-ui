@@ -4,8 +4,9 @@ import LogRocket from 'logrocket'
 const maxRetries = 3
 
 const state = {
-  backend:
-    localStorage.getItem('backend') || process.env.VUE_APP_BACKEND || 'SERVER',
+  backend: 'CLOUD',
+  // backend:
+  //   localStorage.getItem('backend') || process.env.VUE_APP_BACKEND || 'SERVER',
   connected: true,
   connectionMessage: null,
   connectionTimeout: null,

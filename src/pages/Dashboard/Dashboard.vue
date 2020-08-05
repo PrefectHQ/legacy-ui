@@ -63,7 +63,6 @@ export default {
       loading: 0,
       loadedTiles: 0,
       numberOfTiles: 7,
-      previousParams: { flows: { flows: '' }, agents: { agents: '' } },
       projectId: this.$route.params.id,
       refreshTimeout: null,
       tab: this.getTab()
@@ -89,26 +88,36 @@ export default {
         clearTimeout(this.refreshInterval)
       }, 3000)
     },
-    tab(val, prev) {
-      let query = {}
+    tab(val) {
+      let tab = 'overview'
 
       switch (val) {
         case 'flows':
-          query = this.previousParams.flows
+          tab = 'flows'
           break
         case 'agents':
-          query = this.previousParams.agents
+          tab = 'agents'
           break
         default:
           break
       }
 
-      this.previousParams[prev] = this.$route.query
-      this.$router.replace({ query }).catch(e => e)
+      if (!(tab in this.$route.query)) {
+        this.$router.push(
+          {
+            name: this.$route.name,
+            params: this.$route.params,
+            query: {
+              [tab]: ''
+            }
+          },
+          () => {}
+        )
+      }
     },
     $route(val) {
-      if (Object.keys(val.query).length === 0 && this.tab !== 'overview') {
-        this.tab = 'overview'
+      if (val.name == 'dashboard') {
+        this.tab = this.getTab()
       }
     },
     tenant(val) {

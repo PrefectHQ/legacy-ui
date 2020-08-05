@@ -220,6 +220,13 @@ export default {
 <template>
   <v-app class="app">
     <v-main>
+      <v-progress-linear
+        absolute
+        :active="isLoggingInUser"
+        indeterminate
+        height="5"
+      />
+
       <v-slide-y-transition>
         <NavBar v-if="shown && loadedComponents > 0" />
       </v-slide-y-transition>
