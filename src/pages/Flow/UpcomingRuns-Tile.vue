@@ -255,7 +255,8 @@ export default {
             'border-right': `3px solid ${
               tab == 'upcoming' ? 'var(--v-primary-base)' : 'transparent'
             }`,
-            'box-sizing': 'content-box'
+            'box-sizing': 'content-box',
+            'min-width': '100px'
           }"
           @click="tab = 'upcoming'"
         >
@@ -278,7 +279,8 @@ export default {
                   : 'var(--v-primary-base)'
                 : 'transparent'
             }`,
-            'box-sizing': 'content-box'
+            'box-sizing': 'content-box',
+            'min-width': '100px'
           }"
           @click="tab = 'late'"
         >

@@ -61,10 +61,15 @@ export default {
             <slot name="action" />
           </div>
         </v-list-item-title>
-        <v-list-item-subtitle v-if="$slots['subtitle'] || subtitle">
+        <div
+          v-if="$slots['subtitle'] || subtitle"
+          class="subtitle-2 grey--text text--darken-2 caption position-absolute font-weight-medium"
+          style="bottom: 2px;"
+        >
           <slot v-if="$slots['subtitle']" name="subtitle" />
-          <div v-else class="pb-1">{{ subtitle }}</div>
-        </v-list-item-subtitle>
+          <div v-else>{{ subtitle }}</div>
+        </div>
+
         <v-list-item-subtitle v-if="$slots['badge']">
           <slot name="badge" />
         </v-list-item-subtitle>

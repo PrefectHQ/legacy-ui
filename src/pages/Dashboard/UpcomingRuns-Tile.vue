@@ -189,7 +189,7 @@ export default {
           <ConcurrencyInfo
             v-if="isCloud && tab === 'late'"
             class="caption position-absolute"
-            style="bottom: 0;"
+            style="bottom: 2px;"
           />
         </v-col>
       </v-row>

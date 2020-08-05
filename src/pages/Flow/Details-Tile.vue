@@ -117,7 +117,7 @@ export default {
           </div>
           <div
             class="subtitle-2 grey--text text--darken-2 caption position-absolute font-weight-medium"
-            style="bottom: 0;"
+            style="bottom: 2px;"
           >
             {{ `Version ${flow.version}` }}
           </div>
@@ -136,7 +136,8 @@ export default {
             'border-right': `3px solid ${
               tab == 'overview' ? 'var(--v-primary-base)' : 'transparent'
             }`,
-            'box-sizing': 'content-box'
+            'box-sizing': 'content-box',
+            'min-width': '100px'
           }"
           @click="tab = 'overview'"
         >
@@ -155,7 +156,8 @@ export default {
             'border-right': `3px solid ${
               tab == 'details' ? 'var(--v-primary-base)' : 'transparent'
             }`,
-            'box-sizing': 'content-box'
+            'box-sizing': 'content-box',
+            'min-width': '100px'
           }"
           @click="tab = 'details'"
         >
