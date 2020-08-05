@@ -67,7 +67,7 @@ export default {
         this.shown = true
         this.refresh()
         clearTimeout(this.refreshTimeout)
-      }, 1000)
+      }, 3000)
     },
     async connected(val) {
       if (!val) {
