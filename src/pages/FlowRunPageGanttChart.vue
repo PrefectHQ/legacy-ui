@@ -18,7 +18,7 @@ export default {
       chartRenderColorIndex: 0,
       colors: STATE_COLORS,
       flowRun: null,
-      limit: 10,
+      limit: 25,
       page: 1,
       presentStates: {},
       selectedActivityStateFilter: [],
