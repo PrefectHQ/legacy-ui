@@ -3,7 +3,6 @@ import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
-import FailedTasksTile from '@/pages/Dashboard/FailedTasks-Tile'
 import FlowRunHeartbeatTile from '@/pages/Dashboard/FlowRunHeartbeat-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
@@ -47,7 +46,6 @@ export default {
     AgentsTile,
     ApiHealthCheckTile,
     FailedFlowsTile,
-    FailedTasksTile,
     FlowRunHeartbeatTile,
     FlowTableTile,
     ProjectSelector,
@@ -324,7 +322,7 @@ export default {
             class="my-2"
             tile
           >
-            <FailedTasksTile :project-id="projectId" full-height />
+            <!-- <FailedTasksTile :project-id="projectId" full-height /> -->
           </v-skeleton-loader>
 
           <v-skeleton-loader
