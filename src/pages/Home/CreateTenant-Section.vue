@@ -85,8 +85,7 @@ export default {
             >$
           </span>
           <span class="primary--text font-weight-medium">prefect</span>
-          backend
-          <span class="deepRed--text font-weight-medium">
+          backend<span class="deepRed--text font-weight-medium">
             {{ isCloud ? 'cloud' : 'server' }}
           </span>
         </div>
