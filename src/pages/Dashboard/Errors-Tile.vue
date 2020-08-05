@@ -80,7 +80,7 @@ export default {
     },
     sortFailures(failures) {
       return failures.sort((taskRunA, taskRunB) => {
-        if (taskRunA.updated < taskRunB.updated) {
+        if (new Date(taskRunA.updated) < new Date(taskRunB.updated)) {
           return -1
         } else {
           return 1
