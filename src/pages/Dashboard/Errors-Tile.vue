@@ -93,7 +93,8 @@ export default {
       query: require('@/graphql/Dashboard/task-failures.gql'),
       variables() {
         return {
-          heartbeat: oneAgo(this.selectedDateFilter)
+          heartbeat: oneAgo(this.selectedDateFilter),
+          tenantId: this.tenant?.id
         }
       },
       loadingKey: 'loading',

@@ -1,6 +1,10 @@
-query FailedTasks($heartbeat: timestamptz) {
+query FailedTasks($heartbeat: timestamptz, $tenantId: uuid!) {
   task_run(
-    where: { state: { _eq: "Failed" }, updated: { _gte: $heartbeat } }
+    where: {
+      state: { _eq: "Failed" }
+      updated: { _gte: $heartbeat }
+      tenant_id: { _eq: $tenantId }
+    }
     distinct_on: task_id
   ) {
     id
