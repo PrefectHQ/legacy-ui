@@ -2,7 +2,6 @@ import store from '@/store/index'
 
 const tenantNavGuard = async (to, from, next) => {
   if (!store.getters['api/connected']) return next()
-
   if (store.getters['tenant/tenants']?.length === 0) {
     await store.dispatch('tenant/getTenants')
 

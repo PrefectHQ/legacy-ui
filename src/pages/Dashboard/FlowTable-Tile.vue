@@ -328,7 +328,7 @@ export default {
               "
               :to="{
                 name: 'flow',
-                params: { id: item.id, tenant: tenant.slug }
+                params: { id: item.flow_group.id, tenant: tenant.slug }
               }"
             >
               <span>{{ item.name }}</span>

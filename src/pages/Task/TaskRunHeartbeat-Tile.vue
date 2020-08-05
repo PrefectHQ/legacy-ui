@@ -31,7 +31,7 @@ export default {
       query: require('@/graphql/Task/heartbeat.gql'),
       update: d => d.task_run,
       loadingKey: 'loading',
-      pollInterval: 5000,
+      pollInterval: 10000,
       variables() {
         return {
           taskId: this.taskId,
