@@ -97,7 +97,12 @@ export default {
       <v-divider />
 
       <v-list dense>
-        <v-list-item :to="{ name: 'account' }" ripple exact data-cy="account">
+        <v-list-item
+          :to="{ name: 'account', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+          data-cy="account"
+        >
           <v-list-item-action>
             <v-icon>contacts</v-icon>
           </v-list-item-action>
@@ -105,7 +110,12 @@ export default {
             <v-list-item-title>Account</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'members' }" ripple exact data-cy="members">
+        <v-list-item
+          :to="{ name: 'members', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+          data-cy="members"
+        >
           <v-list-item-action>
             <v-icon>people</v-icon>
           </v-list-item-action>
@@ -113,7 +123,11 @@ export default {
             <v-list-item-title>Members</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'projects' }" ripple exact>
+        <v-list-item
+          :to="{ name: 'projects', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
           <v-list-item-action>
             <v-icon>pi-project</v-icon>
           </v-list-item-action>
@@ -121,7 +135,11 @@ export default {
             <v-list-item-title>Projects</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'flow-groups' }" ripple exact>
+        <v-list-item
+          :to="{ name: 'flow-groups', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
           <v-list-item-action>
             <v-icon>pi-flow</v-icon>
           </v-list-item-action>
@@ -130,7 +148,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
         <v-list-item
-          :to="{ name: 'task-concurrency' }"
+          :to="{ name: 'task-concurrency', params: { tenant: tenant.slug } }"
           ripple
           exact
           data-cy="task-concurrency"
@@ -143,7 +161,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
         <v-list-item
-          :to="{ name: 'cloud-hooks' }"
+          :to="{ name: 'cloud-hooks', params: { tenant: tenant.slug } }"
           ripple
           exact
           data-cy="cloud-hooks"
@@ -156,7 +174,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
         <v-list-item
-          :to="{ name: 'tokens' }"
+          :to="{ name: 'tokens', params: { tenant: tenant.slug } }"
           data-cy="team-settings-api-tokens"
           ripple
           exact
@@ -168,7 +186,11 @@ export default {
             <v-list-item-title>API Tokens</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'secrets' }" ripple exact>
+        <v-list-item
+          :to="{ name: 'secrets', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
           <v-list-item-action>
             <v-icon>vpn_key</v-icon>
           </v-list-item-action>
