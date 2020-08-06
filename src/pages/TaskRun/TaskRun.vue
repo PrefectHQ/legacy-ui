@@ -75,12 +75,13 @@ export default {
         })
         .catch(e => e)
     },
-    taskRun(val) {
-      if (!val) return
+    taskRun(val, prevVal) {
+      if (!val || val?.id == prevVal?.id) return
       if (!this.$route.query || !this.$route.query.schematic) {
         this.$router
           .replace({
             query: {
+              ...this.$route.query,
               schematic: this.taskRun.task.id
             }
           })
@@ -129,7 +130,7 @@ export default {
       <span slot="page-title">
         {{ taskRun.flow_run.name }} - {{ taskRun.task.name }}
         <span v-if="taskRun.map_index > -1">
-          (Mapped Child {{ taskRun.map_index }}
+          (Mapped Child {{ taskRun.map_index }})
         </span>
 
         <span v-else-if="parent > 1"> (Parent) </span>

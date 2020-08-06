@@ -779,7 +779,7 @@ export default {
         this.highlightDownstreamEdges(taskId)
 
         this.$router.replace({
-          query: { schematic: taskId, tab: 'schematic' }
+          query: { ...this.$route.query, schematic: taskId }
         })
       } else {
         this.selectedTaskId = null
@@ -788,7 +788,7 @@ export default {
         this.showAllEdges()
 
         this.$router.replace({
-          query: { schematic: '', tab: 'schematic' }
+          query: { ...this.$route.query, schematic: '' }
         })
       }
       let t = d3.timer(elapsed => {

@@ -39,6 +39,14 @@ export default {
     ...mapGetters('user', ['timezone']),
     pollInterval() {
       return this.flow.archived ? 0 : 60000
+    },
+    filteredErrors() {
+      return this.errors
+        ?.filter(error => {
+          return error.task_runs?.length > 0
+        })
+        .map(error => error.task_runs)
+        .flat()
     }
   },
   watch: {
@@ -133,7 +141,9 @@ export default {
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <CardTitle
-          :title="`${errors ? errors.length : 0} Recent Errors`"
+          :title="
+            `${filteredErrors ? filteredErrors.length : 0} Recent Task Failures`
+          "
           icon="error"
           :icon-color="
             flow.archived || loading > 0
@@ -142,7 +152,7 @@ export default {
               ? 'Failed'
               : 'Success'
           "
-          :loading="!errors && loading > 0"
+          :loading="errors && errors.length === 0 && loading > 0"
         >
           <div slot="action" v-on="on">
             <v-select
@@ -171,7 +181,7 @@ export default {
       </span>
     </v-tooltip>
 
-    <v-list dense class="error-card-content">
+    <v-list class="error-card-content">
       <v-slide-y-reverse-transition
         v-if="!errors && loading > 0"
         mode="out-in"
@@ -189,7 +199,7 @@ export default {
         group
       >
         <v-lazy
-          v-for="error in errors"
+          v-for="error in filteredErrors"
           :key="error.id"
           :options="{
             threshold: 0.75
@@ -199,43 +209,35 @@ export default {
         >
           <v-list-item
             :to="{
-              name: 'flow-run',
+              name: 'task-run',
               params: { id: error.id },
               query: {
-                logId: error.logs.length > 0 ? error.logs[0].id : null
+                logId: ''
               }
             }"
           >
             <v-list-item-content>
-              <v-list-item-subtitle class="font-weight-light">
-                <span class="overline">
-                  {{
-                    error.logs.length
-                      ? formatTimeRelative(error.logs[0].timestamp)
-                      : ''
-                  }}
-                </span>
-              </v-list-item-subtitle>
-              <v-list-item-title
-                class="subtitle-2 font-weight-light Failed--text text--darken-1"
-              >
-                {{
-                  error.logs.length
-                    ? error.logs[0].message
-                    : 'No Log associated with this error.'
-                }}
+              <v-list-item-title>
+                <div class="truncate d-block ma-0 pa-0" style="max-width: 95%;">
+                  {{ error.task.name }}
+                </div>
               </v-list-item-title>
               <v-list-item-subtitle class="font-weight-light">
-                <router-link
-                  :to="{ name: 'flow-run', params: { id: error.id } }"
+                <div class="caption">
+                  {{ formatTimeRelative(error.state_timestamp) }}
+                </div>
+
+                <div
+                  class="text-subtitle-2 font-weight-light Failed--text text--darken-1"
                 >
-                  {{ error.name }}
-                </router-link>
+                  {{ error.state_message }}
+                </div>
               </v-list-item-subtitle>
             </v-list-item-content>
-            <v-list-item-avatar
-              ><v-icon>arrow_right</v-icon></v-list-item-avatar
-            >
+
+            <v-list-item-avatar>
+              <v-icon>arrow_right</v-icon>
+            </v-list-item-avatar>
           </v-list-item>
         </v-lazy>
       </v-slide-y-reverse-transition>

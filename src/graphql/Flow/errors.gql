@@ -7,23 +7,20 @@ query Errors(
     where: {
       updated: $updated
       flow: { id: { _eq: $flow_id }, flow_group_id: { _eq: $flow_group_id } }
-      logs: { level: { _in: ["CRITICAL", "ERROR"] } }
     }
-    limit: 10
+    limit: 50
     order_by: [{ updated: desc }]
   ) {
     id
     name
-    logs(
-      limit: 1
-      order_by: [{timestamp: desc}]
-      where: { level: { _in: ["CRITICAL", "ERROR"] }, timestamp: $updated }
-    ) {
-      id
-      level
-      message
-      name
-      timestamp
+    task_runs(where: { state: { _eq: "Failed" } }){
+        task{
+            id
+            name
+        }
+        id
+        state_message
+        state_timestamp
     }
   }
 }

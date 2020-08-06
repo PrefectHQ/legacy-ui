@@ -286,7 +286,9 @@ export default {
       if (!this.shouldScrollToLog()) return
 
       this.scrolledToQueryLog = true
-      this.scrollToLog(this.$route.query.logId)
+      setTimeout(() => {
+        this.scrollToLog(this.$route.query.logId)
+      }, 1500)
     },
     // Fetch a batch of newer logs
     // For pagaination
@@ -412,7 +414,12 @@ export default {
           }
         },
         result(res) {
-          if (res.errors || !this.$route.query.logId) return
+          if (
+            res.errors ||
+            !this.$route.query.logId ||
+            !res.data?.flow_run_by_pk
+          )
+            return
 
           const logsAfter = res.data.flow_run_by_pk.logs_after
           const logsBefore = res.data.flow_run_by_pk.logs_before
