@@ -77,7 +77,7 @@ export default {
 
           <v-list-item-content>
             <div class="font-weight-medium">
-              User Settings
+              User
             </div>
           </v-list-item-content>
         </v-list-item>
@@ -91,7 +91,7 @@ export default {
             <v-icon>person</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>User Profile</v-list-item-title>
+            <v-list-item-title>Profile</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item

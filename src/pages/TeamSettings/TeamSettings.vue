@@ -88,7 +88,7 @@ export default {
 
           <v-list-item-content>
             <div class="font-weight-medium">
-              Team Settings
+              Team
             </div>
           </v-list-item-content>
         </v-list-item>
