@@ -1,4 +1,5 @@
 <script>
+import { mapActions } from 'vuex'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -22,18 +23,16 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     displayError() {
-      this.$toasted.error(
-        'Failed to start flow run. Please wait a few moments and try again.',
+      this.setAlert(
         {
-          action: {
-            text: 'Close',
-            onClick(e, toastObject) {
-              toastObject.goAway(0)
-            }
-          },
-          duration: 5000
-        }
+          alertShow: true,
+          alertMessage:
+            'Failed to start flow run. Please wait a few moments and try again.',
+          alertType: 'error'
+        },
+        5000
       )
     },
     async run() {
@@ -50,7 +49,7 @@ export default {
           }
         })
 
-        const flowRunId = result.data.create_flow_run.flow_run.id
+        const flowRunId = result.data.create_flow_run.id
         this.$emit('flow-run-created', flowRunId)
       } catch (error) {
         this.displayError()
