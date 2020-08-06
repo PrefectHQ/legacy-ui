@@ -144,12 +144,12 @@ const actions = {
     }
     return getters['tenant']
   },
-  async updateTenantSettings({ commit }, settings) {
+  async updateTenantSettings({ dispatch }, settings) {
     try {
       if (!settings || !Object.keys(settings).length) {
         throw new Error('passed invalid or empty settings object')
       }
-      const response = await fallbackApolloClient.mutate({
+      await fallbackApolloClient.mutate({
         mutation: require('@/graphql/Mutations/update-tenant-settings.gql'),
         variables: {
           settings
@@ -159,8 +159,7 @@ const actions = {
         }
       })
 
-      const newSettings = response.data.update_tenant_settings.tenant.settings
-      commit('updateTenantSettings', newSettings)
+      await dispatch('getTenants')
     } catch (e) {
       throw new Error('Problem updating tenant settings: ', e)
     }
