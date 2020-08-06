@@ -110,7 +110,11 @@ export const teamProfileMixin = {
     this.tenantChanges.slug = this.tenant.slug || ''
   },
   methods: {
-    ...mapActions('tenant', ['setCurrentTenant', 'updateTenantSettings']),
+    ...mapActions('tenant', [
+      'setCurrentTenant',
+      'updateTenantSettings',
+      'getTenants'
+    ]),
     ...mapActions('alert', ['setAlert']),
     // Synchronous name check that occur on input blur
     checkName(name) {
@@ -308,6 +312,7 @@ export const teamProfileMixin = {
         return
       }
 
+      await this.getTenants()
       await this.setCurrentTenant(this.tenantChanges.slug)
 
       this.$router.replace({
