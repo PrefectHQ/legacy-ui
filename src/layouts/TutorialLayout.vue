@@ -65,7 +65,7 @@ export default {
                   :complete="stepNumber > step"
                   :step="step"
                   :class="{ 'clickable-step': step <= furthestStep }"
-                  class="stepper-title"
+                  class="text-h6 font-weight-light"
                   @click="$emit('step-click', step, furthestStep)"
                 >
                   <slot :name="`tutorial-step-${step}-title`"></slot>
@@ -106,17 +106,13 @@ export default {
   }
 
   .v-stepper__label {
-    text-shadow: 0 0 0 #000;
+    color: #000 !important;
+    text-shadow: none !important;
   }
   /* stylelint-enable selector-class-pattern */
 }
 
 .full-width {
   width: 100%;
-}
-
-.stepper-title {
-  font-size: 1.15em;
-  font-weight: 300;
 }
 </style>

@@ -1,58 +1,16 @@
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
-    return {
-      removeTeamDialog: false,
-      teamName: null,
-      nameMatches: false,
-      deleteTenantTimeout: null,
-      deleteTenantLoading: false,
-      deleteTenantError: null
-    }
+    return {}
   },
   computed: {
     ...mapGetters('tenant', ['tenant'])
   },
   watch: {},
   mounted() {},
-  methods: {
-    ...mapMutations('tenant', ['setTenant', 'unsetTenant']),
-    closeTeamDialog() {
-      this.removeTeamDialog = false
-      this.teamName = null
-      this.nameMatches = false
-      this.deleteTenantLoading = false
-      this.deleteTenantError = null
-      clearTimeout(this.deleteTenantTimeout)
-    },
-    checkName(val) {
-      this.deleteTenantError = false
-      this.nameMatches = val == this.tenant.name
-    },
-    async deleteTenant() {
-      clearTimeout(this.deleteTenantTimeout)
-      this.deleteTenantLoading = true
-      const deleteTenant = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tenant/delete-tenant.gql'),
-        variables: {
-          id: this.tenant.id
-        }
-      })
-      this.deleteTenantTimeout = setTimeout(() => {
-        this.deleteTenantLoading = false
-        this.teamName = null
-        this.nameMatches = false
-        if (deleteTenant.data && deleteTenant.data.deleteTenant.success) {
-          this.unsetTenant()
-          this.$router.push({ name: 'dashboard' })
-        } else {
-          this.deleteTenantError = 'Something went wrong.'
-        }
-      }, 750)
-    }
-  }
+  methods: {}
 }
 </script>
 

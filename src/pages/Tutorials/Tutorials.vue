@@ -1,4 +1,6 @@
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
@@ -15,6 +17,9 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapGetters('tenant', ['tenant'])
   }
 }
 </script>
@@ -51,7 +56,7 @@ export default {
         <v-list-item
           v-for="(tutorial, index) in tutorials"
           :key="index"
-          :to="{ name: tutorial.to }"
+          :to="{ name: tutorial.to, params: { tenant: tenant.slug } }"
           ripple
           exact
         >
