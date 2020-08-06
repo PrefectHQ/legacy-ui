@@ -1,9 +1,5 @@
 mutation UpdateTenantSettings($settings: JSON!) {
   update_tenant_settings(input: { settings: $settings }) {
     id
-    tenant {
-      id
-      settings
-    }
   }
 }
