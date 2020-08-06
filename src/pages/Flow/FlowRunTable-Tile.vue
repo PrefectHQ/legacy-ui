@@ -146,11 +146,14 @@ export default {
       <v-text-field
         slot="action"
         v-model="searchTerm"
-        class="task-search"
+        class="search"
         dense
         solo
         prepend-inner-icon="search"
         hide-details
+        placeholder="Search for a Flow Run"
+        flat
+        style="min-width: 400px;"
       >
       </v-text-field>
     </CardTitle>
@@ -243,3 +246,14 @@ export default {
     </v-card-text>
   </v-card>
 </template>
+
+<style lang="scss" scoped>
+.search {
+  border-radius: 0 !important;
+  font-size: 0.85rem;
+
+  .v-icon {
+    font-size: 20px !important;
+  }
+}
+</style>

@@ -17,7 +17,7 @@ export default {
     fullHeight: {
       required: false,
       type: Boolean,
-      default: () => false
+      default: () => true
     }
   },
   data() {
@@ -96,7 +96,7 @@ export default {
     class="py-2 position-relative"
     tile
     :style="{
-      height: fullHeight ? '100%' : 'auto'
+      height: fullHeight ? '330px' : 'auto'
     }"
   >
     <v-system-bar :color="stateColor" :height="5" absolute>

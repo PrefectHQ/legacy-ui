@@ -222,22 +222,6 @@ export default {
       </template>
     </CardTitle>
 
-    <v-btn
-      v-if="status !== 'healthy'"
-      small
-      color="primary"
-      text
-      class="mx-1 position-absolute"
-      :class="{
-        'bottom-right-loaded': !isDeleting,
-        'bottom-right-loading': isDeleting
-      }"
-      :loading="isDeleting"
-      @click="showConfirmDialog = true"
-    >
-      Remove
-    </v-btn>
-
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
         <v-card-title class="word-break-normal">
@@ -266,128 +250,123 @@ export default {
       </v-card>
     </v-dialog>
 
-    <v-card-text class="px-3 py-2">
-      <div class="overline">
-        LAST QUERY
-      </div>
-      <transition name="fade">
-        <div v-if="showLastQuery" class="body-1">
-          <span class="font-weight-bold">{{
-            agent.last_queried | formatDateTime
-          }}</span>
-          <span v-if="agent.last_queried">|</span> {{ timer }}
+    <v-card-text class="px-0 py-0" style="height: 250px;">
+      <div class="px-3">
+        <div class="overline">
+          LAST QUERY
         </div>
-      </transition>
-
-      <div class="d-flex justify-space-between  mb-0 mt-6">
-        <div style="width: 50%;">
-          <div class="caption">
-            CORE VERSION
+        <transition name="fade">
+          <div v-if="showLastQuery" class="body-1">
+            <span class="font-weight-bold">{{
+              agent.last_queried | formatDateTime
+            }}</span>
+            <span v-if="agent.last_queried">|</span> {{ timer }}
           </div>
-          <div class="body-2 truncate">
-            {{ agent.core_version || 'Unknown' }}
-          </div>
-        </div>
+        </transition>
 
-        <div style="width: 50%;">
-          <div class="caption">
-            TOKEN ID
+        <div class="d-flex justify-space-between mb-0 mt-6">
+          <div style="width: 50%;">
+            <div class="caption">
+              CORE VERSION
+            </div>
+            <div class="body-2 truncate">
+              {{ agent.core_version || 'Unknown' }}
+            </div>
           </div>
-          <div class="body-2">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <div
-                  class="truncate"
-                  :class="{
-                    pointer: agent.token_id,
-                    'bg-gray-transition': copiedText[agent.token_id],
-                    'bg-white-transition': !copiedText[agent.token_id]
-                  }"
-                  v-on="on"
-                  @click="copyTextToClipboard(agent.token_id)"
-                >
-                  <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
-                    {{ agent.token_id || 'Unknown' }}
-                  </span>
-                </div>
-              </template>
 
-              <span>
-                <v-icon
-                  v-if="agent.token_id"
-                  x-small
-                  class="mb-2px mr-2"
-                  tabindex="0"
-                  color="white"
-                >
-                  {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
-                </v-icon>
-                {{
-                  agent.token_id
-                    ? 'Click to copy ID'
-                    : 'No token ID found; you may have registered the agent with an older version of Prefect Core.'
-                }}</span
-              >
-            </v-tooltip>
-          </div>
-        </div>
-      </div>
-
-      <div class="overline mb-0 mt-6">
-        LABELS
-      </div>
-      <div v-if="agent && agentModified.labels.length > 0">
-        <Label
-          v-for="label in agentModified.labels.slice(0, labelRenderLimit)"
-          :key="label"
-          class="mr-1 mt-1"
-          :clickable="agent && agentModified.labels.length > 1"
-          :outlined="!labelSelected(label)"
-          @click="$emit('label-click', $event)"
-        >
-          {{ label }}
-        </Label>
-        <v-menu v-model="labelMenuOpen" close-on-content-click offset-y>
-          <template v-slot:activator="{ on }">
-            <span v-on="on">
-              <Label
-                v-if="agentModified.labels.length > labelRenderLimit"
-                class="mr-1 mt-1"
-                :clickable="agent && agentModified.labels.length > 1"
-                :outlined="
-                  !anyLabelsSelected(
-                    agentModified.labels.slice(labelRenderLimit)
-                  )
-                "
-              >
-                +{{ agentModified.labels.length - labelRenderLimit }}
-              </Label>
-            </span>
-          </template>
-          <v-card max-height="270">
-            <v-list dense flat>
-              <v-list-item
-                v-for="label in agentModified.labels.slice(labelRenderLimit)"
-                :key="label"
-              >
-                <v-list-item-content>
-                  <Label
-                    :outlined="!labelSelected(label)"
-                    :clickable="agent && agentModified.labels.length > 1"
-                    @click="$emit('label-click', $event)"
+          <div style="width: 50%;">
+            <div class="caption">
+              TOKEN ID
+            </div>
+            <div class="body-2">
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <div
+                    class="truncate"
+                    :class="{
+                      pointer: agent.token_id,
+                      'bg-gray-transition': copiedText[agent.token_id],
+                      'bg-white-transition': !copiedText[agent.token_id]
+                    }"
+                    v-on="on"
+                    @click="copyTextToClipboard(agent.token_id)"
                   >
-                    {{ label }}
-                  </Label>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-menu>
+                    <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
+                      {{ agent.token_id || 'Unknown' }}
+                    </span>
+                  </div>
+                </template>
+
+                <span>
+                  <v-icon
+                    v-if="agent.token_id"
+                    x-small
+                    class="mb-2px mr-2"
+                    tabindex="0"
+                    color="white"
+                  >
+                    {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
+                  </v-icon>
+                  {{
+                    agent.token_id
+                      ? 'Click to copy ID'
+                      : 'No token ID found; you may have registered the agent with an older version of Prefect Core.'
+                  }}</span
+                >
+              </v-tooltip>
+            </div>
+          </div>
+        </div>
+
+        <div class="overline mb-0 mt-6">
+          LABELS
+        </div>
       </div>
-      <div v-else class="body-1">
+      <div
+        v-if="agent && agentModified.labels.length > 0"
+        class="px-3"
+        style="height: 80px;"
+      >
+        <v-chip-group column multiple style="user-select: none;">
+          <Label
+            v-for="label in agentModified.labels"
+            :key="label"
+            class="mr-1 mt-1"
+            clickable
+            :outlined="!labelSelected(label)"
+            size="x-small"
+            @click="$emit('label-click', $event)"
+          >
+            {{ label }}
+          </Label>
+        </v-chip-group>
+      </div>
+      <div v-else class="body-1 px-3">
         None
       </div>
     </v-card-text>
+
+    <v-divider class="my-2" />
+
+    <v-card-actions class="pa-0" style="height: 28px;">
+      <v-spacer />
+
+      <v-btn
+        v-show="status !== 'healthy'"
+        small
+        color="primary"
+        text
+        class="mx-1"
+        :class="{
+          'bottom-right-loaded': !isDeleting,
+          'bottom-right-loading': isDeleting
+        }"
+        :loading="isDeleting"
+        @click="showConfirmDialog = true"
+      >
+        Remove
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
