@@ -42,7 +42,7 @@ export default {
       if (!this.upcoming) return []
       return this.upcoming.filter(run => {
         return (
-          this.getTimeOverdue(run.scheduled_start_time)._milliseconds > 10000
+          this.getTimeOverdue(run.scheduled_start_time)._milliseconds > 20000
         )
       })
     },
@@ -53,7 +53,7 @@ export default {
       if (!this.upcoming) return []
       return this.upcoming.filter(run => {
         return (
-          this.getTimeOverdue(run.scheduled_start_time)._milliseconds <= 10000
+          this.getTimeOverdue(run.scheduled_start_time)._milliseconds <= 20000
         )
       })
     },
