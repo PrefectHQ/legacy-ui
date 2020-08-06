@@ -13,13 +13,13 @@
 </p>
 <p align="center">
 <a href="https://prefect.io">
-    <img src="https://images.ctfassets.net/gm98wzqotmnx/3mwImS57DEydMQXU1FCGG/6e36e2d49faf78cf4a166f123c2c43ca/image__5_.png" height="27" alt="Powered By Prefect>
+    <img src="https://images.ctfassets.net/gm98wzqotmnx/3mwImS57DEydMQXU1FCGG/6e36e2d49faf78cf4a166f123c2c43ca/image__5_.png" height="27" alt="Powered By Prefect">
     </a>
 </p>
 
 # Prefect UI
 
-Note: This repo is for Prefect UI development. To run the Prefect UI as part of [Prefect Server](https://github.com/PrefectHQ/server/), intsall [Prefect](https://github.com/prefecthq/prefect) and run `prefect server start`.
+Note: This repo is for Prefect UI development. To run the Prefect UI as part of [Prefect Server](https://github.com/PrefectHQ/server/), install [Prefect](https://github.com/prefecthq/prefect) and run `prefect server start`.
 
 ### Installation
 
