@@ -97,7 +97,7 @@ export default {
 
     <!-- STEP 2 -->
     <template v-slot:tutorial-step-2-title>
-      Run a simple flow using Prefect Core
+      Run a flow using Prefect Core
     </template>
     <template v-slot:tutorial-step-2-content>
       <WriteFlowStep @next="nextStep"></WriteFlowStep>
