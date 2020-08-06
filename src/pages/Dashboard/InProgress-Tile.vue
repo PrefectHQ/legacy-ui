@@ -217,20 +217,31 @@ export default {
       <v-skeleton-loader v-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
-      <div
-        v-else-if="!loading && runs.length === 0"
-        class="subtitle-1 font-weight-light"
-        style="line-height: 1.25rem;"
-      >
-        You have no
-        {{
-          tab == 'running'
-            ? 'Flows running right now'
-            : tab == 'submitted'
-            ? 'submitted runs'
-            : 'runs in progress'
-        }}
-      </div>
+      <v-list v-else-if="!loading && runs.length === 0">
+        <v-list-item>
+          <v-list-item-avatar class="mr-0">
+            <v-icon class="mb-1" :color="tileColor">
+              warning
+            </v-icon>
+          </v-list-item-avatar>
+
+          <v-list-item-content class="my-0 py-3">
+            <div
+              class="subtitle-1 font-weight-light"
+              style="line-height: 1.25rem;"
+            >
+              You have no
+              {{
+                tab == 'running'
+                  ? 'running flows'
+                  : tab == 'submitted'
+                  ? 'submitted runs'
+                  : 'runs in progress'
+              }}
+            </div>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
 
       <v-list v-else>
         <v-slide-x-transition mode="out-in" leave-absolute group>
