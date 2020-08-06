@@ -1,6 +1,6 @@
 # Prefect UI
 
-[![Powered By Prefect](https://vectr.com/znicholasbrown/bMGyv5ZyO.svg?width=176&height=32&select=bMGyv5ZyOpage0)](https://prefect.io)
+[![Powered By Prefect](https://images.ctfassets.net/gm98wzqotmnx/3mwImS57DEydMQXU1FCGG/6e36e2d49faf78cf4a166f123c2c43ca/image__5_.png)](https://prefect.io)
 [![Netlify Build Status](https://api.netlify.com/api/v1/badges/effeac10-a905-46ee-8e93-b59454ecc8bb/deploy-status)](https://app.netlify.com/sites/prefect-ui/deploys)
 
 ### Installation
