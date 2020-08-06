@@ -1,7 +1,25 @@
+<p align="center" >
+   <img src="https://images.ctfassets.net/gm98wzqotmnx/3Ufcb7yYqcXBDlAhJ30gce/c237bb3254190795b30bf734f3cbc1d4/prefect-logo-full-gradient.svg" width="500" style="max-width: 500px;">
+</p>
+
+<p align="center">
+   <a href="https://app.netlify.com/sites/prefect-ui/deploys">
+      <img src="https://api.netlify.com/api/v1/badges/effeac10-a905-46ee-8e93-b59454ecc8bb/deploy-status" alt="Netlify Build Status">
+   </a>
+
+   <a href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE">
+      <img src="https://prefect-slackin.herokuapp.com/badge.svg">
+   </a>
+</p>
+<p align="center">
+<a href="https://prefect.io">
+    <img src="https://images.ctfassets.net/gm98wzqotmnx/3mwImS57DEydMQXU1FCGG/6e36e2d49faf78cf4a166f123c2c43ca/image__5_.png" height="27" alt="Powered By Prefect>
+    </a>
+</p>
+
 # Prefect UI
 
-[![Powered By Prefect](https://images.ctfassets.net/gm98wzqotmnx/3mwImS57DEydMQXU1FCGG/6e36e2d49faf78cf4a166f123c2c43ca/image__5_.png)](https://prefect.io)
-[![Netlify Build Status](https://api.netlify.com/api/v1/badges/effeac10-a905-46ee-8e93-b59454ecc8bb/deploy-status)](https://app.netlify.com/sites/prefect-ui/deploys)
+Note: This repo is for Prefect UI development. To run the Prefect UI as part of [Prefect Server](https://github.com/PrefectHQ/server/), intsall [Prefect](https://github.com/prefecthq/prefect) and run `prefect server start`.
 
 ### Installation
 
