@@ -93,10 +93,10 @@ export default {
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
 
-    document.removeEventListener(
-      'visibilitychange',
-      this.handleVisibilityChange
-    )
+    // document.removeEventListener(
+    //   'visibilitychange',
+    //   this.handleVisibilityChange
+    // )
     // window.removeEventListener('blur', this.handleVisibilityChange)
     // window.removeEventListener('focus', this.handleVisibilityChange)
   },
@@ -114,11 +114,11 @@ export default {
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
 
-    document.addEventListener(
-      'visibilitychange',
-      this.handleVisibilityChange,
-      false
-    )
+    // document.addEventListener(
+    //   'visibilitychange',
+    //   this.handleVisibilityChange,
+    //   false
+    // )
     // window.addEventListener('blur', this.handleVisibilityChange, false)
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
