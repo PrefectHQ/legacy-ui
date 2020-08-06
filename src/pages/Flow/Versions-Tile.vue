@@ -125,7 +125,9 @@ export default {
   },
   apollo: {
     versions: {
-      query: require('@/graphql/Flow/flow-versions.gql'),
+      query() {
+        return require('@/graphql/Flow/flow-versions.js').default(this.isCloud)
+      },
       variables() {
         return {
           flow_group_id: this.flowGroupId,
