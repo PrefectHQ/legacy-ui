@@ -64,73 +64,78 @@ export default {
           <div class="text-truncate pb-1">
             {{ flowRun.name }}
           </div>
-          <div class="subtitle-2 grey--text text--darken-2">
+          <div
+            class="subtitle-2 grey--text text--darken-2 caption position-absolute font-weight-medium"
+            style="bottom: 2px;"
+          >
             {{ flowRunVersion }}
           </div>
         </v-col>
-        <v-col cols="4">
-          <div class="d-flex flex-column align-end">
-            <v-btn
-              depressed
-              small
-              tile
-              icon
-              class="button-transition w-100 d-flex justify-end"
-              :color="tab == 'overview' ? 'primary' : ''"
-              :style="{
-                'border-right': `3px solid ${
-                  tab == 'overview' ? 'var(--v-primary-base)' : '#fff'
-                }`,
-                'box-sizing': 'content-box'
-              }"
-              @click="tab = 'overview'"
-            >
-              Overview
-              <v-icon small>calendar_view_day</v-icon>
-            </v-btn>
-
-            <v-btn
-              v-if="hasParameters"
-              depressed
-              small
-              tile
-              icon
-              class="button-transition w-100 d-flex justify-end"
-              :color="tab == 'parameters' ? 'primary' : ''"
-              :style="{
-                'border-right': `3px solid ${
-                  tab == 'parameters' ? 'var(--v-primary-base)' : '#fff'
-                }`,
-                'box-sizing': 'content-box'
-              }"
-              @click="tab = 'parameters'"
-            >
-              Parameters
-              <v-icon small>notes</v-icon>
-            </v-btn>
-
-            <v-btn
-              v-if="hasContext"
-              depressed
-              small
-              tile
-              icon
-              class="button-transition w-100 d-flex justify-end"
-              :color="tab == 'context' ? 'primary' : ''"
-              :style="{
-                'border-right': `3px solid ${
-                  tab == 'context' ? 'var(--v-primary-base)' : '#fff'
-                }`,
-                'box-sizing': 'content-box'
-              }"
-              @click="tab = 'context'"
-            >
-              Context
-              <v-icon small>list</v-icon>
-            </v-btn>
-          </div>
-        </v-col>
       </v-row>
+
+      <div slot="action" class="d-flex flex-column align-end">
+        <v-btn
+          depressed
+          small
+          tile
+          icon
+          class="button-transition w-100 d-flex justify-end"
+          :color="tab == 'overview' ? 'primary' : ''"
+          :style="{
+            'border-right': `3px solid ${
+              tab == 'overview' ? 'var(--v-primary-base)' : '#fff'
+            }`,
+            'box-sizing': 'content-box',
+            'min-width': '100px'
+          }"
+          @click="tab = 'overview'"
+        >
+          Overview
+          <v-icon small>calendar_view_day</v-icon>
+        </v-btn>
+
+        <v-btn
+          v-if="hasParameters"
+          depressed
+          small
+          tile
+          icon
+          class="button-transition w-100 d-flex justify-end"
+          :color="tab == 'parameters' ? 'primary' : ''"
+          :style="{
+            'border-right': `3px solid ${
+              tab == 'parameters' ? 'var(--v-primary-base)' : '#fff'
+            }`,
+            'box-sizing': 'content-box',
+            'min-width': '100px'
+          }"
+          @click="tab = 'parameters'"
+        >
+          Parameters
+          <v-icon small>notes</v-icon>
+        </v-btn>
+
+        <v-btn
+          v-if="hasContext"
+          depressed
+          small
+          tile
+          icon
+          class="button-transition w-100 d-flex justify-end"
+          :color="tab == 'context' ? 'primary' : ''"
+          :style="{
+            'border-right': `3px solid ${
+              tab == 'context' ? 'var(--v-primary-base)' : '#fff'
+            }`,
+            'box-sizing': 'content-box',
+            'min-width': '100px'
+          }"
+          @click="tab = 'context'"
+        >
+          Context
+          <v-icon small>list</v-icon>
+        </v-btn>
+      </div>
     </CardTitle>
 
     <CardTitle

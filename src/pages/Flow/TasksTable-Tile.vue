@@ -87,10 +87,13 @@ export default {
         slot="action"
         v-model="searchTerm"
         class="task-search"
+        placeholder="Search for a task"
         dense
         solo
+        flat
         prepend-inner-icon="search"
         hide-details
+        style="min-width: 400px;"
       >
       </v-text-field>
     </CardTitle>

@@ -10,6 +10,11 @@ export default {
       type: Boolean,
       default: true,
       required: false
+    },
+    size: {
+      type: String,
+      default: 'small',
+      required: false
     }
   },
   methods: {
@@ -25,7 +30,10 @@ export default {
     :disabled="!clickable"
     color="primary"
     :outlined="outlined"
-    small
+    :x-large="size === 'x-large'"
+    :large="size === 'large'"
+    :small="size === 'small'"
+    :x-small="size === 'x-small'"
     style="user-select: auto;"
     @click="handleClick"
   >

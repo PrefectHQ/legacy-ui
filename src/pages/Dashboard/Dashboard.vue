@@ -305,12 +305,13 @@ export default {
             slot="row-2-col-1-row-2-tile-1"
             :loading="loadedTiles < 5"
             type="image"
-            height="300"
+            min-height="329"
+            height="100%"
             transition="quick-fade"
             class="my-2"
             tile
           >
-            <FlowRunHeartbeatTile :project-id="projectId" />
+            <FlowRunHeartbeatTile :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
@@ -330,13 +331,17 @@ export default {
             slot="row-2-col-2-row-2-tile-2"
             :loading="loadedTiles < 4"
             type="image"
-            min-height="200px"
+            min-height="329"
             height="100%"
             transition="quick-fade"
             class="my-2"
             tile
           >
-            <AgentsTile v-if="isCloud" @view-details-clicked="tab = 'agents'" />
+            <AgentsTile
+              v-if="isCloud"
+              full-height
+              @view-details-clicked="tab = 'agents'"
+            />
             <ApiHealthCheckTile v-else />
           </v-skeleton-loader>
         </TileLayout>

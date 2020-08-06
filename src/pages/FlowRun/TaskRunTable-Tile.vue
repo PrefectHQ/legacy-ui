@@ -137,10 +137,12 @@ export default {
         v-model="searchTerm"
         class="task-search"
         dense
+        flat
         solo
         prepend-inner-icon="search"
         hide-details
         placeholder="Search by Task or Run Name"
+        style="min-width: 300px;"
       >
       </v-text-field>
     </CardTitle>

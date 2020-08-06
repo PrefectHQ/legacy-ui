@@ -222,6 +222,15 @@ export default {
                 </router-link>
               </div>
 
+              <div v-if="type == 'task'">
+                <router-link
+                  class="link"
+                  :to="{ name: 'task-run', params: { id: item.id } }"
+                >
+                  Task Run
+                </router-link>
+              </div>
+
               <div class="mb-1 caption">
                 {{ formatTime(item.state_timestamp || item.timestamp) }}
               </div>

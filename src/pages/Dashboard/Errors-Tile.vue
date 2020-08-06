@@ -115,7 +115,7 @@ export default {
     class="py-2"
     tile
     :style="{
-      height: fullHeight ? '100%' : 'auto'
+      height: fullHeight ? '330px' : 'auto'
     }"
   >
     <v-system-bar :color="stateColor" :height="5" absolute>

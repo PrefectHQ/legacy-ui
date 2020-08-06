@@ -260,6 +260,7 @@ export default {
           :placeholder="placeholderMessage"
           prepend-inner-icon="search"
           autocomplete="new-password"
+          style="min-width: 400px;"
           @input="handleTableSearchInput"
         />
       </div>
