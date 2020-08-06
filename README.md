@@ -1,7 +1,25 @@
+<p align="center" >
+   <img src="https://images.ctfassets.net/gm98wzqotmnx/3Ufcb7yYqcXBDlAhJ30gce/c237bb3254190795b30bf734f3cbc1d4/prefect-logo-full-gradient.svg" width="500" style="max-width: 500px;" alt="Prefect Logo">
+</p>
+
+<p align="center">
+   <a href="https://app.netlify.com/sites/prefect-ui/deploys">
+      <img src="https://api.netlify.com/api/v1/badges/effeac10-a905-46ee-8e93-b59454ecc8bb/deploy-status" alt="Netlify Build Status" alt="Netlify status badge">
+   </a>
+
+   <a href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE">
+      <img src="https://prefect-slackin.herokuapp.com/badge.svg" alt="Slack members status badge">
+   </a>
+</p>
+<p align="center">
+<a href="https://prefect.io">
+    <img src="https://images.ctfassets.net/gm98wzqotmnx/3mwImS57DEydMQXU1FCGG/6e36e2d49faf78cf4a166f123c2c43ca/image__5_.png" height="27" alt="Powered By Prefect">
+    </a>
+</p>
+
 # Prefect UI
 
-[![Powered By Prefect](https://vectr.com/znicholasbrown/bMGyv5ZyO.svg?width=176&height=32&select=bMGyv5ZyOpage0)](https://prefect.io)
-[![Netlify Build Status](https://api.netlify.com/api/v1/badges/effeac10-a905-46ee-8e93-b59454ecc8bb/deploy-status)](https://app.netlify.com/sites/prefect-ui/deploys)
+Note: This repo is for Prefect UI development. To run the Prefect UI as part of [Prefect Server](https://github.com/PrefectHQ/server/), install [Prefect](https://github.com/prefecthq/prefect) and run `prefect server start`.
 
 ### Installation
 
@@ -53,4 +71,4 @@ Coming soon...
 
 ## License
 
-Prefect UI is made lovingly by the team at Prefect. For information on how you can use, extend, and depend on Prefect UI to manage Prefect workflows, take a look at our [license](https://github.com/PrefectHQ/ui/blob/master/LICENSE).
+Prefect UI is lovingly made by the team at [Prefect](https://www.prefect.io) and licensed under the [Prefect Community License](https://www.prefect.io/legal/prefect-community-license/). For information on how you can use, extend, and depend on Prefect UI to automate your data, take a look at our [license](https://github.com/PrefectHQ/ui/blob/master/LICENSE) or [contact us](https://www.prefect.io/get-prefect#contact).
