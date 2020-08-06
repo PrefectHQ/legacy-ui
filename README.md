@@ -53,4 +53,4 @@ Coming soon...
 
 ## License
 
-Prefect UI is made lovingly by the team at Prefect. For information on how you can use, extend, and depend on Prefect UI to manage Prefect workflows, take a look at our [license](https://github.com/PrefectHQ/ui/blob/master/LICENSE).
+Prefect UI is lovingly made by the team at [Prefect](https://www.prefect.io) and licensed under the [Prefect Community License](https://www.prefect.io/legal/prefect-community-license/). For information on how you can use, extend, and depend on Prefect Server to automate your data, take a look at our [license](https://github.com/PrefectHQ/server/blob/master/LICENSE) or [contact us](https://www.prefect.io/get-prefect#contact).
