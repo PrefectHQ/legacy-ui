@@ -108,7 +108,7 @@ export default {
       "
     />
 
-    <v-list dense class="card-content">
+    <v-list class="card-content">
       <v-slide-y-reverse-transition v-if="isLoading" leave-absolute group>
         <v-skeleton-loader key="loading" type="list-item-avatar">
         </v-skeleton-loader>
@@ -123,7 +123,7 @@ export default {
           </v-list-item-avatar>
           <v-list-item-content class="my-0 py-3">
             <div
-              class="inline-block subtitle-1 font-weight-light"
+              class="inline-block text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               Something went wrong while trying to fetch running agents. Please
@@ -147,7 +147,7 @@ export default {
           </v-list-item-avatar>
           <v-list-item-content class="my-0 py-3">
             <div
-              class="subtitle-1 font-weight-light"
+              class=" text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               You do not have any agents querying Prefect Cloud for flow runs.
@@ -167,7 +167,7 @@ export default {
           </v-list-item-avatar>
           <v-list-item-content class="my-0 py-3">
             <div
-              class="subtitle-1 font-weight-light"
+              class=" text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               <span class="font-weight-medium">{{ agentTracker.healthy }}</span>
@@ -190,7 +190,7 @@ export default {
           </v-list-item-avatar>
           <v-list-item-content class="my-0 py-3">
             <div
-              class="subtitle-1 font-weight-light"
+              class="text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               <span class="font-weight-medium">{{ agentTracker.stale }}</span>
@@ -216,13 +216,13 @@ export default {
           </v-list-item-avatar>
           <v-list-item-content class="my-0 py-3">
             <div
-              class="subtitle-1 font-weight-light"
+              class="text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               <span>
-                <span class="font-weight-medium">{{
-                  agentTracker.unhealthy
-                }}</span>
+                <span class="font-weight-medium">
+                  {{ agentTracker.unhealthy }}
+                </span>
                 agent{{ agentTracker.unhealthy === 1 ? '' : 's' }}
                 {{ agentTracker.unhealthy === 1 ? 'has' : 'have' }}
                 not queried Cloud for flow runs in the last
