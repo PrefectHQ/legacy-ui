@@ -33,7 +33,16 @@ export default {
           //once they accept the invitation, the invitation id is removed.
           localStorage.removeItem('invitationId')
           // Sets the tenant so that they're rerouted to the correct dashboard.
-          await this.getTenant(data.acceptMembershipInvitation.id)
+
+          await this.getTenants()
+
+          const tenantSlug = this.user.memberships.filter(
+            membership => membership.tenant.id === this.tenant.id
+          )?.tenant?.slug
+
+          if (tenantSlug) {
+            this.setCurrentTenant(tenantSlug)
+          }
           this.loading = false
         } else if (errors) {
           if (errors[0].message === 'Uniqueness violation.') {
@@ -50,7 +59,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions('tenant', ['getTenant']),
+    ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     async accept() {
       this.$router.push({
         name: 'dashboard',

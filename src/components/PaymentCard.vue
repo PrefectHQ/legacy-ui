@@ -160,7 +160,7 @@ export default {
         this.cardError = 'There was a problem adding your card information.'
       }
     },
-    reset() {
+    async reset() {
       this.$emit('close')
       this.email = null
       this.address = null
@@ -169,10 +169,11 @@ export default {
       const tenantSlug = this.user.memberships.filter(
         membership => membership.tenant.id === this.tenant.id
       )?.tenant?.slug
-      this.getTenants()
+
+      await this.getTenants()
 
       if (tenantSlug) {
-        this.setCurrentTenant(tenantSlug)
+        await this.setCurrentTenant(tenantSlug)
       }
       this.loading = false
     }
