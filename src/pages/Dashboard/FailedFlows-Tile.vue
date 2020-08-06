@@ -139,7 +139,7 @@ export default {
     </v-tooltip>
 
     <v-card-text class="card-content pa-0">
-      <v-list dense>
+      <v-list>
         <v-slide-y-reverse-transition v-if="loading > 0" leave-absolute group>
           <v-skeleton-loader key="skeleton" type="list-item-three-line">
           </v-skeleton-loader>
@@ -176,33 +176,27 @@ export default {
               threshold: 0.75
             }"
             min-height="40px"
-            transition="fade"
+            transition="slide-y"
           >
             <v-list-item
-              class="text-truncate"
               :to="{
                 name: 'flow',
-                params: { id: failure.flow_id }
+                params: { id: failure.flow.flow_group_id }
               }"
             >
               <v-list-item-content>
-                <v-list-item-title class="subtitle-2">
-                  <router-link
-                    class="link"
-                    :to="{
-                      name: 'flow',
-                      params: { id: failure.flow_id }
-                    }"
-                    >{{ failure.flow.name }}</router-link
-                  >
+                <v-list-item-title>
+                  <div class="truncate d-inline-block" style="max-width: 95%;">
+                    {{ failure.flow.name }}
+                  </div>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   {{ formatDateTime(failure.state_timestamp) }}
                 </v-list-item-subtitle>
               </v-list-item-content>
-              <v-list-item-avatar
-                ><v-icon>arrow_right</v-icon></v-list-item-avatar
-              >
+              <v-list-item-avatar>
+                <v-icon>arrow_right</v-icon>
+              </v-list-item-avatar>
             </v-list-item>
           </v-lazy>
         </v-slide-y-reverse-transition>

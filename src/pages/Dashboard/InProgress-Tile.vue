@@ -1,18 +1,15 @@
 <script>
-/* eslint-disable */
 import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
-import ExternalLink from '@/components/ExternalLink'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
     CardTitle,
     ConcurrencyInfo,
-    DurationSpan,
-    ExternalLink
+    DurationSpan
   },
   mixins: [formatTime],
   props: {
@@ -54,7 +51,7 @@ export default {
     },
     runs() {
       if (this.tab == 'submitted') return this.submitted
-      if (this.tab == 'running') return this.runs
+      if (this.tab == 'running') return this.running
       return this.all
     },
     tileColor() {
@@ -106,7 +103,7 @@ export default {
   watch: {
     async tenant(val) {
       if (val) {
-        await this.$apollo.queries.upcoming.refetch()
+        await this.$apollo.queries.flowRuns.refetch()
       }
     }
   },
@@ -135,7 +132,9 @@ export default {
     class="pb-2"
     tile
     :style="{
-      height: fullHeight ? '330px' : 'auto'
+      height: fullHeight ? '330px' : 'auto',
+      'max-width': '100%',
+      overflow: 'hidden'
     }"
   >
     <v-progress-linear
@@ -144,6 +143,7 @@ export default {
       height="5"
       value="100"
       absolute
+      :indeterminate="loading"
       :color="tileColor"
     />
 
@@ -213,7 +213,7 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text v-if="tab == 'upcoming'" class="pa-0 card-content">
+    <v-card-text class="pa-0 card-content">
       <v-skeleton-loader v-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
@@ -232,74 +232,69 @@ export default {
         }}
       </div>
 
-      <!-- 
-      
+      <v-list v-else>
+        <v-slide-x-transition mode="out-in" leave-absolute group>
+          <v-lazy
+            v-for="run in runs"
+            :key="run.id"
+            :options="{
+              threshold: 0.75
+            }"
+            min-height="40px"
+            transition="fade"
+          >
+            <div>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex align-center">
+                    <div
+                      class="truncate d-inline-block"
+                      style="max-width: 50%;"
+                    >
+                      <router-link
+                        :to="{
+                          name: 'flow',
+                          params: { id: run.flow.flow_group_id }
+                        }"
+                      >
+                        {{ run.flow.name }}
+                      </router-link>
+                    </div>
+                    <div class="font-weight-bold d-inline-block">
+                      <v-icon style="font-size: 12px;">
+                        chevron_right
+                      </v-icon>
+                    </div>
 
-      <v-list v-else dense>
-        <v-lazy
-          v-for="item in upcomingRuns"
-          :key="item.id"
-          :options="{
-            threshold: 0.75
-          }"
-          min-height="44"
-          transition="fade-transition"
-        >
-          <v-list-item dense :disabled="setToRun.includes(item.id)">
-            <v-list-item-content>
-              <span class="caption mb-0">
-                Scheduled for
-                {{ formatDateTime(item.scheduled_start_time) }}
-              </span>
-              <v-list-item-subtitle class="font-weight-light">
-                <router-link
-                  :to="{ name: 'flow', params: { id: item.flow.id } }"
-                >
-                  {{ item.flow.name }}
-                </router-link>
-                <span class="font-weight-bold">
-                  <v-icon style="font-size: 12px;">
-                    chevron_right
-                  </v-icon>
-                </span>
-                <router-link
-                  :to="{ name: 'flow-run', params: { id: item.id } }"
-                >
-                  {{ item.name }}
-                </router-link>
-              </v-list-item-subtitle>
-            </v-list-item-content>
+                    <div
+                      class="truncate d-inline-block"
+                      style="max-width: 35%;"
+                    >
+                      <router-link
+                        :to="{ name: 'flow-run', params: { id: run.id } }"
+                      >
+                        {{ run.name }}
+                      </router-link>
+                    </div>
+                  </v-list-item-title>
+                  <v-list-item-subtitle v-if="run.start_time">
+                    Running for
+                    <DurationSpan
+                      class="font-weight-bold"
+                      :start-time="run.start_time"
+                    />
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle v-else-if="run.state == 'Submitted'">
+                    Submitted for execution
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-            <v-list-item-action tile min-width="5" class="body-2">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    text
-                    x-small
-                    aria-label="Run Now"
-                    :disabled="setToRun.includes(item.id)"
-                    color="primary"
-                    class="vertical-button"
-                    v-on="on"
-                    @click="runFlowNow(item.id, item.version, item.name)"
-                  >
-                    <v-icon x-small dense color="primary"> fa-rocket</v-icon>
-                  </v-btn>
-                </template>
-                <span> Run {{ item.name }} now </span>
-              </v-tooltip>
-            </v-list-item-action>
-          </v-list-item>
-        </v-lazy>
+              <v-divider class="my-1 mx-4 grey lighten-4" />
+            </div>
+          </v-lazy>
+        </v-slide-x-transition>
       </v-list>
-
-      <div
-        v-if="upcomingRuns && upcomingRuns.length > 3"
-        class="pa-0 card-footer"
-      >
-      </div>
-    </v-card-text>
-      </v-list> -->
 
       <div v-if="runs && runs.length > 3" class="pa-0 card-footer"> </div>
     </v-card-text>
