@@ -60,10 +60,10 @@ const prefectUser = async () => {
   }
 }
 
-const prefectTenants = async () => {
+const prefectTenants = async isCloud => {
   // try {
   const result = await fallbackApolloClient.query({
-    query: require('@/graphql/Tenant/tenants.gql'),
+    query: require('@/graphql/Tenant/tenants.js').default(isCloud),
     fetchPolicy: 'no-cache'
   })
   return result.data.tenant
