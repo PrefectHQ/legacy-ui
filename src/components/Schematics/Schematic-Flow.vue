@@ -318,7 +318,7 @@ export default {
       // eslint-disable-next-line
       if (this.debug) console.timeEnd('Pre-stratify')
 
-      // If it takes more than 10 seconds to calculate the
+      // If it takes more than 60 seconds to calculate the
       // dag layout, we'll stop the calculation,
       // terminate the worker, and show an error message
       let timeout = setTimeout(() => {
@@ -339,7 +339,7 @@ export default {
           }
         })
         return
-      }, 30000)
+      }, 60000)
 
       this.loadingKey++
       this.dag = await this.worker.Stratify(preStratify)
