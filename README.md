@@ -21,7 +21,7 @@ Then, you can start the Prefect UI development server:
 $ npm run serve
 ```
 
-Prefect UI should be available at [localhost:8080](http://localhost:8080); changes to the code in the `src/` directory will result in a hot reload of the application. For more information on hot-reloading or the development server, take a look at the [Webpack](https://webpack.js.org/) and [Vue CLI](https://cli.vuejs.org/) documentation.
+The Prefect UI should be available at [http://localhost:8080](http://localhost:8080); changes to the code in the `src/` directory will result in a hot reload of the application. For more information on hot-reloading or the development server, take a look at the [Webpack](https://webpack.js.org/) and [Vue CLI](https://cli.vuejs.org/) documentation.
 
 ### Testing
 
