@@ -24,7 +24,7 @@ export default {
 
       navigator.clipboard.writeText(
         document
-          .getElementById('ud-code-after')
+          .getElementById('ud-code')
           .innerText.replace(/\n- (.*)/g, '')
           .replace(/\+\s/g, '')
           .replace(/\n{3,}/g, '\n\n')
@@ -46,11 +46,11 @@ export default {
       running:
     </p>
 
-    <v-btn x-small class="float-right" @click="copyCode">
+    <v-btn x-small class="float-right mr-2 mt-2" @click="copyCode">
       {{ codeCopied ? 'Copied!' : 'Copy' }}
     </v-btn>
 
-    <pre id="ud-code-after" class="code-block" style="font-size: 12px;">
+    <pre id="ud-code" class="code-block" style="font-size: 12px;">
 import prefect
 from prefect import task, Flow
 

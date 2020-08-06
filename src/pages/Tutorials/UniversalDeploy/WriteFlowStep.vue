@@ -10,7 +10,11 @@ export default {
       this.codeCopied = true
 
       navigator.clipboard.writeText(
-        document.getElementById('ud-code-before').innerText
+        document
+          .getElementById('ud-code')
+          .innerText.replace(/\n- (.*)/g, '')
+          .replace(/\+\s/g, '')
+          .replace(/\n{3,}/g, '\n\n')
       )
 
       setTimeout(() => {
@@ -27,7 +31,7 @@ export default {
       Now let's write a flow that logs the string "Hello world!":
     </p>
 
-    <v-btn x-small class="float-right" @click="copyCode">
+    <v-btn x-small class="float-right mr-2 mt-2" @click="copyCode">
       {{ codeCopied ? 'Copied!' : 'Copy' }}
     </v-btn>
 
@@ -35,7 +39,7 @@ export default {
       class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
       style="border: 1px solid #b0bec5 !important;"
     >
-      <pre class="code-block">
+      <pre id="ud-code" class="code-block">
 import prefect
 from prefect import task, Flow
 
@@ -47,8 +51,7 @@ def hello_task():
 flow = Flow("hello-flow", tasks=[hello_task])
 
 flow.run()
-          </pre
-      >
+      </pre>
     </div>
 
     <p>
@@ -57,7 +60,10 @@ flow.run()
       <kbd>flow.run()</kbd> :
     </p>
 
-    <div class="logs-block pa-3 mt-6">
+    <div
+      class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4 logs-block"
+      style="border: 1px solid #b0bec5 !important;"
+    >
       [2020-01-08 23:49:00,239] INFO - prefect.FlowRunner | Beginning Flow run
       for 'hello-flow'
       <br />
