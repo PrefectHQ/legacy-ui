@@ -48,7 +48,7 @@ export default {
     }, 1000)
   },
   methods: {
-    ...mapActions('tenant', ['getTenant', 'updateTenantSettings']),
+    ...mapActions('tenant', ['getTenants', 'updateTenantSettings']),
     async createLicense() {
       this.loading++
 
@@ -105,7 +105,7 @@ export default {
         })
       } else {
         try {
-          const newTenant = await this.$apollo.mutate({
+          await this.$apollo.mutate({
             mutation: require('@/graphql/Tenant/update-tenant.gql'),
             variables: {
               name: this.tenantChanges.name || this.tenant.name,
@@ -113,13 +113,14 @@ export default {
             }
           })
 
-          await this.getTenant(
-            newTenant.data.update_tenant_slug.tenant.memberships[0].id
-          )
-
           await this.updateTenantSettings({
             teamNamed: true
           })
+
+          await this.getTenants()
+          await this.setCurrentTenant(
+            this.tenantChanges.slug || this.tenant.slug
+          )
         } catch (e) {
           this.updateServerError = true
         }

@@ -84,7 +84,7 @@ export const routes = [
   // --------------------------- //
   {
     name: 'team',
-    path: '/:tenant?/team',
+    path: '/team',
     component: () =>
       import(
         /* webpackChunkName: "team-settings" */ '@/pages/TeamSettings/TeamSettings.vue'
