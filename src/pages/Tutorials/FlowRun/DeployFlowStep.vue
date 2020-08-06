@@ -1,5 +1,6 @@
 <script>
-import '@/styles/atelier-sulphurpool-light.css'
+import { mapActions } from 'vuex'
+
 export default {
   props: {
     complete: {
@@ -17,6 +18,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     async deployFlow() {
       try {
         // Import the demo flow from the JSON file
@@ -26,8 +28,8 @@ export default {
         const result = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/deploy-flow.gql'),
           variables: {
-            project_id: this.projectId,
-            serialized_flow: flow.default
+            projectId: this.projectId,
+            serializedFlow: flow.default
           }
         })
 
@@ -35,9 +37,14 @@ export default {
 
         this.$emit('flow-deployed', this.flowId)
       } catch (error) {
-        this.$toasted.error(
-          'Failed to deploy flow. Please wait a few moments and try again',
-          { duration: 3000 }
+        this.setAlert(
+          {
+            alertShow: true,
+            alertMessage:
+              'Failed to deploy flow. Please wait a few moments and try again',
+            alertType: 'error'
+          },
+          3000
         )
 
         throw error
@@ -56,28 +63,33 @@ export default {
       here:
 
       <v-card flat class="my-6">
-        <pre style="font-size: 12px;">
-  import prefect
-  from prefect import task, Flow
-  from prefect.environments.storage import Docker
+        <div
+          class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
+          style="border: 1px solid #b0bec5 !important;"
+        >
+          <pre class="code-block">
+import prefect
+from prefect import task, Flow
+from prefect.environments.storage import Docker
 
 
-  @task(name="Welcome", slug="welcome-task")
-  def welcome_logger():
-      logger = prefect.context["logger"]
-      with open("/ascii-welcome.txt", "r") as f:
-          lines = "\n\n" + "".join(f.readlines()) + "\n\n"
+@task(name="Welcome", slug="welcome-task")
+def welcome_logger():
+    logger = prefect.context["logger"]
+    with open("/ascii-welcome.txt", "r") as f:
+        lines = "\n\n" + "".join(f.readlines()) + "\n\n"
 
-      logger.info(lines)
+    logger.info(lines)
 
-  storage = Docker(
-      registry_url="prefecthq",
-      image_name="flows",
-      image_tag="welcome-flow",
-      files={"welcome.txt": "/ascii-welcome.txt"},
-  )
-  f = Flow("Welcome Flow", tasks=[welcome_logger], storage=storage)
-        </pre>
+storage = Docker(
+    registry_url="prefecthq",
+    image_name="flows",
+    image_tag="welcome-flow",
+    files={"welcome.txt": "/ascii-welcome.txt"},
+)
+f = Flow("Welcome Flow", tasks=[welcome_logger], storage=storage)
+          </pre>
+        </div>
       </v-card>
       When you click the "Deploy Flow" button, we will copy the metadata
       associated with this flow into your newly created project. The code itself
