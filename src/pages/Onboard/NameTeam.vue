@@ -48,7 +48,7 @@ export default {
     }, 1000)
   },
   methods: {
-    ...mapActions('tenant', ['getTenant', 'updateTenantSettings']),
+    ...mapActions('tenant', ['getTenants', 'updateTenantSettings']),
     async createLicense() {
       this.loading++
 
