@@ -10,7 +10,8 @@ Prefect UI requires [Node.js](https://nodejs.org/) v10+ and [npm](https://www.np
 Before starting the Prefect UI development server, you'll need to install project dependencies:
 
 ```sh
-$ cd prefect-ui
+$ git clone https://github.com/PrefectHQ/ui.git
+$ cd ui
 $ npm install
 ```
 
