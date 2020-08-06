@@ -87,7 +87,7 @@ workflows:
           docker-username: DOCKER_HUB_USER
           image: 'prefecthq/ui'
           path: '.'
-          tag: alpha
+          tag: master
           filters:
             branches:
               only: master
