@@ -11,9 +11,13 @@ query FlowFailures($projectId: uuid, $heartbeat: timestamptz, $tenantId: uuid) {
   ) {
     flow_id
     state_timestamp
+
     flow {
+      id
       name
+      flow_group_id
     }
+
     updated
   }
 }

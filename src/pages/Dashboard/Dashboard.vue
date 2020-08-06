@@ -2,13 +2,13 @@
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
-import ErrorsTile from '@/pages/Dashboard/Errors-Tile'
+import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHeartbeatTile from '@/pages/Dashboard/FlowRunHeartbeat-Tile'
-import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
-import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
-import FailuresTile from '@/pages/Dashboard/Failures-Tile'
+import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
+import SummaryTile from '@/pages/Dashboard/Summary-Tile'
+import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import TimelineTile from '@/pages/Dashboard/Timeline-Tile'
@@ -46,13 +46,13 @@ export default {
     Agents,
     AgentsTile,
     ApiHealthCheckTile,
-    ErrorsTile,
+    FailedFlowsTile,
     FlowRunHeartbeatTile,
     FlowTableTile,
+    InProgressTile,
     ProjectSelector,
     SubPageNav,
     SummaryTile,
-    FailuresTile,
     TileLayout,
     TimelineTile,
     UpcomingRunsTile
@@ -285,7 +285,7 @@ export default {
             class="my-2"
             tile
           >
-            <FailuresTile :project-id="projectId" />
+            <FailedFlowsTile :project-id="projectId" />
           </v-skeleton-loader>
 
           <v-skeleton-loader
@@ -324,7 +324,7 @@ export default {
             class="my-2"
             tile
           >
-            <ErrorsTile :project-id="projectId" full-height />
+            <InProgressTile :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader

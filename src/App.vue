@@ -67,7 +67,7 @@ export default {
         this.shown = true
         this.refresh()
         clearTimeout(this.refreshTimeout)
-      }, 1000)
+      }, 3000)
     },
     async connected(val) {
       if (!val) {
@@ -93,12 +93,12 @@ export default {
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
 
-    document.removeEventListener(
-      'visibilitychange',
-      this.handleVisibilityChange
-    )
-    window.removeEventListener('blur', this.handleVisibilityChange)
-    window.removeEventListener('focus', this.handleVisibilityChange)
+    // document.removeEventListener(
+    //   'visibilitychange',
+    //   this.handleVisibilityChange
+    // )
+    // window.removeEventListener('blur', this.handleVisibilityChange)
+    // window.removeEventListener('focus', this.handleVisibilityChange)
   },
   mounted() {
     if (!this.isCloud || this.isAuthenticated) {
@@ -114,13 +114,13 @@ export default {
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
 
-    document.addEventListener(
-      'visibilitychange',
-      this.handleVisibilityChange,
-      false
-    )
-    window.addEventListener('blur', this.handleVisibilityChange, false)
-    window.addEventListener('focus', this.handleVisibilityChange, false)
+    // document.addEventListener(
+    //   'visibilitychange',
+    //   this.handleVisibilityChange,
+    //   false
+    // )
+    // window.addEventListener('blur', this.handleVisibilityChange, false)
+    // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
     ...mapActions('api', ['getApi', 'monitorConnection']),
