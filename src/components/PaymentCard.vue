@@ -103,6 +103,7 @@ export default {
     ...mapActions('license', ['getLicense']),
     ...mapActions('alert', ['setAlert']),
     ...mapActions('tenant', ['getTenants']),
+    ...mapActions('user', ['getUser']),
     async checkForm() {
       const options = {
         owner: {
@@ -166,11 +167,12 @@ export default {
       this.address = null
       this.cardError = null
       this.username = null
+
+      await this.getUser()
+
       const tenantSlug = this.user.memberships.filter(
         membership => membership.tenant.id === this.tenant.id
       )?.tenant?.slug
-
-      await this.getTenants()
 
       if (tenantSlug) {
         await this.setCurrentTenant(tenantSlug)

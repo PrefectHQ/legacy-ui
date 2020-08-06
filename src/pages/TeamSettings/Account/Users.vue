@@ -89,7 +89,8 @@ export default {
   methods: {
     ...mapActions('license', ['getLicense']),
     ...mapActions('alert', ['setAlert']),
-    ...mapActions('tenant', ['getTenant']),
+    ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     handleInput(ev) {
       this.diff = ev - this.license?.terms?.users + 1
       if (this.diff != 0) this.show = true
@@ -143,10 +144,15 @@ export default {
       this.show = false
       this.users = this.license.terms.users - 1
       this.diff = 0
-      const tenantMembershipId = this.user.memberships.filter(
+
+      await this.getUser()
+      const tenantSlug = this.user.memberships.filter(
         membership => membership.tenant.id === this.tenant.id
-      )
-      await this.getTenant(tenantMembershipId[0].id)
+      )?.tenant?.slug
+
+      if (tenantSlug) {
+        this.setCurrentTenant(tenantSlug)
+      }
       this.loading = false
     }
   }

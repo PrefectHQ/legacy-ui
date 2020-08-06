@@ -34,14 +34,14 @@ export default {
           localStorage.removeItem('invitationId')
           // Sets the tenant so that they're rerouted to the correct dashboard.
 
-          await this.getTenants()
+          await this.getUser()
 
           const tenantSlug = this.user.memberships.filter(
             membership => membership.tenant.id === this.tenant.id
           )?.tenant?.slug
 
           if (tenantSlug) {
-            this.setCurrentTenant(tenantSlug)
+            await this.setCurrentTenant(tenantSlug)
           }
           this.loading = false
         } else if (errors) {
@@ -60,6 +60,7 @@ export default {
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     async accept() {
       this.$router.push({
         name: 'dashboard',
