@@ -102,7 +102,7 @@ export default {
   methods: {
     ...mapActions('license', ['getLicense']),
     ...mapActions('alert', ['setAlert']),
-    ...mapActions('tenant', ['getTenant']),
+    ...mapActions('tenant', ['getTenants']),
     async checkForm() {
       const options = {
         owner: {
@@ -166,10 +166,14 @@ export default {
       this.address = null
       this.cardError = null
       this.username = null
-      const tenantMembershipId = this.user.memberships.filter(
+      const tenantSlug = this.user.memberships.filter(
         membership => membership.tenant.id === this.tenant.id
-      )
-      this.getTenant(tenantMembershipId[0].id)
+      )?.tenant?.slug
+      this.getTenants()
+
+      if (tenantSlug) {
+        this.setCurrentTenant(tenantSlug)
+      }
       this.loading = false
     }
   }
