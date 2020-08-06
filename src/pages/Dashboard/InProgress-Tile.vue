@@ -222,7 +222,14 @@ export default {
         class="subtitle-1 font-weight-light"
         style="line-height: 1.25rem;"
       >
-        You have no runs in progress!
+        You have no
+        {{
+          tab == 'running'
+            ? 'Flows running right now'
+            : tab == 'submitted'
+            ? 'submitted runs'
+            : 'runs in progress'
+        }}
       </div>
 
       <!-- 
