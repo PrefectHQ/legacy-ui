@@ -77,9 +77,9 @@ const mutations = {
 }
 
 const actions = {
-  async getTenants({ commit, getters }) {
+  async getTenants({ commit, getters, rootGetters }) {
     try {
-      const tenants = await prefectTenants()
+      const tenants = await prefectTenants(rootGetters['api/isCloud'])
       commit('setTenants', tenants)
     } catch {
       // Do nothing since the GraphQL error should be logged by Apollo afterware

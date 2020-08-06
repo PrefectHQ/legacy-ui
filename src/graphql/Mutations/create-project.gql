@@ -1,8 +1,4 @@
-mutation CreateProject(
-  $name: String!
-  $description: String
-  $tenantId: String!
-) {
+mutation CreateProject($name: String!, $description: String, $tenantId: UUID!) {
   create_project(
     input: { name: $name, description: $description, tenant_id: $tenantId }
   ) {

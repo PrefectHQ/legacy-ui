@@ -28,6 +28,15 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'role'])
   },
+  watch: {
+    tenant() {
+      this.show = false
+
+      setTimeout(() => {
+        this.show = true
+      }, 1000)
+    }
+  },
   methods: {
     ...mapMutations('tenant', ['setTenant', 'unsetTenant']),
     _closeTeamDialog() {
