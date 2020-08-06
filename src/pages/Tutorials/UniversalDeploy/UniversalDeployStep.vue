@@ -50,7 +50,11 @@ export default {
       {{ codeCopied ? 'Copied!' : 'Copy' }}
     </v-btn>
 
-    <pre id="ud-code" class="code-block" style="font-size: 12px;">
+    <div
+      class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4 pb-0"
+      style="border: 1px solid #b0bec5 !important;"
+    >
+      <pre id="ud-code" class="code-block" style="font-size: 12px;">
 import prefect
 from prefect import task, Flow
 
@@ -66,6 +70,7 @@ flow = Flow("hello-flow", tasks=[hello_task])
 <div class="d-inline-block code-added w-100"><span>+ </span>flow.register(project_name="{{ projectNameEscaped }}")</div>
 <div class="d-inline-block code-added w-100"><span>+ </span>flow.run_agent()</div>
     </pre>
+    </div>
 
     <p>
       Click "Copy" above to copy the updated flow code. Paste the code into your
@@ -73,19 +78,24 @@ flow = Flow("hello-flow", tasks=[hello_task])
       local agent process start to run. If you're seeing the error message "No
       agent API token provided", try passing in the agent token explicitly to
       the
-      <code>run_agent()</code> method:
+      <kbd>run_agent()</kbd> method:
     </p>
 
-    <pre style="font-size: 12px;">
+    <div
+      class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4 pb-0"
+      style="border: 1px solid #b0bec5 !important;"
+    >
+      <pre style="font-size: 12px;">
 <div class="d-inline-block code-added w-100"><span>+ </span>flow.run_agent(token="&lt;YOUR_RUNNER_TOKEN&gt;")</div>
     </pre>
+    </div>
 
     <p>
       And that's it! Your flow is now registered with Prefect Cloud, and an
       agent process is running on your local machine waiting to execute your
       flow runs. For now, your flow is stored on your local machine in your
-      <code>~/.prefect</code> directory. You can configure this later through
-      the use of
+      <kbd>~/.prefect</kbd> directory. You can configure this later through the
+      use of
       <a
         href="https://docs.prefect.io/cloud/execution/storage_options.html#local"
         target="_blank"
