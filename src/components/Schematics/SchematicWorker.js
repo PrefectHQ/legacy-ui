@@ -63,8 +63,8 @@ export function GenerateLayout(data) {
   //             Center            - coordCenter
   //
   if (tree.width <= 3 && tree.height <= 3) {
-    canvasAdjustment.h = height * 0.5
-    canvasAdjustment.w = width * 0.5
+    canvasAdjustment.h = height * 0.35
+    canvasAdjustment.w = width * 0.35
   } else {
     canvasAdjustment.h = height * (1 / tree.height)
     canvasAdjustment.w = width * (1 / tree.width)
