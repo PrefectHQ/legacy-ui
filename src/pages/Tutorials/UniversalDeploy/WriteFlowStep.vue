@@ -24,14 +24,18 @@ export default {
 <template>
   <div>
     <p>
-      Now let's write a simple flow that logs the string "Hello world!":
+      Now let's write a flow that logs the string "Hello world!":
     </p>
 
     <v-btn x-small class="float-right" @click="copyCode">
       {{ codeCopied ? 'Copied!' : 'Copy' }}
     </v-btn>
 
-    <pre id="ud-code-before" style="font-size: 12px;">
+    <div
+      class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
+      style="border: 1px solid #b0bec5 !important;"
+    >
+      <pre class="code-block">
 import prefect
 from prefect import task, Flow
 
@@ -43,12 +47,14 @@ def hello_task():
 flow = Flow("hello-flow", tasks=[hello_task])
 
 flow.run()
-    </pre>
+          </pre
+      >
+    </div>
 
     <p>
       Paste the code above into an interactive Python REPL session. You should
       see the following logs after running
-      <code>flow.run()</code> :
+      <kbd>flow.run()</kbd> :
     </p>
 
     <div class="logs-block pa-3 mt-6">
