@@ -22,7 +22,7 @@ export const cloudHookMixin = {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     cloudHookTypes() {
-      if (this.tenant.prefectAdminSettings.notifications)
+      if (this.tenant.prefectAdminSettings?.notifications)
         return featureFlaggedCloudHookTypes
       return openCloudHookTypes
     }
