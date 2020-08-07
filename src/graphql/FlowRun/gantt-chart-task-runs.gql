@@ -1,0 +1,15 @@
+query TaskRuns($flowRunId: uuid!) {
+  task_run(where: { flow_run_id: { _eq: $flowRunId } }) {
+    id
+    start_time
+    end_time
+    map_index
+    state
+    version
+
+    task {
+      id
+      name
+    }
+  }
+}

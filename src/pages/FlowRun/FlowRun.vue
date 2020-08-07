@@ -4,7 +4,7 @@ import { mapGetters } from 'vuex'
 import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
-import FlowRunPageGanttChart from '@/pages/FlowRunPageGanttChart'
+import GanttChart from '@/components/Visualizations/GanttChart'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import SchematicTile from '@/pages/FlowRun/Schematic-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
@@ -18,7 +18,7 @@ export default {
     Actions,
     BreadCrumbs,
     DetailsTile,
-    FlowRunPageGanttChart,
+    GanttChart,
     LogsCard,
     SchematicTile,
     SubPageNav,
@@ -88,6 +88,16 @@ export default {
       },
       pollInterval: 5000,
       update: data => data.flow_run_by_pk
+    },
+    taskRuns: {
+      query: require('@/graphql/FlowRun/gantt-chart-task-runs.gql'),
+      variables() {
+        return {
+          flowRunId: this.flowRunId
+        }
+      },
+      // pollInterval: 5000,
+      update: data => data.task_run
     }
   }
 }
@@ -178,7 +188,7 @@ export default {
 
       <v-tab-item class="tab-full-height" value="chart">
         <v-card class="pa-2 mt-2" tile>
-          <FlowRunPageGanttChart :flow-run-id="$route.params.id" />
+          <GanttChart :items="taskRuns" />
         </v-card>
       </v-tab-item>
 
