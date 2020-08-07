@@ -4,9 +4,7 @@ import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 
-d3
-throttle
-debounce
+let resizeChartListener
 
 export default {
   props: {
@@ -37,6 +35,11 @@ export default {
     }
   },
   computed: {
+    containerStyle() {
+      return {
+        height: this.groups?.length * 100 + 'px'
+      }
+    },
     render: function() {
       return throttle(this._renderCanvas, 16)
     }
@@ -64,14 +67,16 @@ export default {
 
     const resizeChart = this.resizeChart
 
-    window.addEventListener(
-      'resize',
-      debounce(function() {
-        requestAnimationFrame(resizeChart)
-      }, 150)
-    )
+    resizeChartListener = debounce(function() {
+      requestAnimationFrame(resizeChart)
+    }, 150)
+
+    window.addEventListener('resize', resizeChartListener)
 
     requestAnimationFrame(this.resizeChart)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', resizeChartListener)
   },
   methods: {
     _renderCanvas() {},
@@ -123,7 +128,7 @@ export default {
 </script>
 
 <template>
-  <v-container>
+  <v-container :style="containerStyle">
     <canvas :id="`${id}-canvas`" />
     <svg :id="`${id}-svg`" />
   </v-container>
