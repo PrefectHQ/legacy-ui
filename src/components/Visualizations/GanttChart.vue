@@ -1,11 +1,14 @@
 <script>
 export default {
-  params: {
+  props: {
     items: {
       type: Array,
       required: false,
       default: () => []
     }
+  },
+  mounted() {
+    console.log(this.items)
   }
 }
 </script>

@@ -5,11 +5,7 @@ query TaskRuns($flowRunId: uuid!) {
     end_time
     map_index
     state
+    task_id
     version
-
-    task {
-      id
-      name
-    }
   }
 }

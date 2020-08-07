@@ -4,7 +4,7 @@ import { mapGetters } from 'vuex'
 import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
-import GanttChart from '@/components/Visualizations/GanttChart'
+import GanttChartTile from '@/pages/FlowRun/GanttChart-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import SchematicTile from '@/pages/FlowRun/Schematic-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
@@ -18,7 +18,7 @@ export default {
     Actions,
     BreadCrumbs,
     DetailsTile,
-    GanttChart,
+    GanttChartTile,
     LogsCard,
     SchematicTile,
     SubPageNav,
@@ -35,6 +35,9 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
+    flowId() {
+      return this.flowRun?.flow_id
+    },
     flowRunId() {
       return this.$route.params.id
     },
@@ -88,16 +91,6 @@ export default {
       },
       pollInterval: 5000,
       update: data => data.flow_run_by_pk
-    },
-    taskRuns: {
-      query: require('@/graphql/FlowRun/gantt-chart-task-runs.gql'),
-      variables() {
-        return {
-          flowRunId: this.flowRunId
-        }
-      },
-      // pollInterval: 5000,
-      update: data => data.task_run
     }
   }
 }
@@ -187,9 +180,11 @@ export default {
       </v-tab-item>
 
       <v-tab-item class="tab-full-height" value="chart">
-        <v-card class="pa-2 mt-2" tile>
-          <GanttChart :items="taskRuns" />
-        </v-card>
+        <GanttChartTile
+          v-if="flowId"
+          :flow-id="flowId"
+          :flow-run-id="flowRunId"
+        />
       </v-tab-item>
 
       <v-tab-item class="tab-full-height" value="logs">
