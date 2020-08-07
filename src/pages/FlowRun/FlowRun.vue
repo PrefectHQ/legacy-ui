@@ -184,6 +184,7 @@ export default {
           v-if="flowId"
           :flow-id="flowId"
           :flow-run-id="flowRunId"
+          :flow-run="flowRun"
         />
       </v-tab-item>
 

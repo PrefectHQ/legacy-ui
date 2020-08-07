@@ -1,6 +1,11 @@
 <script>
 export default {
   props: {
+    groups: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
     items: {
       type: Array,
       required: false,
@@ -8,6 +13,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.groups)
     console.log(this.items)
   }
 }
