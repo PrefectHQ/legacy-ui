@@ -151,7 +151,7 @@ export default {
       if (
         this.canEdit &&
         this.editable &&
-        this.tenant.prefectAdminSettings.notifications
+        this.tenant.prefectAdminSettings?.notifications
       ) {
         return featureFlaggedCloudHookTypes
       } else {
@@ -227,7 +227,8 @@ export default {
           name: this.tempName,
           states: this.tempStates,
           config: this.tempConfig,
-          type: this.tempType
+          type: this.tempType,
+          tenant_id: this.tenant.id
         }
 
         const createCloudHookResult = await this.$apollo.mutate({
