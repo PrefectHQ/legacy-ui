@@ -38,6 +38,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['permissions']),
     sortedProjects() {
@@ -62,7 +63,7 @@ export default {
       return this.selected.projectId !== this.flow.project.id
     },
     versionLockingPermitted() {
-      return this.permissions.includes('feature:version-locking')
+      return this.permissions?.includes('feature:version-locking')
     }
   },
   methods: {
@@ -365,7 +366,7 @@ export default {
           </div>
         </v-col>
       </v-row>
-      <v-row class="mt-8">
+      <v-row v-if="isCloud" class="mt-8">
         <v-col cols="12" class="pb-0">
           <div class="title primary--text">
             <!-- We don't really have the visual language necessary to use these I think -->
