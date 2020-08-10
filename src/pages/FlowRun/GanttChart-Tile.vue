@@ -24,6 +24,11 @@ export default {
       default: () => {}
     }
   },
+  data() {
+    return {
+      computedStyle: getComputedStyle(document.documentElement)
+    }
+  },
   computed: {},
   apollo: {
     taskRuns: {
@@ -37,7 +42,14 @@ export default {
         return !this.flowId
       },
       // pollInterval: 5000,
-      update: data => data.task_run
+      update(data) {
+        return data.task_run.map(task => {
+          task.color = this.computedStyle.getPropertyValue(
+            `--v-${task.state}-base`
+          )
+          return task
+        })
+      }
     },
     tasks: {
       query: require('@/graphql/FlowRun/gantt-chart-tasks.gql'),
@@ -90,6 +102,7 @@ export default {
       :groups="tasks"
       :start-time="flowRun.start_time"
       :end-time="flowRun.end_time"
+      y-field="task_id"
     />
   </v-card>
 </template>
