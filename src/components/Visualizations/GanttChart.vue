@@ -68,9 +68,9 @@ export default {
     this.canvas = d3.select(`#${this.id}-canvas`)
     this.svg = d3.select(`#${this.id}-svg`)
 
-    this.y = d3.scaleOrdinal()
+    this.y = d3.scaleBand()
 
-    this.yAxisGroup = this.svg.append('g').attr('class', 'y-axis-group')
+    this.yAxisGroup = this.svg.append('g')
 
     const resizeChart = this.resizeChart
 
@@ -123,14 +123,20 @@ export default {
         .attr('height', this.height)
         .style('width', this.width)
         .style('height', this.height)
+
+      this.update()
     },
     update() {
-      console.log(this.groups)
-      this.y.domain(this.groups.map(group => group.id)).range([0, this.height])
+      console.log('updating')
 
-      const yAxis = d3.axisLeft(this.y)
+      this.y.domain(this.groups.map(group => group.id))
+      this.y.range([0, this.height])
+
+      console.log(this.height)
+      const yAxis = d3.axisRight(this.y)
 
       this.yAxisGroup
+        .attr('class', 'y-axis-group')
         .transition()
         .duration(this.animationDuration)
         .call(yAxis)
@@ -141,13 +147,12 @@ export default {
 
 <template>
   <v-container :style="containerStyle" class="d-flex align-start justify-start">
-    <div>
-      <div
-        v-for="group in groups"
-        :key="group.id"
-        class="my-1 flex-grow-0 flex-shrink-1"
-      >
-        {{ group.name }}
+    <div
+      class="d-flex justify-space-around flex-column text-right"
+      style="height: 100%;"
+    >
+      <div v-for="group in groups" :key="group.id" class="">
+        {{ group.id }}
       </div>
     </div>
 
