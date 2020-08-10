@@ -21,6 +21,10 @@ export default {
       type: Object,
       default: () => {}
     },
+    flowGroup: {
+      type: Object,
+      default: () => {}
+    },
     fullHeight: {
       required: false,
       type: Boolean,
@@ -57,8 +61,11 @@ export default {
       return this.flow.storage.flows
     },
     labels() {
+      console.log('fg labels', this.flowGroup.labels)
       if (!this.flow.environment.labels) return
-      return this.flow.environment.labels.slice().sort()
+      const labels = this.flow.environment.labels.slice().sort()
+      console.log('env labels', labels)
+      return labels
     },
     labelsFiltered() {
       if (!this.flow.environment.labels) return

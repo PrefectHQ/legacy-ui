@@ -5,7 +5,7 @@ export default function(isCloud) {
     query Flow($id: uuid!) {
       flow_group_by_pk(id: $id) {
         id
-
+        labels
         created
         name
         default_parameters
