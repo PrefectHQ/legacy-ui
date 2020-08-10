@@ -1,4 +1,4 @@
-mutation CancelFlowRun($flowRunId: uuid!) {
+mutation CancelFlowRun($flowRunId: UUID!) {
   cancel_flow_run(input: { flow_run_id: $flowRunId }) {
     state
   }
