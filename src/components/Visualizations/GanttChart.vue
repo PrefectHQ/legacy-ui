@@ -31,7 +31,10 @@ export default {
 
       // Dimensions
       height: null,
-      width: null
+      width: null,
+
+      // Misc
+      animationDuration: 500
     }
   },
   computed: {
@@ -64,6 +67,10 @@ export default {
 
     this.canvas = d3.select(`#${this.id}-canvas`)
     this.svg = d3.select(`#${this.id}-svg`)
+
+    this.y = d3.scaleOrdinal()
+
+    this.yAxisGroup = this.svg.append('g').attr('class', 'y-axis-group')
 
     const resizeChart = this.resizeChart
 
@@ -118,18 +125,54 @@ export default {
         .style('height', this.height)
     },
     update() {
-      this.y = d3
-        .scaleOrdinal()
-        .domain(this.groups.map(group => group.id))
-        .range([0, this.height])
+      console.log(this.groups)
+      this.y.domain(this.groups.map(group => group.id)).range([0, this.height])
+
+      const yAxis = d3.axisLeft(this.y)
+
+      this.yAxisGroup
+        .transition()
+        .duration(this.animationDuration)
+        .call(yAxis)
     }
   }
 }
 </script>
 
 <template>
-  <v-container :style="containerStyle">
-    <canvas :id="`${id}-canvas`" />
-    <svg :id="`${id}-svg`" />
+  <v-container :style="containerStyle" class="d-flex align-start justify-start">
+    <div>
+      <div
+        v-for="group in groups"
+        :key="group.id"
+        class="my-1 flex-grow-0 flex-shrink-1"
+      >
+        {{ group.name }}
+      </div>
+    </div>
+
+    <div
+      class="position-relative flex-grow-1 flex-shrink-0"
+      style="height: 100%;"
+    >
+      <canvas :id="`${id}-canvas`" class="gantt" />
+      <svg :id="`${id}-svg`" class="gantt" />
+    </div>
   </v-container>
 </template>
+
+<style lang="scss" scoped>
+.gantt {
+  left: 0;
+  position: absolute;
+  top: 0;
+
+  canvas {
+    z-index: 1;
+  }
+
+  svg {
+    z-index: 2;
+  }
+}
+</style>
