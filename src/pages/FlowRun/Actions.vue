@@ -17,11 +17,11 @@ export default {
   },
   data() {
     return {
-      isRunningNow: false,
       restartDialog: false,
+      runFlowNowClicked: false,
+      runFlowNowLoading: false,
 
       // Alert
-      showAlert: false,
       alertMessage: '',
       alertType: 'info'
     }
@@ -46,15 +46,16 @@ export default {
     ...mapActions('alert', ['setAlert']),
     deleteFlowRun() {},
     async runFlowNow() {
-      try {
-        this.isRunningNow = true
+      this.runFlowNowLoading = true
 
+      try {
+        this.runFlowNowClicked = true
         // Set the flow in a Scheduled state (even if it's already Scheduled).
         // This causes the flow run to execute immediately.
         await this.$apollo.mutate({
           mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
           variables: {
-            flow_run_id: this.flowRun.id,
+            flowRunId: this.flowRun.id,
             version: this.flowRun.version,
             state: {
               type: 'Scheduled'
@@ -65,18 +66,18 @@ export default {
         this.alertMessage =
           'Your flow run has been scheduled to start immediately.'
         this.alertType = 'success'
-        this.showAlert = true
       } catch (error) {
         this.alertMessage =
           'Something went wrong while trying to run this flow. Please try again later.'
         this.alertType = 'error'
-        this.showAlert = true
-        this.isRunningNow = false
+        this.runFlowNowClicked = false
         throw error
       }
 
-      this.setError({
-        alertShow: this.alertShow,
+      this.runFlowNowLoading = false
+
+      this.setAlert({
+        alertShow: true,
         alertMessage: this.alertMessage,
         alertType: this.alertType
       })
@@ -99,8 +100,8 @@ export default {
             color="primary"
             text
             depressed
-            :loading="isRunningNow"
-            :disabled="isRunningNow || !isScheduled || isReadOnlyUser"
+            :loading="runFlowNowLoading"
+            :disabled="runFlowNowLoading || runFlowNowClicked || isReadOnlyUser"
             small
             @click="runFlowNow"
           >
@@ -111,6 +112,9 @@ export default {
       </template>
       <span v-if="isReadOnlyUser">
         Read-only users cannot run flows
+      </span>
+      <span v-else-if="runFlowNowClicked">
+        This flow run has been scheduled to start as soon as possible.
       </span>
       <span v-else>
         Start this flow run immediately
