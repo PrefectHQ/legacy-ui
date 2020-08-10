@@ -1,5 +1,5 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
@@ -127,6 +127,7 @@ export default {
     clearInterval(this.interval)
   },
   methods: {
+    ...mapMutations('alert', 'setAlert'),
     agentIcon(type) {
       return AGENT_TYPES.find(a => a.type == type)?.icon
     },
@@ -160,19 +161,12 @@ export default {
         }, 10000)
       } catch (error) {
         this.isDeleting = false
-        this.$toasted.error(
-          'The agent could not be removed from Cloud. Please try again.',
-          {
-            containerClass: 'toast-typography',
-            action: {
-              text: 'Close',
-              onClick(e, toastObject) {
-                toastObject.goAway(0)
-              }
-            },
-            duration: 5000
-          }
-        )
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'We had a problem removing your Agent. Please try again.',
+          alertType: 'error'
+        })
       }
     },
     labelSelected(label) {
