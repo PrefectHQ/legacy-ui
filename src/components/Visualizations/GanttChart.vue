@@ -3,6 +3,7 @@ import * as d3 from 'd3'
 import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
+import moment from 'moment'
 
 let resizeChartListener
 
@@ -17,6 +18,18 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+
+    // Bookends for the chart
+    endTime: {
+      type: String,
+      required: false,
+      default: null
+    },
+    startTime: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -69,8 +82,10 @@ export default {
     this.svg = d3.select(`#${this.id}-svg`)
 
     this.y = d3.scaleBand()
+    this.x = d3.scaleTime()
 
     this.yAxisGroup = this.svg.append('g')
+    this.xAxisGroup = this.svg.append('g')
 
     const resizeChart = this.resizeChart
 
@@ -132,14 +147,29 @@ export default {
       this.y.domain(this.groups.map(group => group.id))
       this.y.range([0, this.height])
 
-      console.log(this.height)
+      const startTime = moment(this.startTime)
+      const endTime = moment(this.endTime)
+
+      console.log(startTime, endTime)
+      this.x.domain([startTime, endTime])
+      this.x.range([0, this.width])
+
       const yAxis = d3.axisRight(this.y)
+      const xAxis = d3.axisTop(this.x)
 
       this.yAxisGroup
         .attr('class', 'y-axis-group')
+        .style('opacity', 0)
         .transition()
         .duration(this.animationDuration)
         .call(yAxis)
+
+      this.xAxisGroup
+        .attr('class', 'x-axis-group')
+        .attr('transform', `translate(0, ${this.height - 1})`)
+        .transition()
+        .duration(this.animationDuration)
+        .call(xAxis)
     }
   }
 }
@@ -151,8 +181,8 @@ export default {
       class="d-flex justify-space-around flex-column text-right"
       style="height: 100%;"
     >
-      <div v-for="group in groups" :key="group.id" class="">
-        {{ group.id }}
+      <div v-for="group in groups" :key="group.id" class="caption">
+        {{ group.name }}
       </div>
     </div>
 

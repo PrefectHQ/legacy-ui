@@ -84,6 +84,12 @@ export default {
       </div>
     </CardTitle>
 
-    <GanttChart :items="taskRuns" :groups="tasks" />
+    <GanttChart
+      v-if="tasks"
+      :items="taskRuns"
+      :groups="tasks"
+      :start-time="flowRun.start_time"
+      :end-time="flowRun.end_time"
+    />
   </v-card>
 </template>
