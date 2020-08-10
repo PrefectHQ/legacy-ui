@@ -128,7 +128,7 @@ export default {
           ? 'grey'
           : loading > 0
           ? 'secondaryGray'
-          : errors && errors.length > 0
+          : filteredErrors && filteredErrors.length > 0
           ? 'Failed'
           : 'Success'
       "
@@ -148,7 +148,7 @@ export default {
           :icon-color="
             flow.archived || loading > 0
               ? 'grey'
-              : errors && errors.length > 0
+              : filteredErrors && filteredErrors.length > 0
               ? 'Failed'
               : 'Success'
           "
@@ -193,7 +193,7 @@ export default {
       </v-slide-y-reverse-transition>
 
       <v-slide-y-reverse-transition
-        v-else-if="errors && errors.length > 0"
+        v-else-if="filteredErrors && filteredErrors.length > 0"
         leave-absolute
         mode="out-in"
         group
