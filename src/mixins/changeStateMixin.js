@@ -149,7 +149,7 @@ export const changeStateMixin = {
         this.setAlert({
           alertShow: true,
           alertMessage:
-            'Your flow run has been cancelled; please allow up to 30 seconds for this to take effect.',
+            'Your flow run will be cancelled; please allow some time for this to take effect.',
           alertType: 'success'
         })
       } catch (e) {
