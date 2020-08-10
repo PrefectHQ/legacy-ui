@@ -63,13 +63,14 @@ export default {
     labels() {
       console.log('fg labels', this.flowGroup.labels)
       if (!this.flow.environment.labels) return
-      const labels = this.flow.environment.labels.slice().sort()
-      console.log('env labels', labels)
-      return labels
+      const labels = this.flow.environment.labels.slice()
+      const allLabels = labels.concat(this.flowGroup.labels).sort()
+      console.log('env labels', labels, 'all labels', allLabels)
+      return allLabels
     },
     labelsFiltered() {
       if (!this.flow.environment.labels) return
-      const labels = this.flow.environment.labels.slice().sort()
+      const labels = this.labels
       if (!this.labelSearchInput) return labels
       return labels.filter(label => {
         return new RegExp(this.labelSearchInput.toLowerCase(0)).test(
