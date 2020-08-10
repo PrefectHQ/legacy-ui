@@ -3,12 +3,12 @@ import { mapGetters, mapActions } from 'vuex'
 
 // We're removing this until the stack functionality
 // is in a more tenable place.
-// import CancelButton from '@/components/CancelButton.vue'
+import CancelButton from '@/components/CancelButton.vue'
 import MarkAsDialog from '@/components/MarkAsDialog.vue'
 import RestartDialog from '@/pages/FlowRun/Restart-Dialog'
 
 export default {
-  components: { RestartDialog, MarkAsDialog },
+  components: { CancelButton, RestartDialog, MarkAsDialog },
   props: {
     flowRun: {
       required: true,
@@ -147,8 +147,7 @@ export default {
 
     <MarkAsDialog dialog-type="flow run" :flow-run="flowRun" />
 
-    <!-- We're removing this until the stack functionality is in a more tenable place -->
-    <!-- <CancelButton dialog-type="flow run" :flow-run="flowRun" /> -->
+    <CancelButton dialog-type="flow run" :flow-run="flowRun" />
 
     <v-tooltip bottom>
       <template v-slot:activator="{ on }">
