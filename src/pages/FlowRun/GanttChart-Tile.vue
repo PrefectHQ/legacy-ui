@@ -41,9 +41,13 @@ export default {
       skip() {
         return !this.flowId
       },
-      // pollInterval: 5000,
+      pollInterval: 1000,
       update(data) {
         return data.task_run.map(task => {
+          if (!task.end_time && task.start_time) {
+            task.end_time = new Date()
+          }
+
           task.color = this.computedStyle.getPropertyValue(
             `--v-${task.state}-base`
           )
@@ -100,6 +104,7 @@ export default {
       v-if="tasks"
       :items="taskRuns"
       :groups="tasks"
+      :live="!flowRun.end_time"
       :start-time="flowRun.start_time"
       :end-time="flowRun.end_time"
       y-field="task_id"

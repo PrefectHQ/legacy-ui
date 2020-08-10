@@ -31,6 +31,8 @@ export default {
       required: false,
       default: null
     },
+
+    live: { type: Boolean, default: false },
     yField: { type: String, default: () => null }
   },
   data() {
@@ -69,13 +71,13 @@ export default {
       deep: true,
       handler: debounce(function() {
         this.update()
-      }, 500)
+      }, 1000)
     },
     items: {
       deep: true,
       handler: debounce(function() {
         this.update()
-      }, 500)
+      }, 1000)
     }
   },
   mounted() {
@@ -114,8 +116,8 @@ export default {
         const startTime = moment(item.start_time)
         const endTime = moment(item.end_time)
 
-        const width1 = this.x(endTime || now)
-        const x1 = this.x(startTime || now)
+        const width1 = item.start_time ? this.x(endTime || now) : 0
+        const x1 = item.start_time ? this.x(startTime || now) : this.width
         const y1 = this.y(item[this.yField])
 
         const barIndex = this.bars.findIndex(b => b.id == item.id)
@@ -291,14 +293,18 @@ export default {
 
       const startTime = moment(this.startTime)
       const endTime = moment(this.endTime)
-      x.domain([startTime, endTime])
+      const now = new moment()
+      x.domain([startTime, endTime || now])
       x.range([0, this.width])
 
       this.y = y
       this.x = x
 
+      if (this.live) {
+        this.startXScale(startTime)
+      }
+
       const yAxis = d3.axisRight(this.y)
-      const xAxis = d3.axisTop(this.x)
 
       this.yAxisGroup
         .attr('class', 'y-axis-group')
@@ -307,14 +313,22 @@ export default {
         .duration(this.animationDuration)
         .call(yAxis)
 
+      this.render()
+    },
+    startXScale(start) {
+      const t = Date.now()
+      this.x.domain([start, t])
+      this.drawXAxis()
+    },
+    drawXAxis() {
+      const xAxis = d3.axisTop(this.x).ticks(30)
+
       this.xAxisGroup
         .attr('class', 'x-axis-group')
         .attr('transform', `translate(0, ${this.height - 1})`)
         .transition()
         .duration(this.animationDuration)
         .call(xAxis)
-
-      this.render()
     }
   }
 }
