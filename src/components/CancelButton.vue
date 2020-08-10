@@ -32,13 +32,15 @@ export default {
         </div>
       </template>
       <span v-if="role === 'READ_ONLY_USER'">
-        Read-only users cannot cancel flows.
+        Read-only users can't cancel flows.
       </span>
       <span v-else-if="!checkVersion">
-        Upgrade your flow to Prefect 7.3 or higher to enable cancellation.
+        Your Flow was registered with version {{ flowRun.flow.core_version }} of
+        Prefect Core; please upgrade to version 0.13.0 or higher and re-register
+        your Flow to enable cancellation.
       </span>
       <span v-else-if="flowRun.state !== 'Running'">
-        You cannot cancel a flow that's not running
+        You can't cancel a flow that's not running
       </span>
       <span v-else>Cancel a flow run</span>
     </v-tooltip>

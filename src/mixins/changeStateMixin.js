@@ -77,16 +77,13 @@ export const changeStateMixin = {
       }
     },
     checkVersion() {
-      if (
-        this.flowRun.flow.core_version[0] > 0 ||
-        this.flowRun.flow.core_version[2] > 7 ||
-        (this.flowRun.flow.core_version[2] > 6 &&
-          this.flowRun.flow.core_version[4] > 2)
-      ) {
-        return true
-      } else {
-        return false
-      }
+      let split = this.flowRun?.flow?.core_version.split('.')
+
+      let major = parseInt(split[0]),
+        minor = parseInt(split[1]),
+        patch = parseInt(split[2])
+
+      return major >= 1 || (minor >= 13 && patch >= 0)
     }
   },
   methods: {
@@ -131,13 +128,35 @@ export const changeStateMixin = {
         'An error occurred when approving this task run. Please try again.'
       this.changeState()
     },
-    cancelFlowRun() {
+    async cancelFlowRun() {
       this.cancelLoad = true
       this.selectedState = 'Cancelled'
       this.allTasks = true
-      this.toastedMessage =
-        'Please try pressing cancel again. If the flow run has finished, use "Mark As" instead.'
-      this.changeState()
+
+      try {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/FlowRun/cancel-flow-run.gql'),
+          variables: {
+            flowRunId: this.flowRun.id
+          }
+        })
+
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Your flow run has been cancelled; please allow up to 30 seconds for this to take effect.',
+          alertType: 'success'
+        })
+      } catch (e) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Something went wrong when trying to cancel this flow run, please try again.',
+          alertType: 'error'
+        })
+      }
+
+      this.cancelLoad = false
     },
     async changeState() {
       try {
