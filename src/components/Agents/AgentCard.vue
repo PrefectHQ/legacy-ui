@@ -127,7 +127,7 @@ export default {
     clearInterval(this.interval)
   },
   methods: {
-    ...mapActions('alert', 'setAlert'),
+    ...mapActions('alert', ['setAlert']),
     agentIcon(type) {
       return AGENT_TYPES.find(a => a.type == type)?.icon
     },

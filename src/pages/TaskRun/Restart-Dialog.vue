@@ -28,7 +28,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('alert', 'setAlert'),
+    ...mapActions('alert', ['setAlert']),
     cancel() {
       this.$emit('cancel')
     },

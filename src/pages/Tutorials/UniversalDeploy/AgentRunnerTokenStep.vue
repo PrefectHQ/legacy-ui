@@ -22,7 +22,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('alert', 'setAlert'),
+    ...mapActions('alert', ['setAlert']),
     copyToken() {
       navigator.clipboard.writeText(this.agentTokenCommand).then(() => {
         this.tokenCopied = true

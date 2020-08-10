@@ -40,7 +40,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('alert', 'setAlert'),
+    ...mapActions('alert', ['setAlert']),
     async handleProjectFormSubmit() {
       // if the form is invalid, do nothing
       if (!this.valid) return

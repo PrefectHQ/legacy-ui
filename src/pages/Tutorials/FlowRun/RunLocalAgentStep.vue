@@ -26,7 +26,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('alert', 'setAlert'),
+    ...mapActions('alert', ['setAlert']),
     copyAgentCommand() {
       navigator.clipboard.writeText(this.agentCommand).then(() => {
         this.agentCommandCopied = true
