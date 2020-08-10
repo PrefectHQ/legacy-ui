@@ -30,7 +30,7 @@ export const changeStateMixin = {
       cancelLoad: false,
       setStateSuccessA: false,
       setStateSuccessB: false,
-      toastedMessage: 'We hit a problem.  Please try marking the state again.',
+      alertMessage: 'We hit a problem.  Please try marking the state again.',
       taskStates: [
         'Finished',
         'Success',
@@ -124,7 +124,7 @@ export const changeStateMixin = {
     resumeRun() {
       this.resumeLoad = this.taskRun.id
       this.selectedState = 'Resume'
-      this.toastedMessage =
+      this.alertMessage =
         'An error occurred when approving this task run. Please try again.'
       this.changeState()
     },
@@ -229,7 +229,7 @@ export const changeStateMixin = {
       if (this.setStateError) {
         this.setAlert({
           alertShow: true,
-          alertMessage: this.toastedMessage,
+          alertMessage: this.alertMessage,
           alertType: 'error'
         })
       }
@@ -263,7 +263,7 @@ export const changeStateMixin = {
       this.selectedState = ''
       this.allTasks = false
       this.cancelLoad = false
-      this.toastedMessage =
+      this.alertMessage =
         'We hit a problem. Please try marking the state again.'
       this.setStateSuccessA = false
       this.setStateSuccessB = false
