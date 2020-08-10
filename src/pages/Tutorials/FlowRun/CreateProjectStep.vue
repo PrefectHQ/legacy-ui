@@ -1,5 +1,5 @@
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -33,6 +33,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     // helps us check for an existing project name
     projectNames() {
       if (!this.projects) return
@@ -50,11 +51,12 @@ export default {
           mutation: require('@/graphql/Mutations/create-project.gql'),
           variables: {
             name: this.projectName,
-            description: this.projectDescription
+            description: this.projectDescription,
+            tenantId: this.tenant.id
           }
         })
         // extract the project id
-        this.projectId = result.data.create_project.project.id
+        this.projectId = result.data.create_project.id
         // emit the result of the step to the parent
         this.$emit('project-submitted', {
           projectId: this.projectId,
