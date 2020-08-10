@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -20,7 +20,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('alert', 'setAlert'),
+    ...mapActions('alert', 'setAlert'),
     cancel() {
       this.$emit('cancel')
     },

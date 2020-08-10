@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
@@ -127,7 +127,7 @@ export default {
     clearInterval(this.interval)
   },
   methods: {
-    ...mapMutations('alert', 'setAlert'),
+    ...mapActions('alert', 'setAlert'),
     agentIcon(type) {
       return AGENT_TYPES.find(a => a.type == type)?.icon
     },

@@ -1,5 +1,5 @@
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   props: {
@@ -40,7 +40,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('alert', 'setAlert'),
+    ...mapActions('alert', 'setAlert'),
     async handleProjectFormSubmit() {
       // if the form is invalid, do nothing
       if (!this.valid) return

@@ -1,6 +1,6 @@
 <script>
 import { ERROR_MESSAGE } from '@/utils/error'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -28,6 +28,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', 'setAlert'),
     cancel() {
       this.$emit('cancel')
     },
