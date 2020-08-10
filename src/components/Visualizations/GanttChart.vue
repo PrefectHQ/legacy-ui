@@ -250,6 +250,8 @@ export default {
         return this.parentNode
       })
 
+      const marginY = 24
+
       let computedStyle = window.getComputedStyle(parent._groups[0][0], null)
 
       let paddingLeft = parseFloat(
@@ -263,24 +265,25 @@ export default {
           computedStyle.getPropertyValue('padding-bottom')
         )
 
-      this.height =
+      const height =
         parent._groups[0][0].clientHeight - paddingTop - paddingBottom
-      this.width = parent._groups[0][0].clientWidth - paddingLeft - paddingRight
+      const width =
+        parent._groups[0][0].clientWidth - paddingLeft - paddingRight
 
-      if (!this.height || !this.width || this.height < 0 || this.width < 0) {
+      if (!height || !width || height < 0 || width < 0) {
         return
       }
 
       this.svg
-        .attr('viewbox', `0 0 ${this.width} ${this.height}`)
-        .attr('width', this.width)
-        .attr('height', this.height)
+        .attr('viewbox', `0 0 ${width} ${height}`)
+        .attr('width', width)
+        .attr('height', height)
 
-      this.canvas
-        .attr('width', this.width)
-        .attr('height', this.height)
-        .style('width', this.width)
-        .style('height', this.height)
+      this.height = height
+      this.width = width
+      this.canvasHeight = height - marginY
+
+      this.canvas.attr('width', this.width).attr('height', this.canvasHeight)
 
       this.update()
     },
@@ -289,7 +292,7 @@ export default {
       const x = d3.scaleTime()
 
       y.domain(this.groups.map(group => group.id))
-      y.range([0, this.height])
+      y.range([0, this.canvasHeight])
 
       const startTime = moment(this.startTime)
       const endTime = moment(this.endTime)
@@ -302,6 +305,8 @@ export default {
 
       if (this.live) {
         this.startXScale(startTime)
+      } else {
+        this.drawXAxis()
       }
 
       const yAxis = d3.axisRight(this.y)
@@ -321,6 +326,7 @@ export default {
       this.drawXAxis()
     },
     drawXAxis() {
+      console.log('drawingx')
       const xAxis = d3.axisTop(this.x).ticks(30)
 
       this.xAxisGroup
@@ -337,7 +343,7 @@ export default {
 <template>
   <v-container :style="containerStyle" class="d-flex align-start justify-start">
     <div
-      class="d-flex justify-space-around flex-column text-right"
+      class="d-flex justify-space-around flex-column text-right pb-6"
       style="height: 100%;"
     >
       <div v-for="group in groups" :key="group.id" class="caption">
