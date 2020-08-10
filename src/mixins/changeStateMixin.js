@@ -1,5 +1,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
+import { FINISHED_STATES } from '@/utils/states'
+
 export const changeStateMixin = {
   props: {
     taskRun: {
@@ -69,6 +71,9 @@ export const changeStateMixin = {
   computed: {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['role']),
+    isFinished() {
+      return FINISHED_STATES.includes(this.flowRun.state)
+    },
     filteredStates() {
       if (this.dialogType === 'task run') {
         return this.taskStates.filter(state => state !== this.taskRun.state)
