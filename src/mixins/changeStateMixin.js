@@ -222,7 +222,8 @@ export const changeStateMixin = {
       ) {
         this.setAlert({
           alertShow: true,
-          alertMessage: 'Flow run set for cancel.  This may take 30 seconds.',
+          alertMessage:
+            'Your flow run has been cancelled; please allow up to 30 seconds for this to take effect.',
           alertType: 'success'
         })
       }
@@ -244,7 +245,7 @@ export const changeStateMixin = {
       this.allTasks = false
       this.cancelLoad = false
       this.toastedMessage =
-        'We hit a problem.  Please try marking the state again.'
+        'We hit a problem. Please try marking the state again.'
       this.setStateSuccessA = false
       this.setStateSuccessB = false
       this.cancelLoad = false
