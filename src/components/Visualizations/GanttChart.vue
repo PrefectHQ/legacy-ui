@@ -53,7 +53,8 @@ export default {
 
       // Misc
       animationDuration: 500,
-      easing: 'easeCubic'
+      easing: 'easeCubic',
+      hovered: null
     }
   },
   computed: {
@@ -62,8 +63,26 @@ export default {
         height: this.groups?.length * 100 + 'px'
       }
     },
+    hoveredId() {
+      return this.hovered?.id
+    },
+    _mouseout: function() {
+      return debounce(this._rawMouseout, 0, { trailing: true, leading: false })
+    },
     render: function() {
       return throttle(this._renderCanvas, 16)
+    },
+    tooltipStyle() {
+      if (!this.hovered) return
+      let p = this.$refs['parent'].getBoundingClientRect()
+      let overRight = this.hovered.x + 150 - p.width > 0
+      let overLeft = this.hovered.x - 150 < 0
+      return {
+        left: `${
+          overRight ? p.width - 150 : overLeft ? 150 : this.hovered.x
+        }px`,
+        top: `${this.hovered.y}px`
+      }
     }
   },
   watch: {
@@ -104,6 +123,26 @@ export default {
     window.removeEventListener('resize', resizeChartListener)
   },
   methods: {
+    _mouseover(d) {
+      console.log(d)
+      this._mouseout.cancel()
+      // this.hovered = {
+      //   data: d,
+      //   x: this.x(d.id),
+      //   y: this.chartHeight,
+      //   width: this.x.bandwidth(),
+      //   height: this.calcHeight(d)
+      // }
+      this.$emit('bar-mouseover', this.hovered)
+
+      this._renderCanvas()
+    },
+    _rawMouseout() {
+      this.$emit('bar-mouseout', this.hovered)
+      this.hovered = null
+
+      this._renderCanvas()
+    },
     _renderCanvas() {
       cancelAnimationFrame(this.drawCanvas)
 
@@ -355,9 +394,19 @@ export default {
       class="position-relative flex-grow-1 flex-shrink-0"
       style="height: 100%;"
     >
-      <canvas :id="`${id}-canvas`" class="gantt" />
+      <canvas :id="`${id}-canvas`" class="gantt" @click="_mouseover" />
       <svg :id="`${id}-svg`" class="gantt" />
     </div>
+
+    <transition name="tooltip-fade" mode="in-out">
+      <div
+        v-if="$slots['tooltip']"
+        class="v-tooltip__content barchart-tooltip"
+        :style="tooltipStyle"
+      >
+        <slot name="tooltip" />
+      </div>
+    </transition>
   </v-container>
 </template>
 
@@ -366,13 +415,13 @@ export default {
   left: 0;
   position: absolute;
   top: 0;
+}
 
-  canvas {
-    z-index: 1;
-  }
+canvas {
+  z-index: 3;
+}
 
-  svg {
-    z-index: 2;
-  }
+svg {
+  z-index: 2;
 }
 </style>
