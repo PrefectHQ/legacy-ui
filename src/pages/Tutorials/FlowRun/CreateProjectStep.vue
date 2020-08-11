@@ -1,4 +1,6 @@
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   props: {
     complete: {
@@ -38,6 +40,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     async handleProjectFormSubmit() {
       // if the form is invalid, do nothing
       if (!this.valid) return
@@ -61,23 +64,19 @@ export default {
       } catch (error) {
         // if project name already exists
         if (error.message === 'GraphQL error: Uniqueness violation.') {
-          this.$toasted.error(
-            'A project with this name already exists. Please try a different name.',
-            {
-              action: {
-                text: 'Close',
-                onClick(e, toastObject) {
-                  toastObject.goAway(0)
-                }
-              },
-              duration: 5000
-            }
-          )
+          this.setAlert({
+            alertShow: true,
+            alertMessage:
+              'A project with this name already exists. Please try a different name.',
+            alertType: 'error'
+          })
         } else {
-          this.$toasted.error(
-            'Failed to create project. Please wait a few moments and try again',
-            { duration: 3000 }
-          )
+          this.setAlert({
+            alertShow: true,
+            alertMessage:
+              'Failed to create project. Please wait a few moments and try again',
+            alertType: 'error'
+          })
         }
 
         throw error
