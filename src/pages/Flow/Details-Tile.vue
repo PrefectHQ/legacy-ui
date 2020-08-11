@@ -83,7 +83,7 @@ export default {
       return this.labels && this.labels.length > 2
     },
     labelArray() {
-      const labelArray = []
+      const labelArray = this.labels.slice()
       console.log('label', this.newLabel)
       labelArray.push(this.newLabel)
       console.log('labelarray', labelArray)
