@@ -31,6 +31,7 @@ export default {
       )
     },
     hasParameters() {
+      if (!this.flowRun?.parameters) return false
       return Object.keys(this.flowRun.parameters).length > 0
     }
   },
