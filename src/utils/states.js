@@ -83,6 +83,20 @@ export const STATE_PAST_TENSE = {
   Looped: 'were looped'
 }
 
+export const FINISHED_STATES = [
+  'Finished',
+  'Looped',
+  'Success',
+  'Cancelled',
+  'Failed',
+  'TriggerFailed',
+  'ValidationFailed',
+  'TimedOut',
+  'Cached',
+  'Mapped',
+  'Skipped'
+]
+
 export default function(state) {
   return STATE_COLORS[state]
 }
