@@ -38,6 +38,7 @@ export default {
   data() {
     return {
       copiedText: {},
+      dialog: false,
       labelMenuOpen: false,
       labelSearchInput: '',
       tab: 'overview'
@@ -61,10 +62,11 @@ export default {
       return this.flow.storage.flows
     },
     labels() {
-      if (!this.flow.environment.labels) return
-      const labels = this.flow.environment.labels.slice()
-      const allLabels = labels.concat(this.flowGroup.labels).sort()
-      return allLabels
+      if (!this.flow.environment.labels && !this.flowGroup.labels) return
+      const labels = this.flowGroup.labels
+        ? this.flowGroup.labels.slice().sort()
+        : this.flow.environment.labels.slice().sort()
+      return labels
     },
     labelsFiltered() {
       if (!this.flow.environment.labels) return
@@ -215,61 +217,122 @@ export default {
               </div>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item v-if="labels" dense class="px-0">
+            <v-list-item-content>
+              <v-list-item-subtitle class="caption">
+                Labels
+              </v-list-item-subtitle>
 
-          <div v-if="labels && labels.length > 0">
-            <div class="caption">Labels</div>
-            <v-menu
-              v-if="labelsOverflow"
-              v-model="labelMenuOpen"
-              :close-on-content-click="false"
-              offset-y
-            >
-              <template v-slot:activator="{ on }">
-                <v-btn small color="primary" class="mt-1" depressed v-on="on">
-                  Show labels ({{ labels.length }})
-                  <v-icon>
-                    {{ labelMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
-                  </v-icon>
-                </v-btn>
-              </template>
-              <v-card width="300" class="pa-2">
-                <v-text-field
-                  v-model.lazy="labelSearchInput"
-                  dense
-                  placeholder="Search labels"
-                  clearable
-                  solo
-                  flat
-                  outlined
-                  prepend-inner-icon="search"
-                  hide-details
-                  class="label-search pa-2"
-                ></v-text-field>
-                <v-card-text
-                  v-if="labelsFiltered.length > 0"
-                  class="max-h-300 overflow-y-scroll"
-                >
-                  <Label
-                    v-for="label in labelsFiltered"
-                    :key="label"
-                    class="mr-1 mb-1"
-                    >{{ label }}</Label
+              <v-menu
+                v-if="labelsOverflow"
+                v-model="labelMenuOpen"
+                :close-on-content-click="false"
+                offset-y
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn small color="primary" class="mt-1" depressed v-on="on">
+                    Show labels ({{ labels.length }})
+                    <v-icon>
+                      {{ labelMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <v-card width="300" class="pa-2">
+                  <v-text-field
+                    v-model.lazy="labelSearchInput"
+                    dense
+                    placeholder="Search labels"
+                    clearable
+                    solo
+                    flat
+                    outlined
+                    prepend-inner-icon="search"
+                    hide-details
+                    class="label-search pa-2"
+                  ></v-text-field>
+                  <v-card-text
+                    v-if="labelsFiltered.length > 0"
+                    class="max-h-300 overflow-y-scroll"
                   >
-                </v-card-text>
-                <v-card-text v-else class="max-h-300 overflow-y-scroll pa-6">
-                  No labels found. Try expanding your search?
-                </v-card-text>
-              </v-card>
-            </v-menu>
+                    <Label
+                      v-for="label in labelsFiltered"
+                      :key="label"
+                      class="mr-1 mb-1"
+                      >{{ label }}</Label
+                    >
+                  </v-card-text>
+                  <v-card-text v-else class="max-h-300 overflow-y-scroll pa-6">
+                    No labels found. Try expanding your search?
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      text
+                      aria-label="Add Label"
+                      color="primary"
+                      @click.stop="dialog = true"
+                    >
+                      <v-icon small dense color="primary">fa-plus</v-icon>
+                      <span class="ml-2"> Add a new label </span>
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
 
-            <div v-else>
-              <Label v-for="label in labels" :key="label" class="mr-1 mt-1">
-                {{ label }}
-              </Label>
-            </div>
-          </div>
+              <div v-else-if="labels.length > 0">
+                <Label v-for="label in labels" :key="label" class="mr-1 mt-1">
+                  {{ label }}
+                </Label>
+              </div>
+              <div v-else class="subtitle-2">
+                None
+              </div>
+            </v-list-item-content>
+            <v-list-item-action v-if="!labelsOverflow">
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    text
+                    x-small
+                    aria-label="Run Now"
+                    color="primary"
+                    class="vertical-button"
+                    @click.stop="dialog = true"
+                    v-on="on"
+                  >
+                    <v-icon x-small dense color="primary">fa-plus</v-icon>
+                  </v-btn>
+                </template>
+                <span> Add a new label </span>
+              </v-tooltip>
+            </v-list-item-action>
+          </v-list-item>
         </div>
       </v-fade-transition>
+      <v-dialog v-model="dialog" max-width="290">
+        <v-card>
+          <v-card-title class="headline"
+            >Use Google's location service?</v-card-title
+          >
+
+          <v-card-text>
+            Let Google help apps determine location. This means sending
+            anonymous location data to Google, even when no apps are running.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn color="green darken-1" text @click="dialog = false">
+              Disagree
+            </v-btn>
+
+            <v-btn color="green darken-1" text @click="dialog = false">
+              Agree
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-fade-transition hide-on-leave>
         <div v-if="tab == 'details'">
           <v-list-item dense class="px-0">
