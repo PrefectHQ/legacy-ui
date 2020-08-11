@@ -1,4 +1,6 @@
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   props: {
     agentTokenProp: {
@@ -24,6 +26,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     copyAgentCommand() {
       navigator.clipboard.writeText(this.agentCommand).then(() => {
         this.agentCommandCopied = true
@@ -47,14 +50,10 @@ export default {
         this.agentToken = response.data.create_api_token.token
         this.$emit('agent-token-generated', this.agentToken)
       } catch (error) {
-        this.$toasted.error('Failed to generate agent token', {
-          action: {
-            text: 'Close',
-            onClick(e, toastObject) {
-              toastObject.goAway(0)
-            }
-          },
-          duration: 5000
+        this.setAlert({
+          alertShow: true,
+          alertMessage: 'Failed to generate agent token; please try again.',
+          alertType: 'error'
         })
 
         throw error

@@ -1,5 +1,5 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -20,6 +20,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     cancel() {
       this.$emit('cancel')
     },
@@ -61,16 +62,10 @@ export default {
                 }
               })
               if (data?.set_flow_run_states) {
-                this.$toasted.show('Flow has been set for restart', {
-                  containerClass: 'toast-typography',
-                  type: 'success',
-                  action: {
-                    text: 'Close',
-                    onClick(e, toastObject) {
-                      toastObject.goAway(0)
-                    }
-                  },
-                  duration: 5000
+                this.setAlert({
+                  alertShow: true,
+                  alertMessage: 'Flow run restarted.',
+                  alertType: 'success'
                 })
               } else {
                 this.error = true
@@ -87,16 +82,11 @@ export default {
         throw error
       }
       if (this.error === true) {
-        this.$toasted.show('We hit a problem.  Please try restarting again.', {
-          containerClass: 'toast-typography',
-          type: 'error',
-          action: {
-            text: 'Close',
-            onClick(e, toastObject) {
-              toastObject.goAway(0)
-            }
-          },
-          duration: 5000
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Sorry, we hit a problem trying to restart the run; please try again.',
+          alertType: 'error'
         })
       }
     },
