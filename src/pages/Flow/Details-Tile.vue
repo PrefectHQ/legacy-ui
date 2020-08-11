@@ -39,6 +39,7 @@ export default {
     return {
       copiedText: {},
       dialog: false,
+      newLabel: '',
       labelMenuOpen: false,
       labelSearchInput: '',
       tab: 'overview'
@@ -80,9 +81,35 @@ export default {
     },
     labelsOverflow() {
       return this.labels && this.labels.length > 2
+    },
+    labelArray() {
+      const labelArray = []
+      console.log('label', this.newLabel)
+      labelArray.push(this.newLabel)
+      console.log('labelarray', labelArray)
+      return labelArray
     }
   },
   methods: {
+    async addLabel() {
+      try {
+        const { data, errors } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/add-label.gql'),
+          variables: {
+            flowGroupId: this.flowGroup.id,
+            labelArray: this.labelArray
+          },
+          errorPolicy: 'all'
+        })
+        if (data) {
+          console.log('data', data)
+        } else {
+          console.log('errors', errors)
+        }
+      } catch (e) {
+        console.log('catch', e)
+      }
+    },
     clickAndCopyable(field) {
       return ['image_tag', 'image_name', 'registry_url'].includes(field)
     },
@@ -311,24 +338,28 @@ export default {
       </v-fade-transition>
       <v-dialog v-model="dialog" max-width="290">
         <v-card>
-          <v-card-title class="headline"
-            >Use Google's location service?</v-card-title
-          >
+          <v-card-title class="headline">Add a flow group label</v-card-title>
 
           <v-card-text>
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
+            Flows and agents have optional labels which allow you to determine
+            where your flows are executed. For more information see
+            <a
+              href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+              target="_blank"
+              >the docs on labels</a
+            >.
+            <v-text-field v-model="newLabel" label="New label"> </v-text-field>
           </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn color="green darken-1" text @click="dialog = false">
-              Disagree
+            <v-btn text @click="dialog = false">
+              Cancel
             </v-btn>
 
-            <v-btn color="green darken-1" text @click="dialog = false">
-              Agree
+            <v-btn color="primary" @click="addLabel">
+              Add Label
             </v-btn>
           </v-card-actions>
         </v-card>

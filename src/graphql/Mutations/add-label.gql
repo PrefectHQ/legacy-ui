@@ -1,0 +1,5 @@
+mutation AddFlowGroupLabel ($flowGroupId: UUID!, $labelArray: [String!]) {
+  set_flow_group_labels(input: {flow_group_id: $flowGroupId, labels: $labelArray}) {
+    success
+  }
+}
