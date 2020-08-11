@@ -156,6 +156,9 @@
           <v-col>
             <slot name="row-2-col-2-row-3-tile-1" />
           </v-col>
+          <v-col>
+            <slot name="row-2-col-2-row-3-tile-2" />
+          </v-col>
         </v-row>
       </v-col>
     </v-row>

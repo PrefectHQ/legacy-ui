@@ -1,0 +1,24 @@
+query InProgressFlowRuns($projectId: uuid) {
+  flow_run(
+    where: {
+      flow: { project_id: { _eq: $projectId } }
+      state: { _eq: "Queued" }
+    }
+    order_by: { start_time: desc }
+  ) {
+    id
+    name
+    start_time
+    state
+    state_timestamp
+
+    flow {
+      id
+      name
+
+      flow_group_id
+    }
+
+    updated
+  }
+}

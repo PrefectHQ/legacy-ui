@@ -7,6 +7,7 @@ import FlowRunHeartbeatTile from '@/pages/Dashboard/FlowRunHeartbeat-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
+import QueueTile from '@/pages/Dashboard/Queue-Tile'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
@@ -51,6 +52,7 @@ export default {
     FlowTableTile,
     InProgressTile,
     ProjectSelector,
+    QueueTile,
     SubPageNav,
     SummaryTile,
     TileLayout,
@@ -62,7 +64,7 @@ export default {
       key: 0,
       loading: 0,
       loadedTiles: 0,
-      numberOfTiles: 7,
+      numberOfTiles: 8,
       projectId: this.$route.params.id,
       refreshTimeout: null,
       tab: this.getTab()
@@ -256,7 +258,6 @@ export default {
             type="image"
             height="200"
             transition="quick-fade"
-            class="my-2"
             tile
           >
             <TimelineTile :project-id="projectId" />
@@ -269,7 +270,6 @@ export default {
             min-height="329"
             height="100%"
             transition="quick-fade"
-            class="my-2"
             tile
           >
             <SummaryTile :project-id="projectId" full-height />
@@ -282,7 +282,6 @@ export default {
             min-height="200px"
             height="100%"
             transition="quick-fade"
-            class="my-2"
             tile
           >
             <FailedFlowsTile :project-id="projectId" />
@@ -295,7 +294,6 @@ export default {
             min-height="329"
             height="100%"
             transition="quick-fade"
-            class="my-2"
             tile
           >
             <UpcomingRunsTile :key="key" :project-id="projectId" full-height />
@@ -308,7 +306,6 @@ export default {
             min-height="329"
             height="100%"
             transition="quick-fade"
-            class="my-2"
             tile
           >
             <FlowRunHeartbeatTile :project-id="projectId" full-height />
@@ -321,7 +318,6 @@ export default {
             min-height="329"
             height="100%"
             transition="quick-fade"
-            class="my-2"
             tile
           >
             <InProgressTile :project-id="projectId" full-height />
@@ -334,7 +330,6 @@ export default {
             min-height="329"
             height="100%"
             transition="quick-fade"
-            class="my-2"
             tile
           >
             <AgentsTile
@@ -343,6 +338,18 @@ export default {
               @view-details-clicked="tab = 'agents'"
             />
             <ApiHealthCheckTile v-else />
+          </v-skeleton-loader>
+
+          <v-skeleton-loader
+            slot="row-2-col-2-row-3-tile-1"
+            :loading="loadedTiles < 8"
+            type="image"
+            min-height="329"
+            height="100%"
+            transition="quick-fade"
+            tile
+          >
+            <QueueTile :project-id="projectId" />
           </v-skeleton-loader>
         </TileLayout>
       </v-tab-item>
