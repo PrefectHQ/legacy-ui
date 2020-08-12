@@ -1,3 +1,6 @@
+//component for dialog? // add rules to make sure that label is unique? Do we
+need if cloud doesn't? // add remove label option
+
 <script>
 import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
@@ -43,7 +46,9 @@ export default {
       labelMenuOpen: false,
       labelSearchInput: '',
       tab: 'overview',
-      addingLabel: false
+      addingLabel: null,
+      removingLabel: null,
+      noEdit: true
     }
   },
   computed: {
@@ -76,7 +81,7 @@ export default {
       }
     },
     labelsFiltered() {
-      if (!this.flow.environment.labels) return
+      if (!this.flow.environment.labels && !this.flowGroup.labels) return
       const labels = this.labels
       if (!this.labelSearchInput) return labels
       return labels.filter(label => {
@@ -90,15 +95,44 @@ export default {
     },
     labelArray() {
       const labelArray = this.labels.slice()
-      console.log('label', this.newLabel)
       labelArray.push(this.newLabel)
-      console.log('labelarray', labelArray)
-      return labelArray
+      return labelArray.sort()
     }
   },
   methods: {
+    async removeLabel(labelToRemove) {
+      console.log('to remove', labelToRemove)
+      this.removingLabel = labelToRemove
+      const updatedArray = this.labels.filter(label => {
+        console.log('in filter', labelToRemove === label)
+        return labelToRemove != label
+      })
+      console.log('updatedArray', updatedArray)
+      console.log('to remove again', labelToRemove)
+      try {
+        const { data, errors } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/add-label.gql'),
+          variables: {
+            flowGroupId: this.flowGroup.id,
+            labelArray: updatedArray
+          },
+          errorPolicy: 'all'
+        })
+        if (data) {
+          this.labels = updatedArray
+          this.addingLabel = false
+          this.newLabel = ''
+          this.dialog = false
+        } else {
+          console.log('errors', errors)
+        }
+      } catch (e) {
+        console.log('catch', e)
+      }
+    },
     async addLabel() {
-      this.addingLabel = true
+      this.addingLabel = this.newLabel
+      this.labels = this.labelArray
       try {
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/add-label.gql'),
@@ -109,9 +143,7 @@ export default {
           errorPolicy: 'all'
         })
         if (data) {
-          console.log('data', data)
-          this.addedLabel = this.newLabel
-          this.addingLabel = false
+          this.addingLabel = null
           this.newLabel = ''
           this.dialog = false
         } else {
@@ -296,14 +328,36 @@ export default {
                     <Label
                       v-for="(label, i) in labelsFiltered"
                       :key="i"
+                      :loading="
+                        removingLabel === label || addingLabel === label
+                      "
+                      clickable
                       class="mr-1 mb-1"
+                      @click="removeLabel"
                       >{{ label }}</Label
                     >
+                    <v-text-field
+                      v-model="newLabel"
+                      color="primary"
+                      class="mt-2"
+                      @keyup.enter="addLabel"
+                    >
+                      <template v-slot:prepend>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on }">
+                            <v-icon small color="primary" v-on="on"
+                              >fa-plus</v-icon
+                            >
+                          </template>
+                          Add a new label
+                        </v-tooltip>
+                      </template>
+                    </v-text-field>
                   </v-card-text>
                   <v-card-text v-else class="max-h-300 overflow-y-scroll pa-6">
                     No labels found. Try expanding your search?
                   </v-card-text>
-                  <v-card-actions>
+                  <!-- <v-card-actions>
                     <v-spacer />
                     <v-btn
                       text
@@ -314,36 +368,40 @@ export default {
                       <v-icon small dense color="primary">fa-plus</v-icon>
                       <span class="ml-2"> Add a new label </span>
                     </v-btn>
-                  </v-card-actions>
+                  </v-card-actions> -->
                 </v-card>
               </v-menu>
 
               <div v-else-if="labels.length > 0">
-                <Label v-for="label in labels" :key="label" class="mr-1 mt-1">
-                  {{ label }}
-                </Label>
+                <Label
+                  v-for="(label, i) in labelsFiltered"
+                  :key="i"
+                  :loading="removingLabel === label || addingLabel === label"
+                  clickable
+                  class="mr-1 mb-1"
+                  @click="removeLabel"
+                  >{{ label }}</Label
+                >
               </div>
               <div v-else class="subtitle-2">
                 None
               </div>
             </v-list-item-content>
             <v-list-item-action v-if="!labelsOverflow">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    text
-                    x-small
-                    aria-label="Run Now"
-                    color="primary"
-                    class="vertical-button"
-                    @click.stop="dialog = true"
-                    v-on="on"
-                  >
-                    <v-icon x-small dense color="primary">fa-plus</v-icon>
-                  </v-btn>
+              <v-text-field
+                v-model="newLabel"
+                color="primary"
+                class="mt-2"
+                @keyup.enter="addLabel"
+                ><template v-slot:prepend>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon small color="primary" v-on="on">fa-plus</v-icon>
+                    </template>
+                    Add a new label
+                  </v-tooltip>
                 </template>
-                <span> Add a new label </span>
-              </v-tooltip>
+              </v-text-field>
             </v-list-item-action>
           </v-list-item>
         </div>
