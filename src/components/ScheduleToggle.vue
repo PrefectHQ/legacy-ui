@@ -14,7 +14,8 @@ export default {
   },
   data() {
     return {
-      loading: false
+      loading: false,
+      optimisticIsScheduled: this.flow.is_schedule_active
     }
   },
   computed: {
@@ -25,14 +26,9 @@ export default {
     isReadOnlyUser() {
       return this.role === 'READ_ONLY_USER'
     },
-    isScheduled: {
-      get() {
-        if (this.archived) return false
-        return this.flow.is_schedule_active
-      },
-      set() {
-        return
-      }
+    isScheduled() {
+      if (this.archived) return false
+      return this.optimisticIsScheduled
     },
     schedule() {
       return (
@@ -57,6 +53,7 @@ export default {
             this.alertShow = true
             this.alertMessage = 'Schedule paused'
             this.alertType = 'info'
+            this.optimisticIsScheduled = false
           } else {
             this.alertShow = true
             this.alertMessage =
@@ -74,6 +71,7 @@ export default {
             this.alertShow = true
             this.alertMessage = 'Schedule activated'
             this.alertType = 'info'
+            this.optimisticIsScheduled = true
           } else {
             this.alertShow = true
             this.alertMessage =
