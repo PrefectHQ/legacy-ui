@@ -10,3 +10,4 @@
 - Name the restart mutation and fix casing on the restart mutation variable [#98](https://github.com/PrefectHQ/ui/pull/98)
 - Add Created On column to Flow Table - [#103](https://github.com/PrefectHQ/ui/pull/103)
 - Improve schedule toggling reactivity [#104](https://github.com/PrefectHQ/ui/pull/104/files)
+- Update tenant CLI command in CreateTenant section - [#105](https://github.com/PrefectHQ/ui/pull/105)
