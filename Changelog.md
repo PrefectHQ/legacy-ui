@@ -8,3 +8,4 @@
 - Fix issue with Failed Tasks tile incorrectly displaying with a red color - [#88](https://github.com/PrefectHQ/ui/issues/88)
 - Add cancellation button to Flow Run pages [#92](https://github.com/PrefectHQ/ui/pull/92)
 - Name the restart mutation and fix casing on the restart mutation variable [#98](https://github.com/PrefectHQ/ui/pull/98)
+- Add Created On column to Flow Table - [#103](https://github.com/PrefectHQ/ui/pull/103)
