@@ -104,10 +104,12 @@ export default {
           </span>
           <span class="primary--text font-weight-medium">prefect</span>
           server
-          <span class="deepRed--text font-weight-medium"
-            >create-default-tenant</span
-          >
+          <span class="deepRed--text font-weight-medium">create-tenant</span>
           --name
+          <span class="yellow--text text--darken-3 font-weight-medium"
+            >default</span
+          >
+          --slug
           <span class="yellow--text text--darken-3 font-weight-medium"
             >default</span
           >
