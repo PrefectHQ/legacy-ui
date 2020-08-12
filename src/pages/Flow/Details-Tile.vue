@@ -48,7 +48,15 @@ export default {
       tab: 'overview',
       addingLabel: null,
       removingLabel: null,
-      noEdit: true
+      newLabels: null,
+      disableRemove: false,
+      disableAdd: false,
+      valid: false,
+      errorMessage: '',
+      duplicateLabel: '',
+      rules: {
+        labelCheck: value => this.checkInput(value) || this.errorMessage
+      }
     }
   },
   computed: {
@@ -81,8 +89,13 @@ export default {
       }
     },
     labelsFiltered() {
-      if (!this.flow.environment.labels && !this.flowGroup.labels) return
-      const labels = this.labels
+      if (
+        !this.flow.environment.labels &&
+        !this.flowGroup.labels &&
+        !this.newLabels
+      )
+        return
+      const labels = this.newLabels || this.labels
       if (!this.labelSearchInput) return labels
       return labels.filter(label => {
         return new RegExp(this.labelSearchInput.toLowerCase(0)).test(
@@ -91,25 +104,36 @@ export default {
       })
     },
     labelsOverflow() {
+      if (this.newLabels) return this.newLabels.length > 2
       return this.labels && this.labels.length > 2
     },
     labelArray() {
-      const labelArray = this.labels.slice()
+      const labelArray = this.newLabels || this.labels.slice()
       labelArray.push(this.newLabel)
-      return labelArray.sort()
+      return labelArray
     }
   },
   methods: {
+    checkInput(val) {
+      const labels = this.newLabels || this.labels
+      if (labels.includes(val)) {
+        this.errorMessage = 'Duplicate label'
+        this.duplicateLabel = val
+        this.valid = false
+        return false
+      }
+      this.duplicateLabel = ''
+      this.valid = true
+      return true
+    },
     async removeLabel(labelToRemove) {
-      console.log('to remove', labelToRemove)
-      this.removingLabel = labelToRemove
-      const updatedArray = this.labels.filter(label => {
-        console.log('in filter', labelToRemove === label)
-        return labelToRemove != label
-      })
-      console.log('updatedArray', updatedArray)
-      console.log('to remove again', labelToRemove)
       try {
+        this.removingLabel = labelToRemove
+        this.disableRemove = true
+        const labels = this.newLabels || this.labels
+        const updatedArray = await labels.filter(label => {
+          return labelToRemove != label
+        })
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/add-label.gql'),
           variables: {
@@ -119,10 +143,11 @@ export default {
           errorPolicy: 'all'
         })
         if (data) {
-          this.labels = updatedArray
-          this.addingLabel = false
+          this.newLabels = updatedArray
+          this.removingLabel = false
           this.newLabel = ''
           this.dialog = false
+          this.disableRemove = false
         } else {
           console.log('errors', errors)
         }
@@ -131,9 +156,9 @@ export default {
       }
     },
     async addLabel() {
-      this.addingLabel = this.newLabel
-      this.labels = this.labelArray
+      if (!this.valid) return
       try {
+        this.disableAdd = true
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/add-label.gql'),
           variables: {
@@ -143,9 +168,9 @@ export default {
           errorPolicy: 'all'
         })
         if (data) {
-          this.addingLabel = null
+          this.newLabels = this.labelArray
           this.newLabel = ''
-          this.dialog = false
+          this.disableAdd = false
         } else {
           console.log('errors', errors)
         }
@@ -302,7 +327,9 @@ export default {
               >
                 <template v-slot:activator="{ on }">
                   <v-btn small color="primary" class="mt-1" depressed v-on="on">
-                    Show labels ({{ labels.length }})
+                    Show labels ({{
+                      newLabels ? newLabels.length : labels.length
+                    }})
                     <v-icon>
                       {{ labelMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
                     </v-icon>
@@ -326,26 +353,31 @@ export default {
                     class="max-h-300 overflow-y-scroll"
                   >
                     <Label
-                      v-for="(label, i) in labelsFiltered"
+                      v-for="(label, i) in newLabels || labelsFiltered"
                       :key="i"
-                      :loading="
-                        removingLabel === label || addingLabel === label
-                      "
-                      clickable
+                      :duplicate="duplicateLabel === label"
+                      :loading="removingLabel === label"
+                      :disabled="disableRemove"
                       class="mr-1 mb-1"
                       @click="removeLabel"
                       >{{ label }}</Label
                     >
                     <v-text-field
                       v-model="newLabel"
+                      :rules="[rules.labelCheck]"
                       color="primary"
-                      class="mt-2"
+                      clearable
+                      class="mt-2, mr-2"
+                      :disabled="disableAdd"
                       @keyup.enter="addLabel"
                     >
                       <template v-slot:prepend>
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on }">
-                            <v-icon small color="primary" v-on="on"
+                            <v-icon
+                              small
+                              :color="valid ? 'primary' : 'error'"
+                              v-on="on"
                               >fa-plus</v-icon
                             >
                           </template>
@@ -372,68 +404,46 @@ export default {
                 </v-card>
               </v-menu>
 
-              <div v-else-if="labels.length > 0">
-                <Label
-                  v-for="(label, i) in labelsFiltered"
-                  :key="i"
-                  :loading="removingLabel === label || addingLabel === label"
-                  clickable
-                  class="mr-1 mb-1"
-                  @click="removeLabel"
-                  >{{ label }}</Label
-                >
-              </div>
-              <div v-else class="subtitle-2">
-                None
+              <div v-else>
+                <div v-if="!newLabels && labels.length < 1" class="subtitle-2">
+                  None
+                </div>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="newLabel"
+                      :label="valid ? '' : errorMessage"
+                      :rules="[rules.labelCheck]"
+                      color="primary"
+                      clearable
+                      class="py-0 mr-2"
+                      :disabled="disableAdd"
+                      v-on="on"
+                      @keyup.enter="addLabel"
+                      ><template v-slot:prepend-inner>
+                        <Label
+                          v-for="(label, i) in newLabels || labelsFiltered"
+                          :key="i"
+                          :loading="removingLabel === label"
+                          :disabled="disableRemove"
+                          class="mr-1 mb-1"
+                          @click="removeLabel"
+                          >{{ label }}</Label
+                        >
+                      </template>
+                    </v-text-field>
+                  </template>
+                  Add a new label
+                </v-tooltip>
               </div>
             </v-list-item-content>
-            <v-list-item-action v-if="!labelsOverflow">
-              <v-text-field
-                v-model="newLabel"
-                color="primary"
-                class="mt-2"
-                @keyup.enter="addLabel"
-                ><template v-slot:prepend>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon small color="primary" v-on="on">fa-plus</v-icon>
-                    </template>
-                    Add a new label
-                  </v-tooltip>
-                </template>
-              </v-text-field>
+
+            <v-list-item-action v-if="!labelsOverflow" max-width="10px">
             </v-list-item-action>
           </v-list-item>
         </div>
       </v-fade-transition>
-      <v-dialog v-model="dialog" max-width="290">
-        <v-card :loading="addingLabel">
-          <v-card-title class="headline">Add a flow group label</v-card-title>
 
-          <v-card-text>
-            Flows and agents have optional labels which allow you to determine
-            where your flows are executed. For more information see
-            <a
-              href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-              target="_blank"
-              >the docs on labels</a
-            >.
-            <v-text-field v-model="newLabel" label="New label"> </v-text-field>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-
-            <v-btn text @click="dialog = false">
-              Cancel
-            </v-btn>
-
-            <v-btn :loading="addingLabel" color="primary" @click="addLabel">
-              Add Label
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
       <v-fade-transition hide-on-leave>
         <div v-if="tab == 'details'">
           <v-list-item dense class="px-0">

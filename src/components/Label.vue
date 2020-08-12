@@ -1,7 +1,12 @@
 <script>
 export default {
   props: {
-    clickable: {
+    disabled: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    duplicate: {
       type: Boolean,
       default: false,
       required: false
@@ -25,6 +30,9 @@ export default {
   computed: {
     closeIcon() {
       return this.loading ? 'fa-spinner' : 'fa-times-circle'
+    },
+    duplicatedColor() {
+      return this.duplicate ? 'error' : 'primary'
     }
   },
   methods: {
@@ -37,8 +45,8 @@ export default {
 
 <template>
   <v-chip
-    :disabled="!clickable"
-    color="primary"
+    :disabled="disabled"
+    :color="duplicatedColor"
     class="pr-0"
     :outlined="outlined"
     :x-large="size === 'x-large'"
@@ -48,11 +56,20 @@ export default {
     style="user-select: auto;"
   >
     <slot></slot>
-    <v-btn color="primary" :loading="loading" icon
-      ><v-icon small color="primary" @click="handleClick"
-        >fa-times-circle</v-icon
-      >
-    </v-btn>
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          :disabled="disabled"
+          :color="duplicatedColor"
+          :loading="loading"
+          icon
+          ><v-icon small :color="duplicatedColor" @click="handleClick" v-on="on"
+            >fa-times-circle</v-icon
+          >
+        </v-btn>
+      </template>
+      Remove this label
+    </v-tooltip>
   </v-chip>
 </template>
 
