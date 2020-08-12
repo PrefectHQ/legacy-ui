@@ -148,7 +148,9 @@ export default {
 
       const now = new moment()
 
-      const height1 = this.y.bandwidth()
+      const bandWidthHeight = this.y.bandwidth()
+
+      // const
 
       // Check our current data against existing bars
       this.items.forEach(item => {
@@ -165,9 +167,9 @@ export default {
         if (barIndex < 0) {
           this.bars.push({
             ...item,
-            height0: height1,
-            height1: height1,
-            height: height1,
+            height0: bandWidthHeight,
+            height1: bandWidthHeight,
+            height: bandWidthHeight,
             width0: 0,
             width1: width1,
             width: 0,
@@ -185,7 +187,7 @@ export default {
           const bar1 = {
             ...item,
             height0: bar.height,
-            height1: height1,
+            height1: bandWidthHeight,
             height: bar.height,
             width0: bar.width,
             width1: width1,
@@ -213,7 +215,7 @@ export default {
         // ...otherwise we'll start the exit animation
         const bar1 = {
           height0: bar.height,
-          height1: height1,
+          height1: bandWidthHeight,
           height: bar.height,
           width0: bar.width,
           width1: 0,
@@ -260,6 +262,7 @@ export default {
         this.timer = d3.timer(timingCallback)
       }
     },
+    calcBar() {},
     drawCanvas() {
       const context = this.canvas.node().getContext('2d')
 
