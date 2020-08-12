@@ -266,6 +266,7 @@ export default {
                 v-model="labelMenuOpen"
                 :close-on-content-click="false"
                 offset-y
+                max-width="300"
               >
                 <template v-slot:activator="{ on }">
                   <v-btn small color="primary" class="mt-1" depressed v-on="on">
