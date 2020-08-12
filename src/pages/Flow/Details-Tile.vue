@@ -42,7 +42,8 @@ export default {
       newLabel: '',
       labelMenuOpen: false,
       labelSearchInput: '',
-      tab: 'overview'
+      tab: 'overview',
+      addingLabel: false
     }
   },
   computed: {
@@ -62,12 +63,17 @@ export default {
       if (!this.flow.storage || !this.flow.storage.flows) return null
       return this.flow.storage.flows
     },
-    labels() {
-      if (!this.flow.environment.labels && !this.flowGroup.labels) return
-      const labels = this.flowGroup.labels
-        ? this.flowGroup.labels.slice().sort()
-        : this.flow.environment.labels.slice().sort()
-      return labels
+    labels: {
+      get() {
+        if (!this.flow.environment.labels && !this.flowGroup.labels) return
+        const labels = this.flowGroup.labels
+          ? this.flowGroup.labels.slice().sort()
+          : this.flow.environment.labels.slice().sort()
+        return labels
+      },
+      set() {
+        return
+      }
     },
     labelsFiltered() {
       if (!this.flow.environment.labels) return
@@ -92,6 +98,7 @@ export default {
   },
   methods: {
     async addLabel() {
+      this.addingLabel = true
       try {
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/add-label.gql'),
@@ -103,6 +110,10 @@ export default {
         })
         if (data) {
           console.log('data', data)
+          this.addedLabel = this.newLabel
+          this.addingLabel = false
+          this.newLabel = ''
+          this.dialog = false
         } else {
           console.log('errors', errors)
         }
@@ -282,8 +293,8 @@ export default {
                     class="max-h-300 overflow-y-scroll"
                   >
                     <Label
-                      v-for="label in labelsFiltered"
-                      :key="label"
+                      v-for="(label, i) in labelsFiltered"
+                      :key="i"
                       class="mr-1 mb-1"
                       >{{ label }}</Label
                     >
@@ -337,7 +348,7 @@ export default {
         </div>
       </v-fade-transition>
       <v-dialog v-model="dialog" max-width="290">
-        <v-card>
+        <v-card :loading="addingLabel">
           <v-card-title class="headline">Add a flow group label</v-card-title>
 
           <v-card-text>
@@ -358,7 +369,7 @@ export default {
               Cancel
             </v-btn>
 
-            <v-btn color="primary" @click="addLabel">
+            <v-btn :loading="addingLabel" color="primary" @click="addLabel">
               Add Label
             </v-btn>
           </v-card-actions>
