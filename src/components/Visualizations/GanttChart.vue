@@ -60,7 +60,7 @@ export default {
   computed: {
     containerStyle() {
       return {
-        height: this.groups?.length * 100 + 'px'
+        height: this.groups?.length * 50 + 'px'
       }
     },
     hoveredId() {
@@ -123,16 +123,19 @@ export default {
     window.removeEventListener('resize', resizeChartListener)
   },
   methods: {
-    _mouseover(d) {
-      console.log(d)
+    _mouseover(e) {
       this._mouseout.cancel()
-      // this.hovered = {
-      //   data: d,
-      //   x: this.x(d.id),
-      //   y: this.chartHeight,
-      //   width: this.x.bandwidth(),
-      //   height: this.calcHeight(d)
-      // }
+
+      const context = this.canvas.node().getContext('2d')
+
+      this.hovered = this.bars.find(bar =>
+        context?.isPointInPath(bar.path2D, e.offsetX, e.offsetY)
+      )
+
+      this.$refs.canvas.style.cursor = this.hoveredId ? 'pointer' : null
+
+      console.log(this.hovered)
+
       this.$emit('bar-mouseover', this.hovered)
 
       this._renderCanvas()
@@ -140,6 +143,7 @@ export default {
     _rawMouseout() {
       this.$emit('bar-mouseout', this.hovered)
       this.hovered = null
+      this.$refs.canvas.style.cursor = null
 
       this._renderCanvas()
     },
@@ -150,16 +154,18 @@ export default {
 
       const bandWidthHeight = this.y.bandwidth()
 
-      // const
+      const barMap = {}
 
-      // Check our current data against existing bars
-      this.items.forEach(item => {
+      const calcBar = (item, i, array) => {
         const startTime = moment(item.start_time)
         const endTime = moment(item.end_time)
 
-        const width1 = item.start_time ? this.x(endTime || now) : 0
-        const x1 = item.start_time ? this.x(startTime || now) : this.width
-        const y1 = this.y(item[this.yField])
+        const width = item.start_time ? this.x(endTime || now) : 0
+        const x = item.start_time ? this.x(startTime || now) : this.width
+
+        const calcY = this.y(item[this.yField])
+        const height = (1 / array.length) * bandWidthHeight
+        const y = calcY + height * i
 
         const barIndex = this.bars.findIndex(b => b.id == item.id)
         // If the item isn't present in the bar array
@@ -167,18 +173,19 @@ export default {
         if (barIndex < 0) {
           this.bars.push({
             ...item,
-            height0: bandWidthHeight,
-            height1: bandWidthHeight,
-            height: bandWidthHeight,
+            alpha: item.map_index === 0 && 0.25,
+            height0: height,
+            height1: height,
+            height: height,
             width0: 0,
-            width1: width1,
+            width1: width,
             width: 0,
-            x0: x1 || 0,
-            x1: x1 || 0,
-            x: x1 || 0,
-            y0: y1,
-            y1: y1,
-            y: y1
+            x0: x || 0,
+            x1: x || 0,
+            x: x || 0,
+            y0: y,
+            y1: y,
+            y: y
           })
         } else {
           // ...otherwise we update the existing bar with
@@ -186,22 +193,36 @@ export default {
           const bar = this.bars[barIndex]
           const bar1 = {
             ...item,
+            alpha: item.map_index === 0 && 0.25,
             height0: bar.height,
-            height1: bandWidthHeight,
+            height1: height,
             height: bar.height,
             width0: bar.width,
-            width1: width1,
+            width1: width,
             width: bar.width,
             x0: bar.x,
-            x1: x1 || 0,
+            x1: x || 0,
             x: bar.x,
             y0: bar.y,
-            y1: y1,
+            y1: y,
             y: bar.y
           }
 
           this.bars[barIndex] = { ...bar, ...bar1, ...item }
         }
+      }
+
+      // Check our current data against existing bars
+      this.items.forEach(item => {
+        if (item[this.yField] in barMap) {
+          barMap[item[this.yField]].push(item)
+        } else {
+          barMap[[item[this.yField]]] = [item]
+        }
+      })
+
+      Object.keys(barMap).map(id => {
+        return barMap[id].map(calcBar)
       })
 
       // Check our existing bars against current data
@@ -241,7 +262,7 @@ export default {
             ? bar.id == this.hoveredId
               ? 1
               : 0.5
-            : bar.opacity || 1
+            : bar.alpha || 1
           bar.x = bar.x0 * (1 - t) + bar.x1 * t
           bar.y = bar.y0 * (1 - t) + bar.y1 * t
           bar.height = bar.height0 * (1 - t) + bar.height1 * t
@@ -275,13 +296,15 @@ export default {
       let len = this.bars.length
       for (let i = 0; i < len; ++i) {
         const bar = this.bars[i]
+        this.bars[i].path2D = new Path2D()
 
         context.beginPath()
         context.globalAlpha = bar.alpha
         context.fillStyle = bar.color || '#eee'
 
-        context.rect(bar.x, bar.y, bar.width, bar.height)
-        context.fill()
+        this.bars[i].path2D.rect(bar.x, bar.y, bar.width, bar.height)
+
+        context.fill(this.bars[i].path2D)
         context.stroke()
       }
 
@@ -397,7 +420,13 @@ export default {
       class="position-relative flex-grow-1 flex-shrink-0"
       style="height: 100%;"
     >
-      <canvas :id="`${id}-canvas`" class="gantt" @click="_mouseover" />
+      <canvas
+        :id="`${id}-canvas`"
+        ref="canvas"
+        class="gantt"
+        @mousemove="_mouseover"
+        @mouseout="_mouseout"
+      />
       <svg :id="`${id}-svg`" class="gantt" />
     </div>
 
@@ -421,7 +450,12 @@ export default {
 }
 
 canvas {
+  cursor: grab;
   z-index: 3;
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 svg {

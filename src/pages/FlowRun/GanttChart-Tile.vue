@@ -30,6 +30,12 @@ export default {
     }
   },
   computed: {},
+  methods: {
+    refetch() {
+      this.$apollo.queries.tasks.refetch()
+      this.$apollo.queries.taskRuns.refetch()
+    }
+  },
   apollo: {
     taskRuns: {
       query: require('@/graphql/FlowRun/gantt-chart-task-runs.gql'),
@@ -41,7 +47,7 @@ export default {
       skip() {
         return !this.flowId
       },
-      pollInterval: 1000,
+      // pollInterval: 1000,
       update(data) {
         return data.task_run.map(task => {
           if (!task.end_time && task.start_time) {
@@ -98,6 +104,10 @@ export default {
           </span>
         </span>
       </div>
+
+      <template slot="action">
+        <v-btn color="red lighten-3" depressed @click="refetch">Refetch</v-btn>
+      </template>
     </CardTitle>
 
     <GanttChart
