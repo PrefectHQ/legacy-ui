@@ -104,7 +104,7 @@ export default {
       const labels = this.newLabels || this.labels
       let counter = 0
       labels.forEach(label => (counter += label.length))
-      return counter > 30 || labels.length > 2
+      return counter > 20 || labels.length > 2
     }
   },
   methods: {
