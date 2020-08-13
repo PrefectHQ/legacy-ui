@@ -355,7 +355,7 @@ export default {
                       :loading="removingLabel === label"
                       :disabled="disableRemove"
                       class="mr-1 mb-1"
-                      @click="removeLabel"
+                      @remove="removeLabel"
                       >{{ label }}</Label
                     >
                     <v-text-field
@@ -413,7 +413,7 @@ export default {
                           :loading="removingLabel === label"
                           :disabled="disableRemove"
                           class="mr-1 mb-1"
-                          @click="removeLabel"
+                          @remove="removeLabel"
                           >{{ label }}</Label
                         >
                       </template>

@@ -42,8 +42,8 @@ export default {
       if (this.closable) return
       this.$emit('click', this.$slots.default[0].text)
     },
-    handleCancel() {
-      this.$emit('click', this.$slots.default[0].text)
+    handleRemove() {
+      this.$emit('remove', this.$slots.default[0].text)
     }
   }
 }
@@ -73,7 +73,7 @@ export default {
           ><v-icon
             small
             :color="duplicatedColor"
-            @click="handleCancel"
+            @click="handleRemove"
             v-on="on"
             >fa-times-circle</v-icon
           >
