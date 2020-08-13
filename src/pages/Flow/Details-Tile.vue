@@ -389,9 +389,6 @@ export default {
               </v-menu>
 
               <div v-else>
-                <div v-if="!newLabels && labels.length < 1" class="subtitle-2">
-                  None
-                </div>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-text-field

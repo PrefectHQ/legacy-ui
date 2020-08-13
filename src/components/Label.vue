@@ -70,11 +70,8 @@ export default {
           :color="duplicatedColor"
           :loading="loading"
           icon
-          ><v-icon
-            small
-            :color="duplicatedColor"
-            @click="handleRemove"
-            v-on="on"
+          @click="handleRemove"
+          ><v-icon small :color="duplicatedColor" v-on="on"
             >fa-times-circle</v-icon
           >
         </v-btn>
