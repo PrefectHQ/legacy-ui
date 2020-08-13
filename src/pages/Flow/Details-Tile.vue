@@ -1,6 +1,3 @@
-//component for dialog? // add rules to make sure that label is unique? Do we
-need if cloud doesn't? // add remove label option
-
 <script>
 import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
@@ -104,8 +101,10 @@ export default {
       })
     },
     labelsOverflow() {
-      if (this.newLabels) return this.newLabels.length > 2
-      return this.labels && this.labels.length > 2
+      const labels = this.newLabels || this.labels
+      let counter = 0
+      labels.forEach(label => (counter += label.length))
+      return counter > 30 || labels.length > 2
     },
     labelArray() {
       const labelArray = this.newLabels || this.labels.slice()
@@ -312,8 +311,8 @@ export default {
               </div>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="labels" dense class="px-0">
-            <v-list-item-content>
+          <v-list-item dense class="px-0">
+            <v-list-item-content width="800px">
               <v-list-item-subtitle class="caption">
                 Labels
               </v-list-item-subtitle>
@@ -323,7 +322,7 @@ export default {
                 v-model="labelMenuOpen"
                 :close-on-content-click="false"
                 offset-y
-                max-width="300"
+                max-width="300px"
               >
                 <template v-slot:activator="{ on }">
                   <v-btn small color="primary" class="mt-1" depressed v-on="on">
@@ -412,11 +411,12 @@ export default {
                   <template v-slot:activator="{ on }">
                     <v-text-field
                       v-model="newLabel"
+                      dense
                       :label="valid ? '' : errorMessage"
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
-                      class="py-0 mr-2"
+                      class="py-0 mr-2 scroll"
                       :disabled="disableAdd"
                       v-on="on"
                       @keyup.enter="addLabel"
@@ -437,9 +437,6 @@ export default {
                 </v-tooltip>
               </div>
             </v-list-item-content>
-
-            <v-list-item-action v-if="!labelsOverflow" max-width="10px">
-            </v-list-item-action>
           </v-list-item>
         </div>
       </v-fade-transition>
@@ -656,6 +653,10 @@ export default {
 
 .pa-2px {
   padding: 2px;
+}
+
+.scroll {
+  overflow-x: scroll;
 }
 
 .show-icon-hover-focus-only {

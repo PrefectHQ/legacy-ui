@@ -47,7 +47,7 @@ export default {
   <v-chip
     :disabled="disabled"
     :color="duplicatedColor"
-    class="pr-0"
+    class="pr-0 overflow"
     :outlined="outlined"
     :x-large="size === 'x-large'"
     :large="size === 'large'"
@@ -76,5 +76,10 @@ export default {
 <style lang="scss" scoped>
 .v-chip--disabled {
   opacity: 1;
+}
+
+.overflow {
+  max-width: 800px !important;
+  overflow-x: hidden;
 }
 </style>
