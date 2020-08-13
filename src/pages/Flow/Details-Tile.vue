@@ -4,6 +4,7 @@ import Label from '@/components/Label'
 import Parameters from '@/components/Parameters'
 import PrefectSchedule from '@/components/PrefectSchedule'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { mapActions } from 'vuex'
 
 export default {
   filters: {
@@ -38,11 +39,11 @@ export default {
   data() {
     return {
       copiedText: {},
-      dialog: false,
+      tab: 'overview',
+      //labels
       newLabel: '',
       labelMenuOpen: false,
       labelSearchInput: '',
-      tab: 'overview',
       addingLabel: null,
       removingLabel: null,
       newLabels: null,
@@ -105,14 +106,10 @@ export default {
       let counter = 0
       labels.forEach(label => (counter += label.length))
       return counter > 30 || labels.length > 2
-    },
-    labelArray() {
-      const labelArray = this.newLabels || this.labels.slice()
-      labelArray.push(this.newLabel)
-      return labelArray
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     checkInput(val) {
       const labels = this.newLabels || this.labels
       if (labels.includes(val)) {
@@ -125,57 +122,57 @@ export default {
       this.valid = true
       return true
     },
-    async removeLabel(labelToRemove) {
-      try {
-        this.removingLabel = labelToRemove
-        this.disableRemove = true
-        const labels = this.newLabels || this.labels
-        const updatedArray = await labels.filter(label => {
-          return labelToRemove != label
-        })
-        const { data, errors } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/add-label.gql'),
-          variables: {
-            flowGroupId: this.flowGroup.id,
-            labelArray: updatedArray
-          },
-          errorPolicy: 'all'
-        })
-        if (data) {
-          this.newLabels = updatedArray
-          this.removingLabel = false
-          this.newLabel = ''
-          this.dialog = false
-          this.disableRemove = false
-        } else {
-          console.log('errors', errors)
-        }
-      } catch (e) {
-        console.log('catch', e)
-      }
+    removeLabel(labelToRemove) {
+      this.removingLabel = labelToRemove
+      this.disableRemove = true
+      const labels = this.newLabels || this.labels
+      const updatedArray = labels.filter(label => {
+        return labelToRemove != label
+      })
+      this.editLabels(updatedArray)
     },
     async addLabel() {
       if (!this.valid) return
+      this.disableAdd = true
+      const labelArray = this.newLabels || this.labels.slice()
+      labelArray.push(this.newLabel)
+      this.editLabels(labelArray)
+    },
+    async editLabels(newLabels) {
       try {
-        this.disableAdd = true
-        const { data, errors } = await this.$apollo.mutate({
+        const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/add-label.gql'),
           variables: {
             flowGroupId: this.flowGroup.id,
-            labelArray: this.labelArray
+            labelArray: newLabels
           },
           errorPolicy: 'all'
         })
         if (data) {
-          this.newLabels = this.labelArray
-          this.newLabel = ''
-          this.disableAdd = false
+          this.newLabels = newLabels
+          this.resetLabels()
         } else {
-          console.log('errors', errors)
+          this.labelsError()
+          this.resetLabels()
         }
       } catch (e) {
-        console.log('catch', e)
+        this.labelsError()
+        this.resetLabels()
       }
+    },
+    resetLabels() {
+      this.removingLabel = false
+      this.disableAdd = false
+      this.newLabel = ''
+      this.disableRemove = false
+    },
+    labelsError() {
+      this.setAlert({
+        alertShow: true,
+        alertMessage:
+          'There was a problem updating your labels.  Please try again.',
+        alertType: 'error'
+      })
     },
     clickAndCopyable(field) {
       return ['image_tag', 'image_name', 'registry_url'].includes(field)
@@ -366,7 +363,7 @@ export default {
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
-                      class="mt-2, mr-2"
+                      class="mt-2, mr-2 width=100%"
                       :disabled="disableAdd"
                       @keyup.enter="addLabel"
                     >
@@ -388,18 +385,6 @@ export default {
                   <v-card-text v-else class="max-h-300 overflow-y-scroll pa-6">
                     No labels found. Try expanding your search?
                   </v-card-text>
-                  <!-- <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      text
-                      aria-label="Add Label"
-                      color="primary"
-                      @click.stop="dialog = true"
-                    >
-                      <v-icon small dense color="primary">fa-plus</v-icon>
-                      <span class="ml-2"> Add a new label </span>
-                    </v-btn>
-                  </v-card-actions> -->
                 </v-card>
               </v-menu>
 
@@ -412,7 +397,6 @@ export default {
                     <v-text-field
                       v-model="newLabel"
                       dense
-                      :label="valid ? '' : errorMessage"
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
@@ -424,6 +408,7 @@ export default {
                         <Label
                           v-for="(label, i) in newLabels || labelsFiltered"
                           :key="i"
+                          :duplicate="duplicateLabel === label"
                           :loading="removingLabel === label"
                           :disabled="disableRemove"
                           class="mr-1 mb-1"
@@ -653,10 +638,6 @@ export default {
 
 .pa-2px {
   padding: 2px;
-}
-
-.scroll {
-  overflow-x: scroll;
 }
 
 .show-icon-hover-focus-only {

@@ -28,16 +28,13 @@ export default {
     }
   },
   computed: {
-    closeIcon() {
-      return this.loading ? 'fa-spinner' : 'fa-times-circle'
-    },
     duplicatedColor() {
       return this.duplicate ? 'error' : 'primary'
     }
   },
   methods: {
     handleClick() {
-      this.$emit('click', this.$slots.default[0].text, this.index)
+      this.$emit('click', this.$slots.default[0].text)
     }
   }
 }
@@ -80,6 +77,5 @@ export default {
 
 .overflow {
   max-width: 800px !important;
-  overflow-x: hidden;
 }
 </style>
