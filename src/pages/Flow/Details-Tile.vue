@@ -350,6 +350,7 @@ export default {
                     <Label
                       v-for="(label, i) in newLabels || labelsFiltered"
                       :key="i"
+                      closable
                       :duplicate="duplicateLabel === label"
                       :loading="removingLabel === label"
                       :disabled="disableRemove"
@@ -407,6 +408,7 @@ export default {
                         <Label
                           v-for="(label, i) in newLabels || labelsFiltered"
                           :key="i"
+                          closable
                           :duplicate="duplicateLabel === label"
                           :loading="removingLabel === label"
                           :disabled="disableRemove"

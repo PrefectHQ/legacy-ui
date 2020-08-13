@@ -326,7 +326,6 @@ export default {
             v-for="label in agentModified.labels"
             :key="label"
             class="mr-1 mt-1"
-            clickable
             :outlined="!labelSelected(label)"
             size="x-small"
             @click="$emit('label-click', $event)"

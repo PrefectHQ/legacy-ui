@@ -6,6 +6,11 @@ export default {
       default: false,
       required: false
     },
+    closable: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
     duplicate: {
       type: Boolean,
       default: false,
@@ -34,6 +39,10 @@ export default {
   },
   methods: {
     handleClick() {
+      if (this.closable) return
+      this.$emit('click', this.$slots.default[0].text)
+    },
+    handleCancel() {
       this.$emit('click', this.$slots.default[0].text)
     }
   }
@@ -44,23 +53,28 @@ export default {
   <v-chip
     :disabled="disabled"
     :color="duplicatedColor"
-    class="pr-0 overflow"
+    :class="closable ? 'pr-0 overflow' : 'overflow'"
     :outlined="outlined"
     :x-large="size === 'x-large'"
     :large="size === 'large'"
     :small="size === 'small'"
     :x-small="size === 'x-small'"
     style="user-select: auto;"
+    @click="handleClick"
   >
     <slot></slot>
-    <v-tooltip bottom>
+    <v-tooltip v-if="closable" bottom>
       <template v-slot:activator="{ on }">
         <v-btn
           :disabled="disabled"
           :color="duplicatedColor"
           :loading="loading"
           icon
-          ><v-icon small :color="duplicatedColor" @click="handleClick" v-on="on"
+          ><v-icon
+            small
+            :color="duplicatedColor"
+            @click="handleCancel"
+            v-on="on"
             >fa-times-circle</v-icon
           >
         </v-btn>
