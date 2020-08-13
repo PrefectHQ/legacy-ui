@@ -11,3 +11,4 @@
 - Add Created On column to Flow Table - [#103](https://github.com/PrefectHQ/ui/pull/103)
 - Improve schedule toggling reactivity [#104](https://github.com/PrefectHQ/ui/pull/104/files)
 - Update tenant CLI command in CreateTenant section - [#105](https://github.com/PrefectHQ/ui/pull/105)
+- Add an alert to remind users they are on Prefect Cloud if they toggle from Server [#108](https://github.com/PrefectHQ/ui/pull/108)
