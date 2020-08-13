@@ -1,4 +1,6 @@
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   props: {
     complete: {
@@ -31,6 +33,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     // helps us check for an existing project name
     projectNames() {
       if (!this.projects) return
@@ -38,6 +41,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     async handleProjectFormSubmit() {
       // if the form is invalid, do nothing
       if (!this.valid) return
@@ -47,11 +51,12 @@ export default {
           mutation: require('@/graphql/Mutations/create-project.gql'),
           variables: {
             name: this.projectName,
-            description: this.projectDescription
+            description: this.projectDescription,
+            tenantId: this.tenant.id
           }
         })
         // extract the project id
-        this.projectId = result.data.create_project.project.id
+        this.projectId = result.data.create_project.id
         // emit the result of the step to the parent
         this.$emit('project-submitted', {
           projectId: this.projectId,
@@ -61,23 +66,19 @@ export default {
       } catch (error) {
         // if project name already exists
         if (error.message === 'GraphQL error: Uniqueness violation.') {
-          this.$toasted.error(
-            'A project with this name already exists. Please try a different name.',
-            {
-              action: {
-                text: 'Close',
-                onClick(e, toastObject) {
-                  toastObject.goAway(0)
-                }
-              },
-              duration: 5000
-            }
-          )
+          this.setAlert({
+            alertShow: true,
+            alertMessage:
+              'A project with this name already exists. Please try a different name.',
+            alertType: 'error'
+          })
         } else {
-          this.$toasted.error(
-            'Failed to create project. Please wait a few moments and try again',
-            { duration: 3000 }
-          )
+          this.setAlert({
+            alertShow: true,
+            alertMessage:
+              'Failed to create project. Please wait a few moments and try again',
+            alertType: 'error'
+          })
         }
 
         throw error
