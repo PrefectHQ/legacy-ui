@@ -37,9 +37,6 @@ export default {
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
     },
-    alert() {
-      return ''
-    },
     needAlert() {
       return !location.href.includes('prefect.io')
     }
