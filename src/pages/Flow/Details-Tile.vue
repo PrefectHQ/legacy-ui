@@ -367,7 +367,7 @@ export default {
                       :disabled="disableAdd"
                       @keyup.enter="addLabel"
                     >
-                      <template v-slot:prepend>
+                      <template v-slot:prepend-inner>
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on }">
                             <v-icon
