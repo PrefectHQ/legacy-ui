@@ -30,6 +30,11 @@ const serverHeaders = [
     value: 'version',
     sortable: false,
     width: '7.5%'
+  },
+  {
+    text: 'Created On',
+    value: 'created',
+    width: '15%'
   }
 ]
 
@@ -372,6 +377,12 @@ export default {
         <template v-slot:item.flow_runs="{ item }">
           <div class="position-relative allow-overflow">
             <LastTenRuns :flow-id="item.id" :archived="item.archived" />
+          </div>
+        </template>
+
+        <template v-slot:item.created="{ item }">
+          <div class="truncate">
+            {{ formatTime(item.created) }}
           </div>
         </template>
 
