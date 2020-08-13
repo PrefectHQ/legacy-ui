@@ -130,7 +130,7 @@ export default {
       })
       this.editLabels(updatedArray)
     },
-    async addLabel() {
+    addLabel() {
       if (!this.valid) return
       this.disableAdd = true
       const labelArray = this.newLabels || this.labels.slice()
