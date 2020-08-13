@@ -52,7 +52,7 @@ export default {
       errorMessage: '',
       duplicateLabel: '',
       rules: {
-        labelCheck: value => this.checkInput(value) || this.errorMessage
+        labelCheck: value => this.checkLabelInput(value) || this.errorMessage
       }
     }
   },
@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    checkInput(val) {
+    checkLabelInput(val) {
       const labels = this.newLabels || this.labels
       if (labels.includes(val) && !this.disableAdd) {
         this.errorMessage = 'Duplicate label'
