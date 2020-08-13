@@ -44,7 +44,6 @@ export default {
       newLabel: '',
       labelMenuOpen: false,
       labelSearchInput: '',
-      addingLabel: null,
       removingLabel: null,
       newLabels: null,
       disableRemove: false,
@@ -112,7 +111,7 @@ export default {
     ...mapActions('alert', ['setAlert']),
     checkInput(val) {
       const labels = this.newLabels || this.labels
-      if (labels.includes(val)) {
+      if (labels.includes(val) && !this.disableAdd) {
         this.errorMessage = 'Duplicate label'
         this.duplicateLabel = val
         this.valid = false
