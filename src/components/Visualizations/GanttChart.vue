@@ -4,10 +4,17 @@ import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 import moment from 'moment'
+import DurationSpan from '@/components/DurationSpan'
+
+import { formatTime } from '@/mixins/formatTimeMixin'
 
 let resizeChartListener
 
 export default {
+  components: {
+    DurationSpan
+  },
+  mixins: [formatTime],
   props: {
     groups: {
       type: Array,
@@ -58,9 +65,47 @@ export default {
     }
   },
   computed: {
+    barMap() {
+      const barMap = {}
+
+      this.items.forEach(item => {
+        const ref = item[this.yField]
+        if (ref in barMap) {
+          if (
+            !barMap[ref].start_time ||
+            (item.start_time &&
+              moment(item.start_time).isBefore(barMap[ref].start_time))
+          ) {
+            barMap[ref].start_time = item.start_time
+          }
+
+          if (
+            !barMap[ref].end_time ||
+            (item.end_time &&
+              moment(item.end_time).isAfter(barMap[ref].end_time))
+          ) {
+            barMap[ref].end_time = item.end_time
+          }
+
+          barMap[ref].items.push(item)
+        } else {
+          console.log(item.map_index, item.start_time)
+
+          barMap[ref] = {
+            ref: ref,
+            items: [item],
+            start_time: item.start_time,
+            end_time: item.end_time
+          }
+        }
+      })
+
+      return barMap
+    },
     containerStyle() {
       return {
-        height: this.groups?.length * 50 + 'px'
+        height: this.groups?.length * 50 + 'px',
+        'min-height': '1000px'
       }
     },
     hoveredId() {
@@ -74,14 +119,23 @@ export default {
     },
     tooltipStyle() {
       if (!this.hovered) return
-      let p = this.$refs['parent'].getBoundingClientRect()
-      let overRight = this.hovered.x + 150 - p.width > 0
-      let overLeft = this.hovered.x - 150 < 0
+      const p = this.$refs['parent'].getBoundingClientRect()
+      const overRight = this.hovered.offsetX + 125 - p.width > 0
+      const overLeft = this.hovered.offsetX - 125 < 0
+      const overBottom =
+        this.hovered.y + this.hovered.height + 200 - p.height > 0
       return {
         left: `${
-          overRight ? p.width - 150 : overLeft ? 150 : this.hovered.x
+          overRight ? p.width - 250 : overLeft ? 0 : this.hovered.offsetX - 125
         }px`,
-        top: `${this.hovered.y}px`
+        'pointer-events': 'none',
+        top: `${
+          overBottom
+            ? this.hovered.y - 200
+            : this.hovered.y + this.hovered.height + 8
+        }px`,
+        width: '250px',
+        'z-index': 3
       }
     }
   },
@@ -132,9 +186,12 @@ export default {
         context?.isPointInPath(bar.path2D, e.offsetX, e.offsetY)
       )
 
-      this.$refs.canvas.style.cursor = this.hoveredId ? 'pointer' : null
+      if (this.hoveredId) {
+        this.hovered.offsetX = e.offsetX
+        this.hovered.offsetY = e.offsetY
+      }
 
-      console.log(this.hovered)
+      this.$refs.canvas.style.cursor = this.hoveredId ? 'pointer' : null
 
       this.$emit('bar-mouseover', this.hovered)
 
@@ -148,32 +205,49 @@ export default {
       this._renderCanvas()
     },
     _renderCanvas() {
+      console.log(this.barMap)
       cancelAnimationFrame(this.drawCanvas)
 
       const now = new moment()
 
       const bandWidthHeight = this.y.bandwidth()
+      const calcBar = (item, i, array, ref) => {
+        const mapped = item.state === 'Mapped'
 
-      const barMap = {}
+        const startTime = mapped
+          ? moment(this.barMap[ref]?.start_time)
+          : moment(item.start_time)
 
-      const calcBar = (item, i, array) => {
-        const startTime = moment(item.start_time)
-        const endTime = moment(item.end_time)
+        const endTime = mapped
+          ? moment(this.barMap[ref]?.end_time)
+          : moment(item.end_time)
 
-        const width = item.start_time ? this.x(endTime || now) : 0
-        const x = item.start_time ? this.x(startTime || now) : this.width
+        const x = startTime ? this.x(startTime) : 0
+        const width = this.x(endTime || now) - x
 
         const calcY = this.y(item[this.yField])
-        const height = (1 / array.length) * bandWidthHeight
-        const y = calcY + height * i
+        const height =
+          mapped || item.map_index === -1
+            ? bandWidthHeight
+            : (1 / (array.length - 1)) * bandWidthHeight
+        const y =
+          mapped || item.map_index === -1
+            ? calcY
+            : calcY + height * item.map_index
+
+        const alpha = mapped && 0.25
 
         const barIndex = this.bars.findIndex(b => b.id == item.id)
+
         // If the item isn't present in the bar array
         // we instantiate a new bar...
         if (barIndex < 0) {
+          if (item.state == 'Mapped') {
+            console.log(x, y)
+          }
           this.bars.push({
             ...item,
-            alpha: item.map_index === 0 && 0.25,
+            alpha: alpha,
             height0: height,
             height1: height,
             height: height,
@@ -193,7 +267,7 @@ export default {
           const bar = this.bars[barIndex]
           const bar1 = {
             ...item,
-            alpha: item.map_index === 0 && 0.25,
+            alpha: alpha,
             height0: bar.height,
             height1: height,
             height: bar.height,
@@ -212,17 +286,10 @@ export default {
         }
       }
 
-      // Check our current data against existing bars
-      this.items.forEach(item => {
-        if (item[this.yField] in barMap) {
-          barMap[item[this.yField]].push(item)
-        } else {
-          barMap[[item[this.yField]]] = [item]
-        }
-      })
-
-      Object.keys(barMap).map(id => {
-        return barMap[id].map(calcBar)
+      Object.keys(this.barMap).map(id => {
+        return this.barMap[id].items.map((item, i, array) =>
+          calcBar(item, i, array, id)
+        )
       })
 
       // Check our existing bars against current data
@@ -230,7 +297,7 @@ export default {
         const itemExists = this.items.find(item => item.id == bar.id)
 
         // If this is a valid bar, do nothing since its data was already
-        // updated in the loop above...
+        // updated
         if (itemExists) return
 
         // ...otherwise we'll start the exit animation
@@ -391,7 +458,6 @@ export default {
       this.drawXAxis()
     },
     drawXAxis() {
-      console.log('drawingx')
       const xAxis = d3.axisTop(this.x).ticks(30)
 
       this.xAxisGroup
@@ -400,16 +466,31 @@ export default {
         .transition()
         .duration(this.animationDuration)
         .call(xAxis)
+    },
+    statusStyle(state) {
+      return {
+        'border-radius': '50%',
+        display: 'inline-block',
+        'background-color': `var(--v-${state}-base)`,
+        height: '0.75rem',
+        width: '0.75rem'
+      }
     }
   }
 }
 </script>
 
 <template>
-  <v-container :style="containerStyle" class="d-flex align-start justify-start">
+  <v-container
+    :style="containerStyle"
+    class="d-flex align-start justify-start"
+    fluid
+  >
     <div
       class="d-flex justify-space-around flex-column text-right pb-6"
-      style="height: 100%;"
+      style="
+        height: 100%;
+        width: 15%;"
     >
       <div v-for="group in groups" :key="group.id" class="caption">
         {{ group.name }}
@@ -417,8 +498,11 @@ export default {
     </div>
 
     <div
-      class="position-relative flex-grow-1 flex-shrink-0"
-      style="height: 100%;"
+      ref="parent"
+      class="position-relative"
+      style="
+        height: 100%;
+        width: 85%;"
     >
       <canvas
         :id="`${id}-canvas`"
@@ -428,17 +512,87 @@ export default {
         @mouseout="_mouseout"
       />
       <svg :id="`${id}-svg`" class="gantt" />
-    </div>
 
-    <transition name="tooltip-fade" mode="in-out">
-      <div
-        v-if="$slots['tooltip']"
-        class="v-tooltip__content barchart-tooltip"
-        :style="tooltipStyle"
-      >
-        <slot name="tooltip" />
-      </div>
-    </transition>
+      <v-fade-transition mode="out-in">
+        <div
+          v-if="$slots['tooltip']"
+          class="v-tooltip__content barchart-tooltip"
+          :style="tooltipStyle"
+        >
+          <slot name="tooltip" />
+        </div>
+
+        <v-card v-else-if="hoveredId" :style="tooltipStyle" tile>
+          <v-card-title
+            :style="{ color: `var(--v-${hovered.state}-base)` }"
+            class="text-subtitle-1"
+          >
+            <div>
+              {{ hovered.task_id
+              }}{{ hovered.map_index > -1 ? `(${hovered.map_index})` : '' }}
+              <div class="caption grey--text text--lighten-1">
+                (Click for more details)
+              </div>
+            </div>
+          </v-card-title>
+          <v-card-text>
+            <div class="d-flex align-end justify-space-between">
+              State:
+              <div>
+                <span :style="statusStyle(hovered.state)"></span>
+                <span class="font-weight-bold"> {{ hovered.state }}</span>
+              </div>
+            </div>
+            <div
+              v-if="hovered.start_time"
+              class="subtitle d-flex align-end justify-space-between"
+            >
+              Duration:
+
+              <DurationSpan
+                class="font-weight-bold"
+                :start-time="hovered.start_time"
+                :end-time="
+                  hovered.end_time
+                    ? hovered.end_time
+                    : barMap[hovered.task_id].end_time
+                "
+              />
+            </div>
+
+            <div
+              v-if="hovered.start_time || barMap[hovered.task_id].start_time"
+              class="subtitle d-flex align-end justify-space-between"
+            >
+              Start:
+
+              <span class="font-weight-bold">
+                {{
+                  formatTimeGranular(
+                    hovered.start_time || barMap[hovered.task_id].start_time
+                  )
+                }}
+              </span>
+            </div>
+
+            <div
+              v-if="hovered.end_time || barMap[hovered.task_id].end_time"
+              class="subtitle d-flex align-end justify-space-between"
+            >
+              End:
+
+              <span class="font-weight-bold">
+                {{
+                  formatTimeGranular(
+                    hovered.end_time || barMap[hovered.task_id].end_time
+                  )
+                }}
+              </span>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-fade-transition>
+    </div>
   </v-container>
 </template>
 
