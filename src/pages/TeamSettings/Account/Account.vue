@@ -83,3 +83,9 @@ export default {
     <ClearDataDialog />
   </ManagementLayout>
 </template>
+
+<style lang="scss" scoped>
+.v-sheet.v-alert:not(.v-sheet--outlined) {
+  padding-left: 25px;
+}
+</style>
