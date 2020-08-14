@@ -36,6 +36,9 @@ export default {
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
+    },
+    needAlert() {
+      return !location.href.includes('prefect.io')
     }
   },
   watch: {},
@@ -48,6 +51,22 @@ export default {
 
 <template>
   <ManagementLayout>
+    <template v-if="needAlert" v-slot:alert>
+      <v-alert
+        dismissible
+        class="mx-auto mb-12"
+        border="left"
+        colored-border
+        elevation="2"
+        type="warning"
+        tile
+        prominent
+        ><div>You are connected to Prefect Cloud. </div
+        ><div>
+          Any changes you make here will affect your Cloud account.</div
+        ></v-alert
+      >
+    </template>
     <template v-slot:title>Account</template>
 
     <template v-slot:subtitle>
@@ -61,3 +80,9 @@ export default {
     <ClearDataDialog />
   </ManagementLayout>
 </template>
+
+<style lang="scss" scoped>
+.v-sheet.v-alert:not(.v-sheet--outlined) {
+  padding-left: 25px;
+}
+</style>
