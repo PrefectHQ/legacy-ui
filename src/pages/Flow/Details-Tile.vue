@@ -43,6 +43,7 @@ export default {
       //labels
       newLabel: '',
       labelMenuOpen: false,
+      labelMenuOpen2: false,
       labelSearchInput: '',
       removingLabel: null,
       newLabels: null,
@@ -314,11 +315,10 @@ export default {
               </v-list-item-subtitle>
 
               <v-menu
-                v-if="labelsOverflow"
+                v-if="labelsOverflow && !labelMenuOpen2"
                 v-model="labelMenuOpen"
                 :close-on-content-click="false"
                 offset-y
-                max-width="300px"
               >
                 <template v-slot:activator="{ on }">
                   <v-btn small color="primary" class="mt-1" depressed v-on="on">
@@ -330,78 +330,154 @@ export default {
                     </v-icon>
                   </v-btn>
                 </template>
-                <v-card width="300" class="pa-2">
-                  <v-text-field
-                    v-model.lazy="labelSearchInput"
-                    dense
-                    placeholder="Search labels"
-                    clearable
-                    solo
-                    flat
-                    outlined
-                    prepend-inner-icon="search"
-                    hide-details
-                    class="label-search pa-2"
-                  ></v-text-field>
-                  <v-card-text
-                    v-if="labelsFiltered.length > 0"
-                    class="max-h-300 overflow-y-scroll"
+                <v-card width="800px" class="pa-2">
+                  <v-card-title class="subtitle pr-2 py-0"
+                    >Flow group labels</v-card-title
                   >
-                    <Label
-                      v-for="(label, i) in newLabels || labelsFiltered"
-                      :key="i"
-                      closable
-                      :duplicate="duplicateLabel === label"
-                      :loading="removingLabel === label"
-                      :disabled="disableRemove"
-                      class="mr-1 mb-1"
-                      @remove="removeLabel"
-                      >{{ label }}</Label
+
+                  <v-card-text class="overflow-y-scroll py-0">
+                    Flows and agents have optional labels which allow you to
+                    determine where your flows are executed. For more
+                    information see
+                    <a
+                      href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+                      target="_blank"
+                      >the docs on labels</a
+                    >.
+                    <v-text-field
+                      v-model.lazy="labelSearchInput"
+                      dense
+                      placeholder="Search labels"
+                      clearable
+                      solo
+                      flat
+                      outlined
+                      prepend-inner-icon="search"
+                      hide-details
+                      class="label-search pa-2"
+                    ></v-text-field>
+
+                    <div v-if="labelsFiltered.length > 5">
+                      <Label
+                        v-for="(label, i) in labelsFiltered"
+                        :key="i"
+                        closable
+                        :duplicate="duplicateLabel === label"
+                        :loading="removingLabel === label"
+                        :disabled="disableRemove"
+                        class="mr-1 mb-1"
+                        @remove="removeLabel"
+                        >{{ label }}</Label
+                      >
+                    </div>
+                    <div
+                      v-if="labelsFiltered.length == 0"
+                      class="max-h-300 overflow-y-scroll pa-6"
                     >
+                      No labels found. Try expanding your search?
+                    </div>
                     <v-text-field
                       v-model="newLabel"
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
-                      class="mt-2, mr-2 width=100%"
+                      :placeholder="
+                        labelsFiltered.length > 5 ? 'Add a label' : ''
+                      "
+                      class="mt-2, mr-2 label-search"
                       :disabled="disableAdd"
                       @keyup.enter="addLabel"
                     >
-                      <template v-slot:prepend-inner>
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on }">
-                            <v-icon
-                              small
-                              :color="valid ? 'primary' : 'error'"
-                              v-on="on"
-                              >fa-plus</v-icon
-                            >
-                          </template>
-                          Add a new label
-                        </v-tooltip>
+                      <template
+                        v-if="labelsFiltered.length < 6"
+                        v-slot:prepend-inner
+                      >
+                        <Label
+                          v-for="(label, i) in labelsFiltered"
+                          :key="i"
+                          closable
+                          label="Add Label"
+                          :duplicate="duplicateLabel === label"
+                          :loading="removingLabel === label"
+                          :disabled="disableRemove"
+                          class="mr-1 mb-1"
+                          @remove="removeLabel"
+                          >{{ label }}</Label
+                        >
                       </template>
                     </v-text-field>
                   </v-card-text>
-                  <v-card-text v-else class="max-h-300 overflow-y-scroll pa-6">
-                    No labels found. Try expanding your search?
-                  </v-card-text>
                 </v-card>
               </v-menu>
+              <div
+                v-else-if="
+                  (newLabels && newLabels.length > 0) ||
+                    labelsFiltered.length > 0
+                "
+              >
+                <Label
+                  v-for="(label, i) in newLabels || labelsFiltered"
+                  :key="i"
+                  closable
+                  :duplicate="duplicateLabel === label"
+                  :loading="removingLabel === label"
+                  :disabled="disableRemove"
+                  class="mr-1 mb-1"
+                  @remove="removeLabel"
+                  >{{ label }}</Label
+                >
+              </div>
+              <div v-else class="subtitle-2">
+                None
+              </div>
+            </v-list-item-content>
+            <v-list-item-action v-if="!labelsOverflow || labelMenuOpen2">
+              <v-menu v-model="labelMenuOpen2" :close-on-content-click="false">
+                <template v-slot:activator="{ on: menu, attrs }">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on: tooltip }">
+                      <v-btn
+                        text
+                        x-small
+                        aria-label="Run Now"
+                        color="primary"
+                        class="vertical-button"
+                        v-bind="attrs"
+                        v-on="{ ...tooltip, ...menu }"
+                      >
+                        <v-icon class="pt-2" small dense color="primary"
+                          >fa-plus</v-icon
+                        >
+                      </v-btn>
+                    </template>
+                    <span>Add a label</span>
+                  </v-tooltip>
+                </template>
+                <v-card width="800px" class="pa-2">
+                  <v-card-title class="subtitle pr-2 py-0"
+                    >Add a flow group label</v-card-title
+                  >
 
-              <div v-else>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <v-card-text class="overflow-y-scroll py-0">
+                    Flows and agents have optional labels which allow you to
+                    determine where your flows are executed. For more
+                    information see
+                    <a
+                      href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+                      target="_blank"
+                      >the docs on labels</a
+                    >.
+
                     <v-text-field
                       v-model="newLabel"
-                      dense
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
-                      class="py-0 mr-2 scroll"
+                      class="mr-2 height=100px"
                       :disabled="disableAdd"
-                      v-on="on"
                       @keyup.enter="addLabel"
-                      ><template v-slot:prepend-inner>
+                    >
+                      <template v-slot:label>
                         <Label
                           v-for="(label, i) in newLabels || labelsFiltered"
                           :key="i"
@@ -415,11 +491,16 @@ export default {
                         >
                       </template>
                     </v-text-field>
-                  </template>
-                  Add a new label
-                </v-tooltip>
-              </div>
-            </v-list-item-content>
+                  </v-card-text>
+                  <v-card-actions class="py-0">
+                    <v-spacer />
+                    <v-btn small text @click="labelMenuOpen2 = false"
+                      >Close</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
+            </v-list-item-action>
           </v-list-item>
         </div>
       </v-fade-transition>
@@ -649,6 +730,11 @@ export default {
       visibility: visible;
     }
   }
+}
+/* stylelint-disable */
+.v-input .v-label {
+  height: 80px;
+  line-height: 20px;
 }
 
 .w-100 {
