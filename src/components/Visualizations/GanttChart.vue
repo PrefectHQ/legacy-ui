@@ -268,7 +268,7 @@ export default {
             ? calcY
             : calcY + height * item.map_index
 
-        const alpha = mapped && 0.25
+        const alpha = 1
 
         const barIndex = this.bars.findIndex(b => b.id == item.id)
 
@@ -401,9 +401,15 @@ export default {
         context.globalAlpha = bar.alpha
         context.fillStyle = bar.color || '#eee'
 
-        roundRect(this.bars[i].path2D, bar.x, bar.y, bar.width, bar.height, 5)
+        roundRect(this.bars[i].path2D, bar.x, bar.y, bar.width, bar.height, 3)
 
-        context.fill(this.bars[i].path2D)
+        if (bar.state !== 'Mapped') {
+          context.fill(this.bars[i].path2D)
+          context.strokeStyle = '#fff'
+        } else {
+          context.strokeStyle = bar.color
+        }
+
         context.stroke(this.bars[i].path2D)
       }
 
@@ -450,6 +456,10 @@ export default {
       this.canvas.attr('width', this.width).attr('height', this.canvasHeight)
 
       this.update()
+    },
+    itemName(id) {
+      console.log(this.groups.find(group => group.id == id))
+      return this.groups.find(group => group.id == id)?.name
     },
     update() {
       const y = d3.scaleBand()
@@ -554,13 +564,18 @@ export default {
           <slot name="tooltip" />
         </div>
 
-        <v-card v-else-if="hoveredId" :style="tooltipStyle" tile>
+        <v-card
+          v-else-if="hoveredId"
+          :style="tooltipStyle"
+          tile
+          class="tooltip-style"
+        >
           <v-card-title
             :style="{ color: `var(--v-${hovered.state}-base)` }"
             class="text-subtitle-1"
           >
             <div>
-              {{ hovered.task_id
+              {{ itemName(hovered[yField])
               }}{{ hovered.map_index > -1 ? `(${hovered.map_index})` : '' }}
               <div class="caption grey--text text--lighten-1">
                 (Click for more details)
@@ -646,5 +661,9 @@ canvas {
 
 svg {
   z-index: 2;
+}
+
+.tooltip-style {
+  transition: all 50ms;
 }
 </style>
