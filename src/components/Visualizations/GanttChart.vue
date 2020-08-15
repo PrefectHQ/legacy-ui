@@ -10,6 +10,40 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 
 let resizeChartListener
 
+// Adapted for 2D Path context from https://stackoverflow.com/a/3368118
+function roundRect(path, x, y, width, height, radius) {
+  if (typeof radius === 'undefined') {
+    radius = 5
+  }
+
+  if (typeof radius === 'number') {
+    radius = { tl: radius, tr: radius, br: radius, bl: radius }
+  } else {
+    let defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 }
+
+    for (let side in defaultRadius) {
+      radius[side] = radius[side] || defaultRadius[side]
+    }
+  }
+
+  path.moveTo(x + radius.tl, y)
+  path.lineTo(x + width - radius.tr, y)
+  path.quadraticCurveTo(x + width, y, x + width, y + radius.tr)
+  path.lineTo(x + width, y + height - radius.br)
+  path.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - radius.br,
+    y + height
+  )
+  path.lineTo(x + radius.bl, y + height)
+  path.quadraticCurveTo(x, y + height, x, y + height - radius.bl)
+  path.lineTo(x, y + radius.tl)
+  path.quadraticCurveTo(x, y, x + radius.tl, y)
+  path.closePath()
+  return path
+}
+
 export default {
   components: {
     DurationSpan
@@ -205,7 +239,6 @@ export default {
       this._renderCanvas()
     },
     _renderCanvas() {
-      console.log(this.barMap)
       cancelAnimationFrame(this.drawCanvas)
 
       const now = new moment()
@@ -365,14 +398,13 @@ export default {
         const bar = this.bars[i]
         this.bars[i].path2D = new Path2D()
 
-        context.beginPath()
         context.globalAlpha = bar.alpha
         context.fillStyle = bar.color || '#eee'
 
-        this.bars[i].path2D.rect(bar.x, bar.y, bar.width, bar.height)
+        roundRect(this.bars[i].path2D, bar.x, bar.y, bar.width, bar.height, 5)
 
         context.fill(this.bars[i].path2D)
-        context.stroke()
+        context.stroke(this.bars[i].path2D)
       }
 
       context.restore()
