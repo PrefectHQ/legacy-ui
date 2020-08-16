@@ -41,9 +41,10 @@ export default {
       copiedText: {},
       tab: 'overview',
       //labels
+      noLabelInfo: false,
       newLabel: '',
       labelMenuOpen: false,
-      labelMenuOpen2: false,
+      labelEditOpen: false,
       labelSearchInput: '',
       removingLabel: null,
       newLabels: null,
@@ -103,9 +104,15 @@ export default {
     },
     labelsOverflow() {
       const labels = this.newLabels || this.labels
-      let counter = 0
-      labels.forEach(label => (counter += label.length))
-      return counter > 20 || labels.length > 2
+      return labels.length > 3
+    }
+  },
+  watch: {
+    labelsOverflow(val) {
+      if (!val) this.labelMenuOpen = false
+    },
+    newLabels(val) {
+      if (val.length < 1) this.labelEditOpen = false
     }
   },
   methods: {
@@ -149,18 +156,21 @@ export default {
           errorPolicy: 'all'
         })
         if (data) {
-          this.newLabels = newLabels
-          this.resetLabels()
+          this.newLabels = newLabels || this.flow.environment.labels
+          this.resetLabelSettings()
         } else {
           this.labelsError()
-          this.resetLabels()
+          this.resetLabelSettings()
         }
       } catch (e) {
         this.labelsError()
-        this.resetLabels()
+        this.resetLabelSettings()
       }
     },
-    resetLabels() {
+    labelReset() {
+      this.editLabels(null)
+    },
+    resetLabelSettings() {
       this.removingLabel = false
       this.disableAdd = false
       this.newLabel = ''
@@ -294,7 +304,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item dense class="px-0">
+          <v-list-item dense class="px-0" three-line>
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Schedule
@@ -315,7 +325,7 @@ export default {
               </v-list-item-subtitle>
 
               <v-menu
-                v-if="labelsOverflow && !labelMenuOpen2"
+                v-if="labelsOverflow && !labelEditOpen"
                 v-model="labelMenuOpen"
                 :close-on-content-click="false"
                 offset-y
@@ -384,7 +394,7 @@ export default {
                       :placeholder="
                         labelsFiltered.length > 5 ? 'Add a label' : ''
                       "
-                      class="mt-2, mr-2 label-search"
+                      class="pt-0 mr-2"
                       :disabled="disableAdd"
                       @keyup.enter="addLabel"
                     >
@@ -429,25 +439,70 @@ export default {
               </div>
               <div v-else class="subtitle-2">
                 None
+                <v-menu
+                  v-model="noLabelInfo"
+                  :close-on-content-click="false"
+                  offset-y
+                  open-on-hover
+                  color="warning"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-btn text icon x-small v-on="on">
+                      <v-icon>
+                        info
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card tile class="pa-0" max-width="320">
+                    <v-card-text>
+                      You have no labels attached to your flow. Click
+                      <v-icon class="py-1" x-small color="primary"
+                        >fa-plus</v-icon
+                      >
+                      to add new labels or
+                      <v-icon class="py-1" x-small color="codePink"
+                        >fa-undo</v-icon
+                      >
+                      to reset your labels to the ones set at flow registration.
+                    </v-card-text>
+                  </v-card>
+                </v-menu>
               </div>
             </v-list-item-content>
-            <v-list-item-action v-if="!labelsOverflow || labelMenuOpen2">
-              <v-menu v-model="labelMenuOpen2" :close-on-content-click="false">
+            <v-list-item-action>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    :class="labelsOverflow ? 'mt-4' : 'mt-0'"
+                    icon
+                    color="codePink"
+                    small
+                    @click="labelReset"
+                    v-on="on"
+                  >
+                    <v-icon small dense>fa-undo</v-icon>
+                  </v-btn>
+                </template>
+                <span>Reset to labels from flow registration</span>
+              </v-tooltip>
+              <v-menu
+                v-if="!labelsOverflow || labelEditOpen"
+                v-model="labelEditOpen"
+                :close-on-content-click="false"
+                offset-y
+              >
                 <template v-slot:activator="{ on: menu, attrs }">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on: tooltip }">
                       <v-btn
-                        text
-                        x-small
-                        aria-label="Run Now"
+                        small
+                        icon
+                        aria-label="Add label"
                         color="primary"
-                        class="vertical-button"
                         v-bind="attrs"
                         v-on="{ ...tooltip, ...menu }"
                       >
-                        <v-icon class="pt-2" small dense color="primary"
-                          >fa-plus</v-icon
-                        >
+                        <v-icon small dense>fa-plus</v-icon>
                       </v-btn>
                     </template>
                     <span>Add a label</span>
@@ -473,11 +528,11 @@ export default {
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
-                      class="mr-2 height=100px"
+                      class="mr-2 height=150px"
                       :disabled="disableAdd"
                       @keyup.enter="addLabel"
                     >
-                      <template v-slot:label>
+                      <template v-slot:prepend-inner>
                         <Label
                           v-for="(label, i) in newLabels || labelsFiltered"
                           :key="i"
@@ -492,12 +547,13 @@ export default {
                       </template>
                     </v-text-field>
                   </v-card-text>
-                  <v-card-actions class="py-0">
+                  <!-- <v-card-actions class="py-0">
                     <v-spacer />
-                    <v-btn small text @click="labelMenuOpen2 = false"
+
+                    <v-btn small text @click="labelEditOpen = false"
                       >Close</v-btn
                     >
-                  </v-card-actions>
+                  </v-card-actions> -->
                 </v-card>
               </v-menu>
             </v-list-item-action>
@@ -735,6 +791,11 @@ export default {
 .v-input .v-label {
   height: 80px;
   line-height: 20px;
+}
+
+.v-list-item__action--stack {
+  flex-direction: row;
+  align-items: flex-start;
 }
 
 .w-100 {

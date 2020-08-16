@@ -10,7 +10,7 @@
       class="d-flex align-center pb-3"
       :class="$slots.breadcrumbs ? '' : 'py-3'"
     >
-      <v-col :sm="$slots['page-actions'] ? 8 : 12">
+      <v-col :lg="$slots['page-actions'] ? 8 : 12">
         <v-row>
           <v-col
             cols="12"
@@ -31,7 +31,7 @@
       <v-col
         v-if="$slots['page-actions']"
         cols="12"
-        sm="4"
+        lg="4"
         class="align-self-end text-right"
         :class="$vuetify.breakpoint.smAndDown ? 'text-center' : ''"
       >
