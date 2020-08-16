@@ -455,11 +455,11 @@ export default {
                   <v-card tile class="pa-0" max-width="320">
                     <v-card-text>
                       You have no labels attached to your flow. Click
-                      <v-icon class="py-2" x-small color="primary"
+                      <v-icon class="px-1" x-small color="primary"
                         >fa-plus</v-icon
                       >
                       to add new labels or
-                      <v-icon class="py-2" x-small color="codePink"
+                      <v-icon class="px-1" x-small color="codePink"
                         >fa-undo</v-icon
                       >
                       to reset your labels to the ones set at flow registration.
