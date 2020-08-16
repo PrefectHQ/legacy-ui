@@ -105,6 +105,10 @@ export default {
     labelsOverflow() {
       const labels = this.newLabels || this.labels
       return labels.length > 3
+    },
+    labelResetDisabled() {
+      const labels = this.newLabels || this.labels
+      return labels == this.flow.environment.labels
     }
   },
   watch: {
@@ -474,6 +478,7 @@ export default {
                   <v-btn
                     :class="labelsOverflow ? 'mt-4' : 'mt-0'"
                     icon
+                    :disabled="labelResetDisabled"
                     color="codePink"
                     small
                     @click="labelReset"
