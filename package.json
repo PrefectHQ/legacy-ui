@@ -61,7 +61,7 @@
     "@babel/plugin-proposal-optional-chaining": ">=7.10.1",
     "@babel/plugin-transform-runtime": "^7.10.1",
     "@babel/runtime": "^7.10.2",
-    "@vue/cli-plugin-babel": ">=4.4.4",
+    "@vue/cli-plugin-babel": ">=4.5.3",
     "@vue/cli-plugin-eslint": ">=4.4.4",
     "@vue/cli-plugin-unit-jest": ">=4.4.4",
     "@vue/cli-service": ">=4.4.4",
