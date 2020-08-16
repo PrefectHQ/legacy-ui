@@ -444,10 +444,9 @@ export default {
                   :close-on-content-click="false"
                   offset-y
                   open-on-hover
-                  color="warning"
                 >
                   <template v-slot:activator="{ on }">
-                    <v-btn text icon x-small v-on="on">
+                    <v-btn color="warning" text icon x-small v-on="on">
                       <v-icon>
                         info
                       </v-icon>
@@ -456,11 +455,11 @@ export default {
                   <v-card tile class="pa-0" max-width="320">
                     <v-card-text>
                       You have no labels attached to your flow. Click
-                      <v-icon class="py-1" x-small color="primary"
+                      <v-icon class="py-2" x-small color="primary"
                         >fa-plus</v-icon
                       >
                       to add new labels or
-                      <v-icon class="py-1" x-small color="codePink"
+                      <v-icon class="py-2" x-small color="codePink"
                         >fa-undo</v-icon
                       >
                       to reset your labels to the ones set at flow registration.
