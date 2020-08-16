@@ -38,7 +38,7 @@
     "lodash.throttle": ">=4.1.1",
     "lodash.uniq": ">=4.5.0",
     "lodash.uniqueid": ">=4.0.1",
-    "logrocket": ">=1.0.8",
+    "logrocket": ">=1.0.11",
     "logrocket-vuex": "0.0.3",
     "moment": ">=2.26.0",
     "moment-duration-format": ">=2.3.2",
