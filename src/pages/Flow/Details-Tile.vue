@@ -76,11 +76,9 @@ export default {
       return this.flow.storage.flows
     },
     labels() {
-      if (!this.flow.environment.labels && !this.flowGroup.labels) return
-      const labels = this.flowGroup.labels
-        ? this.flowGroup.labels.slice().sort()
-        : this.flow.environment.labels.slice().sort()
-      return labels
+      const labels =
+        this.newLabels || this.flowGroup.labels || this.flow.environment.labels
+      return labels?.slice().sort()
     },
     labelsOverflow() {
       const labels = this.newLabels || this.labels
@@ -135,7 +133,7 @@ export default {
     async editLabels(newLabels) {
       try {
         const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/add-label.gql'),
+          mutation: require('@/graphql/Mutations/set-labels.gql'),
           variables: {
             flowGroupId: this.flowGroup.id,
             labelArray: newLabels
@@ -342,7 +340,7 @@ export default {
                       >the docs on labels</a
                     >.
 
-                    <div v-if="labels.length > 5" class="mb-2">
+                    <div v-if="labels.length > 5" class="mt-4">
                       <Label
                         v-for="(label, i) in labels"
                         :key="i"
