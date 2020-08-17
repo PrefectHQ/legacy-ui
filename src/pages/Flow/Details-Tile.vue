@@ -304,6 +304,144 @@ export default {
             <v-list-item-content width="800px" class="overflow-x-scroll">
               <v-list-item-subtitle class="caption">
                 Labels
+                <v-menu
+                  v-model="noLabelInfo"
+                  :close-on-content-click="false"
+                  offset-y
+                  open-on-hover
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      :color="labels.length < 1 ? 'warning' : null"
+                      text
+                      icon
+                      x-small
+                      v-on="on"
+                    >
+                      <v-icon>
+                        info
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card tile class="pa-0" max-width="320">
+                    <v-card-title class="subtitle pb-1"
+                      >Flow group labels</v-card-title
+                    >
+
+                    <v-card-text class="pt-0">
+                      Flows and agents have optional labels which allow you to
+                      determine where your flows are executed. For more
+                      information see
+                      <a
+                        href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+                        target="_blank"
+                        >the docs on labels</a
+                      >.
+
+                      <v-alert
+                        v-if="labels.length < 1"
+                        border="left"
+                        colored-border
+                        type="warning"
+                        tile
+                        class="body-2 mt-2"
+                      >
+                        You have no labels attached to your flow. Click
+                        <v-icon class="px-1" x-small color="primary"
+                          >fa-plus</v-icon
+                        >
+                        to add new labels or
+                        <v-icon class="px-1" x-small color="codePink"
+                          >fa-undo</v-icon
+                        >
+                        to reset your labels to the ones set at flow
+                        registration.
+                      </v-alert>
+                    </v-card-text>
+                  </v-card>
+                </v-menu>
+                <span v-if="$vuetify.breakpoint.sm" class="ml-8">
+                  <v-menu
+                    v-model="labelEditOpen"
+                    :close-on-content-click="false"
+                    offset-y
+                  >
+                    <template v-slot:activator="{ on: menu, attrs }">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on: tooltip }">
+                          <v-btn
+                            small
+                            icon
+                            aria-label="Add label"
+                            color="primary"
+                            v-bind="attrs"
+                            v-on="{ ...tooltip, ...menu }"
+                          >
+                            <v-icon small dense>fa-plus</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Add a label</span>
+                      </v-tooltip>
+                    </template>
+                    <v-card width="800px" class="overflow-y-scroll py-0">
+                      <v-card-title class="subtitle pr-2 pt-2 pb-0"
+                        >Flow group labels</v-card-title
+                      >
+
+                      <v-card-text class="py-0 width=1500px">
+                        <div class="width=800px">
+                          Flows and agents have optional labels which allow you
+                          to determine where your flows are executed. For more
+                          information see
+                          <a
+                            href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+                            target="_blank"
+                            >the docs on labels</a
+                          >.
+                        </div>
+                        <v-text-field
+                          v-model="newLabel"
+                          :rules="[rules.labelCheck]"
+                          color="primary"
+                          clearable
+                          class="mr-2 width=2000px"
+                          :disabled="disableAdd"
+                          @keyup.enter="addLabel"
+                        >
+                          <template v-slot:prepend-inner>
+                            <Label
+                              v-for="(label, i) in newLabels || labels"
+                              :key="i"
+                              closable
+                              :duplicate="duplicateLabel === label"
+                              :loading="removingLabel === label"
+                              :disabled="disableRemove"
+                              class="mr-1 mb-1"
+                              @remove="removeLabel"
+                              >{{ label }}</Label
+                            >
+                          </template>
+                        </v-text-field>
+                      </v-card-text>
+                    </v-card>
+                  </v-menu>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        class="mt-0"
+                        icon
+                        :disabled="labelResetDisabled"
+                        color="codePink"
+                        small
+                        @click="labelReset"
+                        v-on="on"
+                      >
+                        <v-icon small dense>fa-undo</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Reset to labels from flow registration</span>
+                  </v-tooltip>
+                </span>
               </v-list-item-subtitle>
 
               <div
@@ -323,36 +461,9 @@ export default {
               </div>
               <div v-else class="subtitle-2">
                 None
-                <v-menu
-                  v-model="noLabelInfo"
-                  :close-on-content-click="false"
-                  offset-y
-                  open-on-hover
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-btn color="warning" text icon x-small v-on="on">
-                      <v-icon>
-                        info
-                      </v-icon>
-                    </v-btn>
-                  </template>
-                  <v-card tile class="pa-0" max-width="320">
-                    <v-card-text>
-                      You have no labels attached to your flow. Click
-                      <v-icon class="px-1" x-small color="primary"
-                        >fa-plus</v-icon
-                      >
-                      to add new labels or
-                      <v-icon class="px-1" x-small color="codePink"
-                        >fa-undo</v-icon
-                      >
-                      to reset your labels to the ones set at flow registration.
-                    </v-card-text>
-                  </v-card>
-                </v-menu>
               </div>
             </v-list-item-content>
-            <v-list-item-action class="ma-0">
+            <v-list-item-action v-if="!$vuetify.breakpoint.sm" class="ma-0">
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -375,7 +486,7 @@ export default {
                 offset-y
               >
                 <template v-slot:activator="{ on: menu, attrs }">
-                  <v-tooltip bottom>
+                  <v-tooltip top>
                     <template v-slot:activator="{ on: tooltip }">
                       <v-btn
                         small
