@@ -11,7 +11,7 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 let resizeChartListener
 
 // Adapted for 2D Path context from https://stackoverflow.com/a/3368118
-function roundRect(path, x, y, width, height, radius) {
+function roundRect(path, x, y, width, height, radius, clipped) {
   if (typeof radius === 'undefined') {
     radius = 5
   }
@@ -29,11 +29,14 @@ function roundRect(path, x, y, width, height, radius) {
   path.moveTo(x + radius.tl, y)
   path.lineTo(x + width - radius.tr, y)
   path.quadraticCurveTo(x + width, y, x + width, y + radius.tr)
-  path.lineTo(x + width, y + height - radius.br)
+  path.lineTo(
+    x + width,
+    y + height - radius.br - (clipped ? radius.br * 2.5 : 0)
+  )
   path.quadraticCurveTo(
     x + width,
     y + height,
-    x + width - radius.br,
+    x + width - radius.br - (clipped ? radius.br * 2.5 : 0),
     y + height
   )
   path.lineTo(x + radius.bl, y + height)
@@ -95,6 +98,7 @@ export default {
       // Misc
       animationDuration: 500,
       barHeight: 25,
+      barWidth: 25,
       easing: 'easeCubic',
       hovered: null
     }
@@ -255,7 +259,18 @@ export default {
           : moment(item.end_time)
 
         const x = startTime ? this.x(startTime) : 0
-        const width = this.x(endTime || now) - x
+        const calcWidth = this.x(endTime || now) - x
+        const width =
+          (mapped || item.map_index === -1) && calcWidth > 0
+            ? calcWidth > this.barWidth
+              ? calcWidth
+              : this.barWidth
+            : calcWidth
+
+        // This indicates that the calculated width is less than the min
+        // bar width, so we should display an indicator that this isn't visually representative
+        const clipped =
+          (mapped || item.map_index === -1) && calcWidth < this.barWidth
 
         const calcY =
           this.y(item[this.yField]) + (this.y.bandwidth() - bandWidthHeight) / 2
@@ -281,6 +296,7 @@ export default {
           this.bars.push({
             ...item,
             alpha: alpha,
+            clipped: clipped,
             height0: height,
             height1: height,
             height: height,
@@ -301,6 +317,7 @@ export default {
           const bar1 = {
             ...item,
             alpha: alpha,
+            clipped: clipped,
             height0: bar.height,
             height1: height,
             height: bar.height,
@@ -335,6 +352,7 @@ export default {
 
         // ...otherwise we'll start the exit animation
         const bar1 = {
+          clipped: false,
           height0: bar.height,
           height1: bandWidthHeight,
           height: bar.height,
@@ -400,7 +418,15 @@ export default {
         context.globalAlpha = bar.alpha
         context.fillStyle = bar.color || '#eee'
 
-        roundRect(this.bars[i].path2D, bar.x, bar.y, bar.width, bar.height, 3)
+        roundRect(
+          this.bars[i].path2D,
+          bar.x,
+          bar.y,
+          bar.width,
+          bar.height,
+          3,
+          bar.clipped
+        )
 
         if (bar.state !== 'Mapped') {
           context.fill(this.bars[i].path2D)
@@ -532,7 +558,7 @@ export default {
         height: 100%;
         width: 15%;"
     >
-      <div v-for="group in groups" :key="group.id" class="text-h5 my-2">
+      <div v-for="group in groups" :key="group.id" class="subtitle-1">
         {{ group.name }}
       </div>
     </div>
