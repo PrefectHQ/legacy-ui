@@ -109,6 +109,9 @@ export default {
     labelResetDisabled() {
       const labels = this.newLabels || this.labels
       return labels == this.flow.environment.labels
+    },
+    resetButtonClass() {
+      return this.labelsOverflow ? 'mt-4 ml-2' : 'mt-0'
     }
   },
   watch: {
@@ -308,7 +311,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item dense class="px-0" three-line>
+          <v-list-item dense class="px-0">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Schedule
@@ -344,12 +347,12 @@ export default {
                     </v-icon>
                   </v-btn>
                 </template>
-                <v-card width="800px" class="pa-2">
+                <v-card width="1000px" class="overflow-y-scroll py-0">
                   <v-card-title class="subtitle pr-2 py-0"
                     >Flow group labels</v-card-title
                   >
 
-                  <v-card-text class="overflow-y-scroll py-0">
+                  <v-card-text class="py-0">
                     Flows and agents have optional labels which allow you to
                     determine where your flows are executed. For more
                     information see
@@ -386,7 +389,7 @@ export default {
                     </div>
                     <div
                       v-if="labelsFiltered.length == 0"
-                      class="max-h-300 overflow-y-scroll pa-6"
+                      class="max-h-300 pa-6"
                     >
                       No labels found. Try expanding your search?
                     </div>
@@ -398,6 +401,7 @@ export default {
                       :placeholder="
                         labelsFiltered.length > 5 ? 'Add a label' : ''
                       "
+                      full-width
                       class="pt-0 mr-2"
                       :disabled="disableAdd"
                       @keyup.enter="addLabel"
@@ -472,11 +476,11 @@ export default {
                 </v-menu>
               </div>
             </v-list-item-content>
-            <v-list-item-action>
+            <v-list-item-action class="ma-0">
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    :class="labelsOverflow ? 'mt-4' : 'mt-0'"
+                    :class="resetButtonClass"
                     icon
                     :disabled="labelResetDisabled"
                     color="codePink"
@@ -512,27 +516,28 @@ export default {
                     <span>Add a label</span>
                   </v-tooltip>
                 </template>
-                <v-card width="800px" class="pa-2">
-                  <v-card-title class="subtitle pr-2 py-0"
+                <v-card width="800px" class="overflow-y-scroll py-0">
+                  <v-card-title class="subtitle pr-2 pt-2"
                     >Add a flow group label</v-card-title
                   >
 
-                  <v-card-text class="overflow-y-scroll py-0">
-                    Flows and agents have optional labels which allow you to
-                    determine where your flows are executed. For more
-                    information see
-                    <a
-                      href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-                      target="_blank"
-                      >the docs on labels</a
-                    >.
-
+                  <v-card-text class="py-0 overflow-x-scroll">
+                    <div class="width=1000px">
+                      Flows and agents have optional labels which allow you to
+                      determine where your flows are executed. For more
+                      information see
+                      <a
+                        href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+                        target="_blank"
+                        >the docs on labels</a
+                      >.
+                    </div>
                     <v-text-field
                       v-model="newLabel"
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
-                      class="mr-2 height=150px"
+                      class="mr-2 height=150px width=2000px"
                       :disabled="disableAdd"
                       @keyup.enter="addLabel"
                     >
@@ -792,11 +797,6 @@ export default {
   }
 }
 /* stylelint-disable */
-.v-input .v-label {
-  height: 80px;
-  line-height: 20px;
-}
-
 .v-list-item__action--stack {
   flex-direction: row;
   align-items: flex-start;
