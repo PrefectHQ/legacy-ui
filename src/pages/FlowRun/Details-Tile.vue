@@ -22,9 +22,6 @@ export default {
     }
   },
   computed: {
-    flowRunVersion() {
-      return `Version ${this.flowRun.version}`
-    },
     hasContext() {
       return (
         this.flowRun.context && Object.keys(this.flowRun.context).length > 0
@@ -64,12 +61,6 @@ export default {
         <v-col cols="8">
           <div class="text-truncate pb-1">
             {{ flowRun.name }}
-          </div>
-          <div
-            class="subtitle-2 grey--text text--darken-2 caption position-absolute font-weight-medium"
-            style="bottom: 2px;"
-          >
-            {{ flowRunVersion }}
           </div>
         </v-col>
       </v-row>
@@ -139,12 +130,7 @@ export default {
       </div>
     </CardTitle>
 
-    <CardTitle
-      v-else
-      :title="flowRun.name"
-      icon="pi-flow-run"
-      :subtitle="flowRunVersion"
-    />
+    <CardTitle v-else :title="flowRun.name" icon="pi-flow-run" />
 
     <v-card-text class="pl-12 card-content">
       <v-fade-transition hide-on-leave>
@@ -190,37 +176,6 @@ export default {
           <v-list-item dense class="pa-0">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
-                <v-row no-gutters>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-col cols="6" v-on="on">
-                        Flow Run Version
-                      </v-col>
-                    </template>
-                    <span
-                      >The flow run version shows how many times a flow run has
-                      changed states. This flow run has changed state
-                      {{ flowRun.version }} times.</span
-                    >
-                  </v-tooltip>
-
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-col
-                        cols="6"
-                        class="text-right font-weight-bold"
-                        v-on="on"
-                      >
-                        {{ flowRunVersion }}
-                      </v-col>
-                    </template>
-                    <span
-                      >The flow run version shows how many times a flow run has
-                      changed states. This flow run has changed state
-                      {{ flowRun.version }} times.
-                    </span>
-                  </v-tooltip>
-                </v-row>
                 <v-row no-gutters>
                   <v-col v-if="flowRun.start_time" cols="6">
                     Scheduled Start Time
