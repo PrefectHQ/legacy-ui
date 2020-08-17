@@ -81,8 +81,9 @@ export default {
       return labels?.slice().sort()
     },
     labelsOverflow() {
-      const labels = this.labels
-      return labels.length > 3
+      return false
+      // const labels = this.labels
+      // return labels.length > 3
     },
     labelResetDisabled() {
       const labels = this.newLabels || this.labels
@@ -100,9 +101,9 @@ export default {
     }
   },
   watch: {
-    labelsOverflow(val) {
-      if (!val) this.labelMenuOpen = false
-    },
+    // labelsOverflow(val) {
+    //   if (!val) this.labelMenuOpen = false
+    // },
     newLabels(val) {
       if (val.length < 1) this.labelEditOpen = false
     }
@@ -311,7 +312,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
           <v-list-item dense class="px-0">
-            <v-list-item-content width="800px">
+            <v-list-item-content width="800px" class="overflow-x-scroll">
               <v-list-item-subtitle class="caption">
                 Labels
               </v-list-item-subtitle>
@@ -759,6 +760,10 @@ export default {
 
 .v-text-field input {
   width: 100px;
+}
+
+.v-list-item__content {
+  overflow: scroll;
 }
 
 .w-100 {

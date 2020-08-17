@@ -25,10 +25,10 @@
           'pt-0': $slots['row-0']
         }"
       >
-        <v-row :style="{ height: $vuetify.breakpoint.lgAndUp ? '350px' : '' }">
+        <v-row :style="{ height: $vuetify.breakpoint.mdAndUp ? '350px' : '' }">
           <v-col
             cols="12"
-            lg="4"
+            md="4"
             :class="{
               'pt-1': $slots['row-0']
             }"
@@ -37,8 +37,7 @@
           </v-col>
           <v-col
             cols="12"
-            lg="4"
-            sm="6"
+            md="4"
             :class="{
               'pt-1': $slots['row-0']
             }"
@@ -47,8 +46,7 @@
           </v-col>
           <v-col
             cols="12"
-            lg="4"
-            sm="6"
+            md="4"
             :class="{
               'pt-1': $slots['row-0']
             }"
@@ -57,9 +55,9 @@
           </v-col>
 
           <!-- This col is just used to push col-4 to the right -->
-          <v-col v-if="$vuetify.breakpoint.lgAndUp" cols="4"> </v-col>
+          <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="4"> </v-col>
 
-          <v-col cols="12" lg="8" class="pt-2">
+          <v-col cols="12" md="8" class="pt-2">
             <slot name="row-1-col-4-tile-1" />
           </v-col>
         </v-row>
@@ -75,7 +73,7 @@
             $slots['row-2-col-1-row-4-tile-1']
         "
         cols="12"
-        lg="4"
+        md="4"
         :class="
           $slots['row-1-col-1-tile-1'] ||
           $slots['row-1-col-2-tile-1'] ||
@@ -122,7 +120,7 @@
             $slots['row-2-col-2-row-3-tile-1']
         "
         cols="12"
-        lg="8"
+        md="8"
         :class="
           $slots['row-1-col-1-tile-1'] ||
           $slots['row-1-col-2-tile-1'] ||
