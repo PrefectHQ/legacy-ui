@@ -77,7 +77,9 @@ export default {
     },
     labels() {
       const labels =
-        this.newLabels || this.flowGroup.labels || this.flow.environment.labels
+        this.newLabels ||
+        this.flowGroup?.labels ||
+        this.flow?.environment?.labels
       return labels?.slice().sort()
     },
     labelResetDisabled() {
@@ -90,11 +92,6 @@ export default {
           (val, index) => val === this.flow?.environment?.labels[index]
         )
       )
-    }
-  },
-  watch: {
-    newLabels(val) {
-      if (val.length < 1) this.labelEditOpen = false
     }
   },
   methods: {
