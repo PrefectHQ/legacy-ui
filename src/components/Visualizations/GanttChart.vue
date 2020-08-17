@@ -383,7 +383,6 @@ export default {
         this.timer = d3.timer(timingCallback)
       }
     },
-    calcBar() {},
     drawCanvas() {
       const context = this.canvas.node().getContext('2d')
 
@@ -458,7 +457,6 @@ export default {
       this.update()
     },
     itemName(id) {
-      console.log(this.groups.find(group => group.id == id))
       return this.groups.find(group => group.id == id)?.name
     },
     update() {
