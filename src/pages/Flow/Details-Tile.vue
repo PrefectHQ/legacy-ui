@@ -348,7 +348,7 @@ export default {
                   </v-btn>
                 </template>
                 <v-card width="1000px" class="overflow-y-scroll py-0">
-                  <v-card-title class="subtitle pr-2 py-0"
+                  <v-card-title class="subtitle pr-2 pb-2"
                     >Flow group labels</v-card-title
                   >
 
@@ -393,17 +393,17 @@ export default {
                     >
                       No labels found. Try expanding your search?
                     </div>
+
                     <v-text-field
                       v-model="newLabel"
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
                       :placeholder="
-                        labelsFiltered.length > 5 ? 'Add a label' : ''
+                        labelsFiltered.length > 5 ? 'Add a label' : false
                       "
-                      full-width
-                      class="pt-0 mr-2"
                       :disabled="disableAdd"
+                      class="pt-0 mr-2"
                       @keyup.enter="addLabel"
                     >
                       <template
@@ -517,12 +517,12 @@ export default {
                   </v-tooltip>
                 </template>
                 <v-card width="800px" class="overflow-y-scroll py-0">
-                  <v-card-title class="subtitle pr-2 pt-2"
-                    >Add a flow group label</v-card-title
+                  <v-card-title class="subtitle pr-2 pt-2 pb-0"
+                    >Flow group labels</v-card-title
                   >
 
-                  <v-card-text class="py-0 overflow-x-scroll">
-                    <div class="width=1000px">
+                  <v-card-text class="py-0 width=1500px">
+                    <div class="width=800px">
                       Flows and agents have optional labels which allow you to
                       determine where your flows are executed. For more
                       information see
@@ -537,7 +537,7 @@ export default {
                       :rules="[rules.labelCheck]"
                       color="primary"
                       clearable
-                      class="mr-2 height=150px width=2000px"
+                      class="mr-2 width=2000px"
                       :disabled="disableAdd"
                       @keyup.enter="addLabel"
                     >
@@ -556,13 +556,6 @@ export default {
                       </template>
                     </v-text-field>
                   </v-card-text>
-                  <!-- <v-card-actions class="py-0">
-                    <v-spacer />
-
-                    <v-btn small text @click="labelEditOpen = false"
-                      >Close</v-btn
-                    >
-                  </v-card-actions> -->
                 </v-card>
               </v-menu>
             </v-list-item-action>
@@ -797,9 +790,14 @@ export default {
   }
 }
 /* stylelint-disable */
+
 .v-list-item__action--stack {
   flex-direction: row;
   align-items: flex-start;
+}
+
+.v-text-field input {
+  width: 100px;
 }
 
 .w-100 {
