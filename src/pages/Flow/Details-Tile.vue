@@ -81,12 +81,19 @@ export default {
       return labels?.slice().sort()
     },
     labelsOverflow() {
-      const labels = this.newLabels || this.labels
+      const labels = this.labels
       return labels.length > 3
     },
     labelResetDisabled() {
       const labels = this.newLabels || this.labels
-      return labels == this.flow.environment.labels
+      return (
+        Array.isArray(labels) &&
+        Array.isArray(this.flow?.environment?.labels) &&
+        labels.length === this.flow?.environment?.labels?.length &&
+        labels.every(
+          (val, index) => val === this.flow?.environment?.labels[index]
+        )
+      )
     },
     resetButtonClass() {
       return this.labelsOverflow ? 'mt-4 ml-2' : 'mt-0'
