@@ -116,6 +116,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('api', ['isCloud']),
     stateGroupAll() {
       return this.cloudHookStateGroup('All')
     },
@@ -148,17 +149,22 @@ export default {
           )
     },
     cloudHookTypes() {
+      let allHooks
       if (
         this.canEdit &&
         this.editable &&
         this.tenant.prefectAdminSettings?.notifications
       ) {
-        return featureFlaggedCloudHookTypes
+        allHooks = featureFlaggedCloudHookTypes
       } else {
-        return this.canEdit && this.editable
-          ? openCloudHookTypes
-          : openCloudHookTypes.filter(t => t.type == this.hook.type)
+        allHooks =
+          this.canEdit && this.editable
+            ? openCloudHookTypes
+            : openCloudHookTypes.filter(t => t.type == this.hook.type)
       }
+      return allHooks.filter(
+        t => (t.requiresCloud && this.isCloud) || !t.requiresCloud
+      )
     }
   },
   watch: {
