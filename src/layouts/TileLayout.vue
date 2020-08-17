@@ -38,6 +38,7 @@
           <v-col
             cols="12"
             md="4"
+            sm="6"
             :class="{
               'pt-1': $slots['row-0']
             }"
@@ -47,6 +48,7 @@
           <v-col
             cols="12"
             md="4"
+            sm="6"
             :class="{
               'pt-1': $slots['row-0']
             }"
