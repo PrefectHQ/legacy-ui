@@ -15,7 +15,9 @@ export default {
             color="red darken-3"
             class="vertical-button white--text"
             :style="{ height: '46px' }"
-            :disabled="!checkVersion || role === 'READ_ONLY_USER' || isFinished"
+            :disabled="
+              !checkVersion || role === 'READ_ONLY_USER' || isFinishing
+            "
             text
             small
             depressed
@@ -35,7 +37,7 @@ export default {
         Prefect Core; please upgrade to version 0.13.0 or higher and re-register
         your Flow to enable cancellation.
       </span>
-      <span v-else-if="isFinished"
+      <span v-else-if="isFinishing"
         >This flow run has concluded so it can't be cancelled.</span
       >
       <span v-else>Cancel this flow run.</span>

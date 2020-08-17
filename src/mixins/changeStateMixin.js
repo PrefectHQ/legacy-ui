@@ -74,6 +74,12 @@ export const changeStateMixin = {
     isFinished() {
       return FINISHED_STATES.includes(this.flowRun.state)
     },
+    isFinishing() {
+      return (
+        this.flowRun.state == 'Cancelling' ||
+        FINISHED_STATES.includes(this.flowRun.state)
+      )
+    },
     filteredStates() {
       if (this.dialogType === 'task run') {
         return this.taskStates.filter(state => state !== this.taskRun.state)
