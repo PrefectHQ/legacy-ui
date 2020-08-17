@@ -94,7 +94,7 @@ export default {
 
       // Misc
       animationDuration: 500,
-      barHeight: 22,
+      barHeight: 25,
       easing: 'easeCubic',
       hovered: null
     }
@@ -137,7 +137,7 @@ export default {
     },
     containerStyle() {
       return {
-        height: this.groups?.length * 22 + 'px',
+        height: this.groups?.length * 25 + 'px',
         'min-height': '550px'
       }
     },
