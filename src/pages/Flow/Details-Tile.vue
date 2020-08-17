@@ -80,11 +80,6 @@ export default {
         this.newLabels || this.flowGroup.labels || this.flow.environment.labels
       return labels?.slice().sort()
     },
-    labelsOverflow() {
-      return false
-      // const labels = this.labels
-      // return labels.length > 3
-    },
     labelResetDisabled() {
       const labels = this.newLabels || this.labels
       return (
@@ -95,15 +90,9 @@ export default {
           (val, index) => val === this.flow?.environment?.labels[index]
         )
       )
-    },
-    resetButtonClass() {
-      return this.labelsOverflow ? 'mt-4 ml-2' : 'mt-0'
     }
   },
   watch: {
-    // labelsOverflow(val) {
-    //   if (!val) this.labelMenuOpen = false
-    // },
     newLabels(val) {
       if (val.length < 1) this.labelEditOpen = false
     }
@@ -317,83 +306,8 @@ export default {
                 Labels
               </v-list-item-subtitle>
 
-              <v-menu
-                v-if="labelsOverflow && !labelEditOpen"
-                v-model="labelMenuOpen"
-                :close-on-content-click="false"
-                offset-y
-              >
-                <template v-slot:activator="{ on }">
-                  <v-btn small color="primary" class="mt-1" depressed v-on="on">
-                    Show labels ({{
-                      newLabels ? newLabels.length : labels.length
-                    }})
-                    <v-icon>
-                      {{ labelMenuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <v-card width="1000px" class="overflow-y-scroll py-0">
-                  <v-card-title class="subtitle pr-2 py-2"
-                    >Flow group labels</v-card-title
-                  >
-
-                  <v-card-text class="pt-0">
-                    Flows and agents have optional labels which allow you to
-                    determine where your flows are executed. For more
-                    information see
-                    <a
-                      href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-                      target="_blank"
-                      >the docs on labels</a
-                    >.
-
-                    <div v-if="labels.length > 5" class="mt-4">
-                      <Label
-                        v-for="(label, i) in labels"
-                        :key="i"
-                        closable
-                        :duplicate="duplicateLabel === label"
-                        :loading="removingLabel === label"
-                        :disabled="disableRemove"
-                        class="mr-1 mb-1"
-                        @remove="removeLabel"
-                        >{{ label }}</Label
-                      >
-                    </div>
-
-                    <v-text-field
-                      v-model="newLabel"
-                      :rules="[rules.labelCheck]"
-                      color="primary"
-                      clearable
-                      :placeholder="labels.length > 5 ? 'Add a label' : null"
-                      :disabled="disableAdd"
-                      class="pt-0 mr-2"
-                      @keyup.enter="addLabel"
-                    >
-                      <template v-if="labels.length < 6" v-slot:prepend-inner>
-                        <Label
-                          v-for="(label, i) in labels"
-                          :key="i"
-                          closable
-                          label="Add Label"
-                          :duplicate="duplicateLabel === label"
-                          :loading="removingLabel === label"
-                          :disabled="disableRemove"
-                          class="mr-1 mb-1"
-                          @remove="removeLabel"
-                          >{{ label }}</Label
-                        >
-                      </template>
-                    </v-text-field>
-                  </v-card-text>
-                </v-card>
-              </v-menu>
               <div
-                v-else-if="
-                  (newLabels && newLabels.length > 0) || labels.length > 0
-                "
+                v-if="(newLabels && newLabels.length > 0) || labels.length > 0"
               >
                 <Label
                   v-for="(label, i) in newLabels || labels"
@@ -442,7 +356,7 @@ export default {
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    :class="resetButtonClass"
+                    class="mt-0"
                     icon
                     :disabled="labelResetDisabled"
                     color="codePink"
@@ -456,7 +370,6 @@ export default {
                 <span>Reset to labels from flow registration</span>
               </v-tooltip>
               <v-menu
-                v-if="!labelsOverflow || labelEditOpen"
                 v-model="labelEditOpen"
                 :close-on-content-click="false"
                 offset-y
