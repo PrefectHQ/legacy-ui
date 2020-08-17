@@ -94,6 +94,7 @@ export default {
 
       // Misc
       animationDuration: 500,
+      barHeight: 22,
       easing: 'easeCubic',
       hovered: null
     }
@@ -123,8 +124,6 @@ export default {
 
           barMap[ref].items.push(item)
         } else {
-          console.log(item.map_index, item.start_time)
-
           barMap[ref] = {
             ref: ref,
             items: [item],
@@ -138,8 +137,8 @@ export default {
     },
     containerStyle() {
       return {
-        height: this.groups?.length * 50 + 'px',
-        'min-height': '1000px'
+        height: this.groups?.length * 22 + 'px',
+        'min-height': '550px'
       }
     },
     hoveredId() {
@@ -243,7 +242,7 @@ export default {
 
       const now = new moment()
 
-      const bandWidthHeight = this.y.bandwidth()
+      const bandWidthHeight = this.barHeight
       const calcBar = (item, i, array, ref) => {
         const mapped = item.state === 'Mapped'
 
@@ -258,7 +257,8 @@ export default {
         const x = startTime ? this.x(startTime) : 0
         const width = this.x(endTime || now) - x
 
-        const calcY = this.y(item[this.yField])
+        const calcY =
+          this.y(item[this.yField]) + (this.y.bandwidth() - bandWidthHeight) / 2
         const height =
           mapped || item.map_index === -1
             ? bandWidthHeight
@@ -532,7 +532,7 @@ export default {
         height: 100%;
         width: 15%;"
     >
-      <div v-for="group in groups" :key="group.id" class="caption">
+      <div v-for="group in groups" :key="group.id" class="text-h5 my-2">
         {{ group.name }}
       </div>
     </div>
