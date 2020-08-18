@@ -47,7 +47,7 @@ export default {
       skip() {
         return !this.flowId
       },
-      // pollInterval: 1000,
+      pollInterval: 1000,
       update(data) {
         return data.task_run.map(task => {
           if (!task.end_time && task.start_time) {

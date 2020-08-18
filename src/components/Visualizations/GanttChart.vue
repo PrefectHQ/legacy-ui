@@ -106,7 +106,7 @@ export default {
   computed: {
     barMap() {
       const barMap = {}
-
+      console.log('bar map recalculating')
       this.items.forEach(item => {
         const ref = item[this.yField]
         if (ref in barMap) {
@@ -242,6 +242,7 @@ export default {
       this._renderCanvas()
     },
     _renderCanvas() {
+      console.log('rendering')
       cancelAnimationFrame(this.drawCanvas)
 
       const now = new moment()
@@ -303,9 +304,9 @@ export default {
             width0: 0,
             width1: width,
             width: 0,
-            x0: x || 0,
-            x1: x || 0,
-            x: x || 0,
+            x0: x || -5,
+            x1: x || -5,
+            x: x || -5,
             y0: y,
             y1: y,
             y: y
@@ -325,7 +326,7 @@ export default {
             width1: width,
             width: bar.width,
             x0: bar.x,
-            x1: x || 0,
+            x1: x || -5,
             x: bar.x,
             y0: bar.y,
             y1: y,
@@ -360,7 +361,7 @@ export default {
           width1: 0,
           width: bar.width,
           x0: bar.x,
-          x1: 0,
+          x1: bar.x,
           x: bar.x,
           y0: bar.y,
           y1: 0,
@@ -428,7 +429,7 @@ export default {
           bar.clipped
         )
 
-        if (bar.state !== 'Mapped') {
+        if (!bar.outlined) {
           context.fill(this.bars[i].path2D)
           context.strokeStyle = '#fff'
         } else {
@@ -615,18 +616,22 @@ export default {
               </div>
             </div>
             <div
-              v-if="hovered.start_time"
+              v-if="hovered.start_time || barMap[hovered.task_id].start_time"
               class="subtitle d-flex align-end justify-space-between"
             >
               Duration:
 
               <DurationSpan
                 class="font-weight-bold"
-                :start-time="hovered.start_time"
+                :start-time="
+                  hovered.start_time || barMap[hovered.task_id].start_time
+                "
                 :end-time="
                   hovered.end_time
                     ? hovered.end_time
-                    : barMap[hovered.task_id].end_time
+                    : hovered.state === 'Mapped'
+                    ? barMap[hovered.task_id].end_time
+                    : null
                 "
               />
             </div>
