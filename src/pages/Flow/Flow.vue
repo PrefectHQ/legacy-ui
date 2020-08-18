@@ -314,6 +314,7 @@ export default {
           <DetailsTile
             slot="row-1-col-1-tile-1"
             :flow="selectedFlow"
+            :flow-group="flowGroup"
             :last-flow-run="lastFlowRun"
             full-height
           />

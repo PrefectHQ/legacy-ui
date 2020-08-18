@@ -3,13 +3,15 @@ export const openCloudHookTypes = [
     title: 'Email',
     type: 'EMAIL',
     icon: 'fas fa-envelope',
-    config: { to: null }
+    config: { to: null },
+    requiresCloud: true
   },
   {
     title: 'Slack',
     type: 'SLACK_WEBHOOK',
     icon: 'fab fa-slack',
-    config: { url: null }
+    config: { url: null },
+    requiresCloud: false
   },
   {
     title: 'Twilio',
@@ -20,25 +22,29 @@ export const openCloudHookTypes = [
       auth_token: null,
       to: [],
       messaging_service_sid: null
-    }
+    },
+    requiresCloud: false
   },
   {
     title: 'Pager Duty',
     type: 'PAGERDUTY',
     icon: '$pagerDuty',
-    config: { routing_key: null, api_token: null, severity: [] }
+    config: { routing_key: null, api_token: null, severity: [] },
+    requiresCloud: false
   },
   {
     title: 'Web',
     type: 'WEBHOOK',
     icon: 'fas fa-desktop',
-    config: { to: null }
+    config: { to: null },
+    requiresCloud: false
   },
   {
     title: 'Prefect',
     type: 'PREFECT_MESSAGE',
     icon: '$prefect',
-    config: {}
+    config: {},
+    requiresCloud: false
   }
 ]
 

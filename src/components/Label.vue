@@ -1,7 +1,17 @@
 <script>
 export default {
   props: {
-    clickable: {
+    disabled: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    closable: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    duplicate: {
       type: Boolean,
       default: false,
       required: false
@@ -11,15 +21,29 @@ export default {
       default: true,
       required: false
     },
+    loading: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
     size: {
       type: String,
       default: 'small',
       required: false
     }
   },
+  computed: {
+    duplicatedColor() {
+      return this.duplicate ? 'error' : 'primary'
+    }
+  },
   methods: {
     handleClick() {
+      if (this.closable) return
       this.$emit('click', this.$slots.default[0].text)
+    },
+    handleRemove() {
+      this.$emit('remove', this.$slots.default[0].text)
     }
   }
 }
@@ -27,8 +51,9 @@ export default {
 
 <template>
   <v-chip
-    :disabled="!clickable"
-    color="primary"
+    :disabled="disabled"
+    :color="duplicatedColor"
+    :class="closable ? 'pr-0 overflow' : 'overflow'"
     :outlined="outlined"
     :x-large="size === 'x-large'"
     :large="size === 'large'"
@@ -38,11 +63,30 @@ export default {
     @click="handleClick"
   >
     <slot></slot>
+    <v-tooltip v-if="closable" bottom>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          :disabled="disabled && !loading"
+          :color="duplicatedColor"
+          :loading="loading"
+          icon
+          @click="handleRemove"
+          ><v-icon small :color="duplicatedColor" v-on="on"
+            >fa-times-circle</v-icon
+          >
+        </v-btn>
+      </template>
+      Remove this label
+    </v-tooltip>
   </v-chip>
 </template>
 
 <style lang="scss" scoped>
 .v-chip--disabled {
   opacity: 1;
+}
+
+.overflow {
+  max-width: 800px !important;
 }
 </style>

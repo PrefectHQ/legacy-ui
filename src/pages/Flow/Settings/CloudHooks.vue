@@ -77,6 +77,8 @@ export default {
         other endpoint when your flow enters a given state. For example, send a
         Slack message to your team when a production-critical flow has failed,
         along with the reason for the failure, so you can respond immediately.
+        Note that some Cloud Hooks such as email are only available with Prefect
+        Cloud.
       </div>
 
       <v-row>
