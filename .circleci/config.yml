@@ -179,8 +179,7 @@ workflows:
           docker-username: DOCKER_HUB_USER
           image: 'prefecthq/ui'
           path: '.'
-          tag: CIRCLE_TAG
-          tag_latest: true
+          tag: $CIRCLE_TAG,latest
           filters:
             branches:
               ignore:
@@ -194,9 +193,19 @@ workflows:
                 - /.*/
             tags:
               only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - request-release:
+          type: approval
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
       - deploy-prod:
           requires:
             - build-prod
+            - request-release
           filters:
             branches:
               ignore:
