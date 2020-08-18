@@ -76,6 +76,30 @@ jobs:
           at: .
       - deploy_env:
           BUCKET_NAME: ${GCS_BUCKET__DEV}
+  build-staging:
+    resource_class: large
+    docker:
+      - image: node:14.7
+    steps:
+      - build:
+          VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__STAGING}
+          VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__STAGING}
+          VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__STAGING}
+          VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__STAGING}
+          VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__STAGING}
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - dist
+            - package.json
+  deploy-staging:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: .
+      - deploy_env:
+          BUCKET_NAME: ${GCS_BUCKET__STAGING}
 
 workflows:
   version: 2
@@ -101,6 +125,20 @@ workflows:
       - deploy-dev:
           requires:
             - build-dev
+          filters:
+            branches:
+              only:
+                - master
+  'Deploy staging':
+    jobs:
+      - build-staging:
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-staging:
+          requires:
+            - build-staging
           filters:
             branches:
               only:
