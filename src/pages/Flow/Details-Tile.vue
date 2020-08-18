@@ -322,7 +322,7 @@ export default {
                   </template>
                   <v-card tile class="pa-0" max-width="320">
                     <v-card-title class="subtitle pb-1"
-                      >Flow group labels</v-card-title
+                      >Flow labels</v-card-title
                     >
 
                     <v-card-text class="pt-0">
@@ -343,16 +343,16 @@ export default {
                         tile
                         class="body-2 mt-2"
                       >
-                        You have no labels attached to your flow. If you want to
-                        add labels click
+                        If you want to add labels, click
                         <v-icon class="px-1" x-small color="primary"
                           >fa-plus</v-icon
                         >
-                        or you can reset your labels to the ones set at flow
-                        registration by clicking
+                        to add new labels or
                         <v-icon class="px-1" x-small color="codePink"
                           >fa-undo</v-icon
-                        >.
+                        >
+                        to reset your labels to the ones set at flow
+                        registration.
                       </v-alert>
                     </v-card-text>
                   </v-card>
@@ -382,7 +382,7 @@ export default {
                     </template>
                     <v-card width="800px" class="overflow-y-scroll py-0">
                       <v-card-title class="subtitle pr-2 pt-2 pb-0"
-                        >Flow group labels</v-card-title
+                        >Flow labels</v-card-title
                       >
 
                       <v-card-text class="py-0 width=1500px">
@@ -501,7 +501,7 @@ export default {
                 </template>
                 <v-card width="800px" class="overflow-y-scroll py-0">
                   <v-card-title class="subtitle pr-2 pt-2 pb-0"
-                    >Flow group labels</v-card-title
+                    >Flow labels</v-card-title
                   >
 
                   <v-card-text class="py-0 width=1500px">
