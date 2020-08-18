@@ -309,7 +309,7 @@ export default {
                 >
                   <template v-slot:activator="{ on }">
                     <v-btn
-                      :color="labels.length < 1 ? 'warning' : null"
+                      :color="labels.length < 1 ? 'info' : null"
                       text
                       icon
                       x-small
@@ -339,20 +339,20 @@ export default {
                         v-if="labels.length < 1"
                         border="left"
                         colored-border
-                        type="warning"
+                        type="info"
                         tile
                         class="body-2 mt-2"
                       >
-                        You have no labels attached to your flow. Click
+                        You have no labels attached to your flow. If you want to
+                        add labels click
                         <v-icon class="px-1" x-small color="primary"
                           >fa-plus</v-icon
                         >
-                        to add new labels or
+                        or you can reset your labels to the ones set at flow
+                        registration by clicking
                         <v-icon class="px-1" x-small color="codePink"
                           >fa-undo</v-icon
-                        >
-                        to reset your labels to the ones set at flow
-                        registration.
+                        >.
                       </v-alert>
                     </v-card-text>
                   </v-card>
