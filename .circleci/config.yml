@@ -44,11 +44,13 @@ commands:
             npm run build
   deploy_env:
     parameters:
+      GCP_CREDS_LOC:
+        type: string
       BUCKET_NAME:
         type: string
 
     steps:
-      - run: echo ${GCP_SERVICE_KEY} | gcloud auth activate-service-account --key-file=-
+      - run: echo << parameters.GCP_CREDS_LOC >> | gcloud auth activate-service-account --key-file=-
       - run: gsutil -m cp -r dist/* gs://<< parameters.BUCKET_NAME >>/
 
 jobs:
@@ -75,6 +77,7 @@ jobs:
       - attach_workspace:
           at: .
       - deploy_env:
+          GCP_CREDS_LOC: ${GCP_SERVICE_KEY}
           BUCKET_NAME: ${GCS_BUCKET__DEV}
   build-staging:
     resource_class: large
@@ -99,6 +102,7 @@ jobs:
       - attach_workspace:
           at: .
       - deploy_env:
+          GCP_CREDS_LOC: ${GCP_SERVICE_KEY__STAGING}
           BUCKET_NAME: ${GCS_BUCKET__STAGING}
 
 workflows:
