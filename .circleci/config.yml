@@ -104,6 +104,31 @@ jobs:
       - deploy_env:
           GCP_CREDS: ${GCP_SERVICE_KEY__STAGING}
           BUCKET_NAME: ${GCS_BUCKET__STAGING}
+  build-prod:
+    resource_class: large
+    docker:
+      - image: node:14.7
+    steps:
+      - build:
+          VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__PROD}
+          VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__PROD}
+          VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__PROD}
+          VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__PROD}
+          VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__PROD}
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - dist
+            - package.json
+  deploy-prod:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: .
+      - deploy_env:
+          GCP_CREDS: ${GCP_SERVICE_KEY__PROD}
+          BUCKET_NAME: ${GCS_BUCKET__PROD}
 
 workflows:
   version: 2
@@ -147,3 +172,34 @@ workflows:
             branches:
               only:
                 - master
+  'Deploy prod':
+    jobs:
+      - docker/publish:
+          docker-password: DOCKER_HUB_PW
+          docker-username: DOCKER_HUB_USER
+          image: 'prefecthq/ui'
+          path: '.'
+          tag: CIRCLE_TAG
+          tag_latest: true
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - build-prod:
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - deploy-prod:
+          requires:
+            - build-prod
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
