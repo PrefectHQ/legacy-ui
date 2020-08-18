@@ -62,7 +62,7 @@ export default {
       key: 0,
       loading: 0,
       loadedTiles: 0,
-      numberOfTiles: 7,
+      numberOfTiles: 9,
       projectId: this.$route.params.id,
       refreshTimeout: null,
       tab: this.getTab()
@@ -122,6 +122,8 @@ export default {
     },
     tenant(val) {
       if (val?.id) {
+        this.loadedTiles = 0
+
         clearTimeout(this.refreshTimeout)
         this.refresh()
       }
@@ -353,7 +355,11 @@ export default {
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
-        <FlowTableTile class="mx-3 my-6" :project-id="projectId" />
+        <FlowTableTile
+          v-if="loadedTiles > 8"
+          class="mx-3 my-6"
+          :project-id="projectId"
+        />
       </v-tab-item>
 
       <v-tab-item
@@ -363,7 +369,7 @@ export default {
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
-        <Agents class="mx-3 my-6" />
+        <Agents v-if="loadedTiles > 9" class="mx-3 my-6" />
       </v-tab-item>
 
       <v-tab-item

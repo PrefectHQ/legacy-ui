@@ -104,41 +104,6 @@ export default {
     }
   },
   computed: {
-    barMap() {
-      const barMap = {}
-      console.log('bar map recalculating')
-      this.items.forEach(item => {
-        const ref = item[this.yField]
-        if (ref in barMap) {
-          if (
-            !barMap[ref].start_time ||
-            (item.start_time &&
-              moment(item.start_time).isBefore(barMap[ref].start_time))
-          ) {
-            barMap[ref].start_time = item.start_time
-          }
-
-          if (
-            !barMap[ref].end_time ||
-            (item.end_time &&
-              moment(item.end_time).isAfter(barMap[ref].end_time))
-          ) {
-            barMap[ref].end_time = item.end_time
-          }
-
-          barMap[ref].items.push(item)
-        } else {
-          barMap[ref] = {
-            ref: ref,
-            items: [item],
-            start_time: item.start_time,
-            end_time: item.end_time
-          }
-        }
-      })
-
-      return barMap
-    },
     containerStyle() {
       return {
         height: this.groups?.length * 25 + 'px',
@@ -245,24 +210,21 @@ export default {
       console.log('rendering')
       cancelAnimationFrame(this.drawCanvas)
 
-      const now = new moment()
+      const height = this.barHeight
 
-      const bandWidthHeight = this.barHeight
-      const calcBar = (item, i, array, ref) => {
-        const mapped = item.state === 'Mapped'
+      const calcBar = item => {
+        // const startTime = moment(item.start_time)
 
-        const startTime = mapped
-          ? moment(this.barMap[ref]?.start_time)
-          : moment(item.start_time)
+        // const endTime = item.end_time
 
-        const endTime = mapped
-          ? moment(this.barMap[ref]?.end_time)
-          : moment(item.end_time)
+        const x = item.start_time ? this.x(item.start_time) : 0
 
-        const x = startTime ? this.x(startTime) : 0
-        const calcWidth = this.x(endTime || now) - x
+        const calcWidth = item.end_time
+          ? this.x(item.end_time) - x
+          : this.width - x
+
         const width =
-          (mapped || item.map_index === -1) && calcWidth > 0
+          calcWidth > 0
             ? calcWidth > this.barWidth
               ? calcWidth
               : this.barWidth
@@ -270,19 +232,9 @@ export default {
 
         // This indicates that the calculated width is less than the min
         // bar width, so we should display an indicator that this isn't visually representative
-        const clipped =
-          (mapped || item.map_index === -1) && calcWidth < this.barWidth
+        const clipped = calcWidth < this.barWidth
 
-        const calcY =
-          this.y(item[this.yField]) + (this.y.bandwidth() - bandWidthHeight) / 2
-        const height =
-          mapped || item.map_index === -1
-            ? bandWidthHeight
-            : (1 / (array.length - 1)) * bandWidthHeight
-        const y =
-          mapped || item.map_index === -1
-            ? calcY
-            : calcY + height * item.map_index
+        const y = this.y(item[this.yField]) + (this.y.bandwidth() - height) / 2
 
         const alpha = 1
 
@@ -291,9 +243,6 @@ export default {
         // If the item isn't present in the bar array
         // we instantiate a new bar...
         if (barIndex < 0) {
-          if (item.state == 'Mapped') {
-            console.log(x, y)
-          }
           this.bars.push({
             ...item,
             alpha: alpha,
@@ -325,9 +274,9 @@ export default {
             width0: bar.width,
             width1: width,
             width: bar.width,
-            x0: bar.x,
+            x0: x || -5,
             x1: x || -5,
-            x: bar.x,
+            x: x || -5,
             y0: bar.y,
             y1: y,
             y: bar.y
@@ -337,40 +286,36 @@ export default {
         }
       }
 
-      Object.keys(this.barMap).map(id => {
-        return this.barMap[id].items.map((item, i, array) =>
-          calcBar(item, i, array, id)
-        )
-      })
+      this.items.forEach(calcBar)
+
+      console.log(this.bars)
 
       // Check our existing bars against current data
-      this.bars.forEach((bar, i) => {
-        const itemExists = this.items.find(item => item.id == bar.id)
-
+      this.bars
         // If this is a valid bar, do nothing since its data was already
         // updated
-        if (itemExists) return
-
+        .filter(bar => !this.items.find(item => item.id == bar.id))
         // ...otherwise we'll start the exit animation
-        const bar1 = {
-          clipped: false,
-          height0: bar.height,
-          height1: bandWidthHeight,
-          height: bar.height,
-          width0: bar.width,
-          width1: 0,
-          width: bar.width,
-          x0: bar.x,
-          x1: bar.x,
-          x: bar.x,
-          y0: bar.y,
-          y1: 0,
-          y: bar.y,
-          leaving: true
-        }
+        .forEach((bar, i) => {
+          const bar1 = {
+            clipped: false,
+            height0: bar.height,
+            height1: height,
+            height: bar.height,
+            width0: bar.width,
+            width1: 0,
+            width: bar.width,
+            x0: bar.x,
+            x1: bar.x,
+            x: bar.x,
+            y0: bar.y,
+            y1: 0,
+            y: bar.y,
+            leaving: true
+          }
 
-        this.bars[i] = { ...bar, ...bar1 }
-      })
+          this.bars[i] = { ...bar, ...bar1 }
+        })
 
       requestAnimationFrame(this.drawCanvas)
       const timingCallback = elapsed => {
@@ -525,7 +470,7 @@ export default {
       this.drawXAxis()
     },
     drawXAxis() {
-      const xAxis = d3.axisTop(this.x).ticks(30)
+      const xAxis = d3.axisTop(this.x).ticks(10)
 
       this.xAxisGroup
         .attr('class', 'x-axis-group')
@@ -559,7 +504,7 @@ export default {
         height: 100%;
         width: 15%;"
     >
-      <div v-for="group in groups" :key="group.id" class="subtitle-1">
+      <div v-for="group in groups" :key="group.id" class="caption">
         {{ group.name }}
       </div>
     </div>
@@ -600,10 +545,9 @@ export default {
             class="text-subtitle-1"
           >
             <div>
-              {{ itemName(hovered[yField])
-              }}{{ hovered.map_index > -1 ? `(${hovered.map_index})` : '' }}
+              {{ itemName(hovered[yField]) }}
               <div class="caption grey--text text--lighten-1">
-                (Click for more details)
+                (Click to expand)
               </div>
             </div>
           </v-card-title>
@@ -616,53 +560,37 @@ export default {
               </div>
             </div>
             <div
-              v-if="hovered.start_time || barMap[hovered.task_id].start_time"
+              v-if="hovered.start_time"
               class="subtitle d-flex align-end justify-space-between"
             >
               Duration:
 
               <DurationSpan
                 class="font-weight-bold"
-                :start-time="
-                  hovered.start_time || barMap[hovered.task_id].start_time
-                "
-                :end-time="
-                  hovered.end_time
-                    ? hovered.end_time
-                    : hovered.state === 'Mapped'
-                    ? barMap[hovered.task_id].end_time
-                    : null
-                "
+                :start-time="hovered.start_time"
+                :end-time="hovered.end_time"
               />
             </div>
 
             <div
-              v-if="hovered.start_time || barMap[hovered.task_id].start_time"
+              v-if="hovered.start_time"
               class="subtitle d-flex align-end justify-space-between"
             >
               Start:
 
               <span class="font-weight-bold">
-                {{
-                  formatTimeGranular(
-                    hovered.start_time || barMap[hovered.task_id].start_time
-                  )
-                }}
+                {{ formatTimeGranular(hovered.start_time) }}
               </span>
             </div>
 
             <div
-              v-if="hovered.end_time || barMap[hovered.task_id].end_time"
+              v-if="hovered.end_time"
               class="subtitle d-flex align-end justify-space-between"
             >
               End:
 
               <span class="font-weight-bold">
-                {{
-                  formatTimeGranular(
-                    hovered.end_time || barMap[hovered.task_id].end_time
-                  )
-                }}
+                {{ formatTimeGranular(hovered.end_time) }}
               </span>
             </div>
           </v-card-text>
