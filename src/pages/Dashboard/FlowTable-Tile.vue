@@ -69,6 +69,11 @@ export default {
       required: false,
       type: String,
       default: () => null
+    },
+    tenantLoad: {
+      required: false,
+      default: false,
+      type: Boolean
     }
   },
   data() {
@@ -92,6 +97,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     headers() {
+      console.log('tl', this.tenantLoad)
       return [
         ...(this.showArchived
           ? [
@@ -276,7 +282,7 @@ export default {
         fixed-header
         :search.sync="search"
         :mobile-breakpoint="960"
-        :loading="loading > 0"
+        :loading="loading > 0 || tenantLoad"
         loading-text="Loading your flows..."
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="flows"
