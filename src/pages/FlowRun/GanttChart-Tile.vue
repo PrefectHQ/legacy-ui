@@ -43,6 +43,7 @@ export default {
     },
     groups() {
       if (!this.tasks) return []
+
       // If there's only one selected task and the selected task has multiple runs (mapped),
       // we filter out the mapped task run, sort the mapped runs, and sort them based on map index
       if (this.showMapped) {
@@ -71,19 +72,36 @@ export default {
 
       return Object.keys(this.taskMap)
         .filter(
-          task =>
-            !this.hasSelectedTaskIds || this.selectedTaskIds.includes(task.id)
+          id => !this.hasSelectedTaskIds || this.selectedTaskIds.includes(id)
         )
         .map(id => this.taskMap[id])
     },
     endTime() {
-      // if (this.selectedTaskId)
-      //   return this.taskMap[this.selectedTaskId]?.end_time
+      if (this.hasSelectedTaskIds) {
+        return this.items.reduce((a, b) => {
+          if (
+            !a.end_time ||
+            (b.start_time && moment(b.end_time).isAfter(a.end_time))
+          ) {
+            return b
+          }
+          return a
+        })?.end_time
+      }
       return this.flowRun.end_time
     },
     startTime() {
-      // if (this.selectedTaskId)
-      //   return this.taskMap[this.selectedTaskId]?.start_time
+      if (this.hasSelectedTaskIds) {
+        return this.items.reduce((a, b) => {
+          if (
+            !a.start_time ||
+            (b.start_time && moment(b.start_time).isBefore(a.start_time))
+          ) {
+            return b
+          }
+          return a
+        })?.start_time
+      }
       return this.flowRun.start_time
     },
     pollInterval() {
