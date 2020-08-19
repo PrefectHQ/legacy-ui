@@ -97,7 +97,6 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     headers() {
-      console.log('tl', this.tenantLoad)
       return [
         ...(this.showArchived
           ? [

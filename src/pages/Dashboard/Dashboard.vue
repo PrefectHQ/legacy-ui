@@ -351,13 +351,12 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="flows"
-        :loading="loadedTiles < 6"
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
         <FlowTableTile
-          :tenant-load="loadedTiles < 6"
           class="mx-3 my-6"
+          :tenant-load="loadedTiles < 8"
           :project-id="projectId"
         />
       </v-tab-item>
@@ -369,7 +368,7 @@ export default {
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
-        <Agents :tenant-load="loadedTiles < 7" class="mx-3 my-6" />
+        <Agents :tenant-load="loadedTiles < 9" class="mx-3 my-6" />
       </v-tab-item>
 
       <v-tab-item
