@@ -1,5 +1,5 @@
-mutation UpdateTaskConcurrencyLimit($tag: String!, $limit: Int!) {
-  update_task_concurrency_limit(input: { tag: $tag, limit: $limit }) {
+mutation UpdateTaskConcurrencyLimit($name: String!, $limit: Int!) {
+  update_task_concurrency_limit(input: { name: $name, limit: $limit }) {
     id
   }
 }

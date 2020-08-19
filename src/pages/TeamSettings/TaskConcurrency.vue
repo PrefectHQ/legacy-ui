@@ -172,7 +172,7 @@ export default {
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/TaskTagLimit/update-task-concurrency-limit.gql'),
           variables: {
-            tag: this.newTag,
+            name: this.newTag,
             limit: Number(this.newLimit) // The API expects a type Number, so explicitly casting
           }
         })
@@ -220,7 +220,7 @@ export default {
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/TaskTagLimit/update-task-concurrency-limit.gql'),
           variables: {
-            tag: this.selectedTag.tag,
+            name: this.selectedTag.tag,
             limit: Number(this.newLimit) // The API expects a type Number, so explicitly casting
           }
         })
