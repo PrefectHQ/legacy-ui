@@ -33,6 +33,12 @@ export default {
     }
   },
   computed: {
+    groups() {
+      if (!this.tasks) return []
+      if (this.selectedTaskId)
+        return this.tasks.filter(task => task.id == this.selectedTaskId)
+      return this.tasks
+    },
     items() {
       if (!this.tasks) return []
       if (this.selectedTaskId) return this.taskMap[this.selectedTaskId]?.items
@@ -40,7 +46,11 @@ export default {
     }
   },
   watch: {},
-  methods: {},
+  methods: {
+    _handleClick(data) {
+      this.selectedTaskId = data?.id
+    }
+  },
   apollo: {
     taskRuns: {
       query: require('@/graphql/FlowRun/gantt-chart-task-runs.gql'),
@@ -54,6 +64,10 @@ export default {
       },
       pollInterval: 1000,
       update(data) {
+        Object.keys(this.taskMap).forEach(id => {
+          this.taskMap[id].items = []
+        })
+
         return data.task_run.map(task => {
           const ref = task.task_id
 
@@ -80,6 +94,7 @@ export default {
           this.taskMap[ref].color = task.color
           this.taskMap[ref].state = task.state
 
+          this.taskMap[ref].items.push(task)
           return task
         })
       }
@@ -146,11 +161,13 @@ export default {
     <GanttChart
       v-if="tasks"
       :items="items"
-      :groups="tasks"
+      :groups="groups"
       :live="flowRun.state === 'Running'"
       :start-time="flowRun.start_time"
       :end-time="flowRun.end_time"
-      y-field="id"
+      :y-field="selectedTaskId ? 'task_id' : 'id'"
+      :click-disabled="!!selectedTaskId"
+      @bar-click="_handleClick"
     />
   </v-card>
 </template>

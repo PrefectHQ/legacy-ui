@@ -53,6 +53,12 @@ export default {
   },
   mixins: [formatTime],
   props: {
+    clickDisabled: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+
     groups: {
       type: Array,
       required: false,
@@ -186,6 +192,17 @@ export default {
     window.removeEventListener('resize', resizeChartListener)
   },
   methods: {
+    _click(e) {
+      if (this.clickDisabled) return
+
+      const context = this.canvas.node().getContext('2d')
+
+      const clicked = this.bars.find(bar =>
+        context?.isPointInPath(bar.path2D, e.offsetX, e.offsetY)
+      )
+
+      this.$emit('bar-click', clicked)
+    },
     _mouseover(e) {
       this._mouseout.cancel()
 
@@ -292,8 +309,6 @@ export default {
 
       this.items.forEach(calcBar)
 
-      console.log(this.bars)
-
       // Check our existing bars against current data
       this.bars
         // If this is a valid bar, do nothing since its data was already
@@ -313,13 +328,15 @@ export default {
             x1: bar.x,
             x: bar.x,
             y0: bar.y,
-            y1: 0,
+            y1: bar.y,
             y: bar.y,
             leaving: true
           }
 
           this.bars[i] = { ...bar, ...bar1 }
         })
+
+      console.log(this.groups, this.bars)
 
       requestAnimationFrame(this.drawCanvas)
       const timingCallback = elapsed => {
@@ -530,6 +547,7 @@ export default {
         class="gantt"
         @mousemove="_mouseover"
         @mouseout="_mouseout"
+        @click="_click"
       />
       <svg :id="`${id}-svg`" class="gantt" />
 
