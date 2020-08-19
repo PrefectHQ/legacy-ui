@@ -1,5 +1,15 @@
 # Changelog
 
+## 2020-08-19
+
+### Features and Improvements
+
+- None
+
+### Bugfixes
+
+- Fix issue with creating new task concurrency limits [#122](https://github.com/PrefectHQ/ui/pull/122)
+
 ## 2020-08-18
 
 ### Hello, world!
