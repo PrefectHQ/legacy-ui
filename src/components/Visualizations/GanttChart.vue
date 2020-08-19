@@ -522,18 +522,16 @@ export default {
 
 <template>
   <v-container :style="containerStyle" fluid>
-    <!-- <div
-      class="d-flex justify-space-around flex-column text-right pb-6"
-      style="
-        height: 100%;
-        width: 15%;"
-    >
-      <div v-for="group in groups" :key="group.id" class="caption">
-        {{ group.name }}
-      </div>
-    </div> -->
-
     <div ref="parent" class="position-relative" style="height: 100%;">
+      <div
+        v-if="false"
+        class="d-flex justify-space-around flex-column text-right position-absolute"
+      >
+        <div v-for="group in groups" :key="group.id" class="caption">
+          {{ group.name }}
+        </div>
+      </div>
+
       <canvas
         :id="`${id}-canvas`"
         ref="canvas"
