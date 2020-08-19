@@ -15,3 +15,4 @@
 - Add an alert to remind users they are on Prefect Cloud if they toggle from Server [#108](https://github.com/PrefectHQ/ui/pull/108)
 - Disable Cancel button after pressing it once - [#116](https://github.com/PrefectHQ/ui/pull/116)
 - Remove EMAIL Cloud Hook from Server options - [#116](https://github.com/PrefectHQ/ui/pull/116)
+- Make dashbaord update when a user switches tenant [#123](https://github.com/PrefectHQ/ui/pull/123)
