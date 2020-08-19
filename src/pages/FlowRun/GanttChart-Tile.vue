@@ -2,13 +2,16 @@
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import GanttChart from '@/components/Visualizations/GanttChart'
+import SearchResult from '@/components/Schematics/Preview-SearchResult'
+
 import moment from 'moment'
 
 export default {
   components: {
     CardTitle,
     DurationSpan,
-    GanttChart
+    GanttChart,
+    SearchResult
   },
   props: {
     flowId: {
@@ -29,6 +32,8 @@ export default {
     return {
       computedStyle: getComputedStyle(document.documentElement),
       taskMap: {},
+      search: null,
+      searchInput: null,
       selectedTaskId: null
     }
   },
@@ -76,12 +81,28 @@ export default {
       } else {
         this.$apollo.queries.taskRuns.refetch()
       }
+    },
+    searchInput(val) {
+      let selected = this.tasks?.find(task => task.name == val)
+      if (selected) this._handleSearch(selected.id)
     }
   },
 
   methods: {
     _handleClick(data) {
       this.selectedTaskId = data?.id
+    },
+    _handleSearch(id) {
+      this.selectedTaskId = id
+    },
+    searchFilter(item, queryText) {
+      // This is the filter we use to determine what the VAutocomplete
+      // method is showing. We transform all queries to lowercase
+      // for comparison for a better UX
+      return (
+        item['id'].toLowerCase().includes(queryText.toLowerCase()) ||
+        item['name'].toLowerCase().includes(queryText.toLowerCase())
+      )
     }
   },
   apollo: {
@@ -163,7 +184,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile>
+  <v-card class="pa-2 mt-2" tile style="max-height: 80vh;">
     <v-system-bar :color="flowRun.state" :height="5" absolute />
 
     <CardTitle title="Gantt Chart" icon="pi-gantt">
@@ -188,6 +209,84 @@ export default {
           </span>
         </span>
       </div>
+
+      <template slot="action">
+        <v-autocomplete
+          v-model="searchInput"
+          autocomplete="new-password"
+          class="mx-0 py-0"
+          auto-select-first
+          light
+          background-color="white"
+          hide-details
+          single-line
+          flat
+          solo
+          dense
+          clearable
+          :items="tasks"
+          :search-input.sync="search"
+          :filter="searchFilter"
+          placeholder="All Tasks"
+          prepend-inner-icon="search"
+          item-text="name"
+          disable-lookup
+          @change="_handleSearch"
+        >
+          <template v-if="search == null" v-slot:no-data>
+            <v-list-item>
+              <v-list-item-title>
+                Type to search for a <strong>Task</strong> by
+                <strong>name</strong> or <strong>id</strong>
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+          <template v-else v-slot:no-data>
+            <v-list-item>
+              <v-list-item-title>
+                No results matched your search.
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+          <template v-slot:prepend-item>
+            <div>
+              <v-list-item
+                :input-value="!selectedTaskId"
+                @click="
+                  selectedTaskId = null
+                  searchInput = null
+                "
+              >
+                <v-list-item-content>
+                  <v-list-item-title class="text-body-1">
+                    All Tasks
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="text-body-2 font-weight-regular">
+                    Reset the chart
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider class="my-2" />
+            </div>
+          </template>
+
+          <template v-slot:item="data">
+            <v-lazy
+              :options="{
+                threshold: 0.75
+              }"
+              min-height="40px"
+              transition="fade"
+            >
+              <SearchResult
+                v-if="data"
+                :search-result="data.item"
+                :parent="data.parent"
+              />
+            </v-lazy>
+          </template>
+        </v-autocomplete>
+      </template>
     </CardTitle>
 
     <GanttChart
@@ -195,6 +294,7 @@ export default {
       :items="items"
       :groups="groups"
       :live="flowRun.state === 'Running'"
+      chart-height="500px"
       :start-time="startTime"
       :end-time="endTime"
       y-field="id"

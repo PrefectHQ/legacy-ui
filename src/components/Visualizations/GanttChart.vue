@@ -53,6 +53,11 @@ export default {
   },
   mixins: [formatTime],
   props: {
+    chartHeight: {
+      type: String,
+      required: false,
+      default: () => '100%'
+    },
     clickDisabled: {
       type: Boolean,
       required: false,
@@ -106,17 +111,15 @@ export default {
       animationInterval: null,
       barHeight: 25,
       barWidth: 25,
+      barPaddingY: 5,
+      containerStyle: {
+        height: this.chartHeight
+      },
       easing: 'easeLinear',
       hovered: null
     }
   },
   computed: {
-    containerStyle() {
-      return {
-        height: this.groups?.length * 25 + 'px',
-        'min-height': '550px'
-      }
-    },
     hoveredId() {
       return this.hovered?.id
     },
@@ -274,12 +277,12 @@ export default {
             width0: 0,
             width1: width,
             width: 0,
-            x0: x || -5,
-            x1: x || -5,
-            x: x || -5,
-            y0: y || -5,
-            y1: y || -5,
-            y: y || -5
+            x0: x || 0,
+            x1: x || 0,
+            x: x || 0,
+            y0: y || 0,
+            y1: y || 0,
+            y: y || 0
           })
         } else {
           // ...otherwise we update the existing bar with
@@ -295,9 +298,9 @@ export default {
             width0: bar.width,
             width1: width,
             width: bar.width,
-            x0: x || -5,
-            x1: x || -5,
-            x: x || -5,
+            x0: bar.x > 0 ? bar.x : x || 0,
+            x1: x || 0,
+            x: bar.x > 0 ? bar.x : x || 0,
             y0: y,
             y1: y,
             y: y
@@ -479,6 +482,8 @@ export default {
       }
     },
     async updateY() {
+      this.y.paddingInner(this.barPaddingY).paddingOuter(this.barPaddingY)
+
       this.y.domain(this.groups.map(group => group.id))
       this.y.range([0, this.canvasHeight])
     },
@@ -516,12 +521,8 @@ export default {
 </script>
 
 <template>
-  <v-container
-    :style="containerStyle"
-    class="d-flex align-start justify-start"
-    fluid
-  >
-    <div
+  <v-container :style="containerStyle" fluid>
+    <!-- <div
       class="d-flex justify-space-around flex-column text-right pb-6"
       style="
         height: 100%;
@@ -530,15 +531,9 @@ export default {
       <div v-for="group in groups" :key="group.id" class="caption">
         {{ group.name }}
       </div>
-    </div>
+    </div> -->
 
-    <div
-      ref="parent"
-      class="position-relative"
-      style="
-        height: 100%;
-        width: 85%;"
-    >
+    <div ref="parent" class="position-relative" style="height: 100%;">
       <canvas
         :id="`${id}-canvas`"
         ref="canvas"
