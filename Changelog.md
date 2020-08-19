@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Fix issue with creating new task concurrency limits [#122](https://github.com/PrefectHQ/ui/pull/122)
+- Make dashboard update when a user switches tenant [#123](https://github.com/PrefectHQ/ui/pull/123)
 
 ## 2020-08-18
 
