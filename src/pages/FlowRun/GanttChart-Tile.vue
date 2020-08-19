@@ -34,14 +34,20 @@ export default {
       taskMap: {},
       search: null,
       searchInput: null,
-      selectedTaskId: null
+      selectedTaskIds: []
     }
   },
   computed: {
+    hasSelectedTaskIds() {
+      return this.selectedTaskIds?.length > 0
+    },
     groups() {
       if (!this.tasks) return []
-      if (this.selectedTaskId)
-        return this.taskMap[this.selectedTaskId]?.items
+      // If there's only one selected task and the selected task has multiple runs (mapped),
+      // we filter out the mapped task run, sort the mapped runs, and sort them based on map index
+      if (this.showMapped) {
+        const id = this.selectedTaskIds[0]
+        return this.taskMap[id]?.items
           .filter(run => run.map_index !== -1)
           .sort((a, b) => a.map_index - b.map_index)
           .map(run => {
@@ -50,26 +56,44 @@ export default {
               name: run.map_index
             }
           })
+      }
 
-      return this.tasks
+      return this.tasks.filter(
+        task =>
+          !this.hasSelectedTaskIds || this.selectedTaskIds.includes(task.id)
+      )
     },
     items() {
       if (!this.tasks) return []
-      if (this.selectedTaskId) return this.taskMap[this.selectedTaskId]?.items
-      return Object.keys(this.taskMap).map(id => this.taskMap[id])
+      if (this.showMapped) {
+        return this.taskMap[this.selectedTaskIds[0]]?.items
+      }
+
+      return Object.keys(this.taskMap)
+        .filter(
+          task =>
+            !this.hasSelectedTaskIds || this.selectedTaskIds.includes(task.id)
+        )
+        .map(id => this.taskMap[id])
     },
     endTime() {
-      if (this.selectedTaskId)
-        return this.taskMap[this.selectedTaskId]?.end_time
+      // if (this.selectedTaskId)
+      //   return this.taskMap[this.selectedTaskId]?.end_time
       return this.flowRun.end_time
     },
     startTime() {
-      if (this.selectedTaskId)
-        return this.taskMap[this.selectedTaskId]?.start_time
+      // if (this.selectedTaskId)
+      //   return this.taskMap[this.selectedTaskId]?.start_time
       return this.flowRun.start_time
     },
     pollInterval() {
       return this.flowRun.state === 'Running' ? 1000 : 0
+    },
+    showMapped() {
+      return (
+        this.selectedTaskIds.length === 1 &&
+        this.taskMap[this.selectedTaskIds[0]]?.items.length > 1
+      )
     }
   },
   watch: {
@@ -90,10 +114,11 @@ export default {
 
   methods: {
     _handleClick(data) {
-      this.selectedTaskId = data?.id
+      this.selectedTaskIds = [data?.id]
     },
-    _handleSearch(id) {
-      this.selectedTaskId = id
+    removeSelectedTask(item) {
+      const index = this.selectedTaskIds.indexOf(item.id)
+      if (index >= 0) this.selectedTaskIds.splice(index, 1)
     },
     searchFilter(item, queryText) {
       // This is the filter we use to determine what the VAutocomplete
@@ -209,86 +234,98 @@ export default {
           </span>
         </span>
       </div>
-
-      <template slot="action">
-        <v-autocomplete
-          v-model="searchInput"
-          autocomplete="new-password"
-          class="mx-0 py-0"
-          auto-select-first
-          light
-          background-color="white"
-          hide-details
-          single-line
-          flat
-          solo
-          dense
-          clearable
-          :items="tasks"
-          :search-input.sync="search"
-          :filter="searchFilter"
-          placeholder="All Tasks"
-          prepend-inner-icon="search"
-          item-text="name"
-          disable-lookup
-          @change="_handleSearch"
-        >
-          <template v-if="search == null" v-slot:no-data>
-            <v-list-item>
-              <v-list-item-title>
-                Type to search for a <strong>Task</strong> by
-                <strong>name</strong> or <strong>id</strong>
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-          <template v-else v-slot:no-data>
-            <v-list-item>
-              <v-list-item-title>
-                No results matched your search.
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-          <template v-slot:prepend-item>
-            <div>
-              <v-list-item
-                :input-value="!selectedTaskId"
-                @click="
-                  selectedTaskId = null
-                  searchInput = null
-                "
-              >
-                <v-list-item-content>
-                  <v-list-item-title class="text-body-1">
-                    All Tasks
-                  </v-list-item-title>
-                  <v-list-item-subtitle class="text-body-2 font-weight-regular">
-                    Reset the chart
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider class="my-2" />
-            </div>
-          </template>
-
-          <template v-slot:item="data">
-            <v-lazy
-              :options="{
-                threshold: 0.75
-              }"
-              min-height="40px"
-              transition="fade"
-            >
-              <SearchResult
-                v-if="data"
-                :search-result="data.item"
-                :parent="data.parent"
-              />
-            </v-lazy>
-          </template>
-        </v-autocomplete>
-      </template>
     </CardTitle>
 
+    <div>
+      <v-autocomplete
+        v-model="selectedTaskIds"
+        autocomplete="new-password"
+        class="mx-0 my-4"
+        light
+        background-color="white"
+        single-line
+        multiple
+        solo
+        flat
+        dense
+        clearable
+        :items="tasks"
+        :search-input.sync="search"
+        :filter="searchFilter"
+        prepend-inner-icon="search"
+        label="Search for a task"
+        item-text="name"
+        item-value="id"
+        disable-lookup
+      >
+        <template v-if="search == null" v-slot:no-data>
+          <v-list-item>
+            <v-list-item-title>
+              Type to search for a <strong>Task</strong> by
+              <strong>name</strong> or <strong>id</strong>
+            </v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-else v-slot:no-data>
+          <v-list-item>
+            <v-list-item-title>
+              No results matched your search.
+            </v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-slot:prepend-item>
+          <div>
+            <v-list-item
+              :input-value="selectedTaskIds === 0"
+              @click="
+                selectedTaskIds = []
+                searchInput = null
+              "
+            >
+              <v-list-item-content>
+                <v-list-item-title class="text-body-1">
+                  All Tasks
+                </v-list-item-title>
+                <v-list-item-subtitle class="text-body-2 font-weight-regular">
+                  Reset the chart
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider class="my-2" />
+          </div>
+        </template>
+
+        <template v-slot:selection="data">
+          <v-chip
+            v-bind="data.attrs"
+            :input-value="data.selected"
+            close
+            width="100"
+            class="truncate"
+            @click="data.select"
+            @click:close="removeSelectedTask(data.item)"
+          >
+            {{ data.item.name }}
+          </v-chip>
+        </template>
+
+        <template v-slot:item="data">
+          <v-lazy
+            :options="{
+              threshold: 0.75
+            }"
+            min-height="40px"
+            transition="fade"
+          >
+            <SearchResult
+              v-if="data"
+              :search-result="data.item"
+              :parent="data.parent"
+            />
+          </v-lazy>
+        </template>
+      </v-autocomplete>
+    </div>
     <GanttChart
       v-if="tasks"
       :items="items"
@@ -298,7 +335,7 @@ export default {
       :start-time="startTime"
       :end-time="endTime"
       y-field="id"
-      :click-disabled="!!selectedTaskId"
+      :click-disabled="!!showMapped"
       @bar-click="_handleClick"
     />
   </v-card>
