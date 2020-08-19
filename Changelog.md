@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add unit tests for the agent and alert vuex stores.
 
 ### Bugfixes
 
