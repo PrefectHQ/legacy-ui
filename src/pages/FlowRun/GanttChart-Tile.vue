@@ -38,12 +38,14 @@ export default {
       if (this.selectedTaskId)
         return this.taskMap[this.selectedTaskId]?.items
           .filter(run => run.map_index !== -1)
+          .sort((a, b) => a.map_index - b.map_index)
           .map(run => {
             return {
               id: run.id,
               name: run.map_index
             }
           })
+
       return this.tasks
     },
     items() {
@@ -60,9 +62,23 @@ export default {
       if (this.selectedTaskId)
         return this.taskMap[this.selectedTaskId]?.start_time
       return this.flowRun.start_time
+    },
+    pollInterval() {
+      return this.flowRun.state === 'Running' ? 1000 : 0
     }
   },
-  watch: {},
+  watch: {
+    flowRun() {
+      this.$apollo.queries.taskRuns.stopPolling()
+
+      if (this.pollInterval > 0) {
+        this.$apollo.queries.taskRuns.startPolling(this.pollInterval)
+      } else {
+        this.$apollo.queries.taskRuns.refetch()
+      }
+    }
+  },
+
   methods: {
     _handleClick(data) {
       this.selectedTaskId = data?.id
@@ -79,7 +95,6 @@ export default {
       skip() {
         return !this.flowId || !this.tasks
       },
-      pollInterval: 1000,
       update(data) {
         Object.keys(this.taskMap).forEach(id => {
           this.taskMap[id].items = []

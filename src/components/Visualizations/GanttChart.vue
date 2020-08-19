@@ -336,8 +336,6 @@ export default {
           this.bars[i] = { ...bar, ...bar1 }
         })
 
-      console.log(this.groups, this.bars)
-
       requestAnimationFrame(this.drawCanvas)
       const timingCallback = elapsed => {
         const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
