@@ -36,13 +36,30 @@ export default {
     groups() {
       if (!this.tasks) return []
       if (this.selectedTaskId)
-        return this.tasks.filter(task => task.id == this.selectedTaskId)
+        return this.taskMap[this.selectedTaskId]?.items
+          .filter(run => run.map_index !== -1)
+          .map(run => {
+            return {
+              id: run.id,
+              name: run.map_index
+            }
+          })
       return this.tasks
     },
     items() {
       if (!this.tasks) return []
       if (this.selectedTaskId) return this.taskMap[this.selectedTaskId]?.items
       return Object.keys(this.taskMap).map(id => this.taskMap[id])
+    },
+    endTime() {
+      if (this.selectedTaskId)
+        return this.taskMap[this.selectedTaskId]?.end_time
+      return this.flowRun.end_time
+    },
+    startTime() {
+      if (this.selectedTaskId)
+        return this.taskMap[this.selectedTaskId]?.start_time
+      return this.flowRun.start_time
     }
   },
   watch: {},
@@ -163,9 +180,9 @@ export default {
       :items="items"
       :groups="groups"
       :live="flowRun.state === 'Running'"
-      :start-time="flowRun.start_time"
-      :end-time="flowRun.end_time"
-      :y-field="selectedTaskId ? 'task_id' : 'id'"
+      :start-time="startTime"
+      :end-time="endTime"
+      y-field="id"
       :click-disabled="!!selectedTaskId"
       @bar-click="_handleClick"
     />
