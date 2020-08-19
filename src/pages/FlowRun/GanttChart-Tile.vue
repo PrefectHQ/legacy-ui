@@ -34,17 +34,13 @@ export default {
   },
   computed: {
     items() {
+      if (!this.tasks) return []
       if (this.selectedTaskId) return this.taskMap[this.selectedTaskId]?.items
       return Object.keys(this.taskMap).map(id => this.taskMap[id])
     }
   },
   watch: {},
-  methods: {
-    refetch() {
-      this.$apollo.queries.tasks.refetch()
-      this.$apollo.queries.taskRuns.refetch()
-    }
-  },
+  methods: {},
   apollo: {
     taskRuns: {
       query: require('@/graphql/FlowRun/gantt-chart-task-runs.gql'),
@@ -145,17 +141,13 @@ export default {
           </span>
         </span>
       </div>
-
-      <template slot="action">
-        <v-btn color="red lighten-3" depressed @click="refetch">Refetch</v-btn>
-      </template>
     </CardTitle>
 
     <GanttChart
       v-if="tasks"
       :items="items"
       :groups="tasks"
-      :live="!flowRun.end_time"
+      :live="flowRun.state === 'Running'"
       :start-time="flowRun.start_time"
       :end-time="flowRun.end_time"
       y-field="id"

@@ -88,8 +88,8 @@ export default {
       bars: [],
 
       // Axes functions
-      x: null,
-      y: null,
+      x: d3.scaleTime(),
+      y: d3.scaleBand(),
 
       // Dimensions
       height: null,
@@ -97,9 +97,10 @@ export default {
 
       // Misc
       animationDuration: 500,
+      animationInterval: null,
       barHeight: 25,
       barWidth: 25,
-      easing: 'easeCubic',
+      easing: 'easeLinear',
       hovered: null
     }
   },
@@ -145,20 +146,23 @@ export default {
     groups: {
       deep: true,
       handler: debounce(function() {
-        this.update()
+        this.updateY()
       }, 1000)
     },
     items: {
       deep: true,
       handler: debounce(function() {
-        this.update()
+        this.updateX()
       }, 1000)
+    },
+    startTime() {
+      this.updateX()
+    },
+    endTime() {
+      this.updateX()
     }
   },
   mounted() {
-    console.log(this.groups)
-    console.log(this.items)
-
     this.canvas = d3.select(`#${this.id}-canvas`)
     this.svg = d3.select(`#${this.id}-svg`)
 
@@ -174,6 +178,9 @@ export default {
     window.addEventListener('resize', resizeChartListener)
 
     requestAnimationFrame(this.resizeChart)
+
+    this.updateY()
+    this.updateX()
   },
   beforeDestroy() {
     window.removeEventListener('resize', resizeChartListener)
@@ -207,21 +214,18 @@ export default {
       this._renderCanvas()
     },
     _renderCanvas() {
-      console.log('rendering')
       cancelAnimationFrame(this.drawCanvas)
 
       const height = this.barHeight
 
       const calcBar = item => {
-        // const startTime = moment(item.start_time)
-
-        // const endTime = item.end_time
-
-        const x = item.start_time ? this.x(item.start_time) : 0
+        const x = item.start_time ? this.x(moment(item.start_time)) : 0
 
         const calcWidth = item.end_time
-          ? this.x(item.end_time) - x
-          : this.width - x
+          ? this.x(moment(item.end_time)) - x
+          : item.start_time
+          ? this.width - x
+          : 0
 
         const width =
           calcWidth > 0
@@ -256,9 +260,9 @@ export default {
             x0: x || -5,
             x1: x || -5,
             x: x || -5,
-            y0: y,
-            y1: y,
-            y: y
+            y0: y || -5,
+            y1: y || -5,
+            y: y || -5
           })
         } else {
           // ...otherwise we update the existing bar with
@@ -277,9 +281,9 @@ export default {
             x0: x || -5,
             x1: x || -5,
             x: x || -5,
-            y0: bar.y,
+            y0: y,
             y1: y,
-            y: bar.y
+            y: y
           }
 
           this.bars[barIndex] = { ...bar, ...bar1, ...item }
@@ -426,33 +430,54 @@ export default {
 
       this.canvas.attr('width', this.width).attr('height', this.canvasHeight)
 
-      this.update()
+      this.updateY()
+      this.updateX()
     },
     itemName(id) {
       return this.groups.find(group => group.id == id)?.name
     },
-    update() {
-      const y = d3.scaleBand()
-      const x = d3.scaleTime()
-
-      y.domain(this.groups.map(group => group.id))
-      y.range([0, this.canvasHeight])
+    async updateX() {
+      clearInterval(this.animationInterval)
 
       const startTime = moment(this.startTime)
-      const endTime = moment(this.endTime)
-      const now = new moment()
-      x.domain([startTime, endTime || now])
-      x.range([0, this.width])
+      const endTime = this.endTime ? moment(this.endTime) : new moment()
 
-      this.y = y
-      this.x = x
+      this.x.domain([startTime, endTime])
+      this.x.range([0, this.width - 5])
 
       if (this.live) {
-        this.startXScale(startTime)
-      } else {
-        this.drawXAxis()
-      }
+        this.animationInterval = setInterval(() => {
+          const t = new moment()
+          this.x.domain([startTime, t])
 
+          this.drawXAxis()
+          this.render()
+
+          if (!this.live) {
+            clearInterval(this.animationInterval)
+          }
+        }, this.animationDuration)
+      } else {
+        this.x.domain([startTime, endTime])
+        this.drawXAxis()
+        this.render()
+      }
+    },
+    async updateY() {
+      this.y.domain(this.groups.map(group => group.id))
+      this.y.range([0, this.canvasHeight])
+    },
+    async drawXAxis() {
+      const xAxis = d3.axisTop(this.x).ticks(10)
+
+      await this.xAxisGroup
+        .attr('class', 'x-axis-group')
+        .attr('transform', `translate(0, ${this.height - 2})`)
+        .transition()
+        .duration(this.animationDuration)
+        .call(xAxis)
+    },
+    async drawYAxis() {
       const yAxis = d3.axisRight(this.y)
 
       this.yAxisGroup
@@ -461,23 +486,6 @@ export default {
         .transition()
         .duration(this.animationDuration)
         .call(yAxis)
-
-      this.render()
-    },
-    startXScale(start) {
-      const t = Date.now()
-      this.x.domain([start, t])
-      this.drawXAxis()
-    },
-    drawXAxis() {
-      const xAxis = d3.axisTop(this.x).ticks(10)
-
-      this.xAxisGroup
-        .attr('class', 'x-axis-group')
-        .attr('transform', `translate(0, ${this.height - 1})`)
-        .transition()
-        .duration(this.animationDuration)
-        .call(xAxis)
     },
     statusStyle(state) {
       return {
