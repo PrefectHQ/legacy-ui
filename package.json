@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "export VUE_APP_RELEASE_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && vue-cli-service serve --port 8080",
     "lint": "vue-cli-service lint && vue-cli-service lint:style",
-    "build": "vue-cli-service build",
+    "build": "export VUE_APP_RELEASE_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && vue-cli-service build",
     "lint:ci": "vue-cli-service lint --no-fix && vue-cli-service lint:style --no-fix",
     "lint:css": "vue-cli-service lint:style",
     "lint:js": "vue-cli-service lint",

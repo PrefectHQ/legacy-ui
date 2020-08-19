@@ -44,11 +44,13 @@ commands:
             npm run build
   deploy_env:
     parameters:
+      GCP_CREDS:
+        type: string
       BUCKET_NAME:
         type: string
 
     steps:
-      - run: echo ${GCP_SERVICE_KEY} | gcloud auth activate-service-account --key-file=-
+      - run: echo << parameters.GCP_CREDS >> | gcloud auth activate-service-account --key-file=-
       - run: gsutil -m cp -r dist/* gs://<< parameters.BUCKET_NAME >>/
 
 jobs:
@@ -75,7 +77,58 @@ jobs:
       - attach_workspace:
           at: .
       - deploy_env:
+          GCP_CREDS: ${GCP_SERVICE_KEY}
           BUCKET_NAME: ${GCS_BUCKET__DEV}
+  build-staging:
+    resource_class: large
+    docker:
+      - image: node:14.7
+    steps:
+      - build:
+          VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__STAGING}
+          VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__STAGING}
+          VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__STAGING}
+          VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__STAGING}
+          VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__STAGING}
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - dist
+            - package.json
+  deploy-staging:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: .
+      - deploy_env:
+          GCP_CREDS: ${GCP_SERVICE_KEY__STAGING}
+          BUCKET_NAME: ${GCS_BUCKET__STAGING}
+  build-prod:
+    resource_class: large
+    docker:
+      - image: node:14.7
+    steps:
+      - build:
+          VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__PROD}
+          VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__PROD}
+          VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__PROD}
+          VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__PROD}
+          VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__PROD}
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - dist
+            - package.json
+  deploy-prod:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: .
+      - deploy_env:
+          GCP_CREDS: ${GCP_SERVICE_KEY__PROD}
+          BUCKET_NAME: ${GCS_BUCKET__PROD}
 
 workflows:
   version: 2
@@ -105,3 +158,56 @@ workflows:
             branches:
               only:
                 - master
+  'Deploy staging':
+    jobs:
+      - build-staging:
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-staging:
+          requires:
+            - build-staging
+          filters:
+            branches:
+              only:
+                - master
+  'Deploy prod':
+    jobs:
+      - docker/publish:
+          docker-password: DOCKER_HUB_PW
+          docker-username: DOCKER_HUB_USER
+          image: 'prefecthq/ui'
+          path: '.'
+          tag: $CIRCLE_TAG,latest
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - build-prod:
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - request-release:
+          type: approval
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - deploy-prod:
+          requires:
+            - build-prod
+            - request-release
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
