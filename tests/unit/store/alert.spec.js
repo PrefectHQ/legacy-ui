@@ -11,6 +11,7 @@ describe('Alert Vuex Module', () => {
       linkText: ''
     })
   })
+
   describe('mutations', () => {
     it('updates the state when setAl is called', () => {
       expect(store.getters['alert/getAlert']).toStrictEqual({
@@ -60,30 +61,29 @@ describe('Alert Vuex Module', () => {
       })
     })
   })
+
   describe('actions', () => {
-    describe('setAlert', () => {
-      it('sets the new alert state, calls setTimeout and then empties the alert state', async () => {
-        await store.dispatch('alert/setAlert', {
-          alertShow: true,
-          alertMessage: 'Testing testing 234',
-          alertType: 'error',
-          alertLink: null,
-          linkText: ''
-        })
-        expect(store.getters['alert/getAlert']).toStrictEqual({
-          alertShow: true,
-          alertMessage: 'Testing testing 234',
-          alertType: 'error',
-          alertLink: null,
-          linkText: ''
-        })
-        expect(setTimeout).toHaveBeenCalledTimes(1)
-        expect(setTimeout).toHaveBeenLastCalledWith(
-          expect.any(Function),
-          6000,
-          'setEmpty'
-        )
+    test('setAlert sets the new alert state, calls setTimeout and then empties the alert state', async () => {
+      await store.dispatch('alert/setAlert', {
+        alertShow: true,
+        alertMessage: 'Testing testing 234',
+        alertType: 'error',
+        alertLink: null,
+        linkText: ''
       })
+      expect(store.getters['alert/getAlert']).toStrictEqual({
+        alertShow: true,
+        alertMessage: 'Testing testing 234',
+        alertType: 'error',
+        alertLink: null,
+        linkText: ''
+      })
+      expect(setTimeout).toHaveBeenCalledTimes(1)
+      expect(setTimeout).toHaveBeenLastCalledWith(
+        expect.any(Function),
+        6000,
+        'setEmpty'
+      )
     })
   })
 })
