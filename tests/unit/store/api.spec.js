@@ -20,6 +20,7 @@ describe('API Vuex Module', () => {
       delete process.env.VUE_APP_BACKEND
       delete process.env.VUE_APP_CLOUD_URL
       delete process.env.VUE_APP_SERVER_URL
+      localStorage.clear()
       return {
         backend:
           localStorage.getItem('backend') ||
@@ -37,6 +38,7 @@ describe('API Vuex Module', () => {
       }
     }
     envVarAPIState = () => {
+      localStorage.clear()
       process.env.VUE_APP_BACKEND = 'CLOUD'
       process.env.VUE_APP_CLOUD_URL = 'https://api.prefect.io/graphql'
       process.env.VUE_APP_SERVER_URL = 'http://localhost:4200/graphql'
@@ -59,6 +61,8 @@ describe('API Vuex Module', () => {
     localStoreAPIState = () => {
       localStorage.setItem('backend', 'foo')
       localStorage.setItem('server_url', 'http://0.0.0.0:4200/graphql')
+      process.env.VUE_APP_BACKEND = 'CLOUD'
+      process.env.VUE_APP_SERVER_URL = 'http://localhost:4200/graphql'
       return {
         backend:
           localStorage.getItem('backend') ||
@@ -75,11 +79,10 @@ describe('API Vuex Module', () => {
         version: null
       }
     }
-    localStorage.clear()
   })
 
   describe('State', () => {
-    test('backend should be SERVER if neither local storage nor VUE_APP_BACKEND are set', () => {
+    test('state returns correct values if no localStorage or environment variables are set', () => {
       const state = initialAPIState()
       expect(state.backend).toEqual('SERVER')
       expect(state.connected).toBe(true)
@@ -90,72 +93,75 @@ describe('API Vuex Module', () => {
       expect(state.serverUrl).toBe(undefined)
       expect(state.version).toBe(null)
     })
-    test('backend should check localstorage', () => {
+    test('state checks local storage before environment variables', () => {
       const state = localStoreAPIState()
       expect(localStorage.getItem).toBeCalledWith('backend')
       expect(state.backend).toEqual('foo')
       expect(state.serverUrl).toBe('http://0.0.0.0:4200/graphql')
     })
-    test('backend should be CLOUD if no localstorage backend and VUE_APP_BACKEND env var is set to CLOUD', () => {
+    test('state checks environment variables if no local storage', () => {
       const state = envVarAPIState()
       expect(localStorage.getItem('backend')).toBe(null)
       expect(state.backend).toEqual('CLOUD')
       expect(state.cloudUrl).toBe('https://api.prefect.io/graphql')
       expect(state.serverUrl).toBe('http://localhost:4200/graphql')
     })
-
-    //   connected: true,
-    //   connectionMessage: null,
-    //   connectionTimeout: null,
-    //   releaseTimestamp: null,
-    //   cloudUrl: process.env.VUE_APP_CLOUD_URL,
-    //   retries: 0,
-    //   serverUrl:
-    //     localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
-    //   version: null
-    //       expect(state.api.id).toBe(null)
-    //       expect(state.api.name).toBe(null)
-    //       expect(state.api.info).toBe(null)
-    //       expect(state.api.slug).toBe(null)
-    //       expect(state.api.role).toBe(null)
-    //       expect(Object.keys(state.api.settings).length).toBe(0)
-    //       expect(state.api.licenses.length).toBe(0)
-    //       expect(state.tenantIsSet).toBe(false)
   })
 
   describe('getters', () => {
-    let store
-    const state = initialAPIState
-    store = new Vuex.Store({
-      state: state,
-      getters: api.getters,
-      mutations: api.mutations
+    test('getters should return correct values when no local storage or environment variable is set', () => {
+      let store
+      const state = initialAPIState()
+      store = new Vuex.Store({
+        state: state,
+        getters: api.getters,
+        mutations: api.mutations
+      })
+      expect(store.getters.backend).toBe('SERVER')
+      expect(store.getters.connected).toBe(true)
+      expect(store.getters.connecting).toBe(false)
+      expect(store.getters.connectionMessage).toBe(null)
+      expect(store.getters.connectionTimeout).toBe(null)
+      expect(store.getters.isCloud).toBe(false)
+      expect(store.getters.isServer).toBe(true)
+      expect(store.getters.cloudUrl).toBe(undefined)
+      expect(store.getters.retries).toBe(0)
+      expect(store.getters.serverUrl).toBe(undefined)
+      expect(store.getters.url).toBe(undefined)
+      expect(store.getters.version).toBe(null)
     })
-
-    it('should return when backend is called', () => {
-      localStorage.setItem('backend', 'bar')
-      store.commit('setBackend', 'boo')
-      // console.log(store.state.backend, process.env.VUE_APP_BACKEND)
-      expect(store.getters.backend).toBe('boo')
-      expect(localStorage.getItem('backend')).toBe('boo')
-      expect(localStorage.getItem).toBeCalledWith('backend')
+    test('where relevant getters check local storage before environment variables', () => {
+      let store
+      const state = localStoreAPIState()
+      store = new Vuex.Store({
+        state: state,
+        getters: api.getters,
+        mutations: api.mutations
+      })
+      expect(store.getters.backend).toBe('foo')
+      expect(store.getters.isCloud).toBe(false)
+      expect(store.getters.isServer).toBe(false)
+      expect(store.getters.cloudUrl).toBe(undefined)
+      expect(store.getters.serverUrl).toBe('http://0.0.0.0:4200/graphql')
+      expect(store.getters.url).toBe(null)
     })
-    // it('should return if api is set as boolean when tenantIsSet getter is called', () => {
-    //   expect(store.getters.tenantIsSet).toBe(store.state.tenantIsSet)
-    // })
-    // testing this works in both types of state
-    // store = new Vuex.Store({
-    //   state: loggedinTenantState(),
-    //   getters: api.getters,
-    //   mutations: api.mutations
-    // })
-    // it('should return api object when api getter is called', () => {
-    //   expect(store.getters.api).toBe(store.state.api)
-    // })
-    // it('should return if api is set as boolean when tenantIsSet getter is called', () => {
-    //   expect(store.getters.tenantIsSet).toBe(store.state.tenantIsSet)
-    // })
+    test('where relevant getters check environment variables if no local storage', () => {
+      let store
+      const state = envVarAPIState()
+      store = new Vuex.Store({
+        state: state,
+        getters: api.getters,
+        mutations: api.mutations
+      })
+      expect(store.getters.backend).toBe('CLOUD')
+      expect(store.getters.isCloud).toBe(true)
+      expect(store.getters.isServer).toBe(false)
+      expect(store.getters.cloudUrl).toBe('https://api.prefect.io/graphql')
+      expect(store.getters.serverUrl).toBe('http://localhost:4200/graphql')
+      expect(store.getters.url).toBe('https://api.prefect.io/graphql')
+    })
   })
+
   // describe('Mutations', () => {
   //   let store
 
