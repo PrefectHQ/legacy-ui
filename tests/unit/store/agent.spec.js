@@ -5,7 +5,7 @@ import Vuex from 'vuex'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-describe('agent Vuex Module', () => {
+describe('Agent Vuex Module', () => {
   const initialAgentState = () => {
     return {
       thresholds: {
@@ -26,14 +26,15 @@ describe('agent Vuex Module', () => {
   })
 
   describe('getters', () => {
-    let store
-    store = new Vuex.Store({
+    let store = new Vuex.Store({
       state: initialAgentState(),
       getters: agent.getters
     })
+
     it('should return the stale threshold when the staleThreshold getter is called', () => {
       expect(store.getters.staleThreshold).toBe(store.state.thresholds.stale)
     })
+
     it('should return the unhealthy threshold when the unhealthyThreshold getter is called', () => {
       expect(store.getters.unhealthyThreshold).toBe(
         store.state.thresholds.unhealthy
