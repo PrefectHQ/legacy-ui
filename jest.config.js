@@ -25,7 +25,12 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1'
   },
   roots: ['src', 'tests'],
-  setupFiles: ['jest-localstorage-mock', 'jest-fetch-mock', 'jest-canvas-mock'],
+  setupFiles: [
+    '<rootDir>/tests/envVarMock.js',
+    'jest-localstorage-mock',
+    'jest-fetch-mock',
+    'jest-canvas-mock'
+  ],
   setupFilesAfterEnv: ['<rootDir>/tests/jestSetup.js'],
   snapshotSerializers: ['jest-serializer-vue'],
   testMatch: [

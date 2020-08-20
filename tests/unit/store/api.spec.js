@@ -1,14 +1,7 @@
 import api from '@/store/api'
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
-// import mockLocalStorage from './mocklocalstorage.js'
-
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  clear: jest.fn()
-}
-global.localStorage = localStorageMock
+// require('dotenv').config()
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -18,7 +11,7 @@ jest.mock('@/vue-apollo', () => {
   return {}
 })
 
-describe('api Vuex Module', () => {
+describe('API Vuex Module', () => {
   const initialAPIState = () => {
     return {
       backend:
@@ -37,29 +30,37 @@ describe('api Vuex Module', () => {
     }
   }
 
-  const loggedinTenantState = () => {
-    return {
-      api: {
-        id: 'd38b31a7-d570-4f0c-911d-dcaab5cec3d0',
-        name: 'Test Technologies Inc.',
-        info: null,
-        slug: 'test',
-        role: 'TENANT_ADMIN',
-        settings: { teamNamed: true, agreedToLicense: false },
-        prefectAdminSettings: {},
-        licenses: [{ active: true, product: 'Prefect Cloud Platform' }]
-      },
-      tenantIsSet: true
+  const OLD_ENV = process.env
+  const originalLocal = global.localStorage
+
+  beforeEach(() => {
+    // jest.resetModules() // clear the cache
+    // process.env = { ...OLD_ENV, VUE_APP_BACKEND: 33 } // make a copy
+
+    const localStorageMock = {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      clear: jest.fn()
     }
-  }
+    global.localStorage = localStorageMock
+  })
+
+  afterAll(() => {
+    // process.env = OLD_ENV // restore old env
+    global.localStorage = originalLocal
+  })
 
   describe('State', () => {
     beforeEach(() => localStorage.clear())
 
     test('backend should pull from local storage first, then environment variables and then, if those are null, use SERVER string', () => {
       const state = api.state
+      console.log('env', process.env)
       //   expect(localStorage.store).toEqual({})
+      process.env.VUE_APP_BACKEND = 'spagetti'
+      console.log('env2', process.env)
       expect(state.backend).toBe('SERVER')
+      expect(localStorage.getItem).toBeCalledWith('backend')
       //   localStorage.setItem('backend', 'bar')
       //   expect(localStorage.store).toEqual({ backend: 'bar' })
       //   expect(localStorage.getItem('backend').toEqual('bar'))
@@ -92,18 +93,11 @@ describe('api Vuex Module', () => {
       getters: api.getters,
       mutations: api.mutations
     })
-    const localStorageMock = {
-      getItem: jest.fn(),
-      setItem: jest.fn(),
-      clear: jest.fn()
-    }
-    const originalLocal = global.localStorage
-    global.localStorage = localStorageMock
 
-    it('should return check local storage when backend is called', () => {
-      expect(store.getters.backend).toBe(store.state.backend)
-      // assertions as usual:
-      expect(localStorage.getItem).toBeCalledWith('backend22')
+    it('should return when backend is called', () => {
+      process.env['VUE_APP_BACKEND'] = 'spagetti'
+      expect(store.getters.backend).toBe('fish')
+      expect(localStorage.getItem).toBeCalledWith('backend')
     })
     // it('should return if api is set as boolean when tenantIsSet getter is called', () => {
     //   expect(store.getters.tenantIsSet).toBe(store.state.tenantIsSet)
@@ -120,61 +114,60 @@ describe('api Vuex Module', () => {
     // it('should return if api is set as boolean when tenantIsSet getter is called', () => {
     //   expect(store.getters.tenantIsSet).toBe(store.state.tenantIsSet)
     // })
-    global.localStorage = originalLocal
   })
-  describe('Mutations', () => {
-    let store
+  // describe('Mutations', () => {
+  //   let store
 
-    beforeEach(() => {
-      store = new Vuex.Store({
-        state: initialApiState(),
-        getters: api.getters,
-        actions: api.actions,
-        mutations: api.mutations
-      })
-    })
-    describe('setTenant', () => {
-      it('should set tenantIsSet to true', () => {
-        store.commit('setTenant', loggedinTenantState().api)
-        expect(store.getters['tenantIsSet']).toBe(true)
-        expect(store.getters['api']).toEqual(loggedinTenantState().api)
-      })
-      it('should throw an error if given no api', () => {
-        store.commit('unsetTenant')
-        expect(() => store.commit('setTenant')).toThrow(
-          'passed invalid or empty api object'
-        )
-      })
-    })
-    describe('unsetTenant', () => {
-      it('should set tenantIsSet to false', () => {
-        //Make sure store is in logged in state
-        store.commit('setTenant', loggedinTenantState().api)
-        expect(store.getters['api']).toEqual(loggedinTenantState().api)
-        store.commit('unsetTenant')
-        expect(store.getters['tenantIsSet']).toBe(false)
-        expect(store.getters['api']).toEqual(initialApiState().api)
-      })
-    })
-    describe('updateTenantSettings', () => {
-      it('should update the settings in the store and leave the rest of the api as is', () => {
-        //Make sure store is in logged in state
-        store.commit('setTenant', loggedinTenantState().api)
-        expect(store.getters['api']).toEqual(loggedinTenantState().api)
-        expect(store.getters['tenantIsSet']).toEqual(
-          loggedinTenantState().tenantIsSet
-        )
-        store.commit('updateTenantSettings', { agreedToLicense: true })
-        expect(store.getters['api']).toEqual({
-          ...loggedinTenantState().api,
-          settings: { agreedToLicense: true }
-        })
-      })
-      it('should throw an error message if no settings are passed', () => {
-        expect(() => store.commit('updateTenantSettings')).toThrow(
-          'passed invalid or empty settings object'
-        )
-      })
-    })
-  })
+  //   beforeEach(() => {
+  //     store = new Vuex.Store({
+  //       state: initialAPIState(),
+  //       getters: api.getters,
+  //       actions: api.actions,
+  //       mutations: api.mutations
+  //     })
+  //   })
+  //   describe('setTenant', () => {
+  //     it('should set tenantIsSet to true', () => {
+  //       store.commit('setTenant', loggedinTenantState().api)
+  //       expect(store.getters['tenantIsSet']).toBe(true)
+  //       expect(store.getters['api']).toEqual(loggedinTenantState().api)
+  //     })
+  //     it('should throw an error if given no api', () => {
+  //       store.commit('unsetTenant')
+  //       expect(() => store.commit('setTenant')).toThrow(
+  //         'passed invalid or empty api object'
+  //       )
+  //     })
+  //   })
+  //   describe('unsetTenant', () => {
+  //     it('should set tenantIsSet to false', () => {
+  //       //Make sure store is in logged in state
+  //       store.commit('setTenant', loggedinTenantState().api)
+  //       expect(store.getters['api']).toEqual(loggedinTenantState().api)
+  //       store.commit('unsetTenant')
+  //       expect(store.getters['tenantIsSet']).toBe(false)
+  //       expect(store.getters['api']).toEqual(initialAPIState().api)
+  //     })
+  //   })
+  //   describe('updateTenantSettings', () => {
+  //     it('should update the settings in the store and leave the rest of the api as is', () => {
+  //       //Make sure store is in logged in state
+  //       store.commit('setTenant', loggedinTenantState().api)
+  //       expect(store.getters['api']).toEqual(loggedinTenantState().api)
+  //       expect(store.getters['tenantIsSet']).toEqual(
+  //         loggedinTenantState().tenantIsSet
+  //       )
+  //       store.commit('updateTenantSettings', { agreedToLicense: true })
+  //       expect(store.getters['api']).toEqual({
+  //         ...loggedinTenantState().api,
+  //         settings: { agreedToLicense: true }
+  //       })
+  //     })
+  //     it('should throw an error message if no settings are passed', () => {
+  //       expect(() => store.commit('updateTenantSettings')).toThrow(
+  //         'passed invalid or empty settings object'
+  //       )
+  //     })
+  //   })
+  // })
 })
