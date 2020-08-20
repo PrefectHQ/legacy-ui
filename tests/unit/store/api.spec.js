@@ -1,7 +1,6 @@
 import api from '@/store/api'
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
-// require('dotenv').config()
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -12,91 +11,133 @@ jest.mock('@/vue-apollo', () => {
 })
 
 describe('API Vuex Module', () => {
-  const initialAPIState = () => {
-    return {
-      backend:
-        localStorage.getItem('backend') ||
-        process.env.VUE_APP_BACKEND ||
-        'SERVER',
-      connected: true,
-      connectionMessage: null,
-      connectionTimeout: null,
-      releaseTimestamp: null,
-      cloudUrl: process.env.VUE_APP_CLOUD_URL,
-      retries: 0,
-      serverUrl:
-        localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
-      version: null
-    }
-  }
-
-  const OLD_ENV = process.env
-  const originalLocal = global.localStorage
+  let initialAPIState
+  let envVarAPIState
+  let localStoreAPIState
 
   beforeEach(() => {
-    // jest.resetModules() // clear the cache
-    // process.env = { ...OLD_ENV, VUE_APP_BACKEND: 33 } // make a copy
-
-    const localStorageMock = {
-      getItem: jest.fn(),
-      setItem: jest.fn(),
-      clear: jest.fn()
+    initialAPIState = () => {
+      delete process.env.VUE_APP_BACKEND
+      delete process.env.VUE_APP_CLOUD_URL
+      delete process.env.VUE_APP_SERVER_URL
+      return {
+        backend:
+          localStorage.getItem('backend') ||
+          process.env.VUE_APP_BACKEND ||
+          'SERVER',
+        connected: true,
+        connectionMessage: null,
+        connectionTimeout: null,
+        releaseTimestamp: null,
+        cloudUrl: process.env.VUE_APP_CLOUD_URL,
+        retries: 0,
+        serverUrl:
+          localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
+        version: null
+      }
     }
-    global.localStorage = localStorageMock
-  })
-
-  afterAll(() => {
-    // process.env = OLD_ENV // restore old env
-    global.localStorage = originalLocal
+    envVarAPIState = () => {
+      process.env.VUE_APP_BACKEND = 'CLOUD'
+      process.env.VUE_APP_CLOUD_URL = 'https://api.prefect.io/graphql'
+      process.env.VUE_APP_SERVER_URL = 'http://localhost:4200/graphql'
+      return {
+        backend:
+          localStorage.getItem('backend') ||
+          process.env.VUE_APP_BACKEND ||
+          'SERVER',
+        connected: true,
+        connectionMessage: null,
+        connectionTimeout: null,
+        releaseTimestamp: null,
+        cloudUrl: process.env.VUE_APP_CLOUD_URL,
+        retries: 0,
+        serverUrl:
+          localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
+        version: null
+      }
+    }
+    localStoreAPIState = () => {
+      localStorage.setItem('backend', 'foo')
+      localStorage.setItem('server_url', 'http://0.0.0.0:4200/graphql')
+      return {
+        backend:
+          localStorage.getItem('backend') ||
+          process.env.VUE_APP_BACKEND ||
+          'SERVER',
+        connected: true,
+        connectionMessage: null,
+        connectionTimeout: null,
+        releaseTimestamp: null,
+        cloudUrl: process.env.VUE_APP_CLOUD_URL,
+        retries: 0,
+        serverUrl:
+          localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
+        version: null
+      }
+    }
+    localStorage.clear()
   })
 
   describe('State', () => {
-    beforeEach(() => localStorage.clear())
-
-    test('backend should pull from local storage first, then environment variables and then, if those are null, use SERVER string', () => {
-      const state = api.state
-      console.log('env', process.env)
-      //   expect(localStorage.store).toEqual({})
-      process.env.VUE_APP_BACKEND = 'spagetti'
-      console.log('env2', process.env)
-      expect(state.backend).toBe('SERVER')
-      expect(localStorage.getItem).toBeCalledWith('backend')
-      //   localStorage.setItem('backend', 'bar')
-      //   expect(localStorage.store).toEqual({ backend: 'bar' })
-      //   expect(localStorage.getItem('backend').toEqual('bar'))
-      //   expect(state.backend).toEqual('bar')
-      //     localStorage.getItem('backend') || process.env.VUE_APP_BACKEND || 'SERVER',
-      //   connected: true,
-      //   connectionMessage: null,
-      //   connectionTimeout: null,
-      //   releaseTimestamp: null,
-      //   cloudUrl: process.env.VUE_APP_CLOUD_URL,
-      //   retries: 0,
-      //   serverUrl:
-      //     localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
-      //   version: null
-      //       expect(state.api.id).toBe(null)
-      //       expect(state.api.name).toBe(null)
-      //       expect(state.api.info).toBe(null)
-      //       expect(state.api.slug).toBe(null)
-      //       expect(state.api.role).toBe(null)
-      //       expect(Object.keys(state.api.settings).length).toBe(0)
-      //       expect(state.api.licenses.length).toBe(0)
-      //       expect(state.tenantIsSet).toBe(false)
+    test('backend should be SERVER if neither local storage nor VUE_APP_BACKEND are set', () => {
+      const state = initialAPIState()
+      expect(state.backend).toEqual('SERVER')
+      expect(state.connected).toBe(true)
+      expect(state.connectionMessage).toBe(null)
+      expect(state.connectionTimeout).toBe(null)
+      expect(state.cloudUrl).toBe(undefined)
+      expect(state.retries).toBe(0)
+      expect(state.serverUrl).toBe(undefined)
+      expect(state.version).toBe(null)
     })
+    test('backend should check localstorage', () => {
+      const state = localStoreAPIState()
+      expect(localStorage.getItem).toBeCalledWith('backend')
+      expect(state.backend).toEqual('foo')
+      expect(state.serverUrl).toBe('http://0.0.0.0:4200/graphql')
+    })
+    test('backend should be CLOUD if no localstorage backend and VUE_APP_BACKEND env var is set to CLOUD', () => {
+      const state = envVarAPIState()
+      expect(localStorage.getItem('backend')).toBe(null)
+      expect(state.backend).toEqual('CLOUD')
+      expect(state.cloudUrl).toBe('https://api.prefect.io/graphql')
+      expect(state.serverUrl).toBe('http://localhost:4200/graphql')
+    })
+
+    //   connected: true,
+    //   connectionMessage: null,
+    //   connectionTimeout: null,
+    //   releaseTimestamp: null,
+    //   cloudUrl: process.env.VUE_APP_CLOUD_URL,
+    //   retries: 0,
+    //   serverUrl:
+    //     localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
+    //   version: null
+    //       expect(state.api.id).toBe(null)
+    //       expect(state.api.name).toBe(null)
+    //       expect(state.api.info).toBe(null)
+    //       expect(state.api.slug).toBe(null)
+    //       expect(state.api.role).toBe(null)
+    //       expect(Object.keys(state.api.settings).length).toBe(0)
+    //       expect(state.api.licenses.length).toBe(0)
+    //       expect(state.tenantIsSet).toBe(false)
   })
 
   describe('getters', () => {
     let store
+    const state = initialAPIState
     store = new Vuex.Store({
-      state: initialAPIState(),
+      state: state,
       getters: api.getters,
       mutations: api.mutations
     })
 
     it('should return when backend is called', () => {
-      process.env['VUE_APP_BACKEND'] = 'spagetti'
-      expect(store.getters.backend).toBe('fish')
+      localStorage.setItem('backend', 'bar')
+      store.commit('setBackend', 'boo')
+      // console.log(store.state.backend, process.env.VUE_APP_BACKEND)
+      expect(store.getters.backend).toBe('boo')
+      expect(localStorage.getItem('backend')).toBe('boo')
       expect(localStorage.getItem).toBeCalledWith('backend')
     })
     // it('should return if api is set as boolean when tenantIsSet getter is called', () => {
