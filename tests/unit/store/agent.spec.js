@@ -34,6 +34,7 @@ describe('Agent Vuex Module', () => {
     it('should return the stale threshold when the staleThreshold getter is called', () => {
       expect(store.getters.staleThreshold).toBe(store.state.thresholds.stale)
     })
+
     it('should return the unhealthy threshold when the unhealthyThreshold getter is called', () => {
       expect(store.getters.unhealthyThreshold).toBe(
         store.state.thresholds.unhealthy
