@@ -26,11 +26,11 @@ describe('Agent Vuex Module', () => {
   })
 
   describe('getters', () => {
-    let store
-    store = new Vuex.Store({
+    let store = new Vuex.Store({
       state: initialAgentState(),
       getters: agent.getters
     })
+
     it('should return the stale threshold when the staleThreshold getter is called', () => {
       expect(store.getters.staleThreshold).toBe(store.state.thresholds.stale)
     })
