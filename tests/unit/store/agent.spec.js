@@ -5,7 +5,7 @@ import Vuex from 'vuex'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-describe('agent Vuex Module', () => {
+describe('Agent Vuex Module', () => {
   const initialAgentState = () => {
     return {
       thresholds: {
