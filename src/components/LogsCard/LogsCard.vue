@@ -271,6 +271,22 @@ export default {
         query: { logId: undefined }
       })
     },
+    async myMethod() {
+      let dates = [
+        this.logsQueryResults.scheduled_start_time,
+        moment(this.logsQueryResults.scheduled_start_time).add(1, 'days')
+      ]
+      dates.forEach(async archiveDate => {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/Logs/retrieve-archived-logs.gql'),
+          variables: {
+            flowRunId: this.logsQueryResults.id,
+            timestamp: archiveDate
+          },
+          errorPolicy: 'all'
+        })
+      })
+    },
     // Apply any filters that the user sets
     handleFilter(filterResult) {
       this.limit = DEFAULT_LIMIT
@@ -556,6 +572,11 @@ export default {
           <a href="#" @click.prevent="filterMenuOpen = true">expanding</a>
           or
           <a href="#" @click.prevent="resetQueryVars">resetting</a> your search.
+          <br />
+          <br />
+          If this is an old run, your logs might have been archived.
+          <a @click="myMethod"><u>Click here</u></a>
+          to unarchive them.
         </span>
       </v-card-text>
 
