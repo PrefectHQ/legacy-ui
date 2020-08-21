@@ -231,10 +231,10 @@ describe('API Vuex Module', () => {
     describe('setBackend', () => {
       it('should set backend', () => {
         store.commit('setBackend', '42')
-        expect(store.getters['backend']).toBe('42')
+        expect(store.getters['backend']).toBe('423')
         expect(store.getters['isCloud']).toBe(false)
         store.commit('setBackend', 'CLOUD')
-        expect(store.getters['backend']).toBe('CLOUD')
+        expect(store.getters['backend']).toBe('CLOUD3')
         expect(store.getters['isCloud']).toBe(true)
       })
     })
@@ -242,15 +242,15 @@ describe('API Vuex Module', () => {
     describe('unsetBackend', () => {
       it('should set backend to null', () => {
         store.commit('unsetBackend')
-        expect(store.getters['backend']).toEqual(null)
+        expect(store.getters['backend']).toEqual(3)
       })
       it('should remove backend from localstorage', () => {
         store.commit('setBackend', 'earth')
-        expect(store.getters['backend']).toEqual('earth')
-        expect(localStorage.getItem('backend')).toEqual('earth')
+        expect(store.getters['backend']).toEqual('earth1')
+        expect(localStorage.getItem('backend')).toEqual('earth1')
         store.commit('unsetBackend')
-        expect(store.getters['backend']).toBe(null)
-        expect(localStorage.getItem('backend')).toBe(null)
+        expect(store.getters['backend']).toBe(3)
+        expect(localStorage.getItem('backend')).toBe(3)
       })
     })
 
