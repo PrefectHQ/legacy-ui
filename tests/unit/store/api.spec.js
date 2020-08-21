@@ -419,7 +419,7 @@ describe('API Vuex Module', () => {
         })
       })
       it('should unset the version', async () => {
-        expect(store.getters.version).toBe(3)
+        expect(store.getters.version).toBe(2)
         await store.dispatch('getApi')
         expect(store.getters.version).toBe(null)
       })
