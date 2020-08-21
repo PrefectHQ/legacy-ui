@@ -10,6 +10,8 @@ query TaskRunLogs(
 ) {
   task_run_by_pk(id: $id) {
     id
+    flow_run_id
+    start_time
     state
     logs(
       limit: $limit

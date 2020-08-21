@@ -272,15 +272,19 @@ export default {
       })
     },
     async myMethod() {
+      let flowRunId =
+        this.entity == 'task'
+          ? this.logsQueryResults.flow_run_id
+          : this.logsQueryResults.id
       let dates = [
-        this.logsQueryResults.scheduled_start_time,
-        moment(this.logsQueryResults.scheduled_start_time).add(1, 'days')
+        this.logsQueryResults.start_time,
+        moment(this.logsQueryResults.start_time).add(1, 'days')
       ]
       dates.forEach(async archiveDate => {
         await this.$apollo.mutate({
           mutation: require('@/graphql/Logs/retrieve-archived-logs.gql'),
           variables: {
-            flowRunId: this.logsQueryResults.id,
+            flowRunId: flowRunId,
             timestamp: archiveDate
           },
           errorPolicy: 'all'
@@ -574,9 +578,10 @@ export default {
           <a href="#" @click.prevent="resetQueryVars">resetting</a> your search.
           <br />
           <br />
-          If this is an old run, your logs might have been archived.
-          <a @click="myMethod"><u>Click here</u></a>
-          to unarchive them.
+          If this is an old {{ entity }} run, your logs might have been archived
+          to an alternate storage location. You can
+          <a @click="myMethod"><u>click here</u></a> to unarchive them - please
+          allow up to 30 seconds for the retrieval to take place.
         </span>
       </v-card-text>
 
