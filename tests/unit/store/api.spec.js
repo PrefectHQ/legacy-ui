@@ -8,7 +8,20 @@ localVue.use(Vuex)
 
 jest.mock('@/graphql/api.gql', () => 'api mutation string')
 jest.mock('@/vue-apollo', () => {
-  return {}
+  return {
+    fallbackApolloClient: {
+      query: function() {
+        return {
+          data: {
+            api: {
+              release_timestamp: 'timestamp',
+              version: 2
+            }
+          }
+        }
+      }
+    }
+  }
 })
 
 describe('API Vuex Module', () => {
@@ -352,6 +365,34 @@ describe('API Vuex Module', () => {
         expect(store.getters['version']).toBe(2)
         store.commit('unsetVersion')
         expect(store.getters['version']).toBe(null)
+      })
+    })
+  })
+
+  describe('actions', () => {
+    let store
+    beforeEach(() => {
+      const state = initialAPIState()
+      store = new Vuex.Store({
+        state: state,
+        getters: api.getters,
+        mutations: api.mutations,
+        actions: api.actions
+      })
+    })
+
+    describe('getApi', () => {
+      it('should set the version', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.version).toBe(2)
+      })
+      it('should set the release timestamp', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.releaseTimestamp).toBe('timestamp')
+      })
+      it('should set connected state', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.connected).toBe(true)
       })
     })
   })

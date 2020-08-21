@@ -123,7 +123,6 @@ const actions = {
         query: require('@/graphql/api.gql'),
         fetchPolicy: 'no-cache'
       })
-
       commit('setReleaseTimestamp', data.api.release_timestamp)
       commit('setVersion', data.api.version)
       commit('setConnected', true)
