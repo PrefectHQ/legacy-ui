@@ -3,26 +3,34 @@ import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 jest.useFakeTimers()
 
-const localVue = createLocalVue()
-localVue.use(Vuex)
+//simple mock for gql api query
+let mockerror = false
 
-jest.mock('@/graphql/api.gql', () => 'api mutation string')
 jest.mock('@/vue-apollo', () => {
   return {
     fallbackApolloClient: {
-      query: function() {
-        return {
-          data: {
-            api: {
-              release_timestamp: 'timestamp',
-              version: 2
+      query: () => {
+        if (!mockerror) {
+          return {
+            data: {
+              api: {
+                release_timestamp: 'timestamp',
+                version: 2
+              }
             }
           }
+        } else {
+          return 'error'
         }
       }
     }
   }
 })
+
+const localVue = createLocalVue()
+localVue.use(Vuex)
+
+jest.mock('@/graphql/api.gql', () => 'api mutation string')
 
 describe('API Vuex Module', () => {
   let initialAPIState
@@ -83,14 +91,14 @@ describe('API Vuex Module', () => {
           process.env.VUE_APP_BACKEND ||
           'SERVER',
         connected: true,
-        connectionMessage: null,
-        connectionTimeout: null,
-        releaseTimestamp: null,
+        connectionMessage: 'connection message',
+        connectionTimeout: 300,
+        releaseTimestamp: 'timestamp',
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
-        retries: 0,
+        retries: 5,
         serverUrl:
           localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
-        version: null
+        version: 3
       }
     }
   })
@@ -381,7 +389,10 @@ describe('API Vuex Module', () => {
       })
     })
 
-    describe('getApi', () => {
+    describe('getApi - no api error', () => {
+      beforeEach(() => {
+        mockerror = false
+      })
       it('should set the version', async () => {
         await store.dispatch('getApi')
         expect(store.getters.version).toBe(2)
@@ -393,6 +404,32 @@ describe('API Vuex Module', () => {
       it('should set connected state', async () => {
         await store.dispatch('getApi')
         expect(store.getters.connected).toBe(true)
+      })
+    })
+
+    describe('getApi - with api error', () => {
+      beforeEach(() => {
+        mockerror = true
+        const state = localStoreAPIState()
+        store = new Vuex.Store({
+          state: state,
+          getters: api.getters,
+          mutations: api.mutations,
+          actions: api.actions
+        })
+      })
+      it('should unset the version', async () => {
+        expect(store.getters.version).toBe(3)
+        await store.dispatch('getApi')
+        expect(store.getters.version).toBe(null)
+      })
+      it('should unset the release timestamp', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.releaseTimestamp).toBe(null)
+      })
+      it('should unset connected state', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.connected).toBe(false)
       })
     })
   })
