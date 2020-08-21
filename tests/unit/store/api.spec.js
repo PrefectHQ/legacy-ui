@@ -217,59 +217,62 @@ describe('API Vuex Module', () => {
     })
   })
 
-  // describe('Mutations', () => {
-  //   let store
+  describe('Mutations', () => {
+    let store
 
-  //   beforeEach(() => {
-  //     store = new Vuex.Store({
-  //       state: initialAPIState(),
-  //       getters: api.getters,
-  //       actions: api.actions,
-  //       mutations: api.mutations
-  //     })
-  //   })
-  //   describe('setTenant', () => {
-  //     it('should set tenantIsSet to true', () => {
-  //       store.commit('setTenant', loggedinTenantState().api)
-  //       expect(store.getters['tenantIsSet']).toBe(true)
-  //       expect(store.getters['api']).toEqual(loggedinTenantState().api)
-  //     })
-  //     it('should throw an error if given no api', () => {
-  //       store.commit('unsetTenant')
-  //       expect(() => store.commit('setTenant')).toThrow(
-  //         'passed invalid or empty api object'
-  //       )
-  //     })
-  //   })
-  //   describe('unsetTenant', () => {
-  //     it('should set tenantIsSet to false', () => {
-  //       //Make sure store is in logged in state
-  //       store.commit('setTenant', loggedinTenantState().api)
-  //       expect(store.getters['api']).toEqual(loggedinTenantState().api)
-  //       store.commit('unsetTenant')
-  //       expect(store.getters['tenantIsSet']).toBe(false)
-  //       expect(store.getters['api']).toEqual(initialAPIState().api)
-  //     })
-  //   })
-  //   describe('updateTenantSettings', () => {
-  //     it('should update the settings in the store and leave the rest of the api as is', () => {
-  //       //Make sure store is in logged in state
-  //       store.commit('setTenant', loggedinTenantState().api)
-  //       expect(store.getters['api']).toEqual(loggedinTenantState().api)
-  //       expect(store.getters['tenantIsSet']).toEqual(
-  //         loggedinTenantState().tenantIsSet
-  //       )
-  //       store.commit('updateTenantSettings', { agreedToLicense: true })
-  //       expect(store.getters['api']).toEqual({
-  //         ...loggedinTenantState().api,
-  //         settings: { agreedToLicense: true }
-  //       })
-  //     })
-  //     it('should throw an error message if no settings are passed', () => {
-  //       expect(() => store.commit('updateTenantSettings')).toThrow(
-  //         'passed invalid or empty settings object'
-  //       )
-  //     })
-  //   })
-  // })
+    beforeEach(() => {
+      store = new Vuex.Store({
+        state: initialAPIState(),
+        getters: api.getters,
+        actions: api.actions,
+        mutations: api.mutations
+      })
+    })
+    describe('setBackend', () => {
+      it('should set backend', () => {
+        store.commit('setBackend', '42')
+        expect(store.getters['backend']).toBe('42')
+        expect(store.getters['isCloud']).toBe(false)
+        store.commit('setBackend', 'CLOUD')
+        expect(store.getters['backend']).toBe('CLOUD')
+        expect(store.getters['isCloud']).toBe(true)
+      })
+    })
+
+    describe('unsetBackend', () => {
+      it('should set backend to null', () => {
+        store.commit('unsetBackend')
+        expect(store.getters['backend']).toEqual(null)
+      })
+      it('should remove backend from localstorage', () => {
+        store.commit('setBackend', 'earth')
+        expect(store.getters['backend']).toEqual('earth')
+        expect(localStorage.getItem('backend')).toEqual('earth')
+        store.commit('unsetBackend')
+        expect(store.getters['backend']).toBe(null)
+        expect(localStorage.getItem('backend')).toBe(null)
+      })
+    })
+
+    // describe('updateTenantSettings', () => {
+    //   it('should update the settings in the store and leave the rest of the api as is', () => {
+    //     //Make sure store is in logged in state
+    //     store.commit('setTenant', loggedinTenantState().api)
+    //     expect(store.getters['api']).toEqual(loggedinTenantState().api)
+    //     expect(store.getters['tenantIsSet']).toEqual(
+    //       loggedinTenantState().tenantIsSet
+    //     )
+    //     store.commit('updateTenantSettings', { agreedToLicense: true })
+    //     expect(store.getters['api']).toEqual({
+    //       ...loggedinTenantState().api,
+    //       settings: { agreedToLicense: true }
+    //     })
+    //   })
+    //   it('should throw an error message if no settings are passed', () => {
+    //     expect(() => store.commit('updateTenantSettings')).toThrow(
+    //       'passed invalid or empty settings object'
+    //     )
+    //   })
+    // })
+  })
 })
