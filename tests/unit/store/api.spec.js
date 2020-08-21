@@ -108,28 +108,53 @@ describe('API Vuex Module', () => {
     })
   })
 
-  describe('getters', () => {
-    test('getters should return correct values when no local storage or environment variable is set', () => {
-      let store
+  describe('getters when no local storage or environment variable is set', () => {
+    let store
+    beforeEach(() => {
       const state = initialAPIState()
       store = new Vuex.Store({
         state: state,
         getters: api.getters,
         mutations: api.mutations
       })
+    })
+    it('should return the backend', () => {
       expect(store.getters.backend).toBe('SERVER')
+    })
+    it('should return connected state', () => {
       expect(store.getters.connected).toBe(true)
+    })
+    it('should return connecting state', () => {
       expect(store.getters.connecting).toBe(false)
+    })
+    it('should return the connection message', () => {
       expect(store.getters.connectionMessage).toBe(null)
+    })
+    it('should return the connectionTimeout', () => {
       expect(store.getters.connectionTimeout).toBe(null)
+    })
+    it('should return a boolean about whether the backend is Cloud', () => {
       expect(store.getters.isCloud).toBe(false)
+    })
+    it('should return a boolean about whether the backend is Server', () => {
       expect(store.getters.isServer).toBe(true)
+    })
+    it('should return the cloud url', () => {
       expect(store.getters.cloudUrl).toBe(undefined)
+    })
+    it('should return retries', () => {
       expect(store.getters.retries).toBe(0)
+    })
+    it('should return the server url', () => {
       expect(store.getters.serverUrl).toBe(undefined)
+    })
+    it('should return the active url', () => {
       expect(store.getters.url).toBe(undefined)
+    })
+    it('should return the version', () => {
       expect(store.getters.version).toBe(null)
     })
+
     test('where relevant getters check local storage before environment variables', () => {
       let store
       const state = localStoreAPIState()
