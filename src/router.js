@@ -1,5 +1,4 @@
 import Router from 'vue-router'
-// import { defaultApolloClient } from '@/vue-apollo'
 
 //  Nav guards
 import authNavGuard from '@/middleware/authNavGuard'

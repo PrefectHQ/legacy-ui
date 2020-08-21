@@ -143,7 +143,7 @@ export default {
         'pointer-events': 'none',
         top: `${
           overBottom
-            ? this.hovered.y - 200
+            ? this.hovered.y - 200 + this.hovered.height
             : this.hovered.y + this.hovered.height + 8
         }px`,
         width: '250px',
