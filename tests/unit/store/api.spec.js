@@ -256,7 +256,7 @@ describe('API Vuex Module', () => {
 
     describe('setConnected', () => {
       it('should update connected', () => {
-        expect(store.getters['connected']).toBe('adjkfgh')
+        expect(store.getters['connected']).toBe(true)
         store.commit('setConnected', false)
         expect(store.getters['connected']).toBe(false)
       })
