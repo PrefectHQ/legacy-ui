@@ -254,25 +254,12 @@ describe('API Vuex Module', () => {
       })
     })
 
-    // describe('updateTenantSettings', () => {
-    //   it('should update the settings in the store and leave the rest of the api as is', () => {
-    //     //Make sure store is in logged in state
-    //     store.commit('setTenant', loggedinTenantState().api)
-    //     expect(store.getters['api']).toEqual(loggedinTenantState().api)
-    //     expect(store.getters['tenantIsSet']).toEqual(
-    //       loggedinTenantState().tenantIsSet
-    //     )
-    //     store.commit('updateTenantSettings', { agreedToLicense: true })
-    //     expect(store.getters['api']).toEqual({
-    //       ...loggedinTenantState().api,
-    //       settings: { agreedToLicense: true }
-    //     })
-    //   })
-    //   it('should throw an error message if no settings are passed', () => {
-    //     expect(() => store.commit('updateTenantSettings')).toThrow(
-    //       'passed invalid or empty settings object'
-    //     )
-    //   })
-    // })
+    describe('setConnected', () => {
+      it('should update connected', () => {
+        expect(store.getters['connected']).toBe('adjkfgh')
+        store.commit('setConnected', false)
+        expect(store.getters['connected']).toBe(false)
+      })
+    })
   })
 })
