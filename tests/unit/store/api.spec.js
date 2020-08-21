@@ -154,35 +154,65 @@ describe('API Vuex Module', () => {
     it('should return the version', () => {
       expect(store.getters.version).toBe(null)
     })
+  })
 
-    test('where relevant getters check local storage before environment variables', () => {
-      let store
+  describe('where relevant getters check local storage before environment variables', () => {
+    let store
+    beforeEach(() => {
       const state = localStoreAPIState()
       store = new Vuex.Store({
         state: state,
         getters: api.getters,
         mutations: api.mutations
       })
+    })
+    it('should return the backend', () => {
       expect(store.getters.backend).toBe('foo')
+    })
+    it('should return a boolean about whether the backend is Cloud', () => {
       expect(store.getters.isCloud).toBe(false)
+    })
+    it('should return a boolean about whether the backend is Server', () => {
       expect(store.getters.isServer).toBe(false)
+    })
+    it('should return the cloud url', () => {
       expect(store.getters.cloudUrl).toBe(undefined)
+    })
+    it('should return the server url', () => {
       expect(store.getters.serverUrl).toBe('http://0.0.0.0:4200/graphql')
+    })
+    it('should return the active url', () => {
       expect(store.getters.url).toBe(null)
     })
-    test('where relevant getters check environment variables if no local storage', () => {
-      let store
+  })
+
+  describe('where relevant getters check environment variables if no local storage', () => {
+    let store
+    beforeEach(() => {
       const state = envVarAPIState()
       store = new Vuex.Store({
         state: state,
         getters: api.getters,
         mutations: api.mutations
       })
+    })
+
+    it('should return the backend', () => {
       expect(store.getters.backend).toBe('CLOUD')
+    })
+    it('should return a boolean about whether the backend is Cloud', () => {
       expect(store.getters.isCloud).toBe(true)
+    })
+    it('should return a boolean about whether the backend is Server', () => {
       expect(store.getters.isServer).toBe(false)
+    })
+    it('should return the cloud url', () => {
       expect(store.getters.cloudUrl).toBe('https://api.prefect.io/graphql')
+    })
+    it('should return the server url', () => {
       expect(store.getters.serverUrl).toBe('http://localhost:4200/graphql')
+    })
+    it('should return the active url', () => {
       expect(store.getters.url).toBe('https://api.prefect.io/graphql')
     })
   })
