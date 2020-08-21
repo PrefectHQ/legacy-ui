@@ -1,6 +1,7 @@
 import api from '@/store/api'
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
+jest.useFakeTimers()
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -259,6 +260,98 @@ describe('API Vuex Module', () => {
         expect(store.getters['connected']).toBe(true)
         store.commit('setConnected', false)
         expect(store.getters['connected']).toBe(false)
+      })
+    })
+
+    describe('setConnectionMessage', () => {
+      it('should update the connection message', () => {
+        expect(store.getters['connectionMessage']).toBe(null)
+        store.commit('setConnectionMessage', 'hello')
+        expect(store.getters['connectionMessage']).toBe('hello')
+      })
+    })
+
+    describe('unsetConnectionMessage', () => {
+      it('should unset the connection message', () => {
+        store.commit('setConnectionMessage', 'hello')
+        expect(store.getters['connectionMessage']).toBe('hello')
+        store.commit('unsetConnectionMessage')
+        expect(store.getters['connectionMessage']).toBe(null)
+      })
+    })
+
+    describe('setConnectionTimeout', () => {
+      it('should set ConnectionTimeout', () => {
+        store.commit('setConnectionTimeout', 500)
+        expect(store.getters['connectionTimeout']).toBe(500)
+      })
+    })
+
+    describe('unsetConnectionTimeout', () => {
+      it('should unset ConnectionTimeout', () => {
+        store.commit('setConnectionTimeout', 500)
+        expect(store.getters['connectionTimeout']).toBe(500)
+        store.commit('unsetConnectionTimeout')
+        expect(store.getters['connectionTimeout']).toBe(null)
+        expect(clearTimeout).toHaveBeenCalled()
+      })
+    })
+
+    describe('setReleaseTimestamp', () => {
+      it('should set the release timestamp', () => {
+        store.commit('setReleaseTimestamp', 'a timestamp')
+        expect(store.getters['releaseTimestamp']).toBe('a timestamp')
+      })
+    })
+
+    describe('unsetReleaseTimestamp', () => {
+      it('should unset releaseTimestamp', () => {
+        store.commit('setReleaseTimestamp', 'a timestamp')
+        expect(store.getters['releaseTimestamp']).toBe('a timestamp')
+        store.commit('unsetReleaseTimetamp')
+        expect(store.getters['releaseTimestamp']).toBe(null)
+      })
+    })
+
+    describe('setRetries', () => {
+      it('should set retries', () => {
+        store.commit('setRetries', 5)
+        expect(store.getters['retries']).toBe(5)
+      })
+    })
+
+    describe('setServerUrl', () => {
+      it('should set the server url in state and local storage', () => {
+        store.commit('setServerUrl', 'http:localhost:4200')
+        expect(store.getters['serverUrl']).toEqual('http:localhost:4200')
+        expect(localStorage.setItem).toBeCalledWith(
+          'server_url',
+          'http:localhost:4200'
+        )
+      })
+    })
+
+    describe('unsetServerUrl', () => {
+      it('should unset the server url in state and local storage', () => {
+        store.commit('unsetServerUrl')
+        expect(store.getters['serverUrl']).toEqual(null)
+        expect(localStorage.removeItem).toBeCalledWith('server_url')
+      })
+    })
+
+    describe('setVersion', () => {
+      it('should set the version', () => {
+        store.commit('setVersion', 2)
+        expect(store.getters['version']).toBe(2)
+      })
+    })
+
+    describe('unsetVersion', () => {
+      it('should unset the version', () => {
+        store.commit('setVersion', 2)
+        expect(store.getters['version']).toBe(2)
+        store.commit('unsetVersion')
+        expect(store.getters['version']).toBe(null)
       })
     })
   })
