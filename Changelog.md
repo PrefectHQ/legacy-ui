@@ -1,6 +1,6 @@
 # Changelog
 
-## 2020-08-19
+## Unreleased
 
 ### Features and Improvements
 
@@ -8,8 +8,19 @@
 
 ### Bugfixes
 
-- Fix issue with creating new task concurrency limits [#122](https://github.com/PrefectHQ/ui/pull/122)
+- None
+
+## 2020-08-19a
+
+### Bugfixes
+
 - Make dashboard update when a user switches tenant [#123](https://github.com/PrefectHQ/ui/pull/123)
+
+## 2020-08-19
+
+### Bugfixes
+
+- Fix issue with creating new task concurrency limits [#122](https://github.com/PrefectHQ/ui/pull/122)
 
 ## 2020-08-18
 
