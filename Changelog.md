@@ -1,10 +1,22 @@
 # Changelog
 
-## 2020-08-19
+## Unreleased
 
 ### Features and Improvements
 
+- Add unit tests for the agent and alert vuex stores.
+
+### Bugfixes
+
 - None
+
+## 2020-08-19a
+
+### Bugfixes
+
+- Make dashboard update when a user switches tenant [#123](https://github.com/PrefectHQ/ui/pull/123)
+
+## 2020-08-19
 
 ### Bugfixes
 

@@ -123,7 +123,6 @@ export default {
     tenant(val) {
       if (val?.id) {
         this.loadedTiles = 0
-
         clearTimeout(this.refreshTimeout)
         this.refresh()
       }
