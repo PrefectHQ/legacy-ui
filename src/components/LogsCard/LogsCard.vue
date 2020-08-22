@@ -97,6 +97,8 @@ export default {
       // Initiate scroll to a specific log, provided that a log ID is provided as a query param
       scrolledToQueryLog: false,
 
+      // Archived logs props
+      failedToRetrieveArchivedLogs: false,
       retrievingArchivedLogs: false
     }
   },
@@ -307,6 +309,7 @@ export default {
       })
     },
     async retrieveArchivedLogs() {
+      this.failedToRetrieveArchivedLogs = false
       this.retrievingArchivedLogs = true
       let flowRunId =
         this.entity == 'task'
@@ -331,6 +334,15 @@ export default {
       await this.$apollo.queries.logsQueryResultsOlder?.refetch()
       await this.$apollo.queries.logsQueryResultsNewer?.refetch()
       await this.$apollo.queries.logsQueryResultsTarget?.refetch()
+
+      setTimeout(() => {
+        // If we still haven't found any logs after 30 seconds
+        // we display a message about that
+        if (this.retrievingArchivedLogs) {
+          this.retrievingArchivedLogs = false
+          this.failedToRetrieveArchivedLogs = true
+        }
+      }, 30000)
     },
     // Apply any filters that the user sets
     handleFilter(filterResult) {
@@ -620,14 +632,26 @@ export default {
       </v-card-text>
 
       <v-card-text v-else class="bg-white no-logs-found">
-        {{ entityIsRunning ? `${entityState}...` : 'No logs found.' }}
-        <span v-if="logCount === 0" class="ma-0">
+        {{
+          failedToRetrieveArchivedLogs
+            ? "Sorry, we couldn't get the logs from glacial storage..."
+            : entityIsRunning
+            ? `${entityState}...`
+            : 'No logs found.'
+        }}
+        <span
+          v-if="logCount === 0 && !failedToRetrieveArchivedLogs"
+          class="ma-0"
+        >
           Try
           <a href="#" @click.prevent="filterMenuOpen = true">expanding</a>
           or
           <a href="#" @click.prevent="resetQueryVars">resetting</a> your search.
         </span>
-        <span v-if="logCount === 0 && isCloud" class="ma-0">
+        <span v-if="failedToRetrieveArchivedLogs">
+          <a @click="retrieveArchivedLogs"><u>Retry?</u></a>
+        </span>
+        <span v-else-if="logCount === 0 && isCloud" class="ma-0">
           <br />
           <br />
           <a @click="retrieveArchivedLogs"><u>Click here</u></a> to retrieve
