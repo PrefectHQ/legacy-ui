@@ -272,7 +272,7 @@ export default {
         query: { logId: undefined }
       })
     },
-    async myMethod() {
+    async retrieveArchivedLogs() {
       let flowRunId =
         this.entity == 'task'
           ? this.logsQueryResults.flow_run_id
@@ -581,10 +581,9 @@ export default {
         <span v-if="logCount === 0 && isCloud" class="ma-0">
           <br />
           <br />
-          If this is an old {{ entity }} run, your logs might have been archived
-          to an alternate storage location. You can
-          <a @click="myMethod"><u>click here</u></a> to unarchive them - please
-          allow up to 30 seconds for the retrieval to take place.
+          <a @click="retrieveArchivedLogs"><u>Click here</u></a> to retrieve
+          archived logs - please allow up to 30 seconds for the retrieval to
+          take effect.
         </span>
       </v-card-text>
 
