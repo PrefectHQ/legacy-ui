@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add unit tests for the agent and alert vuex stores.
+- Add way of retrieving archived logs for old flow and task runs - [#128](https://github.com/PrefectHQ/ui/pull/128)
 
 ### Bugfixes
 
