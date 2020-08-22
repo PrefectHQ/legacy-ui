@@ -1,12 +1,12 @@
 <script>
 /* eslint-disable vue/no-v-html */
 
+import { mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import vueScrollTo from 'vue-scrollto'
 
 import store from '@/store'
 import { STATE_TYPES } from '@/utils/states'
-
 import DownloadMenu from './DownloadMenu'
 import FilterMenu from './FilterMenu'
 import LogRow from './LogRow'
@@ -99,6 +99,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     // Derive the state of the flow or task
     entityState() {
       if (!this.logsQueryResults) return 'Fetching logs'
@@ -576,6 +577,8 @@ export default {
           <a href="#" @click.prevent="filterMenuOpen = true">expanding</a>
           or
           <a href="#" @click.prevent="resetQueryVars">resetting</a> your search.
+        </span>
+        <span v-if="logCount === 0 && isCloud" class="ma-0">
           <br />
           <br />
           If this is an old {{ entity }} run, your logs might have been archived
