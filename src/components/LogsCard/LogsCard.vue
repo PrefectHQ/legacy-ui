@@ -95,7 +95,9 @@ export default {
       isTailingLogs: true,
 
       // Initiate scroll to a specific log, provided that a log ID is provided as a query param
-      scrolledToQueryLog: false
+      scrolledToQueryLog: false,
+
+      retrievingArchivedLogs: false
     }
   },
   computed: {
@@ -205,7 +207,15 @@ export default {
         }
       },
       pollInterval: 5000,
-      update: data => data[this.queryKey]
+      update(data) {
+        if (
+          this.retrievingArchivedLogs &&
+          data[this.queryKey]?.logs?.length > 0
+        ) {
+          this.retrievingArchivedLogs = false
+        }
+        return data[this.queryKey]
+      }
     })
 
     this.$apollo.addSmartQuery('logsQueryResultsOlder', {
@@ -222,7 +232,15 @@ export default {
         }
       },
       pollInterval: 5000,
-      update: data => data[this.queryKey]
+      update(data) {
+        if (
+          this.retrievingArchivedLogs &&
+          data[this.queryKey]?.logs?.length > 0
+        ) {
+          this.retrievingArchivedLogs = false
+        }
+        return data[this.queryKey]
+      }
     })
 
     this.$apollo.addSmartQuery('logsQueryResultsNewer', {
@@ -242,7 +260,15 @@ export default {
         }
       },
       pollInterval: 5000,
-      update: data => data[this.queryKey]
+      update(data) {
+        if (
+          this.retrievingArchivedLogs &&
+          data[this.queryKey]?.logs?.length > 0
+        ) {
+          this.retrievingArchivedLogs = false
+        }
+        return data[this.queryKey]
+      }
     })
 
     if (!this.$route.query.logId) return
@@ -256,7 +282,15 @@ export default {
           logId: this.$route.query.logId
         }
       },
-      update: data => data[this.queryKey]
+      update(data) {
+        if (
+          this.retrievingArchivedLogs &&
+          data[this.queryKey]?.logs?.length > 0
+        ) {
+          this.retrievingArchivedLogs = false
+        }
+        return data[this.queryKey]
+      }
     })
   },
   updated() {
@@ -273,6 +307,7 @@ export default {
       })
     },
     async retrieveArchivedLogs() {
+      this.retrievingArchivedLogs = true
       let flowRunId =
         this.entity == 'task'
           ? this.logsQueryResults.flow_run_id
@@ -291,6 +326,11 @@ export default {
           errorPolicy: 'all'
         })
       })
+
+      await this.$apollo.queries.logsQueryResults?.refetch()
+      await this.$apollo.queries.logsQueryResultsOlder?.refetch()
+      await this.$apollo.queries.logsQueryResultsNewer?.refetch()
+      await this.$apollo.queries.logsQueryResultsTarget?.refetch()
     },
     // Apply any filters that the user sets
     handleFilter(filterResult) {
@@ -565,8 +605,17 @@ export default {
         <div id="scroll-end"></div>
       </v-card-text>
 
-      <v-card-text v-else-if="entityIsRunning" class="bg-white">
-        <div class="mb-3"> {{ entityState }}... </div>
+      <v-card-text
+        v-else-if="entityIsRunning || retrievingArchivedLogs"
+        class="bg-white"
+      >
+        <div class="mb-3">
+          {{
+            retrievingArchivedLogs
+              ? 'Retrieving archived logs from glacial storage...'
+              : entityState
+          }}...
+        </div>
         <v-progress-linear indeterminate color="primary"></v-progress-linear>
       </v-card-text>
 
