@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Improve handling of cancelling state [#137](https://github.com/PrefectHQ/ui/pull/137)
 
 ### Bugfixes
 
