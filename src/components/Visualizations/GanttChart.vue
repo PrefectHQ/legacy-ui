@@ -205,22 +205,26 @@ export default {
       if (this.clickDisabled) return
 
       const context = this.canvas.node().getContext('2d')
-
-      const clicked = this.bars.find(bar =>
-        context?.isPointInPath(bar.path2D, e.offsetX, e.offsetY)
-      )
-
-      this.$emit('bar-click', clicked)
+      try {
+        const clicked = this.bars.find(bar =>
+          context?.isPointInPath(bar.path2D, e.offsetX, e.offsetY)
+        )
+        this.$emit('bar-click', clicked)
+      } catch {
+        return
+      }
     },
     _mouseover(e) {
       this._mouseout.cancel()
 
       const context = this.canvas.node().getContext('2d')
-
-      this.hovered = this.bars.find(bar =>
-        context?.isPointInPath(bar.path2D, e.offsetX, e.offsetY)
-      )
-
+      try {
+        this.hovered = this.bars.find(bar =>
+          context?.isPointInPath(bar.path2D, e.offsetX, e.offsetY)
+        )
+      } catch {
+        return
+      }
       if (this.hoveredId) {
         this.hovered.offsetX = e.offsetX
         this.hovered.offsetY = e.offsetY
