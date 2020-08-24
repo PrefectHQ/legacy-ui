@@ -276,6 +276,7 @@ export default {
           prepend-inner-icon="search"
           label="Select tasks to compare"
           item-text="name"
+          debounce="150"
           item-value="id"
           disable-lookup
         >

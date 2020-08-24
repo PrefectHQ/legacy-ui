@@ -339,6 +339,14 @@ export default {
           this.bars[i] = { ...bar, ...bar1 }
         })
 
+      this.groups.forEach((group, i) => {
+        const y = this.y(group[this.yField]) + (this.y.bandwidth() - height) / 2
+
+        this.groups[i].y0 = y
+        this.groups[i].y1 = y
+        this.groups[i].y = y
+      })
+
       requestAnimationFrame(this.drawCanvas)
       const timingCallback = elapsed => {
         const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
@@ -353,6 +361,14 @@ export default {
           bar.y = bar.y0 * (1 - t) + bar.y1 * t
           bar.height = bar.height0 * (1 - t) + bar.height1 * t
           bar.width = bar.width0 * (1 - t) + bar.width1 * t
+        })
+
+        this.groups.forEach(group => {
+          group.y = group.y0 * (1 - t) + group.y1 * t
+          group.color =
+            this.hoveredId && this.hoveredId !== group[this.yField]
+              ? '#eee'
+              : '#2C3E50'
         })
 
         requestAnimationFrame(this.drawCanvas)
@@ -387,7 +403,9 @@ export default {
 
       context.clearRect(0, 0, this.width, this.height)
 
-      let len = this.bars.length
+      let len
+
+      len = this.bars.length
       for (let i = 0; i < len; ++i) {
         const bar = this.bars[i]
         this.bars[i].path2D = new Path2D()
@@ -413,6 +431,15 @@ export default {
         }
 
         context.stroke(this.bars[i].path2D)
+      }
+
+      context.globalAlpha = 1
+
+      len = this.groups.length
+      for (let i = 0; i < len; ++i) {
+        const group = this.groups[i]
+        context.fillStyle = group.color
+        context.fillText(group.name, group.x || 0, group.y)
       }
 
       context.restore()
@@ -532,17 +559,6 @@ export default {
 <template>
   <v-container :style="containerStyle" fluid>
     <div ref="parent" class="position-relative" style="height: 100%;">
-      <div class="position-relative">
-        <div
-          v-for="group in groups"
-          :key="group.id"
-          class="caption position-absolute"
-          :style="calcGroupLabelStyle(group)"
-        >
-          {{ group.name }}
-        </div>
-      </div>
-
       <canvas
         :id="`${id}-canvas`"
         ref="canvas"
