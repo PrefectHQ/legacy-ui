@@ -434,6 +434,7 @@ export default {
       }
 
       context.globalAlpha = 1
+      context.font = 'Roboto'
 
       len = this.groups.length
       for (let i = 0; i < len; ++i) {
@@ -547,6 +548,7 @@ export default {
       await this.xAxisGroup
         .attr('class', 'x-axis-group')
         .attr('transform', `translate(0, ${this.height - 2})`)
+        .style('font-family', 'monospace')
         .transition()
         .duration(this.animationDuration)
         .call(xAxis)
