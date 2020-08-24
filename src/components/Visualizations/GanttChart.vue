@@ -469,6 +469,7 @@ export default {
 
       this.svg
         .attr('viewbox', `0 0 ${width} ${height}`)
+        .attr('transform', 'translate(25)')
         .attr('width', width)
         .attr('height', height)
 
@@ -491,7 +492,7 @@ export default {
       const endTime = this.endTime ? moment(this.endTime) : new moment()
 
       this.x.domain([startTime, endTime])
-      this.x.range([0, this.width - 5])
+      this.x.range([25, this.width - 50])
 
       if (this.live) {
         this.animationInterval = setInterval(() => {
