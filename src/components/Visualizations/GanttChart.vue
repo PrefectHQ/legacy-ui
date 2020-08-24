@@ -498,6 +498,8 @@ export default {
 
       this.x.domain([startTime, endTime])
       this.x.range([0, this.width - 5])
+      this.x.clamp(true)
+      this.x.nice()
 
       if (this.live) {
         this.animationInterval = setInterval(() => {
@@ -524,7 +526,25 @@ export default {
       this.y.range([0, this.canvasHeight])
     },
     async drawXAxis() {
-      const xAxis = d3.axisTop(this.x).ticks(10)
+      let day
+      let meridiem
+
+      const formatTime = d3.timeFormat('%-I:%M:%S')
+      const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
+
+      const xAxis = d3.axisTop(this.x).tickFormat(d => {
+        const dateObj = new Date(d)
+        const dayWeek = dateObj.getDay()
+        const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
+
+        if (day && dayWeek === day && meridiem && hours === meridiem) {
+          return formatTime(d)
+        } else {
+          day = dayWeek
+          meridiem = hours
+          return formatTimeExtended(d)
+        }
+      })
 
       await this.xAxisGroup
         .attr('class', 'x-axis-group')
@@ -536,7 +556,7 @@ export default {
     async drawYAxis() {
       const yAxis = d3.axisRight(this.y)
 
-      this.yAxisGroup
+      await this.yAxisGroup
         .attr('class', 'y-axis-group')
         .style('opacity', 0)
         .transition()
