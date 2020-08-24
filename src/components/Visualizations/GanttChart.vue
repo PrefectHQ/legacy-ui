@@ -63,12 +63,6 @@ export default {
       required: false,
       default: false
     },
-
-    groups: {
-      type: Array,
-      required: false,
-      default: () => []
-    },
     items: {
       type: Array,
       required: false,
@@ -88,6 +82,7 @@ export default {
     },
 
     live: { type: Boolean, default: false },
+    labelField: { type: String, default: 'name' },
     yField: { type: String, default: () => null }
   },
   data() {
@@ -155,22 +150,12 @@ export default {
     }
   },
   watch: {
-    groups: {
-      deep: true,
-      handler: debounce(
-        function() {
-          console.log('handling group update')
-          this.updateY()
-        },
-        1000,
-        { trailing: true, leading: false }
-      )
-    },
     items: {
       deep: true,
       handler: debounce(
         function() {
-          console.log('handling item update')
+          console.log('handling item update', this.items)
+          this.updateY()
           this.updateX()
         },
         1000,
@@ -279,8 +264,7 @@ export default {
 
         const barIndex = this.bars.findIndex(b => b.id == item.id)
 
-        const label = this.groups.find(g => g[this.yField] == item[this.yField])
-          ?.name
+        const label = item[this.labelField]
 
         // If the item isn't present in the bar array
         // we instantiate a new bar...
@@ -484,9 +468,6 @@ export default {
       this.updateY()
       this.updateX()
     },
-    itemName(id) {
-      return this.groups.find(group => group.id == id)?.name
-    },
     async updateX() {
       clearInterval(this.animationInterval)
 
@@ -517,7 +498,7 @@ export default {
     async updateY() {
       this.y.paddingOuter(0.1)
 
-      this.y.domain(this.groups.map(group => group[this.yField]))
+      this.y.domain(this.items.map(item => item[this.yField]))
       this.y.range([0, this.canvasHeight])
     },
     async drawXAxis() {
@@ -633,7 +614,7 @@ export default {
             class="text-subtitle-1"
           >
             <div>
-              {{ itemName(hovered[yField]) }}
+              {{ hovered[labelField] }}
               <div class="caption grey--text text--lighten-1">
                 (Click to expand)
               </div>

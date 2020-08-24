@@ -41,66 +41,62 @@ export default {
     hasSelectedTaskIds() {
       return this.selectedTaskIds?.length > 0
     },
-    groups() {
-      if (!this.tasks) return []
-
-      // If there's only one selected task and the selected task has multiple runs (mapped),
-      // we filter out the mapped task run, sort the mapped runs, and sort them based on map index
+    items() {
+      if (!this.taskRuns) return
+      let items
       if (this.showMapped) {
         const id = this.selectedTaskIds[0]
-        return this.taskMap[id]?.items
-          .filter(run => run.map_index !== -1)
-          .sort((a, b) => a.map_index - b.map_index)
-          .map(run => {
-            return {
-              id: run.id,
-              name: run.map_index
-            }
-          })
-      }
-
-      return this.tasks.filter(
-        task =>
-          !this.hasSelectedTaskIds || this.selectedTaskIds.includes(task.id)
-      )
-    },
-    items() {
-      if (!this.tasks) return []
-      if (this.showMapped) {
-        return this.taskMap[this.selectedTaskIds[0]]?.items
-      }
-
-      return Object.keys(this.taskMap)
-        .filter(
-          id => !this.hasSelectedTaskIds || this.selectedTaskIds.includes(id)
+        items = this.taskRuns.filter(
+          task => task.task_id == id && task.map_index !== -1
         )
-        .map(id => this.taskMap[id])
+      } else if (this.hasSelectedTaskIds) {
+        items = this.taskRuns.filter(
+          task =>
+            this.selectedTaskIds.includes(task.task_id) && task.map_index === -1
+        )
+      } else {
+        items = this.taskRuns.filter(task => task.map_index === -1)
+      }
+
+      items.forEach(item => {
+        const task = this.tasks?.find(t => t.id == item.task_id)
+
+        item.color = this.computedStyle.getPropertyValue(
+          `--v-${item.state}-base`
+        )
+
+        item.shadow = item.state === 'Running'
+        item.name =
+          task.name + (item.map_index > -1 ? ` (${item.map_index})` : '')
+
+        if (item.state === 'Mapped') {
+          const mappedRuns = this.taskRuns.filter(
+            t => t.task_id == item.task_id && t.start_time
+          )
+
+          let start_moments = mappedRuns.map(t => moment(t.start_time))
+
+          item.start_time = moment.min(start_moments).toISOString()
+
+          let end_moments = mappedRuns.map(t => moment(t.end_time))
+
+          item.end_time = moment.max(end_moments).toISOString()
+        }
+      })
+
+      return items
     },
     endTime() {
       if (this.hasSelectedTaskIds) {
-        return this.items.reduce((a, b) => {
-          if (
-            !a.end_time ||
-            (b.start_time && moment(b.end_time).isAfter(a.end_time))
-          ) {
-            return b
-          }
-          return a
-        }, this.flowRun)?.end_time
+        let end_moments = this.items.map(t => moment(t.end_time))
+        return moment.max(end_moments).toISOString()
       }
       return this.flowRun.end_time
     },
     startTime() {
       if (this.hasSelectedTaskIds) {
-        return this.items.reduce((a, b) => {
-          if (
-            !a.start_time ||
-            (b.start_time && moment(b.start_time).isBefore(a.start_time))
-          ) {
-            return b
-          }
-          return a
-        }, this.flowRun)?.start_time
+        let start_moments = this.items.map(t => moment(t.start_time))
+        return moment.min(start_moments).toISOString()
       }
       return this.flowRun.start_time
     },
@@ -161,44 +157,49 @@ export default {
       skip() {
         return !this.flowId || !this.tasks
       },
-      update(data) {
-        Object.keys(this.taskMap).forEach(id => {
-          this.taskMap[id].items = []
-        })
+      update: data => data.task_run
+      // update(data) {
+      // return data.task_run
+      // Object.keys(this.taskMap).forEach(id => {
+      //   this.taskMap[id].items = []
+      // })
 
-        return data.task_run.map(task => {
-          const ref = task.task_id
+      // return data.task_run.forEach(task => {
+      //   const ref = task.task_id
 
-          if (
-            !this.taskMap[ref].start_time ||
-            (task.start_time &&
-              moment(task.start_time).isBefore(this.taskMap[ref].start_time))
-          ) {
-            this.taskMap[ref].start_time = task.start_time
-          }
+      //   if (
+      //     !this.taskMap[ref].start_time ||
+      //     (task.start_time &&
+      //       moment(task.start_time).isBefore(this.taskMap[ref].start_time))
+      //   ) {
+      //     this.taskMap[ref].start_time = task.start_time
+      //   }
 
-          if (
-            !this.taskMap[ref].end_time ||
-            (task.start_time &&
-              moment(task.end_time).isAfter(this.taskMap[ref].end_time))
-          ) {
-            this.taskMap[ref].end_time = task.end_time
-          }
+      //   if (
+      //     !this.taskMap[ref].end_time ||
+      //     (task.start_time &&
+      //       moment(task.end_time).isAfter(this.taskMap[ref].end_time))
+      //   ) {
+      //     this.taskMap[ref].end_time = task.end_time
+      //   }
 
-          task.color = this.computedStyle.getPropertyValue(
-            `--v-${task.state}-base`
-          )
+      //   task.color = this.computedStyle.getPropertyValue(
+      //     `--v-${task.state}-base`
+      //   )
 
-          task.shadow = task.state === 'Running'
+      //   task.shadow = task.state === 'Running'
+      //   task.name =
+      //     this.taskMap[ref].name +
+      //     (task.map_index > -1 ? ` (${task.map_index})` : '')
 
-          this.taskMap[ref].shadow = task.shadow
-          this.taskMap[ref].color = task.color
-          this.taskMap[ref].state = task.state
+      //   this.taskMap[ref].shadow = task.shadow
+      //   this.taskMap[ref].color = task.color
+      //   this.taskMap[ref].state = task.state
 
-          this.taskMap[ref].items.push(task)
-          return task
-        })
-      }
+      //   this.taskMap[ref].items.push(task)
+      //   return task
+      // })
+      // }
     },
     tasks: {
       query: require('@/graphql/FlowRun/gantt-chart-tasks.gql'),
@@ -210,23 +211,7 @@ export default {
       skip() {
         return !this.flowRunId
       },
-      // pollInterval: 5000,
-      update(data) {
-        data.task.map(task => {
-          if (task.id in this.taskMap) return
-          this.taskMap[task.id] = {
-            id: task.id,
-            items: [],
-            color: null,
-            shadow: false,
-            state: null,
-            start_time: null,
-            end_time: null
-          }
-        })
-
-        return data.task
-      }
+      update: data => data.task
     }
   }
 }
@@ -357,7 +342,6 @@ export default {
     <GanttChart
       v-if="tasks"
       :items="items"
-      :groups="groups"
       :live="flowRun.state === 'Running'"
       chart-height="500px"
       :start-time="startTime"
