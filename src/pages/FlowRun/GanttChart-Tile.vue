@@ -254,96 +254,99 @@ export default {
       </div>
     </CardTitle>
 
-    <div>
-      <v-autocomplete
-        v-model="selectedTaskIds"
-        autocomplete="new-password"
-        class="mx-0 my-4"
-        light
-        background-color="white"
-        single-line
-        multiple
-        solo
-        flat
-        dense
-        clearable
-        :items="tasks"
-        :search-input.sync="search"
-        :filter="searchFilter"
-        prepend-inner-icon="search"
-        label="Search for a task"
-        item-text="name"
-        item-value="id"
-        disable-lookup
-      >
-        <template v-if="search == null" v-slot:no-data>
-          <v-list-item>
-            <v-list-item-title>
-              Type to search for a <strong>Task</strong> by
-              <strong>name</strong> or <strong>id</strong>
-            </v-list-item-title>
-          </v-list-item>
-        </template>
-        <template v-else v-slot:no-data>
-          <v-list-item>
-            <v-list-item-title>
-              No results matched your search.
-            </v-list-item-title>
-          </v-list-item>
-        </template>
-        <template v-slot:prepend-item>
-          <div>
-            <v-list-item
-              :input-value="selectedTaskIds === 0"
-              @click="
-                selectedTaskIds = []
-                searchInput = null
-              "
-            >
-              <v-list-item-content>
-                <v-list-item-title class="text-body-1">
-                  All Tasks
-                </v-list-item-title>
-                <v-list-item-subtitle class="text-body-2 font-weight-regular">
-                  Reset the chart
-                </v-list-item-subtitle>
-              </v-list-item-content>
+    <v-card-text class="d-flex justify-end align-center">
+      <div class="search-container">
+        <v-autocomplete
+          v-model="selectedTaskIds"
+          autocomplete="new-password"
+          class="mx-0 my-4"
+          light
+          background-color="white"
+          single-line
+          multiple
+          solo
+          flat
+          dense
+          clearable
+          :items="tasks"
+          :search-input.sync="search"
+          :filter="searchFilter"
+          prepend-inner-icon="search"
+          label="Select tasks to compare"
+          item-text="name"
+          item-value="id"
+          disable-lookup
+        >
+          <template v-if="search == null" v-slot:no-data>
+            <v-list-item>
+              <v-list-item-title>
+                Type to search for a <strong>Task</strong> by
+                <strong>name</strong> or <strong>id</strong>
+              </v-list-item-title>
             </v-list-item>
-            <v-divider class="my-2" />
-          </div>
-        </template>
+          </template>
+          <template v-else v-slot:no-data>
+            <v-list-item>
+              <v-list-item-title>
+                No results matched your search.
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+          <template v-slot:prepend-item>
+            <div>
+              <v-list-item
+                :input-value="selectedTaskIds === 0"
+                @click="
+                  selectedTaskIds = []
+                  searchInput = null
+                "
+              >
+                <v-list-item-content>
+                  <v-list-item-title class="text-body-1">
+                    All Tasks
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="text-body-2 font-weight-regular">
+                    Reset the chart
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider class="my-2" />
+            </div>
+          </template>
 
-        <template v-slot:selection="data">
-          <v-chip
-            v-bind="data.attrs"
-            :input-value="data.selected"
-            close
-            width="100"
-            class="truncate"
-            @click="data.select"
-            @click:close="removeSelectedTask(data.item)"
-          >
-            {{ data.item.name }}
-          </v-chip>
-        </template>
+          <template v-slot:selection="data">
+            <v-chip
+              v-bind="data.attrs"
+              :input-value="data.selected"
+              close
+              width="100"
+              class="my-1 truncate"
+              @click="data.select"
+              @click:close="removeSelectedTask(data.item)"
+            >
+              {{ data.item.name }}
+            </v-chip>
+          </template>
 
-        <template v-slot:item="data">
-          <v-lazy
-            :options="{
-              threshold: 0.75
-            }"
-            min-height="40px"
-            transition="fade"
-          >
-            <SearchResult
-              v-if="data"
-              :search-result="data.item"
-              :parent="data.parent"
-            />
-          </v-lazy>
-        </template>
-      </v-autocomplete>
-    </div>
+          <template v-slot:item="data">
+            <v-lazy
+              :options="{
+                threshold: 0.75
+              }"
+              min-height="40px"
+              transition="fade"
+            >
+              <SearchResult
+                v-if="data"
+                :search-result="data.item"
+                :parent="data.parent"
+              />
+            </v-lazy>
+          </template>
+        </v-autocomplete>
+      </div>
+    </v-card-text>
+
     <GanttChart
       v-if="tasks"
       :items="items"
@@ -358,3 +361,11 @@ export default {
     />
   </v-card>
 </template>
+
+<style lang="scss" scoped>
+.search-container {
+  align-self: flex-end;
+  max-width: 500px;
+  width: 100%;
+}
+</style>
