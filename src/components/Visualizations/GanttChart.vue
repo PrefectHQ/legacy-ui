@@ -369,6 +369,15 @@ export default {
         this.timer = d3.timer(timingCallback)
       }
     },
+    calcGroupLabelStyle(group) {
+      const top =
+        this.y(group[this.yField]) + (this.y.bandwidth() - this.barHeight) / 2
+      return {
+        top: `${top}px`,
+        opacity:
+          this.hoveredId && this.hoveredId !== group[this.yField] ? 0.3 : 1
+      }
+    },
     drawCanvas() {
       const context = this.canvas.node().getContext('2d')
 
@@ -528,7 +537,7 @@ export default {
           v-for="group in groups"
           :key="group.id"
           class="caption position-absolute"
-          :style="{ top: y(group.id) }"
+          :style="calcGroupLabelStyle(group)"
         >
           {{ group.name }}
         </div>
