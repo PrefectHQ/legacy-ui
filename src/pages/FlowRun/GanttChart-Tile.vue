@@ -44,10 +44,11 @@ export default {
     items() {
       if (!this.taskRuns) return
       let items
+
       if (this.showMapped) {
         const id = this.selectedTaskIds[0]
         items = this.taskRuns.filter(
-          task => task.task_id == id && task.map_index !== -1
+          task => task.task_id == id && task.state !== 'Mapped'
         )
       } else if (this.hasSelectedTaskIds) {
         items = this.taskRuns.filter(
@@ -87,14 +88,15 @@ export default {
       return items
     },
     endTime() {
-      if (this.hasSelectedTaskIds) {
+      if (this.hasSelectedTaskIds && this.items?.length > 0) {
         let end_moments = this.items.map(t => moment(t.end_time))
+        // console.log(end_moments)
         return moment.max(end_moments).toISOString()
       }
       return this.flowRun.end_time
     },
     startTime() {
-      if (this.hasSelectedTaskIds) {
+      if (this.hasSelectedTaskIds && this.items?.length > 0) {
         let start_moments = this.items.map(t => moment(t.start_time))
         return moment.min(start_moments).toISOString()
       }
@@ -104,10 +106,7 @@ export default {
       return this.flowRun.state === 'Running' ? 1000 : 0
     },
     showMapped() {
-      return (
-        this.selectedTaskIds.length === 1 &&
-        this.taskMap[this.selectedTaskIds[0]]?.items.length > 1
-      )
+      return this.selectedTaskIds.length === 1
     }
   },
   watch: {
@@ -123,13 +122,32 @@ export default {
     searchInput(val) {
       let selected = this.tasks?.find(task => task.name == val)
       if (selected) this._handleSearch(selected.id)
+    },
+    selectedTaskIds(val) {
+      this.$router.push({
+        query: {
+          chart: val.join(',')
+        }
+      })
     }
   },
-
+  mounted() {
+    if (this.$route.query.chart) {
+      try {
+        this.selectedTaskIds = this.$route.query.chart.split(',')
+      } catch {
+        this.$router.push({
+          query: {
+            chart: null
+          }
+        })
+      }
+    }
+  },
   methods: {
     _handleClick(data) {
       if (data) {
-        this.selectedTaskIds = [data?.id]
+        this.selectedTaskIds = [data?.task_id]
       }
     },
     removeSelectedTask(item) {
@@ -158,48 +176,6 @@ export default {
         return !this.flowId || !this.tasks
       },
       update: data => data.task_run
-      // update(data) {
-      // return data.task_run
-      // Object.keys(this.taskMap).forEach(id => {
-      //   this.taskMap[id].items = []
-      // })
-
-      // return data.task_run.forEach(task => {
-      //   const ref = task.task_id
-
-      //   if (
-      //     !this.taskMap[ref].start_time ||
-      //     (task.start_time &&
-      //       moment(task.start_time).isBefore(this.taskMap[ref].start_time))
-      //   ) {
-      //     this.taskMap[ref].start_time = task.start_time
-      //   }
-
-      //   if (
-      //     !this.taskMap[ref].end_time ||
-      //     (task.start_time &&
-      //       moment(task.end_time).isAfter(this.taskMap[ref].end_time))
-      //   ) {
-      //     this.taskMap[ref].end_time = task.end_time
-      //   }
-
-      //   task.color = this.computedStyle.getPropertyValue(
-      //     `--v-${task.state}-base`
-      //   )
-
-      //   task.shadow = task.state === 'Running'
-      //   task.name =
-      //     this.taskMap[ref].name +
-      //     (task.map_index > -1 ? ` (${task.map_index})` : '')
-
-      //   this.taskMap[ref].shadow = task.shadow
-      //   this.taskMap[ref].color = task.color
-      //   this.taskMap[ref].state = task.state
-
-      //   this.taskMap[ref].items.push(task)
-      //   return task
-      // })
-      // }
     },
     tasks: {
       query: require('@/graphql/FlowRun/gantt-chart-tasks.gql'),

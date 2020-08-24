@@ -152,21 +152,28 @@ export default {
   watch: {
     items: {
       deep: true,
-      handler: debounce(
-        function() {
-          console.log('handling item update', this.items)
-          this.updateY()
-          this.updateX()
-        },
-        1000,
-        { trailing: true, leading: false }
-      )
+      handler: debounce(function() {
+        if (this.items?.length === 0) {
+          console.info('No items were passed to the Gantt Chart component')
+        }
+        this.update()
+      }, 500)
     },
     startTime() {
-      this.updateX()
+      if (!moment(this.startTime)._isValid) {
+        /* eslint-disable-next-line */
+        console.error(this.startTime)
+        throw new Error('Invalid startTime', this.startTime)
+      }
+      this.update()
     },
     endTime() {
-      this.updateX()
+      if (!moment(this.endTime)._isValid) {
+        /* eslint-disable-next-line */
+        console.error(this.endTime)
+        throw new Error('Invalid endTime', this.endTime)
+      }
+      this.update()
     }
   },
   mounted() {
@@ -188,8 +195,7 @@ export default {
 
     requestAnimationFrame(this.resizeChart)
 
-    this.updateY()
-    this.updateX()
+    this.update()
   },
   beforeDestroy() {
     window.removeEventListener('resize', resizeChartListener)
@@ -465,15 +471,15 @@ export default {
 
       this.canvas.attr('width', this.width).attr('height', this.canvasHeight)
 
-      this.updateY()
-      this.updateX()
+      this.update()
     },
-    async updateX() {
+    updateX() {
       clearInterval(this.animationInterval)
 
       const startTime = moment(this.startTime)
       const endTime = this.endTime ? moment(this.endTime) : new moment()
 
+      console.log(startTime, endTime)
       this.x.domain([startTime, endTime])
       this.x.range([25, this.width - 50])
 
@@ -492,14 +498,17 @@ export default {
       } else {
         this.x.domain([startTime, endTime])
         this.drawXAxis()
-        this.render()
       }
     },
-    async updateY() {
+    updateY() {
       this.y.paddingOuter(0.1)
-
       this.y.domain(this.items.map(item => item[this.yField]))
       this.y.range([0, this.canvasHeight])
+    },
+    update() {
+      this.updateY()
+      this.updateX()
+      this.render()
     },
     async drawXAxis() {
       let day
