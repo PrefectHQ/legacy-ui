@@ -479,7 +479,6 @@ export default {
       const startTime = moment(this.startTime)
       const endTime = this.endTime ? moment(this.endTime) : new moment()
 
-      console.log(startTime, endTime)
       this.x.domain([startTime, endTime])
       this.x.range([25, this.width - 50])
 

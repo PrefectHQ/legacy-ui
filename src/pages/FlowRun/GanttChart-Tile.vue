@@ -70,7 +70,10 @@ export default {
         item.name =
           task.name + (item.map_index > -1 ? ` (${item.map_index})` : '')
 
-        if (item.state === 'Mapped') {
+        if (
+          item.state === 'Mapped' ||
+          (item.map_index > -1 && !item.start_time)
+        ) {
           const mappedRuns = this.taskRuns.filter(
             t => t.task_id == item.task_id && t.start_time
           )
@@ -79,9 +82,14 @@ export default {
 
           item.start_time = moment.min(start_moments).toISOString()
 
-          let end_moments = mappedRuns.map(t => moment(t.end_time))
-
-          item.end_time = moment.max(end_moments).toISOString()
+          if (item.state === 'Mapped') {
+            let end_moments = mappedRuns.map(t => moment(t.end_time))
+            item.end_time = moment.max(end_moments).toISOString()
+          } else {
+            item.end_time = moment(item.start_time)
+              .add({ seconds: 1 })
+              .toISOString()
+          }
         }
       })
 
@@ -89,15 +97,18 @@ export default {
     },
     endTime() {
       if (this.hasSelectedTaskIds && this.items?.length > 0) {
-        let end_moments = this.items.map(t => moment(t.end_time))
-        // console.log(end_moments)
+        let end_moments = this.items
+          .filter(t => t.end_time)
+          .map(t => moment(t.end_time))
         return moment.max(end_moments).toISOString()
       }
       return this.flowRun.end_time
     },
     startTime() {
       if (this.hasSelectedTaskIds && this.items?.length > 0) {
-        let start_moments = this.items.map(t => moment(t.start_time))
+        let start_moments = this.items
+          .filter(t => t.start_time)
+          .map(t => moment(t.start_time))
         return moment.min(start_moments).toISOString()
       }
       return this.flowRun.start_time
