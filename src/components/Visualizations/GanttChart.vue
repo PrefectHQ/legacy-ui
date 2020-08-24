@@ -473,7 +473,7 @@ export default {
       const height =
         parent._groups[0][0].clientHeight - paddingTop - paddingBottom
       const width =
-        parent._groups[0][0].clientWidth - paddingLeft - paddingRight
+        parent._groups[0][0].clientWidth - paddingLeft - paddingRight - 100
 
       if (!height || !width || height < 0 || width < 0) {
         return
@@ -481,6 +481,7 @@ export default {
 
       this.svg
         .attr('viewbox', `0 0 ${width} ${height}`)
+        .attr('transform', 'translate(100, 0)')
         .attr('width', width)
         .attr('height', height)
 
@@ -488,7 +489,10 @@ export default {
       this.width = width
       this.canvasHeight = height - marginY
 
-      this.canvas.attr('width', this.width).attr('height', this.canvasHeight)
+      this.canvas
+        .attr('width', this.width)
+        .attr('height', this.canvasHeight)
+        .attr('transform', 'translate(100, 0)')
 
       this.updateY()
       this.updateX()
