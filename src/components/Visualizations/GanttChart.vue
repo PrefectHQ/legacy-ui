@@ -523,11 +523,13 @@ export default {
 <template>
   <v-container :style="containerStyle" fluid>
     <div ref="parent" class="position-relative" style="height: 100%;">
-      <div
-        v-if="false"
-        class="d-flex justify-space-around flex-column text-right position-absolute"
-      >
-        <div v-for="group in groups" :key="group.id" class="caption">
+      <div class="position-relative">
+        <div
+          v-for="group in groups"
+          :key="group.id"
+          class="caption position-absolute"
+          :style="{ top: y(group.id) }"
+        >
           {{ group.name }}
         </div>
       </div>
@@ -625,12 +627,12 @@ export default {
 }
 
 canvas {
-  cursor: grab;
+  // cursor: grab;
   z-index: 3;
 
-  &:active {
-    cursor: grabbing;
-  }
+  // &:active {
+  //   cursor: grabbing;
+  // }
 }
 
 svg {

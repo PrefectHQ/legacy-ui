@@ -86,7 +86,7 @@ export default {
             return b
           }
           return a
-        })?.end_time
+        }, this.flowRun)?.end_time
       }
       return this.flowRun.end_time
     },
@@ -100,7 +100,7 @@ export default {
             return b
           }
           return a
-        })?.start_time
+        }, this.flowRun)?.start_time
       }
       return this.flowRun.start_time
     },
@@ -132,7 +132,9 @@ export default {
 
   methods: {
     _handleClick(data) {
-      this.selectedTaskIds = [data?.id]
+      if (data) {
+        this.selectedTaskIds = [data?.id]
+      }
     },
     removeSelectedTask(item) {
       const index = this.selectedTaskIds.indexOf(item.id)
