@@ -157,15 +157,25 @@ export default {
   watch: {
     groups: {
       deep: true,
-      handler: debounce(function() {
-        this.updateY()
-      }, 1000)
+      handler: debounce(
+        function() {
+          console.log('handling group update')
+          this.updateY()
+        },
+        1000,
+        { trailing: true, leading: false }
+      )
     },
     items: {
       deep: true,
-      handler: debounce(function() {
-        this.updateX()
-      }, 1000)
+      handler: debounce(
+        function() {
+          console.log('handling item update')
+          this.updateX()
+        },
+        1000,
+        { trailing: true, leading: false }
+      )
     },
     startTime() {
       this.updateX()
@@ -362,14 +372,6 @@ export default {
           bar.y = bar.y0 * (1 - t) + bar.y1 * t
           bar.height = bar.height0 * (1 - t) + bar.height1 * t
           bar.width = bar.width0 * (1 - t) + bar.width1 * t
-        })
-
-        this.groups.forEach(group => {
-          group.y = group.y0 * (1 - t) + group.y1 * t
-          group.color =
-            this.hoveredId && this.hoveredId !== group[this.yField]
-              ? '#eee'
-              : '#2C3E50'
         })
 
         requestAnimationFrame(this.drawCanvas)

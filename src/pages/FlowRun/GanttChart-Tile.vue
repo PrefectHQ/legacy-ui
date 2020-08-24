@@ -366,6 +366,18 @@ export default {
       :click-disabled="!!showMapped"
       @bar-click="_handleClick"
     />
+
+    <br />hasSelectedTaskIds: {{ hasSelectedTaskIds }} <br />groups:
+    <kbd>
+      {{ groups }}
+    </kbd>
+    <br />items:
+    <kbd>
+      {{ items }}
+    </kbd>
+    <br />endTime: {{ endTime }} <br />startTime: {{ startTime }}
+    <br />showMapped:
+    {{ showMapped }}
   </v-card>
 </template>
 
