@@ -71,7 +71,15 @@ export default {
               color="Running"
               class="px-1 font-weight-bold"
             >
-              Running
+              Running </v-chip
+            >,
+            <v-chip
+              x-small
+              label
+              color="Cancelling"
+              class="px-1 font-weight-bold"
+            >
+              Cancelling
             </v-chip>
             or
             <v-chip

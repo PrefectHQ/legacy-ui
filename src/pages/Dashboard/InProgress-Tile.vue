@@ -43,7 +43,9 @@ export default {
     },
     running() {
       if (!this.flowRuns) return []
-      return this.flowRuns.filter(run => run.state == 'Running')
+      return this.flowRuns.filter(
+        run => run.state == 'Running' || run.state == 'Cancelling'
+      )
     },
     submitted() {
       if (!this.flowRuns) return []
