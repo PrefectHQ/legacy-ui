@@ -76,7 +76,6 @@ export default {
             <v-chip
               x-small
               label
-              dark
               color="Cancelling"
               class="px-1 font-weight-bold"
             >

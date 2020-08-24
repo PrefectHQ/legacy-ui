@@ -35,7 +35,6 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     loading() {
-      console.log(this.flowRuns)
       return this.loadingKey > 0
     },
     all() {
