@@ -11,6 +11,7 @@ query FlowRunLogs(
   flow_run_by_pk(id: $id) {
     id
     state
+    start_time
     logs(
       limit: $limit
       offset: $offset
