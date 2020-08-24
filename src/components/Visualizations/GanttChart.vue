@@ -340,7 +340,7 @@ export default {
         })
 
       this.groups.forEach((group, i) => {
-        const y = this.y(group[this.yField]) + (this.y.bandwidth() - height) / 2
+        const y = this.y(group[this.yField]) + this.y.bandwidth() / 2
 
         this.groups[i].y0 = y
         this.groups[i].y1 = y
@@ -498,8 +498,6 @@ export default {
 
       this.x.domain([startTime, endTime])
       this.x.range([0, this.width - 5])
-      this.x.clamp(true)
-      this.x.nice()
 
       if (this.live) {
         this.animationInterval = setInterval(() => {
@@ -532,7 +530,7 @@ export default {
       const formatTime = d3.timeFormat('%-I:%M:%S')
       const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 
-      const xAxis = d3.axisTop(this.x).tickFormat(d => {
+      const xAxis = d3.axisTop(this.x.nice()).tickFormat(d => {
         const dateObj = new Date(d)
         const dayWeek = dateObj.getDay()
         const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
@@ -552,6 +550,10 @@ export default {
         .transition()
         .duration(this.animationDuration)
         .call(xAxis)
+
+      this.xAxisGroup.selectAll('text').attr('text-anchor', (d, i, arr) => {
+        return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
+      })
     },
     async drawYAxis() {
       const yAxis = d3.axisRight(this.y)
