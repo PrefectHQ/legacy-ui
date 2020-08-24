@@ -1,0 +1,7 @@
+mutation ArchivedFlowRunLogs($flowRunId: UUID!, $timestamp: DateTime!) {
+  retrieve_archived_flow_run_logs(
+    input: { flow_run_id: $flowRunId, timestamp: $timestamp }
+  ) {
+    success
+  }
+}

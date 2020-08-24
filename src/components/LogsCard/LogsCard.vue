@@ -1,12 +1,12 @@
 <script>
 /* eslint-disable vue/no-v-html */
 
+import { mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import vueScrollTo from 'vue-scrollto'
 
 import store from '@/store'
 import { STATE_TYPES } from '@/utils/states'
-
 import DownloadMenu from './DownloadMenu'
 import FilterMenu from './FilterMenu'
 import LogRow from './LogRow'
@@ -95,10 +95,15 @@ export default {
       isTailingLogs: true,
 
       // Initiate scroll to a specific log, provided that a log ID is provided as a query param
-      scrolledToQueryLog: false
+      scrolledToQueryLog: false,
+
+      // Archived logs props
+      failedToRetrieveArchivedLogs: false,
+      retrievingArchivedLogs: false
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     // Derive the state of the flow or task
     entityState() {
       if (!this.logsQueryResults) return 'Fetching logs'
@@ -204,7 +209,15 @@ export default {
         }
       },
       pollInterval: 5000,
-      update: data => data[this.queryKey]
+      update(data) {
+        if (
+          this.retrievingArchivedLogs &&
+          data[this.queryKey]?.logs?.length > 0
+        ) {
+          this.retrievingArchivedLogs = false
+        }
+        return data[this.queryKey]
+      }
     })
 
     this.$apollo.addSmartQuery('logsQueryResultsOlder', {
@@ -221,7 +234,15 @@ export default {
         }
       },
       pollInterval: 5000,
-      update: data => data[this.queryKey]
+      update(data) {
+        if (
+          this.retrievingArchivedLogs &&
+          data[this.queryKey]?.logs?.length > 0
+        ) {
+          this.retrievingArchivedLogs = false
+        }
+        return data[this.queryKey]
+      }
     })
 
     this.$apollo.addSmartQuery('logsQueryResultsNewer', {
@@ -241,7 +262,15 @@ export default {
         }
       },
       pollInterval: 5000,
-      update: data => data[this.queryKey]
+      update(data) {
+        if (
+          this.retrievingArchivedLogs &&
+          data[this.queryKey]?.logs?.length > 0
+        ) {
+          this.retrievingArchivedLogs = false
+        }
+        return data[this.queryKey]
+      }
     })
 
     if (!this.$route.query.logId) return
@@ -255,7 +284,15 @@ export default {
           logId: this.$route.query.logId
         }
       },
-      update: data => data[this.queryKey]
+      update(data) {
+        if (
+          this.retrievingArchivedLogs &&
+          data[this.queryKey]?.logs?.length > 0
+        ) {
+          this.retrievingArchivedLogs = false
+        }
+        return data[this.queryKey]
+      }
     })
   },
   updated() {
@@ -270,6 +307,42 @@ export default {
       this.$router.replace({
         query: { logId: undefined }
       })
+    },
+    async retrieveArchivedLogs() {
+      this.failedToRetrieveArchivedLogs = false
+      this.retrievingArchivedLogs = true
+      let flowRunId =
+        this.entity == 'task'
+          ? this.logsQueryResults.flow_run_id
+          : this.logsQueryResults.id
+      let dates = [
+        this.logsQueryResults.start_time,
+        moment(this.logsQueryResults.start_time).add(1, 'days')
+      ]
+      dates.forEach(async archiveDate => {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/Logs/retrieve-archived-logs.gql'),
+          variables: {
+            flowRunId: flowRunId,
+            timestamp: archiveDate
+          },
+          errorPolicy: 'all'
+        })
+      })
+
+      await this.$apollo.queries.logsQueryResults?.refetch()
+      await this.$apollo.queries.logsQueryResultsOlder?.refetch()
+      await this.$apollo.queries.logsQueryResultsNewer?.refetch()
+      await this.$apollo.queries.logsQueryResultsTarget?.refetch()
+
+      setTimeout(() => {
+        // If we still haven't found any logs after 30 seconds
+        // we display a message about that
+        if (this.retrievingArchivedLogs) {
+          this.retrievingArchivedLogs = false
+          this.failedToRetrieveArchivedLogs = true
+        }
+      }, 30000)
     },
     // Apply any filters that the user sets
     handleFilter(filterResult) {
@@ -544,18 +617,46 @@ export default {
         <div id="scroll-end"></div>
       </v-card-text>
 
-      <v-card-text v-else-if="entityIsRunning" class="bg-white">
-        <div class="mb-3"> {{ entityState }}... </div>
+      <v-card-text
+        v-else-if="entityIsRunning || retrievingArchivedLogs"
+        class="bg-white"
+      >
+        <div class="mb-3">
+          {{
+            retrievingArchivedLogs
+              ? 'Retrieving archived logs from glacial storage...'
+              : entityState
+          }}...
+        </div>
         <v-progress-linear indeterminate color="primary"></v-progress-linear>
       </v-card-text>
 
       <v-card-text v-else class="bg-white no-logs-found">
-        {{ entityIsRunning ? `${entityState}...` : 'No logs found.' }}
-        <span v-if="logCount === 0" class="ma-0">
+        {{
+          failedToRetrieveArchivedLogs
+            ? "Sorry, we couldn't get the logs from glacial storage..."
+            : entityIsRunning
+            ? `${entityState}...`
+            : 'No logs found.'
+        }}
+        <span
+          v-if="logCount === 0 && !failedToRetrieveArchivedLogs"
+          class="ma-0"
+        >
           Try
           <a href="#" @click.prevent="filterMenuOpen = true">expanding</a>
           or
           <a href="#" @click.prevent="resetQueryVars">resetting</a> your search.
+        </span>
+        <span v-if="failedToRetrieveArchivedLogs">
+          <a @click="retrieveArchivedLogs"><u>Retry?</u></a>
+        </span>
+        <span v-else-if="logCount === 0 && isCloud" class="ma-0">
+          <br />
+          <br />
+          <a @click="retrieveArchivedLogs"><u>Click here</u></a> to retrieve
+          archived logs - please allow up to 30 seconds for the retrieval to
+          take effect.
         </span>
       </v-card-text>
 
