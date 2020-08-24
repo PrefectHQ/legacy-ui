@@ -353,15 +353,17 @@ export default {
         const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
 
         this.bars.forEach(bar => {
+          const multiplier = bar.leaving ? t * 10 : t
+
           bar.alpha = this.hoveredId
             ? bar.id == this.hoveredId
               ? 1
               : 0.5
             : bar.alpha || 1
-          bar.x = bar.x0 * (1 - t) + bar.x1 * t
-          bar.y = bar.y0 * (1 - t) + bar.y1 * t
-          bar.height = bar.height0 * (1 - t) + bar.height1 * t
-          bar.width = bar.width0 * (1 - t) + bar.width1 * t
+          bar.x = bar.x0 * (1 - t) + bar.x1 * multiplier
+          bar.y = bar.y0 * (1 - t) + bar.y1 * multiplier
+          bar.height = bar.height0 * (1 - t) + bar.height1 * multiplier
+          bar.width = bar.width0 * (1 - t) + bar.width1 * multiplier
         })
 
         requestAnimationFrame(this.drawCanvas)
