@@ -4,15 +4,21 @@
 
 ### Features and Improvements
 
-- Improve handling of cancelling state [#137](https://github.com/PrefectHQ/ui/pull/137)
-- Add unit tests for the agent and alert vuex stores[#124](https://github.com/PrefectHQ/ui/pull/124)
-- Add way of retrieving archived logs for old flow and task runs - [#128](https://github.com/PrefectHQ/ui/pull/128)
+- None
 
 ### Bugfixes
 
 - None
 
-## 2020-08-19a
+## 2020-08-24
+
+### Features and Improvements
+
+- Improve handling of cancelling state [#137](https://github.com/PrefectHQ/ui/pull/137)
+- Add unit tests for the agent and alert vuex stores[#124](https://github.com/PrefectHQ/ui/pull/124)
+- Add way of retrieving archived logs for old flow and task runs - [#128](https://github.com/PrefectHQ/ui/pull/128)
+
+## 2020-08-20
 
 ### Bugfixes
 
