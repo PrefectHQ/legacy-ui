@@ -109,9 +109,9 @@ export default {
       // Misc
       animationDuration: 500,
       animationInterval: null,
-      barHeight: 25,
+      barHeight: 35,
       barWidth: 25,
-      barPaddingY: 5,
+      barPaddingY: 10,
       containerStyle: {
         height: this.chartHeight
       },
@@ -241,7 +241,7 @@ export default {
     _renderCanvas() {
       cancelAnimationFrame(this.drawCanvas)
 
-      const height = this.barHeight
+      const height = this.barHeight - this.barPaddingY
 
       const calcBar = item => {
         const x = item.start_time ? this.x(moment(item.start_time)) : 0
@@ -263,7 +263,7 @@ export default {
         // bar width, so we should display an indicator that this isn't visually representative
         const clipped = calcWidth < this.barWidth
 
-        const y = this.y(item[this.yField])
+        const y = this.y(item[this.yField]) + this.barPaddingY
 
         const alpha = 1
 
@@ -433,7 +433,7 @@ export default {
           const savedStrokeStyle = context.fillStyle
           context.font = 'Roboto'
           context.fillStyle = '#273746'
-          context.fillText(bar.label, bar.x || 0, bar.y)
+          context.fillText(bar.label, bar.x, bar.y - this.barPaddingY / 2)
           context.fillStyle = savedStrokeStyle
         }
       }
@@ -512,7 +512,7 @@ export default {
       }
     },
     async updateY() {
-      this.y.paddingInner(this.barPaddingY).paddingOuter(this.barPaddingY)
+      this.y.paddingOuter(0.1)
 
       this.y.domain(this.groups.map(group => group[this.yField]))
       this.y.range([0, this.canvasHeight])
