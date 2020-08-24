@@ -35,6 +35,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     loading() {
+      console.log(this.flowRuns)
       return this.loadingKey > 0
     },
     all() {
@@ -43,7 +44,9 @@ export default {
     },
     running() {
       if (!this.flowRuns) return []
-      return this.flowRuns.filter(run => run.state == 'Running')
+      return this.flowRuns.filter(
+        run => run.state == 'Running' || run.state == 'Cancelling'
+      )
     },
     submitted() {
       if (!this.flowRuns) return []
