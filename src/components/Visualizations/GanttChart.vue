@@ -116,7 +116,10 @@ export default {
         height: this.chartHeight
       },
       easing: 'easeLinear',
-      hovered: null
+      hovered: null,
+      xAxisGridlinesGroup: null,
+      xAxisGroup: null,
+      yAxisGroup: null
     }
   },
   computed: {
@@ -176,6 +179,8 @@ export default {
     this.svg = d3.select(`#${this.id}-svg`)
 
     this.yAxisGroup = this.svg.append('g')
+    this.xAxisGridlinesGroup = this.svg.append('g')
+
     this.xAxisGroup = this.svg.append('g')
 
     const resizeChart = this.resizeChart
@@ -545,6 +550,23 @@ export default {
         }
       })
 
+      const xAxisGrid = d3
+        .axisTop(this.x.nice())
+        .tickSize(-this.height)
+        .tickFormat('')
+
+      await this.xAxisGridlinesGroup
+        .attr('class', 'x-axis-gridlines-group')
+        .style('color', '#eee')
+        .attr('transform', `translate(0, ${-25})`)
+        .transition()
+        .duration(this.animationDuration)
+        .call(xAxisGrid)
+
+      this.xAxisGridlinesGroup.selectAll('path').remove()
+      this.xAxisGridlinesGroup.selectAll('.tick:first-of-type').remove()
+      this.xAxisGridlinesGroup.selectAll('.tick:last-of-type').remove()
+
       await this.xAxisGroup
         .attr('class', 'x-axis-group')
         .attr('transform', `translate(0, ${this.height - 2})`)
@@ -553,9 +575,12 @@ export default {
         .duration(this.animationDuration)
         .call(xAxis)
 
-      this.xAxisGroup.selectAll('text').attr('text-anchor', (d, i, arr) => {
-        return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
-      })
+      this.xAxisGroup
+        .select('.axis')
+        .selectAll('text')
+        .attr('text-anchor', (d, i, arr) => {
+          return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
+        })
     },
     async drawYAxis() {
       const yAxis = d3.axisRight(this.y)
@@ -582,7 +607,11 @@ export default {
 
 <template>
   <v-container :style="containerStyle" fluid>
-    <div ref="parent" class="position-relative" style="height: 100%;">
+    <div
+      ref="parent"
+      class="position-relative chart-container"
+      style="height: 100%;"
+    >
       <canvas
         :id="`${id}-canvas`"
         ref="canvas"
