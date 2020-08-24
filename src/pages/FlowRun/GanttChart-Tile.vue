@@ -189,6 +189,9 @@ export default {
             `--v-${task.state}-base`
           )
 
+          task.shadow = task.state === 'Running'
+
+          this.taskMap[ref].shadow = task.shadow
           this.taskMap[ref].color = task.color
           this.taskMap[ref].state = task.state
 
@@ -215,6 +218,7 @@ export default {
             id: task.id,
             items: [],
             color: null,
+            shadow: false,
             state: null,
             start_time: null,
             end_time: null

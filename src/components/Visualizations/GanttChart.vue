@@ -263,11 +263,14 @@ export default {
         // bar width, so we should display an indicator that this isn't visually representative
         const clipped = calcWidth < this.barWidth
 
-        const y = this.y(item[this.yField]) + (this.y.bandwidth() - height) / 2
+        const y = this.y(item[this.yField])
 
         const alpha = 1
 
         const barIndex = this.bars.findIndex(b => b.id == item.id)
+
+        const label = this.groups.find(g => g[this.yField] == item[this.yField])
+          ?.name
 
         // If the item isn't present in the bar array
         // we instantiate a new bar...
@@ -276,6 +279,7 @@ export default {
             ...item,
             alpha: alpha,
             clipped: clipped,
+            label: label,
             height0: height,
             height1: height,
             height: height,
@@ -306,9 +310,9 @@ export default {
             x0: bar.x > 0 ? bar.x : x || 0,
             x1: x || 0,
             x: bar.x > 0 ? bar.x : x || 0,
-            y0: y,
+            y0: bar.y,
             y1: y,
-            y: y
+            y: bar.y
           }
 
           this.bars[barIndex] = { ...bar, ...bar1, ...item }
@@ -343,14 +347,6 @@ export default {
 
           this.bars[i] = { ...bar, ...bar1 }
         })
-
-      this.groups.forEach((group, i) => {
-        const y = this.y(group[this.yField]) + this.y.bandwidth() / 2
-
-        this.groups[i].y0 = y
-        this.groups[i].y1 = y
-        this.groups[i].y = y
-      })
 
       requestAnimationFrame(this.drawCanvas)
       const timingCallback = elapsed => {
@@ -390,20 +386,11 @@ export default {
         this.timer = d3.timer(timingCallback)
       }
     },
-    calcGroupLabelStyle(group) {
-      const top =
-        this.y(group[this.yField]) + (this.y.bandwidth() - this.barHeight) / 2
-      return {
-        top: `${top}px`,
-        opacity:
-          this.hoveredId && this.hoveredId !== group[this.yField] ? 0.3 : 1
-      }
-    },
     drawCanvas() {
       const context = this.canvas.node().getContext('2d')
 
-      context.save()
       context.lineWidth = 2
+      context.font = 'Roboto'
       context.strokeStyle = '#f9f9f9'
 
       context.clearRect(0, 0, this.width, this.height)
@@ -416,6 +403,7 @@ export default {
         this.bars[i].path2D = new Path2D()
 
         context.globalAlpha = bar.alpha
+
         context.fillStyle = bar.color || '#eee'
 
         roundRect(
@@ -435,20 +423,20 @@ export default {
           context.strokeStyle = bar.color
         }
 
+        if (bar.shadow) {
+          context.strokeStyle = '#777'
+        }
+
         context.stroke(this.bars[i].path2D)
+
+        if (bar.label) {
+          const savedStrokeStyle = context.fillStyle
+          context.font = 'Roboto'
+          context.fillStyle = '#273746'
+          context.fillText(bar.label, bar.x || 0, bar.y)
+          context.fillStyle = savedStrokeStyle
+        }
       }
-
-      context.globalAlpha = 1
-      context.font = 'Roboto'
-
-      len = this.groups.length
-      for (let i = 0; i < len; ++i) {
-        const group = this.groups[i]
-        context.fillStyle = group.color
-        context.fillText(group.name, group.x || 0, group.y)
-      }
-
-      context.restore()
     },
     resizeChart() {
       let parent = this.svg.select(function() {
@@ -473,7 +461,7 @@ export default {
       const height =
         parent._groups[0][0].clientHeight - paddingTop - paddingBottom
       const width =
-        parent._groups[0][0].clientWidth - paddingLeft - paddingRight - 100
+        parent._groups[0][0].clientWidth - paddingLeft - paddingRight
 
       if (!height || !width || height < 0 || width < 0) {
         return
@@ -481,7 +469,6 @@ export default {
 
       this.svg
         .attr('viewbox', `0 0 ${width} ${height}`)
-        .attr('transform', 'translate(100, 0)')
         .attr('width', width)
         .attr('height', height)
 
@@ -489,10 +476,7 @@ export default {
       this.width = width
       this.canvasHeight = height - marginY
 
-      this.canvas
-        .attr('width', this.width)
-        .attr('height', this.canvasHeight)
-        .attr('transform', 'translate(100, 0)')
+      this.canvas.attr('width', this.width).attr('height', this.canvasHeight)
 
       this.updateY()
       this.updateX()
@@ -530,7 +514,7 @@ export default {
     async updateY() {
       this.y.paddingInner(this.barPaddingY).paddingOuter(this.barPaddingY)
 
-      this.y.domain(this.groups.map(group => group.id))
+      this.y.domain(this.groups.map(group => group[this.yField]))
       this.y.range([0, this.canvasHeight])
     },
     async drawXAxis() {
