@@ -1,5 +1,5 @@
 query ConcurrentRuns {
-  flow_run(where: { state: { _in: ["Running", "Submitted"] } }) {
+  flow_run(where: { state: { _in: ["Running", "Submitted", "Cancelling"] } }) {
     id
   }
 }
