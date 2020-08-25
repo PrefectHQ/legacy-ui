@@ -10,6 +10,16 @@
 
 - None
 
+## 2020-08-25
+
+### Features and Improvements
+
+- Add Flow ID to Flow Details Tile - [#135](https://github.com/PrefectHQ/ui/issues/135)
+
+### Bugfixes
+
+- Show payment details in the account page and improve tenant-slug update error handling [#140](https://github.com/PrefectHQ/ui/pull/140)
+
 ## 2020-08-24
 
 ### Features and Improvements
