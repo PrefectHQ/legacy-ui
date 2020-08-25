@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add Flow ID to Flow Details Tile - [#135](https://github.com/PrefectHQ/ui/issues/135)
 
 ### Bugfixes
 

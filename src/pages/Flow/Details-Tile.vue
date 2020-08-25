@@ -557,7 +557,37 @@ export default {
               <v-list-item-subtitle class="caption">
                 <v-row no-gutters>
                   <v-col cols="6">
-                    Flow Group
+                    Flow ID
+                  </v-col>
+                  <v-col
+                    cols="6"
+                    class="text-right font-weight-bold text-truncate"
+                  >
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <span
+                          class="cursor-pointer show-icon-hover-focus-only pa-2px"
+                          role="button"
+                          @click="copyToClipboard(flow.id)"
+                          v-on="on"
+                        >
+                          <v-icon x-small class="mb-2px mr-2" tabindex="0">
+                            {{ copiedText[flow.id] ? 'check' : 'file_copy' }}
+                          </v-icon>
+                          {{ flow.id }}
+                        </span>
+                      </template>
+                      <span>
+                        {{ flow.id }}
+                      </span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+              </v-list-item-subtitle>
+              <v-list-item-subtitle class="caption">
+                <v-row no-gutters>
+                  <v-col cols="6">
+                    Flow Group ID
                   </v-col>
                   <v-col
                     cols="6"
