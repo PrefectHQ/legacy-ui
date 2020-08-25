@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Show payment details in the account page and improve tenant-slug update error handling [#140](https://github.com/PrefectHQ/ui/pull/140)
 
 ## 2020-08-24
 

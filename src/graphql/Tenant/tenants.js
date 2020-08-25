@@ -14,6 +14,7 @@ export default function(isCloud) {
           isCloud
             ? `
               prefectAdminSettings: prefect_admin_settings
+              stripe_customer
             `
             : ''
         }
