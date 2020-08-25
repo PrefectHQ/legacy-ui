@@ -210,7 +210,6 @@ export const teamProfileMixin = {
                 slug: this.slug
               }
             })
-
             if (
               checkSlug?.data?.tenant?.length !== 0 &&
               this.slug != this.tenant.slug
@@ -237,9 +236,10 @@ export const teamProfileMixin = {
       this.slugErrors = []
       this.updateServerError = false
     },
-    handleError() {
+    handleError(alert) {
       this.setAlert({
         alertMessage:
+          alert ||
           'Something went wrong while trying to update your team profile settings. Please try again later.',
         alertType: 'error',
         alertShow: true
@@ -291,18 +291,17 @@ export const teamProfileMixin = {
             slug: this.tenantChanges.slug || this.tenant.slug
           }
         })
-      } catch (e) {
-        // If this query failed because the slug name is already in use,
-        // then an inline error message will be surfaced.
+      } catch (error) {
         // Otherwise, surface the global error alert.
-        if (e.message !== 'GraphQL error: Uniqueness violation.') {
-          this.handleError()
-          this.updateServerError = true
-        }
+        const e = error.toString()
+        const alert = e.includes('Uniqueness violation')
+          ? 'Sorry, that URL slug is already in use. Please try another URL Slug.'
+          : null
+        this.handleError(alert)
+        this.updateServerError = true
         this.isUpdatingTenant = false
         return
       }
-
       if (
         !newTenant?.data?.update_tenant_name ||
         !newTenant?.data?.update_tenant_slug
