@@ -9,11 +9,12 @@ export default function(isCloud) {
         name
         info
         settings
-
+        
         ${
           isCloud
             ? `
               prefectAdminSettings: prefect_admin_settings
+              stripe_customer
             `
             : ''
         }

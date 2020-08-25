@@ -432,5 +432,23 @@ describe('API Vuex Module', () => {
         expect(store.getters.connected).toBe(false)
       })
     })
+
+    describe('monitorConnection - no api error', () => {
+      beforeEach(() => {
+        mockerror = false
+      })
+      it('should set the version', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.version).toBe(2)
+      })
+      it('should set the release timestamp', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.releaseTimestamp).toBe('timestamp')
+      })
+      it('should set connected state', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.connected).toBe(true)
+      })
+    })
   })
 })
