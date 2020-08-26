@@ -28,12 +28,7 @@ export default {
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant', 'tenantIsSet']),
     ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
-    iconColor() {
-      return this.apiMode != 'normal' ? 'secondary' : 'white'
-    },
     connectedIcon() {
-      if (this.connected && this.apiMode != 'normal')
-        return 'signal_cellular_connected_no_internet_4_bar'
       if (this.connected) return 'signal_cellular_4_bar'
       if (this.connecting) return 'signal_cellular_null'
       return 'signal_cellular_off'
@@ -217,7 +212,7 @@ export default {
           text
           icon
           large
-          :color="iconColor"
+          color="white"
           v-on="on"
           @focus="connectionMenu = true"
           @blur="connectionMenu = false"
@@ -237,6 +232,18 @@ export default {
           >
             fas fa-spinner fa-pulse
           </v-icon>
+          <v-icon
+            v-if="apiMode !== 'normal'"
+            small
+            color="accentPink"
+            class="position-absolute"
+            :style="{
+              bottom: '-8px',
+              right: '0'
+            }"
+          >
+            fas fa-exclamation
+          </v-icon>
         </v-btn>
       </template>
       <v-card tile class="pa-0" max-width="320">
@@ -248,11 +255,12 @@ export default {
             to <span class="font-weight-bold">{{ url }}</span> <br /><br />
           </p>
           <v-alert
-            v-if="apiMode != 'normal'"
+            v-if="apiMode !== 'normal'"
             border="left"
             colored-border
             class="text-body-2"
             type="warning"
+            color="accentPink"
             tile
           >
             Prefect Cloud is temporarily in maintenance mode for routine
