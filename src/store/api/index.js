@@ -171,7 +171,7 @@ const actions = {
           commit('setConnectionMessage', 'Connected')
           commit('setRetries', 0)
           commit('setConnected', true)
-          commit('setApiMode', 'maintenance')
+          commit('setApiMode', data.api.mode)
         }
       } catch (e) {
         commit('setConnectionMessage', e)

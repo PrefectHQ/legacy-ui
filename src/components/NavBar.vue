@@ -263,9 +263,9 @@ export default {
             color="accentPink"
             tile
           >
-            Prefect Cloud is temporarily in maintenance mode for routine
-            servicing - during this time, no new runs will be released to your
-            Agents and state updates may be delayed.
+            Prefect Cloud is undergoing routine maintenance; during this time,
+            no new runs will be released to your Agents and state updates may be
+            delayed.
           </v-alert>
         </v-card-text>
         <v-card-actions class="pt-0">
