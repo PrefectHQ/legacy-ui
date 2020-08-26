@@ -71,7 +71,7 @@ describe('API Vuex Module', () => {
           'SERVER',
         connected: true,
         connectionMessage: null,
-        connectionTimeout: null,
+        connectionTimeout: 200,
         releaseTimestamp: null,
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
         retries: 0,
@@ -93,12 +93,12 @@ describe('API Vuex Module', () => {
         connected: true,
         connectionMessage: 'connection message',
         connectionTimeout: 300,
-        releaseTimestamp: 'timestamp',
+        releaseTimestamp: 'xxxxxx',
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
         retries: 5,
         serverUrl:
           localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
-        version: 3
+        version: 8
       }
     }
   })
@@ -419,7 +419,7 @@ describe('API Vuex Module', () => {
         })
       })
       it('should unset the version', async () => {
-        expect(store.getters.version).toBe(3)
+        expect(store.getters.version).toBe(8)
         await store.dispatch('getApi')
         expect(store.getters.version).toBe(null)
       })
@@ -433,21 +433,165 @@ describe('API Vuex Module', () => {
       })
     })
 
-    describe('monitorConnection - no api error', () => {
+    describe('monitorConnection - no query error', () => {
       beforeEach(() => {
         mockerror = false
+        const state = localStoreAPIState()
+        store = new Vuex.Store({
+          state: state,
+          getters: api.getters,
+          mutations: api.mutations,
+          actions: api.actions
+        })
       })
-      it('should set the version', async () => {
-        await store.dispatch('getApi')
-        expect(store.getters.version).toBe(2)
+      it('should unset connection timeout', async () => {
+        await store.dispatch('monitorConnection')
+        expect(clearTimeout).toHaveBeenCalled()
       })
       it('should set the release timestamp', async () => {
-        await store.dispatch('getApi')
+        await store.dispatch('monitorConnection')
         expect(store.getters.releaseTimestamp).toBe('timestamp')
       })
       it('should set connected state', async () => {
-        await store.dispatch('getApi')
+        await store.dispatch('monitorConnection')
         expect(store.getters.connected).toBe(true)
+      })
+      it('should set the version', async () => {
+        await store.dispatch('monitorConnection')
+        expect(store.getters.version).toBe(2)
+      })
+      it('should set the connection message', async () => {
+        await store.dispatch('monitorConnection')
+        expect(store.getters.connectionMessage).toBe('Connected')
+      })
+      it('should set retries back to 0', async () => {
+        await store.dispatch('monitorConnection')
+        expect(store.getters.retries).toBe(0)
+      })
+    })
+    //Mock won't work as error policy set to 'none'
+    // describe('monitorConnection - query error', () => {
+    //   beforeEach(() => {
+    //     mockerror = true
+    //     const state = localStoreAPIState()
+    //     store = new Vuex.Store({
+    //       state: state,
+    //       getters: api.getters,
+    //       mutations: api.mutations,
+    //       actions: api.actions
+    //     })
+    //   })
+    //   it('should unset connection timeout', async () => {
+    //     await store.dispatch('monitorConnection')
+    //     expect(clearTimeout).toHaveBeenCalled()
+    //   })
+    //   it('should set connected state to false', async () => {
+    //     await store.dispatch('monitorConnection')
+    //     expect(store.getters.connected).toBe(false)
+    //   })
+    //   it('should set the connection message', async () => {
+    //     await store.dispatch('monitorConnection')
+    //     expect(store.getters.connectionMessage).toBe('error')
+    //   })
+    // })
+
+    describe('setServerUrl', () => {
+      beforeEach(() => {
+        const state = localStoreAPIState()
+        store = new Vuex.Store({
+          state: state,
+          getters: api.getters,
+          mutations: api.mutations,
+          actions: api.actions
+        })
+      })
+      it('should set the server URL', async () => {
+        expect(store.getters.serverUrl).toBe('http://0.0.0.0:4200/graphql')
+        await store.dispatch('setServerUrl', 'new.url')
+        expect(store.getters.serverUrl).toBe('new.url')
+      })
+    })
+
+    describe('switchBackend', () => {
+      beforeEach(() => {
+        // Mock the mutations and actions from other stores
+        // that we don't want to
+        // test here
+        api.mutations['tenant/setTenant'] = jest.fn()
+        api.mutations['tenant/setDefaultTenant'] = jest.fn()
+        api.mutations['tenant/unsetTenants'] = jest.fn()
+        api.mutations['tenant/unsetTenant'] = jest.fn()
+        api.actions['tenant/getTenants'] = jest.fn()
+        api.actions['auth0/authenticate'] = jest.fn()
+        api.actions['auth0/authorize'] = jest.fn()
+        api.actions['user/getUser'] = jest.fn()
+
+        const state = localStoreAPIState()
+        store = new Vuex.Store({
+          state: state,
+          getters: api.getters,
+          mutations: api.mutations,
+          actions: api.actions
+        })
+      })
+
+      it('should call unsetTenant', async () => {
+        await store.dispatch('switchBackend', 'SERVER')
+        expect(api.mutations['tenant/unsetTenant']).toHaveBeenCalled()
+      })
+      it('should call unsetTenants', async () => {
+        await store.dispatch('switchBackend', 'SERVER')
+        expect(api.mutations['tenant/unsetTenants']).toHaveBeenCalled()
+      })
+
+      describe('switch backend to SERVER', () => {
+        it('should set the backend to SERVER', async () => {
+          expect(store.getters.backend).toBe('foo')
+          await store.dispatch('switchBackend', 'SERVER')
+          expect(store.getters.backend).toBe('SERVER')
+        })
+        it('should call unsetTenant', async () => {
+          await store.dispatch('switchBackend', 'SERVER')
+          expect(api.mutations['tenant/unsetTenant']).toHaveBeenCalled()
+        })
+        it('should call unsetTenants', async () => {
+          await store.dispatch('switchBackend', 'SERVER')
+          expect(api.mutations['tenant/unsetTenants']).toHaveBeenCalled()
+        })
+        it('should call setDefaultTenant', async () => {
+          await store.dispatch('switchBackend', 'SERVER')
+          expect(api.mutations['tenant/setDefaultTenant']).toHaveBeenCalled()
+        })
+      })
+
+      describe('switch backend to CLOUD', () => {
+        it('should set the backend to CLOUD', async () => {
+          expect(store.getters.backend).toBe('foo')
+          await store.dispatch('switchBackend', 'CLOUD')
+          expect(store.getters.backend).toBe('CLOUD')
+        })
+        it('should not call setDefaultTenant', async () => {
+          await store.dispatch('switchBackend', 'CLOUD')
+          expect(
+            api.mutations['tenant/setDefaultTenant']
+          ).toHaveBeenCalledTimes(0)
+        })
+        it('should authenticate', async () => {
+          await store.dispatch('switchBackend', 'CLOUD')
+          expect(api.actions['auth0/authenticate']).toHaveBeenCalled()
+        })
+        it('should authorize', async () => {
+          await store.dispatch('switchBackend', 'CLOUD')
+          expect(api.actions['auth0/authorize']).toHaveBeenCalled()
+        })
+        it('should get the user details', async () => {
+          await store.dispatch('switchBackend', 'CLOUD')
+          expect(api.actions['user/getUser']).toHaveBeenCalled()
+        })
+        it('should get tenants', async () => {
+          await store.dispatch('switchBackend', 'CLOUD')
+          expect(api.actions['tenant/getTenants']).toHaveBeenCalled()
+        })
       })
     })
   })
