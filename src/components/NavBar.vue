@@ -20,6 +20,7 @@ export default {
       'isServer',
       'isCloud',
       'url',
+      'apiMode',
       'connected',
       'connecting',
       'retries'
@@ -27,7 +28,12 @@ export default {
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant', 'tenantIsSet']),
     ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
+    iconColor() {
+      return this.apiMode != 'normal' ? 'secondary' : 'white'
+    },
     connectedIcon() {
+      if (this.connected && this.apiMode != 'normal')
+        return 'signal_cellular_connected_no_internet_4_bar'
       if (this.connected) return 'signal_cellular_4_bar'
       if (this.connecting) return 'signal_cellular_null'
       return 'signal_cellular_off'
@@ -211,7 +217,7 @@ export default {
           text
           icon
           large
-          color="white"
+          :color="iconColor"
           v-on="on"
           @focus="connectionMenu = true"
           @blur="connectionMenu = false"
