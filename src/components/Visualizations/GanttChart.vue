@@ -110,7 +110,7 @@ export default {
       containerStyle: {
         height: this.chartHeight
       },
-      easing: 'easeLinear',
+      easing: 'easePolyInOut',
       hovered: null,
       xAxisGridlinesGroup: null,
       xAxisGroup: null,
@@ -246,7 +246,7 @@ export default {
     _renderCanvas() {
       cancelAnimationFrame(this.drawCanvas)
 
-      const height = this.barHeight - this.barPaddingY
+      const height = Math.round(this.barHeight - this.barPaddingY)
 
       const calcBar = item => {
         const x = item.start_time ? this.x(moment(item.start_time)) : 0
@@ -272,9 +272,20 @@ export default {
 
         const alpha = 1
 
-        const barIndex = this.bars.findIndex(b => b.id == item.id)
+        const barIndex = this.bars.findIndex(
+          b => b[this.yField] == item[this.yField]
+        )
 
         const label = item[this.labelField]
+
+        // We return here if there's no y since that means we don't have
+        // a label for the Y axis yet
+        if (!y) return
+
+        const roundedX = Math.round(x)
+        const roundedY = Math.round(y)
+        const roundedWidth = Math.round(width)
+        const roundedHeight = Math.round(height)
 
         // If the item isn't present in the bar array
         // we instantiate a new bar...
@@ -284,38 +295,39 @@ export default {
             alpha: alpha,
             clipped: clipped,
             label: label,
-            height0: height,
-            height1: height,
-            height: height,
+            height0: roundedHeight,
+            height1: roundedHeight,
+            height: roundedHeight,
             width0: 0,
-            width1: width,
+            width1: roundedWidth,
             width: 0,
-            x0: x || 0,
-            x1: x || 0,
-            x: x || 0,
-            y0: y || 0,
-            y1: y || 0,
-            y: y || 0
+            x0: roundedX || 0,
+            x1: roundedX,
+            x: roundedX || 0,
+            y0: roundedY || 0,
+            y1: roundedY,
+            y: roundedY || 0
           })
         } else {
           // ...otherwise we update the existing bar with
           // new values
           const bar = this.bars[barIndex]
+
           const bar1 = {
             ...item,
             alpha: alpha,
             clipped: clipped,
             height0: bar.height,
-            height1: height,
+            height1: roundedHeight,
             height: bar.height,
             width0: bar.width,
-            width1: width,
+            width1: roundedWidth,
             width: bar.width,
-            x0: bar.x > 0 ? bar.x : x || 0,
-            x1: x || 0,
-            x: bar.x > 0 ? bar.x : x || 0,
+            x0: bar.x > 0 ? bar.x : roundedX,
+            x1: x,
+            x: bar.x > 0 ? bar.x : roundedX,
             y0: bar.y,
-            y1: y,
+            y1: roundedY,
             y: bar.y
           }
 
@@ -329,7 +341,9 @@ export default {
       this.bars
         // If this is a valid bar, do nothing since its data was already
         // updated
-        .filter(bar => !this.items.find(item => item.id == bar.id))
+        .filter(
+          bar => !this.items.find(item => item[this.yField] == bar[this.yField])
+        )
         // ...otherwise we'll start the exit animation
         .forEach((bar, i) => {
           const bar1 = {
@@ -480,6 +494,8 @@ export default {
       this.update()
     },
     updateX() {
+      if (!this.startTime) return
+
       clearInterval(this.animationInterval)
 
       const startTime = moment(this.startTime)
