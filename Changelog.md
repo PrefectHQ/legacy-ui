@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add execution timer to InteractiveAPI queries [#154](https://github.com/PrefectHQ/ui/pull/154)
 
 ### Bugfixes
 
