@@ -20,6 +20,7 @@ export default {
       'isServer',
       'isCloud',
       'url',
+      'apiMode',
       'connected',
       'connecting',
       'retries'
@@ -231,6 +232,18 @@ export default {
           >
             fas fa-spinner fa-pulse
           </v-icon>
+          <v-icon
+            v-if="apiMode !== 'normal'"
+            small
+            color="accentPink"
+            class="position-absolute"
+            :style="{
+              bottom: '-8px',
+              right: '0'
+            }"
+          >
+            fas fa-exclamation
+          </v-icon>
         </v-btn>
       </template>
       <v-card tile class="pa-0" max-width="320">
@@ -239,8 +252,21 @@ export default {
             <span v-if="connected">Connected</span>
             <span v-else-if="connecting">Connecting</span>
             <span v-else>Couldn't connect</span>
-            to <span class="font-weight-bold">{{ url }}</span>
+            to <span class="font-weight-bold">{{ url }}</span> <br /><br />
           </p>
+          <v-alert
+            v-if="apiMode !== 'normal'"
+            border="left"
+            colored-border
+            class="text-body-2"
+            type="warning"
+            color="accentPink"
+            tile
+          >
+            Prefect Cloud is undergoing routine maintenance; during this time,
+            no new runs will be released to your Agents and state updates may be
+            delayed.
+          </v-alert>
         </v-card-text>
         <v-card-actions class="pt-0">
           <v-spacer></v-spacer>
