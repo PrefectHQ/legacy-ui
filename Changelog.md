@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Update connection icon if Cloud is in maintenance mode - [#155](https://github.com/PrefectHQ/ui/pull/155)
 
 ### Bugfixes
 
