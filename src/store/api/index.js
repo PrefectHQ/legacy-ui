@@ -23,7 +23,7 @@ const getters = {
     return state.backend
   },
   apiMode(state) {
-    return state.apiMode || 'normal'
+    return state.apiMode
   },
   connected(state) {
     return state.connected
