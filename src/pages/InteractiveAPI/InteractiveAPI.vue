@@ -41,6 +41,7 @@ export default {
         ? decodeURI(this.$route.query.request)
         : '',
       existing: '',
+      executionTime: null,
       isLoading: false,
       includeArgs: false,
       includeSubs: false,
@@ -411,7 +412,10 @@ export default {
     },
     async makeApolloCall() {
       if (!this.query) return
+      const t0 = performance.now()
+
       this.isLoading = true
+      this.executionTime = null
       this.rightPanelView = 'results'
       this.results = ''
 
@@ -461,6 +465,9 @@ export default {
         }
       }
       this.isLoading = false
+      const t1 = performance.now()
+
+      this.executionTime = t1 - t0
     },
     limitQuery(gqlObj) {
       gqlObj.definitions[0].selectionSet.selections.forEach(selection => {
@@ -889,6 +896,13 @@ export default {
                   fluid
                   class="pa-4 iapi-container container--results"
                 >
+                  <div v-if="executionTime" class="text-caption execution-time">
+                    Query executed in:
+                    <span class="font-weight-medium"
+                      >{{ Math.round(executionTime) }}ms</span
+                    >
+                  </div>
+
                   <v-progress-circular
                     v-if="isLoading"
                     class="loader"
@@ -1110,6 +1124,14 @@ export default {
     color: #000 !important;
     padding: 0 1px !important;
   }
+}
+
+.execution-time {
+  color: var(--v-primary-base);
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 1;
 }
 
 .results {
