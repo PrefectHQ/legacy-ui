@@ -119,7 +119,8 @@ export default {
     containerStyle() {
       return {
         height:
-          this.items?.length * (this.barMinHeight + this.barPaddingY) + 'px'
+          this.items?.length * (this.barMinHeight + this.barPaddingY) + 'px',
+        'min-height': 10 * (this.barMinHeight + this.barPaddingY) + 'px'
       }
     },
     hoveredId() {
@@ -160,6 +161,7 @@ export default {
         if (this.items?.length === 0) {
           console.info('No items were passed to the Gantt Chart component')
         }
+        this.resize()
         this.update()
       }, 500)
     },
