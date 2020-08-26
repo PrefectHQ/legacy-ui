@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-08-25
+
+### Features and Improvements
+
 - Add Flow ID to Flow Details Tile - [#135](https://github.com/PrefectHQ/ui/issues/135)
 
 ### Bugfixes
