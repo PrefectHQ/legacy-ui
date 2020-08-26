@@ -246,15 +246,16 @@ export default {
     _renderCanvas() {
       cancelAnimationFrame(this.drawCanvas)
 
-      const height = Math.round(this.barHeight - this.barPaddingY)
+      const height = this.barHeight - this.barPaddingY
+      // const height = this.y.bandwidth()
 
       const calcBar = item => {
-        const x = item.start_time ? this.x(moment(item.start_time)) : 0
+        const x = item.start_time ? this.x(new Date(item.start_time)) : 0
 
         const calcWidth = item.end_time
-          ? this.x(moment(item.end_time)) - x
+          ? this.x(new Date(item.end_time)) - x
           : item.start_time
-          ? this.width - x
+          ? this.x(Date.now()) - x
           : 0
 
         const width =
@@ -282,11 +283,6 @@ export default {
         // a label for the Y axis yet
         if (!y) return
 
-        const roundedX = Math.round(x)
-        const roundedY = Math.round(y)
-        const roundedWidth = Math.round(width)
-        const roundedHeight = Math.round(height)
-
         // If the item isn't present in the bar array
         // we instantiate a new bar...
         if (barIndex < 0) {
@@ -295,18 +291,18 @@ export default {
             alpha: alpha,
             clipped: clipped,
             label: label,
-            height0: roundedHeight,
-            height1: roundedHeight,
-            height: roundedHeight,
+            height0: height,
+            height1: height,
+            height: height,
             width0: 0,
-            width1: roundedWidth,
+            width1: width,
             width: 0,
-            x0: roundedX || 0,
-            x1: roundedX,
-            x: roundedX || 0,
-            y0: roundedY || 0,
-            y1: roundedY,
-            y: roundedY || 0
+            x0: x || 0,
+            x1: x,
+            x: x || 0,
+            y0: y || 0,
+            y1: y,
+            y: y || 0
           })
         } else {
           // ...otherwise we update the existing bar with
@@ -318,16 +314,16 @@ export default {
             alpha: alpha,
             clipped: clipped,
             height0: bar.height,
-            height1: roundedHeight,
+            height1: height,
             height: bar.height,
             width0: bar.width,
-            width1: roundedWidth,
+            width1: width,
             width: bar.width,
-            x0: bar.x > 0 ? bar.x : roundedX,
+            x0: bar.x > 0 ? bar.x : x,
             x1: x,
-            x: bar.x > 0 ? bar.x : roundedX,
+            x: bar.x > 0 ? bar.x : x,
             y0: bar.y,
-            y1: roundedY,
+            y1: y,
             y: bar.y
           }
 
@@ -378,10 +374,12 @@ export default {
               ? 1
               : 0.5
             : bar.alpha || 1
-          bar.x = bar.x0 * (1 - t) + bar.x1 * multiplier
-          bar.y = bar.y0 * (1 - t) + bar.y1 * multiplier
-          bar.height = bar.height0 * (1 - t) + bar.height1 * multiplier
-          bar.width = bar.width0 * (1 - t) + bar.width1 * multiplier
+          bar.x = Math.round(bar.x0 * (1 - t) + bar.x1 * multiplier)
+          bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
+          bar.height = Math.round(
+            bar.height0 * (1 - t) + bar.height1 * multiplier
+          )
+          bar.width = Math.round(bar.width0 * (1 - t) + bar.width1 * multiplier)
         })
 
         requestAnimationFrame(this.drawCanvas)
@@ -445,7 +443,8 @@ export default {
           const savedStrokeStyle = context.fillStyle
           context.font = 'Roboto'
           context.fillStyle = '#273746'
-          context.fillText(bar.label, bar.x, bar.y - this.barPaddingY / 2)
+          context.fillText(bar.x, bar.x, bar.y - this.barPaddingY / 2)
+          context.fillText(bar.width, bar.x, bar.y - this.barPaddingY * 2)
           context.fillStyle = savedStrokeStyle
         }
       }
@@ -498,15 +497,17 @@ export default {
 
       clearInterval(this.animationInterval)
 
-      const startTime = moment(this.startTime)
-      const endTime = this.endTime ? moment(this.endTime) : new moment()
+      const startTime = new Date(this.startTime)
+      const endTime = this.endTime
+        ? new Date(this.endTime)
+        : Date.now().toString()
 
       this.x.domain([startTime, endTime])
       this.x.range([25, this.width - 50])
 
       if (this.live) {
         this.animationInterval = setInterval(() => {
-          const t = new moment()
+          const t = Date.now().toString()
           this.x.domain([startTime, t])
 
           this.drawXAxis()
@@ -577,12 +578,9 @@ export default {
         .duration(this.animationDuration)
         .call(xAxis)
 
-      this.xAxisGroup
-        .select('.axis')
-        .selectAll('text')
-        .attr('text-anchor', (d, i, arr) => {
-          return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
-        })
+      this.xAxisGroup.selectAll('text').attr('text-anchor', (d, i, arr) => {
+        return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
+      })
     },
     async drawYAxis() {
       const yAxis = d3.axisRight(this.y)
