@@ -443,8 +443,7 @@ export default {
           const savedStrokeStyle = context.fillStyle
           context.font = 'Roboto'
           context.fillStyle = '#273746'
-          context.fillText(bar.x, bar.x, bar.y - this.barPaddingY / 2)
-          context.fillText(bar.width, bar.x, bar.y - this.barPaddingY * 2)
+          context.fillText(bar.label, bar.x, bar.y - this.barPaddingY / 2)
           context.fillStyle = savedStrokeStyle
         }
       }
