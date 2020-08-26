@@ -10,7 +10,7 @@ const state = {
   connectionMessage: null,
   connectionTimeout: null,
   releaseTimestamp: null,
-  apiMode: 'normal',
+  apiMode: null,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
   serverUrl:
