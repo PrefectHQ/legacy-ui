@@ -246,12 +246,19 @@ export default {
             <span v-else-if="connecting">Connecting</span>
             <span v-else>Couldn't connect</span>
             to <span class="font-weight-bold">{{ url }}</span> <br /><br />
-            <span v-if="apiMode != 'normal'"
-              >Prefect Cloud is temporarily in maintenance mode for routine
-              servicing - during this time, no new runs will be released to your
-              Agents and state updates may be delayed.</span
-            >
           </p>
+          <v-alert
+            v-if="apiMode != 'normal'"
+            border="left"
+            colored-border
+            class="text-body-2"
+            type="warning"
+            tile
+          >
+            Prefect Cloud is temporarily in maintenance mode for routine
+            servicing - during this time, no new runs will be released to your
+            Agents and state updates may be delayed.
+          </v-alert>
         </v-card-text>
         <v-card-actions class="pt-0">
           <v-spacer></v-spacer>
