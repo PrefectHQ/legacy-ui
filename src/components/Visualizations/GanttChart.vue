@@ -161,7 +161,7 @@ export default {
         if (this.items?.length === 0) {
           console.info('No items were passed to the Gantt Chart component')
         }
-        this.resize()
+        this.resizeChart()
         this.update()
       }, 500)
     },
@@ -490,7 +490,6 @@ export default {
 
       this.svg
         .attr('viewbox', `0 0 ${width} ${height}`)
-        .attr('transform', 'translate(25)')
         .attr('width', width)
         .attr('height', height)
 
@@ -588,9 +587,18 @@ export default {
         .duration(this.animationDuration)
         .call(xAxis)
 
-      this.xAxisGroup.selectAll('text').attr('text-anchor', (d, i, arr) => {
-        return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
-      })
+      this.xAxisGroup
+        .selectAll('line')
+        .filter((d, i) => i % 2 !== 0)
+        .style('color', '#eee')
+        .style('y2', -25)
+
+      this.xAxisGroup
+        .selectAll('text')
+        .style('opacity', (d, i) => (i % 2 === 0 ? 1 : 0))
+        .attr('text-anchor', (d, i, arr) => {
+          return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
+        })
     },
     async drawYAxis() {
       const yAxis = d3.axisRight(this.y)

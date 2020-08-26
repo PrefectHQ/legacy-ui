@@ -205,7 +205,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile style="max-height: 80vh;">
+  <v-card class="pa-2 mt-2 mb-16" tile>
     <v-system-bar :color="flowRun.state" :height="5" absolute />
 
     <CardTitle title="Gantt Chart" icon="pi-gantt">
