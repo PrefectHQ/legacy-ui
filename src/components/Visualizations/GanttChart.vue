@@ -104,12 +104,10 @@ export default {
       // Misc
       animationDuration: 500,
       animationInterval: null,
-      barHeight: 35,
+      barMaxHeight: 35,
+      barMinHeight: 10,
       barWidth: 25,
       barPaddingY: 10,
-      containerStyle: {
-        height: this.chartHeight
-      },
       easing: 'easePolyInOut',
       hovered: null,
       xAxisGridlinesGroup: null,
@@ -118,6 +116,12 @@ export default {
     }
   },
   computed: {
+    containerStyle() {
+      return {
+        height:
+          this.items?.length * (this.barMinHeight + this.barPaddingY) + 'px'
+      }
+    },
     hoveredId() {
       return this.hovered?.id
     },
@@ -246,8 +250,10 @@ export default {
     _renderCanvas() {
       cancelAnimationFrame(this.drawCanvas)
 
-      const height = this.barHeight - this.barPaddingY
-      // const height = this.y.bandwidth()
+      const height =
+        this.y.bandwidth() > this.barMaxHeight
+          ? this.barMaxHeight
+          : this.y.bandwidth()
 
       const calcBar = item => {
         const x = item.start_time ? this.x(new Date(item.start_time)) : 0
@@ -441,9 +447,12 @@ export default {
 
         if (bar.label) {
           const savedStrokeStyle = context.fillStyle
-          context.font = 'Roboto'
+          context.font = `${
+            bar.height > this.barMinHeight ? this.barMinHeight : bar.height / 2
+          }px Roboto`
           context.fillStyle = '#273746'
-          context.fillText(bar.label, bar.x, bar.y - this.barPaddingY / 2)
+          context.textBaseline = 'middle'
+          context.fillText(bar.label, bar.x + 2, bar.y + bar.height / 2)
           context.fillStyle = savedStrokeStyle
         }
       }
