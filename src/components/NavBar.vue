@@ -245,7 +245,12 @@ export default {
             <span v-if="connected">Connected</span>
             <span v-else-if="connecting">Connecting</span>
             <span v-else>Couldn't connect</span>
-            to <span class="font-weight-bold">{{ url }}</span>
+            to <span class="font-weight-bold">{{ url }}</span> <br /><br />
+            <span v-if="apiMode != 'normal'"
+              >Prefect Cloud is temporarily in maintenance mode for routine
+              servicing - during this time, no new runs will be released to your
+              Agents and state updates may be delayed.</span
+            >
           </p>
         </v-card-text>
         <v-card-actions class="pt-0">
