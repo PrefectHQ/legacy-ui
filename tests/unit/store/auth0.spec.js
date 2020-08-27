@@ -884,102 +884,102 @@ describe('Auth0 Vuex Module', () => {
       })
     })
 
-    // describe('updateAuthentication', () => {
-    //   beforeEach(() => {
-    //     store = new Vuex.Store({
-    //       state: auth0.state,
-    //       getters: auth0.getters,
-    //       actions: auth0.actions,
-    //       mutations: auth0.mutations
-    //     })
+    describe('updateAuthentication', () => {
+      beforeEach(() => {
+        store = new Vuex.Store({
+          state: auth0.state,
+          getters: auth0.getters,
+          actions: auth0.actions,
+          mutations: auth0.mutations
+        })
 
-    //     isAuthenticated.mockReturnValue(false)
+        isAuthenticated.mockReturnValue(false)
 
-    //     let user = loggedInState().user
-    //     getUser.mockReturnValue(user)
+        let user = loggedInState().user
+        getUser.mockReturnValue(user)
 
-    //     getIdTokenClaims.mockReturnValue({
-    //       __raw: MOCK_ID_TOKEN
-    //     })
-    //   })
+        getIdTokenClaims.mockReturnValue({
+          __raw: MOCK_ID_TOKEN
+        })
+      })
 
-    //   afterEach(() => {
-    //     isAuthenticated.mockReset()
-    //     getUser.mockReset()
-    //     getIdTokenClaims.mockReset()
-    //     getTokenSilently.mockReset()
-    //   })
+      afterEach(() => {
+        isAuthenticated.mockReset()
+        getUser.mockReset()
+        getIdTokenClaims.mockReset()
+        getTokenSilently.mockReset()
+      })
 
-    //   it('checks authentication once and returns if user is authenticated', async () => {
-    //     isAuthenticated.mockReset()
-    //     isAuthenticated.mockReturnValueOnce(true)
+      it('checks authentication once and returns if user is authenticated', async () => {
+        isAuthenticated.mockReset()
+        isAuthenticated.mockReturnValueOnce(true)
 
-    //     await store.dispatch('updateAuthentication')
+        await store.dispatch('updateAuthentication')
 
-    //     expect(isAuthenticated).toHaveBeenCalledTimes(1)
-    //   })
+        expect(isAuthenticated).toHaveBeenCalledTimes(1)
+      })
 
-    //   it('checks authentication twice if user is not authenticated', async () => {
-    //     await store.dispatch('updateAuthentication')
+      it('checks authentication twice if user is not authenticated', async () => {
+        await store.dispatch('updateAuthentication')
 
-    //     expect(isAuthenticated).toHaveBeenCalledTimes(2)
-    //   })
+        expect(isAuthenticated).toHaveBeenCalledTimes(2)
+      })
 
-    //   it('calls getTokenSilently when not authenticated', async () => {
-    //     await store.dispatch('updateAuthentication')
+      it('calls getTokenSilently when not authenticated', async () => {
+        await store.dispatch('updateAuthentication')
 
-    //     expect(getTokenSilently).toHaveBeenCalled()
-    //   })
+        expect(getTokenSilently).toHaveBeenCalled()
+      })
 
-    //   it('calls getUser', async () => {
-    //     await store.dispatch('updateAuthentication')
+      it('calls getUser', async () => {
+        await store.dispatch('updateAuthentication')
 
-    //     expect(getUser).toHaveBeenCalled()
-    //   })
+        expect(getUser).toHaveBeenCalled()
+      })
 
-    //   it('commits the results of getUser', async () => {
-    //     store.commit('unsetUser')
-    //     expect(store.getters['user']).toBe(null)
+      it('commits the results of getUser', async () => {
+        store.commit('unsetUser')
+        expect(store.getters['user']).toBe(null)
 
-    //     let user = loggedInState().user
-    //     await store.dispatch('updateAuthentication')
-    //     expect(store.getters['user']).toStrictEqual(user)
-    //   })
+        let user = loggedInState().user
+        await store.dispatch('updateAuthentication')
+        expect(store.getters['user']).toStrictEqual(user)
+      })
 
-    //   it('commits new idToken', async () => {
-    //     store.commit('idToken', MOCK_ID_TOKEN)
-    //     expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
+      it('commits new idToken', async () => {
+        store.commit('idToken', MOCK_ID_TOKEN)
+        expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
 
-    //     getIdTokenClaims.mockReset()
-    //     getIdTokenClaims.mockReturnValueOnce({
-    //       __raw: MOCK_ID_TOKEN_2
-    //     })
+        getIdTokenClaims.mockReset()
+        getIdTokenClaims.mockReturnValueOnce({
+          __raw: MOCK_ID_TOKEN_2
+        })
 
-    //     await store.dispatch('updateAuthentication')
+        await store.dispatch('updateAuthentication')
 
-    //     expect(getIdTokenClaims).toHaveBeenCalledTimes(1)
-    //     expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN_2)
-    //   })
-    // })
+        expect(getIdTokenClaims).toHaveBeenCalledTimes(1)
+        expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN_2)
+      })
+    })
 
-    // describe('updateAuthorization', () => {
-    //   it('commits the authorization data', async () => {
-    //     store.dispatch('updateAuthorization', MOCK_PREFECT_AUTH_PAYLOAD)
+    describe('updateAuthorization', () => {
+      it('commits the authorization data', async () => {
+        store.dispatch('updateAuthorization', MOCK_PREFECT_AUTH_PAYLOAD)
 
-    //     expect(store.getters['authorizationToken']).toBe(
-    //       MOCK_PREFECT_AUTH_PAYLOAD.accessToken
-    //     )
-    //     expect(store.getters['refreshToken']).toBe(
-    //       MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
-    //     )
-    //     expect(store.getters['authorizationTokenExpiry']).toBe(
-    //       new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
-    //     )
-    //     expect(store.getters['refreshTokenExpiry']).toBe(
-    //       jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
-    //     )
-    //   })
-    // })
+        expect(store.getters['authorizationToken']).toBe(
+          MOCK_PREFECT_AUTH_PAYLOAD.access_token
+        )
+        expect(store.getters['refreshToken']).toBe(
+          MOCK_PREFECT_AUTH_PAYLOAD.refresh_token
+        )
+        expect(store.getters['authorizationTokenExpiry']).toBe(
+          new Date(MOCK_PREFECT_AUTH_PAYLOAD.expires_at).getTime()
+        )
+        expect(store.getters['refreshTokenExpiry']).toBe(
+          jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refresh_token).exp * 1000
+        )
+      })
+    })
 
     // describe('login', () => {
     //   it('calls the loginWithRedirect method', async () => {
