@@ -1,4 +1,12 @@
-import { createAuth0Client } from '@auth0/auth0-spa-js'
+import {
+  handleRedirectCallback,
+  isAuthenticated,
+  getUser,
+  getIdTokenClaims,
+  getTokenSilently,
+  loginWithRedirect,
+  logout
+} from '@auth0/auth0-spa-js'
 jest.mock('@auth0/auth0-spa-js')
 
 import auth0 from '@/store/auth0'
@@ -643,454 +651,451 @@ describe('Auth0 Vuex Module', () => {
     })
   })
 
-  //   describe('Actions', () => {
-  //     let store
-
-  //     beforeEach(() => {
-  //       store = new Vuex.Store({
-  //         state: auth0.state,
-  //         getters: auth0.getters,
-  //         actions: auth0.actions,
-  //         mutations: auth0.mutations
-  //       })
-
-  //       handleRedirectCallback.mockClear()
-  //       isAuthenticated.mockClear()
-  //       loginWithRedirect.mockClear()
-  //       getUser.mockClear()
-  //       getIdTokenClaims.mockClear()
-  //     })
-
-  //     // Having a hard time testing this constructor
-  //     // ... the class is definitely mocked
-  //     // but unclear how to spy on its implementation while still
-  //     // returning functions correctly
-  //     // describe('initAuth0', () => {
-  //     //   it('calls the createAuth0Client method', async () => {
-  //     //     // jest.mock('@auth0/auth0-spa-js', () => jest.fn())
-
-  //     //     // const auth0Client = await createAuth0Client()
-  //     //     // console.log(auth0Client)
-  //     //     // const createAuth0ClientSpy = jest.spyOn(createAuth0Client, '__exists')
-  //     //     await store.dispatch('initAuth0')
-  //     //     expect(createAuth0Client).toHaveBeenCalled()
-  //     //   })
-  //     // })
-  //     describe('authenticate', () => {
-  //       it('calls the isAuthenticated method', async () => {
-  //         await store.dispatch('authenticate')
-  //         expect(isAuthenticated).toHaveBeenCalled()
-  //       })
-
-  //       it('correctly returns the value of isAuthenticated', async () => {
-  //         let authenticateResult
-  //         isAuthenticated.mockReturnValueOnce(false)
-  //         authenticateResult = await store.dispatch('authenticate')
-  //         expect(authenticateResult).toBe(false)
-
-  //         isAuthenticated.mockReturnValueOnce(true)
-  //         authenticateResult = await store.dispatch('authenticate')
-  //         expect(authenticateResult).toBe(true)
-  //       })
-
-  //       it('dispatches the login action if isAuthenticated returns false', async () => {
-  //         isAuthenticated.mockReturnValueOnce(false)
-  //         await store.dispatch('authenticate')
-  //         expect(loginWithRedirect).toHaveBeenCalledWith({})
-  //       })
-
-  //       it('does not dispatch the login action if isAuthenticated returns true', async () => {
-  //         isAuthenticated.mockReturnValueOnce(true)
-  //         await store.dispatch('authenticate')
-  //         expect(loginWithRedirect).not.toHaveBeenCalled()
-  //       })
-
-  //       it('calls the redirect callback when "code=" is present in the URL', async () => {
-  //         delete window.location
-  //         window.location = { search: 'code=' }
-
-  //         await store.dispatch('authenticate')
-  //         expect(handleRedirectCallback).toHaveBeenCalled()
-  //       })
-
-  //       it('sets the redirect route when one is present in the URL and not in the store', async () => {
-  //         isAuthenticated.mockReturnValueOnce(false)
-  //         await store.dispatch('removeRedirectRoute')
-
-  //         let redirectRoute = '/path/to/some/place'
-
-  //         delete window.location
-  //         window.location = { pathname: redirectRoute, search: '' }
-
-  //         expect(store.getters['redirectRoute']).toBe(null)
-  //         await store.dispatch('authenticate')
-  //         expect(store.getters['redirectRoute']).toBe(redirectRoute)
-  //       })
-
-  //       it('does not set the redirect route when one is present in the store', async () => {
-  //         isAuthenticated.mockReturnValueOnce(false)
-
-  //         let redirectRoute = '/path/to/some/place',
-  //           otherRedirectRoute = '/path/to/some/other/place'
-  //         await store.dispatch('setRedirectRoute', redirectRoute)
-  //         expect(store.getters['redirectRoute']).toBe(redirectRoute)
-
-  //         delete window.location
-  //         window.location = { pathname: otherRedirectRoute, search: '' }
-
-  //         await store.dispatch('authenticate')
-  //         expect(store.getters['redirectRoute']).not.toBe(otherRedirectRoute)
-  //       })
-  //     })
-
-  //     describe('authorize', () => {
-  //       describe('user', () => {
-  //         beforeEach(() => {
-  //           getIdTokenClaims.mockReturnValueOnce({
-  //             __raw: MOCK_ID_TOKEN
-  //           })
-
-  //           prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-  //           LogRocket.identify.mockReset()
-  //         })
-
-  //         it('is retrieved from the auth0Client', async () => {
-  //           await store.dispatch('authorize')
-  //           expect(getUser).toHaveBeenCalled()
-  //         })
-
-  //         it('is stored', async () => {
-  //           let user = loggedInState().user
-  //           getUser.mockReturnValueOnce(user)
-  //           await store.dispatch('authorize')
-  //           expect(store.getters['user']).toBe(user)
-  //         })
-
-  //         it('is reported to logrocket it exists', async () => {
-  //           getUser.mockReturnValueOnce(loggedInState().user)
-  //           await store.dispatch('authorize')
-  //           expect(LogRocket.identify).toHaveBeenCalled()
-  //         })
-  //       })
-
-  //       describe('idToken', () => {
-  //         beforeEach(() => {
-  //           prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-  //         })
-
-  //         it('is stored', () => {
-  //           getIdTokenClaims.mockReturnValueOnce({
-  //             __raw: MOCK_ID_TOKEN
-  //           })
-
-  //           expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
-  //         })
-  //       })
-
-  //       describe('idTokenExpiry', () => {
-  //         beforeEach(() => {
-  //           prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-  //         })
-
-  //         it('is stored', () => {
-  //           getIdTokenClaims.mockReturnValueOnce({
-  //             __raw: MOCK_ID_TOKEN
-  //           })
-
-  //           expect(store.getters['idTokenExpiry']).toBe(
-  //             jwt_decode(MOCK_ID_TOKEN).exp * 1000
-  //           )
-  //         })
-  //       })
-
-  //       describe('prefectAuthorization', () => {
-  //         beforeEach(() => {
-  //           getIdTokenClaims.mockReturnValueOnce({
-  //             __raw: MOCK_ID_TOKEN
-  //           })
-
-  //           prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-
-  //           LogRocket.identify.mockReset()
-  //         })
-
-  //         it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
-  //           await store.dispatch('authorize')
-
-  //           expect(prefectAuth).toHaveBeenCalledWith(MOCK_ID_TOKEN)
-  //         })
-
-  //         it('is stored', async () => {
-  //           await store.dispatch('authorize')
-
-  //           expect(store.getters['authorizationToken']).toBe(
-  //             MOCK_PREFECT_AUTH_PAYLOAD.accessToken
-  //           )
-  //           expect(store.getters['refreshToken']).toBe(
-  //             MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
-  //           )
-  //           expect(store.getters['authorizationTokenExpiry']).toBe(
-  //             new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
-  //           )
-  //           expect(store.getters['refreshTokenExpiry']).toBe(
-  //             jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
-  //           )
-  //         })
-  //       })
-  //     })
-
-  //     describe('refreshAuthorization', () => {
-  //       describe('prefectAuthorization', () => {
-  //         beforeEach(() => {
-  //           getIdTokenClaims.mockReturnValueOnce({
-  //             __raw: MOCK_ID_TOKEN
-  //           })
-
-  //           prefectRefresh.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-
-  //           LogRocket.identify.mockReset()
-
-  //           store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
-  //         })
-
-  //         it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
-  //           store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
-  //           await store.dispatch('refreshAuthorization')
-
-  //           expect(prefectRefresh).toHaveBeenCalledWith(MOCK_AUTHORIZATION_TOKEN)
-  //         })
-
-  //         it('is stored', async () => {
-  //           await store.dispatch('refreshAuthorization')
-
-  //           expect(store.getters['authorizationToken']).toBe(
-  //             MOCK_PREFECT_AUTH_PAYLOAD.accessToken
-  //           )
-  //           expect(store.getters['refreshToken']).toBe(
-  //             MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
-  //           )
-  //           expect(store.getters['authorizationTokenExpiry']).toBe(
-  //             new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
-  //           )
-  //           expect(store.getters['refreshTokenExpiry']).toBe(
-  //             jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
-  //           )
-  //         })
-  //       })
-  //     })
-
-  //     describe('updateAuthentication', () => {
-  //       beforeEach(() => {
-  //         store = new Vuex.Store({
-  //           state: auth0.state,
-  //           getters: auth0.getters,
-  //           actions: auth0.actions,
-  //           mutations: auth0.mutations
-  //         })
-
-  //         isAuthenticated.mockReturnValue(false)
-
-  //         let user = loggedInState().user
-  //         getUser.mockReturnValue(user)
-
-  //         getIdTokenClaims.mockReturnValue({
-  //           __raw: MOCK_ID_TOKEN
-  //         })
-  //       })
-
-  //       afterEach(() => {
-  //         isAuthenticated.mockReset()
-  //         getUser.mockReset()
-  //         getIdTokenClaims.mockReset()
-  //         getTokenSilently.mockReset()
-  //       })
-
-  //       it('checks authentication once and returns if user is authenticated', async () => {
-  //         isAuthenticated.mockReset()
-  //         isAuthenticated.mockReturnValueOnce(true)
-
-  //         await store.dispatch('updateAuthentication')
-
-  //         expect(isAuthenticated).toHaveBeenCalledTimes(1)
-  //       })
-
-  //       it('checks authentication twice if user is not authenticated', async () => {
-  //         await store.dispatch('updateAuthentication')
-
-  //         expect(isAuthenticated).toHaveBeenCalledTimes(2)
-  //       })
-
-  //       it('calls getTokenSilently when not authenticated', async () => {
-  //         await store.dispatch('updateAuthentication')
-
-  //         expect(getTokenSilently).toHaveBeenCalled()
-  //       })
-
-  //       it('calls getUser', async () => {
-  //         await store.dispatch('updateAuthentication')
-
-  //         expect(getUser).toHaveBeenCalled()
-  //       })
-
-  //       it('commits the results of getUser', async () => {
-  //         store.commit('unsetUser')
-  //         expect(store.getters['user']).toBe(null)
-
-  //         let user = loggedInState().user
-  //         await store.dispatch('updateAuthentication')
-  //         expect(store.getters['user']).toStrictEqual(user)
-  //       })
-
-  //       it('commits new idToken', async () => {
-  //         store.commit('idToken', MOCK_ID_TOKEN)
-  //         expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
-
-  //         getIdTokenClaims.mockReset()
-  //         getIdTokenClaims.mockReturnValueOnce({
-  //           __raw: MOCK_ID_TOKEN_2
-  //         })
-
-  //         await store.dispatch('updateAuthentication')
-
-  //         expect(getIdTokenClaims).toHaveBeenCalledTimes(1)
-  //         expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN_2)
-  //       })
-  //     })
-
-  //     describe('updateAuthorization', () => {
-  //       it('commits the authorization data', async () => {
-  //         store.dispatch('updateAuthorization', MOCK_PREFECT_AUTH_PAYLOAD)
-
-  //         expect(store.getters['authorizationToken']).toBe(
-  //           MOCK_PREFECT_AUTH_PAYLOAD.accessToken
-  //         )
-  //         expect(store.getters['refreshToken']).toBe(
-  //           MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
-  //         )
-  //         expect(store.getters['authorizationTokenExpiry']).toBe(
-  //           new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
-  //         )
-  //         expect(store.getters['refreshTokenExpiry']).toBe(
-  //           jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
-  //         )
-  //       })
-  //     })
-
-  //     describe('login', () => {
-  //       it('calls the loginWithRedirect method', async () => {
-  //         await store.dispatch('login')
-  //         expect(loginWithRedirect).toHaveBeenCalledWith({})
-  //       })
-  //     })
-
-  //     describe('logout', () => {
-  //       it('removes the redirect route from localStorage', async () => {
-  //         let redirectRoute = '/before/logging/out/redirect'
-  //         await store.dispatch('setRedirectRoute', redirectRoute)
-
-  //         expect(localStorage.getItem('redirectRoute')).toBe(redirectRoute)
-
-  //         await store.dispatch('logout')
-  //         expect(localStorage.getItem('redirectRoute')).toBeFalsy()
-  //       })
-
-  //       it('calls the logout method', async () => {
-  //         await store.dispatch('logout')
-  //         expect(logout).toHaveBeenCalledWith({})
-  //       })
-  //     })
-
-  //     describe('setRedirectRoute', () => {
-  //       it('sets the redirectRoute', () => {
-  //         let somePath = '/some/path'
-  //         store.dispatch('setRedirectRoute', somePath)
-  //         expect(store.getters['redirectRoute']).toBe(somePath)
-  //       })
-  //     })
-
-  //     describe('removeRedirectRoute', () => {
-  //       it('removes the redirectRoute', () => {
-  //         let somePath = '/some/path'
-  //         store.dispatch('setRedirectRoute', somePath)
-  //         expect(store.getters['redirectRoute']).toBe(somePath)
-
-  //         store.dispatch('removeRedirectRoute')
-  //         expect(store.getters['redirectRoute']).toBe(null)
-  //       })
-  //     })
-
-  //     describe('reportUserToLogRocket', () => {
-  //       beforeEach(() => {
-  //         store = new Vuex.Store({
-  //           state: loggedOutState(),
-  //           getters: auth0.getters,
-  //           actions: auth0.actions,
-  //           mutations: auth0.mutations
-  //         })
-
-  //         LogRocket.identify.mockReset()
-  //       })
-
-  //       it('calls the LogRocket identify method if a user is set', () => {
-  //         let user = loggedInState().user
-  //         store.commit('user', user)
-
-  //         store.dispatch('reportUserToLogRocket')
-
-  //         expect(LogRocket.identify).toHaveBeenCalled()
-  //       })
-
-  //       it('does not call the LogRocket identify method if a user is not set', () => {
-  //         store.dispatch('reportUserToLogRocket')
-
-  //         store.commit('unsetUser')
-
-  //         expect(store.getters['user']).toBe(null)
-
-  //         expect(LogRocket.identify).not.toHaveBeenCalled()
-  //       })
-  //     })
-  //   })
-  // })
-
-  // describe('prefectAuthorization with a non white-listed token', () => {
-  //   beforeEach(() => {
-  //     const store = new Vuex.Store({
-  //       state: auth0.state,
-  //       getters: auth0.getters,
-  //       actions: auth0.actions,
-  //       mutations: auth0.mutations
-  //     })
-
-  //     prefectAuth.mockReturnValueOnce(null)
-
-  //     it('is not stored', async () => {
-  //       await store.dispatch('authorize')
-  //       expect(store.getters['authorizationToken']).toBe(null)
-  //       expect(store.getters['refreshToken']).toBe(null)
-  //       expect(store.getters['authorizationTokenExpiry']).toBe(null)
-  //       expect(store.getters['refreshTokenExpiry']).toBe(null)
-  //     })
-  //   })
-  // })
-
-  // describe('a user comes from an email invite link', () => {
-  //   let store
-
-  //   beforeEach(() => {
-  //     store = new Vuex.Store({
-  //       state: auth0.state,
-  //       getters: auth0.getters,
-  //       actions: auth0.actions,
-  //       mutations: auth0.mutations
-  //     })
-  //     isAuthenticated.mockReturnValue(false)
-  //   })
-  //   delete window.location
-  //   window.location = { search: '?invitation_id=xyz' }
-
-  //   it('stores the invitation id in local storage', async () => {
-  //     await store.dispatch('authenticate')
-  //     expect(localStorage.getItem('invitationId')).toBe('xyz')
-  //   })
+  describe('Actions', () => {
+    let store
+
+    beforeEach(() => {
+      store = new Vuex.Store({
+        state: auth0.state,
+        getters: auth0.getters,
+        actions: auth0.actions,
+        mutations: auth0.mutations
+      })
+
+      handleRedirectCallback.mockClear()
+      isAuthenticated.mockClear()
+      loginWithRedirect.mockClear()
+      getUser.mockClear()
+      getIdTokenClaims.mockClear()
+    })
+
+    // Having a hard time testing this constructor
+    // ... the class is definitely mocked
+    // but unclear how to spy on its implementation while still
+    // returning functions correctly
+    // describe('initAuth0', () => {
+    //   it('calls the createAuth0Client method', async () => {
+    //     // jest.mock('@auth0/auth0-spa-js', () => jest.fn())
+
+    //     // const auth0Client = await createAuth0Client()
+    //     // console.log(auth0Client)
+    //     // const createAuth0ClientSpy = jest.spyOn(createAuth0Client, '__exists')
+    //     await store.dispatch('initAuth0')
+    //     expect(createAuth0Client).toHaveBeenCalled()
+    //   })
+    // })
+    describe('authenticate', () => {
+      it('calls the isAuthenticated method', async () => {
+        await store.dispatch('authenticate')
+        expect(isAuthenticated).toHaveBeenCalled()
+      })
+
+      it('correctly returns the value of isAuthenticated', async () => {
+        let authenticateResult
+        isAuthenticated.mockReturnValueOnce(false).mockReturnValueOnce(false)
+        authenticateResult = await store.dispatch('authenticate')
+        expect(authenticateResult).toBe(false)
+
+        //need this twice as isAuthenticated is called twice
+        isAuthenticated.mockReturnValueOnce(true).mockReturnValueOnce(true)
+        authenticateResult = await store.dispatch('authenticate')
+        expect(store.getters.isAuthenticated).toBe(true)
+        expect(authenticateResult).toBe(true)
+      })
+      //This now uses a timeout - check is timeout called?
+
+      it('gets a token siliently if isAuthenticated returns false', async () => {
+        isAuthenticated.mockReturnValueOnce(false).mockReturnValueOnce(false)
+        await store.dispatch('authenticate')
+        expect(getTokenSilently).toHaveBeenCalled()
+      })
+
+      it('calls the redirect callback when "code=" is present in the URL', async () => {
+        delete window.location
+        window.location = { search: 'code=' }
+
+        await store.dispatch('authenticate')
+        expect(handleRedirectCallback).toHaveBeenCalled()
+      })
+
+      it('sets the redirect route when one is present in the URL and not in the store', async () => {
+        isAuthenticated.mockReturnValueOnce(false)
+        await store.dispatch('removeRedirectRoute')
+
+        let redirectRoute = '/path/to/some/place'
+
+        delete window.location
+        window.location = { pathname: redirectRoute, search: '' }
+
+        expect(store.getters['redirectRoute']).toBe(null)
+        await store.dispatch('authenticate')
+        expect(store.getters['redirectRoute']).toBe(redirectRoute)
+      })
+
+      it('does not set the redirect route when one is present in the store', async () => {
+        isAuthenticated.mockReturnValueOnce(false)
+
+        let redirectRoute = '/path/to/some/place',
+          otherRedirectRoute = '/path/to/some/other/place'
+        await store.dispatch('setRedirectRoute', redirectRoute)
+        expect(store.getters['redirectRoute']).toBe(redirectRoute)
+
+        delete window.location
+        window.location = { pathname: otherRedirectRoute, search: '' }
+
+        await store.dispatch('authenticate')
+        expect(store.getters['redirectRoute']).not.toBe(otherRedirectRoute)
+      })
+    })
+
+    // describe('authorize', () => {
+    //   describe('user', () => {
+    //     beforeEach(() => {
+    //       getIdTokenClaims.mockReturnValueOnce({
+    //         __raw: MOCK_ID_TOKEN
+    //       })
+
+    //       prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+    //       LogRocket.identify.mockReset()
+    //     })
+
+    //     it('is retrieved from the auth0Client', async () => {
+    //       await store.dispatch('authorize')
+    //       expect(getUser).toHaveBeenCalled()
+    //     })
+
+    //     it('is stored', async () => {
+    //       let user = loggedInState().user
+    //       getUser.mockReturnValueOnce(user)
+    //       await store.dispatch('authorize')
+    //       expect(store.getters['user']).toBe(user)
+    //     })
+
+    //     it('is reported to logrocket it exists', async () => {
+    //       getUser.mockReturnValueOnce(loggedInState().user)
+    //       await store.dispatch('authorize')
+    //       expect(LogRocket.identify).toHaveBeenCalled()
+    //     })
+    //   })
+
+    //   describe('idToken', () => {
+    //     beforeEach(() => {
+    //       prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+    //     })
+
+    //     it('is stored', () => {
+    //       getIdTokenClaims.mockReturnValueOnce({
+    //         __raw: MOCK_ID_TOKEN
+    //       })
+
+    //       expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
+    //     })
+    //   })
+
+    //   describe('idTokenExpiry', () => {
+    //     beforeEach(() => {
+    //       prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+    //     })
+
+    //     it('is stored', () => {
+    //       getIdTokenClaims.mockReturnValueOnce({
+    //         __raw: MOCK_ID_TOKEN
+    //       })
+
+    //       expect(store.getters['idTokenExpiry']).toBe(
+    //         jwt_decode(MOCK_ID_TOKEN).exp * 1000
+    //       )
+    //     })
+    //   })
+
+    //   describe('prefectAuthorization', () => {
+    //     beforeEach(() => {
+    //       getIdTokenClaims.mockReturnValueOnce({
+    //         __raw: MOCK_ID_TOKEN
+    //       })
+
+    //       prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+
+    //       LogRocket.identify.mockReset()
+    //     })
+
+    //     it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
+    //       await store.dispatch('authorize')
+
+    //       expect(prefectAuth).toHaveBeenCalledWith(MOCK_ID_TOKEN)
+    //     })
+
+    //     it('is stored', async () => {
+    //       await store.dispatch('authorize')
+
+    //       expect(store.getters['authorizationToken']).toBe(
+    //         MOCK_PREFECT_AUTH_PAYLOAD.accessToken
+    //       )
+    //       expect(store.getters['refreshToken']).toBe(
+    //         MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
+    //       )
+    //       expect(store.getters['authorizationTokenExpiry']).toBe(
+    //         new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
+    //       )
+    //       expect(store.getters['refreshTokenExpiry']).toBe(
+    //         jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
+    //       )
+    //     })
+    //   })
+    // })
+
+    // describe('refreshAuthorization', () => {
+    //   describe('prefectAuthorization', () => {
+    //     beforeEach(() => {
+    //       getIdTokenClaims.mockReturnValueOnce({
+    //         __raw: MOCK_ID_TOKEN
+    //       })
+
+    //       prefectRefresh.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+
+    //       LogRocket.identify.mockReset()
+
+    //       store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    //     })
+
+    //     it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
+    //       store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    //       await store.dispatch('refreshAuthorization')
+
+    //       expect(prefectRefresh).toHaveBeenCalledWith(MOCK_AUTHORIZATION_TOKEN)
+    //     })
+
+    //     it('is stored', async () => {
+    //       await store.dispatch('refreshAuthorization')
+
+    //       expect(store.getters['authorizationToken']).toBe(
+    //         MOCK_PREFECT_AUTH_PAYLOAD.accessToken
+    //       )
+    //       expect(store.getters['refreshToken']).toBe(
+    //         MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
+    //       )
+    //       expect(store.getters['authorizationTokenExpiry']).toBe(
+    //         new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
+    //       )
+    //       expect(store.getters['refreshTokenExpiry']).toBe(
+    //         jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
+    //       )
+    //     })
+    //   })
+    // })
+
+    // describe('updateAuthentication', () => {
+    //   beforeEach(() => {
+    //     store = new Vuex.Store({
+    //       state: auth0.state,
+    //       getters: auth0.getters,
+    //       actions: auth0.actions,
+    //       mutations: auth0.mutations
+    //     })
+
+    //     isAuthenticated.mockReturnValue(false)
+
+    //     let user = loggedInState().user
+    //     getUser.mockReturnValue(user)
+
+    //     getIdTokenClaims.mockReturnValue({
+    //       __raw: MOCK_ID_TOKEN
+    //     })
+    //   })
+
+    //   afterEach(() => {
+    //     isAuthenticated.mockReset()
+    //     getUser.mockReset()
+    //     getIdTokenClaims.mockReset()
+    //     getTokenSilently.mockReset()
+    //   })
+
+    //   it('checks authentication once and returns if user is authenticated', async () => {
+    //     isAuthenticated.mockReset()
+    //     isAuthenticated.mockReturnValueOnce(true)
+
+    //     await store.dispatch('updateAuthentication')
+
+    //     expect(isAuthenticated).toHaveBeenCalledTimes(1)
+    //   })
+
+    //   it('checks authentication twice if user is not authenticated', async () => {
+    //     await store.dispatch('updateAuthentication')
+
+    //     expect(isAuthenticated).toHaveBeenCalledTimes(2)
+    //   })
+
+    //   it('calls getTokenSilently when not authenticated', async () => {
+    //     await store.dispatch('updateAuthentication')
+
+    //     expect(getTokenSilently).toHaveBeenCalled()
+    //   })
+
+    //   it('calls getUser', async () => {
+    //     await store.dispatch('updateAuthentication')
+
+    //     expect(getUser).toHaveBeenCalled()
+    //   })
+
+    //   it('commits the results of getUser', async () => {
+    //     store.commit('unsetUser')
+    //     expect(store.getters['user']).toBe(null)
+
+    //     let user = loggedInState().user
+    //     await store.dispatch('updateAuthentication')
+    //     expect(store.getters['user']).toStrictEqual(user)
+    //   })
+
+    //   it('commits new idToken', async () => {
+    //     store.commit('idToken', MOCK_ID_TOKEN)
+    //     expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
+
+    //     getIdTokenClaims.mockReset()
+    //     getIdTokenClaims.mockReturnValueOnce({
+    //       __raw: MOCK_ID_TOKEN_2
+    //     })
+
+    //     await store.dispatch('updateAuthentication')
+
+    //     expect(getIdTokenClaims).toHaveBeenCalledTimes(1)
+    //     expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN_2)
+    //   })
+    // })
+
+    // describe('updateAuthorization', () => {
+    //   it('commits the authorization data', async () => {
+    //     store.dispatch('updateAuthorization', MOCK_PREFECT_AUTH_PAYLOAD)
+
+    //     expect(store.getters['authorizationToken']).toBe(
+    //       MOCK_PREFECT_AUTH_PAYLOAD.accessToken
+    //     )
+    //     expect(store.getters['refreshToken']).toBe(
+    //       MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
+    //     )
+    //     expect(store.getters['authorizationTokenExpiry']).toBe(
+    //       new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
+    //     )
+    //     expect(store.getters['refreshTokenExpiry']).toBe(
+    //       jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
+    //     )
+    //   })
+    // })
+
+    // describe('login', () => {
+    //   it('calls the loginWithRedirect method', async () => {
+    //     await store.dispatch('login')
+    //     expect(loginWithRedirect).toHaveBeenCalledWith({})
+    //   })
+    // })
+
+    // describe('logout', () => {
+    //   it('removes the redirect route from localStorage', async () => {
+    //     let redirectRoute = '/before/logging/out/redirect'
+    //     await store.dispatch('setRedirectRoute', redirectRoute)
+
+    //     expect(localStorage.getItem('redirectRoute')).toBe(redirectRoute)
+
+    //     await store.dispatch('logout')
+    //     expect(localStorage.getItem('redirectRoute')).toBeFalsy()
+    //   })
+
+    //   it('calls the logout method', async () => {
+    //     await store.dispatch('logout')
+    //     expect(logout).toHaveBeenCalledWith({})
+    //   })
+    // })
+
+    // describe('setRedirectRoute', () => {
+    //   it('sets the redirectRoute', () => {
+    //     let somePath = '/some/path'
+    //     store.dispatch('setRedirectRoute', somePath)
+    //     expect(store.getters['redirectRoute']).toBe(somePath)
+    //   })
+    // })
+
+    // describe('removeRedirectRoute', () => {
+    //   it('removes the redirectRoute', () => {
+    //     let somePath = '/some/path'
+    //     store.dispatch('setRedirectRoute', somePath)
+    //     expect(store.getters['redirectRoute']).toBe(somePath)
+
+    //     store.dispatch('removeRedirectRoute')
+    //     expect(store.getters['redirectRoute']).toBe(null)
+    //   })
+    // })
+
+    // describe('reportUserToLogRocket', () => {
+    //   beforeEach(() => {
+    //     store = new Vuex.Store({
+    //       state: loggedOutState(),
+    //       getters: auth0.getters,
+    //       actions: auth0.actions,
+    //       mutations: auth0.mutations
+    //     })
+
+    //     LogRocket.identify.mockReset()
+    //   })
+
+    //   it('calls the LogRocket identify method if a user is set', () => {
+    //     let user = loggedInState().user
+    //     store.commit('user', user)
+
+    //     store.dispatch('reportUserToLogRocket')
+
+    //     expect(LogRocket.identify).toHaveBeenCalled()
+    //   })
+
+    //   it('does not call the LogRocket identify method if a user is not set', () => {
+    //     store.dispatch('reportUserToLogRocket')
+
+    //     store.commit('unsetUser')
+
+    //     expect(store.getters['user']).toBe(null)
+
+    //     expect(LogRocket.identify).not.toHaveBeenCalled()
+    //   })
+    // })
+
+    // describe('prefectAuthorization with a non white-listed token', () => {
+    //   beforeEach(() => {
+    //     const store = new Vuex.Store({
+    //       state: auth0.state,
+    //       getters: auth0.getters,
+    //       actions: auth0.actions,
+    //       mutations: auth0.mutations
+    //     })
+
+    //     prefectAuth.mockReturnValueOnce(null)
+
+    //     it('is not stored', async () => {
+    //       await store.dispatch('authorize')
+    //       expect(store.getters['authorizationToken']).toBe(null)
+    //       expect(store.getters['refreshToken']).toBe(null)
+    //       expect(store.getters['authorizationTokenExpiry']).toBe(null)
+    //       expect(store.getters['refreshTokenExpiry']).toBe(null)
+    //     })
+    //   })
+    // })
+
+    // describe('a user comes from an email invite link', () => {
+    //   let store
+
+    //   beforeEach(() => {
+    //     store = new Vuex.Store({
+    //       state: auth0.state,
+    //       getters: auth0.getters,
+    //       actions: auth0.actions,
+    //       mutations: auth0.mutations
+    //     })
+    //     isAuthenticated.mockReturnValue(false)
+    //   })
+    //   delete window.location
+    //   window.location = { search: '?invitation_id=xyz' }
+
+    //   it('stores the invitation id in local storage', async () => {
+    //     await store.dispatch('authenticate')
+    //     expect(localStorage.getItem('invitationId')).toBe('xyz')
+    //   })
+    // })
+  })
 })

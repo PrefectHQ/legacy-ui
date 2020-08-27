@@ -242,6 +242,7 @@ const actions = {
       try {
         await auth0Client.getTokenSilently()
       } catch {
+        commit('isAuthenticated', isAuthenticated)
         await dispatch('login')
       }
     }
