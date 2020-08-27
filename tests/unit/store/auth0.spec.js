@@ -981,12 +981,13 @@ describe('Auth0 Vuex Module', () => {
       })
     })
 
-    // describe('login', () => {
-    //   it('calls the loginWithRedirect method', async () => {
-    //     await store.dispatch('login')
-    //     expect(loginWithRedirect).toHaveBeenCalledWith({})
-    //   })
-    // })
+    describe('login', () => {
+      it('calls the loginWithRedirect method', async () => {
+        await store.dispatch('login')
+        jest.runAllTimers()
+        expect(loginWithRedirect).toHaveBeenCalled()
+      })
+    })
 
     // describe('logout', () => {
     //   it('removes the redirect route from localStorage', async () => {
