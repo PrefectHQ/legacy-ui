@@ -748,65 +748,66 @@ describe('Auth0 Vuex Module', () => {
       })
     })
 
-    // describe('authorize', () => {
-    //   describe('user', () => {
-    //     beforeEach(() => {
-    //       getIdTokenClaims.mockReturnValueOnce({
-    //         __raw: MOCK_ID_TOKEN
-    //       })
+    describe('authorize', () => {
+      describe('user', () => {
+        beforeEach(() => {
+          getIdTokenClaims.mockReturnValueOnce({
+            __raw: MOCK_ID_TOKEN
+          })
 
-    //       prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-    //       LogRocket.identify.mockReset()
-    //     })
+          prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+          LogRocket.identify.mockReset()
+        })
 
-    //     it('is retrieved from the auth0Client', async () => {
-    //       await store.dispatch('authorize')
-    //       expect(getUser).toHaveBeenCalled()
-    //     })
+        it('is retrieved from the auth0Client', async () => {
+          await store.dispatch('authorize')
+          expect(getUser).toHaveBeenCalled()
+        })
 
-    //     it('is stored', async () => {
-    //       let user = loggedInState().user
-    //       getUser.mockReturnValueOnce(user)
-    //       await store.dispatch('authorize')
-    //       expect(store.getters['user']).toBe(user)
-    //     })
+        it('is stored', async () => {
+          let user = loggedInState().user
+          getUser.mockReturnValueOnce(user)
+          await store.dispatch('authorize')
+          expect(store.getters['user']).toBe(user)
+        })
 
-    //     it('is reported to logrocket it exists', async () => {
-    //       getUser.mockReturnValueOnce(loggedInState().user)
-    //       await store.dispatch('authorize')
-    //       expect(LogRocket.identify).toHaveBeenCalled()
-    //     })
-    //   })
+        it('is reported to logrocket it exists', async () => {
+          getUser.mockReturnValueOnce(loggedInState().user)
+          await store.dispatch('authorize')
+          expect(LogRocket.identify).toHaveBeenCalled()
+        })
+      })
 
-    //   describe('idToken', () => {
-    //     beforeEach(() => {
-    //       prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-    //     })
+      describe('idToken', () => {
+        beforeEach(() => {
+          prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+        })
 
-    //     it('is stored', () => {
-    //       getIdTokenClaims.mockReturnValueOnce({
-    //         __raw: MOCK_ID_TOKEN
-    //       })
+        it('is stored', () => {
+          getIdTokenClaims.mockReturnValueOnce({
+            __raw: MOCK_ID_TOKEN
+          })
 
-    //       expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
-    //     })
-    //   })
+          expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
+        })
+      })
 
-    //   describe('idTokenExpiry', () => {
-    //     beforeEach(() => {
-    //       prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-    //     })
+      describe('idTokenExpiry', () => {
+        beforeEach(() => {
+          prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+        })
 
-    //     it('is stored', () => {
-    //       getIdTokenClaims.mockReturnValueOnce({
-    //         __raw: MOCK_ID_TOKEN
-    //       })
+        it('is stored', () => {
+          getIdTokenClaims.mockReturnValueOnce({
+            __raw: MOCK_ID_TOKEN
+          })
 
-    //       expect(store.getters['idTokenExpiry']).toBe(
-    //         jwt_decode(MOCK_ID_TOKEN).exp * 1000
-    //       )
-    //     })
-    //   })
+          expect(store.getters['idTokenExpiry']).toBe(
+            jwt_decode(MOCK_ID_TOKEN).exp * 1000
+          )
+        })
+      })
+    })
 
     //   describe('prefectAuthorization', () => {
     //     beforeEach(() => {
