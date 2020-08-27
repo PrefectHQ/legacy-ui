@@ -844,45 +844,45 @@ describe('Auth0 Vuex Module', () => {
       })
     })
 
-    // describe('refreshAuthorization', () => {
-    //   describe('prefectAuthorization', () => {
-    //     beforeEach(() => {
-    //       getIdTokenClaims.mockReturnValueOnce({
-    //         __raw: MOCK_ID_TOKEN
-    //       })
+    describe('refreshAuthorization', () => {
+      describe('prefectAuthorization', () => {
+        beforeEach(() => {
+          getIdTokenClaims.mockReturnValueOnce({
+            __raw: MOCK_ID_TOKEN
+          })
 
-    //       prefectRefresh.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+          prefectRefresh.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
 
-    //       LogRocket.identify.mockReset()
+          LogRocket.identify.mockReset()
 
-    //       store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
-    //     })
+          store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+        })
 
-    //     it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
-    //       store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
-    //       await store.dispatch('refreshAuthorization')
+        it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
+          store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+          await store.dispatch('refreshAuthorization')
 
-    //       expect(prefectRefresh).toHaveBeenCalledWith(MOCK_AUTHORIZATION_TOKEN)
-    //     })
+          expect(prefectRefresh).toHaveBeenCalledWith(MOCK_AUTHORIZATION_TOKEN)
+        })
 
-    //     it('is stored', async () => {
-    //       await store.dispatch('refreshAuthorization')
+        it('is stored', async () => {
+          await store.dispatch('refreshAuthorization')
 
-    //       expect(store.getters['authorizationToken']).toBe(
-    //         MOCK_PREFECT_AUTH_PAYLOAD.accessToken
-    //       )
-    //       expect(store.getters['refreshToken']).toBe(
-    //         MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
-    //       )
-    //       expect(store.getters['authorizationTokenExpiry']).toBe(
-    //         new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
-    //       )
-    //       expect(store.getters['refreshTokenExpiry']).toBe(
-    //         jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
-    //       )
-    //     })
-    //   })
-    // })
+          expect(store.getters['authorizationToken']).toBe(
+            MOCK_PREFECT_AUTH_PAYLOAD.access_token
+          )
+          expect(store.getters['refreshToken']).toBe(
+            MOCK_PREFECT_AUTH_PAYLOAD.refresh_token
+          )
+          expect(store.getters['authorizationTokenExpiry']).toBe(
+            new Date(MOCK_PREFECT_AUTH_PAYLOAD.expires_at).getTime()
+          )
+          expect(store.getters['refreshTokenExpiry']).toBe(
+            jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refresh_token).exp * 1000
+          )
+        })
+      })
+    })
 
     // describe('updateAuthentication', () => {
     //   beforeEach(() => {
