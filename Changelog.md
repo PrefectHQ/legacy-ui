@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Don't show maintenance mode on load (unless it's true) [#159](https://github.com/PrefectHQ/ui/pull/159)
 
 ## 2020-08-26
 
