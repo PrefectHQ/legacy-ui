@@ -233,7 +233,7 @@ export default {
             fas fa-spinner fa-pulse
           </v-icon>
           <v-icon
-            v-if="apiMode !== 'normal'"
+            v-if="apiMode == 'maintenance'"
             small
             color="accentPink"
             class="position-absolute"
@@ -255,7 +255,7 @@ export default {
             to <span class="font-weight-bold">{{ url }}</span> <br /><br />
           </p>
           <v-alert
-            v-if="apiMode !== 'normal'"
+            v-if="apiMode == 'maintenance'"
             border="left"
             colored-border
             class="text-body-2"
