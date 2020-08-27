@@ -1057,27 +1057,6 @@ describe('Auth0 Vuex Module', () => {
       })
     })
 
-    describe('prefectAuthorization with a non white-listed token', () => {
-      beforeEach(() => {
-        const store = new Vuex.Store({
-          state: auth0.state,
-          getters: auth0.getters,
-          actions: auth0.actions,
-          mutations: auth0.mutations
-        })
-
-        prefectAuth.mockReturnValueOnce(null)
-
-        it('is not stored', async () => {
-          await store.dispatch('authorize')
-          expect(store.getters['authorizationToken']).toBe(null)
-          expect(store.getters['refreshToken']).toBe(null)
-          expect(store.getters['authorizationTokenExpiry']).toBe(null)
-          expect(store.getters['refreshTokenExpiry']).toBe(null)
-        })
-      })
-    })
-
     describe('a user comes from an email invite link', () => {
       let store
 
