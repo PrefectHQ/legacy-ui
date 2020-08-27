@@ -807,43 +807,42 @@ describe('Auth0 Vuex Module', () => {
           )
         })
       })
+
+      describe('prefectAuthorization', () => {
+        beforeEach(() => {
+          getIdTokenClaims.mockReturnValueOnce({
+            __raw: MOCK_ID_TOKEN
+          })
+
+          prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
+
+          LogRocket.identify.mockReset()
+        })
+
+        it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
+          await store.dispatch('authorize')
+
+          expect(prefectAuth).toHaveBeenCalledWith(MOCK_ID_TOKEN)
+        })
+
+        it('is stored', async () => {
+          await store.dispatch('authorize')
+
+          expect(store.getters['authorizationToken']).toBe(
+            MOCK_PREFECT_AUTH_PAYLOAD.access_token
+          )
+          expect(store.getters['refreshToken']).toBe(
+            MOCK_PREFECT_AUTH_PAYLOAD.refresh_token
+          )
+          expect(store.getters['authorizationTokenExpiry']).toBe(
+            new Date(MOCK_PREFECT_AUTH_PAYLOAD.expires_at).getTime()
+          )
+          expect(store.getters['refreshTokenExpiry']).toBe(
+            jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refresh_token).exp * 1000
+          )
+        })
+      })
     })
-
-    //   describe('prefectAuthorization', () => {
-    //     beforeEach(() => {
-    //       getIdTokenClaims.mockReturnValueOnce({
-    //         __raw: MOCK_ID_TOKEN
-    //       })
-
-    //       prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-
-    //       LogRocket.identify.mockReset()
-    //     })
-
-    //     it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
-    //       await store.dispatch('authorize')
-
-    //       expect(prefectAuth).toHaveBeenCalledWith(MOCK_ID_TOKEN)
-    //     })
-
-    //     it('is stored', async () => {
-    //       await store.dispatch('authorize')
-
-    //       expect(store.getters['authorizationToken']).toBe(
-    //         MOCK_PREFECT_AUTH_PAYLOAD.accessToken
-    //       )
-    //       expect(store.getters['refreshToken']).toBe(
-    //         MOCK_PREFECT_AUTH_PAYLOAD.refreshToken
-    //       )
-    //       expect(store.getters['authorizationTokenExpiry']).toBe(
-    //         new Date(MOCK_PREFECT_AUTH_PAYLOAD.expiresAt).getTime()
-    //       )
-    //       expect(store.getters['refreshTokenExpiry']).toBe(
-    //         jwt_decode(MOCK_PREFECT_AUTH_PAYLOAD.refreshToken).exp * 1000
-    //       )
-    //     })
-    //   })
-    // })
 
     // describe('refreshAuthorization', () => {
     //   describe('prefectAuthorization', () => {
