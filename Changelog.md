@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Remove stale references to `run_count` from all GQL queries - [#157](https://github.com/PrefectHQ/ui/pull/157)
 
 ### Bugfixes
 
