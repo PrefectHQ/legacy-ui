@@ -989,114 +989,114 @@ describe('Auth0 Vuex Module', () => {
       })
     })
 
-    // describe('logout', () => {
-    //   it('removes the redirect route from localStorage', async () => {
-    //     let redirectRoute = '/before/logging/out/redirect'
-    //     await store.dispatch('setRedirectRoute', redirectRoute)
+    describe('logout', () => {
+      it('removes the redirect route from localStorage', async () => {
+        let redirectRoute = '/before/logging/out/redirect'
+        await store.dispatch('setRedirectRoute', redirectRoute)
 
-    //     expect(localStorage.getItem('redirectRoute')).toBe(redirectRoute)
+        expect(localStorage.getItem('redirectRoute')).toBe(redirectRoute)
 
-    //     await store.dispatch('logout')
-    //     expect(localStorage.getItem('redirectRoute')).toBeFalsy()
-    //   })
+        await store.dispatch('logout')
+        expect(localStorage.getItem('redirectRoute')).toBeFalsy()
+      })
 
-    //   it('calls the logout method', async () => {
-    //     await store.dispatch('logout')
-    //     expect(logout).toHaveBeenCalledWith({})
-    //   })
-    // })
+      it('calls the logout method', async () => {
+        await store.dispatch('logout')
+        expect(logout).toHaveBeenCalledWith({})
+      })
+    })
 
-    // describe('setRedirectRoute', () => {
-    //   it('sets the redirectRoute', () => {
-    //     let somePath = '/some/path'
-    //     store.dispatch('setRedirectRoute', somePath)
-    //     expect(store.getters['redirectRoute']).toBe(somePath)
-    //   })
-    // })
+    describe('setRedirectRoute', () => {
+      it('sets the redirectRoute', () => {
+        let somePath = '/some/path'
+        store.dispatch('setRedirectRoute', somePath)
+        expect(store.getters['redirectRoute']).toBe(somePath)
+      })
+    })
 
-    // describe('removeRedirectRoute', () => {
-    //   it('removes the redirectRoute', () => {
-    //     let somePath = '/some/path'
-    //     store.dispatch('setRedirectRoute', somePath)
-    //     expect(store.getters['redirectRoute']).toBe(somePath)
+    describe('removeRedirectRoute', () => {
+      it('removes the redirectRoute', () => {
+        let somePath = '/some/path'
+        store.dispatch('setRedirectRoute', somePath)
+        expect(store.getters['redirectRoute']).toBe(somePath)
 
-    //     store.dispatch('removeRedirectRoute')
-    //     expect(store.getters['redirectRoute']).toBe(null)
-    //   })
-    // })
+        store.dispatch('removeRedirectRoute')
+        expect(store.getters['redirectRoute']).toBe(null)
+      })
+    })
 
-    // describe('reportUserToLogRocket', () => {
-    //   beforeEach(() => {
-    //     store = new Vuex.Store({
-    //       state: loggedOutState(),
-    //       getters: auth0.getters,
-    //       actions: auth0.actions,
-    //       mutations: auth0.mutations
-    //     })
+    describe('reportUserToLogRocket', () => {
+      beforeEach(() => {
+        store = new Vuex.Store({
+          state: loggedOutState(),
+          getters: auth0.getters,
+          actions: auth0.actions,
+          mutations: auth0.mutations
+        })
 
-    //     LogRocket.identify.mockReset()
-    //   })
+        LogRocket.identify.mockReset()
+      })
 
-    //   it('calls the LogRocket identify method if a user is set', () => {
-    //     let user = loggedInState().user
-    //     store.commit('user', user)
+      it('calls the LogRocket identify method if a user is set', () => {
+        let user = loggedInState().user
+        store.commit('user', user)
 
-    //     store.dispatch('reportUserToLogRocket')
+        store.dispatch('reportUserToLogRocket')
 
-    //     expect(LogRocket.identify).toHaveBeenCalled()
-    //   })
+        expect(LogRocket.identify).toHaveBeenCalled()
+      })
 
-    //   it('does not call the LogRocket identify method if a user is not set', () => {
-    //     store.dispatch('reportUserToLogRocket')
+      it('does not call the LogRocket identify method if a user is not set', () => {
+        store.dispatch('reportUserToLogRocket')
 
-    //     store.commit('unsetUser')
+        store.commit('unsetUser')
 
-    //     expect(store.getters['user']).toBe(null)
+        expect(store.getters['user']).toBe(null)
 
-    //     expect(LogRocket.identify).not.toHaveBeenCalled()
-    //   })
-    // })
+        expect(LogRocket.identify).not.toHaveBeenCalled()
+      })
+    })
 
-    // describe('prefectAuthorization with a non white-listed token', () => {
-    //   beforeEach(() => {
-    //     const store = new Vuex.Store({
-    //       state: auth0.state,
-    //       getters: auth0.getters,
-    //       actions: auth0.actions,
-    //       mutations: auth0.mutations
-    //     })
+    describe('prefectAuthorization with a non white-listed token', () => {
+      beforeEach(() => {
+        const store = new Vuex.Store({
+          state: auth0.state,
+          getters: auth0.getters,
+          actions: auth0.actions,
+          mutations: auth0.mutations
+        })
 
-    //     prefectAuth.mockReturnValueOnce(null)
+        prefectAuth.mockReturnValueOnce(null)
 
-    //     it('is not stored', async () => {
-    //       await store.dispatch('authorize')
-    //       expect(store.getters['authorizationToken']).toBe(null)
-    //       expect(store.getters['refreshToken']).toBe(null)
-    //       expect(store.getters['authorizationTokenExpiry']).toBe(null)
-    //       expect(store.getters['refreshTokenExpiry']).toBe(null)
-    //     })
-    //   })
-    // })
+        it('is not stored', async () => {
+          await store.dispatch('authorize')
+          expect(store.getters['authorizationToken']).toBe(null)
+          expect(store.getters['refreshToken']).toBe(null)
+          expect(store.getters['authorizationTokenExpiry']).toBe(null)
+          expect(store.getters['refreshTokenExpiry']).toBe(null)
+        })
+      })
+    })
 
-    // describe('a user comes from an email invite link', () => {
-    //   let store
+    describe('a user comes from an email invite link', () => {
+      let store
 
-    //   beforeEach(() => {
-    //     store = new Vuex.Store({
-    //       state: auth0.state,
-    //       getters: auth0.getters,
-    //       actions: auth0.actions,
-    //       mutations: auth0.mutations
-    //     })
-    //     isAuthenticated.mockReturnValue(false)
-    //   })
-    //   delete window.location
-    //   window.location = { search: '?invitation_id=xyz' }
+      beforeEach(() => {
+        store = new Vuex.Store({
+          state: auth0.state,
+          getters: auth0.getters,
+          actions: auth0.actions,
+          mutations: auth0.mutations
+        })
+        isAuthenticated.mockReturnValue(false)
+      })
+      delete window.location
+      window.location = { search: '?invitation_id=xyz' }
 
-    //   it('stores the invitation id in local storage', async () => {
-    //     await store.dispatch('authenticate')
-    //     expect(localStorage.getItem('invitationId')).toBe('xyz')
-    //   })
-    // })
+      it('stores the invitation id in local storage', async () => {
+        await store.dispatch('authenticate')
+        expect(localStorage.getItem('invitationId')).toBe('xyz')
+      })
+    })
   })
 })
