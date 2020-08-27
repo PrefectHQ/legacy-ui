@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add execution timer to InteractiveAPI queries [#154](https://github.com/PrefectHQ/ui/pull/154)
+- Remove stale references to `run_count` from all GQL queries - [#157](https://github.com/PrefectHQ/ui/pull/157)
 
 ### Bugfixes
 
