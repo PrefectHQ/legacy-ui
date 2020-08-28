@@ -41,7 +41,7 @@ describe('Refresh Vuex Module', () => {
     test('the add mutation increase the componentKey by 1', () => {
       expect(store.getters.componentKey).toBe(0)
       store.commit('add')
-      expect(store.getters.componentKey).toBe(0)
+      expect(store.getters.componentKey).toBe(1)
     })
   })
 })
