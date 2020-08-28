@@ -10,6 +10,26 @@
 
 - None
 
+## 2020-08-27
+
+### Features and Improvements
+
+- Remove stale references to `run_count` from all GQL queries - [#157](https://github.com/PrefectHQ/ui/pull/157)
+
+### Bugfixes
+
+- Don't show maintenance mode on load (unless it's true) [#159](https://github.com/PrefectHQ/ui/pull/159)
+
+## 2020-08-26
+
+### Features and Improvements
+
+- Update connection icon if Cloud is in maintenance mode - [#155](https://github.com/PrefectHQ/ui/pull/155)
+
+### Bugfixes
+
+- None
+
 ## 2020-08-25
 
 ### Features and Improvements

@@ -10,6 +10,7 @@ const state = {
   connectionMessage: null,
   connectionTimeout: null,
   releaseTimestamp: null,
+  apiMode: null,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
   serverUrl:
@@ -20,6 +21,9 @@ const state = {
 const getters = {
   backend(state) {
     return state.backend
+  },
+  apiMode(state) {
+    return state.apiMode
   },
   connected(state) {
     return state.connected
@@ -94,6 +98,9 @@ const mutations = {
   setReleaseTimestamp(state, timestamp) {
     state.releaseTimestamp = timestamp
   },
+  setApiMode(state, apiMode) {
+    state.apiMode = apiMode
+  },
   unsetReleaseTimetamp(state) {
     state.releaseTimestamp = null
   },
@@ -127,6 +134,7 @@ const actions = {
       commit('setReleaseTimestamp', data.api.release_timestamp)
       commit('setVersion', data.api.version)
       commit('setConnected', true)
+      commit('setApiMode', data.api.mode)
     } catch (error) {
       commit('unsetReleaseTimetamp')
       commit('unsetVersion')
@@ -163,6 +171,7 @@ const actions = {
           commit('setConnectionMessage', 'Connected')
           commit('setRetries', 0)
           commit('setConnected', true)
+          commit('setApiMode', data.api.mode)
         }
       } catch (e) {
         commit('setConnectionMessage', e)
