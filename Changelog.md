@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add unit test for the auth0 Vuex store
 
 ### Bugfixes
 
