@@ -21,9 +21,6 @@ export default {
     },
     isFailedRun() {
       return this.flowRun.state == 'Failed' || this.failedTaskRuns
-    },
-    hasResultHandler() {
-      return !!this.flowRun.flow.result_handler
     }
   },
   methods: {
@@ -160,31 +157,10 @@ export default {
       Restart from failed?
     </v-card-title>
 
-    <v-card-text v-if="hasResultHandler">
+    <v-card-text>
       Click on confirm to restart
       <span class="font-weight-bold">{{ flowRun.name }}</span> from its failed
       task run(s).
-    </v-card-text>
-    <v-card-text v-else>
-      <span class="font-weight-bold black--text">
-        Warning: If this flow run does not have a result handler, restarting is
-        unlikely to succeed.
-      </span>
-
-      To learn more about result handlers, check out
-      <router-link
-        to="docs"
-        target="_blank"
-        href="https://docs.prefect.io/core/concepts/results.html#results-and-result-handlers"
-      >
-        Results and Result Handlers
-      </router-link>
-      in the Prefect Core docs.
-
-      <div class="pt-5">
-        Click on confirm to restart
-        <span class="font-weight-bold">{{ flowRun.name }}</span> anyway.
-      </div>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
