@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add unit tests for the refresh and sidenav Vuex stores [#165](https://github.com/PrefectHQ/ui/pull/165)
 
 ### Bugfixes
 
