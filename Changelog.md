@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Improve state setting UX and restarting flow runs from failure - [#163](https://github.com/PrefectHQ/ui/pull/163)
 
 ### Bugfixes
 
