@@ -3,9 +3,7 @@
 ## Unreleased
 
 ### Features and Improvements
-
-- Add unit tests for the agent and alert vuex stores.
-- Add unit tests for the api Vuex store.
+- Add unit tests for the api Vuex store [#127](https://github.com/PrefectHQ/ui/pull/127)
 
 ### Bugfixes
 
