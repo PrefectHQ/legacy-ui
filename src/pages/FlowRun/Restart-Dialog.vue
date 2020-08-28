@@ -15,6 +15,9 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    isFailedRun() {
+      return this.flowRun.state == 'Failed' || this.failedTaskRuns
+    },
     hasResultHandler() {
       return !!this.flowRun.flow.result_handler
     }
@@ -29,6 +32,7 @@ export default {
       try {
         const logSuccess = this.writeLogs()
         if (logSuccess) {
+          let result
           let taskStates
           if (this.utilityDownstreamTasks) {
             taskStates = this.utilityDownstreamTasks.map(task => {
@@ -38,7 +42,7 @@ export default {
                 state: { type: 'Pending', message: this.message }
               }
             })
-          } else {
+          } else if (this.failedTaskRuns) {
             taskStates = {
               version: this.failedTaskRuns.version,
               task_run_id: this.failedTaskRuns.id,
@@ -46,36 +50,38 @@ export default {
             }
           }
           if (taskStates) {
-            const result = await this.$apollo.mutate({
+            result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
               variables: {
                 input: taskStates
               }
             })
-            if (result?.data?.set_task_run_states) {
-              const { data } = await this.$apollo.mutate({
-                mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
-                variables: {
-                  flowRunId: this.flowRun.id,
-                  version: this.flowRun.version,
-                  state: { type: 'Scheduled', message: this.message }
-                }
-              })
-              if (data?.set_flow_run_states) {
-                this.setAlert({
-                  alertShow: true,
-                  alertMessage: 'Flow run restarted.',
-                  alertType: 'success'
-                })
-              } else {
-                this.error = true
+          }
+          if (
+            result?.data?.set_task_run_states ||
+            this.flowRun.state == 'Failed'
+          ) {
+            console.log(this.flowRun)
+            const { data } = await this.$apollo.mutate({
+              mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
+              variables: {
+                flowRunId: this.flowRun.id,
+                version: this.flowRun.version,
+                state: { type: 'Scheduled', message: this.message }
               }
+            })
+            if (data?.set_flow_run_states) {
+              this.setAlert({
+                alertShow: true,
+                alertMessage: 'Flow run restarted.',
+                alertType: 'success'
+              })
             } else {
               this.error = true
             }
+          } else {
+            this.error = true
           }
-        } else {
-          this.error = true
         }
       } catch (error) {
         this.error = true
@@ -184,7 +190,7 @@ export default {
         <template v-slot:activator="{ on }">
           <div v-on="on">
             <v-btn
-              :disabled="!failedTaskRuns"
+              :disabled="!isFailedRun"
               color="primary"
               @click="restart"
               v-on="on"
@@ -196,7 +202,7 @@ export default {
         <span v-if="role === 'READ_ONLY_USER'">
           Read-only users cannot restart flow runs
         </span>
-        <span v-else-if="!failedTaskRuns">
+        <span v-else-if="!isFailedRun">
           You can only restart a flow run with failed tasks.
         </span>
       </v-tooltip>
