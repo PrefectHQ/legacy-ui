@@ -26,7 +26,7 @@ describe('Refresh Vuex Module', () => {
       getters: refresh.getters,
       mutations: refresh.mutations
     })
-    it('componentKey returns 0 in intial state', () => {
+    test('the componentKey getter returns 0 in intial state', () => {
       expect(store.getters.componentKey).toBe(0)
     })
   })
@@ -38,7 +38,7 @@ describe('Refresh Vuex Module', () => {
       getters: refresh.getters,
       mutations: refresh.mutations
     })
-    it('add increase the componentKey by 1', () => {
+    test('the add mutation increase the componentKey by 1', () => {
       expect(store.getters.componentKey).toBe(0)
       store.commit('add')
       expect(store.getters.componentKey).toBe(1)
