@@ -68,12 +68,12 @@ export default {
 
         <span class="ml-4">
           Duration:
-          <span v-if="flowRun.duration" class="font-weight-black">
-            {{ flowRun.duration | duration }}
-          </span>
-          <span v-else-if="flowRun.start_time" class="font-weight-black">
-            <DurationSpan :start-time="flowRun.start_time" />
-          </span>
+          <DurationSpan
+            v-if="flowRun.start_time"
+            class="font-weight-black"
+            :start-time="flowRun.start_time"
+            :end-time="flowRun.end_time"
+          />
         </span>
       </div>
       <div slot="action" class="d-flex align-end justify-center flex-column">
