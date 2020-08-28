@@ -15,6 +15,10 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('user', ['user']),
+    restartMessage() {
+      return `${this.user.username} restarted this flow run`
+    },
     isFailedRun() {
       return this.flowRun.state == 'Failed' || this.failedTaskRuns
     },
@@ -39,14 +43,14 @@ export default {
               return {
                 version: task.task.task_runs[0].version,
                 task_run_id: task.task.task_runs[0].id,
-                state: { type: 'Pending', message: this.message }
+                state: { type: 'Pending', message: this.restartMessage }
               }
             })
           } else if (this.failedTaskRuns) {
             taskStates = {
               version: this.failedTaskRuns.version,
               task_run_id: this.failedTaskRuns.id,
-              state: { type: 'Pending', message: this.message }
+              state: { type: 'Pending', message: this.restartMessage }
             }
           }
           if (taskStates) {
@@ -61,13 +65,12 @@ export default {
             result?.data?.set_task_run_states ||
             this.flowRun.state == 'Failed'
           ) {
-            console.log(this.flowRun)
             const { data } = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
               variables: {
                 flowRunId: this.flowRun.id,
                 version: this.flowRun.version,
-                state: { type: 'Scheduled', message: this.message }
+                state: { type: 'Scheduled', message: this.restartMessage }
               }
             })
             if (data?.set_flow_run_states) {
@@ -102,7 +105,7 @@ export default {
         variables: {
           flowRunId: this.flowRun.id,
           name: this.name,
-          message: this.message
+          message: this.restartMessage
         }
       })
       return data?.write_run_logs?.success
