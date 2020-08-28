@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix log generation when restarting flow runs from failure - [#163](https://github.com/PrefectHQ/ui/pull/163)
 
 ## 2020-08-27
 
