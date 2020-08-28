@@ -102,6 +102,8 @@ export default {
         if (value === false) {
           this.close()
           this.tenantMenuOpen = false
+        } else {
+          this.$apollo.queries.pendingInvitations.refetch()
         }
       }
     },
@@ -142,6 +144,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     ...mapActions('api', ['switchBackend', 'backend']),
     ...mapActions('auth0', ['logout']),
     ...mapActions('license', ['getLicense']),
@@ -222,7 +225,7 @@ export default {
     handleRouteToCreateTenant() {
       // We'll route to the new team page when that's done.
     },
-    async handleAcceptPendingInvitation(id) {
+    async handleAcceptPendingInvitation(id, name) {
       let success
       try {
         await this.acceptMembershipInvitation(id)
@@ -235,15 +238,15 @@ export default {
         {
           alertShow: true,
           alertMessage: success
-            ? `You joined ${this.content.sender_tenant_name}... hurrah!`
-            : `Something went wrong trying to accept your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
+            ? `You joined ${name}... hurrah!`
+            : `Something went wrong trying to accept your invitation to ${name}.... please wait a few moments and try again.`,
           alertType: success ? 'success' : 'error'
         },
         3000
       )
       this.$apollo.queries.pendingInvitations.refetch()
     },
-    async handleDeclinePendingInvitation(id) {
+    async handleDeclinePendingInvitation(id, name) {
       let success
       try {
         await this.declineMembershipInvitation(id)
@@ -256,8 +259,8 @@ export default {
         {
           alertShow: true,
           alertMessage: success
-            ? `Invitation to join ${this.content.sender_tenant_name} declined.`
-            : `Something went wrong trying to decline your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
+            ? `Invitation to join ${name} declined.`
+            : `Something went wrong trying to decline your invitation to ${name}.... please wait a few moments and try again.`,
           alertType: success ? 'info' : 'error'
         },
         3000
@@ -717,8 +720,12 @@ export default {
                     <v-list-item-title>
                       <AcceptConfirmInputRow
                         :label="pt.tenant.name"
-                        @accept="handleAcceptPendingInvitation(pt.id)"
-                        @decline="handleDeclinePendingInvitation(pt.id)"
+                        @accept="
+                          handleAcceptPendingInvitation(pt.id, pt.tenant.name)
+                        "
+                        @decline="
+                          handleDeclinePendingInvitation(pt.id, pt.tenant.name)
+                        "
                       />
                     </v-list-item-title>
                   </v-list-item-content>

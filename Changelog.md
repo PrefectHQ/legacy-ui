@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix membership invitation toasts [#166](https://github.com/PrefectHQ/ui/pull/166)
 
 ## 2020-08-27
 
