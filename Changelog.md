@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-08-27
+
+### Features and Improvements
+
 - Remove stale references to `run_count` from all GQL queries - [#157](https://github.com/PrefectHQ/ui/pull/157)
 
 ### Bugfixes
