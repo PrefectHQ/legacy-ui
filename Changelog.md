@@ -5,10 +5,12 @@
 ### Features and Improvements
 
 - Add unit tests for the refresh and sidenav Vuex stores [#165](https://github.com/PrefectHQ/ui/pull/165)
+- Improve state setting UX and restarting flow runs from failure - [#163](https://github.com/PrefectHQ/ui/pull/163)
 
 ### Bugfixes
 
-- None
+- Fix log generation when restarting flow runs from failure - [#163](https://github.com/PrefectHQ/ui/pull/163)
+- Fix membership invitation toasts [#166](https://github.com/PrefectHQ/ui/pull/166)
 
 ## 2020-08-27
 
