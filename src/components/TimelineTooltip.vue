@@ -51,22 +51,13 @@ export default {
       </span>
     </div>
 
-    <div
-      v-if="props.tooltip.data.duration || props.tooltip.data.start_time"
-      class="subtitle"
-    >
+    <div v-if="props.tooltip.data.start_time" class="subtitle">
       Duration:
-      <span
-        v-if="props.tooltip.data.state !== 'Running'"
-        class="font-weight-black"
-      >
-        {{ props.tooltip.data.duration | duration }}
-      </span>
       <component
         :is="$options.components.DurationSpan"
-        v-else-if="props.tooltip.data.start_time"
         class="font-weight-bold"
         :start-time="props.tooltip.data.start_time"
+        :end-time="props.tooltip.data.end_time"
       />
     </div>
   </div>
