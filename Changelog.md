@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Improve state setting UX and restarting flow runs from failure - [#163](https://github.com/PrefectHQ/ui/pull/163)
+- Remove references to task and flow run durations [#169](https://github.com/PrefectHQ/ui/pull/169)
 
 ### Bugfixes
 
