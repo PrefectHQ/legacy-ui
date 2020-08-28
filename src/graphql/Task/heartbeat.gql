@@ -12,7 +12,6 @@ query Heartbeat($taskId: uuid!, $timestamp: timestamptz, $state: String) {
     state
     state_message
     state_timestamp
-    run_count
     duration
     task {
       id

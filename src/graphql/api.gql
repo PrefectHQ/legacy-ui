@@ -1,6 +1,7 @@
 query Api {
   api {
     backend
+    mode
     version
     release_timestamp
   }
