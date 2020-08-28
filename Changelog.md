@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add unit tests for the agent and alert vuex stores.
+- Add unit tests for the api Vuex store.
 
 ### Bugfixes
 
