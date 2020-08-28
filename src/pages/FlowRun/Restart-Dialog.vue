@@ -159,8 +159,7 @@ export default {
 
     <v-card-text>
       Click on confirm to restart
-      <span class="font-weight-bold">{{ flowRun.name }}</span> from its failed
-      task run(s).
+      <span class="font-weight-bold">{{ flowRun.name }}</span>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -182,7 +181,7 @@ export default {
           Read-only users cannot restart flow runs
         </span>
         <span v-else-if="!isFailedRun">
-          You can only restart a flow run with failed tasks.
+          You can only restart a flow run.
         </span>
       </v-tooltip>
 
