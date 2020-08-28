@@ -9,7 +9,6 @@ query FlowRun($id: uuid!) {
     created_by {
       username
     }
-    duration
     start_time
     end_time
     flow {

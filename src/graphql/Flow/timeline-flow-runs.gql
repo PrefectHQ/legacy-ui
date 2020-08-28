@@ -8,7 +8,6 @@ query TimelineFlowRuns($flow_group_id: uuid, $flow_id: uuid) {
   ) {
     id
     name
-    duration
     end_time
     start_time
     scheduled_start_time

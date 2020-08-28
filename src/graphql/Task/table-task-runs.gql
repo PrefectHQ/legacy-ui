@@ -19,7 +19,6 @@ query Task(
     ) {
       id
       map_index
-      duration
       end_time
       start_time
       state

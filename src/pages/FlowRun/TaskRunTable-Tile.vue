@@ -219,10 +219,10 @@ export default {
         </template>
 
         <template v-slot:item.duration="{ item }">
-          <span v-if="item.duration">{{ item.duration | duration }}</span>
           <DurationSpan
-            v-else-if="item.start_time"
+            v-if="item.start_time"
             :start-time="item.start_time"
+            :end-time="item.end_time"
           />
           <span v-else>...</span>
         </template>

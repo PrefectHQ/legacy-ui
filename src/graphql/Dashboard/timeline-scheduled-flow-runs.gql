@@ -9,7 +9,6 @@ query TimelineFlowRuns($project_id: uuid) {
   ) {
     id
     name
-    duration
     flow {
       id
       name
