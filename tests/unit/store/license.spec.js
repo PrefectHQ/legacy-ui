@@ -2,26 +2,42 @@ import license from '@/store/license'
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-const localVue = createLocalVue()
-localVue.use(Vuex)
+//simple mock for gql query
+let mockerror = false
 
-jest.mock('@/graphql/License/license.gql', () => 'tenant token query string')
-
-jest.mock('vue-cli-plugin-apollo/graphql-client', () => {
-  class ApolloClient {
-    mutate() {
-      return { data: 'hello' }
-    }
+jest.mock('logrocket', () => {
+  return {
+    captureException: jest.fn()
   }
-  const createApolloClient = () => {
-    return { ApolloClient: new ApolloClient() }
-  }
-  return { createApolloClient }
 })
+
+import LogRocket from 'logrocket'
+
+jest.mock('@/graphql/License/license.gql', () => 'license query string')
 
 jest.mock('@/vue-apollo', () => {
-  return {}
+  return {
+    fallbackApolloClient: {
+      query: () => {
+        if (!mockerror) {
+          return {
+            data: {
+              auth_info: {
+                license: {},
+                permissions: {}
+              }
+            }
+          }
+        } else {
+          return 'error'
+        }
+      }
+    }
+  }
 })
+
+const localVue = createLocalVue()
+localVue.use(Vuex)
 
 describe('license Vuex Module', () => {
   const initialLicenseState = () => {
@@ -164,10 +180,56 @@ describe('license Vuex Module', () => {
       })
     })
   })
+
   describe('actions', () => {
-    describe('getLicense', () => {
-      it('should set new license data', () => {
-        expect().toEqual()
+    describe('getLicense - no query error', () => {
+      let store
+
+      beforeEach(() => {
+        mockerror = false
+        store = new Vuex.Store({
+          state: initialLicenseState(),
+          getters: license.getters,
+          mutations: license.mutations,
+          actions: license.actions
+        })
+      })
+      it('should set new license data', async () => {
+        await store.dispatch('getLicense')
+        expect(store.getters.hasLicense).toBe(true)
+        expect(store.getters.license).toEqual({})
+      })
+      it('should set permissions', async () => {
+        await store.dispatch('getLicense')
+        expect(store.getters.permissions).toEqual({})
+      })
+    })
+
+    describe('getLicense - with query error', () => {
+      let store
+
+      beforeEach(() => {
+        mockerror = true
+        store = new Vuex.Store({
+          state: initialLicenseState(),
+          getters: license.getters,
+          mutations: license.mutations,
+          actions: license.actions
+        })
+      })
+
+      it('should not set license data', async () => {
+        await store.dispatch('getLicense')
+        expect(store.getters.hasLicense).toBe(false)
+        expect(store.getters.license).toEqual(null)
+      })
+      it('should not set permissions', async () => {
+        await store.dispatch('getLicense')
+        expect(store.getters.permissions).toEqual(null)
+      })
+      it('should call logRocket', async () => {
+        await store.dispatch('getLicense')
+        expect(LogRocket.captureException).toHaveBeenCalled()
       })
     })
   })
