@@ -143,12 +143,10 @@ export default {
                 Duration
               </v-col>
               <v-col cols="6" class="text-right font-weight-bold">
-                <span v-if="taskRun.duration">
-                  {{ taskRun.duration | duration }}
-                </span>
                 <DurationSpan
-                  v-else-if="taskRun.start_time"
+                  v-if="taskRun.start_time"
                   :start-time="taskRun.start_time"
+                  :end-time="taskRun.end_time"
                 />
                 <span v-else>
                   <v-skeleton-loader type="text"></v-skeleton-loader>

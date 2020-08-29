@@ -27,7 +27,6 @@ export default function(isCloud) {
             : ''
         }
 
-        duration
         scheduled_start_time
         start_time
         end_time
@@ -71,7 +70,6 @@ export default function(isCloud) {
           state_timestamp
           start_time
           end_time
-          duration
           map_index
           version
           task {

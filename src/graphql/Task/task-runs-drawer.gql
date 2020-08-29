@@ -16,7 +16,6 @@ query FlowRuns(
     offset: $offset
   ) {
     id
-    duration
     end_time
     start_time
     state

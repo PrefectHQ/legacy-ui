@@ -14,7 +14,6 @@ query TableTaskRuns(
       limit: $limit
       offset: $offset
     ) {
-      duration
       end_time
       map_index
       start_time
