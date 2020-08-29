@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add unit tests for the license Vuex store [#164](https://github.com/PrefectHQ/ui/pull/164)
 
 ### Bugfixes
 
