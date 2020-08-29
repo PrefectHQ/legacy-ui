@@ -13,7 +13,6 @@ query Heartbeat($flowRunId: uuid!, $timestamp: timestamptz, $state: String) {
     state
     state_message
     state_timestamp
-    duration
     task {
       id
       name

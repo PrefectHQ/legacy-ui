@@ -1,23 +1,10 @@
 <script>
 import CardTitle from '@/components/Card-Title'
+import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import moment from 'moment-timezone'
 
 export default {
-  //Adding duration filter here as longer flows need short hand duration
-  filters: {
-    duration: function(v) {
-      if (!v) return ''
-      let d = moment.duration(v)._data,
-        string = ''
-      if (d.days) string += ` ${d.days}d`
-      if (d.hours) string += ` ${d.hours}h`
-      if (d.minutes) string += ` ${d.minutes}m`
-      if (d.seconds) string += ` ${d.seconds}s`
-      return string
-    }
-  },
-  components: { CardTitle },
+  components: { CardTitle, DurationSpan },
   mixins: [formatTime],
   props: {
     aggregate: {
@@ -224,12 +211,11 @@ export default {
         </template>
 
         <template v-slot:item.duration="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <span v-on="on">{{ item.duration | duration }}</span>
-            </template>
-            <span>{{ item.duration | duration }}</span>
-          </v-tooltip>
+          <DurationSpan
+            v-if="item.start_time"
+            :start-time="item.start_time"
+            :end-time="item.end_time"
+          />
         </template>
 
         <template v-slot:item.state="{ item }">

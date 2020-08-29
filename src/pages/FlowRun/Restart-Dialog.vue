@@ -15,8 +15,12 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    hasResultHandler() {
-      return !!this.flowRun.flow.result_handler
+    ...mapGetters('user', ['user']),
+    restartMessage() {
+      return `${this.user.username} restarted this flow run`
+    },
+    isFailedRun() {
+      return this.flowRun.state == 'Failed' || this.failedTaskRuns
     }
   },
   methods: {
@@ -29,53 +33,55 @@ export default {
       try {
         const logSuccess = this.writeLogs()
         if (logSuccess) {
+          let result
           let taskStates
           if (this.utilityDownstreamTasks) {
             taskStates = this.utilityDownstreamTasks.map(task => {
               return {
                 version: task.task.task_runs[0].version,
                 task_run_id: task.task.task_runs[0].id,
-                state: { type: 'Pending', message: this.message }
+                state: { type: 'Pending', message: this.restartMessage }
               }
             })
-          } else {
+          } else if (this.failedTaskRuns) {
             taskStates = {
               version: this.failedTaskRuns.version,
               task_run_id: this.failedTaskRuns.id,
-              state: { type: 'Pending', message: this.message }
+              state: { type: 'Pending', message: this.restartMessage }
             }
           }
           if (taskStates) {
-            const result = await this.$apollo.mutate({
+            result = await this.$apollo.mutate({
               mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
               variables: {
                 input: taskStates
               }
             })
-            if (result?.data?.set_task_run_states) {
-              const { data } = await this.$apollo.mutate({
-                mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
-                variables: {
-                  flowRunId: this.flowRun.id,
-                  version: this.flowRun.version,
-                  state: { type: 'Scheduled', message: this.message }
-                }
-              })
-              if (data?.set_flow_run_states) {
-                this.setAlert({
-                  alertShow: true,
-                  alertMessage: 'Flow run restarted.',
-                  alertType: 'success'
-                })
-              } else {
-                this.error = true
+          }
+          if (
+            result?.data?.set_task_run_states ||
+            this.flowRun.state == 'Failed'
+          ) {
+            const { data } = await this.$apollo.mutate({
+              mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
+              variables: {
+                flowRunId: this.flowRun.id,
+                version: this.flowRun.version,
+                state: { type: 'Scheduled', message: this.restartMessage }
               }
+            })
+            if (data?.set_flow_run_states) {
+              this.setAlert({
+                alertShow: true,
+                alertMessage: 'Flow run restarted.',
+                alertType: 'success'
+              })
             } else {
               this.error = true
             }
+          } else {
+            this.error = true
           }
-        } else {
-          this.error = true
         }
       } catch (error) {
         this.error = true
@@ -96,7 +102,7 @@ export default {
         variables: {
           flowRunId: this.flowRun.id,
           name: this.name,
-          message: this.message
+          message: this.restartMessage
         }
       })
       return data?.write_run_logs?.success
@@ -151,31 +157,9 @@ export default {
       Restart from failed?
     </v-card-title>
 
-    <v-card-text v-if="hasResultHandler">
+    <v-card-text>
       Click on confirm to restart
-      <span class="font-weight-bold">{{ flowRun.name }}</span> from its failed
-      task run(s).
-    </v-card-text>
-    <v-card-text v-else>
-      <span class="font-weight-bold black--text">
-        Warning: If this flow run does not have a result handler, restarting is
-        unlikely to succeed.
-      </span>
-
-      To learn more about result handlers, check out
-      <router-link
-        to="docs"
-        target="_blank"
-        href="https://docs.prefect.io/core/concepts/results.html#results-and-result-handlers"
-      >
-        Results and Result Handlers
-      </router-link>
-      in the Prefect Core docs.
-
-      <div class="pt-5">
-        Click on confirm to restart
-        <span class="font-weight-bold">{{ flowRun.name }}</span> anyway.
-      </div>
+      <span class="font-weight-bold">{{ flowRun.name }}</span>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -184,7 +168,7 @@ export default {
         <template v-slot:activator="{ on }">
           <div v-on="on">
             <v-btn
-              :disabled="!failedTaskRuns"
+              :disabled="!isFailedRun"
               color="primary"
               @click="restart"
               v-on="on"
@@ -196,8 +180,8 @@ export default {
         <span v-if="role === 'READ_ONLY_USER'">
           Read-only users cannot restart flow runs
         </span>
-        <span v-else-if="!failedTaskRuns">
-          You can only restart a flow run with failed tasks.
+        <span v-else-if="!isFailedRun">
+          You can only restart a flow run.
         </span>
       </v-tooltip>
 

@@ -5,7 +5,6 @@ query TaskRun($id: uuid!) {
     state
     state_message
     state_timestamp
-    duration
     updated
     start_time
     end_time

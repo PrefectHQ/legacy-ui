@@ -242,12 +242,10 @@ export default {
                     Duration
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
-                    <span v-if="flowRun.duration">
-                      {{ flowRun.duration | duration }}
-                    </span>
                     <DurationSpan
-                      v-else-if="flowRun.start_time"
+                      v-if="flowRun.start_time"
                       :start-time="flowRun.start_time"
+                      :end-time="flowRun.end_time"
                     />
                     <span v-else>
                       <v-skeleton-loader type="text"></v-skeleton-loader>
