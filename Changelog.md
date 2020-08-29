@@ -22,6 +22,7 @@
 
 - Fix log generation when restarting flow runs from failure - [#163](https://github.com/PrefectHQ/ui/pull/163)
 - Fix membership invitation toasts [#166](https://github.com/PrefectHQ/ui/pull/166)
+- Fix bad labels references for older flows that were preventing the Flow page details tile from rendering correctly [#171](https://github.com/PrefectHQ/ui/pull/171)
 
 ## 2020-08-27
 
