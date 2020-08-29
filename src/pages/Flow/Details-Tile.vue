@@ -309,7 +309,7 @@ export default {
                 >
                   <template v-slot:activator="{ on }">
                     <v-btn
-                      :color="labels.length < 1 ? 'info' : null"
+                      :color="labels && labels.length < 1 ? 'info' : null"
                       text
                       icon
                       x-small
@@ -336,7 +336,7 @@ export default {
                       >.
 
                       <v-alert
-                        v-if="labels.length < 1"
+                        v-if="labels && labels.length < 1"
                         border="left"
                         colored-border
                         type="info"
@@ -442,7 +442,10 @@ export default {
               </v-list-item-subtitle>
 
               <div
-                v-if="(newLabels && newLabels.length > 0) || labels.length > 0"
+                v-if="
+                  (newLabels && newLabels.length > 0) ||
+                    (labels && labels.length > 0)
+                "
               >
                 <Label
                   v-for="(label, i) in newLabels || labels"
