@@ -59,7 +59,6 @@ const actions = {
     }
   }
 }
-//add mock for fallbackapolloclient to provide license mock data - poss with error state so can check logrocket is called
 
 export default {
   getters,
