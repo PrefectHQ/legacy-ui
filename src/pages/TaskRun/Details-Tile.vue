@@ -98,7 +98,7 @@ export default {
           <v-list-item-subtitle class="caption">
             <v-row v-if="taskRun.state == 'Mapped'" no-gutters>
               <v-col cols="6">
-                Expected Mapped Children
+                Expected Mapped Runs
               </v-col>
               <v-col cols="6" class="text-right font-weight-bold">
                 <v-tooltip top>
