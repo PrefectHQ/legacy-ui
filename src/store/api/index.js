@@ -83,6 +83,9 @@ const mutations = {
     localStorage.removeItem('backend')
   },
   setConnected(state, connected) {
+    if (typeof connected !== 'boolean') {
+      throw new Error('Invalid connected state - connected should be a boolean')
+    }
     state.connected = connected
   },
   setConnectionMessage(state, message) {

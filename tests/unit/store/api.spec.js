@@ -287,6 +287,12 @@ describe('API Vuex Module', () => {
         store.commit('setConnected', false)
         expect(store.getters['connected']).toBe(false)
       })
+      it('should throw an error if it tries to set connected to a non-boolean', () => {
+        expect(store.getters['connected']).toBe(true)
+        expect(() => store.commit('setConnected', 'tiger')).toThrow(
+          'Invalid connected state - connected should be a boolean'
+        )
+      })
     })
 
     describe('setConnectionMessage', () => {
