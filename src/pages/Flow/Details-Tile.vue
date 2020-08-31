@@ -4,6 +4,7 @@ import Label from '@/components/Label'
 import Parameters from '@/components/Parameters'
 import PrefectSchedule from '@/components/PrefectSchedule'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { parametersMixin } from '@/mixins/parametersMixin'
 import { mapActions } from 'vuex'
 
 export default {
@@ -16,7 +17,7 @@ export default {
     Parameters,
     PrefectSchedule
   },
-  mixins: [formatTime],
+  mixins: [formatTime, parametersMixin],
   props: {
     flow: {
       type: Object,
@@ -742,7 +743,7 @@ export default {
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
               <v-list-item-subtitle>
-                <Parameters :parameters="flow.parameters"></Parameters>
+                <Parameters :parameters="defaultParameters"></Parameters>
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
