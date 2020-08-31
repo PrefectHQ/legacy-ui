@@ -5,6 +5,15 @@
 ### Features and Improvements
 
 - Display number of expected mapped runs when the data exists - [#173](https://github.com/PrefectHQ/ui/issues/173)
+
+### Bugfixes
+
+- None
+
+## 2020-08-31
+
+### Features and Improvements
+
 - Update scrollbars with platform-specific styling [#177](https://github.com/PrefectHQ/ui/pull/177)
 
 ### Bugfixes
