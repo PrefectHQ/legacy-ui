@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-08-31
+
+### Features and Improvements
+
 - Update scrollbars with platform-specific styling [#177](https://github.com/PrefectHQ/ui/pull/177)
 
 ### Bugfixes
