@@ -252,12 +252,17 @@ describe('API Vuex Module', () => {
     })
     describe('setBackend', () => {
       it('should set backend', () => {
-        store.commit('setBackend', '42')
-        expect(store.getters['backend']).toBe('42')
+        store.commit('setBackend', 'SERVER')
+        expect(store.getters['backend']).toBe('SERVER')
         expect(store.getters['isCloud']).toBe(false)
         store.commit('setBackend', 'CLOUD')
         expect(store.getters['backend']).toBe('CLOUD')
         expect(store.getters['isCloud']).toBe(true)
+      })
+      it('should throw an error if an invalid backend is used', () => {
+        expect(() => store.commit('setBackend', 'FOO')).toThrow(
+          'Invalid backend'
+        )
       })
     })
 
@@ -267,9 +272,9 @@ describe('API Vuex Module', () => {
         expect(store.getters['backend']).toEqual(null)
       })
       it('should remove backend from localstorage', () => {
-        store.commit('setBackend', 'earth')
-        expect(store.getters['backend']).toEqual('earth')
-        expect(localStorage.getItem('backend')).toEqual('earth')
+        store.commit('setBackend', 'CLOUD')
+        expect(store.getters['backend']).toEqual('CLOUD')
+        expect(localStorage.getItem('backend')).toEqual('CLOUD')
         store.commit('unsetBackend')
         expect(store.getters['backend']).toBe(null)
         expect(localStorage.getItem('backend')).toBe(null)

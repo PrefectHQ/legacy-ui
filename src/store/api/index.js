@@ -72,6 +72,9 @@ const getters = {
 
 const mutations = {
   setBackend(state, backend) {
+    if (backend !== 'CLOUD' && backend !== 'SERVER') {
+      throw new Error('Invalid backend')
+    }
     state.backend = backend
     localStorage.setItem('backend', backend)
   },
