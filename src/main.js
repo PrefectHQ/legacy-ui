@@ -155,6 +155,11 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-if (navigator?.platform !== 'MacIntel') {
-  document.body.classList.add('not-mac')
+try {
+  if (navigator?.platform !== 'MacIntel') {
+    document.body.classList.add('not-mac')
+  }
+} catch {
+  // eslint-disable-next-line no-console
+  console.info('Unable to apply platform-specific scrollbar styles.')
 }
