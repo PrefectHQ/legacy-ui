@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Fix "overenthusiastic" scrollbars on non-Mac systems [#177](https://github.com/PrefectHQ/ui/pull/177)
+- Remove token name length requirement in run flow tutorial [#174](https://github.com/PrefectHQ/ui/pull/174)
 
 ## 2020-08-28
 
