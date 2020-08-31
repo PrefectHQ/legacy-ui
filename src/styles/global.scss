@@ -3,7 +3,7 @@ body {
   overflow: overlay;
 }
 
-* {
+.not-mac * {
   box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
   -ms-overflow-style: -ms-autohiding-scrollbar;

@@ -154,3 +154,7 @@ new Vue({
   apolloProvider: defaultApolloProvider,
   render: h => h(App)
 }).$mount('#app')
+
+if (navigator?.platform !== 'MacIntel') {
+  document.body.classList.add('not-mac')
+}
