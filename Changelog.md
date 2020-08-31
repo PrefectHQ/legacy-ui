@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Display number of expected mapped runs when the data exists - [#173](https://github.com/PrefectHQ/ui/issues/173)
 
 ### Bugfixes
 
