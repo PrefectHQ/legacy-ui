@@ -15,7 +15,8 @@ jest.mock('@/vue-apollo', () => {
             data: {
               api: {
                 release_timestamp: 'timestamp',
-                version: 2
+                version: 2,
+                mode: 'maintenance'
               }
             }
           }
@@ -51,6 +52,7 @@ describe('API Vuex Module', () => {
         connected: true,
         connectionMessage: null,
         connectionTimeout: null,
+        apiMode: null,
         releaseTimestamp: null,
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
         retries: 0,
@@ -73,6 +75,7 @@ describe('API Vuex Module', () => {
         connectionMessage: null,
         connectionTimeout: 200,
         releaseTimestamp: null,
+        apiMode: null,
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
         retries: 0,
         serverUrl:
@@ -93,6 +96,7 @@ describe('API Vuex Module', () => {
         connected: true,
         connectionMessage: 'connection message',
         connectionTimeout: 300,
+        apiMode: null,
         releaseTimestamp: 'xxxxxx',
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
         retries: 5,
@@ -112,6 +116,7 @@ describe('API Vuex Module', () => {
       expect(state.connectionTimeout).toBe(null)
       expect(state.cloudUrl).toBe(undefined)
       expect(state.retries).toBe(0)
+      expect(state.apiMode).toBe(null)
       expect(state.serverUrl).toBe(undefined)
       expect(state.version).toBe(null)
     })
@@ -154,6 +159,9 @@ describe('API Vuex Module', () => {
     })
     it('should return the connectionTimeout', () => {
       expect(store.getters.connectionTimeout).toBe(null)
+    })
+    it('should return the api mode', () => {
+      expect(store.getters.apiMode).toBe(null)
     })
     it('should return a boolean about whether the backend is Cloud', () => {
       expect(store.getters.isCloud).toBe(false)
@@ -336,6 +344,20 @@ describe('API Vuex Module', () => {
       })
     })
 
+    describe('setApiMode', () => {
+      it('should set the api mode', () => {
+        store.commit('setApiMode', 'normal')
+        expect(store.getters['apiMode']).toBe('normal')
+        store.commit('setApiMode', 'maintenance')
+        expect(store.getters['apiMode']).toBe('maintenance')
+      })
+      it('should throw an error if we try to set an api model other than normal or maintenance', () => {
+        expect(() => store.commit('setApiMode', 'notnormal')).toThrow(
+          'Unexpected api mode'
+        )
+      })
+    })
+
     describe('unsetReleaseTimestamp', () => {
       it('should unset releaseTimestamp', () => {
         store.commit('setReleaseTimestamp', 'a timestamp')
@@ -415,6 +437,10 @@ describe('API Vuex Module', () => {
       it('should set connected state', async () => {
         await store.dispatch('getApi')
         expect(store.getters.connected).toBe(true)
+      })
+      it('should set api mode', async () => {
+        await store.dispatch('getApi')
+        expect(store.getters.apiMode).toBe('maintenance')
       })
     })
 

@@ -105,6 +105,9 @@ const mutations = {
     state.releaseTimestamp = timestamp
   },
   setApiMode(state, apiMode) {
+    if (apiMode && apiMode !== 'normal' && apiMode !== 'maintenance') {
+      throw new Error('Unexpected api mode')
+    }
     state.apiMode = apiMode
   },
   unsetReleaseTimetamp(state) {
