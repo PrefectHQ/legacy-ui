@@ -112,7 +112,9 @@ export default {
                     Core 0.13.5+
                   </span>
                   <span v-else>
-                    The number of mapped children expected to run.
+                    The number of mapped children expected to run. Note that the
+                    number of active mapped runs may be less than this if some
+                    have not begun running yet.
                   </span>
                 </v-tooltip>
               </v-col>
