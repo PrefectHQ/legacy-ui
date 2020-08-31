@@ -4,11 +4,11 @@
 
 ### Features and Improvements
 
-- None
+- Update scrollbars with platform-specific styling [#177](https://github.com/PrefectHQ/ui/pull/177)
 
 ### Bugfixes
 
-- None
+- Fix "overenthusiastic" scrollbars on non-Mac systems [#177](https://github.com/PrefectHQ/ui/pull/177)
 
 ## 2020-08-28
 
