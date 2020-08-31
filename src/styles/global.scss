@@ -4,12 +4,11 @@ html, body {
 }
 
 * {
-  scrollbar-width: thin;
-}
-
-* {
+  box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
   -ms-overflow-style: -ms-autohiding-scrollbar;
+  scrollbar-width: thin;
+  scrollbar-color: #babac0 transparent;
 
   ::-webkit-scrollbar {
     background-color: #fff;
