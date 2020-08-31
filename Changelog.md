@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Remove token name length requirement in run flow tutorial [#174](https://github.com/PrefectHQ/ui/pull/174)
 
 ## 2020-08-28
 
