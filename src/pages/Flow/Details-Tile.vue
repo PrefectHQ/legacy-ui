@@ -741,24 +741,18 @@ export default {
             <v-list-item-content>
               <v-list-item-subtitle class="grey--text text--darken-3">
                 Parameters
-
                 <v-menu
                   v-model="paramInfoOpen"
-                  offset-y
                   :close-on-content-click="false"
+                  offset-y
                   open-on-hover
                 >
                   <template v-slot:activator="{ on }">
-                    <div class="inline-block pr-4" v-on="on">
-                      <v-icon
-                        small
-                        class="material-icons-outlined"
-                        @focus="paramInfoOpen = true"
-                        @blur="paramInfoOpen = false"
-                      >
+                    <v-btn text icon x-small v-on="on">
+                      <v-icon>
                         info
                       </v-icon>
-                    </div>
+                    </v-btn>
                   </template>
                   <v-card tile class="pa-0" max-width="220">
                     <v-card-text class="pb-0">
