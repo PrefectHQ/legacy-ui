@@ -1,5 +1,5 @@
-
-html, body {
+html,
+body {
   overflow: overlay;
 }
 
@@ -12,8 +12,8 @@ html, body {
   // ... which is just FireFox for now.
   // the -webkit-* selectors will be deprecated at some point
   // so this will serve as a fallback
-  scrollbar-width: thin;
   scrollbar-color: #babac0 transparent;
+  scrollbar-width: thin;
 
   // Styles the scrollbar container
   ::-webkit-scrollbar {
@@ -29,17 +29,17 @@ html, body {
   // Styles scrollbar body
   ::-webkit-scrollbar-thumb {
     background-color: #babac0;
-    border-radius: 16px;
     border: 4px solid #fff;
+    border-radius: 16px;
     min-height: 25px;
   }
 
   // Removes scrollar arrow buttons
+  /* stylelint-disable-next-line */
   ::-webkit-scrollbar-button {
-    display:none;
+    display: none;
   }
 }
-
 
 /*
   This is the fade transition css class overrides
