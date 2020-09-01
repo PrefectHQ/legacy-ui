@@ -167,7 +167,7 @@ export default {
           Read-only users cannot restart flow runs
         </span>
         <span v-else-if="!isFailedRun">
-          You can only restart a flow run.
+          You can only restart a failed flow run.
         </span>
       </v-tooltip>
 
