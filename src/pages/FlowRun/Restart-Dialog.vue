@@ -45,8 +45,6 @@ export default {
           }
         })
 
-        console.log(taskRunStates, this.utilityDownstreamTasks)
-
         let result
         if (taskRunStates?.length > 0) {
           result = await this.$apollo.mutate({
