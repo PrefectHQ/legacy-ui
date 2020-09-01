@@ -5,6 +5,11 @@
 ### Features and Improvements
 - Add unit tests for the api Vuex store [#127](https://github.com/PrefectHQ/ui/pull/127)
 
+- Rename "Mark As" to "Set State" for clarity - [#183](https://github.com/PrefectHQ/ui/pull/183)
+- Add link to task run page from gantt chart - [#185](https://github.com/PrefectHQ/ui/pull/185)
+- Add unit tests for the license Vuex store [#164](https://github.com/PrefectHQ/ui/pull/164)
+- Show (sorted) default parameters in the flow details tile and add an info card with link to the flow settings tab [#176](https://github.com/PrefectHQ/ui/pull/176)
+
 ### Bugfixes
 
 - None
