@@ -37,13 +37,27 @@ export default {
 
         this.writeLogs()
 
-        const taskRunStates = this.utilityDownstreamTasks.map(task => {
-          return {
-            version: task.task.task_runs[0].version,
-            task_run_id: task.task.task_runs[0].id,
-            state: { type: 'Pending', message: this.restartMessage }
-          }
-        })
+        // we want to avoid resetting the parent Mapped state of a mapped pipeline,
+        // as that would cause *all* children to rerun, regardless of whether they failed.
+        // So, first we collect all candidate run states and then filter:
+        // if map_index is null, we can proceed normally - if not null, we explicitly
+        // check whether it's one of the failed states
+        let failedRunIds = this.failedTaskRuns.map(run => run.id)
+
+        const taskRunStates = this.utilityDownstreamTasks
+          .map(task =>
+            task.task.task_runs.map(run => {
+              if (!run.map_index || failedRunIds.includes(run.id)) {
+                return {
+                  version: run.version,
+                  task_run_id: run.id,
+                  state: { type: 'Pending', message: this.restartMessage }
+                }
+              }
+            })
+          )
+          .flat()
+          .filter(x => x)
 
         let result
         if (taskRunStates?.length > 0) {

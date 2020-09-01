@@ -13,7 +13,7 @@
 
 ### Bugfixes
 
-- None
+- Fix bug with Restart from Failed rerunning successfull mapped child tasks - [#182](https://github.com/PrefectHQ/ui/issues/182)
 
 ## 2020-08-31a
 
