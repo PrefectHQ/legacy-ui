@@ -14,7 +14,7 @@ import {
   isDiagonal
 } from '@/utils/curveMetro'
 import { STATE_COLORS } from '@/utils/states'
-import SchematicWorker from 'workerize-loader?inline!./SchematicWorker'
+import SchematicWorker from 'workerize-loader?inline!@/workers/SchematicWorker'
 
 // Add our custom curve to d3 base
 // and then merges the libraries together into one
