@@ -35,7 +35,6 @@ const prefectRefresh = async accessToken => {
         input: { access_token: accessToken }
       }
     })
-    console.log(accessToken, result)
 
     if (result?.data?.refresh_token) {
       return result.data.refresh_token

@@ -46,6 +46,7 @@ export default {
       restrictOutliers: this.normalize,
       sum: 0,
       timer: null,
+      visibilityListenerAdded: false,
       wasLoading: false,
       x: null,
       xShift: 0,
@@ -268,7 +269,7 @@ export default {
 
         requestAnimationFrame(this.drawCanvas)
 
-        if (t === 1) {
+        if (t === 1 || document.hidden) {
           this.timer.stop()
           this.bars = this.bars.filter(b => !b.leaving)
         }
@@ -472,6 +473,24 @@ export default {
         )
     },
     updateChart() {
+      if (document.hidden) {
+        if (this.visibilityListenerAdded) return
+        const handleVisbilityChange = () => {
+          if (document.visibilityState === 'visible') {
+            this.updateChart()
+            document.removeEventListener(
+              'visibilitychange',
+              handleVisbilityChange
+            )
+            this.visibilityListenerAdded = false
+          }
+        }
+        document.addEventListener('visibilitychange', handleVisbilityChange)
+        this.visibilityListenerAdded = true
+
+        return
+      }
+
       if (!this._items) return
       if (!this.loading) clearTimeout(this.loadingInterval)
 
