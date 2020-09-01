@@ -18,7 +18,7 @@
   - [@vue/test-utils@1.0.5](https://www.npmjs.com/package/@vue/test-utils/v/1.0.5)
   - [cronstrue@1.100.0](https://www.npmjs.com/package/cronstrue/v/1.100.0)
   - [codemirror-graphql@0.12.1](https://www.npmjs.com/package/codemirror-graphql/v/0.12.1)
-  - [d3-selection@2.0.0](https://www.npmjs.com/package/d3-selection/v/2.0.0)) (_removed_)
+  - [d3-selection@2.0.0](https://www.npmjs.com/package/d3-selection/v/2.0.0) (_removed_)
   - [codemirror@5.57.0](https://www.npmjs.com/package/codemirror/v/5.57.0)
   - [d3@6.1.1](https://www.npmjs.com/package/d3/v/6.1.1)
   - [logrocket@1.0.12](https://www.npmjs.com/package/logrocket/v/1.0.12)
