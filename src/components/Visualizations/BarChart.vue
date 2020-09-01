@@ -473,6 +473,8 @@ export default {
         )
     },
     updateChart() {
+      const t0 = performance.now()
+
       if (document.hidden) {
         if (this.visibilityListenerAdded) return
         const handleVisbilityChange = () => {
@@ -671,6 +673,8 @@ export default {
           this.updateChart()
         }, this.animationDuration)
       }
+      const t1 = performance.now()
+      console.info(`updateChart took ${Math.round(t1 - t0)}ms.`)
     }
   }
 }
