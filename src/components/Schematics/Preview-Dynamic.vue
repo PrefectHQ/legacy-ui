@@ -142,7 +142,7 @@ export default {
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <span v-on="on">
-                {{ task.serialized_state.n_map_states || 'unknown' }}
+                {{ task.serialized_state.n_map_states || 'Unknown' }}
               </span>
             </template>
             <span v-if="!task.serialized_state.n_map_states">
