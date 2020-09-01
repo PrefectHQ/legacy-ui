@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Features and Improvements
+- Add unit tests for the api Vuex store [#127](https://github.com/PrefectHQ/ui/pull/127)
 
 - Rename "Mark As" to "Set State" for clarity - [#183](https://github.com/PrefectHQ/ui/pull/183)
 - Add link to task run page from gantt chart - [#185](https://github.com/PrefectHQ/ui/pull/185)
