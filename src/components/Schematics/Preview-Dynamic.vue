@@ -134,12 +134,27 @@ export default {
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row v-if="task.state == 'Mapped'">
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Class:</span>
+          <span class="black--text">Expected Runs:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
-          {{ task.task.type | typeClass }}
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <span v-on="on">
+                {{ task.serialized_state.n_map_states || 'Unknown' }}
+              </span>
+            </template>
+            <span v-if="!task.serialized_state.n_map_states">
+              This data is only available on Flows registered with Prefect Core
+              0.13.5+
+            </span>
+            <span v-else>
+              The number of mapped children expected to run. Note that the
+              number of active mapped runs may be less than this if some have
+              not begun running yet.
+            </span>
+          </v-tooltip>
         </v-col>
       </v-row>
 
@@ -229,7 +244,12 @@ export default {
                     {{ run.state_message }}
                   </span>
                 </v-tooltip>
-                <v-list-item-avatar class="caption" style="min-width: 85px;">
+                <v-list-item-avatar
+                  class="caption"
+                  style="
+                  border-radius: unset !important;
+                  min-width: 85px;"
+                >
                   {{ formatTime(run.state_timestamp) }}
                 </v-list-item-avatar>
               </v-list-item>
