@@ -422,14 +422,15 @@ export default {
 
         <v-expand-transition mode="out-in">
           <v-card v-if="showMenu" :style="menuStyle" tile>
-            <v-card-title
-              :style="{ color: `var(--v-${menuTaskRun.state}-base)` }"
-              class="text-subtitle-1"
-            >
-              {{ menuTaskRun.task.name
-              }}{{
-                menuTaskRun.map_index > -1 ? `(${menuTaskRun.map_index})` : ''
-              }}
+            <v-card-title class="text-subtitle-1">
+              <router-link
+                :to="{ name: 'task-run', params: { id: menuTaskRun.id } }"
+              >
+                {{ menuTaskRun.task.name
+                }}{{
+                  menuTaskRun.map_index > -1 ? `(${menuTaskRun.map_index})` : ''
+                }}
+              </router-link>
             </v-card-title>
             <v-card-text>
               <div>
