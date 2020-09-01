@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add link to task run page from gantt chart - [#185](https://github.com/PrefectHQ/ui/pull/185)
 
 ### Bugfixes
 
