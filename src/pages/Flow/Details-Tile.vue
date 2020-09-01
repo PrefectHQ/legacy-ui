@@ -863,8 +863,8 @@ export default {
 /* stylelint-disable */
 
 .v-list-item__action--stack {
-  flex-direction: row;
   align-items: flex-start;
+  flex-direction: row;
 }
 
 .v-text-field input {
