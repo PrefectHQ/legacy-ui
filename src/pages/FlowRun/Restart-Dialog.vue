@@ -20,7 +20,10 @@ export default {
       return `${this.user.username} restarted this flow run`
     },
     isFailedRun() {
-      return this.flowRun.state == 'Failed' || this.failedTaskRuns
+      return this.flowRun.state == 'Failed' || this.hasFailedTaskRuns
+    },
+    hasFailedTaskRuns() {
+      return this.failedTaskRuns?.length > 0
     }
   },
   methods: {
@@ -29,64 +32,61 @@ export default {
       this.$emit('cancel')
     },
     async restart() {
-      this.cancel()
       try {
-        const logSuccess = this.writeLogs()
-        if (logSuccess) {
-          let result
-          let taskStates
-          if (this.utilityDownstreamTasks) {
-            taskStates = this.utilityDownstreamTasks.map(task => {
-              return {
-                version: task.task.task_runs[0].version,
-                task_run_id: task.task.task_runs[0].id,
-                state: { type: 'Pending', message: this.restartMessage }
-              }
-            })
-          } else if (this.failedTaskRuns) {
-            taskStates = {
-              version: this.failedTaskRuns.version,
-              task_run_id: this.failedTaskRuns.id,
-              state: { type: 'Pending', message: this.restartMessage }
-            }
+        this.cancel()
+
+        this.writeLogs()
+
+        const taskRunStates = this.utilityDownstreamTasks.map(task => {
+          return {
+            version: task.task.task_runs[0].version,
+            task_run_id: task.task.task_runs[0].id,
+            state: { type: 'Pending', message: this.restartMessage }
           }
-          if (taskStates) {
-            result = await this.$apollo.mutate({
-              mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
-              variables: {
-                input: taskStates
-              }
-            })
-          }
-          if (
-            result?.data?.set_task_run_states ||
-            this.flowRun.state == 'Failed'
-          ) {
-            const { data } = await this.$apollo.mutate({
-              mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
-              variables: {
-                flowRunId: this.flowRun.id,
-                version: this.flowRun.version,
-                state: { type: 'Scheduled', message: this.restartMessage }
-              }
-            })
-            if (data?.set_flow_run_states) {
-              this.setAlert({
-                alertShow: true,
-                alertMessage: 'Flow run restarted.',
-                alertType: 'success'
-              })
-            } else {
-              this.error = true
+        })
+
+        console.log(taskRunStates, this.utilityDownstreamTasks)
+
+        let result
+        if (taskRunStates?.length > 0) {
+          result = await this.$apollo.mutate({
+            mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
+            variables: {
+              input: taskRunStates
             }
+          })
+        }
+
+        if (
+          result?.data?.set_task_run_states ||
+          this.flowRun.state == 'Failed'
+        ) {
+          const { data } = await this.$apollo.mutate({
+            mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
+            variables: {
+              flowRunId: this.flowRun.id,
+              version: this.flowRun.version,
+              state: { type: 'Scheduled', message: this.restartMessage }
+            }
+          })
+
+          if (data?.set_flow_run_states) {
+            this.setAlert({
+              alertShow: true,
+              alertMessage: 'Flow run restarted.',
+              alertType: 'success'
+            })
           } else {
             this.error = true
           }
+        } else {
+          this.error = true
         }
       } catch (error) {
         this.error = true
         throw error
       }
+
       if (this.error === true) {
         this.setAlert({
           alertShow: true,
@@ -116,34 +116,22 @@ export default {
           flowRunId: this.flowRun.id
         }
       },
-      pollInterval: 5000,
-      update: data => {
-        if (data.task_run) {
-          if (data.task_run.length > 1) {
-            let taskRunString = ''
-            data.task_run.forEach(taskRun => {
-              taskRunString += taskRun.task_id + ','
-            })
-            const failedTaskRunString = taskRunString.slice(0, -1)
-            return failedTaskRunString
-          } else {
-            return data.task_run[0]
-          }
-        }
-      }
+      update: data => data?.task_run
     },
     utilityDownstreamTasks: {
       query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
       variables() {
         return {
-          taskIds: `{${this.failedTaskRuns}}`,
+          // the start_task_ids argument requires a postgres literal,
+          // which is why these are interpolated between {} brackets
+          taskIds: `{${this.failedTaskRuns
+            .map(task => task.task_id)
+            .join(',')}}`,
           flowRunId: this.flowRun.id
         }
       },
-      pollInterval: 5000,
       skip() {
-        const hasFailedTRs = typeof this.failedTaskRuns === 'string'
-        return !hasFailedTRs
+        return !this.failedTaskRuns
       },
       update: data => data.utility_downstream_tasks
     }
