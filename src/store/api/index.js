@@ -180,9 +180,11 @@ const actions = {
           commit('setRetries', 0)
           commit('setConnected', true)
           commit('setApiMode', data.api.mode)
+        } else {
+          throw new Error('no data returned from api query')
         }
       } catch (e) {
-        commit('setConnectionMessage', e)
+        commit('setConnectionMessage', e.toString())
         commit('setConnected', false)
       } finally {
         const timeout = setTimeout(

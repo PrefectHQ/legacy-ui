@@ -21,7 +21,7 @@ jest.mock('@/vue-apollo', () => {
             }
           }
         } else {
-          return 'error'
+          return { data: 'error' }
         }
       }
     }
@@ -445,31 +445,33 @@ describe('API Vuex Module', () => {
         expect(store.getters.retries).toBe(0)
       })
     })
-    //Mock won't work as error policy set to 'none'
-    // describe('monitorConnection - query error', () => {
-    //   beforeEach(() => {
-    //     mockerror = true
-    //     const state = localStoreAPIState()
-    //     store = new Vuex.Store({
-    //       state: state,
-    //       getters: api.getters,
-    //       mutations: api.mutations,
-    //       actions: api.actions
-    //     })
-    //   })
-    //   it('should unset connection timeout', async () => {
-    //     await store.dispatch('monitorConnection')
-    //     expect(clearTimeout).toHaveBeenCalled()
-    //   })
-    //   it('should set connected state to false', async () => {
-    //     await store.dispatch('monitorConnection')
-    //     expect(store.getters.connected).toBe(false)
-    //   })
-    //   it('should set the connection message', async () => {
-    //     await store.dispatch('monitorConnection')
-    //     expect(store.getters.connectionMessage).toBe('error')
-    //   })
-    // })
+
+    describe('monitorConnection - query error', () => {
+      beforeEach(() => {
+        mockerror = true
+        const state = localStoreAPIState()
+        store = new Vuex.Store({
+          state: state,
+          getters: api.getters,
+          mutations: api.mutations,
+          actions: api.actions
+        })
+      })
+      it('should unset connection timeout', async () => {
+        await store.dispatch('monitorConnection')
+        expect(clearTimeout).toHaveBeenCalled()
+      })
+      it('should set connected state to false', async () => {
+        await store.dispatch('monitorConnection')
+        expect(store.getters.connected).toBe(false)
+      })
+      it('should set the connection message', async () => {
+        await store.dispatch('monitorConnection')
+        expect(store.getters.connectionMessage).toBe(
+          "TypeError: Cannot read property 'release_timestamp' of undefined"
+        )
+      })
+    })
 
     describe('setServerUrl', () => {
       beforeEach(() => {
