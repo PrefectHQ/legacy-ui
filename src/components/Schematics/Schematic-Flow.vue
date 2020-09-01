@@ -613,9 +613,6 @@ export default {
           update =>
             update
               .attr('fill', this.calcNodeColor)
-              .transition()
-              .duration(this.transitionDuration)
-              .delay((d, i) => i * 10)
               .attr('r', d => (d.id == this.selectedTaskId ? size : size * 0.9))
               .attr('opacity', 1)
               .attr('cy', data =>
@@ -684,33 +681,28 @@ export default {
                   })
               }),
           update =>
-            update
-              .transition()
-              .duration(this.transitionDuration)
-              .delay((d, i) => i * 10)
-              .attr('stroke', this.calcStrokeColor)
-              .call(update => {
-                update
-                  .transition()
-                  .duration(this.transitionDuration)
-                  .delay((d, i) => i * 10)
-                  .attr('stroke-opacity', d => {
-                    let opacity
-                    if (this.selectedTaskId) {
-                      if (
-                        d.source.id == this.selectedTaskId ||
-                        d.target.id == this.selectedTaskId
-                      ) {
-                        opacity = 1
-                      } else {
-                        opacity = 0.2
-                      }
-                    } else {
+            update.attr('stroke', this.calcStrokeColor).call(update => {
+              update
+                .transition()
+                .duration(this.transitionDuration)
+                .delay((d, i) => i * 10)
+                .attr('stroke-opacity', d => {
+                  let opacity
+                  if (this.selectedTaskId) {
+                    if (
+                      d.source.id == this.selectedTaskId ||
+                      d.target.id == this.selectedTaskId
+                    ) {
                       opacity = 1
+                    } else {
+                      opacity = 0.2
                     }
-                    return opacity
-                  })
-              }),
+                  } else {
+                    opacity = 1
+                  }
+                  return opacity
+                })
+            }),
           exit =>
             exit.call(exit =>
               exit
