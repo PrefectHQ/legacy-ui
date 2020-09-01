@@ -8,7 +8,7 @@ export default {
 
 <template>
   <div v-if="activeButton()">
-    <v-dialog v-model="markAsDialog" width="500" @click:outside="reset">
+    <v-dialog v-model="setStateDialog" width="500" @click:outside="reset">
       <template v-slot:activator="{ on: dialog }">
         <v-tooltip bottom>
           <template #activator="{ on: tooltip }">
@@ -23,7 +23,7 @@ export default {
                 color="grey darken-2"
               >
                 <v-icon>label_important</v-icon>
-                <div>Mark As</div>
+                <div>Set State</div>
               </v-btn>
             </div>
           </template>
@@ -132,7 +132,7 @@ export default {
             color="grey darken-2"
           >
             <v-icon>label_important</v-icon>
-            Mark As
+            Set State
           </v-btn>
         </div>
       </template>
@@ -153,7 +153,7 @@ export default {
             color="grey darken-2"
           >
             <v-icon>label_important</v-icon>
-            Mark As
+            Set State
           </v-btn>
         </div>
       </template>
