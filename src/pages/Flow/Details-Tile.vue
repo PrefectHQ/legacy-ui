@@ -764,6 +764,7 @@ export default {
                         can do so on the parameters tab in
                         <router-link
                           :to="{ name: 'flow', query: { tab: 'settings' } }"
+                          @click.native="paramInfoOpen = false"
                           >Flow Settings</router-link
                         >.
                       </p>
