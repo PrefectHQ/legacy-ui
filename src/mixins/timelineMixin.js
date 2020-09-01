@@ -5,7 +5,6 @@ export const timelineMixin = {
   data() {
     return {
       flowRuns: [],
-      runningFlowsInterval: null,
       scheduledFlowRuns: [],
       tooltip: null
     }
@@ -151,25 +150,6 @@ export const timelineMixin = {
       // We have to sort again because the server-side sorting
       // is unstable
       return [...pastRuns, ...currentRuns, ...queuedRuns, ...futureRuns]
-    },
-    runningFlows() {
-      if (!this.reversedRuns) return []
-      return this.reversedRuns.filter(d => d.state == 'Running').map(d => d.id)
-    }
-  },
-  watch: {
-    runningFlows(val) {
-      clearInterval(this.runningFlowsInterval)
-      if (val.length === 0) return
-      this.runningFlowsInterval = setInterval(() => {
-        this.reversedRuns
-          .filter(d => val.includes(d.id))
-          .forEach(d => {
-            let now = new Date(),
-              start = new Date(d.start_time)
-            d.duration = now - start
-          })
-      }, 1000)
     }
   },
   methods: {
@@ -261,8 +241,5 @@ export const timelineMixin = {
         width: '1rem'
       }
     }
-  },
-  destroyed() {
-    clearInterval(this.runningFlowsInterval)
   }
 }
