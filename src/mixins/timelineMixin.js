@@ -97,13 +97,13 @@ export const timelineMixin = {
         let future = this.getTimeDiff(d.scheduled_start_time)._milliseconds
 
         if (d.start_time && d.end_time) {
-          let end = new moment(d.end_time),
-            start = new moment(d.start_time)
-          d.duration = moment.duration(end.diff(start))
+          let end = new Date(d.end_time),
+            start = new Date(d.start_time)
+          d.duration = end - start
         } else if (d.start_time) {
-          let now = new moment(),
-            start = new moment(d.start_time)
-          d.duration = moment.duration(now.diff(start))
+          let now = new Date(),
+            start = new Date(d.start_time)
+          d.duration = now - start
         }
 
         // We add a filler end_time for instances where a finished
@@ -165,9 +165,9 @@ export const timelineMixin = {
         this.reversedRuns
           .filter(d => val.includes(d.id))
           .forEach(d => {
-            let now = new moment(),
-              start = new moment(d.start_time)
-            d.duration = moment.duration(now.diff(start))
+            let now = new Date(),
+              start = new Date(d.start_time)
+            d.duration = now - start
           })
       }, 1000)
     }
