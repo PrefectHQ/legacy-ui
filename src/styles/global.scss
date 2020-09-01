@@ -118,9 +118,7 @@ body {
     flex-direction: column-reverse !important;
   }
 }
-//stylelint-enable
 
-// stylelint-disable
 .v-input--vertical .v-input__slot {
   flex-direction: column-reverse !important;
 
@@ -133,9 +131,7 @@ body {
     height: unset !important;
   }
 }
-// stylelint-enable
 
-// stylelint-disable
 .v-input--reverse .v-input__slot {
   flex-direction: row-reverse;
   justify-content: flex-end;
@@ -154,13 +150,11 @@ body {
     }
   }
 }
-// stylelint-enable
 
-// stylelint-disable
 .theme--light.v-tabs-items {
-  // stylelint-enable
   background-color: var(--v-appBackground-base) !important;
 }
+// stylelint-enable
 
 .tabs-hidden {
   // stylelint-disable

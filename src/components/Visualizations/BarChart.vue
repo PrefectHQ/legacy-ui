@@ -121,15 +121,17 @@ export default {
     window.onresize = null
   },
   methods: {
-    _click(d) {
+    _click(event) {
       // Turn this on for debugging bars more easily
       // console.log(
       //   d,
       //   this.bars.find(b => b.id == d.id)
       // )
-      this.$emit('bar-click', d)
+      this.$emit('bar-click', event.currentTarget?.__data__)
     },
-    _mouseover(d) {
+    _mouseover(event) {
+      const d = event.currentTarget?.__data__
+
       this._mouseout.cancel()
       this.hovered = {
         data: d,

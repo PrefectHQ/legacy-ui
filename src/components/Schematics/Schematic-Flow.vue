@@ -1,7 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import * as d3_base from 'd3'
-import { event } from 'd3-selection'
 import { zoom } from 'd3-zoom'
 import uniqueId from 'lodash.uniqueid'
 import Legend from '@/components/Schematics/Legend'
@@ -186,26 +185,22 @@ export default {
     this.worker = null
   },
   methods: {
-    _zoomed() {
-      let zoomEvent = event
-
+    _zoomed(event) {
       // Disabling for now to prevent flickering when throttling
       // drawing the canvas
       // this.context.clearRect(0, 0, this.width, this.height)
 
-      if (zoomEvent && zoomEvent.sourceEvent && zoomEvent.sourceEvent.ctrlKey) {
-        if (zoomEvent.sourceEvent.deltaY > 0) {
-          zoomEvent.transform.k =
-            zoomEvent.transform.k - zoomEvent.transform.k * 0.03
-        } else if (zoomEvent && zoomEvent.sourceEvent.deltaY < 0) {
-          zoomEvent.transform.k =
-            zoomEvent.transform.k + zoomEvent.transform.k * 0.03
+      if (event && event.sourceEvent && event.sourceEvent.ctrlKey) {
+        if (event.sourceEvent.deltaY > 0) {
+          event.transform.k = event.transform.k - event.transform.k * 0.03
+        } else if (event && event.sourceEvent.deltaY < 0) {
+          event.transform.k = event.transform.k + event.transform.k * 0.03
         }
       }
-      this.transform = zoomEvent.transform
-      this.transformEventK = zoomEvent.transform.k
-      this.transformEventX = zoomEvent.transform.x
-      this.transformEventY = zoomEvent.transform.y
+      this.transform = event.transform
+      this.transformEventK = event.transform.k
+      this.transformEventX = event.transform.x
+      this.transformEventY = event.transform.y
       this.drawCanvas(this.transform)
     },
     _zoomIn() {
@@ -618,9 +613,6 @@ export default {
           update =>
             update
               .attr('fill', this.calcNodeColor)
-              .transition()
-              .duration(this.transitionDuration)
-              .delay((d, i) => i * 10)
               .attr('r', d => (d.id == this.selectedTaskId ? size : size * 0.9))
               .attr('opacity', 1)
               .attr('cy', data =>
@@ -689,33 +681,28 @@ export default {
                   })
               }),
           update =>
-            update
-              .transition()
-              .duration(this.transitionDuration)
-              .delay((d, i) => i * 10)
-              .attr('stroke', this.calcStrokeColor)
-              .call(update => {
-                update
-                  .transition()
-                  .duration(this.transitionDuration)
-                  .delay((d, i) => i * 10)
-                  .attr('stroke-opacity', d => {
-                    let opacity
-                    if (this.selectedTaskId) {
-                      if (
-                        d.source.id == this.selectedTaskId ||
-                        d.target.id == this.selectedTaskId
-                      ) {
-                        opacity = 1
-                      } else {
-                        opacity = 0.2
-                      }
-                    } else {
+            update.attr('stroke', this.calcStrokeColor).call(update => {
+              update
+                .transition()
+                .duration(this.transitionDuration)
+                .delay((d, i) => i * 10)
+                .attr('stroke-opacity', d => {
+                  let opacity
+                  if (this.selectedTaskId) {
+                    if (
+                      d.source.id == this.selectedTaskId ||
+                      d.target.id == this.selectedTaskId
+                    ) {
                       opacity = 1
+                    } else {
+                      opacity = 0.2
                     }
-                    return opacity
-                  })
-              }),
+                  } else {
+                    opacity = 1
+                  }
+                  return opacity
+                })
+            }),
           exit =>
             exit.call(exit =>
               exit
