@@ -244,7 +244,12 @@ export default {
                     {{ run.state_message }}
                   </span>
                 </v-tooltip>
-                <v-list-item-avatar class="caption" style="min-width: 85px;">
+                <v-list-item-avatar
+                  class="caption"
+                  style="
+                  border-radius: unset !important;
+                  min-width: 85px;"
+                >
                   {{ formatTime(run.state_timestamp) }}
                 </v-list-item-avatar>
               </v-list-item>
