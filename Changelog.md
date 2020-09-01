@@ -5,10 +5,22 @@
 ### Features and Improvements
 
 - Show (sorted) default parameters in the flow details tile and add an info card with link to the flow settings tab [#176](https://github.com/PrefectHQ/ui/pull/176)
+- Display number of expected mapped runs when the data exists - [#173](https://github.com/PrefectHQ/ui/issues/173)
 
 ### Bugfixes
 
 - None
+
+## 2020-08-31
+
+### Features and Improvements
+
+- Update scrollbars with platform-specific styling [#177](https://github.com/PrefectHQ/ui/pull/177)
+
+### Bugfixes
+
+- Fix "overenthusiastic" scrollbars on non-Mac systems [#177](https://github.com/PrefectHQ/ui/pull/177)
+- Remove token name length requirement in run flow tutorial [#174](https://github.com/PrefectHQ/ui/pull/174)
 
 ## 2020-08-28
 

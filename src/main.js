@@ -154,3 +154,12 @@ new Vue({
   apolloProvider: defaultApolloProvider,
   render: h => h(App)
 }).$mount('#app')
+
+try {
+  if (navigator?.platform !== 'MacIntel') {
+    document.body.classList.add('not-mac')
+  }
+} catch {
+  // eslint-disable-next-line no-console
+  console.info('Unable to apply platform-specific scrollbar styles.')
+}
