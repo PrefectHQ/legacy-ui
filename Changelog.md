@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Rename "Mark As" to "Set State" for clarity - [#183](https://github.com/PrefectHQ/ui/pull/183)
 
 ### Bugfixes
 
