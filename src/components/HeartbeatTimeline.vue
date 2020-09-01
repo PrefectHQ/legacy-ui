@@ -21,7 +21,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['timezone'])
+    ...mapGetters('user', ['timezone']),
+    non_scheduled_items: function() {
+      return this.items.filter(item => item.state != 'Scheduled')
+    }
   },
   methods: {
     icon(item) {
@@ -145,7 +148,7 @@ export default {
         </v-timeline-item>
 
         <v-timeline-item
-          v-for="item in items"
+          v-for="item in non_scheduled_items"
           :key="item.id"
           small
           :color="item.state"
