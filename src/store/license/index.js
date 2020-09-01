@@ -42,11 +42,11 @@ const actions = {
         query: require('@/graphql/License/license.gql'),
         fetchPolicy: 'no-cache'
       })
-      if (data.auth_info.license) {
+      if (data?.auth_info?.license) {
         commit('setLicense', data.auth_info.license)
       }
 
-      if (data.auth_info.permissions) {
+      if (data?.auth_info?.permissions) {
         commit('setPermissions', data.auth_info.permissions)
       }
     } catch (error) {
