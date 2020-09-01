@@ -5,6 +5,34 @@
 ### Features and Improvements
 
 - Display number of expected mapped runs when the data exists - [#173](https://github.com/PrefectHQ/ui/issues/173)
+- August package updates [#180](https://github.com/PrefectHQ/ui/pull/180):
+  - @babel/runtime@7.11.2
+  - @vue/cli-plugin-babel@4.5.4
+  - @vue/cli-service@4.5.4
+  - @babel/plugin-transform-runtime@7.11.5
+  - @vue/cli-plugin-eslint@4.5.4
+  - @vue/cli-plugin-unit-jest@4.5.4
+  - babel-jest@26.3.0
+  - @auth0/auth0-spa-js@1.11.0
+  - @babel/core@7.11.5
+  - @vue/test-utils@1.0.5
+  - cronstrue@1.100.0
+  - codemirror-graphql@0.12.1
+  - d3-selection@2.0.0 _removed_
+  - codemirror@5.57.0
+  - d3@6.1.1
+  - logrocket@1.0.12
+  - eslint@7.8.0
+  - js-beautify@1.13.0
+  - d3-zoom@2.0.0
+  - sinon@9.0.3
+  - vue-code-highlight@0.7.5
+  - vue-router@3.4.3
+  - start-server-and-test@1.11.3
+  - stylelint@13.7.0
+  - vue@2.6.12
+  - vue-template-compiler@2.6.12
+  - vuetify@2.3.10
 
 ### Bugfixes
 
