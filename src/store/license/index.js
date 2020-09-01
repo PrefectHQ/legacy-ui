@@ -37,7 +37,6 @@ const actions = {
   async getLicense({ commit }) {
     commit('unsetLicense')
     commit('unsetPermissions')
-
     try {
       const { data } = await fallbackApolloClient.query({
         query: require('@/graphql/License/license.gql'),
