@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add link to task run page from gantt chart - [#185](https://github.com/PrefectHQ/ui/pull/185)
 - Add unit tests for the license Vuex store [#164](https://github.com/PrefectHQ/ui/pull/164)
 - Show (sorted) default parameters in the flow details tile and add an info card with link to the flow settings tab [#176](https://github.com/PrefectHQ/ui/pull/176)
 
