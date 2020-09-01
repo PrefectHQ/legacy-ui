@@ -96,7 +96,7 @@ describe('license Vuex Module', () => {
         expect(store.getters.hasLicense).toBe(false)
       })
 
-      it('should return permissions when the permissions getter is called', () => {
+      it('should return null when the permissions getter is called', () => {
         expect(store.getters.permissions).toBe(null)
       })
     })
