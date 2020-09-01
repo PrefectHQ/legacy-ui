@@ -142,7 +142,7 @@ export default {
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <span v-on="on">
-                {{ task.serialized_state.n_map_states || 'unknown' }}
+                {{ task.serialized_state.n_map_states || 'Unknown' }}
               </span>
             </template>
             <span v-if="!task.serialized_state.n_map_states">
@@ -244,7 +244,12 @@ export default {
                     {{ run.state_message }}
                   </span>
                 </v-tooltip>
-                <v-list-item-avatar class="caption" style="min-width: 85px;">
+                <v-list-item-avatar
+                  class="caption"
+                  style="
+                  border-radius: unset !important;
+                  min-width: 85px;"
+                >
                   {{ formatTime(run.state_timestamp) }}
                 </v-list-item-avatar>
               </v-list-item>

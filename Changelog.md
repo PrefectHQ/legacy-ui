@@ -5,7 +5,44 @@
 ### Features and Improvements
 
 - Show (sorted) default parameters in the flow details tile and add an info card with link to the flow settings tab [#176](https://github.com/PrefectHQ/ui/pull/176)
+
+### Bugfixes
+
+- None
+
+## 2020-08-31a
+
+### Features and Improvements
+
 - Display number of expected mapped runs when the data exists - [#173](https://github.com/PrefectHQ/ui/issues/173)
+- August package updates [#180](https://github.com/PrefectHQ/ui/pull/180):
+  - [@babel/runtime@7.11.2](https://www.npmjs.com/package/@babel/runtime/v/7.11.2)
+  - [@vue/cli-plugin-babel@4.5.4](https://www.npmjs.com/package/@vue/cli-plugin-babel/v/4.5.4)
+  - [@vue/cli-service@4.5.4](https://www.npmjs.com/package/@vue/cli-service/v/4.5.4)
+  - [@babel/plugin-transform-runtime@7.11.5](https://www.npmjs.com/package/@babel/plugin-transform-runtime/v/7.11.5)
+  - [@vue/cli-plugin-eslint@4.5.4](https://www.npmjs.com/package/@vue/cli-plugin-eslint/v/4.5.4)
+  - [@vue/cli-plugin-unit-jest@4.5.4](https://www.npmjs.com/package/@vue/cli-plugin-unit-jest/v/4.5.4)
+  - [babel-jest@26.3.0](https://www.npmjs.com/package/babel-jest/v/26.3.0)
+  - [@auth0/auth0-spa-js@1.11.0](https://www.npmjs.com/package/@auth0/auth0-spa-js/v/1.11.0)
+  - [@babel/core@7.11.5](https://www.npmjs.com/package/@babel/core/v/7.11.5)
+  - [@vue/test-utils@1.0.5](https://www.npmjs.com/package/@vue/test-utils/v/1.0.5)
+  - [cronstrue@1.100.0](https://www.npmjs.com/package/cronstrue/v/1.100.0)
+  - [codemirror-graphql@0.12.1](https://www.npmjs.com/package/codemirror-graphql/v/0.12.1)
+  - [d3-selection@2.0.0](https://www.npmjs.com/package/d3-selection/v/2.0.0) (_removed_)
+  - [codemirror@5.57.0](https://www.npmjs.com/package/codemirror/v/5.57.0)
+  - [d3@6.1.1](https://www.npmjs.com/package/d3/v/6.1.1)
+  - [logrocket@1.0.12](https://www.npmjs.com/package/logrocket/v/1.0.12)
+  - [eslint@7.8.0](https://www.npmjs.com/package/eslint/v/7.8.0)
+  - [js-beautify@1.13.0](https://www.npmjs.com/package/js-beautify/v/1.13.0)
+  - [d3-zoom@2.0.0](https://www.npmjs.com/package/d3-zoom/v/2.0.0)
+  - [sinon@9.0.3](https://www.npmjs.com/package/sinon/v/9.0.3)
+  - [vue-code-highlight@0.7.5](https://www.npmjs.com/package/vue-code-highlight/v/0.7.5)
+  - [vue-router@3.4.3](https://www.npmjs.com/package/vue-router/v/3.4.3)
+  - [start-server-and-test@1.11.3](https://www.npmjs.com/package/start-server-and-test/v/1.11.3)
+  - [stylelint@13.7.0](https://www.npmjs.com/package/stylelint/v/13.7.0)
+  - [vue@2.6.12](https://www.npmjs.com/package/vue/v/2.6.12)
+  - [vue-template-compiler@2.6.12](https://www.npmjs.com/package/vue-template-compiler/v/2.6.12)
+  - [vuetify@2.3.10](https://www.npmjs.com/package/vuetify/v/2.3.10)
 
 ### Bugfixes
 
