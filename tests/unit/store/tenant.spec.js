@@ -39,6 +39,7 @@ jest.mock('@/graphql/Mutations/update-tenant-settings.gql', () => {
 describe('tenant Vuex Module', () => {
   const initialTenantState = () => {
     return {
+      defaultTenant: null,
       tenant: {
         id: null,
         name: null,
@@ -50,12 +51,14 @@ describe('tenant Vuex Module', () => {
         licenses: [],
         stripeCustomerID: ''
       },
-      tenantIsSet: false
+      tenantIsSet: false,
+      tenants: []
     }
   }
 
   const loggedinTenantState = () => {
     return {
+      defaultTenant: { name: 'TestTenant', slug: 'test', id: 'XXXXXXXXXX' },
       tenant: {
         id: 'd38b31a7-d570-4f0c-911d-dcaab5cec3d0',
         name: 'Test Technologies Inc.',
@@ -66,13 +69,15 @@ describe('tenant Vuex Module', () => {
         prefectAdminSettings: {},
         licenses: [{ active: true, product: 'Prefect Cloud Platform' }]
       },
-      tenantIsSet: true
+      tenantIsSet: true,
+      tenants: []
     }
   }
 
   describe('State', () => {
     it('should be initally be empty (set to false or null)', () => {
       const state = tenant.state
+      expect(state.defaultTenant).toBe(null)
       expect(state.tenant.id).toBe(null)
       expect(state.tenant.name).toBe(null)
       expect(state.tenant.info).toBe(null)
@@ -81,12 +86,21 @@ describe('tenant Vuex Module', () => {
       expect(Object.keys(state.tenant.settings).length).toBe(0)
       expect(state.tenant.licenses.length).toBe(0)
       expect(state.tenantIsSet).toBe(false)
+      expect(state.tenants.length).toBe(0)
     })
   })
 
-  describe('getters', () => {
+  describe('getters with initial tenant state', () => {
     let store
-    it('should return empty tenant object when tenant getter is called on initialTenantState', () => {
+    beforeEach(() => {
+      store = new Vuex.Store({
+        state: initialTenantState(),
+        getters: tenant.getters,
+        actions: tenant.actions,
+        mutations: tenant.mutations
+      })
+    })
+    it('should return null and false when tenant getter is called on initialTenantState', () => {
       store = new Vuex.Store({
         state: initialTenantState(),
         getters: tenant.getters,
@@ -94,7 +108,7 @@ describe('tenant Vuex Module', () => {
       })
       expect(store.getters.tenant).toEqual(initialTenantState().tenant)
     })
-    it('should return if tenant is set as boolean when tenantIsSet getter is called', () => {
+    it('should return false if tenantIsSet getter is called on intitalTenantState', () => {
       store = new Vuex.Store({
         state: initialTenantState(),
         getters: tenant.getters,
@@ -102,23 +116,25 @@ describe('tenant Vuex Module', () => {
       })
       expect(store.getters.tenantIsSet).toBe(false)
     })
-    // testing this works in both types of state
-
-    it('should return logged in tenant details when tenant getter is called on loggedInTenantState', () => {
+  })
+  describe('getters with logged in tenant state', () => {
+    let store
+    beforeEach(() => {
       store = new Vuex.Store({
         state: loggedinTenantState(),
         getters: tenant.getters,
+        actions: tenant.actions,
         mutations: tenant.mutations
       })
+    })
+    it('should return logged in tenant details when tenant getter is called on loggedInTenantState', () => {
       expect(store.getters.tenant).toEqual(loggedinTenantState().tenant)
     })
     it('should return if tenant is set as boolean when tenantIsSet getter is called', () => {
-      store = new Vuex.Store({
-        state: loggedinTenantState(),
-        getters: tenant.getters,
-        mutations: tenant.mutations
-      })
       expect(store.getters.tenantIsSet).toBe(true)
+    })
+    it('should return the defaultTenant when the defaultTenant getter is called', () => {
+      expect(store.getters.defaultTenant.slug).toEqual('test')
     })
   })
 
