@@ -139,6 +139,9 @@ describe('tenant Vuex Module', () => {
         loggedinTenantState().defaultTenant
       )
     })
+    it('should return the role when the role getter is called', () => {
+      expect(store.getters.role).toEqual('TENANT_ADMIN')
+    })
   })
 
   describe('Mutations', () => {
