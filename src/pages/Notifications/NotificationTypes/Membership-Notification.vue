@@ -78,7 +78,6 @@ export default {
         const data = await this.declineMembershipInvitation(
           this.content.membership_invitation_id
         )
-        console.log(data)
         if (data?.delete_membership_invitation) {
           this.tempDecline = true
           success = true
