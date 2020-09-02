@@ -130,22 +130,22 @@ describe('tenant Vuex Module', () => {
         mutations: tenant.mutations
       })
     })
-    it('should return logged in tenant details when tenant getter is called on loggedInTenantState', () => {
+    test('tenant getter should return logged in tenant details', () => {
       expect(store.getters.tenant).toEqual(loggedinTenantState().tenant)
     })
-    it('should return if tenant is set as boolean when tenantIsSet getter is called', () => {
+    test('tenantIsSet getter should return true if the tenant is set', () => {
       expect(store.getters.tenantIsSet).toBe(true)
     })
-    it('should return the defaultTenant when the defaultTenant getter is called', () => {
+    test('defaultTenant getter should return the defaultTenant', () => {
       expect(store.getters.defaultTenant.slug).toEqual('test')
       expect(store.getters.defaultTenant).toEqual(
         loggedinTenantState().defaultTenant
       )
     })
-    it('should return the role when the role getter is called', () => {
+    test('role getter should return the role', () => {
       expect(store.getters.role).toEqual('TENANT_ADMIN')
     })
-    it('should return an array of tenant objects when the tenants getter is called', () => {
+    test('tenants getter should return an array of tenant objects', () => {
       expect(store.getters.tenants[0].slug).toEqual('test')
       expect(store.getters.tenants).toEqual(loggedinTenantState().tenants)
     })
