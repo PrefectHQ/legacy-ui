@@ -57,7 +57,10 @@ export default {
             })
           )
           .flat()
-          .filter(x => x)
+          // the above flat map doesn't always return objects
+          // but can return something like [undefined, {...}, undefined]
+          // so we filter falsey values here
+          .filter(x => !!x)
 
         let result
         if (taskRunStates?.length > 0) {
