@@ -48,9 +48,11 @@ const actions = {
 
       if (data?.auth_info?.permissions) {
         commit('setPermissions', data.auth_info.permissions)
+      } else {
+        throw new Error('no auth info on this license')
       }
     } catch (error) {
-      LogRocket.captureException(error, {
+      LogRocket.captureException(error.toString(), {
         extra: {
           pageName: 'LicenseStore',
           stage: 'getLicense'
