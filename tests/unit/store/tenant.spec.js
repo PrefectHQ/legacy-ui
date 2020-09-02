@@ -146,7 +146,7 @@ describe('tenant Vuex Module', () => {
       expect(store.getters.role).toEqual('TENANT_ADMIN')
     })
     it('should return an array of tenant objects when the tenants getter is called', () => {
-      expect(store.getters.tenants[0].slug).toEqual('tes')
+      expect(store.getters.tenants[0].slug).toEqual('test')
       expect(store.getters.tenants).toEqual(loggedinTenantState().tenants)
     })
   })
