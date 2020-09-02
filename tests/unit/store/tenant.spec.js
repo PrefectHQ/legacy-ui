@@ -140,7 +140,7 @@ describe('tenant Vuex Module', () => {
       )
     })
     it('should return the role when the role getter is called', () => {
-      expect(store.getters.role).toEqual('TENANT_DMIN')
+      expect(store.getters.role).toEqual('TENANT_ADMIN')
     })
   })
 
