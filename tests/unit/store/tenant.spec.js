@@ -71,7 +71,7 @@ describe('tenant Vuex Module', () => {
   }
 
   describe('State', () => {
-    it('should be initally set to false', () => {
+    it('should be initally be empty (set to false or null)', () => {
       const state = tenant.state
       expect(state.tenant.id).toBe(null)
       expect(state.tenant.name).toBe(null)
@@ -86,30 +86,42 @@ describe('tenant Vuex Module', () => {
 
   describe('getters', () => {
     let store
-    store = new Vuex.Store({
-      state: initialTenantState(),
-      getters: tenant.getters,
-      mutations: tenant.mutations
-    })
-    it('should return tenant object when tenant getter is called', () => {
-      expect(store.getters.tenant).toBe(store.state.tenant)
+    it('should return empty tenant object when tenant getter is called on initialTenantState', () => {
+      store = new Vuex.Store({
+        state: initialTenantState(),
+        getters: tenant.getters,
+        mutations: tenant.mutations
+      })
+      expect(store.getters.tenant).toEqual(initialTenantState().tenant)
     })
     it('should return if tenant is set as boolean when tenantIsSet getter is called', () => {
-      expect(store.getters.tenantIsSet).toBe(store.state.tenantIsSet)
+      store = new Vuex.Store({
+        state: initialTenantState(),
+        getters: tenant.getters,
+        mutations: tenant.mutations
+      })
+      expect(store.getters.tenantIsSet).toBe(false)
     })
     // testing this works in both types of state
-    store = new Vuex.Store({
-      state: loggedinTenantState(),
-      getters: tenant.getters,
-      mutations: tenant.mutations
-    })
-    it('should return tenant object when tenant getter is called', () => {
-      expect(store.getters.tenant).toBe(store.state.tenant)
+
+    it('should return logged in tenant details when tenant getter is called on loggedInTenantState', () => {
+      store = new Vuex.Store({
+        state: loggedinTenantState(),
+        getters: tenant.getters,
+        mutations: tenant.mutations
+      })
+      expect(store.getters.tenant).toEqual(loggedinTenantState().tenant)
     })
     it('should return if tenant is set as boolean when tenantIsSet getter is called', () => {
-      expect(store.getters.tenantIsSet).toBe(store.state.tenantIsSet)
+      store = new Vuex.Store({
+        state: loggedinTenantState(),
+        getters: tenant.getters,
+        mutations: tenant.mutations
+      })
+      expect(store.getters.tenantIsSet).toBe(true)
     })
   })
+
   describe('Mutations', () => {
     let store
 
