@@ -4,14 +4,26 @@
 
 ### Features and Improvements
 
-- Rename "Mark As" to "Set State" for clarity - [#183](https://github.com/PrefectHQ/ui/pull/183)
-- Add link to task run page from gantt chart - [#185](https://github.com/PrefectHQ/ui/pull/185)
-- Add unit tests for the license Vuex store [#164](https://github.com/PrefectHQ/ui/pull/164)
-- Show (sorted) default parameters in the flow details tile and add an info card with link to the flow settings tab [#176](https://github.com/PrefectHQ/ui/pull/176)
+- None
 
 ### Bugfixes
 
 - None
+
+## 2020-09-1
+
+### Features and Improvements
+
+- Add unit tests for the api Vuex store [#127](https://github.com/PrefectHQ/ui/pull/127)
+- Rename "Mark As" to "Set State" for clarity - [#183](https://github.com/PrefectHQ/ui/pull/183)
+- Add link to task run page from gantt chart - [#185](https://github.com/PrefectHQ/ui/pull/185)
+- Add unit tests for the license Vuex store [#164](https://github.com/PrefectHQ/ui/pull/164)
+- Show (sorted) default parameters in the flow details tile and add an info card with link to the flow settings tab [#176](https://github.com/PrefectHQ/ui/pull/176)
+- Clean up the flow run restart dialog - [#186](https://github.com/PrefectHQ/ui/pull/186)
+
+### Bugfixes
+
+- Fix bug with Restart from Failed rerunning successfull mapped child tasks - [#182](https://github.com/PrefectHQ/ui/issues/182)
 
 ## 2020-08-31a
 
