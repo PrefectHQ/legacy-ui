@@ -80,8 +80,6 @@ export const timelineMixin = {
       )
     },
     reversedRuns() {
-      const t0 = performance.now()
-
       let runs = [...this.scheduledFlowRuns, ...this.flowRuns]
 
       const computedStyle = getComputedStyle(document.documentElement)
@@ -158,8 +156,6 @@ export const timelineMixin = {
         ...futureRuns
       ]
 
-      const t1 = performance.now()
-      console.info(`reversedRuns took ${Math.round(t1 - t0)}ms.`)
       return toReturn
     }
   },
