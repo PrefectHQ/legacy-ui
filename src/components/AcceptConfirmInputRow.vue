@@ -5,6 +5,10 @@ export default {
     label: {
       type: String,
       default: ''
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -15,11 +19,9 @@ export default {
   methods: {
     accept() {
       this.$emit('accept')
-      this.confirm = false
     },
     decline() {
       this.$emit('decline')
-      this.confirm = false
     }
   }
 }
@@ -58,6 +60,7 @@ export default {
             color="primary"
             block
             text
+            :loading="loading"
             outlined
             @click="accept"
           >
