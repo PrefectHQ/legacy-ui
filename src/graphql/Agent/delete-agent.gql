@@ -1,5 +1,5 @@
 mutation DeleteAgent($agentId: String!) {
-  delete_agent(input: { agent_id: $agentId }) {
+  delete_agent_instance(input: { agent_instance_id: $agentId }) {
     success
   }
 }
