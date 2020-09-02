@@ -14,7 +14,9 @@ export default {
   },
   data() {
     return {
-      loading: 0
+      loading: 0,
+      tempMember: false,
+      tempDecline: false
     }
   },
   computed: {
@@ -44,53 +46,60 @@ export default {
       this.loading++
       let success
       try {
-        await this.acceptMembershipInvitation(
+        const data = await this.acceptMembershipInvitation(
           this.content.membership_invitation_id
         )
-        success = true
+        if (data?.accept_membership_invitation) {
+          this.tempMember = true
+          success = true
+        }
       } catch (e) {
         success = false
+      } finally {
+        this.setAlert(
+          {
+            alertShow: true,
+            alertMessage: success
+              ? `You joined ${this.content.sender_tenant_name}... hurrah!`
+              : `Something went wrong trying to accept your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
+            alertType: success ? 'success' : 'error'
+          },
+          3000
+        )
+        await this.getUser()
+        await this.$apollo.queries.membershipInvitation.refetch()
+        this.loading--
       }
-
-      this.setAlert(
-        {
-          alertShow: true,
-          alertMessage: success
-            ? `You joined ${this.content.sender_tenant_name}... hurrah!`
-            : `Something went wrong trying to accept your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
-          alertType: success ? 'success' : 'error'
-        },
-        3000
-      )
-      this.getUser()
-      this.$apollo.queries.membershipInvitation.refetch()
-      this.loading--
     },
     async _declineInvitation() {
       this.loading++
       let success
       try {
-        await this.declineMembershipInvitation(
+        const data = await this.declineMembershipInvitation(
           this.content.membership_invitation_id
         )
-        success = true
+        console.log(data)
+        if (data?.delete_membership_invitation) {
+          this.tempDecline = true
+          success = true
+        }
       } catch (e) {
         success = false
+      } finally {
+        this.setAlert(
+          {
+            alertShow: true,
+            alertMessage: success
+              ? `Invitation to join ${this.content.sender_tenant_name} declined.`
+              : `Something went wrong trying to decline your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
+            alertType: success ? 'info' : 'error'
+          },
+          3000
+        )
+        this.getUser()
+        await this.$apollo.queries.membershipInvitation.refetch()
+        this.loading--
       }
-
-      this.setAlert(
-        {
-          alertShow: true,
-          alertMessage: success
-            ? `Invitation to join ${this.content.sender_tenant_name} declined.`
-            : `Something went wrong trying to decline your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
-          alertType: success ? 'info' : 'error'
-        },
-        3000
-      )
-      this.getUser()
-      this.$apollo.queries.membershipInvitation.refetch()
-      this.loading--
     }
   },
   apollo: {
@@ -111,14 +120,17 @@ export default {
 <template>
   <v-list-item-content>
     <v-skeleton-loader v-if="loading > 0" type="text" tile />
-    <v-list-item-title v-else-if="isMember">
+    <v-list-item-title v-else-if="tempMember || isMember">
       You joined
       <span class="font-weight-medium"> {{ content.sender_tenant_name }} </span>
       !
     </v-list-item-title>
-    <v-list-item-title v-else-if="!isMember && membershipInvitationIsValid">
+    <v-list-item-title
+      v-else-if="!tempDecline && !isMember && membershipInvitationIsValid"
+    >
       <AcceptConfirmInputRow
         :label="rowLabel"
+        :loading="loading > 0"
         @accept="_acceptInvitation"
         @decline="_declineInvitation"
       />
