@@ -134,7 +134,7 @@ describe('tenant Vuex Module', () => {
       expect(store.getters.tenantIsSet).toBe(true)
     })
     it('should return the defaultTenant when the defaultTenant getter is called', () => {
-      expect(store.getters.defaultTenant.slug).toEqual('test')
+      expect(store.getters.defaultTenant.slug).toEqual('tes')
     })
   })
 
