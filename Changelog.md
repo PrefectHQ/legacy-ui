@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Remove deprecated route calls from Task Concurrency page - [#193](https://github.com/PrefectHQ/ui/pull/193)
 
 ### Bugfixes
 
