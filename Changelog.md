@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Keep the approve button in a loading state until the task state updates from paused to resume [#192](https://github.com/PrefectHQ/ui/pull/192)
 
 ## 2020-09-1
 
