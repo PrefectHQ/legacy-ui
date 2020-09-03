@@ -215,9 +215,6 @@ describe('Auth0 Vuex Module', () => {
         expect(store.getters['user'].name).toBe(user.name)
         expect(store.getters['user'].sub).toBe(user.sub)
         expect(store.getters['user'].email).toBe(user.email)
-
-        store.commit('unsetUser')
-        expect(store.getters['user']).toBe(loggedOutState().user)
       })
 
       it('should set the idToken', () => {
@@ -508,10 +505,7 @@ describe('Auth0 Vuex Module', () => {
 
       it('unsets user', () => {
         store.commit('user', loggedInState().user)
-        expect(store.getters['user'].name).toBe(loggedInState().user.name)
-        expect(store.getters['user'].sub).toBe(loggedInState().user.sub)
-        expect(store.getters['user'].email).toBe(loggedInState().user.email)
-
+        expect(store.getters['user']).toEqual(loggedInState().user)
         store.commit('unsetUser')
         expect(store.getters['user']).toBe(null)
       })
@@ -971,12 +965,9 @@ describe('Auth0 Vuex Module', () => {
       })
 
       it('does not call the LogRocket identify method if a user is not set', () => {
-        store.dispatch('reportUserToLogRocket')
-
         store.commit('unsetUser')
-
         expect(store.getters['user']).toBe(null)
-
+        store.dispatch('reportUserToLogRocket')
         expect(LogRocket.identify).not.toHaveBeenCalled()
       })
     })
