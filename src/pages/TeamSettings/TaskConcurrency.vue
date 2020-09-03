@@ -220,7 +220,7 @@ export default {
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/TaskTagLimit/update-task-concurrency-limit.gql'),
           variables: {
-            name: this.selectedTag.tag,
+            name: this.selectedTag.name,
             limit: Number(this.newLimit) // The API expects a type Number, so explicitly casting
           }
         })
@@ -435,7 +435,7 @@ export default {
           </template>
 
           <template v-slot:item.tag="{ item }">
-            <div class="body-2">{{ item.tag }}</div>
+            <div class="body-2">{{ item.name }}</div>
           </template>
 
           <template v-slot:item.usage="{ item }">
@@ -566,7 +566,7 @@ export default {
       v-model="showEditDialog"
       :dialog-props="{ maxWidth: '540' }"
       :title="
-        `Edit the concurrency limit for tasks with the tag ${selectedTag.tag}`
+        `Edit the concurrency limit for tasks with the tag ${selectedTag.name}`
       "
       :disabled="!editValid"
       @confirm="updateTaskTagLimit"
@@ -592,7 +592,7 @@ export default {
       :dialog-props="{ maxWidth: '440' }"
       :title="
         `Are you sure you want to remove concurrency limits for tasks with the
-          tag ${selectedTag.tag}?`
+          tag ${selectedTag.name}?`
       "
       type="error"
       @confirm="deleteTaskTagLimit"
