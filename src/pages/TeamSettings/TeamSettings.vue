@@ -157,6 +157,19 @@ export default {
           </v-list-item-content>
         </v-list-item>
         <v-list-item
+          :to="{ name: 'flow-concurrency', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+          data-cy="flow-concurrency"
+        >
+          <v-list-item-action>
+            <v-icon>pi-flow-run</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Flow Concurrency</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item
           :to="{ name: 'task-concurrency', params: { tenant: tenant.slug } }"
           ripple
           exact
