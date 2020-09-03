@@ -138,7 +138,7 @@ export default {
     tagsWithUsage() {
       return this.tags.map(tag => ({
         ...tag,
-        usage: this.usage[tag.tag] || 0
+        usage: this.usage[tag.name] || 0
       }))
     }
   },
@@ -153,14 +153,14 @@ export default {
     this.$apollo.addSmartQuery('usage', {
       query: require('@/graphql/TaskTagUsage/task-tag-usage.gql'),
       variables: {
-        tags: this.tags?.map(tag => tag.tag)
+        tags: this.tags?.map(tag => tag.name)
       },
       pollInterval: 5000,
       update: data => {
-        // Usage is returned as an array of objects in format { tag, usage }
+        // Usage is returned as an array of objects in format { name, usage }
         // Convert this array into object that maps tag names to usage
-        return data?.task_tag_usage?.reduce((accum, usage) => {
-          accum[usage.tag] = usage.usage
+        return data?.task_concurrency?.reduce((accum, usage) => {
+          accum[usage.name] = usage.usage
           return accum
         }, {})
       }
@@ -270,7 +270,7 @@ export default {
       query: require('@/graphql/TaskTagLimit/task-tag-limit.gql'),
       pollInterval: 5000,
       loadingKey: 'loadingKey',
-      update: data => data.task_tag_limit,
+      update: data => data.task_concurrency_limit,
       skip() {
         // Skip this query if the tenant isn't eligible
         return !this.isEligible
