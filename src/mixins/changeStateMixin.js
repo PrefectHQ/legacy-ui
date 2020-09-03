@@ -32,6 +32,7 @@ export const changeStateMixin = {
       cancelLoad: false,
       setStateSuccessA: false,
       setStateSuccessB: false,
+      taskRunApproved: false,
       alertMessage: 'We hit a problem.  Please try marking the state again.',
       taskStates: [
         { header: 'Finished States' },
@@ -202,6 +203,9 @@ export const changeStateMixin = {
               result?.data?.set_task_run_states?.states?.length
             if (!this.setStateSuccessA) {
               this.setStateError = true
+            }
+            if (this.setStateSuccessA && this.dialogType == 'resume') {
+              this.taskRunApproved = true
             }
           }
           if (this.dialogType === 'flow run') {
