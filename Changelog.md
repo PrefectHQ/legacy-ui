@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add a loading state for accepting invitations in the sidenav and a warning before a user removes themself from a tenant [#190](https://github.com/PrefectHQ/ui/pull/190)
 
 ### Bugfixes
 
