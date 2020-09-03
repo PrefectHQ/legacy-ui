@@ -70,6 +70,7 @@ export default {
             v-if="confirm == 'decline'"
             color="error"
             block
+            :loading="loading"
             text
             outlined
             @click="decline"
