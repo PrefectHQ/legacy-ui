@@ -90,7 +90,7 @@ export default {
             alertShow: true,
             alertMessage: success
               ? `Invitation to join ${this.content.sender_tenant_name} declined.`
-              : `Something went wrong trying to decline your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
+              : `Something went wrong trying to decline your invitation to ${this.content.sender_tenant_name}... please wait a few moments and try again.`,
             alertType: success ? 'info' : 'error'
           },
           3000
