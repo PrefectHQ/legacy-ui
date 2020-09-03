@@ -114,6 +114,9 @@ export default {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
         : this.allHeaders.filter(header => header.mobile)
+    },
+    deleteSelfWarning() {
+      return this.user.email === this.selectedUser.email
     }
   },
   watch: {
@@ -346,16 +349,25 @@ export default {
       v-if="selectedUser"
       v-model="dialogRemoveUser"
       type="error"
+      :title="
+        deleteSelfWarning
+          ? `Are you sure you want to remove yourself from ${tenant.name}?`
+          : `Are you sure you want to remove ${selectedUser.email} from your team?`
+      "
       :dialog-props="{ 'max-width': '600' }"
       :disabled="isRemovingUser"
       :loading="isRemovingUser"
-      :title="
-        `Are you sure you want to remove ${selectedUser.email} from your team?`
-      "
       @confirm="removeUser(selectedUser.membershipId)"
     >
-      <span class="font-weight-bold">{{ selectedUser.username }}</span>
-      will no longer be able to access your team account.
+      <div v-if="deleteSelfWarning" class="red--text"
+        >Are you sure you want to remove yourself from {{ tenant.name }}? You'll
+        no longer be able to access your Projects or Flows associated with
+        {{ tenant.name }}.
+      </div>
+      <div v-else>
+        <span class="font-weight-bold">{{ selectedUser.username }}</span>
+        will no longer be able to access your team account.</div
+      >
     </ConfirmDialog>
   </div>
 </template>
