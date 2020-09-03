@@ -51,7 +51,10 @@ export default {
       update: d => d.flow_run,
       loadingKey: 'loading',
       variables() {
-        let variables = { state: this.checkedState }
+        let variables = {
+          state: this.checkedState,
+          filterOutState: 'Scheduled'
+        }
 
         if (this.aggregate) {
           variables.flow_group_id = this.flow.flow_group_id

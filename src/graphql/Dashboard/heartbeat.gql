@@ -1,10 +1,10 @@
-query Heartbeat($projectId: uuid, $timestamp: timestamptz, $state: String) {
+query Heartbeat($projectId: uuid, $timestamp: timestamptz, $state: String, $filterOutState: String) {
   flow_run(
     limit: 10
     where: {
       flow: { project_id: { _eq: $projectId } }
       state_timestamp: { _gte: $timestamp }
-      state: { _eq: $state }
+      state: { _eq: $state, _neq: $filterOutState }
     }
     order_by: { updated: desc_nulls_last }
   ) {
