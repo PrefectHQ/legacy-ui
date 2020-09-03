@@ -116,160 +116,83 @@ describe('Auth0 Vuex Module', () => {
   })
 
   describe('Getters', () => {
-    describe('... while in a valid logged in state', () => {
-      let store
+    let store
 
-      beforeEach(() => {
-        store = new Vuex.Store({
-          state: loggedInState(),
-          getters: auth0.getters,
-          actions: auth0.actions,
-          mutations: auth0.mutations
-        })
-      })
-
-      it('should return the user', () => {
-        expect(store.getters.user).toBe(store.state.user)
-      })
-
-      it('should return the idToken', () => {
-        expect(store.getters.idToken).toBe(store.state.idToken)
-      })
-
-      it('should return isAuthenticated', () => {
-        expect(store.getters.isAuthenticated).toBe(store.state.isAuthenticated)
-      })
-
-      it('should return isAuthorized', () => {
-        expect(store.getters.isAuthorized).toBe(true)
-      })
-
-      it('should return the authorizationToken', () => {
-        expect(store.getters.authorizationToken).toBe(
-          store.state.authorizationToken
-        )
-      })
-
-      it('should return the refreshToken', () => {
-        expect(store.getters.refreshToken).toBe(store.state.refreshToken)
-      })
-
-      it('should return the authorizationTokenExpiry', () => {
-        expect(store.getters.authorizationTokenExpiry).toBe(
-          store.state.authorizationTokenExpiry
-        )
-      })
-
-      it('should return the refreshTokenExpiry', () => {
-        expect(store.getters.refreshTokenExpiry).toBe(
-          store.state.refreshTokenExpiry
-        )
-      })
-
-      it('should return the idTokenExpiry', () => {
-        expect(store.getters.idTokenExpiry).toBe(store.state.idTokenExpiry)
-      })
-
-      it('should return isRefreshingAuthentication', () => {
-        expect(store.getters.isRefreshingAuthentication).toBe(
-          store.state.isRefreshingAuthentication
-        )
-      })
-
-      it('should return isRefreshingAuthorization', () => {
-        expect(store.getters.isRefreshingAuthorization).toBe(
-          store.state.isRefreshingAuthorization
-        )
-      })
-
-      it('should return isLoggingInUser', () => {
-        expect(store.getters.isLoggingInUser).toBe(store.state.isLoggingInUser)
-      })
-
-      it('should return isAuthorizingUser', () => {
-        expect(store.getters.isAuthorizingUser).toBe(
-          store.state.isAuthorizingUser
-        )
-      })
-
-      it('should return the redirectRoute', () => {
-        expect(store.getters.redirectRoute).toBe(store.state.redirectRoute)
+    beforeEach(() => {
+      store = new Vuex.Store({
+        state: loggedInState(),
+        getters: auth0.getters,
+        actions: auth0.actions,
+        mutations: auth0.mutations
       })
     })
 
-    describe('... while in a logged out state', () => {
-      let store
+    it('should return the user', () => {
+      expect(store.getters.user).toBe(store.state.user)
+    })
 
-      beforeEach(() => {
-        store = new Vuex.Store({
-          state: loggedOutState(),
-          getters: auth0.getters,
-          actions: auth0.actions,
-          mutations: auth0.mutations
-        })
-      })
+    it('should return the idToken', () => {
+      expect(store.getters.idToken).toBe(store.state.idToken)
+    })
 
-      it('should return the user', () => {
-        expect(store.getters.user).toBe(store.state.user)
-      })
+    it('should return isAuthenticated', () => {
+      expect(store.getters.isAuthenticated).toBe(store.state.isAuthenticated)
+    })
 
-      it('should return the idToken', () => {
-        expect(store.getters.idToken).toBe(store.state.idToken)
-      })
+    it('should return isAuthorized', () => {
+      expect(store.getters.isAuthorized).toBe(true)
+    })
 
-      it('should return isAuthenticated', () => {
-        expect(store.getters.isAuthenticated).toBe(store.state.isAuthenticated)
-      })
+    it('should return the authorizationToken', () => {
+      expect(store.getters.authorizationToken).toBe(
+        store.state.authorizationToken
+      )
+    })
 
-      it('should return isAuthorized', () => {
-        expect(store.getters.isAuthorized).toBe(false)
-      })
+    it('should return the refreshToken', () => {
+      expect(store.getters.refreshToken).toBe(store.state.refreshToken)
+    })
 
-      it('should return the authorizationToken', () => {
-        expect(store.getters.authorizationToken).toBe(
-          store.state.authorizationToken
-        )
-      })
+    it('should return the authorizationTokenExpiry', () => {
+      expect(store.getters.authorizationTokenExpiry).toBe(
+        store.state.authorizationTokenExpiry
+      )
+    })
 
-      it('should return the refreshToken', () => {
-        expect(store.getters.refreshToken).toBe(store.state.refreshToken)
-      })
+    it('should return the refreshTokenExpiry', () => {
+      expect(store.getters.refreshTokenExpiry).toBe(
+        store.state.refreshTokenExpiry
+      )
+    })
 
-      it('should return the authorizationTokenExpiry', () => {
-        expect(store.getters.authorizationTokenExpiry).toBe(
-          store.state.authorizationTokenExpiry
-        )
-      })
+    it('should return the idTokenExpiry', () => {
+      expect(store.getters.idTokenExpiry).toBe(store.state.idTokenExpiry)
+    })
 
-      it('should return the refreshTokenExpiry', () => {
-        expect(store.getters.refreshTokenExpiry).toBe(
-          store.state.refreshTokenExpiry
-        )
-      })
+    it('should return isRefreshingAuthentication', () => {
+      expect(store.getters.isRefreshingAuthentication).toBe(
+        store.state.isRefreshingAuthentication
+      )
+    })
 
-      it('should return the idTokenExpiry', () => {
-        expect(store.getters.idTokenExpiry).toBe(store.state.idTokenExpiry)
-      })
+    it('should return isRefreshingAuthorization', () => {
+      expect(store.getters.isRefreshingAuthorization).toBe(
+        store.state.isRefreshingAuthorization
+      )
+    })
 
-      it('should return isRefreshingAuthorization', () => {
-        expect(store.getters.isRefreshingAuthorization).toBe(
-          store.state.isRefreshingAuthorization
-        )
-      })
+    it('should return isLoggingInUser', () => {
+      expect(store.getters.isLoggingInUser).toBe(store.state.isLoggingInUser)
+    })
 
-      it('should return isLoggingInUser', () => {
-        expect(store.getters.isLoggingInUser).toBe(store.state.isLoggingInUser)
-      })
+    it('should return isAuthorizingUser', () => {
+      expect(store.getters.isAuthorizingUser).toBe(
+        store.state.isAuthorizingUser
+      )
+    })
 
-      it('should return isAuthorizingUser', () => {
-        expect(store.getters.isAuthorizingUser).toBe(
-          store.state.isAuthorizingUser
-        )
-      })
-
-      it('should return the redirectRoute', () => {
-        expect(store.getters.redirectRoute).toBe(store.state.redirectRoute)
-      })
+    it('should return the redirectRoute', () => {
+      expect(store.getters.redirectRoute).toBe(store.state.redirectRoute)
     })
   })
 
