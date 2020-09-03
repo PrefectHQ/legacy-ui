@@ -351,7 +351,7 @@ export default {
       type="error"
       :title="
         deleteSelfWarning
-          ? '*** You are removing yourself from this tenant. ***'
+          ? `Are you sure you want to remove yourself from ${tenant.name}?`
           : `Are you sure you want to remove ${selectedUser.email} from your team?`
       "
       :dialog-props="{ 'max-width': '600' }"
