@@ -9,6 +9,13 @@ export default {
       required: false,
       default: false
     }
+  },
+  computed: {
+    loading() {
+      if (this.resumeLoad == this.taskRun.id) return true
+      if (this.taskRunApproved && this.taskRun.state === 'Paused') return true
+      return false
+    }
   }
 }
 </script>
@@ -26,7 +33,7 @@ export default {
           small
           :disabled="role === 'READ_ONLY_USER'"
           color="accentOrange"
-          :loading="resumeLoad == taskRun.id"
+          :loading="loading"
           @click="resumeRun"
         >
           <v-icon>far fa-check-circle</v-icon>
