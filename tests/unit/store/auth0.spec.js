@@ -211,9 +211,10 @@ describe('Auth0 Vuex Module', () => {
 
       it('should set the user', () => {
         store.commit('user', loggedInState().user)
-        expect(store.getters['user'].name).toBe(loggedInState().user.name)
-        expect(store.getters['user'].sub).toBe(loggedInState().user.sub)
-        expect(store.getters['user'].email).toBe(loggedInState().user.email)
+        const user = loggedInState().user
+        expect(store.getters['user'].name).toBe(user.name)
+        expect(store.getters['user'].sub).toBe(user.sub)
+        expect(store.getters['user'].email).toBe(user.email)
 
         store.commit('unsetUser')
         expect(store.getters['user']).toBe(loggedOutState().user)
