@@ -138,7 +138,7 @@ export default {
     tagsWithUsage() {
       return this.tags.map(tag => ({
         ...tag,
-        usage: this.usage[tag.tag] || 0
+        usage: this.usage[tag.name] || 0
       }))
     }
   },
@@ -153,14 +153,14 @@ export default {
     this.$apollo.addSmartQuery('usage', {
       query: require('@/graphql/TaskTagUsage/task-tag-usage.gql'),
       variables: {
-        tags: this.tags?.map(tag => tag.tag)
+        tags: this.tags?.map(tag => tag.name)
       },
       pollInterval: 5000,
       update: data => {
-        // Usage is returned as an array of objects in format { tag, usage }
+        // Usage is returned as an array of objects in format { name, usage }
         // Convert this array into object that maps tag names to usage
-        return data?.task_tag_usage?.reduce((accum, usage) => {
-          accum[usage.tag] = usage.usage
+        return data?.task_concurrency?.reduce((accum, usage) => {
+          accum[usage.name] = usage.usage
           return accum
         }, {})
       }
@@ -220,7 +220,7 @@ export default {
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/TaskTagLimit/update-task-concurrency-limit.gql'),
           variables: {
-            name: this.selectedTag.tag,
+            name: this.selectedTag.name,
             limit: Number(this.newLimit) // The API expects a type Number, so explicitly casting
           }
         })
@@ -270,7 +270,7 @@ export default {
       query: require('@/graphql/TaskTagLimit/task-tag-limit.gql'),
       pollInterval: 5000,
       loadingKey: 'loadingKey',
-      update: data => data.task_tag_limit,
+      update: data => data.task_concurrency_limit,
       skip() {
         // Skip this query if the tenant isn't eligible
         return !this.isEligible
@@ -435,7 +435,7 @@ export default {
           </template>
 
           <template v-slot:item.tag="{ item }">
-            <div class="body-2">{{ item.tag }}</div>
+            <div class="body-2">{{ item.name }}</div>
           </template>
 
           <template v-slot:item.usage="{ item }">
@@ -566,7 +566,7 @@ export default {
       v-model="showEditDialog"
       :dialog-props="{ maxWidth: '540' }"
       :title="
-        `Edit the concurrency limit for tasks with the tag ${selectedTag.tag}`
+        `Edit the concurrency limit for tasks with the tag ${selectedTag.name}`
       "
       :disabled="!editValid"
       @confirm="updateTaskTagLimit"
@@ -592,7 +592,7 @@ export default {
       :dialog-props="{ maxWidth: '440' }"
       :title="
         `Are you sure you want to remove concurrency limits for tasks with the
-          tag ${selectedTag.tag}?`
+          tag ${selectedTag.name}?`
       "
       type="error"
       @confirm="deleteTaskTagLimit"

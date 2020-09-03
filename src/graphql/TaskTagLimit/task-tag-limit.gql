@@ -1,7 +1,7 @@
 query TaskTagLimit {
-  task_tag_limit {
+  task_concurrency_limit {
     id
     limit
-    tag
+    name
   }
 }

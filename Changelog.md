@@ -4,11 +4,12 @@
 
 ### Features and Improvements
 
-- None
+- Remove deprecated route calls from Task Concurrency page - [#193](https://github.com/PrefectHQ/ui/pull/193)
+- Add a loading state for accepting invitations in the sidenav and a warning before a user removes themself from a tenant [#190](https://github.com/PrefectHQ/ui/pull/190)
 
 ### Bugfixes
 
-- None
+- Keep the approve button in a loading state until the task state updates from paused to resume [#192](https://github.com/PrefectHQ/ui/pull/192)
 
 ## 2020-09-1
 
