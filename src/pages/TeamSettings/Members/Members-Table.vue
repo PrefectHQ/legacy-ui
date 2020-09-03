@@ -360,8 +360,7 @@ export default {
       @confirm="removeUser(selectedUser.membershipId)"
     >
       <div v-if="deleteSelfWarning" class="red--text"
-        >Are you sure you want to remove yourself? You will no longer be able to
-        access this team account.
+        >Are you sure you want to remove yourself from {{ tenant.name }}? You'll no longer be able to access your Projects or Flows associated with {{ tenant.name }}.
       </div>
       <div v-else>
         <span class="font-weight-bold">{{ selectedUser.username }}</span>
