@@ -56,7 +56,8 @@ export default {
       selectedTenant: null,
       tenantMenuOpen: false,
       tzMenuOpen: false,
-      switchHovered: false
+      switchHovered: false,
+      handlingInvitationLoad: false
     }
   },
   computed: {
@@ -102,6 +103,8 @@ export default {
         if (value === false) {
           this.close()
           this.tenantMenuOpen = false
+        } else {
+          this.$apollo.queries.pendingInvitations.refetch()
         }
       }
     },
@@ -142,6 +145,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     ...mapActions('api', ['switchBackend', 'backend']),
     ...mapActions('auth0', ['logout']),
     ...mapActions('license', ['getLicense']),
@@ -222,47 +226,51 @@ export default {
     handleRouteToCreateTenant() {
       // We'll route to the new team page when that's done.
     },
-    async handleAcceptPendingInvitation(id) {
+    async handleAcceptPendingInvitation(id, name) {
+      this.handlingInvitationLoad = true
       let success
       try {
         await this.acceptMembershipInvitation(id)
         success = true
       } catch (e) {
         success = false
+      } finally {
+        this.setAlert(
+          {
+            alertShow: true,
+            alertMessage: success
+              ? `You joined ${name}... hurrah!`
+              : `Something went wrong trying to accept your invitation to ${name}... please wait a few moments and try again.`,
+            alertType: success ? 'success' : 'error'
+          },
+          3000
+        )
+        await this.$apollo.queries.pendingInvitations.refetch()
+        this.handlingInvitationLoad = false
       }
-
-      this.setAlert(
-        {
-          alertShow: true,
-          alertMessage: success
-            ? `You joined ${this.content.sender_tenant_name}... hurrah!`
-            : `Something went wrong trying to accept your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
-          alertType: success ? 'success' : 'error'
-        },
-        3000
-      )
-      this.$apollo.queries.pendingInvitations.refetch()
     },
-    async handleDeclinePendingInvitation(id) {
+    async handleDeclinePendingInvitation(id, name) {
+      this.handlingInvitationLoad = true
       let success
       try {
         await this.declineMembershipInvitation(id)
         success = true
       } catch (e) {
         success = false
+      } finally {
+        this.setAlert(
+          {
+            alertShow: true,
+            alertMessage: success
+              ? `Invitation to join ${name} declined.`
+              : `Something went wrong trying to decline your invitation to ${name}... please wait a few moments and try again.`,
+            alertType: success ? 'success' : 'error'
+          },
+          3000
+        )
+        await this.$apollo.queries.pendingInvitations.refetch()
+        this.handlingInvitationLoad = false
       }
-
-      this.setAlert(
-        {
-          alertShow: true,
-          alertMessage: success
-            ? `Invitation to join ${this.content.sender_tenant_name} declined.`
-            : `Something went wrong trying to decline your invitation to ${this.content.sender_tenant_name}.... please wait a few moments and try again.`,
-          alertType: success ? 'info' : 'error'
-        },
-        3000
-      )
-      this.$apollo.queries.pendingInvitations.refetch()
     },
     closeDialogAndMenu() {
       this.feedbackDialog = false
@@ -702,7 +710,10 @@ export default {
             :indeterminate="loading"
           />
           <v-list class="ma-2" dense flat :disabled="loading">
-            <v-list-item-group v-if="pendingInvitations.length > 0" subheader>
+            <v-list-item-group
+              v-if="pendingInvitations.length > 0 || handlingInvitationLoad"
+              subheader
+            >
               <v-subheader>Pending Invitations</v-subheader>
               <v-slide-x-transition
                 v-for="pt in pendingInvitations"
@@ -717,8 +728,13 @@ export default {
                     <v-list-item-title>
                       <AcceptConfirmInputRow
                         :label="pt.tenant.name"
-                        @accept="handleAcceptPendingInvitation(pt.id)"
-                        @decline="handleDeclinePendingInvitation(pt.id)"
+                        :loading="handlingInvitationLoad"
+                        @accept="
+                          handleAcceptPendingInvitation(pt.id, pt.tenant.name)
+                        "
+                        @decline="
+                          handleDeclinePendingInvitation(pt.id, pt.tenant.name)
+                        "
                       />
                     </v-list-item-title>
                   </v-list-item-content>

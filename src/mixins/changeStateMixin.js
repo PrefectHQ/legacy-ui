@@ -19,7 +19,7 @@ export const changeStateMixin = {
   },
   data() {
     return {
-      markAsDialog: false,
+      setStateDialog: false,
       markAsLoading: false,
       resumeLoad: '',
       reason: '',
@@ -32,39 +32,36 @@ export const changeStateMixin = {
       cancelLoad: false,
       setStateSuccessA: false,
       setStateSuccessB: false,
+      taskRunApproved: false,
       alertMessage: 'We hit a problem.  Please try marking the state again.',
       taskStates: [
-        'Finished',
-        'Success',
-        'Skipped',
+        { header: 'Finished States' },
+        { divider: '...' },
         'Failed',
-        'Looped',
-        'Mapped',
-        'Cached',
+        'Success',
+        'Cancelled',
+        'Finished',
+        'Skipped',
         'TimedOut',
-        'Paused',
+        { header: 'Scheduled States - To Re-run Task Run' },
+        { divider: '...' },
+        'Scheduled',
         'Resume',
-        'TriggerFailed'
+        { header: 'Pending - to clear the state' },
+        { divider: '...' },
+        'Pending'
       ],
       flowStates: [
         { header: 'Finished States' },
         { divider: '...' },
         'Failed',
         'Success',
-        'Mapped',
-        'Finished',
-        'Cached',
-        'Skipped',
-        'TriggerFailed',
-        'TimedOut',
         'Cancelled',
+        'Finished',
+        'Skipped',
         { header: 'Scheduled - To Re-run Flow Run' },
         { divider: '...' },
-        'Scheduled',
-        { header: 'Pending States' },
-        { divider: '...' },
-        'Pending',
-        'Paused'
+        'Scheduled'
       ]
     }
   },
@@ -113,12 +110,7 @@ export const changeStateMixin = {
     },
     activeButton() {
       if (this.role === 'READ_ONLY_USER') return false
-      if (this.dialogType === 'task run') {
-        if (this.taskRun.state === 'Running') return true
-        return !!this.taskStates.includes(this.taskRun.state)
-      } else if (this.dialogType === 'flow run') {
-        return true
-      }
+      return true
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
@@ -212,6 +204,9 @@ export const changeStateMixin = {
             if (!this.setStateSuccessA) {
               this.setStateError = true
             }
+            if (this.setStateSuccessA && this.dialogType == 'resume') {
+              this.taskRunApproved = true
+            }
           }
           if (this.dialogType === 'flow run') {
             const result = await this.$apollo.mutate({
@@ -265,7 +260,7 @@ export const changeStateMixin = {
       }
     },
     reset() {
-      this.markAsDialog = false
+      this.setStateDialog = false
       this.markAsLoading = false
       this.reason = ''
       this.form = false

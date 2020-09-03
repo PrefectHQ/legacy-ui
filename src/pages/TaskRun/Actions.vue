@@ -1,12 +1,12 @@
 <script>
 import { mapGetters } from 'vuex'
 // import CancelButton from '@/components/CancelButton.vue'
-import MarkAsDialog from '@/components/MarkAsDialog.vue'
+import SetStateDialog from '@/components/SetStateDialog.vue'
 import RestartDialog from '@/pages/TaskRun/Restart-Dialog'
 import ResumeButton from '@/components/ResumeButton'
 
 export default {
-  components: { RestartDialog, MarkAsDialog, ResumeButton },
+  components: { RestartDialog, SetStateDialog, ResumeButton },
   props: {
     taskRun: {
       required: true,
@@ -68,7 +68,7 @@ export default {
       />
     </v-dialog>
 
-    <MarkAsDialog dialog-type="task run" :task-run="taskRun" />
+    <SetStateDialog dialog-type="task run" :task-run="taskRun" />
 
     <!-- Shouldn't we be able to cancel this? -->
     <!-- <CancelButton dialog-type="flow run" :flow-run="flowRun" /> -->

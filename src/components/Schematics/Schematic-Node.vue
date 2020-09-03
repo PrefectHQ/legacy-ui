@@ -206,18 +206,13 @@ export default {
         {{ nodeData.data.name }}
       </div>
       <div
-        v-if="
-          showDetails && (nodeData.data.duration || nodeData.data.start_time)
-        "
+        v-if="showDetails && nodeData.data.start_time"
         :style="durationStyle"
       >
         Duration:
-        <span v-if="nodeData.data.duration" class="font-weight-black">
-          {{ nodeData.data.duration | duration }}
-        </span>
         <DurationSpan
-          v-else-if="nodeData.data.start_time"
           :start-time="nodeData.data.start_time"
+          :end-time="nodeData.data.end_time"
         />
       </div>
     </div>

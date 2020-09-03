@@ -3,8 +3,8 @@ query FlowRun($id: uuid!) {
     id
     name
     state
-    duration
     start_time
+    end_time
 
     task_runs {
       id
@@ -13,7 +13,7 @@ query FlowRun($id: uuid!) {
       state_message
       state_timestamp
       start_time
-      duration
+      end_time
       map_index
 
       task {

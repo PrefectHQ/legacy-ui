@@ -22,14 +22,11 @@ export default {
         </span>
         <span class="font-weight-bold">{{ data.name }}</span>
 
-        <div v-if="data.duration || data.start_time" class="subtitle">
+        <div v-if="data.start_time" class="subtitle">
           Duration:
-          <span v-if="data.duration" class="font-weight-black">
-            {{ data.duration | duration }}
-          </span>
           <DurationSpan
-            v-else-if="data.start_time"
             :start-time="data.start_time"
+            :end-time="data.end_time"
           />
         </div>
       </div>

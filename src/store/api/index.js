@@ -72,6 +72,9 @@ const getters = {
 
 const mutations = {
   setBackend(state, backend) {
+    if (backend !== 'CLOUD' && backend !== 'SERVER') {
+      throw new Error('Invalid backend')
+    }
     state.backend = backend
     localStorage.setItem('backend', backend)
   },
@@ -80,6 +83,9 @@ const mutations = {
     localStorage.removeItem('backend')
   },
   setConnected(state, connected) {
+    if (typeof connected !== 'boolean') {
+      throw new Error('Invalid connected state - connected should be a boolean')
+    }
     state.connected = connected
   },
   setConnectionMessage(state, message) {
@@ -99,6 +105,9 @@ const mutations = {
     state.releaseTimestamp = timestamp
   },
   setApiMode(state, apiMode) {
+    if (apiMode && apiMode !== 'normal' && apiMode !== 'maintenance') {
+      throw new Error('Unexpected api mode')
+    }
     state.apiMode = apiMode
   },
   unsetReleaseTimetamp(state) {
@@ -130,7 +139,6 @@ const actions = {
         query: require('@/graphql/api.gql'),
         fetchPolicy: 'no-cache'
       })
-
       commit('setReleaseTimestamp', data.api.release_timestamp)
       commit('setVersion', data.api.version)
       commit('setConnected', true)
@@ -172,9 +180,11 @@ const actions = {
           commit('setRetries', 0)
           commit('setConnected', true)
           commit('setApiMode', data.api.mode)
+        } else {
+          throw new Error('no data returned from api query')
         }
       } catch (e) {
-        commit('setConnectionMessage', e)
+        commit('setConnectionMessage', e.toString())
         commit('setConnected', false)
       } finally {
         const timeout = setTimeout(

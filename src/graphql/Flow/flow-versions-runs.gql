@@ -12,7 +12,6 @@ query VersionsRuns($flow_ids: [uuid!]) {
       limit: 10
     ) {
       id
-      duration
       name
       start_time
       end_time
