@@ -78,7 +78,7 @@ describe('tenant Vuex Module', () => {
   }
 
   describe('State', () => {
-    it('should be initally be empty (set to false or null)', () => {
+    it('should hold tenant info)', () => {
       const state = tenant.state
       expect(state.defaultTenant).toBe(null)
       expect(state.tenant.id).toBe(null)
@@ -93,34 +93,7 @@ describe('tenant Vuex Module', () => {
     })
   })
 
-  describe('getters with initial tenant state', () => {
-    let store
-    beforeEach(() => {
-      store = new Vuex.Store({
-        state: initialTenantState(),
-        getters: tenant.getters,
-        actions: tenant.actions,
-        mutations: tenant.mutations
-      })
-    })
-    it('should return null and false when tenant getter is called on initialTenantState', () => {
-      store = new Vuex.Store({
-        state: initialTenantState(),
-        getters: tenant.getters,
-        mutations: tenant.mutations
-      })
-      expect(store.getters.tenant).toEqual(initialTenantState().tenant)
-    })
-    it('should return false if tenantIsSet getter is called on intitalTenantState', () => {
-      store = new Vuex.Store({
-        state: initialTenantState(),
-        getters: tenant.getters,
-        mutations: tenant.mutations
-      })
-      expect(store.getters.tenantIsSet).toBe(false)
-    })
-  })
-  describe('getters with logged in tenant state', () => {
+  describe('getters', () => {
     let store
     beforeEach(() => {
       store = new Vuex.Store({
