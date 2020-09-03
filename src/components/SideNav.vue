@@ -240,7 +240,7 @@ export default {
             alertShow: true,
             alertMessage: success
               ? `You joined ${name}... hurrah!`
-              : `Something went wrong trying to accept your invitation to ${name}.... please wait a few moments and try again.`,
+              : `Something went wrong trying to accept your invitation to ${name}... please wait a few moments and try again.`,
             alertType: success ? 'success' : 'error'
           },
           3000
