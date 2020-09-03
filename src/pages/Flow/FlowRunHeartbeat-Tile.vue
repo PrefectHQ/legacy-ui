@@ -53,7 +53,7 @@ export default {
       variables() {
         let variables = {
           state: this.checkedState,
-          filterOutState: 'Scheduled'
+          filterOutStates: 'Scheduled'
         }
 
         if (this.aggregate) {

@@ -43,7 +43,7 @@ export default {
           projectId: this.projectId ? this.projectId : null,
           timestamp: oneAgo('month'),
           state: this.checkedState,
-          filterOutState: 'Scheduled'
+          filterOutStates: 'Scheduled'
         }
       },
       pollInterval: 10000
