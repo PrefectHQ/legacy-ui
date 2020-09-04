@@ -261,16 +261,10 @@ describe('tenant Vuex Module', () => {
       })
 
       it('should return tenants', async () => {
-        const tenantsArray = [
-          { name: 'boo', id: '12345' },
-          { name: 'team2', id: '345' }
-        ]
+        const tenantsArray = [{ name: 'boo', id: '12345' }]
         prefectTenants.mockReturnValueOnce(tenantsArray)
         const returnedTenants = await store.dispatch('getTenants')
-        expect(returnedTenants).toEqual([
-          { name: 'boo', id: '12345' },
-          { name: 'team2', id: '345' }
-        ])
+        expect(returnedTenants).toEqual([{ name: 'boo', id: '12345' }])
       })
     })
 
