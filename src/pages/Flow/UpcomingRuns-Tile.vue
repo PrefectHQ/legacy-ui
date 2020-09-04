@@ -39,23 +39,19 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['timezone']),
     lateRuns() {
-      if (!this.upcoming) return []
+      if (!this.upcoming) return null
       return this.upcoming.filter(run => {
-        return (
-          this.getTimeOverdue(run.scheduled_start_time)._milliseconds > 20000
-        )
+        return this.getTimeOverdue(run.scheduled_start_time) > 20000
+      })
+    },
+    upcomingRuns() {
+      if (!this.upcoming) return null
+      return this.upcoming.filter(run => {
+        return this.getTimeOverdue(run.scheduled_start_time) <= 20000
       })
     },
     pollInterval() {
       return this.flow.archived ? 0 : 5000
-    },
-    upcomingRuns() {
-      if (!this.upcoming) return []
-      return this.upcoming.filter(run => {
-        return (
-          this.getTimeOverdue(run.scheduled_start_time)._milliseconds <= 20000
-        )
-      })
     },
     title() {
       if (this.flow.archived) {
@@ -156,17 +152,7 @@ export default {
       return `${formatted} ${shortenedTz}`
     },
     getTimeOverdue(time) {
-      let now, start
-      if (this.timezone) {
-        now = new moment().tz(this.timezone)
-        start = moment(time).tz(this.timezone)
-      } else {
-        now = new moment()
-        start = moment(time)
-      }
-      let diff = moment.duration(now.diff(start))
-
-      return diff
+      return new Date() - new Date(time)
     }
   },
   apollo: {
