@@ -5,25 +5,40 @@ import Vuex from 'vuex'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
+jest.mock('@/middleware/prefectAuth', () => {
+  return {
+    prefectTenants: jest.fn(),
+    prefectRefresh: jest.fn()
+  }
+})
+import { prefectTenants } from '@/middleware/prefectAuth'
+
 jest.mock(
   '@/graphql/Tenant/tenant-token.gql',
   () => 'tenant token mutation string'
 )
 
-jest.mock('vue-cli-plugin-apollo/graphql-client', () => {
-  class ApolloClient {
-    mutate() {
-      return { data: 'hello' }
-    }
-  }
-  const createApolloClient = () => {
-    return { ApolloClient: new ApolloClient() }
-  }
-  return { createApolloClient }
-})
+let mockerror
 
 jest.mock('@/vue-apollo', () => {
-  return {}
+  return {
+    fallbackApolloClient: {
+      query: () => {
+        if (!mockerror) {
+          return {
+            data: {
+              auth_info: {
+                license: {},
+                permissions: {}
+              }
+            }
+          }
+        } else {
+          return 'error'
+        }
+      }
+    }
+  }
 })
 
 jest.mock(
@@ -217,5 +232,74 @@ describe('tenant Vuex Module', () => {
         )
       })
     })
+  })
+
+  describe('actions', () => {
+    describe('getTenants - no query error', () => {
+      let store
+
+      beforeEach(() => {
+        mockerror = false
+        store = new Vuex.Store({
+          state: initialTenantState(),
+          getters: tenant.getters,
+          mutations: tenant.mutations,
+          actions: tenant.actions
+        })
+      })
+
+      it('should set tenants', async () => {
+        await store.dispatch('getTenants')
+        expect(prefectTenants).toHaveBeenCalled()
+      })
+
+      it('should set tenants', async () => {
+        const tenantsArray = [{ name: 'boo', id: '12345' }]
+        prefectTenants.mockReturnValueOnce(tenantsArray)
+        await store.dispatch('getTenants')
+        expect(store.getters.tenants).toEqual(tenantsArray)
+      })
+
+      it('should return tenants', async () => {
+        const tenantsArray = [
+          { name: 'boo', id: '12345' },
+          { name: 'team2', id: '345' }
+        ]
+        prefectTenants.mockReturnValueOnce(tenantsArray)
+        const returnedTenants = await store.dispatch('getTenants')
+        expect(returnedTenants).toEqual([
+          { name: 'boo', id: '12345' },
+          { name: 'tea2', id: '345' }
+        ])
+      })
+    })
+
+    // describe('getLicense - with query error', () => {
+    //   let store
+
+    //   beforeEach(() => {
+    //     mockerror = true
+    //     store = new Vuex.Store({
+    //       state: initialLicenseState(),
+    //       getters: license.getters,
+    //       mutations: license.mutations,
+    //       actions: license.actions
+    //     })
+    //   })
+
+    //   it('should not set license data', async () => {
+    //     await store.dispatch('getLicense')
+    //     expect(store.getters.hasLicense).toBe(false)
+    //     expect(store.getters.license).toEqual(null)
+    //   })
+    //   it('should not set permissions', async () => {
+    //     await store.dispatch('getLicense')
+    //     expect(store.getters.permissions).toEqual(null)
+    //   })
+    //   // it('should call logRocket', async () => {
+    //   //   await store.dispatch('getLicense')
+    //   //   expect(LogRocket.captureException).toHaveBeenCalled()
+    //   // })
+    // })
   })
 })

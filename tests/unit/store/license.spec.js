@@ -11,7 +11,7 @@ jest.mock('logrocket', () => {
   }
 })
 
-import LogRocket from 'logrocket'
+// import LogRocket from 'logrocket'
 
 jest.mock('@/graphql/License/license.gql', () => 'license query string')
 
