@@ -36,7 +36,7 @@ export default {
       }, 2000)
     },
     async generateAgentToken() {
-      if (!this.agentTokenName || this.agentTokenName.length < 3) return
+      if (!this.agentTokenName) return
 
       try {
         const name = this.agentTokenName
