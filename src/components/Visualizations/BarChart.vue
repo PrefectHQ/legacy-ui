@@ -583,10 +583,19 @@ export default {
               .attr('height', barStart)
               .attr('width', x.bandwidth())
               .attr('y', 0)
-              .attr('x', (d, i) => x(d.id ? d.id : i)),
+              .attr('x', (d, i) => x(d.id ? d.id : i))
+              .call(update =>
+                update
+                  .on('click', this._click)
+                  .on('mouseout', this._mouseout)
+                  .on('mouseover', this._mouseover)
+              ),
           exit =>
             exit.call(exit =>
               exit
+                .on('click', null)
+                .on('mouseout', null)
+                .on('mouseover', null)
                 .transition('exit')
                 .duration(this.animationDuration)
                 .remove()
