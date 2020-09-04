@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Filter scheduled flows from the activity timeline [#188](https://https://github.com/PrefectHQ/ui/pull/188)
 
 ## 2020-08-28
 
