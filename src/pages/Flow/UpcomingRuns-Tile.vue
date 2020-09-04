@@ -94,7 +94,7 @@ export default {
         ? 'grey'
         : this.tab == 'upcoming'
         ? 'primary'
-        : this.lateRuns.length > 0
+        : this.lateRuns?.length > 0
         ? 'deepRed'
         : 'Success'
     }
@@ -102,7 +102,7 @@ export default {
   watch: {
     upcoming(val) {
       if (!val) return
-      if (this.lateRuns.length > 0) {
+      if (this.lateRuns?.length > 0) {
         this.tab = 'late'
       }
     },
