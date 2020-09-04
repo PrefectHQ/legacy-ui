@@ -51,7 +51,7 @@ export default {
       })
     },
     pollInterval() {
-      return this.flow.archived ? 0 : 5000
+      return this.flow.archived ? 0 : 10000
     },
     title() {
       if (this.flow.archived) {
@@ -170,10 +170,7 @@ export default {
         return variables
       },
       loadingKey: 'loading',
-      update({ flow_run }) {
-        if (!flow_run) return
-        return flow_run
-      }
+      update: data => data?.flow_run
     }
   }
 }
