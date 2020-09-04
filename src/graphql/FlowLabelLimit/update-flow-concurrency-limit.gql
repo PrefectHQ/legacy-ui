@@ -1,0 +1,5 @@
+mutation UpdateFlowConcurrencyLimit($label: String!, $limit: Int!) {
+  update_flow_concurrency_limit(input: { label: $label, limit: $limit }) {
+    id
+  }
+}

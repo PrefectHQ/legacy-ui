@@ -6,6 +6,7 @@ query Agents {
     labels
     last_queried
     token_id
+    token_name
     type
   }
 }
