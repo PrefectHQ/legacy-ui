@@ -135,12 +135,24 @@ describe('tenant Vuex Module', () => {
         mutations: tenant.mutations
       })
     })
+
+    describe('setDefaultTenant', () => {
+      it('should set the defaultTenant', () => {
+        const tenant = loggedinTenantState().tenant
+        store.commit('setDefaultTenant', tenant)
+        expect(store.getters['defaultTenant']).toEqual(
+          loggedinTenantState().tenant
+        )
+      })
+    })
+
     describe('setTenant', () => {
       it('should set tenantIsSet to true', () => {
         store.commit('setTenant', loggedinTenantState().tenant)
         expect(store.getters['tenantIsSet']).toBe(true)
         expect(store.getters['tenant']).toEqual(loggedinTenantState().tenant)
       })
+
       it('should throw an error if given no tenant', () => {
         store.commit('unsetTenant')
         expect(() => store.commit('setTenant')).toThrow(
@@ -148,6 +160,22 @@ describe('tenant Vuex Module', () => {
         )
       })
     })
+
+    describe('setTenants', () => {
+      it('should set the tenants array', () => {
+        const tenants = loggedinTenantState().tenants
+        store.commit('setTenants', tenants)
+        expect(store.getters['tenants'][0]).toEqual(tenants[0])
+      })
+
+      it('should throw an error if given no tenants', () => {
+        store.commit('unsetTenants')
+        expect(() => store.commit('setTenants', [])).toThrow(
+          'passed invalid or empty tenant array'
+        )
+      })
+    })
+
     describe('unsetTenant', () => {
       it('should set tenantIsSet to false', () => {
         //Make sure store is in logged in state
@@ -158,6 +186,17 @@ describe('tenant Vuex Module', () => {
         expect(store.getters['tenant']).toEqual(initialTenantState().tenant)
       })
     })
+
+    describe('unsetTenants', () => {
+      it('should set tenants to an empty array', () => {
+        //Make sure store is in logged in state
+        store.commit('setTenants', loggedinTenantState().tenants)
+        expect(store.getters['tenants']).toEqual(loggedinTenantState().tenants)
+        store.commit('unsetTenants')
+        expect(store.getters['tenants']).toEqual([])
+      })
+    })
+
     describe('updateTenantSettings', () => {
       it('should update the settings in the store and leave the rest of the tenant as is', () => {
         //Make sure store is in logged in state
