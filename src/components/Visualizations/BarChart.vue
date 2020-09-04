@@ -27,6 +27,7 @@ export default {
       animationTimer: null,
       bars: [],
       barStart: null,
+      boundingClientRect: null,
       calcHeight: null,
       calcY: null,
       canvas: null,
@@ -67,7 +68,7 @@ export default {
     },
     tooltipStyle() {
       if (!this.hovered) return
-      let p = this.$refs['parent'].getBoundingClientRect()
+      let p = this.boundingClientRect
       let overRight = this.hovered.x + 150 - p.width > 0
       let overLeft = this.hovered.x - 150 < 0
       return {
@@ -113,6 +114,8 @@ export default {
         value: Math.floor(Math.random() * 100)
       }
     })
+
+    this.boundingClientRect = this.$refs['parent'].getBoundingClientRect()
   },
   updated() {
     if (!this.chart) this.createChart()
@@ -352,6 +355,8 @@ export default {
         paddingBottom = parseFloat(
           computedStyle.getPropertyValue('padding-bottom')
         )
+
+      this.boundingClientRect = this.$refs['parent'].getBoundingClientRect()
 
       this.chartWidth = this.vertical
         ? this.width

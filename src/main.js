@@ -48,6 +48,7 @@ if (
   process.env.VUE_APP_ENVIRONMENT == 'dev'
 ) {
   Vue.config.devtools = true
+  Vue.config.performance = true
 }
 
 const blockedResponses = ['CreateAPIToken', 'APITokens', 'CreateRunnerToken']
