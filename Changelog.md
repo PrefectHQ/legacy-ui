@@ -12,6 +12,7 @@
 - Create service worker scaffolding - [201](https://github.com/PrefectHQ/ui/pull/201)
 - Use native JavaScript Date objects instead of `moment` for duration calculations - [201](https://github.com/PrefectHQ/ui/pull/201)
 - Export the Apollo cache - [201](https://github.com/PrefectHQ/ui/pull/201)
+- Add new Flow Concurrency page for managing user-driven flow concurrency limits - [#199](https://github.com/PrefectHQ/ui/pull/199)
 
 ### Bugfixes
 
@@ -68,7 +69,7 @@
 
 ### Bugfixes
 
-- None
+- Filter scheduled flows from the activity timeline [#188](https://https://github.com/PrefectHQ/ui/pull/188)
 
 ## 2020-08-31
 

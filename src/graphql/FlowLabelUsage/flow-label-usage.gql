@@ -1,0 +1,6 @@
+query FlowLabelUsage($labels: [String!]) {
+  flow_concurrency(labels: $labels) {
+    label
+    usage
+  }
+}

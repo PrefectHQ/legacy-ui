@@ -1,0 +1,7 @@
+query FlowLabelLimit {
+  flow_concurrency_limit {
+    id
+    limit
+    name
+  }
+}
