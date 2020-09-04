@@ -33,7 +33,6 @@ export default {
       }
     }
   },
-  methods: {},
   apollo: {
     flowRuns: {
       query: require('@/graphql/Dashboard/timeline-flow-runs.gql'),

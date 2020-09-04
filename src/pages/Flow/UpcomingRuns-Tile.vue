@@ -39,23 +39,19 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['timezone']),
     lateRuns() {
-      if (!this.upcoming) return []
+      if (!this.upcoming) return null
       return this.upcoming.filter(run => {
-        return (
-          this.getTimeOverdue(run.scheduled_start_time)._milliseconds > 20000
-        )
+        return this.getTimeOverdue(run.scheduled_start_time) > 20000
+      })
+    },
+    upcomingRuns() {
+      if (!this.upcoming) return null
+      return this.upcoming.filter(run => {
+        return this.getTimeOverdue(run.scheduled_start_time) <= 20000
       })
     },
     pollInterval() {
-      return this.flow.archived ? 0 : 5000
-    },
-    upcomingRuns() {
-      if (!this.upcoming) return []
-      return this.upcoming.filter(run => {
-        return (
-          this.getTimeOverdue(run.scheduled_start_time)._milliseconds <= 20000
-        )
-      })
+      return this.flow.archived ? 0 : 10000
     },
     title() {
       if (this.flow.archived) {
@@ -98,7 +94,7 @@ export default {
         ? 'grey'
         : this.tab == 'upcoming'
         ? 'primary'
-        : this.lateRuns.length > 0
+        : this.lateRuns?.length > 0
         ? 'deepRed'
         : 'Success'
     }
@@ -106,7 +102,7 @@ export default {
   watch: {
     upcoming(val) {
       if (!val) return
-      if (this.lateRuns.length > 0) {
+      if (this.lateRuns?.length > 0) {
         this.tab = 'late'
       }
     },
@@ -156,17 +152,7 @@ export default {
       return `${formatted} ${shortenedTz}`
     },
     getTimeOverdue(time) {
-      let now, start
-      if (this.timezone) {
-        now = new moment().tz(this.timezone)
-        start = moment(time).tz(this.timezone)
-      } else {
-        now = new moment()
-        start = moment(time)
-      }
-      let diff = moment.duration(now.diff(start))
-
-      return diff
+      return new Date() - new Date(time)
     }
   },
   apollo: {
@@ -184,10 +170,7 @@ export default {
         return variables
       },
       loadingKey: 'loading',
-      update({ flow_run }) {
-        if (!flow_run) return
-        return flow_run
-      }
+      update: data => data?.flow_run
     }
   }
 }
@@ -207,7 +190,7 @@ export default {
           ? 'grey'
           : loading > 0
           ? 'secondaryGray'
-          : lateRuns.length > 0
+          : lateRuns && lateRuns.length > 0
           ? 'deepRed'
           : 'Success'
       "
@@ -274,7 +257,7 @@ export default {
           :style="{
             'border-right': `3px solid ${
               tab == 'late'
-                ? lateRuns.length > 0
+                ? lateRuns && lateRuns.length > 0
                   ? 'var(--v-deepRed-base)'
                   : 'var(--v-primary-base)'
                 : 'transparent'
@@ -284,7 +267,7 @@ export default {
           }"
           @click="tab = 'late'"
         >
-          <v-icon v-if="lateRuns.length > 0" small color="deepRed">
+          <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
             warning
           </v-icon>
           Late
@@ -297,7 +280,10 @@ export default {
       <v-skeleton-loader v-if="loading > 0" type="list-item-three-line">
       </v-skeleton-loader>
 
-      <v-list-item v-else-if="loading === 0 && upcomingRuns.length === 0" dense>
+      <v-list-item
+        v-else-if="loading === 0 && upcomingRuns && upcomingRuns.length === 0"
+        dense
+      >
         <v-list-item-avatar class="mr-0">
           <v-icon :color="flow.archived ? '' : 'Success'">
             {{ flow.archived ? 'archive' : 'check' }}
@@ -381,7 +367,11 @@ export default {
       >
       </Alert>
 
-      <div v-if="upcomingRuns.length > 3" class="pa-0 card-footer"> </div>
+      <div
+        v-if="upcomingRuns && upcomingRuns.length > 3"
+        class="pa-0 card-footer"
+      >
+      </div>
     </v-card-text>
 
     <v-card-text v-if="tab == 'late'" class="pa-0 card-content">
@@ -480,7 +470,8 @@ export default {
         </v-dialog>
       </v-list>
 
-      <div v-if="lateRuns.length > 3" class="pa-0 card-footer"> </div>
+      <div v-if="lateRuns && lateRuns.length > 3" class="pa-0 card-footer">
+      </div>
     </v-card-text>
 
     <Alert

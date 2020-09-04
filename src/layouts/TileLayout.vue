@@ -1,3 +1,13 @@
+<script>
+export default {
+  computed: {
+    extendedSlots() {
+      return Object.keys(this.$slots).filter(key => key.includes('extended'))
+    }
+  }
+}
+</script>
+
 <template>
   <v-container fluid style="max-width: 1440px;" class="mx-auto pt-0 px-3 pb-12">
     <v-row v-if="$slots['row-0']" no-gutters>
@@ -155,6 +165,12 @@
         <v-row v-if="$slots['row-2-col-2-row-3-tile-1']">
           <v-col>
             <slot name="row-2-col-2-row-3-tile-1" />
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col v-for="slot in extendedSlots" :key="slot">
+            <slot :name="slot" />
           </v-col>
         </v-row>
       </v-col>
