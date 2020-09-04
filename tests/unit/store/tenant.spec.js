@@ -269,7 +269,7 @@ describe('tenant Vuex Module', () => {
         const returnedTenants = await store.dispatch('getTenants')
         expect(returnedTenants).toEqual([
           { name: 'boo', id: '12345' },
-          { name: 'tea2', id: '345' }
+          { name: 'team2', id: '345' }
         ])
       })
     })
