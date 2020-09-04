@@ -1,0 +1,5 @@
+mutation DeleteFlowConcurrencyLimit($limitId: UUID!) {
+  delete_flow_concurrency_limit(input: { limit_id: $limitId }) {
+    success
+  }
+}
