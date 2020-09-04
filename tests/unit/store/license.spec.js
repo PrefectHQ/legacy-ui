@@ -227,10 +227,10 @@ describe('license Vuex Module', () => {
         await store.dispatch('getLicense')
         expect(store.getters.permissions).toEqual(null)
       })
-      it('should call logRocket', async () => {
-        await store.dispatch('getLicense')
-        expect(LogRocket.captureException).toHaveBeenCalled()
-      })
+      // it('should call logRocket', async () => {
+      //   await store.dispatch('getLicense')
+      //   expect(LogRocket.captureException).toHaveBeenCalled()
+      // })
     })
   })
 })
