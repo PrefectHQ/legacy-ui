@@ -6,6 +6,11 @@
 
 - Remove deprecated route calls from Task Concurrency page - [#193](https://github.com/PrefectHQ/ui/pull/193)
 - Add a loading state for accepting invitations in the sidenav and a warning before a user removes themself from a tenant [#190](https://github.com/PrefectHQ/ui/pull/190)
+- Changes to the barchart visualization to take browser visibility into account when performing repaints of the canvas and svg elements - [201](https://github.com/PrefectHQ/ui/pull/201)
+- Removes `task_run` joins on the upcoming runs queries for both the dashboard and flow pages - [201](https://github.com/PrefectHQ/ui/pull/201)
+- Create service worker scaffolding - [201](https://github.com/PrefectHQ/ui/pull/201)
+- Use native JavaScript Date objects instead of `moment` for duration calculations - [201](https://github.com/PrefectHQ/ui/pull/201)
+- Export the Apollo cache - [201](https://github.com/PrefectHQ/ui/pull/201)
 
 ### Bugfixes
 
