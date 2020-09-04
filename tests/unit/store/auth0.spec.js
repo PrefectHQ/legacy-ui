@@ -610,16 +610,15 @@ describe('Auth0 Vuex Module', () => {
 
       it('correctly returns the value of isAuthenticated', async () => {
         isAuthenticated.mockReturnValueOnce(false).mockReturnValueOnce(false)
-        const authenticateResult = await store.dispatch('authenticate')
+        let authenticateResult = await store.dispatch('authenticate')
         expect(authenticateResult).toBe(false)
 
-        // //need this twice as isAuthenticated is called twice
-        // isAuthenticated.mockReturnValueOnce(true).mockReturnValueOnce(true)
-        // const authenticateResult = await store.dispatch('authenticate')
-        // expect(store.getters.isAuthenticated).toBe(true)
-        // expect(authenticateResult).toBe(true)
+        //need this twice as isAuthenticated is called twice
+        isAuthenticated.mockReturnValueOnce(true).mockReturnValueOnce(true)
+        authenticateResult = await store.dispatch('authenticate')
+        expect(store.getters.isAuthenticated).toBe(true)
+        expect(authenticateResult).toBe(true)
       })
-      //This now uses a timeout - check is timeout called?
 
       it('gets a token siliently if isAuthenticated returns false', async () => {
         isAuthenticated.mockReturnValueOnce(false).mockReturnValueOnce(false)
