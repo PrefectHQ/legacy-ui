@@ -5,6 +5,7 @@ process.env.VUE_APP_GRAPHQL_HTTP = 'http://test.io'
 
 module.exports = {
   automock: false,
+  timers: 'fake',
   collectCoverageFrom: [
     'src/**/*.{js,vue}',
     '!**/node_modules/**',

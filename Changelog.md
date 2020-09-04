@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add unit test for the auth0 Vuex store[#162](https://github.com/PrefectHQ/ui/pull/162)
 - Remove deprecated route calls from Task Concurrency page - [#193](https://github.com/PrefectHQ/ui/pull/193)
 - Add a loading state for accepting invitations in the sidenav and a warning before a user removes themself from a tenant [#190](https://github.com/PrefectHQ/ui/pull/190)
 - Changes to the barchart visualization to take browser visibility into account when performing repaints of the canvas and svg elements - [201](https://github.com/PrefectHQ/ui/pull/201)
