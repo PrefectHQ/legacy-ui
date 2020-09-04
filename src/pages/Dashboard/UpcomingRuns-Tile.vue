@@ -1,5 +1,5 @@
 <script>
-import moment from 'moment-timezone'
+// import moment from 'moment-timezone'
 import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
@@ -42,17 +42,13 @@ export default {
     lateRuns() {
       if (!this.upcoming) return null
       return this.upcoming.filter(run => {
-        return (
-          this.getTimeOverdue(run.scheduled_start_time)._milliseconds > 20000
-        )
+        return this.getTimeOverdue(run.scheduled_start_time) > 20000
       })
     },
     upcomingRuns() {
       if (!this.upcoming) return null
       return this.upcoming.filter(run => {
-        return (
-          this.getTimeOverdue(run.scheduled_start_time)._milliseconds <= 20000
-        )
+        return this.getTimeOverdue(run.scheduled_start_time) <= 20000
       })
     },
     title() {
@@ -117,17 +113,7 @@ export default {
   },
   methods: {
     getTimeOverdue(time) {
-      let now, start
-      if (this.timezone) {
-        now = new moment().tz(this.timezone)
-        start = moment(time).tz(this.timezone)
-      } else {
-        now = new moment()
-        start = moment(time)
-      }
-      let diff = moment.duration(now.diff(start))
-
-      return diff
+      return new Date() - new Date(time)
     }
   },
   apollo: {
@@ -139,11 +125,8 @@ export default {
         }
       },
       loadingKey: 'loading',
-      pollInterval: 3000,
-      update({ flow_run }) {
-        if (!flow_run) return
-        return flow_run
-      }
+      pollInterval: 10000,
+      update: data => data?.flow_run
     }
   }
 }
