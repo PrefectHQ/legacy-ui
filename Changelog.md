@@ -7,6 +7,7 @@
 - Add unit test for the auth0 Vuex store[#162](https://github.com/PrefectHQ/ui/pull/162)
 - Remove deprecated route calls from Task Concurrency page - [#193](https://github.com/PrefectHQ/ui/pull/193)
 - Add a loading state for accepting invitations in the sidenav and a warning before a user removes themself from a tenant [#190](https://github.com/PrefectHQ/ui/pull/190)
+- Display the token name instead of the token id on the agent card - [#200](https://https://github.com/PrefectHQ/ui/pull/200)
 - Add new Flow Concurrency page for managing user-driven flow concurrency limits - [#199](https://github.com/PrefectHQ/ui/pull/199)
 
 ### Bugfixes
