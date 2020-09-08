@@ -144,7 +144,7 @@ export default {
       let _y = this.y(d[this.computedYField])
       return _y < this.barStart - this.min ? _y : this.barStart - this.min
     },
-    _click({ currentTarget }) {
+    click({ currentTarget }) {
       // Turn this on for debugging bars more easily
       // console.log(
       //   d,
@@ -152,7 +152,7 @@ export default {
       // )
       this.$emit('bar-click', currentTarget?.__data__)
     },
-    _mouseover({ currentTarget }) {
+    mouseover({ currentTarget }) {
       const d = currentTarget?.__data__
 
       this.computedMouseout.cancel()
@@ -566,9 +566,9 @@ export default {
               .attr('x', (d, i) => x(d.id ? d.id : i))
               .call(enter =>
                 enter
-                  .on('click', this._click)
+                  .on('click', this.click)
                   .on('mouseout', this.computedMouseout)
-                  .on('mouseover', this._mouseover)
+                  .on('mouseover', this.mouseover)
               ),
           update =>
             update
@@ -579,9 +579,9 @@ export default {
               .attr('x', (d, i) => x(d.id ? d.id : i))
               .call(update =>
                 update
-                  .on('click', this._click)
+                  .on('click', this.click)
                   .on('mouseout', this.computedMouseout)
-                  .on('mouseover', this._mouseover)
+                  .on('mouseover', this.mouseover)
               ),
           exit =>
             exit.call(exit =>
