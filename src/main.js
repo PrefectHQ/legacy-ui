@@ -149,28 +149,32 @@ Vue.component('height-transition', TransitionHeight)
 
 Vue.mixin({
   destroyed() {
-    this.$el.remove()
-    this.elm = null
-    this.$el = null
-    this.parent = null
-    this.$parent = null
-    this.options = null
-    this.$options = null
-    this.$vnode = null
-    this.listeners = null
-    this.$listeners = null
-    this._vnode = null
-    this._watcher = null
-    this._watchers = null
-    this._computedWatchers = null
-    this.$slots = null
-    this.slots = null
-    this.$scopedSlots = null
-    this.scopedSlots = null
-    this.$children = null
-    this.children = null
-    this.store = null
-    this.$store = null
+    try {
+      this.$el.remove()
+      this.elm = null
+      this.$el = null
+      this.parent = null
+      this.$parent = null
+      // this.options = null // Unsetting this throws internal Vue errors
+      this.$options = null
+      this.$vnode = null
+      this.listeners = null
+      // this.$listeners = null // Unsetting this throws internal Vue errors
+      this._vnode = null
+      this._watcher = null
+      this._watchers = null
+      this._computedWatchers = null
+      this.$slots = null
+      this.slots = null
+      this.$scopedSlots = null
+      this.scopedSlots = null
+      this.$children = null
+      this.children = null
+      this.store = null
+      this.$store = null
+    } catch {
+      //
+    }
   }
 })
 
