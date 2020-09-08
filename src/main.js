@@ -147,14 +147,45 @@ Vue.filter('roundThousands', roundThousands)
 
 Vue.component('height-transition', TransitionHeight)
 
+Vue.mixin({
+  destroyed() {
+    this.$el.remove()
+    this.elm = null
+    this.$el = null
+    this.parent = null
+    this.$parent = null
+    this.options = null
+    this.$options = null
+    this.$vnode = null
+    this._vnode = null
+    this._watcher = null
+    this._watchers = null
+    this._computedWatchers = null
+    this.$slots = null
+    this.slots = null
+    this.$scopedSlots = null
+    this.scopedSlots = null
+    this.$children = null
+    this.children = null
+    this.store = null
+    this.$store = null
+  }
+})
+
 // Create application
-new Vue({
+let PrefectUI = new Vue({
   vuetify,
   router,
   store,
   apolloProvider: defaultApolloProvider,
   render: h => h(App)
 }).$mount('#app')
+
+function DestroyPrefectUI() {
+  PrefectUI.$destroy()
+  PrefectUI = null
+}
+setTimeout(DestroyPrefectUI, 30000)
 
 try {
   if (navigator?.platform !== 'MacIntel') {
