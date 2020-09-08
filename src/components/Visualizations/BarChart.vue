@@ -26,11 +26,11 @@ export default {
       id: uniqueId('barChart'),
       animationTimer: null,
       bars: [],
-      barStart: null,
       boundingClientRect: null,
       calcHeight: null,
       calcY: null,
       canvas: null,
+      chartHeight: null,
       chart: null,
       easing: 'easeCubic',
       groupBreaklines: null,
@@ -60,11 +60,23 @@ export default {
     _items() {
       return this.loading ? this.loadingItems : this.items
     },
+    _mouseout: function() {
+      return debounce(this._rawMouseout, 0, { trailing: true, leading: false })
+    },
     _yField() {
       return this.loading ? 'value' : this.yField
     },
     animationDuration() {
       return this.loading ? 500 : 500
+    },
+    barStart() {
+      return this.chartHeight - this.chartHeight * 0.1
+    },
+    animateCanvas: function() {
+      return throttle(this.rawAnimateCanvas, 16)
+    },
+    min() {
+      return this.chartHeight * 0.15
     },
     tooltipStyle() {
       if (!this.hovered) return
@@ -77,12 +89,6 @@ export default {
         }px`,
         top: `${this.hovered.y}px`
       }
-    },
-    animateCanvas: function() {
-      return throttle(this.rawAnimateCanvas, 16)
-    },
-    _mouseout: function() {
-      return debounce(this._rawMouseout, 0, { trailing: true, leading: false })
     }
   },
   watch: {
@@ -125,6 +131,16 @@ export default {
     window.onresize = null
   },
   methods: {
+    _calcHeight(d) {
+      if (d.ignore) return this.barStart / 3
+      let height = this.y(0) - this.y(d[this._yField])
+      return height > this.min ? height : this.min
+    },
+    _calcY(d) {
+      if (d.ignore) return this.barStart / 1.5
+      let _y = this.y(d[this._yField])
+      return _y < this.barStart - this.min ? _y : this.barStart - this.min
+    },
     _click(event) {
       // Turn this on for debugging bars more easily
       // console.log(
@@ -142,7 +158,7 @@ export default {
         x: this.x(d.id),
         y: this.chartHeight,
         width: this.x.bandwidth(),
-        height: this.calcHeight(d)
+        height: this._calcHeight(d)
       }
       this.$emit('bar-mouseover', this.hovered)
 
@@ -192,9 +208,9 @@ export default {
       this._items.forEach((item, i) => {
         const barIndex = this.bars.findIndex(b => b.id == item.id)
 
-        const height1 = this.calcHeight(item)
+        const height1 = this._calcHeight(item)
         const x1 = this.x(item.id || i)
-        const y1 = this.calcY(item)
+        const y1 = this._calcY(item)
         const opacity = item.opacity ? item.opacity : 1
 
         // If the item isn't present in the bar array
@@ -499,10 +515,6 @@ export default {
       if (!this._items) return
       if (!this.loading) clearTimeout(this.loadingInterval)
 
-      const barStart = this.chartHeight - this.chartHeight * 0.1
-
-      this.barStart = barStart
-
       let domainItems = this._items.map((d, i) => (d.id ? d.id : i))
 
       let domain = this.minBands
@@ -535,30 +547,12 @@ export default {
         y = d3.scaleLinear()
       }
 
-      y.range([barStart, this.chartHeight * 0.2]).domain([
+      y.range([this.barStart, this.chartHeight * 0.2]).domain([
         0,
         this.loading ? 100 : yMax > 0 ? yMax : 100
       ])
 
       this.y = y
-
-      const min = this.chartHeight * 0.15
-
-      const calcHeight = d => {
-        if (d.ignore) return barStart / 3
-        let height = y(0) - y(d[this._yField])
-        return height > min ? height : min
-      }
-
-      this.calcHeight = calcHeight
-
-      const calcY = d => {
-        if (d.ignore) return barStart / 1.5
-        let _y = y(d[this._yField])
-        return _y < barStart - min ? _y : barStart - min
-      }
-
-      this.calcY = calcY
 
       this.groupClickArea
         .selectAll('.click-area-rect')
@@ -572,7 +566,7 @@ export default {
               .attr('class', 'click-area-rect')
               .attr('id', d => `click-area-${d.id}`)
               .style('fill', 'transparent')
-              .attr('height', barStart)
+              .attr('height', this.barStart)
               .attr('width', x.bandwidth())
               .attr('y', 0)
               .attr('x', (d, i) => x(d.id ? d.id : i))
@@ -585,7 +579,7 @@ export default {
           update =>
             update
               .attr('id', d => `click-area-${d.id}`)
-              .attr('height', barStart)
+              .attr('height', this.barStart)
               .attr('width', x.bandwidth())
               .attr('y', 0)
               .attr('x', (d, i) => x(d.id ? d.id : i))
@@ -625,7 +619,7 @@ export default {
               .style('opacity', 0)
               .attr('text-anchor', 'middle')
               .text('timelapse')
-              .attr('y', barStart / 1.5 - 3)
+              .attr('y', this.barStart / 1.5 - 3)
               .attr('x', d => x(d.id) + x.bandwidth() / 2)
               .call(enter =>
                 enter
@@ -665,12 +659,15 @@ export default {
             .attr('class', 'x-axis')
             .attr('stroke', 'rgba(0, 0, 0, 0.12)')
             .attr('stroke-width', 1)
-            .attr('d', `M0,${barStart}L0,${barStart}`)
+            .attr('d', `M0,${this.barStart}L0,${this.barStart}`)
             .call(enter =>
               enter
                 .transition('enter')
                 .duration(this.animationDuration)
-                .attr('d', `M0,${barStart}L${this.chartWidth},${barStart}`)
+                .attr(
+                  'd',
+                  `M0,${this.barStart}L${this.chartWidth},${this.barStart}`
+                )
             )
         )
 
