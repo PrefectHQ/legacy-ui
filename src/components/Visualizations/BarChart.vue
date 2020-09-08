@@ -73,6 +73,11 @@ export default {
     animateCanvas: function() {
       return throttle(this.rawAnimateCanvas, 16)
     },
+    resizeChart: function() {
+      return debounce(() => {
+        requestAnimationFrame(this.rawResizeChart)
+      }, 150)
+    },
     min() {
       return this.chartHeight * 0.15
     },
@@ -127,6 +132,7 @@ export default {
   beforeDestroy() {
     clearTimeout(this.loadingInterval)
     window.onresize = null
+    window.removeEventListener('resize', this.resizeChart)
   },
   methods: {
     calcHeight(d) {
@@ -139,16 +145,16 @@ export default {
       let _y = this.y(d[this.computedYField])
       return _y < this.barStart - this.min ? _y : this.barStart - this.min
     },
-    _click(event) {
+    _click({ currentTarget }) {
       // Turn this on for debugging bars more easily
       // console.log(
       //   d,
       //   this.bars.find(b => b.id == d.id)
       // )
-      this.$emit('bar-click', event.currentTarget?.__data__)
+      this.$emit('bar-click', currentTarget?.__data__)
     },
-    _mouseover(event) {
-      const d = event.currentTarget?.__data__
+    _mouseover({ currentTarget }) {
+      const d = currentTarget?.__data__
 
       this.computedMouseout.cancel()
       this.hovered = {
@@ -184,16 +190,7 @@ export default {
         .append('g')
         .attr('class', 'breaklines-group')
 
-      this.resizeChart()
-
-      const resizeChart = this.resizeChart
-
-      window.addEventListener(
-        'resize',
-        debounce(function() {
-          requestAnimationFrame(resizeChart)
-        }, 150)
-      )
+      window.addEventListener('resize', this.resizeChart)
 
       requestAnimationFrame(this.resizeChart)
     },
@@ -352,7 +349,7 @@ export default {
 
       context.restore()
     },
-    resizeChart() {
+    rawResizeChart() {
       let parent = this.chart.select(function() {
         return this.parentNode
       })
