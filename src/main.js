@@ -147,6 +147,13 @@ Vue.filter('roundThousands', roundThousands)
 
 Vue.component('height-transition', TransitionHeight)
 
+// This is a global mixin used to clean up any
+// references a component may have after it's destroyed.
+// It's a pretty heavy-handed approach to what we're trying
+// to accomplish but Vue doesn't seem to be removing all references
+// itself, which is leading to large memory leaks on data-heavy pages
+// as Apollo polls and when navigating between pages.
+// This could be more elegant and may be fixed by upgrading to Vue 3.
 Vue.mixin({
   destroyed() {
     try {
@@ -188,6 +195,9 @@ let PrefectUI = new Vue({
   render: h => h(App)
 }).$mount('#app')
 
+// This can be used in testing to destroy the entire application and remove
+// the root node associated with it.
+// Use this to test persistant objects that V8 can't garbage collect.
 // function DestroyPrefectUI() {
 //   PrefectUI.$destroy()
 //   PrefectUI = null
