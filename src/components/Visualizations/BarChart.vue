@@ -131,7 +131,6 @@ export default {
   },
   beforeDestroy() {
     clearTimeout(this.loadingInterval)
-    window.onresize = null
     window.removeEventListener('resize', this.resizeChart)
   },
   methods: {
