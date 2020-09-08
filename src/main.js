@@ -179,6 +179,7 @@ Vue.mixin({
 })
 
 // Create application
+// eslint-disable-next-line no-unused-vars
 let PrefectUI = new Vue({
   vuetify,
   router,
@@ -187,11 +188,11 @@ let PrefectUI = new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-function DestroyPrefectUI() {
-  PrefectUI.$destroy()
-  PrefectUI = null
-}
-setTimeout(DestroyPrefectUI, 30000)
+// function DestroyPrefectUI() {
+//   PrefectUI.$destroy()
+//   PrefectUI = null
+// }
+// setTimeout(DestroyPrefectUI, 30000)
 
 try {
   if (navigator?.platform !== 'MacIntel') {
