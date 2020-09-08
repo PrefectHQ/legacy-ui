@@ -27,8 +27,6 @@ export default {
       animationTimer: null,
       bars: [],
       boundingClientRect: null,
-      calcHeight: null,
-      calcY: null,
       canvas: null,
       chartHeight: null,
       chart: null,
@@ -57,13 +55,13 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
-    _items() {
+    computedItems() {
       return this.loading ? this.loadingItems : this.items
     },
-    _mouseout: function() {
-      return debounce(this._rawMouseout, 0, { trailing: true, leading: false })
+    computedMouseout: function() {
+      return debounce(this.rawMouseout, 0, { trailing: true, leading: false })
     },
-    _yField() {
+    computedYField() {
       return this.loading ? 'value' : this.yField
     },
     animationDuration() {
@@ -131,14 +129,14 @@ export default {
     window.onresize = null
   },
   methods: {
-    _calcHeight(d) {
+    calcHeight(d) {
       if (d.ignore) return this.barStart / 3
-      let height = this.y(0) - this.y(d[this._yField])
+      let height = this.y(0) - this.y(d[this.computedYField])
       return height > this.min ? height : this.min
     },
-    _calcY(d) {
+    calcY(d) {
       if (d.ignore) return this.barStart / 1.5
-      let _y = this.y(d[this._yField])
+      let _y = this.y(d[this.computedYField])
       return _y < this.barStart - this.min ? _y : this.barStart - this.min
     },
     _click(event) {
@@ -152,13 +150,13 @@ export default {
     _mouseover(event) {
       const d = event.currentTarget?.__data__
 
-      this._mouseout.cancel()
+      this.computedMouseout.cancel()
       this.hovered = {
         data: d,
         x: this.x(d.id),
         y: this.chartHeight,
         width: this.x.bandwidth(),
-        height: this._calcHeight(d)
+        height: this.calcHeight(d)
       }
       this.$emit('bar-mouseover', this.hovered)
 
@@ -166,7 +164,7 @@ export default {
 
       this.animateCanvas()
     },
-    _rawMouseout() {
+    rawMouseout() {
       this.$emit('bar-mouseout', this.hovered)
       this.hovered = null
       this.hoveredId = null
@@ -205,12 +203,12 @@ export default {
       const barWidth = this.x.bandwidth()
 
       // Check our current data against existing bars
-      this._items.forEach((item, i) => {
+      this.computedItems.forEach((item, i) => {
         const barIndex = this.bars.findIndex(b => b.id == item.id)
 
-        const height1 = this._calcHeight(item)
+        const height1 = this.calcHeight(item)
         const x1 = this.x(item.id || i)
-        const y1 = this._calcY(item)
+        const y1 = this.calcY(item)
         const opacity = item.opacity ? item.opacity : 1
 
         // If the item isn't present in the bar array
@@ -251,7 +249,7 @@ export default {
 
       // Check our existing bars against current data
       this.bars.forEach((bar, i) => {
-        const itemExists = this._items.find(item => item.id == bar.id)
+        const itemExists = this.computedItems.find(item => item.id == bar.id)
 
         // If this is a valid bar, do nothing since its data was already
         // updated in the loop above...
@@ -512,10 +510,10 @@ export default {
         return
       }
 
-      if (!this._items) return
+      if (!this.computedItems) return
       if (!this.loading) clearTimeout(this.loadingInterval)
 
-      let domainItems = this._items.map((d, i) => (d.id ? d.id : i))
+      let domainItems = this.computedItems.map((d, i) => (d.id ? d.id : i))
 
       let domain = this.minBands
         ? domainItems.length > this.minBands
@@ -537,7 +535,7 @@ export default {
 
       this.x = x
 
-      let yMax = d3.max(this._items, d => d[this._yField])
+      let yMax = d3.max(this.computedItems, d => d[this.computedYField])
 
       let y
 
@@ -556,7 +554,7 @@ export default {
 
       this.groupClickArea
         .selectAll('.click-area-rect')
-        .data(this.loading ? [] : this._items)
+        .data(this.loading ? [] : this.computedItems)
         .join(
           enter =>
             enter
@@ -573,7 +571,7 @@ export default {
               .call(enter =>
                 enter
                   .on('click', this._click)
-                  .on('mouseout', this._mouseout)
+                  .on('mouseout', this.computedMouseout)
                   .on('mouseover', this._mouseover)
               ),
           update =>
@@ -586,7 +584,7 @@ export default {
               .call(update =>
                 update
                   .on('click', this._click)
-                  .on('mouseout', this._mouseout)
+                  .on('mouseout', this.computedMouseout)
                   .on('mouseover', this._mouseover)
               ),
           exit =>
@@ -605,7 +603,7 @@ export default {
       // the correct index for the x scale
       this.groupText
         .selectAll('.warning-text')
-        .data(this.loading ? [] : this._items)
+        .data(this.loading ? [] : this.computedItems)
         .join(
           enter =>
             enter

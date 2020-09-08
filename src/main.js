@@ -157,6 +157,8 @@ Vue.mixin({
     this.options = null
     this.$options = null
     this.$vnode = null
+    this.listeners = null
+    this.$listeners = null
     this._vnode = null
     this._watcher = null
     this._watchers = null
