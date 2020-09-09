@@ -179,6 +179,7 @@ Vue.mixin({
       this.children = null
       this.store = null
       this.$store = null
+      this.$apollo = null
     } catch {
       //
     }
