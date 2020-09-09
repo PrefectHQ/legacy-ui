@@ -341,32 +341,29 @@ describe('tenant Vuex Module', () => {
       })
     })
 
-    // describe('getLicense - with query error', () => {
-    //   let store
+    describe('updateTenantSettings', () => {
+      let store
 
-    //   beforeEach(() => {
-    //     mockerror = true
-    //     store = new Vuex.Store({
-    //       state: initialLicenseState(),
-    //       getters: license.getters,
-    //       mutations: license.mutations,
-    //       actions: license.actions
-    //     })
-    //   })
+      beforeEach(() => {
+        tenant.actions.getTenants = jest.fn()
+        store = new Vuex.Store({
+          state: initialTenantState(),
+          getters: tenant.getters,
+          mutations: tenant.mutations,
+          actions: tenant.actions
+        })
+      })
 
-    //   it('should not set license data', async () => {
-    //     await store.dispatch('getLicense')
-    //     expect(store.getters.hasLicense).toBe(false)
-    //     expect(store.getters.license).toEqual(null)
-    //   })
-    //   it('should not set permissions', async () => {
-    //     await store.dispatch('getLicense')
-    //     expect(store.getters.permissions).toEqual(null)
-    //   })
-    //   // it('should call logRocket', async () => {
-    //   //   await store.dispatch('getLicense')
-    //   //   expect(LogRocket.captureException).toHaveBeenCalled()
-    //   // })
-    // })
+      it('should throw an error if no settings are given', async () => {
+        expect(store.dispatch('updateTenantSettings')).rejects.toThrow(
+          'Error: passed invalid or empty settings object'
+        )
+      })
+
+      it('should call the getTenants action when settings are given', async () => {
+        await store.dispatch('updateTenantSettings', { name: 'Tom' })
+        expect(tenant.actions.getTenants).toBeCalled()
+      })
+    })
   })
 })

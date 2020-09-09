@@ -158,10 +158,10 @@ const actions = {
           throw error
         }
       })
-
       await dispatch('getTenants')
     } catch (e) {
-      throw new Error('Problem updating tenant settings: ', e)
+      if (e) throw new Error(e)
+      else throw new Error('Problem updating tenant settings: ', e)
     }
   }
 }
