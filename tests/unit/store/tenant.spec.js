@@ -23,19 +23,8 @@ let mockerror
 jest.mock('@/vue-apollo', () => {
   return {
     fallbackApolloClient: {
-      query: () => {
-        if (!mockerror) {
-          return {
-            data: {
-              auth_info: {
-                license: {},
-                permissions: {}
-              }
-            }
-          }
-        } else {
-          return 'error'
-        }
+      mutate: () => {
+        return { data: { switch_token: 1 } }
       }
     }
   }
@@ -265,6 +254,90 @@ describe('tenant Vuex Module', () => {
         prefectTenants.mockReturnValueOnce(tenantsArray)
         const returnedTenants = await store.dispatch('getTenants')
         expect(returnedTenants).toEqual([{ name: 'boo', id: '12345' }])
+      })
+    })
+
+    describe('setCurrentTenant -server', () => {
+      let store
+
+      beforeEach(() => {
+        store = new Vuex.Store({
+          state: initialTenantState(),
+          getters: tenant.getters,
+          mutations: tenant.mutations,
+          actions: tenant.actions
+        })
+      })
+
+      it('should throw an error if no slug is provided', () => {
+        expect(store.dispatch('setCurrentTenant', false)).rejects.toThrow(
+          'No slug was provided when trying to set the current tenant'
+        )
+      })
+
+      it('should check if tenant is set and getTenant if not set', async () => {
+        expect(store.getters.tenant.slug).toBe(null)
+        const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
+        prefectTenants.mockReturnValueOnce(tenantsArray)
+        await store.dispatch('setCurrentTenant', 'team2')
+        expect(store.getters.tenant.slug).toEqual('team2')
+      })
+
+      it('should throw an error if the requested tenant does not exist', async () => {
+        expect(store.getters.tenant.slug).toBe(null)
+        const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
+        prefectTenants.mockReturnValueOnce(tenantsArray)
+        expect(store.dispatch('setCurrentTenant', 'team3')).rejects.toThrow(
+          "Error: Unable to set current tenant: tenant doesn't exist"
+        )
+      })
+
+      it('should set the tenant role to Tenant Admin', async () => {
+        expect(store.getters.tenant.slug).toBe(null)
+        const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
+        prefectTenants.mockReturnValueOnce(tenantsArray)
+        await store.dispatch('setCurrentTenant', 'team2')
+        expect(store.getters.role).toEqual('TENANT_ADMIN')
+      })
+
+      it('should return the tenant', async () => {
+        const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
+        prefectTenants.mockReturnValueOnce(tenantsArray)
+        expect(await store.dispatch('setCurrentTenant', 'team2')).toEqual({
+          id: '12345',
+          name: 'boo',
+          role: 'TENANT_ADMIN',
+          slug: 'team2'
+        })
+      })
+    })
+
+    describe('setCurrentTenant - Cloud specific', () => {
+      let store
+
+      beforeEach(() => {
+        tenant.actions['auth0/updateAuthorization'] = jest.fn
+        tenant.actions['license/getLicense'] = jest.fn()
+        store = new Vuex.Store({
+          state: initialTenantState(),
+          getters: {
+            ...tenant.getters,
+            'api/isCloud': () => true,
+            'user/memberships': () => [
+              { tenant: { id: '12345' }, role: 'USER' }
+            ]
+          },
+          mutations: tenant.mutations,
+          actions: tenant.actions
+        })
+      })
+
+      it('should set the tenant role according to user memberships', async () => {
+        expect(store.getters.tenant.slug).toBe(null)
+        const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
+        prefectTenants.mockReturnValueOnce(tenantsArray)
+        await store.dispatch('setCurrentTenant', 'team2')
+        expect(store.getters.role).toEqual('USER')
       })
     })
 
