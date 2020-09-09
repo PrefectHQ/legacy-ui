@@ -104,7 +104,6 @@ const actions = {
       }
 
       tenant = getters['tenants']?.find(t => t.slug === slug)
-
       if (!tenant) {
         throw new Error("Unable to set current tenant: tenant doesn't exist")
       }
@@ -140,7 +139,8 @@ const actions = {
 
       commit('setTenant', tenant)
     } catch (e) {
-      throw new Error('Problem setting tenant: ', e)
+      if (e) throw new Error(e)
+      else throw new Error('Problem setting tenant')
     }
     return getters['tenant']
   },
