@@ -1,5 +1,5 @@
 query Agents {
-  agents {
+  agent {
     id
     core_version
     name

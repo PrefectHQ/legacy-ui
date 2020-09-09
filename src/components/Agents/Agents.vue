@@ -118,8 +118,8 @@ export default {
       },
       loadingKey: 'loading',
       update: data => {
-        if (!data.agents) return this.agents
-        return data.agents
+        if (!data.agent) return this.agents
+        return data.agent
           .map(agent => ({
             ...agent,
             secondsSinceLastQuery: moment().diff(
