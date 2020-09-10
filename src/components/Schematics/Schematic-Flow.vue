@@ -3,6 +3,7 @@ import { mapGetters } from 'vuex'
 import * as d3_base from 'd3'
 import { zoom } from 'd3-zoom'
 import uniqueId from 'lodash.uniqueid'
+import throttle from 'lodash.throttle'
 import Legend from '@/components/Schematics/Legend'
 import LogRocket from 'logrocket'
 import SchematicNode from '@/components/Schematics/Schematic-Node'
@@ -88,6 +89,7 @@ export default {
       showLabels: false,
       showTooltip: true,
       size: 0,
+      timer: null,
       tooltipData: null,
       transitionDuration: 250,
       transform: null,
@@ -135,6 +137,9 @@ export default {
         level2: this.transform?.k / this.size > 0.15
       }
     },
+    animateCanvas: function() {
+      return throttle(this.rawAnimateCanvas, 16)
+    },
     visibleNodes() {
       if (!this.transform) return []
       const buf = 100 // buffer
@@ -160,13 +165,7 @@ export default {
       }
     },
     showCards() {
-      let t = d3.timer(elapsed => {
-        this.drawCanvas(this.transform)
-
-        if (elapsed > this.transitionDuration) {
-          t.stop()
-        }
-      })
+      this.animateCanvas()
     }
   },
   mounted() {
@@ -179,10 +178,14 @@ export default {
     }
   },
   beforeDestroy() {
-    this.id = uniqueId('schematic')
+    cancelAnimationFrame(this.drawCanvas)
+    this.id = null
     this.hasFit = null
     this.nodeData = null
     this.worker = null
+    this.custom = null
+    this.timer.stop()
+    this.timer = null
   },
   methods: {
     _zoomed(event) {
@@ -201,7 +204,7 @@ export default {
       this.transformEventK = event.transform.k
       this.transformEventX = event.transform.x
       this.transformEventY = event.transform.y
-      this.drawCanvas(this.transform)
+      requestAnimationFrame(this.drawCanvas)
     },
     _zoomIn() {
       if (this.transform.k < 0.01) return
@@ -262,7 +265,7 @@ export default {
       this.loadingKey--
     },
     async createDag(tasks) {
-      if (tasks.length === 0) return
+      if (tasks.length === 0 || this.loading) return
       this.loadingKey += 2
       this.mappedTasks = {}
 
@@ -409,19 +412,52 @@ export default {
       this.redraw()
     },
     fitViz() {
-      this.canvas
-        .transition()
-        .duration(500)
-        .call(
+      this.canvas.call(
+        this.scaledZoom.transform,
+        d3.zoomIdentity
+          .translate(this.canvasAdjustment.w / 2, this.canvasAdjustment.h / 2)
+          .scale(1)
+      )
+    },
+    rawAnimateCanvas() {
+      cancelAnimationFrame(this.drawCanvas)
+
+      this.timer?.stop()
+      this.timer = d3.timer(elapsed => {
+        this.canvas.call(
           this.scaledZoom.transform,
           d3.zoomIdentity
-            .translate(this.canvasAdjustment.w / 2, this.canvasAdjustment.h / 2)
-            .scale(1)
+            .translate(this.transformEventX, this.transformEventY)
+            .scale(this.transformEventK)
         )
+
+        if (elapsed > this.transitionDuration + 100) {
+          setTimeout(() => {
+            // Final fit
+            this.painting = false
+
+            // Fit after the first drawing
+            if (!this.hasFit) {
+              this.hasFit = true
+              this.fitViz()
+              setTimeout(() => {
+                this.showCanvas = true
+              }, 600)
+            }
+          }, 500)
+
+          this.timer.stop()
+        }
+      })
     },
-    drawCanvas(transform) {
+    drawCanvas() {
+      // If the custom ref has been destroyed we don't want to continue trying
+      // to draw the canvas (this can happen if this has been queued)
+      if (!this.custom) return
+
       this.context.clearRect(0, 0, this.width, this.height)
 
+      const transform = this.transform
       const context = this.context
       const showNodes = !this.showCards
       const showDetails = this.showDetails
@@ -437,6 +473,8 @@ export default {
         scaledArrow > 10 ? 10 : scaledArrow < 5 ? 5 : scaledArrow
       const nodeSize =
         scaledNode + Math.min(scaledNode, scaledNode * (size / scaledNode))
+
+      if (!this.custom) return
 
       let edges = this.custom.selectAll('path')
 
@@ -495,9 +533,11 @@ export default {
         })
       })
 
-      if (!showNodes && showDetails.level1) return
+      if (!showNodes && showDetails?.level1) return
 
       let nodes = this.custom.selectAll('circle')
+
+      if (!nodes) return
 
       // Resets the alpha before we draw nodes,
       // which we always want to be opaque
@@ -545,35 +585,7 @@ export default {
     redraw() {
       this.updateEdges()
       this.updateNodes()
-
-      let t = d3.timer(elapsed => {
-        this.drawCanvas(d3.zoomIdentity)
-
-        this.canvas.call(
-          this.scaledZoom.transform,
-          d3.zoomIdentity
-            .translate(this.transformEventX, this.transformEventY)
-            .scale(this.transformEventK)
-        )
-
-        if (elapsed > this.transitionDuration + 100) {
-          setTimeout(() => {
-            // Final fit
-            this.painting = false
-
-            // Fit after the first drawing
-            if (!this.hasFit) {
-              this.hasFit = true
-              this.fitViz()
-              setTimeout(() => {
-                this.showCanvas = true
-              }, 600)
-            }
-          }, 500)
-
-          t.stop()
-        }
-      })
+      this.animateCanvas()
     },
     updateNodes() {
       // Preserves references to this for event handlers
@@ -778,13 +790,8 @@ export default {
           query: { ...this.$route.query, schematic: '' }
         })
       }
-      let t = d3.timer(elapsed => {
-        this.drawCanvas(this.transform)
 
-        if (elapsed > this.transitionDuration + 100) {
-          t.stop()
-        }
-      })
+      this.animateCanvas()
     },
     showAllNodes() {
       this.custom
@@ -1025,7 +1032,7 @@ export default {
     >
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <v-btn icon tile v-on="on" @click="fitViz()">
+          <v-btn icon tile v-on="on" @click="fitViz">
             <v-icon>center_focus_strong</v-icon>
           </v-btn>
         </template>

@@ -26,10 +26,9 @@ export default {
       id: uniqueId('barChart'),
       animationTimer: null,
       bars: [],
-      barStart: null,
-      calcHeight: null,
-      calcY: null,
+      boundingClientRect: null,
       canvas: null,
+      chartHeight: null,
       chart: null,
       easing: 'easeCubic',
       groupBreaklines: null,
@@ -56,18 +55,35 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
-    _items() {
+    computedItems() {
       return this.loading ? this.loadingItems : this.items
     },
-    _yField() {
+    computedMouseout: function() {
+      return debounce(this.rawMouseout, 0, { trailing: true, leading: false })
+    },
+    computedYField() {
       return this.loading ? 'value' : this.yField
     },
     animationDuration() {
       return this.loading ? 500 : 500
     },
+    barStart() {
+      return this.chartHeight - this.chartHeight * 0.1
+    },
+    animateCanvas: function() {
+      return throttle(this.rawAnimateCanvas, 16)
+    },
+    resizeChart: function() {
+      return debounce(() => {
+        requestAnimationFrame(this.rawResizeChart)
+      }, 150)
+    },
+    min() {
+      return this.chartHeight * 0.15
+    },
     tooltipStyle() {
       if (!this.hovered) return
-      let p = this.$refs['parent'].getBoundingClientRect()
+      let p = this.boundingClientRect
       let overRight = this.hovered.x + 150 - p.width > 0
       let overLeft = this.hovered.x - 150 < 0
       return {
@@ -76,12 +92,6 @@ export default {
         }px`,
         top: `${this.hovered.y}px`
       }
-    },
-    animateCanvas: function() {
-      return throttle(this.rawAnimateCanvas, 16)
-    },
-    _mouseout: function() {
-      return debounce(this._rawMouseout, 0, { trailing: true, leading: false })
     }
   },
   watch: {
@@ -113,27 +123,39 @@ export default {
         value: Math.floor(Math.random() * 100)
       }
     })
+
+    this.boundingClientRect = this.$refs['parent'].getBoundingClientRect()
   },
   updated() {
     if (!this.chart) this.createChart()
   },
   beforeDestroy() {
     clearTimeout(this.loadingInterval)
-    window.onresize = null
+    window.removeEventListener('resize', this.resizeChart)
   },
   methods: {
-    _click(event) {
+    calcHeight(d) {
+      if (d.ignore) return this.barStart / 3
+      let height = this.y(0) - this.y(d[this.computedYField])
+      return height > this.min ? height : this.min
+    },
+    calcY(d) {
+      if (d.ignore) return this.barStart / 1.5
+      let _y = this.y(d[this.computedYField])
+      return _y < this.barStart - this.min ? _y : this.barStart - this.min
+    },
+    click({ currentTarget }) {
       // Turn this on for debugging bars more easily
       // console.log(
       //   d,
       //   this.bars.find(b => b.id == d.id)
       // )
-      this.$emit('bar-click', event.currentTarget?.__data__)
+      this.$emit('bar-click', currentTarget?.__data__)
     },
-    _mouseover(event) {
-      const d = event.currentTarget?.__data__
+    mouseover({ currentTarget }) {
+      const d = currentTarget?.__data__
 
-      this._mouseout.cancel()
+      this.computedMouseout.cancel()
       this.hovered = {
         data: d,
         x: this.x(d.id),
@@ -147,7 +169,7 @@ export default {
 
       this.animateCanvas()
     },
-    _rawMouseout() {
+    rawMouseout() {
       this.$emit('bar-mouseout', this.hovered)
       this.hovered = null
       this.hoveredId = null
@@ -167,16 +189,7 @@ export default {
         .append('g')
         .attr('class', 'breaklines-group')
 
-      this.resizeChart()
-
-      const resizeChart = this.resizeChart
-
-      window.addEventListener(
-        'resize',
-        debounce(function() {
-          requestAnimationFrame(resizeChart)
-        }, 150)
-      )
+      window.addEventListener('resize', this.resizeChart)
 
       requestAnimationFrame(this.resizeChart)
     },
@@ -186,7 +199,7 @@ export default {
       const barWidth = this.x.bandwidth()
 
       // Check our current data against existing bars
-      this._items.forEach((item, i) => {
+      this.computedItems.forEach((item, i) => {
         const barIndex = this.bars.findIndex(b => b.id == item.id)
 
         const height1 = this.calcHeight(item)
@@ -232,7 +245,7 @@ export default {
 
       // Check our existing bars against current data
       this.bars.forEach((bar, i) => {
-        const itemExists = this._items.find(item => item.id == bar.id)
+        const itemExists = this.computedItems.find(item => item.id == bar.id)
 
         // If this is a valid bar, do nothing since its data was already
         // updated in the loop above...
@@ -335,7 +348,7 @@ export default {
 
       context.restore()
     },
-    resizeChart() {
+    rawResizeChart() {
       let parent = this.chart.select(function() {
         return this.parentNode
       })
@@ -352,6 +365,8 @@ export default {
         paddingBottom = parseFloat(
           computedStyle.getPropertyValue('padding-bottom')
         )
+
+      this.boundingClientRect = this.$refs['parent'].getBoundingClientRect()
 
       this.chartWidth = this.vertical
         ? this.width
@@ -491,14 +506,10 @@ export default {
         return
       }
 
-      if (!this._items) return
+      if (!this.computedItems) return
       if (!this.loading) clearTimeout(this.loadingInterval)
 
-      const barStart = this.chartHeight - this.chartHeight * 0.1
-
-      this.barStart = barStart
-
-      let domainItems = this._items.map((d, i) => (d.id ? d.id : i))
+      let domainItems = this.computedItems.map((d, i) => (d.id ? d.id : i))
 
       let domain = this.minBands
         ? domainItems.length > this.minBands
@@ -520,7 +531,7 @@ export default {
 
       this.x = x
 
-      let yMax = d3.max(this._items, d => d[this._yField])
+      let yMax = d3.max(this.computedItems, d => d[this.computedYField])
 
       let y
 
@@ -530,34 +541,16 @@ export default {
         y = d3.scaleLinear()
       }
 
-      y.range([barStart, this.chartHeight * 0.2]).domain([
+      y.range([this.barStart, this.chartHeight * 0.2]).domain([
         0,
         this.loading ? 100 : yMax > 0 ? yMax : 100
       ])
 
       this.y = y
 
-      const min = this.chartHeight * 0.15
-
-      const calcHeight = d => {
-        if (d.ignore) return barStart / 3
-        let height = y(0) - y(d[this._yField])
-        return height > min ? height : min
-      }
-
-      this.calcHeight = calcHeight
-
-      const calcY = d => {
-        if (d.ignore) return barStart / 1.5
-        let _y = y(d[this._yField])
-        return _y < barStart - min ? _y : barStart - min
-      }
-
-      this.calcY = calcY
-
       this.groupClickArea
         .selectAll('.click-area-rect')
-        .data(this.loading ? [] : this._items)
+        .data(this.loading ? [] : this.computedItems)
         .join(
           enter =>
             enter
@@ -567,28 +560,28 @@ export default {
               .attr('class', 'click-area-rect')
               .attr('id', d => `click-area-${d.id}`)
               .style('fill', 'transparent')
-              .attr('height', barStart)
+              .attr('height', this.barStart)
               .attr('width', x.bandwidth())
               .attr('y', 0)
               .attr('x', (d, i) => x(d.id ? d.id : i))
               .call(enter =>
                 enter
-                  .on('click', this._click)
-                  .on('mouseout', this._mouseout)
-                  .on('mouseover', this._mouseover)
+                  .on('click', this.click)
+                  .on('mouseout', this.computedMouseout)
+                  .on('mouseover', this.mouseover)
               ),
           update =>
             update
               .attr('id', d => `click-area-${d.id}`)
-              .attr('height', barStart)
+              .attr('height', this.barStart)
               .attr('width', x.bandwidth())
               .attr('y', 0)
               .attr('x', (d, i) => x(d.id ? d.id : i))
               .call(update =>
                 update
-                  .on('click', this._click)
-                  .on('mouseout', this._mouseout)
-                  .on('mouseover', this._mouseover)
+                  .on('click', this.click)
+                  .on('mouseout', this.computedMouseout)
+                  .on('mouseover', this.mouseover)
               ),
           exit =>
             exit.call(exit =>
@@ -606,7 +599,7 @@ export default {
       // the correct index for the x scale
       this.groupText
         .selectAll('.warning-text')
-        .data(this.loading ? [] : this._items)
+        .data(this.loading ? [] : this.computedItems)
         .join(
           enter =>
             enter
@@ -620,7 +613,7 @@ export default {
               .style('opacity', 0)
               .attr('text-anchor', 'middle')
               .text('timelapse')
-              .attr('y', barStart / 1.5 - 3)
+              .attr('y', this.barStart / 1.5 - 3)
               .attr('x', d => x(d.id) + x.bandwidth() / 2)
               .call(enter =>
                 enter
@@ -660,12 +653,15 @@ export default {
             .attr('class', 'x-axis')
             .attr('stroke', 'rgba(0, 0, 0, 0.12)')
             .attr('stroke-width', 1)
-            .attr('d', `M0,${barStart}L0,${barStart}`)
+            .attr('d', `M0,${this.barStart}L0,${this.barStart}`)
             .call(enter =>
               enter
                 .transition('enter')
                 .duration(this.animationDuration)
-                .attr('d', `M0,${barStart}L${this.chartWidth},${barStart}`)
+                .attr(
+                  'd',
+                  `M0,${this.barStart}L${this.chartWidth},${this.barStart}`
+                )
             )
         )
 
