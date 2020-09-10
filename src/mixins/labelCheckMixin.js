@@ -14,25 +14,32 @@ export const labelCheckMixin = {
       return null
     },
     flowLabels() {
-      const labels = this.flowGroup?.labels || this.flow?.environment?.labels
+      const labels =
+        this.newLabels ||
+        this.flowGroup?.labels ||
+        this.flow?.environment?.labels
       return labels
-    }
-  },
-  methods: {
+    },
     labelsAlign() {
+      if (!this.agents) {
+        this.labelMessage = 'You have no live agents'
+        return false
+      }
       if (!this.flowLabels.length && this.agentLabels.length) {
         this.labelMessage = `Your flow has no labels and your agents have the following labels: ${this.agentLabels}.  To let the agent pick up this flow run, you will need to add one of these labels to you flow.`
         return false
       } else {
         let matchingLabels = 0
-        this.agentLabels.forEach(array => {
-          if (this.flowLabels.every(label => array.includes(label)))
-            matchingLabels++
-        })
+        if (this.agentLabels) {
+          this.agentLabels.forEach(array => {
+            if (this.flowLabels.every(label => array.includes(label)))
+              matchingLabels++
+          })
+        }
         if (matchingLabels > 0) {
           return true
         } else {
-          this.labelMessage = `You have a mismatch between your flow and agent labels.  Your flow labels are: ${this.flowLabels} and your agent labels are: Agent1: ${this.agentLabels[0]} Agent 2: ${this.agentLabels[1]}`
+          this.labelMessage = `You have a mismatch between your flow and agent labels.  Your flow labels are: ${this.flowLabels} and your agent labels are: ${this.agentLabels} }`
           return false
         }
       }

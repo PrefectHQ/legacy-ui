@@ -17,10 +17,13 @@ const getters = {
   unhealthyThreshold(state) {
     return state.thresholds.unhealthy
   },
+  agents(state) {
+    return state.agents
+  },
   agentLabels(state) {
     if (state.agents) {
-      const labels = state.agents.reduce((accumulator, agent) => {
-        accumulator.push(agent.labels)
+      const labels = state.agents.reduce((accumulator, agent, index) => {
+        accumulator.push({ [index]: agent.labels })
         return accumulator
       }, [])
       return labels

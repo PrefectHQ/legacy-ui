@@ -5,6 +5,7 @@ import CardTitle from '@/components/Card-Title'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
 import ExternalLink from '@/components/ExternalLink'
+import LabelWarning from '@/components/LabelWarning'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -14,7 +15,8 @@ export default {
     CardTitle,
     ConcurrencyInfo,
     DurationSpan,
-    ExternalLink
+    ExternalLink,
+    LabelWarning
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin, formatTime],
   props: {
@@ -127,6 +129,11 @@ export default {
       loadingKey: 'loading',
       pollInterval: 10000,
       update: data => data?.flow_run
+    },
+    agents: {
+      query: require('@/graphql/Agent/agents.gql'),
+      loadingKey: 'loading',
+      update: data => data?.agents
     }
   }
 }
@@ -352,10 +359,18 @@ export default {
             three-line
             :to="{ name: 'flow-run', params: { id: item.id } }"
           >
+            <v-list-item-avatar class="mr-0 ml-0">
+              <LabelWarning
+                :flow="item.flow"
+                :flow-group="item.flow.flow_group"
+                :agents="agents"
+              />
+            </v-list-item-avatar>
             <v-list-item-content>
               <span class="caption mb-0">
                 Scheduled for {{ formatDateTime(item.scheduled_start_time) }}
               </span>
+
               <v-list-item-title class="body-2">
                 <router-link
                   :to="{ name: 'flow', params: { id: item.flow.id } }"

@@ -8,13 +8,15 @@ import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
+import LabelWarning from '@/components/LabelWarning'
 
 export default {
   components: {
     Alert,
     CardTitle,
     ConcurrencyInfo,
-    DurationSpan
+    DurationSpan,
+    LabelWarning
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin],
   props: {
@@ -23,6 +25,10 @@ export default {
       default: () => false
     },
     flow: {
+      type: Object,
+      default: () => {}
+    },
+    flowGroup: {
       type: Object,
       default: () => {}
     },
@@ -171,6 +177,11 @@ export default {
       },
       loadingKey: 'loading',
       update: data => data?.flow_run
+    },
+    agents: {
+      query: require('@/graphql/Agent/agents.gql'),
+      loadingKey: 'loading',
+      update: data => data?.agents
     }
   }
 }
@@ -410,6 +421,13 @@ export default {
             two-line
             :to="{ name: 'flow-run', params: { id: item.id } }"
           >
+            <v-list-item-avatar class="mr-0">
+              <LabelWarning
+                :flow="flow"
+                :flow-group="flowGroup"
+                :agents="agents"
+              />
+            </v-list-item-avatar>
             <v-list-item-content>
               <span class="caption mb-0">
                 Scheduled for {{ formatTime(item.scheduled_start_time) }}
@@ -421,6 +439,7 @@ export default {
                   {{ item.name }}
                 </router-link>
               </v-list-item-title>
+
               <v-list-item-subtitle class="caption">
                 <DurationSpan :start-time="item.scheduled_start_time" />
                 behind schedule

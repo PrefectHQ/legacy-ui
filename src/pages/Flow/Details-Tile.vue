@@ -3,9 +3,9 @@ import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
 import Parameters from '@/components/Parameters'
 import PrefectSchedule from '@/components/PrefectSchedule'
+import LabelWarning from '@/components/LabelWarning'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { parametersMixin } from '@/mixins/parametersMixin'
-import { labelCheckMixin } from '@/mixins/labelCheckMixin'
 import { mapActions } from 'vuex'
 
 export default {
@@ -15,10 +15,11 @@ export default {
   components: {
     CardTitle,
     Label,
+    LabelWarning,
     Parameters,
     PrefectSchedule
   },
-  mixins: [formatTime, parametersMixin, labelCheckMixin],
+  mixins: [formatTime, parametersMixin],
   props: {
     flow: {
       type: Object,
@@ -367,6 +368,11 @@ export default {
                     </v-card-text>
                   </v-card>
                 </v-menu>
+                <LabelWarning
+                  :flow="flow"
+                  :flow-group="flowGroup"
+                  :agents="agents"
+                />
                 <span v-if="$vuetify.breakpoint.sm" class="ml-8">
                   <v-menu
                     v-model="labelEditOpen"
