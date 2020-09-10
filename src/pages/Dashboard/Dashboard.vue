@@ -260,7 +260,10 @@ export default {
             class="my-2"
             tile
           >
-            <TimelineTile :project-id="projectId" />
+            <TimelineTile
+              :project-id="projectId"
+              :visible="tab == 'overview'"
+            />
           </v-skeleton-loader>
 
           <v-skeleton-loader
