@@ -5,6 +5,7 @@ import Parameters from '@/components/Parameters'
 import PrefectSchedule from '@/components/PrefectSchedule'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { parametersMixin } from '@/mixins/parametersMixin'
+import { labelCheckMixin } from '@/mixins/labelCheckMixin'
 import { mapActions } from 'vuex'
 
 export default {
@@ -17,7 +18,7 @@ export default {
     Parameters,
     PrefectSchedule
   },
-  mixins: [formatTime, parametersMixin],
+  mixins: [formatTime, parametersMixin, labelCheckMixin],
   props: {
     flow: {
       type: Object,
@@ -177,6 +178,13 @@ export default {
         this.copiedText = {}
         this.copiedText[value] = false
       }, 600)
+    }
+  },
+  apollo: {
+    agents: {
+      query: require('@/graphql/Agent/agents.gql'),
+      loadingKey: 'loading',
+      update: data => data?.agents
     }
   }
 }
