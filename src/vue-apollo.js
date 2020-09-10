@@ -239,7 +239,7 @@ const link = ApolloLink.from([
   batchLink
 ])
 
-const inMemoryCache = new InMemoryCache({
+export const cache = new InMemoryCache({
   resultCaching: false
 })
 
@@ -268,7 +268,7 @@ export const defaultOptions = {
   link: link,
 
   // Override default cache
-  cache: inMemoryCache,
+  cache: cache,
 
   // Override the way the Authorization header is set
   // getAuth: () => ...

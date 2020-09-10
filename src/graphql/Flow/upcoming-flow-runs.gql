@@ -10,9 +10,5 @@ query UpcomingFlowRuns($flow_group_id: uuid, $flow_id: uuid) {
     name
     version
     scheduled_start_time
-    task_runs {
-      id
-      version
-    }
   }
 }
