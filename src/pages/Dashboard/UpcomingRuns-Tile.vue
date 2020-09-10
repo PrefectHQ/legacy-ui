@@ -266,6 +266,13 @@ export default {
           transition="fade-transition"
         >
           <v-list-item dense :disabled="setToRun.includes(item.id)">
+            <v-list-item-avatar class="mr-0 ml-0">
+              <LabelWarning
+                :flow="item.flow"
+                :flow-group="item.flow.flow_group"
+                :agents="agents"
+              />
+            </v-list-item-avatar>
             <v-list-item-content>
               <span class="caption mb-0">
                 Scheduled for

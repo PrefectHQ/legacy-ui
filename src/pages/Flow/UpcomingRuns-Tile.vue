@@ -325,6 +325,11 @@ export default {
           transition="fade"
         >
           <v-list-item dense :disabled="setToRun.includes(item.id)">
+            <LabelWarning
+              :flow="flow"
+              :flow-group="flowGroup"
+              :agents="agents"
+            />
             <v-list-item-content>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">

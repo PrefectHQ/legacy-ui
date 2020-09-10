@@ -16,7 +16,9 @@ export default {
   },
   data() {
     return {
-      infoMessage: ''
+      infoMessage: '',
+      docsMessage: '',
+      docsLink: ''
     }
   },
   computed: {
@@ -40,7 +42,11 @@ export default {
     labelsAlign() {
       if (!this.agents) return
       if (!this.agents.length) {
-        this.labelMessage('You have no live agents')
+        this.labelMessage(
+          'You have no live agents.  This will stop your flow run from starting.',
+          'agents',
+          'https://docs.prefect.io/orchestration/agents/overview.html'
+        )
         return false
       }
       if (!this.flowLabels.length && this.agentLabels.length) {
@@ -68,8 +74,10 @@ export default {
     }
   },
   methods: {
-    labelMessage(message) {
+    labelMessage(message, docsMessage, link) {
       this.infoMessage = message
+      this.docsMessage = docsMessage
+      this.docsLink = link
     }
   }
 }
@@ -96,12 +104,9 @@ export default {
       <v-card-title class="subtitle pb-1">Label Problem</v-card-title>
 
       <v-card-text class="pt-0">
-        {{ infoMessage }}
-        For more information see
-        <a
-          href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-          target="_blank"
-          >the docs on labels</a
+        <div>{{ infoMessage }} </div>
+        <div>For more information check-out</div>
+        <a :href="docsLink" target="_blank">the docs on {{ docsMessage }}</a
         >.
       </v-card-text>
     </v-card>
