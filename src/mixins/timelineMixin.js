@@ -5,7 +5,6 @@ export const timelineMixin = {
   data() {
     return {
       flowRuns: [],
-      runningFlowsInterval: null,
       scheduledFlowRuns: [],
       tooltip: null
     }
@@ -97,13 +96,13 @@ export const timelineMixin = {
         let future = this.getTimeDiff(d.scheduled_start_time)._milliseconds
 
         if (d.start_time && d.end_time) {
-          let end = new moment(d.end_time),
-            start = new moment(d.start_time)
-          d.duration = moment.duration(end.diff(start))
+          let end = new Date(d.end_time),
+            start = new Date(d.start_time)
+          d.duration = end - start
         } else if (d.start_time) {
-          let now = new moment(),
-            start = new moment(d.start_time)
-          d.duration = moment.duration(now.diff(start))
+          let now = new Date(),
+            start = new Date(d.start_time)
+          d.duration = now - start
         }
 
         // We add a filler end_time for instances where a finished
@@ -150,26 +149,14 @@ export const timelineMixin = {
 
       // We have to sort again because the server-side sorting
       // is unstable
-      return [...pastRuns, ...currentRuns, ...queuedRuns, ...futureRuns]
-    },
-    runningFlows() {
-      if (!this.reversedRuns) return []
-      return this.reversedRuns.filter(d => d.state == 'Running').map(d => d.id)
-    }
-  },
-  watch: {
-    runningFlows(val) {
-      clearInterval(this.runningFlowsInterval)
-      if (val.length === 0) return
-      this.runningFlowsInterval = setInterval(() => {
-        this.reversedRuns
-          .filter(d => val.includes(d.id))
-          .forEach(d => {
-            let now = new moment(),
-              start = new moment(d.start_time)
-            d.duration = moment.duration(now.diff(start))
-          })
-      }, 1000)
+      const toReturn = [
+        ...pastRuns,
+        ...currentRuns,
+        ...queuedRuns,
+        ...futureRuns
+      ]
+
+      return toReturn
     }
   },
   methods: {
@@ -261,8 +248,5 @@ export const timelineMixin = {
         width: '1rem'
       }
     }
-  },
-  destroyed() {
-    clearInterval(this.runningFlowsInterval)
   }
 }
