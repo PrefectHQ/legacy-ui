@@ -412,15 +412,12 @@ export default {
       this.redraw()
     },
     fitViz() {
-      this.canvas
-        .transition()
-        .duration(500)
-        .call(
-          this.scaledZoom.transform,
-          d3.zoomIdentity
-            .translate(this.canvasAdjustment.w / 2, this.canvasAdjustment.h / 2)
-            .scale(1)
-        )
+      this.canvas.call(
+        this.scaledZoom.transform,
+        d3.zoomIdentity
+          .translate(this.canvasAdjustment.w / 2, this.canvasAdjustment.h / 2)
+          .scale(1)
+      )
     },
     rawAnimateCanvas() {
       cancelAnimationFrame(this.drawCanvas)
