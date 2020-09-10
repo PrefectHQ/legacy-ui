@@ -38,8 +38,7 @@ export default {
       alertType: null,
       alertLink: null,
       scheduleLoading: false,
-      selectedVersion: +this.$route.query.version || null,
-      labelMessage: ''
+      selectedVersion: +this.$route.query.version || null
     }
   },
   computed: {
@@ -125,7 +124,6 @@ export default {
           this.quickRunErrorAlert(errors[0]?.message)
         }
       } catch (err) {
-        console.log(err)
         this.quickRunErrorAlert()
         LogRocket.captureException(err)
       }
