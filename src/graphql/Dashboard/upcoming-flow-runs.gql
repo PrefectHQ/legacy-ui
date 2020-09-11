@@ -16,9 +16,5 @@ query UpcomingFlowRuns($projectId: uuid) {
       name
       schedule
     }
-    task_runs {
-      id
-      version
-    }
   }
 }
