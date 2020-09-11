@@ -11,11 +11,6 @@ export default {
       type: Object,
       required: true
     },
-    dense: {
-      type: Boolean,
-      required: false,
-      default: () => false
-    },
     timestamp: {
       type: String,
       required: false,
@@ -149,5 +144,9 @@ export default {
       <span class="font-weight-medium">{{ content.sender_tenant_name }}</span>
       has expired or was declined.
     </v-list-item-title>
+
+    <v-list-item-subtitle v-if="timestamp">
+      {{ timestamp }}
+    </v-list-item-subtitle>
   </v-list-item-content>
 </template>
