@@ -1,5 +1,3 @@
-import { fallbackApolloClient } from '@/vue-apollo'
-
 const state = {
   thresholds: {
     // Time before an agent becomes stale
@@ -19,16 +17,6 @@ const getters = {
   },
   agents(state) {
     return state.agents
-  },
-  agentLabels(state) {
-    if (state.agents) {
-      const labels = state.agents.reduce((accumulator, agent, index) => {
-        accumulator.push({ [index]: agent.labels })
-        return accumulator
-      }, [])
-      return labels
-    }
-    return null
   }
 }
 
@@ -38,26 +26,9 @@ const mutations = {
   }
 }
 
-const actions = {
-  async getAgents({ commit }) {
-    try {
-      const { data } = await fallbackApolloClient.query({
-        query: require('@/graphql/Agent/agents.gql'),
-        fetchPolicy: 'no-cache'
-      })
-      if (data.agents) {
-        commit('setAgents', data.agents)
-      }
-    } catch (error) {
-      commit('setAgents', null)
-    }
-  }
-}
-
 export default {
   getters,
   mutations,
-  actions,
   state,
   namespaced: true
 }
