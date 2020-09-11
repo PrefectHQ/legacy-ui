@@ -4,11 +4,12 @@
 
 ### Features and Improvements
 
-- None
+- Fix app-wide component teardown by manually nulling references that were preventing the garbage colector from running correctly - [#212](https://github.com/PrefectHQ/ui/pull/212)
 
 ### Bugfixes
 
-- None
+- Fix BarChart component resize event listener removal - [#212](https://github.com/PrefectHQ/ui/pull/212)
+- Remove all BarChart underscore method and property references - [#212](https://github.com/PrefectHQ/ui/pull/212)
 
 ## 2020-09-08
 

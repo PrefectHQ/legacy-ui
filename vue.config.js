@@ -47,7 +47,7 @@ module.exports = {
   },
 
   configureWebpack: {
-    devtool: 'eval-source-map',
+    devtool: 'source-map',
     optimization: {
       splitChunks: {
         chunks: 'all',
