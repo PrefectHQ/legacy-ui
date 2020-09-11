@@ -219,12 +219,16 @@ export default {
   },
   apollo: {
     agents: {
-      query: require('@/graphql/Agent/agents.gql'),
+      query() {
+        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+      },
       loadingKey: 'loading',
       skip() {
         return !this.tenant.id
       },
-      update: data => data?.agents
+      update: data => {
+        return data.agent
+      }
     }
   }
 }

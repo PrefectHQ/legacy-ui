@@ -17,6 +17,7 @@ export default {
   },
   computed: {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
+    ...mapGetters('api', ['isCloud']),
     agentTracker() {
       return this.agents?.reduce(
         (tracker, agent) => {
@@ -83,8 +84,10 @@ export default {
       },
       loadingKey: 'loading',
       pollInterval: 5000,
-      query: require('@/graphql/Agent/agents.gql'),
-      update: data => data.agents
+      query() {
+        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+      },
+      update: data => data.agent
     }
   }
 }
