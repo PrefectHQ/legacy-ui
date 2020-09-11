@@ -10,6 +10,16 @@ export default {
     content: {
       type: Object,
       required: true
+    },
+    dense: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
+    timestamp: {
+      type: String,
+      required: false,
+      default: () => null
     }
   },
   data() {

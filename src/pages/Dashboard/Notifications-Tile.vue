@@ -2,7 +2,6 @@
 import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import gql from 'graphql-tag'
 
 // Notification type-specific components
 import ApprovalNotification from '@/pages/Notifications/NotificationTypes/Approval-Notification'
@@ -78,29 +77,6 @@ export default {
       })
     }
   },
-  async beforeRouteLeave(to, from, next) {
-    if (!to.query?.notification_id) return next()
-
-    try {
-      if (to.query?.notification_id) {
-        let mutationString = gql`
-        mutation MarkMessagesAsRead {
-          mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
-            success
-            error
-          }
-        }
-      `
-        await this.$apollo.mutate({
-          mutation: mutationString
-        })
-
-        delete to.query.notification_id
-      }
-    } finally {
-      next({ name: to.name, params: to.params })
-    }
-  },
   apollo: {
     notifications: {
       query() {
@@ -160,25 +136,23 @@ export default {
             :to="notificationNavigation(n)"
             exact
           >
-            <v-list-item-avatar class="mx-2 pa-0">
-              <v-icon :color="notificationIconColor(n.type, n)">
-                {{ n.content.icon ? n.content.icon : notificationIcon(n.type) }}
-              </v-icon>
-            </v-list-item-avatar>
+            <v-icon small class="mr-4">
+              {{ n.content.icon ? n.content.icon : notificationIcon(n.type) }}
+            </v-icon>
 
             <component
               :is="notificationComponent(n.type)"
+              :timestamp="formatDateTime(n.created)"
+              dense
               :content="n.content"
               :read="n.read"
             />
 
-            <v-list-item-action class="o-100">
-              <v-list-item-action-text>
-                {{ formatDateTime(n.created) }}
-              </v-list-item-action-text>
-            </v-list-item-action>
+            <v-list-item-avatar>
+              <v-icon>arrow_right</v-icon>
+            </v-list-item-avatar>
           </v-list-item>
-          <v-divider v-if="i + 1 < notifications.length" :key="i"></v-divider>
+          <v-divider :key="i" class="my-1 mx-4 grey lighten-4" />
         </template>
       </v-list>
     </v-card-text>
