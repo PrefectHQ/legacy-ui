@@ -171,7 +171,7 @@ export default {
         } catch (error) {
           this.isScheduled = false
           this.alertShow = true
-          this.alertMessage = `Something went wrong: ${error}`
+          this.alertMessage = `${error}`
           this.alertType = 'error'
         } finally {
           this.scheduleLoading = false
@@ -198,7 +198,7 @@ export default {
           }
         } catch (error) {
           this.alertShow = true
-          this.alertMessage = `Something went wrong: ${error}`
+          this.alertMessage = `${error}`
           this.alertType = 'error'
         } finally {
           this.scheduleLoading = false
