@@ -6,7 +6,7 @@ import PrefectSchedule from '@/components/PrefectSchedule'
 import LabelWarning from '@/components/LabelWarning'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { parametersMixin } from '@/mixins/parametersMixin'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   filters: {
@@ -101,7 +101,6 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    ...mapMutations('flow', ['setTempLabels']),
     checkLabelInput(val) {
       const labels = this.newLabels || this.labels
       if (labels.includes(val) && !this.disableAdd) {
@@ -141,10 +140,6 @@ export default {
         })
         if (data) {
           this.newLabels = newLabels || this.flow.environment.labels
-          this.setTempLabels({
-            flowId: this.flow.id,
-            newLabels: this.newLabels
-          })
           this.resetLabelSettings()
         } else {
           this.labelsError()

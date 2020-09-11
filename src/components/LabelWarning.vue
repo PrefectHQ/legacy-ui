@@ -34,10 +34,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('agent', ['agents']),
-    ...mapGetters('flow', ['updatedLabels']),
-    newLabels() {
-      return this.updatedLabels[this.flow.id]
-    },
     agentOrLabel() {
       if (!this.agents || !this.agents.length) return 'Agent Problem'
       if (!this.labelsAlign) return 'Label Problem'
@@ -54,10 +50,7 @@ export default {
       return null
     },
     flowLabels() {
-      const labels =
-        this.newLabels ||
-        this.flowGroup?.labels ||
-        this.flow?.environment?.labels
+      const labels = this.flowGroup?.labels || this.flow?.environment?.labels
       return labels
     },
     labelsAlign() {
