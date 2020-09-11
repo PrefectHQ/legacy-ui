@@ -4,10 +4,12 @@
 
 ### Features and Improvements
 
+- Add a check for flow and agent label alignment and alert if mis-matched [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Fix app-wide component teardown by manually nulling references that were preventing the garbage colector from running correctly - [#212](https://github.com/PrefectHQ/ui/pull/212)
 
 ### Bugfixes
 
+- Improve error handling on the flow page schedule toggle and label setting [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Fix BarChart component resize event listener removal - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Remove all BarChart underscore method and property references - [#212](https://github.com/PrefectHQ/ui/pull/212)
 
