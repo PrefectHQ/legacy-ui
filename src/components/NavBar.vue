@@ -70,11 +70,6 @@ export default {
         timeObj ? timeObj.format('h:mm A') : moment(time).format('h:mm A')
       } ${shortenedTz}`
     },
-    goToNotifications() {
-      this.$router.push({
-        name: 'notifications'
-      })
-    },
     trackAndLogout() {
       this.logout(this.$apolloProvider.clients.defaultClient)
     },
@@ -289,7 +284,7 @@ export default {
         :class="
           notificationsCount && notificationsCount > 0 ? '' : 'badge--hidden'
         "
-        @click="goToNotifications"
+        :to="{ name: 'notifications' }"
       >
         <v-icon>notifications</v-icon>
       </v-btn>

@@ -1,7 +1,8 @@
 <script>
-/* eslint-disable */
 import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
+import { formatTime } from '@/mixins/formatTimeMixin'
+import gql from 'graphql-tag'
 
 // Notification type-specific components
 import ApprovalNotification from '@/pages/Notifications/NotificationTypes/Approval-Notification'
@@ -24,6 +25,7 @@ export default {
     MembershipNotification,
     WhatsNewNotification
   },
+  mixins: [formatTime],
   data() {
     return {
       loadingKey: 0
@@ -34,21 +36,26 @@ export default {
     cardTitle() {
       return `${parseInt(
         this.notificationsCount
-      ).toLocaleString()} Recent notification${
+      ).toLocaleString()} unread notification${
         this.notificationsCount === 1 ? '' : 's'
       }`
+    },
+    iconColor() {
+      return this.isLoading
+        ? null
+        : this.notificationsCount > 0
+        ? 'codePink'
+        : null
     },
     isLoading() {
       return this.loadingKey > 0
     },
     where() {
       let where = {
-        tenant_id: { _eq: this.tenant?.id }
+        tenant_id: { _eq: this.tenant?.id },
+        read: { _eq: false }
       }
 
-      if (this.read !== 0) {
-        where.read = { _eq: this.read }
-      }
       return where
     }
   },
@@ -64,6 +71,34 @@ export default {
     },
     notificationNavigation(notification) {
       return navigationMap[notification.type](notification, this.tenant)
+    },
+    routeToNotifications() {
+      this.$router.push({
+        name: 'notifications'
+      })
+    }
+  },
+  async beforeRouteLeave(to, from, next) {
+    if (!to.query?.notification_id) return next()
+
+    try {
+      if (to.query?.notification_id) {
+        let mutationString = gql`
+        mutation MarkMessagesAsRead {
+          mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
+            success
+            error
+          }
+        }
+      `
+        await this.$apollo.mutate({
+          mutation: mutationString
+        })
+
+        delete to.query.notification_id
+      }
+    } finally {
+      next({ name: to.name, params: to.params })
     }
   },
   apollo: {
@@ -75,20 +110,19 @@ export default {
       },
       variables() {
         return {
-          limit: this.limit,
-          offset: this.limit * (this.page - 1),
+          limit: 5,
           orderBy: { created: 'desc' },
           where: this.where
         }
       },
-      loadingKey: 'loading',
+      loadingKey: 'loadingKey',
       update: data => data.notifications,
       pollInterval: 5000,
       fetchPolicy: 'network-only'
     },
     notificationsCount: {
       query: require('@/graphql/Notifications/notifications-count.gql'),
-      loadingKey: 'loading',
+      loadingKey: 'loadingKey',
       variables() {
         return {
           where: this.where
@@ -107,17 +141,50 @@ export default {
     <CardTitle
       :title="cardTitle"
       icon="notifications"
+      :icon-color="iconColor"
       icon-class="mb-1"
       :loading="isLoading"
     />
 
-    <v-list class="card-content">
-      This is where i'd put notificaitons...
-    </v-list>
+    <v-card-text class="pa-0 card-content">
+      <v-skeleton-loader v-if="isLoading" type="list-item-three-line">
+      </v-skeleton-loader>
 
+      <v-list>
+        <template v-for="(n, i) in notifications">
+          <v-list-item
+            :key="n.id"
+            class="position-relative"
+            :class="n.read ? 'o-60 hover-o-100' : ''"
+            :disabled="isLoading > 0"
+            :to="notificationNavigation(n)"
+            exact
+          >
+            <v-list-item-avatar class="mx-2 pa-0">
+              <v-icon :color="notificationIconColor(n.type, n)">
+                {{ n.content.icon ? n.content.icon : notificationIcon(n.type) }}
+              </v-icon>
+            </v-list-item-avatar>
+
+            <component
+              :is="notificationComponent(n.type)"
+              :content="n.content"
+              :read="n.read"
+            />
+
+            <v-list-item-action class="o-100">
+              <v-list-item-action-text>
+                {{ formatDateTime(n.created) }}
+              </v-list-item-action-text>
+            </v-list-item-action>
+          </v-list-item>
+          <v-divider v-if="i + 1 < notifications.length" :key="i"></v-divider>
+        </template>
+      </v-list>
+    </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn small color="primary" text>
+      <v-btn small color="primary" text :to="{ name: 'notifications' }">
         View all notifications
       </v-btn>
     </v-card-actions>
