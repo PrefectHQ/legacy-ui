@@ -372,6 +372,8 @@ export default {
                   :flow="flow"
                   :flow-group="flowGroup"
                   :agents="agents"
+                  icon-size="x-large"
+                  :always="false"
                 />
                 <span v-if="$vuetify.breakpoint.sm" class="ml-8">
                   <v-menu
