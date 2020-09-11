@@ -69,7 +69,10 @@ export default {
         )
         return false
       }
-      if (!this.flowLabels.length && this.agentLabels.length) {
+      if (
+        !this.flowLabels.length &&
+        this.agentLabels.every(arrayOfLabels => arrayOfLabels.length > 0)
+      ) {
         this.labelMessage(
           'To let the agent pick up this flow run, you may need to add labels to your flow.',
           'Labels and Flow Affinity',
