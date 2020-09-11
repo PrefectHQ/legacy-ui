@@ -131,7 +131,6 @@ export default {
     },
     async editLabels(newLabels) {
       try {
-        console.log(this.role)
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/set-labels.gql'),
           variables: {
