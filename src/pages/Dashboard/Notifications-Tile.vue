@@ -148,7 +148,7 @@ export default {
               :read="n.read"
             />
 
-            <v-list-item-avatar>
+            <v-list-item-avatar v-if="notificationNavigation(n)">
               <v-icon>arrow_right</v-icon>
             </v-list-item-avatar>
           </v-list-item>

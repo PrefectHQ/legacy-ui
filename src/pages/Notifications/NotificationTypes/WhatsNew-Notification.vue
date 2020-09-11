@@ -54,6 +54,10 @@ export default {
       </v-icon>
     </v-list-item-title>
 
+    <v-list-item-subtitle v-if="timestamp">
+      {{ timestamp }}
+    </v-list-item-subtitle>
+
     <v-list-item-subtitle v-if="!readMore" v-html="decodeHTML(content.body)">
     </v-list-item-subtitle>
 
