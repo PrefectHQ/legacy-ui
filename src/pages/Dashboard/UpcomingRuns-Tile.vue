@@ -310,7 +310,7 @@ export default {
                     v-on="on"
                     @click="runFlowNow(item.id, item.version, item.name)"
                   >
-                    <v-icon x-small dense color="primary"> fa-rocket</v-icon>
+                    <v-icon small dense color="primary"> fa-rocket</v-icon>
                   </v-btn>
                 </template>
                 <span> Run {{ item.name }} now </span>

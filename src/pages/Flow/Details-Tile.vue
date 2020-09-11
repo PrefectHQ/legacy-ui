@@ -6,7 +6,7 @@ import PrefectSchedule from '@/components/PrefectSchedule'
 import LabelWarning from '@/components/LabelWarning'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { parametersMixin } from '@/mixins/parametersMixin'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   filters: {
@@ -63,6 +63,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['role']),
     filteredStorage() {
       if (!this.flow.storage) return {}
 
@@ -130,13 +131,13 @@ export default {
     },
     async editLabels(newLabels) {
       try {
+        console.log(this.role)
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/set-labels.gql'),
           variables: {
             flowGroupId: this.flowGroup.id,
             labelArray: newLabels
-          },
-          errorPolicy: 'all'
+          }
         })
         if (data) {
           this.newLabels = newLabels || this.flow.environment.labels
@@ -146,7 +147,7 @@ export default {
           this.resetLabelSettings()
         }
       } catch (e) {
-        this.labelsError()
+        this.labelsError(e)
         this.resetLabelSettings()
       }
     },
@@ -159,11 +160,13 @@ export default {
       this.newLabel = ''
       this.disableRemove = false
     },
-    labelsError() {
+    labelsError(e) {
+      const message = e
+        ? `There was a problem: ${e}`
+        : 'There was a problem updating your labels.  Please try again.'
       this.setAlert({
         alertShow: true,
-        alertMessage:
-          'There was a problem updating your labels.  Please try again.',
+        alertMessage: message,
         alertType: 'error'
       })
     },
@@ -385,18 +388,24 @@ export default {
                     <template v-slot:activator="{ on: menu, attrs }">
                       <v-tooltip bottom>
                         <template v-slot:activator="{ on: tooltip }">
-                          <v-btn
-                            small
-                            icon
-                            aria-label="Add label"
-                            color="primary"
-                            v-bind="attrs"
-                            v-on="{ ...tooltip, ...menu }"
-                          >
-                            <v-icon small dense>fa-plus</v-icon>
-                          </v-btn>
+                          <div v-on="tooltip">
+                            <v-btn
+                              small
+                              icon
+                              :disabled="role == 'READ_ONLY_USER'"
+                              aria-label="Add label"
+                              color="primary"
+                              v-bind="attrs"
+                              v-on="menu"
+                            >
+                              <v-icon small dense>fa-plus</v-icon>
+                            </v-btn>
+                          </div>
                         </template>
-                        <span>Add a label</span>
+                        <span v-if="role == 'READ_ONLY_USER'">
+                          Read-only users can not edit labels</span
+                        >
+                        <span v-else>Add a label</span>
                       </v-tooltip>
                     </template>
                     <v-card width="800px" class="overflow-y-scroll py-0">
@@ -507,18 +516,24 @@ export default {
                 <template v-slot:activator="{ on: menu, attrs }">
                   <v-tooltip top>
                     <template v-slot:activator="{ on: tooltip }">
-                      <v-btn
-                        small
-                        icon
-                        aria-label="Add label"
-                        color="primary"
-                        v-bind="attrs"
-                        v-on="{ ...tooltip, ...menu }"
-                      >
-                        <v-icon small dense>fa-plus</v-icon>
-                      </v-btn>
+                      <div v-on="tooltip">
+                        <v-btn
+                          small
+                          icon
+                          :disabled="role == 'READ_ONLY_USER'"
+                          aria-label="Add label"
+                          color="primary"
+                          v-bind="attrs"
+                          v-on="menu"
+                        >
+                          <v-icon small dense>fa-plus</v-icon>
+                        </v-btn>
+                      </div>
                     </template>
-                    <span>Add a label</span>
+                    <span v-if="role == 'READ_ONLY_USER'">
+                      Read-only users can not edit labels</span
+                    >
+                    <span v-else>Add a label</span>
                   </v-tooltip>
                 </template>
                 <v-card width="800px" class="overflow-y-scroll py-0">

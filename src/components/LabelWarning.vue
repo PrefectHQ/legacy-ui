@@ -89,7 +89,7 @@ export default {
         }
         if (matchingLabels > 0) {
           this.labelMessage(
-            'Your flow affinity looks good.',
+            'Your flow and agent labels good.',
             'Labels and Flow Affinity',
             'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
           )
@@ -125,12 +125,17 @@ export default {
     <template v-slot:activator="{ on }">
       <v-btn text icon v-on="on">
         <v-icon
-          :color="labelsAlign ? 'info' : 'deepRed'"
-          :size="iconSize || 'xx-large'"
+          :color="labelsAlign ? 'success' : 'deepRed'"
+          :size="iconSize || 'x-large'"
         >
           label
         </v-icon>
-        <v-icon class="position-absolute" color="white" size="small">
+        <v-icon
+          v-if="!labelsAlign"
+          class="position-absolute"
+          color="white"
+          size="small"
+        >
           priority_high
         </v-icon>
       </v-btn>
