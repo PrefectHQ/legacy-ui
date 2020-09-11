@@ -482,4 +482,8 @@ a {
   position: absolute;
   width: 100%;
 }
+
+.theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+  padding-left: 8px;
+}
 </style>
