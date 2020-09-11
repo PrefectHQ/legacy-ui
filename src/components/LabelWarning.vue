@@ -10,10 +10,6 @@ export default {
       type: Object,
       default: () => {}
     },
-    agents: {
-      type: Array,
-      default: null
-    },
     iconSize: {
       type: String,
       required: false,
@@ -37,6 +33,12 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('agent', ['agents']),
+    ...mapGetters('flow', ['updatedLabels']),
+    newLabels() {
+      console.log('updated', this.updatedLabels)
+      return this.updatedLabels[this.flow.id]
+    },
     agentOrLabel() {
       if (!this.agents) return 'Agent Problem'
       if (!this.labelsAlign) return 'Label Problem'
@@ -60,6 +62,7 @@ export default {
       return labels
     },
     labelsAlign() {
+      console.log(this.newLabels, this.flowLabels, this.flowGroup.labels)
       if (!this.agents) return
       if (!this.agents.length) {
         this.labelMessage(
@@ -146,7 +149,7 @@ export default {
       <v-card-text class="pt-0">
         <div class="font-weight-bold pb-4"> {{ infoMessage }}</div>
         <div
-          >You can see you agent labels in the
+          >You can see your agent labels in the
           <router-link
             target="_blank"
             :to="{

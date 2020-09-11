@@ -6,7 +6,7 @@ import PrefectSchedule from '@/components/PrefectSchedule'
 import LabelWarning from '@/components/LabelWarning'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { parametersMixin } from '@/mixins/parametersMixin'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
   filters: {
@@ -101,6 +101,7 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    ...mapMutations('flow', ['setTempLabels']),
     checkLabelInput(val) {
       const labels = this.newLabels || this.labels
       if (labels.includes(val) && !this.disableAdd) {
@@ -140,6 +141,10 @@ export default {
         })
         if (data) {
           this.newLabels = newLabels || this.flow.environment.labels
+          this.setTempLabels({
+            flowId: this.flow.id,
+            newLabels: this.newLabels
+          })
           this.resetLabelSettings()
         } else {
           this.labelsError()
@@ -181,13 +186,6 @@ export default {
         this.copiedText = {}
         this.copiedText[value] = false
       }, 600)
-    }
-  },
-  apollo: {
-    agents: {
-      query: require('@/graphql/Agent/agents.gql'),
-      loadingKey: 'loading',
-      update: data => data?.agents
     }
   }
 }
@@ -373,7 +371,6 @@ export default {
                 <LabelWarning
                   :flow="flow"
                   :flow-group="flowGroup"
-                  :agents="agents"
                   icon-size="x-large"
                   :always="false"
                   location="flowPage"

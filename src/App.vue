@@ -86,6 +86,9 @@ export default {
       if (val) {
         this.shown = true
       }
+    },
+    agents(val) {
+      this.setAgents(val)
     }
   },
   beforeDestroy() {
@@ -128,7 +131,7 @@ export default {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
     ...mapMutations('tenant', ['setDefaultTenant']),
-
+    ...mapMutations('agent', ['setAgents']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
@@ -212,6 +215,16 @@ export default {
       }
 
       requestAnimationFrame(loadTiles)
+    }
+  },
+  apollo: {
+    agents: {
+      query: require('@/graphql/Agent/agents.gql'),
+      loadingKey: 'loading',
+      skip() {
+        return !this.tenant.id
+      },
+      update: data => data?.agents
     }
   }
 }

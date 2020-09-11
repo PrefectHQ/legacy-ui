@@ -176,12 +176,8 @@ export default {
         return variables
       },
       loadingKey: 'loading',
+      pollInterval: 50000,
       update: data => data?.flow_run
-    },
-    agents: {
-      query: require('@/graphql/Agent/agents.gql'),
-      loadingKey: 'loading',
-      update: data => data?.agents
     }
   }
 }
@@ -328,8 +324,6 @@ export default {
             <LabelWarning
               :flow="flow"
               :flow-group="flowGroup"
-              :agents="agents"
-              always-show
               location="flowPage"
             />
             <v-list-item-content>
@@ -432,7 +426,7 @@ export default {
               <LabelWarning
                 :flow="flow"
                 :flow-group="flowGroup"
-                :agents="agents"
+                location="flowPage"
               />
             </v-list-item-avatar>
             <v-list-item-content>
