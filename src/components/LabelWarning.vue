@@ -39,7 +39,8 @@ export default {
       return this.updatedLabels[this.flow.id]
     },
     agentOrLabel() {
-      if (!this.agents) return 'Agent Problem'
+      console.log(this.agents, 'agents')
+      if (!this.agents || !this.agents.length) return 'Agent Problem'
       if (!this.labelsAlign) return 'Label Problem'
       return 'Flow and Agent Labels'
     },
@@ -90,7 +91,7 @@ export default {
         }
         if (matchingLabels > 0) {
           this.labelMessage(
-            'Your flow and agent labels good.',
+            'Your flow and agent labels look good.',
             'Labels and Flow Affinity',
             'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
           )

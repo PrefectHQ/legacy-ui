@@ -227,6 +227,7 @@ export default {
         return !this.tenant.id
       },
       update: data => {
+        console.log(data, 'data')
         return data.agent
       }
     }
