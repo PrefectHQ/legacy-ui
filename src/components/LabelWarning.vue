@@ -39,7 +39,6 @@ export default {
       return this.updatedLabels[this.flow.id]
     },
     agentOrLabel() {
-      console.log(this.agents, 'agents')
       if (!this.agents || !this.agents.length) return 'Agent Problem'
       if (!this.labelsAlign) return 'Label Problem'
       return 'Flow and Agent Labels'
