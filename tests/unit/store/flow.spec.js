@@ -46,8 +46,7 @@ describe('Flow Vuex Module', () => {
       expect(store.getters.updatedLabels).toEqual({})
       store.commit('setTempLabels', { flowId: '12345', newLabels: ['a', 'b'] })
       expect(store.getters.updatedLabels).toEqual({
-        flowId: '12345',
-        newLabels: [1, 2, 3]
+        '12345': ['a', 'b']
       })
     })
   })
