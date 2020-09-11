@@ -330,6 +330,7 @@ export default {
               :flow-group="flowGroup"
               :agents="agents"
               always-show
+              location="flowPage"
             />
             <v-list-item-content>
               <v-tooltip top>

@@ -374,6 +374,7 @@ export default {
                   :agents="agents"
                   icon-size="x-large"
                   :always="false"
+                  location="flowPage"
                 />
                 <span v-if="$vuetify.breakpoint.sm" class="ml-8">
                   <v-menu

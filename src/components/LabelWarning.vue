@@ -22,6 +22,10 @@ export default {
     always: {
       type: Boolean,
       default: true
+    },
+    location: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -68,7 +72,7 @@ export default {
       if (!this.flowLabels.length && this.agentLabels.length) {
         this.labelMessage(
           'To let the agent pick up this flow run, you may need to add labels to your flow.',
-          'Your agent and flow labels look good.',
+          'Labels and Flow Affinity',
           'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
         )
         return false
@@ -82,7 +86,7 @@ export default {
         }
         if (matchingLabels > 0) {
           this.labelMessage(
-            'Your agent and flow labels look good.',
+            'Your flow affinity looks good.',
             'Labels and Flow Affinity',
             'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
           )
@@ -118,7 +122,7 @@ export default {
     <template v-slot:activator="{ on }">
       <v-btn text icon v-on="on">
         <v-icon
-          :color="labelsAlign ? 'info' : 'error'"
+          :color="labelsAlign ? 'info' : 'deepRed'"
           :size="iconSize || 'xx-large'"
         >
           label
@@ -136,6 +140,7 @@ export default {
         <div
           >You can see you agent labels in the
           <router-link
+            target="_blank"
             :to="{
               name: 'dashboard',
               params: { tenant: tenant.slug },
@@ -148,12 +153,14 @@ export default {
         <div>
           You can see and edit you flow labels in the
           <router-link
+            v-if="location !== 'flowPage'"
+            target="_blank"
             :to="{
               name: 'flow',
               params: { id: flow.id, tenant: tenant.slug }
             }"
             >flow details tile</router-link
-          ></div
+          ><span v-else>flow details tile</span></div
         >
         <div class="mt-4">
           For more information check-out the docs on
