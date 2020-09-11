@@ -126,7 +126,7 @@ export default {
       <v-skeleton-loader v-if="isLoading" type="list-item-three-line">
       </v-skeleton-loader>
 
-      <v-list>
+      <v-list v-else-if="notificationsCount > 0">
         <template v-for="(n, i) in notifications">
           <v-list-item
             :key="n.id"
@@ -154,6 +154,23 @@ export default {
           </v-list-item>
           <v-divider :key="i" class="my-1 mx-4 grey lighten-4" />
         </template>
+      </v-list>
+
+      <v-list v-else>
+        <v-list-item>
+          <v-list-item-avatar class="mr-0">
+            <v-icon class="green--text">check</v-icon>
+          </v-list-item-avatar>
+
+          <v-list-item-content class="my-0 py-3">
+            <div
+              class="subtitle-1 font-weight-light"
+              style="line-height: 1.25rem;"
+            >
+              You're all caught up!
+            </div>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-card-text>
     <v-card-actions>
