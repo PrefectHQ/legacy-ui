@@ -36,7 +36,6 @@ export default {
     ...mapGetters('agent', ['agents']),
     ...mapGetters('flow', ['updatedLabels']),
     newLabels() {
-      console.log('updated', this.updatedLabels)
       return this.updatedLabels[this.flow.id]
     },
     agentOrLabel() {
@@ -62,7 +61,6 @@ export default {
       return labels
     },
     labelsAlign() {
-      console.log(this.newLabels, this.flowLabels, this.flowGroup.labels)
       if (!this.agents) return
       if (!this.agents.length) {
         this.labelMessage(
