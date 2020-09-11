@@ -35,7 +35,7 @@ export default {
     cardTitle() {
       return `${parseInt(
         this.notificationsCount
-      ).toLocaleString()} unread notification${
+      ).toLocaleString()} Unread Notification${
         this.notificationsCount === 1 ? '' : 's'
       }`
     },
