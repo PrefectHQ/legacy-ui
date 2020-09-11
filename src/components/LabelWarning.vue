@@ -68,7 +68,7 @@ export default {
       if (!this.flowLabels.length && this.agentLabels.length) {
         this.labelMessage(
           'To let the agent pick up this flow run, you may need to add labels to your flow.',
-          'Labels and Flow Affinity',
+          'Your agent and flow labels look good.',
           'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
         )
         return false
@@ -82,13 +82,14 @@ export default {
         }
         if (matchingLabels > 0) {
           this.labelMessage(
+            'Your agent and flow labels look good.',
             'Labels and Flow Affinity',
             'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
           )
           return true
         } else {
           this.labelMessage(
-            'To let the agent pick up this flow run, you need to align your flow and agents label.',
+            'It looks like you have a label on your flow that does not match your agent labels. To let the agent pick up this flow run, you need to align your flow and agents label.',
             'Labels and Flow Affinity',
             'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
           )
@@ -131,28 +132,32 @@ export default {
       <v-card-title class="subtitle pb-1">{{ agentOrLabel }} </v-card-title>
 
       <v-card-text class="pt-0">
-        <div> {{ infoMessage }}</div>
-        You can see you agent labels in the
-        <router-link
-          :to="{
-            name: 'dashboard',
-            params: { tenant: tenant.slug },
-            query: { agents: '' }
-          }"
+        <div class="font-weight-bold pb-4"> {{ infoMessage }}</div>
+        <div
+          >You can see you agent labels in the
+          <router-link
+            :to="{
+              name: 'dashboard',
+              params: { tenant: tenant.slug },
+              query: { agents: '' }
+            }"
+          >
+            <span>agents tab</span></router-link
+          ></div
         >
-          <span>agents tab</span></router-link
-        >
-        You can see and edit you flow labels in the
-        <router-link
-          :to="{
-            name: 'flow',
-            params: { id: flow.id, tenant: tenant.slug }
-          }"
-          >flow details tile</router-link
+        <div>
+          You can see and edit you flow labels in the
+          <router-link
+            :to="{
+              name: 'flow',
+              params: { id: flow.id, tenant: tenant.slug }
+            }"
+            >flow details tile</router-link
+          ></div
         >
         <div class="mt-4">
-          For more information check-out
-          <a :href="docsLink" target="_blank">the docs on {{ docsName }}</a>
+          For more information check-out the docs on
+          <a :href="docsLink" target="_blank">{{ docsName }}</a>
           .</div
         >
       </v-card-text>
