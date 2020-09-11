@@ -221,6 +221,7 @@ export default {
         "
       >
         <span v-if="loading === 0">
+          <span class="font-weight-medium">{{ tenant.name }}</span> -
           {{ projectId && project ? project.name : 'All Projects' }}
         </span>
         <span v-else>
