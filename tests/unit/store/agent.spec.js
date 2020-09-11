@@ -60,7 +60,7 @@ describe('Agent Vuex Module', () => {
     it('should add new agents when the setAgents mutation is called', () => {
       expect(store.getters.agents).toBe(null)
       store.commit('setAgents', { id: '12345' })
-      expect(store.getters.agents).toEqual({ id: '1235' })
+      expect(store.getters.agents).toEqual({ id: '12345' })
     })
   })
 })
