@@ -3,9 +3,9 @@ import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
-import FlowRunHeartbeatTile from '@/pages/Dashboard/FlowRunHeartbeat-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
+import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
@@ -47,9 +47,9 @@ export default {
     AgentsTile,
     ApiHealthCheckTile,
     FailedFlowsTile,
-    FlowRunHeartbeatTile,
     FlowTableTile,
     InProgressTile,
+    NotificationsTile,
     ProjectSelector,
     SubPageNav,
     SummaryTile,
@@ -312,7 +312,7 @@ export default {
             class="my-2"
             tile
           >
-            <FlowRunHeartbeatTile :project-id="projectId" full-height />
+            <NotificationsTile :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
