@@ -15,7 +15,7 @@ COPY ./LICENSE LICENSE
 WORKDIR /app
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Build static files
 RUN npm run build
