@@ -4,6 +4,16 @@ export default {
     content: {
       type: Object,
       required: true
+    },
+    dense: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
+    timestamp: {
+      type: String,
+      required: false,
+      default: () => null
     }
   },
   apollo: {
@@ -22,7 +32,22 @@ export default {
 </script>
 
 <template>
-  <v-list-item-content>
+  <v-list-item-content v-if="dense">
+    <v-list-item-title>
+      <div v-if="task">
+        <span class="font-weight-medium">{{ task.flow.name }}</span> has a
+        paused run that requires approval to resume.
+      </div>
+      <div v-else>
+        <v-skeleton-loader type="heading" tile></v-skeleton-loader>
+      </div>
+    </v-list-item-title>
+    <v-list-item-subtitle v-if="timestamp">
+      {{ timestamp }}
+    </v-list-item-subtitle>
+  </v-list-item-content>
+
+  <v-list-item-content v-else>
     <v-list-item-title>
       <div v-if="task">
         <span class="font-weight-medium">{{ task.name }}</span> is paused and
