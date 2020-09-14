@@ -15,6 +15,23 @@ export default {
       required: false,
       default: () => null
     }
+  },
+  computed: {
+    stateClass() {
+      const lightStates = [
+        'Submitted',
+        'Cancelled',
+        'Cancelling',
+        'Queued',
+        'Pending'
+      ]
+
+      const textColor = lightStates.includes(this.content.event.state)
+        ? 'black--text'
+        : 'white--text'
+
+      return [this.content.event.state, textColor]
+    }
   }
 }
 </script>
@@ -23,9 +40,15 @@ export default {
   <v-list-item-content v-if="dense">
     <v-list-item-title>
       {{ content.event.flow.name }}:
-      <span :class="`${content.event.state}--text`">{{
-        content.event.state
-      }}</span>
+      <span
+        :class="{
+          [content.event.state]: true,
+          'white--text': content.event.state !== 'Submitted'
+        }"
+        class="px-2 rounded-pill d-inline-block text-body-2"
+      >
+        {{ content.event.state }}
+      </span>
     </v-list-item-title>
     <v-list-item-subtitle v-if="timestamp">
       {{ timestamp }}
