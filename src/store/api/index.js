@@ -15,8 +15,8 @@ const state = {
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
   serverUrl:
-    settings?.server_url ||
     localStorage.getItem('server_url') ||
+    settings?.server_url ||
     process.env.VUE_APP_SERVER_URL,
   version: null
 }
