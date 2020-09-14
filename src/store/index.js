@@ -16,7 +16,6 @@ import sideNav from '@/store/sideNav'
 import tenant from '@/store/tenant'
 import user from '@/store/user'
 import alert from '@/store/alert'
-import flow from '@/store/flow'
 
 Vue.use(Vuex)
 
@@ -44,8 +43,7 @@ const store = new Vuex.Store({
     refresh,
     sideNav,
     tenant,
-    user,
-    flow
+    user
   },
   strict: process.env.NODE_ENV !== 'production',
   plugins: [logrocketPlugin]
