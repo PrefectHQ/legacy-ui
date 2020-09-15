@@ -237,7 +237,7 @@ describe('tenant Vuex Module', () => {
         })
       })
 
-      it('should set tenants', async () => {
+      it('should call the prefectTenants method', async () => {
         await store.dispatch('getTenants')
         expect(prefectTenants).toHaveBeenCalled()
       })
