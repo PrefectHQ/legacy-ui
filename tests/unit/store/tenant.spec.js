@@ -76,7 +76,17 @@ describe('tenant Vuex Module', () => {
       tenantIsSet: true,
       tenants: [
         { name: 'TestTenant', slug: 'test', id: 'XXXXXXXXXX' },
-        { name: 'TestTenant2', slug: 'testy', id: 'YYYYYYYYY' }
+        { name: 'TestTenant2', slug: 'testy', id: 'YYYYYYYYY' },
+        {
+          id: 'd38b31a7-d570-4f0c-911d-dcaab5cec3d0',
+          name: 'Test Technologies Inc.',
+          info: null,
+          slug: 'test',
+          role: 'TENANT_ADMIN',
+          settings: { teamNamed: true, agreedToLicense: false },
+          prefectAdminSettings: {},
+          licenses: [{ active: true, product: 'Prefect Cloud Platform' }]
+        }
       ]
     }
   }
