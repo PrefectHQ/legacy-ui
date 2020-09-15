@@ -158,6 +158,23 @@ describe('tenant Vuex Module', () => {
           loggedinTenantState().tenant
         )
       })
+      it('should throw an error if passed an invalid tenant', () => {
+        expect(() => store.commit('setDefaultTenant', [1, 2, 3])).toThrow(
+          'passed invalid or empty tenant object'
+        )
+      })
+
+      it('should throw an error if passed no tenant', () => {
+        expect(() => store.commit('setDefaultTenant')).toThrow(
+          'passed invalid or empty tenant object'
+        )
+      })
+
+      it('should throw an error if passed an empty tenant', () => {
+        expect(() => store.commit('setDefaultTenant', {})).toThrow(
+          'passed invalid or empty tenant object'
+        )
+      })
     })
 
     describe('setTenant', () => {
@@ -173,6 +190,13 @@ describe('tenant Vuex Module', () => {
           'passed invalid or empty tenant object'
         )
       })
+
+      it('should throw an error if given an empty tenant', () => {
+        store.commit('unsetTenant')
+        expect(() => store.commit('setTenant', {})).toThrow(
+          'passed invalid or empty tenant object'
+        )
+      })
     })
 
     describe('setTenants', () => {
@@ -182,7 +206,14 @@ describe('tenant Vuex Module', () => {
         expect(store.getters['tenants'][0]).toEqual(tenants[0])
       })
 
-      it('should throw an error if given no tenants', () => {
+      it('should throw an error if given no tenants array', () => {
+        store.commit('unsetTenants')
+        expect(() => store.commit('setTenants')).toThrow(
+          'passed invalid or empty tenant array'
+        )
+      })
+
+      it('should throw an error if given an empty tenants array', () => {
         store.commit('unsetTenants')
         expect(() => store.commit('setTenants', [])).toThrow(
           'passed invalid or empty tenant array'

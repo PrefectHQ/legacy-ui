@@ -38,16 +38,29 @@ const getters = {
 
 const mutations = {
   setDefaultTenant(state, tenant) {
+    if (
+      !tenant ||
+      typeof tenant !== 'object' ||
+      Array.isArray(tenant) ||
+      Object.keys(tenant) < 1
+    ) {
+      throw new Error('passed invalid or empty tenant object')
+    }
     state.defaultTenant = tenant
   },
   setTenant(state, tenant) {
-    if (!tenant || !Object.keys(tenant).length) {
+    if (
+      !tenant ||
+      typeof tenant !== 'object' ||
+      Array.isArray(tenant) ||
+      Object.keys(tenant) < 1
+    ) {
       throw new Error('passed invalid or empty tenant object')
     }
     state.tenant = { ...tenant }
   },
   setTenants(state, tenants) {
-    if (tenants?.length === 0) {
+    if (!tenants || tenants?.length === 0) {
       throw new Error('passed invalid or empty tenant array')
     }
     state.tenants = tenants
