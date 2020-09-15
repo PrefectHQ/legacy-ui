@@ -312,7 +312,7 @@ describe('tenant Vuex Module', () => {
       })
     })
 
-    describe('setCurrentTenant - Cloud specific', () => {
+    describe('setCurrentTenant - Cloud', () => {
       let store
 
       beforeEach(() => {
