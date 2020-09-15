@@ -1,6 +1,5 @@
 import { fallbackApolloClient } from '@/vue-apollo'
 import LogRocket from 'logrocket'
-import settings from '../../../public/settings.json'
 
 const maxRetries = 3
 
@@ -16,7 +15,7 @@ const state = {
   retries: 0,
   serverUrl:
     localStorage.getItem('server_url') ||
-    settings?.server_url ||
+    window.prefect_ui_settings?.server_url ||
     process.env.VUE_APP_SERVER_URL,
   version: null
 }
