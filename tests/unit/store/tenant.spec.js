@@ -275,7 +275,7 @@ describe('tenant Vuex Module', () => {
         )
       })
 
-      it('should check if tenant is set and getTenant if not set', async () => {
+      it('should call getTenants if the passed tenant is not present in the store', async () => {
         expect(store.getters.tenant.slug).toBe(null)
         const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
         prefectTenants.mockReturnValueOnce(tenantsArray)
