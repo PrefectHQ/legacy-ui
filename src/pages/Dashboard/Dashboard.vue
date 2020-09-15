@@ -3,9 +3,9 @@ import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
-import FlowRunHeartbeatTile from '@/pages/Dashboard/FlowRunHeartbeat-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
+import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
@@ -13,6 +13,7 @@ import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import TimelineTile from '@/pages/Dashboard/Timeline-Tile'
 import { mapGetters } from 'vuex'
+import gql from 'graphql-tag'
 
 const serverTabs = [
   {
@@ -47,9 +48,9 @@ export default {
     AgentsTile,
     ApiHealthCheckTile,
     FailedFlowsTile,
-    FlowRunHeartbeatTile,
     FlowTableTile,
     InProgressTile,
+    NotificationsTile,
     ProjectSelector,
     SubPageNav,
     SummaryTile,
@@ -131,6 +132,28 @@ export default {
   mounted() {
     this.refresh()
   },
+  async beforeRouteLeave(to, from, next) {
+    if (!to.query?.notification_id) return next()
+    try {
+      if (to.query?.notification_id) {
+        let mutationString = gql`
+        mutation MarkMessagesAsRead {
+          mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
+            success
+            error
+          }
+        }
+      `
+        await this.$apollo.mutate({
+          mutation: mutationString
+        })
+
+        delete to.query.notification_id
+      }
+    } finally {
+      next({ name: to.name, params: to.params })
+    }
+  },
   methods: {
     handleProjectSelect(val) {
       this.projectId = val
@@ -198,6 +221,7 @@ export default {
         "
       >
         <span v-if="loading === 0">
+          <span class="font-weight-medium">{{ tenant.name }}</span> -
           {{ projectId && project ? project.name : 'All Projects' }}
         </span>
         <span v-else>
@@ -260,7 +284,10 @@ export default {
             class="my-2"
             tile
           >
-            <TimelineTile :project-id="projectId" />
+            <TimelineTile
+              :project-id="projectId"
+              :visible="tab == 'overview'"
+            />
           </v-skeleton-loader>
 
           <v-skeleton-loader
@@ -312,7 +339,7 @@ export default {
             class="my-2"
             tile
           >
-            <FlowRunHeartbeatTile :project-id="projectId" full-height />
+            <NotificationsTile :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
