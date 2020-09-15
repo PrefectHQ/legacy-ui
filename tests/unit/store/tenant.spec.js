@@ -257,7 +257,7 @@ describe('tenant Vuex Module', () => {
       })
     })
 
-    describe('setCurrentTenant -server', () => {
+    describe('setCurrentTenant - Server', () => {
       let store
 
       beforeEach(() => {
