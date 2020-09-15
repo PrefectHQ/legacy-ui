@@ -139,8 +139,7 @@ const actions = {
 
       commit('setTenant', tenant)
     } catch (e) {
-      if (e) throw new Error(e)
-      else throw new Error('Problem setting tenant')
+      throw new Error(`Problem setting tenant: ${e}`)
     }
     return getters['tenant']
   },
@@ -160,8 +159,7 @@ const actions = {
       })
       await dispatch('getTenants')
     } catch (e) {
-      if (e) throw new Error(e)
-      else throw new Error('Problem updating tenant settings: ', e)
+      throw new Error(`Problem updating tenant settings: ${e}`)
     }
   }
 }
