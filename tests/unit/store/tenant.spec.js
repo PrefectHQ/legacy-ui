@@ -247,6 +247,7 @@ describe('tenant Vuex Module', () => {
         //Make sure store is in logged in state
         store.commit('setTenant', loggedinTenantState().tenant)
         expect(store.getters['tenant']).toEqual(loggedinTenantState().tenant)
+        expect(store.getters['tenant'].settings.agreedToLicense).toEqual(false)
         expect(store.getters['tenantIsSet']).toEqual(
           loggedinTenantState().tenantIsSet
         )
