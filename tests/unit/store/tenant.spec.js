@@ -279,7 +279,7 @@ describe('tenant Vuex Module', () => {
         })
       })
 
-      it('should set tenants', async () => {
+      it('should call the prefectTenants method', async () => {
         await store.dispatch('getTenants')
         expect(prefectTenants).toHaveBeenCalled()
       })
@@ -299,7 +299,7 @@ describe('tenant Vuex Module', () => {
       })
     })
 
-    describe('setCurrentTenant -server', () => {
+    describe('setCurrentTenant - Server', () => {
       let store
 
       beforeEach(() => {
@@ -317,7 +317,7 @@ describe('tenant Vuex Module', () => {
         )
       })
 
-      it('should check if tenant is set and getTenant if not set', async () => {
+      it('should call getTenants if the passed tenant is not present in the store', async () => {
         expect(store.getters.tenant.slug).toBe(null)
         const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
         prefectTenants.mockReturnValueOnce(tenantsArray)
@@ -354,7 +354,7 @@ describe('tenant Vuex Module', () => {
       })
     })
 
-    describe('setCurrentTenant - Cloud specific', () => {
+    describe('setCurrentTenant - Cloud', () => {
       let store
 
       beforeEach(() => {
