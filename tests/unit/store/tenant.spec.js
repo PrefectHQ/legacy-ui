@@ -319,10 +319,17 @@ describe('tenant Vuex Module', () => {
 
       it('should call getTenants if the passed tenant is not present in the store', async () => {
         expect(store.getters.tenant.slug).toBe(null)
-        const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
+        expect(store.getters.tenant.name).toBe(null)
+        expect(store.getters.tenant.id).toBe(null)
+        const tenantsArray = [
+          { name: 'boo', id: '12345', slug: 'team2' },
+          { name: 'anotherTenant', id: '45678' }
+        ]
         prefectTenants.mockReturnValueOnce(tenantsArray)
         await store.dispatch('setCurrentTenant', 'team2')
         expect(store.getters.tenant.slug).toEqual('team2')
+        expect(store.getters.tenant.name).toEqual('boo')
+        expect(store.getters.tenant.id).toEqual('12345')
       })
 
       it('should throw an error if the requested tenant does not exist', async () => {
