@@ -127,7 +127,7 @@ export default {
 
 <template>
   <v-card
-    class="pa-2"
+    class="py-2"
     tile
     :style="{
       height: fullHeight ? '330px' : 'auto'
