@@ -375,7 +375,7 @@ describe('tenant Vuex Module', () => {
             'api/isCloud': () => true,
             'user/memberships': () => [
               { tenant: { id: '12345' }, role: 'USER' },
-              { tenant: { id: '45678' }, role: 'USER' }
+              { tenant: { id: '45678' }, role: 'TENANT_ADMIN' }
             ]
           },
           mutations: tenant.mutations,
