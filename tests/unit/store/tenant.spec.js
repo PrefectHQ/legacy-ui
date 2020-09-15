@@ -375,7 +375,8 @@ describe('tenant Vuex Module', () => {
             'api/isCloud': () => true,
             'user/memberships': () => [
               { tenant: { id: '12345' }, role: 'USER' },
-              { tenant: { id: '45678' }, role: 'TENANT_ADMIN' }
+              { tenant: { id: '45678' }, role: 'TENANT_ADMIN' },
+              { tenant: { id: '9101112' }, role: 'READ_ONLY_USER' }
             ]
           },
           mutations: tenant.mutations,
@@ -398,11 +399,12 @@ describe('tenant Vuex Module', () => {
         expect(store.getters.tenant.slug).toBe(null)
         const tenantsArray = [
           { name: 'boo', id: '12345', slug: 'team2' },
-          { name: 'anotherTeam', id: '45678', slug: 'team3' }
+          { name: 'anotherTeam', id: '45678', slug: 'team3' },
+          { name: 'aReadOnlyTeam', id: '9101112', slug: 'team1' }
         ]
         prefectTenants.mockReturnValueOnce(tenantsArray)
-        await store.dispatch('setCurrentTenant', 'team3')
-        expect(store.getters.role).toEqual('TENANT_ADMIN')
+        await store.dispatch('setCurrentTenant', 'team1')
+        expect(store.getters.role).toEqual('READ_ONLY_USER')
       })
     })
 
