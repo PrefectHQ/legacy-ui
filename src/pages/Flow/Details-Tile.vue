@@ -394,7 +394,7 @@ export default {
                           </div>
                         </template>
                         <span v-if="role == 'READ_ONLY_USER'">
-                          Read-only users can not edit labels</span
+                          Read-only users cannot edit labels</span
                         >
                         <span v-else>Add a label</span>
                       </v-tooltip>
