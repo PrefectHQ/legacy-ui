@@ -63,7 +63,7 @@ export default {
         this.agentLabels.every(arrayOfLabels => arrayOfLabels.length > 0)
       ) {
         this.labelMessage(
-          'To let the agent pick up this flow run, you may need to add labels to your flow.',
+          'You have no Agents configured to pick up flows without labels; you may need to add labels to your flow.',
           'Labels and Flow Affinity',
           'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
         )
