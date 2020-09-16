@@ -33,6 +33,10 @@ export default {
     },
     isScheduled() {
       return this.flowRun?.state === 'Scheduled'
+    },
+    canRestart() {
+      const eligibleStates = ['Cancelled', 'Failed', 'Cancelling']
+      return eligibleStates.includes(this.flowRun.state)
     }
   },
   watch: {
@@ -130,7 +134,7 @@ export default {
             text
             depressed
             small
-            :disabled="isReadOnlyUser"
+            :disabled="isReadOnlyUser || !canRestart"
             color="deep-orange darken-1"
             @click="restartDialog = true"
           >
@@ -142,7 +146,10 @@ export default {
       <span v-if="isReadOnlyUser">
         Read-only users cannot restart flow runs
       </span>
-      <span v-else>Restart run from failed</span>
+      <span v-else-if="!canRestart"
+        >You can not restart flows from a {{ flowRun.state }} state</span
+      >
+      <span v-else>Restart run from {{ flowRun.state }} </span>
     </v-tooltip>
 
     <v-dialog v-model="restartDialog" width="500">

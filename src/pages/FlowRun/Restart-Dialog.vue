@@ -23,7 +23,8 @@ export default {
       return (
         this.flowRun.state == 'Failed' ||
         this.hasFailedTaskRuns ||
-        this.flowRun.state === 'Cancelled'
+        this.flowRun.state === 'Cancelled' ||
+        this.flowRun.state === 'Cancelling'
       )
     },
     hasFailedTaskRuns() {
@@ -79,7 +80,8 @@ export default {
         if (
           result?.data?.set_task_run_states ||
           this.flowRun.state == 'Failed' ||
-          this.flowRun.state === 'Cancelled'
+          this.flowRun.state === 'Cancelled' ||
+          this.flowRun.state == 'Cancelling'
         ) {
           const { data } = await this.$apollo.mutate({
             mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
@@ -161,9 +163,7 @@ export default {
 
 <template>
   <v-card tile>
-    <v-card-title>
-      Restart from failed?
-    </v-card-title>
+    <v-card-title> Restart from {{ flowRun.state }}? </v-card-title>
 
     <v-card-text>
       Click on confirm to restart
