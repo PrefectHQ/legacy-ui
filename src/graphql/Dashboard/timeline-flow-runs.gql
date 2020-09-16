@@ -5,7 +5,7 @@ query TimelineFlowRuns($limit: Int, $project_id: uuid) {
       state: { _neq: "Scheduled" }
     }
     limit: $limit
-    order_by: { scheduled_start_time: desc }
+    order_by: { scheduled_start_time: desc_nulls_last }
   ) {
     id
     name
