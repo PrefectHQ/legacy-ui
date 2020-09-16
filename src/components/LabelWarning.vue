@@ -160,7 +160,7 @@ export default {
           ><span v-else>flow details tile</span></div
         >
         <div class="mt-4">
-          For more information check-out the docs on
+          For more information check out the docs on
           <a :href="docsLink" target="_blank">{{ docsName }}</a>
           .</div
         >
