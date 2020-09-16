@@ -117,6 +117,8 @@ Vue.use(Router)
 
 // Vue Global Error Handler
 Vue.config.errorHandler = function(error, vm, info) {
+  if (error?.includes("Cannot read property '_observe' of null")) return
+
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
     console.log('Vue Global Error Handler', JSON.stringify({ error, vm, info }))
@@ -147,19 +149,6 @@ Vue.filter('roundThousands', roundThousands)
 
 Vue.component('height-transition', TransitionHeight)
 
-Vue.config.errorHandler = function(err, vm, info) {
-  // handle error
-  // `info` is a Vue-specific error info, e.g. which lifecycle hook
-  // the error was found in. Only available in 2.2.0+
-  console.log('Custom vue error handler: ', err, vm.name, info)
-}
-Vue.config.warnHandler = function(err, vm, info) {
-  // handle error
-  // `info` is a Vue-specific error info, e.g. which lifecycle hook
-  // the error was found in. Only available in 2.2.0+
-  console.log('Custom vue warn handler: ', err, vm.name, info)
-}
-
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
 // It's a pretty heavy-handed approach to what we're trying
@@ -179,27 +168,16 @@ const blockedProps = [
   'expansionPanels',
   'tabsBar'
 ]
-blockedProps
+
 Vue.mixin({
   destroyed() {
-    setTimeout(() => {
+    const prepForGC = () => {
       try {
         this.$el?.remove()
-
-        Object.keys(this).forEach(key => {
-          try {
-            !blockedProps.includes(key) &&
-              !(key in this[key]?.$props) &&
-              (this[key] = null)
-          } catch {
-            /* */
-          }
-        })
-
+        this.elm = null
+        this.$el = null
         this.parent = null
         this.$parent = null
-        this.$el = null
-        this.elm = null
         this.data = null
         // this.$data = null // Unsetting this throws internal Vue errors
         // this.options = null // Unsetting this throws internal Vue errors
@@ -219,12 +197,39 @@ Vue.mixin({
         this.children = null
         this.store = null
         this.$store = null
-        this.$apollo = null
-      } catch {
+
+        // $apollo has no setter so we clear props instead
+        if (this.$apollo) {
+          this.$apollo.vm = null
+        }
+
+        Object.keys(this).forEach(key => {
+          try {
+            !blockedProps.includes(key) &&
+              !(key in this[key]?.$props) &&
+              (this[key] = null)
+          } catch {
+            /* */
+          }
+        })
+      } catch (e) {
+        console.error('Error in destroyed garbage collector mixin', e)
         /* */
       }
-    }, 1000)
-    this.$destroy()
+    }
+
+    // If the element has already been removed from the DOM
+    // we run the GC prep method immediately
+    if (!document.body.contains(this.$el)) {
+      prepForGC()
+      return
+    }
+
+    // Otherwise we can assume there's some sort of transition
+    // on the component and we wait for it to complete
+    // Note: this is obviously rough but Observer methods
+    // were performing exceedingly poorly.
+    setTimeout(prepForGC, 1500)
   }
 })
 
