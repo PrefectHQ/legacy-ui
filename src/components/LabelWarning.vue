@@ -46,8 +46,7 @@ export default {
       }, [])
     },
     flowLabels() {
-      const labels = this.flowGroup?.labels || this.flow?.environment?.labels
-      return labels
+      return this.flowGroup?.labels || this.flow?.environment?.labels
     },
     labelsAlign() {
       if (!this.agents) return
