@@ -23,6 +23,7 @@
 - Fix BarChart component resize event listener removal - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Remove all BarChart underscore method and property references - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Fix visual bugs associated with resizing while the BarChart component wasn't visible - [#216](https://github.com/PrefectHQ/ui/pull/216)
+- Fix bug preventing late runs from being cleared in the UI - [#227](https://github.com/PrefectHQ/ui/pull/227)
 
 ## 2020-09-08
 
