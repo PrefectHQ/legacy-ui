@@ -19,11 +19,13 @@ jest.mock(
 )
 
 let mockerror
+const mockUpdate = jest.fn()
 
 jest.mock('@/vue-apollo', () => {
   return {
     fallbackApolloClient: {
-      mutate: () => {
+      mutate: settings => {
+        mockUpdate(settings.variables.settings)
         return { data: { switch_token: 1 } }
       }
     }
@@ -34,11 +36,7 @@ jest.mock(
   '@/graphql/Tenant/membership.gql',
   () => 'tenant membership query string'
 )
-jest.mock('@/graphql/Mutations/update-tenant-settings.gql', () => {
-  return {
-    response: { data: { updateTenantSettings: { tenant: { settings: {} } } } }
-  }
-})
+jest.mock('@/graphql/Mutations/update-tenant-settings.gql', () => 'gql string')
 
 describe('tenant Vuex Module', () => {
   const initialTenantState = () => {
@@ -430,6 +428,11 @@ describe('tenant Vuex Module', () => {
       it('should call the getTenants action when settings are given', async () => {
         await store.dispatch('updateTenantSettings', { name: 'Tom' })
         expect(tenant.actions.getTenants).toBeCalled()
+      })
+
+      it('should call the update tenant settings mutation when settings are given', async () => {
+        await store.dispatch('updateTenantSettings', { name: 'Tom' })
+        expect(mockUpdate).toBeCalledWith({ name: 'Tom' })
       })
     })
   })
