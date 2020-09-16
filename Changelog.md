@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## Unreleased
+
+### Features and Improvements
+
 - Fix app-wide component teardown by manually nulling references that were preventing the garbage colector from running correctly - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Remove `task_run` join from the Dashboard-level Upcoming Runs query - [#218](https://github.com/PrefectHQ/ui/pull/218)
 - Introduce a notifications tile - [#220](https://github.com/PrefectHQ/ui/pull/220)
