@@ -147,6 +147,19 @@ Vue.filter('roundThousands', roundThousands)
 
 Vue.component('height-transition', TransitionHeight)
 
+Vue.config.errorHandler = function(err, vm, info) {
+  // handle error
+  // `info` is a Vue-specific error info, e.g. which lifecycle hook
+  // the error was found in. Only available in 2.2.0+
+  console.log('Custom vue error handler: ', err, vm.name, info)
+}
+Vue.config.warnHandler = function(err, vm, info) {
+  // handle error
+  // `info` is a Vue-specific error info, e.g. which lifecycle hook
+  // the error was found in. Only available in 2.2.0+
+  console.log('Custom vue warn handler: ', err, vm.name, info)
+}
+
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
 // It's a pretty heavy-handed approach to what we're trying
@@ -154,11 +167,35 @@ Vue.component('height-transition', TransitionHeight)
 // itself, which is leading to large memory leaks on data-heavy pages
 // as Apollo polls and when navigating between pages.
 // This could be more elegant and may be fixed by upgrading to Vue 3.
+const blockedProps = [
+  '$data',
+  '$listeners',
+  'theme',
+  '$attrs',
+  '$props',
+  'timeline',
+  'windowGroup',
+  'expansionPanel',
+  'expansionPanels',
+  'tabsBar'
+]
+blockedProps
 Vue.mixin({
   destroyed() {
     setTimeout(() => {
       try {
         this.$el?.remove()
+
+        Object.keys(this).forEach(key => {
+          try {
+            !blockedProps.includes(key) &&
+              !(key in this[key]?.$props) &&
+              (this[key] = null)
+          } catch {
+            /* */
+          }
+        })
+
         this.parent = null
         this.$parent = null
         this.$el = null
