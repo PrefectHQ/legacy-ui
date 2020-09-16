@@ -156,33 +156,38 @@ Vue.component('height-transition', TransitionHeight)
 // This could be more elegant and may be fixed by upgrading to Vue 3.
 Vue.mixin({
   destroyed() {
-    try {
-      this.$el.remove()
-      this.elm = null
-      this.$el = null
-      this.parent = null
-      this.$parent = null
-      // this.options = null // Unsetting this throws internal Vue errors
-      this.$options = null
-      this.$vnode = null
-      this.listeners = null
-      // this.$listeners = null // Unsetting this throws internal Vue errors
-      this._vnode = null
-      this._watcher = null
-      this._watchers = null
-      this._computedWatchers = null
-      this.$slots = null
-      this.slots = null
-      this.$scopedSlots = null
-      this.scopedSlots = null
-      this.$children = null
-      this.children = null
-      this.store = null
-      this.$store = null
-      this.$apollo = null
-    } catch {
-      //
-    }
+    setTimeout(() => {
+      try {
+        this.$el?.remove()
+        this.parent = null
+        this.$parent = null
+        this.$el = null
+        this.elm = null
+        this.data = null
+        // this.$data = null // Unsetting this throws internal Vue errors
+        // this.options = null // Unsetting this throws internal Vue errors
+        this.$options = null
+        this.$vnode = null
+        this.listeners = null
+        // this.$listeners = null // Unsetting this throws internal Vue errors
+        this._vnode = null
+        this._watcher = null
+        this._watchers = null
+        this._computedWatchers = null
+        this.$slots = null
+        this.slots = null
+        this.$scopedSlots = null
+        this.scopedSlots = null
+        this.$children = null
+        this.children = null
+        this.store = null
+        this.$store = null
+        this.$apollo = null
+      } catch {
+        /* */
+      }
+    }, 1000)
+    this.$destroy()
   }
 })
 
