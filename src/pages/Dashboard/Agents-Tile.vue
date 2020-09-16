@@ -16,7 +16,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
+    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
     ...mapGetters('api', ['isCloud']),
     agentTracker() {
       return this.agents?.reduce(
@@ -75,19 +75,6 @@ export default {
       }
 
       return 'success'
-    }
-  },
-  apollo: {
-    agents: {
-      error() {
-        this.queryError = true
-      },
-      loadingKey: 'loading',
-      pollInterval: 5000,
-      query() {
-        return require('@/graphql/Agent/agents.js').default(this.isCloud)
-      },
-      update: data => data.agent
     }
   }
 }
