@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Improve efficiency of flow run timeline queries - [#229](https://github.com/PrefectHQ/ui/pull/229)
 
 ### Bugfixes
 
