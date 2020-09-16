@@ -321,15 +321,15 @@ export default {
           transition="fade"
         >
           <v-list-item dense :disabled="setToRun.includes(item.id)">
-            <LabelWarning
-              :flow="flow"
-              :flow-group="flowGroup"
-              location="flowPage"
-            />
             <v-list-item-content>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <span class="caption mb-0" v-on="on">
+                    <LabelWarning
+                      :flow="flow"
+                      :flow-group="flowGroup"
+                      location="flowPage"
+                    />
                     Scheduled for {{ formatTime(item.scheduled_start_time) }}
                   </span>
                 </template>
@@ -422,15 +422,13 @@ export default {
             two-line
             :to="{ name: 'flow-run', params: { id: item.id } }"
           >
-            <v-list-item-avatar class="mr-0">
-              <LabelWarning
-                :flow="flow"
-                :flow-group="flowGroup"
-                location="flowPage"
-              />
-            </v-list-item-avatar>
             <v-list-item-content>
               <span class="caption mb-0">
+                <LabelWarning
+                  :flow="flow"
+                  :flow-group="flowGroup"
+                  location="flowPage"
+                />
                 Scheduled for {{ formatTime(item.scheduled_start_time) }}
               </span>
               <v-list-item-title class="body-2">

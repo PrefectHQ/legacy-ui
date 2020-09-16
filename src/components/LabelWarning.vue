@@ -43,11 +43,11 @@ export default {
       return this.flowGroup?.labels || this.flow?.environment?.labels
     },
     docsName() {
-      if (!this.agents.length) return 'agents'
+      if (!this.agents?.length) return 'agents'
       return 'Labels and Flow Affinity'
     },
     docsLink() {
-      if (!this.agents.length)
+      if (!this.agents?.length)
         return 'https://docs.prefect.io/orchestration/agents/overview.html'
       return 'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
     },
@@ -59,7 +59,7 @@ export default {
         return false
       }
       if (
-        !this.flowLabels.length &&
+        !this.flowLabels?.length &&
         this.agentLabels.every(arrayOfLabels => arrayOfLabels.length > 0)
       ) {
         this.labelMessage(
@@ -102,18 +102,15 @@ export default {
     open-on-hover
   >
     <template v-slot:activator="{ on }">
-      <v-btn text icon v-on="on">
-        <v-icon
-          :color="labelsAlign ? 'success' : 'deepRed'"
-          :size="iconSize || 'x-large'"
-        >
-          label
+      <v-btn left x-small icon class="lefty" v-on="on">
+        <v-icon color="failRed">
+          fa-tag
         </v-icon>
         <v-icon
           v-if="!labelsAlign"
           class="position-absolute"
           color="white"
-          size="small"
+          size="x-small"
         >
           priority_high
         </v-icon>
@@ -158,3 +155,9 @@ export default {
     </v-card>
   </v-menu>
 </template>
+
+<style lang="scss" scoped>
+.lefty {
+  justify-content: left;
+}
+</style>

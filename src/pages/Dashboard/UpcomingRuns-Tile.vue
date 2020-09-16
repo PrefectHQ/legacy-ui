@@ -261,14 +261,12 @@ export default {
           transition="fade-transition"
         >
           <v-list-item dense :disabled="setToRun.includes(item.id)">
-            <v-list-item-avatar class="mr-0 ml-0">
-              <LabelWarning
-                :flow="item.flow"
-                :flow-group="item.flow.flow_group"
-              />
-            </v-list-item-avatar>
             <v-list-item-content>
               <span class="caption mb-0">
+                <LabelWarning
+                  :flow="item.flow"
+                  :flow-group="item.flow.flow_group"
+                />
                 Scheduled for
                 {{ formatDateTime(item.scheduled_start_time) }}
               </span>
@@ -360,14 +358,12 @@ export default {
             three-line
             :to="{ name: 'flow-run', params: { id: item.id } }"
           >
-            <v-list-item-avatar class="mr-0 ml-0">
-              <LabelWarning
-                :flow="item.flow"
-                :flow-group="item.flow.flow_group"
-              />
-            </v-list-item-avatar>
             <v-list-item-content>
               <span class="caption mb-0">
+                <LabelWarning
+                  :flow="item.flow"
+                  :flow-group="item.flow.flow_group"
+                />
                 Scheduled for {{ formatDateTime(item.scheduled_start_time) }}
               </span>
 
@@ -481,9 +477,5 @@ a {
   pointer-events: none;
   position: absolute;
   width: 100%;
-}
-
-.theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
-  padding-left: 8px;
 }
 </style>

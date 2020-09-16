@@ -319,6 +319,7 @@ export default {
                       text
                       icon
                       x-small
+                      class="mr-2"
                       v-on="on"
                     >
                       <v-icon>
