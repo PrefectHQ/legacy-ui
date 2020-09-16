@@ -4,6 +4,17 @@
 
 ### Features and Improvements
 
+- Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-09-15
+
+### Features and Improvements
+
 - Fix app-wide component teardown by manually nulling references that were preventing the garbage colector from running correctly - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Remove `task_run` join from the Dashboard-level Upcoming Runs query - [#218](https://github.com/PrefectHQ/ui/pull/218)
 - Introduce a notifications tile - [#220](https://github.com/PrefectHQ/ui/pull/220)
@@ -13,6 +24,7 @@
 - Fix BarChart component resize event listener removal - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Remove all BarChart underscore method and property references - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Fix visual bugs associated with resizing while the BarChart component wasn't visible - [#216](https://github.com/PrefectHQ/ui/pull/216)
+- Fix bug preventing late runs from being cleared in the UI - [#227](https://github.com/PrefectHQ/ui/pull/227)
 
 ## 2020-09-08
 
