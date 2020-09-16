@@ -10,7 +10,6 @@ export default {
   },
   data() {
     return {
-      agents: null,
       loading: 0,
       queryError: false
     }
