@@ -5,7 +5,7 @@ const state = {
     // Time before an agent becomes unhealthy
     unhealthy: 5 // minutes since last query,
   },
-  agents: []
+  agents: null
 }
 
 const getters = {

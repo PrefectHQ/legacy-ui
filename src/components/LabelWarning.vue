@@ -15,10 +15,6 @@ export default {
       required: false,
       default: null
     },
-    always: {
-      type: Boolean,
-      default: true
-    },
     location: {
       type: String,
       default: ''
@@ -26,9 +22,7 @@ export default {
   },
   data() {
     return {
-      infoMessage: '',
-      docsName: '',
-      docsLink: ''
+      infoMessage: ''
     }
   },
   computed: {
@@ -48,13 +42,19 @@ export default {
     flowLabels() {
       return this.flowGroup?.labels || this.flow?.environment?.labels
     },
+    docsName() {
+      if (!this.agents.length) return 'agents'
+      return 'Labels and Flow Affinity'
+    },
+    docsLink() {
+      if (!this.agents.length)
+        return 'https://docs.prefect.io/orchestration/agents/overview.html'
+      return 'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
+    },
     labelsAlign() {
-      if (!this.agents) return
-      if (!this.agents.length) {
+      if (!this.agents?.length) {
         this.labelMessage(
-          'You have no live Agents - scheduled flow runs will not be submitted for execution and will display as "Late".',
-          'agents',
-          'https://docs.prefect.io/orchestration/agents/overview.html'
+          'You have no live Agents - scheduled flow runs will not be submitted for execution and will display as "Late".'
         )
         return false
       }
@@ -63,9 +63,7 @@ export default {
         this.agentLabels.every(arrayOfLabels => arrayOfLabels.length > 0)
       ) {
         this.labelMessage(
-          'You have no Agents configured to pick up flows without labels; you may need to add labels to your flow.',
-          'Labels and Flow Affinity',
-          'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
+          'You have no Agents configured to pick up flows without labels; you may need to add labels to your flow.'
         )
         return false
       } else {
@@ -77,17 +75,11 @@ export default {
           })
         }
         if (matchingLabels > 0) {
-          this.labelMessage(
-            'Your flow and agent labels look good.',
-            'Labels and Flow Affinity',
-            'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
-          )
+          this.labelMessage('Your flow and agent labels look good.')
           return true
         } else {
           this.labelMessage(
-            'It looks like you have a mismatch of labels between your flow and running Agents. To allow an Agent to pick up this flow run, you need to have at least one Agent whose labels include those on the flow.',
-            'Labels and Flow Affinity',
-            'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
+            'It looks like you have a mismatch of labels between your flow and running Agents. To allow an Agent to pick up this flow run, you need to have at least one Agent whose labels include those on the flow.'
           )
           return false
         }
@@ -95,10 +87,8 @@ export default {
     }
   },
   methods: {
-    labelMessage(message, docsName, link) {
+    labelMessage(message) {
       this.infoMessage = message
-      this.docsName = docsName
-      this.docsLink = link
     }
   }
 }
@@ -106,7 +96,7 @@ export default {
 
 <template>
   <v-menu
-    v-if="always || !labelsAlign"
+    v-if="!labelsAlign"
     :close-on-content-click="false"
     offset-y
     open-on-hover
