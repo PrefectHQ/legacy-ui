@@ -18,6 +18,7 @@ export default {
     normalize: { type: Boolean, default: () => true },
     padding: { type: Number, default: () => 2 },
     showControls: { type: Boolean, default: () => false },
+    visible: { type: Boolean, default: () => true },
     width: { type: Number, default: () => null },
     yField: { type: String, default: () => null }
   },
@@ -76,7 +77,7 @@ export default {
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
-      }, 150)
+      }, 300)
     },
     min() {
       return this.chartHeight * 0.15
@@ -97,7 +98,7 @@ export default {
   watch: {
     breaklines: debounce(function() {
       if (!this.chart) this.createChart()
-      if (this.loading) return
+      if (this.loading || !this.visible) return
       this.updateBreaklines()
     }, 500),
     items: {
@@ -111,6 +112,11 @@ export default {
     },
     restrictOutliers() {
       this.updateChart()
+    },
+    visible(val) {
+      if (val) {
+        this.resizeChart()
+      }
     }
   },
   mounted() {
@@ -368,22 +374,20 @@ export default {
 
       this.boundingClientRect = this.$refs['parent'].getBoundingClientRect()
 
-      this.chartWidth = this.vertical
+      const width = this.vertical
         ? this.width
         : parent._groups[0][0].clientWidth - paddingLeft - paddingRight
 
-      this.chartHeight = this.vertical
+      const height = this.vertical
         ? parent._groups[0][0].clientHeight - paddingTop - paddingBottom
         : this.height
 
-      if (
-        !this.chartHeight ||
-        !this.chartWidth ||
-        this.chartHeight < 0 ||
-        this.chartWidth < 0
-      ) {
+      if (!height || !width || height <= 0 || width <= 0) {
         return
       }
+
+      this.chartWidth = width
+      this.chartHeight = height
 
       this.chart
         .attr('viewbox', `0 0 ${this.chartWidth} ${this.chartHeight}`)
@@ -506,6 +510,7 @@ export default {
         return
       }
 
+      if (!this.visible) return
       if (!this.computedItems) return
       if (!this.loading) clearTimeout(this.loadingInterval)
 

@@ -21,9 +21,5 @@ query UpcomingFlowRuns($projectId: uuid) {
         labels
       }
     }
-    task_runs {
-      id
-      version
-    }
   }
 }

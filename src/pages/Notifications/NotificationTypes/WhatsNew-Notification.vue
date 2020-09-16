@@ -5,6 +5,16 @@ export default {
     content: {
       type: Object,
       required: true
+    },
+    dense: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
+    timestamp: {
+      type: String,
+      required: false,
+      default: () => null
     }
   },
   data() {
@@ -43,6 +53,10 @@ export default {
         open_in_new
       </v-icon>
     </v-list-item-title>
+
+    <v-list-item-subtitle v-if="timestamp">
+      {{ timestamp }}
+    </v-list-item-subtitle>
 
     <v-list-item-subtitle v-if="!readMore" v-html="decodeHTML(content.body)">
     </v-list-item-subtitle>

@@ -13,7 +13,8 @@ export default {
     projectId: {
       type: String,
       default: () => null
-    }
+    },
+    visible: { type: Boolean, default: () => true }
   },
   data() {
     return {
@@ -80,6 +81,7 @@ export default {
       :height="150"
       :min-bands="100"
       show-controls
+      :visible="visible"
       y-field="duration"
       @bar-click="_barClick"
       @bar-mouseout="_barMouseout"

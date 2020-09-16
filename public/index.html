@@ -48,6 +48,20 @@
       async
     ></script>
     <script src="https://js.stripe.com/v3/" async></script>
+
+    <script>
+      ;(async () => {
+        try {
+          window.prefect_ui_settings = await fetch(
+            `${process.env.VUE_APP_BASE_URL}/settings.json`
+          )
+            .then(response => response.json())
+            .then(data => data)
+        } catch {
+          // Let this fail silently
+        }
+      })()
+    </script>
   </head>
   <body>
     <noscript>

@@ -309,6 +309,7 @@ export default {
             slot="row-0"
             :aggregate="!flowVersionId"
             :flow="selectedFlow"
+            :visible="tab == 'overview'"
           />
 
           <DetailsTile

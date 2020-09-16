@@ -86,31 +86,9 @@ export const cancelLateRunsMixin = {
               }
             ) {
               states {
-                id
                 status
               }
             }
-
-            set_task_run_states(
-              input: {
-                states: [${this.individualRuns.map(r =>
-                  r.task_runs.map(t => {
-                    return `{
-                      task_run_id: "${t.id}",
-                      state: ${JSON.stringify(
-                        '{"type": "Cancelled","message": "This run was late and so was cancelled from the UI."}'
-                      )},
-                      version: ${t.version}
-                    }`
-                  })
-                )}]
-              }
-            ) {
-              states {
-                id
-              }
-            }
-          
           `
 
           // Build mutation to delete late flow runs.
