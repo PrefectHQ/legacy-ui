@@ -223,6 +223,7 @@ export default {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
       loadingKey: 'loading',
+      pollInterval: 3000,
       skip() {
         return !this.tenant.id
       },
