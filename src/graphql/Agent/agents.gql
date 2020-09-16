@@ -1,5 +1,5 @@
 query Agents {
-  agents {
+  agents(limit: 100) {
     id
     core_version
     name
