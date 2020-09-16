@@ -40,14 +40,10 @@ export default {
       return 'Flow and Agent Labels'
     },
     agentLabels() {
-      if (this.agents) {
-        const labels = this.agents.reduce((accumulator, agent) => {
+      return this.agents?.reduce((accumulator, agent) => {
           accumulator.push(agent.labels)
           return accumulator
-        }, [])
-        return labels
-      }
-      return null
+      }, [])
     },
     flowLabels() {
       const labels = this.flowGroup?.labels || this.flow?.environment?.labels
