@@ -41,8 +41,8 @@ export default {
     },
     agentLabels() {
       return this.agents?.reduce((accumulator, agent) => {
-          accumulator.push(agent.labels)
-          return accumulator
+        accumulator.push(agent.labels)
+        return accumulator
       }, [])
     },
     flowLabels() {
