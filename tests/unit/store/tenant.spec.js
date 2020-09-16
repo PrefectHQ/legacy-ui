@@ -26,7 +26,7 @@ jest.mock('@/vue-apollo', () => {
     fallbackApolloClient: {
       mutate: settings => {
         mockUpdate(settings.variables.settings)
-        return { data: { switch_token: 1 } }
+        return { data: { tenant: 1 } }
       }
     }
   }
@@ -340,7 +340,7 @@ describe('tenant Vuex Module', () => {
       })
 
       it('should set the tenant role to TENANT_ADMIN', async () => {
-        //All tenants need an admin - for tenants in server with only one member, that role should be admin
+        //All tenants need an admin - for tenants in server with only one member, that member's role should be admin
         expect(store.getters.tenant.slug).toBe(null)
         const tenantsArray = [{ name: 'boo', id: '12345', slug: 'team2' }]
         prefectTenants.mockReturnValueOnce(tenantsArray)
