@@ -85,7 +85,7 @@ export default {
           return true
         } else {
           this.labelMessage(
-            'It looks like you have a label on your flow that does not match your agent labels. To let the agent pick up this flow run, you need to align your flow and agents label.',
+            'It looks like you have a mismatch of labels between your flow and running Agents. To allow an Agent to pick up this flow run, you need to have at least one Agent whose labels include those on the flow.',
             'Labels and Flow Affinity',
             'https://docs.prefect.io/orchestration/agents/overview.html#flow-affinity-labels'
           )
