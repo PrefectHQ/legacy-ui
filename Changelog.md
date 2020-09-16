@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Limit number of agents returned to 100 as a stopgap for runaway registrations - [#230](https://github.com/PrefectHQ/ui/pull/230)
 
 ## 2020-09-15
 
