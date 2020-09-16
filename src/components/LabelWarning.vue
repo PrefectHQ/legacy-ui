@@ -57,7 +57,7 @@ export default {
       if (!this.agents) return
       if (!this.agents.length) {
         this.labelMessage(
-          'You have no live agents.  Flow runs will not be picked up.',
+          'You have no live Agents - scheduled flow runs will not be submitted for execution and will display as "Late".',
           'agents',
           'https://docs.prefect.io/orchestration/agents/overview.html'
         )
