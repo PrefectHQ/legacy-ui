@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
 - None
 
 ### Bugfixes
