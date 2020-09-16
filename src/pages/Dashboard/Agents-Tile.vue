@@ -16,7 +16,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
+    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
     ...mapGetters('api', ['isCloud']),
     agentTracker() {
       return this.agents?.reduce(
