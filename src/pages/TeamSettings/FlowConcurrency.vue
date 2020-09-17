@@ -132,23 +132,6 @@ export default {
       this.$apollo?.queries?.usage?.refetch()
     }
   },
-  mounted() {
-    this.$apollo.addSmartQuery('usage', {
-      query: require('@/graphql/FlowLabelUsage/flow-label-usage.gql'),
-      variables: {
-        labels: this.labels?.map(label => label.name)
-      },
-      pollInterval: 5000,
-      update: data => {
-        // Usage is returned as an array of objects in format { name, usage }
-        // Convert this array into object that maps label names to usage
-        return data?.flow_concurrency?.reduce((accum, usage) => {
-          accum[usage.label] = usage.usage
-          return accum
-        }, {})
-      }
-    })
-  },
   methods: {
     async addFlowLabelLimit() {
       try {
@@ -253,7 +236,27 @@ export default {
       query: require('@/graphql/FlowLabelLimit/flow-label-limit.gql'),
       pollInterval: 5000,
       loadingKey: 'loadingKey',
-      update: data => data.flow_concurrency_limit
+      update: data => {
+        return data.flow_concurrency_limit
+      }
+    },
+    usage: {
+      query: require('@/graphql/FlowLabelUsage/flow-label-usage.gql'),
+      variables() {
+        return { labels: this.labels?.map(label => label.name) }
+      },
+      pollInterval: 5000,
+      skip() {
+        return !this.labels?.length
+      },
+      update: data => {
+        // Usage is returned as an array of objects in format { name, usage }
+        // Convert this array into object that maps label names to usage
+        return data?.flow_concurrency?.reduce((accum, usage) => {
+          accum[usage.label] = usage.usage
+          return accum
+        }, {})
+      }
     }
   }
 }
