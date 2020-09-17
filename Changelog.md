@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-09-17
+
+### Features and Improvements
+
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
 
 ### Bugfixes
