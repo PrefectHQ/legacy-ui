@@ -101,7 +101,7 @@ export default {
     goToRunFlowPage() {
       this.$router.push({
         name: 'flow',
-        params: { id: this.flow.id },
+        params: { id: this.flow.id, tenant: this.tenant?.slug },
         query: { run: '' }
       })
     },
@@ -117,7 +117,7 @@ export default {
         if (data?.create_flow_run?.id) {
           this.$router.push({
             name: 'flow-run',
-            params: { id: data?.create_flow_run?.id }
+            params: { id: data?.create_flow_run?.id, tenant: this.tenant?.slug }
           })
         }
         if (errors) {
@@ -135,7 +135,7 @@ export default {
           'This flow version is now archived.  You have a newer version of your flow.'
         this.alertLink = {
           name: 'flow',
-          params: { id: this.flow.id },
+          params: { id: this.flow.id, tenant: this.tenant?.slug },
           query: { versions: '' }
         }
         this.alertType = 'error'
