@@ -117,7 +117,7 @@ export default {
         alertType: 'success',
         alertLink: {
           name: 'flow-run',
-          params: { id: id }
+          params: { id: id, tenant: this.tenant?.slug }
         }
       })
     },
