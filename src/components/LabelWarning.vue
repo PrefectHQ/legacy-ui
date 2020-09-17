@@ -22,7 +22,8 @@ export default {
   },
   data() {
     return {
-      infoMessage: ''
+      infoMessage: '',
+      noLabelInfo: false
     }
   },
   computed: {
@@ -79,7 +80,7 @@ export default {
           return true
         } else {
           this.labelMessage(
-            'It looks like no currently running Agent has this flow's full set of labels. To allow an Agent to run this flow, you need to have at least one Agent whose labels include all of those on the flow.'
+            "It looks like no currently running Agent has this flow's full set of labels. To allow an Agent to run this flow, you need to have at least one Agent whose labels include all of those on the flow."
           )
           return false
         }
@@ -96,23 +97,43 @@ export default {
 
 <template>
   <v-menu
-    v-if="!labelsAlign"
+    v-if="labelsAlign && location == 'flowPageDetails'"
     :close-on-content-click="false"
     offset-y
     open-on-hover
   >
     <template v-slot:activator="{ on }">
-      <v-btn left x-small icon class="lefty" v-on="on">
-        <v-icon color="failRed">
-          fa-tag
+      <v-btn text icon x-small class="mr-2" v-on="on">
+        <v-icon>
+          info
         </v-icon>
-        <v-icon
-          v-if="!labelsAlign"
-          class="position-absolute"
-          color="white"
-          size="x-small"
-        >
-          priority_high
+      </v-btn>
+    </template>
+    <v-card tile class="pa-0" max-width="320">
+      <v-card-title class="subtitle pb-1">Flow labels</v-card-title>
+
+      <v-card-text class="pt-0">
+        Flows and agents have optional labels which allow you to determine where
+        your flows are executed. For more information see
+        <a
+          href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+          target="_blank"
+          >the docs on labels</a
+        >.
+      </v-card-text>
+    </v-card>
+  </v-menu>
+  <v-menu
+    v-else-if="!labelsAlign"
+    :close-on-content-click="false"
+    offset-y
+    open-on-hover
+  >
+    <template v-slot:activator="{ on }">
+      <v-btn icon small text class="super-imposed-icon-set ml-n2" v-on="on">
+        <v-icon dense color="red">label</v-icon>
+        <v-icon x-small color="white" class="nudge-icon-left">
+          not_interested
         </v-icon>
       </v-btn>
     </template>
@@ -137,7 +158,7 @@ export default {
         <div>
           You can see and edit you flow labels in the
           <router-link
-            v-if="location !== 'flowPage'"
+            v-if="location !== 'flowPage' || location !== 'flowPageDetails'"
             target="_blank"
             :to="{
               name: 'flow',
@@ -159,5 +180,26 @@ export default {
 <style lang="scss" scoped>
 .lefty {
   justify-content: left;
+}
+
+.super-imposed-icon-set {
+  display: inline-block;
+  position: relative;
+
+  i {
+    z-index: 0;
+  }
+
+  i:last-child {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  .nudge-icon-left {
+    left: 45% !important;
+  }
 }
 </style>
