@@ -4,11 +4,14 @@
 
 ### Features and Improvements
 
-- None
+- Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
+- Improves error handling related to garbage collection - [#232](https://github.com/PrefectHQ/ui/pull/232)
+- Improves component teardown by accounting for elements whose destroyed method had been called but that hadn't been removed from the DOM due to transitions - [#232](https://github.com/PrefectHQ/ui/pull/232)
+- Improve navigation experience when going forward/backward in the browser history - [#232](https://github.com/PrefectHQ/ui/pull/232)
 
 ### Bugfixes
 
-- None
+- Fixes errors that were thrown when routing to tenant-guarded pages without passing a tenant slug - [#232](https://github.com/PrefectHQ/ui/pull/232)
 
 ## 2020-09-17
 

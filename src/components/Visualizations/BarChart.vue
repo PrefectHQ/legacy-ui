@@ -130,7 +130,7 @@ export default {
       }
     })
 
-    this.boundingClientRect = this.$refs['parent'].getBoundingClientRect()
+    this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
   },
   updated() {
     if (!this.chart) this.createChart()
@@ -372,7 +372,7 @@ export default {
           computedStyle.getPropertyValue('padding-bottom')
         )
 
-      this.boundingClientRect = this.$refs['parent'].getBoundingClientRect()
+      this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
 
       const width = this.vertical
         ? this.width
