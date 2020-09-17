@@ -19,7 +19,9 @@ export default {
       if (!val) return
       if (!this.$route.params || !this.$route.params.id) {
         if (val[0]) {
-          this.$router.push({ params: { id: val[0].id } })
+          this.$router.push({
+            params: { id: val[0].id, tenant: this.tenant?.slug }
+          })
         }
       }
     }
