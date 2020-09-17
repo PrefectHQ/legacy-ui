@@ -54,7 +54,7 @@ export default {
     labelsAlign() {
       if (!this.agents?.length) {
         this.labelMessage(
-          'You have no live Agents - scheduled flow runs will not be submitted for execution and will display as "Late".'
+          'You have no live Agents - scheduled flow runs will not be submitted for execution and might display as "Late".'
         )
         return false
       }
