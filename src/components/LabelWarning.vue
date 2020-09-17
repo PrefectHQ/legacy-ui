@@ -54,7 +54,7 @@ export default {
     labelsAlign() {
       if (!this.agents?.length) {
         this.labelMessage(
-          'You have no live Agents - scheduled flow runs will not be submitted for execution and will display as "Late".'
+          'You have no live Agents - scheduled flow runs will not be submitted for execution and might display as "Late".'
         )
         return false
       }
@@ -63,7 +63,7 @@ export default {
         this.agentLabels.every(arrayOfLabels => arrayOfLabels.length > 0)
       ) {
         this.labelMessage(
-          'You have no Agents configured to pick up flows without labels; you may need to add labels to your flow.'
+          'You have no currently running Agents configured to pick up flows without labels; you may need to add labels to your flow.'
         )
         return false
       } else {
@@ -79,7 +79,7 @@ export default {
           return true
         } else {
           this.labelMessage(
-            'It looks like you have a mismatch of labels between your flow and running Agents. To allow an Agent to pick up this flow run, you need to have at least one Agent whose labels include those on the flow.'
+            'It looks like no currently running Agent has this flow's full set of labels. To allow an Agent to run this flow, you need to have at least one Agent whose labels include all of those on the flow.'
           )
           return false
         }
@@ -132,7 +132,7 @@ export default {
             }"
           >
             <span>agents tab</span></router-link
-          ></div
+          >.</div
         >
         <div>
           You can see and edit you flow labels in the
