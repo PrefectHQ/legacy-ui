@@ -116,14 +116,20 @@ Vue.directive('disable-read-only-user', {
 Vue.use(Router)
 
 // Vue Global Error Handler
-Vue.config.errorHandler = function(error, vm, info) {
-  if (error?.includes("Cannot read property '_observe' of null")) return
-
+Vue.config.errorHandler = function(error, vm, trace) {
+  if (error?.message.includes("Cannot read property '_observe' of null")) return
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
-    console.log('Vue Global Error Handler', JSON.stringify({ error, vm, info }))
+    console.log('Vue Global Error Handler', { error, vm, trace })
   LogRocket.captureException(error)
-  LogRocket.log('Related to error', vm, info)
+  LogRocket.log('Related to error', vm, error)
+}
+
+Vue.config.warnHandler = function(error, vm, trace) {
+  if (error?.message.includes("Cannot read property '_observe' of null")) return
+  if (process.env.NODE_ENV === 'development')
+    // eslint-disable-next-line no-console
+    console.log('Vue Global Warn Handler', { error, vm, trace })
 }
 
 // Catch the rest
