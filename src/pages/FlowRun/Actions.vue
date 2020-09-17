@@ -35,7 +35,7 @@ export default {
       return this.flowRun?.state === 'Scheduled'
     },
     canRestart() {
-      const eligibleStates = ['Cancelled', 'Failed', 'Cancelling']
+      const eligibleStates = ['Failed']
       return eligibleStates.includes(this.flowRun.state)
     }
   },

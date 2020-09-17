@@ -11,13 +11,8 @@ export default {
   data() {
     return {
       error: false,
-      eligibleStates: [
-        'Cancelled',
-        'Failed',
-        'Cancelling',
-        'TimedOut',
-        'TriggerFailed'
-      ]
+      eligibleStates: ['Failed'],
+      failedTaskRunStates: ['Cancelled', 'Failed', 'TimedOut', 'TriggerFailed']
     }
   },
   computed: {
@@ -139,7 +134,7 @@ export default {
       variables() {
         return {
           flowRunId: this.flowRun.id,
-          failedStates: this.eligibleStates
+          failedStates: this.failedTaskRunStates
         }
       },
       update: data => {
