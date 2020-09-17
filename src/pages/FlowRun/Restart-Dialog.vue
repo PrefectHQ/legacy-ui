@@ -10,7 +10,14 @@ export default {
   },
   data() {
     return {
-      error: false
+      error: false,
+      eligibleStates: [
+        'Cancelled',
+        'Failed',
+        'Cancelling',
+        'TimedOut',
+        'TriggerFailed'
+      ]
     }
   },
   computed: {
@@ -21,10 +28,8 @@ export default {
     },
     isFailedRun() {
       return (
-        this.flowRun.state == 'Failed' ||
         this.hasFailedTaskRuns ||
-        this.flowRun.state === 'Cancelled' ||
-        this.flowRun.state === 'Cancelling'
+        this.eligibleStates.includes(this.flowRun.state)
       )
     },
     hasFailedTaskRuns() {
@@ -79,9 +84,7 @@ export default {
 
         if (
           result?.data?.set_task_run_states ||
-          this.flowRun.state == 'Failed' ||
-          this.flowRun.state === 'Cancelled' ||
-          this.flowRun.state == 'Cancelling'
+          this.eligibleStates.includes(this.flowRun.state)
         ) {
           const { data } = await this.$apollo.mutate({
             mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
@@ -135,10 +138,13 @@ export default {
       query: require('@/graphql/FlowRun/failed-task-runs.gql'),
       variables() {
         return {
-          flowRunId: this.flowRun.id
+          flowRunId: this.flowRun.id,
+          failedStates: this.eligibleStates
         }
       },
-      update: data => data?.task_run
+      update: data => {
+        return data?.task_run
+      }
     },
     utilityDownstreamTasks: {
       query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
