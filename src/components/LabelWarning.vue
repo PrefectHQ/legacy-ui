@@ -79,7 +79,7 @@ export default {
           return true
         } else {
           this.labelMessage(
-            'It looks like you have a mismatch of labels between your flow and running Agents. To allow an Agent to pick up this flow run, you need to have at least one Agent whose labels include those on the flow.'
+            'It looks like no currently running Agent has this flow's full set of labels. To allow an Agent to run this flow, you need to have at least one Agent whose labels include all of those on the flow.'
           )
           return false
         }
