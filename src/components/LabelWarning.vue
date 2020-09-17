@@ -132,7 +132,7 @@ export default {
             }"
           >
             <span>agents tab</span></router-link
-          ></div
+          >.</div
         >
         <div>
           You can see and edit you flow labels in the
