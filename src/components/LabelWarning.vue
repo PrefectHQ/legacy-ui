@@ -63,7 +63,7 @@ export default {
         this.agentLabels.every(arrayOfLabels => arrayOfLabels.length > 0)
       ) {
         this.labelMessage(
-          'You have no Agents configured to pick up flows without labels; you may need to add labels to your flow.'
+          'You have no currently running Agents configured to pick up flows without labels; you may need to add labels to your flow.'
         )
         return false
       } else {
