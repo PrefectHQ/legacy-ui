@@ -1,17 +1,18 @@
 <script>
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
-import GanttChart from '@/components/Visualizations/GanttChart'
-import SearchResult from '@/components/Schematics/Preview-SearchResult'
+// import GanttChart from '@/components/Visualizations/GanttChart'
+// import SearchResult from '@/components/Schematics/Preview-SearchResult'
 
 import moment from 'moment'
+import gql from 'graphql-tag'
 
 export default {
   components: {
     CardTitle,
-    DurationSpan,
-    GanttChart,
-    SearchResult
+    DurationSpan
+    // GanttChart,
+    // SearchResult
   },
   props: {
     flowId: {
@@ -118,6 +119,22 @@ export default {
     },
     showMapped() {
       return this.selectedTaskIds.length === 1
+    },
+    mappedTaskRuns() {
+      return this.taskRuns?.filter(taskRun => taskRun.state == 'Mapped')
+    },
+    mappedChildrenQuery() {
+      return this.mappedTaskRuns
+        ?.map(
+          (taskRun, index) => `
+         mapped_run_${index}: mapped_children(task_run_id: "${taskRun.id}") {
+            max_end_time
+            min_start_time
+            state_counts
+          }
+      `
+        )
+        .join(' ')
     }
   },
   watch: {
@@ -199,6 +216,32 @@ export default {
         return !this.flowRunId
       },
       update: data => data.task
+    },
+    mappedChildren: {
+      query() {
+        return gql`
+        query MappedChildren {
+          ${this.mappedChildrenQuery}
+        }
+      `
+      },
+      skip() {
+        return !this.taskRuns || !this.mappedTaskRuns.length
+      },
+      update(data) {
+        // Since mapped_children doesn't return an id (and we can't do this mapping with GraphQL)
+        // we map those here instead
+        const mappedTaskMap = {}
+        Object.keys(data).forEach(
+          (key, index) =>
+            (mappedTaskMap[this.mappedTaskRuns[index]?.id] = {
+              ...data[key],
+              parent_id: this.mappedTaskRuns[index]?.id,
+              task_id: this.mappedTaskRuns[index]?.task_id
+            })
+        )
+        return mappedTaskMap
+      }
     }
   }
 }
@@ -232,7 +275,12 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text class="d-flex justify-end align-center">
+    <v-card-text class="">
+      {{ mappedChildren }}
+      <!-- <div v-for="item in items" :key="item.id">
+        {{ item.name }}
+      </div> -->
+      <!--       
       <div class="search-container">
         <v-autocomplete
           v-model="selectedTaskIds"
@@ -323,9 +371,9 @@ export default {
             </v-lazy>
           </template>
         </v-autocomplete>
-      </div>
+      </div> -->
     </v-card-text>
-
+    <!-- 
     <GanttChart
       v-if="tasks"
       :items="items"
@@ -336,7 +384,7 @@ export default {
       y-field="id"
       :click-disabled="!!showMapped"
       @bar-click="_handleClick"
-    />
+    /> -->
   </v-card>
 </template>
 
