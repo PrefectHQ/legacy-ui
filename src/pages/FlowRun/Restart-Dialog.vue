@@ -6,13 +6,19 @@ export default {
     flowRun: {
       required: true,
       type: Object
+    },
+    eligibleStates: {
+      required: true,
+      type: Array
+    },
+    failedTaskRuns: {
+      required: true,
+      type: Array
     }
   },
   data() {
     return {
-      error: false,
-      eligibleStates: ['Failed'],
-      failedTaskRunStates: ['Cancelled', 'Failed', 'TimedOut', 'TriggerFailed']
+      error: false
     }
   },
   computed: {
@@ -129,18 +135,18 @@ export default {
     }
   },
   apollo: {
-    failedTaskRuns: {
-      query: require('@/graphql/FlowRun/failed-task-runs.gql'),
-      variables() {
-        return {
-          flowRunId: this.flowRun.id,
-          failedStates: this.failedTaskRunStates
-        }
-      },
-      update: data => {
-        return data?.task_run
-      }
-    },
+    // failedTaskRuns: {
+    //   query: require('@/graphql/FlowRun/failed-task-runs.gql'),
+    //   variables() {
+    //     return {
+    //       flowRunId: this.flowRun.id,
+    //       failedStates: this.failedTaskRunStates
+    //     }
+    //   },
+    //   update: data => {
+    //     return data?.task_run
+    //   }
+    // },
     utilityDownstreamTasks: {
       query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
       variables() {

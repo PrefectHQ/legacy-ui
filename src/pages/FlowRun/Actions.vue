@@ -17,13 +17,17 @@ export default {
   },
   data() {
     return {
-      restartDialog: false,
       runFlowNowClicked: false,
       runFlowNowLoading: false,
 
       // Alert
       alertMessage: '',
-      alertType: 'info'
+      alertType: 'info',
+
+      //restart
+      eligibleStates: ['Failed'],
+      failedTaskRunStates: ['Cancelled', 'Failed', 'TimedOut', 'TriggerFailed'],
+      restartDialog: false
     }
   },
   computed: {
@@ -35,8 +39,10 @@ export default {
       return this.flowRun?.state === 'Scheduled'
     },
     canRestart() {
-      const eligibleStates = ['Failed']
-      return eligibleStates.includes(this.flowRun.state)
+      return (
+        this.failedTaskRuns?.length > 0 ||
+        this.eligibleStates.includes(this.flowRun.state)
+      )
     }
   },
   watch: {
@@ -86,6 +92,20 @@ export default {
         alertType: this.alertType
       })
     }
+  },
+  apollo: {
+    failedTaskRuns: {
+      query: require('@/graphql/FlowRun/failed-task-runs.gql'),
+      variables() {
+        return {
+          flowRunId: this.flowRun.id,
+          failedStates: this.failedTaskRunStates
+        }
+      },
+      update: data => {
+        return data?.task_run
+      }
+    }
   }
 }
 </script>
@@ -134,6 +154,7 @@ export default {
             text
             depressed
             small
+            :eligible-states="eligibleStates"
             :disabled="isReadOnlyUser || !canRestart"
             color="deep-orange darken-1"
             @click="restartDialog = true"
@@ -147,13 +168,18 @@ export default {
         Read-only users cannot restart flow runs
       </span>
       <span v-else-if="!canRestart"
-        >You can not restart flows from a {{ flowRun.state }} state</span
+        >You can not restart flows runs from a {{ flowRun.state }} state</span
       >
       <span v-else>Restart run from {{ flowRun.state }} </span>
     </v-tooltip>
 
     <v-dialog v-model="restartDialog" width="500">
-      <RestartDialog :flow-run="flowRun" @cancel="restartDialog = false" />
+      <RestartDialog
+        :flow-run="flowRun"
+        :failed-task-runs="failedTaskRuns"
+        :eligible-states="eligibleStates"
+        @cancel="restartDialog = false"
+      />
     </v-dialog>
 
     <SetStateDialog dialog-type="flow run" :flow-run="flowRun" />
