@@ -4,6 +4,7 @@ query($flowRunId: uuid, $taskIds: _uuid) {
     task {
       task_runs(where: { flow_run_id: { _eq: $flowRunId } }) {
         id
+        map_index
         version
       }
     }

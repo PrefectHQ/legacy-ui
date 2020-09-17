@@ -116,6 +116,14 @@ export const routes = [
           )
       },
       {
+        name: 'flow-concurrency',
+        path: 'flow-concurrency',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--flow-concurrency" */ '@/pages/TeamSettings/FlowConcurrency.vue'
+          )
+      },
+      {
         name: 'task-concurrency',
         path: 'task-concurrency',
         component: () =>

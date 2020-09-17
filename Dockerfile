@@ -15,12 +15,16 @@ COPY ./LICENSE LICENSE
 WORKDIR /app
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Build static files
 RUN npm run build
 
 FROM nginx:stable
+
+# Update package list and install the jq package
+# which we use for manipulating settings JSON blobs
+RUN apt-get update && apt-get install jq -y
 
 # Copy the previously built static files to the nginx container
 COPY --from=ui /app/dist /var/www

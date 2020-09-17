@@ -4,6 +4,7 @@ import Label from '@/components/Label'
 import Parameters from '@/components/Parameters'
 import PrefectSchedule from '@/components/PrefectSchedule'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { parametersMixin } from '@/mixins/parametersMixin'
 import { mapActions } from 'vuex'
 
 export default {
@@ -16,7 +17,7 @@ export default {
     Parameters,
     PrefectSchedule
   },
-  mixins: [formatTime],
+  mixins: [formatTime, parametersMixin],
   props: {
     flow: {
       type: Object,
@@ -38,6 +39,7 @@ export default {
   },
   data() {
     return {
+      paramInfoOpen: false,
       copiedText: {},
       tab: 'overview',
       //labels
@@ -309,7 +311,7 @@ export default {
                 >
                   <template v-slot:activator="{ on }">
                     <v-btn
-                      :color="labels.length < 1 ? 'info' : null"
+                      :color="labels && labels.length < 1 ? 'info' : null"
                       text
                       icon
                       x-small
@@ -336,7 +338,7 @@ export default {
                       >.
 
                       <v-alert
-                        v-if="labels.length < 1"
+                        v-if="labels && labels.length < 1"
                         border="left"
                         colored-border
                         type="info"
@@ -442,7 +444,10 @@ export default {
               </v-list-item-subtitle>
 
               <div
-                v-if="(newLabels && newLabels.length > 0) || labels.length > 0"
+                v-if="
+                  (newLabels && newLabels.length > 0) ||
+                    (labels && labels.length > 0)
+                "
               >
                 <Label
                   v-for="(label, i) in newLabels || labels"
@@ -736,10 +741,63 @@ export default {
             <v-list-item-content>
               <v-list-item-subtitle class="grey--text text--darken-3">
                 Parameters
+                <v-menu
+                  v-model="paramInfoOpen"
+                  :close-on-content-click="false"
+                  offset-y
+                  open-on-hover
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-btn text icon x-small v-on="on">
+                      <v-icon>
+                        info
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card tile class="pa-0" max-width="220">
+                    <v-card-text class="pb-0">
+                      <p>
+                        Here you can see the default paramaters for your
+                        flow.</p
+                      ><p>
+                        If you want to update your flow group's parameters, you
+                        can do so on the parameters tab in
+                        <router-link
+                          :to="{ name: 'flow', query: { tab: 'settings' } }"
+                          @click.native="paramInfoOpen = false"
+                          >Flow Settings</router-link
+                        >.
+                      </p>
+                      <p>
+                        Refer to the
+                        <a
+                          href="https://docs.prefect.io/core/concepts/parameters.html#parameters"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          @click="paramInfoOpen = false"
+                        >
+                          documentation</a
+                        >
+                        <sup
+                          ><v-icon x-small>
+                            open_in_new
+                          </v-icon></sup
+                        >
+                        for more details on parameters.
+                      </p>
+                    </v-card-text>
+                    <v-card-actions class="pt-0">
+                      <v-spacer></v-spacer>
+                      <v-btn small text @click="paramInfoOpen = false"
+                        >Close</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-menu>
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
               <v-list-item-subtitle>
-                <Parameters :parameters="flow.parameters"></Parameters>
+                <Parameters :parameters="defaultParameters"></Parameters>
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -805,8 +863,8 @@ export default {
 /* stylelint-disable */
 
 .v-list-item__action--stack {
-  flex-direction: row;
   align-items: flex-start;
+  flex-direction: row;
 }
 
 .v-text-field input {

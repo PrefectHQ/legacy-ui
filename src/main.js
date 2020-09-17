@@ -43,6 +43,7 @@ if (
   process.env.VUE_APP_ENVIRONMENT == 'dev'
 ) {
   Vue.config.devtools = true
+  Vue.config.performance = true
 }
 
 const blockedResponses = ['CreateAPIToken', 'APITokens', 'CreateRunnerToken']
@@ -141,11 +142,69 @@ Vue.filter('roundThousands', roundThousands)
 
 Vue.component('height-transition', TransitionHeight)
 
+// This is a global mixin used to clean up any
+// references a component may have after it's destroyed.
+// It's a pretty heavy-handed approach to what we're trying
+// to accomplish but Vue doesn't seem to be removing all references
+// itself, which is leading to large memory leaks on data-heavy pages
+// as Apollo polls and when navigating between pages.
+// This could be more elegant and may be fixed by upgrading to Vue 3.
+Vue.mixin({
+  destroyed() {
+    try {
+      this.$el.remove()
+      this.elm = null
+      this.$el = null
+      this.parent = null
+      this.$parent = null
+      // this.options = null // Unsetting this throws internal Vue errors
+      this.$options = null
+      this.$vnode = null
+      this.listeners = null
+      // this.$listeners = null // Unsetting this throws internal Vue errors
+      this._vnode = null
+      this._watcher = null
+      this._watchers = null
+      this._computedWatchers = null
+      this.$slots = null
+      this.slots = null
+      this.$scopedSlots = null
+      this.scopedSlots = null
+      this.$children = null
+      this.children = null
+      this.store = null
+      this.$store = null
+      this.$apollo = null
+    } catch {
+      //
+    }
+  }
+})
+
 // Create application
-new Vue({
+// eslint-disable-next-line no-unused-vars
+let PrefectUI = new Vue({
   vuetify,
   router,
   store,
   apolloProvider: defaultApolloProvider,
   render: h => h(App)
 }).$mount('#app')
+
+// This can be used in testing to destroy the entire application and remove
+// the root node associated with it.
+// Use this to test persistant objects that V8 can't garbage collect.
+// function DestroyPrefectUI() {
+//   PrefectUI.$destroy()
+//   PrefectUI = null
+// }
+// setTimeout(DestroyPrefectUI, 30000)
+
+try {
+  if (navigator?.platform !== 'MacIntel') {
+    document.body.classList.add('not-mac')
+  }
+} catch {
+  // eslint-disable-next-line no-console
+  console.info('Unable to apply platform-specific scrollbar styles.')
+}

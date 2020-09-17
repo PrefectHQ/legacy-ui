@@ -2,7 +2,6 @@ query TaskRun($id: uuid!) {
   task_run_by_pk(id: $id) {
     id
     created
-    duration
     end_time
     flow_run {
       id
@@ -10,7 +9,6 @@ query TaskRun($id: uuid!) {
     }
     updated
     map_index
-    run_count
     start_time
     state
     state_message

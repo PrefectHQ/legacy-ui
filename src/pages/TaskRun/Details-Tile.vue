@@ -96,6 +96,30 @@ export default {
       <v-list-item dense class="pa-0">
         <v-list-item-content>
           <v-list-item-subtitle class="caption">
+            <v-row v-if="taskRun.state == 'Mapped'" no-gutters>
+              <v-col cols="6">
+                Expected Mapped Runs
+              </v-col>
+              <v-col cols="6" class="text-right font-weight-bold">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on">
+                      {{ taskRun.serialized_state.n_map_states || 'unknown' }}
+                    </span>
+                  </template>
+                  <span v-if="!taskRun.serialized_state.n_map_states">
+                    This data is only available on Flows registered with Prefect
+                    Core 0.13.5+
+                  </span>
+                  <span v-else>
+                    The number of mapped children expected to run. Note that the
+                    number of active mapped runs may be less than this if some
+                    have not begun running yet.
+                  </span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+
             <v-row v-if="taskRun.start_time" no-gutters>
               <v-col cols="6">
                 Started
@@ -143,12 +167,10 @@ export default {
                 Duration
               </v-col>
               <v-col cols="6" class="text-right font-weight-bold">
-                <span v-if="taskRun.duration">
-                  {{ taskRun.duration | duration }}
-                </span>
                 <DurationSpan
-                  v-else-if="taskRun.start_time"
+                  v-if="taskRun.start_time"
                   :start-time="taskRun.start_time"
+                  :end-time="taskRun.end_time"
                 />
                 <span v-else>
                   <v-skeleton-loader type="text"></v-skeleton-loader>
@@ -170,19 +192,6 @@ export default {
                     {{ formatTime(taskRun.updated) }}
                   </div>
                 </v-tooltip>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="6">
-                Class
-              </v-col>
-              <v-col
-                v-if="taskRun.task"
-                cols="6"
-                class="text-right font-weight-bold"
-              >
-                {{ taskRun.task.type | typeClass }}
               </v-col>
             </v-row>
 

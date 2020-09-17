@@ -31,7 +31,10 @@ export const parametersMixin = {
     ...mapGetters('tenant', ['tenant']),
     parameterInput: {
       get() {
-        const paramString = JSON.stringify(this.flowGroup.default_parameters)
+        const sorted = Object.fromEntries(
+          Object.entries(this.flowGroup.default_parameters).sort()
+        )
+        const paramString = JSON.stringify(sorted)
         return jsBeautify(paramString, jsonFormatOptions)
       },
       set(val) {
@@ -90,7 +93,10 @@ export const parametersMixin = {
           ).length > 0
         paramifiedArray.push({ name: key, default: value, required: required })
       }
-      return paramifiedArray
+      const sorted = paramifiedArray.sort((a, b) => {
+        return a.name > b.name ? 1 : -1
+      })
+      return sorted
     }
   },
   watch: {

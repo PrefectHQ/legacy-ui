@@ -1,6 +1,6 @@
 query TaskTagUsage($tags: [String!]) {
-  task_tag_usage(tags: $tags) {
-    tag
+  task_concurrency(names: $tags) {
+    name
     usage
   }
 }

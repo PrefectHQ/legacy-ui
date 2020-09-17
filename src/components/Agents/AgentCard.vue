@@ -270,7 +270,7 @@ export default {
 
           <div style="width: 50%;">
             <div class="caption">
-              TOKEN ID
+              TOKEN NAME
             </div>
             <div class="body-2">
               <v-tooltip top>
@@ -278,33 +278,33 @@ export default {
                   <div
                     class="truncate"
                     :class="{
-                      pointer: agent.token_id,
-                      'bg-gray-transition': copiedText[agent.token_id],
-                      'bg-white-transition': !copiedText[agent.token_id]
+                      pointer: agent.token_name,
+                      'bg-gray-transition': copiedText[agent.token_name],
+                      'bg-white-transition': !copiedText[agent.token_name]
                     }"
                     v-on="on"
-                    @click="copyTextToClipboard(agent.token_id)"
+                    @click="copyTextToClipboard(agent.token_name)"
                   >
                     <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
-                      {{ agent.token_id || 'Unknown' }}
+                      {{ agent.token_name || 'Unknown' }}
                     </span>
                   </div>
                 </template>
 
                 <span>
                   <v-icon
-                    v-if="agent.token_id"
+                    v-if="agent.token_name"
                     x-small
                     class="mb-2px mr-2"
                     tabindex="0"
                     color="white"
                   >
-                    {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
+                    {{ copiedText[agent.token_name] ? 'check' : 'file_copy' }}
                   </v-icon>
                   {{
-                    agent.token_id
-                      ? 'Click to copy ID'
-                      : 'No token ID found; you may have registered the agent with an older version of Prefect Core.'
+                    agent.token_name
+                      ? 'Click to copy token name'
+                      : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
                   }}</span
                 >
               </v-tooltip>

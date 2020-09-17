@@ -52,6 +52,7 @@ export default {
   },
   beforeDestroy() {
     window.onresize = null
+    window.removeEventListener('resize', this.updateChart)
   },
   methods: {
     calcHeight(d, i) {
@@ -78,7 +79,7 @@ export default {
     },
     createChart() {
       this.chart = d3.select(`#${this.id}`)
-      window.onresize = this.updateChart
+      window.addEventListener('resize', this.updateChart)
     },
     statusStyle(state) {
       return {

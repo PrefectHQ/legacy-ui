@@ -10,16 +10,22 @@ const state = {
   connectionMessage: null,
   connectionTimeout: null,
   releaseTimestamp: null,
+  apiMode: null,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
   serverUrl:
-    localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
+    localStorage.getItem('server_url') ||
+    window.prefect_ui_settings?.server_url ||
+    process.env.VUE_APP_SERVER_URL,
   version: null
 }
 
 const getters = {
   backend(state) {
     return state.backend
+  },
+  apiMode(state) {
+    return state.apiMode
   },
   connected(state) {
     return state.connected
@@ -68,6 +74,9 @@ const getters = {
 
 const mutations = {
   setBackend(state, backend) {
+    if (backend !== 'CLOUD' && backend !== 'SERVER') {
+      throw new Error('Invalid backend')
+    }
     state.backend = backend
     localStorage.setItem('backend', backend)
   },
@@ -76,6 +85,9 @@ const mutations = {
     localStorage.removeItem('backend')
   },
   setConnected(state, connected) {
+    if (typeof connected !== 'boolean') {
+      throw new Error('Invalid connected state - connected should be a boolean')
+    }
     state.connected = connected
   },
   setConnectionMessage(state, message) {
@@ -93,6 +105,12 @@ const mutations = {
   },
   setReleaseTimestamp(state, timestamp) {
     state.releaseTimestamp = timestamp
+  },
+  setApiMode(state, apiMode) {
+    if (apiMode && apiMode !== 'normal' && apiMode !== 'maintenance') {
+      throw new Error('Unexpected api mode')
+    }
+    state.apiMode = apiMode
   },
   unsetReleaseTimetamp(state) {
     state.releaseTimestamp = null
@@ -123,10 +141,10 @@ const actions = {
         query: require('@/graphql/api.gql'),
         fetchPolicy: 'no-cache'
       })
-
       commit('setReleaseTimestamp', data.api.release_timestamp)
       commit('setVersion', data.api.version)
       commit('setConnected', true)
+      commit('setApiMode', data.api.mode)
     } catch (error) {
       commit('unsetReleaseTimetamp')
       commit('unsetVersion')
@@ -163,9 +181,12 @@ const actions = {
           commit('setConnectionMessage', 'Connected')
           commit('setRetries', 0)
           commit('setConnected', true)
+          commit('setApiMode', data.api.mode)
+        } else {
+          throw new Error('no data returned from api query')
         }
       } catch (e) {
-        commit('setConnectionMessage', e)
+        commit('setConnectionMessage', e.toString())
         commit('setConnected', false)
       } finally {
         const timeout = setTimeout(

@@ -5,12 +5,10 @@ query TaskRun($id: uuid!) {
     state
     state_message
     state_timestamp
-    duration
     updated
     start_time
     end_time
     map_index
-    run_count
     serialized_state
 
     task {

@@ -38,16 +38,29 @@ const getters = {
 
 const mutations = {
   setDefaultTenant(state, tenant) {
+    if (
+      !tenant ||
+      typeof tenant !== 'object' ||
+      Array.isArray(tenant) ||
+      Object.keys(tenant) < 1
+    ) {
+      throw new Error('passed invalid or empty tenant object')
+    }
     state.defaultTenant = tenant
   },
   setTenant(state, tenant) {
-    if (!tenant || !Object.keys(tenant).length) {
+    if (
+      !tenant ||
+      typeof tenant !== 'object' ||
+      Array.isArray(tenant) ||
+      Object.keys(tenant) < 1
+    ) {
       throw new Error('passed invalid or empty tenant object')
     }
     state.tenant = { ...tenant }
   },
   setTenants(state, tenants) {
-    if (tenants?.length === 0) {
+    if (!tenants || tenants?.length === 0) {
       throw new Error('passed invalid or empty tenant array')
     }
     state.tenants = tenants
@@ -104,7 +117,6 @@ const actions = {
       }
 
       tenant = getters['tenants']?.find(t => t.slug === slug)
-
       if (!tenant) {
         throw new Error("Unable to set current tenant: tenant doesn't exist")
       }
@@ -140,7 +152,7 @@ const actions = {
 
       commit('setTenant', tenant)
     } catch (e) {
-      throw new Error('Problem setting tenant: ', e)
+      throw new Error(`Problem setting tenant: ${e}`)
     }
     return getters['tenant']
   },
@@ -158,10 +170,9 @@ const actions = {
           throw error
         }
       })
-
       await dispatch('getTenants')
     } catch (e) {
-      throw new Error('Problem updating tenant settings: ', e)
+      throw new Error(`Problem updating tenant settings: ${e}`)
     }
   }
 }

@@ -5,48 +5,12 @@ import FlowRunNotification from '@/pages/Notifications/NotificationTypes/FlowRun
 import MembershipNotification from '@/pages/Notifications/NotificationTypes/Membership-Notification'
 import ApprovalNotification from '@/pages/Notifications/NotificationTypes/Approval-Notification'
 import WhatsNewNotification from '@/pages/Notifications/NotificationTypes/WhatsNew-Notification'
-
-const componentMap = {
-  CLOUD_HOOK: 'FlowRunNotification',
-  MEMBERSHIP_INVITATION: 'MembershipNotification',
-  REQUIRES_APPROVAL: 'ApprovalNotification',
-  WHATS_NEW: 'WhatsNewNotification'
-}
-
-const iconMap = {
-  CLOUD_HOOK: 'pi-flow-run',
-  MEMBERSHIP_INVITATION: 'group_add',
-  REQUIRES_APPROVAL: 'pause_circle_outline',
-  WHATS_NEW: '🎉'
-}
-
-const iconColorMap = {
-  CLOUD_HOOK: n => {
-    return n.content.event.state
-  },
-  MEMBERSHIP_INVITATION: () => 'primary',
-  WHATS_NEW: () => 'primary',
-  REQUIRES_APPROVAL: () => 'accentOrange'
-}
-
-const navigationMap = {
-  CLOUD_HOOK: (n, tenant) => {
-    return {
-      name: 'flow-run',
-      params: { id: n.content.event.id, tenant: tenant.slug },
-      query: { notification_id: n.id }
-    }
-  },
-  MEMBERSHIP_INVITATION: () => null,
-  WHATS_NEW: () => null,
-  REQUIRES_APPROVAL: (n, tenant) => {
-    return {
-      name: 'task-run',
-      params: { id: n.content.task_run.id, tenant: tenant.slug },
-      query: { notification_id: n.id }
-    }
-  }
-}
+import {
+  componentMap,
+  iconMap,
+  iconColorMap,
+  navigationMap
+} from '@/pages/Notifications/utils'
 
 export default {
   components: {
