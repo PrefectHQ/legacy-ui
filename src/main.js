@@ -175,7 +175,8 @@ const blockedProps = [
   'expansionPanel',
   'expansionPanels',
   'tabsBar',
-  'listItemGroup'
+  'listItemGroup',
+  'btnToggle'
 ]
 
 Vue.mixin({
