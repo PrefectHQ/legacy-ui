@@ -12,6 +12,7 @@
 ### Bugfixes
 
 - Fixes errors that were thrown when routing to tenant-guarded pages without passing a tenant slug - [#232](https://github.com/PrefectHQ/ui/pull/232)
+- Disable restart button on actions line rather than dialog[#234](https://github.com/PrefectHQ/ui/pull/234)
 
 ## 2020-09-17
 
