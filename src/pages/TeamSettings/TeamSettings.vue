@@ -38,7 +38,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('tenant', ['setTenant', 'unsetTenant']),
+    ...mapMutations('tenant', ['setTenant', 'unsetTenant', 'tenant']),
     _closeTeamDialog() {
       this.deleteTeamDialog = false
       this.teamName = null
@@ -63,7 +63,7 @@ export default {
         this.nameMatches = false
         if (deleteTeam?.data?.delete_tenant?.success) {
           this.unsetTenant()
-          this.$router.push({ name: 'dashboard' })
+          this.$router.push({ name: 'dashboard', tenant: this.tenant?.slug })
         } else {
           this.deleteTeamError = 'Something went wrong.'
         }
