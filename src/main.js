@@ -174,7 +174,8 @@ const blockedProps = [
   'windowGroup',
   'expansionPanel',
   'expansionPanels',
-  'tabsBar'
+  'tabsBar',
+  'listItemGroup'
 ]
 
 Vue.mixin({
