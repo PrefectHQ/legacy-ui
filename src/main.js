@@ -222,8 +222,8 @@ Vue.mixin({
           }
         })
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error('Error in destroyed garbage collector mixin', e)
-        /* */
       }
     }
 
