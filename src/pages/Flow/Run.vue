@@ -54,7 +54,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['role'])
+    ...mapGetters('tenant', ['tenant', 'role'])
   },
   watch: {
     //Makes sure that codemirror updates if new defaults are set in the settings tab
@@ -107,7 +107,7 @@ export default {
     goToFlowRunPage() {
       this.$router.push({
         name: 'flow-run',
-        params: { id: this.flowRunId }
+        params: { id: this.flowRunId, tenant: this.tenant?.slug }
       })
     },
     renderSuccessAlert(id) {
