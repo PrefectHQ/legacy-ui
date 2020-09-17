@@ -5,11 +5,10 @@
 ### Features and Improvements
 
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
-- None
 
 ### Bugfixes
 
-- None
+- Fix a race condition with flow concurrency usage - [#231](https://github.com/PrefectHQ/ui/pull/231)
 
 ## 2020-09-15
 
