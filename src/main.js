@@ -30,9 +30,9 @@ import { insertedActions, updatedActions } from '@/directives/disable-read-only'
 import TransitionHeight from '@/components/Functional/Transition-Height'
 
 // Apex charts component
-import VueApexCharts from 'vue-apexcharts'
-Vue.use(VueApexCharts)
-Vue.component('apexchart', VueApexCharts)
+// import VueApexCharts from 'vue-apexcharts'
+// Vue.use(VueApexCharts)
+// Vue.component('apexchart', VueApexCharts)
 
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
@@ -116,12 +116,22 @@ Vue.directive('disable-read-only-user', {
 Vue.use(Router)
 
 // Vue Global Error Handler
-Vue.config.errorHandler = function(error, vm, info) {
+Vue.config.errorHandler = function(error, vm, trace) {
+  if (error?.message?.includes("Cannot read property '_observe' of null"))
+    return
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
-    console.log('Vue Global Error Handler', JSON.stringify({ error, vm, info }))
+    console.log('Vue Global Error Handler', { error, vm, trace })
   LogRocket.captureException(error)
-  LogRocket.log('Related to error', vm, info)
+  LogRocket.log('Related to error', vm, error)
+}
+
+Vue.config.warnHandler = function(error, vm, trace) {
+  if (error?.message?.includes("Cannot read property '_observe' of null"))
+    return
+  if (process.env.NODE_ENV === 'development')
+    // eslint-disable-next-line no-console
+    console.log('Vue Global Warn Handler', { error, vm, trace })
 }
 
 // Catch the rest
@@ -154,35 +164,82 @@ Vue.component('height-transition', TransitionHeight)
 // itself, which is leading to large memory leaks on data-heavy pages
 // as Apollo polls and when navigating between pages.
 // This could be more elegant and may be fixed by upgrading to Vue 3.
+const blockedProps = [
+  '$data',
+  '$listeners',
+  'theme',
+  '$attrs',
+  '$props',
+  'timeline',
+  'windowGroup',
+  'expansionPanel',
+  'expansionPanels',
+  'tabsBar',
+  'listItemGroup',
+  'btnToggle'
+]
+
 Vue.mixin({
   destroyed() {
-    try {
-      this.$el.remove()
-      this.elm = null
-      this.$el = null
-      this.parent = null
-      this.$parent = null
-      // this.options = null // Unsetting this throws internal Vue errors
-      this.$options = null
-      this.$vnode = null
-      this.listeners = null
-      // this.$listeners = null // Unsetting this throws internal Vue errors
-      this._vnode = null
-      this._watcher = null
-      this._watchers = null
-      this._computedWatchers = null
-      this.$slots = null
-      this.slots = null
-      this.$scopedSlots = null
-      this.scopedSlots = null
-      this.$children = null
-      this.children = null
-      this.store = null
-      this.$store = null
-      this.$apollo = null
-    } catch {
-      //
+    const prepForGC = () => {
+      try {
+        this.$el?.remove()
+        this.elm = null
+        this.$el = null
+        this.parent = null
+        this.$parent = null
+        this.data = null
+        // this.$data = null // Unsetting this throws internal Vue errors
+        // this.options = null // Unsetting this throws internal Vue errors
+        this.$options = null
+        this.$vnode = null
+        this.listeners = null
+        // this.$listeners = null // Unsetting this throws internal Vue errors
+        this._vnode = null
+        this._watcher = null
+        this._watchers = null
+        this._computedWatchers = null
+        this.$slots = null
+        this.slots = null
+        this.$scopedSlots = null
+        this.scopedSlots = null
+        this.$children = null
+        this.children = null
+        this.store = null
+        this.$store = null
+
+        // $apollo has no setter so we clear props instead
+        if (this.$apollo) {
+          this.$apollo.vm = null
+        }
+
+        Object.keys(this).forEach(key => {
+          try {
+            !blockedProps.includes(key) &&
+              !(key in this[key]?.$props) &&
+              (this[key] = null)
+          } catch {
+            /* */
+          }
+        })
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Error in destroyed garbage collector mixin', e)
+      }
     }
+
+    // If the element has already been removed from the DOM
+    // we run the GC prep method immediately
+    if (!document.body.contains(this.$el)) {
+      prepForGC()
+      return
+    }
+
+    // Otherwise we can assume there's some sort of transition
+    // on the component and we wait for it to complete
+    // Note: this is obviously rough but Observer methods
+    // were performing exceedingly poorly.
+    setTimeout(prepForGC, 1500)
   }
 })
 

@@ -86,6 +86,14 @@ export default {
       if (val) {
         this.shown = true
       }
+    },
+    async $route(new_route, old_route) {
+      if (
+        new_route?.params?.tenant !== old_route?.params?.tenant &&
+        this.tenant?.slug !== new_route.params.tenant
+      ) {
+        await this.setCurrentTenant(new_route.params.tenant)
+      }
     }
   },
   beforeDestroy() {

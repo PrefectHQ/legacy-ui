@@ -108,9 +108,12 @@ export default {
           {
             name: this.$route.name,
             params: this.$route.params,
-            query: {
-              [tab]: ''
-            }
+            query:
+              tab == 'overview'
+                ? null
+                : {
+                    [tab]: ''
+                  }
           },
           () => {}
         )

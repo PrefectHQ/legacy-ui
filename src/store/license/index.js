@@ -42,6 +42,7 @@ const actions = {
         query: require('@/graphql/License/license.gql'),
         fetchPolicy: 'no-cache'
       })
+
       if (data?.auth_info?.license) {
         commit('setLicense', data.auth_info.license)
       }

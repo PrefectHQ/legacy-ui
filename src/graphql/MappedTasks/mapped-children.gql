@@ -1,0 +1,7 @@
+query MappedChildren($taskRunId: uuid!) {
+  mapped_children(task_run_id: $taskRunId) {
+    max_end_time
+    min_start_time
+    state_counts
+  }
+}

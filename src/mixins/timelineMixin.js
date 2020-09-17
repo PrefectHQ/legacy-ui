@@ -11,6 +11,7 @@ export const timelineMixin = {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
+    ...mapGetters('tenant', ['tenant']),
     breaklines() {
       if (this.reversedRuns.length <= 0) return []
       let breaklines = []
@@ -186,7 +187,8 @@ export const timelineMixin = {
       this.$router.push({
         name: 'flow-run',
         params: {
-          id: d.id
+          id: d.id,
+          tenant: this.tenant?.slug
         }
       })
     },
