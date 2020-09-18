@@ -149,23 +149,6 @@ export default {
       this.$apollo?.queries?.usage?.refetch()
     }
   },
-  mounted() {
-    this.$apollo.addSmartQuery('usage', {
-      query: require('@/graphql/TaskTagUsage/task-tag-usage.gql'),
-      variables: {
-        tags: this.tags?.map(tag => tag.name)
-      },
-      pollInterval: 5000,
-      update: data => {
-        // Usage is returned as an array of objects in format { name, usage }
-        // Convert this array into object that maps tag names to usage
-        return data?.task_concurrency?.reduce((accum, usage) => {
-          accum[usage.name] = usage.usage
-          return accum
-        }, {})
-      }
-    })
-  },
   methods: {
     async addTaskTagLimit() {
       try {
@@ -274,6 +257,24 @@ export default {
       skip() {
         // Skip this query if the tenant isn't eligible
         return !this.isEligible
+      }
+    },
+    usage: {
+      query: require('@/graphql/TaskTagUsage/task-tag-usage.gql'),
+      variables() {
+        return { tags: this.tags?.map(tag => tag.name) }
+      },
+      pollInterval: 5000,
+      skip() {
+        return !this.tags?.length
+      },
+      update: data => {
+        // Usage is returned as an array of objects in format { name, usage }
+        // Convert this array into object that maps tag names to usage
+        return data?.task_concurrency?.reduce((accum, usage) => {
+          accum[usage.name] = usage.usage
+          return accum
+        }, {})
       }
     }
   }
