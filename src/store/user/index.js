@@ -62,6 +62,7 @@ const mutations = {
       email: auth0User.email,
       picture: auth0User.picture
     }
+    console.log('user', state.auth0User)
   },
   setUserSettings(state, settings) {
     if (state.user.settings != settings) {

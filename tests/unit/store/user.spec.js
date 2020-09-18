@@ -33,6 +33,40 @@ describe('user Vuex Module', () => {
     }
   }
 
+  const userState = () => {
+    return {
+      user: {
+        id: '12345',
+        email: 'test@test.com',
+        username: 'test123',
+        default_membership_id: '5678',
+        memberships: [
+          {
+            id: '5678',
+            role: 'TENANT_ADMIN',
+            tenant: { id: 'xxx', name: 'test1', slug: 'test1' }
+          },
+          {
+            id: '1112131415',
+            role: 'USER',
+            tenant: { id: 'yyyyy', name: 'test2', slug: 'test2' }
+          }
+        ],
+        first_name: 'first',
+        last_name: 'last',
+        settings: {
+          timezone: 'utc'
+        }
+      },
+      auth0User: {
+        name: 'testtest',
+        email: 'test@test.com',
+        picture: 'linktopicture'
+      },
+      userIsSet: true
+    }
+  }
+
   describe('State', () => {
     test('userIsSet should initally be set to false', () => {
       const state = user.state
@@ -66,19 +100,28 @@ describe('user Vuex Module', () => {
   describe('getters', () => {
     let store
     store = new Vuex.Store({
-      state: initialState(),
+      state: userState(),
       getters: user.getters,
       mutations: user.mutations
     })
-
-    it('user should return empty user in initialState', () => {
+    test('user should return user details', () => {
       expect(store.getters.user).toBe(store.state.user)
     })
-    it('userIsSet should initially return false', () => {
-      expect(store.getters.userIsSet).toBe(false)
+    test('userIsSet should initially return false', () => {
+      expect(store.getters.userIsSet).toBe(true)
     })
-    it('defaultMembershipId should initially return null', () => {
-      expect(store.getters.defaultMembershipId).toBe(null)
+    test('defaultMembershipId should return membership id if user membership id is set', () => {
+      expect(store.getters.defaultMembershipId).toEqual('5678')
+    })
+    test('auth0user should return auth0user details', () => {
+      expect(store.getters.auth0User).toEqual({
+        name: 'testtest',
+        email: 'test@test.com',
+        picture: 'linktopicture'
+      })
+    })
+    test('timezone should return user timezone', () => {
+      expect(store.getters.timezone).toEqual('utc')
     })
   })
 
