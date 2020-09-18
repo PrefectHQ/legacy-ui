@@ -123,6 +123,11 @@ describe('user Vuex Module', () => {
     test('timezone should return user timezone', () => {
       expect(store.getters.timezone).toEqual('utc')
     })
+    test('settings should return user settings', () => {
+      expect(store.getters.settings).toEqual({
+        timezone: 'utc'
+      })
+    })
   })
 
   describe('mutations', () => {
