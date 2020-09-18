@@ -4,7 +4,7 @@ import moment from 'moment-timezone'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 import Feedback from '@/components/Feedback'
-import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
+import { clearCache } from '@/vue-apollo'
 
 const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
@@ -156,8 +156,6 @@ export default {
     async _switchBackend() {
       this.loading = true
 
-      stopDefaultClient()
-
       if (!this.isCloud) {
         await this.switchBackend('CLOUD')
       } else {
@@ -166,7 +164,7 @@ export default {
 
       this.loading = false
 
-      refreshDefaultClient()
+      clearCache()
       this.handlePostTokenRouting()
     },
     getRoute(name) {
@@ -181,7 +179,6 @@ export default {
     },
     async handleSwitchTenant(tenant) {
       this.loading = true
-      stopDefaultClient()
 
       if (tenant.slug == this.tenant.slug) return
 
@@ -189,7 +186,8 @@ export default {
 
       this.loading = false
       this.tenantMenuOpen = false
-      refreshDefaultClient()
+
+      clearCache()
       this.handlePostTokenRouting()
     },
     handlePostTokenRouting() {
