@@ -183,5 +183,37 @@ describe('user Vuex Module', () => {
       expect(store.getters.auth0User).toEqual(initialState().auth0User)
       expect(store.getters.auth0User.email).toEqual(null)
     })
+    test('setUserDefaultMembershipId mutation sets the default membership', () => {
+      expect(store.getters.defaultMembershipId).toEqual(null)
+      store.commit('setUserDefaultMembershipId', '5678')
+      expect(store.getters.defaultMembershipId).toEqual('5678')
+    })
+  })
+
+  describe('actions', () => {
+    describe('setDefaultTenant action', () => {
+      let store
+      beforeEach(() => {
+        // Mock the mutations and actions from other stores
+        // that we don't want to
+        // test here
+        user.mutations['tenant/setDefaultTenant'] = jest.fn()
+        store = new Vuex.Store({
+          state: userState(),
+          getters: user.getters,
+          mutations: user.mutations,
+          actions: user.actions
+        })
+      })
+      it('sets the default tenant according to the default membership id if available', () => {
+        expect(store.getters.defaultMembershipId).toEqual('5678')
+        store.dispatch('setDefaultTenant')
+        expect(user.mutations['tenant/setDefaultTenant']).toHaveBeenCalledWith({
+          id: 'xxx',
+          name: 'test1',
+          slug: 'test1'
+        })
+      })
+    })
   })
 })

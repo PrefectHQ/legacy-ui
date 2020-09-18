@@ -104,7 +104,7 @@ const actions = {
       getters['memberships']?.[0] || rootGetters['tenant/tenants']
 
     if (!defaultMembershipId || rootGetters['api/isServer']) return firstTenant
-
+    console.log(defaultTenant, 'default Tenants')
     commit('tenant/setDefaultTenant', defaultTenant || firstTenant, {
       root: true
     })
