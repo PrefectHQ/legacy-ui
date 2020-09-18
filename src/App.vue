@@ -1,7 +1,7 @@
 <script>
 import Alert from '@/components/Alert'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
+import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
@@ -70,10 +70,8 @@ export default {
       }, 3000)
     },
     async connected(val) {
-      if (!val) {
-        stopDefaultClient()
-      } else {
-        refreshDefaultClient()
+      if (val) {
+        clearCache()
       }
     },
     tenant(val) {
