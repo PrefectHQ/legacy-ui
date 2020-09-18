@@ -130,12 +130,17 @@ export default {
     open-on-hover
   >
     <template v-slot:activator="{ on }">
-      <v-btn icon small text class="super-imposed-icon-set ml-n2" v-on="on">
-        <v-icon dense color="red">label</v-icon>
-        <v-icon x-small color="white" class="nudge-icon-left">
+      <div text class="super-imposed-icon-set cursor-pointer" v-on="on">
+        <v-icon v-ripple color="red">label</v-icon>
+        <v-icon
+          x-small
+          color="white"
+          class="nudge-icon-left"
+          style="pointer-events: none;"
+        >
           not_interested
         </v-icon>
-      </v-btn>
+      </div>
     </template>
     <v-card tile class="pa-0" max-width="320">
       <v-card-title class="subtitle pb-1">{{ agentOrLabel }} </v-card-title>

@@ -262,13 +262,15 @@ export default {
         >
           <v-list-item dense :disabled="setToRun.includes(item.id)">
             <v-list-item-content>
-              <span class="caption mb-0">
+              <span class="caption mb-0 ml-n1 d-flex align-end">
                 <LabelWarning
                   :flow="item.flow"
                   :flow-group="item.flow.flow_group"
                 />
-                Scheduled for
-                {{ formatDateTime(item.scheduled_start_time) }}
+                <span class="ml-1">
+                  Scheduled for
+                  {{ formatDateTime(item.scheduled_start_time) }}
+                </span>
               </span>
               <v-list-item-subtitle class="font-weight-light">
                 <router-link
@@ -359,12 +361,15 @@ export default {
             :to="{ name: 'flow-run', params: { id: item.id } }"
           >
             <v-list-item-content>
-              <span class="caption mb-0">
+              <span class="caption mb-0 ml-n1 d-flex align-end">
                 <LabelWarning
                   :flow="item.flow"
                   :flow-group="item.flow.flow_group"
                 />
-                Scheduled for {{ formatDateTime(item.scheduled_start_time) }}
+                <span class="ml-1">
+                  Scheduled for
+                  {{ formatDateTime(item.scheduled_start_time) }}
+                </span>
               </span>
 
               <v-list-item-title class="body-2">
