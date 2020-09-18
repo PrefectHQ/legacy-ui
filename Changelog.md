@@ -4,6 +4,11 @@
 
 ### Features and Improvements
 
+- Add a check for flow and agent label alignment and alert if mis-matched [#217](https://github.com/PrefectHQ/ui/pull/217)
+- Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
+- Improves error handling related to garbage collection - [#232](https://github.com/PrefectHQ/ui/pull/232)
+- Improves component teardown by accounting for elements whose destroyed method had been called but that hadn't been removed from the DOM due to transitions - [#232](https://github.com/PrefectHQ/ui/pull/232)
+- Improve navigation experience when going forward/backward in the browser history - [#232](https://github.com/PrefectHQ/ui/pull/232)
 - None
 
 ### Bugfixes
@@ -36,6 +41,7 @@
 
 ### Bugfixes
 
+- Improve error handling on the flow page schedule toggle and label setting [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Fix BarChart component resize event listener removal - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Remove all BarChart underscore method and property references - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Fix visual bugs associated with resizing while the BarChart component wasn't visible - [#216](https://github.com/PrefectHQ/ui/pull/216)

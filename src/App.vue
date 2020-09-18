@@ -78,12 +78,16 @@ export default {
       if (val?.id) {
         clearTimeout(this.refreshTimeout)
         this.refresh()
+        this.$apollo.queries.agents.refresh()
       }
     },
     isAuthenticated(val) {
       if (val) {
         this.shown = true
       }
+    },
+    agents(val) {
+      this.setAgents(val)
     },
     async $route(new_route, old_route) {
       if (
@@ -134,7 +138,7 @@ export default {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
     ...mapMutations('tenant', ['setDefaultTenant']),
-
+    ...mapMutations('agent', ['setAgents']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
@@ -218,6 +222,21 @@ export default {
       }
 
       requestAnimationFrame(loadTiles)
+    }
+  },
+  apollo: {
+    agents: {
+      query() {
+        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+      },
+      loadingKey: 'loading',
+      pollInterval: 3000,
+      skip() {
+        return !this.tenant.id
+      },
+      update: data => {
+        return data.agent
+      }
     }
   }
 }
