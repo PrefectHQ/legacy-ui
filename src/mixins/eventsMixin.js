@@ -1,4 +1,4 @@
-const konamee = [
+const expectedEvent = [
   'ArrowUp',
   'ArrowUp',
   'ArrowDown',
@@ -27,12 +27,12 @@ export const eventsMixin = {
     checkSequence() {
       for (let i = 0; i < this.sequence.length; ++i) {
         let key = this.sequence[i]
-        if (key !== konamee[i]) {
+        if (key !== expectedEvent[i]) {
           this.sequence = []
           break
         }
 
-        if (i == konamee.length - 1) {
+        if (i == expectedEvent.length - 1) {
           this.sequence = []
           this.handleSequenceSuccess()
         }
