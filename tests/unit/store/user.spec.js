@@ -143,10 +143,20 @@ describe('user Vuex Module', () => {
       getters: user.getters,
       mutations: user.mutations
     })
-    it('changes "timezone" value when "updateUserSettings" is commited', () => {
-      expect(store.getters.timezone).toBe('')
-      store.commit('setUserSettings', { timezone: 'UTC' })
-      expect(store.getters.timezone).toBe('UTC')
+
+    test('user mutation sets the user and updates user is set', () => {
+      expect(store.getters.user).toEqual(initialState().user)
+      expect(store.getters.userIsSet).toBe(false)
+      store.commit('user', userState().user)
+      expect(store.getters.user).toEqual(userState().user)
+      expect(store.getters.user.email).toEqual('test@test.com')
+      expect(store.getters.userIsSet).toBe(true)
+    })
+    test('setAuth0User mutation sets the auth0 user', () => {
+      expect(store.getters.auth0User).toEqual(initialState().auth0User)
+      store.commit('setAuth0User', userState().auth0User)
+      expect(store.getters.auth0User).toEqual(userState().auth0User)
+      expect(store.getters.auth0User.email).toEqual('test@test.com')
     })
   })
 })
