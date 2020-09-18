@@ -62,7 +62,6 @@ const mutations = {
       email: auth0User.email,
       picture: auth0User.picture
     }
-    console.log('user', state.auth0User)
   },
   setUserSettings(state, settings) {
     if (state.user.settings != settings) {
@@ -74,6 +73,8 @@ const mutations = {
       id: null,
       email: null,
       username: null,
+      first_name: '',
+      last_name: '',
       default_membership_id: null,
       memberships: null,
       settings: { timezone: '' }

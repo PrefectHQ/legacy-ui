@@ -138,10 +138,12 @@ describe('user Vuex Module', () => {
 
   describe('mutations', () => {
     let store
-    store = new Vuex.Store({
-      state: initialState(),
-      getters: user.getters,
-      mutations: user.mutations
+    beforeEach(() => {
+      store = new Vuex.Store({
+        state: initialState(),
+        getters: user.getters,
+        mutations: user.mutations
+      })
     })
 
     test('user mutation sets the user and updates user is set', () => {
@@ -157,6 +159,29 @@ describe('user Vuex Module', () => {
       store.commit('setAuth0User', userState().auth0User)
       expect(store.getters.auth0User).toEqual(userState().auth0User)
       expect(store.getters.auth0User.email).toEqual('test@test.com')
+    })
+    test('setUsetSettings mutation sets the user settings', () => {
+      expect(store.getters.user).toEqual(initialState().user)
+      store.commit('setUserSettings', userState().user.settings)
+      expect(store.getters.settings).toEqual(userState().user.settings)
+      expect(store.getters.timezone).toEqual('utc')
+    })
+    test('unsetUser mutation un-sets the user and updates user is set', () => {
+      store.commit('user', userState().user)
+      expect(store.getters.user).toEqual(userState().user)
+      expect(store.getters.user.email).toEqual('test@test.com')
+      expect(store.getters.userIsSet).toBe(true)
+      store.commit('unsetUser')
+      expect(store.getters.user).toEqual(initialState().user)
+      expect(store.getters.userIsSet).toBe(false)
+    })
+    test('unsetAuth0User mutation un-sets the auth0 user', () => {
+      store.commit('setAuth0User', userState().auth0User)
+      expect(store.getters.auth0User).toEqual(userState().auth0User)
+      expect(store.getters.auth0User.email).toEqual('test@test.com')
+      store.commit('unsetAuth0User')
+      expect(store.getters.auth0User).toEqual(initialState().auth0User)
+      expect(store.getters.auth0User.email).toEqual(null)
     })
   })
 })
