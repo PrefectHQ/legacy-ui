@@ -78,6 +78,7 @@ export default {
       if (val?.id) {
         clearTimeout(this.refreshTimeout)
         this.refresh()
+        this.$apollo.queries.agents.refresh()
       }
     },
     isAuthenticated(val) {
