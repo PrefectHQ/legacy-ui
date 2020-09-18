@@ -4,7 +4,6 @@ import uniq from 'lodash.uniq'
 import { mapGetters } from 'vuex'
 
 import AgentCard from '@/components/Agents/AgentCard'
-import moment from '@/utils/moment'
 
 const STATUSES = ['healthy', 'stale', 'unhealthy']
 
@@ -36,15 +35,9 @@ export default {
     },
     computedAgents() {
       if (!this.agents) return []
-      return this.agents
-        .map(agent => ({
-          ...agent,
-          secondsSinceLastQuery: moment().diff(
-            moment(agent.last_queried),
-            'seconds'
-          )
-        }))
-        .sort((agentA, agentB) => (agentA.id < agentB.id ? -1 : 1))
+      return [...this.agents].sort((agentA, agentB) =>
+        agentA.id < agentB.id ? -1 : 1
+      )
     },
     isLoading() {
       return this.loading > 0
