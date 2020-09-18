@@ -43,8 +43,6 @@ export const eventsMixin = {
       this.checkSequence()
     },
     handleSequenceSuccess() {
-      console.log('success')
-
       const app = document.getElementById('app')
 
       app.classList.add('roll')
