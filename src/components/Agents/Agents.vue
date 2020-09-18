@@ -14,7 +14,6 @@ export default {
   },
   data() {
     return {
-      agents: null,
       filterMenuOpen: false,
       queryFailed: false,
       loading: 0,
@@ -24,7 +23,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
+    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
     allLabels() {
@@ -35,13 +34,25 @@ export default {
         []
       )
     },
+    computedAgents() {
+      if (!this.agents) return []
+      return this.agents
+        .map(agent => ({
+          ...agent,
+          secondsSinceLastQuery: moment().diff(
+            moment(agent.last_queried),
+            'seconds'
+          )
+        }))
+        .sort((agentA, agentB) => (agentA.id < agentB.id ? -1 : 1))
+    },
     isLoading() {
       return this.loading > 0
     },
     filteredAgents() {
       if (!this.agents) return []
 
-      return this.agents.filter(agent => {
+      return this.computedAgents.filter(agent => {
         if (this.showUnlabeledAgentsOnly) {
           return agent.labels.length === 0
         }
@@ -108,30 +119,6 @@ export default {
         return 'stale'
 
       return 'unhealthy'
-    }
-  },
-  apollo: {
-    agents: {
-      query() {
-        return require('@/graphql/Agent/agents.js').default(this.isCloud)
-      },
-      pollInterval: 5000,
-      error() {
-        this.queryFailed = true
-      },
-      loadingKey: 'loading',
-      update: data => {
-        if (!data.agent) return this.agents
-        return data.agent
-          .map(agent => ({
-            ...agent,
-            secondsSinceLastQuery: moment().diff(
-              moment(agent.last_queried),
-              'seconds'
-            )
-          }))
-          .sort((agentA, agentB) => (agentA.id < agentB.id ? -1 : 1))
-      }
     }
   }
 }
