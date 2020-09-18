@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- Show version group id on the flow details tile[]()
+- Show version group id on the flow details tile[#236](https://github.com/PrefectHQ/ui/pull/236)
 
 ### Bugfixes
 
