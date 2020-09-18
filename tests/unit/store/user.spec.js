@@ -56,19 +56,13 @@ describe('user Vuex Module', () => {
     test('auth0User details should initally be empty', () => {
       const state = user.state
       expect(state.auth0User).toEqual({
-        id: null,
+        name: null,
         email: null,
-        username: null,
-        default_membership_id: null,
-        memberships: null,
-        first_name: '',
-        last_name: '',
-        settings: {
-          timezone: ''
-        }
+        picture: null
       })
     })
   })
+
   describe('getters', () => {
     let store
     store = new Vuex.Store({
