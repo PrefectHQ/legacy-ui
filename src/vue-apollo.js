@@ -308,13 +308,8 @@ export const createApolloProvider = () => {
   return apolloProvider
 }
 
-export const stopDefaultClient = () => {
-  defaultApolloClient.stop()
-}
-
-export const refreshDefaultClient = () => {
-  defaultApolloClient.stop()
-  defaultApolloClient.resetStore()
+export const clearCache = () => {
+  defaultApolloClient.cache.reset()
 }
 
 export const defaultApolloProvider = createApolloProvider()
