@@ -128,6 +128,12 @@ describe('user Vuex Module', () => {
         timezone: 'utc'
       })
     })
+    test('first name should return user first name', () => {
+      expect(store.getters.firstName).toEqual('first')
+    })
+    test('last name should return user last name', () => {
+      expect(store.getters.lastName).toEqual('last')
+    })
   })
 
   describe('mutations', () => {
