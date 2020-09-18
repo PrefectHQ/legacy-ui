@@ -27,7 +27,6 @@ export default {
     ...mapGetters('api', ['isCloud']),
     allLabels() {
       if (!this.agents) return []
-
       return this.agents.reduce(
         (accumLabels, currentAgent) => accumLabels.concat(currentAgent.labels),
         []
