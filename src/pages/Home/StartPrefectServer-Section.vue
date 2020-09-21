@@ -8,6 +8,9 @@ export default {
   },
   data() {
     return {
+      defaultUrl:
+        window.prefect_ui_settings?.server_url ||
+        process.env.VUE_APP_SERVER_URL,
       error: false,
       loading: false,
       success: false,
@@ -25,6 +28,13 @@ export default {
       this.success = false
       this.error = false
       this.loading = false
+    },
+    async _resetUrl() {
+      localStorage.removeItem('server_url')
+
+      this.urlInput = this.defaultUrl
+
+      this.setServerUrl(this.defaultUrl)
     },
     async _testUrl() {
       this.success = false
@@ -114,14 +124,32 @@ export default {
           @keyup="_handleKeyup"
         >
           <template v-slot:append>
-            <v-fade-transition mode="out-in">
-              <v-icon v-if="success" key="success" color="green">
-                check
-              </v-icon>
-              <v-icon v-else-if="error" key="error" color="error">
-                error
-              </v-icon>
-            </v-fade-transition>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  color="blue-grey lighten-1"
+                  icon
+                  small
+                  @click="_resetUrl"
+                  v-on="on"
+                >
+                  <v-fade-transition mode="out-in">
+                    <v-icon v-if="success" key="success" color="green">
+                      check
+                    </v-icon>
+                    <v-icon v-else-if="error" key="error" color="error">
+                      error
+                    </v-icon>
+                    <v-icon v-else key="reset" color="grey">
+                      settings_backup_restore
+                    </v-icon>
+                  </v-fade-transition>
+                </v-btn>
+              </template>
+              <span>
+                Reset stored GraphQL endpoint
+              </span>
+            </v-tooltip>
           </template>
 
           <template v-slot:append-outer>
