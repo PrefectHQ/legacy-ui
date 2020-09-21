@@ -82,7 +82,7 @@ export default {
     },
 
     live: { type: Boolean, default: false },
-    labelField: { type: String, default: 'name' },
+    labelField: { type: String, default: 'label' },
     yField: { type: String, default: () => null }
   },
   data() {
@@ -105,7 +105,7 @@ export default {
       animationDuration: 500,
       animationInterval: null,
       barMaxHeight: 35,
-      barMinHeight: 10,
+      barMinHeight: 15,
       barWidth: 25,
       barPaddingY: 10,
       easing: 'easePolyInOut',
@@ -422,17 +422,37 @@ export default {
 
         context.globalAlpha = bar.alpha
 
-        context.fillStyle = bar.color || '#eee'
+        let offset = 0
+        let colors = Object.keys(bar.colors)
 
-        roundRect(
-          this.bars[i].path2D,
-          bar.x,
-          bar.y,
-          bar.width,
-          bar.height,
-          3,
-          bar.clipped
-        )
+        colors.forEach((color, j) => {
+          context.fillStyle = color || '#eee'
+
+          const width = bar.width * bar.colors[color]
+          const radius = { tl: 0, tr: 0, br: 0, bl: 0 }
+
+          if (j === 0) {
+            radius.tl = 3
+            radius.bl = 3
+          }
+
+          if (j === colors.length - 1) {
+            radius.tr = 3
+            radius.br = 3
+          }
+
+          roundRect(
+            this.bars[i].path2D,
+            bar.x + offset,
+            bar.y,
+            width,
+            bar.height,
+            radius,
+            bar.clipped
+          )
+
+          offset += width
+        })
 
         if (!bar.outlined) {
           context.fill(this.bars[i].path2D)
@@ -605,7 +625,7 @@ export default {
 
       await this.yAxisGroup
         .attr('class', 'y-axis-group')
-        .style('opacity', 0)
+        .style('opacity', 1)
         .transition()
         .duration(this.animationDuration)
         .call(yAxis)

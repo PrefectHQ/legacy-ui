@@ -1,7 +1,7 @@
 <script>
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
-// import GanttChart from '@/components/Visualizations/GanttChart'
+import GanttChart from '@/components/Visualizations/GanttChart'
 // import SearchResult from '@/components/Schematics/Preview-SearchResult'
 
 import moment from 'moment'
@@ -10,8 +10,8 @@ import gql from 'graphql-tag'
 export default {
   components: {
     CardTitle,
-    DurationSpan
-    // GanttChart,
+    DurationSpan,
+    GanttChart
     // SearchResult
   },
   props: {
@@ -43,58 +43,53 @@ export default {
       return this.selectedTaskIds?.length > 0
     },
     items() {
-      if (!this.taskRuns) return
-      let items
+      if (!this.tasks) return
+      return this.tasks.map(task => {
+        const taskRun = this.taskRunMap[task.id]
+        const mappedRef = this.mappedChildren?.[task.id]
+        const isMapped = taskRun?.state == 'Mapped'
 
-      if (this.showMapped) {
-        const id = this.selectedTaskIds[0]
-        items = this.taskRuns.filter(
-          task => task.task_id == id && task.state !== 'Mapped'
-        )
-      } else if (this.hasSelectedTaskIds) {
-        items = this.taskRuns.filter(
-          task =>
-            this.selectedTaskIds.includes(task.task_id) && task.map_index === -1
-        )
-      } else {
-        items = this.taskRuns.filter(task => task.map_index === -1)
-      }
+        const item = {
+          id: task.id,
+          label: task.name,
+          colors: {},
+          start_time: null,
+          end_time: null,
+          links: []
+        }
 
-      items.forEach(item => {
-        const task = this.tasks?.find(t => t.id == item.task_id)
+        if (!taskRun || (isMapped && !mappedRef)) return item
 
-        item.color = this.computedStyle.getPropertyValue(
-          `--v-${item.state}-base`
-        )
+        if (isMapped) {
+          item.start_time = mappedRef.min_start_time
+          item.end_time = mappedRef.max_end_time
 
-        item.shadow = item.state === 'Running'
-        item.name =
-          task.name + (item.map_index > -1 ? ` (${item.map_index})` : '')
-
-        if (
-          item.state === 'Mapped' ||
-          (item.map_index > -1 && !item.start_time)
-        ) {
-          const mappedRuns = this.taskRuns.filter(
-            t => t.task_id == item.task_id && t.start_time
+          const states = Object.keys(mappedRef.state_counts)
+          const total = Object.values(mappedRef.state_counts).reduce(
+            (a, b) => a + b,
+            0
           )
 
-          let start_moments = mappedRuns.map(t => moment(t.start_time))
+          states.forEach(state => {
+            const color = this.computedStyle
+              .getPropertyValue(`--v-${state}-base`)
+              ?.trim()
 
-          item.start_time = moment.min(start_moments).toISOString()
+            item.colors[color] = mappedRef.state_counts[state] / total
+          })
+        } else {
+          item.start_time = taskRun.start_time
+          item.end_time = taskRun.end_time
 
-          if (item.state === 'Mapped') {
-            let end_moments = mappedRuns.map(t => moment(t.end_time))
-            item.end_time = moment.max(end_moments).toISOString()
-          } else {
-            item.end_time = moment(item.start_time)
-              .add({ seconds: 1 })
-              .toISOString()
-          }
+          const color = this.computedStyle
+            .getPropertyValue(`--v-${taskRun.state}-base`)
+            ?.trim()
+
+          item.colors[color] = 1
         }
-      })
 
-      return items
+        return item
+      })
     },
     endTime() {
       if (this.hasSelectedTaskIds && this.items?.length > 0) {
@@ -135,6 +130,15 @@ export default {
       `
         )
         .join(' ')
+    },
+    taskRunMap() {
+      if (!this.taskRuns) return {}
+      const taskRunMap = {}
+      this.taskRuns.forEach(taskRun => {
+        taskRunMap[taskRun.task_id] = taskRun
+      })
+
+      return taskRunMap
     }
   },
   watch: {
@@ -157,6 +161,9 @@ export default {
           chart: val.join(',')
         }
       })
+    },
+    items(val) {
+      console.log(val)
     }
   },
   mounted() {
@@ -234,7 +241,7 @@ export default {
         const mappedTaskMap = {}
         Object.keys(data).forEach(
           (key, index) =>
-            (mappedTaskMap[this.mappedTaskRuns[index]?.id] = {
+            (mappedTaskMap[this.mappedTaskRuns[index]?.task_id] = {
               ...data[key],
               parent_id: this.mappedTaskRuns[index]?.id,
               task_id: this.mappedTaskRuns[index]?.task_id
@@ -276,7 +283,6 @@ export default {
     </CardTitle>
 
     <v-card-text class="">
-      {{ mappedChildren }}
       <!-- <div v-for="item in items" :key="item.id">
         {{ item.name }}
       </div> -->
@@ -373,9 +379,8 @@ export default {
         </v-autocomplete>
       </div> -->
     </v-card-text>
-    <!-- 
     <GanttChart
-      v-if="tasks"
+      v-if="items"
       :items="items"
       :live="flowRun.state === 'Running'"
       chart-height="500px"
@@ -384,7 +389,7 @@ export default {
       y-field="id"
       :click-disabled="!!showMapped"
       @bar-click="_handleClick"
-    /> -->
+    />
   </v-card>
 </template>
 
