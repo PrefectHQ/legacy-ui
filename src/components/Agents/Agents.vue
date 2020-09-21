@@ -26,6 +26,7 @@ export default {
   computed: {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('api', ['isCloud']),
     allLabels() {
       if (!this.agents) return []
 
@@ -111,15 +112,17 @@ export default {
   },
   apollo: {
     agents: {
-      query: require('@/graphql/Agent/agents.gql'),
+      query() {
+        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+      },
       pollInterval: 5000,
       error() {
         this.queryFailed = true
       },
       loadingKey: 'loading',
       update: data => {
-        if (!data.agents) return this.agents
-        return data.agents
+        if (!data.agent) return this.agents
+        return data.agent
           .map(agent => ({
             ...agent,
             secondsSinceLastQuery: moment().diff(

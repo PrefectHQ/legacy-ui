@@ -8,13 +8,15 @@ import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
+import LabelWarning from '@/components/LabelWarning'
 
 export default {
   components: {
     Alert,
     CardTitle,
     ConcurrencyInfo,
-    DurationSpan
+    DurationSpan,
+    LabelWarning
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin],
   props: {
@@ -23,6 +25,10 @@ export default {
       default: () => false
     },
     flow: {
+      type: Object,
+      default: () => {}
+    },
+    flowGroup: {
       type: Object,
       default: () => {}
     },
@@ -170,6 +176,7 @@ export default {
         return variables
       },
       loadingKey: 'loading',
+      pollInterval: 50000,
       update: data => data?.flow_run
     }
   }
@@ -318,6 +325,11 @@ export default {
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <span class="caption mb-0" v-on="on">
+                    <LabelWarning
+                      :flow="flow"
+                      :flow-group="flowGroup"
+                      location="flowPage"
+                    />
                     Scheduled for {{ formatTime(item.scheduled_start_time) }}
                   </span>
                 </template>
@@ -348,7 +360,7 @@ export default {
                     v-on="on"
                     @click="runFlowNow(item.id, item.version, item.name)"
                   >
-                    <v-icon x-small dense color="primary"> fa-rocket</v-icon>
+                    <v-icon small dense color="primary"> fa-rocket</v-icon>
                   </v-btn>
                 </template>
                 <span> Run {{ item.name }} now </span>
@@ -412,6 +424,11 @@ export default {
           >
             <v-list-item-content>
               <span class="caption mb-0">
+                <LabelWarning
+                  :flow="flow"
+                  :flow-group="flowGroup"
+                  location="flowPage"
+                />
                 Scheduled for {{ formatTime(item.scheduled_start_time) }}
               </span>
               <v-list-item-title class="body-2">
@@ -421,6 +438,7 @@ export default {
                   {{ item.name }}
                 </router-link>
               </v-list-item-title>
+
               <v-list-item-subtitle class="caption">
                 <DurationSpan :start-time="item.scheduled_start_time" />
                 behind schedule
