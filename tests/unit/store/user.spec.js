@@ -197,7 +197,7 @@ describe('user Vuex Module', () => {
         // Mock the mutations and actions from other stores
         // that we don't want to
         // test here
-        user.mutations['tenant/setDefaultTenant'] = jest.fn()
+        user.mutations['tenant/setDefaultTenant'] = jest.fn(x => x)
         store = new Vuex.Store({
           state: userState(),
           getters: user.getters,
@@ -208,7 +208,10 @@ describe('user Vuex Module', () => {
       it('sets the default tenant according to the default membership id if available', () => {
         expect(store.getters.defaultMembershipId).toEqual('5678')
         store.dispatch('setDefaultTenant')
-        expect(user.mutations['tenant/setDefaultTenant']).toHaveBeenCalledWith({
+        expect(
+          //First argument passed is the user object, second is the default tenant to set
+          user.mutations['tenant/setDefaultTenant'].mock.calls[0][1]
+        ).toEqual({
           id: 'xxx',
           name: 'test1',
           slug: 'test1'
