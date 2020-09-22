@@ -105,7 +105,7 @@ export default {
       animationDuration: 500,
       animationInterval: null,
       barMaxHeight: 35,
-      barMinHeight: 15,
+      barMinHeight: 25,
       barWidth: 25,
       barPaddingY: 10,
       easing: 'easePolyInOut',
@@ -144,6 +144,7 @@ export default {
           overRight ? p.width - 250 : overLeft ? 0 : this.hovered.offsetX - 125
         }px`,
         'pointer-events': 'none',
+        position: 'absolute',
         top: `${
           overBottom
             ? this.hovered.y - 200 + this.hovered.height
@@ -484,8 +485,6 @@ export default {
         return this.parentNode
       })
 
-      const marginY = 24
-
       let computedStyle = window.getComputedStyle(parent._groups[0][0], null)
 
       let paddingLeft = parseFloat(
@@ -508,14 +507,16 @@ export default {
         return
       }
 
+      this.height = height
+      this.width = width
+
+      this.canvasHeight =
+        this.items?.length * (this.barMaxHeight + this.barPaddingY)
+
       this.svg
         .attr('viewbox', `0 0 ${width} ${height}`)
         .attr('width', width)
-        .attr('height', height)
-
-      this.height = height
-      this.width = width
-      this.canvasHeight = height - marginY
+        .attr('height', this.canvasHeight)
 
       this.canvas.attr('width', this.width).attr('height', this.canvasHeight)
 
@@ -532,7 +533,7 @@ export default {
         : Date.now().toString()
 
       this.x.domain([startTime, endTime])
-      this.x.range([25, this.width - 50])
+      this.x.range([5, this.width - 5])
 
       if (this.live) {
         this.animationInterval = setInterval(() => {
@@ -553,6 +554,7 @@ export default {
     },
     updateY() {
       this.y.paddingOuter(0.1)
+      this.y.paddingInner(0.1)
       this.y.domain(this.items.map(item => item[this.yField]))
       this.y.range([0, this.canvasHeight])
     },
@@ -568,7 +570,7 @@ export default {
       const formatTime = d3.timeFormat('%-I:%M:%S')
       const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 
-      const xAxis = d3.axisTop(this.x.nice()).tickFormat(d => {
+      const xAxis = d3.axisBottom(this.x.nice()).tickFormat(d => {
         const dateObj = new Date(d)
         const dayWeek = dateObj.getDay()
         const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
@@ -589,33 +591,49 @@ export default {
 
       await this.xAxisGridlinesGroup
         .attr('class', 'x-axis-gridlines-group')
-        .style('color', '#eee')
-        .attr('transform', `translate(0, ${-25})`)
         .transition()
         .duration(this.animationDuration)
         .call(xAxisGrid)
 
+      this.xAxisGridlinesGroup
+        .selectAll('.tick')
+        .style('color', '#eee')
+        .style('opacity', (d, i, arr) =>
+          i === 0 || i === arr.length - 1 ? 0 : 1
+        )
+        .style('top', (d, i) => (i % 2 > 0 ? '50px' : null))
+
       this.xAxisGridlinesGroup.selectAll('path').remove()
-      this.xAxisGridlinesGroup.selectAll('.tick:first-of-type').remove()
-      this.xAxisGridlinesGroup.selectAll('.tick:last-of-type').remove()
+
+      // this.xAxisGridlinesGroup
+      //   .selectAll('.tick:nth-child(odd)')
+      //   .attr('transform', `translate(0, ${25})`)
+      //   .style('color', 'crimson')
+
+      // this.xAxisGridlinesGroup.selectAll('.tick:first-of-type').remove()
+      // this.xAxisGridlinesGroup.selectAll('.tick:last-of-type').remove()
 
       await this.xAxisGroup
         .attr('class', 'x-axis-group')
-        .attr('transform', `translate(0, ${this.height - 2})`)
-        .style('font-family', 'monospace')
+        // This will put the x-axis at the bottom of the chart
+        // .attr('transform', `translate(0, ${this.height - 2})`)
         .transition()
         .duration(this.animationDuration)
         .call(xAxis)
 
-      this.xAxisGroup
-        .selectAll('line')
-        .filter((d, i) => i % 2 !== 0)
-        .style('color', '#eee')
-        .style('y2', -25)
+      const opacity = (d, i, arr) => {
+        return i === 0 || i === arr.length - 1 ? 1 : i % 2 === 0 ? 1 : 0
+      }
+
+      // this.xAxisGroup
+      //   .selectAll('line')
+      //   .filter(filterFirstLastEven)
+      //   .style('color', '#eee')
+      //   .style('y2', -25)
 
       this.xAxisGroup
         .selectAll('text')
-        .style('opacity', (d, i) => (i % 2 === 0 ? 1 : 0))
+        .style('opacity', opacity)
         .attr('text-anchor', (d, i, arr) => {
           return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
         })
@@ -644,21 +662,21 @@ export default {
 </script>
 
 <template>
-  <v-container :style="containerStyle" fluid>
+  <v-container>
     <div
       ref="parent"
       class="position-relative chart-container"
       style="height: 100%;"
     >
+      <svg :id="`${id}-svg`" class="svg" />
+
       <canvas
         :id="`${id}-canvas`"
         ref="canvas"
-        class="gantt"
         @mousemove="_mouseover"
         @mouseout="_mouseout"
         @click="_click"
       />
-      <svg :id="`${id}-svg`" class="gantt" />
 
       <v-fade-transition mode="out-in">
         <div
@@ -736,23 +754,29 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.gantt {
+.chart-container {
+  width: 100%;
+}
+
+.svg {
+  height: 100%;
   left: 0;
+  pointer-events: none;
   position: absolute;
-  top: 0;
+  top: -25px;
+  user-select: none;
+  z-index: 0;
 }
 
 canvas {
+  border: 2px solid #dc143c;
+  position: relative;
   // cursor: grab;
   z-index: 3;
 
   // &:active {
   //   cursor: grabbing;
   // }
-}
-
-svg {
-  z-index: 2;
 }
 
 .tooltip-style {

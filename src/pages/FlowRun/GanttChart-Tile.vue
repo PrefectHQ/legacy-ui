@@ -161,9 +161,6 @@ export default {
           chart: val.join(',')
         }
       })
-    },
-    items(val) {
-      console.log(val)
     }
   },
   mounted() {
