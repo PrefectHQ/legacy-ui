@@ -3,9 +3,10 @@ import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
 import Parameters from '@/components/Parameters'
 import PrefectSchedule from '@/components/PrefectSchedule'
+import LabelWarning from '@/components/LabelWarning'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { parametersMixin } from '@/mixins/parametersMixin'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   filters: {
@@ -14,6 +15,7 @@ export default {
   components: {
     CardTitle,
     Label,
+    LabelWarning,
     Parameters,
     PrefectSchedule
   },
@@ -43,7 +45,6 @@ export default {
       copiedText: {},
       tab: 'overview',
       //labels
-      noLabelInfo: false,
       newLabel: '',
       labelMenuOpen: false,
       labelEditOpen: false,
@@ -61,6 +62,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['role']),
     filteredStorage() {
       if (!this.flow.storage) return {}
 
@@ -133,8 +135,7 @@ export default {
           variables: {
             flowGroupId: this.flowGroup.id,
             labelArray: newLabels
-          },
-          errorPolicy: 'all'
+          }
         })
         if (data) {
           this.newLabels = newLabels || this.flow.environment.labels
@@ -144,7 +145,7 @@ export default {
           this.resetLabelSettings()
         }
       } catch (e) {
-        this.labelsError()
+        this.labelsError(e)
         this.resetLabelSettings()
       }
     },
@@ -157,11 +158,13 @@ export default {
       this.newLabel = ''
       this.disableRemove = false
     },
-    labelsError() {
+    labelsError(e) {
+      const message = e
+        ? `There was a problem: ${e}`
+        : 'There was a problem updating your labels.  Please try again.'
       this.setAlert({
         alertShow: true,
-        alertMessage:
-          'There was a problem updating your labels.  Please try again.',
+        alertMessage: message,
         alertType: 'error'
       })
     },
@@ -303,62 +306,12 @@ export default {
             <v-list-item-content width="800px" class="overflow-x-scroll">
               <v-list-item-subtitle class="caption">
                 Labels
-                <v-menu
-                  v-model="noLabelInfo"
-                  :close-on-content-click="false"
-                  offset-y
-                  open-on-hover
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      :color="labels && labels.length < 1 ? 'info' : null"
-                      text
-                      icon
-                      x-small
-                      v-on="on"
-                    >
-                      <v-icon>
-                        info
-                      </v-icon>
-                    </v-btn>
-                  </template>
-                  <v-card tile class="pa-0" max-width="320">
-                    <v-card-title class="subtitle pb-1"
-                      >Flow labels</v-card-title
-                    >
-
-                    <v-card-text class="pt-0">
-                      Flows and agents have optional labels which allow you to
-                      determine where your flows are executed. For more
-                      information see
-                      <a
-                        href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-                        target="_blank"
-                        >the docs on labels</a
-                      >.
-
-                      <v-alert
-                        v-if="labels && labels.length < 1"
-                        border="left"
-                        colored-border
-                        type="info"
-                        tile
-                        class="body-2 mt-2"
-                      >
-                        If you want to add labels, click
-                        <v-icon class="px-1" x-small color="primary"
-                          >fa-plus</v-icon
-                        >
-                        to add new labels or
-                        <v-icon class="px-1" x-small color="codePink"
-                          >fa-undo</v-icon
-                        >
-                        to reset your labels to the ones set at flow
-                        registration.
-                      </v-alert>
-                    </v-card-text>
-                  </v-card>
-                </v-menu>
+                <LabelWarning
+                  :flow="flow"
+                  :flow-group="flowGroup"
+                  icon-size="x-large"
+                  location="flowPageDetails"
+                />
                 <span v-if="$vuetify.breakpoint.sm" class="ml-8">
                   <v-menu
                     v-model="labelEditOpen"
@@ -368,18 +321,24 @@ export default {
                     <template v-slot:activator="{ on: menu, attrs }">
                       <v-tooltip bottom>
                         <template v-slot:activator="{ on: tooltip }">
-                          <v-btn
-                            small
-                            icon
-                            aria-label="Add label"
-                            color="primary"
-                            v-bind="attrs"
-                            v-on="{ ...tooltip, ...menu }"
-                          >
-                            <v-icon small dense>fa-plus</v-icon>
-                          </v-btn>
+                          <div v-on="tooltip">
+                            <v-btn
+                              small
+                              icon
+                              :disabled="role == 'READ_ONLY_USER'"
+                              aria-label="Add label"
+                              color="primary"
+                              v-bind="attrs"
+                              v-on="menu"
+                            >
+                              <v-icon small dense>fa-plus</v-icon>
+                            </v-btn>
+                          </div>
                         </template>
-                        <span>Add a label</span>
+                        <span v-if="role == 'READ_ONLY_USER'">
+                          Read-only users cannot edit labels</span
+                        >
+                        <span v-else>Add a label</span>
                       </v-tooltip>
                     </template>
                     <v-card width="800px" class="overflow-y-scroll py-0">
@@ -490,18 +449,24 @@ export default {
                 <template v-slot:activator="{ on: menu, attrs }">
                   <v-tooltip top>
                     <template v-slot:activator="{ on: tooltip }">
-                      <v-btn
-                        small
-                        icon
-                        aria-label="Add label"
-                        color="primary"
-                        v-bind="attrs"
-                        v-on="{ ...tooltip, ...menu }"
-                      >
-                        <v-icon small dense>fa-plus</v-icon>
-                      </v-btn>
+                      <div v-on="tooltip">
+                        <v-btn
+                          small
+                          icon
+                          :disabled="role == 'READ_ONLY_USER'"
+                          aria-label="Add label"
+                          color="primary"
+                          v-bind="attrs"
+                          v-on="menu"
+                        >
+                          <v-icon small dense>fa-plus</v-icon>
+                        </v-btn>
+                      </div>
                     </template>
-                    <span>Add a label</span>
+                    <span v-if="role == 'READ_ONLY_USER'">
+                      Read-only users cannot edit labels</span
+                    >
+                    <span v-else>Add a label</span>
                   </v-tooltip>
                 </template>
                 <v-card width="800px" class="overflow-y-scroll py-0">
@@ -618,6 +583,40 @@ export default {
                       </template>
                       <span>
                         {{ flow.flow_group_id }}
+                      </span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+              </v-list-item-subtitle>
+              <v-list-item-subtitle class="caption">
+                <v-row no-gutters>
+                  <v-col cols="6">
+                    Version Group ID
+                  </v-col>
+                  <v-col
+                    cols="6"
+                    class="text-right font-weight-bold text-truncate"
+                  >
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <span
+                          class="cursor-pointer show-icon-hover-focus-only pa-2px"
+                          role="button"
+                          @click="copyToClipboard(flow.version_group_id)"
+                          v-on="on"
+                        >
+                          <v-icon x-small class="mb-2px mr-2" tabindex="0">
+                            {{
+                              copiedText[flow.version_group_id]
+                                ? 'check'
+                                : 'file_copy'
+                            }}
+                          </v-icon>
+                          {{ flow.version_group_id }}
+                        </span>
+                      </template>
+                      <span>
+                        {{ flow.version_group_id }}
                       </span>
                     </v-tooltip>
                   </v-col>

@@ -4,7 +4,6 @@ import uniq from 'lodash.uniq'
 import { mapGetters } from 'vuex'
 
 import AgentCard from '@/components/Agents/AgentCard'
-import moment from '@/utils/moment'
 
 const STATUSES = ['healthy', 'stale', 'unhealthy']
 
@@ -14,7 +13,6 @@ export default {
   },
   data() {
     return {
-      agents: null,
       filterMenuOpen: false,
       queryFailed: false,
       loading: 0,
@@ -24,14 +22,20 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
+    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('api', ['isCloud']),
     allLabels() {
       if (!this.agents) return []
-
       return this.agents.reduce(
         (accumLabels, currentAgent) => accumLabels.concat(currentAgent.labels),
         []
+      )
+    },
+    computedAgents() {
+      if (!this.agents) return []
+      return [...this.agents].sort((agentA, agentB) =>
+        agentA.id < agentB.id ? -1 : 1
       )
     },
     isLoading() {
@@ -40,7 +44,7 @@ export default {
     filteredAgents() {
       if (!this.agents) return []
 
-      return this.agents.filter(agent => {
+      return this.computedAgents.filter(agent => {
         if (this.showUnlabeledAgentsOnly) {
           return agent.labels.length === 0
         }
@@ -107,28 +111,6 @@ export default {
         return 'stale'
 
       return 'unhealthy'
-    }
-  },
-  apollo: {
-    agents: {
-      query: require('@/graphql/Agent/agents.gql'),
-      pollInterval: 5000,
-      error() {
-        this.queryFailed = true
-      },
-      loadingKey: 'loading',
-      update: data => {
-        if (!data.agents) return this.agents
-        return data.agents
-          .map(agent => ({
-            ...agent,
-            secondsSinceLastQuery: moment().diff(
-              moment(agent.last_queried),
-              'seconds'
-            )
-          }))
-          .sort((agentA, agentB) => (agentA.id < agentB.id ? -1 : 1))
-      }
     }
   }
 }

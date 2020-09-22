@@ -73,7 +73,9 @@ export default {
   },
   apollo: {
     agents: {
-      query: require('@/graphql/Agent/agents.gql'),
+      query() {
+        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+      },
       pollInterval: 5000,
       loadingKey: 'loadingKey',
       skip() {
@@ -81,7 +83,7 @@ export default {
       },
       fetchPolicy: 'network-only',
       update: data =>
-        data?.agents?.sort((a, b) => a.id.localeCompare(b.id)) || []
+        data?.agent?.sort((a, b) => a.id.localeCompare(b.id)) || []
     }
   }
 }
