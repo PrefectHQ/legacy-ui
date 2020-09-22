@@ -135,11 +135,14 @@ describe('user Vuex Module', () => {
         timezone: 'utc'
       })
     })
-    test('first name should return user first name', () => {
+    test('firstName should return user first name', () => {
       expect(store.getters.firstName).toEqual('first')
     })
-    test('last name should return user last name', () => {
+    test('lastName should return user last name', () => {
       expect(store.getters.lastName).toEqual('last')
+    })
+    test('memberships should return memberships array', () => {
+      expect(store.getters.memberships).toEqual(userState().user.memberships)
     })
   })
 
@@ -207,7 +210,12 @@ describe('user Vuex Module', () => {
         user.mutations['tenant/setDefaultTenant'] = jest.fn()
         store = new Vuex.Store({
           state: userState(),
-          getters: user.getters,
+          getters: {
+            ...user.getters,
+            'tenant/tenants': () => [
+              { id: '3333', name: 'test33', slug: 'test33' }
+            ]
+          },
           mutations: user.mutations,
           actions: user.actions
         })
@@ -216,7 +224,7 @@ describe('user Vuex Module', () => {
         expect(store.getters.defaultMembershipId).toEqual('5678')
         store.dispatch('setDefaultTenant')
         expect(
-          //First argument passed is the user object, second is the default tenant to set
+          //First argument passed is the user state object, second is the default tenant to set
           user.mutations['tenant/setDefaultTenant'].mock.calls[0][1]
         ).toEqual({
           id: 'xxx',
@@ -224,15 +232,24 @@ describe('user Vuex Module', () => {
           slug: 'test1'
         })
       })
-      it('sets the default tenant according to the first tenant if there is no default tenant', async () => {
+      it('sets the default tenant according to the first tenant in the memberships array if there is no tenant matching the default membership id', async () => {
         expect(store.getters.defaultMembershipId).toEqual('5678')
         store.commit('setUserDefaultMembershipId', '2222')
         expect(store.getters.defaultMembershipId).toEqual('2222')
         await store.dispatch('setDefaultTenant')
         expect(
-          //First argument passed is the user object, second is the default tenant to set
+          //First argument passed is the user state, second is the default tenant to set
           user.mutations['tenant/setDefaultTenant'].mock.calls[0][1]
         ).toEqual({ id: 'yyyyy', name: 'test2', slug: 'test2' })
+      })
+      it('sets the default tenant according to the first tenant in the tenants store tenants array if there are no memberships', async () => {
+        store.commit('unsetUser')
+        expect(store.getters.memberships).toEqual(null)
+        await store.dispatch('setDefaultTenant')
+        expect(
+          //First argument passed is the user state, second is the default tenant to set
+          user.mutations['tenant/setDefaultTenant'].mock.calls[0][1]
+        ).toEqual({ id: '3333', name: 'test33', slug: 'test33' })
       })
     })
 
@@ -260,10 +277,15 @@ describe('user Vuex Module', () => {
         await store.dispatch('getUser')
         expect(store.getters.user).toEqual(userState().user)
       })
-      // it('calls setDefaultTenant', async () => {
-      //   await store.dispatch('getUser')
-      //   expect(user.mutations['tenant/setDefaultTenant']).toBeCalled()
-      // })
+      it('calls setDefaultTenant', async () => {
+        await store.dispatch('getUser')
+        expect(user.mutations['tenant/setDefaultTenant']).toBeCalled()
+      })
+      it('returns the user', async () => {
+        prefectUser.mockReturnValueOnce(userState().user)
+        const returnedUser = await store.dispatch('getUser')
+        expect(returnedUser).toEqual(userState().user)
+      })
     })
   })
 })

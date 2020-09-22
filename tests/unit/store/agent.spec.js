@@ -50,7 +50,7 @@ describe('Agent Vuex Module', () => {
     })
   })
 
-  describe('mutationss', () => {
+  describe('mutations', () => {
     let store = new Vuex.Store({
       state: initialAgentState(),
       getters: agent.getters,
