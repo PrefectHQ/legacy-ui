@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Show version group id on the flow details tile[#236](https://github.com/PrefectHQ/ui/pull/236)
 - Add a check for flow and agent label alignment and alert if mis-matched [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
 - Improves error handling related to garbage collection - [#232](https://github.com/PrefectHQ/ui/pull/232)
@@ -19,7 +20,6 @@
 
 ### Features and Improvements
 
-- Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
 - Improves error handling related to garbage collection - [#232](https://github.com/PrefectHQ/ui/pull/232)
 - Improves component teardown by accounting for elements whose destroyed method had been called but that hadn't been removed from the DOM due to transitions - [#232](https://github.com/PrefectHQ/ui/pull/232)
