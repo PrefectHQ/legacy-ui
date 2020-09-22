@@ -29,16 +29,9 @@ const tenantNavGuard = async (to, from, next) => {
 
     // ... but only if the tenant exists
     if (tenantExists) {
-      console.log(
-        'tenant exists',
-        tenantExists,
-        'passedTenantSlug',
-        passedTenantSlug
-      )
       await store.dispatch('tenant/setCurrentTenant', passedTenantSlug)
       return next()
     } else if (defaultTenantSlug) {
-      console.log('defaultTenantSlug', defaultTenantSlug)
       await store.dispatch('tenant/setCurrentTenant', defaultTenantSlug)
       return next({
         name: to.name,
