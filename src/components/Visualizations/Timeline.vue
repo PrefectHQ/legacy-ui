@@ -39,6 +39,12 @@ export default {
   },
   data: () => ({
     id: uniqueId('timeline'),
+    canvas: null,
+    svg: null,
+
+    height_: null,
+    width_: null,
+
     interval: null,
     iterations: 0,
     playing: false
@@ -75,14 +81,47 @@ export default {
       clearInterval(this.interval)
     },
     rawResizeChart() {
-      console.log('resizing chart')
+      let parent = this.canvas.select(function() {
+        return this.parentNode
+      })?._groups?.[0]?.[0]
+
+      let computedStyle = window.getComputedStyle(parent, null)
+
+      // This is the padding that the parent element has
+      // NOT the internal padding
+      let padding = {
+        left: parseFloat(computedStyle.getPropertyValue('padding-left')),
+        right: parseFloat(computedStyle.getPropertyValue('padding-right')),
+        top: parseFloat(computedStyle.getPropertyValue('padding-top')),
+        bottom: parseFloat(computedStyle.getPropertyValue('padding-bottom'))
+      }
+
+      this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
+
+      const width = parent.clientWidth - padding.left - padding.right
+
+      const height = parent.clientHeight - padding.top - padding.bottom
+
+      if (!height || !width || height <= 0 || width <= 0) {
+        return
+      }
+
+      this.svg
+        .attr('viewbox', `0 0 ${width} ${height}`)
+        .attr('width', width)
+        .attr('height', height)
+
+      this.canvas.attr('width', width).attr('height', height)
+
+      this.height_ = height
+      this.width_ = width
     }
   }
 }
 </script>
 
 <template>
-  <div class="position-relative">
+  <div ref="parent" class="position-relative">
     <div>
       <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
       <div>Number of iterations: {{ iterations }}</div>
