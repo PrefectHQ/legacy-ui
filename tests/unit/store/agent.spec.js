@@ -61,7 +61,7 @@ describe('Agent Vuex Module', () => {
       expect(store.getters.agents).toBe(null)
       store.commit('setAgents', [{ id: '12345' }])
       expect(store.getters.agents).toEqual([
-        { id: '123', secondsSinceLastQuery: 0 }
+        { id: '12345', secondsSinceLastQuery: 0 }
       ])
     })
   })
