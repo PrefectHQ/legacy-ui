@@ -93,6 +93,7 @@ export default {
     },
     async $route(new_route, old_route) {
       if (
+        new_route?.params?.tenant &&
         new_route?.params?.tenant !== old_route?.params?.tenant &&
         this.tenant?.slug !== new_route.params.tenant
       ) {
