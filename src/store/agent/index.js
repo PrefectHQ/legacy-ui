@@ -1,3 +1,5 @@
+import moment from '@/utils/moment'
+
 const state = {
   thresholds: {
     // Time before an agent becomes stale
@@ -22,7 +24,13 @@ const getters = {
 
 const mutations = {
   setAgents(state, agents) {
-    state.agents = agents
+    state.agents = agents.map(agent => ({
+      ...agent,
+      secondsSinceLastQuery: moment().diff(
+        moment(agent.last_queried),
+        'seconds'
+      )
+    }))
   }
 }
 
