@@ -63,7 +63,7 @@ jobs:
     steps:
       - prep
       - run:
-          name: NPM Test:Unit
+          # name: NPM Test:Unit
           command: npm run test:unit
 
   build-dev:
@@ -145,9 +145,9 @@ jobs:
 workflows:
   version: 2
 
-  # 'Run unit tests':
-  #   jobs:
-  #     - unit-test
+  'Run unit tests':
+    jobs:
+      - unit-test
 
   'Build and publish development UI artifacts':
     jobs:
