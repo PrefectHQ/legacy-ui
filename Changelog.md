@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add Vuex user store unit tests and add circleci job to run unit tests on PR [#245](https://github.com/PrefectHQ/ui/pull/245)
 - Show version group id on the flow details tile[#236](https://github.com/PrefectHQ/ui/pull/236)
 - Add a check for flow and agent label alignment and alert if mis-matched [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
