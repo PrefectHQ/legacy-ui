@@ -5,6 +5,7 @@ import CardTitle from '@/components/Card-Title'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
 import ExternalLink from '@/components/ExternalLink'
+import LabelWarning from '@/components/LabelWarning'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -14,7 +15,8 @@ export default {
     CardTitle,
     ConcurrencyInfo,
     DurationSpan,
-    ExternalLink
+    ExternalLink,
+    LabelWarning
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin, formatTime],
   props: {
@@ -260,9 +262,15 @@ export default {
         >
           <v-list-item dense :disabled="setToRun.includes(item.id)">
             <v-list-item-content>
-              <span class="caption mb-0">
-                Scheduled for
-                {{ formatDateTime(item.scheduled_start_time) }}
+              <span class="caption mb-0 ml-n1 d-flex align-end">
+                <LabelWarning
+                  :flow="item.flow"
+                  :flow-group="item.flow.flow_group"
+                />
+                <span class="ml-1">
+                  Scheduled for
+                  {{ formatDateTime(item.scheduled_start_time) }}
+                </span>
               </span>
               <v-list-item-subtitle class="font-weight-light">
                 <router-link
@@ -296,7 +304,7 @@ export default {
                     v-on="on"
                     @click="runFlowNow(item.id, item.version, item.name)"
                   >
-                    <v-icon x-small dense color="primary"> fa-rocket</v-icon>
+                    <v-icon small dense color="primary"> fa-rocket</v-icon>
                   </v-btn>
                 </template>
                 <span> Run {{ item.name }} now </span>
@@ -353,9 +361,17 @@ export default {
             :to="{ name: 'flow-run', params: { id: item.id } }"
           >
             <v-list-item-content>
-              <span class="caption mb-0">
-                Scheduled for {{ formatDateTime(item.scheduled_start_time) }}
+              <span class="caption mb-0 ml-n1 d-flex align-end">
+                <LabelWarning
+                  :flow="item.flow"
+                  :flow-group="item.flow.flow_group"
+                />
+                <span class="ml-1">
+                  Scheduled for
+                  {{ formatDateTime(item.scheduled_start_time) }}
+                </span>
               </span>
+
               <v-list-item-title class="body-2">
                 <router-link
                   :to="{ name: 'flow', params: { id: item.flow.id } }"
