@@ -9,6 +9,13 @@ jest.mock('@/middleware/prefectAuth', () => {
   null
 })
 
+jest.mock('@/middleware/prefectAuth', () => {
+  return {
+    prefectUser: jest.fn()
+  }
+})
+import { prefectUser } from '@/middleware/prefectAuth'
+
 describe('user Vuex Module', () => {
   const initialState = () => {
     return {
@@ -42,14 +49,14 @@ describe('user Vuex Module', () => {
         default_membership_id: '5678',
         memberships: [
           {
-            id: '5678',
-            role: 'TENANT_ADMIN',
-            tenant: { id: 'xxx', name: 'test1', slug: 'test1' }
-          },
-          {
             id: '1112131415',
             role: 'USER',
             tenant: { id: 'yyyyy', name: 'test2', slug: 'test2' }
+          },
+          {
+            id: '5678',
+            role: 'TENANT_ADMIN',
+            tenant: { id: 'xxx', name: 'test1', slug: 'test1' }
           }
         ],
         first_name: 'first',
@@ -197,7 +204,7 @@ describe('user Vuex Module', () => {
         // Mock the mutations and actions from other stores
         // that we don't want to
         // test here
-        user.mutations['tenant/setDefaultTenant'] = jest.fn(x => x)
+        user.mutations['tenant/setDefaultTenant'] = jest.fn()
         store = new Vuex.Store({
           state: userState(),
           getters: user.getters,
@@ -217,6 +224,46 @@ describe('user Vuex Module', () => {
           slug: 'test1'
         })
       })
+      it('sets the default tenant according to the first tenant if there is no default tenant', async () => {
+        expect(store.getters.defaultMembershipId).toEqual('5678')
+        store.commit('setUserDefaultMembershipId', '2222')
+        expect(store.getters.defaultMembershipId).toEqual('2222')
+        await store.dispatch('setDefaultTenant')
+        expect(
+          //First argument passed is the user object, second is the default tenant to set
+          user.mutations['tenant/setDefaultTenant'].mock.calls[0][1]
+        ).toEqual({ id: 'yyyyy', name: 'test2', slug: 'test2' })
+      })
+    })
+
+    describe('getUser action', () => {
+      let store
+      beforeEach(() => {
+        // Mock the mutations and actions from other stores
+        // that we don't want to
+        // test here
+        user.mutations['tenant/setDefaultTenant'] = jest.fn()
+        store = new Vuex.Store({
+          state: initialState(),
+          getters: user.getters,
+          mutations: user.mutations,
+          actions: user.actions
+        })
+      })
+      it('calls prefectUser', async () => {
+        await store.dispatch('getUser')
+        expect(prefectUser).toBeCalled()
+      })
+      it('set the user', async () => {
+        expect(store.getters.user).toEqual(initialState().user)
+        prefectUser.mockReturnValueOnce(userState().user)
+        await store.dispatch('getUser')
+        expect(store.getters.user).toEqual(userState().user)
+      })
+      // it('calls setDefaultTenant', async () => {
+      //   await store.dispatch('getUser')
+      //   expect(user.mutations['tenant/setDefaultTenant']).toBeCalled()
+      // })
     })
   })
 })

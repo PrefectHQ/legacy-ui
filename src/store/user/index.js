@@ -98,16 +98,17 @@ const actions = {
     const defaultMembershipId = getters['defaultMembershipId']
     const defaultTenant = getters['memberships']?.find(
       membership => membership.id === defaultMembershipId
-    ).tenant
+    )?.tenant
 
     const firstTenant =
-      getters['memberships']?.[0] || rootGetters['tenant/tenants']
+      getters['memberships']?.[0]?.tenant || rootGetters['tenant/tenants']
 
     if (!defaultMembershipId || rootGetters['api/isServer']) return firstTenant
     commit('tenant/setDefaultTenant', defaultTenant || firstTenant, {
       root: true
     })
   },
+
   async getUser({ commit, getters, dispatch }) {
     const user = await prefectUser()
     commit('user', user)
