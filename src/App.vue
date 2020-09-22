@@ -5,6 +5,7 @@ import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
+import { eventsMixin } from '@/mixins/eventsMixin'
 
 export default {
   components: {
@@ -12,6 +13,7 @@ export default {
     NavBar,
     SideNav
   },
+  mixins: [eventsMixin],
   data() {
     return {
       error: null,

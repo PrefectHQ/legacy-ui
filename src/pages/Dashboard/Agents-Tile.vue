@@ -77,26 +77,6 @@ export default {
       return 'success'
     }
   }
-  // watch: {
-  //   agents(val) {
-  //     this.setAgents(val)
-  //   }
-  // },
-  // methods: {
-  //   ...mapMutations('agent', ['setAgents'])
-  // },
-  // apollo: {
-  //   agents: {
-  //     query() {
-  //       return require('@/graphql/Agent/agents.js').default(this.isCloud)
-  //     },
-  //     loadingKey: 'loading',
-  //     pollInterval: 3000,
-  //     update: data => {
-  //       return data.agent
-  //     }
-  //   }
-  // }
 }
 </script>
 
