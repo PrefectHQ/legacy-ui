@@ -1,7 +1,5 @@
 <script>
-/* eslint-disable */
 import * as d3 from 'd3'
-import { axisBottom } from '@d3fc/d3fc-axis'
 import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
@@ -10,6 +8,7 @@ throttle
 const formatTime = d3.timeFormat('%-I:%M:%S')
 const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 
+// eslint-disable-next-line
 const opacity = (d, i, arr) => {
   return i === 0 || i === arr.length - 1 ? 1 : i % 2 === 0 ? 1 : 0
 }
@@ -131,7 +130,7 @@ export default {
       let day
       let meridiem
 
-      return axisBottom(x).tickFormat(d => {
+      return d3.axisBottom(x).tickFormat(d => {
         const dateObj = new Date(d)
         const dayWeek = dateObj.getDay()
         const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
@@ -208,14 +207,6 @@ export default {
 
       this.x.domain([domainStart, domainEnd])
 
-      const xAxis = this.newXAxis(this.x)
-
-      this.xAxisNode
-        // .transition()
-        // .duration(50 || this.animationDuration)
-        // .ease(d3.easeLinear)
-        .call(xAxis)
-
       this.scaleExtent = [
         1,
         (domainEnd.getTime() - domainStart.getTime()) / (1000 * 60)
@@ -226,64 +217,30 @@ export default {
         [this.width_, this.height_]
       ]
 
-      this.zoom = d3
-        .zoom()
+      const filter = () => {
+        return event.isTrusted
+      }
+
+      this.zoom
         .scaleExtent(this.scaleExtent)
         .translateExtent(this.translateExtent)
-        .on('zoom', ({ transform }) => {
-          console.log(transform)
-          this.updateX(transform)
-        })
+        .on('zoom', this.updateX)
+        .filter(filter)
 
       this.canvas.call(this.zoom)
 
-      this.updateX(d3.zoomIdentity)
+      this.updateX({ transform: d3.zoomIdentity })
     },
-    updateX(transform) {
-      console.log('updating x', transform)
+    updateX({ transform }) {
       this.transform = transform
 
       const xAxis = this.newXAxis(this.transform.rescaleX(this.x))
 
       this.xAxisNode
-        // .transition()
-        // .duration(50 || this.animationDuration)
-        // .ease(d3.easeLinear)
-        // .transition()
-        // .delay(0)
+        .transition()
+        .duration(100)
+        .ease(d3.easeLinear)
         .call(xAxis)
-      // .call(node => {
-      //   node
-      //     .selectAll('text')
-      //     // .style('opacity', opacity)
-      //     .attr('text-anchor', (d, i, arr) => {
-      //       return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
-      //     })
-      // })
-
-      // this.x.domain([
-      //   this.start ? this.start : new Date(now - 60000),
-      //   this.end ? this.end : now
-
-      // .extent([0, 0], [this.width_, this.height_])
-
-      // const xAxis = this.newXAxis(this.transform?.rescaleX(this.x) ?? this.x)
-
-      // this.xAxisNode
-      //   .transition()
-      //   .duration(this.animationDuration)
-      //   .ease(d3.easeLinear)
-      //   .call(xAxis)
-      // .call(node => {
-      //   node
-      //     .selectAll('text')
-      //     // .style('opacity', opacity)
-      //     .attr('text-anchor', (d, i, arr) => {
-      //       return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
-      //     })
-      // })
-
-      // .on('end', this.updateX)
     },
     zoomed(e) {
       this.transform = e.transform
@@ -324,7 +281,7 @@ export default {
       <div>Number of iterations: {{ iterations }}</div>
 
       <div class="d-flex">
-        <v-btn @click="zoomIn" :disabled="transform.k == scaleExtent[1]">
+        <v-btn :disabled="transform.k == scaleExtent[1]" @click="zoomIn">
           +
         </v-btn>
         <v-btn
