@@ -41,7 +41,7 @@ export default {
           .map(t => moment(t.start_time))
         return moment.min(start_moments).toISOString()
       }
-      return this.flowRun.start_time
+      return this.flowRun.start_time || this.flowRun.scheduled_start_time
     },
     items() {
       if (!this.tasks) return

@@ -5,6 +5,8 @@ import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 
 throttle
+const formatTime = d3.timeFormat('%-I:%M:%S')
+const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 
 export default {
   props: {
@@ -38,47 +40,113 @@ export default {
     }
   },
   data: () => ({
+    animationDuration: 500,
     id: uniqueId('timeline'),
     canvas: null,
     svg: null,
+    zoom: d3.zoom(),
 
+    // Viewport extent
+    viewportLeft: 0,
+    viewportRight: 1,
+
+    // Dimensions
     height_: null,
     width_: null,
 
+    padding: {
+      bottom: 5,
+      left: 5,
+      right: 5,
+      top: 5,
+      x: 10,
+      y: 10
+    },
+
     interval: null,
     iterations: 0,
-    playing: false
+    playing: false,
+    transform: null,
+
+    // Scales
+    x: d3.scaleTime(),
+    y: d3.scaleBand(),
+    xAxis: null,
+    xAxisNode: null
   }),
   computed: {
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
       }, 300)
+    },
+
+    // Computed X Domain
+    // startTimeMs() {
+    //   return new Date(this.startTime).getTime()
+    // },
+    // endTimeMs() {
+    //   if (!this.endTime) return null
+    //   return new Date(this.endTime).getTime()
+    // },
+
+    start() {
+      if (!this.startTime) return null
+      return new Date(this.startTime)
+    },
+    end() {
+      if (!this.endTime) return null
+      return new Date(this.endTime)
     }
   },
   mounted() {
     this.canvas = d3.select(`#${this.id}-canvas`)
     this.svg = d3.select(`#${this.id}-svg`)
+    this.xAxisNode = this.svg.append('g')
 
     window.addEventListener('resize', this.resizeChart)
     requestAnimationFrame(this.resizeChart)
+
+    this.zoom.on('zoom', this.zoomed)
+    this.canvas.call(this.zoom)
   },
   beforeDestroy() {
+    this.interval?.stop()
     window.removeEventListener('resize', this.resizeChart)
+    this.canvas.on('.zoom', null)
   },
   methods: {
+    createXAxis() {
+      let day
+      let meridiem
+
+      this.xAxis = d3.axisBottom(this.x.nice()).tickFormat(d => {
+        const dateObj = new Date(d)
+        const dayWeek = dateObj.getDay()
+        const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
+
+        if (day && dayWeek === day && meridiem && hours === meridiem) {
+          return formatTime(d)
+        } else {
+          day = dayWeek
+          meridiem = hours
+          return formatTimeExtended(d)
+        }
+      })
+    },
     play() {
       this.playing = true
-      this.interval = setInterval(() => {
+      this.interval = d3.interval(() => {
+        // this.updateX()
         ++this.iterations
-      }, 16)
+      }, this.animationDuration)
     },
     playOrPause() {
       this.playing ? this.pause() : this.play()
     },
     pause() {
       this.playing = false
-      clearInterval(this.interval)
+      this.interval?.stop()
     },
     rawResizeChart() {
       let parent = this.canvas.select(function() {
@@ -113,8 +181,50 @@ export default {
 
       this.canvas.attr('width', width).attr('height', height)
 
+      this.xAxisNode
+        .attr('class', 'x-axis-group')
+        .attr('transform', `translate(0, ${height})`)
+
+      this.x.range([this.padding.left, width - this.padding.right])
+
       this.height_ = height
       this.width_ = width
+
+      this.zoom.scaleExtent([1, 40]).translateExtent([
+        [-100, -100],
+        [this.width_ + 90, this.height_ + 100]
+      ])
+
+      this.updateX()
+    },
+    updateX() {
+      d3.timerFlush()
+
+      const now = new Date()
+
+      // this.x.domain([
+      //   this.start ? this.start : new Date(now - 60000),
+      //   this.end ? this.end : now
+      // ])
+      this.x.domain([new Date(now - 60000), now])
+
+      this.createXAxis()
+
+      this.xAxisNode
+        .transition()
+        .duration(this.animationDuration)
+        .call(
+          this.xAxis.scale(
+            this.transform ? this.transform.rescaleX(this.x) : this.x
+          )
+        )
+        .on('end', this.updateX)
+    },
+    zoomed(e) {
+      this.transform = e.transform
+
+      if (!this.xAxis) return
+      this.xAxisNode.call(this.xAxis.scale(this.transform.rescaleX(this.x)))
     }
   }
 }
@@ -126,8 +236,8 @@ export default {
       <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
       <div>Number of iterations: {{ iterations }}</div>
     </div>
-    <canvas :id="`${id}-canvas`" />
-    <svg :id="`${id}-svg`" />
+    <canvas :id="`${id}-canvas`" class="canvas" />
+    <svg :id="`${id}-svg`" class="svg" />
   </div>
 </template>
 
