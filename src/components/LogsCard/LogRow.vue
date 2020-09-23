@@ -111,7 +111,7 @@ export default {
       <v-tooltip top>
         <template v-slot:activator="{ on }">
           <div class="log-datetime grey--text text--darken-1" v-on="on">
-            {{ log.time }}
+            {{ logTime(log.timestamp) }}
           </div>
         </template>
         <span>{{ logDate(log.timestamp) }}</span>

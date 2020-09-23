@@ -73,8 +73,8 @@ export const formatTime = {
       let timeObj = moment(timestamp).tz(this.timezone)
       return `${
         timeObj
-          ? timeObj.format('h:mm:ssa')
-          : moment(timestamp).format('h:mm:ssa')
+          ? timeObj.format('HH:mm:ss')
+          : moment(timestamp).format('HH:mm:s')
       }`
     },
     logDate(timestamp) {
