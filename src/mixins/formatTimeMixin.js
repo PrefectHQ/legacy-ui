@@ -61,6 +61,31 @@ export const formatTime = {
           : moment(timestamp).format('D MMM YYYY h:mma')
       }`
     },
+    formTime(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj ? timeObj.format('hh:mma') : moment(timestamp).format('hh:mma')
+      }`
+    },
+    logTime(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj
+          ? timeObj.format('h:mm:ssa')
+          : moment(timestamp).format('h:mm:ssa')
+      }`
+    },
+    logDate(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj
+          ? timeObj.format('D MMMM YYYY h:mma')
+          : moment(timestamp).format('D MMMM YYYY h:mma')
+      }`
+    },
     formatTime(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone)
