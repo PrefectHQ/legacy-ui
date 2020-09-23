@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-09-23
+
+### Features and Improvements
+
 - Show version group id on the flow details tile[#236](https://github.com/PrefectHQ/ui/pull/236)
 - Add a check for flow and agent label alignment and alert if mis-matched [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
