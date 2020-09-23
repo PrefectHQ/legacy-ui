@@ -34,6 +34,10 @@ export default {
 
       this.urlInput = this.defaultUrl
 
+      this.error = false
+      this.success = false
+      this.connected = false
+
       this.setServerUrl(this.defaultUrl)
     },
     async _testUrl() {
@@ -156,7 +160,7 @@ export default {
           </template>
 
           <template v-slot:append-outer>
-            <div class="mt-n1">
+            <div>
               <v-btn
                 color="primary"
                 dark
