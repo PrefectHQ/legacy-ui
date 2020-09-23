@@ -3,9 +3,10 @@ import globalNameSearchQuery from '@/graphql/GlobalSearch/search-by-name.gql'
 import globalIDSearchQuery from '@/graphql/GlobalSearch/search-by-id.gql'
 import GlobalSearchIcon from '@/components/GlobalSearchBar/GlobalSearchIcon'
 import GlobalSearchResult from '@/components/GlobalSearchBar/GlobalSearchResult'
+import MResult from '@/components/GlobalSearchBar/MResult'
 
 export default {
-  components: { GlobalSearchIcon, GlobalSearchResult },
+  components: { GlobalSearchIcon, GlobalSearchResult, MResult },
   data() {
     return {
       activateTimeout: null,
@@ -14,7 +15,8 @@ export default {
       model: null,
       search: null,
       results: [],
-      isLoading: false
+      isLoading: false,
+      mResult: false
     }
   },
   computed: {
@@ -111,7 +113,9 @@ export default {
         this.results = []
         return
       }
-
+      if (input == 'about:Prefect') {
+        this.mResult = true
+      }
       // Once we've confirmed that we have input and
       // we aren't pausing all queries, we check that
       // the input matches a UUID regex which is stored as
@@ -310,7 +314,10 @@ export default {
         </template>
         <template v-else v-slot:no-data>
           <v-list-item>
-            <v-list-item-title>
+            <v-list-item-title v-if="mResult">
+              <MResult />
+            </v-list-item-title>
+            <v-list-item-title v-else>
               No results matched your search.
             </v-list-item-title>
           </v-list-item>
