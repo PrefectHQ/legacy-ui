@@ -149,7 +149,10 @@ export default {
           x >= -buf &&
           y >= -buf &&
           x <= this.width + buf &&
-          y <= this.height + buf
+          y <= this.height + buf &&
+          node.data.type !== 'prefect.core.parameter.Parameter' &&
+          node.data.type !==
+            'prefect.tasks.control_flow.conditional.CompareValue'
         )
       })
     }
@@ -493,8 +496,16 @@ export default {
         edge.each(d => {
           let _p
           let _context
+
+          if (d.source.data?.type == 'prefect.core.parameter.Parameter') {
+            context.setLineDash([5, 15])
+          } else {
+            context.setLineDash([])
+          }
+
           d.data.points.forEach((p, i) => {
             let point = transform.apply([p.x, p.y])
+            let to
             switch (i) {
               case 0:
                 _p = point
@@ -503,7 +514,7 @@ export default {
               default:
                 _p = point
                 if (isDiagonal(_context[0], _context[1], point[0], point[1])) {
-                  let to = makeQuadraticBezierPoints(
+                  to = makeQuadraticBezierPoints(
                     _context[0],
                     _context[1],
                     point[0],
@@ -516,6 +527,25 @@ export default {
                 context.lineTo(point[0], point[1])
                 break
             }
+
+            if (
+              i === d.data.points.length - 1 &&
+              d.source.data?.type ==
+                'prefect.tasks.control_flow.conditional.CompareValue'
+            ) {
+              context.font = '14px Roboto'
+              context.fillStyle = '#07e798'
+
+              context.translate(to[0][0], to[0][1])
+
+              context.rotate(
+                Math.atan2(to[1][1] - to[0][1], to[1][0] - to[0][0])
+              )
+              context.fillText('True', lineWidth * 2, -lineWidth * 3)
+
+              context.setTransform(1, 0, 0, 1, 0, 0)
+            }
+
             _context = point
           })
 
@@ -533,15 +563,86 @@ export default {
         })
       })
 
-      if (!showNodes && showDetails?.level1) return
+      let nodes = this.custom
+        .selectAll('circle')
+        .filter(d => d.data?.type == 'prefect.core.parameter.Parameter')
 
-      let nodes = this.custom.selectAll('circle')
+      nodes.each(function() {
+        let node = d3.select(this)
+        let point = transform.apply([node.attr('cx'), node.attr('cy')])
+
+        context.beginPath()
+        context.fillStyle = '#f77062'
+        context.arc(point[0], point[1], nodeSize / 2, 0, 2 * Math.PI)
+        context.fill()
+
+        context.fillStyle = 'transparent'
+        this.path2D = new Path2D()
+        this.path2D.arc(
+          point[0],
+          point[1],
+          nodeSize + Math.min(nodeSize, nodeSize * (size / nodeSize)),
+          0,
+          2 * Math.PI
+        )
+
+        context.fill(this.path2D)
+        context.font = '24px Roboto'
+        context.fillStyle = '#fff'
+        context.textBaseline = 'middle'
+        context.fillText(
+          'P',
+          point[0] - nodeSize / 12,
+          point[1] + nodeSize / 12
+        )
+      })
 
       if (!nodes) return
+
+      nodes = this.custom
+        .selectAll('circle')
+        .filter(
+          d =>
+            d.data?.type ==
+            'prefect.tasks.control_flow.conditional.CompareValue'
+        )
+
+      nodes.each(function() {
+        let node = d3.select(this)
+        let point = transform.apply([node.attr('cx'), node.attr('cy')])
+
+        context.beginPath()
+        context.fillStyle = '#07e798'
+        context.arc(point[0], point[1], nodeSize / 4, 0, 2 * Math.PI)
+        context.fill()
+
+        context.fillStyle = 'transparent'
+        this.path2D = new Path2D()
+        this.path2D.arc(
+          point[0],
+          point[1],
+          nodeSize + Math.min(nodeSize, nodeSize * (size / nodeSize)),
+          0,
+          2 * Math.PI
+        )
+
+        context.fill(this.path2D)
+      })
 
       // Resets the alpha before we draw nodes,
       // which we always want to be opaque
       context.globalAlpha = 1
+
+      if (!showNodes && showDetails?.level1) return
+
+      nodes = this.custom
+        .selectAll('circle')
+        .filter(
+          d =>
+            d.data?.type !== 'prefect.core.parameter.Parameter' &&
+            d.data?.type !==
+              'prefect.tasks.control_flow.conditional.CompareValue'
+        )
 
       nodes.each(function() {
         let node = d3.select(this)
@@ -731,9 +832,13 @@ export default {
         const handleSelect = this.handleSelect
         let found = false
         this.custom.selectAll('circle').each(function() {
-          if (context.isPointInPath(this.path2D, e.offsetX, e.offsetY)) {
-            found = true
-            handleSelect({ id: this.id })
+          try {
+            if (context?.isPointInPath(this.path2D, e.offsetX, e.offsetY)) {
+              found = true
+              handleSelect({ id: this.id })
+            }
+          } catch {
+            // do nothing
           }
         })
         if (!found && this.selectedTaskId)
@@ -751,13 +856,17 @@ export default {
       const updateTooltip = this.updateTooltip
       let found = false
       this.custom.selectAll('circle').each(function() {
-        if (found) return
-        if (context.isPointInPath(this.path2D, e.offsetX, e.offsetY)) {
-          canvas._groups[0][0].style.cursor = 'pointer'
-          found = true
-          updateTooltip(nodeData.find(node => node.id == this.id))
-        } else {
-          canvas._groups[0][0].style.cursor = null
+        try {
+          if (found) return
+          if (context?.isPointInPath(this.path2D, e.offsetX, e.offsetY)) {
+            canvas._groups[0][0].style.cursor = 'pointer'
+            found = true
+            updateTooltip(nodeData.find(node => node.id == this.id))
+          } else {
+            canvas._groups[0][0].style.cursor = null
+          }
+        } catch {
+          // do nothing
         }
       })
       if (!found) updateTooltip(null)
