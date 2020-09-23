@@ -8,6 +8,9 @@ export default {
   },
   data() {
     return {
+      defaultUrl:
+        window.prefect_ui_settings?.server_url ||
+        process.env.VUE_APP_SERVER_URL,
       error: false,
       loading: false,
       success: false,
@@ -25,6 +28,17 @@ export default {
       this.success = false
       this.error = false
       this.loading = false
+    },
+    async _resetUrl() {
+      localStorage.removeItem('server_url')
+
+      this.urlInput = this.defaultUrl
+
+      this.error = false
+      this.success = false
+      this.connected = false
+
+      this.setServerUrl(this.defaultUrl)
     },
     async _testUrl() {
       this.success = false
@@ -114,18 +128,39 @@ export default {
           @keyup="_handleKeyup"
         >
           <template v-slot:append>
-            <v-fade-transition mode="out-in">
-              <v-icon v-if="success" key="success" color="green">
-                check
-              </v-icon>
-              <v-icon v-else-if="error" key="error" color="error">
-                error
-              </v-icon>
-            </v-fade-transition>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <div class="mb-2">
+                  <v-fade-transition mode="out-in">
+                    <v-icon v-if="success" key="success" color="green">
+                      check
+                    </v-icon>
+                    <v-icon v-else-if="error" key="error" color="error">
+                      error
+                    </v-icon>
+                  </v-fade-transition>
+
+                  <v-btn
+                    color="blue-grey lighten-1"
+                    icon
+                    small
+                    @click="_resetUrl"
+                    v-on="on"
+                  >
+                    <v-icon key="reset" color="grey">
+                      settings_backup_restore
+                    </v-icon>
+                  </v-btn>
+                </div>
+              </template>
+              <span>
+                Reset stored GraphQL endpoint
+              </span>
+            </v-tooltip>
           </template>
 
           <template v-slot:append-outer>
-            <div class="mt-n1">
+            <div>
               <v-btn
                 color="primary"
                 dark
@@ -165,3 +200,10 @@ export default {
     </ol>
   </div>
 </template>
+
+<style lang="scss" scoped>
+/* stylelint-disable-next-line */
+.v-input__append-inner {
+  margin-top: 0 !important;
+}
+</style>
