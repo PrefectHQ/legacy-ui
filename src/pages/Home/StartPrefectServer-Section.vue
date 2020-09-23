@@ -126,13 +126,7 @@ export default {
           <template v-slot:append>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <v-btn
-                  color="blue-grey lighten-1"
-                  icon
-                  small
-                  @click="_resetUrl"
-                  v-on="on"
-                >
+                <div>
                   <v-fade-transition mode="out-in">
                     <v-icon v-if="success" key="success" color="green">
                       check
@@ -140,11 +134,20 @@ export default {
                     <v-icon v-else-if="error" key="error" color="error">
                       error
                     </v-icon>
-                    <v-icon v-else key="reset" color="grey">
+                  </v-fade-transition>
+
+                  <v-btn
+                    color="blue-grey lighten-1"
+                    icon
+                    small
+                    @click="_resetUrl"
+                    v-on="on"
+                  >
+                    <v-icon key="reset" color="grey">
                       settings_backup_restore
                     </v-icon>
-                  </v-fade-transition>
-                </v-btn>
+                  </v-btn>
+                </div>
               </template>
               <span>
                 Reset stored GraphQL endpoint
