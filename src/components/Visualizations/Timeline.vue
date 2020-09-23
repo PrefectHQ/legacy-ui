@@ -91,16 +91,6 @@ export default {
         requestAnimationFrame(this.rawResizeChart)
       }, 300)
     },
-
-    // Computed X Domain
-    // startTimeMs() {
-    //   return new Date(this.startTime).getTime()
-    // },
-    // endTimeMs() {
-    //   if (!this.endTime) return null
-    //   return new Date(this.endTime).getTime()
-    // },
-
     start() {
       if (!this.startTime) return this.now
       return new Date(this.startTime)
