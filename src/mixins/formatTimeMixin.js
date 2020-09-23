@@ -74,7 +74,7 @@ export const formatTime = {
       return `${
         timeObj
           ? timeObj.format('HH:mm:ss')
-          : moment(timestamp).format('HH:mm:s')
+          : moment(timestamp).format('HH:mm:ss')
       }`
     },
     logDate(timestamp) {
