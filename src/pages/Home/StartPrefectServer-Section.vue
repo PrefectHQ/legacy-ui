@@ -126,7 +126,7 @@ export default {
           <template v-slot:append>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <div>
+                <div class="mb-2">
                   <v-fade-transition mode="out-in">
                     <v-icon v-if="success" key="success" color="green">
                       check
@@ -196,3 +196,10 @@ export default {
     </ol>
   </div>
 </template>
+
+<style lang="scss" scoped>
+/* stylelint-disable-next-line */
+.v-input__append-inner {
+  margin-top: 0 !important;
+}
+</style>
