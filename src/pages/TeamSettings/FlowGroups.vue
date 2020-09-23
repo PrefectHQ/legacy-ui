@@ -33,7 +33,7 @@ export default {
         },
         {
           mobile: true,
-          text: 'Group ID',
+          text: 'Version Group ID',
           value: 'version_group_id',
           width: '25%'
         },
