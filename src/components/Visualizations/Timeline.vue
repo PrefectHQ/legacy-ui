@@ -1,7 +1,7 @@
 <script>
 /* eslint-disable */
 import * as d3 from 'd3'
-import { axisBottom } from 'd3fc-axis'
+import { axisBottom } from '@d3fc/d3fc-axis'
 import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
