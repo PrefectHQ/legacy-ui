@@ -120,19 +120,23 @@ export default {
       let day
       let meridiem
 
-      return d3.axisBottom(x).tickFormat(d => {
-        const dateObj = new Date(d)
-        const dayWeek = dateObj.getDay()
-        const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
+      return d3
+        .axisBottom(x)
+        .ticks(5)
+        .tickSizeOuter(0)
+        .tickFormat(d => {
+          const dateObj = new Date(d)
+          const dayWeek = dateObj.getDay()
+          const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
 
-        if (day && dayWeek === day && meridiem && hours === meridiem) {
-          return formatTime(d)
-        } else {
-          day = dayWeek
-          meridiem = hours
-          return formatTimeExtended(d)
-        }
-      })
+          if (day && dayWeek === day && meridiem && hours === meridiem) {
+            return formatTime(d)
+          } else {
+            day = dayWeek
+            meridiem = hours
+            return formatTimeExtended(d)
+          }
+        })
     },
     play() {
       this.playing = true
@@ -177,7 +181,7 @@ export default {
       this.svg
         .attr('viewbox', `0 0 ${width} ${height}`)
         .attr('width', width)
-        .attr('height', height)
+        .attr('height', height + 50)
 
       this.canvas.attr('width', width).attr('height', height)
 
@@ -237,25 +241,25 @@ export default {
       this.updateX()
     },
     panLeft() {
-      this.canvas
+      this.svg
         .transition()
         .duration(500)
         .call(this.zoom.translateBy, 200, 0)
     },
     panRight() {
-      this.canvas
+      this.svg
         .transition()
         .duration(500)
         .call(this.zoom.translateBy, -200, 0)
     },
     zoomIn() {
-      this.canvas
+      this.svg
         .transition()
         .duration(500)
         .call(this.zoom.scaleBy, 2)
     },
     zoomOut() {
-      this.canvas
+      this.svg
         .transition()
         .duration(500)
         .call(this.zoom.scaleBy, 0.5)
@@ -265,7 +269,7 @@ export default {
 </script>
 
 <template>
-  <div ref="parent" class="position-relative">
+  <div>
     <div>
       <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
       <div>Number of iterations: {{ iterations }}</div>
@@ -298,25 +302,51 @@ export default {
         </v-btn>
       </div>
     </div>
-    <canvas :id="`${id}-canvas`" class="canvas" />
-    <svg :id="`${id}-svg`" class="svg" />
+    <div ref="parent" class="position-relative">
+      <canvas :id="`${id}-canvas`" class="canvas" />
+      <svg :id="`${id}-svg`" class="svg" />
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .svg {
+  border: 1px solid #dc143c;
   height: 100%;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  user-select: none;
+  // pointer-events: none;
+  position: relative;
+  // user-select: none;
+  width: 100%;
   z-index: 0;
 }
 
 .canvas {
+  border: 1px solid #32cd32;
   cursor: grab;
-  position: relative;
+  left: 0;
+  position: absolute;
+  top: 0;
   z-index: 1;
+}
+</style>
+
+<style lang="scss">
+// We use unscoped css here
+// so that we don't need to do a post-selection
+// on the axis
+.x-axis-group {
+  font: 16px Roboto, sans-serif;
+
+  // .tick:first-of-type {
+  //   text-anchor: start;
+  // }
+
+  // .tick:last-of-type {
+  //   text-anchor: end;
+  // }
+
+  // .tick:not(:first-of-type):not(:last-of-type):nth-child(even) {
+  //   opacity: 0;
+  // }
 }
 </style>
