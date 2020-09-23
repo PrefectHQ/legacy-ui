@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.11.0",
+    "@d3fc/d3fc-axis": "^3.0.4",
     "apollo-link-batch-http": "^1.2.14",
     "codemirror": "^5.57.0",
     "codemirror-graphql": "^0.12.1",

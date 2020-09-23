@@ -1,5 +1,7 @@
 <script>
+/* eslint-disable */
 import * as d3 from 'd3'
+import { axisBottom } from 'd3fc'
 import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
@@ -7,6 +9,10 @@ import debounce from 'lodash.debounce'
 throttle
 const formatTime = d3.timeFormat('%-I:%M:%S')
 const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
+
+const opacity = (d, i, arr) => {
+  return i === 0 || i === arr.length - 1 ? 1 : i % 2 === 0 ? 1 : 0
+}
 
 export default {
   props: {
@@ -114,13 +120,14 @@ export default {
     this.interval?.stop()
     window.removeEventListener('resize', this.resizeChart)
     this.canvas.on('.zoom', null)
+    this.xAxisNode.on('end', null)
   },
   methods: {
     createXAxis() {
       let day
       let meridiem
 
-      this.xAxis = d3.axisBottom(this.x.nice()).tickFormat(d => {
+      this.xAxis = axisBottom(this.x.nice()).tickFormat(d => {
         const dateObj = new Date(d)
         const dayWeek = dateObj.getDay()
         const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
@@ -198,14 +205,11 @@ export default {
       this.updateX()
     },
     updateX() {
-      d3.timerFlush()
-
       const now = new Date()
 
       // this.x.domain([
       //   this.start ? this.start : new Date(now - 60000),
       //   this.end ? this.end : now
-      // ])
       this.x.domain([new Date(now - 60000), now])
 
       this.createXAxis()
@@ -213,11 +217,21 @@ export default {
       this.xAxisNode
         .transition()
         .duration(this.animationDuration)
+        .ease(d3.easeLinear)
         .call(
           this.xAxis.scale(
             this.transform ? this.transform.rescaleX(this.x) : this.x
           )
         )
+        .call(node => {
+          node
+            .selectAll('text')
+            // .style('opacity', opacity)
+            .attr('text-anchor', (d, i, arr) => {
+              return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
+            })
+        })
+
         .on('end', this.updateX)
     },
     zoomed(e) {
