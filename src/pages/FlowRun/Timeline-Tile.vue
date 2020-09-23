@@ -189,6 +189,11 @@ export default {
 
 <template>
   <div>
-    <Timeline :items="items" :start-time="startTime" :end-time="endTime" />
+    <Timeline
+      v-if="items"
+      :items="items"
+      :start-time="startTime"
+      :end-time="endTime"
+    />
   </div>
 </template>

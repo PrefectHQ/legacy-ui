@@ -49,6 +49,7 @@ export default {
     animationDuration: 500,
     id: uniqueId('timeline'),
     canvas: null,
+    now: Date.now(),
     svg: null,
     zoom: d3.zoom(),
 
@@ -72,7 +73,12 @@ export default {
     interval: null,
     iterations: 0,
     playing: false,
-    transform: null,
+    scaleExtent: [1, 10],
+    translateExtent: [
+      [-Infinity, -Infinity],
+      [Infinity, Infinity]
+    ],
+    transform: { x: 0, y: 0, k: 1 },
 
     // Scales
     x: d3.scaleTime(),
@@ -97,7 +103,7 @@ export default {
     // },
 
     start() {
-      if (!this.startTime) return null
+      if (!this.startTime) return this.now
       return new Date(this.startTime)
     },
     end() {
@@ -108,13 +114,11 @@ export default {
   mounted() {
     this.canvas = d3.select(`#${this.id}-canvas`)
     this.svg = d3.select(`#${this.id}-svg`)
+
     this.xAxisNode = this.svg.append('g')
 
     window.addEventListener('resize', this.resizeChart)
     requestAnimationFrame(this.resizeChart)
-
-    this.zoom.on('zoom', this.zoomed)
-    this.canvas.call(this.zoom)
   },
   beforeDestroy() {
     this.interval?.stop()
@@ -123,11 +127,11 @@ export default {
     this.xAxisNode.on('end', null)
   },
   methods: {
-    createXAxis() {
+    newXAxis(x) {
       let day
       let meridiem
 
-      this.xAxis = axisBottom(this.x.nice()).tickFormat(d => {
+      return axisBottom(x).tickFormat(d => {
         const dateObj = new Date(d)
         const dayWeek = dateObj.getDay()
         const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
@@ -197,48 +201,117 @@ export default {
       this.height_ = height
       this.width_ = width
 
-      this.zoom.scaleExtent([1, 40]).translateExtent([
-        [-100, -100],
-        [this.width_ + 90, this.height_ + 100]
-      ])
-
-      this.updateX()
-    },
-    updateX() {
       const now = new Date()
+
+      const domainStart = this.start
+      const domainEnd = this.end ?? now
+
+      this.x.domain([domainStart, domainEnd])
+
+      const xAxis = this.newXAxis(this.x)
+
+      this.xAxisNode
+        // .transition()
+        // .duration(50 || this.animationDuration)
+        // .ease(d3.easeLinear)
+        .call(xAxis)
+
+      this.scaleExtent = [
+        1,
+        (domainEnd.getTime() - domainStart.getTime()) / (1000 * 60)
+      ]
+
+      this.translateExtent = [
+        [0, 0],
+        [this.width_, this.height_]
+      ]
+
+      this.zoom = d3
+        .zoom()
+        .scaleExtent(this.scaleExtent)
+        .translateExtent(this.translateExtent)
+        .on('zoom', ({ transform }) => {
+          console.log(transform)
+          this.updateX(transform)
+        })
+
+      this.canvas.call(this.zoom)
+
+      this.updateX(d3.zoomIdentity)
+    },
+    updateX(transform) {
+      console.log('updating x', transform)
+      this.transform = transform
+
+      const xAxis = this.newXAxis(this.transform.rescaleX(this.x))
+
+      this.xAxisNode
+        // .transition()
+        // .duration(50 || this.animationDuration)
+        // .ease(d3.easeLinear)
+        // .transition()
+        // .delay(0)
+        .call(xAxis)
+      // .call(node => {
+      //   node
+      //     .selectAll('text')
+      //     // .style('opacity', opacity)
+      //     .attr('text-anchor', (d, i, arr) => {
+      //       return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
+      //     })
+      // })
 
       // this.x.domain([
       //   this.start ? this.start : new Date(now - 60000),
       //   this.end ? this.end : now
-      this.x.domain([new Date(now - 60000), now])
 
-      this.createXAxis()
+      // .extent([0, 0], [this.width_, this.height_])
 
-      this.xAxisNode
-        .transition()
-        .duration(this.animationDuration)
-        .ease(d3.easeLinear)
-        .call(
-          this.xAxis.scale(
-            this.transform ? this.transform.rescaleX(this.x) : this.x
-          )
-        )
-        .call(node => {
-          node
-            .selectAll('text')
-            // .style('opacity', opacity)
-            .attr('text-anchor', (d, i, arr) => {
-              return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
-            })
-        })
+      // const xAxis = this.newXAxis(this.transform?.rescaleX(this.x) ?? this.x)
 
-        .on('end', this.updateX)
+      // this.xAxisNode
+      //   .transition()
+      //   .duration(this.animationDuration)
+      //   .ease(d3.easeLinear)
+      //   .call(xAxis)
+      // .call(node => {
+      //   node
+      //     .selectAll('text')
+      //     // .style('opacity', opacity)
+      //     .attr('text-anchor', (d, i, arr) => {
+      //       return i === 0 ? 'start' : i === arr.length - 1 ? 'end' : 'middle'
+      //     })
+      // })
+
+      // .on('end', this.updateX)
     },
     zoomed(e) {
       this.transform = e.transform
-
-      if (!this.xAxis) return
-      this.xAxisNode.call(this.xAxis.scale(this.transform.rescaleX(this.x)))
+      this.updateX()
+    },
+    panLeft() {
+      this.canvas
+        .transition()
+        .duration(500)
+        .call(this.zoom.translateBy, 200, 0)
+    },
+    panRight() {
+      this.canvas
+        .transition()
+        .duration(500)
+        .call(this.zoom.translateBy, -200, 0)
+    },
+    zoomIn() {
+      this.canvas
+        .transition()
+        .duration(500)
+        .call(this.zoom.scaleBy, 2)
+    },
+    zoomOut() {
+      this.canvas
+        .transition()
+        .duration(500)
+        .call(this.zoom.scaleBy, 0.5)
     }
   }
 }
@@ -249,6 +322,34 @@ export default {
     <div>
       <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
       <div>Number of iterations: {{ iterations }}</div>
+
+      <div class="d-flex">
+        <v-btn @click="zoomIn" :disabled="transform.k == scaleExtent[1]">
+          +
+        </v-btn>
+        <v-btn
+          class="ml-2"
+          :disabled="transform.k == scaleExtent[0]"
+          @click="zoomOut"
+        >
+          -
+        </v-btn>
+
+        <v-btn
+          class="ml-12"
+          :disabled="transform.x == translateExtent[0][0]"
+          @click="panLeft"
+        >
+          ←
+        </v-btn>
+        <v-btn
+          class="ml-2"
+          :disabled="transform.x == -translateExtent[1][0]"
+          @click="panRight"
+        >
+          →
+        </v-btn>
+      </div>
     </div>
     <canvas :id="`${id}-canvas`" class="canvas" />
     <svg :id="`${id}-svg`" class="svg" />
