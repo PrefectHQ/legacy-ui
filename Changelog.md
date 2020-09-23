@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Add 24 hour clock to the logs row [#247](https://github.com/PrefectHQ/ui/pull/247)
 
 ## 2020-09-23
 
@@ -24,7 +24,7 @@
 
 ### Bugfixes
 
-- Add 24 hour clock to the logs row [#247](https://github.com/PrefectHQ/ui/pull/247)
+- None
 
 ## 2020-09-17
 
