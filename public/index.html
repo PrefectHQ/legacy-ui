@@ -52,9 +52,7 @@
     <script>
       ;(async () => {
         try {
-          window.prefect_ui_settings = await fetch(
-            `${process.env.VUE_APP_BASE_URL}/settings.json`
-          )
+          window.prefect_ui_settings = await fetch('/settings.json')
             .then(response => response.json())
             .then(data => data)
         } catch {

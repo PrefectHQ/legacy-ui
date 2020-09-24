@@ -8,11 +8,22 @@
 - Expose agents page and dashboard tile for server users [#249](https://github.com/PrefectHQ/ui/pull/249)
 - Make labels on agent cards scrollable and add ID to information displayed [#249](https://github.com/PrefectHQ/ui/pull/249)
 - Show version group id on the flow details tile [#236](https://github.com/PrefectHQ/ui/pull/236)
+
+### Bugfixes
+
+- None
+
+## 2020-09-23
+
+### Features and Improvements
+
+- Show version group id on the flow details tile[#236](https://github.com/PrefectHQ/ui/pull/236)
 - Add a check for flow and agent label alignment and alert if mis-matched [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
 - Improves error handling related to garbage collection - [#232](https://github.com/PrefectHQ/ui/pull/232)
 - Improves component teardown by accounting for elements whose destroyed method had been called but that hadn't been removed from the DOM due to transitions - [#232](https://github.com/PrefectHQ/ui/pull/232)
 - Improve navigation experience when going forward/backward in the browser history - [#232](https://github.com/PrefectHQ/ui/pull/232)
+- Improve the usability of apollo endpoint setting - [#241](https://github.com/PrefectHQ/ui/pull/241)
 
 ### Bugfixes
 
