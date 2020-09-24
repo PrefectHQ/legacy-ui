@@ -51,8 +51,7 @@ export default {
 
       // Bars
       bars: [],
-      barRadius: 50,
-      barPaddingY: 10,
+      barRadius: 25,
 
       // Viewport extent
       viewportLeft: 0,
@@ -147,11 +146,7 @@ export default {
         })
     },
     _renderCanvas() {
-      const height = this.collapsed_
-        ? this.barRadius
-        : this.y.bandwidth() < this.barRadius
-        ? this.barRadius
-        : this.y.bandwidth()
+      const height = this.y.bandwidth()
 
       const calcBar = item => {
         const x = item.start_time ? this.x(new Date(item.start_time)) : 0
@@ -162,11 +157,10 @@ export default {
           ? this.x(Date.now()) - x
           : 0
 
-        const width = calcWidth > this.barRadius ? calcWidth : this.barRadius
+        const width = calcWidth > height ? calcWidth : height
 
         // This indicates that the calculated width is less than the min
         // bar width, so we should display an indicator that this isn't visually representative
-        const clipped = calcWidth < this.barRadius
 
         const y = this.collapsed_ ? 0 : this.y(item.id)
 
@@ -182,7 +176,6 @@ export default {
           this.bars.push({
             ...item,
             alpha: alpha,
-            clipped: clipped,
             label: label,
             height0: height,
             height1: height,
@@ -193,7 +186,7 @@ export default {
             x0: x || 0,
             x1: x,
             x: x || 0,
-            y0: y || 0,
+            y0: y,
             y1: y,
             y: y || 0
           })
@@ -205,7 +198,6 @@ export default {
           const bar1 = {
             ...item,
             alpha: alpha,
-            clipped: clipped,
             height0: bar.height,
             height1: height,
             height: bar.height,
@@ -234,7 +226,6 @@ export default {
         // ...otherwise we'll start the exit animation
         .forEach((bar, i) => {
           const bar1 = {
-            clipped: false,
             height0: bar.height,
             height1: height,
             height: bar.height,
@@ -310,11 +301,16 @@ export default {
           context.fillStyle = color || '#eee'
 
           const y = bar.y * (1 / this.transform.k)
-          const width = bar.width * bar.colors[color]
           const radius = (bar.height / 2) * (1 / this.transform.k)
+          const width = bar.width * bar.colors[color]
+          // const adjustedWidth = width - radius * 2
           const circleOffset = (width / 2) * (1 / this.transform.k)
 
-          if (width == this.barRadius && colors.length === 1) {
+          // If the unadjusted height and width are equal,
+          // we just draw a single shape (a circle)
+          // This is cleaner visually and more performant
+          // than drawing 3 shapes
+          if (bar.width <= bar.height) {
             const circle = new Path2D()
             circle.arc(
               bar.x + circleOffset,
@@ -412,13 +408,17 @@ export default {
         parent.clientWidth - padding.left - padding.right
       )
 
-      const height = Math.floor(
-        this.collapsed_
-          ? parent.clientHeight - padding.top - padding.bottom
-          : this.height
-          ? this.height
-          : this.items.length * this.barRadius
-      )
+      // If a height is specified in the component
+      // we use that, otherwise we assume infinite height and
+      // let the component expand based on the min
+      // bar radius
+      let height
+      if (this.height) {
+        height = this.height
+      } else {
+        height = this.items.length * this.barRadius * 2
+      }
+      height = Math.floor(height)
 
       if (!height || !width || height <= 0 || width <= 0) {
         return
@@ -454,6 +454,7 @@ export default {
       this.x.domain([domainStart, domainEnd])
 
       this.y.domain(this.items.map(item => item.id))
+      this.y.paddingInner(0.1)
       this.y.range([0, height])
 
       const scaleExtentUpper =
@@ -510,6 +511,12 @@ export default {
         .duration(500)
         .call(this.zoom.translateBy, -200, 0)
     },
+    redraw() {
+      const context = this.canvas.node().getContext('2d')
+      context.clearRect(0, 0, this.width_, this.height_)
+      this.bars = []
+      this.resizeChart()
+    },
     zoomIn() {
       this.canvas
         .transition()
@@ -528,41 +535,65 @@ export default {
 
 <template>
   <div>
-    <div>
-      <div class="d-flex my-4">
-        <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
+    <div class="d-flex align-middle justify-space-between">
+      <div>
+        <div class="d-flex my-4">
+          <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
 
-        <v-btn class="ml-12" @click="collapse">
-          {{ collapsed_ ? 'Expand' : 'Collapse' }}
-        </v-btn>
+          <v-btn class="ml-12" @click="collapse">
+            {{ collapsed_ ? 'Expand' : 'Collapse' }}
+          </v-btn>
+
+          <v-btn class="ml-12" @click="redraw">
+            Redraw
+          </v-btn>
+        </div>
+
+        <div class="d-flex  my-4">
+          <v-btn :disabled="transform.k == scaleExtent[1]" @click="zoomIn">
+            +
+          </v-btn>
+          <v-btn
+            class="ml-2"
+            :disabled="transform.k == scaleExtent[0]"
+            @click="zoomOut"
+          >
+            -
+          </v-btn>
+
+          <v-btn
+            class="ml-12"
+            :disabled="transform.x == translateExtent[0][0]"
+            @click="panLeft"
+          >
+            ←
+          </v-btn>
+          <v-btn
+            class="ml-2"
+            :disabled="transform.x == -translateExtent[1][0]"
+            @click="panRight"
+          >
+            →
+          </v-btn>
+        </div>
       </div>
-
-      <div class="d-flex  my-4">
-        <v-btn :disabled="transform.k == scaleExtent[1]" @click="zoomIn">
-          +
-        </v-btn>
-        <v-btn
-          class="ml-2"
-          :disabled="transform.k == scaleExtent[0]"
-          @click="zoomOut"
-        >
-          -
-        </v-btn>
-
-        <v-btn
-          class="ml-12"
-          :disabled="transform.x == translateExtent[0][0]"
-          @click="panLeft"
-        >
-          ←
-        </v-btn>
-        <v-btn
-          class="ml-2"
-          :disabled="transform.x == -translateExtent[1][0]"
-          @click="panRight"
-        >
-          →
-        </v-btn>
+      <div
+        class="text-caption text-right d-flex flex-column justify-space-around"
+      >
+        <div>
+          Scale:
+          <div class="font-weight-medium">
+            {{ Math.round(transform.k * 100) / 100 }}
+          </div>
+        </div>
+        <hr />
+        <div>
+          Transform
+          <div class="font-weight-medium">
+            {{ Math.round(transform.x * 100) / 100 }},
+            {{ Math.round(transform.y * 100) / 100 }}
+          </div>
+        </div>
       </div>
     </div>
     <div ref="parent" class="position-relative">
