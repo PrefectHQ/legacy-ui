@@ -8,9 +8,41 @@ throttle
 const formatTime = d3.timeFormat('%-I:%M:%S')
 const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 
-// eslint-disable-next-line
-const opacity = (d, i, arr) => {
-  return i === 0 || i === arr.length - 1 ? 1 : i % 2 === 0 ? 1 : 0
+// Adapted for 2D Path context from https://stackoverflow.com/a/3368118
+function roundRect(path, x, y, width, height, radius, clipped) {
+  if (typeof radius === 'undefined') {
+    radius = 5
+  }
+
+  if (typeof radius === 'number') {
+    radius = { tl: radius, tr: radius, br: radius, bl: radius }
+  } else {
+    let defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 }
+
+    for (let side in defaultRadius) {
+      radius[side] = radius[side] || defaultRadius[side]
+    }
+  }
+
+  path.moveTo(x + radius.tl, y)
+  path.lineTo(x + width - radius.tr, y)
+  path.quadraticCurveTo(x + width, y, x + width, y + radius.tr)
+  path.lineTo(
+    x + width,
+    y + height - radius.br - (clipped ? radius.br * 2.5 : 0)
+  )
+  path.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - radius.br - (clipped ? radius.br * 2.5 : 0),
+    y + height
+  )
+  path.lineTo(x + radius.bl, y + height)
+  path.quadraticCurveTo(x, y + height, x, y + height - radius.bl)
+  path.lineTo(x, y + radius.tl)
+  path.quadraticCurveTo(x, y, x + radius.tl, y)
+  path.closePath()
+  return path
 }
 
 export default {
@@ -18,7 +50,7 @@ export default {
     collapsed: {
       type: Boolean,
       required: false,
-      default: false
+      default: true
     },
     height: {
       type: Number,
@@ -44,48 +76,64 @@ export default {
       default: null
     }
   },
-  data: () => ({
-    animationDuration: 500,
-    id: uniqueId('timeline'),
-    canvas: null,
-    now: Date.now(),
-    svg: null,
-    zoom: d3.zoom(),
+  data() {
+    return {
+      animationDuration: 500,
+      id: uniqueId('timeline'),
+      canvas: null,
+      easing: 'easePolyInOut',
+      collapsed_: this.collapsed,
+      now: Date.now(),
+      svg: null,
+      zoom: d3.zoom(),
 
-    // Viewport extent
-    viewportLeft: 0,
-    viewportRight: 1,
+      // Bars
+      bars: [],
+      barMaxHeight: 75,
+      barMinHeight: 50,
+      barWidth: 25,
+      barPaddingY: 10,
 
-    // Dimensions
-    height_: null,
-    width_: null,
+      // Viewport extent
+      viewportLeft: 0,
+      viewportRight: 1,
 
-    padding: {
-      bottom: 5,
-      left: 5,
-      right: 5,
-      top: 5,
-      x: 10,
-      y: 10
-    },
+      // Dimensions
+      height_: null,
+      width_: null,
 
-    interval: null,
-    iterations: 0,
-    playing: false,
-    scaleExtent: [1, 10],
-    translateExtent: [
-      [-Infinity, -Infinity],
-      [Infinity, Infinity]
-    ],
-    transform: { x: 0, y: 0, k: 1 },
+      padding: {
+        bottom: 5,
+        left: 5,
+        right: 5,
+        top: 5,
+        x: 10,
+        y: 10
+      },
 
-    // Scales
-    x: d3.scaleTime(),
-    y: d3.scaleBand(),
-    xAxis: null,
-    xAxisNode: null
-  }),
+      interval: null,
+      iterations: 0,
+      playing: false,
+      scaleExtent: [1, 10],
+      translateExtent: [
+        [-Infinity, -Infinity],
+        [Infinity, Infinity]
+      ],
+      transform: { x: 0, y: 0, k: 1 },
+
+      // Scales
+      x: d3.scaleTime(),
+      y: d3.scaleBand(),
+      xAxis: null,
+      xAxisNode: null
+    }
+  },
   computed: {
+    draw: function() {
+      return throttle(() => {
+        requestAnimationFrame(this.rawDraw)
+      }, 16)
+    },
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
@@ -138,10 +186,220 @@ export default {
           }
         })
     },
+    _renderCanvas() {
+      const height = this.collapsed_
+        ? this.barMaxHeight
+        : this.y.bandwidth() > this.barMaxHeight
+        ? this.barMaxHeight
+        : this.y.bandwidth()
+
+      const calcBar = item => {
+        const x = item.start_time ? this.x(new Date(item.start_time)) : 0
+
+        const calcWidth = item.end_time
+          ? this.x(new Date(item.end_time)) - x
+          : item.start_time
+          ? this.x(Date.now()) - x
+          : 0
+
+        const width =
+          calcWidth > 0
+            ? calcWidth > this.barWidth
+              ? calcWidth
+              : this.barWidth
+            : calcWidth
+
+        // This indicates that the calculated width is less than the min
+        // bar width, so we should display an indicator that this isn't visually representative
+        const clipped = calcWidth < this.barWidth
+
+        const y = this.collapsed_ ? 0 : this.y(item.id) + this.barPaddingY
+
+        const alpha = 1
+
+        const barIndex = this.bars.findIndex(b => b.id == item.id)
+
+        const label = item[this.labelField]
+
+        // If the item isn't present in the bar array
+        // we instantiate a new bar...
+        if (barIndex < 0) {
+          this.bars.push({
+            ...item,
+            alpha: alpha,
+            clipped: clipped,
+            label: label,
+            height0: height,
+            height1: height,
+            height: height,
+            width0: 0,
+            width1: width,
+            width: 0,
+            x0: x || 0,
+            x1: x,
+            x: x || 0,
+            y0: y || 0,
+            y1: y,
+            y: y || 0
+          })
+        } else {
+          // ...otherwise we update the existing bar with
+          // new values
+          const bar = this.bars[barIndex]
+
+          const bar1 = {
+            ...item,
+            alpha: alpha,
+            clipped: clipped,
+            height0: bar.height,
+            height1: height,
+            height: bar.height,
+            width0: bar.width,
+            width1: width,
+            width: bar.width,
+            x0: bar.x > 0 ? bar.x : x,
+            x1: x,
+            x: bar.x > 0 ? bar.x : x,
+            y0: bar.y,
+            y1: y,
+            y: bar.y
+          }
+
+          this.bars[barIndex] = { ...bar, ...bar1, ...item }
+        }
+      }
+
+      this.items.forEach(calcBar)
+
+      // Check our existing bars against current data
+      this.bars
+        // If this is a valid bar, do nothing since its data was already
+        // updated
+        .filter(bar => !this.items.find(item => item.id == bar.id))
+        // ...otherwise we'll start the exit animation
+        .forEach((bar, i) => {
+          const bar1 = {
+            clipped: false,
+            height0: bar.height,
+            height1: height,
+            height: bar.height,
+            width0: bar.width,
+            width1: 0,
+            width: bar.width,
+            x0: bar.x,
+            x1: bar.x,
+            x: bar.x,
+            y0: bar.y,
+            y1: bar.y,
+            y: bar.y,
+            leaving: true
+          }
+
+          this.bars[i] = { ...bar, ...bar1 }
+        })
+
+      this.draw()
+      const timingCallback = elapsed => {
+        const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
+
+        this.bars.forEach(bar => {
+          const multiplier = bar.leaving ? t * 10 : t
+
+          bar.alpha = this.hoveredId
+            ? bar.id == this.hoveredId
+              ? 1
+              : 0.5
+            : bar.alpha || 1
+          bar.x = Math.round(bar.x0 * (1 - t) + bar.x1 * multiplier)
+          bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
+          bar.height = Math.round(
+            bar.height0 * (1 - t) + bar.height1 * multiplier
+          )
+          bar.width = Math.round(bar.width0 * (1 - t) + bar.width1 * multiplier)
+        })
+
+        this.draw()
+
+        if (t === 1) {
+          this.timer.stop()
+          this.bars = this.bars.filter(b => !b.leaving)
+        }
+      }
+
+      if (this.timer) {
+        this.timer.restart(timingCallback)
+      } else {
+        this.timer = d3.timer(timingCallback)
+      }
+    },
+    rawDraw() {
+      const context = this.canvas.node().getContext('2d')
+
+      context.save()
+      context.clearRect(0, 0, this.width_, this.height_)
+      context.translate(this.transform.x, this.transform.y)
+      context.scale(this.transform.k, this.transform.k)
+
+      context.beginPath()
+      let len = this.bars.length
+      for (let i = 0; i < len; ++i) {
+        const bar = this.bars[i]
+        this.bars[i].path2D = new Path2D()
+
+        context.globalAlpha = bar.alpha
+
+        let offset = 0
+        let colors = Object.keys(bar.colors)
+
+        colors.forEach((color, j) => {
+          context.fillStyle = color || '#eee'
+
+          const width = bar.width * bar.colors[color]
+          const radius = { tl: 0, tr: 0, br: 0, bl: 0 }
+
+          if (j === 0) {
+            radius.tl = bar.height / 2
+            radius.bl = bar.height / 2
+          }
+
+          if (j === colors.length - 1) {
+            radius.tr = bar.height / 2
+            radius.br = bar.height / 2
+          }
+
+          roundRect(
+            this.bars[i].path2D,
+            bar.x + offset,
+            bar.y,
+            width,
+            bar.height,
+            radius,
+            bar.clipped
+          )
+
+          offset += width
+        })
+
+        context.fill(this.bars[i].path2D)
+
+        // if (bar.label) {
+        //   const savedStrokeStyle = context.fillStyle
+        //   context.font = `${
+        //     bar.height > this.barMinHeight ? this.barMinHeight : bar.height / 2
+        //   }px Roboto`
+        //   context.fillStyle = '#273746'
+        //   context.textBaseline = 'middle'
+        //   context.fillText(bar.label, bar.x + 2, bar.y + bar.height / 2)
+        //   context.fillStyle = savedStrokeStyle
+        // }
+      }
+
+      context.restore()
+    },
     play() {
       this.playing = true
       this.interval = d3.interval(() => {
-        // this.updateX()
+        this._renderCanvas()
         ++this.iterations
       }, this.animationDuration)
     },
@@ -172,22 +430,31 @@ export default {
 
       const width = parent.clientWidth - padding.left - padding.right
 
-      const height = parent.clientHeight - padding.top - padding.bottom
+      const height = this.collapsed_
+        ? parent.clientHeight - padding.top - padding.bottom
+        : this.height
+        ? this.height
+        : this.items.length * this.barMinHeight
 
       if (!height || !width || height <= 0 || width <= 0) {
         return
       }
 
+      console.log(height)
+      const axisHeight = 35
+
       this.svg
         .attr('viewbox', `0 0 ${width} ${height}`)
         .attr('width', width)
-        .attr('height', height + 50)
+        .attr('height', height + axisHeight)
 
-      this.canvas.attr('width', width).attr('height', height)
+      this.canvas
+        .attr('width', width)
+        .attr('height', height)
+        .style('transform', `translate(0, ${axisHeight}px)`)
 
-      this.xAxisNode
-        .attr('class', 'x-axis-group')
-        .attr('transform', `translate(0, ${height})`)
+      this.xAxisNode.attr('class', 'x-axis-group').style('position', 'fixed')
+      // .style('transform', `translate(0, ${height}px)`) // This moves the axis to the bottom of the svg node
 
       this.x.range([this.padding.left, width - this.padding.right])
 
@@ -200,6 +467,9 @@ export default {
       const domainEnd = this.end ?? now
 
       this.x.domain([domainStart, domainEnd])
+
+      this.y.domain(this.items.map(item => item.id))
+      this.y.range([0, height])
 
       this.scaleExtent = [
         1,
@@ -218,16 +488,14 @@ export default {
       this.zoom
         .scaleExtent(this.scaleExtent)
         .translateExtent(this.translateExtent)
-        .on('zoom', this.updateX)
+        .on('zoom', this.zoomed)
         .filter(filter)
 
+      this.zoomed({ transform: d3.zoomIdentity })
+
       this.canvas.call(this.zoom)
-
-      this.updateX({ transform: d3.zoomIdentity })
     },
-    updateX({ transform }) {
-      this.transform = transform
-
+    updateX() {
       const xAxis = this.newXAxis(this.transform.rescaleX(this.x))
 
       this.xAxisNode
@@ -236,30 +504,35 @@ export default {
         .ease(d3.easeLinear)
         .call(xAxis)
     },
-    zoomed(e) {
-      this.transform = e.transform
+    zoomed({ transform }) {
+      this.transform = transform
       this.updateX()
+      this._renderCanvas()
+    },
+    collapse() {
+      this.collapsed_ = !this.collapsed_
+      this.resizeChart()
     },
     panLeft() {
-      this.svg
+      this.canvas
         .transition()
         .duration(500)
         .call(this.zoom.translateBy, 200, 0)
     },
     panRight() {
-      this.svg
+      this.canvas
         .transition()
         .duration(500)
         .call(this.zoom.translateBy, -200, 0)
     },
     zoomIn() {
-      this.svg
+      this.canvas
         .transition()
         .duration(500)
         .call(this.zoom.scaleBy, 2)
     },
     zoomOut() {
-      this.svg
+      this.canvas
         .transition()
         .duration(500)
         .call(this.zoom.scaleBy, 0.5)
@@ -271,10 +544,15 @@ export default {
 <template>
   <div>
     <div>
-      <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
-      <div>Number of iterations: {{ iterations }}</div>
+      <div class="d-flex my-4">
+        <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
 
-      <div class="d-flex">
+        <v-btn class="ml-12" @click="collapse">
+          {{ collapsed_ ? 'Expand' : 'Collapse' }}
+        </v-btn>
+      </div>
+
+      <div class="d-flex  my-4">
         <v-btn :disabled="transform.k == scaleExtent[1]" @click="zoomIn">
           +
         </v-btn>
@@ -350,3 +628,6 @@ export default {
   // }
 }
 </style>
+
+referer:
+https://cloud.prefect.io/?client_id=z8iBknuNYsEHh61it7ihD5EVvMsG9920&connection=&lang=en-US%2Cen%3Bq%3D0.9&error=invalid_request&error_description=The%20redirect_uri%20parameter%20is%20not%20valid%3A%20%22%24DEPLOY_PRIME_URL%22%20If%20url%20looks%20fine%2C%20check%20that%20you%20are%20not%20including%20non%20printable%20chars&tracking=1c1ff19e888398fb3c0f
