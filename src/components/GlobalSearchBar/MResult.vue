@@ -13,10 +13,9 @@ export default {
 </script>
 
 <template>
-  <div class="search-result">
+  <div>
     <v-list-item-content>
       <v-list-item-subtitle>{{ typeName }}</v-list-item-subtitle>
-
       <v-list-item-subtitle class="id-subtitle">
         Here I am, brain the size of a planet and they ask me to tell you about
         Prefect....
@@ -26,11 +25,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.search-result {
-  cursor: pointer;
-  min-width: 15rem;
-}
-
 .id-subtitle {
   font-size: 0.6rem !important;
 }
