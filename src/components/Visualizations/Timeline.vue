@@ -204,9 +204,9 @@ export default {
             width0: bar.width,
             width1: width,
             width: bar.width,
-            x0: bar.x > 0 ? bar.x : x,
+            x0: bar.x,
             x1: x,
-            x: bar.x > 0 ? bar.x : x,
+            x: bar.x,
             y0: bar.y,
             y1: y,
             y: bar.y
@@ -304,7 +304,7 @@ export default {
           const radius = (bar.height / 2) * (1 / this.transform.k)
           const width = bar.width * bar.colors[color]
           // const adjustedWidth = width - radius * 2
-          const circleOffset = (width / 2) * (1 / this.transform.k)
+          const circleOffset = radius
 
           // If the unadjusted height and width are equal,
           // we just draw a single shape (a circle)
