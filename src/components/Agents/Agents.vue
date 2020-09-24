@@ -316,9 +316,9 @@ export default {
       </p>
 
       <p class="mb-0">
-        Refer to the Prefect Cloud documentation on
+        Refer to the Prefect documentation on
         <a
-          href="https://docs.prefect.io/cloud/agent/overview.html"
+          href="https://docs.prefect.io/orchestration/agents/overview.html"
           target="_blank"
           rel="noopener noreferrer"
           >agents</a
@@ -332,7 +332,7 @@ export default {
         <router-link class="link" :to="{ name: 'universal-deploy-tutorial' }">
           <u>Universal Deploy</u>
         </router-link>
-        tutorials for guidance on running agents in Cloud.
+        tutorials for guidance on running agents.
       </p>
     </v-alert>
   </div>

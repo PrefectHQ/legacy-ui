@@ -363,7 +363,6 @@ export default {
             tile
           >
             <AgentsTile full-height @view-details-clicked="tab = 'agents'" />
-            <ApiHealthCheckTile />
           </v-skeleton-loader>
         </TileLayout>
       </v-tab-item>
