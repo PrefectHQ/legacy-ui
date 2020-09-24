@@ -89,9 +89,7 @@ export default {
 
       // Bars
       bars: [],
-      barMaxHeight: 75,
-      barMinHeight: 50,
-      barWidth: 25,
+      barRadius: 50,
       barPaddingY: 10,
 
       // Viewport extent
@@ -188,9 +186,9 @@ export default {
     },
     _renderCanvas() {
       const height = this.collapsed_
-        ? this.barMaxHeight
-        : this.y.bandwidth() > this.barMaxHeight
-        ? this.barMaxHeight
+        ? this.barRadius
+        : this.y.bandwidth() < this.barRadius
+        ? this.barRadius
         : this.y.bandwidth()
 
       const calcBar = item => {
@@ -202,18 +200,13 @@ export default {
           ? this.x(Date.now()) - x
           : 0
 
-        const width =
-          calcWidth > 0
-            ? calcWidth > this.barWidth
-              ? calcWidth
-              : this.barWidth
-            : calcWidth
+        const width = calcWidth > this.barRadius ? calcWidth : this.barRadius
 
         // This indicates that the calculated width is less than the min
         // bar width, so we should display an indicator that this isn't visually representative
-        const clipped = calcWidth < this.barWidth
+        const clipped = calcWidth < this.barRadius
 
-        const y = this.collapsed_ ? 0 : this.y(item.id) + this.barPaddingY
+        const y = this.collapsed_ ? 0 : this.y(item.id)
 
         const alpha = 1
 
@@ -232,9 +225,9 @@ export default {
             height0: height,
             height1: height,
             height: height,
-            width0: 0,
+            width0: this.barRadius,
             width1: width,
-            width: 0,
+            width: this.barRadius,
             x0: x || 0,
             x1: x,
             x: x || 0,
@@ -355,27 +348,40 @@ export default {
           context.fillStyle = color || '#eee'
 
           const width = bar.width * bar.colors[color]
+
+          const rd = bar.height / 2
           const radius = { tl: 0, tr: 0, br: 0, bl: 0 }
 
           if (j === 0) {
-            radius.tl = bar.height / 2
-            radius.bl = bar.height / 2
+            radius.tl = rd
+            radius.bl = rd
           }
 
           if (j === colors.length - 1) {
-            radius.tr = bar.height / 2
-            radius.br = bar.height / 2
+            radius.tr = rd
+            radius.br = rd
           }
 
-          roundRect(
-            this.bars[i].path2D,
-            bar.x + offset,
-            bar.y,
-            width,
-            bar.height,
-            radius,
-            bar.clipped
-          )
+          console.log(i, j, bar.x, width, bar.height, radius)
+          if (width == this.barRadius && colors.length === 1) {
+            const circleOffset = width / 2
+            this.bars[i].path2D.arc(
+              bar.x + circleOffset,
+              bar.y + circleOffset,
+              circleOffset,
+              0,
+              2 * Math.PI
+            )
+          } else {
+            roundRect(
+              this.bars[i].path2D,
+              bar.x + offset,
+              bar.y,
+              width,
+              bar.height,
+              radius
+            )
+          }
 
           offset += width
         })
@@ -434,13 +440,12 @@ export default {
         ? parent.clientHeight - padding.top - padding.bottom
         : this.height
         ? this.height
-        : this.items.length * this.barMinHeight
+        : this.items.length * this.barRadius
 
       if (!height || !width || height <= 0 || width <= 0) {
         return
       }
 
-      console.log(height)
       const axisHeight = 35
 
       this.svg
@@ -456,7 +461,7 @@ export default {
       this.xAxisNode.attr('class', 'x-axis-group').style('position', 'fixed')
       // .style('transform', `translate(0, ${height}px)`) // This moves the axis to the bottom of the svg node
 
-      this.x.range([this.padding.left, width - this.padding.right])
+      this.x.range([this.barRadius * 1.25, width - this.padding.right])
 
       this.height_ = height
       this.width_ = width
