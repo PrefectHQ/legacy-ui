@@ -1,4 +1,4 @@
-mutation DeleteAgent($agentId: UUID!) {
+mutation DeleteAgent($agentId: String!) {
   delete_agent(input: { agent_id: $agentId }) {
     success
   }
