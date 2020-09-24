@@ -1,7 +1,6 @@
 <script>
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
-import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
@@ -40,7 +39,6 @@ export default {
   components: {
     Agents,
     AgentsTile,
-    ApiHealthCheckTile,
     FailedFlowsTile,
     FlowTableTile,
     InProgressTile,
