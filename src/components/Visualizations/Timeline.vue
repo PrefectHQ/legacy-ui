@@ -45,12 +45,14 @@ function roundRect(path, x, y, width, height, radius, clipped) {
   return path
 }
 
+roundRect
+
 export default {
   props: {
     collapsed: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     },
     height: {
       type: Number,
@@ -331,7 +333,7 @@ export default {
       context.save()
       context.clearRect(0, 0, this.width_, this.height_)
       context.translate(this.transform.x, this.transform.y)
-      context.scale(this.transform.k, this.transform.k)
+      context.scale(this.transform.k, 1)
 
       context.beginPath()
       let len = this.bars.length
@@ -348,39 +350,39 @@ export default {
           context.fillStyle = color || '#eee'
 
           const width = bar.width * bar.colors[color]
+          const radius = (bar.height / 2) * this.transform.k
+          const circleOffset = width / 2
 
-          const rd = bar.height / 2
-          const radius = { tl: 0, tr: 0, br: 0, bl: 0 }
-
-          if (j === 0) {
-            radius.tl = rd
-            radius.bl = rd
-          }
-
-          if (j === colors.length - 1) {
-            radius.tr = rd
-            radius.br = rd
-          }
-
-          console.log(i, j, bar.x, width, bar.height, radius)
           if (width == this.barRadius && colors.length === 1) {
-            const circleOffset = width / 2
-            this.bars[i].path2D.arc(
-              bar.x + circleOffset,
-              bar.y + circleOffset,
-              circleOffset,
-              0,
-              2 * Math.PI
-            )
+            circleOffset
+            // this.bars[i].path2D.arc(
+            //   bar.x + circleOffset,
+            //   bar.y + circleOffset,
+            //   circleOffset,
+            //   0,
+            //   2 * Math.PI
+            // )
           } else {
-            roundRect(
-              this.bars[i].path2D,
-              bar.x + offset,
-              bar.y,
-              width,
-              bar.height,
-              radius
-            )
+            this.bars[i].path2D.rect(bar.x + offset, bar.y, width, bar.height)
+
+            if (j === 0) {
+              this.bars[i].path2D.arc(
+                bar.x,
+                bar.y + bar.height / 2,
+                radius,
+                -(90 * Math.PI) / 180,
+                -(270 * Math.PI) / 180,
+                true
+              )
+            }
+            offset
+
+            // this.bars[i].path2D.rect(bar.x + offset, bar.y, width, bar.height)
+
+            // if (j === colors.length - 1) {
+            //   radius.tr = rd
+            //   radius.br = rd
+            // }
           }
 
           offset += width
@@ -434,13 +436,17 @@ export default {
 
       this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
 
-      const width = parent.clientWidth - padding.left - padding.right
+      const width = Math.floor(
+        parent.clientWidth - padding.left - padding.right
+      )
 
-      const height = this.collapsed_
-        ? parent.clientHeight - padding.top - padding.bottom
-        : this.height
-        ? this.height
-        : this.items.length * this.barRadius
+      const height = Math.floor(
+        this.collapsed_
+          ? parent.clientHeight - padding.top - padding.bottom
+          : this.height
+          ? this.height
+          : this.items.length * this.barRadius
+      )
 
       if (!height || !width || height <= 0 || width <= 0) {
         return
@@ -454,6 +460,8 @@ export default {
         .attr('height', height + axisHeight)
 
       this.canvas
+        .style('width', `${width}px`)
+        .style('height', `${height}px`)
         .attr('width', width)
         .attr('height', height)
         .style('transform', `translate(0, ${axisHeight}px)`)
@@ -476,14 +484,14 @@ export default {
       this.y.domain(this.items.map(item => item.id))
       this.y.range([0, height])
 
-      this.scaleExtent = [
-        1,
+      const scaleExtentUpper =
         (domainEnd.getTime() - domainStart.getTime()) / (1000 * 60)
-      ]
+
+      this.scaleExtent = [1, scaleExtentUpper < 2 ? 2 : scaleExtentUpper]
 
       this.translateExtent = [
         [0, 0],
-        [this.width_, this.height_]
+        [this.width_ * 2, this.height_ * 2]
       ]
 
       const filter = () => {
@@ -595,6 +603,7 @@ export default {
 <style lang="scss" scoped>
 .svg {
   border: 1px solid #dc143c;
+  box-sizing: border-box;
   height: 100%;
   // pointer-events: none;
   position: relative;
@@ -605,6 +614,7 @@ export default {
 
 .canvas {
   border: 1px solid #32cd32;
+  box-sizing: border-box;
   cursor: grab;
   left: 0;
   position: absolute;
