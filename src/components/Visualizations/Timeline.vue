@@ -51,6 +51,7 @@ export default {
 
       // Bars
       bars: [],
+      barPadding: 0.3,
       barRadius: 25,
 
       // Viewport extent
@@ -168,7 +169,7 @@ export default {
 
         const barIndex = this.bars.findIndex(b => b.id == item.id)
 
-        const label = item[this.labelField]
+        const label = item.label
 
         // If the item isn't present in the bar array
         // we instantiate a new bar...
@@ -294,14 +295,14 @@ export default {
 
         context.globalAlpha = bar.alpha
 
+        const y = bar.y * (1 / this.transform.k)
+        const radius = (bar.height / 2) * (1 / this.transform.k)
+
         let offset = 0
         let colors = Object.keys(bar.colors)
 
         colors.forEach((color, j) => {
           context.fillStyle = color || '#eee'
-
-          const y = bar.y * (1 / this.transform.k)
-          const radius = (bar.height / 2) * (1 / this.transform.k)
 
           // If the unadjusted height and width are equal,
           // we just draw a single shape (a circle)
@@ -352,16 +353,19 @@ export default {
 
         context.fill(this.bars[i].path2D)
 
-        // if (bar.label) {
-        //   const savedStrokeStyle = context.fillStyle
-        //   context.font = `${
-        //     bar.height > this.barMinHeight ? this.barMinHeight : bar.height / 2
-        //   }px Roboto`
-        //   context.fillStyle = '#273746'
-        //   context.textBaseline = 'middle'
-        //   context.fillText(bar.label, bar.x + 2, bar.y + bar.height / 2)
-        //   context.fillStyle = savedStrokeStyle
-        // }
+        // These are pretty fuzzy right now
+        // so we'll probably want to move them to the svg layer
+        if (bar.label) {
+          const savedStrokeStyle = context.fillStyle
+          const fontSize = Math.ceil(radius * 0.65)
+
+          context.font = `${fontSize}px Roboto`
+          context.textAlign = 'start'
+          context.textBaseline = 'hanging'
+          context.fillStyle = '#000'
+          context.fillText(bar.label, bar.x, y + radius * 2 + 2)
+          context.fillStyle = savedStrokeStyle
+        }
       }
 
       context.restore()
@@ -448,7 +452,8 @@ export default {
       this.x.domain([domainStart, domainEnd])
 
       this.y.domain(this.items.map(item => item.id))
-      this.y.paddingInner(0.1)
+      this.y.paddingInner(this.barPadding)
+      this.y.paddingOuter(this.barPadding * 2)
       this.y.range([0, height])
 
       const scaleExtentUpper =
