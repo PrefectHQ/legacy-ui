@@ -303,8 +303,6 @@ export default {
           const y = bar.y * (1 / this.transform.k)
           const radius = (bar.height / 2) * (1 / this.transform.k)
           const width = bar.width * bar.colors[color]
-          // const adjustedWidth = width - radius * 2
-          const circleOffset = radius
 
           // If the unadjusted height and width are equal,
           // we just draw a single shape (a circle)
@@ -312,13 +310,7 @@ export default {
           // than drawing 3 shapes
           if (bar.width <= bar.height) {
             const circle = new Path2D()
-            circle.arc(
-              bar.x + circleOffset,
-              y + circleOffset,
-              radius,
-              0,
-              2 * Math.PI
-            )
+            circle.arc(bar.x + radius, y + radius, radius, 0, 2 * Math.PI)
 
             this.bars[i].path2D.addPath(circle)
           } else {
