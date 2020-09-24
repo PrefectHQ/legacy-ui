@@ -4,6 +4,7 @@ import { mapGetters, mapActions } from 'vuex'
 import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
 import moment from '@/utils/moment'
+import { formatTime } from '@/mixins/formatTimeMixin'
 
 const AGENT_TYPES = [
   { type: 'DockerAgent', icon: '$docker' },
@@ -24,6 +25,7 @@ export default {
       return moment(value).format('h:mma z')
     }
   },
+  mixins: [formatTime],
   props: {
     agent: {
       type: Object,
@@ -53,6 +55,7 @@ export default {
   },
   computed: {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
+    ...mapGetters('api', ['isCloud']),
     agentModified() {
       return {
         ...this.agent,
@@ -180,7 +183,7 @@ export default {
   <v-card
     tile
     :disabled="isDeleting"
-    class="agent-card px-2 pb-3"
+    class="agent-card overflow-y-scroll px-2 pb-3"
     :min-height="$vuetify.breakpoint.smAndDown ? null : 260"
   >
     <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
@@ -258,7 +261,7 @@ export default {
           </div>
         </transition>
 
-        <div class="d-flex justify-space-between mb-0 mt-6">
+        <div class="d-flex justify-space-between mb-4 mt-4">
           <div style="width: 50%;">
             <div class="caption">
               CORE VERSION
@@ -268,7 +271,7 @@ export default {
             </div>
           </div>
 
-          <div style="width: 50%;">
+          <div v-if="isCloud" style="width: 50%;">
             <div class="caption">
               TOKEN NAME
             </div>
@@ -312,13 +315,22 @@ export default {
           </div>
         </div>
 
-        <div class="overline mb-0 mt-6">
+        <div style="width: 50%;">
+          <div class="caption">
+            CREATED
+          </div>
+          <div class="body-2">
+            {{ formDate(agent.created) || 'Unknown' }}
+          </div>
+        </div>
+
+        <div class="overline mb-0 mt-2">
           LABELS
         </div>
       </div>
       <div
         v-if="agent && agentModified.labels.length > 0"
-        class="px-3"
+        class="px-3 overflow-y-scroll"
         style="height: 80px;"
       >
         <v-chip-group column multiple style="user-select: none;">
@@ -339,7 +351,7 @@ export default {
       </div>
     </v-card-text>
 
-    <v-divider class="my-2" />
+    <v-divider class="mt-6 mb-4" />
 
     <v-card-actions class="pa-0" style="height: 28px;">
       <v-spacer />

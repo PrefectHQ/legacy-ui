@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import jsBeautify from 'js-beautify'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import CardTitle from '@/components/Card-Title'
@@ -22,6 +23,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     hasContext() {
       return (
         this.flowRun.context && Object.keys(this.flowRun.context).length > 0
@@ -170,6 +172,24 @@ export default {
                 </v-tooltip>
                 {{ flowRun.state_message }}
               </div>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item v-if="flowRun.agent_id" dense class="px-0">
+            <v-list-item-content>
+              <v-list-item-subtitle class="caption">
+                Agent ID
+              </v-list-item-subtitle>
+              <router-link
+                class="link"
+                :to="{
+                  name: 'dashboard',
+                  params: { tenant: tenant.slug },
+                  query: { agents: '' }
+                }"
+              >
+                {{ flowRun.agent_id }}
+              </router-link>
             </v-list-item-content>
           </v-list-item>
 

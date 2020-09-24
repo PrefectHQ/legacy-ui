@@ -140,7 +140,7 @@ export default {
               class=" text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
-              You do not have any agents querying Prefect Cloud for flow runs.
+              You do not have any agents querying for flow runs.
             </div>
           </v-list-item-content>
         </v-list-item>

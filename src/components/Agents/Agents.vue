@@ -312,7 +312,7 @@ export default {
       max-width="600"
     >
       <p>
-        You do not have any agents querying Prefect Cloud for flow runs.
+        You do not have any agents querying for flow runs.
       </p>
 
       <p class="mb-0">
