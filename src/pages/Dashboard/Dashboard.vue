@@ -34,19 +34,7 @@ const serverTabs = [
   }
 ]
 
-const cloudTabs = [
-  // {
-  //   name: 'Agents',
-  //   target: 'agents',
-  //   icon: 'pi-agent',
-  //   iconSize: 'small'
-  // }
-  // {
-  //   name: 'Analytics',
-  //   target: 'analytics',
-  //   icon: 'insert_chart_outlined'
-  // }
-]
+const cloudTabs = []
 
 export default {
   components: {
