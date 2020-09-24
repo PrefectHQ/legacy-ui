@@ -261,7 +261,7 @@ export default {
           </div>
         </transition>
 
-        <div class="d-flex justify-space-between mb-4 mt-4">
+        <div class="d-flex justify-space-between mb-2 mt-2">
           <div style="width: 50%;">
             <div class="caption">
               CORE VERSION
@@ -315,12 +315,38 @@ export default {
           </div>
         </div>
 
-        <div style="width: 50%;">
+        <div style="width: 50%;" class="mb-2">
           <div class="caption">
             CREATED
           </div>
           <div class="body-2">
             {{ formDate(agent.created) || 'Unknown' }}
+          </div>
+        </div>
+
+        <div>
+          <div class="caption">
+            Agent ID
+          </div>
+          <div class="body-2 truncate">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <span
+                  class="cursor-pointer show-icon-hover-focus-only pa-2px"
+                  role="button"
+                  @click="copyTextToClipboard(agent.id)"
+                  v-on="on"
+                >
+                  <v-icon x-small class="mb-2px mr-2" tabindex="0">
+                    {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
+                  </v-icon>
+                  {{ agent.id || 'Unknown' }}
+                </span>
+              </template>
+              <span>
+                {{ agent.id || 'Unknown' }}
+              </span>
+            </v-tooltip>
           </div>
         </div>
 
@@ -351,7 +377,7 @@ export default {
       </div>
     </v-card-text>
 
-    <v-divider class="mt-6 mb-4" />
+    <v-divider class="mt-12 mb-4" />
 
     <v-card-actions class="pa-0" style="height: 28px;">
       <v-spacer />
