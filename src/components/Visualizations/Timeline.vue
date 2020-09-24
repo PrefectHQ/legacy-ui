@@ -4,48 +4,8 @@ import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 
-throttle
 const formatTime = d3.timeFormat('%-I:%M:%S')
 const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
-
-// Adapted for 2D Path context from https://stackoverflow.com/a/3368118
-function roundRect(path, x, y, width, height, radius, clipped) {
-  if (typeof radius === 'undefined') {
-    radius = 5
-  }
-
-  if (typeof radius === 'number') {
-    radius = { tl: radius, tr: radius, br: radius, bl: radius }
-  } else {
-    let defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 }
-
-    for (let side in defaultRadius) {
-      radius[side] = radius[side] || defaultRadius[side]
-    }
-  }
-
-  path.moveTo(x + radius.tl, y)
-  path.lineTo(x + width - radius.tr, y)
-  path.quadraticCurveTo(x + width, y, x + width, y + radius.tr)
-  path.lineTo(
-    x + width,
-    y + height - radius.br - (clipped ? radius.br * 2.5 : 0)
-  )
-  path.quadraticCurveTo(
-    x + width,
-    y + height,
-    x + width - radius.br - (clipped ? radius.br * 2.5 : 0),
-    y + height
-  )
-  path.lineTo(x + radius.bl, y + height)
-  path.quadraticCurveTo(x, y + height, x, y + height - radius.bl)
-  path.lineTo(x, y + radius.tl)
-  path.quadraticCurveTo(x, y, x + radius.tl, y)
-  path.closePath()
-  return path
-}
-
-roundRect
 
 export default {
   props: {
@@ -332,8 +292,8 @@ export default {
 
       context.save()
       context.clearRect(0, 0, this.width_, this.height_)
-      context.translate(this.transform.x, this.transform.y)
-      context.scale(this.transform.k, 1)
+      context.translate(this.transform.x, 1)
+      context.scale(this.transform.k, this.transform.k)
 
       context.beginPath()
       let len = this.bars.length
@@ -349,40 +309,52 @@ export default {
         colors.forEach((color, j) => {
           context.fillStyle = color || '#eee'
 
+          const y = bar.y * (1 / this.transform.k)
           const width = bar.width * bar.colors[color]
-          const radius = (bar.height / 2) * this.transform.k
-          const circleOffset = width / 2
+          const radius = (bar.height / 2) * (1 / this.transform.k)
+          const circleOffset = (width / 2) * (1 / this.transform.k)
 
           if (width == this.barRadius && colors.length === 1) {
-            circleOffset
-            // this.bars[i].path2D.arc(
-            //   bar.x + circleOffset,
-            //   bar.y + circleOffset,
-            //   circleOffset,
-            //   0,
-            //   2 * Math.PI
-            // )
+            const circle = new Path2D()
+            circle.arc(
+              bar.x + circleOffset,
+              y + circleOffset,
+              radius,
+              0,
+              2 * Math.PI
+            )
+
+            this.bars[i].path2D.addPath(circle)
           } else {
-            this.bars[i].path2D.rect(bar.x + offset, bar.y, width, bar.height)
+            this.bars[i].path2D.rect(bar.x + offset, y, width, radius * 2)
 
             if (j === 0) {
-              this.bars[i].path2D.arc(
+              const cap = new Path2D()
+              cap.arc(
                 bar.x,
-                bar.y + bar.height / 2,
+                y + radius,
                 radius,
                 -(90 * Math.PI) / 180,
                 -(270 * Math.PI) / 180,
                 true
               )
+
+              this.bars[i].path2D.addPath(cap)
             }
-            offset
 
-            // this.bars[i].path2D.rect(bar.x + offset, bar.y, width, bar.height)
+            if (j === colors.length - 1) {
+              const cap = new Path2D()
+              cap.arc(
+                bar.x + width,
+                y + radius,
+                radius,
+                (90 * Math.PI) / 180,
+                (270 * Math.PI) / 180,
+                true
+              )
 
-            // if (j === colors.length - 1) {
-            //   radius.tr = rd
-            //   radius.br = rd
-            // }
+              this.bars[i].path2D.addPath(cap)
+            }
           }
 
           offset += width

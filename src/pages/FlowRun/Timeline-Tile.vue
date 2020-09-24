@@ -1,6 +1,5 @@
 <script>
 import gql from 'graphql-tag'
-import moment from 'moment'
 
 const computedStyle = getComputedStyle(document.documentElement)
 
@@ -26,22 +25,10 @@ export default {
   data: () => ({}),
   computed: {
     endTime() {
-      if (this.items?.length) {
-        let end_moments = this.items
-          .filter(t => t.end_time)
-          .map(t => moment(t.end_time))
-        return moment.max(end_moments).toISOString()
-      }
       return this.flowRun.end_time
     },
     startTime() {
-      if (this.items?.length) {
-        let start_moments = this.items
-          .filter(t => t.start_time)
-          .map(t => moment(t.start_time))
-        return moment.min(start_moments).toISOString()
-      }
-      return this.flowRun.start_time || this.flowRun.scheduled_start_time
+      return this.flowRun.scheduled_start_time
     },
     items() {
       if (!this.tasks) return
@@ -79,8 +66,13 @@ export default {
             item.colors[color] = mappedRef.state_counts[state] / total
           })
         } else {
-          item.start_time = taskRun.start_time
+          item.start_time =
+            taskRun.start_time ?? this.flowRun.scheduled_start_time
           item.end_time = taskRun.end_time
+            ? taskRun.end_time
+            : taskRun.state == 'Running'
+            ? null
+            : item.start_time
 
           const color = computedStyle
             .getPropertyValue(`--v-${taskRun.state}-base`)
