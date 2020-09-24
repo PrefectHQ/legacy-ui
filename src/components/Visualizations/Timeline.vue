@@ -302,7 +302,6 @@ export default {
 
           const y = bar.y * (1 / this.transform.k)
           const radius = (bar.height / 2) * (1 / this.transform.k)
-          const width = bar.width * bar.colors[color]
 
           // If the unadjusted height and width are equal,
           // we just draw a single shape (a circle)
@@ -314,12 +313,15 @@ export default {
 
             this.bars[i].path2D.addPath(circle)
           } else {
-            this.bars[i].path2D.rect(bar.x + offset, y, width, radius * 2)
+            const x = bar.x + radius
+            const width = bar.width * bar.colors[color]
+
+            this.bars[i].path2D.rect(x + offset, y, width, radius * 2)
 
             if (j === 0) {
               const cap = new Path2D()
               cap.arc(
-                bar.x,
+                x,
                 y + radius,
                 radius,
                 -(90 * Math.PI) / 180,
@@ -333,7 +335,7 @@ export default {
             if (j === colors.length - 1) {
               const cap = new Path2D()
               cap.arc(
-                bar.x + width,
+                x + width,
                 y + radius,
                 radius,
                 (90 * Math.PI) / 180,
@@ -343,9 +345,9 @@ export default {
 
               this.bars[i].path2D.addPath(cap)
             }
-          }
 
-          offset += width
+            offset += width
+          }
         })
 
         context.fill(this.bars[i].path2D)
