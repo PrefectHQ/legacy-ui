@@ -470,7 +470,7 @@ export default {
 
       this.translateExtent = [
         [0, 0],
-        [this.width_ + this.width_ * 0.3, this.height_]
+        [this.width_ + this.width_ * 0.1, this.height_]
       ]
 
       const filter = () => {
