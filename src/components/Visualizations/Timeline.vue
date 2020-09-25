@@ -451,8 +451,11 @@ export default {
 
       const now = new Date()
 
-      const domainStart = this.start
-      const domainEnd = this.end ?? now
+      const startMs = this.start?.getTime() ?? 0
+      const endMs = (this.end ?? now)?.getTime() ?? 0
+      const domainPadding = 60000 // 1 minute padding on either side
+      const domainStart = new Date(startMs - domainPadding)
+      const domainEnd = new Date(endMs + domainPadding)
 
       this.x.domain([domainStart, domainEnd])
 
@@ -461,14 +464,13 @@ export default {
       this.y.paddingOuter(this.barPadding * 2)
       this.y.range([0, height])
 
-      const scaleExtentUpper =
-        (domainEnd.getTime() - domainStart.getTime()) / (1000 * 60)
+      const scaleExtentUpper = (endMs - startMs) / (1000 * 60)
 
       this.scaleExtent = [1, scaleExtentUpper < 2 ? 2 : scaleExtentUpper]
 
       this.translateExtent = [
         [0, 0],
-        [this.width_ * 2, this.height_ * 2]
+        [this.width_ + this.width_ * 0.3, this.height_]
       ]
 
       const filter = () => {
