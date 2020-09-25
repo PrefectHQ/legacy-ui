@@ -43,6 +43,7 @@ export default {
       animationDuration: 500,
       id: uniqueId('timeline'),
       canvas: null,
+      drawTimeout: null,
       easing: 'easePolyInOut',
       collapsed_: this.collapsed,
       now: Date.now(),
@@ -147,7 +148,9 @@ export default {
         })
     },
     _renderCanvas() {
-      const height = this.y.bandwidth()
+      const height = this.collapsed_
+        ? this.barRadius * 2 - this.barRadius * this.barPadding * 2
+        : this.y.bandwidth()
 
       const calcBar = item => {
         const x = item.start_time ? this.x(new Date(item.start_time)) : 0
@@ -160,10 +163,9 @@ export default {
 
         const width = calcWidth > height ? calcWidth : height
 
-        // This indicates that the calculated width is less than the min
-        // bar width, so we should display an indicator that this isn't visually representative
-
-        const y = this.collapsed_ ? 0 : this.y(item.id)
+        const y = this.collapsed_
+          ? this.barPadding * this.barRadius
+          : this.y(item.id)
 
         const alpha = 1
 
@@ -385,6 +387,7 @@ export default {
       this.interval?.stop()
     },
     rawResizeChart() {
+      clearTimeout(this.drawTimeout)
       let parent = this.canvas.select(function() {
         return this.parentNode
       })?._groups?.[0]?.[0]
@@ -414,7 +417,9 @@ export default {
       if (this.height) {
         height = this.height
       } else {
-        height = this.items.length * this.barRadius * 2
+        height = this.collapsed_
+          ? this.barRadius * 2
+          : this.items.length * this.barRadius * 2
       }
       height = Math.floor(height)
 
@@ -470,15 +475,19 @@ export default {
         return event.isTrusted
       }
 
-      this.zoom
-        .scaleExtent(this.scaleExtent)
-        .translateExtent(this.translateExtent)
-        .on('zoom', this.zoomed)
-        .filter(filter)
+      // We use a timeout to account for the transition
+      // period when redrawing the canvas and svg nodes
+      this.drawTimeout = setTimeout(() => {
+        this.zoom
+          .scaleExtent(this.scaleExtent)
+          .translateExtent(this.translateExtent)
+          .on('zoom', this.zoomed)
+          .filter(filter)
 
-      this.zoomed({ transform: d3.zoomIdentity })
+        this.zoomed({ transform: d3.zoomIdentity })
 
-      this.canvas.call(this.zoom)
+        this.canvas.call(this.zoom)
+      }, 500)
     },
     updateX() {
       const xAxis = this.newXAxis(this.transform.rescaleX(this.x))
@@ -610,6 +619,7 @@ export default {
   // pointer-events: none;
   position: relative;
   // user-select: none;
+  transition: all 500ms;
   width: 100%;
   z-index: 0;
 }
@@ -621,6 +631,7 @@ export default {
   left: 0;
   position: absolute;
   top: 0;
+  transition: all 500ms;
   z-index: 1;
 }
 </style>
