@@ -357,13 +357,13 @@ export default {
         // so we'll probably want to move them to the svg layer
         if (bar.label) {
           const savedStrokeStyle = context.fillStyle
-          const fontSize = Math.ceil(radius * 0.65)
+          const fontSize = 14 * (1 / this.transform.k)
+          const textY = (12 + bar.y + bar.height) * (1 / this.transform.k)
 
           context.font = `${fontSize}px Roboto`
           context.textAlign = 'start'
-          context.textBaseline = 'hanging'
           context.fillStyle = '#000'
-          context.fillText(bar.label, bar.x, y + radius * 2 + 2)
+          context.fillText(bar.label, bar.x, textY)
           context.fillStyle = savedStrokeStyle
         }
       }
