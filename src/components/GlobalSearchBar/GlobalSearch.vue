@@ -313,11 +313,9 @@ export default {
           </v-list-item>
         </template>
         <template v-else v-slot:no-data>
-          <v-list-item>
-            <v-list-item-title v-if="mResult">
-              <MResult />
-            </v-list-item-title>
-            <v-list-item-title v-else>
+          <MResult v-if="mResult" />
+          <v-list-item v-else>
+            <v-list-item-title>
               No results matched your search.
             </v-list-item-title>
           </v-list-item>
