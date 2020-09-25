@@ -326,7 +326,7 @@ export default {
 
         <div>
           <div class="caption">
-            Agent ID
+            AGENT ID
           </div>
           <div class="body-2 truncate">
             <v-tooltip bottom>
