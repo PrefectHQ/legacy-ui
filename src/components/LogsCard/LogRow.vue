@@ -1,5 +1,7 @@
 <script>
+import { formatTime } from '@/mixins/formatTimeMixin'
 export default {
+  mixins: [formatTime],
   props: {
     index: {
       type: Number,
@@ -109,10 +111,10 @@ export default {
       <v-tooltip top>
         <template v-slot:activator="{ on }">
           <div class="log-datetime grey--text text--darken-1" v-on="on">
-            {{ log.time }}
+            {{ logTime(log.timestamp) }}
           </div>
         </template>
-        <span>{{ log.date }} at {{ log.time }}</span>
+        <span>{{ logDate(log.timestamp) }}</span>
       </v-tooltip>
       <div class="log-level d-flex align-center justify-start">
         <v-icon :color="logLevelColor(log.level)" x-small>lens</v-icon>

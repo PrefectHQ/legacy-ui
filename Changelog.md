@@ -10,6 +10,13 @@
 
 - None
 
+## 2020-09-24
+
+### Bugfixes
+
+- Fix `delete_agent` mutation `agentId` type [#253](https://github.com/PrefectHQ/ui/pull/253)
+- Add 24 hour clock to the logs row [#247](https://github.com/PrefectHQ/ui/pull/247)
+
 ## 2020-09-23
 
 ### Features and Improvements
@@ -21,10 +28,6 @@
 - Improves component teardown by accounting for elements whose destroyed method had been called but that hadn't been removed from the DOM due to transitions - [#232](https://github.com/PrefectHQ/ui/pull/232)
 - Improve navigation experience when going forward/backward in the browser history - [#232](https://github.com/PrefectHQ/ui/pull/232)
 - Improve the usability of apollo endpoint setting - [#241](https://github.com/PrefectHQ/ui/pull/241)
-
-### Bugfixes
-
-- None
 
 ## 2020-09-17
 
@@ -169,10 +172,6 @@
 ### Features and Improvements
 
 - Update connection icon if Cloud is in maintenance mode - [#155](https://github.com/PrefectHQ/ui/pull/155)
-
-### Bugfixes
-
-- None
 
 ## 2020-08-25
 
