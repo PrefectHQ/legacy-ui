@@ -9,6 +9,11 @@ const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 
 export default {
   props: {
+    breakpoints: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
     collapsed: {
       type: Boolean,
       required: false,
@@ -42,13 +47,17 @@ export default {
     return {
       animationDuration: 500,
       id: uniqueId('timeline'),
-      canvas: null,
       drawTimeout: null,
       easing: 'easePolyInOut',
       collapsed_: this.collapsed,
       now: Date.now(),
-      svg: null,
       zoom: d3.zoom(),
+
+      // DOM refs
+      canvas: null,
+      breakpointsNode: null,
+      svg: null,
+      xAxisNode: null,
 
       // Bars
       bars: [],
@@ -85,8 +94,7 @@ export default {
       // Scales
       x: d3.scaleTime(),
       y: d3.scaleBand(),
-      xAxis: null,
-      xAxisNode: null
+      xAxis: null
     }
   },
   computed: {
@@ -114,6 +122,7 @@ export default {
     this.svg = d3.select(`#${this.id}-svg`)
 
     this.xAxisNode = this.svg.append('g')
+    this.breakpointsNode = this.svg.append('g')
 
     window.addEventListener('resize', this.resizeChart)
     requestAnimationFrame(this.resizeChart)
@@ -491,6 +500,93 @@ export default {
         this.canvas.call(this.zoom)
       }, 500)
     },
+    updateBreakpoints() {
+      this.breakpointsNode.attr(
+        'transform',
+        () => `translate(${this.transform.x}) scale(${this.transform.k})`
+      )
+
+      this.breakpointsNode
+        .selectAll('.breakpoints-group')
+        .data(this.breakpoints)
+        .join(
+          enter => {
+            const g = enter
+              .append('g')
+              .attr('transform', `translate(0) scale(${1 / this.transform.k})`)
+              .attr('class', 'breakpoints-group')
+
+            g.append('path')
+              .attr('stroke', '#999')
+              .attr('stroke-width', 1)
+              .attr('stroke-dasharray', 5)
+              .attr('d', `M0,10L0,${this.height_}`)
+              .style('pointer-events', 'none')
+
+            g.append('text')
+              .style('font-size', '8px')
+              .style('pointer-events', 'none')
+              .attr('fill', '#999')
+              .attr('text-anchor', d => d.anchor || 'middle')
+              .text(d => d.label)
+              .attr('y', 6)
+              .style('opacity', 0)
+              .transition()
+              .delay(this.animationDuration)
+              .duration(150)
+              .style('opacity', 1)
+
+            return g.call(enter =>
+              enter
+                .transition('enter')
+                .duration(0)
+                .attr(
+                  'transform',
+                  d =>
+                    `translate(${
+                      d.time ? this.x(new Date(d.time)) : -20
+                    }) scale(${1 / this.transform.k})`
+                )
+            )
+          },
+          update =>
+            update.call(update => {
+              update
+                .select('text')
+                .attr('text-anchor', d => d.anchor || 'middle')
+                .text(d => d.label)
+                .transition()
+                .delay(this.animationDuration)
+                .duration(150)
+                .style('opacity', 1)
+
+              return update.call(update =>
+                update.attr(
+                  'transform',
+                  d =>
+                    `translate(${
+                      d.time ? this.x(new Date(d.time)) : -20
+                    }) scale(${1 / this.transform.k})`
+                )
+              )
+            }),
+          exit => {
+            exit
+              .selectAll('text')
+              .transition('exit')
+              .duration(150)
+              .style('opacity', 0)
+
+            return exit.call(exit =>
+              exit
+                .transition('exit')
+                .duration(this.animationDuration)
+                .attr('transform', 'translate(0)')
+                .remove()
+            )
+          }
+        )
+    },
     updateX() {
       const xAxis = this.newXAxis(this.transform.rescaleX(this.x))
 
@@ -503,6 +599,7 @@ export default {
     zoomed({ transform }) {
       this.transform = transform
       this.updateX()
+      this.updateBreakpoints()
       this._renderCanvas()
     },
     collapse() {

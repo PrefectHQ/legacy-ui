@@ -32,6 +32,13 @@ export default function(isCloud) {
         state_timestamp
         version
 
+        states {
+          id
+          state
+          timestamp
+          message
+        }
+
         flow {
           id
           name

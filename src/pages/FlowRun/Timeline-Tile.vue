@@ -84,6 +84,23 @@ export default {
         return item
       })
     },
+    breakpoints() {
+      return [
+        {
+          label: 'Scheduled',
+          time: this.flowRun?.scheduled_start_time,
+          color: '#000'
+        },
+        {
+          label: 'Submitted',
+          time: this.flowRun?.states.find(state => state.state == 'Submitted')
+            ?.timestamp,
+          color: '#000'
+        },
+        { label: 'Start', time: this.flowRun?.start_time, color: '#000' },
+        { label: 'End', time: this.flowRun?.end_time, color: '#000' }
+      ]
+    },
     mappedTaskRuns() {
       return this.taskRuns?.filter(taskRun => taskRun.state == 'Mapped')
     },
@@ -186,6 +203,7 @@ export default {
       :items="items"
       :start-time="startTime"
       :end-time="endTime"
+      :breakpoints="breakpoints"
     />
   </div>
 </template>
