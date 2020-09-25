@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- - Remove link to Cloud tutorials from Server [#255](https://github.com/PrefectHQ/ui/pull/255)
 
 ## 2020-09-24
 
