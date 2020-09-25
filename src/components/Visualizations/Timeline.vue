@@ -503,7 +503,7 @@ export default {
     updateBreakpoints() {
       this.breakpointsNode.attr(
         'transform',
-        () => `translate(${this.transform.x}) scale(${this.transform.k})`
+        () => `translate(${this.transform.x} 35) scale(${this.transform.k})`
       )
 
       this.breakpointsNode
@@ -517,7 +517,7 @@ export default {
               .attr('class', 'breakpoints-group')
 
             g.append('path')
-              .attr('stroke', '#999')
+              .attr('stroke', d => d.color || '#999')
               .attr('stroke-width', 1)
               .attr('stroke-dasharray', 5)
               .attr('d', `M0,10L0,${this.height_}`)

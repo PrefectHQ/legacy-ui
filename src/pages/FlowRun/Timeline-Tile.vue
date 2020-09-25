@@ -89,16 +89,24 @@ export default {
         {
           label: 'Scheduled',
           time: this.flowRun?.scheduled_start_time,
-          color: '#000'
+          color: computedStyle.getPropertyValue('--v-Scheduled-base')
         },
         {
           label: 'Submitted',
           time: this.flowRun?.states.find(state => state.state == 'Submitted')
             ?.timestamp,
-          color: '#000'
+          color: computedStyle.getPropertyValue('--v-Submitted-base')
         },
-        { label: 'Start', time: this.flowRun?.start_time, color: '#000' },
-        { label: 'End', time: this.flowRun?.end_time, color: '#000' }
+        {
+          label: 'Start',
+          time: this.flowRun?.start_time,
+          color: computedStyle.getPropertyValue('--v-Running-base')
+        },
+        {
+          label: 'End',
+          time: this.flowRun?.end_time,
+          color: computedStyle.getPropertyValue('--v-Running-base')
+        }
       ]
     },
     mappedTaskRuns() {
