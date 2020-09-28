@@ -347,7 +347,7 @@ export default {
             if (j === colors.length - 1) {
               const cap = new Path2D()
               cap.arc(
-                x + width,
+                x + width + offset,
                 y + radius,
                 radius,
                 (90 * Math.PI) / 180,
@@ -360,9 +360,9 @@ export default {
 
             offset += width
           }
-        })
 
-        context.fill(this.bars[i].path2D)
+          context.fill(this.bars[i].path2D)
+        })
 
         // These are pretty fuzzy right now
         // so we'll probably want to move them to the svg layer
