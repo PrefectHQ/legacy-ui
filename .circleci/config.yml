@@ -54,6 +54,18 @@ commands:
       - run: gsutil -m cp -r dist/* gs://<< parameters.BUCKET_NAME >>/
 
 jobs:
+
+  unit-test:
+    # TODO: bump this to large in the future if needed. The default (medium) is resulting in test instabilities (ENOMEM: not enough memory, read)
+    resource_class: medium
+    docker:
+      - image: node:10.16.3
+    steps:
+      - prep
+      - run:
+          # name: NPM Test:Unit
+          command: npm run test:unit
+
   build-dev:
     resource_class: large
     docker:
@@ -132,6 +144,10 @@ jobs:
 
 workflows:
   version: 2
+
+  'Run unit tests':
+    jobs:
+      - unit-test
 
   'Build and publish development UI artifacts':
     jobs:
