@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- Remove link to Cloud tutorials from Server [#255](https://github.com/PrefectHQ/ui/pull/255)
 - Fixes instances where allowed users and allowed read only users weren't always being read correctly when license terms were null - [#260](https://github.com/PrefectHQ/ui/pull/260)
 
 ## 2020-09-28
