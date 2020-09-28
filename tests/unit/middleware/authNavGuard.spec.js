@@ -34,7 +34,7 @@ describe('Auth Nav Guard', () => {
     })
   })
 
-  describe('...when the user is neither authenticated authorized', () => {
+  describe('...when the backend is Cloud and the user is neither authenticated authorized', () => {
     it('calls the authentication route', async () => {
       dispatchStub.withArgs('auth0/authorize').callsFake()
       dispatchStub.withArgs('auth0/authenticate').callsFake(async () => {
