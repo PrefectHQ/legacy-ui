@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add Vuex user store unit tests and add circleci job to run unit tests on PR [#245](https://github.com/PrefectHQ/ui/pull/245)
+- Add unit tests for the auth nav guard middleware [#261](https://github.com/PrefectHQ/ui/pull/261)
 
 ### Bugfixes
 

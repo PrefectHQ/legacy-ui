@@ -147,15 +147,25 @@ describe('Auth Nav Guard', () => {
     expect(next).toHaveBeenCalledWith()
   })
 
-  it('aborts navigation when the user cannot be authorized or authenticated', async () => {
-    dispatchStub.withArgs('auth0/authorize').resolves()
-
+  it('aborts navigation when the user cannot be authenticated', async () => {
     dispatchStub.withArgs('auth0/authenticate').resolves()
 
     const next = jest.fn()
 
     await authNavGuard({}, {}, next)
 
+    expect(next).toHaveBeenCalledWith(false)
+  })
+
+  it('aborts navigation if authorization fails', async () => {
+    store.commit('auth0/isAuthenticated', true)
+    dispatchStub.withArgs('auth0/authorize').resolves()
+    const next = jest.fn()
+    expect(store.getters['auth0/isAuthorized']).toBe(false)
+    expect(store.getters['auth0/isAuthenticated']).toBe(true)
+    await authNavGuard({}, {}, next)
+    expect(store.getters['auth0/isAuthorized']).toBe(false)
+    expect(store.getters['auth0/isAuthenticated']).toBe(true)
     expect(next).toHaveBeenCalledWith(false)
   })
 
@@ -182,17 +192,5 @@ describe('Auth Nav Guard', () => {
     await authNavGuard({}, {}, next)
 
     expect(next).toHaveBeenCalledWith({ path: redirectRoute })
-  })
-
-  it('calls next with false if authorization fails', async () => {
-    store.commit('auth0/isAuthenticated', true)
-    dispatchStub.withArgs('auth0/authorize').resolves()
-    const next = jest.fn()
-    expect(store.getters['auth0/isAuthorized']).toBe(false)
-    expect(store.getters['auth0/isAuthenticated']).toBe(true)
-    await authNavGuard({}, {}, next)
-    expect(store.getters['auth0/isAuthorized']).toBe(false)
-    expect(store.getters['auth0/isAuthenticated']).toBe(true)
-    expect(next).toHaveBeenCalledWith(false)
   })
 })
