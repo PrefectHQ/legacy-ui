@@ -38,7 +38,24 @@ export default {
 </script>
 
 <template>
-  <v-list-item-content>
+  <v-list-item-content v-if="dense">
+    <v-list-item-title>
+      <span
+        class="px-2 rounded-pill d-inline-block caption white--text codePink"
+      >
+        New
+      </span>
+      {{ content.title }}
+      <v-icon v-if="content.link" x-small class="ml-1">
+        open_in_new
+      </v-icon>
+    </v-list-item-title>
+    <v-list-item-subtitle v-if="timestamp">
+      {{ timestamp }}
+    </v-list-item-subtitle>
+  </v-list-item-content>
+
+  <v-list-item-content v-else>
     <v-list-item-title>
       <a
         v-if="content.link"
