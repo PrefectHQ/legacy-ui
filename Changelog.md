@@ -17,10 +17,6 @@
 - Show user notifications on the notifications tile - [#258](https://github.com/PrefectHQ/ui/pull/258)
 - Add dense styling for the WhatsNew notification component - [#258](https://github.com/PrefectHQ/ui/pull/258)
 
-### Bugfixes
-
-- None
-
 ## 2020-09-24
 
 ### Bugfixes
