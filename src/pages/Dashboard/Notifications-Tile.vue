@@ -51,7 +51,10 @@ export default {
     },
     where() {
       let where = {
-        tenant_id: { _eq: this.tenant?.id },
+        _or: [
+          { tenant_id: { _eq: this.tenant?.id } },
+          { tenant_id: { _is_null: true } }
+        ],
         read: { _eq: false }
       }
 
@@ -134,9 +137,11 @@ export default {
             :class="n.read ? 'o-60 hover-o-100' : ''"
             :disabled="isLoading > 0"
             :to="notificationNavigation(n)"
+            :href="n.content.link"
+            :target="notificationNavigation(n) ? null : '_blank'"
             exact
           >
-            <v-icon small class="mr-4">
+            <v-icon small class="mr-4 grey--text text--darken-1">
               {{ n.content.icon ? n.content.icon : notificationIcon(n.type) }}
             </v-icon>
 

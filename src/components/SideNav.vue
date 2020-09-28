@@ -458,6 +458,7 @@ export default {
 
         <v-list dense>
           <v-list-item
+            v-if="isCloud"
             id="tutorial"
             active-class="primary-active-class"
             :disabled="routeDisabled"
@@ -470,6 +471,7 @@ export default {
               <v-list-item-title>Tutorials</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
           <v-list-item
             class="bottom"
             ripple
