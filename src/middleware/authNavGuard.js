@@ -15,6 +15,7 @@ const isServer = () => {
 const authNavGuard = async (to, from, next) => {
   // If this is a Server deployment,
   // we bypass authentication
+
   if (isServer()) return next()
   if (isAuthenticated() && isAuthorized() && store.getters['user/userIsSet']) {
     return next()
@@ -26,6 +27,10 @@ const authNavGuard = async (to, from, next) => {
 
   if (!isAuthorized()) {
     await store.dispatch('auth0/authorize')
+  }
+
+  if (!isAuthenticated()) {
+    await store.dispatch('auth0/authenticate')
   }
 
   // If the user isn't authenticated or authorized
