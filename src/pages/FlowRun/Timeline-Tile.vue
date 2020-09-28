@@ -105,7 +105,9 @@ export default {
         {
           label: 'End',
           time: this.flowRun?.end_time,
-          color: computedStyle.getPropertyValue('--v-Running-base')
+          color: computedStyle.getPropertyValue(
+            `--v-${this.flowRun?.state}-base`
+          )
         }
       ]
     },

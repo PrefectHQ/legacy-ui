@@ -319,7 +319,7 @@ export default {
           // we just draw a single shape (a circle)
           // This is cleaner visually and more performant
           // than drawing 3 shapes
-          if (bar.width <= bar.height) {
+          if (colors.length === 1 && bar.width <= bar.height) {
             const circle = new Path2D()
             circle.arc(bar.x + radius, y + radius, radius, 0, 2 * Math.PI)
 
@@ -518,19 +518,21 @@ export default {
 
             g.append('path')
               .attr('stroke', d => d.color || '#999')
-              .attr('stroke-width', 1)
+              .attr('stroke-width', 1.5)
               .attr('stroke-dasharray', 5)
-              .attr('d', `M0,10L0,${this.height_}`)
+              .attr('d', `M0,0L0,${this.height_}`)
               .style('pointer-events', 'none')
 
             g.append('text')
-              .style('font-size', '8px')
+              .style('font-size', '16px')
               .style('pointer-events', 'none')
               .attr('fill', '#999')
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
-              .attr('y', 6)
+              .attr('y', this.height_ / 2)
+              .attr('x', 5)
               .style('opacity', 0)
+              .attr('transform', `rotate(90 0 ${this.height_ / 2})`)
               .transition()
               .delay(this.animationDuration)
               .duration(150)
@@ -591,9 +593,9 @@ export default {
       const xAxis = this.newXAxis(this.transform.rescaleX(this.x))
 
       this.xAxisNode
-        .transition()
-        .duration(100)
-        .ease(d3.easeLinear)
+        // .transition()
+        // .duration(100)
+        // .ease(d3.easeLinear)
         .call(xAxis)
     },
     zoomed({ transform }) {
@@ -712,7 +714,6 @@ export default {
 
 <style lang="scss" scoped>
 .svg {
-  border: 1px solid #dc143c;
   box-sizing: border-box;
   height: 100%;
   // pointer-events: none;
@@ -724,7 +725,6 @@ export default {
 }
 
 .canvas {
-  border: 1px solid #32cd32;
   box-sizing: border-box;
   cursor: grab;
   left: 0;
