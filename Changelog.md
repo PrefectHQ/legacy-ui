@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add Vuex user store unit tests and add circleci job to run unit tests on PR [#245](https://github.com/PrefectHQ/ui/pull/245)
 
 ### Bugfixes
 
