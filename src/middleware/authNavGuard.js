@@ -29,10 +29,6 @@ const authNavGuard = async (to, from, next) => {
     await store.dispatch('auth0/authorize')
   }
 
-  if (!isAuthenticated()) {
-    await store.dispatch('auth0/authenticate')
-  }
-
   // If the user isn't authenticated or authorized
   // at this point, we abort navigation
   if (!isAuthenticated() || !isAuthorized()) {
