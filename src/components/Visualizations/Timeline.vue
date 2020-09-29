@@ -30,6 +30,11 @@ export default {
       required: false,
       default: () => []
     },
+    live: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
 
     // Bookends for the chart
     endTime: {

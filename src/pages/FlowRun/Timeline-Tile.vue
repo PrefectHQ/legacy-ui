@@ -1,5 +1,6 @@
 <script>
 import gql from 'graphql-tag'
+import { FINISHED_STATES } from '@/utils/states'
 
 const computedStyle = getComputedStyle(document.documentElement)
 
@@ -111,6 +112,9 @@ export default {
         }
       ]
     },
+    isFinished() {
+      return FINISHED_STATES.includes(this.flowRun.state)
+    },
     mappedTaskRuns() {
       return this.taskRuns?.filter(taskRun => taskRun.state == 'Mapped')
     },
@@ -217,6 +221,7 @@ export default {
       :start-time="startTime"
       :end-time="endTime"
       :breakpoints="breakpoints"
+      :live="!isFinished"
     />
   </div>
 </template>
