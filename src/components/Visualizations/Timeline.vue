@@ -486,7 +486,7 @@ export default {
 
       const startMs = this.start?.getTime() ?? 0
       const endMs = (this.end ?? now)?.getTime() ?? 0
-      const domainPadding = 60000 // 1 minute padding on either side
+      const domainPadding = (endMs - startMs) * 0.05 // 1 minute padding on either side
       const domainStart = new Date(startMs - domainPadding)
       const domainEnd = new Date(endMs + domainPadding)
 
