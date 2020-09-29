@@ -96,6 +96,9 @@ export default {
           (val, index) => val === this.flow?.environment?.labels[index]
         )
       )
+    },
+    hasUser() {
+      return this.flow.created_by != null
     }
   },
   methods: {
@@ -263,7 +266,7 @@ export default {
     <v-card-text class="pl-12 pt-2 card-content">
       <v-fade-transition hide-on-leave>
         <div v-if="tab == 'overview'">
-          <v-list-item dense class="px-0">
+          <v-list-item v-if="hasUser" dense class="px-0">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Created by
