@@ -266,15 +266,18 @@ export default {
     <v-card-text class="pl-12 pt-2 card-content">
       <v-fade-transition hide-on-leave>
         <div v-if="tab == 'overview'">
-          <v-list-item v-if="hasUser" dense class="px-0">
+          <v-list-item dense class="px-0">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
-                Created by
+                Created <span v-if="hasUser">by</span>
               </v-list-item-subtitle>
-              <div class="subtitle-2">
+              <div v-if="hasUser" class="subtitle-2">
                 {{ flow.created_by.username }}
               </div>
-              <div class="caption">{{ formatTime(flow.created) }} </div>
+              <div class="caption">
+                <b v-if="!hasUser"> {{ formatTime(flow.created) }} </b>
+                <span v-if="hasUser"> {{ formatTime(flow.created) }} </span>
+              </div>
             </v-list-item-content>
           </v-list-item>
 
