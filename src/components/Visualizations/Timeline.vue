@@ -117,6 +117,14 @@ export default {
       return new Date(this.endTime)
     }
   },
+  watch: {
+    items: {
+      deep: true,
+      handler: debounce(function() {
+        this._renderCanvas()
+      }, 500)
+    }
+  },
   mounted() {
     this.canvas = d3.select(`#${this.id}-canvas`)
     this.svg = d3.select(`#${this.id}-svg`)
