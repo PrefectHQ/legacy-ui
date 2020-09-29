@@ -442,7 +442,6 @@ export default {
       this.live_ ? this.pause() : this.play()
     },
     pause() {
-      console.log('paugin')
       this.live_ = false
       this.interval?.stop()
     },
