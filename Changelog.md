@@ -8,7 +8,18 @@
 
 ### Bugfixes
 
+- None
+
+## 2020-09-29
+
+### Features and Improvements
+
+- Add unit tests for the flow navigation guard [#248](https://github.com/PrefectHQ/ui/pull/248)
+
+### Bugfixes
+
 - Hide label affinity warning in server until Core catches up [#264](https://github.com/PrefectHQ/ui/pull/264)
+- Fixes a situation where task runs in the table on the flow run page were incorrectly calculating infinite durations - [#267](https://github.com/PrefectHQ/ui/pull/267)
 
 ## 2020-09-28a
 

@@ -6,6 +6,7 @@ import Vuetify from 'vuetify/lib'
 import DockerIcon from '@/components/Icons/Docker.vue'
 import FargateIcon from '@/components/Icons/Fargate.vue'
 import KubernetesIcon from '@/components/Icons/Kubernetes.vue'
+import mrIcon from '@/components/Icons/mr.vue'
 import NomadIcon from '@/components/Icons/Nomad.vue'
 import PrefectIcon from '@/components/Icons/Prefect.vue'
 import TwilioIcon from '@/components/Icons/twilio.vue'
@@ -56,6 +57,7 @@ const CUSTOM_ICONS = {
   docker: { component: DockerIcon },
   fargate: { component: FargateIcon },
   kubernetes: { component: KubernetesIcon },
+  mr: { component: mrIcon },
   nomad: { component: NomadIcon },
   prefect: { component: PrefectIcon },
   twilio: { component: TwilioIcon },
