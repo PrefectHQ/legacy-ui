@@ -181,7 +181,7 @@ export default {
         await this.getTenants()
 
         if (this.isServer && !this.tenants?.length) {
-          // Server has no tenants so so redirect to home
+          // Server has no tenants so redirect to home
           this.$router.push({
             name: 'home'
           })
