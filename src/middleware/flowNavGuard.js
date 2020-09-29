@@ -9,7 +9,6 @@ const flowNavGuard = async (to, from, next) => {
       id: id
     }
   })
-
   if (group?.data?.flow_group_by_pk?.id) return next()
 
   let version = await fallbackApolloClient.query({
