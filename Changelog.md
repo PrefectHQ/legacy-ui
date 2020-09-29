@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Redirect to home when UI is loaded up against a Prefect Server instance with no tenants [#270](https://github.com/PrefectHQ/ui/pull/270)
 
 ## 2020-09-29
 
