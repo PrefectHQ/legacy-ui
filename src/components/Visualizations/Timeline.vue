@@ -1,7 +1,7 @@
 <script>
 import * as d3 from 'd3'
 import uniqueId from 'lodash.uniqueid'
-import throttle from 'lodash.throttle'
+// import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 
 const formatTime = d3.timeFormat('%-I:%M:%S')
@@ -108,11 +108,6 @@ export default {
     }
   },
   computed: {
-    render: function() {
-      return throttle(() => {
-        requestAnimationFrame(this.rawRender)
-      }, 16)
-    },
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
@@ -199,7 +194,9 @@ export default {
           }
         })
     },
-    rawRender() {
+    render(elapsed) {
+      const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
+
       const context = this.canvas.node().getContext('2d')
 
       context.save()
@@ -211,6 +208,21 @@ export default {
       let len = this.bars.length
       for (let i = 0; i < len; ++i) {
         const bar = this.bars[i]
+
+        const multiplier = bar.leaving ? t * 10 : t
+
+        bar.alpha = this.hoveredId
+          ? bar.id == this.hoveredId
+            ? 1
+            : 0.5
+          : bar.alpha || 1
+        bar.x = Math.round(bar.x0 * (1 - t) + bar.x1 * multiplier)
+        bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
+        bar.height = Math.round(
+          bar.height0 * (1 - t) + bar.height1 * multiplier
+        )
+        bar.width = Math.round(bar.width0 * (1 - t) + bar.width1 * multiplier)
+
         this.bars[i].path2D = new Path2D()
 
         context.globalAlpha = bar.alpha
@@ -299,6 +311,11 @@ export default {
       }
 
       context.restore()
+
+      if (t === 1) {
+        this.timer.stop()
+        this.bars = this.bars.filter(b => !b.leaving)
+      }
     },
     updateBars() {
       const height = this.collapsed_
@@ -400,38 +417,10 @@ export default {
           this.bars[i] = { ...bar, ...bar1 }
         })
 
-      this.render()
-      const timingCallback = elapsed => {
-        const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
-
-        this.bars.forEach(bar => {
-          const multiplier = bar.leaving ? t * 10 : t
-
-          bar.alpha = this.hoveredId
-            ? bar.id == this.hoveredId
-              ? 1
-              : 0.5
-            : bar.alpha || 1
-          bar.x = Math.round(bar.x0 * (1 - t) + bar.x1 * multiplier)
-          bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
-          bar.height = Math.round(
-            bar.height0 * (1 - t) + bar.height1 * multiplier
-          )
-          bar.width = Math.round(bar.width0 * (1 - t) + bar.width1 * multiplier)
-        })
-
-        this.render()
-
-        if (t === 1) {
-          this.timer.stop()
-          this.bars = this.bars.filter(b => !b.leaving)
-        }
-      }
-
       if (this.timer) {
-        this.timer.restart(timingCallback)
+        this.timer.restart(this.render)
       } else {
-        this.timer = d3.timer(timingCallback)
+        this.timer = d3.timer(this.render)
       }
     },
     play() {
@@ -634,20 +623,20 @@ export default {
       // like zooming and panning
       const x = this.transform.rescaleX(this.x)
       const xAxis = this.newXAxis(x)
-      const live = this.live
+      const live = this.live_
 
-      this.updateBars()
-      this.updateBreakpoints()
       this.xAxisNode
         .transition()
-        .duration(shouldTransition ? 0 : this.animationDuration)
+        .duration(shouldTransition ? this.animationDuration : 0)
         .call(xAxis)
         .on('end', () => {
           this.xAxisNode.on('end', null)
+          this.updateBars()
+          this.updateBreakpoints()
 
           if (live) {
             this.updateScales()
-            requestAnimationFrame(this.updateX)
+            this.updateX(true)
             ++this.iterations
           }
         })
@@ -690,7 +679,7 @@ export default {
     },
     zoomed({ transform }) {
       this.transform = transform
-      this.updateX(true)
+      this.updateX()
     },
     collapse() {
       this.collapsed_ = !this.collapsed_
