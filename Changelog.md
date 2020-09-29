@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Hide label affinity warning in server until Core catches up [#264](https://github.com/PrefectHQ/ui/pull/264)
 
 ## 2020-09-28a
 
