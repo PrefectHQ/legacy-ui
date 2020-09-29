@@ -93,7 +93,7 @@ export default {
 
       interval: null,
       iterations: 0,
-      playing: this.live,
+      live_: this.live,
       scaleExtent: [1, 10],
       translateExtent: [
         [-Infinity, -Infinity],
@@ -108,9 +108,9 @@ export default {
     }
   },
   computed: {
-    draw: function() {
+    render: function() {
       return throttle(() => {
-        requestAnimationFrame(this.rawDraw)
+        requestAnimationFrame(this.rawRender)
       }, 16)
     },
     resizeChart: function() {
@@ -152,12 +152,7 @@ export default {
       }, 500)
     },
     live(val) {
-      if (val) {
-        this.interval?.stop()
-        this.play()
-      } else {
-        this.pause()
-      }
+      this.live_ = val
     }
   },
   mounted() {
@@ -171,6 +166,8 @@ export default {
 
     window.addEventListener('resize', this.resizeChart)
     requestAnimationFrame(this.resizeChart)
+
+    this.live_ = this.live
   },
   beforeDestroy() {
     this.timer?.stop()
@@ -202,42 +199,7 @@ export default {
           }
         })
     },
-    render() {
-      this.draw()
-      const timingCallback = elapsed => {
-        const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
-
-        this.bars.forEach(bar => {
-          const multiplier = bar.leaving ? t * 10 : t
-
-          bar.alpha = this.hoveredId
-            ? bar.id == this.hoveredId
-              ? 1
-              : 0.5
-            : bar.alpha || 1
-          bar.x = Math.round(bar.x0 * (1 - t) + bar.x1 * multiplier)
-          bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
-          bar.height = Math.round(
-            bar.height0 * (1 - t) + bar.height1 * multiplier
-          )
-          bar.width = Math.round(bar.width0 * (1 - t) + bar.width1 * multiplier)
-        })
-
-        this.draw()
-
-        if (t === 1) {
-          this.timer.stop()
-          this.bars = this.bars.filter(b => !b.leaving)
-        }
-      }
-
-      if (this.timer) {
-        this.timer.restart(timingCallback)
-      } else {
-        this.timer = d3.timer(timingCallback)
-      }
-    },
-    rawDraw() {
+    rawRender() {
       const context = this.canvas.node().getContext('2d')
 
       context.save()
@@ -437,27 +399,51 @@ export default {
 
           this.bars[i] = { ...bar, ...bar1 }
         })
-    },
-    play() {
-      this.playing = true
-      this.interval = d3.interval(() => {
-        // requestAnimationFrame(() => {
 
-        // })
+      this.render()
+      const timingCallback = elapsed => {
+        const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
 
-        this.updateScales()
-        this.updateX()
-        this.updateBreakpoints()
+        this.bars.forEach(bar => {
+          const multiplier = bar.leaving ? t * 10 : t
+
+          bar.alpha = this.hoveredId
+            ? bar.id == this.hoveredId
+              ? 1
+              : 0.5
+            : bar.alpha || 1
+          bar.x = Math.round(bar.x0 * (1 - t) + bar.x1 * multiplier)
+          bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
+          bar.height = Math.round(
+            bar.height0 * (1 - t) + bar.height1 * multiplier
+          )
+          bar.width = Math.round(bar.width0 * (1 - t) + bar.width1 * multiplier)
+        })
+
         this.render()
 
-        ++this.iterations
-      }, 16)
+        if (t === 1) {
+          this.timer.stop()
+          this.bars = this.bars.filter(b => !b.leaving)
+        }
+      }
+
+      if (this.timer) {
+        this.timer.restart(timingCallback)
+      } else {
+        this.timer = d3.timer(timingCallback)
+      }
+    },
+    play() {
+      this.live_ = true
+      this.updateX()
     },
     playOrPause() {
-      this.playing ? this.pause() : this.play()
+      this.live_ ? this.pause() : this.play()
     },
     pause() {
-      this.playing = false
+      console.log('paugin')
+      this.live_ = false
       this.interval?.stop()
     },
     rawResizeChart() {
@@ -523,7 +509,7 @@ export default {
       this.width_ = width
 
       this.updateScales()
-      this.updateBars()
+      this.updateX()
 
       const filter = () => {
         return event.isTrusted
@@ -545,10 +531,7 @@ export default {
         // Adds the zoom entity
         // to the canvas element
         this.canvas.call(this.zoom)
-
-        if (this.live) {
-          this.play()
-        }
+        this.play()
       }, 500)
     },
     updateBreakpoints() {
@@ -646,8 +629,23 @@ export default {
     updateX() {
       const x = this.transform.rescaleX(this.x)
       const xAxis = this.newXAxis(x)
+      const live = this.live
 
-      this.xAxisNode.call(xAxis)
+      this.render()
+      this.updateBreakpoints()
+      this.xAxisNode
+        .transition()
+        .duration(16)
+        .call(xAxis)
+        .on('end', () => {
+          this.xAxisNode.on('end', null)
+
+          if (live) {
+            this.updateScales()
+            requestAnimationFrame(this.updateX)
+            ++this.iterations
+          }
+        })
     },
     updateScales() {
       const prevDomainEnd = this.domainEnd
@@ -688,8 +686,6 @@ export default {
     zoomed({ transform }) {
       this.transform = transform
       this.updateX()
-      this.updateBreakpoints()
-      this.render()
     },
     collapse() {
       this.collapsed_ = !this.collapsed_
@@ -734,7 +730,7 @@ export default {
     <div class="d-flex align-middle justify-space-between">
       <div>
         <div class="d-flex my-4">
-          <v-btn @click="playOrPause">{{ playing ? 'Pause' : 'Play' }}</v-btn>
+          <v-btn @click="playOrPause">{{ live_ ? 'Pause' : 'Play' }}</v-btn>
 
           <v-btn class="ml-12" @click="collapse">
             {{ collapsed_ ? 'Expand' : 'Collapse' }}
