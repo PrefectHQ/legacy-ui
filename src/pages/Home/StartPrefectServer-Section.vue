@@ -65,11 +65,16 @@ export default {
 <template>
   <div>
     <div class="text-body-1">
-      Before you can begin to schedule work with Prefect Server, you'll need to
-      start the orchestration infrastructure required to manage your Flows. This
-      includes a database, API, scheduler, and various other criticial services.
-      Alternatively, you can use Prefect Cloud and get started right away (it's
-      free!)
+      Before you can begin to schedule work with
+      <ExternalLink
+        href="https://docs.prefect.io/orchestration/server/overview.html"
+      >
+        Prefect Server
+      </ExternalLink>
+      , you'll need to start the orchestration infrastructure required to manage
+      your Flows. This includes a database, API, scheduler, and various other
+      criticial services. Alternatively, you can use Prefect Cloud and get
+      started right away (it's free!)
     </div>
 
     <ol class="mt-6">
