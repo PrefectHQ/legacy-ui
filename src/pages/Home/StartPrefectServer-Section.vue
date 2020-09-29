@@ -107,13 +107,12 @@ export default {
       <div class="text-body-1 mt-2">
         The GraphQL endpoint is one of the public URLs exposed by Prefect Server
         that allows interaction with the API. By default it's exposed at
-        <kbd>http://localhost:4200/graphql</kbd>, but you can modify this and
-        other settings from your Server's <kbd>~/.prefect/config.toml</kbd> or
-        in the input box below:
+        <kbd>http://localhost:4200/graphql</kbd>, but this can be modified. You
+        can directly modify this endpoint in the input box below:
       </div>
 
       <div
-        class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2 mt-10"
+        class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2 mt-6 mb-10"
       >
         <div>Prefect Server GraphQL endpoint:</div>
         <v-text-field
@@ -174,6 +173,28 @@ export default {
             </div>
           </template>
         </v-text-field>
+      </div>
+
+      <div class="text-body-1 mt-2">
+        ...or by setting <kbd>apollo_url</kbd> in
+        <kbd>./prefect/config.toml</kbd> on whatever machine you're running
+        Prefect Server:
+      </div>
+      <div
+        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
+        style="border: 1px solid #b0bec5 !important;"
+      >
+        <div class="code-block">
+          <pre>
+[server]
+  [server.ui]
+    apollo_url="http://localhost:4200/graphql"
+          </pre>
+        </div>
+      </div>
+      <div class="text-body-1 mt-2">
+        Note: The second method will change the default Apollo endpoint but can
+        still be overidden by the input box above.
       </div>
 
       <v-scroll-y-transition mode="out-in">
