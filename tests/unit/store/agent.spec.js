@@ -50,17 +50,19 @@ describe('Agent Vuex Module', () => {
     })
   })
 
-  describe('mutationss', () => {
+  describe('mutations', () => {
     let store = new Vuex.Store({
       state: initialAgentState(),
       getters: agent.getters,
       mutations: agent.mutations
     })
 
-    it('should add new agents when the setAgents mutation is called', () => {
+    it('should add new agents, and update seconds since last query, when the setAgents mutation is called', () => {
       expect(store.getters.agents).toBe(null)
-      store.commit('setAgents', { id: '12345' })
-      expect(store.getters.agents).toEqual({ id: '12345' })
+      store.commit('setAgents', [{ id: '12345' }])
+      expect(store.getters.agents).toEqual([
+        { id: '12345', secondsSinceLastQuery: 0 }
+      ])
     })
   })
 })

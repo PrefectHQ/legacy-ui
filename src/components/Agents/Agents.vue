@@ -323,16 +323,18 @@ export default {
           rel="noopener noreferrer"
           >agents</a
         >
-        to understand their role in your infrastructure. You can also go through
-        the
-        <router-link class="link" :to="{ name: 'flow-run-tutorial' }">
-          <u>Running a Flow</u>
-        </router-link>
-        and
-        <router-link class="link" :to="{ name: 'universal-deploy-tutorial' }">
-          <u>Universal Deploy</u>
-        </router-link>
-        tutorials for guidance on running agents.
+        to understand their role in your infrastructure.
+        <span v-if="isCloud">
+          You can also go through the
+          <router-link class="link" :to="{ name: 'flow-run-tutorial' }">
+            <u>Running a Flow</u>
+          </router-link>
+          and
+          <router-link class="link" :to="{ name: 'universal-deploy-tutorial' }">
+            <u>Universal Deploy</u>
+          </router-link>
+          tutorials for guidance on running agents in Cloud.</span
+        >
       </p>
     </v-alert>
   </div>
