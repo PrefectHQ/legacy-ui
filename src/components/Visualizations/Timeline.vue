@@ -71,6 +71,9 @@ export default {
       barPadding: 0.3,
       barRadius: 25,
 
+      domainStart: null,
+      domainEnd: null,
+
       // Viewport extent
       viewportLeft: 0,
       viewportRight: 1,
@@ -122,6 +125,17 @@ export default {
     end() {
       if (!this.endTime) return null
       return new Date(this.endTime)
+    },
+    breakpoints_() {
+      if (!this.live) return this.breakpoints
+      return [
+        ...this.breakpoints,
+        {
+          label: '(now)',
+          time: Date.now(),
+          color: '#999'
+        }
+      ]
     }
   },
   watch: {
@@ -134,7 +148,7 @@ export default {
     items: {
       deep: true,
       handler: debounce(function() {
-        this._renderCanvas()
+        this.updateBars()
       }, 500)
     },
     live(val) {
@@ -188,106 +202,7 @@ export default {
           }
         })
     },
-    _renderCanvas() {
-      const height = this.collapsed_
-        ? this.barRadius * 2 - this.barRadius * this.barPadding * 2
-        : this.y.bandwidth()
-
-      const calcBar = item => {
-        const x = item.start_time ? this.x(new Date(item.start_time)) : 0
-
-        const calcWidth = item.end_time
-          ? this.x(new Date(item.end_time)) - x
-          : item.start_time
-          ? this.x(Date.now()) - x
-          : 0
-
-        const width = calcWidth > height ? calcWidth : height
-
-        const y = this.collapsed_
-          ? this.barPadding * this.barRadius
-          : this.y(item.id)
-
-        const alpha = 1
-
-        const barIndex = this.bars.findIndex(b => b.id == item.id)
-
-        const label = item.label
-
-        // If the item isn't present in the bar array
-        // we instantiate a new bar...
-        if (barIndex < 0) {
-          this.bars.push({
-            ...item,
-            alpha: alpha,
-            label: label,
-            height0: height,
-            height1: height,
-            height: height,
-            width0: this.barRadius,
-            width1: width,
-            width: this.barRadius,
-            x0: x || 0,
-            x1: x,
-            x: x || 0,
-            y0: y,
-            y1: y,
-            y: y || 0
-          })
-        } else {
-          // ...otherwise we update the existing bar with
-          // new values
-          const bar = this.bars[barIndex]
-
-          const bar1 = {
-            ...item,
-            alpha: alpha,
-            height0: bar.height,
-            height1: height,
-            height: bar.height,
-            width0: bar.width,
-            width1: width,
-            width: bar.width,
-            x0: bar.x,
-            x1: x,
-            x: bar.x,
-            y0: bar.y,
-            y1: y,
-            y: bar.y
-          }
-
-          this.bars[barIndex] = { ...bar, ...bar1, ...item }
-        }
-      }
-
-      this.items.forEach(calcBar)
-
-      // Check our existing bars against current data
-      this.bars
-        // If this is a valid bar, do nothing since its data was already
-        // updated
-        .filter(bar => !this.items.find(item => item.id == bar.id))
-        // ...otherwise we'll start the exit animation
-        .forEach((bar, i) => {
-          const bar1 = {
-            height0: bar.height,
-            height1: height,
-            height: bar.height,
-            width0: bar.width,
-            width1: 0,
-            width: bar.width,
-            x0: bar.x,
-            x1: bar.x,
-            x: bar.x,
-            y0: bar.y,
-            y1: bar.y,
-            y: bar.y,
-            leaving: true
-          }
-
-          this.bars[i] = { ...bar, ...bar1 }
-        })
-
+    render() {
       this.draw()
       const timingCallback = elapsed => {
         const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
@@ -423,6 +338,106 @@ export default {
 
       context.restore()
     },
+    updateBars() {
+      const height = this.collapsed_
+        ? this.barRadius * 2 - this.barRadius * this.barPadding * 2
+        : this.y.bandwidth()
+
+      const calcBar = item => {
+        const x = item.start_time ? this.x(new Date(item.start_time)) : 0
+
+        const calcWidth = item.end_time
+          ? this.x(new Date(item.end_time)) - x
+          : item.start_time
+          ? this.x(Date.now()) - x
+          : 0
+
+        const width = calcWidth > height ? calcWidth : height
+
+        const y = this.collapsed_
+          ? this.barPadding * this.barRadius
+          : this.y(item.id)
+
+        const alpha = 1
+
+        const barIndex = this.bars.findIndex(b => b.id == item.id)
+
+        const label = item.label
+
+        // If the item isn't present in the bar array
+        // we instantiate a new bar...
+        if (barIndex < 0) {
+          this.bars.push({
+            ...item,
+            alpha: alpha,
+            label: label,
+            height0: height,
+            height1: height,
+            height: height,
+            width0: this.barRadius,
+            width1: width,
+            width: this.barRadius,
+            x0: x || 0,
+            x1: x,
+            x: x || 0,
+            y0: y,
+            y1: y,
+            y: y || 0
+          })
+        } else {
+          // ...otherwise we update the existing bar with
+          // new values
+          const bar = this.bars[barIndex]
+
+          const bar1 = {
+            ...item,
+            alpha: alpha,
+            height0: bar.height,
+            height1: height,
+            height: bar.height,
+            width0: bar.width,
+            width1: width,
+            width: bar.width,
+            x0: bar.x,
+            x1: x,
+            x: bar.x,
+            y0: bar.y,
+            y1: y,
+            y: bar.y
+          }
+
+          this.bars[barIndex] = { ...bar, ...bar1, ...item }
+        }
+      }
+
+      this.items.forEach(calcBar)
+
+      // Check our existing bars against current data
+      this.bars
+        // If this is a valid bar, do nothing since its data was already
+        // updated
+        .filter(bar => !this.items.find(item => item.id == bar.id))
+        // ...otherwise we'll start the exit animation
+        .forEach((bar, i) => {
+          const bar1 = {
+            height0: bar.height,
+            height1: height,
+            height: bar.height,
+            width0: bar.width,
+            width1: 0,
+            width: bar.width,
+            x0: bar.x,
+            x1: bar.x,
+            x: bar.x,
+            y0: bar.y,
+            y1: bar.y,
+            y: bar.y,
+            leaving: true
+          }
+
+          this.bars[i] = { ...bar, ...bar1 }
+        })
+    },
     play() {
       this.playing = true
       this.interval = d3.interval(() => {
@@ -433,7 +448,7 @@ export default {
         this.updateScales()
         this.updateX()
         this.updateBreakpoints()
-        this._renderCanvas()
+        this.render()
 
         ++this.iterations
       }, 16)
@@ -508,6 +523,7 @@ export default {
       this.width_ = width
 
       this.updateScales()
+      this.updateBars()
 
       const filter = () => {
         return event.isTrusted
@@ -634,15 +650,17 @@ export default {
       this.xAxisNode.call(xAxis)
     },
     updateScales() {
+      const prevDomainEnd = this.domainEnd
+
       const now = new Date()
       const startMs = this.start?.getTime() ?? 0
       const endMs = (this.end ?? now)?.getTime() ?? 0
       const domainPadding = (endMs - startMs) * 0.05 // 1 minute padding on either side
-      const domainStart = new Date(startMs - domainPadding)
-      const domainEnd = new Date(endMs + (this.end ? domainPadding : 0))
+      this.domainStart = new Date(startMs - domainPadding)
+      this.domainEnd = new Date(endMs + (this.end ? domainPadding : 0))
 
       this.x.range([this.barRadius * 1.25, this.width_ - this.padding.right])
-      this.x.domain([domainStart, domainEnd])
+      this.x.domain([this.domainStart, this.domainEnd])
       this.y.domain(this.items.map(item => item.id))
       this.y.paddingInner(this.barPadding)
       this.y.paddingOuter(this.barPadding * 2)
@@ -656,12 +674,22 @@ export default {
         [0, 0],
         [this.width_ + this.width_ * 0.1, this.height_]
       ]
+
+      if (prevDomainEnd) {
+        const translateBy = this.x(prevDomainEnd) - this.x(this.domainEnd)
+
+        this.transform.x += translateBy
+
+        this.canvas.call(this.zoom, this.transform)
+        // this.zoom.translateBy(this.canvas, translateBy, 0)
+        // this.canvas.call(this.zoom, )¿
+      }
     },
     zoomed({ transform }) {
       this.transform = transform
       this.updateX()
       this.updateBreakpoints()
-      this._renderCanvas()
+      this.render()
     },
     collapse() {
       this.collapsed_ = !this.collapsed_
