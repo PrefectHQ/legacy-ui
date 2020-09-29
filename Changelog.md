@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-09-29
+
+### Features and Improvements
+
 - Add unit tests for the flow navigation guard [#248](https://github.com/PrefectHQ/ui/pull/248)
 
 ### Bugfixes
