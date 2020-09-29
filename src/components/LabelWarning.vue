@@ -29,6 +29,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('agent', ['agents']),
+    ...mapGetters('api', ['isCloud']),
     agentOrLabel() {
       if (!this.agents || !this.agents.length) return 'Agent Problem'
       if (!this.labelsAlign) return 'Label Problem'
@@ -124,7 +125,7 @@ export default {
     </v-card>
   </v-menu>
   <v-menu
-    v-else-if="!labelsAlign"
+    v-else-if="!labelsAlign && isCloud"
     :close-on-content-click="false"
     offset-y
     open-on-hover
