@@ -3,9 +3,10 @@ import globalNameSearchQuery from '@/graphql/GlobalSearch/search-by-name.gql'
 import globalIDSearchQuery from '@/graphql/GlobalSearch/search-by-id.gql'
 import GlobalSearchIcon from '@/components/GlobalSearchBar/GlobalSearchIcon'
 import GlobalSearchResult from '@/components/GlobalSearchBar/GlobalSearchResult'
+import MResult from '@/components/GlobalSearchBar/MResult'
 
 export default {
-  components: { GlobalSearchIcon, GlobalSearchResult },
+  components: { GlobalSearchIcon, GlobalSearchResult, MResult },
   data() {
     return {
       activateTimeout: null,
@@ -14,7 +15,8 @@ export default {
       model: null,
       search: null,
       results: [],
-      isLoading: false
+      isLoading: false,
+      mResult: false
     }
   },
   computed: {
@@ -111,6 +113,7 @@ export default {
         this.results = []
         return
       }
+      this.mResult = input == 'about:Prefect' ? true : false
 
       // Once we've confirmed that we have input and
       // we aren't pausing all queries, we check that
@@ -309,7 +312,8 @@ export default {
           </v-list-item>
         </template>
         <template v-else v-slot:no-data>
-          <v-list-item>
+          <MResult v-if="mResult" />
+          <v-list-item v-else>
             <v-list-item-title>
               No results matched your search.
             </v-list-item-title>
