@@ -4,12 +4,23 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- Hide label affinity warning in server until Core catches up [#264](https://github.com/PrefectHQ/ui/pull/264)
+
+## 2020-09-28a
+
+### Features and Improvements
+
 - Add Vuex user store unit tests and add circleci job to run unit tests on PR [#245](https://github.com/PrefectHQ/ui/pull/245)
 - Add unit tests for the auth nav guard middleware [#261](https://github.com/PrefectHQ/ui/pull/261)
 
 ### Bugfixes
 
-- None
+- Remove link to Cloud tutorials from Server [#255](https://github.com/PrefectHQ/ui/pull/255)
+- Fixes instances where allowed users and allowed read only users weren't always being read correctly when license terms were null - [#260](https://github.com/PrefectHQ/ui/pull/260)
 
 ## 2020-09-28
 
