@@ -182,9 +182,11 @@ export default {
 
         if (this.isServer && !this.tenants?.length) {
           // Server has no tenants so redirect to home
-          this.$router.push({
-            name: 'home'
-          })
+          if (this.$route.name !== 'home') {
+            this.$router.push({
+              name: 'home'
+            })
+          }
         }
 
         if (this.isServer && this.tenants?.length) {
