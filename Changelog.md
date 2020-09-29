@@ -10,6 +10,24 @@
 
 - None
 
+## 2020-09-28a
+
+### Features and Improvements
+
+- Add Vuex user store unit tests and add circleci job to run unit tests on PR [#245](https://github.com/PrefectHQ/ui/pull/245)
+
+### Bugfixes
+
+- Remove link to Cloud tutorials from Server [#255](https://github.com/PrefectHQ/ui/pull/255)
+- Fixes instances where allowed users and allowed read only users weren't always being read correctly when license terms were null - [#260](https://github.com/PrefectHQ/ui/pull/260)
+
+## 2020-09-28
+
+### Features and Improvements
+
+- Show user notifications on the notifications tile - [#258](https://github.com/PrefectHQ/ui/pull/258)
+- Add dense styling for the WhatsNew notification component - [#258](https://github.com/PrefectHQ/ui/pull/258)
+
 ## 2020-09-24
 
 ### Bugfixes

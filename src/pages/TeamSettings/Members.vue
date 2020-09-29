@@ -82,10 +82,10 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license']),
     allowedFullUsers() {
-      return this.license?.terms?.users
+      return this.license?.terms?.users ?? Infinity
     },
     allowedReadOnlyUsers() {
-      return this.license?.terms?.read_only_users
+      return this.license?.terms?.read_only_users ?? Infinity
     },
     insufficientUsers() {
       return (
