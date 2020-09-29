@@ -313,6 +313,11 @@ export default {
         let colors = Object.keys(bar.colors)
 
         colors.forEach((color, j) => {
+          let capLeft = new Path2D(),
+            capRight = new Path2D(),
+            circle = new Path2D(),
+            rect = new Path2D()
+
           context.fillStyle = color || '#eee'
 
           // If the unadjusted height and width are equal,
@@ -320,19 +325,15 @@ export default {
           // This is cleaner visually and more performant
           // than drawing 3 shapes
           if (colors.length === 1 && bar.width <= bar.height) {
-            const circle = new Path2D()
             circle.arc(bar.x + radius, y + radius, radius, 0, 2 * Math.PI)
-
-            this.bars[i].path2D.addPath(circle)
           } else {
             const x = bar.x + radius
             const width = bar.width * bar.colors[color]
 
-            this.bars[i].path2D.rect(x + offset, y, width, radius * 2)
+            rect.rect(x + offset, y, width, radius * 2)
 
             if (j === 0) {
-              const cap = new Path2D()
-              cap.arc(
+              capLeft.arc(
                 x,
                 y + radius,
                 radius,
@@ -340,13 +341,10 @@ export default {
                 -(270 * Math.PI) / 180,
                 true
               )
-
-              this.bars[i].path2D.addPath(cap)
             }
 
             if (j === colors.length - 1) {
-              const cap = new Path2D()
-              cap.arc(
+              capRight.arc(
                 x + width + offset,
                 y + radius,
                 radius,
@@ -354,14 +352,24 @@ export default {
                 (270 * Math.PI) / 180,
                 true
               )
-
-              this.bars[i].path2D.addPath(cap)
             }
 
             offset += width
           }
 
-          context.fill(this.bars[i].path2D)
+          // Fill the shape but add the shape to the reference
+          // path, so we can calculation intersections
+          context.fill(circle)
+          this.bars[i].path2D.addPath(circle)
+
+          context.fill(rect)
+          this.bars[i].path2D.addPath(rect)
+
+          context.fill(capLeft)
+          this.bars[i].path2D.addPath(capLeft)
+
+          context.fill(capRight)
+          this.bars[i].path2D.addPath(capRight)
         })
 
         // These are pretty fuzzy right now
