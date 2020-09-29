@@ -115,6 +115,8 @@ export default {
       }
       if (input == 'about:Prefect') {
         this.mResult = true
+      } else {
+        this.mResult = false
       }
       // Once we've confirmed that we have input and
       // we aren't pausing all queries, we check that
