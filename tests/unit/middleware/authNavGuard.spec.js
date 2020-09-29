@@ -148,7 +148,16 @@ describe('Auth Nav Guard', () => {
   })
 
   it('aborts navigation when the user cannot be authenticated', async () => {
-    dispatchStub.withArgs('auth0/authenticate').resolves()
+    dispatchStub.withArgs('auth0/authenticate').callsFake(async () => {
+      store.commit('auth0/isAuthenticated', false)
+    })
+    dispatchStub.withArgs('auth0/authorize').callsFake(async () => {
+      store.commit(
+        'auth0/authorizationTokenExpiry',
+        new Date().getTime() + 100000000
+      )
+      store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    })
 
     const next = jest.fn()
 
