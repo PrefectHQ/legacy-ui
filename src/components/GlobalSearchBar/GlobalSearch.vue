@@ -113,11 +113,8 @@ export default {
         this.results = []
         return
       }
-      if (input == 'about:Prefect') {
-        this.mResult = true
-      } else {
-        this.mResult = false
-      }
+      this.mResult = input == 'about:Prefect' ? true : false
+
       // Once we've confirmed that we have input and
       // we aren't pausing all queries, we check that
       // the input matches a UUID regex which is stored as
