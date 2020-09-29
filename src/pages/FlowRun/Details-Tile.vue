@@ -146,7 +146,7 @@ export default {
                     ? 'Prefect Scheduler'
                     : flowRun.created_by
                     ? flowRun.created_by.username
-                    : 'A nonexistant user'
+                    : 'Ad hoc run'
                 }}
               </div>
             </v-list-item-content>
