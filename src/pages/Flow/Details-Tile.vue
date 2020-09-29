@@ -272,11 +272,7 @@ export default {
                 Created by
               </v-list-item-subtitle>
               <div class="subtitle-2">
-                {{
-                  flow.created_by
-                    ? flow.created_by.username
-                    : 'A nonexistent user'
-                }}
+                {{ flow.created_by.username }}
               </div>
               <div class="caption">{{ formatTime(flow.created) }} </div>
             </v-list-item-content>
