@@ -58,6 +58,8 @@ export default {
       now: Date.now(),
       zoom: d3.zoom(),
 
+      followEdge: true,
+
       // DOM refs
       canvas: null,
       breakpointsNode: null,
@@ -88,13 +90,13 @@ export default {
 
       interval: null,
       iterations: 0,
-      playing: false,
+      playing: this.live,
       scaleExtent: [1, 10],
       translateExtent: [
         [-Infinity, -Infinity],
         [Infinity, Infinity]
       ],
-      transform: { x: 0, y: 0, k: 1 },
+      transform: d3.zoomIdentity,
 
       // Scales
       x: d3.scaleTime(),
@@ -134,9 +136,19 @@ export default {
       handler: debounce(function() {
         this._renderCanvas()
       }, 500)
+    },
+    live(val) {
+      if (val) {
+        this.interval?.stop()
+        this.play()
+      } else {
+        this.pause()
+      }
     }
   },
   mounted() {
+    this.timer?.stop()
+
     this.canvas = d3.select(`#${this.id}-canvas`)
     this.svg = d3.select(`#${this.id}-svg`)
 
@@ -147,6 +159,7 @@ export default {
     requestAnimationFrame(this.resizeChart)
   },
   beforeDestroy() {
+    this.timer?.stop()
     this.interval?.stop()
     window.removeEventListener('resize', this.resizeChart)
     this.canvas.on('.zoom', null)
@@ -413,9 +426,17 @@ export default {
     play() {
       this.playing = true
       this.interval = d3.interval(() => {
+        // requestAnimationFrame(() => {
+
+        // })
+
+        this.updateScales()
+        this.updateX()
+        this.updateBreakpoints()
         this._renderCanvas()
+
         ++this.iterations
-      }, this.animationDuration)
+      }, 16)
     },
     playOrPause() {
       this.playing ? this.pause() : this.play()
@@ -425,6 +446,7 @@ export default {
       this.interval?.stop()
     },
     rawResizeChart() {
+      this.pause()
       clearTimeout(this.drawTimeout)
       let parent = this.canvas.select(function() {
         return this.parentNode
@@ -482,34 +504,10 @@ export default {
       this.xAxisNode.attr('class', 'x-axis-group').style('position', 'fixed')
       // .style('transform', `translate(0, ${height}px)`) // This moves the axis to the bottom of the svg node
 
-      this.x.range([this.barRadius * 1.25, width - this.padding.right])
-
       this.height_ = height
       this.width_ = width
 
-      const now = new Date()
-
-      const startMs = this.start?.getTime() ?? 0
-      const endMs = (this.end ?? now)?.getTime() ?? 0
-      const domainPadding = (endMs - startMs) * 0.05 // 1 minute padding on either side
-      const domainStart = new Date(startMs - domainPadding)
-      const domainEnd = new Date(endMs + domainPadding)
-
-      this.x.domain([domainStart, domainEnd])
-
-      this.y.domain(this.items.map(item => item.id))
-      this.y.paddingInner(this.barPadding)
-      this.y.paddingOuter(this.barPadding * 2)
-      this.y.range([0, height])
-
-      const scaleExtentUpper = (endMs - startMs) / (1000 * 60)
-
-      this.scaleExtent = [1, scaleExtentUpper < 2 ? 2 : scaleExtentUpper]
-
-      this.translateExtent = [
-        [0, 0],
-        [this.width_ + this.width_ * 0.1, this.height_]
-      ]
+      this.updateScales()
 
       const filter = () => {
         return event.isTrusted
@@ -524,9 +522,17 @@ export default {
           .on('zoom', this.zoomed)
           .filter(filter)
 
+        // Sets the initial transform
+        // and updates the scales and breakpoints
         this.zoomed({ transform: d3.zoomIdentity })
 
+        // Adds the zoom entity
+        // to the canvas element
         this.canvas.call(this.zoom)
+
+        if (this.live) {
+          this.play()
+        }
       }, 500)
     },
     updateBreakpoints() {
@@ -622,13 +628,34 @@ export default {
         )
     },
     updateX() {
-      const xAxis = this.newXAxis(this.transform.rescaleX(this.x))
+      const x = this.transform.rescaleX(this.x)
+      const xAxis = this.newXAxis(x)
 
-      this.xAxisNode
-        // .transition()
-        // .duration(100)
-        // .ease(d3.easeLinear)
-        .call(xAxis)
+      this.xAxisNode.call(xAxis)
+    },
+    updateScales() {
+      const now = new Date()
+      const startMs = this.start?.getTime() ?? 0
+      const endMs = (this.end ?? now)?.getTime() ?? 0
+      const domainPadding = (endMs - startMs) * 0.05 // 1 minute padding on either side
+      const domainStart = new Date(startMs - domainPadding)
+      const domainEnd = new Date(endMs + (this.end ? domainPadding : 0))
+
+      this.x.range([this.barRadius * 1.25, this.width_ - this.padding.right])
+      this.x.domain([domainStart, domainEnd])
+      this.y.domain(this.items.map(item => item.id))
+      this.y.paddingInner(this.barPadding)
+      this.y.paddingOuter(this.barPadding * 2)
+      this.y.range([0, this.height_])
+
+      const scaleExtentUpper = (endMs - startMs) / (1000 * 60)
+
+      this.scaleExtent = [1, scaleExtentUpper < 2 ? 2 : scaleExtentUpper]
+
+      this.translateExtent = [
+        [0, 0],
+        [this.width_ + this.width_ * 0.1, this.height_]
+      ]
     },
     zoomed({ transform }) {
       this.transform = transform
@@ -688,6 +715,8 @@ export default {
           <v-btn class="ml-12" @click="redraw">
             Redraw
           </v-btn>
+
+          <div> Iterations: {{ iterations }} </div>
         </div>
 
         <div class="d-flex  my-4">
