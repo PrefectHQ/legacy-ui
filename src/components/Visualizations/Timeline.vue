@@ -313,12 +313,12 @@ export default {
         let colors = Object.keys(bar.colors)
 
         colors.forEach((color, j) => {
+          context.fillStyle = color || '#eee'
+
           let capLeft = new Path2D(),
             capRight = new Path2D(),
             circle = new Path2D(),
             rect = new Path2D()
-
-          context.fillStyle = color || '#eee'
 
           // If the unadjusted height and width are equal,
           // we just draw a single shape (a circle)
@@ -341,6 +341,8 @@ export default {
                 -(270 * Math.PI) / 180,
                 true
               )
+
+              capLeft.addPath(rect)
             }
 
             if (j === colors.length - 1) {
@@ -352,6 +354,8 @@ export default {
                 (270 * Math.PI) / 180,
                 true
               )
+
+              capRight.addPath(rect)
             }
 
             offset += width
@@ -359,17 +363,15 @@ export default {
 
           // Fill the shape but add the shape to the reference
           // path, so we can calculation intersections
-          context.fill(circle)
           this.bars[i].path2D.addPath(circle)
-
-          context.fill(rect)
           this.bars[i].path2D.addPath(rect)
-
-          context.fill(capLeft)
           this.bars[i].path2D.addPath(capLeft)
-
-          context.fill(capRight)
           this.bars[i].path2D.addPath(capRight)
+
+          context.fill(circle)
+          context.fill(rect)
+          context.fill(capLeft)
+          context.fill(capRight)
         })
 
         // These are pretty fuzzy right now
