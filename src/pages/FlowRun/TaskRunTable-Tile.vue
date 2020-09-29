@@ -4,6 +4,7 @@ import moment from 'moment-timezone'
 import DurationSpan from '@/components/DurationSpan'
 import ResumeButton from '@/components/ResumeButton'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { FINISHED_STATES } from '@/utils/states'
 
 export default {
   components: {
@@ -89,6 +90,9 @@ export default {
       if (same.length > 1) {
         return true
       }
+    },
+    isFinished(state) {
+      return FINISHED_STATES.includes(state)
     }
   },
   apollo: {
@@ -222,7 +226,13 @@ export default {
           <DurationSpan
             v-if="item.start_time"
             :start-time="item.start_time"
-            :end-time="item.end_time"
+            :end-time="
+              item.end_time
+                ? item.end_time
+                : isFinished(item.state)
+                ? item.start_time
+                : null
+            "
           />
           <span v-else>...</span>
         </template>
