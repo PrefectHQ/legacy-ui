@@ -508,7 +508,6 @@ export default {
       this.width_ = width
 
       this.updateScales()
-      this.updateX()
 
       const filter = () => {
         return event.isTrusted
@@ -530,7 +529,10 @@ export default {
         // Adds the zoom entity
         // to the canvas element
         this.canvas.call(this.zoom)
-        this.play()
+
+        if (this.live) {
+          this.play()
+        }
       }, 500)
     },
     updateBreakpoints() {
@@ -625,16 +627,20 @@ export default {
           }
         )
     },
-    updateX() {
+    updateX(shouldTransition) {
+      // Passing true to this method
+      // removes the duration from the axis transitions
+      // meaning we can keep the scales in sync with user actions
+      // like zooming and panning
       const x = this.transform.rescaleX(this.x)
       const xAxis = this.newXAxis(x)
       const live = this.live
 
-      this.render()
+      this.updateBars()
       this.updateBreakpoints()
       this.xAxisNode
         .transition()
-        .duration(16)
+        .duration(shouldTransition ? 0 : this.animationDuration)
         .call(xAxis)
         .on('end', () => {
           this.xAxisNode.on('end', null)
@@ -684,7 +690,7 @@ export default {
     },
     zoomed({ transform }) {
       this.transform = transform
-      this.updateX()
+      this.updateX(true)
     },
     collapse() {
       this.collapsed_ = !this.collapsed_
