@@ -118,6 +118,12 @@ export default {
     }
   },
   watch: {
+    breakpoints: {
+      deep: true,
+      handler: debounce(function() {
+        this.updateBreakpoints()
+      }, 500)
+    },
     items: {
       deep: true,
       handler: debounce(function() {
@@ -548,9 +554,12 @@ export default {
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
               .attr('y', this.height_ / 2)
-              .attr('x', 5)
+              .attr('x', 0)
               .style('opacity', 0)
-              .attr('transform', `rotate(90 0 ${this.height_ / 2})`)
+              .attr(
+                'transform',
+                `translate(5) rotate(90 0 ${this.height_ / 2})`
+              )
               .transition()
               .delay(this.animationDuration)
               .duration(150)
