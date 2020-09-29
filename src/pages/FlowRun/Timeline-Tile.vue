@@ -162,6 +162,7 @@ export default {
       skip() {
         return !this.flowId || !this.tasks
       },
+      pollInterval: 3000,
       update: data => data.task_run
     },
     tasks: {
@@ -174,6 +175,7 @@ export default {
       skip() {
         return !this.flowRunId
       },
+      pollInterval: 3000,
       update: data => data.task
     },
     mappedChildren: {
@@ -187,6 +189,7 @@ export default {
       skip() {
         return !this.taskRuns || !this.mappedTaskRuns.length
       },
+      pollInterval: 3000,
       update(data) {
         // Since mapped_children doesn't return an id (and we can't do this mapping with GraphQL)
         // we map those here instead
