@@ -144,14 +144,14 @@ export default {
         Overview
       </v-tab>
 
+      <v-tab href="#chart" :style="hideOnMobile">
+        <v-icon left>pi-gantt</v-icon>
+        Timeline
+      </v-tab>
+
       <v-tab href="#schematic" :style="hideOnMobile">
         <v-icon left>pi-schematic</v-icon>
         Schematic
-      </v-tab>
-
-      <v-tab href="#chart" :style="hideOnMobile">
-        <v-icon left>pi-gantt</v-icon>
-        Gantt Chart
       </v-tab>
 
       <v-tab href="#logs" :style="hideOnMobile" data-cy="flow-run-logs-tab">
@@ -239,14 +239,14 @@ export default {
         <v-icon>view_quilt</v-icon>
       </v-btn>
 
+      <v-btn @click="tab = 'chart'">
+        Timeline
+        <v-icon>pi-gantt</v-icon>
+      </v-btn>
+
       <v-btn @click="tab = 'schematic'">
         Schematic
         <v-icon>pi-schematic</v-icon>
-      </v-btn>
-
-      <v-btn @click="tab = 'chart'">
-        Gantt Chart
-        <v-icon>pi-gantt</v-icon>
       </v-btn>
 
       <v-btn @click="tab = 'logs'">
