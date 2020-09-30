@@ -35,7 +35,6 @@ export default {
           name: 'dashboard',
           params: { tenant: tenant.slug }
         })
-        this.loading = false
       }
     },
     async acceptInvitation() {
@@ -66,9 +65,7 @@ export default {
         return { id: this.invitationId }
       },
       pollInterval: 5000,
-      update: data => {
-        return data.membership_invitation
-      }
+      update: data => data.membership_invitation
     }
   }
 }
@@ -101,7 +98,11 @@ export default {
             v-if="error || !membershipInvitation || !membershipInvitation[0]"
           >
             <div>
-              {{ errorMessage }}
+              <span v-if="error"> {{ errorMessage }} </span>
+              <span v-else>
+                We can't find your membership invitation. Have you already
+                accepted?
+              </span>
             </div>
           </div>
           <div v-else>
