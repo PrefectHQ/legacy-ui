@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Allow label edit on flows created with an older version of core [#273](https://github.com/PrefectHQ/ui/pull/273)
 
 ## 2020-09-29
 
