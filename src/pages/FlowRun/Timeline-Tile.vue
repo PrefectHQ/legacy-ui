@@ -67,9 +67,6 @@ export default {
         if (!taskRun || (isMapped && !mappedRef)) return item
 
         if (isMapped) {
-          item.start_time = mappedRef.min_start_time
-          item.end_time = mappedRef.max_end_time
-
           const states = Object.keys(mappedRef.state_counts).sort(
             (s1, s2) => notPastStates.indexOf(s1) - notPastStates.indexOf(s2)
           )
@@ -89,9 +86,21 @@ export default {
             })
           })
 
+          if (item.colors.length == 0) {
+            item.colors.push({
+              color: computedStyle.getPropertyValue('--v-Mapped-base'),
+              value: 1
+            })
+          }
+
           item.shadow = taskRun?.serialized_state?.n_map_states
             ? taskRun?.serialized_state?.n_map_states !== total
             : this.flowRun.state == 'Running' && isMapped
+
+          item.start_time = mappedRef.min_start_time
+          item.end_time = taskRun?.serialized_state?.n_map_states
+            ? taskRun?.serialized_state?.n_map_states !== total
+            : mappedRef.max_end_time
         } else {
           item.start_time = taskRun.start_time
           item.end_time = taskRun.end_time

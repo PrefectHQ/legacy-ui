@@ -5,6 +5,8 @@ query TaskRuns($flowRunId: uuid!) {
     id
     start_time
     end_time
+
+    serialized_state
     state
     task_id
     version

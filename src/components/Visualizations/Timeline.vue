@@ -248,7 +248,7 @@ export default {
           context.globalAlpha = bar.alpha || 1
           // context.lineWidth = 1 * (1 / this.transform.k)
           // context.strokeStyle = colors[0]
-          context.fillStyle = 'orange'
+          context.fillStyle = '#eee'
           context.shadowColor = '#666'
           context.shadowBlur = bar.shadow
           const compress = 2
