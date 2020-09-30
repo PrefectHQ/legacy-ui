@@ -539,7 +539,10 @@ export default {
           enter => {
             const g = enter
               .append('g')
-              .attr('transform', `translate(0) scale(${1 / this.transform.k})`)
+              .attr(
+                'transform',
+                `translate(${this.x(this.now)}) scale(${1 / this.transform.k})`
+              )
               .attr('class', 'breakpoints-group')
 
             g.append('path')
@@ -570,7 +573,7 @@ export default {
             return g.call(enter =>
               enter
                 .transition('enter')
-                .duration(0)
+                .duration(this.animationDuration)
                 .attr(
                   'transform',
                   d =>
