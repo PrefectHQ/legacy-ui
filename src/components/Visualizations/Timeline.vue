@@ -240,45 +240,43 @@ export default {
             circle = new Path2D(),
             rect = new Path2D()
 
-          // If the unadjusted height and width are equal,
-          // we just draw a single shape (a circle)
-          // This is cleaner visually and more performant
-          // than drawing 3 shapes
-          if (colors.length === 1 && bar.width <= bar.height) {
-            circle.arc(bar.x + radius, y + radius, radius, 0, 2 * Math.PI)
-          } else {
-            const x = bar.x + radius / 2
-            const width = bar.width * bar.colors[color] - radius
+          const x = bar.x + radius / 2
 
-            rect.rect(x + offset, y, width, radius * 2)
+          const calcWidth = bar.width * bar.colors[color] - radius
+          const width = calcWidth < 0 || calcWidth <= bar.height ? 0 : calcWidth
 
-            if (j === 0) {
-              capLeft.arc(
-                x,
-                y + radius,
-                radius,
-                -(90 * Math.PI) / 180,
-                -(270 * Math.PI) / 180,
-                true
-              )
+          rect.rect(x + offset, y, width, radius * 2)
 
-              capLeft.addPath(rect)
-            }
+          if (j === 0) {
+            capLeft.arc(
+              x,
+              y + radius,
+              radius,
+              -(90 * Math.PI) / 180,
+              -(270 * Math.PI) / 180,
+              true
+            )
 
-            if (j === colors.length - 1) {
-              capRight.arc(
-                x + width + offset,
-                y + radius,
-                radius,
-                (90 * Math.PI) / 180,
-                (270 * Math.PI) / 180,
-                true
-              )
+            capLeft.addPath(rect)
+          }
 
-              capRight.addPath(rect)
-            }
+          if (j === colors.length - 1) {
+            capRight.arc(
+              x + width + offset,
+              y + radius,
+              radius,
+              (90 * Math.PI) / 180,
+              (270 * Math.PI) / 180,
+              true
+            )
 
-            offset += width
+            capRight.addPath(rect)
+          }
+
+          offset += width
+
+          if (width <= 0) {
+            capLeft.addPath(capRight)
           }
 
           // Fill the shape but add the shape to the reference
