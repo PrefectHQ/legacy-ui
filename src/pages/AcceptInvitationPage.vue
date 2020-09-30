@@ -6,9 +6,7 @@ export default {
     return {
       loading: false,
       error: false,
-      invitationId: localStorage.getItem('invitationId')
-        ? localStorage.getItem('invitationId')
-        : this.$route.query.invitation_id,
+      invitationId: this.$route.query.invitation_id,
       membershipInvitation: null,
       errorMessage:
         'It looks like there was a problem with your invitation.  Please check the details and your account and try again.'
@@ -16,76 +14,50 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['user']),
-    ...mapGetters('tenant', ['tenant'])
-  },
-  mounted: function() {
-    this.$nextTick(async function acceptInvitation() {
-      try {
-        this.loading = true
-        const { data, errors } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Tenant/accept-membership-invitation.gql'),
-          variables: {
-            membershipInvitationId: this.invitationId
-          },
-          errorPolicy: 'all'
-        })
-        if (data?.accept_membership_invitation?.id) {
-          //once they accept the invitation, the invitation id is removed.
-          localStorage.removeItem('invitationId')
-          // Sets the tenant so that they're rerouted to the correct dashboard.
-
-          await this.getUser()
-
-          const tenantSlug = this.user.memberships.filter(
-            membership => membership.tenant.id === this.tenant.id
-          )?.tenant?.slug
-
-          if (tenantSlug) {
-            await this.setCurrentTenant(tenantSlug)
-          }
-          this.loading = false
-        } else if (errors) {
-          if (errors[0].message === 'Uniqueness violation.') {
-            this.errorMessage =
-              'It looks like that invitation has already been accepted. Check your tenant list.'
-          }
-          this.loading = false
-          this.error = true
-        }
-      } catch (e) {
-        this.loading = false
-        this.error = true
-      }
-    })
+    ...mapGetters('tenant', ['tenant']),
+    teamName() {
+      return this.membershipInvitation[0]?.tenant?.name || 'your new team'
+    },
+    userName() {
+      return this.membershipInvitation[0]?.user?.username
+    }
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
     async accept() {
-      this.$router.push({
-        name: 'dashboard',
-        params: { tenant: this.tenant.slug }
-      })
+      const tenant = this.membershipInvitation[0].tenant
+      // const accepted = await this.acceptInvitation()
+      // if (accepted) {
+      console.log(tenant)
+      // await this.setCurrentTenant(tenant.slug)
+      // this.$router.push({
+      //   name: 'dashboard',
+      //   params: { tenant: tenant.slug }
+      // })
+      // }
     },
-    teamName() {
-      if (this.membershipInvitation) {
-        if (this.membershipInvitation[0]) {
-          if (this.membershipInvitation[0].tenant) {
-            return this.membershipInvitation[0].tenant.name
+    async acceptInvitation() {
+      try {
+        this.loading = true
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Tenant/accept-membership-invitation.gql'),
+          variables: {
+            membershipInvitationId: this.invitationId
           }
+        })
+        if (data?.accept_membership_invitation?.id) {
+          this.loading = false
+          return true
         }
+      } catch (e) {
+        this.errorMessage = e
+          .toString()
+          .split(':')
+          .pop()
+        this.loading = false
+        this.error = true
       }
-      return 'your new team'
-    },
-    userName() {
-      if (this.membershipInvitation) {
-        if (this.membershipInvitation[0]) {
-          if (this.membershipInvitation[0].user) {
-            return this.membershipInvitation[0].user.username
-          }
-        }
-      }
-      return null
     }
   },
   apollo: {
@@ -95,8 +67,9 @@ export default {
         return { id: this.invitationId }
       },
       pollInterval: 5000,
-      update: data => data.membership_invitation,
-      errorPolicy: 'all'
+      update: data => {
+        return data.membership_invitation
+      }
     }
   }
 }
@@ -125,22 +98,35 @@ export default {
       </v-row>
       <v-row>
         <v-col cols="12">
-          <div v-if="error">
-            <div> {{ errorMessage }} </div>
+          <div
+            v-if="error || !membershipInvitation || !membershipInvitation[0]"
+          >
+            <div>
+              {{ errorMessage }}
+            </div>
           </div>
           <div v-else>
             <div class="display-1">
-              Welcome to Prefect Cloud {{ userName() }}
+              Welcome to Prefect Cloud {{ userName }}
             </div>
             <div id="name" class="subtitle-1">
-              Welcome to {{ teamName() }}. To join, please click below.
+              Welcome to {{ teamName }}. To join, please click below.
             </div>
           </div>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
-          <v-btn v-if="!error && !loading" class="mr-3" @click="accept">
+          <v-btn
+            v-if="
+              !error &&
+                !loading &&
+                membershipInvitation &&
+                membershipInvitation[0]
+            "
+            class="mr-3"
+            @click="accept"
+          >
             Join
           </v-btn>
         </v-col>
