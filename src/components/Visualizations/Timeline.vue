@@ -65,6 +65,7 @@ export default {
       drawTimeout: null,
       easing: 'easePolyInOut',
       id: uniqueId('timeline'),
+      hoveredId: null,
       now: new Date(),
       showControls: false, // These are useful for debugging
       zoom: d3.zoom(),
@@ -199,7 +200,22 @@ export default {
       console.log(e)
     },
     mousemove(e) {
-      console.log(e)
+      const context = this.canvas.node().getContext('2d')
+      let hoveredId
+
+      for (let i = 0; i < this.bars.length; ++i) {
+        const bar = this.bars[i]
+        if (context.isPointInPath(bar.path2D, e.offsetX, e.offsetY)) {
+          hoveredId = bar.id
+          break
+        }
+      }
+
+      if (!hoveredId || hoveredId !== this.hoveredId) {
+        this.updateBars()
+      }
+
+      this.hoveredId = hoveredId
     },
     newXAxis(x) {
       let day
