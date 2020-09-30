@@ -159,7 +159,12 @@ export default {
         Logs
       </v-tab>
 
-      <v-tab-item class="tab-full-height pa-0" value="overview">
+      <v-tab-item
+        class="tab-full-height pa-0"
+        value="overview"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
 
@@ -175,13 +180,23 @@ export default {
         </TileLayout>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="schematic">
+      <v-tab-item
+        class="tab-full-height"
+        value="schematic"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <SchematicTile slot="row-2-tile" />
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="chart">
+      <v-tab-item
+        class="tab-full-height"
+        value="chart"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <!-- <GanttChartTile
           v-if="flowId"
           :flow-id="flowId"
@@ -196,7 +211,12 @@ export default {
         />
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="logs">
+      <v-tab-item
+        class="tab-full-height"
+        value="logs"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <LogsCard
             slot="row-2-tile"
