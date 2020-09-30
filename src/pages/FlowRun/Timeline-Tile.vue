@@ -31,9 +31,18 @@ export default {
   computed: {
     endTime() {
       return this.flowRun.end_time
+        ? Math.max.apply(null, [
+            new Date(this.flowRun.scheduled_start_time),
+            new Date(this.flowRun.end_time),
+            this.maxItemEndTime
+          ])
+        : null
     },
     startTime() {
-      return this.flowRun.scheduled_start_time
+      return Math.min.apply(null, [
+        new Date(this.flowRun.scheduled_start_time),
+        new Date(this.flowRun.start_time)
+      ])
     },
     items() {
       if (!this.tasks) return
@@ -87,6 +96,12 @@ export default {
 
         return item
       })
+    },
+    maxItemEndTime() {
+      return Math.max.apply(
+        null,
+        this.items.map(item => new Date(item.end_time))
+      )
     },
     isFinished() {
       return FINISHED_STATES.includes(this.flowRun.state)

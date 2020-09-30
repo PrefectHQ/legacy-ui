@@ -38,12 +38,12 @@ export default {
 
     // Bookends for the chart
     endTime: {
-      type: String,
+      type: [Number, String],
       required: false,
       default: null
     },
     startTime: {
-      type: String,
+      type: [Number, String],
       required: false,
       default: null
     }
