@@ -23,7 +23,11 @@ export default {
       default: () => {}
     }
   },
-  data: () => ({}),
+  data() {
+    return {
+      breakpoints: []
+    }
+  },
   computed: {
     endTime() {
       return this.flowRun.end_time
@@ -84,33 +88,6 @@ export default {
         return item
       })
     },
-    breakpoints() {
-      return [
-        {
-          label: 'Scheduled',
-          time: this.flowRun?.scheduled_start_time,
-          color: computedStyle.getPropertyValue('--v-Scheduled-base')
-        },
-        {
-          label: 'Submitted',
-          time: this.flowRun?.states.find(state => state.state == 'Submitted')
-            ?.timestamp,
-          color: computedStyle.getPropertyValue('--v-Submitted-base')
-        },
-        {
-          label: 'Start',
-          time: this.flowRun?.start_time,
-          color: computedStyle.getPropertyValue('--v-Running-base')
-        },
-        {
-          label: 'End',
-          time: this.flowRun?.end_time,
-          color: computedStyle.getPropertyValue(
-            `--v-${this.flowRun?.state}-base`
-          )
-        }
-      ]
-    },
     isFinished() {
       return FINISHED_STATES.includes(this.flowRun.state)
     },
@@ -152,6 +129,32 @@ export default {
       } else {
         this.$apollo.queries.taskRuns.refetch()
       }
+
+      this.breakpoints = [
+        {
+          label: 'Scheduled',
+          time: this.flowRun?.scheduled_start_time,
+          color: computedStyle.getPropertyValue('--v-Scheduled-base')
+        },
+        {
+          label: 'Submitted',
+          time: this.flowRun?.states.find(state => state.state == 'Submitted')
+            ?.timestamp,
+          color: computedStyle.getPropertyValue('--v-Submitted-base')
+        },
+        {
+          label: 'Start',
+          time: this.flowRun?.start_time,
+          color: computedStyle.getPropertyValue('--v-Running-base')
+        },
+        {
+          label: 'End',
+          time: this.flowRun?.end_time,
+          color: computedStyle.getPropertyValue(
+            `--v-${this.flowRun?.state}-base`
+          )
+        }
+      ]
     }
   },
   apollo: {
