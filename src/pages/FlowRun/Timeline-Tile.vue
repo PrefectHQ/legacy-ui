@@ -130,6 +130,14 @@ export default {
         this.$apollo.queries.taskRuns.refetch()
       }
 
+      this.generateBreakpoints()
+    }
+  },
+  mounted() {
+    this.generateBreakpoints()
+  },
+  methods: {
+    generateBreakpoints() {
       this.breakpoints = [
         {
           label: 'Scheduled',
