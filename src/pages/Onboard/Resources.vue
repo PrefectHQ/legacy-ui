@@ -220,7 +220,7 @@ export default {
         <v-col cols="12" class="text-center py-2">
           <v-btn
             :to="{ name: 'dashboard' }"
-            class="mx-auto"
+            class="mx-auto mb-12"
             color="primary"
             x-large
           >
