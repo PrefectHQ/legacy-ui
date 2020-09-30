@@ -94,6 +94,7 @@ export default {
       interval: null,
       iterations: 0,
       live_: this.live,
+      pauseUpdates: false,
       scaleExtent: [1, 10],
       translateExtent: [
         [-Infinity, -Infinity],
@@ -137,12 +138,14 @@ export default {
     breakpoints: {
       deep: true,
       handler: debounce(function() {
+        if (this.pauseUpdates) return
         this.updateBreakpoints()
       }, 500)
     },
     items: {
       deep: true,
       handler: debounce(function() {
+        if (this.pauseUpdates) return
         this.updateBars()
       }, 500)
     },
@@ -320,6 +323,8 @@ export default {
         : this.y.bandwidth()
 
       const calcBar = item => {
+        if (this.pauseUpdates) return
+
         const x = item.start_time
           ? this.x(new Date(item.start_time))
           : this.x(this.now) + 20
@@ -423,15 +428,14 @@ export default {
       }
     },
     play() {
-      this.live_ = true
+      this.pauseUpdates = false
       this.updateX()
     },
     playOrPause() {
-      this.live_ ? this.pause() : this.play()
+      this.pauseUpdates ? this.play() : this.pause()
     },
     pause() {
-      this.live_ = false
-      this.interval?.stop()
+      this.pauseUpdates = true
     },
     rawResizeChart() {
       this.pause()
@@ -504,6 +508,8 @@ export default {
       // We use a timeout to account for the transition
       // period when redrawing the canvas and svg nodes
       this.drawTimeout = setTimeout(() => {
+        this.play()
+
         this.zoom
           .scaleExtent(this.scaleExtent)
           .translateExtent(this.translateExtent)
@@ -517,11 +523,7 @@ export default {
         // Adds the zoom entity
         // to the canvas element
         this.canvas.call(this.zoom)
-
-        if (this.live) {
-          this.play()
-        }
-      }, 500)
+      }, this.animationDuration)
     },
     updateBreakpoints(shouldTransition) {
       this.breakpointsNode.attr(
@@ -635,7 +637,6 @@ export default {
       // like zooming and panning
       const x = this.transform.rescaleX(this.x)
       const xAxis = this.newXAxis(x)
-      const live = this.live_
       this.now = new Date()
 
       this.xAxisNode
@@ -647,7 +648,7 @@ export default {
           this.updateBars()
           this.updateBreakpoints(shouldTransition)
 
-          if (live) {
+          if (this.live_ && !this.pauseUpdates) {
             this.updateScales()
             ++this.iterations
           }
@@ -740,7 +741,9 @@ export default {
     <div class="d-flex align-middle justify-space-between">
       <div>
         <div class="d-flex my-4">
-          <v-btn @click="playOrPause">{{ live_ ? 'Pause' : 'Play' }}</v-btn>
+          <v-btn @click="playOrPause">
+            {{ pauseUpdates ? 'Play' : 'Pause' }}
+          </v-btn>
 
           <v-btn class="ml-12" @click="collapse">
             {{ collapsed_ ? 'Expand' : 'Collapse' }}
