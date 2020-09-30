@@ -93,14 +93,24 @@ export default {
             })
           }
 
-          item.shadow = taskRun?.serialized_state?.n_map_states
-            ? taskRun?.serialized_state?.n_map_states !== total
-            : this.flowRun.state == 'Running' && isMapped
-
           item.start_time = mappedRef.min_start_time
-          item.end_time = taskRun?.serialized_state?.n_map_states
-            ? taskRun?.serialized_state?.n_map_states !== total
-            : mappedRef.max_end_time
+          console.log(taskRun.serialized_state)
+
+          if (taskRun?.serialized_state?.n_map_states) {
+            item.end_time =
+              taskRun?.serialized_state?.n_map_states == total &&
+              !states.some(state => notPastStates.includes(state))
+                ? mappedRef.max_end_time
+                : null
+            item.shadow = states.some(state => notPastStates.includes(state))
+          } else {
+            // We could always use mappedRef.max_end_time
+            // if we don't want to assume a mapped task run is always running
+            // on older versions of Core
+            item.end_time =
+              this.flowRun.state == 'Running' ? null : mappedRef.max_end_time
+            item.shadow = this.flowRun.state == 'Running'
+          }
         } else {
           item.start_time = taskRun.start_time
           item.end_time = taskRun.end_time
