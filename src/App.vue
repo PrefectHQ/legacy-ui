@@ -180,6 +180,15 @@ export default {
         await this.getApi()
         await this.getTenants()
 
+        if (this.isServer && !this.tenants?.length) {
+          // Server has no tenants so redirect to home
+          if (this.$route.name !== 'home') {
+            this.$router.push({
+              name: 'home'
+            })
+          }
+        }
+
         if (this.isServer && this.tenants?.length) {
           // If this is Server, there won't be a default tenant, so we'll set one
           this.setDefaultTenant(this.tenants?.[0])
