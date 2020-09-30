@@ -585,6 +585,13 @@ export default {
           update =>
             update.call(update => {
               update
+                .select('path')
+                .transition('update')
+                .duration(this.animationDuration)
+                .attr('stroke', d => d.color || '#999')
+                .attr('d', `M0,0L0,${this.height_}`)
+
+              update
                 .select('text')
                 .attr('text-anchor', d => d.anchor || 'middle')
                 .text(d => d.label)
