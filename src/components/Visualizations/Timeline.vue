@@ -515,15 +515,17 @@ export default {
       // we use that, otherwise we assume infinite height and
       // let the component expand based on the min
       // bar radius
-      let height
-      if (this.height) {
-        height = parseInt(this.height)
-      } else {
-        height = this.collapsed_
-          ? this.barRadius * 2 + this.barRadius * this.barPadding * 2
-          : this.items.length * this.barRadius * 2
-      }
-      height = Math.floor(height)
+      let height = Math.floor(
+        parent.clientHeight - padding.top - padding.bottom
+      )
+      // if (this.height) {
+      //   height = parseInt(this.height)
+      // } else {
+      //   height = this.collapsed_
+      //     ? this.barRadius * 2 + this.barRadius * this.barPadding * 2
+      //     : this.items.length * this.barRadius * 2
+      // }
+      // height = Math.floor(height)
 
       if (!height || !width || height <= 0 || width <= 0) {
         return
@@ -787,8 +789,15 @@ export default {
 </script>
 
 <template>
-  <div>
-    <div v-if="showControls" class="d-flex align-middle justify-space-between">
+  <div
+    ref="parent"
+    class="position-relative overflow-scroll"
+    style="height: 100%;"
+  >
+    <div
+      v-if="showControls"
+      class="d-flex align-middle justify-space-between position-absolute"
+    >
       <div>
         <div class="d-flex my-4">
           <v-btn @click="playOrPause">
@@ -853,10 +862,9 @@ export default {
         </div>
       </div>
     </div>
-    <div ref="parent" class="position-relative">
-      <canvas :id="`${id}-canvas`" class="canvas" />
-      <svg :id="`${id}-svg`" class="svg" />
-    </div>
+
+    <canvas :id="`${id}-canvas`" class="canvas" />
+    <svg :id="`${id}-svg`" class="svg" />
   </div>
 </template>
 

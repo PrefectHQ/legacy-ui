@@ -156,7 +156,14 @@ export default {
         <v-icon left>format_align_left</v-icon>
         Logs
       </v-tab>
+    </v-tabs>
 
+    <v-tabs-items
+      v-model="tab"
+      class="px-6 mx-auto tabs-border-bottom"
+      :style="{ 'max-width': tab == 'chart' ? null : '1440px' }"
+      mandatory
+    >
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
@@ -223,8 +230,7 @@ export default {
           />
         </TileLayoutFull>
       </v-tab-item>
-    </v-tabs>
-
+    </v-tabs-items>
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn @click="tab = 'overview'">
         Overview

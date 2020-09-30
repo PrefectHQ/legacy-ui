@@ -1,4 +1,5 @@
 <script>
+import CardTitle from '@/components/Card-Title'
 import gql from 'graphql-tag'
 import { FINISHED_STATES } from '@/utils/states'
 
@@ -7,6 +8,7 @@ const notPastStates = ['Running', 'Submitted', 'Pending']
 
 export default {
   components: {
+    CardTitle,
     Timeline: () => import('@/components/Visualizations/Timeline')
   },
   props: {
@@ -188,7 +190,6 @@ export default {
   mounted() {
     this.generateBreakpoints()
 
-    console.log(this.$refs)
     this.containerHeight = getComputedStyle(
       this.$refs['timeline-container']
     ).height
@@ -281,22 +282,26 @@ export default {
 </script>
 
 <template>
-  <div ref="timeline-container" class="timeline-container">
-    <Timeline
-      v-if="items"
-      :items="items"
-      :start-time="startTime"
-      :end-time="endTime"
-      :breakpoints="breakpoints"
-      :live="!isFinished"
-      :height="containerHeight"
-    />
-  </div>
+  <v-card class="pa-2 my-6" tile>
+    <CardTitle title="Run Timeline" icon="pi-gantt" />
+
+    <v-card-text ref="timeline-container" class="timeline-container">
+      <Timeline
+        v-if="items"
+        :items="items"
+        :start-time="startTime"
+        :end-time="endTime"
+        :breakpoints="breakpoints"
+        :live="!isFinished"
+        :height="containerHeight"
+      />
+    </v-card-text>
+  </v-card>
 </template>
 
 <style lang="scss" scoped>
 .timeline-container {
-  height: calc(100vh - 300px);
+  height: calc(100vh - 350px);
   min-height: 1000px;
 }
 </style>
