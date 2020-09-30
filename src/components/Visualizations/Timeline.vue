@@ -215,12 +215,12 @@ export default {
             ? 1
             : 0.5
           : bar.alpha || 1
-        bar.x = Math.floor(bar.x0 * (1 - t) + bar.x1 * multiplier)
+        bar.x = bar.x0 * (1 - t) + bar.x1 * multiplier
         bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
         bar.height = Math.round(
           bar.height0 * (1 - t) + bar.height1 * multiplier
         )
-        bar.width = Math.floor(bar.width0 * (1 - t) + bar.width1 * multiplier)
+        bar.width = bar.width0 * (1 - t) + bar.width1 * multiplier
 
         this.bars[i].path2D = new Path2D()
 
