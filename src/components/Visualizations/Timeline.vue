@@ -323,7 +323,9 @@ export default {
         : this.y.bandwidth()
 
       const calcBar = item => {
-        const x = item.start_time ? this.x(new Date(item.start_time)) : 0
+        const x = item.start_time
+          ? this.x(new Date(item.start_time))
+          : this.x(this.now) + 20
 
         const calcWidth = item.end_time
           ? this.x(new Date(item.end_time)) - x

@@ -67,8 +67,7 @@ export default {
             item.colors[color] = mappedRef.state_counts[state] / total
           })
         } else {
-          item.start_time =
-            taskRun.start_time ?? this.flowRun.scheduled_start_time
+          item.start_time = taskRun.start_time
           item.end_time = taskRun.end_time
             ? taskRun.end_time
             : taskRun.state == 'Running'
