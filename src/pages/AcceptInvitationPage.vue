@@ -23,8 +23,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
-    ...mapActions('user', ['getUser']),
+    ...mapActions('tenant', ['setCurrentTenant']),
     async accept() {
       this.loading = true
       const tenant = this.membershipInvitation[0].tenant

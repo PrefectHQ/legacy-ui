@@ -94,7 +94,7 @@ const mutations = {
 }
 
 const actions = {
-  async setDefaultTenant({ commit, getters, rootGetters, tenant }) {
+  async setDefaultTenant({ commit, getters, rootGetters }) {
     const defaultMembershipId = getters['defaultMembershipId']
     const defaultTenant = getters['memberships']?.find(
       membership => membership.id === defaultMembershipId
@@ -103,15 +103,15 @@ const actions = {
     const firstTenant =
       getters['memberships']?.[0]?.tenant || rootGetters['tenant/tenants']?.[0]
 
-    commit('tenant/setDefaultTenant', tenant || defaultTenant || firstTenant, {
+    commit('tenant/setDefaultTenant', defaultTenant || firstTenant, {
       root: true
     })
   },
 
-  async getUser({ commit, getters, dispatch, tenant }) {
+  async getUser({ commit, getters, dispatch }) {
     const user = await prefectUser()
     commit('user', user)
-    await dispatch('setDefaultTenant', tenant)
+    await dispatch('setDefaultTenant')
     return getters['user']
   }
 }
