@@ -5,7 +5,6 @@ import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
 import TimelineTile from '@/pages/FlowRun/Timeline-Tile'
-// import GanttChartTile from '@/pages/FlowRun/GanttChart-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import SchematicTile from '@/pages/FlowRun/Schematic-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
@@ -20,7 +19,6 @@ export default {
     BreadCrumbs,
     DetailsTile,
     TimelineTile,
-    // GanttChartTile,
     LogsCard,
     SchematicTile,
     SubPageNav,
@@ -197,12 +195,6 @@ export default {
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
-        <!-- <GanttChartTile
-          v-if="flowId"
-          :flow-id="flowId"
-          :flow-run-id="flowRunId"
-          :flow-run="flowRun"
-        /> -->
         <TimelineTile
           v-if="flowId"
           :flow-id="flowId"
