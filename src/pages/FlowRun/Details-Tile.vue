@@ -30,6 +30,9 @@ export default {
     hasParameters() {
       if (!this.flowRun?.parameters) return false
       return Object.keys(this.flowRun.parameters).length > 0
+    },
+    hasUserOrIsAutoscheduled() {
+      return this.flowRun.created_by != null || this.flowRun.auto_scheduled
     }
   },
   methods: {
@@ -135,7 +138,7 @@ export default {
     <v-card-text class="pl-12 card-content">
       <v-fade-transition hide-on-leave>
         <div v-if="tab === 'overview'">
-          <v-list-item dense class="px-0">
+          <v-list-item v-if="hasUserOrIsAutoscheduled" class="px-0">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Created by
@@ -144,9 +147,7 @@ export default {
                 {{
                   flowRun.auto_scheduled
                     ? 'Prefect Scheduler'
-                    : flowRun.created_by
-                    ? flowRun.created_by.username
-                    : 'Ad hoc run'
+                    : flowRun.created_by.username
                 }}
               </div>
             </v-list-item-content>
