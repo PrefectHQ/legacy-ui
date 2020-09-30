@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Update information in "Connect the UI" section of the home view [#271](https://github.com/PrefectHQ/ui/pull/271)
 
 ### Bugfixes
 
