@@ -55,7 +55,7 @@ export default {
       drawTimeout: null,
       easing: 'easePolyInOut',
       collapsed_: this.collapsed,
-      now: Date.now(),
+      now: new Date(),
       zoom: d3.zoom(),
 
       followEdge: true,
@@ -328,7 +328,7 @@ export default {
         const calcWidth = item.end_time
           ? this.x(new Date(item.end_time)) - x
           : item.start_time
-          ? this.x(Date.now()) - x
+          ? this.x(this.now) - x
           : 0
 
         const width = calcWidth > height ? calcWidth : height
@@ -644,12 +644,12 @@ export default {
     updateScales() {
       const prevDomainEnd = this.domainEnd
 
-      const now = new Date()
+      this.now = new Date()
       const startMs = this.start?.getTime() ?? 0
-      const endMs = (this.end ?? now)?.getTime() ?? 0
+      const endMs = (this.end ?? this.now).getTime()
       const domainPadding = (endMs - startMs) * 0.05 // 1 minute padding on either side
       this.domainStart = new Date(startMs - domainPadding)
-      this.domainEnd = new Date(endMs + (this.end ? domainPadding : 0))
+      this.domainEnd = new Date(endMs + domainPadding)
 
       this.x.range([this.barRadius * 1.25, this.width_ - this.padding.right])
       this.x.domain([this.domainStart, this.domainEnd])
@@ -667,7 +667,7 @@ export default {
         [this.width_ + this.width_ * 0.1, this.height_]
       ]
 
-      if (prevDomainEnd) {
+      if (prevDomainEnd && this.transform.k !== 1) {
         const translateBy = this.x(prevDomainEnd) - this.x(this.domainEnd)
 
         this.transform.x += translateBy
@@ -675,6 +675,8 @@ export default {
         this.canvas.call(this.zoom, this.transform)
         // this.zoom.translateBy(this.canvas, translateBy, 0)
         // this.canvas.call(this.zoom, )¿
+      } else {
+        this.canvas.call(this.zoom)
       }
     },
     zoomed({ transform }) {
