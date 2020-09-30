@@ -74,7 +74,7 @@ export default {
             v-if="showDashboardNavigation"
             :to="{ name: 'dashboard' }"
             data-cy="go-to-dashboard"
-            class="dashboard-link-absolute"
+            class="dashboard-link-absolute mb-12"
             color="primary"
             x-large
           >
@@ -234,6 +234,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+* {
+  box-sizing: border-box;
+}
+
 .dashboard-button-absolute {
   bottom: 5vh;
   left: 50%;
