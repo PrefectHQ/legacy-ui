@@ -122,12 +122,12 @@ export default {
       return new Date(this.endTime)
     },
     breakpoints_() {
-      if (!this.live) return this.breakpoints
+      if (!this.live_) return this.breakpoints
       return [
         ...this.breakpoints,
         {
           label: '(now)',
-          time: Date.now(),
+          time: this.now,
           color: '#999'
         }
       ]
@@ -524,7 +524,7 @@ export default {
         }
       }, 500)
     },
-    updateBreakpoints() {
+    updateBreakpoints(shouldTransition) {
       this.breakpointsNode.attr(
         'transform',
         () => `translate(${this.transform.x} 35) scale(${this.transform.k})`
@@ -532,7 +532,7 @@ export default {
 
       this.breakpointsNode
         .selectAll('.breakpoints-group')
-        .data(this.breakpoints)
+        .data(this.breakpoints_)
         .join(
           enter => {
             const g = enter
@@ -590,13 +590,16 @@ export default {
                 .style('opacity', 1)
 
               return update.call(update =>
-                update.attr(
-                  'transform',
-                  d =>
-                    `translate(${
-                      d.time ? this.x(new Date(d.time)) : -20
-                    }) scale(${1 / this.transform.k})`
-                )
+                update
+                  .transition('update')
+                  .duration(shouldTransition ? this.animationDuration : 0)
+                  .attr(
+                    'transform',
+                    d =>
+                      `translate(${
+                        d.time ? this.x(new Date(d.time)) : -20
+                      }) scale(${1 / this.transform.k})`
+                  )
               )
             }),
           exit => {
@@ -624,6 +627,7 @@ export default {
       const x = this.transform.rescaleX(this.x)
       const xAxis = this.newXAxis(x)
       const live = this.live_
+      this.now = new Date()
 
       this.xAxisNode
         .transition()
@@ -632,11 +636,10 @@ export default {
         .on('end', () => {
           this.xAxisNode.on('end', null)
           this.updateBars()
-          this.updateBreakpoints()
+          this.updateBreakpoints(shouldTransition)
 
           if (live) {
             this.updateScales()
-            this.updateX(true)
             ++this.iterations
           }
         })
@@ -678,6 +681,8 @@ export default {
       } else {
         this.canvas.call(this.zoom)
       }
+
+      this.updateX(true)
     },
     zoomed({ transform }) {
       this.transform = transform
