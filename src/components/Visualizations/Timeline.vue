@@ -215,9 +215,9 @@ export default {
       context.translate(this.transform.x, 1)
       context.scale(this.transform.k, this.transform.k)
 
-      context.beginPath()
       let len = this.bars.length
       for (let i = 0; i < len; ++i) {
+        context.beginPath()
         const bar = this.bars[i]
 
         const multiplier = bar.leaving ? t * 10 : t
@@ -233,10 +233,9 @@ export default {
           bar.height0 * (1 - t) + bar.height1 * multiplier
         )
         bar.width = bar.width0 * (1 - t) + bar.width1 * multiplier
+        bar.shadow = bar.shadow0 * (1 - t) + bar.shadow1 * multiplier
 
         this.bars[i].path2D = new Path2D()
-
-        context.globalAlpha = bar.alpha || 1
 
         const y = bar.y * (1 / this.transform.k)
         const radius = (bar.height / 2) * (1 / this.transform.k)
@@ -244,12 +243,49 @@ export default {
         let offset = 0
         let colors = Object.keys(bar.colors)
 
+        // Create outline of the bar
+        if (bar.shadow) {
+          context.beginPath()
+          context.globalAlpha = bar.alpha || 1
+          // context.lineWidth = 1 * (1 / this.transform.k)
+          // context.strokeStyle = colors[0]
+          context.shadowColor = '#666'
+          context.shadowBlur = bar.shadow
+          const x = bar.x + radius / 2
+          const calcWidth = bar.width - radius
+          const width = calcWidth < 0 || calcWidth <= bar.height ? 0 : calcWidth
+
+          context.arc(
+            x,
+            y + radius,
+            radius,
+            -(90 * Math.PI) / 180,
+            -(270 * Math.PI) / 180,
+            true
+          )
+
+          context.arc(
+            x + width,
+            y + radius,
+            radius,
+            (90 * Math.PI) / 180,
+            (270 * Math.PI) / 180,
+            true
+          )
+          context.closePath()
+          context.fill()
+          // End create outline of the bar
+        }
+
+        context.shadowBlur = 0
+        context.globalAlpha = bar.alpha || 1
+        context.beginPath()
+
         colors.forEach((color, j) => {
           context.fillStyle = color || '#eee'
 
           const capLeft = new Path2D(),
             capRight = new Path2D(),
-            circle = new Path2D(),
             rect = new Path2D()
 
           const x = bar.x + radius / 2
@@ -293,15 +329,11 @@ export default {
 
           // Fill the shape but add the shape to the reference
           // path, so we can calculation intersections
-          this.bars[i].path2D.addPath(circle)
           this.bars[i].path2D.addPath(rect)
           this.bars[i].path2D.addPath(capLeft)
           this.bars[i].path2D.addPath(capRight)
 
-          context.fill(circle)
-          context.fill(rect)
-          context.fill(capLeft)
-          context.fill(capRight)
+          context.fill(this.bars[i].path2D)
         })
 
         // These are pretty fuzzy right now
@@ -366,6 +398,9 @@ export default {
             height0: height,
             height1: height,
             height: height,
+            shadow: 0,
+            shadow0: 0,
+            shadow1: item.shadow ? 5 : 0,
             width0: this.barRadius,
             width1: width,
             width: this.barRadius,
@@ -387,6 +422,9 @@ export default {
             height0: bar.height,
             height1: height,
             height: bar.height,
+            shadow: bar.shadow,
+            shadow0: bar.shadow,
+            shadow1: item.shadow ? 5 : 0,
             width0: bar.width,
             width1: width,
             width: bar.width,

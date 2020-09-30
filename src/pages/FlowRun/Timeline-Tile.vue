@@ -58,6 +58,7 @@ export default {
           label: task.name,
           colors: {},
           start_time: null,
+          shadow: false,
           end_time: null,
           links: []
         }
@@ -81,6 +82,10 @@ export default {
 
             item.colors[color] = mappedRef.state_counts[state] / total
           })
+
+          item.shadow = taskRun?.serialized_state?.n_map_states
+            ? taskRun?.serialized_state?.n_map_states !== total
+            : this.flowRun.state == 'Running' && isMapped
         } else {
           item.start_time = taskRun.start_time
           item.end_time = taskRun.end_time
@@ -94,6 +99,7 @@ export default {
             ?.trim()
 
           item.colors[color] = 1
+          item.shadow = taskRun.state == 'Running' || taskRun.state == 'Pending'
         }
 
         return item
@@ -248,12 +254,10 @@ export default {
     <Timeline
       v-if="items"
       :items="items"
-      collapsed
       :start-time="startTime"
       :end-time="endTime"
       :breakpoints="breakpoints"
       :live="!isFinished"
-      :bar-radius="10"
     />
   </div>
 </template>
