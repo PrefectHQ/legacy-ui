@@ -68,13 +68,13 @@ export default {
         </v-col>
       </v-slide-x-transition>
 
-      <v-col class="d-flex align-end justify-center" cols="12" md="2">
+      <v-col class="d-flex align-center justify-center" cols="12" md="2">
         <transition name="fade">
           <v-btn
             v-if="showDashboardNavigation"
             :to="{ name: 'dashboard' }"
             data-cy="go-to-dashboard"
-            class="dashboard-link-absolute mb-12"
+            class="dashboard-link-absolute"
             color="primary"
             x-large
           >
@@ -220,7 +220,7 @@ export default {
         <v-col cols="12" class="text-center py-2">
           <v-btn
             :to="{ name: 'dashboard' }"
-            class="mx-auto mb-12"
+            class="mx-auto mb-8"
             color="primary"
             x-large
           >
