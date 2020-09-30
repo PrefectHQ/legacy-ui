@@ -294,6 +294,7 @@ export default {
         :breakpoints="breakpoints"
         :live="!isFinished"
         :height="containerHeight"
+        :min-bar-radius="5"
       />
     </v-card-text>
   </v-card>

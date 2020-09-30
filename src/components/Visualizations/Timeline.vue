@@ -24,8 +24,13 @@ export default {
       required: false,
       default: false
     },
-    height: {
-      type: [Number, String],
+    // height: {
+    //   type: [Number, String],
+    //   required: false,
+    //   default: null
+    // },
+    minBarRadius: {
+      type: Number,
       required: false,
       default: null
     },
@@ -515,40 +520,43 @@ export default {
       // we use that, otherwise we assume infinite height and
       // let the component expand based on the min
       // bar radius
-      let height = Math.floor(
+      this.height = Math.floor(
         parent.clientHeight - padding.top - padding.bottom
       )
-      // if (this.height) {
-      //   height = parseInt(this.height)
-      // } else {
-      //   height = this.collapsed_
-      //     ? this.barRadius * 2 + this.barRadius * this.barPadding * 2
-      //     : this.items.length * this.barRadius * 2
-      // }
-      // height = Math.floor(height)
 
-      if (!height || !width || height <= 0 || width <= 0) {
+      if (
+        this.items?.length * this.minBarRadius +
+          this.items?.length * this.minBarRadius * this.barPadding * 2 >
+        this.height
+      ) {
+        this.height_ =
+          this.items?.length * this.minBarRadius +
+          this.items?.length * this.minBarRadius * this.barPadding * 2
+      } else {
+        this.height_ = this.height
+      }
+
+      if (!this.height || !width || this.height <= 0 || width <= 0) {
         return
       }
 
-      const axisHeight = 35
+      // const axisHeight = 35
 
       this.svg
-        .attr('viewbox', `0 0 ${width} ${height}`)
+        .attr('viewbox', `0 0 ${width} ${this.height}`)
         .attr('width', width)
-        .attr('height', height + axisHeight)
+        .attr('height', this.height)
 
       this.canvas
         .style('width', `${width}px`)
-        .style('height', `${height}px`)
+        .style('height', `${this.height_}px`)
         .attr('width', width)
-        .attr('height', height)
-        .style('transform', `translate(0, ${axisHeight}px)`)
+        .attr('height', this.height_)
+      // .style('transform', `translate(0, ${axisHeight}px)`)
 
       this.xAxisNode.attr('class', 'x-axis-group').style('position', 'fixed')
       // .style('transform', `translate(0, ${height}px)`) // This moves the axis to the bottom of the svg node
 
-      this.height_ = height
       this.width_ = width
 
       this.updateScales()
@@ -574,7 +582,7 @@ export default {
 
         // Adds the zoom entity
         // to the canvas element
-        this.canvas.call(this.zoom)
+        // this.canvas.call(this.zoom)
       }, this.animationDuration)
     },
     updateBreakpoints(shouldTransition) {
@@ -600,7 +608,7 @@ export default {
               .attr('stroke', d => d.color || '#999')
               .attr('stroke-width', 1.5)
               .attr('stroke-dasharray', 5)
-              .attr('d', `M0,0L0,${this.height_}`)
+              .attr('d', `M0,0L0,${this.height}`)
               .style('pointer-events', 'none')
 
             g.append('text')
@@ -609,13 +617,10 @@ export default {
               .attr('fill', '#999')
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
-              .attr('y', this.height_ / 2)
+              .attr('y', this.height / 2)
               .attr('x', 0)
               .style('opacity', 0)
-              .attr(
-                'transform',
-                `translate(5) rotate(90 0 ${this.height_ / 2})`
-              )
+              .attr('transform', `translate(5) rotate(90 0 ${this.height / 2})`)
               .transition()
               .delay(this.animationDuration)
               .duration(150)
@@ -641,7 +646,7 @@ export default {
                 .transition('update')
                 .duration(this.animationDuration)
                 .attr('stroke', d => d.color || '#999')
-                .attr('d', `M0,0L0,${this.height_}`)
+                .attr('d', `M0,0L0,${this.height}`)
 
               update
                 .select('text')
@@ -737,11 +742,11 @@ export default {
 
         this.transform.x += translateBy
 
-        this.canvas.call(this.zoom, this.transform)
+        // this.canvas.call(this.zoom, this.transform)
         // this.zoom.translateBy(this.canvas, translateBy, 0)
         // this.canvas.call(this.zoom, )¿
       } else {
-        this.canvas.call(this.zoom)
+        // this.canvas.call(this.zoom)
       }
 
       this.updateX(true)
@@ -791,7 +796,7 @@ export default {
 <template>
   <div
     ref="parent"
-    class="position-relative overflow-scroll"
+    class="position-relative timeline-container"
     style="height: 100%;"
   >
     <div
@@ -869,14 +874,17 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.timeline-container {
+  overflow: scroll;
+  position: relative;
+}
+
 .svg {
   box-sizing: border-box;
-  height: 100%;
   // pointer-events: none;
-  position: relative;
+  position: fixed;
   // user-select: none;
   transition: all 500ms;
-  width: 100%;
   z-index: 0;
 }
 
