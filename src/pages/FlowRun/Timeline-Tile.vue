@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 import { FINISHED_STATES } from '@/utils/states'
 
 const computedStyle = getComputedStyle(document.documentElement)
+const notPastStates = ['Running', 'Submitted', 'Pending']
 
 export default {
   components: {
@@ -56,7 +57,7 @@ export default {
         const item = {
           id: task.id,
           label: task.name,
-          colors: {},
+          colors: [],
           start_time: null,
           shadow: false,
           end_time: null,
@@ -69,7 +70,9 @@ export default {
           item.start_time = mappedRef.min_start_time
           item.end_time = mappedRef.max_end_time
 
-          const states = Object.keys(mappedRef.state_counts)
+          const states = Object.keys(mappedRef.state_counts).sort(
+            (s1, s2) => notPastStates.indexOf(s1) - notPastStates.indexOf(s2)
+          )
           const total = Object.values(mappedRef.state_counts).reduce(
             (a, b) => a + b,
             0
@@ -80,7 +83,10 @@ export default {
               .getPropertyValue(`--v-${state}-base`)
               ?.trim()
 
-            item.colors[color] = mappedRef.state_counts[state] / total
+            item.colors.push({
+              color: color,
+              value: mappedRef.state_counts[state] / total
+            })
           })
 
           item.shadow = taskRun?.serialized_state?.n_map_states
@@ -98,7 +104,7 @@ export default {
             .getPropertyValue(`--v-${taskRun.state}-base`)
             ?.trim()
 
-          item.colors[color] = 1
+          item.colors.push({ color: color, value: 1 })
           item.shadow = taskRun.state == 'Running' || taskRun.state == 'Pending'
         }
 

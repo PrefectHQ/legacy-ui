@@ -241,7 +241,6 @@ export default {
         const radius = (bar.height / 2) * (1 / this.transform.k)
 
         let offset = 0
-        let colors = Object.keys(bar.colors)
 
         // Create outline of the bar
         if (bar.shadow) {
@@ -249,16 +248,17 @@ export default {
           context.globalAlpha = bar.alpha || 1
           // context.lineWidth = 1 * (1 / this.transform.k)
           // context.strokeStyle = colors[0]
+          context.fillStyle = 'orange'
           context.shadowColor = '#666'
           context.shadowBlur = bar.shadow
-          const x = bar.x + radius / 2
-          const calcWidth = bar.width - radius
-          const width = calcWidth < 0 || calcWidth <= bar.height ? 0 : calcWidth
+          const compress = 2
+          const x = bar.x + radius / 2 + compress / 2
+          const width = bar.width - radius * 2 - compress
 
           context.arc(
             x,
             y + radius,
-            radius,
+            radius - compress / 2,
             -(90 * Math.PI) / 180,
             -(270 * Math.PI) / 180,
             true
@@ -267,7 +267,7 @@ export default {
           context.arc(
             x + width,
             y + radius,
-            radius,
+            radius - compress / 2,
             (90 * Math.PI) / 180,
             (270 * Math.PI) / 180,
             true
@@ -279,10 +279,11 @@ export default {
 
         context.shadowBlur = 0
         context.globalAlpha = bar.alpha || 1
-        context.beginPath()
 
-        colors.forEach((color, j) => {
-          context.fillStyle = color || '#eee'
+        bar.colors.forEach((color, j) => {
+          context.beginPath()
+
+          context.fillStyle = color.color || '#eee'
 
           const capLeft = new Path2D(),
             capRight = new Path2D(),
@@ -290,8 +291,8 @@ export default {
 
           const x = bar.x + radius / 2
 
-          const calcWidth = bar.width * bar.colors[color] - radius
-          const width = calcWidth < 0 || calcWidth <= bar.height ? 0 : calcWidth
+          const calcWidth = (bar.width - radius * 2) * color.value
+          const width = calcWidth < 0 ? 0 : calcWidth
 
           rect.rect(x + offset, y, width, radius * 2)
 
@@ -305,10 +306,10 @@ export default {
               true
             )
 
-            capLeft.addPath(rect)
+            rect.addPath(capLeft)
           }
 
-          if (j === colors.length - 1) {
+          if (j === bar.colors.length - 1) {
             capRight.arc(
               x + width + offset,
               y + radius,
@@ -318,13 +319,14 @@ export default {
               true
             )
 
-            capRight.addPath(rect)
+            rect.addPath(capRight)
           }
-
-          offset += width
 
           if (width <= 0) {
             capLeft.addPath(capRight)
+            context.fill(capLeft)
+          } else {
+            context.fill(rect)
           }
 
           // Fill the shape but add the shape to the reference
@@ -333,7 +335,7 @@ export default {
           this.bars[i].path2D.addPath(capLeft)
           this.bars[i].path2D.addPath(capRight)
 
-          context.fill(this.bars[i].path2D)
+          offset += width
         })
 
         // These are pretty fuzzy right now
