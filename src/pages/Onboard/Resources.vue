@@ -234,10 +234,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-* {
-  box-sizing: border-box;
-}
-
 .dashboard-button-absolute {
   bottom: 5vh;
   left: 50%;
