@@ -582,7 +582,7 @@ export default {
 
         // Adds the zoom entity
         // to the canvas element
-        // this.canvas.call(this.zoom)
+        this.canvas.call(this.zoom)
       }, this.animationDuration)
     },
     updateBreakpoints(shouldTransition) {
@@ -742,11 +742,11 @@ export default {
 
         this.transform.x += translateBy
 
-        // this.canvas.call(this.zoom, this.transform)
+        this.canvas.call(this.zoom, this.transform)
         // this.zoom.translateBy(this.canvas, translateBy, 0)
         // this.canvas.call(this.zoom, )¿
       } else {
-        // this.canvas.call(this.zoom)
+        this.canvas.call(this.zoom)
       }
 
       this.updateX(true)
@@ -796,7 +796,7 @@ export default {
 <template>
   <div
     ref="parent"
-    class="position-relative timeline-container"
+    class="position-relative timeline-container px-8"
     style="height: 100%;"
   >
     <div
