@@ -1,7 +1,7 @@
 <script>
 import * as d3 from 'd3'
 import uniqueId from 'lodash.uniqueid'
-// import throttle from 'lodash.throttle'
+import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 
 const formatTime = d3.timeFormat('%-I:%M:%S')
@@ -9,6 +9,11 @@ const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 
 export default {
   props: {
+    barRadius: {
+      type: Number,
+      required: false,
+      default: 25
+    },
     breakpoints: {
       type: Array,
       required: false,
@@ -69,7 +74,6 @@ export default {
       // Bars
       bars: [],
       barPadding: 0.3,
-      barRadius: 25,
 
       domainStart: null,
       domainEnd: null,
@@ -132,6 +136,11 @@ export default {
           color: '#999'
         }
       ]
+    },
+    updateBars: function() {
+      return throttle(() => {
+        this.rawUpdateBars()
+      }, 100)
     }
   },
   watch: {
@@ -227,7 +236,7 @@ export default {
 
         this.bars[i].path2D = new Path2D()
 
-        context.globalAlpha = bar.alpha
+        context.globalAlpha = bar.alpha || 1
 
         const y = bar.y * (1 / this.transform.k)
         const radius = (bar.height / 2) * (1 / this.transform.k)
@@ -238,7 +247,7 @@ export default {
         colors.forEach((color, j) => {
           context.fillStyle = color || '#eee'
 
-          let capLeft = new Path2D(),
+          const capLeft = new Path2D(),
             capRight = new Path2D(),
             circle = new Path2D(),
             rect = new Path2D()
@@ -297,17 +306,17 @@ export default {
 
         // These are pretty fuzzy right now
         // so we'll probably want to move them to the svg layer
-        if (bar.label && !this.collapsed_) {
-          const savedStrokeStyle = context.fillStyle
-          const fontSize = 14 * (1 / this.transform.k)
-          const textY = (12 + bar.y + bar.height) * (1 / this.transform.k)
+        // if (bar.label && !this.collapsed_) {
+        //   const savedStrokeStyle = context.fillStyle
+        //   const fontSize = 14 * (1 / this.transform.k)
+        //   const textY = (12 + bar.y + bar.height) * (1 / this.transform.k)
 
-          context.font = `${fontSize}px Roboto`
-          context.textAlign = 'start'
-          context.fillStyle = '#000'
-          context.fillText(bar.label, bar.x, textY)
-          context.fillStyle = savedStrokeStyle
-        }
+        //   context.font = `${fontSize}px Roboto`
+        //   context.textAlign = 'start'
+        //   context.fillStyle = '#000'
+        //   context.fillText(bar.label, bar.x, textY)
+        //   context.fillStyle = savedStrokeStyle
+        // }
       }
 
       context.restore()
@@ -317,7 +326,7 @@ export default {
         this.bars = this.bars.filter(b => !b.leaving)
       }
     },
-    updateBars() {
+    rawUpdateBars() {
       const height = this.collapsed_
         ? this.barRadius * 2 - this.barRadius * this.barPadding * 2
         : this.y.bandwidth()
@@ -470,7 +479,7 @@ export default {
         height = this.height
       } else {
         height = this.collapsed_
-          ? this.barRadius * 2
+          ? this.barRadius * 2 + this.barRadius * this.barPadding * 2
           : this.items.length * this.barRadius * 2
       }
       height = Math.floor(height)
@@ -567,7 +576,7 @@ export default {
               .transition()
               .delay(this.animationDuration)
               .duration(150)
-              .style('opacity', 1)
+              .style('opacity', this.collapsed_ ? 0 : 1)
 
             return g.call(enter =>
               enter
@@ -598,7 +607,7 @@ export default {
                 .transition()
                 .delay(this.animationDuration)
                 .duration(150)
-                .style('opacity', 1)
+                .style('opacity', this.collapsed_ ? 0 : 1)
 
               return update.call(update =>
                 update

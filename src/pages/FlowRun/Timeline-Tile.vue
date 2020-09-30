@@ -39,10 +39,12 @@ export default {
         : null
     },
     startTime() {
-      return Math.min.apply(null, [
-        new Date(this.flowRun.scheduled_start_time),
-        new Date(this.flowRun.start_time)
-      ])
+      return this.flowRun.start_time
+        ? Math.min.apply(null, [
+            new Date(this.flowRun.scheduled_start_time),
+            new Date(this.flowRun.start_time)
+          ])
+        : this.flowRun.scheduled_start_time
     },
     items() {
       if (!this.tasks) return
@@ -104,7 +106,10 @@ export default {
       )
     },
     isFinished() {
-      return FINISHED_STATES.includes(this.flowRun.state)
+      return (
+        FINISHED_STATES.includes(this.flowRun.state) &&
+        this.flowRun.state !== 'Scheduled'
+      )
     },
     mappedTaskRuns() {
       return this.taskRuns?.filter(taskRun => taskRun.state == 'Mapped')
@@ -239,14 +244,16 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div ref="timeline-container" class="d-flex flex-column h-100">
     <Timeline
       v-if="items"
       :items="items"
+      collapsed
       :start-time="startTime"
       :end-time="endTime"
       :breakpoints="breakpoints"
       :live="!isFinished"
+      :bar-radius="10"
     />
   </div>
 </template>
