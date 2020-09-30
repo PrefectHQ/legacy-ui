@@ -56,10 +56,10 @@ export default {
   data() {
     return {
       animationDuration: 500,
-      id: uniqueId('timeline'),
+      collapsed_: this.collapsed,
       drawTimeout: null,
       easing: 'easePolyInOut',
-      collapsed_: this.collapsed,
+      id: uniqueId('timeline'),
       now: new Date(),
       showControls: false, // These are useful for debugging
       zoom: d3.zoom(),
