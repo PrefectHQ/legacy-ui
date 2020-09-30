@@ -26,6 +26,7 @@ export default {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
     async accept() {
+      this.loading = true
       const tenant = this.membershipInvitation[0].tenant
       const accepted = await this.acceptInvitation()
       if (accepted) {
@@ -34,11 +35,11 @@ export default {
           name: 'dashboard',
           params: { tenant: tenant.slug }
         })
+        this.loading = false
       }
     },
     async acceptInvitation() {
       try {
-        this.loading = true
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Tenant/accept-membership-invitation.gql'),
           variables: {
@@ -46,7 +47,6 @@ export default {
           }
         })
         if (data?.accept_membership_invitation?.id) {
-          this.loading = false
           return true
         }
       } catch (e) {
