@@ -14,7 +14,7 @@ import SummaryTile from '@/pages/Flow/Summary-Tile'
 import TasksTableTile from '@/pages/Flow/TasksTable-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
-import TimelineTile from '@/pages/Flow/Timeline-Tile'
+import FlowRunHistoryTile from '@/pages/Flow/FlowRunHistory-Tile'
 import UpcomingRunsTile from '@/pages/Flow/UpcomingRuns-Tile'
 import VersionsTile from '@/pages/Flow/Versions-Tile'
 import { mapGetters } from 'vuex'
@@ -35,7 +35,7 @@ export default {
     TasksTableTile,
     TileLayout,
     TileLayoutFull,
-    TimelineTile,
+    FlowRunHistoryTile,
     UpcomingRunsTile,
     VersionsTile
   },
@@ -305,7 +305,7 @@ export default {
         reverse-transition="quick-fade"
       >
         <TileLayout>
-          <TimelineTile
+          <FlowRunHistoryTile
             slot="row-0"
             :aggregate="!flowVersionId"
             :flow="selectedFlow"
