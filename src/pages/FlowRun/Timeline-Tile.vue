@@ -26,7 +26,8 @@ export default {
   },
   data() {
     return {
-      breakpoints: []
+      breakpoints: [],
+      containerHeight: null
     }
   },
   computed: {
@@ -186,6 +187,11 @@ export default {
   },
   mounted() {
     this.generateBreakpoints()
+
+    console.log(this.$refs)
+    this.containerHeight = getComputedStyle(
+      this.$refs['timeline-container']
+    ).height
   },
   methods: {
     generateBreakpoints() {
@@ -275,7 +281,7 @@ export default {
 </script>
 
 <template>
-  <div ref="timeline-container" class="d-flex flex-column h-100">
+  <div ref="timeline-container" class="timeline-container">
     <Timeline
       v-if="items"
       :items="items"
@@ -283,6 +289,13 @@ export default {
       :end-time="endTime"
       :breakpoints="breakpoints"
       :live="!isFinished"
+      :height="containerHeight"
     />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.timeline-container {
+  height: calc(100vh - 225px);
+}
+</style>

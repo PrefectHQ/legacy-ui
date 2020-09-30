@@ -25,7 +25,7 @@ export default {
       default: false
     },
     height: {
-      type: Number,
+      type: [Number, String],
       required: false,
       default: null
     },
@@ -61,6 +61,7 @@ export default {
       easing: 'easePolyInOut',
       collapsed_: this.collapsed,
       now: new Date(),
+      showControls: false, // These are useful for debugging
       zoom: d3.zoom(),
 
       followEdge: true,
@@ -516,7 +517,7 @@ export default {
       // bar radius
       let height
       if (this.height) {
-        height = this.height
+        height = parseInt(this.height)
       } else {
         height = this.collapsed_
           ? this.barRadius * 2 + this.barRadius * this.barPadding * 2
@@ -787,7 +788,7 @@ export default {
 
 <template>
   <div>
-    <div class="d-flex align-middle justify-space-between">
+    <div v-if="showControls" class="d-flex align-middle justify-space-between">
       <div>
         <div class="d-flex my-4">
           <v-btn @click="playOrPause">
