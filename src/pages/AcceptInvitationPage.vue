@@ -27,14 +27,14 @@ export default {
     ...mapActions('user', ['getUser']),
     async accept() {
       const tenant = this.membershipInvitation[0].tenant
-      // const accepted = await this.acceptInvitation()
-      // if (accepted) {
-      await this.setCurrentTenant(tenant.slug)
-      this.$router.push({
-        name: 'dashboard',
-        params: { tenant: tenant.slug }
-      })
-      // }
+      const accepted = await this.acceptInvitation()
+      if (accepted) {
+        await this.setCurrentTenant(tenant.slug)
+        this.$router.push({
+          name: 'dashboard',
+          params: { tenant: tenant.slug }
+        })
+      }
     },
     async acceptInvitation() {
       try {
