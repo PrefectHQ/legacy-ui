@@ -198,7 +198,6 @@ export default {
       const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
 
       const context = this.canvas.node().getContext('2d')
-
       context.save()
       context.clearRect(0, 0, this.width_, this.height_)
       context.translate(this.transform.x, 1)
@@ -216,12 +215,12 @@ export default {
             ? 1
             : 0.5
           : bar.alpha || 1
-        bar.x = Math.round(bar.x0 * (1 - t) + bar.x1 * multiplier)
+        bar.x = Math.floor(bar.x0 * (1 - t) + bar.x1 * multiplier)
         bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
         bar.height = Math.round(
           bar.height0 * (1 - t) + bar.height1 * multiplier
         )
-        bar.width = Math.round(bar.width0 * (1 - t) + bar.width1 * multiplier)
+        bar.width = Math.floor(bar.width0 * (1 - t) + bar.width1 * multiplier)
 
         this.bars[i].path2D = new Path2D()
 
@@ -248,8 +247,8 @@ export default {
           if (colors.length === 1 && bar.width <= bar.height) {
             circle.arc(bar.x + radius, y + radius, radius, 0, 2 * Math.PI)
           } else {
-            const x = bar.x + radius
-            const width = bar.width * bar.colors[color]
+            const x = bar.x + radius / 2
+            const width = bar.width * bar.colors[color] - radius
 
             rect.rect(x + offset, y, width, radius * 2)
 
