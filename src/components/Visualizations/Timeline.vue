@@ -180,6 +180,9 @@ export default {
     window.addEventListener('resize', this.resizeChart)
     requestAnimationFrame(this.resizeChart)
 
+    this.canvas.on('click', this.click)
+    this.canvas.on('mousemove', this.mousemove)
+
     this.live_ = this.live
   },
   beforeDestroy() {
@@ -187,9 +190,17 @@ export default {
     this.interval?.stop()
     window.removeEventListener('resize', this.resizeChart)
     this.canvas.on('.zoom', null)
+    this.canvas.on('click', null)
+    this.canvas.on('mousemove', null)
     this.xAxisNode.on('end', null)
   },
   methods: {
+    click(e) {
+      console.log(e)
+    },
+    mousemove(e) {
+      console.log(e)
+    },
     newXAxis(x) {
       let day
       let meridiem
