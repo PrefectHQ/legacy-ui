@@ -678,7 +678,7 @@ export default {
 
       this.translateExtent = [
         [0, 0],
-        [this.width_ + this.width_ * 0.1, this.height_]
+        [this.width_, this.height_]
       ]
 
       if (prevDomainEnd && this.transform.k !== 1) {
