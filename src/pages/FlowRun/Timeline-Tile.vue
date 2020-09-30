@@ -282,7 +282,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 my-6" tile>
+  <v-card class="pa-2 my-6 mx-auto" style="max-width: 1362px;" tile>
     <CardTitle title="Run Timeline" icon="pi-gantt" />
 
     <v-card-text ref="timeline-container" class="timeline-container">

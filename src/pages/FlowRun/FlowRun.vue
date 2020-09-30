@@ -161,7 +161,7 @@ export default {
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
-      :style="{ 'max-width': tab == 'chart' ? null : '1440px' }"
+      :style="{ 'max-width': tab == 'chart' ? 'auto' : '1440px' }"
       mandatory
     >
       <v-tab-item
