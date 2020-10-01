@@ -414,17 +414,27 @@ export default {
           const fontSize = 10 * (1 / this.transform.k)
           const textY = (9 + bar.y + bar.height) * (1 / this.transform.k)
 
-          const transformedX =
-            (bar.x + this.transform.x) * (1 / this.transform.k)
-          const overLeft = transformedX < 0
-          const overRight = transformedX > this.width_
+          const tX = bar.x + this.transform.x / this.transform.k
+          const x1 = bar.width + bar.x
+          const overLeft = tX < 0
+          // const overRight = transformedX > this.width_ / this.transform.k
+
+          const leftEdge = -(this.transform.x / this.transform.k)
           const textX = overLeft
-            ? this.transform.x
-            : overRight
-            ? this.width_
+            ? leftEdge > x1
+              ? bar.width + bar.x
+              : leftEdge
             : bar.x
+          // const textX = overLeft
+          //   ? -(this.transform.x / this.transform.k)
+          //   : overRight
+          //   ? this.width_ / this.transform.k +
+          //     -(this.transform.x / this.transform.k)
+          //   : bar.x
+
           context.font = `${fontSize}px Roboto`
-          context.textAlign = overRight ? 'end' : 'start'
+          // context.textAlign = overLeft && leftEdge > tX1 ? 'end' : 'start'
+          context.textAlign = 'start'
           context.fillStyle = '#999'
           context.fillText(bar.label, textX, textY)
           context.fillStyle = savedStrokeStyle

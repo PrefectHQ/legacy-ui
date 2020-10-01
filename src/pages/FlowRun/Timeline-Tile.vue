@@ -97,7 +97,6 @@ export default {
           }
 
           item.start_time = mappedRef.min_start_time
-          console.log(taskRun.serialized_state)
 
           if (taskRun?.serialized_state?.n_map_states) {
             item.end_time =
@@ -223,7 +222,7 @@ export default {
       ]
     },
     handleHover(id) {
-      console.log(id)
+      id
     }
   },
   apollo: {
