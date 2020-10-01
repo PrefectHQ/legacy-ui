@@ -204,7 +204,6 @@ export default {
       let x = (e.offsetX - this.transform.x) * (1 / this.transform.k)
       let y = e.offsetY * (1 / this.transform.k)
 
-      console.log(x, y)
       for (let i = 0; i < this.bars.length; ++i) {
         const bar = this.bars[i]
         if (context.isPointInPath(bar.path2D, x, y)) {
