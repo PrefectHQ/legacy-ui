@@ -303,7 +303,7 @@ export default {
         context.globalAlpha = bar.alpha || 1
 
         // Create outline of the bar
-        if (bar.shadow) {
+        if (bar.shadow && (!this.hoveredId || this.hoveredId == bar.id)) {
           context.beginPath()
           // context.lineWidth = 1 * (1 / this.transform.k)
           // context.strokeStyle = colors[0]
