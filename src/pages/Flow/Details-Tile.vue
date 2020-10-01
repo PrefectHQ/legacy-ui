@@ -98,7 +98,7 @@ export default {
       )
     },
     hasUser() {
-      return this.flow.created_by != null
+      return this.flow?.created_by
     }
   },
   methods: {
@@ -274,9 +274,8 @@ export default {
               <div v-if="hasUser" class="subtitle-2">
                 {{ flow.created_by.username }}
               </div>
-              <div class="caption">
-                <b v-if="!hasUser"> {{ formatTime(flow.created) }} </b>
-                <span v-if="hasUser"> {{ formatTime(flow.created) }} </span>
+              <div class="caption" :class="{ 'font-weight-bold': !hasUser }">
+                {{ formatTime(flow.created) }}
               </div>
             </v-list-item-content>
           </v-list-item>

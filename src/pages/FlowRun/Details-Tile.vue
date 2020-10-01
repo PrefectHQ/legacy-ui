@@ -3,6 +3,7 @@ import jsBeautify from 'js-beautify'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -22,6 +23,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     hasContext() {
       return (
         this.flowRun.context && Object.keys(this.flowRun.context).length > 0
@@ -31,8 +33,8 @@ export default {
       if (!this.flowRun?.parameters) return false
       return Object.keys(this.flowRun.parameters).length > 0
     },
-    hasUserOrIsAutoscheduled() {
-      return this.flowRun.created_by != null || this.flowRun.auto_scheduled
+    isCloudOrAutoScheduled() {
+      return this.isCloud || this.flowRun?.auto_scheduled
     }
   },
   methods: {
@@ -138,7 +140,7 @@ export default {
     <v-card-text class="pl-12 card-content">
       <v-fade-transition hide-on-leave>
         <div v-if="tab === 'overview'">
-          <v-list-item v-if="hasUserOrIsAutoscheduled" class="px-0">
+          <v-list-item v-if="isCloudOrAutoScheduled" class="px-0">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Created by
@@ -147,7 +149,9 @@ export default {
                 {{
                   flowRun.auto_scheduled
                     ? 'Prefect Scheduler'
-                    : flowRun.created_by.username
+                    : flowRun.created_by
+                    ? flowRun.created_by.username
+                    : 'A nonexistant user'
                 }}
               </div>
             </v-list-item-content>
