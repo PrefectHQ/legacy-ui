@@ -83,7 +83,8 @@ export default {
       const labels =
         this.newLabels ||
         this.flowGroup?.labels ||
-        this.flow?.environment?.labels
+        this.flow?.environment?.labels ||
+        []
       return labels?.slice().sort()
     },
     labelResetDisabled() {
@@ -126,6 +127,7 @@ export default {
     },
     addLabel() {
       if (!this.valid) return
+      if (!this.newLabel) return
       this.disableAdd = true
       const labelArray = this.newLabels || this.labels.slice()
       labelArray.push(this.newLabel)
