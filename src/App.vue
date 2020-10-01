@@ -55,6 +55,13 @@ export default {
     },
     isCloud() {
       return this.backend == 'CLOUD'
+    },
+    isWelcome() {
+      return (
+        this.$route.name === 'welcome' ||
+        this.$route.name === 'onboard-resources' ||
+        this.$route.name === 'name-team'
+      )
     }
   },
   watch: {
@@ -180,6 +187,15 @@ export default {
         await this.getApi()
         await this.getTenants()
 
+        if (this.isServer && !this.tenants?.length) {
+          // Server has no tenants so redirect to home
+          if (this.$route.name !== 'home') {
+            this.$router.push({
+              name: 'home'
+            })
+          }
+        }
+
         if (this.isServer && this.tenants?.length) {
           // If this is Server, there won't be a default tenant, so we'll set one
           this.setDefaultTenant(this.tenants?.[0])
@@ -247,7 +263,7 @@ export default {
 
 <template>
   <v-app class="app">
-    <v-main>
+    <v-main :class="{ 'pt-0': isWelcome }">
       <v-progress-linear
         absolute
         :active="isLoggingInUser"

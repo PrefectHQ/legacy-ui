@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Update information in "Connect the UI" section of the home view [#271](https://github.com/PrefectHQ/ui/pull/271)
 - Add agent ID to flow run page details for submitted runs [#249](https://github.com/PrefectHQ/ui/pull/249)
 - Expose agents page and dashboard tile for server users [#249](https://github.com/PrefectHQ/ui/pull/249)
 - Make labels on agent cards scrollable and add ID to information displayed [#249](https://github.com/PrefectHQ/ui/pull/249)
@@ -11,7 +12,21 @@
 
 ### Bugfixes
 
-- None
+- Make sure the 'To The Dashboard' button is more visible on the onboard/resources page [#275](https://github.com/PrefectHQ/ui/pull/275)
+- Allow label edit on flows created with an older version of core [#273](https://github.com/PrefectHQ/ui/pull/273)
+- Redirect to home when UI is loaded up against a Prefect Server instance with no tenants [#270](https://github.com/PrefectHQ/ui/pull/270)
+- Direct users to the new tenant when they accept an invitation from the accept invitation page [#274](https://github.com/PrefectHQ/ui/pull/274)
+
+## 2020-09-29
+
+### Features and Improvements
+
+- Add unit tests for the flow navigation guard [#248](https://github.com/PrefectHQ/ui/pull/248)
+
+### Bugfixes
+
+- Hide label affinity warning in server until Core catches up [#264](https://github.com/PrefectHQ/ui/pull/264)
+- Fixes a situation where task runs in the table on the flow run page were incorrectly calculating infinite durations - [#267](https://github.com/PrefectHQ/ui/pull/267)
 
 ## 2020-09-28a
 

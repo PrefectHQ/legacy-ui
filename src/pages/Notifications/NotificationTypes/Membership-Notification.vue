@@ -67,7 +67,14 @@ export default {
             alertMessage: success
               ? `You joined ${this.content.sender_tenant_name}... hurrah!`
               : `Something went wrong trying to accept your invitation to ${this.content.sender_tenant_name}... please wait a few moments and try again.`,
-            alertType: success ? 'success' : 'error'
+            alertType: success ? 'success' : 'error',
+            alertLink: success
+              ? {
+                  name: 'dashboard',
+                  params: { tenant: this.content.sender_tenant_slug }
+                }
+              : null,
+            linkText: success ? 'Take me to my new tenant!' : ''
           },
           3000
         )
