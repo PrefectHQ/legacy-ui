@@ -29,6 +29,11 @@ export default {
     //   required: false,
     //   default: null
     // },
+    maxBarRadius: {
+      type: Number,
+      required: false,
+      default: 35
+    },
     minBarRadius: {
       type: Number,
       required: false,
@@ -409,10 +414,19 @@ export default {
           const fontSize = 10 * (1 / this.transform.k)
           const textY = (9 + bar.y + bar.height) * (1 / this.transform.k)
 
+          const transformedX =
+            (bar.x + this.transform.x) * (1 / this.transform.k)
+          const overLeft = transformedX < 0
+          const overRight = transformedX > this.width_
+          const textX = overLeft
+            ? this.transform.x
+            : overRight
+            ? this.width_
+            : bar.x
           context.font = `${fontSize}px Roboto`
-          context.textAlign = 'start'
+          context.textAlign = overRight ? 'end' : 'start'
           context.fillStyle = '#999'
-          context.fillText(bar.label, bar.x, textY)
+          context.fillText(bar.label, textX, textY)
           context.fillStyle = savedStrokeStyle
         }
       }
@@ -427,6 +441,8 @@ export default {
     rawUpdateBars() {
       const height = this.collapsed_
         ? this.barRadius * 2 - this.barRadius * this.barPadding * 2
+        : this.y.bandwidth() > this.maxBarRadius
+        ? this.maxBarRadius
         : this.y.bandwidth()
 
       const calcBar = item => {
