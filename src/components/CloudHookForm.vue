@@ -104,7 +104,7 @@ export default {
         requiredCombo: val =>
           (!!val && val.length > 0) || 'At least one number is required',
         url: val => {
-          const pattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
+          const pattern = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
           return pattern.test(val) || 'Invalid URL.'
         }
       },
