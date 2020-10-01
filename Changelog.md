@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-10-01
+
+### Features and Improvements
+
 - Update information in "Connect the UI" section of the home view [#271](https://github.com/PrefectHQ/ui/pull/271)
 
 ### Bugfixes
