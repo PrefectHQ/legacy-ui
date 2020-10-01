@@ -221,6 +221,9 @@ export default {
           )
         }
       ]
+    },
+    handleHover(id) {
+      console.log(id)
     }
   },
   apollo: {
@@ -295,6 +298,7 @@ export default {
         :live="!isFinished"
         :height="containerHeight"
         :min-bar-radius="10"
+        @hover="handleHover"
       />
     </v-card-text>
   </v-card>

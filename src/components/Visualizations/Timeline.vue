@@ -233,17 +233,22 @@ export default {
         }
       }
 
-      if (!hoveredId || hoveredId !== this.hoveredId) {
+      if ((!hoveredId && this.hoveredId) || hoveredId !== this.hoveredId) {
         if (!hoveredId) this.canvas._groups[0][0].style.cursor = null
+        this.$emit('hover', hoveredId)
         this.updateBars()
       }
 
       this.hoveredId = hoveredId
     },
     mouseout() {
+      // if we don't have a hovered item already
+      // we don't need to do anything
+      if (!this.hoveredId) return
       this.hoveredId = null
       this.canvas._groups[0][0].style.cursor = null
       this.updateBars()
+      this.$emit('hover', null)
     },
     newXAxis(x) {
       let day
