@@ -295,8 +295,9 @@ export default {
 
         this.bars[i].path2D = new Path2D()
 
-        const y = bar.y * (1 / this.transform.k)
         const radius = (bar.height / 2) * (1 / this.transform.k)
+        const x = bar.x + radius / 2
+        const y = bar.y * (1 / this.transform.k)
 
         let offset = 0
         context.globalAlpha = bar.alpha || 1
@@ -345,8 +346,6 @@ export default {
           const capLeft = new Path2D(),
             capRight = new Path2D(),
             rect = new Path2D()
-
-          const x = bar.x + radius / 2
 
           const calcWidth = (bar.width - radius * 2) * color.value
           const width = calcWidth < 0 ? 0 : calcWidth
