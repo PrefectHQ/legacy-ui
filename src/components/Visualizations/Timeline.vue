@@ -918,7 +918,7 @@ export default {
       </div>
     </div>
 
-    <canvas :id="`${id}-canvas`" class="canvas" />
+    <canvas :id="`${id}-canvas`" class="canvas mx-auto" />
     <svg :id="`${id}-svg`" class="svg" />
   </div>
 </template>
@@ -941,9 +941,7 @@ export default {
 .canvas {
   box-sizing: border-box;
   cursor: grab;
-  left: 0;
   position: absolute;
-  top: 0;
   transition: all 500ms;
   z-index: 1;
 }
