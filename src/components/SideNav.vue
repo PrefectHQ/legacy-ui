@@ -224,7 +224,7 @@ export default {
     handleRouteToCreateTenant() {
       // We'll route to the new team page when that's done.
     },
-    async handleAcceptPendingInvitation(id, name) {
+    async handleAcceptPendingInvitation(id, name, slug) {
       this.handlingInvitationLoad = true
       let success
       try {
@@ -239,7 +239,14 @@ export default {
             alertMessage: success
               ? `You joined ${name}... hurrah!`
               : `Something went wrong trying to accept your invitation to ${name}... please wait a few moments and try again.`,
-            alertType: success ? 'success' : 'error'
+            alertType: success ? 'success' : 'error',
+            alertLink: success
+              ? {
+                  name: 'dashboard',
+                  params: { tenant: slug }
+                }
+              : null,
+            linkText: success ? 'Take me to my new tenant!' : ''
           },
           3000
         )
@@ -730,7 +737,11 @@ export default {
                         :label="pt.tenant.name"
                         :loading="handlingInvitationLoad"
                         @accept="
-                          handleAcceptPendingInvitation(pt.id, pt.tenant.name)
+                          handleAcceptPendingInvitation(
+                            pt.id,
+                            pt.tenant.name,
+                            pt.tenant.slug
+                          )
                         "
                         @decline="
                           handleDeclinePendingInvitation(pt.id, pt.tenant.name)
