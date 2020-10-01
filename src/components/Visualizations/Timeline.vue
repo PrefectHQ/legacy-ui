@@ -404,17 +404,17 @@ export default {
 
         // These are pretty fuzzy right now
         // so we'll probably want to move them to the svg layer
-        // if (bar.label && !this.collapsed_) {
-        //   const savedStrokeStyle = context.fillStyle
-        //   const fontSize = 14 * (1 / this.transform.k)
-        //   const textY = (12 + bar.y + bar.height) * (1 / this.transform.k)
+        if (bar.label && !this.collapsed_) {
+          const savedStrokeStyle = context.fillStyle
+          const fontSize = 10 * (1 / this.transform.k)
+          const textY = (9 + bar.y + bar.height) * (1 / this.transform.k)
 
-        //   context.font = `${fontSize}px Roboto`
-        //   context.textAlign = 'start'
-        //   context.fillStyle = '#000'
-        //   context.fillText(bar.label, bar.x, textY)
-        //   context.fillStyle = savedStrokeStyle
-        // }
+          context.font = `${fontSize}px Roboto`
+          context.textAlign = 'start'
+          context.fillStyle = '#999'
+          context.fillText(bar.label, bar.x, textY)
+          context.fillStyle = savedStrokeStyle
+        }
       }
 
       context.restore()
