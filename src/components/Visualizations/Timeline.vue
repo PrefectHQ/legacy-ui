@@ -183,6 +183,7 @@ export default {
 
     this.canvas.on('click', this.click)
     this.canvas.on('mousemove', this.mousemove)
+    this.canvas.on('mouseout', this.mouseout)
 
     this.live_ = this.live
   },
@@ -193,19 +194,20 @@ export default {
     this.canvas.on('.zoom', null)
     this.canvas.on('click', null)
     this.canvas.on('mousemove', null)
+    this.canvas.on('mouseout', null)
     this.xAxisNode.on('end', null)
   },
   methods: {
     click(e) {
-      console.log(e)
-    },
-    mousemove(e) {
       const context = this.canvas.node().getContext('2d')
       let hoveredId
+      let x = (e.offsetX - this.transform.x) * (1 / this.transform.k)
+      let y = e.offsetY * (1 / this.transform.k)
 
+      console.log(x, y)
       for (let i = 0; i < this.bars.length; ++i) {
         const bar = this.bars[i]
-        if (context.isPointInPath(bar.path2D, e.offsetX, e.offsetY)) {
+        if (context.isPointInPath(bar.path2D, x, y)) {
           hoveredId = bar.id
           break
         }
@@ -216,6 +218,30 @@ export default {
       }
 
       this.hoveredId = hoveredId
+    },
+    mousemove(e) {
+      const context = this.canvas.node().getContext('2d')
+      let hoveredId
+      let x = (e.offsetX - this.transform.x) * (1 / this.transform.k)
+      let y = e.offsetY * (1 / this.transform.k)
+
+      for (let i = 0; i < this.bars.length; ++i) {
+        const bar = this.bars[i]
+        if (context.isPointInPath(bar.path2D, x, y)) {
+          hoveredId = bar.id
+          break
+        }
+      }
+
+      if (!hoveredId || hoveredId !== this.hoveredId) {
+        this.updateBars()
+      }
+
+      this.hoveredId = hoveredId
+    },
+    mouseout() {
+      this.hoveredId = null
+      this.updateBars()
     },
     newXAxis(x) {
       let day
@@ -274,11 +300,11 @@ export default {
         const radius = (bar.height / 2) * (1 / this.transform.k)
 
         let offset = 0
+        context.globalAlpha = bar.alpha || 1
 
         // Create outline of the bar
         if (bar.shadow) {
           context.beginPath()
-          context.globalAlpha = bar.alpha || 1
           // context.lineWidth = 1 * (1 / this.transform.k)
           // context.strokeStyle = colors[0]
           context.fillStyle = '#eee'
@@ -311,7 +337,6 @@ export default {
         }
 
         context.shadowBlur = 0
-        context.globalAlpha = bar.alpha || 1
 
         bar.colors.forEach((color, j) => {
           context.beginPath()
