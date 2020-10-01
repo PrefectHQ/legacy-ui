@@ -228,11 +228,13 @@ export default {
         const bar = this.bars[i]
         if (context.isPointInPath(bar.path2D, x, y)) {
           hoveredId = bar.id
+          this.canvas._groups[0][0].style.cursor = 'pointer'
           break
         }
       }
 
       if (!hoveredId || hoveredId !== this.hoveredId) {
+        if (!hoveredId) this.canvas._groups[0][0].style.cursor = null
         this.updateBars()
       }
 
@@ -240,6 +242,7 @@ export default {
     },
     mouseout() {
       this.hoveredId = null
+      this.canvas._groups[0][0].style.cursor = null
       this.updateBars()
     },
     newXAxis(x) {
