@@ -55,6 +55,13 @@ export default {
     },
     isCloud() {
       return this.backend == 'CLOUD'
+    },
+    isWelcome() {
+      return (
+        this.$route.name === 'welcome' ||
+        this.$route.name === 'onboard-resources' ||
+        this.$route.name === 'name-team'
+      )
     }
   },
   watch: {
@@ -256,7 +263,7 @@ export default {
 
 <template>
   <v-app class="app">
-    <v-main>
+    <v-main :class="{ 'pt-0': isWelcome }">
       <v-progress-linear
         absolute
         :active="isLoggingInUser"
