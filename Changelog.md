@@ -4,11 +4,12 @@
 
 ### Features and Improvements
 
-- None
+- Update information in "Connect the UI" section of the home view [#271](https://github.com/PrefectHQ/ui/pull/271)
 
 ### Bugfixes
 
-- None
+- Allow label edit on flows created with an older version of core [#273](https://github.com/PrefectHQ/ui/pull/273)
+- Redirect to home when UI is loaded up against a Prefect Server instance with no tenants [#270](https://github.com/PrefectHQ/ui/pull/270)
 
 ## 2020-09-29
 
