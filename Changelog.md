@@ -8,7 +8,6 @@
 - Add agent ID to flow run page details for submitted runs [#249](https://github.com/PrefectHQ/ui/pull/249)
 - Expose agents page and dashboard tile for server users [#249](https://github.com/PrefectHQ/ui/pull/249)
 - Make labels on agent cards scrollable and add ID to information displayed [#249](https://github.com/PrefectHQ/ui/pull/249)
-- Show version group id on the flow details tile [#236](https://github.com/PrefectHQ/ui/pull/236)
 
 ### Bugfixes
 
