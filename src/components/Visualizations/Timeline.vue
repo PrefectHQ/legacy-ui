@@ -310,7 +310,7 @@ export default {
           context.fillStyle = '#eee'
           context.shadowColor = '#666'
           context.shadowBlur = bar.shadow
-          const compress = 2
+          const compress = 2 * (1 / this.transform.k)
           const x = bar.x + radius / 2 + compress / 2
           const width = bar.width - radius * 2 - compress
 
