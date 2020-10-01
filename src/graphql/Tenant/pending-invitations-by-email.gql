@@ -9,6 +9,7 @@ query PendingInvitations($email: String!) {
     tenant {
       id
       name
+      slug
     }
   }
 }
