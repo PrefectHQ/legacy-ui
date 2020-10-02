@@ -171,12 +171,11 @@ export default {
         Read-only users cannot restart flow runs
       </span>
       <span v-else-if="!canRestart"
-        >Restart re-runs only failed and cancelled task runs and their
-        downstream dependents.
+        >You can only restart flow runs from a failed or cancelled state.
         <span v-if="isFinished"
           >If you wish to re-run this flow run again, use SET STATE to set it
           (and its task runs) into a scheduled state. You can also restart from
-          from a task run.</span
+          a task run.</span
         >
       </span>
       <span v-else>Restart run from {{ flowRun.state }} </span>
