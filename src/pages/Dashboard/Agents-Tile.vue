@@ -1,5 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
+// import { mapMutations } from 'vuex'
 
 import CardTitle from '@/components/Card-Title'
 import moment from '@/utils/moment'
@@ -10,13 +11,13 @@ export default {
   },
   data() {
     return {
-      agents: null,
       loading: 0,
       queryError: false
     }
   },
   computed: {
-    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
+    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
+    ...mapGetters('api', ['isCloud']),
     agentTracker() {
       return this.agents?.reduce(
         (tracker, agent) => {
@@ -74,17 +75,6 @@ export default {
       }
 
       return 'success'
-    }
-  },
-  apollo: {
-    agents: {
-      error() {
-        this.queryError = true
-      },
-      loadingKey: 'loading',
-      pollInterval: 5000,
-      query: require('@/graphql/Agent/agents.gql'),
-      update: data => data.agents
     }
   }
 }

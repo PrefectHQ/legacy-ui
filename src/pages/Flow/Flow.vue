@@ -331,6 +331,7 @@ export default {
             slot="row-1-col-3-tile-1"
             :aggregate="!flowVersionId"
             :flow="selectedFlow"
+            :flow-group="flowGroup"
             full-height
           />
 

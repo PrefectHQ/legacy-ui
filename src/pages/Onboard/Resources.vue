@@ -68,7 +68,7 @@ export default {
         </v-col>
       </v-slide-x-transition>
 
-      <v-col class="d-flex align-end justify-center" cols="12" md="2">
+      <v-col class="d-flex align-center justify-center" cols="12" md="2">
         <transition name="fade">
           <v-btn
             v-if="showDashboardNavigation"

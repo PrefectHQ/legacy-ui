@@ -4,7 +4,7 @@ import moment from 'moment-timezone'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 import Feedback from '@/components/Feedback'
-import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
+import { clearCache } from '@/vue-apollo'
 
 const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
@@ -156,8 +156,6 @@ export default {
     async _switchBackend() {
       this.loading = true
 
-      stopDefaultClient()
-
       if (!this.isCloud) {
         await this.switchBackend('CLOUD')
       } else {
@@ -166,7 +164,7 @@ export default {
 
       this.loading = false
 
-      refreshDefaultClient()
+      clearCache()
       this.handlePostTokenRouting()
     },
     getRoute(name) {
@@ -181,7 +179,6 @@ export default {
     },
     async handleSwitchTenant(tenant) {
       this.loading = true
-      stopDefaultClient()
 
       if (tenant.slug == this.tenant.slug) return
 
@@ -189,7 +186,8 @@ export default {
 
       this.loading = false
       this.tenantMenuOpen = false
-      refreshDefaultClient()
+
+      clearCache()
       this.handlePostTokenRouting()
     },
     handlePostTokenRouting() {
@@ -226,7 +224,7 @@ export default {
     handleRouteToCreateTenant() {
       // We'll route to the new team page when that's done.
     },
-    async handleAcceptPendingInvitation(id, name) {
+    async handleAcceptPendingInvitation(id, name, slug) {
       this.handlingInvitationLoad = true
       let success
       try {
@@ -241,7 +239,14 @@ export default {
             alertMessage: success
               ? `You joined ${name}... hurrah!`
               : `Something went wrong trying to accept your invitation to ${name}... please wait a few moments and try again.`,
-            alertType: success ? 'success' : 'error'
+            alertType: success ? 'success' : 'error',
+            alertLink: success
+              ? {
+                  name: 'dashboard',
+                  params: { tenant: slug }
+                }
+              : null,
+            linkText: success ? 'Take me to my new tenant!' : ''
           },
           3000
         )
@@ -460,6 +465,7 @@ export default {
 
         <v-list dense>
           <v-list-item
+            v-if="isCloud"
             id="tutorial"
             active-class="primary-active-class"
             :disabled="routeDisabled"
@@ -472,6 +478,7 @@ export default {
               <v-list-item-title>Tutorials</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
           <v-list-item
             class="bottom"
             ripple
@@ -730,7 +737,11 @@ export default {
                         :label="pt.tenant.name"
                         :loading="handlingInvitationLoad"
                         @accept="
-                          handleAcceptPendingInvitation(pt.id, pt.tenant.name)
+                          handleAcceptPendingInvitation(
+                            pt.id,
+                            pt.tenant.name,
+                            pt.tenant.slug
+                          )
                         "
                         @decline="
                           handleDeclinePendingInvitation(pt.id, pt.tenant.name)

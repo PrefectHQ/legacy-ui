@@ -1,10 +1,11 @@
 <script>
 import Alert from '@/components/Alert'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import { stopDefaultClient, refreshDefaultClient } from '@/vue-apollo'
+import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
+import { eventsMixin } from '@/mixins/eventsMixin'
 
 export default {
   components: {
@@ -12,6 +13,7 @@ export default {
     NavBar,
     SideNav
   },
+  mixins: [eventsMixin],
   data() {
     return {
       error: null,
@@ -53,6 +55,13 @@ export default {
     },
     isCloud() {
       return this.backend == 'CLOUD'
+    },
+    isWelcome() {
+      return (
+        this.$route.name === 'welcome' ||
+        this.$route.name === 'onboard-resources' ||
+        this.$route.name === 'name-team'
+      )
     }
   },
   watch: {
@@ -70,16 +79,15 @@ export default {
       }, 3000)
     },
     async connected(val) {
-      if (!val) {
-        stopDefaultClient()
-      } else {
-        refreshDefaultClient()
+      if (val) {
+        clearCache()
       }
     },
     tenant(val) {
       if (val?.id) {
         clearTimeout(this.refreshTimeout)
         this.refresh()
+        this.$apollo.queries.agents.refresh()
       }
     },
     isAuthenticated(val) {
@@ -87,8 +95,12 @@ export default {
         this.shown = true
       }
     },
+    agents(val) {
+      this.setAgents(val)
+    },
     async $route(new_route, old_route) {
       if (
+        new_route?.params?.tenant &&
         new_route?.params?.tenant !== old_route?.params?.tenant &&
         this.tenant?.slug !== new_route.params.tenant
       ) {
@@ -136,7 +148,7 @@ export default {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
     ...mapMutations('tenant', ['setDefaultTenant']),
-
+    ...mapMutations('agent', ['setAgents']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
@@ -174,6 +186,15 @@ export default {
       try {
         await this.getApi()
         await this.getTenants()
+
+        if (this.isServer && !this.tenants?.length) {
+          // Server has no tenants so redirect to home
+          if (this.$route.name !== 'home') {
+            this.$router.push({
+              name: 'home'
+            })
+          }
+        }
 
         if (this.isServer && this.tenants?.length) {
           // If this is Server, there won't be a default tenant, so we'll set one
@@ -221,13 +242,28 @@ export default {
 
       requestAnimationFrame(loadTiles)
     }
+  },
+  apollo: {
+    agents: {
+      query() {
+        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+      },
+      loadingKey: 'loading',
+      pollInterval: 3000,
+      skip() {
+        return !this.tenant.id
+      },
+      update: data => {
+        return data.agent
+      }
+    }
   }
 }
 </script>
 
 <template>
   <v-app class="app">
-    <v-main>
+    <v-main :class="{ 'pt-0': isWelcome }">
       <v-progress-linear
         absolute
         :active="isLoggingInUser"

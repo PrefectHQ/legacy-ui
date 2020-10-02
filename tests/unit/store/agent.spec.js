@@ -13,7 +13,8 @@ describe('Agent Vuex Module', () => {
         stale: 1, // minutes since last query
         // Time before an agent becomes unhealthy
         unhealthy: 5 // minutes since last query
-      }
+      },
+      agents: null
     }
   }
 
@@ -22,6 +23,10 @@ describe('Agent Vuex Module', () => {
       const state = agent.state
       expect(state.thresholds.stale).toBe(1)
       expect(state.thresholds.unhealthy).toBe(5)
+    })
+    it('should have no agents', () => {
+      const state = agent.state
+      expect(state.agents).toBe(null)
     })
   })
 
@@ -39,6 +44,25 @@ describe('Agent Vuex Module', () => {
       expect(store.getters.unhealthyThreshold).toBe(
         store.state.thresholds.unhealthy
       )
+    })
+    it('should return agents when the agents getters is called', () => {
+      expect(store.getters.agents).toBe(null)
+    })
+  })
+
+  describe('mutations', () => {
+    let store = new Vuex.Store({
+      state: initialAgentState(),
+      getters: agent.getters,
+      mutations: agent.mutations
+    })
+
+    it('should add new agents, and update seconds since last query, when the setAgents mutation is called', () => {
+      expect(store.getters.agents).toBe(null)
+      store.commit('setAgents', [{ id: '12345' }])
+      expect(store.getters.agents).toEqual([
+        { id: '12345', secondsSinceLastQuery: 0 }
+      ])
     })
   })
 })

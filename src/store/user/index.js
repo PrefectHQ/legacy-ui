@@ -73,6 +73,8 @@ const mutations = {
       id: null,
       email: null,
       username: null,
+      first_name: '',
+      last_name: '',
       default_membership_id: null,
       memberships: null,
       settings: { timezone: '' }
@@ -96,17 +98,16 @@ const actions = {
     const defaultMembershipId = getters['defaultMembershipId']
     const defaultTenant = getters['memberships']?.find(
       membership => membership.id === defaultMembershipId
-    ).tenant
+    )?.tenant
 
     const firstTenant =
-      getters['memberships']?.[0] || rootGetters['tenant/tenants']
-
-    if (!defaultMembershipId || rootGetters['api/isServer']) return firstTenant
+      getters['memberships']?.[0]?.tenant || rootGetters['tenant/tenants']?.[0]
 
     commit('tenant/setDefaultTenant', defaultTenant || firstTenant, {
       root: true
     })
   },
+
   async getUser({ commit, getters, dispatch }) {
     const user = await prefectUser()
     commit('user', user)

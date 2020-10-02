@@ -8,6 +8,9 @@ export default {
   },
   data() {
     return {
+      defaultUrl:
+        window.prefect_ui_settings?.server_url ||
+        process.env.VUE_APP_SERVER_URL,
       error: false,
       loading: false,
       success: false,
@@ -25,6 +28,17 @@ export default {
       this.success = false
       this.error = false
       this.loading = false
+    },
+    async _resetUrl() {
+      localStorage.removeItem('server_url')
+
+      this.urlInput = this.defaultUrl
+
+      this.error = false
+      this.success = false
+      this.connected = false
+
+      this.setServerUrl(this.defaultUrl)
     },
     async _testUrl() {
       this.success = false
@@ -51,11 +65,16 @@ export default {
 <template>
   <div>
     <div class="text-body-1">
-      Before you can begin to schedule work with Prefect Server, you'll need to
-      start the orchestration infrastructure required to manage your Flows. This
-      includes a database, API, scheduler, and various other criticial services.
-      Alternatively, you can use Prefect Cloud and get started right away (it's
-      free!)
+      Before you can begin to schedule work with
+      <ExternalLink
+        href="https://docs.prefect.io/orchestration/server/overview.html"
+      >
+        Prefect Server
+      </ExternalLink>
+      , you'll need to start the orchestration infrastructure required to manage
+      your Flows. This includes a database, API, scheduler, and various other
+      criticial services. Alternatively, you can use Prefect Cloud and get
+      started right away (it's free!)
     </div>
 
     <ol class="mt-6">
@@ -93,13 +112,12 @@ export default {
       <div class="text-body-1 mt-2">
         The GraphQL endpoint is one of the public URLs exposed by Prefect Server
         that allows interaction with the API. By default it's exposed at
-        <kbd>http://localhost:4200/graphql</kbd>, but you can modify this and
-        other settings from your Server's <kbd>~/.prefect/config.toml</kbd> or
-        in the input box below:
+        <kbd>http://localhost:4200/graphql</kbd>, but this can be modified. You
+        can directly modify this endpoint in the input box below:
       </div>
 
       <div
-        class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2 mt-10"
+        class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2 mt-6 mb-10"
       >
         <div>Prefect Server GraphQL endpoint:</div>
         <v-text-field
@@ -114,18 +132,39 @@ export default {
           @keyup="_handleKeyup"
         >
           <template v-slot:append>
-            <v-fade-transition mode="out-in">
-              <v-icon v-if="success" key="success" color="green">
-                check
-              </v-icon>
-              <v-icon v-else-if="error" key="error" color="error">
-                error
-              </v-icon>
-            </v-fade-transition>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <div class="mb-2">
+                  <v-fade-transition mode="out-in">
+                    <v-icon v-if="success" key="success" color="green">
+                      check
+                    </v-icon>
+                    <v-icon v-else-if="error" key="error" color="error">
+                      error
+                    </v-icon>
+                  </v-fade-transition>
+
+                  <v-btn
+                    color="blue-grey lighten-1"
+                    icon
+                    small
+                    @click="_resetUrl"
+                    v-on="on"
+                  >
+                    <v-icon key="reset" color="grey">
+                      settings_backup_restore
+                    </v-icon>
+                  </v-btn>
+                </div>
+              </template>
+              <span>
+                Reset stored GraphQL endpoint
+              </span>
+            </v-tooltip>
           </template>
 
           <template v-slot:append-outer>
-            <div class="mt-n1">
+            <div>
               <v-btn
                 color="primary"
                 dark
@@ -139,6 +178,28 @@ export default {
             </div>
           </template>
         </v-text-field>
+      </div>
+
+      <div class="text-body-1 mt-2">
+        ...or by setting <kbd>apollo_url</kbd> in
+        <kbd>./prefect/config.toml</kbd> on whatever machine you're running
+        Prefect Server:
+      </div>
+      <div
+        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
+        style="border: 1px solid #b0bec5 !important;"
+      >
+        <div class="code-block">
+          <pre>
+[server]
+  [server.ui]
+    apollo_url="http://localhost:4200/graphql"
+          </pre>
+        </div>
+      </div>
+      <div class="text-body-1 mt-2">
+        Note: The second method will change the default Apollo endpoint but can
+        still be overidden by the input box above.
       </div>
 
       <v-scroll-y-transition mode="out-in">
@@ -165,3 +226,10 @@ export default {
     </ol>
   </div>
 </template>
+
+<style lang="scss" scoped>
+/* stylelint-disable-next-line */
+.v-input__append-inner {
+  margin-top: 0 !important;
+}
+</style>

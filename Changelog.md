@@ -4,6 +4,67 @@
 
 ### Features and Improvements
 
+- Disable restart button on actions line rather than dialog[#234](https://github.com/PrefectHQ/ui/pull/234)
+
+### Bugfixes
+
+- None
+
+## 2020-10-01
+
+### Features and Improvements
+
+- Update information in "Connect the UI" section of the home view [#271](https://github.com/PrefectHQ/ui/pull/271)
+
+### Bugfixes
+
+- Make sure the 'To The Dashboard' button is more visible on the onboard/resources page [#275](https://github.com/PrefectHQ/ui/pull/275)
+- Allow label edit on flows created with an older version of core [#273](https://github.com/PrefectHQ/ui/pull/273)
+- Redirect to home when UI is loaded up against a Prefect Server instance with no tenants [#270](https://github.com/PrefectHQ/ui/pull/270)
+- Direct users to the new tenant when they accept an invitation from the accept invitation page [#274](https://github.com/PrefectHQ/ui/pull/274)
+
+## 2020-09-29
+
+### Features and Improvements
+
+- Add unit tests for the flow navigation guard [#248](https://github.com/PrefectHQ/ui/pull/248)
+
+### Bugfixes
+
+- Hide label affinity warning in server until Core catches up [#264](https://github.com/PrefectHQ/ui/pull/264)
+- Fixes a situation where task runs in the table on the flow run page were incorrectly calculating infinite durations - [#267](https://github.com/PrefectHQ/ui/pull/267)
+
+## 2020-09-28a
+
+### Features and Improvements
+
+- Add Vuex user store unit tests and add circleci job to run unit tests on PR [#245](https://github.com/PrefectHQ/ui/pull/245)
+
+### Bugfixes
+
+- Remove link to Cloud tutorials from Server [#255](https://github.com/PrefectHQ/ui/pull/255)
+- Fixes instances where allowed users and allowed read only users weren't always being read correctly when license terms were null - [#260](https://github.com/PrefectHQ/ui/pull/260)
+
+## 2020-09-28
+
+### Features and Improvements
+
+- Show user notifications on the notifications tile - [#258](https://github.com/PrefectHQ/ui/pull/258)
+- Add dense styling for the WhatsNew notification component - [#258](https://github.com/PrefectHQ/ui/pull/258)
+
+## 2020-09-24
+
+### Bugfixes
+
+- Fix `delete_agent` mutation `agentId` type [#253](https://github.com/PrefectHQ/ui/pull/253)
+- Add 24 hour clock to the logs row [#247](https://github.com/PrefectHQ/ui/pull/247)
+
+## 2020-09-23
+
+### Features and Improvements
+
+- Show version group id on the flow details tile[#236](https://github.com/PrefectHQ/ui/pull/236)
+- Add a check for flow and agent label alignment and alert if mis-matched [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
 - Improves error handling related to garbage collection - [#232](https://github.com/PrefectHQ/ui/pull/232)
 - Improves component teardown by accounting for elements whose destroyed method had been called but that hadn't been removed from the DOM due to transitions - [#232](https://github.com/PrefectHQ/ui/pull/232)
@@ -12,17 +73,22 @@
 ### Bugfixes
 
 - Fixes errors that were thrown when routing to tenant-guarded pages without passing a tenant slug - [#232](https://github.com/PrefectHQ/ui/pull/232)
-- Disable restart button on actions line rather than dialog[#234](https://github.com/PrefectHQ/ui/pull/234)
+- Improve the usability of apollo endpoint setting - [#241](https://github.com/PrefectHQ/ui/pull/241)
 
 ## 2020-09-17
 
 ### Features and Improvements
 
 - Add unit tests for tenant store [#195](https://github.com/PrefectHQ/ui/pull/195)
+- Improves error handling related to garbage collection - [#232](https://github.com/PrefectHQ/ui/pull/232)
+- Improves component teardown by accounting for elements whose destroyed method had been called but that hadn't been removed from the DOM due to transitions - [#232](https://github.com/PrefectHQ/ui/pull/232)
+- Improve navigation experience when going forward/backward in the browser history - [#232](https://github.com/PrefectHQ/ui/pull/232)
 
 ### Bugfixes
 
+- Fixes errors that were thrown when routing to tenant-guarded pages without passing a tenant slug - [#232](https://github.com/PrefectHQ/ui/pull/232)
 - Fix a race condition with flow concurrency usage - [#231](https://github.com/PrefectHQ/ui/pull/231)
+- Fix a race condition with task tag concurrency usage - [#235](https://github.com/PrefectHQ/ui/pull/235)
 
 ## 2020-09-15
 
@@ -34,6 +100,7 @@
 
 ### Bugfixes
 
+- Improve error handling on the flow page schedule toggle and label setting [#217](https://github.com/PrefectHQ/ui/pull/217)
 - Fix BarChart component resize event listener removal - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Remove all BarChart underscore method and property references - [#212](https://github.com/PrefectHQ/ui/pull/212)
 - Fix visual bugs associated with resizing while the BarChart component wasn't visible - [#216](https://github.com/PrefectHQ/ui/pull/216)
@@ -151,10 +218,6 @@
 ### Features and Improvements
 
 - Update connection icon if Cloud is in maintenance mode - [#155](https://github.com/PrefectHQ/ui/pull/155)
-
-### Bugfixes
-
-- None
 
 ## 2020-08-25
 

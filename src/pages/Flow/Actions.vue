@@ -153,61 +153,62 @@ export default {
       })
     },
     async scheduleFlow() {
-      try {
-        this.scheduleLoading = true
-        let response
+      this.scheduleLoading = true
 
-        if (this.isScheduled) {
-          response = await this.$apollo.mutate({
+      if (this.isScheduled) {
+        try {
+          const { data } = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/set-schedule-inactive.gql'),
             variables: {
               id: this.flow.id
             }
           })
-
-          if (response.data.set_schedule_inactive.success) {
+          if (data.set_schedule_inactive.success) {
             this.alertShow = true
             this.alertMessage = 'Schedule set to paused'
             this.alertType = 'info'
-          } else {
-            this.alertShow = true
-            this.alertMessage =
-              '"Something went wrong. Please wait a few moments and try again."'
-            this.alertType = 'error'
           }
-        } else if (!this.isScheduled) {
-          response = await this.$apollo.mutate({
+        } catch (error) {
+          this.isScheduled = false
+          this.alertShow = true
+          this.alertMessage = `${error}`
+          this.alertType = 'error'
+        } finally {
+          this.scheduleLoading = false
+          this.setAlert({
+            alertShow: this.alertShow,
+            alertMessage: this.alertMessage,
+            alertType: this.alertType,
+            alertLink: this.alertLink
+          })
+        }
+      } else {
+        try {
+          const { data } = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/set-schedule-active.gql'),
             variables: {
               id: this.flow.id
             }
           })
 
-          if (response.data.set_schedule_active.success) {
+          if (data.set_schedule_active.success) {
             this.alertShow = true
             this.alertMessage = 'Schedule set to active'
             this.alertType = 'info'
-          } else {
-            this.alertShow = true
-            this.alertMessage =
-              '"Something went wrong. Please wait a few moments and try again."'
-            this.alertType = 'error'
           }
+        } catch (error) {
+          this.alertShow = true
+          this.alertMessage = `${error}`
+          this.alertType = 'error'
+        } finally {
+          this.scheduleLoading = false
+          this.setAlert({
+            alertShow: this.alertShow,
+            alertMessage: this.alertMessage,
+            alertType: this.alertType,
+            alertLink: this.alertLink
+          })
         }
-      } catch (error) {
-        this.alertShow = true
-        this.alertMessage =
-          '"Something went wrong. Please wait a few moments and try again."'
-        this.alertType = 'error'
-        throw error
-      } finally {
-        this.scheduleLoading = false
-        this.setAlert({
-          alertShow: this.alertShow,
-          alertMessage: this.alertMessage,
-          alertType: this.alertType,
-          alertLink: this.alertLink
-        })
       }
     },
     unarchiveFlow() {}
