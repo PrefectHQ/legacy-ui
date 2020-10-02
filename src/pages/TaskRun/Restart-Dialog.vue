@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       error: ERROR_MESSAGE,
-      tasksSuccess: null,
+      tasksSuccess: true,
       name: 'PrefectCloudUIRestartButton'
     }
   },
@@ -77,15 +77,7 @@ export default {
               state: { type: 'Scheduled', message: this.message }
             }
           })
-          if (data?.set_flow_run_states) {
-            this.setAlert({
-              alertShow: true,
-              alertMessage: 'Run restarted.',
-              alertType: 'success'
-            })
-          } else {
-            this.tasksSuccess = false
-          }
+          if (!data?.set_flow_run_states) this.tasksSuccess = false
         }
       } catch (error) {
         this.tasksSuccess = false
@@ -94,7 +86,7 @@ export default {
         this.setAlert({
           alertShow: true,
           alertMessage: this.tasksSuccess
-            ? 'Flow run restarted'
+            ? `Flow run ${this.taskRun.flow_run.name} restarted from ${this.taskRun.task.name}`
             : 'Sorry, we hit a problem trying to restart the run; please try again.',
           alertType: this.tasksSuccess ? 'success' : 'error'
         })
