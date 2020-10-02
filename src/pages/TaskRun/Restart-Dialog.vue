@@ -42,54 +42,53 @@ export default {
       return !!hasUpstreamEdges && !hasCachedInput
     },
     async restart() {
+      console.log('restarting')
       this.cancel()
       try {
         this.dialog = false
-        const logSuccess = this.writeLogs()
-        if (logSuccess) {
-          let taskStates
-          if (this.utilityDownstreamTasks.length) {
-            taskStates = this.utilityDownstreamTasks.map(task => {
-              return {
-                version: task.task.task_runs[0].version,
-                taskRunId: task.task.task_runs[0].id,
-                state: { type: 'Pending', message: this.message }
-              }
-            })
-          } else {
-            taskStates = {
-              taskRunId: this.taskRun.id,
-              version: this.taskRun.version,
+        await this.writeLogs()
+        let taskStates
+        if (this.utilityDownstreamTasks.length) {
+          taskStates = this.utilityDownstreamTasks.map(task => {
+            return {
+              version: task.task.task_runs[0].version,
+              task_run_id: task.task.task_runs[0].id,
               state: { type: 'Pending', message: this.message }
             }
+          })
+        } else {
+          taskStates = {
+            task_run_id: this.taskRun.id,
+            version: this.taskRun.version,
+            state: { type: 'Pending', message: this.message }
           }
-          const result = await this.$apollo.mutate({
-            mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
+        }
+        const result = await this.$apollo.mutate({
+          mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
+          variables: {
+            input: taskStates
+          }
+        })
+        console.log('settask run states', result)
+        if (result?.data?.set_task_run_states) {
+          const { data } = await this.$apollo.mutate({
+            mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
             variables: {
-              input: taskStates
+              flowRunId: this.flowRunId,
+              version: this.taskRun.flow_run.version,
+              state: { type: 'Scheduled', message: this.message }
             }
           })
-          if (result?.data?.set_task_run_states) {
-            const { data } = await this.$apollo.mutate({
-              mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
-              variables: {
-                flow_run_id: this.flowRunId,
-                version: this.taskRun.flow_run.version,
-                state: { type: 'Scheduled', message: this.message }
-              }
+          console.log('flow run states', data)
+          if (data?.set_flow_run_states) {
+            this.setAlert({
+              alertShow: true,
+              alertMessage: 'Run restarted.',
+              alertType: 'success'
             })
-            if (data?.set_flow_run_states) {
-              this.setAlert({
-                alertShow: true,
-                alertMessage: 'Run restarted.',
-                alertType: 'success'
-              })
-            } else {
-              this.tasksSuccess = false
-            }
+          } else {
+            this.tasksSuccess = false
           }
-        } else {
-          this.tasksSuccess = false
         }
       } catch (error) {
         this.tasksSuccess = false
@@ -108,7 +107,7 @@ export default {
       const { data } = await this.$apollo.mutate({
         mutation: require('@/graphql/Update/write-run-logs.gql'),
         variables: {
-          flow_run_id: this.flowRunId,
+          flowRunId: this.flowRunId,
           name: this.name,
           message: this.message
         }

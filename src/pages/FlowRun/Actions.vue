@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { FINISHED_STATES } from '@/utils/states'
 
 // We're removing this until the stack functionality
 // is in a more tenable place.
@@ -37,6 +38,9 @@ export default {
     },
     isScheduled() {
       return this.flowRun?.state === 'Scheduled'
+    },
+    isFinished() {
+      return FINISHED_STATES.includes(this.flowRun.state)
     },
     canRestart() {
       return (
@@ -145,7 +149,7 @@ export default {
       </span>
     </v-tooltip>
 
-    <v-tooltip bottom>
+    <v-tooltip max-width="250px" bottom>
       <template v-slot:activator="{ on }">
         <div v-on="on">
           <v-btn
@@ -168,9 +172,14 @@ export default {
         Read-only users cannot restart flow runs
       </span>
       <span v-else-if="!canRestart"
-        >You can not restart flows runs unless they or their task runs are in a
-        cancelled or failed state</span
-      >
+        >Restart re-runs only failed and cancelled task runs and their
+        downstream dependents.
+        <span v-if="isFinished"
+          >If you wish to re-run this flow run again, use SET STATE to set it
+          (and its task runs) into a scheduled state. You can also restart from
+          from a task run.</span
+        >
+      </span>
       <span v-else>Restart run from {{ flowRun.state }} </span>
     </v-tooltip>
 
