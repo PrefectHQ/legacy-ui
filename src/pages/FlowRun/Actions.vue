@@ -25,7 +25,7 @@ export default {
       alertType: 'info',
 
       //restart
-      eligibleStates: ['Failed', 'Cancelled'],
+      eligibleStates: ['Failed'],
       failedTaskRunStates: ['Cancelled', 'Failed', 'TimedOut', 'TriggerFailed'],
       restartDialog: false
     }
@@ -168,8 +168,7 @@ export default {
         Read-only users cannot restart flow runs
       </span>
       <span v-else-if="!canRestart"
-        >You can not restart flows runs unless they or their task runs are in a
-        cancelled or failed state</span
+        >You can not restart flows runs from a {{ flowRun.state }} state</span
       >
       <span v-else>Restart run from {{ flowRun.state }} </span>
     </v-tooltip>
