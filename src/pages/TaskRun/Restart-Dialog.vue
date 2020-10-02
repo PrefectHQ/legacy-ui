@@ -90,13 +90,13 @@ export default {
       } catch (error) {
         this.tasksSuccess = false
         throw error
-      }
-      if (this.tasksSuccess === false) {
+      } finally {
         this.setAlert({
           alertShow: true,
-          alertMessage:
-            'Sorry, we hit a problem trying to restart the run; please try again.',
-          alertType: 'error'
+          alertMessage: this.tasksSuccess
+            ? 'Flow run restarted'
+            : 'Sorry, we hit a problem trying to restart the run; please try again.',
+          alertType: this.tasksSuccess ? 'success' : 'error'
         })
       }
     },
