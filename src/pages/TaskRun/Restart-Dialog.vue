@@ -42,7 +42,6 @@ export default {
       return !!hasUpstreamEdges && !hasCachedInput
     },
     async restart() {
-      console.log('restarting')
       this.cancel()
       try {
         this.dialog = false
@@ -69,7 +68,6 @@ export default {
             input: taskStates
           }
         })
-        console.log('settask run states', result)
         if (result?.data?.set_task_run_states) {
           const { data } = await this.$apollo.mutate({
             mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
@@ -79,7 +77,6 @@ export default {
               state: { type: 'Scheduled', message: this.message }
             }
           })
-          console.log('flow run states', data)
           if (data?.set_flow_run_states) {
             this.setAlert({
               alertShow: true,
