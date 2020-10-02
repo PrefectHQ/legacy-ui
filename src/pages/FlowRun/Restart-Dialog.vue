@@ -135,18 +135,6 @@ export default {
     }
   },
   apollo: {
-    // failedTaskRuns: {
-    //   query: require('@/graphql/FlowRun/failed-task-runs.gql'),
-    //   variables() {
-    //     return {
-    //       flowRunId: this.flowRun.id,
-    //       failedStates: this.failedTaskRunStates
-    //     }
-    //   },
-    //   update: data => {
-    //     return data?.task_run
-    //   }
-    // },
     utilityDownstreamTasks: {
       query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
       variables() {

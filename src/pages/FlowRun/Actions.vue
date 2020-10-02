@@ -158,9 +158,8 @@ export default {
             text
             depressed
             small
-            :eligible-states="eligibleStates"
             :disabled="isReadOnlyUser || !canRestart"
-            color="deep-orange darken-1"
+            color="info"
             @click="restartDialog = true"
           >
             <v-icon>fab fa-rev</v-icon>
