@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Don't display nonexistant user info for flows and flow runs when connected to Prefect Server [#269](https://github.com/PrefectHQ/ui/pull/269)
 
 ### Bugfixes
 
