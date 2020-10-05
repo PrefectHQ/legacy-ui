@@ -4,7 +4,6 @@ import jsBeautify from 'js-beautify'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
-import { mapGetters } from 'vuex'
 
 export default {
   components: {
