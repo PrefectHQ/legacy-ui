@@ -178,9 +178,8 @@ export default {
       <span v-else-if="!canRestart"
         >You can only restart flow runs from a failed or cancelled state.
         <span v-if="isFinished"
-          >If you wish to re-run this flow run again, use SET STATE to set it
-          (and its task runs) into a scheduled state. You can also restart from
-          a task run.</span
+          >If you wish to run this flow run again, you can set it (and its task
+          runs) into a scheduled state.</span
         >
       </span>
       <span v-else>Restart run from {{ flowRun.state }} </span>
