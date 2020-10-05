@@ -27,7 +27,12 @@ export default {
 
       //restart
       eligibleStates: ['Failed', 'Cancelled'],
-      failedTaskRunStates: ['Cancelled', 'Failed', 'TimedOut', 'TriggerFailed'],
+      eligibleTaskRunStates: [
+        'Cancelled',
+        'Failed',
+        'TimedOut',
+        'TriggerFailed'
+      ],
       restartDialog: false
     }
   },
@@ -103,7 +108,7 @@ export default {
       variables() {
         return {
           flowRunId: this.flowRun.id,
-          failedStates: this.failedTaskRunStates
+          failedStates: this.eligibleTaskRunStates
         }
       },
       update: data => {
