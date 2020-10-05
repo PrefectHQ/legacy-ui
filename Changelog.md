@@ -5,10 +5,25 @@
 ### Features and Improvements
 
 - Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
+- Don't display nonexistant user info for flows and flow runs when connected to Prefect Server [#269](https://github.com/PrefectHQ/ui/pull/269)
 
 ### Bugfixes
 
 - None
+
+## 2020-10-01
+
+### Features and Improvements
+
+- Update information in "Connect the UI" section of the home view [#271](https://github.com/PrefectHQ/ui/pull/271)
+
+### Bugfixes
+
+- Make sure the 'To The Dashboard' button is more visible on the onboard/resources page [#275](https://github.com/PrefectHQ/ui/pull/275)
+- Allow label edit on flows created with an older version of core [#273](https://github.com/PrefectHQ/ui/pull/273)
+- Redirect to home when UI is loaded up against a Prefect Server instance with no tenants [#270](https://github.com/PrefectHQ/ui/pull/270)
+- Allow IP address as endpoint for URL cloudhooks [#277](https://github.com/PrefectHQ/ui/pull/277)
+- Direct users to the new tenant when they accept an invitation from the accept invitation page [#274](https://github.com/PrefectHQ/ui/pull/274)
 
 ## 2020-09-29
 

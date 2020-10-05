@@ -83,7 +83,8 @@ export default {
       const labels =
         this.newLabels ||
         this.flowGroup?.labels ||
-        this.flow?.environment?.labels
+        this.flow?.environment?.labels ||
+        []
       return labels?.slice().sort()
     },
     labelResetDisabled() {
@@ -96,6 +97,9 @@ export default {
           (val, index) => val === this.flow?.environment?.labels[index]
         )
       )
+    },
+    hasUser() {
+      return this.flow?.created_by
     }
   },
   methods: {
@@ -123,6 +127,7 @@ export default {
     },
     addLabel() {
       if (!this.valid) return
+      if (!this.newLabel) return
       this.disableAdd = true
       const labelArray = this.newLabels || this.labels.slice()
       labelArray.push(this.newLabel)
@@ -266,16 +271,14 @@ export default {
           <v-list-item dense class="px-0">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
-                Created by
+                Created <span v-if="hasUser">by</span>
               </v-list-item-subtitle>
-              <div class="subtitle-2">
-                {{
-                  flow.created_by
-                    ? flow.created_by.username
-                    : 'A nonexistent user'
-                }}
+              <div v-if="hasUser" class="subtitle-2">
+                {{ flow.created_by.username }}
               </div>
-              <div class="caption">{{ formatTime(flow.created) }} </div>
+              <div class="caption" :class="{ 'font-weight-bold': !hasUser }">
+                {{ formatTime(flow.created) }}
+              </div>
             </v-list-item-content>
           </v-list-item>
 
