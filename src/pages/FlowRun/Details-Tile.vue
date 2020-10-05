@@ -250,7 +250,11 @@ export default {
                     <DurationSpan
                       v-if="flowRun.start_time"
                       :start-time="flowRun.start_time"
-                      :end-time="isFinished ? flowRun.end_time : null"
+                      :end-time="
+                        isFinished && flowRun.start_time
+                          ? flowRun.end_time
+                          : null
+                      "
                     />
                     <span v-else>
                       <v-skeleton-loader type="text"></v-skeleton-loader>
