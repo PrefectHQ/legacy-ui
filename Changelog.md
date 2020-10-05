@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- Disable restart button on actions line rather than dialog[#234](https://github.com/PrefectHQ/ui/pull/234)
+- Enable restart from cancelled and update restart from failed[#234](https://github.com/PrefectHQ/ui/pull/234)
 
 ### Bugfixes
 
