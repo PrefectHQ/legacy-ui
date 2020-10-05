@@ -312,13 +312,13 @@ export default {
       max-width="600"
     >
       <p>
-        You do not have any agents querying Prefect Cloud for flow runs.
+        You do not have any agents querying for flow runs.
       </p>
 
       <p class="mb-0">
-        Refer to the Prefect Cloud documentation on
+        Refer to the Prefect documentation on
         <a
-          href="https://docs.prefect.io/cloud/agent/overview.html"
+          href="https://docs.prefect.io/orchestration/agents/overview.html"
           target="_blank"
           rel="noopener noreferrer"
           >agents</a

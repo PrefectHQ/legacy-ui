@@ -1,7 +1,6 @@
 <script>
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
-import ApiHealthCheckTile from '@/pages/Dashboard/ApiHealthCheck-Tile'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
@@ -25,28 +24,21 @@ const serverTabs = [
     name: 'Flows',
     target: 'flows',
     icon: 'pi-flow'
-  }
-]
-
-const cloudTabs = [
+  },
   {
     name: 'Agents',
     target: 'agents',
     icon: 'pi-agent',
     iconSize: 'small'
   }
-  // {
-  //   name: 'Analytics',
-  //   target: 'analytics',
-  //   icon: 'insert_chart_outlined'
-  // }
 ]
+
+const cloudTabs = []
 
 export default {
   components: {
     Agents,
     AgentsTile,
-    ApiHealthCheckTile,
     FailedFlowsTile,
     FlowTableTile,
     InProgressTile,
@@ -368,12 +360,7 @@ export default {
             class="my-2"
             tile
           >
-            <AgentsTile
-              v-if="isCloud"
-              full-height
-              @view-details-clicked="tab = 'agents'"
-            />
-            <ApiHealthCheckTile v-else />
+            <AgentsTile full-height @view-details-clicked="tab = 'agents'" />
           </v-skeleton-loader>
         </TileLayout>
       </v-tab-item>
@@ -392,7 +379,6 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        v-if="isCloud"
         class="tab-full-height"
         value="agents"
         transition="quick-fade"

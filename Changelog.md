@@ -15,6 +15,9 @@
 ### Features and Improvements
 
 - Update information in "Connect the UI" section of the home view [#271](https://github.com/PrefectHQ/ui/pull/271)
+- Add agent ID to flow run page details for submitted runs [#249](https://github.com/PrefectHQ/ui/pull/249)
+- Expose agents page and dashboard tile for server users [#249](https://github.com/PrefectHQ/ui/pull/249)
+- Make labels on agent cards scrollable and add ID to information displayed [#249](https://github.com/PrefectHQ/ui/pull/249)
 
 ### Bugfixes
 
