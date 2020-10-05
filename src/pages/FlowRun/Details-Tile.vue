@@ -246,6 +246,7 @@ export default {
                     Duration
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
+                    <!-- Check for isFinished improves duration handling for restarted flows  -->
                     <DurationSpan
                       v-if="flowRun.start_time"
                       :start-time="flowRun.start_time"
