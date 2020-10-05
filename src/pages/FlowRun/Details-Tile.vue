@@ -4,6 +4,7 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import { FINISHED_STATES } from '@/utils/states'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -23,6 +24,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     hasContext() {
       return (
         this.flowRun.context && Object.keys(this.flowRun.context).length > 0
@@ -34,6 +36,9 @@ export default {
     hasParameters() {
       if (!this.flowRun?.parameters) return false
       return Object.keys(this.flowRun.parameters).length > 0
+    },
+    isCloudOrAutoScheduled() {
+      return this.isCloud || this.flowRun?.auto_scheduled
     }
   },
   methods: {
@@ -139,7 +144,7 @@ export default {
     <v-card-text class="pl-12 card-content">
       <v-fade-transition hide-on-leave>
         <div v-if="tab === 'overview'">
-          <v-list-item dense class="px-0">
+          <v-list-item v-if="isCloudOrAutoScheduled" class="px-0">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Created by
