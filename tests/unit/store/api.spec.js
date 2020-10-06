@@ -3,6 +3,8 @@ import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 jest.useFakeTimers()
 
+const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
+
 //simple mock for gql api query
 let mockerror = false
 
@@ -57,7 +59,7 @@ describe('API Vuex Module', () => {
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
         retries: 0,
         serverUrl:
-          localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
+          localStorage.getItem(SERVER_KEY) || process.env.VUE_APP_SERVER_URL,
         version: null
       }
     }
@@ -79,13 +81,13 @@ describe('API Vuex Module', () => {
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
         retries: 0,
         serverUrl:
-          localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
+          localStorage.getItem(SERVER_KEY) || process.env.VUE_APP_SERVER_URL,
         version: null
       }
     }
     localStoreAPIState = () => {
       localStorage.setItem('backend', 'foo')
-      localStorage.setItem('server_url', 'http://0.0.0.0:4200/graphql')
+      localStorage.setItem(SERVER_KEY, 'http://0.0.0.0:4200/graphql')
       process.env.VUE_APP_BACKEND = 'CLOUD'
       process.env.VUE_APP_SERVER_URL = 'http://localhost:4200/graphql'
       return {
@@ -101,7 +103,7 @@ describe('API Vuex Module', () => {
         cloudUrl: process.env.VUE_APP_CLOUD_URL,
         retries: 5,
         serverUrl:
-          localStorage.getItem('server_url') || process.env.VUE_APP_SERVER_URL,
+          localStorage.getItem(SERVER_KEY) || process.env.VUE_APP_SERVER_URL,
         version: 8
       }
     }
@@ -318,7 +320,7 @@ describe('API Vuex Module', () => {
         store.commit('setServerUrl', 'http:localhost:4200')
         expect(store.getters['serverUrl']).toEqual('http:localhost:4200')
         expect(localStorage.setItem).toBeCalledWith(
-          'server_url',
+          SERVER_KEY,
           'http:localhost:4200'
         )
       })
@@ -328,7 +330,7 @@ describe('API Vuex Module', () => {
       it('should unset the server url in state and local storage', () => {
         store.commit('unsetServerUrl')
         expect(store.getters['serverUrl']).toEqual(null)
-        expect(localStorage.removeItem).toBeCalledWith('server_url')
+        expect(localStorage.removeItem).toBeCalledWith(SERVER_KEY)
       })
     })
 
