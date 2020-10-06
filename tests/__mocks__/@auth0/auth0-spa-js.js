@@ -1,5 +1,3 @@
-/* global jest */
-
 export const handleRedirectCallback = jest.fn()
 export const isAuthenticated = jest.fn().mockReturnValue(Math.random() >= 0.5)
 export const getUser = jest.fn().mockReturnValue({})

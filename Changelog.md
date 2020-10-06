@@ -5,7 +5,7 @@
 
 ### Features and Improvements
 
-- None
+- Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
 
 ### Bugfixes
 
