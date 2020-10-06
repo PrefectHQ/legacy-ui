@@ -73,22 +73,6 @@ describe('Auth Nav Guard', () => {
     })
   })
 
-  it('calls next when the user is authorized, authenticated, and set', () => {
-    store.commit('user/user', { name: 'test_user' })
-    store.commit('auth0/isAuthenticated', true)
-    store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
-    store.commit(
-      'auth0/authorizationTokenExpiry',
-      new Date().getTime() + 100000000
-    )
-
-    const next = jest.fn()
-
-    authNavGuard({}, {}, next)
-
-    expect(next).toHaveBeenCalledWith()
-  })
-
   it('calls the getUser route', async () => {
     store.commit('auth0/isAuthenticated', true)
     store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
@@ -106,6 +90,22 @@ describe('Auth Nav Guard', () => {
     expect(store.getters['user/firstName']).toEqual('test_user123')
   })
 
+  it('calls next when the user is authorized, authenticated, and set', () => {
+    store.commit('user/user', { name: 'test_user' })
+    store.commit('auth0/isAuthenticated', true)
+    store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    store.commit(
+      'auth0/authorizationTokenExpiry',
+      new Date().getTime() + 100000000
+    )
+    const next = jest.fn()
+    authNavGuard({}, {}, next)
+    // We test here that next was called *with no arguments*
+    // explicitly, since that has a big impact on what the method does
+    // in the navguard
+    expect(next).toHaveBeenCalledWith()
+  })
+
   it('aborts navigation when the user cannot be authenticated', async () => {
     dispatchStub.withArgs('auth0/authenticate').callsFake(async () => {
       store.commit('auth0/isAuthenticated', false)
@@ -117,11 +117,8 @@ describe('Auth Nav Guard', () => {
       )
       store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     })
-
     const next = jest.fn()
-
     await authNavGuard({}, {}, next)
-
     expect(next).toHaveBeenCalledWith(false)
   })
 
@@ -139,26 +136,19 @@ describe('Auth Nav Guard', () => {
 
   it('calls next with a redirect route, if one is present in the store', async () => {
     let redirectRoute = '/some/path'
-
     store.commit('auth0/isAuthenticated', true)
     store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     store.commit(
       'auth0/authorizationTokenExpiry',
       new Date().getTime() + 100000000
     )
-
     dispatchStub.withArgs('user/getUser').callsFake(async () => {
       store.commit('user/user', { name: 'test_user' })
     })
-
     store.commit('auth0/redirectRoute', redirectRoute)
-
     expect(store.getters['auth0/redirectRoute']).toBe(redirectRoute)
-
     const next = jest.fn()
-
     await authNavGuard({}, {}, next)
-
     expect(next).toHaveBeenCalledWith({ path: redirectRoute })
   })
 })
