@@ -1,11 +1,11 @@
 import { fallbackApolloClient } from '@/vue-apollo'
 import LogRocket from 'logrocket'
 
-const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
+const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
-if (!localStorage.getItem(`${UI_DEPLOY_TIMESTAMP}_server_url`)) {
+if (!localStorage.getItem(SERVER_KEY)) {
   localStorage.setItem(
-    `${UI_DEPLOY_TIMESTAMP}_server_url`,
+    SERVER_KEY,
     window.prefect_ui_settings?.server_url || process.env.VUE_APP_SERVER_URL
   )
 }
@@ -22,7 +22,7 @@ const state = {
   apiMode: null,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
-  serverUrl: localStorage.getItem(`${UI_DEPLOY_TIMESTAMP}_server_url`),
+  serverUrl: localStorage.getItem(SERVER_KEY),
   version: null
 }
 
@@ -126,11 +126,11 @@ const mutations = {
   },
   setServerUrl(state, url) {
     state.serverUrl = url
-    localStorage.setItem(`${UI_DEPLOY_TIMESTAMP}_server_url`, url)
+    localStorage.setItem(SERVER_KEY, url)
   },
   unsetServerUrl(state) {
     state.serverUrl = null
-    localStorage.removeItem(`${UI_DEPLOY_TIMESTAMP}_server_url`)
+    localStorage.removeItem(SERVER_KEY)
   },
   setVersion(state, version) {
     state.version = version
