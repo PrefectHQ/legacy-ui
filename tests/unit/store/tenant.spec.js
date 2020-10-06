@@ -18,7 +18,6 @@ jest.mock(
   () => 'tenant token mutation string'
 )
 
-let mockerror
 const mockUpdate = jest.fn()
 
 jest.mock('@/vue-apollo', () => {
@@ -268,7 +267,6 @@ describe('tenant Vuex Module', () => {
       let store
 
       beforeEach(() => {
-        mockerror = false
         store = new Vuex.Store({
           state: initialTenantState(),
           getters: tenant.getters,

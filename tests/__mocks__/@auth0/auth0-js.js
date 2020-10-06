@@ -1,5 +1,3 @@
-/* global jest */
-
 export const mockAuthorize = jest.fn()
 
 export const mockLogout = jest.fn()

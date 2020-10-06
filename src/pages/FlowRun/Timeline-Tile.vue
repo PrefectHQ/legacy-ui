@@ -9,6 +9,7 @@ const notPastStates = ['Running', 'Submitted', 'Pending']
 export default {
   components: {
     CardTitle,
+    TaskRunMenu: () => import('@/components/TaskRunMenu'),
     Timeline: () => import('@/components/Visualizations/Timeline')
   },
   props: {
@@ -29,7 +30,8 @@ export default {
   data() {
     return {
       breakpoints: [],
-      containerHeight: null
+      containerHeight: null,
+      hoveredTaskRun: null
     }
   },
   computed: {
@@ -164,10 +166,13 @@ export default {
       return this.flowRun.state === 'Running' ? 1000 : 0
     },
     taskRunMap() {
-      if (!this.taskRuns) return {}
+      if (!this.taskRuns || !this.tasks) return {}
       const taskRunMap = {}
-      this.taskRuns.forEach(taskRun => {
-        taskRunMap[taskRun.task_id] = taskRun
+      this.tasks.map(task => {
+        const run = this.taskRuns.find(tr => tr.task_id == task.id)
+        taskRunMap[task.id] = run
+        taskRunMap[task.id].task_id = task.id
+        taskRunMap[task.id].task_name = task.name
       })
 
       return taskRunMap
@@ -222,7 +227,9 @@ export default {
       ]
     },
     handleHover(id) {
-      id
+      console.log(id)
+      this.hoveredTaskRun = this.taskRunMap[id]
+      console.log(this.hoveredTaskRun)
     }
   },
   apollo: {
@@ -302,7 +309,7 @@ export default {
     </v-card-text>
 
     <v-expand-transition mode="out-in">
-      <TaskRunMenu :task-run="hoveredTaskRun" />
+      <TaskRunMenu v-if="hoveredTaskRun" :task-run="hoveredTaskRun" />
     </v-expand-transition>
   </v-card>
 </template>
