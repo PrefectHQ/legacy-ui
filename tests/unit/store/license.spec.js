@@ -11,7 +11,6 @@ jest.mock('logrocket', () => {
   }
 })
 
-
 jest.mock('@/graphql/License/license.gql', () => 'license query string')
 
 jest.mock('@/vue-apollo', () => {
