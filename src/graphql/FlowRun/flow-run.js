@@ -35,6 +35,7 @@ export default function(isCloud) {
         state_timestamp
         parameters
         context
+        agent_id
         task_run_states: task_runs(distinct_on: state) {
           state
         }
