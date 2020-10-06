@@ -233,7 +233,7 @@ Vue.mixin({
     // Otherwise we can assume there's some sort of transition
     // on the component and we wait for it to complete
     // Note: this is obviously rough but Observer methods
-    // were performing exceedingly poorly.
+    // were performing poorly.
     setTimeout(prepForGC, 1500)
   }
 })

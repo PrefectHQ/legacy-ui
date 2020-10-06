@@ -85,5 +85,3 @@ export default {}
     </v-card-text>
   </v-card>
 </template>
-
-<style></style>

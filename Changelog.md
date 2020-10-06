@@ -1,6 +1,30 @@
 # Changelog
 
+
 ## Unreleased
+
+### Features and Improvements
+
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-10-05
+
+### Features and Improvements
+
+- Don't display nonexistant user info for flows and flow runs when connected to Prefect Server [#269](https://github.com/PrefectHQ/ui/pull/269)
+- Add agent ID to flow run page details for submitted runs [#249](https://github.com/PrefectHQ/ui/pull/249)
+- Expose agents page and dashboard tile for server users [#249](https://github.com/PrefectHQ/ui/pull/249)
+- Make labels on agent cards scrollable and add ID to information displayed [#249](https://github.com/PrefectHQ/ui/pull/249)
+
+### Bugfixes
+
+- Allow IP address as endpoint for URL cloudhooks [#277](https://github.com/PrefectHQ/ui/pull/277)
+
+## 2020-10-01
 
 ### Features and Improvements
 

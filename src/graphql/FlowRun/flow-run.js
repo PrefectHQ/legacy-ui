@@ -30,8 +30,11 @@ export default function(isCloud) {
         state
         state_message
         state_timestamp
+        parameters
+        context
+        agent_id
         version
-
+        
         states {
           id
           state
