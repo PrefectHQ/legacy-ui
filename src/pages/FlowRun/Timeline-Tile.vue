@@ -300,6 +300,10 @@ export default {
         @hover="handleHover"
       />
     </v-card-text>
+
+    <v-expand-transition mode="out-in">
+      <TaskRunMenu :task-run="hoveredTaskRun" />
+    </v-expand-transition>
   </v-card>
 </template>
 
