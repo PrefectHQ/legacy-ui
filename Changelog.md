@@ -9,7 +9,7 @@
 
 ### Bugfixes
 
-- None
+- Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
 
 ## 2020-10-05
 
