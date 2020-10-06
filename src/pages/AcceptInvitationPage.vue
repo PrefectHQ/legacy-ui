@@ -6,9 +6,7 @@ export default {
     return {
       loading: false,
       error: false,
-      invitationId: localStorage.getItem('invitationId')
-        ? localStorage.getItem('invitationId')
-        : this.$route.query.invitation_id,
+      invitationId: this.$route.query.invitation_id,
       membershipInvitation: null,
       errorMessage:
         'It looks like there was a problem with your invitation.  Please check the details and your account and try again.'
@@ -16,76 +14,47 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['user']),
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('tenant', ['tenant']),
+    teamName() {
+      return this.membershipInvitation[0]?.tenant?.name || 'your new team'
+    },
+    userName() {
+      return this.membershipInvitation[0]?.user?.username
+    }
   },
-  mounted: function() {
-    this.$nextTick(async function acceptInvitation() {
+  methods: {
+    ...mapActions('tenant', ['setCurrentTenant']),
+    async accept() {
+      this.loading = true
+      const tenant = this.membershipInvitation[0].tenant
+      const accepted = await this.acceptInvitation()
+      if (accepted) {
+        await this.setCurrentTenant(tenant.slug)
+        this.$router.push({
+          name: 'dashboard',
+          params: { tenant: tenant.slug }
+        })
+      }
+    },
+    async acceptInvitation() {
       try {
-        this.loading = true
-        const { data, errors } = await this.$apollo.mutate({
+        const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Tenant/accept-membership-invitation.gql'),
           variables: {
             membershipInvitationId: this.invitationId
-          },
-          errorPolicy: 'all'
+          }
         })
         if (data?.accept_membership_invitation?.id) {
-          //once they accept the invitation, the invitation id is removed.
-          localStorage.removeItem('invitationId')
-          // Sets the tenant so that they're rerouted to the correct dashboard.
-
-          await this.getUser()
-
-          const tenantSlug = this.user.memberships.filter(
-            membership => membership.tenant.id === this.tenant.id
-          )?.tenant?.slug
-
-          if (tenantSlug) {
-            await this.setCurrentTenant(tenantSlug)
-          }
-          this.loading = false
-        } else if (errors) {
-          if (errors[0].message === 'Uniqueness violation.') {
-            this.errorMessage =
-              'It looks like that invitation has already been accepted. Check your tenant list.'
-          }
-          this.loading = false
-          this.error = true
+          return true
         }
       } catch (e) {
+        this.errorMessage = e
+          .toString()
+          .split(':')
+          .pop()
         this.loading = false
         this.error = true
       }
-    })
-  },
-  methods: {
-    ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
-    ...mapActions('user', ['getUser']),
-    async accept() {
-      this.$router.push({
-        name: 'dashboard',
-        params: { tenant: this.tenant.slug }
-      })
-    },
-    teamName() {
-      if (this.membershipInvitation) {
-        if (this.membershipInvitation[0]) {
-          if (this.membershipInvitation[0].tenant) {
-            return this.membershipInvitation[0].tenant.name
-          }
-        }
-      }
-      return 'your new team'
-    },
-    userName() {
-      if (this.membershipInvitation) {
-        if (this.membershipInvitation[0]) {
-          if (this.membershipInvitation[0].user) {
-            return this.membershipInvitation[0].user.username
-          }
-        }
-      }
-      return null
     }
   },
   apollo: {
@@ -95,8 +64,7 @@ export default {
         return { id: this.invitationId }
       },
       pollInterval: 5000,
-      update: data => data.membership_invitation,
-      errorPolicy: 'all'
+      update: data => data.membership_invitation
     }
   }
 }
@@ -125,22 +93,39 @@ export default {
       </v-row>
       <v-row>
         <v-col cols="12">
-          <div v-if="error">
-            <div> {{ errorMessage }} </div>
+          <div
+            v-if="error || !membershipInvitation || !membershipInvitation[0]"
+          >
+            <div>
+              <span v-if="error"> {{ errorMessage }} </span>
+              <span v-else>
+                We can't find your membership invitation. Have you already
+                accepted?
+              </span>
+            </div>
           </div>
           <div v-else>
             <div class="display-1">
-              Welcome to Prefect Cloud {{ userName() }}
+              Welcome to Prefect Cloud {{ userName }}
             </div>
             <div id="name" class="subtitle-1">
-              Welcome to {{ teamName() }}. To join, please click below.
+              Welcome to {{ teamName }}. To join, please click below.
             </div>
           </div>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
-          <v-btn v-if="!error && !loading" class="mr-3" @click="accept">
+          <v-btn
+            v-if="
+              !error &&
+                !loading &&
+                membershipInvitation &&
+                membershipInvitation[0]
+            "
+            class="mr-3"
+            @click="accept"
+          >
             Join
           </v-btn>
         </v-col>
