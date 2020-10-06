@@ -262,8 +262,6 @@ const initialize = async () => {
       apolloProvider: defaultApolloProvider,
       render: h => h(App)
     }).$mount('#app')
-
-    console.log(window.prefect_ui_settings)
   }
 }
 initialize()
