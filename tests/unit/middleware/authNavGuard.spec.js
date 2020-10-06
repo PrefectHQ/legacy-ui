@@ -36,48 +36,40 @@ describe('Auth Nav Guard', () => {
 
   describe('...when the backend is Cloud and the user is neither authenticated authorized', () => {
     it('calls the authentication route', async () => {
+      // Having trouble mocking 'authenticate' here to see if it's called so mocking the result of that call with dispatchStub and checking that 'authenticate' is passed by checking that the instructions passed in dispatchStub are followed
       dispatchStub.withArgs('auth0/authorize').callsFake()
       dispatchStub.withArgs('auth0/authenticate').callsFake(async () => {
         store.commit('auth0/isAuthenticated', true)
       })
-
       expect(store.getters['auth0/isAuthorized']).toBe(false)
       expect(store.getters['auth0/isAuthenticated']).toBe(false)
-
       const next = jest.fn()
-
       await authNavGuard({}, {}, next)
-
       expect(store.getters['auth0/isAuthenticated']).toBe(true)
     })
 
-    it('calls the authorization route after authenticating', async () => {
+    it('calls the authorization route', async () => {
+      //see above about not being able to spy on dispatch but mocking calls and then testing the correct info is passed
+      const expiry = new Date().getTime() + 100000000
       dispatchStub.withArgs('user/getUser').callsFake(async () => {
         store.commit('user/user', { name: 'test_user' })
       })
-
       dispatchStub.withArgs('auth0/authorize').callsFake(async () => {
         store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
-        store.commit(
-          'auth0/authorizationTokenExpiry',
-          new Date().getTime() + 100000000
-        )
+        store.commit('auth0/authorizationTokenExpiry', expiry)
       })
-
       dispatchStub.withArgs('auth0/authenticate').callsFake(async () => {
         store.commit('auth0/isAuthenticated', true)
       })
-
       expect(store.getters['auth0/isAuthorized']).toBe(false)
       expect(store.getters['auth0/isAuthenticated']).toBe(false)
-
       const next = jest.fn()
-
       await authNavGuard({}, {}, next)
-
-      expect(store.getters['auth0/isAuthenticated']).toBe(true)
       expect(store.getters['auth0/isAuthorized']).toBe(true)
-      expect(next).toHaveBeenCalledWith()
+      expect(store.getters['auth0/authorizationToken']).toEqual(
+        MOCK_AUTHORIZATION_TOKEN
+      )
+      expect(store.getters['auth0/authorizationTokenExpiry']).toEqual(expiry)
     })
   })
 
@@ -97,33 +89,7 @@ describe('Auth Nav Guard', () => {
     expect(next).toHaveBeenCalledWith()
   })
 
-  it('calls the authorization route when the user is authenticated but not authorized', async () => {
-    store.commit('auth0/isAuthenticated', true)
-
-    dispatchStub.withArgs('user/getUser').callsFake(async () => {
-      store.commit('user/user', { name: 'test_user' })
-    })
-
-    dispatchStub.withArgs('auth0/authorize').callsFake(async () => {
-      store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
-      store.commit(
-        'auth0/authorizationTokenExpiry',
-        new Date().getTime() + 100000000
-      )
-    })
-
-    const next = jest.fn()
-
-    expect(store.getters['auth0/isAuthorized']).toBe(false)
-
-    await authNavGuard({}, {}, next)
-
-    expect(store.getters['auth0/isAuthorized']).toBe(true)
-
-    expect(next).toHaveBeenCalledWith()
-  })
-
-  it('calls the getUser route when the user is authenticated and authorized, but no user is set', async () => {
+  it('calls the getUser route', async () => {
     store.commit('auth0/isAuthenticated', true)
     store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     store.commit(
@@ -131,20 +97,13 @@ describe('Auth Nav Guard', () => {
       new Date().getTime() + 100000000
     )
     dispatchStub.withArgs('user/getUser').callsFake(async () => {
-      store.commit('user/user', { name: 'test_user' })
+      store.commit('user/user', { first_name: 'test_user123' })
     })
-
     const next = jest.fn()
     expect(store.getters['user/userIsSet']).toBe(false)
-
     await authNavGuard({}, {}, next)
-
     expect(store.getters['user/userIsSet']).toBe(true)
-
-    // We test here that next was called *with no arguments*
-    // explicitly, since that has a big impact on what the method does
-    // in the navguard
-    expect(next).toHaveBeenCalledWith()
+    expect(store.getters['user/firstName']).toEqual('test_user123')
   })
 
   it('aborts navigation when the user cannot be authenticated', async () => {
