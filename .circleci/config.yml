@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   docker: circleci/docker@1.0.0
+  slack: circleci/slack@3.4.2
 
 commands:
   prep:
@@ -190,19 +191,9 @@ workflows:
                 - master
   'Deploy prod':
     jobs:
-      - docker/publish:
-          docker-password: DOCKER_HUB_PW
-          docker-username: DOCKER_HUB_USER
-          image: 'prefecthq/ui'
-          path: '.'
-          tag: $CIRCLE_TAG,latest
-          filters:
-            branches:
-              ignore:
-                - /.*/
-            tags:
-              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
-      - build-prod:
+      - slack/approval-notification:
+          mentions: "nicholas,chris"
+          message: "Release Prod"
           filters:
             branches:
               ignore:
@@ -217,10 +208,32 @@ workflows:
                 - /.*/
             tags:
               only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - build-prod:
+          requires:
+            - request-release
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - docker/publish:
+          requires:
+            - request-release
+          docker-password: DOCKER_HUB_PW
+          docker-username: DOCKER_HUB_USER
+          image: 'prefecthq/ui'
+          path: '.'
+          tag: $CIRCLE_TAG,latest
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
       - deploy-prod:
           requires:
             - build-prod
-            - request-release
           filters:
             branches:
               ignore:
