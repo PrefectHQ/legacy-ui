@@ -176,6 +176,13 @@ export default {
       })
 
       return taskRunMap
+    },
+    taskRunMenuStyle() {
+      return {
+        position: 'absolute',
+        top: 0,
+        left: 0
+      }
     }
   },
   watch: {
@@ -309,7 +316,11 @@ export default {
     </v-card-text>
 
     <v-expand-transition mode="out-in">
-      <TaskRunMenu v-if="hoveredTaskRun" :task-run="hoveredTaskRun" />
+      <TaskRunMenu
+        v-if="hoveredTaskRun"
+        :task-run="hoveredTaskRun"
+        :style="taskRunMenuStyle"
+      />
     </v-expand-transition>
   </v-card>
 </template>
