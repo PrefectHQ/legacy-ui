@@ -111,9 +111,7 @@ export default {
           failedStates: this.eligibleTaskRunStates
         }
       },
-      update: data => {
-        return data?.task_run
-      }
+      update: data => data?.task_run
     }
   }
 }
