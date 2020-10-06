@@ -31,7 +31,7 @@ export default {
   <div v-if="concurrentRuns && license">
     {{ concurrentRuns.length
     }}{{ flowConcurrency ? `/${flowConcurrency}` : '' }} slot{{
-      flowConcurrency === 1 ? '' : 's'
+      concurrentRuns.length === 1 || flowConcurrency === 1 ? '' : 's'
     }}
     used
 
