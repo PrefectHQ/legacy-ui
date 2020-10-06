@@ -6,8 +6,6 @@
 ### Features and Improvements
 
 - Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
-- Don't display nonexistant user info for flows and flow runs when connected to Prefect Server [#269](https://github.com/PrefectHQ/ui/pull/269)
-- None
 
 ### Bugfixes
 
