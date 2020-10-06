@@ -1,6 +1,5 @@
 # Changelog
 
-
 ## Unreleased
 
 ### Features and Improvements
@@ -9,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix race condition with `apollo_url` - [#295](https://github.com/PrefectHQ/ui/pull/295)
 
 ## 2020-10-05
 
