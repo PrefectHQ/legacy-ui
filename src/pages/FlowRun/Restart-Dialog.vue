@@ -179,12 +179,7 @@ export default {
     <v-card-actions>
       <v-spacer></v-spacer>
 
-      <v-btn
-        :disabled="!isEligibleToRestart"
-        color="primary"
-        @click="restart"
-        v-on="on"
-      >
+      <v-btn :disabled="!isEligibleToRestart" color="primary" @click="restart">
         Confirm
       </v-btn>
 
