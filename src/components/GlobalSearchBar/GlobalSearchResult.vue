@@ -9,7 +9,7 @@ export default {
       required: true,
       type: Object,
       validator: result => {
-        //this handles with task runs that don't have names
+        //this handles task runs that don't have names
         if (!result.name) result.name = result.id
         return (
           result.id &&
