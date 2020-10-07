@@ -27,7 +27,7 @@ export default {
     restartMessage() {
       return `${this.user.username} restarted this flow run`
     },
-    isFailedRun() {
+    isEligibleToRestart() {
       return (
         this.hasFailedTaskRuns ||
         this.eligibleStates.includes(this.flowRun.state)
@@ -35,6 +35,11 @@ export default {
     },
     hasFailedTaskRuns() {
       return this.failedTaskRuns?.length > 0
+    },
+    reRunStates() {
+      const reRunStates = this.eligibleStates.slice()
+      reRunStates.splice(this.eligibleStates.length - 1, 0, '&')
+      return reRunStates.join(' ')
     }
   },
   methods: {
@@ -158,35 +163,30 @@ export default {
 
 <template>
   <v-card tile>
-    <v-card-title> Restart from {{ flowRun.state }}? </v-card-title>
+    <v-card-title> Restart? </v-card-title>
 
     <v-card-text>
-      Click on confirm to restart
-      <span class="font-weight-bold">{{ flowRun.name }}</span>
+      Click on confirm to restart this flow run. Restarting will restart all
+      task runs in {{ reRunStates }} states and run any task runs in a Pending
+      state. Task runs that rely on upstream results may require additional
+      configuration to restart correctly. Read more about that
+      <a
+        href="https://docs.prefect.io/core/concepts/results.html#results"
+        target="_blank"
+        >in the Results docs</a
+      >.
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
 
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <div v-on="on">
-            <v-btn
-              :disabled="!isFailedRun"
-              color="primary"
-              @click="restart"
-              v-on="on"
-            >
-              Confirm
-            </v-btn>
-          </div>
-        </template>
-        <span v-if="role === 'READ_ONLY_USER'">
-          Read-only users cannot restart flow runs
-        </span>
-        <span v-else-if="!isFailedRun">
-          You can only restart a failed flow run.
-        </span>
-      </v-tooltip>
+      <v-btn
+        :disabled="!isEligibleToRestart"
+        color="primary"
+        @click="restart"
+        v-on="on"
+      >
+        Confirm
+      </v-btn>
 
       <v-btn text @click="cancel">
         Cancel
