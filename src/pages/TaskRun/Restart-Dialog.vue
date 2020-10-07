@@ -86,7 +86,7 @@ export default {
         this.setAlert({
           alertShow: true,
           alertMessage: this.tasksSuccess
-            ? `Flow run ${this.taskRun.flow_run.name} restarted from ${this.taskRun.task.name}`
+            ? `Flow run ${this.taskRun.flow_run.name} restarted. This will re-run ${this.taskRun.task.name} and its downstream dependents`
             : 'Sorry, we hit a problem trying to restart the run; please try again.',
           alertType: this.tasksSuccess ? 'success' : 'error'
         })
