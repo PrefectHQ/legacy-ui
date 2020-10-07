@@ -32,6 +32,12 @@ export default {
     cancel() {
       this.$emit('cancel')
     },
+    runOrReRunMessage(oldState) {
+      const state = oldState ? oldState : this.taskRun.state
+      return state !== 'Pending'
+        ? `re-run task ${this.taskRun.task.name} and its downstream dependents`
+        : `run task ${this.taskRun.task.name} and any other pending task runs`
+    },
     raiseWarning() {
       const hasCachedInput = Object.keys(
         this.taskRun?.serialized_state?.cached_inputs
@@ -42,6 +48,7 @@ export default {
       return !!hasUpstreamEdges && !hasCachedInput
     },
     async restart() {
+      const oldState = this.taskRun.state
       this.cancel()
       try {
         this.dialog = false
@@ -86,7 +93,9 @@ export default {
         this.setAlert({
           alertShow: true,
           alertMessage: this.tasksSuccess
-            ? `Flow run ${this.taskRun.flow_run.name} restarted. This will re-run ${this.taskRun.task.name} and its downstream dependents`
+            ? `Flow run ${
+                this.taskRun.flow_run.name
+              } restarted. This will ${this.runOrReRunMessage(oldState)}`
             : 'Sorry, we hit a problem trying to restart the run; please try again.',
           alertType: this.tasksSuccess ? 'success' : 'error'
         })
@@ -160,7 +169,7 @@ export default {
     <v-card-text v-else>
       Click on confirm to restart the flow run
       {{ taskRun.flow_run.name }} from this task run. This will restart your
-      flow run and re-run this task and its downstream dependencies.
+      flow run and {{ runOrReRunMessage() }}.
     </v-card-text>
 
     <v-card-actions>
