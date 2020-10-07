@@ -1,15 +1,29 @@
 # Changelog
 
+
 ## Unreleased
 
 ### Features and Improvements
 
 - Enable restart from cancelled and update restart from failed[#234](https://github.com/PrefectHQ/ui/pull/234)
-- Don't display nonexistant user info for flows and flow runs when connected to Prefect Server [#269](https://github.com/PrefectHQ/ui/pull/269)
+- Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
 
 ### Bugfixes
 
-- None
+- Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
+
+## 2020-10-05
+
+### Features and Improvements
+
+- Don't display nonexistant user info for flows and flow runs when connected to Prefect Server [#269](https://github.com/PrefectHQ/ui/pull/269)
+- Add agent ID to flow run page details for submitted runs [#249](https://github.com/PrefectHQ/ui/pull/249)
+- Expose agents page and dashboard tile for server users [#249](https://github.com/PrefectHQ/ui/pull/249)
+- Make labels on agent cards scrollable and add ID to information displayed [#249](https://github.com/PrefectHQ/ui/pull/249)
+
+### Bugfixes
+
+- Allow IP address as endpoint for URL cloudhooks [#277](https://github.com/PrefectHQ/ui/pull/277)
 
 ## 2020-10-01
 
@@ -22,7 +36,6 @@
 - Make sure the 'To The Dashboard' button is more visible on the onboard/resources page [#275](https://github.com/PrefectHQ/ui/pull/275)
 - Allow label edit on flows created with an older version of core [#273](https://github.com/PrefectHQ/ui/pull/273)
 - Redirect to home when UI is loaded up against a Prefect Server instance with no tenants [#270](https://github.com/PrefectHQ/ui/pull/270)
-- Allow IP address as endpoint for URL cloudhooks [#277](https://github.com/PrefectHQ/ui/pull/277)
 - Direct users to the new tenant when they accept an invitation from the accept invitation page [#274](https://github.com/PrefectHQ/ui/pull/274)
 
 ## 2020-09-29
