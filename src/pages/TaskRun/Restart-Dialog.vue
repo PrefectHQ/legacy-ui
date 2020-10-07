@@ -159,29 +159,20 @@ export default {
     </v-card-text>
     <v-card-text v-else>
       Click on confirm to restart the flow run
-      {{ taskRun.flow_run.name }} from this task run.
+      {{ taskRun.flow_run.name }} from this task run. This will restart your
+      flow run and re-run this task and its downstream dependencies.
     </v-card-text>
 
     <v-card-actions>
       <v-spacer></v-spacer>
 
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <div v-on="on">
-            <v-btn
-              :disabled="role === 'READ_ONLY_USER'"
-              color="primary"
-              @click="restart"
-              v-on="on"
-            >
-              Confirm
-            </v-btn>
-          </div>
-        </template>
-        <span v-if="role === 'READ_ONLY_USER'">
-          Read-only users cannot restart task runs
-        </span>
-      </v-tooltip>
+      <v-btn
+        :disabled="role === 'READ_ONLY_USER'"
+        color="primary"
+        @click="restart"
+      >
+        Confirm
+      </v-btn>
 
       <v-btn text @click="cancel">
         Cancel
