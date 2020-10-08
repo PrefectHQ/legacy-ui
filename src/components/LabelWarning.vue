@@ -157,7 +157,7 @@ export default {
             >flow run details tile</router-link
           ><span v-else>{{ flowOrFlowRun }} details tile</span>.</div
         >
-        <div v-if="flow.is_schedule_active">
+        <div v-if="flow && flow.is_schedule_active" class="mt-4">
           If you need to edit labels on many scheduled flow runs, you can pause
           the schedule and update the flow labels on the
           <router-link
