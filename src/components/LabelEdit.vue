@@ -119,7 +119,6 @@ export default {
             }
           })
         }
-        console.log('res', result)
         if (result.data) {
           this.newLabels = newLabels || this.flow.environment.labels
           this.resetLabelSettings()
@@ -128,7 +127,6 @@ export default {
           this.resetLabelSettings()
         }
       } catch (e) {
-        console.log('error', e)
         this.labelsError(e)
         this.resetLabelSettings()
       }
