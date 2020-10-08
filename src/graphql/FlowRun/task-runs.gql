@@ -15,5 +15,6 @@ query TaskRuns(
       name
       mapped
     }
+    name
   }
 }

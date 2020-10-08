@@ -81,6 +81,7 @@ export default function(isCloud) {
             max_retries
             retry_delay
           }
+          name
         }
         flow {
           id
