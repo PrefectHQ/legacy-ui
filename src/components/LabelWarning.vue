@@ -122,11 +122,13 @@ export default {
       </v-btn>
     </template>
     <v-card tile class="pa-0" max-width="320">
-      <v-card-title class="subtitle pb-1">Flow labels</v-card-title>
+      <v-card-title class="subtitle pb-1"
+        >{{ flowOrFlowRun }} labels</v-card-title
+      >
 
       <v-card-text class="pt-0">
-        Flows and agents have optional labels which allow you to determine where
-        your flows are executed. For more information see
+        Flows, flow runs and agents have optional labels which allow you to
+        determine where your flow runs are executed. For more information see
         <a
           href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
           target="_blank"

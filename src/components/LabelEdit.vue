@@ -56,6 +56,9 @@ export default {
         []
       return labels?.slice().sort()
     },
+    flowOrFlowRun() {
+      return this.flowRun ? 'Flow Run' : 'Flow'
+    },
     labelResetDisabled() {
       const labels = this.newLabels || this.labels
       return (
@@ -120,7 +123,8 @@ export default {
           })
         }
         if (result.data) {
-          this.newLabels = newLabels || this.flow.environment.labels
+          this.newLabels =
+            newLabels || this.flowRun.labels || this.flow.environment.labels
           this.resetLabelSettings()
         } else {
           this.labelsError()
@@ -197,14 +201,14 @@ export default {
             </template>
             <v-card width="800px" class="overflow-y-scroll py-0">
               <v-card-title class="subtitle pr-2 pt-2 pb-0"
-                >Flow labels</v-card-title
+                >{{ flowOrFlowRun }} labels</v-card-title
               >
 
               <v-card-text class="py-0 width=1500px">
                 <div class="width=800px">
-                  Flows and agents have optional labels which allow you to
-                  determine where your flows are executed. For more information
-                  see
+                  Flows, flow runs and agents have optional labels which allow
+                  you to determine where your flow runs are executed. For more
+                  information see
                   <a
                     href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
                     target="_blank"
@@ -319,13 +323,14 @@ export default {
         </template>
         <v-card width="800px" class="overflow-y-scroll py-0">
           <v-card-title class="subtitle pr-2 pt-2 pb-0"
-            >Flow labels</v-card-title
+            >{{ flowOrFlowRun }} labels</v-card-title
           >
 
           <v-card-text class="py-0 width=1500px">
             <div class="width=800px">
-              Flows and agents have optional labels which allow you to determine
-              where your flows are executed. For more information see
+              Flows, flow runs and agents have optional labels which allow you
+              to determine where your flow runs are executed. For more
+              information see
               <a
                 href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
                 target="_blank"
