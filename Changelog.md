@@ -4,11 +4,13 @@
 
 ### Features and Improvements
 
-- None
+- Enable restart from cancelled and update restart from failed[#234](https://github.com/PrefectHQ/ui/pull/234)
+- Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
 
 ### Bugfixes
 
 - Fix race condition with `apollo_url` - [#295](https://github.com/PrefectHQ/ui/pull/295)
+- Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
 
 ## 2020-10-05
 

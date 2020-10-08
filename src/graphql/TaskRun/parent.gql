@@ -1,4 +1,4 @@
-query($flowRunId: uuid, $taskId: uuid) {
+query taskRunParent($flowRunId: uuid, $taskId: uuid) {
   task_run(
     where: {
       _and: [

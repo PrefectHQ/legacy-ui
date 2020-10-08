@@ -1,8 +1,8 @@
-query FailedTaskRuns($flowRunId: uuid) {
+query FailedTaskRuns($flowRunId: uuid, $failedStates: [String!]) {
   task_run(
     where: {
       flow_run_id: { _eq: $flowRunId }
-      state: { _in: ["Failed", "Cancelled", "TimedOut", "TriggerFailed"] }
+      state: { _in: $failedStates }
     }
   ) {
     id

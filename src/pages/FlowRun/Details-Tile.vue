@@ -4,6 +4,7 @@ import jsBeautify from 'js-beautify'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
+import { FINISHED_STATES } from '@/utils/states'
 
 export default {
   components: {
@@ -29,6 +30,9 @@ export default {
       return (
         this.flowRun.context && Object.keys(this.flowRun.context).length > 0
       )
+    },
+    isFinished() {
+      return FINISHED_STATES.includes(this.flowRun.state)
     },
     hasParameters() {
       if (!this.flowRun?.parameters) return false
@@ -266,10 +270,15 @@ export default {
                     Duration
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
+                    <!-- Check for isFinished improves duration handling for restarted flows  -->
                     <DurationSpan
                       v-if="flowRun.start_time"
                       :start-time="flowRun.start_time"
-                      :end-time="flowRun.end_time"
+                      :end-time="
+                        isFinished && flowRun.start_time
+                          ? flowRun.end_time
+                          : null
+                      "
                     />
                     <span v-else>
                       <v-skeleton-loader type="text"></v-skeleton-loader>
