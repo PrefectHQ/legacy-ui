@@ -187,7 +187,7 @@ export default {
       try {
         if (this.isCloud) {
           if (!this.isAuthenticated) {
-            await this.authenticate('app')
+            await this.authenticate()
           }
 
           if (!this.isAuthorized) {
