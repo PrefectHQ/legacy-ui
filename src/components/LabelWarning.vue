@@ -10,6 +10,10 @@ export default {
       type: Object,
       default: () => {}
     },
+    flowRun: {
+      type: Object,
+      default: () => {}
+    },
     iconSize: {
       type: String,
       required: false,
@@ -41,8 +45,15 @@ export default {
         return accumulator
       }, [])
     },
+    flowOrFlowRun() {
+      return this.flowRun ? 'Flow Run' : 'Flow'
+    },
     flowLabels() {
-      return this.flowGroup?.labels || this.flow?.environment?.labels
+      return (
+        this.flowRun?.labels ||
+        this.flowGroup?.labels ||
+        this.flow?.environment?.labels
+      )
     },
     docsName() {
       if (!this.agents?.length) return 'agents'
@@ -65,7 +76,7 @@ export default {
         this.agentLabels.every(arrayOfLabels => arrayOfLabels.length > 0)
       ) {
         this.labelMessage(
-          'You have no currently running Agents configured to pick up flows without labels; you may need to add labels to your flow.'
+          `You have no currently running Agents configured to pick up flow runs without labels; you may need to add labels to your ${this.flowOrFlowRun}.`
         )
         return false
       } else {
@@ -81,7 +92,7 @@ export default {
           return true
         } else {
           this.labelMessage(
-            "It looks like no currently running Agent has this flow's full set of labels. To allow an Agent to run this flow, you need to have at least one Agent whose labels include all of those on the flow."
+            `It looks like no currently running Agent has this ${this.flowOrFlowRun}'s full set of labels. To allow an Agent to run this ${this.flowOrFlowRun}, you need to have at least one Agent whose labels include all of those on the ${this.flowOrFlowRun}.`
           )
           return false
         }
@@ -98,34 +109,7 @@ export default {
 
 <template>
   <v-menu
-    v-if="labelsAlign && location == 'flowPageDetails'"
-    :close-on-content-click="false"
-    offset-y
-    open-on-hover
-  >
-    <template v-slot:activator="{ on }">
-      <v-btn text icon x-small class="mr-2" v-on="on">
-        <v-icon>
-          info
-        </v-icon>
-      </v-btn>
-    </template>
-    <v-card tile class="pa-0" max-width="320">
-      <v-card-title class="subtitle pb-1">Flow labels</v-card-title>
-
-      <v-card-text class="pt-0">
-        Flows and agents have optional labels which allow you to determine where
-        your flows are executed. For more information see
-        <a
-          href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-          target="_blank"
-          >the docs on labels</a
-        >.
-      </v-card-text>
-    </v-card>
-  </v-menu>
-  <v-menu
-    v-else-if="!labelsAlign && isCloud"
+    v-if="!labelsAlign && isCloud"
     :close-on-content-click="false"
     offset-y
     open-on-hover
@@ -162,17 +146,30 @@ export default {
           >.</div
         >
         <div>
-          You can see and edit you flow labels in the
+          You can see and edit your
+          {{ flowOrFlowRun }} labels in the
           <router-link
-            v-if="location !== 'flowPage' || location !== 'flowPageDetails'"
-            target="_blank"
+            v-if="location !== 'flowPageDetails'"
+            :to="{
+              name: 'flow-run',
+              params: { id: flowRun.id, tenant: tenant.slug }
+            }"
+            >flow run details tile</router-link
+          ><span v-else>{{ flowOrFlowRun }} details tile</span>.</div
+        >
+        <div v-if="flow && flow.is_schedule_active" class="mt-4">
+          If you need to edit labels on many scheduled flow runs, you can pause
+          the schedule and update the flow labels on the
+          <router-link
+            v-if="location !== 'flowPageDetails'"
             :to="{
               name: 'flow',
               params: { id: flow.id, tenant: tenant.slug }
             }"
             >flow details tile</router-link
-          ><span v-else>flow details tile</span></div
-        >
+          >
+          and then turn your schedule back on.
+        </div>
         <div class="mt-4">
           For more information check out the docs on
           <a :href="docsLink" target="_blank">{{ docsName }}</a>

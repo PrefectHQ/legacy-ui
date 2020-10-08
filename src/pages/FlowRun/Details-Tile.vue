@@ -4,12 +4,14 @@ import jsBeautify from 'js-beautify'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
+import LabelEdit from '@/components/LabelEdit'
 import { FINISHED_STATES } from '@/utils/states'
 
 export default {
   components: {
     CardTitle,
-    DurationSpan
+    DurationSpan,
+    LabelEdit
   },
   mixins: [formatTime],
   props: {
@@ -288,6 +290,7 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+          <LabelEdit type="flowRun" :flow-run="flowRun" />
         </div>
       </v-fade-transition>
 
