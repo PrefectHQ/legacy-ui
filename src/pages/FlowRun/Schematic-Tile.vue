@@ -46,7 +46,7 @@ export default {
           this.tasks = []
         }
       },
-      pollInterval: 1000
+      pollInterval: 2000
     }
   }
 }
