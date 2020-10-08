@@ -5,6 +5,7 @@
 
 ### Features and Improvements
 
+- Enable restart from cancelled and update restart from failed[#234](https://github.com/PrefectHQ/ui/pull/234)
 - Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
 
 ### Bugfixes
