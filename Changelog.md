@@ -6,6 +6,7 @@
 ### Features and Improvements
 
 - Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
+- Display task run names on flow run page and task run page [#302](https://github.com/PrefectHQ/ui/pull/302)
 
 ### Bugfixes
 
