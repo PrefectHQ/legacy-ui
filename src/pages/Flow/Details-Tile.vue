@@ -418,7 +418,23 @@ export default {
           </v-list-item>
 
           <v-list-item dense class="px-0">
-            <v-list-item-content>
+            <v-list-item-content v-if="flow.run_config">
+              <v-list-item-subtitle class="grey--text text--darken-3">
+                Run Config
+              </v-list-item-subtitle>
+              <v-divider style="max-width: 50%;" />
+              <v-list-item-subtitle class="caption">
+                <v-row v-if="flow.run_config.type" no-gutters>
+                  <v-col cols="6">
+                    Type
+                  </v-col>
+                  <v-col cols="6" class="text-right font-weight-bold">
+                    {{ flow.run_config.type }}
+                  </v-col>
+                </v-row>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-content v-else>
               <v-list-item-subtitle class="grey--text text--darken-3">
                 Environment
               </v-list-item-subtitle>
