@@ -92,7 +92,7 @@ export default {
           return true
         } else {
           this.labelMessage(
-            `It looks like no currently running Agent has this ${this.flowOrFlowRuns}'s full set of labels. To allow an Agent to run this ${this.flowOrFlowRun}, you need to have at least one Agent whose labels include all of those on the ${this.flowOrFlowRun}.`
+            `It looks like no currently running Agent has this ${this.flowOrFlowRun}'s full set of labels. To allow an Agent to run this ${this.flowOrFlowRun}, you need to have at least one Agent whose labels include all of those on the ${this.flowOrFlowRun}.`
           )
           return false
         }
@@ -176,14 +176,13 @@ export default {
           You can see and edit your
           {{ flowOrFlowRun }} labels in the
           <router-link
-            v-if="location !== 'flowPage' || location !== 'flowPageDetails'"
-            target="_blank"
+            v-if="location !== 'flowPageDetails'"
             :to="{
-              name: 'flow',
-              params: { id: flow.id, tenant: tenant.slug }
+              name: 'flow-run',
+              params: { id: flowRun.id, tenant: tenant.slug }
             }"
-            >flow details tile</router-link
-          ><span v-else>flow details tile</span></div
+            >{{ flowOrFlowRun }} details tile</router-link
+          ><span v-else>{{ flowOrFlowRun }} details tile</span>.</div
         >
         <div class="mt-4">
           For more information check out the docs on

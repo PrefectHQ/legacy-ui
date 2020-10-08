@@ -20,6 +20,10 @@ export default {
     flowRun: {
       type: Object,
       default: () => {}
+    },
+    type: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -46,7 +50,7 @@ export default {
     labels() {
       const labels =
         this.newLabels ||
-        this.flowRun.labels ||
+        this.flowRun?.labels ||
         this.flowGroup?.labels ||
         this.flow?.environment?.labels ||
         []
@@ -97,14 +101,26 @@ export default {
     },
     async editLabels(newLabels) {
       try {
-        const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/set-labels.gql'),
-          variables: {
-            flowGroupId: this.flowGroup.id,
-            labelArray: newLabels
-          }
-        })
-        if (data) {
+        let result
+        if (this.type !== 'flowRun') {
+          result = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/set-labels.gql'),
+            variables: {
+              flowGroupId: this.flowGroup.id,
+              labelArray: newLabels
+            }
+          })
+        } else {
+          result = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/set-flow-run-labels.gql'),
+            variables: {
+              flowRunId: this.flowRun.id,
+              labelArray: newLabels
+            }
+          })
+        }
+        console.log('res', result)
+        if (result.data) {
           this.newLabels = newLabels || this.flow.environment.labels
           this.resetLabelSettings()
         } else {
@@ -112,6 +128,7 @@ export default {
           this.resetLabelSettings()
         }
       } catch (e) {
+        console.log('error', e)
         this.labelsError(e)
         this.resetLabelSettings()
       }
@@ -145,8 +162,9 @@ export default {
       <v-list-item-subtitle class="caption">
         Labels
         <LabelWarning
-          :flow="flow"
+          :flow="type === 'flowRun' ? flowRun.flow : flow"
           :flow-group="flowGroup"
+          :flow-run="flowRun"
           icon-size="x-large"
           location="flowPageDetails"
         />
@@ -221,7 +239,7 @@ export default {
               </v-card-text>
             </v-card>
           </v-menu>
-          <v-tooltip top>
+          <v-tooltip v-if="type !== 'flowRun'" top>
             <template v-slot:activator="{ on }">
               <v-btn
                 class="mt-0"
@@ -261,7 +279,7 @@ export default {
       </div>
     </v-list-item-content>
     <v-list-item-action v-if="!$vuetify.breakpoint.sm" class="ma-0">
-      <v-tooltip top>
+      <v-tooltip v-if="type !== 'flowRun'" top>
         <template v-slot:activator="{ on }">
           <v-btn
             class="mt-0"

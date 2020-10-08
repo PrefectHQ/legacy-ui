@@ -281,7 +281,7 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <LabelEdit :flow-run="flowRun" />
+          <LabelEdit type="flowRun" :flow-run="flowRun" />
         </div>
       </v-fade-transition>
 

@@ -14,6 +14,7 @@ export default function(isCloud) {
         id
         name
         version
+        labels
         auto_scheduled
 
         ${
