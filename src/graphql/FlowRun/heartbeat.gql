@@ -19,5 +19,6 @@ query Heartbeat($flowRunId: uuid!, $timestamp: timestamptz, $state: String) {
       max_retries
     }
     __typename
+    name
   }
 }
