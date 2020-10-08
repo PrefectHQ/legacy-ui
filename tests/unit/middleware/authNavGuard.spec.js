@@ -22,6 +22,7 @@ describe('Auth Nav Guard', () => {
     store.commit('auth0/unsetAuthorizationToken')
     store.commit('auth0/unsetAuthorizationTokenExpiry')
     store.commit('api/unsetBackend')
+    store.commit('auth0/unsetRedirectRoute')
   })
 
   describe('...when the backend is server', () => {
