@@ -10,6 +10,10 @@ export default {
       type: Object,
       default: () => {}
     },
+    flowRun: {
+      type: Object,
+      default: () => {}
+    },
     iconSize: {
       type: String,
       required: false,
@@ -42,7 +46,11 @@ export default {
       }, [])
     },
     flowLabels() {
-      return this.flowGroup?.labels || this.flow?.environment?.labels
+      return (
+        this.flowRun?.labels ||
+        this.flowGroup?.labels ||
+        this.flow?.environment?.labels
+      )
     },
     docsName() {
       if (!this.agents?.length) return 'agents'

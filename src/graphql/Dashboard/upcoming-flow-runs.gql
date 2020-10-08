@@ -9,6 +9,7 @@ query UpcomingFlowRuns($projectId: uuid) {
     id
     name
     state
+    labels
     scheduled_start_time
     version
     flow {
@@ -16,10 +17,6 @@ query UpcomingFlowRuns($projectId: uuid) {
       name
       schedule
       environment
-      flow_group {
-        id
-        labels
-      }
     }
   }
 }
