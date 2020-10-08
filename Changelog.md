@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add section to flow details for `flow.run_config` if not null, otherwise display `flow.environment` [#307](https://github.com/PrefectHQ/ui/pull/307)
 - Enable restart from cancelled and update restart from failed [#234](https://github.com/PrefectHQ/ui/pull/234)
 - Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
 - Update label edit and label warning to use flow run labels (#300)[https://github.com/PrefectHQ/ui/pull/300]
