@@ -6,6 +6,7 @@
 
 - Enable restart from cancelled and update restart from failed[#234](https://github.com/PrefectHQ/ui/pull/234)
 - Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
+- Update label edit and label warning to use flow run labels (#300)[https://github.com/PrefectHQ/ui/pull/300]
 - Display task run names on flow run page and task run page [#302](https://github.com/PrefectHQ/ui/pull/302)
 
 ### Bugfixes
@@ -13,6 +14,7 @@
 - Fix race condition with `apollo_url` - [#295](https://github.com/PrefectHQ/ui/pull/295)
 - Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
 - Remove duplicate store.commits in authNavGuard unit test [#303](https://github.com/PrefectHQ/ui/pull/303)
+- Enable global search for task runs without names [#299](https://github.com/PrefectHQ/ui/pull/299)
 
 ## 2020-10-05
 
