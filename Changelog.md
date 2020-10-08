@@ -18,6 +18,7 @@
 - Fix bug with unknown invitation ID in accept invitation [#306](https://github.com/PrefectHQ/ui/pull/306)
 - Fix race condition with onboard/welcome flow [#304](https://github.com/PrefectHQ/ui/pull/304)
 - Fix version display in flow page version dropdown - [#305](https://github.com/PrefectHQ/ui/pull/305)
+- Invalid state hotfix - [#308](https://github.com/PrefectHQ/ui/pull/308)
 
 ## 2020-10-05
 
