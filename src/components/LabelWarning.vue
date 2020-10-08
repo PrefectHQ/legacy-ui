@@ -45,6 +45,9 @@ export default {
         return accumulator
       }, [])
     },
+    flowOrFlowRun() {
+      return location === 'flowPageDetails' ? 'flow' : 'flow run'
+    },
     flowLabels() {
       return (
         this.flowRun?.labels ||
@@ -73,7 +76,7 @@ export default {
         this.agentLabels.every(arrayOfLabels => arrayOfLabels.length > 0)
       ) {
         this.labelMessage(
-          'You have no currently running Agents configured to pick up flows without labels; you may need to add labels to your flow.'
+          `You have no currently running Agents configured to pick up flow runs without labels; you may need to add labels to your ${this.flowOrFlowRun}.`
         )
         return false
       } else {
@@ -89,7 +92,7 @@ export default {
           return true
         } else {
           this.labelMessage(
-            "It looks like no currently running Agent has this flow's full set of labels. To allow an Agent to run this flow, you need to have at least one Agent whose labels include all of those on the flow."
+            `It looks like no currently running Agent has this ${this.flowOrFlowRuns}'s full set of labels. To allow an Agent to run this ${this.flowOrFlowRun}, you need to have at least one Agent whose labels include all of those on the ${this.flowOrFlowRun}.`
           )
           return false
         }
@@ -170,7 +173,8 @@ export default {
           >.</div
         >
         <div>
-          You can see and edit you flow labels in the
+          You can see and edit your
+          {{ flowOrFlowRun }} labels in the
           <router-link
             v-if="location !== 'flowPage' || location !== 'flowPageDetails'"
             target="_blank"
