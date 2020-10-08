@@ -46,7 +46,7 @@ export default {
       }, [])
     },
     flowOrFlowRun() {
-      return location === 'flowPageDetails' ? 'flow' : 'flow run'
+      return this.flowRun ? 'Flow Run' : 'Flow'
     },
     flowLabels() {
       return (
@@ -109,36 +109,7 @@ export default {
 
 <template>
   <v-menu
-    v-if="labelsAlign && location == 'flowPageDetails'"
-    :close-on-content-click="false"
-    offset-y
-    open-on-hover
-  >
-    <template v-slot:activator="{ on }">
-      <v-btn text icon x-small class="mr-2" v-on="on">
-        <v-icon>
-          info
-        </v-icon>
-      </v-btn>
-    </template>
-    <v-card tile class="pa-0" max-width="320">
-      <v-card-title class="subtitle pb-1"
-        >{{ flowOrFlowRun }} labels</v-card-title
-      >
-
-      <v-card-text class="pt-0">
-        Flows, flow runs and agents have optional labels which allow you to
-        determine where your flow runs are executed. For more information see
-        <a
-          href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-          target="_blank"
-          >the docs on labels</a
-        >.
-      </v-card-text>
-    </v-card>
-  </v-menu>
-  <v-menu
-    v-else-if="!labelsAlign && isCloud"
+    v-if="!labelsAlign && isCloud"
     :close-on-content-click="false"
     offset-y
     open-on-hover

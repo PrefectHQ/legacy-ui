@@ -163,6 +163,32 @@ export default {
     <v-list-item-content width="800px" class="overflow-x-scroll">
       <v-list-item-subtitle class="caption">
         Labels
+        <v-menu :close-on-content-click="false" offset-y open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn text icon x-small class="mr-2" v-on="on">
+              <v-icon>
+                info
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-card tile class="pa-0" max-width="320">
+            <v-card-title class="subtitle pb-1"
+              >{{ flowOrFlowRun }} Labels
+            </v-card-title>
+
+            <v-card-text class="pt-0">
+              Flows, flow runs and agents have optional labels which allow you
+              to determine where your flow runs are executed. For more
+              information see
+              <a
+                href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+                target="_blank"
+                >the docs on labels</a
+              >.
+            </v-card-text>
+          </v-card>
+        </v-menu>
+
         <LabelWarning
           :flow="type === 'flowRun' ? flowRun.flow : flow"
           :flow-group="flowGroup"
