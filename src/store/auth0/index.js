@@ -223,7 +223,18 @@ const actions = {
     if (!auth0Client) await dispatch('initAuth0')
 
     if (window.location.search.includes('code=')) {
-      await auth0Client.handleRedirectCallback()
+      try {
+        await auth0Client.handleRedirectCallback()
+      } catch (e) {
+        // Catches repeated calls to the handleRedirectCallback...
+        // The first time handleRedirectCallback is called, it removes the challenge
+        // from the window search... when another call is made, it looks for the challenge
+        // which was removed, halting further execution and navigation. This allows the method to proceed
+        // in cases of an invalid state
+        if (!e?.includes('Error: Invalid State')) {
+          return await dispatch('login')
+        }
+      }
     }
 
     const isAuthenticated = await auth0Client.isAuthenticated()

@@ -187,7 +187,7 @@ export default {
       try {
         if (this.isCloud) {
           if (!this.isAuthenticated) {
-            await this.authenticate()
+            await this.authenticate('app')
           }
 
           if (!this.isAuthorized) {
@@ -261,6 +261,10 @@ export default {
       requestAnimationFrame(loadTiles)
     }
   },
+  beforeRouteEnter(to, from, next) {
+    console.log(from)
+    return next()
+  },
   apollo: {
     agents: {
       query() {
@@ -281,7 +285,7 @@ export default {
 
 <template>
   <v-app class="app">
-    <v-main v-if="startupHasRun" :class="{ 'pt-0': isWelcome }">
+    <v-main :class="{ 'pt-0': isWelcome }">
       <v-progress-linear
         absolute
         :active="isLoggingInUser"
@@ -295,7 +299,7 @@ export default {
 
       <SideNav v-if="shown" />
       <v-fade-transition mode="out-in">
-        <router-view v-if="shown" class="router-view" />
+        <router-view v-if="shown && isAuthenticated" class="router-view" />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>
