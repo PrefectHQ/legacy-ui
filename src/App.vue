@@ -261,10 +261,6 @@ export default {
       requestAnimationFrame(loadTiles)
     }
   },
-  beforeRouteEnter(to, from, next) {
-    console.log(from)
-    return next()
-  },
   apollo: {
     agents: {
       query() {
