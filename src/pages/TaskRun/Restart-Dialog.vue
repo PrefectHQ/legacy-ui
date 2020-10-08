@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       error: ERROR_MESSAGE,
-      tasksSuccess: null,
+      tasksSuccess: true,
       name: 'PrefectCloudUIRestartButton'
     }
   },
@@ -32,6 +32,12 @@ export default {
     cancel() {
       this.$emit('cancel')
     },
+    runOrReRunMessage(oldState) {
+      const state = oldState ? oldState : this.taskRun.state
+      return state !== 'Pending'
+        ? `re-run task ${this.taskRun.task.name} and its downstream dependents`
+        : `run task ${this.taskRun.task.name} and any other pending task runs`
+    },
     raiseWarning() {
       const hasCachedInput = Object.keys(
         this.taskRun?.serialized_state?.cached_inputs
@@ -42,65 +48,56 @@ export default {
       return !!hasUpstreamEdges && !hasCachedInput
     },
     async restart() {
+      const oldState = this.taskRun.state
       this.cancel()
       try {
         this.dialog = false
-        const logSuccess = this.writeLogs()
-        if (logSuccess) {
-          let taskStates
-          if (this.utilityDownstreamTasks.length) {
-            taskStates = this.utilityDownstreamTasks.map(task => {
-              return {
-                version: task.task.task_runs[0].version,
-                taskRunId: task.task.task_runs[0].id,
-                state: { type: 'Pending', message: this.message }
-              }
-            })
-          } else {
-            taskStates = {
-              taskRunId: this.taskRun.id,
-              version: this.taskRun.version,
+        await this.writeLogs()
+        let taskStates
+        if (this.utilityDownstreamTasks.length) {
+          taskStates = this.utilityDownstreamTasks.map(task => {
+            return {
+              version: task.task.task_runs[0].version,
+              task_run_id: task.task.task_runs[0].id,
               state: { type: 'Pending', message: this.message }
             }
+          })
+        } else {
+          taskStates = {
+            task_run_id: this.taskRun.id,
+            version: this.taskRun.version,
+            state: { type: 'Pending', message: this.message }
           }
-          const result = await this.$apollo.mutate({
-            mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
+        }
+        const result = await this.$apollo.mutate({
+          mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
+          variables: {
+            input: taskStates
+          }
+        })
+        if (result?.data?.set_task_run_states) {
+          const { data } = await this.$apollo.mutate({
+            mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
             variables: {
-              input: taskStates
+              flowRunId: this.flowRunId,
+              version: this.taskRun.flow_run.version,
+              state: { type: 'Scheduled', message: this.message }
             }
           })
-          if (result?.data?.set_task_run_states) {
-            const { data } = await this.$apollo.mutate({
-              mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
-              variables: {
-                flow_run_id: this.flowRunId,
-                version: this.taskRun.flow_run.version,
-                state: { type: 'Scheduled', message: this.message }
-              }
-            })
-            if (data?.set_flow_run_states) {
-              this.setAlert({
-                alertShow: true,
-                alertMessage: 'Run restarted.',
-                alertType: 'success'
-              })
-            } else {
-              this.tasksSuccess = false
-            }
-          }
-        } else {
-          this.tasksSuccess = false
+          if (!data?.set_flow_run_states) this.tasksSuccess = false
         }
       } catch (error) {
         this.tasksSuccess = false
         throw error
-      }
-      if (this.tasksSuccess === false) {
+      } finally {
         this.setAlert({
           alertShow: true,
-          alertMessage:
-            'Sorry, we hit a problem trying to restart the run; please try again.',
-          alertType: 'error'
+          alertMessage: this.tasksSuccess
+            ? `Flow run ${
+                this.taskRun.flow_run.name
+              } restarted. This will ${this.runOrReRunMessage(oldState)}`
+            : 'Sorry, we hit a problem trying to restart the run; please try again.',
+          alertType: this.tasksSuccess ? 'success' : 'error'
         })
       }
     },
@@ -108,7 +105,7 @@ export default {
       const { data } = await this.$apollo.mutate({
         mutation: require('@/graphql/Update/write-run-logs.gql'),
         variables: {
-          flow_run_id: this.flowRunId,
+          flowRunId: this.flowRunId,
           name: this.name,
           message: this.message
         }
@@ -171,29 +168,20 @@ export default {
     </v-card-text>
     <v-card-text v-else>
       Click on confirm to restart the flow run
-      {{ taskRun.flow_run.name }} from this task run.
+      {{ taskRun.flow_run.name }} from this task run. This will restart your
+      flow run and {{ runOrReRunMessage() }}.
     </v-card-text>
 
     <v-card-actions>
       <v-spacer></v-spacer>
 
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <div v-on="on">
-            <v-btn
-              :disabled="role === 'READ_ONLY_USER'"
-              color="primary"
-              @click="restart"
-              v-on="on"
-            >
-              Confirm
-            </v-btn>
-          </div>
-        </template>
-        <span v-if="role === 'READ_ONLY_USER'">
-          Read-only users cannot restart task runs
-        </span>
-      </v-tooltip>
+      <v-btn
+        :disabled="role === 'READ_ONLY_USER'"
+        color="primary"
+        @click="restart"
+      >
+        Confirm
+      </v-btn>
 
       <v-btn text @click="cancel">
         Cancel
