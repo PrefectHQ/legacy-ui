@@ -10,6 +10,7 @@ query TaskRun($id: uuid!) {
     end_time
     map_index
     serialized_state
+    name
 
     task {
       id
