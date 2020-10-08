@@ -23,14 +23,14 @@ export default {
   methods: {
     ...mapActions('api', ['getApi']),
     ...mapActions('tenant', ['updateTenantSettings']),
-    ...mapMutations('api', ['setServerUrl']),
+    ...mapMutations('api', ['setServerUrl', 'unsetServerUrl']),
     _handleKeyup() {
       this.success = false
       this.error = false
       this.loading = false
     },
     async _resetUrl() {
-      localStorage.removeItem('server_url')
+      this.unsetServerUrl()
 
       this.urlInput = this.defaultUrl
 
