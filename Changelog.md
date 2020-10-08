@@ -12,6 +12,7 @@
 
 - Fix race condition with `apollo_url` - [#295](https://github.com/PrefectHQ/ui/pull/295)
 - Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
+- Enable global search for task runs without names [#299](https://github.com/PrefectHQ/ui/pull/299)
 
 ## 2020-10-05
 
