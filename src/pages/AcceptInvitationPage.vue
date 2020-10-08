@@ -27,7 +27,8 @@ export default {
     async accept() {
       this.loading = true
       const tenant = this.membershipInvitation[0].tenant
-      const accepted = await this.acceptInvitation()
+      const invitationId = this.membershipInvitation[0].id
+      const accepted = await this.acceptInvitation(invitationId)
       if (accepted) {
         await this.setCurrentTenant(tenant.slug)
         this.$router.push({
@@ -36,12 +37,12 @@ export default {
         })
       }
     },
-    async acceptInvitation() {
+    async acceptInvitation(id) {
       try {
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Tenant/accept-membership-invitation.gql'),
           variables: {
-            membershipInvitationId: this.invitationId
+            membershipInvitationId: id
           }
         })
         if (data?.accept_membership_invitation?.id) {

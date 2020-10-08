@@ -1,0 +1,5 @@
+mutation SetFlowRunLabel ($flowRunId: UUID!, $labelArray: [String!]!) {
+  set_flow_run_labels(input: {flow_run_id: $flowRunId, labels: $labelArray}) {
+    success
+  }
+}

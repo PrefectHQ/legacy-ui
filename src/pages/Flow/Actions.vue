@@ -72,7 +72,7 @@ export default {
   watch: {
     $route(val) {
       if (this.selectedVersion == val.query?.version) return
-      this.selectedVersion = val.query.version || null
+      this.selectedVersion = +val.query.version || null
     }
   },
   mounted() {

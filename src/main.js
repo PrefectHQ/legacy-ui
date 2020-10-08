@@ -243,15 +243,28 @@ Vue.mixin({
   }
 })
 
-// Create application
-// eslint-disable-next-line no-unused-vars
-let PrefectUI = new Vue({
-  vuetify,
-  router,
-  store,
-  apolloProvider: defaultApolloProvider,
-  render: h => h(App)
-}).$mount('#app')
+let PrefectUI
+
+const initialize = async () => {
+  try {
+    window.prefect_ui_settings = await fetch('/settings.json')
+      .then(response => response.json())
+      .then(data => data)
+  } finally {
+    // Let this fail silently
+
+    // Create application
+    // eslint-disable-next-line no-unused-vars
+    PrefectUI = new Vue({
+      vuetify,
+      router,
+      store,
+      apolloProvider: defaultApolloProvider,
+      render: h => h(App)
+    }).$mount('#app')
+  }
+}
+initialize()
 
 // This can be used in testing to destroy the entire application and remove
 // the root node associated with it.

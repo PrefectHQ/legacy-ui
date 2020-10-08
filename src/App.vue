@@ -23,6 +23,7 @@ export default {
       refreshTimeout: null,
       reset: false,
       shown: false,
+      startupHasRun: false,
       wholeAppShown: true
     }
   },
@@ -184,13 +185,28 @@ export default {
     },
     async startup() {
       try {
+        if (this.isCloud) {
+          if (!this.isAuthenticated) {
+            await this.authenticate()
+          }
+
+          if (!this.isAuthorized) {
+            await this.authorize()
+          }
+
+          if (!this.userIsSet) {
+            await this.getUser()
+          }
+        }
+
         await this.getApi()
+
         await this.getTenants()
 
         if (this.isServer && !this.tenants?.length) {
           // Server has no tenants so redirect to home
           if (this.$route.name !== 'home') {
-            this.$router.push({
+            await this.$router.push({
               name: 'home'
             })
           }
@@ -205,7 +221,7 @@ export default {
           await this.setCurrentTenant(this.defaultTenant.slug)
 
           if (this.isCloud && !this.tenant.settings.teamNamed) {
-            this.$router.push({
+            await this.$router.push({
               name: 'welcome',
               params: {
                 tenant: this.tenant.slug
@@ -215,10 +231,12 @@ export default {
         }
       } catch {
         if (this.$route.name !== 'home') {
-          this.$router.push({
+          await this.$router.push({
             name: 'home'
           })
         }
+      } finally {
+        this.startupHasRun = true
       }
     },
     refresh() {
@@ -263,7 +281,7 @@ export default {
 
 <template>
   <v-app class="app">
-    <v-main :class="{ 'pt-0': isWelcome }">
+    <v-main v-if="startupHasRun" :class="{ 'pt-0': isWelcome }">
       <v-progress-linear
         absolute
         :active="isLoggingInUser"

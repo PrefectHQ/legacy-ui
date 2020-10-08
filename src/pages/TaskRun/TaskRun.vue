@@ -128,12 +128,15 @@ export default {
     <SubPageNav>
       <span slot="page-type">Task Run</span>
       <span slot="page-title">
-        {{ taskRun.flow_run.name }} - {{ taskRun.task.name }}
-        <span v-if="taskRun.map_index > -1">
-          (Mapped Child {{ taskRun.map_index }})
+        {{ taskRun.flow_run.name }} -
+        <span v-if="taskRun.name">{{ taskRun.name }}</span>
+        <span v-else>
+          {{ taskRun.task.name }}
+          <span v-if="taskRun.map_index > -1">
+            (Mapped Child {{ taskRun.map_index }})
+          </span>
+          <span v-else-if="parent > 1"> (Parent) </span>
         </span>
-
-        <span v-else-if="parent > 1"> (Parent) </span>
       </span>
       <BreadCrumbs
         slot="breadcrumbs"

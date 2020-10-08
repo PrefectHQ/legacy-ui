@@ -14,6 +14,7 @@ export default function(isCloud) {
         id
         name
         version
+        labels
         auto_scheduled
 
         ${
@@ -80,6 +81,7 @@ export default function(isCloud) {
             max_retries
             retry_delay
           }
+          name
         }
         flow {
           id

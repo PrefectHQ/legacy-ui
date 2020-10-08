@@ -1,16 +1,22 @@
 # Changelog
 
-
 ## Unreleased
 
 ### Features and Improvements
 
-- Enable restart from cancelled and update restart from failed[#234](https://github.com/PrefectHQ/ui/pull/234)
+- Enable restart from cancelled and update restart from failed [#234](https://github.com/PrefectHQ/ui/pull/234)
 - Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
+- Update label edit and label warning to use flow run labels (#300)[https://github.com/PrefectHQ/ui/pull/300]
+- Display task run names on flow run page and task run page [#302](https://github.com/PrefectHQ/ui/pull/302)
 
 ### Bugfixes
 
+- Fix race condition with `apollo_url` - [#295](https://github.com/PrefectHQ/ui/pull/295)
 - Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
+- Enable global search for task runs without names [#299](https://github.com/PrefectHQ/ui/pull/299)
+- Fix bug with unknown invitation ID in accept invitation [#306](https://github.com/PrefectHQ/ui/pull/306)
+- Fix race condition with onboard/welcome flow [#304](https://github.com/PrefectHQ/ui/pull/304)
+- Fix version display in flow page version dropdown - [#305](https://github.com/PrefectHQ/ui/pull/305)
 
 ## 2020-10-05
 

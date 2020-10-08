@@ -37,6 +37,7 @@ query GlobalSearchByID($id: uuid!) {
   }
   task_run(where: { id: { _eq: $id } }) {
     id
+    name
     task {
       id
       name
