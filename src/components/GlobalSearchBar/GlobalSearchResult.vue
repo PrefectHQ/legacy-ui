@@ -9,6 +9,8 @@ export default {
       required: true,
       type: Object,
       validator: result => {
+        //this handles task runs that don't have names
+        if (!result.name) result.name = result.id
         return (
           result.id &&
           result.name &&
@@ -68,7 +70,7 @@ export default {
         v-html="`${parent.genFilteredText(searchResult.name)}`"
       />
       <v-list-item-subtitle class="id-subtitle">
-        {{ searchResult.id }}
+        {{ searchResult.name !== searchResult.id ? searchResult.id : '' }}
       </v-list-item-subtitle>
     </v-list-item-content>
   </div>
