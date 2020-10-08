@@ -154,9 +154,22 @@ export default {
               name: 'flow-run',
               params: { id: flowRun.id, tenant: tenant.slug }
             }"
-            >{{ flowOrFlowRun }} details tile</router-link
+            >flow run details tile</router-link
           ><span v-else>{{ flowOrFlowRun }} details tile</span>.</div
         >
+        <div v-if="flow.is_schedule_active">
+          If you need to edit labels on many scheduled flow runs, you can pause
+          the schedule and update the flow labels on the
+          <router-link
+            v-if="location !== 'flowPageDetails'"
+            :to="{
+              name: 'flow',
+              params: { id: flow.id, tenant: tenant.slug }
+            }"
+            >flow details tile</router-link
+          >
+          and then turn your schedule back on.
+        </div>
         <div class="mt-4">
           For more information check out the docs on
           <a :href="docsLink" target="_blank">{{ docsName }}</a>

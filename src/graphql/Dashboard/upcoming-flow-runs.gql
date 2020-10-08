@@ -17,6 +17,7 @@ query UpcomingFlowRuns($projectId: uuid) {
       name
       schedule
       environment
+      is_schedule_active
     }
   }
 }
