@@ -1,5 +1,5 @@
 query FlowRun($id: uuid!) {
-  flow_run(where: { id: { _eq: $id } }) {
+  flow_run_by_pk(id: $id) {
     id
     name
     state
