@@ -6,7 +6,7 @@ query FlowRun($id: uuid!) {
     start_time
     end_time
 
-    task_runs {
+    task_runs(where: { map_index: { _eq: -1 } }) {
       id
       serialized_state
       state
