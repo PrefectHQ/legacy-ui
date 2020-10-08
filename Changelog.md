@@ -12,6 +12,7 @@
 
 - Fix race condition with `apollo_url` - [#295](https://github.com/PrefectHQ/ui/pull/295)
 - Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
+- Remove duplicate store.commits in authNavGuard unit test [#303](https://github.com/PrefectHQ/ui/pull/303)
 
 ## 2020-10-05
 
