@@ -15,6 +15,7 @@
 - Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
 - Enable global search for task runs without names [#299](https://github.com/PrefectHQ/ui/pull/299)
 - Fix bug with unknown invitation ID in accept invitation [#306](https://github.com/PrefectHQ/ui/pull/306)
+- Fix race condition with onboard/welcome flow [#304](https://github.com/PrefectHQ/ui/pull/304)
 
 ## 2020-10-05
 
