@@ -91,7 +91,7 @@ export default {
         this.$apollo.queries.agents.refresh()
       }
     },
-    isAuthenticated(val) {
+    isAuthorized(val) {
       if (val) {
         this.shown = true
 
@@ -132,7 +132,7 @@ export default {
     this.refresh()
   },
   async beforeMount() {
-    if ((this.isServer || this.isAuthenticated) && !this.startupHasRun) {
+    if ((this.isServer || this.isAuthorized) && !this.startupHasRun) {
       await this.startup()
     }
 
