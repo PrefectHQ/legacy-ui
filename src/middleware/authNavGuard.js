@@ -21,6 +21,7 @@ const authNavGuard = async (to, from, next) => {
   }
 
   if (!isAuthenticated()) {
+    console.log('getting authenticated from the navguard')
     await store.dispatch('auth0/authenticate')
   }
 

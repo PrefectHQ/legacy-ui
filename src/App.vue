@@ -187,6 +187,7 @@ export default {
       try {
         if (this.isCloud) {
           if (!this.isAuthenticated) {
+            console.log('getting auth from app')
             await this.authenticate()
           }
 

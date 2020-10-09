@@ -10,6 +10,7 @@ const state = {
   authorizationTokenExpiry: null,
   idToken: null,
   idTokenExpiry: null,
+  authenticating: false,
   isAuthenticated: false,
   isAuthorizingUser: false,
   isLoggingInUser: false,
@@ -207,6 +208,9 @@ const mutations = {
   unsetRedirectRoute(state) {
     state.redirectRoute = null
     localStorage.removeItem('redirectRoute')
+  },
+  authenticating(state, bool) {
+    state.authenticating = bool
   }
 }
 
@@ -220,6 +224,9 @@ const actions = {
     })
   },
   async authenticate({ dispatch, commit, getters }) {
+    console.log('authenticating', state.authenticating)
+    if (state.authenticating) return
+    commit('authenticating', true)
     if (!auth0Client) await dispatch('initAuth0')
 
     if (window.location?.search?.includes('code=')) {
@@ -254,7 +261,7 @@ const actions = {
         await dispatch('login')
       }
     }
-
+    commit('authenticating', false)
     return await auth0Client.isAuthenticated()
   },
   async authorize({ commit, getters, dispatch }) {
