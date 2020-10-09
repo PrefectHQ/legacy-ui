@@ -23,6 +23,7 @@ export default {
       refreshTimeout: null,
       reset: false,
       shown: false,
+      startupHasRun: false,
       wholeAppShown: true
     }
   },
@@ -90,9 +91,13 @@ export default {
         this.$apollo.queries.agents.refresh()
       }
     },
-    isAuthenticated(val) {
+    isAuthorized(val) {
       if (val) {
         this.shown = true
+
+        if (!this.startupHasRun) {
+          this.startup()
+        }
       }
     },
     agents(val) {
@@ -127,7 +132,10 @@ export default {
     this.refresh()
   },
   async beforeMount() {
-    await this.startup()
+    if ((this.isServer || this.isAuthorized) && !this.startupHasRun) {
+      await this.startup()
+    }
+
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -183,14 +191,27 @@ export default {
       this.lastInteraction = this.currentInteraction
     },
     async startup() {
+      this.startupHasRun = true
+
       try {
+        if (this.isCloud) {
+          if (!this.isAuthorized) {
+            await this.authorize()
+          }
+
+          if (!this.userIsSet) {
+            await this.getUser()
+          }
+        }
+
         await this.getApi()
+
         await this.getTenants()
 
         if (this.isServer && !this.tenants?.length) {
           // Server has no tenants so redirect to home
           if (this.$route.name !== 'home') {
-            this.$router.push({
+            await this.$router.push({
               name: 'home'
             })
           }
@@ -205,7 +226,7 @@ export default {
           await this.setCurrentTenant(this.defaultTenant.slug)
 
           if (this.isCloud && !this.tenant.settings.teamNamed) {
-            this.$router.push({
+            await this.$router.push({
               name: 'welcome',
               params: {
                 tenant: this.tenant.slug
@@ -215,7 +236,7 @@ export default {
         }
       } catch {
         if (this.$route.name !== 'home') {
-          this.$router.push({
+          await this.$router.push({
             name: 'home'
           })
         }

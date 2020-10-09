@@ -178,15 +178,8 @@ const authMiddleware = setContext(async (_, { headers }) => {
     store.getters['auth0/isAuthorizingUser'] ||
     store.getters['auth0/isLoggingInUser']
 
-  if (
-    store.getters['api/backend'] !== 'SERVER' &&
-    (!store.getters['auth0/idToken'] || !isAuthenticatedUser) &&
-    !store.getters['isRefreshingAuthentication']
-  ) {
-    return await store.dispatch('auth0/updateAuthentication')
-  } else if (store.getters['isRefreshingAuthentication']) {
-    // Don't fire requests while we're trying to refresh authentication
-    return
+  if (store.getters['api/backend'] !== 'SERVER' && !isAuthenticatedUser) {
+    await store.dispatch('auth0/updateAuthentication')
   }
 
   if (_.operationName == 'RefreshToken') {
