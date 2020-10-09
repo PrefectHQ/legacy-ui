@@ -164,12 +164,10 @@ export default {
       }
     },
     handleOffline() {
-      // TODO: ADD APP BAR FOR CONNECTION STATUS
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
     },
     handleOnline() {
-      // TODO: ADD APP BAR FOR CONNECTION STATUS
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
     },
