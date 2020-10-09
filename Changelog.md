@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Check labels on `flow.run_config` when generating warning for flow labels without an agent [#312](https://github.com/PrefectHQ/ui/pull/312)
 - Use labels from `flow.run_config` if present [#309](https://github.com/PrefectHQ/ui/pull/309)
 
 ### Bugfixes
@@ -14,7 +15,6 @@
 
 ### Features and Improvements
 
-- Check labels on `flow.run_config` when generating warning for flow labels without an agent [#312](https://github.com/PrefectHQ/ui/pull/312)
 - Add section to flow details for `flow.run_config` if not null, otherwise display `flow.environment` [#307](https://github.com/PrefectHQ/ui/pull/307)
 - Enable restart from cancelled and update restart from failed [#234](https://github.com/PrefectHQ/ui/pull/234)
 - Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
