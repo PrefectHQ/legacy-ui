@@ -178,10 +178,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
     store.getters['auth0/isAuthorizingUser'] ||
     store.getters['auth0/isLoggingInUser']
 
-  if (
-    store.getters['api/backend'] !== 'SERVER' &&
-    (!store.getters['auth0/idToken'] || !isAuthenticatedUser)
-  ) {
+  if (store.getters['api/backend'] !== 'SERVER' && !isAuthenticatedUser) {
     await store.dispatch('auth0/updateAuthentication')
   }
 
