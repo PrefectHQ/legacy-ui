@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Check labels on `flow.run_config` when generating warning for flow labels without an agent [#312](https://github.com/PrefectHQ/ui/pull/312)
 - Use labels from `flow.run_config` if present [#309](https://github.com/PrefectHQ/ui/pull/309)
 
 ### Bugfixes
