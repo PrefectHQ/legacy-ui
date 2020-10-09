@@ -77,8 +77,9 @@ export default {
       this.loadedTiles = 0
 
       this.refreshTimeout = setTimeout(() => {
+        console.log('refreshing')
         this.refresh()
-        clearTimeout(this.refreshInterval)
+        clearTimeout(this.refreshTimeout)
       }, 3000)
     },
     tab(val) {
