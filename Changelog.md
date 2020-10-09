@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Use labels from `flow.run_config` if present [#309](https://github.com/PrefectHQ/ui/pull/309)
 
 ### Bugfixes
 
