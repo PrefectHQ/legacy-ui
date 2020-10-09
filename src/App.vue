@@ -191,6 +191,8 @@ export default {
       this.lastInteraction = this.currentInteraction
     },
     async startup() {
+      // eslint-disable-next-line
+      console.count('startup running')
       this.startupHasRun = true
 
       try {

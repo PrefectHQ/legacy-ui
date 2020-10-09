@@ -220,6 +220,8 @@ const actions = {
     })
   },
   async authenticate({ dispatch, commit, getters }) {
+    // eslint-disable-next-line
+    console.count('is authenticating')
     if (!auth0Client) await dispatch('initAuth0')
 
     if (window.location?.search?.includes('code=')) {
