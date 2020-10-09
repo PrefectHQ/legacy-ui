@@ -23,6 +23,7 @@ export default {
       refreshTimeout: null,
       reset: false,
       shown: false,
+      startupHasRun: false,
       wholeAppShown: true
     }
   },
@@ -93,7 +94,10 @@ export default {
     isAuthenticated(val) {
       if (val) {
         this.shown = true
-        this.startup()
+
+        if (!this.startupHasRun) {
+          this.startup()
+        }
       }
     },
     agents(val) {
@@ -128,7 +132,7 @@ export default {
     this.refresh()
   },
   async beforeMount() {
-    if (this.isServer || this.isAuthenticated) {
+    if ((this.isServer || this.isAuthenticated) && !this.startupHasRun) {
       await this.startup()
     }
 
@@ -187,6 +191,8 @@ export default {
       this.lastInteraction = this.currentInteraction
     },
     async startup() {
+      this.startupHasRun = true
+
       try {
         if (this.isCloud) {
           if (!this.isAuthorized) {
