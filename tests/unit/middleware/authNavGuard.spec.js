@@ -6,11 +6,6 @@ import { MOCK_AUTHORIZATION_TOKEN } from '../store/mockTokens'
 describe('Auth Nav Guard', () => {
   let dispatchStub
   beforeEach(() => {
-    store.commit('user/unsetUser')
-    store.commit('auth0/isAuthenticated', false)
-    store.commit('auth0/unsetAuthorizationToken')
-    store.commit('auth0/unsetAuthorizationTokenExpiry')
-    store.commit('api/unsetBackend')
     dispatchStub = sinon.stub(store, ['dispatch'])
     dispatchStub.callThrough()
   })
