@@ -23,7 +23,6 @@ export default {
       refreshTimeout: null,
       reset: false,
       shown: false,
-      startupHasRun: false,
       wholeAppShown: true
     }
   },
@@ -94,6 +93,7 @@ export default {
     isAuthenticated(val) {
       if (val) {
         this.shown = true
+        this.startup()
       }
     },
     agents(val) {
@@ -128,7 +128,10 @@ export default {
     this.refresh()
   },
   async beforeMount() {
-    await this.startup()
+    if (this.isServer || this.isAuthenticated) {
+      await this.startup()
+    }
+
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -186,10 +189,6 @@ export default {
     async startup() {
       try {
         if (this.isCloud) {
-          if (!this.isAuthenticated) {
-            await this.authenticate()
-          }
-
           if (!this.isAuthorized) {
             await this.authorize()
           }
@@ -235,8 +234,6 @@ export default {
             name: 'home'
           })
         }
-      } finally {
-        this.startupHasRun = true
       }
     },
     refresh() {
@@ -295,7 +292,7 @@ export default {
 
       <SideNav v-if="shown" />
       <v-fade-transition mode="out-in">
-        <router-view v-if="shown && isAuthenticated" class="router-view" />
+        <router-view v-if="shown" class="router-view" />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>
