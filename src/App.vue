@@ -91,9 +91,13 @@ export default {
         this.$apollo.queries.agents.refresh()
       }
     },
-    isAuthenticated(val) {
+    isAuthorized(val) {
       if (val) {
         this.shown = true
+
+        if (!this.startupHasRun) {
+          this.startup()
+        }
       }
     },
     agents(val) {
@@ -128,7 +132,10 @@ export default {
     this.refresh()
   },
   async beforeMount() {
-    await this.startup()
+    if ((this.isServer || this.isAuthorized) && !this.startupHasRun) {
+      await this.startup()
+    }
+
     this.monitorConnection()
 
     document.addEventListener('keydown', this.handleKeydown)
@@ -184,12 +191,10 @@ export default {
       this.lastInteraction = this.currentInteraction
     },
     async startup() {
+      this.startupHasRun = true
+
       try {
         if (this.isCloud) {
-          if (!this.isAuthenticated) {
-            await this.authenticate()
-          }
-
           if (!this.isAuthorized) {
             await this.authorize()
           }
@@ -235,8 +240,6 @@ export default {
             name: 'home'
           })
         }
-      } finally {
-        this.startupHasRun = true
       }
     },
     refresh() {
@@ -281,7 +284,7 @@ export default {
 
 <template>
   <v-app class="app">
-    <v-main v-if="startupHasRun" :class="{ 'pt-0': isWelcome }">
+    <v-main :class="{ 'pt-0': isWelcome }">
       <v-progress-linear
         absolute
         :active="isLoggingInUser"
