@@ -44,7 +44,7 @@ export default {
           target="_blank"
         >
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon color="grey darken-1" v-on="on">info</v-icon>
             </template>
             <span>

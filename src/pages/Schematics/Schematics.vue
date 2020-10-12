@@ -50,7 +50,7 @@ export default {
       touchless
       :mini-variant="$vuetify.breakpoint.smAndDown"
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-list-item>
           <v-list-item-avatar>
             <v-icon class="blue--text accent-4">

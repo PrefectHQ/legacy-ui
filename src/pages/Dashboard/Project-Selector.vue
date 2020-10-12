@@ -151,7 +151,7 @@ export default {
       full-width
       background-color="transparent"
     >
-      <template v-slot:item="{ item }">
+      <template #item="{ item }">
         <v-list-item-content
           :class="item.id == 'new_project' ? 'new-project' : ''"
         >

@@ -148,7 +148,7 @@ export default {
     }"
   >
     <v-tooltip top>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <CardTitle title="Flow Runs Summary" icon="pi-flow-run">
           <div slot="action" v-on="on">
             <v-select
@@ -163,7 +163,7 @@ export default {
               hide-details
               flat
             >
-              <template v-slot:prepend-inner>
+              <template #prepend-inner>
                 <v-icon color="black" x-small>
                   history
                 </v-icon>
@@ -199,7 +199,7 @@ export default {
                   class="centered-skeleton"
                 />
                 <v-tooltip v-else-if="filteredStateSegments.length > 0" bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span v-on="on">
                       <span class="hoverable">
                         {{ total.toLocaleString() }}
@@ -247,7 +247,7 @@ export default {
                   class="centered-skeleton"
                 />
                 <v-tooltip v-else-if="filteredStateSegments.length > 0" bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span v-on="on">
                       <span class="hoverable">
                         {{

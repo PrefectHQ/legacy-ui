@@ -105,7 +105,7 @@ export default {
     </v-system-bar>
 
     <v-tooltip top>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <CardTitle
           :title="cardTitle"
           icon="pi-flow"
@@ -124,7 +124,7 @@ export default {
               hide-details
               flat
             >
-              <template v-slot:prepend-inner>
+              <template #prepend-inner>
                 <v-icon color="black" x-small>
                   history
                 </v-icon>

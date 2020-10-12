@@ -198,7 +198,7 @@ export default {
     >
       <template v-if="['stale', 'unhealthy'].includes(status)" slot="action">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-icon class="float-right mr-4" :color="statusColor" v-on="on">
               {{ status === 'stale' ? 'warning' : 'error' }}
             </v-icon>
@@ -277,7 +277,7 @@ export default {
             </div>
             <div class="body-2">
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <div
                     class="truncate"
                     :class="{
@@ -330,7 +330,7 @@ export default {
           </div>
           <div class="body-2 truncate">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <span
                   class="cursor-pointer show-icon-hover-focus-only pa-2px"
                   role="button"

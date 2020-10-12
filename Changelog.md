@@ -10,6 +10,8 @@
 ### Bugfixes
 
 - Fix bug where "Loading" still showed after flow name had loaded on hooks page [#288](https://github.com/PrefectHQ/ui/issues/288)
+- Fix dashboard flicker on load - [#313](https://github.com/PrefectHQ/ui/pull/313)
+- Fix missing tenant slug in url - [#313](https://github.com/PrefectHQ/ui/pull/313)
 
 ## 2020-10-09
 

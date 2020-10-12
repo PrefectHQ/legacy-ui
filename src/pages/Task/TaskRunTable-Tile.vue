@@ -107,7 +107,7 @@ export default {
 <template>
   <v-card class="pa-2 mt-2" tile>
     <v-tooltip top>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <CardTitle :title="tableTitle" icon="pi-task-run">
           <div slot="action" v-on="on">
             <v-select
@@ -121,7 +121,7 @@ export default {
               hide-details
               flat
             >
-              <template v-slot:prepend-inner>
+              <template #prepend-inner>
                 <v-icon color="black" x-small>
                   history
                 </v-icon>
@@ -159,9 +159,9 @@ export default {
         :class="{ 'fixed-table': this.$vuetify.breakpoint.smAndUp }"
         calculate-widths
       >
-        <template v-slot:item.flow_run="{ item }">
+        <template #item.flow_run="{ item }">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <router-link
                 class="link"
                 :to="{ name: 'task-run', params: { id: item.id } }"
@@ -178,9 +178,9 @@ export default {
           </v-tooltip>
         </template>
 
-        <template v-slot:item.start_time="{ item }">
+        <template #item.start_time="{ item }">
           <v-tooltip v-if="item.start_time" top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <span v-on="on"> {{ formDate(item.start_time) }}</span>
             </template>
             <span> {{ formatTime(item.start_time) }}</span>
@@ -188,9 +188,9 @@ export default {
           <span v-else>...</span>
         </template>
 
-        <template v-slot:item.end_time="{ item }">
+        <template #item.end_time="{ item }">
           <v-tooltip v-if="item.end_time" top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <span v-on="on">{{ formDate(item.end_time) }}</span>
             </template>
             <span>{{ formatTime(item.end_time) }}</span>
@@ -198,7 +198,7 @@ export default {
           <span v-else>...</span>
         </template>
 
-        <template v-slot:item.duration="{ item }">
+        <template #item.duration="{ item }">
           <DurationSpan
             v-if="item.start_time"
             :start-time="item.start_time"
@@ -207,9 +207,9 @@ export default {
           <span v-else>...</span>
         </template>
 
-        <template v-slot:item.state="{ item }">
+        <template #item.state="{ item }">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon class="mr-1 pointer" small :color="item.state" v-on="on">
                 brightness_1
               </v-icon>

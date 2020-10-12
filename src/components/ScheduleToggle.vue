@@ -102,7 +102,7 @@ export default {
 <template>
   <div class="position-relative">
     <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div class="schedule-toggle" v-on="on">
           <v-badge
             :value="schedule == null && isScheduled"

@@ -260,7 +260,7 @@ export default {
               class="text-caption d-flex justify-end align-center position-absolute timeline-timestamp"
             >
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <span v-on="on">
                     {{ shortTime(item.state_timestamp || item.timestamp) }}
                   </span>

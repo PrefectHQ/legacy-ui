@@ -87,7 +87,7 @@ export default {
         top: $vuetify.breakpoint.smAndDown ? '56px' : '64px'
       }"
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-list-item>
           <v-list-item-action>
             <v-icon class="blue--text accent-4">
@@ -222,7 +222,7 @@ export default {
         </v-list-item>
       </v-list>
 
-      <template v-slot:append>
+      <template #append>
         <v-list dense>
           <v-list-item v-if="false && role == 'TENANT_ADMIN'" :ripple="false">
             <v-list-item-content v-if="$vuetify.breakpoint.mdAndUp">
