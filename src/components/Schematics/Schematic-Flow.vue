@@ -1002,7 +1002,6 @@ export default {
         v-for="data in visibleNodes"
         :key="data.id"
         :disabled="selectedTaskId && selectedTaskId !== data.id"
-        :mapped="mappedTasks[data.id]"
         :multiplier="size"
         :node-data="data"
         :show-details="showDetails.level2"

@@ -39,14 +39,18 @@ export default {
       update(data) {
         if (data?.flow_run_by_pk) {
           this.tasks = data.flow_run_by_pk.task_runs.map(tr => {
-            return { ...tr, flow_run_name: data.flow_run_by_pk.name }
+            return {
+              ...tr,
+              flow_run_name: data.flow_run_by_pk.name,
+              task_run_id: tr.id
+            }
           })
           return data.flow_run_by_pk
         } else {
           this.tasks = []
         }
       },
-      pollInterval: 2000
+      pollInterval: 3000
     }
   }
 }
