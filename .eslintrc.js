@@ -27,7 +27,7 @@ module.exports = {
     semi: ['error', 'never'],
     'vuetify/grid-unknown-attributes': 'error',
     'vuetify/no-deprecated-classes': 'error',
-    'vue/valid-v-slot': false
+    'vue/valid-v-slot': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint'
