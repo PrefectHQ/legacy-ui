@@ -52,6 +52,7 @@ export default {
         this.newLabels ||
         this.flowRun?.labels ||
         this.flowGroup?.labels ||
+        this.flow?.run_config?.labels ||
         this.flow?.environment?.labels ||
         []
       return labels?.slice().sort()
@@ -61,13 +62,13 @@ export default {
     },
     labelResetDisabled() {
       const labels = this.newLabels || this.labels
+      const defaultLabels =
+        this.flow?.run_config?.labels || this.flow?.environment?.labels
       return (
         Array.isArray(labels) &&
-        Array.isArray(this.flow?.environment?.labels) &&
-        labels.length === this.flow?.environment?.labels?.length &&
-        labels.every(
-          (val, index) => val === this.flow?.environment?.labels[index]
-        )
+        Array.isArray(defaultLabels) &&
+        labels.length === defaultLabels.length &&
+        labels.every((val, index) => val === defaultLabels[index])
       )
     }
   },
@@ -124,7 +125,11 @@ export default {
         }
         if (result.data) {
           this.newLabels =
-            newLabels || this.flowRun.labels || this.flow.environment.labels
+            newLabels ||
+            this.flowRun?.labels ||
+            this.flow?.run_config?.labels ||
+            this.flow?.environment?.labels ||
+            []
           this.resetLabelSettings()
         } else {
           this.labelsError()

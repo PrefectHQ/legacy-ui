@@ -52,6 +52,7 @@ export default {
       return (
         this.flowRun?.labels ||
         this.flowGroup?.labels ||
+        this.flow?.run_config?.labels ||
         this.flow?.environment?.labels
       )
     },
