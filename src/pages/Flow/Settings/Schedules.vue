@@ -204,7 +204,7 @@ export default {
       Psst! We noticed you've got schedules here but your flow's schedule isn't
       turned on; turn it on with the toggle at the top of the page to start
       scheduling flows!
-      <template v-slot:actions="{ dismiss }">
+      <template #actions="{ dismiss }">
         <v-btn text color="white" @click="dismiss">Close</v-btn>
       </template>
     </v-banner>
@@ -315,7 +315,7 @@ export default {
                       max-width="300"
                       top
                     >
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <v-chip
                           class="px-2 rounded-sm mr-1"
                           label
@@ -334,7 +334,7 @@ export default {
                       max-width="200"
                       top
                     >
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <v-chip
                           v-if="'parameter_defaults' in clock"
                           class="px-2 rounded-sm mr-1"
@@ -363,7 +363,7 @@ export default {
                     :close-on-content-click="false"
                     open-on-hover
                   >
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <div
                         class="my-1 mb-auto d-block text-decoration-none"
                         v-on="on"
@@ -446,7 +446,7 @@ export default {
                     :background-opacity="1"
                     left
                   >
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <v-btn
                         icon
                         fab
@@ -470,7 +470,7 @@ export default {
                     :background-opacity="1"
                     left
                   >
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <v-btn
                         icon
                         fab

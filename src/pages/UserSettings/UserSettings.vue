@@ -25,7 +25,7 @@ export default {
       :mini-variant="$vuetify.breakpoint.smAndDown"
       :style="{ top: $vuetify.breakpoint.smAndDown ? '56px' : '64px' }"
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-list-item>
           <v-list-item-action>
             <v-icon class="blue--text accent-4">

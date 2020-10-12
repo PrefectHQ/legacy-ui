@@ -130,7 +130,7 @@ export default {
       @click:clear="handleClear"
       @focus="handleFocus"
     >
-      <template v-if="search == null" v-slot:no-data>
+      <template v-if="search == null" #no-data>
         <v-list-item>
           <v-list-item-title>
             Type to search for a <strong>Task</strong> by
@@ -138,14 +138,14 @@ export default {
           </v-list-item-title>
         </v-list-item>
       </template>
-      <template v-else v-slot:no-data>
+      <template v-else #no-data>
         <v-list-item>
           <v-list-item-title>
             No results matched your search.
           </v-list-item-title>
         </v-list-item>
       </template>
-      <template v-slot:item="data">
+      <template #item="data">
         <v-lazy
           :options="{
             threshold: 0.75

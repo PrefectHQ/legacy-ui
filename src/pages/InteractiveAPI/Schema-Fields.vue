@@ -11,7 +11,7 @@ export default {
 <template>
   <v-list v-if="items">
     <v-list-group class="pa-2" prepend-icon="clear_all" no-action>
-      <template v-slot:activator>
+      <template #activator>
         <v-list-item-content>
           <div style="color: #f77062;">Fields</div>
         </v-list-item-content>

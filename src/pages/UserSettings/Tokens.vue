@@ -154,9 +154,9 @@ export default {
 
 <template>
   <ManagementLayout show>
-    <template v-slot:title>Personal Access Tokens</template>
+    <template #title>Personal Access Tokens</template>
 
-    <template v-slot:subtitle>
+    <template #subtitle>
       Personal Access (or <code>USER</code>) tokens are used to represent a
       single user, and are typically used by Prefect Cloud clients (such as the
       Prefect Cloud CLI) to log in to any tenants the user has access to. View
@@ -168,7 +168,7 @@ export default {
       >
     </template>
 
-    <template v-slot:cta>
+    <template #cta>
       <v-btn
         color="blue"
         data-cy="create-personal-access-token"
@@ -232,25 +232,25 @@ export default {
           no-results-text="No tokens found. Try expanding your search?"
           no-data-text="You do not have any personal access tokens yet."
         >
-          <template v-slot:header.name="{ header }">
+          <template #header.name="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.created="{ header }">
+          <template #header.created="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.last_used="{ header }">
+          <template #header.last_used="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.expires_at="{ header }">
+          <template #header.expires_at="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:item.name="{ item }">
+          <template #item.name="{ item }">
             {{ item.name }}
           </template>
 
-          <template v-slot:item.created="{ item }">
+          <template #item.created="{ item }">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <span v-on="on">
                   {{ item.created ? formDate(item.created) : '' }}
                 </span>
@@ -261,9 +261,9 @@ export default {
             </v-tooltip>
           </template>
 
-          <template v-slot:item.last_used="{ item }">
+          <template #item.last_used="{ item }">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <span v-on="on">
                   {{ item.last_used ? formDate(item.last_used) : '' }}
                 </span>
@@ -274,14 +274,14 @@ export default {
             </v-tooltip>
           </template>
 
-          <template v-slot:item.expires_at="{ item }">
+          <template #item.expires_at="{ item }">
             {{
               item.expires_at ? formatTimeRelative(item.expires_at) : 'Never'
             }}
           </template>
-          <template v-slot:item.actions="{ item }">
+          <template #item.actions="{ item }">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   text
                   fab

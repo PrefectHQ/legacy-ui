@@ -295,7 +295,7 @@ export default {
           handleSearch(input)
         "
       >
-        <template v-if="input == null" v-slot:no-data>
+        <template v-if="input == null" #no-data>
           <v-list-item>
             <v-list-item-title>
               Type to search for a <strong>Project</strong>,
@@ -304,14 +304,14 @@ export default {
             </v-list-item-title>
           </v-list-item>
         </template>
-        <template v-else-if="isLoading" v-slot:no-data>
+        <template v-else-if="isLoading" #no-data>
           <v-list-item>
             <v-list-item-title>
               Searching...
             </v-list-item-title>
           </v-list-item>
         </template>
-        <template v-else v-slot:no-data>
+        <template v-else #no-data>
           <MResult v-if="mResult" />
           <v-list-item v-else>
             <v-list-item-title>
@@ -319,7 +319,7 @@ export default {
             </v-list-item-title>
           </v-list-item>
         </template>
-        <template v-slot:item="data">
+        <template #item="data">
           <GlobalSearchIcon v-if="data" :type="data.item.__typename" />
           <GlobalSearchResult
             v-if="data"

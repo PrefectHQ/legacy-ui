@@ -123,7 +123,7 @@ export default {
     :class="$vuetify.breakpoint.smAndDown ? 'justify-center' : 'justify-end'"
   >
     <v-tooltip v-if="isScheduled" bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             class="vertical-button"
@@ -153,7 +153,7 @@ export default {
     </v-tooltip>
 
     <v-tooltip max-width="250px" bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             class="vertical-button"
@@ -197,7 +197,7 @@ export default {
     <CancelButton dialog-type="flow run" :flow-run="flowRun" />
 
     <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             v-if="

@@ -93,7 +93,7 @@ export default {
     offset-y
     transition="slide-y-transition"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn color="blue-grey darken-2" text small v-on="on">
         <v-icon>
           cloud_download

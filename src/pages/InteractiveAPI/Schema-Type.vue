@@ -27,7 +27,7 @@ export default {
     <div class="overline type">
       {{ type.name }}
       <v-tooltip v-if="type.description" top>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-icon x-small v-on="on">
             help_outline
           </v-icon>

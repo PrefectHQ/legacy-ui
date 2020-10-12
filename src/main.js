@@ -32,7 +32,7 @@ import TransitionHeight from '@/components/Functional/Transition-Height'
 // Apex charts component
 import VueApexCharts from 'vue-apexcharts'
 Vue.use(VueApexCharts)
-Vue.component('apexchart', VueApexCharts)
+Vue.component('ApexChart', VueApexCharts)
 
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
@@ -155,7 +155,7 @@ Vue.filter('roundTens', roundTens)
 Vue.filter('roundHundreds', roundHundreds)
 Vue.filter('roundThousands', roundThousands)
 
-Vue.component('height-transition', TransitionHeight)
+Vue.component('HeightTransition', TransitionHeight)
 
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.

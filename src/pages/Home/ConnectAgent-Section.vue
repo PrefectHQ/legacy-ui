@@ -192,7 +192,7 @@ export default {
       </div>
 
       <v-simple-table v-if="isCloud">
-        <template v-slot:default>
+        <template #default>
           <thead>
             <tr>
               <th>Type</th>

@@ -301,9 +301,9 @@ export default {
           nextIcon: 'keyboard_arrow_right'
         }"
       >
-        <template v-slot:item.archived="{ item }">
+        <template #item.archived="{ item }">
           <v-tooltip v-if="!item.archived" top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon small dark color="green" v-on="on">
                 pi-flow
               </v-icon>
@@ -311,7 +311,7 @@ export default {
             <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
           </v-tooltip>
           <v-tooltip v-else top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon small dark color="accent-pink" v-on="on">
                 archive
               </v-icon>
@@ -320,7 +320,7 @@ export default {
           </v-tooltip>
         </template>
 
-        <template v-slot:item.name="{ item }">
+        <template #item.name="{ item }">
           <div class="truncate">
             <router-link
               class="link"
@@ -342,7 +342,7 @@ export default {
           </div>
         </template>
 
-        <template v-slot:item.project.name="{ item }">
+        <template #item.project.name="{ item }">
           <div class="truncate">
             <router-link
               class="link"
@@ -356,11 +356,11 @@ export default {
           </div>
         </template>
 
-        <template v-slot:item.schedule="{ item }">
+        <template #item.schedule="{ item }">
           <ScheduleToggle :flow="item" :flow-group="item.flow_group" />
         </template>
 
-        <template v-slot:item.project="{ item }">
+        <template #item.project="{ item }">
           <div class="truncate">
             <router-link
               class="link"
@@ -374,26 +374,26 @@ export default {
           </div>
         </template>
 
-        <template v-slot:item.flow_runs="{ item }">
+        <template #item.flow_runs="{ item }">
           <div class="position-relative allow-overflow">
             <LastTenRuns :flow-id="item.id" :archived="item.archived" />
           </div>
         </template>
 
-        <template v-slot:item.created="{ item }">
+        <template #item.created="{ item }">
           <div class="truncate">
             {{ formatTime(item.created) }}
           </div>
         </template>
 
-        <template v-slot:item.created_by.username="{ item }">
+        <template #item.created_by.username="{ item }">
           <div class="truncate">
             {{ item.created_by ? item.created_by.username : null }}
           </div>
         </template>
 
         <!-- eslint-disable vue/no-template-shadow -->
-        <template v-slot:body.append="{ headers }">
+        <template #body.append="{ headers }">
           <td :colspan="headers.length">
             <v-row justify="end">
               <v-switch

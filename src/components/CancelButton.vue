@@ -9,7 +9,7 @@ export default {
 <template>
   <div v-if="dialogType == 'flow run'">
     <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             color="red darken-3"
