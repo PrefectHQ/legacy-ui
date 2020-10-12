@@ -39,7 +39,7 @@ export default {
           text: 'Task',
           value: 'task.name',
           sortable: false,
-          width: '20%'
+          width: '27.5%'
         },
         {
           text: 'Start Time',
@@ -49,13 +49,13 @@ export default {
         },
         { text: 'End Time', value: 'end_time', align: 'start', width: '15%' },
         { text: 'Duration', value: 'duration', align: 'end', width: '17.5%' },
-        { text: 'State', value: 'state', align: 'end', width: '12.5%' },
+        { text: 'State', value: 'state', align: 'end', width: '10%' },
         {
           text: '',
           value: 'action',
           sortable: false,
           align: 'center',
-          width: '12.5%'
+          width: '10%'
         }
       ],
       itemsPerPage: 15,
