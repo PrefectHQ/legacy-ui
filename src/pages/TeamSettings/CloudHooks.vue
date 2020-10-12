@@ -409,7 +409,7 @@ export default {
               <!-- Error -->
               <div v-else-if="error" class="error apollo">An error occurred</div
               ><!-- Result -->
-              <div v-if="data && data.flow[0]" class="result apollo">
+              <div v-else-if="data && data.flow[0]" class="result apollo">
                 <router-link
                   :to="{
                     name: 'flow',
