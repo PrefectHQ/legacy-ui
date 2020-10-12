@@ -9,7 +9,7 @@ export default {
 <template>
   <div v-if="activeButton()">
     <v-dialog v-model="setStateDialog" width="500" @click:outside="reset">
-      <template v-slot:activator="{ on: dialog }">
+      <template #activator="{ on: dialog }">
         <v-tooltip bottom>
           <template #activator="{ on: tooltip }">
             <div v-on="{ ...tooltip, ...dialog }">
@@ -120,7 +120,7 @@ export default {
   </div>
   <div v-else-if="role == 'READ_ONLY_USER' && dialogType == 'flow run'">
     <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             text
@@ -141,7 +141,7 @@ export default {
   </div>
   <div v-else-if="dialogType == 'task run'">
     <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             text

@@ -121,9 +121,9 @@ export default {
 
 <template>
   <ManagementLayout class="mt-3">
-    <template v-slot:title>Your Profile</template>
+    <template #title>Your Profile</template>
 
-    <template v-slot:subtitle>
+    <template #subtitle>
       Control how your actions are displayed and how timestamps appear in
       Prefect Cloud
     </template>

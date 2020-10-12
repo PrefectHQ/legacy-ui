@@ -229,9 +229,9 @@ export default {
 
 <template>
   <ManagementLayout :show="!isLoadingMembersTable" control-show>
-    <template v-slot:title>Team Members</template>
+    <template #title>Team Members</template>
 
-    <template v-slot:subtitle>
+    <template #subtitle>
       <span v-if="isTenantAdmin">
         View your team's members, manage permissions, and send invitations
       </span>
@@ -240,7 +240,7 @@ export default {
       </span>
     </template>
 
-    <template v-if="isTenantAdmin" v-slot:cta>
+    <template v-if="isTenantAdmin" #cta>
       <v-btn
         :disabled="insufficientUsers"
         color="primary"
@@ -256,7 +256,7 @@ export default {
       </v-btn>
     </template>
 
-    <template v-if="insufficientUsers" v-slot:alerts>
+    <template v-if="insufficientUsers" #alerts>
       <v-alert
         class="mx-auto"
         border="left"

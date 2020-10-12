@@ -115,7 +115,7 @@ export default {
     offset-y
     open-on-hover
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <div text class="super-imposed-icon-set cursor-pointer" v-on="on">
         <v-icon v-ripple color="red">label</v-icon>
         <v-icon

@@ -118,7 +118,7 @@ export default {
 
           <v-list>
             <v-list-group class="pa-2" prepend-icon="sort" no-action>
-              <template v-slot:activator>
+              <template #activator>
                 <v-list-item-content>
                   <div style="color: #f77062;">
                     Arguments

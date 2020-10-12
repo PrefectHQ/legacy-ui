@@ -187,9 +187,9 @@ export default {
 
 <template>
   <ManagementLayout :show="!isFetchingTokens" control-show>
-    <template v-slot:title>API Tokens</template>
+    <template #title>API Tokens</template>
 
-    <template v-if="isTenantAdmin" v-slot:subtitle>
+    <template v-if="isTenantAdmin" #subtitle>
       Create and manage your
       <a
         href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
@@ -216,7 +216,7 @@ export default {
       </sup>
       tokens.
     </template>
-    <template v-else-if="isReadOnlyUser" v-slot:subtitle>
+    <template v-else-if="isReadOnlyUser" #subtitle>
       Manage
       <a
         href="https://docs.prefect.io/cloud/concepts/api.html#runner"
@@ -243,7 +243,7 @@ export default {
       </sup>
       tokens.
     </template>
-    <template v-else v-slot:subtitle>
+    <template v-else #subtitle>
       Manage and create your
       <a
         href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
@@ -259,7 +259,7 @@ export default {
       tokens.
     </template>
 
-    <template v-if="isReadOnlyUser" v-slot:alerts>
+    <template v-if="isReadOnlyUser" #alerts>
       <v-alert
         class="mx-auto"
         border="left"
@@ -274,7 +274,7 @@ export default {
       </v-alert>
     </template>
 
-    <template v-slot:cta>
+    <template #cta>
       <v-btn
         v-if="!isReadOnlyUser"
         color="primary"
@@ -347,29 +347,29 @@ export default {
           no-data-text="Your team does not have any API Tokens yet."
         >
           <!-- HEADERS -->
-          <template v-slot:header.name="{ header }">
+          <template #header.name="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.created_by="{ header }">
+          <template #header.created_by="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.created="{ header }">
+          <template #header.created="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.last_used="{ header }">
+          <template #header.last_used="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.expires_at="{ header }">
+          <template #header.expires_at="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.scope="{ header }">
+          <template #header.scope="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
 
           <!-- TOKEN CREATED-AT TIME -->
-          <template v-slot:item.created="{ item }">
+          <template #item.created="{ item }">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <span v-on="on">
                   {{ item.created ? formDate(item.created) : '' }}
                 </span>
@@ -381,9 +381,9 @@ export default {
           </template>
 
           <!-- TOKEN LAST-USED TIME -->
-          <template v-slot:item.last_used="{ item }">
+          <template #item.last_used="{ item }">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <span v-on="on">
                   {{ item.last_used ? formDate(item.last_used) : '' }}
                 </span>
@@ -395,14 +395,14 @@ export default {
           </template>
 
           <!-- TOKEN EXPIRES-AT TIME -->
-          <template v-slot:item.expires_at="{ item }">
+          <template #item.expires_at="{ item }">
             {{ item.expires_at ? formatTimeRelative(item.expires_at) : '' }}
           </template>
 
           <!-- TOKEN ACTIONS -->
-          <template v-if="!isReadOnlyUser" v-slot:item.actions="{ item }">
+          <template v-if="!isReadOnlyUser" #item.actions="{ item }">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   text
                   fab

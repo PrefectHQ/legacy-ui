@@ -235,7 +235,7 @@ export default {
                     class="text-right font-weight-bold text-truncate"
                   >
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span
                           class="cursor-pointer show-icon-hover-focus-only pa-2px"
                           role="button"
@@ -265,7 +265,7 @@ export default {
                     class="text-right font-weight-bold text-truncate"
                   >
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span
                           class="cursor-pointer show-icon-hover-focus-only pa-2px"
                           role="button"
@@ -299,7 +299,7 @@ export default {
                     class="text-right font-weight-bold text-truncate"
                   >
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span
                           class="cursor-pointer show-icon-hover-focus-only pa-2px"
                           role="button"
@@ -394,7 +394,7 @@ export default {
                       bottom
                       max-width="300"
                     >
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span
                           class="cursor-pointer show-icon-hover-focus-only pa-2px"
                           :class="{
@@ -463,7 +463,7 @@ export default {
                   offset-y
                   open-on-hover
                 >
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <v-btn text icon x-small v-on="on">
                       <v-icon>
                         info

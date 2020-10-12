@@ -86,7 +86,7 @@ export default {
     <div class="log-actions">
       <div class="log-link">
         <v-tooltip right>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               color="blue-grey lighten-1"
               text
@@ -109,7 +109,7 @@ export default {
 
     <div class="log-info caption py-2 text-left">
       <v-tooltip top>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <div class="log-datetime grey--text text--darken-1" v-on="on">
             {{ logTime(log.timestamp) }}
           </div>
@@ -131,7 +131,7 @@ export default {
 
     <div v-if="log.task_run_id" class="justify-self-end log-router-link">
       <v-tooltip top>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             class="log-router-button vertical-button"
             color="blue-grey lighten-1"

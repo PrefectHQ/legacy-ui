@@ -86,9 +86,9 @@ export default {
           <v-row>
             <v-col cols="12">
               <v-dialog v-model="createNewCloudHook" max-width="700">
-                <template v-slot:activator="{ onD }">
+                <template #activator="{ onD }">
                   <v-tooltip top>
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <div
                         class="pb-1 text-center"
                         :class="containerClass"
@@ -208,7 +208,7 @@ export default {
                                     </div>
                                     <div class="justify-self-end">
                                       <v-tooltip bottom>
-                                        <template v-slot:activator="{ on }">
+                                        <template #activator="{ on }">
                                           <div v-on="on" @click.stop>
                                             <div class="vertical-button">
                                               <v-switch
@@ -227,7 +227,7 @@ export default {
                                                   )
                                                 "
                                               >
-                                                <template v-slot:label>
+                                                <template #label>
                                                   <v-btn
                                                     tile
                                                     small

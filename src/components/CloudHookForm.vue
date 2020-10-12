@@ -437,7 +437,7 @@ export default {
                 order-sm="1"
               >
                 <v-tooltip v-if="!canEdit && editable" top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div style="display: inline-block;" v-on="on">
                       <v-btn
                         :loading="testCloudHookLoading"
@@ -462,7 +462,7 @@ export default {
                 </v-tooltip>
 
                 <v-tooltip v-if="!canEdit && editable" top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div style="display: inline-block;" v-on="on">
                       <v-btn icon @click="canEdit = true">
                         <v-icon color="primary lighten-1">edit</v-icon>
@@ -489,7 +489,7 @@ export default {
                 </v-btn> -->
 
                 <v-tooltip v-if="editable && !canEdit" top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div style="display: inline-block;" v-on="on">
                       <v-btn
                         icon
@@ -661,7 +661,7 @@ export default {
                   hint="To add a number to the list, type the number and press enter."
                   persistent-hint
                 >
-                  <template v-slot:no-data>
+                  <template #no-data>
                     <v-list-item>
                       <v-list-item-content>
                         <v-list-item-title>

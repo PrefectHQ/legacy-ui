@@ -201,7 +201,7 @@ export default {
       open-on-hover
       transition="slide-y-transition"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           class="ml-2 position-relative"
           text
@@ -297,7 +297,7 @@ export default {
       transition="slide-y-transition"
       nudge-bottom="15"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-scale-transition>
           <v-avatar
             v-if="isCloud"
@@ -329,7 +329,7 @@ export default {
             <v-list-item-subtitle>{{ auth0User.email }}</v-list-item-subtitle>
             <v-list-item-subtitle>
               <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <span v-on="on">
                     {{ formatTime(time) }}
                     <v-icon class="material-icons-outlined" x-small>

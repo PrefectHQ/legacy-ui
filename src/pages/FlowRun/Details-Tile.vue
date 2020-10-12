@@ -171,7 +171,7 @@ export default {
               </v-list-item-subtitle>
               <div class="subtitle-2">
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span class="caption" v-on="on">
                       [{{ formDate(flowRun.state_timestamp) }}]:
                     </span>
@@ -216,7 +216,7 @@ export default {
                     class="text-right font-weight-bold"
                   >
                     <v-tooltip top>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span v-on="on">
                           {{ formatTime(flowRun.scheduled_start_time) }}
                         </span>
@@ -231,7 +231,7 @@ export default {
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
                     <v-tooltip top>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span v-on="on">
                           {{
                             flowRun.start_time
@@ -256,7 +256,7 @@ export default {
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
                     <v-tooltip top>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span v-on="on">
                           {{ formatTime(flowRun.end_time) }}
                         </span>

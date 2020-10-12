@@ -53,11 +53,11 @@ export default {
     :step-number="currentStep"
     @step-click="handleStepClick"
   >
-    <template v-slot:title>
+    <template #title>
       Universal Deploy
     </template>
 
-    <template v-slot:description>
+    <template #description>
       <span>
         This tutorial guides you through writing a simple flow and deploying it
         using
@@ -71,7 +71,7 @@ export default {
       </span>
     </template>
 
-    <template v-slot:alert>
+    <template #alert>
       <span v-if="role === 'READ_ONLY_USER'">
         As a read-only user, you will not be able to complete this tutorial.
       </span>
@@ -88,44 +88,44 @@ export default {
     </template>
 
     <!-- STEP 1 -->
-    <template v-slot:tutorial-step-1-title>
+    <template #tutorial-step-1-title>
       Set up your local environment
     </template>
-    <template v-slot:tutorial-step-1-content>
+    <template #tutorial-step-1-content>
       <LocalEnvironmentStep @next="nextStep"></LocalEnvironmentStep>
     </template>
 
     <!-- STEP 2 -->
-    <template v-slot:tutorial-step-2-title>
+    <template #tutorial-step-2-title>
       Run a flow using Prefect Core
     </template>
-    <template v-slot:tutorial-step-2-content>
+    <template #tutorial-step-2-content>
       <WriteFlowStep @next="nextStep"></WriteFlowStep>
     </template>
 
     <!-- STEP 3 -->
-    <template v-slot:tutorial-step-3-title>
+    <template #tutorial-step-3-title>
       Log into Prefect Cloud from the CLI
     </template>
-    <template v-slot:tutorial-step-3-content>
+    <template #tutorial-step-3-content>
       <CreatePersonalAccessTokenStep
         @next="nextStep"
       ></CreatePersonalAccessTokenStep>
     </template>
 
     <!-- STEP 4 -->
-    <template v-slot:tutorial-step-4-title>
+    <template #tutorial-step-4-title>
       Create an agent token
     </template>
-    <template v-slot:tutorial-step-4-content>
+    <template #tutorial-step-4-content>
       <AgentRunnerTokenStep @next="nextStep"></AgentRunnerTokenStep>
     </template>
 
     <!-- STEP 5 -->
-    <template v-slot:tutorial-step-5-title>
+    <template #tutorial-step-5-title>
       Select a project
     </template>
-    <template v-slot:tutorial-step-5-content>
+    <template #tutorial-step-5-content>
       <CreateProjectStep
         :complete="!!projectName"
         @project-submitted="handleProjectSelection"
@@ -133,10 +133,10 @@ export default {
     </template>
 
     <!-- STEP 6 -->
-    <template v-slot:tutorial-step-6-title>
+    <template #tutorial-step-6-title>
       Deploy your flow with Universal Deploy
     </template>
-    <template v-slot:tutorial-step-6-content>
+    <template #tutorial-step-6-content>
       <UniversalDeployStep
         :project-name="projectName"
         @next="nextStep"
@@ -144,10 +144,10 @@ export default {
     </template>
 
     <!-- STEP 7 -->
-    <template v-slot:tutorial-step-7-title>
+    <template #tutorial-step-7-title>
       Run your flow in Prefect Cloud
     </template>
-    <template v-slot:tutorial-step-7-content>
+    <template #tutorial-step-7-content>
       <RunFlowStep v-if="projectId" :project-id="projectId"></RunFlowStep>
     </template>
   </TutorialLayout>

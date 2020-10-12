@@ -204,7 +204,7 @@ export default {
 
 <template>
   <v-tooltip :bottom="!vertical" :right="vertical">
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <svg :id="id" preserveAspectRatio="xMinYMin meet" v-on="on" />
     </template>
     <div v-if="filteredSegments.length > 0">

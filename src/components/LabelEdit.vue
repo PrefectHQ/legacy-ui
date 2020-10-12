@@ -169,7 +169,7 @@ export default {
       <v-list-item-subtitle class="caption">
         Labels
         <v-menu :close-on-content-click="false" offset-y open-on-hover>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn text icon x-small class="mr-2" v-on="on">
               <v-icon>
                 info
@@ -207,9 +207,9 @@ export default {
             :close-on-content-click="false"
             offset-y
           >
-            <template v-slot:activator="{ on: menu, attrs }">
+            <template #activator="{ on: menu, attrs }">
               <v-tooltip bottom>
-                <template v-slot:activator="{ on: tooltip }">
+                <template #activator="{ on: tooltip }">
                   <div v-on="tooltip">
                     <v-btn
                       small
@@ -255,7 +255,7 @@ export default {
                   :disabled="disableAdd"
                   @keyup.enter="addLabel"
                 >
-                  <template v-slot:prepend-inner>
+                  <template #prepend-inner>
                     <Label
                       v-for="(label, i) in newLabels || labels"
                       :key="i"
@@ -273,7 +273,7 @@ export default {
             </v-card>
           </v-menu>
           <v-tooltip v-if="type !== 'flowRun'" top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 class="mt-0"
                 icon
@@ -313,7 +313,7 @@ export default {
     </v-list-item-content>
     <v-list-item-action v-if="!$vuetify.breakpoint.sm" class="ma-0">
       <v-tooltip v-if="type !== 'flowRun'" top>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             class="mt-0"
             icon
@@ -329,9 +329,9 @@ export default {
         <span>Reset to labels from flow registration</span>
       </v-tooltip>
       <v-menu v-model="labelEditOpen" :close-on-content-click="false" offset-y>
-        <template v-slot:activator="{ on: menu, attrs }">
+        <template #activator="{ on: menu, attrs }">
           <v-tooltip top>
-            <template v-slot:activator="{ on: tooltip }">
+            <template #activator="{ on: tooltip }">
               <div v-on="tooltip">
                 <v-btn
                   small
@@ -377,7 +377,7 @@ export default {
               :disabled="disableAdd"
               @keyup.enter="addLabel"
             >
-              <template v-slot:prepend-inner>
+              <template #prepend-inner>
                 <Label
                   v-for="(label, i) in newLabels || labels"
                   :key="i"

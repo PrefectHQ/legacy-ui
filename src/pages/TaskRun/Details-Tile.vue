@@ -79,7 +79,7 @@ export default {
           </v-list-item-subtitle>
           <div class="subtitle-2">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <span class="caption" v-on="on">
                   [{{ formDate(taskRun.state_timestamp) }}]:
                 </span>
@@ -102,7 +102,7 @@ export default {
               </v-col>
               <v-col cols="6" class="text-right font-weight-bold">
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span v-on="on">
                       {{ taskRun.serialized_state.n_map_states || 'unknown' }}
                     </span>
@@ -126,7 +126,7 @@ export default {
               </v-col>
               <v-col cols="6" class="text-right font-weight-bold">
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span v-on="on">
                       {{
                         formDate(
@@ -151,7 +151,7 @@ export default {
               </v-col>
               <v-col cols="6" class="text-right font-weight-bold">
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span v-on="on">
                       {{ formDate(taskRun.end_time) }}
                     </span>
@@ -183,7 +183,7 @@ export default {
               </v-col>
               <v-col cols="6" class="text-right font-weight-bold">
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span v-on="on">
                       {{ formDate(taskRun.updated) }}
                     </span>
@@ -222,7 +222,7 @@ export default {
                 class="text-right font-weight-bold"
               >
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span v-on="on">
                       {{ taskRun.serialized_state._result.location || 'None' }}
                     </span>

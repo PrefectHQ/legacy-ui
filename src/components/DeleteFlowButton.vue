@@ -128,7 +128,7 @@ export default {
 <template>
   <div v-if="role !== 'READ_ONLY_USER'" class="text-center">
     <v-dialog v-model="deleteDialog" width="500" @click:outside="reset">
-      <template v-slot:activator="{ on: dialog }">
+      <template #activator="{ on: dialog }">
         <v-tooltip bottom>
           <template #activator="{ on: tooltip }">
             <div v-on="{ ...tooltip, ...dialog }">
@@ -151,7 +151,7 @@ export default {
         </v-tooltip>
       </template>
 
-      <!-- <template v-slot:activator="{ on }">
+      <!-- <template #activator="{ on }">
         <v-btn
           class="vertical-button"
           text
@@ -212,7 +212,7 @@ export default {
   </div>
   <div v-else-if="role == 'READ_ONLY_USER'">
     <v-tooltip top>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn class="vertical-button" text disabled tile small>
             <v-icon>delete</v-icon>
