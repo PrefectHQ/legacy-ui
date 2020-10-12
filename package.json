@@ -82,7 +82,7 @@
     "postcss-scss": "^3.0.2",
     "pre-commit": ">=1.2.2",
     "sass": "^1.27.0",
-    "sass-loader": "^8.0.0",
+    "sass-loader": "^10.0.3",
     "sinon": "^9.2.0",
     "start-server-and-test": "^1.11.5",
     "style-loader": "^2.0.0",

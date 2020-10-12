@@ -155,7 +155,7 @@ Vue.filter('roundTens', roundTens)
 Vue.filter('roundHundreds', roundHundreds)
 Vue.filter('roundThousands', roundThousands)
 
-Vue.component('height-transition', TransitionHeight)
+Vue.component('HeightTransition', TransitionHeight)
 
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
