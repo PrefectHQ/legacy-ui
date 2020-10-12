@@ -403,7 +403,7 @@ export default {
             :variables="{ VGI: item.version_group_id }"
             :skip="!item.version_group_id"
           >
-            <template v-slot="{ result: { loading, error, data } }">
+            <template #default="{ result: { loading, error, data } }">
               <!-- Loading -->
               <div v-if="loading" class="loading apollo">Loading...</div>
               <!-- Error -->
