@@ -65,7 +65,7 @@
     "@vue/cli-service": "^4.5.7",
     "@vue/eslint-config-prettier": ">=6.0.0",
     "@vue/test-utils": "^1.1.0",
-    "autoprefixer": "^10.0.1",
+    "autoprefixer": "^9.8.6",
     "babel-eslint": ">=10.0.3",
     "babel-jest": "^26.5.2",
     "babel-polyfill": "^6.26.0",
@@ -98,6 +98,9 @@
     "vue-template-compiler": "^2.6.12",
     "vuetify-loader": ">=1.5.0",
     "workerize-loader": ">=1.2.1"
+  },
+  "peerDependencies": {
+    "postcss": "^8.0.0"
   },
   "pre-commit": [
     "lint",
