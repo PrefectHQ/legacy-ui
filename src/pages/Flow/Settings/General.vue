@@ -296,7 +296,7 @@ export default {
           <v-row no-gutters>
             <v-col cols="12" md="6" sm="8">
               <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <div v-on="on">
                     <v-select
                       v-model="selected.projectId"
@@ -322,7 +322,7 @@ export default {
             </v-col>
             <v-col cols="12" md="4" align-self="center">
               <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <div style="display: inline-block;" v-on="on">
                     <v-btn
                       :disabled="
@@ -376,7 +376,7 @@ export default {
         </v-col>
         <v-col cols="12" class="pt-0">
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div class="pb-1" style="display: inline-block;" v-on="on">
                 <v-switch
                   v-model="selected.versionLockingEnabled"
@@ -390,7 +390,7 @@ export default {
                   "
                   @change="_handleVersionLockingChange"
                 >
-                  <template v-slot:label>
+                  <template #label>
                     <label>
                       Version Locking
                       <span
@@ -448,7 +448,7 @@ export default {
         </v-col>
         <v-col cols="12" class="pt-0">
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div class="pb-1" style="display: inline-block;" v-on="on">
                 <v-switch
                   v-model="selected.heartbeatEnabled"
@@ -458,7 +458,7 @@ export default {
                   :disabled="isReadOnlyUser || loading.heartbeat"
                   @change="_handleHeartbeatChange"
                 >
-                  <template v-slot:label>
+                  <template #label>
                     <label>
                       Heartbeat
                       <span
@@ -528,7 +528,7 @@ export default {
         </v-col>
         <v-col cols="12" class="pt-0">
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div class="pb-1" style="display: inline-block;" v-on="on">
                 <v-switch
                   v-model="selected.lazarusEnabled"
@@ -538,7 +538,7 @@ export default {
                   :disabled="isReadOnlyUser || loading.lazarus"
                   @change="_handleLazarusChange"
                 >
-                  <template v-slot:label>
+                  <template #label>
                     <label>
                       Lazarus
                       <span

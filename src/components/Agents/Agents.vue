@@ -149,7 +149,7 @@ export default {
       offset-y
       transition="slide-y-transition"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           class="vertical-button py-1 filter-button-position"
           color="#666"

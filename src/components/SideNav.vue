@@ -389,7 +389,7 @@ export default {
           </v-list-item>
 
           <v-tooltip v-if="role == 'Restricted User'" top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-list-item data-cy="sidenav-api" v-on="on">
                 <v-list-item-action>
                   <v-icon>vertical_split</v-icon>
@@ -516,7 +516,7 @@ export default {
             max-width="560"
             @click:outside="closeDialogAndMenu"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-list-item
                 id="Feedback"
                 active-class="primary-active-class"

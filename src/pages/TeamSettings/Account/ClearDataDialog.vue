@@ -346,7 +346,7 @@ export default {
           max-width="400"
           transition="fade"
         >
-          <template v-if="dataLoading" v-slot:prepend>
+          <template v-if="dataLoading" #prepend>
             <v-progress-circular
               :size="28"
               :width="4"
@@ -457,7 +457,7 @@ export default {
             <router-link :to="{ name: 'help' }">Support page</router-link>
           </div>
 
-          <template v-slot:close>
+          <template #close>
             <div class="text-right">
               <v-btn v-if="show" depressed color="primary" @click="_close">
                 Close

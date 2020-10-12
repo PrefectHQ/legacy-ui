@@ -323,7 +323,7 @@ export default {
           <v-list-item dense :disabled="setToRun.includes(item.id)">
             <v-list-item-content>
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <span class="caption mb-0" v-on="on">
                     <LabelWarning
                       :flow="flow"
@@ -349,7 +349,7 @@ export default {
 
             <v-list-item-action tile min-width="5" class="body-2">
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-btn
                     text
                     x-small

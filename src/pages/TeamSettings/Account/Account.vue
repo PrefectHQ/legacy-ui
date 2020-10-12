@@ -51,7 +51,7 @@ export default {
 
 <template>
   <ManagementLayout>
-    <template v-if="needAlert" v-slot:alert>
+    <template v-if="needAlert" #alert>
       <v-alert
         dismissible
         class="mx-auto mb-12"
@@ -67,9 +67,9 @@ export default {
         ></v-alert
       >
     </template>
-    <template v-slot:title>Account</template>
+    <template #title>Account</template>
 
-    <template v-slot:subtitle>
+    <template #subtitle>
       Manage your team's billing, data, and profile information.
     </template>
 

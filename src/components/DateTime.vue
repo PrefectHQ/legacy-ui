@@ -189,7 +189,7 @@ export default {
       offset-y
       :close-on-content-click="false"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-text-field
           :value="formattedValue"
           clearable

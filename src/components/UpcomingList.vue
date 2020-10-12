@@ -45,13 +45,13 @@ export default {
     active-class="upcoming-active-class"
     :disabled="loading"
   >
-    <template v-slot:prependIcon>
+    <template #prependIcon>
       <v-list-item-avatar class="ma-0 mx-2">
         <v-icon class="black--text">schedule</v-icon>
       </v-list-item-avatar>
     </template>
 
-    <template v-slot:activator>
+    <template #activator>
       <v-list-item-content class="mr-2">
         <v-list-item-title class="title">
           <span class="Scheduled--text font-weight-black mr-1">
@@ -62,7 +62,7 @@ export default {
       </v-list-item-content>
     </template>
 
-    <template v-slot:appendIcon>
+    <template #appendIcon>
       <v-list-item-avatar class="mr-2">
         <v-icon>arrow_drop_down</v-icon>
       </v-list-item-avatar>

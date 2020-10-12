@@ -64,7 +64,7 @@ export default {
   >
     <slot></slot>
     <v-tooltip v-if="closable" bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           :disabled="disabled && !loading"
           :color="duplicatedColor"

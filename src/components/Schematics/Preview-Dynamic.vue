@@ -62,7 +62,7 @@ export default {
         </v-list-item-title>
         <v-list-item-subtitle class="caption">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <span v-on="on">
                 <span :class="`${task.state}--text`">
                   {{ task.state }}
@@ -140,7 +140,7 @@ export default {
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <span v-on="on">
                 {{ task.serialized_state.n_map_states || 'Unknown' }}
               </span>
@@ -173,7 +173,7 @@ export default {
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <span v-on="on">
                 {{
                   task.serialized_state._result.location ||
@@ -192,7 +192,7 @@ export default {
     <v-card-actions v-if="runs && runs.length > 0" class="px-0 py-0">
       <v-list dense style="width: 100%;" class="py-0">
         <v-list-group v-model="expanded" no-action dense value="true">
-          <template v-slot:activator>
+          <template #activator>
             <v-list-item-content class="pa-0">
               <v-list-item-title class="body-2 d-flex align-end">
                 <v-icon class="black--text mr-6" small>trending_up</v-icon>
@@ -204,7 +204,7 @@ export default {
             </v-list-item-content>
           </template>
 
-          <template v-slot:appendIcon>
+          <template #appendIcon>
             <v-list-item-avatar class="mr-0">
               <v-icon>arrow_drop_down</v-icon>
             </v-list-item-avatar>
@@ -230,7 +230,7 @@ export default {
                 :style="runStyle(run.state)"
               >
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <v-list-item-content v-on="on">
                       <v-list-item-title>
                         {{ run.state }}

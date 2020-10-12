@@ -237,9 +237,9 @@ export default {
 
 <template>
   <ManagementLayout>
-    <template v-slot:title>Flow Groups</template>
+    <template #title>Flow Groups</template>
 
-    <template v-slot:subtitle>
+    <template #subtitle>
       <span v-if="isTenantAdmin">
         View and manage your team's flows by
         <ExternalLink
@@ -311,26 +311,26 @@ export default {
           }"
         >
           <!-- HEADERS -->
-          <template v-slot:header.name="{ header }">
+          <template #header.name="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.active="{ header }">
+          <template #header.active="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.version_group_id="{ header }">
+          <template #header.version_group_id="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.created_by.username="{ header }">
+          <template #header.created_by.username="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.project.name="{ header }">
+          <template #header.project.name="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
 
           <!-- FVG ID -->
-          <template v-slot:item.version_group_id="{ item }">
+          <template #item.version_group_id="{ item }">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div
                   class="hidewidth cursor-pointer"
                   v-on="on"
@@ -353,9 +353,9 @@ export default {
           </template>
 
           <!-- FVG NAME -->
-          <template v-slot:item.name="{ item }">
+          <template #item.name="{ item }">
             <v-tooltip v-if="item.name" top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div class="hidewidth" v-on="on">
                   <router-link
                     :to="{
@@ -377,9 +377,9 @@ export default {
           </template>
 
           <!-- FVG ACTIVE/ARCHIVED -->
-          <template v-slot:item.active="{ item }">
+          <template #item.active="{ item }">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-icon v-if="item.active" small dark color="green" v-on="on">
                   pi-flow
                 </v-icon>
@@ -397,7 +397,7 @@ export default {
           </template>
 
           <!-- FVG ACTIONS -->
-          <template v-if="isTenantAdmin" v-slot:item.action="{ item }">
+          <template v-if="isTenantAdmin" #item.action="{ item }">
             <v-btn
               color="error"
               text

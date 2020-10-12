@@ -456,9 +456,9 @@ export default {
 
 <template>
   <ManagementLayout :show="!isLoadingTable" control-show>
-    <template v-slot:title>Projects</template>
+    <template #title>Projects</template>
 
-    <template v-slot:subtitle>
+    <template #subtitle>
       <span v-if="isTenantAdmin">
         View and manage your team's
         <ExternalLink
@@ -476,7 +476,7 @@ export default {
       >
     </template>
 
-    <template v-if="!isReadOnlyUser" v-slot:cta>
+    <template v-if="!isReadOnlyUser" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -550,28 +550,26 @@ export default {
           no-data-text="This team does not have any projects yet."
         >
           <!-- HEADERS -->
-          <template v-slot:header.name="{ header }">
+          <template #header.name="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.description="{ header }">
+          <template #header.description="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template
-            v-slot:header.active_flow_count.aggregate.count="{ header }"
-          >
+          <template #header.active_flow_count.aggregate.count="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.created="{ header }">
+          <template #header.created="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.id="{ header }">
+          <template #header.id="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
 
           <!-- PROJECT ID-->
-          <template v-slot:item.id="{ item }">
+          <template #item.id="{ item }">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div
                   class="cursor-pointer truncate"
                   v-on="on"
@@ -587,9 +585,9 @@ export default {
           </template>
 
           <!-- PROJECT NAME -->
-          <template v-slot:item.name="{ item }">
+          <template #item.name="{ item }">
             <v-tooltip v-if="item.name" top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div class="hidewidth" v-on="on">
                   <router-link
                     :to="{
@@ -610,9 +608,9 @@ export default {
           </template>
 
           <!-- PROJECT CREATION DATETIME -->
-          <template v-slot:item.created="{ item }">
+          <template #item.created="{ item }">
             <v-tooltip v-if="item.created" top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div class="hidewidth" v-on="on">
                   {{ formDate(item.created) }}
                 </div>
@@ -623,9 +621,9 @@ export default {
           </template>
 
           <!-- PROJECT DESCRIPTION -->
-          <template v-slot:item.description="{ item }">
+          <template #item.description="{ item }">
             <v-tooltip v-if="item.description" top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div class="hidewidth" v-on="on">
                   {{ item.description }}
                 </div>
@@ -636,9 +634,9 @@ export default {
           </template>
 
           <!-- PROJECT ACTIONS -->
-          <template v-if="isTenantAdmin" v-slot:item.actions="{ item }">
+          <template v-if="isTenantAdmin" #item.actions="{ item }">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   text
                   fab
@@ -656,7 +654,7 @@ export default {
               Modify this project
             </v-tooltip>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   text
                   fab

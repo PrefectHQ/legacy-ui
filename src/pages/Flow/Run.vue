@@ -259,7 +259,7 @@ export default {
                 :close-on-content-click="false"
                 open-on-hover
               >
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <div class="inline-block pr-4" v-on="on">
                     <v-icon
                       small
@@ -393,7 +393,7 @@ export default {
                 :close-on-content-click="false"
                 open-on-hover
               >
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <div class="inline-block pr-4" v-on="on">
                     <v-icon
                       small
