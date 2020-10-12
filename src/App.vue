@@ -68,10 +68,7 @@ export default {
   watch: {
     backend() {
       this.loadedComponents = 0
-
-      if (this.isCloud && !this.isAuthenticated) {
-        this.shown = false
-      }
+      this.shown = false
 
       this.refreshTimeout = setTimeout(() => {
         this.shown = true
@@ -93,10 +90,10 @@ export default {
     },
     isAuthorized(val) {
       if (val) {
-        this.shown = true
-
         if (!this.startupHasRun) {
           this.startup()
+        } else {
+          this.shown = true
         }
       }
     },
@@ -126,8 +123,11 @@ export default {
     // window.removeEventListener('focus', this.handleVisibilityChange)
   },
   mounted() {
-    if (!this.isCloud || this.isAuthenticated) {
+    if (!this.isCloud || (this.isAuthenticated && this.isAuthorized)) {
       this.shown = true
+      if (!this.startupHasRun) {
+        this.startup()
+      }
     }
     this.refresh()
   },
@@ -164,12 +164,10 @@ export default {
       }
     },
     handleOffline() {
-      // TODO: ADD APP BAR FOR CONNECTION STATUS
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
     },
     handleOnline() {
-      // TODO: ADD APP BAR FOR CONNECTION STATUS
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
     },
@@ -238,6 +236,16 @@ export default {
         if (this.$route.name !== 'home') {
           await this.$router.push({
             name: 'home'
+          })
+        }
+      } finally {
+        this.shown = true
+
+        if (!this.$route.params.tenant) {
+          this.$router.replace({
+            params: {
+              tenant: this.tenant.slug
+            }
           })
         }
       }
