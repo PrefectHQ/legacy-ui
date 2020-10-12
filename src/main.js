@@ -32,7 +32,7 @@ import TransitionHeight from '@/components/Functional/Transition-Height'
 // Apex charts component
 import VueApexCharts from 'vue-apexcharts'
 Vue.use(VueApexCharts)
-Vue.component('apexchart', VueApexCharts)
+Vue.component('ApexChart', VueApexCharts)
 
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
