@@ -538,7 +538,7 @@ export default {
           <span class="state-indicator px-4">
             <span>
               <v-tooltip v-if="entityState" bottom>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-icon
                     class="state-indicator-icon"
                     :class="{ 'fade-in-out': entityIsRunning }"
@@ -666,7 +666,7 @@ export default {
         open-delay="400"
         transition="fade-transition"
       >
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             :color="isTailingLogs ? 'primary' : 'secondaryGrayLight'"
             :class="{ 'white--text': isTailingLogs }"

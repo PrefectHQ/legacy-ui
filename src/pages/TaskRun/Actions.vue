@@ -37,7 +37,7 @@ export default {
       :include-text="true"
     />
     <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             class="vertical-button mr-2"

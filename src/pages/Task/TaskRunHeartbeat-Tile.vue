@@ -59,7 +59,7 @@ export default {
         flat
         style="max-width: 150px;"
       >
-        <template v-slot:prepend-inner>
+        <template #prepend-inner>
           <v-icon color="black" x-small>
             label_important
           </v-icon>

@@ -264,14 +264,14 @@ export default {
 
 <template>
   <ManagementLayout>
-    <template v-slot:title>Flow Concurrency</template>
+    <template #title>Flow Concurrency</template>
 
-    <template v-slot:subtitle>
+    <template #subtitle>
       Impose concurrency limits on the number of flows that are running at any
       given time
     </template>
 
-    <template v-if="hasManagementPermission" v-slot:cta>
+    <template v-if="hasManagementPermission" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -286,7 +286,7 @@ export default {
       </v-btn>
     </template>
 
-    <template v-else-if="!isTenantAdmin" v-slot:alerts>
+    <template v-else-if="!isTenantAdmin" #alerts>
       <v-alert
         class="mx-auto"
         border="left"
@@ -353,12 +353,12 @@ export default {
           no-results-text="No concurrency limits found. Try expanding your search?"
           no-data-text="This team has not set any flow concurrency limits yet."
         >
-          <template v-slot:header.tag="{ header }">
+          <template #header.tag="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
-          <template v-slot:header.usage="{ header }">
+          <template #header.usage="{ header }">
             <v-tooltip bottom open-delay="500">
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div class="subtitle-2" v-on="on">
                   {{ header.text.toUpperCase() }}
                   <v-icon
@@ -372,9 +372,9 @@ export default {
               Number of flows that are running with the given label
             </v-tooltip>
           </template>
-          <template v-slot:header.limit="{ header }">
+          <template #header.limit="{ header }">
             <v-tooltip bottom open-delay="500">
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div class="subtitle-2" v-on="on">
                   {{ header.text.toUpperCase() }}
                   <v-icon
@@ -390,11 +390,11 @@ export default {
             </v-tooltip>
           </template>
 
-          <template v-slot:item.label="{ item }">
+          <template #item.label="{ item }">
             <div class="body-2">{{ item.name }}</div>
           </template>
 
-          <template v-slot:item.usage="{ item }">
+          <template #item.usage="{ item }">
             <span>
               {{ item.usage }} running
               {{ item.usage === 1 ? 'flow' : 'flows' }} ({{
@@ -415,10 +415,10 @@ export default {
             </div>
           </template>
 
-          <template v-slot:item.limit="{ item }">
+          <template #item.limit="{ item }">
             <div class="subtitle-1 position-relative">
               <v-tooltip v-if="item.limit === 0" bottom open-delay="500">
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <div v-on="on">
                     {{ item.limit }}
                     <v-icon
@@ -441,9 +441,9 @@ export default {
             </div>
           </template>
 
-          <template v-slot:item.actions="{ item }">
+          <template #item.actions="{ item }">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   v-if="hasManagementPermission"
                   color="primary"
@@ -460,7 +460,7 @@ export default {
             </v-tooltip>
 
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   v-if="hasManagementPermission"
                   color="red"

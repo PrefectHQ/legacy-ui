@@ -247,33 +247,33 @@ export default {
       no-data-text="This team does not have any members yet."
     >
       <!-- HEADERS -->
-      <template v-slot:header.email="{ header }">
+      <template #header.email="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
-      <template v-slot:header.username="{ header }">
+      <template #header.username="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
-      <template v-slot:header.firstName="{ header }">
+      <template #header.firstName="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
-      <template v-slot:header.lastName="{ header }">
+      <template #header.lastName="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
-      <template v-slot:header.role="{ header }">
+      <template #header.role="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
 
       <!-- ROLE -->
-      <template v-slot:item.role="{ item }">
+      <template #item.role="{ item }">
         <v-chip small dark :color="roleColorMap[item.role] || 'secondaryLight'">
           {{ roleMap[item.role] || 'Unknown' }}
         </v-chip>
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="isTenantAdmin" v-slot:item.actions="{ item }">
+      <template v-if="isTenantAdmin" #item.actions="{ item }">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               text
               fab
@@ -292,7 +292,7 @@ export default {
           Modify this user's role
         </v-tooltip>
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               text
               fab
@@ -335,10 +335,10 @@ export default {
         prepend-icon="supervised_user_circle"
         :items="['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']"
       >
-        <template v-slot:item="{ item }">
+        <template #item="{ item }">
           {{ roleMap[item] }}
         </template>
-        <template v-slot:selection="{ item }">
+        <template #selection="{ item }">
           {{ roleMap[item] }}
         </template>
       </v-select>

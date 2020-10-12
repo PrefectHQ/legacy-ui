@@ -118,7 +118,7 @@ export default {
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
       >
-        <template v-slot:item.name="{ item }">
+        <template #item.name="{ item }">
           <router-link
             class="link"
             :data-cy="'task-link|' + item.name"
@@ -128,7 +128,7 @@ export default {
           </router-link>
         </template>
 
-        <template v-slot:item.mapped="{ item }">
+        <template #item.mapped="{ item }">
           <v-icon v-if="item.mapped" color="primary">
             check
           </v-icon>
@@ -137,22 +137,22 @@ export default {
           </span>
         </template>
 
-        <template v-slot:item.retry_delay="{ item }">
+        <template #item.retry_delay="{ item }">
           <span v-if="item.retry_delay">{{ item.retry_delay | duration }}</span>
           <span v-else>
             -
           </span>
         </template>
 
-        <template v-slot:item.max_retries="{ item }">
+        <template #item.max_retries="{ item }">
           {{ item.max_retries }}
         </template>
 
-        <template v-slot:item.type="{ item }">
+        <template #item.type="{ item }">
           {{ item.type | typeClass }}
         </template>
 
-        <template v-slot:item.trigger="{ item }">
+        <template #item.trigger="{ item }">
           {{ item.trigger | typeClass }}
         </template>
       </v-data-table>

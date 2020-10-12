@@ -93,11 +93,11 @@ export default {
     :step-number="state.stepNumber"
     @step-click="handleStepClick"
   >
-    <template v-slot:title>
+    <template #title>
       Running a Flow
     </template>
 
-    <template v-slot:description>
+    <template #description>
       <span>
         This tutorial guides you through the process of creating a project,
         authenticating with Prefect Cloud, and running a flow through a
@@ -114,17 +114,17 @@ export default {
       </span>
     </template>
 
-    <template v-slot:alert>
+    <template #alert>
       <span v-if="role === 'READ_ONLY_USER'">
         As a read-only user, you will not be able to complete this tutorial.
       </span>
     </template>
 
     <!-- STEP 1 -->
-    <template v-slot:tutorial-step-1-title>
+    <template #tutorial-step-1-title>
       Select a project
     </template>
-    <template v-slot:tutorial-step-1-content>
+    <template #tutorial-step-1-content>
       <CreateProjectStep
         :complete="!!state.projectId"
         @project-submitted="handleProjectSubmitted"
@@ -132,10 +132,10 @@ export default {
     </template>
 
     <!-- STEP 2 -->
-    <template v-slot:tutorial-step-2-title>
+    <template #tutorial-step-2-title>
       Deploy your flow
     </template>
-    <template v-slot:tutorial-step-2-content>
+    <template #tutorial-step-2-content>
       <DeployFlowStep
         v-if="state.projectId"
         :complete="!!state.flowId"
@@ -145,10 +145,10 @@ export default {
     </template>
 
     <!-- STEP 3 -->
-    <template v-slot:tutorial-step-3-title>
+    <template #tutorial-step-3-title>
       Set up your local environment
     </template>
-    <template v-slot:tutorial-step-3-content>
+    <template #tutorial-step-3-content>
       <p>
         Next, we need to make sure you have a working Python 3.6+ environment
         with the latest version of Prefect installed. You can install the latest
@@ -177,10 +177,10 @@ export default {
     </template>
 
     <!-- STEP 4 -->
-    <template v-slot:tutorial-step-4-title>
+    <template #tutorial-step-4-title>
       Log into Prefect Cloud from the CLI
     </template>
-    <template v-slot:tutorial-step-4-content>
+    <template #tutorial-step-4-content>
       <CreatePersonalAccessTokenStep
         @set-token="setPersonalAccessToken"
         @next="nextStep"
@@ -188,10 +188,10 @@ export default {
     </template>
 
     <!-- STEP 5 -->
-    <template v-slot:tutorial-step-5-title>
+    <template #tutorial-step-5-title>
       Run a Docker agent locally
     </template>
-    <template v-slot:tutorial-step-5-content>
+    <template #tutorial-step-5-content>
       <RunLocalAgentStep
         :agent-token-prop="state.agentToken"
         @agent-token-generated="handleAgentTokenGenerated"
@@ -200,10 +200,10 @@ export default {
     </template>
 
     <!-- STEP 6 -->
-    <template v-slot:tutorial-step-6-title>
+    <template #tutorial-step-6-title>
       Run the flow
     </template>
-    <template v-slot:tutorial-step-6-content>
+    <template #tutorial-step-6-content>
       <RunAFlowStep
         v-if="state.flowId"
         :flow-id="state.flowId"

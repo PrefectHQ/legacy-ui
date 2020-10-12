@@ -185,32 +185,32 @@ export default {
       no-data-text="There are no pending membership invitations."
     >
       <!-- HEADERS -->
-      <template v-slot:header.email="{ header }">
+      <template #header.email="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
-      <template v-slot:header.role="{ header }">
+      <template #header.role="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
-      <template v-slot:header.created="{ header }">
+      <template #header.created="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
 
       <!-- INVITATION SENT TIMESTAMP -->
-      <template v-slot:item.created="{ item }">
+      <template #item.created="{ item }">
         {{ formatDateTime(item.created) }}
       </template>
 
       <!-- ROLE -->
-      <template v-slot:item.role="{ item }">
+      <template #item.role="{ item }">
         <v-chip small dark :color="roleColorMap[item.role] || 'secondaryLight'">
           {{ roleMap[item.role] || 'Unknown' }}
         </v-chip>
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="isTenantAdmin" v-slot:item.action="{ item }">
+      <template v-if="isTenantAdmin" #item.action="{ item }">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               text
               fab
