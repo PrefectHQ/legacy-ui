@@ -16,7 +16,12 @@ const authNavGuard = async (to, from, next) => {
   // If this is a Server deployment,
   // we bypass authentication
   if (isServer()) return next()
-  if (isAuthenticated() && isAuthorized() && store.getters['user/userIsSet']) {
+  if (
+    isAuthenticated() &&
+    isAuthorized() &&
+    store.getters['user/userIsSet'] &&
+    !redirectRoute
+  ) {
     return next()
   }
 
@@ -38,6 +43,7 @@ const authNavGuard = async (to, from, next) => {
 
   const redirectRoute = store.getters['auth0/redirectRoute']
   if (redirectRoute) {
+    console.log('redirect route', redirectRoute)
     store.dispatch('auth0/removeRedirectRoute')
     if (to.query && to.query.code) delete to.query.code
     if (to.query && to.query.state) delete to.query.state

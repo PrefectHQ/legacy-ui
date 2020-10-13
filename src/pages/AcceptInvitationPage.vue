@@ -6,7 +6,9 @@ export default {
     return {
       loading: false,
       error: false,
-      invitationId: this.$route.query.invitation_id,
+      invitationId:
+        this.$route.query.invitation_id ||
+        sessionStorage.getItem('invitationId'),
       membershipInvitation: null,
       errorMessage:
         'It looks like there was a problem with your invitation.  Please check the details and your account and try again.'
@@ -16,6 +18,7 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant']),
     teamName() {
+      console.log(this.invitationId)
       return this.membershipInvitation[0]?.tenant?.name || 'your new team'
     },
     userName() {
@@ -99,7 +102,8 @@ export default {
           >
             <div>
               <span v-if="error"> {{ errorMessage }} </span>
-              <span v-else>
+              <span v-else
+                >{{ teamName }}
                 We can't find your membership invitation. Have you already
                 accepted?
               </span>
