@@ -248,7 +248,7 @@ export default {
         </template>
 
         <template #item.flow_runs="{ item }">
-          <div class="position-relative allow-overflow">
+          <div class="position-relative allow-overflow" style="height: 55px;">
             <LastTenRuns :flow-id="item.id" :archived="item.archived" />
           </div>
         </template>
