@@ -18,7 +18,6 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant']),
     teamName() {
-      console.log(this.invitationId)
       return this.membershipInvitation[0]?.tenant?.name || 'your new team'
     },
     userName() {
@@ -102,8 +101,7 @@ export default {
           >
             <div>
               <span v-if="error"> {{ errorMessage }} </span>
-              <span v-else
-                >{{ teamName }}
+              <span v-else>
                 We can't find your membership invitation. Have you already
                 accepted?
               </span>
