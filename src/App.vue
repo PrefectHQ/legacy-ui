@@ -223,7 +223,12 @@ export default {
         if (this.defaultTenant?.id) {
           await this.setCurrentTenant(this.defaultTenant.slug)
 
-          if (this.isCloud && !this.tenant.settings.teamNamed) {
+          const acceptingInvitation = sessionStorage.getItem('invitationId')
+          if (
+            this.isCloud &&
+            !this.tenant.settings.teamNamed &&
+            !acceptingInvitation
+          ) {
             await this.$router.push({
               name: 'welcome',
               params: {
@@ -232,7 +237,7 @@ export default {
             })
           }
         }
-      } catch {
+      } catch (e) {
         if (this.$route.name !== 'home') {
           await this.$router.push({
             name: 'home'
