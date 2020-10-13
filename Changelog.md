@@ -11,6 +11,7 @@
 
 - Fix dashboard flicker on load - [#313](https://github.com/PrefectHQ/ui/pull/313)
 - Fix missing tenant slug in url - [#313](https://github.com/PrefectHQ/ui/pull/313)
+- Prevent flow table rows expanding on load [#323](https://github.com/PrefectHQ/ui/pull/323)
 
 ## 2020-10-09
 
