@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Only add params to Cloud dashbaord to prevent Vue Router relative params error []()
 
 ## 2020-10-13
 
