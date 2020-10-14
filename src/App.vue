@@ -240,8 +240,7 @@ export default {
         }
       } finally {
         this.shown = true
-
-        if (!this.$route.params.tenant) {
+        if (this.isCloud && !this.$route.name && !this.$route.params.tenant) {
           this.$router.replace({
             params: {
               tenant: this.tenant.slug
