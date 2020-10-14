@@ -408,8 +408,4 @@ export default {
 .scroll-across {
   overflow: scroll;
 }
-
-// .v-list-item__content {
-//   overflow: scroll;
-// }
 </style>
