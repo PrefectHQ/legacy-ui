@@ -397,3 +397,15 @@ export default {
     </v-list-item-action>
   </v-list-item>
 </template>
+
+<style lang="scss" scoped>
+/* stylelint-disable */
+.v-list-item__action--stack {
+  align-items: flex-start;
+  flex-direction: row;
+}
+
+.v-list-item__content {
+  overflow: scroll;
+}
+</style>

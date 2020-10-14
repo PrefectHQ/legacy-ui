@@ -576,20 +576,6 @@ export default {
     }
   }
 }
-/* stylelint-disable */
-
-.v-list-item__action--stack {
-  align-items: flex-start;
-  flex-direction: row;
-}
-
-.v-text-field input {
-  width: 100px;
-}
-
-.v-list-item__content {
-  overflow: scroll;
-}
 
 .w-100 {
   width: 100% !important;
