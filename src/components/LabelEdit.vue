@@ -165,7 +165,7 @@ export default {
 
 <template>
   <v-list-item dense class="px-0">
-    <v-list-item-content width="800px" class="scroll-across">
+    <v-list-item-content width="800px" class="overflow-x-scroll">
       <v-list-item-subtitle class="caption">
         Labels
         <v-menu :close-on-content-click="false" offset-y open-on-hover>
@@ -403,9 +403,5 @@ export default {
 .v-list-item__action--stack {
   align-items: flex-start;
   flex-direction: row;
-}
-
-.scroll-across {
-  overflow: scroll;
 }
 </style>
