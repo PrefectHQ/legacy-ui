@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Fix Vue Router relative params error [#331](https://github.com/PrefectHQ/ui/pull/331)
+- Move styling for the label edit component to the correct component and add scoping [#330](https://github.com/PrefectHQ/ui/pull/330)
 
 ## 2020-10-13
 
