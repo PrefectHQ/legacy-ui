@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Move styling for the label edit component to the correct component and add scoping [#330](https://github.com/PrefectHQ/ui/pull/330)
 
 ## 2020-10-13
 
