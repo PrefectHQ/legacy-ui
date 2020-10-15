@@ -191,8 +191,8 @@ export default {
       this.handlePostTokenRouting()
     },
     handlePostTokenRouting() {
-      //there's a race condition between tenant being set (thought the tenant nav guard) and tenant connected routes being called. Routing to home as a fallback.
-      if (!this.tenant) {
+      //there's a race condition between tenant being set and tenant connected routes being called. Routing to home as a fallback.
+      if (!this.tenant && this.$route.name != 'home') {
         this.$router.push({
           name: 'home'
         })
@@ -219,7 +219,7 @@ export default {
       } else {
         this.$router.push({
           name: this.$route.name,
-          params: { ...this.$route.params, tenant: this.tenant.slug }
+          params: { ...this.$route.params, tenant: this.tenant?.slug }
         })
       }
     },
