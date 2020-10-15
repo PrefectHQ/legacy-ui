@@ -191,6 +191,14 @@ export default {
       this.handlePostTokenRouting()
     },
     handlePostTokenRouting() {
+      //there's a race condition between tenant being set and tenant connected routes being called. Routing to home as a fallback.
+      if (!this.tenant && this.$route.name != 'home') {
+        this.$router.push({
+          name: 'home'
+        })
+        return
+      }
+
       if (this.isCloud && !this.tenant.settings.teamNamed) {
         this.$router.push({
           name: 'welcome',
@@ -198,10 +206,8 @@ export default {
             tenant: this.tenant.slug
           }
         })
-
         return
       }
-
       if (
         tenantProtectedRoutes.includes(this.$route.name) ||
         (this.isServer && backendProtectedRoutes.includes(this.$route.name))
@@ -213,7 +219,7 @@ export default {
       } else {
         this.$router.push({
           name: this.$route.name,
-          params: { ...this.$route.params, tenant: this.tenant.slug }
+          params: { ...this.$route.params, tenant: this.tenant?.slug }
         })
       }
     },

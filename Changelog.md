@@ -4,6 +4,17 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- Fix Vue Router relative params error [#331](https://github.com/PrefectHQ/ui/pull/331)
+- Move styling for the label edit component to the correct component and add scoping [#330](https://github.com/PrefectHQ/ui/pull/330)
+
+## 2020-10-13
+
+### Features and Improvements
+
 - Check labels on `flow.run_config` when generating warning for flow labels without an agent [#312](https://github.com/PrefectHQ/ui/pull/312)
 - Use labels from `flow.run_config` if present [#309](https://github.com/PrefectHQ/ui/pull/309)
 
@@ -12,6 +23,7 @@
 - Fix bug where "Loading" still showed after flow name had loaded on hooks page [#288](https://github.com/PrefectHQ/ui/issues/288)
 - Fix dashboard flicker on load - [#313](https://github.com/PrefectHQ/ui/pull/313)
 - Fix missing tenant slug in url - [#313](https://github.com/PrefectHQ/ui/pull/313)
+- Prevent flow table rows expanding on load [#323](https://github.com/PrefectHQ/ui/pull/323)
 
 ## 2020-10-09
 

@@ -190,7 +190,6 @@ export default {
     },
     async startup() {
       this.startupHasRun = true
-
       try {
         if (this.isCloud) {
           if (!this.isAuthorized) {
@@ -245,8 +244,7 @@ export default {
         }
       } finally {
         this.shown = true
-
-        if (!this.$route.params.tenant) {
+        if (this.route === 'dashboard' && !this.$route.params.tenant) {
           this.$router.replace({
             params: {
               tenant: this.tenant.slug
@@ -298,13 +296,6 @@ export default {
 <template>
   <v-app class="app">
     <v-main :class="{ 'pt-0': isWelcome }">
-      <v-progress-linear
-        absolute
-        :active="isLoggingInUser"
-        indeterminate
-        height="5"
-      />
-
       <v-slide-y-transition>
         <NavBar v-if="shown && loadedComponents > 0" />
       </v-slide-y-transition>
@@ -318,6 +309,28 @@ export default {
         <v-card class="error--login">
           <v-card-text>{{ error }}</v-card-text>
         </v-card>
+      </v-container>
+
+      <v-container v-if="!shown" class="fill-height" justify-center>
+        <v-row justify="center">
+          <v-col class="cols-8">
+            <div v-if="isLoggingInUser" class="display-3 text-center mb-4">
+              Drawing edges....
+            </div>
+            <div v-else-if="isAuthenticated" class="display-3 text-center mb-4">
+              Calculating node distances....
+            </div>
+            <div v-else class="display-3 text-center mb-4">
+              Fetching flows....
+            </div>
+            <v-progress-linear
+              color="codePink"
+              indeterminate
+              rounded
+              height="6"
+            ></v-progress-linear>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
 
