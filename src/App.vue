@@ -315,6 +315,9 @@ export default {
             <div v-else-if="isAuthenticated" class="display-3 text-center mb-4">
               Calculating node distances....
             </div>
+            <div v-else class="display-3 text-center mb-4">
+              Fetching flows....
+            </div>
             <v-progress-linear
               color="codePink"
               indeterminate
