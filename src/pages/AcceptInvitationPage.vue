@@ -16,7 +16,6 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant']),
     teamName() {
-      console.log('invit', this.membershipInvitation)
       return this.membershipInvitation[0]?.tenant?.name || 'your new team'
     },
     userName() {
