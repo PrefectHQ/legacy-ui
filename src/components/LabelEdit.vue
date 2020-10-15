@@ -165,7 +165,7 @@ export default {
 
 <template>
   <v-list-item dense class="px-0">
-    <v-list-item-content width="800px" class="overflow-x-scroll scroll-across">
+    <v-list-item-content width="800px" class="scroll-across">
       <v-list-item-subtitle class="caption">
         Labels
         <v-menu :close-on-content-click="false" offset-y open-on-hover>
