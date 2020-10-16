@@ -43,7 +43,6 @@ const authNavGuard = async (to, from, next) => {
 
   const redirectRoute = store.getters['auth0/redirectRoute']
   if (redirectRoute) {
-    console.log('redirect route', redirectRoute)
     store.dispatch('auth0/removeRedirectRoute')
     if (to.query && to.query.code) delete to.query.code
     if (to.query && to.query.state) delete to.query.state

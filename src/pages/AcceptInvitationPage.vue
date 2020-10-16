@@ -93,13 +93,15 @@ export default {
 
 <template>
   <v-container v-if="$apollo.loading || loading">
-    <v-progress-circular
-      color="codePink"
-      class="position-absolute center"
-      indeterminate
-      size="150"
-      width="10"
-    />
+    <v-row justify="center" align="center">
+      <v-progress-circular
+        color="codePink"
+        class="position-absolute"
+        indeterminate
+        size="150"
+        width="10"
+      />
+    </v-row>
   </v-container>
 
   <v-container v-else class="text-center fill-height pa-0" fluid>
@@ -132,8 +134,8 @@ export default {
           </div>
         </div>
         <v-row>
-          <v-col cols="12">
-            <v-btn v-if="!invitationError" class="mr-3" @click="accept">
+          <v-col v-if="!invitationError" cols="12">
+            <v-btn class="mr-3" @click="accept">
               Join
             </v-btn>
             <v-btn :to="{ name: 'dashboard' }">

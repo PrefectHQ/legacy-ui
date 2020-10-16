@@ -223,23 +223,16 @@ export default {
         if (this.defaultTenant?.id) {
           await this.setCurrentTenant(this.defaultTenant.slug)
 
-          const acceptingInvitation =
-            sessionStorage.getItem('invitationId') &&
-            this.$route.name === 'accept'
-
-          if (this.isCloud && acceptingInvitation) {
-            return
-          }
+          const acceptingInvitation = sessionStorage.getItem('invitationId')
 
           if (
-            this.isCloud &&
-            !this.tenant.settings.teamNamed &&
-            !acceptingInvitation
+            (this.isCloud && !this.tenant.settings.teamNamed) ||
+            (this.isCloud && acceptingInvitation)
           ) {
             await this.$router.push({
               name: 'welcome',
               params: {
-                tenant: this.tenant.slug
+                tenant: this.tenant?.slug
               }
             })
           }
