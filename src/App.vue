@@ -61,7 +61,8 @@ export default {
       return (
         this.$route.name === 'welcome' ||
         this.$route.name === 'onboard-resources' ||
-        this.$route.name === 'name-team'
+        this.$route.name === 'name-team' ||
+        this.$route.name === 'accept'
       )
     }
   },
@@ -222,7 +223,14 @@ export default {
         if (this.defaultTenant?.id) {
           await this.setCurrentTenant(this.defaultTenant.slug)
 
-          const acceptingInvitation = sessionStorage.getItem('invitationId')
+          const acceptingInvitation =
+            sessionStorage.getItem('invitationId') &&
+            this.$route.name === 'accept'
+
+          if (this.isCloud && acceptingInvitation) {
+            return
+          }
+
           if (
             this.isCloud &&
             !this.tenant.settings.teamNamed &&
@@ -327,6 +335,7 @@ export default {
               color="codePink"
               indeterminate
               rounded
+              width="2"
               height="6"
             ></v-progress-linear>
           </v-col>

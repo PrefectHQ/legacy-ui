@@ -301,6 +301,11 @@ const actions = {
     const prefectAuthorization = await prefectRefresh(
       getters['authorizationToken']
     )
+    if (!prefectAuthorization) {
+      dispatch('authorize')
+      return
+    }
+
     dispatch('updateAuthorization', prefectAuthorization)
     commit('isRefreshingAuthorization', false)
   },

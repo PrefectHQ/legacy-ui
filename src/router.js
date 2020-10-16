@@ -32,15 +32,6 @@ export const routes = [
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
-    name: 'accept',
-    path: '/accept',
-    component: () =>
-      import(
-        /* webpackChunkName: "accept" */ '@/pages/AcceptInvitationPage.vue'
-      ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-  },
-  {
     name: 'project',
     path: '/:tenant?/project/:id',
     component: () =>
@@ -234,6 +225,14 @@ export const routes = [
         component: () =>
           import(
             /* webpackChunkName: "onboard--resources" */ '@/pages/Onboard/Resources.vue'
+          )
+      },
+      {
+        name: 'accept',
+        path: 'accept',
+        component: () =>
+          import(
+            /* webpackChunkName: "accept" */ '@/pages/AcceptInvitationPage.vue'
           )
       }
     ]

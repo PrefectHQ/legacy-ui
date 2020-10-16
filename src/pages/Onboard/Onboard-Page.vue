@@ -11,7 +11,7 @@ export default {
       return {
         'overflow-y-hidden': this.$vuetify.breakpoint.mdAndUp,
         'bg-blue': route == 'welcome',
-        'bg-grey': route == 'name-team'
+        'bg-grey': route == 'name-team' || route == 'accept'
       }
     },
     noSlash() {
@@ -120,17 +120,24 @@ export default {
       >
       </div>
       <div
+        v-if="$vuetify.breakpoint.mdAndUp || $route.name == 'accept'"
+        key="slash-3"
+        class="slash-grey o-slash slash-3"
+        :class="[slash4Class, $vuetify.breakpoint.mdAndUp ? 'slash-4' : '']"
+      >
+      </div>
+      <div
         v-if="$vuetify.breakpoint.mdAndUp"
-        key="slash-4"
-        class="slash-grey o-slash slash-4"
+        key="slash-5"
+        class="slash-grey o-slash slash-5"
         :class="slash4Class"
       >
       </div>
       <div
         v-if="$vuetify.breakpoint.mdAndUp"
         key="slash-5"
-        class="slash-orange o-slash slash-5"
-        :class="slash5Class"
+        class="slash-orange o-slash slash-6"
+        :class="slash6Class"
       >
       </div>
 
@@ -164,6 +171,21 @@ export default {
           ]"
           :style="slash2Style(i)"
         ></div>
+        <div
+          v-if="$vuetify.breakpoint.mdAndUp && $route.name == 'accept'"
+          key="name-team-slashes"
+        >
+          <div
+            v-for="i in noSlash"
+            :key="`name-team-slash-${i}`"
+            class="o-slash slash-2"
+            :class="[
+              slash2Class,
+              i % 2 === 0 ? 'slash-grey' : 'slash-grey-reverse'
+            ]"
+            :style="slash2Style(i)"
+          ></div>
+        </div>
       </div>
     </transition-group>
 
