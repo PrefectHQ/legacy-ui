@@ -16,12 +16,7 @@ const authNavGuard = async (to, from, next) => {
   // If this is a Server deployment,
   // we bypass authentication
   if (isServer()) return next()
-  if (
-    isAuthenticated() &&
-    isAuthorized() &&
-    store.getters['user/userIsSet'] &&
-    !redirectRoute
-  ) {
+  if (isAuthenticated() && isAuthorized() && store.getters['user/userIsSet']) {
     return next()
   }
 

@@ -302,6 +302,7 @@ const actions = {
       getters['authorizationToken']
     )
     if (!prefectAuthorization) {
+      console.log('refresh failed CALLING AUTHORIZE')
       dispatch('authorize')
       return
     }
