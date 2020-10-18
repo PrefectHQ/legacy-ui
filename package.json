@@ -23,7 +23,7 @@
     "codemirror-graphql": "^0.12.2",
     "cronstrue": "^1.100.0",
     "d3": "^6.2.0",
-    "d3-dag": "0.3.5",
+    "d3-dag": "0.4.6",
     "d3-zoom": "^2.0.0",
     "graphql": "^15.1.0",
     "js-beautify": "^1.13.0",
