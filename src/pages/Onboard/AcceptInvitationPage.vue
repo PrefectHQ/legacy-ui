@@ -96,9 +96,13 @@ export default {
 </script>
 
 <template>
-  <v-container class="text-center fill-height pa-0" fluid>
-    <v-slide-x-transition v-if="invitationError && !loadingPage">
-      <div class="grey--text text--lighten-5 welcome-text">
+  <v-container
+    v-if="invitationError && !loadingPage"
+    class="text-center fill-height px-0 py-16"
+    fluid
+  >
+    <v-row align="center">
+      <v-col class="grey--text text--lighten-5 mx-12">
         <div class="display-1">
           <span v-if="error"> {{ errorMessage }} </span>
           <span v-else>
@@ -107,7 +111,7 @@ export default {
         </div>
         <div>
           <v-btn
-            class="dashboard-link-absolute mt-8"
+            class="mt-8"
             color="primary"
             x-large
             :to="{ name: 'dashboard' }"
@@ -116,107 +120,48 @@ export default {
             <v-icon right>fas fa-rocket</v-icon>
           </v-btn>
         </div>
-      </div>
-    </v-slide-x-transition>
-
-    <v-slide-x-transition v-else>
-      <div>
-        <div class="display-1">
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-container v-else class="text-center fill-height px-0 py-16" fluid>
+    <v-row />
+    <v-row>
+      <v-col>
+        <div class="display-1 grey--text text--lighten-5">
           You've been invited to join {{ teamName }}!
         </div>
-        <div class="subtitle mt-8"> To accept, please click below. </div>
-      </div>
+        <div class="subtitle grey--text text--lighten-5 mt-4">
+          To accept, please click below.
+        </div>
+        <div class="mt-8">
+          <v-btn class="mr-3" color="accentPink" dark depressed @click="accept">
+            <v-icon class="pr-4">fa-user-friends</v-icon>
+            Accept
+          </v-btn>
 
-      <v-row>
-        <v-col v-if="!invitationError && !loadingPage" cols="12">
-          <div>
-            <v-btn
-              class="mr-3"
-              color="accentPink"
-              dark
-              depressed
-              @click="accept"
-            >
-              <v-icon class="pr-4">fa-user-friends</v-icon>
-              Accept
-            </v-btn>
-            <v-btn text class="white--text" :to="{ name: 'dashboard' }">
-              No thanks!
-            </v-btn>
-          </div>
-        </v-col>
-      </v-row>
-    </v-slide-x-transition>
+          <v-btn text class="white--text" :to="{ name: 'dashboard' }">
+            Not right now...
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
+
+    <v-row />
+
+    <v-row align="center">
+      <v-col>
+        <div class="mx-12 grey--text text--lighten-5 body-1 text--primary">
+          For more information about teams in Prefect Cloud, check out
+          <router-link
+            to="https://docs.prefect.io/orchestration/ui/team-settings.html"
+            class="link-color"
+          >
+            the docs!
+          </router-link>
+        </div>
+      </v-col>
+    </v-row>
+
+    <v-row />
   </v-container>
-
-  <!-- <v-container v-else class="text-center">
-    <v-row>
-      <v-col cols="12">
-        <img
-          class="logo"
-          src="@/assets/logos/logo-full-color-horizontal.svg"
-          alt="The Prefect Logo"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <div v-if="error || !membershipInvitation || !membershipInvitation[0]">
-          <div>
-            <span v-if="error"> {{ errorMessage }} </span>
-            <span v-else>
-              We can't find your membership invitation. Have you already
-              accepted?
-            </span>
-          </div>
-        </div>
-        <div v-else>
-          <div class="display-1"> Welcome to Prefect Cloud {{ userName }} </div>
-          <div id="name" class="subtitle-1">
-            Welcome to {{ teamName }}. To join, please click below.
-          </div>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-btn
-          v-if="
-            !error &&
-              !loading &&
-              membershipInvitation &&
-              membershipInvitation[0]
-          "
-          class="mr-3"
-          @click="accept"
-        >
-          Join
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-container> -->
 </template>
-
-<style lang="scss" scoped>
-.fill-height {
-  height: 100vh !important;
-}
-
-.welcome-text {
-  left: 50%;
-  max-width: 700px;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  z-index: 1;
-}
-
-.logo {
-  img {
-    height: auto;
-    max-width: 700px;
-    width: 90%;
-  }
-}
-</style>
