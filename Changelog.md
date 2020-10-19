@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- What's New notifications are now marked as read when clicked from the dashboard. 
 
 ### Bugfixes
 
