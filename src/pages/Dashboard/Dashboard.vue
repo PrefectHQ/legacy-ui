@@ -160,6 +160,7 @@ export default {
       return 'overview'
     },
     refresh() {
+      console.log('refreshing')
       let start
 
       const animationDuration = 150

@@ -56,6 +56,7 @@ const tenantNavGuard = async (to, from, next) => {
       query: to.query
     })
   }
+  console.log(passedTenantSlug, tenantIsSet, defaultTenantSlug)
 
   // Else if a default tenant slug exists
   // whether from the tenant associated with the default membership id or
@@ -73,6 +74,7 @@ const tenantNavGuard = async (to, from, next) => {
   // Otherwise, we direct to the get started page because we are either not
   // connected to an API or we have no access to a tenant
   // Note: this should only be possible in Server
+
   return next({
     name: 'home'
   })

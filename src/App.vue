@@ -70,6 +70,8 @@ export default {
       this.loadedComponents = 0
       this.shown = false
 
+      console.log('refreshingtimeout')
+
       this.refreshTimeout = setTimeout(() => {
         this.shown = true
         this.refresh()
@@ -190,65 +192,66 @@ export default {
     },
     async startup() {
       this.startupHasRun = true
+      this.shown = true
 
-      try {
-        if (this.isCloud) {
-          if (!this.isAuthorized) {
-            await this.authorize()
-          }
+      // try {
+      //   if (this.isCloud) {
+      //     if (!this.isAuthorized) {
+      //       await this.authorize()
+      //     }
 
-          if (!this.userIsSet) {
-            await this.getUser()
-          }
-        }
+      //     if (!this.userIsSet) {
+      //       await this.getUser()
+      //     }
+      //   }
 
-        await this.getApi()
+      //   await this.getApi()
 
-        await this.getTenants()
+      //   await this.getTenants()
 
-        if (this.isServer && !this.tenants?.length) {
-          // Server has no tenants so redirect to home
-          if (this.$route.name !== 'home') {
-            await this.$router.push({
-              name: 'home'
-            })
-          }
-        }
+      //   if (this.isServer && !this.tenants?.length) {
+      //     // Server has no tenants so redirect to home
+      //     if (this.$route.name !== 'home') {
+      //       await this.$router.push({
+      //         name: 'home'
+      //       })
+      //     }
+      //   }
 
-        if (this.isServer && this.tenants?.length) {
-          // If this is Server, there won't be a default tenant, so we'll set one
-          this.setDefaultTenant(this.tenants?.[0])
-        }
+      //   if (this.isServer && this.tenants?.length) {
+      //     // If this is Server, there won't be a default tenant, so we'll set one
+      //     this.setDefaultTenant(this.tenants?.[0])
+      //   }
 
-        if (this.defaultTenant?.id) {
-          await this.setCurrentTenant(this.defaultTenant.slug)
+      //   if (this.defaultTenant?.id) {
+      //     await this.setCurrentTenant(this.defaultTenant.slug)
 
-          if (this.isCloud && !this.tenant.settings.teamNamed) {
-            await this.$router.push({
-              name: 'welcome',
-              params: {
-                tenant: this.tenant.slug
-              }
-            })
-          }
-        }
-      } catch {
-        if (this.$route.name !== 'home') {
-          await this.$router.push({
-            name: 'home'
-          })
-        }
-      } finally {
-        this.shown = true
+      //     if (this.isCloud && !this.tenant.settings.teamNamed) {
+      //       await this.$router.push({
+      //         name: 'welcome',
+      //         params: {
+      //           tenant: this.tenant.slug
+      //         }
+      //       })
+      //     }
+      //   }
+      // } catch {
+      //   if (this.$route.name !== 'home') {
+      //     await this.$router.push({
+      //       name: 'home'
+      //     })
+      //   }
+      // } finally {
+      //   this.shown = true
 
-        if (!this.$route.params.tenant) {
-          this.$router.replace({
-            params: {
-              tenant: this.tenant.slug
-            }
-          })
-        }
-      }
+      //   if (!this.$route.params.tenant) {
+      //     this.$router.replace({
+      //       params: {
+      //         tenant: this.tenant.slug
+      //       }
+      //     })
+      //   }
+      // }
     },
     refresh() {
       let start
@@ -301,12 +304,12 @@ export default {
       />
 
       <v-slide-y-transition>
-        <NavBar v-if="shown && loadedComponents > 0" />
+        <NavBar v-if="loadedComponents > 0" />
       </v-slide-y-transition>
 
-      <SideNav v-if="shown" />
+      <SideNav />
       <v-fade-transition mode="out-in">
-        <router-view v-if="shown" class="router-view" />
+        <router-view class="router-view" />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>
