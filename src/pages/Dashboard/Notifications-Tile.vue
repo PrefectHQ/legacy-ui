@@ -74,6 +74,18 @@ export default {
     notificationNavigation(notification) {
       return navigationMap[notification.type](notification, this.tenant)
     },
+    async markAsRead(notification) {
+      if (notification.content.link) {
+        this.loadingKey++
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/mark-as-read.gql'),
+          variables: {
+            input: { message_id: notification.id }
+          }
+        })
+        this.loadingKey--
+      }
+    },
     routeToNotifications() {
       this.$router.push({
         name: 'notifications'
@@ -140,6 +152,7 @@ export default {
             :href="n.content.link"
             :target="notificationNavigation(n) ? null : '_blank'"
             exact
+            @click="markAsRead(n)"
           >
             <v-icon small class="mr-4 grey--text text--darken-1">
               {{ n.content.icon ? n.content.icon : notificationIcon(n.type) }}
