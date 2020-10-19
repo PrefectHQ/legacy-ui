@@ -34,6 +34,8 @@ const authNavGuard = async (to, from, next) => {
     return next(false)
   }
 
+  if (!store.getters['api/isConnected']) await store.dispatch('api/getApi')
+
   if (!store.getters['user/userIsSet']) await store.dispatch('user/getUser')
 
   const redirectRoute = store.getters['auth0/redirectRoute']

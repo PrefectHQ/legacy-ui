@@ -56,7 +56,6 @@ const tenantNavGuard = async (to, from, next) => {
       query: to.query
     })
   }
-  console.log(passedTenantSlug, tenantIsSet, defaultTenantSlug)
 
   // Else if a default tenant slug exists
   // whether from the tenant associated with the default membership id or
