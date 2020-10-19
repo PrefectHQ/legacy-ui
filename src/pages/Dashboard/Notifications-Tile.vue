@@ -84,7 +84,6 @@ export default {
           }
         })
         this.loadingKey--
-        // this.$router.push({name: "notifications"})
       }
     },
     routeToNotifications() {
