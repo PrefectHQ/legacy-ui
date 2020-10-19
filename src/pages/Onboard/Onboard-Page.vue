@@ -11,7 +11,7 @@ export default {
       return {
         'overflow-y-hidden': this.$vuetify.breakpoint.mdAndUp,
         'bg-blue': route == 'welcome',
-        'bg-grey': route == 'name-team'
+        'bg-grey': route == 'name-team' || route == 'accept'
       }
     },
     noSlash() {
@@ -113,7 +113,11 @@ export default {
       >
       </div>
       <div
-        v-if="$vuetify.breakpoint.mdAndUp || $route.name == 'name-team'"
+        v-if="
+          $vuetify.breakpoint.mdAndUp ||
+            $route.name == 'name-team' ||
+            $route.name == 'accept'
+        "
         key="slash-3"
         class="slash-grey o-slash slash-3"
         :class="[slash3Class, $vuetify.breakpoint.mdAndUp ? 'slash-3' : '']"

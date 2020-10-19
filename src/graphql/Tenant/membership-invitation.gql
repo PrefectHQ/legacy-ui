@@ -1,5 +1,5 @@
-query Memberships($id: uuid) {
-  membership_invitation(where: { id: { _eq: $id } }) {
+query Memberships($id: uuid!) {
+  membership_invitation_by_pk(id: $id ) {
     id
     created
     email
