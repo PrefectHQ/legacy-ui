@@ -2,11 +2,13 @@
 import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
 import { formatTime } from '@/mixins/formatTimeMixin'
+
 // Notification type-specific components
 import ApprovalNotification from '@/pages/Notifications/NotificationTypes/Approval-Notification'
 import FlowRunNotification from '@/pages/Notifications/NotificationTypes/FlowRun-Notification'
 import MembershipNotification from '@/pages/Notifications/NotificationTypes/Membership-Notification'
 import WhatsNewNotification from '@/pages/Notifications/NotificationTypes/WhatsNew-Notification'
+
 import {
   componentMap,
   iconMap,
@@ -55,6 +57,7 @@ export default {
         ],
         read: { _eq: false }
       }
+
       return where
     }
   },
@@ -70,19 +73,6 @@ export default {
     },
     notificationNavigation(notification) {
       return navigationMap[notification.type](notification, this.tenant)
-    },
-    async markAsRead(notification) {
-      if (notification.content.link) {
-        this.loadingKey++
-        await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/mark-as-read.gql'),
-          variables: {
-            input: { message_id: notification.id }
-          }
-        })
-        this.loadingKey--
-        // this.$router.push({name: "notifications"})
-      }
     },
     routeToNotifications() {
       this.$router.push({
@@ -124,6 +114,7 @@ export default {
   }
 }
 </script>
+
 <template>
   <v-card class="py-2 position-relative" style="height: 330px;" tile>
     <CardTitle
@@ -133,9 +124,11 @@ export default {
       icon-class="mb-1"
       :loading="isLoading"
     />
+
     <v-card-text class="pa-0 card-content">
       <v-skeleton-loader v-if="isLoading" type="list-item-three-line">
       </v-skeleton-loader>
+
       <v-list v-else-if="notificationsCount > 0">
         <template v-for="(n, i) in notifications">
           <v-list-item
@@ -143,15 +136,15 @@ export default {
             class="position-relative"
             :class="n.read ? 'o-60 hover-o-100' : ''"
             :disabled="isLoading > 0"
-            :href="n.content.link"
             :to="notificationNavigation(n)"
+            :href="n.content.link"
             :target="notificationNavigation(n) ? null : '_blank'"
             exact
-            @click="markAsRead(n)"
           >
             <v-icon small class="mr-4 grey--text text--darken-1">
               {{ n.content.icon ? n.content.icon : notificationIcon(n.type) }}
             </v-icon>
+
             <component
               :is="notificationComponent(n.type)"
               :timestamp="formatDateTime(n.created)"
@@ -159,6 +152,7 @@ export default {
               :content="n.content"
               :read="n.read"
             />
+
             <v-list-item-avatar v-if="notificationNavigation(n)">
               <v-icon>arrow_right</v-icon>
             </v-list-item-avatar>
@@ -166,11 +160,13 @@ export default {
           <v-divider :key="i" class="my-1 mx-4 grey lighten-4" />
         </template>
       </v-list>
+
       <v-list v-else>
         <v-list-item>
           <v-list-item-avatar class="mr-0">
             <v-icon class="green--text">check</v-icon>
           </v-list-item-avatar>
+
           <v-list-item-content class="my-0 py-3">
             <div
               class="subtitle-1 font-weight-light"
@@ -190,6 +186,7 @@ export default {
     </v-card-actions>
   </v-card>
 </template>
+
 <style lang="scss" scoped>
 .card-content {
   height: 100%;

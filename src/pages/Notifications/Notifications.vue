@@ -6,6 +6,7 @@ import NotificationsLayout from '@/layouts/NotificationsLayout'
 import SubPageNav from '@/layouts/SubPageNav'
 import gql from 'graphql-tag'
 import LogRocket from 'logrocket'
+
 export default {
   components: {
     BreadCrumbs,
@@ -16,6 +17,7 @@ export default {
   filters: {},
   async beforeRouteLeave(to, from, next) {
     if (!to.query?.notification_id) return next()
+
     try {
       if (to.query?.notification_id) {
         let mutationString = gql`
@@ -26,9 +28,11 @@ export default {
           }
         }
       `
+
         await this.$apollo.mutate({
           mutation: mutationString
         })
+
         delete to.query.notification_id
       }
     } finally {
@@ -95,6 +99,7 @@ export default {
     },
     where() {
       let where = {}
+
       if (this.read !== 0) {
         where.read = { _eq: this.read }
       }
@@ -108,12 +113,14 @@ export default {
     },
     teams(val) {
       if (!val) return
+
       this.counts = val.map(v => {
         return {
           id: v.id,
           count: 0
         }
       })
+
       // This pushes the user notifications count object
       this.counts.push({
         id: 'user-notifications',
@@ -140,9 +147,13 @@ export default {
     },
     async deleteMessages() {
       if (this.selected?.length === 0) return
+
       this.loading++
+
       let messageMutations = ''
+
       let selectedIds = this.selected.map(s => s.sid)
+
       selectedIds.forEach((sid, i) => {
         messageMutations += `
           d${i}: delete_message(input: { message_id: "${sid}" }) {
@@ -151,15 +162,18 @@ export default {
             }
         `
       })
+
       try {
         let mutationString = gql`
               mutation DeleteMessages {
                 ${messageMutations}
               }
             `
+
         const { data } = await this.$apollo.mutate({
           mutation: mutationString
         })
+
         if (data?.d0.success) {
           this.selected = []
         }
@@ -171,14 +185,19 @@ export default {
           }
         })
       }
+
       this.loading--
       this.updateKey++
     },
     async markAsRead() {
       if (this.selected?.length === 0) return
+
       this.loading++
+
       let messageMutations = ''
+
       let selectedIds = this.selected.map(s => s.sid)
+
       selectedIds.forEach((sid, i) => {
         messageMutations += `
           m${i}: mark_message_as_read(input: { message_id: "${sid}" }) {
@@ -187,15 +206,18 @@ export default {
             }
         `
       })
+
       try {
         let mutationString = gql`
               mutation MarkMessagesAsRead {
                 ${messageMutations}
               }
             `
+
         const { data } = await this.$apollo.mutate({
           mutation: mutationString
         })
+
         if (data?.m0.success) {
           this.selected = []
         }
@@ -207,14 +229,19 @@ export default {
           }
         })
       }
+
       this.loading--
       this.updateKey++
     },
     async markAsUnread() {
       if (this.selected?.length === 0) return
+
       this.loading++
+
       let messageMutations = ''
+
       let selectedIds = this.selected.map(s => s.sid)
+
       selectedIds.forEach((sid, i) => {
         messageMutations += `
           m${i}: mark_message_as_unread(input: { message_id: "${sid}" }) {
@@ -223,15 +250,18 @@ export default {
             }
         `
       })
+
       try {
         let mutationString = gql`
               mutation MarkMessagesAsUnread {
                 ${messageMutations}
               }
             `
+
         const { data } = await this.$apollo.mutate({
           mutation: mutationString
         })
+
         if (data?.m0.success) {
           this.selected = []
         }
@@ -243,6 +273,7 @@ export default {
           }
         })
       }
+
       this.loading--
       this.updateKey++
     },
@@ -264,6 +295,7 @@ export default {
   }
 }
 </script>
+
 <template>
   <v-sheet color="appBackground">
     <SubPageNav>
@@ -284,6 +316,7 @@ export default {
         ></BreadCrumbs>
       </span>
     </SubPageNav>
+
     <NotificationsLayout>
       <v-card slot="col-1" class="py-2 px-4 text-left" tile>
         <v-progress-linear
@@ -294,6 +327,7 @@ export default {
           absolute
           :bottom="$vuetify.breakpoint.xs"
         />
+
         <v-btn-toggle
           v-model="read"
           :class="
@@ -311,6 +345,7 @@ export default {
           >
             All
           </v-btn>
+
           <v-btn
             :small="$vuetify.breakpoint.xs"
             :value="false"
@@ -319,6 +354,7 @@ export default {
             <v-icon left color="codePink" x-small>fiber_manual_record</v-icon>
             Unread
           </v-btn>
+
           <v-btn
             :small="$vuetify.breakpoint.xs"
             :value="true"
@@ -330,6 +366,7 @@ export default {
             Read
           </v-btn>
         </v-btn-toggle>
+
         <v-btn
           v-if="!read && _allRead === false"
           :small="$vuetify.breakpoint.xs"
@@ -345,6 +382,7 @@ export default {
           </v-icon>
           Mark as Read
         </v-btn>
+
         <v-btn
           v-else
           :small="$vuetify.breakpoint.xs"
@@ -360,6 +398,7 @@ export default {
           </v-icon>
           Mark as Unread
         </v-btn>
+
         <v-btn
           :small="$vuetify.breakpoint.xs"
           depressed
@@ -372,9 +411,12 @@ export default {
           <v-icon left small>
             delete
           </v-icon>
+
           Delete Selected
         </v-btn>
+
         <v-divider />
+
         <v-card-title class="ml-4 pl-0 subtitle-2 grey--text text--darken-2">
           Filter
         </v-card-title>
@@ -392,6 +434,7 @@ export default {
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
           <v-list-item
             v-for="team in teams"
             :key="team.id"
@@ -412,6 +455,7 @@ export default {
           </v-list-item>
         </v-list-item-group>
       </v-card>
+
       <transition-group name="bf">
         <div v-show="!allCaughtUp" key="notificationgroup">
           <NotificationGroup
@@ -429,6 +473,7 @@ export default {
             @loading="updateLoading"
             @remove="_handleRemove"
           />
+
           <NotificationGroup
             v-for="team in filteredTeams"
             :key="team.id"
@@ -442,6 +487,7 @@ export default {
             @remove="_handleRemove"
           />
         </div>
+
         <v-card v-if="showAllCaughtUp" key="allcaughtup" class="py-2 px-4" tile>
           <v-card-text>
             <v-row class="pa-12">
@@ -465,15 +511,18 @@ export default {
     </NotificationsLayout>
   </v-sheet>
 </template>
+
 <style lang="scss">
 // stylelint-disable
 .bf-enter-active,
 .bf-leave-active {
   transition: opacity 0.3s !important;
 }
+
 .bf-leave-active {
   display: none;
 }
+
 .bf-enter,
 .bf-leave-to {
   opacity: 0 !important;
