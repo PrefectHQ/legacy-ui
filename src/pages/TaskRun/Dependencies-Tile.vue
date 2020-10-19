@@ -12,28 +12,14 @@ export default {
     SchematicFlow
   },
   props: {
-    downstreamCount: {
-      type: Number,
-      required: false,
-      default: () => null
-    },
-    flowRunId: {
-      type: String,
-      required: true
-    },
     loading: {
       type: Boolean,
       required: false,
       default: () => false
     },
-    taskIds: {
-      type: Array,
+    taskRun: {
+      type: Object,
       required: true
-    },
-    upstreamCount: {
-      type: Number,
-      required: false,
-      default: () => null
     }
   },
   data() {
@@ -47,51 +33,55 @@ export default {
   computed: {
     ...mapGetters('user', ['timezone']),
     subtitle() {
-      return `${this.upstreamCount} Upstream • ${this.downstreamCount} Downstream`
+      return `${this.upstreamTasks?.length} Upstream • ${this.downstreamTasks?.length} Downstream`
+    },
+    query() {
+      if (this.taskRun?.map_index === -1) {
+        return ''
+      }
+      return ''
     }
   },
   watch: {},
   methods: {},
   apollo: {
-    flowRun: {
-      query: require('@/graphql/Schematics/flow-run.gql'),
-      variables() {
-        return {
-          id: this.flowRunId
-        }
-      },
-      skip() {
-        return (
-          !this.flowRunId ||
-          (this.tasks?.length && this.flowRun.state !== 'Running')
-          // Had to add the second portion here because this
-          // query was running out of control for some reason
-        )
-      },
-      update(data) {
-        if (data.flow_run && data.flow_run.length) {
-          let taskRuns = data.flow_run[0].task_runs.filter(tr =>
-            this.taskIds.includes(tr.task.id)
-          )
-
-          taskRuns.forEach(tr => {
-            tr.flow_run_name = data.flow_run[0].name
-            tr.task.upstream_edges = tr.task.upstream_edges.filter(edge =>
-              this.taskIds.includes(edge.upstream_task.id)
-            )
-            tr.task.downstream_edges = tr.task.downstream_edges.filter(edge =>
-              this.taskIds.includes(edge.downstream_task.id)
-            )
-          })
-
-          this.tasks = taskRuns
-          return data.flow_run[0]
-        } else {
-          this.tasks = []
-        }
-      },
-      pollInterval: 3000
-    }
+    // flowRun: {
+    //   query: require('@/graphql/Schematics/task-run.gql'),
+    //   variables() {
+    //     return {
+    //       id: this.flowRunId
+    //     }
+    //   },
+    //   skip() {
+    //     return (
+    //       !this.flowRunId ||
+    //       (this.tasks?.length && this.flowRun.state !== 'Running')
+    //       // Had to add the second portion here because this
+    //       // query was running out of control for some reason
+    //     )
+    //   },
+    //   update(data) {
+    //     if (data.flow_run && data.flow_run.length) {
+    //       let taskRuns = data.flow_run[0].task_runs.filter(tr =>
+    //         this.taskIds.includes(tr.task.id)
+    //       )
+    //       taskRuns.forEach(tr => {
+    //         tr.flow_run_name = data.flow_run[0].name
+    //         tr.task.upstream_edges = tr.task.upstream_edges.filter(edge =>
+    //           this.taskIds.includes(edge.upstream_task.id)
+    //         )
+    //         tr.task.downstream_edges = tr.task.downstream_edges.filter(edge =>
+    //           this.taskIds.includes(edge.downstream_task.id)
+    //         )
+    //       })
+    //       this.tasks = taskRuns
+    //       return data.flow_run[0]
+    //     } else {
+    //       this.tasks = []
+    //     }
+    //   },
+    //   pollInterval: 3000
+    // }
   }
 }
 </script>

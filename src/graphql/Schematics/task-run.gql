@@ -1,0 +1,57 @@
+query TaskRun($id: uuid!) {
+  task_run_by_pk(id: $id) {
+      
+  }
+  flow_run_by_pk(id: $id) {
+    id
+    name
+    state
+    start_time
+    end_time
+
+    task_runs(where: { map_index: { _eq: -1 } }) {
+      id
+      serialized_state
+      state
+      state_message
+      state_timestamp
+      start_time
+      end_time
+      map_index
+
+      task {
+        id
+        mapped
+        name
+        max_retries
+        retry_delay
+        trigger
+        type
+
+        upstream_edges {
+          upstream_task {
+            id
+            name
+          }
+          downstream_task {
+            id
+            name
+          }
+        }
+        downstream_edges {
+          upstream_task {
+            id
+            name
+          }
+          downstream_task {
+            id
+            name
+          }
+        }
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

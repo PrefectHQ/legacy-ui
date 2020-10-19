@@ -44,16 +44,16 @@ export default {
       )
       return [this.taskRun.task.id, ...upstream, ...downstream]
     },
-    downstreamCount() {
-      if (!this.taskRun) return null
-      return this.taskRun.task.downstream_edges.length
+    downstreamEdges() {
+      if (!this.taskRun) return []
+      return this.taskRun.task.downstream_edges
     },
     taskRunId() {
       return this.$route.params.id
     },
-    upstreamCount() {
-      if (!this.taskRun) return null
-      return this.taskRun.task.upstream_edges.length
+    upstreamEdges() {
+      if (!this.taskRun) return []
+      return this.taskRun.task.upstream_edges
     }
   },
   watch: {
@@ -209,11 +209,8 @@ export default {
 
           <DependenciesTile
             slot="row-2-col-2-row-3-tile-1"
-            :flow-run-id="taskRun.flow_run.id"
+            :task-run="taskRun"
             :loading="loading > 0"
-            :task-ids="dependencies"
-            :upstream-count="upstreamCount"
-            :downstream-count="downstreamCount"
           />
         </TileLayout>
       </v-tab-item>
