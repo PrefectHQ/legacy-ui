@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - What's New notifications are now marked as read when clicked from the dashboard - [#344](https://github.com/PrefectHQ/ui/pull/344)
+- Add helpful links for Server users experienceing connection issues - [#355](https://github.com/PrefectHQ/ui/pull/355)
 
 ### Bugfixes
 
