@@ -198,7 +198,6 @@ export default {
       v-model="connectionMenu"
       :close-on-content-click="false"
       offset-y
-      open-on-hover
       transition="slide-y-transition"
     >
       <template #activator="{ on }">
@@ -209,8 +208,6 @@ export default {
           large
           color="white"
           v-on="on"
-          @focus="connectionMenu = true"
-          @blur="connectionMenu = false"
         >
           <v-icon>
             {{ connectedIcon }}
@@ -247,7 +244,16 @@ export default {
             <span v-if="connected">Connected</span>
             <span v-else-if="connecting">Connecting</span>
             <span v-else>Couldn't connect</span>
-            to <span class="font-weight-bold">{{ url }}</span> <br /><br />
+            to
+            <span class="font-weight-bold">
+              <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
+              <span v-else class="secondaryGray--text">Prefect Server</span>
+            </span>
+            <span v-if="isServer">
+              at
+              <span class="font-weight-bold">{{ url }}</span>
+            </span>
+            <br /><br />
           </p>
           <v-alert
             v-if="apiMode == 'maintenance'"
