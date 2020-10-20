@@ -1,7 +1,9 @@
 import store from '@/store/index'
 
 const tenantNavGuard = async (to, from, next) => {
-  if (!store.getters['api/connected']) return next()
+  if (store.getters['api/isServer'] && !store.getters['api/connected'])
+    return next()
+
   if (store.getters['tenant/tenants']?.length === 0) {
     await store.dispatch('tenant/getTenants')
 
@@ -73,6 +75,7 @@ const tenantNavGuard = async (to, from, next) => {
   // Otherwise, we direct to the get started page because we are either not
   // connected to an API or we have no access to a tenant
   // Note: this should only be possible in Server
+
   return next({
     name: 'home'
   })
