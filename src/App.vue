@@ -128,11 +128,15 @@ export default {
     // window.removeEventListener('blur', this.handleVisibilityChange)
     // window.removeEventListener('focus', this.handleVisibilityChange)
   },
-  mounted() {
+  async mounted() {
     this.refresh()
 
-    if (this.isAuthorized) {
-      this.getApi()
+    if (this.isAuthorized || this.isServer) {
+      await this.getApi()
+
+      if (!this.connected && this.isServer) {
+        this.$router.push({ name: 'home' })
+      }
     }
   },
   async beforeMount() {
