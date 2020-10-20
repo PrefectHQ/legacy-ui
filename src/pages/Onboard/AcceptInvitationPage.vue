@@ -250,11 +250,11 @@ export default {
       </div>
     </transition-group>
     <v-container
-      v-if="invitationError && !loadingPage"
+      v-if="!loadingPage"
       class="position-absolute onboard-content text-center pa-0"
       fluid
     >
-      <v-row align="center">
+      <v-row v-if="invitationError" align="center">
         <v-col class="grey--text text--lighten-5 mx-12">
           <div class="display-1">
             <span> {{ mutationErrorMessage || errorMessage }} </span>
@@ -267,30 +267,7 @@ export default {
           </div>
         </v-col>
       </v-row>
-      <v-row align="center">
-        <v-col>
-          <div
-            v-if="!loadingPage"
-            class="ma-12 grey--text text--lighten-5 body-1 text--primary"
-          >
-            For more information about teams in Prefect Cloud, check out
-            <a
-              href="https://docs.prefect.io/orchestration/ui/team-settings.html"
-              target="_blank"
-              class="link-color"
-            >
-              our docs</a
-            >.
-          </div>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-container
-      v-else
-      class="text-center position-absolute pa-0 onboard-content router-view"
-      fluid
-    >
-      <v-row v-if="!loadingPage" align="center">
+      <v-row v-else align="center">
         <v-col>
           <div class="display-1 grey--text text--lighten-5">
             You've been invited to join {{ teamName }}!
@@ -322,13 +299,9 @@ export default {
           </div>
         </v-col>
       </v-row>
-
       <v-row align="center">
         <v-col>
-          <div
-            v-if="!loadingPage"
-            class="ma-12 grey--text text--lighten-5 body-1 text--primary"
-          >
+          <div class="ma-12 grey--text text--lighten-5 body-1 text--primary">
             For more information about teams in Prefect Cloud, check out
             <a
               href="https://docs.prefect.io/orchestration/ui/team-settings.html"
