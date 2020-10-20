@@ -94,7 +94,6 @@ export default {
       }
     },
     agents(val) {
-      console.log(val)
       this.setAgents(val)
     },
     async $route(new_route, old_route) {
@@ -203,7 +202,12 @@ export default {
       loadingKey: 'loading',
       pollInterval: 3000,
       skip() {
-        return !this.isConnected
+        return (
+          (this.isCloud && !this.isAuthenticated) ||
+          !this.connected ||
+          !this.isAuthorized ||
+          (this.isServer && !this.connected)
+        )
       },
       update: data => data.agent
     }
