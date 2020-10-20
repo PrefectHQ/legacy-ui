@@ -98,34 +98,36 @@ export default {
 <template>
   <v-container
     v-if="invitationError && !loadingPage"
-    class="text-center fill-height px-0 py-16"
+    class="text-center fill-height bg-grey h-100"
     fluid
   >
-    <v-row align="center">
-      <v-col class="grey--text text--lighten-5 mx-12">
-        <div class="display-1">
-          <span v-if="error"> {{ errorMessage }} </span>
-          <span v-else>
-            We can't find your membership invitation. Have you already accepted?
-          </span>
-        </div>
-        <div>
-          <v-btn
-            class="mt-8"
-            color="primary"
-            x-large
-            :to="{ name: 'dashboard' }"
-          >
-            Back to the dashboard!
-            <v-icon right>fas fa-rocket</v-icon>
-          </v-btn>
-        </div>
-      </v-col>
-    </v-row>
+    <transition-group name="fade" mode="out-in">
+      <v-row key="slash-1" align="center" class="slash-grey slash-3">
+        <v-col class="grey--text text--lighten-5 mx-12">
+          <div class="display-1">
+            <span v-if="error"> {{ errorMessage }} </span>
+            <span v-else>
+              We can't find your membership invitation. Have you already
+              accepted?
+            </span>
+          </div>
+          <div>
+            <v-btn
+              class="mt-8"
+              color="primary"
+              x-large
+              :to="{ name: 'dashboard' }"
+            >
+              Back to the dashboard!
+              <v-icon right>fas fa-rocket</v-icon>
+            </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+    </transition-group>
   </v-container>
-  <v-container v-else class="text-center fill-height px-0 py-16" fluid>
-    <v-row />
-    <v-row>
+  <v-container v-else class="text-center fill-height bg-grey h-100" fluid>
+    <v-row key="slash-1" align="center" class="slash-grey slash-3">
       <v-col>
         <div class="display-1 grey--text text--lighten-5">
           You've been invited to join {{ teamName }}!
@@ -146,11 +148,12 @@ export default {
       </v-col>
     </v-row>
 
-    <v-row />
-
-    <v-row align="center">
+    <v-row key="slash-2" align="center">
       <v-col>
-        <div class="mx-12 grey--text text--lighten-5 body-1 text--primary">
+        <div
+          v-if="!loadingPage"
+          class="mx-12 grey--text text--lighten-5 body-1 text--primary"
+        >
           For more information about teams in Prefect Cloud, check out
           <router-link
             to="https://docs.prefect.io/orchestration/ui/team-settings.html"
@@ -161,7 +164,38 @@ export default {
         </div>
       </v-col>
     </v-row>
-
-    <v-row />
   </v-container>
 </template>
+
+<style lang="scss" scoped>
+.bg-grey {
+  background-image: linear-gradient(105deg, #2f383f, #647489) !important;
+}
+
+.h-100 {
+  min-height: 100vh !important;
+}
+
+.o-slash {
+  backface-visibility: hidden;
+  position: absolute;
+  transition: all 250ms;
+  z-index: 2;
+
+  &.slash-3 {
+    height: 600px;
+    top: 50%;
+    width: 100%;
+  }
+}
+
+.slide-fade-enter-active {
+  transition: all 1s ease;
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(10px);
+}
+</style>

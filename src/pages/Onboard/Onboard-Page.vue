@@ -113,11 +113,7 @@ export default {
       >
       </div>
       <div
-        v-if="
-          $vuetify.breakpoint.mdAndUp ||
-            $route.name == 'name-team' ||
-            $route.name == 'accept'
-        "
+        v-if="$vuetify.breakpoint.mdAndUp || $route.name == 'name-team'"
         key="slash-3"
         class="slash-grey o-slash slash-3"
         :class="[slash3Class, $vuetify.breakpoint.mdAndUp ? 'slash-3' : '']"
