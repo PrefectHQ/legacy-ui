@@ -109,6 +109,11 @@ export default {
       ) {
         await this.setCurrentTenant(new_route.params.tenant)
       }
+    },
+    isAuthorized(value) {
+      if (value) {
+        this.getApi()
+      }
     }
   },
   beforeDestroy() {
@@ -125,6 +130,10 @@ export default {
   },
   mounted() {
     this.refresh()
+
+    if (this.isAuthorized) {
+      this.getApi()
+    }
   },
   async beforeMount() {
     document.addEventListener('keydown', this.handleKeydown)
