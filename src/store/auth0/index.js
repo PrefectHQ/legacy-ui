@@ -234,7 +234,6 @@ const actions = {
         // Don't do anything with this though.
       }
     }
-
     const isAuthenticated = await auth0Client.isAuthenticated()
     commit('isAuthenticated', isAuthenticated)
 

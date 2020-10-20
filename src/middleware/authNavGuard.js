@@ -34,7 +34,9 @@ const authNavGuard = async (to, from, next) => {
     return next(false)
   }
 
-  if (!store.getters['api/isConnected']) await store.dispatch('api/getApi')
+  // If we're not connected, dispatch the getApi method, which will update connection status
+  // and will start to monitor the connection
+  if (!store.getters['api/isConnected']) store.dispatch('api/getApi')
 
   if (!store.getters['user/userIsSet']) await store.dispatch('user/getUser')
 
@@ -43,6 +45,7 @@ const authNavGuard = async (to, from, next) => {
     store.dispatch('auth0/removeRedirectRoute')
     if (to.query && to.query.code) delete to.query.code
     if (to.query && to.query.state) delete to.query.state
+
     return next({ path: redirectRoute, params: to.params, query: to.query })
   }
 
