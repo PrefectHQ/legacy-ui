@@ -272,7 +272,7 @@ export default {
         <v-col>
           <div
             v-if="!loadingPage"
-            class="mx-12 grey--text text--lighten-5 body-1 text--primary"
+            class="ma-12 grey--text text--lighten-5 body-1 text--primary"
           >
             For more information about teams in Prefect Cloud, check out
             <router-link
