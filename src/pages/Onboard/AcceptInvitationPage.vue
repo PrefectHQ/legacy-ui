@@ -274,11 +274,12 @@ export default {
             class="ma-12 grey--text text--lighten-5 body-1 text--primary"
           >
             For more information about teams in Prefect Cloud, check out
-            <router-link
-              to="https://docs.prefect.io/orchestration/ui/team-settings.html"
+            <a
+              href="https://docs.prefect.io/orchestration/ui/team-settings.html"
+              target="_blank"
               class="link-color"
             >
-              our docs</router-link
+              our docs</a
             >.
           </div>
         </v-col>
@@ -329,11 +330,12 @@ export default {
             class="ma-12 grey--text text--lighten-5 body-1 text--primary"
           >
             For more information about teams in Prefect Cloud, check out
-            <router-link
-              to="https://docs.prefect.io/orchestration/ui/team-settings.html"
+            <a
+              href="https://docs.prefect.io/orchestration/ui/team-settings.html"
+              target="_blank"
               class="link-color"
             >
-              our docs</router-link
+              our docs</a
             >.
           </div>
         </v-col>
