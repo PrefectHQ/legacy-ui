@@ -218,7 +218,11 @@ export default {
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
       <v-slide-y-transition>
-        <NavBar v-if="isAuthenticated && loadedComponents > 0" />
+        <NavBar
+          v-if="
+            ((isCloud && isAuthenticated) || isServer) && loadedComponents > 0
+          "
+        />
       </v-slide-y-transition>
 
       <SideNav />
