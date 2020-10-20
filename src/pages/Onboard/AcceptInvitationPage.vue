@@ -6,12 +6,14 @@ export default {
     return {
       loadingKey: 0,
       loading: false,
+      deleting: false,
       start: false,
       error: false,
       invitationId:
         this.$route.query.invitation_id ||
         sessionStorage.getItem('invitationId'),
-      membershipInvitation: null
+      membershipInvitation: null,
+      mutationErrorMessage: false
     }
   },
   computed: {
@@ -27,7 +29,8 @@ export default {
       return (
         this.error ||
         !this.membershipInvitation ||
-        !this.membershipInvitation.user
+        !this.membershipInvitation.user ||
+        this.mutationErrorMessage
       )
     },
     errorMessage() {
@@ -109,9 +112,39 @@ export default {
       }
       this.loading = false
     },
+    async decline() {
+      this.deleting = true
+      const invitationId = this.membershipInvitation.id
+      const declined = await this.declineInvitation(invitationId)
+      if (declined) {
+        this.toDashboard()
+      }
+      this.deleting = false
+    },
     toDashboard() {
       sessionStorage.removeItem('invitationId')
       this.$router.push({ name: 'dashboard' })
+    },
+    async declineInvitation(id) {
+      try {
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Tenant/delete-membership-invitation.gql'),
+          variables: {
+            membershipInvitationId: id
+          }
+        })
+        if (data?.delete_membership_invitation?.success) {
+          return true
+        }
+      } catch (e) {
+        console.log(e)
+        this.mutationErrorMessage = e
+          .toString()
+          .split(':')
+          .pop()
+        this.loading = false
+        this.error = true
+      }
     },
     async acceptInvitation(id) {
       try {
@@ -125,7 +158,7 @@ export default {
           return true
         }
       } catch (e) {
-        this.errorMessage = e
+        this.mutationErrorMessage = e
           .toString()
           .split(':')
           .pop()
@@ -224,13 +257,29 @@ export default {
       <v-row align="center">
         <v-col class="grey--text text--lighten-5 mx-12">
           <div class="display-1">
-            <span> {{ errorMessage }} </span>
+            <span> {{ mutationErrorMessage || errorMessage }} </span>
           </div>
           <div>
             <v-btn class="mt-8" color="primary" x-large @click="toDashboard">
               Back to the dashboard!
               <v-icon right>fas fa-rocket</v-icon>
             </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row align="center">
+        <v-col>
+          <div
+            v-if="!loadingPage"
+            class="ma-12 grey--text text--lighten-5 body-1 text--primary"
+          >
+            For more information about teams in Prefect Cloud, check out
+            <router-link
+              to="https://docs.prefect.io/orchestration/ui/team-settings.html"
+              class="link-color"
+            >
+              our docs</router-link
+            >.
           </div>
         </v-col>
       </v-row>
@@ -261,8 +310,13 @@ export default {
               Accept
             </v-btn>
 
-            <v-btn text class="white--text" @click="toDashboard">
-              Not right now...
+            <v-btn
+              outlined
+              class="white--text"
+              :loading="deleting"
+              @click="decline"
+            >
+              No Thanks
             </v-btn>
           </div>
         </v-col>
@@ -279,8 +333,8 @@ export default {
               to="https://docs.prefect.io/orchestration/ui/team-settings.html"
               class="link-color"
             >
-              our docs.
-            </router-link>
+              our docs</router-link
+            >.
           </div>
         </v-col>
       </v-row>
@@ -289,6 +343,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.link-color {
+  color: #27b1ff;
+}
+
 .bg-grey {
   background-image: linear-gradient(105deg, #2f383f, #647489) !important;
 }
