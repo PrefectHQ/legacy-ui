@@ -19,6 +19,27 @@ query TaskRun($id: uuid!) {
       max_retries
       trigger
       type
+
+      upstream_edges {
+        upstream_task {
+          id
+          name
+        }
+        downstream_task {
+          id
+          name
+        }
+      }
+      downstream_edges {
+        upstream_task {
+          id
+          name
+        }
+        downstream_task {
+          id
+          name
+        }
+      }
     }
 
     flow_run {

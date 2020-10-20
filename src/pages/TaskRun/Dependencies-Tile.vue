@@ -33,7 +33,7 @@ export default {
   computed: {
     ...mapGetters('user', ['timezone']),
     subtitle() {
-      return `${this.upstreamTasks?.length} Upstream • ${this.downstreamTasks?.length} Downstream`
+      return `${this.taskRun?.task?.upstream_edges?.length} Upstream • ${this.taskRun?.task?.downstream_edges?.length} Downstream`
     },
     query() {
       if (this.taskRun?.map_index === -1) {
@@ -43,6 +43,9 @@ export default {
     }
   },
   watch: {},
+  mounted() {
+    console.log(this.taskRun)
+  },
   methods: {},
   apollo: {
     // flowRun: {
