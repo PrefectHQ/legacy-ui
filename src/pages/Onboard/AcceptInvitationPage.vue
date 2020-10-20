@@ -5,14 +5,13 @@ export default {
   data() {
     return {
       loadingKey: 0,
+      loading: false,
       start: false,
       error: false,
       invitationId:
         this.$route.query.invitation_id ||
         sessionStorage.getItem('invitationId'),
-      membershipInvitation: null,
-      errorMessage:
-        'It looks like there was a problem with your invitation.  Please check the details and your account and try again.'
+      membershipInvitation: null
     }
   },
   computed: {
@@ -25,14 +24,33 @@ export default {
       return this.loadingKey > 0
     },
     invitationError() {
-      return this.error || !this.membershipInvitation
+      return (
+        this.error ||
+        !this.membershipInvitation ||
+        !this.membershipInvitation.user
+      )
+    },
+    errorMessage() {
+      if (this.membershipInvitation && !this.membershipInvitation.user)
+        return "The membership ID provided doesn't match this user. Are you in the right account? "
+      if (this.error)
+        return 'It looks like there was a problem with your invitation.  Please check the details and your account and try again.'
+      return `We can't find your membership invitation. Have you already
+              accepted?`
+    },
+    noSlash() {
+      return this.$vuetify.breakpoint.xl
+        ? 15
+        : this.$vuetify.breakpoint.lg
+        ? 10
+        : 5
     },
     slashClass() {
       return {
-        slash: this.$vuetify.breakpoint.mdAndUp,
+        slash: this.$vuetify.breakpoint.smAndUp,
         'slash-horizontal': this.$vuetify.breakpoint.smAndDown,
         'slash-full': this.$vuetify.breakpoint.smAndDown,
-        'slash-origin-center': this.$vuetify.breakpoint.mdAndUp
+        'slash-origin-center': this.$vuetify.breakpoint.smAndUp
       }
     },
     slash1Class() {
@@ -43,8 +61,8 @@ export default {
     },
     slash2Class() {
       return {
-        slash: this.$vuetify.breakpoint.mdAndUp,
-        'slash-origin-center': this.$vuetify.breakpoint.mdAndUp,
+        slash: this.$vuetify.breakpoint.smAndUp,
+        'slash-origin-center': this.$vuetify.breakpoint.smAndUp,
         paused: !this.start
       }
     },
@@ -57,14 +75,14 @@ export default {
     slash4Class() {
       return {
         ...this.slashResourcesClass,
-        'slash-origin-left': this.$vuetify.breakpoint.mdAndUp,
+        'slash-origin-left': this.$vuetify.breakpoint.smAndUp,
         paused: true
       }
     },
     slash5Class() {
       return {
         ...this.slashResourcesClass,
-        'slash-origin-right': this.$vuetify.breakpoint.mdAndUp,
+        'slash-origin-right': this.$vuetify.breakpoint.smAndUp,
         paused: true
       }
     }
@@ -78,16 +96,22 @@ export default {
     ...mapActions('tenant', ['setCurrentTenant']),
     async accept() {
       this.loading = true
-      const tenant = this.membershipInvitation[0].tenant
-      const invitationId = this.membershipInvitation[0].id
+      const tenant = this.membershipInvitation.tenant
+      const invitationId = this.membershipInvitation.id
       const accepted = await this.acceptInvitation(invitationId)
       if (accepted) {
+        sessionStorage.removeItem('invitationId')
         await this.setCurrentTenant(tenant.slug)
         this.$router.push({
           name: 'dashboard',
           params: { tenant: tenant.slug }
         })
       }
+      this.loading = false
+    },
+    toDashboard() {
+      sessionStorage.removeItem('invitationId')
+      this.$router.push({ name: 'dashboard' })
     },
     async acceptInvitation(id) {
       try {
@@ -147,70 +171,39 @@ export default {
 
 <template>
   <v-container
-    v-if="invitationError && !loadingPage"
-    class="text-center fill-height bg-grey h-100"
-    fluid
-  >
-    <v-row align="center" class="slash-grey slash-3">
-      <v-col class="grey--text text--lighten-5 mx-12">
-        <div class="display-1">
-          <span v-if="error"> {{ errorMessage }} </span>
-          <span v-else>
-            We can't find your membership invitation. Have you already accepted?
-          </span>
-        </div>
-        <div>
-          <v-btn
-            class="mt-8"
-            color="primary"
-            x-large
-            :to="{ name: 'dashboard' }"
-          >
-            Back to the dashboard!
-            <v-icon right>fas fa-rocket</v-icon>
-          </v-btn>
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
-  <v-container
-    v-else
-    class="ma-0 pa-0 position-relative h-100 test-bg bg-grey"
+    class="ma-0 pa-0 position-relative h-100 bg-grey overflow-y-hidden"
     fluid
   >
     <transition-group name="fade" mode="out-in">
       <div
-        v-if="$vuetify.breakpoint.mdAndUp || $route.name == 'welcome'"
+        v-if="$vuetify.breakpoint.smAndUp"
         key="slash-1"
         class="slash-blue o-slash slash-1"
-        :class="[slash1Class, $vuetify.breakpoint.mdAndUp ? 'slash-1' : '']"
+        :class="[slash1Class, $vuetify.breakpoint.smAndUp ? 'slash-1' : '']"
       >
       </div>
       <div
-        v-if="$vuetify.breakpoint.mdAndUp || $route.name == 'name-team'"
         key="slash-3"
         class="slash-grey o-slash slash-3"
-        :class="[slash3Class, $vuetify.breakpoint.mdAndUp ? 'slash-3' : '']"
+        :class="[slash3Class, $vuetify.breakpoint.smAndUp ? 'slash-3' : '']"
       >
       </div>
       <div
-        v-if="$vuetify.breakpoint.mdAndUp"
+        v-if="$vuetify.breakpoint.smAndUp"
         key="slash-4"
         class="slash-grey o-slash slash-4"
         :class="slash4Class"
       >
       </div>
       <div
-        v-if="$vuetify.breakpoint.mdAndUp"
+        v-if="$vuetify.breakpoint.smAndUp"
         key="slash-5"
         class="slash-orange o-slash slash-5"
         :class="slash5Class"
       >
       </div>
-      <div
-        v-if="$vuetify.breakpoint.mdAndUp && $route.name == 'name-team'"
-        key="name-team-slashes"
-      >
+
+      <div v-if="$vuetify.breakpoint.smAndUp" key="name-team-slashes">
         <div
           v-for="i in noSlash"
           :key="`name-team-slash-${i}`"
@@ -224,7 +217,27 @@ export default {
       </div>
     </transition-group>
     <v-container
-      class="text-center position-absolute pa-0 onboard-content"
+      v-if="invitationError && !loadingPage"
+      class="position-absolute onboard-content text-center pa-0"
+      fluid
+    >
+      <v-row align="center">
+        <v-col class="grey--text text--lighten-5 mx-12">
+          <div class="display-1">
+            <span> {{ errorMessage }} </span>
+          </div>
+          <div>
+            <v-btn class="mt-8" color="primary" x-large @click="toDashboard">
+              Back to the dashboard!
+              <v-icon right>fas fa-rocket</v-icon>
+            </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-container
+      v-else
+      class="text-center position-absolute pa-0 onboard-content router-view"
       fluid
     >
       <v-row v-if="!loadingPage" align="center">
@@ -241,13 +254,14 @@ export default {
               color="accentPink"
               dark
               depressed
+              :loading="loading"
               @click="accept"
             >
               <v-icon class="pr-4">fa-user-friends</v-icon>
               Accept
             </v-btn>
 
-            <v-btn text class="white--text" :to="{ name: 'dashboard' }">
+            <v-btn text class="white--text" @click="toDashboard">
               Not right now...
             </v-btn>
           </div>
@@ -265,7 +279,7 @@ export default {
               to="https://docs.prefect.io/orchestration/ui/team-settings.html"
               class="link-color"
             >
-              the docs!
+              our docs.
             </router-link>
           </div>
         </v-col>
