@@ -25,6 +25,7 @@ export default {
       'connecting',
       'retries'
     ]),
+    ...mapGetters('auth0', ['isAuthorized']),
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant', 'tenantIsSet']),
     ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
@@ -191,9 +192,7 @@ export default {
 
     <v-spacer />
 
-    <GlobalSearch
-      v-if="isServer || (tenant.settings.teamNamed && hasLicense)"
-    />
+    <GlobalSearch v-if="isServer || isAuthorized" />
     <v-menu
       v-model="connectionMenu"
       :close-on-content-click="false"
@@ -274,7 +273,7 @@ export default {
 
     <v-scale-transition>
       <v-btn
-        v-if="isServer || hasLicense"
+        v-if="isServer || isAuthorized"
         color="white"
         text
         icon
