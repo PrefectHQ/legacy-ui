@@ -33,6 +33,7 @@ export default {
       'version',
       'url',
       'connected',
+      'connecting',
       'isServer',
       'isCloud'
     ]),
@@ -55,7 +56,7 @@ export default {
       return this.$route.name === 'not-found'
     },
     loading() {
-      return this.isAuthorizingUser || this.isLoggingInUser
+      return this.isAuthorizingUser || this.isLoggingInUser || this.connecting
     },
     isCloud() {
       return this.backend == 'CLOUD'
@@ -72,8 +73,6 @@ export default {
     backend() {
       this.loadedComponents = 0
       this.shown = false
-
-      console.log('refreshingtimeout')
 
       this.refreshTimeout = setTimeout(() => {
         this.shown = true
@@ -199,7 +198,6 @@ export default {
       query() {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
-      loadingKey: 'loading',
       pollInterval: 3000,
       skip() {
         return (
