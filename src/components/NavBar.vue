@@ -1,10 +1,11 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import ExternalLink from '@/components/ExternalLink'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import moment from '@/utils/moment'
 
 export default {
-  components: { GlobalSearch },
+  components: { ExternalLink, GlobalSearch },
   data() {
     return {
       connectionMenu: false,
@@ -238,7 +239,7 @@ export default {
           </v-icon>
         </v-btn>
       </template>
-      <v-card tile class="pa-0" max-width="320">
+      <v-card tile class="pa-0" max-width="500">
         <v-card-text class="pb-0">
           <div class="mb-2">
             <span v-if="connected">Connected</span>
@@ -253,6 +254,47 @@ export default {
               at
               <span class="font-weight-bold">{{ url }}</span>
             </span>
+
+            <v-alert
+              v-if="isServer && (!connected || connecting)"
+              border="left"
+              colored-border
+              class="text-body-1 mt-2"
+              icon="cloud"
+              color="primary"
+              tile
+            >
+              <div>
+                Having trouble?
+                <span class="font-weight-medium">Don't panic! </span>
+              </div>
+              <div class="mt-4">
+                The <v-icon x-small>fab fa-slack</v-icon>&nbsp;
+                <ExternalLink
+                  href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+                  >Prefect Slack community</ExternalLink
+                >
+                is a great place to ask questions, provide feedback, or just to
+                chat! Check out the
+                <ExternalLink
+                  href="https://docs.prefect.io/orchestration/server/overview.html#what-is-prefect-server"
+                  >Prefect documentation</ExternalLink
+                >
+
+                for tips on setting up Prefect Server, idioms for writing flows,
+                and so much more.
+
+                <div class="mt-4"
+                  >Did you know that
+
+                  <ExternalLink href="https://www.prefect.io/cloud"
+                    >Prefect Cloud</ExternalLink
+                  >
+                  offers a feature-rich and fully-managed orchestration layer
+                  for your flows? Oh and it's also <em>free</em>.
+                </div>
+              </div>
+            </v-alert>
           </div>
           <v-alert
             v-if="apiMode == 'maintenance'"
