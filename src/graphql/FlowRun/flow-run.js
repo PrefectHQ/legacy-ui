@@ -4,11 +4,6 @@ export default function(isCloud) {
   return gql`
     query FlowRun(
       $id: uuid!
-      $taskRunStates: [String!]
-      $taskName: String
-      $sort: order_by
-      $limit: Int
-      $offset: Int
     ) {
       flow_run_by_pk(id: $id) {
         id
