@@ -73,7 +73,6 @@ export default {
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
     lastDeployment_Cloud() {
-      console.log(this.releaseTimestamp)
       return this.releaseTimestamp
         ? moment(this.releaseTimestamp).format('MMM D [•] h:mmA')
         : 'Unknown'
