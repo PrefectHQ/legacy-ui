@@ -5,6 +5,7 @@ export default {
   data() {
     return {
       loadingKey: 0,
+      start: false,
       error: false,
       invitationId:
         this.$route.query.invitation_id ||
@@ -18,29 +19,60 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant']),
     teamName() {
-      console.log(
-        'mem inv',
-        this.membershipInvitation,
-        'inv id',
-        this.invitationId
-      )
       return this.membershipInvitation?.tenant?.name || 'your new team'
-    },
-    userName() {
-      return this.membershipInvitation[0]?.user?.username
     },
     loadingPage() {
       return this.loadingKey > 0
     },
     invitationError() {
-      console.log(
-        'mem inv',
-        this.membershipInvitation,
-        'inv id',
-        this.invitationId
-      )
       return this.error || !this.membershipInvitation
+    },
+    slashClass() {
+      return {
+        slash: this.$vuetify.breakpoint.mdAndUp,
+        'slash-horizontal': this.$vuetify.breakpoint.smAndDown,
+        'slash-full': this.$vuetify.breakpoint.smAndDown,
+        'slash-origin-center': this.$vuetify.breakpoint.mdAndUp
+      }
+    },
+    slash1Class() {
+      return {
+        ...this.slashClass,
+        paused: !this.start
+      }
+    },
+    slash2Class() {
+      return {
+        slash: this.$vuetify.breakpoint.mdAndUp,
+        'slash-origin-center': this.$vuetify.breakpoint.mdAndUp,
+        paused: !this.start
+      }
+    },
+    slash3Class() {
+      return {
+        ...this.slashClass,
+        paused: false
+      }
+    },
+    slash4Class() {
+      return {
+        ...this.slashResourcesClass,
+        'slash-origin-left': this.$vuetify.breakpoint.mdAndUp,
+        paused: true
+      }
+    },
+    slash5Class() {
+      return {
+        ...this.slashResourcesClass,
+        'slash-origin-right': this.$vuetify.breakpoint.mdAndUp,
+        paused: true
+      }
     }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.start = true
+    }, 250)
   },
   methods: {
     ...mapActions('tenant', ['setCurrentTenant']),
@@ -76,6 +108,24 @@ export default {
         this.loading = false
         this.error = true
       }
+    },
+    slash2Style(i) {
+      let width, top
+      if (i > this.noSlash / 2) {
+        top = i * 5 + 50
+        width = Math.floor(Math.random() * (125 - 75)) + 75
+      } else {
+        top = i * 5
+        width = Math.floor(Math.random() * (75 - 25)) + 25
+      }
+
+      return {
+        top: `${top}%`,
+        height: '120px',
+        left: 0,
+        'transition-delay': `${Math.floor(i / 2) * 25 + 250}ms`,
+        width: `${width}%`
+      }
     }
   },
   apollo: {
@@ -101,69 +151,126 @@ export default {
     class="text-center fill-height bg-grey h-100"
     fluid
   >
+    <v-row align="center" class="slash-grey slash-3">
+      <v-col class="grey--text text--lighten-5 mx-12">
+        <div class="display-1">
+          <span v-if="error"> {{ errorMessage }} </span>
+          <span v-else>
+            We can't find your membership invitation. Have you already accepted?
+          </span>
+        </div>
+        <div>
+          <v-btn
+            class="mt-8"
+            color="primary"
+            x-large
+            :to="{ name: 'dashboard' }"
+          >
+            Back to the dashboard!
+            <v-icon right>fas fa-rocket</v-icon>
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-container
+    v-else
+    class="ma-0 pa-0 position-relative h-100 test-bg bg-grey"
+    fluid
+  >
     <transition-group name="fade" mode="out-in">
-      <v-row key="slash-1" align="center" class="slash-grey slash-3">
-        <v-col class="grey--text text--lighten-5 mx-12">
-          <div class="display-1">
-            <span v-if="error"> {{ errorMessage }} </span>
-            <span v-else>
-              We can't find your membership invitation. Have you already
-              accepted?
-            </span>
+      <div
+        v-if="$vuetify.breakpoint.mdAndUp || $route.name == 'welcome'"
+        key="slash-1"
+        class="slash-blue o-slash slash-1"
+        :class="[slash1Class, $vuetify.breakpoint.mdAndUp ? 'slash-1' : '']"
+      >
+      </div>
+      <div
+        v-if="$vuetify.breakpoint.mdAndUp || $route.name == 'name-team'"
+        key="slash-3"
+        class="slash-grey o-slash slash-3"
+        :class="[slash3Class, $vuetify.breakpoint.mdAndUp ? 'slash-3' : '']"
+      >
+      </div>
+      <div
+        v-if="$vuetify.breakpoint.mdAndUp"
+        key="slash-4"
+        class="slash-grey o-slash slash-4"
+        :class="slash4Class"
+      >
+      </div>
+      <div
+        v-if="$vuetify.breakpoint.mdAndUp"
+        key="slash-5"
+        class="slash-orange o-slash slash-5"
+        :class="slash5Class"
+      >
+      </div>
+      <div
+        v-if="$vuetify.breakpoint.mdAndUp && $route.name == 'name-team'"
+        key="name-team-slashes"
+      >
+        <div
+          v-for="i in noSlash"
+          :key="`name-team-slash-${i}`"
+          class="o-slash slash-2"
+          :class="[
+            slash2Class,
+            i % 2 === 0 ? 'slash-grey' : 'slash-grey-reverse'
+          ]"
+          :style="slash2Style(i)"
+        ></div>
+      </div>
+    </transition-group>
+    <v-container
+      class="text-center position-absolute pa-0 onboard-content"
+      fluid
+    >
+      <v-row v-if="!loadingPage" align="center">
+        <v-col>
+          <div class="display-1 grey--text text--lighten-5">
+            You've been invited to join {{ teamName }}!
           </div>
-          <div>
+          <div class="subtitle grey--text text--lighten-5 mt-4">
+            To accept, please click below.
+          </div>
+          <div class="mt-8">
             <v-btn
-              class="mt-8"
-              color="primary"
-              x-large
-              :to="{ name: 'dashboard' }"
+              class="mr-3"
+              color="accentPink"
+              dark
+              depressed
+              @click="accept"
             >
-              Back to the dashboard!
-              <v-icon right>fas fa-rocket</v-icon>
+              <v-icon class="pr-4">fa-user-friends</v-icon>
+              Accept
+            </v-btn>
+
+            <v-btn text class="white--text" :to="{ name: 'dashboard' }">
+              Not right now...
             </v-btn>
           </div>
         </v-col>
       </v-row>
-    </transition-group>
-  </v-container>
-  <v-container v-else class="text-center fill-height bg-grey h-100" fluid>
-    <v-row key="slash-1" align="center" class="slash-grey slash-3">
-      <v-col>
-        <div class="display-1 grey--text text--lighten-5">
-          You've been invited to join {{ teamName }}!
-        </div>
-        <div class="subtitle grey--text text--lighten-5 mt-4">
-          To accept, please click below.
-        </div>
-        <div class="mt-8">
-          <v-btn class="mr-3" color="accentPink" dark depressed @click="accept">
-            <v-icon class="pr-4">fa-user-friends</v-icon>
-            Accept
-          </v-btn>
 
-          <v-btn text class="white--text" :to="{ name: 'dashboard' }">
-            Not right now...
-          </v-btn>
-        </div>
-      </v-col>
-    </v-row>
-
-    <v-row key="slash-2" align="center">
-      <v-col>
-        <div
-          v-if="!loadingPage"
-          class="mx-12 grey--text text--lighten-5 body-1 text--primary"
-        >
-          For more information about teams in Prefect Cloud, check out
-          <router-link
-            to="https://docs.prefect.io/orchestration/ui/team-settings.html"
-            class="link-color"
+      <v-row align="center">
+        <v-col>
+          <div
+            v-if="!loadingPage"
+            class="mx-12 grey--text text--lighten-5 body-1 text--primary"
           >
-            the docs!
-          </router-link>
-        </div>
-      </v-col>
-    </v-row>
+            For more information about teams in Prefect Cloud, check out
+            <router-link
+              to="https://docs.prefect.io/orchestration/ui/team-settings.html"
+              class="link-color"
+            >
+              the docs!
+            </router-link>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-container>
 </template>
 
@@ -176,26 +283,64 @@ export default {
   min-height: 100vh !important;
 }
 
+.onboard-content {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
 .o-slash {
   backface-visibility: hidden;
   position: absolute;
   transition: all 250ms;
   z-index: 2;
 
+  &.slash-full {
+    height: 100vh !important;
+    top: 0 !important;
+    transform: none;
+    width: 100% !important;
+
+    &.slash-4 {
+      left: 0 !important;
+      top: 0 !important;
+    }
+
+    &.slash-5 {
+      left: 0 !important;
+      top: 100vh !important;
+    }
+  }
+
+  &.slash-1 {
+    height: 500px;
+    top: 50%;
+    width: 100%;
+  }
+
+  &.slash-2 {
+    z-index: 1 !important;
+  }
+
   &.slash-3 {
     height: 600px;
     top: 50%;
     width: 100%;
   }
-}
 
-.slide-fade-enter-active {
-  transition: all 1s ease;
-}
+  &.slash-4 {
+    height: 600px;
+    left: 0;
+    top: 60%;
+    width: 49%;
+  }
 
-.slide-fade-enter,
-.slide-fade-leave-to {
-  opacity: 0;
-  transform: translateX(10px);
+  &.slash-5 {
+    height: 600px;
+    right: 0;
+    top: 40%;
+    width: 49%;
+  }
 }
 </style>
