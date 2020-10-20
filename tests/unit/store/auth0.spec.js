@@ -987,7 +987,7 @@ describe('Auth0 Vuex Module', () => {
 
       it('stores the invitation id in local storage', async () => {
         await store.dispatch('authenticate')
-        expect(localStorage.getItem('invitationId')).toBe('xyz')
+        expect(sessionStorage.getItem('invitationId')).toBe('xyz')
       })
     })
   })
