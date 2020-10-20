@@ -49,14 +49,20 @@ export default {
       'tenant',
       'tenants',
       'defaultTenant',
-      'tenantIsSet'
+      'tenantIsSet',
+      'isLoadingTenant'
     ]),
     ...mapGetters('user', ['userIsSet']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
     loading() {
-      return this.isAuthorizingUser || this.isLoggingInUser || this.connecting
+      return (
+        this.isAuthorizingUser ||
+        this.isLoggingInUser ||
+        this.connecting ||
+        this.isLoadingTenant
+      )
     },
     isCloud() {
       return this.backend == 'CLOUD'
