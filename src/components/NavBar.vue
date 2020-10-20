@@ -253,7 +253,6 @@ export default {
               at
               <span class="font-weight-bold">{{ url }}</span>
             </span>
-            <br /><br />
           </p>
           <v-alert
             v-if="apiMode == 'maintenance'"
