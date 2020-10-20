@@ -36,7 +36,7 @@ const authNavGuard = async (to, from, next) => {
 
   // If we're not connected, dispatch the getApi method, which will update connection status
   // and will start to monitor the connection
-  if (!store.getters['api/isConnected']) store.dispatch('api/getApi')
+  if (!store.getters['api/connected']) store.dispatch('api/getApi')
 
   if (!store.getters['user/userIsSet']) store.dispatch('user/getUser')
 

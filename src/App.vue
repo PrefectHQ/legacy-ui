@@ -94,6 +94,7 @@ export default {
       }
     },
     agents(val) {
+      console.log(val)
       this.setAgents(val)
     },
     async $route(new_route, old_route) {
@@ -202,11 +203,9 @@ export default {
       loadingKey: 'loading',
       pollInterval: 3000,
       skip() {
-        return !this.tenant.id
+        return !this.isConnected
       },
-      update: data => {
-        return data.agent
-      }
+      update: data => data.agent
     }
   }
 }
