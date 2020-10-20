@@ -240,7 +240,7 @@ export default {
       </template>
       <v-card tile class="pa-0" max-width="320">
         <v-card-text class="pb-0">
-          <p>
+          <div class="mb-2">
             <span v-if="connected">Connected</span>
             <span v-else-if="connecting">Connecting</span>
             <span v-else>Couldn't connect</span>
@@ -253,7 +253,7 @@ export default {
               at
               <span class="font-weight-bold">{{ url }}</span>
             </span>
-          </p>
+          </div>
           <v-alert
             v-if="apiMode == 'maintenance'"
             border="left"
