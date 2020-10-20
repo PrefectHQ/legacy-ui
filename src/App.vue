@@ -54,6 +54,9 @@ export default {
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
+    loading() {
+      return this.isAuthorizingUser || this.isLoggingInUser
+    },
     isCloud() {
       return this.backend == 'CLOUD'
     },
@@ -212,15 +215,10 @@ export default {
 <template>
   <v-app class="app">
     <v-main :class="{ 'pt-0': isWelcome }">
-      <v-progress-linear
-        absolute
-        :active="isLoggingInUser"
-        indeterminate
-        height="5"
-      />
+      <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
       <v-slide-y-transition>
-        <NavBar v-if="loadedComponents > 0" />
+        <NavBar v-if="isAuthenticated && loadedComponents > 0" />
       </v-slide-y-transition>
 
       <SideNav />
