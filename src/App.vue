@@ -71,7 +71,8 @@ export default {
       return (
         this.$route.name === 'welcome' ||
         this.$route.name === 'onboard-resources' ||
-        this.$route.name === 'name-team'
+        this.$route.name === 'name-team' ||
+        this.$route.name === 'accept'
       )
     }
   },

@@ -11,7 +11,7 @@ export default {
       return {
         'overflow-y-hidden': this.$vuetify.breakpoint.mdAndUp,
         'bg-blue': route == 'welcome',
-        'bg-grey': route == 'name-team' || route == 'accept'
+        'bg-grey': route == 'name-team'
       }
     },
     noSlash() {
