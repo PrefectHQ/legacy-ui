@@ -7,6 +7,8 @@ import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 
+const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
+
 export default {
   components: {
     Alert,
@@ -129,6 +131,15 @@ export default {
     // window.removeEventListener('focus', this.handleVisibilityChange)
   },
   async mounted() {
+    if (!localStorage.getItem(SERVER_KEY)) {
+      localStorage.setItem(
+        SERVER_KEY,
+        window.prefect_ui_settings?.server_url || process.env.VUE_APP_SERVER_URL
+      )
+
+      this.setServerUrl(localStorage.getItem(SERVER_KEY))
+    }
+
     this.refresh()
 
     if (this.isAuthorized || this.isServer) {
@@ -153,7 +164,7 @@ export default {
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
-    ...mapActions('api', ['getApi', 'monitorConnection']),
+    ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth0', ['authenticate', 'authorize']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
