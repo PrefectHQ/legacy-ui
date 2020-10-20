@@ -146,7 +146,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          v-if="agentTracker.healthy > 0"
+          v-if="agentTracker && agentTracker.healthy > 0"
           key="healthy-agents"
           color="grey"
         >
@@ -169,7 +169,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          v-if="agentTracker.stale > 0"
+          v-if="agentTracker && agentTracker.stale > 0"
           key="stale-agents"
           color="grey"
         >
@@ -195,7 +195,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          v-if="agentTracker.unhealthy > 0"
+          v-if="agentTracker && agentTracker.unhealthy > 0"
           key="unhealthy-agents"
           color="grey"
         >

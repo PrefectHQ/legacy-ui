@@ -14,6 +14,7 @@ const state = {
     prefectAdminSettings: {},
     stripeCustomerID: ''
   },
+  isLoadingTenant: false,
   tenantIsSet: false,
   tenants: []
 }
@@ -21,6 +22,9 @@ const state = {
 const getters = {
   defaultTenant(state) {
     return state.defaultTenant
+  },
+  isLoadingTenant(state) {
+    return state.isLoadingTenant
   },
   role(state) {
     return state.tenant.role
@@ -47,6 +51,15 @@ const mutations = {
       throw new Error('passed invalid or empty tenant object')
     }
     state.defaultTenant = tenant
+  },
+  setIsLoadingTenant(state, value) {
+    if (typeof value !== 'boolean') {
+      throw new Error(
+        `passed invalid value to setIsLoadingTenant mutation, got ${typeof val}, expected Boolean.`
+      )
+    }
+
+    state.isLoadingTenant = value
   },
   setTenant(state, tenant) {
     if (
@@ -108,6 +121,8 @@ const actions = {
     }
 
     try {
+      commit('setIsLoadingTenant', true)
+
       let tenant = getters['tenants']?.find(t => t.slug === slug)
 
       if (!tenant) {
@@ -154,6 +169,8 @@ const actions = {
     } catch (e) {
       throw new Error(`Problem setting tenant: ${e}`)
     }
+
+    commit('setIsLoadingTenant', false)
     return getters['tenant']
   },
   async updateTenantSettings({ dispatch }, settings) {
