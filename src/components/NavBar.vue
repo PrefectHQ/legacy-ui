@@ -238,7 +238,16 @@ export default {
           </v-icon>
         </v-btn>
       </template>
-      <v-card tile class="pa-0" max-width="500">
+      <v-card
+        tile
+        class="pa-0"
+        max-width="700"
+        :min-width="
+          (isServer && (!connected || connecting)) || apiMode == 'maintenance'
+            ? 600
+            : 300
+        "
+      >
         <v-card-text class="pb-0">
           <div class="mb-2">
             <span v-if="connected">Connected</span>
@@ -281,7 +290,13 @@ export default {
                 >
 
                 for tips on setting up Prefect Server, idioms for writing flows,
-                and so much more.
+                and so much more. Looking for more in-depth discussion? Our
+                <ExternalLink
+                  href="https://github.com/PrefectHQ/prefect/discussions/category_choices"
+                  >GitHub Discussion board</ExternalLink
+                >
+                is a great place to present long-form ideas, technical
+                challenges, or to show off your Prefect tasks and flows!
 
                 <div class="mt-4"
                   >Did you know that
@@ -299,13 +314,13 @@ export default {
             v-if="apiMode == 'maintenance'"
             border="left"
             colored-border
-            class="text-body-2"
+            class="text-body-1"
             type="warning"
             color="accentPink"
             tile
           >
-            Prefect Cloud is undergoing routine maintenance; during this time,
-            no new runs will be released to your Agents and state updates may be
+            Prefect Cloud is undergoing routine maintenance; during this time no
+            new runs will be released to your Agents and state updates may be
             delayed.
           </v-alert>
         </v-card-text>
