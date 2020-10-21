@@ -34,26 +34,14 @@ export default {
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     },
-    dependencies() {
-      if (!this.taskRun) return []
-      let upstream = this.taskRun.task.upstream_edges.map(
-        edge => edge.upstream_task.id
-      )
-      let downstream = this.taskRun.task.downstream_edges.map(
-        edge => edge.downstream_task.id
-      )
-      return [this.taskRun.task.id, ...upstream, ...downstream]
-    },
-    downstreamEdges() {
-      if (!this.taskRun) return []
-      return this.taskRun.task.downstream_edges
-    },
     taskRunId() {
       return this.$route.params.id
     },
-    upstreamEdges() {
-      if (!this.taskRun) return []
-      return this.taskRun.task.upstream_edges
+    mappedParent() {
+      return this.taskRun.mapped == this.taskRun.map_index > -1
+    },
+    mappedChild() {
+      return this.taskRun.mapped && this.taskRun.map_index > -1
     }
   },
   watch: {
