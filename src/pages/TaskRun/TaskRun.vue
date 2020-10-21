@@ -174,6 +174,16 @@ export default {
         <v-icon left>format_align_left</v-icon>
         Logs
       </v-tab>
+
+      <v-tab href="#children" :style="hideOnMobile">
+        <v-icon left>device_hub</v-icon>
+        Children
+      </v-tab>
+
+      <v-tab href="#siblings" :style="hideOnMobile">
+        <v-icon left>linear_scale</v-icon>
+        Siblings
+      </v-tab>
     </v-tabs>
 
     <v-tabs-items
