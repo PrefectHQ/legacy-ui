@@ -158,7 +158,10 @@ export default {
         }
       },
       skip() {
-        return this.nodeData.data.state !== 'Mapped'
+        return (
+          this.nodeData.data.state !== 'Mapped' ||
+          !this.nodeData?.data?.task_run_id
+        )
       },
       pollInterval: 3000,
       update: data => data.mapped_children

@@ -143,6 +143,9 @@ export default {
         )
       },
       update(data) {
+        const taskRun = this.taskRun
+        taskRun.task.task_run_id = taskRun.id
+
         const dependencies = Object.keys(data).map(key => {
           const task = data[key][0]
 
@@ -156,7 +159,7 @@ export default {
           )
           return task
         })
-        this.tasks = [this.taskRun, ...dependencies]
+        this.tasks = [taskRun, ...dependencies]
 
         return data
       },
