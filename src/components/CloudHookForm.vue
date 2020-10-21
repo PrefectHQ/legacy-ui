@@ -407,6 +407,7 @@ export default {
               <v-col cols="12" md="8" class="pb-0">
                 <v-autocomplete
                   v-if="canEdit && !versionGroupIdProp"
+                  id="item"
                   v-model="versionGroupIdSelect"
                   data-cy="flow-list"
                   item-value="version_group_id"
@@ -414,8 +415,14 @@ export default {
                   label="Flow (Version Group)"
                   class="headline overflow"
                   :items="flows"
-                />
-
+                >
+                  <template #item="{ item }">
+                  <v-list-item-content>
+                    <v-list-item-title>{{item.name}}</v-list-item-title>
+                    <v-list-item-subtitle>({{item.project.name}})</v-list-item-subtitle>
+                  </v-list-item-content>
+                  </template>
+                </v-autocomplete>
                 <v-text-field
                   v-if="canEdit"
                   v-model="tempName"
