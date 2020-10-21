@@ -201,32 +201,30 @@ export default {
               </v-col>
             </v-row>
 
-            <v-row no-gutters>
+            <v-row
+              v-if="
+                taskRun.serialized_state && taskRun.serialized_state._result
+              "
+              no-gutters
+            >
               <v-col cols="6">
                 Result Type
               </v-col>
-              <v-col
-                v-if="
-                  taskRun.serialized_state && taskRun.serialized_state._result
-                "
-                cols="6"
-                class="text-right font-weight-bold"
-              >
+              <v-col cols="6" class="text-right font-weight-bold">
                 {{ taskRun.serialized_state._result.type | typeClass }}
               </v-col>
             </v-row>
 
-            <v-row no-gutters>
+            <v-row
+              v-if="
+                taskRun.serialized_state && taskRun.serialized_state._result
+              "
+              no-gutters
+            >
               <v-col cols="6">
                 Result Location
               </v-col>
-              <v-col
-                v-if="
-                  taskRun.serialized_state && taskRun.serialized_state._result
-                "
-                cols="6"
-                class="text-right font-weight-bold"
-              >
+              <v-col cols="6" class="text-right font-weight-bold">
                 <v-tooltip top>
                   <template #activator="{ on }">
                     <span v-on="on">
