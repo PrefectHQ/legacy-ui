@@ -16,6 +16,7 @@ query TaskRun($id: uuid!) {
       id
       name
       retry_delay
+      mapped
       max_retries
       trigger
       type

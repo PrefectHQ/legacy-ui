@@ -38,10 +38,10 @@ export default {
       return this.$route.params.id
     },
     mappedParent() {
-      return this.taskRun.mapped == this.taskRun.map_index > -1
+      return this.taskRun?.task.mapped && this.taskRun?.map_index === -1
     },
     mappedChild() {
-      return this.taskRun.mapped && this.taskRun.map_index > -1
+      return this.taskRun?.task.mapped && this.taskRun?.map_index > -1
     }
   },
   watch: {
@@ -177,12 +177,12 @@ export default {
 
       <v-tab href="#children" :style="hideOnMobile">
         <v-icon left>device_hub</v-icon>
-        Children
+        Children {{ mappedParent }}
       </v-tab>
 
       <v-tab href="#siblings" :style="hideOnMobile">
         <v-icon left>linear_scale</v-icon>
-        Siblings
+        Siblings {{ mappedChild }}
       </v-tab>
     </v-tabs>
 
