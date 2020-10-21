@@ -167,9 +167,9 @@ export default {
       )
     },
     projectNamePrefix() {
-      const prefixedName = item => item.name + " ("+item.project.name+")"
+      const prefixedName = item => item.name + ' (' + item.project.name + ')'
       return prefixedName
-    },
+    }
   },
   watch: {
     loading(val) {
