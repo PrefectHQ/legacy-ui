@@ -22,6 +22,12 @@ export default {
     return {}
   },
   computed: {
+    expectedRuns() {
+      return (
+        this.taskRun?.serialized_state?.n_map_states?.toLocaleString() ||
+        'Unknown'
+      )
+    },
     filteredParams() {
       return {
         [this.taskRun.task.name]: this.taskRun.flow_run.parameters[
@@ -104,7 +110,7 @@ export default {
                 <v-tooltip top>
                   <template #activator="{ on }">
                     <span v-on="on">
-                      {{ taskRun.serialized_state.n_map_states || 'unknown' }}
+                      {{ expectedRuns }}
                     </span>
                   </template>
                   <span v-if="!taskRun.serialized_state.n_map_states">
