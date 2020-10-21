@@ -246,6 +246,16 @@ export default {
         Logs
         <v-icon>format_align_left</v-icon>
       </v-btn>
+
+      <v-btn @click="tab = 'children'">
+        Children
+        <v-icon>device_hub</v-icon>
+      </v-btn>
+
+      <v-btn @click="tab = 'siblings'">
+        Siblings
+        <v-icon>linear_scale</v-icon>
+      </v-btn>
     </v-bottom-navigation>
   </v-sheet>
 </template>
