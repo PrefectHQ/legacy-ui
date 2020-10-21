@@ -36,7 +36,7 @@ export const routes = [
     path: '/accept',
     component: () =>
       import(
-        /* webpackChunkName: "accept" */ '@/pages/Onboard/AcceptInvitationPage.vue'
+        /* webpackChunkName: "accept" */ '@/pages/Onboard/Onboard-Page.vue'
       ),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
