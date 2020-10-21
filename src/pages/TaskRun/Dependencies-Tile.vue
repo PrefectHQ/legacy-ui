@@ -77,7 +77,7 @@ export default {
       expanded: true,
       showCards: true,
       task: null,
-      tasks: []
+      tasks: [this.taskRun]
     }
   },
   computed: {
@@ -105,7 +105,7 @@ export default {
       }
 
       if (this.taskRun.task.downstream_edges.length) {
-        const downstream = this.taskRun.task.upstream_edges.reduce(
+        const downstream = this.taskRun.task.downstream_edges.reduce(
           (string, edge, i) => {
             string += `
           downstream_task_run_${i}: task_run(where: { flow_run_id: { _eq: "${this.taskRun?.flow_run?.id}" }, task_id: { _eq: "${edge?.downstream_task?.id}" }, map_index: { _in: [ -1, ${this.taskRun?.map_index} ] } }) {
