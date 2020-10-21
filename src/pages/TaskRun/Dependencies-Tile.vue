@@ -78,7 +78,7 @@ export default {
       expanded: true,
       showCards: true,
       task: null,
-      tasks: [this.taskRun]
+      tasks: []
     }
   },
   computed: {
@@ -127,6 +127,20 @@ export default {
           ${queryString}
         }
       `
+    },
+    modifiedTaskRun() {
+      return {
+        ...this.taskRun,
+        flow_run_name: this.taskRun.flow_run.name,
+        task: {
+          ...this.taskRun.task,
+          task_run_id: this.taskRun.id,
+          name:
+            this.taskRun.name ??
+            this.taskRun.task.name +
+              (this.taskRun.map_index > -1 ? `(${this.taskRun.map_index})` : '')
+        }
+      }
     }
   },
   watch: {},
@@ -143,9 +157,6 @@ export default {
         )
       },
       update(data) {
-        const taskRun = this.taskRun
-        taskRun.task.task_run_id = taskRun.id
-
         const dependencies = Object.keys(data).map(key => {
           const task = data[key][0]
 
@@ -159,7 +170,14 @@ export default {
           )
           return task
         })
-        this.tasks = [taskRun, ...dependencies]
+
+        dependencies.forEach(d => {
+          d.flow_run_name = this.taskRun.flow_run.name
+
+          d.task.name =
+            d.name ?? d.task.name + (d.map_index > -1 ? `(${d.map_index})` : '')
+        })
+        this.tasks = [this.modifiedTaskRun, ...dependencies]
 
         return data
       },

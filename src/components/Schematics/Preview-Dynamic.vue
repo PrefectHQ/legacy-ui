@@ -62,7 +62,10 @@ export default {
           Task Run
         </v-list-item-subtitle>
         <v-list-item-title>
-          {{ task.flow_run_name }} - {{ task.task.name }}
+          <span>
+            {{ task.flow_run_name }} -
+            {{ task.name ? task.name : task.task.name }}
+          </span>
           <span v-if="task.map_index > -1"> ({{ task.map_index }})</span>
         </v-list-item-title>
         <v-list-item-subtitle class="caption">

@@ -51,6 +51,9 @@ export default {
       scale: false
     }
   },
+  mounted() {
+    console.log(this.nodeData)
+  },
   computed: {
     appliedTransform() {
       return this.transform.apply([this.nodeData.x, this.nodeData.y])
