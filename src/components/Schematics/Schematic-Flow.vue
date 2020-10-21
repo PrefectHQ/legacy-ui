@@ -275,16 +275,6 @@ export default {
       if (this.debug) console.time('Pre-stratify')
 
       let preStratify = tasks
-        .filter(task => {
-          if (!task.task) return true
-
-          if (task.map_index > -1) {
-            this.mappedTasks[task.task.id]
-              ? this.mappedTasks[task.task.id].push(task)
-              : (this.mappedTasks[task.task.id] = [task])
-          }
-          return task.map_index === -1
-        })
         .sort((a, b) => {
           let _a = a.task ? a.task : a
           let _b = b.task ? b.task : b
@@ -377,18 +367,7 @@ export default {
 
       let taskMap = Object.assign(
         {},
-        ...tasks
-          .filter(task => {
-            if (!task.task) return true
-
-            if (task.map_index > -1) {
-              this.mappedTasks[task.task.id]
-                ? this.mappedTasks[task.task.id].push(task)
-                : (this.mappedTasks[task.task.id] = [task])
-            }
-            return task.map_index === -1
-          })
-          .map(t => ({ [t.task?.id || t.id]: t }))
+        ...tasks.map(t => ({ [t.task?.id || t.id]: t }))
       )
 
       this.nodeData.forEach(node => {

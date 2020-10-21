@@ -85,7 +85,7 @@ export default {
       }
     },
     isParameter() {
-      return this.nodeData.data.type.split('.').pop() == 'Parameter'
+      return this.nodeData?.data?.type?.split('.').pop() == 'Parameter'
     },
     segments() {
       if (!this.mappedChildren) return []
