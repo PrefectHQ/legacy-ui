@@ -9,7 +9,6 @@ export default {
       loadingKey: 0,
       loading: false,
       deleting: false,
-      start: false,
       error: false,
       dialog: false,
       invitationId:
