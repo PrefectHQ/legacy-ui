@@ -198,7 +198,16 @@ export default {
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
             <div class="display-1 text-center">
-              Let's start by creating your team
+              Let's start by creating your
+              {{ pendingInvitations.length ? 'personal' : '' }}
+              team
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-icon small v-on="on">fa-question-circle</v-icon>
+                </template>
+                All Prefect users are required to have a personal team for
+                sandbox use.
+              </v-tooltip>
             </div>
           </v-col>
 
