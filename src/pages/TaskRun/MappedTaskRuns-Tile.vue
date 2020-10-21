@@ -77,14 +77,34 @@ export default {
   apollo: {
     taskRuns: {
       query: require('@/graphql/TaskRun/table-mapped-task-runs.gql'),
+      throttle: 500,
+      debounce: 250,
       variables() {
         const orderBy = {}
         orderBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
+
+        const where = {
+          task_id: { _eq: this.taskRun.task.id },
+          flow_run_id: { _eq: this.taskRun.flow_run.id }
+        }
+        const _or = []
+        const mapSearch = parseInt(this.searchTerm)
+
+        if (mapSearch) {
+          _or.push({ map_index: { _eq: mapSearch } })
+        }
+        if (this.searchTerm !== null) {
+          _or.push({
+            name: { _ilike: this.searchFormatted }
+          })
+        }
+
+        if (_or.length) {
+          where._or = _or
+        }
+
         return {
-          where: {
-            task_id: { _eq: this.taskRun.task.id },
-            flow_run_id: { _eq: this.taskRun.flow_run.id }
-          },
+          where,
           limit: this.itemsPerPage,
           offset: this.offset,
           orderBy
@@ -100,12 +120,30 @@ export default {
     },
     taskRunsCount: {
       query: require('@/graphql/TaskRun/table-mapped-task-runs-count.gql'),
+      throttle: 500,
+      debounce: 250,
       variables() {
+        const where = {
+          task_id: { _eq: this.taskRun.task.id },
+          flow_run_id: { _eq: this.taskRun.flow_run.id }
+        }
+        const _or = []
+        const mapSearch = parseInt(this.searchTerm)
+
+        if (mapSearch) {
+          _or.push({ map_index: { _eq: mapSearch } })
+        }
+        if (this.searchTerm !== null) {
+          _or.push({
+            name: { _ilike: this.searchFormatted }
+          })
+        }
+
+        if (_or.length) {
+          where._or = _or
+        }
         return {
-          where: {
-            task_id: { _eq: this.taskRun.task.id },
-            flow_run_id: { _eq: this.taskRun.flow_run.id }
-          }
+          where
         }
       },
       pollInterval: 5000,
