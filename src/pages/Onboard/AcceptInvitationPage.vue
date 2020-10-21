@@ -123,7 +123,6 @@ export default {
         return !this.invitationId
       },
       loadingKey: 'loadingKey',
-      pollInterval: 5000,
       update: data => data.membership_invitation_by_pk
     }
   }
