@@ -11,6 +11,7 @@ export default {
       deleting: false,
       start: false,
       error: false,
+      dialog: false,
       invitationId:
         this.$route.query.invitation_id ||
         sessionStorage.getItem('invitationId'),
@@ -150,15 +151,48 @@ export default {
             <v-icon class="pr-4">fa-user-friends</v-icon>
             Accept
           </v-btn>
+          <v-dialog v-model="dialog" max-width="500">
+            <template #activator="{ on, attrs }">
+              <v-btn outlined class="white--text" v-bind="attrs" v-on="on">
+                No Thanks
+              </v-btn>
+            </template>
 
-          <v-btn
-            outlined
-            class="white--text"
-            :loading="deleting"
-            @click="decline"
-          >
-            No Thanks
-          </v-btn>
+            <v-card>
+              <v-card-title class="headline">
+                Are you sure you want to decline?
+              </v-card-title>
+
+              <v-card-text>
+                <div
+                  >Clicking 'Decline' below will delete your invitation and take
+                  you back to the dashboard. </div
+                ><div class="mt-2">
+                  If you don't want to confirm or delete your invitation right
+                  now, you can click on 'Dashboard'. You'll be able to accept
+                  (or decline) the invitation later.
+                </div>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  class="white--text"
+                  color="prefect"
+                  :loading="deleting"
+                  @click="decline"
+                >
+                  Decline
+                </v-btn>
+                <v-btn outlined color="prefect" @click="toDashboard">
+                  Dashboard</v-btn
+                >
+                <v-btn text color="prefect" @click="dialog = false"
+                  >Cancel</v-btn
+                >
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </div>
       </v-col>
     </v-row>
