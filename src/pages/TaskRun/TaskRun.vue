@@ -57,11 +57,8 @@ export default {
         case 'logs':
           query = { logId: '' }
           break
-        case 'children':
-          query = { 'map-children': '' }
-          break
-        case 'siblings':
-          query = { 'map-siblings': '' }
+        case 'mapped-runs':
+          query = { 'mapped-runs': '' }
           break
         default:
           break
@@ -89,8 +86,7 @@ export default {
   methods: {
     getTab() {
       if ('logId' in this.$route.query) return 'logs'
-      if ('map-children' in this.$route.query) return 'children'
-      if ('map-siblings' in this.$route.query) return 'siblings'
+      if ('mapped-runs' in this.$route.query) return 'mapped-runs'
       return 'overview'
     }
   },
@@ -186,14 +182,13 @@ export default {
         Logs
       </v-tab>
 
-      <v-tab v-if="mappedParent" href="#children" :style="hideOnMobile">
+      <v-tab
+        v-if="mappedParent || mappedChild"
+        href="#mapped-runs"
+        :style="hideOnMobile"
+      >
         <v-icon left>device_hub</v-icon>
-        Children
-      </v-tab>
-
-      <v-tab v-if="mappedChild" href="#siblings" :style="hideOnMobile">
-        <v-icon left>linear_scale</v-icon>
-        Siblings
+        Mapped Runs
       </v-tab>
     </v-tabs>
 
@@ -247,7 +242,7 @@ export default {
 
       <v-tab-item
         class="tab-full-height"
-        value="children"
+        value="mapped-runs"
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
@@ -278,14 +273,9 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-      <v-btn @click="tab = 'children'">
-        Children
+      <v-btn @click="tab = 'mapped-runs'">
+        Mapped Runs
         <v-icon>device_hub</v-icon>
-      </v-btn>
-
-      <v-btn @click="tab = 'siblings'">
-        Siblings
-        <v-icon>linear_scale</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-sheet>
