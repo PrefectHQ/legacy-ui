@@ -52,6 +52,7 @@ export default {
       ],
       itemsPerPage: 25,
       page: 1,
+      searchTerm: null,
       selectedDateFilter: 'day',
       sortBy: 'map_index',
       sortDesc: false,
@@ -119,16 +120,20 @@ export default {
 
 <template>
   <v-card class="pa-2 mt-2" tile>
-    <v-tooltip top>
-      <template #activator="{ on }">
-        <CardTitle :title="tableTitle" icon="pi-task-run">
-          <div slot="action" v-on="on"> </div>
-        </CardTitle>
-      </template>
-      <span>
-        Filter by when runs were last updated
-      </span>
-    </v-tooltip>
+    <CardTitle :title="tableTitle" icon="pi-task-run">
+      <v-text-field
+        slot="action"
+        v-model="searchTerm"
+        class="task-search"
+        flat
+        solo
+        prepend-inner-icon="search"
+        hide-details
+        placeholder="Search by run name or map index"
+        style="min-width: 300px;"
+      >
+      </v-text-field>
+    </CardTitle>
 
     <v-card-text>
       <v-data-table
@@ -236,10 +241,12 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.time-interval-picker {
+.task-search {
+  border-radius: 0 !important;
   font-size: 0.85rem;
-  margin: auto;
-  margin-right: 0;
-  max-width: 150px;
+
+  .v-icon {
+    font-size: 20px !important;
+  }
 }
 </style>
