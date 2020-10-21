@@ -137,7 +137,6 @@ export default {
           return true
         }
       } catch (e) {
-        console.log(e)
         this.mutationErrorMessage = e
           .toString()
           .split(':')
