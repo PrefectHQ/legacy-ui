@@ -4,5 +4,8 @@ query Flows {
     archived
     name
     version_group_id
+    project {
+      name
+    }
   }
 }

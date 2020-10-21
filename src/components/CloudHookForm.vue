@@ -165,7 +165,11 @@ export default {
       return allHooks.filter(
         t => (t.requiresCloud && this.isCloud) || !t.requiresCloud
       )
-    }
+    },
+    projectNamePrefix() {
+      const prefixedName = item => item.name + " ("+item.project.name+")"
+      return prefixedName
+    },
   },
   watch: {
     loading(val) {
@@ -406,7 +410,7 @@ export default {
                   v-model="versionGroupIdSelect"
                   data-cy="flow-list"
                   item-value="version_group_id"
-                  item-text="name"
+                  :item-text="projectNamePrefix"
                   label="Flow (Version Group)"
                   class="headline overflow"
                   :items="flows"
