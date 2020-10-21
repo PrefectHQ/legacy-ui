@@ -3,13 +3,6 @@ import LogRocket from 'logrocket'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
-if (!localStorage.getItem(SERVER_KEY)) {
-  localStorage.setItem(
-    SERVER_KEY,
-    window.prefect_ui_settings?.server_url || process.env.VUE_APP_SERVER_URL
-  )
-}
-
 const maxRetries = 3
 
 const state = {
