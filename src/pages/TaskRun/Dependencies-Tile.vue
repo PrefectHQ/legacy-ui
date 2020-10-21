@@ -93,7 +93,7 @@ export default {
         const upstream = this.taskRun.task.upstream_edges.reduce(
           (string, edge, i) => {
             string += `
-          task_run_${i}: task_run(where: { flow_run_id: { _eq: "${this.taskRun?.flow_run?.id}" }, task_id: { _eq: "${edge?.upstream_task?.id}" }, map_index: { _in: [ -1, ${this.taskRun?.map_index} ] } }) {
+          upstream_task_run_${i}: task_run(where: { flow_run_id: { _eq: "${this.taskRun?.flow_run?.id}" }, task_id: { _eq: "${edge?.upstream_task?.id}" }, map_index: { _in: [ -1, ${this.taskRun?.map_index} ] } }) {
             ${taskRunFields}
           }
         `
@@ -108,7 +108,7 @@ export default {
         const downstream = this.taskRun.task.upstream_edges.reduce(
           (string, edge, i) => {
             string += `
-          task_run_${i}: task_run(where: { flow_run_id: { _eq: "${this.taskRun?.flow_run?.id}" }, task_id: { _eq: "${edge?.downstream_task?.id}" }, map_index: { _in: [ -1, ${this.taskRun?.map_index} ] } }) {
+          downstream_task_run_${i}: task_run(where: { flow_run_id: { _eq: "${this.taskRun?.flow_run?.id}" }, task_id: { _eq: "${edge?.downstream_task?.id}" }, map_index: { _in: [ -1, ${this.taskRun?.map_index} ] } }) {
             ${taskRunFields}
           }
         `
