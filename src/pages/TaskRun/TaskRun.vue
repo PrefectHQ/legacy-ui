@@ -37,6 +37,7 @@ export default {
     taskRunId() {
       return this.$route.params.id
     },
+    // Is this the correct definition? Can a mapped task run have siblings and children?
     mappedParent() {
       return this.taskRun?.task.mapped && this.taskRun?.map_index === -1
     },
@@ -175,14 +176,14 @@ export default {
         Logs
       </v-tab>
 
-      <v-tab href="#children" :style="hideOnMobile">
+      <v-tab v-if="mappedParent" href="#children" :style="hideOnMobile">
         <v-icon left>device_hub</v-icon>
-        Children {{ mappedParent }}
+        Children
       </v-tab>
 
-      <v-tab href="#siblings" :style="hideOnMobile">
+      <v-tab v-if="mappedChild" href="#siblings" :style="hideOnMobile">
         <v-icon left>linear_scale</v-icon>
-        Siblings {{ mappedChild }}
+        Siblings
       </v-tab>
     </v-tabs>
 
