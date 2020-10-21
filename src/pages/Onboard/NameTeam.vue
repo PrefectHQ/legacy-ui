@@ -2,9 +2,10 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
+import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin.js'
 
 export default {
-  mixins: [teamProfileMixin],
+  mixins: [teamProfileMixin, handleMembershipInvitations],
   data() {
     return {
       // Form's computed height
@@ -12,11 +13,14 @@ export default {
 
       loading: 0,
       pendingInvitations: [],
+      deleting: false,
+      dialog: false,
 
       // Reveal animation bools
       revealNote: false,
       revealNameInput: false,
       revealUrlInput: false,
+      revealPendingTeams: false,
       revealConfirm: false
     }
   },
@@ -42,6 +46,7 @@ export default {
     setTimeout(() => {
       this.revealNameInput = true
       this.revealUrlInput = true
+      this.revealPendingTeams = true
       this.revealConfirm = true
 
       setTimeout(() => {
@@ -132,6 +137,45 @@ export default {
       await this.createLicense()
       if (!this.updateServerError) this.goToResources()
     },
+    async accept() {
+      try {
+        this.loading = true
+        const tenant = this.membershipInvitation.tenant
+        const invitationId = this.membershipInvitation.id
+        const accepted = await this.acceptMembershipInvitation(invitationId)
+        if (accepted.accept_membership_invitation.id) {
+          sessionStorage.removeItem('invitationId')
+          await this.setCurrentTenant(tenant.slug)
+          this.toDashboard(tenant)
+        }
+      } catch (e) {
+        this.mutationErrorMessage = e
+          .toString()
+          .split(':')
+          .pop()
+        this.loading = false
+        this.error = true
+      }
+      this.loading = false
+    },
+    async decline() {
+      try {
+        this.deleting = true
+        const invitationId = this.membershipInvitation.id
+        const declined = await this.declineMembershipInvitation(invitationId)
+        if (declined.delete_membership_invitation.success) {
+          this.toDashboard()
+        }
+        this.deleting = false
+      } catch (e) {
+        this.mutationErrorMessage = e
+          .toString()
+          .split(':')
+          .pop()
+        this.loading = false
+        this.error = true
+      }
+    },
     goToResources() {
       this.revealNameInput = false
       this.revealUrlInput = false
@@ -152,7 +196,6 @@ export default {
         }
       },
       async result({ data, loading }) {
-        console.log(data)
         if (loading || !data || !data.pendingInvitations) return
         // We filter this because we don't want to show invitations
         // to tenants we're already in...
@@ -215,21 +258,6 @@ export default {
             <div class="body-2 text--darken-1">
               (You can always change this later)
             </div>
-          </v-col>
-
-          <v-col v-if="revealNote" key="pendingInvites" cols="6" offset="3">
-            <div class="body-2 text--darken-1">
-              Your pending invitations:
-            </div>
-            <v-list
-              v-for="pt in pendingInvitations"
-              :key="pt.id"
-              color="transparent"
-            >
-              <v-list-item>
-                {{ pt.tenant.name }}
-              </v-list-item>
-            </v-list>
           </v-col>
 
           <v-col
@@ -311,6 +339,78 @@ export default {
                 clear
               </v-icon>
             </v-text-field>
+          </v-col>
+
+          <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
+            <div class="body-2 text--darken-1">
+              Your pending invitations:
+            </div>
+            <v-list
+              v-for="pt in pendingInvitations"
+              :key="pt.id"
+              color="transparent"
+            >
+              <v-list-item>
+                {{ pt.tenant.name }}
+                <div class="mt-8">
+                  <v-btn
+                    class="mr-3"
+                    color="accentPink"
+                    dark
+                    depressed
+                    @click="accept"
+                  >
+                    <v-icon class="pr-4">fa-user-friends</v-icon>
+                    Accept
+                  </v-btn>
+                  <v-dialog v-model="dialog" max-width="500">
+                    <template #activator="{ on, attrs }">
+                      <v-btn
+                        outlined
+                        class="white--text"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        No Thanks
+                      </v-btn>
+                    </template>
+                    <v-card>
+                      <v-card-title class="headline">
+                        Are you sure you want to decline?
+                      </v-card-title>
+                      <v-card-text>
+                        <div>
+                          Clicking
+                          <span class="font-weight-bold"> Decline </span> will
+                          delete your invitation.
+                        </div>
+                        <div class="mt-2">
+                          If you don't want to confirm or delete your invitation
+                          right now, you can click on
+                          <span class="font-weight-bold"> Cancel</span>. You'll
+                          be able to accept (or decline) the invitation from
+                          your dashboard after creating your personal team.
+                        </div>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          class="white--text"
+                          color="prefect"
+                          :loading="deleting"
+                          @click="decline"
+                        >
+                          Decline
+                        </v-btn>
+                        <v-btn outlined color="prefect" @click="dialog = false"
+                          >Cancel</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </div>
+              </v-list-item>
+            </v-list>
           </v-col>
 
           <v-col
