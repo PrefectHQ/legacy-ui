@@ -22,7 +22,7 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant']),
     teamName() {
-      return this.membershipInvitation?.tenant?.name || 'your new team'
+      return this.membershipInvitation?.tenant?.name || 'a new team'
     },
     loadingPage() {
       return this.loadingKey > 0
@@ -56,6 +56,7 @@ export default {
           sessionStorage.removeItem('invitationId')
           await this.setCurrentTenant(tenant.slug)
           this.toDashboard(tenant)
+          this.loading = false
         }
       } catch (e) {
         this.mutationErrorMessage = e
@@ -65,7 +66,6 @@ export default {
         this.loading = false
         this.error = true
       }
-      this.loading = false
     },
     async decline() {
       try {
@@ -81,7 +81,8 @@ export default {
           .toString()
           .split(':')
           .pop()
-        this.loading = false
+        this.dialog = false
+        this.deleting = false
         this.error = true
       }
     },
