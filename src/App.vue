@@ -7,6 +7,8 @@ import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 
+const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
+
 export default {
   components: {
     Alert,
@@ -22,7 +24,7 @@ export default {
       loadingKey: 0,
       refreshTimeout: null,
       reset: false,
-      shown: false,
+      shown: true,
       startupHasRun: false,
       wholeAppShown: true
     }
@@ -33,6 +35,7 @@ export default {
       'version',
       'url',
       'connected',
+      'connecting',
       'isServer',
       'isCloud'
     ]),
@@ -48,11 +51,20 @@ export default {
       'tenant',
       'tenants',
       'defaultTenant',
-      'tenantIsSet'
+      'tenantIsSet',
+      'isLoadingTenant'
     ]),
     ...mapGetters('user', ['userIsSet']),
     notFoundPage() {
       return this.$route.name === 'not-found'
+    },
+    loading() {
+      return (
+        this.isAuthorizingUser ||
+        this.isLoggingInUser ||
+        this.connecting ||
+        this.isLoadingTenant
+      )
     },
     isCloud() {
       return this.backend == 'CLOUD'
@@ -83,18 +95,18 @@ export default {
     },
     tenant(val) {
       if (val?.id) {
+        if (this.isCloud && !this.tenant.settings.teamNamed) {
+          this.$router.push({
+            name: 'welcome',
+            params: {
+              tenant: this.tenant.slug
+            }
+          })
+        }
+
         clearTimeout(this.refreshTimeout)
         this.refresh()
         this.$apollo.queries.agents.refresh()
-      }
-    },
-    isAuthorized(val) {
-      if (val) {
-        if (!this.startupHasRun) {
-          this.startup()
-        } else {
-          this.shown = true
-        }
       }
     },
     agents(val) {
@@ -107,6 +119,11 @@ export default {
         this.tenant?.slug !== new_route.params.tenant
       ) {
         await this.setCurrentTenant(new_route.params.tenant)
+      }
+    },
+    isAuthorized(value) {
+      if (value) {
+        this.getApi()
       }
     }
   },
@@ -122,22 +139,27 @@ export default {
     // window.removeEventListener('blur', this.handleVisibilityChange)
     // window.removeEventListener('focus', this.handleVisibilityChange)
   },
-  mounted() {
-    if (!this.isCloud || (this.isAuthenticated && this.isAuthorized)) {
-      this.shown = true
-      if (!this.startupHasRun) {
-        this.startup()
+  async mounted() {
+    if (!localStorage.getItem(SERVER_KEY)) {
+      localStorage.setItem(
+        SERVER_KEY,
+        window.prefect_ui_settings?.server_url || process.env.VUE_APP_SERVER_URL
+      )
+
+      this.setServerUrl(localStorage.getItem(SERVER_KEY))
+    }
+
+    this.refresh()
+
+    if (this.isAuthorized || this.isServer) {
+      await this.getApi()
+
+      if (!this.connected && this.isServer) {
+        this.$router.push({ name: 'home' })
       }
     }
-    this.refresh()
   },
   async beforeMount() {
-    if ((this.isServer || this.isAuthorized) && !this.startupHasRun) {
-      await this.startup()
-    }
-
-    this.monitorConnection()
-
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
@@ -151,7 +173,7 @@ export default {
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
-    ...mapActions('api', ['getApi', 'monitorConnection']),
+    ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth0', ['authenticate', 'authorize']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
@@ -188,68 +210,6 @@ export default {
 
       this.lastInteraction = this.currentInteraction
     },
-    async startup() {
-      this.startupHasRun = true
-
-      try {
-        if (this.isCloud) {
-          if (!this.isAuthorized) {
-            await this.authorize()
-          }
-
-          if (!this.userIsSet) {
-            await this.getUser()
-          }
-        }
-
-        await this.getApi()
-
-        await this.getTenants()
-
-        if (this.isServer && !this.tenants?.length) {
-          // Server has no tenants so redirect to home
-          if (this.$route.name !== 'home') {
-            await this.$router.push({
-              name: 'home'
-            })
-          }
-        }
-
-        if (this.isServer && this.tenants?.length) {
-          // If this is Server, there won't be a default tenant, so we'll set one
-          this.setDefaultTenant(this.tenants?.[0])
-        }
-
-        if (this.defaultTenant?.id) {
-          await this.setCurrentTenant(this.defaultTenant.slug)
-
-          if (this.isCloud && !this.tenant.settings.teamNamed) {
-            await this.$router.push({
-              name: 'welcome',
-              params: {
-                tenant: this.tenant.slug
-              }
-            })
-          }
-        }
-      } catch {
-        if (this.$route.name !== 'home') {
-          await this.$router.push({
-            name: 'home'
-          })
-        }
-      } finally {
-        this.shown = true
-
-        if (!this.$route.params.tenant) {
-          this.$router.replace({
-            params: {
-              tenant: this.tenant.slug
-            }
-          })
-        }
-      }
-    },
     refresh() {
       let start
 
@@ -277,14 +237,16 @@ export default {
       query() {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
-      loadingKey: 'loading',
       pollInterval: 3000,
       skip() {
-        return !this.tenant.id
+        return (
+          (this.isCloud && !this.isAuthenticated) ||
+          !this.connected ||
+          !this.isAuthorized ||
+          (this.isServer && !this.connected)
+        )
       },
-      update: data => {
-        return data.agent
-      }
+      update: data => data.agent
     }
   }
 }
@@ -293,20 +255,19 @@ export default {
 <template>
   <v-app class="app">
     <v-main :class="{ 'pt-0': isWelcome }">
-      <v-progress-linear
-        absolute
-        :active="isLoggingInUser"
-        indeterminate
-        height="5"
-      />
+      <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
       <v-slide-y-transition>
-        <NavBar v-if="shown && loadedComponents > 0" />
+        <NavBar
+          v-if="
+            ((isCloud && isAuthenticated) || isServer) && loadedComponents > 0
+          "
+        />
       </v-slide-y-transition>
 
-      <SideNav v-if="shown" />
+      <SideNav />
       <v-fade-transition mode="out-in">
-        <router-view v-if="shown" class="router-view" />
+        <router-view class="router-view" />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>
