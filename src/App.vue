@@ -7,6 +7,8 @@ import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 
+const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
+
 export default {
   components: {
     Alert,
@@ -94,6 +96,15 @@ export default {
     },
     tenant(val) {
       if (val?.id) {
+        if (this.isCloud && !this.tenant.settings.teamNamed) {
+          this.$router.push({
+            name: 'welcome',
+            params: {
+              tenant: this.tenant.slug
+            }
+          })
+        }
+
         clearTimeout(this.refreshTimeout)
         this.refresh()
         this.$apollo.queries.agents.refresh()
@@ -129,11 +140,24 @@ export default {
     // window.removeEventListener('blur', this.handleVisibilityChange)
     // window.removeEventListener('focus', this.handleVisibilityChange)
   },
-  mounted() {
+  async mounted() {
+    if (!localStorage.getItem(SERVER_KEY)) {
+      localStorage.setItem(
+        SERVER_KEY,
+        window.prefect_ui_settings?.server_url || process.env.VUE_APP_SERVER_URL
+      )
+
+      this.setServerUrl(localStorage.getItem(SERVER_KEY))
+    }
+
     this.refresh()
 
-    if (this.isAuthorized) {
-      this.getApi()
+    if (this.isAuthorized || this.isServer) {
+      await this.getApi()
+
+      if (!this.connected && this.isServer) {
+        this.$router.push({ name: 'home' })
+      }
     }
   },
   async beforeMount() {
@@ -150,7 +174,7 @@ export default {
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
-    ...mapActions('api', ['getApi', 'monitorConnection']),
+    ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth0', ['authenticate', 'authorize']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
