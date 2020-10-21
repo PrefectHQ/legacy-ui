@@ -7,6 +7,7 @@ import gql from 'graphql-tag'
 
 const taskRunFields = `
   id
+  task_run_id: id
   map_index
   name
   state
@@ -157,7 +158,6 @@ export default {
         })
         this.tasks = [this.taskRun, ...dependencies]
 
-        console.log(this.tasks)
         return data
       },
       pollInterval: 5000
