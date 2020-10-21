@@ -35,7 +35,7 @@ export default {
     },
     errorMessage() {
       if (this.membershipInvitation && !this.membershipInvitation.user)
-        return "The membership ID provided doesn't match this user. Are you in the right account? "
+        return "This invitation appears to be for someone else - did you log in to the correct account? "
       if (this.error)
         return 'It looks like there was a problem with your invitation.  Please check the details and your account and try again.'
       return `We can't find your membership invitation. Have you already
