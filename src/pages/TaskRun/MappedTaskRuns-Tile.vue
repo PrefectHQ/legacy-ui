@@ -50,10 +50,12 @@ export default {
           width: '15%'
         }
       ],
+      initialPageSet: false,
       itemsPerPage: 25,
       page: 1,
       searchTerm: null,
       selectedDateFilter: 'day',
+      serverItemsLength: null,
       sortBy: 'map_index',
       sortDesc: false,
       taskRunDurations: {},
@@ -72,6 +74,14 @@ export default {
       if (!this.searchTerm) return null
       return `%${this.searchTerm}%`
     }
+  },
+  mounted() {
+    this.page =
+      Math.abs(Math.ceil(this.taskRun.map_index / this.itemsPerPage)) + 1
+    console.log(this.taskRun.map_index)
+    console.log(
+      Math.abs(Math.ceil(this.taskRun.map_index / this.itemsPerPage)) + 1
+    )
   },
   methods: {},
   apollo: {
@@ -110,6 +120,9 @@ export default {
           orderBy
         }
       },
+      skip() {
+        return !this.initialPageSet
+      },
       loadingKey: 'loading',
       pollInterval: 5000,
       update(data) {
@@ -147,10 +160,19 @@ export default {
         }
       },
       pollInterval: 5000,
-      update: data =>
-        data && data.task_run_aggregate
-          ? data.task_run_aggregate.aggregate.count
-          : null
+      update(data) {
+        this.serverItemsLength = data?.task_run_aggregate?.aggregate?.count
+
+        if (!this.initialPageSet) {
+          this.page = Math.abs(
+            Math.ceil(this.taskRun.map_index / this.itemsPerPage)
+          )
+
+          this.initialPageSet = true
+        }
+
+        return data?.task_run_aggregate?.aggregate?.count ?? null
+      }
     }
   }
 }
@@ -182,7 +204,8 @@ export default {
           firstIcon: 'first_page',
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',
-          nextIcon: 'keyboard_arrow_right'
+          nextIcon: 'keyboard_arrow_right',
+          showCurrentPage: true
         }"
         single-select
         class="truncate-table"
@@ -194,7 +217,7 @@ export default {
         must-sort
         item-key="id"
         :page.sync="page"
-        :server-items-length="taskRunsCount"
+        :server-items-length="serverItemsLength"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
         :class="{ 'fixed-table': this.$vuetify.breakpoint.smAndUp }"
