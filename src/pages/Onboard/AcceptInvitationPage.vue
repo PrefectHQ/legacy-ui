@@ -164,12 +164,14 @@ export default {
 
               <v-card-text>
                 <div
-                  >Clicking 'Decline' below will delete your invitation and take
-                  you back to the dashboard. </div
+                  >Clicking <span class="font-weight-bold"> Decline </span> will
+                  delete your invitation and take you back to the dashboard. </div
                 ><div class="mt-2">
                   If you don't want to confirm or delete your invitation right
-                  now, you can click on 'Dashboard'. You'll be able to accept
-                  (or decline) the invitation later.
+                  now, you can click on
+                  <span class="font-weight-bold"> Dashboard </span>. You'll be
+                  taken back to your team dashboard and be able to accept (or
+                  decline) the invitation later.
                 </div>
               </v-card-text>
 
