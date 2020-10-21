@@ -11,6 +11,7 @@ export default {
       height: '0px',
 
       loading: 0,
+      pendingInvitations: [],
 
       // Reveal animation bools
       revealNote: false,
@@ -21,6 +22,7 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['user']),
+    ...mapGetters('api', ['isCloud']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
     }
@@ -141,7 +143,39 @@ export default {
       })
     }
   },
-  apollo: {}
+  apollo: {
+    pendingInvitations: {
+      query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
+      variables() {
+        return {
+          email: this.user.email
+        }
+      },
+      async result({ data, loading }) {
+        console.log(data)
+        if (loading || !data || !data.pendingInvitations) return
+        // We filter this because we don't want to show invitations
+        // to tenants we're already in...
+        // This is due to a bug(feature?) in the back end that allows
+        // users to be invited to tenants they're already part of
+        await this.getUser()
+        this.pendingInvitations =
+          data.pendingInvitations && data.pendingInvitations.length
+            ? data.pendingInvitations.filter(
+                pi =>
+                  !this.memberships
+                    .map(at => at.tenant.id)
+                    .includes(pi.tenant.id)
+              )
+            : []
+      },
+      skip() {
+        return !this.isCloud || !this.user || !this.user.email
+      },
+      fetchPolicy: 'network-only',
+      pollInterval: 60000
+    }
+  }
 }
 </script>
 
@@ -172,6 +206,21 @@ export default {
             <div class="body-2 text--darken-1">
               (You can always change this later)
             </div>
+          </v-col>
+
+          <v-col v-if="revealNote" key="pendingInvites" cols="6" offset="3">
+            <div class="body-2 text--darken-1">
+              Your pending invitations:
+            </div>
+            <v-list
+              v-for="pt in pendingInvitations"
+              :key="pt.id"
+              color="transparent"
+            >
+              <v-list-item>
+                {{ pt.tenant.name }}
+              </v-list-item>
+            </v-list>
           </v-col>
 
           <v-col
