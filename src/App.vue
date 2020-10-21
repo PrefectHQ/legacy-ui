@@ -95,6 +95,15 @@ export default {
     },
     tenant(val) {
       if (val?.id) {
+        if (this.isCloud && !this.tenant.settings.teamNamed) {
+          this.$router.push({
+            name: 'welcome',
+            params: {
+              tenant: this.tenant.slug
+            }
+          })
+        }
+
         clearTimeout(this.refreshTimeout)
         this.refresh()
         this.$apollo.queries.agents.refresh()
