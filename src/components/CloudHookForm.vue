@@ -417,10 +417,12 @@ export default {
                   :items="flows"
                 >
                   <template #item="{ item }">
-                  <v-list-item-content>
-                    <v-list-item-title>{{item.name}}</v-list-item-title>
-                    <v-list-item-subtitle>({{item.project.name}})</v-list-item-subtitle>
-                  </v-list-item-content>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ item.name }}</v-list-item-title>
+                      <v-list-item-subtitle
+                        >({{ item.project.name }})</v-list-item-subtitle
+                      >
+                    </v-list-item-content>
                   </template>
                 </v-autocomplete>
                 <v-text-field
