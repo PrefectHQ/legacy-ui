@@ -6,6 +6,7 @@ import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import DependenciesTile from '@/pages/TaskRun/Dependencies-Tile'
+import MappedTaskRunsTile from '@/pages/TaskRun/MappedTaskRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TaskRunHeartbeatTile from '@/pages/TaskRun/TaskRunHeartbeat-Tile'
 import TileLayout from '@/layouts/TileLayout'
@@ -18,6 +19,7 @@ export default {
     DependenciesTile,
     DetailsTile,
     LogsCard,
+    MappedTaskRunsTile,
     SubPageNav,
     TaskRunHeartbeatTile,
     TileLayout,
@@ -55,6 +57,12 @@ export default {
         case 'logs':
           query = { logId: '' }
           break
+        case 'children':
+          query = { 'map-children': '' }
+          break
+        case 'siblings':
+          query = { 'map-siblings': '' }
+          break
         default:
           break
       }
@@ -81,6 +89,8 @@ export default {
   methods: {
     getTab() {
       if ('logId' in this.$route.query) return 'logs'
+      if ('map-children' in this.$route.query) return 'children'
+      if ('map-siblings' in this.$route.query) return 'siblings'
       return 'overview'
     }
   },
@@ -232,6 +242,27 @@ export default {
             query-key="task_run_by_pk"
             :variables="{ id: $route.params.id }"
           />
+        </TileLayoutFull>
+      </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height"
+        value="children"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
+        <TileLayoutFull>
+          <v-skeleton-loader
+            slot="row-2-tile"
+            :loading="loading > 0"
+            type="image"
+            height="800"
+            transition="quick-fade"
+            class="my-2"
+            tile
+          >
+            <MappedTaskRunsTile :task-run="taskRun" />
+          </v-skeleton-loader>
         </TileLayoutFull>
       </v-tab-item>
     </v-tabs-items>
