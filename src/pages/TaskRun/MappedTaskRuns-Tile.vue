@@ -75,14 +75,6 @@ export default {
       return `%${this.searchTerm}%`
     }
   },
-  mounted() {
-    this.page =
-      Math.abs(Math.ceil(this.taskRun.map_index / this.itemsPerPage)) + 1
-    console.log(this.taskRun.map_index)
-    console.log(
-      Math.abs(Math.ceil(this.taskRun.map_index / this.itemsPerPage)) + 1
-    )
-  },
   methods: {},
   apollo: {
     taskRuns: {
@@ -164,8 +156,8 @@ export default {
         this.serverItemsLength = data?.task_run_aggregate?.aggregate?.count
 
         if (!this.initialPageSet) {
-          this.page = Math.abs(
-            Math.ceil(this.taskRun.map_index / this.itemsPerPage)
+          this.page = Math.ceil(
+            Math.abs(this.taskRun.map_index) / this.itemsPerPage
           )
 
           this.initialPageSet = true
