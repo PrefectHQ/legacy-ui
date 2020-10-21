@@ -133,8 +133,7 @@ export default {
       <v-col>
         <div class="display-1 grey--text text--lighten-5">
           You've been invited to join
-          <span class="font-weight-bold"> {{ teamName }}</span
-          >!
+          <span class="font-weight-bold"> {{ teamName }}</span>
         </div>
         <div class="subtitle grey--text text--lighten-5 mt-4">
           To accept, please click below.
