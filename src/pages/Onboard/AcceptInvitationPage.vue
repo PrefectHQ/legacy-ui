@@ -1,7 +1,9 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin.js'
 
 export default {
+  mixins: [handleMembershipInvitations],
   data() {
     return {
       loadingKey: 0,
@@ -45,72 +47,50 @@ export default {
   methods: {
     ...mapActions('tenant', ['setCurrentTenant']),
     async accept() {
-      this.loading = true
-      const tenant = this.membershipInvitation.tenant
-      const invitationId = this.membershipInvitation.id
-      const accepted = await this.acceptInvitation(invitationId)
-      if (accepted) {
-        sessionStorage.removeItem('invitationId')
-        await this.setCurrentTenant(tenant.slug)
-        this.$router.push({
-          name: 'dashboard',
-          params: { tenant: tenant.slug }
-        })
+      try {
+        this.loading = true
+        const tenant = this.membershipInvitation.tenant
+        const invitationId = this.membershipInvitation.id
+        const accepted = await this.acceptMembershipInvitation(invitationId)
+        if (accepted.accept_membership_invitation.id) {
+          sessionStorage.removeItem('invitationId')
+          await this.setCurrentTenant(tenant.slug)
+          this.toDashboard(tenant)
+        }
+      } catch (e) {
+        this.mutationErrorMessage = e
+          .toString()
+          .split(':')
+          .pop()
+        this.loading = false
+        this.error = true
       }
       this.loading = false
     },
     async decline() {
-      this.deleting = true
-      const invitationId = this.membershipInvitation.id
-      const declined = await this.declineInvitation(invitationId)
-      if (declined) {
-        this.toDashboard()
+      try {
+        this.deleting = true
+        const invitationId = this.membershipInvitation.id
+        const declined = await this.declineMembershipInvitation(invitationId)
+        if (declined.delete_membership_invitation.success) {
+          this.toDashboard()
+        }
+        this.deleting = false
+      } catch (e) {
+        this.mutationErrorMessage = e
+          .toString()
+          .split(':')
+          .pop()
+        this.loading = false
+        this.error = true
       }
-      this.deleting = false
     },
-    toDashboard() {
+    toDashboard(tenant) {
       sessionStorage.removeItem('invitationId')
-      this.$router.push({ name: 'dashboard' })
-    },
-    async declineInvitation(id) {
-      try {
-        const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Tenant/delete-membership-invitation.gql'),
-          variables: {
-            membershipInvitationId: id
-          }
-        })
-        if (data?.delete_membership_invitation?.success) {
-          return true
-        }
-      } catch (e) {
-        this.mutationErrorMessage = e
-          .toString()
-          .split(':')
-          .pop()
-        this.loading = false
-        this.error = true
-      }
-    },
-    async acceptInvitation(id) {
-      try {
-        const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Tenant/accept-membership-invitation.gql'),
-          variables: {
-            membershipInvitationId: id
-          }
-        })
-        if (data?.accept_membership_invitation?.id) {
-          return true
-        }
-      } catch (e) {
-        this.mutationErrorMessage = e
-          .toString()
-          .split(':')
-          .pop()
-        this.loading = false
-        this.error = true
-      }
+      this.$router.push({
+        name: 'dashboard',
+        params: { tenant: tenant ? tenant.slug : this.tenant.slug }
+      })
     }
   },
   apollo: {
