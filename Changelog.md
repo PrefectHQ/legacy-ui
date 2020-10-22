@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Remove flow join from the flow run history query - [#365](https://github.com/PrefectHQ/ui/pull/365)
 
 ### Bugfixes
 
