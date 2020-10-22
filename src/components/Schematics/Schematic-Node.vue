@@ -152,7 +152,7 @@ export default {
       },
       skip() {
         return (
-          this.nodeData.data.state !== 'Mapped' ||
+          this.nodeData?.data?.state !== 'Mapped' ||
           !this.nodeData?.data?.task_run_id
         )
       },
