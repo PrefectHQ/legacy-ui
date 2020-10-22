@@ -4,7 +4,8 @@
 
 ### Features and Improvements
 
-- None
+- Adds the project name as a prefix when creating a Cloud Hook - [#363](https://github.com/PrefectHQ/ui/pull/363)
+- Remove flow join from the flow run history query - [#365](https://github.com/PrefectHQ/ui/pull/365)
 
 ### Bugfixes
 

@@ -88,7 +88,7 @@ export default {
       @bar-mouseover="_barMouseover"
     >
       <template v-if="canShowTooltip" slot="tooltip">
-        <TimelineTooltip :tooltip="tooltip" />
+        <TimelineTooltip :tooltip="tooltip" :loading="tooltipLoading" />
       </template>
     </BarChart>
   </v-card>
