@@ -6,6 +6,7 @@ import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import DependenciesTile from '@/pages/TaskRun/Dependencies-Tile'
+import MappedTaskRunsTile from '@/pages/TaskRun/MappedTaskRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TaskRunHeartbeatTile from '@/pages/TaskRun/TaskRunHeartbeat-Tile'
 import TileLayout from '@/layouts/TileLayout'
@@ -18,6 +19,7 @@ export default {
     DependenciesTile,
     DetailsTile,
     LogsCard,
+    MappedTaskRunsTile,
     SubPageNav,
     TaskRunHeartbeatTile,
     TileLayout,
@@ -34,26 +36,15 @@ export default {
     hideOnMobile() {
       return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     },
-    dependencies() {
-      if (!this.taskRun) return []
-      let upstream = this.taskRun.task.upstream_edges.map(
-        edge => edge.upstream_task.id
-      )
-      let downstream = this.taskRun.task.downstream_edges.map(
-        edge => edge.downstream_task.id
-      )
-      return [this.taskRun.task.id, ...upstream, ...downstream]
-    },
-    downstreamCount() {
-      if (!this.taskRun) return null
-      return this.taskRun.task.downstream_edges.length
-    },
     taskRunId() {
       return this.$route.params.id
     },
-    upstreamCount() {
-      if (!this.taskRun) return null
-      return this.taskRun.task.upstream_edges.length
+    // Is this the correct definition? Can a mapped task run have siblings and children?
+    mappedParent() {
+      return this.taskRun?.task.mapped && this.taskRun?.map_index === -1
+    },
+    mappedChild() {
+      return this.taskRun?.task.mapped && this.taskRun?.map_index > -1
     }
   },
   watch: {
@@ -65,6 +56,9 @@ export default {
       switch (val) {
         case 'logs':
           query = { logId: '' }
+          break
+        case 'mapped-runs':
+          query = { 'mapped-runs': '' }
           break
         default:
           break
@@ -92,6 +86,7 @@ export default {
   methods: {
     getTab() {
       if ('logId' in this.$route.query) return 'logs'
+      if ('mapped-runs' in this.$route.query) return 'mapped-runs'
       return 'overview'
     }
   },
@@ -186,6 +181,15 @@ export default {
         <v-icon left>format_align_left</v-icon>
         Logs
       </v-tab>
+
+      <v-tab
+        v-if="mappedParent || mappedChild"
+        href="#mapped-runs"
+        :style="hideOnMobile"
+      >
+        <v-icon left>device_hub</v-icon>
+        Mapped Runs
+      </v-tab>
     </v-tabs>
 
     <v-tabs-items
@@ -209,11 +213,8 @@ export default {
 
           <DependenciesTile
             slot="row-2-col-2-row-3-tile-1"
-            :flow-run-id="taskRun.flow_run.id"
+            :task-run="taskRun"
             :loading="loading > 0"
-            :task-ids="dependencies"
-            :upstream-count="upstreamCount"
-            :downstream-count="downstreamCount"
           />
         </TileLayout>
       </v-tab-item>
@@ -238,6 +239,27 @@ export default {
           />
         </TileLayoutFull>
       </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height"
+        value="mapped-runs"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
+        <TileLayoutFull>
+          <v-skeleton-loader
+            slot="row-2-tile"
+            :loading="loading > 0"
+            type="image"
+            height="800"
+            transition="quick-fade"
+            class="my-2"
+            tile
+          >
+            <MappedTaskRunsTile :task-run="taskRun" />
+          </v-skeleton-loader>
+        </TileLayoutFull>
+      </v-tab-item>
     </v-tabs-items>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
@@ -249,6 +271,11 @@ export default {
       <v-btn @click="tab = 'logs'">
         Logs
         <v-icon>format_align_left</v-icon>
+      </v-btn>
+
+      <v-btn @click="tab = 'mapped-runs'">
+        Mapped Runs
+        <v-icon>device_hub</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-sheet>

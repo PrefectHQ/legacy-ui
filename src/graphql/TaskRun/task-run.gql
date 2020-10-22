@@ -16,30 +16,29 @@ query TaskRun($id: uuid!) {
       id
       name
       retry_delay
+      mapped
       max_retries
       trigger
       type
 
       upstream_edges {
-        id
         upstream_task {
           id
           name
-          retry_delay
-          max_retries
-          trigger
-          type
         }
-      }
-      downstream_edges {
-        id
         downstream_task {
           id
           name
-          retry_delay
-          max_retries
-          trigger
-          type
+        }
+      }
+      downstream_edges {
+        upstream_task {
+          id
+          name
+        }
+        downstream_task {
+          id
+          name
         }
       }
     }

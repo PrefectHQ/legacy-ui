@@ -6,7 +6,7 @@ query Heartbeat($flowRunId: uuid!, $timestamp: timestamptz, $state: String) {
       state_timestamp: { _gte: $timestamp }
       state: { _eq: $state }
     }
-    order_by: { updated: desc_nulls_last }
+    order_by: { state_timestamp: desc_nulls_last }
   ) {
     id
     map_index

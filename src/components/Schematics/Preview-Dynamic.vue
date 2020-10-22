@@ -26,6 +26,11 @@ export default {
   computed: {
     resultExists() {
       return this.task.serialized_state && this.task.serialized_state._result
+    },
+    expectedRuns() {
+      return (
+        this.task?.serialized_state?.n_map_states?.toLocaleString() || 'Unknown'
+      )
     }
   },
   methods: {
@@ -57,7 +62,10 @@ export default {
           Task Run
         </v-list-item-subtitle>
         <v-list-item-title>
-          {{ task.flow_run_name }} - {{ task.task.name }}
+          <span>
+            {{ task.flow_run_name }} -
+            {{ task.name ? task.name : task.task.name }}
+          </span>
           <span v-if="task.map_index > -1"> ({{ task.map_index }})</span>
         </v-list-item-title>
         <v-list-item-subtitle class="caption">
@@ -139,10 +147,10 @@ export default {
           <span class="black--text">Expected Runs:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
-          <v-tooltip top>
+          <v-tooltip max-width="300px" top>
             <template #activator="{ on }">
               <span v-on="on">
-                {{ task.serialized_state.n_map_states || 'Unknown' }}
+                {{ expectedRuns }}
               </span>
             </template>
             <span v-if="!task.serialized_state.n_map_states">
@@ -152,7 +160,7 @@ export default {
             <span v-else>
               The number of mapped children expected to run. Note that the
               number of active mapped runs may be less than this if some have
-              not begun running yet.
+              not yet entered a <code>Pending</code> state.
             </span>
           </v-tooltip>
         </v-col>
