@@ -137,8 +137,8 @@ export default {
             (this.isFinished || FINISHED_STATES.includes(item.state)) &&
             !item.start_time
           ) {
-            item.start_time = item.state_timestamp
-            item.end_time = item.state_timestamp
+            item.start_time = taskRun.state_timestamp
+            item.end_time = taskRun.state_timestamp
           }
 
           return item
@@ -153,7 +153,7 @@ export default {
     maxItemEndTime() {
       return Math.max.apply(
         null,
-        this.items.map(item => new Date(item.end_time || item.state_timestamp))
+        this.items.map(item => new Date(item.end_time))
       )
     },
     isFinished() {
