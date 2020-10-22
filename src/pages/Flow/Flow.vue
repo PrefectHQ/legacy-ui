@@ -20,8 +20,10 @@ import VersionsTile from '@/pages/Flow/Versions-Tile'
 import { mapGetters } from 'vuex'
 
 export default {
-  metaInfo: {
-    title: 'SOME SILLY TITLE'
+  metaInfo() {
+    return {
+      title: this.selectedFlow?.name
+    }
   },
   components: {
     Actions,
