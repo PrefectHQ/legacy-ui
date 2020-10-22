@@ -6,7 +6,8 @@ export const timelineMixin = {
     return {
       flowRuns: [],
       scheduledFlowRuns: [],
-      tooltip: null
+      tooltip: null,
+      tooltipLoading: false
     }
   },
   computed: {
@@ -163,8 +164,15 @@ export const timelineMixin = {
   methods: {
     _barMouseout() {
       this.tooltip = null
+      this.tooltipLoading = false
     },
-    _barMouseover(d) {
+    async _barMouseover(d) {
+      this.tooltipLoading = !!d.data.flow_id
+
+      const tooltipData = d
+
+      this.tooltip = tooltipData
+
       if (d.data.end_time) {
         d.data.display_end_time = this.formatTime(d.data.end_time)
       }
@@ -181,7 +189,30 @@ export const timelineMixin = {
 
       d.status_style = this.statusStyle(d.data.state)
 
-      this.tooltip = d
+      if (!d.data.flow_id) {
+        this.tooltip = d
+        return
+      }
+
+      const flow_id = d.data.flow_id
+      try {
+        const { data } = await this.$apollo.query({
+          query: require('@/graphql/Dashboard/timeline-flow.gql'),
+          variables: {
+            flowId: d.data.flow_id
+          }
+        })
+
+        tooltipData.data.flow = data.flow_by_pk
+      } finally {
+        this.tooltipLoading = false
+
+        // We check this to make sure we're not showing the tooltip
+        // when _barMouseout has already run or a different
+        // bar has been hovered
+        if (this.tooltip && this.tooltip.data.flow_id == flow_id)
+          this.tooltip = tooltipData
+      }
     },
     _barClick(d) {
       this.$router.push({
