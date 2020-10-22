@@ -32,7 +32,7 @@ export default {
     maxBarRadius: {
       type: Number,
       required: false,
-      default: 35
+      default: 10
     },
     minBarRadius: {
       type: Number,
@@ -85,7 +85,7 @@ export default {
 
       // Bars
       bars: [],
-      barPadding: 0.3,
+      barPadding: 0.15,
 
       domainStart: null,
       domainEnd: null,
