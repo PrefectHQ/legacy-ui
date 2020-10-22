@@ -11,7 +11,7 @@ export default {
       return {
         'overflow-y-hidden': this.$vuetify.breakpoint.mdAndUp,
         'bg-blue': route == 'welcome',
-        'bg-grey': route == 'name-team'
+        'bg-grey': this.nameTeamOrAcceptRoute
       }
     },
     noSlash() {
@@ -20,6 +20,9 @@ export default {
         : this.$vuetify.breakpoint.lg
         ? 10
         : 5
+    },
+    nameTeamOrAcceptRoute() {
+      return this.$route.name == 'name-team' || this.$route.name == 'accept'
     },
     slashClass() {
       return {
@@ -45,7 +48,7 @@ export default {
     slash3Class() {
       return {
         ...this.slashClass,
-        paused: this.$route.name !== 'name-team'
+        paused: !this.nameTeamOrAcceptRoute
       }
     },
     slash4Class() {
@@ -113,7 +116,7 @@ export default {
       >
       </div>
       <div
-        v-if="$vuetify.breakpoint.mdAndUp || $route.name == 'name-team'"
+        v-if="$vuetify.breakpoint.mdAndUp || nameTeamOrAcceptRoute"
         key="slash-3"
         class="slash-grey o-slash slash-3"
         :class="[slash3Class, $vuetify.breakpoint.mdAndUp ? 'slash-3' : '']"
@@ -151,7 +154,7 @@ export default {
       </div>
 
       <div
-        v-if="$vuetify.breakpoint.mdAndUp && $route.name == 'name-team'"
+        v-if="$vuetify.breakpoint.mdAndUp && nameTeamOrAcceptRoute"
         key="name-team-slashes"
       >
         <div

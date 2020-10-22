@@ -243,7 +243,7 @@ const actions = {
 
     if (window.location?.search?.includes('invitation_id=')) {
       const invitationID = window.location.search.split('=')
-      localStorage.setItem('invitationId', invitationID[1])
+      sessionStorage.setItem('invitationId', invitationID[1])
     }
 
     if (!isAuthenticated) {

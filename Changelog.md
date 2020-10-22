@@ -16,6 +16,7 @@
 ### Features and Improvements
 
 - What's New notifications are now marked as read when clicked from the dashboard - [#344](https://github.com/PrefectHQ/ui/pull/344)
+- Update the design of the Accept Invitation Page - [#359](https://github.com/PrefectHQ/ui/pull/359)
 - Add helpful links for Server users experienceing connection issues - [#355](https://github.com/PrefectHQ/ui/pull/355)
 
 ### Bugfixes
