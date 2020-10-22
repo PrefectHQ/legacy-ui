@@ -8,6 +8,7 @@ query TimelineFlowRuns($project_id: uuid) {
     order_by: { scheduled_start_time: asc_nulls_last }
   ) {
     id
+    flow_id
     name
     end_time
     start_time
