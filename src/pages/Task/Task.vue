@@ -9,6 +9,11 @@ import TileLayoutAlternate from '@/layouts/TileLayout-Alternate'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
 
 export default {
+  metaInfo() {
+    return {
+      title: this.task ? `Task - ${this.task?.name}` : null
+    }
+  },
   components: {
     BreadCrumbs,
     DependenciesTile,
