@@ -234,7 +234,7 @@ export default {
           <v-chip
             v-for="state in Object.keys(mappedChildren.state_counts)"
             :key="state"
-            class="px-6"
+            class="px-4 font-weight-bold"
             :class="stateClass(state)"
             label
             small
