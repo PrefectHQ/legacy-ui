@@ -13,6 +13,7 @@ export default {
 
       loading: 0,
       pendingInvitations: [],
+      accepting: false,
       deleting: false,
       dialog: false,
 
@@ -137,16 +138,13 @@ export default {
       await this.createLicense()
       if (!this.updateServerError) this.goToResources()
     },
-    async accept() {
+    async accept(id) {
       try {
-        this.loading = true
-        const tenant = this.membershipInvitation.tenant
-        const invitationId = this.membershipInvitation.id
+        this.accepting = true
+        const invitationId = id
         const accepted = await this.acceptMembershipInvitation(invitationId)
         if (accepted.accept_membership_invitation.id) {
-          sessionStorage.removeItem('invitationId')
-          await this.setCurrentTenant(tenant.slug)
-          this.toDashboard(tenant)
+          this.accepting = false
         }
       } catch (e) {
         this.mutationErrorMessage = e
@@ -158,13 +156,12 @@ export default {
       }
       this.loading = false
     },
-    async decline() {
+    async decline(id) {
       try {
         this.deleting = true
-        const invitationId = this.membershipInvitation.id
-        const declined = await this.declineMembershipInvitation(invitationId)
+        const declined = await this.declineMembershipInvitation(id)
         if (declined.delete_membership_invitation.success) {
-          this.toDashboard()
+          this.$emit('hide')
         }
         this.deleting = false
       } catch (e) {
@@ -241,9 +238,7 @@ export default {
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
             <div class="display-1 text-center">
-              Let's start by creating your
-              {{ pendingInvitations.length ? 'personal' : '' }}
-              team
+              Let's start by creating your team
               <v-tooltip bottom>
                 <template #activator="{ on }">
                   <v-icon small v-on="on">fa-question-circle</v-icon>
@@ -342,7 +337,7 @@ export default {
           </v-col>
 
           <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
-            <div class="body-2 text--darken-1">
+            <div v-if="pendingInvitations.length" class="body-2 text--darken-1">
               Your pending invitations:
             </div>
             <v-list
@@ -358,7 +353,8 @@ export default {
                     color="accentPink"
                     dark
                     depressed
-                    @click="accept"
+                    :loading="accepting"
+                    @click="accept(pt.id)"
                   >
                     <v-icon class="pr-4">fa-user-friends</v-icon>
                     Accept
@@ -398,7 +394,7 @@ export default {
                           class="white--text"
                           color="prefect"
                           :loading="deleting"
-                          @click="decline"
+                          @click="decline(pt.id)"
                         >
                           Decline
                         </v-btn>
