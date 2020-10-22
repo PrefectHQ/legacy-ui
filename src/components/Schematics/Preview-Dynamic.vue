@@ -66,7 +66,6 @@ export default {
             {{ task.flow_run_name }} -
             {{ task.name ? task.name : task.task.name }}
           </span>
-          <span v-if="task.map_index > -1"> ({{ task.map_index }})</span>
         </v-list-item-title>
         <v-list-item-subtitle class="caption">
           <v-tooltip top>

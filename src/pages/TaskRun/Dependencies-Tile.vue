@@ -138,7 +138,9 @@ export default {
           name:
             this.taskRun.name ??
             this.taskRun.task.name +
-              (this.taskRun.map_index > -1 ? `(${this.taskRun.map_index})` : '')
+              (this.taskRun.map_index > -1
+                ? ` (${this.taskRun.map_index})`
+                : '')
         }
       }
     }
