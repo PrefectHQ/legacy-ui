@@ -4,13 +4,6 @@ import DurationSpan from '@/components/DurationSpan'
 import StackedLineChart from '@/components/Visualizations/StackedLineChart'
 import { STATE_COLORS } from '@/utils/states'
 
-// const defaultSegments = () => [
-//   { label: 'Pending', value: 0 },
-//   { label: 'Running', value: 0 },
-//   { label: 'Success', value: 0 },
-//   { label: 'Failed', value: 0 }
-// ]
-
 export default {
   filters: {
     duration: function(v) {
