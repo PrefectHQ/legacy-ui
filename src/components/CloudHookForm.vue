@@ -165,10 +165,6 @@ export default {
       return allHooks.filter(
         t => (t.requiresCloud && this.isCloud) || !t.requiresCloud
       )
-    },
-    projectNamePrefix() {
-      const prefixedName = item => item.name + ' (' + item.project.name + ')'
-      return prefixedName
     }
   },
   watch: {
@@ -374,6 +370,9 @@ export default {
     },
     stateGroupColor(group) {
       return GROUP_COLORS[group]
+    },
+    projectNamePrefix() {
+      return item => `${item.name} (${item.project.name})`
     }
   },
   apollo: {
@@ -411,7 +410,7 @@ export default {
                   v-model="versionGroupIdSelect"
                   data-cy="flow-list"
                   item-value="version_group_id"
-                  :item-text="projectNamePrefix"
+                  :item-text="projectNamePrefix()"
                   label="Flow (Version Group)"
                   class="headline overflow"
                   :items="flows"

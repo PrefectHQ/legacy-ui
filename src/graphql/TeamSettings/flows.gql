@@ -5,6 +5,7 @@ query Flows {
     name
     version_group_id
     project {
+      id
       name
     }
   }
