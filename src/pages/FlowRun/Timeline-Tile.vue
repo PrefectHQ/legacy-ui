@@ -344,6 +344,6 @@ export default {
 <style lang="scss" scoped>
 .timeline-container {
   height: calc(100vh - 350px);
-  min-height: 1000px;
+  // min-height: 1000px;
 }
 </style>
