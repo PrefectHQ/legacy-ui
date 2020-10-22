@@ -1,5 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
+import JsonInput from '@/components/JsonInput'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -9,7 +10,8 @@ export default {
   components: {
     Alert,
     ConfirmDialog,
-    ManagementLayout
+    ManagementLayout,
+    JsonInput
   },
   data() {
     return {
@@ -49,9 +51,13 @@ export default {
       search: null,
 
       // Input rules
+      errorMessage: '',
       rules: {
         required: val => !!val || 'This field is required.'
       },
+      secretType: null,
+      vaild: false,
+      jsonError: '',
 
       // Dialogs
       secretModifyDialog: false,
@@ -59,7 +65,7 @@ export default {
 
       // Create/modify secret name & value input
       secretNameInput: null,
-      secretValueInput: null,
+      secretValueInput: '',
 
       // Secret selected for modification/deletion
       selectedSecret: null,
@@ -134,12 +140,41 @@ export default {
       this.secretDeleteDialog = true
     },
     resetSelectedSecret() {
+      if (this.secretType !== 'json') this.$refs.form.resetValidation()
       this.selectedSecret = null
       this.secretNameInput = null
       this.secretValueInput = null
+      this.secretType = null
+      this.jsonError = ''
+    },
+    validSecretJSON() {
+      if (!this.$refs.secretRef) {
+        return true
+      }
+
+      // Check JSON using the JsonInput component's validation
+      const jsonValidationResult = this.$refs.secretRef.validateJson()
+
+      if (jsonValidationResult === 'SyntaxError') {
+        this.jsonError = `
+          There is a syntax error in your secret JSON.
+          Please correct the error and try again.
+        `
+        this.isSettingSecret = false
+        return false
+      }
+
+      if (jsonValidationResult === 'MissingError') {
+        this.jsonError = 'Please enter your secret as a JSON object.'
+        this.isSettingSecret = false
+        return false
+      }
+
+      return true
     },
     async setSecret() {
       this.isSettingSecret = true
+      if (this.secretType === 'json' && !this.validSecretJSON()) return
 
       if (this.isSecretUpdate) {
         await this.deleteSecret(
@@ -147,18 +182,19 @@ export default {
           { isModifying: true }
         )
       }
-
-      let value
-
-      try {
-        value = JSON.parse(this.secretValueInput)
-      } catch {
+      let value = this.secretValueInput
+      if (!this.secretType) {
         try {
-          value = String.raw`${this.secretValueInput}`
+          value = JSON.parse(this.secretValueInput)
         } catch {
-          value = JSON.stringify(this.secretValueInput)
+          try {
+            value = String.raw`${this.secretValueInput}`
+          } catch {
+            value = JSON.stringify(this.secretValueInput)
+          }
         }
       }
+      if (this.secretType === 'json') value = JSON.parse(this.secretValueInput)
 
       const secretResult = await this.$apollo.mutate({
         mutation: require('@/graphql/Secrets/set-secret.gql'),
@@ -401,18 +437,51 @@ export default {
         prepend-inner-icon="vpn_key"
         validate-on-blur
       />
+      <v-tooltip bottom>
+        <template #activator="{ on }">
+          <div v-on="on">
+            <v-select
+              v-model="secretType"
+              class="select mx-4"
+              :items="[
+                { value: 'string', text: 'String' },
+                { value: 'json', text: 'JSON' }
+              ]"
+              placeholder="Secret Type"
+            />
+          </div>
+        </template>
+        <span
+          >You can set the type that this secret should be set to. (Defaults to
+          type of input.)</span
+        >
+      </v-tooltip>
+      <div v-if="secretType === 'json'">
+        <JsonInput
+          ref="secretRef"
+          v-model="secretValueInput"
+          @input="jsonError = ''"
+        ></JsonInput>
+        <div class="caption red--text">{{ jsonError }}</div></div
+      >
+
       <v-textarea
+        v-else
+        ref="form"
         v-model="secretValueInput"
         class="_lr-hide mt-2"
         style="max-height: 400px;"
         data-private
         :autofocus="isSecretUpdate"
+        clearable
         outlined
         dense
+        :rules="[rules.required]"
         placeholder="Secret Value"
         prepend-inner-icon="lock"
         row-height="4"
       />
+
       <v-fade-transition>
         <v-alert
           v-if="secretExists"

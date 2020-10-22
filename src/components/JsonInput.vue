@@ -2,6 +2,10 @@
 import jsBeautify from 'js-beautify'
 import { codemirror } from 'vue-codemirror'
 
+import 'codemirror/addon/edit/matchbrackets'
+import 'codemirror/addon/edit/closebrackets'
+import 'codemirror/lib/codemirror.css'
+
 export default {
   components: {
     CodeMirror: codemirror
@@ -72,7 +76,7 @@ export default {
       this.$emit('input', event)
     },
     markJsonErrors(syntaxError) {
-      const errorIndex = syntaxError.message.split(' ').pop()
+      const errorIndex = syntaxError?.message?.split(' ').pop()
       const errorPosition = this.cmInstance.doc.posFromIndex(errorIndex)
       this.errorLine = errorPosition.line
       this.cmInstance.doc.addLineClass(
