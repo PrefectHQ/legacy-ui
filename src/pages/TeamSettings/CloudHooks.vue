@@ -260,8 +260,8 @@ export default {
 
 <template>
   <ManagementLayout :show="!isLoadingTable" control-show>
-    <template v-slot:title>Cloud Hooks</template>
-    <template v-slot:subtitle>
+    <template #title>Cloud Hooks</template>
+    <template #subtitle>
       <div v-if="isReadOnlyUser">
         View your team's
         <ExternalLink
@@ -279,11 +279,11 @@ export default {
       </div>
     </template>
 
-    <template v-if="!isReadOnlyUser" v-slot:cta>
+    <template v-if="!isReadOnlyUser" #cta>
       <v-dialog v-model="createNewCloudHook" max-width="700">
-        <template v-slot:activator="{ onD }">
+        <template #activator="{ onD }">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div class="pb-1" style="display: inline-block;" v-on="on">
                 <v-btn
                   color="primary"
@@ -356,32 +356,32 @@ export default {
         }"
         no-data-text="No Cloud Hooks found."
         ><!-- HEADERS -->
-        <template v-slot:header.name="{ header }">
+        <template #header.name="{ header }">
           <span class="subtitle-2 text-center">{{
             header.text.toUpperCase()
           }}</span>
         </template>
-        <template v-slot:header.active="{ header }">
+        <template #header.active="{ header }">
           <span class="subtitle-2 text-center">{{
             header.text.toUpperCase()
           }}</span>
         </template>
-        <template v-slot:header.version_group_id="{ header }">
+        <template #header.version_group_id="{ header }">
           <span class="subtitle-2 text-center">{{
             header.text.toUpperCase()
           }}</span>
         </template>
-        <template v-slot:header.type="{ header }">
+        <template #header.type="{ header }">
           <span class="subtitle-2 text-center">{{
             header.text.toUpperCase()
           }}</span>
         </template>
-        <template v-slot:header.states="{ header }">
+        <template #header.states="{ header }">
           <span class="subtitle-2 text-center">{{
             header.text.toUpperCase()
           }}</span>
         </template>
-        <template v-slot:item.version_group_id="{ item }">
+        <template #item.version_group_id="{ item }">
           <ApolloQuery
             :query="
               gql => gql`
@@ -403,13 +403,13 @@ export default {
             :variables="{ VGI: item.version_group_id }"
             :skip="!item.version_group_id"
           >
-            <template v-slot="{ result: { loading, error, data } }">
+            <template #default="{ result: { loading, error, data } }">
               <!-- Loading -->
               <div v-if="loading" class="loading apollo">Loading...</div>
               <!-- Error -->
               <div v-else-if="error" class="error apollo">An error occurred</div
               ><!-- Result -->
-              <div v-if="data && data.flow[0]" class="result apollo">
+              <div v-else-if="data && data.flow[0]" class="result apollo">
                 <router-link
                   :to="{
                     name: 'flow',
@@ -428,9 +428,9 @@ export default {
             </template>
           </ApolloQuery>
         </template>
-        <template v-slot:item.type="{ item }">
+        <template #item.type="{ item }">
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon class="mr-3" v-on="on">
                 {{ typeIcon(item.type) }}
               </v-icon>
@@ -440,9 +440,9 @@ export default {
             </span>
           </v-tooltip>
         </template>
-        <template v-slot:item.active="{ item }">
+        <template #item.active="{ item }">
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div v-on="on" @click.stop>
                 <div class="vertical-button mr-3">
                   <v-switch
@@ -454,7 +454,7 @@ export default {
                     :disabled="isReadOnlyUser || item.loading"
                     @change="_handleSetCloudHookStatusChange($event, item)"
                   >
-                    <template v-slot:label>
+                    <template #label>
                       <v-btn tile small text disabled class="mb-1">
                         {{ item.active ? 'On' : 'Off' }}
                       </v-btn>
@@ -472,9 +472,9 @@ export default {
             </span>
           </v-tooltip>
         </template>
-        <template v-slot:item.states="{ item }">
+        <template #item.states="{ item }">
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div class="body-2" v-on="on">
                 <v-chip
                   label
@@ -490,9 +490,9 @@ export default {
             <span class="capitalize">{{ formatStates(item.states) }}</span>
           </v-tooltip>
         </template>
-        <template v-if="!isReadOnlyUser" v-slot:item.action="{ item }">
+        <template v-if="!isReadOnlyUser" #item.action="{ item }">
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div style="display: inline-block;" v-on="on">
                 <v-btn
                   :loading="setTest === item.id"
@@ -511,7 +511,7 @@ export default {
             </span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 text
                 fab
@@ -530,7 +530,7 @@ export default {
           </v-tooltip>
 
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 color="error"
                 text

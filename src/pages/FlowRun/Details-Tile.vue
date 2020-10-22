@@ -4,11 +4,14 @@ import jsBeautify from 'js-beautify'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
+import LabelEdit from '@/components/LabelEdit'
+import { FINISHED_STATES } from '@/utils/states'
 
 export default {
   components: {
     CardTitle,
-    DurationSpan
+    DurationSpan,
+    LabelEdit
   },
   mixins: [formatTime],
   props: {
@@ -29,6 +32,9 @@ export default {
       return (
         this.flowRun.context && Object.keys(this.flowRun.context).length > 0
       )
+    },
+    isFinished() {
+      return FINISHED_STATES.includes(this.flowRun.state)
     },
     hasParameters() {
       if (!this.flowRun?.parameters) return false
@@ -165,7 +171,7 @@ export default {
               </v-list-item-subtitle>
               <div class="subtitle-2">
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span class="caption" v-on="on">
                       [{{ formDate(flowRun.state_timestamp) }}]:
                     </span>
@@ -210,7 +216,7 @@ export default {
                     class="text-right font-weight-bold"
                   >
                     <v-tooltip top>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span v-on="on">
                           {{ formatTime(flowRun.scheduled_start_time) }}
                         </span>
@@ -225,7 +231,7 @@ export default {
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
                     <v-tooltip top>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span v-on="on">
                           {{
                             flowRun.start_time
@@ -250,7 +256,7 @@ export default {
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
                     <v-tooltip top>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span v-on="on">
                           {{ formatTime(flowRun.end_time) }}
                         </span>
@@ -266,10 +272,15 @@ export default {
                     Duration
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
+                    <!-- Check for isFinished improves duration handling for restarted flows  -->
                     <DurationSpan
                       v-if="flowRun.start_time"
                       :start-time="flowRun.start_time"
-                      :end-time="flowRun.end_time"
+                      :end-time="
+                        isFinished && flowRun.start_time
+                          ? flowRun.end_time
+                          : null
+                      "
                     />
                     <span v-else>
                       <v-skeleton-loader type="text"></v-skeleton-loader>
@@ -279,6 +290,7 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+          <LabelEdit type="flowRun" :flow-run="flowRun" />
         </div>
       </v-fade-transition>
 

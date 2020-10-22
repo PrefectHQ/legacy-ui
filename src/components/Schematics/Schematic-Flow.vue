@@ -1039,7 +1039,7 @@ export default {
       elevation="2"
     >
       <v-tooltip top>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn icon tile v-on="on" @click="fitViz">
             <v-icon>center_focus_strong</v-icon>
           </v-btn>
@@ -1050,7 +1050,7 @@ export default {
       </v-tooltip>
 
       <v-tooltip top>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn icon tile v-on="on" @click="_zoomIn">
             <v-icon>zoom_in</v-icon>
           </v-btn>
@@ -1061,7 +1061,7 @@ export default {
       </v-tooltip>
 
       <v-tooltip top>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn icon tile v-on="on" @click="_zoomOut">
             <v-icon>zoom_out</v-icon>
           </v-btn>

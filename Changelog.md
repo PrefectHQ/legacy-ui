@@ -1,15 +1,63 @@
 # Changelog
 
-
 ## Unreleased
 
 ### Features and Improvements
 
-- None
+- Adds the project name as a prefix when creating a Cloud Hook - [#363](https://github.com/PrefectHQ/ui/pull/363)
+- Remove flow join from the flow run history query - [#365](https://github.com/PrefectHQ/ui/pull/365)
 
 ### Bugfixes
 
 - None
+
+## 2020-10-21
+
+### Features and Improvements
+
+- What's New notifications are now marked as read when clicked from the dashboard - [#344](https://github.com/PrefectHQ/ui/pull/344)
+- Update the design of the Accept Invitation Page - [#359](https://github.com/PrefectHQ/ui/pull/359)
+- Add helpful links for Server users experienceing connection issues - [#355](https://github.com/PrefectHQ/ui/pull/355)
+
+### Bugfixes
+
+- Move styling for the label edit component to the correct component and add scoping [#330](https://github.com/PrefectHQ/ui/pull/330)
+- Fix whitescreen bug and improve time to paint - [#354](https://github.com/PrefectHQ/ui/pull/354)
+
+## 2020-10-13
+
+### Features and Improvements
+
+- Check labels on `flow.run_config` when generating warning for flow labels without an agent [#312](https://github.com/PrefectHQ/ui/pull/312)
+- Use labels from `flow.run_config` if present [#309](https://github.com/PrefectHQ/ui/pull/309)
+
+### Bugfixes
+
+- Fix bug where "Loading" still showed after flow name had loaded on hooks page [#288](https://github.com/PrefectHQ/ui/issues/288)
+- Fix dashboard flicker on load - [#313](https://github.com/PrefectHQ/ui/pull/313)
+- Fix missing tenant slug in url - [#313](https://github.com/PrefectHQ/ui/pull/313)
+- Prevent flow table rows expanding on load [#323](https://github.com/PrefectHQ/ui/pull/323)
+
+## 2020-10-09
+
+### Features and Improvements
+
+- Add section to flow details for `flow.run_config` if not null, otherwise display `flow.environment` [#307](https://github.com/PrefectHQ/ui/pull/307)
+- Enable restart from cancelled and update restart from failed [#234](https://github.com/PrefectHQ/ui/pull/234)
+- Add unit tests for the authNavGuard middleware [#266](https://github.com/PrefectHQ/ui/pull/266)
+- Update label edit and label warning to use flow run labels (#300)[https://github.com/PrefectHQ/ui/pull/300]
+- Display task run names on flow run page and task run page [#302](https://github.com/PrefectHQ/ui/pull/302)
+
+### Bugfixes
+
+- Fix race condition with `apollo_url` - [#295](https://github.com/PrefectHQ/ui/pull/295)
+- Don't pluralize "slot" when only one is being used [#293](https://github.com/PrefectHQ/ui/issues/293)
+- Remove duplicate store.commits in authNavGuard unit test [#303](https://github.com/PrefectHQ/ui/pull/303)
+- Enable global search for task runs without names [#299](https://github.com/PrefectHQ/ui/pull/299)
+- Fix bug with unknown invitation ID in accept invitation [#306](https://github.com/PrefectHQ/ui/pull/306)
+- Fix race condition with onboard/welcome flow [#304](https://github.com/PrefectHQ/ui/pull/304)
+- Fix version display in flow page version dropdown - [#305](https://github.com/PrefectHQ/ui/pull/305)
+- Invalid state hotfix - [#308](https://github.com/PrefectHQ/ui/pull/308)
 
 ## 2020-10-05
 

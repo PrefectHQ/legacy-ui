@@ -77,7 +77,7 @@ export default {
           name = item.name
           break
         case 'task_run':
-          name = item.task.name
+          name = item.name || item.task.name
           break
         case 'task_run_state':
           name = item.message
@@ -183,9 +183,11 @@ export default {
                     <v-icon v-if="item.map_index > -1" x-small class="mx-1"
                       >dynamic_feed</v-icon
                     >
-                    <span v-if="item.map_index > -1" class="text-body-2">{{
-                      item.map_index
-                    }}</span>
+                    <span
+                      v-if="item.map_index > -1 && !item.name"
+                      class="text-body-2"
+                      >{{ item.map_index }}</span
+                    >
                   </div>
 
                   <div v-if="item.state_message" class="text-caption truncate">
@@ -207,7 +209,10 @@ export default {
               <div v-if="type !== 'task_run_state'" class="text-body-1">
                 <router-link class="link" :to="routeTo(item)">
                   {{ timelineItemTitle(item) }}
-                  <span v-if="item.map_index > -1" class="text-caption mb-2">
+                  <span
+                    v-if="item.map_index > -1 && !item.name"
+                    class="text-caption mb-2"
+                  >
                     (Mapped Child {{ item.map_index }})
                   </span>
                 </router-link>
@@ -255,7 +260,7 @@ export default {
               class="text-caption d-flex justify-end align-center position-absolute timeline-timestamp"
             >
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <span v-on="on">
                     {{ shortTime(item.state_timestamp || item.timestamp) }}
                   </span>

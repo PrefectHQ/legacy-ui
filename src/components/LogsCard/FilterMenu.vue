@@ -175,7 +175,7 @@ export default {
     offset-y
     transition="slide-y-transition"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn color="blue-grey darken-2" text small v-on="on">
         <v-icon>
           filter_list
@@ -219,7 +219,7 @@ export default {
               max-width="290"
               offset-y
             >
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-text-field
                   :value="dateFromInput"
                   :error-messages="filterFormDatetimeError"
@@ -307,7 +307,7 @@ export default {
               max-width="290"
               offset-y
             >
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-text-field
                   :error-messages="filterFormDatetimeError"
                   :placeholder="endDatePlaceholder()"

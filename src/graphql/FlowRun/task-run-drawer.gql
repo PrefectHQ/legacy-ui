@@ -21,5 +21,6 @@ query TaskRun($id: uuid!) {
       retry_delay
     }
     version
+    name
   }
 }

@@ -23,14 +23,14 @@ export default {
   methods: {
     ...mapActions('api', ['getApi']),
     ...mapActions('tenant', ['updateTenantSettings']),
-    ...mapMutations('api', ['setServerUrl']),
+    ...mapMutations('api', ['setServerUrl', 'unsetServerUrl']),
     _handleKeyup() {
       this.success = false
       this.error = false
       this.loading = false
     },
     async _resetUrl() {
-      localStorage.removeItem('server_url')
+      this.unsetServerUrl()
 
       this.urlInput = this.defaultUrl
 
@@ -131,9 +131,9 @@ export default {
           :disabled="loading"
           @keyup="_handleKeyup"
         >
-          <template v-slot:append>
+          <template #append>
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div class="mb-2">
                   <v-fade-transition mode="out-in">
                     <v-icon v-if="success" key="success" color="green">
@@ -163,7 +163,7 @@ export default {
             </v-tooltip>
           </template>
 
-          <template v-slot:append-outer>
+          <template #append-outer>
             <div>
               <v-btn
                 color="primary"

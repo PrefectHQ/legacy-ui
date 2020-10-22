@@ -31,7 +31,7 @@ export default {
   <div v-if="concurrentRuns && license">
     {{ concurrentRuns.length
     }}{{ flowConcurrency ? `/${flowConcurrency}` : '' }} slot{{
-      flowConcurrency === 1 ? '' : 's'
+      concurrentRuns.length === 1 || flowConcurrency === 1 ? '' : 's'
     }}
     used
 
@@ -41,7 +41,7 @@ export default {
       offset-y
       transition="slide-y-transition"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn text icon x-small v-on="on">
           <v-icon>
             info

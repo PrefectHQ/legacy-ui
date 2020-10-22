@@ -150,7 +150,7 @@ Vue.filter('roundTens', roundTens)
 Vue.filter('roundHundreds', roundHundreds)
 Vue.filter('roundThousands', roundThousands)
 
-Vue.component('height-transition', TransitionHeight)
+Vue.component('HeightTransition', TransitionHeight)
 
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
@@ -238,15 +238,28 @@ Vue.mixin({
   }
 })
 
-// Create application
-// eslint-disable-next-line no-unused-vars
-let PrefectUI = new Vue({
-  vuetify,
-  router,
-  store,
-  apolloProvider: defaultApolloProvider,
-  render: h => h(App)
-}).$mount('#app')
+let PrefectUI
+
+const initialize = async () => {
+  try {
+    window.prefect_ui_settings = await fetch('/settings.json')
+      .then(response => response.json())
+      .then(data => data)
+  } finally {
+    // Let this fail silently
+
+    // Create application
+    // eslint-disable-next-line no-unused-vars
+    PrefectUI = new Vue({
+      vuetify,
+      router,
+      store,
+      apolloProvider: defaultApolloProvider,
+      render: h => h(App)
+    }).$mount('#app')
+  }
+}
+initialize()
 
 // This can be used in testing to destroy the entire application and remove
 // the root node associated with it.

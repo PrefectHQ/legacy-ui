@@ -199,9 +199,9 @@ export default {
         :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
         calculate-widths
       >
-        <template v-slot:item.version="{ item }">
+        <template #item.version="{ item }">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <router-link
                 class="link"
                 :to="{
@@ -217,9 +217,9 @@ export default {
           </v-tooltip>
         </template>
 
-        <template v-slot:item.created="{ item }">
+        <template #item.created="{ item }">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <span v-on="on">
                 {{ formDate(item.created) }}
               </span>
@@ -228,9 +228,9 @@ export default {
           </v-tooltip>
         </template>
 
-        <template v-slot:item.archived="{ item }">
+        <template #item.archived="{ item }">
           <v-tooltip v-if="!item.archived" top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon small dark color="green" v-on="on">
                 pi-flow
               </v-icon>
@@ -238,7 +238,7 @@ export default {
             <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
           </v-tooltip>
           <v-tooltip v-else top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon small dark color="accent-pink" v-on="on">
                 archive
               </v-icon>
@@ -247,8 +247,8 @@ export default {
           </v-tooltip>
         </template>
 
-        <template v-slot:item.flow_runs="{ item }">
-          <div class="position-relative allow-overflow">
+        <template #item.flow_runs="{ item }">
+          <div class="position-relative allow-overflow" style="height: 55px;">
             <LastTenRuns :flow-id="item.id" :archived="item.archived" />
           </div>
         </template>

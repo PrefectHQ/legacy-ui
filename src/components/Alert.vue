@@ -141,7 +141,7 @@ export default {
     >
     </span>
 
-    <template v-slot:action>
+    <template #action>
       <v-btn v-if="alertLink" color="pink" text :to="alertLink">
         <span>{{ linkText }}</span>
       </v-btn>

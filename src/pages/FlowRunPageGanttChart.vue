@@ -341,7 +341,7 @@ export default {
     </v-card-text>
     <v-card-text v-else class="pt-0">
       <div ref="container">
-        <apexchart
+        <ApexChart
           v-click-outside="hideMenu"
           class="mt-10"
           :height="`${75 * flowRun.task_runs.length + 75}px`"

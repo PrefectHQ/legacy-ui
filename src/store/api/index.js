@@ -1,6 +1,8 @@
 import { fallbackApolloClient } from '@/vue-apollo'
 import LogRocket from 'logrocket'
 
+const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
+
 const maxRetries = 3
 
 const state = {
@@ -13,10 +15,7 @@ const state = {
   apiMode: null,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
-  serverUrl:
-    localStorage.getItem('server_url') ||
-    window.prefect_ui_settings?.server_url ||
-    process.env.VUE_APP_SERVER_URL,
+  serverUrl: localStorage.getItem(SERVER_KEY),
   version: null
 }
 
@@ -119,12 +118,12 @@ const mutations = {
     state.retries = retries
   },
   setServerUrl(state, url) {
-    localStorage.setItem('server_url', url)
     state.serverUrl = url
+    localStorage.setItem(SERVER_KEY, url)
   },
   unsetServerUrl(state) {
-    localStorage.removeItem('server_url')
     state.serverUrl = null
+    localStorage.removeItem(SERVER_KEY)
   },
   setVersion(state, version) {
     state.version = version

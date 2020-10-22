@@ -735,7 +735,7 @@ export default {
     </transition>
 
     <v-menu v-if="showControls" bottom left :close-on-content-click="false">
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn icon small class="input-menu" v-on="on">
           <v-icon>more_vert</v-icon>
         </v-btn>

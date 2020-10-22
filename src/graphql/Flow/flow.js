@@ -29,6 +29,7 @@ export default function(isCloud) {
           }
 
           description
+          run_config
           environment
           flow_group_id
 

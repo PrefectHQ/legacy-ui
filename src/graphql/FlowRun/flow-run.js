@@ -7,6 +7,10 @@ export default function(isCloud) {
     ) {
       flow_run_by_pk(id: $id) {
         id
+        name
+        version
+        labels
+        auto_scheduled
 
         ${
           isCloud

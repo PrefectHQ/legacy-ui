@@ -72,7 +72,7 @@ export default {
   watch: {
     $route(val) {
       if (this.selectedVersion == val.query?.version) return
-      this.selectedVersion = val.query.version || null
+      this.selectedVersion = +val.query.version || null
     }
   },
   mounted() {
@@ -236,7 +236,7 @@ export default {
       max-width="340"
       :open-delay="isReadOnlyUser || !isQuickRunnable || archived ? 0 : 750"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             class="vertical-button mr-2 py-1 position-relative"
@@ -291,7 +291,7 @@ export default {
     <div class="vertical-divider"></div>
 
     <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-badge
             :value="schedule == null && isScheduled"
@@ -312,7 +312,7 @@ export default {
                 :disabled="isReadOnlyUser || archived"
                 @change="scheduleFlow"
               >
-                <template v-slot:label>
+                <template #label>
                   <v-btn small text disabled tile class="mb-1">
                     Schedule
                   </v-btn>
@@ -342,7 +342,7 @@ export default {
     <DeleteButton :flow="flow" :flow-group="flowGroup" type="flow" />
 
     <!-- <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <div class="vertical-button ml-2">
             <v-switch
@@ -352,7 +352,7 @@ export default {
               class="v-input--vertical"
               color="codePink"
             >
-              <template v-slot:label>
+              <template #label>
                 <v-btn tile small text disabled class="mb-1">Archive</v-btn>
               </template>
             </v-switch>

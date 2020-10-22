@@ -1,9 +1,8 @@
 <script>
 import CardTitle from '@/components/Card-Title'
-import Label from '@/components/Label'
+import LabelEdit from '@/components/LabelEdit'
 import Parameters from '@/components/Parameters'
 import PrefectSchedule from '@/components/PrefectSchedule'
-import LabelWarning from '@/components/LabelWarning'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { parametersMixin } from '@/mixins/parametersMixin'
 import { mapActions, mapGetters } from 'vuex'
@@ -14,8 +13,7 @@ export default {
   },
   components: {
     CardTitle,
-    Label,
-    LabelWarning,
+    LabelEdit,
     Parameters,
     PrefectSchedule
   },
@@ -55,10 +53,7 @@ export default {
       disableAdd: false,
       valid: false,
       errorMessage: '',
-      duplicateLabel: '',
-      rules: {
-        labelCheck: value => this.checkLabelInput(value) || this.errorMessage
-      }
+      duplicateLabel: ''
     }
   },
   computed: {
@@ -79,100 +74,12 @@ export default {
       if (!this.flow.storage || !this.flow.storage.flows) return null
       return this.flow.storage.flows
     },
-    labels() {
-      const labels =
-        this.newLabels ||
-        this.flowGroup?.labels ||
-        this.flow?.environment?.labels ||
-        []
-      return labels?.slice().sort()
-    },
-    labelResetDisabled() {
-      const labels = this.newLabels || this.labels
-      return (
-        Array.isArray(labels) &&
-        Array.isArray(this.flow?.environment?.labels) &&
-        labels.length === this.flow?.environment?.labels?.length &&
-        labels.every(
-          (val, index) => val === this.flow?.environment?.labels[index]
-        )
-      )
-    },
     hasUser() {
       return this.flow?.created_by
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    checkLabelInput(val) {
-      const labels = this.newLabels || this.labels
-      if (labels.includes(val) && !this.disableAdd) {
-        this.errorMessage = 'Duplicate label'
-        this.duplicateLabel = val
-        this.valid = false
-        return false
-      }
-      this.duplicateLabel = ''
-      this.valid = true
-      return true
-    },
-    removeLabel(labelToRemove) {
-      this.removingLabel = labelToRemove
-      this.disableRemove = true
-      const labels = this.newLabels || this.labels
-      const updatedArray = labels.filter(label => {
-        return labelToRemove != label
-      })
-      this.editLabels(updatedArray)
-    },
-    addLabel() {
-      if (!this.valid) return
-      if (!this.newLabel) return
-      this.disableAdd = true
-      const labelArray = this.newLabels || this.labels.slice()
-      labelArray.push(this.newLabel)
-      this.editLabels(labelArray)
-    },
-    async editLabels(newLabels) {
-      try {
-        const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/set-labels.gql'),
-          variables: {
-            flowGroupId: this.flowGroup.id,
-            labelArray: newLabels
-          }
-        })
-        if (data) {
-          this.newLabels = newLabels || this.flow.environment.labels
-          this.resetLabelSettings()
-        } else {
-          this.labelsError()
-          this.resetLabelSettings()
-        }
-      } catch (e) {
-        this.labelsError(e)
-        this.resetLabelSettings()
-      }
-    },
-    labelReset() {
-      this.editLabels(null)
-    },
-    resetLabelSettings() {
-      this.removingLabel = false
-      this.disableAdd = false
-      this.newLabel = ''
-      this.disableRemove = false
-    },
-    labelsError(e) {
-      const message = e
-        ? `There was a problem: ${e}`
-        : 'There was a problem updating your labels.  Please try again.'
-      this.setAlert({
-        alertShow: true,
-        alertMessage: message,
-        alertType: 'error'
-      })
-    },
     clickAndCopyable(field) {
       return ['image_tag', 'image_name', 'registry_url'].includes(field)
     },
@@ -305,217 +212,8 @@ export default {
               </div>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item dense class="px-0">
-            <v-list-item-content width="800px" class="overflow-x-scroll">
-              <v-list-item-subtitle class="caption">
-                Labels
-                <LabelWarning
-                  :flow="flow"
-                  :flow-group="flowGroup"
-                  icon-size="x-large"
-                  location="flowPageDetails"
-                />
-                <span v-if="$vuetify.breakpoint.sm" class="ml-8">
-                  <v-menu
-                    v-model="labelEditOpen"
-                    :close-on-content-click="false"
-                    offset-y
-                  >
-                    <template v-slot:activator="{ on: menu, attrs }">
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on: tooltip }">
-                          <div v-on="tooltip">
-                            <v-btn
-                              small
-                              icon
-                              :disabled="role == 'READ_ONLY_USER'"
-                              aria-label="Add label"
-                              color="primary"
-                              v-bind="attrs"
-                              v-on="menu"
-                            >
-                              <v-icon small dense>fa-plus</v-icon>
-                            </v-btn>
-                          </div>
-                        </template>
-                        <span v-if="role == 'READ_ONLY_USER'">
-                          Read-only users cannot edit labels</span
-                        >
-                        <span v-else>Add a label</span>
-                      </v-tooltip>
-                    </template>
-                    <v-card width="800px" class="overflow-y-scroll py-0">
-                      <v-card-title class="subtitle pr-2 pt-2 pb-0"
-                        >Flow labels</v-card-title
-                      >
 
-                      <v-card-text class="py-0 width=1500px">
-                        <div class="width=800px">
-                          Flows and agents have optional labels which allow you
-                          to determine where your flows are executed. For more
-                          information see
-                          <a
-                            href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-                            target="_blank"
-                            >the docs on labels</a
-                          >.
-                        </div>
-                        <v-text-field
-                          v-model="newLabel"
-                          :rules="[rules.labelCheck]"
-                          color="primary"
-                          clearable
-                          class="mr-2 width=2000px"
-                          :disabled="disableAdd"
-                          @keyup.enter="addLabel"
-                        >
-                          <template v-slot:prepend-inner>
-                            <Label
-                              v-for="(label, i) in newLabels || labels"
-                              :key="i"
-                              closable
-                              :duplicate="duplicateLabel === label"
-                              :loading="removingLabel === label"
-                              :disabled="disableRemove"
-                              class="mr-1 mb-1"
-                              @remove="removeLabel"
-                              >{{ label }}</Label
-                            >
-                          </template>
-                        </v-text-field>
-                      </v-card-text>
-                    </v-card>
-                  </v-menu>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        class="mt-0"
-                        icon
-                        :disabled="labelResetDisabled"
-                        color="codePink"
-                        small
-                        @click="labelReset"
-                        v-on="on"
-                      >
-                        <v-icon small dense>fa-undo</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Reset to labels from flow registration</span>
-                  </v-tooltip>
-                </span>
-              </v-list-item-subtitle>
-
-              <div
-                v-if="
-                  (newLabels && newLabels.length > 0) ||
-                    (labels && labels.length > 0)
-                "
-              >
-                <Label
-                  v-for="(label, i) in newLabels || labels"
-                  :key="i"
-                  closable
-                  :duplicate="duplicateLabel === label"
-                  :loading="removingLabel === label"
-                  :disabled="disableRemove"
-                  class="mr-1 mb-1"
-                  @remove="removeLabel"
-                  >{{ label }}</Label
-                >
-              </div>
-              <div v-else class="subtitle-2">
-                None
-              </div>
-            </v-list-item-content>
-            <v-list-item-action v-if="!$vuetify.breakpoint.sm" class="ma-0">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    class="mt-0"
-                    icon
-                    :disabled="labelResetDisabled"
-                    color="codePink"
-                    small
-                    @click="labelReset"
-                    v-on="on"
-                  >
-                    <v-icon small dense>fa-undo</v-icon>
-                  </v-btn>
-                </template>
-                <span>Reset to labels from flow registration</span>
-              </v-tooltip>
-              <v-menu
-                v-model="labelEditOpen"
-                :close-on-content-click="false"
-                offset-y
-              >
-                <template v-slot:activator="{ on: menu, attrs }">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on: tooltip }">
-                      <div v-on="tooltip">
-                        <v-btn
-                          small
-                          icon
-                          :disabled="role == 'READ_ONLY_USER'"
-                          aria-label="Add label"
-                          color="primary"
-                          v-bind="attrs"
-                          v-on="menu"
-                        >
-                          <v-icon small dense>fa-plus</v-icon>
-                        </v-btn>
-                      </div>
-                    </template>
-                    <span v-if="role == 'READ_ONLY_USER'">
-                      Read-only users cannot edit labels</span
-                    >
-                    <span v-else>Add a label</span>
-                  </v-tooltip>
-                </template>
-                <v-card width="800px" class="overflow-y-scroll py-0">
-                  <v-card-title class="subtitle pr-2 pt-2 pb-0"
-                    >Flow labels</v-card-title
-                  >
-
-                  <v-card-text class="py-0 width=1500px">
-                    <div class="width=800px">
-                      Flows and agents have optional labels which allow you to
-                      determine where your flows are executed. For more
-                      information see
-                      <a
-                        href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-                        target="_blank"
-                        >the docs on labels</a
-                      >.
-                    </div>
-                    <v-text-field
-                      v-model="newLabel"
-                      :rules="[rules.labelCheck]"
-                      color="primary"
-                      clearable
-                      class="mr-2 width=2000px"
-                      :disabled="disableAdd"
-                      @keyup.enter="addLabel"
-                    >
-                      <template v-slot:prepend-inner>
-                        <Label
-                          v-for="(label, i) in newLabels || labels"
-                          :key="i"
-                          closable
-                          :duplicate="duplicateLabel === label"
-                          :loading="removingLabel === label"
-                          :disabled="disableRemove"
-                          class="mr-1 mb-1"
-                          @remove="removeLabel"
-                          >{{ label }}</Label
-                        >
-                      </template>
-                    </v-text-field>
-                  </v-card-text>
-                </v-card>
-              </v-menu>
-            </v-list-item-action>
-          </v-list-item>
+          <LabelEdit :flow="flow" :flow-group="flowGroup" />
         </div>
       </v-fade-transition>
 
@@ -537,7 +235,7 @@ export default {
                     class="text-right font-weight-bold text-truncate"
                   >
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span
                           class="cursor-pointer show-icon-hover-focus-only pa-2px"
                           role="button"
@@ -567,7 +265,7 @@ export default {
                     class="text-right font-weight-bold text-truncate"
                   >
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span
                           class="cursor-pointer show-icon-hover-focus-only pa-2px"
                           role="button"
@@ -601,7 +299,7 @@ export default {
                     class="text-right font-weight-bold text-truncate"
                   >
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span
                           class="cursor-pointer show-icon-hover-focus-only pa-2px"
                           role="button"
@@ -629,7 +327,23 @@ export default {
           </v-list-item>
 
           <v-list-item dense class="px-0">
-            <v-list-item-content>
+            <v-list-item-content v-if="flow.run_config">
+              <v-list-item-subtitle class="grey--text text--darken-3">
+                Run Config
+              </v-list-item-subtitle>
+              <v-divider style="max-width: 50%;" />
+              <v-list-item-subtitle class="caption">
+                <v-row v-if="flow.run_config.type" no-gutters>
+                  <v-col cols="6">
+                    Type
+                  </v-col>
+                  <v-col cols="6" class="text-right font-weight-bold">
+                    {{ flow.run_config.type }}
+                  </v-col>
+                </v-row>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-content v-else>
               <v-list-item-subtitle class="grey--text text--darken-3">
                 Environment
               </v-list-item-subtitle>
@@ -680,7 +394,7 @@ export default {
                       bottom
                       max-width="300"
                     >
-                      <template v-slot:activator="{ on }">
+                      <template #activator="{ on }">
                         <span
                           class="cursor-pointer show-icon-hover-focus-only pa-2px"
                           :class="{
@@ -749,7 +463,7 @@ export default {
                   offset-y
                   open-on-hover
                 >
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <v-btn text icon x-small v-on="on">
                       <v-icon>
                         info
@@ -861,20 +575,6 @@ export default {
       visibility: visible;
     }
   }
-}
-/* stylelint-disable */
-
-.v-list-item__action--stack {
-  align-items: flex-start;
-  flex-direction: row;
-}
-
-.v-text-field input {
-  width: 100px;
-}
-
-.v-list-item__content {
-  overflow: scroll;
 }
 
 .w-100 {

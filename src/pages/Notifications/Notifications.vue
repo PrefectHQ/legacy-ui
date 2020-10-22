@@ -15,6 +15,30 @@ export default {
     SubPageNav
   },
   filters: {},
+  async beforeRouteLeave(to, from, next) {
+    if (!to.query?.notification_id) return next()
+
+    try {
+      if (to.query?.notification_id) {
+        let mutationString = gql`
+        mutation MarkMessagesAsRead {
+          mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
+            success
+            error
+          }
+        }
+      `
+
+        await this.$apollo.mutate({
+          mutation: mutationString
+        })
+
+        delete to.query.notification_id
+      }
+    } finally {
+      next({ name: to.name, params: to.params })
+    }
+  },
   data() {
     return {
       allCaughtUp: false,
@@ -102,30 +126,6 @@ export default {
         id: 'user-notifications',
         count: 0
       })
-    }
-  },
-  async beforeRouteLeave(to, from, next) {
-    if (!to.query?.notification_id) return next()
-
-    try {
-      if (to.query?.notification_id) {
-        let mutationString = gql`
-        mutation MarkMessagesAsRead {
-          mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
-            success
-            error
-          }
-        }
-      `
-
-        await this.$apollo.mutate({
-          mutation: mutationString
-        })
-
-        delete to.query.notification_id
-      }
-    } finally {
-      next({ name: to.name, params: to.params })
     }
   },
   methods: {

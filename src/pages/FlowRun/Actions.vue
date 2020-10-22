@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { FINISHED_STATES } from '@/utils/states'
 
 // We're removing this until the stack functionality
 // is in a more tenable place.
@@ -17,13 +18,22 @@ export default {
   },
   data() {
     return {
-      restartDialog: false,
       runFlowNowClicked: false,
       runFlowNowLoading: false,
 
       // Alert
       alertMessage: '',
-      alertType: 'info'
+      alertType: 'info',
+
+      //restart
+      eligibleStates: ['Failed', 'Cancelled'],
+      eligibleTaskRunStates: [
+        'Cancelled',
+        'Failed',
+        'TimedOut',
+        'TriggerFailed'
+      ],
+      restartDialog: false
     }
   },
   computed: {
@@ -33,6 +43,15 @@ export default {
     },
     isScheduled() {
       return this.flowRun?.state === 'Scheduled'
+    },
+    isFinished() {
+      return FINISHED_STATES.includes(this.flowRun.state)
+    },
+    canRestart() {
+      return (
+        this.failedTaskRuns?.length > 0 ||
+        this.eligibleStates.includes(this.flowRun.state)
+      )
     }
   },
   watch: {
@@ -82,6 +101,18 @@ export default {
         alertType: this.alertType
       })
     }
+  },
+  apollo: {
+    failedTaskRuns: {
+      query: require('@/graphql/FlowRun/failed-task-runs.gql'),
+      variables() {
+        return {
+          flowRunId: this.flowRun.id,
+          failedStates: this.eligibleTaskRunStates
+        }
+      },
+      update: data => data?.task_run
+    }
   }
 }
 </script>
@@ -92,7 +123,7 @@ export default {
     :class="$vuetify.breakpoint.smAndDown ? 'justify-center' : 'justify-end'"
   >
     <v-tooltip v-if="isScheduled" bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             class="vertical-button"
@@ -121,8 +152,8 @@ export default {
       </span>
     </v-tooltip>
 
-    <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+    <v-tooltip max-width="250px" bottom>
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             class="vertical-button"
@@ -130,8 +161,8 @@ export default {
             text
             depressed
             small
-            :disabled="isReadOnlyUser"
-            color="deep-orange darken-1"
+            :disabled="isReadOnlyUser || !canRestart"
+            color="info"
             @click="restartDialog = true"
           >
             <v-icon>fab fa-rev</v-icon>
@@ -142,11 +173,23 @@ export default {
       <span v-if="isReadOnlyUser">
         Read-only users cannot restart flow runs
       </span>
-      <span v-else>Restart run from failed</span>
+      <span v-else-if="!canRestart"
+        >You can only restart flow runs from a failed or cancelled state.
+        <span v-if="isFinished"
+          >If you wish to run this flow run again, you can set it (and its task
+          runs) into a scheduled state.</span
+        >
+      </span>
+      <span v-else>Restart run from {{ flowRun.state }} </span>
     </v-tooltip>
 
     <v-dialog v-model="restartDialog" width="500">
-      <RestartDialog :flow-run="flowRun" @cancel="restartDialog = false" />
+      <RestartDialog
+        :flow-run="flowRun"
+        :failed-task-runs="failedTaskRuns"
+        :eligible-states="eligibleStates"
+        @cancel="restartDialog = false"
+      />
     </v-dialog>
 
     <SetStateDialog dialog-type="flow run" :flow-run="flowRun" />
@@ -154,7 +197,7 @@ export default {
     <CancelButton dialog-type="flow run" :flow-run="flowRun" />
 
     <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             v-if="

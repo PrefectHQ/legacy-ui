@@ -7,6 +7,7 @@ query UpcomingFlowRuns($flow_group_id: uuid, $flow_id: uuid) {
     order_by: { scheduled_start_time: asc }
   ) {
     id
+    labels
     name
     version
     scheduled_start_time

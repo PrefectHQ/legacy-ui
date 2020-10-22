@@ -139,7 +139,7 @@ export default {
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->
     </v-system-bar>
     <v-tooltip top>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <CardTitle
           :title="
             `${filteredErrors ? filteredErrors.length : 0} Recent Task Failures`
@@ -167,7 +167,7 @@ export default {
               hide-details
               flat
             >
-              <template v-slot:prepend-inner>
+              <template #prepend-inner>
                 <v-icon color="black" x-small>
                   history
                 </v-icon>

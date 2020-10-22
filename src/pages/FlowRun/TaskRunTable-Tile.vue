@@ -175,16 +175,17 @@ export default {
         :class="{ 'fixed-table': this.$vuetify.breakpoint.smAndUp }"
         calculate-widths
       >
-        <template v-slot:item.task.name="{ item }">
+        <template #item.task.name="{ item }">
           <div class="text-truncate">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <router-link
                   class="link truncate"
                   :data-cy="'task-run-table-link|' + item.task.name"
                   :to="{ name: 'task-run', params: { id: item.id } }"
                 >
-                  <span v-on="on"
+                  <span v-if="item.name">{{ item.name }}</span>
+                  <span v-else v-on="on"
                     >{{ item.task.name
                     }}<span v-if="item.map_index > -1">
                       (Mapped Child {{ item.map_index }})</span
@@ -204,25 +205,25 @@ export default {
           </div>
         </template>
 
-        <template v-slot:item.start_time="{ item }">
+        <template #item.start_time="{ item }">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <span v-on="on"> {{ formDate(item.start_time) }}</span>
             </template>
             <span> {{ formatTime(item.start_time) }}</span>
           </v-tooltip>
         </template>
 
-        <template v-slot:item.end_time="{ item }">
+        <template #item.end_time="{ item }">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <span v-on="on">{{ formDate(item.end_time) }}</span>
             </template>
             <span>{{ formatTime(item.end_time) }}</span>
           </v-tooltip>
         </template>
 
-        <template v-slot:item.duration="{ item }">
+        <template #item.duration="{ item }">
           <DurationSpan
             v-if="item.start_time"
             :start-time="item.start_time"
@@ -237,9 +238,9 @@ export default {
           <span v-else>...</span>
         </template>
 
-        <template v-slot:item.state="{ item }">
+        <template #item.state="{ item }">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon
                 class="mr-1 pointer"
                 :data-cy="
@@ -258,7 +259,7 @@ export default {
             <span>{{ item.state }}</span>
           </v-tooltip>
         </template>
-        <template v-slot:item.action="{ item }">
+        <template #item.action="{ item }">
           <ResumeButton
             v-if="item.state == 'Paused'"
             :task-run="{ ...item, flow_run: flowRun }"

@@ -370,6 +370,9 @@ export default {
     },
     stateGroupColor(group) {
       return GROUP_COLORS[group]
+    },
+    projectNamePrefix() {
+      return item => `${item.name} (${item.project.name})`
     }
   },
   apollo: {
@@ -403,15 +406,24 @@ export default {
               <v-col cols="12" md="8" class="pb-0">
                 <v-autocomplete
                   v-if="canEdit && !versionGroupIdProp"
+                  id="item"
                   v-model="versionGroupIdSelect"
                   data-cy="flow-list"
                   item-value="version_group_id"
-                  item-text="name"
+                  :item-text="projectNamePrefix()"
                   label="Flow (Version Group)"
                   class="headline overflow"
                   :items="flows"
-                />
-
+                >
+                  <template #item="{ item }">
+                    <v-list-item-content>
+                      <v-list-item-title>{{ item.name }}</v-list-item-title>
+                      <v-list-item-subtitle
+                        >({{ item.project.name }})</v-list-item-subtitle
+                      >
+                    </v-list-item-content>
+                  </template>
+                </v-autocomplete>
                 <v-text-field
                   v-if="canEdit"
                   v-model="tempName"
@@ -437,7 +449,7 @@ export default {
                 order-sm="1"
               >
                 <v-tooltip v-if="!canEdit && editable" top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div style="display: inline-block;" v-on="on">
                       <v-btn
                         :loading="testCloudHookLoading"
@@ -462,7 +474,7 @@ export default {
                 </v-tooltip>
 
                 <v-tooltip v-if="!canEdit && editable" top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div style="display: inline-block;" v-on="on">
                       <v-btn icon @click="canEdit = true">
                         <v-icon color="primary lighten-1">edit</v-icon>
@@ -489,7 +501,7 @@ export default {
                 </v-btn> -->
 
                 <v-tooltip v-if="editable && !canEdit" top>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div style="display: inline-block;" v-on="on">
                       <v-btn
                         icon
@@ -661,7 +673,7 @@ export default {
                   hint="To add a number to the list, type the number and press enter."
                   persistent-hint
                 >
-                  <template v-slot:no-data>
+                  <template #no-data>
                     <v-list-item>
                       <v-list-item-content>
                         <v-list-item-title>

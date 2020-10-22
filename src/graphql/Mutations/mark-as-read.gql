@@ -1,0 +1,6 @@
+mutation MarkMessageAsRead($input: mark_message_as_read_input!) {
+  mark_message_as_read(input: $input) {
+    success
+    error
+    }
+  }

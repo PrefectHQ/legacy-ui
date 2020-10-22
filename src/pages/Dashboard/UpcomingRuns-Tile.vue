@@ -263,10 +263,7 @@ export default {
           <v-list-item dense :disabled="setToRun.includes(item.id)">
             <v-list-item-content>
               <span class="caption mb-0 ml-n1 d-flex align-end">
-                <LabelWarning
-                  :flow="item.flow"
-                  :flow-group="item.flow.flow_group"
-                />
+                <LabelWarning :flow="item.flow" :flow-run="item" />
                 <span class="ml-1">
                   Scheduled for
                   {{ formatDateTime(item.scheduled_start_time) }}
@@ -293,7 +290,7 @@ export default {
 
             <v-list-item-action tile min-width="5" class="body-2">
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-btn
                     text
                     x-small
@@ -362,10 +359,7 @@ export default {
           >
             <v-list-item-content>
               <span class="caption mb-0 ml-n1 d-flex align-end">
-                <LabelWarning
-                  :flow="item.flow"
-                  :flow-group="item.flow.flow_group"
-                />
+                <LabelWarning :flow="item.flow" :flow-run="item" />
                 <span class="ml-1">
                   Scheduled for
                   {{ formatDateTime(item.scheduled_start_time) }}

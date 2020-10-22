@@ -5,7 +5,7 @@ export default {
   render: function(createElement, context) {
     const data = {
       props: {
-        name: 'height-transition',
+        name: 'HeightTransition',
         mode: 'out-in'
       },
       on: {

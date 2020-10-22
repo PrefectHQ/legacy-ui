@@ -132,9 +132,9 @@ export default {
           <v-row>
             <v-col cols="12">
               <v-dialog v-model="editAll" max-width="700">
-                <template v-slot:activator="{ onD }">
+                <template #activator="{ onD }">
                   <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <div
                         class="pb-1 text-center"
                         :class="containerClass"
@@ -203,7 +203,7 @@ export default {
                 </v-card>
               </v-dialog>
               <v-tooltip v-if="!!paramsToReset" bottom>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-btn
                     text
                     color="red"
@@ -240,9 +240,9 @@ export default {
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-            <template v-slot:actions>
+            <template #actions>
               <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <div v-on="on">
                     <v-btn
                       text
@@ -258,7 +258,7 @@ export default {
                 <span>Reset to the parameters set at flow registration</span>
               </v-tooltip>
               <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
+                <template #activator="{ on, attrs }">
                   <div v-bind="attrs" v-on="on">
                     <v-btn icon @click.stop="individualOpenEdit(i)"
                       ><v-icon v-if="expandedPanelKeys.includes(i)"

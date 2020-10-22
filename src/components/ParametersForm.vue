@@ -211,7 +211,7 @@ export default {
         :rules="[rules.typeCheck]"
       ></v-text-field>
       <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <div v-on="on">
             <v-select
               v-model="defaultType"

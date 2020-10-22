@@ -1,10 +1,11 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import ExternalLink from '@/components/ExternalLink'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import moment from '@/utils/moment'
 
 export default {
-  components: { GlobalSearch },
+  components: { ExternalLink, GlobalSearch },
   data() {
     return {
       connectionMenu: false,
@@ -25,6 +26,7 @@ export default {
       'connecting',
       'retries'
     ]),
+    ...mapGetters('auth0', ['isAuthorized']),
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant', 'tenantIsSet']),
     ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
@@ -47,7 +49,8 @@ export default {
       return (
         this.$route.name === 'welcome' ||
         this.$route.name === 'onboard-resources' ||
-        this.$route.name === 'name-team'
+        this.$route.name === 'name-team' ||
+        this.$route.name === 'accept'
       )
     }
   },
@@ -191,17 +194,14 @@ export default {
 
     <v-spacer />
 
-    <GlobalSearch
-      v-if="isServer || (tenant.settings.teamNamed && hasLicense)"
-    />
+    <GlobalSearch v-if="isServer || isAuthorized" />
     <v-menu
       v-model="connectionMenu"
       :close-on-content-click="false"
       offset-y
-      open-on-hover
       transition="slide-y-transition"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           class="ml-2 position-relative"
           text
@@ -209,8 +209,6 @@ export default {
           large
           color="white"
           v-on="on"
-          @focus="connectionMenu = true"
-          @blur="connectionMenu = false"
         >
           <v-icon>
             {{ connectedIcon }}
@@ -241,25 +239,89 @@ export default {
           </v-icon>
         </v-btn>
       </template>
-      <v-card tile class="pa-0" max-width="320">
+      <v-card
+        tile
+        class="pa-0"
+        max-width="700"
+        :min-width="
+          (isServer && (!connected || connecting)) || apiMode == 'maintenance'
+            ? 600
+            : 300
+        "
+      >
         <v-card-text class="pb-0">
-          <p>
+          <div class="mb-2">
             <span v-if="connected">Connected</span>
             <span v-else-if="connecting">Connecting</span>
             <span v-else>Couldn't connect</span>
-            to <span class="font-weight-bold">{{ url }}</span> <br /><br />
-          </p>
+            to
+            <span class="font-weight-bold">
+              <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
+              <span v-else class="secondaryGray--text">Prefect Server</span>
+            </span>
+            <span v-if="isServer">
+              at
+              <span class="font-weight-bold">{{ url }}</span>
+            </span>
+
+            <v-alert
+              v-if="isServer && (!connected || connecting)"
+              border="left"
+              colored-border
+              class="text-body-1 mt-2"
+              icon="cloud"
+              color="primary"
+              tile
+            >
+              <div>
+                Having trouble?
+                <span class="font-weight-medium">Don't panic! </span>
+              </div>
+              <div class="mt-4">
+                The <v-icon x-small>fab fa-slack</v-icon>&nbsp;
+                <ExternalLink
+                  href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+                  >Prefect Slack community</ExternalLink
+                >
+                is a great place to ask questions, provide feedback, or just to
+                chat! Check out the
+                <ExternalLink
+                  href="https://docs.prefect.io/orchestration/server/overview.html#what-is-prefect-server"
+                  >Prefect documentation</ExternalLink
+                >
+
+                for tips on setting up Prefect Server, idioms for writing flows,
+                and so much more. Looking for more in-depth discussion? Our
+                <ExternalLink
+                  href="https://github.com/PrefectHQ/prefect/discussions/category_choices"
+                  >GitHub Discussion board</ExternalLink
+                >
+                is a great place to present long-form ideas, technical
+                challenges, or to show off your Prefect tasks and flows!
+
+                <div class="mt-4"
+                  >Did you know that
+
+                  <ExternalLink href="https://www.prefect.io/cloud"
+                    >Prefect Cloud</ExternalLink
+                  >
+                  offers a feature-rich and fully-managed orchestration layer
+                  for your flows? Oh and it's also <em>free</em>.
+                </div>
+              </div>
+            </v-alert>
+          </div>
           <v-alert
             v-if="apiMode == 'maintenance'"
             border="left"
             colored-border
-            class="text-body-2"
+            class="text-body-1"
             type="warning"
             color="accentPink"
             tile
           >
-            Prefect Cloud is undergoing routine maintenance; during this time,
-            no new runs will be released to your Agents and state updates may be
+            Prefect Cloud is undergoing routine maintenance; during this time no
+            new runs will be released to your Agents and state updates may be
             delayed.
           </v-alert>
         </v-card-text>
@@ -274,7 +336,7 @@ export default {
 
     <v-scale-transition>
       <v-btn
-        v-if="isServer || hasLicense"
+        v-if="isServer || isAuthorized"
         color="white"
         text
         icon
@@ -297,7 +359,7 @@ export default {
       transition="slide-y-transition"
       nudge-bottom="15"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-scale-transition>
           <v-avatar
             v-if="isCloud"
@@ -329,7 +391,7 @@ export default {
             <v-list-item-subtitle>{{ auth0User.email }}</v-list-item-subtitle>
             <v-list-item-subtitle>
               <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <span v-on="on">
                     {{ formatTime(time) }}
                     <v-icon class="material-icons-outlined" x-small>

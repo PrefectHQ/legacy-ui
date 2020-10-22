@@ -221,9 +221,9 @@ export default {
 
 <template>
   <ManagementLayout :show="!isFetchingSecrets" control-show>
-    <template v-slot:title>Secrets</template>
+    <template #title>Secrets</template>
 
-    <template v-slot:subtitle>
+    <template #subtitle>
       Manage the
       <a
         href="https://docs.prefect.io/cloud/cloud_concepts/secrets.html"
@@ -239,7 +239,7 @@ export default {
       required by your team's flow executions
     </template>
 
-    <template v-if="!isReadOnlyUser" v-slot:cta>
+    <template v-if="!isReadOnlyUser" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -257,7 +257,7 @@ export default {
       </v-btn>
     </template>
 
-    <template v-if="isReadOnlyUser" v-slot:alerts>
+    <template v-if="isReadOnlyUser" #alerts>
       <v-alert
         class="mx-auto"
         border="left"
@@ -333,14 +333,14 @@ export default {
           no-data-text="Your team does not have any secrets yet."
         >
           <!-- HEADERS -->
-          <template v-slot:header.name="{ header }">
+          <template #header.name="{ header }">
             <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
           </template>
 
           <!-- ACTIONS -->
-          <template v-slot:item.actions="{ item }">
+          <template #item.actions="{ item }">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   text
                   fab
@@ -355,7 +355,7 @@ export default {
               Modify secret
             </v-tooltip>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   text
                   fab

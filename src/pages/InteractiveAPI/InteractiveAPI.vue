@@ -796,7 +796,7 @@ export default {
                 ></v-text-field>
 
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <v-icon small v-on="on">
                       info
                     </v-icon>
@@ -832,7 +832,7 @@ export default {
                 ></v-text-field>
 
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <v-icon small v-on="on">
                       info
                     </v-icon>
