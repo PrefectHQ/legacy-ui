@@ -178,6 +178,15 @@ export default {
         reverse-transition="quick-fade"
       >
         <TileLayout>
+          <TimelineTile
+            v-if="flowId"
+            slot="row-0"
+            condensed
+            :flow-id="flowId"
+            :flow-run-id="flowRunId"
+            :flow-run="flowRun"
+          />
+
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
 
           <TaskRunHeartbeatTile

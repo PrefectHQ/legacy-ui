@@ -19,7 +19,7 @@ export default {
       required: false,
       default: () => []
     },
-    collapsed: {
+    condensed: {
       type: Boolean,
       required: false,
       default: false
@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       animationDuration: 500,
-      collapsed_: this.collapsed,
+      condensed_: this.condensed,
       drawTimeout: null,
       easing: 'easePolyInOut',
       id: uniqueId('timeline'),
@@ -118,6 +118,9 @@ export default {
       ],
       transform: d3.zoomIdentity,
 
+      rowMap: {},
+      rows: 1,
+
       // Scales
       x: d3.scaleTime(),
       y: d3.scaleBand(),
@@ -128,6 +131,11 @@ export default {
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
+      }, 300)
+    },
+    resizeCanvas: function() {
+      return debounce(() => {
+        requestAnimationFrame(this.rawResizeCanvas)
       }, 300)
     },
     start() {
@@ -167,6 +175,7 @@ export default {
       deep: true,
       handler: debounce(function() {
         if (this.pauseUpdates) return
+        this.calcRows()
         this.updateBars()
       }, 500)
     },
@@ -182,6 +191,8 @@ export default {
 
     this.xAxisNode = this.svg.append('g')
     this.breakpointsNode = this.svg.append('g')
+
+    this.calcRows()
 
     window.addEventListener('resize', this.resizeChart)
     requestAnimationFrame(this.resizeChart)
@@ -203,6 +214,44 @@ export default {
     this.xAxisNode.on('end', null)
   },
   methods: {
+    calcRows() {
+      const prevRows = this.rows
+      const grid = []
+
+      itemLoop: for (let i = 0; i < this.items.length; ++i) {
+        const item = this.items[i]
+        const start = new Date(item.start_time)
+        const end = new Date(item.end_time)
+
+        for (let row = 0; row <= grid.length; ++row) {
+          // If the current row doesn't exist, create it, put this item on it,
+          // and move to the next item
+          if (!grid[row]) {
+            this.rowMap[item.id] = row
+            grid.push([[start, end]])
+            continue itemLoop
+          }
+
+          // Otherwise check the start and end times against each
+          // start[0] and end[1] time in the row
+          let intersects = grid[row].some(slot => start < slot[1])
+
+          if (!intersects) {
+            this.rowMap[item.id] = row
+            grid[row].push([start, end])
+            continue itemLoop
+          }
+        }
+      }
+
+      this.rows = grid.length
+
+      if (this.rows !== prevRows) {
+        console.log('is different, updating')
+        this.resizeCanvas()
+        this.updateScales()
+      }
+    },
     click(e) {
       const context = this.canvas.node().getContext('2d')
       let hoveredId
@@ -409,7 +458,7 @@ export default {
 
         // These are pretty fuzzy right now
         // so we'll probably want to move them to the svg layer
-        if (bar.label && !this.collapsed_) {
+        if (bar.label && !this.condensed_) {
           const savedStrokeStyle = context.fillStyle
           const fontSize = 10 * (1 / this.transform.k)
           const textY = (9 + bar.y + bar.height) * (1 / this.transform.k)
@@ -449,11 +498,10 @@ export default {
       }
     },
     rawUpdateBars() {
-      const height = this.collapsed_
-        ? this.barRadius * 2 - this.barRadius * this.barPadding * 2
-        : this.y.bandwidth() > this.maxBarRadius
-        ? this.maxBarRadius
-        : this.y.bandwidth()
+      const height =
+        this.y.bandwidth() > this.maxBarRadius
+          ? this.maxBarRadius
+          : this.y.bandwidth()
 
       const calcBar = item => {
         if (this.pauseUpdates) return
@@ -470,9 +518,7 @@ export default {
 
         const width = calcWidth > height ? calcWidth : height
 
-        const y = this.collapsed_
-          ? this.barPadding * this.barRadius
-          : this.y(item.id)
+        const y = this.y(this.rowMap[item.id])
 
         const alpha = 1
 
@@ -608,18 +654,6 @@ export default {
         parent.clientHeight - padding.top - padding.bottom
       )
 
-      if (
-        this.items?.length * this.minBarRadius +
-          this.items?.length * this.minBarRadius * this.barPadding * 2 >
-        this.height
-      ) {
-        this.height_ =
-          this.items?.length * this.minBarRadius +
-          this.items?.length * this.minBarRadius * this.barPadding * 2
-      } else {
-        this.height_ = this.height
-      }
-
       if (!this.height || !width || this.height <= 0 || width <= 0) {
         return
       }
@@ -631,18 +665,12 @@ export default {
         .attr('width', width)
         .attr('height', this.height)
 
-      this.canvas
-        .style('width', `${width}px`)
-        .style('height', `${this.height_}px`)
-        .attr('width', width)
-        .attr('height', this.height_)
-      // .style('transform', `translate(0, ${axisHeight}px)`)
-
       this.xAxisNode.attr('class', 'x-axis-group').style('position', 'fixed')
       // .style('transform', `translate(0, ${height}px)`) // This moves the axis to the bottom of the svg node
 
       this.width_ = width
 
+      this.resizeCanvas()
       this.updateScales()
 
       const filter = () => {
@@ -668,6 +696,24 @@ export default {
         // to the canvas element
         this.canvas.call(this.zoom)
       }, this.animationDuration)
+    },
+    rawResizeCanvas() {
+      const fullHeight =
+        this.rows * this.minBarRadius +
+        this.rows * this.minBarRadius * this.barPadding * 2
+
+      this.height_ = this.condensed_
+        ? this.height
+        : Math.max(fullHeight, this.height)
+
+      this.canvas
+        .style('width', `${this.width_}px`)
+        .style('height', `${this.height_}px`)
+        .attr('width', this.width_)
+        .attr('height', this.height_)
+      // .style('transform', `translate(0, ${axisHeight}px)`)
+
+      this.updateScales()
     },
     updateBreakpoints(shouldTransition) {
       this.breakpointsNode.attr(
@@ -708,7 +754,7 @@ export default {
               .transition()
               .delay(this.animationDuration)
               .duration(150)
-              .style('opacity', this.collapsed_ ? 0 : 1)
+              .style('opacity', this.condensed_ ? 0 : 1)
 
             return g.call(enter =>
               enter
@@ -739,7 +785,7 @@ export default {
                 .transition()
                 .delay(this.animationDuration)
                 .duration(150)
-                .style('opacity', this.collapsed_ ? 0 : 1)
+                .style('opacity', this.condensed_ ? 0 : 1)
 
               return update.call(update =>
                 update
@@ -807,7 +853,7 @@ export default {
 
       this.x.range([this.barRadius * 1.25, this.width_ - this.padding.right])
       this.x.domain([this.domainStart, this.domainEnd])
-      this.y.domain(this.items.map(item => item.id))
+      this.y.domain([...Array(this.rows).keys()])
       this.y.paddingInner(this.barPadding)
       this.y.paddingOuter(this.barPadding * 2)
       this.y.range([0, this.height_])
@@ -840,8 +886,8 @@ export default {
       this.updateX()
     },
     collapse() {
-      this.collapsed_ = !this.collapsed_
-      this.resizeChart()
+      this.condensed_ = !this.condensed_
+      this.resizeCanvas()
     },
     panLeft() {
       this.canvas
@@ -880,7 +926,7 @@ export default {
 <template>
   <div
     ref="parent"
-    class="position-relative timeline-container px-8"
+    class="position-relative timeline-container"
     style="height: 100%;"
   >
     <div
@@ -894,7 +940,7 @@ export default {
           </v-btn>
 
           <v-btn class="ml-12" @click="collapse">
-            {{ collapsed_ ? 'Expand' : 'Collapse' }}
+            {{ condensed_ ? 'Expand' : 'Collapse' }}
           </v-btn>
 
           <v-btn class="ml-12" @click="redraw">

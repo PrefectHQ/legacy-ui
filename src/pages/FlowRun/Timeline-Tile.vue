@@ -13,6 +13,11 @@ export default {
     Timeline: () => import('@/components/Visualizations/Timeline')
   },
   props: {
+    condensed: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     flowId: {
       type: String,
       required: true
@@ -35,6 +40,11 @@ export default {
     }
   },
   computed: {
+    containerStyle() {
+      return {
+        height: this.condensed ? '114px' : 'calc(100vh - 350px)'
+      }
+    },
     endTime() {
       return this.flowRun.end_time
         ? Math.max.apply(null, [
@@ -139,6 +149,7 @@ export default {
           ) {
             item.start_time = taskRun.state_timestamp
             item.end_time = taskRun.state_timestamp
+            item.shadow = false
           }
 
           return item
@@ -250,9 +261,7 @@ export default {
       ]
     },
     handleHover(id) {
-      console.log(id)
       this.hoveredTaskRun = this.taskRunMap[id]
-      console.log(this.hoveredTaskRun)
     }
   },
   apollo: {
@@ -314,12 +323,34 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 my-6 mx-auto" style="max-width: 1362px;" tile>
-    <CardTitle title="Run Timeline" icon="pi-gantt" />
-
-    <v-card-text ref="timeline-container" class="timeline-container">
+  <v-card
+    class="mt-6 mx-auto"
+    :class="{ 'px-2': !condensed }"
+    style="max-width: 1362px;"
+    tile
+  >
+    <div style="height: 112px;">
       <Timeline
         v-if="items"
+        :items="items"
+        :start-time="startTime"
+        :end-time="endTime"
+        :breakpoints="breakpoints"
+        :live="!isFinished"
+        :min-bar-radius="10"
+        @hover="handleHover"
+      />
+    </div>
+    <CardTitle v-if="!condensed" title="Run Timeline" icon="pi-gantt" />
+
+    <v-card-text
+      ref="timeline-container"
+      class="timeline-container overflow-hidden"
+      :style="containerStyle"
+    >
+      <Timeline
+        v-if="items"
+        :condensed="condensed"
         :items="items"
         :start-time="startTime"
         :end-time="endTime"
@@ -331,19 +362,16 @@ export default {
       />
     </v-card-text>
 
-    <v-expand-transition mode="out-in">
+    <v-fade-transition mode="out-in">
       <TaskRunMenu
         v-if="hoveredTaskRun"
         :task-run="hoveredTaskRun"
         :style="taskRunMenuStyle"
       />
-    </v-expand-transition>
+    </v-fade-transition>
   </v-card>
 </template>
 
 <style lang="scss" scoped>
-.timeline-container {
-  height: calc(100vh - 350px);
-  // min-height: 1000px;
-}
+//
 </style>
