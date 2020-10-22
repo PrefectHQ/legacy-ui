@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add ability to accept team invites on new user creation, go directly to invited team - [#322](https://github.com/PrefectHQ/ui/issues/322)
 
 ### Bugfixes
 
