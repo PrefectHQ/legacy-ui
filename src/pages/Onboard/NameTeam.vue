@@ -16,6 +16,7 @@ export default {
       accepting: false,
       deleting: false,
       dialog: false,
+      redirectTenant: null,
 
       // Reveal animation bools
       revealNote: false,
@@ -126,9 +127,6 @@ export default {
           })
 
           await this.getTenants()
-          await this.setCurrentTenant(
-            this.tenantChanges.slug || this.tenant.slug
-          )
         } catch (e) {
           this.updateServerError = true
         }
@@ -138,12 +136,14 @@ export default {
       await this.createLicense()
       if (!this.updateServerError) this.goToResources()
     },
-    async accept(id) {
+    async accept(pt) {
       try {
         this.accepting = true
-        const invitationId = id
+        const invitationId = pt.id
         const accepted = await this.acceptMembershipInvitation(invitationId)
+        this.redirectTenant = pt.tenant.slug
         if (accepted.accept_membership_invitation.id) {
+          this.redirectTenant = pt.tenant.slug
           this.accepting = false
         }
       } catch (e) {
@@ -173,10 +173,16 @@ export default {
         this.error = true
       }
     },
-    goToResources() {
+    async goToResources() {
       this.revealNameInput = false
       this.revealUrlInput = false
       this.revealConfirm = false
+
+      await this.setCurrentTenant(
+        this.redirectTenant != null
+          ? this.redirectTenant
+          : this.tenantChanges.slug || this.tenant.slug
+      )
 
       this.$router.push({
         name: 'onboard-resources',
@@ -360,7 +366,7 @@ export default {
                     dark
                     depressed
                     :loading="accepting"
-                    @click="accept(pt.id)"
+                    @click="accept(pt)"
                   >
                     <v-icon class="pr-4">fa-user-friends</v-icon>
                     Accept
