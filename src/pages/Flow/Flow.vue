@@ -20,6 +20,9 @@ import VersionsTile from '@/pages/Flow/Versions-Tile'
 import { mapGetters } from 'vuex'
 
 export default {
+  metaInfo: {
+    title: 'SOME SILLY TITLE'
+  },
   components: {
     Actions,
     BreadCrumbs,
