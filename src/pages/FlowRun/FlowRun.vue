@@ -14,6 +14,13 @@ import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
 
 export default {
+  metaInfo() {
+    return {
+      title: this.flowRun
+        ? `Run | ${this.flowRun.flow?.name} - ${this.flowRun.name}`
+        : null
+    }
+  },
   components: {
     Actions,
     BreadCrumbs,
