@@ -45,7 +45,7 @@ export default {
         <DurationSpan
           class="font-weight-bold"
           :start-time="taskRun.start_time"
-          :end-time="taskRun.end_time ? taskRun.end_time : flowRun.end_time"
+          :end-time="taskRun.end_time"
         />
       </div>
       <div
@@ -54,16 +54,16 @@ export default {
       >
         Start:
         <span class="font-weight-bold">
-          {{ formatDate(taskRun.start_time) }}
+          {{ formatTime(taskRun.start_time) }}
         </span>
       </div>
       <div
-        v-if="taskRun.end_time || flowRun.end_time"
+        v-if="taskRun.end_time"
         class="subtitle d-flex align-end justify-space-between"
       >
         End:
         <span class="font-weight-bold">
-          {{ formatDate(taskRun.end_time || flowRun.end_time) }}
+          {{ formatTime(taskRun.end_time) }}
         </span>
       </div>
       <div
@@ -72,7 +72,7 @@ export default {
       >
         Updated:
         <span class="font-weight-bold">
-          {{ formatDate(taskRun.state_timestamp) }}
+          {{ formatTime(taskRun.state_timestamp) }}
         </span>
       </div>
       <div class="subtitle d-flex align-end justify-space-between">

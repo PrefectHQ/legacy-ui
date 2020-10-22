@@ -133,6 +133,14 @@ export default {
               taskRun.state == 'Running' || taskRun.state == 'Pending'
           }
 
+          if (
+            (this.isFinished || FINISHED_STATES.includes(item.state)) &&
+            !item.start_time
+          ) {
+            item.start_time = item.state_timestamp
+            item.end_time = item.state_timestamp
+          }
+
           return item
         })
         .sort((a, b) => {
@@ -145,7 +153,7 @@ export default {
     maxItemEndTime() {
       return Math.max.apply(
         null,
-        this.items.map(item => new Date(item.end_time))
+        this.items.map(item => new Date(item.end_time || item.state_timestamp))
       )
     },
     isFinished() {
@@ -271,7 +279,7 @@ export default {
       skip() {
         return !this.flowRunId
       },
-      pollInterval: 3000,
+      pollInterval: 5000,
       update: data => data.task
     },
     mappedChildren: {
@@ -285,7 +293,7 @@ export default {
       skip() {
         return !this.taskRuns || !this.mappedTaskRuns.length
       },
-      pollInterval: 3000,
+      pollInterval: 5000,
       update(data) {
         // Since mapped_children doesn't return an id (and we can't do this mapping with GraphQL)
         // we map those here instead
