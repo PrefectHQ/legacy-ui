@@ -12,6 +12,13 @@ import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
 
 export default {
+  metaInfo() {
+    return {
+      title: this.taskRun
+        ? `Task Run | ${this.taskRun?.name ?? this.taskRun?.task?.name}`
+        : null
+    }
+  },
   components: {
     Actions,
     BreadCrumbs,
