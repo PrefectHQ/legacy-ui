@@ -18,7 +18,6 @@ export default {
     return {
       chartRenderColorIndex: 0,
       colors: STATE_COLORS,
-      flowRun: null,
       limit: 25,
       menuStyle: {},
       page: 1,
@@ -195,7 +194,7 @@ export default {
     },
     handleDataPointMouseEnter(event, chartContext, config) {
       event.target.style.cursor = 'pointer'
-      this.tooltipTaskRun = this.flowRun.task_runs[config.dataPointIndex]
+      this.tooltipTaskRun = this.taskRuns[config.dataPointIndex]
 
       if (this.menuTaskRun?.id !== this.tooltipTaskRun?.id) {
         this.showTooltip = true
@@ -231,7 +230,7 @@ export default {
   apollo: {
     flowRun: {
       query() {
-        return require('@/graphql/FlowRun/flow-run.js').default(this.isCloud)
+        return require('@/graphql/FlowRun/gantt-task-runs.gql')
       },
       variables() {
         let taskRunStates
