@@ -36,6 +36,13 @@ const serverTabs = [
 const cloudTabs = []
 
 export default {
+  metaInfo() {
+    return {
+      title: `${this.tenant?.name} - ${
+        this.project ? this.project.name : 'All Projects'
+      }`
+    }
+  },
   components: {
     Agents,
     AgentsTile,
