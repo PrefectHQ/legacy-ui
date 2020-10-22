@@ -15,7 +15,7 @@ export default {
   metaInfo() {
     return {
       title: this.taskRun
-        ? `Task Run - ${this.taskRun?.name ?? this.taskRun?.task?.name}`
+        ? `Task Run | ${this.taskRun?.name ?? this.taskRun?.task?.name}`
         : null
     }
   },

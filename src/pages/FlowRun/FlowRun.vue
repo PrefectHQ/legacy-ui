@@ -17,7 +17,7 @@ export default {
   metaInfo() {
     return {
       title: this.flowRun
-        ? `Run: ${this.flowRun.flow?.name} - ${this.flowRun.name}`
+        ? `Run | ${this.flowRun.flow?.name} - ${this.flowRun.name}`
         : null
     }
   },

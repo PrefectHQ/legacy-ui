@@ -22,7 +22,7 @@ import { mapGetters } from 'vuex'
 export default {
   metaInfo() {
     return {
-      title: this.selectedFlow?.name
+      titleTemplate: `Flow | ${this.selectedFlow?.name ?? 'Prefect'}`
     }
   },
   components: {

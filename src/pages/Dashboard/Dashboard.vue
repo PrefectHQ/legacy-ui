@@ -38,9 +38,7 @@ const cloudTabs = []
 export default {
   metaInfo() {
     return {
-      title: `${this.tenant?.name} - ${
-        this.project ? this.project.name : 'All Projects'
-      }`
+      titleTemplate: `%s | ${this.project ? this.project.name : 'All Projects'}`
     }
   },
   components: {
