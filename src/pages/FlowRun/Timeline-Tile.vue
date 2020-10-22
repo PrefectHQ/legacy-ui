@@ -54,85 +54,93 @@ export default {
     },
     items() {
       if (!this.tasks) return
-      return this.tasks.map(task => {
-        const taskRun = this.taskRunMap[task.id]
-        const mappedRef = this.mappedChildren?.[task.id]
-        const isMapped = taskRun?.state == 'Mapped'
+      return this.tasks
+        .map(task => {
+          const taskRun = this.taskRunMap[task.id]
+          const mappedRef = this.mappedChildren?.[task.id]
+          const isMapped = taskRun?.state == 'Mapped'
 
-        const item = {
-          id: task.id,
-          label: task.name,
-          colors: [],
-          start_time: null,
-          shadow: false,
-          end_time: null,
-          links: []
-        }
+          const item = {
+            id: task.id,
+            label: task.name,
+            colors: [],
+            start_time: null,
+            shadow: false,
+            end_time: null,
+            links: []
+          }
 
-        if (!taskRun || (isMapped && !mappedRef)) return item
+          if (!taskRun || (isMapped && !mappedRef)) return item
 
-        if (isMapped) {
-          const states = Object.keys(mappedRef.state_counts).sort(
-            (s1, s2) => notPastStates.indexOf(s1) - notPastStates.indexOf(s2)
-          )
-          const total = Object.values(mappedRef.state_counts).reduce(
-            (a, b) => a + b,
-            0
-          )
+          if (isMapped) {
+            const states = Object.keys(mappedRef.state_counts).sort(
+              (s1, s2) => notPastStates.indexOf(s1) - notPastStates.indexOf(s2)
+            )
+            const total = Object.values(mappedRef.state_counts).reduce(
+              (a, b) => a + b,
+              0
+            )
 
-          states.forEach(state => {
+            states.forEach(state => {
+              const color = computedStyle
+                .getPropertyValue(`--v-${state}-base`)
+                ?.trim()
+
+              item.colors.push({
+                color: color,
+                value: mappedRef.state_counts[state] / total
+              })
+            })
+
+            if (item.colors.length == 0) {
+              item.colors.push({
+                color: computedStyle.getPropertyValue('--v-Mapped-base'),
+                value: 1
+              })
+            }
+
+            item.start_time = mappedRef.min_start_time
+
+            if (taskRun?.serialized_state?.n_map_states) {
+              item.end_time =
+                taskRun?.serialized_state?.n_map_states == total &&
+                !states.some(state => notPastStates.includes(state))
+                  ? mappedRef.max_end_time
+                  : null
+              item.shadow = states.some(state => notPastStates.includes(state))
+            } else {
+              // We could always use mappedRef.max_end_time
+              // if we don't want to assume a mapped task run is always running
+              // on older versions of Core
+              item.end_time =
+                this.flowRun.state == 'Running' ? null : mappedRef.max_end_time
+              item.shadow = this.flowRun.state == 'Running'
+            }
+          } else {
+            item.start_time = taskRun.start_time
+            item.end_time = taskRun.end_time
+              ? taskRun.end_time
+              : taskRun.state == 'Running'
+              ? null
+              : item.start_time
+
             const color = computedStyle
-              .getPropertyValue(`--v-${state}-base`)
+              .getPropertyValue(`--v-${taskRun.state}-base`)
               ?.trim()
 
-            item.colors.push({
-              color: color,
-              value: mappedRef.state_counts[state] / total
-            })
-          })
-
-          if (item.colors.length == 0) {
-            item.colors.push({
-              color: computedStyle.getPropertyValue('--v-Mapped-base'),
-              value: 1
-            })
+            item.colors.push({ color: color, value: 1 })
+            item.shadow =
+              taskRun.state == 'Running' || taskRun.state == 'Pending'
           }
 
-          item.start_time = mappedRef.min_start_time
-
-          if (taskRun?.serialized_state?.n_map_states) {
-            item.end_time =
-              taskRun?.serialized_state?.n_map_states == total &&
-              !states.some(state => notPastStates.includes(state))
-                ? mappedRef.max_end_time
-                : null
-            item.shadow = states.some(state => notPastStates.includes(state))
-          } else {
-            // We could always use mappedRef.max_end_time
-            // if we don't want to assume a mapped task run is always running
-            // on older versions of Core
-            item.end_time =
-              this.flowRun.state == 'Running' ? null : mappedRef.max_end_time
-            item.shadow = this.flowRun.state == 'Running'
-          }
-        } else {
-          item.start_time = taskRun.start_time
-          item.end_time = taskRun.end_time
-            ? taskRun.end_time
-            : taskRun.state == 'Running'
-            ? null
-            : item.start_time
-
-          const color = computedStyle
-            .getPropertyValue(`--v-${taskRun.state}-base`)
-            ?.trim()
-
-          item.colors.push({ color: color, value: 1 })
-          item.shadow = taskRun.state == 'Running' || taskRun.state == 'Pending'
-        }
-
-        return item
-      })
+          return item
+        })
+        .sort((a, b) => {
+          if (!a.start_time && b.start_time) return 1
+          if (!b.start_time && a.start_time) return -1
+          if (!a.start_time && !b.start_time) return 0
+          return new Date(a.start_time) - new Date(b.start_time)
+        })
     },
     maxItemEndTime() {
       return Math.max.apply(
