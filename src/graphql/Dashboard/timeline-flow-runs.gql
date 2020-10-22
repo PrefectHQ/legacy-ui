@@ -8,11 +8,8 @@ query TimelineFlowRuns($limit: Int, $project_id: uuid) {
     order_by: { scheduled_start_time: desc }
   ) {
     id
+    flow_id
     name
-    flow {
-      id
-      name
-    }
     end_time
     start_time
     scheduled_start_time
