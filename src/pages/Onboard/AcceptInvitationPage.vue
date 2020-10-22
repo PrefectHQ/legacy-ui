@@ -199,7 +199,7 @@ export default {
     </v-row>
     <v-row align="center">
       <v-col>
-        <div class="ma-12 grey--text text--lighten-5 body-1 text--primary">
+        <div class="ma-12 white--text body-1">
           For more information about teams in Prefect Cloud, check out
           <a
             href="https://docs.prefect.io/orchestration/ui/team-settings.html"
