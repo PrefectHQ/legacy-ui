@@ -10,6 +10,11 @@ import { eventsMixin } from '@/mixins/eventsMixin'
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
 export default {
+  metaInfo() {
+    return {
+      title: `Prefect ${this.backend == 'CLOUD' ? 'Cloud' : 'Server'}`
+    }
+  },
   components: {
     Alert,
     NavBar,
