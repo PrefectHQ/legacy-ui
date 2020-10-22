@@ -8,6 +8,7 @@ import App from '@/App.vue'
 import store from '@/store'
 import { defaultApolloProvider } from '@/vue-apollo'
 import router from '@/router'
+import VueMeta from 'vue-meta'
 
 import LogRocket from 'logrocket'
 
@@ -109,6 +110,9 @@ Vue.directive('disable-read-only-user', {
 
 // Router
 Vue.use(Router)
+
+// Meta data plugin
+Vue.use(VueMeta)
 
 // Vue Global Error Handler
 Vue.config.errorHandler = function(error, vm, trace) {

@@ -20,6 +20,11 @@ import VersionsTile from '@/pages/Flow/Versions-Tile'
 import { mapGetters } from 'vuex'
 
 export default {
+  metaInfo() {
+    return {
+      titleTemplate: `Flow | ${this.selectedFlow?.name ?? 'Prefect'}`
+    }
+  },
   components: {
     Actions,
     BreadCrumbs,
