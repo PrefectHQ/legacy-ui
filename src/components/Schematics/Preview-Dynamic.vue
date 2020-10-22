@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     resultExists() {
-      return this.task.serialized_state && this.task.serialized_state._result
+      return this.task?.serialized_state?._result
     },
     expectedRuns() {
       return (
