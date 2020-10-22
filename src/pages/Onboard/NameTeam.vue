@@ -241,7 +241,9 @@ export default {
               Let's start by creating your team
               <v-tooltip bottom>
                 <template #activator="{ on }">
-                  <v-icon small v-on="on">fa-question-circle</v-icon>
+                  <v-icon class="white--text" v-on="on"
+                    >fa-question-circle</v-icon
+                  >
                 </template>
                 All Prefect users are required to have a personal team for
                 sandbox use.
@@ -337,7 +339,7 @@ export default {
           </v-col>
 
           <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
-            <div v-if="pendingInvitations.length" class="body-2 text--darken-1">
+            <div v-if="pendingInvitations.length" class="body-1">
               Your pending invitations:
             </div>
             <v-list
@@ -345,8 +347,12 @@ export default {
               :key="pt.id"
               color="transparent"
             >
-              <v-list-item>
-                {{ pt.tenant.name }}
+              <v-list-item
+                style="align-items: baseline;
+                color: #fff !important;
+                justify-content: space-between;"
+              >
+                <span>{{ pt.tenant.name }}</span>
                 <div class="mt-8">
                   <v-btn
                     class="mr-3"
