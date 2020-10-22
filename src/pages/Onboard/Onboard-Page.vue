@@ -1,9 +1,5 @@
 <script>
-import acceptPage from '@/pages/Onboard/AcceptInvitationPage'
 export default {
-  components: {
-    acceptPage
-  },
   data() {
     return {
       start: false
@@ -176,8 +172,7 @@ export default {
 
     <v-container class="position-absolute onboard-content pa-0" fluid>
       <transition name="fade" mode="out-in">
-        <acceptPage v-if="$route.name == 'accept'" />
-        <router-view v-else class="router-view" />
+        <router-view class="router-view" />
       </transition>
     </v-container>
   </v-container>
