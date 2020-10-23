@@ -237,7 +237,7 @@ export default {
           states: this.tempStates,
           config:
             this.tempType == 'EMAIL'
-              ? this.tempConfig.split(',')
+              ? { to: this.tempConfig['to'].split(',') }
               : this.tempConfig,
           type: this.tempType,
           tenant_id: this.tenant.id

@@ -250,6 +250,16 @@ export default {
         this.hooksLoaded = true
       },
       update(data) {
+        // This forces type conversion for email lists from the API
+        data.cloud_hook
+          .filter(c => c.type == 'EMAIL')
+          .forEach(
+            c =>
+              (c.config['to'] =
+                typeof c.config['to'] === 'string'
+                  ? c.config['to']
+                  : c.config['to'].join(','))
+          )
         return data.cloud_hook
       },
       fetchPolicy: 'no-cache'
