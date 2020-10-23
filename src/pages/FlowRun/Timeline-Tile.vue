@@ -197,7 +197,7 @@ export default {
       const taskRunMap = {}
       this.tasks.map(task => {
         const run = this.taskRuns.find(tr => tr.task_id == task.id)
-        taskRunMap[task.id] = run
+        taskRunMap[task.id] = run ?? {}
         taskRunMap[task.id].task_id = task.id
         taskRunMap[task.id].task_name = task.name
       })
