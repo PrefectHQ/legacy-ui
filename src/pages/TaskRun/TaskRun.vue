@@ -194,8 +194,10 @@ export default {
         href="#mapped-runs"
         :style="hideOnMobile"
       >
-        <v-icon left>device_hub</v-icon>
-        Mapped Runs
+        <v-badge color="codePink" content="New!" bottom bordered inline>
+          <v-icon left>device_hub</v-icon>
+          Mapped Runs
+        </v-badge>
       </v-tab>
     </v-tabs>
 

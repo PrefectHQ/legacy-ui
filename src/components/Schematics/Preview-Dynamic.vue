@@ -44,6 +44,36 @@ export default {
             } !important`
           : ''
       }
+    },
+    stateClass(state) {
+      const lightStates = [
+        'Submitted',
+        'Cancelled',
+        'Cancelling',
+        'Queued',
+        'Pending'
+      ]
+
+      const textColor = lightStates.includes(state)
+        ? ['grey--text', 'text--darken-4']
+        : ['white--text']
+
+      return [state, ...textColor]
+    }
+  },
+  apollo: {
+    mappedChildren: {
+      query: require('@/graphql/MappedTasks/mapped-children.gql'),
+      variables() {
+        return {
+          taskRunId: this.task.id
+        }
+      },
+      skip() {
+        return this.task.state !== 'Mapped' || !this.task.id
+      },
+      pollInterval: 3000,
+      update: data => data.mapped_children
     }
   }
 }
@@ -195,6 +225,28 @@ export default {
         </v-col>
       </v-row>
     </v-card-text>
+
+    <v-card-actions v-if="mappedChildren" class="pl-3">
+      <div>
+        <div class="body-1 black--text">Mapped Runs</div>
+
+        <v-chip-group column>
+          <v-chip
+            v-for="state in Object.keys(mappedChildren.state_counts)"
+            :key="state"
+            class="px-4 font-weight-bold"
+            :class="stateClass(state)"
+            label
+            small
+          >
+            {{ state }}
+            <span class="font-weight-medium ml-1">
+              ({{ mappedChildren.state_counts[state].toLocaleString() }})
+            </span>
+          </v-chip>
+        </v-chip-group>
+      </div>
+    </v-card-actions>
 
     <v-card-actions v-if="runs && runs.length > 0" class="px-0 py-0">
       <v-list dense style="width: 100%;" class="py-0">

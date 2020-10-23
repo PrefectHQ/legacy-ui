@@ -37,14 +37,6 @@ export default function(isCloud) {
         parameters
         context
         agent_id
-        version
-        
-        states {
-          id
-          state
-          timestamp
-          message
-        }
 
         flow {
           id
