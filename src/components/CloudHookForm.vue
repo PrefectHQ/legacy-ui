@@ -98,7 +98,10 @@ export default {
       rules: {
         email: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(val) || 'Invalid e-mail.'
+          return (
+            val.split(',').every(email => pattern.test(email.trim())) ||
+            'Invalid e-mail.'
+          )
         },
         required: val => !!val || 'Required.',
         requiredCombo: val =>
