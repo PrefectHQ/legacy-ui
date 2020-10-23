@@ -1,10 +1,11 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-
+import ExternalLink from '@/components/ExternalLink'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin.js'
 
 export default {
+  components: { ExternalLink },
   mixins: [teamProfileMixin, handleMembershipInvitations],
   data() {
     return {
@@ -245,15 +246,29 @@ export default {
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
             <div class="display-1 text-center">
               Let's start by creating your team
-              <v-tooltip bottom>
+              <v-menu
+                :close-on-content-click="false"
+                offset-y
+                transition="slide-y-transition"
+              >
                 <template #activator="{ on }">
                   <v-icon class="white--text" v-on="on"
                     >fa-question-circle</v-icon
                   >
                 </template>
-                All Prefect users are required to have a personal team for
-                sandbox use.
-              </v-tooltip>
+                <v-card tile class="pa-2 mt-1" max-width="320">
+                  <div class="body-2">
+                    All Prefect users are required to have a personal team for
+                    sandbox use. You can always switch between teams using the
+                    side menu. For more information about teams in Prefect,
+                    check out our
+                    <ExternalLink
+                      href="https://docs.prefect.io/orchestration/ui/team-settings.html#switching-teams"
+                      >docs</ExternalLink
+                    >.
+                  </div>
+                </v-card>
+              </v-menu>
             </div>
           </v-col>
 
