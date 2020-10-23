@@ -235,7 +235,10 @@ export default {
           version_group_id: this.versionGroupId,
           name: this.tempName,
           states: this.tempStates,
-          config: this.tempConfig,
+          config:
+            this.tempType == 'EMAIL'
+              ? this.tempConfig.split(',')
+              : this.tempConfig,
           type: this.tempType,
           tenant_id: this.tenant.id
         }
