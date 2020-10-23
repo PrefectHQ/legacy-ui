@@ -13,7 +13,6 @@ export default {
       height: '0px',
 
       loading: 0,
-      pendingInvitations: [],
       accepting: false,
       deleting: false,
       dialog: false,
@@ -145,7 +144,6 @@ export default {
         this.redirectTenant = pt.tenant.slug
         if (accepted.accept_membership_invitation.id) {
           this.redirectTenant = pt.tenant.slug
-          this.accepting = false
           this.$apollo.queries.pendingInvitations.refetch()
         }
       } catch (e) {
@@ -153,9 +151,9 @@ export default {
           .toString()
           .split(':')
           .pop()
-        this.loading = false
         this.error = true
       }
+      this.accepting = false
       this.loading = false
     },
     async decline(id) {
@@ -182,9 +180,7 @@ export default {
       this.revealConfirm = false
 
       await this.setCurrentTenant(
-        this.redirectTenant != null
-          ? this.redirectTenant
-          : this.tenantChanges.slug || this.tenant.slug
+        this.redirectTenant ?? this.tenantChanges.slug ?? this.tenant.slug
       )
 
       this.$router.push({
