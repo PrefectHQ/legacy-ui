@@ -55,9 +55,16 @@ export default {
       rules: {
         required: val => !!val || 'This field is required.'
       },
-      secretType: 'auto',
       vaild: false,
       jsonError: '',
+
+      //Types
+      selectedTypeIndex: 0,
+      secretTypes: [
+        { value: 'auto', text: 'Auto' },
+        { value: 'string', text: 'String' },
+        { value: 'json', text: 'JSON' }
+      ],
 
       //jsonInput
       placeholderText:
@@ -146,7 +153,7 @@ export default {
       this.selectedSecret = null
       this.secretNameInput = null
       this.secretValueInput = null
-      this.secretType = null
+      this.selectedTypeIndex = 0
       this.jsonError = ''
     },
     validSecretJSON() {
@@ -176,7 +183,7 @@ export default {
     },
     async setSecret() {
       this.isSettingSecret = true
-      if (this.secretType === 'json' && !this.validSecretJSON()) return
+      if (this.selectedTypeIndex === 2 && !this.validSecretJSON()) return
 
       if (this.isSecretUpdate) {
         await this.deleteSecret(
@@ -185,7 +192,7 @@ export default {
         )
       }
       let value = this.secretValueInput
-      if (!this.secretType) {
+      if (this.selectedTypeIndex === 0) {
         try {
           value = JSON.parse(this.secretValueInput)
         } catch {
@@ -196,7 +203,8 @@ export default {
           }
         }
       }
-      if (this.secretType === 'json') value = JSON.parse(this.secretValueInput)
+      if (this.selectedTypeIndex === 2)
+        value = JSON.parse(this.secretValueInput)
 
       const secretResult = await this.$apollo.mutate({
         mutation: require('@/graphql/Secrets/set-secret.gql'),
@@ -228,9 +236,6 @@ export default {
       this.isSettingSecret = false
       this.secretNameInput = null
       this.secretValueInput = null
-    },
-    setType(type) {
-      this.secretType = type.value
     }
   },
   apollo: {
@@ -448,28 +453,21 @@ export default {
         v-model="secretValueInput"
         prepend-icon="lock"
         height-auto
-        :selected-type="secretType"
+        :selected-type="secretTypes[selectedTypeIndex].value"
         :placeholder-text="placeholderText"
         @input="jsonError = ''"
-        @set-type="setType"
       >
         <v-menu top offset-y>
           <template #activator="{ on }">
-            <v-btn text small align="start" color="accent" v-on="on"
-              >{{}} askjfb</v-btn
-            >
+            <v-btn text small align="start" color="accent" v-on="on">{{
+              secretTypes[selectedTypeIndex].text
+            }}</v-btn>
           </template>
           <v-list>
-            <v-list-item-group
-              v-for="(item, index) in [
-                { value: 'string', text: 'String' },
-                { value: 'json', text: 'JSON' },
-                { value: 'auto', text: 'Auto' }
-              ]"
-              :key="index"
-              @click="selectType(item)"
-            >
-              <v-list-item-title>{{ item.text }} </v-list-item-title>
+            <v-list-item-group v-model="selectedTypeIndex" color="primary">
+              <v-list-item v-for="(item, index) in secretTypes" :key="index">
+                <v-list-item-title>{{ item.text }} </v-list-item-title>
+              </v-list-item>
             </v-list-item-group>
           </v-list>
         </v-menu>

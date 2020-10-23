@@ -22,11 +22,11 @@ export default {
       required: false,
       default: ''
     },
-    // selectedType: {
-    //   type: String,
-    //   default: null,
-    //   required: false
-    // },
+    selectedType: {
+      type: String,
+      default: null,
+      required: false
+    },
     // If true, editor height updates based on content.
     heightAuto: {
       type: Boolean,
@@ -138,9 +138,6 @@ export default {
           throw err
         }
       }
-    },
-    selectType(type) {
-      this.$emit('set-type', type)
     }
   }
 }
@@ -167,7 +164,6 @@ export default {
     <v-card-actions>
       <v-spacer />
       <slot></slot>
-
       <v-btn text small align="end" color="accent" @click="formatJson">
         Format
       </v-btn>
