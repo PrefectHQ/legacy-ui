@@ -665,7 +665,7 @@ export default {
         .attr('width', width)
         .attr('height', this.height)
 
-      this.xAxisNode.attr('class', 'x-axis-group').style('position', 'fixed')
+      this.xAxisNode.attr('class', 'x-axis-group').style('opacity', 0)
       // .style('transform', `translate(0, ${height}px)`) // This moves the axis to the bottom of the svg node
 
       this.width_ = width
@@ -742,19 +742,17 @@ export default {
               .style('pointer-events', 'none')
 
             g.append('text')
-              .style('font-size', '16px')
+              .style('font-size', '8px')
               .style('pointer-events', 'none')
               .attr('fill', '#999')
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
-              .attr('y', this.height / 2)
-              .attr('x', 0)
+              .attr('y', -4)
               .style('opacity', 0)
-              .attr('transform', `translate(5) rotate(90 0 ${this.height / 2})`)
               .transition()
               .delay(this.animationDuration)
               .duration(150)
-              .style('opacity', this.condensed_ ? 0 : 1)
+              .style('opacity', 1)
 
             return g.call(enter =>
               enter
@@ -785,7 +783,7 @@ export default {
                 .transition()
                 .delay(this.animationDuration)
                 .duration(150)
-                .style('opacity', this.condensed_ ? 0 : 1)
+                .style('opacity', 1)
 
               return update.call(update =>
                 update
