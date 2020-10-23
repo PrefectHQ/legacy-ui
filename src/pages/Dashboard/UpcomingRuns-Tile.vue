@@ -196,7 +196,7 @@ export default {
           }"
           @click="tab = 'upcoming'"
         >
-          Upcoming
+          ({{ upcomingRuns.length }}) Upcoming
           <v-icon small>access_time</v-icon>
         </v-btn>
 
@@ -223,7 +223,7 @@ export default {
           <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
             warning
           </v-icon>
-          Late
+          ({{ lateRuns.length }}) Late
           <v-icon small>timelapse</v-icon>
         </v-btn>
       </div>
