@@ -5,6 +5,8 @@ import { codemirror } from 'vue-codemirror'
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/edit/closebrackets'
 import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/display/placeholder'
+import 'codemirror/addon/scroll/simplescrollbars.js'
 
 export default {
   components: {
@@ -14,6 +16,15 @@ export default {
     disabled: {
       type: Boolean,
       default: () => false
+    },
+    prependIcon: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    selectType: {
+      type: Boolean,
+      required: false
     },
     // If true, editor height updates based on content.
     heightAuto: {
@@ -27,6 +38,11 @@ export default {
       required: false
     },
     newParameterInput: {
+      type: String,
+      default: '',
+      required: false
+    },
+    placeholderText: {
       type: String,
       default: '',
       required: false
@@ -53,6 +69,8 @@ export default {
         mode: 'application/json',
         readOnly: this.disabled,
         smartIndent: true,
+        scrollbarStyle: 'simple',
+        placeholder: this.placeholderText,
         tabSize: 2
       }
     }
@@ -125,37 +143,34 @@ export default {
 </script>
 
 <template>
-  <div
-    class="position-relative"
-    :class="{ 'json-input-height-auto': heightAuto }"
-  >
-    <CodeMirror
-      ref="cmRef"
-      data-cy="code-mirror-input"
-      :value="internalValue"
-      class="ma-1"
-      :options="editorOptions"
-      :style="{
-        border: '1px solid #ddd',
-        'font-size': '1.3em'
-      }"
-      @input="handleJsonInput($event)"
-    ></CodeMirror>
-    <v-btn
-      text
-      small
-      color="accent"
-      class="position-absolute"
-      :style="{
-        bottom: '8px',
-        right: '6px',
-        'z-index': 3
-      }"
-      @click="formatJson"
-    >
-      Format
-    </v-btn>
-  </div>
+  <v-card outlined :class="{ 'json-input-height-auto': heightAuto }">
+    <v-card-title v-if="prependIcon" class="pb-2">
+      <v-icon color="primary">{{ prependIcon }}</v-icon>
+    </v-card-title>
+    <v-card-text>
+      <CodeMirror
+        ref="cmRef"
+        data-cy="code-mirror-input"
+        :value="internalValue"
+        class="ma-1"
+        :style="{
+          'font-size': '1.3em'
+        }"
+        :options="editorOptions"
+        cursor-height="1.5"
+        @input="handleJsonInput($event)"
+      ></CodeMirror>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn v-if="selectType" text small align="start" color="accent"
+        >Type</v-btn
+      >
+      <v-btn text small align="end" color="accent" @click="formatJson">
+        Format
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <style lang="scss">
@@ -180,8 +195,16 @@ export default {
     height: auto;
     min-height: 108px;
   }
-  /* stylelint-enable selector-class-pattern */
+
+  .CodeMirror-empty {
+    color: #808080;
+  }
 }
+
+.codeMirror-scroll {
+  max-width: 100%;
+}
+/* stylelint-enable selector-class-pattern */
 
 .json-input-error-text {
   text-decoration: #ff5252 wavy underline !important;

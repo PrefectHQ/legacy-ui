@@ -86,10 +86,12 @@ export default {
       if (this.selectedSecret?.name === this.secretNameInput) {
         return false
       }
-
       return this.secretNames
         ?.map(secret => secret.name)
         .includes(this.secretNameInput)
+    },
+    placeholderText() {
+      return "Enter your secret value here...\n\nClick on 'Type' to select String or JSON validation"
     }
   },
   watch: {
@@ -140,7 +142,6 @@ export default {
       this.secretDeleteDialog = true
     },
     resetSelectedSecret() {
-      if (this.secretType !== 'json') this.$refs.form.resetValidation()
       this.selectedSecret = null
       this.secretNameInput = null
       this.secretValueInput = null
@@ -412,7 +413,7 @@ export default {
 
     <ConfirmDialog
       v-model="secretModifyDialog"
-      :dialog-props="{ 'max-width': '500' }"
+      :dialog-props="{ 'max-width': '75vh' }"
       :disabled="!(secretNameInput && secretValueInput)"
       :loading="isSettingSecret"
       :title="isSecretUpdate ? 'Modify Secret' : 'Create New Secret'"
@@ -437,50 +438,17 @@ export default {
         prepend-inner-icon="vpn_key"
         validate-on-blur
       />
-      <v-tooltip bottom>
-        <template #activator="{ on }">
-          <div v-on="on">
-            <v-select
-              v-model="secretType"
-              class="select mx-4"
-              :items="[
-                { value: 'string', text: 'String' },
-                { value: 'json', text: 'JSON' }
-              ]"
-              placeholder="Secret Type"
-            />
-          </div>
-        </template>
-        <span
-          >You can set the type that this secret should be set to. (Defaults to
-          type of input.)</span
-        >
-      </v-tooltip>
-      <div v-if="secretType === 'json'">
-        <JsonInput
-          ref="secretRef"
-          v-model="secretValueInput"
-          @input="jsonError = ''"
-        ></JsonInput>
-        <div class="caption red--text">{{ jsonError }}</div></div
-      >
 
-      <v-textarea
-        v-else
-        ref="form"
+      <JsonInput
+        ref="secretRef"
         v-model="secretValueInput"
-        class="_lr-hide mt-2"
-        style="max-height: 400px;"
-        data-private
-        :autofocus="isSecretUpdate"
-        clearable
-        outlined
-        dense
-        :rules="[rules.required]"
-        placeholder="Secret Value"
-        prepend-inner-icon="lock"
-        row-height="4"
-      />
+        prepend-icon="lock"
+        height-auto
+        :select-type="true"
+        :placeholder-text="placeholderText"
+        @input="jsonError = ''"
+      ></JsonInput>
+      <div class="caption red--text">{{ jsonError }}</div>
 
       <v-fade-transition>
         <v-alert
