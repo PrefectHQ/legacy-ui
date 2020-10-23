@@ -592,8 +592,8 @@ export default {
                 </div>
                 <div class="subtitle pt-2">
                   <span v-if="tempType == 'EMAIL'">
-                    Prefect Cloud will send an email to this address when your
-                    flow's State changes.
+                    Input emails separated by commas; Prefect Cloud will send an
+                    email to these addresses when your flow's State changes.
                   </span>
                   <span v-else-if="tempType == 'SLACK_WEBHOOK'">
                     Prefect Cloud will send a notification via Slack Webhook to
