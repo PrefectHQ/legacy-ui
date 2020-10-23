@@ -4,13 +4,6 @@ import DurationSpan from '@/components/DurationSpan'
 import StackedLineChart from '@/components/Visualizations/StackedLineChart'
 import { STATE_COLORS } from '@/utils/states'
 
-const defaultSegments = () => [
-  { label: 'Pending', value: 0 },
-  { label: 'Running', value: 0 },
-  { label: 'Success', value: 0 },
-  { label: 'Failed', value: 0 }
-]
-
 export default {
   filters: {
     duration: function(v) {
@@ -40,11 +33,6 @@ export default {
     // This doesn't pass webpack compilation so disabling for now...
     // we can reinstate with TS
     disabled: { type: Boolean, required: false, default: () => false },
-    mapped: {
-      type: Array,
-      required: false,
-      default: () => null
-    },
     multiplier: { type: Number, required: true },
     nodeData: { type: null, required: true },
     showDetails: { type: Boolean, required: false, default: () => true },
@@ -53,8 +41,7 @@ export default {
   },
   data() {
     return {
-      scale: false,
-      segments: defaultSegments()
+      scale: false
     }
   },
   computed: {
@@ -91,7 +78,16 @@ export default {
       }
     },
     isParameter() {
-      return this.nodeData.data.type.split('.').pop() == 'Parameter'
+      return this.nodeData?.data?.type?.split('.').pop() == 'Parameter'
+    },
+    segments() {
+      if (!this.mappedChildren) return []
+      return Object.keys(this.mappedChildren.state_counts).map(state => {
+        return {
+          label: state,
+          value: this.mappedChildren.state_counts[state]
+        }
+      })
     },
     subtitleStyle() {
       let size = 64 * (1 / this.transform.k)
@@ -111,42 +107,6 @@ export default {
         'font-size': `${size}px !important`,
         'line-height': `${size + 10}px !important`
       }
-    }
-  },
-  watch: {
-    mapped(val) {
-      let segments = defaultSegments()
-      val.forEach(task => {
-        let index = segments.findIndex(s => s.label == task.state)
-
-        if (index > -1) {
-          segments[index].value++
-        } else {
-          segments.push({
-            label: task.state,
-            value: 1
-          })
-        }
-      })
-      this.segments = segments
-    }
-  },
-  mounted() {
-    if (this.mapped) {
-      let segments = defaultSegments()
-      this.mapped.forEach(task => {
-        let index = segments.findIndex(s => s.label == task.state)
-
-        if (index > -1) {
-          segments[index].value++
-        } else {
-          segments.push({
-            label: task.state,
-            value: 1
-          })
-        }
-      })
-      this.segments = segments
     }
   },
   methods: {
@@ -180,6 +140,24 @@ export default {
         green10 = parseInt(green, 16),
         blue10 = parseInt(blue, 16)
       return `rgba(${red10}, ${green10}, ${blue10}, 0.6)`
+    }
+  },
+  apollo: {
+    mappedChildren: {
+      query: require('@/graphql/MappedTasks/mapped-children.gql'),
+      variables() {
+        return {
+          taskRunId: this.nodeData?.data?.task_run_id
+        }
+      },
+      skip() {
+        return (
+          this.nodeData?.data?.state !== 'Mapped' ||
+          !this.nodeData?.data?.task_run_id
+        )
+      },
+      pollInterval: 3000,
+      update: data => data.mapped_children
     }
   }
 }
@@ -217,7 +195,7 @@ export default {
       </div>
     </div>
     <div
-      v-if="mapped && showDetails"
+      v-if="mappedChildren && showDetails"
       class="line-chart"
       :class="disabled ? 'disabled' : ''"
     >

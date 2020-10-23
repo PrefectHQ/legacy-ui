@@ -370,6 +370,9 @@ export default {
     },
     stateGroupColor(group) {
       return GROUP_COLORS[group]
+    },
+    projectNamePrefix() {
+      return item => `${item.name} (${item.project.name})`
     }
   },
   apollo: {
@@ -403,15 +406,24 @@ export default {
               <v-col cols="12" md="8" class="pb-0">
                 <v-autocomplete
                   v-if="canEdit && !versionGroupIdProp"
+                  id="item"
                   v-model="versionGroupIdSelect"
                   data-cy="flow-list"
                   item-value="version_group_id"
-                  item-text="name"
+                  :item-text="projectNamePrefix()"
                   label="Flow (Version Group)"
                   class="headline overflow"
                   :items="flows"
-                />
-
+                >
+                  <template #item="{ item }">
+                    <v-list-item-content>
+                      <v-list-item-title>{{ item.name }}</v-list-item-title>
+                      <v-list-item-subtitle
+                        >({{ item.project.name }})</v-list-item-subtitle
+                      >
+                    </v-list-item-content>
+                  </template>
+                </v-autocomplete>
                 <v-text-field
                   v-if="canEdit"
                   v-model="tempName"

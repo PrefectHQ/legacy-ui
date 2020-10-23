@@ -6,7 +6,8 @@ export default {
     DurationSpan
   },
   props: {
-    tooltip: { type: Object, required: true }
+    tooltip: { type: Object, required: true },
+    loading: { type: Boolean, required: false, default: false }
   }
 }
 </script>
@@ -16,9 +17,12 @@ export default {
     <div v-if="props.tooltip.data.flow" class="title truncate">
       {{ props.tooltip.data.flow.name }}
     </div>
+    <div v-else-if="props.loading">
+      ...
+    </div>
     <div
       class="truncate"
-      :class="props.tooltip.data.flow ? 'caption' : 'title'"
+      :class="props.tooltip.data.flow || props.loading ? 'caption' : 'title'"
     >
       {{ props.tooltip.data.name }}
     </div>

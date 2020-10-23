@@ -10,6 +10,11 @@ import { eventsMixin } from '@/mixins/eventsMixin'
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
 export default {
+  metaInfo() {
+    return {
+      title: `Prefect ${this.backend == 'CLOUD' ? 'Cloud' : 'Server'}`
+    }
+  },
   components: {
     Alert,
     NavBar,
@@ -73,7 +78,8 @@ export default {
       return (
         this.$route.name === 'welcome' ||
         this.$route.name === 'onboard-resources' ||
-        this.$route.name === 'name-team'
+        this.$route.name === 'name-team' ||
+        this.$route.name === 'accept'
       )
     }
   },
