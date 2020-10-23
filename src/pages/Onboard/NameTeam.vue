@@ -146,6 +146,7 @@ export default {
         if (accepted.accept_membership_invitation.id) {
           this.redirectTenant = pt.tenant.slug
           this.accepting = false
+          this.$apollo.queries.pendingInvitations.refetch()
         }
       } catch (e) {
         this.mutationErrorMessage = e
@@ -163,6 +164,7 @@ export default {
         const declined = await this.declineMembershipInvitation(id)
         if (declined.delete_membership_invitation.success) {
           this.$emit('hide')
+          this.$apollo.queries.pendingInvitations.refetch()
         }
         this.deleting = false
       } catch (e) {
@@ -373,7 +375,7 @@ export default {
                 color: #fff !important;
                 justify-content: space-between;"
               >
-                <span>{{ pt.tenant.name }}</span>
+                <span class="pr-2">{{ pt.tenant.name }}</span>
                 <div class="mt-8">
                   <v-btn
                     class="mr-3"
