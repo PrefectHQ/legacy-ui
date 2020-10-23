@@ -102,9 +102,9 @@ export default {
         bottom: 5,
         left: 5,
         right: 5,
-        top: 5,
+        top: 20,
         x: 10,
-        y: 10
+        y: 25
       },
 
       interval: null,
@@ -195,7 +195,7 @@ export default {
     this.calcRows()
 
     window.addEventListener('resize', this.resizeChart)
-    requestAnimationFrame(this.resizeChart)
+    this.resizeChart()
 
     this.canvas.on('click', this.click)
     this.canvas.on('mousemove', this.mousemove)
@@ -246,11 +246,7 @@ export default {
 
       this.rows = grid.length
 
-      if (this.rows !== prevRows) {
-        console.log('is different, updating')
-        this.resizeCanvas()
-        this.updateScales()
-      }
+      if (this.rows !== prevRows) this.updateScales()
     },
     click(e) {
       const context = this.canvas.node().getContext('2d')
@@ -499,16 +495,17 @@ export default {
     },
     rawUpdateBars() {
       const height =
-        this.y.bandwidth() > this.maxBarRadius
+        (this.y.bandwidth() > this.maxBarRadius
           ? this.maxBarRadius
-          : this.y.bandwidth()
+          : this.y.bandwidth()) ?? 0
 
       const calcBar = item => {
         if (this.pauseUpdates) return
 
-        const x = item.start_time
-          ? this.x(new Date(item.start_time))
-          : this.x(this.now) + 20
+        const x =
+          (item.start_time
+            ? this.x(new Date(item.start_time))
+            : this.x(this.now) + 20) ?? 0
 
         const calcWidth = item.end_time
           ? this.x(new Date(item.end_time)) - x
@@ -518,7 +515,7 @@ export default {
 
         const width = calcWidth > height ? calcWidth : height
 
-        const y = this.y(this.rowMap[item.id])
+        const y = this.y(this.rowMap[item.id]) ?? 0
 
         const alpha = 1
 
@@ -658,17 +655,36 @@ export default {
         return
       }
 
-      // const axisHeight = 35
-
       this.svg
         .attr('viewbox', `0 0 ${width} ${this.height}`)
         .attr('width', width)
         .attr('height', this.height)
 
-      this.xAxisNode.attr('class', 'x-axis-group').style('opacity', 0)
-      // .style('transform', `translate(0, ${height}px)`) // This moves the axis to the bottom of the svg node
-
       this.width_ = width
+
+      this.xAxisNode
+        .attr('class', 'x-axis-group')
+        .append('path')
+        .attr('class', 'x-axis-bottom')
+        .attr('stroke', 'rgba(0, 0, 0, 0.12)')
+        .attr('stroke-width', 1)
+        .attr(
+          'd',
+          `M${this.padding.left},${this.height - this.padding.bottom}L${
+            this.padding.left
+          },${this.height - this.padding.bottom}`
+        )
+        .call(enter =>
+          enter
+            .transition('enter')
+            .duration(this.animationDuration)
+            .attr(
+              'd',
+              `M${this.padding.left},${this.height - this.padding.bottom}L${this
+                .width_ - this.padding.right},${this.height -
+                this.padding.bottom}`
+            )
+        )
 
       this.resizeCanvas()
       this.updateScales()
@@ -703,22 +719,22 @@ export default {
         this.rows * this.minBarRadius * this.barPadding * 2
 
       this.height_ = this.condensed_
-        ? this.height
-        : Math.max(fullHeight, this.height)
+        ? this.height - this.padding.y
+        : Math.max(fullHeight, this.height) - this.padding.y
 
       this.canvas
         .style('width', `${this.width_}px`)
         .style('height', `${this.height_}px`)
         .attr('width', this.width_)
         .attr('height', this.height_)
-      // .style('transform', `translate(0, ${axisHeight}px)`)
+        .style('transform', `translate(0, ${this.padding.y}px)`)
 
       this.updateScales()
     },
     updateBreakpoints(shouldTransition) {
       this.breakpointsNode.attr(
         'transform',
-        () => `translate(${this.transform.x} 35) scale(${this.transform.k})`
+        () => `translate(${this.transform.x} 5) scale(${this.transform.k})`
       )
 
       this.breakpointsNode
@@ -738,16 +754,18 @@ export default {
               .attr('stroke', d => d.color || '#999')
               .attr('stroke-width', 1.5)
               .attr('stroke-dasharray', 5)
-              .attr('d', `M0,0L0,${this.height}`)
+              .attr('d', `M0,10L0,${this.height}`)
               .style('pointer-events', 'none')
 
             g.append('text')
               .style('font-size', '8px')
               .style('pointer-events', 'none')
               .attr('fill', '#999')
+              .attr('alignment-baseline', 'hanging')
               .attr('text-anchor', d => d.anchor || 'middle')
+              .style('user-select', 'none')
               .text(d => d.label)
-              .attr('y', -4)
+              .attr('y', 0)
               .style('opacity', 0)
               .transition()
               .delay(this.animationDuration)
@@ -774,7 +792,7 @@ export default {
                 .transition('update')
                 .duration(this.animationDuration)
                 .attr('stroke', d => d.color || '#999')
-                .attr('d', `M0,0L0,${this.height}`)
+                .attr('d', `M0,10L0,${this.height}`)
 
               update
                 .select('text')
@@ -820,26 +838,36 @@ export default {
       // removes the duration from the axis transitions
       // meaning we can keep the scales in sync with user actions
       // like zooming and panning
-      const x = this.transform.rescaleX(this.x)
-      const xAxis = this.newXAxis(x)
-      this.now = new Date()
+      // const x = this.transform.rescaleX(this.x)
+      // const xAxis = this.newXAxis(x)
+      // this.now = new Date()
 
-      this.xAxisNode
-        .transition()
-        .duration(shouldTransition ? this.animationDuration : 0)
-        .call(xAxis)
-        .on('end', () => {
-          this.xAxisNode.on('end', null)
-          this.updateBars()
-          this.updateBreakpoints(shouldTransition)
+      this.updateBars()
+      this.updateBreakpoints(shouldTransition)
 
-          if (this.live_ && !this.pauseUpdates) {
-            this.updateScales()
-            ++this.iterations
-          }
-        })
+      if (this.live_ && !this.pauseUpdates) {
+        this.updateScales()
+      }
+
+      // We only need this section if we want to draw the x-axis
+      // this.xAxisNode
+      //   .transition()
+      //   .duration(shouldTransition ? this.animationDuration : 0)
+      //   .call(xAxis)
+      //   .on('end', () => {
+      //     this.xAxisNode.on('end', null)
+      //     this.updateBars()
+      //     this.updateBreakpoints(shouldTransition)
+
+      //     if (this.live_ && !this.pauseUpdates) {
+      //       this.updateScales()
+      //       ++this.iterations
+      //     }
+      //   })
     },
     updateScales() {
+      if (!this.height_ || !this.width_) return
+
       const prevDomainEnd = this.domainEnd
 
       this.now = new Date()

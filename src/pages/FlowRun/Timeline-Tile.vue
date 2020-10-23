@@ -329,23 +329,11 @@ export default {
     style="max-width: 1362px;"
     tile
   >
-    <div style="height: 112px;">
-      <Timeline
-        v-if="items"
-        :items="items"
-        :start-time="startTime"
-        :end-time="endTime"
-        :breakpoints="breakpoints"
-        :live="!isFinished"
-        :min-bar-radius="10"
-        @hover="handleHover"
-      />
-    </div>
     <CardTitle v-if="!condensed" title="Run Timeline" icon="pi-gantt" />
 
     <v-card-text
       ref="timeline-container"
-      class="timeline-container overflow-hidden"
+      class="timeline-container overflow-hidden pa-0"
       :style="containerStyle"
     >
       <Timeline
@@ -364,7 +352,7 @@ export default {
 
     <v-fade-transition mode="out-in">
       <TaskRunMenu
-        v-if="hoveredTaskRun"
+        v-if="hoveredTaskRun && false"
         :task-run="hoveredTaskRun"
         :style="taskRunMenuStyle"
       />
