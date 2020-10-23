@@ -38,6 +38,11 @@ export default function(isCloud) {
         context
         agent_id
 
+        states {
+          id
+          state
+        }
+
         flow {
           id
           name
