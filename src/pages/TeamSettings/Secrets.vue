@@ -452,7 +452,28 @@ export default {
         :placeholder-text="placeholderText"
         @input="jsonError = ''"
         @set-type="setType"
-      ></JsonInput>
+      >
+        <v-menu top offset-y>
+          <template #activator="{ on }">
+            <v-btn text small align="start" color="accent" v-on="on"
+              >{{}} askjfb</v-btn
+            >
+          </template>
+          <v-list>
+            <v-list-item-group
+              v-for="(item, index) in [
+                { value: 'string', text: 'String' },
+                { value: 'json', text: 'JSON' },
+                { value: 'auto', text: 'Auto' }
+              ]"
+              :key="index"
+              @click="selectType(item)"
+            >
+              <v-list-item-title>{{ item.text }} </v-list-item-title>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+      </JsonInput>
       <div class="caption red--text">{{ jsonError }}</div>
 
       <v-fade-transition>

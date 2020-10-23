@@ -22,11 +22,11 @@ export default {
       required: false,
       default: ''
     },
-    selectedType: {
-      type: String,
-      default: null,
-      required: false
-    },
+    // selectedType: {
+    //   type: String,
+    //   default: null,
+    //   required: false
+    // },
     // If true, editor height updates based on content.
     heightAuto: {
       type: Boolean,
@@ -53,7 +53,7 @@ export default {
     return {
       // Line of JSON that contains a syntax error
       errorLine: null,
-      inputType: this.selectedType,
+      // inputType: this.selectedType,
       // The JSON may need to be modified for formatting.
       // Store the JSON prop's value internally as data so the JSON can be modified.
       internalValue: this.value
@@ -166,35 +166,7 @@ export default {
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-menu top offset-y>
-        <template #activator="{ on }">
-          <v-btn
-            v-if="selectedType"
-            text
-            small
-            align="start"
-            color="accent"
-            v-on="on"
-            >Type</v-btn
-          >
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in [
-              { value: 'string', text: 'String' },
-              { value: 'json', text: 'JSON' },
-              { value: 'auto', text: 'Auto' }
-            ]"
-            :key="index"
-            :class="selectedType === item.value ? 'pink' : null"
-            @click="selectType(item)"
-          >
-            <v-list-item-title
-              >{{ item.text }}{{ selectedType }}
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <slot></slot>
 
       <v-btn text small align="end" color="accent" @click="formatJson">
         Format
@@ -218,9 +190,6 @@ export default {
   To mitigate the effect of these global styles, each style will be prepended
   with json-input-, for "Run Flow Page".
 */
-.pink {
-  color: accentPink;
-}
 
 .json-input-height-auto {
   /* stylelint-disable selector-class-pattern */
