@@ -22,8 +22,9 @@ export default {
       required: false,
       default: ''
     },
-    selectType: {
-      type: Boolean,
+    selectedType: {
+      type: String,
+      default: null,
       required: false
     },
     // If true, editor height updates based on content.
@@ -52,7 +53,7 @@ export default {
     return {
       // Line of JSON that contains a syntax error
       errorLine: null,
-
+      inputType: this.selectedType,
       // The JSON may need to be modified for formatting.
       // Store the JSON prop's value internally as data so the JSON can be modified.
       internalValue: this.value
@@ -137,6 +138,9 @@ export default {
           throw err
         }
       }
+    },
+    selectType(type) {
+      this.$emit('set-type', type)
     }
   }
 }
@@ -147,12 +151,11 @@ export default {
     <v-card-title v-if="prependIcon" class="pb-2">
       <v-icon color="primary">{{ prependIcon }}</v-icon>
     </v-card-title>
-    <v-card-text>
+    <v-card-text class="pb-0">
       <CodeMirror
         ref="cmRef"
         data-cy="code-mirror-input"
         :value="internalValue"
-        class="ma-1"
         :style="{
           'font-size': '1.3em'
         }"
@@ -163,9 +166,36 @@ export default {
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn v-if="selectType" text small align="start" color="accent"
-        >Type</v-btn
-      >
+      <v-menu top offset-y>
+        <template #activator="{ on }">
+          <v-btn
+            v-if="selectedType"
+            text
+            small
+            align="start"
+            color="accent"
+            v-on="on"
+            >Type</v-btn
+          >
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in [
+              { value: 'string', text: 'String' },
+              { value: 'json', text: 'JSON' },
+              { value: 'auto', text: 'Auto' }
+            ]"
+            :key="index"
+            :class="selectedType === item.value ? 'pink' : null"
+            @click="selectType(item)"
+          >
+            <v-list-item-title
+              >{{ item.text }}{{ selectedType }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
       <v-btn text small align="end" color="accent" @click="formatJson">
         Format
       </v-btn>
@@ -188,6 +218,9 @@ export default {
   To mitigate the effect of these global styles, each style will be prepended
   with json-input-, for "Run Flow Page".
 */
+.pink {
+  color: accentPink;
+}
 
 .json-input-height-auto {
   /* stylelint-disable selector-class-pattern */

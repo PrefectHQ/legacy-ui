@@ -55,9 +55,13 @@ export default {
       rules: {
         required: val => !!val || 'This field is required.'
       },
-      secretType: null,
+      secretType: 'auto',
       vaild: false,
       jsonError: '',
+
+      //jsonInput
+      placeholderText:
+        "Enter your secret value here...\n\nClick on 'Type' to select String or JSON validation",
 
       // Dialogs
       secretModifyDialog: false,
@@ -89,9 +93,6 @@ export default {
       return this.secretNames
         ?.map(secret => secret.name)
         .includes(this.secretNameInput)
-    },
-    placeholderText() {
-      return "Enter your secret value here...\n\nClick on 'Type' to select String or JSON validation"
     }
   },
   watch: {
@@ -227,6 +228,9 @@ export default {
       this.isSettingSecret = false
       this.secretNameInput = null
       this.secretValueInput = null
+    },
+    setType(type) {
+      this.secretType = type.value
     }
   },
   apollo: {
@@ -444,9 +448,10 @@ export default {
         v-model="secretValueInput"
         prepend-icon="lock"
         height-auto
-        :select-type="true"
+        :selected-type="secretType"
         :placeholder-text="placeholderText"
         @input="jsonError = ''"
+        @set-type="setType"
       ></JsonInput>
       <div class="caption red--text">{{ jsonError }}</div>
 
