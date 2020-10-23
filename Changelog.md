@@ -11,6 +11,7 @@
 - Adds the project name as a prefix when creating a Cloud Hook - [#363](https://github.com/PrefectHQ/ui/pull/363)
 - Remove flow join from the flow run history query - [#365](https://github.com/PrefectHQ/ui/pull/365)
 - Add dynamic and templated page titles to the major pages - [#367](https://github.com/PrefectHQ/ui/pull/367)
+- Update the Cloud Hooks email input rules to allow multiple comma-separated emails - [#372](https://github.com/PrefectHQ/ui/pull/372)
 
 ### Bugfixes
 
