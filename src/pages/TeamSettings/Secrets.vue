@@ -84,7 +84,10 @@ export default {
 
       // Store previous secret name when modifying secret
       // This is used to delete the secret with that name and create a new secret with a separate value
-      previousSecretName: null
+      previousSecretName: null,
+
+      //secretsInfoCard
+      secretsInfo: false
     }
   },
   computed: {
@@ -287,7 +290,27 @@ export default {
 
 <template>
   <ManagementLayout :show="!isFetchingSecrets" control-show>
-    <template #title>Secrets</template>
+    <template #title
+      >Secrets
+      <v-menu
+        v-model="secretsInfo"
+        :close-on-content-click="false"
+        bottom
+        offset-x
+      >
+        <template #activator="{ on, attrs }">
+          <v-btn icon small v-bind="attrs" v-on="on">
+            <v-icon>info</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card width="200">
+          <v-card-title class="title">
+            Text and info about Vault with hashicorp label and link?
+          </v-card-title>
+        </v-card>
+      </v-menu></template
+    >
 
     <template #subtitle>
       Manage the
