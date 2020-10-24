@@ -194,6 +194,7 @@ export default {
         return false
       }
       this.jsonError = ''
+      this.$refs.secretRef.removeJsonErrors()
       return true
     },
     async setSecret() {
