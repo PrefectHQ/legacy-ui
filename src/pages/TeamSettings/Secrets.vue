@@ -39,6 +39,7 @@ export default {
       isFetchingSecrets: true,
       isDeletingSecret: false,
       isSettingSecret: false,
+      codeMirrorLoading: false,
 
       // Distinguish between creating & modifying secret
       isSecretUpdate: false,
@@ -68,7 +69,7 @@ export default {
 
       //jsonInput
       placeholderText:
-        "Enter your secret value here...\n\nClick on 'Type' to select String or JSON validation",
+        "Enter your secret value here...\n\nClick on 'Auto' to set a type for validation",
 
       // Dialogs
       secretModifyDialog: false,
@@ -105,6 +106,10 @@ export default {
   watch: {
     tenant() {
       this.$apollo.queries.secretNames.refetch()
+    },
+    selectedTypeIndex() {
+      this.jsonError = ''
+      this.validSecretJSON()
     }
   },
   methods: {
@@ -155,9 +160,19 @@ export default {
       this.secretValueInput = null
       this.selectedTypeIndex = 0
       this.jsonError = ''
+      this.codeMirrorLoading = true
+      setTimeout(() => {
+        this.codeMirrorLoading = false
+      }, 5)
     },
     validSecretJSON() {
+      if (this.selectedTypeIndex !== 2) {
+        this.$refs.secretRef.removeJsonErrors()
+        this.jsonError = ''
+        return true
+      }
       if (!this.$refs.secretRef) {
+        this.jsonError = ''
         return true
       }
 
@@ -178,7 +193,7 @@ export default {
         this.isSettingSecret = false
         return false
       }
-
+      this.jsonError = ''
       return true
     },
     async setSecret() {
@@ -236,6 +251,10 @@ export default {
       this.isSettingSecret = false
       this.secretNameInput = null
       this.secretValueInput = null
+      this.codeMirrorLoading = true
+      setTimeout(() => {
+        this.codeMirrorLoading = false
+      }, 5)
     }
   },
   apollo: {
@@ -442,6 +461,11 @@ export default {
         single-line
         outlined
         dense
+        :messages="
+          secretExists
+            ? 'A secret with this this name already exists. Clicking COFIRM will overwrite it.'
+            : null
+        "
         :rules="[rules.required]"
         placeholder="Secret Name"
         prepend-inner-icon="vpn_key"
@@ -449,13 +473,14 @@ export default {
       />
 
       <JsonInput
+        v-if="!codeMirrorLoading"
         ref="secretRef"
         v-model="secretValueInput"
         prepend-icon="lock"
         height-auto
         :selected-type="secretTypes[selectedTypeIndex].value"
         :placeholder-text="placeholderText"
-        @input="jsonError = ''"
+        @input="validSecretJSON"
       >
         <v-menu top offset-y>
           <template #activator="{ on }">
@@ -472,25 +497,7 @@ export default {
           </v-list>
         </v-menu>
       </JsonInput>
-      <div class="caption red--text">{{ jsonError }}</div>
-
-      <v-fade-transition>
-        <v-alert
-          v-if="secretExists"
-          class="mt-3"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          dense
-        >
-          <div class="subtitle-2 font-weight-light">
-            A secret already exists with this name. By selecting CONFIRM, you
-            will override this secret with a new value.
-          </div>
-        </v-alert>
-      </v-fade-transition>
+      <div class="caption red--text min-height">{{ jsonError }}</div>
     </ConfirmDialog>
 
     <ConfirmDialog
@@ -522,5 +529,9 @@ a {
 .flex {
   display: flex;
   justify-content: flex-end;
+}
+
+.min-height {
+  height: 15px;
 }
 </style>

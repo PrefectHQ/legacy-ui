@@ -93,6 +93,7 @@ export default {
     handleJsonInput(event) {
       this.removeJsonErrors()
       this.$emit('input', event)
+      this.validateJson
     },
     markJsonErrors(syntaxError) {
       const errorIndex = syntaxError?.message?.split(' ').pop()
