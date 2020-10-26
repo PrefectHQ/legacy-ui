@@ -117,14 +117,14 @@ export default {
                 !states.some(state => notPastStates.includes(state))
                   ? mappedRef.max_end_time
                   : null
-              item.shadow = states.some(state => notPastStates.includes(state))
+              // item.shadow = states.some(state => notPastStates.includes(state))
             } else {
               // We could always use mappedRef.max_end_time
               // if we don't want to assume a mapped task run is always running
               // on older versions of Core
               item.end_time =
                 this.flowRun.state == 'Running' ? null : mappedRef.max_end_time
-              item.shadow = this.flowRun.state == 'Running'
+              // item.shadow = this.flowRun.state == 'Running'
             }
           } else {
             item.start_time = taskRun.start_time
@@ -139,8 +139,8 @@ export default {
               ?.trim()
 
             item.colors.push({ color: color, value: 1 })
-            item.shadow =
-              taskRun.state == 'Running' || taskRun.state == 'Pending'
+            // item.shadow =
+            // taskRun.state == 'Running' || taskRun.state == 'Pending'
           }
 
           if (

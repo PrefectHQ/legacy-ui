@@ -32,7 +32,7 @@ export default {
     maxBarRadius: {
       type: Number,
       required: false,
-      default: 10
+      default: 2000
     },
     minBarRadius: {
       type: Number,
@@ -73,6 +73,7 @@ export default {
       hoveredId: null,
       now: new Date(),
       showControls: false, // These are useful for debugging
+      updateXTimeout: null,
       zoom: d3.zoom(),
 
       followEdge: true,
@@ -220,8 +221,32 @@ export default {
 
       itemLoop: for (let i = 0; i < this.items.length; ++i) {
         const item = this.items[i]
-        const start = new Date(item.start_time)
-        const end = new Date(item.end_time)
+
+        // If the item hasn't started yet, we distribute
+        // it to the row with the least items already
+        if (!item.start_time) {
+          const start = Date.now()
+          const end = Date.now()
+
+          const lengths = grid.map(row => row.length)
+          let row = lengths.indexOf(Math.min(...lengths))
+
+          this.rowMap[item.id] = row
+
+          if (!grid[row]) {
+            grid.push([[start, end]])
+          } else {
+            grid[row].push([start, end])
+          }
+          continue itemLoop
+        }
+
+        const start = item.start_time
+          ? new Date(item.start_time).getTime()
+          : null
+        const end = item.end_time
+          ? new Date(item.end_time).getTime()
+          : Date.now()
 
         for (let row = 0; row <= grid.length; ++row) {
           // If the current row doesn't exist, create it, put this item on it,
@@ -232,9 +257,20 @@ export default {
             continue itemLoop
           }
 
+          if (!start) {
+            const lengths = grid.map(row => row.length)
+            let row = lengths.indexOf(Math.min(...lengths))
+
+            this.rowMap[item.id] = row
+            grid[row].push([start, end])
+            continue itemLoop
+          }
+
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
-          let intersects = grid[row].some(slot => start < slot[1])
+          let intersects = grid[row].some(
+            slot => end <= slot[0] - 1000 || start <= slot[1] + 1000
+          )
 
           if (!intersects) {
             this.rowMap[item.id] = row
@@ -344,10 +380,9 @@ export default {
             : 0.5
           : bar.alpha || 1
         bar.x = bar.x0 * (1 - t) + bar.x1 * multiplier
-        bar.y = Math.round(bar.y0 * (1 - t) + bar.y1 * multiplier)
-        bar.height = Math.round(
-          bar.height0 * (1 - t) + bar.height1 * multiplier
-        )
+        bar.y = bar.y0 * (1 - t) + bar.y1 * multiplier
+        bar.height = bar.height0 * (1 - t) + bar.height1 * multiplier
+
         bar.width = bar.width0 * (1 - t) + bar.width1 * multiplier
         bar.shadow = bar.shadow0 * (1 - t) + bar.shadow1 * multiplier
 
@@ -355,7 +390,7 @@ export default {
 
         const radius = (bar.height / 2) * (1 / this.transform.k)
         const x = bar.x + radius / 2
-        const y = bar.y * (1 / this.transform.k)
+        const y = bar.y * (1 / this.transform.k) + this.barPadding / 2
 
         let offset = 0
         context.globalAlpha = bar.alpha || 1
@@ -727,7 +762,7 @@ export default {
         .style('height', `${this.height_}px`)
         .attr('width', this.width_)
         .attr('height', this.height_)
-        .style('transform', `translate(0, ${this.padding.y}px)`)
+        .style('transform', `translate(0, ${this.padding.y * 0.75}px)`)
 
       this.updateScales()
     },
@@ -834,6 +869,7 @@ export default {
         )
     },
     updateX(shouldTransition) {
+      clearTimeout(this.updateXTimeout)
       // Passing true to this method
       // removes the duration from the axis transitions
       // meaning we can keep the scales in sync with user actions
@@ -846,7 +882,9 @@ export default {
       this.updateBreakpoints(shouldTransition)
 
       if (this.live_ && !this.pauseUpdates) {
-        this.updateScales()
+        this.updateXTimeout = setTimeout(() => {
+          this.updateScales()
+        }, this.animationDuration)
       }
 
       // We only need this section if we want to draw the x-axis
@@ -873,7 +911,7 @@ export default {
       this.now = new Date()
       const startMs = this.start?.getTime() ?? 0
       const endMs = (this.end ?? this.now).getTime()
-      const domainPadding = (endMs - startMs) * 0.05 // 1 minute padding on either side
+      const domainPadding = (endMs - startMs) * 0.025 // 1 minute padding on either side
       this.domainStart = new Date(startMs - domainPadding)
       this.domainEnd = new Date(endMs + domainPadding)
 
