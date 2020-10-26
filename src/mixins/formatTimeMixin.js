@@ -77,6 +77,15 @@ export const formatTime = {
           : moment(timestamp).format('HH:mm:ss')
       }`
     },
+    logTimeExtended(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj
+          ? timeObj.format('HH:mm:ss:SS')
+          : moment(timestamp).format('HH:mm:ss:SS')
+      }`
+    },
     logDate(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone)

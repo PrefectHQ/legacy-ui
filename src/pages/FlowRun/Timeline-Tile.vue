@@ -132,11 +132,7 @@ export default {
             }
           } else {
             item.start_time = taskRun.start_time
-            item.end_time = taskRun.end_time
-              ? taskRun.end_time
-              : taskRun.state == 'Running'
-              ? null
-              : item.start_time
+            item.end_time = taskRun.end_time ?? null
 
             const color = computedStyle
               .getPropertyValue(`--v-${taskRun.state}-base`)
@@ -154,6 +150,13 @@ export default {
             item.start_time = taskRun.state_timestamp
             item.end_time = taskRun.state_timestamp
             item.shadow = false
+          }
+
+          if (
+            item.data.task_name == 'Node 3_4' ||
+            item.data.task_name == 'Node 4_6'
+          ) {
+            console.log(item)
           }
 
           return item

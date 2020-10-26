@@ -348,7 +348,6 @@ export default {
         this.updateBars()
       }
 
-      console.log(hovered)
       this.hoveredId = hoveredId
       this.hovered = hovered
     },
@@ -1116,21 +1115,21 @@ export default {
         <div v-if="hovered.data.data.state == 'Scheduled'" class="subtitle">
           Scheduled for:
           <span class="font-weight-black">
-            {{ hovered.data.data.scheduled_start_time }}
+            {{ logTimeExtended(hovered.data.data.scheduled_start_time) }}
           </span>
         </div>
 
         <div v-if="hovered.data.start_time" class="subtitle">
           Started:
           <span class="font-weight-black">
-            {{ hovered.data.start_time }}
+            {{ logTimeExtended(hovered.data.start_time) }}
           </span>
         </div>
 
         <div v-if="hovered.data.end_time" class="subtitle">
           Ended:
           <span class="font-weight-black">
-            {{ hovered.data.end_time }}
+            {{ logTimeExtended(hovered.data.end_time) }}
           </span>
         </div>
 
