@@ -331,7 +331,7 @@ export default {
           hovered = {
             data: bar,
             x: e.offsetX,
-            y: this.height_
+            y: this.height
           }
           this.canvas._groups[0][0].style.cursor = 'pointer'
           break
@@ -351,8 +351,8 @@ export default {
       // if we don't have a hovered item already
       // we don't need to do anything
       if (!this.hoveredId) return
-      // this.hoveredId = null
-      // this.hovered = null
+      this.hoveredId = null
+      this.hovered = null
       this.canvas._groups[0][0].style.cursor = null
       this.updateBars()
       this.$emit('hover', null)
