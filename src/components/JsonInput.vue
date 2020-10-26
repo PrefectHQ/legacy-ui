@@ -126,7 +126,7 @@ export default {
         if (!input || (input && input.trim() === '')) {
           this.jsonError = 'Please enter your secret as a JSON object.'
           this.$emit('invalid-secret', true)
-          return false
+          return 'MissingError'
         }
         // Attempt to parse JSON and catch syntax errors
         JSON.parse(input)
@@ -141,7 +141,7 @@ export default {
           There is a syntax error in your secret JSON.
           Please correct the error and try again.
         `
-          return false
+          return 'SyntaxError'
         } else {
           throw err
         }

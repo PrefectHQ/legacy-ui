@@ -179,8 +179,9 @@ export default {
         this.$refs.secretRef.removeJsonErrors()
         return true
       }
-      // Check JSON using the JsonInput component's validation
-      return this.$refs.secretRef.validateJson()
+      // Check JSON using the JsonInput component's validation (need to check for true over truthy here because of the way the jsonInput returns for other components)
+      if (this.$refs.secretRef.validateJson() === true) return true
+      return false
     },
     setInvalidSecret(event) {
       this.invalidSecret = event
