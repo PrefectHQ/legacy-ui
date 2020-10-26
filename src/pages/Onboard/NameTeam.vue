@@ -380,6 +380,7 @@ export default {
                     color="accentPink"
                     dark
                     depressed
+                    :disabled="disabled"
                     :loading="accepting"
                     @click="accept(pt)"
                   >
@@ -391,6 +392,7 @@ export default {
                       <v-btn
                         outlined
                         class="white--text"
+                        :disabled="disabled"
                         v-bind="attrs"
                         v-on="on"
                       >
