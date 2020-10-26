@@ -46,7 +46,7 @@ export default {
       }
     },
     endTime() {
-      return this.flowRun.end_time
+      return this.flowRun.end_time && this.isFinished
         ? Math.max.apply(null, [
             new Date(this.flowRun.scheduled_start_time),
             new Date(this.flowRun.end_time),
@@ -152,13 +152,6 @@ export default {
             item.shadow = false
           }
 
-          if (
-            item.data.task_name == 'Node 3_4' ||
-            item.data.task_name == 'Node 4_6'
-          ) {
-            console.log(item)
-          }
-
           return item
         })
         .sort((a, b) => {
@@ -260,7 +253,7 @@ export default {
         },
         {
           label: 'End',
-          time: this.flowRun?.end_time,
+          time: this.isFinished ? this.flowRun?.end_time : null,
           color: computedStyle.getPropertyValue(
             `--v-${this.flowRun?.state}-base`
           )
