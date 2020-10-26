@@ -56,7 +56,7 @@ export default {
       rules: {
         required: val => !!val || 'This field is required.'
       },
-      vaild: false,
+      invalidSecret: false,
 
       //Types
       selectedTypeIndex: 0,
@@ -100,6 +100,12 @@ export default {
       return this.secretNames
         ?.map(secret => secret.name)
         .includes(this.secretNameInput)
+    },
+    disableConfirm() {
+      if (!this.secretNameInput) return false
+      if (!this.secretValueInput) return false
+      if (this.invalidSecret) return false
+      return true
     }
   },
   watch: {
@@ -158,11 +164,13 @@ export default {
       this.secretValueInput = null
       this.selectedTypeIndex = 0
       this.codeMirrorLoading = true
+      this.invalidSecret = false
       setTimeout(() => {
         this.codeMirrorLoading = false
       }, 5)
     },
     validSecretJSON() {
+      this.invalidSecret = false
       if (this.selectedTypeIndex !== 2) {
         this.$refs.secretRef.removeJsonErrors()
         return true
@@ -172,12 +180,18 @@ export default {
         return true
       }
       // Check JSON using the JsonInput component's validation
-      this.$refs.secretRef.validateJson()
+      return this.$refs.secretRef.validateJson()
+    },
+    setInvalidSecret(event) {
+      this.invalidSecret = event
     },
     async setSecret() {
       this.isSettingSecret = true
-      if (this.selectedTypeIndex === 2 && !this.validSecretJSON()) return
-
+      if (this.selectedTypeIndex === 2 && !this.validSecretJSON()) {
+        this.isSettingSecret = false
+        this.invalidSecret = true
+        return
+      }
       if (this.isSecretUpdate) {
         await this.deleteSecret(
           { name: this.previousSecretName },
@@ -420,7 +434,7 @@ export default {
     <ConfirmDialog
       v-model="secretModifyDialog"
       :dialog-props="{ 'max-width': '75vh' }"
-      :disabled="!(secretNameInput && secretValueInput)"
+      :disabled="!disableConfirm"
       :loading="isSettingSecret"
       :title="isSecretUpdate ? 'Modify Secret' : 'Create New Secret'"
       @cancel="resetSelectedSecret"
@@ -459,6 +473,7 @@ export default {
         :selected-type="secretTypes[selectedTypeIndex].value"
         :placeholder-text="placeholderText"
         @input="validSecretJSON"
+        @invalid-secret="setInvalidSecret"
       >
         <v-menu top offset-y>
           <template #activator="{ on }">

@@ -53,7 +53,6 @@ export default {
     return {
       // Line of JSON that contains a syntax error
       errorLine: null,
-      // inputType: this.selectedType,
       // The JSON may need to be modified for formatting.
       // Store the JSON prop's value internally as data so the JSON can be modified.
       internalValue: this.value,
@@ -117,7 +116,7 @@ export default {
 
       this.errorLine = null
     },
-    // JSON validation is not used within this component.
+    // JSON validation is only used within this component for secrets.
     // Parent components are responsible for imperatively validating JSON using a ref to this component.
     validateJson(event) {
       if (this.newParameterInput) this.internalValue = this.newParameterInput
@@ -126,20 +125,23 @@ export default {
         // Treat empty or null inputs as valid
         if (!input || (input && input.trim() === '')) {
           this.jsonError = 'Please enter your secret as a JSON object.'
-          return 'MissingError'
+          this.$emit('invalid-secret', true)
+          return false
         }
         // Attempt to parse JSON and catch syntax errors
         JSON.parse(input)
         this.removeJsonErrors()
+        this.$emit('invalid-secret', false)
         return true
       } catch (err) {
         if (err instanceof SyntaxError) {
           this.markJsonErrors(err)
+          this.$emit('invalid-secret', true)
           this.jsonError = `
           There is a syntax error in your secret JSON.
           Please correct the error and try again.
         `
-          return 'SyntaxError'
+          return false
         } else {
           throw err
         }
