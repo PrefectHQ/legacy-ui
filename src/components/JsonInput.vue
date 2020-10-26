@@ -56,7 +56,8 @@ export default {
       // inputType: this.selectedType,
       // The JSON may need to be modified for formatting.
       // Store the JSON prop's value internally as data so the JSON can be modified.
-      internalValue: this.value
+      internalValue: this.value,
+      jsonError: ''
     }
   },
   computed: {
@@ -93,7 +94,7 @@ export default {
     handleJsonInput(event) {
       this.removeJsonErrors()
       this.$emit('input', event)
-      this.validateJson
+      if (this.selectedType === 'json') this.validateJson(event)
     },
     markJsonErrors(syntaxError) {
       const errorIndex = syntaxError?.message?.split(' ').pop()
@@ -106,8 +107,8 @@ export default {
       )
     },
     removeJsonErrors() {
+      this.jsonError = ''
       if (this.errorLine == null) return
-
       this.cmInstance.doc.removeLineClass(
         this.errorLine,
         'text',
@@ -118,22 +119,26 @@ export default {
     },
     // JSON validation is not used within this component.
     // Parent components are responsible for imperatively validating JSON using a ref to this component.
-    validateJson() {
+    validateJson(event) {
       if (this.newParameterInput) this.internalValue = this.newParameterInput
+      const input = event || this.internalValue
       try {
         // Treat empty or null inputs as valid
-        if (
-          !this.internalValue ||
-          (this.internalValue && this.internalValue.trim() === '')
-        ) {
+        if (!input || (input && input.trim() === '')) {
+          this.jsonError = 'Please enter your secret as a JSON object.'
           return 'MissingError'
         }
         // Attempt to parse JSON and catch syntax errors
-        JSON.parse(this.internalValue)
+        JSON.parse(input)
+        this.removeJsonErrors()
         return true
       } catch (err) {
         if (err instanceof SyntaxError) {
           this.markJsonErrors(err)
+          this.jsonError = `
+          There is a syntax error in your secret JSON.
+          Please correct the error and try again.
+        `
           return 'SyntaxError'
         } else {
           throw err
@@ -161,6 +166,7 @@ export default {
         cursor-height="1.5"
         @input="handleJsonInput($event)"
       ></CodeMirror>
+      <div class="caption red--text min-height">{{ jsonError }}</div>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
@@ -207,5 +213,11 @@ export default {
 
 .json-input-error-text {
   text-decoration: #ff5252 wavy underline !important;
+}
+</style>
+
+<style lang="scss" scoped>
+.min-height {
+  height: 15px;
 }
 </style>
