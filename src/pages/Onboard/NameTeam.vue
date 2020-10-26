@@ -137,6 +137,7 @@ export default {
       if (!this.updateServerError) this.goToResources()
     },
     async accept(pt) {
+      this.loading++
       try {
         this.accepting = true
         const invitationId = pt.id
@@ -154,9 +155,10 @@ export default {
         this.error = true
       }
       this.accepting = false
-      this.loading = false
+      this.loading--
     },
     async decline(id) {
+      this.loading++
       try {
         this.deleting = true
         const declined = await this.declineMembershipInvitation(id)
@@ -164,15 +166,15 @@ export default {
           this.$emit('hide')
           this.$apollo.queries.pendingInvitations.refetch()
         }
-        this.deleting = false
       } catch (e) {
         this.mutationErrorMessage = e
           .toString()
           .split(':')
           .pop()
-        this.loading = false
         this.error = true
       }
+      this.deleting = false
+      this.loading--
     },
     async goToResources() {
       this.revealNameInput = false
