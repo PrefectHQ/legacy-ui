@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- Add type selection, including JSON validation, to the Secrets page [#370](https://github.com/PrefectHQ/ui/pull/370)
+- Add type selection, including inline JSON validation, to the Secrets page [#370](https://github.com/PrefectHQ/ui/pull/370)
 
 ### Bugfixes
 
