@@ -3,11 +3,15 @@ import * as d3 from 'd3'
 import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
+import DurationSpan from '@/components/DurationSpan'
+import { formatTime } from '@/mixins/formatTimeMixin'
 
-const formatTime = d3.timeFormat('%-I:%M:%S')
-const formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
+const d3formatTime = d3.timeFormat('%-I:%M:%S')
+const d3formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 
 export default {
+  components: { DurationSpan },
+  mixins: [formatTime],
   props: {
     barRadius: {
       type: Number,
@@ -344,6 +348,7 @@ export default {
         this.updateBars()
       }
 
+      console.log(hovered)
       this.hoveredId = hoveredId
       this.hovered = hovered
     },
@@ -371,11 +376,11 @@ export default {
           const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
 
           if (day && dayWeek === day && meridiem && hours === meridiem) {
-            return formatTime(d)
+            return d3formatTime(d)
           } else {
             day = dayWeek
             meridiem = hours
-            return formatTimeExtended(d)
+            return d3formatTimeExtended(d)
           }
         })
     },
@@ -966,6 +971,15 @@ export default {
 
       this.updateX(true)
     },
+    statusStyle(state) {
+      return {
+        'border-radius': '50%',
+        display: 'inline-block',
+        'background-color': `var(--v-${state}-base)`,
+        height: '1rem',
+        width: '1rem'
+      }
+    },
     zoomed({ transform }) {
       this.transform = transform
       this.updateX()
@@ -1092,7 +1106,42 @@ export default {
         class="v-tooltip__content timeline-tooltip"
         :style="tooltipStyle"
       >
-        {{ hovered }}
+        <h3>{{ hovered.data.data.task_name }}</h3>
+
+        <div class="d-flex align-center justify-start">
+          <div :style="statusStyle(hovered.data.data.state)"></div>
+          <div class="ml-2">{{ hovered.data.data.state }}</div>
+        </div>
+
+        <div v-if="hovered.data.data.state == 'Scheduled'" class="subtitle">
+          Scheduled for:
+          <span class="font-weight-black">
+            {{ hovered.data.data.scheduled_start_time }}
+          </span>
+        </div>
+
+        <div v-if="hovered.data.start_time" class="subtitle">
+          Started:
+          <span class="font-weight-black">
+            {{ hovered.data.start_time }}
+          </span>
+        </div>
+
+        <div v-if="hovered.data.end_time" class="subtitle">
+          Ended:
+          <span class="font-weight-black">
+            {{ hovered.data.end_time }}
+          </span>
+        </div>
+
+        <div v-if="hovered.data.start_time" class="subtitle">
+          Duration:
+          <DurationSpan
+            class="font-weight-bold"
+            :start-time="hovered.data.start_time"
+            :end-time="hovered.data.end_time"
+          />
+        </div>
       </div>
     </transition>
   </div>

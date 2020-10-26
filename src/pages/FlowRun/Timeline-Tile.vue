@@ -77,7 +77,11 @@ export default {
             start_time: null,
             shadow: false,
             end_time: null,
-            links: []
+            links: [],
+            data: {
+              ...task,
+              ...taskRun
+            }
           }
 
           if (!taskRun || (isMapped && !mappedRef)) return item
