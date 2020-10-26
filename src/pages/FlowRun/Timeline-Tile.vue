@@ -333,7 +333,7 @@ export default {
 
     <v-card-text
       ref="timeline-container"
-      class="timeline-container overflow-hidden pa-0"
+      class="timeline-container pa-0"
       :style="containerStyle"
     >
       <Timeline

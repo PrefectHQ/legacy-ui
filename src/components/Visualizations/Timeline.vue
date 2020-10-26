@@ -71,6 +71,7 @@ export default {
       easing: 'easePolyInOut',
       id: uniqueId('timeline'),
       hoveredId: null,
+      hovered: null,
       now: new Date(),
       showControls: false, // These are useful for debugging
       updateXTimeout: null,
@@ -157,6 +158,18 @@ export default {
           color: '#999'
         }
       ]
+    },
+    tooltipStyle() {
+      if (!this.hovered) return
+      let p = this.boundingClientRect
+      let overRight = this.hovered.x + 187.5 - p.width > 0
+      let overLeft = this.hovered.x - 187.5 < 0
+      return {
+        left: `${
+          overRight ? p.width - 187.5 : overLeft ? 187.5 : this.hovered.x
+        }px`,
+        top: `${this.hovered.y}px`
+      }
     },
     updateBars: function() {
       return throttle(() => {
@@ -307,6 +320,7 @@ export default {
     mousemove(e) {
       const context = this.canvas.node().getContext('2d')
       let hoveredId
+      let hovered
       let x = (e.offsetX - this.transform.x) * (1 / this.transform.k)
       let y = e.offsetY * (1 / this.transform.k)
 
@@ -314,6 +328,11 @@ export default {
         const bar = this.bars[i]
         if (context.isPointInPath(bar.path2D, x, y)) {
           hoveredId = bar.id
+          hovered = {
+            data: bar,
+            x: e.offsetX,
+            y: this.height_
+          }
           this.canvas._groups[0][0].style.cursor = 'pointer'
           break
         }
@@ -326,12 +345,14 @@ export default {
       }
 
       this.hoveredId = hoveredId
+      this.hovered = hovered
     },
     mouseout() {
       // if we don't have a hovered item already
       // we don't need to do anything
       if (!this.hoveredId) return
-      this.hoveredId = null
+      // this.hoveredId = null
+      // this.hovered = null
       this.canvas._groups[0][0].style.cursor = null
       this.updateBars()
       this.$emit('hover', null)
@@ -1064,12 +1085,22 @@ export default {
 
     <canvas :id="`${id}-canvas`" class="canvas mx-auto" />
     <svg :id="`${id}-svg`" class="svg" />
+
+    <transition name="tooltip-fade" mode="in-out">
+      <div
+        v-if="hovered"
+        class="v-tooltip__content timeline-tooltip"
+        :style="tooltipStyle"
+      >
+        {{ hovered }}
+      </div>
+    </transition>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .timeline-container {
-  overflow: scroll;
+  // overflow: scroll;
   position: relative;
 }
 
@@ -1088,6 +1119,17 @@ export default {
   position: absolute;
   transition: all 500ms;
   z-index: 1;
+}
+
+.timeline-tooltip {
+  pointer-events: none;
+  position: absolute;
+  text-overflow: initial;
+  transform: translate(-50%);
+  transition: all 150ms;
+  user-select: none;
+  width: 375px !important;
+  z-index: 4;
 }
 </style>
 
