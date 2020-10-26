@@ -285,8 +285,9 @@ export default {
 
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
+          // TODO: Remove the buffer, this shouldn't be necessary
           let intersects = grid[row].some(
-            slot => end <= slot[0] - 1000 || start <= slot[1] + 1000
+            slot => end <= slot[0] - 10000 || start <= slot[1] + 10000
           )
 
           if (!intersects) {
