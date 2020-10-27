@@ -1,6 +1,7 @@
 <script>
 import jsBeautify from 'js-beautify'
 import { codemirror } from 'vue-codemirror'
+import debounce from 'lodash.debounce'
 
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/edit/closebrackets'
@@ -118,13 +119,13 @@ export default {
     },
     // JSON validation is only used within this component for secrets.
     // Parent components are responsible for imperatively validating JSON using a ref to this component.
-    validateJson(event) {
+    validateJson: debounce(function(event) {
       if (this.newParameterInput) this.internalValue = this.newParameterInput
       const input = event || this.internalValue
       try {
         // Treat empty or null inputs as valid
         if (!input || (input && input.trim() === '')) {
-          this.jsonError = 'Please enter your secret as a JSON object.'
+          this.jsonError = 'Please enter a value.'
           this.$emit('invalid-secret', true)
           return 'MissingError'
         }
@@ -145,7 +146,7 @@ export default {
           throw err
         }
       }
-    }
+    }, 300)
   }
 }
 </script>
