@@ -56,7 +56,8 @@ export default {
       // The JSON may need to be modified for formatting.
       // Store the JSON prop's value internally as data so the JSON can be modified.
       internalValue: this.value,
-      jsonError: ''
+      jsonError: '',
+      focussed: false
     }
   },
   computed: {
@@ -138,8 +139,7 @@ export default {
           this.markJsonErrors(err)
           this.$emit('invalid-secret', true)
           this.jsonError = `
-          There is a syntax error in your secret JSON.
-          Please correct the error and try again.
+          There is a syntax error in your JSON.
         `
           return 'SyntaxError'
         } else {
@@ -152,32 +152,54 @@ export default {
 </script>
 
 <template>
-  <v-card outlined :class="{ 'json-input-height-auto': heightAuto }">
-    <v-card-title v-if="prependIcon" class="pb-2">
-      <v-icon color="primary">{{ prependIcon }}</v-icon>
-    </v-card-title>
-    <v-card-text class="pb-0">
-      <CodeMirror
-        ref="cmRef"
-        data-cy="code-mirror-input"
-        :value="internalValue"
-        :style="{
-          'font-size': '1.3em'
-        }"
-        :options="editorOptions"
-        cursor-height="1.5"
-        @input="handleJsonInput($event)"
-      ></CodeMirror>
-      <div class="caption red--text min-height">{{ jsonError }}</div>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer />
-      <slot></slot>
-      <v-btn text small align="end" color="accent" @click="formatJson">
-        Format
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+  <div
+    class="position-relative json-input-empty-text"
+    :class="{ 'json-input-height-auto': heightAuto }"
+  >
+    <v-icon
+      :color="focussed ? 'primary' : 'grey'"
+      class="position-absolute"
+      :style="{
+        top: '8px',
+        left: '6px',
+        'z-index': 3
+      }"
+    >
+      {{ prependIcon }}
+    </v-icon>
+    <CodeMirror
+      ref="cmRef"
+      data-cy="code-mirror-input"
+      :value="internalValue"
+      class="ma-1 pl-6"
+      :options="editorOptions"
+      :style="{
+        border: '1px solid #ddd',
+        'font-size': '1.3em'
+      }"
+      @input="handleJsonInput($event)"
+      @focus="focussed = true"
+      @blur="focussed = false"
+    ></CodeMirror>
+
+    <slot></slot>
+    <v-btn
+      class="position-absolute"
+      :style="{
+        bottom: '15px',
+        right: '5px',
+        'z-index': 3
+      }"
+      text
+      small
+      color="accent"
+      @click="formatJson"
+    >
+      Format
+    </v-btn>
+
+    <div class="caption red--text min-height ">{{ jsonError }}</div>
+  </div>
 </template>
 
 <style lang="scss">
@@ -202,15 +224,14 @@ export default {
     height: auto;
     min-height: 108px;
   }
+}
 
+.json-input-empty-text {
   .CodeMirror-empty {
     color: #808080;
   }
 }
 
-.codeMirror-scroll {
-  max-width: 100%;
-}
 /* stylelint-enable selector-class-pattern */
 
 .json-input-error-text {

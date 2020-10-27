@@ -39,7 +39,6 @@ export default {
       isFetchingSecrets: true,
       isDeletingSecret: false,
       isSettingSecret: false,
-      codeMirrorLoading: false,
 
       // Distinguish between creating & modifying secret
       isSecretUpdate: false,
@@ -163,11 +162,7 @@ export default {
       this.secretNameInput = null
       this.secretValueInput = null
       this.selectedTypeIndex = 0
-      this.codeMirrorLoading = true
       this.invalidSecret = false
-      setTimeout(() => {
-        this.codeMirrorLoading = false
-      }, 5)
     },
     validSecretJSON() {
       this.invalidSecret = false
@@ -244,10 +239,6 @@ export default {
       this.isSettingSecret = false
       this.secretNameInput = null
       this.secretValueInput = null
-      this.codeMirrorLoading = true
-      setTimeout(() => {
-        this.codeMirrorLoading = false
-      }, 5)
     }
   },
   apollo: {
@@ -466,11 +457,10 @@ export default {
       />
 
       <JsonInput
-        v-if="!codeMirrorLoading"
+        v-if="secretModifyDialog"
         ref="secretRef"
         v-model="secretValueInput"
         prepend-icon="lock"
-        height-auto
         :selected-type="secretTypes[selectedTypeIndex].value"
         :placeholder-text="placeholderText"
         @input="validSecretJSON"
@@ -478,7 +468,17 @@ export default {
       >
         <v-menu top offset-y>
           <template #activator="{ on }">
-            <v-btn text small align="start" color="accent" v-on="on"
+            <v-btn
+              text
+              small
+              class="position-absolute"
+              :style="{
+                bottom: '15px',
+                right: '75px',
+                'z-index': 3
+              }"
+              color="accent"
+              v-on="on"
               >Type</v-btn
             >
           </template>
