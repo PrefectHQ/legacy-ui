@@ -1,12 +1,12 @@
 <script>
 import jsBeautify from 'js-beautify'
 import { codemirror } from 'vue-codemirror'
+import debounce from 'lodash.debounce'
 
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/edit/closebrackets'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/display/placeholder'
-import 'codemirror/addon/scroll/simplescrollbars.js'
 
 export default {
   components: {
@@ -53,10 +53,11 @@ export default {
     return {
       // Line of JSON that contains a syntax error
       errorLine: null,
-      // inputType: this.selectedType,
       // The JSON may need to be modified for formatting.
       // Store the JSON prop's value internally as data so the JSON can be modified.
-      internalValue: this.value
+      internalValue: this.value,
+      jsonError: '',
+      focussed: false
     }
   },
   computed: {
@@ -70,7 +71,7 @@ export default {
         mode: 'application/json',
         readOnly: this.disabled,
         smartIndent: true,
-        scrollbarStyle: 'simple',
+        lineWrapping: true,
         placeholder: this.placeholderText,
         tabSize: 2
       }
@@ -93,7 +94,7 @@ export default {
     handleJsonInput(event) {
       this.removeJsonErrors()
       this.$emit('input', event)
-      this.validateJson
+      if (this.selectedType === 'json') this.validateJson(event)
     },
     markJsonErrors(syntaxError) {
       const errorIndex = syntaxError?.message?.split(' ').pop()
@@ -106,8 +107,8 @@ export default {
       )
     },
     removeJsonErrors() {
+      this.jsonError = ''
       if (this.errorLine == null) return
-
       this.cmInstance.doc.removeLineClass(
         this.errorLine,
         'text',
@@ -116,60 +117,90 @@ export default {
 
       this.errorLine = null
     },
-    // JSON validation is not used within this component.
+    // JSON validation is only used within this component for secrets.
     // Parent components are responsible for imperatively validating JSON using a ref to this component.
-    validateJson() {
+    validateJson: debounce(function(event) {
       if (this.newParameterInput) this.internalValue = this.newParameterInput
+      const input = event || this.internalValue
       try {
         // Treat empty or null inputs as valid
-        if (
-          !this.internalValue ||
-          (this.internalValue && this.internalValue.trim() === '')
-        ) {
+        if (!input || (input && input.trim() === '')) {
+          this.jsonError = 'Please enter a value.'
+          this.$emit('invalid-secret', true)
           return 'MissingError'
         }
         // Attempt to parse JSON and catch syntax errors
-        JSON.parse(this.internalValue)
+        JSON.parse(input)
+        this.removeJsonErrors()
+        this.$emit('invalid-secret', false)
         return true
       } catch (err) {
         if (err instanceof SyntaxError) {
           this.markJsonErrors(err)
+          this.$emit('invalid-secret', true)
+          this.jsonError = `
+          There is a syntax error in your JSON.
+        `
           return 'SyntaxError'
         } else {
           throw err
         }
       }
-    }
+    }, 300)
   }
 }
 </script>
 
 <template>
-  <v-card outlined :class="{ 'json-input-height-auto': heightAuto }">
-    <v-card-title v-if="prependIcon" class="pb-2">
-      <v-icon color="primary">{{ prependIcon }}</v-icon>
-    </v-card-title>
-    <v-card-text class="pb-0">
-      <CodeMirror
-        ref="cmRef"
-        data-cy="code-mirror-input"
-        :value="internalValue"
-        :style="{
-          'font-size': '1.3em'
-        }"
-        :options="editorOptions"
-        cursor-height="1.5"
-        @input="handleJsonInput($event)"
-      ></CodeMirror>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer />
-      <slot></slot>
-      <v-btn text small align="end" color="accent" @click="formatJson">
-        Format
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+  <div
+    class="position-relative json-input-empty-text"
+    :class="{ 'json-input-height-auto': heightAuto }"
+  >
+    <v-icon
+      :color="focussed ? 'primary' : 'grey'"
+      class="position-absolute"
+      :style="{
+        top: '8px',
+        left: '6px',
+        'z-index': 3
+      }"
+    >
+      {{ prependIcon }}
+    </v-icon>
+    <CodeMirror
+      ref="cmRef"
+      data-cy="code-mirror-input"
+      :value="internalValue"
+      class="ma-1"
+      :class="prependIcon ? 'pl-6' : null"
+      :options="editorOptions"
+      :style="{
+        border: '1px solid #ddd',
+        'font-size': '1.3em'
+      }"
+      @input="handleJsonInput($event)"
+      @focus="focussed = true"
+      @blur="focussed = false"
+    ></CodeMirror>
+
+    <slot></slot>
+    <v-btn
+      class="position-absolute"
+      :style="{
+        bottom: '15px',
+        right: '5px',
+        'z-index': 3
+      }"
+      text
+      small
+      color="accent"
+      @click="formatJson"
+    >
+      Format
+    </v-btn>
+
+    <div class="caption red--text min-height ">{{ jsonError }}</div>
+  </div>
 </template>
 
 <style lang="scss">
@@ -194,18 +225,23 @@ export default {
     height: auto;
     min-height: 108px;
   }
+}
 
+.json-input-empty-text {
   .CodeMirror-empty {
     color: #808080;
   }
 }
 
-.codeMirror-scroll {
-  max-width: 100%;
-}
 /* stylelint-enable selector-class-pattern */
 
 .json-input-error-text {
   text-decoration: #ff5252 wavy underline !important;
+}
+</style>
+
+<style lang="scss" scoped>
+.min-height {
+  height: 15px;
 }
 </style>

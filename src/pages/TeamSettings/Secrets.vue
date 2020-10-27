@@ -39,7 +39,6 @@ export default {
       isFetchingSecrets: true,
       isDeletingSecret: false,
       isSettingSecret: false,
-      codeMirrorLoading: false,
 
       // Distinguish between creating & modifying secret
       isSecretUpdate: false,
@@ -56,8 +55,7 @@ export default {
       rules: {
         required: val => !!val || 'This field is required.'
       },
-      vaild: false,
-      jsonError: '',
+      invalidSecret: false,
 
       //Types
       selectedTypeIndex: 0,
@@ -69,7 +67,7 @@ export default {
 
       //jsonInput
       placeholderText:
-        "Enter your secret value here...\n\nClick on 'Auto' to set a type for validation",
+        "Enter your secret value here...\n\nClick on 'Type' to select a type validation",
 
       // Dialogs
       secretModifyDialog: false,
@@ -104,6 +102,12 @@ export default {
       return this.secretNames
         ?.map(secret => secret.name)
         .includes(this.secretNameInput)
+    },
+    disableConfirm() {
+      if (!this.secretNameInput) return false
+      if (!this.secretValueInput) return false
+      if (this.invalidSecret) return false
+      return true
     }
   },
   watch: {
@@ -111,7 +115,6 @@ export default {
       this.$apollo.queries.secretNames.refetch()
     },
     selectedTypeIndex() {
-      this.jsonError = ''
       this.validSecretJSON()
     }
   },
@@ -162,48 +165,32 @@ export default {
       this.secretNameInput = null
       this.secretValueInput = null
       this.selectedTypeIndex = 0
-      this.jsonError = ''
-      this.codeMirrorLoading = true
-      setTimeout(() => {
-        this.codeMirrorLoading = false
-      }, 5)
+      this.invalidSecret = false
     },
     validSecretJSON() {
+      this.invalidSecret = false
       if (this.selectedTypeIndex !== 2) {
         this.$refs.secretRef.removeJsonErrors()
-        this.jsonError = ''
         return true
       }
       if (!this.$refs.secretRef) {
-        this.jsonError = ''
+        this.$refs.secretRef.removeJsonErrors()
         return true
       }
-
-      // Check JSON using the JsonInput component's validation
-      const jsonValidationResult = this.$refs.secretRef.validateJson()
-
-      if (jsonValidationResult === 'SyntaxError') {
-        this.jsonError = `
-          There is a syntax error in your secret JSON.
-          Please correct the error and try again.
-        `
-        this.isSettingSecret = false
-        return false
-      }
-
-      if (jsonValidationResult === 'MissingError') {
-        this.jsonError = 'Please enter your secret as a JSON object.'
-        this.isSettingSecret = false
-        return false
-      }
-      this.jsonError = ''
-      this.$refs.secretRef.removeJsonErrors()
-      return true
+      // Check JSON using the JsonInput component's validation (need to check for true over truthy here because of the way the jsonInput returns for other components)
+      if (this.$refs.secretRef.validateJson() === true) return true
+      return false
+    },
+    setInvalidSecret(event) {
+      this.invalidSecret = event
     },
     async setSecret() {
       this.isSettingSecret = true
-      if (this.selectedTypeIndex === 2 && !this.validSecretJSON()) return
-
+      if (this.selectedTypeIndex === 2 && !this.validSecretJSON()) {
+        this.isSettingSecret = false
+        this.invalidSecret = true
+        return
+      }
       if (this.isSecretUpdate) {
         await this.deleteSecret(
           { name: this.previousSecretName },
@@ -255,10 +242,6 @@ export default {
       this.isSettingSecret = false
       this.secretNameInput = null
       this.secretValueInput = null
-      this.codeMirrorLoading = true
-      setTimeout(() => {
-        this.codeMirrorLoading = false
-      }, 5)
     }
   },
   apollo: {
@@ -466,7 +449,7 @@ export default {
     <ConfirmDialog
       v-model="secretModifyDialog"
       :dialog-props="{ 'max-width': '75vh' }"
-      :disabled="!(secretNameInput && secretValueInput)"
+      :disabled="!disableConfirm"
       :loading="isSettingSecret"
       :title="isSecretUpdate ? 'Modify Secret' : 'Create New Secret'"
       @cancel="resetSelectedSecret"
@@ -487,7 +470,7 @@ export default {
         dense
         :messages="
           secretExists
-            ? 'A secret with this this name already exists. Clicking COFIRM will overwrite it.'
+            ? 'A secret with this this name already exists. Clicking CONFIRM will overwrite it.'
             : null
         "
         :rules="[rules.required]"
@@ -497,20 +480,30 @@ export default {
       />
 
       <JsonInput
-        v-if="!codeMirrorLoading"
+        v-if="secretModifyDialog"
         ref="secretRef"
         v-model="secretValueInput"
         prepend-icon="lock"
-        height-auto
         :selected-type="secretTypes[selectedTypeIndex].value"
         :placeholder-text="placeholderText"
         @input="validSecretJSON"
+        @invalid-secret="setInvalidSecret"
       >
         <v-menu top offset-y>
           <template #activator="{ on }">
-            <v-btn text small align="start" color="accent" v-on="on">{{
-              secretTypes[selectedTypeIndex].text
-            }}</v-btn>
+            <v-btn
+              text
+              small
+              class="position-absolute"
+              :style="{
+                bottom: '15px',
+                right: '75px',
+                'z-index': 3
+              }"
+              color="accent"
+              v-on="on"
+              >Type</v-btn
+            >
           </template>
           <v-list>
             <v-list-item-group v-model="selectedTypeIndex" color="primary">
@@ -521,7 +514,6 @@ export default {
           </v-list>
         </v-menu>
       </JsonInput>
-      <div class="caption red--text min-height">{{ jsonError }}</div>
     </ConfirmDialog>
 
     <ConfirmDialog
@@ -553,9 +545,5 @@ a {
 .flex {
   display: flex;
   justify-content: flex-end;
-}
-
-.min-height {
-  height: 15px;
 }
 </style>
