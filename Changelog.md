@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add type selection, including inline JSON validation, to the Secrets page [#370](https://github.com/PrefectHQ/ui/pull/370)
+- Add indicator of number of upcoming or late runs to the dashboard card title = [#348](https://github.com/PrefectHQ/ui/issues/348)
 
 ### Bugfixes
 
