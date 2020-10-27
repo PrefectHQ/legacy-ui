@@ -14,7 +14,9 @@ export default {
 
       loading: 0,
       accepting: false,
-      deleting: false,
+      activeInvite: null,
+      currentInvitation: null,
+      declining: false,
       dialog: false,
       redirectTenant: null,
 
@@ -138,8 +140,9 @@ export default {
     },
     async accept(pt) {
       this.loading++
+      this.accepting = true
       try {
-        this.accepting = true
+        this.activeInvite = pt.id
         const invitationId = pt.id
         const accepted = await this.acceptMembershipInvitation(invitationId)
         this.redirectTenant = pt.tenant.slug
@@ -154,16 +157,23 @@ export default {
           .pop()
         this.error = true
       }
+      this.activeInvite = null
       this.accepting = false
       this.loading--
     },
+    openModal(pt) {
+      this.activeInvite = pt.id
+      this.currentInvitation = pt
+      this.dialog = true
+    },
     async decline(id) {
       this.loading++
+      this.declining = true
       try {
-        this.deleting = true
+        this.activeInvite = id
         const declined = await this.declineMembershipInvitation(id)
         if (declined.delete_membership_invitation.success) {
-          this.$emit('hide')
+          this.dialog = false
           this.$apollo.queries.pendingInvitations.refetch()
         }
       } catch (e) {
@@ -173,7 +183,8 @@ export default {
           .pop()
         this.error = true
       }
-      this.deleting = false
+      this.declining = false
+      this.activeInvite = null
       this.loading--
     },
     async goToResources() {
@@ -381,58 +392,20 @@ export default {
                     dark
                     depressed
                     :disabled="disabled"
-                    :loading="accepting"
+                    :loading="activeInvite === pt.id && accepting"
                     @click="accept(pt)"
                   >
                     <v-icon class="pr-4">fa-user-friends</v-icon>
                     Accept
                   </v-btn>
-                  <v-dialog v-model="dialog" max-width="500">
-                    <template #activator="{ on, attrs }">
-                      <v-btn
-                        outlined
-                        class="white--text"
-                        :disabled="disabled"
-                        v-bind="attrs"
-                        v-on="on"
-                      >
-                        No Thanks
-                      </v-btn>
-                    </template>
-                    <v-card>
-                      <v-card-title class="headline">
-                        Are you sure you want to decline?
-                      </v-card-title>
-                      <v-card-text>
-                        <div>
-                          Clicking
-                          <span class="font-weight-bold"> Decline </span> will
-                          delete your invitation.
-                        </div>
-                        <div class="mt-2">
-                          If you don't want to confirm or delete your invitation
-                          right now, you can click on
-                          <span class="font-weight-bold"> Cancel</span>. You'll
-                          be able to accept (or decline) the invitation from
-                          your dashboard after creating your personal team.
-                        </div>
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          class="white--text"
-                          color="prefect"
-                          :loading="deleting"
-                          @click="decline(pt.id)"
-                        >
-                          Decline
-                        </v-btn>
-                        <v-btn outlined color="prefect" @click="dialog = false"
-                          >Cancel</v-btn
-                        >
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
+                  <v-btn
+                    outlined
+                    class="white--text"
+                    :disabled="disabled"
+                    @click="openModal(pt)"
+                  >
+                    No Thanks
+                  </v-btn>
                 </div>
               </v-list-item>
             </v-list>
@@ -473,6 +446,40 @@ export default {
         </transition-group>
       </div>
     </v-row>
+    <v-dialog v-if="currentInvitation" v-model="dialog" max-width="500">
+      <v-card>
+        <v-card-title class="headline">
+          Are you sure you want to decline the invitation to
+          {{ currentInvitation.tenant.name }}?
+        </v-card-title>
+        <v-card-text>
+          <div>
+            Clicking
+            <span class="font-weight-bold"> Decline </span> will delete your
+            invitation.
+          </div>
+          <div class="mt-2">
+            If you don't want to confirm or delete your invitation right now,
+            you can click on
+            <span class="font-weight-bold"> Cancel</span>. You'll be able to
+            accept (or decline) the invitation from your dashboard after
+            creating your personal team.
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            class="white--text"
+            color="prefect"
+            :loading="declining"
+            @click="decline(currentInvitation.id)"
+          >
+            Decline
+          </v-btn>
+          <v-btn outlined color="prefect" @click="dialog = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
