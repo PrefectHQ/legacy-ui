@@ -5,6 +5,15 @@
 ### Features and Improvements
 
 - Add indicator of number of upcoming or late runs to the dashboard card title = [#348](https://github.com/PrefectHQ/ui/issues/348)
+
+### Bugfixes
+
+- None
+
+## 2020-10-23
+
+### Features and Improvements
+
 - Improve the speed and rendering of flow run and task run schematics with mapped tasks - [#364](https://github.com/PrefectHQ/ui/pull/364)
 - Improve task run dependency schematics - [#364](https://github.com/PrefectHQ/ui/pull/364)
 - Add mapped runs tab to mapped task run pages (parents and children) - [#364](https://github.com/PrefectHQ/ui/pull/364)
