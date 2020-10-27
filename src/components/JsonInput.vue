@@ -6,7 +6,6 @@ import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/edit/closebrackets'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/display/placeholder'
-import 'codemirror/addon/scroll/simplescrollbars.js'
 
 export default {
   components: {
@@ -71,7 +70,7 @@ export default {
         mode: 'application/json',
         readOnly: this.disabled,
         smartIndent: true,
-        scrollbarStyle: 'simple',
+        lineWrapping: true,
         placeholder: this.placeholderText,
         tabSize: 2
       }
