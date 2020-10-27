@@ -10,11 +10,28 @@
 
 - None
 
+## 2020-10-23
+
+### Features and Improvements
+
+- Improve the speed and rendering of flow run and task run schematics with mapped tasks - [#364](https://github.com/PrefectHQ/ui/pull/364)
+- Improve task run dependency schematics - [#364](https://github.com/PrefectHQ/ui/pull/364)
+- Add mapped runs tab to mapped task run pages (parents and children) - [#364](https://github.com/PrefectHQ/ui/pull/364)
+- Add task run names where possible to schematics and dependencies tiles - [#364](https://github.com/PrefectHQ/ui/pull/364)
+- Adds the project name as a prefix when creating a Cloud Hook - [#363](https://github.com/PrefectHQ/ui/pull/363)
+- Remove flow join from the flow run history query - [#365](https://github.com/PrefectHQ/ui/pull/365)
+- Add dynamic and templated page titles to the major pages - [#367](https://github.com/PrefectHQ/ui/pull/367)
+
+### Bugfixes
+
+- Fix moving activity timeline on the flow run page - [#364](https://github.com/PrefectHQ/ui/pull/364)
+
 ## 2020-10-21
 
 ### Features and Improvements
 
 - What's New notifications are now marked as read when clicked from the dashboard - [#344](https://github.com/PrefectHQ/ui/pull/344)
+- Update the design of the Accept Invitation Page - [#359](https://github.com/PrefectHQ/ui/pull/359)
 - Add helpful links for Server users experienceing connection issues - [#355](https://github.com/PrefectHQ/ui/pull/355)
 
 ### Bugfixes

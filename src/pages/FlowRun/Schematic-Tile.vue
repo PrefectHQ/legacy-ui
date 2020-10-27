@@ -37,16 +37,20 @@ export default {
         return !this.$route.params.id
       },
       update(data) {
-        if (data.flow_run && data.flow_run.length) {
-          this.tasks = data.flow_run[0].task_runs.map(tr => {
-            return { ...tr, flow_run_name: data.flow_run[0].name }
+        if (data?.flow_run_by_pk) {
+          this.tasks = data.flow_run_by_pk.task_runs.map(tr => {
+            return {
+              ...tr,
+              flow_run_name: data.flow_run_by_pk.name,
+              task_run_id: tr.id
+            }
           })
-          return data.flow_run[0]
+          return data.flow_run_by_pk
         } else {
           this.tasks = []
         }
       },
-      pollInterval: 1000
+      pollInterval: 3000
     }
   }
 }
