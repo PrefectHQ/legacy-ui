@@ -5,13 +5,15 @@ import JsonInput from '@/components/JsonInput'
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ManagementLayout from '@/layouts/ManagementLayout'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
   components: {
     Alert,
     ConfirmDialog,
     ManagementLayout,
-    JsonInput
+    JsonInput,
+    ExternalLink
   },
   data() {
     return {
@@ -287,10 +289,26 @@ export default {
           </v-btn>
         </template>
 
-        <v-card width="200">
-          <v-card-title class="title">
-            Text and info about Vault with hashicorp label and link?
-          </v-card-title>
+        <v-card width="300">
+          <v-list class="py-0">
+            <v-list-item two-line class="px-4 py-0">
+              <v-list-item-avatar class="mr-2">
+                <v-icon color="black">{{ '$hashicorp' }}</v-icon>
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-subtitle
+                  >Prefect Cloud uses
+                  <ExternalLink href="https://www.hashicorp.com/products/vault">
+                    Vault by Hashicorp
+                  </ExternalLink>
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  to keep secrets secure.</v-list-item-subtitle
+                >
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
         </v-card>
       </v-menu></template
     >
