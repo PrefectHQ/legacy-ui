@@ -171,7 +171,8 @@ export default {
       ref="cmRef"
       data-cy="code-mirror-input"
       :value="internalValue"
-      class="ma-1 pl-6"
+      class="ma-1"
+      :class="prependIcon ? 'pl-6' : null"
       :options="editorOptions"
       :style="{
         border: '1px solid #ddd',
