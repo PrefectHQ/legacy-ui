@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add indicator of number of upcoming or late runs to the dashboard card title = [#348](https://github.com/PrefectHQ/ui/issues/348)
 
 ### Bugfixes
 
