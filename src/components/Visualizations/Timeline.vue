@@ -277,11 +277,6 @@ export default {
           ? new Date(item.end_time).getTime()
           : Date.now()
 
-        // console.log(
-        //   item.start_time,
-        //   new Date(item.start_time).getTimezoneOffset() / 60
-        // )
-
         for (let row = 0; row <= grid.length; ++row) {
           // If the current row doesn't exist, create it, put this item on it,
           // and move to the next item
@@ -302,13 +297,16 @@ export default {
 
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
-          // TODO: Remove the buffer, this shouldn't be necessary
-          // let intersects = grid[row].some(
-          //   slot => end <= slot[0] - 10000 || start <= slot[1] + 10000
-          // )
+          // TODO: This buffer is somewhat arbitrary, looking only at runs that happen within
+          // 1 second of each other; we could improve this by calculating intersection as a function
+          // of minimum run diameter
           let intersects = grid[row].some(
-            slot => end <= slot[0] || start <= slot[1]
+            slot => end <= slot[0] - 1000 || start <= slot[1] + 1000
           )
+
+          // let intersects = grid[row].some(
+          //   slot => end <= slot[0] || start <= slot[1]
+          // )
 
           if (!intersects) {
             this.rowMap[item.id] = row
