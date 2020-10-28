@@ -74,6 +74,7 @@ export default {
       drawTimeout: null,
       easing: 'easePolyInOut',
       id: uniqueId('timeline'),
+      hoveredBreakpoint: null,
       hoveredId: null,
       hovered: null,
       now: new Date(),
@@ -153,15 +154,25 @@ export default {
       return new Date(this.endTime)
     },
     breakpoints_() {
-      if (!this.live_) return this.breakpoints
-      return [
-        ...this.breakpoints,
-        {
+      const breakpoints = [...this.breakpoints]
+
+      if (this.live_) {
+        breakpoints.push({
           label: '(now)',
           time: this.now,
           color: '#999'
-        }
-      ]
+        })
+      }
+
+      if (this.hoveredBreakpoint) {
+        breakpoints.push({
+          label: this.hoveredBreakpoint.label,
+          time: this.hoveredBreakpoint.time,
+          color: '#999'
+        })
+      }
+
+      return breakpoints
     },
     tooltipStyle() {
       if (!this.hovered) return
@@ -265,6 +276,11 @@ export default {
           ? new Date(item.end_time).getTime()
           : Date.now()
 
+        // console.log(
+        //   item.start_time,
+        //   new Date(item.start_time).getTimezoneOffset() / 60
+        // )
+
         for (let row = 0; row <= grid.length; ++row) {
           // If the current row doesn't exist, create it, put this item on it,
           // and move to the next item
@@ -323,6 +339,14 @@ export default {
       this.hoveredId = hoveredId
     },
     mousemove(e) {
+      this.hoveredBreakpoint = {
+        time: this.x.invert(
+          (e.offsetX - this.transform.x) * (1 / this.transform.k)
+        ),
+        label: this.logTimeExtended(this.x.invert(e.offsetX))
+      }
+      this.updateBreakpoints()
+
       const context = this.canvas.node().getContext('2d')
       let hoveredId
       let hovered
@@ -353,11 +377,15 @@ export default {
       this.hovered = hovered
     },
     mouseout() {
+      this.hoveredBreakpoint = null
+      this.updateBreakpoints()
+
       // if we don't have a hovered item already
       // we don't need to do anything
       if (!this.hoveredId) return
       this.hoveredId = null
       this.hovered = null
+
       this.canvas._groups[0][0].style.cursor = null
       this.updateBars()
       this.$emit('hover', null)
@@ -807,7 +835,8 @@ export default {
               .append('g')
               .attr(
                 'transform',
-                `translate(${this.x(this.now)}) scale(${1 / this.transform.k})`
+                `translate(${this.x(this.now) + this.transform.x}) scale(${1 /
+                  this.transform.k})`
               )
               .attr('class', 'breakpoints-group')
 

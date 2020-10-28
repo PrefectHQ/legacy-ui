@@ -113,6 +113,11 @@ export default {
               })
             }
 
+            console.log(
+              'YOUR MAPPED REF IS HERE: ',
+              new Date(mappedRef.max_end_time).toLocaleString()
+            )
+
             item.start_time = mappedRef.min_start_time
 
             if (taskRun?.serialized_state?.n_map_states) {
