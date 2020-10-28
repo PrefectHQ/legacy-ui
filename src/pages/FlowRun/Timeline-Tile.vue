@@ -238,31 +238,13 @@ export default {
   },
   methods: {
     generateBreakpoints() {
-      this.breakpoints = [
-        {
-          label: 'Scheduled',
-          time: this.flowRun?.scheduled_start_time,
-          color: computedStyle.getPropertyValue('--v-Scheduled-base')
-        },
-        {
-          label: 'Submitted',
-          time: this.flowRun?.states.find(state => state.state == 'Submitted')
-            ?.timestamp,
-          color: computedStyle.getPropertyValue('--v-Submitted-base')
-        },
-        {
-          label: 'Start',
-          time: this.flowRun?.start_time,
-          color: computedStyle.getPropertyValue('--v-Running-base')
-        },
-        {
-          label: 'End',
-          time: this.isFinished ? this.flowRun?.end_time : null,
-          color: computedStyle.getPropertyValue(
-            `--v-${this.flowRun?.state}-base`
-          )
+      this.breakpoints = this.flowRun.states.map(state => {
+        return {
+          label: state.state,
+          time: state.timestamp,
+          color: computedStyle.getPropertyValue(`--v-${state.state}-base`)
         }
-      ]
+      })
     },
     handleHover(id) {
       this.hoveredTaskRun = this.taskRunMap[id]

@@ -81,6 +81,7 @@ export default {
       now: new Date(),
       showControls: false, // These are useful for debugging
       showLabels: true,
+      showTimestampAtCursor: false,
       updateXTimeout: null,
       zoom: d3.zoom(),
 
@@ -342,19 +343,21 @@ export default {
       this.hoveredId = hoveredId
     },
     mousemove(e) {
-      this.hoveredBreakpoint = {
-        time: this.x.invert(
-          (e.offsetX - this.transform.x) * (1 / this.transform.k)
-        ),
-        label: this.logTimeExtended(
-          new Date(
-            this.x.invert(
-              (e.offsetX - this.transform.x) * (1 / this.transform.k)
+      if (this.showTimestampAtCursor) {
+        this.hoveredBreakpoint = {
+          time: this.x.invert(
+            (e.offsetX - this.transform.x) * (1 / this.transform.k)
+          ),
+          label: this.logTimeExtended(
+            new Date(
+              this.x.invert(
+                (e.offsetX - this.transform.x) * (1 / this.transform.k)
+              )
             )
           )
-        )
+        }
+        this.updateBreakpoints()
       }
-      this.updateBreakpoints()
 
       const context = this.canvas.node().getContext('2d')
       let hoveredId
@@ -857,6 +860,7 @@ export default {
                   : this.logTimeExtended(new Date(d.time))
               )
               .attr('y', 0)
+              .attr('x', 0)
               .style('opacity', 0)
               .transition()
               .delay(50)
@@ -1028,9 +1032,6 @@ export default {
       this.bars = []
       this.resizeChart()
     },
-    updateLabels() {
-      this.updateBreakpoints()
-    },
     zoomIn() {
       this.canvas
         .transition()
@@ -1118,15 +1119,28 @@ export default {
             label="Breakpoint Labels"
             hide-details
             class="v-input--reverse input-menu-item ma-0"
-            @change="updateLabels"
+            @change="updateBreakpoints"
           ></v-checkbox>
         </v-list-item>
+
+        <v-list-item>
+          <v-checkbox
+            v-model="showTimestampAtCursor"
+            label="Cursor Timestamp"
+            hide-details
+            class="v-input--reverse input-menu-item ma-0"
+            @change="updateBreakpoints"
+          ></v-checkbox>
+        </v-list-item>
+
         <v-list-item v-if="showControls" @click="playOrPause">
           {{ pauseUpdates ? 'Play' : 'Pause' }}
         </v-list-item>
+
         <v-list-item v-if="showControls" @click="collapse">
           {{ condensed_ ? 'Expand' : 'Collapse' }}
         </v-list-item>
+
         <v-list-item v-if="showControls" @click="redraw">
           Redraw
         </v-list-item>

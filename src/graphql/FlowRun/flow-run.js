@@ -41,6 +41,7 @@ export default function(isCloud) {
         states {
           id
           state
+          timestamp
         }
 
         flow {
