@@ -69,7 +69,7 @@ export default {
           query = { 'mapped-runs': '' }
           break
         case 'artifact':
-          query = { 'artifact': '' }
+          query = { artifact: '' }
           break
         default:
           break
@@ -98,7 +98,7 @@ export default {
     getTab() {
       if ('logId' in this.$route.query) return 'logs'
       if ('mapped-runs' in this.$route.query) return 'mapped-runs'
-      if('artifact' in this.$route.query) return 'artifact'
+      if ('artifact' in this.$route.query) return 'artifact'
       return 'overview'
     },
     parseMarkdown(md) {
@@ -201,7 +201,7 @@ export default {
         <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
           <v-icon left>check_box</v-icon>
           Artifact
-        </v-badge> 
+        </v-badge>
       </v-tab>
 
       <v-tab
@@ -268,7 +268,8 @@ export default {
         class="tab-full-height"
         value="artifact"
         transition="quick-fade"
-        reverse-transition="quick-fade">
+        reverse-transition="quick-fade"
+      >
         <!-- <div v-html="parseMarkdown('# hello')"></div> -->
       </v-tab-item>
 
@@ -305,7 +306,7 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-       <v-btn @click="tab = 'artifact'">
+      <v-btn @click="tab = 'artifact'">
         Artifact
         <v-icon>format_align_left</v-icon>
       </v-btn>

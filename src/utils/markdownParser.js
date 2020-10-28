@@ -8,11 +8,10 @@ export function parser(md) {
     .use(recommended)
     .use(html)
     .process(md, function(error, file) {
-      if(error) {
+      if (error) {
         result = error
       }
       result = String(file)
     })
   return result
 }
-

@@ -67,7 +67,7 @@ export default {
           query = { chart: '' }
           break
         case 'artifact':
-          query = {artifact: ''}
+          query = { artifact: '' }
           break
         default:
           break
@@ -84,7 +84,7 @@ export default {
       if ('schematic' in this.$route.query) return 'schematic'
       if ('logId' in this.$route.query) return 'logs'
       if ('chart' in this.$route.query) return 'chart'
-      if('artifact' in this.$route.query) return 'artifact'
+      if ('artifact' in this.$route.query) return 'artifact'
       return 'overview'
     },
     parseMarkdown(md) {
@@ -221,7 +221,7 @@ export default {
       </v-tab-item>
 
       <v-tab-item class="tab-full-height" value="artifact">
-       <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
+        <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
       </v-tab-item>
     </v-tabs>
 
