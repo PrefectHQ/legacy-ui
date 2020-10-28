@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add indicator of number of upcoming or late runs to the dashboard card title = [#348](https://github.com/PrefectHQ/ui/issues/348)
+- Update the agents tile on the dashboard to show flows can not run without agents [#382](https://github.com/PrefectHQ/ui/pull/382)
 
 ### Bugfixes
 
