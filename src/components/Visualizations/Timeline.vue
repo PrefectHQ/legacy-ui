@@ -968,7 +968,7 @@ export default {
       this.domainStart = new Date(startMs - domainPadding)
       this.domainEnd = new Date(endMs + domainPadding)
 
-      this.x.range([this.barRadius * 1.25, this.width_ - this.padding.right])
+      this.x.range([this.padding.left, this.width_ - this.padding.right])
       this.x.domain([this.domainStart, this.domainEnd])
       this.y.domain([...Array(this.rows).keys()])
       this.y.paddingInner(this.barPadding)
