@@ -12,6 +12,7 @@ import TaskRunHeartbeatTile from '@/pages/FlowRun/TaskRunHeartbeat-Tile'
 import TaskRunTableTile from '@/pages/FlowRun/TaskRunTable-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
+import { parser } from '@/utils/markdownParser'
 
 export default {
   metaInfo() {
@@ -65,6 +66,9 @@ export default {
         case 'chart':
           query = { chart: '' }
           break
+        case 'artifact':
+          query = {artifact: ''}
+          break
         default:
           break
       }
@@ -80,7 +84,11 @@ export default {
       if ('schematic' in this.$route.query) return 'schematic'
       if ('logId' in this.$route.query) return 'logs'
       if ('chart' in this.$route.query) return 'chart'
+      if('artifact' in this.$route.query) return 'artifact'
       return 'overview'
+    },
+    parseMarkdown(md) {
+      return parser(md)
     }
   },
   apollo: {
@@ -161,6 +169,13 @@ export default {
         Logs
       </v-tab>
 
+      <v-tab href="#artifact" :style="hideOnMobile" disabled>
+        <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
+          <v-icon left>check_box</v-icon>
+          Artifact
+        </v-badge>
+      </v-tab>
+
       <v-tab-item class="tab-full-height pa-0" value="overview">
         <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
@@ -204,6 +219,10 @@ export default {
           />
         </TileLayoutFull>
       </v-tab-item>
+
+      <v-tab-item class="tab-full-height" value="artifact">
+       <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
+      </v-tab-item>
     </v-tabs>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
@@ -224,6 +243,11 @@ export default {
 
       <v-btn @click="tab = 'logs'">
         Logs
+        <v-icon>format_align_left</v-icon>
+      </v-btn>
+
+      <v-btn @click="tab = 'artifact'">
+        artifact
         <v-icon>format_align_left</v-icon>
       </v-btn>
     </v-bottom-navigation>

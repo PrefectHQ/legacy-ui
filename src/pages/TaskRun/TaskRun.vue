@@ -11,6 +11,7 @@ import SubPageNav from '@/layouts/SubPageNav'
 import TaskRunHeartbeatTile from '@/pages/TaskRun/TaskRunHeartbeat-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
+import { parser } from '@/utils/markdownParser'
 
 export default {
   metaInfo() {
@@ -67,6 +68,9 @@ export default {
         case 'mapped-runs':
           query = { 'mapped-runs': '' }
           break
+        case 'artifact':
+          query = { 'artifact': '' }
+          break
         default:
           break
       }
@@ -94,7 +98,11 @@ export default {
     getTab() {
       if ('logId' in this.$route.query) return 'logs'
       if ('mapped-runs' in this.$route.query) return 'mapped-runs'
+      if('artifact' in this.$route.query) return 'artifact'
       return 'overview'
+    },
+    parseMarkdown(md) {
+      return parser(md)
     }
   },
   apollo: {
@@ -189,6 +197,13 @@ export default {
         Logs
       </v-tab>
 
+      <v-tab href="#artifact" :style="hideOnMobile" disabled>
+        <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
+          <v-icon left>check_box</v-icon>
+          Artifact
+        </v-badge> 
+      </v-tab>
+
       <v-tab
         v-if="mappedParent || mappedChild"
         href="#mapped-runs"
@@ -251,6 +266,14 @@ export default {
 
       <v-tab-item
         class="tab-full-height"
+        value="artifact"
+        transition="quick-fade"
+        reverse-transition="quick-fade">
+        <!-- <div v-html="parseMarkdown('# hello')"></div> -->
+      </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height"
         value="mapped-runs"
         transition="quick-fade"
         reverse-transition="quick-fade"
@@ -279,6 +302,11 @@ export default {
 
       <v-btn @click="tab = 'logs'">
         Logs
+        <v-icon>format_align_left</v-icon>
+      </v-btn>
+
+       <v-btn @click="tab = 'artifact'">
+        Artifact
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
