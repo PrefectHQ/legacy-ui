@@ -1219,15 +1219,11 @@ export default {
 }
 
 .timeline-container {
-  // overflow: scroll;
   position: relative;
 }
 
 .svg {
   box-sizing: border-box;
-  // pointer-events: none;
-  position: fixed;
-  // user-select: none;
   transition: all 500ms;
   z-index: 0;
 }
