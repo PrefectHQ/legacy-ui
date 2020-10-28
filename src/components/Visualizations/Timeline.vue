@@ -823,12 +823,14 @@ export default {
           enter => {
             const g = enter
               .append('g')
+              .attr('class', 'breakpoints-group')
               .attr(
                 'transform',
-                `translate(${this.x(this.now) + this.transform.x}) scale(${1 /
-                  this.transform.k})`
+                d =>
+                  `translate(${
+                    d.time ? this.x(new Date(d.time)) : -20
+                  }) scale(${1 / this.transform.k})`
               )
-              .attr('class', 'breakpoints-group')
 
             g.append('path')
               .attr('stroke', d => d.color || '#999')
@@ -855,21 +857,15 @@ export default {
               .attr('y', 0)
               .style('opacity', 0)
               .transition()
-              .delay(this.animationDuration)
-              .duration(150)
+              .delay(50)
+              .duration(50)
               .style('opacity', 1)
 
             return g.call(enter =>
               enter
                 .transition('enter')
-                .duration(this.animationDuration)
-                .attr(
-                  'transform',
-                  d =>
-                    `translate(${
-                      d.time ? this.x(new Date(d.time)) : -20
-                    }) scale(${1 / this.transform.k})`
-                )
+                .duration(50)
+                .style('opacity', 1)
             )
           },
           update =>
@@ -890,14 +886,14 @@ export default {
                     : this.logTimeExtended(new Date(d.time))
                 )
                 .transition()
-                .delay(this.animationDuration)
-                .duration(150)
+                .delay(50)
+                .duration(50)
                 .style('opacity', 1)
 
               return update.call(update =>
                 update
                   .transition('update')
-                  .duration(shouldTransition ? this.animationDuration : 0)
+                  .duration(shouldTransition ? 50 : 0)
                   .attr(
                     'transform',
                     d =>
@@ -908,17 +904,11 @@ export default {
               )
             }),
           exit => {
-            exit
-              .selectAll('text')
-              .transition('exit')
-              .duration(150)
-              .style('opacity', 0)
-
             return exit.call(exit =>
               exit
                 .transition('exit')
-                .duration(this.animationDuration)
-                .attr('transform', 'translate(0)')
+                .duration(50)
+                .style('opacity', 0)
                 .remove()
             )
           }
