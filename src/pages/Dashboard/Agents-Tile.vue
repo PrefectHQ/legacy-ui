@@ -4,10 +4,12 @@ import { mapGetters } from 'vuex'
 
 import CardTitle from '@/components/Card-Title'
 import moment from '@/utils/moment'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
   components: {
-    CardTitle
+    CardTitle,
+    ExternalLink
   },
   data() {
     return {
@@ -60,17 +62,14 @@ export default {
       if (this.isLoading) return 'secondaryGray'
       if (
         this.hasError ||
+        this.agents?.length === 0 ||
         (this.agentTracker?.healthy === 0 &&
           this.agentTracker?.stale === 0 &&
           this.agentTracker?.unhealthy > 0)
       )
         return 'error'
 
-      if (
-        this.agents?.length === 0 ||
-        this.agentTracker?.stale > 0 ||
-        this.agentTracker?.unhealthy > 0
-      ) {
+      if (this.agentTracker?.stale > 0 || this.agentTracker?.unhealthy > 0) {
         return 'warning'
       }
 
@@ -131,8 +130,8 @@ export default {
           color="grey"
         >
           <v-list-item-avatar class="mr-0">
-            <v-icon class="warning--text mb-1">
-              warning
+            <v-icon class="error--text mb-1">
+              error
             </v-icon>
           </v-list-item-avatar>
           <v-list-item-content class="my-0 py-3">
@@ -140,8 +139,19 @@ export default {
               class=" text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
-              You do not have any agents querying for flow runs.
-            </div>
+              You do not have any agents querying for flow runs. Without an
+              agent, your flow runs will not be picked up.</div
+            >
+            <div
+              class=" text-subtitle-1 font-weight-light pt-4"
+              style="line-height: 1.25rem;"
+              >See
+              <ExternalLink
+                href="https://docs.prefect.io/orchestration/agents/overview.html"
+                >the Prefect docs</ExternalLink
+              >
+              for more info on agents.</div
+            >
           </v-list-item-content>
         </v-list-item>
 
