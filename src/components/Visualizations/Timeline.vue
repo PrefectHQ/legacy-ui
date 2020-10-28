@@ -763,7 +763,7 @@ export default {
 
       this.xAxisNode
         .attr('class', 'x-axis-group')
-        .style('transform', `translate(0, ${this.height - 25}px)`)
+        .style('transform', `translate(0, ${this.height - 20}px)`)
 
       this.resizeCanvas()
       this.updateScales()
@@ -833,8 +833,11 @@ export default {
             g.append('path')
               .attr('stroke', d => d.color || '#999')
               .attr('stroke-width', 1.5)
-              .attr('stroke-dasharray', 5)
-              .attr('d', `M0,10L0,${this.height - 10}`)
+              .attr(
+                'stroke-dasharray',
+                '5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 12'
+              )
+              .attr('d', `M0,10L0,${this.height - 19}`)
               .style('pointer-events', 'none')
 
             g.append('text')
@@ -876,7 +879,7 @@ export default {
                 .transition('update')
                 .duration(this.animationDuration)
                 .attr('stroke', d => d.color || '#999')
-                .attr('d', `M0,10L0,${this.height - 10}`)
+                .attr('d', `M0,10L0,${this.height - 19}`)
 
               update
                 .select('text')
