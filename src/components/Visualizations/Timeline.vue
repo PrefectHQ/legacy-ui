@@ -8,6 +8,7 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 
 const d3formatTime = d3.timeFormat('%-I:%M:%S')
 const d3formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
+const xAxisHeight = 20
 
 export default {
   components: { DurationSpan },
@@ -107,7 +108,7 @@ export default {
       width_: null,
 
       padding: {
-        bottom: 5,
+        bottom: xAxisHeight,
         left: 5,
         right: 5,
         top: 20,
@@ -452,7 +453,7 @@ export default {
 
         const radius = (bar.height / 2) * (1 / this.transform.k)
         const x = bar.x + radius / 2
-        const y = bar.y * (1 / this.transform.k) + this.barPadding / 2
+        const y = bar.y * (1 / this.transform.k)
 
         let offset = 0
         context.globalAlpha = bar.alpha || 1
@@ -759,7 +760,10 @@ export default {
 
       this.xAxisNode
         .attr('class', 'x-axis-group')
-        .style('transform', `translate(0, ${this.height - 20}px)`)
+        .style(
+          'transform',
+          `translate(0, ${this.height - this.padding.bottom}px)`
+        )
 
       this.resizeCanvas()
       this.updateScales()
@@ -793,9 +797,11 @@ export default {
         this.rows * this.minBarRadius +
         this.rows * this.minBarRadius * this.barPadding * 2
 
-      this.height_ = this.condensed_
-        ? this.height - this.padding.y
-        : Math.max(fullHeight, this.height) - this.padding.y
+      this.height_ =
+        (this.condensed_
+          ? this.height - this.padding.y
+          : Math.max(fullHeight, this.height) - this.padding.y) -
+        this.padding.bottom
 
       this.canvas
         .style('width', `${this.width_}px`)
