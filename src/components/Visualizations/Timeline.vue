@@ -405,8 +405,8 @@ export default {
       let meridiem
 
       return d3
-        .axisTop(x)
-        .ticks(15)
+        .axisBottom(x)
+        .ticks(5)
         .tickSizeOuter(0)
         .tickFormat(d => {
           const dateObj = new Date(d)
@@ -763,28 +763,7 @@ export default {
 
       this.xAxisNode
         .attr('class', 'x-axis-group')
-        .style('transform', `translate(0, ${this.height - 4}px)`)
-        .append('path')
-        .attr('class', 'x-axis-bottom')
-        .attr('stroke', 'rgba(0, 0, 0, 0.12)')
-        .attr('stroke-width', 1)
-        .attr(
-          'd',
-          `M${this.padding.left},${this.height - this.padding.bottom}L${
-            this.padding.left
-          },${this.height - this.padding.bottom}`
-        )
-        .call(enter =>
-          enter
-            .transition('enter')
-            .duration(this.animationDuration)
-            .attr(
-              'd',
-              `M${this.padding.left},${this.height - this.padding.bottom}L${this
-                .width_ - this.padding.right},${this.height -
-                this.padding.bottom}`
-            )
-        )
+        .style('transform', `translate(0, ${this.height - 25}px)`)
 
       this.resizeCanvas()
       this.updateScales()
@@ -855,7 +834,7 @@ export default {
               .attr('stroke', d => d.color || '#999')
               .attr('stroke-width', 1.5)
               .attr('stroke-dasharray', 5)
-              .attr('d', `M0,10L0,${this.height}`)
+              .attr('d', `M0,10L0,${this.height - 10}`)
               .style('pointer-events', 'none')
 
             g.append('text')
@@ -897,7 +876,7 @@ export default {
                 .transition('update')
                 .duration(this.animationDuration)
                 .attr('stroke', d => d.color || '#999')
-                .attr('d', `M0,10L0,${this.height}`)
+                .attr('d', `M0,10L0,${this.height - 10}`)
 
               update
                 .select('text')
@@ -948,8 +927,8 @@ export default {
       // removes the duration from the axis transitions
       // meaning we can keep the scales in sync with user actions
       // like zooming and panning
-      // const x = this.transform.rescaleX(this.x)
-      // const xAxis = this.newXAxis(x)
+      const x = this.transform.rescaleX(this.x)
+      const xAxis = this.newXAxis(x)
       this.now = new Date()
 
       this.updateBars()
@@ -962,20 +941,20 @@ export default {
       }
 
       // We only need this section if we want to draw the x-axis
-      // this.xAxisNode
-      //   .transition()
-      //   .duration(shouldTransition ? this.animationDuration : 0)
-      //   .call(xAxis)
-      //   .on('end', () => {
-      //     this.xAxisNode.on('end', null)
-      //     this.updateBars()
-      //     this.updateBreakpoints(shouldTransition)
+      this.xAxisNode
+        .transition()
+        .duration(shouldTransition ? this.animationDuration : 0)
+        .call(xAxis)
+        .on('end', () => {
+          this.xAxisNode.on('end', null)
+          this.updateBars()
+          this.updateBreakpoints(shouldTransition)
 
-      //     if (this.live_ && !this.pauseUpdates) {
-      //       this.updateScales()
-      //       ++this.iterations
-      //     }
-      //   })
+          if (this.live_ && !this.pauseUpdates) {
+            this.updateScales()
+            ++this.iterations
+          }
+        })
     },
     updateScales() {
       if (!this.height_ || !this.width_) return
@@ -1253,15 +1232,27 @@ export default {
 // so that we don't need to do a post-selection
 // on the axis
 .x-axis-group {
-  font: 16px Roboto, sans-serif;
+  color: #9e9e9e !important;
+  font: 10px Roboto, sans-serif;
+  opacity: 0.8;
 
-  // .tick:first-of-type {
-  //   text-anchor: start;
-  // }
+  .domain {
+    stroke: rgba(0, 0, 0, 0.12);
+    stroke-width: 1.65px;
+  }
 
-  // .tick:last-of-type {
-  //   text-anchor: end;
-  // }
+  .tick line {
+    stroke: rgba(0, 0, 0, 0.12);
+    stroke-width: 1.65px;
+  }
+
+  .tick:first-of-type {
+    text-anchor: start;
+  }
+
+  .tick:last-of-type {
+    text-anchor: end;
+  }
 
   // .tick:not(:first-of-type):not(:last-of-type):nth-child(even) {
   //   opacity: 0;
@@ -1269,6 +1260,6 @@ export default {
 }
 
 .breakpoints-group {
-  opacity: 0.6;
+  opacity: 1;
 }
 </style>
