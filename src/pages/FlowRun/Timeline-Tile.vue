@@ -2,6 +2,7 @@
 import gql from 'graphql-tag'
 import { FINISHED_STATES } from '@/utils/states'
 
+import { formatTime } from '@/mixins/formatTimeMixin'
 const computedStyle = getComputedStyle(document.documentElement)
 const notPastStates = ['Running', 'Submitted', 'Pending']
 
@@ -10,6 +11,7 @@ export default {
     TaskRunMenu: () => import('@/components/TaskRunMenu'),
     Timeline: () => import('@/components/Visualizations/Timeline')
   },
+  mixins: [formatTime],
   props: {
     condensed: {
       type: Boolean,
@@ -114,11 +116,6 @@ export default {
                 value: 1
               })
             }
-
-            console.log(
-              'YOUR MAPPED REF IS HERE: ',
-              new Date(mappedRef.max_end_time).toLocaleString()
-            )
 
             item.start_time = mappedRef.min_start_time
 

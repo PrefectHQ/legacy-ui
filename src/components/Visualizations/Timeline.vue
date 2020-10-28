@@ -606,13 +606,11 @@ export default {
             ? this.x(new Date(item.start_time))
             : this.x(this.now) + 20) ?? 0
 
-        const calcWidth = item.end_time
+        const width = item.end_time
           ? this.x(new Date(item.end_time)) - x
           : item.start_time
           ? this.x(this.now) - x
           : 0
-
-        const width = calcWidth > height ? calcWidth : height
 
         const y = this.y(this.rowMap[item.id]) ?? 0
 
@@ -635,9 +633,9 @@ export default {
             shadow: 0,
             shadow0: 0,
             shadow1: item.shadow ? 5 : 0,
-            width0: this.barRadius,
+            width0: 0,
             width1: width,
-            width: this.barRadius,
+            width: 0,
             x0: x || 0,
             x1: x,
             x: x || 0,
