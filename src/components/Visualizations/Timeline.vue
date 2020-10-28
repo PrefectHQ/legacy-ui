@@ -1214,7 +1214,7 @@ export default {
   opacity: 0.35;
   position: absolute;
   right: 0;
-  top: 4px;
+  top: -20px;
   z-index: 2;
 }
 

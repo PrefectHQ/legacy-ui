@@ -1,5 +1,4 @@
 <script>
-import CardTitle from '@/components/Card-Title'
 import gql from 'graphql-tag'
 import { FINISHED_STATES } from '@/utils/states'
 
@@ -8,7 +7,6 @@ const notPastStates = ['Running', 'Submitted', 'Pending']
 
 export default {
   components: {
-    CardTitle,
     TaskRunMenu: () => import('@/components/TaskRunMenu'),
     Timeline: () => import('@/components/Visualizations/Timeline')
   },
@@ -36,7 +34,8 @@ export default {
     return {
       breakpoints: [],
       containerHeight: null,
-      hoveredTaskRun: null
+      hoveredTaskRun: null,
+      loadingKey: 0
     }
   },
   computed: {
@@ -61,6 +60,9 @@ export default {
             new Date(this.flowRun.start_time)
           ])
         : this.flowRun.scheduled_start_time
+    },
+    loading() {
+      return this.loadingKey > 0
     },
     items() {
       if (!this.tasks) return
@@ -280,6 +282,7 @@ export default {
       skip() {
         return !this.flowId || !this.tasks
       },
+      loadingKey: 'loadingKey',
       pollInterval: 3000,
       update: data => data.task_run
     },
@@ -293,6 +296,7 @@ export default {
       skip() {
         return !this.flowRunId
       },
+      loadingKey: 'loadingKey',
       pollInterval: 5000,
       update: data => data.task
     },
@@ -329,17 +333,27 @@ export default {
 
 <template>
   <v-card
-    class="mt-6 mx-auto"
-    :class="{ 'px-2': !condensed }"
-    style="max-width: 1362px;"
+    class="px-3 pt-7 pb-0 mx-auto mt-4"
+    style="
+      max-height: 200px;
+      max-width: 1362px;"
     tile
   >
-    <CardTitle v-if="!condensed" title="Run Timeline" icon="pi-gantt" />
+    <div class="caption text-left grey--text timeline-title">
+      <v-icon x-small>pi-gantt</v-icon><span class="ml-1">Timeline</span>
+    </div>
+
+    <div
+      v-if="!loading && items.length === 0"
+      class="caption text-center grey--text timeline-no-runs"
+    >
+      No timeline
+    </div>
 
     <v-card-text
       ref="timeline-container"
       class="timeline-container pa-0"
-      :style="containerStyle"
+      style="height: 150px;"
     >
       <Timeline
         v-if="items"
@@ -366,5 +380,16 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-//
+.timeline-title {
+  left: 8px;
+  position: absolute;
+  top: 8px;
+}
+
+.timeline-no-runs {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
 </style>
