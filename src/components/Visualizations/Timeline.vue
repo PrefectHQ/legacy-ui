@@ -36,7 +36,7 @@ export default {
     maxBarRadius: {
       type: Number,
       required: false,
-      default: 2000
+      default: 35
     },
     minBarRadius: {
       type: Number,
@@ -302,8 +302,11 @@ export default {
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
           // TODO: Remove the buffer, this shouldn't be necessary
+          // let intersects = grid[row].some(
+          //   slot => end <= slot[0] - 10000 || start <= slot[1] + 10000
+          // )
           let intersects = grid[row].some(
-            slot => end <= slot[0] - 10000 || start <= slot[1] + 10000
+            slot => end <= slot[0] || start <= slot[1]
           )
 
           if (!intersects) {
