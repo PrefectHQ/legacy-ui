@@ -79,6 +79,7 @@ export default {
       hovered: null,
       now: new Date(),
       showControls: false, // These are useful for debugging
+      showLabels: true,
       updateXTimeout: null,
       zoom: d3.zoom(),
 
@@ -346,7 +347,13 @@ export default {
         time: this.x.invert(
           (e.offsetX - this.transform.x) * (1 / this.transform.k)
         ),
-        label: this.logTimeExtended(this.x.invert(e.offsetX))
+        label: this.logTimeExtended(
+          new Date(
+            this.x.invert(
+              (e.offsetX - this.transform.x) * (1 / this.transform.k)
+            )
+          )
+        )
       }
       this.updateBreakpoints()
 
@@ -398,8 +405,8 @@ export default {
       let meridiem
 
       return d3
-        .axisBottom(x)
-        .ticks(5)
+        .axisTop(x)
+        .ticks(15)
         .tickSizeOuter(0)
         .tickFormat(d => {
           const dateObj = new Date(d)
@@ -756,6 +763,7 @@ export default {
 
       this.xAxisNode
         .attr('class', 'x-axis-group')
+        .style('transform', `translate(0, ${this.height - 4}px)`)
         .append('path')
         .attr('class', 'x-axis-bottom')
         .attr('stroke', 'rgba(0, 0, 0, 0.12)')
@@ -857,7 +865,11 @@ export default {
               .attr('alignment-baseline', 'hanging')
               .attr('text-anchor', d => d.anchor || 'middle')
               .style('user-select', 'none')
-              .text(d => d.label)
+              .text(d =>
+                this.showLabels
+                  ? d.label
+                  : this.logTimeExtended(new Date(d.time))
+              )
               .attr('y', 0)
               .style('opacity', 0)
               .transition()
@@ -890,7 +902,11 @@ export default {
               update
                 .select('text')
                 .attr('text-anchor', d => d.anchor || 'middle')
-                .text(d => d.label)
+                .text(d =>
+                  this.showLabels
+                    ? d.label
+                    : this.logTimeExtended(new Date(d.time))
+                )
                 .transition()
                 .delay(this.animationDuration)
                 .duration(150)
@@ -934,7 +950,7 @@ export default {
       // like zooming and panning
       // const x = this.transform.rescaleX(this.x)
       // const xAxis = this.newXAxis(x)
-      // this.now = new Date()
+      this.now = new Date()
 
       this.updateBars()
       this.updateBreakpoints(shouldTransition)
@@ -1038,6 +1054,9 @@ export default {
       this.bars = []
       this.resizeChart()
     },
+    updateLabels() {
+      this.updateBreakpoints()
+    },
     zoomIn() {
       this.canvas
         .transition()
@@ -1060,56 +1079,46 @@ export default {
     class="position-relative timeline-container"
     style="height: 100%;"
   >
-    <div
-      v-if="showControls"
-      class="d-flex align-middle justify-space-between position-absolute"
-    >
-      <div>
-        <div class="d-flex my-4">
-          <v-btn @click="playOrPause">
-            {{ pauseUpdates ? 'Play' : 'Pause' }}
-          </v-btn>
+    <v-menu bottom left :close-on-content-click="false">
+      <template #activator="{ on }">
+        <v-btn icon small class="input-menu" v-on="on">
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+      </template>
 
-          <v-btn class="ml-12" @click="collapse">
-            {{ condensed_ ? 'Expand' : 'Collapse' }}
-          </v-btn>
+      <div v-if="showControls" class="d-flex  my-4">
+        <v-btn small :disabled="transform.k == scaleExtent[1]" @click="zoomIn">
+          +
+        </v-btn>
+        <v-btn
+          small
+          class="ml-2"
+          :disabled="transform.k == scaleExtent[0]"
+          @click="zoomOut"
+        >
+          -
+        </v-btn>
 
-          <v-btn class="ml-12" @click="redraw">
-            Redraw
-          </v-btn>
-
-          <div> Iterations: {{ iterations }} </div>
-        </div>
-
-        <div class="d-flex  my-4">
-          <v-btn :disabled="transform.k == scaleExtent[1]" @click="zoomIn">
-            +
-          </v-btn>
-          <v-btn
-            class="ml-2"
-            :disabled="transform.k == scaleExtent[0]"
-            @click="zoomOut"
-          >
-            -
-          </v-btn>
-
-          <v-btn
-            class="ml-12"
-            :disabled="transform.x == translateExtent[0][0]"
-            @click="panLeft"
-          >
-            ←
-          </v-btn>
-          <v-btn
-            class="ml-2"
-            :disabled="transform.x == -translateExtent[1][0]"
-            @click="panRight"
-          >
-            →
-          </v-btn>
-        </div>
+        <v-btn
+          small
+          class="ml-12"
+          :disabled="transform.x == translateExtent[0][0]"
+          @click="panLeft"
+        >
+          ←
+        </v-btn>
+        <v-btn
+          small
+          class="ml-2"
+          :disabled="transform.x == -translateExtent[1][0]"
+          @click="panRight"
+        >
+          →
+        </v-btn>
       </div>
+
       <div
+        v-if="showControls"
         class="text-caption text-right d-flex flex-column justify-space-around"
       >
         <div>
@@ -1127,7 +1136,28 @@ export default {
           </div>
         </div>
       </div>
-    </div>
+
+      <v-list dense tile>
+        <v-list-item>
+          <v-checkbox
+            v-model="showLabels"
+            label="Breakpoint Labels"
+            hide-details
+            class="v-input--reverse input-menu-item ma-0"
+            @change="updateLabels"
+          ></v-checkbox>
+        </v-list-item>
+        <v-list-item v-if="showControls" @click="playOrPause">
+          {{ pauseUpdates ? 'Play' : 'Pause' }}
+        </v-list-item>
+        <v-list-item v-if="showControls" @click="collapse">
+          {{ condensed_ ? 'Expand' : 'Collapse' }}
+        </v-list-item>
+        <v-list-item v-if="showControls" @click="redraw">
+          Redraw
+        </v-list-item>
+      </v-list>
+    </v-menu>
 
     <canvas :id="`${id}-canvas`" class="canvas mx-auto" />
     <svg :id="`${id}-svg`" class="svg" />
@@ -1180,6 +1210,14 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.input-menu {
+  opacity: 0.35;
+  position: absolute;
+  right: 0;
+  top: 4px;
+  z-index: 2;
+}
+
 .timeline-container {
   // overflow: scroll;
   position: relative;
