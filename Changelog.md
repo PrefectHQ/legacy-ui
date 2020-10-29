@@ -6,6 +6,7 @@
 
 - Add state-driven color-coded tab icos to flow run and task run pages - [#389](https://github.com/PrefectHQ/ui/pull/389)
 - Add type selection, including inline JSON validation, to the Secrets page [#370](https://github.com/PrefectHQ/ui/pull/370)
+- Add an info card about Vault and secret management to the Secrets page [#377](https://github.com/PrefectHQ/ui/pull/377)
 
 ### Bugfixes
 
