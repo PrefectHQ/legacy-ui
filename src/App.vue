@@ -12,7 +12,14 @@ const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 export default {
   metaInfo() {
     return {
-      title: `Prefect ${this.backend == 'CLOUD' ? 'Cloud' : 'Server'}`
+      title: `Prefect ${this.backend == 'CLOUD' ? 'Cloud' : 'Server'}`,
+      link: [
+        {
+          rel: 'icon',
+          href: null,
+          vmid: 'favicon'
+        }
+      ]
     }
   },
   components: {

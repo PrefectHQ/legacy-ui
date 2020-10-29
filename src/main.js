@@ -112,7 +112,10 @@ Vue.directive('disable-read-only-user', {
 Vue.use(Router)
 
 // Meta data plugin
-Vue.use(VueMeta)
+Vue.use(VueMeta, {
+  refreshOnceOnNavigation: true,
+  debounceWait: 500
+})
 
 // Vue Global Error Handler
 Vue.config.errorHandler = function(error, vm, trace) {
