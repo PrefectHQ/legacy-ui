@@ -4,7 +4,8 @@
 
 ### Features and Improvements
 
-- None
+- Added a md parser for the upcoming artifacts/tutorials - [#380](https://github.com/PrefectHQ/ui/issues/380)
+- Created an "artifacts" tab in the flow run and task run 
 
 ### Bugfixes
 
