@@ -38,7 +38,6 @@
     "lodash.uniqueid": ">=4.0.1",
     "logrocket": "^1.0.14",
     "logrocket-vuex": "0.0.3",
-    "markdown-loader": "^6.0.0",
     "moment": "^2.29.1",
     "moment-duration-format": ">=2.3.2",
     "moment-timezone": ">=0.5.31",

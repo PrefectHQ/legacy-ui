@@ -6,8 +6,6 @@ module.exports = {
       .use('html-loader')
       .loader('html-loader')
       .end()
-      .use('markdown-loader')
-      .loader('markdown-loader')
 
     config.resolve.symlinks(false)
 
