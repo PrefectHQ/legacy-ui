@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add ability to accept team invites on new user creation, go directly to invited team - [#322](https://github.com/PrefectHQ/ui/issues/322)
 - Add indicator of number of upcoming or late runs to the dashboard card title = [#348](https://github.com/PrefectHQ/ui/issues/348)
 
 ### Bugfixes
