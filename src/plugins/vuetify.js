@@ -11,6 +11,7 @@ import NomadIcon from '@/components/Icons/Nomad.vue'
 import PrefectIcon from '@/components/Icons/Prefect.vue'
 import TwilioIcon from '@/components/Icons/twilio.vue'
 import PagerDutyIcon from '@/components/Icons/PagerDuty.vue'
+import Hashicorp from '@/components/Icons/Hashicorp.vue'
 
 export const THEME_COLORS = {
   prefect: '#27b1ff', // prefect blue
@@ -61,7 +62,8 @@ const CUSTOM_ICONS = {
   nomad: { component: NomadIcon },
   prefect: { component: PrefectIcon },
   twilio: { component: TwilioIcon },
-  pagerDuty: { component: PagerDutyIcon }
+  pagerDuty: { component: PagerDutyIcon },
+  hashicorp: { component: Hashicorp }
 }
 
 export default new Vuetify({

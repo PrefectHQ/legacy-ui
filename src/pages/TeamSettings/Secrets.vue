@@ -5,13 +5,15 @@ import JsonInput from '@/components/JsonInput'
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ManagementLayout from '@/layouts/ManagementLayout'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
   components: {
     Alert,
     ConfirmDialog,
     ManagementLayout,
-    JsonInput
+    JsonInput,
+    ExternalLink
   },
   data() {
     return {
@@ -82,7 +84,10 @@ export default {
 
       // Store previous secret name when modifying secret
       // This is used to delete the secret with that name and create a new secret with a separate value
-      previousSecretName: null
+      previousSecretName: null,
+
+      //secretsInfoCard
+      secretsInfo: false
     }
   },
   computed: {
@@ -270,7 +275,43 @@ export default {
 
 <template>
   <ManagementLayout :show="!isFetchingSecrets" control-show>
-    <template #title>Secrets</template>
+    <template #title
+      >Secrets
+      <v-menu
+        v-model="secretsInfo"
+        :close-on-content-click="false"
+        bottom
+        offset-x
+      >
+        <template #activator="{ on, attrs }">
+          <v-btn icon small v-bind="attrs" v-on="on">
+            <v-icon>info</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card max-width="300">
+          <v-card-text class="pl-12">
+            <v-icon
+              class="position-absolute"
+              :style="{
+                top: '30px',
+                left: '12px',
+                'z-index': 3
+              }"
+              color="black"
+              >{{ '$hashicorp' }}</v-icon
+            >
+            <span class="body-1 ">
+              Prefect Cloud uses
+              <ExternalLink href="https://www.hashicorp.com/products/vault">
+                Vault by Hashicorp
+              </ExternalLink>
+              to keep secrets secure.</span
+            >
+          </v-card-text>
+        </v-card>
+      </v-menu></template
+    >
 
     <template #subtitle>
       Manage the
