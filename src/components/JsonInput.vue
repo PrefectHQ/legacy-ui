@@ -193,7 +193,7 @@ export default {
     <v-btn
       class="position-absolute"
       :style="{
-        bottom: '20px',
+        bottom: '25px',
         right: '10px',
         'z-index': 3
       }"
@@ -236,6 +236,10 @@ export default {
 .json-input-empty-text {
   .CodeMirror-empty {
     color: #808080;
+  }
+
+  .CodeMirror-cursor {
+    height: auto !important;
   }
 }
 

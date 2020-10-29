@@ -473,7 +473,7 @@ export default {
               small
               class="position-absolute"
               :style="{
-                bottom: '20px',
+                bottom: '25px',
                 right: '80px',
                 'z-index': 3
               }"
