@@ -335,7 +335,7 @@ export default {
       style="height: 150px;"
     >
       <Timeline
-        v-if="items"
+        v-if="taskRuns && items"
         :condensed="condensed"
         :items="items"
         :start-time="startTime"
