@@ -60,6 +60,7 @@ export default {
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'updateTenantSettings']),
+    ...mapActions('user', ['getUser']),
     async createLicense() {
       this.loading++
 
@@ -267,12 +268,25 @@ export default {
                     >fa-question-circle</v-icon
                   >
                 </template>
-                <v-card tile class="pa-2 mt-1" max-width="320">
-                  <div class="body-2">
-                    All Prefect users are required to have a personal team for
-                    sandbox use. You can always switch between teams using the
-                    side menu. For more information about teams in Prefect,
-                    check out our
+                <v-card tile class="pa-3 mt-1" max-width="320">
+                  <div class="body-1">
+                    Prefect automatically creates a sandbox development team for
+                    you to use &mdash; this is a great place to test and deploy
+                    flows as you explore Prefect. When you're ready to
+                    collaborate with others, you can
+                    <ExternalLink
+                      href="https://www.prefect.io/get-prefect#pricing"
+                    >
+                      upgrade this team</ExternalLink
+                    >
+                    to invite more users or
+                    <ExternalLink
+                      href="https://www.prefect.io/get-prefect/#contact"
+                    >
+                      contact sales</ExternalLink
+                    >
+                    to add another team. For more information about teams in
+                    Prefect, check out our
                     <ExternalLink
                       href="https://docs.prefect.io/orchestration/ui/team-settings.html#switching-teams"
                       >docs</ExternalLink
@@ -459,11 +473,10 @@ export default {
             invitation.
           </div>
           <div class="mt-2">
-            If you don't want to confirm or delete your invitation right now,
+            If you don't want to accept or decline your invitation right now,
             you can click on
             <span class="font-weight-bold"> Cancel</span>. You'll be able to
-            accept (or decline) the invitation from your dashboard after
-            creating your personal team.
+            accept (or decline) the invitation later.
           </div>
         </v-card-text>
         <v-card-actions>
