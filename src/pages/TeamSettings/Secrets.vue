@@ -560,10 +560,6 @@ a {
   text-decoration: none;
 }
 
-.no-hide {
-  overflow: visible;
-}
-
 .flex {
   display: flex;
   justify-content: flex-end;
