@@ -9,10 +9,6 @@ import PrefectSchedule from '@/components/PrefectSchedule'
 import DateTime from '@/components/DateTime'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 
-import 'codemirror/addon/edit/matchbrackets'
-import 'codemirror/addon/edit/closebrackets'
-import 'codemirror/lib/codemirror.css'
-
 export default {
   components: {
     CardTitle,
