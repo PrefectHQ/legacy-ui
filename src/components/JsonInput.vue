@@ -178,7 +178,7 @@ export default {
       :value="internalValue"
       class="ma-1 pt-2 cm-style"
       :class="{
-        'pl-8': prependIcon,
+        'pl-7': prependIcon,
         'blue-border': prependIcon && focussed && !jsonError,
         'red-border': prependIcon && jsonError,
         'plain-border': prependIcon && !focussed && !jsonError,
