@@ -4,6 +4,27 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-10-29
+
+### Features and Improvements
+
+- Add ability to accept team invites on new user creation, go directly to invited team - [#322](https://github.com/PrefectHQ/ui/issues/322)
+- Add indicator of number of upcoming or late runs to the dashboard card title - [#348](https://github.com/PrefectHQ/ui/issues/348)
+
+### Bugfixes
+
+- Fix issue with checking authorization for Server users when querying for agents - [#387](https://github.com/PrefectHQ/ui/pull/387)
+
+## 2020-10-23
+
+### Features and Improvements
+
 - Improve the speed and rendering of flow run and task run schematics with mapped tasks - [#364](https://github.com/PrefectHQ/ui/pull/364)
 - Improve task run dependency schematics - [#364](https://github.com/PrefectHQ/ui/pull/364)
 - Add mapped runs tab to mapped task run pages (parents and children) - [#364](https://github.com/PrefectHQ/ui/pull/364)
