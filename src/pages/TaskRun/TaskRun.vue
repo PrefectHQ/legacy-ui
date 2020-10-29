@@ -24,7 +24,8 @@ export default {
           type: 'image/svg',
           href: this.taskRun
             ? `/state-icons/${this.taskRun.state.toLowerCase()}.svg`
-            : null
+            : null,
+          vmid: 'favicon'
         }
       ]
     }

@@ -25,7 +25,8 @@ export default {
           type: 'image/svg',
           href: this.flowRun
             ? `/state-icons/${this.flowRun.state.toLowerCase()}.svg`
-            : null
+            : null,
+          vmid: 'favicon'
         }
       ]
     }
