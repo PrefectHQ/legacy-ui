@@ -1,5 +1,4 @@
 import remark from 'remark'
-import recommended from 'remark-preset-lint-recommended'
 import html from 'remark-html'
 import breaks from 'remark-breaks'
 
@@ -7,7 +6,6 @@ export function parser(md) {
   let result = ''
   if (typeof md === 'string') {
     remark()
-      .use(recommended)
       .use(html)
       .use(breaks)
       .process(md, function(error, file) {
