@@ -142,16 +142,6 @@ export default {
               You do not have any agents querying for flow runs. Without an
               agent, your flow runs will not be picked up.</div
             >
-            <div
-              class=" text-subtitle-1 font-weight-light pt-4"
-              style="line-height: 1.25rem;"
-              >See
-              <ExternalLink
-                href="https://docs.prefect.io/orchestration/agents/overview.html"
-                >the Prefect docs</ExternalLink
-              >
-              for more info on agents.</div
-            >
           </v-list-item-content>
         </v-list-item>
 
@@ -233,6 +223,20 @@ export default {
                 }}
               </span>
             </div>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="statusColor === 'error'" key="docs-link">
+          <v-list-item-content>
+            <div
+              class=" text-subtitle-1 font-weight-light pt-4"
+              style="line-height: 1.25rem;"
+              >See
+              <ExternalLink
+                href="https://docs.prefect.io/orchestration/agents/overview.html"
+                >the Prefect docs</ExternalLink
+              >
+              for more information on agents.</div
+            >
           </v-list-item-content>
         </v-list-item>
       </v-slide-y-reverse-transition>
