@@ -179,9 +179,10 @@ export default {
       class="ma-1 pt-2 cm-style"
       :class="{
         'pl-8': prependIcon,
-        'blue-border': focussed && !jsonError,
-        'red-border': jsonError,
-        'plain-border': !focussed && !jsonError
+        'blue-border': prependIcon && focussed && !jsonError,
+        'red-border': prependIcon && jsonError,
+        'plain-border': prependIcon && !focussed && !jsonError,
+        'original-border': !prependIcon
       }"
       :options="editorOptions"
       @input="handleJsonInput($event)"
@@ -205,7 +206,7 @@ export default {
       Format
     </v-btn>
 
-    <div class="body-2 red--text min-height pl-4">{{ jsonError }}</div>
+    <div class="caption red--text min-height pl-4">{{ jsonError }}</div>
   </div>
 </template>
 
@@ -272,5 +273,9 @@ export default {
 .plain-border {
   border: 2px solid #ddd;
   border-radius: 5px;
+}
+
+.original-border {
+  border: 1px solid #ddd;
 }
 </style>
