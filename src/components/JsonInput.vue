@@ -64,6 +64,11 @@ export default {
     cmInstance() {
       return this.$refs.cmRef && this.$refs.cmRef.codemirror
     },
+    iconColor() {
+      if (this.jsonError) return 'error'
+      if (this.focussed) return 'primary'
+      return 'grey'
+    },
     editorOptions() {
       return {
         autoCloseBrackets: true,
@@ -157,11 +162,11 @@ export default {
     :class="{ 'json-input-height-auto': heightAuto }"
   >
     <v-icon
-      :color="focussed ? 'primary' : 'grey'"
+      :color="iconColor"
       class="position-absolute"
       :style="{
-        top: '8px',
-        left: '6px',
+        top: '12px',
+        left: '12px',
         'z-index': 3
       }"
     >
@@ -171,13 +176,15 @@ export default {
       ref="cmRef"
       data-cy="code-mirror-input"
       :value="internalValue"
-      class="ma-1 pt-2"
-      :class="prependIcon ? 'pl-6' : null"
-      :options="editorOptions"
-      :style="{
-        border: '1px solid #ddd',
-        'font-size': '1.3em'
+      class="ma-1 pt-2 cm-style"
+      :class="{
+        'pl-7': prependIcon,
+        'blue-border': prependIcon && focussed && !jsonError,
+        'red-border': prependIcon && jsonError,
+        'plain-border': prependIcon && !focussed && !jsonError,
+        'original-border': !prependIcon
       }"
+      :options="editorOptions"
       @input="handleJsonInput($event)"
       @focus="focussed = true"
       @blur="focussed = false"
@@ -187,8 +194,8 @@ export default {
     <v-btn
       class="position-absolute"
       :style="{
-        bottom: '15px',
-        right: '5px',
+        bottom: '25px',
+        right: '10px',
         'z-index': 3
       }"
       text
@@ -199,7 +206,7 @@ export default {
       Format
     </v-btn>
 
-    <div class="caption red--text min-height ">{{ jsonError }}</div>
+    <div class="caption red--text min-height pl-4">{{ jsonError }}</div>
   </div>
 </template>
 
@@ -231,6 +238,10 @@ export default {
   .CodeMirror-empty {
     color: #808080;
   }
+
+  .CodeMirror-cursor {
+    height: auto !important;
+  }
 }
 
 /* stylelint-enable selector-class-pattern */
@@ -243,5 +254,28 @@ export default {
 <style lang="scss" scoped>
 .min-height {
   height: 15px;
+}
+
+.cm-style {
+  font-size: 1.3em;
+}
+
+.red-border {
+  border: 2px solid #ff5252;
+  border-radius: 5px;
+}
+
+.blue-border {
+  border: 2px solid #3b8dff;
+  border-radius: 5px;
+}
+
+.plain-border {
+  border: 2px solid #ddd;
+  border-radius: 5px;
+}
+
+.original-border {
+  border: 1px solid #ddd;
 }
 </style>

@@ -6,12 +6,22 @@
 
 - Add type selection, including inline JSON validation, to the Secrets page [#370](https://github.com/PrefectHQ/ui/pull/370)
 - Add an info card about Vault and secret management to the Secrets page [#377](https://github.com/PrefectHQ/ui/pull/377)
-- Add ability to accept team invites on new user creation, go directly to invited team - [#322](https://github.com/PrefectHQ/ui/issues/322)
-- Add indicator of number of upcoming or late runs to the dashboard card title = [#348](https://github.com/PrefectHQ/ui/issues/348)
 
 ### Bugfixes
 
 - None
+
+## 2020-10-29
+
+### Features and Improvements
+
+- Add ability to accept team invites on new user creation, go directly to invited team - [#322](https://github.com/PrefectHQ/ui/issues/322)
+- Update the agents tile on the dashboard to show flows can not run without agents [#382](https://github.com/PrefectHQ/ui/pull/382)
+- Add indicator of number of upcoming or late runs to the dashboard card title - [#348](https://github.com/PrefectHQ/ui/issues/348)
+
+### Bugfixes
+
+- Fix issue with checking authorization for Server users when querying for agents - [#387](https://github.com/PrefectHQ/ui/pull/387)
 
 ## 2020-10-23
 
