@@ -162,8 +162,8 @@ export default {
             >
               <span class="font-weight-medium">{{ agentTracker.healthy }}</span>
               agent{{ agentTracker.healthy === 1 ? '' : 's' }}
-              {{ agentTracker.healthy === 1 ? 'is' : 'are' }} querying Cloud for
-              flow runs
+              {{ agentTracker.healthy === 1 ? 'is' : 'are' }} querying for flow
+              runs
             </div>
           </v-list-item-content>
         </v-list-item>
@@ -186,7 +186,7 @@ export default {
               <span class="font-weight-medium">{{ agentTracker.stale }}</span>
               agent{{ agentTracker.stale === 1 ? '' : 's' }}
               {{ agentTracker.stale === 1 ? 'has' : 'have' }}
-              not queried Cloud for flow runs in the last
+              not queried for flow runs in the last
               {{
                 staleThreshold === 1 ? 'minute' : `${staleThreshold} minutes`
               }}
@@ -215,7 +215,7 @@ export default {
                 </span>
                 agent{{ agentTracker.unhealthy === 1 ? '' : 's' }}
                 {{ agentTracker.unhealthy === 1 ? 'has' : 'have' }}
-                not queried Cloud for flow runs in the last
+                not queried for flow runs in the last
                 {{
                   unhealthyThreshold === 1
                     ? 'minute'

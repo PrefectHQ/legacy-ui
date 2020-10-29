@@ -7,10 +7,11 @@
 - Add ability to accept team invites on new user creation, go directly to invited team - [#322](https://github.com/PrefectHQ/ui/issues/322)
 - Add indicator of number of upcoming or late runs to the dashboard card title = [#348](https://github.com/PrefectHQ/ui/issues/348)
 - Update the agents tile on the dashboard to show flows can not run without agents [#382](https://github.com/PrefectHQ/ui/pull/382)
+- Add indicator of number of upcoming or late runs to the dashboard card title - [#348](https://github.com/PrefectHQ/ui/issues/348)
 
 ### Bugfixes
 
-- None
+- Fix issue with checking authorization for Server users when querying for agents - [#387](https://github.com/PrefectHQ/ui/pull/387)
 
 ## 2020-10-23
 
