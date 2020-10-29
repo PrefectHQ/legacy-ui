@@ -1,26 +1,36 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-
+import ExternalLink from '@/components/ExternalLink'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
+import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin.js'
 
 export default {
-  mixins: [teamProfileMixin],
+  components: { ExternalLink },
+  mixins: [teamProfileMixin, handleMembershipInvitations],
   data() {
     return {
       // Form's computed height
       height: '0px',
 
       loading: 0,
+      accepting: false,
+      activeInvite: null,
+      currentInvitation: null,
+      declining: false,
+      dialog: false,
+      redirectTenant: null,
 
       // Reveal animation bools
       revealNote: false,
       revealNameInput: false,
       revealUrlInput: false,
+      revealPendingTeams: false,
       revealConfirm: false
     }
   },
   computed: {
     ...mapGetters('user', ['user']),
+    ...mapGetters('api', ['isCloud']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
     }
@@ -40,6 +50,7 @@ export default {
     setTimeout(() => {
       this.revealNameInput = true
       this.revealUrlInput = true
+      this.revealPendingTeams = true
       this.revealConfirm = true
 
       setTimeout(() => {
@@ -49,6 +60,7 @@ export default {
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'updateTenantSettings']),
+    ...mapActions('user', ['getUser']),
     async createLicense() {
       this.loading++
 
@@ -118,9 +130,6 @@ export default {
           })
 
           await this.getTenants()
-          await this.setCurrentTenant(
-            this.tenantChanges.slug || this.tenant.slug
-          )
         } catch (e) {
           this.updateServerError = true
         }
@@ -130,10 +139,63 @@ export default {
       await this.createLicense()
       if (!this.updateServerError) this.goToResources()
     },
-    goToResources() {
+    async accept(pt) {
+      this.loading++
+      this.accepting = true
+      try {
+        this.activeInvite = pt.id
+        const invitationId = pt.id
+        const accepted = await this.acceptMembershipInvitation(invitationId)
+        this.redirectTenant = pt.tenant.slug
+        if (accepted.accept_membership_invitation.id) {
+          this.redirectTenant = pt.tenant.slug
+          this.$apollo.queries.pendingInvitations.refetch()
+        }
+      } catch (e) {
+        this.mutationErrorMessage = e
+          .toString()
+          .split(':')
+          .pop()
+        this.error = true
+      }
+      this.activeInvite = null
+      this.accepting = false
+      this.loading--
+    },
+    openModal(pt) {
+      this.activeInvite = pt.id
+      this.currentInvitation = pt
+      this.dialog = true
+    },
+    async decline(id) {
+      this.loading++
+      this.declining = true
+      try {
+        this.activeInvite = id
+        const declined = await this.declineMembershipInvitation(id)
+        if (declined.delete_membership_invitation.success) {
+          this.dialog = false
+          this.$apollo.queries.pendingInvitations.refetch()
+        }
+      } catch (e) {
+        this.mutationErrorMessage = e
+          .toString()
+          .split(':')
+          .pop()
+        this.error = true
+      }
+      this.declining = false
+      this.activeInvite = null
+      this.loading--
+    },
+    async goToResources() {
       this.revealNameInput = false
       this.revealUrlInput = false
       this.revealConfirm = false
+
+      await this.setCurrentTenant(
+        this.redirectTenant ?? this.tenantChanges.slug ?? this.tenant.slug
+      )
 
       this.$router.push({
         name: 'onboard-resources',
@@ -141,7 +203,38 @@ export default {
       })
     }
   },
-  apollo: {}
+  apollo: {
+    pendingInvitations: {
+      query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
+      variables() {
+        return {
+          email: this.user.email
+        }
+      },
+      async result({ data, loading }) {
+        if (loading || !data || !data.pendingInvitations) return
+        // We filter this because we don't want to show invitations
+        // to tenants we're already in...
+        // This is due to a bug(feature?) in the back end that allows
+        // users to be invited to tenants they're already part of
+        await this.getUser()
+        this.pendingInvitations =
+          data.pendingInvitations && data.pendingInvitations.length
+            ? data.pendingInvitations.filter(
+                pi =>
+                  !this.memberships
+                    .map(at => at.tenant.id)
+                    .includes(pi.tenant.id)
+              )
+            : []
+      },
+      skip() {
+        return !this.isCloud || !this.user || !this.user.email
+      },
+      fetchPolicy: 'network-only',
+      pollInterval: 60000
+    }
+  }
 }
 </script>
 
@@ -165,6 +258,42 @@ export default {
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
             <div class="display-1 text-center">
               Let's start by creating your team
+              <v-menu
+                :close-on-content-click="false"
+                offset-y
+                transition="slide-y-transition"
+              >
+                <template #activator="{ on }">
+                  <v-icon class="white--text" v-on="on"
+                    >fa-question-circle</v-icon
+                  >
+                </template>
+                <v-card tile class="pa-3 mt-1" max-width="320">
+                  <div class="body-1">
+                    Prefect automatically creates a sandbox development team for
+                    you to use &mdash; this is a great place to test and deploy
+                    flows as you explore Prefect. When you're ready to
+                    collaborate with others, you can
+                    <ExternalLink
+                      href="https://www.prefect.io/get-prefect#pricing"
+                    >
+                      upgrade this team</ExternalLink
+                    >
+                    to invite more users or
+                    <ExternalLink
+                      href="https://www.prefect.io/get-prefect/#contact"
+                    >
+                      contact sales</ExternalLink
+                    >
+                    to add another team. For more information about teams in
+                    Prefect, check out our
+                    <ExternalLink
+                      href="https://docs.prefect.io/orchestration/ui/team-settings.html#switching-teams"
+                      >docs</ExternalLink
+                    >.
+                  </div>
+                </v-card>
+              </v-menu>
             </div>
           </v-col>
 
@@ -255,6 +384,47 @@ export default {
             </v-text-field>
           </v-col>
 
+          <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
+            <div v-if="pendingInvitations.length" class="body-1">
+              Your pending invitations:
+            </div>
+            <v-list
+              v-for="pt in pendingInvitations"
+              :key="pt.id"
+              color="transparent"
+            >
+              <v-list-item
+                style="align-items: baseline;
+                color: #fff !important;
+                justify-content: space-between;"
+              >
+                <span class="pr-2">{{ pt.tenant.name }}</span>
+                <div class="mt-8">
+                  <v-btn
+                    class="mr-3"
+                    color="accentPink"
+                    dark
+                    depressed
+                    :disabled="disabled"
+                    :loading="activeInvite === pt.id && accepting"
+                    @click="accept(pt)"
+                  >
+                    <v-icon class="pr-4">fa-user-friends</v-icon>
+                    Accept
+                  </v-btn>
+                  <v-btn
+                    outlined
+                    class="white--text"
+                    :disabled="disabled"
+                    @click="openModal(pt)"
+                  >
+                    No Thanks
+                  </v-btn>
+                </div>
+              </v-list-item>
+            </v-list>
+          </v-col>
+
           <v-col
             v-if="revealConfirm"
             key="revealConfirm"
@@ -290,6 +460,39 @@ export default {
         </transition-group>
       </div>
     </v-row>
+    <v-dialog v-if="currentInvitation" v-model="dialog" max-width="500">
+      <v-card>
+        <v-card-title class="headline">
+          Are you sure you want to decline the invitation to
+          {{ currentInvitation.tenant.name }}?
+        </v-card-title>
+        <v-card-text>
+          <div>
+            Clicking
+            <span class="font-weight-bold"> Decline </span> will delete your
+            invitation.
+          </div>
+          <div class="mt-2">
+            If you don't want to accept or decline your invitation right now,
+            you can click on
+            <span class="font-weight-bold"> Cancel</span>. You'll be able to
+            accept (or decline) the invitation later.
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            class="white--text"
+            color="prefect"
+            :loading="declining"
+            @click="decline(currentInvitation.id)"
+          >
+            Decline
+          </v-btn>
+          <v-btn outlined color="prefect" @click="dialog = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
