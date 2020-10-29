@@ -1,15 +1,19 @@
 <script>
 import { mapGetters } from 'vuex'
+import JsonInput from '@/components/JsonInput'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ManagementLayout from '@/layouts/ManagementLayout'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
   components: {
     Alert,
     ConfirmDialog,
-    ManagementLayout
+    ManagementLayout,
+    JsonInput,
+    ExternalLink
   },
   data() {
     return {
@@ -49,9 +53,23 @@ export default {
       search: null,
 
       // Input rules
+      errorMessage: '',
       rules: {
         required: val => !!val || 'This field is required.'
       },
+      invalidSecret: false,
+
+      //Types
+      selectedTypeIndex: 0,
+      secretTypes: [
+        { value: 'auto', text: 'Auto' },
+        { value: 'string', text: 'String' },
+        { value: 'json', text: 'JSON' }
+      ],
+
+      //jsonInput
+      placeholderText:
+        "Enter your secret value here...\n\nClick on 'Type' to select a type validation",
 
       // Dialogs
       secretModifyDialog: false,
@@ -59,14 +77,17 @@ export default {
 
       // Create/modify secret name & value input
       secretNameInput: null,
-      secretValueInput: null,
+      secretValueInput: '',
 
       // Secret selected for modification/deletion
       selectedSecret: null,
 
       // Store previous secret name when modifying secret
       // This is used to delete the secret with that name and create a new secret with a separate value
-      previousSecretName: null
+      previousSecretName: null,
+
+      //secretsInfoCard
+      secretsInfo: false
     }
   },
   computed: {
@@ -80,15 +101,23 @@ export default {
       if (this.selectedSecret?.name === this.secretNameInput) {
         return false
       }
-
       return this.secretNames
         ?.map(secret => secret.name)
         .includes(this.secretNameInput)
+    },
+    disableConfirm() {
+      if (!this.secretNameInput) return false
+      if (!this.secretValueInput) return false
+      if (this.invalidSecret) return false
+      return true
     }
   },
   watch: {
     tenant() {
       this.$apollo.queries.secretNames.refetch()
+    },
+    selectedTypeIndex() {
+      this.validSecretJSON()
     }
   },
   methods: {
@@ -137,28 +166,53 @@ export default {
       this.selectedSecret = null
       this.secretNameInput = null
       this.secretValueInput = null
+      this.selectedTypeIndex = 0
+      this.invalidSecret = false
+    },
+    validSecretJSON() {
+      this.invalidSecret = false
+      if (this.selectedTypeIndex !== 2) {
+        this.$refs.secretRef.removeJsonErrors()
+        return true
+      }
+      if (!this.$refs.secretRef) {
+        this.$refs.secretRef.removeJsonErrors()
+        return true
+      }
+      // Check JSON using the JsonInput component's validation (need to check for true over truthy here because of the way the jsonInput returns for other components)
+      if (this.$refs.secretRef.validateJson() === true) return true
+      return false
+    },
+    setInvalidSecret(event) {
+      this.invalidSecret = event
     },
     async setSecret() {
       this.isSettingSecret = true
-
+      if (this.selectedTypeIndex === 2 && !this.validSecretJSON()) {
+        this.isSettingSecret = false
+        this.invalidSecret = true
+        return
+      }
       if (this.isSecretUpdate) {
         await this.deleteSecret(
           { name: this.previousSecretName },
           { isModifying: true }
         )
       }
-
-      let value
-
-      try {
-        value = JSON.parse(this.secretValueInput)
-      } catch {
+      let value = this.secretValueInput
+      if (this.selectedTypeIndex === 0) {
         try {
-          value = String.raw`${this.secretValueInput}`
+          value = JSON.parse(this.secretValueInput)
         } catch {
-          value = JSON.stringify(this.secretValueInput)
+          try {
+            value = String.raw`${this.secretValueInput}`
+          } catch {
+            value = JSON.stringify(this.secretValueInput)
+          }
         }
       }
+      if (this.selectedTypeIndex === 2)
+        value = JSON.parse(this.secretValueInput)
 
       const secretResult = await this.$apollo.mutate({
         mutation: require('@/graphql/Secrets/set-secret.gql'),
@@ -221,7 +275,43 @@ export default {
 
 <template>
   <ManagementLayout :show="!isFetchingSecrets" control-show>
-    <template #title>Secrets</template>
+    <template #title
+      >Secrets
+      <v-menu
+        v-model="secretsInfo"
+        :close-on-content-click="false"
+        bottom
+        offset-x
+      >
+        <template #activator="{ on, attrs }">
+          <v-btn icon small v-bind="attrs" v-on="on">
+            <v-icon>info</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card max-width="300">
+          <v-card-text class="pl-12">
+            <v-icon
+              class="position-absolute"
+              :style="{
+                top: '30px',
+                left: '12px',
+                'z-index': 3
+              }"
+              color="black"
+              >{{ '$hashicorp' }}</v-icon
+            >
+            <span class="body-1 ">
+              Prefect Cloud uses
+              <ExternalLink href="https://www.hashicorp.com/products/vault">
+                Vault by Hashicorp
+              </ExternalLink>
+              to keep secrets secure.</span
+            >
+          </v-card-text>
+        </v-card>
+      </v-menu></template
+    >
 
     <template #subtitle>
       Manage the
@@ -376,8 +466,8 @@ export default {
 
     <ConfirmDialog
       v-model="secretModifyDialog"
-      :dialog-props="{ 'max-width': '500' }"
-      :disabled="!(secretNameInput && secretValueInput)"
+      :dialog-props="{ 'max-width': '75vh' }"
+      :disabled="!disableConfirm"
       :loading="isSettingSecret"
       :title="isSecretUpdate ? 'Modify Secret' : 'Create New Secret'"
       @cancel="resetSelectedSecret"
@@ -396,40 +486,52 @@ export default {
         single-line
         outlined
         dense
+        :messages="
+          secretExists
+            ? 'A secret with this this name already exists. Clicking CONFIRM will overwrite it.'
+            : null
+        "
         :rules="[rules.required]"
         placeholder="Secret Name"
         prepend-inner-icon="vpn_key"
         validate-on-blur
       />
-      <v-textarea
+
+      <JsonInput
+        v-if="secretModifyDialog"
+        ref="secretRef"
         v-model="secretValueInput"
-        class="_lr-hide mt-2"
-        style="max-height: 400px;"
-        data-private
-        :autofocus="isSecretUpdate"
-        outlined
-        dense
-        placeholder="Secret Value"
-        prepend-inner-icon="lock"
-        row-height="4"
-      />
-      <v-fade-transition>
-        <v-alert
-          v-if="secretExists"
-          class="mt-3"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          dense
-        >
-          <div class="subtitle-2 font-weight-light">
-            A secret already exists with this name. By selecting CONFIRM, you
-            will override this secret with a new value.
-          </div>
-        </v-alert>
-      </v-fade-transition>
+        prepend-icon="lock"
+        :selected-type="secretTypes[selectedTypeIndex].value"
+        :placeholder-text="placeholderText"
+        @input="validSecretJSON"
+        @invalid-secret="setInvalidSecret"
+      >
+        <v-menu top offset-y>
+          <template #activator="{ on }">
+            <v-btn
+              text
+              small
+              class="position-absolute"
+              :style="{
+                bottom: '25px',
+                right: '80px',
+                'z-index': 3
+              }"
+              color="accent"
+              v-on="on"
+              >Type</v-btn
+            >
+          </template>
+          <v-list>
+            <v-list-item-group v-model="selectedTypeIndex" color="primary">
+              <v-list-item v-for="(item, index) in secretTypes" :key="index">
+                <v-list-item-title>{{ item.text }} </v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+      </JsonInput>
     </ConfirmDialog>
 
     <ConfirmDialog

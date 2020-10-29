@@ -19,7 +19,17 @@ export default {
     return {
       title: this.flowRun
         ? `Run | ${this.flowRun.flow?.name} - ${this.flowRun.name}`
-        : null
+        : null,
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/svg',
+          href: this.flowRun
+            ? `/state-icons/${this.flowRun.state.toLowerCase()}.svg`
+            : null,
+          vmid: 'favicon'
+        }
+      ]
     }
   },
   components: {
