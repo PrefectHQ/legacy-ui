@@ -246,9 +246,8 @@ export default {
       pollInterval: 3000,
       skip() {
         return (
-          (this.isCloud && !this.isAuthenticated) ||
+          (this.isCloud && (!this.isAuthenticated || !this.isAuthorized)) ||
           !this.connected ||
-          !this.isAuthorized ||
           (this.isServer && !this.connected)
         )
       },
