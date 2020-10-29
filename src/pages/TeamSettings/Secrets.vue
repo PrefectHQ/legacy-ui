@@ -289,26 +289,26 @@ export default {
           </v-btn>
         </template>
 
-        <v-card width="300">
-          <v-list class="py-0">
-            <v-list-item two-line class="px-4 py-0">
-              <v-list-item-avatar class="mr-2">
-                <v-icon color="black">{{ '$hashicorp' }}</v-icon>
-              </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-subtitle
-                  >Prefect Cloud uses
-                  <ExternalLink href="https://www.hashicorp.com/products/vault">
-                    Vault by Hashicorp
-                  </ExternalLink>
-                </v-list-item-subtitle>
-                <v-list-item-subtitle>
-                  to keep secrets secure.</v-list-item-subtitle
-                >
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+        <v-card max-width="300">
+          <v-card-text class="pl-12">
+            <v-icon
+              class="position-absolute"
+              :style="{
+                top: '30px',
+                left: '12px',
+                'z-index': 3
+              }"
+              color="black"
+              >{{ '$hashicorp' }}</v-icon
+            >
+            <span class="body-1 ">
+              Prefect Cloud uses
+              <ExternalLink href="https://www.hashicorp.com/products/vault">
+                Vault by Hashicorp
+              </ExternalLink>
+              to keep secrets secure.</span
+            >
+          </v-card-text>
         </v-card>
       </v-menu></template
     >
@@ -558,6 +558,10 @@ export default {
 <style lang="scss" scoped>
 a {
   text-decoration: none;
+}
+
+.no-hide {
+  overflow: visible;
 }
 
 .flex {
