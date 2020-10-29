@@ -473,8 +473,8 @@ export default {
               small
               class="position-absolute"
               :style="{
-                bottom: '15px',
-                right: '75px',
+                bottom: '20px',
+                right: '80px',
                 'z-index': 3
               }"
               color="accent"
