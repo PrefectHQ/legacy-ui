@@ -115,7 +115,7 @@ export default {
         {{ title }}
       </v-card-title>
 
-      <v-card-text>
+      <v-card-text class="pb-0">
         <slot></slot>
       </v-card-text>
 
