@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Make sure the upcoming runs tile switches back to the upcoming tab when there are no late runs [#395](https://github.com/PrefectHQ/ui/pull/395)
 
 ## 2020-10-29
 
