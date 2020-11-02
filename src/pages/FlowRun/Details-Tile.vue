@@ -144,10 +144,10 @@ export default {
 
     <CardTitle v-else :title="flowRun.name" icon="pi-flow-run" />
 
-    <v-card-text class="pl-12 card-content">
+    <v-card-text class="pa-0">
       <v-fade-transition hide-on-leave>
-        <div v-if="tab === 'overview'">
-          <v-list-item v-if="isCloudOrAutoScheduled" class="px-0">
+        <v-list v-if="tab === 'overview'">
+          <v-list-item v-if="isCloudOrAutoScheduled">
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Created by
@@ -164,7 +164,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item v-if="flowRun.state_message" dense class="px-0">
+          <v-list-item v-if="flowRun.state_message" dense>
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Last State Message
@@ -185,7 +185,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item v-if="flowRun.agent_id" dense class="px-0">
+          <v-list-item v-if="flowRun.agent_id" dense>
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Agent ID
@@ -203,7 +203,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item dense class="pa-0">
+          <v-list-item dense>
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 <v-row no-gutters>
@@ -291,7 +291,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
           <LabelEdit type="flowRun" :flow-run="flowRun" />
-        </div>
+        </v-list>
       </v-fade-transition>
 
       <v-fade-transition hide-on-leave>
@@ -318,7 +318,7 @@ export default {
 <style lang="scss" scoped>
 .card-content {
   max-height: 254px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .code-block {

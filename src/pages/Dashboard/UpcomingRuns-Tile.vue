@@ -239,7 +239,7 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text v-if="tab == 'upcoming'" class="pa-0 card-content">
+    <v-card-text v-if="tab == 'upcoming'" class="pa-0">
       <v-skeleton-loader v-if="loading > 0" type="list-item-three-line">
       </v-skeleton-loader>
 
@@ -260,7 +260,7 @@ export default {
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-else dense>
+      <v-list v-else dense class="card-content">
         <v-lazy
           v-for="item in upcomingRuns"
           :key="item.id"
@@ -352,7 +352,7 @@ export default {
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-else dense>
+      <v-list v-else dense class="card-content">
         <v-lazy
           v-for="item in lateRuns"
           :key="item.id"
@@ -476,7 +476,7 @@ a {
 
 .card-content {
   max-height: 254px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .card-footer {

@@ -926,7 +926,7 @@ export default {
   bottom: 0;
   left: 300px;
   max-height: calc(100% - 100px);
-  overflow-y: scroll;
+  overflow-y: auto;
   position: absolute;
   width: 100%;
 
