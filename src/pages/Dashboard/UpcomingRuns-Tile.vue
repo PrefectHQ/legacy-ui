@@ -101,6 +101,9 @@ export default {
       if (this.lateRuns?.length > 0) {
         this.tab = 'late'
       }
+      if (this.lateRuns?.length <= 0) {
+        this.tab = 'upcoming'
+      }
     },
     tenant(val) {
       this.projects = []
@@ -112,6 +115,10 @@ export default {
         }, 1000)
       }
     }
+  },
+  beforeDestroy() {
+    this.upcoming = []
+    this.tab = 'upcoming'
   },
   methods: {
     getTimeOverdue(time) {
@@ -197,7 +204,7 @@ export default {
           @click="tab = 'upcoming'"
         >
           {{
-            upcomingRuns.length > 0 && tab === 'late'
+            upcomingRuns && upcomingRuns.length > 0 && tab === 'late'
               ? `(${upcomingRuns.length})`
               : ''
           }}
@@ -229,7 +236,7 @@ export default {
             warning
           </v-icon>
           {{
-            lateRuns.length > 0 && tab === 'upcoming'
+            lateRuns && lateRuns.length > 0 && tab === 'upcoming'
               ? `(${lateRuns.length})`
               : ''
           }}
