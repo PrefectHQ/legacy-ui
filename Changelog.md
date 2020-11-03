@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
 
 ### Bugfixes
 
