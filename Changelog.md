@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix a bug on restart from failed which was missing failed task runs [#398](https://github.com/PrefectHQ/ui/pull/398)
 
 ## 2020-10-29a
 
