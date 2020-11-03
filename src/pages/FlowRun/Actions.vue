@@ -39,7 +39,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
     isReadOnlyUser() {
-      console.log(1, this.failedTaskRuns)
       return this.role === 'READ_ONLY_USER'
     },
     isScheduled() {
