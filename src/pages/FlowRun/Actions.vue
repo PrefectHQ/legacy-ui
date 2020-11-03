@@ -59,6 +59,9 @@ export default {
       if (oldVal.state === 'Scheduled' && newVal.state !== 'Scheduled') {
         this.isRunningNow = false
       }
+      if (FINISHED_STATES.includes(newVal.state)) {
+        this.$apollo.queries.failedTaskRuns.refetch()
+      }
     }
   },
   methods: {
@@ -66,7 +69,6 @@ export default {
     deleteFlowRun() {},
     handleRestartClick() {
       this.restartDialog = true
-      this.$apollo.queries.failedTaskRuns.refetch()
     },
     async runFlowNow() {
       this.runFlowNowLoading = true
