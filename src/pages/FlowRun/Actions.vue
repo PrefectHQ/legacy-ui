@@ -39,6 +39,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
     isReadOnlyUser() {
+      console.log(1, this.failedTaskRuns)
       return this.role === 'READ_ONLY_USER'
     },
     isScheduled() {
@@ -64,6 +65,10 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     deleteFlowRun() {},
+    handleRestartClick() {
+      this.restartDialog = true
+      this.$apollo.queries.failedTaskRuns.refetch()
+    },
     async runFlowNow() {
       this.runFlowNowLoading = true
 
@@ -163,7 +168,7 @@ export default {
             small
             :disabled="isReadOnlyUser || !canRestart"
             color="info"
-            @click="restartDialog = true"
+            @click="handleRestartClick"
           >
             <v-icon>fab fa-rev</v-icon>
             <div>Restart</div>

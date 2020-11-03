@@ -28,6 +28,7 @@ export default {
       return `${this.user.username} restarted this flow run`
     },
     isEligibleToRestart() {
+      console.log(this.failedTaskRuns)
       return (
         this.hasFailedTaskRuns ||
         this.eligibleStates.includes(this.flowRun.state)
