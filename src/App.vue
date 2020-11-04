@@ -38,8 +38,7 @@ export default {
       reset: false,
       shown: true,
       startupHasRun: false,
-      wholeAppShown: true,
-      agentError: false
+      wholeAppShown: true
     }
   },
   computed: {
@@ -123,9 +122,6 @@ export default {
         this.refresh()
         this.$apollo.queries.agents.refresh()
       }
-    },
-    agentError() {
-      this.setAgents(null)
     },
     agents(val) {
       this.setAgents(val)
@@ -256,9 +252,6 @@ export default {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
       pollInterval: 3000,
-      error() {
-        this.agentError = true
-      },
       fetchPolicy: 'no-cache',
       update({ agent }) {
         if (!agent) return null
