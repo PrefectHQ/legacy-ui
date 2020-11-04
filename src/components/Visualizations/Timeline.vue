@@ -827,102 +827,202 @@ export default {
         () => `translate(${this.transform.x} 5) scale(${this.transform.k})`
       )
 
-      this.breakpointsNode
+      const breakpoints = this.breakpoints_
+      const breakpointGroups = []
+
+      for (let i = 0; i < this.breakpoints_.length; ++i) {
+        const d = breakpoints[i]
+        const x = d.time ? this.x(new Date(d.time)) : -20
+        const intersectionIndex = breakpointGroups.findIndex(
+          g =>
+            x <= g.x + 25 * (1 / this.transform.k) &&
+            x >= g.x - 25 * (1 / this.transform.k)
+        )
+
+        if (intersectionIndex > -1) {
+          breakpointGroups[intersectionIndex].breakpoints.push({
+            id: i,
+            x: x,
+            ...d
+          })
+
+          // This section is used to aggregate breakpoints at the median
+          // isntead of at the mean.
+          // breakpointGroups[intersectionIndex].breakpoints.sort(
+          //   (a, b) => a.x - b.x
+          // )
+          // const median = Math.ceil(
+          //   breakpointGroups[intersectionIndex].breakpoints.length / 2
+          // )
+          // breakpointGroups[intersectionIndex].x =
+          //   breakpointGroups[intersectionIndex].breakpoints[median].x
+
+          breakpointGroups[intersectionIndex].x =
+            breakpointGroups[intersectionIndex].breakpoints.reduce(
+              (acc, b) => acc + b.x,
+              0
+            ) / breakpointGroups[intersectionIndex].breakpoints.length
+
+          breakpoints[i].group_ref = intersectionIndex
+          breakpoints[i].x = x
+        } else {
+          breakpoints[i].group_ref = breakpointGroups.push({
+            breakpoints: [{ id: i, x: x, ...d }],
+            x: x
+          })
+
+          breakpoints[i].x = x
+        }
+      }
+
+      const breakpointsGroup = this.breakpointsNode
         .selectAll('.breakpoints-group')
-        .data(this.breakpoints_)
-        .join(
-          enter => {
-            const g = enter
-              .append('g')
-              .attr('class', 'breakpoints-group')
-              .attr(
-                'transform',
-                d =>
-                  `translate(${
-                    d.time ? this.x(new Date(d.time)) : -20
-                  }) scale(${1 / this.transform.k})`
-              )
+        .data(breakpointGroups)
 
-            g.append('path')
-              .attr('stroke', '#999')
-              .attr('stroke-width', 1.5)
-              .attr('stroke-dasharray', '5')
-              .attr('d', `M0,${this.height - 20}L0,${this.height - 20}`)
-              .style('pointer-events', 'none')
-              .transition()
-              .delay((d, i) => i * 50)
+      breakpointsGroup.join(
+        enter => {
+          const g = enter
+            .append('g')
+            .attr('class', 'breakpoints-group')
+            .style('opacity', 1)
+            .attr(
+              'transform',
+              d => `translate(${d.x}) scale(${1 / this.transform.k})`
+            )
+
+          g.append('path')
+            .attr('stroke', '#999')
+            .attr('stroke-width', 1.5)
+            .attr('stroke-dasharray', 5)
+            .attr('d', `M0,${this.height - 25}L0,${this.height - 20}`)
+            .style('pointer-events', 'none')
+            .transition()
+            .delay((d, i) => i * 50)
+            .duration(this.animationDuration)
+            .attr('d', `M0,${this.height - 25}L0,10`)
+
+          g.append('text')
+            .style('font-size', '8px')
+            .style('pointer-events', 'none')
+            .attr('fill', '#999')
+            .attr('alignment-baseline', 'hanging')
+            .attr('text-anchor', d => d.anchor || 'middle')
+            .style('user-select', 'none')
+            .text(d => {
+              if (d.breakpoints.length === 1) {
+                let breakpoint = d.breakpoints[0]
+                return this.showLabels
+                  ? breakpoint.label
+                  : this.logTimeExtended(new Date(breakpoint.time))
+              } else {
+                return `${d.breakpoints.length}+ states`
+              }
+            })
+            .attr('y', 1)
+            .attr('x', 0)
+            .style('opacity', 0)
+            .transition()
+            .delay(50)
+            .duration(50)
+            .style('opacity', 1)
+
+          return g.call(enter =>
+            enter
+              .transition('enter')
+              .duration(50)
+              .style('opacity', 1)
+          )
+        },
+        update =>
+          update.call(update => {
+            update
+              .select('path')
+              .transition('update')
               .duration(this.animationDuration)
-              .attr('d', `M0,${this.height - 20}L0,10`)
+              .attr('stroke', '#999')
 
-            g.append('circle')
-              .attr('fill', d => d.color || '#999')
-              .attr('cy', this.height - 25)
-              .attr('cx', 0)
-              .attr('r', 5)
-
-            g.append('text')
-              .style('font-size', '8px')
-              .style('pointer-events', 'none')
-              .attr('fill', '#999')
-              .attr('alignment-baseline', 'hanging')
+            update
+              .select('text')
               .attr('text-anchor', d => d.anchor || 'middle')
-              .style('user-select', 'none')
-              .text(d =>
-                this.showLabels
-                  ? d.label
-                  : this.logTimeExtended(new Date(d.time))
-              )
-              .attr('y', 0)
-              .attr('x', 0)
-              .style('opacity', 0)
+              .text(d => {
+                if (d.breakpoints.length === 1) {
+                  let breakpoint = d.breakpoints[0]
+                  return this.showLabels
+                    ? breakpoint.label
+                    : this.logTimeExtended(new Date(breakpoint.time))
+                } else {
+                  return `${d.breakpoints.length}+ states`
+                }
+              })
               .transition()
               .delay(50)
               .duration(50)
               .style('opacity', 1)
 
-            return g.call(enter =>
-              enter
-                .transition('enter')
-                .duration(50)
-                .style('opacity', 1)
-            )
-          },
-          update =>
-            update.call(update => {
+            return update.call(update =>
               update
-                .select('path')
                 .transition('update')
-                .duration(this.animationDuration)
-                .attr('stroke', '#999')
-
-              update.select('circle').attr('fill', d => d.color || '#999')
-
-              update
-                .select('text')
-                .attr('text-anchor', d => d.anchor || 'middle')
-                .text(d =>
-                  this.showLabels
-                    ? d.label
-                    : this.logTimeExtended(new Date(d.time))
+                .duration(shouldTransition ? 50 : 0)
+                .attr(
+                  'transform',
+                  d => `translate(${d.x}) scale(${1 / this.transform.k})`
                 )
-                .transition()
-                .delay(50)
-                .duration(50)
-                .style('opacity', 1)
+            )
+          }),
+        exit => {
+          return exit.call(exit =>
+            exit
+              .transition('exit')
+              .duration(50)
+              .style('opacity', 0)
+              .remove()
+          )
+        }
+      )
 
-              return update.call(update =>
+      const radius = 5
+
+      breakpointsGroup
+        .selectAll('.breakline-circle')
+        .data(d => d.breakpoints)
+        .join(
+          enter => {
+            const g = enter
+              .append('circle')
+              .attr('class', 'breakline-circle')
+              .attr('id', d => `circle-${d.id}`)
+              .style('opacity', 1)
+
+            g.attr('cy', this.height - 25)
+              .attr('cx', (d, i, arr) => {
+                let median = Math.ceil(arr.length / 2) - 1
+                return (
+                  (i - median) * 5 - (arr.length % 2 === 0 ? radius / 2 : 0)
+                )
+              })
+              .attr('r', radius)
+              .attr('stroke-width', 0.5)
+              .attr('stroke', '#fff')
+              .attr('fill', d => d.color)
+
+            return g
+          },
+          update => {
+            return update
+              .attr('fill', d => d.color)
+              .style('opacity', 1)
+              .call(update =>
                 update
                   .transition('update')
-                  .duration(shouldTransition ? 50 : 0)
-                  .attr(
-                    'transform',
-                    d =>
-                      `translate(${
-                        d.time ? this.x(new Date(d.time)) : -20
-                      }) scale(${1 / this.transform.k})`
-                  )
+                  .duration(50)
+                  .attr('cx', (d, i, arr) => {
+                    let median = Math.ceil(arr.length / 2) - 1
+                    return (
+                      (i - median) * 5 - (arr.length % 2 === 0 ? radius / 2 : 0)
+                    )
+                  })
               )
-            }),
+          },
           exit => {
             return exit.call(exit =>
               exit
