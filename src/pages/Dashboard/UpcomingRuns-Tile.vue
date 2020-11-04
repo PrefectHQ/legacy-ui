@@ -34,8 +34,7 @@ export default {
   data() {
     return {
       loadingKey: 0,
-      tab: 'upcoming',
-      error: false
+      tab: 'upcoming'
     }
   },
   computed: {
@@ -58,7 +57,7 @@ export default {
       })
     },
     title() {
-      if (this.error || !this.upcoming) return
+      if (!this.upcoming) return
       let title = ''
 
       if (this.tab == 'upcoming') {
@@ -129,9 +128,6 @@ export default {
         }
       },
       loadingKey: 'loadingKey',
-      error() {
-        this.error = true
-      },
       pollInterval: 10000,
       fetchPolicy: 'no-cache',
       update({ flow_run }) {
@@ -147,7 +143,7 @@ export default {
   <v-card class="py-2" tile :style="{ height: fullHeight ? '330px' : 'auto' }">
     <v-system-bar
       :color="
-        loading || error || !upcoming
+        loading || !upcoming
           ? 'secondaryGray'
           : lateRuns && lateRuns.length > 0
           ? 'deepRed'
@@ -164,10 +160,7 @@ export default {
           <div>
             <div
               v-if="
-                loading ||
-                  (tab === 'late' && isClearingLateRuns) ||
-                  error ||
-                  !upcoming
+                loading || (tab === 'late' && isClearingLateRuns) || !upcoming
               "
               style="
                 display: inline-block;
@@ -248,7 +241,10 @@ export default {
     </CardTitle>
 
     <v-card-text v-if="tab == 'upcoming'" class="pa-0">
-      <v-skeleton-loader v-if="loading || error" type="list-item-three-line">
+      <v-skeleton-loader
+        v-if="loading || !upcoming"
+        type="list-item-three-line"
+      >
       </v-skeleton-loader>
 
       <v-list-item
