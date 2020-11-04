@@ -164,8 +164,8 @@ export default {
 </script>
 
 <template>
-  <v-list-item dense class="px-0">
-    <v-list-item-content width="800px" class="overflow-x-scroll">
+  <v-list-item dense>
+    <v-list-item-content width="800px" style="overflow-x: auto;">
       <v-list-item-subtitle class="caption">
         Labels
         <v-menu :close-on-content-click="false" offset-y open-on-hover>
@@ -230,7 +230,7 @@ export default {
                 <span v-else>Add a label</span>
               </v-tooltip>
             </template>
-            <v-card width="800px" class="overflow-y-scroll py-0">
+            <v-card width="800px" class="py-0">
               <v-card-title class="subtitle pr-2 pt-2 pb-0"
                 >{{ flowOrFlowRun }} labels</v-card-title
               >
@@ -352,7 +352,7 @@ export default {
             <span v-else>Add a label</span>
           </v-tooltip>
         </template>
-        <v-card width="800px" class="overflow-y-scroll py-0">
+        <v-card width="800px" class="py-0">
           <v-card-title class="subtitle pr-2 pt-2 pb-0"
             >{{ flowOrFlowRun }} labels</v-card-title
           >
