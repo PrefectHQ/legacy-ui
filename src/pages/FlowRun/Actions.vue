@@ -59,11 +59,21 @@ export default {
       if (oldVal.state === 'Scheduled' && newVal.state !== 'Scheduled') {
         this.isRunningNow = false
       }
+      if (
+        newVal.state !== oldVal.state &&
+        FINISHED_STATES.includes(newVal.state)
+      ) {
+        this.$apollo.queries.failedTaskRuns.refetch()
+      }
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     deleteFlowRun() {},
+    handleRestartClick() {
+      this.$apollo.queries.failedTaskRuns.refetch()
+      this.restartDialog = true
+    },
     async runFlowNow() {
       this.runFlowNowLoading = true
 
@@ -163,7 +173,7 @@ export default {
             small
             :disabled="isReadOnlyUser || !canRestart"
             color="info"
-            @click="restartDialog = true"
+            @click="handleRestartClick"
           >
             <v-icon>fab fa-rev</v-icon>
             <div>Restart</div>
