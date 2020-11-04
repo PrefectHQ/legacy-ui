@@ -59,7 +59,10 @@ export default {
       if (oldVal.state === 'Scheduled' && newVal.state !== 'Scheduled') {
         this.isRunningNow = false
       }
-     if (newVal.state !== oldVal.state && FINISHED_STATES.includes(newVal.state)) {
+      if (
+        newVal.state !== oldVal.state &&
+        FINISHED_STATES.includes(newVal.state)
+      ) {
         this.$apollo.queries.failedTaskRuns.refetch()
       }
     }
