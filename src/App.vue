@@ -38,7 +38,8 @@ export default {
       reset: false,
       shown: true,
       startupHasRun: false,
-      wholeAppShown: true
+      wholeAppShown: true,
+      agentError: false
     }
   },
   computed: {
@@ -100,6 +101,7 @@ export default {
         this.refresh()
         clearTimeout(this.refreshTimeout)
       }, 3000)
+      this.setAgents(null)
     },
     async connected(val) {
       if (val) {
@@ -121,6 +123,9 @@ export default {
         this.refresh()
         this.$apollo.queries.agents.refresh()
       }
+    },
+    agentError() {
+      this.setAgents(null)
     },
     agents(val) {
       this.setAgents(val)
@@ -251,14 +256,14 @@ export default {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
       pollInterval: 3000,
-      skip() {
-        return (
-          (this.isCloud && (!this.isAuthenticated || !this.isAuthorized)) ||
-          !this.connected ||
-          (this.isServer && !this.connected)
-        )
+      error() {
+        this.agentError = true
       },
-      update: data => data.agent
+      fetchPolicy: 'no-cache',
+      update({ agent }) {
+        if (!agent) return null
+        return agent
+      }
     }
   }
 }
