@@ -175,7 +175,7 @@ export default {
         })
       }
 
-      return breakpoints
+      return breakpoints.sort((a, b) => new Date(a.time) - new Date(b.time))
     },
     tooltipStyle() {
       if (!this.hovered) return
@@ -200,8 +200,11 @@ export default {
       deep: true,
       handler: debounce(function() {
         if (this.pauseUpdates) return
-        this.updateBreakpoints()
+        this.updateBreakpoints(true)
       }, 500)
+    },
+    endTime() {
+      this.updateScales()
     },
     items: {
       deep: true,
@@ -213,6 +216,9 @@ export default {
     },
     live(val) {
       this.live_ = val
+    },
+    startTime() {
+      this.updateScales()
     }
   },
   mounted() {
@@ -841,8 +847,12 @@ export default {
               .attr('stroke', '#999')
               .attr('stroke-width', 1.5)
               .attr('stroke-dasharray', '5')
-              .attr('d', `M0,10L0,${this.height - 20}`)
+              .attr('d', `M0,${this.height - 20}L0,${this.height - 20}`)
               .style('pointer-events', 'none')
+              .transition()
+              .delay((d, i) => i * 50)
+              .duration(this.animationDuration)
+              .attr('d', `M0,${this.height - 20}L0,10`)
 
             g.append('circle')
               .attr('fill', d => d.color || '#999')

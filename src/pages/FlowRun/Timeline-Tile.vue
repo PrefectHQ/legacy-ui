@@ -238,8 +238,6 @@ export default {
   },
   methods: {
     generateBreakpoints() {
-      console.log(this.flowRun)
-
       this.breakpoints = this.flowRun.states.map(state => {
         return {
           label: state.state,
