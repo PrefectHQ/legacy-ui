@@ -130,10 +130,7 @@ export default {
       loadingKey: 'loadingKey',
       pollInterval: 10000,
       fetchPolicy: 'no-cache',
-      update({ flow_run }) {
-        if (!flow_run) return
-        return flow_run
-      }
+      update: data => data?.flow_run
     }
   }
 }
