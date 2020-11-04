@@ -317,7 +317,6 @@ export default {
 <style lang="scss">
 .card-content {
   height: 254px;
-  overflow-y: scroll;
 }
 
 .centered-skeleton {

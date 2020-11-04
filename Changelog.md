@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Make sure the upcoming runs tile switches back to the upcoming tab when there are no late runs [#395](https://github.com/PrefectHQ/ui/pull/395)
+- Fix issue where scrollbars show on all tiles even when not needed - [#366](https://github.com/PrefectHQ/ui/issues/366)
 
 ## 2020-10-29a
 

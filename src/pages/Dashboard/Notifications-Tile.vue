@@ -137,11 +137,11 @@ export default {
       :loading="isLoading"
     />
 
-    <v-card-text class="pa-0 card-content">
+    <v-card-text class="pa-0">
       <v-skeleton-loader v-if="isLoading" type="list-item-three-line">
       </v-skeleton-loader>
 
-      <v-list v-else-if="notificationsCount > 0">
+      <v-list v-else-if="notificationsCount > 0" class=" card-content">
         <template v-for="(n, i) in notifications">
           <v-list-item
             :key="n.id"
@@ -204,6 +204,6 @@ export default {
 .card-content {
   height: 100%;
   max-height: 210px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 </style>
