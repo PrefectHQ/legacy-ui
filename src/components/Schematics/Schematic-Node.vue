@@ -80,6 +80,12 @@ export default {
     isParameter() {
       return this.nodeData?.data?.type?.split('.').pop() == 'Parameter'
     },
+    isResource() {
+      return (
+        this.nodeData?.data?.type?.split('.').pop() == 'ResourceCleanupTask' ||
+        this.nodeData?.data?.type?.split('.').pop() == 'ResourceSetupTask'
+      )
+    },
     segments() {
       if (!this.mappedChildren) return []
       return Object.keys(this.mappedChildren.state_counts).map(state => {
@@ -178,9 +184,22 @@ export default {
   >
     <div class="ml-12 node-content" style="width: calc(100% - 6rem);">
       <div class="title truncate font-weight-bold" :style="titleStyle">
-        <v-icon v-if="isParameter" class="parameter-icon ma-auto">
-          local_parking
-        </v-icon>
+        <v-avatar
+          v-if="isResource || isParameter"
+          color="accentOrange"
+          size="0.75em"
+        >
+          <span
+            v-if="isParameter"
+            class="display-3 white--text font-weight-black"
+            >P</span
+          >
+          <span
+            v-if="isResource"
+            class="display-3 white--text font-weight-black"
+            >R</span
+          >
+        </v-avatar>
         {{ nodeData.data.name }}
       </div>
       <div
@@ -221,14 +240,6 @@ export default {
 
 .h-100 {
   height: 100%;
-}
-
-.parameter-icon {
-  background-color: var(--v-accentOrange-base);
-  border-radius: 50%;
-  color: #fff !important;
-  font-size: 0.75em !important;
-  padding: 0.1em;
 }
 
 .position-relative {
