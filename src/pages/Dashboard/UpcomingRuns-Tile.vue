@@ -34,7 +34,8 @@ export default {
   data() {
     return {
       loadingKey: 0,
-      tab: 'upcoming'
+      tab: 'upcoming',
+      error: false
     }
   },
   computed: {
@@ -51,13 +52,13 @@ export default {
       return this.loadingKey > 0
     },
     upcomingRuns() {
-      console.log('upcomig', this.upcoming)
       if (!this.upcoming) return null
       return this.upcoming.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) <= 20000
       })
     },
     title() {
+      if (this.error || !this.upcoming) return
       let title = ''
 
       if (this.tab == 'upcoming') {
@@ -109,19 +110,8 @@ export default {
         this.tab = 'upcoming'
       }
     }
-    // tenant(val) {
-    //   this.projects = []
-
-    //   if (val) {
-    //     this.loading =
-    //     setTimeout(async () => {
-    //       await this.$apollo.queries.upcoming.refetch(), (this.loading = 0)
-    //     }, 1000)
-    //   }
-    // }
   },
   beforeDestroy() {
-    console.log('destroy')
     this.upcoming = []
     this.tab = 'upcoming'
   },
@@ -139,25 +129,25 @@ export default {
         }
       },
       loadingKey: 'loadingKey',
-      fetchPolicy: 'no-cache',
+      error() {
+        this.error = true
+      },
       pollInterval: 80000,
-      update: data => data?.flow_run
+      fetchPolicy: 'no-cache',
+      update({ flow_run }) {
+        if (!flow_run) return
+        return flow_run
+      }
     }
   }
 }
 </script>
 
 <template>
-  <v-card
-    class="py-2"
-    tile
-    :style="{
-      height: fullHeight ? '100%' : 'auto'
-    }"
-  >
+  <v-card class="py-2" tile :style="{ height: fullHeight ? '330px' : 'auto' }">
     <v-system-bar
       :color="
-        loading
+        loading || error || !upcoming
           ? 'secondaryGray'
           : lateRuns && lateRuns.length > 0
           ? 'deepRed'
@@ -173,7 +163,12 @@ export default {
         <v-col cols="8">
           <div>
             <div
-              v-if="loading || (tab === 'late' && isClearingLateRuns)"
+              v-if="
+                loading ||
+                  (tab === 'late' && isClearingLateRuns) ||
+                  error ||
+                  !upcoming
+              "
               style="
                 display: inline-block;
                 height: 20px;
@@ -253,11 +248,11 @@ export default {
     </CardTitle>
 
     <v-card-text v-if="tab == 'upcoming'" class="pa-0">
-      <v-skeleton-loader v-if="loading" type="list-item-three-line">
+      <v-skeleton-loader v-if="loading || error" type="list-item-three-line">
       </v-skeleton-loader>
 
       <v-list-item
-        v-else-if="loading === 0 && upcomingRuns && upcomingRuns.length === 0"
+        v-else-if="!loading && upcomingRuns && upcomingRuns.length === 0"
         dense
       >
         <v-list-item-avatar class="mr-0">
