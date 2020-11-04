@@ -838,14 +838,17 @@ export default {
               )
 
             g.append('path')
-              .attr('stroke', d => d.color || '#999')
+              .attr('stroke', '#999')
               .attr('stroke-width', 1.5)
-              .attr(
-                'stroke-dasharray',
-                '5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 12'
-              )
-              .attr('d', `M0,10L0,${this.height - 19}`)
+              .attr('stroke-dasharray', '5')
+              .attr('d', `M0,10L0,${this.height - 20}`)
               .style('pointer-events', 'none')
+
+            g.append('circle')
+              .attr('fill', d => d.color || '#999')
+              .attr('cy', this.height - 25)
+              .attr('cx', 0)
+              .attr('r', 5)
 
             g.append('text')
               .style('font-size', '8px')
@@ -880,8 +883,9 @@ export default {
                 .select('path')
                 .transition('update')
                 .duration(this.animationDuration)
-                .attr('stroke', d => d.color || '#999')
-                .attr('d', `M0,10L0,${this.height - 19}`)
+                .attr('stroke', '#999')
+
+              update.select('circle').attr('fill', d => d.color || '#999')
 
               update
                 .select('text')

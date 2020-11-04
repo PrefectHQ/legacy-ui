@@ -51,7 +51,7 @@ export default {
         ? Math.max.apply(null, [
             new Date(this.flowRun.scheduled_start_time),
             new Date(this.flowRun.end_time),
-            this.maxItemEndTime
+            this.maxEndTime
           ])
         : null
     },
@@ -165,11 +165,11 @@ export default {
           return new Date(a.start_time) - new Date(b.start_time)
         })
     },
-    maxItemEndTime() {
-      return Math.max.apply(
-        null,
-        this.items.map(item => new Date(item.end_time))
-      )
+    maxEndTime() {
+      return Math.max.apply(null, [
+        ...this.items.map(item => new Date(item.end_time)),
+        ...this.flowRun.states.map(state => new Date(state.timestamp))
+      ])
     },
     isFinished() {
       return (
@@ -238,6 +238,8 @@ export default {
   },
   methods: {
     generateBreakpoints() {
+      console.log(this.flowRun)
+
       this.breakpoints = this.flowRun.states.map(state => {
         return {
           label: state.state,
