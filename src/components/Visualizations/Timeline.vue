@@ -17,7 +17,7 @@ export default {
     barRadius: {
       type: Number,
       required: false,
-      default: 25
+      default: 15
     },
     breakpoints: {
       type: Array,
@@ -37,7 +37,7 @@ export default {
     maxBarRadius: {
       type: Number,
       required: false,
-      default: 35
+      default: 25
     },
     minBarRadius: {
       type: Number,

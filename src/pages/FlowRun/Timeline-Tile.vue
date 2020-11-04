@@ -73,6 +73,7 @@ export default {
           const taskRun = this.taskRunMap[task.id]
           const mappedRef = this.mappedChildren?.[task.id]
           const isMapped = taskRun?.state == 'Mapped'
+          const taskRunIsFinished = FINISHED_STATES.includes(taskRun.state)
 
           const item = {
             id: task.id,
@@ -136,7 +137,7 @@ export default {
             }
           } else {
             item.start_time = taskRun.start_time
-            item.end_time = taskRun.end_time ?? null
+            item.end_time = !taskRunIsFinished ? null : taskRun.end_time ?? null
 
             const color = computedStyle
               .getPropertyValue(`--v-${taskRun.state}-base`)
@@ -147,10 +148,7 @@ export default {
             // taskRun.state == 'Running' || taskRun.state == 'Pending'
           }
 
-          if (
-            (this.isFinished || FINISHED_STATES.includes(item.state)) &&
-            !item.start_time
-          ) {
+          if ((this.isFinished || taskRunIsFinished) && !item.start_time) {
             item.start_time = taskRun.state_timestamp
             item.end_time = taskRun.state_timestamp
             item.shadow = false
