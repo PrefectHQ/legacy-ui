@@ -7,8 +7,7 @@ const state = {
     // Time before an agent becomes unhealthy
     unhealthy: 5 // minutes since last query,
   },
-  agents: null,
-  loading: false
+  agents: null
 }
 
 const getters = {
@@ -20,9 +19,6 @@ const getters = {
   },
   agents(state) {
     return state.agents
-  },
-  loading(state) {
-    return state.loading
   }
 }
 
