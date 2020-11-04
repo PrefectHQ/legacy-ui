@@ -14,21 +14,24 @@ export default {
         { text: 'Name', value: 'name' },
         { text: 'URL', value: 'slug' },
         { text: 'Role', value: 'role' },
-        { text: 'Current', value: 'View' },
-        { text: 'Leave', value: 'Leave' }
+        { text: 'Actions', value: 'id' }
       ],
       user: null
     }
   },
   computed: {
-    ...mapGetters('user', ['firstName', 'lastName', 'timezone']),
-    ...mapGetters('tenant', ['tenant', 'tenants', 'tenantIsSet']),
-    role() {
-      console.log(this.tenant)
-      if (!this.tenant) return
-
+    ...mapGetters('user', ['memberships']),
+    ...mapGetters('tenant', ['tenant', 'tenants', 'tenantIsSet'])
+  },
+  methods: {
+    ...mapMutations('user', ['setUserSettings']),
+    ...mapActions('user', ['getUser']),
+    ...mapActions('tenant', ['setCurrentTenant']),
+    role(item) {
+      console.log('tenants', this.tenants)
+      console.log('memberships', this.memberships)
       let role
-      switch (this.tenant.role) {
+      switch (item) {
         case 'USER':
           role = 'User'
           break
@@ -43,12 +46,33 @@ export default {
           break
       }
       return role
-    }
-  },
-  methods: {
-    ...mapMutations('user', ['setUserSettings']),
-    ...mapActions('user', ['getUser']),
-    ...mapActions('tenant', ['setCurrentTenant']),
+    },
+    async removeUser(tenant) {
+      console.log('in removeUser', tenant)
+      this.isRemovingUser = true
+
+      /*const res = await this.$apollo.mutate({
+        mutation: require('@/graphql/Tenant/delete-membership.gql'),
+        variables: { membershipId }
+      })
+
+      if (res?.data?.delete_membership?.success) {
+        this.$emit(
+          'successful-action',
+          'You have removed yourself from this team.'
+        )
+        this.$apollo.queries.tenantUsers.refetch()
+      } else {
+        this.$emit(
+          'failed-action',
+          'Something went wrong while trying to leave this team. Please try again.'
+        )
+      }
+*/
+      this.isRemovingUser = false
+      this.dialogRemoveUser = false
+      this.selectedUser = null
+    },
     async handleSwitchTenant(tenant) {
       this.loading = true
 
@@ -57,10 +81,8 @@ export default {
       await this.setCurrentTenant(tenant.slug)
 
       this.loading = false
-      this.tenantMenuOpen = false
 
       clearCache()
-      this.handlePostTokenRouting()
     }
   }
 }
@@ -72,9 +94,17 @@ export default {
 
     <template #subtitle>
       See your Prefect teams and roles, switch between them, and leave teams
-      {{ role }}
     </template>
 
-    <v-data-table :headers="headers" :items="tenants"></v-data-table>
+    <v-data-table :headers="headers" :items="tenants">
+      <template #item.role="{item}">
+        {{ role(item.role) }}
+      </template>
+      <template #item.id="{item}">
+        {{ item.id === tenant.id ? 'Current' :
+        <button @click="handleSwitchTenant(item)">View</button> }}
+        <button @click="removeUser(item)">Leave</button>
+      </template>
+    </v-data-table>
   </ManagementLayout>
 </template>
