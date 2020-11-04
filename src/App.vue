@@ -252,6 +252,7 @@ export default {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
       pollInterval: 3000,
+      //Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
       update({ agent }) {
         if (!agent) return null
