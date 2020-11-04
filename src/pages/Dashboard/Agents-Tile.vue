@@ -12,9 +12,7 @@ export default {
     ExternalLink
   },
   data() {
-    return {
-      queryError: false
-    }
+    return {}
   },
   computed: {
     ...mapGetters('agent', [

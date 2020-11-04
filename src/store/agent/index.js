@@ -28,7 +28,6 @@ const getters = {
 
 const mutations = {
   setAgents(state, agents) {
-    state.loading = true
     if (!agents) {
       state.agents = null
       return
@@ -40,7 +39,6 @@ const mutations = {
         'seconds'
       )
     }))
-    state.loading = false
   }
 }
 
