@@ -68,6 +68,7 @@ export default {
     ...mapActions('alert', ['setAlert']),
     deleteFlowRun() {},
     handleRestartClick() {
+      this.$apollo.queries.failedTaskRuns.refetch()
       this.restartDialog = true
     },
     async runFlowNow() {
