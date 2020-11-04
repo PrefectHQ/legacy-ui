@@ -132,7 +132,7 @@ export default {
       error() {
         this.error = true
       },
-      pollInterval: 80000,
+      pollInterval: 10000,
       fetchPolicy: 'no-cache',
       update({ flow_run }) {
         if (!flow_run) return
