@@ -15,12 +15,7 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters('agent', [
-      'staleThreshold',
-      'unhealthyThreshold',
-      'agents',
-      'loading'
-    ]),
+    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
     ...mapGetters('api', ['isCloud']),
     agentTracker() {
       return this.agents?.reduce(
@@ -56,7 +51,7 @@ export default {
       }`
     },
     statusColor() {
-      if (this.loading || !this.agents) return 'secondaryGray'
+      if (!this.agents) return 'secondaryGray'
       if (
         this.agents?.length === 0 ||
         (this.agentTracker?.healthy === 0 &&
@@ -87,36 +82,16 @@ export default {
       icon="pi-agent"
       :icon-color="statusColor"
       icon-class="mb-1"
-      :loading="loading || !agents"
+      :loading="!agents"
       :data-cy="
         'agents-tile-healthy-count|' + (agentTracker ? agentTracker.healthy : 0)
       "
     />
 
     <v-list class="card-content">
-      <v-slide-y-reverse-transition v-if="loading" leave-absolute group>
+      <v-slide-y-reverse-transition v-if="!agents" leave-absolute group>
         <v-skeleton-loader key="loading" type="list-item-avatar">
         </v-skeleton-loader>
-      </v-slide-y-reverse-transition>
-
-      <v-slide-y-reverse-transition v-else-if="!agents" leave-absolute group>
-        <v-list-item key="error" color="grey">
-          <v-list-item-avatar class="mr-0">
-            <v-icon class="error--text">
-              error
-            </v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content class="my-0 py-3">
-            <div
-              class="inline-block text-subtitle-1 font-weight-light"
-              style="line-height: 1.25rem;"
-            >
-              Something went wrong while trying to fetch running agents. Please
-              try refreshing your page. If this error persists, return to this
-              page after a few minutes.
-            </div>
-          </v-list-item-content>
-        </v-list-item>
       </v-slide-y-reverse-transition>
 
       <v-slide-y-reverse-transition v-else leave-absolute group>
