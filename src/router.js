@@ -187,6 +187,14 @@ export const routes = [
           import(
             /* webpackChunkName: "user-settings--tokens" */ '@/pages/UserSettings/Tokens.vue'
           )
+      },
+      {
+        name: 'teams',
+        path: 'teams',
+        component: () =>
+          import(
+            /* webpackChunkName: "user-settings--teams" */ '@/pages/UserSettings/Teams.vue'
+          )
       }
     ]
   },
