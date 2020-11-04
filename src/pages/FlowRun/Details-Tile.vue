@@ -37,6 +37,7 @@ export default {
       return FINISHED_STATES.includes(this.flowRun.state)
     },
     hasParameters() {
+      console.log(this.flowRun)
       if (!this.flowRun?.parameters) return false
       return Object.keys(this.flowRun.parameters).length > 0
     },
