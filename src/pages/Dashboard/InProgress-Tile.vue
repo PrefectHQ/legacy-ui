@@ -215,11 +215,11 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text class="pa-0 card-content">
+    <v-card-text class="pa-0">
       <v-skeleton-loader v-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
-      <v-list v-else-if="!loading && runs.length === 0">
+      <v-list v-else-if="!loading && runs.length === 0" class="card-content">
         <v-list-item>
           <v-list-item-avatar class="mr-0">
             <v-icon class="mb-1" :color="tileColor">
@@ -245,7 +245,7 @@ export default {
         </v-list-item>
       </v-list>
 
-      <v-list v-else>
+      <v-list v-else class="card-content">
         <v-slide-x-transition mode="out-in" leave-absolute group>
           <v-lazy
             v-for="run in runs"
@@ -329,7 +329,7 @@ a {
 
 .card-content {
   max-height: 254px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .card-footer {

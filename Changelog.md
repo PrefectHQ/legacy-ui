@@ -4,11 +4,12 @@
 
 ### Features and Improvements
 
-- None
+- Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
 
 ### Bugfixes
 
-- None
+- Fix a bug on restart from failed which was missing failed task runs [#398](https://github.com/PrefectHQ/ui/pull/398)
+- Fix issue where scrollbars show on all tiles even when not needed - [#366](https://github.com/PrefectHQ/ui/issues/366)
 
 ## 2020-10-29a
 

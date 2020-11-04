@@ -267,7 +267,7 @@ export default {
 .card-content {
   height: 100%;
   max-height: 210px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .time-interval-picker {
