@@ -672,7 +672,7 @@ export default {
 
         // If the item isn't present in the bar array
         // we instantiate a new bar...
-        if (barIndex < 0) {
+        if (barIndex === -1) {
           this.bars.push({
             ...item,
             alpha: alpha,
@@ -691,7 +691,7 @@ export default {
             x: x || 0,
             y0: y,
             y1: y,
-            y: y || 0
+            y: y
           })
         } else {
           // ...otherwise we update the existing bar with
@@ -1141,6 +1141,7 @@ export default {
       // i.e. if zoomed in to the max extent the length of time the
       // graph will show.
       // Duration of entire run / smallest period (ms)
+      // We default to 5 seconds right now.
       const scaleExtentUpper = (endMs - startMs) / 5000
       this.scaleExtent = [1, scaleExtentUpper < 2 ? 2 : scaleExtentUpper]
 
@@ -1349,7 +1350,6 @@ export default {
 
 .svg {
   box-sizing: border-box;
-  transition: all 500ms;
   z-index: 0;
 }
 
@@ -1357,7 +1357,6 @@ export default {
   box-sizing: border-box;
   cursor: grab;
   position: absolute;
-  transition: all 500ms;
   z-index: 1;
 }
 
