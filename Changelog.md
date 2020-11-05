@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Update the Cloud Hooks email input rules to allow multiple comma-separated emails - [#372](https://github.com/PrefectHQ/ui/pull/372)
 - Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
 
 ### Bugfixes
