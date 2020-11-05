@@ -1,35 +1,35 @@
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 
 import ManagementLayout from '@/layouts/ManagementLayout.vue'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
   components: {
-    ManagementLayout
+    ManagementLayout,
+    ConfirmDialog
   },
   data() {
     return {
+      dialogRemoveUser: false,
       headers: [
         { text: 'Name', value: 'name' },
         { text: 'URL', value: 'slug' },
         { text: 'Role', value: 'role' },
         { text: 'Actions', value: 'id' }
       ],
-      user: null
+      isRemovingUser: false,
+      removeTenant: null
     }
   },
   computed: {
     ...mapGetters('user', ['memberships']),
-    ...mapGetters('tenant', ['tenant', 'tenants', 'tenantIsSet'])
+    ...mapGetters('tenant', ['tenant', 'tenants'])
   },
   methods: {
-    ...mapMutations('user', ['setUserSettings']),
-    ...mapActions('user', ['getUser']),
     ...mapActions('tenant', ['setCurrentTenant']),
     role(item) {
-      console.log('tenants', this.tenants)
-      console.log('memberships', this.memberships)
       let role
       switch (item) {
         case 'USER':
@@ -49,6 +49,7 @@ export default {
     },
     async removeUser(tenant) {
       console.log('in removeUser', tenant)
+      console.log('did I set user?', this.memberships)
       this.isRemovingUser = true
 
       /*const res = await this.$apollo.mutate({
@@ -105,11 +106,35 @@ export default {
         {{ role(item.role) }}
       </template>
       <template #item.id="{item}">
-        <button v-if="item.id !== tenant.id" @click="handleSwitchTenant(item)"
-          >View</button
+        <v-btn v-if="item.id !== tenant.id" @click="handleSwitchTenant(item)"
+          >View</v-btn
         >
         <span v-else>Current</span>
-        <button @click="removeUser(item)">Leave</button>
+        <v-btn
+          @click="
+            dialogRemoveUser = true
+            removeTenant = item
+          "
+          >Leave</v-btn
+        >
+        <ConfirmDialog
+          v-if="removeTenant"
+          v-model="dialogRemoveUser"
+          type="error"
+          :title="
+            `Are you sure you want to remove yourself from ${removeTenant.name}?`
+          "
+          :dialog-props="{ 'max-width': '600' }"
+          :disabled="isRemovingUser"
+          :loading="isRemovingUser"
+          @confirm="removeUser(removeTenant)"
+        >
+          <div class="red--text"
+            >Are you sure you want to remove yourself from
+            {{ removeTenant.name }}? You'll no longer be able to access your
+            Projects or Flows associated with {{ removeTenant.name }}.
+          </div>
+        </ConfirmDialog>
       </template>
     </v-data-table>
   </ManagementLayout>
