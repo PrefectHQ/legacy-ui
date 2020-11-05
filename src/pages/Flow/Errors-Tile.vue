@@ -276,7 +276,7 @@ export default {
 <style lang="scss" scoped>
 .error-card-content {
   max-height: 254px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .error-footer {

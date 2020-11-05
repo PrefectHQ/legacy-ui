@@ -98,7 +98,10 @@ export default {
       rules: {
         email: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(val) || 'Invalid e-mail.'
+          return (
+            val.split(',').every(email => pattern.test(email.trim())) ||
+            'Invalid e-mail.'
+          )
         },
         required: val => !!val || 'Required.',
         requiredCombo: val =>
@@ -589,8 +592,8 @@ export default {
                 </div>
                 <div class="subtitle pt-2">
                   <span v-if="tempType == 'EMAIL'">
-                    Prefect Cloud will send an email to this address when your
-                    flow's State changes.
+                    Input emails separated by commas; Prefect Cloud will send an
+                    email to these addresses when your flow's State changes.
                   </span>
                   <span v-else-if="tempType == 'SLACK_WEBHOOK'">
                     Prefect Cloud will send a notification via Slack Webhook to

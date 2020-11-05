@@ -9,7 +9,8 @@ export const cancelLateRunsMixin = {
       isClearingLateRuns: false,
       showClearLateRunsDialog: false,
       individualRuns: [],
-      scheduleIds: []
+      scheduleIds: [],
+      ids: []
     }
   },
   watch: {
