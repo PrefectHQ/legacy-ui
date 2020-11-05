@@ -8,7 +8,8 @@ const notPastStates = ['Running', 'Submitted', 'Pending']
 
 export default {
   components: {
-    TaskRunMenu: () => import('@/components/TaskRunMenu'),
+    RunStateTooltip: () => import('@/components/RunStateTooltip'),
+    TaskRunTooltip: () => import('@/components/TaskRunTooltip'),
     Timeline: () => import('@/components/Visualizations/Timeline')
   },
   mixins: [formatTime],
@@ -36,6 +37,7 @@ export default {
     return {
       breakpoints: [],
       containerHeight: null,
+      hoveredBreakpoints: null,
       hoveredTaskRun: null,
       loadingKey: 0
     }
@@ -205,13 +207,6 @@ export default {
       })
 
       return taskRunMap
-    },
-    taskRunMenuStyle() {
-      return {
-        position: 'absolute',
-        top: 0,
-        left: 0
-      }
     }
   },
   watch: {
@@ -244,8 +239,11 @@ export default {
         }
       })
     },
-    handleHover(id) {
-      this.hoveredTaskRun = this.taskRunMap[id]
+    handleHover(e) {
+      this.hoveredTaskRun = [this.taskRunMap[e.id]]
+    },
+    handleBreakpointHover(e) {
+      this.hoveredBreakpoints = e?.breakpoints
     }
   },
   apollo: {
@@ -342,17 +340,25 @@ export default {
         :live="!isFinished"
         :height="containerHeight"
         :min-bar-radius="10"
+        @breakpoint-hover="handleBreakpointHover"
         @hover="handleHover"
-      />
-    </v-card-text>
+      >
+        <template slot="item-tooltip">
+          <v-fade-transition mode="out-in">
+            <TaskRunTooltip v-if="hoveredTaskRun" :task-runs="hoveredTaskRun" />
+          </v-fade-transition>
+        </template>
 
-    <v-fade-transition mode="out-in">
-      <TaskRunMenu
-        v-if="hoveredTaskRun && false"
-        :task-run="hoveredTaskRun"
-        :style="taskRunMenuStyle"
-      />
-    </v-fade-transition>
+        <template slot="breakpoint-tooltip">
+          <v-fade-transition mode="out-in">
+            <RunStateTooltip
+              v-if="hoveredBreakpoints"
+              :states="hoveredBreakpoints"
+            />
+          </v-fade-transition>
+        </template>
+      </Timeline>
+    </v-card-text>
   </v-card>
 </template>
 

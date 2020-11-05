@@ -76,8 +76,10 @@ export default {
       easing: 'easePolyInOut',
       id: uniqueId('timeline'),
       hoveredBreakpoint: null,
-      hoveredId: null,
+      hoveredBreakpoints: null,
       hovered: null,
+      hoveredItem: null,
+      hoveredItemId: null,
       now: new Date(),
       showControls: false, // These are useful for debugging
       showLabels: true,
@@ -342,11 +344,24 @@ export default {
         }
       }
 
-      if (!hoveredId || hoveredId !== this.hoveredId) {
+      if (!hoveredId || hoveredId !== this.hoveredItemId) {
         this.updateBars()
       }
 
-      this.hoveredId = hoveredId
+      this.hoveredItemId = hoveredId
+    },
+    breaklineMouseout() {
+      this.hoveredBreakpoints = null
+      this.hovered = false
+      this.$emit('breakpoint-hover', null)
+    },
+    breaklineMouseover(e) {
+      this.hoveredBreakpoints = e.currentTarget?.__data__.breakpoints
+      this.hovered = {
+        x: e.offsetX,
+        y: this.height
+      }
+      this.$emit('breakpoint-hover', e.currentTarget?.__data__)
     },
     mousemove(e) {
       if (this.showTimestampAtCursor) {
@@ -385,13 +400,17 @@ export default {
         }
       }
 
-      if ((!hoveredId && this.hoveredId) || hoveredId !== this.hoveredId) {
+      if (
+        (!hoveredId && this.hoveredItemId) ||
+        hoveredId !== this.hoveredItemId
+      ) {
         if (!hoveredId) this.canvas._groups[0][0].style.cursor = null
-        this.$emit('hover', hoveredId)
+        this.$emit('hover', { id: hoveredId, ...hovered })
         this.updateBars()
       }
 
-      this.hoveredId = hoveredId
+      this.hoveredItemId = hoveredId
+      this.hoveredItem = hovered
       this.hovered = hovered
     },
     mouseout() {
@@ -400,8 +419,9 @@ export default {
 
       // if we don't have a hovered item already
       // we don't need to do anything
-      if (!this.hoveredId) return
-      this.hoveredId = null
+      if (!this.hoveredItemId) return
+      this.hoveredItemId = null
+      this.hoveredItem = null
       this.hovered = null
 
       this.canvas._groups[0][0].style.cursor = null
@@ -446,8 +466,8 @@ export default {
 
         const multiplier = bar.leaving ? t * 10 : t
 
-        bar.alpha = this.hoveredId
-          ? bar.id == this.hoveredId
+        bar.alpha = this.hoveredItemId
+          ? bar.id == this.hoveredItemId
             ? 1
             : 0.5
           : bar.alpha || 1
@@ -468,7 +488,10 @@ export default {
         context.globalAlpha = bar.alpha || 1
 
         // Create outline of the bar
-        if (bar.shadow && (!this.hoveredId || this.hoveredId == bar.id)) {
+        if (
+          bar.shadow &&
+          (!this.hoveredItemId || this.hoveredItemId == bar.id)
+        ) {
           context.beginPath()
           // context.lineWidth = 1 * (1 / this.transform.k)
           // context.strokeStyle = colors[0]
@@ -926,12 +949,15 @@ export default {
             .duration(50)
             .style('opacity', 1)
 
-          return g.call(enter =>
-            enter
-              .transition('enter')
-              .duration(50)
-              .style('opacity', 1)
-          )
+          return g
+            .on('mouseover', this.breaklineMouseover)
+            .on('mouseout', this.breaklineMouseout)
+            .call(enter =>
+              enter
+                .transition('enter')
+                .duration(50)
+                .style('opacity', 1)
+            )
         },
         update =>
           update.call(update => {
@@ -970,13 +996,16 @@ export default {
             )
           }),
         exit => {
-          return exit.call(exit =>
-            exit
-              .transition('exit')
-              .duration(50)
-              .style('opacity', 0)
-              .remove()
-          )
+          return exit
+            .on('mouseover', null)
+            .on('mouseout', null)
+            .call(exit =>
+              exit
+                .transition('exit')
+                .duration(50)
+                .style('opacity', 0)
+                .remove()
+            )
         }
       )
 
@@ -1264,50 +1293,67 @@ export default {
     <canvas :id="`${id}-canvas`" class="canvas mx-auto" />
     <svg :id="`${id}-svg`" class="svg" />
 
-    <transition name="tooltip-fade" mode="in-out">
-      <div
-        v-if="hovered"
-        class="v-tooltip__content timeline-tooltip"
-        :style="tooltipStyle"
-      >
-        <h3>{{ hovered.data.data.task_name }}</h3>
+    <div
+      v-if="hovered && $slots['item-tooltip']"
+      class="timeline-tooltip"
+      :style="tooltipStyle"
+    >
+      <slot name="item-tooltip" />
+    </div>
+    <div v-else-if="hovered" class="timeline-tooltip" :style="tooltipStyle">
+      <h3>{{ hovered.data.data.task_name }}</h3>
 
-        <div class="d-flex align-center justify-start">
-          <div :style="statusStyle(hovered.data.data.state)"></div>
-          <div class="ml-2">{{ hovered.data.data.state }}</div>
-        </div>
-
-        <div v-if="hovered.data.data.state == 'Scheduled'" class="subtitle">
-          Scheduled for:
-          <span class="font-weight-black">
-            {{ logTimeExtended(hovered.data.data.scheduled_start_time) }}
-          </span>
-        </div>
-
-        <div v-if="hovered.data.start_time" class="subtitle">
-          Started:
-          <span class="font-weight-black">
-            {{ logTimeExtended(hovered.data.start_time) }}
-          </span>
-        </div>
-
-        <div v-if="hovered.data.end_time" class="subtitle">
-          Ended:
-          <span class="font-weight-black">
-            {{ logTimeExtended(hovered.data.end_time) }}
-          </span>
-        </div>
-
-        <div v-if="hovered.data.start_time" class="subtitle">
-          Duration:
-          <DurationSpan
-            class="font-weight-bold"
-            :start-time="hovered.data.start_time"
-            :end-time="hovered.data.end_time"
-          />
-        </div>
+      <div class="d-flex align-center justify-start">
+        <div :style="statusStyle(hovered.data.data.state)"></div>
+        <div class="ml-2">{{ hovered.data.data.state }}</div>
       </div>
-    </transition>
+
+      <div v-if="hovered.data.data.state == 'Scheduled'" class="subtitle">
+        Scheduled for:
+        <span class="font-weight-black">
+          {{ logTimeExtended(hovered.data.data.scheduled_start_time) }}
+        </span>
+      </div>
+
+      <div v-if="hovered.data.start_time" class="subtitle">
+        Started:
+        <span class="font-weight-black">
+          {{ logTimeExtended(hovered.data.start_time) }}
+        </span>
+      </div>
+
+      <div v-if="hovered.data.end_time" class="subtitle">
+        Ended:
+        <span class="font-weight-black">
+          {{ logTimeExtended(hovered.data.end_time) }}
+        </span>
+      </div>
+
+      <div v-if="hovered.data.start_time" class="subtitle">
+        Duration:
+        <DurationSpan
+          class="font-weight-bold"
+          :start-time="hovered.data.start_time"
+          :end-time="hovered.data.end_time"
+        />
+      </div>
+    </div>
+
+    <div
+      v-if="hoveredBreakpoints && $slots['breakpoint-tooltip']"
+      class="timeline-tooltip"
+      :style="tooltipStyle"
+    >
+      <slot name="breakpoint-tooltip" />
+    </div>
+
+    <div
+      v-else-if="hoveredBreakpoints"
+      class="v-tooltip__content timeline-tooltip"
+      :style="tooltipStyle"
+    >
+      {{ hoveredBreakpoint }}
+    </div>
   </div>
 </template>
 
