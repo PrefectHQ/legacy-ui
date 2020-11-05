@@ -17,7 +17,17 @@ export default {
     return {
       title: this.taskRun
         ? `Task Run | ${this.taskRun?.name ?? this.taskRun?.task?.name}`
-        : null
+        : null,
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/svg',
+          href: this.taskRun
+            ? `/state-icons/${this.taskRun.state.toLowerCase()}.svg`
+            : null,
+          vmid: 'favicon'
+        }
+      ]
     }
   },
   components: {

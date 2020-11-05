@@ -138,8 +138,8 @@ export default {
       </span>
     </v-tooltip>
 
-    <v-card-text class="card-content pa-0">
-      <v-list>
+    <v-card-text class="pa-0">
+      <v-list class="card-content">
         <v-slide-y-reverse-transition v-if="loading > 0" leave-absolute group>
           <v-skeleton-loader key="skeleton" type="list-item-three-line">
           </v-skeleton-loader>
@@ -233,7 +233,7 @@ export default {
 .card-content {
   height: 100%;
   max-height: 254px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .footer {
