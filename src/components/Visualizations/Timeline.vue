@@ -625,12 +625,6 @@ export default {
               ? bar.width + bar.x
               : leftEdge
             : bar.x
-          // const textX = overLeft
-          //   ? -(this.transform.x / this.transform.k)
-          //   : overRight
-          //   ? this.width_ / this.transform.k +
-          //     -(this.transform.x / this.transform.k)
-          //   : bar.x
 
           context.font = `${fontSize}px Roboto`
           // context.textAlign = overLeft && leftEdge > tX1 ? 'end' : 'start'
@@ -895,7 +889,7 @@ export default {
           })
 
           // This section is used to aggregate breakpoints at the median
-          // isntead of at the mean.
+          // instead of at the mean.
           // breakpointGroups[intersectionIndex].breakpoints.sort(
           //   (a, b) => a.x - b.x
           // )
@@ -1143,8 +1137,11 @@ export default {
       this.y.paddingOuter(this.barPadding * 2)
       this.y.range([0, this.height_])
 
-      const scaleExtentUpper = (endMs - startMs) / (1000 * 60)
-
+      // This is the the smallest period represented by the full graph
+      // i.e. if zoomed in to the max extent the length of time the
+      // graph will show.
+      // Duration of entire run / smallest period (ms)
+      const scaleExtentUpper = (endMs - startMs) / 5000
       this.scaleExtent = [1, scaleExtentUpper < 2 ? 2 : scaleExtentUpper]
 
       this.translateExtent = [
