@@ -13,8 +13,15 @@ export default {
 <template>
   <div class="v-tooltip__content">
     <div v-for="(state, i) in states" :key="i">
-      <h3>{{ state.state }}</h3>
+      <div class="title">{{ state.state }}</div>
       {{ state }}
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.divider {
+  border: 1px solid #fff;
+  margin: 8px 0;
+}
+</style>

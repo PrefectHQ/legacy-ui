@@ -25,9 +25,9 @@ export default {
 </script>
 
 <template>
-  <div class="v-tooltip__content">
+  <div class="v-tooltip__content tooltip">
     <div v-for="(taskRun, i) in taskRuns" :key="i">
-      <h3>{{ taskRun.task_name }}</h3>
+      <div class="title">{{ taskRun.task_name }}</div>
 
       <div class="d-flex align-center justify-start">
         <div :style="statusStyle(taskRun.state)"></div>
@@ -66,3 +66,19 @@ export default {
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.divider {
+  border: 1px solid #fff;
+  margin: 8px 0;
+}
+
+.tooltip {
+  pointer-events: none;
+  text-overflow: initial;
+  transition: all 150ms;
+  user-select: none;
+  width: 375px !important;
+  z-index: 4;
+}
+</style>
