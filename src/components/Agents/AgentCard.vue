@@ -183,8 +183,9 @@ export default {
   <v-card
     tile
     :disabled="isDeleting"
-    class="agent-card overflow-y-scroll px-2 pb-3"
+    class="agent-card px-2 pb-3"
     :min-height="$vuetify.breakpoint.smAndDown ? null : 260"
+    style="overflow-y: auto;"
   >
     <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
 
@@ -356,7 +357,7 @@ export default {
       </div>
       <div
         v-if="agent && agentModified.labels.length > 0"
-        class="px-3 overflow-y-scroll"
+        class="px-3"
         style="height: 80px;"
       >
         <v-chip-group column multiple style="user-select: none;">

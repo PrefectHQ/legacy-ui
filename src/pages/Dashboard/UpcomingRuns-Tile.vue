@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      loading: 0,
+      loadingKey: 0,
       tab: 'upcoming'
     }
   },
@@ -47,6 +47,9 @@ export default {
         return this.getTimeOverdue(run.scheduled_start_time) > 20000
       })
     },
+    loading() {
+      return this.loadingKey > 0
+    },
     upcomingRuns() {
       if (!this.upcoming) return null
       return this.upcoming.filter(run => {
@@ -54,6 +57,7 @@ export default {
       })
     },
     title() {
+      if (!this.upcoming) return
       let title = ''
 
       if (this.tab == 'upcoming') {
@@ -65,7 +69,7 @@ export default {
 
       if (this.tab == 'late') {
         title =
-          this.loading > 0 || this.isClearingLateRuns
+          this.loading || this.isClearingLateRuns
             ? 'Late Runs'
             : `${this.lateRuns?.length || 0} Late Runs`
       }
@@ -86,7 +90,7 @@ export default {
       return icon
     },
     titleIconColor() {
-      return this.loading > 0
+      return this.loading
         ? 'grey'
         : this.tab == 'upcoming'
         ? 'primary'
@@ -101,17 +105,14 @@ export default {
       if (this.lateRuns?.length > 0) {
         this.tab = 'late'
       }
-    },
-    tenant(val) {
-      this.projects = []
-
-      if (val) {
-        this.loading = 1
-        setTimeout(async () => {
-          await this.$apollo.queries.upcoming.refetch(), (this.loading = 0)
-        }, 1000)
+      if (this.lateRuns?.length <= 0) {
+        this.tab = 'upcoming'
       }
     }
+  },
+  beforeDestroy() {
+    this.upcoming = []
+    this.tab = 'upcoming'
   },
   methods: {
     getTimeOverdue(time) {
@@ -126,8 +127,9 @@ export default {
           projectId: this.projectId ? this.projectId : null
         }
       },
-      loadingKey: 'loading',
+      loadingKey: 'loadingKey',
       pollInterval: 10000,
+      fetchPolicy: 'no-cache',
       update: data => data?.flow_run
     }
   }
@@ -135,16 +137,10 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="py-2"
-    tile
-    :style="{
-      height: fullHeight ? '100%' : 'auto'
-    }"
-  >
+  <v-card class="py-2" tile :style="{ height: fullHeight ? '330px' : 'auto' }">
     <v-system-bar
       :color="
-        loading > 0
+        loading || !upcoming
           ? 'secondaryGray'
           : lateRuns && lateRuns.length > 0
           ? 'deepRed'
@@ -160,7 +156,9 @@ export default {
         <v-col cols="8">
           <div>
             <div
-              v-if="loading > 0 || (tab === 'late' && isClearingLateRuns)"
+              v-if="
+                loading || (tab === 'late' && isClearingLateRuns) || !upcoming
+              "
               style="
                 display: inline-block;
                 height: 20px;
@@ -197,7 +195,7 @@ export default {
           @click="tab = 'upcoming'"
         >
           {{
-            upcomingRuns.length > 0 && tab === 'late'
+            upcomingRuns && upcomingRuns.length > 0 && tab === 'late'
               ? `(${upcomingRuns.length})`
               : ''
           }}
@@ -229,7 +227,7 @@ export default {
             warning
           </v-icon>
           {{
-            lateRuns.length > 0 && tab === 'upcoming'
+            lateRuns && lateRuns.length > 0 && tab === 'upcoming'
               ? `(${lateRuns.length})`
               : ''
           }}
@@ -239,12 +237,15 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text v-if="tab == 'upcoming'" class="pa-0 card-content">
-      <v-skeleton-loader v-if="loading > 0" type="list-item-three-line">
+    <v-card-text v-if="tab == 'upcoming'" class="pa-0">
+      <v-skeleton-loader
+        v-if="loading || !upcoming"
+        type="list-item-three-line"
+      >
       </v-skeleton-loader>
 
       <v-list-item
-        v-else-if="loading === 0 && upcomingRuns && upcomingRuns.length === 0"
+        v-else-if="!loading && upcomingRuns && upcomingRuns.length === 0"
         dense
       >
         <v-list-item-avatar class="mr-0">
@@ -260,7 +261,7 @@ export default {
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-else dense>
+      <v-list v-else dense class="card-content">
         <v-lazy
           v-for="item in upcomingRuns"
           :key="item.id"
@@ -330,13 +331,13 @@ export default {
 
     <v-card-text v-if="tab == 'late'" class="pa-0 card-content">
       <v-skeleton-loader
-        v-if="loading > 0 || isClearingLateRuns"
+        v-if="loading || isClearingLateRuns"
         type="list-item-three-line"
       >
       </v-skeleton-loader>
 
       <v-list-item
-        v-else-if="loading === 0 && lateRuns && lateRuns.length === 0"
+        v-else-if="!loading && lateRuns && lateRuns.length === 0"
         dense
       >
         <v-list-item-avatar class="mr-0">
@@ -352,7 +353,7 @@ export default {
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-else dense>
+      <v-list v-else dense class="card-content">
         <v-lazy
           v-for="item in lateRuns"
           :key="item.id"
@@ -476,7 +477,7 @@ a {
 
 .card-content {
   max-height: 254px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .card-footer {
