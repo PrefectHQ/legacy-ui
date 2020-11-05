@@ -11,6 +11,27 @@ export default {
     taskRuns: { type: Array, required: true }
   },
   methods: {
+    expectedRuns(taskRun) {
+      return (
+        taskRun.data?.serialized_state?.n_map_states?.toLocaleString() ||
+        'Unknown'
+      )
+    },
+    stateClass(state) {
+      const lightStates = [
+        'Submitted',
+        'Cancelled',
+        'Cancelling',
+        'Queued',
+        'Pending'
+      ]
+
+      const textColor = lightStates.includes(state)
+        ? ['grey--text', 'text--darken-4']
+        : ['white--text']
+
+      return [state, ...textColor]
+    },
     statusStyle(state) {
       return {
         'border-radius': '50%',
@@ -27,17 +48,17 @@ export default {
 <template>
   <div class="v-tooltip__content tooltip">
     <div v-for="(taskRun, i) in taskRuns" :key="i">
-      <div class="title">{{ taskRun.task_name }}</div>
+      <div class="title">{{ taskRun.data.task_name }}</div>
 
       <div class="d-flex align-center justify-start">
-        <div :style="statusStyle(taskRun.state)"></div>
-        <div class="ml-2">{{ taskRun.state }}</div>
+        <div :style="statusStyle(taskRun.data.state)"></div>
+        <div class="ml-2">{{ taskRun.data.state }}</div>
       </div>
 
       <div v-if="taskRun.state == 'Scheduled'" class="subtitle">
         Scheduled for:
         <span class="font-weight-black">
-          {{ logTimeExtended(taskRun.scheduled_start_time) }}
+          {{ logTimeExtended(taskRun.data.scheduled_start_time) }}
         </span>
       </div>
 
@@ -62,6 +83,44 @@ export default {
           :start-time="taskRun.start_time"
           :end-time="taskRun.end_time"
         />
+      </div>
+
+      <div
+        v-if="taskRun.data.serialized_state.n_map_states"
+        class="divider"
+      ></div>
+
+      <div v-if="taskRun.data.serialized_state.n_map_states" class="subtitle">
+        Expected Runs:
+        <span class="font-weight-black">
+          {{ expectedRuns(taskRun) }}
+        </span>
+      </div>
+
+      <div v-if="taskRun.data.mappedChildren">
+        <div>
+          <div class="subtitle">Mapped Runs</div>
+
+          <v-chip
+            v-for="state in Object.keys(
+              taskRun.data.mappedChildren.state_counts
+            )"
+            :key="state"
+            class="px-4 font-weight-medium mr-1"
+            :class="stateClass(state)"
+            label
+            small
+          >
+            {{ state }}
+            <span class="font-weight-normal ml-1">
+              ({{
+                taskRun.data.mappedChildren.state_counts[
+                  state
+                ].toLocaleString()
+              }})
+            </span>
+          </v-chip>
+        </div>
       </div>
     </div>
   </div>

@@ -87,7 +87,8 @@ export default {
             links: [],
             data: {
               ...task,
-              ...taskRun
+              ...taskRun,
+              mappedChildren: mappedRef
             }
           }
 
@@ -122,6 +123,10 @@ export default {
 
             item.start_time = mappedRef.min_start_time
 
+            // If we have n_mapped_states and the flow run isn't finished,
+            // we attempt to set the end time based on mapped children having
+            // all finished states; if any of the mapped children are still pending/submitted/running
+            // we assuming the task run is still going and set the end_time to null
             if (taskRun?.serialized_state?.n_map_states && !this.isFinished) {
               item.end_time =
                 taskRun?.serialized_state?.n_map_states == total &&
@@ -241,7 +246,8 @@ export default {
       })
     },
     handleHover(e) {
-      this.hoveredTaskRun = [this.taskRunMap[e.id]]
+      this.hoveredTaskRun = this.items.filter(item => item.id == e?.id)
+      console.log(this.hoveredTaskRun)
     },
     handleBreakpointHover(e) {
       e?.breakpoints.forEach(b => {
