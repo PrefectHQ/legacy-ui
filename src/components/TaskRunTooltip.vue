@@ -46,7 +46,7 @@ export default {
 </script>
 
 <template>
-  <div class="v-tooltip__content tooltip">
+  <div class="v-tooltip__content tooltip py-2">
     <div v-for="(taskRun, i) in taskRuns" :key="i">
       <div class="title">{{ taskRun.data.task_name }}</div>
 
