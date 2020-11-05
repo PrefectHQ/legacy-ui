@@ -254,10 +254,7 @@ export default {
       pollInterval: 3000,
       //Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
-      update({ agent }) {
-        if (!agent) return null
-        return agent
-      }
+      update: data => data.agent ?? null
     }
   }
 }
