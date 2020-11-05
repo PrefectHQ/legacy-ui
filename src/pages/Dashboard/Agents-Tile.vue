@@ -12,10 +12,7 @@ export default {
     ExternalLink
   },
   data() {
-    return {
-      loading: 0,
-      queryError: false
-    }
+    return {}
   },
   computed: {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
@@ -46,22 +43,16 @@ export default {
       )
     },
     cardTitle() {
-      if (!this.agents) return '0 Agents'
+      if (!this.agents) return
+      if (this.agents && this.agents.length === 0) return '0 Agents'
 
       return `${this.agents?.length} ${
         this.agents?.length === 1 ? 'Agent' : 'Agents'
       }`
     },
-    hasError() {
-      return this.queryError && !this.agents
-    },
-    isLoading() {
-      return this.loading > 0
-    },
     statusColor() {
-      if (this.isLoading) return 'secondaryGray'
+      if (!this.agents) return 'secondaryGray'
       if (
-        this.hasError ||
         this.agents?.length === 0 ||
         (this.agentTracker?.healthy === 0 &&
           this.agentTracker?.stale === 0 &&
@@ -91,36 +82,16 @@ export default {
       icon="pi-agent"
       :icon-color="statusColor"
       icon-class="mb-1"
-      :loading="isLoading"
+      :loading="!agents"
       :data-cy="
         'agents-tile-healthy-count|' + (agentTracker ? agentTracker.healthy : 0)
       "
     />
 
     <v-list class="card-content">
-      <v-slide-y-reverse-transition v-if="isLoading" leave-absolute group>
+      <v-slide-y-reverse-transition v-if="!agents" leave-absolute group>
         <v-skeleton-loader key="loading" type="list-item-avatar">
         </v-skeleton-loader>
-      </v-slide-y-reverse-transition>
-
-      <v-slide-y-reverse-transition v-else-if="hasError" leave-absolute group>
-        <v-list-item key="error" color="grey">
-          <v-list-item-avatar class="mr-0">
-            <v-icon class="error--text">
-              error
-            </v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content class="my-0 py-3">
-            <div
-              class="inline-block text-subtitle-1 font-weight-light"
-              style="line-height: 1.25rem;"
-            >
-              Something went wrong while trying to fetch running agents. Please
-              try refreshing your page. If this error persists, return to this
-              page after a few minutes.
-            </div>
-          </v-list-item-content>
-        </v-list-item>
       </v-slide-y-reverse-transition>
 
       <v-slide-y-reverse-transition v-else leave-absolute group>
