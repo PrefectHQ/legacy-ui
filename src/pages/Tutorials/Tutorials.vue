@@ -1,6 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-import { getRoutes } from '@/utils/markdownParser'
 
 export default {
   data() {
@@ -16,8 +15,7 @@ export default {
           to: 'universal-deploy-tutorial',
           title: 'Universal Deploy'
         }
-      ],
-      routes: getRoutes()
+      ]
     }
   },
   computed: {
@@ -54,25 +52,7 @@ export default {
 
       <v-divider />
 
-      <v-expansion-panels focusable>
-        <v-expansion-panel v-for="(item, i) in routes" :key="i">
-          <v-expansion-panel-header>
-            <router-link :to="item.fileName">{{ item.fileName }}</router-link>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-list-item v-for="(id, index) in item.ids" :key="index">
-              <v-list-item-content>
-                <v-list-item-title>
-                  <!-- <router-link :to="item.fileName + id"> {{ id }}</router-link> -->
-                  <a :href="id">{{ id.replace(/#/gm, '') }}</a>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-
-      <!-- <v-list dense>
+      <v-list dense>
         <v-list-item
           v-for="(tutorial, index) in tutorials"
           :key="index"
@@ -90,7 +70,7 @@ export default {
             }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-      </v-list> -->
+      </v-list>
     </v-navigation-drawer>
 
     <div

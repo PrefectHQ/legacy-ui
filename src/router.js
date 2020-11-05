@@ -7,8 +7,6 @@ import flowNavGuard from '@/middleware/flowNavGuard'
 import multiguard from 'vue-router-multiguard'
 import tenantNavGuard from '@/middleware/tenantNavGuard'
 
-import { getMDRoutes } from '@/utils/markdownParser'
-
 export const routes = [
   {
     name: 'not-found',
@@ -257,28 +255,27 @@ export const routes = [
         /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
       ),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard]),
-    redirect: { name: 'FlowRun' },
-    children: getMDRoutes()
-    // children: [
-    //   {
-    //     name: 'flow-run-tutorial',
-    //     path: 'flow-run-tutorial',
-    //     component: () =>
-    //       import(
-    //         /* webpackChunkName: "tutorials--flow-run" */ '@/pages/Tutorials/FlowRun/FlowRunTutorial.vue'
-    //       ),
-    //     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-    //   },
-    //   {
-    //     name: 'universal-deploy-tutorial',
-    //     path: 'universal-deploy-tutorial',
-    //     component: () =>
-    //       import(
-    //         /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/UniversalDeploy/UniversalDeployTutorial.vue'
-    //       ),
-    //     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-    //   }
-    // ].concat(getMDRoutes())
+    redirect: { name: 'flow-run-tutorial' },
+    children: [
+      {
+        name: 'flow-run-tutorial',
+        path: 'flow-run-tutorial',
+        component: () =>
+          import(
+            /* webpackChunkName: "tutorials--flow-run" */ '@/pages/Tutorials/FlowRun/FlowRunTutorial.vue'
+          ),
+        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      },
+      {
+        name: 'universal-deploy-tutorial',
+        path: 'universal-deploy-tutorial',
+        component: () =>
+          import(
+            /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/UniversalDeploy/UniversalDeployTutorial.vue'
+          ),
+        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      }
+    ]
   },
   {
     name: 'notifications',
