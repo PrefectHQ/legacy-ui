@@ -251,6 +251,9 @@ export default {
       query() {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
+      skip() {
+        return this.isCloud && !this.isAuthorized
+      },
       pollInterval: 3000,
       //Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
