@@ -83,6 +83,10 @@ export default {
       this.loading = false
 
       clearCache()
+      this.$router.push({
+        name: 'dashboard',
+        params: { tenant: this.tenant.slug }
+      })
     }
   }
 }
@@ -101,8 +105,10 @@ export default {
         {{ role(item.role) }}
       </template>
       <template #item.id="{item}">
-        {{ item.id === tenant.id ? 'Current' :
-        <button @click="handleSwitchTenant(item)">View</button> }}
+        <button v-if="item.id !== tenant.id" @click="handleSwitchTenant(item)"
+          >View</button
+        >
+        <span v-else>Current</span>
         <button @click="removeUser(item)">Leave</button>
       </template>
     </v-data-table>
