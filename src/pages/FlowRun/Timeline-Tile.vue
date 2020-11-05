@@ -346,6 +346,7 @@ export default {
         :items="items"
         :start-time="startTime"
         :end-time="endTime"
+        :loading="loading && (!tasks || !taskRuns)"
         :breakpoints="breakpoints"
         :live="!isFinished"
         :height="containerHeight"

@@ -27,11 +27,13 @@ export default {
       required: false,
       default: false
     },
-    // height: {
-    //   type: [Number, String],
-    //   required: false,
-    //   default: null
-    // },
+
+    loading: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+
     maxBarRadius: {
       type: Number,
       required: false,
@@ -118,6 +120,8 @@ export default {
       // Dimensions
       height_: null,
       width_: null,
+      height: null,
+      width: null,
 
       padding: {
         bottom: xAxisHeight,
@@ -149,6 +153,11 @@ export default {
     }
   },
   computed: {
+    calcRows: function() {
+      return debounce(() => {
+        requestAnimationFrame(this.rawCalcRows)
+      }, 300)
+    },
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
@@ -157,6 +166,11 @@ export default {
     resizeCanvas: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeCanvas)
+      }, 300)
+    },
+    setChartDimensions: function() {
+      return debounce(() => {
+        requestAnimationFrame(this.rawSetChartDimensions)
       }, 300)
     },
     start() {
@@ -257,10 +271,15 @@ export default {
     this.xAxisNode = this.svg.append('g')
     this.breakpointsNode = this.svg.append('g')
 
-    this.calcRows()
+    this.resizeChart()
+
+    if (!this.loading) {
+      this.calcRows()
+    }
 
     window.addEventListener('resize', this.resizeChart)
-    this.resizeChart()
+
+    this.setChartDimensions()
 
     this.canvas.on('click', this.click)
     this.canvas.on('mousemove', this.mousemove)
@@ -279,9 +298,17 @@ export default {
     this.xAxisNode.on('end', null)
   },
   methods: {
-    calcRows() {
+    rawCalcRows() {
       const prevRows = this.rows
       const grid = []
+
+      this.now = new Date()
+      const startMs = this.start?.getTime() ?? 0
+      const endMs = (this.end ?? this.now).getTime()
+
+      // TODO: This buffer is based on the visible space, the scale of the chart, and the max bar radius...
+      // I'm sure this could be improved with a more precise definition of overlap
+      const overlapMargin = ((endMs - startMs) / this.width) * this.maxBarRadius
 
       itemLoop: for (let i = 0; i < this.items.length; ++i) {
         const item = this.items[i]
@@ -332,11 +359,9 @@ export default {
 
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
-          // TODO: This buffer is somewhat arbitrary, looking only at runs that happen within
-          // 1 second of each other; we could improve this by calculating intersection as a function
-          // of minimum run diameter
           let intersects = grid[row].some(
-            slot => end <= slot[0] - 1000 || start <= slot[1] + 1000
+            slot =>
+              end <= slot[0] - overlapMargin || start <= slot[1] + overlapMargin
           )
 
           // let intersects = grid[row].some(
@@ -767,8 +792,6 @@ export default {
       this.pauseUpdates = true
     },
     rawResizeChart() {
-      this.pause()
-      clearTimeout(this.drawTimeout)
       let parent = this.canvas.select(function() {
         return this.parentNode
       })?._groups?.[0]?.[0]
@@ -786,9 +809,7 @@ export default {
 
       this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
 
-      const width = Math.floor(
-        parent.clientWidth - padding.left - padding.right
-      )
+      this.width = Math.floor(parent.clientWidth - padding.left - padding.right)
 
       // If a height is specified in the component
       // we use that, otherwise we assume infinite height and
@@ -798,16 +819,24 @@ export default {
         parent.clientHeight - padding.top - padding.bottom
       )
 
-      if (!this.height || !width || this.height <= 0 || width <= 0) {
+      if (this.width_ !== this.width) {
+        this.setChartDimensions()
+      }
+    },
+    rawSetChartDimensions() {
+      this.pause()
+      clearTimeout(this.drawTimeout)
+
+      if (!this.height || this.height <= 0) {
         return
       }
 
       this.svg
-        .attr('viewbox', `0 0 ${width} ${this.height}`)
-        .attr('width', width)
+        .attr('viewbox', `0 0 ${this.width} ${this.height}`)
+        .attr('width', this.width)
         .attr('height', this.height)
 
-      this.width_ = width
+      this.width_ = this.width
 
       this.xAxisNode
         .attr('class', 'x-axis-group')
@@ -1198,6 +1227,7 @@ export default {
       context.clearRect(0, 0, this.width_, this.height_)
       this.bars = []
       this.resizeChart()
+      this.setChartDimensions()
     },
     zoomIn() {
       this.canvas
