@@ -46,17 +46,17 @@ export default {
       )
     },
     flowRunParams() {
-      const flowParams = this.flowRun.flow.parameters.reduce(
+      const flowParams = this.flowRun?.flow?.parameters.reduce(
         (accum, currentParam) => {
           accum[currentParam.name] = currentParam.default
           return accum
         },
         {}
       )
-      const flowRunParams = this.flowRun.parameters
+      const flowRunParams = this.flowRun?.parameters
       const diff = difference(
         Object.keys(flowParams),
-        Object.keys(this.flowRun.parameters)
+        Object.keys(flowRunParams)
       )
       diff.forEach(
         differentKey => (flowRunParams[differentKey] = flowParams[differentKey])
