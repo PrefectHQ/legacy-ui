@@ -38,8 +38,18 @@ export default {
     },
     hasParameters() {
       console.log(this.flowRun)
-      if (!this.flowRun?.parameters) return false
-      return Object.keys(this.flowRun.parameters).length > 0
+      if (!this.flowRun?.parameters && !this.flowRun?.flow?.parameters)
+        return false
+      return (
+        Object.keys(this.flowRun.parameters).length > 0 ||
+        this.flowRun.flow.parameters.length > 0
+      )
+    },
+    flowParams() {
+      return this.flowRun.flow.parameters.reduce((accum, currentParam) => {
+        accum[currentParam.name] = currentParam.default
+        return accum
+      }, {})
     },
     isCloudOrAutoScheduled() {
       return this.isCloud || this.flowRun?.auto_scheduled
@@ -300,7 +310,11 @@ export default {
           v-if="tab === 'parameters'"
           class="text-body-2 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-5 code-block"
         >
-          {{ formatJson(flowRun.parameters) }}
+          {{
+            Object.keys(flowRun.parameters).length
+              ? formatJson(flowRun.parameters)
+              : flowParams
+          }}
         </div>
       </v-fade-transition>
 
