@@ -6,6 +6,7 @@ import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import LabelEdit from '@/components/LabelEdit'
 import { FINISHED_STATES } from '@/utils/states'
+import difference from 'lodash.difference'
 
 export default {
   components: {
@@ -37,7 +38,6 @@ export default {
       return FINISHED_STATES.includes(this.flowRun.state)
     },
     hasParameters() {
-      console.log(this.flowRun)
       if (!this.flowRun?.parameters && !this.flowRun?.flow?.parameters)
         return false
       return (
@@ -45,11 +45,23 @@ export default {
         this.flowRun.flow.parameters.length > 0
       )
     },
-    flowParams() {
-      return this.flowRun.flow.parameters.reduce((accum, currentParam) => {
-        accum[currentParam.name] = currentParam.default
-        return accum
-      }, {})
+    flowRunParams() {
+      const flowParams = this.flowRun.flow.parameters.reduce(
+        (accum, currentParam) => {
+          accum[currentParam.name] = currentParam.default
+          return accum
+        },
+        {}
+      )
+      const flowRunParams = this.flowRun.parameters
+      const diff = difference(
+        Object.keys(flowParams),
+        Object.keys(this.flowRun.parameters)
+      )
+      diff.forEach(
+        differentKey => (flowRunParams[differentKey] = flowParams[differentKey])
+      )
+      return flowRunParams
     },
     isCloudOrAutoScheduled() {
       return this.isCloud || this.flowRun?.auto_scheduled
@@ -310,11 +322,7 @@ export default {
           v-if="tab === 'parameters'"
           class="text-body-2 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-5 code-block"
         >
-          {{
-            Object.keys(flowRun.parameters).length
-              ? formatJson(flowRun.parameters)
-              : flowParams
-          }}
+          {{ formatJson(flowRunParams) }}
         </div>
       </v-fade-transition>
 
