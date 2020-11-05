@@ -4,10 +4,13 @@
 
 ### Features and Improvements
 
+- Update the Cloud Hooks email input rules to allow multiple comma-separated emails - [#372](https://github.com/PrefectHQ/ui/pull/372)
 - Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
 
 ### Bugfixes
 
+- Make sure the upcoming runs tile switches back to the upcoming tab when there are no late runs - [#395](https://github.com/PrefectHQ/ui/pull/395)
+- Make agents and upoming runs tile refresh when switch backend - [#395](https://github.com/PrefectHQ/ui/pull/395)
 - Fix a bug on restart from failed which was missing failed task runs [#398](https://github.com/PrefectHQ/ui/pull/398)
 - Fix issue where scrollbars show on all tiles even when not needed - [#366](https://github.com/PrefectHQ/ui/issues/366)
 - Include flow parameters in parameters shown in the flow run parameters tab - [#401](https://github.com/PrefectHQ/ui/pull/401)

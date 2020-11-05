@@ -24,6 +24,10 @@ const getters = {
 
 const mutations = {
   setAgents(state, agents) {
+    if (!agents) {
+      state.agents = null
+      return
+    }
     state.agents = agents.map(agent => ({
       ...agent,
       secondsSinceLastQuery: moment().diff(
