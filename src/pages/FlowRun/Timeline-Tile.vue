@@ -122,9 +122,10 @@ export default {
 
             item.start_time = mappedRef.min_start_time
 
-            if (taskRun?.serialized_state?.n_map_states) {
+            if (taskRun?.serialized_state?.n_map_states && !this.isFinished) {
               item.end_time =
                 taskRun?.serialized_state?.n_map_states == total &&
+                // !this.isFinished &&
                 !states.some(state => notPastStates.includes(state))
                   ? mappedRef.max_end_time
                   : null
