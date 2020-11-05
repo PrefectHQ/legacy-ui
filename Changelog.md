@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
+- Add more info to a flow's "Run Config" details section - [#400](https://github.com/PrefectHQ/ui/pull/400)
 
 ### Bugfixes
 
