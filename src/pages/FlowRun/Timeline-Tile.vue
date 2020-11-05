@@ -243,6 +243,9 @@ export default {
       this.hoveredTaskRun = [this.taskRunMap[e.id]]
     },
     handleBreakpointHover(e) {
+      e?.breakpoints.forEach(b => {
+        b.formattedTime = this.logTime(b.time)
+      })
       this.hoveredBreakpoints = e?.breakpoints
     }
   },

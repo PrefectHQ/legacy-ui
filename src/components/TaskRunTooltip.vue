@@ -74,11 +74,7 @@ export default {
 }
 
 .tooltip {
-  pointer-events: none;
-  text-overflow: initial;
-  transition: all 150ms;
-  user-select: none;
-  width: 375px !important;
-  z-index: 4;
+  height: auto;
+  width: 100%;
 }
 </style>

@@ -3,7 +3,6 @@ import * as d3 from 'd3'
 import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
-import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 const d3formatTime = d3.timeFormat('%-I:%M:%S')
@@ -11,7 +10,6 @@ const d3formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
 const xAxisHeight = 20
 
 export default {
-  components: { DurationSpan },
   mixins: [formatTime],
   props: {
     barRadius: {
@@ -43,6 +41,17 @@ export default {
       type: Number,
       required: false,
       default: null
+    },
+
+    breakpointTooltipWidth: {
+      type: Number,
+      required: false,
+      default: 185
+    },
+    itemTooltipWidth: {
+      type: Number,
+      required: false,
+      default: 375
     },
 
     items: {
@@ -179,16 +188,32 @@ export default {
 
       return breakpoints.sort((a, b) => new Date(a.time) - new Date(b.time))
     },
-    tooltipStyle() {
+    breakpointTooltipStyle() {
       if (!this.hovered) return
+      let half = this.breakpointTooltipWidth / 2
       let p = this.boundingClientRect
-      let overRight = this.hovered.x + 187.5 - p.width > 0
-      let overLeft = this.hovered.x - 187.5 < 0
+      let overRight = this.hovered.x + half - p.width > 0
+      let overLeft = this.hovered.x - half < 0
       return {
         left: `${
-          overRight ? p.width - 187.5 : overLeft ? 187.5 : this.hovered.x
+          overRight ? p.width - half : overLeft ? half : this.hovered.x
         }px`,
-        top: `${this.hovered.y}px`
+        top: `${this.hovered.y}px`,
+        width: `${this.breakpointTooltipWidth}px`
+      }
+    },
+    itemTooltipStyle() {
+      if (!this.hovered) return
+      let half = this.itemTooltipWidth / 2
+      let p = this.boundingClientRect
+      let overRight = this.hovered.x + half - p.width > 0
+      let overLeft = this.hovered.x - half < 0
+      return {
+        left: `${
+          overRight ? p.width - half : overLeft ? half : this.hovered.x
+        }px`,
+        top: `${this.hovered.y}px`,
+        width: `${this.itemTooltipWidth}px`
       }
     },
     updateBars: function() {
@@ -352,7 +377,7 @@ export default {
     },
     breaklineMouseout() {
       this.hoveredBreakpoints = null
-      this.hovered = false
+      this.hovered = null
       this.$emit('breakpoint-hover', null)
     },
     breaklineMouseover(e) {
@@ -858,8 +883,8 @@ export default {
         const x = d.time ? this.x(new Date(d.time)) : -20
         const intersectionIndex = breakpointGroups.findIndex(
           g =>
-            x <= g.x + 25 * (1 / this.transform.k) &&
-            x >= g.x - 25 * (1 / this.transform.k)
+            x <= g.x + 40 * (1 / this.transform.k) &&
+            x >= g.x - 40 * (1 / this.transform.k)
         )
 
         if (intersectionIndex > -1) {
@@ -1019,6 +1044,7 @@ export default {
             const g = enter
               .append('circle')
               .attr('class', 'breakline-circle')
+              .style('cursor', 'pointer')
               .attr('id', d => `circle-${d.id}`)
               .style('opacity', 1)
 
@@ -1294,65 +1320,19 @@ export default {
     <svg :id="`${id}-svg`" class="svg" />
 
     <div
-      v-if="hovered && $slots['item-tooltip']"
+      v-if="hoveredItem && $slots['item-tooltip']"
       class="timeline-tooltip"
-      :style="tooltipStyle"
+      :style="itemTooltipStyle"
     >
       <slot name="item-tooltip" />
-    </div>
-    <div v-else-if="hovered" class="timeline-tooltip" :style="tooltipStyle">
-      <h3>{{ hovered.data.data.task_name }}</h3>
-
-      <div class="d-flex align-center justify-start">
-        <div :style="statusStyle(hovered.data.data.state)"></div>
-        <div class="ml-2">{{ hovered.data.data.state }}</div>
-      </div>
-
-      <div v-if="hovered.data.data.state == 'Scheduled'" class="subtitle">
-        Scheduled for:
-        <span class="font-weight-black">
-          {{ logTimeExtended(hovered.data.data.scheduled_start_time) }}
-        </span>
-      </div>
-
-      <div v-if="hovered.data.start_time" class="subtitle">
-        Started:
-        <span class="font-weight-black">
-          {{ logTimeExtended(hovered.data.start_time) }}
-        </span>
-      </div>
-
-      <div v-if="hovered.data.end_time" class="subtitle">
-        Ended:
-        <span class="font-weight-black">
-          {{ logTimeExtended(hovered.data.end_time) }}
-        </span>
-      </div>
-
-      <div v-if="hovered.data.start_time" class="subtitle">
-        Duration:
-        <DurationSpan
-          class="font-weight-bold"
-          :start-time="hovered.data.start_time"
-          :end-time="hovered.data.end_time"
-        />
-      </div>
     </div>
 
     <div
       v-if="hoveredBreakpoints && $slots['breakpoint-tooltip']"
       class="timeline-tooltip"
-      :style="tooltipStyle"
+      :style="breakpointTooltipStyle"
     >
       <slot name="breakpoint-tooltip" />
-    </div>
-
-    <div
-      v-else-if="hoveredBreakpoints"
-      class="v-tooltip__content timeline-tooltip"
-      :style="tooltipStyle"
-    >
-      {{ hoveredBreakpoint }}
     </div>
   </div>
 </template>
@@ -1391,7 +1371,6 @@ export default {
   transform: translate(-50%);
   transition: all 150ms;
   user-select: none;
-  width: 375px !important;
   z-index: 4;
 }
 </style>
