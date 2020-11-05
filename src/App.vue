@@ -100,6 +100,7 @@ export default {
         this.refresh()
         clearTimeout(this.refreshTimeout)
       }, 3000)
+      this.setAgents(null)
     },
     async connected(val) {
       if (val) {
@@ -250,15 +251,13 @@ export default {
       query() {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
-      pollInterval: 3000,
       skip() {
-        return (
-          (this.isCloud && (!this.isAuthenticated || !this.isAuthorized)) ||
-          !this.connected ||
-          (this.isServer && !this.connected)
-        )
+        return this.isCloud && !this.isAuthorized
       },
-      update: data => data.agent
+      pollInterval: 3000,
+      //Without this, server UI with no actual server shows results
+      fetchPolicy: 'no-cache',
+      update: data => data.agent ?? null
     }
   }
 }
