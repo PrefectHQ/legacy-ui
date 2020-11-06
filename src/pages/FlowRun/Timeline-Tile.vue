@@ -249,8 +249,6 @@ export default {
       this.hoveredTaskRuns = this.items.filter(item =>
         e?.ids?.includes(item.id)
       )
-
-      console.log(e, this.hoveredTaskRuns)
     },
     handleBreakpointHover(e) {
       e?.breakpoints.forEach(b => {
