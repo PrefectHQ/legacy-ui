@@ -11,7 +11,7 @@ export const heartbeatMixin = {
       return this.state
     },
     states() {
-      return this.stateNames.filter(name => name !== 'Scheduled')
+      return this.stateNames.filter(name => name !== 'Scheduled').sort()
     }
   },
   methods: {}
