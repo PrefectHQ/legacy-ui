@@ -90,8 +90,7 @@ export default {
       hoveredBreakpoint: null,
       hoveredBreakpoints: null,
       hovered: null,
-      hoveredItem: null,
-      hoveredItemId: null,
+      hoveredItemIds: [],
       now: new Date(),
       showControls: true, // These are useful for debugging
       showLabels: true,
@@ -426,36 +425,36 @@ export default {
       }
 
       const context = this.canvas.node().getContext('2d')
-      let hoveredId
-      let hovered
+      let hoveredIds = []
+      let hovered = {
+        data: [],
+        x: e.offsetX,
+        y: this.height
+      }
       let x = (e.offsetX - this.transform.x) * (1 / this.transform.k)
       let y = e.offsetY * (1 / this.transform.k)
 
       for (let i = 0; i < this.bars.length; ++i) {
         const bar = this.bars[i]
         if (context.isPointInPath(bar.path2D, x, y)) {
-          hoveredId = bar.id
-          hovered = {
-            data: bar,
-            x: e.offsetX,
-            y: this.height
-          }
+          hoveredIds.push(bar.id)
+          hovered.data.push(bar)
+
           this.canvas._groups[0][0].style.cursor = 'pointer'
-          break
         }
       }
 
       if (
-        (!hoveredId && this.hoveredItemId) ||
-        hoveredId !== this.hoveredItemId
+        (!hoveredIds.length && this.hoveredItemIds.length) ||
+        hoveredIds.some(h => !this.hoveredItemIds.includes(h))
       ) {
-        if (!hoveredId) this.canvas._groups[0][0].style.cursor = null
-        this.$emit('hover', { id: hoveredId, ...hovered })
+        if (!hoveredIds.length) this.canvas._groups[0][0].style.cursor = null
+
+        this.$emit('hover', { ids: hoveredIds, ...hovered })
         this.updateBars()
       }
 
-      this.hoveredItemId = hoveredId
-      this.hoveredItem = hovered
+      this.hoveredItemIds = hoveredIds
       this.hovered = hovered
     },
     mouseout() {
@@ -464,9 +463,8 @@ export default {
 
       // if we don't have a hovered item already
       // we don't need to do anything
-      if (!this.hoveredItemId) return
-      this.hoveredItemId = null
-      this.hoveredItem = null
+      if (!this.hoveredItemIds.length) return
+      this.hoveredItemIds = []
       this.hovered = null
 
       this.canvas._groups[0][0].style.cursor = null
@@ -514,10 +512,12 @@ export default {
         context.beginPath()
         const bar = this.bars[i]
 
-        bar.alpha = this.hoveredItemId
-          ? bar.id == this.hoveredItemId
-            ? 1
-            : 0.5
+        const isHovered = this.hoveredItemIds.includes(bar.id)
+
+        bar.alpha = isHovered
+          ? 1
+          : this.hoveredItemIds.length
+          ? 0.5
           : bar.alpha || 1
         bar.x = bar.x0 * (1 - t) + bar.x1 * t
         bar.y = bar.y0 * (1 - t) + bar.y1 * t
@@ -536,10 +536,7 @@ export default {
         context.globalAlpha = bar.alpha || 1
 
         // Create outline of the bar
-        if (
-          bar.shadow &&
-          (!this.hoveredItemId || this.hoveredItemId == bar.id)
-        ) {
+        if (bar.shadow && (!this.hoveredItemIds.length || isHovered)) {
           context.beginPath()
           // context.lineWidth = 1 * (1 / this.transform.k)
           // context.strokeStyle = colors[0]
@@ -1364,7 +1361,7 @@ export default {
     <svg :id="`${id}-svg`" class="svg" />
 
     <div
-      v-if="hoveredItem && $slots['item-tooltip']"
+      v-if="hoveredItemIds.length && $slots['item-tooltip']"
       class="timeline-tooltip"
       :style="itemTooltipStyle"
     >

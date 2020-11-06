@@ -122,6 +122,11 @@ export default {
           </v-chip>
         </div>
       </div>
+
+      <div
+        v-if="taskRuns.length > 1 && i !== taskRuns.length - 1"
+        class="divider"
+      ></div>
     </div>
   </div>
 </template>

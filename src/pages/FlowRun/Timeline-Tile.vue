@@ -38,7 +38,7 @@ export default {
       breakpoints: [],
       containerHeight: null,
       hoveredBreakpoints: null,
-      hoveredTaskRun: null,
+      hoveredTaskRuns: [],
       loadingKey: 0
     }
   },
@@ -246,7 +246,11 @@ export default {
       })
     },
     handleHover(e) {
-      this.hoveredTaskRun = this.items.filter(item => item.id == e?.id)
+      this.hoveredTaskRuns = this.items.filter(item =>
+        e?.ids?.includes(item.id)
+      )
+
+      console.log(e, this.hoveredTaskRuns)
     },
     handleBreakpointHover(e) {
       e?.breakpoints.forEach(b => {
@@ -355,7 +359,10 @@ export default {
       >
         <template slot="item-tooltip">
           <v-fade-transition mode="out-in">
-            <TaskRunTooltip v-if="hoveredTaskRun" :task-runs="hoveredTaskRun" />
+            <TaskRunTooltip
+              v-if="hoveredTaskRuns.length"
+              :task-runs="hoveredTaskRuns"
+            />
           </v-fade-transition>
         </template>
 
