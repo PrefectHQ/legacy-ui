@@ -11,20 +11,7 @@ export const heartbeatMixin = {
       return this.state
     },
     states() {
-      if (this.state === 'All') {
-        return this.list()
-      }
-      return this.stateList
+      return this.stateNames.filter(name => name !== 'Scheduled')
     }
   },
-  methods: {
-    list() {
-      if (this.state === 'All') {
-        const list = this.heartbeat ? this.heartbeat.map(run => run.state) : []
-        list.unshift('All')
-        this.stateList = list
-        return list
-      }
-    }
-  }
-}
+  methods: {}
