@@ -85,6 +85,7 @@ export default {
       condensed_: this.condensed,
       drawTimeout: null,
       easing: 'easePolyInOut',
+      firstRenderComplete: false,
       id: uniqueId('timeline'),
       hoveredBreakpoint: null,
       hoveredBreakpoints: null,
@@ -231,9 +232,12 @@ export default {
       }
     },
     updateBars: function() {
-      return throttle(() => {
-        this.rawUpdateBars()
-      }, 100)
+      return throttle(
+        () => {
+          this.rawUpdateBars()
+        },
+        this.firstRenderComplete ? 16 : this.animationDuration
+      )
     }
   },
   watch: {
@@ -302,14 +306,6 @@ export default {
       const prevRows = this.rows
       const grid = []
 
-      this.now = new Date()
-      const startMs = this.start?.getTime() ?? 0
-      const endMs = (this.end ?? this.now).getTime()
-
-      // TODO: This buffer is based on the visible space, the scale of the chart, and the max bar radius...
-      // I'm sure this could be improved with a more precise definition of overlap
-      const overlapMargin = ((endMs - startMs) / this.width) * this.maxBarRadius
-
       itemLoop: for (let i = 0; i < this.items.length; ++i) {
         const item = this.items[i]
 
@@ -360,8 +356,7 @@ export default {
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
           let intersects = grid[row].some(
-            slot =>
-              end <= slot[0] - overlapMargin || start <= slot[1] + overlapMargin
+            slot => end <= slot[0] - 1000 || start <= slot[1] + 1000
           )
 
           // let intersects = grid[row].some(
@@ -501,7 +496,19 @@ export default {
         })
     },
     render(elapsed) {
-      const t = Math.min(1, d3[this.easing](elapsed / this.animationDuration))
+      const t = Math.min(
+        1,
+        elapsed /
+          (this.live_ && this.firstRenderComplete ? 1 : this.animationDuration)
+      )
+
+      if (t >= 1) {
+        this.firstRenderComplete = true
+
+        // if (!this.live_) {
+        //   this.timer?.stop()
+        // }
+      }
 
       const context = this.canvas.node().getContext('2d')
       context.save()
@@ -514,19 +521,17 @@ export default {
         context.beginPath()
         const bar = this.bars[i]
 
-        const multiplier = bar.leaving ? t * 10 : t
-
         bar.alpha = this.hoveredItemId
           ? bar.id == this.hoveredItemId
             ? 1
             : 0.5
           : bar.alpha || 1
-        bar.x = bar.x0 * (1 - t) + bar.x1 * multiplier
-        bar.y = bar.y0 * (1 - t) + bar.y1 * multiplier
-        bar.height = bar.height0 * (1 - t) + bar.height1 * multiplier
+        bar.x = bar.x0 * (1 - t) + bar.x1 * t
+        bar.y = bar.y0 * (1 - t) + bar.y1 * t
+        bar.height = bar.height0 * (1 - t) + bar.height1 * t
 
-        bar.width = bar.width0 * (1 - t) + bar.width1 * multiplier
-        bar.shadow = bar.shadow0 * (1 - t) + bar.shadow1 * multiplier
+        bar.width = bar.width0 * (1 - t) + bar.width1 * t
+        bar.shadow = bar.shadow0 * (1 - t) + bar.shadow1 * t
 
         this.bars[i].path2D = new Path2D()
 
@@ -1003,7 +1008,7 @@ export default {
             .call(enter =>
               enter
                 .transition('enter')
-                .duration(50)
+                .duration(16)
                 .style('opacity', 1)
             )
         },
@@ -1036,7 +1041,7 @@ export default {
             return update.call(update =>
               update
                 .transition('update')
-                .duration(shouldTransition ? 50 : 0)
+                .duration(shouldTransition ? 16 : 0)
                 .attr(
                   'transform',
                   d => `translate(${d.x}) scale(${1 / this.transform.k})`
@@ -1134,7 +1139,7 @@ export default {
       // We only need this section if we want to draw the x-axis
       this.xAxisNode
         .transition()
-        .duration(shouldTransition ? this.animationDuration : 0)
+        .duration(shouldTransition ? 16 : 0)
         .call(xAxis)
         .on('end', () => {
           this.xAxisNode.on('end', null)
