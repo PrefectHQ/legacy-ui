@@ -53,15 +53,7 @@ export default {
         },
         {}
       )
-      const flowRunParams = this.flowRun?.parameters
-      const diff = difference(
-        Object.keys(flowParams),
-        Object.keys(flowRunParams)
-      )
-      diff.forEach(
-        differentKey => (flowRunParams[differentKey] = flowParams[differentKey])
-      )
-      return flowRunParams
+      return  { ...flowParams, ...this.flowRun?.parameters }
     },
     isCloudOrAutoScheduled() {
       return this.isCloud || this.flowRun?.auto_scheduled
