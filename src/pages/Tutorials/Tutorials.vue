@@ -21,7 +21,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('tenant', ['tenant']),
+    tutorialParser() {
+      // this.tenant.prefectAdminSettings -> emtpy right now
+      return false
+    }
   }
 }
 </script>
@@ -54,7 +58,7 @@ export default {
 
       <v-divider />
 
-      <v-expansion-panels focusable>
+      <v-expansion-panels v-if="tutorialParser" focusable>
         <v-expansion-panel v-for="(item, i) in routes" :key="i">
           <v-expansion-panel-header>
             <router-link :to="item.fileName">{{ item.fileName }}</router-link>
@@ -71,8 +75,7 @@ export default {
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-
-      <!-- <v-list dense>
+      <v-list v-else dense>
         <v-list-item
           v-for="(tutorial, index) in tutorials"
           :key="index"
@@ -90,7 +93,7 @@ export default {
             }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-      </v-list> -->
+      </v-list>
     </v-navigation-drawer>
 
     <div

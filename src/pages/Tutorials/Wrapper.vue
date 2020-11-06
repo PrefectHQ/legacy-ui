@@ -11,6 +11,6 @@ export default {
 
 <template>
   <div>
-    <div v-html="fileMD()"></div>
+    <!-- <div v-html="fileMD()"></div> -->
   </div>
 </template>
