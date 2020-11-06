@@ -47,12 +47,21 @@ export default {
       }
       return role
     },
-    async removeUser(tenant) {
-      console.log('in removeUser', tenant)
-      console.log('did I set user?', this.memberships)
+    async removeUser(removalTenant) {
       this.isRemovingUser = true
+      const initialTenant = this.tenant
 
-      /*const res = await this.$apollo.mutate({
+      let membershipsObject = {}
+      for (const membership of this.memberships) {
+        membershipsObject[membership.tenant.id] = membership.id
+      }
+      const membershipId = membershipsObject[removalTenant.id]
+
+      if (initialTenant.id !== removalTenant.id) {
+        await this.setCurrentTenant(removalTenant.slug)
+      }
+
+      const res = await this.$apollo.mutate({
         mutation: require('@/graphql/Tenant/delete-membership.gql'),
         variables: { membershipId }
       })
@@ -62,14 +71,17 @@ export default {
           'successful-action',
           'You have removed yourself from this team.'
         )
-        this.$apollo.queries.tenantUsers.refetch()
       } else {
         this.$emit(
           'failed-action',
           'Something went wrong while trying to leave this team. Please try again.'
         )
       }
-*/
+
+      if (initialTenant.id !== removalTenant.id) {
+        await this.setCurrentTenant(initialTenant.slug)
+      }
+
       this.isRemovingUser = false
       this.dialogRemoveUser = false
       this.selectedUser = null
