@@ -6,7 +6,6 @@ import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import LabelEdit from '@/components/LabelEdit'
 import { FINISHED_STATES } from '@/utils/states'
-// import difference from 'lodash.difference'
 
 export default {
   components: {
