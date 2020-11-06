@@ -37,7 +37,7 @@ export default {
     maxBarRadius: {
       type: Number,
       required: false,
-      default: 20
+      default: 100
     },
     minBarRadius: {
       type: Number,
@@ -510,42 +510,6 @@ export default {
 
       let len = this.bars.length
 
-      // const barGroups = []
-
-      // for (let i = 0; i < this.breakpoints_.length; ++i) {
-      //   const d = barGroups[i]
-      //   const x = d.time ? this.x(new Date(d.time)) : -20
-      //   const intersectionIndex = barGroups.findIndex(
-      //     g =>
-      //       x <= g.x + 40 * (1 / this.transform.k) &&
-      //       x >= g.x - 40 * (1 / this.transform.k)
-      //   )
-
-      //   if (intersectionIndex > -1) {
-      //     barGroups[intersectionIndex].breakpoints.push({
-      //       id: i,
-      //       x: x,
-      //       ...d
-      //     })
-
-      //     barGroups[intersectionIndex].x =
-      //       barGroups[intersectionIndex].breakpoints.reduce(
-      //         (acc, b) => acc + b.x,
-      //         0
-      //       ) / barGroups[intersectionIndex].breakpoints.length
-
-      //     barGroups[i].group_ref = intersectionIndex
-      //     barGroups[i].x = x
-      //   } else {
-      //     barGroups[i].group_ref = barGroups.push({
-      //       breakpoints: [{ id: i, x: x, ...d }],
-      //       x: x
-      //     })
-
-      //     barGroups[i].x = x
-      //   }
-      // }
-
       for (let i = 0; i < len; ++i) {
         context.beginPath()
         const bar = this.bars[i]
@@ -609,6 +573,8 @@ export default {
         }
 
         context.shadowBlur = 0
+        context.strokeStyle = '#fff'
+        context.lineWidth = 2 / this.transform.k
 
         bar.colors.forEach((color, j) => {
           context.beginPath()
@@ -622,7 +588,12 @@ export default {
           const calcWidth = (bar.width - radius * 2) * color.value
           const width = calcWidth < 0 ? 0 : calcWidth
 
-          rect.rect(x + offset, y, width, radius * 2)
+          rect.rect(
+            x + offset,
+            y + (width <= 0 ? context.lineWidth : 0),
+            width,
+            radius * 2 - (width <= 0 ? context.lineWidth : 0)
+          )
 
           if (j === 0) {
             capLeft.arc(
@@ -635,6 +606,7 @@ export default {
             )
 
             rect.addPath(capLeft)
+            context.stroke(capLeft)
           }
 
           if (j === bar.colors.length - 1) {
@@ -648,6 +620,8 @@ export default {
             )
 
             rect.addPath(capRight)
+
+            context.stroke(capRight)
           }
 
           if (width <= 0) {
@@ -662,7 +636,6 @@ export default {
           this.bars[i].path2D.addPath(rect)
           this.bars[i].path2D.addPath(capLeft)
           this.bars[i].path2D.addPath(capRight)
-
           offset += width
         })
 
@@ -737,10 +710,11 @@ export default {
           this.bars.push({
             ...item,
             alpha: alpha,
-            label: label,
             height0: height,
             height1: height,
             height: height,
+            label: label,
+            row: this.rowMap[item.id],
             shadow: 0,
             shadow0: 0,
             shadow1: item.shadow ? 5 : 0,
@@ -765,6 +739,7 @@ export default {
             height0: bar.height,
             height1: height,
             height: bar.height,
+            row: this.rowMap[item.id],
             shadow: bar.shadow,
             shadow0: bar.shadow,
             shadow1: item.shadow ? 5 : 0,
