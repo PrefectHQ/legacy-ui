@@ -111,14 +111,26 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout class="mt-3">
+  <ManagementLayout>
     <template #title>Your Teams</template>
 
     <template #subtitle>
       See your Prefect teams and roles, switch between them, and leave teams
     </template>
 
-    <v-data-table :headers="headers" :items="tenants">
+    <v-data-table
+      fixed-header
+      class="elevation-2 rounded-none truncate-table"
+      :headers="headers"
+      :items="tenants"
+      :footer-props="{
+        showFirstLastPage: true,
+        firstIcon: 'first_page',
+        lastIcon: 'last_page',
+        prevIcon: 'keyboard_arrow_left',
+        nextIcon: 'keyboard_arrow_right'
+      }"
+    >
       <template #item.role="{item}">
         {{ role(item.role) }}
       </template>
@@ -126,8 +138,9 @@ export default {
         <v-btn v-if="item.id !== tenant.id" @click="handleSwitchTenant(item)"
           >View</v-btn
         >
-        <span v-else>Current</span>
+        <v-btn v-else disabled>Current</v-btn>
         <v-btn
+          class="ml-3"
           @click="
             dialogRemoveUser = true
             removeTenant = item
