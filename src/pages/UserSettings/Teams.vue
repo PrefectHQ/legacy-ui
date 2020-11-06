@@ -28,7 +28,7 @@ export default {
     ...mapGetters('tenant', ['tenant', 'tenants'])
   },
   methods: {
-    ...mapActions('tenant', ['setCurrentTenant']),
+    ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     role(item) {
       let role
       switch (item) {
@@ -80,11 +80,16 @@ export default {
 
       if (initialTenant.id !== removalTenant.id) {
         await this.setCurrentTenant(initialTenant.slug)
+      } else if (this.tenants[0].id === removalTenant.id) {
+        await this.setCurrentTenant(this.tenants[1].slug)
+      } else {
+        await this.setCurrentTenant(this.tenants[0].slug)
       }
+
+      await this.getTenants()
 
       this.isRemovingUser = false
       this.dialogRemoveUser = false
-      this.selectedUser = null
     },
     async handleSwitchTenant(tenant) {
       this.loading = true
