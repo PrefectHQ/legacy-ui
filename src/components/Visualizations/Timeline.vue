@@ -93,7 +93,7 @@ export default {
       hoveredItem: null,
       hoveredItemId: null,
       now: new Date(),
-      showControls: false, // These are useful for debugging
+      showControls: true, // These are useful for debugging
       showLabels: true,
       showTimestampAtCursor: false,
       updateXTimeout: null,
@@ -479,7 +479,7 @@ export default {
 
       return d3
         .axisBottom(x)
-        .ticks(5)
+        .ticks(7)
         .tickSizeOuter(0)
         .tickFormat(d => {
           const dateObj = new Date(d)
@@ -501,14 +501,6 @@ export default {
         elapsed /
           (this.live_ && this.firstRenderComplete ? 1 : this.animationDuration)
       )
-
-      if (t >= 1) {
-        this.firstRenderComplete = true
-
-        // if (!this.live_) {
-        //   this.timer?.stop()
-        // }
-      }
 
       const context = this.canvas.node().getContext('2d')
       context.save()
@@ -670,6 +662,7 @@ export default {
       if (t === 1) {
         this.timer.stop()
         this.bars = this.bars.filter(b => !b.leaving)
+        this.firstRenderComplete = true
       }
     },
     rawUpdateBars() {
@@ -1231,6 +1224,7 @@ export default {
       const context = this.canvas.node().getContext('2d')
       context.clearRect(0, 0, this.width_, this.height_)
       this.bars = []
+      this.firstRenderComplete = false
       this.resizeChart()
       this.setChartDimensions()
     },
@@ -1256,65 +1250,68 @@ export default {
     class="position-relative timeline-container"
     style="height: 100%;"
   >
-    <v-menu bottom left :close-on-content-click="false">
+    <v-menu bottom right :close-on-content-click="false">
       <template #activator="{ on }">
         <v-btn icon small class="input-menu" v-on="on">
           <v-icon>more_vert</v-icon>
         </v-btn>
       </template>
 
-      <div v-if="showControls" class="d-flex  my-4">
-        <v-btn small :disabled="transform.k == scaleExtent[1]" @click="zoomIn">
-          +
-        </v-btn>
-        <v-btn
-          small
-          class="ml-2"
-          :disabled="transform.k == scaleExtent[0]"
-          @click="zoomOut"
-        >
-          -
-        </v-btn>
-
-        <v-btn
-          small
-          class="ml-12"
-          :disabled="transform.x == translateExtent[0][0]"
-          @click="panLeft"
-        >
-          ←
-        </v-btn>
-        <v-btn
-          small
-          class="ml-2"
-          :disabled="transform.x == -translateExtent[1][0]"
-          @click="panRight"
-        >
-          →
-        </v-btn>
-      </div>
-
-      <div
-        v-if="showControls"
-        class="text-caption text-right d-flex flex-column justify-space-around"
-      >
-        <div>
-          Scale:
-          <div class="font-weight-medium">
-            {{ Math.round(transform.k * 100) / 100 }}
-          </div>
-        </div>
-        <hr />
-        <div>
-          Transform
-          <div class="font-weight-medium">
-            {{ Math.round(transform.x * 100) / 100 }},
-            {{ Math.round(transform.y * 100) / 100 }}
-          </div>
-        </div>
-      </div>
-
       <v-list dense tile>
+        <v-list-item v-if="showControls" class="d-flex  my-4">
+          <v-btn
+            small
+            :disabled="transform.k == scaleExtent[1]"
+            @click="zoomIn"
+          >
+            +
+          </v-btn>
+          <v-btn
+            small
+            class="ml-2"
+            :disabled="transform.k == scaleExtent[0]"
+            @click="zoomOut"
+          >
+            -
+          </v-btn>
+
+          <v-btn
+            small
+            class="ml-12"
+            :disabled="transform.x == translateExtent[0][0]"
+            @click="panLeft"
+          >
+            ←
+          </v-btn>
+          <v-btn
+            small
+            class="ml-2"
+            :disabled="transform.x == -translateExtent[1][0]"
+            @click="panRight"
+          >
+            →
+          </v-btn>
+        </v-list-item>
+
+        <v-list-item
+          v-if="showControls"
+          class="text-caption text-right d-flex flex-column justify-space-around"
+        >
+          <span>
+            Scale:
+            <span class="font-weight-medium">
+              {{ Math.round(transform.k * 100) / 100 }}
+            </span>
+          </span>
+          <span>
+            Transform
+            <span class="font-weight-medium">
+              {{ Math.round(transform.x * 100) / 100 }},
+              {{ Math.round(transform.y * 100) / 100 }}
+            </span>
+          </span>
+        </v-list-item>
+
         <v-list-item>
           <v-checkbox
             v-model="showLabels"
@@ -1425,6 +1422,10 @@ export default {
     stroke-width: 1.65px;
   }
 
+  .tick {
+    transition: all 50ms;
+  }
+
   .tick:first-of-type {
     text-anchor: start;
   }
@@ -1432,10 +1433,6 @@ export default {
   .tick:last-of-type {
     text-anchor: end;
   }
-
-  // .tick:not(:first-of-type):not(:last-of-type):nth-child(even) {
-  //   opacity: 0;
-  // }
 }
 
 .breakpoints-group {
