@@ -37,7 +37,7 @@ export default {
     maxBarRadius: {
       type: Number,
       required: false,
-      default: 25
+      default: 20
     },
     minBarRadius: {
       type: Number,
@@ -509,6 +509,43 @@ export default {
       context.scale(this.transform.k, this.transform.k)
 
       let len = this.bars.length
+
+      // const barGroups = []
+
+      // for (let i = 0; i < this.breakpoints_.length; ++i) {
+      //   const d = barGroups[i]
+      //   const x = d.time ? this.x(new Date(d.time)) : -20
+      //   const intersectionIndex = barGroups.findIndex(
+      //     g =>
+      //       x <= g.x + 40 * (1 / this.transform.k) &&
+      //       x >= g.x - 40 * (1 / this.transform.k)
+      //   )
+
+      //   if (intersectionIndex > -1) {
+      //     barGroups[intersectionIndex].breakpoints.push({
+      //       id: i,
+      //       x: x,
+      //       ...d
+      //     })
+
+      //     barGroups[intersectionIndex].x =
+      //       barGroups[intersectionIndex].breakpoints.reduce(
+      //         (acc, b) => acc + b.x,
+      //         0
+      //       ) / barGroups[intersectionIndex].breakpoints.length
+
+      //     barGroups[i].group_ref = intersectionIndex
+      //     barGroups[i].x = x
+      //   } else {
+      //     barGroups[i].group_ref = barGroups.push({
+      //       breakpoints: [{ id: i, x: x, ...d }],
+      //       x: x
+      //     })
+
+      //     barGroups[i].x = x
+      //   }
+      // }
+
       for (let i = 0; i < len; ++i) {
         context.beginPath()
         const bar = this.bars[i]
@@ -685,7 +722,8 @@ export default {
           ? this.x(this.now) - x
           : 0
 
-        const y = this.y(this.rowMap[item.id]) ?? 0
+        const y =
+          (this.y(this.rowMap[item.id]) ?? 0) + (this.y.bandwidth() - height)
 
         const alpha = 1
 
@@ -1154,7 +1192,7 @@ export default {
       this.now = new Date()
       const startMs = this.start?.getTime() ?? 0
       const endMs = (this.end ?? this.now).getTime()
-      const domainPadding = (endMs - startMs) * 0.025 // 1 minute padding on either side
+      const domainPadding = (endMs - startMs) * 0.025
       this.domainStart = new Date(startMs - domainPadding)
       this.domainEnd = new Date(endMs + domainPadding)
 
