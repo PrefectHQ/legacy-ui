@@ -48,7 +48,7 @@
     "vue-code-highlight": "^0.7.6",
     "vue-codemirror": ">=4.0.6",
     "vue-meta": "^2.4.0",
-    "vue-router": "^3.4.6",
+    "vue-router": "^3.4.9",
     "vue-router-multiguard": ">=1.0.3",
     "vue-scrollto": "^2.19.1",
     "vuetify": "^2.3.13",
