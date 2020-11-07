@@ -23,7 +23,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     tutorialParser() {
-      // this.tenant.prefectAdminSettings -> emtpy right now
       return false
     }
   }
