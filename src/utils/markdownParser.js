@@ -3,34 +3,6 @@ import html from 'remark-html'
 import breaks from 'remark-breaks'
 import slug from 'remark-slug'
 
-// import unified from 'unified'
-import markdown from 'remark-parse'
-import remark2rehype from 'remark-rehype'
-import format from 'rehype-format'
-import rehypeHtml from 'rehype-stringify'
-
-export function mdParser(md) {
-  let str = ''
-
-  remark()
-    .use(markdown)
-    .use(remark2rehype)
-    .use(format)
-    .use(rehypeHtml)
-    .process(md, function(err, file) {
-      str = file
-    })
-  // unified()
-  //   .use(markdown)
-  //   .use(remark2rehype)
-  //   .use(format)
-  //   .use(rehypeHtml)
-  //   .process(md, function(err, file) {
-  //     str = file
-  //   })
-  return str
-}
-
 export function parser(md) {
   let result = ''
   if (typeof md === 'string') {
