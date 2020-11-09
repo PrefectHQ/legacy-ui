@@ -1185,7 +1185,7 @@ export default {
 
       this.translateExtent = [
         [0, 0],
-        [this.width_, this.height_]
+        [this.width_, 0]
       ]
 
       if (prevDomainEnd && this.transform.k !== 1) {
@@ -1289,7 +1289,9 @@ export default {
           <v-btn
             small
             class="ml-12"
-            :disabled="transform.x == translateExtent[0][0]"
+            :disabled="
+              transform.k === 1 || transform.x == translateExtent[0][0]
+            "
             @click="panLeft"
           >
             ←
@@ -1297,7 +1299,11 @@ export default {
           <v-btn
             small
             class="ml-2"
-            :disabled="transform.x == -translateExtent[1][0]"
+            :disabled="
+              transform.k === 1 ||
+                transform.k * translateExtent[1][0] + transform.x <=
+                  translateExtent[1][0]
+            "
             @click="panRight"
           >
             →
@@ -1320,6 +1326,10 @@ export default {
               {{ Math.round(transform.x * 100) / 100 }},
               {{ Math.round(transform.y * 100) / 100 }}
             </span>
+          </span>
+          <span>
+            Translate Extent
+            <span class="font-weight-medium"> {{ translateExtent }}, </span>
           </span>
         </v-list-item>
 
