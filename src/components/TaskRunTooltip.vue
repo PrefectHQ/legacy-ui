@@ -21,9 +21,8 @@ export default {
   methods: {
     expectedRuns(taskRun) {
       return (
-        taskRun.data?.serialized_state?.n_map_states?.toLocaleString() ||
-        'Unknown'
-      )
+        taskRun.data?.serialized_state?.n_map_states || 'Unknown'
+      ).toLocaleString()
     },
     stateClass(state) {
       const lightStates = [
@@ -98,7 +97,7 @@ export default {
         class="divider"
       ></div>
 
-      <div v-if="taskRun.data.serialized_state.n_map_states" class="subtitle">
+      <div v-if="taskRun.data.state == 'Mapped'" class="subtitle">
         Expected Runs:
         <span class="font-weight-black">
           {{ expectedRuns(taskRun) }}

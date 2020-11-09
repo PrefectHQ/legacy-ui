@@ -57,14 +57,17 @@ export default {
           ])
         : null
     },
+    filteredFlowRunStates() {
+      return this.flowRun.states.filter(state => state.state !== 'Pending')
+    },
     startTime() {
       return this.flowRun.start_time
         ? Math.min.apply(null, [
             new Date(this.flowRun.scheduled_start_time),
             new Date(this.flowRun.start_time),
-            ...this.flowRun.states
-              .filter(state => state.state == 'Scheduled')
-              .map(state => new Date(state.timestamp))
+            ...this.filteredFlowRunStates.map(
+              state => new Date(state.start_time ?? state.timestamp)
+            )
           ])
         : this.flowRun.scheduled_start_time
     },
@@ -244,10 +247,10 @@ export default {
   },
   methods: {
     generateBreakpoints() {
-      this.breakpoints = this.flowRun.states.map(state => {
+      this.breakpoints = this.filteredFlowRunStates.map(state => {
         return {
           label: state.state,
-          time: state.timestamp,
+          time: state.start_time ?? state.timestamp,
           color: computedStyle.getPropertyValue(`--v-${state.state}-base`)
         }
       })
