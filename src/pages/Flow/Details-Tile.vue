@@ -70,6 +70,28 @@ export default {
           return obj
         }, {})
     },
+    runConfigDisplayFields() {
+      if (!this.flow.run_config || !this.flow.run_config.type) return []
+
+      let fields = ['type']
+      if (this.flow.run_config.type == 'LocalRun') {
+        fields.push('working_dir')
+      } else if (this.flow.run_config.type == 'DockerRun') {
+        fields.push('image')
+      } else if (this.flow.run_config.type == 'KubernetesRun') {
+        fields.push(
+          'image',
+          'job_template_path',
+          'cpu_request',
+          'cpu_limit',
+          'memory_request',
+          'memory_limit'
+        )
+      } else if (this.flow.run_config.type == 'ECSRun') {
+        fields.push('image', 'task_definition_path', 'cpu', 'memory')
+      }
+      return fields.filter(field => this.flow.run_config[field] != null)
+    },
     flows() {
       if (!this.flow.storage || !this.flow.storage.flows) return null
       return this.flow.storage.flows
@@ -333,12 +355,19 @@ export default {
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
               <v-list-item-subtitle class="caption">
-                <v-row v-if="flow.run_config.type" no-gutters>
+                <v-row
+                  v-for="field in runConfigDisplayFields"
+                  :key="field"
+                  no-gutters
+                >
                   <v-col cols="6">
-                    Type
+                    {{ field }}
                   </v-col>
-                  <v-col cols="6" class="text-right font-weight-bold">
-                    {{ flow.run_config.type }}
+                  <v-col
+                    cols="6"
+                    class="text-right font-weight-bold text-truncate"
+                  >
+                    {{ flow.run_config[field] }}
                   </v-col>
                 </v-row>
               </v-list-item-subtitle>
