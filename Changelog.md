@@ -17,6 +17,7 @@
 - Fix issue where scrollbars show on all tiles even when not needed - [#366](https://github.com/PrefectHQ/ui/issues/366)
 - Include flow parameters in parameters shown in the flow run parameters tab - [#401](https://github.com/PrefectHQ/ui/pull/401)
 - Make sure task runs are fetched for the set state button - [#411](https://github.com/PrefectHQ/ui/pull/411)
+- Fix issue with notifications tile actions not being aligned to bottom #410 - [#410](https://github.com/PrefectHQ/ui/pull/410)
 
 ## 2020-10-29a
 
