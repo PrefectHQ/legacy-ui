@@ -37,7 +37,7 @@ export default {
     maxBarRadius: {
       type: Number,
       required: false,
-      default: 100
+      default: 25
     },
     minBarRadius: {
       type: Number,
