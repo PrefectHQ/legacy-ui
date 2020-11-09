@@ -109,7 +109,7 @@ export default {
 
       // Bars
       bars: [],
-      barPadding: 0.15,
+      barPadding: 0.2,
 
       domainStart: null,
       domainEnd: null,
