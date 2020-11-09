@@ -71,7 +71,7 @@ export default {
 
 <template>
   <v-card class="pa-2" tile>
-    <CardTitle title="Activity" icon="show_chart">
+    <CardTitle title="Activity" icon="show_chart" :icon-color="state">
       <v-select
         slot="action"
         v-model="state"

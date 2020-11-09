@@ -7,6 +7,7 @@
 - Update the Cloud Hooks email input rules to allow multiple comma-separated emails - [#372](https://github.com/PrefectHQ/ui/pull/372)
 - Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
 - Add more info to a flow's "Run Config" details section - [#400](https://github.com/PrefectHQ/ui/pull/400)
+- Enable filtering by all state types in the activity timeline tile [#402](https://github.com/PrefectHQ/ui/pull/402)
 
 ### Bugfixes
 
