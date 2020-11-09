@@ -1422,6 +1422,7 @@ export default {
   color: #9e9e9e !important;
   font: 10px Roboto, sans-serif;
   opacity: 0.8;
+  user-select: none;
 
   .domain {
     stroke: rgba(0, 0, 0, 0.12);
