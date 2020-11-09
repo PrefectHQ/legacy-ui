@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add a "Your Teams" page to the User menu, allowing you to see and change memberships - [#194](https://github.com/PrefectHQ/ui/issues/194)
 - Update the Cloud Hooks email input rules to allow multiple comma-separated emails - [#372](https://github.com/PrefectHQ/ui/pull/372)
 - Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
 - Add more info to a flow's "Run Config" details section - [#400](https://github.com/PrefectHQ/ui/pull/400)
