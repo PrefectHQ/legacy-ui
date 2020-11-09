@@ -159,11 +159,6 @@ export default {
         Overview
       </v-tab>
 
-      <v-tab href="#chart" :style="hideOnMobile">
-        <v-icon left>pi-gantt</v-icon>
-        Timeline
-      </v-tab>
-
       <v-tab href="#schematic" :style="hideOnMobile">
         <v-icon left>pi-schematic</v-icon>
         Schematic
@@ -224,20 +219,6 @@ export default {
 
       <v-tab-item
         class="tab-full-height"
-        value="chart"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
-      >
-        <TimelineTile
-          v-if="flowId"
-          :flow-id="flowId"
-          :flow-run-id="flowRunId"
-          :flow-run="flowRun"
-        />
-      </v-tab-item>
-
-      <v-tab-item
-        class="tab-full-height"
         value="logs"
         transition="quick-fade"
         reverse-transition="quick-fade"
@@ -261,11 +242,6 @@ export default {
       <v-btn @click="tab = 'overview'">
         Overview
         <v-icon>view_quilt</v-icon>
-      </v-btn>
-
-      <v-btn @click="tab = 'chart'">
-        Timeline
-        <v-icon>pi-gantt</v-icon>
       </v-btn>
 
       <v-btn @click="tab = 'schematic'">
