@@ -161,7 +161,7 @@ export default {
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
-      }, 300)
+      }, 500)
     },
     resizeCanvas: function() {
       return debounce(() => {
@@ -1261,6 +1261,25 @@ export default {
     class="position-relative timeline-container"
     style="height: 100%;"
   >
+    <div class="controls-overlay d-flex flex-column align-center" multiple>
+      <v-btn small depressed icon tile color="#999">
+        <v-icon>add</v-icon>
+      </v-btn>
+
+      <div class="d-flex">
+        <v-btn small icon depressed tile color="#999">
+          <v-icon>arrow_left</v-icon>
+        </v-btn>
+        <v-btn small icon depressed tile color="#999">
+          <v-icon>arrow_right</v-icon>
+        </v-btn>
+      </div>
+
+      <v-btn small depressed icon tile color="#999">
+        <v-icon>remove</v-icon>
+      </v-btn>
+    </div>
+
     <v-menu bottom left :close-on-content-click="false">
       <template #activator="{ on }">
         <v-btn icon small class="input-menu" v-on="on">
@@ -1399,6 +1418,35 @@ export default {
 
 .timeline-container {
   position: relative;
+
+  .controls-overlay {
+    background-color: #fff;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      -1px 2px 2px 0 rgba(0, 0, 0, 0.14), -5px 1px 5px -4px rgba(0, 0, 0, 0.12) !important;
+    left: -68px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -60%);
+    transition: all 250ms;
+    z-index: 2;
+
+    > .v-btn {
+      width: 100%;
+    }
+
+    &:focus,
+    &:hover {
+      opacity: 1;
+    }
+
+    @media only screen and (max-width: 1440px) {
+      box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+        1px 2px 2px 0 rgba(0, 0, 0, 0.14), 3px 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
+      left: 0;
+      margin-left: -12px;
+      opacity: 0.85;
+    }
+  }
 }
 
 .svg {

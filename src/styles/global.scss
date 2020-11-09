@@ -204,19 +204,31 @@ body {
 }
 
 .v-btn-toggle {
+  &.flat-left {
+    .v-btn {
+      border-bottom-left-radius: 0 !important;
+      border-top-left-radius: 0 !important;
+    }
+  }
+
   &.stacking-btn-toggle {
+    .v-btn:not(:first-child) {
+      border-left-width: 1px !important;
+    }
+
     .v-btn:first-child {
       border-bottom-left-radius: 0 !important;
       border-top-right-radius: 4px !important;
     }
 
     .v-btn:last-child {
-      border-bottom-left-radius: 4px !important;
       border-top-right-radius: 0 !important;
     }
+  }
 
-    .v-btn:not(:first-child) {
-      border-left-width: 1px !important;
+  &.stacking-btn-toggle:not(.flat-left) {
+    .v-btn:last-child {
+      border-bottom-left-radius: 4px !important;
     }
   }
 }
