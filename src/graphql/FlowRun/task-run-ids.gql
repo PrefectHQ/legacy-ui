@@ -1,0 +1,9 @@
+query taskRunIds($flowRunId: uuid!) {
+  flow_run_by_pk(id: $flowRunId) {
+      id
+    task_runs{
+    version
+      id
+    }
+  }
+}

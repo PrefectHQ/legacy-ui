@@ -2,7 +2,21 @@
 import { changeStateMixin } from '@/mixins/changeStateMixin'
 
 export default {
-  mixins: [changeStateMixin]
+  mixins: [changeStateMixin],
+  apollo: {
+    taskRunIds: {
+      query: require('@/graphql/FlowRun/task-run-ids.gql'),
+      variables() {
+        return {
+          flowRunId: this.flowRun.id
+        }
+      },
+      pollInterval: 10000,
+      update: data => {
+        return data.flow_run_by_pk.task_runs
+      }
+    }
+  }
 }
 </script>
 

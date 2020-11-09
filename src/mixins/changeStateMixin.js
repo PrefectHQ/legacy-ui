@@ -163,13 +163,15 @@ export const changeStateMixin = {
     },
     async changeState() {
       try {
+        //make sure we get the lastest version of each task run
+        if (this.allTasks) this.$apollo.queries.taskRunIds.refetch()
         this.markAsLoading = true
         const logSuccess = this.writeLogs()
         if (logSuccess) {
           if (
             this.dialogType === 'task run' ||
             this.dialogType == 'resume' ||
-            (this.allTasks && this.flowRun.task_runs.length)
+            (this.allTasks && this.taskRunIds?.length)
           ) {
             let taskState
             if (this.dialogType === 'task run' || this.dialogType == 'resume') {
@@ -182,7 +184,7 @@ export const changeStateMixin = {
                 }
               }
             } else {
-              taskState = this.flowRun.task_runs.map(taskRun => {
+              taskState = this.taskRunIds?.map(taskRun => {
                 return {
                   version: taskRun.version,
                   task_run_id: taskRun.id,
