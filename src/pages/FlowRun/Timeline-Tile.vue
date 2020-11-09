@@ -244,6 +244,12 @@ export default {
           color: computedStyle.getPropertyValue(`--v-${state.state}-base`)
         }
       })
+
+      this.breakpoints.unshift({
+        label: 'Scheduled Start',
+        time: this.flowRun.scheduled_start_time,
+        color: computedStyle.getPropertyValue('--v-Scheduled-base')
+      })
     },
     handleHover(e) {
       this.hoveredTaskRuns = this.items.filter(item =>
