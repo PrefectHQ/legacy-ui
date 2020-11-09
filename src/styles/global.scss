@@ -168,25 +168,6 @@ body {
   cursor: pointer;
 }
 
-.font-strikethrough {
-  text-decoration: line-through !important;
-}
-
-.font-strikethrough-diagonal {
-  position: relative;
-
-  &::before {
-    border-color: inherit;
-    border-top: 1px solid;
-    content: '';
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: rotate(-5deg);
-  }
-}
-
 .tabs-border-bottom {
   .v-tabs-bar {
     border-bottom: 1px solid #ddd !important;
@@ -233,10 +214,6 @@ body {
   overflow-y: hidden !important;
 }
 
-.overflow-x-scroll {
-  overflow-x: scroll !important;
-}
-
 .inline-block {
   display: inline-block;
 }
@@ -253,52 +230,8 @@ body {
   opacity: 1 !important;
 }
 
-.o-90 {
-  opacity: 0.9 !important;
-}
-
-.o-85 {
-  opacity: 0.85 !important;
-}
-
-.o-80 {
-  opacity: 0.8 !important;
-}
-
-.o-75 {
-  opacity: 0.75 !important;
-}
-
-.o-70 {
-  opacity: 0.7 !important;
-}
-
 .o-60 {
   opacity: 0.6 !important;
-}
-
-.o-50 {
-  opacity: 0.5 !important;
-}
-
-.o-40 {
-  opacity: 0.4 !important;
-}
-
-.o-30 {
-  opacity: 0.3 !important;
-}
-
-.o-20 {
-  opacity: 0.2 !important;
-}
-
-.o-10 {
-  opacity: 0.1 !important;
-}
-
-.o-none {
-  opacity: 0 !important;
 }
 
 .hover-o-100 {
@@ -317,9 +250,6 @@ body {
 }
 
 // Horizontal and diagonal slash styling
-.slash-container {
-  height: 100vh;
-}
 
 .fill-height {
   height: calc(100vh - 64px);

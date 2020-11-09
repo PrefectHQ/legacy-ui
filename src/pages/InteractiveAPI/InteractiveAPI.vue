@@ -24,7 +24,6 @@ import Schema from './Schema'
 import 'codemirror/addon/search/searchcursor'
 import js_beautify from 'js-beautify'
 
-import '@/styles/highlightjs.default.css'
 import '@/styles/playground.scss'
 
 export default {
