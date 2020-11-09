@@ -7,8 +7,7 @@ import flowNavGuard from '@/middleware/flowNavGuard'
 import multiguard from 'vue-router-multiguard'
 import tenantNavGuard from '@/middleware/tenantNavGuard'
 
-// import { getMDRoutes } from '@/utils/markdownParser'
-
+import { mdRoutes } from '@/utils/markdownParser'
 export const routes = [
   {
     name: 'not-found',
@@ -277,7 +276,7 @@ export const routes = [
           ),
         beforeEnter: multiguard([authNavGuard, tenantNavGuard])
       }
-    ]
+    ].concat(mdRoutes())
   },
   {
     name: 'notifications',

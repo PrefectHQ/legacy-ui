@@ -1,7 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-import { getRoutes } from '@/utils/markdownParser'
-
 export default {
   data() {
     return {
@@ -16,8 +14,7 @@ export default {
           to: 'universal-deploy-tutorial',
           title: 'Universal Deploy'
         }
-      ],
-      routes: getRoutes()
+      ]
     }
   },
   computed: {
@@ -57,24 +54,7 @@ export default {
 
       <v-divider />
 
-      <v-expansion-panels v-if="tutorialParser" focusable>
-        <v-expansion-panel v-for="(item, i) in routes" :key="i">
-          <v-expansion-panel-header>
-            <router-link :to="item.fileName">{{ item.fileName }}</router-link>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-list-item v-for="(id, index) in item.ids" :key="index">
-              <v-list-item-content>
-                <v-list-item-title>
-                  <!-- <router-link :to="item.fileName + id"> {{ id }}</router-link> -->
-                  <a :href="id">{{ id.replace(/#/gm, '') }}</a>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-      <v-list v-else dense>
+      <v-list v-if="!tutorialParser" dense>
         <v-list-item
           v-for="(tutorial, index) in tutorials"
           :key="index"
@@ -93,6 +73,10 @@ export default {
           </v-list-item-content>
         </v-list-item>
       </v-list>
+
+      <div v-else>
+        <router-link :to="{ name: 'test' }">Test</router-link>
+      </div>
     </v-navigation-drawer>
 
     <div
