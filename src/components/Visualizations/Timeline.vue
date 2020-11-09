@@ -1472,9 +1472,9 @@ export default {
   .controls-overlay {
     background-color: #fff;
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-      -1px 2px 2px 0 rgba(0, 0, 0, 0.14), -5px 1px 5px -4px rgba(0, 0, 0, 0.12) !important;
-    left: -68px;
+      1px 2px 2px 0 rgba(0, 0, 0, 0.14), 3px 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
     position: absolute;
+    right: -68px;
     top: 50%;
     transform: translate(0, -60%);
     transition: all 250ms;
@@ -1491,10 +1491,11 @@ export default {
 
     @media only screen and (max-width: 1440px) {
       box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-        1px 2px 2px 0 rgba(0, 0, 0, 0.14), 3px 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
-      left: 0;
-      margin-left: -12px;
+        -1px 2px 2px 0 rgba(0, 0, 0, 0.14),
+        -5px 1px 5px -4px rgba(0, 0, 0, 0.12) !important;
+      margin-right: -12px;
       opacity: 0.85;
+      right: 0;
     }
   }
 }

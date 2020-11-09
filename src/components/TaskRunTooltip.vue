@@ -10,6 +10,14 @@ export default {
   props: {
     taskRuns: { type: Array, required: true }
   },
+  computed: {
+    displayedTaskRuns() {
+      return this.taskRuns.slice(0, 5)
+    },
+    hiddenTaskRuns() {
+      return this.taskRuns.slice(5)
+    }
+  },
   methods: {
     expectedRuns(taskRun) {
       return (
@@ -47,7 +55,7 @@ export default {
 
 <template>
   <div class="v-tooltip__content tooltip py-2">
-    <div v-for="(taskRun, i) in taskRuns" :key="i">
+    <div v-for="(taskRun, i) in displayedTaskRuns" :key="i">
       <div class="title">{{ taskRun.data.task_name }}</div>
 
       <div class="d-flex align-center justify-start">
@@ -124,9 +132,18 @@ export default {
       </div>
 
       <div
-        v-if="taskRuns.length > 1 && i !== taskRuns.length - 1"
+        v-if="
+          displayedTaskRuns.length > 1 && i !== displayedTaskRuns.length - 1
+        "
         class="divider"
       ></div>
+    </div>
+
+    <div
+      v-if="hiddenTaskRuns.length"
+      class="pt-4 caption font-weight-medium text-right"
+    >
+      +{{ hiddenTaskRuns.length }} more
     </div>
   </div>
 </template>
