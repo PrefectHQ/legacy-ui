@@ -92,7 +92,8 @@ export default {
       hovered: null,
       hoveredItemIds: [],
       now: new Date(),
-      showControls: false, // These are useful for debugging
+      showControls: true,
+      showDebugControls: false, // These are useful for debugging
       showLabels: true,
       showTimestampAtCursor: false,
       updateXTimeout: null,
@@ -1261,7 +1262,11 @@ export default {
     class="position-relative timeline-container"
     style="height: 100%;"
   >
-    <div class="controls-overlay d-flex flex-column align-center" multiple>
+    <div
+      v-if="showControls"
+      class="controls-overlay d-flex flex-column align-center"
+      multiple
+    >
       <v-btn
         small
         depressed
@@ -1324,7 +1329,7 @@ export default {
       </template>
 
       <v-list dense tile class="d-flex justify-middle align-end flex-column">
-        <v-list-item v-if="showControls" class="d-flex  my-4">
+        <v-list-item v-if="showDebugControls" class="d-flex  my-4">
           <v-btn
             small
             :disabled="transform.k == scaleExtent[1]"
@@ -1366,7 +1371,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          v-if="showControls"
+          v-if="showDebugControls"
           class="text-caption text-right d-flex flex-column justify-space-around"
         >
           <span>
@@ -1390,6 +1395,15 @@ export default {
 
         <v-list-item>
           <v-checkbox
+            v-model="showControls"
+            label="Show Controls"
+            hide-details
+            class="v-input--reverse input-menu-item ma-0"
+          ></v-checkbox>
+        </v-list-item>
+
+        <v-list-item>
+          <v-checkbox
             v-model="showLabels"
             label="Breakpoint Labels"
             hide-details
@@ -1408,15 +1422,15 @@ export default {
           ></v-checkbox>
         </v-list-item>
 
-        <v-list-item v-if="showControls" @click="playOrPause">
+        <v-list-item v-if="showDebugControls" @click="playOrPause">
           {{ pauseUpdates ? 'Play' : 'Pause' }}
         </v-list-item>
 
-        <v-list-item v-if="showControls" @click="collapse">
+        <v-list-item v-if="showDebugControls" @click="collapse">
           {{ condensed_ ? 'Expand' : 'Collapse' }}
         </v-list-item>
 
-        <v-list-item v-if="showControls" @click="redraw">
+        <v-list-item v-if="showDebugControls" @click="redraw">
           Redraw
         </v-list-item>
       </v-list>
