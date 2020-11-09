@@ -251,8 +251,6 @@ export default {
           color: computedStyle.getPropertyValue(`--v-${state.state}-base`)
         }
       })
-
-      console.log(this.breakpoints)
     },
     handleHover(e) {
       this.hoveredTaskRuns = this.items.filter(item =>
