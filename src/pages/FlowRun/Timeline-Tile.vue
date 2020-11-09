@@ -252,6 +252,11 @@ export default {
         }
       })
     },
+    handleClick() {
+      // TODO: We want to add some click event to bars; it's possible we could use just a menu and then navigation
+      // to individual task runs from there, but for now the click event, similar to the hover,
+      // will return a list of all the task runs under the cursor at a given time.
+    },
     handleHover(e) {
       this.hoveredTaskRuns = this.items.filter(item =>
         e?.ids?.includes(item.id)
@@ -361,6 +366,7 @@ export default {
         :min-bar-radius="10"
         @breakpoint-hover="handleBreakpointHover"
         @hover="handleHover"
+        @click="handleClick"
       >
         <template slot="item-tooltip">
           <v-fade-transition mode="out-in">
