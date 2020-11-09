@@ -164,7 +164,7 @@ export const changeStateMixin = {
     async changeState() {
       try {
         //make sure we get the lastest version of each task run
-        if (this.allTasks) this.$apollo.queries.taskRunIds.refetch()
+        if (this.allTasks) await this.$apollo.queries.taskRunIds.refetch()
         this.markAsLoading = true
         const logSuccess = this.writeLogs()
         if (logSuccess) {
