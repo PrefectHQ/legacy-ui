@@ -156,6 +156,10 @@ export default {
             // taskRun.state == 'Running' || taskRun.state == 'Pending'
           }
 
+          if ((this.isFinished || taskRunIsFinished) && !item.end_time) {
+            item.end_time = taskRun.start_time
+          }
+
           if ((this.isFinished || taskRunIsFinished) && !item.start_time) {
             item.start_time = taskRun.state_timestamp
             item.end_time = taskRun.state_timestamp
