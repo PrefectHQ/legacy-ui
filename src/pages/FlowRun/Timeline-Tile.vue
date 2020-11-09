@@ -61,7 +61,10 @@ export default {
       return this.flowRun.start_time
         ? Math.min.apply(null, [
             new Date(this.flowRun.scheduled_start_time),
-            new Date(this.flowRun.start_time)
+            new Date(this.flowRun.start_time),
+            ...this.flowRun.states
+              .filter(state => state.state == 'Scheduled')
+              .map(state => new Date(state.timestamp))
           ])
         : this.flowRun.scheduled_start_time
     },
@@ -249,11 +252,7 @@ export default {
         }
       })
 
-      this.breakpoints.unshift({
-        label: 'Scheduled Start',
-        time: this.flowRun.scheduled_start_time,
-        color: computedStyle.getPropertyValue('--v-Scheduled-base')
-      })
+      console.log(this.breakpoints)
     },
     handleHover(e) {
       this.hoveredTaskRuns = this.items.filter(item =>
