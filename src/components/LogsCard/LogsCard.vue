@@ -741,7 +741,6 @@ export default {
 
 .logs-card {
   background-color: transparent;
-  overflow: scroll;
   position: relative;
 }
 
@@ -759,7 +758,7 @@ export default {
 
 .logs-list {
   max-height: 62vh;
-  overflow-y: scroll;
+  overflow: auto;
   position: relative;
 }
 

@@ -39,6 +39,7 @@ export default function(isCloud) {
           version
           version_group_id
           core_version
+          parameters
           project {
             id
             name

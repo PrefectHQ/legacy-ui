@@ -249,9 +249,7 @@ export default {
         if (!data) return
         this.hooksLoaded = true
       },
-      update(data) {
-        return data.cloud_hook
-      },
+      update: data => data.cloud_hook,
       fetchPolicy: 'no-cache'
     }
   }

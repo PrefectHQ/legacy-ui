@@ -61,6 +61,7 @@ export const STATE_NAMES = [
   'Skipped',
   'Resume',
   'Paused',
+  'Submitted',
   'TriggerFailed'
 ]
 

@@ -70,6 +70,28 @@ export default {
           return obj
         }, {})
     },
+    runConfigDisplayFields() {
+      if (!this.flow.run_config || !this.flow.run_config.type) return []
+
+      let fields = ['type']
+      if (this.flow.run_config.type == 'LocalRun') {
+        fields.push('working_dir')
+      } else if (this.flow.run_config.type == 'DockerRun') {
+        fields.push('image')
+      } else if (this.flow.run_config.type == 'KubernetesRun') {
+        fields.push(
+          'image',
+          'job_template_path',
+          'cpu_request',
+          'cpu_limit',
+          'memory_request',
+          'memory_limit'
+        )
+      } else if (this.flow.run_config.type == 'ECSRun') {
+        fields.push('image', 'task_definition_path', 'cpu', 'memory')
+      }
+      return fields.filter(field => this.flow.run_config[field] != null)
+    },
     flows() {
       if (!this.flow.storage || !this.flow.storage.flows) return null
       return this.flow.storage.flows
@@ -172,10 +194,10 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text class="pl-12 pt-2 card-content">
+    <v-card-text class="pa-0">
       <v-fade-transition hide-on-leave>
-        <div v-if="tab == 'overview'">
-          <v-list-item dense class="px-0">
+        <v-list v-if="tab == 'overview'" class="card-content">
+          <v-list-item dense>
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Created <span v-if="hasUser">by</span>
@@ -189,7 +211,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item v-if="flow.core_version" dense class="px-0">
+          <v-list-item v-if="flow.core_version" dense>
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Prefect Core Version:
@@ -198,7 +220,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item dense class="px-0">
+          <v-list-item dense>
             <v-list-item-content>
               <v-list-item-subtitle class="caption">
                 Schedule
@@ -214,12 +236,12 @@ export default {
           </v-list-item>
 
           <LabelEdit :flow="flow" :flow-group="flowGroup" />
-        </div>
+        </v-list>
       </v-fade-transition>
 
       <v-fade-transition hide-on-leave>
-        <div v-if="tab == 'details'">
-          <v-list-item dense class="px-0">
+        <v-list v-if="tab == 'details'" class="card-content">
+          <v-list-item dense>
             <v-list-item-content>
               <v-list-item-subtitle class="grey--text text--darken-3">
                 General
@@ -326,19 +348,26 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item dense class="px-0">
+          <v-list-item dense>
             <v-list-item-content v-if="flow.run_config">
               <v-list-item-subtitle class="grey--text text--darken-3">
                 Run Config
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
               <v-list-item-subtitle class="caption">
-                <v-row v-if="flow.run_config.type" no-gutters>
+                <v-row
+                  v-for="field in runConfigDisplayFields"
+                  :key="field"
+                  no-gutters
+                >
                   <v-col cols="6">
-                    Type
+                    {{ field }}
                   </v-col>
-                  <v-col cols="6" class="text-right font-weight-bold">
-                    {{ flow.run_config.type }}
+                  <v-col
+                    cols="6"
+                    class="text-right font-weight-bold text-truncate"
+                  >
+                    {{ flow.run_config[field] }}
                   </v-col>
                 </v-row>
               </v-list-item-subtitle>
@@ -370,7 +399,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item v-if="flow.storage" dense class="px-0 mt-2">
+          <v-list-item v-if="flow.storage" dense class="mt-2">
             <v-list-item-content>
               <v-list-item-subtitle class="grey--text text--darken-3">
                 Storage
@@ -424,7 +453,7 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item v-if="flows" dense class="px-0 mt-2">
+          <v-list-item v-if="flows" dense class="mt-2">
             <v-list-item-content>
               <v-list-item-subtitle class="grey--text text--darken-3">
                 Flow Locations
@@ -452,7 +481,6 @@ export default {
             v-if="flow.parameters && flow.parameters.length > 0"
             dense
             two-line
-            class="px-0"
           >
             <v-list-item-content>
               <v-list-item-subtitle class="grey--text text--darken-3">
@@ -517,7 +545,7 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-        </div>
+        </v-list>
       </v-fade-transition>
     </v-card-text>
   </v-card>
@@ -536,7 +564,7 @@ export default {
 
 .card-content {
   max-height: 254px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .cursor-pointer {
