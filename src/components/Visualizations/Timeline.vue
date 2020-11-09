@@ -1262,20 +1262,56 @@ export default {
     style="height: 100%;"
   >
     <div class="controls-overlay d-flex flex-column align-center" multiple>
-      <v-btn small depressed icon tile color="#999">
+      <v-btn
+        small
+        depressed
+        icon
+        tile
+        color="#999"
+        :disabled="transform.k == scaleExtent[1]"
+        @click="zoomIn"
+      >
         <v-icon>add</v-icon>
       </v-btn>
 
       <div class="d-flex">
-        <v-btn small icon depressed tile color="#999">
+        <v-btn
+          small
+          icon
+          depressed
+          tile
+          color="#999"
+          :disabled="transform.k === 1 || transform.x == translateExtent[0][0]"
+          @click="panLeft"
+        >
           <v-icon>arrow_left</v-icon>
         </v-btn>
-        <v-btn small icon depressed tile color="#999">
+        <v-btn
+          small
+          icon
+          depressed
+          tile
+          color="#999"
+          :disabled="
+            transform.k === 1 ||
+              transform.k * translateExtent[1][0] + transform.x <=
+                translateExtent[1][0]
+          "
+          @click="panRight"
+        >
           <v-icon>arrow_right</v-icon>
         </v-btn>
       </div>
 
-      <v-btn small depressed icon tile color="#999">
+      <v-btn
+        small
+        depressed
+        icon
+        tile
+        color="#999"
+        :disabled="transform.k == scaleExtent[0]"
+        @click="zoomOut"
+      >
         <v-icon>remove</v-icon>
       </v-btn>
     </div>
