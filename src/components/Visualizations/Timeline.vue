@@ -92,7 +92,7 @@ export default {
       hovered: null,
       hoveredItemIds: [],
       now: new Date(),
-      showControls: true, // These are useful for debugging
+      showControls: false, // These are useful for debugging
       showLabels: true,
       showTimestampAtCursor: false,
       updateXTimeout: null,
@@ -1261,14 +1261,14 @@ export default {
     class="position-relative timeline-container"
     style="height: 100%;"
   >
-    <v-menu bottom right :close-on-content-click="false">
+    <v-menu bottom left :close-on-content-click="false">
       <template #activator="{ on }">
         <v-btn icon small class="input-menu" v-on="on">
           <v-icon>more_vert</v-icon>
         </v-btn>
       </template>
 
-      <v-list dense tile>
+      <v-list dense tile class="d-flex justify-middle align-end flex-column">
         <v-list-item v-if="showControls" class="d-flex  my-4">
           <v-btn
             small
