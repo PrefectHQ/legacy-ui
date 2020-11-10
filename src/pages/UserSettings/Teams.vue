@@ -282,8 +282,8 @@ export default {
         >
           <div class="red--text"
             >Are you sure you want to remove yourself from
-            {{ removeTenant.name }}? You'll no longer be able to access your
-            Projects or Flows associated with {{ removeTenant.name }}.
+            {{ removeTenant.name }}? You'll no longer be able to access your run
+            data associated with {{ removeTenant.name }}.
           </div>
         </ConfirmDialog>
       </template>
