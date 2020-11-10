@@ -5,6 +5,9 @@ module.exports = {
       .test(/\.md/)
       .use('html-loader')
       .loader('html-loader')
+      .tap(options => {
+        return { ...options, minimized: false }
+      })
       .end()
 
     config.resolve.symlinks(false)
