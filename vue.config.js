@@ -6,7 +6,7 @@ module.exports = {
       .use('html-loader')
       .loader('html-loader')
       .tap(options => {
-        return { ...options, minimized: false }
+        return { ...options, minimize: false }
       })
       .end()
 
