@@ -17,7 +17,7 @@ export default {
       currentInvitation: null,
       declining: false,
       dialog: false,
-      redirectTenant: null
+      redirectTenant: null,
 
       // Reveal animation bools
       revealNote: false,
