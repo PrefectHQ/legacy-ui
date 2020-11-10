@@ -28,14 +28,14 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['memberships', 'user']),
-    ...mapGetters('tenant', ['tenant', 'tenants'])
+    ...mapGetters('tenant', ['tenant', 'tenants']),
+    currentMemberships() {
+      return this.memberships.map(i => i.tenant.id)
+    }
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
-    currentMemberships() {
-      return this.memberships.map(i => i.tenant.id)
-    },
     role(item) {
       let role
       switch (item) {
@@ -59,8 +59,6 @@ export default {
       const inviteId = this.pendingInvitations.find(i => i.tenant.id == id)?.id
       try {
         await this.acceptMembershipInvitation(inviteId)
-      } catch (e) {
-        console.log(e)
       } finally {
         await this.$apollo.queries.pendingInvitations.refetch()
         this.handlingInvitationLoad = false
@@ -73,8 +71,6 @@ export default {
       const inviteId = this.pendingInvitations.find(i => i.tenant.id == id)?.id
       try {
         await this.declineMembershipInvitation(inviteId)
-      } catch (e) {
-        console.log(e)
       } finally {
         await this.$apollo.queries.pendingInvitations.refetch()
         this.handlingInvitationLoad = false
@@ -210,7 +206,7 @@ export default {
         <v-tooltip bottom>
           <template #activator="{on}">
             <v-btn
-              v-if="!currentMemberships().includes(item.id)"
+              v-if="!currentMemberships.includes(item.id)"
               text
               fab
               x-small
@@ -224,7 +220,7 @@ export default {
         <v-tooltip bottom>
           <template #activator="{on}">
             <v-btn
-              v-if="!currentMemberships().includes(item.id)"
+              v-if="!currentMemberships.includes(item.id)"
               text
               fab
               x-small
@@ -239,7 +235,7 @@ export default {
           ><template #activator="{on}"
             ><v-btn
               v-if="
-                item.id !== tenant.id && currentMemberships().includes(item.id)
+                item.id !== tenant.id && currentMemberships.includes(item.id)
               "
               text
               fab
@@ -254,7 +250,7 @@ export default {
         <v-tooltip bottom
           ><template #activator="{on}"
             ><v-btn
-              v-if="currentMemberships().includes(item.id)"
+              v-if="currentMemberships.includes(item.id)"
               text
               fab
               x-small
