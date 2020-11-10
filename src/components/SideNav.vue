@@ -618,11 +618,7 @@ export default {
                 <div
                   v-if="pendingInvitations"
                   class="badge"
-                  :class="
-                    pendingInvitations && pendingInvitations.length < 1
-                      ? 'badge--hidden'
-                      : ''
-                  "
+                  :class="pendingInvitations.length < 1 ? 'badge--hidden' : ''"
                 >
                   {{ pendingInvitations.length }}
                 </div>
@@ -707,10 +703,7 @@ export default {
           />
           <v-list class="ma-2" dense flat :disabled="loading">
             <v-list-item-group
-              v-if="
-                (pendingInvitations && pendingInvitations.length > 0) ||
-                  handlingInvitationLoad
-              "
+              v-if="pendingInvitations.length > 0 || handlingInvitationLoad"
               subheader
             >
               <v-subheader>Pending Invitations</v-subheader>
