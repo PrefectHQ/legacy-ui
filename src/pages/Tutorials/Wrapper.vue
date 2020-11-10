@@ -12,6 +12,6 @@ export default {
 <template>
   <div>
     <h1>Route: {{ this.$route.name }}</h1>
-    <div v-html="fileMD()"></div>
+    <!-- <div v-html="fileMD()"></div> -->
   </div>
 </template>
