@@ -52,7 +52,6 @@ export default {
       feedbackDialog: false,
       items: [],
       loading: false,
-      pendingInvitations: [],
       selectedTenant: null,
       tenantMenuOpen: false,
       tzMenuOpen: false,

@@ -17,8 +17,7 @@ export default {
       currentInvitation: null,
       declining: false,
       dialog: false,
-      redirectTenant: null,
-      pendingInvitations: [],
+      redirectTenant: null
 
       // Reveal animation bools
       revealNote: false,
