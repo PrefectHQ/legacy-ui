@@ -3,17 +3,26 @@ import { changeStateMixin } from '@/mixins/changeStateMixin'
 
 export default {
   mixins: [changeStateMixin],
+  data() {
+    return {
+      childTasks: false
+    }
+  },
   apollo: {
     taskRunIds: {
       query: require('@/graphql/FlowRun/task-run-ids.gql'),
       variables() {
         return {
-          flowRunId: this.flowRun.id
+          flowRunId: this.flowRun.id,
+          mapIndex: this.childTasks ? null : -1
         }
+      },
+      skip() {
+        return !this.flowRun
       },
       pollInterval: 10000,
       update: data => {
-        return data.flow_run_by_pk.task_runs
+        return data.task_run
       }
     }
   }
@@ -76,7 +85,15 @@ export default {
                   <v-checkbox
                     v-if="flowRun"
                     v-model="allTasks"
-                    label="Change the state of all task runs too"
+                    class="pb-0 mb-0"
+                    label="Include all (non-child) task runs"
+                  ></v-checkbox>
+                  <v-checkbox
+                    v-if="flowRun"
+                    v-model="childTasks"
+                    :disabled="!allTasks"
+                    class="pt-0 mt-0"
+                    label="Include mapped-child task runs - this may take some time"
                   ></v-checkbox>
                   <v-form ref="form" @submit.prevent>
                     <v-text-field
@@ -109,6 +126,10 @@ export default {
                   {{ taskRun ? taskRun.name : flowRun.name }} to
                   <span class="font-weight-black pb-8">
                     {{ selectedState }}.</span
+                  >
+                  <div v-if="childTasks" class="pt-1">
+                    If you have a lot of child mapped tasks, the state change
+                    may continue in the background.</div
                   >
                   <span v-if="dialogType === 'task run'">
                     This may have an effect on downstream tasks.

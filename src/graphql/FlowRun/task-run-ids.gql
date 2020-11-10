@@ -1,9 +1,7 @@
-query taskRunIds($flowRunId: uuid!) {
-  flow_run_by_pk(id: $flowRunId) {
-      id
-    task_runs{
+query taskRunIds($flowRunId: uuid!, $mapIndex: Int) {
+    task_run (where: {_and: [{flow_run_id: {_eq: $flowRunId}}, {map_index: {_eq: $mapIndex}}]}){
     version
       id
-    }
+      map_index
   }
 }

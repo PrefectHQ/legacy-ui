@@ -184,7 +184,7 @@ export const changeStateMixin = {
                 }
               }
             } else {
-              taskState = this.taskRunIds?.map(taskRun => {
+              taskState = this.taskRunIds.map(taskRun => {
                 return {
                   version: taskRun.version,
                   task_run_id: taskRun.id,
@@ -271,6 +271,7 @@ export const changeStateMixin = {
       this.selectedState = ''
       this.allTasks = false
       this.cancelLoad = false
+      this.childTasks = false
       this.alertMessage =
         'We hit a problem. Please try marking the state again.'
       this.setStateSuccessA = false
