@@ -231,7 +231,6 @@ export default {
         await this.acceptMembershipInvitation(id)
         success = true
       } catch (e) {
-        console.log(e)
         success = false
       } finally {
         this.setAlert(
