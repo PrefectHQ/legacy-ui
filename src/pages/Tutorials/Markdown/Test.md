@@ -1,19 +1,9 @@
-# H1
+# Heading One
 
-## H2
+## Heading Two
 
-### H3
-
-**bold text**
-
-1. First item
-2. Second item
-3. Third item
-
-- First item
-- Second item
-- Third item
+**bold**
 
 ```js
-console.log('hello!')
+console.log('hey')
 ```

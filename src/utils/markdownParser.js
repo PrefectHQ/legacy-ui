@@ -3,7 +3,7 @@ import marked from 'marked'
 export function parser(md) {
   let result = ''
   if (typeof md === 'string') {
-    result = marked(md, { gfm: true })
+    result = marked(md, { gfm: true, breaks: true })
   } else {
     result = `Error! A ${typeof md} was passed in instead of a string`
   }
