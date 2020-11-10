@@ -280,7 +280,7 @@ export const routes = [
         path: 'test',
         component: () =>
           import(
-            /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/Wrapper.vue'
+            /* webpackChunkName: "tutorials--test" */ '@/pages/Tutorials/Wrapper.vue'
           ),
         beforeEnter: multiguard([authNavGuard, tenantNavGuard])
       }
