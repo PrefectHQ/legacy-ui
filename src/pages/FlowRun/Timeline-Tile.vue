@@ -142,11 +142,9 @@ export default {
                   : null
               // item.shadow = states.some(state => notPastStates.includes(state))
             } else {
-              // We could always use mappedRef.max_end_time
-              // if we don't want to assume a mapped task run is always running
-              // on older versions of Core
-              item.end_time =
-                this.flowRun.state == 'Running' ? null : mappedRef.max_end_time
+              // Using mappedRef.max_end_time means older versions of Core will visually "jump"
+              // as new task runs are taken into account for the calculation of max_end_time
+              item.end_time = mappedRef.max_end_time
               // item.shadow = this.flowRun.state == 'Running'
             }
           } else {
