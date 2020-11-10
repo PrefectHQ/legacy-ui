@@ -17,7 +17,7 @@ export default {
         { text: 'Name', value: 'name' },
         { text: 'URL', value: 'slug' },
         { text: 'Role', value: 'role' },
-        { text: 'Actions', value: 'id' }
+        { text: '', value: 'id', align: 'right', sortable: false }
       ],
       isRemovingUser: false,
       removeTenant: null
@@ -51,11 +51,9 @@ export default {
       this.isRemovingUser = true
       const initialTenant = this.tenant
 
-      let membershipsObject = {}
-      for (const membership of this.memberships) {
-        membershipsObject[membership.tenant.id] = membership.id
-      }
-      const membershipId = membershipsObject[removalTenant.id]
+      const membershipId = this.memberships.find(
+        m => m.tenant.id == removalTenant.id
+      )?.id
 
       if (initialTenant.id !== removalTenant.id) {
         await this.setCurrentTenant(removalTenant.slug)
@@ -115,13 +113,14 @@ export default {
     <template #title>Your Teams</template>
 
     <template #subtitle>
-      See your Prefect teams and roles, switch between them, and leave teams
+      View and manage your team memberships
     </template>
 
     <v-data-table
       fixed-header
       class="elevation-2 rounded-none truncate-table"
       :headers="headers"
+      :header-props="{ 'sort-icon': 'arrow_drop_up' }"
       :items="tenants"
       :footer-props="{
         showFirstLastPage: true,
@@ -131,21 +130,48 @@ export default {
         nextIcon: 'keyboard_arrow_right'
       }"
     >
+      <template #header.name="{ header }">
+        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+      </template>
+      <template #header.slug="{ header }">
+        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+      </template>
+      <template #header.role="{ header }">
+        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+      </template>
       <template #item.role="{item}">
         {{ role(item.role) }}
       </template>
       <template #item.id="{item}">
-        <v-btn v-if="item.id !== tenant.id" @click="handleSwitchTenant(item)"
-          >View</v-btn
+        <v-tooltip bottom
+          ><template #activator="{on}"
+            ><v-btn
+              v-if="item.id !== tenant.id"
+              text
+              fab
+              x-small
+              color="primary"
+              v-on="on"
+              @click="handleSwitchTenant(item)"
+              ><v-icon>fas fa-eye</v-icon></v-btn
+            ></template
+          >Switch to this team</v-tooltip
         >
-        <v-btn v-else disabled>Current</v-btn>
-        <v-btn
-          class="ml-3"
-          @click="
-            dialogRemoveUser = true
-            removeTenant = item
-          "
-          >Leave</v-btn
+        <v-tooltip bottom
+          ><template #activator="{on}"
+            ><v-btn
+              text
+              fab
+              x-small
+              color="error"
+              v-on="on"
+              @click="
+                dialogRemoveUser = true
+                removeTenant = item
+              "
+              ><v-icon>close</v-icon></v-btn
+            ></template
+          >Leave this team</v-tooltip
         >
         <ConfirmDialog
           v-if="removeTenant"
