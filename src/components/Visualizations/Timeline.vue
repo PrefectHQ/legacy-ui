@@ -3,10 +3,11 @@ import * as d3 from 'd3'
 import uniqueId from 'lodash.uniqueid'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
-import { formatTime } from '@/mixins/formatTimeMixin'
+import moment from '@/utils/moment'
 
-const d3formatTime = d3.timeFormat('%-I:%M:%S')
-const d3formatTimeExtended = d3.timeFormat('%a %-I:%M:%S %p')
+import { formatTime } from '@/mixins/formatTimeMixin'
+import { mapGetters } from 'vuex'
+
 const xAxisHeight = 20
 
 export default {
@@ -154,6 +155,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('user', ['user', 'timezone']),
     calcRows: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawCalcRows)
@@ -482,17 +484,35 @@ export default {
         .ticks(7)
         .tickSizeOuter(0)
         .tickFormat(d => {
-          const dateObj = new Date(d)
-          const dayWeek = dateObj.getDay()
-          const hours = dateObj.getHours() < 12 ? 'am' : 'pm'
+          const t = moment(d).tz(this.timezone)
+          const dateObj = t ? t : moment(d)
+          const dayWeek = dateObj.day()
+          const hours = dateObj.hour() < 12 ? 'am' : 'pm'
 
-          if (day && dayWeek === day && meridiem && hours === meridiem) {
-            return d3formatTime(d)
-          } else {
+          const shortened =
+            day && dayWeek === day && meridiem && hours === meridiem
+
+          if (!shortened) {
             day = dayWeek
             meridiem = hours
-            return d3formatTimeExtended(d)
           }
+
+          const formatted = dateObj.calendar(null, {
+            sameDay: `h:mm${shortened ? '' : 'a'}`,
+            nextDay: 'D MMM h:mm',
+            nextWeek: 'D MMM h:mm',
+            lastDay: `${shortened ? '' : '[Yesterday at]'} h:mm${
+              shortened ? '' : 'a'
+            }`,
+            lastWeek: `${shortened ? '' : 'D MMM [at] '}h:mm${
+              shortened ? '' : 'a'
+            }`,
+            sameElse: `${shortened ? '' : 'D MMM [at] '}h:mm${
+              shortened ? '' : 'a'
+            }`
+          })
+
+          return `${formatted}`
         })
     },
     render(elapsed) {
