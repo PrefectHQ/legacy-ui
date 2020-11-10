@@ -1,6 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { clearCache } from '@/vue-apollo'
+import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 
 import ManagementLayout from '@/layouts/ManagementLayout.vue'
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -10,9 +11,11 @@ export default {
     ManagementLayout,
     ConfirmDialog
   },
+  mixins: [handleMembershipInvitations],
   data() {
     return {
       dialogRemoveUser: false,
+      handlingInvitationLoad: false,
       headers: [
         { text: 'Name', value: 'name' },
         { text: 'URL', value: 'slug' },
@@ -24,11 +27,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['memberships']),
+    ...mapGetters('user', ['memberships', 'user']),
     ...mapGetters('tenant', ['tenant', 'tenants'])
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
+    currentMemberships() {
+      return this.memberships.map(i => i.tenant.id)
+    },
     role(item) {
       let role
       switch (item) {
@@ -46,6 +53,34 @@ export default {
           break
       }
       return role
+    },
+    async handleAcceptPendingInvitation(id) {
+      this.handlingInvitationLoad = true
+      const inviteId = this.pendingInvitations.find(i => i.tenant.id == id)?.id
+      try {
+        await this.acceptMembershipInvitation(inviteId)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        await this.$apollo.queries.pendingInvitations.refetch()
+        this.handlingInvitationLoad = false
+      }
+      await this.getUser()
+      await this.getTenants()
+    },
+    async handleDeclinePendingInvitation(id) {
+      this.handlingInvitationLoad = true
+      const inviteId = this.pendingInvitations.find(i => i.tenant.id == id)?.id
+      try {
+        await this.declineMembershipInvitation(inviteId)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        await this.$apollo.queries.pendingInvitations.refetch()
+        this.handlingInvitationLoad = false
+      }
+      await this.getUser()
+      await this.getTenants()
     },
     async removeUser(removalTenant) {
       this.isRemovingUser = true
@@ -104,6 +139,35 @@ export default {
         params: { tenant: this.tenant.slug }
       })
     }
+  },
+  apollo: {
+    pendingInvitations: {
+      query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
+      variables() {
+        return {
+          email: this.user.email
+        }
+      },
+      async result({ data, loading }) {
+        if (loading || !data || !data.pendingInvitations) return
+        // We filter this because we don't want to show invitations
+        // to tenants we're already in...
+        // This is due to a bug(feature?) in the back end that allows
+        // users to be invited to tenants they're already part of
+        await this.getUser()
+        this.pendingInvitations =
+          data.pendingInvitations && data.pendingInvitations.length
+            ? data.pendingInvitations.filter(
+                pi =>
+                  !this.memberships
+                    .map(at => at.tenant.id)
+                    .includes(pi.tenant.id)
+              )
+            : []
+      },
+      fetchPolicy: 'network-only',
+      pollInterval: 60000
+    }
   }
 }
 </script>
@@ -143,10 +207,40 @@ export default {
         {{ role(item.role) }}
       </template>
       <template #item.id="{item}">
+        <v-tooltip bottom>
+          <template #activator="{on}">
+            <v-btn
+              v-if="!currentMemberships().includes(item.id)"
+              text
+              fab
+              x-small
+              color="primary"
+              v-on="on"
+              @click="handleAcceptPendingInvitation(item.id)"
+              ><v-icon>check</v-icon></v-btn
+            ></template
+          >Accept invite to join team
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template #activator="{on}">
+            <v-btn
+              v-if="!currentMemberships().includes(item.id)"
+              text
+              fab
+              x-small
+              color="error"
+              v-on="on"
+              @click="handleDeclinePendingInvitation(item.id)"
+              ><v-icon>close</v-icon></v-btn
+            ></template
+          >Decline invite to join team
+        </v-tooltip>
         <v-tooltip bottom
           ><template #activator="{on}"
             ><v-btn
-              v-if="item.id !== tenant.id"
+              v-if="
+                item.id !== tenant.id && currentMemberships().includes(item.id)
+              "
               text
               fab
               x-small
@@ -160,6 +254,7 @@ export default {
         <v-tooltip bottom
           ><template #activator="{on}"
             ><v-btn
+              v-if="currentMemberships().includes(item.id)"
               text
               fab
               x-small
