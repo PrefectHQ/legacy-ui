@@ -447,7 +447,8 @@ export default {
 
       if (
         (!hoveredIds.length && this.hoveredItemIds.length) ||
-        hoveredIds.some(h => !this.hoveredItemIds.includes(h))
+        hoveredIds.some(h => !this.hoveredItemIds.includes(h)) ||
+        hoveredIds.length !== this.hoveredItemIds.length
       ) {
         if (!hoveredIds.length) this.canvas._groups[0][0].style.cursor = null
 
