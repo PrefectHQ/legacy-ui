@@ -231,6 +231,7 @@ export default {
         await this.acceptMembershipInvitation(id)
         success = true
       } catch (e) {
+        console.log(e)
         success = false
       } finally {
         this.setAlert(
@@ -290,23 +291,6 @@ export default {
           email: this.user.email
         }
       },
-      async result({ data, loading }) {
-        if (loading || !data || !data.pendingInvitations) return
-        // We filter this because we don't want to show invitations
-        // to tenants we're already in...
-        // This is due to a bug(feature?) in the back end that allows
-        // users to be invited to tenants they're already part of
-        await this.getUser()
-        this.pendingInvitations =
-          data.pendingInvitations && data.pendingInvitations.length
-            ? data.pendingInvitations.filter(
-                pi =>
-                  !this.memberships
-                    .map(at => at.tenant.id)
-                    .includes(pi.tenant.id)
-              )
-            : []
-      },
       skip() {
         return (
           !this.isCloud ||
@@ -317,7 +301,8 @@ export default {
         )
       },
       fetchPolicy: 'network-only',
-      pollInterval: 60000
+      pollInterval: 60000,
+      update: data => data.pendingInvitations
     }
   }
 }
@@ -633,7 +618,11 @@ export default {
                 <div
                   v-if="pendingInvitations"
                   class="badge"
-                  :class="pendingInvitations.length < 1 ? 'badge--hidden' : ''"
+                  :class="
+                    pendingInvitations && pendingInvitations.length < 1
+                      ? 'badge--hidden'
+                      : ''
+                  "
                 >
                   {{ pendingInvitations.length }}
                 </div>
@@ -718,7 +707,10 @@ export default {
           />
           <v-list class="ma-2" dense flat :disabled="loading">
             <v-list-item-group
-              v-if="pendingInvitations.length > 0 || handlingInvitationLoad"
+              v-if="
+                (pendingInvitations && pendingInvitations.length > 0) ||
+                  handlingInvitationLoad
+              "
               subheader
             >
               <v-subheader>Pending Invitations</v-subheader>
