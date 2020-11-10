@@ -7,7 +7,6 @@ import flowNavGuard from '@/middleware/flowNavGuard'
 import multiguard from 'vue-router-multiguard'
 import tenantNavGuard from '@/middleware/tenantNavGuard'
 
-import { mdRoutes } from '@/utils/markdownParser'
 export const routes = [
   {
     name: 'not-found',
@@ -275,8 +274,17 @@ export const routes = [
             /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/UniversalDeploy/UniversalDeployTutorial.vue'
           ),
         beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      },
+      {
+        name: 'test',
+        path: 'test',
+        component: () =>
+          import(
+            /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/Wrapper.vue'
+          ),
+        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
       }
-    ].concat(mdRoutes())
+    ]
   },
   {
     name: 'notifications',

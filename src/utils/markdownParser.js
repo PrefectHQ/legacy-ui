@@ -1,28 +1,18 @@
-import marked from 'marked'
+import remark from 'remark'
+import html from 'remark-html'
+import slug from 'remark-slug'
 
 export function parser(md) {
   let result = ''
   if (typeof md === 'string') {
-    result = marked(md, { gfm: true, breaks: true })
+    remark()
+      .use(html)
+      .use(slug)
+      .process(md, (err, file) => {
+        result = String(file)
+      })
   } else {
     result = `Error! A ${typeof md} was passed in instead of a string`
   }
   return result
-}
-
-export function mdRoutes() {
-  const mdFiles = require
-    .context('../pages/Tutorials/Markdown', true, /\.md/)
-    .keys()
-  return mdFiles.map(file => {
-    const name = file
-      .replace(/\//g, '')
-      .replace(/\./, '')
-      .replace(/\.md/, '')
-    return {
-      name,
-      path: name,
-      component: () => import('@/pages/Tutorials/Wrapper.vue')
-    }
-  })
 }
