@@ -137,7 +137,7 @@ export default {
       :loading="isLoading"
     />
 
-    <v-card-text class="pa-0">
+    <v-card-text class="pa-0 card-content">
       <v-skeleton-loader v-if="isLoading" type="list-item-three-line">
       </v-skeleton-loader>
 

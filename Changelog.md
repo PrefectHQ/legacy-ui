@@ -6,6 +6,8 @@
 
 - Update the Cloud Hooks email input rules to allow multiple comma-separated emails - [#372](https://github.com/PrefectHQ/ui/pull/372)
 - Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
+- Add more info to a flow's "Run Config" details section - [#400](https://github.com/PrefectHQ/ui/pull/400)
+- Enable filtering by all state types in the activity timeline tile [#402](https://github.com/PrefectHQ/ui/pull/402)
 
 ### Bugfixes
 
@@ -13,6 +15,8 @@
 - Make agents and upoming runs tile refresh when switch backend - [#395](https://github.com/PrefectHQ/ui/pull/395)
 - Fix a bug on restart from failed which was missing failed task runs [#398](https://github.com/PrefectHQ/ui/pull/398)
 - Fix issue where scrollbars show on all tiles even when not needed - [#366](https://github.com/PrefectHQ/ui/issues/366)
+- Include flow parameters in parameters shown in the flow run parameters tab - [#401](https://github.com/PrefectHQ/ui/pull/401)
+- Fix issue with notifications tile actions not being aligned to bottom #410 - [#410](https://github.com/PrefectHQ/ui/pull/410)
 
 ## 2020-10-29a
 
