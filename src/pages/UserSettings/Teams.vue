@@ -2,6 +2,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
+import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 
 import ManagementLayout from '@/layouts/ManagementLayout.vue'
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -9,7 +10,8 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 export default {
   components: {
     ManagementLayout,
-    ConfirmDialog
+    ConfirmDialog,
+    AcceptConfirmInputRow
   },
   mixins: [handleMembershipInvitations],
   data() {
@@ -22,6 +24,7 @@ export default {
         { text: '', value: 'id', align: 'right', sortable: false }
       ],
       isRemovingUser: false,
+      pendingInvitations: [],
       removeTenant: null
     }
   },
@@ -43,6 +46,7 @@ export default {
   methods: {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
+    ...mapActions('alert', ['setAlert']),
     role(item) {
       let role
       switch (item) {
@@ -61,27 +65,62 @@ export default {
       }
       return role
     },
-    async handleAcceptPendingInvitation(id) {
+    async handleAcceptPendingInvitation(id, name, slug) {
       this.handlingInvitationLoad = true
+      let success
       try {
         await this.acceptMembershipInvitation(id)
+        success = true
+      } catch (e) {
+        success = false
       } finally {
+        this.setAlert(
+          {
+            alertShow: true,
+            alertMessage: success
+              ? `You joined ${name}... hurrah!`
+              : `Something went wrong trying to accept your invitation to ${name}... please wait a few moments and try again.`,
+            alertType: success ? 'success' : 'error',
+            alertLink: success
+              ? {
+                  name: 'dashboard',
+                  params: { tenant: slug }
+                }
+              : null,
+            linkText: success ? 'Take me to my new tenant!' : ''
+          },
+          3000
+        )
         await this.$apollo.queries.pendingInvitations.refetch()
+        await this.getUser()
+        await this.getTenants()
         this.handlingInvitationLoad = false
       }
-      await this.getUser()
-      await this.getTenants()
     },
-    async handleDeclinePendingInvitation(id) {
+    async handleDeclinePendingInvitation(id, name) {
       this.handlingInvitationLoad = true
+      let success
       try {
         await this.declineMembershipInvitation(id)
+        success = true
+      } catch (e) {
+        success = false
       } finally {
+        this.setAlert(
+          {
+            alertShow: true,
+            alertMessage: success
+              ? `Invitation to join ${name} declined.`
+              : `Something went wrong trying to decline your invitation to ${name}... please wait a few moments and try again.`,
+            alertType: success ? 'success' : 'error'
+          },
+          3000
+        )
         await this.$apollo.queries.pendingInvitations.refetch()
+        await this.getUser()
+        await this.getTenants()
         this.handlingInvitationLoad = false
       }
-      await this.getUser()
-      await this.getTenants()
     },
     async removeUser(removalTenant) {
       this.isRemovingUser = true
@@ -120,6 +159,7 @@ export default {
         await this.setCurrentTenant(this.tenants[0].slug)
       }
 
+      await this.getUser()
       await this.getTenants()
 
       this.isRemovingUser = false
@@ -151,7 +191,7 @@ export default {
       },
       fetchPolicy: 'network-only',
       pollInterval: 60000,
-      update: data => data.pendingInvitations ?? []
+      update: data => data?.pendingInvitations ?? []
     }
   }
 }
@@ -190,34 +230,19 @@ export default {
       </template>
 
       <template #item.id="{item}">
-        <v-tooltip bottom>
-          <template #activator="{on}">
-            <v-btn
-              v-if="!item.member"
-              text
-              fab
-              x-small
-              color="primary"
-              v-on="on"
-              @click="handleAcceptPendingInvitation(item.id)"
-              ><v-icon>check</v-icon></v-btn
-            ></template
-          >Accept invite to join team
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template #activator="{on}">
-            <v-btn
-              v-if="!item.member"
-              text
-              fab
-              x-small
-              color="error"
-              v-on="on"
-              @click="handleDeclinePendingInvitation(item.id)"
-              ><v-icon>close</v-icon></v-btn
-            ></template
-          >Decline invite to join team
-        </v-tooltip>
+        <AcceptConfirmInputRow
+          v-if="!item.member"
+          :loading="handlingInvitationLoad"
+          :tooltips="true"
+          @accept="
+            handleAcceptPendingInvitation(
+              item.id,
+              item.tenant.name,
+              item.tenant.slug
+            )
+          "
+          @decline="handleDeclinePendingInvitation(item.id, item.tenant.name)"
+        />
         <v-tooltip bottom
           ><template #activator="{on}"
             ><v-btn
@@ -243,7 +268,7 @@ export default {
               v-on="on"
               @click="
                 dialogRemoveUser = true
-                removeTenant = item
+                removeTenant = item.tenant
               "
               ><v-icon>close</v-icon></v-btn
             ></template
