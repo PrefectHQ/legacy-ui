@@ -14,7 +14,8 @@ export default {
       variables() {
         return {
           flowRunId: this.flowRun.id,
-          mapIndex: this.childTasks ? null : -1
+          parentMapIndex: -1,
+          childMapIndex: null
         }
       },
       skip() {
@@ -86,7 +87,7 @@ export default {
                     v-if="flowRun"
                     v-model="allTasks"
                     class="pb-0 mb-0"
-                    label="Include all (non-child) task runs"
+                    label="Include non-child task runs"
                   ></v-checkbox>
                   <v-checkbox
                     v-if="flowRun"

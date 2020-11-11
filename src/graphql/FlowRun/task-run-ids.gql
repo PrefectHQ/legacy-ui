@@ -1,5 +1,5 @@
-query taskRunIds($flowRunId: uuid!, $mapIndex: Int) {
-    task_run (where: {_and: [{flow_run_id: {_eq: $flowRunId}}, {map_index: {_eq: $mapIndex}}]}){
+query taskRunIds($flowRunId: uuid!, $parentMapIndex: Int, $childMapIndex: Int) {
+    task_run (where: {_and: [{flow_run_id: {_eq: $flowRunId}}, {map_index: {_eq: $parentMapIndex}}, {map_index: { _gte: $childMapIndex}}]}){
     version
       id
       map_index

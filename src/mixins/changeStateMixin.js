@@ -184,6 +184,7 @@ export const changeStateMixin = {
                 }
               }
             } else {
+              console.log('ids', this.taskRunIds)
               taskState = this.taskRunIds.map(taskRun => {
                 return {
                   version: taskRun.version,
@@ -233,28 +234,68 @@ export const changeStateMixin = {
         }
       } catch (error) {
         this.setStateError = true
+      } finally {
+        if (this.setStateError) {
+          this.setAlert({
+            alertShow: true,
+            alertMessage: this.alertMessage,
+            alertType: 'error'
+          })
+        }
+        if (
+          this.setStateSuccessA &&
+          this.setStateSuccessB &&
+          this.cancelLoad &&
+          !this.setStateError
+        ) {
+          this.setAlert({
+            alertShow: true,
+            alertMessage:
+              'Your flow run will be cancelled; please allow some time for this to take effect.',
+            alertType: 'success'
+          })
+        }
+        if (this.setStateSuccessA && this.childTasks) {
+          this.setAllTaskRuns()
+        }
+        setTimeout(() => this.reset(), 500)
       }
-      if (this.setStateError) {
-        this.setAlert({
-          alertShow: true,
-          alertMessage: this.alertMessage,
-          alertType: 'error'
+    },
+    async setAllTaskRuns() {
+      try {
+        const { data } = await this.$apollo.query({
+          query: require('@/graphql/FlowRun/task-run-ids.gql'),
+          variables: {
+            flowRunId: this.flowRun.id,
+            parentMapIndex: null,
+            childMapIndex: -1
+          }
         })
-      }
-      if (
-        this.setStateSuccessA &&
-        this.setStateSuccessB &&
-        this.cancelLoad &&
-        !this.setStateError
-      ) {
-        this.setAlert({
-          alertShow: true,
-          alertMessage:
-            'Your flow run will be cancelled; please allow some time for this to take effect.',
-          alertType: 'success'
+
+        console.log('data', data, this.taskRunIds)
+        const taskState = data.task_run.map(taskRun => {
+          return {
+            version: taskRun.version,
+            task_run_id: taskRun.id,
+            state: {
+              type: this.selectedState,
+              message: this.runLogMessage()
+            }
+          }
         })
+        const success = await this.$apollo.mutate({
+          mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
+          variables: {
+            input: taskState
+          }
+        })
+        console.log('success', success)
+        this.childTasks = false
+        this.childMapIndex = null
+        this.parentMapIndex = -1
+      } catch (e) {
+        console.log('error', e)
       }
-      setTimeout(() => this.reset(), 500)
     },
     checkContinue() {
       if (this.selectedState) {
@@ -271,9 +312,9 @@ export const changeStateMixin = {
       this.selectedState = ''
       this.allTasks = false
       this.cancelLoad = false
-      this.childTasks = false
       this.alertMessage =
         'We hit a problem. Please try marking the state again.'
+
       this.setStateSuccessA = false
       this.setStateSuccessB = false
       this.cancelLoad = false
