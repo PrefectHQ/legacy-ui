@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Remove obsolete invitation sort code in for pending invitation queries - [#417](https://github.com/PrefectHQ/ui/pull/417)
 
 ### Bugfixes
 
