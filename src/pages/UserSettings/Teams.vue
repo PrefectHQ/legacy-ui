@@ -253,7 +253,7 @@ export default {
                 style="margin-right: 14px;"
                 color="primary"
                 v-on="on"
-                @click="handleSwitchTenant(item)"
+                @click="handleSwitchTenant(item.tenant)"
                 ><v-icon>swap_horiz</v-icon></v-btn
               ></template
             >Switch to this team</v-tooltip
