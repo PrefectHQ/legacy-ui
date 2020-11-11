@@ -243,37 +243,38 @@ export default {
           "
           @decline="handleDeclinePendingInvitation(item.id, item.tenant.name)"
         />
-        <v-tooltip bottom
-          ><template #activator="{on}"
-            ><v-btn
-              v-if="item.tenant.id !== tenant.id && item.member"
-              text
-              fab
-              x-small
-              color="primary"
-              v-on="on"
-              @click="handleSwitchTenant(item)"
-              ><v-icon>fas fa-eye</v-icon></v-btn
-            ></template
-          >Switch to this team</v-tooltip
-        >
-        <v-tooltip bottom
-          ><template #activator="{on}"
-            ><v-btn
-              v-if="item.member"
-              text
-              fab
-              x-small
-              color="error"
-              v-on="on"
-              @click="
-                dialogRemoveUser = true
-                removeTenant = item.tenant
-              "
-              ><v-icon>close</v-icon></v-btn
-            ></template
-          >Leave this team</v-tooltip
-        >
+        <div style="padding-right: 6px;">
+          <v-tooltip bottom
+            ><template #activator="{on}"
+              ><v-btn
+                v-if="item.tenant.id !== tenant.id && item.member"
+                text
+                small
+                style="margin-right: 14px;"
+                color="primary"
+                v-on="on"
+                @click="handleSwitchTenant(item)"
+                ><v-icon>fas fa-eye</v-icon></v-btn
+              ></template
+            >Switch to this team</v-tooltip
+          >
+          <v-tooltip bottom
+            ><template #activator="{on}"
+              ><v-btn
+                v-if="item.member"
+                text
+                small
+                color="error"
+                v-on="on"
+                @click="
+                  dialogRemoveUser = true
+                  removeTenant = item.tenant
+                "
+                ><v-icon>close</v-icon></v-btn
+              ></template
+            >Leave this team</v-tooltip
+          >
+        </div>
         <ConfirmDialog
           v-if="removeTenant"
           v-model="dialogRemoveUser"
