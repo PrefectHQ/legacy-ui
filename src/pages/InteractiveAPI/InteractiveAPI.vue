@@ -76,6 +76,7 @@ export default {
         { command: 'Ctrl + Space', description: 'Open the autocomplete menu' }
       ],
       queriesWithoutLimits: [
+        'agent',
         'agents',
         '_aggregate',
         'api',

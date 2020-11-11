@@ -357,7 +357,7 @@ export default {
       </div>
       <div
         v-if="agent && agentModified.labels.length > 0"
-        class="px-3"
+        class="px-3 overflow-scroll"
         style="height: 80px;"
       >
         <v-chip-group column multiple style="user-select: none;">
@@ -431,5 +431,9 @@ export default {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.overflow-scroll {
+  overflow: scroll;
 }
 </style>
