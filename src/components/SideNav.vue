@@ -84,6 +84,10 @@ export default {
         this.isCloud ? 'cloud' : 'core'
       }-logo-no-text.svg`)
     },
+    tenantIds() {
+      const ids = this.memberships.map(membership => membership.tenant.id)
+      return ids
+    },
     logoAlt() {
       return require(`@/assets/logos/${
         this.isCloud ? 'core' : 'cloud'
@@ -286,7 +290,8 @@ export default {
       query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
       variables() {
         return {
-          email: this.user.email
+          email: this.user.email,
+          tenantIds: this.tenantIds
         }
       },
       skip() {

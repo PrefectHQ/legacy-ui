@@ -1,7 +1,10 @@
-query PendingInvitations($email: String!) {
+query PendingInvitations($email: String!, $tenantIds: [uuid!]) {
   pendingInvitations: membership_invitation(
-    where: { email: { _eq: $email } }
+    where: { _and: [
+      { email: { _eq: $email }},
+      {tenant_id: {_nin: $tenantIds}} ]}
   ) {
+    tenant_id
     id
     role
     email
