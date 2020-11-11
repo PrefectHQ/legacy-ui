@@ -76,8 +76,8 @@ export default {
         case 'chart':
           query = { chart: '' }
           break
-        case 'artifact':
-          query = { artifact: '' }
+        case 'artifacts':
+          query = { artifacts: '' }
           break
         default:
           break
@@ -94,7 +94,7 @@ export default {
       if ('schematic' in this.$route.query) return 'schematic'
       if ('logId' in this.$route.query) return 'logs'
       if ('chart' in this.$route.query) return 'chart'
-      if ('artifact' in this.$route.query) return 'artifact'
+      if ('artifacts' in this.$route.query) return 'artifacts'
       return 'overview'
     },
     parseMarkdown(md) {
@@ -179,10 +179,10 @@ export default {
         Logs
       </v-tab>
 
-      <v-tab href="#artifact" :style="hideOnMobile" disabled>
+      <v-tab href="#artifacts" :style="hideOnMobile" disabled>
         <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
-          <v-icon left>check_box</v-icon>
-          Artifact
+          <v-icon left>fas fa-fingerprint</v-icon>
+          Artifacts
         </v-badge>
       </v-tab>
 
@@ -230,7 +230,7 @@ export default {
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="artifact">
+      <v-tab-item class="tab-full-height" value="artifacts">
         <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
       </v-tab-item>
     </v-tabs>
@@ -256,9 +256,9 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-      <v-btn @click="tab = 'artifact'">
-        artifact
-        <v-icon>format_align_left</v-icon>
+      <v-btn @click="tab = 'artifacts'" disabled>
+        Artifacts
+        <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-sheet>
@@ -271,5 +271,16 @@ export default {
 
 .tab-full-height {
   min-height: 80vh;
+}
+
+/* stylelint-disable */
+
+.v-tab--disabled .v-badge__badge {
+  pointer-events: none;
+}
+
+.v-badge--inline .v-badge__badge,
+.v-badge--inline .v-badge__wrapper {
+  margin: 5px;
 }
 </style>

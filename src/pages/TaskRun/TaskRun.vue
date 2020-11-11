@@ -78,8 +78,8 @@ export default {
         case 'mapped-runs':
           query = { 'mapped-runs': '' }
           break
-        case 'artifact':
-          query = { artifact: '' }
+        case 'artifacts':
+          query = { artifacts: '' }
           break
         default:
           break
@@ -108,7 +108,7 @@ export default {
     getTab() {
       if ('logId' in this.$route.query) return 'logs'
       if ('mapped-runs' in this.$route.query) return 'mapped-runs'
-      if ('artifact' in this.$route.query) return 'artifact'
+      if ('artifacts' in this.$route.query) return 'artifacts'
       return 'overview'
     },
     parseMarkdown(md) {
@@ -207,10 +207,10 @@ export default {
         Logs
       </v-tab>
 
-      <v-tab href="#artifact" :style="hideOnMobile" disabled>
+      <v-tab href="#artifacts" :style="hideOnMobile" disabled>
         <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
-          <v-icon left>check_box</v-icon>
-          Artifact
+          <v-icon left>fas fa-fingerprint</v-icon>
+          Artifacts
         </v-badge>
       </v-tab>
 
@@ -276,7 +276,7 @@ export default {
 
       <v-tab-item
         class="tab-full-height"
-        value="artifact"
+        value="artifacts"
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
@@ -316,9 +316,9 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-      <v-btn @click="tab = 'artifact'">
-        Artifact
-        <v-icon>format_align_left</v-icon>
+      <v-btn @click="tab = 'artifacts'" disabled>
+        Artifacts
+        <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>
 
       <v-btn @click="tab = 'mapped-runs'">
@@ -336,5 +336,16 @@ export default {
 
 .tab-full-height {
   min-height: 80vh;
+}
+
+/* stylelint-disable */
+
+.v-tab--disabled .v-badge__badge {
+  pointer-events: none;
+}
+
+.v-badge--inline .v-badge__badge,
+.v-badge--inline .v-badge__wrapper {
+  margin: 5px;
 }
 </style>
