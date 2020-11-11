@@ -3,6 +3,8 @@ import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
 import { mapGetters } from 'vuex'
 
+import moment from '@/utils/moment'
+
 import AgentCard from '@/components/Agents/AgentCard'
 
 const STATUSES = ['healthy', 'stale', 'unhealthy']
@@ -26,6 +28,31 @@ export default {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
+    agentTracker() {
+      return this.agents?.reduce(
+        (tracker, agent) => {
+          const secondsSinceLastQuery = moment().diff(
+            moment(agent.last_queried),
+            'seconds'
+          )
+
+          if (secondsSinceLastQuery < 60 * this.staleThreshold) {
+            tracker.healthy++
+          } else if (secondsSinceLastQuery < 60 * this.unhealthyThreshold) {
+            tracker.stale++
+          } else {
+            tracker.unhealthy++
+          }
+
+          return tracker
+        },
+        {
+          healthy: 0,
+          stale: 0,
+          unhealthy: 0
+        }
+      )
+    },
     allLabels() {
       if (!this.agents) return []
       return this.agents.reduce(
@@ -178,6 +205,7 @@ export default {
       <v-dialog v-model="cleanUpDialog" max-width="480">
         <template #activator="{ on }">
           <v-btn
+            v-if="agentTracker.unhealthy > 0"
             class="vertical-button py-1 "
             color="red"
             text
