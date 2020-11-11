@@ -6,6 +6,7 @@
 
 - Allow querying for agents from the IAPI - [#425](https://github.com/PrefectHQ/ui/pull/425)
 - Add a "Clean Up" button to allow bulk removal of unhealthy agents - [#425](https://github.com/PrefectHQ/ui/pull/425)
+- Remove obsolete invitation sort code in for pending invitation queries - [#417](https://github.com/PrefectHQ/ui/pull/417)
 
 ### Bugfixes
 
