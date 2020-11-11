@@ -182,7 +182,7 @@ export default {
 <template>
   <v-card
     tile
-    :disabled="isDeleting"
+    :disabled="agent.isDeleting || isDeleting"
     class="agent-card px-2 pb-3"
     :min-height="$vuetify.breakpoint.smAndDown ? null : 260"
     style="overflow-y: auto;"
@@ -388,10 +388,10 @@ export default {
         text
         class="mx-1"
         :class="{
-          'bottom-right-loaded': !isDeleting,
-          'bottom-right-loading': isDeleting
+          'bottom-right-loaded': !agent.isDeleting && !isDeleting,
+          'bottom-right-loading': agent.isDeleting || isDeleting
         }"
-        :loading="isDeleting"
+        :loading="agent.isDeleting || isDeleting"
         @click="showConfirmDialog = true"
       >
         Remove

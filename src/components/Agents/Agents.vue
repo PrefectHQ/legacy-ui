@@ -80,13 +80,30 @@ export default {
   },
   methods: {
     async clearUnhealthyAgents() {
-      const unhealthyAgentIds = this.agents
+      this.agents
         .filter(
           agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
         )
-        .map(agent => agent.id)
+        .forEach(agent => {
+          agent.isDeleting = true
 
-      console.log(unhealthyAgentIds)
+          this.$apollo
+            .mutate({
+              mutation: require('@/graphql/Agent/delete-agent.gql'),
+              variables: {
+                agentId: agent.id
+              }
+            })
+            .then(() => {
+              this.cleanUpDialog = false
+              setTimeout(() => {
+                agent.isDeleting = false
+              }, 10000)
+            })
+          setTimeout(() => {
+            agent.isDeleting = false
+          }, 2000)
+        })
     },
     handleLabelClick(lbl) {
       let label = lbl.trim()
