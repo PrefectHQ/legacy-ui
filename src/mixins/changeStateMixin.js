@@ -233,32 +233,31 @@ export const changeStateMixin = {
         }
       } catch (error) {
         this.setStateError = true
-      } finally {
-        if (this.setStateError) {
-          this.setAlert({
-            alertShow: true,
-            alertMessage: this.alertMessage,
-            alertType: 'error'
-          })
-        }
-        if (
-          this.setStateSuccessA &&
-          this.setStateSuccessB &&
-          this.cancelLoad &&
-          !this.setStateError
-        ) {
-          this.setAlert({
-            alertShow: true,
-            alertMessage:
-              'Your flow run will be cancelled; please allow some time for this to take effect.',
-            alertType: 'success'
-          })
-        }
-        if (this.setStateSuccessA && this.childTasks) {
-          this.setAllTaskRuns()
-        }
-        setTimeout(() => this.reset(), 500)
       }
+      if (this.setStateError) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: this.alertMessage,
+          alertType: 'error'
+        })
+      }
+      if (
+        this.setStateSuccessA &&
+        this.setStateSuccessB &&
+        this.cancelLoad &&
+        !this.setStateError
+      ) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Your flow run will be cancelled; please allow some time for this to take effect.',
+          alertType: 'success'
+        })
+      }
+      if (this.setStateSuccessA && this.childTasks) {
+        this.setAllTaskRuns()
+      }
+      setTimeout(() => this.reset(), 500)
     },
     async setAllTaskRuns() {
       try {
