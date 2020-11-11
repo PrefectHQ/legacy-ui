@@ -286,8 +286,6 @@ export const changeStateMixin = {
           }
         })
         this.childTasks = false
-        this.childMapIndex = null
-        this.parentMapIndex = -1
       } catch (e) {
         this.setAlert({
           alertShow: true,
