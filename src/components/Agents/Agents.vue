@@ -13,6 +13,7 @@ export default {
   },
   data() {
     return {
+      cleanUpDialog: false,
       filterMenuOpen: false,
       queryFailed: false,
       loading: 0,
@@ -141,107 +142,150 @@ export default {
   </div>
 
   <div v-else-if="agents && agents.length > 0">
-    <v-menu
-      v-model="filterMenuOpen"
-      :close-on-content-click="false"
-      bottom
-      left
-      offset-y
-      transition="slide-y-transition"
+    <div
+      class="agent-controls"
+      :class="{
+        'md-and-down': $vuetify.breakpoint.mdAndDown,
+        'md-and-up': $vuetify.breakpoint.mdAndUp
+      }"
     >
-      <template #activator="{ on }">
-        <v-btn
-          class="vertical-button py-1 filter-button-position"
-          color="#666"
-          :class="{
-            'md-and-down': $vuetify.breakpoint.mdAndDown,
-            'md-and-up': $vuetify.breakpoint.mdAndUp
-          }"
-          text
-          tile
-          small
-          v-on="on"
-        >
-          <v-icon>
-            filter_list
-          </v-icon>
-          <div class="mb-1">Filter</div>
-        </v-btn>
-      </template>
-      <v-card width="320">
-        <v-card-text class="pb-6">
-          <v-autocomplete
-            ref="agents"
-            v-model="labelInput"
-            :items="allLabels"
-            label="Filter agents by label"
-            outlined
-            multiple
-            dense
-            chips
-            small-chips
-            :disabled="showUnlabeledAgentsOnly || allLabels.length === 0"
-            deletable-chips
-            hide-no-data
-            :menu-props="{
-              closeOnContentClick: true,
-              maxHeight: 300,
-              transition: 'slide-y-transition'
-            }"
-            @click:append="menuArrow"
-          ></v-autocomplete>
-          <v-switch
-            v-model="showUnlabeledAgentsOnly"
-            class="ma-0 mt-1 label-switch-position"
-            label="Only show agents with no labels"
-            hide-details
-          ></v-switch>
-          <v-checkbox
-            v-model="statusInput"
-            hide-details
-            label="Show healthy agents"
-            value="healthy"
-            color="success"
-          ></v-checkbox>
-          <v-checkbox
-            v-model="statusInput"
-            label="Show stale agents"
-            :hint="
-              `Stale agents have not queried for flows in the last ${
-                staleThreshold === 1 ? 'minute' : `${staleThreshold} minutes`
-              }.`
-            "
-            persistent-hint
-            value="stale"
-            color="warning"
-          ></v-checkbox>
-          <v-checkbox
-            v-model="statusInput"
-            label="Show unhealthy agents"
-            :hint="
-              `Unhealthy agents have not queried for flows in the last ${
-                unhealthyThreshold === 1
-                  ? 'minute'
-                  : `${unhealthyThreshold} minutes`
-              }.`
-            "
-            persistent-hint
-            value="unhealthy"
-            color="error"
-          ></v-checkbox>
-        </v-card-text>
+      <v-dialog v-model="cleanUpDialog" max-width="480">
+        <template #activator="{ on }">
+          <v-btn
+            class="vertical-button py-1 "
+            color="red"
+            text
+            tile
+            small
+            v-on="on"
+          >
+            <v-icon>
+              delete_sweep
+            </v-icon>
+            <div class="mb-1">Clean Up</div>
+          </v-btn>
+        </template>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="resetFilter">
-            Reset
+        <v-card flat>
+          <v-card-title class="title word-break-normal">
+            Clean up unhealthy agents?
+          </v-card-title>
+
+          <v-card-text>
+            This will remove all agents that haven't queried the server for
+            {{ unhealthyThreshold }} minutes.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text tile @click="cleanUpDialog = false">
+              Cancel
+            </v-btn>
+            <v-btn dark color="red" depressed @click="clearUnhealthyAgents">
+              Confirm
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-menu
+        v-model="filterMenuOpen"
+        :close-on-content-click="false"
+        bottom
+        left
+        offset-y
+        transition="slide-y-transition"
+      >
+        <template #activator="{ on }">
+          <v-btn
+            class="vertical-button py-1 "
+            color="#666"
+            text
+            tile
+            small
+            v-on="on"
+          >
+            <v-icon>
+              filter_list
+            </v-icon>
+            <div class="mb-1">Filter</div>
           </v-btn>
-          <v-btn text @click="filterMenuOpen = false">
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-menu>
+        </template>
+        <v-card width="320">
+          <v-card-text class="pb-6">
+            <v-autocomplete
+              ref="agents"
+              v-model="labelInput"
+              :items="allLabels"
+              label="Filter agents by label"
+              outlined
+              multiple
+              dense
+              chips
+              small-chips
+              :disabled="showUnlabeledAgentsOnly || allLabels.length === 0"
+              deletable-chips
+              hide-no-data
+              :menu-props="{
+                closeOnContentClick: true,
+                maxHeight: 300,
+                transition: 'slide-y-transition'
+              }"
+              @click:append="menuArrow"
+            ></v-autocomplete>
+            <v-switch
+              v-model="showUnlabeledAgentsOnly"
+              class="ma-0 mt-1 label-switch-position"
+              label="Only show agents with no labels"
+              hide-details
+            ></v-switch>
+            <v-checkbox
+              v-model="statusInput"
+              hide-details
+              label="Show healthy agents"
+              value="healthy"
+              color="success"
+            ></v-checkbox>
+            <v-checkbox
+              v-model="statusInput"
+              label="Show stale agents"
+              :hint="
+                `Stale agents have not queried for flows in the last ${
+                  staleThreshold === 1 ? 'minute' : `${staleThreshold} minutes`
+                }.`
+              "
+              persistent-hint
+              value="stale"
+              color="warning"
+            ></v-checkbox>
+            <v-checkbox
+              v-model="statusInput"
+              label="Show unhealthy agents"
+              :hint="
+                `Unhealthy agents have not queried for flows in the last ${
+                  unhealthyThreshold === 1
+                    ? 'minute'
+                    : `${unhealthyThreshold} minutes`
+                }.`
+              "
+              persistent-hint
+              value="unhealthy"
+              color="error"
+            ></v-checkbox>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="resetFilter">
+              Reset
+            </v-btn>
+            <v-btn text @click="filterMenuOpen = false">
+              Close
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
+    </div>
 
     <v-scroll-x-reverse-transition>
       <v-alert
@@ -359,7 +403,7 @@ export default {
   opacity: 0;
 }
 
-.filter-button-position {
+.agent-controls {
   position: absolute;
   right: 8px;
   z-index: 1;
