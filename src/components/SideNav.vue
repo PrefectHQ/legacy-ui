@@ -79,6 +79,10 @@ export default {
     lastDeployment_UI() {
       return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
     },
+    tenantIds() {
+      const ids = this.memberships.map(membership => membership.tenant.id)
+      return ids
+    },
     logo() {
       return require(`@/assets/logos/${
         this.isCloud ? 'cloud' : 'core'
@@ -286,7 +290,8 @@ export default {
       query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
       variables() {
         return {
-          email: this.user.email
+          email: this.user.email,
+          tenantIds: this.tenantIds
         }
       },
       skip() {
