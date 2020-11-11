@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add a "Your Teams" page to the User menu, allowing you to see and change memberships - [#194](https://github.com/PrefectHQ/ui/issues/194)
+- Remove obsolete invitation sort code in for pending invitation queries - [#417](https://github.com/PrefectHQ/ui/pull/417)
 
 ### Bugfixes
 
