@@ -87,14 +87,14 @@ export default {
                     v-if="flowRun"
                     v-model="allTasks"
                     class="pb-0 mb-0"
-                    label="Include non-child task runs"
+                    label="Include non-mapped task runs"
                   ></v-checkbox>
                   <v-checkbox
                     v-if="flowRun"
                     v-model="childTasks"
                     :disabled="!allTasks"
                     class="pt-0 mt-0"
-                    label="Include mapped-child task runs - this may take some time"
+                    label="Include mapped task runs - this may take some time"
                   ></v-checkbox>
                   <v-form ref="form" @submit.prevent>
                     <v-text-field
