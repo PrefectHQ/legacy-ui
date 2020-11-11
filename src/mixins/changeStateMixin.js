@@ -290,7 +290,12 @@ export const changeStateMixin = {
         this.childMapIndex = null
         this.parentMapIndex = -1
       } catch (e) {
-        console.log('error', e)
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'An error occured setting the state of mapped task runs',
+          alertType: 'error'
+        })
       }
     },
     checkContinue() {
