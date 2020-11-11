@@ -1,13 +1,3 @@
-# Heading One
+# h1
 
-## Heading Two
-
-- 1
-- 2
-- 3
-
-**bold**
-
-```js
-console.log('hey')
-```
+## h2

@@ -1,9 +1,10 @@
 <script>
 import { parser } from '@/utils/markdownParser'
+const testMd = require('./Markdown/test.md')
 export default {
   methods: {
     fileMD() {
-      return parser(require(`./Markdown/${this.$route.name}.md`))
+      return parser(testMd)
     }
   }
 }
@@ -12,6 +13,6 @@ export default {
 <template>
   <div>
     <h1>Route: {{ this.$route.name }}</h1>
-    <!-- <div v-html="fileMD()"></div> -->
+    <div v-html="fileMD()"></div>
   </div>
 </template>
