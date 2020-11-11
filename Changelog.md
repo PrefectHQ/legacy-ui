@@ -5,11 +5,13 @@
 ### Features and Improvements
 
 - Add a "Your Teams" page to the User menu, allowing you to see and change memberships - [#194](https://github.com/PrefectHQ/ui/issues/194)
+- Allow querying for agents from the IAPI - [#425](https://github.com/PrefectHQ/ui/pull/425)
+- Add a "Clean Up" button to allow bulk removal of unhealthy agents - [#425](https://github.com/PrefectHQ/ui/pull/425)
 - Remove obsolete invitation sort code in for pending invitation queries - [#417](https://github.com/PrefectHQ/ui/pull/417)
 
 ### Bugfixes
 
-- None
+- Fix an issue where agent labels were overflowing their bounding box - [#425](https://github.com/PrefectHQ/ui/pull/425)
 
 ## 2020-11-10
 
@@ -27,7 +29,8 @@
 - Fix a bug on restart from failed which was missing failed task runs [#398](https://github.com/PrefectHQ/ui/pull/398)
 - Fix issue where scrollbars show on all tiles even when not needed - [#366](https://github.com/PrefectHQ/ui/issues/366)
 - Include flow parameters in parameters shown in the flow run parameters tab - [#401](https://github.com/PrefectHQ/ui/pull/401)
-- Fix issue with notifications tile actions not being aligned to bottom #410 - [#410](https://github.com/PrefectHQ/ui/pull/410)
+- Make sure task runs are fetched for the set state button - [#411](https://github.com/PrefectHQ/ui/pull/411)
+- Fix issue with notifications tile actions not being aligned to bottom - [#410](https://github.com/PrefectHQ/ui/pull/410)
 
 ## 2020-10-29a
 

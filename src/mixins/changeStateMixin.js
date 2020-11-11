@@ -163,13 +163,15 @@ export const changeStateMixin = {
     },
     async changeState() {
       try {
+        //make sure we get the lastest version of each task run
         this.markAsLoading = true
+        if (this.allTasks) await this.$apollo.queries.taskRunIds.refetch()
         const logSuccess = this.writeLogs()
         if (logSuccess) {
           if (
             this.dialogType === 'task run' ||
             this.dialogType == 'resume' ||
-            (this.allTasks && this.flowRun.task_runs.length)
+            (this.allTasks && this.taskRunIds?.length)
           ) {
             let taskState
             if (this.dialogType === 'task run' || this.dialogType == 'resume') {
@@ -182,7 +184,7 @@ export const changeStateMixin = {
                 }
               }
             } else {
-              taskState = this.flowRun.task_runs.map(taskRun => {
+              taskState = this.taskRunIds.map(taskRun => {
                 return {
                   version: taskRun.version,
                   task_run_id: taskRun.id,
@@ -252,7 +254,46 @@ export const changeStateMixin = {
           alertType: 'success'
         })
       }
+      if (this.setStateSuccessA && this.childTasks) {
+        this.setAllTaskRuns(this.selectedState)
+      }
       setTimeout(() => this.reset(), 500)
+    },
+    async setAllTaskRuns(type) {
+      try {
+        const { data } = await this.$apollo.query({
+          query: require('@/graphql/FlowRun/task-run-ids.gql'),
+          variables: {
+            flowRunId: this.flowRun.id,
+            parentMapIndex: null,
+            childMapIndex: -1
+          }
+        })
+        const taskState = data.task_run.map(taskRun => {
+          return {
+            version: taskRun.version,
+            task_run_id: taskRun.id,
+            state: {
+              type: type,
+              message: this.runLogMessage()
+            }
+          }
+        })
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
+          variables: {
+            input: taskState
+          }
+        })
+        this.childTasks = false
+      } catch (e) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'An error occured setting the state of mapped task runs',
+          alertType: 'error'
+        })
+      }
     },
     checkContinue() {
       if (this.selectedState) {
@@ -271,6 +312,7 @@ export const changeStateMixin = {
       this.cancelLoad = false
       this.alertMessage =
         'We hit a problem. Please try marking the state again.'
+
       this.setStateSuccessA = false
       this.setStateSuccessB = false
       this.cancelLoad = false
