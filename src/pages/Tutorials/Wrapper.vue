@@ -1,6 +1,6 @@
 <script>
 import { parser } from '@/utils/markdownParser'
-const testMd = require('./markdown/test.md')
+const testMd = require('./Markdown/Test.md')
 export default {
   methods: {
     fileMD() {
