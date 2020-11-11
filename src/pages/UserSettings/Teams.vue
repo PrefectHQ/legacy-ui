@@ -23,7 +23,6 @@ export default {
         { text: '', value: 'id', align: 'right', sortable: false }
       ],
       isRemovingUser: false,
-      pendingInvitations: [],
       removeTenant: null
     }
   },
@@ -147,7 +146,7 @@ export default {
       },
       fetchPolicy: 'network-only',
       pollInterval: 60000,
-      update: data => data.pendingInvitations
+      update: data => data.pendingInvitations ?? []
     }
   }
 }
