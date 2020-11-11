@@ -184,7 +184,6 @@ export const changeStateMixin = {
                 }
               }
             } else {
-              console.log('ids', this.taskRunIds)
               taskState = this.taskRunIds.map(taskRun => {
                 return {
                   version: taskRun.version,
@@ -271,8 +270,6 @@ export const changeStateMixin = {
             childMapIndex: -1
           }
         })
-
-        console.log('data', data, this.taskRunIds)
         const taskState = data.task_run.map(taskRun => {
           return {
             version: taskRun.version,
@@ -283,13 +280,12 @@ export const changeStateMixin = {
             }
           }
         })
-        const success = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
           variables: {
             input: taskState
           }
         })
-        console.log('success', success)
         this.childTasks = false
         this.childMapIndex = null
         this.parentMapIndex = -1
