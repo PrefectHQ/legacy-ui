@@ -172,8 +172,16 @@ export default {
           </v-card-title>
 
           <v-card-text>
-            This will remove all agents that haven't queried the server for
-            {{ unhealthyThreshold }} minutes.
+            <p>
+              This will remove any agents that haven't queried
+              <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
+              <span v-else class="secondaryGray--text">Prefect Server</span> in
+              the last {{ unhealthyThreshold }} minutes.
+            </p>
+            <p>
+              Note: These agents will appear again if they become healthy by
+              querying the server.
+            </p>
           </v-card-text>
 
           <v-card-actions>
