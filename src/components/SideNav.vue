@@ -300,7 +300,7 @@ export default {
       },
       fetchPolicy: 'network-only',
       pollInterval: 60000,
-      update: data => data.pendingInvitations
+      update: data => data?.pendingInvitations ?? []
     }
   }
 }
