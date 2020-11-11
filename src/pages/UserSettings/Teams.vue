@@ -19,9 +19,9 @@ export default {
       dialogRemoveUser: false,
       handlingInvitationLoad: false,
       headers: [
-        { text: 'Name', value: 'tenant.name' },
-        { text: 'URL', value: 'tenant.slug' },
-        { text: '', value: 'id', align: 'right', sortable: false }
+        { text: 'Name', value: 'tenant.name', width: '35%' },
+        { text: 'URL', value: 'tenant.slug', width: '35%' },
+        { text: '', value: 'id', align: 'right', sortable: false, width: '30%' }
       ],
       isRemovingUser: false,
       pendingInvitations: [],
@@ -254,7 +254,7 @@ export default {
                 color="primary"
                 v-on="on"
                 @click="handleSwitchTenant(item)"
-                ><v-icon>fas fa-eye</v-icon></v-btn
+                ><v-icon>swap_horiz</v-icon></v-btn
               ></template
             >Switch to this team</v-tooltip
           >
