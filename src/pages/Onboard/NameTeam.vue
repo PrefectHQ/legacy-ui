@@ -32,6 +32,10 @@ export default {
     ...mapGetters('api', ['isCloud']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
+    },
+    tenantIds() {
+      const ids = this.memberships.map(membership => membership.tenant.id)
+      return ids
     }
   },
   mounted() {
@@ -207,7 +211,8 @@ export default {
       query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
       variables() {
         return {
-          email: this.user.email
+          email: this.user.email,
+          tenantIds: this.tenantIds
         }
       },
       pollInterval: 60000,
