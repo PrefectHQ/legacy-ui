@@ -255,11 +255,11 @@ export const changeStateMixin = {
         })
       }
       if (this.setStateSuccessA && this.childTasks) {
-        this.setAllTaskRuns()
+        this.setAllTaskRuns(this.selectedState)
       }
       setTimeout(() => this.reset(), 500)
     },
-    async setAllTaskRuns() {
+    async setAllTaskRuns(type) {
       try {
         const { data } = await this.$apollo.query({
           query: require('@/graphql/FlowRun/task-run-ids.gql'),
@@ -274,7 +274,7 @@ export const changeStateMixin = {
             version: taskRun.version,
             task_run_id: taskRun.id,
             state: {
-              type: this.selectedState,
+              type: type,
               message: this.runLogMessage()
             }
           }
