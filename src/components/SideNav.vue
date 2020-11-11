@@ -64,7 +64,8 @@ export default {
       'isServer',
       'isCloud',
       'version',
-      'releaseTimestamp'
+      'releaseTimestamp',
+      'coreVersion'
     ]),
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('tenant', ['tenant', 'tenants', 'tenantIsSet']),
@@ -339,6 +340,10 @@ export default {
               </v-btn>
             </v-list-item-action>
           </v-list-item>
+
+          <v-list-item-content>
+            Version: {{ coreVersion }}
+          </v-list-item-content>
 
           <v-list-item
             active-class="primary-active-class"
