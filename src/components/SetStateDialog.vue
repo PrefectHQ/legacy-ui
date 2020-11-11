@@ -22,9 +22,7 @@ export default {
         return !this.flowRun
       },
       pollInterval: 10000,
-      update: data => {
-        return data.task_run
-      }
+      update: data => data.task_run
     }
   }
 }
