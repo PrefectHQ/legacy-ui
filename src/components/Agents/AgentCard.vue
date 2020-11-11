@@ -360,18 +360,16 @@ export default {
         class="px-3 overflow-scroll"
         style="height: 80px;"
       >
-        <v-chip-group column multiple style="user-select: none;">
-          <Label
-            v-for="label in agentModified.labels"
-            :key="label"
-            class="mr-1 mt-1"
-            :outlined="!labelSelected(label)"
-            size="x-small"
-            @click="$emit('label-click', $event)"
-          >
-            {{ label }}
-          </Label>
-        </v-chip-group>
+        <Label
+          v-for="label in agentModified.labels"
+          :key="label"
+          class="mr-1 mt-1"
+          :outlined="!labelSelected(label)"
+          size="x-small"
+          @click="$emit('label-click', $event)"
+        >
+          {{ label }}
+        </Label>
       </div>
       <div v-else class="body-1 px-3">
         None

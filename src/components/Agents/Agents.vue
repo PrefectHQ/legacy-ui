@@ -79,6 +79,15 @@ export default {
     }
   },
   methods: {
+    async clearUnhealthyAgents() {
+      const unhealthyAgentIds = this.agents
+        .filter(
+          agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
+        )
+        .map(agent => agent.id)
+
+      console.log(unhealthyAgentIds)
+    },
     handleLabelClick(lbl) {
       let label = lbl.trim()
 
@@ -228,7 +237,6 @@ export default {
               label="Filter agents by label"
               outlined
               multiple
-              dense
               chips
               small-chips
               :disabled="showUnlabeledAgentsOnly || allLabels.length === 0"
