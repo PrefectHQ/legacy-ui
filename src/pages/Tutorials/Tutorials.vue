@@ -1,6 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-
 export default {
   data() {
     return {
@@ -19,7 +18,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('tenant', ['tenant']),
+    tutorialParser() {
+      return false
+    }
   }
 }
 </script>
@@ -52,7 +54,7 @@ export default {
 
       <v-divider />
 
-      <v-list dense>
+      <v-list v-if="!tutorialParser" dense>
         <v-list-item
           v-for="(tutorial, index) in tutorials"
           :key="index"
@@ -71,6 +73,10 @@ export default {
           </v-list-item-content>
         </v-list-item>
       </v-list>
+
+      <div v-else>
+        <router-link :to="{ name: 'test' }">Test</router-link>
+      </div>
     </v-navigation-drawer>
 
     <div
