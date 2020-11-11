@@ -4,12 +4,12 @@ import { clearCache } from '@/vue-apollo'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 
 import ManagementLayout from '@/layouts/ManagementLayout.vue'
-import ConfirmDialog from '@/components/ConfirmDialog'
+// import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
   components: {
-    ManagementLayout,
-    ConfirmDialog
+    ManagementLayout
+    // ConfirmDialog
   },
   mixins: [handleMembershipInvitations],
   data() {
@@ -17,9 +17,8 @@ export default {
       dialogRemoveUser: false,
       handlingInvitationLoad: false,
       headers: [
-        { text: 'Name', value: 'name' },
-        { text: 'URL', value: 'slug' },
-        { text: 'Role', value: 'role' },
+        { text: 'Name', value: 'tenant.name' },
+        { text: 'URL', value: 'tenant.slug' },
         { text: '', value: 'id', align: 'right', sortable: false }
       ],
       isRemovingUser: false,
@@ -30,8 +29,17 @@ export default {
   computed: {
     ...mapGetters('user', ['memberships', 'user']),
     ...mapGetters('tenant', ['tenant', 'tenants']),
-    currentMemberships() {
-      return this.memberships.map(i => i.tenant.id)
+    items() {
+      console.log(this.memberships, this.pendingInvitations)
+      return [
+        ...this.memberships.map(m => {
+          return {
+            ...m,
+            member: true
+          }
+        }),
+        ...this.pendingInvitations
+      ]
     }
   },
   methods: {
@@ -57,9 +65,8 @@ export default {
     },
     async handleAcceptPendingInvitation(id) {
       this.handlingInvitationLoad = true
-      const inviteId = this.pendingInvitations.find(i => i.tenant.id == id)?.id
       try {
-        await this.acceptMembershipInvitation(inviteId)
+        await this.acceptMembershipInvitation(id)
       } finally {
         await this.$apollo.queries.pendingInvitations.refetch()
         this.handlingInvitationLoad = false
@@ -69,9 +76,8 @@ export default {
     },
     async handleDeclinePendingInvitation(id) {
       this.handlingInvitationLoad = true
-      const inviteId = this.pendingInvitations.find(i => i.tenant.id == id)?.id
       try {
-        await this.declineMembershipInvitation(inviteId)
+        await this.declineMembershipInvitation(id)
       } finally {
         await this.$apollo.queries.pendingInvitations.refetch()
         this.handlingInvitationLoad = false
@@ -147,7 +153,7 @@ export default {
       },
       fetchPolicy: 'network-only',
       pollInterval: 60000,
-      update: data => data.pendingInvitations
+      update: data => data.pendingInvitations || []
     }
   }
 }
@@ -166,7 +172,7 @@ export default {
       class="elevation-2 rounded-none truncate-table"
       :headers="headers"
       :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-      :items="tenants"
+      :items="items"
       :footer-props="{
         showFirstLastPage: true,
         firstIcon: 'first_page',
@@ -184,14 +190,12 @@ export default {
       <template #header.role="{ header }">
         <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
-      <template #item.role="{item}">
-        {{ role(item.role) }}
-      </template>
+
       <template #item.id="{item}">
         <v-tooltip bottom>
           <template #activator="{on}">
             <v-btn
-              v-if="!currentMemberships.includes(item.id)"
+              v-if="!item.member"
               text
               fab
               x-small
@@ -205,7 +209,7 @@ export default {
         <v-tooltip bottom>
           <template #activator="{on}">
             <v-btn
-              v-if="!currentMemberships.includes(item.id)"
+              v-if="!item.member"
               text
               fab
               x-small
@@ -219,9 +223,7 @@ export default {
         <v-tooltip bottom
           ><template #activator="{on}"
             ><v-btn
-              v-if="
-                item.id !== tenant.id && currentMemberships.includes(item.id)
-              "
+              v-if="item.tenant.id !== tenant.id && item.member"
               text
               fab
               x-small
@@ -235,7 +237,7 @@ export default {
         <v-tooltip bottom
           ><template #activator="{on}"
             ><v-btn
-              v-if="currentMemberships.includes(item.id)"
+              v-if="item.member"
               text
               fab
               x-small
