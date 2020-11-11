@@ -182,7 +182,7 @@ export default {
 <template>
   <v-card
     tile
-    :disabled="isDeleting"
+    :disabled="agent.isDeleting || isDeleting"
     class="agent-card px-2 pb-3"
     :min-height="$vuetify.breakpoint.smAndDown ? null : 260"
     style="overflow-y: auto;"
@@ -357,21 +357,19 @@ export default {
       </div>
       <div
         v-if="agent && agentModified.labels.length > 0"
-        class="px-3"
+        class="px-3 overflow-scroll"
         style="height: 80px;"
       >
-        <v-chip-group column multiple style="user-select: none;">
-          <Label
-            v-for="label in agentModified.labels"
-            :key="label"
-            class="mr-1 mt-1"
-            :outlined="!labelSelected(label)"
-            size="x-small"
-            @click="$emit('label-click', $event)"
-          >
-            {{ label }}
-          </Label>
-        </v-chip-group>
+        <Label
+          v-for="label in agentModified.labels"
+          :key="label"
+          class="mr-1 mt-1"
+          :outlined="!labelSelected(label)"
+          size="x-small"
+          @click="$emit('label-click', $event)"
+        >
+          {{ label }}
+        </Label>
       </div>
       <div v-else class="body-1 px-3">
         None
@@ -390,10 +388,10 @@ export default {
         text
         class="mx-1"
         :class="{
-          'bottom-right-loaded': !isDeleting,
-          'bottom-right-loading': isDeleting
+          'bottom-right-loaded': !agent.isDeleting && !isDeleting,
+          'bottom-right-loading': agent.isDeleting || isDeleting
         }"
-        :loading="isDeleting"
+        :loading="agent.isDeleting || isDeleting"
         @click="showConfirmDialog = true"
       >
         Remove
@@ -431,5 +429,9 @@ export default {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.overflow-scroll {
+  overflow: scroll;
 }
 </style>
