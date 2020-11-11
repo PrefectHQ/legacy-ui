@@ -3,6 +3,7 @@ import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
+import CalendarView from '@/pages/Dashboard/Calendar-View'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
@@ -26,6 +27,12 @@ const serverTabs = [
     icon: 'pi-flow'
   },
   {
+    name: 'Calendar',
+    target: 'calendar',
+    icon: 'event',
+    iconSize: 'small'
+  },
+  {
     name: 'Agents',
     target: 'agents',
     icon: 'pi-agent',
@@ -46,6 +53,7 @@ export default {
     AgentsTile,
     FailedFlowsTile,
     FlowTableTile,
+    CalendarView,
     InProgressTile,
     NotificationsTile,
     ProjectSelector,
@@ -82,7 +90,7 @@ export default {
       key: 0,
       loading: 0,
       loadedTiles: 0,
-      numberOfTiles: 9,
+      numberOfTiles: 10,
       projectId: this.$route.params.id,
       refreshTimeout: null,
       tab: this.getTab()
@@ -117,6 +125,9 @@ export default {
           break
         case 'agents':
           tab = 'agents'
+          break
+        case 'calendar':
+          tab = 'calendar'
           break
         default:
           break
@@ -162,6 +173,7 @@ export default {
     getTab() {
       if ('flows' in this.$route.query) return 'flows'
       if ('agents' in this.$route.query) return 'agents'
+      if ('calendar' in this.$route.query) return 'calendar'
       return 'overview'
     },
     refresh() {
@@ -390,6 +402,19 @@ export default {
         reverse-transition="quick-fade"
       >
         <Agents v-if="loadedTiles > 9" class="mx-3 my-6" />
+      </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height"
+        value="calendar"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
+        <CalendarView
+          v-if="loadedTiles > 10"
+          class="mx-3 my-6"
+          :project-id="projectId"
+        />
       </v-tab-item>
 
       <v-tab-item
