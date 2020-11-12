@@ -69,6 +69,9 @@ const getters = {
   },
   version(state) {
     return state.version
+  },
+  coreVersion(state) {
+    return state.coreVersion
   }
 }
 
@@ -133,10 +136,10 @@ const mutations = {
     state.version = null
   },
   setCoreVersion(state, version) {
-    state.core_version = version
+    state.coreVersion = version
   },
   unsetCoreVersion(state) {
-    state.core_version = null
+    state.coreVersion = null
   }
 }
 
