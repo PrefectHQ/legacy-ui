@@ -28,7 +28,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="caption text-center">
     {{ flowName }}
   </div>
 </template>
