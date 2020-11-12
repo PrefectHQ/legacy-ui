@@ -36,6 +36,24 @@ export const formatTime = {
           : moment(timestamp).format('DD/MM/YY')
       }`
     },
+    formatCalendarDate(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj
+          ? timeObj.format('YYYY-MM-DD')
+          : moment(timestamp).format('YYYY-MM-DD')
+      }`
+    },
+    formatCalendarTime(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj
+          ? timeObj.format('YYYY-MM-DD HH:mm:ss')
+          : moment(timestamp).format('YYYY-MM-DD HH:mm:ss')
+      }`
+    },
     shortTime(timestamp) {
       if (!timestamp) return
       let t = moment(timestamp).tz(this.timezone)
