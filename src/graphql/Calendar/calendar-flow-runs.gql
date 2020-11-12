@@ -4,7 +4,7 @@ query CalendarFlowRuns($project_id: uuid, $startTime: timestamptz) {
     flow: { project_id: { _eq: $project_id } }
     start_time: {_gte: $startTime}
     }
-    
+    # limit: 250
   ) {
     id
     flow_id
