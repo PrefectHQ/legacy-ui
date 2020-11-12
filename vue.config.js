@@ -1,5 +1,15 @@
 module.exports = {
   chainWebpack: config => {
+    config.module
+      .rule('md')
+      .test(/\.md/)
+      .use('html-loader')
+      .loader('html-loader')
+      .tap(options => {
+        return { ...options, minimize: false }
+      })
+      .end()
+
     config.resolve.symlinks(false)
 
     config.output.globalObject('this')
