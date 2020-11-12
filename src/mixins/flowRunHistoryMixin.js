@@ -1,7 +1,7 @@
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 
-export const timelineMixin = {
+export const flowRunHistoryMixin = {
   data() {
     return {
       flowRuns: [],

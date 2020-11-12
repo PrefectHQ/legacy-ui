@@ -10,7 +10,7 @@ import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
-import TimelineTile from '@/pages/Dashboard/Timeline-Tile'
+import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import { mapGetters } from 'vuex'
 import gql from 'graphql-tag'
 
@@ -52,7 +52,7 @@ export default {
     SubPageNav,
     SummaryTile,
     TileLayout,
-    TimelineTile,
+    FlowRunHistoryTile,
     UpcomingRunsTile
   },
   async beforeRouteLeave(to, from, next) {
@@ -284,7 +284,7 @@ export default {
             class="my-2"
             tile
           >
-            <TimelineTile
+            <FlowRunHistoryTile
               :project-id="projectId"
               :visible="tab == 'overview'"
             />

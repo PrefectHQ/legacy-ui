@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.13.2",
-    "apexcharts": "npm:znicholasbrown-apexcharts@>=3.10.1",
     "apollo-link-batch-http": "^1.2.14",
     "codemirror": "^5.58.2",
     "codemirror-graphql": "^0.12.3",
@@ -46,7 +45,6 @@
     "remark-slug": "^6.0.0",
     "velocity-animate": ">=1.5.2",
     "vue": "^2.6.12",
-    "vue-apexcharts": ">=1.5.2",
     "vue-apollo": "^3.0.5",
     "vue-code-highlight": "^0.7.6",
     "vue-codemirror": ">=4.0.6",

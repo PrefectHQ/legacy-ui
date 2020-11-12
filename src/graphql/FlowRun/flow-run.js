@@ -23,15 +23,27 @@ export default function(isCloud) {
             : ''
         }
 
+        auto_scheduled
+        context
+        end_time
+        flow_id
+        name
+        parameters
         scheduled_start_time
         start_time
-        end_time
         state
         state_message
         state_timestamp
         parameters
         context
         agent_id
+
+        states {
+          id
+          state
+          timestamp
+          start_time
+        }
 
         flow {
           id

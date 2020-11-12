@@ -30,11 +30,6 @@ import { insertedActions, updatedActions } from '@/directives/disable-read-only'
 // Functional Components
 import TransitionHeight from '@/components/Functional/Transition-Height'
 
-// Apex charts component
-import VueApexCharts from 'vue-apexcharts'
-Vue.use(VueApexCharts)
-Vue.component('ApexChart', VueApexCharts)
-
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
 
@@ -245,7 +240,7 @@ Vue.mixin({
     // Otherwise we can assume there's some sort of transition
     // on the component and we wait for it to complete
     // Note: this is obviously rough but Observer methods
-    // were performing exceedingly poorly.
+    // were performing poorly.
     setTimeout(prepForGC, 1500)
   }
 })

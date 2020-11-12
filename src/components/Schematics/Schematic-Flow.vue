@@ -710,9 +710,13 @@ export default {
         const handleSelect = this.handleSelect
         let found = false
         this.custom.selectAll('circle').each(function() {
-          if (context.isPointInPath(this.path2D, e.offsetX, e.offsetY)) {
-            found = true
-            handleSelect({ id: this.id })
+          try {
+            if (context?.isPointInPath(this.path2D, e.offsetX, e.offsetY)) {
+              found = true
+              handleSelect({ id: this.id })
+            }
+          } catch {
+            // do nothing
           }
         })
         if (!found && this.selectedTaskId)
@@ -730,13 +734,17 @@ export default {
       const updateTooltip = this.updateTooltip
       let found = false
       this.custom.selectAll('circle').each(function() {
-        if (found) return
-        if (context.isPointInPath(this.path2D, e.offsetX, e.offsetY)) {
-          canvas._groups[0][0].style.cursor = 'pointer'
-          found = true
-          updateTooltip(nodeData.find(node => node.id == this.id))
-        } else {
-          canvas._groups[0][0].style.cursor = null
+        try {
+          if (found) return
+          if (context?.isPointInPath(this.path2D, e.offsetX, e.offsetY)) {
+            canvas._groups[0][0].style.cursor = 'pointer'
+            found = true
+            updateTooltip(nodeData.find(node => node.id == this.id))
+          } else {
+            canvas._groups[0][0].style.cursor = null
+          }
+        } catch {
+          // do nothing
         }
       })
       if (!found) updateTooltip(null)
