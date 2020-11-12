@@ -16,7 +16,8 @@ const state = {
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
   serverUrl: localStorage.getItem(SERVER_KEY),
-  version: null
+  version: null,
+  core_version: null
 }
 
 const getters = {
@@ -68,6 +69,9 @@ const getters = {
   },
   version(state) {
     return state.version
+  },
+  coreVersion(state) {
+    return state.coreVersion
   }
 }
 
@@ -130,6 +134,12 @@ const mutations = {
   },
   unsetVersion(state) {
     state.version = null
+  },
+  setCoreVersion(state, version) {
+    state.coreVersion = version
+  },
+  unsetCoreVersion(state) {
+    state.coreVersion = null
   }
 }
 
@@ -142,11 +152,13 @@ const actions = {
       })
       commit('setReleaseTimestamp', data.api.release_timestamp)
       commit('setVersion', data.api.version)
+      commit('setCoreVersion', data.api.core_version)
       commit('setConnected', true)
       commit('setApiMode', data.api.mode)
     } catch (error) {
       commit('unsetReleaseTimetamp')
       commit('unsetVersion')
+      commit('unsetCoreVersion')
       commit('setConnected', false)
 
       LogRocket.captureException(error, {
