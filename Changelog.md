@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add the Prefect Core version to the side navigation bar for Server users - [#431](https://github.com/PrefectHQ/ui/pull/431)
 
 ### Bugfixes
 

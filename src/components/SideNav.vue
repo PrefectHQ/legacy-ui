@@ -64,7 +64,8 @@ export default {
       'isServer',
       'isCloud',
       'version',
-      'releaseTimestamp'
+      'releaseTimestamp',
+      'coreVersion'
     ]),
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('tenant', ['tenant', 'tenants', 'tenantIsSet']),
@@ -587,6 +588,15 @@ export default {
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <div v-if="coreVersion && isServer" class="pb-2 overline text-center">
+            <div class="grey--text">
+              Core Version
+            </div>
+            <div class="font-weight-medium" style="line-height: 1;">
+              {{ coreVersion }}
+            </div>
+          </div>
 
           <v-list-item
             v-if="isCloud"
