@@ -17,6 +17,7 @@ const state = {
   retries: 0,
   serverUrl: localStorage.getItem(SERVER_KEY),
   version: null
+  core_version: null
 }
 
 const getters = {
@@ -130,6 +131,12 @@ const mutations = {
   },
   unsetVersion(state) {
     state.version = null
+  },
+  setCoreVersion(state, version) {
+    state.core_version = version
+  },
+  unsetCoreVersion(state) {
+    state.core_version = null
   }
 }
 
@@ -142,11 +149,13 @@ const actions = {
       })
       commit('setReleaseTimestamp', data.api.release_timestamp)
       commit('setVersion', data.api.version)
+      commit('setCoreVersion', data.api.core_version)
       commit('setConnected', true)
       commit('setApiMode', data.api.mode)
     } catch (error) {
       commit('unsetReleaseTimetamp')
       commit('unsetVersion')
+      commit('unsetCoreVersion')
       commit('setConnected', false)
 
       LogRocket.captureException(error, {
