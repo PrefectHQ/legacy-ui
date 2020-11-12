@@ -4,12 +4,18 @@
 
 ### Features and Improvements
 
-- Remove the Gantt Chart (replaced by the Timeline) and `vue-apexcharts` - [#278](https://github.com/PrefectHQ/ui/pull/278)
-- Add the Flow Run timeline to the Flow Run Overview Page - [#278](https://github.com/PrefectHQ/ui/pull/278)
+- None
 
 ### Bugfixes
 
 - None
+
+## 2020-11-12
+
+### Features and Improvements
+
+- Remove the Gantt Chart (replaced by the Timeline) and `vue-apexcharts` - [#278](https://github.com/PrefectHQ/ui/pull/278)
+- Add the Flow Run timeline to the Flow Run Overview Page - [#278](https://github.com/PrefectHQ/ui/pull/278)
 
 ## 2020-11-11
 
