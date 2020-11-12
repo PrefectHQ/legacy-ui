@@ -16,12 +16,7 @@
     "test:coverage": "vue-cli-service test:unit --coverage"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@auth0/auth0-spa-js": "^1.12.1",
-=======
     "@auth0/auth0-spa-js": "^1.13.2",
-    "apexcharts": "npm:znicholasbrown-apexcharts@>=3.10.1",
->>>>>>> e34c28b8f97b2d5d6550990cb5b70267f8a875f6
     "apollo-link-batch-http": "^1.2.14",
     "codemirror": "^5.58.2",
     "codemirror-graphql": "^0.12.3",
