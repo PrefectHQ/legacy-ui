@@ -95,6 +95,15 @@ export const formatTime = {
           : moment(timestamp).format('HH:mm:ss')
       }`
     },
+    logTimeExtended(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj
+          ? timeObj.format('HH:mm:ss:SS')
+          : moment(timestamp).format('HH:mm:ss:SS')
+      }`
+    },
     logDate(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone)
@@ -111,6 +120,15 @@ export const formatTime = {
         timeObj
           ? timeObj.format('D MMMM YYYY h:mma')
           : moment(timestamp).format('D MMMM YYYY h:mma')
+      }`
+    },
+    formatTimeGranular(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj
+          ? timeObj.format('h:mm:ss A')
+          : moment(timestamp).format('h:mm:ss A')
       }`
     },
     formatDateTime(timestamp) {

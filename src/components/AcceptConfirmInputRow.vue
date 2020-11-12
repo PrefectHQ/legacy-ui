@@ -9,6 +9,10 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    tooltips: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -32,22 +36,31 @@ export default {
     <div v-if="!confirm" class="d-flex align-center justify-space-between">
       <div class="truncate" v-html="label"></div>
       <div class="text-right">
-        <v-btn
-          color="primary"
-          data-cy="choose-tenant"
-          text
-          @click="confirm = 'accept'"
+        <v-tooltip :disabled="!tooltips" bottom
+          ><template #activator="{on}"
+            ><v-btn
+              color="primary"
+              data-cy="choose-tenant"
+              text
+              v-on="on"
+              @click="confirm = 'accept'"
+            >
+              <v-icon>
+                check
+              </v-icon>
+            </v-btn></template
+          >Accept team invite</v-tooltip
         >
-          <v-icon>
-            check
-          </v-icon>
-        </v-btn>
 
-        <v-btn color="error" text @click="confirm = 'decline'">
-          <v-icon>
-            close
-          </v-icon>
-        </v-btn>
+        <v-tooltip :disabled="!tooltips" bottom
+          ><template #activator="{on}"
+            ><v-btn color="error" text v-on="on" @click="confirm = 'decline'">
+              <v-icon>
+                close
+              </v-icon>
+            </v-btn></template
+          >Decline team invite</v-tooltip
+        >
       </div>
     </div>
 

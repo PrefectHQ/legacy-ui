@@ -3,7 +3,7 @@ import LastTenRuns from '@/components/LastTenRuns'
 import CardTitle from '@/components/Card-Title'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
-import { timelineMixin } from '@/mixins/timelineMixin'
+import { flowRunHistoryMixin } from '@/mixins/flowRunHistoryMixin'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 const serverHeaders = [
@@ -47,7 +47,7 @@ export default {
     CardTitle,
     LastTenRuns
   },
-  mixins: [formatTime, timelineMixin],
+  mixins: [formatTime, flowRunHistoryMixin],
   props: {
     flowGroupId: {
       required: true,

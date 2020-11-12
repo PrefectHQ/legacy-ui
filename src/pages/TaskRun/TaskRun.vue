@@ -11,6 +11,7 @@ import SubPageNav from '@/layouts/SubPageNav'
 import TaskRunHeartbeatTile from '@/pages/TaskRun/TaskRunHeartbeat-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
+import { parser } from '@/utils/markdownParser'
 
 export default {
   metaInfo() {
@@ -77,6 +78,9 @@ export default {
         case 'mapped-runs':
           query = { 'mapped-runs': '' }
           break
+        case 'artifacts':
+          query = { artifacts: '' }
+          break
         default:
           break
       }
@@ -104,7 +108,11 @@ export default {
     getTab() {
       if ('logId' in this.$route.query) return 'logs'
       if ('mapped-runs' in this.$route.query) return 'mapped-runs'
+      if ('artifacts' in this.$route.query) return 'artifacts'
       return 'overview'
+    },
+    parseMarkdown(md) {
+      return parser(md)
     }
   },
   apollo: {
@@ -199,6 +207,13 @@ export default {
         Logs
       </v-tab>
 
+      <v-tab href="#artifacts" :style="hideOnMobile" disabled>
+        <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
+          <v-icon left>fas fa-fingerprint</v-icon>
+          Artifacts
+        </v-badge>
+      </v-tab>
+
       <v-tab
         v-if="mappedParent || mappedChild"
         href="#mapped-runs"
@@ -261,6 +276,15 @@ export default {
 
       <v-tab-item
         class="tab-full-height"
+        value="artifacts"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
+        <!-- <div v-html="parseMarkdown('# hello')"></div> -->
+      </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height"
         value="mapped-runs"
         transition="quick-fade"
         reverse-transition="quick-fade"
@@ -292,6 +316,11 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
+      <v-btn disabled @click="tab = 'artifacts'">
+        Artifacts
+        <v-icon>fas fa-fingerprint</v-icon>
+      </v-btn>
+
       <v-btn @click="tab = 'mapped-runs'">
         Mapped Runs
         <v-icon>device_hub</v-icon>
@@ -307,5 +336,16 @@ export default {
 
 .tab-full-height {
   min-height: 80vh;
+}
+
+/* stylelint-disable */
+
+.v-tab--disabled .v-badge__badge {
+  pointer-events: none;
+}
+
+.v-badge--inline .v-badge__badge,
+.v-badge--inline .v-badge__wrapper {
+  margin: 5px;
 }
 </style>

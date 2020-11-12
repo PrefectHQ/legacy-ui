@@ -29,8 +29,8 @@ export default {
     },
     expectedRuns() {
       return (
-        this.task?.serialized_state?.n_map_states?.toLocaleString() || 'Unknown'
-      )
+        this.task?.serialized_state?.n_map_states || 'Unknown'
+      ).toLocaleString()
     }
   },
   methods: {

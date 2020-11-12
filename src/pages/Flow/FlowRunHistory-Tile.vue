@@ -1,6 +1,6 @@
 <script>
 import BarChart from '@/components/Visualizations/BarChart.vue'
-import { timelineMixin } from '@/mixins/timelineMixin'
+import { flowRunHistoryMixin } from '@/mixins/flowRunHistoryMixin'
 import TimelineTooltip from '@/components/TimelineTooltip'
 
 export default {
@@ -8,7 +8,7 @@ export default {
     BarChart,
     TimelineTooltip
   },
-  mixins: [timelineMixin],
+  mixins: [flowRunHistoryMixin],
   props: {
     aggregate: {
       type: Boolean,

@@ -1,5 +1,4 @@
 import Router from 'vue-router'
-// import { defaultApolloClient } from '@/vue-apollo'
 
 //  Nav guards
 import authNavGuard from '@/middleware/authNavGuard'
@@ -187,6 +186,14 @@ export const routes = [
           import(
             /* webpackChunkName: "user-settings--tokens" */ '@/pages/UserSettings/Tokens.vue'
           )
+      },
+      {
+        name: 'teams',
+        path: 'teams',
+        component: () =>
+          import(
+            /* webpackChunkName: "user-settings--teams" */ '@/pages/UserSettings/Teams.vue'
+          )
       }
     ]
   },
@@ -272,6 +279,15 @@ export const routes = [
         component: () =>
           import(
             /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/UniversalDeploy/UniversalDeployTutorial.vue'
+          ),
+        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      },
+      {
+        name: 'test',
+        path: 'test',
+        component: () =>
+          import(
+            /* webpackChunkName: "tutorials--test" */ '@/pages/Tutorials/Wrapper.vue'
           ),
         beforeEnter: multiguard([authNavGuard, tenantNavGuard])
       }
