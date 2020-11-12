@@ -324,31 +324,26 @@ export default {
       <div class="lists-wrapper" @click="tenantMenuOpen = false">
         <v-list flat>
           <v-list-item class="side-nav-header">
-            <v-list flat>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-img
-                    height="40"
-                    contain
-                    class="logo"
-                    position="left"
-                    :src="navLogo"
-                    alt="Prefect Logo"
-                  />
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-btn icon small @click="close">
-                    <v-icon>close</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-              <v-list-item v-if="coreVersion">
-                <v-list-item-content>
-                  Version: {{ coreVersion }}
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
+            <v-list-item-content>
+              <v-img
+                height="40"
+                contain
+                class="logo"
+                position="left"
+                :src="navLogo"
+                alt="Prefect Logo"
+              />
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn icon small @click="close">
+                <v-icon>close</v-icon>
+              </v-btn>
+            </v-list-item-action>
           </v-list-item>
+
+          <v-list-item-content>
+            Version: {{ coreVersion }}
+          </v-list-item-content>
 
           <v-list-item
             active-class="primary-active-class"
