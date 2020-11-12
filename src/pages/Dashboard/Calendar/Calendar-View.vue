@@ -24,7 +24,8 @@ export default {
       flows: [],
       limit: 15,
       loading: 0,
-      timePeriod: 'category'
+      timePeriod: 'category',
+      timeInterval: 15
     }
   },
   computed: {
@@ -34,33 +35,34 @@ export default {
     today() {
       return this.formatCalendarTime(new Date())
     },
-    flowRunEvents() {
-      const flowRuns = this.flowRuns?.map(flowRun => {
-        flowRun.start = this.formatCalendarTime(flowRun.start_time)
-        flowRun.end = this.formatCalendarTime(flowRun.end_time)
-        flowRun.category = flowRun.flow_id
-        return flowRun
-      })
-      return flowRuns
-    }
-  },
-  watch: {
-    search(val) {
-      this.$router.replace({
-        query: { ...this.$route.query, flows: val }
-      })
+    intervalCount() {
+      return (60 / this.timeInterval) * 24
     },
-    showArchived(val) {
-      let query = { ...this.$route.query }
-
-      if (val) {
-        query.archived = true
-      } else {
-        delete query.archived
+    flowRunEvents() {
+      if (this.timePeriod != 'month') {
+        const flowRuns = this.flowRuns?.map(flowRun => {
+          flowRun.start = this.formatCalendarTime(flowRun.start_time)
+          flowRun.end = this.formatCalendarTime(flowRun.end_time)
+          flowRun.category = flowRun.flow_id
+          return flowRun
+        })
+        console.log('fr', flowRuns)
+        return flowRuns
       }
-      this.$router.replace({
-        query: query
+      const flows = this.flows.map(flow => {
+        if (flow?.flow_runs[0]?.start_time) {
+          flow.start = this.formatCalendarTime(flow?.flow_runs[0]?.start_time)
+          // flow.end = this.formatCalendarDate(flow?.flow_runs[0]?.start_time)
+          console.log('flow', flow)
+          return flow
+        }
       })
+      return flows
+    },
+    flowIds() {
+      const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
+      console.log('flow ids', ids)
+      return ids
     }
   },
   methods: {
@@ -70,7 +72,7 @@ export default {
   },
   apollo: {
     flowRuns: {
-      query: require('@/graphql/Dashboard/calendar-flow-runs.gql'),
+      query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
@@ -79,25 +81,25 @@ export default {
           )
         }
       },
-      pollInterval: 5000,
       loadingKey: 'loadingKey',
       update: data => data.flow_run
     },
     flows: {
-      query() {
-        return require('@/graphql/Dashboard/flows.js').default(this.isCloud)
+      query: require('@/graphql/Calendar/calendar-flows.gql'),
+      skip() {
+        return this.timePeriod != 'month'
       },
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
+          id: this.flowIds,
           startTime: oneAgo(
             this.timePeriod === 'category' ? 'day' : this.timePeriod
           )
         }
       },
       loadingKey: 'loading',
-      pollInterval: 60000,
-      update: data => data?.flow.id
+      update: data => data?.flow
     }
   }
 }
@@ -114,12 +116,14 @@ export default {
         ref="calendar"
         :now="today"
         :value="today"
-        :categories="flows"
+        :categories="flowIds"
         category-show-all
         event-overlap-mode="column"
         event-overlap-threshold="0"
         :events="flowRunEvents"
         :event-color="eventColor"
+        :interval-minutes="timeInterval"
+        :interval-count="intervalCount"
         :type="timePeriod"
       >
         <template #category="{ category }">

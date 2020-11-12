@@ -1,0 +1,14 @@
+query CalendarFlows($project_id: uuid, $ids: [uuid!], $startTime: timestamptz) {
+  flow(
+    where: {
+    id: { _in: $ids }
+    project_id: { _eq: $project_id }  
+    }
+  ) {
+    id
+    name
+    flow_runs (where:{start_time: {_gte: $startTime}}) {
+        start_time
+    }
+  }
+}

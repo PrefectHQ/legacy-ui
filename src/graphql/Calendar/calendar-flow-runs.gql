@@ -2,11 +2,9 @@ query CalendarFlowRuns($project_id: uuid, $startTime: timestamptz) {
   flow_run(
     where: {
     flow: { project_id: { _eq: $project_id } }
-    
     start_time: {_gte: $startTime}
     }
-    limit: 500
-    order_by: { start_time: desc }
+    
   ) {
     id
     flow_id
