@@ -65,6 +65,14 @@ export default {
             <v-list-item-title>Personal Access Tokens</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item :to="{ name: 'teams' }" ripple exact>
+          <v-list-item-action>
+            <v-icon>people</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Your Teams</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <div

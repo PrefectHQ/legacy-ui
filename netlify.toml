@@ -26,4 +26,4 @@
   for = "/*"
 
   [headers.values]
-    Content-Security-Policy = "frame-ancestors https://login.prefect.io"
+    Content-Security-Policy = "*"

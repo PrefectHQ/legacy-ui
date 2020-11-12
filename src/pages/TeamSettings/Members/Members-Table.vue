@@ -361,7 +361,7 @@ export default {
     >
       <div v-if="deleteSelfWarning" class="red--text"
         >Are you sure you want to remove yourself from {{ tenant.name }}? You'll
-        no longer be able to access your Projects or Flows associated with
+        no longer be able to access your run data associated with
         {{ tenant.name }}.
       </div>
       <div v-else>
