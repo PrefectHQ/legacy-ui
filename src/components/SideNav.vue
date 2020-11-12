@@ -341,10 +341,6 @@ export default {
             </v-list-item-action>
           </v-list-item>
 
-          <v-list-item-content>
-            Version: {{ coreVersion }}
-          </v-list-item-content>
-
           <v-list-item
             active-class="primary-active-class"
             data-cy="side-nav-dashboard-item"
@@ -592,6 +588,15 @@ export default {
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <div v-if="coreVersion && isServer" class="pb-2 overline text-center">
+            <div class="grey--text">
+              Core Version
+            </div>
+            <div class="font-weight-medium" style="line-height: 1;">
+              {{ coreVersion }}
+            </div>
+          </div>
 
           <v-list-item
             v-if="isCloud"
