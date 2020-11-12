@@ -24,7 +24,7 @@ export default {
       flows: [],
       limit: 15,
       loading: 0,
-      timePeriod: 'day'
+      timePeriod: 'category'
     }
   },
   computed: {
@@ -32,7 +32,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     today() {
-      return this.formatCalendarDate(new Date())
+      return this.formatCalendarTime(new Date())
     },
     flowRunEvents() {
       const flowRuns = this.flowRuns?.map(flowRun => {
@@ -74,7 +74,9 @@ export default {
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: oneAgo(this.timePeriod)
+          startTime: oneAgo(
+            this.timePeriod === 'category' ? 'day' : this.timePeriod
+          )
         }
       },
       pollInterval: 5000,

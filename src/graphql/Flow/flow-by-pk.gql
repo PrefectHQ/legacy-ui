@@ -1,5 +1,6 @@
 query FlowByPk ($flowId: uuid!) {
     flow_by_pk(id: $flowId) {
+        id
         name
         schedule
     }
