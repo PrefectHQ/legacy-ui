@@ -185,7 +185,6 @@ export default {
         :open-on-click="false"
         :close-on-content-click="false"
         offset-y
-        close-delay="1000000000"
       >
         <template #activator="{on}">
           <div v-on="on">
