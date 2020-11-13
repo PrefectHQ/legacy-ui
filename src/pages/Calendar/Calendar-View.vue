@@ -40,7 +40,7 @@ export default {
 </script>
 
 <template>
-  <v-container class="notcontainer pa-0 ma-0">
+  <v-container>
     <v-row>
       <v-col cols="3">
         <v-card>
