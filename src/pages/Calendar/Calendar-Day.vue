@@ -1,5 +1,5 @@
 <script>
-import FlowName from '@/pages/Dashboard/Calendar/FlowName'
+import FlowName from '@/pages/Calendar/FlowName'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import moment from '@/utils/moment'

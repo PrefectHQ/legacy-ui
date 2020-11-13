@@ -197,9 +197,22 @@ export const routes = [
       }
     ]
   },
+  // ---------------------------//
+  //
+  // Calendar
+  //
+  // ----------------------------//
+  {
+    path: '/:tenant/calendar',
+    component: () =>
+      import(
+        /*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
   // --------------------------- //
   //
-  // Tutorials
+  // Onboard
   //
   // --------------------------- //
   {

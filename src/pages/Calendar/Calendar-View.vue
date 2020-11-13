@@ -1,5 +1,5 @@
 <script>
-import CalendarDay from '@/pages/Dashboard/Calendar/Calendar-Day'
+import CalendarDay from '@/pages/Calendar/Calendar-Day'
 import { mapGetters } from 'vuex'
 import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
