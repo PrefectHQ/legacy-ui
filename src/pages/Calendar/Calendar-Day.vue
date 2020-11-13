@@ -83,24 +83,34 @@ export default {
 </script>
 
 <template>
-  <v-calendar
-    ref="calendar"
-    :now="date"
-    :value="date"
-    :categories="flowIds"
-    category-show-all
+  <v-skeleton-loader
     :loading="loadingKey > 0"
-    event-overlap-mode="column"
-    event-overlap-threshold="0"
-    :events="flowRunEvents"
-    :event-color="eventColor"
-    :interval-minutes="timeInterval"
-    :interval-count="intervalCount"
-    type="category"
-    @click:date="moreDays++"
+    type="image"
+    min-height="329"
+    height="100%"
+    transition="quick-fade"
+    class="my-2"
+    tile
   >
-    <template #category="{ category }">
-      <FlowName :id="category" />
-    </template>
-  </v-calendar>
+    <v-calendar
+      ref="calendar"
+      class="calendarstyle"
+      :now="date"
+      :value="date"
+      :categories="flowIds"
+      category-show-all
+      event-overlap-mode="column"
+      event-overlap-threshold="0"
+      :events="flowRunEvents"
+      :event-color="eventColor"
+      :interval-minutes="timeInterval"
+      :interval-count="intervalCount"
+      type="category"
+      @click:date="moreDays++"
+    >
+      <template #category="{ category }">
+        <FlowName :id="category" class="minwidth" />
+      </template>
+    </v-calendar>
+  </v-skeleton-loader>
 </template>
