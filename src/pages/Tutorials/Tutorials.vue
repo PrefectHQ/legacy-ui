@@ -1,6 +1,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { parser, getRoutes } from '@/utils/markdownParser'
+/* eslint-disable vue/no-v-html */
 
 export default {
   data() {
