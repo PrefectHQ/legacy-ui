@@ -203,6 +203,7 @@ export const routes = [
   //
   // ----------------------------//
   {
+    name: 'calendar',
     path: '/:tenant/calendar',
     component: () =>
       import(

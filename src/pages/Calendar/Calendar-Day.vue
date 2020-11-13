@@ -27,7 +27,8 @@ export default {
   },
   data() {
     return {
-      skip: false
+      skip: false,
+      loadingKey: 0
     }
   },
   computed: {
@@ -43,23 +44,12 @@ export default {
       return date
     },
     flowRunEvents() {
-      if (this.timePeriod != 'month') {
-        const flowRuns = this.flowRuns?.map(flowRun => {
-          flowRun.start = this.formatCalendarTime(flowRun.start_time)
-          flowRun.end = this.formatCalendarTime(flowRun.end_time)
-          flowRun.category = flowRun.flow_id
-          return flowRun
-        })
-        return flowRuns
-      }
-      const flows = this.flows.map(flow => {
-        if (flow?.flow_runs[0]?.start_time) {
-          flow.start = this.formatCalendarTime(flow?.flow_runs[0]?.start_time)
-          // flow.end = this.formatCalendarDate(flow?.flow_runs[0]?.start_time)
-          return flow
-        }
+      return this.flowRuns?.map(flowRun => {
+        flowRun.start = this.formatCalendarTime(flowRun.start_time)
+        flowRun.end = this.formatCalendarTime(flowRun.end_time)
+        flowRun.category = flowRun.flow_id
+        return flowRun
       })
-      return flows
     },
     flowIds() {
       const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
@@ -87,21 +77,6 @@ export default {
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
       update: data => data.flow_run
-    },
-    flows: {
-      query: require('@/graphql/Calendar/calendar-flows.gql'),
-      skip() {
-        return this.skip
-      },
-      variables() {
-        return {
-          project_id: this.projectId == '' ? null : this.projectId,
-          id: this.flowIds,
-          startTime: this.timeBack
-        }
-      },
-      loadingKey: 'loading',
-      update: data => data?.flow
     }
   }
 }
@@ -114,6 +89,7 @@ export default {
     :value="date"
     :categories="flowIds"
     category-show-all
+    :loading="loadingKey > 0"
     event-overlap-mode="column"
     event-overlap-threshold="0"
     :events="flowRunEvents"
