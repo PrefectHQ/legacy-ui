@@ -536,6 +536,67 @@ body {
 .overflow-table > .v-data-table__wrapper {
   overflow: initial !important;
 }
+
+.md {
+  margin-top: 3.25rem;
+  margin-left: 2.25rem;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #4d606e;
+    font-weight: 700;
+    line-height: 1.15;
+    text-rendering: optimizeLegibility;
+    border-bottom: 1px solid #d2dadf;
+    padding-bottom: 0.3rem;
+  }
+
+  ol,
+  p,
+  ul {
+    font-size: 1em;
+    line-height: 1.75;
+    margin-bottom: 1.25em;
+  }
+
+  p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    color: #4d606e;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  a {
+    font-weight: 500;
+    text-decoration: none;
+  }
+  code {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #3b8dff;
+    color: #4d606e;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1.6em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+  }
+}
 // stylelint-enable
 
 .code-block {

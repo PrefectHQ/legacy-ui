@@ -71,7 +71,12 @@ export default {
                 hash: props.item.name
               }"
               class="links"
-              >{{ props.item.name }}</router-link
+              >{{
+                props.item.name
+                  .substring(1)
+                  .replace(/-/g, ' ')
+                  .toUpperCase()
+              }}</router-link
             >
           </div>
 
@@ -83,7 +88,7 @@ export default {
               }"
               class="links"
             >
-              {{ props.item.name }}
+              {{ props.item.name.replace(/-/g, ' ').toUpperCase() }}
             </router-link>
           </div>
         </template>
@@ -98,6 +103,7 @@ export default {
     >
       <div
         v-if="$route.params.id"
+        class="md"
         v-html="mdParser(require(`./Markdown/${$route.params.id}.md`))"
       >
       </div>
@@ -134,7 +140,7 @@ export default {
 .router-link-active {
   color: #3b8dff;
   font-weight: bold;
+  font-weight: 700;
 }
-
 // stylelint-enable
 </style>
