@@ -4,6 +4,7 @@ import { mapGetters } from 'vuex'
 import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
+import ExternalLink from '@/components/ExternalLink'
 import TimelineTile from '@/pages/FlowRun/Timeline-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import SchematicTile from '@/pages/FlowRun/Schematic-Tile'
@@ -36,6 +37,7 @@ export default {
     Actions,
     BreadCrumbs,
     DetailsTile,
+    ExternalLink,
     TimelineTile,
     LogsCard,
     SchematicTile,
@@ -177,12 +179,62 @@ export default {
         Logs
       </v-tab>
 
-      <v-tab href="#artifacts" :style="hideOnMobile" disabled>
-        <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
-          <v-icon left>fas fa-fingerprint</v-icon>
-          Artifacts
-        </v-badge>
-      </v-tab>
+      <v-menu
+        open-on-hover
+        :close-on-click="false"
+        :open-on-click="false"
+        :close-on-content-click="false"
+        offset-y
+      >
+        <template #activator="{on}">
+          <div v-on="on">
+            <!-- Height: 100% is required here since we're nesting the tab -->
+            <v-tab
+              href="#artifacts"
+              :style="hideOnMobile"
+              style="height: 100%;"
+              disabled
+            >
+              <v-badge
+                color="codePink"
+                content="Coming Soon!"
+                bottom
+                bordered
+                inline
+              >
+                <v-icon left>fas fa-fingerprint</v-icon>
+                Artifacts
+              </v-badge>
+            </v-tab>
+          </div>
+        </template>
+        <v-card tile class="pa-0" max-width="320">
+          <v-card-title>
+            <v-badge
+              color="codePink"
+              content="Coming Soon!"
+              bottom
+              bordered
+              inline
+            >
+              <v-icon left>fas fa-fingerprint</v-icon>
+              Artifacts
+            </v-badge>
+          </v-card-title>
+          <v-card-text>
+            <div>
+              The Artifacts API is an experimental feature set currently under
+              development. For a sneak preview, check out the
+              <ExternalLink
+                href="https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts"
+              >
+                Artifacts API docs
+              </ExternalLink>
+              !
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-menu>
     </v-tabs>
 
     <v-tabs-items
