@@ -38,6 +38,7 @@
         <slot name="page-actions"></slot>
       </v-col>
     </v-row>
+    <v-row v-if="$slots.tabs"><slot name="tabs"></slot></v-row>
     <v-divider />
   </v-sheet>
 </template>

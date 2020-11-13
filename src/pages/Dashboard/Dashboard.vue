@@ -1,5 +1,6 @@
 <script>
 import Agents from '@/components/Agents/Agents'
+import NavTabBar from '@/components/NavTabBar'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
@@ -47,6 +48,7 @@ export default {
     FailedFlowsTile,
     FlowTableTile,
     InProgressTile,
+    NavTabBar,
     NotificationsTile,
     ProjectSelector,
     SubPageNav,
@@ -92,9 +94,6 @@ export default {
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('api', ['backend', 'isCloud', 'connected']),
     ...mapGetters('tenant', ['tenant']),
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
-    },
     tabs() {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
     }
@@ -239,28 +238,8 @@ export default {
           <ProjectSelector @project-select="handleProjectSelect" />
         </v-skeleton-loader>
       </span>
+      <span slot="tabs"><NavTabBar :tabs="tabs" page="dashboard"/></span>
     </SubPageNav>
-
-    <v-tabs
-      v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
-      style="max-width: 1440px;"
-      light
-    >
-      <v-tabs-slider color="blue"></v-tabs-slider>
-
-      <v-tab
-        v-for="tb in tabs"
-        :key="tb.target"
-        :data-cy="`dashboard-${tb.target}-tab`"
-        :href="`#${tb.target}`"
-        :style="hideOnMobile"
-      >
-        <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
-        {{ tb.name }}
-      </v-tab>
-    </v-tabs>
 
     <v-tabs-items
       v-model="tab"
