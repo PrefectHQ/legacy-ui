@@ -62,9 +62,3 @@ export default {
     </v-row>
   </v-container>
 </template>
-
-<style scoped>
-.notcontainer {
-  max-width: 98%;
-}
-</style>
