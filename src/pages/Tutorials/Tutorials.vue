@@ -1,5 +1,7 @@
 <script>
 import { mapGetters } from 'vuex'
+import { parser, getRoutes } from '@/utils/markdownParser'
+
 export default {
   data() {
     return {
@@ -14,13 +16,17 @@ export default {
           to: 'universal-deploy-tutorial',
           title: 'Universal Deploy'
         }
-      ]
+      ],
+      routes: getRoutes()
     }
   },
+
   computed: {
-    ...mapGetters('tenant', ['tenant']),
-    tutorialParser() {
-      return false
+    ...mapGetters('tenant', ['tenant'])
+  },
+  methods: {
+    mdParser(md) {
+      return parser(md)
     }
   }
 }
@@ -54,31 +60,34 @@ export default {
 
       <v-divider />
 
-      <v-list v-if="!tutorialParser" dense>
-        <v-list-item
-          v-for="(tutorial, index) in tutorials"
-          :key="index"
-          :to="{ name: tutorial.to, params: { tenant: tenant.slug } }"
-          ripple
-          exact
-        >
-          <v-list-item-action>
-            <v-icon v-if="tutorial.icon">{{ tutorial.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ tutorial.title }}</v-list-item-title>
-            <v-list-item-subtitle v-if="tutorial.subtitle">{{
-              tutorial.subtitle
-            }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <v-treeview :items="routes" hoverable open-on-click transition>
+        <template slot="label" slot-scope="props">
+          <div v-if="props.item.name[0] === '#'">
+            <router-link
+              :to="{
+                name: 'tutorial',
+                params: { tenant: tenant.slug, id: props.item.file },
+                hash: props.item.name
+              }"
+              class="links"
+              >{{ props.item.name }}</router-link
+            >
+          </div>
 
-      <div v-else>
-        <router-link :to="{ name: 'test' }">Test</router-link>
-      </div>
+          <div v-else>
+            <router-link
+              :to="{
+                name: 'tutorial',
+                params: { tenant: tenant.slug, id: props.item.name }
+              }"
+              class="links"
+            >
+              {{ props.item.name }}
+            </router-link>
+          </div>
+        </template>
+      </v-treeview>
     </v-navigation-drawer>
-
     <div
       :class="{
         'sm-and-down-left-padding': $vuetify.breakpoint.smAndDown,
@@ -86,6 +95,12 @@ export default {
       }"
       style="min-height: 100%;"
     >
+      <div
+        v-if="$route.params.id"
+        v-html="mdParser(require(`./Markdown/${$route.params.id}.md`))"
+      >
+      </div>
+
       <v-fade-transition mode="out-in">
         <router-view></router-view>
       </v-fade-transition>
@@ -107,4 +122,18 @@ export default {
   // Match left padding with collapsed User Settings sidebar width
   padding-left: 56px;
 }
+// stylelint-disable
+
+.links {
+  color: #465968;
+  font-size: 14px;
+  text-decoration: none;
+  font-family: Roboto, sans-serif;
+}
+.router-link-active {
+  color: #3b8dff;
+  font-weight: bold;
+}
+
+// stylelint-enable
 </style>

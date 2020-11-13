@@ -256,42 +256,12 @@ export const routes = [
   // --------------------------- //
   {
     name: 'tutorial',
-    path: '/:tenant?/tutorial',
+    path: '/:tenant?/tutorial/:id?',
     component: () =>
       import(
         /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
       ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard]),
-    redirect: { name: 'flow-run-tutorial' },
-    children: [
-      {
-        name: 'flow-run-tutorial',
-        path: 'flow-run-tutorial',
-        component: () =>
-          import(
-            /* webpackChunkName: "tutorials--flow-run" */ '@/pages/Tutorials/FlowRun/FlowRunTutorial.vue'
-          ),
-        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-      },
-      {
-        name: 'universal-deploy-tutorial',
-        path: 'universal-deploy-tutorial',
-        component: () =>
-          import(
-            /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/UniversalDeploy/UniversalDeployTutorial.vue'
-          ),
-        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-      },
-      {
-        name: 'test',
-        path: 'test',
-        component: () =>
-          import(
-            /* webpackChunkName: "tutorials--test" */ '@/pages/Tutorials/Wrapper.vue'
-          ),
-        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-      }
-    ]
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
     name: 'notifications',
@@ -327,7 +297,15 @@ export const routes = [
 
 const router = new Router({
   mode: 'history',
-  routes
+  routes,
+  scrollBehavior(to) {
+    if (to.hash) {
+      return {
+        selector: to.hash,
+        behavior: 'smooth'
+      }
+    }
+  }
 })
 
 export default router
