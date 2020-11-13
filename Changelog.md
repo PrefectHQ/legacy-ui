@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add feature teaser to the Artifacts tabs on the task run and flow run pages - [#435](https://github.com/PrefectHQ/ui/pull/435)
 
 ### Bugfixes
 
