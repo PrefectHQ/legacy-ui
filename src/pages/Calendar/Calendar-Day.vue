@@ -2,7 +2,6 @@
 import FlowName from '@/pages/Calendar/FlowName'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
-// import moment from '@/utils/moment'
 
 export default {
   components: {
@@ -29,7 +28,8 @@ export default {
     return {
       skip: false,
       loadingKey: 0,
-      flowId: null
+      flowId: null,
+      filteredRuns: {}
     }
   },
   computed: {
@@ -43,34 +43,30 @@ export default {
       return this.addDay(this.date, 1)
     },
     flowRunEvents() {
-      let lastFlowRun = {}
-      let count = 1
-      console.log(this.flowRuns)
-      return this.flowRuns?.filter(flowRun => {
+      let lastRun = {}
+      const filtered = this.flowRuns?.filter((flowRun, index) => {
         flowRun.start = this.formatCalendarTime(flowRun.start_time)
         flowRun.end = this.formatCalendarTime(flowRun.end_time)
         flowRun.category = flowRun.flow_id
-        const lastRunStart = this.addTime(lastFlowRun.start_time, 15, 'minutes')
-        console.log(
-          1,
-          lastFlowRun.start_time,
-          2,
-          lastRunStart,
-          3,
-          flowRun.start
-        )
+        const previousRun = this.flowRuns[index - 1]
+        const lastRunStart = this.addTime(previousRun?.start_time, 1, 'minutes')
         if (
-          lastRunStart > flowRun.start &&
-          lastFlowRun.flow_id === flowRun.flow_id
+          lastRunStart > flowRun.start_time &&
+          previousRun.flow_id === flowRun.flow_id
         ) {
-          count++
-          lastFlowRun.name = `${count} flow runs`
+          if (!this.filteredRuns[flowRun.flow_id])
+            this.filteredRuns[flowRun.flow_id] = []
+          this.filteredRuns[flowRun.flow_id].push(flowRun)
+          lastRun[index] = flowRun
+          lastRun.name = 'Multiple Flows'
           return null
         }
-        count = 1
-        lastFlowRun = flowRun
+        // console.log('big', flowRun, lastRunStart, flowRun.start)
+        lastRun = flowRun
         return flowRun
       })
+      console.log(this.filteredRuns)
+      return filtered
     },
     flowIds() {
       console.log(this.flowRunEvents)

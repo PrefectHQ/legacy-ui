@@ -8,7 +8,7 @@ query CalendarFlowRuns($project_id: uuid, $startTime: timestamptz, $endTime: tim
     ]
     }
     # distinct_on: flow_id
-    order_by: {flow_id: asc}
+    order_by: {flow_id: asc, start_time: asc}
   ) 
   {
     id

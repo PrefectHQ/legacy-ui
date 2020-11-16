@@ -38,12 +38,13 @@ export const formatTime = {
     },
     formatCalendarDate(timestamp) {
       if (!timestamp) return
-      let timeObj = moment(timestamp)
-      return `${
+      let timeObj = moment(timestamp).tz(this.timeZone)
+      const date = `${
         timeObj
           ? timeObj.format('YYYY-MM-DD')
           : moment(timestamp).format('YYYY-MM-DD')
       }`
+      return date
     },
     formatCalendarTime(timestamp) {
       if (!timestamp) return
@@ -58,18 +59,18 @@ export const formatTime = {
       if (!timestamp) return
       let timeObj = moment(timestamp)
         .add(amount, unit)
-        .tz(this.timezone)
-      return `${
-        timeObj
-          ? timeObj.format('YYYY-MM-DD HH:mm:ss')
-          : moment(timestamp).format('YYYY-MM-DD HH:mm:ss')
-      }`
+        .toISOString()
+      return timeObj
     },
     addDay(timestamp, amount) {
       if (!timestamp) return
-      return moment(timestamp)
-        .add(amount, 'day')
-        .tz(this.timezone)
+      let timeObj = moment(timestamp).add(amount, 'days')
+      const date = `${
+        timeObj
+          ? timeObj.format('YYYY-MM-DD')
+          : moment(timestamp).format('YYYY-MM-DD')
+      }`
+      return date
     },
     shortTime(timestamp) {
       if (!timestamp) return
