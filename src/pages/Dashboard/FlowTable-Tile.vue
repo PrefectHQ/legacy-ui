@@ -303,15 +303,15 @@ export default {
         }"
       >
         <template #item.archived="{ item }">
-          <t-span :content="item.archived ? 'Archived' : 'Active'">
+          <truncate :content="item.archived ? 'Archived' : 'Active'">
             <v-icon small dark :color="item.archived ? 'accent-pink' : 'green'">
               {{ item.archived ? 'archive' : 'pi-flow' }}
             </v-icon>
-          </t-span>
+          </truncate>
         </template>
 
         <template #item.name="{ item }">
-          <t-span :content="item.name">
+          <truncate :content="item.name">
             <router-link
               class="link"
               :data-cy="
@@ -329,11 +329,11 @@ export default {
             >
               <span>{{ item.name }}</span>
             </router-link>
-          </t-span>
+          </truncate>
         </template>
 
         <template #item.project.name="{ item }">
-          <t-span :content="item.project.name">
+          <truncate :content="item.project.name">
             <router-link
               class="link"
               :to="{
@@ -343,7 +343,7 @@ export default {
             >
               <span>{{ item.project.name }}</span>
             </router-link>
-          </t-span>
+          </truncate>
         </template>
 
         <template #item.schedule="{ item }">
@@ -357,11 +357,11 @@ export default {
         </template>
 
         <template #item.created="{ item }">
-          <t-span :content="formatTime(item.created)" />
+          <truncate :content="formatTime(item.created)" />
         </template>
 
         <template #item.created_by.username="{ item }">
-          <t-span
+          <truncate
             :content="item.created_by ? item.created_by.username : null"
           />
         </template>
