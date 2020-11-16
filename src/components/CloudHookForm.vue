@@ -607,23 +607,21 @@ export default {
                   </span>
                   <span v-else-if="tempType == 'MSTEAMS'">
                     Prefect Cloud will send a message via the Microsoft Teams
-                    API to this endpoint's channel when your flow's State
-                    changes. To read more about the Teams message endpoint, you
-                    can visit the
+                    API to this channel endpoint when your flow's State changes.
+                    To read more about the Teams message endpoint, you can visit
+                    the
                     <a
                       href="https://docs.microsoft.com/en-us/graph/api/channel-post-message"
                       target="_blank"
                       >Teams Message API Docs</a
                     >. The <code class="my-1 mx-1">URL</code> can be generated
-                    for a channel by creating a Connector. The
-                    <code class="my-1 mx-1">TOKEN ID</code> and
-                    <code class="my-1 mx-1">AUTH TOKEN</code> can be created by
-                    following the instructions for
+                    for a channel by TODO. Before this hook can be used, you
+                    must authorize the Prefect CloudHook app with your
+                    organization by having an admin navigate to
                     <a
-                      href="https://docs.microsoft.com/en-us/graph/auth-v2-service"
+                      href="https://login.microsoftonline.com/organizations/adminconsent?client_id=4a57ed7e-406c-41f1-894d-227d9299e187"
                       target="_blank"
-                    >
-                      Service Account Authentication </a
+                      >Grant Prefect Access</a
                     >.
                   </span>
                   <span v-else-if="tempType == 'TWILIO'">
