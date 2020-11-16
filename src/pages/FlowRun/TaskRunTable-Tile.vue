@@ -234,17 +234,7 @@ export default {
 
         <template #item.state="{ item }">
           <truncate :content="item.state">
-            <v-icon
-              class="mr-1 pointer"
-              :data-cy="
-                'task-run-table-state|' +
-                  item.task.name +
-                  '|' +
-                  item.state.toLowerCase()
-              "
-              small
-              :color="item.state"
-            >
+            <v-icon class="mr-1 pointer" small :color="item.state">
               brightness_1
             </v-icon>
           </truncate>
