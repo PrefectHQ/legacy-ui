@@ -119,7 +119,7 @@ export default {
         :sort-desc.sync="sortDesc"
       >
         <template #item.name="{ item }">
-          <Truncated :content="item.name">
+          <v-truncated :content="item.name">
             <router-link
               class="link"
               :data-cy="'task-link|' + item.name"
@@ -127,7 +127,7 @@ export default {
             >
               {{ item.name }}
             </router-link>
-          </Truncated>
+          </v-truncated>
         </template>
 
         <template #item.mapped="{ item }">
