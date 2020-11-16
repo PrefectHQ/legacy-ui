@@ -38,7 +38,7 @@ export const formatTime = {
     },
     formatCalendarDate(timestamp) {
       if (!timestamp) return
-      let timeObj = moment(timestamp).tz(this.timezone)
+      let timeObj = moment(timestamp)
       return `${
         timeObj
           ? timeObj.format('YYYY-MM-DD')
@@ -48,6 +48,17 @@ export const formatTime = {
     formatCalendarTime(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj
+          ? timeObj.format('YYYY-MM-DD HH:mm:ss')
+          : moment(timestamp).format('YYYY-MM-DD HH:mm:ss')
+      }`
+    },
+    addTime(timestamp, amount, unit) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp)
+        .add(amount, unit)
+        .tz(this.timezone)
       return `${
         timeObj
           ? timeObj.format('YYYY-MM-DD HH:mm:ss')

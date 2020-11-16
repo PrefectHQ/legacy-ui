@@ -1,7 +1,6 @@
 <script>
 import CalendarDay from '@/pages/Calendar/Calendar-Day'
 import { mapGetters } from 'vuex'
-import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
@@ -22,8 +21,8 @@ export default {
       timePeriod: 'day',
       timePeriodOptions: ['day', 'week', 'month'],
       timeIntervalOptions: [1, 5, 15, 30, 60],
-      timeInterval: 15,
-      date: this.formatCalendarDate(moment())
+      timeInterval: 60,
+      date: this.formatCalendarDate(new Date())
     }
   },
   computed: {
@@ -46,6 +45,7 @@ export default {
         <v-card>
           <v-date-picker
             v-model="date"
+            no-title
             color="primary"
             width="95%"
           ></v-date-picker>

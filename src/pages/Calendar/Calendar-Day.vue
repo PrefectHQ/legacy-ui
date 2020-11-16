@@ -2,7 +2,7 @@
 import FlowName from '@/pages/Calendar/FlowName'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import moment from '@/utils/moment'
+// import moment from '@/utils/moment'
 
 export default {
   components: {
@@ -28,7 +28,8 @@ export default {
   data() {
     return {
       skip: false,
-      loadingKey: 0
+      loadingKey: 0,
+      flowId: null
     }
   },
   computed: {
@@ -39,20 +40,41 @@ export default {
       return (60 / this.timeInterval) * 24
     },
     end() {
-      const timestamp = moment(this.date).add(1, 'days')
-      const date = this.formatCalendarDate(timestamp)
-      return date
+      return this.addTime(this.date, 1, 'day')
     },
     flowRunEvents() {
-      return this.flowRuns?.map(flowRun => {
+      let lastFlowRun = {}
+      let count = 1
+      console.log(this.flowRuns)
+      return this.flowRuns?.filter(flowRun => {
         flowRun.start = this.formatCalendarTime(flowRun.start_time)
         flowRun.end = this.formatCalendarTime(flowRun.end_time)
         flowRun.category = flowRun.flow_id
+        const lastRunStart = this.addTime(lastFlowRun.start_time, 15, 'minutes')
+        console.log(
+          1,
+          lastFlowRun.start_time,
+          2,
+          lastRunStart,
+          3,
+          flowRun.start
+        )
+        if (
+          lastRunStart > flowRun.start &&
+          lastFlowRun.flow_id === flowRun.flow_id
+        ) {
+          count++
+          lastFlowRun.name = `${count} flow runs`
+          return null
+        }
+        count = 1
+        lastFlowRun = flowRun
         return flowRun
       })
     },
     flowIds() {
-      const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
+      console.log(this.flowRunEvents)
+      const ids = this.uniqueFlowRuns?.map(flowRun => flowRun.flow_id)
       return ids
     }
   },
@@ -68,7 +90,8 @@ export default {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.date,
-          endTime: this.end
+          endTime: this.end,
+          flow_id: this.flowId
         }
       },
       skip() {
@@ -108,9 +131,22 @@ export default {
       type="category"
       @click:date="moreDays++"
     >
+      <template #day-body class="minwidth"> </template>
       <template #category="{ category }">
-        <FlowName :id="category" class="minwidth" />
+        <FlowName :id="category" />
       </template>
     </v-calendar>
   </v-skeleton-loader>
 </template>
+
+<style lang="scss" scoped>
+.calendarstyle {
+  max-width: 95vw;
+  overflow: scroll;
+}
+
+.minwidth {
+  min-width: 500px;
+  overflow: scroll;
+}
+</style>
