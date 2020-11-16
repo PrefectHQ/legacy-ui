@@ -3,6 +3,7 @@ import { mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
+import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
 import FlowRunPageGanttChart from '@/pages/FlowRunPageGanttChart'
 import LogsCard from '@/components/LogsCard/LogsCard'
@@ -38,6 +39,7 @@ export default {
     DetailsTile,
     FlowRunPageGanttChart,
     LogsCard,
+    NavTabBar,
     SchematicTile,
     SubPageNav,
     TaskRunHeartbeatTile,
@@ -47,7 +49,29 @@ export default {
   },
   data() {
     return {
-      tab: this.getTab()
+      tab: this.getTab(),
+      tabs: [
+        {
+          name: 'Overview',
+          target: 'overview',
+          icon: 'view_quilt'
+        },
+        {
+          name: 'Schematic',
+          target: 'schematic',
+          icon: 'pi-schematic'
+        },
+        {
+          name: 'Logs',
+          target: 'logs',
+          icon: 'format_align_left'
+        },
+        {
+          name: 'Artifacts',
+          target: 'artifacts',
+          icon: 'fas fa-fingerprint'
+        }
+      ]
     }
   },
   computed: {
@@ -55,9 +79,6 @@ export default {
     ...mapGetters('api', ['isCloud']),
     flowRunId() {
       return this.$route.params.id
-    },
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     }
   },
   watch: {
@@ -65,36 +86,31 @@ export default {
       this.tab = this.getTab()
     },
     tab(val) {
-      let query = {}
+      let query = { ...this.$route.query }
       switch (val) {
         case 'schematic':
-          query = { schematic: '' }
+          query = 'schematic'
           break
         case 'logs':
-          query = { logId: '' }
+          query = 'logId'
           break
         case 'chart':
           query = { chart: '' }
           break
         case 'artifacts':
-          query = { artifacts: '' }
+          /* eslint-disable-next-line */
+          query = 'artifacts'
           break
         default:
           break
       }
-      this.$router
-        .replace({
-          query: query
-        })
-        .catch(e => e)
     }
   },
   methods: {
     getTab() {
-      if ('schematic' in this.$route.query) return 'schematic'
-      if ('logId' in this.$route.query) return 'logs'
-      if ('chart' in this.$route.query) return 'chart'
-      if ('artifacts' in this.$route.query) return 'artifacts'
+      if (Object.keys(this.$route.query).length != 0) {
+        return Object.keys(this.$route.query)[0]
+      }
       return 'overview'
     },
     parseMarkdown(md) {
@@ -147,45 +163,14 @@ export default {
       ></BreadCrumbs>
 
       <Actions slot="page-actions" :flow-run="flowRun" />
+      <span slot="tabs"><NavTabBar :tabs="tabs" page="flow-run"/></span>
     </SubPageNav>
 
-    <v-tabs
-      v-if="flowRun"
+    <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
       style="max-width: 1440px;"
-      light
     >
-      <v-tabs-slider color="blue"></v-tabs-slider>
-
-      <v-tab href="#overview" :style="hideOnMobile">
-        <v-icon left>view_quilt</v-icon>
-        Overview
-      </v-tab>
-
-      <v-tab href="#schematic" :style="hideOnMobile">
-        <v-icon left>pi-schematic</v-icon>
-        Schematic
-      </v-tab>
-
-      <v-tab href="#chart" :style="hideOnMobile">
-        <v-icon left>pi-gantt</v-icon>
-        Gantt Chart
-      </v-tab>
-
-      <v-tab href="#logs" :style="hideOnMobile" data-cy="flow-run-logs-tab">
-        <v-icon left>format_align_left</v-icon>
-        Logs
-      </v-tab>
-
-      <v-tab href="#artifacts" :style="hideOnMobile" disabled>
-        <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
-          <v-icon left>fas fa-fingerprint</v-icon>
-          Artifacts
-        </v-badge>
-      </v-tab>
-
       <v-tab-item class="tab-full-height pa-0" value="overview">
         <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
@@ -233,7 +218,7 @@ export default {
       <v-tab-item class="tab-full-height" value="artifacts">
         <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
       </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn @click="tab = 'overview'">
@@ -256,7 +241,7 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-      <v-btn @click="tab = 'artifacts'" disabled>
+      <v-btn disabled @click="tab = 'artifacts'">
         Artifacts
         <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>

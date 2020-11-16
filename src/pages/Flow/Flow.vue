@@ -91,9 +91,6 @@ export default {
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
-    },
     flowGroupId() {
       return this.$route.params.id
     },
