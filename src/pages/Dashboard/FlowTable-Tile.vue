@@ -359,15 +359,13 @@ export default {
         </template>
 
         <template #item.created="{ item }">
-          <div class="truncate">
-            {{ formatTime(item.created) }}
-          </div>
+          <Truncated :content="formatTime(item.created)" />
         </template>
 
         <template #item.created_by.username="{ item }">
-          <div class="truncate">
-            {{ item.created_by ? item.created_by.username : null }}
-          </div>
+          <Truncated
+            :content="item.created_by ? item.created_by.username : null"
+          />
         </template>
 
         <!-- eslint-disable vue/no-template-shadow -->
