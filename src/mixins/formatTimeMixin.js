@@ -65,6 +65,12 @@ export const formatTime = {
           : moment(timestamp).format('YYYY-MM-DD HH:mm:ss')
       }`
     },
+    addDay(timestamp, amount) {
+      if (!timestamp) return
+      return moment(timestamp)
+        .add(amount, 'day')
+        .tz(this.timezone)
+    },
     shortTime(timestamp) {
       if (!timestamp) return
       let t = moment(timestamp).tz(this.timezone)

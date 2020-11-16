@@ -40,7 +40,7 @@ export default {
       return (60 / this.timeInterval) * 24
     },
     end() {
-      return this.addTime(this.date, 1, 'day')
+      return this.addDay(this.date, 1)
     },
     flowRunEvents() {
       let lastFlowRun = {}
