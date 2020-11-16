@@ -207,14 +207,11 @@ export default {
         </template>
 
         <template #item.state="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <v-icon class="mr-1 pointer" small :color="item.state" v-on="on">
-                brightness_1
-              </v-icon>
-            </template>
-            <span>{{ item.state }}</span>
-          </v-tooltip>
+          <truncate :content="item.state">
+            <v-icon class="mr-1 pointer" small :color="item.state">
+              brightness_1
+            </v-icon>
+          </truncate>
         </template>
       </v-data-table>
     </v-card-text>
