@@ -40,6 +40,13 @@ export const openCloudHookTypes = [
     requiresCloud: false
   },
   {
+    title: 'Teams',
+    type: 'MSTEAMS',
+    icon: 'fas fa-desktop', // TODO: Replace with a MS or Teams ico
+    config: { token_id: null, auth_token: null, url: null },
+    requiresCloud: false
+  },
+  {
     title: 'Prefect',
     type: 'PREFECT_MESSAGE',
     icon: '$prefect',

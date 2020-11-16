@@ -605,6 +605,27 @@ export default {
                       >Slack API Docs</a
                     >.
                   </span>
+                  <span v-else-if="tempType == 'MSTEAMS'">
+                    Prefect Cloud will send a message via the Microsoft Teams
+                    API to this endpoint's channel when your flow's State
+                    changes. To read more about the Teams message endpoint, you
+                    can visit the
+                    <a
+                      href="https://docs.microsoft.com/en-us/graph/api/channel-post-message"
+                      target="_blank"
+                      >Teams Message API Docs</a
+                    >. The <code class="my-1 mx-1">URL</code> can be generated
+                    for a channel by creating a Connector. The
+                    <code class="my-1 mx-1">TOKEN ID</code> and
+                    <code class="my-1 mx-1">AUTH TOKEN</code> can be created by
+                    following the instructions for
+                    <a
+                      href="https://docs.microsoft.com/en-us/graph/auth-v2-service"
+                      target="_blank"
+                    >
+                      Service Account Authentication </a
+                    >.
+                  </span>
                   <span v-else-if="tempType == 'TWILIO'">
                     Prefect Cloud will send a message via the
                     <a href="https://www.twilio.com/docs" target="_blank">
@@ -710,6 +731,30 @@ export default {
                   v-model="tempConfig.messaging_service_sid"
                   :rules="[rules.required]"
                   label="Messaging service SID"
+                  dense
+                />
+
+                <v-text-field
+                  v-if="tempType == 'MSTEAMS'"
+                  v-model="tempConfig.url"
+                  :rules="[rules.required, rules.url]"
+                  label="Channel URL"
+                  dense
+                />
+                <v-text-field
+                  v-if="tempType == 'MSTEAMS'"
+                  v-model="tempConfig.token_id"
+                  :rules="[rules.required]"
+                  label="Token ID"
+                  class="mb-8"
+                  dense
+                />
+                <v-text-field
+                  v-if="tempType == 'MSTEAMS'"
+                  v-model="tempConfig.auth_token"
+                  class="my-8"
+                  :rules="[rules.required]"
+                  label="Auth Token"
                   dense
                 />
 
