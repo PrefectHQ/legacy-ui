@@ -619,7 +619,7 @@ export default {
                     must authorize the Prefect CloudHook app with your
                     organization by having an admin navigate to
                     <a
-                      href="https://login.microsoftonline.com/organizations/adminconsent?client_id=4a57ed7e-406c-41f1-894d-227d9299e187"
+                      href="https://login.microsoftonline.com/common/adminconsent?client_id=4a57ed7e-406c-41f1-894d-227d9299e187"
                       target="_blank"
                       >Grant Prefect Access</a
                     >.
