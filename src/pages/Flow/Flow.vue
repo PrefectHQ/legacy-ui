@@ -89,36 +89,6 @@ export default {
       ]
     }
   },
-  /*     <v-tabs
-      v-if="flowGroup"
-      v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
-      style="max-width: 1440px;"
-      light
-    >
-      <v-tab href="#versions" :style="hideOnMobile" data-cy="flow-versions-tab">
-        <v-icon left>loop</v-icon>
-        Versions
-      </v-tab>
-
-      <!-- <v-tab href="#analytics" :style="hideOnMobile" disabled>
-        <v-icon left>insert_chart_outlined</v-icon>
-        Analytics
-      </v-tab> -->
-
-      <v-tab href="#run" :style="hideOnMobile" data-cy="run-flow-tab">
-        <v-icon left>fa-rocket</v-icon>
-        Run
-      </v-tab>
-
-      <v-spacer />
-
-      <v-tab href="#settings" :style="hideOnMobile" data-cy="flow-settings-tab">
-        <v-icon left>settings</v-icon>
-        Settings
-      </v-tab>
-    </v-tabs>*/
   computed: {
     ...mapGetters('api', ['isCloud']),
     hideOnMobile() {
