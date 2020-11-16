@@ -108,33 +108,18 @@ export default {
       }, 3000)
     },
     tab(val) {
-      let tab = 'overview'
+      let query = { ...this.$route.query }
 
       switch (val) {
         case 'flows':
-          tab = 'flows'
+          query = 'flows'
           break
         case 'agents':
-          tab = 'agents'
+          /* eslint-disable-next-line */
+          query = 'agents'
           break
         default:
           break
-      }
-
-      if (!(tab in this.$route.query)) {
-        this.$router.push(
-          {
-            name: this.$route.name,
-            params: this.$route.params,
-            query:
-              tab == 'overview'
-                ? null
-                : {
-                    [tab]: ''
-                  }
-          },
-          () => {}
-        )
       }
     },
     $route() {
