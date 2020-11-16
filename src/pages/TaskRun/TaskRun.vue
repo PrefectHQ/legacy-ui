@@ -3,6 +3,7 @@ import { mapGetters } from 'vuex'
 
 import Actions from '@/pages/TaskRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
+import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import DependenciesTile from '@/pages/TaskRun/Dependencies-Tile'
@@ -38,6 +39,7 @@ export default {
     DetailsTile,
     LogsCard,
     MappedTaskRunsTile,
+    NavTabBar,
     SubPageNav,
     TaskRunHeartbeatTile,
     TileLayout,
@@ -46,14 +48,33 @@ export default {
   data() {
     return {
       loading: 0,
-      tab: this.getTab()
+      tab: this.getTab(),
+      tabs: [
+        {
+          name: 'Overview',
+          target: 'overview',
+          icon: 'view_module'
+        },
+        {
+          name: 'Logs',
+          target: 'logs',
+          icon: 'format_align_left'
+        },
+        {
+          name: 'Artifacts',
+          target: 'artifacts',
+          icon: 'fas fa-fingerprint'
+        },
+        {
+          name: 'Mapped Runs',
+          target: 'mapped-runs',
+          icon: 'device_hub'
+        }
+      ]
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
-    },
     taskRunId() {
       return this.$route.params.id
     },
@@ -70,25 +91,21 @@ export default {
       this.tab = this.getTab()
     },
     tab(val) {
-      let query = {}
+      let query = { ...this.$route.query }
       switch (val) {
         case 'logs':
-          query = { logId: '' }
+          query = 'logId'
           break
         case 'mapped-runs':
-          query = { 'mapped-runs': '' }
+          query = 'mapped-runs'
           break
         case 'artifacts':
-          query = { artifacts: '' }
+          /* eslint-disable-next-line */
+          query = 'artifacts'
           break
         default:
           break
       }
-      this.$router
-        .replace({
-          query: query
-        })
-        .catch(e => e)
     },
     taskRun(val, prevVal) {
       if (!val || val?.id == prevVal?.id) return
@@ -106,9 +123,9 @@ export default {
   },
   methods: {
     getTab() {
-      if ('logId' in this.$route.query) return 'logs'
-      if ('mapped-runs' in this.$route.query) return 'mapped-runs'
-      if ('artifacts' in this.$route.query) return 'artifacts'
+      if (Object.keys(this.$route.query).length != 0) {
+        return Object.keys(this.$route.query)[0]
+      }
       return 'overview'
     },
     parseMarkdown(md) {
@@ -186,45 +203,8 @@ export default {
       ></BreadCrumbs>
 
       <Actions slot="page-actions" :task-run="taskRun" />
+      <span slot="tabs"><NavTabBar :tabs="tabs" page="task-run"/></span>
     </SubPageNav>
-
-    <v-tabs
-      v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
-      style="max-width: 1440px;"
-      light
-    >
-      <v-tabs-slider color="blue"></v-tabs-slider>
-
-      <v-tab href="#overview" :style="hideOnMobile">
-        <v-icon left>view_module</v-icon>
-        Overview
-      </v-tab>
-
-      <v-tab href="#logs" :style="hideOnMobile">
-        <v-icon left>format_align_left</v-icon>
-        Logs
-      </v-tab>
-
-      <v-tab href="#artifacts" :style="hideOnMobile" disabled>
-        <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
-          <v-icon left>fas fa-fingerprint</v-icon>
-          Artifacts
-        </v-badge>
-      </v-tab>
-
-      <v-tab
-        v-if="mappedParent || mappedChild"
-        href="#mapped-runs"
-        :style="hideOnMobile"
-      >
-        <v-badge color="codePink" content="New!" bottom bordered inline>
-          <v-icon left>device_hub</v-icon>
-          Mapped Runs
-        </v-badge>
-      </v-tab>
-    </v-tabs>
 
     <v-tabs-items
       v-model="tab"
@@ -316,7 +296,7 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-      <v-btn @click="tab = 'artifacts'" disabled>
+      <v-btn disabled @click="tab = 'artifacts'">
         Artifacts
         <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>
