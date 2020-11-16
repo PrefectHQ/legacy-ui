@@ -69,7 +69,8 @@ export default {
         {
           name: 'Artifacts',
           target: 'artifacts',
-          icon: 'fas fa-fingerprint'
+          icon: 'fas fa-fingerprint',
+          disabled: true
         }
       ]
     }

@@ -61,6 +61,7 @@ export default {
       :data-cy="`${page}-${tb.target}-tab`"
       :href="`#${tb.target}`"
       :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
+      :disabled="tb.disabled"
     >
       <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
       {{ tb.name }}
