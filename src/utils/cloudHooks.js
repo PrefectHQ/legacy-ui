@@ -43,7 +43,7 @@ export const openCloudHookTypes = [
     title: 'Teams',
     type: 'MSTEAMS',
     icon: 'fas fa-desktop', // TODO: Replace with a MS or Teams ico
-    config: { token_id: null, auth_token: null, url: null },
+    config: { url: null },
     requiresCloud: false
   },
   {

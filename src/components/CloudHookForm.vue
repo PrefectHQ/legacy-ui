@@ -739,22 +739,6 @@ export default {
                   label="Channel URL"
                   dense
                 />
-                <v-text-field
-                  v-if="tempType == 'MSTEAMS'"
-                  v-model="tempConfig.token_id"
-                  :rules="[rules.required]"
-                  label="Token ID"
-                  class="mb-8"
-                  dense
-                />
-                <v-text-field
-                  v-if="tempType == 'MSTEAMS'"
-                  v-model="tempConfig.auth_token"
-                  class="my-8"
-                  :rules="[rules.required]"
-                  label="Auth Token"
-                  dense
-                />
 
                 <v-text-field
                   v-if="tempType == 'WEBHOOK'"
