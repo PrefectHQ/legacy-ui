@@ -335,7 +335,7 @@ export default {
         </template>
 
         <template #item.project.name="{ item }">
-          <div class="truncate">
+          <Truncated :content="item.project.name">
             <router-link
               class="link"
               :to="{
@@ -345,25 +345,11 @@ export default {
             >
               <span>{{ item.project.name }}</span>
             </router-link>
-          </div>
+          </Truncated>
         </template>
 
         <template #item.schedule="{ item }">
           <ScheduleToggle :flow="item" :flow-group="item.flow_group" />
-        </template>
-
-        <template #item.project="{ item }">
-          <div class="truncate">
-            <router-link
-              class="link"
-              :to="{
-                name: 'project',
-                params: { id: item.project.id, tenant: tenant.slug }
-              }"
-            >
-              <span>{{ item.project.name }}</span>
-            </router-link>
-          </div>
         </template>
 
         <template #item.flow_runs="{ item }">
