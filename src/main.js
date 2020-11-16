@@ -159,7 +159,7 @@ Vue.filter('roundHundreds', roundHundreds)
 Vue.filter('roundThousands', roundThousands)
 
 Vue.component('HeightTransition', TransitionHeight)
-Vue.component('VTruncated', TruncatedSpan)
+Vue.component('TSpan', TruncatedSpan)
 
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
