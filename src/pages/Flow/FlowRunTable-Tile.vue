@@ -181,27 +181,21 @@ export default {
         </template>
 
         <template #item.scheduled_start_time="{ item }">
-          <truncate :content="formDate(item.scheduled_start_time)">
+          <truncate :content="formatTime(item.scheduled_start_time)">
             {{ formDate(item.scheduled_start_time) }}
           </truncate>
         </template>
 
         <template #item.start_time="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <span v-on="on">{{ formDate(item.start_time) }}</span>
-            </template>
-            <span>{{ formatTime(item.start_time) }}</span>
-          </v-tooltip>
+          <truncate :content="formatTime(item.start_time)">
+            {{ formDate(item.start_time) }}
+          </truncate>
         </template>
 
         <template #item.end_time="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <span v-on="on">{{ formDate(item.end_time) }}</span>
-            </template>
-            <span>{{ formatTime(item.end_time) }}</span>
-          </v-tooltip>
+          <truncate :content="formatTime(item.end_time)">
+            {{ formDate(item.end_time) }}
+          </truncate>
         </template>
 
         <template #item.duration="{ item }">
