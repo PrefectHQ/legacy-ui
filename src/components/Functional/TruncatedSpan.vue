@@ -7,7 +7,7 @@ export default {
   },
   props: {
     content: {
-      type: String,
+      type: [Number, String],
       required: false,
       default: null
     }
@@ -22,7 +22,7 @@ export default {
         class="truncate"
         style="
           display: inline-block;
-          width: 100%;
+          width: auto;
         "
         v-on="on"
       >
