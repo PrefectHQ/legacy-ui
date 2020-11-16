@@ -1,9 +1,11 @@
 <script>
 import CardTitle from '@/components/Card-Title'
-import { mapGetters } from 'vuex'
 import LastTenRuns from '@/components/LastTenRuns'
 import ScheduleToggle from '@/components/ScheduleToggle'
+import Truncated from '@/components/Truncated'
+
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 
 const serverHeaders = [
@@ -60,7 +62,8 @@ export default {
   components: {
     CardTitle,
     LastTenRuns,
-    ScheduleToggle
+    ScheduleToggle,
+    Truncated
   },
   filters: {},
   mixins: [formatTime],
@@ -302,26 +305,15 @@ export default {
         }"
       >
         <template #item.archived="{ item }">
-          <v-tooltip v-if="!item.archived" top>
-            <template #activator="{ on }">
-              <v-icon small dark color="green" v-on="on">
-                pi-flow
-              </v-icon>
-            </template>
-            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
-          </v-tooltip>
-          <v-tooltip v-else top>
-            <template #activator="{ on }">
-              <v-icon small dark color="accent-pink" v-on="on">
-                archive
-              </v-icon>
-            </template>
-            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
-          </v-tooltip>
+          <Truncated :content="item.archived ? 'Archived' : 'Active'">
+            <v-icon small dark :color="item.archived ? 'accent-pink' : 'green'">
+              {{ item.archived ? 'archive' : 'pi-flow' }}
+            </v-icon>
+          </Truncated>
         </template>
 
         <template #item.name="{ item }">
-          <div class="truncate">
+          <Truncated :content="item.name">
             <router-link
               class="link"
               :data-cy="
@@ -339,7 +331,7 @@ export default {
             >
               <span>{{ item.name }}</span>
             </router-link>
-          </div>
+          </Truncated>
         </template>
 
         <template #item.project.name="{ item }">
