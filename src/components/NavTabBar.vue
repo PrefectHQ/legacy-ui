@@ -18,45 +18,28 @@ export default {
   },
   watch: {
     tab(val) {
-      let tab = 'overview'
-
-      switch (val) {
-        case 'flows':
-          tab = 'flows'
-          break
-        case 'agents':
-          tab = 'agents'
-          break
-        default:
-          break
+      let query = {}
+      if (val) {
+        if (this.$route.params.id) {
+          query = { [val]: this.$route.params.id } // schematic uses this
+        }
+        query = { [val]: '' }
       }
-
-      if (!(tab in this.$route.query)) {
-        this.$router.push(
-          {
-            name: this.$route.name,
-            params: this.$route.params,
-            query:
-              tab == 'overview'
-                ? null
-                : {
-                    [tab]: ''
-                  }
-          },
-          () => {}
-        )
-      }
+      this.$router
+        .replace({
+          query: query
+        })
+        .catch(e => e)
     },
-    $route(val) {
-      if (val.name == 'dashboard') {
-        this.tab = this.getTab()
-      }
+    $route() {
+      this.tab = this.getTab()
     }
   },
   methods: {
     getTab() {
-      if ('flows' in this.$route.query) return 'flows'
-      if ('agents' in this.$route.query) return 'agents'
+      if (Object.keys(this.$route.query).length != 0) {
+        return Object.keys(this.$route.query)[0]
+      }
       return 'overview'
     }
   }
@@ -78,17 +61,9 @@ export default {
       :data-cy="`${page}-${tb.target}-tab`"
       :href="`#${tb.target}`"
       :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
-      @click="$emit('update:tab', $event.target.value)"
     >
       <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
       {{ tb.name }}
     </v-tab>
   </v-tabs>
 </template>
-
-<style lang="scss" scoped>
-.arrow-position {
-  bottom: 1px;
-  position: relative;
-}
-</style>

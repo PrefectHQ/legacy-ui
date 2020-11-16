@@ -137,10 +137,8 @@ export default {
         )
       }
     },
-    $route(val) {
-      if (val.name == 'dashboard') {
-        this.tab = this.getTab()
-      }
+    $route() {
+      this.tab = this.getTab()
     },
     tenant(val) {
       if (val?.id) {
