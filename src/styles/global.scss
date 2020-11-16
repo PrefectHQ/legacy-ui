@@ -580,7 +580,7 @@ body {
     font-weight: 500;
     text-decoration: none;
   }
-  code {
+  pre > code {
     background: #f4f4f4;
     border: 1px solid #ddd;
     border-left: 3px solid #3b8dff;
@@ -595,6 +595,15 @@ body {
     padding: 1em 1.5em;
     display: block;
     word-wrap: break-word;
+  }
+
+  blockquote {
+    border-left-style: solid;
+    border-left-width: 5px;
+    border-left-color: gray;
+    background-color: #f2f3f4;
+    padding-left: 2em;
+    padding-right: 2em;
   }
 }
 // stylelint-enable
