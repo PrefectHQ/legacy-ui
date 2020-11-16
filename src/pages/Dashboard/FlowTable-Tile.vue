@@ -2,7 +2,6 @@
 import CardTitle from '@/components/Card-Title'
 import LastTenRuns from '@/components/LastTenRuns'
 import ScheduleToggle from '@/components/ScheduleToggle'
-import Truncated from '@/components/Truncated'
 
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters } from 'vuex'
@@ -62,8 +61,7 @@ export default {
   components: {
     CardTitle,
     LastTenRuns,
-    ScheduleToggle,
-    Truncated
+    ScheduleToggle
   },
   filters: {},
   mixins: [formatTime],

@@ -1,5 +1,10 @@
 <script>
+import { VTooltip } from 'vuetify/lib'
+
 export default {
+  components: {
+    VTooltip
+  },
   props: {
     content: {
       type: String,
@@ -10,8 +15,8 @@ export default {
 }
 </script>
 
-<template>
-  <v-tooltip top>
+<template functional>
+  <component :is="$options.components.VTooltip" top>
     <template #activator="{ on }">
       <span
         class="truncate"
@@ -22,10 +27,10 @@ export default {
         v-on="on"
       >
         <slot>
-          {{ content }}
+          {{ props.content }}
         </slot>
       </span>
     </template>
-    <span>{{ content }}</span>
-  </v-tooltip>
+    <span>{{ props.content }}</span>
+  </component>
 </template>
