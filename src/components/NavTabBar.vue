@@ -16,6 +16,11 @@ export default {
       tab: this.getTab()
     }
   },
+  computed: {
+    availableTabs() {
+      return this.tabs.filter(tab => !tab.hidden)
+    }
+  },
   watch: {
     tab(val) {
       let query = {}
@@ -56,7 +61,7 @@ export default {
   >
     <v-tabs-slider color="blue"></v-tabs-slider>
     <v-tab
-      v-for="tb in tabs"
+      v-for="tb in availableTabs"
       :key="tb.target"
       :data-cy="`${page}-${tb.target}-tab`"
       :href="`#${tb.target}`"

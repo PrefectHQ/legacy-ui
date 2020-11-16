@@ -69,7 +69,8 @@ export default {
         {
           name: 'Mapped Runs',
           target: 'mapped-runs',
-          icon: 'device_hub'
+          icon: 'device_hub',
+          hidden: !this.mappedParent || !this.mappedChild
         }
       ]
     }
