@@ -86,6 +86,11 @@ export default {
           this.multipleFlowRuns[id].name = `${count} flow runs`
         }
       })
+      this.scheduledFlowRuns?.forEach(flowRun => {
+        flowRun.start = this.formatCalendarTime(flowRun.scheduled_start_time)
+        flowRun.category = flowRun.flow_id
+        filtered.push(flowRun)
+      })
       return filtered
     },
     flowIds() {
