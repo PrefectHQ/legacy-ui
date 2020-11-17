@@ -61,6 +61,7 @@ export default {
         @disabled="!isEditing"
         @focus="focused = true"
         @blur="focused = false"
+        @keyup.enter="save"
       />
     </div>
   </div>

@@ -1,5 +1,5 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
@@ -51,6 +51,7 @@ export default {
   },
   data() {
     return {
+      flowRunNameLoading: false,
       tab: this.getTab()
     }
   },
@@ -97,6 +98,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     getTab() {
       if ('schematic' in this.$route.query) return 'schematic'
       if ('logId' in this.$route.query) return 'logs'
@@ -107,8 +109,42 @@ export default {
     parseMarkdown(md) {
       return parser(md)
     },
-    saveFlowRunName(e) {
-      console.log(e)
+    async saveFlowRunName(e) {
+      try {
+        const previousName = this.flowRunName
+        this.flowRunNameLoading = true
+
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/set-flow-run-name.gql'),
+          variables: {
+            input: {
+              flow_run_id: this.flowRunId,
+              name: e
+            }
+          }
+        })
+
+        await this.$apollo.queries.flowRun.refetch()
+
+        if (!data.set_flow_run_name.success) {
+          throw new Error(data.set_flow_run_name.error)
+        }
+
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `${previousName} has been renamed to ${e}`,
+          alertType: 'success'
+        })
+      } catch {
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Oops! Something went wrong while trying to update your flow run name, please try again.',
+          alertType: 'error'
+        })
+      } finally {
+        this.flowRunNameLoading = false
+      }
     }
   },
   apollo: {
@@ -136,6 +172,7 @@ export default {
         <EditableTextField
           :content="flowRun.name"
           label="Flow Run Name"
+          :loading="flowRunNameLoading"
           @change="saveFlowRunName"
         />
       </span>
