@@ -26,18 +26,18 @@ export default {
   },
   methods: {
     discard() {
-      this.isEditing = false
+      this.focused = false
       this.$refs['edit-input']?.blur()
 
       this.value = this.content
     },
     edit() {
-      this.isEditing = true
+      this.focused = true
       console.log(this.$refs)
       this.$refs['edit-input']?.focus()
     },
     save() {
-      this.isEditing = false
+      this.focused = false
       this.$refs['edit-input']?.blur()
 
       this.$emit('change', this.value)
@@ -62,20 +62,23 @@ export default {
         :class="{ 'cursor-pointer': !focused }"
         @disabled="!isEditing"
         @focus="focused = true"
-        @blur="focused = false"
         @keyup.enter="save"
       />
+    </div>
+
+    <div v-if="focused" class="button-container">
+      <v-btn depressed x-small class="mr-1" @click="discard">Cancel</v-btn>
+      <v-btn depressed color="primary" x-small @click="save">Save</v-btn>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.edit-icon {
-  float: right;
-}
-
-.original-border {
-  border: 1px solid #ddd;
+.button-container {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
 }
 
 .inherited-text-field {

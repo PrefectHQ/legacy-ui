@@ -110,8 +110,10 @@ export default {
       return parser(md)
     },
     async saveFlowRunName(e) {
+      const previousName = this.flowRun.name
+      if (previousName === e) return
+
       try {
-        const previousName = this.flowRun.name
         this.flowRunNameLoading = true
 
         const { data } = await this.$apollo.mutate({
@@ -132,7 +134,7 @@ export default {
 
         this.setAlert({
           alertShow: true,
-          alertMessage: `${previousName} has been renamed to ${e}`,
+          alertMessage: `<span class="font-weight-medium">${previousName}</span> has been renamed to <span class="font-weight-medium">${e}</span>`,
           alertType: 'success'
         })
       } catch {
@@ -172,8 +174,8 @@ export default {
         slot="page-title"
         style="
         display: block;
-        max-width: 50%;
-        min-width: 500px;
+        max-width: 100%;
+        min-width: 300px;
         width: auto;
         "
       >
