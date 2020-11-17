@@ -62,13 +62,25 @@ export default {
     class="inherited-text-field"
     :class="{ focused: focused, 'cursor-pointer': !focused }"
   >
-    <v-icon small class="edit-icon">edit</v-icon>
+    <v-icon v-if="!loading" small class="prepend-input edit-icon">edit</v-icon>
+    <v-progress-circular
+      v-else
+      indeterminate
+      class="prepend-input"
+      color="primary"
+      size="16"
+      width="2"
+    />
 
-    <div
+    <v-input
       class="input-container"
       :class="{
-        'error-border': required && (!value || value.length === 0)
+        'error-border': required && (!value || value.length === 0),
+        disabled: !loading
       }"
+      hide-details
+      :error="required && (!value || value.length === 0)"
+      @disabled="loading"
     >
       <input
         ref="edit-input"
@@ -78,12 +90,11 @@ export default {
           'cursor-pointer': !focused
         }"
         min="1"
-        @disabled="loading"
-        @focus="focused = true"
         @keyup.enter="save"
         @keyup.esc="discard"
+        @focus="focused = true"
       />
-    </div>
+    </v-input>
 
     <!-- Not sure if we need to show these buttons since enter is a pretty natural interaction -->
     <!-- <div v-if="focused" class="button-container text-center">
@@ -113,11 +124,14 @@ export default {
   width: 60px;
 }
 
-.edit-icon {
+.prepend-input {
   left: -20px;
-  opacity: 0;
   position: absolute;
   top: 6px;
+}
+
+.edit-icon {
+  opacity: 0;
   transition: all 150ms;
 }
 
@@ -131,13 +145,24 @@ export default {
   position: relative;
   width: 100%;
 
-  input,
-  input:active {
-    outline: none;
-    width: 100%;
+  .v-input {
+    color: inherit !important;
+    font-size: inherit !important;
+  }
+
+  &.disabled {
+    .v-input {
+      color: #d00 !important;
+    }
   }
 
   .input-container {
+    input,
+    input:active {
+      outline: none;
+      width: 100%;
+    }
+
     &::after {
       background-color: #3b8dff;
       bottom: 0;
