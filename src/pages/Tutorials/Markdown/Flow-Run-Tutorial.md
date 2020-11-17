@@ -123,5 +123,3 @@ Lastly, we need to indicate to the API to schedule a flow run; there are a few o
 ```python
 prefect run flow --name Welcome Flow --project 'Hello, World!'
 ```
-
-Remember to stop the agent with Ctrl-C.

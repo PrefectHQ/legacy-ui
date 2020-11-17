@@ -38,9 +38,11 @@ export default {
     <v-navigation-drawer
       clipped
       left
+      width="370px"
       fixed
       permanent
       touchless
+      mini-variant-width="370px"
       :mini-variant="$vuetify.breakpoint.smAndDown"
       :style="{ top: $vuetify.breakpoint.smAndDown ? '56px' : '64px' }"
     >
@@ -61,7 +63,7 @@ export default {
 
       <v-divider />
 
-      <v-treeview :items="routes" hoverable open-on-click transition>
+      <v-treeview :items="routes" hoverable open-on-click transition open-all>
         <template slot="label" slot-scope="props">
           <div v-if="props.item.name[0] === '#'">
             <router-link
@@ -122,20 +124,19 @@ export default {
 
 .sm-and-up-left-padding {
   // Match left padding with User Settings sidebar width
-  padding-left: 256px;
+  padding-left: 356px;
 }
 
 .sm-and-down-left-padding {
   // Match left padding with collapsed User Settings sidebar width
-  padding-left: 56px;
+  padding-left: 46px;
 }
 // stylelint-disable
 
 .links {
-  color: #465968;
-  font-size: 14px;
   text-decoration: none;
   font-family: Roboto, sans-serif;
+  color: #4d606e;
 }
 .router-link-active {
   color: #3b8dff;
