@@ -1,5 +1,6 @@
 <script>
 import Alert from '@/components/Alert'
+import Footer from '@/components/Footer'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
@@ -24,6 +25,7 @@ export default {
   },
   components: {
     Alert,
+    Footer,
     NavBar,
     SideNav
   },
@@ -286,6 +288,8 @@ export default {
           <v-card-text>{{ error }}</v-card-text>
         </v-card>
       </v-container>
+
+      <Footer />
     </v-main>
 
     <Alert
@@ -297,31 +301,6 @@ export default {
       :link-text="getAlert.linkText"
       :timeout="12000"
     />
-
-    <v-footer padless>
-      <v-card flat tile width="100%" class="text-center transparent">
-        <v-card-text>
-          <v-btn depressed icon class="mx-4">
-            <v-icon>fab fa-twitter</v-icon>
-          </v-btn>
-          <v-btn depressed icon class="mx-4">
-            <v-icon>fab fa-linkedin</v-icon>
-          </v-btn>
-          <v-btn depressed icon class="mx-4">
-            <v-icon>fab fa-instagram</v-icon>
-          </v-btn>
-          <v-btn depressed icon class="mx-4">
-            <v-icon>fab fa-github</v-icon>
-          </v-btn>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-text>
-          {{ new Date().getFullYear() }} — <strong>Prefect</strong>
-        </v-card-text>
-      </v-card>
-    </v-footer>
   </v-app>
 </template>
 
@@ -372,5 +351,6 @@ html {
 
 .router-view {
   max-width: 100% !important;
+  min-height: calc(100vh - 128px);
 }
 </style>
