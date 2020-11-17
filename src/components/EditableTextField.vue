@@ -21,6 +21,10 @@ export default {
     return {
       focused: false,
       isEditing: false,
+      rules: {
+        required: val => !!val || 'Required.',
+        length: val => val?.length > 0 || 'At least one number is required'
+      },
       value: this.content
     }
   },
@@ -54,12 +58,20 @@ export default {
   >
     <v-icon small class="edit-icon">edit</v-icon>
 
-    <div class="input-container">
+    <div
+      class="input-container"
+      :class="{
+        'error-border': !value || value.length === 0
+      }"
+    >
       <input
         ref="edit-input"
         v-model="value"
         class="truncate"
-        :class="{ 'cursor-pointer': !focused }"
+        :class="{
+          'cursor-pointer': !focused
+        }"
+        min="1"
         @disabled="!isEditing"
         @focus="focused = true"
         @keyup.enter="save"
@@ -95,6 +107,14 @@ export default {
   width: 60px;
 }
 
+.edit-icon {
+  left: -20px;
+  opacity: 0;
+  position: absolute;
+  top: 6px;
+  transition: all 150ms;
+}
+
 .inherited-text-field {
   box-sizing: border-box;
   color: inherit !important;
@@ -111,24 +131,31 @@ export default {
     width: 100%;
   }
 
-  .input-container::after {
-    background-color: #3b8dff;
-    bottom: 0;
-    content: '';
-    height: 2px;
-    left: 50%;
-    position: absolute;
-    transition: all 100ms;
-    transition-delay: 100ms;
-    width: 0%;
-  }
+  // .input-container {
+  //   &.error {
+  //     &::after {
+  //       background-color: var(--v-error-base);
+  //     }
+  //   }
+  // }
 
-  .edit-icon {
-    left: -20px;
-    opacity: 0;
-    position: absolute;
-    top: 6px;
-    transition: all 150ms;
+  .input-container {
+    &::after {
+      background-color: #3b8dff;
+      bottom: 0;
+      content: '';
+      height: 2px;
+      left: 50%;
+      position: absolute;
+      transition: all 100ms;
+      transition-delay: 10ms;
+      width: 0%;
+    }
+
+    &.error-border::after {
+      background-color: var(--v-error-base);
+      transition-delay: 0;
+    }
   }
 
   &.focused {
