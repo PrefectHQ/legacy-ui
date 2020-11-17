@@ -119,13 +119,15 @@ export default {
         :sort-desc.sync="sortDesc"
       >
         <template #item.name="{ item }">
-          <router-link
-            class="link"
-            :data-cy="'task-link|' + item.name"
-            :to="{ name: 'task', params: { id: item.id } }"
-          >
-            {{ item.name }}
-          </router-link>
+          <truncate :content="item.name">
+            <router-link
+              class="link"
+              :data-cy="'task-link|' + item.name"
+              :to="{ name: 'task', params: { id: item.id } }"
+            >
+              {{ item.name }}
+            </router-link>
+          </truncate>
         </template>
 
         <template #item.mapped="{ item }">

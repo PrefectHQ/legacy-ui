@@ -16,7 +16,7 @@
             cols="12"
             class="d-flex align-center justify-space-between pb-1"
           >
-            <div>
+            <div style="width: inherit;">
               <div class="overline"><slot name="page-type"></slot></div>
               <div class="headline"><slot name="page-title"></slot></div>
             </div>

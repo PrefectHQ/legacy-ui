@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
 
 ### Bugfixes
 

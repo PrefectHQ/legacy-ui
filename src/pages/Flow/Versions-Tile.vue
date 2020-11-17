@@ -200,51 +200,32 @@ export default {
         calculate-widths
       >
         <template #item.version="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <router-link
-                class="link"
-                :to="{
-                  name: 'flow',
-                  params: { id: flowGroupId, tenant: tenant.slug },
-                  query: { version: item.version }
-                }"
-              >
-                <div class="truncate" v-on="on">{{ item.version }}</div>
-              </router-link>
-            </template>
-            <span>{{ item.name }}: Version {{ item.version }}</span>
-          </v-tooltip>
+          <truncate :content="item.version">
+            <router-link
+              class="link"
+              :to="{
+                name: 'flow',
+                params: { id: flowGroupId, tenant: tenant.slug },
+                query: { version: item.version }
+              }"
+            >
+              {{ item.version }}
+            </router-link>
+          </truncate>
         </template>
 
         <template #item.created="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <span v-on="on">
-                {{ formDate(item.created) }}
-              </span>
-            </template>
-            <span>{{ formatTime(item.created) }}</span>
-          </v-tooltip>
+          <truncate :content="formatTime(item.created)">
+            {{ formDate(item.created) }}
+          </truncate>
         </template>
 
         <template #item.archived="{ item }">
-          <v-tooltip v-if="!item.archived" top>
-            <template #activator="{ on }">
-              <v-icon small dark color="green" v-on="on">
-                pi-flow
-              </v-icon>
-            </template>
-            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
-          </v-tooltip>
-          <v-tooltip v-else top>
-            <template #activator="{ on }">
-              <v-icon small dark color="accent-pink" v-on="on">
-                archive
-              </v-icon>
-            </template>
-            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
-          </v-tooltip>
+          <truncate :content="item.archived ? 'Archived' : 'Active'">
+            <v-icon small dark :color="item.archived ? 'accent-pink' : 'green'">
+              {{ item.archived ? 'archive' : 'pi-flow' }}
+            </v-icon>
+          </truncate>
         </template>
 
         <template #item.flow_runs="{ item }">
