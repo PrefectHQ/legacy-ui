@@ -186,7 +186,7 @@ export default {
         <img
           class="logo"
           style="pointer-events: none;"
-          src="@/assets/logos/logomark-light.svg"
+          src="@/assets/logos/logomark-white.svg"
           alt="The Prefect Logo"
         />
       </v-btn>
