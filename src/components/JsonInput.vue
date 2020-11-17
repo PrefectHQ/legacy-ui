@@ -179,15 +179,15 @@ export default {
       class="ma-1 pt-2 cm-style"
       :class="{
         'pl-7': prependIcon,
-        'blue-border': prependIcon && focused && !jsonError,
+        'blue-border': prependIcon && focussed && !jsonError,
         'red-border': prependIcon && jsonError,
-        'plain-border': prependIcon && !focused && !jsonError,
+        'plain-border': prependIcon && !focussed && !jsonError,
         'original-border': !prependIcon
       }"
       :options="editorOptions"
       @input="handleJsonInput($event)"
-      @focus="focused = true"
-      @blur="focused = false"
+      @focus="focussed = true"
+      @blur="focussed = false"
     ></CodeMirror>
 
     <slot></slot>
