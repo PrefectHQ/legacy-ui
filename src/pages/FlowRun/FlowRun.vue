@@ -183,6 +183,7 @@ export default {
           :content="flowRun.name"
           label="Flow Run Name"
           :loading="flowRunNameLoading"
+          required
           @change="saveFlowRunName"
         />
       </span>

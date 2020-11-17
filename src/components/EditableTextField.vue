@@ -15,12 +15,16 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    required: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
     return {
       focused: false,
-      isEditing: false,
       rules: {
         required: val => !!val || 'Required.',
         length: val => val?.length > 0 || 'At least one number is required'
@@ -41,6 +45,8 @@ export default {
       this.$refs['edit-input']?.focus()
     },
     save() {
+      if (this.value?.length === 0) return
+
       this.focused = false
       this.$refs['edit-input']?.blur()
 
@@ -61,7 +67,7 @@ export default {
     <div
       class="input-container"
       :class="{
-        'error-border': !value || value.length === 0
+        'error-border': required && (!value || value.length === 0)
       }"
     >
       <input
@@ -72,7 +78,7 @@ export default {
           'cursor-pointer': !focused
         }"
         min="1"
-        @disabled="!isEditing"
+        @disabled="loading"
         @focus="focused = true"
         @keyup.enter="save"
         @keyup.esc="discard"
@@ -130,14 +136,6 @@ export default {
     outline: none;
     width: 100%;
   }
-
-  // .input-container {
-  //   &.error {
-  //     &::after {
-  //       background-color: var(--v-error-base);
-  //     }
-  //   }
-  // }
 
   .input-container {
     &::after {
