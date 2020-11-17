@@ -137,7 +137,7 @@ export default {
           }
         })
 
-        await this.$apollo.queries.flowRun.refetch()
+        await this.$apollo.queries.taskRun.refetch()
 
         if (!data.set_task_run_name.success) {
           throw new Error(data.set_task_run_name.error)
