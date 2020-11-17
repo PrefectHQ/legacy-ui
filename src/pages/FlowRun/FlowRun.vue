@@ -168,7 +168,15 @@ export default {
   <v-sheet v-if="flowRun" color="appBackground">
     <SubPageNav>
       <span slot="page-type">Flow Run</span>
-      <span slot="page-title">
+      <span
+        slot="page-title"
+        style="
+        display: block;
+        max-width: 50%;
+        min-width: 500px;
+        width: auto;
+        "
+      >
         <EditableTextField
           :content="flowRun.name"
           label="Flow Run Name"

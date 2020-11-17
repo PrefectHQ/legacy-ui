@@ -27,6 +27,7 @@ export default {
   methods: {
     discard() {
       this.isEditing = false
+      this.$refs['edit-input']?.blur()
 
       this.value = this.content
     },
@@ -37,6 +38,7 @@ export default {
     },
     save() {
       this.isEditing = false
+      this.$refs['edit-input']?.blur()
 
       this.$emit('change', this.value)
     }
@@ -84,12 +86,12 @@ export default {
   max-width: 100%;
   padding-bottom: 2px;
   position: relative;
-  width: fit-content;
+  width: 100%;
 
   input,
   input:active {
     outline: none;
-    width: auto;
+    width: 100%;
   }
 
   .input-container::after {
