@@ -111,7 +111,7 @@ export default {
     },
     async saveFlowRunName(e) {
       try {
-        const previousName = this.flowRunName
+        const previousName = this.flowRun.name
         this.flowRunNameLoading = true
 
         const { data } = await this.$apollo.mutate({
