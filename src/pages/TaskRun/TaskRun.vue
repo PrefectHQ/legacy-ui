@@ -48,8 +48,23 @@ export default {
   data() {
     return {
       loading: 0,
-      tab: this.getTab(),
-      tabs: [
+      tab: this.getTab()
+    }
+  },
+  computed: {
+    ...mapGetters('tenant', ['tenant']),
+    taskRunId() {
+      return this.$route.params.id
+    },
+    // Is this the correct definition? Can a mapped task run have siblings and children?
+    mappedParent() {
+      return this.taskRun?.task.mapped && this.taskRun?.map_index === -1
+    },
+    mappedChild() {
+      return this.taskRun?.task.mapped && this.taskRun?.map_index > -1
+    },
+    tabs() {
+      return [
         {
           name: 'Overview',
           target: 'overview',
@@ -64,28 +79,17 @@ export default {
           name: 'Artifacts',
           target: 'artifacts',
           icon: 'fas fa-fingerprint',
+          badgeText: 'Coming Soon!',
           disabled: true
         },
         {
           name: 'Mapped Runs',
           target: 'mapped-runs',
           icon: 'device_hub',
-          hidden: !this.mappedParent || !this.mappedChild
+          badgeText: 'New!',
+          hidden: !this.mappedParent && !this.mappedChild
         }
       ]
-    }
-  },
-  computed: {
-    ...mapGetters('tenant', ['tenant']),
-    taskRunId() {
-      return this.$route.params.id
-    },
-    // Is this the correct definition? Can a mapped task run have siblings and children?
-    mappedParent() {
-      return this.taskRun?.task.mapped && this.taskRun?.map_index === -1
-    },
-    mappedChild() {
-      return this.taskRun?.task.mapped && this.taskRun?.map_index > -1
     }
   },
   watch: {
