@@ -18,10 +18,9 @@ export default {
 <template functional>
   <component :is="$options.components.VTooltip" top>
     <template #activator="{ on }">
-      <span
+      <div
         class="truncate"
         style="
-          display: inline-block;
           width: auto;
         "
         v-on="on"
@@ -29,7 +28,7 @@ export default {
         <slot>
           {{ props.content }}
         </slot>
-      </span>
+      </div>
     </template>
     <span>{{ props.content }}</span>
   </component>
