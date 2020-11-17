@@ -152,7 +152,7 @@ export default {
         this.setAlert({
           alertShow: true,
           alertMessage:
-            'Oops! Something went wrong while trying to update your flow run name, please try again.',
+            'Oops! Something went wrong while trying to update your task run name, please try again.',
           alertType: 'error'
         })
       } finally {
