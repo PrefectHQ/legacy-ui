@@ -28,8 +28,10 @@ export default {
     return {
       skip: false,
       loadingKey: 0,
-      flowId: null,
-      filteredRuns: {}
+      // flowId: null,
+      limit: {},
+      startTime: {},
+      multipleFlowRuns: { name: 'flow runs' }
     }
   },
   computed: {
@@ -43,40 +45,61 @@ export default {
       return this.addDay(this.date, 1)
     },
     flowRunEvents() {
-      let lastRun = {}
-      const filtered = this.flowRuns?.filter((flowRun, index) => {
-        flowRun.start = this.formatCalendarTime(flowRun.start_time)
-        flowRun.end = this.formatCalendarTime(flowRun.end_time)
-        flowRun.category = flowRun.flow_id
-        const previousRun = this.flowRuns[index - 1]
-        const lastRunStart = this.addTime(previousRun?.start_time, 1, 'minutes')
-        if (
-          lastRunStart > flowRun.start_time &&
-          previousRun.flow_id === flowRun.flow_id
-        ) {
-          if (!this.filteredRuns[flowRun.flow_id])
-            this.filteredRuns[flowRun.flow_id] = []
-          this.filteredRuns[flowRun.flow_id].push(flowRun)
-          lastRun[index] = flowRun
-          lastRun.name = 'Multiple Flows'
-          return null
+      // return this.flowRuns.map(flowRun => {
+      //   flowRun.start = this.formatCalendarTime(flowRun.start_time)
+      //   flowRun.category = flowRun.flow_id
+      //   flowRun.end = this.formatCalendarTime(flowRun.end_time)
+      //   return flowRun
+      // })
+      const filtered = []
+      this.flowRuns?.forEach((flowRun, index) => {
+        const id = flowRun.flow_id
+        if (!this.limit[id]) {
+          this.limit[id] = this.addTime(flowRun.start_time, 15, 'minutes')
+          this.startTime = {}
+          this.startTime[id] = flowRun.start_time
         }
-        // console.log('big', flowRun, lastRunStart, flowRun.start)
-        lastRun = flowRun
-        return flowRun
+        if (this.limit[id] < flowRun.start_time) {
+          const addFlowRun = this.multipleFlowRuns[id]
+          if (addFlowRun.start) filtered.push(addFlowRun)
+          this.limit[id] = null
+          this.multipleFlowRuns[id] = { name: 'flow runs' }
+          flowRun.start = this.formatCalendarTime(flowRun.start_time)
+          flowRun.category = flowRun.flow_id
+          flowRun.end = this.formatCalendarTime(flowRun.end_time)
+          filtered.push(flowRun)
+        }
+        if (this.limit[id] >= flowRun.start_time) {
+          if (!this.multipleFlowRuns[id])
+            this.multipleFlowRuns[id] = { name: 'flow-runs' }
+          this.multipleFlowRuns[id][index] = flowRun
+          this.multipleFlowRuns[id].id = id
+          this.multipleFlowRuns[id].state = 'Success'
+          this.multipleFlowRuns[id].start = this.formatCalendarTime(
+            this.startTime[id]
+          )
+          this.multipleFlowRuns[id].end = this.formatCalendarTime(
+            flowRun.end_time
+          )
+          this.multipleFlowRuns[id].category = id
+          const count = Object.keys(this.multipleFlowRuns[id]).length - 6
+          this.multipleFlowRuns[id].name = `${count} flow runs`
+        }
       })
-      console.log(this.filteredRuns)
       return filtered
     },
     flowIds() {
       console.log(this.flowRunEvents)
-      const ids = this.uniqueFlowRuns?.map(flowRun => flowRun.flow_id)
+      const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
       return ids
     }
   },
   methods: {
     eventColor(event) {
-      return event.state
+      return event.state ? event.state : 'primary'
+    },
+    handleEventClick(event) {
+      console.log(event.event)
     }
   },
   apollo: {
@@ -86,8 +109,24 @@ export default {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.date,
-          endTime: this.end,
-          flow_id: this.flowId
+          endTime: this.end
+          // flow_id: this.flowId
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run
+    },
+    scheduledFlowRuns: {
+      query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end
         }
       },
       skip() {
@@ -119,13 +158,14 @@ export default {
       :categories="flowIds"
       category-show-all
       event-overlap-mode="column"
+      event-more
       event-overlap-threshold="0"
       :events="flowRunEvents"
       :event-color="eventColor"
       :interval-minutes="timeInterval"
       :interval-count="intervalCount"
       type="category"
-      @click:date="moreDays++"
+      @click:event="handleEventClick"
     >
       <template #day-body class="minwidth"> </template>
       <template #category="{ category }">
