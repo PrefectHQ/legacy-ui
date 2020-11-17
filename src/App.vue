@@ -39,6 +39,7 @@ export default {
       refreshTimeout: null,
       reset: false,
       shown: true,
+      showFooter: false,
       startupHasRun: false,
       wholeAppShown: true
     }
@@ -279,7 +280,12 @@ export default {
       </v-slide-y-transition>
 
       <SideNav />
-      <v-fade-transition mode="out-in">
+
+      <v-fade-transition
+        mode="out-in"
+        @before-leave="showFooter = false"
+        @after-enter="showFooter = true"
+      >
         <router-view class="router-view" />
       </v-fade-transition>
 
@@ -289,7 +295,9 @@ export default {
         </v-card>
       </v-container>
 
-      <Footer />
+      <v-fade-transition mode="out-in">
+        <Footer v-if="showFooter" />
+      </v-fade-transition>
     </v-main>
 
     <Alert
@@ -350,7 +358,14 @@ html {
 }
 
 .router-view {
+  height: auto;
+  margin-bottom: 18px;
   max-width: 100% !important;
-  min-height: calc(100vh - 128px);
+  min-height: calc(100vh - 310px);
+}
+
+.tab-full-height {
+  height: auto;
+  min-height: calc(100vh - 360px);
 }
 </style>

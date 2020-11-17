@@ -386,12 +386,7 @@ export default {
   background-color: #c8e1ff !important;
 }
 
-.tab-full-height {
-  min-height: 80vh;
-}
-
 /* stylelint-disable */
-
 .v-tab--disabled .v-badge__badge {
   pointer-events: none;
 }

@@ -412,10 +412,6 @@ export default {
 </template>
 
 <style lang="scss">
-.tab-full-height {
-  min-height: 100vh;
-}
-
 // stylelint-disable
 .v-skeleton-loader__image {
   height: inherit !important;

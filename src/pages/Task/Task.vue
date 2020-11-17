@@ -282,9 +282,3 @@ export default {
     </v-bottom-navigation>
   </v-sheet>
 </template>
-
-<style lang="scss">
-.tab-full-height {
-  min-height: 80vh;
-}
-</style>

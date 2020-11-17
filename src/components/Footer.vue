@@ -48,8 +48,13 @@ const links = [
   }
 ]
 
+const insetRoutes = ['team', 'user', 'tutorials']
+
 export default {
   computed: {
+    inset() {
+      return insetRoutes.includes(this.$route.path.split('/')[1])
+    },
     linksLeft() {
       return links.slice(0, Math.ceil(links.length / 2))
     },
@@ -67,12 +72,20 @@ export default {
 </script>
 
 <template>
-  <v-footer color="transparent" padless app absolute>
-    <v-card flat tile width="100%" class="text-center transparent">
+  <v-footer
+    color="transparent"
+    padless
+    :inset="inset"
+    :class="{
+      'sm-and-down-left-padding': inset && $vuetify.breakpoint.smAndDown,
+      'sm-and-up-left-padding': inset && $vuetify.breakpoint.smAndUp
+    }"
+  >
+    <v-card flat tile width="100%" class="transparent">
       <v-divider class="mx-auto" style="max-width: 1440px;"></v-divider>
 
       <v-card-text class="d-flex align-center justify-center">
-        <div class="d-flex flex-column align-end justify-start">
+        <div class="block d-flex flex-column align-end justify-start">
           <div>
             <v-btn
               v-for="(icon, i) in socialIconsLeft"
@@ -87,19 +100,16 @@ export default {
             </v-btn>
           </div>
 
-          <div class="mr-1 mt-4">
-            <a
-              v-for="(link, i) in linksLeft"
-              :key="i"
-              class="link ml-16"
-              :href="link.link"
-            >
-              {{ link.text }}
-            </a>
+          <div class="mr-1 mt-4 d-flex justify-space-between w-100">
+            <div v-for="(link, i) in linksLeft" :key="i">
+              <a class="link" :href="link.link">
+                {{ link.text }}
+              </a>
+            </div>
           </div>
         </div>
 
-        <div class="mx-16">
+        <div class="mx-16 text-center">
           <div class="overline">Made with ♡ in DC</div>
 
           <a href="https://prefect.io" target="_blank">
@@ -111,7 +121,7 @@ export default {
           </a>
         </div>
 
-        <div class="d-flex flex-column align-start justify-start">
+        <div class="block d-flex flex-column align-start justify-start">
           <div>
             <v-btn
               v-for="(icon, i) in socialIconsRight"
@@ -126,34 +136,15 @@ export default {
             </v-btn>
           </div>
 
-          <div class="ml-1 mt-4 align-self-end">
-            <a
-              v-for="(link, i) in linksRight"
-              :key="i"
-              class="link mr-16"
-              :href="link.link"
-            >
-              {{ link.text }}
-            </a>
+          <div class="ml-1 mt-4 d-flex justify-space-between w-100">
+            <div v-for="(link, i) in linksRight" :key="i">
+              <a class="link" :href="link.link">
+                {{ link.text }}
+              </a>
+            </div>
           </div>
         </div>
-
-        <!-- <v-btn depressed icon class="mx-4">
-          <v-icon>fab fa-twitter</v-icon>
-        </v-btn>
-        <v-btn depressed icon class="mx-4">
-          <v-icon>fab fa-slack</v-icon>
-        </v-btn>
-
-        <v-btn depressed icon class="mx-4">
-          <v-icon>fab fa-instagram</v-icon>
-        </v-btn>
-        <v-btn depressed icon class="mx-4">
-          <v-icon>fab fa-github</v-icon>
-        </v-btn> -->
       </v-card-text>
-
-      <v-card-text> </v-card-text>
     </v-card>
   </v-footer>
 </template>
@@ -163,5 +154,24 @@ export default {
   filter: grayscale(1);
   height: 50px;
   width: auto;
+}
+
+.block {
+  //   max-width: 500px;
+  width: 200px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.sm-and-up-left-padding {
+  // Match left padding with sidebar widths
+  padding-left: 256px;
+}
+
+.sm-and-down-left-padding {
+  // Match left padding with collapsed sidebar widths
+  padding-left: 56px;
 }
 </style>
