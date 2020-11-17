@@ -4,6 +4,7 @@ import { mapGetters } from 'vuex'
 import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
+import EditableTextField from '@/components/EditableTextField'
 import ExternalLink from '@/components/ExternalLink'
 import TimelineTile from '@/pages/FlowRun/Timeline-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
@@ -37,6 +38,7 @@ export default {
     Actions,
     BreadCrumbs,
     DetailsTile,
+    EditableTextField,
     ExternalLink,
     TimelineTile,
     LogsCard,
@@ -104,6 +106,9 @@ export default {
     },
     parseMarkdown(md) {
       return parser(md)
+    },
+    saveFlowRunName(e) {
+      console.log(e)
     }
   },
   apollo: {
@@ -128,7 +133,11 @@ export default {
     <SubPageNav>
       <span slot="page-type">Flow Run</span>
       <span slot="page-title">
-        {{ flowRun.name }}
+        <EditableTextField
+          :content="flowRun.name"
+          label="Flow Run Name"
+          @change="saveFlowRunName"
+        />
       </span>
 
       <BreadCrumbs
