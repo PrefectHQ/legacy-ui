@@ -145,9 +145,7 @@ export default {
           alertType: 'error'
         })
       } finally {
-        setTimeout(() => {
-          this.flowRunNameLoading = false
-        }, 3000)
+        this.flowRunNameLoading = false
       }
     }
   },
@@ -183,7 +181,7 @@ export default {
       >
         <EditableTextField
           :content="flowRun.name"
-          label="Flow Run Name"
+          label="Flow run name"
           :loading="flowRunNameLoading"
           required
           @change="saveFlowRunName"

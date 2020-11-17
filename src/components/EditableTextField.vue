@@ -24,6 +24,7 @@ export default {
   },
   data() {
     return {
+      error: false,
       focused: false,
       rules: {
         required: val => !!val || 'Required.',
@@ -47,6 +48,7 @@ export default {
       this.$refs['edit-input']?.focus()
     },
     save() {
+      this.error = this.value?.length === 0
       if (this.loading || this.value?.length === 0) return
 
       this.focused = false
@@ -76,7 +78,7 @@ export default {
     />
 
     <v-menu
-      :value="focused && required && (!value || value.length === 0)"
+      :value="focused && required && (!value || value.length === 0) && error"
       :close-on-click="false"
       :open-on-click="false"
       :close-on-content-click="false"
@@ -103,7 +105,7 @@ export default {
             :class="{
               'cursor-pointer': !focused
             }"
-            min="1"
+            :placeholder="`${label} (press enter to save)`"
             @disabled="loading"
             @keyup.enter="save"
             @keyup.esc="discard"
@@ -112,11 +114,9 @@ export default {
         </v-input>
       </template>
 
-      <v-card class="pa-0" max-width="320">
-        <v-card-text>
-          Flow run names can't be empty.
-        </v-card-text>
-      </v-card>
+      <v-alert border="left" colored-border type="error" class="ma-0">
+        {{ label }} can't be empty
+      </v-alert>
     </v-menu>
 
     <!-- Not sure if we need to show these buttons since enter is a pretty natural interaction -->
