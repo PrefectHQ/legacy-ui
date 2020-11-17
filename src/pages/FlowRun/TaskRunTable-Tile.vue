@@ -206,21 +206,15 @@ export default {
         </template>
 
         <template #item.start_time="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <span v-on="on"> {{ formDate(item.start_time) }}</span>
-            </template>
-            <span> {{ formatTime(item.start_time) }}</span>
-          </v-tooltip>
+          <truncate :content="formatTime(item.start_time)">
+            {{ formDate(item.start_time) }}
+          </truncate>
         </template>
 
         <template #item.end_time="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <span v-on="on">{{ formDate(item.end_time) }}</span>
-            </template>
-            <span>{{ formatTime(item.end_time) }}</span>
-          </v-tooltip>
+          <truncate :content="formatTime(item.end_time)">
+            {{ formDate(item.end_time) }}
+          </truncate>
         </template>
 
         <template #item.duration="{ item }">
@@ -239,26 +233,13 @@ export default {
         </template>
 
         <template #item.state="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <v-icon
-                class="mr-1 pointer"
-                :data-cy="
-                  'task-run-table-state|' +
-                    item.task.name +
-                    '|' +
-                    item.state.toLowerCase()
-                "
-                small
-                :color="item.state"
-                v-on="on"
-              >
-                brightness_1
-              </v-icon>
-            </template>
-            <span>{{ item.state }}</span>
-          </v-tooltip>
+          <truncate :content="item.state">
+            <v-icon class="mr-1 pointer" small :color="item.state">
+              brightness_1
+            </v-icon>
+          </truncate>
         </template>
+
         <template #item.action="{ item }">
           <ResumeButton
             v-if="item.state == 'Paused'"
