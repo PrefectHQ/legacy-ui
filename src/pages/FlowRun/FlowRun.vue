@@ -145,7 +145,9 @@ export default {
           alertType: 'error'
         })
       } finally {
-        this.flowRunNameLoading = false
+        setTimeout(() => {
+          this.flowRunNameLoading = false
+        }, 3000)
       }
     }
   },

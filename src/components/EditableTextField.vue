@@ -40,12 +40,14 @@ export default {
       this.value = this.content
     },
     edit() {
+      if (this.loading) return
+
       this.focused = true
 
       this.$refs['edit-input']?.focus()
     },
     save() {
-      if (this.value?.length === 0) return
+      if (this.loading || this.value?.length === 0) return
 
       this.focused = false
       this.$refs['edit-input']?.blur()
@@ -73,30 +75,49 @@ export default {
       width="2"
     />
 
-    <v-input
-      class="input-container"
-      :class="{
-        'error-border': required && (!value || value.length === 0),
-        disabled: loading
-      }"
-      hide-details
-      :error="required && (!value || value.length === 0)"
-      @disabled="loading"
+    <v-menu
+      :value="focused && required && (!value || value.length === 0)"
+      :close-on-click="false"
+      :open-on-click="false"
+      :close-on-content-click="false"
+      offset-y
+      max-width="320"
+      nudge-bottom="5"
     >
-      <input
-        ref="edit-input"
-        v-model="value"
-        class="truncate"
-        :class="{
-          'cursor-pointer': !focused
-        }"
-        min="1"
-        @disabled="loading"
-        @keyup.enter="save"
-        @keyup.esc="discard"
-        @focus="focused = true"
-      />
-    </v-input>
+      <template #activator="{on}">
+        <v-input
+          class="input-container"
+          :class="{
+            'error-border': required && (!value || value.length === 0),
+            disabled: loading
+          }"
+          hide-details
+          :error="required && (!value || value.length === 0)"
+          v-on="on"
+          @disabled="loading"
+        >
+          <input
+            ref="edit-input"
+            v-model="value"
+            class="truncate"
+            :class="{
+              'cursor-pointer': !focused
+            }"
+            min="1"
+            @disabled="loading"
+            @keyup.enter="save"
+            @keyup.esc="discard"
+            @focus="focused = !loading && true"
+          />
+        </v-input>
+      </template>
+
+      <v-card class="pa-0" max-width="320">
+        <v-card-text>
+          Flow run names can't be empty.
+        </v-card-text>
+      </v-card>
+    </v-menu>
 
     <!-- Not sure if we need to show these buttons since enter is a pretty natural interaction -->
     <!-- <div v-if="focused" class="button-container text-center">
@@ -150,10 +171,6 @@ export default {
   .v-input {
     color: inherit !important;
     font-size: inherit !important;
-
-    &.disabled {
-      color: #90a4ae !important;
-    }
   }
 
   .input-container {
@@ -163,6 +180,15 @@ export default {
       outline: none;
       transition: all 100ms;
       width: 100%;
+    }
+
+    &.disabled {
+      color: #90a4ae !important;
+      cursor: progress;
+
+      input {
+        pointer-events: none;
+      }
     }
 
     &::after {
