@@ -41,7 +41,7 @@ export default {
     },
     edit() {
       this.focused = true
-      console.log(this.$refs)
+
       this.$refs['edit-input']?.focus()
     },
     save() {
@@ -61,6 +61,7 @@ export default {
     v-click-outside="discard"
     class="inherited-text-field"
     :class="{ focused: focused, 'cursor-pointer': !focused }"
+    @click="edit"
   >
     <v-icon v-if="!loading" small class="prepend-input edit-icon">edit</v-icon>
     <v-progress-circular
@@ -76,7 +77,7 @@ export default {
       class="input-container"
       :class="{
         'error-border': required && (!value || value.length === 0),
-        disabled: !loading
+        disabled: loading
       }"
       hide-details
       :error="required && (!value || value.length === 0)"
@@ -90,6 +91,7 @@ export default {
           'cursor-pointer': !focused
         }"
         min="1"
+        @disabled="loading"
         @keyup.enter="save"
         @keyup.esc="discard"
         @focus="focused = true"
@@ -148,18 +150,18 @@ export default {
   .v-input {
     color: inherit !important;
     font-size: inherit !important;
-  }
 
-  &.disabled {
-    .v-input {
-      color: #d00 !important;
+    &.disabled {
+      color: #90a4ae !important;
     }
   }
 
   .input-container {
     input,
     input:active {
+      color: inherit !important;
       outline: none;
+      transition: all 100ms;
       width: 100%;
     }
 
