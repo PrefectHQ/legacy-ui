@@ -63,22 +63,36 @@ export default {
         @disabled="!isEditing"
         @focus="focused = true"
         @keyup.enter="save"
+        @keyup.esc="discard"
       />
     </div>
 
-    <div v-if="focused" class="button-container">
-      <v-btn depressed x-small class="mr-1" @click="discard">Cancel</v-btn>
-      <v-btn depressed color="primary" x-small @click="save">Save</v-btn>
-    </div>
+    <!-- Not sure if we need to show these buttons since enter is a pretty natural interaction -->
+    <!-- <div v-if="focused" class="button-container text-center">
+      <v-btn block depressed color="primary" x-small @click="save">
+        Save
+      </v-btn>
+      <v-btn
+        block
+        depressed
+        x-small
+        class="mr-1"
+        color="transparent"
+        @click="discard"
+      >
+        Cancel
+      </v-btn>
+    </div> -->
   </div>
 </template>
 
 <style lang="scss" scoped>
 .button-container {
   position: absolute;
-  right: 0;
+  right: -60px;
   top: 50%;
   transform: translate(0, -50%);
+  width: 60px;
 }
 
 .inherited-text-field {
