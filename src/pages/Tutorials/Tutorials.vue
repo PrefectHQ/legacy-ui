@@ -6,28 +6,19 @@ import { parser, getRoutes } from '@/utils/markdownParser'
 export default {
   data() {
     return {
-      tutorials: [
-        {
-          icon: 'pi-flow-run',
-          to: 'flow-run-tutorial',
-          title: 'Running a Flow'
-        },
-        {
-          icon: 'storage',
-          to: 'universal-deploy-tutorial',
-          title: 'Universal Deploy'
-        }
-      ],
-      routes: getRoutes()
+      routes: getRoutes(),
+      icon: true
     }
   },
-
   computed: {
     ...mapGetters('tenant', ['tenant'])
   },
   methods: {
     mdParser(md) {
       return parser(md)
+    },
+    toggle() {
+      this.icon = !this.icon
     }
   }
 }
@@ -35,35 +26,27 @@ export default {
 
 <template>
   <v-container>
-    <v-navigation-drawer
-      clipped
-      left
-      width="370px"
-      fixed
-      permanent
-      touchless
-      mini-variant-width="370px"
-      :mini-variant="$vuetify.breakpoint.smAndDown"
-      :style="{ top: $vuetify.breakpoint.smAndDown ? '56px' : '64px' }"
-    >
-      <template #prepend>
-        <v-list-item>
-          <v-list-item-action>
-            <v-icon class="blue--text accent-4">
-              school
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <div class="font-weight-medium">
-              Tutorials
-            </div>
-          </v-list-item-content>
-        </v-list-item>
-      </template>
+    <v-icon class="blue--text accent-4" large @click.stop="toggle">
+      {{ !icon ? 'keyboard_arrow_right' : 'keyboard_arrow_left' }}
+    </v-icon>
 
-      <v-divider />
+    <v-navigation-drawer v-model="icon" app clipped left fixed touchless>
+      <v-list-item>
+        <v-list-item-action>
+          <v-icon class="blue--text accent-4">
+            school
+          </v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <div class="font-weight-medium">
+            Tutorials
+          </div>
+        </v-list-item-content>
+      </v-list-item>
 
-      <v-treeview :items="routes" hoverable open-on-click transition open-all>
+      <v-divider></v-divider>
+
+      <v-treeview :items="routes" hoverable transition open-all>
         <template slot="label" slot-scope="props">
           <div v-if="props.item.name[0] === '#'">
             <router-link
@@ -96,10 +79,11 @@ export default {
         </template>
       </v-treeview>
     </v-navigation-drawer>
+
     <div
       :class="{
-        'sm-and-down-left-padding': $vuetify.breakpoint.smAndDown,
-        'sm-and-up-left-padding': $vuetify.breakpoint.smAndUp
+        'sm-and-down-left-padding': $vuetify.breakpoint.xs,
+        'sm-and-up-left-padding': $vuetify.breakpoint.xs
       }"
       style="min-height: 100%;"
     >
@@ -124,12 +108,12 @@ export default {
 
 .sm-and-up-left-padding {
   // Match left padding with User Settings sidebar width
-  padding-left: 356px;
+  padding-left: 256px;
 }
 
 .sm-and-down-left-padding {
   // Match left padding with collapsed User Settings sidebar width
-  padding-left: 46px;
+  padding-left: 36px;
 }
 // stylelint-disable
 
@@ -137,6 +121,9 @@ export default {
   text-decoration: none;
   font-family: Roboto, sans-serif;
   color: #4d606e;
+  word-wrap: break-word; /* IE 5.5-7 */
+  white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+  white-space: pre-wrap;
 }
 .router-link-active {
   color: #3b8dff;

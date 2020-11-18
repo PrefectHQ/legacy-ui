@@ -299,13 +299,11 @@ export const routes = [
 const router = new Router({
   mode: 'history',
   routes,
-  scrollBehavior: (to, savedPosition) => {
+  scrollBehavior: to => {
     let scrollTo = 0
 
     if (to.hash) {
       scrollTo = to.hash
-    } else if (savedPosition) {
-      scrollTo = savedPosition.y
     }
 
     return goTo(scrollTo)
