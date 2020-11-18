@@ -391,6 +391,21 @@ export default {
           </v-tooltip>
 
           <v-list-item
+            v-else
+            active-class="primary-active-class"
+            :disabled="routeDisabled"
+            :to="getRoute('api')"
+            ripple
+          >
+            <v-list-item-action>
+              <v-icon>vertical_split</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Interactive API</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item
             active-class="primary-active-class"
             data-cy="side-nav-dashboard-item"
             :disabled="routeDisabled"
@@ -418,21 +433,6 @@ export default {
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Tutorials</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-list-item
-            v-else
-            active-class="primary-active-class"
-            :disabled="routeDisabled"
-            :to="getRoute('api')"
-            ripple
-          >
-            <v-list-item-action>
-              <v-icon>vertical_split</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Interactive API</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
