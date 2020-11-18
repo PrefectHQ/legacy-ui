@@ -69,7 +69,7 @@ export default {
     async flowRunEventsMethod() {
       const timeGroups = this.timeGroups()
       let event = []
-      for (let i = 0; i < timeGroups.length; i++) {
+      timeGroups.forEach(async (timeGroup, i) => {
         const finished = await this.$apollo.query({
           query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
           variables: {
@@ -116,7 +116,7 @@ export default {
           flowRuns.state = state.length ? state[0].state : 'Success'
           event.push(flowRuns)
         }
-      }
+      })
       return event
     },
     eventColor(event) {

@@ -6,6 +6,11 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      loadingKey: 0
+    }
+  },
   computed: {
     flowName() {
       return this.flow?.name
@@ -28,8 +33,8 @@ export default {
 </script>
 
 <template>
-  <div class="caption text-center">
-    <router-link :to="{ name: 'flow', params: { id: flow ? flow.id : '' } }">
+  <div v-if="loadingKey < 1" class="caption text-center">
+    <router-link :to="{ name: 'flow', params: { id: flow.id } }">
       <truncate :content="flowName"> </truncate>
     </router-link>
   </div>
