@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
+- Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
 
 ### Bugfixes
 
