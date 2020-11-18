@@ -145,7 +145,7 @@ export default {
 
         this.setAlert({
           alertShow: true,
-          alertMessage: `<span class="font-weight-medium">${previousName}</span> has been renamed to <span class="font-weight-medium">${e}</span>`,
+          alertMessage: `<span class="font-weight-medium">${previousName || 'Your task run'}</span> has been renamed to <span class="font-weight-medium">${e}</span>`,
           alertType: 'success'
         })
       } catch {
