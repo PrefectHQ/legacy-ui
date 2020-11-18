@@ -1,9 +1,11 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
+import EditableTextField from '@/components/EditableTextField'
+import ExternalLink from '@/components/ExternalLink'
 import TimelineTile from '@/pages/FlowRun/Timeline-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import SchematicTile from '@/pages/FlowRun/Schematic-Tile'
@@ -36,6 +38,8 @@ export default {
     Actions,
     BreadCrumbs,
     DetailsTile,
+    EditableTextField,
+    ExternalLink,
     TimelineTile,
     LogsCard,
     SchematicTile,
@@ -47,6 +51,7 @@ export default {
   },
   data() {
     return {
+      flowRunNameLoading: false,
       tab: this.getTab()
     }
   },
@@ -93,6 +98,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     getTab() {
       if ('schematic' in this.$route.query) return 'schematic'
       if ('logId' in this.$route.query) return 'logs'
@@ -102,6 +108,45 @@ export default {
     },
     parseMarkdown(md) {
       return parser(md)
+    },
+    async saveFlowRunName(e) {
+      const previousName = this.flowRun.name
+      if (previousName === e) return
+
+      try {
+        this.flowRunNameLoading = true
+
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/set-flow-run-name.gql'),
+          variables: {
+            input: {
+              flow_run_id: this.flowRunId,
+              name: e
+            }
+          }
+        })
+
+        await this.$apollo.queries.flowRun.refetch()
+
+        if (!data.set_flow_run_name.success) {
+          throw new Error(data.set_flow_run_name.error)
+        }
+
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `<span class="font-weight-medium">${previousName}</span> has been renamed to <span class="font-weight-medium">${e}</span>`,
+          alertType: 'success'
+        })
+      } catch {
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Oops! Something went wrong while trying to update your flow run name, please try again.',
+          alertType: 'error'
+        })
+      } finally {
+        this.flowRunNameLoading = false
+      }
     }
   },
   apollo: {
@@ -125,8 +170,22 @@ export default {
   <v-sheet v-if="flowRun" color="appBackground">
     <SubPageNav>
       <span slot="page-type">Flow Run</span>
-      <span slot="page-title">
-        {{ flowRun.name }}
+      <span
+        slot="page-title"
+        style="
+        display: block;
+        max-width: 100%;
+        min-width: 300px;
+        width: auto;
+        "
+      >
+        <EditableTextField
+          :content="flowRun.name"
+          label="Flow run name"
+          :loading="flowRunNameLoading"
+          required
+          @change="saveFlowRunName"
+        />
       </span>
 
       <BreadCrumbs
@@ -177,12 +236,62 @@ export default {
         Logs
       </v-tab>
 
-      <v-tab href="#artifacts" :style="hideOnMobile" disabled>
-        <v-badge color="codePink" content="Coming Soon!" bottom bordered inline>
-          <v-icon left>fas fa-fingerprint</v-icon>
-          Artifacts
-        </v-badge>
-      </v-tab>
+      <v-menu
+        open-on-hover
+        :close-on-click="false"
+        :open-on-click="false"
+        :close-on-content-click="false"
+        offset-y
+      >
+        <template #activator="{on}">
+          <div v-on="on">
+            <!-- Height: 100% is required here since we're nesting the tab -->
+            <v-tab
+              href="#artifacts"
+              :style="hideOnMobile"
+              style="height: 100%;"
+              disabled
+            >
+              <v-badge
+                color="codePink"
+                content="Coming Soon!"
+                bottom
+                bordered
+                inline
+              >
+                <v-icon left>fas fa-fingerprint</v-icon>
+                Artifacts
+              </v-badge>
+            </v-tab>
+          </div>
+        </template>
+        <v-card tile class="pa-0" max-width="320">
+          <v-card-title>
+            <v-badge
+              color="codePink"
+              content="Coming Soon!"
+              bottom
+              bordered
+              inline
+            >
+              <v-icon left>fas fa-fingerprint</v-icon>
+              Artifacts
+            </v-badge>
+          </v-card-title>
+          <v-card-text>
+            <div>
+              The Artifacts API is an experimental feature set currently under
+              development. For a sneak preview, check out the
+              <ExternalLink
+                href="https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts"
+              >
+                Artifacts API docs
+              </ExternalLink>
+              !
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-menu>
     </v-tabs>
 
     <v-tabs-items

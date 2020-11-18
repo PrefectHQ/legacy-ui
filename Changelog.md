@@ -4,11 +4,18 @@
 
 ### Features and Improvements
 
-- Add the Prefect Core version to the side navigation bar for Server users - [#431](https://github.com/PrefectHQ/ui/pull/431)
+- Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
+- Allow editing task run names from the task run page - [#449](https://github.com/PrefectHQ/ui/pull/449)
 
 ### Bugfixes
 
 - None
+
+## 2020-11-13
+
+### Features and Improvements
+
+- Add feature teaser to the Artifacts tabs on the task run and flow run pages - [#435](https://github.com/PrefectHQ/ui/pull/435)
 
 ## 2020-11-12
 
