@@ -82,7 +82,7 @@ export default {
       }"
     >
       <v-fade-transition mode="out-in">
-        <router-view class="sub-router-view"></router-view>
+        <router-view></router-view>
       </v-fade-transition>
     </div>
   </v-app>
