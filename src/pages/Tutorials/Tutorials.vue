@@ -13,12 +13,22 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant'])
   },
+  mounted() {
+    const path = `/${this.tenant.slug}/tutorial/${this.routes[0].name}`
+    if (this.$route.path !== path) this.$router.push(path)
+  },
   methods: {
     mdParser(md) {
       return parser(md)
     },
     toggle() {
       this.icon = !this.icon
+    },
+    sentenceCasing(str) {
+      return str
+        .split(' ')
+        .map(word => word.replace(word[0], word[0].toUpperCase()))
+        .join(' ')
     }
   }
 }
@@ -46,7 +56,7 @@ export default {
 
       <v-divider></v-divider>
 
-      <v-treeview :items="routes" hoverable transition open-all>
+      <v-treeview :items="routes" hoverable transition open-on-click>
         <template slot="label" slot-scope="props">
           <div v-if="props.item.name[0] === '#'">
             <router-link
@@ -56,13 +66,15 @@ export default {
                 hash: props.item.name
               }"
               class="links"
-              >{{
-                props.item.name
-                  .substring(1)
-                  .replace(/-/g, ' ')
-                  .toUpperCase()
-              }}</router-link
             >
+              <div>
+                {{
+                  sentenceCasing(
+                    props.item.name.substring(1).replace(/-/g, ' ')
+                  )
+                }}
+              </div>
+            </router-link>
           </div>
 
           <div v-else>
@@ -73,7 +85,9 @@ export default {
               }"
               class="links"
             >
-              {{ props.item.name.replace(/-/g, ' ').toUpperCase() }}
+              <div>{{
+                sentenceCasing(props.item.name.replace(/-/g, ' '))
+              }}</div>
             </router-link>
           </div>
         </template>
@@ -109,11 +123,13 @@ export default {
 .sm-and-up-left-padding {
   // Match left padding with User Settings sidebar width
   padding-left: 56px;
+  padding-right: 56px;
 }
 
 .sm-and-down-left-padding {
   // Match left padding with collapsed User Settings sidebar width
   padding-left: 36px;
+  padding-right: 36px;
 }
 // stylelint-disable
 
@@ -124,6 +140,7 @@ export default {
   word-wrap: break-word; /* IE 5.5-7 */
   white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
   white-space: pre-wrap;
+  font-size: 0.8125rem;
 }
 .router-link-active {
   color: #3b8dff;
