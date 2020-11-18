@@ -1,9 +1,10 @@
 <template>
-  <v-sheet
-    tile
-    style="max-width: 1440px;"
-    class="mx-auto px-6"
+  <v-app-bar
+    elevate-on-scroll
     color="appBackground"
+    style="position: fixed;
+    width: 100%;
+    z-index: 5;"
   >
     <v-row
       no-gutters
@@ -38,7 +39,8 @@
         <slot name="page-actions"></slot>
       </v-col>
     </v-row>
-    <v-row v-if="$slots.tabs"><slot name="tabs"></slot></v-row>
-    <v-divider />
-  </v-sheet>
+    <template v-if="$slots.tabs" slot="extension"
+      ><slot name="tabs"></slot
+    ></template>
+  </v-app-bar>
 </template>
