@@ -170,7 +170,9 @@ export default {
       ></BreadCrumbs>
 
       <Actions slot="page-actions" :flow-run="flowRun" />
-      <span slot="tabs"><NavTabBar :tabs="tabs" page="flow-run"/></span>
+      <span slot="tabs" style="width: 100%;"
+        ><NavTabBar :tabs="tabs" page="flow-run"
+      /></span>
     </SubPageNav>
 
     <v-tabs-items

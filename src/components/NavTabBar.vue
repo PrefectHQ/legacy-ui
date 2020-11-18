@@ -22,8 +22,11 @@ export default {
     }
   },
   computed: {
-    availableTabs() {
-      return this.tabs.filter(tab => !tab.hidden)
+    mainTabs() {
+      return this.tabs.filter(tab => !tab.hidden && tab.align != 'right')
+    },
+    secondaryTabs() {
+      return this.tabs.filter(tab => !tab.hidden && tab.align === 'right')
     }
   },
   watch: {
@@ -66,7 +69,7 @@ export default {
   >
     <v-tabs-slider color="blue"></v-tabs-slider>
     <v-tab
-      v-for="tb in availableTabs"
+      v-for="tb in mainTabs"
       :key="tb.target"
       :data-cy="`${page}-${tb.target}-tab`"
       :href="`#${tb.target}`"
@@ -85,7 +88,7 @@ export default {
       >
         <template #activator="{on}">
           <div
-            :style="tb.cardText && 'pointer-events: auto;'"
+            :style="tb.cardText && 'cursor: default; pointer-events: auto;'"
             v-on="on"
             @click.stop
           >
@@ -123,6 +126,19 @@ export default {
           >
         </v-card>
       </v-menu>
+    </v-tab>
+    <v-spacer />
+    <v-tab
+      v-for="tb in secondaryTabs"
+      :key="tb.target"
+      :data-cy="`${page}-${tb.target}-tab`"
+      :href="`#${tb.target}`"
+      :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
+      :disabled="tb.disabled"
+      :hidden="tb.hidden"
+    >
+      <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
+      {{ tb.name }}
     </v-tab>
   </v-tabs>
 </template>

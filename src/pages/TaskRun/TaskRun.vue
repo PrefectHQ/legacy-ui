@@ -214,7 +214,9 @@ export default {
       ></BreadCrumbs>
 
       <Actions slot="page-actions" :task-run="taskRun" />
-      <span slot="tabs"><NavTabBar :tabs="tabs" page="task-run"/></span>
+      <span slot="tabs" style="width: 100%;"
+        ><NavTabBar :tabs="tabs" page="task-run"
+      /></span>
     </SubPageNav>
 
     <v-tabs-items

@@ -221,7 +221,9 @@ export default {
           <ProjectSelector @project-select="handleProjectSelect" />
         </v-skeleton-loader>
       </span>
-      <span slot="tabs"><NavTabBar :tabs="tabs" page="dashboard"/></span>
+      <span slot="tabs" style="width: 100%;"
+        ><NavTabBar :tabs="tabs" page="dashboard"
+      /></span>
     </SubPageNav>
 
     <v-tabs-items

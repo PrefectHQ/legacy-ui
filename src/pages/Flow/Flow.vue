@@ -84,7 +84,8 @@ export default {
         {
           name: 'Settings',
           target: 'settings',
-          icon: 'settings'
+          icon: 'settings',
+          align: 'right'
         }
       ]
     }
@@ -265,7 +266,7 @@ export default {
         :scheduled="selectedFlow.is_schedule_active"
         :versions="versions"
       />
-      <span slot="tabs"
+      <span slot="tabs" style="width: 100%;"
         ><NavTabBar :tabs="tabs" v-if="flowGroup" page="flow"
       /></span>
     </SubPageNav>

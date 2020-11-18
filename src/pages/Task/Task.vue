@@ -198,7 +198,9 @@ export default {
         ></BreadCrumbs>
         <v-skeleton-loader v-else type="text" />
       </span>
-      <span slot="tabs"><NavTabBar :tabs="tabs" page="flow"/></span>
+      <span slot="tabs" style="width: 100%;"
+        ><NavTabBar :tabs="tabs" page="flow"
+      /></span>
     </SubPageNav>
 
     <v-tabs-items
