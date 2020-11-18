@@ -1,4 +1,4 @@
-query CalendarFlowRuns($project_id: uuid, $startTime: timestamptz, $endTime: timestamptz) {
+query CalendarDistinctFlowRuns($project_id: uuid, $startTime: timestamptz, $endTime: timestamptz) {
   flow_run (
     where: { 
       _and: [
@@ -7,6 +7,8 @@ query CalendarFlowRuns($project_id: uuid, $startTime: timestamptz, $endTime: tim
     {start_time: { _lte: $endTime}}
     ]
     }
+    distinct_on: flow_id
+    order_by: {flow_id: asc}
   ) 
   {
     id

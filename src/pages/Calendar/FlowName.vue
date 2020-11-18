@@ -29,6 +29,8 @@ export default {
 
 <template>
   <div class="caption text-center">
-    <truncate :content="flowName"> </truncate>
+    <router-link :to="{ name: 'flow', params: { id: flow ? flow.id : '' } }">
+      <truncate :content="flowName"> </truncate>
+    </router-link>
   </div>
 </template>

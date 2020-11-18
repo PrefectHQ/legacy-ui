@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      skip: true,
+      skip: false,
       loadingKey: 0,
       gettingRuns: false,
       flowRunEvents: [],
@@ -47,6 +47,7 @@ export default {
     },
     flowIds() {
       const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
+      console.log(ids)
       return ids
     },
     overlay() {
@@ -136,19 +137,18 @@ export default {
       } else {
         open()
       }
-
       nativeEvent.stopPropagation()
     }
   },
   apollo: {
     flowRuns: {
-      query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+      query: require('@/graphql/Calendar/distinct-on-calendar-flow-runs.gql'),
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.date,
-          endTime: this.end
-          // flow_id: this.flowId
+          endTime: this.end,
+          distintOn: true
         }
       },
       skip() {
