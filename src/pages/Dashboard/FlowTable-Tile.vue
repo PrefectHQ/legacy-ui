@@ -1,9 +1,10 @@
 <script>
 import CardTitle from '@/components/Card-Title'
-import { mapGetters } from 'vuex'
 import LastTenRuns from '@/components/LastTenRuns'
 import ScheduleToggle from '@/components/ScheduleToggle'
+
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 
 const serverHeaders = [
@@ -302,26 +303,15 @@ export default {
         }"
       >
         <template #item.archived="{ item }">
-          <v-tooltip v-if="!item.archived" top>
-            <template #activator="{ on }">
-              <v-icon small dark color="green" v-on="on">
-                pi-flow
-              </v-icon>
-            </template>
-            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
-          </v-tooltip>
-          <v-tooltip v-else top>
-            <template #activator="{ on }">
-              <v-icon small dark color="accent-pink" v-on="on">
-                archive
-              </v-icon>
-            </template>
-            <span>{{ item.archived ? 'Archived' : 'Active' }}</span>
-          </v-tooltip>
+          <truncate :content="item.archived ? 'Archived' : 'Active'">
+            <v-icon small dark :color="item.archived ? 'accent-pink' : 'green'">
+              {{ item.archived ? 'archive' : 'pi-flow' }}
+            </v-icon>
+          </truncate>
         </template>
 
         <template #item.name="{ item }">
-          <div class="truncate">
+          <truncate :content="item.name">
             <router-link
               class="link"
               :data-cy="
@@ -339,11 +329,11 @@ export default {
             >
               <span>{{ item.name }}</span>
             </router-link>
-          </div>
+          </truncate>
         </template>
 
         <template #item.project.name="{ item }">
-          <div class="truncate">
+          <truncate :content="item.project.name">
             <router-link
               class="link"
               :to="{
@@ -353,25 +343,11 @@ export default {
             >
               <span>{{ item.project.name }}</span>
             </router-link>
-          </div>
+          </truncate>
         </template>
 
         <template #item.schedule="{ item }">
           <ScheduleToggle :flow="item" :flow-group="item.flow_group" />
-        </template>
-
-        <template #item.project="{ item }">
-          <div class="truncate">
-            <router-link
-              class="link"
-              :to="{
-                name: 'project',
-                params: { id: item.project.id, tenant: tenant.slug }
-              }"
-            >
-              <span>{{ item.project.name }}</span>
-            </router-link>
-          </div>
         </template>
 
         <template #item.flow_runs="{ item }">
@@ -381,15 +357,13 @@ export default {
         </template>
 
         <template #item.created="{ item }">
-          <div class="truncate">
-            {{ formatTime(item.created) }}
-          </div>
+          <truncate :content="formatTime(item.created)" />
         </template>
 
         <template #item.created_by.username="{ item }">
-          <div class="truncate">
-            {{ item.created_by ? item.created_by.username : null }}
-          </div>
+          <truncate
+            :content="item.created_by ? item.created_by.username : null"
+          />
         </template>
 
         <!-- eslint-disable vue/no-template-shadow -->
