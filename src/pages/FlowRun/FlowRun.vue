@@ -73,7 +73,10 @@ export default {
           disabled: true,
           badgeText: 'Coming Soon!',
           cardText:
-            'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the <ExternalLink href="https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts"> Artifacts API docs</ExternalLink>!'
+            'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the',
+          cardLink:
+            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLinkText: 'Artifacts API Docs'
         }
       ]
     }

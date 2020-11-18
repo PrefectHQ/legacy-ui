@@ -1,5 +1,10 @@
 <script>
+import ExternalLink from '@/components/ExternalLink'
+
 export default {
+  components: {
+    ExternalLink
+  },
   props: {
     tabs: {
       type: Array,
@@ -71,14 +76,53 @@ export default {
     >
       <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
       {{ tb.name }}
-      <v-badge
-        v-if="tb.badgeText"
-        color="codePink"
-        :content="tb.badgeText"
-        bottom
-        bordered
-        inline
-      ></v-badge>
+      <v-menu
+        open-on-hover
+        :close-on-click="false"
+        :open-on-click="false"
+        :close-on-content-click="false"
+        offset-y
+      >
+        <template #activator="{on}">
+          <div
+            :style="tb.cardText && 'pointer-events: auto;'"
+            v-on="on"
+            @click.stop
+          >
+            <v-badge
+              v-if="tb.badgeText"
+              color="codePink"
+              :content="tb.badgeText"
+              bottom
+              bordered
+              inline
+            ></v-badge>
+          </div>
+        </template>
+        <v-card v-if="tb.cardText" tile class="pa-0" max-width="320">
+          <v-card-title>
+            <v-badge
+              color="codePink"
+              :content="tb.badgeText"
+              bottom
+              bordered
+              inline
+            >
+              <v-icon left>{{ tb.icon }}</v-icon>
+              {{ tb.name }}
+            </v-badge>
+          </v-card-title>
+          <v-card-text>
+            <div>
+              {{ tb.cardText }}
+              <ExternalLink :href="tb.cardLink">{{
+                tb.cardLinkText
+              }}</ExternalLink
+              >!
+            </div></v-card-text
+          >
+        </v-card>
+      </v-menu>
     </v-tab>
   </v-tabs>
 </template>

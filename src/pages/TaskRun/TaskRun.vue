@@ -80,7 +80,12 @@ export default {
           target: 'artifacts',
           icon: 'fas fa-fingerprint',
           badgeText: 'Coming Soon!',
-          disabled: true
+          disabled: true,
+          cardText:
+            'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the',
+          cardLink:
+            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLinkText: 'Artifacts API Docs'
         },
         {
           name: 'Mapped Runs',
