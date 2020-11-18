@@ -107,7 +107,10 @@ export default {
               ? `${flowRuns.runs.length} flow runs`
               : flowRuns.runs[0].name
           flowRuns.name = name
-          flowRuns.state = flowRuns.runs[0].state
+          const state = flowRuns.runs.filter(run => {
+            return run.state !== 'Success'
+          })
+          flowRuns.state = state.length ? state[0].state : 'Success'
           event.push(flowRuns)
         }
       }
@@ -220,6 +223,7 @@ export default {
               v-for="(run, index) in selectedEvent.runs"
               :key="index"
             >
+              <v-icon class="pr-4" :color="run.state">pi-flow-run</v-icon>
               <router-link :to="{ name: 'flow-run', params: { id: run.id } }">
                 {{ run.name }}
               </router-link>
