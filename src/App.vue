@@ -387,12 +387,6 @@ html {
   }
 }
 
-// .sub-router-view {
-//   height: auto;
-//   margin-bottom: 18px;
-//   min-height: calc(100vh - 246px);
-// }
-
 .tab-full-height {
   height: auto;
   min-height: calc(100vh - 360px);
