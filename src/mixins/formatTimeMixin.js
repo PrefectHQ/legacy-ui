@@ -38,7 +38,7 @@ export const formatTime = {
     },
     formatCalendarDate(timestamp) {
       if (!timestamp) return
-      let timeObj = moment(timestamp).tz(this.timeZone)
+      let timeObj = moment(timestamp)
       const date = `${
         timeObj
           ? timeObj.format('YYYY-MM-DD')
@@ -55,11 +55,28 @@ export const formatTime = {
           : moment(timestamp).format('YYYY-MM-DD HH:mm:ss')
       }`
     },
+    convertCalendarStartTime(timestamp) {
+      const startTime = moment(timestamp).tz(this.timezone) || moment(timestamp)
+      return startTime.toISOString()
+    },
+    timeGroups() {
+      // const periodsInADay = moment.duration(1, 'day').as('m')
+
+      const timeLabels = []
+      let timeStart = this.date
+
+      for (let i = 0; i <= 1440; i += this.timeInterval) {
+        timeStart = this.addTime(timeStart, this.timeInterval, 'minutes')
+        timeLabels.push(timeStart)
+      }
+      return timeLabels
+    },
     addTime(timestamp, amount, unit) {
       if (!timestamp) return
       let timeObj = moment(timestamp)
         .add(amount, unit)
         .toISOString()
+
       return timeObj
     },
     addDay(timestamp, amount) {

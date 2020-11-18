@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      skip: false,
+      skip: true,
       loadingKey: 0,
       // flowId: null,
       limit: {},
@@ -44,57 +44,85 @@ export default {
     end() {
       return this.addDay(this.date, 1)
     },
+
     flowRunEvents() {
-      // return this.flowRuns.map(flowRun => {
+      const timeGroups = this.timeGroups()
+      // const updatedFlowRuns = this.flowRuns?.map(flowRun => {
       //   flowRun.start = this.formatCalendarTime(flowRun.start_time)
       //   flowRun.category = flowRun.flow_id
       //   flowRun.end = this.formatCalendarTime(flowRun.end_time)
       //   return flowRun
       // })
-      const filtered = []
-      this.flowRuns?.forEach((flowRun, index) => {
-        const id = flowRun.flow_id
-        if (!this.limit[id]) {
-          this.limit[id] = this.addTime(flowRun.start_time, 15, 'minutes')
-          this.startTime = {}
-          this.startTime[id] = flowRun.start_time
+      let event = []
+      for (let i = 0; i < timeGroups.length; i++) {
+        const flows = this.$apollo.query({
+          query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+          variables: {
+            project_id: this.projectId == '' ? null : this.projectId,
+            startTime: timeGroups[i],
+            endTime: timeGroups[i + 1]
+            // flow_id: this.flowId
+          },
+          loadingKey: 'loadingKey'
+        })
+        const Obj = {
+          name: timeGroups[i],
+          start: this.formatCalendarTime(timeGroups[i]),
+          flows: flows
         }
-        if (this.limit[id] < flowRun.start_time) {
-          const addFlowRun = this.multipleFlowRuns[id]
-          if (addFlowRun.start) filtered.push(addFlowRun)
-          this.limit[id] = null
-          this.multipleFlowRuns[id] = { name: 'flow runs' }
-          flowRun.start = this.formatCalendarTime(flowRun.start_time)
-          flowRun.category = flowRun.flow_id
-          flowRun.end = this.formatCalendarTime(flowRun.end_time)
-          filtered.push(flowRun)
-        }
-        if (this.limit[id] >= flowRun.start_time) {
-          if (!this.multipleFlowRuns[id])
-            this.multipleFlowRuns[id] = { name: 'flow-runs' }
-          this.multipleFlowRuns[id][index] = flowRun
-          this.multipleFlowRuns[id].id = id
-          this.multipleFlowRuns[id].state = 'Success'
-          this.multipleFlowRuns[id].start = this.formatCalendarTime(
-            this.startTime[id]
-          )
-          this.multipleFlowRuns[id].end = this.formatCalendarTime(
-            flowRun.end_time
-          )
-          this.multipleFlowRuns[id].category = id
-          const count = Object.keys(this.multipleFlowRuns[id]).length - 6
-          this.multipleFlowRuns[id].name = `${count} flow runs`
-        }
-      })
-      this.scheduledFlowRuns?.forEach(flowRun => {
-        flowRun.start = this.formatCalendarTime(flowRun.scheduled_start_time)
-        flowRun.category = flowRun.flow_id
-        filtered.push(flowRun)
-      })
-      return filtered
+        event.push(Obj)
+      }
+      console.log('event', event)
+      return event
+
+      // const filtered = this.flowRuns.reduce((flowRunGroupObject, flowRun) => {
+
+      //   flowRunGroupObject[timeStart] = {}
+      // }, {})
+
+      // const filtered = []
+      // this.flowRuns?.forEach((flowRun, index) => {
+      //   const id = flowRun.flow_id
+      //   if (!this.limit[id]) {
+      //     this.limit[id] = this.addTime(flowRun.start_time, 15, 'minutes')
+      //     this.startTime = {}
+      //     this.startTime[id] = flowRun.start_time
+      //   }
+      //   if (this.limit[id] < flowRun.start_time) {
+      //     const addFlowRun = this.multipleFlowRuns[id]
+      //     if (addFlowRun.start) filtered.push(addFlowRun)
+      //     this.limit[id] = null
+      //     this.multipleFlowRuns[id] = { name: 'flow runs' }
+      //     flowRun.start = this.formatCalendarTime(flowRun.start_time)
+      //     flowRun.category = flowRun.flow_id
+      //     flowRun.end = this.formatCalendarTime(flowRun.end_time)
+      //     filtered.push(flowRun)
+      //   }
+      //   if (this.limit[id] >= flowRun.start_time) {
+      //     if (!this.multipleFlowRuns[id])
+      //       this.multipleFlowRuns[id] = { name: 'flow-runs' }
+      //     this.multipleFlowRuns[id][index] = flowRun
+      //     this.multipleFlowRuns[id].id = id
+      //     this.multipleFlowRuns[id].state = 'Success'
+      //     this.multipleFlowRuns[id].start = this.formatCalendarTime(
+      //       this.startTime[id]
+      //     )
+      //     this.multipleFlowRuns[id].end = this.formatCalendarTime(
+      //       flowRun.end_time
+      //     )
+      //     this.multipleFlowRuns[id].category = id
+      //     const count = Object.keys(this.multipleFlowRuns[id]).length - 6
+      //     this.multipleFlowRuns[id].name = `${count} flow runs`
+      //   }
+      // })
+      // this.scheduledFlowRuns?.forEach(flowRun => {
+      //   flowRun.start = this.formatCalendarTime(flowRun.scheduled_start_time)
+      //   flowRun.category = flowRun.flow_id
+      //   filtered.push(flowRun)
+      // })
+      // return filtered
     },
     flowIds() {
-      console.log(this.flowRunEvents)
       const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
       return ids
     }
@@ -169,7 +197,7 @@ export default {
       :event-color="eventColor"
       :interval-minutes="timeInterval"
       :interval-count="intervalCount"
-      type="category"
+      type="day"
       @click:event="handleEventClick"
     >
       <template #day-body class="minwidth"> </template>

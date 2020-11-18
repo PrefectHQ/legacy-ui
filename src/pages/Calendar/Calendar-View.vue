@@ -21,7 +21,7 @@ export default {
       timePeriod: 'day',
       timePeriodOptions: ['day', 'week', 'month'],
       timeIntervalOptions: [1, 5, 15, 30, 60],
-      timeInterval: 30,
+      timeInterval: 60,
       date: this.formatCalendarDate(new Date())
     }
   },
