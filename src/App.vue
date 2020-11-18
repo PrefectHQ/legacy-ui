@@ -10,6 +10,8 @@ import { eventsMixin } from '@/mixins/eventsMixin'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
+const fullPageRoutes = ['api', '404']
+
 export default {
   metaInfo() {
     return {
@@ -73,6 +75,9 @@ export default {
     ...mapGetters('user', ['userIsSet']),
     notFoundPage() {
       return this.$route.name === 'not-found'
+    },
+    fullPageRoute() {
+      return fullPageRoutes.includes(this.$route.name)
     },
     loading() {
       return (
@@ -296,7 +301,10 @@ export default {
       <SideNav />
 
       <v-fade-transition mode="out-in">
-        <router-view class="router-view" />
+        <router-view
+          class="router-view"
+          :class="{ 'full-page': fullPageRoute }"
+        />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>
@@ -306,7 +314,7 @@ export default {
       </v-container>
 
       <v-slide-y-reverse-transition>
-        <Footer v-if="showFooter" />
+        <Footer v-if="!fullPageRoute && showFooter" />
       </v-slide-y-reverse-transition>
     </v-main>
 
@@ -373,6 +381,10 @@ html {
   max-width: 100% !important;
   min-height: calc(100vh - 64px - 123px);
   padding-bottom: 18px;
+
+  &.full-page {
+    margin-bottom: 0 !important;
+  }
 }
 
 // .sub-router-view {
