@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      skip: false,
+      skip: true,
       loadingKey: 0,
       gettingRuns: false,
       flowRunEvents: [],
@@ -47,7 +47,6 @@ export default {
     },
     flowIds() {
       const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
-      console.log(ids)
       return ids
     },
     overlay() {
@@ -189,7 +188,6 @@ export default {
       class="calendarstyle"
       :now="date"
       :value="date"
-      :categories="flowIds"
       category-show-all
       event-overlap-mode="column"
       event-more
