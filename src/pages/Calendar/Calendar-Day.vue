@@ -30,10 +30,9 @@ export default {
       loadingKey: 0,
       gettingRuns: false,
       flowRunEvents: [],
-      // flowId: null,
-      limit: {},
-      startTime: {},
-      multipleFlowRuns: { name: 'flow runs' }
+      selectedEvent: null,
+      selectedOpen: false,
+      selectedElement: null
     }
   },
   computed: {
@@ -117,8 +116,22 @@ export default {
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
-    handleEventClick(event) {
-      console.log(event.event)
+    handleEventClick({ nativeEvent, event }) {
+      const open = () => {
+        this.selectedEvent = event
+        this.selectedElement = nativeEvent.target
+        setTimeout(() => {
+          this.selectedOpen = true
+        }, 10)
+      }
+      if (this.selectedOpen) {
+        this.selectedOpen = false
+        setTimeout(open, 10)
+      } else {
+        open()
+      }
+
+      nativeEvent.stopPropagation()
     }
   },
   apollo: {
@@ -165,7 +178,7 @@ export default {
     type="image"
     min-height="329"
     height="100%"
-    transition="quick-fade"
+    transition-group="quick-fade"
     class="my-2"
     tile
   >
@@ -191,6 +204,35 @@ export default {
         <FlowName :id="category" />
       </template>
     </v-calendar>
+    <v-menu
+      v-if="selectedEvent"
+      v-model="selectedOpen"
+      :close-on-content-click="false"
+      :activator="selectedElement"
+      offset-x
+    >
+      <v-card max-width="150px">
+        <v-card-title> {{ selectedEvent.name }} </v-card-title>
+
+        <v-card-text>
+          <v-list>
+            <v-list-item
+              v-for="(run, index) in selectedEvent.runs"
+              :key="index"
+            >
+              <router-link :to="{ name: 'flow-run', params: { id: run.id } }">
+                {{ run.name }}
+              </router-link>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn text color="secondary" @click="selectedOpen = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-menu>
   </v-skeleton-loader>
 </template>
 
