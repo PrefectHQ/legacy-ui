@@ -48,6 +48,9 @@ export default {
     flowIds() {
       const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
       return ids
+    },
+    overlay() {
+      return this.loadingKey > 0 || this.gettingRuns
     }
   },
   watch: {
@@ -176,15 +179,11 @@ export default {
 </script>
 
 <template>
-  <v-skeleton-loader
-    :loading="loadingKey > 0 || gettingRuns"
-    type="image"
-    min-height="329"
-    height="100%"
-    transition-group="quick-fade"
-    class="my-2"
-    tile
-  >
+  <div>
+    <v-overlay :value="overlay">
+      Fetching and organizing flow runs...
+    </v-overlay>
+
     <v-calendar
       ref="calendar"
       class="calendarstyle"
@@ -237,7 +236,7 @@ export default {
         </v-card-actions>
       </v-card>
     </v-menu>
-  </v-skeleton-loader>
+  </div>
 </template>
 
 <style lang="scss" scoped>

@@ -62,8 +62,8 @@ export const formatTime = {
     timeGroups() {
       // const periodsInADay = moment.duration(1, 'day').as('m')
 
-      const timeLabels = []
       let timeStart = this.date
+      const timeLabels = [moment(this.date).toISOString()]
 
       for (let i = 0; i <= 1440; i += this.timeInterval) {
         timeStart = this.addTime(timeStart, this.timeInterval, 'minutes')
