@@ -29,6 +29,6 @@ export default {
 
 <template>
   <div class="caption text-center">
-    {{ flowName }}
+    <truncate :content="flowName"> </truncate>
   </div>
 </template>

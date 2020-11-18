@@ -28,6 +28,8 @@ export default {
     return {
       skip: true,
       loadingKey: 0,
+      gettingRuns: false,
+      flowRunEvents: [],
       // flowId: null,
       limit: {},
       startTime: {},
@@ -44,43 +46,74 @@ export default {
     end() {
       return this.addDay(this.date, 1)
     },
-
-    flowRunEvents() {
-      const timeGroups = this.timeGroups()
-      // const updatedFlowRuns = this.flowRuns?.map(flowRun => {
-      //   flowRun.start = this.formatCalendarTime(flowRun.start_time)
-      //   flowRun.category = flowRun.flow_id
-      //   flowRun.end = this.formatCalendarTime(flowRun.end_time)
-      //   return flowRun
-      // })
-      let event = []
-      for (let i = 0; i < timeGroups.length; i++) {
-        const flows = this.$apollo.query({
-          query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
-          variables: {
-            project_id: this.projectId == '' ? null : this.projectId,
-            startTime: timeGroups[i],
-            endTime: timeGroups[i + 1]
-            // flow_id: this.flowId
-          },
-          loadingKey: 'loadingKey'
-        })
-        const Obj = {
-          name: timeGroups[i],
-          start: this.formatCalendarTime(timeGroups[i]),
-          flows: flows
-        }
-        event.push(Obj)
-      }
-      console.log('event', event)
-      return event
-    },
     flowIds() {
       const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
       return ids
     }
   },
+  watch: {
+    async date() {
+      this.gettingRuns = true
+      this.flowRunEvents = await this.flowRunEventsMethod()
+      this.gettingRuns = false
+    }
+  },
+  async created() {
+    this.gettingRuns = true
+    this.flowRunEvents = await this.flowRunEventsMethod()
+    this.gettingRuns = false
+  },
   methods: {
+    async flowRunEventsMethod() {
+      const timeGroups = this.timeGroups()
+      let event = []
+      for (let i = 0; i < timeGroups.length; i++) {
+        const finished = await this.$apollo.query({
+          query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+          variables: {
+            project_id: this.projectId == '' ? null : this.projectId,
+            startTime: timeGroups[i],
+            endTime: timeGroups[i + 1]
+          },
+          loadingKey: 'loadingKey'
+        })
+        const upcoming = await this.$apollo.query({
+          query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+          variables: {
+            project_id: this.projectId == '' ? null : this.projectId,
+            startTime: timeGroups[i],
+            endTime: timeGroups[i + 1]
+          },
+          loadingKey: 'loadingKey'
+        })
+        const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
+        const flowRunsGroup = allRuns.reduce((runObj, flowRun) => {
+          if (runObj[flowRun.flow_id]) {
+            runObj[flowRun.flow_id].push(flowRun)
+          } else {
+            runObj[flowRun.flow_id] = []
+            runObj[flowRun.flow_id].push(flowRun)
+          }
+          return runObj
+        }, {})
+
+        for (const key in flowRunsGroup) {
+          const flowRuns = {
+            start: this.formatCalendarTime(timeGroups[i]),
+            category: key,
+            runs: flowRunsGroup[key]
+          }
+          const name =
+            flowRuns.runs.length > 1
+              ? `${flowRuns.runs.length} flow runs`
+              : flowRuns.runs[0].name
+          flowRuns.name = name
+          flowRuns.state = flowRuns.runs[0].state
+          event.push(flowRuns)
+        }
+      }
+      return event
+    },
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
@@ -128,7 +161,7 @@ export default {
 
 <template>
   <v-skeleton-loader
-    :loading="loadingKey > 0"
+    :loading="loadingKey > 0 || gettingRuns"
     type="image"
     min-height="329"
     height="100%"
@@ -150,7 +183,7 @@ export default {
       :event-color="eventColor"
       :interval-minutes="timeInterval"
       :interval-count="intervalCount"
-      type="day"
+      type="category"
       @click:event="handleEventClick"
     >
       <template #day-body class="minwidth"> </template>
