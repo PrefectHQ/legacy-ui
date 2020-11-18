@@ -26,11 +26,11 @@ export default {
 
 <template>
   <v-container>
-    <v-icon class="blue--text accent-4" large @click.stop="toggle">
-      {{ !icon ? 'keyboard_arrow_right' : 'keyboard_arrow_left' }}
+    <v-icon class="blue--text accent-4 float-right" large @click.stop="toggle">
+      {{ !icon ? 'keyboard_arrow_left' : 'keyboard_arrow_right' }}
     </v-icon>
 
-    <v-navigation-drawer v-model="icon" app clipped left fixed touchless>
+    <v-navigation-drawer v-model="icon" app clipped right fixed touchless>
       <v-list-item>
         <v-list-item-action>
           <v-icon class="blue--text accent-4">
@@ -82,8 +82,8 @@ export default {
 
     <div
       :class="{
-        'sm-and-down-left-padding': $vuetify.breakpoint.xs,
-        'sm-and-up-left-padding': $vuetify.breakpoint.xs
+        'sm-and-down-left-padding': $vuetify.breakpoint.smAndDown,
+        'sm-and-up-left-padding': $vuetify.breakpoint.smAndUp
       }"
       style="min-height: 100%;"
     >
@@ -108,7 +108,7 @@ export default {
 
 .sm-and-up-left-padding {
   // Match left padding with User Settings sidebar width
-  padding-left: 256px;
+  padding-left: 56px;
 }
 
 .sm-and-down-left-padding {
