@@ -74,53 +74,6 @@ export default {
       }
       console.log('event', event)
       return event
-
-      // const filtered = this.flowRuns.reduce((flowRunGroupObject, flowRun) => {
-
-      //   flowRunGroupObject[timeStart] = {}
-      // }, {})
-
-      // const filtered = []
-      // this.flowRuns?.forEach((flowRun, index) => {
-      //   const id = flowRun.flow_id
-      //   if (!this.limit[id]) {
-      //     this.limit[id] = this.addTime(flowRun.start_time, 15, 'minutes')
-      //     this.startTime = {}
-      //     this.startTime[id] = flowRun.start_time
-      //   }
-      //   if (this.limit[id] < flowRun.start_time) {
-      //     const addFlowRun = this.multipleFlowRuns[id]
-      //     if (addFlowRun.start) filtered.push(addFlowRun)
-      //     this.limit[id] = null
-      //     this.multipleFlowRuns[id] = { name: 'flow runs' }
-      //     flowRun.start = this.formatCalendarTime(flowRun.start_time)
-      //     flowRun.category = flowRun.flow_id
-      //     flowRun.end = this.formatCalendarTime(flowRun.end_time)
-      //     filtered.push(flowRun)
-      //   }
-      //   if (this.limit[id] >= flowRun.start_time) {
-      //     if (!this.multipleFlowRuns[id])
-      //       this.multipleFlowRuns[id] = { name: 'flow-runs' }
-      //     this.multipleFlowRuns[id][index] = flowRun
-      //     this.multipleFlowRuns[id].id = id
-      //     this.multipleFlowRuns[id].state = 'Success'
-      //     this.multipleFlowRuns[id].start = this.formatCalendarTime(
-      //       this.startTime[id]
-      //     )
-      //     this.multipleFlowRuns[id].end = this.formatCalendarTime(
-      //       flowRun.end_time
-      //     )
-      //     this.multipleFlowRuns[id].category = id
-      //     const count = Object.keys(this.multipleFlowRuns[id]).length - 6
-      //     this.multipleFlowRuns[id].name = `${count} flow runs`
-      //   }
-      // })
-      // this.scheduledFlowRuns?.forEach(flowRun => {
-      //   flowRun.start = this.formatCalendarTime(flowRun.scheduled_start_time)
-      //   flowRun.category = flowRun.flow_id
-      //   filtered.push(flowRun)
-      // })
-      // return filtered
     },
     flowIds() {
       const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
