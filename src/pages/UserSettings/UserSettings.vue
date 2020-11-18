@@ -80,10 +80,9 @@ export default {
         'sm-and-down-left-padding': $vuetify.breakpoint.smAndDown,
         'sm-and-up-left-padding': $vuetify.breakpoint.smAndUp
       }"
-      style="min-height: 100%;"
     >
       <v-fade-transition mode="out-in">
-        <router-view></router-view>
+        <router-view class="sub-router-view"></router-view>
       </v-fade-transition>
     </div>
   </v-app>

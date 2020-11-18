@@ -75,10 +75,12 @@ export default {
   <v-footer
     color="transparent"
     padless
+    absolute
     :inset="inset"
     :class="{
       'sm-and-down-left-padding': inset && $vuetify.breakpoint.smAndDown,
-      'sm-and-up-left-padding': inset && $vuetify.breakpoint.smAndUp
+      'sm-and-up-left-padding': inset && $vuetify.breakpoint.smAndUp,
+      'sm-and-down-bottom-padding': $vuetify.breakpoint.smAndDown
     }"
   >
     <v-card flat tile width="100%" class="transparent">
@@ -157,7 +159,6 @@ export default {
 }
 
 .block {
-  //   max-width: 500px;
   width: 200px;
 }
 
@@ -173,5 +174,9 @@ export default {
 .sm-and-down-left-padding {
   // Match left padding with collapsed sidebar widths
   padding-left: 56px;
+}
+
+.sm-and-down-bottom-padding {
+  padding-bottom: 56px;
 }
 </style>

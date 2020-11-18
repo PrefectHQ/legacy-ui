@@ -249,9 +249,10 @@ export default {
         'sm-and-down-left-padding': $vuetify.breakpoint.smAndDown,
         'sm-and-up-left-padding': $vuetify.breakpoint.smAndUp
       }"
-      style="min-height: 100%;"
     >
-      <router-view v-if="show"></router-view>
+      <v-fade-transition mode="out-in">
+        <router-view class="sub-router-view"></router-view>
+      </v-fade-transition>
     </div>
 
     <template v-if="false && role == 'TENANT_ADMIN'">

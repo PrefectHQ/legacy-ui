@@ -33,9 +33,10 @@ export default {
   data() {
     return {
       error: null,
+      footerTimeout: null,
       loadedComponents: 0,
-      numberOfComponents: 1,
       loadingKey: 0,
+      numberOfComponents: 1,
       refreshTimeout: null,
       reset: false,
       shown: true,
@@ -137,6 +138,10 @@ export default {
       ) {
         await this.setCurrentTenant(new_route.params.tenant)
       }
+
+      clearTimeout(this.footerTimeout)
+
+      this.showFooter = false
     },
     isAuthorized(value) {
       if (value) {
@@ -148,6 +153,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeydown)
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
+    document.removeEventListener('mousemove', this.handleMouseMove)
 
     // document.removeEventListener(
     //   'visibilitychange',
@@ -180,6 +186,7 @@ export default {
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
+    document.addEventListener('mousemove', this.handleMouseMove)
 
     // document.addEventListener(
     //   'visibilitychange',
@@ -209,6 +216,13 @@ export default {
     handleOnline() {
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
+    },
+    handleMouseMove(e) {
+      if (e.pageY >= document.body.clientHeight - 185) {
+        this.showFooter = true
+      } else {
+        this.showFooter = false
+      }
     },
     handleVisibilityChange() {
       this.currentInteraction = moment()
@@ -281,11 +295,7 @@ export default {
 
       <SideNav />
 
-      <v-fade-transition
-        mode="out-in"
-        @before-leave="showFooter = false"
-        @after-enter="showFooter = true"
-      >
+      <v-fade-transition mode="out-in">
         <router-view class="router-view" />
       </v-fade-transition>
 
@@ -295,9 +305,9 @@ export default {
         </v-card>
       </v-container>
 
-      <v-fade-transition mode="out-in">
+      <v-slide-y-reverse-transition>
         <Footer v-if="showFooter" />
-      </v-fade-transition>
+      </v-slide-y-reverse-transition>
     </v-main>
 
     <Alert
@@ -359,10 +369,17 @@ html {
 
 .router-view {
   height: auto;
-  margin-bottom: 18px;
+  margin-bottom: 123px;
   max-width: 100% !important;
-  min-height: calc(100vh - 310px);
+  min-height: calc(100vh - 64px - 123px);
+  padding-bottom: 18px;
 }
+
+// .sub-router-view {
+//   height: auto;
+//   margin-bottom: 18px;
+//   min-height: calc(100vh - 246px);
+// }
 
 .tab-full-height {
   height: auto;
