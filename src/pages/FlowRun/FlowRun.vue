@@ -178,8 +178,10 @@ export default {
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
-      style="max-width: 1440px;
-      padding-top: 130px;"
+      style="max-width: 1440px;"
+      :style="
+        $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
+      "
     >
       <v-tab-item class="tab-full-height pa-0" value="overview">
         <TileLayout>

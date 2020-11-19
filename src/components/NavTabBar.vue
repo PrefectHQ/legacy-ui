@@ -62,7 +62,7 @@ export default {
 <template>
   <v-tabs
     v-model="tab"
-    class="px-6 mx-auto tabs-border-bottom"
+    class="mx-auto tabs-border-bottom"
     :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
     style="max-width: 1440px;"
     light
