@@ -1,6 +1,26 @@
+<script>
+export default {
+  data() {
+    return {
+      pageScrolled: false
+    }
+  },
+  methods: {
+    scrolled() {
+      this.pageScrolled = window.scrollY > 30
+    }
+  }
+}
+</script>
+
 <template>
   <v-app-bar
-    elevate-on-scroll
+    v-scroll="scrolled"
+    :elevation="
+      pageScrolled && (!$slots.tabs || $vuetify.breakpoint.smAndDown)
+        ? '4'
+        : '0'
+    "
     height="80"
     color="appBackground"
     style="

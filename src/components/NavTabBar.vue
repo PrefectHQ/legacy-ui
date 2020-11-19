@@ -18,7 +18,8 @@ export default {
   },
   data() {
     return {
-      tab: this.getTab()
+      tab: this.getTab(),
+      pageScrolled: false
     }
   },
   computed: {
@@ -54,6 +55,9 @@ export default {
         return Object.keys(this.$route.query)[0]
       }
       return 'overview'
+    },
+    scrolled() {
+      this.pageScrolled = window.scrollY > 30
     }
   }
 }
@@ -62,8 +66,12 @@ export default {
 <template>
   <v-tabs
     v-model="tab"
+    v-scroll="scrolled"
     class="mx-auto tabs-border-bottom"
-    :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
+    :class="[
+      $vuetify.breakpoint.smAndDown ? 'tabs-hidden' : '',
+      pageScrolled ? 'elevation-4' : ''
+    ]"
     style="max-width: 1440px;"
     light
   >
