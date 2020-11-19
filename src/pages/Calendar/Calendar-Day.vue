@@ -211,7 +211,9 @@ export default {
       offset-x
     >
       <v-card max-width="150px">
-        <v-card-title> {{ selectedEvent.name }} </v-card-title>
+        <v-card-title>
+          {{ selectedEvent.name }} - <FlowName :id="selectedEvent.category"
+        /></v-card-title>
 
         <v-card-text>
           <v-list>
