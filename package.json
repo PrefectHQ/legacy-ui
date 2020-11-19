@@ -100,6 +100,7 @@
     "vue-cli-plugin-webpack-bundle-analyzer": "^2.0.0",
     "vue-template-compiler": "^2.6.12",
     "vuetify-loader": ">=1.5.0",
+    "worker-plugin": "^5.0.0",
     "workerize-loader": ">=1.2.1"
   },
   "peerDependencies": {

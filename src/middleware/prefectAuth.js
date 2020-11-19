@@ -11,6 +11,7 @@ const prefectAuth = async idToken => {
     })
 
     if (result?.data?.log_in) {
+      console.log(new Date(result.data.log_in.expires_at))
       return result.data.log_in
     } else if (result?.errors) {
       if (
@@ -37,6 +38,7 @@ const prefectRefresh = async accessToken => {
     })
 
     if (result?.data?.refresh_token) {
+      console.log(new Date(result.data.refresh_token.expires_at))
       return result.data.refresh_token
     } else if (result.error) {
       throw new Error(result.error)

@@ -30,6 +30,7 @@ export default {
   mixins: [eventsMixin],
   data() {
     return {
+      AuthWorker: null,
       error: null,
       loadedComponents: 0,
       numberOfComponents: 1,
@@ -146,6 +147,8 @@ export default {
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
 
+    this.AuthWorker.terminate()
+
     // document.removeEventListener(
     //   'visibilitychange',
     //   this.handleVisibilityChange
@@ -172,6 +175,17 @@ export default {
         this.$router.push({ name: 'home' })
       }
     }
+
+    this.AuthWorker = new Worker('./workers/token.js', {
+      type: 'module'
+    })
+    console.log(this.AuthWorker)
+
+    this.AuthWorker.onmessage = this.receiveMessageFromAuthWorker
+    // this.AuthWorker.addEventListener(
+    //   'message',
+    //   this.receiveMessageFromAuthWorker
+    // )
   },
   async beforeMount() {
     document.addEventListener('keydown', this.handleKeydown)
@@ -244,6 +258,16 @@ export default {
       }
 
       requestAnimationFrame(loadTiles)
+    },
+    receiveMessageFromAuthWorker(e) {
+      console.log('Message recieved from the auth worker', e)
+    },
+    sendMessageToAuthWorker() {
+      if (!this.AuthWorker.onmessage) {
+        this.AuthWorker.onmessage = this.receiveMessageFromAuthWorker
+      }
+      console.log(this.AuthWorker)
+      this.AuthWorker.postMessage('Message from App.vue')
     }
   },
   apollo: {
@@ -277,6 +301,7 @@ export default {
       </v-slide-y-transition>
 
       <SideNav />
+      <v-btn @click="sendMessageToAuthWorker">Send Message</v-btn>
       <v-fade-transition mode="out-in">
         <router-view class="router-view" />
       </v-fade-transition>

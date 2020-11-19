@@ -1,3 +1,6 @@
+const { IgnorePlugin } = require('webpack')
+const WorkerPlugin = require('worker-plugin')
+
 module.exports = {
   chainWebpack: config => {
     config.module
@@ -79,7 +82,18 @@ module.exports = {
           }
         }
       }
-    }
+    },
+    plugins: [
+      new WorkerPlugin(),
+      // This is necessary to avoid the worker plugin
+      // parsing the auth0 files, which use a different worker syntax
+      // there's a fix here: https://github.com/GoogleChromeLabs/worker-plugin/pull/94
+      new IgnorePlugin({
+        checkResource(resource) {
+          return resource.includes('@auth0/auth0-spa-js')
+        }
+      })
+    ]
   },
 
   pluginOptions: {

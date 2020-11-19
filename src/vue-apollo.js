@@ -29,7 +29,7 @@ function notExpired(expiry) {
 }
 
 function aboutToExpire(expiry) {
-  return notExpired(expiry) && new Date().getTime() + 300000 >= expiry
+  return notExpired(expiry) && new Date().getTime() + 5000 >= expiry
 }
 
 let errors = 0,

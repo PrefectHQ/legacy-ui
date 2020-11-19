@@ -1,4 +1,4 @@
-import createAuth0Client from '@auth0/auth0-spa-js'
+const Auth0 = require('@auth0/auth0-spa-js')
 import LogRocket from 'logrocket'
 import { prefectAuth, prefectRefresh } from '@/middleware/prefectAuth'
 import jwt_decode from 'jwt-decode'
@@ -212,7 +212,7 @@ const mutations = {
 
 const actions = {
   async initAuth0() {
-    auth0Client = await createAuth0Client({
+    auth0Client = await new Auth0({
       domain: process.env.VUE_APP_AUTH0_DOMAIN,
       client_id: process.env.VUE_APP_AUTH0_PUBLIC_CLIENT_ID,
       redirect_uri: process.env.VUE_APP_BASE_URL || window.location.origin,
