@@ -74,7 +74,7 @@ export default {
           query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
           variables: {
             project_id: this.projectId == '' ? null : this.projectId,
-            startTime: timeGroups[i],
+            startTime: timeGroup,
             endTime: timeGroups[i + 1]
           },
           loadingKey: 'loadingKey'
@@ -83,25 +83,24 @@ export default {
           query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
           variables: {
             project_id: this.projectId == '' ? null : this.projectId,
-            startTime: timeGroups[i],
-            endTime: timeGroups[i + 1]
+            startTime: timeGroup,
+            endTime: timeGroups[i + 1] || this.end
           },
           loadingKey: 'loadingKey'
         })
         const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
         const flowRunsGroup = allRuns.reduce((runObj, flowRun) => {
-          if (runObj[flowRun.flow_id]) {
-            runObj[flowRun.flow_id].push(flowRun)
-          } else {
-            runObj[flowRun.flow_id] = []
-            runObj[flowRun.flow_id].push(flowRun)
-          }
+          if (!runObj[flowRun.flow_id]) runObj[flowRun.flow_id] = []
+          runObj[flowRun.flow_id].push(flowRun)
           return runObj
         }, {})
 
         for (const key in flowRunsGroup) {
+          if (i === 0) {
+            timeGroup = this.addTime(timeGroup, 1, 'm')
+          }
           const flowRuns = {
-            start: this.formatCalendarTime(timeGroups[i]),
+            start: this.formatCalendarTime(timeGroup),
             category: key,
             runs: flowRunsGroup[key]
           }
