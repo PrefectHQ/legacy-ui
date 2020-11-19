@@ -1,10 +1,11 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/TaskRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
+import EditableTextField from '@/components/EditableTextField'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import DependenciesTile from '@/pages/TaskRun/Dependencies-Tile'
 import MappedTaskRunsTile from '@/pages/TaskRun/MappedTaskRuns-Tile'
@@ -37,6 +38,7 @@ export default {
     BreadCrumbs,
     DependenciesTile,
     DetailsTile,
+    EditableTextField,
     LogsCard,
     MappedTaskRunsTile,
     NavTabBar,
@@ -48,7 +50,8 @@ export default {
   data() {
     return {
       loading: 0,
-      tab: this.getTab()
+      tab: this.getTab(),
+      taskRunNameLoading: false
     }
   },
   computed: {
@@ -133,6 +136,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
         return Object.keys(this.$route.query)[0]
@@ -141,6 +145,46 @@ export default {
     },
     parseMarkdown(md) {
       return parser(md)
+    },
+    async saveTaskRunName(e) {
+      const previousName = this.taskRun.name
+      if (previousName === e) return
+
+      try {
+        this.taskRunNameLoading = true
+
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/set-task-run-name.gql'),
+          variables: {
+            input: {
+              task_run_id: this.taskRunId,
+              name: e
+            }
+          }
+        })
+
+        await this.$apollo.queries.taskRun.refetch()
+
+        if (!data.set_task_run_name.success) {
+          throw new Error(data.set_task_run_name.error)
+        }
+
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `<span class="font-weight-medium">${previousName ||
+            'Your task run'}</span> has been renamed to <span class="font-weight-medium">${e}</span>`,
+          alertType: 'success'
+        })
+      } catch {
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Oops! Something went wrong while trying to update your task run name, please try again.',
+          alertType: 'error'
+        })
+      } finally {
+        this.taskRunNameLoading = false
+      }
     }
   },
   apollo: {
@@ -175,16 +219,29 @@ export default {
   <v-sheet v-if="taskRun" color="appBackground">
     <SubPageNav>
       <span slot="page-type">Task Run</span>
-      <span slot="page-title">
-        {{ taskRun.flow_run.name }} -
-        <span v-if="taskRun.name">{{ taskRun.name }}</span>
-        <span v-else>
-          {{ taskRun.task.name }}
-          <span v-if="taskRun.map_index > -1">
-            (Mapped Child {{ taskRun.map_index }})
-          </span>
-          <span v-else-if="parent > 1"> (Parent) </span>
-        </span>
+      <span
+        slot="page-title"
+        style="
+          display: block;
+          max-width: 100%;
+          min-width: 300px;
+          width: auto;
+          "
+      >
+        <EditableTextField
+          :content="
+            taskRun.name ||
+              `${taskRun.task.name} ${
+                taskRun.map_index > -1
+                  ? `(Mapped Child ${taskRun.map_index})`
+                  : ''
+              }`
+          "
+          label="Task run name"
+          :loading="taskRunNameLoading"
+          required
+          @change="saveTaskRunName"
+        />
       </span>
       <BreadCrumbs
         slot="breadcrumbs"

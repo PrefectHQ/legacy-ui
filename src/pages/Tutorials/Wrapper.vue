@@ -1,4 +1,6 @@
 <script>
+/* eslint-disable vue/no-v-html */
+
 import { parser } from '@/utils/markdownParser'
 const testMd = require('./Markdown/Test.md')
 export default {

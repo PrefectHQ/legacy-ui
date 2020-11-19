@@ -1,11 +1,12 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
-import FlowRunPageGanttChart from '@/pages/FlowRunPageGanttChart'
+import EditableTextField from '@/components/EditableTextField'
+import TimelineTile from '@/pages/FlowRun/Timeline-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import SchematicTile from '@/pages/FlowRun/Schematic-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
@@ -37,7 +38,8 @@ export default {
     Actions,
     BreadCrumbs,
     DetailsTile,
-    FlowRunPageGanttChart,
+    EditableTextField,
+    TimelineTile,
     LogsCard,
     NavTabBar,
     SchematicTile,
@@ -49,6 +51,7 @@ export default {
   },
   data() {
     return {
+      flowRunNameLoading: false,
       tab: this.getTab(),
       tabs: [
         {
@@ -84,6 +87,9 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
+    flowId() {
+      return this.flowRun?.flow_id
+    },
     flowRunId() {
       return this.$route.params.id
     }
@@ -114,6 +120,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
         return Object.keys(this.$route.query)[0]
@@ -122,6 +129,45 @@ export default {
     },
     parseMarkdown(md) {
       return parser(md)
+    },
+    async saveFlowRunName(e) {
+      const previousName = this.flowRun.name
+      if (previousName === e) return
+
+      try {
+        this.flowRunNameLoading = true
+
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/set-flow-run-name.gql'),
+          variables: {
+            input: {
+              flow_run_id: this.flowRunId,
+              name: e
+            }
+          }
+        })
+
+        await this.$apollo.queries.flowRun.refetch()
+
+        if (!data.set_flow_run_name.success) {
+          throw new Error(data.set_flow_run_name.error)
+        }
+
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `<span class="font-weight-medium">${previousName}</span> has been renamed to <span class="font-weight-medium">${e}</span>`,
+          alertType: 'success'
+        })
+      } catch {
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Oops! Something went wrong while trying to update your flow run name, please try again.',
+          alertType: 'error'
+        })
+      } finally {
+        this.flowRunNameLoading = false
+      }
     }
   },
   apollo: {
@@ -145,8 +191,22 @@ export default {
   <v-sheet v-if="flowRun" color="appBackground">
     <SubPageNav>
       <span slot="page-type">Flow Run</span>
-      <span slot="page-title">
-        {{ flowRun.name }}
+      <span
+        slot="page-title"
+        style="
+        display: block;
+        max-width: 100%;
+        min-width: 300px;
+        width: auto;
+        "
+      >
+        <EditableTextField
+          :content="flowRun.name"
+          label="Flow run name"
+          :loading="flowRunNameLoading"
+          required
+          @change="saveFlowRunName"
+        />
       </span>
 
       <BreadCrumbs
@@ -178,13 +238,28 @@ export default {
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
-      style="max-width: 1440px;"
-      :style="
-        $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
-      "
+      :style="[
+        { 'padding-top': $vuetify.breakpoint.mdAndUp ? '130px' : '80px' },
+        { 'max-width': tab == 'chart' ? 'auto' : '1440px' }
+      ]"
+      mandatory
     >
-      <v-tab-item class="tab-full-height pa-0" value="overview">
+      <v-tab-item
+        class="tab-full-height pa-0"
+        value="overview"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayout>
+          <TimelineTile
+            v-if="flowId"
+            slot="row-0"
+            condensed
+            :flow-id="flowId"
+            :flow-run-id="flowRunId"
+            :flow-run="flowRun"
+          />
+
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
 
           <TaskRunHeartbeatTile
@@ -199,19 +274,23 @@ export default {
         </TileLayout>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="schematic">
+      <v-tab-item
+        class="tab-full-height"
+        value="schematic"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <SchematicTile slot="row-2-tile" />
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="chart">
-        <v-card class="pa-2 mt-2" tile>
-          <FlowRunPageGanttChart :flow-run-id="$route.params.id" />
-        </v-card>
-      </v-tab-item>
-
-      <v-tab-item class="tab-full-height" value="logs">
+      <v-tab-item
+        class="tab-full-height"
+        value="logs"
+        transition="quick-fade"
+        reverse-transition="quick-fade"
+      >
         <TileLayoutFull>
           <LogsCard
             slot="row-2-tile"
@@ -241,11 +320,6 @@ export default {
       <v-btn @click="tab = 'schematic'">
         Schematic
         <v-icon>pi-schematic</v-icon>
-      </v-btn>
-
-      <v-btn @click="tab = 'chart'">
-        Gantt Chart
-        <v-icon>pi-gantt</v-icon>
       </v-btn>
 
       <v-btn @click="tab = 'logs'">

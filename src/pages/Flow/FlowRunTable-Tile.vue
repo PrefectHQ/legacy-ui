@@ -170,44 +170,32 @@ export default {
         calculate-widths
       >
         <template #item.name="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <router-link
-                class="link truncate"
-                :to="{ name: 'flow-run', params: { id: item.id } }"
-              >
-                <span v-on="on">{{ item.name }}</span>
-              </router-link>
-            </template>
-            <span>{{ item.name }}</span>
-          </v-tooltip>
+          <truncate :content="item.name">
+            <router-link
+              class="link truncate"
+              :to="{ name: 'flow-run', params: { id: item.id } }"
+            >
+              {{ item.name }}
+            </router-link>
+          </truncate>
         </template>
 
         <template #item.scheduled_start_time="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <span v-on="on">{{ formDate(item.scheduled_start_time) }}</span>
-            </template>
-            <span>{{ formatTime(item.scheduled_start_time) }}</span>
-          </v-tooltip>
+          <truncate :content="formatTime(item.scheduled_start_time)">
+            {{ formDate(item.scheduled_start_time) }}
+          </truncate>
         </template>
 
         <template #item.start_time="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <span v-on="on">{{ formDate(item.start_time) }}</span>
-            </template>
-            <span>{{ formatTime(item.start_time) }}</span>
-          </v-tooltip>
+          <truncate :content="formatTime(item.start_time)">
+            {{ formDate(item.start_time) }}
+          </truncate>
         </template>
 
         <template #item.end_time="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <span v-on="on">{{ formDate(item.end_time) }}</span>
-            </template>
-            <span>{{ formatTime(item.end_time) }}</span>
-          </v-tooltip>
+          <truncate :content="formatTime(item.end_time)">
+            {{ formDate(item.end_time) }}
+          </truncate>
         </template>
 
         <template #item.duration="{ item }">
@@ -219,14 +207,11 @@ export default {
         </template>
 
         <template #item.state="{ item }">
-          <v-tooltip top>
-            <template #activator="{ on }">
-              <v-icon class="mr-1 pointer" small :color="item.state" v-on="on">
-                brightness_1
-              </v-icon>
-            </template>
-            <span>{{ item.state }}</span>
-          </v-tooltip>
+          <truncate :content="item.state">
+            <v-icon class="mr-1 pointer" small :color="item.state">
+              brightness_1
+            </v-icon>
+          </truncate>
         </template>
       </v-data-table>
     </v-card-text>

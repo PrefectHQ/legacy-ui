@@ -9,7 +9,7 @@ export default {
 </script>
 
 <template>
-  <v-container fluid style="max-width: 1440px;" class="mx-auto pt-0 px-3 pb-12">
+  <v-container fluid class="mx-auto pt-0 px-3 pb-12">
     <v-row v-if="$slots['row-0']" no-gutters>
       <v-col class="pa-0">
         <slot name="row-0" />

@@ -91,5 +91,10 @@ module.exports = {
     webpackBundleAnalyzer: {
       analyzerMode: 'disabled'
     }
-  }
+  },
+
+  // Adding this package specically because
+  // the source has 2 nullish coalscent references
+  // that babel isn't transpiling correctly otherwise
+  transpileDependencies: ['@d3fc/d3fc-axis']
 }
