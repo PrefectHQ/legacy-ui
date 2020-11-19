@@ -205,8 +205,14 @@ export default {
 <template>
   <v-sheet color="appBackground">
     <SubPageNav>
-      <span slot="page-type">Flow</span>
-
+      <span
+        slot="page-type"
+        class="overline"
+        style="align-items: center;
+      display: flex;
+      flex-direction: column;"
+        ><v-icon large>pi-flow</v-icon>FLOW</span
+      >
       <span
         slot="page-title"
         :style="

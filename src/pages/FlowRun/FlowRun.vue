@@ -190,7 +190,14 @@ export default {
 <template>
   <v-sheet v-if="flowRun" color="appBackground">
     <SubPageNav>
-      <span slot="page-type">Flow Run</span>
+      <span
+        slot="page-type"
+        class="overline"
+        style="align-items: center;
+      display: flex;
+      flex-direction: column;"
+        ><v-icon large>pi-flow-run</v-icon>FLOW RUN</span
+      >
       <span
         slot="page-title"
         style="

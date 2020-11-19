@@ -142,7 +142,14 @@ export default {
 <template>
   <v-sheet color="appBackground">
     <SubPageNav>
-      <span slot="page-type">Task</span>
+      <span
+        slot="page-type"
+        class="overline"
+        style="align-items: center;
+      display: flex;
+      flex-direction: column;"
+        ><v-icon large>pi-task</v-icon>TASK</span
+      >
       <span
         slot="page-title"
         :style="

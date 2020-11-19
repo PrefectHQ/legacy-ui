@@ -27,7 +27,7 @@ export default {
     position: fixed;
     width: 100%;
     z-index: 5;"
-  >
+    ><span class="pr-2"><slot name="page-type"> </slot></span>
     <v-row
       no-gutters
       class="d-flex align-center mx-auto pb-3"
@@ -40,8 +40,7 @@ export default {
             class="d-flex align-center justify-space-between pb-1"
           >
             <div style="width: inherit;">
-              <div
-                ><span class="overline"><slot name="page-type"></slot></span>
+              <div>
                 <span
                   v-if="$slots.breadcrumbs"
                   class="pl-2"

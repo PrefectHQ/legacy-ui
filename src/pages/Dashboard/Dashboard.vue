@@ -189,7 +189,14 @@ export default {
 <template>
   <v-sheet color="appBackground">
     <SubPageNav>
-      <span slot="page-type">Dashboard</span>
+      <span
+        slot="page-type"
+        class="overline"
+        style="align-items: center;
+      display: flex;
+      flex-direction: column;"
+        ><v-icon large>view_quilt</v-icon>DASHBOARD</span
+      >
       <span
         slot="page-title"
         :style="
