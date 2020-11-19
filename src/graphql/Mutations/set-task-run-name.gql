@@ -1,0 +1,6 @@
+mutation SetTaskRunName($input: set_task_run_name_input!) {
+  set_task_run_name(input: $input) {
+    success
+    error
+  }
+}
