@@ -62,7 +62,6 @@ export default {
   },
   async created() {
     this.flowRunEvents = await this.flowRunEventsMethod()
-    console.log('done')
   },
   methods: {
     async flowRunEventsMethod() {
@@ -116,7 +115,6 @@ export default {
           event.push(flowRuns)
         }
       })
-      console.log('done 2')
       this.gettingRuns = false
       return event
     },
