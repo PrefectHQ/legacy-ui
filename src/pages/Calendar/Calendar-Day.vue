@@ -61,12 +61,12 @@ export default {
     }
   },
   async created() {
-    this.gettingRuns = true
     this.flowRunEvents = await this.flowRunEventsMethod()
-    this.gettingRuns = false
+    console.log('done')
   },
   methods: {
     async flowRunEventsMethod() {
+      this.gettingRuns = true
       const timeGroups = this.timeGroups()
       let event = []
       timeGroups.forEach(async (timeGroup, i) => {
@@ -116,6 +116,8 @@ export default {
           event.push(flowRuns)
         }
       })
+      console.log('done 2')
+      this.gettingRuns = false
       return event
     },
     eventColor(event) {
