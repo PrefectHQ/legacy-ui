@@ -144,7 +144,7 @@ export default {
     <SubPageNav>
       <span
         slot="page-type"
-        class="overline"
+        class="overline pr-2"
         style="align-items: center;
       display: flex;
       flex-direction: column;"

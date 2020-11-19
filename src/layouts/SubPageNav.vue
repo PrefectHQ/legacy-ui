@@ -41,10 +41,7 @@ export default {
           >
             <div style="width: inherit;">
               <div>
-                <span
-                  v-if="$slots.breadcrumbs"
-                  class="pl-2"
-                  style="font-size: 0.875rem;"
+                <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem;"
                   ><slot name="breadcrumbs"></slot
                 ></span>
               </div>
