@@ -6,6 +6,7 @@
 
 - Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
 - Allow editing task run names from the task run page - [#449](https://github.com/PrefectHQ/ui/pull/449)
+- Fixes subpage nav to top of page when scrolling - [#407](https://github.com/PrefectHQ/ui/issues/407)
 
 ### Bugfixes
 
