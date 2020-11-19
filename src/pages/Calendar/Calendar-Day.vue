@@ -90,8 +90,6 @@ export default {
         })
         const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
         const flowRunsGroup = allRuns.reduce((runObj, flowRun) => {
-          if (flowRun.flow_id === '9d853ec3-6fcf-4f9f-88ea-88a45b663d8d')
-            console.log('missing', flowRun)
           if (!runObj[flowRun.flow_id]) runObj[flowRun.flow_id] = []
           runObj[flowRun.flow_id].push(flowRun)
           return runObj
