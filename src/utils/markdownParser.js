@@ -1,6 +1,7 @@
 import remark from 'remark'
 import html from 'remark-html'
 import slug from 'remark-slug'
+import highlight from 'remark-highlight.js'
 
 export function parser(md) {
   let result = ''
@@ -8,6 +9,7 @@ export function parser(md) {
     remark()
       .use(html)
       .use(slug)
+      .use(highlight)
       .process(md, (err, file) => {
         result = String(file)
       })

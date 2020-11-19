@@ -1,13 +1,13 @@
 <script>
 import { mapGetters } from 'vuex'
 import { parser, getRoutes } from '@/utils/markdownParser'
+import '@/styles/atelier-sulphurpool-light.css'
 /* eslint-disable vue/no-v-html */
 
 export default {
   data() {
     return {
-      routes: getRoutes(),
-      icon: true
+      routes: getRoutes()
     }
   },
   computed: {
@@ -21,9 +21,7 @@ export default {
     mdParser(md) {
       return parser(md)
     },
-    toggle() {
-      this.icon = !this.icon
-    },
+
     sentenceCasing(str) {
       return str
         .split(' ')
@@ -36,11 +34,17 @@ export default {
 
 <template>
   <v-container>
-    <v-icon class="blue--text accent-4 float-right" large @click.stop="toggle">
-      {{ !icon ? 'keyboard_arrow_left' : 'keyboard_arrow_right' }}
-    </v-icon>
-
-    <v-navigation-drawer v-model="icon" app clipped right fixed touchless>
+    <v-navigation-drawer
+      :mini-variant="$vuetify.breakpoint.smAndDown"
+      mini-variant-width="auto"
+      width="300"
+      clipped
+      permanent
+      left
+      fixed
+      touchless
+      :style="{ top: $vuetify.breakpoint.smAndDown ? '56px' : '64px' }"
+    >
       <v-list-item>
         <v-list-item-action>
           <v-icon class="blue--text accent-4">
@@ -122,17 +126,17 @@ export default {
 
 .sm-and-up-left-padding {
   // Match left padding with User Settings sidebar width
-  padding-left: 56px;
-  padding-right: 56px;
+  padding-left: 356px;
+  padding-right: 256px;
 }
 
 .sm-and-down-left-padding {
   // Match left padding with collapsed User Settings sidebar width
-  padding-left: 36px;
-  padding-right: 36px;
+  padding-left: 136px;
+  padding-right: 16px;
 }
-// stylelint-disable
 
+// stylelint-disable
 .links {
   text-decoration: none;
   font-family: Roboto, sans-serif;

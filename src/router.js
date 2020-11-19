@@ -1,5 +1,4 @@
 import Router from 'vue-router'
-import goTo from 'vuetify/es5/services/goto'
 
 //  Nav guards
 import authNavGuard from '@/middleware/authNavGuard'
@@ -299,14 +298,13 @@ export const routes = [
 const router = new Router({
   mode: 'history',
   routes,
-  scrollBehavior: to => {
-    let scrollTo = 0
-
+  scrollBehavior(to) {
     if (to.hash) {
-      scrollTo = to.hash
+      return {
+        selector: to.hash,
+        behavior: 'smooth'
+      }
     }
-
-    return goTo(scrollTo)
   }
 })
 
