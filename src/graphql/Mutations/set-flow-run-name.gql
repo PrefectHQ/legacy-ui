@@ -1,0 +1,6 @@
+mutation SetFlowRunName($input: set_flow_run_name_input!) {
+  set_flow_run_name(input: $input) {
+    success
+    error
+  }
+}
