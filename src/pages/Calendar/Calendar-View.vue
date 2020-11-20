@@ -37,8 +37,8 @@ export default {
     ...mapGetters('user', ['timezone']),
     flowId() {
       if (this.selectedFlowId) return this.selectedFlowId
-      if (this.flowRuns) return this.flowRuns[0]?.flow_id
-      return null
+      if (this.flowRuns && this.flowRuns[0]) return this.flowRuns[0]?.flow_id
+      return this.scheduledFlowRuns[0]?.flow_id
     }
   },
   methods: {
@@ -78,7 +78,7 @@ export default {
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
-      update: data => data.flow_run
+      update: data => data.flow_run || []
     }
   }
 }
@@ -87,8 +87,7 @@ export default {
 <template>
   <v-container>
     <v-row>
-      <v-col class="pa-0" cols="12" md="3" lg="10">
-        {{ flowId }}
+      <v-col class="pa-0" cols="12" md="3" lg="2">
         <v-date-picker
           v-model="date"
           no-title

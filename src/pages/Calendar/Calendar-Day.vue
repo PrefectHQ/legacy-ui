@@ -144,7 +144,8 @@ export default {
     },
     filteredFlowRunEvents(time) {
       const timeInParts = time.split(':')
-      const events = this.flowRuns?.filter(event => {
+      const runs = [this.flowRuns, this.scheduledFlowRuns]
+      const events = runs.filter(event => {
         const start = new Date(event.start_time).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit'
@@ -233,7 +234,7 @@ export default {
             class="pl-4, pt-4"
             flat
           >
-            <v-btn x-small icon @click="handleEventClick"
+            <v-btn icon @click="handleEventClick"
               ><v-icon x-small :color="eventColor(event)"
                 >pi-flow-run</v-icon
               ></v-btn
