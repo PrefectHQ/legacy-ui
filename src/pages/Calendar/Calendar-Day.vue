@@ -62,89 +62,89 @@ export default {
       return this.loadingKey > 0 || this.gettingRuns
     }
   },
-  watch: {
-    async date() {
-      this.gettingRuns = true
-      this.flowRunEvents = await this.flowRunEventsMethod()
-      this.gettingRuns = false
-    },
-    async flowId() {
-      this.flowRunEvents = await this.flowRunEventsMethod()
-    }
-  },
-  async created() {
-    this.flowRunEvents = await this.flowRunEventsMethod()
-  },
+  // watch: {
+  //   async date() {
+  //     this.gettingRuns = true
+  //     this.flowRunEvents = await this.flowRunEventsMethod()
+  //     this.gettingRuns = false
+  //   },
+  //   async flowId() {
+  //     this.flowRunEvents = await this.flowRunEventsMethod()
+  //   }
+  // },
+  // async created() {
+  //   this.flowRunEvents = await this.flowRunEventsMethod()
+  // },
   methods: {
-    async flowRunEventsMethod() {
-      this.gettingRuns = true
-      const timeGroups = this.timeGroups()
-      let event = []
-      timeGroups.forEach(async (timeGroup, i) => {
-        const finished = await this.$apollo.query({
-          query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
-          variables: {
-            project_id: this.projectId == '' ? null : this.projectId,
-            startTime: timeGroup,
-            endTime: timeGroups[i + 1] || this.end,
-            flowIds: this.flowId
-          },
-          loadingKey: 'loadingKey'
-        })
-        const upcoming = await this.$apollo.query({
-          query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
-          variables: {
-            project_id: this.projectId == '' ? null : this.projectId,
-            startTime: timeGroup,
-            endTime: timeGroups[i + 1] || this.end,
-            flowIds: this.flowId ? [this.flowId] : null
-          },
-          loadingKey: 'loadingKey'
-        })
-        const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
-        const flowRunsGroup = allRuns.reduce((runObj, flowRun) => {
-          if (!runObj[flowRun.flow_id]) runObj[flowRun.flow_id] = []
-          runObj[flowRun.flow_id].push(flowRun)
-          return runObj
-        }, {})
+    // async flowRunEventsMethod() {
+    //   this.gettingRuns = true
+    //   const timeGroups = this.timeGroups()
+    //   let event = []
+    //   timeGroups.forEach(async (timeGroup, i) => {
+    //     const finished = await this.$apollo.query({
+    //       query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+    //       variables: {
+    //         project_id: this.projectId == '' ? null : this.projectId,
+    //         startTime: timeGroup,
+    //         endTime: timeGroups[i + 1] || this.end,
+    //         flowIds: this.flowId
+    //       },
+    //       loadingKey: 'loadingKey'
+    //     })
+    //     const upcoming = await this.$apollo.query({
+    //       query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+    //       variables: {
+    //         project_id: this.projectId == '' ? null : this.projectId,
+    //         startTime: timeGroup,
+    //         endTime: timeGroups[i + 1] || this.end,
+    //         flowIds: this.flowId ? [this.flowId] : null
+    //       },
+    //       loadingKey: 'loadingKey'
+    //     })
+    //     const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
+    //     const flowRunsGroup = allRuns.reduce((runObj, flowRun) => {
+    //       if (!runObj[flowRun.flow_id]) runObj[flowRun.flow_id] = []
+    //       runObj[flowRun.flow_id].push(flowRun)
+    //       return runObj
+    //     }, {})
 
-        for (const key in flowRunsGroup) {
-          if (i === 0) {
-            timeGroup = this.addTime(timeGroup, 1, 'm')
-          }
-          const flowRuns = {
-            start: this.formatCalendarTime(timeGroup),
-            category: key,
-            runs: flowRunsGroup[key]
-          }
-          const name =
-            flowRuns.runs.length > 1
-              ? `${flowRuns.runs.length} flow runs`
-              : flowRuns.runs[0].name
-          flowRuns.name = name
-          // flowRuns.start = this.formatCalendarTime(timeGroup)
-          flowRuns.start =
-            flowRuns.runs.length > 1 || !flowRuns.runs[0].start_time
-              ? this.formatCalendarTime(timeGroup)
-              : this.formatCalendarTime(flowRuns.runs[0].start_time)
-          if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
-            flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
-          const state = flowRuns.runs.filter(run => {
-            return run.state !== 'Success'
-          })
-          flowRuns.state = state.length ? state[0].state : 'Success'
-          event.push(flowRuns)
-        }
-      })
-      this.gettingRuns = false
-      return event
-    },
+    //     for (const key in flowRunsGroup) {
+    //       if (i === 0) {
+    //         timeGroup = this.addTime(timeGroup, 1, 'm')
+    //       }
+    //       const flowRuns = {
+    //         start: this.formatCalendarTime(timeGroup),
+    //         category: key,
+    //         runs: flowRunsGroup[key]
+    //       }
+    //       const name =
+    //         flowRuns.runs.length > 1
+    //           ? `${flowRuns.runs.length} flow runs`
+    //           : flowRuns.runs[0].name
+    //       flowRuns.name = name
+    //       // flowRuns.start = this.formatCalendarTime(timeGroup)
+    //       flowRuns.start =
+    //         flowRuns.runs.length > 1 || !flowRuns.runs[0].start_time
+    //           ? this.formatCalendarTime(timeGroup)
+    //           : this.formatCalendarTime(flowRuns.runs[0].start_time)
+    //       if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
+    //         flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
+    //       const state = flowRuns.runs.filter(run => {
+    //         return run.state !== 'Success'
+    //       })
+    //       flowRuns.state = state.length ? state[0].state : 'Success'
+    //       event.push(flowRuns)
+    //     }
+    //   })
+    //   this.gettingRuns = false
+    //   return event
+    // },
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
     filteredFlowRunEvents(time) {
       const timeInParts = time.split(':')
-      const events = this.flowRuns.filter(event => {
+      const events = this.flowRuns?.filter(event => {
         const start = new Date(event.start_time).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit'
@@ -156,10 +156,9 @@ export default {
       })
       return events
     },
-    handleEventClick({ nativeEvent, event }) {
+    handleEventClick(event) {
       const open = () => {
         this.selectedEvent = event
-        this.selectedElement = nativeEvent.target
         setTimeout(() => {
           this.selectedOpen = true
         }, 10)
@@ -170,7 +169,6 @@ export default {
       } else {
         open()
       }
-      nativeEvent.stopPropagation()
     }
   },
   apollo: {
@@ -213,7 +211,9 @@ export default {
 
 <template>
   <div>
-    <v-overlay v-if="overlay"> Fetching and organizing flows...</v-overlay>
+    <!-- <v-overlay v-if="overlay" absolute>
+      Fetching and organizing flows...</v-overlay
+    > -->
     <v-calendar
       ref="calendar"
       class="calendarstyle"
@@ -223,24 +223,23 @@ export default {
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       type="category"
-      @click:event="handleEventClick"
+      @click:event="handleEventClick(item)"
     >
       <template #interval="{time}">
-        {{ time }}
-        <v-list
-          ><v-list-item
+        <v-row class="ma-0 pa-0">
+          <v-card
             v-for="event in filteredFlowRunEvents(time)"
             :key="event.id"
-            ><v-list-item-icon>
-              <v-icon :color="eventColor(event)"
+            class="pl-4, pt-4"
+            flat
+          >
+            <v-btn x-small icon @click="handleEventClick"
+              ><v-icon x-small :color="eventColor(event)"
                 >pi-flow-run</v-icon
-              ></v-list-item-icon
-            >
-            <v-list-item-content>
-              {{ event.name }}
-            </v-list-item-content>
-          </v-list-item></v-list
-        >
+              ></v-btn
+            ><span class="caption"> {{ event.name }}</span>
+          </v-card>
+        </v-row>
       </template>
       <template #category="{ category }">
         <FlowName :id="category" />
