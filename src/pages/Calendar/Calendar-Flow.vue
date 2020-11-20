@@ -19,23 +19,9 @@ export default {
       required: true,
       type: Number
     },
-    calendarInterval: {
-      required: true,
-      type: Number
-    },
-    timePeriod: {
-      required: false,
-      type: String,
-      default: 'hour'
-    },
     date: {
       required: true,
       type: String
-    },
-    flowId: {
-      required: false,
-      type: String,
-      default: null
     }
   },
   data() {
@@ -88,8 +74,7 @@ export default {
           variables: {
             project_id: this.projectId == '' ? null : this.projectId,
             startTime: timeGroup,
-            endTime: timeGroups[i + 1] || this.end,
-            flowIds: this.flowId
+            endTime: timeGroups[i + 1] || this.end
           },
           loadingKey: 'loadingKey'
         })
@@ -98,8 +83,7 @@ export default {
           variables: {
             project_id: this.projectId == '' ? null : this.projectId,
             startTime: timeGroup,
-            endTime: timeGroups[i + 1] || this.end,
-            flowIds: this.flowId
+            endTime: timeGroups[i + 1] || this.end
           },
           loadingKey: 'loadingKey'
         })
@@ -124,13 +108,6 @@ export default {
               ? `${flowRuns.runs.length} flow runs`
               : flowRuns.runs[0].name
           flowRuns.name = name
-          // flowRuns.start = this.formatCalendarTime(timeGroup)
-          flowRuns.start =
-            flowRuns.runs.length > 1 || !flowRuns.runs[0].start_time
-              ? this.formatCalendarTime(timeGroup)
-              : this.formatCalendarTime(flowRuns.runs[0].start_time)
-          if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
-            flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
           const state = flowRuns.runs.filter(run => {
             return run.state !== 'Success'
           })
@@ -160,33 +137,69 @@ export default {
       }
       nativeEvent.stopPropagation()
     }
+  },
+  apollo: {
+    flowRuns: {
+      query: require('@/graphql/Calendar/distinct-on-calendar-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          distintOn: true
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run
+    },
+    scheduledFlowRuns: {
+      query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run
+    }
   }
 }
 </script>
 
 <template>
   <div>
+    <v-skeleton-loader
+      :loading="loadingKey > 0 || gettingRuns"
+      type="image"
+      min-height="329"
+      height="100%"
+      transition="quick-fade"
+      class="my-2"
+      tile
+    />
+
     <v-calendar
       ref="calendar"
       class="calendarstyle"
       :now="date"
       :value="date"
-      category-show-all
-      event-overlap-mode="column"
-      event-more
-      event-overlap-threshold="0"
       :events="flowRunEvents"
       :event-color="eventColor"
-      :interval-minutes="calendarInterval"
+      :interval-minutes="timeInterval"
       :interval-count="intervalCount"
-      type="category"
+      type="day"
       @click:event="handleEventClick"
-    >
-      <template #day-body class="minwidth"> </template>
-      <template #category="{ category }">
-        <FlowName :id="category" />
-      </template>
-    </v-calendar>
+    ></v-calendar>
     <v-menu
       v-if="selectedEvent"
       v-model="selectedOpen"
