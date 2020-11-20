@@ -33,9 +33,8 @@ export default {
       type: String
     },
     flowId: {
-      required: false,
-      type: String,
-      default: null
+      required: true,
+      type: String
     }
   },
   data() {
@@ -73,6 +72,10 @@ export default {
       this.flowRunEvents = await this.flowRunEventsMethod()
       this.gettingRuns = false
     }
+  },
+  async flowId() {
+    console.log('flowId switched')
+    this.flowRunEvents = await this.flowRunEventsMethod()
   },
   async created() {
     this.flowRunEvents = await this.flowRunEventsMethod()
@@ -174,7 +177,7 @@ export default {
       category-show-all
       event-overlap-mode="column"
       event-more
-      event-overlap-threshold="0"
+      event-overlap-threshold="2"
       :events="flowRunEvents"
       :event-color="eventColor"
       :interval-minutes="calendarInterval"
@@ -224,7 +227,7 @@ export default {
 
 <style lang="scss" scoped>
 .calendarstyle {
-  max-width: 95vw;
+  max-width: 100vw;
   overflow: scroll;
 }
 
