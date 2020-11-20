@@ -120,6 +120,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.container {
+  background: #fff;
+}
+
 .cursor-point {
   cursor: pointer;
 }

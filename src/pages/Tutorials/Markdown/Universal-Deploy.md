@@ -76,13 +76,13 @@ Projects are used to organize flows that have been deployed to Prefect Cloud.
 
 Every time you deploy a flow, you will need to specify a project to deploy into. There are no limits on the number of projects you can have, and you can always delete projects later. You can read more about interacting with projects [here](https://docs.prefect.io/cloud/concepts/projects.html).
 
-###### UI
+#### UI
 
 Projects can be created from the project filter on the [dashboard](/) or the [project settings page](/team/projects).
 
 ![team-projects](https://docs.prefect.io/orchestration/ui/dashboard-overview.png)
 
-###### Core Client
+#### Core Client
 
 To create a new project with the Core client:
 
@@ -93,7 +93,7 @@ client = Client()
 client.create_project(project_name="Hello, World!")
 ```
 
-###### GraphQL
+#### GraphQL
 
 To create a new project with GraphQL, issue the following mutation:
 
