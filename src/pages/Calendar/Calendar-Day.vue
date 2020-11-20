@@ -144,7 +144,7 @@ export default {
     },
     filteredFlowRunEvents(time) {
       const timeInParts = time.split(':')
-      const runs = [this.flowRuns, this.scheduledFlowRuns]
+      const runs = [...this.flowRuns, ...this.scheduledFlowRuns]
       const events = runs.filter(event => {
         const start = new Date(event.start_time).toLocaleTimeString([], {
           hour: '2-digit',
