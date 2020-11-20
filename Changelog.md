@@ -10,7 +10,7 @@
 
 ### Bugfixes
 
-- None
+- Fix an issue where restarting a task run would fail to correctly set downstream task run states - [#452](https://github.com/PrefectHQ/ui/pull/452)
 
 ## 2020-11-13
 
