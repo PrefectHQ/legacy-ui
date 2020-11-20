@@ -39,6 +39,9 @@ export default {
       if (this.selectedFlowId) return this.selectedFlowId
       if (this.flowRuns && this.flowRuns[0]) return this.flowRuns[0]?.flow_id
       return this.scheduledFlowRuns[0]?.flow_id
+    },
+    allRuns() {
+      return [...this.flowRuns, ...this.scheduledFlowRuns]
     }
   },
   methods: {
@@ -102,7 +105,7 @@ export default {
             <v-expansion-panel-content>
               <v-list>
                 <v-list-item
-                  v-for="item in flowRuns"
+                  v-for="item in allRuns"
                   :key="item.id"
                   dense
                   @click="chooseSelectedFlow(item)"
