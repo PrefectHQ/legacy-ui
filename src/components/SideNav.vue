@@ -421,21 +421,6 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item
-            v-if="isCloud"
-            id="tutorial"
-            active-class="primary-active-class"
-            :disabled="routeDisabled"
-            :to="getRoute('tutorial')"
-          >
-            <v-list-item-action>
-              <v-icon>school</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Tutorials</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
           <!-- <v-list-item :to="{ name: 'schematics' }" ripple>
             <v-list-item-action>
               <v-icon>account_tree</v-icon>
