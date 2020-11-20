@@ -4,8 +4,10 @@
 
 ### Features and Improvements
 
+- Add the Prefect Core version to the side navigation bar for Server users - [#431](https://github.com/PrefectHQ/ui/pull/431)
 - Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
 - Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
+- Allow editing task run names from the task run page - [#449](https://github.com/PrefectHQ/ui/pull/449)
 
 ### Bugfixes
 
