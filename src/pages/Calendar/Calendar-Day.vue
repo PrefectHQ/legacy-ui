@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      skip: true,
+      skip: false,
       loadingKey: 0,
       gettingRuns: false,
       flowRunEvents: [],
@@ -53,14 +53,10 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     intervalCount() {
-      return (60 / this.timeInterval) * 24
+      return (60 / this.calendarInterval) * 24
     },
     end() {
       return this.addDay(this.date, 1)
-    },
-    flowIds() {
-      const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
-      return ids
     },
     overlay() {
       return this.loadingKey > 0 || this.gettingRuns
@@ -71,11 +67,10 @@ export default {
       this.gettingRuns = true
       this.flowRunEvents = await this.flowRunEventsMethod()
       this.gettingRuns = false
+    },
+    async flowId() {
+      this.flowRunEvents = await this.flowRunEventsMethod()
     }
-  },
-  async flowId() {
-    console.log('flowId switched')
-    this.flowRunEvents = await this.flowRunEventsMethod()
   },
   async created() {
     this.flowRunEvents = await this.flowRunEventsMethod()
@@ -102,7 +97,7 @@ export default {
             project_id: this.projectId == '' ? null : this.projectId,
             startTime: timeGroup,
             endTime: timeGroups[i + 1] || this.end,
-            flowIds: this.flowId
+            flowIds: this.flowId ? [this.flowId] : null
           },
           loadingKey: 'loadingKey'
         })
@@ -147,6 +142,20 @@ export default {
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
+    filteredFlowRunEvents(time) {
+      const timeInParts = time.split(':')
+      const events = this.flowRuns.filter(event => {
+        const start = new Date(event.start_time).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+        const startInParts = start.split(':')
+        const starty = startInParts[0] >= timeInParts[0]
+        const fin = startInParts[0] < timeInParts[0] + 1
+        if (starty && fin) return event
+      })
+      return events
+    },
     handleEventClick({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event
@@ -163,29 +172,76 @@ export default {
       }
       nativeEvent.stopPropagation()
     }
+  },
+  apollo: {
+    flowRuns: {
+      query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          flowIds: this.flowId ? [this.flowId] : null
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run
+    },
+    scheduledFlowRuns: {
+      query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run
+    }
   }
 }
 </script>
 
 <template>
   <div>
+    <v-overlay v-if="overlay"> Fetching and organizing flows...</v-overlay>
     <v-calendar
       ref="calendar"
       class="calendarstyle"
       :now="date"
       :value="date"
       category-show-all
-      event-overlap-mode="column"
-      event-more
-      event-overlap-threshold="2"
-      :events="flowRunEvents"
-      :event-color="eventColor"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       type="category"
       @click:event="handleEventClick"
     >
-      <template #day-body class="minwidth"> </template>
+      <template #interval="{time}">
+        {{ time }}
+        <v-list
+          ><v-list-item
+            v-for="event in filteredFlowRunEvents(time)"
+            :key="event.id"
+            ><v-list-item-icon>
+              <v-icon :color="eventColor(event)"
+                >pi-flow-run</v-icon
+              ></v-list-item-icon
+            >
+            <v-list-item-content>
+              {{ event.name }}
+            </v-list-item-content>
+          </v-list-item></v-list
+        >
+      </template>
       <template #category="{ category }">
         <FlowName :id="category" />
       </template>
@@ -196,6 +252,7 @@ export default {
       :close-on-content-click="false"
       :activator="selectedElement"
       offset-x
+      max-width="150px"
     >
       <v-card max-width="150px">
         <v-card-title>
@@ -215,11 +272,6 @@ export default {
             </v-list-item>
           </v-list>
         </v-card-text>
-        <v-card-actions>
-          <v-btn text color="secondary" @click="selectedOpen = false">
-            Cancel
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-menu>
   </div>
