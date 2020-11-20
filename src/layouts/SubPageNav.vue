@@ -27,13 +27,14 @@ export default {
     position: fixed;
     width: 100%;
     z-index: 5;"
-    ><span class="pr-2"><slot name="page-type"> </slot></span>
+  >
     <v-row
       no-gutters
       class="d-flex align-center mx-auto pb-3"
       style="max-width: 1440px;"
     >
-      <v-col :sm="$slots['page-actions'] ? 6 : 12">
+      <span style="position: absolute;"><slot name="page-type"> </slot></span>
+      <v-col :sm="$slots['page-actions'] ? 6 : 12" style="padding-left: 80px;">
         <v-row>
           <v-col
             cols="12"
