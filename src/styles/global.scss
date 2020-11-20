@@ -540,6 +540,9 @@ body {
 .md {
   margin-top: 3.25rem;
   margin-left: 2.25rem;
+  .heading-anchor::before {
+    content: '# ';
+  }
   h1 {
     font-size: 2.5em;
   }
@@ -600,7 +603,7 @@ body {
     text-decoration: none;
   }
   pre > code {
-    background: #f9f9f9;
+    background-color: #f9f9f9;
     border: 1px solid #f9f9f9;
     border-radius: 2px;
     color: #5e6687;

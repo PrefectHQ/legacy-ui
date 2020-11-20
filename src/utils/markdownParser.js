@@ -2,6 +2,7 @@ import remark from 'remark'
 import html from 'remark-html'
 import slug from 'remark-slug'
 import highlight from 'remark-highlight.js'
+import headings from 'remark-autolink-headings'
 
 export function parser(md) {
   let result = ''
@@ -10,6 +11,13 @@ export function parser(md) {
       .use(html)
       .use(slug)
       .use(highlight)
+      .use(headings, {
+        content: {
+          type: 'element',
+          tagName: 'span',
+          properties: { className: ['heading-anchor'] }
+        }
+      })
       .process(md, (err, file) => {
         result = String(file)
       })
