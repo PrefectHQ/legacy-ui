@@ -223,7 +223,7 @@ export default {
                 overflow: 'hidden',
                 width: '400px'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && { display: 'inline' }
         "
       >
         <div v-if="flowGroup">
@@ -247,7 +247,10 @@ export default {
                 overflow: 'hidden',
                 width: '500px'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && {
+                display: 'inline',
+                'font-size': '0.875rem'
+              }
         "
       >
         <BreadCrumbs

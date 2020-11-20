@@ -219,7 +219,10 @@ export default {
 <template>
   <div
     class="pa-0 mb-2 d-flex align-center"
-    :class="$vuetify.breakpoint.smAndDown ? 'justify-center' : 'justify-end'"
+    :class="[
+      $vuetify.breakpoint.smAndDown ? 'justify-center' : 'justify-end',
+      $vuetify.breakpoint.xsOnly && 'mx-auto'
+    ]"
   >
     <v-select
       :value.sync="selectedVersion"

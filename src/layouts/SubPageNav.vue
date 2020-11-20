@@ -33,27 +33,33 @@ export default {
       class="d-flex align-center mx-auto pb-3"
       style="max-width: 1440px;"
     >
-      <v-col :sm="$slots['page-actions'] ? 8 : 12">
+      <v-col :sm="$slots['page-actions'] ? 6 : 12">
         <v-row>
           <v-col
             cols="12"
             class="d-flex align-center justify-space-between pb-1"
           >
             <div style="width: inherit;">
-              <div>
+              <div v-if="$vuetify.breakpoint.mdAndUp">
                 <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem;"
                   ><slot name="breadcrumbs"></slot
                 ></span>
               </div>
-              <div class="headline"><slot name="page-title"></slot></div>
+              <div class="headline"
+                ><slot name="page-title"></slot
+                ><slot
+                  v-if="$slots.breadcrumbs && $vuetify.breakpoint.smAndDown"
+                  name="breadcrumbs"
+                ></slot>
+              </div>
             </div>
           </v-col>
         </v-row>
       </v-col>
       <v-col
-        v-if="$slots['page-actions']"
+        v-if="$slots['page-actions'] && $vuetify.breakpoint.smAndUp"
         cols="12"
-        sm="4"
+        sm="6"
         class="align-self-end text-right"
         :class="$vuetify.breakpoint.smAndDown ? 'text-center' : ''"
       >
@@ -62,6 +68,11 @@ export default {
     </v-row>
     <template v-if="$slots.tabs && $vuetify.breakpoint.mdAndUp" slot="extension"
       ><slot name="tabs"></slot
+    ></template>
+    <template
+      v-if="$slots['page-actions'] && $vuetify.breakpoint.xsOnly"
+      slot="extension"
+      ><slot name="page-actions"></slot
     ></template>
   </v-app-bar>
 </template>

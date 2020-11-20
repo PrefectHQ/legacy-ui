@@ -206,7 +206,9 @@ export default {
                 height: '28px',
                 overflow: 'hidden'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && {
+                display: 'inline'
+              }
         "
       >
         <span v-if="loading === 0">

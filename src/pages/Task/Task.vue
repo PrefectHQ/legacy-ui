@@ -160,7 +160,9 @@ export default {
                 overflow: 'hidden',
                 width: '400px'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && {
+                display: 'inline'
+              }
         "
       >
         <span v-if="loading === 0">
@@ -181,7 +183,10 @@ export default {
                 overflow: 'hidden',
                 width: '500px'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && {
+                display: 'inline',
+                'font-size': '0.875rem'
+              }
         "
       >
         <BreadCrumbs

@@ -229,11 +229,13 @@ export default {
       <span
         slot="page-title"
         style="
-          display: block;
           max-width: 100%;
           min-width: 300px;
           width: auto;
           "
+        :style="[
+          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' }
+        ]"
       >
         <EditableTextField
           :content="
@@ -275,6 +277,12 @@ export default {
             text: taskRun.flow_run.name
           }
         ]"
+        :style="
+          $vuetify.breakpoint.smAndDown && {
+            display: 'inline',
+            'font-size': '0.875rem'
+          }
+        "
       ></BreadCrumbs>
 
       <Actions slot="page-actions" :task-run="taskRun" />
