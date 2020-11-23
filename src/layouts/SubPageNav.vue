@@ -33,8 +33,12 @@ export default {
       class="d-flex align-center mx-auto pb-3"
       style="max-width: 1440px;"
     >
-      <span style="position: absolute;"><slot name="page-type"> </slot></span>
-      <v-col :sm="$slots['page-actions'] ? 6 : 12" style="padding-left: 80px;">
+      <span
+        style="height: 100%;
+        position: absolute;"
+        ><slot name="page-type"> </slot
+      ></span>
+      <v-col :sm="$slots['page-actions'] ? 6 : 12" style="padding-left: 50px;">
         <v-row>
           <v-col
             cols="12"

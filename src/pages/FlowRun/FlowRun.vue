@@ -192,11 +192,14 @@ export default {
     <SubPageNav>
       <span
         slot="page-type"
-        class="overline pr-2"
         style="align-items: center;
       display: flex;
-      flex-direction: column;"
-        ><v-icon large>pi-flow-run</v-icon>FLOW RUN</span
+      flex-direction: column;
+      font-size: 0.75rem;
+      height: 100%;
+      justify-content: center;
+      text-align: center;"
+        ><v-icon>pi-flow-run</v-icon>FLOW<br />RUN</span
       >
       <span
         slot="page-title"
