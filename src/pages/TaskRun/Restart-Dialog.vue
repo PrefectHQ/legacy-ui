@@ -53,7 +53,7 @@ export default {
       try {
         this.dialog = false
         await this.writeLogs()
-        let taskStates
+        let taskStates = []
         if (this.utilityDownstreamTasks.length) {
           taskStates = this.utilityDownstreamTasks.map(task => {
             return {
@@ -63,18 +63,20 @@ export default {
             }
           })
         } else {
-          taskStates = {
+          taskStates.push({
             task_run_id: this.taskRun.id,
             version: this.taskRun.version,
             state: { type: 'Pending', message: this.message }
-          }
+          })
         }
+
         const result = await this.$apollo.mutate({
           mutation: require('@/graphql/TaskRun/set-task-run-states.gql'),
           variables: {
             input: taskStates
           }
         })
+
         if (result?.data?.set_task_run_states) {
           const { data } = await this.$apollo.mutate({
             mutation: require('@/graphql/TaskRun/set-flow-run-states.gql'),
@@ -84,6 +86,7 @@ export default {
               state: { type: 'Scheduled', message: this.message }
             }
           })
+
           if (!data?.set_flow_run_states) this.tasksSuccess = false
         }
       } catch (error) {
@@ -114,22 +117,11 @@ export default {
     }
   },
   apollo: {
-    taskRun: {
-      query: require('@/graphql/TaskRun/task-run.gql'),
-      variables() {
-        return {
-          id: this.taskRun.id,
-          timestamp: this.heartbeat
-        }
-      },
-      pollInterval: 5000,
-      update: data => data.task_run_by_pk
-    },
     utilityDownstreamTasks: {
       query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
       variables() {
         return {
-          taskIds: `{${this.taskRun.id}}`,
+          taskIds: `{${this.taskRun.task.id}}`,
           flowRunId: this.flowRunId
         }
       },
