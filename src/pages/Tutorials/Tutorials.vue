@@ -36,8 +36,7 @@ export default {
   <v-container>
     <v-navigation-drawer
       :mini-variant="$vuetify.breakpoint.smAndDown"
-      mini-variant-width="auto"
-      width="300"
+      width="280"
       clipped
       permanent
       left
@@ -45,57 +44,38 @@ export default {
       touchless
       :style="{ top: $vuetify.breakpoint.smAndDown ? '56px' : '64px' }"
     >
-      <v-list-item>
-        <v-list-item-action>
-          <v-icon class="blue--text accent-4">
-            school
-          </v-icon>
-        </v-list-item-action>
-        <v-list-item-content>
-          <div class="font-weight-medium">
-            Tutorials
-          </div>
-        </v-list-item-content>
-      </v-list-item>
+      <v-list>
+        <v-list-group
+          v-for="(item, index) in routes"
+          :key="index"
+          :value="true"
+          no-action
+          sub-group
+        >
+          <template #activator>
+            <v-list-item-content>
+              <v-list-item-title>{{
+                sentenceCasing(item.name.replace(/-/g, ' '))
+              }}</v-list-item-title>
+            </v-list-item-content>
+          </template>
 
-      <v-divider></v-divider>
-
-      <v-treeview :items="routes" hoverable transition open-on-click>
-        <template slot="label" slot-scope="props">
-          <div v-if="props.item.name[0] === '#'">
-            <router-link
-              :to="{
-                name: 'tutorial',
-                params: { tenant: tenant.slug, id: props.item.file },
-                hash: props.item.name
-              }"
-              class="links"
-            >
-              <div>
-                {{
-                  sentenceCasing(
-                    props.item.name.substring(1).replace(/-/g, ' ')
-                  )
-                }}
-              </div>
-            </router-link>
-          </div>
-
-          <div v-else>
-            <router-link
-              :to="{
-                name: 'tutorial',
-                params: { tenant: tenant.slug, id: props.item.name }
-              }"
-              class="links"
-            >
-              <div>{{
-                sentenceCasing(props.item.name.replace(/-/g, ' '))
-              }}</div>
-            </router-link>
-          </div>
-        </template>
-      </v-treeview>
+          <v-list-item
+            v-for="(child, i) in item.children"
+            :key="i"
+            link
+            :to="{
+              name: 'tutorial',
+              params: { tenant: tenant.slug, id: child.file },
+              hash: child.name
+            }"
+          >
+            <v-list-item-title class="links">{{
+              sentenceCasing(child.name.substring(1).replace(/-/g, ' '))
+            }}</v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
     </v-navigation-drawer>
 
     <div
@@ -130,30 +110,22 @@ export default {
 
 .sm-and-up-left-padding {
   // Match left padding with User Settings sidebar width
-  padding-left: 356px;
-  padding-right: 256px;
+  padding-left: 286px;
+  padding-right: 56px;
 }
 
 .sm-and-down-left-padding {
   // Match left padding with collapsed User Settings sidebar width
-  padding-left: 136px;
-  padding-right: 16px;
+  padding-left: 56px;
 }
 
 // stylelint-disable
 .links {
-  text-decoration: none;
   font-family: Roboto, sans-serif;
-  color: #4d606e;
   word-wrap: break-word; /* IE 5.5-7 */
   white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
   white-space: pre-wrap;
-  font-size: 0.8125rem;
 }
-.router-link-active {
-  color: #3b8dff;
-  font-weight: bold;
-  font-weight: 700;
-}
+
 // stylelint-enable
 </style>

@@ -295,15 +295,41 @@ export const routes = [
   }
 ]
 
+function getElementPosition(el) {
+  const docEl = document.documentElement
+  const docRect = docEl.getBoundingClientRect()
+  const elRect = el.getBoundingClientRect()
+  return {
+    x: elRect.left - docRect.left,
+    y: elRect.top - docRect.top
+  }
+}
+
+function scrollToHash(to) {
+  const targetElement = document.querySelector(to.hash)
+
+  if (targetElement) {
+    let elPos = getElementPosition(targetElement),
+      elRect = targetElement.getBoundingClientRect()
+
+    let position =
+      elRect.height > window.innerHeight
+        ? elPos.y
+        : elPos.y - (window.innerHeight - elRect.height) / 2
+
+    return window.scrollTo({
+      top: position,
+      behavior: 'smooth'
+    })
+  }
+}
+
 const router = new Router({
   mode: 'history',
   routes,
   scrollBehavior(to) {
     if (to.hash) {
-      return {
-        selector: to.hash,
-        behavior: 'smooth'
-      }
+      scrollToHash(to)
     }
   }
 })
