@@ -53,7 +53,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     intervalCount() {
-      return (60 / this.timeInterval) * 24
+      return (60 / this.calendarInterval) * 24
     },
     end() {
       return this.addDay(this.date, 1)
@@ -71,11 +71,10 @@ export default {
       this.gettingRuns = true
       this.flowRunEvents = await this.flowRunEventsMethod()
       this.gettingRuns = false
+    },
+    async flowId() {
+      this.flowRunEvents = await this.flowRunEventsMethod()
     }
-  },
-  async flowId() {
-    console.log('flowId switched')
-    this.flowRunEvents = await this.flowRunEventsMethod()
   },
   async created() {
     this.flowRunEvents = await this.flowRunEventsMethod()
@@ -132,6 +131,14 @@ export default {
             flowRuns.runs.length > 1 || !flowRuns.runs[0].start_time
               ? this.formatCalendarTime(timeGroup)
               : this.formatCalendarTime(flowRuns.runs[0].start_time)
+          if (
+            flowRuns.runs.length === 1 &&
+            flowRuns.runs[0].start_time &&
+            !flowRuns.runs[0].end_time
+          )
+            //Will need to fix this to handle timezones!!
+            console.log(this.formatCalendarTime(new Date()))
+          flowRuns.end = this.formatCalendarTime(new Date())
           if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
             flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
           const state = flowRuns.runs.filter(run => {
@@ -174,18 +181,22 @@ export default {
       class="calendarstyle"
       :now="date"
       :value="date"
-      category-show-all
       event-overlap-mode="column"
-      event-more
-      event-overlap-threshold="2"
       :events="flowRunEvents"
       :event-color="eventColor"
+      :interval-height="100"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       type="category"
       @click:event="handleEventClick"
     >
-      <template #day-body class="minwidth"> </template>
+      <template #event="{event}">
+        <div class="caption pl-2">
+          {{ event.name }} {{ formTime(event.start) }} -
+          {{ formTime(event.end) }}
+        </div>
+      </template>
+
       <template #category="{ category }">
         <FlowName :id="category" />
       </template>
@@ -196,6 +207,7 @@ export default {
       :close-on-content-click="false"
       :activator="selectedElement"
       offset-x
+      max-width="150px"
     >
       <v-card max-width="150px">
         <v-card-title>
@@ -203,7 +215,7 @@ export default {
         /></v-card-title>
 
         <v-card-text>
-          <v-list>
+          <v-list two-line>
             <v-list-item
               v-for="(run, index) in selectedEvent.runs"
               :key="index"
@@ -225,14 +237,14 @@ export default {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .calendarstyle {
   max-width: 100vw;
   overflow: scroll;
-}
 
-.minwidth {
-  min-width: 500px;
-  overflow: scroll;
+  // .v-event-timed {
+  // max-width: 80px;
+  // max-height: 5px;
+  // }
 }
 </style>

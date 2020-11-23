@@ -23,7 +23,7 @@ export default {
       timePeriod: 'day',
       timePeriodOptions: ['day', 'week', 'month'],
       timeIntervalOptions: [1, 5, 15, 30, 60],
-      timeInterval: 15,
+      timeInterval: 5,
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
@@ -35,9 +35,6 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
-    intervalCount() {
-      return (60 / this.calendarInterval) * 24
-    },
     flowId() {
       console.log('flowId switched')
       if (this.selectedFlowId) return this.selectedFlowId
@@ -98,6 +95,8 @@ export default {
           color="primary"
           width="99%"
         ></v-date-picker>
+        <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
+        <v-time-picker v-model="end" :max="start"></v-time-picker> -->
         <v-expansion-panels :value="0">
           <v-expansion-panel v-for="(filter, index) in filters" :key="index">
             <v-expansion-panel-header>
