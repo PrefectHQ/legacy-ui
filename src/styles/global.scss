@@ -540,9 +540,19 @@ body {
 .md {
   margin-top: 3.25rem;
   margin-left: 2.25rem;
-  .heading-anchor::before {
-    content: '# ';
+
+  a[aria-hidden='true'] {
+    font-size: 0.85em;
+    float: left;
+    margin-left: -0.87em;
+    padding-right: 0.23em;
+    margin-top: 0.125em;
+    opacity: 0;
   }
+  a[aria-hidden='true']:hover {
+    opacity: 1;
+  }
+
   h1 {
     font-size: 2.5em;
   }

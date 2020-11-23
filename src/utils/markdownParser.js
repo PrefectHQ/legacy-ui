@@ -13,9 +13,8 @@ export function parser(md) {
       .use(highlight)
       .use(headings, {
         content: {
-          type: 'element',
-          tagName: 'span',
-          properties: { className: ['heading-anchor'] }
+          type: 'text',
+          value: '# '
         }
       })
       .process(md, (err, file) => {
