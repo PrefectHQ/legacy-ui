@@ -181,7 +181,7 @@ export default {
       class="calendarstyle"
       :now="date"
       :value="date"
-      event-overlap-mode="column"
+      event-overlap-mode="stack"
       :events="flowRunEvents"
       :event-color="eventColor"
       :interval-height="100"
