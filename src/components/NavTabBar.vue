@@ -76,18 +76,29 @@ export default {
     light
   >
     <v-tabs-slider color="blue"></v-tabs-slider>
-    <v-tab
-      v-for="tb in mainTabs"
-      :key="tb.target"
-      :data-cy="`${page}-${tb.target}-tab`"
-      :href="`#${tb.target}`"
-      :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
-      :disabled="tb.disabled"
-      :hidden="tb.hidden"
-    >
-      <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
-      {{ tb.name }}
+    <template v-for="tb in mainTabs">
+      <v-tab
+        v-if="!tb.cardText"
+        :key="tb.target"
+        :data-cy="`${page}-${tb.target}-tab`"
+        :href="`#${tb.target}`"
+        :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
+        :disabled="tb.disabled"
+      >
+        <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
+        {{ tb.name }}
+        <v-badge
+          v-if="tb.badgeText"
+          color="codePink"
+          :content="tb.badgeText"
+          bottom
+          bordered
+          inline
+        ></v-badge>
+      </v-tab>
       <v-menu
+        v-else
+        :key="tb.target"
         open-on-hover
         :close-on-click="false"
         :open-on-click="false"
@@ -100,14 +111,26 @@ export default {
             v-on="on"
             @click.stop
           >
-            <v-badge
-              v-if="tb.badgeText"
-              color="codePink"
-              :content="tb.badgeText"
-              bottom
-              bordered
-              inline
-            ></v-badge>
+            <v-tab
+              :data-cy="`${page}-${tb.target}-tab`"
+              :href="`#${tb.target}`"
+              :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
+              :disabled="tb.disabled"
+              :hidden="tb.hidden"
+            >
+              <v-icon left :size="tb.iconSize || 'medium'">{{
+                tb.icon
+              }}</v-icon>
+              {{ tb.name }}
+              <v-badge
+                v-if="tb.badgeText"
+                color="codePink"
+                :content="tb.badgeText"
+                bottom
+                bordered
+                inline
+              ></v-badge>
+            </v-tab>
           </div>
         </template>
         <v-card v-if="tb.cardText" tile class="pa-0" max-width="320">
@@ -134,7 +157,8 @@ export default {
           >
         </v-card>
       </v-menu>
-    </v-tab>
+    </template>
+
     <v-spacer />
     <v-tab
       v-for="tb in secondaryTabs"
