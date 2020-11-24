@@ -263,8 +263,10 @@ export default {
       class="px-6 mx-auto tabs-border-bottom"
       style="
         max-width: 1440px;
-        padding-top: 130px;
       "
+      :style="{
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
       mandatory
     >
       <v-tab-item
