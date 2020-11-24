@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      skip: true,
+      skip: false,
       loadingKey: 0,
       gettingRuns: false,
       flowRunEvents: [],
@@ -58,106 +58,108 @@ export default {
     end() {
       return this.addDay(this.date, 1)
     },
-    flowIds() {
-      const ids = this.flowRuns?.map(flowRun => flowRun.flow_id)
-      return ids
-    },
     overlay() {
       return this.loadingKey > 0 || this.gettingRuns
     }
   },
-  watch: {
-    async date() {
-      this.gettingRuns = true
-      this.flowRunEvents = await this.flowRunEventsMethod()
-      this.gettingRuns = false
-    },
-    async flowId() {
-      this.flowRunEvents = await this.flowRunEventsMethod()
-    }
-  },
-  async created() {
-    this.flowRunEvents = await this.flowRunEventsMethod()
-  },
+  // watch: {
+  //   async date() {
+  //     this.gettingRuns = true
+  //     this.flowRunEvents = await this.flowRunEventsMethod()
+  //     this.gettingRuns = false
+  //   },
+  //   async flowId() {
+  //     this.flowRunEvents = await this.flowRunEventsMethod()
+  //   }
+  // },
+  // async created() {
+  //   this.flowRunEvents = await this.flowRunEventsMethod()
+  // },
   methods: {
-    async flowRunEventsMethod() {
-      this.gettingRuns = true
-      const timeGroups = this.timeGroups()
-      let event = []
-      timeGroups.forEach(async (timeGroup, i) => {
-        const finished = await this.$apollo.query({
-          query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
-          variables: {
-            project_id: this.projectId == '' ? null : this.projectId,
-            startTime: timeGroup,
-            endTime: timeGroups[i + 1] || this.end,
-            flowIds: this.flowId
-          },
-          loadingKey: 'loadingKey'
-        })
-        const upcoming = await this.$apollo.query({
-          query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
-          variables: {
-            project_id: this.projectId == '' ? null : this.projectId,
-            startTime: timeGroup,
-            endTime: timeGroups[i + 1] || this.end,
-            flowIds: this.flowId
-          },
-          loadingKey: 'loadingKey'
-        })
-        const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
-        const flowRunsGroup = allRuns.reduce((runObj, flowRun) => {
-          if (!runObj[flowRun.flow_id]) runObj[flowRun.flow_id] = []
-          runObj[flowRun.flow_id].push(flowRun)
-          return runObj
-        }, {})
+    // async flowRunEventsMethod() {
+    //   this.gettingRuns = true
+    //   const timeGroups = this.timeGroups()
+    //   let event = []
+    //   timeGroups.forEach(async (timeGroup, i) => {
+    //     const finished = await this.$apollo.query({
+    //       query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+    //       variables: {
+    //         project_id: this.projectId == '' ? null : this.projectId,
+    //         startTime: timeGroup,
+    //         endTime: timeGroups[i + 1] || this.end,
+    //         flowIds: this.flowId
+    //       },
+    //       loadingKey: 'loadingKey'
+    //     })
+    //     const upcoming = await this.$apollo.query({
+    //       query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+    //       variables: {
+    //         project_id: this.projectId == '' ? null : this.projectId,
+    //         startTime: timeGroup,
+    //         endTime: timeGroups[i + 1] || this.end,
+    //         flowIds: this.flowId ? [this.flowId] : null
+    //       },
+    //       loadingKey: 'loadingKey'
+    //     })
+    //     const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
+    //     const flowRunsGroup = allRuns.reduce((runObj, flowRun) => {
+    //       if (!runObj[flowRun.flow_id]) runObj[flowRun.flow_id] = []
+    //       runObj[flowRun.flow_id].push(flowRun)
+    //       return runObj
+    //     }, {})
 
-        for (const key in flowRunsGroup) {
-          if (i === 0) {
-            timeGroup = this.addTime(timeGroup, 1, 'm')
-          }
-          const flowRuns = {
-            start: this.formatCalendarTime(timeGroup),
-            category: key,
-            runs: flowRunsGroup[key]
-          }
-          const name =
-            flowRuns.runs.length > 1
-              ? `${flowRuns.runs.length} flow runs`
-              : flowRuns.runs[0].name
-          flowRuns.name = name
-          // flowRuns.start = this.formatCalendarTime(timeGroup)
-          flowRuns.start =
-            flowRuns.runs.length > 1 || !flowRuns.runs[0].start_time
-              ? this.formatCalendarTime(timeGroup)
-              : this.formatCalendarTime(flowRuns.runs[0].start_time)
-          if (
-            flowRuns.runs.length === 1 &&
-            flowRuns.runs[0].start_time &&
-            !flowRuns.runs[0].end_time
-          )
-            //Will need to fix this to handle timezones!!
-            console.log(this.formatCalendarTime(new Date()))
-          flowRuns.end = this.formatCalendarTime(new Date())
-          if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
-            flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
-          const state = flowRuns.runs.filter(run => {
-            return run.state !== 'Success'
-          })
-          flowRuns.state = state.length ? state[0].state : 'Success'
-          event.push(flowRuns)
-        }
-      })
-      this.gettingRuns = false
-      return event
-    },
+    //     for (const key in flowRunsGroup) {
+    //       if (i === 0) {
+    //         timeGroup = this.addTime(timeGroup, 1, 'm')
+    //       }
+    //       const flowRuns = {
+    //         start: this.formatCalendarTime(timeGroup),
+    //         category: key,
+    //         runs: flowRunsGroup[key]
+    //       }
+    //       const name =
+    //         flowRuns.runs.length > 1
+    //           ? `${flowRuns.runs.length} flow runs`
+    //           : flowRuns.runs[0].name
+    //       flowRuns.name = name
+    //       // flowRuns.start = this.formatCalendarTime(timeGroup)
+    //       flowRuns.start =
+    //         flowRuns.runs.length > 1 || !flowRuns.runs[0].start_time
+    //           ? this.formatCalendarTime(timeGroup)
+    //           : this.formatCalendarTime(flowRuns.runs[0].start_time)
+    //       if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
+    //         flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
+    //       const state = flowRuns.runs.filter(run => {
+    //         return run.state !== 'Success'
+    //       })
+    //       flowRuns.state = state.length ? state[0].state : 'Success'
+    //       event.push(flowRuns)
+    //     }
+    //   })
+    //   this.gettingRuns = false
+    //   return event
+    // },
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
-    handleEventClick({ nativeEvent, event }) {
+    filteredFlowRunEvents(time) {
+      const timeInParts = time.split(':')
+      const runs = [...this.flowRuns, ...this.scheduledFlowRuns]
+      const events = runs.filter(event => {
+        const start = new Date(event.start_time).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+        const startInParts = start.split(':')
+        const starty = startInParts[0] >= timeInParts[0]
+        const fin = startInParts[0] < timeInParts[0] + 1
+        if (starty && fin) return event
+      })
+      return events
+    },
+    handleEventClick(event) {
       const open = () => {
         this.selectedEvent = event
-        this.selectedElement = nativeEvent.target
         setTimeout(() => {
           this.selectedOpen = true
         }, 10)
@@ -168,7 +170,41 @@ export default {
       } else {
         open()
       }
-      nativeEvent.stopPropagation()
+    }
+  },
+  apollo: {
+    flowRuns: {
+      query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          flowIds: this.flowId ? [this.flowId] : null
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run
+    },
+    scheduledFlowRuns: {
+      query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run
     }
   }
 }
@@ -176,27 +212,36 @@ export default {
 
 <template>
   <div>
+    <!-- <v-overlay v-if="overlay" absolute>
+      Fetching and organizing flows...</v-overlay
+    > -->
     <v-calendar
       ref="calendar"
       class="calendarstyle"
       :now="date"
       :value="date"
-      event-overlap-mode="stack"
-      :events="flowRunEvents"
-      :event-color="eventColor"
-      :interval-height="100"
+      category-show-all
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       type="category"
-      @click:event="handleEventClick"
+      @click:event="handleEventClick(item)"
     >
-      <template #event="{event}">
-        <div class="caption pl-2">
-          {{ event.name }} {{ formTime(event.start) }} -
-          {{ formTime(event.end) }}
-        </div>
+      <template #interval="{time}">
+        <v-row class="ma-0 pa-0">
+          <v-card
+            v-for="event in filteredFlowRunEvents(time)"
+            :key="event.id"
+            class="pl-4, pt-4"
+            flat
+          >
+            <v-btn icon @click="handleEventClick"
+              ><v-icon x-small :color="eventColor(event)"
+                >pi-flow-run</v-icon
+              ></v-btn
+            ><span class="caption"> {{ event.name }}</span>
+          </v-card>
+        </v-row>
       </template>
-
       <template #category="{ category }">
         <FlowName :id="category" />
       </template>
@@ -227,11 +272,6 @@ export default {
             </v-list-item>
           </v-list>
         </v-card-text>
-        <v-card-actions>
-          <v-btn text color="secondary" @click="selectedOpen = false">
-            Cancel
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-menu>
   </div>

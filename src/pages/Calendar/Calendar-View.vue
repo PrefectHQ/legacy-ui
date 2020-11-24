@@ -36,10 +36,12 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     flowId() {
-      console.log('flowId switched')
       if (this.selectedFlowId) return this.selectedFlowId
-      if (this.flowRuns) return this.flowRuns[0]?.flow_id
-      return null
+      if (this.flowRuns && this.flowRuns[0]) return this.flowRuns[0]?.flow_id
+      return this.scheduledFlowRuns[0]?.flow_id
+    },
+    allRuns() {
+      return [...this.flowRuns, ...this.scheduledFlowRuns]
     }
   },
   methods: {
@@ -79,7 +81,7 @@ export default {
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
-      update: data => data.flow_run
+      update: data => data.flow_run || []
     }
   }
 }
@@ -88,7 +90,7 @@ export default {
 <template>
   <v-container>
     <v-row>
-      <v-col class="pa-0" cols="12" lg="2">
+      <v-col class="pa-0" cols="12" md="3" lg="2">
         <v-date-picker
           v-model="date"
           no-title
@@ -105,7 +107,7 @@ export default {
             <v-expansion-panel-content>
               <v-list>
                 <v-list-item
-                  v-for="item in flowRuns"
+                  v-for="item in allRuns"
                   :key="item.id"
                   dense
                   @click="chooseSelectedFlow(item)"
@@ -121,7 +123,7 @@ export default {
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
-      <v-col class="pa-0" cols="12" lg="10">
+      <v-col class="pa-0" cols="12" md="9" lg="10">
         <CalendarDay
           v-if="timePeriod === 'day'"
           :project-id="projectId"
