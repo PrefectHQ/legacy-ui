@@ -46,7 +46,12 @@ export default {
       selectedEvent: null,
       selectedOpen: false,
       selectedElement: null,
-      type: 'category'
+      type: 'category',
+      timeOptions: [
+        { text: 'Four Days', value: '4day' },
+        { text: 'Day', value: 'category' }
+        // { text: 'Hour', value: 'hour' }
+      ]
     }
   },
   computed: {
@@ -67,6 +72,9 @@ export default {
           break
         case 'day':
           days = 1
+          break
+        case 'hour':
+          return this.addTime(this.date, 1, 'h')
       }
       return this.addDay(this.date, days)
     },
@@ -161,6 +169,12 @@ export default {
     transition-group="quick-fade"
     tile
   >
+    <v-select
+      v-model="type"
+      label="Time Periods"
+      :items="timeOptions"
+      outlined
+    ></v-select>
     <v-calendar
       ref="calendar"
       :now="date"

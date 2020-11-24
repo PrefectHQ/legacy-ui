@@ -27,7 +27,7 @@ export default {
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
-      selectedFlowId: null,
+      selectedFlow: null,
       filters: [{ name: 'Flows' }],
       loadingKey: 0
     }
@@ -37,7 +37,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     flowId() {
-      if (this.selectedFlowId) return this.selectedFlowId
+      if (this.selectedFlow) return this.flowRuns[this.selectedFlow].flow_id
       if (this.flowRuns && this.flowRuns[0]) return this.flowRuns[0]?.flow_id
       return this.scheduledFlowRuns[0]?.flow_id
     },
@@ -45,12 +45,6 @@ export default {
       return [...this.flowRuns, ...this.scheduledFlowRuns]
     }
   },
-  methods: {
-    chooseSelectedFlow(flowRun) {
-      this.selectedFlowId = flowRun.flow_id
-    }
-  },
-
   apollo: {
     flowRuns: {
       query: require('@/graphql/Calendar/distinct-on-calendar-flow-runs.gql'),
@@ -116,18 +110,15 @@ export default {
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-list>
-                  <v-list-item
-                    v-for="item in flowRuns"
-                    :key="item.id"
-                    dense
-                    @click="chooseSelectedFlow(item)"
-                  >
-                    <v-list-item-content>
-                      <v-list-item-subtitle class="font-weight-light">
-                        <FlowName :id="item.flow_id" />
-                      </v-list-item-subtitle>
-                    </v-list-item-content>
-                  </v-list-item>
+                  <v-list-item-group v-model="selectedFlow" color="primary">
+                    <v-list-item v-for="item in flowRuns" :key="item.id" dense>
+                      <v-list-item-content>
+                        <v-list-item-subtitle class="font-weight-light">
+                          <FlowName :id="item.flow_id" />
+                        </v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list-item-group>
                 </v-list>
               </v-expansion-panel-content>
             </v-expansion-panel>
