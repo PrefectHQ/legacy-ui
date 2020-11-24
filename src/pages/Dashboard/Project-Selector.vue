@@ -137,7 +137,7 @@ export default {
       id="project-dropdown"
       v-model="projectSelect"
       class="project-selector"
-      :class="$vuetify.breakpoint.xsOnly ? 'ml-0' : 'mr-0'"
+      :class="$vuetify.breakpoint.xsOnly ? 'mx-auto' : 'mr-0'"
       hide-details
       data-cy="projects"
       :items="sortedProjects"

@@ -239,7 +239,10 @@ export default {
         />
       </span>
 
-      <span slot="page-actions">
+      <span
+        slot="page-actions"
+        :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
+      >
         <v-skeleton-loader
           slot="row-0"
           :loading="loadedTiles < 4"
@@ -250,17 +253,17 @@ export default {
           <ProjectSelector @project-select="handleProjectSelect" />
         </v-skeleton-loader>
       </span>
-      <span slot="tabs" style="width: 100%;"
-        ><NavTabBar :tabs="tabs" page="dashboard"
-      /></span>
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="dashboard" />
+      </span>
     </SubPageNav>
 
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
-      style="max-width: 1440px;"
-      :style="
-        $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
+      style="
+        max-width: 1440px;
+        padding-top: 130px;
       "
       mandatory
     >

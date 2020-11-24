@@ -33,7 +33,7 @@ export default {
         ? '4'
         : '0'
     "
-    height="80"
+    height="auto"
     color="appBackground"
     class="pb-3"
     style="
@@ -44,16 +44,20 @@ export default {
     <v-row
       no-gutters
       class="d-flex align-center mx-auto"
+      :class="{
+        'justify-center': $vuetify.breakpoint.smAndDown
+      }"
       style="max-width: 1440px;"
     >
       <v-col
         :sm="$slots['page-actions'] ? 6 : 12"
-        class="d-flex align-end justify-space-between"
+        class="d-flex align-end"
+        :class="{}"
       >
         <div class="mr-2">
           <v-icon x-large color="blue-grey lighten-4">{{ icon }}</v-icon>
         </div>
-        <div style="width: inherit;">
+        <div>
           <div>
             <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem;">
               <slot name="breadcrumbs"></slot>
@@ -71,7 +75,9 @@ export default {
         cols="12"
         sm="6"
         class="align-self-end text-right"
-        :class="$vuetify.breakpoint.smAndDown ? 'text-center' : ''"
+        :class="{
+          'text-center': $vuetify.breakpoint.smAndDown
+        }"
       >
         <slot name="page-actions"></slot>
       </v-col>

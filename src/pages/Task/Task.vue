@@ -109,7 +109,8 @@ export default {
   methods: {
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
+        let target = Object.keys(this.$route.query)[0]
+        if (this.tabs?.find(tab => tab.target == target)) return target
       }
       return 'overview'
     }

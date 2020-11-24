@@ -165,7 +165,8 @@ export default {
   methods: {
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
+        let target = Object.keys(this.$route.query)[0]
+        if (this.tabs?.find(tab => tab.target == target)) return target
       }
       return 'overview'
     }
@@ -276,9 +277,9 @@ export default {
       v-if="flowGroup"
       class="px-6 mx-auto tabs-border-bottom"
       style="max-width: 1440px;"
-      :style="
-        $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
-      "
+      :style="{
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
     >
       <v-tab-item
         class="tab-full-height pa-0"

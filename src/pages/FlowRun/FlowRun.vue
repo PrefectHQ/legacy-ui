@@ -248,10 +248,10 @@ export default {
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
-      :style="[
-        { 'padding-top': $vuetify.breakpoint.mdAndUp ? '130px' : '80px' },
-        { 'max-width': tab == 'chart' ? 'auto' : '1440px' }
-      ]"
+      :style="{
+        'max-width': tab == 'chart' ? 'auto' : '1440px',
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
       mandatory
     >
       <v-tab-item
