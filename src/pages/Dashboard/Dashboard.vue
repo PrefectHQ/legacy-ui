@@ -188,18 +188,10 @@ export default {
 
 <template>
   <v-sheet color="appBackground">
-    <SubPageNav>
-      <span
-        slot="page-type"
-        style="align-items: center;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.75rem;
-      height: 100%;
-      justify-content: center;
-      text-align: center;"
-        ><v-icon>view_quilt</v-icon>DASH</span
-      >
+    <SubPageNav
+      :icon="projectId && project ? 'pi-project' : 'view_quilt'"
+      :page-type="projectId && project ? 'Project' : 'Dashboard'"
+    >
       <span
         slot="page-title"
         :style="

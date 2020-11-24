@@ -1,5 +1,17 @@
 <script>
 export default {
+  props: {
+    icon: {
+      type: String,
+      required: false,
+      default: () => null
+    },
+    pageType: {
+      type: String,
+      required: false,
+      default: () => null
+    }
+  },
   data() {
     return {
       pageScrolled: false
@@ -30,32 +42,30 @@ export default {
   >
     <v-row
       no-gutters
-      class="d-flex align-center mx-auto pb-3"
+      class="d-flex align-center mx-auto"
       style="max-width: 1440px;"
     >
-      <span
-        style="height: 100%;
-        position: absolute;"
-        ><slot name="page-type"> </slot
-      ></span>
-      <v-col :sm="$slots['page-actions'] ? 6 : 12" style="padding-left: 50px;">
+      <v-col :sm="$slots['page-actions'] ? 6 : 12">
         <v-row>
-          <v-col
-            cols="12"
-            class="d-flex align-center justify-space-between pb-1"
-          >
+          <v-col cols="12" class="d-flex align-end justify-space-between pb-1">
+            <div class="mr-2">
+              <v-icon x-large>{{ icon }}</v-icon>
+            </div>
             <div style="width: inherit;">
               <div v-if="$vuetify.breakpoint.mdAndUp">
-                <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem;"
-                  ><slot name="breadcrumbs"></slot
-                ></span>
+                <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem;">
+                  <slot name="breadcrumbs"></slot>
+                </span>
+                <slot v-if="$slots['page-type']" name="page-type"></slot>
+                <span v-else class="overline">{{ pageType }}</span>
               </div>
-              <div class="headline"
-                ><slot name="page-title"></slot
-                ><slot
+              <div class="headline">
+                <slot name="page-title"></slot>
+                <slot
                   v-if="$slots.breadcrumbs && $vuetify.breakpoint.smAndDown"
                   name="breadcrumbs"
-                ></slot>
+                >
+                </slot>
               </div>
             </div>
           </v-col>

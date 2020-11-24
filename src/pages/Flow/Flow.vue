@@ -204,18 +204,7 @@ export default {
 
 <template>
   <v-sheet color="appBackground">
-    <SubPageNav>
-      <span
-        slot="page-type"
-        style="align-items: center;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.75rem;
-      height: 100%;
-      justify-content: center;
-      text-align: center;"
-        ><v-icon>pi-flow</v-icon>FLOW</span
-      >
+    <SubPageNav icon="pi-flow" page-type="Flow">
       <span
         slot="page-title"
         :style="
@@ -245,7 +234,6 @@ export default {
         :style="
           !flowGroup
             ? {
-                display: 'block',
                 height: '21px',
                 overflow: 'hidden',
                 width: '500px'

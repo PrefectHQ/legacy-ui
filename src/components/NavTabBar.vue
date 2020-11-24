@@ -67,7 +67,7 @@ export default {
   <v-tabs
     v-model="tab"
     v-scroll="scrolled"
-    class="mx-auto tabs-border-bottom"
+    class="mx-auto tabs-border-bottom tabs-border-top"
     :class="[
       $vuetify.breakpoint.smAndDown ? 'tabs-hidden' : '',
       pageScrolled ? 'elevation-4' : ''

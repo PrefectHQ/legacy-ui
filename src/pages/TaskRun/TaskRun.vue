@@ -217,18 +217,7 @@ export default {
 
 <template>
   <v-sheet v-if="taskRun" color="appBackground">
-    <SubPageNav>
-      <span
-        slot="page-type"
-        style="align-items: center;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.75rem;
-      height: 100%;
-      justify-content: center;
-      text-align: center;"
-        ><v-icon>pi-task-run</v-icon>TASK<br />RUN</span
-      >
+    <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
         style="
