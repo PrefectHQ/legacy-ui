@@ -269,7 +269,8 @@ export default {
       :interval-height="150"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
-      type="week"
+      type="4day"
+      :locale="timezone"
       @click:event="handleEventClick"
     >
       <template #event="{event}">

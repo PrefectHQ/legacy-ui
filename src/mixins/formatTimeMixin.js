@@ -48,7 +48,8 @@ export const formatTime = {
     },
     formatCalendarTime(timestamp) {
       if (!timestamp) return
-      let timeObj = moment(timestamp).tz(this.timezone)
+      let timeObj
+      // = moment(timestamp).tz(this.timezone)
       return `${
         timeObj
           ? timeObj.format('YYYY-MM-DD HH:mm:ss')
@@ -56,7 +57,8 @@ export const formatTime = {
       }`
     },
     convertCalendarStartTime(timestamp) {
-      const startTime = moment(timestamp).tz(this.timezone) || moment(timestamp)
+      // moment(timestamp).tz(this.timezone) ||
+      const startTime = moment(timestamp)
       return startTime.toISOString()
     },
     timeGroups() {
