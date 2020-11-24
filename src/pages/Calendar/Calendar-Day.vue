@@ -76,76 +76,6 @@ export default {
     this.flowRunEvents = await this.flowRunEventsList()
   },
   methods: {
-    // async flowRunEventsMethod() {
-    //   this.gettingRuns = true
-    //   const timeGroups = this.timeGroups()
-    //   let event = []
-    //   timeGroups.forEach(async (timeGroup, i) => {
-    //     const finished = await this.$apollo.query({
-    //       query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
-    //       variables: {
-    //         project_id: this.projectId == '' ? null : this.projectId,
-    //         startTime: timeGroup,
-    //         endTime: timeGroups[i + 1] || this.end,
-    //         flowIds: this.flowId
-    //       },
-    //       loadingKey: 'loadingKey'
-    //     })
-    //     const upcoming = await this.$apollo.query({
-    //       query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
-    //       variables: {
-    //         project_id: this.projectId == '' ? null : this.projectId,
-    //         startTime: timeGroup,
-    //         endTime: timeGroups[i + 1] || this.end,
-    //         flowIds: this.flowId ? [this.flowId] : null
-    //       },
-    //       loadingKey: 'loadingKey'
-    //     })
-    //     const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
-    //     const flowRunsGroup = allRuns.reduce((runObj, flowRun) => {
-    //       if (!runObj[flowRun.flow_id]) runObj[flowRun.flow_id] = []
-    //       runObj[flowRun.flow_id].push(flowRun)
-    //       return runObj
-    //     }, {})
-
-    //     for (const key in flowRunsGroup) {
-    //       if (i === 0) {
-    //         timeGroup = this.addTime(timeGroup, 1, 'm')
-    //       }
-    //       const flowRuns = {
-    //         start: this.formatCalendarTime(timeGroup),
-    //         category: key,
-    //         runs: flowRunsGroup[key]
-    //       }
-    //       const name =
-    //         flowRuns.runs.length > 1
-    //           ? `${flowRuns.runs.length} flow runs`
-    //           : flowRuns.runs[0].name
-    //       flowRuns.name = name
-    //       // flowRuns.start = this.formatCalendarTime(timeGroup)
-    //       flowRuns.start =
-    //         flowRuns.runs.length > 1 || !flowRuns.runs[0].start_time
-    //           ? this.formatCalendarTime(timeGroup)
-    //           : this.formatCalendarTime(flowRuns.runs[0].start_time)
-    //       if (
-    //         flowRuns.runs.length === 1 &&
-    //         flowRuns.runs[0].start_time &&
-    //         !flowRuns.runs[0].end_time
-    //       )
-    //         //Will need to fix this to handle timezones!!?
-    //         flowRuns.end = this.formatCalendarTime(new Date())
-    //       if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
-    //         flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
-    //       const state = flowRuns.runs.filter(run => {
-    //         return run.state !== 'Success'
-    //       })
-    //       flowRuns.state = state.length ? state[0].state : 'Success'
-    //       event.push(flowRuns)
-    //     }
-    //   })
-    //   this.gettingRuns = false
-    //   return event
-    // },
     async flowRunEventsList() {
       this.gettingRuns = true
       const finished = await this.$apollo.query({
@@ -268,7 +198,6 @@ export default {
   >
     <v-calendar
       ref="calendar"
-      class="calendarstyle"
       :now="date"
       :value="date"
       event-overlap-mode="stack"
@@ -315,15 +244,3 @@ export default {
     </v-menu>
   </v-skeleton-loader>
 </template>
-
-<style lang="scss">
-.calendarstyle {
-  max-width: 100vw;
-  overflow: scroll;
-
-  // .v-event-timed {
-  // max-width: 80px;
-  // max-height: 5px;
-  // }
-}
-</style>
