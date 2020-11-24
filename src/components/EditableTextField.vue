@@ -162,7 +162,7 @@ export default {
   box-sizing: border-box;
   color: inherit !important;
   font-size: inherit !important;
-  height: 30px;
+  height: 28px;
   max-width: 100%;
   padding-bottom: 2px;
   position: relative;

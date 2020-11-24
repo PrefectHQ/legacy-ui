@@ -210,36 +210,39 @@ export default {
         />
       </span>
 
-      <BreadCrumbs
+      <span
         slot="breadcrumbs"
-        :crumbs="[
-          {
-            route: {
-              name: 'project',
-              params: { id: flowRun.flow.project.id }
-            },
-            text: flowRun.flow.project.name
-          },
-          {
-            route: {
-              name: 'flow',
-              params: { id: flowRun.flow.id }
-            },
-            text: flowRun.flow.name
-          }
-        ]"
         :style="
           $vuetify.breakpoint.smAndDown && {
             display: 'inline',
             'font-size': '0.875rem'
           }
         "
-      ></BreadCrumbs>
+      >
+        <BreadCrumbs
+          :crumbs="[
+            {
+              route: {
+                name: 'project',
+                params: { id: flowRun.flow.project.id }
+              },
+              text: flowRun.flow.project.name
+            },
+            {
+              route: {
+                name: 'flow',
+                params: { id: flowRun.flow.id }
+              },
+              text: flowRun.flow.name
+            }
+          ]"
+        />
+      </span>
 
       <Actions slot="page-actions" :flow-run="flowRun" />
-      <span slot="tabs" style="width: 100%;"
-        ><NavTabBar :tabs="tabs" page="flow-run"
-      /></span>
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="flow-run" />
+      </span>
     </SubPageNav>
 
     <v-tabs-items
