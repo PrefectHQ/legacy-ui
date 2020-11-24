@@ -197,7 +197,7 @@ export default {
     font-size: 1rem;
     font-weight: 500;
     letter-spacing: 0.0892857143em;
-    line-height: 20px;
+    line-height: 1.25rem;
     text-transform: uppercase;
   }
 }
