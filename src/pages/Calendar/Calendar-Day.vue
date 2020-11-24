@@ -269,7 +269,7 @@ export default {
       :interval-height="150"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
-      type="category"
+      type="week"
       @click:event="handleEventClick"
     >
       <template #event="{event}">
