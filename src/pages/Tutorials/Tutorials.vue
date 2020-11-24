@@ -44,6 +44,23 @@ export default {
       touchless
       :style="{ top: $vuetify.breakpoint.smAndDown ? '56px' : '64px' }"
     >
+      <template #prepend>
+        <v-list-item>
+          <v-list-item-action>
+            <v-icon class="blue--text accent-4">
+              school
+            </v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <div class="font-weight-medium">
+              Tutorials
+            </div>
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+
+      <v-divider />
+
       <v-list>
         <v-list-group
           v-for="(item, index) in routes"
