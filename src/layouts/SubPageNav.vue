@@ -39,7 +39,7 @@ export default {
     style="
     position: fixed;
     width: 100%;
-    z-index: 5;"
+    z-index: 4;"
   >
     <v-row
       no-gutters
