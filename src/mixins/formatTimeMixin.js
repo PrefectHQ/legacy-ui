@@ -46,12 +46,6 @@ export const formatTime = {
       }`
       return date
     },
-    // queryStart(date) {
-    //   const timeObj = moment(date).tz(this.timezone) || moment(date)
-    //   const start = timeObj.format('YYYY-MM-DD HH:mm:ss')
-    //   console.log('start', start)
-    //   return start
-    // },
     formatCalendarTime(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
@@ -60,27 +54,13 @@ export const formatTime = {
     convertCalendarStartTime(timestamp) {
       const startTime = moment(timestamp)
       const start = startTime.format('YYYY-MM-DD HH:mm:ss')
-      console.log('start', start)
       return start
     },
-    // timeGroups() {
-    //   // const periodsInADay = moment.duration(1, 'day').as('m')
-
-    //   let timeStart = this.date
-    //   const timeLabels = [moment(this.date).toISOString()]
-
-    //   for (let i = 0; i <= 1440; i += this.timeInterval) {
-    //     timeStart = this.addTime(timeStart, this.timeInterval, 'minutes')
-    //     timeLabels.push(timeStart)
-    //   }
-    //   return timeLabels
-    // },
     addTime(timestamp, amount, unit) {
       if (!timestamp) return
       let timeObj = moment(timestamp)
         .add(amount, unit)
         .format('YYYY-MM-DD HH:mm:ss')
-      console.log('timeobj', timestamp, timeObj)
       return timeObj
     },
     addDay(timestamp, amount) {

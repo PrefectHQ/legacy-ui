@@ -45,7 +45,8 @@ export default {
       flowRunEvents: [],
       selectedEvent: null,
       selectedOpen: false,
-      selectedElement: null
+      selectedElement: null,
+      type: 'category'
     }
   },
   computed: {
@@ -56,7 +57,18 @@ export default {
       return (60 / this.calendarInterval) * 24
     },
     end() {
-      return this.addDay(this.date, 1)
+      let days = 1
+      switch (this.type) {
+        case '4day':
+          days = 4
+          break
+        case 'week':
+          days = 7
+          break
+        case 'day':
+          days = 1
+      }
+      return this.addDay(this.date, days)
     },
     overlay() {
       return this.loadingKey > 0 || this.gettingRuns
@@ -124,21 +136,6 @@ export default {
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
-    filteredFlowRunEvents(time) {
-      const timeInParts = time.split(':')
-      const runs = [...this.flowRuns, ...this.scheduledFlowRuns]
-      const events = runs.filter(event => {
-        const start = new Date(event.start_time).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-        const startInParts = start.split(':')
-        const starty = startInParts[0] >= timeInParts[0]
-        const fin = startInParts[0] < timeInParts[0] + 1
-        if (starty && fin) return event
-      })
-      return events
-    },
     handleEventClick(event) {
       const open = () => {
         this.selectedEvent = event.event
@@ -152,42 +149,6 @@ export default {
       } else {
         open()
       }
-    }
-  },
-  apollo: {
-    flowRuns: {
-      query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
-      variables() {
-        return {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.convertCalendarStartTime(this.end),
-          flowIds: this.flowId
-        }
-      },
-      skip() {
-        return this.skip
-      },
-      fetchPolicy: 'cache-first',
-      loadingKey: 'loadingKey',
-      update: data => data.flow_run || []
-    },
-    scheduledFlowRuns: {
-      query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
-      variables() {
-        return {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.convertCalendarStartTime(this.end),
-          flowIds: this.flowId
-        }
-      },
-      skip() {
-        return this.skip
-      },
-      fetchPolicy: 'cache-first',
-      loadingKey: 'loadingKey',
-      update: data => data.flow_run || []
     }
   }
 }
@@ -210,7 +171,7 @@ export default {
       :interval-height="250"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
-      type="category"
+      :type="type"
       @click:event="handleEventClick"
     >
       <template #event="{event}">
