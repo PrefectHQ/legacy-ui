@@ -29,7 +29,7 @@ export default {
   <div
     class="pa-0 mb-2 d-flex align-center"
     :class="[
-      $vuetify.breakpoint.smAndDown ? 'justify-center' : 'justify-end',
+      $vuetify.breakpoint.xsOnly ? 'justify-center' : 'justify-end',
       $vuetify.breakpoint.xsOnly && 'mx-auto'
     ]"
   >
