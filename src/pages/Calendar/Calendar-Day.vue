@@ -46,6 +46,7 @@ export default {
       selectedEvent: null,
       selectedOpen: false,
       selectedElement: null
+      // flowRunEvents: this.flowRunEventsList()
     }
   },
   computed: {
@@ -53,6 +54,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     intervalCount() {
+      console.log('event list', this.flowRunEventsList())
       return (60 / this.calendarInterval) * 24
     },
     end() {
@@ -69,15 +71,15 @@ export default {
   watch: {
     async date() {
       this.gettingRuns = true
-      this.flowRunEvents = await this.flowRunEventsMethod()
+      this.flowRunEvents = await this.flowRunEventsList()
       this.gettingRuns = false
     },
     async flowId() {
-      this.flowRunEvents = await this.flowRunEventsMethod()
+      this.flowRunEvents = await this.flowRunEventsList()
     }
   },
   async created() {
-    this.flowRunEvents = await this.flowRunEventsMethod()
+    this.flowRunEvents = await this.flowRunEventsList()
   },
   methods: {
     async flowRunEventsMethod() {
@@ -136,9 +138,8 @@ export default {
             flowRuns.runs[0].start_time &&
             !flowRuns.runs[0].end_time
           )
-            //Will need to fix this to handle timezones!!
-            console.log(this.formatCalendarTime(new Date()))
-          flowRuns.end = this.formatCalendarTime(new Date())
+            //Will need to fix this to handle timezones!!?
+            flowRuns.end = this.formatCalendarTime(new Date())
           if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
             flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
           const state = flowRuns.runs.filter(run => {
@@ -150,6 +151,44 @@ export default {
       })
       this.gettingRuns = false
       return event
+    },
+    async flowRunEventsList() {
+      this.gettingRuns = true
+      const finished = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+        variables: {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          flowIds: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
+      const upcoming = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+        variables: {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          flowIds: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
+      const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
+
+      allRuns.map(flowRun => {
+        flowRun.start = !flowRun.start_time
+          ? this.formatCalendarTime(flowRun.scheduled_start_time)
+          : this.formatCalendarTime(flowRun.start_time)
+        if (flowRun.start_time && !flowRun.end_time)
+          //Will need to fix this to handle timezones!!?
+          flowRun.end = this.formatCalendarTime(new Date())
+        if (flowRun.end_time)
+          flowRun.end = this.formatCalendarTime(flowRun.end_time)
+        flowRun.category = flowRun.flow_id
+      })
+      this.gettingRuns = false
+      return allRuns
     },
     eventColor(event) {
       return event.state ? event.state : 'primary'
@@ -170,12 +209,56 @@ export default {
       }
       nativeEvent.stopPropagation()
     }
+  },
+  apollo: {
+    flowRuns: {
+      query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          flowIds: this.flowId
+        }
+      },
+      skip() {
+        return !this.flowId
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run || []
+    },
+    scheduledFlowRuns: {
+      query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          flowIds: this.flowId
+        }
+      },
+      skip() {
+        return !this.flowId
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run || []
+    }
   }
 }
 </script>
 
 <template>
-  <div>
+  <v-skeleton-loader
+    type="image"
+    min-height="329"
+    height="100%"
+    :loading="loadingKey > 0 || gettingRuns"
+    transition-group="quick-fade"
+    class="my-2"
+    tile
+  >
     <v-calendar
       ref="calendar"
       class="calendarstyle"
@@ -184,7 +267,7 @@ export default {
       event-overlap-mode="stack"
       :events="flowRunEvents"
       :event-color="eventColor"
-      :interval-height="100"
+      :interval-height="150"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       type="category"
@@ -234,7 +317,7 @@ export default {
         </v-card-actions>
       </v-card>
     </v-menu>
-  </div>
+  </v-skeleton-loader>
 </template>
 
 <style lang="scss">

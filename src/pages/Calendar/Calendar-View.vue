@@ -23,7 +23,7 @@ export default {
       timePeriod: 'day',
       timePeriodOptions: ['day', 'week', 'month'],
       timeIntervalOptions: [1, 5, 15, 30, 60],
-      timeInterval: 5,
+      timeInterval: 2,
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
