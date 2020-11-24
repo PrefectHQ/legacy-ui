@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      skip: false,
+      skip: true,
       loadingKey: 0,
       gettingRuns: false,
       flowRunEvents: [],
@@ -82,8 +82,8 @@ export default {
         query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
         variables: {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.queryStart(this.date),
-          endTime: this.end,
+          startTime: this.convertCalendarStartTime(this.date),
+          endTime: this.convertCalendarStartTime(this.end),
           flowIds: this.flowId
         },
         loadingKey: 'loadingKey'
@@ -92,8 +92,8 @@ export default {
         query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
         variables: {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.date,
-          endTime: this.end,
+          startTime: this.convertCalendarStartTime(this.date),
+          endTime: this.convertCalendarStartTime(this.end),
           flowIds: this.flowId
         },
         loadingKey: 'loadingKey'
@@ -111,7 +111,7 @@ export default {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
           if (diff < 60000) {
             const addedTime = this.addTime(flowRun.start, 3, 'm')
-            flowRun.end = this.formatCalendarTime(addedTime)
+            flowRun.end = addedTime
           } else {
             flowRun.end = this.formatCalendarTime(flowRun.end_time)
           }
@@ -166,7 +166,7 @@ export default {
         }
       },
       skip() {
-        return !this.flowId
+        return this.skip
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
@@ -183,7 +183,7 @@ export default {
         }
       },
       skip() {
-        return !this.flowId
+        return this.skip
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
