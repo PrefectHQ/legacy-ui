@@ -172,6 +172,7 @@ export default {
             class="vertical-button"
             text
             depressed
+            style="height: 46px;"
             small
             :disabled="isReadOnlyUser || !canRestart"
             color="info"

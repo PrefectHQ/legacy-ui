@@ -245,6 +245,7 @@ export default {
           <v-btn
             class="vertical-button mr-2 position-relative"
             color="primary"
+            style="height: 46px;"
             text
             tile
             small
