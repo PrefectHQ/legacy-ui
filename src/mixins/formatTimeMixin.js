@@ -46,6 +46,12 @@ export const formatTime = {
       }`
       return date
     },
+    queryStart(date) {
+      const timeObj = moment(date)
+      const start = timeObj.toISOString()
+      console.log('start', start)
+      return start
+    },
     formatCalendarTime(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)

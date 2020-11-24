@@ -82,7 +82,7 @@ export default {
         query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
         variables: {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.date,
+          startTime: this.queryStart(this.date),
           endTime: this.end,
           flowIds: this.flowId
         },
@@ -107,8 +107,15 @@ export default {
         if (flowRun.start_time && !flowRun.end_time)
           //Will need to fix this to handle timezones!!?
           flowRun.end = this.formatCalendarTime(new Date())
-        if (flowRun.end_time)
-          flowRun.end = this.formatCalendarTime(flowRun.end_time)
+        if (flowRun.end_time) {
+          const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
+          if (diff < 60000) {
+            const addedTime = this.addTime(flowRun.start, 3, 'm')
+            flowRun.end = this.formatCalendarTime(addedTime)
+          } else {
+            flowRun.end = this.formatCalendarTime(flowRun.end_time)
+          }
+        }
         flowRun.category = flowRun.flow_id
       })
       this.gettingRuns = false
@@ -153,8 +160,8 @@ export default {
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.date,
-          endTime: this.end,
+          startTime: this.convertCalendarStartTime(this.date),
+          endTime: this.convertCalendarStartTime(this.end),
           flowIds: this.flowId
         }
       },
@@ -170,8 +177,8 @@ export default {
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.date,
-          endTime: this.end,
+          startTime: this.convertCalendarStartTime(this.date),
+          endTime: this.convertCalendarStartTime(this.end),
           flowIds: this.flowId
         }
       },
@@ -189,11 +196,8 @@ export default {
 <template>
   <v-skeleton-loader
     type="image"
-    min-height="329"
-    height="100%"
     :loading="loadingKey > 0 || gettingRuns"
     transition-group="quick-fade"
-    class="my-2"
     tile
   >
     <v-calendar
@@ -203,7 +207,7 @@ export default {
       event-overlap-mode="stack"
       :events="flowRunEvents"
       :event-color="eventColor"
-      :interval-height="150"
+      :interval-height="250"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       type="category"
@@ -211,8 +215,8 @@ export default {
     >
       <template #event="{event}">
         <div class="caption pl-2">
-          {{ event.name }} {{ formTimeNoTimeZone(event.start) }} -
-          {{ formTimeNoTimeZone(event.end) }}
+          {{ event.name }} {{ formTime(event.start_time) }} -
+          {{ formTime(event.end_time) }}
         </div>
       </template>
       <template #category="{ category }">
@@ -225,6 +229,7 @@ export default {
       :close-on-content-click="false"
       :activator="selectedElement"
       offset-x
+      bottom
       max-width="150px"
     >
       <v-card max-width="150px">
@@ -235,7 +240,7 @@ export default {
         <v-card-text>
           <v-icon class="pr-4" :color="selectedEvent.state">pi-flow-run</v-icon>
           <router-link
-            :to="{ name: 'flow-run', params: { id: selectedEvent.flow_id } }"
+            :to="{ name: 'flow-run', params: { id: selectedEvent.id } }"
           >
             {{ selectedEvent.name }}
           </router-link>
