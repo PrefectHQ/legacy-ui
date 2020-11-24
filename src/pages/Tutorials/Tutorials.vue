@@ -42,7 +42,7 @@ export default {
       left
       fixed
       touchless
-      :expand-on-hover="$vuetify.breakpoint.mobile"
+      :expand-on-hover="$vuetify.breakpoint.smAndDown"
       :style="{ top: $vuetify.breakpoint.smAndDown ? '56px' : '64px' }"
     >
       <template #prepend>
