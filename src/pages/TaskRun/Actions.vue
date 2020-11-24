@@ -44,7 +44,6 @@ export default {
         <div v-on="on">
           <v-btn
             class="vertical-button mr-2"
-            :style="{ height: '46px' }"
             text
             depressed
             small

@@ -140,7 +140,7 @@ export default {
         <div v-on="on">
           <v-btn
             class="vertical-button"
-            :style="{ height: '46px' }"
+            style="height: 46px;"
             color="primary"
             text
             depressed
@@ -170,7 +170,6 @@ export default {
         <div v-on="on">
           <v-btn
             class="vertical-button"
-            :style="{ height: '46px' }"
             text
             depressed
             small

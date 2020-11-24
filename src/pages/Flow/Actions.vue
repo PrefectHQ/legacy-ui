@@ -218,13 +218,13 @@ export default {
 
 <template>
   <div
-    class="pa-0 mb-2 d-flex align-center"
+    class="pa-0 pt-3 mb-2 d-flex align-start"
     :class="[
       $vuetify.breakpoint.xsOnly ? 'justify-center' : 'justify-end',
       $vuetify.breakpoint.xsOnly && 'mx-auto'
     ]"
   >
-    <div style="width: 100px !important;">
+    <div class="version-selector">
       <v-select
         :value.sync="selectedVersion"
         :items="versions"
@@ -243,7 +243,7 @@ export default {
       <template #activator="{ on }">
         <div v-on="on">
           <v-btn
-            class="vertical-button mr-2 py-1 position-relative"
+            class="vertical-button mr-2 position-relative"
             color="primary"
             text
             tile
@@ -378,42 +378,21 @@ export default {
 </template>
 
 <style lang="scss">
-.vertical-divider {
-  border-left: 0.5px solid rgba(0, 0, 0, 0.26);
-  border-right: 0.5px solid rgba(0, 0, 0, 0.26);
-  height: 75%;
-}
+.version-selector {
+  font-size: 16px;
+  padding-top: 12px;
+  width: 100px !important;
 
-// stylelint-disable
-.vertical-button {
-  &.v-btn--tile {
-    height: auto !important;
+  div {
+    font-size: 0.9rem !important;
   }
 
-  .v-btn__content {
-    flex-direction: column-reverse !important;
-  }
-}
-//stylelint-enable
-
-// stylelint-disable
-.v-input--vertical {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-
-  .v-input__slot {
-    flex-direction: column-reverse !important;
-
-    .v-input--selection-controls__input {
-      align-self: center;
-      margin: auto !important;
-      transform: scale(0.9);
-    }
-  }
-
-  .v-btn:not(.v-btn--round).v-size--small {
-    height: unset !important;
+  .v-label {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.0892857143em;
+    line-height: 20px;
+    text-transform: uppercase;
   }
 }
-// stylelint-enable
 </style>

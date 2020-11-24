@@ -35,6 +35,7 @@ export default {
     "
     height="80"
     color="appBackground"
+    class="pb-3"
     style="
     position: fixed;
     width: 100%;
@@ -45,31 +46,25 @@ export default {
       class="d-flex align-center mx-auto"
       style="max-width: 1440px;"
     >
-      <v-col :sm="$slots['page-actions'] ? 6 : 12">
-        <v-row>
-          <v-col cols="12" class="d-flex align-end justify-space-between pb-1">
-            <div class="mr-2">
-              <v-icon x-large color="blue-grey lighten-4">{{ icon }}</v-icon>
-            </div>
-            <div style="width: inherit;">
-              <div v-if="$vuetify.breakpoint.mdAndUp">
-                <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem;">
-                  <slot name="breadcrumbs"></slot>
-                </span>
-                <slot v-if="$slots['page-type']" name="page-type"></slot>
-                <span v-else class="overline">{{ pageType }}</span>
-              </div>
-              <div class="headline">
-                <slot name="page-title"></slot>
-                <slot
-                  v-if="$slots.breadcrumbs && $vuetify.breakpoint.smAndDown"
-                  name="breadcrumbs"
-                >
-                </slot>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
+      <v-col
+        :sm="$slots['page-actions'] ? 6 : 12"
+        class="d-flex align-end justify-space-between"
+      >
+        <div class="mr-2">
+          <v-icon x-large color="blue-grey lighten-4">{{ icon }}</v-icon>
+        </div>
+        <div style="width: inherit;">
+          <div>
+            <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem;">
+              <slot name="breadcrumbs"></slot>
+            </span>
+            <slot v-if="$slots['page-type']" name="page-type"></slot>
+            <span v-else class="overline">{{ pageType }}</span>
+          </div>
+          <div class="headline">
+            <slot name="page-title"></slot>
+          </div>
+        </div>
       </v-col>
       <v-col
         v-if="$slots['page-actions'] && $vuetify.breakpoint.smAndUp"
