@@ -224,15 +224,16 @@ export default {
       $vuetify.breakpoint.xsOnly && 'mx-auto'
     ]"
   >
-    <v-select
-      :value.sync="selectedVersion"
-      :items="versions"
-      dense
-      label="Version"
-      hide-details
-      style="width: 100px !important;"
-      @change="_changeVersion"
-    />
+    <div style="width: 100px !important;">
+      <v-select
+        :value.sync="selectedVersion"
+        :items="versions"
+        dense
+        label="Version"
+        hide-details
+        @change="_changeVersion"
+      />
+    </div>
 
     <v-tooltip
       bottom

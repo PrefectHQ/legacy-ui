@@ -49,7 +49,7 @@ export default {
         <v-row>
           <v-col cols="12" class="d-flex align-end justify-space-between pb-1">
             <div class="mr-2">
-              <v-icon x-large>{{ icon }}</v-icon>
+              <v-icon x-large color="blue-grey lighten-4">{{ icon }}</v-icon>
             </div>
             <div style="width: inherit;">
               <div v-if="$vuetify.breakpoint.mdAndUp">
