@@ -298,7 +298,9 @@ export default {
 
         <v-card-text>
           <v-icon class="pr-4" :color="selectedEvent.state">pi-flow-run</v-icon>
-          <router-link :to="{ name: 'flow-run', params: { id: run.id } }">
+          <router-link
+            :to="{ name: 'flow-run', params: { id: selectedEvent.id } }"
+          >
             {{ selectedEvent.name }}
           </router-link>
         </v-card-text>
