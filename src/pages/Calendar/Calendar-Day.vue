@@ -54,7 +54,6 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     intervalCount() {
-      console.log('event list', this.flowRunEventsList())
       return (60 / this.calendarInterval) * 24
     },
     end() {
@@ -298,17 +297,10 @@ export default {
         /></v-card-title>
 
         <v-card-text>
-          <v-list two-line>
-            <v-list-item
-              v-for="(run, index) in selectedEvent.runs"
-              :key="index"
-            >
-              <v-icon class="pr-4" :color="run.state">pi-flow-run</v-icon>
-              <router-link :to="{ name: 'flow-run', params: { id: run.id } }">
-                {{ run.name }}
-              </router-link>
-            </v-list-item>
-          </v-list>
+          <v-icon class="pr-4" :color="selectedEvent.state">pi-flow-run</v-icon>
+          <router-link :to="{ name: 'flow-run', params: { id: run.id } }">
+            {{ selectedEvent.name }}
+          </router-link>
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" @click="selectedOpen = false">

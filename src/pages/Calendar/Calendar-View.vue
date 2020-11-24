@@ -36,7 +36,6 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     flowId() {
-      console.log('flowId switched')
       if (this.selectedFlowId) return this.selectedFlowId
       if (this.flowRuns) return this.flowRuns[0]?.flow_id
       return null
