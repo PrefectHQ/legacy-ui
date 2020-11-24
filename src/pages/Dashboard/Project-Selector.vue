@@ -132,7 +132,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet tile color="appBackground">
+  <div>
     <v-autocomplete
       id="project-dropdown"
       v-model="projectSelect"
@@ -142,13 +142,11 @@ export default {
       data-cy="projects"
       :items="sortedProjects"
       :loading="loading"
+      label="Project"
       item-value="id"
       item-text="name"
       prepend-icon="pi-project"
       dense
-      flat
-      solo
-      full-width
       background-color="transparent"
     >
       <template #item="{ item }">
@@ -169,7 +167,7 @@ export default {
     </v-autocomplete>
 
     <NewProjectDialog :show.sync="newProjectDialog" />
-  </v-sheet>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -182,10 +180,25 @@ export default {
   color: #3b8dff;
   font-weight: 500;
 }
+</style>
 
+<style lang="scss">
 .project-selector {
-  font-size: 0.9rem;
+  font-size: 16px;
   margin: auto;
-  max-width: 250px;
+  padding-top: 12px;
+  width: 250px !important;
+
+  div {
+    font-size: 0.9rem !important;
+  }
+
+  .v-label {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.0892857143em;
+    line-height: 20px;
+    text-transform: uppercase;
+  }
 }
 </style>
