@@ -62,19 +62,19 @@ export default {
       return this.loadingKey > 0 || this.gettingRuns
     }
   },
-  // watch: {
-  //   async date() {
-  //     this.gettingRuns = true
-  //     this.flowRunEvents = await this.flowRunEventsMethod()
-  //     this.gettingRuns = false
-  //   },
-  //   async flowId() {
-  //     this.flowRunEvents = await this.flowRunEventsMethod()
-  //   }
-  // },
-  // async created() {
-  //   this.flowRunEvents = await this.flowRunEventsMethod()
-  // },
+  watch: {
+    async date() {
+      this.gettingRuns = true
+      this.flowRunEvents = await this.flowRunEventsList()
+      this.gettingRuns = false
+    },
+    async flowId() {
+      this.flowRunEvents = await this.flowRunEventsList()
+    }
+  },
+  async created() {
+    this.flowRunEvents = await this.flowRunEventsList()
+  },
   methods: {
     // async flowRunEventsMethod() {
     //   this.gettingRuns = true
@@ -127,6 +127,13 @@ export default {
     //         flowRuns.runs.length > 1 || !flowRuns.runs[0].start_time
     //           ? this.formatCalendarTime(timeGroup)
     //           : this.formatCalendarTime(flowRuns.runs[0].start_time)
+    //       if (
+    //         flowRuns.runs.length === 1 &&
+    //         flowRuns.runs[0].start_time &&
+    //         !flowRuns.runs[0].end_time
+    //       )
+    //         //Will need to fix this to handle timezones!!?
+    //         flowRuns.end = this.formatCalendarTime(new Date())
     //       if (flowRuns.runs.length === 1 && flowRuns.runs[0].end_time)
     //         flowRuns.end = this.formatCalendarTime(flowRuns.runs[0].end_time)
     //       const state = flowRuns.runs.filter(run => {
@@ -139,6 +146,44 @@ export default {
     //   this.gettingRuns = false
     //   return event
     // },
+    async flowRunEventsList() {
+      this.gettingRuns = true
+      const finished = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+        variables: {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          flowIds: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
+      const upcoming = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+        variables: {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.date,
+          endTime: this.end,
+          flowIds: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
+      const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
+
+      allRuns.map(flowRun => {
+        flowRun.start = !flowRun.start_time
+          ? this.formatCalendarTime(flowRun.scheduled_start_time)
+          : this.formatCalendarTime(flowRun.start_time)
+        if (flowRun.start_time && !flowRun.end_time)
+          //Will need to fix this to handle timezones!!?
+          flowRun.end = this.formatCalendarTime(new Date())
+        if (flowRun.end_time)
+          flowRun.end = this.formatCalendarTime(flowRun.end_time)
+        flowRun.category = flowRun.flow_id
+      })
+      this.gettingRuns = false
+      return allRuns
+    },
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
@@ -180,15 +225,15 @@ export default {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.date,
           endTime: this.end,
-          flowIds: this.flowId ? [this.flowId] : null
+          flowIds: this.flowId
         }
       },
       skip() {
-        return this.skip
+        return !this.flowId
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
-      update: data => data.flow_run
+      update: data => data.flow_run || []
     },
     scheduledFlowRuns: {
       query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
@@ -196,51 +241,50 @@ export default {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.date,
-          endTime: this.end
+          endTime: this.end,
+          flowIds: this.flowId
         }
       },
       skip() {
-        return this.skip
+        return !this.flowId
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
-      update: data => data.flow_run
+      update: data => data.flow_run || []
     }
   }
 }
 </script>
 
 <template>
-  <div>
-    <!-- <v-overlay v-if="overlay" absolute>
-      Fetching and organizing flows...</v-overlay
-    > -->
+  <v-skeleton-loader
+    type="image"
+    min-height="329"
+    height="100%"
+    :loading="loadingKey > 0 || gettingRuns"
+    transition-group="quick-fade"
+    class="my-2"
+    tile
+  >
     <v-calendar
       ref="calendar"
       class="calendarstyle"
       :now="date"
       :value="date"
-      category-show-all
+      event-overlap-mode="stack"
+      :events="flowRunEvents"
+      :event-color="eventColor"
+      :interval-height="150"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
-      type="category"
-      @click:event="handleEventClick(item)"
+      type="4day"
+      @click:event="handleEventClick"
     >
-      <template #interval="{time}">
-        <v-row class="ma-0 pa-0">
-          <v-card
-            v-for="event in filteredFlowRunEvents(time)"
-            :key="event.id"
-            class="pl-4, pt-4"
-            flat
-          >
-            <v-btn icon @click="handleEventClick"
-              ><v-icon x-small :color="eventColor(event)"
-                >pi-flow-run</v-icon
-              ></v-btn
-            ><span class="caption"> {{ event.name }}</span>
-          </v-card>
-        </v-row>
+      <template #event="{event}">
+        <div class="caption pl-2">
+          {{ event.name }} {{ formTimeNoTimeZone(event.start) }} -
+          {{ formTimeNoTimeZone(event.end) }}
+        </div>
       </template>
       <template #category="{ category }">
         <FlowName :id="category" />
@@ -256,25 +300,20 @@ export default {
     >
       <v-card max-width="150px">
         <v-card-title>
-          {{ selectedEvent.name }} - <FlowName :id="selectedEvent.category"
+          {{ selectedEvent.name }} - <FlowName :id="selectedEvent.flow_id"
         /></v-card-title>
 
         <v-card-text>
-          <v-list two-line>
-            <v-list-item
-              v-for="(run, index) in selectedEvent.runs"
-              :key="index"
-            >
-              <v-icon class="pr-4" :color="run.state">pi-flow-run</v-icon>
-              <router-link :to="{ name: 'flow-run', params: { id: run.id } }">
-                {{ run.name }}
-              </router-link>
-            </v-list-item>
-          </v-list>
+          <v-icon class="pr-4" :color="selectedEvent.state">pi-flow-run</v-icon>
+          <router-link
+            :to="{ name: 'flow-run', params: { id: selectedEvent.flow_id } }"
+          >
+            {{ selectedEvent.name }}
+          </router-link>
         </v-card-text>
       </v-card>
     </v-menu>
-  </div>
+  </v-skeleton-loader>
 </template>
 
 <style lang="scss">

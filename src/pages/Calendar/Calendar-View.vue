@@ -23,12 +23,13 @@ export default {
       timePeriod: 'day',
       timePeriodOptions: ['day', 'week', 'month'],
       timeIntervalOptions: [1, 5, 15, 30, 60],
-      timeInterval: 5,
+      timeInterval: 2,
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
       selectedFlowId: null,
-      filters: [{ name: 'Flows' }]
+      filters: [{ name: 'Flows' }],
+      loadingKey: 0
     }
   },
   computed: {
@@ -99,33 +100,43 @@ export default {
         ></v-date-picker>
         <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
         <v-time-picker v-model="end" :max="start"></v-time-picker> -->
-        <v-expansion-panels :value="0">
-          <v-expansion-panel v-for="(filter, index) in filters" :key="index">
-            <v-expansion-panel-header>
-              {{ filter.name }}
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-list>
-                <v-list-item
-                  v-for="item in allRuns"
-                  :key="item.id"
-                  dense
-                  @click="chooseSelectedFlow(item)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-weight-light">
-                      <FlowName :id="item.flow_id" />
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
+        <v-skeleton-loader
+          type="image"
+          min-height="329"
+          height="100%"
+          :loading="loadingKey > 0"
+          transition-group="quick-fade"
+          class="my-2"
+          tile
+        >
+          <v-expansion-panels :value="0">
+            <v-expansion-panel v-for="(filter, index) in filters" :key="index">
+              <v-expansion-panel-header>
+                {{ filter.name }}
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-list>
+                  <v-list-item
+                    v-for="item in flowRuns"
+                    :key="item.id"
+                    dense
+                    @click="chooseSelectedFlow(item)"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-subtitle class="font-weight-light">
+                        <FlowName :id="item.flow_id" />
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-skeleton-loader>
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <CalendarDay
-          v-if="timePeriod === 'day'"
+          v-if="timePeriod === 'day' && flowId"
           :project-id="projectId"
           :date="date"
           :flow-id="flowId"
