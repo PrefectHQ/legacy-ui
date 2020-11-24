@@ -270,13 +270,12 @@ export default {
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       type="4day"
-      :locale="timezone"
       @click:event="handleEventClick"
     >
       <template #event="{event}">
         <div class="caption pl-2">
-          {{ event.name }} {{ formTime(event.start) }} -
-          {{ formTime(event.end) }}
+          {{ event.name }} {{ formTimeNoTimeZone(event.start) }} -
+          {{ formTimeNoTimeZone(event.end) }}
         </div>
       </template>
 
