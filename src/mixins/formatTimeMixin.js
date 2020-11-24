@@ -44,13 +44,11 @@ export const formatTime = {
           ? timeObj.format('YYYY-MM-DD')
           : moment(timestamp).format('YYYY-MM-DD')
       }`
-      console.log('date', date)
       return date
     },
     formatCalendarTime(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
-      console.log(timeObj.format('YYYY-MM-DD HH:mm:ss'))
       return timeObj.format('YYYY-MM-DD HH:mm:ss')
     },
     convertCalendarStartTime(timestamp) {
