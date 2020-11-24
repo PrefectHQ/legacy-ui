@@ -1,17 +1,18 @@
 <script>
 import Agents from '@/components/Agents/Agents'
-import NavTabBar from '@/components/NavTabBar'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
+import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
+import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
+import NavTabBar from '@/components/NavTabBar'
 import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
-import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import { mapGetters } from 'vuex'
 import gql from 'graphql-tag'
 
@@ -45,6 +46,7 @@ export default {
   components: {
     Agents,
     AgentsTile,
+    BreadCrumbs,
     FailedFlowsTile,
     FlowTableTile,
     InProgressTile,
@@ -207,13 +209,36 @@ export default {
         "
       >
         <span v-if="loading === 0">
-          <span class="font-weight-medium">{{ tenant.name }}</span> -
-          {{ projectId && project ? project.name : 'All Projects' }}
+          {{ projectId && project ? project.name : tenant.name }}
         </span>
         <span v-else>
           <v-skeleton-loader type="heading" tile></v-skeleton-loader>
         </span>
       </span>
+
+      <span
+        v-if="projectId && project"
+        slot="breadcrumbs"
+        :style="
+          $vuetify.breakpoint.smAndDown && {
+            display: 'inline',
+            'font-size': '0.875rem'
+          }
+        "
+      >
+        <BreadCrumbs
+          :crumbs="[
+            {
+              route: {
+                name: 'dashboard',
+                params: { tenant: tenant.slug }
+              },
+              text: tenant.name
+            }
+          ]"
+        />
+      </span>
+
       <span slot="page-actions">
         <v-skeleton-loader
           slot="row-0"
