@@ -204,7 +204,7 @@ export default {
     },
     handleEventClick(event) {
       const open = () => {
-        this.selectedEvent = event
+        this.selectedEvent = event.event
         setTimeout(() => {
           this.selectedOpen = true
         }, 10)
@@ -277,7 +277,7 @@ export default {
       :interval-height="150"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
-      type="4day"
+      type="category"
       @click:event="handleEventClick"
     >
       <template #event="{event}">
