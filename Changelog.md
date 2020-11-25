@@ -13,6 +13,7 @@
 ### Bugfixes
 
 - Fix an issue where restarting a task run would fail to correctly set downstream task run states - [#452](https://github.com/PrefectHQ/ui/pull/452)
+- Fix schematic node finished task run durations - [#468](https://github.com/PrefectHQ/ui/pull/468)
 
 ## 2020-11-13
 
