@@ -138,6 +138,7 @@ export default {
     :class="{
       'elevation-0': isTransparent
     }"
+    elevate-on-scroll
     :color="navBarColor"
     :fixed="!isTransparent"
     clipped-right
