@@ -47,9 +47,10 @@ export default {
         .remove()
     },
     createRingChart() {
-      console.log('creating chart', this.colors, this.segments)
       this.radius = Math.min(this.width, this.height) / 2
-      this.color = d3.scaleOrdinal().range(this.colors || ['f22', 'ff222'])
+      this.color = d3
+        .scaleOrdinal()
+        .range(this.colors || ['ffff', 'transparent'])
 
       this.arc = d3
         .arc()
@@ -90,7 +91,6 @@ export default {
       this.updateRingChart()
     },
     updateRingChart() {
-      console.log('pie', this.pie(this.segments))
       this.chart.selectAll('.arc').exit()
 
       let category = this.chart
@@ -129,7 +129,6 @@ export default {
             return this.arc(d)
           }
         })
-      console.log('category', category)
     }
   }
 }
