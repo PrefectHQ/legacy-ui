@@ -33,9 +33,9 @@ export default {
 </script>
 
 <template>
-  <div v-if="loadingKey < 1" class="caption text-center">
+  <div v-if="loadingKey < 1" class="caption text-center max-width">
     <!-- <router-link :to="{ name: 'flow', params: { id: flow.id } }"> -->
-    <truncate :content="flowName"> </truncate>
+    <truncate v-if="loadingKey < 1" :content="flowName"> </truncate>
     <!-- </router-link> -->
   </div>
 </template>

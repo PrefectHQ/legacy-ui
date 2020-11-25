@@ -6,7 +6,7 @@ export default {
   props: {
     colors: { type: Array, default: () => null },
     segments: { type: Array, default: () => [] },
-    width: { type: Number, default: () => null },
+    width: { type: Number, default: () => 200 },
     height: { type: Number, default: () => null },
     outerRadius: { type: Number, default: () => null },
     innerRadius: { type: Number, default: () => null }
@@ -47,13 +47,9 @@ export default {
         .remove()
     },
     createRingChart() {
-      this.width = this.width || 200
-      this.height = this.height || 200
+      console.log('creating chart', this.colors, this.segments)
       this.radius = Math.min(this.width, this.height) / 2
-
-      this.color = d3
-        .scaleOrdinal()
-        .range(this.colors || ['#fff', 'transparent'])
+      this.color = d3.scaleOrdinal().range(this.colors || ['f22', 'ff222'])
 
       this.arc = d3
         .arc()
@@ -94,6 +90,7 @@ export default {
       this.updateRingChart()
     },
     updateRingChart() {
+      console.log('pie', this.pie(this.segments))
       this.chart.selectAll('.arc').exit()
 
       let category = this.chart
@@ -132,6 +129,7 @@ export default {
             return this.arc(d)
           }
         })
+      console.log('category', category)
     }
   }
 }
