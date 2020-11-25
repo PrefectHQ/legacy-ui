@@ -139,7 +139,8 @@ export default {
     ...mapActions('alert', ['setAlert']),
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
+        let target = Object.keys(this.$route.query)[0]
+        if (this.tabs?.find(tab => tab.target == target)) return target
       }
       return 'overview'
     },
@@ -217,18 +218,7 @@ export default {
 
 <template>
   <v-sheet v-if="taskRun" color="appBackground">
-    <SubPageNav>
-      <span
-        slot="page-type"
-        style="align-items: center;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.75rem;
-      height: 100%;
-      justify-content: center;
-      text-align: center;"
-        ><v-icon>pi-task-run</v-icon>TASK<br />RUN</span
-      >
+    <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
         style="
@@ -298,9 +288,9 @@ export default {
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
       style="max-width: 1440px;"
-      :style="
-        $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
-      "
+      :style="{
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
     >
       <v-tab-item
         class="tab-full-height pa-0"

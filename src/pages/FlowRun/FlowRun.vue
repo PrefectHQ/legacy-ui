@@ -189,18 +189,7 @@ export default {
 
 <template>
   <v-sheet v-if="flowRun" color="appBackground">
-    <SubPageNav>
-      <span
-        slot="page-type"
-        style="align-items: center;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.75rem;
-      height: 100%;
-      justify-content: center;
-      text-align: center;"
-        ><v-icon>pi-flow-run</v-icon>FLOW<br />RUN</span
-      >
+    <SubPageNav icon="pi-flow-run" page-type="Flow Run">
       <span
         slot="page-title"
         style="
@@ -221,45 +210,48 @@ export default {
         />
       </span>
 
-      <BreadCrumbs
+      <span
         slot="breadcrumbs"
-        :crumbs="[
-          {
-            route: {
-              name: 'project',
-              params: { id: flowRun.flow.project.id }
-            },
-            text: flowRun.flow.project.name
-          },
-          {
-            route: {
-              name: 'flow',
-              params: { id: flowRun.flow.id }
-            },
-            text: flowRun.flow.name
-          }
-        ]"
         :style="
           $vuetify.breakpoint.smAndDown && {
             display: 'inline',
             'font-size': '0.875rem'
           }
         "
-      ></BreadCrumbs>
+      >
+        <BreadCrumbs
+          :crumbs="[
+            {
+              route: {
+                name: 'project',
+                params: { id: flowRun.flow.project.id }
+              },
+              text: flowRun.flow.project.name
+            },
+            {
+              route: {
+                name: 'flow',
+                params: { id: flowRun.flow.id }
+              },
+              text: flowRun.flow.name
+            }
+          ]"
+        />
+      </span>
 
       <Actions slot="page-actions" :flow-run="flowRun" />
-      <span slot="tabs" style="width: 100%;"
-        ><NavTabBar :tabs="tabs" page="flow-run"
-      /></span>
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="flow-run" />
+      </span>
     </SubPageNav>
 
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
-      :style="[
-        { 'padding-top': $vuetify.breakpoint.mdAndUp ? '130px' : '80px' },
-        { 'max-width': tab == 'chart' ? 'auto' : '1440px' }
-      ]"
+      :style="{
+        'max-width': tab == 'chart' ? 'auto' : '1440px',
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
       mandatory
     >
       <v-tab-item

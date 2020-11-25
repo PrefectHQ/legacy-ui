@@ -193,6 +193,12 @@ body {
   }
 }
 
+.tabs-border-top {
+  .v-tabs-bar {
+    border-top: 1px solid #ddd !important;
+  }
+}
+
 .v-text-field-input-color {
   // stylelint-disable
   .v-text-field__slot {

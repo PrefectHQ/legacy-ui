@@ -109,7 +109,8 @@ export default {
   methods: {
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
+        let target = Object.keys(this.$route.query)[0]
+        if (this.tabs?.find(tab => tab.target == target)) return target
       }
       return 'overview'
     }
@@ -141,18 +142,7 @@ export default {
 
 <template>
   <v-sheet color="appBackground">
-    <SubPageNav>
-      <span
-        slot="page-type"
-        style="align-items: center;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.75rem;
-      height: 100%;
-      justify-content: center;
-      text-align: center;"
-        ><v-icon>pi-task</v-icon>TASK</span
-      >
+    <SubPageNav icon="pi-task" page-type="Task">
       <span
         slot="page-title"
         :style="

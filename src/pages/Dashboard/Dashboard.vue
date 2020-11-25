@@ -1,17 +1,18 @@
 <script>
 import Agents from '@/components/Agents/Agents'
-import NavTabBar from '@/components/NavTabBar'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
+import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
+import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
+import NavTabBar from '@/components/NavTabBar'
 import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
-import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import { mapGetters } from 'vuex'
 import gql from 'graphql-tag'
 
@@ -45,6 +46,7 @@ export default {
   components: {
     Agents,
     AgentsTile,
+    BreadCrumbs,
     FailedFlowsTile,
     FlowTableTile,
     InProgressTile,
@@ -188,18 +190,10 @@ export default {
 
 <template>
   <v-sheet color="appBackground">
-    <SubPageNav>
-      <span
-        slot="page-type"
-        style="align-items: center;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.75rem;
-      height: 100%;
-      justify-content: center;
-      text-align: center;"
-        ><v-icon>view_quilt</v-icon>DASH</span
-      >
+    <SubPageNav
+      :icon="projectId && project ? 'pi-project' : 'view_quilt'"
+      :page-type="projectId && project ? 'Project' : 'Dashboard'"
+    >
       <span
         slot="page-title"
         :style="
@@ -215,14 +209,40 @@ export default {
         "
       >
         <span v-if="loading === 0">
-          <span class="font-weight-medium">{{ tenant.name }}</span> -
-          {{ projectId && project ? project.name : 'All Projects' }}
+          {{ projectId && project ? project.name : tenant.name }}
         </span>
         <span v-else>
           <v-skeleton-loader type="heading" tile></v-skeleton-loader>
         </span>
       </span>
-      <span slot="page-actions">
+
+      <span
+        v-if="projectId && project"
+        slot="breadcrumbs"
+        :style="
+          $vuetify.breakpoint.smAndDown && {
+            display: 'inline',
+            'font-size': '0.875rem'
+          }
+        "
+      >
+        <BreadCrumbs
+          :crumbs="[
+            {
+              route: {
+                name: 'dashboard',
+                params: { tenant: tenant.slug }
+              },
+              text: tenant.name
+            }
+          ]"
+        />
+      </span>
+
+      <span
+        slot="page-actions"
+        :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
+      >
         <v-skeleton-loader
           slot="row-0"
           :loading="loadedTiles < 4"
@@ -233,18 +253,20 @@ export default {
           <ProjectSelector @project-select="handleProjectSelect" />
         </v-skeleton-loader>
       </span>
-      <span slot="tabs" style="width: 100%;"
-        ><NavTabBar :tabs="tabs" page="dashboard"
-      /></span>
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="dashboard" />
+      </span>
     </SubPageNav>
 
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
-      style="max-width: 1440px;"
-      :style="
-        $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
+      style="
+        max-width: 1440px;
       "
+      :style="{
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
       mandatory
     >
       <v-tab-item
