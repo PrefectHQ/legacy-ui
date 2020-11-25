@@ -1,0 +1,112 @@
+<script>
+import DurationSpan from '@/components/DurationSpan'
+import { formatTime } from '@/mixins/formatTimeMixin'
+import FlowName from '@/pages/Calendar/FlowName'
+export default {
+  components: {
+    DurationSpan,
+    FlowName
+  },
+  mixins: [formatTime],
+  props: {
+    run: { type: Object, required: true },
+    type: { type: String, required: false, default: 'task-run' }
+  },
+  methods: {
+    statusStyle(state) {
+      return {
+        'border-radius': '50%',
+        display: 'inline-block',
+        'background-color': `var(--v-${state}-base)`,
+        height: '1rem',
+        width: '1rem'
+      }
+    }
+  }
+}
+</script>
+
+<template>
+  <v-card tile>
+    <v-card-title class="text-subtitle-1">
+      <router-link :to="{ name: type, params: { id: run.id } }">
+        {{ run.name ? run.name : run.task_name }}
+        {{ run.map_index > -1 ? `(${run.map_index})` : '' }}
+      </router-link>
+      <span v-if="type === 'flow_run'"> <FlowName :id="run.id" /> </span>
+    </v-card-title>
+    <v-card-text>
+      <div>
+        State:
+        <span :style="statusStyle(run.state)"></span>
+        <span class="font-weight-bold"> {{ run.state }}</span>
+      </div>
+      <div
+        v-if="run.start_time"
+        class="subtitle d-flex align-end justify-space-between"
+      >
+        Duration:
+        <DurationSpan
+          class="font-weight-bold"
+          :start-time="run.start_time"
+          :end-time="run.end_time"
+        />
+      </div>
+      <div
+        v-if="run.start_time"
+        class="subtitle d-flex align-end justify-space-between"
+      >
+        Start:
+        <span class="font-weight-bold">
+          {{ formatTime(run.start_time) }}
+        </span>
+      </div>
+      <div
+        v-if="run.end_time"
+        class="subtitle d-flex align-end justify-space-between"
+      >
+        End:
+        <span class="font-weight-bold">
+          {{ formatTime(run.end_time) }}
+        </span>
+      </div>
+      <div
+        v-if="run.state_timestamp"
+        class="subtitle d-flex align-end justify-space-between"
+      >
+        Updated:
+        <span class="font-weight-bold">
+          {{ formatTime(run.state_timestamp) }}
+        </span>
+      </div>
+      <div v-if="type === 'task-run'">
+        <div class="subtitle d-flex align-end justify-space-between">
+          Max Retries:
+          <span class="font-weight-bold">
+            {{ run.max_retries || 0 }}
+          </span>
+        </div>
+        <div class="subtitle d-flex align-end justify-space-between">
+          Retry delay:
+          <span class="font-weight-bold">
+            {{ run.retry_delay || 0 }}
+          </span>
+        </div>
+        <v-divider class="my-2" />
+        <div class="text-subtitle-1">
+          <div>Message:</div>
+          <div class="font-weight-bold">
+            {{ run.state_message || 'No message' }}
+          </div>
+        </div>
+        <v-divider class="my-2" />
+        <div class="text-subtitle-1">
+          <div>Result:</div>
+          <div class="font-weight-bold">
+            {{ run.state_result || 'No result' }}
+          </div>
+        </div>
+      </div>
+    </v-card-text>
+  </v-card>
+</template>

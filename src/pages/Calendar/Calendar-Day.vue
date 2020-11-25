@@ -1,6 +1,6 @@
 <script>
 import FlowName from '@/pages/Calendar/FlowName'
-import FlowRunMenu from '@/components/TaskRunMenu'
+import FlowRunMenu from '@/components/RunMenu'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -84,10 +84,12 @@ export default {
   watch: {
     async date() {
       this.gettingRuns = true
+      this.selectedEvent = null
       this.flowRunEvents = await this.flowRunEventsList()
       this.gettingRuns = false
     },
     async flowId() {
+      this.selectedEvent = null
       this.flowRunEvents = await this.flowRunEventsList()
     }
   },
@@ -143,9 +145,10 @@ export default {
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
-    handleEventClick(event) {
+    handleEventClick({ nativeEvent, event }) {
       const open = () => {
-        this.selectedEvent = event.event
+        this.selectedEvent = event
+        this.selectedElement = nativeEvent.target
         setTimeout(() => {
           this.selectedOpen = true
         }, 10)
@@ -181,7 +184,7 @@ export default {
       event-overlap-mode="stack"
       :events="flowRunEvents"
       :event-color="eventColor"
-      :interval-height="200"
+      :interval-height="250"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       :type="type"
@@ -204,7 +207,7 @@ export default {
       :close-on-content-click="false"
       :activator="selectedElement"
     >
-      <FlowRunMenu :task-run="selectedEvent" />
+      <FlowRunMenu :run="selectedEvent" type="flow-run" />
     </v-menu>
   </v-skeleton-loader>
 </template>
