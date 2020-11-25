@@ -49,11 +49,7 @@ export default {
       }"
       style="max-width: 1440px;"
     >
-      <v-col
-        :sm="$slots['page-actions'] ? 6 : 12"
-        class="d-flex align-end"
-        :class="{}"
-      >
+      <v-col :sm="$slots['page-actions'] ? 6 : 12" class="d-flex align-end">
         <div class="mr-2">
           <v-icon x-large color="blue-grey lighten-4">{{ icon }}</v-icon>
         </div>

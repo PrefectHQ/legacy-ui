@@ -87,14 +87,6 @@ export default {
       >
         <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
         {{ tb.name }}
-        <v-badge
-          v-if="tb.badgeText"
-          color="codePink"
-          :content="tb.badgeText"
-          bottom
-          bordered
-          inline
-        ></v-badge>
       </v-tab>
       <v-menu
         v-else
@@ -115,12 +107,13 @@ export default {
               :data-cy="`${page}-${tb.target}-tab`"
               :href="`#${tb.target}`"
               :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
+              style="height: 100%;"
               :disabled="tb.disabled"
               :hidden="tb.hidden"
             >
-              <v-icon left :size="tb.iconSize || 'medium'">{{
-                tb.icon
-              }}</v-icon>
+              <v-icon left :size="tb.iconSize || 'medium'">
+                {{ tb.icon }}
+              </v-icon>
               {{ tb.name }}
               <v-badge
                 v-if="tb.badgeText"
