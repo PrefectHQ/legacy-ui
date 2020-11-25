@@ -61,6 +61,11 @@ export const formatTime = {
       let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
       return timeObj.add(amount, unit).format('YYYY-MM-DD HH:mm:ss')
     },
+    addTimeNoTz(timestamp, amount, unit) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp)
+      return timeObj.add(amount, unit).format('YYYY-MM-DD HH:mm:ss')
+    },
     addDay(timestamp, amount) {
       if (!timestamp) return
       const timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)

@@ -1,11 +1,13 @@
 <script>
 import FlowName from '@/pages/Calendar/FlowName'
+import FlowRunMenu from '@/components/TaskRunMenu'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
-    FlowName
+    FlowName,
+    FlowRunMenu
   },
   filters: {},
   mixins: [formatTime],
@@ -127,7 +129,7 @@ export default {
         if (flowRun.end_time) {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
           if (diff < 60000) {
-            const addedTime = this.addTime(flowRun.start, 3, 'm')
+            const addedTime = this.addTimeNoTz(flowRun.start, 3, 'm')
             flowRun.end = addedTime
           } else {
             flowRun.end = this.formatCalendarTime(flowRun.end_time)
@@ -179,14 +181,14 @@ export default {
       event-overlap-mode="stack"
       :events="flowRunEvents"
       :event-color="eventColor"
-      :interval-height="250"
+      :interval-height="200"
       :interval-minutes="calendarInterval"
       :interval-count="intervalCount"
       :type="type"
       @click:event="handleEventClick"
     >
       <template #event="{event}">
-        <div class="caption pl-2">
+        <div :id="event.name" class="caption pl-2">
           {{ event.name }} {{ formTime(event.start_time) }} -
           {{ formTime(event.end_time) }}
         </div>
@@ -196,28 +198,13 @@ export default {
       </template>
     </v-calendar>
     <v-menu
-      v-if="selectedEvent"
-      v-model="selectedOpen"
+      :value="selectedOpen"
+      absolute
+      offset-x
       :close-on-content-click="false"
       :activator="selectedElement"
-      offset-x
-      bottom
-      max-width="150px"
     >
-      <v-card max-width="150px">
-        <v-card-title>
-          {{ selectedEvent.name }} - <FlowName :id="selectedEvent.flow_id"
-        /></v-card-title>
-
-        <v-card-text>
-          <v-icon class="pr-4" :color="selectedEvent.state">pi-flow-run</v-icon>
-          <router-link
-            :to="{ name: 'flow-run', params: { id: selectedEvent.id } }"
-          >
-            {{ selectedEvent.name }}
-          </router-link>
-        </v-card-text>
-      </v-card>
+      <FlowRunMenu :task-run="selectedEvent" />
     </v-menu>
   </v-skeleton-loader>
 </template>
