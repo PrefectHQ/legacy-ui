@@ -54,7 +54,6 @@ export const formatTime = {
     convertCalendarStartTime(timestamp) {
       const startTime = moment(timestamp).tz(this.timezone) || moment(timestamp)
       const start = startTime.startOf('day').toISOString()
-      console.log('start', start)
       return start
     },
     addTime(timestamp, amount, unit) {

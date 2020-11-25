@@ -105,14 +105,6 @@ export default {
         },
         loadingKey: 'loadingKey'
       })
-      console.log(
-        'start',
-        this.convertCalendarStartTime(this.date),
-        'end',
-        this.end,
-        'formatted end',
-        this.formatTime(this.end)
-      )
       const upcoming = await this.$apollo.query({
         query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
         variables: {
@@ -123,7 +115,6 @@ export default {
         },
         loadingKey: 'loadingKey'
       })
-      console.log('upcoming runs', upcoming)
       const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
 
       allRuns.map(flowRun => {
