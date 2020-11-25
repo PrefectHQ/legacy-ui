@@ -5,10 +5,7 @@ export default {
   mixins: [changeStateMixin],
   data() {
     return {
-      childTasks: false,
-      rules: {
-        required: value => !!value || 'This field is is required.'
-      }
+      childTasks: false
     }
   },
   apollo: {
@@ -68,7 +65,6 @@ export default {
             label="State"
             prepend-icon="assessment"
             :items="filteredStates"
-            :rules="[rules.required]"
           >
           </v-select>
 
