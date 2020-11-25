@@ -83,6 +83,7 @@ export default {
   },
   watch: {
     async date() {
+      console.log('date clicked', this.flowId)
       this.gettingRuns = true
       this.selectedEvent = null
       this.flowRunEvents = await this.flowRunEventsList()
@@ -202,7 +203,7 @@ export default {
     </v-calendar>
     <v-menu
       :value="selectedOpen"
-      offset-y
+      offset-x
       open-on-hover
       :close-on-content-click="false"
       :activator="selectedElement"

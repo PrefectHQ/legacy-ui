@@ -27,7 +27,7 @@ export default {
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
-      selectedFlow: null,
+      selectedFlow: 0,
       filters: [{ name: 'Flows' }],
       loadingKey: 0
     }
@@ -37,12 +37,16 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     flowId() {
-      if (this.selectedFlow) return this.flowRuns[this.selectedFlow].flow_id
-      if (this.flowRuns && this.flowRuns[0]) return this.flowRuns[0]?.flow_id
-      return this.scheduledFlowRuns[0]?.flow_id
+      if (this.selectedFlow) return this.allIds[this.selectedFlow]
+      if (this.allIds && this.allIds[0]) return this.allIds[0]
+      return ''
     },
     allRuns() {
       return [...this.flowRuns, ...this.scheduledFlowRuns]
+    },
+    allIds() {
+      const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
+      return flowIds ? [...new Set(flowIds)] : []
     }
   },
   apollo: {
@@ -111,10 +115,10 @@ export default {
               <v-expansion-panel-content>
                 <v-list>
                   <v-list-item-group v-model="selectedFlow" color="primary">
-                    <v-list-item v-for="item in flowRuns" :key="item.id" dense>
+                    <v-list-item v-for="item in allIds" :key="item.id" dense>
                       <v-list-item-content>
                         <v-list-item-subtitle class="font-weight-light">
-                          <FlowName :id="item.flow_id" />
+                          <FlowName :id="item" />
                         </v-list-item-subtitle>
                       </v-list-item-content>
                     </v-list-item>
