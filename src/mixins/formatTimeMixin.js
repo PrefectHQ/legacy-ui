@@ -52,26 +52,23 @@ export const formatTime = {
       return timeObj.format('YYYY-MM-DD HH:mm:ss')
     },
     convertCalendarStartTime(timestamp) {
-      const startTime = moment(timestamp)
-      const start = startTime.format('YYYY-MM-DD HH:mm:ss')
+      const startTime = moment(timestamp).tz(this.timezone) || moment(timestamp)
+      const start = startTime.startOf('day').toISOString()
+      console.log('start', start)
       return start
     },
     addTime(timestamp, amount, unit) {
       if (!timestamp) return
-      let timeObj = moment(timestamp)
-        .add(amount, unit)
-        .format('YYYY-MM-DD HH:mm:ss')
-      return timeObj
+      let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
+      return timeObj.add(amount, unit).format('YYYY-MM-DD HH:mm:ss')
     },
     addDay(timestamp, amount) {
       if (!timestamp) return
-      let timeObj = moment(timestamp).add(amount, 'days')
-      const date = `${
-        timeObj
-          ? timeObj.format('YYYY-MM-DD')
-          : moment(timestamp).format('YYYY-MM-DD')
-      }`
-      return date
+      const timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
+      return timeObj
+        .add(amount, 'days')
+        .startOf('day')
+        .toISOString()
     },
     shortTime(timestamp) {
       if (!timestamp) return

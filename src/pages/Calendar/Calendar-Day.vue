@@ -77,9 +77,6 @@ export default {
           return this.addTime(this.date, 1, 'h')
       }
       return this.addDay(this.date, days)
-    },
-    overlay() {
-      return this.loadingKey > 0 || this.gettingRuns
     }
   },
   watch: {
@@ -103,21 +100,30 @@ export default {
         variables: {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.convertCalendarStartTime(this.end),
+          endTime: this.end,
           flowIds: this.flowId
         },
         loadingKey: 'loadingKey'
       })
+      console.log(
+        'start',
+        this.convertCalendarStartTime(this.date),
+        'end',
+        this.end,
+        'formatted end',
+        this.formatTime(this.end)
+      )
       const upcoming = await this.$apollo.query({
         query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
         variables: {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.convertCalendarStartTime(this.end),
+          endTime: this.end,
           flowIds: this.flowId
         },
         loadingKey: 'loadingKey'
       })
+      console.log('upcoming runs', upcoming)
       const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
 
       allRuns.map(flowRun => {

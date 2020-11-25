@@ -9,8 +9,6 @@ query CalendarScheduledFlowRuns($project_id: uuid, $startTime: timestamptz, $end
     {flow_id: { _in: $flowIds}}
     ]
     }
-    # distinct_on: flow_id
-    # order_by: {flow_id: asc, scheduled_start_time: asc}
   ) 
   {
     id
