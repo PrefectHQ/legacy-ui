@@ -33,7 +33,10 @@ export default {
         {{ run.name ? run.name : run.task_name }}
         {{ run.map_index > -1 ? `(${run.map_index})` : '' }}
       </router-link>
-      <span v-if="type === 'flow_run'"> <FlowName :id="run.id" /> </span>
+
+      <div v-if="type === 'flow-run'" class="pl-4">
+        <FlowName :id="run.flow_id" />
+      </div>
     </v-card-title>
     <v-card-text>
       <div>

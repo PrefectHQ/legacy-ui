@@ -202,8 +202,8 @@ export default {
     </v-calendar>
     <v-menu
       :value="selectedOpen"
-      absolute
-      offset-x
+      offset-y
+      open-on-hover
       :close-on-content-click="false"
       :activator="selectedElement"
     >

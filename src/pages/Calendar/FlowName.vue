@@ -34,8 +34,8 @@ export default {
 
 <template>
   <div v-if="loadingKey < 1" class="caption text-center">
-    <!-- <router-link :to="{ name: 'flow', params: { id: flow.id } }"> -->
-    <truncate :content="flowName"> </truncate>
-    <!-- </router-link> -->
+    <router-link :to="{ name: 'flow', params: { id: flow.id } }">
+      <truncate :content="flowName"> </truncate>
+    </router-link>
   </div>
 </template>
