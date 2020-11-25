@@ -22,7 +22,6 @@ export default {
   // },
   computed: {
     print() {
-      console.log('alow task runs', this.flowRun)
       return true
     },
     colors() {
@@ -44,7 +43,6 @@ export default {
           })
         }
       })
-      console.log('statesArr', stateArr)
       return stateArr
     }
   },
