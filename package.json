@@ -26,7 +26,7 @@
     "d3-zoom": "^2.0.0",
     "graphql": "^15.4.0",
     "js-beautify": "^1.13.0",
-    "jwt-decode": "^3.1.1",
+    "jwt-decode": "^3.1.2",
     "lodash.debounce": ">=4.0.8",
     "lodash.difference": ">=4.5.0",
     "lodash.range": ">=3.2.0",
