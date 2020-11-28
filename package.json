@@ -20,7 +20,7 @@
     "apollo-link-batch-http": "^1.2.14",
     "codemirror": "^5.58.2",
     "codemirror-graphql": "^0.12.3",
-    "cronstrue": "^1.103.0",
+    "cronstrue": "^1.105.0",
     "d3": "^6.2.0",
     "d3-dag": "0.3.5",
     "d3-zoom": "^2.0.0",
