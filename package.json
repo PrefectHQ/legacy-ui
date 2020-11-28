@@ -39,7 +39,7 @@
     "logrocket-vuex": "0.0.3",
     "moment": "^2.29.1",
     "moment-duration-format": ">=2.3.2",
-    "moment-timezone": ">=0.5.31",
+    "moment-timezone": ">=0.5.32",
     "remark": "^13.0.0",
     "remark-autolink-headings": "^6.0.1",
     "remark-highlight.js": "^6.0.0",
