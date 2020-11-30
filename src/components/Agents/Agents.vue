@@ -465,16 +465,23 @@ export default {
 }
 
 .agent-controls {
-  position: absolute;
-  right: 8px;
-  z-index: 1;
+  left: 50%;
+  position: fixed;
+  transform: translate(570px);
+  z-index: 4;
 
   &.md-and-down {
-    top: -124px;
+    top: 146px;
   }
 
   &.md-and-up {
-    top: -72px;
+    top: 128px;
+  }
+
+  @media screen and (max-width: 1440px) {
+    left: unset;
+    right: 12px;
+    transform: unset;
   }
 }
 
