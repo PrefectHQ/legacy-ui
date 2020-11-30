@@ -27,16 +27,12 @@ const links = [
     link: 'https://docs.prefect.io/'
   },
   {
-    text: 'Community',
-    link: 'https://www.prefect.io/community/updates'
-  },
-  {
-    text: 'Changelog',
-    link: 'https://www.prefect.io/public-changelog/'
-  },
-  {
     text: 'Legal',
     link: 'https://www.prefect.io/legal/cloud-saas-license'
+  },
+  {
+    text: 'Community',
+    link: 'https://www.prefect.io/community/updates'
   },
   {
     text: 'Blog',
@@ -45,6 +41,10 @@ const links = [
   {
     text: 'Careers',
     link: 'https://www.prefect.io/about/company#careers'
+  },
+  {
+    text: 'Changelog',
+    link: 'https://www.prefect.io/public-changelog/'
   }
 ]
 
@@ -102,8 +102,19 @@ export default {
             </v-btn>
           </div>
 
-          <div class="mr-1 mt-4 d-flex justify-space-between w-100">
-            <div v-for="(link, i) in linksLeft" :key="i">
+          <div
+            class="mr-1 mt-4 d-flex w-100 flex-wrap"
+            :class="{
+              'justify-space-between': $vuetify.breakpoint.smAndUp,
+              'justify-end': $vuetify.breakpoint.xsOnly,
+              'text-right': $vuetify.breakpoint.xsOnly
+            }"
+          >
+            <div
+              v-for="(link, i) in linksLeft"
+              :key="i"
+              style="min-width: 66px;"
+            >
               <a class="link" :href="link.link">
                 {{ link.text }}
               </a>
@@ -111,7 +122,13 @@ export default {
           </div>
         </div>
 
-        <div class="mx-16 text-center">
+        <div
+          class="text-center"
+          :class="{
+            'mx-16': $vuetify.breakpoint.mdAndUp,
+            'mx-2': $vuetify.breakpoint.smAndDown
+          }"
+        >
           <div class="overline">Made with ♡ in DC</div>
 
           <a href="https://prefect.io" target="_blank">
@@ -138,8 +155,17 @@ export default {
             </v-btn>
           </div>
 
-          <div class="ml-1 mt-4 d-flex justify-space-between w-100">
-            <div v-for="(link, i) in linksRight" :key="i">
+          <div class="ml-1 mt-4 d-flex w-100 flex-wrap">
+            <div
+              v-for="(link, i) in linksRight"
+              :key="i"
+              :class="{
+                'justify-space-between': $vuetify.breakpoint.smAndUp,
+                'justify-start': $vuetify.breakpoint.xsOnly,
+                'text-left': $vuetify.breakpoint.xsOnly
+              }"
+              style="min-width: 66px;"
+            >
               <a class="link" :href="link.link">
                 {{ link.text }}
               </a>
