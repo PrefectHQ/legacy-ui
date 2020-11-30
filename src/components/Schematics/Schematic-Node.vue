@@ -3,6 +3,7 @@ import { duration } from '@/utils/moment'
 import DurationSpan from '@/components/DurationSpan'
 import StackedLineChart from '@/components/Visualizations/StackedLineChart'
 import { STATE_COLORS } from '@/utils/states'
+import { FINISHED_STATES } from '@/utils/states'
 
 export default {
   filters: {
@@ -146,6 +147,9 @@ export default {
         green10 = parseInt(green, 16),
         blue10 = parseInt(blue, 16)
       return `rgba(${red10}, ${green10}, ${blue10}, 0.6)`
+    },
+    isFinished(state) {
+      return FINISHED_STATES.includes(state)
     }
   },
   apollo: {
@@ -209,7 +213,13 @@ export default {
         Duration:
         <DurationSpan
           :start-time="nodeData.data.start_time"
-          :end-time="nodeData.data.end_time"
+          :end-time="
+            nodeData.data.end_time
+              ? nodeData.data.end_time
+              : isFinished(nodeData.data.state)
+              ? nodeData.data.start_time
+              : null
+          "
         />
       </div>
     </div>
