@@ -328,8 +328,15 @@ export default {
             cols="12"
             class="my-2 mb-12 name-team-input mx-auto"
           >
-            <div class="overline">
-              Team Slug
+            <div class="overline d-flex justify-center align-center">
+              <span class="mr-1">Team Slug</span>
+              <Truncate
+                content="This slug is used to create shareable links for your flows and runs unique to your team."
+              >
+                <v-icon x-small dark>
+                  info
+                </v-icon>
+              </Truncate>
             </div>
             <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
               {{ tenant.slug }}
