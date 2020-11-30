@@ -1,0 +1,8 @@
+query TaskRunArtifacts($taskRunId: uuid!) {
+  task_run_artifact(where: { task_run_id: { _eq: $taskRunId } }) {
+    id
+    created
+    data
+    kind
+  }
+}
