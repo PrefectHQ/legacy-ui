@@ -1,5 +1,6 @@
 <script>
 import BreadCrumbs from '@/components/BreadCrumbs'
+import NavTabBar from '@/components/NavTabBar'
 import DependenciesTile from '@/pages/Task/Dependencies-Tile'
 import DetailsTile from '@/pages/Task/Details-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
@@ -18,6 +19,7 @@ export default {
     BreadCrumbs,
     DependenciesTile,
     DetailsTile,
+    NavTabBar,
     SubPageNav,
     TaskRunHeartbeatTile,
     TaskRunTableTile,
@@ -27,13 +29,22 @@ export default {
   data() {
     return {
       loading: 0,
-      tab: this.getTab()
+      tab: this.getTab(),
+      tabs: [
+        {
+          name: 'Overview',
+          target: 'overview',
+          icon: 'view_module'
+        },
+        {
+          name: 'Runs',
+          target: 'runs',
+          icon: 'pi-task-run'
+        }
+      ]
     }
   },
   computed: {
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
-    },
     dependencies() {
       if (!this.task) return []
       let upstream = this.task.upstream_edges.map(edge => {
@@ -70,22 +81,18 @@ export default {
       this.tab = this.getTab()
     },
     tab(val) {
-      let query = {}
+      let query = { ...this.$route.query }
       switch (val) {
         case 'schematic':
-          query = { schematic: this.taskId }
+          query = 'schematic'
           break
         case 'runs':
-          query = { runs: '' }
+          /* eslint-disable-next-line */
+          query = 'runs'
           break
         default:
           break
       }
-      this.$router
-        .replace({
-          query: query
-        })
-        .catch(e => e)
     }
   },
   mounted() {
@@ -101,7 +108,10 @@ export default {
   },
   methods: {
     getTab() {
-      if ('runs' in this.$route.query) return 'runs'
+      if (Object.keys(this.$route.query).length != 0) {
+        let target = Object.keys(this.$route.query)[0]
+        if (this.tabs?.find(tab => tab.target == target)) return target
+      }
       return 'overview'
     }
   },
@@ -132,8 +142,7 @@ export default {
 
 <template>
   <v-sheet color="appBackground">
-    <SubPageNav>
-      <span slot="page-type">Task</span>
+    <SubPageNav icon="pi-task" page-type="Task">
       <span
         slot="page-title"
         :style="
@@ -144,7 +153,9 @@ export default {
                 overflow: 'hidden',
                 width: '400px'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && {
+                display: 'inline'
+              }
         "
       >
         <span v-if="loading === 0">
@@ -165,7 +176,10 @@ export default {
                 overflow: 'hidden',
                 width: '500px'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && {
+                display: 'inline',
+                'font-size': '0.875rem'
+              }
         "
       >
         <BreadCrumbs
@@ -189,37 +203,18 @@ export default {
         ></BreadCrumbs>
         <v-skeleton-loader v-else type="text" />
       </span>
+      <span slot="tabs" style="width: 100%;"
+        ><NavTabBar :tabs="tabs" page="flow"
+      /></span>
     </SubPageNav>
-
-    <v-tabs
-      v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
-      style="max-width: 1440px;"
-      light
-    >
-      <v-tabs-slider color="blue"></v-tabs-slider>
-
-      <v-tab href="#overview" :style="hideOnMobile">
-        <v-icon left>view_module</v-icon>
-        Overview
-      </v-tab>
-
-      <v-tab href="#runs" :style="hideOnMobile">
-        <v-icon left>pi-task-run</v-icon>
-        Runs
-      </v-tab>
-
-      <!-- <v-tab href="#analytics" :style="hideOnMobile" disabled>
-        <v-icon left>insert_chart_outlined</v-icon>
-        Analytics
-      </v-tab> -->
-    </v-tabs>
 
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom"
       style="max-width: 1440px;"
+      :style="
+        $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
+      "
     >
       <v-tab-item
         class="tab-full-height"

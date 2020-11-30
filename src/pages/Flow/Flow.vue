@@ -2,6 +2,7 @@
 /* eslint-disable */
 import Actions from '@/pages/Flow/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
+import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/Flow/Details-Tile'
 import ErrorsTile from '@/pages/Flow/Errors-Tile'
 import FlowRunHeartbeatTile from '@/pages/Flow/FlowRunHeartbeat-Tile'
@@ -32,6 +33,7 @@ export default {
     ErrorsTile,
     FlowRunHeartbeatTile,
     FlowRunTableTile,
+    NavTabBar,
     RunTiles,
     SchematicTile,
     Settings,
@@ -47,14 +49,49 @@ export default {
   data() {
     return {
       loadingKey: 0,
-      tab: this.getTab()
+      tab: this.getTab(),
+      tabs: [
+        {
+          name: 'Overview',
+          target: 'overview',
+          icon: 'view_module'
+        },
+        {
+          name: 'Tasks',
+          target: 'tasks',
+          icon: 'pi-task'
+        },
+        {
+          name: 'Runs',
+          target: 'runs',
+          icon: 'pi-flow-run'
+        },
+        {
+          name: 'Schematic',
+          target: 'schematic',
+          icon: 'pi-schematic'
+        },
+        {
+          name: 'Versions',
+          target: 'versions',
+          icon: 'loop'
+        },
+        {
+          name: 'Run',
+          target: 'run',
+          icon: 'fa-rocket'
+        },
+        {
+          name: 'Settings',
+          target: 'settings',
+          icon: 'settings',
+          align: 'right'
+        }
+      ]
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
-    },
     flowGroupId() {
       return this.$route.params.id
     },
@@ -103,42 +140,34 @@ export default {
       let query = { ...this.$route.query }
       switch (val) {
         case 'schematic':
-          query.tab = 'schematic'
+          query = 'schematic'
           break
         case 'runs':
-          query.tab = 'runs'
+          query = 'runs'
           break
         case 'tasks':
-          query.tab = 'tasks'
+          query = 'tasks'
           break
         case 'versions':
-          query.tab = 'versions'
+          query = 'versions'
           break
         case 'run':
-          query.tab = 'run'
+          query = 'run'
           break
         case 'settings':
-          query.tab = 'settings'
+          query = 'settings'
           break
         default:
-          delete query.tab
           break
       }
-      this.$router
-        .replace({
-          query: query
-        })
-        .catch(e => e)
     }
   },
   methods: {
     getTab() {
-      if (this.$route.query?.tab == 'schematic') return 'schematic'
-      if (this.$route.query?.tab == 'runs') return 'runs'
-      if (this.$route.query?.tab == 'tasks') return 'tasks'
-      if (this.$route.query?.tab == 'versions') return 'versions'
-      if (this.$route.query?.tab == 'run') return 'run'
-      if (this.$route.query?.tab == 'settings') return 'settings'
+      if (Object.keys(this.$route.query).length != 0) {
+        let target = Object.keys(this.$route.query)[0]
+        if (this.tabs?.find(tab => tab.target == target)) return target
+      }
       return 'overview'
     }
   },
@@ -176,9 +205,7 @@ export default {
 
 <template>
   <v-sheet color="appBackground">
-    <SubPageNav>
-      <span slot="page-type">Flow</span>
-
+    <SubPageNav icon="pi-flow" page-type="Flow">
       <span
         slot="page-title"
         :style="
@@ -189,7 +216,7 @@ export default {
                 overflow: 'hidden',
                 width: '400px'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && { display: 'inline' }
         "
       >
         <div v-if="flowGroup">
@@ -208,12 +235,14 @@ export default {
         :style="
           !flowGroup
             ? {
-                display: 'block',
                 height: '21px',
                 overflow: 'hidden',
                 width: '500px'
               }
-            : {}
+            : $vuetify.breakpoint.smAndDown && {
+                display: 'inline',
+                'font-size': '0.875rem'
+              }
         "
       >
         <BreadCrumbs
@@ -238,70 +267,19 @@ export default {
         :scheduled="selectedFlow.is_schedule_active"
         :versions="versions"
       />
+      <span slot="tabs" style="width: 100%;"
+        ><NavTabBar :tabs="tabs" v-if="flowGroup" page="flow"
+      /></span>
     </SubPageNav>
-
-    <v-tabs
-      v-if="flowGroup"
-      v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
-      style="max-width: 1440px;"
-      light
-    >
-      <v-tabs-slider color="blue"></v-tabs-slider>
-
-      <v-tab href="#overview" :style="hideOnMobile" data-cy="flow-overview-tab">
-        <v-icon left>view_module</v-icon>
-        Overview
-      </v-tab>
-
-      <v-tab href="#tasks" :style="hideOnMobile" data-cy="flow-tasks-tab">
-        <v-icon left>pi-task</v-icon>
-        Tasks
-      </v-tab>
-
-      <v-tab href="#runs" :style="hideOnMobile" data-cy="flow-runs-tab">
-        <v-icon left>pi-flow-run</v-icon>
-        Runs
-      </v-tab>
-
-      <v-tab
-        href="#schematic"
-        :style="hideOnMobile"
-        data-cy="flow-schematic-tab"
-      >
-        <v-icon left>pi-schematic</v-icon>
-        Schematic
-      </v-tab>
-
-      <v-tab href="#versions" :style="hideOnMobile" data-cy="flow-versions-tab">
-        <v-icon left>loop</v-icon>
-        Versions
-      </v-tab>
-
-      <!-- <v-tab href="#analytics" :style="hideOnMobile" disabled>
-        <v-icon left>insert_chart_outlined</v-icon>
-        Analytics
-      </v-tab> -->
-
-      <v-tab href="#run" :style="hideOnMobile" data-cy="run-flow-tab">
-        <v-icon left>fa-rocket</v-icon>
-        Run
-      </v-tab>
-
-      <v-spacer />
-
-      <v-tab href="#settings" :style="hideOnMobile" data-cy="flow-settings-tab">
-        <v-icon left>settings</v-icon>
-        Settings
-      </v-tab>
-    </v-tabs>
 
     <v-tabs-items
       v-model="tab"
       v-if="flowGroup"
       class="px-6 mx-auto tabs-border-bottom"
       style="max-width: 1440px;"
+      :style="{
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
     >
       <v-tab-item
         class="tab-full-height pa-0"
