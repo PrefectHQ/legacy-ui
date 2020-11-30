@@ -148,21 +148,21 @@ export default {
 }
 
 .prepend-input {
-  left: -20px;
-  position: absolute;
-  top: 6px;
+  display: inline-block;
+  position: relative;
 }
 
 .edit-icon {
   opacity: 0;
   transition: all 150ms;
+  width: 0;
 }
 
 .inherited-text-field {
   box-sizing: border-box;
   color: inherit !important;
   font-size: inherit !important;
-  height: 30px;
+  height: 28px;
   max-width: 100%;
   padding-bottom: 2px;
   position: relative;
@@ -174,6 +174,9 @@ export default {
   }
 
   .input-container {
+    display: inline-block;
+    width: calc(100% - 20px);
+
     input,
     input:active {
       color: inherit !important;
@@ -216,19 +219,23 @@ export default {
     }
 
     .input-container::after {
-      left: 0;
-      width: 100%;
+      left: 20px;
+      width: calc(100% - 20px);
     }
 
     .edit-icon {
+      margin-right: 4px;
       opacity: 1;
+      width: 16px;
     }
   }
 
   &:focus,
   &:hover {
     .edit-icon {
+      margin-right: 4px;
       opacity: 1;
+      width: 16px;
     }
   }
 }

@@ -28,7 +28,10 @@ export default {
 <template>
   <div
     class="pa-0 mb-2 d-flex align-center"
-    :class="$vuetify.breakpoint.smAndDown ? 'justify-center' : 'justify-end'"
+    :class="[
+      $vuetify.breakpoint.xsOnly ? 'justify-center' : 'justify-end',
+      $vuetify.breakpoint.xsOnly && 'mx-auto'
+    ]"
   >
     <ResumeButton
       v-if="taskRun.state == 'Paused'"
@@ -41,7 +44,6 @@ export default {
         <div v-on="on">
           <v-btn
             class="vertical-button mr-2"
-            :style="{ height: '46px' }"
             text
             depressed
             small
