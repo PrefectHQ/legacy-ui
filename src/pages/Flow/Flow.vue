@@ -261,6 +261,7 @@ export default {
       <Actions
         v-if="selectedFlow"
         slot="page-actions"
+        style="height: 55px;"
         :archived="!!selectedFlow.archived"
         :flow="selectedFlow"
         :flow-group="flowGroup"
