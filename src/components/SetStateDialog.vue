@@ -1,7 +1,13 @@
 <script>
 import { changeStateMixin } from '@/mixins/changeStateMixin'
+import { mapGetters } from 'vuex'
+
+import Alert from '@/components/Alert'
 
 export default {
+  components: {
+    Alert
+  },
   mixins: [changeStateMixin],
   data() {
     return {
@@ -24,6 +30,9 @@ export default {
       pollInterval: 10000,
       update: data => data.task_run
     }
+  },
+  computed: {
+    ...mapGetters('alert', ['getAlert'])
   }
 }
 </script>
@@ -53,9 +62,9 @@ export default {
         </v-tooltip>
       </template>
 
-      <v-card :loading="markAsLoading">
+      <v-card flat :loading="markAsLoading">
         <div style="padding: 20px;">
-          <v-card-title>
+          <v-card-title class="headline word-break-normal mb-3" primary-title>
             Change the state of {{ taskRun ? taskRun.name : flowRun.name }}
           </v-card-title>
           <v-select
@@ -122,15 +131,19 @@ export default {
               {{ taskRun ? taskRun.name : flowRun.name }} to
               <span class="font-weight-black pb-8"> {{ selectedState }}.</span>
             </v-tooltip>
-            <!-- <v-btn v-disable-read-only-user="!selectedState" color="primary">
-              Confirm
-            </v-btn> -->
             <v-btn text @click="reset">
               Cancel
             </v-btn>
           </v-card-actions>
         </div>
       </v-card>
+
+      <Alert
+        v-if="getAlert.alertShow"
+        v-model="getAlert.alertShow"
+        :type="getAlert.alertType"
+        :message="getAlert.alertMessage"
+      />
     </v-dialog>
   </div>
   <div v-else-if="role == 'READ_ONLY_USER' && dialogType == 'flow run'">
