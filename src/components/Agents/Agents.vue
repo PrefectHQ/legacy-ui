@@ -471,7 +471,7 @@ export default {
   z-index: 4;
 
   &.md-and-down {
-    top: 146px;
+    top: 120px;
   }
 
   &.md-and-up {
@@ -481,6 +481,21 @@ export default {
   @media screen and (max-width: 1440px) {
     left: unset;
     right: 12px;
+    transform: unset;
+  }
+
+  @media screen and (max-width: 960px) {
+    background-color: var(--v-appBackground-base);
+
+    left: 50%;
+    right: unset;
+    transform: translate(-50%);
+  }
+
+  @media screen and (max-width: 600px) {
+    left: unset;
+    right: 12px;
+    top: 64px !important;
     transform: unset;
   }
 }
