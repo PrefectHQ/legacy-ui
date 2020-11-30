@@ -329,7 +329,7 @@ export default {
             class="my-2 mb-12 name-team-input mx-auto"
           >
             <div class="overline">
-              Team URL
+              Team Slug
             </div>
             <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
               {{ tenant.slug }}
