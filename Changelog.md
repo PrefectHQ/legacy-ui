@@ -10,10 +10,12 @@
 - Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
 - Allow editing task run names from the task run page - [#449](https://github.com/PrefectHQ/ui/pull/449)
 - Fixes subpage nav to top of page when scrolling - [#407](https://github.com/PrefectHQ/ui/issues/407)
+- Update wording on the team onboarding page - [#471](https://github.com/PrefectHQ/ui/pull/471)
 
 ### Bugfixes
 
 - Fix an issue where restarting a task run would fail to correctly set downstream task run states - [#452](https://github.com/PrefectHQ/ui/pull/452)
+- Fix schematic node finished task run durations - [#468](https://github.com/PrefectHQ/ui/pull/468)
 
 ## 2020-11-13
 
