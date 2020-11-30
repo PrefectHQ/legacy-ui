@@ -44,15 +44,22 @@ RUN mkdir -p "/var/www${VUE_APP_PUBLIC_PATH}" && \
 
 # Replace the default nginx config
 # with the one we've defined here
-RUN echo "server { \n\
+RUN echo "\n\
+server { \n\
   # We'll want to make this dynamic at some point  \n\
   listen 8080; \n\
   root /var/www; \n\
   index ${VUE_APP_PUBLIC_PATH}index.html; \n\
+  location = /healthz { \n\
+    access_log off; \n\
+    add_header Content-Type text/plain; \n\
+    return 200 'ok'; \n\
+  } \n\
   location / { \n\
     try_files \$uri ${VUE_APP_PUBLIC_PATH}index.html =404; \n\
   } \n\
 }" > /etc/nginx/conf.d/default.conf
+RUN nginx -T
 
 
 
