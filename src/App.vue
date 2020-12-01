@@ -36,7 +36,6 @@ export default {
   data() {
     return {
       error: null,
-      footerTimeout: null,
       loadedComponents: 0,
       loadingKey: 0,
       numberOfComponents: 1,
