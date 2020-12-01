@@ -14,6 +14,7 @@ import TaskRunHeartbeatTile from '@/pages/FlowRun/TaskRunHeartbeat-Tile'
 import TaskRunTableTile from '@/pages/FlowRun/TaskRunTable-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
+import Alert from '@/components/Alert'
 import { parser } from '@/utils/markdownParser'
 
 export default {
@@ -36,6 +37,7 @@ export default {
   },
   components: {
     Actions,
+    Alert,
     BreadCrumbs,
     DetailsTile,
     EditableTextField,
@@ -87,6 +89,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
+    ...mapGetters('alert', ['getAlert']),
     flowId() {
       return this.flowRun?.flow_id
     },
@@ -320,6 +323,13 @@ export default {
         <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
       </v-tab-item>
     </v-tabs-items>
+
+    <Alert
+      v-if="getAlert.alertShow"
+      :value="getAlert.alertShow"
+      :type="getAlert.alertType"
+      :message="getAlert.alertMessage"
+    />
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn @click="tab = 'overview'">

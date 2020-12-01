@@ -1,13 +1,7 @@
 <script>
 import { changeStateMixin } from '@/mixins/changeStateMixin'
-import { mapGetters } from 'vuex'
-
-import Alert from '@/components/Alert'
 
 export default {
-  components: {
-    Alert
-  },
   mixins: [changeStateMixin],
   data() {
     return {
@@ -30,9 +24,6 @@ export default {
       pollInterval: 10000,
       update: data => data.task_run
     }
-  },
-  computed: {
-    ...mapGetters('alert', ['getAlert'])
   }
 }
 </script>
@@ -100,6 +91,7 @@ export default {
               label="Include mapped task runs - this may take some time"
             ></v-checkbox>
           </div>
+
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-tooltip top>
@@ -139,13 +131,6 @@ export default {
           </v-card-actions>
         </div>
       </v-card>
-
-      <Alert
-        v-if="getAlert.alertShow"
-        v-model="getAlert.alertShow"
-        :type="getAlert.alertType"
-        :message="getAlert.alertMessage"
-      />
     </v-dialog>
   </div>
   <div v-else-if="role == 'READ_ONLY_USER' && dialogType == 'flow run'">

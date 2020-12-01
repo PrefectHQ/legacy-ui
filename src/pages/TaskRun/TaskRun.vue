@@ -13,6 +13,7 @@ import SubPageNav from '@/layouts/SubPageNav'
 import TaskRunHeartbeatTile from '@/pages/TaskRun/TaskRunHeartbeat-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
+import Alert from '@/components/Alert'
 import { parser } from '@/utils/markdownParser'
 
 export default {
@@ -35,6 +36,7 @@ export default {
   },
   components: {
     Actions,
+    Alert,
     BreadCrumbs,
     DependenciesTile,
     DetailsTile,
@@ -56,6 +58,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('alert', ['getAlert']),
     taskRunId() {
       return this.$route.params.id
     },
@@ -365,6 +368,13 @@ export default {
         </TileLayoutFull>
       </v-tab-item>
     </v-tabs-items>
+
+    <Alert
+      v-if="getAlert.alertShow"
+      :value="getAlert.alertShow"
+      :type="getAlert.alertType"
+      :message="getAlert.alertMessage"
+    />
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
       <v-btn @click="tab = 'overview'">
