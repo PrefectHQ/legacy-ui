@@ -475,7 +475,7 @@ export default {
   }
 
   &.md-and-up {
-    top: 128px;
+    top: 136px;
   }
 
   @media screen and (max-width: 1440px) {

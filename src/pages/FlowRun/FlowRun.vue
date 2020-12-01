@@ -239,7 +239,7 @@ export default {
         />
       </span>
 
-      <Actions slot="page-actions" :flow-run="flowRun" />
+      <Actions slot="page-actions" style="height: 55px;" :flow-run="flowRun" />
       <span slot="tabs" style="width: 100%;">
         <NavTabBar :tabs="tabs" page="flow-run" />
       </span>

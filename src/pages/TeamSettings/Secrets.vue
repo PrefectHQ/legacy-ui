@@ -46,8 +46,8 @@ export default {
       isSecretUpdate: false,
 
       // How many rows are displayed at a time,
-      itemsPerPage: 20,
-      rowsPerPageItems: [20, 50, 100],
+      itemsPerPage: 10,
+      rowsPerPageItems: [10, 15, 20, -1],
 
       // Table search
       search: null,

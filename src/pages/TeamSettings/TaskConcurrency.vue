@@ -390,6 +390,7 @@ export default {
           :loading="loadingKey > 0"
           :footer-props="{
             showFirstLastPage: true,
+            itemsPerPageOptions: [10, 15, 20, -1],
             firstIcon: 'first_page',
             lastIcon: 'last_page',
             prevIcon: 'keyboard_arrow_left',
