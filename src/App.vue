@@ -157,7 +157,6 @@ export default {
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
     window.removeEventListener('mousewheel', this.handleScroll)
-    // document.removeEventListener('mousemove', this.handleMouseMove)
 
     // document.removeEventListener(
     //   'visibilitychange',
@@ -191,7 +190,6 @@ export default {
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
     window.addEventListener('mousewheel', this.handleScroll)
-    // document.addEventListener('mousemove', this.handleMouseMove)
 
     // document.addEventListener(
     //   'visibilitychange',
@@ -221,13 +219,6 @@ export default {
     handleOnline() {
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
-    },
-    handleMouseMove(e) {
-      if (e.pageY >= document.body.clientHeight - 185) {
-        this.showFooter = true
-      } else {
-        this.showFooter = false
-      }
     },
     handleScroll: debounce(
       function() {
