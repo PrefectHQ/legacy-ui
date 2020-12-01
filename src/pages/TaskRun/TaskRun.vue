@@ -278,7 +278,7 @@ export default {
         "
       ></BreadCrumbs>
 
-      <Actions slot="page-actions" :task-run="taskRun" />
+      <Actions slot="page-actions" style="height: 55px;" :task-run="taskRun" />
       <span slot="tabs" style="width: 100%;"
         ><NavTabBar :tabs="tabs" page="task-run"
       /></span>
