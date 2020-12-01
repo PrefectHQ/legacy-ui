@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- Changes the default table rows to more sensible defaults - [475](https://github.com/PrefectHQ/ui/pull/475)
+- Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
 
 ### Bugfixes
 
