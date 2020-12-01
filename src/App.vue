@@ -223,7 +223,7 @@ export default {
     handleScroll: debounce(
       function() {
         if (
-          window.innerHeight + window.pageYOffset >=
+          window.innerHeight + window.pageYOffset + 50 >=
           document.body.offsetHeight
         ) {
           this.showFooter = true
@@ -306,7 +306,10 @@ export default {
       <v-fade-transition mode="out-in">
         <router-view
           class="router-view"
-          :class="{ 'full-page': fullPageRoute }"
+          :class="{
+            'full-page': fullPageRoute,
+            'sm-and-down-bottom-padding': $vuetify.breakpoint.smAndDown
+          }"
         />
       </v-fade-transition>
 
@@ -388,6 +391,10 @@ html {
 
   &.full-page {
     margin-bottom: 0 !important;
+  }
+
+  &.sm-and-down-bottom-padding {
+    // margin-bottom: 180px;
   }
 }
 

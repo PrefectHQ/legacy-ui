@@ -403,7 +403,7 @@ export default {
       </v-tab-item>
     </v-tabs-items>
 
-    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
+    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" app fixed>
       <v-btn v-for="tb in tabs" :key="tb.target" @click="tab = tb.target">
         {{ tb.name }}
         <v-icon>{{ tb.icon }}</v-icon>

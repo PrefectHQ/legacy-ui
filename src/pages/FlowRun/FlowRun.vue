@@ -320,7 +320,7 @@ export default {
       </v-tab-item>
     </v-tabs-items>
 
-    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
+    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" app fixed>
       <v-btn @click="tab = 'overview'">
         Overview
         <v-icon>view_quilt</v-icon>

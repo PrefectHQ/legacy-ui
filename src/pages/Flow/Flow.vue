@@ -405,6 +405,7 @@ export default {
     <v-bottom-navigation
       v-if="$vuetify.breakpoint.smAndDown"
       color="primary"
+      app
       fixed
     >
       <v-btn :input-value="tab == 'overview'" @click="tab = 'overview'">

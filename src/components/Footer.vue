@@ -96,7 +96,7 @@ export default {
               target="_blank"
               depressed
               icon
-              class="ml-4"
+              :class="inset ? 'ml-2' : 'ml-4'"
             >
               <v-icon>{{ icon.icon }}</v-icon>
             </v-btn>
@@ -149,7 +149,7 @@ export default {
               target="_blank"
               depressed
               icon
-              class="mr-4"
+              :class="inset ? 'mr-2' : 'mr-4'"
             >
               <v-icon>{{ icon.icon }}</v-icon>
             </v-btn>
@@ -203,6 +203,6 @@ export default {
 }
 
 .sm-and-down-bottom-padding {
-  padding-bottom: 56px;
+  // padding-bottom: 56px;
 }
 </style>
