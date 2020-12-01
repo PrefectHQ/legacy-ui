@@ -82,6 +82,7 @@ export default {
             class="mb-3"
             label="Opitional - Why are you changing state?"
             prepend-icon="live_help"
+            autocomplete="new-password"
             outlined
           />
 
@@ -105,6 +106,7 @@ export default {
               <template #activator="{ on, attrs }">
                 <v-btn
                   v-disable-read-only-user="!selectedState"
+                  :loading="markAsLoading"
                   color="primary"
                   v-bind="attrs"
                   v-on="on"
