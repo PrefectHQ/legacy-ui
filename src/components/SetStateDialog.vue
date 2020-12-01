@@ -56,7 +56,7 @@ export default {
       <v-card flat :loading="markAsLoading">
         <div style="padding: 20px;">
           <v-card-title class="headline word-break-normal mb-3" primary-title>
-            Change the state of {{ taskRun ? taskRun.name : flowRun.name }}
+            Change the state of {{ taskRun ? taskRun.task.name : flowRun.name }}
           </v-card-title>
           <v-select
             v-model="selectedState"
