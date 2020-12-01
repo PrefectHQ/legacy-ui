@@ -4,11 +4,11 @@
 
 ### Features and Improvements
 
-- None
+- Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
 
 ### Bugfixes
 
-- None
+- Fix jumping height on subnav = [#476](https://github.com/PrefectHQ/ui/pull/476)
 
 ## 2020-11-13
 

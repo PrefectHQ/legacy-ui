@@ -192,7 +192,7 @@ export default {
         v-model="selected"
         :footer-props="{
           showFirstLastPage: true,
-          itemsPerPageOptions: [5, 15, 25, 50],
+          itemsPerPageOptions: [10, 15, 25, 50],
           firstIcon: 'first_page',
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',
