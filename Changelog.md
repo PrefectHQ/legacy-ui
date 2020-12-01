@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
+- Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
 
 ### Bugfixes
 
@@ -17,7 +18,6 @@
 - Aims to improve and convert the current tutorials into md - [#434](https://github.com/PrefectHQ/ui/pull/434)
 - Add the Prefect Core version to the side navigation bar for Server users - [#431](https://github.com/PrefectHQ/ui/pull/431)
 - Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
-- Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
 - Allow editing task run names from the task run page - [#449](https://github.com/PrefectHQ/ui/pull/449)
 - Fixes subpage nav to top of page when scrolling - [#407](https://github.com/PrefectHQ/ui/issues/407)
 - Update wording on the team onboarding page - [#471](https://github.com/PrefectHQ/ui/pull/471)
