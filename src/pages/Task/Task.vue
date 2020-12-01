@@ -210,14 +210,13 @@ export default {
 
     <v-tabs-items
       v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
       style="max-width: 1440px;"
       :style="
         $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
       "
     >
       <v-tab-item
-        class="tab-full-height"
         value="runs"
         transition="quick-fade"
         reverse-transition="quick-fade"
@@ -232,7 +231,7 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height pa-0"
+        class="pa-0"
         value="overview"
         transition="quick-fade"
         reverse-transition="quick-fade"

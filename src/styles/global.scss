@@ -95,7 +95,6 @@ body {
 .quick-fade-leave-active {
   opacity: 1;
   transition: opacity 200ms ease-in-out;
-  width: 100%;
 }
 
 .quick-fade-enter,
@@ -111,7 +110,7 @@ body {
 .tab-fade-leave-active {
   opacity: 1;
   position: absolute;
-  transition: opacity 200ms ease-in-out;
+  transition: opacity 350ms ease-in-out;
   width: 100%;
 }
 

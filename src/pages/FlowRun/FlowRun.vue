@@ -247,7 +247,7 @@ export default {
 
     <v-tabs-items
       v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
       :style="{
         'max-width': tab == 'chart' ? 'auto' : '1440px',
         'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
@@ -255,7 +255,7 @@ export default {
       mandatory
     >
       <v-tab-item
-        class="tab-full-height pa-0"
+        class="pa-0"
         value="overview"
         transition="tab-fade"
         reverse-transition="tab-fade"
@@ -285,7 +285,6 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
         value="schematic"
         transition="tab-fade"
         reverse-transition="tab-fade"

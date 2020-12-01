@@ -405,4 +405,8 @@ html {
     margin-bottom: 0 !important;
   }
 }
+
+.tab-full-height {
+  min-height: 100%;
+}
 </style>

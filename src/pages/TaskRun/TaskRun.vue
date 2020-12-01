@@ -286,14 +286,14 @@ export default {
 
     <v-tabs-items
       v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
       style="max-width: 1440px;"
       :style="{
         'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
       }"
     >
       <v-tab-item
-        class="tab-full-height pa-0"
+        class="pa-0"
         value="overview"
         transition="tab-fade"
         reverse-transition="tab-fade"
@@ -336,7 +336,6 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
         value="artifacts"
         transition="tab-fade"
         reverse-transition="tab-fade"
@@ -345,7 +344,6 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
         value="mapped-runs"
         transition="tab-fade"
         reverse-transition="tab-fade"
