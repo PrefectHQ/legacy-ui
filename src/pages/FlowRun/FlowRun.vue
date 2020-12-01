@@ -257,8 +257,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <TimelineTile
@@ -287,8 +287,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="schematic"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <SchematicTile slot="row-2-tile" />
@@ -298,8 +298,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="logs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <LogsCard

@@ -88,18 +88,35 @@ body {
 }
 
 .quick-fade-leave-active {
-  transition: opacity 100ms ease-in-out !important;
+  transition: opacity 150ms ease-in-out !important;
 }
 
 .quick-fade-enter-active,
 .quick-fade-leave-active {
   opacity: 1;
-  position: absolute;
-  transition: opacity 150ms ease-in-out;
+  transition: opacity 200ms ease-in-out;
+  width: 100%;
 }
 
 .quick-fade-enter,
 .quick-fade-leave-to {
+  opacity: 0;
+}
+
+.tab-fade-leave-active {
+  transition: opacity 150ms ease-in-out !important;
+}
+
+.tab-fade-enter-active,
+.tab-fade-leave-active {
+  opacity: 1;
+  position: absolute;
+  transition: opacity 200ms ease-in-out;
+  width: 100%;
+}
+
+.tab-fade-enter,
+.tab-fade-leave-to {
   opacity: 0;
 }
 

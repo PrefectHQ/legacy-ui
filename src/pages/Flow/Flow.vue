@@ -284,8 +284,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <FlowRunHistoryTile
@@ -336,8 +336,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="tasks"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <TasksTableTile slot="row-2-tile" :flow="selectedFlow" />
@@ -347,8 +347,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="runs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <FlowRunTableTile
@@ -362,8 +362,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="schematic"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <SchematicTile slot="row-2-tile" :flow="selectedFlow" />
@@ -373,8 +373,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="versions"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <VersionsTile slot="row-2-tile" :flow-group-id="flowGroup.id" />
@@ -384,8 +384,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="run"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <RunTiles :flow="selectedFlow" :flow-group="flowGroup" />
       </v-tab-item>
@@ -393,8 +393,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="settings"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <Settings

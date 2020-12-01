@@ -295,8 +295,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :task-run="taskRun" />
@@ -317,8 +317,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="logs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <LogsCard
@@ -338,8 +338,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="artifacts"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <!-- <div v-html="parseMarkdown('# hello')"></div> -->
       </v-tab-item>
@@ -347,8 +347,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="mapped-runs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <v-skeleton-loader

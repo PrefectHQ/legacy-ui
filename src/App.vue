@@ -399,6 +399,7 @@ html {
   max-width: 100% !important;
   min-height: calc(100vh - 64px - 123px);
   padding-bottom: 18px;
+  transition: height none !important;
 
   &.full-page {
     margin-bottom: 0 !important;

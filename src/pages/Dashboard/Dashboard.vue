@@ -272,8 +272,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <v-skeleton-loader
@@ -374,8 +374,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="flows"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <FlowTableTile
           v-if="loadedTiles > 8"
@@ -387,8 +387,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="agents"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <Agents v-if="loadedTiles > 9" class="mx-3 my-6" />
       </v-tab-item>
@@ -396,8 +396,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="analytics"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         Nothing to see here :)
       </v-tab-item>
