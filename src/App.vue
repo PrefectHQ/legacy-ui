@@ -7,6 +7,7 @@ import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
+import debounce from 'lodash.debounce'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
@@ -136,6 +137,8 @@ export default {
       this.setAgents(val)
     },
     async $route(new_route, old_route) {
+      this.showFooter = false
+
       if (
         new_route?.params?.tenant &&
         new_route?.params?.tenant !== old_route?.params?.tenant &&
@@ -143,10 +146,6 @@ export default {
       ) {
         await this.setCurrentTenant(new_route.params.tenant)
       }
-
-      clearTimeout(this.footerTimeout)
-
-      this.showFooter = false
     },
     isAuthorized(value) {
       if (value) {
@@ -158,7 +157,8 @@ export default {
     document.removeEventListener('keydown', this.handleKeydown)
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
-    document.removeEventListener('mousemove', this.handleMouseMove)
+    window.removeEventListener('mousewheel', this.handleScroll)
+    // document.removeEventListener('mousemove', this.handleMouseMove)
 
     // document.removeEventListener(
     //   'visibilitychange',
@@ -191,7 +191,8 @@ export default {
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
-    document.addEventListener('mousemove', this.handleMouseMove)
+    window.addEventListener('mousewheel', this.handleScroll)
+    // document.addEventListener('mousemove', this.handleMouseMove)
 
     // document.addEventListener(
     //   'visibilitychange',
@@ -229,6 +230,23 @@ export default {
         this.showFooter = false
       }
     },
+    handleScroll: debounce(
+      function() {
+        console.log(
+          window.innerHeight,
+          window.pageYOffset,
+          document.body.offsetHeight
+        )
+        if (
+          window.innerHeight + window.pageYOffset >=
+          document.body.offsetHeight
+        ) {
+          this.showFooter = true
+        } else this.showFooter = false
+      },
+      150,
+      { leading: true, trailing: true }
+    ),
     handleVisibilityChange() {
       this.currentInteraction = moment()
 
@@ -385,10 +403,5 @@ html {
   &.full-page {
     margin-bottom: 0 !important;
   }
-}
-
-.tab-full-height {
-  height: auto;
-  min-height: calc(100vh - 360px);
 }
 </style>

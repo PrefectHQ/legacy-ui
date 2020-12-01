@@ -87,14 +87,15 @@ body {
   opacity: 0;
 }
 
+.quick-fade-leave-active {
+  transition: opacity 100ms ease-in-out !important;
+}
+
 .quick-fade-enter-active,
 .quick-fade-leave-active {
   opacity: 1;
-  transition: opacity ease-in-out 150ms;
-}
-
-.quick-fade-leave-active {
-  transition: opacity ease-in-out 150ms;
+  position: absolute;
+  transition: opacity 150ms ease-in-out;
 }
 
 .quick-fade-enter,
