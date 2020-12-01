@@ -232,11 +232,6 @@ export default {
     },
     handleScroll: debounce(
       function() {
-        console.log(
-          window.innerHeight,
-          window.pageYOffset,
-          document.body.offsetHeight
-        )
         if (
           window.innerHeight + window.pageYOffset >=
           document.body.offsetHeight
