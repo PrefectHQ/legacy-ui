@@ -434,7 +434,7 @@ export default {
           <router-link class="link" :to="{ path: 'tutorial/Universal-Deploy' }">
             <u>Universal Deploy</u>
           </router-link>
-          tutorials for guidance on running agents in Cloud.</span
+          tutorial for guidance on running agents in Cloud.</span
         >
       </p>
     </v-alert>
