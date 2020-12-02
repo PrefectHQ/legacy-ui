@@ -1,13 +1,17 @@
 <script>
 import Alert from '@/components/Alert'
+import Footer from '@/components/Footer'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
+import debounce from 'lodash.debounce'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
+
+const fullPageRoutes = ['api', '404']
 
 export default {
   metaInfo() {
@@ -24,6 +28,7 @@ export default {
   },
   components: {
     Alert,
+    Footer,
     NavBar,
     SideNav
   },
@@ -32,11 +37,12 @@ export default {
     return {
       error: null,
       loadedComponents: 0,
-      numberOfComponents: 1,
       loadingKey: 0,
+      numberOfComponents: 1,
       refreshTimeout: null,
       reset: false,
       shown: true,
+      showFooter: false,
       startupHasRun: false,
       wholeAppShown: true
     }
@@ -69,6 +75,9 @@ export default {
     ...mapGetters('user', ['userIsSet']),
     notFoundPage() {
       return this.$route.name === 'not-found'
+    },
+    fullPageRoute() {
+      return fullPageRoutes.includes(this.$route.name)
     },
     loading() {
       return (
@@ -127,6 +136,8 @@ export default {
       this.setAgents(val)
     },
     async $route(new_route, old_route) {
+      this.showFooter = false
+
       if (
         new_route?.params?.tenant &&
         new_route?.params?.tenant !== old_route?.params?.tenant &&
@@ -145,6 +156,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeydown)
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
+    window.removeEventListener('mousewheel', this.handleScroll)
 
     // document.removeEventListener(
     //   'visibilitychange',
@@ -177,6 +189,7 @@ export default {
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
+    window.addEventListener('mousewheel', this.handleScroll)
 
     // document.addEventListener(
     //   'visibilitychange',
@@ -207,6 +220,18 @@ export default {
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
     },
+    handleScroll: debounce(
+      function() {
+        if (
+          window.innerHeight + window.pageYOffset + 50 >=
+          document.body.offsetHeight
+        ) {
+          this.showFooter = true
+        } else this.showFooter = false
+      },
+      150,
+      { leading: true, trailing: true }
+    ),
     handleVisibilityChange() {
       this.currentInteraction = moment()
 
@@ -277,8 +302,15 @@ export default {
       </v-slide-y-transition>
 
       <SideNav />
+
       <v-fade-transition mode="out-in">
-        <router-view class="router-view" />
+        <router-view
+          class="router-view"
+          :class="{
+            'full-page': fullPageRoute,
+            'sm-and-down-bottom-padding': $vuetify.breakpoint.smAndDown
+          }"
+        />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>
@@ -286,6 +318,10 @@ export default {
           <v-card-text>{{ error }}</v-card-text>
         </v-card>
       </v-container>
+
+      <v-slide-y-reverse-transition>
+        <Footer v-if="!fullPageRoute && showFooter" />
+      </v-slide-y-reverse-transition>
     </v-main>
 
     <Alert
@@ -346,6 +382,23 @@ html {
 }
 
 .router-view {
+  height: auto;
+  margin-bottom: 123px;
   max-width: 100% !important;
+  min-height: calc(100vh - 64px - 123px);
+  padding-bottom: 18px;
+  transition: height none !important;
+
+  &.full-page {
+    margin-bottom: 0 !important;
+  }
+
+  &.sm-and-down-bottom-padding {
+    // margin-bottom: 180px;
+  }
+}
+
+.tab-full-height {
+  min-height: 100%;
 }
 </style>
