@@ -155,6 +155,9 @@ export default {
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
+    striped(event) {
+      return event.state === 'Scheduled' ? 'striped' : null
+    },
     handleEventClick({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event
@@ -243,7 +246,7 @@ export default {
         @click:event="handleEventClick"
       >
         <template #event="{event}">
-          <div :id="event.name" class="caption pl-2">
+          <div :id="event.name" class="caption pl-2" :class="striped(event)">
             {{ event.name }} {{ formTime(event.start_time) }} -
             {{ formTime(event.end_time) }}
           </div>
@@ -268,3 +271,10 @@ export default {
     </v-skeleton-loader>
   </v-sheet>
 </template>
+
+<style lang="scss" scoped>
+.striped {
+  background: repeating-linear-gradient(45deg, #ffeec4, #ffbe1e 10px);
+  color: #3d2c00;
+}
+</style>
