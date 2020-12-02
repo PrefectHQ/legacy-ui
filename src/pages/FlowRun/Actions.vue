@@ -130,14 +130,17 @@ export default {
 <template>
   <div
     class="pa-0 mb-2 d-flex align-center"
-    :class="$vuetify.breakpoint.smAndDown ? 'justify-center' : 'justify-end'"
+    :class="[
+      $vuetify.breakpoint.xsOnly ? 'justify-center' : 'justify-end',
+      $vuetify.breakpoint.xsOnly && 'mx-auto'
+    ]"
   >
     <v-tooltip v-if="isScheduled" bottom>
       <template #activator="{ on }">
         <div v-on="on">
           <v-btn
             class="vertical-button"
-            :style="{ height: '46px' }"
+            style="height: 46px;"
             color="primary"
             text
             depressed
@@ -167,9 +170,9 @@ export default {
         <div v-on="on">
           <v-btn
             class="vertical-button"
-            :style="{ height: '46px' }"
             text
             depressed
+            style="height: 46px;"
             small
             :disabled="isReadOnlyUser || !canRestart"
             color="info"

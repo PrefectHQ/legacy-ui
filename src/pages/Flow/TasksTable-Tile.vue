@@ -102,7 +102,7 @@ export default {
       <v-data-table
         v-if="!loading"
         :footer-props="{
-          'items-per-page-options': [5, 15, 25, 50],
+          'items-per-page-options': [10, 15, 25, 50],
           'prev-icon': 'chevron_left',
           'next-icon': 'chevron_right'
         }"
