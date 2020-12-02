@@ -6,6 +6,8 @@ import highlight from 'remark-highlight.js'
 import headings from 'remark-autolink-headings'
 import gfm from 'remark-gfm'
 import all from 'mdast-util-to-hast/lib/all'
+import normalize from 'mdurl/encode'
+import u from 'unist-builder'
 import table from 'mdast-util-to-hast/lib/handlers/table'
 
 export function parser(md) {
@@ -47,6 +49,28 @@ export function artifact_parser(md) {
             }
             return h(node, 'h' + node.depth, all(h, node))
           },
+          link: function(h, node) {
+            let props = { href: normalize(node.url), target: '_blank' }
+
+            if (node.title !== null && node.title !== undefined) {
+              props.title = node.title
+            }
+
+            return h(node.position, 'span', [
+              h(node, 'a', props, all(h, node)),
+              h(node.position, 'sup', [
+                h(
+                  node.position,
+                  'i',
+                  {
+                    className: 'v-icon notranslate material-icons theme--light',
+                    style: 'font-size: 12px'
+                  },
+                  [u('text', 'open_in_new')]
+                )
+              ])
+            ])
+          },
           paragraph: function(h, node) {
             node.data = {
               hProperties: { className: 'body-1' }
@@ -83,8 +107,8 @@ export function artifact_parser(md) {
           }
         }
       })
-      .process(md, (err, file) => {
-        result = String(file)
+      .process(md, (err, str) => {
+        result = String(str)
       })
   } else {
     result = `Error! A ${typeof md} was passed in instead of a string`
