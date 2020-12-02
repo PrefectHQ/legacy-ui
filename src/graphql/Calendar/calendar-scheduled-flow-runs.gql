@@ -5,7 +5,7 @@ query CalendarScheduledFlowRuns($project_id: uuid, $startTime: timestamptz, $end
     {flow: { project_id: { _eq: $project_id } }}
     {scheduled_start_time: { _gt: $startTime}}, 
     {scheduled_start_time: { _lt: $endTime}},
-    {start_time: {_eq: null}},
+    {start_time: {_is_null: true}},
     {flow_id: { _in: $flowIds}}
     ]
     }
