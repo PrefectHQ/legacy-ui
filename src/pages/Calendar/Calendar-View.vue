@@ -39,7 +39,7 @@ export default {
     ...mapGetters('user', ['timezone']),
     ...mapGetters('api', ['backend']),
     flowId() {
-      if (this.selectedFlow) return this.allIds[this.selectedFlow]
+      if (this.selectedFlow) return this.selectedFlow
       if (this.allIds && this.allIds[0]) return this.allIds[0]
       return ''
     },
@@ -70,6 +70,9 @@ export default {
       const upcoming = await this.$apollo.queries.scheduledFlowRuns.refetch()
       if (runs.length || upcoming.length) this.refetching = false
     }
+    // date() {
+    //   this.selectedFlow = null
+    // }
   },
   apollo: {
     flowRuns: {
@@ -140,6 +143,7 @@ export default {
                     <v-list-item
                       v-for="item in allIds"
                       :key="item ? item.id : null"
+                      :value="item"
                       dense
                     >
                       <v-list-item-content>
