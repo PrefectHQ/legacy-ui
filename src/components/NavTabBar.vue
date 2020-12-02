@@ -120,7 +120,6 @@ export default {
                 color="codePink"
                 :content="tb.badgeText"
                 bottom
-                bordered
                 inline
               ></v-badge>
             </v-tab>
