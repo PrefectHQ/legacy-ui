@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      skip: true,
+      skip: false,
       loadingKey: 0,
       gettingRuns: false,
       flowRunEvents: [],
@@ -67,7 +67,7 @@ export default {
       return (60 / this.calendarInterval) * 24
     },
     scheduleBanner() {
-      if (this.upcoming.length > 8) return true
+      if (this.flow?.is_schedule_active && this.upcoming.length > 8) return true
       return new Date(this.date) > new Date()
     },
     end() {
@@ -90,10 +90,8 @@ export default {
   },
   watch: {
     async date() {
-      this.gettingRuns = true
       this.selectedEvent = null
       this.flowRunEvents = await this.flowRunEventsList()
-      this.gettingRuns = false
     },
     async flowId() {
       this.selectedEvent = null
@@ -171,6 +169,22 @@ export default {
       } else {
         open()
       }
+    }
+  },
+  apollo: {
+    flow: {
+      query: require('@/graphql/Calendar/calendar-flows.gql'),
+      variables() {
+        return {
+          id: this.flowId
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_by_pk
     }
   }
 }
