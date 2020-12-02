@@ -352,7 +352,7 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="py-12"
+        class="pb-12"
         value="artifacts"
         transition="tab-fade"
         reverse-transition="tab-fade"
