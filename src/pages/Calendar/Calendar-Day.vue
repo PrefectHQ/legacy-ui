@@ -37,10 +37,6 @@ export default {
     flowId: {
       required: true,
       type: String
-    },
-    end: {
-      required: true,
-      type: String
     }
   },
   data() {
@@ -66,6 +62,23 @@ export default {
     ...mapGetters('user', ['timezone']),
     intervalCount() {
       return (60 / this.calendarInterval) * 24
+    },
+    end() {
+      let days = 1
+      switch (this.type) {
+        case '4day':
+          days = 4
+          break
+        case 'week':
+          days = 7
+          break
+        case 'day':
+          days = 1
+          break
+        case 'hour':
+          return this.addTime(this.date, 1, 'h')
+      }
+      return this.addDay(this.date, days)
     }
   },
   watch: {
@@ -76,6 +89,10 @@ export default {
       this.gettingRuns = false
     },
     async flowId() {
+      this.selectedEvent = null
+      this.flowRunEvents = await this.flowRunEventsList()
+    },
+    async type() {
       this.selectedEvent = null
       this.flowRunEvents = await this.flowRunEventsList()
     }

@@ -42,28 +42,16 @@ export default {
       return ''
     },
     allRuns() {
-      return [...this.flowRuns, ...this.scheduledFlowRuns]
+      if (this.flowRuns || this.scheduledFlowRuns)
+        return [...this.flowRuns, ...this.scheduledFlowRuns]
+      return []
     },
     allIds() {
       const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
       return flowIds ? [...new Set(flowIds)] : []
     },
     end() {
-      let days = 1
-      switch (this.type) {
-        case '4day':
-          days = 4
-          break
-        case 'week':
-          days = 7
-          break
-        case 'day':
-          days = 1
-          break
-        case 'hour':
-          return this.addTime(this.date, 1, 'h')
-      }
-      return this.addDay(this.date, days)
+      return this.addDay(this.date, 1)
     }
   },
   apollo: {
@@ -132,7 +120,11 @@ export default {
               <v-expansion-panel-content>
                 <v-list>
                   <v-list-item-group v-model="selectedFlow" color="primary">
-                    <v-list-item v-for="item in allIds" :key="item.id" dense>
+                    <v-list-item
+                      v-for="item in allIds"
+                      :key="item ? item.id : null"
+                      dense
+                    >
                       <v-list-item-content>
                         <v-list-item-subtitle class="font-weight-light">
                           <FlowName :id="item" />
@@ -151,7 +143,6 @@ export default {
           v-if="timePeriod === 'day' && flowId"
           :project-id="projectId"
           :date="date"
-          :end="end"
           :flow-id="flowId"
           :time-period="timePeriod"
           :time-interval="timeInterval"
