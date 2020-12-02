@@ -83,7 +83,6 @@ export default {
   },
   watch: {
     async date() {
-      console.log('date clicked', this.flowId)
       this.gettingRuns = true
       this.selectedEvent = null
       this.flowRunEvents = await this.flowRunEventsList()
