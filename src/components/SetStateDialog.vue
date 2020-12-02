@@ -56,7 +56,14 @@ export default {
       <v-card flat :loading="markAsLoading">
         <div style="padding: 20px;">
           <v-card-title class="headline word-break-normal mb-3" primary-title>
-            Change the state of {{ taskRun ? taskRun.task.name : flowRun.name }}
+            Change the run of
+            {{
+              taskRun
+                ? taskRun.task.name
+                : taskRun && !taskRun.task.name
+                ? taskRun.name
+                : flowRun.name
+            }}
           </v-card-title>
           <v-select
             v-model="selectedState"
@@ -71,7 +78,7 @@ export default {
           <v-text-field
             v-model="reason"
             class="mb-3"
-            label="Opitional - Why are you changing state?"
+            label="Optional - Why are you changing state?"
             prepend-icon="live_help"
             autocomplete="new-password"
             outlined
@@ -191,5 +198,9 @@ export default {
 .checkbox-container {
   margin-left: 30px;
   margin-top: -20px;
+}
+/* stylelint-disable */
+.v-btn__loader {
+  color: #fff;
 }
 </style>
