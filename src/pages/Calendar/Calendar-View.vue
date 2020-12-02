@@ -47,6 +47,23 @@ export default {
     allIds() {
       const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
       return flowIds ? [...new Set(flowIds)] : []
+    },
+    end() {
+      let days = 1
+      switch (this.type) {
+        case '4day':
+          days = 4
+          break
+        case 'week':
+          days = 7
+          break
+        case 'day':
+          days = 1
+          break
+        case 'hour':
+          return this.addTime(this.date, 1, 'h')
+      }
+      return this.addDay(this.date, days)
     }
   },
   apollo: {
@@ -134,6 +151,7 @@ export default {
           v-if="timePeriod === 'day' && flowId"
           :project-id="projectId"
           :date="date"
+          :end="end"
           :flow-id="flowId"
           :time-period="timePeriod"
           :time-interval="timeInterval"
