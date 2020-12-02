@@ -81,7 +81,7 @@ Every time you deploy a flow, you will need to specify a project to deploy into.
 You can create a project using the CLI:
 
 ```bash
-prefect create project hello-world
+prefect create project tester
 ```
 
 You can also create a project using the project selector on the dashboard page of the UI or using the API. 
