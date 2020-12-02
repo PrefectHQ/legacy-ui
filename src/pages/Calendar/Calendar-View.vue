@@ -29,7 +29,8 @@ export default {
       skip: false,
       selectedFlow: 0,
       filters: [{ name: 'Flows' }],
-      loadingKey: 0
+      loadingKey: 0,
+      refetching: false
     }
   },
   computed: {
@@ -52,6 +53,14 @@ export default {
     },
     end() {
       return this.addDay(this.date, 1)
+    }
+  },
+  watch: {
+    async tenant() {
+      this.refetching = true
+      await this.$apollo.queries.flowRuns.refetch()
+      await this.$apollo.queries.scheduledFlowRuns.refetch()
+      this.refetching = false
     }
   },
   apollo: {
@@ -107,7 +116,7 @@ export default {
           type="list-item, list-item, list-item, list-item"
           min-height="329"
           height="100%"
-          :loading="loadingKey > 0"
+          :loading="loadingKey > 0 || refetching"
           transition-group="quick-fade"
           class="my-2"
           tile
@@ -140,7 +149,7 @@ export default {
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <CalendarDay
-          v-if="timePeriod === 'day' && flowId"
+          v-if="flowId"
           :project-id="projectId"
           :date="date"
           :flow-id="flowId"
