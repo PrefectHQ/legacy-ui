@@ -2,6 +2,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/TaskRun/Actions'
+import Artifact from '@/components/Artifact'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
@@ -35,6 +36,7 @@ export default {
   },
   components: {
     Actions,
+    Artifact,
     BreadCrumbs,
     DependenciesTile,
     DetailsTile,
@@ -83,7 +85,7 @@ export default {
           target: 'artifacts',
           icon: 'fas fa-fingerprint',
           badgeText: 'Coming Soon!',
-          disabled: true,
+          // disabled: true,
           cardText:
             'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the',
           cardLink:
@@ -104,23 +106,22 @@ export default {
     $route() {
       this.tab = this.getTab()
     },
-    tab(val) {
-      let query = { ...this.$route.query }
-      switch (val) {
-        case 'logs':
-          query = 'logId'
-          break
-        case 'mapped-runs':
-          query = 'mapped-runs'
-          break
-        case 'artifacts':
-          /* eslint-disable-next-line */
-          query = 'artifacts'
-          break
-        default:
-          break
-      }
-    },
+    // tab(val) {
+    //   let query = { ...this.$route.query }
+    //   switch (val) {
+    //     case 'logs':
+    //       query = 'logId'
+    //       break
+    //     case 'mapped-runs':
+    //       query = 'mapped-runs'
+    //       break
+    //     case 'artifacts':
+    //       query = 'artifacts'
+    //       break
+    //     default:
+    //       break
+    //   }
+    // },
     taskRun(val, prevVal) {
       if (!val || val?.id == prevVal?.id) return
       if (!this.$route.query || !this.$route.query.schematic) {
@@ -138,9 +139,14 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     getTab() {
+      console.log(Object.keys(this.$route.query))
+      // if (Object.keys(this.$route.query).length != 0) {
+      //   let target = Object.keys(this.$route.query)[0]
+      //   console.log(this.tabs)
+      //   if (this.tabs?.find(tab => tab.target == target)) return target
+      // }
       if (Object.keys(this.$route.query).length != 0) {
-        let target = Object.keys(this.$route.query)[0]
-        if (this.tabs?.find(tab => tab.target == target)) return target
+        return Object.keys(this.$route.query)[0]
       }
       return 'overview'
     },
@@ -189,6 +195,16 @@ export default {
     }
   },
   apollo: {
+    artifacts: {
+      query: require('@/graphql/TaskRun/task-run-artifacts.gql'),
+      variables() {
+        return {
+          taskRunId: this.taskRunId
+        }
+      },
+      pollInterval: 10000,
+      update: data => data.task_run_artifact
+    },
     taskRun: {
       query: require('@/graphql/TaskRun/task-run.gql'),
       variables() {
@@ -298,7 +314,7 @@ export default {
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
-        <TileLayout>
+        <TileLayout v-if="tab == 'overview'">
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :task-run="taskRun" />
 
           <TaskRunHeartbeatTile
@@ -341,6 +357,7 @@ export default {
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
+        <Artifact v-if="artifacts" :artifact="artifacts[0]" />
         <!-- <div v-html="parseMarkdown('# hello')"></div> -->
       </v-tab-item>
 
