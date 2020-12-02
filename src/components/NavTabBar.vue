@@ -118,6 +118,7 @@ export default {
               <v-badge
                 v-if="tb.badgeText"
                 color="codePink"
+                class="text-none"
                 :content="tb.badgeText"
                 bottom
                 inline

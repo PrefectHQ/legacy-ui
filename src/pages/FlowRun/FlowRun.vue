@@ -74,7 +74,7 @@ export default {
           target: 'artifacts',
           icon: 'fas fa-fingerprint',
           // disabled: true,
-          badgeText: 'Coming Soon!',
+          badgeText: 'New!',
           cardText:
             'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the',
           cardLink:

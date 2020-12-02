@@ -84,7 +84,7 @@ export default {
           name: 'Artifacts',
           target: 'artifacts',
           icon: 'fas fa-fingerprint',
-          badgeText: 'Coming Soon!',
+          badgeText: 'New!',
           // disabled: true,
           cardText:
             'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the',
@@ -289,9 +289,9 @@ export default {
       ></BreadCrumbs>
 
       <Actions slot="page-actions" style="height: 55px;" :task-run="taskRun" />
-      <span slot="tabs" style="width: 100%;"
-        ><NavTabBar :tabs="tabs" page="task-run"
-      /></span>
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="task-run" />
+      </span>
     </SubPageNav>
 
     <v-tabs-items
