@@ -139,7 +139,6 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     getTab() {
-      console.log(Object.keys(this.$route.query))
       // if (Object.keys(this.$route.query).length != 0) {
       //   let target = Object.keys(this.$route.query)[0]
       //   console.log(this.tabs)
