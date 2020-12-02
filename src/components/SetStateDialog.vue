@@ -59,9 +59,9 @@ export default {
             Change the run of
             {{
               taskRun
-                ? taskRun.task.name
-                : taskRun && !taskRun.task.name
                 ? taskRun.name
+                  ? taskRun.name
+                  : taskRun.task.name
                 : flowRun.name
             }}
           </v-card-title>
@@ -129,7 +129,14 @@ export default {
               Please be aware that clicking on confirm will set the state of
               your
               {{ dialogType }}
-              {{ taskRun ? taskRun.name : flowRun.name }} to
+              {{
+                taskRun
+                  ? taskRun.name
+                    ? taskRun.name
+                    : taskRun.task.name
+                  : flowRun.name
+              }}
+              to
               <span class="font-weight-black pb-8"> {{ selectedState }}.</span>
             </v-tooltip>
             <v-btn text @click="reset">
