@@ -37,6 +37,7 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
+    ...mapGetters('api', ['backend']),
     flowId() {
       if (this.selectedFlow) return this.allIds[this.selectedFlow]
       if (this.allIds && this.allIds[0]) return this.allIds[0]
@@ -61,6 +62,13 @@ export default {
       await this.$apollo.queries.flowRuns.refetch()
       await this.$apollo.queries.scheduledFlowRuns.refetch()
       this.refetching = false
+    },
+    async backend() {
+      this.refetching = true
+      this.selectedFlow = null
+      const runs = await this.$apollo.queries.flowRuns.refetch()
+      const upcoming = await this.$apollo.queries.scheduledFlowRuns.refetch()
+      if (runs.length || upcoming.length) this.refetching = false
     }
   },
   apollo: {
@@ -149,7 +157,7 @@ export default {
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <CalendarDay
-          v-if="flowId"
+          v-if="flowId && !refetching"
           :project-id="projectId"
           :date="date"
           :flow-id="flowId"
