@@ -51,11 +51,10 @@ export default {
         {{ run.name ? run.name : run.task_name }}
         {{ run.map_index > -1 ? `(${run.map_index})` : '' }}
       </router-link>
-
-      <div v-if="type === 'flow-run'" class="pl-4 max-width">
-        <FlowName :id="run.flow_id" />
-      </div>
     </v-card-title>
+    <v-card-subtitle v-if="type === 'flow-run'">
+      <FlowName :id="run.flow_id" />
+    </v-card-subtitle>
     <v-card-text>
       <div>
         State:
@@ -131,9 +130,3 @@ export default {
     </v-card-text>
   </v-card>
 </template>
-
-<style scss scoped>
-.max-width {
-  max-width: 100%;
-}
-</style>
