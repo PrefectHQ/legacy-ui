@@ -260,7 +260,7 @@ export default {
 
     <v-tabs-items
       v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
       style="
         max-width: 1440px;
       "
@@ -272,8 +272,8 @@ export default {
       <v-tab-item
         class="tab-full-height pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <v-skeleton-loader
@@ -374,8 +374,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="flows"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <FlowTableTile
           v-if="loadedTiles > 8"
@@ -387,8 +387,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="agents"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <Agents v-if="loadedTiles > 9" class="mx-3 my-6" />
       </v-tab-item>
@@ -396,14 +396,14 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="analytics"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         Nothing to see here :)
       </v-tab-item>
     </v-tabs-items>
 
-    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
+    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" app fixed>
       <v-btn v-for="tb in tabs" :key="tb.target" @click="tab = tb.target">
         {{ tb.name }}
         <v-icon>{{ tb.icon }}</v-icon>
@@ -413,10 +413,6 @@ export default {
 </template>
 
 <style lang="scss">
-.tab-full-height {
-  min-height: 100vh;
-}
-
 // stylelint-disable
 .v-skeleton-loader__image {
   height: inherit !important;

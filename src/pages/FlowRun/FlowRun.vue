@@ -247,7 +247,7 @@ export default {
 
     <v-tabs-items
       v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
       :style="{
         'max-width': tab == 'chart' ? 'auto' : '1440px',
         'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
@@ -255,10 +255,10 @@ export default {
       mandatory
     >
       <v-tab-item
-        class="tab-full-height pa-0"
+        class="pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <TimelineTile
@@ -285,10 +285,9 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
         value="schematic"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <SchematicTile slot="row-2-tile" />
@@ -298,8 +297,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="logs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <LogsCard
@@ -321,7 +320,7 @@ export default {
       </v-tab-item>
     </v-tabs-items>
 
-    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
+    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" app fixed>
       <v-btn @click="tab = 'overview'">
         Overview
         <v-icon>view_quilt</v-icon>
@@ -350,12 +349,7 @@ export default {
   background-color: #c8e1ff !important;
 }
 
-.tab-full-height {
-  min-height: 80vh;
-}
-
 /* stylelint-disable */
-
 .v-tab--disabled .v-badge__badge {
   pointer-events: none;
 }

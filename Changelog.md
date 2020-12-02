@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
+- Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
 
 ### Bugfixes
 
