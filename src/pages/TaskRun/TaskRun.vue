@@ -203,7 +203,7 @@ export default {
         }
       },
       pollInterval: 10000,
-      update: data => data.task_run_artifact
+      update: data => data.task_run_artifact || []
     },
     taskRun: {
       query: require('@/graphql/TaskRun/task-run.gql'),
@@ -352,13 +352,22 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
+        class="tab-full-height py-12"
         value="artifacts"
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
-        <Artifact v-if="artifacts" :artifact="artifacts[0]" />
-        <!-- <div v-html="parseMarkdown('# hello')"></div> -->
+        <v-lazy
+          v-for="artifact in artifacts"
+          :key="artifact.id"
+          :options="{
+            threshold: 0.75
+          }"
+          min-height="40px"
+          transition="fade"
+        >
+          <Artifact :artifact="artifact" />
+        </v-lazy>
       </v-tab-item>
 
       <v-tab-item
