@@ -10,6 +10,7 @@
 ### Bugfixes
 
 - Fix jumping height on subnav = [#476](https://github.com/PrefectHQ/ui/pull/476)
+- Removed tutorial that does not work as previously intended - [#480](https://github.com/PrefectHQ/ui/pull/480)
 
 ## 2020-11-13
 
