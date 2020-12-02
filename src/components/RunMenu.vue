@@ -2,50 +2,18 @@
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import FlowName from '@/pages/Calendar/FlowName'
-import RingChart from '@/components/Visualizations/RingChart'
-import { STATE_COLORS } from '@/utils/states'
+
 export default {
   components: {
     DurationSpan,
-    FlowName,
-    RingChart
+    FlowName
   },
   mixins: [formatTime],
   props: {
     run: { type: Object, required: false, default: () => {} },
     type: { type: String, required: false, default: 'task-run' }
   },
-  // data() {
-  //   return {
-  //     colors: STATE_COLORS
-  //   }
-  // },
-  computed: {
-    print() {
-      return true
-    },
-    colors() {
-      if (this.segments) return this.segments.map(segment => segment.color)
-      return null
-    },
-    segments() {
-      const states = Object.keys(STATE_COLORS).sort()
-      let stateArr = []
-      states.forEach(state => {
-        const val = this.flowRun.task_runs.filter(
-          taskRun => taskRun.state === state
-        )
-        if (val.length) {
-          stateArr.push({
-            label: state,
-            value: val.length,
-            color: STATE_COLORS[state]
-          })
-        }
-      })
-      return stateArr
-    }
-  },
+  computed: {},
   methods: {
     statusStyle(state) {
       return {
@@ -77,7 +45,7 @@ export default {
 </script>
 
 <template>
-  <v-card v-if="print" tile>
+  <v-card tile>
     <v-card-title class="text-subtitle-1 ">
       <router-link :to="{ name: type, params: { id: run.id } }">
         {{ run.name ? run.name : run.task_name }}
@@ -89,14 +57,6 @@ export default {
       </div>
     </v-card-title>
     <v-card-text>
-      <RingChart
-        :colors="colors"
-        :segments="segments"
-        :width="200"
-        :height="200"
-        :inner-radius="20"
-        :outer-radius="80"
-      />
       <div>
         State:
         <span :style="statusStyle(run.state)"></span>
