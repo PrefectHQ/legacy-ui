@@ -70,9 +70,6 @@ export default {
       const upcoming = await this.$apollo.queries.scheduledFlowRuns.refetch()
       if (runs.length || upcoming.length) this.refetching = false
     }
-    // date() {
-    //   this.selectedFlow = null
-    // }
   },
   apollo: {
     flowRuns: {
@@ -115,49 +112,59 @@ export default {
   <v-container>
     <v-row>
       <v-col class="pa-0" cols="12" md="3" lg="2">
-        <v-date-picker
-          v-model="date"
-          no-title
-          color="primary"
-          width="99%"
-        ></v-date-picker>
-        <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
+        <v-sheet>
+          <v-date-picker
+            v-model="date"
+            no-title
+            flat
+            color="primary"
+            width="99%"
+          ></v-date-picker>
+          <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
         <v-time-picker v-model="end" :max="start"></v-time-picker> -->
-        <v-skeleton-loader
-          type="list-item, list-item, list-item, list-item"
-          min-height="329"
-          height="100%"
-          :loading="loadingKey > 0 || refetching"
-          transition-group="quick-fade"
-          class="my-2"
-          tile
-        >
-          <v-expansion-panels :value="0">
-            <v-expansion-panel v-for="(filter, index) in filters" :key="index">
-              <v-expansion-panel-header>
-                {{ filter.name }}
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-list>
-                  <v-list-item-group v-model="selectedFlow" color="primary">
-                    <v-list-item
-                      v-for="item in allIds"
-                      :key="item ? item.id : null"
-                      :value="item"
-                      dense
+          <v-skeleton-loader
+            type="list-item, list-item, list-item, list-item"
+            min-height="329"
+            height="100%"
+            :loading="loadingKey > 0 || refetching"
+            transition-group="quick-fade"
+            class="my-2"
+            tile
+          >
+            <v-expansion-panels :value="0">
+              <v-expansion-panel
+                v-for="(filter, index) in filters"
+                :key="index"
+              >
+                <v-expansion-panel-header>
+                  {{ filter.name }}
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-list>
+                    <v-list-item-group
+                      v-model="selectedFlow"
+                      color="primary"
+                      mandatory
                     >
-                      <v-list-item-content>
-                        <v-list-item-subtitle class="font-weight-light">
-                          <FlowName :id="item" />
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </v-skeleton-loader>
+                      <v-list-item
+                        v-for="item in allIds"
+                        :key="item ? item.id : null"
+                        :value="item"
+                        dense
+                      >
+                        <v-list-item-content>
+                          <v-list-item-subtitle class="font-weight-light">
+                            <FlowName :id="item" />
+                          </v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-skeleton-loader>
+        </v-sheet>
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <CalendarDay

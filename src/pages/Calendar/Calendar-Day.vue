@@ -3,11 +3,13 @@ import FlowName from '@/pages/Calendar/FlowName'
 import FlowRunMenu from '@/components/RunMenu'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
   components: {
     FlowName,
-    FlowRunMenu
+    FlowRunMenu,
+    ExternalLink
   },
   filters: {},
   mixins: [formatTime],
@@ -49,6 +51,7 @@ export default {
       selectedOpen: false,
       selectedElement: null,
       type: 'category',
+      upcoming: [],
       timeOptions: [
         { text: 'Four Days', value: '4day' },
         { text: 'Day', value: 'category' }
@@ -62,6 +65,10 @@ export default {
     ...mapGetters('user', ['timezone']),
     intervalCount() {
       return (60 / this.calendarInterval) * 24
+    },
+    scheduleBanner() {
+      if (this.upcoming.length > 8) return true
+      return new Date(this.date) > new Date()
     },
     end() {
       let days = 1
@@ -123,6 +130,7 @@ export default {
         },
         loadingKey: 'loadingKey'
       })
+      this.upcoming = upcoming.data.flow_run
       const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
 
       allRuns.map(flowRun => {
@@ -169,12 +177,14 @@ export default {
 </script>
 
 <template>
-  <div>
+  <v-sheet>
     <v-select
       v-model="type"
       label="Time Periods"
       :items="timeOptions"
       outlined
+      dense
+      hide-details
     ></v-select>
     <v-skeleton-loader
       type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
@@ -182,6 +192,29 @@ export default {
       transition-group="quick-fade"
       tile
     >
+      <v-banner
+        key="1"
+        v-model="scheduleBanner"
+        :icon="$vuetify.breakpoint.lgAndUp ? 'announcement' : null"
+        sticky
+        single-line
+        class="text-body-2 black--text py-0 my-2"
+        icon-color="white"
+        color="amber"
+        tile
+        transition="slide-y-transition"
+      >
+        Reminder!
+        <ExternalLink
+          href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
+        >
+          Prefect Scheduler
+        </ExternalLink>
+        will only schedule 10 runs in advance.
+        <template #actions="{ dismiss }">
+          <v-btn text color="white" @click="dismiss">Close</v-btn>
+        </template>
+      </v-banner>
       <v-calendar
         ref="calendar"
         :now="date"
@@ -219,5 +252,5 @@ export default {
         />
       </v-menu>
     </v-skeleton-loader>
-  </div>
+  </v-sheet>
 </template>
