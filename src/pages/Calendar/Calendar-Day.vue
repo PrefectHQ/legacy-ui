@@ -169,49 +169,51 @@ export default {
 </script>
 
 <template>
-  <v-skeleton-loader
-    type="image"
-    :loading="loadingKey > 0 || gettingRuns"
-    transition-group="quick-fade"
-    tile
-  >
+  <div>
     <v-select
       v-model="type"
       label="Time Periods"
       :items="timeOptions"
       outlined
     ></v-select>
-    <v-calendar
-      ref="calendar"
-      :now="date"
-      :value="date"
-      event-overlap-mode="stack"
-      :events="flowRunEvents"
-      :event-color="eventColor"
-      :interval-height="250"
-      :interval-minutes="calendarInterval"
-      :interval-count="intervalCount"
-      :type="type"
-      @click:event="handleEventClick"
+    <v-skeleton-loader
+      type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
+      :loading="loadingKey > 0 || gettingRuns"
+      transition-group="quick-fade"
+      tile
     >
-      <template #event="{event}">
-        <div :id="event.name" class="caption pl-2">
-          {{ event.name }} {{ formTime(event.start_time) }} -
-          {{ formTime(event.end_time) }}
-        </div>
-      </template>
-      <template #category="{ category }">
-        <FlowName :id="category" />
-      </template>
-    </v-calendar>
-    <v-menu
-      :value="selectedOpen"
-      offset-y
-      max-width="50vW"
-      :close-on-content-click="false"
-      :activator="selectedElement"
-    >
-      <FlowRunMenu :run="selectedEvent" type="flow-run" />
-    </v-menu>
-  </v-skeleton-loader>
+      <v-calendar
+        ref="calendar"
+        :now="date"
+        :value="date"
+        event-overlap-mode="stack"
+        :events="flowRunEvents"
+        :event-color="eventColor"
+        :interval-height="250"
+        :interval-minutes="calendarInterval"
+        :interval-count="intervalCount"
+        :type="type"
+        @click:event="handleEventClick"
+      >
+        <template #event="{event}">
+          <div :id="event.name" class="caption pl-2">
+            {{ event.name }} {{ formTime(event.start_time) }} -
+            {{ formTime(event.end_time) }}
+          </div>
+        </template>
+        <template #category="{ category }">
+          <FlowName :id="category" />
+        </template>
+      </v-calendar>
+      <v-menu
+        :value="selectedOpen"
+        offset-y
+        max-width="50vW"
+        :close-on-content-click="false"
+        :activator="selectedElement"
+      >
+        <FlowRunMenu :run="selectedEvent" type="flow-run" />
+      </v-menu>
+    </v-skeleton-loader>
+  </div>
 </template>

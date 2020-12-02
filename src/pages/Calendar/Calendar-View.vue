@@ -104,7 +104,7 @@ export default {
         <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
         <v-time-picker v-model="end" :max="start"></v-time-picker> -->
         <v-skeleton-loader
-          type="image"
+          type="list-item, list-item, list-item, list-item"
           min-height="329"
           height="100%"
           :loading="loadingKey > 0"
