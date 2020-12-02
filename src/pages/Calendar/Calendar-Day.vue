@@ -212,7 +212,11 @@ export default {
         :close-on-content-click="false"
         :activator="selectedElement"
       >
-        <FlowRunMenu :run="selectedEvent" type="flow-run" />
+        <FlowRunMenu
+          v-if="selectedEvent"
+          :run="selectedEvent"
+          type="flow-run"
+        />
       </v-menu>
     </v-skeleton-loader>
   </div>
