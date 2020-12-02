@@ -144,7 +144,7 @@ export default {
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.date,
+          startTime: this.convertCalendarStartTime(this.date),
           endTime: this.end,
           distintOn: true
         }
