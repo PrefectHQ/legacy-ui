@@ -4,6 +4,9 @@ export default {
     id: {
       type: String,
       required: true
+    },
+    left: {
+      type: Boolean
     }
   },
   data() {
@@ -14,6 +17,10 @@ export default {
   computed: {
     flowName() {
       return this.flow?.name
+    },
+    textAlign() {
+      if (this.left) return null
+      return 'text-center'
     }
   },
   apollo: {
@@ -33,7 +40,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="loadingKey < 1" class="caption text-center max-width">
+  <div v-if="loadingKey < 1" class="caption max-width" :class="textAlign">
     <!-- <router-link :to="{ name: 'flow', params: { id: flow.id } }"> -->
     <truncate v-if="loadingKey < 1" :content="flowName"> </truncate>
     <!-- </router-link> -->

@@ -47,13 +47,16 @@ export default {
 <template>
   <v-card tile>
     <v-card-title class="text-subtitle-1 ">
-      <router-link :to="{ name: type, params: { id: run.id } }">
+      <router-link :to="{ name: type, params: { id: run.id } }" target="_blank">
         {{ run.name ? run.name : run.task_name }}
         {{ run.map_index > -1 ? `(${run.map_index})` : '' }}
       </router-link>
+      <v-icon x-small>
+        open_in_new
+      </v-icon>
     </v-card-title>
     <v-card-subtitle v-if="type === 'flow-run'">
-      <FlowName :id="run.flow_id" />
+      <FlowName :id="run.flow_id" left />
     </v-card-subtitle>
     <v-card-text>
       <div>
