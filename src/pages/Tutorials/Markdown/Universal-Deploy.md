@@ -70,43 +70,21 @@ You'll need this token later in the tutorial. You can save it in your local conf
 export PREFECT__CLOUD__AGENT__AUTH_TOKEN=<COPIED_RUNNER_TOKEN>
 ```
 
+You can also create a RUNNER token using the API Tokens page in Team settings in the UI. 
+
 # Creating a project
 
 Projects are used to organize flows that have been deployed to Prefect Cloud.
 
 Every time you deploy a flow, you will need to specify a project to deploy into. There are no limits on the number of projects you can have, and you can always delete projects later. You can read more about interacting with projects [here](https://docs.prefect.io/cloud/concepts/projects.html).
 
-#### UI
+You can create a project using the CLI:
 
-Projects can be created from the project filter on the [dashboard](/) or the [project settings page](/team/projects).
-
-![team-projects](https://docs.prefect.io/orchestration/ui/dashboard-overview.png)
-
-#### Core Client
-
-To create a new project with the Core client:
-
-```py
-from prefect import Client
-
-client = Client()
-client.create_project(project_name="Hello, World!")
+```bash
+prefect create project hello-world
 ```
 
-#### GraphQL
-
-To create a new project with GraphQL, issue the following mutation:
-
-```json
-mutation {
-  create_project(input: { name: "Hello, World!" }) {
-    project {
-      id
-      name
-    }
-  }
-}
-```
+You can also create a project using the project selector on the dashboard page of the UI or using the API. 
 
 # Deploy your flow with Universal Deploy
 
@@ -123,7 +101,7 @@ def hello_task():
 
 flow = Flow("hello-flow", tasks=[hello_task])
 
-flow.run()
+#flow.run()
 
 flow.register(project_name="tester")
 flow.run_agent()
@@ -141,7 +119,9 @@ We call this pattern `"Universal Deploy"` because all it requires is a working P
 
 # Run Your Flow In Prefect Cloud
 
-You can now run your flow from Prefect Cloud!
+To run your flow in Prefect Cloud, find your flow in the Flows tab of the dashboard and select your flow.  You can click on "Quick Run" to run your flow with no additional settings.  
+
+If you want to add parameters, context or to schedule your run for a point in the future, you can click on "Run" to open the run tab and add that information before you run your flow. You can also default parameters and schedules by selecting the "settings" tab on the flow page. 
 
 **Universal Deploy and Labels**
 
