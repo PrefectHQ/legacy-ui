@@ -431,14 +431,10 @@ export default {
         to understand their role in your infrastructure.
         <span v-if="isCloud">
           You can also go through the
-          <router-link class="link" :to="{ name: 'flow-run-tutorial' }">
-            <u>Running a Flow</u>
-          </router-link>
-          and
-          <router-link class="link" :to="{ name: 'universal-deploy-tutorial' }">
+          <router-link class="link" :to="{ path: 'tutorial/Universal-Deploy' }">
             <u>Universal Deploy</u>
           </router-link>
-          tutorials for guidance on running agents in Cloud.</span
+          tutorial for guidance on running agents in Cloud.</span
         >
       </p>
     </v-alert>
