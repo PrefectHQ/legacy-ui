@@ -55,16 +55,19 @@ export default {
 
       <v-card flat :loading="markAsLoading">
         <div style="padding: 20px;">
-          <v-card-title class="headline word-break-normal mb-3" primary-title>
+          <v-card-title class="headline word-break-normal card-title">
             <span v-if="taskRun && taskRun.name">
               Change the state of
-              {{ taskRun.name }}
+              <span class="font-weight-medium">{{ taskRun.name }}</span>
             </span>
             <span v-else-if="taskRun">
               Change the state of this run of
-              {{ taskRun.task.name }}
+              <span class="font-weight-medium">{{ taskRun.task.name }}</span>
             </span>
-            <span v-else>{{ flowRun.name }}</span>
+            <span v-else
+              >Change the state of
+              <span class="font-weight-medium">{{ flowRun.name }}</span></span
+            >
           </v-card-title>
           <v-select
             v-model="selectedState"
@@ -210,5 +213,11 @@ export default {
 /* stylelint-disable */
 .v-btn__loader {
   color: #fff;
+}
+
+.card-title {
+  margin-left: -12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
 }
 </style>
