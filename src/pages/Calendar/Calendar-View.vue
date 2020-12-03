@@ -64,6 +64,9 @@ export default {
     },
     end() {
       return this.addDay(this.date, 1)
+    },
+    calTitle() {
+      return this.getMonth(this.date)
     }
   },
   watch: {
@@ -124,10 +127,10 @@ export default {
 </script>
 
 <template>
-  <v-container class="ma-2 pl-0 ">
+  <v-container class="ma-2 pl-0 pt-0">
     <v-row>
       <v-col class="pa-0" cols="12" md="3" lg="2">
-        <v-sheet color="appBackground" class="lighter" elevation="0">
+        <v-sheet color="appBackground" elevation="0">
           <v-date-picker
             v-model="date"
             no-title
@@ -188,7 +191,7 @@ export default {
         </v-sheet>
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
-        <v-toolbar flat color="appBackground">
+        <v-toolbar flat color="appBackground" class="pt-0">
           <v-btn
             outlined
             class="mx-4 py-2"
@@ -197,10 +200,11 @@ export default {
           >
             Today
           </v-btn>
-          <v-toolbar-title v-if="$refs.calendar">
-            {{ $refs.calendar.title }}
+          <v-spacer />
+          <v-toolbar-title>
+            {{ calTitle }}
           </v-toolbar-title>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-menu bottom right>
             <template #activator="{ on, attrs }">
               <v-btn
@@ -234,6 +238,7 @@ export default {
         </v-toolbar>
         <CalendarDay
           v-if="flowId && !refetching"
+          ref="calendar"
           :project-id="projectId"
           :date="date"
           :type="type"

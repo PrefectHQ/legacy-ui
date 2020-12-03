@@ -199,7 +199,7 @@ export default {
   >
     <v-sheet height="95vH" class="sheet-tweaks">
       <v-calendar
-        ref="calendar"
+        ref="cal"
         :now="date"
         :value="date"
         event-overlap-mode="stack"
