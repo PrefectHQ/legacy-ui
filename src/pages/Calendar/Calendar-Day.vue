@@ -232,42 +232,44 @@ export default {
           <v-btn text color="white" @click="dismiss">Close</v-btn>
         </template>
       </v-banner>
-      <v-calendar
-        ref="calendar"
-        :now="date"
-        :value="date"
-        event-overlap-mode="stack"
-        :events="flowRunEvents"
-        :event-color="eventColor"
-        :interval-height="250"
-        :interval-minutes="calendarInterval"
-        :interval-count="intervalCount"
-        :type="type"
-        @click:event="handleEventClick"
-      >
-        <template #event="{event}">
-          <div :id="event.name" class="caption pl-2" :class="striped(event)">
-            {{ event.name }} {{ formTime(event.start_time) }} -
-            {{ formTime(event.end_time) }}
-          </div>
-        </template>
-        <template #category="{ category }">
-          <FlowName :id="category" />
-        </template>
-      </v-calendar>
-      <v-menu
-        :value="selectedOpen"
-        offset-y
-        max-width="50vW"
-        :close-on-content-click="false"
-        :activator="selectedElement"
-      >
-        <FlowRunMenu
-          v-if="selectedEvent"
-          :run="selectedEvent"
-          type="flow-run"
-        />
-      </v-menu>
+      <v-sheet height="90vH">
+        <v-calendar
+          ref="calendar"
+          :now="date"
+          :value="date"
+          event-overlap-mode="stack"
+          :events="flowRunEvents"
+          :event-color="eventColor"
+          :interval-height="250"
+          :interval-minutes="calendarInterval"
+          :interval-count="intervalCount"
+          :type="type"
+          @click:event="handleEventClick"
+        >
+          <template #event="{event}">
+            <div :id="event.name" class="caption pl-2" :class="striped(event)">
+              {{ event.name }} {{ formTime(event.start_time) }} -
+              {{ formTime(event.end_time) }}
+            </div>
+          </template>
+          <template #category="{ category }">
+            <FlowName :id="category" />
+          </template>
+        </v-calendar>
+        <v-menu
+          :value="selectedOpen"
+          offset-y
+          max-width="50vW"
+          :close-on-content-click="false"
+          :activator="selectedElement"
+        >
+          <FlowRunMenu
+            v-if="selectedEvent"
+            :run="selectedEvent"
+            type="flow-run"
+          />
+        </v-menu>
+      </v-sheet>
     </v-skeleton-loader>
   </v-sheet>
 </template>

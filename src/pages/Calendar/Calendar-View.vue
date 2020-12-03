@@ -39,6 +39,7 @@ export default {
     ...mapGetters('user', ['timezone']),
     ...mapGetters('api', ['backend']),
     flowId() {
+      if (this.$route.params.id) return this.$route.params.id
       if (this.selectedFlow) return this.selectedFlow
       if (this.allIds && this.allIds[0]) return this.allIds[0]
       return ''
@@ -50,7 +51,9 @@ export default {
     },
     allIds() {
       const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
-      return flowIds ? [...new Set(flowIds)] : []
+      return flowIds
+        ? [...new Set(flowIds, this.$route.params.id)]
+        : [this.$route.params.id]
     },
     end() {
       return this.addDay(this.date, 1)
@@ -117,6 +120,7 @@ export default {
             v-model="date"
             no-title
             flat
+            dense
             color="primary"
             width="99%"
           ></v-date-picker>

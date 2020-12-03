@@ -169,7 +169,10 @@ export default {
         if (this.tabs?.find(tab => tab.target == target)) return target
       }
       return 'overview'
-    }
+    }, 
+    goToCalendar(){
+      this.$router.push({name: 'calendar', params: this.flow.id})
+    },
   },
   apollo: {
     flowGroup: {
