@@ -86,7 +86,7 @@ export default {
       key: 0,
       loading: 0,
       loadedTiles: 0,
-      numberOfTiles: 10,
+      numberOfTiles: 9,
       projectId: this.$route.params.id,
       refreshTimeout: null,
       tab: this.getTab()
