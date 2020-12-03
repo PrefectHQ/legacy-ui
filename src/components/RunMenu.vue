@@ -64,10 +64,7 @@ export default {
         <span :style="statusStyle(run.state)"></span>
         <span class="font-weight-bold"> {{ run.state }}</span>
       </div>
-      <div
-        v-if="run.start_time"
-        class="subtitle d-flex align-end justify-space-between"
-      >
+      <div v-if="run.start_time" class="subtitle">
         Duration:
         <DurationSpan
           class="font-weight-bold"
@@ -75,41 +72,32 @@ export default {
           :end-time="run.end_time"
         />
       </div>
-      <div
-        v-if="run.start_time"
-        class="subtitle d-flex align-end justify-space-between"
-      >
+      <div v-if="run.start_time" class="subtitle">
         Start:
         <span class="font-weight-bold">
           {{ formatTime(run.start_time) }}
         </span>
       </div>
-      <div
-        v-if="run.end_time"
-        class="subtitle d-flex align-end justify-space-between"
-      >
+      <div v-if="run.end_time" class="subtitle ">
         End:
         <span class="font-weight-bold">
           {{ formatTime(run.end_time) }}
         </span>
       </div>
-      <div
-        v-if="run.state_timestamp"
-        class="subtitle d-flex align-end justify-space-between"
-      >
+      <div v-if="run.state_timestamp" class="subtitle">
         Updated:
         <span class="font-weight-bold">
           {{ formatTime(run.state_timestamp) }}
         </span>
       </div>
       <div v-if="type === 'task-run'">
-        <div class="subtitle d-flex align-end justify-space-between">
+        <div class="subtitle">
           Max Retries:
           <span class="font-weight-bold">
             {{ run.max_retries || 0 }}
           </span>
         </div>
-        <div class="subtitle d-flex align-end justify-space-between">
+        <div class="subtitle">
           Retry delay:
           <span class="font-weight-bold">
             {{ run.retry_delay || 0 }}
