@@ -127,7 +127,6 @@ export default {
       })
       this.upcoming = upcoming.data.flow_run
       const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
-      console.log(allRuns.length)
       this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
       allRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
@@ -198,16 +197,12 @@ export default {
     transition-group="quick-fade"
     tile
     class="skeleton-tweak"
-    ><v-banner
-      key="1"
+    ><v-snackbar
       v-model="scheduleBanner"
       :icon="$vuetify.breakpoint.lgAndUp ? 'announcement' : null"
-      sticky
-      single-line
       class="text-body-2 black--text py-0"
       icon-color="white"
       color="amber"
-      tile
       transition="slide-y-transition"
     >
       Reminder!
@@ -220,7 +215,7 @@ export default {
       <template #actions="{ dismiss }">
         <v-btn text color="white" @click="dismiss">Close</v-btn>
       </template>
-    </v-banner>
+    </v-snackbar>
     <v-sheet height="95vH" class="sheet-tweaks">
       <v-calendar
         ref="cal"
