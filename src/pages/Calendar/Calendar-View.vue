@@ -130,65 +130,63 @@ export default {
   <v-container class="ma-2 pl-0 pt-0">
     <v-row>
       <v-col class="pa-0" cols="12" md="3" lg="2">
-        <v-sheet color="appBackground" elevation="0">
-          <v-date-picker
-            v-model="date"
-            no-title
-            class="small-picker pl-0"
-            flat
-            width="99%"
-            height="200px"
-          ></v-date-picker>
-          <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
+        <v-date-picker
+          v-model="date"
+          no-title
+          class="small-picker pl-0"
+          flat
+          width="99%"
+          height="200px"
+        ></v-date-picker>
+        <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
         <v-time-picker v-model="end" :max="start"></v-time-picker> -->
-          <v-skeleton-loader
-            type="list-item, list-item, list-item, list-item"
-            min-height="329"
-            height="100%"
-            :loading="loadingKey > 0 || refetching"
-            transition-group="quick-fade"
-            class="my-2 expansion"
-            tile
-          >
-            <v-expansion-panels class="expansion" flat :value="0">
-              <v-expansion-panel
-                v-for="(filter, index) in filters"
-                :key="index"
-                class="expansion"
-              >
-                <v-expansion-panel-header class="expansion">
-                  {{ filter.name }}
-                </v-expansion-panel-header>
-                <v-expansion-panel-content class="expansion">
-                  <v-list class="expansion">
-                    <v-list-item-group
-                      v-model="selectedFlow"
-                      color="primary"
-                      mandatory
+        <v-skeleton-loader
+          type="list-item, list-item, list-item, list-item"
+          min-height="329"
+          height="100%"
+          :loading="loadingKey > 0 || refetching"
+          transition-group="quick-fade"
+          class="my-2 expansion"
+          tile
+        >
+          <v-expansion-panels class="expansion" flat :value="0">
+            <v-expansion-panel
+              v-for="(filter, index) in filters"
+              :key="index"
+              class="expansion"
+            >
+              <v-expansion-panel-header class="expansion py-0">
+                {{ filter.name }}
+              </v-expansion-panel-header>
+              <v-expansion-panel-content class="expansion">
+                <v-list class="expansion" height="70vh">
+                  <v-list-item-group
+                    v-model="selectedFlow"
+                    color="primary"
+                    mandatory
+                    class="expansion"
+                  >
+                    <v-list-item
+                      v-for="item in allIds"
+                      :key="item ? item.id : null"
+                      :value="item"
+                      dense
                       class="expansion"
                     >
-                      <v-list-item
-                        v-for="item in allIds"
-                        :key="item ? item.id : null"
-                        :value="item"
-                        dense
-                        class="expansion"
-                      >
-                        <v-list-item-content class="expansion">
-                          <v-list-item-subtitle
-                            class="font-weight-light expansion"
-                          >
-                            <FlowName :id="item" left />
-                          </v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-skeleton-loader>
-        </v-sheet>
+                      <v-list-item-content class="expansion pa-0">
+                        <v-list-item-subtitle
+                          class="font-weight-light expansion"
+                        >
+                          <FlowName :id="item" left />
+                        </v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-skeleton-loader>
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <v-toolbar flat color="appBackground" class="pt-0">
@@ -273,6 +271,8 @@ export default {
 }
 
 .expansion {
+  overflow: scroll;
+
   .theme--light.v-expansion-panels .v-expansion-panel {
     background-color: #f9f9f9 !important;
   }
@@ -284,6 +284,10 @@ export default {
 
   .theme--light.v-sheet {
     background-color: #f9f9f9 !important;
+  }
+
+  .v-expansion-panel--active > .v-expansion-panel-header {
+    min-height: 20px;
   }
 }
 </style>
