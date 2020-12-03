@@ -197,7 +197,7 @@ export default {
     },
     scrollToElement() {
       const el = this.$el.getElementsByClassName('scroll-here')[0]
-      if (el) {
+      if (el && this.$vuetify.breakpoint.lgAndUp) {
         el.scrollIntoView()
       }
     }
