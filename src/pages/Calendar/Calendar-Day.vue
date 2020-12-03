@@ -1,15 +1,13 @@
 <script>
-import FlowName from '@/pages/Calendar/FlowName'
 import FlowRunMenu from '@/components/RunMenu'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import ExternalLink from '@/components/ExternalLink'
+// import ExternalLink from '@/components/ExternalLink'
 
 export default {
   components: {
-    FlowName,
-    FlowRunMenu,
-    ExternalLink
+    FlowRunMenu
+    // ExternalLink
   },
   filters: {},
   mixins: [formatTime],
@@ -50,11 +48,11 @@ export default {
       selectedEvent: null,
       selectedOpen: false,
       selectedElement: null,
-      type: 'category',
+      type: 'day',
       upcoming: [],
       timeOptions: [
         { text: 'Four Days', value: '4day' },
-        { text: 'Day', value: 'category' }
+        { text: 'Day', value: 'day' }
         // { text: 'Hour', value: 'hour' }
       ]
     }
@@ -194,45 +192,25 @@ export default {
 </script>
 
 <template>
-  <v-sheet>
-    <v-select
-      v-model="type"
-      label="Time Periods"
-      :items="timeOptions"
-      outlined
-      dense
-      hide-details
-    ></v-select>
+  <v-sheet height="64">
+    <v-toolbar flat>
+      <v-select
+        v-model="type"
+        label="Time Periods"
+        :items="timeOptions"
+        dense
+        outlined
+        class="pt-2 limit-width"
+        hide-details
+      ></v-select>
+    </v-toolbar>
     <v-skeleton-loader
       type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
       :loading="loadingKey > 0 || gettingRuns"
       transition-group="quick-fade"
       tile
     >
-      <v-banner
-        key="1"
-        v-model="scheduleBanner"
-        :icon="$vuetify.breakpoint.lgAndUp ? 'announcement' : null"
-        sticky
-        single-line
-        class="text-body-2 black--text py-0 my-2"
-        icon-color="white"
-        color="amber"
-        tile
-        transition="slide-y-transition"
-      >
-        Reminder!
-        <ExternalLink
-          href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
-        >
-          Prefect Scheduler
-        </ExternalLink>
-        will only schedule 10 runs in advance.
-        <template #actions="{ dismiss }">
-          <v-btn text color="white" @click="dismiss">Close</v-btn>
-        </template>
-      </v-banner>
-      <v-sheet height="90vH">
+      <v-sheet height="75vH">
         <v-calendar
           ref="calendar"
           :now="date"
@@ -240,10 +218,11 @@ export default {
           event-overlap-mode="stack"
           :events="flowRunEvents"
           :event-color="eventColor"
-          :interval-height="250"
+          :interval-height="200"
           :interval-minutes="calendarInterval"
           :interval-count="intervalCount"
           :type="type"
+          class="calendar-tweaks"
           @click:event="handleEventClick"
         >
           <template #event="{event}">
@@ -251,9 +230,6 @@ export default {
               {{ event.name }} {{ formTime(event.start_time) }} -
               {{ formTime(event.end_time) }}
             </div>
-          </template>
-          <template #category="{ category }">
-            <FlowName :id="category" />
           </template>
         </v-calendar>
         <v-menu
@@ -274,9 +250,30 @@ export default {
   </v-sheet>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .striped {
   background: repeating-linear-gradient(45deg, #ffeec4, #ffbe1e 10px);
   color: #3d2c00;
+}
+
+.limit-width {
+  max-width: 20%;
+}
+
+/* stylelint-disable */
+.calendar-tweaks {
+  .v-calendar-daily__intervals-body {
+    max-width: 45px !important;
+  }
+  .v-btn--fab.v-size--default {
+    height: 35px;
+    width: 30px;
+  }
+  .v-calendar-daily_head-weekday {
+    padding: 3px 0px 0px 0px;
+    font-size: 8px;
+    text-align: center;
+    text-transform: uppercase;
+  }
 }
 </style>

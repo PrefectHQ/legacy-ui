@@ -112,17 +112,18 @@ export default {
 </script>
 
 <template>
-  <v-container>
+  <v-container class="ma-2">
     <v-row>
-      <v-col class="pa-0" cols="12" md="3" lg="2">
-        <v-sheet>
+      <v-col class="pa-0" cols="12" md="2">
+        <v-sheet color="appBackground" class="appBackground" elevation="0">
           <v-date-picker
             v-model="date"
             no-title
+            class="small-picker"
             flat
-            dense
             color="primary"
             width="99%"
+            height="200px"
           ></v-date-picker>
           <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
         <v-time-picker v-model="end" :max="start"></v-time-picker> -->
@@ -135,7 +136,7 @@ export default {
             class="my-2"
             tile
           >
-            <v-expansion-panels :value="0">
+            <v-expansion-panels flat :value="0">
               <v-expansion-panel
                 v-for="(filter, index) in filters"
                 :key="index"
@@ -170,7 +171,7 @@ export default {
           </v-skeleton-loader>
         </v-sheet>
       </v-col>
-      <v-col class="pa-0" cols="12" md="9" lg="10">
+      <v-col class="pa-0" cols="12" md="10">
         <CalendarDay
           v-if="flowId && !refetching"
           :project-id="projectId"
@@ -184,3 +185,18 @@ export default {
     </v-row>
   </v-container>
 </template>
+
+<style lang="scss" scoped>
+.small-picker {
+  max-height: 200px;
+
+  .v-date-picker-table--date .v-btn {
+    height: 25px;
+    width: 25px;
+  }
+
+  // .v-date-picker-table {
+  //   max-height: 200px;
+  // }
+}
+</style>
