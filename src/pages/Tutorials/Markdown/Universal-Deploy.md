@@ -101,7 +101,7 @@ def hello_task():
 
 flow = Flow("hello-flow", tasks=[hello_task])
 
-#flow.run()
+# flow.run() We could run our flow locally using the flow's run method but we'll be running this from Cloud!
 
 flow.register(project_name="tester")
 flow.run_agent()
