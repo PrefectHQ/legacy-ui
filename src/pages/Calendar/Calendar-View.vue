@@ -121,7 +121,6 @@ export default {
             no-title
             class="small-picker pl-0"
             flat
-            color="primary"
             width="99%"
             height="200px"
           ></v-date-picker>
@@ -202,8 +201,12 @@ export default {
     max-height: 200px;
   }
 
+  .v-btn:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+    background-color: none !important;
+  }
+
   .theme--light {
-    background-color: #f9f9f9 !important;
+    background: #f9f9f9;
   }
 }
 
