@@ -4,5 +4,15 @@ query TaskRunArtifacts($taskRunIds: [uuid!]) {
     created
     data
     kind
+
+    task_run {
+      id
+      name
+
+      task {
+        id
+        name
+      }
+    }
   }
 }

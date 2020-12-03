@@ -19,11 +19,11 @@ export default {
 </script>
 
 <template>
-  <v-card tile>
-    <v-card-text class="grey--text text--darken-3">
-      <div class="artifact md" v-html="mdParser(artifact.data.markdown)"> </div>
-    </v-card-text>
-  </v-card>
+  <div
+    class="artifact md grey--text text--darken-3"
+    v-html="mdParser(artifact.data.markdown)"
+  >
+  </div>
 </template>
 
 <style lang="scss">

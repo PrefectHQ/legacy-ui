@@ -1,0 +1,5 @@
+query TaskRunIds($where: task_run_bool_exp!, $limit: Int, $offset: Int) {
+  task_run(where: $where, limit: $limit, offset: $offset) {
+    id
+  }
+}

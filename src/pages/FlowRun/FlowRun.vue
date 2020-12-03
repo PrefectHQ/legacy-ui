@@ -2,6 +2,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
+import Artifacts from '@/components/Artifacts/Artifacts'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
@@ -36,6 +37,7 @@ export default {
   },
   components: {
     Actions,
+    Artifacts,
     BreadCrumbs,
     DetailsTile,
     EditableTextField,
@@ -316,7 +318,7 @@ export default {
       </v-tab-item>
 
       <v-tab-item class="tab-full-height" value="artifacts">
-        <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
+        <Artifacts :flow-run-id="flowRunId" />
       </v-tab-item>
     </v-tabs-items>
 
