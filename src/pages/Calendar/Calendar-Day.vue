@@ -170,7 +170,11 @@ export default {
       return event.state ? event.state : 'primary'
     },
     striped(event) {
-      return event.state === 'Scheduled' ? 'striped' : null
+      return event.state === 'Scheduled'
+        ? 'sched-striped'
+        : event.state === 'Running'
+        ? 'run-striped'
+        : null
     },
     handleEventClick({ nativeEvent, event }) {
       const open = () => {
@@ -278,7 +282,7 @@ export default {
 </template>
 
 <style lang="scss">
-.striped {
+.sched-striped {
   background: repeating-linear-gradient(
     135deg,
     #ffeec4,
@@ -287,6 +291,17 @@ export default {
     #ffbe1e 10px
   );
   color: #3d2c00;
+}
+
+.run-striped {
+  background: repeating-linear-gradient(
+    135deg,
+    #d1eeff,
+    #d1eeff 25%,
+    #27b1ff 25%,
+    #27b1ff 50%
+  );
+  color: #001b2a;
 }
 
 .limit-width {
