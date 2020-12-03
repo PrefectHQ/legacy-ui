@@ -2,12 +2,12 @@
 import FlowRunMenu from '@/components/RunMenu'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
-// import ExternalLink from '@/components/ExternalLink'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
   components: {
-    FlowRunMenu
-    // ExternalLink
+    FlowRunMenu,
+    ExternalLink
   },
   filters: {},
   mixins: [formatTime],
@@ -52,7 +52,8 @@ export default {
       selectedEvent: null,
       selectedOpen: false,
       selectedElement: null,
-      upcoming: []
+      upcoming: [],
+      intervalHeight: 100
     }
   },
   computed: {
@@ -126,7 +127,8 @@ export default {
       })
       this.upcoming = upcoming.data.flow_run
       const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
-
+      console.log(allRuns.length)
+      this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
       allRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
@@ -196,7 +198,29 @@ export default {
     transition-group="quick-fade"
     tile
     class="skeleton-tweak"
-  >
+    ><v-banner
+      key="1"
+      v-model="scheduleBanner"
+      :icon="$vuetify.breakpoint.lgAndUp ? 'announcement' : null"
+      sticky
+      single-line
+      class="text-body-2 black--text py-0"
+      icon-color="white"
+      color="amber"
+      tile
+      transition="slide-y-transition"
+    >
+      Reminder!
+      <ExternalLink
+        href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
+      >
+        Prefect Scheduler
+      </ExternalLink>
+      will only schedule 10 runs in advance.
+      <template #actions="{ dismiss }">
+        <v-btn text color="white" @click="dismiss">Close</v-btn>
+      </template>
+    </v-banner>
     <v-sheet height="95vH" class="sheet-tweaks">
       <v-calendar
         ref="cal"
@@ -205,7 +229,7 @@ export default {
         event-overlap-mode="stack"
         :events="flowRunEvents"
         :event-color="eventColor"
-        :interval-height="200"
+        :interval-height="intervalHeight"
         :interval-minutes="calendarInterval"
         :interval-count="intervalCount"
         :type="type"
