@@ -252,7 +252,10 @@ export default {
         >
       </template>
     </v-snackbar>
-    <v-sheet height="85vH" class="sheet-tweaks">
+    <v-sheet
+      :height="$vuetify.breakpoint.lgAndUp ? '85vH' : '95vH'"
+      class="sheet-tweaks"
+    >
       <v-calendar
         ref="cal"
         :now="date"
