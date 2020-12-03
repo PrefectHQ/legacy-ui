@@ -26,7 +26,7 @@ export default {
 <template>
   <v-card tile>
     <v-card-title class="text-subtitle-1">
-      <router-link :to="{ name: 'flow-run', params: { id: taskRun.id } }">
+      <router-link :to="{ name: 'task-run', params: { id: taskRun.id } }">
         {{ taskRun.name ? taskRun.name : taskRun.task_name }}
         {{ taskRun.map_index > -1 ? `(${taskRun.map_index})` : '' }}
       </router-link>
