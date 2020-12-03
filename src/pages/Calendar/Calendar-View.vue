@@ -189,13 +189,8 @@ export default {
         </v-skeleton-loader>
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
-        <v-toolbar flat color="appBackground" class="pt-0">
-          <v-btn
-            outlined
-            class="mx-4 py-2"
-            color="grey darken-2"
-            @click="setToday"
-          >
+        <v-toolbar flat color="appBackground" class="pt-0 tbar">
+          <v-btn outlined class="mx-4" color="grey darken-2" @click="setToday">
             Today
           </v-btn>
           <v-spacer />
@@ -251,6 +246,14 @@ export default {
 </template>
 
 <style lang="scss">
+/* stylelint-disable */
+.tbar {
+  max-height: 50px;
+  .v-toolbar__content {
+    max-height: 50px;
+  }
+}
+
 .small-picker {
   .v-date-picker-table--date .v-btn {
     height: 25px;

@@ -99,6 +99,9 @@ export default {
   async created() {
     this.flowRunEvents = await this.flowRunEventsList()
   },
+  updated() {
+    this.scrollToElement()
+  },
   methods: {
     async flowRunEventsList() {
       this.gettingRuns = true
@@ -186,6 +189,17 @@ export default {
       } else {
         open()
       }
+    },
+    timeNow(time) {
+      return time.split(':')[0] == new Date().getHours() - 2
+        ? 'scroll-here'
+        : null
+    },
+    scrollToElement() {
+      const el = this.$el.getElementsByClassName('scroll-here')[0]
+      if (el) {
+        el.scrollIntoView()
+      }
     }
   },
   apollo: {
@@ -238,7 +252,7 @@ export default {
         >
       </template>
     </v-snackbar>
-    <v-sheet height="95vH" class="sheet-tweaks">
+    <v-sheet height="85vH" class="sheet-tweaks">
       <v-calendar
         ref="cal"
         :now="date"
@@ -258,6 +272,9 @@ export default {
             {{ event.name }} {{ formTime(event.start_time) }} -
             {{ formTime(event.end_time) }}
           </div>
+        </template>
+        <template #interval="{time}">
+          <div :class="timeNow(time)" />
         </template>
       </v-calendar>
       <v-menu
