@@ -30,7 +30,14 @@ export default {
       selectedFlow: 0,
       filters: [{ name: 'Flows' }],
       loadingKey: 0,
-      refetching: false
+      refetching: false,
+      type: 'day',
+      typeToLabel: {
+        month: 'Month',
+        week: 'Week',
+        day: 'Day',
+        '4day': '4 Days'
+      }
     }
   },
   computed: {
@@ -74,6 +81,11 @@ export default {
       if (runs.length || upcoming.length) this.refetching = false
     }
   },
+  methods: {
+    setToday() {
+      this.date = this.formatCalendarDate(new Date())
+    }
+  },
   apollo: {
     flowRuns: {
       query: require('@/graphql/Calendar/distinct-on-calendar-flow-runs.gql'),
@@ -112,7 +124,7 @@ export default {
 </script>
 
 <template>
-  <v-container class="ma-2 pl-0 lighter">
+  <v-container class="ma-2 pl-0 ">
     <v-row>
       <v-col class="pa-0" cols="12" md="3" lg="2">
         <v-sheet color="appBackground" class="lighter" elevation="0">
@@ -176,10 +188,55 @@ export default {
         </v-sheet>
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
+        <v-toolbar flat color="appBackground">
+          <v-btn
+            outlined
+            class="mx-4 py-2"
+            color="grey darken-2"
+            @click="setToday"
+          >
+            Today
+          </v-btn>
+          <v-toolbar-title v-if="$refs.calendar">
+            {{ $refs.calendar.title }}
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-menu bottom right>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                outlined
+                color="grey darken-2"
+                class="mr-4"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <span>{{ typeToLabel[type] }}</span>
+                <v-icon right>
+                  expand_more
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="type = 'day'">
+                <v-list-item-title>Day</v-list-item-title>
+              </v-list-item>
+              <!-- <v-list-item @click="type = 'week'">
+                  <v-list-item-title>Week</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="type = 'month'">
+                  <v-list-item-title>Month</v-list-item-title>
+                </v-list-item> -->
+              <v-list-item @click="type = '4day'">
+                <v-list-item-title>4 Days</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-toolbar>
         <CalendarDay
           v-if="flowId && !refetching"
           :project-id="projectId"
           :date="date"
+          :type="type"
           :flow-id="flowId"
           :time-period="timePeriod"
           :time-interval="timeInterval"

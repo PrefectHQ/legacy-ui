@@ -37,6 +37,10 @@ export default {
     flowId: {
       required: true,
       type: String
+    },
+    type: {
+      required: true,
+      type: String
     }
   },
   data() {
@@ -48,13 +52,7 @@ export default {
       selectedEvent: null,
       selectedOpen: false,
       selectedElement: null,
-      type: 'day',
-      upcoming: [],
-      timeOptions: [
-        { text: 'Four Days', value: '4day' },
-        { text: 'Day', value: 'day' }
-        // { text: 'Hour', value: 'hour' }
-      ]
+      upcoming: []
     }
   },
   computed: {
@@ -192,63 +190,50 @@ export default {
 </script>
 
 <template>
-  <v-sheet height="64">
-    <v-toolbar flat color="appBackground">
-      <v-select
-        v-model="type"
-        label="Time Periods"
-        :items="timeOptions"
-        dense
-        outlined
-        class="pt-2 limit-width"
-        hide-details
-      ></v-select>
-    </v-toolbar>
-    <v-skeleton-loader
-      type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
-      :loading="loadingKey > 0 || gettingRuns"
-      transition-group="quick-fade"
-      tile
-      class="skeleton-tweak"
-    >
-      <v-sheet height="75vH" class="sheet-tweaks">
-        <v-calendar
-          ref="calendar"
-          :now="date"
-          :value="date"
-          event-overlap-mode="stack"
-          :events="flowRunEvents"
-          :event-color="eventColor"
-          :interval-height="200"
-          :interval-minutes="calendarInterval"
-          :interval-count="intervalCount"
-          :type="type"
-          class="calendar-tweaks"
-          @click:event="handleEventClick"
-        >
-          <template #event="{event}">
-            <div :id="event.name" class="caption pl-2" :class="striped(event)">
-              {{ event.name }} {{ formTime(event.start_time) }} -
-              {{ formTime(event.end_time) }}
-            </div>
-          </template>
-        </v-calendar>
-        <v-menu
-          :value="selectedOpen"
-          offset-y
-          max-width="50vW"
-          :close-on-content-click="false"
-          :activator="selectedElement"
-        >
-          <FlowRunMenu
-            v-if="selectedEvent"
-            :run="selectedEvent"
-            type="flow-run"
-          />
-        </v-menu>
-      </v-sheet>
-    </v-skeleton-loader>
-  </v-sheet>
+  <v-skeleton-loader
+    type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
+    :loading="loadingKey > 0 || gettingRuns"
+    transition-group="quick-fade"
+    tile
+    class="skeleton-tweak"
+  >
+    <v-sheet height="95vH" class="sheet-tweaks">
+      <v-calendar
+        ref="calendar"
+        :now="date"
+        :value="date"
+        event-overlap-mode="stack"
+        :events="flowRunEvents"
+        :event-color="eventColor"
+        :interval-height="200"
+        :interval-minutes="calendarInterval"
+        :interval-count="intervalCount"
+        :type="type"
+        class="calendar-tweaks"
+        @click:event="handleEventClick"
+      >
+        <template #event="{event}">
+          <div :id="event.name" class="caption pl-2" :class="striped(event)">
+            {{ event.name }} {{ formTime(event.start_time) }} -
+            {{ formTime(event.end_time) }}
+          </div>
+        </template>
+      </v-calendar>
+      <v-menu
+        :value="selectedOpen"
+        offset-y
+        max-width="50vW"
+        :close-on-content-click="false"
+        :activator="selectedElement"
+      >
+        <FlowRunMenu
+          v-if="selectedEvent"
+          :run="selectedEvent"
+          type="flow-run"
+        />
+      </v-menu>
+    </v-sheet>
+  </v-skeleton-loader>
 </template>
 
 <style lang="scss">
