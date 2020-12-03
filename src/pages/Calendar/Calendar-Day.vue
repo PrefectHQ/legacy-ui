@@ -290,5 +290,9 @@ export default {
     text-align: center;
     text-transform: uppercase;
   }
+
+  .v-calendar-daily__intervals-head {
+    max-width: 45px !important;
+  }
 }
 </style>
