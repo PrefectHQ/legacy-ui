@@ -53,7 +53,8 @@ export default {
       selectedOpen: false,
       selectedElement: null,
       upcoming: [],
-      intervalHeight: 100
+      intervalHeight: 100,
+      scheduleBanner: false
     }
   },
   computed: {
@@ -62,10 +63,6 @@ export default {
     ...mapGetters('user', ['timezone']),
     intervalCount() {
       return (60 / this.calendarInterval) * 24
-    },
-    scheduleBanner() {
-      if (this.flow?.is_schedule_active && this.upcoming.length > 8) return true
-      return new Date(this.date) > new Date()
     },
     end() {
       let days = 1
@@ -127,7 +124,8 @@ export default {
       })
       this.upcoming = upcoming.data.flow_run
       const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
-      this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
+      if (this.type === 'day')
+        this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
       allRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
@@ -147,6 +145,11 @@ export default {
         flowRun.category = flowRun.flow_id
       })
       this.gettingRuns = false
+      if (this.flow?.is_schedule_active && this.upcoming.length > 8) {
+        this.scheduleBanner = true
+      } else {
+        this.scheduleBanner = new Date(this.date) > new Date()
+      }
       return allRuns
     },
     eventColor(event) {
@@ -199,21 +202,26 @@ export default {
     class="skeleton-tweak"
     ><v-snackbar
       v-model="scheduleBanner"
+      top
+      app
       :icon="$vuetify.breakpoint.lgAndUp ? 'announcement' : null"
-      class="text-body-2 black--text py-0"
-      icon-color="white"
+      custom-class="pt-8"
       color="amber"
       transition="slide-y-transition"
     >
-      Reminder!
-      <ExternalLink
-        href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
+      <span :style="{ color: '#3d2c00' }">
+        Reminder!
+        <ExternalLink
+          href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
+        >
+          Prefect Scheduler
+        </ExternalLink>
+        will only schedule 10 runs in advance.</span
       >
-        Prefect Scheduler
-      </ExternalLink>
-      will only schedule 10 runs in advance.
-      <template #actions="{ dismiss }">
-        <v-btn text color="white" @click="dismiss">Close</v-btn>
+      <template #action="{ attrs }">
+        <v-btn v-bind="attrs" text color="white" @click="scheduleBanner = false"
+          >Close</v-btn
+        >
       </template>
     </v-snackbar>
     <v-sheet height="95vH" class="sheet-tweaks">
@@ -257,7 +265,13 @@ export default {
 
 <style lang="scss">
 .striped {
-  background: repeating-linear-gradient(45deg, #ffeec4, #ffbe1e 10px);
+  background: repeating-linear-gradient(
+    135deg,
+    #ffeec4,
+    #ffeec4 5px,
+    #ffbe1e 5px,
+    #ffbe1e 10px
+  );
   color: #3d2c00;
 }
 
