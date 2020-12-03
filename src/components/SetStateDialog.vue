@@ -56,14 +56,15 @@ export default {
       <v-card flat :loading="markAsLoading">
         <div style="padding: 20px;">
           <v-card-title class="headline word-break-normal mb-3" primary-title>
-            Change the run of
-            {{
-              taskRun
-                ? taskRun.name
-                  ? taskRun.name
-                  : taskRun.task.name
-                : flowRun.name
-            }}
+            <span v-if="taskRun && taskRun.name">
+              Change the state of
+              {{ taskRun.name }}
+            </span>
+            <span v-else-if="taskRun">
+              Change the state of this run of
+              {{ taskRun.task.name }}
+            </span>
+            <span v-else>{{ flowRun.name }}</span>
           </v-card-title>
           <v-select
             v-model="selectedState"
