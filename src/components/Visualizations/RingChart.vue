@@ -52,7 +52,7 @@ export default {
       this.radius = Math.min(this.width, this.height) / 2
       this.color = d3
         .scaleOrdinal()
-        .range(this.colors || ['#ffff', 'transparent'])
+        .range(this.colors || ['#fff', 'transparent'])
 
       this.arc = d3
         .arc()
