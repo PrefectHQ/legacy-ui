@@ -209,13 +209,13 @@ export default {
       :loading="loadingKey > 0 || gettingRuns"
       transition-group="quick-fade"
       tile
+      class="skeleton-tweak"
     >
-      <v-sheet height="75vH">
+      <v-sheet height="75vH" class="sheet-tweaks">
         <v-calendar
           ref="calendar"
           :now="date"
           :value="date"
-          color="primary"
           event-overlap-mode="stack"
           :events="flowRunEvents"
           :event-color="eventColor"
@@ -262,9 +262,21 @@ export default {
 }
 
 /* stylelint-disable */
-.calendar-tweaks {
-  background-color: #f9f9f9;
 
+.sheet-tweaks {
+  .theme--light {
+    background-color: #f9f9f9 !important;
+  }
+}
+.skeleton-tweak {
+  .theme--light {
+    background-color: #f9f9f9 !important;
+  }
+}
+.calendar-tweaks {
+  .theme--light {
+    background-color: #f9f9f9 !important;
+  }
   .v-calendar-daily__intervals-body {
     max-width: 45px !important;
   }

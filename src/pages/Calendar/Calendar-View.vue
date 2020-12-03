@@ -112,14 +112,14 @@ export default {
 </script>
 
 <template>
-  <v-container class="ma-2">
+  <v-container class="ma-2 pl-0 lighter">
     <v-row>
-      <v-col class="pa-0" cols="12" md="2">
-        <v-sheet color="appBackground" class="appBackground" elevation="0">
+      <v-col class="pa-0" cols="12" md="3" lg="2">
+        <v-sheet color="appBackground" class="lighter" elevation="0">
           <v-date-picker
             v-model="date"
             no-title
-            class="small-picker"
+            class="small-picker pl-0"
             flat
             color="primary"
             width="99%"
@@ -133,33 +133,38 @@ export default {
             height="100%"
             :loading="loadingKey > 0 || refetching"
             transition-group="quick-fade"
-            class="my-2"
+            class="my-2 expansion"
             tile
           >
-            <v-expansion-panels flat :value="0">
+            <v-expansion-panels class="expansion" flat :value="0">
               <v-expansion-panel
                 v-for="(filter, index) in filters"
                 :key="index"
+                class="expansion"
               >
-                <v-expansion-panel-header>
+                <v-expansion-panel-header class="expansion">
                   {{ filter.name }}
                 </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-list>
+                <v-expansion-panel-content class="expansion">
+                  <v-list class="expansion">
                     <v-list-item-group
                       v-model="selectedFlow"
                       color="primary"
                       mandatory
+                      class="expansion"
                     >
                       <v-list-item
                         v-for="item in allIds"
                         :key="item ? item.id : null"
                         :value="item"
                         dense
+                        class="expansion"
                       >
-                        <v-list-item-content>
-                          <v-list-item-subtitle class="font-weight-light">
-                            <FlowName :id="item" />
+                        <v-list-item-content class="expansion">
+                          <v-list-item-subtitle
+                            class="font-weight-light expansion"
+                          >
+                            <FlowName :id="item" left />
                           </v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
@@ -171,7 +176,7 @@ export default {
           </v-skeleton-loader>
         </v-sheet>
       </v-col>
-      <v-col class="pa-0" cols="12" md="10">
+      <v-col class="pa-0" cols="12" md="9" lg="10">
         <CalendarDay
           v-if="flowId && !refetching"
           :project-id="projectId"
@@ -186,17 +191,34 @@ export default {
   </v-container>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .small-picker {
-  max-height: 200px;
-
   .v-date-picker-table--date .v-btn {
     height: 25px;
     width: 25px;
   }
 
-  // .v-date-picker-table {
-  //   max-height: 200px;
-  // }
+  .v-date-picker-table {
+    max-height: 200px;
+  }
+
+  .theme--light {
+    background-color: #f9f9f9 !important;
+  }
+}
+
+.expansion {
+  .theme--light.v-expansion-panels .v-expansion-panel {
+    background-color: #f9f9f9 !important;
+  }
+
+  .theme--light.v-list {
+    background: #f9f9f9 !important;
+    background-color: #f9f9f9 !important;
+  }
+
+  .theme--light.v-sheet {
+    background-color: #f9f9f9 !important;
+  }
 }
 </style>

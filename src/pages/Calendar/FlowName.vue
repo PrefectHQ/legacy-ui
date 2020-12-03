@@ -40,9 +40,19 @@ export default {
 </script>
 
 <template>
-  <div v-if="loadingKey < 1" class="caption max-width" :class="textAlign">
+  <div
+    v-if="loadingKey < 1"
+    class="caption max-width grey-back"
+    :class="textAlign"
+  >
     <!-- <router-link :to="{ name: 'flow', params: { id: flow.id } }"> -->
     <truncate v-if="loadingKey < 1" :content="flowName"> </truncate>
     <!-- </router-link> -->
   </div>
 </template>
+
+<style lang="scss" scoped>
+div >>> div {
+  background-color: #f9f9f9 !important;
+}
+</style>
