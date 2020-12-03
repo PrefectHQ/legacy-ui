@@ -2,7 +2,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/TaskRun/Actions'
-import Artifact from '@/components/Artifact'
+import Artifacts from '@/components/Artifacts/Artifacts'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
@@ -36,7 +36,7 @@ export default {
   },
   components: {
     Actions,
-    Artifact,
+    Artifacts,
     BreadCrumbs,
     DependenciesTile,
     DetailsTile,
@@ -189,16 +189,6 @@ export default {
     }
   },
   apollo: {
-    artifacts: {
-      query: require('@/graphql/TaskRun/task-run-artifacts.gql'),
-      variables() {
-        return {
-          taskRunId: this.taskRunId
-        }
-      },
-      pollInterval: 10000,
-      update: data => data.task_run_artifact || []
-    },
     taskRun: {
       query: require('@/graphql/TaskRun/task-run.gql'),
       variables() {
@@ -351,17 +341,7 @@ export default {
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <v-lazy
-          v-for="artifact in artifacts"
-          :key="artifact.id"
-          :options="{
-            threshold: 0.75
-          }"
-          min-height="40px"
-          transition="fade"
-        >
-          <Artifact :artifact="artifact" />
-        </v-lazy>
+        <Artifacts :task-run-ids="[taskRunId]" />
       </v-tab-item>
 
       <v-tab-item
