@@ -112,6 +112,16 @@ export default {
         },
         loadingKey: 'loadingKey'
       })
+      const running = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
+        variables: {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.convertCalendarStartTime(this.date),
+          endTime: this.end,
+          flowIds: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
       const upcoming = await this.$apollo.query({
         query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
         variables: {
@@ -123,7 +133,11 @@ export default {
         loadingKey: 'loadingKey'
       })
       this.upcoming = upcoming.data.flow_run
-      const allRuns = [...finished.data.flow_run, ...upcoming.data.flow_run]
+      const allRuns = [
+        ...finished.data.flow_run,
+        ...upcoming.data.flow_run,
+        ...running.data.flow_run
+      ]
       if (this.type === 'day')
         this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
       allRuns.map(flowRun => {
