@@ -121,7 +121,7 @@ We call this pattern `"Universal Deploy"` because all it requires is a working P
 
 To run your flow in Prefect Cloud, find your flow in the Flows tab of the dashboard and select your flow.  You can click on "Quick Run" to run your flow with no additional settings.  
 
-If you want to add parameters, context or to schedule your run for a point in the future, you can click on "Run" to open the run tab and add that information before you run your flow. You can also default parameters and schedules by selecting the "settings" tab on the flow page. 
+You can use the `Run` tab on your flow page to pass parameters or context to your flow or to schedule a run for some point in the future. You can update default parameters and add or modify schedules by selecting the `Settings` tab on the flow page. 
 
 **Universal Deploy and Labels**
 
