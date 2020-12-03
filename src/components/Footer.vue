@@ -66,6 +66,9 @@ export default {
     },
     socialIconsRight() {
       return socialIcons.slice(Math.ceil(socialIcons.length / 2))
+    },
+    noShow() {
+      return this.$route.path.split('/')[2] === 'calendar'
     }
   }
 }
@@ -73,6 +76,7 @@ export default {
 
 <template>
   <v-footer
+    v-if="!noShow"
     color="transparent"
     padless
     absolute
