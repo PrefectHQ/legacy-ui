@@ -131,10 +131,10 @@ export default {
               your
               {{ dialogType }}
               {{
-                taskRun
+                taskRun && taskRun.name
                   ? taskRun.name
-                    ? taskRun.name
-                    : taskRun.task.name
+                  : taskRun
+                  ? taskRun.task.name
                   : flowRun.name
               }}
               to
