@@ -193,7 +193,7 @@ export default {
 
 <template>
   <v-sheet height="64">
-    <v-toolbar flat>
+    <v-toolbar flat color="appBackground">
       <v-select
         v-model="type"
         label="Time Periods"
@@ -215,6 +215,7 @@ export default {
           ref="calendar"
           :now="date"
           :value="date"
+          color="primary"
           event-overlap-mode="stack"
           :events="flowRunEvents"
           :event-color="eventColor"
@@ -262,6 +263,8 @@ export default {
 
 /* stylelint-disable */
 .calendar-tweaks {
+  background-color: #f9f9f9;
+
   .v-calendar-daily__intervals-body {
     max-width: 45px !important;
   }
