@@ -108,10 +108,12 @@ export default {
             <v-tooltip top>
               <template #activator="{ on, attrs }">
                 <v-btn
+                  v-show="childTasks || dialogType === 'task run'"
                   v-disable-read-only-user="!selectedState"
                   :loading="markAsLoading"
                   color="primary"
                   v-bind="attrs"
+                  class="set-state"
                   v-on="on"
                   @click="changeState"
                 >
@@ -129,20 +131,17 @@ export default {
                 This may have an effect on downstream tasks.
                 <br />
               </span>
-
-              Please be aware that clicking on confirm will set the state of
-              your
-              {{ dialogType }}
-              {{
-                taskRun && taskRun.name
-                  ? taskRun.name
-                  : taskRun
-                  ? taskRun.task.name
-                  : flowRun.name
-              }}
-              to
-              <span class="font-weight-black pb-8"> {{ selectedState }}.</span>
             </v-tooltip>
+            <v-btn
+              v-show="!taskRun && (!childTasks || !dialogType === 'task run')"
+              v-disable-read-only-user="!selectedState"
+              :loading="markAsLoading"
+              color="primary"
+              class="set-state"
+              @click="changeState"
+            >
+              Confirm
+            </v-btn>
             <v-btn text @click="reset">
               Cancel
             </v-btn>
@@ -211,7 +210,7 @@ export default {
   margin-top: -20px;
 }
 /* stylelint-disable */
-.v-btn__loader {
+.set-state .v-btn__loader {
   color: #fff;
 }
 
