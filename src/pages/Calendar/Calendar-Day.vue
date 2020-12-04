@@ -53,7 +53,7 @@ export default {
       selectedOpen: false,
       selectedElement: null,
       upcoming: [],
-      intervalHeight: 100,
+      intervalHeight: 10,
       scheduleBanner: false
     }
   },
@@ -142,7 +142,8 @@ export default {
         ...running.data.flow_run
       ]
       if (this.type === 'day')
-        this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
+        this.intervalHeight = allRuns.length > 5 ? allRuns.length : 5
+
       allRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)

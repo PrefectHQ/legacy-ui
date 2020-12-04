@@ -149,7 +149,6 @@ export default {
       this.$apollo.skipAll = true
 
       const routeToNavigateTo = this.routeName(searchResult.__typename)
-
       // Navigate to the URL based on the search result
       this.$router.push({
         name: routeToNavigateTo,

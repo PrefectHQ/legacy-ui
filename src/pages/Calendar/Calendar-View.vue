@@ -52,15 +52,17 @@ export default {
       return ''
     },
     allRuns() {
-      if (this.flowRuns || this.scheduledFlowRuns)
-        return [...this.flowRuns, ...this.scheduledFlowRuns]
+      if (this.flowRuns || this.scheduledFlowRuns || this.runningFlowRuns)
+        return [
+          ...this.flowRuns,
+          ...this.scheduledFlowRuns,
+          ...this.runningFlowRuns
+        ]
       return []
     },
     allIds() {
       const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
-      return flowIds
-        ? [...new Set(flowIds, this.$route.params.id)]
-        : [this.$route.params.id]
+      return flowIds ? [...new Set(flowIds)] : [this.$route.params.id]
     },
     end() {
       return this.addDay(this.date, 1)
@@ -108,6 +110,22 @@ export default {
     },
     scheduledFlowRuns: {
       query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.convertCalendarStartTime(this.date),
+          endTime: this.end
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run || []
+    },
+    runningFlowRuns: {
+      query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
