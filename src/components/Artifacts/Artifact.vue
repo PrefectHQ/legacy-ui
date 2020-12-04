@@ -20,7 +20,7 @@ export default {
 
 <template>
   <div
-    class="artifact md grey--text text--darken-3"
+    class="artifact md grey--text text--darken-3 mx-4"
     v-html="mdParser(artifact.data.markdown)"
   >
   </div>

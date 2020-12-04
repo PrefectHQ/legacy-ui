@@ -6,11 +6,13 @@ export default {
     Artifact
   },
   props: {
+    // Get all -1 mi task runs
     flowRunId: {
       type: String,
       required: false,
       default: () => null
     },
+    // Get first 5 mapped task run ids
     taskRunIds: {
       type: Array,
       required: false,
@@ -19,6 +21,7 @@ export default {
   },
   data() {
     return {
+      artifact: null,
       expanded: []
     }
   },
@@ -27,15 +30,7 @@ export default {
       return this.taskRunIds || this.ids
     }
   },
-  methods: {
-    close(id) {
-      let i = this.expanded.findIndex(e => e == id)
-      this.expanded.splice(i, 1)
-    },
-    expand(id) {
-      this.expanded.push(id)
-    }
-  },
+  methods: {},
   apollo: {
     artifacts: {
       query: require('@/graphql/Artifacts/task-run-artifacts.gql'),
@@ -60,7 +55,7 @@ export default {
           where: {
             flow_run_id: { _eq: this.flowRunId }
           },
-          limit: 10,
+          limit: 100,
           offset: 0
         }
       },
@@ -74,110 +69,114 @@ export default {
 </script>
 
 <template>
-  <!-- <div>
-    <v-lazy
-      v-for="a in artifacts"
-      :key="a.id"
-      :options="{
-        threshold: 0.75
-      }"
-      min-height="40px"
-      transition="fade"
+  <v-container>
+    <v-slide-group
+      v-model="artifact"
+      show-arrows
+      center-active
+      mandatory
+      class="mx-auto mb-4 mt-3 artifact-selector"
     >
-      <v-list-item>
-        {{ a.task_run.name ? a.task_run.name : a.task_run.task.name }} Artifact
-      </v-list-item>
-      <Artifact v-if="false" :artifact="a" />
-    </v-lazy>
-  </div> -->
-
-  <div class="grid my-4">
-    <div
-      v-for="a in artifacts"
-      :key="a.id"
-      class="grid-container"
-      :class="{ 'grid-container-large': expanded.includes(a.id) }"
-    >
-      <v-card
-        class="artifact-card text-truncate"
-        :class="{ 'artifact-card-large': expanded.includes(a.id) }"
-        :style="{
-          'border-left': '4px solid var(--v-primary-base) !important'
-        }"
-        tile
+      <v-slide-item
+        v-for="a in artifacts"
+        :key="a.id"
+        v-slot="{ active, toggle }"
       >
-        <v-fade-transition mode="out-in">
-          <v-card-text
-            v-if="!expanded.includes(a.id)"
-            style="height: 100%;"
-            @click="expand(a.id)"
+        <v-btn
+          :input-value="active"
+          icon
+          class="position-relative"
+          color="primary"
+          @click="toggle"
+        >
+          <v-icon large color="codePink">fiber_manual_record</v-icon>
+          <v-icon class="position-absolute" x-small color="white">
+            fas fa-fingerprint
+          </v-icon>
+        </v-btn>
+      </v-slide-item>
+    </v-slide-group>
+
+    <v-row no-gutters>
+      <v-col>
+        <v-window v-model="artifact" class="artifact-container">
+          <v-window-item
+            v-for="a in artifacts"
+            :key="a.id"
+            class="h-100"
+            transition="quick-fade"
+            reverse-transition="quick-fade"
           >
-            {{ a.task_run.name ? a.task_run.name : a.task_run.task.name }}
-            Artifact
-          </v-card-text>
-          <v-card-text v-else>
-            <v-btn
-              icon
-              absolute
-              style="
-                right: 25px;
-                top: 25px;
-            "
-              @click="close(a.id)"
-            >
-              <v-icon>close</v-icon>
-            </v-btn>
-            <Artifact :artifact="a" />
-          </v-card-text>
-        </v-fade-transition>
-      </v-card>
-    </div>
-  </div>
+            <v-card class="artifact-card pa-0" tile>
+              <v-card-title class="artifact-card-title white">
+                <div class="position-relative">
+                  <v-icon x-large color="primary">fiber_manual_record</v-icon>
+                  <v-icon
+                    class="position-absolute center-absolute"
+                    small
+                    color="white"
+                  >
+                    fas fa-fingerprint
+                  </v-icon>
+                </div>
+                <div>
+                  <div
+                    class="overline grey--text text--darken-1"
+                    style="line-height: 1rem;"
+                  >
+                    Artifact
+                  </div>
+                  <div class="text-h4">
+                    {{
+                      a.task_run.name ? a.task_run.name : a.task_run.task.name
+                    }}
+                  </div>
+                </div>
+              </v-card-title>
+              <v-card-text>
+                <v-fade-transition mode="out-in">
+                  <Artifact :artifact="a" />
+                </v-fade-transition>
+              </v-card-text>
+            </v-card>
+          </v-window-item>
+        </v-window>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
-$cellsize: 225px;
-$guttersize: 24px;
-
-.grid {
-  column-gap: $guttersize;
-  display: grid;
-  grid-auto-flow: dense;
-  grid-auto-rows: $cellsize;
-  grid-template-columns: repeat(auto-fill, $cellsize);
-  justify-content: center;
-  row-gap: $guttersize;
-}
-
-.grid-container {
-  grid-column: span 1;
-  grid-row: span 1;
-  overflow: visible;
-  position: relative;
-
-  &.grid-container-large {
-    grid-column: 1 / -1;
-    grid-row: span 3;
-  }
+.artifact-container {
+  height: calc(100vh - 350px);
+  min-height: 400px;
 }
 
 .artifact-card {
-  height: 100%;
-  left: 0;
-  max-height: $cellsize + $guttersize;
-  max-width: $cellsize + $guttersize;
-  min-height: $cellsize;
-  min-width: $cellsize;
-  position: absolute;
-  top: 0;
-  transition: all 250ms;
-  width: 100%;
+  height: auto;
+  max-height: calc(100% - 60px);
+  overflow: scroll;
+  position: relative;
+  transition: height 250ms ease-in-out;
 
-  &.artifact-card-large {
-    max-height: $cellsize * 3 + $guttersize * 3;
-    max-width: 100%;
-    min-height: $cellsize * 3;
-    min-width: 100%;
+  .artifact-card-title {
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
+}
+
+.artifact-selector {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.center-absolute {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
