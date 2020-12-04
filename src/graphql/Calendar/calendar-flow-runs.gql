@@ -15,6 +15,7 @@ query CalendarFlowRuns($project_id: uuid, $startTime: timestamptz, $endTime: tim
     flow {
       flow_group_id
       id
+      name
       version
     }
     name

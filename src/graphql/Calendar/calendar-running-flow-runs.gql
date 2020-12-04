@@ -16,6 +16,7 @@ query CalendarRunningFlowRuns($flowIds: [uuid!], $startTime: timestamptz) {
     flow {
       flow_group_id
       id
+      name
       version
     }
     end_time

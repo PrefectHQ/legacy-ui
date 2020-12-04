@@ -1,19 +1,21 @@
 <script>
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import FlowName from '@/pages/Calendar/FlowName'
 
 export default {
   components: {
-    DurationSpan,
-    FlowName
+    DurationSpan
   },
   mixins: [formatTime],
   props: {
     run: { type: Object, required: false, default: () => {} },
     type: { type: String, required: false, default: 'task-run' }
   },
-  computed: {},
+  computed: {
+    flowNameAndVersion() {
+      return `${this.run.flow.name} (${this.run.flow.version})`
+    }
+  },
   methods: {
     statusStyle(state) {
       return {
@@ -26,20 +28,20 @@ export default {
     }
   },
   apollo: {
-    flowRun: {
-      query() {
-        return require('@/graphql/Calendar/flow-run-task-runs.gql')
-      },
-      skip() {
-        return !this.run.id
-      },
-      variables() {
-        return {
-          id: this.run.id
-        }
-      },
-      update: data => data.flow_run_by_pk
-    }
+    // flow: {
+    //   query() {
+    //     return require('@/graphql/Calendar/flow.gql')
+    //   },
+    //   skip() {
+    //     return !this.run.id
+    //   },
+    //   variables() {
+    //     return {
+    //       id: this.run.flow_id
+    //     }
+    //   },
+    //   update: data => data.flow_by_pk
+    // }
   }
 }
 </script>
@@ -56,9 +58,9 @@ export default {
       </v-icon>
     </v-card-title>
     <v-card-subtitle v-if="type === 'flow-run'">
-      <FlowName :id="run.flow.flow_group_id" left /><span class="caption"
-        >(Version: {{ run.flow.version }})</span
-      >
+      <span class="caption"
+        ><truncate :content="flowNameAndVersion"> </truncate
+      ></span>
     </v-card-subtitle>
     <v-card-text>
       <div>
