@@ -53,7 +53,7 @@ export default {
       selectedOpen: false,
       selectedElement: null,
       upcoming: [],
-      intervalHeight: 10,
+      intervalHeight: 30,
       scheduleBanner: false
     }
   },
@@ -142,7 +142,7 @@ export default {
         ...running.data.flow_run
       ]
       if (this.type === 'day')
-        this.intervalHeight = allRuns.length > 5 ? allRuns.length : 5
+        this.intervalHeight = allRuns.length > 30 ? allRuns.length : 30
 
       allRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
@@ -208,7 +208,7 @@ export default {
       query: require('@/graphql/Calendar/calendar-flows.gql'),
       variables() {
         return {
-          id: this.flowId
+          flowId: this.flowId
         }
       },
       skip() {
@@ -216,7 +216,7 @@ export default {
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
-      update: data => data.flow_by_pk
+      update: data => data.flow_group_by_pk.flows[0]
     }
   }
 }

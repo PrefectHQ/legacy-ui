@@ -2,9 +2,10 @@ query CalendarRunningFlowRuns($flowIds: [uuid!], $startTime: timestamptz) {
   flow_run (
     where: { 
       _and: [
-    {flow_id: { _in: $flowIds}},
+    {flow: {flow_group_id: { _in: $flowIds}}},
     {state: { _eq: "Running"}}
     {start_time: {_lt: $startTime}}
+
       ]
     }
   ) 
@@ -12,6 +13,11 @@ query CalendarRunningFlowRuns($flowIds: [uuid!], $startTime: timestamptz) {
     id
     flow_id
     name
+    flow {
+      flow_group_id
+      id
+      version
+    }
     end_time
     start_time
     scheduled_start_time

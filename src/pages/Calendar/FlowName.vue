@@ -25,7 +25,7 @@ export default {
   },
   apollo: {
     flow: {
-      query: require('@/graphql/Flow/flow-by-pk.gql'),
+      query: require('@/graphql/Calendar/calendar-flows.gql'),
       variables() {
         return {
           flowId: this.id
@@ -33,7 +33,7 @@ export default {
       },
       loadingKey: 'loadingKey',
       pollInterval: 500000,
-      update: data => data?.flow_by_pk
+      update: data => data?.flow_group_by_pk?.flows[0]
     }
   }
 }

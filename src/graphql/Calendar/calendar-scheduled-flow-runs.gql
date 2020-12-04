@@ -6,13 +6,18 @@ query CalendarScheduledFlowRuns($project_id: uuid, $startTime: timestamptz, $end
     {scheduled_start_time: { _gt: $startTime}}, 
     {scheduled_start_time: { _lt: $endTime}},
     {start_time: {_is_null: true}},
-    {flow_id: { _in: $flowIds}}
+    {flow: {flow_group_id: { _in: $flowIds}}}
     ]
     }
   ) 
   {
     id
     flow_id
+    flow {
+      flow_group_id
+      id
+      version
+    }
     name
     end_time
     start_time

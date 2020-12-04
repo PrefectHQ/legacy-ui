@@ -61,7 +61,8 @@ export default {
       return []
     },
     allIds() {
-      const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
+      const flowIds = this.allRuns?.map(flowRun => flowRun.flow.flow_group_id)
+      console.log(flowIds)
       return flowIds ? [...new Set(flowIds)] : [this.$route.params.id]
     },
     end() {
