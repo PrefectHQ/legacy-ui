@@ -5,8 +5,10 @@ query CalendarFinishedFlowRuns($startTime: timestamptz, $endTime: timestamptz) {
     flows {
       name
       id
+      version
       flow_runs (where: {_and: [{start_time: { _gte: $startTime}}, {start_time: { _lte: $endTime}}]}){
         id
+        state
         name
         start_time
         end_time

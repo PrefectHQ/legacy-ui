@@ -17,6 +17,10 @@ export default {
       type: String,
       default: () => null
     },
+    flows: {
+      type: Array,
+      required: true
+    },
     timePeriod: {
       required: false,
       type: String,
@@ -45,7 +49,7 @@ export default {
       selectedOpen: false,
       selectedElement: null,
       upcoming: [],
-      intervalHeight: 100,
+      intervalHeight: 50,
       scheduleBanner: false,
       calendarInterval: 60
     }
@@ -98,44 +102,46 @@ export default {
   methods: {
     async flowRunEventsList() {
       this.gettingRuns = true
-      const finished = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
-        variables: {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.end,
-          flowIds: this.flowId
-        },
-        loadingKey: 'loadingKey'
+      // const finished = await this.$apollo.query({
+      //   query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
+      //   variables: {
+      //     project_id: this.projectId == '' ? null : this.projectId,
+      //     startTime: this.convertCalendarStartTime(this.date),
+      //     endTime: this.end,
+      //     flowIds: this.flowId
+      //   },
+      //   loadingKey: 'loadingKey'
+      // })
+      // const running = await this.$apollo.query({
+      //   query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
+      //   variables: {
+      //     project_id: this.projectId == '' ? null : this.projectId,
+      //     startTime: this.convertCalendarStartTime(this.date),
+      //     endTime: this.end,
+      //     flowIds: this.flowId
+      //   },
+      //   loadingKey: 'loadingKey'
+      // })
+      // const upcoming = await this.$apollo.query({
+      //   query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
+      //   variables: {
+      //     project_id: this.projectId == '' ? null : this.projectId,
+      //     startTime: this.convertCalendarStartTime(this.date),
+      //     endTime: this.end,
+      //     flowIds: this.flowId
+      //   },
+      //   loadingKey: 'loadingKey'
+      // })
+      // this.upcoming = upcoming.data.flow_run
+      let allRuns = []
+      this.flows.forEach(flowGroup => {
+        flowGroup.flows.forEach(flow => {
+          allRuns = allRuns.concat(flow.flow_runs)
+        })
       })
-      const running = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
-        variables: {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.end,
-          flowIds: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      const upcoming = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
-        variables: {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.end,
-          flowIds: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      this.upcoming = upcoming.data.flow_run
-      const allRuns = [
-        ...finished.data.flow_run,
-        ...upcoming.data.flow_run,
-        ...running.data.flow_run
-      ]
       if (this.type === 'day')
-        this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
+        this.intervalHeight = allRuns.length > 50 ? allRuns.length : 50
+
       allRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
@@ -200,7 +206,7 @@ export default {
       query: require('@/graphql/Calendar/calendar-flows.gql'),
       variables() {
         return {
-          id: this.flowId
+          flowId: this.flowId
         }
       },
       skip() {
@@ -208,7 +214,7 @@ export default {
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
-      update: data => data.flow_by_pk
+      update: data => data.flow_group_by_pk
     }
   }
 }
@@ -308,16 +314,14 @@ export default {
 
 /* stylelint-disable */
 
-.sheet-tweaks {
-  .theme--light {
-    background-color: #f9f9f9 !important;
-  }
+.sheet-tweaks .theme--light {
+  background-color: #f9f9f9 !important;
 }
-.skeleton-tweak {
-  .theme--light {
-    background-color: #f9f9f9 !important;
-  }
+
+.skeleton-tweak .theme--light {
+  background-color: #f9f9f9 !important;
 }
+
 .calendar-tweaks {
   .theme--light {
     background-color: #f9f9f9 !important;

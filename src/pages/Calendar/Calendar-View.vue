@@ -45,28 +45,31 @@ export default {
     ...mapGetters('user', ['timezone']),
     ...mapGetters('api', ['backend']),
     flowId() {
-      if (this.$route.params.id) return this.$route.params.id
+      if (this.$route?.params?.id) return this.$route.params.id
       if (this.selectedFlow) return this.selectedFlow
       if (this.allIds && this.allIds[0]) return this.allIds[0]
       return ''
     },
-    allRuns() {
-      if (this.flowRuns || this.scheduledFlowRuns) {
-        const flows = this.flowRuns.filter(
+    allFlows() {
+      if (this.flows || this.scheduledFlows || this.runningFlows) {
+        const flows = [
+          ...this.flows,
+          ...this.scheduledFlows,
+          ...this.runningFlows
+        ]
+
+        return flows.filter(
           flow_group =>
-            flow_group.flows?.filter(flow => flow.flow_runs?.length).length
+            flow_group.flows.filter(flow => flow.flow_runs?.length).length
         )
-        return [...flows, ...this.scheduledFlowRuns]
       }
       return []
     },
     allIds() {
-      const flowIds = this.allRuns?.map(flowRun =>
-        flowRun.flow_id ? flowRun.flow_id : flowRun.id
-      )
+      const flowIds = this.allFlows?.map(flow => flow.id)
       return flowIds
-        ? [...new Set(flowIds, this.$route.params.id)]
-        : [this.$route.params.id]
+        ? [...new Set(flowIds, this.$route.params?.id)]
+        : [this.$route.params?.id]
     },
     end() {
       return this.addDay(this.date, 1)
@@ -96,13 +99,13 @@ export default {
     }
   },
   apollo: {
-    flowRuns: {
-      query: require('@/graphql/Calendar/distinct-on-calendar-flow-runs.gql'),
+    flows: {
+      query: require('@/graphql/Calendar/calendar-finished-flow-runs.gql'),
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.end
+          endTime: this.convertCalendarStartTime(this.end)
         }
       },
       skip() {
@@ -112,13 +115,13 @@ export default {
       loadingKey: 'loadingKey',
       update: data => data.flow_group
     },
-    scheduledFlowRuns: {
+    scheduledFlows: {
       query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.end
+          endTime: this.convertCalendarStartTime(this.end)
         }
       },
       skip() {
@@ -126,7 +129,25 @@ export default {
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
-      update: data => data.flow_run || []
+      update: data => data.flow_group || []
+    },
+    runningFlows: {
+      query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.convertCalendarStartTime(this.date),
+          endTime: this.convertCalendarStartTime(this.end)
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      fetchPolicy: 'cache-first',
+      loadingKey: 'loadingKey',
+      update: data => {
+        return data.flow_group || []
+      }
     }
   }
 }
@@ -182,7 +203,7 @@ export default {
                       <v-list-item-content class="expansion pa-0">
                         <v-list-item-subtitle
                           class="font-weight-light expansion"
-                          ><FlowName :id="item" />
+                          ><FlowName :id="item" left />
                         </v-list-item-subtitle>
                       </v-list-item-content>
                     </v-list-item>
@@ -239,6 +260,7 @@ export default {
           ref="calendar"
           :project-id="projectId"
           :date="date"
+          :flows="allFlows.filter(flow => flow.id === flowId)"
           :type="type"
           :flow-id="flowId"
           :time-period="timePeriod"

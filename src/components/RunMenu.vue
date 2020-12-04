@@ -25,22 +25,7 @@ export default {
       }
     }
   },
-  apollo: {
-    flowRun: {
-      query() {
-        return require('@/graphql/Calendar/flow-run-task-runs.gql')
-      },
-      skip() {
-        return !this.run.id
-      },
-      variables() {
-        return {
-          id: this.run.id
-        }
-      },
-      update: data => data.flow_run_by_pk
-    }
-  }
+  apollo: {}
 }
 </script>
 

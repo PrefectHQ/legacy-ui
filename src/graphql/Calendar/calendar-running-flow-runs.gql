@@ -1,4 +1,4 @@
-query CalendarRunningFlowRuns {
+query CalendarRunningFlowRuns ($startTime: timestamptz) {
   flow_group {
     id
     name
@@ -6,9 +6,10 @@ query CalendarRunningFlowRuns {
       name
       id
       version
-      flow_runs (where: {state:{_eq: "Running"}}){
+      flow_runs (where: {_and:[{state:{_eq: "Running"}}, {start_time: {_lt: $startTime}}]}){
         id
         name
+        state
         start_time
     }
   }
