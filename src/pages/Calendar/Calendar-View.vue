@@ -24,7 +24,6 @@ export default {
       timePeriodOptions: ['day', 'week', 'month'],
       timeIntervalOptions: [1, 5, 15, 30, 60],
       timeInterval: 2,
-      calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
       selectedFlow: 0,
@@ -52,12 +51,19 @@ export default {
       return ''
     },
     allRuns() {
-      if (this.flowRuns || this.scheduledFlowRuns)
-        return [...this.flowRuns, ...this.scheduledFlowRuns]
+      if (this.flowRuns || this.scheduledFlowRuns) {
+        const flows = this.flowRuns.filter(
+          flow_group =>
+            flow_group.flows?.filter(flow => flow.flow_runs?.length).length
+        )
+        return [...flows, ...this.scheduledFlowRuns]
+      }
       return []
     },
     allIds() {
-      const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
+      const flowIds = this.allRuns?.map(flowRun =>
+        flowRun.flow_id ? flowRun.flow_id : flowRun.id
+      )
       return flowIds
         ? [...new Set(flowIds, this.$route.params.id)]
         : [this.$route.params.id]
@@ -104,7 +110,7 @@ export default {
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
-      update: data => data.flow_run
+      update: data => data.flow_group
     },
     scheduledFlowRuns: {
       query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
@@ -176,8 +182,7 @@ export default {
                       <v-list-item-content class="expansion pa-0">
                         <v-list-item-subtitle
                           class="font-weight-light expansion"
-                        >
-                          <FlowName :id="item" left />
+                          ><FlowName :id="item" />
                         </v-list-item-subtitle>
                       </v-list-item-content>
                     </v-list-item>
@@ -238,7 +243,6 @@ export default {
           :flow-id="flowId"
           :time-period="timePeriod"
           :time-interval="timeInterval"
-          :calendar-interval="calendarInterval"
         />
       </v-col>
     </v-row>

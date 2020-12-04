@@ -1,0 +1,16 @@
+query CalendarFinishedFlowRuns($startTime: timestamptz, $endTime: timestamptz) {
+  flow_group {
+    id
+    name
+    flows {
+      name
+      id
+      flow_runs (where: {_and: [{start_time: { _gte: $startTime}}, {start_time: { _lte: $endTime}}]}){
+        id
+        name
+        start_time
+        end_time
+    }
+  }
+}
+}

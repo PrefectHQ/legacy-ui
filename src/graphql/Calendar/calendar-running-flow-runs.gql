@@ -1,19 +1,16 @@
-query CalendarRunningFlowRuns($flowIds: [uuid!]) {
-  flow_run (
-    where: { 
-      _and: [
-    {flow_id: { _in: $flowIds}},
-    {state: { _eq: "Running"}}
-      ]
-    }
-  ) 
-  {
+query CalendarRunningFlowRuns {
+  flow_group {
     id
-    flow_id
     name
-    end_time
-    start_time
-    scheduled_start_time
-    state
+    flows {
+      name
+      id
+      version
+      flow_runs (where: {state:{_eq: "Running"}}){
+        id
+        name
+        start_time
+    }
   }
+}
 }

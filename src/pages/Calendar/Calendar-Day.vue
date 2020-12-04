@@ -17,14 +17,6 @@ export default {
       type: String,
       default: () => null
     },
-    timeInterval: {
-      required: true,
-      type: Number
-    },
-    calendarInterval: {
-      required: true,
-      type: Number
-    },
     timePeriod: {
       required: false,
       type: String,
@@ -54,7 +46,8 @@ export default {
       selectedElement: null,
       upcoming: [],
       intervalHeight: 100,
-      scheduleBanner: false
+      scheduleBanner: false,
+      calendarInterval: 60
     }
   },
   computed: {

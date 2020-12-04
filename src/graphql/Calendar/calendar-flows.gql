@@ -1,8 +1,10 @@
-query CalendarFlow( $id: uuid!) {
-  flow_by_pk(id: $id) 
+query CalendarFlow( $flowId: uuid!) {
+  flow_group_by_pk(id: $flowId) 
     {
+      flows{
     id
     name
     is_schedule_active
   }
+    }
 }
