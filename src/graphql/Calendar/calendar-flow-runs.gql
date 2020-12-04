@@ -13,6 +13,8 @@ query CalendarFlowRuns($project_id: uuid, $startTime: timestamptz, $endTime: tim
     id
     flow_id
     flow {
+      flow_group_id
+      id
       version
     }
     name

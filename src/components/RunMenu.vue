@@ -56,7 +56,9 @@ export default {
       </v-icon>
     </v-card-title>
     <v-card-subtitle v-if="type === 'flow-run'">
-      <FlowName :id="run.flow_id" left />
+      <FlowName :id="run.flow.flow_group_id" left /><span class="caption"
+        >(Version: {{ run.flow.version }})</span
+      >
     </v-card-subtitle>
     <v-card-text>
       <div>
