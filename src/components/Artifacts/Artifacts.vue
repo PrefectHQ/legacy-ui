@@ -55,7 +55,7 @@ export default {
           where: {
             flow_run_id: { _eq: this.flowRunId }
           },
-          limit: 100,
+          limit: 10,
           offset: 0
         }
       },
@@ -69,81 +69,73 @@ export default {
 </script>
 
 <template>
-  <v-container>
-    <v-slide-group
-      v-model="artifact"
-      show-arrows
-      center-active
-      mandatory
-      class="mx-auto mb-4 mt-3 artifact-selector"
-    >
-      <v-slide-item
-        v-for="a in artifacts"
-        :key="a.id"
-        v-slot="{ active, toggle }"
+  <v-row no-gutters>
+    <div class="artifact-selector my-4 mr-4">
+      <v-btn-toggle
+        v-model="artifact"
+        class="d-flex flex-column stacking-btn-toggle"
+        mandatory
       >
         <v-btn
-          :input-value="active"
+          v-for="a in artifacts"
+          :key="a.id"
           icon
           class="position-relative"
           color="primary"
-          @click="toggle"
         >
-          <v-icon large color="codePink">fiber_manual_record</v-icon>
+          <v-icon large :color="a.task_run.state">
+            fiber_manual_record
+          </v-icon>
           <v-icon class="position-absolute" x-small color="white">
             fas fa-fingerprint
           </v-icon>
         </v-btn>
-      </v-slide-item>
-    </v-slide-group>
+      </v-btn-toggle>
+    </div>
 
-    <v-row no-gutters>
-      <v-col>
-        <v-window v-model="artifact" class="artifact-container">
-          <v-window-item
-            v-for="a in artifacts"
-            :key="a.id"
-            class="h-100"
-            transition="quick-fade"
-            reverse-transition="quick-fade"
-          >
-            <v-card class="artifact-card pa-0" tile>
-              <v-card-title class="artifact-card-title white">
-                <div class="position-relative">
-                  <v-icon x-large color="primary">fiber_manual_record</v-icon>
-                  <v-icon
-                    class="position-absolute center-absolute"
-                    small
-                    color="white"
-                  >
-                    fas fa-fingerprint
-                  </v-icon>
+    <v-col>
+      <v-window v-model="artifact" class="artifact-container">
+        <v-window-item
+          v-for="a in artifacts"
+          :key="a.id"
+          class="h-100"
+          transition="quick-fade"
+          reverse-transition="quick-fade"
+        >
+          <v-card class="artifact-card pa-0" tile>
+            <v-card-title class="artifact-card-title white">
+              <div class="position-relative">
+                <v-icon x-large color="primary">fiber_manual_record</v-icon>
+                <v-icon
+                  class="position-absolute center-absolute"
+                  small
+                  color="white"
+                >
+                  fas fa-fingerprint
+                </v-icon>
+              </div>
+              <div>
+                <div
+                  class="overline grey--text text--darken-1"
+                  style="line-height: 1rem;"
+                >
+                  Artifact
                 </div>
-                <div>
-                  <div
-                    class="overline grey--text text--darken-1"
-                    style="line-height: 1rem;"
-                  >
-                    Artifact
-                  </div>
-                  <div class="text-h4">
-                    {{
-                      a.task_run.name ? a.task_run.name : a.task_run.task.name
-                    }}
-                  </div>
+                <div class="text-h4">
+                  {{ a.task_run.name ? a.task_run.name : a.task_run.task.name }}
                 </div>
-              </v-card-title>
-              <v-card-text>
-                <v-fade-transition mode="out-in">
-                  <Artifact :artifact="a" />
-                </v-fade-transition>
-              </v-card-text>
-            </v-card>
-          </v-window-item>
-        </v-window>
-      </v-col>
-    </v-row>
-  </v-container>
+              </div>
+            </v-card-title>
+            <v-card-text>
+              <v-fade-transition mode="out-in">
+                <Artifact :artifact="a" />
+              </v-fade-transition>
+            </v-card-text>
+          </v-card>
+        </v-window-item>
+      </v-window>
+    </v-col>
+  </v-row>
 </template>
 
 <style lang="scss" scoped>
@@ -167,7 +159,7 @@ export default {
 }
 
 .artifact-selector {
-  width: 100%;
+  max-height: calc(100%);
 }
 
 .h-100 {

@@ -8,6 +8,7 @@ query TaskRunArtifacts($taskRunIds: [uuid!]) {
     task_run {
       id
       name
+      state
 
       task {
         id
