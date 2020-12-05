@@ -52,12 +52,10 @@ export default {
     },
     allFlows() {
       if (this.flows || this.scheduledFlows || this.runningFlows) {
-        const flows = [
-          ...this.flows,
-          ...this.scheduledFlows,
-          ...this.runningFlows
-        ]
-
+        const flows =
+          new Date(this.date) < new Date()
+            ? [...this.flows, ...this.scheduledFlows, ...this.runningFlows]
+            : [...this.flows, ...this.scheduledFlows]
         return flows.filter(
           flow_group =>
             flow_group.flows.filter(flow => flow.flow_runs?.length).length
