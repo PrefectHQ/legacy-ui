@@ -15,8 +15,8 @@ export default {
     }
   },
   computed: {
-    flowName() {
-      return this.flow?.name
+    flowDetails() {
+      return `${this.flow.name}(Version ${this.flow.version})`
     },
     textAlign() {
       if (this.left) return null
@@ -46,7 +46,7 @@ export default {
     :class="textAlign"
   >
     <!-- <router-link :to="{ name: 'flow', params: { id: flow.id } }"> -->
-    <truncate v-if="loadingKey < 1" :content="flowName"> </truncate>
+    <truncate v-if="loadingKey < 1" :content="flowDetails"> </truncate>
     <!-- </router-link> -->
   </div>
 </template>
