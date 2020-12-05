@@ -30,7 +30,7 @@ export default {
 
 <template>
   <div v-if="activeButton()">
-    <v-dialog v-model="setStateDialog" width="500" @click:outside="reset">
+    <v-dialog v-model="setStateDialog" max-width="600" @click:outside="reset">
       <template #activator="{ on: dialog }">
         <v-tooltip bottom>
           <template #activator="{ on: tooltip }">
@@ -52,103 +52,101 @@ export default {
           <span>Change the state of this {{ dialogType }}</span>
         </v-tooltip>
       </template>
-      <v-card :loading="markAsLoading">
-        <v-card-title>
-          Change the state of {{ taskRun ? taskRun.name : flowRun.name }}
-        </v-card-title>
-        <v-card-text>
-          <v-stepper v-model="e1">
-            <v-stepper-header>
-              <v-stepper-step :complete="e1 > 1" editable step="1">
-                Select State
-              </v-stepper-step>
-              <v-divider></v-divider>
-              <v-stepper-step :complete="e1 > 2" step="2">
-                Confirm
-              </v-stepper-step>
-            </v-stepper-header>
-            <v-divider></v-divider>
-            <v-stepper-items>
-              <v-stepper-content step="1">
-                <v-card-text>
-                  <div>
-                    <v-autocomplete
-                      v-model="selectedState"
-                      label="Select A State"
-                      :items="filteredStates"
-                      autocomplete="new-password"
-                      required
-                    >
-                    </v-autocomplete>
-                  </div>
-                  <v-checkbox
-                    v-if="flowRun"
-                    v-model="allTasks"
-                    class="pb-0 mb-0"
-                    label="Include non-mapped task runs"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-if="flowRun"
-                    v-model="childTasks"
-                    :disabled="!allTasks"
-                    class="pt-0 mt-0"
-                    label="Include mapped task runs - this may take some time"
-                  ></v-checkbox>
-                  <v-form ref="form" @submit.prevent>
-                    <v-text-field
-                      v-model="reason"
-                      autocomplete="off"
-                      label="Optional - Why are you changing state?"
-                      @keyup.enter="checkContinue()"
-                    ></v-text-field>
-                  </v-form>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn
-                    v-disable-read-only-user="!selectedState"
-                    color="primary"
-                    @click="checkContinue"
-                  >
-                    Continue
-                  </v-btn>
 
-                  <v-btn text @click="reset">Cancel</v-btn>
-                </v-card-actions>
-              </v-stepper-content>
+      <v-card flat :loading="markAsLoading">
+        <div style="padding: 20px;">
+          <v-card-title class="headline word-break-normal card-title">
+            <span v-if="taskRun && taskRun.name">
+              Change the state of
+              <span class="font-weight-medium">{{ taskRun.name }}</span>
+            </span>
+            <span v-else-if="taskRun">
+              Change the state of this run of
+              <span class="font-weight-medium">{{ taskRun.task.name }}</span>
+            </span>
+            <span v-else
+              >Change the state of
+              <span class="font-weight-medium">{{ flowRun.name }}</span></span
+            >
+          </v-card-title>
+          <v-select
+            v-model="selectedState"
+            outlined
+            :menu-props="{ offsetY: true }"
+            label="State"
+            prepend-icon="assessment"
+            :items="filteredStates"
+          >
+          </v-select>
 
-              <v-stepper-content step="2">
-                <v-card-text>
-                  Please be aware that clicking on confirm will set the state of
-                  your
-                  {{ dialogType }}
-                  {{ taskRun ? taskRun.name : flowRun.name }} to
-                  <span class="font-weight-black pb-8">
-                    {{ selectedState }}.</span
-                  >
-                  <div v-if="childTasks" class="pt-1">
-                    If you have a lot of child mapped tasks, the state change
-                    may continue in the background.</div
-                  >
-                  <span v-if="dialogType === 'task run'">
-                    This may have an effect on downstream tasks.
-                  </span>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn
-                    v-disable-read-only-user="!selectedState"
-                    color="primary"
-                    @click="changeState"
-                  >
-                    Confirm
-                  </v-btn>
-                  <v-btn text @click="reset">Cancel</v-btn>
-                </v-card-actions>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </v-card-text>
+          <v-text-field
+            v-model="reason"
+            class="mb-3"
+            label="Optional - Why are you changing state?"
+            prepend-icon="live_help"
+            autocomplete="new-password"
+            outlined
+          />
+
+          <div class="checkbox-container">
+            <v-checkbox
+              v-if="flowRun"
+              v-model="allTasks"
+              label="Include non-mapped task runs"
+              style="margin-bottom: -30px;"
+            ></v-checkbox>
+            <v-checkbox
+              v-if="flowRun"
+              v-model="childTasks"
+              :disabled="!allTasks"
+              label="Include mapped task runs - this may take some time"
+            ></v-checkbox>
+          </div>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-tooltip top>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  v-show="childTasks || dialogType === 'task run'"
+                  v-disable-read-only-user="!selectedState"
+                  :loading="markAsLoading"
+                  color="primary"
+                  v-bind="attrs"
+                  class="set-state"
+                  v-on="on"
+                  @click="changeState"
+                >
+                  Confirm
+                </v-btn>
+              </template>
+
+              <span v-if="childTasks" class="pt-1">
+                If you have a lot of child mapped tasks, the state change may
+                continue in the background.
+                <br />
+              </span>
+
+              <span v-if="dialogType === 'task run'">
+                This may have an effect on downstream tasks.
+                <br />
+              </span>
+            </v-tooltip>
+            <v-btn
+              v-show="!taskRun && (!childTasks || !dialogType === 'task run')"
+              v-disable-read-only-user="!selectedState"
+              :loading="markAsLoading"
+              color="primary"
+              class="set-state"
+              @click="changeState"
+            >
+              Confirm
+            </v-btn>
+            <v-btn text @click="reset">
+              Cancel
+            </v-btn>
+          </v-card-actions>
+        </div>
       </v-card>
     </v-dialog>
   </div>
@@ -205,5 +203,20 @@ export default {
 .theme--light.v-subheader {
   color: #000;
   font-weight: bold !important;
+}
+
+.checkbox-container {
+  margin-left: 30px;
+  margin-top: -20px;
+}
+/* stylelint-disable */
+.set-state .v-btn__loader {
+  color: #fff;
+}
+
+.card-title {
+  margin-left: -12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
 }
 </style>
