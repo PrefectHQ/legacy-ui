@@ -1,4 +1,4 @@
-query CalendarScheduledFlowRuns($endTime: timestamptz) {
+query CalendarScheduledFlowRuns($startTime: timestamptz) {
   flow_group {
     id
     name
@@ -8,6 +8,7 @@ query CalendarScheduledFlowRuns($endTime: timestamptz) {
       id
       flow_runs (where: { 
       _and: [
+    {scheduled_start_time: { _gt: $startTime}},
     {scheduled_start_time: { _lt: $endTime}},
     {state: {_eq: "Scheduled"}}
     ]
