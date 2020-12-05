@@ -88,20 +88,32 @@ export default {
             :key="a.id"
             v-slot="{ active, toggle }"
           >
-            <v-btn :input-value="active" icon @click="toggle">
-              <v-icon :x-large="active" color="primary">
-                fiber_manual_record
-              </v-icon>
-              <v-scale-transition>
-                <v-icon
-                  v-if="active"
-                  color="white"
-                  class="position-absolute center-absolute"
-                >
-                  fingerprint
-                </v-icon>
-              </v-scale-transition>
-            </v-btn>
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <v-btn :input-value="active" icon @click="toggle" v-on="on">
+                  <v-icon :x-large="active" color="primary">
+                    fiber_manual_record
+                  </v-icon>
+                  <v-scale-transition>
+                    <v-icon
+                      v-if="active"
+                      color="white"
+                      class="position-absolute center-absolute"
+                    >
+                      fingerprint
+                    </v-icon>
+                  </v-scale-transition>
+                </v-btn>
+              </template>
+              <div>
+                <div class="title">
+                  {{ a.task_run.task.name }}
+                </div>
+                <div v-if="a.task_run.name" class="subtitle-1">
+                  {{ a.task_run.name }}
+                </div>
+              </div>
+            </v-tooltip>
           </v-item>
         </v-item-group>
         <v-btn
