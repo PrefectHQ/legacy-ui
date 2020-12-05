@@ -159,8 +159,7 @@ export default {
           width="99%"
           height="200px"
         ></v-date-picker>
-        <!-- <v-time-picker v-model="start" :max="end"></v-time-picker>
-        <v-time-picker v-model="end" :max="start"></v-time-picker> -->
+
         <v-skeleton-loader
           type="list-item, list-item, list-item, list-item"
           min-height="329"
