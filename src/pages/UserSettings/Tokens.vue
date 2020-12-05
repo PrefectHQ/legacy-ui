@@ -354,6 +354,7 @@ export default {
       :cancel-props="{ 'data-cy': 'close-personal-access-token-dialog' }"
       title="Your token has been created"
       :confirm-text="tokenCopied ? 'Copied' : 'Copy'"
+      cancel-text="Close"
       @cancel="resetNewToken"
       @confirm="copyNewToken"
     >
