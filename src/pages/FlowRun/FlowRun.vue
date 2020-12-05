@@ -316,7 +316,12 @@ export default {
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="artifacts">
+      <v-tab-item
+        class="tab-full-height"
+        value="artifacts"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
+      >
         <Artifacts :flow-run-id="flowRunId" />
       </v-tab-item>
     </v-tabs-items>
