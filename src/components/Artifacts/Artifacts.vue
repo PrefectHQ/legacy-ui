@@ -30,7 +30,14 @@ export default {
       return this.taskRunIds || this.ids
     }
   },
-  methods: {},
+  methods: {
+    decrement() {
+      this.artifact--
+    },
+    increment() {
+      this.artifact++
+    }
+  },
   apollo: {
     artifacts: {
       query: require('@/graphql/Artifacts/task-run-artifacts.gql'),
@@ -55,8 +62,8 @@ export default {
           where: {
             flow_run_id: { _eq: this.flowRunId }
           },
-          limit: 10,
-          offset: 0
+          limit: null, // We'll introduce limits and offsets later when we begin server-side pagination for artifacts
+          offset: null
         }
       },
       skip() {
@@ -70,30 +77,33 @@ export default {
 
 <template>
   <v-row no-gutters>
-    <div class="artifact-selector my-4 mr-4">
-      <v-btn-toggle
-        v-model="artifact"
-        class="d-flex flex-column stacking-btn-toggle"
-        mandatory
-      >
-        <v-btn
-          v-for="a in artifacts"
-          :key="a.id"
-          icon
-          class="position-relative"
-          color="primary"
-        >
-          <v-icon large :color="a.task_run.state">
-            fiber_manual_record
-          </v-icon>
-          <v-icon class="position-absolute" x-small color="white">
-            fas fa-fingerprint
-          </v-icon>
-        </v-btn>
-      </v-btn-toggle>
-    </div>
-
     <v-col>
+      <div class="d-flex align-center justify-center">
+        <v-btn icon :disabled="artifact == 0" @click="decrement">
+          <v-icon large>arrow_left</v-icon>
+        </v-btn>
+        <v-item-group v-model="artifact" class="text-center my-2" mandatory>
+          <v-item
+            v-for="a in artifacts"
+            :key="a.id"
+            v-slot="{ active, toggle }"
+          >
+            <v-btn :input-value="active" icon @click="toggle">
+              <v-icon :x-large="active" color="primary">
+                fiber_manual_record
+              </v-icon>
+            </v-btn>
+          </v-item>
+        </v-item-group>
+        <v-btn
+          icon
+          :disabled="artifact == artifacts.length - 1"
+          @click="increment"
+        >
+          <v-icon large>arrow_right</v-icon>
+        </v-btn>
+      </div>
+
       <v-window v-model="artifact" class="artifact-container">
         <v-window-item
           v-for="a in artifacts"
@@ -140,13 +150,13 @@ export default {
 
 <style lang="scss" scoped>
 .artifact-container {
-  height: calc(100vh - 350px);
+  height: calc(100vh - 400px);
   min-height: 400px;
 }
 
 .artifact-card {
   height: auto;
-  max-height: calc(100% - 60px);
+  max-height: 100%;
   overflow: scroll;
   position: relative;
   transition: height 250ms ease-in-out;

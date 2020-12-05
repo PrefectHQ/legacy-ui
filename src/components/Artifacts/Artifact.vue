@@ -28,6 +28,8 @@ export default {
 
 <style lang="scss">
 .artifact {
+  margin-top: 0;
+
   .table-wrapper {
     max-height: 400px;
   }
