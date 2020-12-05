@@ -52,12 +52,16 @@ export default {
       return ''
     },
     allRuns() {
-      if (this.flowRuns || this.scheduledFlowRuns || this.runningFlowRuns)
-        return [
-          ...this.flowRuns,
-          ...this.scheduledFlowRuns,
-          ...this.runningFlowRuns
-        ]
+      if (this.flowRuns || this.scheduledFlowRuns || this.runningFlowRuns) {
+        if (new Date(this.date) < new Date()) {
+          return [
+            ...this.flowRuns,
+            ...this.scheduledFlowRuns,
+            ...this.runningFlowRuns
+          ]
+        }
+        return [...this.flowRuns, ...this.scheduledFlowRuns]
+      }
       return []
     },
     allIds() {
