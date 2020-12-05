@@ -17,18 +17,9 @@ export default {
       type: String,
       default: () => null
     },
-    timeInterval: {
-      required: true,
-      type: Number
-    },
     calendarInterval: {
       required: true,
       type: Number
-    },
-    timePeriod: {
-      required: false,
-      type: String,
-      default: 'hour'
     },
     date: {
       required: true,

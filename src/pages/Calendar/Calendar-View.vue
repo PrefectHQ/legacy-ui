@@ -20,10 +20,6 @@ export default {
   },
   data() {
     return {
-      timePeriod: 'day',
-      timePeriodOptions: ['day', 'week', 'month'],
-      timeIntervalOptions: [1, 5, 15, 30, 60],
-      timeInterval: 2,
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
@@ -256,8 +252,6 @@ export default {
           :date="date"
           :type="type"
           :flow-id="flowId"
-          :time-period="timePeriod"
-          :time-interval="timeInterval"
           :calendar-interval="calendarInterval"
         />
       </v-col>
