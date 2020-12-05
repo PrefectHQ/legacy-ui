@@ -92,6 +92,15 @@ export default {
               <v-icon :x-large="active" color="primary">
                 fiber_manual_record
               </v-icon>
+              <v-scale-transition>
+                <v-icon
+                  v-if="active"
+                  color="white"
+                  class="position-absolute center-absolute"
+                >
+                  fingerprint
+                </v-icon>
+              </v-scale-transition>
             </v-btn>
           </v-item>
         </v-item-group>
