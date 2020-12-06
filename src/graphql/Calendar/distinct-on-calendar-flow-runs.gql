@@ -13,10 +13,5 @@ query CalendarDistinctFlowRuns($project_id: uuid, $startTime: timestamptz, $endT
   {
     id
     flow_id
-    name
-    end_time
-    start_time
-    scheduled_start_time
-    state
   }
 }
