@@ -165,33 +165,25 @@ export default {
           tile
         >
           <v-expansion-panels class="expansion" flat :value="0">
-            <v-expansion-panel
-              v-for="(filter, index) in filters"
-              :key="index"
-              class="expansion"
-            >
-              <v-expansion-panel-header class="expansion py-0">
+            <v-expansion-panel v-for="(filter, index) in filters" :key="index">
+              <v-expansion-panel-header class=" py-0">
                 {{ filter.name }}
               </v-expansion-panel-header>
-              <v-expansion-panel-content class="expansion">
-                <v-list class="expansion" height="70vh">
+              <v-expansion-panel-content>
+                <v-list height="70vh">
                   <v-list-item-group
                     v-model="selectedFlow"
                     color="primary"
                     mandatory
-                    class="expansion"
                   >
                     <v-list-item
                       v-for="item in allIds"
                       :key="item ? item.id : null"
                       :value="item"
                       dense
-                      class="expansion"
                     >
-                      <v-list-item-content class="expansion pa-0">
-                        <v-list-item-subtitle
-                          class="font-weight-light expansion"
-                        >
+                      <v-list-item-content class=" pa-0">
+                        <v-list-item-subtitle class="font-weight-light ">
                           <FlowName :id="item" left />
                         </v-list-item-subtitle>
                       </v-list-item-content>
