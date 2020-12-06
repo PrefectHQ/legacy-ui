@@ -4,6 +4,8 @@
 
 ### Features and Improvements
 
+- Changes the design of the Set State modal to match the design of the other forms - [#465](https://github.com/PrefectHQ/ui/pull/465)
+
 - Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
 - Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
 
@@ -11,6 +13,7 @@
 
 - Fix jumping height on subnav = [#476](https://github.com/PrefectHQ/ui/pull/476)
 - Removed tutorial that does not work as previously intended - [#480](https://github.com/PrefectHQ/ui/pull/480)
+- Switch "cancel" to "close" on token dialogs - [#488](https://github.com/PrefectHQ/ui/pull/488)
 
 ## 2020-11-13
 
