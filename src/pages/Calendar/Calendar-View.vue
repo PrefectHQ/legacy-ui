@@ -260,8 +260,11 @@ export default {
 
 <style lang="scss">
 /* stylelint-disable */
-.tbar .v-toolbar__content {
+.tbar {
   max-height: 50px;
+  .v-toolbar__content {
+    max-height: 50px;
+  }
 }
 
 .small-picker {
@@ -290,16 +293,11 @@ export default {
     background-color: #f9f9f9 !important;
   }
 
-  .theme--light.v-list {
-    background: #f9f9f9 !important;
+  .theme--light {
     background-color: #f9f9f9 !important;
   }
 
-  .theme--light.v-sheet {
-    background-color: #f9f9f9 !important;
-  }
-
-  .v-expansion-panel--active > .v-expansion-panel-header {
+  .v-expansion-panel--active .v-expansion-panel-header {
     min-height: 20px;
   }
 }
