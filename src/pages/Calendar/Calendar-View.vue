@@ -42,7 +42,6 @@ export default {
     ...mapGetters('user', ['timezone']),
     ...mapGetters('api', ['backend']),
     flowId() {
-      if (this.$route.params.id) return this.$route.params.id
       if (this.selectedFlow) return this.selectedFlow
       if (this.allIds && this.allIds[0]) return this.allIds[0]
       return ''
@@ -261,11 +260,8 @@ export default {
 
 <style lang="scss">
 /* stylelint-disable */
-.tbar {
+.tbar .v-toolbar__content {
   max-height: 50px;
-  .v-toolbar__content {
-    max-height: 50px;
-  }
 }
 
 .small-picker {
