@@ -53,7 +53,7 @@ export default {
       position: sticky;
       text-align: left;
       top: 0;
-      z-index: 2;
+      z-index: 1;
     }
 
     th:first-of-type {
