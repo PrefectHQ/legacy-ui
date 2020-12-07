@@ -78,7 +78,7 @@ export default {
     this.flowRunEvents = this.flowRunEventsList()
   },
   updated() {
-    this.$refs.calendar.scrollToTime(this.timeNow)
+    this.$refs?.calendar?.scrollToTime(new Date().toTimeString())
   },
   methods: {
     flowRunEventsList() {
@@ -138,18 +138,18 @@ export default {
       } else {
         open()
       }
-    },
-    timeNow(time) {
-      return time.split(':')[0] == new Date().getHours() - 2
-        ? 'scroll-here'
-        : null
-    },
-    scrollToElement() {
-      const el = this.$el.getElementsByClassName('scroll-here')[0]
-      if (el && this.$vuetify.breakpoint.lgAndUp) {
-        el.scrollIntoView()
-      }
     }
+    // timeNow(time) {
+    //   return time.split(':')[0] == new Date().getHours() - 2
+    //     ? 'scroll-here'
+    //     : null
+    // },
+    // scrollToElement() {
+    //   const el = this.$el.getElementsByClassName('scroll-here')[0]
+    //   if (el && this.$vuetify.breakpoint.lgAndUp) {
+    //     el.scrollIntoView()
+    //   }
+    // }
   },
   apollo: {
     flow: {
@@ -225,9 +225,9 @@ export default {
             {{ formTime(event.end_time) }}
           </div>
         </template>
-        <template #interval="{time}">
+        <!-- <template #interval="{time}">
           <div :class="timeNow(time)" />
-        </template>
+        </template> -->
       </v-calendar>
       <v-menu
         :value="selectedOpen"
