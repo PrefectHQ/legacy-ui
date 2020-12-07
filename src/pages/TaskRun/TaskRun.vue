@@ -86,7 +86,7 @@ export default {
           icon: 'fas fa-fingerprint',
           badgeText: 'Beta',
           cardText:
-            'The Artifacts API is a beta feature set currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
+            'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
           cardLink:
             'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
           cardLinkText: 'Artifacts API Docs'
@@ -308,7 +308,7 @@ export default {
           <DependenciesTile
             slot="row-2-col-2-row-3-tile-1"
             :task-run="taskRun"
-            :loading="loading > 0"
+            :loading="taskRun && loading > 0"
           />
         </TileLayout>
       </v-tab-item>

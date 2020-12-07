@@ -78,7 +78,10 @@ export default {
 <template>
   <v-row no-gutters>
     <v-col>
-      <div class="d-flex align-center justify-center">
+      <div
+        v-if="artifacts && artifacts.length > 0"
+        class="d-flex align-center justify-center"
+      >
         <v-btn icon :disabled="artifact == 0" @click="decrement">
           <v-icon large>arrow_left</v-icon>
         </v-btn>
@@ -118,11 +121,29 @@ export default {
         </v-item-group>
         <v-btn
           icon
-          :disabled="artifact == artifacts.length - 1"
+          :disabled="!artifacts || artifact == artifacts.length - 1"
           @click="increment"
         >
           <v-icon large>arrow_right</v-icon>
         </v-btn>
+      </div>
+      <div
+        v-else
+        class="text-center position-absolute center-absolute text-h5 grey--text text--darken-2"
+      >
+        This run has no
+        <span class="font-weight-medium">
+          <v-icon x-small color="primary" class="ml-1">
+            fas fa-fingerprint
+          </v-icon>
+          Artifacts</span
+        >! You can learn how to generate artifacts from your flow/task in the
+        <a
+          href="https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts"
+          target="_blank"
+        >
+          Artifacts API Docs</a
+        >.
       </div>
 
       <v-window v-model="artifact" class="artifact-container">
