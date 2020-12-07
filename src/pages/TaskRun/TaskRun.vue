@@ -106,22 +106,6 @@ export default {
     $route() {
       this.tab = this.getTab()
     },
-    // tab(val) {
-    //   let query = { ...this.$route.query }
-    //   switch (val) {
-    //     case 'logs':
-    //       query = 'logId'
-    //       break
-    //     case 'mapped-runs':
-    //       query = 'mapped-runs'
-    //       break
-    //     case 'artifacts':
-    //       query = 'artifacts'
-    //       break
-    //     default:
-    //       break
-    //   }
-    // },
     taskRun(val, prevVal) {
       if (!val || val?.id == prevVal?.id) return
       if (!this.$route.query || !this.$route.query.schematic) {
@@ -298,7 +282,7 @@ export default {
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <TileLayout v-if="tab == 'overview'">
+        <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :task-run="taskRun" />
 
           <TaskRunHeartbeatTile
