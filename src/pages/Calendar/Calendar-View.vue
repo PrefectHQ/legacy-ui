@@ -63,7 +63,16 @@ export default {
       return flowIds ? [...new Set(flowIds)] : []
     },
     end() {
-      return this.addDay(this.date, 1)
+      let days = 1
+      switch (this.type) {
+        case '4day':
+          days = 4
+          break
+        case 'day':
+          days = 1
+          break
+      }
+      return this.addDay(this.date, days)
     },
     calTitle() {
       return this.getMonth(this.date)

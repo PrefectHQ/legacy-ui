@@ -58,18 +58,6 @@ export default {
     ...mapGetters('user', ['timezone']),
     intervalCount() {
       return (60 / this.calendarInterval) * 24
-    },
-    end() {
-      let days = 1
-      switch (this.type) {
-        case '4day':
-          days = 4
-          break
-        case 'day':
-          days = 1
-          break
-      }
-      return this.addDay(this.date, days)
     }
   },
   watch: {
@@ -89,8 +77,8 @@ export default {
   created() {
     this.flowRunEvents = this.flowRunEventsList()
   },
-  updated() {
-    this.scrollToElement()
+  mounted() {
+    this.$refs.cal.scrollToTime(this.timeNow)
   },
   methods: {
     flowRunEventsList() {
@@ -102,15 +90,19 @@ export default {
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
           : this.formatCalendarTime(flowRun.start_time)
-        if (flowRun.start_time && !flowRun.end_time)
-          flowRun.end = this.formatCalendarTime(new Date())
+        if (flowRun.start_time && !flowRun.end_time) {
+          // flowRun.end = this.formatCalendarTime(new Date())
+          flowRun.timed = false
+        }
         if (flowRun.end_time) {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
           if (diff < 60000) {
             const addedTime = this.addTimeNoTz(flowRun.start, 3, 'm')
             flowRun.end = addedTime
+            flowRun.timed = true
           } else {
             flowRun.end = this.formatCalendarTime(flowRun.end_time)
+            flowRun.timed = true
           }
         }
         flowRun.category = flowRun.flow_id
