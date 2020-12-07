@@ -29,8 +29,6 @@ export default {
       refetching: false,
       type: 'day',
       typeToLabel: {
-        month: 'Month',
-        week: 'Week',
         day: 'Day',
         '4day': '4 Days'
       }

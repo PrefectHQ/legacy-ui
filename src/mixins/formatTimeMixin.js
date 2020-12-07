@@ -49,11 +49,7 @@ export const formatTime = {
     formatCalendarTime(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
-      return timeObj.format('YYYY-MM-DD HH:mm:ss')
-    },
-    formatCalendarTime2(timestamp) {
-      if (!timestamp) return
-      let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
+      //Bit of a hack here to make sure that we have timezone but also get the time in milliseconds
       const updated = timeObj.format('YYYY-MM-DD HH:mm:ss')
       return moment(updated).valueOf()
     },

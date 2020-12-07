@@ -49,7 +49,8 @@ export default {
       selectedElement: null,
       upcoming: [],
       intervalHeight: 100,
-      scheduleBanner: false
+      scheduleBanner: false,
+      closeBanner: false
     }
   },
   computed: {
@@ -88,10 +89,10 @@ export default {
         this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
       allRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
-          ? this.formatCalendarTime2(flowRun.scheduled_start_time)
-          : this.formatCalendarTime2(flowRun.start_time)
+          ? this.formatCalendarTime(flowRun.scheduled_start_time)
+          : this.formatCalendarTime(flowRun.start_time)
         if (flowRun.start_time && !flowRun.end_time) {
-          flowRun.end = this.formatCalendarTime2(new Date())
+          flowRun.end = this.formatCalendarTime(new Date())
           if (flowRun.start_time < this.date) {
             flowRun.timed = false
           } else {
@@ -101,11 +102,11 @@ export default {
         if (flowRun.end_time) {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
           if (diff < 60000) {
-            const addedTime = this.addTimeNoTz(flowRun.start, 3, 'm')
+            const addedTime = this.addTimeNoTz(flowRun.start_time, 3, 'm')
             flowRun.end = addedTime
             flowRun.timed = true
           } else {
-            flowRun.end = this.formatCalendarTime2(flowRun.end_time)
+            flowRun.end = this.formatCalendarTime(flowRun.end_time)
             flowRun.timed = true
           }
         }
@@ -115,9 +116,13 @@ export default {
         flowRun.category = flowRun.flow_id
       })
       this.gettingRuns = false
-      if (this.flow?.is_schedule_active && this.upcoming.length > 8) {
+      if (
+        this.flow?.is_schedule_active &&
+        this.upcoming.length > 8 &&
+        !this.closeBanner
+      ) {
         this.scheduleBanner = true
-      } else {
+      } else if (!this.closeBanner) {
         this.scheduleBanner = new Date(this.date) > new Date()
       }
       return allRuns
@@ -142,6 +147,10 @@ export default {
       } else {
         open()
       }
+    },
+    handleScheduleBanner() {
+      this.scheduleBanner = false
+      this.closeBanner = true
     }
   },
   apollo: {
@@ -189,7 +198,7 @@ export default {
         will only schedule 10 runs in advance.</span
       >
       <template #action="{ attrs }">
-        <v-btn v-bind="attrs" text color="white" @click="scheduleBanner = false"
+        <v-btn v-bind="attrs" text color="white" @click="handleScheduleBanner"
           >Close</v-btn
         >
       </template>
