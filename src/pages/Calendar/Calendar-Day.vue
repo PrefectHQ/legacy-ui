@@ -32,6 +32,10 @@ export default {
     type: {
       required: true,
       type: String
+    },
+    runs: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -61,77 +65,37 @@ export default {
         case '4day':
           days = 4
           break
-        case 'week':
-          days = 7
-          break
         case 'day':
           days = 1
           break
-        case 'hour':
-          return this.addTime(this.date, 1, 'h')
       }
       return this.addDay(this.date, days)
     }
   },
   watch: {
-    async date() {
+    date() {
       this.selectedEvent = null
-      this.flowRunEvents = await this.flowRunEventsList()
+      this.flowRunEvents = this.flowRunEventsList()
     },
-    async flowId() {
+    flowId() {
       this.selectedEvent = null
-      this.flowRunEvents = await this.flowRunEventsList()
+      this.flowRunEvents = this.flowRunEventsList()
     },
-    async type() {
+    type() {
       this.selectedEvent = null
-      this.flowRunEvents = await this.flowRunEventsList()
+      this.flowRunEvents = this.flowRunEventsList()
     }
   },
-  async created() {
-    this.flowRunEvents = await this.flowRunEventsList()
+  created() {
+    this.flowRunEvents = this.flowRunEventsList()
   },
   updated() {
     this.scrollToElement()
   },
   methods: {
-    async flowRunEventsList() {
+    flowRunEventsList() {
       this.gettingRuns = true
-      const finished = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
-        variables: {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.end,
-          flowIds: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      const running = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
-        variables: {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.end,
-          flowIds: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      const upcoming = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
-        variables: {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
-          endTime: this.end,
-          flowIds: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      this.upcoming = upcoming.data.flow_run
-      const allRuns = [
-        ...finished.data.flow_run,
-        ...upcoming.data.flow_run,
-        ...running.data.flow_run
-      ]
+      const allRuns = this.runs.filter(run => run.flow_id === this.flowId)
       if (this.type === 'day')
         this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
       allRuns.map(flowRun => {
@@ -139,7 +103,6 @@ export default {
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
           : this.formatCalendarTime(flowRun.start_time)
         if (flowRun.start_time && !flowRun.end_time)
-          //Will need to fix this to handle timezones!!?
           flowRun.end = this.formatCalendarTime(new Date())
         if (flowRun.end_time) {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)

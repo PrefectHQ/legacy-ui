@@ -91,7 +91,7 @@ export default {
   },
   apollo: {
     flowRuns: {
-      query: require('@/graphql/Calendar/distinct-on-calendar-flow-runs.gql'),
+      query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
@@ -224,12 +224,6 @@ export default {
               <v-list-item @click="type = 'day'">
                 <v-list-item-title>Day</v-list-item-title>
               </v-list-item>
-              <!-- <v-list-item @click="type = 'week'">
-                  <v-list-item-title>Week</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = 'month'">
-                  <v-list-item-title>Month</v-list-item-title>
-                </v-list-item> -->
               <v-list-item @click="type = '4day'">
                 <v-list-item-title>4 Days</v-list-item-title>
               </v-list-item>
@@ -243,6 +237,7 @@ export default {
           :date="date"
           :type="type"
           :flow-id="flowId"
+          :runs="allRuns"
           :calendar-interval="calendarInterval"
         />
       </v-col>
