@@ -143,17 +143,6 @@ export default {
         open()
       }
     }
-    // timeNow(time) {
-    //   return time.split(':')[0] == new Date().getHours() - 2
-    //     ? 'scroll-here'
-    //     : null
-    // },
-    // scrollToElement() {
-    //   const el = this.$el.getElementsByClassName('scroll-here')[0]
-    //   if (el && this.$vuetify.breakpoint.lgAndUp) {
-    //     el.scrollIntoView()
-    //   }
-    // }
   },
   apollo: {
     flow: {
@@ -225,13 +214,10 @@ export default {
       >
         <template #event="{event}">
           <div :id="event.name" class="caption pl-2" :class="striped(event)">
-            {{ event.name }} {{ formTime(event.start_time) }} -
-            {{ formTime(event.end_time) }}
+            {{ event.name }} {{ shortTime(event.start_time) }} -
+            {{ shortTime(event.end_time) }}
           </div>
         </template>
-        <!-- <template #interval="{time}">
-          <div :class="timeNow(time)" />
-        </template> -->
       </v-calendar>
       <v-menu
         :value="selectedOpen"
