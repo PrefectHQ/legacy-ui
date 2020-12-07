@@ -139,6 +139,13 @@ export default {
     this.refresh()
   },
   methods: {
+    handleAgentDetailsClick() {
+      this.$router.push({
+        name: this.projectId ? 'project' : 'dashboard',
+        params: { tenant: this.tenant.slug, id: this.projectId },
+        query: { agents: null }
+      })
+    },
     handleProjectSelect(val) {
       this.projectId = val
       this.$apollo.queries.project.refetch()
@@ -366,7 +373,10 @@ export default {
             class="my-2"
             tile
           >
-            <AgentsTile full-height @view-details-clicked="tab = 'agents'" />
+            <AgentsTile
+              full-height
+              @view-details-clicked="handleAgentDetailsClick"
+            />
           </v-skeleton-loader>
         </TileLayout>
       </v-tab-item>

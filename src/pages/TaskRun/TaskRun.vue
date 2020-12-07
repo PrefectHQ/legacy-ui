@@ -2,6 +2,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/TaskRun/Actions'
+import Artifacts from '@/components/Artifacts/Artifacts'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
@@ -35,6 +36,7 @@ export default {
   },
   components: {
     Actions,
+    Artifacts,
     BreadCrumbs,
     DependenciesTile,
     DetailsTile,
@@ -79,23 +81,23 @@ export default {
           icon: 'format_align_left'
         },
         {
-          name: 'Artifacts',
-          target: 'artifacts',
-          icon: 'fas fa-fingerprint',
-          badgeText: 'Coming Soon!',
-          disabled: true,
-          cardText:
-            'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the',
-          cardLink:
-            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
-          cardLinkText: 'Artifacts API Docs'
-        },
-        {
           name: 'Mapped Runs',
           target: 'mapped-runs',
           icon: 'device_hub',
+          badgeColor: 'primary',
           badgeText: 'New!',
           hidden: !this.mappedParent && !this.mappedChild
+        },
+        {
+          name: 'Artifacts',
+          target: 'artifacts',
+          icon: 'fas fa-fingerprint',
+          badgeText: 'Beta',
+          cardText:
+            'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
+          cardLink:
+            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLinkText: 'Artifacts API Docs'
         }
       ]
     }
@@ -103,23 +105,6 @@ export default {
   watch: {
     $route() {
       this.tab = this.getTab()
-    },
-    tab(val) {
-      let query = { ...this.$route.query }
-      switch (val) {
-        case 'logs':
-          query = 'logId'
-          break
-        case 'mapped-runs':
-          query = 'mapped-runs'
-          break
-        case 'artifacts':
-          /* eslint-disable-next-line */
-          query = 'artifacts'
-          break
-        default:
-          break
-      }
     },
     taskRun(val, prevVal) {
       if (!val || val?.id == prevVal?.id) return
@@ -139,8 +124,7 @@ export default {
     ...mapActions('alert', ['setAlert']),
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
-        let target = Object.keys(this.$route.query)[0]
-        if (this.tabs?.find(tab => tab.target == target)) return target
+        return Object.keys(this.$route.query)[0]
       }
       return 'overview'
     },
@@ -279,9 +263,9 @@ export default {
       ></BreadCrumbs>
 
       <Actions slot="page-actions" style="height: 55px;" :task-run="taskRun" />
-      <span slot="tabs" style="width: 100%;"
-        ><NavTabBar :tabs="tabs" page="task-run"
-      /></span>
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="task-run" />
+      </span>
     </SubPageNav>
 
     <v-tabs-items
@@ -309,7 +293,7 @@ export default {
           <DependenciesTile
             slot="row-2-col-2-row-3-tile-1"
             :task-run="taskRun"
-            :loading="loading > 0"
+            :loading="taskRun && loading > 0"
           />
         </TileLayout>
       </v-tab-item>
@@ -336,11 +320,12 @@ export default {
       </v-tab-item>
 
       <v-tab-item
+        class="pb-12"
         value="artifacts"
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <!-- <div v-html="parseMarkdown('# hello')"></div> -->
+        <Artifacts :task-run-ids="[taskRunId]" />
       </v-tab-item>
 
       <v-tab-item
