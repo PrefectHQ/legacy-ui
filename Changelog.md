@@ -1,8 +1,11 @@
 # Changelog
 
 ## Unreleased
+
 ### Features and Improvements
+- None
 ### Bugfixes
+- None
 
 ## 2020-12-07
 
