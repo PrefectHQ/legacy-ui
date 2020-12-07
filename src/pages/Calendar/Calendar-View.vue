@@ -278,19 +278,19 @@ export default {
   }
 }
 
-.expansion {
-  overflow: scroll;
+// .expansion {
+//   overflow: scroll;
 
-  .theme--light.v-expansion-panels .v-expansion-panel {
-    background-color: #f9f9f9 !important;
-  }
+//   .theme--light.v-expansion-panels .v-expansion-panel {
+//     background-color: #f9f9f9 !important;
+//   }
 
-  .theme--light {
-    background-color: #f9f9f9 !important;
-  }
+//   .theme--light {
+//     background-color: #f9f9f9 !important;
+//   }
 
-  .v-expansion-panel--active .v-expansion-panel-header {
-    min-height: 20px;
-  }
-}
+//   .v-expansion-panel--active .v-expansion-panel-header {
+//     min-height: 20px;
+//   }
+// }
 </style>
