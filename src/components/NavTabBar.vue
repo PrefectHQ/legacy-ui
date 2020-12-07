@@ -77,19 +77,8 @@ export default {
   >
     <v-tabs-slider color="blue"></v-tabs-slider>
     <template v-for="tb in mainTabs">
-      <v-tab
-        v-if="!tb.cardText"
-        :key="tb.target"
-        :data-cy="`${page}-${tb.target}-tab`"
-        :href="`#${tb.target}`"
-        :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
-        :disabled="tb.disabled"
-      >
-        <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
-        {{ tb.name }}
-      </v-tab>
       <v-menu
-        v-else
+        v-if="tb.cardText"
         :key="tb.target"
         open-on-hover
         :close-on-click="false"
@@ -106,7 +95,10 @@ export default {
             <v-tab
               :data-cy="`${page}-${tb.target}-tab`"
               :href="`#${tb.target}`"
-              :class="$vuetify.breakpoint.smAndDown ? 'tabs-hidden' : ''"
+              :class="{
+                'tabs-hidden': $vuetify.breakpoint.smAndDown,
+                'pr-2': tb.badgeText
+              }"
               style="height: 100%;"
               :disabled="tb.disabled"
               :hidden="tb.hidden"
@@ -150,6 +142,28 @@ export default {
           >
         </v-card>
       </v-menu>
+      <v-tab
+        v-else
+        :key="tb.target"
+        :data-cy="`${page}-${tb.target}-tab`"
+        :href="`#${tb.target}`"
+        :class="{
+          'tabs-hidden': $vuetify.breakpoint.smAndDown,
+          'pr-2': tb.badgeText
+        }"
+        :disabled="tb.disabled"
+      >
+        <v-icon left :size="tb.iconSize || 'medium'">{{ tb.icon }}</v-icon>
+        {{ tb.name }}
+        <v-badge
+          v-if="tb.badgeText"
+          :color="tb.badgeColor || 'codePink'"
+          class="text-none"
+          :content="tb.badgeText"
+          bottom
+          inline
+        ></v-badge>
+      </v-tab>
     </template>
 
     <v-spacer />

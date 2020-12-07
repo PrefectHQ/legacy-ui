@@ -81,6 +81,14 @@ export default {
           icon: 'format_align_left'
         },
         {
+          name: 'Mapped Runs',
+          target: 'mapped-runs',
+          icon: 'device_hub',
+          badgeColor: 'primary',
+          badgeText: 'New!',
+          hidden: !this.mappedParent && !this.mappedChild
+        },
+        {
           name: 'Artifacts',
           target: 'artifacts',
           icon: 'fas fa-fingerprint',
@@ -90,13 +98,6 @@ export default {
           cardLink:
             'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
           cardLinkText: 'Artifacts API Docs'
-        },
-        {
-          name: 'Mapped Runs',
-          target: 'mapped-runs',
-          icon: 'device_hub',
-          badgeText: 'New!',
-          hidden: !this.mappedParent && !this.mappedChild
         }
       ]
     }
