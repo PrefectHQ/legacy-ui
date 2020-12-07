@@ -20,10 +20,14 @@ export default {
   data() {
     return {
       artifact: null,
-      expanded: []
+      expanded: [],
+      loadingKey: 0
     }
   },
   computed: {
+    loading() {
+      return !this.artifacts && this.loadingKey > 0
+    },
     taskRunIds_() {
       return this.taskRunIds || this.ids
     }
@@ -47,6 +51,7 @@ export default {
       skip() {
         return !this.taskRunIds_
       },
+      loadingKey: 'loadingKey',
       pollInterval: 10000,
       update: data =>
         [...(data.task_run_artifact || [])].sort(
@@ -67,6 +72,7 @@ export default {
       skip() {
         return this.taskRunIds
       },
+      loadingKey: 'loadingKey',
       update: data => data.task_run?.map(t => t.id) || null
     }
   }
@@ -124,6 +130,15 @@ export default {
         >
           <v-icon large>arrow_right</v-icon>
         </v-btn>
+      </div>
+      <div v-else-if="loading" class="position-absolute center-absolute">
+        <v-progress-circular
+          v-if="loading"
+          color="primary"
+          indeterminate
+          size="150"
+          width="10"
+        />
       </div>
       <div
         v-else
