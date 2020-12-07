@@ -13,6 +13,7 @@
 
 - Fix jumping height on subnav = [#476](https://github.com/PrefectHQ/ui/pull/476)
 - Removed tutorial that does not work as previously intended - [#480](https://github.com/PrefectHQ/ui/pull/480)
+- Switch "cancel" to "close" on token dialogs - [#488](https://github.com/PrefectHQ/ui/pull/488)
 
 ## 2020-11-13
 

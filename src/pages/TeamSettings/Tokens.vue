@@ -498,6 +498,7 @@ export default {
       :cancel-props="{ 'data-cy': 'close-api-token-dialog' }"
       title="Your token has been created"
       :confirm-text="apiTokenCopied ? 'Copied' : 'Copy'"
+      cancel-text="Close"
       @cancel="resetNewToken"
       @confirm="copyNewToken"
     >
