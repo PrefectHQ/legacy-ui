@@ -241,7 +241,6 @@ export default {
         </v-toolbar>
         <CalendarDay
           v-if="flowId && !refetching"
-          ref="calendar"
           :project-id="projectId"
           :date="date"
           :type="type"

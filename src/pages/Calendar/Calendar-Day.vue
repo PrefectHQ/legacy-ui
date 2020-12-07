@@ -78,7 +78,7 @@ export default {
     this.flowRunEvents = this.flowRunEventsList()
   },
   mounted() {
-    this.$refs.cal.scrollToTime(this.timeNow)
+    this.$refs.calendar.scrollToTime(this.timeNow)
   },
   methods: {
     flowRunEventsList() {
@@ -91,7 +91,7 @@ export default {
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
           : this.formatCalendarTime(flowRun.start_time)
         if (flowRun.start_time && !flowRun.end_time) {
-          // flowRun.end = this.formatCalendarTime(new Date())
+          flowRun.end = this.formatCalendarTime(new Date())
           flowRun.timed = false
         }
         if (flowRun.end_time) {
@@ -104,6 +104,9 @@ export default {
             flowRun.end = this.formatCalendarTime(flowRun.end_time)
             flowRun.timed = true
           }
+        }
+        if (!flowRun.start_time) {
+          flowRun.timed = true
         }
         flowRun.category = flowRun.flow_id
       })
@@ -203,7 +206,7 @@ export default {
       class="sheet-tweaks"
     >
       <v-calendar
-        ref="cal"
+        ref="calendar"
         :now="date"
         :value="date"
         event-overlap-mode="stack"
