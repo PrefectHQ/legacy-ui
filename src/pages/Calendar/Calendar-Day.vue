@@ -77,7 +77,7 @@ export default {
   created() {
     this.flowRunEvents = this.flowRunEventsList()
   },
-  mounted() {
+  updated() {
     this.$refs.calendar.scrollToTime(this.timeNow)
   },
   methods: {
@@ -275,6 +275,8 @@ export default {
   }
 }
 .calendar-tweaks {
+  overflow: auto;
+
   .theme--light {
     background-color: #f9f9f9 !important;
   }
