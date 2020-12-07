@@ -220,12 +220,4 @@ export default {
 .full-height {
   min-height: 67vh;
 }
-
-.position-relative {
-  position: relative;
-}
-
-.position-absolute {
-  position: absolute;
-}
 </style>

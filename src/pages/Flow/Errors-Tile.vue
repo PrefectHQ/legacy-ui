@@ -298,10 +298,6 @@ export default {
   max-width: 150px;
 }
 
-.position-relative {
-  position: relative;
-}
-
 a {
   text-decoration: none !important;
 }

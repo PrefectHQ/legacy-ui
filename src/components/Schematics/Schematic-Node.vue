@@ -252,10 +252,6 @@ export default {
   height: 100%;
 }
 
-.position-relative {
-  position: relative !important;
-}
-
 .line-chart {
   bottom: 0;
   height: 50px;
