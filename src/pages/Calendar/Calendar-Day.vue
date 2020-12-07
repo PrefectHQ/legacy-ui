@@ -88,11 +88,15 @@ export default {
         this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
       allRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
-          ? this.formatCalendarTime(flowRun.scheduled_start_time)
-          : this.formatCalendarTime(flowRun.start_time)
+          ? this.formatCalendarTime2(flowRun.scheduled_start_time)
+          : this.formatCalendarTime2(flowRun.start_time)
         if (flowRun.start_time && !flowRun.end_time) {
-          flowRun.end = this.formatCalendarTime(new Date())
-          flowRun.timed = false
+          flowRun.end = this.formatCalendarTime2(new Date())
+          if (flowRun.start_time < this.date) {
+            flowRun.timed = false
+          } else {
+            flowRun.timed = true
+          }
         }
         if (flowRun.end_time) {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
@@ -101,7 +105,7 @@ export default {
             flowRun.end = addedTime
             flowRun.timed = true
           } else {
-            flowRun.end = this.formatCalendarTime(flowRun.end_time)
+            flowRun.end = this.formatCalendarTime2(flowRun.end_time)
             flowRun.timed = true
           }
         }
