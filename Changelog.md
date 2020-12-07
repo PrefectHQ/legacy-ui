@@ -4,14 +4,20 @@
 
 ### Features and Improvements
 
-- Changes the design of the Set State modal to match the design of the other forms - [#465](https://github.com/PrefectHQ/ui/pull/465)
+### Bugfixes
 
+## 2020-12-07
+
+### Features and Improvements
+
+- Add new artifacts tab on flow run and task run pages - [#484](https://github.com/PrefectHQ/ui/pull/484)
+- Changes the design of the Set State modal to match the design of the other forms - [#465](https://github.com/PrefectHQ/ui/pull/465)
 - Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
 - Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
 
 ### Bugfixes
 
-- Fix jumping height on subnav = [#476](https://github.com/PrefectHQ/ui/pull/476)
+- Fix jumping height on subnav - [#476](https://github.com/PrefectHQ/ui/pull/476)
 - Removed tutorial that does not work as previously intended - [#480](https://github.com/PrefectHQ/ui/pull/480)
 - Switch "cancel" to "close" on token dialogs - [#488](https://github.com/PrefectHQ/ui/pull/488)
 
