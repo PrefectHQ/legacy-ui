@@ -6,13 +6,11 @@ export default {
     Artifact
   },
   props: {
-    // Get all -1 mi task runs
     flowRunId: {
       type: String,
       required: false,
       default: () => null
     },
-    // Get first 5 mapped task run ids
     taskRunIds: {
       type: Array,
       required: false,
