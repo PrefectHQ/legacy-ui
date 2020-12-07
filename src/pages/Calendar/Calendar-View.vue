@@ -279,7 +279,7 @@ export default {
 }
 
 .expansion {
-  overflow: scroll;
+  overflow: auto;
 
   .theme--light.v-expansion-panels .v-expansion-panel {
     background-color: #f9f9f9 !important;
