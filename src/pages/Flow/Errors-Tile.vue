@@ -218,7 +218,10 @@ export default {
           >
             <v-list-item-content>
               <v-list-item-title>
-                <div class="truncate d-block ma-0 pa-0" style="max-width: 95%;">
+                <div
+                  class="text-truncate d-block ma-0 pa-0"
+                  style="max-width: 95%;"
+                >
                   {{ error.task.name }}
                 </div>
               </v-list-item-title>

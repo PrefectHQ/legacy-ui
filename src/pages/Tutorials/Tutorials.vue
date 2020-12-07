@@ -1,7 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { parser, getRoutes } from '@/utils/markdownParser'
-import '@/styles/atelier-sulphurpool-light.css'
 /* eslint-disable vue/no-v-html */
 
 export default {

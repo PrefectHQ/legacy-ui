@@ -304,7 +304,7 @@ export default {
     <v-text-field
       v-if="!$vuetify.breakpoint.mdAndUp"
       v-model="search"
-      class="rounded-none elevation-1 mb-1"
+      class="rounded-0 elevation-1 mb-1"
       solo
       dense
       hide-details
@@ -319,7 +319,7 @@ export default {
         <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
           <v-text-field
             v-model="search"
-            class="rounded-none elevation-1"
+            class="rounded-0 elevation-1"
             solo
             dense
             hide-details
@@ -336,7 +336,7 @@ export default {
         <v-data-table
           fixed-header
           data-cy="label-table"
-          class="elevation-2 rounded-none truncate-table"
+          class="elevation-2 rounded-0 truncate-table"
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :items="labelsWithUsage"

@@ -119,12 +119,6 @@ body {
   opacity: 0;
 }
 
-.truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 // stylelint-disable
 .vertical-button {
   &.v-btn--tile {
@@ -249,16 +243,8 @@ body {
   overflow-y: hidden !important;
 }
 
-.inline-block {
-  display: inline-block;
-}
-
 .word-break-normal {
   word-break: normal;
-}
-
-.rounded-none {
-  border-radius: 0 !important;
 }
 
 .o-100 {

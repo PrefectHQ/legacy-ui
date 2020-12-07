@@ -187,7 +187,7 @@ export default {
     @mousewheel="wheelEvent"
   >
     <div class="ml-12 node-content" style="width: calc(100% - 6rem);">
-      <div class="title truncate font-weight-bold" :style="titleStyle">
+      <div class="title text-truncate font-weight-bold" :style="titleStyle">
         <v-avatar
           v-if="isResource || isParameter"
           color="accentOrange"

@@ -19,7 +19,7 @@ export default {
   <component :is="$options.components.VTooltip" top>
     <template #activator="{ on }">
       <div
-        class="truncate"
+        class="text-truncate"
         style="
           width: auto;
         "

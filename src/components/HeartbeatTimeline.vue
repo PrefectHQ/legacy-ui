@@ -178,7 +178,7 @@ export default {
                     }}
                   </div>
 
-                  <div class="text-subtitle-1 black--text mt-n1 truncate">
+                  <div class="text-subtitle-1 black--text mt-n1 text-truncate">
                     {{ timelineItemTitle(item) }}
                     <v-icon v-if="item.map_index > -1" x-small class="mx-1"
                       >dynamic_feed</v-icon
@@ -190,11 +190,14 @@ export default {
                     >
                   </div>
 
-                  <div v-if="item.state_message" class="text-caption truncate">
+                  <div
+                    v-if="item.state_message"
+                    class="text-caption text-truncate"
+                  >
                     {{ item.state_message }}
                   </div>
 
-                  <div v-else-if="item.name" class="text-caption truncate">
+                  <div v-else-if="item.name" class="text-caption text-truncate">
                     {{ item.name }}
                   </div>
                 </div>
