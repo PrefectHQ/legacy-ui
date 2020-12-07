@@ -223,8 +223,18 @@ export default {
       >
         <template #event="{event}">
           <div :id="event.name" class="caption pl-2" :class="striped(event)">
-            {{ event.name }} {{ shortTime(event.start_time) }} -
-            {{ shortTime(event.end_time) }}
+            {{ event.name }}
+            {{
+              event.state === 'Running'
+                ? shortTime(event.start_time)
+                : formTime(event.start_time)
+            }}
+            -
+            {{
+              event.state === 'Running'
+                ? shortTime(event.end_time)
+                : formTime(event.end_time)
+            }}
           </div>
         </template>
       </v-calendar>
