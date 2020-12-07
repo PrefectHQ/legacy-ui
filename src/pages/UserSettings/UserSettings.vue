@@ -65,6 +65,14 @@ export default {
             <v-list-item-title>Personal Access Tokens</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item :to="{ name: 'teams' }" ripple exact>
+          <v-list-item-action>
+            <v-icon>people</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Your Teams</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <div
@@ -72,7 +80,6 @@ export default {
         'sm-and-down-left-padding': $vuetify.breakpoint.smAndDown,
         'sm-and-up-left-padding': $vuetify.breakpoint.smAndUp
       }"
-      style="min-height: 100%;"
     >
       <v-fade-transition mode="out-in">
         <router-view></router-view>

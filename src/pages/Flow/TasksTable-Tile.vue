@@ -102,7 +102,7 @@ export default {
       <v-data-table
         v-if="!loading"
         :footer-props="{
-          'items-per-page-options': [5, 15, 25, 50],
+          'items-per-page-options': [10, 15, 25, 50],
           'prev-icon': 'chevron_left',
           'next-icon': 'chevron_right'
         }"
@@ -119,13 +119,15 @@ export default {
         :sort-desc.sync="sortDesc"
       >
         <template #item.name="{ item }">
-          <router-link
-            class="link"
-            :data-cy="'task-link|' + item.name"
-            :to="{ name: 'task', params: { id: item.id } }"
-          >
-            {{ item.name }}
-          </router-link>
+          <truncate :content="item.name">
+            <router-link
+              class="link"
+              :data-cy="'task-link|' + item.name"
+              :to="{ name: 'task', params: { id: item.id } }"
+            >
+              {{ item.name }}
+            </router-link>
+          </truncate>
         </template>
 
         <template #item.mapped="{ item }">

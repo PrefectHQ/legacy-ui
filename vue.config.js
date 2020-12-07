@@ -1,5 +1,15 @@
 module.exports = {
   chainWebpack: config => {
+    config.module
+      .rule('md')
+      .test(/\.md/)
+      .use('html-loader')
+      .loader('html-loader')
+      .tap(options => {
+        return { ...options, minimize: false }
+      })
+      .end()
+
     config.resolve.symlinks(false)
 
     config.output.globalObject('this')
@@ -81,5 +91,10 @@ module.exports = {
     webpackBundleAnalyzer: {
       analyzerMode: 'disabled'
     }
-  }
+  },
+
+  // Adding this package specically because
+  // the source has 2 nullish coalscent references
+  // that babel isn't transpiling correctly otherwise
+  transpileDependencies: ['@d3fc/d3fc-axis']
 }

@@ -338,6 +338,7 @@ export default {
           class="elevation-2 rounded-none truncate-table"
           :footer-props="{
             showFirstLastPage: true,
+            itemsPerPageOptions: [10, 15, 20, -1],
             firstIcon: 'first_page',
             lastIcon: 'last_page',
             prevIcon: 'keyboard_arrow_left',
@@ -497,6 +498,7 @@ export default {
       :cancel-props="{ 'data-cy': 'close-api-token-dialog' }"
       title="Your token has been created"
       :confirm-text="apiTokenCopied ? 'Copied' : 'Copy'"
+      cancel-text="Close"
       @cancel="resetNewToken"
       @confirm="copyNewToken"
     >

@@ -52,7 +52,6 @@ export default {
       feedbackDialog: false,
       items: [],
       loading: false,
-      pendingInvitations: [],
       selectedTenant: null,
       tenantMenuOpen: false,
       tzMenuOpen: false,
@@ -65,7 +64,8 @@ export default {
       'isServer',
       'isCloud',
       'version',
-      'releaseTimestamp'
+      'releaseTimestamp',
+      'coreVersion'
     ]),
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('tenant', ['tenant', 'tenants', 'tenantIsSet']),
@@ -290,23 +290,6 @@ export default {
           email: this.user.email
         }
       },
-      async result({ data, loading }) {
-        if (loading || !data || !data.pendingInvitations) return
-        // We filter this because we don't want to show invitations
-        // to tenants we're already in...
-        // This is due to a bug(feature?) in the back end that allows
-        // users to be invited to tenants they're already part of
-        await this.getUser()
-        this.pendingInvitations =
-          data.pendingInvitations && data.pendingInvitations.length
-            ? data.pendingInvitations.filter(
-                pi =>
-                  !this.memberships
-                    .map(at => at.tenant.id)
-                    .includes(pi.tenant.id)
-              )
-            : []
-      },
       skip() {
         return (
           !this.isCloud ||
@@ -317,7 +300,8 @@ export default {
         )
       },
       fetchPolicy: 'network-only',
-      pollInterval: 60000
+      pollInterval: 60000,
+      update: data => data?.pendingInvitations ?? []
     }
   }
 }
@@ -604,6 +588,15 @@ export default {
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <div v-if="coreVersion && isServer" class="pb-2 overline text-center">
+            <div class="grey--text">
+              Core Version
+            </div>
+            <div class="font-weight-medium" style="line-height: 1;">
+              {{ coreVersion }}
+            </div>
+          </div>
 
           <v-list-item
             v-if="isCloud"

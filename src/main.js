@@ -29,11 +29,7 @@ import { insertedActions, updatedActions } from '@/directives/disable-read-only'
 
 // Functional Components
 import TransitionHeight from '@/components/Functional/Transition-Height'
-
-// Apex charts component
-import VueApexCharts from 'vue-apexcharts'
-Vue.use(VueApexCharts)
-Vue.component('ApexChart', VueApexCharts)
+import TruncatedSpan from '@/components/Functional/TruncatedSpan'
 
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
@@ -163,6 +159,7 @@ Vue.filter('roundHundreds', roundHundreds)
 Vue.filter('roundThousands', roundThousands)
 
 Vue.component('HeightTransition', TransitionHeight)
+Vue.component('Truncate', TruncatedSpan)
 
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
@@ -245,7 +242,7 @@ Vue.mixin({
     // Otherwise we can assume there's some sort of transition
     // on the component and we wait for it to complete
     // Note: this is obviously rough but Observer methods
-    // were performing exceedingly poorly.
+    // were performing poorly.
     setTimeout(prepForGC, 1500)
   }
 })

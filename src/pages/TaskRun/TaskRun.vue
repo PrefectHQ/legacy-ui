@@ -1,9 +1,11 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/TaskRun/Actions'
 import BreadCrumbs from '@/components/BreadCrumbs'
+import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
+import EditableTextField from '@/components/EditableTextField'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import DependenciesTile from '@/pages/TaskRun/Dependencies-Tile'
 import MappedTaskRunsTile from '@/pages/TaskRun/MappedTaskRuns-Tile'
@@ -11,6 +13,7 @@ import SubPageNav from '@/layouts/SubPageNav'
 import TaskRunHeartbeatTile from '@/pages/TaskRun/TaskRunHeartbeat-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
+import { parser } from '@/utils/markdownParser'
 
 export default {
   metaInfo() {
@@ -35,8 +38,10 @@ export default {
     BreadCrumbs,
     DependenciesTile,
     DetailsTile,
+    EditableTextField,
     LogsCard,
     MappedTaskRunsTile,
+    NavTabBar,
     SubPageNav,
     TaskRunHeartbeatTile,
     TileLayout,
@@ -45,14 +50,12 @@ export default {
   data() {
     return {
       loading: 0,
-      tab: this.getTab()
+      tab: this.getTab(),
+      taskRunNameLoading: false
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
-    },
     taskRunId() {
       return this.$route.params.id
     },
@@ -62,6 +65,39 @@ export default {
     },
     mappedChild() {
       return this.taskRun?.task.mapped && this.taskRun?.map_index > -1
+    },
+    tabs() {
+      return [
+        {
+          name: 'Overview',
+          target: 'overview',
+          icon: 'view_module'
+        },
+        {
+          name: 'Logs',
+          target: 'logs',
+          icon: 'format_align_left'
+        },
+        {
+          name: 'Artifacts',
+          target: 'artifacts',
+          icon: 'fas fa-fingerprint',
+          badgeText: 'Coming Soon!',
+          disabled: true,
+          cardText:
+            'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the',
+          cardLink:
+            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLinkText: 'Artifacts API Docs'
+        },
+        {
+          name: 'Mapped Runs',
+          target: 'mapped-runs',
+          icon: 'device_hub',
+          badgeText: 'New!',
+          hidden: !this.mappedParent && !this.mappedChild
+        }
+      ]
     }
   },
   watch: {
@@ -69,22 +105,21 @@ export default {
       this.tab = this.getTab()
     },
     tab(val) {
-      let query = {}
+      let query = { ...this.$route.query }
       switch (val) {
         case 'logs':
-          query = { logId: '' }
+          query = 'logId'
           break
         case 'mapped-runs':
-          query = { 'mapped-runs': '' }
+          query = 'mapped-runs'
+          break
+        case 'artifacts':
+          /* eslint-disable-next-line */
+          query = 'artifacts'
           break
         default:
           break
       }
-      this.$router
-        .replace({
-          query: query
-        })
-        .catch(e => e)
     },
     taskRun(val, prevVal) {
       if (!val || val?.id == prevVal?.id) return
@@ -101,10 +136,56 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     getTab() {
-      if ('logId' in this.$route.query) return 'logs'
-      if ('mapped-runs' in this.$route.query) return 'mapped-runs'
+      if (Object.keys(this.$route.query).length != 0) {
+        let target = Object.keys(this.$route.query)[0]
+        if (this.tabs?.find(tab => tab.target == target)) return target
+      }
       return 'overview'
+    },
+    parseMarkdown(md) {
+      return parser(md)
+    },
+    async saveTaskRunName(e) {
+      const previousName = this.taskRun.name
+      if (previousName === e) return
+
+      try {
+        this.taskRunNameLoading = true
+
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/set-task-run-name.gql'),
+          variables: {
+            input: {
+              task_run_id: this.taskRunId,
+              name: e
+            }
+          }
+        })
+
+        await this.$apollo.queries.taskRun.refetch()
+
+        if (!data.set_task_run_name.success) {
+          throw new Error(data.set_task_run_name.error)
+        }
+
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `<span class="font-weight-medium">${previousName ||
+            'Your task run'}</span> has been renamed to <span class="font-weight-medium">${e}</span>`,
+          alertType: 'success'
+        })
+      } catch {
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'Oops! Something went wrong while trying to update your task run name, please try again.',
+          alertType: 'error'
+        })
+      } finally {
+        this.taskRunNameLoading = false
+      }
     }
   },
   apollo: {
@@ -137,18 +218,32 @@ export default {
 
 <template>
   <v-sheet v-if="taskRun" color="appBackground">
-    <SubPageNav>
-      <span slot="page-type">Task Run</span>
-      <span slot="page-title">
-        {{ taskRun.flow_run.name }} -
-        <span v-if="taskRun.name">{{ taskRun.name }}</span>
-        <span v-else>
-          {{ taskRun.task.name }}
-          <span v-if="taskRun.map_index > -1">
-            (Mapped Child {{ taskRun.map_index }})
-          </span>
-          <span v-else-if="parent > 1"> (Parent) </span>
-        </span>
+    <SubPageNav icon="pi-task-run" page-type="Task Run">
+      <span
+        slot="page-title"
+        style="
+          max-width: 100%;
+          min-width: 300px;
+          width: auto;
+          "
+        :style="[
+          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' }
+        ]"
+      >
+        <EditableTextField
+          :content="
+            taskRun.name ||
+              `${taskRun.task.name} ${
+                taskRun.map_index > -1
+                  ? `(Mapped Child ${taskRun.map_index})`
+                  : ''
+              }`
+          "
+          label="Task run name"
+          :loading="taskRunNameLoading"
+          required
+          @change="saveTaskRunName"
+        />
       </span>
       <BreadCrumbs
         slot="breadcrumbs"
@@ -175,52 +270,33 @@ export default {
             text: taskRun.flow_run.name
           }
         ]"
+        :style="
+          $vuetify.breakpoint.smAndDown && {
+            display: 'inline',
+            'font-size': '0.875rem'
+          }
+        "
       ></BreadCrumbs>
 
-      <Actions slot="page-actions" :task-run="taskRun" />
+      <Actions slot="page-actions" style="height: 55px;" :task-run="taskRun" />
+      <span slot="tabs" style="width: 100%;"
+        ><NavTabBar :tabs="tabs" page="task-run"
+      /></span>
     </SubPageNav>
-
-    <v-tabs
-      v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
-      style="max-width: 1440px;"
-      light
-    >
-      <v-tabs-slider color="blue"></v-tabs-slider>
-
-      <v-tab href="#overview" :style="hideOnMobile">
-        <v-icon left>view_module</v-icon>
-        Overview
-      </v-tab>
-
-      <v-tab href="#logs" :style="hideOnMobile">
-        <v-icon left>format_align_left</v-icon>
-        Logs
-      </v-tab>
-
-      <v-tab
-        v-if="mappedParent || mappedChild"
-        href="#mapped-runs"
-        :style="hideOnMobile"
-      >
-        <v-badge color="codePink" content="New!" bottom bordered inline>
-          <v-icon left>device_hub</v-icon>
-          Mapped Runs
-        </v-badge>
-      </v-tab>
-    </v-tabs>
 
     <v-tabs-items
       v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
       style="max-width: 1440px;"
+      :style="{
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
     >
       <v-tab-item
-        class="tab-full-height pa-0"
+        class="pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :task-run="taskRun" />
@@ -241,8 +317,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="logs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <LogsCard
@@ -260,10 +336,17 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
+        value="artifacts"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
+      >
+        <!-- <div v-html="parseMarkdown('# hello')"></div> -->
+      </v-tab-item>
+
+      <v-tab-item
         value="mapped-runs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <v-skeleton-loader
@@ -281,7 +364,7 @@ export default {
       </v-tab-item>
     </v-tabs-items>
 
-    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
+    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" app fixed>
       <v-btn @click="tab = 'overview'">
         Overview
         <v-icon>view_module</v-icon>
@@ -290,6 +373,11 @@ export default {
       <v-btn @click="tab = 'logs'">
         Logs
         <v-icon>format_align_left</v-icon>
+      </v-btn>
+
+      <v-btn disabled @click="tab = 'artifacts'">
+        Artifacts
+        <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>
 
       <v-btn @click="tab = 'mapped-runs'">
@@ -305,7 +393,13 @@ export default {
   background-color: #c8e1ff !important;
 }
 
-.tab-full-height {
-  min-height: 80vh;
+/* stylelint-disable */
+.v-tab--disabled .v-badge__badge {
+  pointer-events: none;
+}
+
+.v-badge--inline .v-badge__badge,
+.v-badge--inline .v-badge__wrapper {
+  margin: 5px;
 }
 </style>

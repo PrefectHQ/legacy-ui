@@ -1,5 +1,4 @@
 import Router from 'vue-router'
-// import { defaultApolloClient } from '@/vue-apollo'
 
 //  Nav guards
 import authNavGuard from '@/middleware/authNavGuard'
@@ -187,6 +186,14 @@ export const routes = [
           import(
             /* webpackChunkName: "user-settings--tokens" */ '@/pages/UserSettings/Tokens.vue'
           )
+      },
+      {
+        name: 'teams',
+        path: 'teams',
+        component: () =>
+          import(
+            /* webpackChunkName: "user-settings--teams" */ '@/pages/UserSettings/Teams.vue'
+          )
       }
     ]
   },
@@ -249,33 +256,12 @@ export const routes = [
   // --------------------------- //
   {
     name: 'tutorial',
-    path: '/:tenant?/tutorial',
+    path: '/:tenant?/tutorial/:id?',
     component: () =>
       import(
         /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
       ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard]),
-    redirect: { name: 'flow-run-tutorial' },
-    children: [
-      {
-        name: 'flow-run-tutorial',
-        path: 'flow-run-tutorial',
-        component: () =>
-          import(
-            /* webpackChunkName: "tutorials--flow-run" */ '@/pages/Tutorials/FlowRun/FlowRunTutorial.vue'
-          ),
-        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-      },
-      {
-        name: 'universal-deploy-tutorial',
-        path: 'universal-deploy-tutorial',
-        component: () =>
-          import(
-            /* webpackChunkName: "tutorials--universal-deploy" */ '@/pages/Tutorials/UniversalDeploy/UniversalDeployTutorial.vue'
-          ),
-        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-      }
-    ]
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
     name: 'notifications',
@@ -309,9 +295,43 @@ export const routes = [
   }
 ]
 
+function getElementPosition(el) {
+  const docEl = document.documentElement
+  const docRect = docEl.getBoundingClientRect()
+  const elRect = el.getBoundingClientRect()
+  return {
+    x: elRect.left - docRect.left,
+    y: elRect.top - docRect.top
+  }
+}
+
+function scrollToHash(to) {
+  const targetElement = document.querySelector(to.hash)
+
+  if (targetElement) {
+    let elPos = getElementPosition(targetElement),
+      elRect = targetElement.getBoundingClientRect()
+
+    let position =
+      elRect.height > window.innerHeight
+        ? elPos.y
+        : elPos.y - (window.innerHeight - elRect.height) / 2
+
+    return window.scrollTo({
+      top: position,
+      behavior: 'smooth'
+    })
+  }
+}
+
 const router = new Router({
   mode: 'history',
-  routes
+  routes,
+  scrollBehavior(to) {
+    if (to.hash) {
+      scrollToHash(to)
+    }
+  }
 })
 
 export default router

@@ -4,6 +4,64 @@
 
 ### Features and Improvements
 
+- Changes the design of the Set State modal to match the design of the other forms - [#465](https://github.com/PrefectHQ/ui/pull/465)
+
+- Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
+- Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
+
+### Bugfixes
+
+- Fix jumping height on subnav = [#476](https://github.com/PrefectHQ/ui/pull/476)
+- Removed tutorial that does not work as previously intended - [#480](https://github.com/PrefectHQ/ui/pull/480)
+- Switch "cancel" to "close" on token dialogs - [#488](https://github.com/PrefectHQ/ui/pull/488)
+
+## 2020-11-13
+
+### Features and Improvements
+
+- Aims to improve and convert the current tutorials into md - [#434](https://github.com/PrefectHQ/ui/pull/434)
+- Add the Prefect Core version to the side navigation bar for Server users - [#431](https://github.com/PrefectHQ/ui/pull/431)
+- Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
+- Allow editing task run names from the task run page - [#449](https://github.com/PrefectHQ/ui/pull/449)
+- Fixes subpage nav to top of page when scrolling - [#407](https://github.com/PrefectHQ/ui/issues/407)
+- Update wording on the team onboarding page - [#471](https://github.com/PrefectHQ/ui/pull/471)
+
+### Bugfixes
+
+- Fix an issue where restarting a task run would fail to correctly set downstream task run states - [#452](https://github.com/PrefectHQ/ui/pull/452)
+- Fix schematic node finished task run durations - [#468](https://github.com/PrefectHQ/ui/pull/468)
+
+## 2020-11-13
+
+### Features and Improvements
+
+- Add feature teaser to the Artifacts tabs on the task run and flow run pages - [#435](https://github.com/PrefectHQ/ui/pull/435)
+
+## 2020-11-12
+
+### Features and Improvements
+
+- Remove the Gantt Chart (replaced by the Timeline) and `vue-apexcharts` - [#278](https://github.com/PrefectHQ/ui/pull/278)
+- Add the Flow Run timeline to the Flow Run Overview Page - [#278](https://github.com/PrefectHQ/ui/pull/278)
+
+## 2020-11-11
+
+### Features and Improvements
+
+- Add a "Your Teams" page to the User menu, allowing you to see and change memberships - [#194](https://github.com/PrefectHQ/ui/issues/194)
+- Allow querying for agents from the IAPI - [#425](https://github.com/PrefectHQ/ui/pull/425)
+- Add a "Clean Up" button to allow bulk removal of unhealthy agents - [#425](https://github.com/PrefectHQ/ui/pull/425)
+- Remove obsolete invitation sort code in for pending invitation queries - [#417](https://github.com/PrefectHQ/ui/pull/417)
+
+### Bugfixes
+
+- Fix an issue where agent labels were overflowing their bounding box - [#425](https://github.com/PrefectHQ/ui/pull/425)
+- Make sure task runs are fetched for the set state button - [#411](https://github.com/PrefectHQ/ui/pull/411)
+
+## 2020-11-10
+
+### Features and Improvements
+
 - Update the Cloud Hooks email input rules to allow multiple comma-separated emails - [#372](https://github.com/PrefectHQ/ui/pull/372)
 - Add indicator for resource manager tasks - [#396](https://github.com/PrefectHQ/ui/pull/396)
 - Add more info to a flow's "Run Config" details section - [#400](https://github.com/PrefectHQ/ui/pull/400)
@@ -16,6 +74,7 @@
 - Fix a bug on restart from failed which was missing failed task runs [#398](https://github.com/PrefectHQ/ui/pull/398)
 - Fix issue where scrollbars show on all tiles even when not needed - [#366](https://github.com/PrefectHQ/ui/issues/366)
 - Include flow parameters in parameters shown in the flow run parameters tab - [#401](https://github.com/PrefectHQ/ui/pull/401)
+- Fix issue with notifications tile actions not being aligned to bottom - [#410](https://github.com/PrefectHQ/ui/pull/410)
 
 ## 2020-10-29a
 

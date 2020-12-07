@@ -237,6 +237,7 @@ export default {
       class="elevation-2 rounded-none truncate-table"
       :footer-props="{
         showFirstLastPage: true,
+        itemsPerPageOptions: [10, 15, 20, -1],
         firstIcon: 'first_page',
         lastIcon: 'last_page',
         prevIcon: 'keyboard_arrow_left',
@@ -361,7 +362,7 @@ export default {
     >
       <div v-if="deleteSelfWarning" class="red--text"
         >Are you sure you want to remove yourself from {{ tenant.name }}? You'll
-        no longer be able to access your Projects or Flows associated with
+        no longer be able to access your run data associated with
         {{ tenant.name }}.
       </div>
       <div v-else>

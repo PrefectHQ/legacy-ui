@@ -11,7 +11,6 @@ export default {
     return {
       // Form's computed height
       height: '0px',
-
       loading: 0,
       accepting: false,
       activeInvite: null,
@@ -211,28 +210,8 @@ export default {
           email: this.user.email
         }
       },
-      async result({ data, loading }) {
-        if (loading || !data || !data.pendingInvitations) return
-        // We filter this because we don't want to show invitations
-        // to tenants we're already in...
-        // This is due to a bug(feature?) in the back end that allows
-        // users to be invited to tenants they're already part of
-        await this.getUser()
-        this.pendingInvitations =
-          data.pendingInvitations && data.pendingInvitations.length
-            ? data.pendingInvitations.filter(
-                pi =>
-                  !this.memberships
-                    .map(at => at.tenant.id)
-                    .includes(pi.tenant.id)
-              )
-            : []
-      },
-      skip() {
-        return !this.isCloud || !this.user || !this.user.email
-      },
-      fetchPolicy: 'network-only',
-      pollInterval: 60000
+      pollInterval: 60000,
+      update: data => data?.pendingInvitations ?? []
     }
   }
 }
@@ -349,8 +328,15 @@ export default {
             cols="12"
             class="my-2 mb-12 name-team-input mx-auto"
           >
-            <div class="overline">
-              Team URL
+            <div class="overline d-flex justify-center align-center">
+              <span class="mr-1">Team Slug</span>
+              <Truncate
+                content="This slug is used to create shareable links for your flows and runs unique to your team."
+              >
+                <v-icon x-small dark>
+                  info
+                </v-icon>
+              </Truncate>
             </div>
             <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
               {{ tenant.slug }}

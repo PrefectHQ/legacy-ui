@@ -3,6 +3,7 @@ query Api {
     backend
     mode
     version
+    core_version
     release_timestamp
   }
 }
