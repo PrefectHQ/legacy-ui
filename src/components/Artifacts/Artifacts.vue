@@ -143,6 +143,7 @@ export default {
       <div
         v-else
         class="text-center position-absolute center-absolute text-h5 grey--text text--darken-2"
+        style="z-index: 1;"
       >
         This run has no
         <span class="font-weight-medium">
