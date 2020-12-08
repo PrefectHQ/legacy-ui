@@ -4,8 +4,17 @@
 
 ### Features and Improvements
 
-- Changes the design of the Set State modal to match the design of the other forms - [#465](https://github.com/PrefectHQ/ui/pull/465)
+- Add task run names to global search - [#485](https://github.com/PrefectHQ/ui/pull/485)
 
+### Bugfixes
+
+- None
+
+## 2020-12-07
+
+### Features and Improvements
+
+- Changes the design of the Set State modal to match the design of the other forms - [#465](https://github.com/PrefectHQ/ui/pull/465)
 - Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
 - Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
 
