@@ -75,7 +75,7 @@ export default {
     this.flowRunEvents = this.flowRunEventsList()
   },
   updated() {
-    this.$refs?.calendar?.scrollToTime(new Date().toTimeString())
+    this.$refs?.calendar?.scrollToTime(this.formTime(new Date()))
   },
   methods: {
     flowRunEventsList() {
