@@ -123,6 +123,22 @@ export const formatTime = {
         timeObj ? timeObj.format('hh:mma') : moment(timestamp).format('hh:mma')
       }`
     },
+    calEventTime(timestamp, date) {
+      if (!timestamp) return
+      let t = moment(timestamp).tz(this.timezone)
+
+      let timeObj = t ? t : moment(timestamp)
+
+      let formatted = timeObj.calendar(date, {
+        sameDay: 'h:mma',
+        nextDay: 'D MMM ',
+        nextWeek: 'D MMM ',
+        lastDay: 'D MMM ',
+        lastWeek: 'D MMM ',
+        sameElse: 'D MMM '
+      })
+      return `${formatted}`
+    },
     logTime(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone)
