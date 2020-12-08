@@ -61,9 +61,8 @@ export default {
       return flowIds ? [...new Set(flowIds)] : []
     },
     start() {
-      // let days = 1
-      // return this.subtractDay(this.date, days)
-      return this.date
+      let days = 1
+      return this.subtractDay(this.date, days)
     },
     end() {
       let days = 1
