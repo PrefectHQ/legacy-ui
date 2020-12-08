@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add a flow run calendar view page - [#433](https://github.com/PrefectHQ/ui/pull/433)
+- Add task run names to global search - [#485](https://github.com/PrefectHQ/ui/pull/485)
 
 ### Bugfixes
 

@@ -44,4 +44,12 @@ query GlobalSearchByName($name: String) {
     }
     __typename
   }
+  task_run(
+    where: { name: { _ilike: $name } }
+    limit: 5
+  ) {
+    id
+    name
+    __typename
+  }
 }
