@@ -62,16 +62,22 @@ export default {
     },
     start() {
       let days = 1
-      return this.subtractDay(this.date, days)
+      console.log(this.tzOffset(this.date))
+      const start =
+        this.tzOffset(this.date) < 0
+          ? this.subtractDay(this.date, days)
+          : this.date
+      console.log(start)
+      return start
     },
     end() {
       let days = 1
       switch (this.type) {
         case '4day':
-          days = 4
+          days = this.tzOffset(this.date) > 0 ? 5 : 4
           break
         case 'day':
-          days = 2
+          days = this.tzOffset(this.date) > 0 ? 2 : 1
           break
       }
       return this.addDay(this.date, days)

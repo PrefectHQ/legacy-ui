@@ -82,10 +82,12 @@ export const formatTime = {
     subtractDay(timestamp, amount) {
       if (!timestamp) return
       const timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
-      return timeObj
+      const day = timeObj
         .subtract(amount, 'days')
         .startOf('day')
         .toISOString()
+      console.log('day', day)
+      return day
     },
     shortTime(timestamp) {
       if (!timestamp) return
@@ -122,6 +124,12 @@ export const formatTime = {
       return `${
         timeObj ? timeObj.format('hh:mma') : moment(timestamp).format('hh:mma')
       }`
+    },
+    tzOffset(date) {
+      const zone = moment.tz.zone(this.timezone)
+      const offset =
+        zone?.parse(Date.UTC(date)) || new Date().getTimezoneOffset()
+      return offset
     },
     calEventTime(timestamp, date) {
       if (!timestamp) return
