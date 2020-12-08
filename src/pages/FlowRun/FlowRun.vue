@@ -2,6 +2,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
+import Artifacts from '@/components/Artifacts/Artifacts'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
@@ -36,6 +37,7 @@ export default {
   },
   components: {
     Actions,
+    Artifacts,
     BreadCrumbs,
     DetailsTile,
     EditableTextField,
@@ -73,10 +75,9 @@ export default {
           name: 'Artifacts',
           target: 'artifacts',
           icon: 'fas fa-fingerprint',
-          disabled: true,
-          badgeText: 'Coming Soon!',
+          badgeText: 'Beta',
           cardText:
-            'The Artifacts API is an experimental feature set currently under development. For a sneak preview, check out the',
+            'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
           cardLink:
             'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
           cardLinkText: 'Artifacts API Docs'
@@ -315,8 +316,13 @@ export default {
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="artifacts">
-        <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
+      <v-tab-item
+        class="tab-full-height"
+        value="artifacts"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
+      >
+        <Artifacts :flow-run-id="flowRunId" />
       </v-tab-item>
     </v-tabs-items>
 

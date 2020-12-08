@@ -635,6 +635,7 @@ body {
     font-weight: 500;
     text-decoration: none;
   }
+
   pre > code {
     background-color: #f9f9f9;
     border: 1px solid #f9f9f9;
@@ -643,6 +644,7 @@ body {
     page-break-inside: avoid;
     font-family: 'Source Code Pro', monospace;
     font-size: 1em;
+    font-weight: 400;
     line-height: 1.5;
     margin-bottom: 1.6em;
     max-width: 100%;
@@ -652,6 +654,7 @@ body {
     word-wrap: break-word;
     margin-top: 16px;
   }
+
   p > code {
     color: #3b8dff;
     padding: 0.25rem 0.5rem;

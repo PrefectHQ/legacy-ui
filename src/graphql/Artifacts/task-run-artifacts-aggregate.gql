@@ -1,0 +1,7 @@
+query TaskRunArtifacts($taskRunIds: [uuid!]) {
+  task_run_artifact_aggregate(where: { task_run_id: { _in: $taskRunIds } }) {
+    aggregate {
+      count
+    }
+  }
+}
