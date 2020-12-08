@@ -1,4 +1,6 @@
 <script>
+import '@/styles/slash.scss'
+
 export default {
   data() {
     return {
