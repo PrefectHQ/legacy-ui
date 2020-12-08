@@ -86,7 +86,6 @@ export const formatTime = {
         .subtract(amount, 'days')
         .startOf('day')
         .toISOString()
-      console.log('day', day)
       return day
     },
     shortTime(timestamp) {

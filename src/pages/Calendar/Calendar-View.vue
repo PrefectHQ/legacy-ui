@@ -62,12 +62,10 @@ export default {
     },
     start() {
       let days = 1
-      console.log(this.tzOffset(this.date))
       const start =
         this.tzOffset(this.date) < 0
           ? this.subtractDay(this.date, days)
           : this.date
-      console.log(start)
       return start
     },
     end() {
