@@ -1,0 +1,188 @@
+.md {
+  margin-left: 2.25rem;
+  margin-top: 3.25rem;
+  // stylelint-disable
+  a[aria-hidden='true'] {
+    float: left;
+    font-size: 0.85em;
+    margin-left: -0.87em;
+    margin-top: 0.125em;
+    opacity: 0;
+    padding-right: 0.23em;
+  }
+
+  a[aria-hidden='true']:hover {
+    opacity: 1;
+  }
+  // stylelint-enable
+  h1 {
+    font-size: 2.5em;
+  }
+
+  h2 {
+    font-size: 2em;
+  }
+
+  h3 {
+    font-size: 1.75em;
+  }
+
+  h4 {
+    font-size: 1.5em;
+  }
+
+  h5 {
+    font-size: 1.25em;
+  }
+
+  h6 {
+    font-size: 1em;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    border-bottom: 1px solid #d2dadf;
+    color: #4d606e;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-top: 1em;
+    padding-bottom: 0.7rem;
+    text-rendering: optimizeLegibility;
+  }
+
+  ol,
+  p,
+  ul {
+    color: #4d606e;
+    font-size: 1em;
+    line-height: 1.75;
+  }
+
+  p {
+    color: #4d606e;
+    display: block;
+    margin-block-end: 1em;
+    margin-block-start: 1em;
+    margin-inline-end: 0;
+    margin-inline-start: 0;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  a {
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  pre > code {
+    background-color: #f9f9f9;
+    border: 1px solid #f9f9f9;
+    border-radius: 2px;
+    color: #5e6687;
+    display: block;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1em;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 1.6em;
+    margin-top: 16px;
+    max-width: 100%;
+    overflow: auto;
+    padding: 12px;
+    page-break-inside: avoid;
+    word-wrap: break-word;
+  }
+
+  p > code {
+    background-color: rgba(27, 31, 35, 0.05);
+    border-radius: 3px;
+    color: #3b8dff;
+    font-size: 0.85em;
+    margin: 0;
+    padding: 0.25rem 0.5rem;
+  }
+
+  blockquote {
+    background-color: #fffaf1;
+    border-color: #e90;
+    border-left-style: solid;
+    border-left-width: 0.5rem;
+    font-size: 13px;
+    margin: 1rem 0;
+    padding: 0.1rem 1.5rem;
+  }
+}
+
+/* Base16 Atelier Sulphurpool Light - Theme */
+/* by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/sulphurpool) */
+/* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
+
+/* Atelier-Sulphurpool Comment */
+.hljs-comment,
+.hljs-quote {
+  color: #6b7394;
+}
+
+/* Atelier-Sulphurpool Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #c94922;
+}
+
+/* Atelier-Sulphurpool Orange */
+.hljs-number,
+.hljs-meta,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+  color: #c76b29;
+}
+
+/* Atelier-Sulphurpool Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+  color: #ac9739;
+}
+
+/* Atelier-Sulphurpool Blue */
+.hljs-title,
+.hljs-section {
+  color: #3d8fd1;
+}
+
+/* Atelier-Sulphurpool Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #6679cc;
+}
+
+.hljs {
+  background: #f5f7ff;
+  color: #5e6687;
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
