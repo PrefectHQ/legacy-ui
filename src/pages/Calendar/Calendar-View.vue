@@ -60,6 +60,11 @@ export default {
       const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
       return flowIds ? [...new Set(flowIds)] : []
     },
+    start() {
+      // let days = 1
+      // return this.subtractDay(this.date, days)
+      return this.date
+    },
     end() {
       let days = 1
       switch (this.type) {
@@ -67,7 +72,7 @@ export default {
           days = 4
           break
         case 'day':
-          days = 1
+          days = 2
           break
       }
       return this.addDay(this.date, days)
@@ -86,9 +91,9 @@ export default {
     async backend() {
       this.refetching = true
       this.selectedFlow = null
-      const runs = await this.$apollo.queries.flowRuns.refetch()
-      const upcoming = await this.$apollo.queries.scheduledFlowRuns.refetch()
-      if (runs.length || upcoming.length) this.refetching = false
+      await this.$apollo.queries.flowRuns.refetch()
+      await this.$apollo.queries.scheduledFlowRuns.refetch()
+      this.refetching = false
     }
   },
   methods: {
@@ -102,14 +107,13 @@ export default {
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
+          startTime: this.start,
           endTime: this.end
         }
       },
       skip() {
         return this.skip
       },
-      fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
       update: data => data.flow_run
     },
@@ -118,14 +122,13 @@ export default {
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
+          startTime: this.start,
           endTime: this.end
         }
       },
       skip() {
         return this.skip
       },
-      fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
       update: data => data.flow_run || []
     },
@@ -134,14 +137,13 @@ export default {
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.convertCalendarStartTime(this.date),
+          startTime: this.start,
           endTime: this.end
         }
       },
       skip() {
         return this.skip
       },
-      fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
       update: data => data.flow_run || []
     }
@@ -237,15 +239,24 @@ export default {
             </v-list>
           </v-menu>
         </v-toolbar>
-        <CalendarDay
-          v-if="flowId && !refetching"
-          :project-id="projectId"
-          :date="date"
-          :type="type"
-          :flow-id="flowId"
-          :runs="allRuns"
-          :calendar-interval="calendarInterval"
-        />
+        <v-skeleton-loader
+          type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
+          :loading="loadingKey > 0"
+          transition-group="quick-fade"
+          tile
+          class="skeleton-tweak"
+        >
+          <CalendarDay
+            v-if="flowId && !refetching && allRuns"
+            :project-id="projectId"
+            :date="date"
+            :loading="loadingKey > 0"
+            :type="type"
+            :flow-id="flowId"
+            :runs="allRuns"
+            :calendar-interval="calendarInterval"
+          />
+        </v-skeleton-loader>
       </v-col>
     </v-row>
   </v-container>

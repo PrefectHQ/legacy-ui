@@ -36,6 +36,10 @@ export default {
     runs: {
       type: Array,
       required: true
+    },
+    loading: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
@@ -69,10 +73,6 @@ export default {
     flowId() {
       this.selectedEvent = null
       this.flowRunEvents = this.flowRunEventsList()
-    },
-    type() {
-      this.selectedEvent = null
-      this.flowRunEvents = this.flowRunEventsList()
     }
   },
   created() {
@@ -102,7 +102,7 @@ export default {
         if (flowRun.end_time) {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
           if (diff < 60000) {
-            const addedTime = this.addTimeNoTz(flowRun.start_time, 3, 'm')
+            const addedTime = this.addTime(flowRun.start_time, 3, 'm')
             flowRun.end = addedTime
             flowRun.timed = true
           } else {
@@ -175,7 +175,7 @@ export default {
 <template>
   <v-skeleton-loader
     type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
-    :loading="loadingKey > 0 || gettingRuns"
+    :loading="loadingKey > 0 || gettingRuns || loading"
     transition-group="quick-fade"
     tile
     class="skeleton-tweak"

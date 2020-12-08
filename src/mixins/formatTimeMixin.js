@@ -79,6 +79,14 @@ export const formatTime = {
         .startOf('day')
         .toISOString()
     },
+    subtractDay(timestamp, amount) {
+      if (!timestamp) return
+      const timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
+      return timeObj
+        .subtract(amount, 'days')
+        .startOf('day')
+        .toISOString()
+    },
     shortTime(timestamp) {
       if (!timestamp) return
       let t = moment(timestamp).tz(this.timezone)
