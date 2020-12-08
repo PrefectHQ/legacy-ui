@@ -88,6 +88,9 @@ export default {
   watch: {
     async tenant() {
       this.refetching = true
+      this.allIds = null
+      this.allRuns = null
+      this.selectedFlow = null
       await this.$apollo.queries.flowRuns.refetch()
       await this.$apollo.queries.scheduledFlowRuns.refetch()
       this.refetching = false
@@ -95,6 +98,8 @@ export default {
     async backend() {
       this.refetching = true
       this.selectedFlow = null
+      this.allIds = null
+      this.allRuns = null
       await this.$apollo.queries.flowRuns.refetch()
       await this.$apollo.queries.scheduledFlowRuns.refetch()
       this.refetching = false
@@ -157,7 +162,7 @@ export default {
         return {
           project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.start,
-          endTime: this.end
+          endTime: this.date
         }
       },
       skip() {
@@ -192,7 +197,12 @@ export default {
           class="my-2 expansion"
           tile
         >
-          <v-expansion-panels class="expansion" flat :value="0">
+          <v-expansion-panels
+            v-if="allIds && allIds.length"
+            class="expansion"
+            flat
+            :value="0"
+          >
             <v-expansion-panel v-for="(filter, index) in filters" :key="index">
               <v-expansion-panel-header class=" py-0">
                 {{ filter.name }}
@@ -221,6 +231,10 @@ export default {
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
+          <div v-else class="pa-4 subtitle-1">
+            <v-icon color="grey" class="pr-2">warning</v-icon> No flow run
+            activity on this date!
+          </div>
         </v-skeleton-loader>
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">

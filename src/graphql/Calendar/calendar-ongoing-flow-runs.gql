@@ -3,7 +3,7 @@ query CalendarOngoingFlowRuns($startTime:timestamptz, $endTime: timestamptz) {
     where: { 
       _and: [
     {start_time: {_lt: $startTime}}
-    {end_time: {_gt: $endTime}}
+    {end_time: {_gte: $endTime}}
       ]
     }
   ) 
