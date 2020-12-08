@@ -1,7 +1,7 @@
 .md {
   margin-left: 2.25rem;
   margin-top: 3.25rem;
-  // stylelint-disable
+
   a[aria-hidden='true'] {
     float: left;
     font-size: 0.85em;
@@ -14,7 +14,7 @@
   a[aria-hidden='true']:hover {
     opacity: 1;
   }
-  // stylelint-enable
+
   h1 {
     font-size: 2.5em;
   }
