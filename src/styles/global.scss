@@ -130,6 +130,7 @@ body {
   }
 }
 
+// toggle button with label above
 .v-input--vertical .v-input__slot {
   flex-direction: column-reverse !important;
 
@@ -143,6 +144,7 @@ body {
   }
 }
 
+// overflow menu with checkboxes
 .v-input--reverse .v-input__slot {
   flex-direction: row-reverse;
   justify-content: flex-end;
@@ -165,10 +167,9 @@ body {
 .theme--light.v-tabs-items {
   background-color: var(--v-appBackground-base) !important;
 }
-// stylelint-enable
 
+// hides subnav on small screens
 .tabs-hidden {
-  // stylelint-disable
   .v-tabs-bar {
     display: none;
   }
@@ -239,10 +240,6 @@ body {
   position: relative !important;
 }
 
-.overflow-y-hidden {
-  overflow-y: hidden !important;
-}
-
 .word-break-normal {
   word-break: normal;
 }
@@ -264,10 +261,6 @@ body {
 
 .user-select-none {
   user-select: none;
-}
-
-.z-1 {
-  z-index: 1 !important;
 }
 
 // Horizontal and diagonal slash styling

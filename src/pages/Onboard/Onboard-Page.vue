@@ -183,6 +183,10 @@ export default {
   min-height: 100vh !important;
 }
 
+.overflow-y-hidden {
+  overflow-y: hidden !important;
+}
+
 .bg-blue {
   background-image: linear-gradient(105deg, #0e50f5, #2edaff) !important;
 }

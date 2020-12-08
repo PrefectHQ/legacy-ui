@@ -256,6 +256,10 @@ export default {
   z-index: 2;
 }
 
+.z-1 {
+  z-index: 1 !important;
+}
+
 .gradient-background {
   position: relative;
 
