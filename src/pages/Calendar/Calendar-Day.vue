@@ -109,6 +109,10 @@ export default {
         if (!flowRun.start_time) {
           flowRun.timed = true
         }
+        if (flowRun.start_time < this.date && flowRun.end_time > this.date) {
+          flowRun.end = this.formatCalendarTime(new Date())
+          this.flowRun.timed = false
+        }
         flowRun.category = flowRun.flow_id
       })
       this.gettingRuns = false

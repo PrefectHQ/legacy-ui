@@ -50,7 +50,8 @@ export default {
           ? [
               ...this.flowRuns,
               ...this.scheduledFlowRuns,
-              ...this.runningFlowRuns
+              ...this.runningFlowRuns,
+              ...this.ongoingFlowRuns
             ]
           : [...this.flowRuns, ...this.scheduledFlowRuns]
       }
@@ -137,6 +138,21 @@ export default {
     },
     runningFlowRuns: {
       query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
+      variables() {
+        return {
+          project_id: this.projectId == '' ? null : this.projectId,
+          startTime: this.start,
+          endTime: this.end
+        }
+      },
+      skip() {
+        return this.skip
+      },
+      loadingKey: 'loadingKey',
+      update: data => data.flow_run || []
+    },
+    ongoingFlowRuns: {
+      query: require('@/graphql/Calendar/calendar-ongoing-flow-runs.gql'),
       variables() {
         return {
           project_id: this.projectId == '' ? null : this.projectId,

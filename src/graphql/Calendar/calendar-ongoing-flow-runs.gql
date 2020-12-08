@@ -1,0 +1,19 @@
+query CalendarOngoingFlowRuns($startTime:timestamptz, $endTime: timestamptz) {
+  flow_run (
+    where: { 
+      _and: [
+    {start_time: {_lt: $startTime}}
+    {end_time: {_gt: $endTime}}
+      ]
+    }
+  ) 
+  {
+    id
+    flow_id
+    name
+    end_time
+    start_time
+    scheduled_start_time
+    state
+  }
+}
