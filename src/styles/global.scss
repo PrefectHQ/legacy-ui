@@ -41,9 +41,7 @@ body {
   }
 }
 
-/*
-  This is the fade transition css class overrides
-*/
+/* Transition and animation classes */
 .fade-enter-active {
   animation: fade 500ms;
 }
@@ -119,6 +117,23 @@ body {
   opacity: 0;
 }
 
+.roll {
+  animation: roll 3s ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes roll {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* End transition and animation classes */
+
+/* Vuetify overrides */
 // stylelint-disable
 .vertical-button {
   &.v-btn--tile {
@@ -167,39 +182,12 @@ body {
 .theme--light.v-tabs-items {
   background-color: var(--v-appBackground-base) !important;
 }
+// stylelint-enable
+/* End vuetify overrides */
 
-// hides subnav on small screens
-.tabs-hidden {
-  .v-tabs-bar {
-    display: none;
-  }
-  // stylelint-enable
-}
-
+/* Utility classes */
 .cursor-pointer {
   cursor: pointer;
-}
-
-.tabs-border-bottom {
-  .v-tabs-bar {
-    border-bottom: 1px solid #ddd !important;
-  }
-}
-
-.tabs-border-top {
-  .v-tabs-bar {
-    border-top: 1px solid #ddd !important;
-  }
-}
-
-.v-text-field-input-color {
-  // stylelint-disable
-  .v-text-field__slot {
-    input {
-      color: inherit !important;
-    }
-  }
-  // stylelint-enable
 }
 
 .position-absolute {
@@ -214,18 +202,18 @@ body {
   word-break: normal;
 }
 
-.o-100 {
-  opacity: 1 !important;
-}
+$percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
-.o-60 {
-  opacity: 0.6 !important;
-}
+@each $percent in $percents {
+  .o-#{$percent} {
+    opacity: $percent/100 !important;
+  }
 
-.hover-o-100 {
-  &:hover,
-  &:focus {
-    opacity: 1 !important;
+  .hover-o-#{$percent} {
+    &:hover,
+    &:focus {
+      opacity: $percent/100 !important;
+    }
   }
 }
 
@@ -237,18 +225,22 @@ body {
   height: calc(100vh - 64px);
 }
 
-.roll {
-  animation: roll 3s ease-in-out;
-  pointer-events: none;
+.code-block {
+  font-family: 'Source Code Pro', monospace !important;
+  white-space: pre-wrap;
+}
+/* End utility classes */
+
+/* Common UI elements */
+.tabs-border-bottom {
+  .v-tabs-bar {
+    border-bottom: 1px solid #ddd !important;
+  }
 }
 
-@keyframes roll {
-  from {
-    transform: rotate(0);
-  }
-
-  to {
-    transform: rotate(360deg);
+.tabs-border-top {
+  .v-tabs-bar {
+    border-top: 1px solid #ddd !important;
   }
 }
 
@@ -269,13 +261,24 @@ body {
   }
 }
 
-// stylelint-disable
+.v-text-field-input-color {
+  // stylelint-disable
+  .v-text-field__slot {
+    input {
+      color: inherit !important;
+    }
+  }
+}
+
+// hides subnav on small screens
+.tabs-hidden {
+  .v-tabs-bar {
+    display: none;
+  }
+}
+
 .overflow-table > .v-data-table__wrapper {
   overflow: initial !important;
 }
 // stylelint-enable
-
-.code-block {
-  font-family: 'Source Code Pro', monospace !important;
-  white-space: pre-wrap;
-}
+/* End common UI elements */
