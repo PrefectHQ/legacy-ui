@@ -236,6 +236,7 @@ export default {
         <FlowRunMenu
           v-if="selectedEvent"
           :run="selectedEvent"
+          :active="flow.is_schedule_active"
           type="flow-run"
         />
       </v-menu>

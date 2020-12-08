@@ -2,16 +2,19 @@
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import FlowName from '@/pages/Calendar/FlowName'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
   components: {
     DurationSpan,
-    FlowName
+    FlowName,
+    ExternalLink
   },
   mixins: [formatTime],
   props: {
     run: { type: Object, required: false, default: () => {} },
-    type: { type: String, required: false, default: 'task-run' }
+    type: { type: String, required: false, default: 'task-run' },
+    active: { type: Boolean, required: true }
   },
   computed: {},
   methods: {
@@ -31,6 +34,24 @@ export default {
 
 <template>
   <v-card tile>
+    <v-banner
+      v-if="run.state === 'Scheduled' && active"
+      key="1"
+      sticky
+      single-line
+      class="text-body-2 black--text my-0 pa-2"
+      color="amber"
+      tile
+      transition="slide-y-transition"
+    >
+      Reminder!
+      <ExternalLink
+        href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
+      >
+        Prefect Scheduler
+      </ExternalLink>
+      will only schedule 10 runs in advance.
+    </v-banner>
     <v-card-title class="text-subtitle-1 ">
       <router-link :to="{ name: type, params: { id: run.id } }" target="_blank">
         {{ run.name ? run.name : run.task_name }}
