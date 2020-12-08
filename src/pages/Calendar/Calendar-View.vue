@@ -239,24 +239,16 @@ export default {
             </v-list>
           </v-menu>
         </v-toolbar>
-        <v-skeleton-loader
-          type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
-          :loading="loadingKey > 0"
-          transition-group="quick-fade"
-          tile
-          class="skeleton-tweak"
-        >
-          <CalendarDay
-            v-if="flowId && !refetching && allRuns"
-            :project-id="projectId"
-            :date="date"
-            :loading="loadingKey > 0"
-            :type="type"
-            :flow-id="flowId"
-            :runs="allRuns"
-            :calendar-interval="calendarInterval"
-          />
-        </v-skeleton-loader>
+
+        <CalendarDay
+          v-if="flowId && !refetching && loadingKey < 1"
+          :project-id="projectId"
+          :date="date"
+          :type="type"
+          :flow-id="flowId"
+          :runs="allRuns"
+          :calendar-interval="calendarInterval"
+        />
       </v-col>
     </v-row>
   </v-container>

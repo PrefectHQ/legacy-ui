@@ -36,10 +36,6 @@ export default {
     runs: {
       type: Array,
       required: true
-    },
-    loading: {
-      type: Boolean,
-      required: true
     }
   },
   data() {
@@ -175,11 +171,12 @@ export default {
 <template>
   <v-skeleton-loader
     type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
-    :loading="loadingKey > 0 || gettingRuns || loading"
+    :loading="loadingKey > 0 || gettingRuns"
     transition-group="quick-fade"
     tile
     class="skeleton-tweak"
-    ><v-snackbar
+  >
+    <v-snackbar
       v-model="scheduleBanner"
       top
       app
