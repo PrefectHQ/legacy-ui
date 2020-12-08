@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add task run names to global search - [#485](https://github.com/PrefectHQ/ui/pull/485)
 
 ### Bugfixes
 
