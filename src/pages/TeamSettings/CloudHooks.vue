@@ -347,6 +347,7 @@ export default {
         :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
         :footer-props="{
           showFirstLastPage: true,
+          itemsPerPageOptions: [10, 15, 20, -1],
           firstIcon: 'first_page',
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',

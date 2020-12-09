@@ -431,14 +431,10 @@ export default {
         to understand their role in your infrastructure.
         <span v-if="isCloud">
           You can also go through the
-          <router-link class="link" :to="{ name: 'flow-run-tutorial' }">
-            <u>Running a Flow</u>
-          </router-link>
-          and
-          <router-link class="link" :to="{ name: 'universal-deploy-tutorial' }">
+          <router-link class="link" :to="{ path: 'tutorial/Universal-Deploy' }">
             <u>Universal Deploy</u>
           </router-link>
-          tutorials for guidance on running agents in Cloud.</span
+          tutorial for guidance on running agents in Cloud.</span
         >
       </p>
     </v-alert>
@@ -465,16 +461,38 @@ export default {
 }
 
 .agent-controls {
-  position: absolute;
-  right: 8px;
-  z-index: 1;
+  left: 50%;
+  position: fixed;
+  transform: translate(570px);
+  z-index: 4;
 
   &.md-and-down {
-    top: -124px;
+    top: 120px;
   }
 
   &.md-and-up {
-    top: -72px;
+    top: 136px;
+  }
+
+  @media screen and (max-width: 1440px) {
+    left: unset;
+    right: 12px;
+    transform: unset;
+  }
+
+  @media screen and (max-width: 960px) {
+    background-color: var(--v-appBackground-base);
+
+    left: 50%;
+    right: unset;
+    transform: translate(-50%);
+  }
+
+  @media screen and (max-width: 600px) {
+    left: unset;
+    right: 12px;
+    top: 64px !important;
+    transform: unset;
   }
 }
 

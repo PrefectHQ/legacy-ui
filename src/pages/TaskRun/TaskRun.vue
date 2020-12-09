@@ -2,10 +2,11 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/TaskRun/Actions'
+import Artifacts from '@/components/Artifacts/Artifacts'
 import BreadCrumbs from '@/components/BreadCrumbs'
+import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/TaskRun/Details-Tile'
 import EditableTextField from '@/components/EditableTextField'
-import ExternalLink from '@/components/ExternalLink'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import DependenciesTile from '@/pages/TaskRun/Dependencies-Tile'
 import MappedTaskRunsTile from '@/pages/TaskRun/MappedTaskRuns-Tile'
@@ -35,13 +36,14 @@ export default {
   },
   components: {
     Actions,
+    Artifacts,
     BreadCrumbs,
     DependenciesTile,
     DetailsTile,
     EditableTextField,
-    ExternalLink,
     LogsCard,
     MappedTaskRunsTile,
+    NavTabBar,
     SubPageNav,
     TaskRunHeartbeatTile,
     TileLayout,
@@ -56,9 +58,6 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
-    },
     taskRunId() {
       return this.$route.params.id
     },
@@ -68,32 +67,44 @@ export default {
     },
     mappedChild() {
       return this.taskRun?.task.mapped && this.taskRun?.map_index > -1
+    },
+    tabs() {
+      return [
+        {
+          name: 'Overview',
+          target: 'overview',
+          icon: 'view_module'
+        },
+        {
+          name: 'Logs',
+          target: 'logs',
+          icon: 'format_align_left'
+        },
+        {
+          name: 'Mapped Runs',
+          target: 'mapped-runs',
+          icon: 'device_hub',
+          badgeColor: 'primary',
+          badgeText: 'New!',
+          hidden: !this.mappedParent && !this.mappedChild
+        },
+        {
+          name: 'Artifacts',
+          target: 'artifacts',
+          icon: 'fas fa-fingerprint',
+          badgeText: 'Beta',
+          cardText:
+            'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
+          cardLink:
+            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLinkText: 'Artifacts API Docs'
+        }
+      ]
     }
   },
   watch: {
     $route() {
       this.tab = this.getTab()
-    },
-    tab(val) {
-      let query = {}
-      switch (val) {
-        case 'logs':
-          query = { logId: '' }
-          break
-        case 'mapped-runs':
-          query = { 'mapped-runs': '' }
-          break
-        case 'artifacts':
-          query = { artifacts: '' }
-          break
-        default:
-          break
-      }
-      this.$router
-        .replace({
-          query: query
-        })
-        .catch(e => e)
     },
     taskRun(val, prevVal) {
       if (!val || val?.id == prevVal?.id) return
@@ -112,9 +123,9 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     getTab() {
-      if ('logId' in this.$route.query) return 'logs'
-      if ('mapped-runs' in this.$route.query) return 'mapped-runs'
-      if ('artifacts' in this.$route.query) return 'artifacts'
+      if (Object.keys(this.$route.query).length != 0) {
+        return Object.keys(this.$route.query)[0]
+      }
       return 'overview'
     },
     parseMarkdown(md) {
@@ -191,16 +202,17 @@ export default {
 
 <template>
   <v-sheet v-if="taskRun" color="appBackground">
-    <SubPageNav>
-      <span slot="page-type">Task Run</span>
+    <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
         style="
-          display: block;
           max-width: 100%;
           min-width: 300px;
           width: auto;
           "
+        :style="[
+          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' }
+        ]"
       >
         <EditableTextField
           :content="
@@ -242,109 +254,33 @@ export default {
             text: taskRun.flow_run.name
           }
         ]"
+        :style="
+          $vuetify.breakpoint.smAndDown && {
+            display: 'inline',
+            'font-size': '0.875rem'
+          }
+        "
       ></BreadCrumbs>
 
-      <Actions slot="page-actions" :task-run="taskRun" />
+      <Actions slot="page-actions" style="height: 55px;" :task-run="taskRun" />
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="task-run" />
+      </span>
     </SubPageNav>
-
-    <v-tabs
-      v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
-      style="max-width: 1440px;"
-      light
-    >
-      <v-tabs-slider color="blue"></v-tabs-slider>
-
-      <v-tab href="#overview" :style="hideOnMobile">
-        <v-icon left>view_module</v-icon>
-        Overview
-      </v-tab>
-
-      <v-tab href="#logs" :style="hideOnMobile">
-        <v-icon left>format_align_left</v-icon>
-        Logs
-      </v-tab>
-
-      <v-menu
-        open-on-hover
-        :close-on-click="false"
-        :open-on-click="false"
-        :close-on-content-click="false"
-        offset-y
-      >
-        <template #activator="{on}">
-          <div v-on="on">
-            <!-- Height: 100% is required here since we're nesting the tab -->
-            <v-tab
-              href="#artifacts"
-              :style="hideOnMobile"
-              style="height: 100%;"
-              disabled
-            >
-              <v-badge
-                color="codePink"
-                content="Coming Soon!"
-                bottom
-                bordered
-                inline
-              >
-                <v-icon left>fas fa-fingerprint</v-icon>
-                Artifacts
-              </v-badge>
-            </v-tab>
-          </div>
-        </template>
-        <v-card tile class="pa-0" max-width="320">
-          <v-card-title>
-            <v-badge
-              color="codePink"
-              content="Coming Soon!"
-              bottom
-              bordered
-              inline
-            >
-              <v-icon left>fas fa-fingerprint</v-icon>
-              Artifacts
-            </v-badge>
-          </v-card-title>
-          <v-card-text>
-            <div>
-              The Artifacts API is an experimental feature set currently under
-              development. For a sneak preview, check out the
-              <ExternalLink
-                href="https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts"
-              >
-                Artifacts API docs
-              </ExternalLink>
-              !
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-menu>
-
-      <v-tab
-        v-if="mappedParent || mappedChild"
-        href="#mapped-runs"
-        :style="hideOnMobile"
-      >
-        <v-badge color="codePink" content="New!" bottom bordered inline>
-          <v-icon left>device_hub</v-icon>
-          Mapped Runs
-        </v-badge>
-      </v-tab>
-    </v-tabs>
 
     <v-tabs-items
       v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
       style="max-width: 1440px;"
+      :style="{
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
     >
       <v-tab-item
-        class="tab-full-height pa-0"
+        class="pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :task-run="taskRun" />
@@ -357,7 +293,7 @@ export default {
           <DependenciesTile
             slot="row-2-col-2-row-3-tile-1"
             :task-run="taskRun"
-            :loading="loading > 0"
+            :loading="taskRun && loading > 0"
           />
         </TileLayout>
       </v-tab-item>
@@ -365,8 +301,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="logs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <LogsCard
@@ -384,19 +320,18 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
+        class="pb-12"
         value="artifacts"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
-        <!-- <div v-html="parseMarkdown('# hello')"></div> -->
+        <Artifacts :task-run-ids="[taskRunId]" />
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
         value="mapped-runs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <v-skeleton-loader
@@ -414,7 +349,7 @@ export default {
       </v-tab-item>
     </v-tabs-items>
 
-    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
+    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" app fixed>
       <v-btn @click="tab = 'overview'">
         Overview
         <v-icon>view_module</v-icon>
@@ -443,12 +378,7 @@ export default {
   background-color: #c8e1ff !important;
 }
 
-.tab-full-height {
-  min-height: 80vh;
-}
-
 /* stylelint-disable */
-
 .v-tab--disabled .v-badge__badge {
   pointer-events: none;
 }

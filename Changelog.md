@@ -4,13 +4,41 @@
 
 ### Features and Improvements
 
-- Add the Prefect Core version to the side navigation bar for Server users - [#431](https://github.com/PrefectHQ/ui/pull/431)
-- Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
-- Allow editing task run names from the task run page - [#449](https://github.com/PrefectHQ/ui/pull/449)
+- None
 
 ### Bugfixes
 
 - None
+
+## 2020-12-07
+
+### Features and Improvements
+
+- Changes the design of the Set State modal to match the design of the other forms - [#465](https://github.com/PrefectHQ/ui/pull/465)
+- Changes the default table rows to more sensible defaults - [#475](https://github.com/PrefectHQ/ui/pull/475)
+- Add a footer to the app - [#451](https://github.com/PrefectHQ/ui/pull/451)
+
+### Bugfixes
+
+- Fix jumping height on subnav = [#476](https://github.com/PrefectHQ/ui/pull/476)
+- Removed tutorial that does not work as previously intended - [#480](https://github.com/PrefectHQ/ui/pull/480)
+- Switch "cancel" to "close" on token dialogs - [#488](https://github.com/PrefectHQ/ui/pull/488)
+
+## 2020-11-13
+
+### Features and Improvements
+
+- Aims to improve and convert the current tutorials into md - [#434](https://github.com/PrefectHQ/ui/pull/434)
+- Add the Prefect Core version to the side navigation bar for Server users - [#431](https://github.com/PrefectHQ/ui/pull/431)
+- Allow editing flow run names from the flow run page - [#448](https://github.com/PrefectHQ/ui/pull/448)
+- Allow editing task run names from the task run page - [#449](https://github.com/PrefectHQ/ui/pull/449)
+- Fixes subpage nav to top of page when scrolling - [#407](https://github.com/PrefectHQ/ui/issues/407)
+- Update wording on the team onboarding page - [#471](https://github.com/PrefectHQ/ui/pull/471)
+
+### Bugfixes
+
+- Fix an issue where restarting a task run would fail to correctly set downstream task run states - [#452](https://github.com/PrefectHQ/ui/pull/452)
+- Fix schematic node finished task run durations - [#468](https://github.com/PrefectHQ/ui/pull/468)
 
 ## 2020-11-13
 

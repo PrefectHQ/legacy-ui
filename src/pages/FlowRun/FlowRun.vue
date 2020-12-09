@@ -2,10 +2,11 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
+import Artifacts from '@/components/Artifacts/Artifacts'
 import BreadCrumbs from '@/components/BreadCrumbs'
+import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
 import EditableTextField from '@/components/EditableTextField'
-import ExternalLink from '@/components/ExternalLink'
 import TimelineTile from '@/pages/FlowRun/Timeline-Tile'
 import LogsCard from '@/components/LogsCard/LogsCard'
 import SchematicTile from '@/pages/FlowRun/Schematic-Tile'
@@ -36,12 +37,13 @@ export default {
   },
   components: {
     Actions,
+    Artifacts,
     BreadCrumbs,
     DetailsTile,
     EditableTextField,
-    ExternalLink,
     TimelineTile,
     LogsCard,
+    NavTabBar,
     SchematicTile,
     SubPageNav,
     TaskRunHeartbeatTile,
@@ -52,7 +54,35 @@ export default {
   data() {
     return {
       flowRunNameLoading: false,
-      tab: this.getTab()
+      tab: this.getTab(),
+      tabs: [
+        {
+          name: 'Overview',
+          target: 'overview',
+          icon: 'view_quilt'
+        },
+        {
+          name: 'Schematic',
+          target: 'schematic',
+          icon: 'pi-schematic'
+        },
+        {
+          name: 'Logs',
+          target: 'logs',
+          icon: 'format_align_left'
+        },
+        {
+          name: 'Artifacts',
+          target: 'artifacts',
+          icon: 'fas fa-fingerprint',
+          badgeText: 'Beta',
+          cardText:
+            'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
+          cardLink:
+            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLinkText: 'Artifacts API Docs'
+        }
+      ]
     }
   },
   computed: {
@@ -63,9 +93,6 @@ export default {
     },
     flowRunId() {
       return this.$route.params.id
-    },
-    hideOnMobile() {
-      return { 'tabs-hidden': this.$vuetify.breakpoint.smAndDown }
     }
   },
   watch: {
@@ -73,37 +100,32 @@ export default {
       this.tab = this.getTab()
     },
     tab(val) {
-      let query = {}
+      let query = { ...this.$route.query }
       switch (val) {
         case 'schematic':
-          query = { schematic: '' }
+          query = 'schematic'
           break
         case 'logs':
-          query = { logId: '' }
+          query = 'logId'
           break
         case 'chart':
           query = { chart: '' }
           break
         case 'artifacts':
-          query = { artifacts: '' }
+          /* eslint-disable-next-line */
+          query = 'artifacts'
           break
         default:
           break
       }
-      this.$router
-        .replace({
-          query: query
-        })
-        .catch(e => e)
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     getTab() {
-      if ('schematic' in this.$route.query) return 'schematic'
-      if ('logId' in this.$route.query) return 'logs'
-      if ('chart' in this.$route.query) return 'chart'
-      if ('artifacts' in this.$route.query) return 'artifacts'
+      if (Object.keys(this.$route.query).length != 0) {
+        return Object.keys(this.$route.query)[0]
+      }
       return 'overview'
     },
     parseMarkdown(md) {
@@ -168,16 +190,17 @@ export default {
 
 <template>
   <v-sheet v-if="flowRun" color="appBackground">
-    <SubPageNav>
-      <span slot="page-type">Flow Run</span>
+    <SubPageNav icon="pi-flow-run" page-type="Flow Run">
       <span
         slot="page-title"
         style="
-        display: block;
         max-width: 100%;
         min-width: 300px;
         width: auto;
         "
+        :style="[
+          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' }
+        ]"
       >
         <EditableTextField
           :content="flowRun.name"
@@ -188,123 +211,55 @@ export default {
         />
       </span>
 
-      <BreadCrumbs
+      <span
         slot="breadcrumbs"
-        :crumbs="[
-          {
-            route: {
-              name: 'project',
-              params: { id: flowRun.flow.project.id }
-            },
-            text: flowRun.flow.project.name
-          },
-          {
-            route: {
-              name: 'flow',
-              params: { id: flowRun.flow.id }
-            },
-            text: flowRun.flow.name
+        :style="
+          $vuetify.breakpoint.smAndDown && {
+            display: 'inline',
+            'font-size': '0.875rem'
           }
-        ]"
-      ></BreadCrumbs>
-
-      <Actions slot="page-actions" :flow-run="flowRun" />
-    </SubPageNav>
-
-    <v-tabs
-      v-if="flowRun"
-      v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :class="hideOnMobile"
-      style="max-width: 1440px;"
-      light
-    >
-      <v-tabs-slider color="blue"></v-tabs-slider>
-
-      <v-tab href="#overview" :style="hideOnMobile">
-        <v-icon left>view_quilt</v-icon>
-        Overview
-      </v-tab>
-
-      <v-tab href="#schematic" :style="hideOnMobile">
-        <v-icon left>pi-schematic</v-icon>
-        Schematic
-      </v-tab>
-
-      <v-tab href="#logs" :style="hideOnMobile" data-cy="flow-run-logs-tab">
-        <v-icon left>format_align_left</v-icon>
-        Logs
-      </v-tab>
-
-      <v-menu
-        open-on-hover
-        :close-on-click="false"
-        :open-on-click="false"
-        :close-on-content-click="false"
-        offset-y
+        "
       >
-        <template #activator="{on}">
-          <div v-on="on">
-            <!-- Height: 100% is required here since we're nesting the tab -->
-            <v-tab
-              href="#artifacts"
-              :style="hideOnMobile"
-              style="height: 100%;"
-              disabled
-            >
-              <v-badge
-                color="codePink"
-                content="Coming Soon!"
-                bottom
-                bordered
-                inline
-              >
-                <v-icon left>fas fa-fingerprint</v-icon>
-                Artifacts
-              </v-badge>
-            </v-tab>
-          </div>
-        </template>
-        <v-card tile class="pa-0" max-width="320">
-          <v-card-title>
-            <v-badge
-              color="codePink"
-              content="Coming Soon!"
-              bottom
-              bordered
-              inline
-            >
-              <v-icon left>fas fa-fingerprint</v-icon>
-              Artifacts
-            </v-badge>
-          </v-card-title>
-          <v-card-text>
-            <div>
-              The Artifacts API is an experimental feature set currently under
-              development. For a sneak preview, check out the
-              <ExternalLink
-                href="https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts"
-              >
-                Artifacts API docs
-              </ExternalLink>
-              !
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-menu>
-    </v-tabs>
+        <BreadCrumbs
+          :crumbs="[
+            {
+              route: {
+                name: 'project',
+                params: { id: flowRun.flow.project.id }
+              },
+              text: flowRun.flow.project.name
+            },
+            {
+              route: {
+                name: 'flow',
+                params: { id: flowRun.flow.id }
+              },
+              text: flowRun.flow.name
+            }
+          ]"
+        />
+      </span>
+
+      <Actions slot="page-actions" style="height: 55px;" :flow-run="flowRun" />
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="flow-run" />
+      </span>
+    </SubPageNav>
 
     <v-tabs-items
       v-model="tab"
-      class="px-6 mx-auto tabs-border-bottom"
-      :style="{ 'max-width': tab == 'chart' ? 'auto' : '1440px' }"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
+      :style="{
+        'max-width': tab == 'chart' ? 'auto' : '1440px',
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+      }"
       mandatory
     >
       <v-tab-item
-        class="tab-full-height pa-0"
+        class="pa-0"
         value="overview"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayout>
           <TimelineTile
@@ -331,10 +286,9 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
         value="schematic"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <SchematicTile slot="row-2-tile" />
@@ -344,8 +298,8 @@ export default {
       <v-tab-item
         class="tab-full-height"
         value="logs"
-        transition="quick-fade"
-        reverse-transition="quick-fade"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
         <TileLayoutFull>
           <LogsCard
@@ -362,12 +316,17 @@ export default {
         </TileLayoutFull>
       </v-tab-item>
 
-      <v-tab-item class="tab-full-height" value="artifacts">
-        <!-- <div v-html="parseMarkdown('# Hello!')"></div> -->
+      <v-tab-item
+        class="tab-full-height"
+        value="artifacts"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
+      >
+        <Artifacts :flow-run-id="flowRunId" />
       </v-tab-item>
     </v-tabs-items>
 
-    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" fixed>
+    <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" app fixed>
       <v-btn @click="tab = 'overview'">
         Overview
         <v-icon>view_quilt</v-icon>
@@ -396,12 +355,7 @@ export default {
   background-color: #c8e1ff !important;
 }
 
-.tab-full-height {
-  min-height: 80vh;
-}
-
 /* stylelint-disable */
-
 .v-tab--disabled .v-badge__badge {
   pointer-events: none;
 }
