@@ -1,4 +1,4 @@
-export const STATE_COLORS = {
+export const STATE_COLORS_OLD = {
   Failed: '#eb0000',
   Pending: '#b9dcff',
   Scheduled: '#ffbe1e',
@@ -20,6 +20,34 @@ export const STATE_COLORS = {
   Mapped: '#4067a2',
   Looped: '#4c4cff'
 }
+
+export const STATE_COLORS_BASE_PALETTE = {
+  Pending: '#fef3c7',
+  Scheduled: '#FCD34D',
+  Queued: '#d95b06',
+  Paused: '#CE4697',
+  Running: '#2EDAFF',
+  Submitted: '#FFEF5C',
+  Listening: '#16CBDF',
+  Cancelling: '#6CA6BE',
+  Cancelled: '#7e8696',
+  Skipped: '#9ca3af',
+  Finished: '#65a097',
+  Looped: '#c498a2',
+  Resume: '#d9ae82',
+  Retrying: '#ec7b57',
+  Streaming: '#b799f9',
+  Success: '#06E797',
+  Cached: '#b9d366',
+  Mapped: '#8ae5c4',
+  Failed: '#ff4c4c',
+  ClientFailed: '#802626',
+  TimedOut: '#bf6971',
+  TriggerFailed: '#ff9999',
+  ValidationFailed: '#bf3251'
+}
+
+export const STATE_COLORS = STATE_COLORS_BASE_PALETTE
 
 export const STATE_TYPES = {
   Failed: 'Finished',
