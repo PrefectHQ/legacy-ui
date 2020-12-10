@@ -12,7 +12,6 @@ export default {
   },
   methods: {
     mdParser(md) {
-      console.log('md', md, this.artifact)
       return artifact_parser(md)
     }
   }
