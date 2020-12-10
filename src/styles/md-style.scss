@@ -1,7 +1,7 @@
 .md {
   margin-left: 2.25rem;
   margin-top: 3.25rem;
-
+  /* stylelint-disable-next-line */
   a[aria-hidden='true'] {
     float: left;
     font-size: 0.85em;
@@ -10,7 +10,7 @@
     opacity: 0;
     padding-right: 0.23em;
   }
-
+  /* stylelint-disable-next-line */
   a[aria-hidden='true']:hover {
     opacity: 1;
   }
@@ -38,7 +38,7 @@
   h6 {
     font-size: 1em;
   }
-
+  /* stylelint-disable a11y/line-height-is-vertical-rhythmed */
   h1,
   h2,
   h3,
@@ -53,6 +53,7 @@
     padding-bottom: 0.7rem;
     text-rendering: optimizeLegibility;
   }
+  /* stylelint-enable */
 
   ol,
   p,
@@ -107,7 +108,7 @@
     margin: 0;
     padding: 0.25rem 0.5rem;
   }
-
+  /* stylelint-disable a11y/font-size-is-readable */
   blockquote {
     background-color: #fffaf1;
     border-color: #e90;
@@ -117,4 +118,5 @@
     margin: 1rem 0;
     padding: 0.1rem 1.5rem;
   }
+  /* stylelint-enable */
 }

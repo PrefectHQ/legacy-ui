@@ -1,3 +1,16 @@
+/*
+This file is for styles used throughout the app, and global overrides.
+The style sections are:
+  - Transition and Animation classes (used throughout the app for consistent look and feel)
+  - Vuetify overrides (where Vuetify/material theming doesn't fit with our aesthetic)
+  - Utility classes (see if Vuetify offers the class you need before making more of these!)
+  - Common UI elements (used throughout the app for consistent look and feel)
+
+If you have styles used on several pages, but they aren't truly "global", you can create 
+a "regional" stylesheet, and import it only on the pages needed. This will keep our CSS
+concise and snappy, and the files easier to read!
+*/
+
 html,
 body {
   overflow: overlay;
