@@ -51,7 +51,7 @@ export default {
               ...(this.flowRuns ? this.flowRuns : []),
               ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : []),
               ...(this.runningFlowRuns ? this.runningFlowRuns : []),
-              ...(this.ongoingFlowRuns ? this.ongoingFlowRunss : [])
+              ...(this.ongoingFlowRuns ? this.ongoingFlowRuns : [])
             ]
           : [
               ...(this.flowRuns ? this.flowRuns : []),
