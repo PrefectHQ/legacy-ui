@@ -48,12 +48,15 @@ export default {
       if (this.flowRuns || this.scheduledFlowRuns || this.runningFlowRuns) {
         return new Date(this.date) < new Date()
           ? [
-              ...this.flowRuns,
-              ...this.scheduledFlowRuns,
-              ...this.runningFlowRuns,
-              ...this.ongoingFlowRuns
+              ...(this.flowRuns ? this.flowRuns : []),
+              ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : []),
+              ...(this.runningFlowRuns ? this.runningFlowRuns : []),
+              ...(this.ongoingFlowRuns ? this.ongoingFlowRunss : [])
             ]
-          : [...this.flowRuns, ...this.scheduledFlowRuns]
+          : [
+              ...(this.flowRuns ? this.flowRuns : []),
+              ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : [])
+            ]
       }
       return []
     },
