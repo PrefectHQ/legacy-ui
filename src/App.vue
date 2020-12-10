@@ -58,7 +58,7 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('auth0', [
+    ...mapGetters('auth', [
       'isAuthenticated',
       'isAuthorized',
       'isAuthenticatingUser',
@@ -201,7 +201,7 @@ export default {
   },
   methods: {
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
-    ...mapActions('auth0', ['authenticate', 'authorize']),
+    ...mapActions('auth', ['authenticate', 'authorize']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
     ...mapMutations('tenant', ['setDefaultTenant']),

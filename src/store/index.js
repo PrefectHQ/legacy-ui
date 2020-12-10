@@ -9,7 +9,7 @@ import createPlugin from 'logrocket-vuex'
 // Modules
 import agent from '@/store/agent'
 import api from '@/store/api'
-import auth0 from '@/store/auth0'
+import auth from '@/store/auth'
 import license from '@/store/license'
 import refresh from '@/store/refresh'
 import sideNav from '@/store/sideNav'
@@ -38,7 +38,7 @@ const store = new Vuex.Store({
     agent,
     alert,
     api,
-    auth0,
+    auth,
     license,
     refresh,
     sideNav,

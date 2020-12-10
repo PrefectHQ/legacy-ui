@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.13.2",
+    "@okta/okta-auth-js": "4.3.0",
+    "@okta/okta-vue": "^3.0.0",
     "apollo-link-batch-http": "^1.2.14",
     "codemirror": "^5.58.2",
     "codemirror-graphql": "^0.12.3",

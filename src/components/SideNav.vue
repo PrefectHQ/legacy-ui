@@ -70,7 +70,7 @@ export default {
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('tenant', ['tenant', 'tenants', 'tenantIsSet']),
     ...mapGetters('user', ['memberships', 'user']),
-    ...mapGetters('auth0', ['authorizationToken']),
+    ...mapGetters('auth', ['authorizationToken']),
     ...mapGetters('license', ['hasLicense']),
     lastDeployment_Cloud() {
       return this.releaseTimestamp
@@ -147,7 +147,7 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapActions('api', ['switchBackend', 'backend']),
-    ...mapActions('auth0', ['logout']),
+    ...mapActions('auth', ['logout']),
     ...mapActions('license', ['getLicense']),
     ...mapActions('tenant', ['setCurrentTenant']),
     ...mapActions('user', ['getUser']),

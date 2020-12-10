@@ -7,7 +7,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('auth0', ['authorizationToken'])
+    ...mapGetters('auth', ['authorizationToken'])
   },
   watch: {
     authorizationToken(val) {

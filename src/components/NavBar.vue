@@ -26,10 +26,10 @@ export default {
       'connecting',
       'retries'
     ]),
-    ...mapGetters('auth0', ['isAuthorized']),
+    ...mapGetters('auth', ['isAuthorized']),
     ...mapGetters('license', ['hasLicense']),
     ...mapGetters('tenant', ['tenant', 'tenantIsSet']),
-    ...mapGetters('user', ['memberships', 'user', 'auth0User', 'timezone']),
+    ...mapGetters('user', ['memberships', 'user', 'oktaUser', 'timezone']),
     connectedIcon() {
       if (this.connected) return 'signal_cellular_4_bar'
       if (this.connecting) return 'signal_cellular_null'
@@ -63,7 +63,7 @@ export default {
   methods: {
     ...mapMutations('sideNav', ['open']),
     ...mapMutations('refresh', ['add']),
-    ...mapActions('auth0', ['logout']),
+    ...mapActions('auth', ['logout']),
     formatTime(time) {
       let timeObj = moment(time).tz(this.timezone),
         shortenedTz = moment()
@@ -368,7 +368,7 @@ export default {
             size="42"
             v-on="on"
           >
-            <img :src="auth0User.picture" :alt="auth0User.name" />
+            <img :src="oktaUser.profileUrl" :alt="oktaUser.name" />
           </v-avatar>
         </v-scale-transition>
       </template>
@@ -382,14 +382,14 @@ export default {
           dense
         >
           <v-list-item-avatar>
-            <img :src="auth0User.picture" :alt="auth0User.name" />
+            <img :src="oktaUser.profileUrl" :alt="oktaUser.name" />
           </v-list-item-avatar>
 
           <v-list-item-content>
             <v-list-item-title>
               {{ user.first_name }} {{ user.last_name }}
             </v-list-item-title>
-            <v-list-item-subtitle>{{ auth0User.email }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ oktaUser.email }}</v-list-item-subtitle>
             <v-list-item-subtitle>
               <v-tooltip bottom>
                 <template #activator="{ on }">
