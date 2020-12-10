@@ -12,6 +12,7 @@ export default {
   },
   methods: {
     mdParser(md) {
+      console.log('md', md, this.artifact)
       return artifact_parser(md)
     }
   }
@@ -21,7 +22,7 @@ export default {
 <template>
   <div
     class="artifact md grey--text text--darken-3 mx-4"
-    v-html="mdParser(artifact.data.markdown)"
+    v-html="mdParser(artifact.data.markdown || artifact.data.link)"
   >
   </div>
 </template>
