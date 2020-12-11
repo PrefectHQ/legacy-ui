@@ -1,7 +1,7 @@
 <script>
 /* eslint-disable vue/no-v-html */
 import { artifact_parser } from '@/utils/markdownParser'
-import '@/styles/atelier-sulphurpool-light.css'
+import '@/styles/atelier-sulphurpool-light.scss'
 
 export default {
   props: {

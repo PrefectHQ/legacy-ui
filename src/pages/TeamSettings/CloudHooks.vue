@@ -323,7 +323,7 @@ export default {
       <div class="py-1 mr-2 flex">
         <v-text-field
           v-model="search"
-          class="rounded-none elevation-1"
+          class="rounded-0 elevation-1"
           solo
           dense
           hide-details
@@ -343,7 +343,7 @@ export default {
         :search="search"
         :items="cloudHooks"
         :items-per-page="10"
-        class="elevation-2 rounded-none"
+        class="elevation-2 rounded-0"
         :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
         :footer-props="{
           showFirstLastPage: true,

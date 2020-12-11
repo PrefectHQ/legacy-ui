@@ -256,7 +256,7 @@ export default {
                 open-on-hover
               >
                 <template #activator="{ on }">
-                  <div class="inline-block pr-4" v-on="on">
+                  <div class="d-inline-block pr-4" v-on="on">
                     <v-icon
                       small
                       class="material-icons-outlined"
@@ -390,7 +390,7 @@ export default {
                 open-on-hover
               >
                 <template #activator="{ on }">
-                  <div class="inline-block pr-4" v-on="on">
+                  <div class="d-inline-block pr-4" v-on="on">
                     <v-icon
                       small
                       class="material-icons-outlined"

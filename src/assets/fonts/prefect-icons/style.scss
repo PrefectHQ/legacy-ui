@@ -9,13 +9,13 @@
   // stylelint-disable
   src: url('#{$prefect-font-path}/#{$prefect-font-family}.eot?higzvn');
   src: url('#{$prefect-font-path}/#{$prefect-font-family}.eot?higzvn#iefix')
-    format('embedded-opentype'),
+      format('embedded-opentype'),
     url('#{$prefect-font-path}/#{$prefect-font-family}.ttf?higzvn')
-    format('truetype'),
+      format('truetype'),
     url('#{$prefect-font-path}/#{$prefect-font-family}.woff?higzvn')
-    format('woff'),
+      format('woff'),
     url('#{$prefect-font-path}/#{$prefect-font-family}.svg?higzvn##{$prefect-font-family}')
-    format('svg');
+      format('svg');
   // stylelint-enable
 }
 

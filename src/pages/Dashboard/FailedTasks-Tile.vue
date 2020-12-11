@@ -172,7 +172,7 @@ export default {
             </v-list-item-avatar>
             <v-list-item-content class="my-0 py-3">
               <div
-                class="inline-block subtitle-1 font-weight-light"
+                class="d-inline-block subtitle-1 font-weight-light"
                 style="line-height: 1.25rem;"
               >
                 Something went wrong while trying to fetch Task failures

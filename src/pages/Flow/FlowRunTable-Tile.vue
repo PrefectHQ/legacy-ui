@@ -172,7 +172,7 @@ export default {
         <template #item.name="{ item }">
           <truncate :content="item.name">
             <router-link
-              class="link truncate"
+              class="link text-truncate"
               :to="{ name: 'flow-run', params: { id: item.id } }"
             >
               {{ item.name }}

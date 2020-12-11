@@ -277,7 +277,7 @@ export default {
     <v-text-field
       v-if="!$vuetify.breakpoint.mdAndUp"
       v-model="searchInput"
-      class="rounded-none elevation-1 mb-1"
+      class="rounded-0 elevation-1 mb-1"
       solo
       dense
       hide-details
@@ -328,7 +328,7 @@ export default {
         <v-spacer></v-spacer>
         <v-text-field
           v-model="searchInput"
-          class="rounded-none mt-1 mr-2"
+          class="rounded-0 mt-1 mr-2"
           solo
           dense
           hide-details
