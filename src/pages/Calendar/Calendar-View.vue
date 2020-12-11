@@ -23,7 +23,8 @@ export default {
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
-      selectedFlow: 0,
+      selectedFlow: null,
+      selectFlow: null,
       filters: [{ name: 'Flows' }],
       loadingKey: 0,
       refetching: false,
@@ -31,7 +32,8 @@ export default {
       typeToLabel: {
         day: 'Day',
         '4day': '4 Days'
-      }
+      },
+      Ids: null
     }
   },
   computed: {
@@ -40,8 +42,8 @@ export default {
     ...mapGetters('user', ['timezone']),
     ...mapGetters('api', ['backend']),
     flowId() {
-      if (this.selectedFlow) return this.selectedFlow
-      if (this.allIds && this.allIds[0]) return this.allIds[0]
+      if (this.selectedFlow) return this.selectedFlow[0]
+      if (this.allIds && this.allIds[0]) return this.allIds[0][0]
       return ''
     },
     allRuns() {
@@ -59,10 +61,6 @@ export default {
             ]
       }
       return []
-    },
-    allIds() {
-      const flowIds = this.allRuns?.map(flowRun => flowRun.flow_id)
-      return flowIds ? [...new Set(flowIds)] : []
     },
     start() {
       let days = 1
@@ -86,6 +84,23 @@ export default {
     },
     calTitle() {
       return this.getMonth(this.date)
+    },
+    allIds() {
+      const flowIds = this.allRuns?.map(flowRun => {
+        return flowRun.flow_id === this.selectFlow
+          ? [flowRun.flow_id, 'selected']
+          : [flowRun.flow_id, 'active']
+      })
+      let flowGroupIds = []
+      this.allFlows?.forEach(flowGroup => {
+        if (flowGroup.flows[0]?.id)
+          flowGroup.flows[0].id === this.selectFlow
+            ? flowGroupIds.push([flowGroup.flows[0].id, 'selected'])
+            : flowGroupIds.push([flowGroup.flows[0].id, 'inactive'])
+      })
+      const allIds =
+        flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
+      return [...allIds]
     }
   },
   watch: {
@@ -106,11 +121,34 @@ export default {
       await this.$apollo.queries.flowRuns.refetch()
       await this.$apollo.queries.scheduledFlowRuns.refetch()
       this.refetching = false
+    },
+    date() {
+      this.Ids = null
+      this.orderIds()
     }
   },
   methods: {
     setToday() {
       this.date = this.formatCalendarDate(new Date())
+    },
+    orderIds() {
+      const ordered = [...this.allIds]
+      ordered.sort((a, b) =>
+        a[1] === 'selected'
+          ? -1
+          : b[1] === 'selected'
+          ? 1
+          : a[1] === 'active'
+          ? -1
+          : b[1] === 'active'
+          ? -1
+          : 0
+      )
+      this.Ids = ordered
+    },
+    handleSelectedFlow(flow) {
+      flow[1] = 'selected'
+      this.selectFlow = flow[0]
     }
   },
   apollo: {
@@ -173,6 +211,17 @@ export default {
       },
       loadingKey: 'loadingKey',
       update: data => data.flow_run || []
+    },
+    allFlows: {
+      query: require('@/graphql/Calendar/calendar-flow-groups.gql'),
+      variables() {
+        return {}
+      },
+      skip() {
+        return this.skip
+      },
+      loadingKey: 'loadingKey',
+      update: data => data.flow_group
     }
   }
 }
@@ -218,14 +267,17 @@ export default {
                     mandatory
                   >
                     <v-list-item
-                      v-for="item in allIds"
-                      :key="item ? item.id : null"
+                      v-for="(item, inde) in Ids || allIds"
+                      :key="inde"
                       :value="item"
                       dense
                     >
-                      <v-list-item-content class=" pa-0">
+                      <v-list-item-content
+                        class=" pa-0"
+                        @click="handleSelectedFlow(item)"
+                      >
                         <v-list-item-subtitle class="font-weight-light ">
-                          <FlowName :id="item" left />
+                          <FlowName :id="item[0]" left :icon="item[1]" />
                         </v-list-item-subtitle>
                       </v-list-item-content>
                     </v-list-item>

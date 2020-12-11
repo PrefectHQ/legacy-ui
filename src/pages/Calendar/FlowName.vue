@@ -7,6 +7,11 @@ export default {
     },
     left: {
       type: Boolean
+    },
+    icon: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -16,7 +21,8 @@ export default {
   },
   computed: {
     flowDetails() {
-      return `${this.flow.name} (Version ${this.flow.version})`
+      return `${this.flow.name} `
+      // (Version ${this.flow.version})`
     },
     textAlign() {
       if (this.left) return null
@@ -40,15 +46,23 @@ export default {
 </script>
 
 <template>
-  <div
+  <span
     v-if="loadingKey < 1"
     class="caption max-width grey-back"
     :class="textAlign"
   >
-    <!-- <router-link :to="{ name: 'flow', params: { id: flow.id } }"> -->
-    <truncate v-if="loadingKey < 1" :content="flowDetails"> </truncate>
-    <!-- </router-link> -->
-  </div>
+    <truncate :content="flowDetails">
+      <v-icon v-if="icon === 'active'" color="codePink" small
+        >pi-flow-run</v-icon
+      >
+      <v-icon v-if="icon === 'selected'" color="green" small
+        >pi-flow-run</v-icon
+      >
+      <!-- <router-link :to="{ name: 'flow', params: { id: flow.id } }"> -->
+      {{ flowDetails }}
+      <!-- </router-link> -->
+    </truncate>
+  </span>
 </template>
 
 <style lang="scss" scoped>
