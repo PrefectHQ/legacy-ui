@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Add link handling to artifacts page - [#498](https://github.com/PrefectHQ/ui/pull/498)
 
 ## 2020-12-07
 
