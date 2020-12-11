@@ -29,11 +29,11 @@ export default {
       loadingKey: 0,
       refetching: false,
       type: 'day',
+      reorder: true,
       typeToLabel: {
         day: 'Day',
         '4day': '4 Days'
-      },
-      Ids: null
+      }
     }
   },
   computed: {
@@ -101,6 +101,21 @@ export default {
       const allIds =
         flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
       return [...allIds]
+    },
+    orderIds() {
+      const ordered = [...this.allIds]
+      ordered.sort((a, b) =>
+        a[1] === 'selected' && this.reorder === true
+          ? -1
+          : b[1] === 'selected' && this.reorder === true
+          ? 1
+          : a[1] === 'active'
+          ? -1
+          : b[1] === 'active'
+          ? -1
+          : 0
+      )
+      return ordered
     }
   },
   watch: {
@@ -123,32 +138,16 @@ export default {
       this.refetching = false
     },
     date() {
-      this.Ids = null
-      this.orderIds()
+      this.reorder = true
     }
   },
   methods: {
     setToday() {
       this.date = this.formatCalendarDate(new Date())
     },
-    orderIds() {
-      const ordered = [...this.allIds]
-      ordered.sort((a, b) =>
-        a[1] === 'selected'
-          ? -1
-          : b[1] === 'selected'
-          ? 1
-          : a[1] === 'active'
-          ? -1
-          : b[1] === 'active'
-          ? -1
-          : 0
-      )
-      this.Ids = ordered
-    },
     handleSelectedFlow(flow) {
-      flow[1] = 'selected'
       this.selectFlow = flow[0]
+      this.reorder = false
     }
   },
   apollo: {
@@ -250,7 +249,7 @@ export default {
           tile
         >
           <v-expansion-panels
-            v-if="allIds && allIds.length"
+            v-if="orderIds && orderIds.length"
             class="expansion"
             flat
             :value="0"
@@ -267,7 +266,7 @@ export default {
                     mandatory
                   >
                     <v-list-item
-                      v-for="(item, inde) in Ids || allIds"
+                      v-for="(item, inde) in orderIds"
                       :key="inde"
                       :value="item"
                       dense
