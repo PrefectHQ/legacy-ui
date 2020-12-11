@@ -30,6 +30,7 @@ export default {
       refetching: false,
       type: 'day',
       reorder: true,
+      Ids: null,
       typeToLabel: {
         day: 'Day',
         '4day': '4 Days'
@@ -43,7 +44,7 @@ export default {
     ...mapGetters('api', ['backend']),
     flowId() {
       if (this.selectedFlow) return this.selectedFlow[0]
-      if (this.allIds && this.allIds[0]) return this.allIds[0][0]
+      // if (this.allIds && this.allIds[0]) return this.allIds[0][0]
       return ''
     },
     allRuns() {
@@ -84,38 +85,6 @@ export default {
     },
     calTitle() {
       return this.getMonth(this.date)
-    },
-    allIds() {
-      const flowIds = this.allRuns?.map(flowRun => {
-        return flowRun.flow_id === this.selectFlow
-          ? [flowRun.flow_id, 'selected']
-          : [flowRun.flow_id, 'active']
-      })
-      let flowGroupIds = []
-      this.allFlows?.forEach(flowGroup => {
-        if (flowGroup.flows[0]?.id)
-          flowGroup.flows[0].id === this.selectFlow
-            ? flowGroupIds.push([flowGroup.flows[0].id, 'selected'])
-            : flowGroupIds.push([flowGroup.flows[0].id, 'inactive'])
-      })
-      const allIds =
-        flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
-      return [...allIds]
-    },
-    orderIds() {
-      const ordered = [...this.allIds]
-      ordered.sort((a, b) =>
-        a[1] === 'selected' && this.reorder === true
-          ? -1
-          : b[1] === 'selected' && this.reorder === true
-          ? 1
-          : a[1] === 'active'
-          ? -1
-          : b[1] === 'active'
-          ? -1
-          : 0
-      )
-      return ordered
     }
   },
   watch: {
@@ -139,7 +108,11 @@ export default {
     },
     date() {
       this.reorder = true
+      this.orderIds()
     }
+  },
+  mounted() {
+    this.orderIds()
   },
   methods: {
     setToday() {
@@ -148,6 +121,41 @@ export default {
     handleSelectedFlow(flow) {
       this.selectFlow = flow[0]
       this.reorder = false
+    },
+    allIds() {
+      const flowIds = this.allRuns?.map(flowRun => {
+        return flowRun.flow_id === this.selectFlow
+          ? [flowRun.flow_id, 'selected']
+          : [flowRun.flow_id, 'active']
+      })
+      let flowGroupIds = []
+      this.allFlows?.forEach(flowGroup => {
+        if (flowGroup.flows[0]?.id)
+          flowGroup.flows[0].id === this.selectFlow
+            ? flowGroupIds.push([flowGroup.flows[0].id, 'selected'])
+            : flowGroupIds.push([flowGroup.flows[0].id, 'inactive'])
+      })
+      const allIds =
+        flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
+      this.Ids = [...allIds]
+      return this.Ids
+    },
+    orderIds() {
+      const runs = this.allIds()?.length ? [...this.allIds()] : []
+      const ordered = runs.sort((a, b) =>
+        a[1] === 'selected' && this.reorder === true
+          ? -1
+          : b[1] === 'selected' && this.reorder === true
+          ? 1
+          : a[1] === 'active'
+          ? -1
+          : b[1] === 'active'
+          ? -1
+          : 0
+      )
+      console.log(ordered)
+      this.Ids = ordered
+      this.selectedFlow = ordered[0][0]
     }
   },
   apollo: {
@@ -249,7 +257,7 @@ export default {
           tile
         >
           <v-expansion-panels
-            v-if="orderIds && orderIds.length"
+            v-if="Ids && Ids.length"
             class="expansion"
             flat
             :value="0"
@@ -266,7 +274,7 @@ export default {
                     mandatory
                   >
                     <v-list-item
-                      v-for="(item, inde) in orderIds"
+                      v-for="(item, inde) in Ids"
                       :key="inde"
                       :value="item"
                       dense
