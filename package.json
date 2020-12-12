@@ -16,7 +16,7 @@
     "test:coverage": "vue-cli-service test:unit --coverage"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.13.2",
+    "@auth0/auth0-spa-js": "^1.13.5",
     "apollo-link-batch-http": "^1.2.14",
     "codemirror": "^5.58.2",
     "codemirror-graphql": "^0.12.3",
