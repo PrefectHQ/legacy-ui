@@ -52,21 +52,14 @@ export default {
     :class="textAlign"
   >
     <truncate :content="flowDetails">
-      <v-icon v-if="icon === 'active'" color="codePink" small
-        >pi-flow-run</v-icon
-      >
-      <v-icon v-if="icon === 'selected'" color="green" small
-        >pi-flow-run</v-icon
-      >
-      <!-- <router-link :to="{ name: 'flow', params: { id: flow.id } }"> -->
       {{ flowDetails }}
-      <!-- </router-link> -->
+      <v-icon v-if="icon === 'active'" x-small> fas fa-asterisk</v-icon>
     </truncate>
   </span>
 </template>
 
 <style lang="scss" scoped>
 div >>> div {
-  background-color: #f9f9f9 !important;
+  background-color: #f9f9f9;
 }
 </style>

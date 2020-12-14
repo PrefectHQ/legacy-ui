@@ -6,14 +6,11 @@ query CalendarOngoingFlowRuns($startTime:timestamptz, $endTime: timestamptz) {
     {end_time: {_gte: $endTime}}
       ]
     }
+    distinct_on: flow_id
+    limit: 1
   ) 
   {
     id
     flow_id
-    name
-    end_time
-    start_time
-    scheduled_start_time
-    state
   }
 }

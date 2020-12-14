@@ -1,0 +1,20 @@
+query CalendarDayRunningFlowRuns($flowIds: [uuid!], $startTime:timestamptz) {
+  flow_run (
+    where: { 
+      _and: [
+    {flow_id: { _in: $flowIds}},
+    {state: { _eq: "Running"}},
+    {start_time: {_lt: $startTime}}
+      ]
+    }
+  ) 
+  {
+    id
+    flow_id
+    name
+    end_time
+    start_time
+    scheduled_start_time
+    state
+  }
+}

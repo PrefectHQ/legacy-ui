@@ -1,36 +1,24 @@
 <script>
 import CalendarDay from '@/pages/Calendar/Calendar-Day'
+import CalendarFlows from '@/pages/Calendar/Calendar-FlowFilter'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import FlowName from '@/pages/Calendar/FlowName'
 
 export default {
   components: {
     CalendarDay,
-    FlowName
+    CalendarFlows
   },
-  filters: {},
   mixins: [formatTime],
-  props: {
-    projectId: {
-      required: false,
-      type: String,
-      default: () => null
-    }
-  },
   data() {
     return {
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
       skip: false,
-      selectedFlow: null,
-      selectFlow: null,
-      filters: [{ name: 'Flows' }],
       loadingKey: 0,
       refetching: false,
       type: 'day',
-      reorder: true,
-      Ids: null,
+      flowId: null,
       typeToLabel: {
         day: 'Day',
         '4day': '4 Days'
@@ -42,47 +30,6 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     ...mapGetters('api', ['backend']),
-    flowId() {
-      if (this.selectedFlow) return this.selectedFlow[0]
-      // if (this.allIds && this.allIds[0]) return this.allIds[0][0]
-      return ''
-    },
-    allRuns() {
-      if (this.flowRuns || this.scheduledFlowRuns || this.runningFlowRuns) {
-        return new Date(this.date) < new Date()
-          ? [
-              ...(this.flowRuns ? this.flowRuns : []),
-              ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : []),
-              ...(this.runningFlowRuns ? this.runningFlowRuns : []),
-              ...(this.ongoingFlowRuns ? this.ongoingFlowRuns : [])
-            ]
-          : [
-              ...(this.flowRuns ? this.flowRuns : []),
-              ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : [])
-            ]
-      }
-      return []
-    },
-    start() {
-      let days = 1
-      const start =
-        this.tzOffset(this.date) < 0
-          ? this.subtractDay(this.date, days)
-          : this.date
-      return start
-    },
-    end() {
-      let days = 1
-      switch (this.type) {
-        case '4day':
-          days = this.tzOffset(this.date) > 0 ? 5 : 4
-          break
-        case 'day':
-          days = this.tzOffset(this.date) > 0 ? 2 : 1
-          break
-      }
-      return this.addDay(this.date, days)
-    },
     calTitle() {
       return this.getMonth(this.date)
     }
@@ -105,14 +52,7 @@ export default {
       await this.$apollo.queries.flowRuns.refetch()
       await this.$apollo.queries.scheduledFlowRuns.refetch()
       this.refetching = false
-    },
-    date() {
-      this.reorder = true
-      this.orderIds()
     }
-  },
-  mounted() {
-    this.orderIds()
   },
   methods: {
     setToday() {
@@ -121,116 +61,9 @@ export default {
     handleSelectedFlow(flow) {
       this.selectFlow = flow[0]
       this.reorder = false
-    },
-    allIds() {
-      const flowIds = this.allRuns?.map(flowRun => {
-        return flowRun.flow_id === this.selectFlow
-          ? [flowRun.flow_id, 'selected']
-          : [flowRun.flow_id, 'active']
-      })
-      let flowGroupIds = []
-      this.allFlows?.forEach(flowGroup => {
-        if (flowGroup.flows[0]?.id)
-          flowGroup.flows[0].id === this.selectFlow
-            ? flowGroupIds.push([flowGroup.flows[0].id, 'selected'])
-            : flowGroupIds.push([flowGroup.flows[0].id, 'inactive'])
-      })
-      const allIds =
-        flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
-      this.Ids = [...allIds]
-      return this.Ids
-    },
-    orderIds() {
-      const runs = this.allIds()?.length ? [...this.allIds()] : []
-      const ordered = runs.sort((a, b) =>
-        a[1] === 'selected' && this.reorder === true
-          ? -1
-          : b[1] === 'selected' && this.reorder === true
-          ? 1
-          : a[1] === 'active'
-          ? -1
-          : b[1] === 'active'
-          ? -1
-          : 0
-      )
-      console.log(ordered)
-      this.Ids = ordered
-      this.selectedFlow = ordered[0][0]
     }
   },
-  apollo: {
-    flowRuns: {
-      query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
-      variables() {
-        return {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.start,
-          endTime: this.end
-        }
-      },
-      skip() {
-        return this.skip
-      },
-      loadingKey: 'loadingKey',
-      update: data => data.flow_run
-    },
-    scheduledFlowRuns: {
-      query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
-      variables() {
-        return {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.start,
-          endTime: this.end
-        }
-      },
-      skip() {
-        return this.skip
-      },
-      loadingKey: 'loadingKey',
-      update: data => data.flow_run || []
-    },
-    runningFlowRuns: {
-      query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
-      variables() {
-        return {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.start,
-          endTime: this.end
-        }
-      },
-      skip() {
-        return this.skip
-      },
-      loadingKey: 'loadingKey',
-      update: data => data.flow_run || []
-    },
-    ongoingFlowRuns: {
-      query: require('@/graphql/Calendar/calendar-ongoing-flow-runs.gql'),
-      variables() {
-        return {
-          project_id: this.projectId == '' ? null : this.projectId,
-          startTime: this.start,
-          endTime: this.date
-        }
-      },
-      skip() {
-        return this.skip
-      },
-      loadingKey: 'loadingKey',
-      update: data => data.flow_run || []
-    },
-    allFlows: {
-      query: require('@/graphql/Calendar/calendar-flow-groups.gql'),
-      variables() {
-        return {}
-      },
-      skip() {
-        return this.skip
-      },
-      loadingKey: 'loadingKey',
-      update: data => data.flow_group
-    }
-  }
+  apollo: {}
 }
 </script>
 
@@ -246,58 +79,7 @@ export default {
           width="99%"
           height="200px"
         ></v-date-picker>
-
-        <v-skeleton-loader
-          type="list-item, list-item, list-item, list-item"
-          min-height="329"
-          height="100%"
-          :loading="loadingKey > 0 || refetching"
-          transition-group="quick-fade"
-          class="my-2 expansion"
-          tile
-        >
-          <v-expansion-panels
-            v-if="Ids && Ids.length"
-            class="expansion"
-            flat
-            :value="0"
-          >
-            <v-expansion-panel v-for="(filter, index) in filters" :key="index">
-              <v-expansion-panel-header class=" py-0">
-                {{ filter.name }}
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-list height="70vh">
-                  <v-list-item-group
-                    v-model="selectedFlow"
-                    color="primary"
-                    mandatory
-                  >
-                    <v-list-item
-                      v-for="(item, inde) in Ids"
-                      :key="inde"
-                      :value="item"
-                      dense
-                    >
-                      <v-list-item-content
-                        class=" pa-0"
-                        @click="handleSelectedFlow(item)"
-                      >
-                        <v-list-item-subtitle class="font-weight-light ">
-                          <FlowName :id="item[0]" left :icon="item[1]" />
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-          <div v-else class="pa-4 subtitle-1">
-            <v-icon color="grey" class="pr-2">warning</v-icon> No flow run
-            activity on this date!
-          </div>
-        </v-skeleton-loader>
+        <CalendarFlows :day="date" />
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <v-toolbar flat color="appBackground" class="pt-0 tbar">
@@ -374,22 +156,6 @@ export default {
 
   .theme--light {
     background: #f9f9f9;
-  }
-}
-
-.expansion {
-  overflow: auto;
-
-  .theme--light.v-expansion-panels .v-expansion-panel {
-    background-color: #f9f9f9 !important;
-  }
-
-  .theme--light {
-    background-color: #f9f9f9 !important;
-  }
-
-  .v-expansion-panel--active .v-expansion-panel-header {
-    min-height: 20px;
   }
 }
 </style>
