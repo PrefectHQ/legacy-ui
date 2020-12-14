@@ -356,29 +356,19 @@ export default {
         no-data-text="No Cloud Hooks found."
         ><!-- HEADERS -->
         <template #header.name="{ header }">
-          <span class="subtitle-2 text-center">{{
-            header.text.toUpperCase()
-          }}</span>
+          <span class="subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #header.active="{ header }">
-          <span class="subtitle-2 text-center">{{
-            header.text.toUpperCase()
-          }}</span>
+          <span class="subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #header.version_group_id="{ header }">
-          <span class="subtitle-2 text-center">{{
-            header.text.toUpperCase()
-          }}</span>
+          <span class="subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #header.type="{ header }">
-          <span class="subtitle-2 text-center">{{
-            header.text.toUpperCase()
-          }}</span>
+          <span class="subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #header.states="{ header }">
-          <span class="subtitle-2 text-center">{{
-            header.text.toUpperCase()
-          }}</span>
+          <span class="subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #item.version_group_id="{ item }">
           <ApolloQuery
