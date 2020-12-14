@@ -237,11 +237,3 @@ export default {
     </v-tooltip>
   </div>
 </template>
-
-<style lang="scss">
-.vertical-divider {
-  border-left: 0.5px solid rgba(0, 0, 0, 0.26);
-  border-right: 0.5px solid rgba(0, 0, 0, 0.26);
-  height: 75%;
-}
-</style>
