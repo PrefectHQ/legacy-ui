@@ -424,7 +424,7 @@ export default {
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
 
           <!-- ACTIONS -->
