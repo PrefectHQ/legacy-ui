@@ -398,13 +398,13 @@ export default {
           no-data-text="This team has not set any task concurrency limits yet."
         >
           <template #header.tag="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.usage="{ header }">
             <v-tooltip bottom open-delay="500">
               <template #activator="{ on }">
                 <div class="subtitle-2" v-on="on">
-                  {{ header.text.toUpperCase() }}
+                  {{ header.text }}
                   <v-icon
                     x-small
                     class="material-icons-outlined"
@@ -420,7 +420,7 @@ export default {
             <v-tooltip bottom open-delay="500">
               <template #activator="{ on }">
                 <div class="subtitle-2" v-on="on">
-                  {{ header.text.toUpperCase() }}
+                  {{ header.text }}
                   <v-icon
                     x-small
                     class="material-icons-outlined"
