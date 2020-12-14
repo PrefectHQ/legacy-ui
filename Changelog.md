@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2020-12-14
+
+### Features and Improvements
+
 - Add task run names to global search - [#485](https://github.com/PrefectHQ/ui/pull/485)
 
 ### Bugfixes
