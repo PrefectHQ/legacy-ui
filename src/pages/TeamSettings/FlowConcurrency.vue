@@ -500,7 +500,7 @@ export default {
           data-cy="label-name"
           validate-on-blur
           :rules="[rules.required]"
-          label="label"
+          label="Label"
           autofocus
         ></v-text-field>
         <v-text-field
