@@ -118,10 +118,10 @@ export default {
       </v-tooltip>
       <div class="log-level d-flex align-center justify-start">
         <v-icon :color="logLevelColor(log.level)" x-small>lens</v-icon>
-        <span class="truncate ml-1 text-small-caps">{{ log.level }}</span>
+        <span class="text-truncate ml-1 text-small-caps">{{ log.level }}</span>
       </div>
       <div class="log-name caption font-weight-light">
-        <span class="truncate">{{ source }}</span>
+        <span class="text-truncate">{{ source }}</span>
       </div>
     </div>
 

@@ -149,14 +149,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.position-relative {
-  position: relative;
-}
-
-.position-absolute {
-  position: absolute;
-}
-
 .copy-button {
   bottom: 5px;
   right: 5px;

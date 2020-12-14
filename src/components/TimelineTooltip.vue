@@ -14,14 +14,14 @@ export default {
 
 <template functional>
   <div>
-    <div v-if="props.tooltip.data.flow" class="title truncate">
+    <div v-if="props.tooltip.data.flow" class="title text-truncate">
       {{ props.tooltip.data.flow.name }}
     </div>
     <div v-else-if="props.loading">
       ...
     </div>
     <div
-      class="truncate"
+      class="text-truncate"
       :class="props.tooltip.data.flow || props.loading ? 'caption' : 'title'"
     >
       {{ props.tooltip.data.name }}

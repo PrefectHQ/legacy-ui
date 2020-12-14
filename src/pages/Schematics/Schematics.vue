@@ -106,10 +106,6 @@ svg {
   font-size: 0.6rem !important;
 }
 
-.position-relative {
-  position: relative;
-}
-
 .h-100 {
   height: calc(100vh - 64px);
 }

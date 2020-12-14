@@ -180,7 +180,7 @@ export default {
             <v-tooltip top>
               <template #activator="{ on }">
                 <router-link
-                  class="link truncate"
+                  class="link text-truncate"
                   :data-cy="'task-run-table-link|' + item.task.name"
                   :to="{ name: 'task-run', params: { id: item.id } }"
                 >
