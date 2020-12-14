@@ -320,9 +320,7 @@ export default {
         icon="lock"
         max-width="600"
       >
-        <p>
-          Your license does not include task concurrency limits.
-        </p>
+        Your license does not include task concurrency limits.
 
         <p v-if="isTenantAdmin" class="mt-4 mb-0">
           If you would like to upgrade, please contact
