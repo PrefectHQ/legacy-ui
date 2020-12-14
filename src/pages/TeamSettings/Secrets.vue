@@ -358,7 +358,7 @@ export default {
         icon="lock"
         max-width="380"
       >
-        Read-only users cannot create secrets.
+        Read-only users cannot manage secrets.
       </v-alert>
     </template>
 

@@ -270,7 +270,7 @@ export default {
         icon="lock"
         max-width="380"
       >
-        Read-only users cannot create API tokens.
+        Read-only users cannot manage API tokens.
       </v-alert>
     </template>
 
