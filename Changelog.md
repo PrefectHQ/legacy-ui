@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Assorted visual bugs - [#507](https://github.com/PrefectHQ/ui/pull/507)
 
 ## 2020-12-14
 
