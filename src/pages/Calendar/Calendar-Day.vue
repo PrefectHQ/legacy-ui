@@ -139,39 +139,34 @@ export default {
               : allRuns.length
             : 100
       const updatedRuns = uniqueRuns.map(flowRun => {
+        let timed = true
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
           : this.formatCalendarTime(flowRun.start_time)
         if (flowRun.start_time && !flowRun.end_time) {
           flowRun.end = this.formatCalendarTime(new Date())
           if (flowRun.start_time < this.date) {
-            flowRun.timed = false
-          } else {
-            flowRun.timed = true
+            timed = false
           }
         }
         if (flowRun.end_time) {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
           if (diff < 60000) {
-            const addedTime = this.addTime(flowRun.start_time, 3, 'm')
+            const addedTime = this.addTime(flowRun.start_time, 2, 'm')
             flowRun.end = addedTime
-            flowRun.timed = true
           } else {
             flowRun.end = this.formatCalendarTime(flowRun.end_time)
-            flowRun.timed = true
           }
-        }
-        if (!flowRun.start_time) {
-          flowRun.timed = true
         }
         if (
           flowRun.start_time < this.date &&
           flowRun.end_time?.split('T')[0] > this.date
         ) {
           flowRun.end = this.formatCalendarTime(new Date())
-          flowRun.timed = false
+          timed = false
         }
         flowRun.category = flowRun.flow_id
+        flowRun.timed = timed
         return flowRun
       })
       this.gettingRuns = false
@@ -184,8 +179,7 @@ export default {
       } else if (!this.closeBanner) {
         this.scheduleBanner = new Date(this.date) > new Date()
       }
-      console.log(allRuns, updatedRuns)
-      return allRuns
+      return updatedRuns
     },
     eventColor(event) {
       return event.state ? event.state : 'primary'
@@ -365,13 +359,8 @@ export default {
   }
 }
 
+//Make the popover menu visible
 .v-calendar .v-event-timed {
   overflow: visible;
-}
-
-.menu-tweaks {
-  .v-calendar .v-event-timed {
-    overflow: visible;
-  }
 }
 </style>
