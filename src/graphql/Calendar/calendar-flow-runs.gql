@@ -6,8 +6,6 @@ query CalendarFlowRuns($startTime: timestamptz, $endTime: timestamptz) {
     {start_time: { _lt: $endTime}}
       ]
     }
-    distinct_on: flow_id
-    limit: 1
   ) 
   {
     id

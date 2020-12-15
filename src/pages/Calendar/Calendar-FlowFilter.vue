@@ -22,7 +22,8 @@ export default {
       selectedFlow: null,
       loadingKey: 0,
       refetching: false,
-      Ids: null
+      Ids: null,
+      flowGroupIds: []
     }
   },
   computed: {
@@ -114,6 +115,10 @@ export default {
     handleSelectedFlow(flow) {
       this.selectFlow = flow
       this.$emit('update', flow[0])
+    },
+    updateFlowGroupList(flowGroupId) {
+      console.log(flowGroupId)
+      this.flowGroupIds.push(flowGroupId)
     }
   },
   apollo: {
@@ -221,7 +226,9 @@ export default {
                       v-if="item"
                       :id="item[0]"
                       left
+                      :fg-ids="flowGroupIds"
                       :active="item[1] === 'active'"
+                      @fg="updateFlowGroupList"
                     />
                   </v-list-item-subtitle>
                 </v-list-item-content>

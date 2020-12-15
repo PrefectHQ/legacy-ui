@@ -12,6 +12,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    fgIds: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data() {
@@ -21,15 +26,24 @@ export default {
   },
   computed: {
     flowDetails() {
-      return `${this.flow?.name} `
-      // (Version ${this.flow.version})`
+      return `${this.flow?.name} 
+     ${
+       this.fgIds.filter(id => id === this.flow.flow_group_id).length > 1
+         ? `(Version ${this.flow.version})`
+         : ''
+     }`
     },
     textAlign() {
       if (this.left) return null
       return 'text-center'
     },
     textColor() {
-      return this.active ? 'green--text' : null
+      return this.active ? 'primary--text' : null
+    }
+  },
+  watch: {
+    flow(val) {
+      if (val && this.active) this.$emit('fg', val.flow_group_id)
     }
   },
   apollo: {

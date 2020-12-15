@@ -183,7 +183,6 @@ export default {
       } else if (!this.closeBanner) {
         this.scheduleBanner = new Date(this.date) > new Date()
       }
-      console.log(allRuns)
       return allRuns
     },
     eventColor(event) {

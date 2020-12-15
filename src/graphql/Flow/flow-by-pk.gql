@@ -4,5 +4,6 @@ query FlowByPk ($flowId: uuid!) {
         name
         version
         schedule
+        flow_group_id
     }
 }
