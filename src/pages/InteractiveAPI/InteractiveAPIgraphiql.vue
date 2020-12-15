@@ -1,8 +1,4 @@
 <script>
-import GraphiQL from 'graphiql'
-import React from 'react'
-import ReactDOM from 'react-dom'
-
 // Load GraphiQL React based UI within a Vue Component from CDN
 // example: https://gist.github.com/metafeather/ebda15c00c737c4d95cdc11ea71af32a
 // ref: https://github.com/graphql/graphiql/tree/main/packages/graphiql#cdn-bundle
@@ -49,8 +45,10 @@ export default {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params)
       }).then(res => res.json())
+    /* eslint-disable */
     ReactDOM.render(
       React.createElement(GraphiQL, { fetcher }),
+      /* eslint-enable */
       document.getElementById('graphiql')
     )
   }
