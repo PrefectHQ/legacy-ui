@@ -262,7 +262,7 @@ export default {
         >
       </template>
     </v-snackbar>
-    <v-sheet :height="'95vH'" class="sheet-tweaks">
+    <v-sheet :height="'100vH'" class="sheet-tweaks">
       <v-calendar
         ref="calendar"
         :now="date"
@@ -286,12 +286,12 @@ export default {
         </template>
       </v-calendar>
       <v-menu
-        :value="selectedOpen"
-        offset-y
-        position-relative
+        v-model="selectedOpen"
+        class="menu-tweaks"
+        :attach="selectedElement"
+        offset-x
         max-width="50vW"
         :close-on-content-click="false"
-        :activator="selectedElement"
       >
         <FlowRunMenu
           v-if="selectedEvent"
@@ -354,6 +354,12 @@ export default {
 
   .v-calendar-daily__intervals-head {
     max-width: 45px !important;
+  }
+}
+
+.menu-tweaks {
+  .v-calendar .v-event-timed {
+    overflow: visible;
   }
 }
 </style>
