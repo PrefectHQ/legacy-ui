@@ -9,7 +9,6 @@ import ReactDOM from 'react-dom'
 const js = (id, url) =>
   new Promise((resolve, reject) => {
     if (document.getElementById(id)) {
-      console.error(`Error loading ${url} async: ${id} is not unique`)
       return
     }
     const el = document.createElement('script')
