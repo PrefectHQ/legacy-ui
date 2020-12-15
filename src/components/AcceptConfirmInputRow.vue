@@ -34,7 +34,7 @@ export default {
 <template>
   <div>
     <div v-if="!confirm" class="d-flex align-center justify-space-between">
-      <div class="truncate" v-html="label"></div>
+      <div class="text-truncate" v-html="label"></div>
       <div class="text-right">
         <v-tooltip :disabled="!tooltips" bottom
           ><template #activator="{on}"

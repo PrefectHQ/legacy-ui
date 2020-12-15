@@ -16,16 +16,16 @@
 .hljs-name,
 .hljs-regexp,
 .hljs-link,
-.hljs-name,
 .hljs-selector-id,
 .hljs-selector-class {
   color: #c94922;
 }
 
 /* Atelier-Sulphurpool Orange */
+/* stylelint-disable-next-line */
+.hljs-built_in,
 .hljs-number,
 .hljs-meta,
-.hljs-built_in,
 .hljs-builtin-name,
 .hljs-literal,
 .hljs-type,
@@ -53,10 +53,10 @@
 }
 
 .hljs {
-  display: block;
-  overflow-x: auto;
   background: #f5f7ff;
   color: #5e6687;
+  display: block;
+  overflow-x: auto;
   padding: 0.5em;
 }
 

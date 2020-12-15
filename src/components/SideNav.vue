@@ -568,7 +568,7 @@ export default {
                 >
                   <v-col cols="5" class="text-right">
                     <div class="font-weight-bold">API</div>
-                    <div class="truncate">{{ lastDeployment_Cloud }}</div>
+                    <div class="text-truncate">{{ lastDeployment_Cloud }}</div>
                   </v-col>
                   <v-col cols="2" class="px-2">
                     <v-avatar
@@ -598,7 +598,7 @@ export default {
                   </v-col>
                   <v-col cols="5" class="text-left">
                     <div class="font-weight-bold">UI</div>
-                    <div class="truncate">{{ lastDeployment_UI }}</div>
+                    <div class="text-truncate">{{ lastDeployment_UI }}</div>
                   </v-col>
                 </v-row>
               </v-list-item-title>

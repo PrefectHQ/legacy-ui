@@ -226,8 +226,12 @@ export default {
   with json-input-, for "Run Flow Page".
 */
 
+/* stylelint-disable selector-class-pattern */
+.CodeMirror {
+  height: 300px;
+}
+
 .json-input-height-auto {
-  /* stylelint-disable selector-class-pattern */
   .CodeMirror {
     height: auto;
     min-height: 108px;

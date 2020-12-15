@@ -5,11 +5,20 @@
 ### Features and Improvements
 
 - Add a flow run calendar view page - [#433](https://github.com/PrefectHQ/ui/pull/433)
-- Add task run names to global search - [#485](https://github.com/PrefectHQ/ui/pull/485)
 
 ### Bugfixes
 
 - None
+
+## 2020-12-14
+
+### Features and Improvements
+
+- Add task run names to global search - [#485](https://github.com/PrefectHQ/ui/pull/485)
+
+### Bugfixes
+
+- Add link handling to artifacts page - [#498](https://github.com/PrefectHQ/ui/pull/498)
 
 ## 2020-12-07
 
