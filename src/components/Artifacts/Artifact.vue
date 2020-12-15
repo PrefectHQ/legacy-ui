@@ -1,7 +1,7 @@
 <script>
 /* eslint-disable vue/no-v-html */
 import { artifact_parser } from '@/utils/markdownParser'
-import '@/styles/atelier-sulphurpool-light.css'
+import '@/styles/atelier-sulphurpool-light.scss'
 
 export default {
   props: {
@@ -21,7 +21,7 @@ export default {
 <template>
   <div
     class="artifact md grey--text text--darken-3 mx-4"
-    v-html="mdParser(artifact.data.markdown)"
+    v-html="mdParser(artifact.data.markdown || artifact.data.link)"
   >
   </div>
 </template>

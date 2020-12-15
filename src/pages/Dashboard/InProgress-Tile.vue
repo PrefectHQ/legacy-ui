@@ -261,7 +261,7 @@ export default {
                 <v-list-item-content>
                   <v-list-item-title class="d-flex align-center">
                     <div
-                      class="truncate d-inline-block"
+                      class="text-truncate d-inline-block"
                       style="max-width: 50%;"
                     >
                       <router-link
@@ -280,7 +280,7 @@ export default {
                     </div>
 
                     <div
-                      class="truncate d-inline-block"
+                      class="text-truncate d-inline-block"
                       style="max-width: 35%;"
                     >
                       <router-link

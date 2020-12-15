@@ -103,14 +103,6 @@ export default {
   min-height: 67vh;
 }
 
-.position-relative {
-  position: relative;
-}
-
-.position-absolute {
-  position: absolute;
-}
-
 .vertical-divider {
   border-left: 0.5px solid rgba(0, 0, 0, 0.26);
   border-right: 0.5px solid rgba(0, 0, 0, 0.26);

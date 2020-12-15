@@ -106,12 +106,4 @@ export default {
   top: 1rem;
   width: 250px;
 }
-
-.position-relative {
-  position: relative;
-}
-
-.position-absolute {
-  position: absolute;
-}
 </style>

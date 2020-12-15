@@ -267,7 +267,7 @@ export default {
             <div class="caption">
               CORE VERSION
             </div>
-            <div class="body-2 truncate">
+            <div class="body-2 text-truncate">
               {{ agent.core_version || 'Unknown' }}
             </div>
           </div>
@@ -280,7 +280,7 @@ export default {
               <v-tooltip top>
                 <template #activator="{ on }">
                   <div
-                    class="truncate"
+                    class="text-truncate"
                     :class="{
                       pointer: agent.token_name,
                       'bg-gray-transition': copiedText[agent.token_name],
@@ -329,7 +329,7 @@ export default {
           <div class="caption">
             AGENT ID
           </div>
-          <div class="body-2 truncate">
+          <div class="body-2 text-truncate">
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <span

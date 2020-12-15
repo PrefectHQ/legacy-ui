@@ -1,4 +1,6 @@
 <script>
+import '@/styles/slash.scss'
+
 export default {
   data() {
     return {
@@ -181,6 +183,10 @@ export default {
 <style lang="scss" scoped>
 .h-100 {
   min-height: 100vh !important;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden !important;
 }
 
 .bg-blue {
