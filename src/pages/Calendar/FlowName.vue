@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     flowDetails() {
-      return `${this.flow.name} `
+      return `${this.flow?.name} `
       // (Version ${this.flow.version})`
     },
     textAlign() {

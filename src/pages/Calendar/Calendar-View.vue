@@ -36,22 +36,10 @@ export default {
   },
   watch: {
     async tenant() {
-      this.refetching = true
-      this.allIds = null
-      this.allRuns = null
-      this.selectedFlow = null
-      await this.$apollo.queries.flowRuns.refetch()
-      await this.$apollo.queries.scheduledFlowRuns.refetch()
-      this.refetching = false
+      this.flowId = null
     },
     async backend() {
-      this.refetching = true
-      this.selectedFlow = null
-      this.allIds = null
-      this.allRuns = null
-      await this.$apollo.queries.flowRuns.refetch()
-      await this.$apollo.queries.scheduledFlowRuns.refetch()
-      this.refetching = false
+      this.flowId = null
     }
   },
   methods: {

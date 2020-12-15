@@ -49,7 +49,6 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     intervalCount() {
-      console.log('in int count', this.flowId)
       return (60 / this.calendarInterval) * 24
     },
     start() {

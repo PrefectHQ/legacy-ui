@@ -7,7 +7,6 @@ export default {
   components: {
     FlowName
   },
-  filters: {},
   mixins: [formatTime],
   props: {
     day: {
@@ -91,12 +90,16 @@ export default {
       this.refetching = true
       await this.$apollo.queries.flowRuns.refetch()
       await this.$apollo.queries.scheduledFlowRuns.refetch()
+      await this.$apollo.queries.ongoingFlowRuns.refetch()
+      await this.$apollo.queries.runningFlowRuns.refetch()
       this.refetching = false
     },
     async backend() {
       this.refetching = true
       await this.$apollo.queries.flowRuns.refetch()
       await this.$apollo.queries.scheduledFlowRuns.refetch()
+      await this.$apollo.queries.ongoingFlowRuns.refetch()
+      await this.$apollo.queries.runningFlowRuns.refetch()
       this.refetching = false
     },
     allIds(val) {
@@ -215,7 +218,7 @@ export default {
                   @click="handleSelectedFlow(item)"
                 >
                   <v-list-item-subtitle class="font-weight-light ">
-                    <FlowName :id="item[0]" left :icon="item[1]" />
+                    <FlowName v-if="item" :id="item[0]" left :icon="item[1]" />
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
