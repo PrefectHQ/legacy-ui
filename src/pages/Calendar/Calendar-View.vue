@@ -118,7 +118,6 @@ export default {
         </v-toolbar>
 
         <CalendarDay
-          v-if="flowId && !refetching && loadingKey < 1"
           :date="date"
           :type="type"
           :flow-id="flowId"

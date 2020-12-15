@@ -98,11 +98,15 @@ export default {
       await this.$apollo.queries.flowRuns.refetch()
       await this.$apollo.queries.scheduledFlowRuns.refetch()
       this.refetching = false
+    },
+    allIds(val) {
+      if (val[0]) this.$emit('update', this.allIds[0][0])
     }
   },
   created() {
     //creates a non-reactive property that isn't tracked by Vue - so that allIds does not reset
     this.selectFlow = null
+    this.$emit('update', this.allIds[0])
   },
   methods: {
     handleSelectedFlow(flow) {

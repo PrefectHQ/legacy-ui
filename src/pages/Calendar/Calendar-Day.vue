@@ -88,7 +88,7 @@ export default {
   methods: {
     async flowRunEventsList() {
       this.gettingRuns = true
-      console.log(this.flowId)
+      console.log('Flow Id in day', this.flowId)
       const scheduledRuns = await this.$apollo.query({
         query: require('@/graphql/Calendar/calendar-day-scheduled-flow-runs.gql'),
         variables: {
