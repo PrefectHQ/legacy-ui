@@ -73,14 +73,25 @@ export default {
       }, [])
       const flowGroupIds = this.allFlows?.reduce((accum, flowGroup) => {
         if (flowGroup.flows[0]?.id && flowGroup.flows[0]?.id !== selected) {
-          accum.push([flowGroup.flows[0].id, 'inactive'])
+          accum.push([flowGroup.flows[0].id, `${flowGroup.flows[0].name}`])
         }
         return accum
       }, [])
       const allIds =
         flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
       const runs = [...allIds]
-      const ordered = runs.sort(a => (a[1] === 'active' ? -1 : 1))
+      const ordered = runs.sort((a, b) =>
+        a[1] === 'active'
+          ? -1
+          : b[1] === 'active'
+          ? 1
+          : a[1] > b[1]
+          ? 1
+          : b[1] > a[1]
+          ? -1
+          : 0
+      )
+      console.log('ordered', ordered)
       if (this.selectFlow) ordered.unshift(this.selectFlow)
       return ordered
     }
