@@ -138,7 +138,7 @@ export default {
               ? allRuns.length / 2
               : allRuns.length
             : 100
-      uniqueRuns.map(flowRun => {
+      const updatedRuns = uniqueRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
           : this.formatCalendarTime(flowRun.start_time)
@@ -172,6 +172,7 @@ export default {
           flowRun.timed = false
         }
         flowRun.category = flowRun.flow_id
+        return flowRun
       })
       this.gettingRuns = false
       if (
@@ -183,13 +184,18 @@ export default {
       } else if (!this.closeBanner) {
         this.scheduleBanner = new Date(this.date) > new Date()
       }
+      console.log(allRuns, updatedRuns)
       return allRuns
     },
     eventColor(event) {
       return event.state ? event.state : 'primary'
     },
     striped(event) {
-      return event.state === 'Scheduled' ? 'striped' : null
+      return event.state === 'Scheduled'
+        ? 'striped'
+        : event.state === 'Submitted'
+        ? 'darker'
+        : ''
     },
     handleEventClick({ nativeEvent, event }) {
       const open = () => {
@@ -314,6 +320,10 @@ export default {
   color: #3d2c00;
 }
 
+.darker {
+  color: #3d2c00;
+}
+
 .limit-width {
   max-width: 20%;
 }
@@ -353,6 +363,10 @@ export default {
   .v-calendar-daily__intervals-head {
     max-width: 45px !important;
   }
+}
+
+.v-calendar .v-event-timed {
+  overflow: visible;
 }
 
 .menu-tweaks {
