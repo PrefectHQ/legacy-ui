@@ -137,6 +137,10 @@ export default {
     max-height: 200px;
   }
 
+  .v-date-picker-header__value button {
+    padding: 0;
+  }
+
   .v-btn:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
     background-color: none !important;
   }
