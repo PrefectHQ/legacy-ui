@@ -134,7 +134,7 @@ export default {
   }
 
   .v-date-picker-table {
-    max-height: 180px;
+    max-height: 200px;
   }
 
   .v-btn:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
