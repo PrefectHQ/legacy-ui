@@ -104,6 +104,9 @@ export default {
     },
     allIds(val) {
       if (val[0] && !this.selectFlow) this.$emit('update', this.allIds[0][0])
+    },
+    day() {
+      this.flowGroupIds = []
     }
   },
   created() {
