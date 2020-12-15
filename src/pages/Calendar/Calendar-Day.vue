@@ -195,9 +195,7 @@ export default {
       const open = () => {
         this.selectedEvent = event
         this.selectedElement = nativeEvent.target
-        setTimeout(() => {
-          this.selectedOpen = true
-        }, 10)
+        this.selectedOpen = true
       }
       if (this.selectedOpen) {
         this.selectedOpen = false
@@ -286,7 +284,7 @@ export default {
         </template>
       </v-calendar>
       <v-menu
-        v-model="selectedOpen"
+        :value="selectedOpen"
         class="menu-tweaks"
         :attach="selectedElement"
         offset-x
