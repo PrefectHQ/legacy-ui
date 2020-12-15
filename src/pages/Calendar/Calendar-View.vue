@@ -141,6 +141,10 @@ export default {
     background-color: none !important;
   }
 
+  .v-btn:before {
+    background-color: #f9f9f9;
+  }
+
   .theme--light {
     background: #f9f9f9;
   }
