@@ -8,10 +8,10 @@ export default {
     left: {
       type: Boolean
     },
-    icon: {
-      type: String,
+    active: {
+      type: Boolean,
       required: false,
-      default: null
+      default: false
     }
   },
   data() {
@@ -27,6 +27,9 @@ export default {
     textAlign() {
       if (this.left) return null
       return 'text-center'
+    },
+    textColor() {
+      return this.active ? 'green--text' : null
     }
   },
   apollo: {
@@ -48,12 +51,11 @@ export default {
 <template>
   <span
     v-if="loadingKey < 1"
-    class="caption max-width grey-back"
-    :class="textAlign"
+    class="caption max-width"
+    :class="[textAlign, textColor]"
   >
     <truncate :content="flowDetails">
       {{ flowDetails }}
-      <v-icon v-if="icon === 'active'" x-small> fas fa-asterisk</v-icon>
     </truncate>
   </span>
 </template>

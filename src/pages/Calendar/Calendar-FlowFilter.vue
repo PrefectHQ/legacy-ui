@@ -33,7 +33,7 @@ export default {
     start() {
       let days = 1
       const start =
-        this.tzOffset(this.date) < 0
+        this.tzOffset(this.day) < 0
           ? this.subtractDay(this.day, days)
           : this.day
       return start
@@ -48,7 +48,7 @@ export default {
           days = this.tzOffset(this.day) > 0 ? 2 : 1
           break
       }
-      return this.addDay(this.date, days)
+      return this.addDay(this.day, days)
     },
     allIds() {
       const allRuns =
@@ -70,7 +70,6 @@ export default {
         }
         return accum
       }, [])
-
       const flowGroupIds = this.allFlows?.reduce((accum, flowGroup) => {
         if (flowGroup.flows[0]?.id && flowGroup.flows[0]?.id !== selected) {
           accum.push([flowGroup.flows[0].id, 'inactive'])
@@ -218,7 +217,12 @@ export default {
                   @click="handleSelectedFlow(item)"
                 >
                   <v-list-item-subtitle class="font-weight-light ">
-                    <FlowName v-if="item" :id="item[0]" left :icon="item[1]" />
+                    <FlowName
+                      v-if="item"
+                      :id="item[0]"
+                      left
+                      :active="item[1] === 'active'"
+                    />
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
