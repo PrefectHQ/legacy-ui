@@ -63,13 +63,13 @@ export default {
           no-title
           class="small-picker pl-0"
           flat
-          width="99%"
+          width="100%"
           height="200px"
         ></v-date-picker>
         <CalendarFlows :day="date" @update="handleSelectedFlow" />
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
-        <v-toolbar flat color="appBackground" class="pt-0 tbar">
+        <v-toolbar flat color="appBackground" class="pa-0 tbar">
           <v-btn outlined class="mx-4" color="grey darken-2" @click="setToday">
             Today
           </v-btn>
@@ -141,6 +141,10 @@ export default {
 
   .theme--light {
     background: #f9f9f9;
+  }
+
+  .v-date-picker-table--month td {
+    height: 30px;
   }
 }
 </style>
