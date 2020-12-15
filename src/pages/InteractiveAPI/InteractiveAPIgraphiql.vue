@@ -23,13 +23,7 @@ const js = (id, url) =>
 export default {
   name: 'Playground',
   meta: {
-    title: 'GraphiQL',
-    link: {
-      'graphiql-css': {
-        rel: 'stylesheet',
-        href: 'https://unpkg.com/graphiql/graphiql.min.css'
-      }
-    }
+    title: 'GraphiQL'
   },
   async mounted() {
     // wait for latest CDN scripts
@@ -45,18 +39,22 @@ export default {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params)
       }).then(res => res.json())
-    /* eslint-disable */
+    /* eslint-disable no-undef */
     ReactDOM.render(
       React.createElement(GraphiQL, { fetcher }),
-      /* eslint-enable */
+      /* eslint-enable no-undef */
       document.getElementById('graphiql')
     )
   }
 }
 </script>
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div id="graphiql" style="height: 100vh;"></div>
+<template>
+  <div
+    id="graphiql"
+    style="height: calc(100vh - 64px);
+    padding-bottom: 0;"
+  ></div>
 </template>
 
 <style>
