@@ -126,11 +126,13 @@ export default {
 }
 
 .small-picker {
-  width: 25vw;
-
   .v-date-picker-table--date .v-btn {
     height: 25px;
     width: 25px;
+  }
+
+  .v-date-picker-years {
+    width: 250px;
   }
 
   .v-date-picker-table {
