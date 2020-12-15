@@ -1,22 +1,10 @@
 import Router from 'vue-router'
-import { getDistDirectory, renderAltair } from 'altair-static'
 
 //  Nav guards
 import authNavGuard from '@/middleware/authNavGuard'
 import flowNavGuard from '@/middleware/flowNavGuard'
 import multiguard from 'vue-router-multiguard'
 import tenantNavGuard from '@/middleware/tenantNavGuard'
-
-// eslint-disable-next-line no-unused-vars
-const renderOptions = {
-  baseURL: '/:tenant?/playground',
-  endpointURL: 'http://localhost:4200/graphql',
-  initialQuery: '{ getData { id name surname } }'
-}
-// eslint-disable-next-line no-unused-vars
-// const altairAsString = renderAltair(renderOptions)
-// eslint-disable-next-line no-unused-vars
-// const altairAssetsPath = getDistDirectory()
 
 export const routes = [
   {
@@ -35,20 +23,13 @@ export const routes = [
       ),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
-  /*{
+  {
     name: 'playground',
-    path: '/:tenant?/playground'
+    path: '/:tenant?/playground',
     component: () =>
-      const renderOptions = {
-      baseURL: '/playground',
-      endpointURL: 'http://localhost:4200/graphql',
-      initialQuery: '{ getData { id name surname } }'
-    }
-    // eslint-disable-next-line no-unused-vars
-    const altairAsString = renderAltair(renderOptions)
-    // eslint-disable-next-line no-unused-vars
-    const altairAssetsPath = getDistDirectory()
-  },*/
+      import('@/pages/InteractiveAPI/InteractiveAPIgraphiql.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
   {
     name: 'help',
     path: '/help',
