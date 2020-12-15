@@ -1,11 +1,11 @@
-query CalendarDayScheduledFlowRuns($project_id: uuid, $startTime: timestamptz, $endTime: timestamptz, $flowIds: [uuid!]) {
+query CalendarDayScheduledFlowRuns($startTime: timestamptz, $endTime: timestamptz, $flowId: uuid!) {
   flow_run (
     where: { 
       _and: [
     {scheduled_start_time: { _gt: $startTime}}, 
     {scheduled_start_time: { _lt: $endTime}},
     {start_time: {_is_null: true}},
-    {flow_id: { _in: $flowIds}}
+    {flow_id: { _eq: $flowId}}
     ]
     }
   ) 

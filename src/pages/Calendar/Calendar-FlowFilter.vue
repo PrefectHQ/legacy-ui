@@ -115,7 +115,6 @@ export default {
       query: require('@/graphql/Calendar/calendar-flow-runs.gql'),
       variables() {
         return {
-          project_id: this.projectId == '' ? null : this.projectId,
           startTime: this.start,
           endTime: this.end
         }

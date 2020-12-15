@@ -119,11 +119,9 @@ export default {
 
         <CalendarDay
           v-if="flowId && !refetching && loadingKey < 1"
-          :project-id="projectId"
           :date="date"
           :type="type"
           :flow-id="flowId"
-          :runs="allRuns"
           :calendar-interval="calendarInterval"
         />
       </v-col>

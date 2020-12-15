@@ -1,8 +1,8 @@
-query CalendarDayOngoingFlowRuns($flowIds: [uuid!], $startTime:timestamptz, $endTime: timestamptz) {
+query CalendarDayOngoingFlowRuns($flowId: uuid!, $startTime:timestamptz, $endTime: timestamptz) {
   flow_run (
     where: { 
       _and: [
-    {flow_id: { _in: $flowIds}},
+    {flow_id: { _eq: $flowId}},
     {start_time: {_lt: $startTime}}
     {end_time: {_gt: $endTime}}
       ]

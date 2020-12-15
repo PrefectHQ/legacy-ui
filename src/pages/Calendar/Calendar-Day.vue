@@ -12,11 +12,6 @@ export default {
   filters: {},
   mixins: [formatTime],
   props: {
-    projectId: {
-      required: false,
-      type: String,
-      default: () => null
-    },
     calendarInterval: {
       required: true,
       type: Number
@@ -32,10 +27,6 @@ export default {
     type: {
       required: true,
       type: String
-    },
-    runs: {
-      type: Array,
-      required: true
     }
   },
   data() {
@@ -59,31 +50,97 @@ export default {
     ...mapGetters('user', ['timezone']),
     intervalCount() {
       return (60 / this.calendarInterval) * 24
+    },
+    start() {
+      let days = 1
+      const start =
+        this.tzOffset(this.date) < 0
+          ? this.subtractDay(this.date, days)
+          : this.date
+      return start
+    },
+    end() {
+      let days = 1
+      switch (this.type) {
+        case '4day':
+          days = this.tzOffset(this.date) > 0 ? 5 : 4
+          break
+        case 'day':
+          days = this.tzOffset(this.date) > 0 ? 2 : 1
+          break
+      }
+      return this.addDay(this.date, days)
     }
   },
   watch: {
-    date() {
+    async date() {
       this.selectedEvent = null
-      this.flowRunEvents = this.flowRunEventsList()
+      this.flowRunEvents = await this.flowRunEventsList()
     },
-    flowId() {
+    async flowId() {
       this.selectedEvent = null
-      this.flowRunEvents = this.flowRunEventsList()
+      this.flowRunEvents = await this.flowRunEventsList()
     }
   },
-  created() {
-    this.flowRunEvents = this.flowRunEventsList()
-  },
-  updated() {
-    this.$refs?.calendar?.scrollToTime(this.formTime(new Date()))
-  },
+  // updated() {
+  //   this.$refs?.calendar?.scrollToTime(this.formTime(new Date()))
+  // },
   methods: {
-    flowRunEventsList() {
+    async flowRunEventsList() {
       this.gettingRuns = true
-      const allRuns = this.runs.filter(run => run.flow_id === this.flowId)
+      console.log(this.flowId)
+      const scheduledRuns = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-day-scheduled-flow-runs.gql'),
+        variables: {
+          startTime: this.start,
+          endTime: this.end,
+          flowId: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
+      const finishedRuns = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-day-flow-runs.gql'),
+        variables: {
+          startTime: this.start,
+          endTime: this.end,
+          flowId: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
+      const runningRuns = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-day-running-flow-runs.gql'),
+        variables: {
+          startTime: this.start,
+          endTime: this.end,
+          flowId: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
+      const ongoingRuns = await this.$apollo.query({
+        query: require('@/graphql/Calendar/calendar-day-ongoing-flow-runs.gql'),
+        variables: {
+          startTime: this.start,
+          endTime: this.date,
+          flowId: this.flowId
+        },
+        loadingKey: 'loadingKey'
+      })
+      const allRuns = [
+        ...(finishedRuns?.data?.flow_run ? finishedRuns.data.flow_run : []),
+        ...(scheduledRuns?.data?.flow_run ? scheduledRuns.data.flow_run : []),
+        ...(runningRuns?.data?.flow_run ? runningRuns.data.flow_run : []),
+        ...(ongoingRuns?.data?.flow_run ? ongoingRuns.data.flow_run : [])
+      ]
+      const uniqueRuns = [...new Set(allRuns)]
+      console.log('allRuns', uniqueRuns, this.start, this.end, this.date)
       if (this.type === 'day')
-        this.intervalHeight = allRuns.length > 100 ? allRuns.length : 100
-      allRuns.map(flowRun => {
+        this.intervalHeight =
+          allRuns.length > 100
+            ? allRuns.length > 1500
+              ? allRuns.length / 2
+              : allRuns.length
+            : 100
+      uniqueRuns.map(flowRun => {
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
           : this.formatCalendarTime(flowRun.start_time)
@@ -165,7 +222,7 @@ export default {
         }
       },
       skip() {
-        return this.skip
+        return this.skip || !this.flowId
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
