@@ -117,7 +117,6 @@ export default {
       this.$emit('update', flow[0])
     },
     updateFlowGroupList(flowGroupId) {
-      console.log(flowGroupId)
       this.flowGroupIds.push(flowGroupId)
     }
   },

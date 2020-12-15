@@ -220,7 +220,7 @@ export default {
         }
       },
       skip() {
-        return this.skip || !this.flowId
+        return this.skip
       },
       fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
