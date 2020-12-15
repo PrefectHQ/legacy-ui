@@ -45,14 +45,11 @@ export default {
     )
     await js('graphiql-js', 'https://unpkg.com/graphiql/graphiql.min.js')
     const fetcher = params =>
-      fetch(
-        'http://localhost:4200/graphql', //this is the wrong url, what's correct?
-        {
-          method: 'post',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(params)
-        }
-      ).then(res => res.json())
+      fetch(process.env.VUE_APP_CLOUD_URL, {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+      }).then(res => res.json())
     ReactDOM.render(
       React.createElement(GraphiQL, { fetcher }),
       document.getElementById('graphiql')
@@ -68,6 +65,7 @@ export default {
 <style>
 @import 'https://unpkg.com/graphiql/graphiql.min.css';
 /* stylelint-disable */
+/* theming from https://gist.github.com/bkeating/cfe0d5e72bd3f9f1f77e1a2ff2309972, needs lots of help */
 .CodeMirror {
   background: #282d34 !important;
 }
