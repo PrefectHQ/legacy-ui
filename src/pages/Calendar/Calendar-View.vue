@@ -59,7 +59,6 @@ export default {
       this.date = this.formatCalendarDate(new Date())
     },
     handleSelectedFlow(flow) {
-      console.log('selectFlow', flow)
       this.flowId = flow
     }
   },
@@ -118,6 +117,7 @@ export default {
         </v-toolbar>
 
         <CalendarDay
+          v-if="flowId"
           :date="date"
           :type="type"
           :flow-id="flowId"

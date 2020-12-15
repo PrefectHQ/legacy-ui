@@ -49,6 +49,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     intervalCount() {
+      console.log('in int count', this.flowId)
       return (60 / this.calendarInterval) * 24
     },
     start() {
@@ -82,13 +83,12 @@ export default {
       this.flowRunEvents = await this.flowRunEventsList()
     }
   },
-  // updated() {
-  //   this.$refs?.calendar?.scrollToTime(this.formTime(new Date()))
-  // },
+  async created() {
+    this.flowRunEvents = await this.flowRunEventsList()
+  },
   methods: {
     async flowRunEventsList() {
       this.gettingRuns = true
-      console.log('Flow Id in day', this.flowId)
       const scheduledRuns = await this.$apollo.query({
         query: require('@/graphql/Calendar/calendar-day-scheduled-flow-runs.gql'),
         variables: {
@@ -132,7 +132,6 @@ export default {
         ...(ongoingRuns?.data?.flow_run ? ongoingRuns.data.flow_run : [])
       ]
       const uniqueRuns = [...new Set(allRuns)]
-      console.log('allRuns', uniqueRuns, this.start, this.end, this.date)
       if (this.type === 'day')
         this.intervalHeight =
           allRuns.length > 100

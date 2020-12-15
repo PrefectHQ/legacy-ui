@@ -100,7 +100,7 @@ export default {
       this.refetching = false
     },
     allIds(val) {
-      if (val[0]) this.$emit('update', this.allIds[0][0])
+      if (val[0] && !this.selectFlow) this.$emit('update', this.allIds[0][0])
     }
   },
   created() {
