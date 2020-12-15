@@ -288,6 +288,7 @@ export default {
       <v-menu
         :value="selectedOpen"
         offset-y
+        position-relative
         max-width="50vW"
         :close-on-content-click="false"
         :activator="selectedElement"

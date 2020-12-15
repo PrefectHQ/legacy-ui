@@ -91,7 +91,6 @@ export default {
           ? -1
           : 0
       )
-      console.log('ordered', ordered)
       if (this.selectFlow) ordered.unshift(this.selectFlow)
       return ordered
     }
