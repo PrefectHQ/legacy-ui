@@ -59,8 +59,8 @@ export default {
       this.date = this.formatCalendarDate(new Date())
     },
     handleSelectedFlow(flow) {
-      this.selectFlow = flow[0]
-      this.reorder = false
+      console.log('selectFlow', flow)
+      this.flowId = flow
     }
   },
   apollo: {}
@@ -79,7 +79,7 @@ export default {
           width="99%"
           height="200px"
         ></v-date-picker>
-        <CalendarFlows :day="date" />
+        <CalendarFlows :day="date" @update="handleSelectedFlow" />
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <v-toolbar flat color="appBackground" class="pt-0 tbar">

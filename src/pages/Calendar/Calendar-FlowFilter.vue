@@ -21,10 +21,8 @@ export default {
       skip: false,
       show: true,
       selectedFlow: null,
-      selectFlow: null,
       loadingKey: 0,
       refetching: false,
-      reorder: true,
       Ids: null
     }
   },
@@ -66,39 +64,27 @@ export default {
               ...(this.flowRuns ? this.flowRuns : []),
               ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : [])
             ]
-      const flowIds = allRuns?.map(flowRun => [flowRun.flow_id, 'active'])
-      let flowGroupIds = []
-      this.allFlows?.forEach(flowGroup => {
-        if (flowGroup.flows[0]?.id)
-          flowGroupIds.push([flowGroup.flows[0].id, 'inactive'])
-      })
+      const selected = this.selectFlow ? this.selectFlow[0] : null
+      const flowIds = allRuns?.reduce((accum, flowRun) => {
+        if (flowRun.flow_id !== selected) {
+          accum.push([flowRun.flow_id, 'active'])
+        }
+        return accum
+      }, [])
+
+      const flowGroupIds = this.allFlows?.reduce((accum, flowGroup) => {
+        if (flowGroup.flows[0]?.id && flowGroup.flows[0]?.id !== selected) {
+          accum.push([flowGroup.flows[0].id, 'inactive'])
+        }
+        return accum
+      }, [])
       const allIds =
         flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
       const runs = [...allIds]
       const ordered = runs.sort(a => (a[1] === 'active' ? -1 : 1))
+      if (this.selectFlow) ordered.unshift(this.selectFlow)
       return ordered
     }
-    // flowId() {
-    //   if (this.selectedFlow) return this.selectedFlow[0]
-    //   // if (this.allIds && this.allIds[0]) return this.allIds[0][0]
-    //   return ''
-    // },
-    // allRuns() {
-    //   if (this.flowRuns || this.scheduledFlowRuns || this.runningFlowRuns) {
-    //     return new Date(this.date) < new Date()
-    //       ? [
-    //           ...(this.flowRuns ? this.flowRuns : []),
-    //           ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : []),
-    //           ...(this.runningFlowRuns ? this.runningFlowRuns : []),
-    //           ...(this.ongoingFlowRuns ? this.ongoingFlowRuns : [])
-    //         ]
-    //       : [
-    //           ...(this.flowRuns ? this.flowRuns : []),
-    //           ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : [])
-    //         ]
-    //   }
-    //   return []
-    // }
   },
   watch: {
     async tenant() {
@@ -113,20 +99,15 @@ export default {
       await this.$apollo.queries.scheduledFlowRuns.refetch()
       this.refetching = false
     }
-    // date() {
-    //   this.loadingKey++
-    // }
-    // allIds() {
-    //   console.log('change back')
-    //   this.refetching = false
-    // }
   },
-  //   mounted() {
-  //     this.allIds()
-  //   },
+  created() {
+    //creates a non-reactive property that isn't tracked by Vue - so that allIds does not reset
+    this.selectFlow = null
+  },
   methods: {
     handleSelectedFlow(flow) {
-      this.selectFlow = flow[0]
+      this.selectFlow = flow
+      this.$emit('update', flow[0])
     }
   },
   apollo: {
@@ -207,7 +188,7 @@ export default {
     type="list-item, list-item, list-item, list-item"
     min-height="329"
     height="100%"
-    :loading="loadingKey > 0"
+    :loading="loadingKey > 0 || refetching"
     transition-group="quick-fade"
     class="my-2 expansion"
     tile
