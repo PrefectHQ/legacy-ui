@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 // Load GraphiQL React based UI within a Vue Component from CDN
 // example: https://gist.github.com/metafeather/ebda15c00c737c4d95cdc11ea71af32a
 // ref: https://github.com/graphql/graphiql/tree/main/packages/graphiql#cdn-bundle
@@ -21,7 +22,10 @@ const js = (id, url) =>
   })
 
 export default {
-  name: 'Playground',
+  computed: {
+    ...mapGetters('auth0', ['authorizationToken']),
+    ...mapGetters('api', ['url'])
+  },
   meta: {
     title: 'GraphiQL'
   },
@@ -34,9 +38,12 @@ export default {
     )
     await js('graphiql-js', 'https://unpkg.com/graphiql/graphiql.min.js')
     const fetcher = params =>
-      fetch(process.env.VUE_APP_CLOUD_URL, {
+      fetch(this.url, {
         method: 'post',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${this.authorizationToken}`
+        },
         body: JSON.stringify(params)
       }).then(res => res.json())
     /* eslint-disable no-undef */
