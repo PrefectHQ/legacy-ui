@@ -33,16 +33,16 @@ export default {
 </script>
 
 <template>
-  <v-card tile>
-    <v-banner
+  <v-card tile class="pointer">
+    <v-alert
       v-if="run.state === 'Scheduled' && active"
-      key="1"
-      sticky
-      single-line
-      class="text-body-2 black--text my-0 pa-2"
-      color="amber"
+      class="mx-2 mt-2 mb-0 caption"
+      border="left"
+      colored-border
+      type="warning"
       tile
-      transition="slide-y-transition"
+      icon="announcement"
+      dense
     >
       Reminder!
       <ExternalLink
@@ -51,8 +51,8 @@ export default {
         Prefect Scheduler
       </ExternalLink>
       will only schedule 10 runs in advance.
-    </v-banner>
-    <v-card-title class="text-subtitle-1 ">
+    </v-alert>
+    <v-card-title class="text-subtitle-1 pt-2">
       <router-link :to="{ name: type, params: { id: run.id } }" target="_blank">
         {{ run.name ? run.name : run.task_name }}
         {{ run.map_index > -1 ? `(${run.map_index})` : '' }}
@@ -96,34 +96,39 @@ export default {
           {{ formatTime(run.state_timestamp) }}
         </span>
       </div>
-      <div v-if="type === 'task-run'">
-        <div class="subtitle">
-          Max Retries:
-          <span class="font-weight-bold">
-            {{ run.max_retries || 0 }}
-          </span>
+
+      <div v-if="run.max_retries" class="subtitle">
+        Max Retries:
+        <span class="font-weight-bold">
+          {{ run.max_retries || 0 }}
+        </span>
+      </div>
+      <div v-if="run.retry_delay" class="subtitle">
+        Retry delay:
+        <span class="font-weight-bold">
+          {{ run.retry_delay || 0 }}
+        </span>
+      </div>
+      <v-divider class="my-2" />
+      <div v-if="run.state_message" class="text-subtitle-1">
+        <div>Message:</div>
+        <div class="font-weight-bold">
+          {{ run.state_message || 'No message' }}
         </div>
-        <div class="subtitle">
-          Retry delay:
-          <span class="font-weight-bold">
-            {{ run.retry_delay || 0 }}
-          </span>
-        </div>
-        <v-divider class="my-2" />
-        <div class="text-subtitle-1">
-          <div>Message:</div>
-          <div class="font-weight-bold">
-            {{ run.state_message || 'No message' }}
-          </div>
-        </div>
-        <v-divider class="my-2" />
-        <div class="text-subtitle-1">
-          <div>Result:</div>
-          <div class="font-weight-bold">
-            {{ run.state_result || 'No result' }}
-          </div>
+      </div>
+      <v-divider class="my-2" />
+      <div v-if="run.state_result" class="text-subtitle-1">
+        <div>Result:</div>
+        <div class="font-weight-bold">
+          {{ run.state_result || 'No result' }}
         </div>
       </div>
     </v-card-text>
   </v-card>
 </template>
+
+<style scoped>
+.pointer {
+  cursor: default;
+}
+</style>

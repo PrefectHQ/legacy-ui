@@ -1,5 +1,5 @@
 <script>
-import FlowRunMenu from '@/components/RunMenu'
+import FlowRunMenu from '@/pages/Calendar/RunMenu'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import ExternalLink from '@/components/ExternalLink'
