@@ -64,14 +64,130 @@ export default {
   ></div>
 </template>
 
-<style>
+<style lang="scss">
 @import 'https://unpkg.com/graphiql/graphiql.min.css';
-/* stylelint-disable */
-/* theming from https://gist.github.com/bkeating/cfe0d5e72bd3f9f1f77e1a2ff2309972, needs lots of help */
-.CodeMirror {
-  background: #282d34 !important;
+$editor-black: #1d252b;
+$toolbar-black: #21262b;
+$divider-gray: #4e5965;
+$text-gray: #edf0f3;
+/* stylelint-disable selector-class-pattern */
+/* since we're not writing these class names, we can't abide by stylelint's naming rules */
+.graphiql-container {
+  .CodeMirror {
+    background: $editor-black !important;
+  }
+
+  button {
+    color: $text-gray;
+  }
+
+  .historyPaneWrap {
+    z-index: 4 !important; // keeps history panel under sidenav
+  }
+
+  .doc-explorer-title-bar,
+  .history-title-bar {
+    background: $toolbar-black;
+    color: $text-gray;
+    height: 32px;
+    padding: 0 8px;
+
+    .history-title,
+    .doc-explorer-title {
+      margin-top: 10px;
+      overflow: hidden;
+      padding: 0 0 0 10px;
+    }
+  }
+
+  .doc-category-title {
+    border-bottom: 1px solid $divider-gray;
+  }
+
+  .history-contents,
+  .doc-explorer-contents {
+    background: $toolbar-black;
+    border-top: 2px solid $divider-gray;
+    color: $text-gray;
+    top: 32px;
+
+    li {
+      border-bottom: 1px solid $divider-gray;
+    }
+  }
+
+  .topBar {
+    background: $toolbar-black;
+    border-bottom: 2px solid $divider-gray;
+
+    .title {
+      color: $text-gray;
+    }
+
+    .execute-button {
+      background: $divider-gray;
+      border: 0;
+      box-shadow: none;
+      height: 30px;
+      width: 30px;
+      /* stylelint-disable-next-line selector-max-compound-selectors */
+      * {
+        fill: $text-gray;
+      }
+    }
+
+    .toolbar-button {
+      background: $divider-gray;
+      box-shadow: none;
+      color: $text-gray;
+      padding: 2px 8px;
+    }
+  }
+
+  .docExplorerShow {
+    background: $divider-gray;
+    border: 0;
+    box-shadow: none;
+    color: $text-gray;
+    padding: 2px 8px;
+
+    &::before {
+      border-left: 2px solid $text-gray;
+      border-top: 2px solid $text-gray;
+    }
+  }
+
+  .CodeMirror-gutters,
+  .result-window .CodeMirror-gutters,
+  .resultWrap,
+  .secondary-editor-title {
+    background: $divider-gray;
+    border: 0;
+    color: $text-gray;
+  }
+
+  .secondary-editor {
+    height: 28px;
+  }
+
+  .secondary-editor-title > div {
+    color: $text-gray !important;
+  }
+
+  ::-webkit-scrollbar-track, // hmm this isn't working
+  .CodeMirror-vscrollbar,
+  .CodeMirror-hscrollbar {
+    background: $toolbar-black;
+  }
+
+  ::-webkit-scrollbar-thumb,
+  .CodeMirror-vscrollbar,
+  .CodeMirror-hscrollbar {
+    background: $divider-gray;
+  }
 }
-.graphiql-container .doc-explorer-contents,
+
+/*.graphiql-container .doc-explorer-contents,
 .graphiql-container .history-contents {
   background-color: #21262b;
   border-top: 1px solid #181a1f;
@@ -278,5 +394,5 @@ li.CodeMirror-hint-active {
 .CodeMirror-hint-information .content {
   color: #a4abb7;
 }
-/* stylelint-enable */
+*/
 </style>
