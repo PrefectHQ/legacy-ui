@@ -154,10 +154,8 @@ export default {
             : this.formatCalendarTime(flowRun.end_time)
 
         flowRun.timed =
-          flowRun.start_time < this.date
-            ? false
-            : flowRun.start_time < this.date &&
-              flowRun.end_time?.split('T')[0] > this.date
+          flowRun.start_time < this.date &&
+          flowRun.end_time?.split('T')[0] > this.date
             ? false
             : true
 

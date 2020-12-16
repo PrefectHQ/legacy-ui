@@ -142,9 +142,9 @@ export const formatTime = {
 
       let formatted = timeObj.calendar(date, {
         sameDay: 'h:mma',
-        nextDay: 'D MMM ',
-        nextWeek: 'D MMM ',
-        lastDay: 'D MMM ',
+        nextDay: 'D MMM h:mma',
+        nextWeek: 'D MMM',
+        lastDay: 'D MMM h: mma',
         lastWeek: 'D MMM ',
         sameElse: 'D MMM '
       })
