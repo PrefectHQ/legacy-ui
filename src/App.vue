@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
-import NavBar from '@/components/NavBar'
+import ApplicationNavBar from '@/components/Nav/ApplicationNav'
 import SideNav from '@/components/SideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
@@ -28,8 +28,8 @@ export default {
   },
   components: {
     Alert,
+    ApplicationNavBar,
     Footer,
-    NavBar,
     SideNav
   },
   mixins: [eventsMixin],
@@ -294,7 +294,7 @@ export default {
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
       <v-slide-y-transition>
-        <NavBar
+        <ApplicationNavBar
           v-if="
             ((isCloud && isAuthenticated) || isServer) && loadedComponents > 0
           "

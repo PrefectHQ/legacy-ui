@@ -3,15 +3,16 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      active: false
+      active: false,
+      menu: false
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
     routes() {
       return [
         {
-          text: 'Home',
+          text: 'Getting Started',
           route: {
             name: 'home'
           }
@@ -45,7 +46,10 @@ export default {
   <v-app-bar app elevate-on-scroll fixed color="primary">
     <router-link
       :to="{
-        name: 'dashboard'
+        name: 'dashboard',
+        params: {
+          tenant: tenant.slug
+        }
       }"
     >
       <v-btn color="primary" text icon large>
@@ -58,7 +62,15 @@ export default {
       </v-btn>
     </router-link>
 
-    <v-divider vertical class="white vertical-divider my-auto" />
+    <div
+      class="text-subtitle-1 font-weight-medium white--text d-flex align-center justify-start px-4"
+      style="height: 100%;"
+    >
+      <div style="font-size: 1.05rem;">{{ tenant.name }}</div>
+      <v-icon color="grey lighten-3">arrow_drop_down</v-icon>
+    </div>
+
+    <v-divider vertical class="white vertical-divider my-auto mr-2" />
 
     <v-btn
       v-for="r in routes"
@@ -113,42 +125,6 @@ export default {
 
 .logo {
   width: 1rem;
-}
-
-.badge {
-  overflow: unset;
-  position: relative;
-
-  /* stylelint-disable */
-  /* Disabling this because the style linter doesn't like the small font-size */
-  &::after {
-    /* stylelint-enable */
-    $badge-size: 12.5px;
-
-    background-color: #da2072;
-    border-radius: 50%;
-    bottom: 5px;
-    content: '';
-    font-size: 12px;
-    height: $badge-size;
-    line-height: $badge-size;
-    position: absolute;
-    right: 5px;
-    text-align: center;
-    transition: 0.1s linear all;
-    width: $badge-size;
-    z-index: 9;
-  }
-
-  &.badge-left::after {
-    left: 5px;
-    right: auto;
-  }
-
-  &.badge--hidden::after {
-    content: '' !important;
-    transform: scale(0);
-  }
 }
 
 .navbar-icon {
