@@ -120,8 +120,9 @@ $text-gray: #edf0f3;
     background: $toolbar-black;
     border-bottom: 2px solid $divider-gray;
 
+    /* stylelint-disable-next-line a11y/no-display-none */
     .title {
-      color: $text-gray;
+      display: none;
     }
 
     .execute-button {
@@ -149,6 +150,21 @@ $text-gray: #edf0f3;
     border: 0;
     box-shadow: none;
     color: $text-gray;
+    padding: 2px 8px;
+
+    &::before {
+      border-left: 2px solid $text-gray;
+      border-top: 2px solid $text-gray;
+    }
+  }
+
+  .doc-explorer-back {
+    background: $divider-gray;
+    border-radius: 3px;
+    color: $text-gray;
+    height: 25px;
+    margin: 4px 0 0;
+    overflow: hidden;
     padding: 2px 8px;
 
     &::before {
