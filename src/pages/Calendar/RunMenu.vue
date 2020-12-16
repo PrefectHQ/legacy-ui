@@ -62,7 +62,7 @@ export default {
       </v-icon>
     </v-card-title>
     <v-card-subtitle v-if="type === 'flow-run'">
-      <FlowName :id="run.flow_id" left />
+      <FlowName :id="run.flow_id" left :truncate="false" />
     </v-card-subtitle>
     <v-card-text>
       <div>

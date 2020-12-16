@@ -76,14 +76,17 @@ export default {
     async date() {
       this.selectedEvent = null
       this.flowRunEvents = await this.flowRunEventsList()
+      this.scrollToElement()
     },
     async flowId() {
       this.selectedEvent = null
       this.flowRunEvents = await this.flowRunEventsList()
+      this.scrollToElement()
     }
   },
   async created() {
     this.flowRunEvents = await this.flowRunEventsList()
+    this.scrollToElement()
   },
   methods: {
     async flowRunEventsList() {
@@ -181,7 +184,6 @@ export default {
           : !this.closeBanner
           ? new Date(this.date) > new Date()
           : false
-
       return updatedRuns
     },
     eventColor(event) {
@@ -210,6 +212,18 @@ export default {
     handleScheduleBanner() {
       this.scheduleBanner = false
       this.closeBanner = true
+    },
+    timeNow(time) {
+      console.log(time)
+      return time.split(':')[0] == new Date().getHours() - 2
+        ? 'scroll-here'
+        : null
+    },
+    scrollToElement() {
+      const el = this.$el.getElementsByClassName('scroll-here')[0]
+      if (el) {
+        el.scrollIntoView()
+      }
     }
   },
   apollo: {
@@ -285,7 +299,11 @@ export default {
             {{ calEventTime(event.end_time, date) }}
           </div>
         </template>
+        <template #interval="{time}">
+          <div :class="timeNow(time)" />
+        </template>
       </v-calendar>
+
       <v-menu
         :value="selectedOpen"
         class="menu-tweaks"

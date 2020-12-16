@@ -17,6 +17,11 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    truncate: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
   data() {
@@ -68,9 +73,10 @@ export default {
     class="caption max-width"
     :class="[textAlign, textColor]"
   >
-    <truncate :content="flowDetails">
+    <truncate v-if="truncate" :content="flowDetails">
       {{ flowDetails }}
     </truncate>
+    <span v-else> {{ flowDetails }} </span>
   </span>
 </template>
 
