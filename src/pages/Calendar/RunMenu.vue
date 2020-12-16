@@ -109,14 +109,14 @@ export default {
           {{ run.retry_delay || 0 }}
         </span>
       </div>
-      <v-divider class="my-2" />
+      <v-divider v-if="run.state_message" class="my-2" />
       <div v-if="run.state_message" class="text-subtitle-1">
         <div>Message:</div>
         <div class="font-weight-bold">
           {{ run.state_message || 'No message' }}
         </div>
       </div>
-      <v-divider class="my-2" />
+      <v-divider v-if="run.state_result" class="my-2" />
       <div v-if="run.state_result" class="text-subtitle-1">
         <div>Result:</div>
         <div class="font-weight-bold">
