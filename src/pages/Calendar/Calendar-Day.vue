@@ -131,54 +131,57 @@ export default {
         ...(ongoingRuns?.data?.flow_run ? ongoingRuns.data.flow_run : [])
       ]
       const uniqueRuns = [...new Set(allRuns)]
-      if (this.type === 'day')
-        this.intervalHeight =
-          allRuns.length > 100
-            ? allRuns.length > 1500
-              ? allRuns.length / 2
-              : allRuns.length
-            : 100
+
       const updatedRuns = uniqueRuns.map(flowRun => {
-        let timed = true
+        const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
+        const addedTime = this.addTime(flowRun.start_time, 2, 'm')
+
         flowRun.start = !flowRun.start_time
           ? this.formatCalendarTime(flowRun.scheduled_start_time)
           : this.formatCalendarTime(flowRun.start_time)
-        if (flowRun.start_time && !flowRun.end_time) {
-          flowRun.end = this.formatCalendarTime(new Date())
-          if (flowRun.start_time < this.date) {
-            timed = false
-          }
-        }
-        if (flowRun.end_time) {
-          const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
-          if (diff < 60000) {
-            const addedTime = this.addTime(flowRun.start_time, 2, 'm')
-            flowRun.end = addedTime
-          } else {
-            flowRun.end = this.formatCalendarTime(flowRun.end_time)
-          }
-        }
-        if (
-          flowRun.start_time < this.date &&
-          flowRun.end_time?.split('T')[0] > this.date
-        ) {
-          flowRun.end = this.formatCalendarTime(new Date())
-          timed = false
-        }
+
+        flowRun.end =
+          flowRun.start_time && !flowRun.end_time
+            ? this.formatCalendarTime(new Date())
+            : diff < 60000
+            ? addedTime
+            : flowRun.start_time < this.date &&
+              flowRun.end_time?.split('T')[0] > this.date
+            ? this.formatCalendarTime(new Date())
+            : this.formatCalendarTime(flowRun.end_time)
+
+        flowRun.timed =
+          flowRun.start_time < this.date
+            ? false
+            : flowRun.start_time < this.date &&
+              flowRun.end_time?.split('T')[0] > this.date
+            ? false
+            : true
+
         flowRun.category = flowRun.flow_id
-        flowRun.timed = timed
         return flowRun
       })
+
+      this.intervalHeight =
+        this.type === 'day'
+          ? uniqueRuns.length < 100
+            ? 100
+            : uniqueRuns.length > 1500
+            ? uniqueRuns.length / 2
+            : uniqueRuns.length
+          : 100
+
       this.gettingRuns = false
-      if (
+
+      this.scheduleBanner =
         this.flow?.is_schedule_active &&
         this.upcoming.length > 8 &&
         !this.closeBanner
-      ) {
-        this.scheduleBanner = true
-      } else if (!this.closeBanner) {
-        this.scheduleBanner = new Date(this.date) > new Date()
-      }
+          ? true
+          : !this.closeBanner
+          ? new Date(this.date) > new Date()
+          : false
+
       return updatedRuns
     },
     eventColor(event) {
@@ -360,7 +363,13 @@ export default {
 }
 
 //Make the popover menu visible
+.v-calendar .v-event {
+  overflow: visible;
+  z-index: auto;
+}
+
 .v-calendar .v-event-timed {
   overflow: visible;
+  z-index: auto;
 }
 </style>
