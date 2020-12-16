@@ -6,6 +6,7 @@ import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
 import NavBar from '@/components/NavBar'
 import SideNav from '@/components/SideNav'
+import { authMixin } from '@/mixins/authMixin'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
 
@@ -32,7 +33,7 @@ export default {
     NavBar,
     SideNav
   },
-  mixins: [eventsMixin],
+  mixins: [authMixin, eventsMixin],
   data() {
     return {
       error: null,
@@ -81,10 +82,11 @@ export default {
     },
     loading() {
       return (
-        this.isAuthorizingUser ||
-        this.isLoggingInUser ||
-        this.connecting ||
-        this.isLoadingTenant
+        this.isAuthenticated &&
+        (this.isAuthorizingUser ||
+          this.isLoggingInUser ||
+          this.connecting ||
+          this.isLoadingTenant)
       )
     },
     isCloud() {
@@ -158,6 +160,8 @@ export default {
     window.removeEventListener('online', this.handleOnline)
     window.removeEventListener('mousewheel', this.handleScroll)
 
+    // this.oktaClient?.remove()
+
     // document.removeEventListener(
     //   'visibilitychange',
     //   this.handleVisibilityChange
@@ -184,6 +188,20 @@ export default {
         this.$router.push({ name: 'home' })
       }
     }
+
+    if (this.isCloud) {
+      await this.getSession()
+
+      if (!this.isAuthenticated) {
+        this.$router.push({
+          name: 'login'
+        })
+      } else {
+        this.$router.push({
+          name: 'dashboard'
+        })
+      }
+    }
   },
   async beforeMount() {
     document.addEventListener('keydown', this.handleKeydown)
@@ -191,6 +209,27 @@ export default {
     window.addEventListener('online', this.handleOnline)
     window.addEventListener('mousewheel', this.handleScroll)
 
+    // clientId: '0oa255485udf0Aiok5d6',
+    // domain: 'https://dev-1174844.okta.com',
+    // issuer: 'https://dev-1174844.okta.com/oauth2/aus253yqnnV3LqpiR5d6'
+    // console.log(this.isCloud)
+    // if (this.isCloud) {
+    //   this.oktaClient = new OktaSignIn({
+    //     el: '#okta-client',
+    //     baseUrl: 'https://dev-1174844.okta.com',
+    //     clientId: '0oa255485udf0Aiok5d6',
+    //     redirectUri: 'http://localhost:8080',
+    //     authParams: {
+    //       issuer: 'https://dev-1174844.okta.com/oauth2/aus253yqnnV3LqpiR5d6',
+    //       responseType: ['code'],
+    //       // scopes: this.scope,
+    //       display: 'page'
+    //     },
+    //     features: {
+    //       // router: true
+    //     }
+    //   })
+    // }
     // document.addEventListener(
     //   'visibilitychange',
     //   this.handleVisibilityChange,

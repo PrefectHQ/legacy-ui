@@ -246,6 +246,35 @@ export const routes = [
     ]
   },
   {
+    name: 'login',
+    path: '/login',
+    redirect: { name: 'sign-in' },
+    component: () =>
+      import(/* webpackChunkName: "Auth" */ '@/pages/Auth/Auth.vue'),
+    children: [
+      {
+        name: 'sign-in',
+        path: '',
+        component: () =>
+          import(/* webpackChunkName: "login" */ '@/pages/Auth/SignIn.vue')
+      },
+      {
+        name: 'sign-up',
+        path: 'sign-up',
+        component: () =>
+          import(/* webpackChunkName: "sign-up" */ '@/pages/Auth/SignUp.vue')
+      },
+      {
+        name: 'forgot-password',
+        path: 'forgot-password',
+        component: () =>
+          import(
+            /* webpackChunkName: "forgot-password" */ '@/pages/Auth/ForgotPassword.vue'
+          )
+      }
+    ]
+  },
+  {
     path: '/accept',
     redirect: 'welcome/accept'
   },

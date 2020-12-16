@@ -11,7 +11,7 @@ const authClient = new OktaAuth({
   issuer: VUE_APP_PUBLIC_ISSUER,
   redirectUri: 'http://localhost:8080',
   scopes: ['openid', 'profile', 'email'],
-  pkce: true,
+  authorizeUrl: 'http://localhost:8081',
   testing: {
     disableHttpsCheck: true
   }
@@ -256,17 +256,10 @@ const mutations = {
 }
 
 const actions = {
-  async authenticate({ dispatch, commit, getters }) {
-    dispatch, commit, getters
-
-    const isLoginRedirect = authClient.token.isLoginRedirect()
-    const { tokens } = isLoginRedirect
-      ? await authClient.token.parseFromUrl()
-      : await authClient.tokenManager.getTokens()
-
+  async authenticate({ dispatch, commit }, tokens) {
     if (!tokens) {
       commit('isAuthenticated', false)
-      await dispatch('login')
+      // await dispatch('login')
     } else {
       dispatch('commitTokens', tokens)
 
@@ -360,7 +353,11 @@ const actions = {
     // the redirect "fails" (succeeds but login doesn't show, despite the DOM all being present)
     // about 50% of the time without this timeout.
     setTimeout(() => {
-      authClient.token.getWithRedirect({ responseType: ['token', 'id_token'] })
+      // console.log(authClient)
+      authClient.token.getWithRedirect({
+        responseType: ['code'],
+        state: 'ui-testing'
+      })
       commit('isLoggingInUser', false)
     }, 2000)
   },
