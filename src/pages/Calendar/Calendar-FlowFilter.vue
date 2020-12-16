@@ -19,7 +19,6 @@ export default {
       filters: [{ name: 'Flows' }],
       skip: false,
       show: true,
-      selectedFlow: null,
       loadingKey: 0,
       refetching: false,
       Ids: null,
@@ -222,7 +221,7 @@ export default {
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-list height="70vh">
-            <v-list-item-group v-model="selectedFlow" color="primary" mandatory>
+            <v-list-item-group :value="selectFlow" color="primary" mandatory>
               <v-list-item
                 v-for="(item, inde) in allIds"
                 :key="inde"
