@@ -16,5 +16,6 @@ query CalendarDayOngoingFlowRuns($flowId: uuid!, $startTime:timestamptz, $endTim
     start_time
     scheduled_start_time
     state
+    state_message
   }
 }

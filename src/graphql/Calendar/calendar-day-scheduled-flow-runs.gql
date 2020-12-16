@@ -17,5 +17,6 @@ query CalendarDayScheduledFlowRuns($startTime: timestamptz, $endTime: timestampt
     start_time
     scheduled_start_time
     state
+    state_message
   }
 }

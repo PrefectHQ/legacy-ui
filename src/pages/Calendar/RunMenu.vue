@@ -110,8 +110,8 @@ export default {
         </span>
       </div>
       <v-divider v-if="run.state_message" class="my-2" />
-      <div v-if="run.state_message" class="text-subtitle-1">
-        <div>Message:</div>
+      <div v-if="run.state_message">
+        <div class="text-subtitle">Message:</div>
         <div class="font-weight-bold">
           {{ run.state_message || 'No message' }}
         </div>

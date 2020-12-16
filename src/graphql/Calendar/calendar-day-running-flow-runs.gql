@@ -16,5 +16,6 @@ query CalendarDayRunningFlowRuns($flowId: uuid!, $startTime:timestamptz) {
     start_time
     scheduled_start_time
     state
+    state_message
   }
 }
