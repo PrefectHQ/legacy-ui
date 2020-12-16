@@ -50,6 +50,7 @@ export default {
       this.width = this.width || 200
       this.height = this.height || 200
       this.radius = Math.min(this.width, this.height) / 2
+
       this.color = d3
         .scaleOrdinal()
         .range(this.colors || ['#fff', 'transparent'])
