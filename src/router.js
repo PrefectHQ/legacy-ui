@@ -256,7 +256,7 @@ export const routes = [
   // --------------------------- //
   {
     name: 'tutorial',
-    path: '/:tenant?/tutorial/:id?',
+    path: '/tutorial/:id?',
     component: () =>
       import(
         /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
