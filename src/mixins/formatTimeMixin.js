@@ -46,6 +46,10 @@ export const formatTime = {
       }`
       return date
     },
+    getHour(timestamp) {
+      let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)
+      return timeObj.format('HH')
+    },
     formatCalendarTime(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone) || moment(timestamp)

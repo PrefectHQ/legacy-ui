@@ -214,7 +214,7 @@ export default {
       this.closeBanner = true
     },
     timeNow(time) {
-      return time.split(':')[0] == new Date().getHours() - 2
+      return time.split(':')[0] == this.getHour(new Date()) - 2
         ? 'scroll-here'
         : null
     },
