@@ -1,6 +1,9 @@
 <script>
 import { mapGetters } from 'vuex'
+import UserMenu from '@/components/Nav/UserMenu'
+
 export default {
+  components: { UserMenu },
   data() {
     return {
       active: false,
@@ -108,11 +111,7 @@ export default {
       <i class="fad fa-server fa-2x nav-bar-duotone-icon" />
     </v-btn>
 
-    <v-btn class="white ml-3 mr-1" large icon>
-      <v-icon large color="grey">
-        face
-      </v-icon>
-    </v-btn>
+    <UserMenu />
   </v-app-bar>
 </template>
 
