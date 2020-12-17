@@ -23,6 +23,25 @@ export const formatTime = {
     ...mapGetters('user', ['user', 'timezone'])
   },
   methods: {
+    datePartHour(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj ? timeObj.format('hh') : moment(timestamp).format('hh')
+      }`
+    },
+    datePartMinute(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${
+        timeObj ? timeObj.format('mm') : moment(timestamp).format('mm')
+      }`
+    },
+    datePartMeridian(timestamp) {
+      if (!timestamp) return
+      let timeObj = moment(timestamp).tz(this.timezone)
+      return `${timeObj ? timeObj.format('a') : moment(timestamp).format('a')}`
+    },
     formatTimeRelative(timestamp) {
       let timeObj = moment(timestamp).tz(this.timezone)
       return timeObj ? timeObj.fromNow() : moment(timestamp).fromNow()
