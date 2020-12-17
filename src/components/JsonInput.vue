@@ -176,9 +176,9 @@ export default {
       ref="cmRef"
       data-cy="code-mirror-input"
       :value="internalValue"
-      class="ma-1 pt-2 cm-style"
+      class="pt-2 cm-style"
       :class="{
-        'pl-7': prependIcon,
+        'pl-9': prependIcon,
         'blue-border': prependIcon && focussed && !jsonError,
         'red-border': prependIcon && jsonError,
         'plain-border': prependIcon && !focussed && !jsonError,

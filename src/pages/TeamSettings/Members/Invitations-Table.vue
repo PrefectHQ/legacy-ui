@@ -187,13 +187,13 @@ export default {
     >
       <!-- HEADERS -->
       <template #header.email="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.role="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.created="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="subtitle-2">{{ header.text }}</span>
       </template>
 
       <!-- INVITATION SENT TIMESTAMP -->
