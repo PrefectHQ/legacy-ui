@@ -220,7 +220,7 @@ export default {
           {{ filter.name }}
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-list height="70vh">
+          <v-list height="60vh">
             <v-list-item-group :value="selectFlow" color="primary" mandatory>
               <v-list-item
                 v-for="(item, inde) in allIds"

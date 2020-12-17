@@ -277,7 +277,7 @@ export default {
         >
       </template>
     </v-snackbar>
-    <v-sheet :height="'100vH'" class="sheet-tweaks">
+    <v-sheet height="100vh" class="sheet-tweaks">
       <v-calendar
         ref="calendar"
         :now="date"
