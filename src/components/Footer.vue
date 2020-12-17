@@ -66,9 +66,6 @@ export default {
     },
     socialIconsRight() {
       return socialIcons.slice(Math.ceil(socialIcons.length / 2))
-    },
-    noShow() {
-      return this.$route.path.split('/')[2] === 'calendar'
     }
   }
 }
