@@ -1,10 +1,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import ConnectionMenu from '@/components/Nav/ConnectionMenu'
+import NotificationMenu from '@/components/Nav/NotificationMenu'
 import UserMenu from '@/components/Nav/UserMenu'
 
 export default {
-  components: { ConnectionMenu, UserMenu },
+  components: { ConnectionMenu, NotificationMenu, UserMenu },
   data() {
     return {
       active: false,
@@ -101,12 +102,7 @@ export default {
       />
     </v-btn>
 
-    <v-btn class="navbar-icon mx-1" icon @click="active = !active">
-      <span class="fa-stack" :class="{ active: active }">
-        <i class="fad fa-circle nav-bar-duotone-icon fa-stack-1x fa-xs"></i>
-        <i class="fad fa-bell nav-bar-duotone-icon fa-stack-2x"></i>
-      </span>
-    </v-btn>
+    <NotificationMenu />
 
     <ConnectionMenu />
 
