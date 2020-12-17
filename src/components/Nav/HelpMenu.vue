@@ -41,7 +41,7 @@ export default {
       </v-btn>
     </template>
 
-    <v-sheet width="350" class="white py-4">
+    <v-sheet width="350" class="white pt-4">
       <div class="text-h6 font-weight-light px-4">
         Stuck? We can help!
       </div>

@@ -255,7 +255,7 @@ export default {
       search
     </v-icon> -->
 
-    <v-btn
+    <!-- <v-btn
       class="global-search-activator cursor-pointer"
       :class="{ active: active }"
       text
@@ -267,6 +267,15 @@ export default {
       <v-icon>
         search
       </v-icon>
+    </v-btn> -->
+
+    <v-btn
+      class="navbar-icon mx-1 global-search-activator cursor-pointer"
+      icon
+      :class="{ active: active }"
+      @click.native="_activate"
+    >
+      <i class="fad fa-search fa-2x nav-bar-duotone-icon" />
     </v-btn>
 
     <div class="global-search" :class="{ active: active }">

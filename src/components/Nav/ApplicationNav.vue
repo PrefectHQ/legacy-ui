@@ -1,12 +1,19 @@
 <script>
 import { mapGetters } from 'vuex'
 import ConnectionMenu from '@/components/Nav/ConnectionMenu'
+import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import HelpMenu from '@/components/Nav/HelpMenu'
 import NotificationMenu from '@/components/Nav/NotificationMenu'
 import UserMenu from '@/components/Nav/UserMenu'
 
 export default {
-  components: { ConnectionMenu, HelpMenu, NotificationMenu, UserMenu },
+  components: {
+    ConnectionMenu,
+    GlobalSearch,
+    HelpMenu,
+    NotificationMenu,
+    UserMenu
+  },
   data() {
     return {
       active: false,
@@ -93,9 +100,7 @@ export default {
 
     <v-spacer></v-spacer>
 
-    <v-btn class="navbar-icon mx-1" icon>
-      <i class="fad fa-search fa-2x nav-bar-duotone-icon" />
-    </v-btn>
+    <GlobalSearch />
 
     <HelpMenu />
 
