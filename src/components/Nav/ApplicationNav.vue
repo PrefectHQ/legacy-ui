@@ -1,9 +1,10 @@
 <script>
 import { mapGetters } from 'vuex'
+import ConnectionMenu from '@/components/Nav/ConnectionMenu'
 import UserMenu from '@/components/Nav/UserMenu'
 
 export default {
-  components: { UserMenu },
+  components: { ConnectionMenu, UserMenu },
   data() {
     return {
       active: false,
@@ -107,9 +108,7 @@ export default {
       </span>
     </v-btn>
 
-    <v-btn class="navbar-icon mx-1" icon>
-      <i class="fad fa-server fa-2x nav-bar-duotone-icon" />
-    </v-btn>
+    <ConnectionMenu />
 
     <UserMenu />
   </v-app-bar>
