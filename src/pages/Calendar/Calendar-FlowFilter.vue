@@ -50,6 +50,12 @@ export default {
       }
       return this.addDay(this.day, days)
     },
+    queryVariables() {
+      return {
+        startTime: this.start,
+        endTime: this.end
+      }
+    },
     allIds() {
       const allRuns =
         new Date(this.day) < new Date()
@@ -154,10 +160,7 @@ export default {
     scheduledFlowRuns: {
       query: require('@/graphql/Calendar/calendar-scheduled-flow-runs.gql'),
       variables() {
-        return {
-          startTime: this.start,
-          endTime: this.end
-        }
+        return this.queryVariables
       },
       skip() {
         return this.skip
@@ -168,10 +171,7 @@ export default {
     runningFlowRuns: {
       query: require('@/graphql/Calendar/calendar-running-flow-runs.gql'),
       variables() {
-        return {
-          startTime: this.start,
-          endTime: this.end
-        }
+        return this.queryVariables
       },
       skip() {
         return this.skip
@@ -195,9 +195,6 @@ export default {
     },
     allFlows: {
       query: require('@/graphql/Calendar/calendar-flow-groups.gql'),
-      variables() {
-        return {}
-      },
       skip() {
         return this.skip
       },
