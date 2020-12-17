@@ -349,7 +349,7 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-      <v-btn disabled @click="tab = 'artifacts'">
+      <v-btn @click="tab = 'artifacts'">
         Artifacts
         <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>
