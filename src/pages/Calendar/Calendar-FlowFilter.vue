@@ -20,7 +20,6 @@ export default {
       skip: false,
       show: true,
       loadingKey: 0,
-      refetching: false,
       Ids: null,
       flowGroupIds: []
     }
@@ -102,24 +101,20 @@ export default {
   },
   watch: {
     async tenant() {
-      this.refetching = true
       this.selectFlow = null
       this.$apollo.queries.flowRuns.refetch()
       this.$apollo.queries.scheduledFlowRuns.refetch()
       this.$apollo.queries.ongoingFlowRuns.refetch()
       this.$apollo.queries.runningFlowRuns.refetch()
       this.$apollo.queries.allFlows.refetch()
-      this.refetching = false
     },
     async backend() {
-      this.refetching = true
       this.selectFlow = null
       this.$apollo.queries.flowRuns.refetch()
       this.$apollo.queries.scheduledFlowRuns.refetch()
       this.$apollo.queries.ongoingFlowRuns.refetch()
       this.$apollo.queries.runningFlowRuns.refetch()
       this.$apollo.queries.allFlows.refetch()
-      this.refetching = false
     },
     allIds(val) {
       if (val[0] && !this.selectFlow) this.$emit('update', this.allIds[0][0])
@@ -206,51 +201,41 @@ export default {
 </script>
 
 <template>
-  <v-skeleton-loader
-    type="list-item, list-item, list-item, list-item"
-    min-height="329"
-    height="100%"
-    :loading="loadingKey > 0 || refetching"
-    transition-group="quick-fade"
-    class="my-2 expansion"
-    tile
-  >
-    <v-expansion-panels class="expansion" flat :value="0">
-      <v-expansion-panel v-for="(filter, index) in filters" :key="index">
-        <v-expansion-panel-header class=" py-0">
-          {{ filter.name }}
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-list height="60vh">
-            <v-list-item-group :value="selectFlow" color="primary" mandatory>
-              <v-list-item
-                v-for="(item, inde) in allIds"
-                :key="inde"
-                :value="item"
-                dense
+  <v-expansion-panels class="expansion" flat :value="0">
+    <v-expansion-panel v-for="(filter, index) in filters" :key="index">
+      <v-expansion-panel-header class=" py-0">
+        {{ filter.name }}
+      </v-expansion-panel-header>
+      <v-expansion-panel-content>
+        <v-list height="60vh">
+          <v-list-item-group :value="selectFlow" color="primary" mandatory>
+            <v-list-item
+              v-for="(item, inde) in allIds"
+              :key="inde"
+              :value="item"
+              dense
+            >
+              <v-list-item-content
+                class=" pa-0"
+                @click="handleSelectedFlow(item)"
               >
-                <v-list-item-content
-                  class=" pa-0"
-                  @click="handleSelectedFlow(item)"
-                >
-                  <v-list-item-subtitle class="font-weight-light ">
-                    <FlowName
-                      v-if="item"
-                      :id="item[0]"
-                      left
-                      :fg-ids="flowGroupIds"
-                      :active="item[1] === 'active'"
-                      @fg="updateFlowGroupList"
-                    />
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-  </v-skeleton-loader>
+                <v-list-item-subtitle class="font-weight-light ">
+                  <FlowName
+                    v-if="item"
+                    :id="item[0]"
+                    left
+                    :fg-ids="flowGroupIds"
+                    :active="item[1] === 'active'"
+                    @fg="updateFlowGroupList"
+                  />
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>
 
 <style lang="scss">
