@@ -124,10 +124,10 @@ export default {
       ]).then(runs => {
         this.upcoming = runs[0]?.data?.flow_run?.length
         const allRuns = [
-          ...(runs[0]?.data?.flow_run ? runs[0].data.flow_run : []),
-          ...(runs[1]?.data?.flow_run ? runs[1].data.flow_run : []),
-          ...(runs[2]?.data?.flow_run ? runs[2].data.flow_run : []),
-          ...(runs[3]?.data?.flow_run ? runs[3].data.flow_run : [])
+          ...(runs[0]?.data?.flow_run || []),
+          ...(runs[1]?.data?.flow_run || []),
+          ...(runs[2]?.data?.flow_run || []),
+          ...(runs[3]?.data?.flow_run || [])
         ]
         const uniqueRuns = [...new Set(allRuns)]
         const updatedRuns = uniqueRuns.map(flowRun => {
