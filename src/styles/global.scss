@@ -295,3 +295,64 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 }
 // stylelint-enable
 /* End common UI elements */
+
+/* Navbar icon global styles */
+
+.navbar-icon {
+  font-size: 0.85rem;
+  height: 36px !important;
+  width: 36px !important;
+
+  .svg-inline--fa {
+    --fa-primary-color: #fff;
+    --fa-secondary-color: #efefef;
+    transition: all 150ms linear;
+
+    &.fa-search {
+      --fa-primary-color: #efefef;
+      --fa-secondary-color: #fff;
+      --fa-secondary-opacity: 1;
+    }
+
+    &.fa-bell {
+      --fa-primary-color: #efefef;
+      --fa-secondary-color: #fff;
+      --fa-secondary-opacity: 1;
+    }
+
+    &.fa-server {
+      --fa-secondary-opacity: 1;
+    }
+
+    &.fa-circle {
+      --fa-secondary-color: #fff;
+      --fa-secondary-opacity: 0;
+      height: 0;
+      width: 0;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    .svg-inline--fa {
+      --fa-primary-color: var(--v-accentPink-base);
+    }
+  }
+}
+
+.fa-stack {
+  &.active {
+    .nav-bar-duotone-icon {
+      --fa-primary-color: var(--v-accentPink-base);
+    }
+
+    .fa-stack-1x {
+      height: 100%;
+      left: 50%;
+      transform: translate(-50%, 1.15em) scale(0.6);
+      width: 100%;
+    }
+  }
+}
+
+/* End Navbar icon global styles */

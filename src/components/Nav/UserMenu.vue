@@ -1,17 +1,13 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-// import MenuLink from '@/components/Nav/MenuLink'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
-  components: {
-    // MenuLink
-  },
   mixins: [formatTime],
   data() {
     return {
       clockInterval: null,
-      model: true,
+      model: false,
       routes: [
         {
           title: 'Profile',
