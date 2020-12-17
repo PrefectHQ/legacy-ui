@@ -41,7 +41,8 @@ export default {
       upcoming: null,
       intervalHeight: 100,
       scheduleBanner: false,
-      closeBanner: false
+      closeBanner: false,
+      timeout: null
     }
   },
   computed: {
@@ -184,6 +185,7 @@ export default {
         : ''
     },
     handleEventClick({ nativeEvent, event }) {
+      clearTimeout(this.timeout)
       const open = () => {
         this.selectedEvent = event
         this.selectedElement = nativeEvent.target
@@ -191,7 +193,7 @@ export default {
       }
       if (this.selectedOpen) {
         this.selectedOpen = false
-        setTimeout(open, 10)
+        this.timeout = setTimeout(open, 10)
       } else {
         open()
       }
