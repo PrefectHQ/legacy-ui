@@ -70,6 +70,7 @@ $editor-black: #1d252b;
 $toolbar-black: #21262b;
 $divider-gray: #4e5965;
 $text-gray: #edf0f3;
+$accent-pink: #fe5196;
 /* stylelint-disable selector-class-pattern */
 /* since we're not writing these class names, we can't abide by stylelint's naming rules */
 .graphiql-container {
@@ -89,7 +90,7 @@ $text-gray: #edf0f3;
   .history-title-bar {
     background: $toolbar-black;
     color: $text-gray;
-    height: 32px;
+    height: 40px;
     padding: 0 8px;
 
     .history-title,
@@ -109,7 +110,7 @@ $text-gray: #edf0f3;
     background: $toolbar-black;
     border-top: 2px solid $divider-gray;
     color: $text-gray;
-    top: 32px;
+    top: 40px;
 
     li {
       border-bottom: 1px solid $divider-gray;
@@ -119,6 +120,7 @@ $text-gray: #edf0f3;
   .topBar {
     background: $toolbar-black;
     border-bottom: 2px solid $divider-gray;
+    height: 42px;
 
     /* stylelint-disable-next-line a11y/no-display-none */
     .title {
@@ -126,7 +128,7 @@ $text-gray: #edf0f3;
     }
 
     .execute-button {
-      background: $divider-gray;
+      background: $accent-pink;
       border: 0;
       box-shadow: none;
       height: 30px;
@@ -190,16 +192,26 @@ $text-gray: #edf0f3;
     color: $text-gray !important;
   }
 
-  ::-webkit-scrollbar-track, // hmm this isn't working
-  .CodeMirror-vscrollbar,
-  .CodeMirror-hscrollbar {
-    background: $toolbar-black;
+  ::-webkit-scrollbar-thumb {
+    background: radial-gradient($divider-gray, #434c56);
+    border-radius: 6px;
   }
 
-  ::-webkit-scrollbar-thumb,
+  ::-webkit-scrollbar-track,
   .CodeMirror-vscrollbar,
   .CodeMirror-hscrollbar {
-    background: $divider-gray;
+    background-color: transparent;
+    scrollbar-color: transparent;
+  }
+
+  ::-webkit-scrollbar {
+    background-color: transparent;
+    width: 10px;
+  }
+
+  /* stylelint-disable-next-line a11y/no-display-none */
+  ::-webkit-scrollbar-button {
+    display: none;
   }
 }
 
