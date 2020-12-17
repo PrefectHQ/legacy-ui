@@ -75,6 +75,7 @@ export default {
       }, 250)
     },
     _deactivate() {
+      console.log('deactivating')
       clearTimeout(this.activateTimeout)
       this.$refs['global-search'].reset()
       this.input = null
@@ -246,29 +247,6 @@ export default {
     class="d-flex align-center justify-end global-search-container"
     :class="{ 'justify-center': active }"
   >
-    <!-- <v-icon
-      color="white"
-      class="global-search-activator cursor-pointer"
-      :class="{ 'mr-2': active, active: active }"
-      @click.native="_activate"
-    >
-      search
-    </v-icon> -->
-
-    <!-- <v-btn
-      class="global-search-activator cursor-pointer"
-      :class="{ active: active }"
-      text
-      icon
-      large
-      color="white"
-      @click.native="_activate"
-    >
-      <v-icon>
-        search
-      </v-icon>
-    </v-btn> -->
-
     <v-btn
       class="navbar-icon mx-1 global-search-activator cursor-pointer"
       icon
@@ -285,8 +263,15 @@ export default {
         v-model="model"
         single-line
         dense
+        outlined
+        rounded
+        multiple
         dark
         clearable
+        :menu-props="{
+          closeOnContentClick: false,
+          closeOnClick: false
+        }"
         :items="entries"
         :loading="isLoading ? 'green accent-3' : false"
         :search-input.sync="search"
@@ -297,8 +282,8 @@ export default {
         hide-details
         clear-icon="close"
         open-on-clear
-        @clear="results = []"
         @blur="_deactivate"
+        @clear="results = []"
         @focus="
           results = []
           handleSearch(input)
@@ -306,7 +291,7 @@ export default {
       >
         <template v-if="input == null" #no-data>
           <v-list-item>
-            <v-list-item-title>
+            <v-list-item-title class="text-subtitle-1 font-weight-light">
               Type to search for a <strong>Project</strong>,
               <strong>Flow</strong>, <strong>Task</strong>, or
               <strong>Run</strong>
@@ -344,13 +329,14 @@ export default {
 <style lang="scss" scoped>
 .global-search-container {
   height: 100%;
+  max-width: 100%;
   transition: all 250ms;
-  width: 100%;
+  width: 500px;
 }
 
 .global-search {
   font-size: 1rem;
-  max-width: 1000px;
+  max-width: 500px;
   transition: all 250ms;
   width: 0;
 
