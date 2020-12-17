@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Assorted visual bugs - [#507](https://github.com/PrefectHQ/ui/pull/507)
+- Remove disabled from the artifacts tab on mobile pages - [#512](https://github.com/PrefectHQ/ui/pull/512)
 
 ## 2020-12-14
 
