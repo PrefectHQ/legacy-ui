@@ -39,7 +39,6 @@ export default {
   data() {
     return {
       backendTimeout: null,
-      disabled: false,
       loading: false,
       model: false,
       value: this.backend
@@ -56,7 +55,8 @@ export default {
       'connecting',
       'retries'
     ]),
-    buttonClass() {
+    ...mapGetters('tenant', ['tenant']),
+    iconClass() {
       if (this.connected) return ['connected']
       if (this.connecting) return ['connecting', 'connecting-animate']
       return ['disconnected']
@@ -72,24 +72,24 @@ export default {
   },
   methods: {
     ...mapActions('api', ['switchBackend']),
-    async _switchBackend() {
+    async _switchBackend(val) {
+      if (val == this.backend) return
+
       clearTimeout(this.backendTimeout)
       this.loading = true
-      this.disabled = true
 
       this.backendTimeout = setTimeout(async () => {
+        this.loading = false
+
         if (!this.isCloud) {
           await this.switchBackend('CLOUD')
         } else {
           await this.switchBackend('SERVER')
         }
 
-        this.loading = false
-        this.disabled = false
-
         clearCache()
         this.handlePostTokenRouting()
-      }, 1000)
+      }, 2000)
     },
     handlePostTokenRouting() {
       if (this.isCloud && !this.tenant.settings.teamNamed) {
@@ -131,7 +131,7 @@ export default {
     nudge-bottom="20"
   >
     <template #activator="{ on }">
-      <v-btn class="navbar-icon mx-1" :class="buttonClass" icon v-on="on">
+      <v-btn class="navbar-icon mx-1" :class="iconClass" icon v-on="on">
         <i class="fad fa-server fa-2x nav-bar-duotone-icon" />
       </v-btn>
     </template>
@@ -140,11 +140,57 @@ export default {
       <v-alert
         border="left"
         colored-border
-        icon="fad fa-clouds"
         tile
         :color="statusColor"
         class="text-body-1 mb-0"
       >
+        <template slot="prepend">
+          <div class="align-self-start" style="height: 100%;">
+            <div
+              class="navbar-icon mr-2 grey lighten-2 rounded-circle d-flex align-center justify-center"
+              :class="iconClass"
+              icon
+            >
+              <i class="fad fa-server fa-2x nav-bar-duotone-icon" />
+            </div>
+          </div>
+        </template>
+
+        <div class="mb-4 text-h5 d-flex align-bottom justify-start">
+          <v-btn
+            color="primary lighten-1"
+            class="px-3 white--text font-weight-bold text-subtitle-1"
+            depressed
+            tile
+            :outlined="isServer"
+            :disabled="loading"
+            style="width: 50%;"
+            @click="_switchBackend('CLOUD')"
+          >
+            <img
+              class="logo mr-2"
+              src="@/assets/logos/cloud-logo-no-text.svg"
+            />
+            Cloud
+          </v-btn>
+
+          <v-btn
+            color="secondary lighten-2"
+            class="px-3 white--text font-weight-bold text-subtitle-1"
+            depressed
+            tile
+            :outlined="isCloud"
+            :disabled="loading"
+            style="width: 50%;"
+            @click="_switchBackend('SERVER')"
+          >
+            Server
+            <img class="logo ml-2" src="@/assets/logos/core-logo-no-text.svg" />
+          </v-btn>
+        </div>
+
+        <v-divider class="grey lighten-3 my-5" style="width: 50%;" />
+
         <div class="mb-2 text-h6 font-weight-light">
           <span v-if="connected">Connected</span>
           <span v-else-if="connecting">Connecting</span>
@@ -216,21 +262,6 @@ export default {
           for information about upcoming maintenance windows and the current
           uptime of Prefect Cloud services.
         </div>
-
-        <div class="mt-4">
-          Cloud
-          <v-switch
-            v-model="backend"
-            color="primary"
-            :disabled="disabled"
-            :loading="loading"
-            inset
-            dense
-            hide-details
-            @change="_switchBackend"
-          />
-          Server
-        </div>
       </v-alert>
     </v-sheet>
   </v-menu>
@@ -290,5 +321,10 @@ $statuses: (
       animation: #{$selector}-swap 2000ms linear infinite;
     }
   }
+}
+
+.logo {
+  height: 24px;
+  width: 24px;
 }
 </style>

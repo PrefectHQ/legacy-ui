@@ -101,14 +101,14 @@ export default {
   },
   watch: {
     backend() {
-      this.loadedComponents = 0
-      this.shown = false
+      // this.loadedComponents = 0
+      // this.shown = false
 
-      this.refreshTimeout = setTimeout(() => {
-        this.shown = true
-        this.refresh()
-        clearTimeout(this.refreshTimeout)
-      }, 3000)
+      // this.refreshTimeout = setTimeout(() => {
+      //   this.shown = true
+      //   this.refresh()
+      //   clearTimeout(this.refreshTimeout)
+      // }, 3000)
       this.setAgents(null)
     },
     async connected(val) {
