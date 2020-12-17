@@ -293,8 +293,6 @@ export default {
       </span>
     </v-tooltip>
 
-    <div class="vertical-divider"></div>
-
     <v-tooltip bottom>
       <template #activator="{ on }">
         <div v-on="on">
