@@ -39,7 +39,6 @@ export default {
       selectedOpen: false,
       selectedElement: null,
       upcoming: null,
-      intervalHeight: 100,
       scheduleBanner: false,
       closeBanner: false,
       timeout: null
@@ -51,6 +50,15 @@ export default {
     ...mapGetters('user', ['timezone']),
     intervalCount() {
       return (60 / this.calendarInterval) * 24
+    },
+    intervalHeight() {
+      return this.type === 'day'
+        ? this.flowRunEvents.length < 100
+          ? 100
+          : this.flowRunEvents.length > 1500
+          ? this.flowRunEvents.length / 2
+          : this.flowRunEvents.length
+        : 100
     },
     start() {
       let days = 1
@@ -76,17 +84,19 @@ export default {
   watch: {
     async date() {
       this.selectedEvent = null
-      this.flowRunEvents = await this.flowRunEventsList()
+      this.flowRunEvents = []
+      await this.flowRunEventsList()
       this.scrollToElement()
     },
     async flowId() {
       this.selectedEvent = null
-      this.flowRunEvents = await this.flowRunEventsList()
+      this.flowRunEvents = []
+      await this.flowRunEventsList()
       this.scrollToElement()
     }
   },
   async created() {
-    this.flowRunEvents = await this.flowRunEventsList()
+    await this.flowRunEventsList()
     this.scrollToElement()
   },
   methods: {
@@ -133,7 +143,7 @@ export default {
         const uniqueRuns = [...new Set(allRuns)]
         const updatedRuns = uniqueRuns.map(flowRun => {
           const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
-          const addedTime = this.addTime(flowRun.start_time, 2, 'm')
+          const addedTime = this.addTime(flowRun.start_time, 3, 'm')
 
           flowRun.start = !flowRun.start_time
             ? this.formatCalendarTime(flowRun.scheduled_start_time)
@@ -234,13 +244,7 @@ export default {
 </script>
 
 <template>
-  <v-skeleton-loader
-    type="list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line, list-item-three-line"
-    :loading="loadingKey > 0 || gettingRuns"
-    transition-group="quick-fade"
-    tile
-    class="skeleton-tweak"
-  >
+  <v-sheet height="100vh" class="sheet-tweaks">
     <v-snackbar
       v-model="scheduleBanner"
       top
@@ -265,50 +269,48 @@ export default {
         >
       </template>
     </v-snackbar>
-    <v-sheet height="100vh" class="sheet-tweaks">
-      <v-calendar
-        ref="calendar"
-        :now="date"
-        :value="date"
-        event-overlap-mode="stack"
-        :events="flowRunEvents"
-        :event-color="eventColor"
-        :interval-height="intervalHeight"
-        :interval-minutes="calendarInterval"
-        :interval-count="intervalCount"
-        :type="type"
-        class="calendar-tweaks"
-        @click:event="handleEventClick"
-      >
-        <template #event="{event}">
-          <div :id="event.name" class="caption pl-2" :class="striped(event)">
-            {{ event.name }} {{ calEventTime(event.start_time, date) }}
-            -
-            {{ calEventTime(event.end_time, date) }}
-          </div>
-        </template>
-        <template #interval="{time}">
-          <div :class="timeNow(time)" />
-        </template>
-      </v-calendar>
+    <v-calendar
+      ref="calendar"
+      :now="date"
+      :value="date"
+      event-overlap-mode="stack"
+      :events="flowRunEvents"
+      :event-color="eventColor"
+      :interval-height="intervalHeight"
+      :interval-minutes="calendarInterval"
+      :interval-count="intervalCount"
+      :type="type"
+      class="calendar-tweaks"
+      @click:event="handleEventClick"
+    >
+      <template #event="{event}">
+        <div :id="event.name" class="caption pl-2" :class="striped(event)">
+          {{ event.name }} {{ calEventTime(event.start_time, date) }}
+          -
+          {{ calEventTime(event.end_time, date) }}
+        </div>
+      </template>
+      <template #interval="{time}">
+        <div :class="timeNow(time)" />
+      </template>
+    </v-calendar>
 
-      <v-menu
-        :value="selectedOpen"
-        class="menu-tweaks"
-        :attach="selectedElement"
-        offset-x
-        max-width="50vW"
-        :close-on-content-click="false"
-      >
-        <FlowRunMenu
-          v-if="selectedEvent"
-          :run="selectedEvent"
-          :active="flow.is_schedule_active"
-          type="flow-run"
-        />
-      </v-menu>
-    </v-sheet>
-  </v-skeleton-loader>
+    <v-menu
+      :value="selectedOpen"
+      class="menu-tweaks"
+      :attach="selectedElement"
+      offset-x
+      max-width="50vW"
+      :close-on-content-click="false"
+    >
+      <FlowRunMenu
+        v-if="selectedEvent"
+        :run="selectedEvent"
+        :active="flow.is_schedule_active"
+        type="flow-run"
+      />
+    </v-menu>
+  </v-sheet>
 </template>
 
 <style lang="scss">
