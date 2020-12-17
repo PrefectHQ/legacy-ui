@@ -120,7 +120,7 @@ export default {
       }
     },
     flowRun(val) {
-      if (val === 'noRun') this.$router.push({ name: 'not-found' })
+      if (val === 'not-found') this.$router.push({ name: 'not-found' })
     }
   },
   methods: {
@@ -189,7 +189,7 @@ export default {
           this.$router.push({ name: 'not-found' })
       },
       pollInterval: 5000,
-      update: data => data.flow_run_by_pk || 'noRun'
+      update: data => data.flow_run_by_pk || 'not-found'
     }
   }
 }

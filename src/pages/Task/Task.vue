@@ -95,7 +95,7 @@ export default {
       }
     },
     task(val) {
-      if (val === 'noRun') this.$router.push({ name: 'not-found' })
+      if (val === 'not-found') this.$router.push({ name: 'not-found' })
     }
   },
   mounted() {
@@ -131,7 +131,7 @@ export default {
         if (error.toString().includes('invalid input'))
           this.$router.push({ name: 'not-found' })
       },
-      update: data => data.task_by_pk || 'noRun'
+      update: data => data.task_by_pk || 'not-found'
     },
     lastTaskRun: {
       query: require('@/graphql/Task/last-task-run.gql'),
