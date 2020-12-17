@@ -36,11 +36,8 @@ export default {
   <v-card tile class="pointer">
     <v-alert
       v-if="run.state === 'Scheduled' && active"
-      class="mx-2 mt-2 mb-0 caption"
-      border="left"
-      colored-border
+      class="mx-2 mt-2 mb-0 caption radius"
       type="warning"
-      tile
       icon="announcement"
       dense
     >
@@ -130,5 +127,9 @@ export default {
 <style scoped>
 .pointer {
   cursor: default;
+}
+
+.v-card > .radius {
+  border-radius: 4px !important;
 }
 </style>
