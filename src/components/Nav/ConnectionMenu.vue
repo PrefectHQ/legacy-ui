@@ -169,7 +169,9 @@ export default {
           >
             <img
               class="logo mr-2"
+              style="opacity: 0.5;"
               src="@/assets/logos/cloud-logo-no-text.svg"
+              :style="isCloud && 'filter: brightness(0) invert(1); opacity: 1;'"
             />
             Cloud
           </v-btn>
@@ -185,7 +187,14 @@ export default {
             @click="_switchBackend('SERVER')"
           >
             Server
-            <img class="logo ml-2" src="@/assets/logos/core-logo-no-text.svg" />
+            <img
+              class="logo ml-2"
+              src="@/assets/logos/core-logo-no-text.svg"
+              style="opacity: 0.5;"
+              :style="
+                isServer && 'filter: brightness(0) invert(1); opacity: 1;'
+              "
+            />
           </v-btn>
         </div>
 
