@@ -93,6 +93,9 @@ export default {
         default:
           break
       }
+    },
+    task(val) {
+      if (val === 'noRun') this.$router.push({ name: 'not-found' })
     }
   },
   mounted() {
@@ -124,7 +127,11 @@ export default {
           id: this.taskId
         }
       },
-      update: data => data.task_by_pk
+      error(error) {
+        if (error.toString().includes('invalid input'))
+          this.$router.push({ name: 'not-found' })
+      },
+      update: data => data.task_by_pk || 'noRun'
     },
     lastTaskRun: {
       query: require('@/graphql/Task/last-task-run.gql'),
@@ -141,7 +148,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet color="appBackground">
+  <v-sheet v-if="task" color="appBackground">
     <SubPageNav icon="pi-task" page-type="Task">
       <span
         slot="page-title"
