@@ -82,6 +82,18 @@ export default {
     }
   },
   watch: {
+    async tenant() {
+      this.selectedEvent = null
+      this.flowRunEvents = []
+      await this.flowRunEventsList()
+      this.scrollToElement()
+    },
+    async backend() {
+      this.selectedEvent = null
+      this.flowRunEvents = []
+      await this.flowRunEventsList()
+      this.scrollToElement()
+    },
     async date() {
       this.selectedEvent = null
       this.flowRunEvents = []

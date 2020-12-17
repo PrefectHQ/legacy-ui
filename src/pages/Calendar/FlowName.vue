@@ -33,7 +33,7 @@ export default {
     flowDetails() {
       return `${this.flow?.name} 
      ${
-       this.fgIds.filter(id => id === this.flow.flow_group_id).length > 1
+       this.fgIds.filter(id => id === this.flow?.flow_group_id).length > 1
          ? `(Version ${this.flow.version})`
          : ''
      }`
