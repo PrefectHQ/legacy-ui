@@ -66,19 +66,54 @@ export default {
 
 <style lang="scss">
 @import 'https://unpkg.com/graphiql/graphiql.min.css';
-$editor-black: #1d252b;
+$editor-black: #1d252b; // secondaryGrayDark
 $toolbar-black: #21262b;
 $divider-gray: #4e5965;
-$text-gray: #edf0f3;
+$text-gray: #edf0f3; // secondaryGrayLight
 $accent-pink: #fe5196;
+$accent-orange: #f77062;
+$accent-cyan: #2edaff;
+$accent-blue: #1b5da4; // accent
 /* stylelint-disable selector-class-pattern */
 /* since we're not writing these class names, we can't abide by stylelint's naming rules */
+.CodeMirror-info {
+  // this popover isn't technically inside the container
+  background: $divider-gray;
+
+  .info-description {
+    color: $text-gray;
+  }
+
+  .type-name {
+    color: $accent-cyan;
+  }
+
+  .field-name {
+    color: $accent-orange;
+  }
+}
+
 .graphiql-container {
   .CodeMirror {
     background: $editor-black !important;
   }
 
-  button {
+  .CodeMirror-cursor {
+    border-left: 1px solid $text-gray;
+  }
+
+  .CodeMirror-hints {
+    background: $divider-gray;
+
+    /* stylelint-disable-next-line selector-max-compound-selectors */
+    .CodeMirror-hint,
+    .CodeMirror-hint-information .content {
+    color: $text-gray;
+  }
+  }
+
+  button,
+  input {
     color: $text-gray;
   }
 
@@ -95,10 +130,14 @@ $accent-pink: #fe5196;
 
     .history-title,
     .doc-explorer-title {
-      margin-top: 10px;
+      margin-top: 14px;
       overflow: hidden;
       padding: 0 0 0 10px;
     }
+
+    .docExplorerHide {
+      padding-top: 22px;
+  }
   }
 
   .doc-category-title {
@@ -111,9 +150,29 @@ $accent-pink: #fe5196;
     border-top: 2px solid $divider-gray;
     color: $text-gray;
     top: 40px;
+  }
 
-    li {
+  .history-contents li {
       border-bottom: 1px solid $divider-gray;
+
+    &:hover,
+    &:focus {
+      background: $accent-pink;
+    }
+
+    /* stylelint-disable-next-line selector-max-compound-selectors */
+    button:not(.history-label) {
+      font-size: 20px;
+  }
+  }
+
+  .search-box {
+    input {
+      padding: 6px 24px;
+    }
+
+    .search-box-clear {
+      background: $divider-gray;
     }
   }
 
@@ -131,8 +190,8 @@ $accent-pink: #fe5196;
       background: $accent-pink;
       border: 0;
       box-shadow: none;
-      height: 30px;
-      width: 30px;
+      height: 32px;
+      width: 32px;
       /* stylelint-disable-next-line selector-max-compound-selectors */
       * {
         fill: $text-gray;
@@ -165,7 +224,7 @@ $accent-pink: #fe5196;
     border-radius: 3px;
     color: $text-gray;
     height: 25px;
-    margin: 4px 0 0;
+    margin: 8px 0 0;
     overflow: hidden;
     padding: 2px 8px;
 
