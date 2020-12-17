@@ -183,19 +183,11 @@ export default {
               <v-list-item-subtitle class="caption">
                 Last State Message
               </v-list-item-subtitle>
-              <div class="subtitle-2">
-                <v-tooltip top>
-                  <template #activator="{ on }">
-                    <span class="caption" v-on="on">
-                      [{{ formDate(flowRun.state_timestamp) }}]:
-                    </span>
-                  </template>
-                  <div>
-                    {{ formatTime(flowRun.state_timestamp) }}
-                  </div>
-                </v-tooltip>
+
+              <truncate :content="flowRun.state_message">
+                [{{ formatTime(flowRun.state_timestamp) }}]:
                 {{ flowRun.state_message }}
-              </div>
+              </truncate>
             </v-list-item-content>
           </v-list-item>
 
