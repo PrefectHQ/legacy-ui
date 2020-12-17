@@ -39,8 +39,9 @@ export default {
       <component
         :is="$options.components.VListItemTitle"
         class="text-body-1 text--primary"
-        >{{ props.primary }}</component
       >
+        {{ props.primary }}
+      </component>
       <component
         :is="$options.components.VListItemSubtitle"
         class="text-caption text--secondary text-truncate"

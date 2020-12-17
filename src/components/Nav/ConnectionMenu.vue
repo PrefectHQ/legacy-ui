@@ -127,6 +127,8 @@ export default {
     v-model="model"
     :close-on-content-click="false"
     offset-y
+    offset-x
+    :nudge-left="500"
     transition="slide-y-transition"
     nudge-bottom="20"
   >
