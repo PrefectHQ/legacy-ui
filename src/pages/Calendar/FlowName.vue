@@ -31,24 +31,40 @@ export default {
   },
   computed: {
     flowDetails() {
-      return `${this.flow?.name} 
-     ${
-       this.fgIds.filter(id => id === this.flow?.flow_group_id).length > 1
-         ? `(Version ${this.flow.version})`
-         : ''
-     }`
+      const version =
+        this.fgIds.filter(id => id === this.flow?.flow_group_id).length > 1
+          ? `(Version ${this.flow.version})`
+          : ''
+      const active = this.active ? '' : '- no current runs'
+      return `${this.flow?.name} ${version} ${active}`
+    },
+    flowNameText() {
+      const version =
+        this.fgIds.filter(id => id === this.flow?.flow_group_id).length > 1
+          ? `(Version ${this.flow.version})`
+          : ''
+      return `${this.flow?.name} ${version}`
     },
     textAlign() {
-      if (this.left) return null
+      if (this.left) return 'text-left'
       return 'text-center'
-    },
-    textColor() {
-      return this.active ? 'primary--text' : null
     }
   },
   watch: {
     flow(val) {
       if (val && this.active) this.$emit('fg', val.flow_group_id)
+    }
+  },
+  methods: {
+    addDot(state) {
+      return {
+        'border-radius': '50%',
+        display: 'inline-block',
+        'background-color': `var(--v-${state}-base)`,
+        height: '8px',
+        width: '8px',
+        'margin-right': '4px'
+      }
     }
   },
   apollo: {
@@ -68,15 +84,12 @@ export default {
 </script>
 
 <template>
-  <span
-    v-if="loadingKey < 1"
-    class="caption max-width"
-    :class="[textAlign, textColor]"
-  >
+  <span v-if="loadingKey < 1" class="caption max-width" :class="[textAlign]">
     <truncate v-if="truncate" :content="flowDetails">
-      {{ flowDetails }}
+      <span v-if="active" :style="addDot('primary')"></span>
+      {{ flowNameText }}
     </truncate>
-    <span v-else> {{ flowDetails }} </span>
+    <span v-else> {{ flowNameText }} </span>
   </span>
 </template>
 
