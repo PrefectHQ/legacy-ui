@@ -201,59 +201,71 @@ export default {
 </script>
 
 <template>
-  <v-expansion-panels class="expansion" flat :value="0">
-    <v-expansion-panel v-for="(filter, index) in filters" :key="index">
-      <v-expansion-panel-header class=" py-0">
-        {{ filter.name }}
-      </v-expansion-panel-header>
-      <v-expansion-panel-content>
-        <v-list height="60vh">
-          <v-list-item-group :value="selectFlow" color="primary" mandatory>
-            <v-list-item
-              v-for="(item, inde) in allIds"
-              :key="inde"
-              :value="item"
-              dense
-            >
-              <v-list-item-content
-                class=" pa-0"
-                @click="handleSelectedFlow(item)"
+  <div class="expansion text-center">
+    <v-expansion-panels class="expansion" flat :value="0">
+      <v-expansion-panel v-for="(filter, index) in filters" :key="index">
+        <v-expansion-panel-header class=" py-0">
+          {{ filter.name }}
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-progress-circular
+            v-if="loadingKey > 0"
+            class="circular"
+            :active="loadingKey > 0"
+            :indeterminate="loadingKey > 0"
+            color="primary"
+            width="3"
+            size="50"
+          ></v-progress-circular>
+          <v-list v-else height="60vh" class="pt-0">
+            <v-list-item-group :value="selectFlow" color="primary" mandatory>
+              <v-list-item
+                v-for="(item, inde) in allIds"
+                :key="inde"
+                :value="item"
+                dense
               >
-                <v-list-item-subtitle class="font-weight-light ">
-                  <FlowName
-                    v-if="item"
-                    :id="item[0]"
-                    left
-                    :fg-ids="flowGroupIds"
-                    :active="item[1] === 'active'"
-                    @fg="updateFlowGroupList"
-                  />
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-expansion-panel-content>
-    </v-expansion-panel>
-  </v-expansion-panels>
+                <v-list-item-content
+                  class=" pa-0"
+                  @click="handleSelectedFlow(item)"
+                >
+                  <v-list-item-subtitle class="font-weight-light ">
+                    <FlowName
+                      v-if="item"
+                      :id="item[0]"
+                      left
+                      :fg-ids="flowGroupIds"
+                      :active="item[1] === 'active'"
+                      @fg="updateFlowGroupList"
+                    />
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </div>
 </template>
 
 <style lang="scss">
 /* stylelint-disable */
 
-.expansion {
+.expansion > div {
   overflow: auto;
+  background-color: #f9f9f9 !important;
 
-  .theme--light.v-expansion-panels .v-expansion-panel {
+  .theme--light > div {
     background-color: #f9f9f9 !important;
   }
 
-  .theme--light {
-    background-color: #f9f9f9 !important;
-  }
-
-  .v-expansion-panel--active .v-expansion-panel-header {
+  .v-expansion-panel-header {
     min-height: 20px;
   }
+}
+
+.circular {
+  padding-top: 100px !important;
 }
 </style>
