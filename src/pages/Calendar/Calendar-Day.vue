@@ -38,7 +38,7 @@ export default {
       selectedEvent: null,
       selectedOpen: false,
       selectedElement: null,
-      upcoming: [],
+      upcoming: null,
       intervalHeight: 100,
       scheduleBanner: false,
       closeBanner: false
@@ -91,101 +91,87 @@ export default {
   methods: {
     async flowRunEventsList() {
       this.gettingRuns = true
-      const scheduledRuns = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-day-scheduled-flow-runs.gql'),
-        variables: {
-          startTime: this.start,
-          endTime: this.end,
-          flowId: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      const finishedRuns = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-day-flow-runs.gql'),
-        variables: {
-          startTime: this.start,
-          endTime: this.end,
-          flowId: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      const runningRuns = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-day-running-flow-runs.gql'),
-        variables: {
-          startTime: this.start,
-          endTime: this.end,
-          flowId: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      const ongoingRuns = await this.$apollo.query({
-        query: require('@/graphql/Calendar/calendar-day-ongoing-flow-runs.gql'),
-        variables: {
-          startTime: this.start,
-          endTime: this.date,
-          flowId: this.flowId
-        },
-        loadingKey: 'loadingKey'
-      })
-      const allRuns = [
-        ...(finishedRuns?.data?.flow_run ? finishedRuns.data.flow_run : []),
-        ...(scheduledRuns?.data?.flow_run ? scheduledRuns.data.flow_run : []),
-        ...(runningRuns?.data?.flow_run ? runningRuns.data.flow_run : []),
-        ...(ongoingRuns?.data?.flow_run ? ongoingRuns.data.flow_run : [])
-      ]
-      const uniqueRuns = [...new Set(allRuns)]
+      const queryVariables = {
+        startTime: this.start,
+        endTime: this.end,
+        flowId: this.flowId
+      }
+      Promise.all([
+        this.$apollo.query({
+          query: require('@/graphql/Calendar/calendar-day-scheduled-flow-runs.gql'),
+          variables: queryVariables,
+          loadingKey: 'loadingKey'
+        }),
+        this.$apollo.query({
+          query: require('@/graphql/Calendar/calendar-day-flow-runs.gql'),
+          variables: queryVariables,
+          loadingKey: 'loadingKey'
+        }),
+        this.$apollo.query({
+          query: require('@/graphql/Calendar/calendar-day-running-flow-runs.gql'),
+          variables: queryVariables,
+          loadingKey: 'loadingKey'
+        }),
+        this.$apollo.query({
+          query: require('@/graphql/Calendar/calendar-day-ongoing-flow-runs.gql'),
+          variables: {
+            startTime: this.start,
+            endTime: this.date,
+            flowId: this.flowId
+          },
+          loadingKey: 'loadingKey'
+        })
+      ]).then(runs => {
+        this.upcoming = runs[0]?.data?.flow_run?.length
+        const allRuns = [
+          ...(runs[0]?.data?.flow_run ? runs[0].data.flow_run : []),
+          ...(runs[1]?.data?.flow_run ? runs[1].data.flow_run : []),
+          ...(runs[2]?.data?.flow_run ? runs[2].data.flow_run : []),
+          ...(runs[3]?.data?.flow_run ? runs[3].data.flow_run : [])
+        ]
+        const uniqueRuns = [...new Set(allRuns)]
+        const updatedRuns = uniqueRuns.map(flowRun => {
+          const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
+          const addedTime = this.addTime(flowRun.start_time, 2, 'm')
 
-      const updatedRuns = uniqueRuns.map(flowRun => {
-        const diff = new Date(flowRun.end_time) - new Date(flowRun.start_time)
-        const addedTime = this.addTime(flowRun.start_time, 2, 'm')
+          flowRun.start = !flowRun.start_time
+            ? this.formatCalendarTime(flowRun.scheduled_start_time)
+            : this.formatCalendarTime(flowRun.start_time)
 
-        flowRun.start = !flowRun.start_time
-          ? this.formatCalendarTime(flowRun.scheduled_start_time)
-          : this.formatCalendarTime(flowRun.start_time)
+          flowRun.end =
+            flowRun.start_time && !flowRun.end_time
+              ? this.formatCalendarTime(new Date())
+              : diff < 60000
+              ? addedTime
+              : flowRun.start_time < this.date &&
+                flowRun.end_time?.split('T')[0] > this.date
+              ? this.formatCalendarTime(new Date())
+              : this.formatCalendarTime(flowRun.end_time)
 
-        flowRun.end =
-          flowRun.start_time && !flowRun.end_time
-            ? this.formatCalendarTime(new Date())
-            : diff < 60000
-            ? addedTime
-            : flowRun.start_time < this.date &&
-              flowRun.end_time?.split('T')[0] > this.date
-            ? this.formatCalendarTime(new Date())
-            : this.formatCalendarTime(flowRun.end_time)
-
-        flowRun.timed =
-          flowRun.start_time < this.date
-            ? !flowRun.end_time
-              ? false
-              : flowRun.end_time.split('T')[0] > this.date
-              ? false
+          flowRun.timed =
+            flowRun.start_time < this.date
+              ? !flowRun.end_time
+                ? false
+                : flowRun.end_time.split('T')[0] > this.date
+                ? false
+                : true
               : true
-            : true
 
-        flowRun.category = flowRun.flow_id
-        return flowRun
+          flowRun.category = flowRun.flow_id
+          return flowRun
+        })
+        this.flowRunEvents = updatedRuns
+        this.gettingRuns = false
+        this.showScheduleBanner()
       })
-
-      this.intervalHeight =
-        this.type === 'day'
-          ? uniqueRuns.length < 100
-            ? 100
-            : uniqueRuns.length > 1500
-            ? uniqueRuns.length / 2
-            : uniqueRuns.length
-          : 100
-
-      this.gettingRuns = false
-
+    },
+    showScheduleBanner() {
       this.scheduleBanner =
-        this.flow?.is_schedule_active &&
-        this.upcoming.length > 8 &&
-        !this.closeBanner
+        this.flow?.is_schedule_active && this.upcoming > 8 && !this.closeBanner
           ? true
           : !this.closeBanner
           ? new Date(this.date) > new Date()
           : false
-      return updatedRuns
     },
     eventColor(event) {
       return event.state ? event.state : 'primary'
