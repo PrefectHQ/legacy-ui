@@ -26,7 +26,7 @@ export default {
 
 <template>
   <v-btn :to="{ name: 'notifications' }" class="navbar-icon mx-1" icon>
-    <span class="fa-stack" :class="{ active: active }">
+    <span class="fa-stack overflow-hidden" :class="{ active: active }">
       <i class="fad fa-circle nav-bar-duotone-icon fa-stack-1x fa-xs"></i>
       <i class="fad fa-bell nav-bar-duotone-icon fa-stack-2x"></i>
     </span>
