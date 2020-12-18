@@ -26,9 +26,6 @@ export default {
         height: '1rem',
         width: '1rem'
       }
-    },
-    printMenClick(event) {
-      console.log('clicked printMen', event)
     }
   },
   apollo: {}

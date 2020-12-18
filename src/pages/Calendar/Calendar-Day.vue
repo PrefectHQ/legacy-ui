@@ -202,12 +202,11 @@ export default {
         ? 'darker'
         : ''
     },
-    handleEventClick(ev, el) {
-      console.log(ev, el)
+    handleEventClick(item, event) {
       clearTimeout(this.timeout)
       const open = () => {
-        this.selectedEvent = ev
-        this.selectedElement = el.target
+        this.selectedEvent = item
+        this.selectedElement = event.target
         this.selectedOpen = true
       }
       if (this.selectedOpen) {
@@ -216,9 +215,6 @@ export default {
       } else {
         open()
       }
-      // el.nativeEvent.stopPropogation
-      //   ? el.nativeEvent.stopPropogation()
-      //   : el.nativeEvent.cancelBubble()
     },
     handleScheduleBanner() {
       this.scheduleBanner = false
