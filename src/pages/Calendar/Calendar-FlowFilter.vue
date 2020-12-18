@@ -22,7 +22,8 @@ export default {
       loadingKey: 0,
       Ids: null,
       flowGroupIds: [],
-      timeout: null
+      timeout: null,
+      selectedFlow: 0
     }
   },
   computed: {
@@ -137,6 +138,7 @@ export default {
     },
     day() {
       this.flowGroupIds = []
+      this.selectedFlow = 0
     }
   },
   created() {
@@ -145,7 +147,8 @@ export default {
     this.$emit('update', this.allIds[0])
   },
   methods: {
-    handleSelectedFlow(flow) {
+    handleSelectedFlow(flow, index) {
+      this.selectedFlow = index
       this.selectFlow = flow
       this.$emit('update', flow[0])
     },
@@ -228,16 +231,16 @@ export default {
             <v-progress-linear
               :indeterminate="loadingKey > 0"
             ></v-progress-linear>
-            <v-list-item-group :value="selectFlow" color="primary" mandatory>
+            <v-list-item-group :value="selectedFlow" color="primary" mandatory>
               <v-list-item
                 v-for="(item, inde) in allIds"
                 :key="inde"
-                :value="item"
                 dense
+                class="pl-2"
               >
                 <v-list-item-content
                   class=" pa-0"
-                  @click="handleSelectedFlow(item)"
+                  @click="handleSelectedFlow(item, inde)"
                 >
                   <v-list-item-subtitle class="font-weight-light ">
                     <FlowName

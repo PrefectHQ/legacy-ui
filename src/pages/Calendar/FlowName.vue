@@ -51,7 +51,7 @@ export default {
           ? `(Version ${this.version})`
           : ''
       const active = this.active ? '' : '- no current runs'
-      return `${this.flow?.name} ${version} ${active}`
+      return `${this.name} ${version} ${active}`
     },
     flowNameText() {
       const version =
@@ -73,13 +73,19 @@ export default {
   },
   methods: {
     addDot(state) {
-      return {
-        'border-radius': '50%',
-        display: 'inline-block',
-        'background-color': `var(--v-${state}-base)`,
-        height: '8px',
-        width: '8px',
-        'margin-right': '4px'
+      if (this.active) {
+        return {
+          'border-radius': '50%',
+          display: 'inline-block',
+          'background-color': `var(--v-${state}-base)`,
+          height: '5px',
+          width: '5px',
+          'margin-right': '3px'
+        }
+      } else {
+        return {
+          'margin-right': '8px'
+        }
       }
     }
   },
@@ -105,7 +111,7 @@ export default {
 <template>
   <span v-if="loadingKey < 1" class="caption max-width" :class="[textAlign]">
     <truncate v-if="truncate" :content="flowDetails">
-      <span v-if="active" :style="addDot('primary')"></span>
+      <span :style="addDot('primary')"></span>
       {{ flowNameText }}
     </truncate>
     <span v-else> {{ flowNameText }} </span>
