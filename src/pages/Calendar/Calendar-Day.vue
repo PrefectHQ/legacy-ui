@@ -293,7 +293,7 @@ export default {
       <template #event="{event}">
         <div
           :id="event.name"
-          class="caption pl-2"
+          class="caption pl-2 event"
           :class="striped(event)"
           @click.self="handleEventClick(event, $event)"
         >
@@ -326,6 +326,10 @@ export default {
 </template>
 
 <style lang="scss">
+.event {
+  height: 100%;
+}
+
 .striped {
   background: repeating-linear-gradient(
     135deg,
