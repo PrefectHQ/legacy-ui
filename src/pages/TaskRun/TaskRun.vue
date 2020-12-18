@@ -107,6 +107,7 @@ export default {
       this.tab = this.getTab()
     },
     taskRun(val, prevVal) {
+      if (val === 'not-found') this.$router.push({ name: 'not-found' })
       if (!val || val?.id == prevVal?.id) return
       if (!this.$route.query || !this.$route.query.schematic) {
         this.$router
@@ -180,9 +181,13 @@ export default {
           id: this.taskRunId
         }
       },
+      error(error) {
+        if (error.toString().includes('invalid input'))
+          this.$router.push({ name: 'not-found' })
+      },
       loadingKey: 'loading',
       pollInterval: 5000,
-      update: data => data.task_run_by_pk
+      update: data => data.task_run_by_pk || 'not-found'
     },
     parent: {
       query: require('@/graphql/TaskRun/parent.gql'),
@@ -360,7 +365,7 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-      <v-btn disabled @click="tab = 'artifacts'">
+      <v-btn @click="tab = 'artifacts'">
         Artifacts
         <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>
