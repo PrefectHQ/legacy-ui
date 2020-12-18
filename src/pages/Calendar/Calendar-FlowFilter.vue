@@ -55,48 +55,53 @@ export default {
         endTime: this.end
       }
     },
-    allIds() {
-      const allRuns =
-        new Date(this.day) < new Date()
-          ? [
-              ...(this.flowRuns ? this.flowRuns : []),
-              ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : []),
-              ...(this.runningFlowRuns ? this.runningFlowRuns : []),
-              ...(this.ongoingFlowRuns ? this.ongoingFlowRuns : [])
-            ]
-          : [
-              ...(this.flowRuns ? this.flowRuns : []),
-              ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : [])
-            ]
-      const selected = this.selectFlow ? this.selectFlow[0] : null
-      const flowIds = allRuns?.reduce((accum, flowRun) => {
-        if (flowRun.flow_id !== selected) {
-          accum.push([flowRun.flow_id, 'active'])
-        }
-        return accum
-      }, [])
-      const flowGroupIds = this.allFlows?.reduce((accum, flowGroup) => {
-        if (flowGroup.flows[0]?.id && flowGroup.flows[0]?.id !== selected) {
-          accum.push([flowGroup.flows[0].id, `${flowGroup.flows[0].name}`])
-        }
-        return accum
-      }, [])
-      const allIds =
-        flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
-      const runs = [...allIds]
-      const ordered = runs.sort((a, b) =>
-        a[1] === 'active'
-          ? -1
-          : b[1] === 'active'
-          ? 1
-          : a[1] > b[1]
-          ? 1
-          : b[1] > a[1]
-          ? -1
-          : 0
-      )
-      if (this.selectFlow) ordered.unshift(this.selectFlow)
-      return ordered
+    allIds: {
+      get() {
+        const allRuns =
+          new Date(this.day) < new Date()
+            ? [
+                ...(this.flowRuns ? this.flowRuns : []),
+                ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : []),
+                ...(this.runningFlowRuns ? this.runningFlowRuns : []),
+                ...(this.ongoingFlowRuns ? this.ongoingFlowRuns : [])
+              ]
+            : [
+                ...(this.flowRuns ? this.flowRuns : []),
+                ...(this.scheduledFlowRuns ? this.scheduledFlowRuns : [])
+              ]
+        const selected = this.selectFlow ? this.selectFlow[0] : null
+        const flowIds = allRuns?.reduce((accum, flowRun) => {
+          if (flowRun.flow_id !== selected) {
+            accum.push([flowRun.flow_id, 'active'])
+          }
+          return accum
+        }, [])
+        const flowGroupIds = this.allFlows?.reduce((accum, flowGroup) => {
+          if (flowGroup.flows[0]?.id && flowGroup.flows[0]?.id !== selected) {
+            accum.push([flowGroup.flows[0].id, `${flowGroup.flows[0].name}`])
+          }
+          return accum
+        }, [])
+        const allIds =
+          flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
+        const runs = [...allIds]
+        const ordered = runs.sort((a, b) =>
+          a[1] === 'active'
+            ? -1
+            : b[1] === 'active'
+            ? 1
+            : a[1] > b[1]
+            ? 1
+            : b[1] > a[1]
+            ? -1
+            : 0
+        )
+        if (this.selectFlow) ordered.unshift(this.selectFlow)
+        return ordered
+      },
+      set() {
+        return null
+      }
     }
   },
   watch: {
@@ -121,6 +126,7 @@ export default {
     },
     day() {
       this.flowGroupIds = []
+      this.allIds = []
     }
   },
   created() {
@@ -169,7 +175,7 @@ export default {
         return this.queryVariables
       },
       skip() {
-        return this.skip
+        return new Date(this.day) > new Date()
       },
       loadingKey: 'loadingKey',
       update: data => data.flow_run || []
@@ -183,7 +189,7 @@ export default {
         }
       },
       skip() {
-        return this.skip
+        return new Date(this.day) > new Date()
       },
       loadingKey: 'loadingKey',
       update: data => data.flow_run || []
@@ -208,17 +214,16 @@ export default {
           {{ filter.name }}
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-progress-circular
-            v-if="loadingKey > 0"
-            class="circular"
-            :active="loadingKey > 0"
-            :indeterminate="loadingKey > 0"
-            color="primary"
-            width="3"
-            size="50"
-          ></v-progress-circular>
-          <v-list v-else height="60vh" class="pt-0">
-            <v-list-item-group :value="selectFlow" color="primary" mandatory>
+          <v-list height="60vh" class="pt-0">
+            <v-progress-linear
+              :indeterminate="loadingKey > 0"
+            ></v-progress-linear>
+            <v-list-item-group
+              v-if="allIds"
+              :value="selectFlow"
+              color="primary"
+              mandatory
+            >
               <v-list-item
                 v-for="(item, inde) in allIds"
                 :key="inde"
@@ -233,6 +238,7 @@ export default {
                     <FlowName
                       v-if="item"
                       :id="item[0]"
+                      :name="item[1] !== 'active' ? item[1] : null"
                       left
                       :fg-ids="flowGroupIds"
                       :active="item[1] === 'active'"

@@ -22,6 +22,11 @@ export default {
       type: Boolean,
       required: false,
       default: true
+    },
+    name: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -43,7 +48,8 @@ export default {
         this.fgIds.filter(id => id === this.flow?.flow_group_id).length > 1
           ? `(Version ${this.flow.version})`
           : ''
-      return `${this.flow?.name} ${version}`
+      const name = this.name ? `${this.name}` : `${this.flow?.name}`
+      return `${name} ${version}`
     },
     textAlign() {
       if (this.left) return 'text-left'
@@ -75,9 +81,12 @@ export default {
           flowId: this.id
         }
       },
+      skip() {
+        return this.name
+      },
       loadingKey: 'loadingKey',
       pollInterval: 500000,
-      update: data => data?.flow_by_pk
+      update: data => data.flow_by_pk
     }
   }
 }
