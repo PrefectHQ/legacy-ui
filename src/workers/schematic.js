@@ -75,7 +75,7 @@ export function GenerateLayout(data) {
       .sugiyama()
       .size([width - canvasAdjustment.w, height - canvasAdjustment.h])
       .layering(d3.layeringLongestPath().topDown(false))
-      .decross(d3.decrossTwoLayer().order(d3.twolayerOpt()))
+      // .decross(d3.decrossTwoLayer().order(d3.twolayerOpt())) // Disabling this due to runaway worker memory usage for large graphs
       // .coord(d3.coordMinCurve()) // Disabling this due to some edge cases with quadratic positive definites
       .separation((a, b) => {
         return (a.data !== undefined) + (b.data !== undefined)
