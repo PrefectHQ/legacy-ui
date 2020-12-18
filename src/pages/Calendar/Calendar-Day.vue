@@ -33,7 +33,6 @@ export default {
     return {
       skip: false,
       loadingKey: 0,
-      gettingRuns: false,
       flowRunEvents: [],
       selectedEvent: null,
       selectedOpen: false,
@@ -109,7 +108,7 @@ export default {
   },
   methods: {
     async flowRunEventsList() {
-      this.gettingRuns = true
+      this.$emit('loading', true)
       const queryVariables = {
         startTime: this.start,
         endTime: this.end,
@@ -180,7 +179,7 @@ export default {
           return flowRun
         })
         this.flowRunEvents = updatedRuns
-        this.gettingRuns = false
+        this.$emit('loading', false)
         this.showScheduleBanner()
       })
     },

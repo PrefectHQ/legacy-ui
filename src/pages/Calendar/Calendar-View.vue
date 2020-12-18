@@ -14,8 +14,7 @@ export default {
     return {
       calendarInterval: 60,
       date: this.formatCalendarDate(new Date()),
-      skip: false,
-      loadingKey: 0,
+      loading: false,
       refetching: false,
       type: 'day',
       flowId: null,
@@ -48,9 +47,11 @@ export default {
     },
     handleSelectedFlow(flow) {
       this.flowId = flow
+    },
+    handleLoad(bool) {
+      this.loading = bool
     }
-  },
-  apollo: {}
+  }
 }
 </script>
 
@@ -77,6 +78,13 @@ export default {
           <v-toolbar-title>
             {{ calTitle }}
           </v-toolbar-title>
+          <v-progress-linear
+            absolute
+            bottom
+            :active="loading"
+            :indeterminate="loading"
+            color="primary"
+          ></v-progress-linear>
           <v-spacer />
           <v-menu bottom right>
             <template #activator="{ on, attrs }">
@@ -110,6 +118,7 @@ export default {
           :type="type"
           :flow-id="flowId"
           :calendar-interval="calendarInterval"
+          @loading="handleLoad"
         />
       </v-col>
     </v-row>
