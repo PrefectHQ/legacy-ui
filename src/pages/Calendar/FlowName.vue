@@ -27,6 +27,16 @@ export default {
       type: String,
       required: false,
       default: null
+    },
+    version: {
+      type: String,
+      required: false,
+      default: null
+    },
+    fgId: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -37,16 +47,16 @@ export default {
   computed: {
     flowDetails() {
       const version =
-        this.fgIds.filter(id => id === this.flow?.flow_group_id).length > 1
-          ? `(Version ${this.flow.version})`
+        this.fgIds.filter(id => id === this.fgId).length > 1
+          ? `(Version ${this.version})`
           : ''
       const active = this.active ? '' : '- no current runs'
       return `${this.flow?.name} ${version} ${active}`
     },
     flowNameText() {
       const version =
-        this.fgIds.filter(id => id === this.flow?.flow_group_id).length > 1
-          ? `(Version ${this.flow.version})`
+        this.fgIds.filter(id => id === this.fgId).length > 1
+          ? `(Version ${this.version})`
           : ''
       const name = this.name ? `${this.name}` : `${this.flow?.name}`
       return `${name} ${version}`

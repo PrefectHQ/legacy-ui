@@ -1,11 +1,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
-// import FlowName from '@/pages/Calendar/FlowName'
+import FlowName from '@/pages/Calendar/FlowName'
 
 export default {
   components: {
-    // FlowName
+    FlowName
   },
   mixins: [formatTime],
   props: {
@@ -22,8 +22,7 @@ export default {
       loadingKey: 0,
       Ids: null,
       flowGroupIds: [],
-      timeout: null,
-      showIds: true
+      timeout: null
     }
   },
   computed: {
@@ -57,85 +56,63 @@ export default {
         endTime: this.end
       }
     },
-    allIds: {
-      get() {
-        const allRuns =
-          new Date(this.day) < new Date()
-            ? [
-                ...(this.flowRuns || []),
-                ...(this.scheduledFlowRuns || []),
-                ...(this.runningFlowRuns || []),
-                ...(this.ongoingFlowRuns || []),
-                ...(this.allFlows || [])
-              ]
-            : [
-                ...(this.flowRuns || []),
-                ...(this.scheduledFlowRuns || []),
-                ...(this.allFlows || [])
-              ]
-        // const selected = this.selectFlow ? this.selectFlow[0] : null
-        // const flowIds = allRuns?.reduce((accum, flowRun) => {
-        //   if (flowRun.flow_id !== selected) {
-        //     accum.push([flowRun.flow_id, 'active'])
-        //   }
-        //   return accum
-        // }, {})
-        // const flowGroupIds = this.allFlows?.reduce((accum, flowGroup) => {
-        //   if (flowGroup.flows[0]?.id && flowGroup.flows[0]?.id !== selected) {
-        //     accum.push([flowGroup.flows[0].id, `${flowGroup.flows[0].name}`])
-        //   }
-        //   return accum
-        // }, [])
-        // const allIds =
-        //   flowIds && flowGroupIds ? new Map([...flowGroupIds, ...flowIds]) : []
-        // const runs = [...allIds]
-        const runs = allRuns.reduce((accum, run) => {
-          if (!run.flow_id && !run.flows) {
-            console.log('skipping')
-            return accum
-          }
-          if (run.flow_id) {
-            if (!accum[run.flow_id]) {
-              console.log('in if')
-              accum[run.flow_id] = {
-                name: run.flow?.name,
-                active: true,
-                id: run.flow_id
-              }
-              console.log('flowid', accum)
-            }
-          }
-          if (run.flows && run.flows[0]?.id) {
-            if (!accum[run.flows[0]?.id]) {
-              accum[run.flows[0].id] = {
-                name: run.flows[0].name,
-                active: false,
-                id: run.flows[0].id
-              }
-            }
-          }
-
+    allIds() {
+      const allRuns =
+        new Date(this.day) < new Date()
+          ? [
+              ...(this.flowRuns || []),
+              ...(this.scheduledFlowRuns || []),
+              ...(this.runningFlowRuns || []),
+              ...(this.ongoingFlowRuns || []),
+              ...(this.allFlows || [])
+            ]
+          : [
+              ...(this.flowRuns || []),
+              ...(this.scheduledFlowRuns || []),
+              ...(this.allFlows || [])
+            ]
+      const runs = allRuns.reduce((accum, run) => {
+        if (!run.flow_id && !run.flows) {
           return accum
-        }, {})
-        let entries = Object.entries(runs)
-        const ordered = entries.sort((a, b) =>
-          a[1].active
-            ? -1
-            : b[1].active
-            ? 1
-            : a[1].name > b[1].name
-            ? 1
-            : b[1].name > a[1].name
-            ? -1
-            : 0
-        )
-        if (this.selectFlow) ordered.unshift(this.selectFlow)
-        console.log(ordered)
-        return ordered
-      },
-      set() {
-        return null
-      }
+        }
+        if (run.flow_id) {
+          if (this.selectFlow && this.selectFlow[0] === run.flow_id)
+            return accum
+          if (!accum[run.flow_id]) {
+            accum[run.flow_id] = {
+              name: run.flow?.name,
+              active: true,
+              id: run.flow_id
+            }
+          }
+        }
+        if (run.flows && run.flows[0]?.id) {
+          if (this.selectFlow && this.selectFlow[0] === run.flows[0].id)
+            return accum
+          if (!accum[run.flows[0]?.id]) {
+            accum[run.flows[0].id] = {
+              name: run.flows[0].name,
+              active: false,
+              id: run.flows[0].id
+            }
+          }
+        }
+        return accum
+      }, {})
+      let entries = Object.entries(runs)
+      const ordered = entries.sort((a, b) =>
+        a[1].active
+          ? -1
+          : b[1].active
+          ? 1
+          : a[1].name > b[1].name
+          ? 1
+          : b[1].name > a[1].name
+          ? -1
+          : 0
+      )
+      if (this.selectFlow) ordered.unshift(this.selectFlow)
+      return ordered
     }
   },
   watch: {
@@ -157,18 +134,8 @@ export default {
     },
     allIds(val) {
       if (val[0] && !this.selectFlow) this.$emit('update', this.allIds[0][0])
-      clearTimeout(this.timeout)
-      this.showIds = false
-      if (val[0]) {
-        this.timeout = setTimeout(() => {
-          this.showIds = true
-        }, 5)
-        console.log('val', val)
-        // this.finishedIds = val
-      }
     },
     day() {
-      // this.allIds()
       this.flowGroupIds = []
     }
   },
@@ -176,7 +143,6 @@ export default {
     //creates a non-reactive property that isn't tracked by Vue - so that allIds does not reset
     this.selectFlow = null
     this.$emit('update', this.allIds[0])
-    // this.finishedIds = this.allIds
   },
   methods: {
     handleSelectedFlow(flow) {
@@ -262,12 +228,7 @@ export default {
             <v-progress-linear
               :indeterminate="loadingKey > 0"
             ></v-progress-linear>
-            <v-list-item-group
-              v-if="showIds"
-              :value="selectFlow"
-              color="primary"
-              mandatory
-            >
+            <v-list-item-group :value="selectFlow" color="primary" mandatory>
               <v-list-item
                 v-for="(item, inde) in allIds"
                 :key="inde"
@@ -279,16 +240,16 @@ export default {
                   @click="handleSelectedFlow(item)"
                 >
                   <v-list-item-subtitle class="font-weight-light ">
-                    {{ item[1].name }}
-                    <!-- <FlowName
+                    <FlowName
                       v-if="item"
                       :id="item[0]"
-                      :name="item[1] !== 'active' ? item[1] : null"
+                      :name="item[1].name"
+                      :version="item[1].version"
                       left
                       :fg-ids="flowGroupIds"
-                      :active="item[1] === 'active'"
+                      :active="item[1].active"
                       @fg="updateFlowGroupList"
-                    /> -->
+                    />
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -308,6 +269,10 @@ export default {
   background-color: #f9f9f9 !important;
 
   .theme--light > div {
+    background-color: #f9f9f9 !important;
+  }
+
+  .theme--light.v-list {
     background-color: #f9f9f9 !important;
   }
 
