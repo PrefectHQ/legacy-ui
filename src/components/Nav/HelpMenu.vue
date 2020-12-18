@@ -1,23 +1,8 @@
 <script>
-// import MenuLink from '@/components/Nav/MenuLink'
-
 export default {
-  //   components: { MenuLink },
   data() {
     return {
       model: false
-    }
-  },
-  computed: {
-    routes() {
-      return [
-        {
-          text: 'Getting Started',
-          route: {
-            name: 'home'
-          }
-        }
-      ]
     }
   }
 }
@@ -34,7 +19,12 @@ export default {
     nudge-bottom="20"
   >
     <template #activator="{ on }">
-      <v-btn class="navbar-icon mx-1" icon v-on="on">
+      <v-btn
+        class="navbar-icon mx-1"
+        :input-value="$route.path.includes('/help')"
+        icon
+        v-on="on"
+      >
         <i
           class="fad fa-question-circle nav-bar-duotone-icon fa-2x white--text"
         />

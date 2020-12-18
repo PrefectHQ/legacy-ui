@@ -4,6 +4,7 @@ import ConnectionMenu from '@/components/Nav/ConnectionMenu'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import HelpMenu from '@/components/Nav/HelpMenu'
 import NotificationMenu from '@/components/Nav/NotificationMenu'
+import TeamMenu from '@/components/Nav/TeamMenu'
 import UserMenu from '@/components/Nav/UserMenu'
 
 export default {
@@ -12,6 +13,7 @@ export default {
     GlobalSearch,
     HelpMenu,
     NotificationMenu,
+    TeamMenu,
     UserMenu
   },
   data() {
@@ -21,36 +23,36 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'tenants']),
-    routes() {
-      return [
-        {
-          text: 'Getting Started',
-          route: {
-            name: 'home'
-          }
-        },
-        {
-          text: 'Interactive API',
-          route: {
-            name: 'api',
-            params: { tenant: this.tenant.slug }
-          }
-        },
-        {
-          text: 'Team',
-          route: {
-            name: 'team'
-          }
-        },
-        {
-          text: 'Tutorials',
-          route: {
-            name: 'tutorial'
-          }
-        }
-      ]
-    }
+    ...mapGetters('tenant', ['tenant', 'tenants'])
+    // routes() {
+    //   return [
+    //     {
+    //       text: 'Getting Started',
+    //       route: {
+    //         name: 'home'
+    //       }
+    //     },
+    //     {
+    //       text: 'Interactive API',
+    //       route: {
+    //         name: 'api',
+    //         params: { tenant: this.tenant.slug }
+    //       }
+    //     },
+    //     {
+    //       text: 'Team',
+    //       route: {
+    //         name: 'team'
+    //       }
+    //     },
+    //     {
+    //       text: 'Tutorials',
+    //       route: {
+    //         name: 'tutorial'
+    //       }
+    //     }
+    //   ]
+    // }
   }
 }
 </script>
@@ -86,6 +88,35 @@ export default {
     <v-divider vertical class="white vertical-divider my-auto mr-2" />
 
     <v-btn
+      :to="{
+        name: 'home'
+      }"
+      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
+      dark
+      small
+      depressed
+      color="transparent"
+    >
+      Getting Started
+    </v-btn>
+
+    <v-btn
+      :to="{
+        name: 'api',
+        params: { tenant: tenant.slug }
+      }"
+      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
+      dark
+      small
+      depressed
+      color="transparent"
+    >
+      Interactive API
+    </v-btn>
+
+    <TeamMenu />
+
+    <!-- <v-btn
       v-for="r in routes"
       :key="r.text"
       :to="r.route"
@@ -96,7 +127,7 @@ export default {
       color="transparent"
     >
       {{ r.text }}
-    </v-btn>
+    </v-btn> -->
 
     <v-spacer></v-spacer>
 
