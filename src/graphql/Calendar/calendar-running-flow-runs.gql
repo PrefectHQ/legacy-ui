@@ -12,5 +12,10 @@ query CalendarRunningFlowRuns($startTime:timestamptz) {
   {
     id
     flow_id
+    flow {
+      id
+      name
+      version
+    }
   }
 }

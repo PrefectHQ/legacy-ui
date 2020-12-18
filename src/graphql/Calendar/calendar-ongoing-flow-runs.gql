@@ -12,5 +12,10 @@ query CalendarOngoingFlowRuns($startTime:timestamptz, $endTime: timestamptz) {
   {
     id
     flow_id
+    flow {
+      id
+      name
+      version
+    }
   }
 }
