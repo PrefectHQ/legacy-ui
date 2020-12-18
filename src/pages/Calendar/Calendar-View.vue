@@ -79,56 +79,66 @@ export default {
       </v-col>
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <v-toolbar flat color="appBackground" class="pa-0 tbar">
-          <v-btn outlined class="mx-4" color="grey darken-2" @click="setToday">
-            Today
-          </v-btn>
-          <v-spacer />
-          <v-btn fab text small color="grey darken-2" @click="prev">
-            <v-icon>
-              chevron_left
-            </v-icon>
-          </v-btn>
-          <v-toolbar-title class="py-4">
-            {{ calTitle }}
-          </v-toolbar-title>
-          <v-btn fab text small color="grey darken-2" @click="next">
-            <v-icon>
-              chevron_right
-            </v-icon>
-          </v-btn>
-
-          <v-spacer />
-          <v-menu bottom right>
-            <template #activator="{ on, attrs }">
+          <v-row>
+            <v-col cols="12" sm="4">
               <v-btn
                 outlined
+                class="mx-4"
                 color="grey darken-2"
-                class="mr-4"
-                v-bind="attrs"
-                v-on="on"
+                @click="setToday"
               >
-                <span>{{ typeToLabel[type] }}</span>
-                <v-icon right>
-                  expand_more
+                Today
+              </v-btn>
+              <v-btn fab text small color="grey darken-2" @click="prev">
+                <v-icon>
+                  chevron_left
                 </v-icon>
               </v-btn>
-            </template>
-            <v-list>
-              <v-list-item @click="type = 'day'">
-                <v-list-item-title>Day</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 Days</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-          <v-progress-linear
-            absolute
-            bottom
-            :active="loading"
-            :indeterminate="loading"
-            color="primary"
-          ></v-progress-linear>
+              <v-btn fab text small color="grey darken-2" @click="next">
+                <v-icon>
+                  chevron_right
+                </v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="12" sm="4" class="text-center mt-2">
+              <v-toolbar-title>
+                {{ calTitle }}
+              </v-toolbar-title>
+            </v-col>
+            <v-col cols="12" sm="4" class="text-right">
+              <v-menu bottom right>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    outlined
+                    color="grey darken-2"
+                    class="mr-4"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <span>{{ typeToLabel[type] }}</span>
+                    <v-icon right>
+                      expand_more
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item @click="type = 'day'">
+                    <v-list-item-title>Day</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="type = '4day'">
+                    <v-list-item-title>4 Days</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-col>
+            <v-progress-linear
+              absolute
+              bottom
+              :active="loading"
+              :indeterminate="loading"
+              color="primary"
+            ></v-progress-linear>
+          </v-row>
         </v-toolbar>
 
         <CalendarDay
