@@ -202,11 +202,12 @@ export default {
         ? 'darker'
         : ''
     },
-    handleEventClick({ nativeEvent, event }) {
+    handleEventClick(ev, el) {
+      console.log(ev, el)
       clearTimeout(this.timeout)
       const open = () => {
-        this.selectedEvent = event
-        this.selectedElement = nativeEvent.target
+        this.selectedEvent = ev
+        this.selectedElement = el.target
         this.selectedOpen = true
       }
       if (this.selectedOpen) {
@@ -215,6 +216,9 @@ export default {
       } else {
         open()
       }
+      // el.nativeEvent.stopPropogation
+      //   ? el.nativeEvent.stopPropogation()
+      //   : el.nativeEvent.cancelBubble()
     },
     handleScheduleBanner() {
       this.scheduleBanner = false
@@ -289,10 +293,14 @@ export default {
       :interval-count="intervalCount"
       :type="type"
       class="calendar-tweaks"
-      @click:event="handleEventClick"
     >
       <template #event="{event}">
-        <div :id="event.name" class="caption pl-2" :class="striped(event)">
+        <div
+          :id="event.name"
+          class="caption pl-2"
+          :class="striped(event)"
+          @click.self="handleEventClick(event, $event)"
+        >
           {{ event.name }} {{ calEventTime(event.start_time, date) }}
           -
           {{ calEventTime(event.end_time, date) }}
@@ -305,7 +313,7 @@ export default {
 
     <v-menu
       :value="selectedOpen"
-      class="menu-tweaks"
+      content-class="menu-tweaks"
       :attach="selectedElement"
       offset-x
       max-width="50vW"
@@ -379,6 +387,11 @@ export default {
 }
 
 //Make the popover menu visible
+
+.menu-tweaks {
+  cursor: default;
+  // pointer-events: none !important;
+}
 .v-calendar .v-event {
   overflow: visible;
   z-index: auto;
