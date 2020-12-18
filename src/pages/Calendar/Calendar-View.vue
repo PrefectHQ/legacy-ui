@@ -50,6 +50,14 @@ export default {
     },
     handleLoad(bool) {
       this.loading = bool
+    },
+    prev() {
+      const day = this.subtractDay(this.date, 1)
+      this.date = this.formatCalendarDate(day)
+    },
+    next() {
+      const day = this.addDay(this.date, 1)
+      this.date = this.formatCalendarDate(day)
     }
   }
 }
@@ -75,16 +83,20 @@ export default {
             Today
           </v-btn>
           <v-spacer />
-          <v-toolbar-title>
+          <v-btn fab text small color="grey darken-2" @click="prev">
+            <v-icon>
+              chevron_left
+            </v-icon>
+          </v-btn>
+          <v-toolbar-title class="py-4">
             {{ calTitle }}
           </v-toolbar-title>
-          <v-progress-linear
-            absolute
-            bottom
-            :active="loading"
-            :indeterminate="loading"
-            color="primary"
-          ></v-progress-linear>
+          <v-btn fab text small color="grey darken-2" @click="next">
+            <v-icon>
+              chevron_right
+            </v-icon>
+          </v-btn>
+
           <v-spacer />
           <v-menu bottom right>
             <template #activator="{ on, attrs }">
@@ -110,6 +122,13 @@ export default {
               </v-list-item>
             </v-list>
           </v-menu>
+          <v-progress-linear
+            absolute
+            bottom
+            :active="loading"
+            :indeterminate="loading"
+            color="primary"
+          ></v-progress-linear>
         </v-toolbar>
 
         <CalendarDay
