@@ -4,11 +4,24 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- Assorted visual bugs - [#507](https://github.com/PrefectHQ/ui/pull/507)
+- Remove disabled from the artifacts tab on mobile pages - [#512](https://github.com/PrefectHQ/ui/pull/512)
+- Route to the 404 page if an incomplete or incorrect flow run, task or task run uuid is given in the route - [#511](https://github.com/PrefectHQ/ui/pull/511)
+- Remove decrossing from schematic graph calculations - [#515](https://github.com/PrefectHQ/ui/pull/515)
+
+## 2020-12-14
+
+### Features and Improvements
+
 - Add task run names to global search - [#485](https://github.com/PrefectHQ/ui/pull/485)
 
 ### Bugfixes
 
-- None
+- Add link handling to artifacts page - [#498](https://github.com/PrefectHQ/ui/pull/498)
 
 ## 2020-12-07
 

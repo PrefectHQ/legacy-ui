@@ -101,7 +101,7 @@ export default {
           <input
             ref="edit-input"
             v-model="value"
-            class="truncate"
+            class="text-truncate"
             :class="{
               'cursor-pointer': !focused
             }"

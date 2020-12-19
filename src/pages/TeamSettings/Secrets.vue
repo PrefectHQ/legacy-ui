@@ -358,7 +358,7 @@ export default {
         icon="lock"
         max-width="380"
       >
-        Read-only users cannot create secrets.
+        Read-only users cannot manage secrets.
       </v-alert>
     </template>
 
@@ -366,7 +366,7 @@ export default {
     <v-text-field
       v-if="!$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
       v-model="search"
-      class="rounded-none elevation-1 mb-1"
+      class="rounded-0 elevation-1 mb-1"
       solo
       dense
       hide-details
@@ -386,7 +386,7 @@ export default {
           <v-text-field
             v-if="!isReadOnlyUser"
             v-model="search"
-            class="rounded-none elevation-1"
+            class="rounded-0 elevation-1"
             solo
             dense
             hide-details
@@ -410,7 +410,7 @@ export default {
           :items="secretNames"
           :items-per-page.sync="itemsPerPage"
           sort-by="name"
-          class="elevation-2 rounded-none truncate-table"
+          class="elevation-2 rounded-0 truncate-table"
           :footer-props="{
             firstIcon: 'first_page',
             itemsPerPageOptions: rowsPerPageItems,
@@ -424,7 +424,7 @@ export default {
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
 
           <!-- ACTIONS -->

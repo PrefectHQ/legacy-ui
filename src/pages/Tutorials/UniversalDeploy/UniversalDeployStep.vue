@@ -125,10 +125,6 @@ flow = Flow("hello-flow", tasks=[hello_task])
   background-color: #feeef0;
 }
 
-.position-absolute {
-  position: absolute;
-}
-
 .w-100 {
   width: 100%;
 }

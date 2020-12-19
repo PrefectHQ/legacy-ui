@@ -1140,18 +1140,10 @@ canvas {
   right: 0.15rem;
 }
 
-.position-absolute {
-  position: absolute;
-
-  &.center {
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.position-relative {
-  position: relative;
+.center {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .node-data-group {

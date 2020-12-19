@@ -320,9 +320,7 @@ export default {
         icon="lock"
         max-width="600"
       >
-        <p>
-          Your license does not include task concurrency limits.
-        </p>
+        Your license does not include task concurrency limits.
 
         <p v-if="isTenantAdmin" class="mt-4 mb-0">
           If you would like to upgrade, please contact
@@ -349,7 +347,7 @@ export default {
     <v-text-field
       v-if="isEligible && !$vuetify.breakpoint.mdAndUp"
       v-model="search"
-      class="rounded-none elevation-1 mb-1"
+      class="rounded-0 elevation-1 mb-1"
       solo
       dense
       hide-details
@@ -364,7 +362,7 @@ export default {
         <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
           <v-text-field
             v-model="search"
-            class="rounded-none elevation-1"
+            class="rounded-0 elevation-1"
             solo
             dense
             hide-details
@@ -381,7 +379,7 @@ export default {
         <v-data-table
           fixed-header
           data-cy="tag-table"
-          class="elevation-2 rounded-none truncate-table"
+          class="elevation-2 rounded-0 truncate-table"
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :items="tagsWithUsage"
@@ -400,13 +398,13 @@ export default {
           no-data-text="This team has not set any task concurrency limits yet."
         >
           <template #header.tag="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.usage="{ header }">
             <v-tooltip bottom open-delay="500">
               <template #activator="{ on }">
                 <div class="subtitle-2" v-on="on">
-                  {{ header.text.toUpperCase() }}
+                  {{ header.text }}
                   <v-icon
                     x-small
                     class="material-icons-outlined"
@@ -422,7 +420,7 @@ export default {
             <v-tooltip bottom open-delay="500">
               <template #activator="{ on }">
                 <div class="subtitle-2" v-on="on">
-                  {{ header.text.toUpperCase() }}
+                  {{ header.text }}
                   <v-icon
                     x-small
                     class="material-icons-outlined"

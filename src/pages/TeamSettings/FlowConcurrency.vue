@@ -304,7 +304,7 @@ export default {
     <v-text-field
       v-if="!$vuetify.breakpoint.mdAndUp"
       v-model="search"
-      class="rounded-none elevation-1 mb-1"
+      class="rounded-0 elevation-1 mb-1"
       solo
       dense
       hide-details
@@ -319,7 +319,7 @@ export default {
         <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
           <v-text-field
             v-model="search"
-            class="rounded-none elevation-1"
+            class="rounded-0 elevation-1"
             solo
             dense
             hide-details
@@ -336,7 +336,7 @@ export default {
         <v-data-table
           fixed-header
           data-cy="label-table"
-          class="elevation-2 rounded-none truncate-table"
+          class="elevation-2 rounded-0 truncate-table"
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :items="labelsWithUsage"
@@ -355,13 +355,13 @@ export default {
           no-data-text="This team has not set any flow concurrency limits yet."
         >
           <template #header.tag="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.usage="{ header }">
             <v-tooltip bottom open-delay="500">
               <template #activator="{ on }">
                 <div class="subtitle-2" v-on="on">
-                  {{ header.text.toUpperCase() }}
+                  {{ header.text }}
                   <v-icon
                     x-small
                     class="material-icons-outlined"
@@ -377,7 +377,7 @@ export default {
             <v-tooltip bottom open-delay="500">
               <template #activator="{ on }">
                 <div class="subtitle-2" v-on="on">
-                  {{ header.text.toUpperCase() }}
+                  {{ header.text }}
                   <v-icon
                     x-small
                     class="material-icons-outlined"
@@ -500,7 +500,7 @@ export default {
           data-cy="label-name"
           validate-on-blur
           :rules="[rules.required]"
-          label="label"
+          label="Label"
           autofocus
         ></v-text-field>
         <v-text-field

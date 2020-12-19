@@ -567,10 +567,6 @@ export default {
   overflow-y: auto;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
-
 .label-search {
   border-radius: 0 !important;
   font-size: 0.85rem !important;

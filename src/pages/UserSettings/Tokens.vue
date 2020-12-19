@@ -199,7 +199,7 @@ export default {
         <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
           <v-text-field
             v-model="search"
-            class="rounded-none elevation-1"
+            class="rounded-0 elevation-1"
             solo
             dense
             hide-details
@@ -215,7 +215,7 @@ export default {
 
         <v-data-table
           fixed-header
-          class="elevation-2 rounded-none truncate-table"
+          class="elevation-2 rounded-0 truncate-table"
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :search="search"
@@ -233,16 +233,16 @@ export default {
           no-data-text="You do not have any personal access tokens yet."
         >
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.last_used="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.expires_at="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #item.name="{ item }">
             {{ item.name }}

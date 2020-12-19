@@ -234,7 +234,7 @@ export default {
       :header-props="{ 'sort-icon': 'arrow_drop_up' }"
       :items="membersItems"
       :items-per-page="10"
-      class="elevation-2 rounded-none truncate-table"
+      class="elevation-2 rounded-0 truncate-table"
       :footer-props="{
         showFirstLastPage: true,
         itemsPerPageOptions: [10, 15, 20, -1],
@@ -249,19 +249,19 @@ export default {
     >
       <!-- HEADERS -->
       <template #header.email="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.username="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.firstName="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.lastName="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.role="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="subtitle-2">{{ header.text }}</span>
       </template>
 
       <!-- ROLE -->

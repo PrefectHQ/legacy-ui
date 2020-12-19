@@ -153,7 +153,7 @@ export default {
             </v-list-item-avatar>
             <v-list-item-content class="my-0 py-3">
               <div
-                class="inline-block subtitle-1 font-weight-light"
+                class="d-inline-block subtitle-1 font-weight-light"
                 style="line-height: 1.25rem;"
               >
                 Something went wrong while trying to fetch failed flow
@@ -186,7 +186,10 @@ export default {
             >
               <v-list-item-content>
                 <v-list-item-title>
-                  <div class="truncate d-inline-block" style="max-width: 95%;">
+                  <div
+                    class="text-truncate d-inline-block"
+                    style="max-width: 95%;"
+                  >
                     {{ failure.flow.name }}
                   </div>
                 </v-list-item-title>

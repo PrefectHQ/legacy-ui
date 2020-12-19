@@ -469,8 +469,4 @@ export default {
     transform: scale(0);
   }
 }
-
-.cursor-pointer {
-  cursor: pointer;
-}
 </style>

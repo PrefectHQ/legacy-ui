@@ -498,7 +498,7 @@ export default {
     <v-text-field
       v-if="!$vuetify.breakpoint.mdAndUp"
       v-model="searchInput"
-      class="rounded-none elevation-1 mb-1"
+      class="rounded-0 elevation-1 mb-1"
       solo
       dense
       hide-details
@@ -513,7 +513,7 @@ export default {
         <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
           <v-text-field
             v-model="searchInput"
-            class="rounded-none elevation-1"
+            class="rounded-0 elevation-1"
             solo
             dense
             hide-details
@@ -537,7 +537,7 @@ export default {
           :items-per-page="10"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
-          class="elevation-2 rounded-none truncate-table"
+          class="elevation-2 rounded-0 truncate-table"
           :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
           :footer-props="{
             showFirstLastPage: true,
@@ -552,19 +552,19 @@ export default {
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.description="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.active_flow_count.aggregate.count="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.id="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
 
           <!-- PROJECT ID-->
@@ -572,7 +572,7 @@ export default {
             <v-tooltip top>
               <template #activator="{ on }">
                 <div
-                  class="cursor-pointer truncate"
+                  class="cursor-pointer text-truncate"
                   v-on="on"
                   @click="copyTextToClipboard(item.id)"
                 >
