@@ -13,11 +13,6 @@ export default {
       required: false,
       default: false
     },
-    fgIds: {
-      type: Array,
-      required: false,
-      default: () => []
-    },
     truncate: {
       type: Boolean,
       required: false,
@@ -32,11 +27,6 @@ export default {
       type: Number,
       required: false,
       default: null
-    },
-    fgId: {
-      type: String,
-      required: false,
-      default: null
     }
   },
   data() {
@@ -46,10 +36,7 @@ export default {
   },
   computed: {
     includeVersion() {
-      const fgId = this.fgId || this.flow?.flow_group_id
-      return this.fgIds.filter(id => id === fgId).length > 1
-        ? `(Version ${this.version || this.flow?.version})`
-        : ''
+      return !this.name ? `(Version ${this.version || this.flow?.version})` : ''
     },
     flowDetails() {
       const name = this.name ? `${this.name}` : `${this.flow?.name}`

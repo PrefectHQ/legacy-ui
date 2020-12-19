@@ -119,10 +119,6 @@ export default {
       )
       if (this.selectFlow) ordered.unshift(this.selectFlow)
       return ordered
-    },
-    fgIds() {
-      const ids = this.allIds.map(run => run[1].fgId)
-      return ids
     }
   },
   watch: {
@@ -258,7 +254,6 @@ export default {
                       :name="item[1].name"
                       :version="item[1].version"
                       left
-                      :fg-ids="fgIds"
                       :active="item[1].active"
                       @fg="updateFlowGroupList"
                     />
