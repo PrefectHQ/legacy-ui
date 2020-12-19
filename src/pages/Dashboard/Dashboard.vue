@@ -200,6 +200,7 @@ export default {
     <SubPageNav
       :icon="projectId && project ? 'pi-project' : 'view_quilt'"
       :page-type="projectId && project ? 'Project' : 'Dashboard'"
+      :tenant-slug="tenant.slug"
     >
       <span
         slot="page-title"
