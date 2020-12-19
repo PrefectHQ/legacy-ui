@@ -1,0 +1,20 @@
+query CalendarScheduledFlowRuns($startTime: timestamptz, $endTime: timestamptz) {
+  flow_run (
+    where: { 
+      _and: [
+    {scheduled_start_time: { _gt: $startTime}}, 
+    {scheduled_start_time: { _lt: $endTime}},
+    {start_time: {_is_null: true}},
+    ]
+    }
+  ) 
+  {
+    id
+    flow_id
+    flow {
+      id 
+      name
+      version
+    }
+  }
+}

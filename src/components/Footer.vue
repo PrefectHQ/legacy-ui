@@ -73,6 +73,7 @@ export default {
 
 <template>
   <v-footer
+    v-if="!noShow"
     color="transparent"
     padless
     absolute
