@@ -81,7 +81,6 @@ export default {
             return accum
           if (!accum[run.flow_id]) {
             accum[run.flow_id] = {
-              name: run.flow?.name,
               active: true,
               id: run.flow_id
             }
@@ -94,8 +93,14 @@ export default {
             accum[run.flows[0].id] = {
               name: run.flows[0].name,
               active: false,
-              id: run.flows[0].id
+              id: run.flows[0].id,
+              version: run.flows[0].version,
+              fgId: run.id
             }
+          } else {
+            accum[run.flows[0].id].name = run.flows[0].name
+            accum[run.flows[0].id].version = run.flows[0].version
+            accum[run.flows[0].id].fgId = run.id
           }
         }
         return accum
@@ -114,6 +119,10 @@ export default {
       )
       if (this.selectFlow) ordered.unshift(this.selectFlow)
       return ordered
+    },
+    fgIds() {
+      const ids = this.allIds.map(run => run[1].fgId)
+      return ids
     }
   },
   watch: {
@@ -249,7 +258,7 @@ export default {
                       :name="item[1].name"
                       :version="item[1].version"
                       left
-                      :fg-ids="flowGroupIds"
+                      :fg-ids="fgIds"
                       :active="item[1].active"
                       @fg="updateFlowGroupList"
                     />
