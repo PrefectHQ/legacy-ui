@@ -114,20 +114,20 @@ export default {
       Interactive API
     </v-btn>
 
-    <TeamMenu />
-
-    <!-- <v-btn
-      v-for="r in routes"
-      :key="r.text"
-      :to="r.route"
+    <v-btn
+      :to="{
+        name: 'calendar'
+      }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
       dark
       small
       depressed
       color="transparent"
     >
-      {{ r.text }}
-    </v-btn> -->
+      Calendar
+    </v-btn>
+
+    <TeamMenu />
 
     <v-spacer></v-spacer>
 
