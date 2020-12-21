@@ -22,7 +22,6 @@ export default {
   computed: {
     showBanner() {
       // let show = this.flowCount ? this.flowCount === 0 : false
-      console.log('FLOW COUNT: ', this.flowCount)
       let show = this.flowCount > 0
       if (!this.dismissed && this.pageScroll) {
         show = !this.pageScroll
@@ -51,6 +50,7 @@ export default {
 
 <template>
   <div>
+    {{ flowCount }}
     <v-banner :value="showBanner" two-line>
       <v-avatar slot="icon" color="#3b8dff" size="40">
         <v-icon icon="mdi-lock" color="white">
