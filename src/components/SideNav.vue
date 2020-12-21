@@ -405,6 +405,22 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
+          <v-list-item
+            active-class="primary-active-class"
+            data-cy="side-nav-dashboard-item"
+            :disabled="routeDisabled"
+            ripple
+            exact
+            :to="getRoute('calendar')"
+          >
+            <v-list-item-action>
+              <v-icon>event</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Calendar</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
           <!-- <v-list-item :to="{ name: 'schematics' }" ripple>
             <v-list-item-action>
               <v-icon>account_tree</v-icon>

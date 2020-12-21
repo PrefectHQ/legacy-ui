@@ -118,6 +118,9 @@ export default {
         default:
           break
       }
+    },
+    flowRun(val) {
+      if (val === 'not-found') this.$router.push({ name: 'not-found' })
     }
   },
   methods: {
@@ -181,8 +184,12 @@ export default {
           id: this.flowRunId
         }
       },
+      error(error) {
+        if (error.toString().includes('invalid input'))
+          this.$router.push({ name: 'not-found' })
+      },
       pollInterval: 5000,
-      update: data => data.flow_run_by_pk
+      update: data => data.flow_run_by_pk || 'not-found'
     }
   }
 }
@@ -342,7 +349,7 @@ export default {
         <v-icon>format_align_left</v-icon>
       </v-btn>
 
-      <v-btn disabled @click="tab = 'artifacts'">
+      <v-btn @click="tab = 'artifacts'">
         Artifacts
         <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>
