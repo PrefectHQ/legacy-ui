@@ -4,7 +4,13 @@
 
 ### Features and Improvements
 
+- Add a flow run calendar view page - [#433](https://github.com/PrefectHQ/ui/pull/433)
+
+### Bugfixes
+
 - None
+
+## 2020-12-18
 
 ### Bugfixes
 
