@@ -21,7 +21,9 @@ export default {
   },
   computed: {
     showBanner() {
-      let show = this.flowCount ? this.flowCount === 0 : false
+      // let show = this.flowCount ? this.flowCount === 0 : false
+      console.log('FLOW COUNT: ', this.flowCount)
+      let show = this.flowCount > 0
       if (!this.dismissed && this.pageScroll) {
         show = !this.pageScroll
       } else if (this.dismissed) {
