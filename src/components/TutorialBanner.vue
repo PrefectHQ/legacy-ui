@@ -34,14 +34,14 @@ export default {
     flowCount: {
       query: gql`
         query {
-          flow_group_aggregate {
+          flow_aggregate {
             aggregate {
               count
             }
           }
         }
       `,
-      update: data => data.flow_group_aggregate.aggregate.count
+      update: data => data.flow_aggregate.aggregate.count
     }
   }
 }
