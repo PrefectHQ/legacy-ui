@@ -116,7 +116,8 @@ export default {
 
     <v-btn
       :to="{
-        name: 'calendar'
+        name: 'calendar',
+        params: { tenant: tenant.slug }
       }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
       dark
