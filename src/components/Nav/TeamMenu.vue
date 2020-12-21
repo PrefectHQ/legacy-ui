@@ -11,7 +11,6 @@ export default {
 <template>
   <v-menu
     v-model="model"
-    :close-on-content-click="false"
     offset-y
     transition="slide-y-transition"
     nudge-bottom="25"
@@ -36,47 +35,6 @@ export default {
       </div> -->
 
       <v-list>
-        <!-- <v-list-item href="https://docs.prefect.io" target="_blank">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-books fa-2x fa-flip-horizontal" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Docs
-              <sup>
-                <v-icon x-small>
-                  open_in_new
-                </v-icon>
-              </sup>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Explore Prefect through our docs
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item> -->
-
-        <!-- <v-list-item
-          href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
-          target="_blank"
-        >
-          <v-list-item-avatar tile>
-            <i class="o-100 fab fa-github fa-2x grey--text text--darken-2" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Found a bug?
-              <sup>
-                <v-icon x-small>
-                  open_in_new
-                </v-icon>
-              </sup>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Update your team name and slug
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item> -->
-
         <v-list-item :to="{ name: 'account' }">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-abacus fa-2x" />
@@ -135,6 +93,22 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item :to="{ name: 'flow-concurrency' }">
+          <v-list-item-avatar tile>
+            <v-icon large color="#999">
+              pi-flow
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Flow Groups
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              View all your team's flows
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :to="{ name: 'cloud-hooks' }">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-clouds fa-2x" />
@@ -157,10 +131,26 @@ export default {
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="text-subtitle-1">
-              Concurrency
+              Flow Concurrency
             </v-list-item-title>
             <v-list-item-subtitle>
-              Manage flow and task run concurrency
+              Manage flow concurrency
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :to="{ name: 'task-concurrency' }">
+          <v-list-item-avatar tile>
+            <v-icon large color="primaryDark">
+              pi-task-run
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Task Concurrency
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Manage task run concurrency
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -220,6 +210,9 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+$dark-grey-icon: #999;
+$dark-blue-icon: var(--v-primaryDark-base);
+
 .o-100 {
   &.svg-inline--fa {
     --fa-primary-opacity: 0.8;
@@ -228,27 +221,27 @@ export default {
 }
 
 .fa-abacus {
-  --fa-primary-color: #999;
-  --fa-secondary-color: #06e797;
+  --fa-primary-color: #{$dark-grey-icon};
+  --fa-secondary-color: #{$dark-blue-icon};
 }
 
 .fa-key-skeleton {
-  --fa-primary-color: var(--v-accentOrange-base);
-  --fa-secondary-color: #999;
+  --fa-primary-color: #{$dark-blue-icon};
+  --fa-secondary-color: #{$dark-grey-icon};
 }
 
 .fa-users {
-  --fa-primary-color: #0075b8;
-  --fa-secondary-color: #999;
+  --fa-primary-color: #{$dark-blue-icon};
+  --fa-secondary-color: #{$dark-grey-icon};
 }
 
 .fa-clouds {
-  --fa-primary-color: var(--v-primaryDark-base);
-  --fa-secondary-color: var(--v-primary-base);
+  --fa-primary-color: #{$dark-blue-icon};
+  --fa-secondary-color: #{$dark-grey-icon};
 }
 
 .fa-exchange-alt {
-  --fa-primary-color: var(--v-accentOrange-base);
-  --fa-secondary-color: #999;
+  --fa-primary-color: #{$dark-blue-icon};
+  --fa-secondary-color: #{$dark-grey-icon};
 }
 </style>

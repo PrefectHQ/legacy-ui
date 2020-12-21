@@ -11,7 +11,6 @@ export default {
 <template>
   <v-menu
     v-model="model"
-    :close-on-content-click="false"
     offset-y
     offset-x
     :nudge-left="350"
@@ -61,7 +60,7 @@ export default {
           target="_blank"
         >
           <v-list-item-avatar tile>
-            <i class="o-100 fab fa-github fa-2x grey--text text--darken-2" />
+            <i class="o-100 fab fa-github fa-2x primaryDark--text" />
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="text-subtitle-1">
@@ -119,6 +118,9 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+$dark-grey-icon: #999;
+$dark-blue-icon: var(--v-primaryDark-base);
+
 .o-100 {
   &.svg-inline--fa {
     --fa-primary-opacity: 0.8;
@@ -127,12 +129,12 @@ export default {
 }
 
 .fa-life-ring {
-  --fa-primary-color: #efefef;
-  --fa-secondary-color: #ff4c4c;
+  --fa-secondary-color: #{$dark-grey-icon};
+  --fa-primary-color: #{$dark-blue-icon};
 }
 
 .fa-books {
-  --fa-primary-color: #efefef;
-  --fa-secondary-color: #0075b8;
+  --fa-primary-color: #{$dark-grey-icon};
+  --fa-secondary-color: #{$dark-blue-icon};
 }
 </style>
