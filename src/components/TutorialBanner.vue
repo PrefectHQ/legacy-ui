@@ -50,7 +50,6 @@ export default {
 
 <template>
   <div>
-    {{ flowCount }}
     <v-banner :value="showBanner" two-line>
       <v-avatar slot="icon" color="#3b8dff" size="40">
         <v-icon icon="mdi-lock" color="white">
