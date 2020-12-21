@@ -56,7 +56,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+          href="https://github.com/PrefectHQ/ui/issues/new/choose"
           target="_blank"
         >
           <v-list-item-avatar tile>

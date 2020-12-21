@@ -239,7 +239,7 @@ export default {
             for tips on setting up Prefect Server, idioms for writing flows, and
             so much more. Looking for more in-depth discussion? Our
             <ExternalLink
-              href="https://github.com/PrefectHQ/prefect/discussions/category_choices"
+              href="https://github.com/PrefectHQ/prefect/discussions/new"
               >GitHub Discussion board</ExternalLink
             >
             is a great place to present long-form ideas, technical challenges,
@@ -266,8 +266,7 @@ export default {
 
         <div v-else-if="isCloud">
           Having trouble? Check out the
-          <ExternalLink
-            href="https://github.com/PrefectHQ/prefect/discussions/category_choices"
+          <ExternalLink href="https://prefect.status.io/"
             >Prefect Cloud status page</ExternalLink
           >
           for information about upcoming maintenance windows and the current
