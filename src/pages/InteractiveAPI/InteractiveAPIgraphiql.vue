@@ -22,9 +22,21 @@ const js = (id, url) =>
   })
 
 export default {
+  data() {
+    return {
+      defaultQuery:
+        this.role === 'READ_ONLY_USER'
+          ? 'Sorry this page is not available to Read-only users.'
+          : `# Enter your query/mutation here
+# Example:
+query { hello }`,
+      readOnly: this.role === 'READ_ONLY_USER'
+    }
+  },
   computed: {
     ...mapGetters('auth0', ['authorizationToken']),
-    ...mapGetters('api', ['url'])
+    ...mapGetters('api', ['url']),
+    ...mapGetters('tenant', ['role'])
   },
   meta: {
     title: 'GraphiQL'
@@ -48,7 +60,11 @@ export default {
       }).then(res => res.json())
     /* eslint-disable no-undef */
     ReactDOM.render(
-      React.createElement(GraphiQL, { fetcher }),
+      React.createElement(GraphiQL, {
+        fetcher,
+        defaultQuery: this.defaultQuery,
+        readOnly: this.readOnly
+      }),
       /* eslint-enable no-undef */
       document.getElementById('graphiql')
     )
