@@ -38,9 +38,6 @@ query { hello }`,
     ...mapGetters('api', ['url']),
     ...mapGetters('tenant', ['role'])
   },
-  meta: {
-    title: 'GraphiQL'
-  },
   async mounted() {
     // wait for latest CDN scripts
     await js('react', 'https://unpkg.com/react/umd/react.production.min.js')
@@ -82,15 +79,8 @@ query { hello }`,
 
 <style lang="scss">
 @import 'https://unpkg.com/graphiql/graphiql.min.css';
-$editor-black: #1d252b; // secondaryGrayDark
 $toolbar-black: #21262b;
 $divider-gray: #4e5965;
-$text-gray: #edf0f3; // secondaryGrayLight
-$accent-pink: #fe5196;
-$accent-orange: #f77062;
-$accent-cyan: #2edaff;
-$code-blue: #0073df;
-$code-pink: #da2072;
 $brackets-gray: #8d98a5;
 /* stylelint-disable selector-class-pattern */
 /* since we're not writing these class names, we can't abide by stylelint's naming rules */
@@ -99,26 +89,26 @@ $brackets-gray: #8d98a5;
   background: $divider-gray;
 
   .info-description {
-    color: $text-gray;
+    color: var(--v-secondaryGrayLight-base);
   }
 
   .type-name {
-    color: $accent-cyan;
+    color: var(--v-accentCyan-base);
   }
 
   .field-name {
-    color: $accent-orange;
+    color: var(--v-accentOrange-base);
   }
 }
 
 .graphiql-container {
   /* overall styles */
   .CodeMirror {
-    background: $editor-black !important;
+    background: var(--v-secondaryGrayDark-base) !important;
   }
 
   .CodeMirror-cursor {
-    border-left: 1px solid $text-gray;
+    border-left: 1px solid var(--v-secondaryGrayLight-base);
   }
 
   .CodeMirror-hints {
@@ -127,7 +117,7 @@ $brackets-gray: #8d98a5;
     /* stylelint-disable-next-line selector-max-compound-selectors */
     .CodeMirror-hint,
     .CodeMirror-hint-information .content {
-      color: $text-gray;
+      color: var(--v-secondaryGrayLight-base);
     }
   }
 
@@ -137,7 +127,7 @@ $brackets-gray: #8d98a5;
   .secondary-editor-title {
     background: $divider-gray;
     border: 0;
-    color: $text-gray;
+    color: var(--v-secondaryGrayLight-base);
   }
 
   .secondary-editor {
@@ -145,12 +135,12 @@ $brackets-gray: #8d98a5;
   }
 
   .secondary-editor-title > div {
-    color: $text-gray !important;
+    color: var(--v-secondaryGrayLight-base) !important;
   }
 
   button,
   input {
-    color: $text-gray;
+    color: var(--v-secondaryGrayLight-base);
   }
   /* History and Documentation sidebars */
   .historyPaneWrap {
@@ -160,7 +150,7 @@ $brackets-gray: #8d98a5;
   .doc-explorer-title-bar,
   .history-title-bar {
     background: $toolbar-black;
-    color: $text-gray;
+    color: var(--v-secondaryGrayLight-base);
     height: 40px;
     padding: 0 8px;
 
@@ -184,7 +174,7 @@ $brackets-gray: #8d98a5;
   .doc-explorer-contents {
     background: $toolbar-black;
     border-top: 2px solid $divider-gray;
-    color: $text-gray;
+    color: var(--v-secondaryGrayLight-base);
     top: 40px;
   }
 
@@ -193,7 +183,7 @@ $brackets-gray: #8d98a5;
 
     &:hover,
     &:focus {
-      background: $accent-pink;
+      background: var(--v-accentPink-base);
     }
 
     /* stylelint-disable-next-line selector-max-compound-selectors */
@@ -220,19 +210,19 @@ $brackets-gray: #8d98a5;
     /* stylelint-disable-next-line selector-max-compound-selectors */
     .doc-category-title,
     .field-short-description > * {
-      color: $text-gray;
+      color: var(--v-secondaryGrayLight-base);
     }
 
     .field-name {
-      color: $accent-cyan;
+      color: var(--v-accentCyan-base);
     }
 
     .arg-name {
-      color: $accent-orange;
+      color: var(--v-accentOrange-base);
     }
 
     .type-name {
-      color: $code-blue;
+      color: var(--v-codeBlue-base);
     }
   }
 
@@ -248,21 +238,21 @@ $brackets-gray: #8d98a5;
     }
 
     .execute-button {
-      background: $accent-pink;
+      background: var(--v-accentPink-base);
       border: 0;
       box-shadow: none;
       height: 32px;
       width: 32px;
       /* stylelint-disable-next-line selector-max-compound-selectors */
       * {
-        fill: $text-gray;
+        fill: var(--v-secondaryGrayLight-base);
       }
     }
 
     .toolbar-button {
       background: $divider-gray;
       box-shadow: none;
-      color: $text-gray;
+      color: var(--v-secondaryGrayLight-base);
       padding: 2px 8px;
     }
   }
@@ -271,46 +261,46 @@ $brackets-gray: #8d98a5;
     background: $divider-gray;
     border: 0;
     box-shadow: none;
-    color: $text-gray;
+    color: var(--v-secondaryGrayLight-base);
     padding: 2px 8px;
 
     &::before {
-      border-left: 2px solid $text-gray;
-      border-top: 2px solid $text-gray;
+      border-left: 2px solid var(--v-secondaryGrayLight-base);
+      border-top: 2px solid var(--v-secondaryGrayLight-base);
     }
   }
 
   .doc-explorer-back {
     background: $divider-gray;
     border-radius: 3px;
-    color: $text-gray;
+    color: var(--v-secondaryGrayLight-base);
     height: 25px;
     margin: 8px 0 0;
     overflow: hidden;
     padding: 2px 8px;
 
     &::before {
-      border-left: 2px solid $text-gray;
-      border-top: 2px solid $text-gray;
+      border-left: 2px solid var(--v-secondaryGrayLight-base);
+      border-top: 2px solid var(--v-secondaryGrayLight-base);
     }
   }
   /* code colors */
   .cm-keyword,
   .cm-def {
-    color: $code-pink;
+    color: var(--v-codePink-base);
   }
 
   .cm-property {
-    color: $code-blue;
+    color: var(--v-codeBlue-base);
   }
 
   .cm-string {
-    color: $accent-orange;
+    color: var(--v-accentOrange-base);
   }
 
   .cm-variable,
   .cm-attribute {
-    color: $accent-orange;
+    color: var(--v-accentOrange-base);
   }
 
   .cm-punctuation {
