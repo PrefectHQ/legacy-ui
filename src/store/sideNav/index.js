@@ -1,5 +1,5 @@
 const state = {
-  open: false
+  open: true
 }
 
 const getters = {

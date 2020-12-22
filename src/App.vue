@@ -5,7 +5,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
-import SideNav from '@/components/SideNav'
+import TeamSideNav from '@/components/Nav/TeamSideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
 
@@ -30,7 +30,7 @@ export default {
     Alert,
     ApplicationNavBar,
     Footer,
-    SideNav
+    TeamSideNav
   },
   mixins: [eventsMixin],
   data() {
@@ -301,7 +301,7 @@ export default {
         />
       </v-slide-y-transition>
 
-      <SideNav />
+      <TeamSideNav />
 
       <v-fade-transition mode="out-in">
         <router-view

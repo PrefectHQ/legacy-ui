@@ -5,6 +5,7 @@ import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import HelpMenu from '@/components/Nav/HelpMenu'
 import NotificationMenu from '@/components/Nav/NotificationMenu'
 import TeamMenu from '@/components/Nav/TeamMenu'
+import TeamSideNavButton from '@/components/Nav/TeamSideNavButton'
 import UserMenu from '@/components/Nav/UserMenu'
 
 export default {
@@ -14,6 +15,7 @@ export default {
     HelpMenu,
     NotificationMenu,
     TeamMenu,
+    TeamSideNavButton,
     UserMenu
   },
   data() {
@@ -23,36 +25,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'tenants'])
-    // routes() {
-    //   return [
-    //     {
-    //       text: 'Getting Started',
-    //       route: {
-    //         name: 'home'
-    //       }
-    //     },
-    //     {
-    //       text: 'Interactive API',
-    //       route: {
-    //         name: 'api',
-    //         params: { tenant: this.tenant.slug }
-    //       }
-    //     },
-    //     {
-    //       text: 'Team',
-    //       route: {
-    //         name: 'team'
-    //       }
-    //     },
-    //     {
-    //       text: 'Tutorials',
-    //       route: {
-    //         name: 'tutorial'
-    //       }
-    //     }
-    //   ]
-    // }
+    ...mapGetters('tenant', ['tenant'])
   }
 }
 </script>
@@ -67,25 +40,18 @@ export default {
         }
       }"
     >
-      <v-btn color="primary" text icon large>
+      <v-btn icon x-large>
         <img
           class="logo"
-          style="pointer-events: none;"
           src="@/assets/logos/logomark-white.svg"
           alt="The Prefect Logo"
         />
       </v-btn>
     </router-link>
 
-    <div
-      class="text-subtitle-1 font-weight-medium white--text d-flex align-center justify-start px-4"
-      style="height: 100%;"
-    >
-      <div style="font-size: 1.05rem;">{{ tenant.name }}</div>
-      <v-icon color="grey lighten-3">arrow_drop_down</v-icon>
-    </div>
+    <TeamSideNavButton />
 
-    <v-divider vertical class="white vertical-divider my-auto mr-2" />
+    <v-divider vertical class="white vertical-divider my-auto mx-2" />
 
     <v-btn
       :to="{
@@ -152,6 +118,6 @@ export default {
 }
 
 .logo {
-  width: 1rem;
+  height: 100%;
 }
 </style>
