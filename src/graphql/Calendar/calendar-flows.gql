@@ -1,0 +1,8 @@
+query CalendarFlow( $id: uuid!) {
+  flow_by_pk(id: $id) 
+    {
+    id
+    name
+    is_schedule_active
+  }
+}
