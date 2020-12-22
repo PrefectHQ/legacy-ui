@@ -75,7 +75,6 @@ export default {
       }, 250)
     },
     _deactivate() {
-      console.log('deactivating')
       clearTimeout(this.activateTimeout)
       this.$refs['global-search'].reset()
       this.input = null

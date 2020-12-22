@@ -79,7 +79,8 @@ export default {
           return {
             id: t.id,
             name: t.name,
-            icon: this.types['task']
+            icon: this.types['task'],
+            type: 'task'
           }
         })
         .sort((a, b) =>
@@ -98,6 +99,7 @@ export default {
               name: project.name,
               icon: this.types['project'],
               iconActive: this.types['projectActive'],
+              type: 'project',
               children: [
                 ...(this.flows ?? [])
                   ?.filter(f => f.project_id == project.id)
@@ -106,7 +108,8 @@ export default {
                       id: f.id,
                       name: f.name,
                       children: this.loadTasks, // These are loaded async
-                      icon: this.types['flow']
+                      icon: this.types['flow'],
+                      type: 'flow'
                     }
                   })
                   .sort((a, b) =>
@@ -151,6 +154,7 @@ export default {
           noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
           activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
         }"
+        @select="handleSelect"
       />
     </div>
   </v-navigation-drawer>

@@ -39,6 +39,11 @@ export default {
       required: false,
       default: () => null
     },
+    type: {
+      type: String,
+      required: false,
+      default: () => null
+    },
     options: {
       type: Object,
       required: false,
@@ -94,9 +99,13 @@ export default {
     }
   },
   methods: {
-    async toggle() {
+    async select(data) {
+      this.$emit('select', data)
+    },
+    async toggle(e) {
       // if this item is being closed,
       // we can skip the rest
+      console.log(e)
       if (this.open) return (this.open = false)
 
       if (isFunction(this.items)) {
@@ -122,9 +131,13 @@ export default {
       :input-value="active_"
       :class="'pl-' + (depth - 1) * 4"
       :disabled="loading"
-      v-on="canExpand ? { click: toggle } : {}"
     >
-      <v-list-item-avatar class="my-0 mr-0" tile size="20">
+      <v-list-item-avatar
+        class="my-0 mr-0 cursor-pointer"
+        tile
+        size="20"
+        v-on="canExpand ? { click: toggle } : {}"
+      >
         <span v-if="loading" key="loading-spinner">
           <i class="fas fa-spinner-third fa-spin fa-sm" />
         </span>
@@ -137,12 +150,26 @@ export default {
           arrow_right
         </v-icon>
       </v-list-item-avatar>
-      <v-list-item-avatar class="my-0 mr-2" tile size="20">
-        <v-icon :color="open ? 'primaryDark' : 'grey'" size="20">
-          {{ open && iconActive_ ? iconActive_ : icon_ }}
-        </v-icon>
-      </v-list-item-avatar>
-      <v-list-item-content>{{ name_ }}</v-list-item-content>
+
+      <v-list-item-content class="cursor-pointer pa-0">
+        <div
+          v-ripple
+          style="
+            height: 40px;
+            line-height: 40px;
+            user-select: none;
+          "
+          class="px-2"
+          @click.stop="select({ id: id, type: type })"
+          @click.self="toggle"
+        >
+          <v-icon :color="open ? 'primaryDark' : 'grey'" size="20" class="mr-2">
+            {{ open && iconActive_ ? iconActive_ : icon_ }}
+          </v-icon>
+
+          {{ name_ }}
+        </div>
+      </v-list-item-content>
     </v-list-item>
     <div v-if="depth == 0 || (open && children_ && children_.length > 0)">
       <tree
@@ -154,8 +181,10 @@ export default {
         :icon-active="child.iconActive"
         :name="child.name"
         :items="child.children"
+        :type="child.type"
         :active-ids="activeIds"
         :options="options"
+        @select="select"
       />
     </div>
 
