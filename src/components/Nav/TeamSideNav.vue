@@ -8,6 +8,7 @@ export default {
   },
   data() {
     return {
+      activateTimeout: null,
       items: [],
       types: {
         project: 'folder',
@@ -39,12 +40,24 @@ export default {
     flows() {
       this.updateItems()
     },
+    isOpen(val) {
+      if (val) {
+        clearTimeout(this.activateTimeout)
+        this.activateTimeout = setTimeout(() => {
+          console.log(this.$refs['drawer'])
+          this.$refs['drawer'].focus()
+        }, 250)
+      }
+    },
     projects() {
       this.updateItems()
     }
   },
   mounted() {
     this.updateItems()
+  },
+  beforeDestroy() {
+    clearTimeout(this.activateTimeout)
   },
   methods: {
     ...mapMutations('sideNav', ['close']),
@@ -125,20 +138,22 @@ export default {
     width="375"
     class="drawer"
   >
-    <v-subheader>
-      Projects
-      <v-divider class="mx-4" />
-    </v-subheader>
+    <div ref="drawer" class="focusable" tabindex="-1">
+      <v-subheader>
+        Projects
+        <v-divider class="mx-4" />
+      </v-subheader>
 
-    <tree
-      class="px-4"
-      :active-ids="[]"
-      :items="items"
-      :options="{
-        noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
-        activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
-      }"
-    />
+      <tree
+        class="px-4"
+        :active-ids="[]"
+        :items="items"
+        :options="{
+          noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
+          activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
+        }"
+      />
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -146,6 +161,14 @@ export default {
 .drawer {
   height: calc(100vh - 64px);
   padding: 8px 0;
+
+  .focusable {
+    /* stylelint-disable-next-line */
+    &:focus {
+      // This allows us to auto-focus the nav drawer but not show the outline
+      outline: none;
+    }
+  }
 }
 
 .logo {
