@@ -1,4 +1,5 @@
 <script>
+import debounce from 'lodash.throttle'
 import { mapGetters, mapMutations } from 'vuex'
 import Tree from '@/components/Tree/Tree'
 
@@ -35,6 +36,14 @@ export default {
         }
       }
     }
+    // throttledRouting() {
+    //   return throttle(this.handleSelect, 1000)
+    // },
+    // throttledSelect: function(val) {
+    //   return throttle(() => {
+    //     this.handleSelect(val)
+    //   }, 1000)
+    // }
   },
   watch: {
     flows() {
@@ -61,9 +70,21 @@ export default {
   methods: {
     ...mapMutations('sideNav', ['close']),
     ...mapMutations('task', ['addTasks', 'removeFlowTasks']),
-    handleSelect(val) {
-      console.log(val)
-    },
+    handleSelect: debounce(
+      function(val) {
+        requestAnimationFrame(() => {
+          this.$router.push({
+            name: val.type,
+            params: {
+              id: val.id,
+              tenant: this.tenant.slug
+            }
+          })
+        })
+      },
+      1500,
+      { leading: true, trailing: true }
+    ),
     async loadTasks(item) {
       const { data } = await this.$apollo.query({
         query: require('@/graphql/Nav/tasks.gql'),
@@ -136,7 +157,7 @@ export default {
     temporary
     hide-overlay
     absolute
-    elevation="0"
+    disable-route-watcher
     width="375"
     class="drawer"
   >

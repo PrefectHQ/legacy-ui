@@ -102,10 +102,9 @@ export default {
     async select(data) {
       this.$emit('select', data)
     },
-    async toggle(e) {
+    async toggle() {
       // if this item is being closed,
       // we can skip the rest
-      console.log(e)
       if (this.open) return (this.open = false)
 
       if (isFunction(this.items)) {
