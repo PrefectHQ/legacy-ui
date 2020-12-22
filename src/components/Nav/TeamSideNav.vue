@@ -44,7 +44,6 @@ export default {
       if (val) {
         clearTimeout(this.activateTimeout)
         this.activateTimeout = setTimeout(() => {
-          console.log(this.$refs['drawer'])
           this.$refs['drawer'].focus()
         }, 250)
       }
