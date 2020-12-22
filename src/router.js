@@ -197,6 +197,20 @@ export const routes = [
       }
     ]
   },
+  // ---------------------------//
+  //
+  // Calendar
+  //
+  // ----------------------------//
+  {
+    name: 'calendar',
+    path: '/:tenant/calendar',
+    component: () =>
+      import(
+        /*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
   // --------------------------- //
   //
   // Tutorials
