@@ -24,13 +24,6 @@ export const routes = [
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
-    name: 'playground',
-    path: '/:tenant?/playground',
-    component: () =>
-      import('@/pages/InteractiveAPI/InteractiveAPIgraphiql.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-  },
-  {
     name: 'help',
     path: '/help',
     component: () =>
@@ -204,23 +197,9 @@ export const routes = [
       }
     ]
   },
-  // ---------------------------//
-  //
-  // Calendar
-  //
-  // ----------------------------//
-  {
-    name: 'calendar',
-    path: '/:tenant/calendar',
-    component: () =>
-      import(
-        /*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
-      ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-  },
   // --------------------------- //
   //
-  // Onboard
+  // Tutorials
   //
   // --------------------------- //
   {
