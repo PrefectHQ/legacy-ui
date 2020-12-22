@@ -4,6 +4,7 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
   data() {
     return {
+      items: [],
       types: {
         project: 'pi-project',
         flow: 'pi-flow',
@@ -11,27 +12,83 @@ export default {
       }
     }
   },
+
   computed: {
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('flow', ['flows']),
     ...mapGetters('project', ['projects']),
     ...mapGetters('tenant', ['tenant']),
-    items() {
-      return [
-        ...this.projects
-          ?.map(project => {
+    ...mapGetters('task', ['tasks']),
+    model: {
+      get() {
+        return this.isOpen
+      },
+      set(value) {
+        if (value === false) {
+          this.close()
+        }
+      }
+    }
+  },
+  watch: {
+    flows() {
+      this.updateItems()
+    },
+    projects() {
+      this.updateItems()
+    }
+  },
+  mounted() {
+    this.updateItems()
+  },
+  methods: {
+    ...mapMutations('sideNav', ['close']),
+    ...mapMutations('task', ['addTasks']),
+    handleSelect(val) {
+      console.log(val)
+    },
+    async loadTasks(item) {
+      if (item.type !== 'flow') return
+      const { data } = await this.$apollo.query({
+        query: require('@/graphql/Nav/tasks.gql'),
+        variables: {
+          flowId: item.id
+        }
+      })
+
+      this.addTasks(data.task)
+
+      this.updateItems()
+    },
+    updateItems() {
+      this.items = [
+        ...(this.projects ?? [])
+          .map(project => {
             return {
               id: project.id,
               name: project.name,
               type: 'project',
               children: [
-                ...this.flows
+                ...(this.flows ?? [])
                   ?.filter(f => f.project_id == project.id)
                   .map(f => {
                     return {
                       id: f.id,
                       name: f.name,
-                      children: [], // We load these asyncronously using the callback from load-children,
+                      children: (this.tasks ?? [])
+                        ?.filter(t => t.flow_id == f.id)
+                        .map(t => {
+                          return {
+                            id: t.id,
+                            name: t.name,
+                            type: 'task'
+                          }
+                        })
+                        .sort((a, b) =>
+                          a.name.localeCompare(b.name, undefined, {
+                            ignorePunctuation: true
+                          })
+                        ), // We load these asyncronously using the callback from load-children,
                       type: 'flow'
                     }
                   })
@@ -47,20 +104,7 @@ export default {
             a.name.localeCompare(b.name, undefined, { ignorePunctuation: true })
           )
       ]
-    },
-    model: {
-      get() {
-        return this.isOpen
-      },
-      set(value) {
-        if (value === false) {
-          this.close()
-        }
-      }
     }
-  },
-  methods: {
-    ...mapMutations('sideNav', ['close'])
   }
 }
 </script>
@@ -75,7 +119,14 @@ export default {
     width="375"
     class="drawer"
   >
-    <v-treeview :items="items" dense>
+    <v-treeview
+      :items="items"
+      dense
+      activatable
+      open-on-click
+      :load-children="loadTasks"
+      @update:active="handleSelect"
+    >
       <template #prepend="{ item, open }">
         <v-icon :color="open ? 'primaryDark' : 'grey'">
           {{ types[item.type] }}
@@ -86,9 +137,13 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+// $treeview-node-padding: 4px !important !default;
+// $treeview-node-margin: 2px !important !default;
+// $treeview-node-level-width: 10px !important;
+
 .drawer {
   height: calc(100vh - 64px);
-  padding-top: 64px;
+  padding: 8px 0;
 }
 
 .logo {

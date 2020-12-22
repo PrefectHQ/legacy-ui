@@ -15,6 +15,7 @@ import license from '@/store/license'
 import project from '@/store/project'
 import refresh from '@/store/refresh'
 import sideNav from '@/store/sideNav'
+import task from '@/store/task'
 import tenant from '@/store/tenant'
 import user from '@/store/user'
 import alert from '@/store/alert'
@@ -46,6 +47,7 @@ const store = new Vuex.Store({
     project,
     refresh,
     sideNav,
+    task,
     tenant,
     user
   },
