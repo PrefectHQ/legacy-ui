@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     ...mapGetters('auth0', ['isAuthorized']),
-    ...mapGetters('user', ['user', 'auth0User', 'timezone'])
+    ...mapGetters('user', ['user', 'auth0User'])
   },
   mounted() {
     clearInterval(this.clock)

@@ -8,7 +8,31 @@ export default {
     ...mapGetters('project', ['projects']),
     ...mapGetters('tenant', ['tenant']),
     items() {
-      return []
+      return this.projects
+        ?.map(project => {
+          return {
+            id: project.id,
+            name: project.name,
+            type: 'project',
+            children: this.flows
+              ?.filter(f => f.project_id == project.id)
+              .map(f => {
+                return {
+                  id: f.id,
+                  name: f.name,
+                  children: [] // We load these asyncronously using the callback from load-children
+                }
+              })
+              .sort((a, b) =>
+                a.name.localeCompare(b.name, undefined, {
+                  ignorePunctuation: true
+                })
+              )
+          }
+        })
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { ignorePunctuation: true })
+        )
     },
     model: {
       get() {
@@ -38,7 +62,6 @@ export default {
     class="drawer"
   >
     <v-treeview :items="items" />
-    {{ projects }}
   </v-navigation-drawer>
 </template>
 
