@@ -48,29 +48,26 @@ export default {
 </script>
 
 <template>
-  <div>
-    <v-banner :value="showBanner" two-line>
-      <v-avatar slot="icon" color="#3b8dff" size="40">
-        <v-icon icon="mdi-lock" color="white">
-          school
-        </v-icon>
-      </v-avatar>
+  <v-banner :value="showBanner" two-line>
+    <v-avatar slot="icon" color="#3b8dff" size="40">
+      <v-icon icon="mdi-lock" color="white">
+        school
+      </v-icon>
+    </v-avatar>
 
-      Looks like you don't have any flows. Check out our tutorials to learn
-      more!
+    Looks like you don't have any flows. Check out our tutorials to learn more!
 
-      <template #actions>
-        <v-btn
-          text
-          color="#3b8dff"
-          :to="{ name: 'tutorial', params: { tenant: tenantSlug } }"
-        >
-          Yes
-        </v-btn>
-        <v-btn text color="#ff5252" @click="dismissed = !dismissed">
-          Dismiss
-        </v-btn>
-      </template>
-    </v-banner>
-  </div>
+    <template #actions>
+      <v-btn
+        text
+        color="#3b8dff"
+        :to="{ name: 'tutorial', params: { tenant: tenantSlug } }"
+      >
+        Go to tutorials
+      </v-btn>
+      <v-btn text color="#ff5252" @click="dismissed = !dismissed">
+        Dismiss
+      </v-btn>
+    </template>
+  </v-banner>
 </template>
