@@ -17,6 +17,9 @@ const mutations = {
       else state.tasks.push(task)
     })
   },
+  removeFlowTasks(state, flowId) {
+    state.tasks = state.tasks.filter(t => t.flow_id !== flowId)
+  },
   setTasks(state, tasks) {
     state.tasks = tasks
   },

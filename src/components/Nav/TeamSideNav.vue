@@ -1,12 +1,17 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import Tree from '@/components/Tree/Tree'
 
 export default {
+  components: {
+    Tree
+  },
   data() {
     return {
       items: [],
       types: {
-        project: 'pi-project',
+        project: 'folder',
+        projectActive: 'pi-project',
         flow: 'pi-flow',
         task: 'pi-task'
       }
@@ -43,12 +48,11 @@ export default {
   },
   methods: {
     ...mapMutations('sideNav', ['close']),
-    ...mapMutations('task', ['addTasks']),
+    ...mapMutations('task', ['addTasks', 'removeFlowTasks']),
     handleSelect(val) {
       console.log(val)
     },
     async loadTasks(item) {
-      if (item.type !== 'flow') return
       const { data } = await this.$apollo.query({
         query: require('@/graphql/Nav/tasks.gql'),
         variables: {
@@ -58,16 +62,30 @@ export default {
 
       this.addTasks(data.task)
 
-      this.updateItems()
+      const sortedTasks = data.task
+        .map(t => {
+          return {
+            id: t.id,
+            name: t.name,
+            icon: this.types['task']
+          }
+        })
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, {
+            ignorePunctuation: true
+          })
+        )
+      return sortedTasks
     },
     updateItems() {
       this.items = [
         ...(this.projects ?? [])
           .map(project => {
-            return {
+            const val = {
               id: project.id,
               name: project.name,
-              type: 'project',
+              icon: this.types['project'],
+              iconActive: this.types['projectActive'],
               children: [
                 ...(this.flows ?? [])
                   ?.filter(f => f.project_id == project.id)
@@ -75,21 +93,8 @@ export default {
                     return {
                       id: f.id,
                       name: f.name,
-                      children: (this.tasks ?? [])
-                        ?.filter(t => t.flow_id == f.id)
-                        .map(t => {
-                          return {
-                            id: t.id,
-                            name: t.name,
-                            type: 'task'
-                          }
-                        })
-                        .sort((a, b) =>
-                          a.name.localeCompare(b.name, undefined, {
-                            ignorePunctuation: true
-                          })
-                        ), // We load these asyncronously using the callback from load-children,
-                      type: 'flow'
+                      children: this.loadTasks, // These are loaded async
+                      icon: this.types['flow']
                     }
                   })
                   .sort((a, b) =>
@@ -99,6 +104,7 @@ export default {
                   )
               ]
             }
+            return val
           })
           .sort((a, b) =>
             a.name.localeCompare(b.name, undefined, { ignorePunctuation: true })
@@ -119,28 +125,19 @@ export default {
     width="375"
     class="drawer"
   >
-    <v-treeview
+    <v-subheader>
+      Projects
+      <v-divider class="mx-4" />
+    </v-subheader>
+
+    <tree
       :items="items"
-      dense
-      activatable
-      open-on-click
-      :load-children="loadTasks"
-      @update:active="handleSelect"
-    >
-      <template #prepend="{ item, open }">
-        <v-icon :color="open ? 'primaryDark' : 'grey'">
-          {{ types[item.type] }}
-        </v-icon>
-      </template>
-    </v-treeview>
+      :options="{ noData: { 0: 'No projects', 1: 'No flows', 2: 'No tasks' } }"
+    />
   </v-navigation-drawer>
 </template>
 
 <style lang="scss" scoped>
-// $treeview-node-padding: 4px !important !default;
-// $treeview-node-margin: 2px !important !default;
-// $treeview-node-level-width: 10px !important;
-
 .drawer {
   height: calc(100vh - 64px);
   padding: 8px 0;

@@ -29,6 +29,7 @@
     "jwt-decode": "^3.1.1",
     "lodash.debounce": ">=4.0.8",
     "lodash.difference": ">=4.5.0",
+    "lodash.isfunction": "^3.0.9",
     "lodash.range": ">=3.2.0",
     "lodash.round": ">=4.0.4",
     "lodash.snakecase": ">=4.1.1",
@@ -56,7 +57,7 @@
     "vue-router": "^3.4.9",
     "vue-router-multiguard": ">=1.0.3",
     "vue-scrollto": "^2.20.0",
-    "vuetify": "^2.3.17",
+    "vuetify": "^2.3.21",
     "vuex": ">=3.4.0"
   },
   "devDependencies": {
