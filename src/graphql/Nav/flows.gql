@@ -1,0 +1,8 @@
+query Flows {
+  flow(where: { archived: { _eq: false } }) {
+    id
+    flow_group_id
+    name
+    project_id
+  }
+}

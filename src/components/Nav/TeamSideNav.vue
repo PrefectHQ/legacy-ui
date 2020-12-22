@@ -4,7 +4,12 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapGetters('sideNav', ['isOpen']),
+    ...mapGetters('flow', ['flows']),
+    ...mapGetters('project', ['projects']),
     ...mapGetters('tenant', ['tenant']),
+    items() {
+      return []
+    },
     model: {
       get() {
         return this.isOpen
@@ -32,7 +37,8 @@ export default {
     width="375"
     class="drawer"
   >
-    some content
+    <v-treeview :items="items" />
+    {{ projects }}
   </v-navigation-drawer>
 </template>
 

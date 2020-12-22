@@ -204,8 +204,10 @@ export default {
     ...mapActions('auth0', ['authenticate', 'authorize']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapActions('user', ['getUser']),
-    ...mapMutations('tenant', ['setDefaultTenant']),
     ...mapMutations('agent', ['setAgents']),
+    ...mapMutations('flow', ['setFlows']),
+    ...mapMutations('project', ['setProjects']),
+    ...mapMutations('tenant', ['setDefaultTenant']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
@@ -283,6 +285,34 @@ export default {
       //Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
       update: data => data.agent ?? null
+    },
+    flows: {
+      query() {
+        return require('@/graphql/Nav/flows.gql')
+      },
+      skip() {
+        return this.isCloud && !this.isAuthorized
+      },
+      pollInterval: 10000,
+      update(data) {
+        if (!data?.flow) return []
+        this.setFlows(data.flow)
+        return data.flow
+      }
+    },
+    projects: {
+      query() {
+        return require('@/graphql/Nav/projects.gql')
+      },
+      skip() {
+        return this.isCloud && !this.isAuthorized
+      },
+      pollInterval: 10000,
+      update(data) {
+        if (!data?.project) return []
+        this.setProjects(data.project)
+        return data.project
+      }
     }
   }
 }
