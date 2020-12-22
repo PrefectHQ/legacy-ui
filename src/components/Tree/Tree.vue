@@ -33,6 +33,13 @@ export default {
       type: [Array, Function],
       required: false,
       default: () => null
+    },
+    options: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
@@ -68,6 +75,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.options)
     this.icon_ = this.icon
     this.iconActive_ = this.iconActive
     this.name_ = this.name
@@ -139,8 +147,28 @@ export default {
         :icon-active="child.iconActive"
         :name="child.name"
         :items="child.children"
+        :options="options"
       />
     </div>
+
+    <v-list-item
+      v-else-if="
+        open &&
+          children_ &&
+          children_.length === 0 &&
+          options.noData &&
+          options.noData[depth]
+      "
+      class="pa-0"
+      dense
+      :class="'pl-' + depth * 5"
+    >
+      <v-list-item-content
+        class="font-italic text-body-2 grey--text text--darken-1"
+      >
+        ({{ options.noData[depth] }})
+      </v-list-item-content>
+    </v-list-item>
   </div>
 </template>
 

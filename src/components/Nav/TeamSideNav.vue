@@ -131,8 +131,9 @@ export default {
     </v-subheader>
 
     <tree
+      class="px-4"
       :items="items"
-      :options="{ noData: { 0: 'No projects', 1: 'No flows', 2: 'No tasks' } }"
+      :options="{ noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' } }"
     />
   </v-navigation-drawer>
 </template>
