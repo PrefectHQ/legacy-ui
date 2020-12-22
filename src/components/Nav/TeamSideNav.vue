@@ -2,37 +2,51 @@
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
+  data() {
+    return {
+      types: {
+        project: 'pi-project',
+        flow: 'pi-flow',
+        task: 'pi-task'
+      }
+    }
+  },
   computed: {
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('flow', ['flows']),
     ...mapGetters('project', ['projects']),
     ...mapGetters('tenant', ['tenant']),
     items() {
-      return this.projects
-        ?.map(project => {
-          return {
-            id: project.id,
-            name: project.name,
-            type: 'project',
-            children: this.flows
-              ?.filter(f => f.project_id == project.id)
-              .map(f => {
-                return {
-                  id: f.id,
-                  name: f.name,
-                  children: [] // We load these asyncronously using the callback from load-children
-                }
-              })
-              .sort((a, b) =>
-                a.name.localeCompare(b.name, undefined, {
-                  ignorePunctuation: true
-                })
-              )
-          }
-        })
-        .sort((a, b) =>
-          a.name.localeCompare(b.name, undefined, { ignorePunctuation: true })
-        )
+      return [
+        ...this.projects
+          ?.map(project => {
+            return {
+              id: project.id,
+              name: project.name,
+              type: 'project',
+              children: [
+                ...this.flows
+                  ?.filter(f => f.project_id == project.id)
+                  .map(f => {
+                    return {
+                      id: f.id,
+                      name: f.name,
+                      children: [], // We load these asyncronously using the callback from load-children,
+                      type: 'flow'
+                    }
+                  })
+                  .sort((a, b) =>
+                    a.name.localeCompare(b.name, undefined, {
+                      ignorePunctuation: true
+                    })
+                  )
+              ]
+            }
+          })
+          .sort((a, b) =>
+            a.name.localeCompare(b.name, undefined, { ignorePunctuation: true })
+          )
+      ]
     },
     model: {
       get() {
@@ -61,7 +75,13 @@ export default {
     width="375"
     class="drawer"
   >
-    <v-treeview :items="items" />
+    <v-treeview :items="items" dense>
+      <template #prepend="{ item, open }">
+        <v-icon :color="open ? 'primaryDark' : 'grey'">
+          {{ types[item.type] }}
+        </v-icon>
+      </template>
+    </v-treeview>
   </v-navigation-drawer>
 </template>
 
