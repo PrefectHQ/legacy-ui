@@ -132,8 +132,12 @@ export default {
 
     <tree
       class="px-4"
+      :active-ids="[]"
       :items="items"
-      :options="{ noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' } }"
+      :options="{
+        noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
+        activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
+      }"
     />
   </v-navigation-drawer>
 </template>

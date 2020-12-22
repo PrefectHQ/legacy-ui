@@ -4,6 +4,11 @@ import isFunction from 'lodash.isfunction'
 export default {
   name: 'Tree',
   props: {
+    activeIds: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
     id: {
       type: [String, Number],
       required: false,
@@ -45,6 +50,7 @@ export default {
   data() {
     return {
       // These _ data props allow us to manipulate local component state without throwing warnings
+      active_: null,
       icon_: null,
       iconActive_: null,
       name_: null,
@@ -75,7 +81,8 @@ export default {
     }
   },
   mounted() {
-    console.log(this.options)
+    this.active_ = this.activeIds.includes(this.id)
+
     this.icon_ = this.icon
     this.iconActive_ = this.iconActive
     this.name_ = this.name
@@ -112,6 +119,7 @@ export default {
       v-if="icon || name_"
       class="pa-0"
       dense
+      :input-value="active_"
       :class="'pl-' + (depth - 1) * 4"
       :disabled="loading"
       v-on="canExpand ? { click: toggle } : {}"
@@ -136,7 +144,6 @@ export default {
       </v-list-item-avatar>
       <v-list-item-content>{{ name_ }}</v-list-item-content>
     </v-list-item>
-
     <div v-if="depth == 0 || (open && children_ && children_.length > 0)">
       <tree
         v-for="child in children_"
@@ -147,6 +154,7 @@ export default {
         :icon-active="child.iconActive"
         :name="child.name"
         :items="child.children"
+        :active-ids="activeIds"
         :options="options"
       />
     </div>

@@ -208,10 +208,12 @@ export default {
     ...mapMutations('flow', ['setFlows']),
     ...mapMutations('project', ['setProjects']),
     ...mapMutations('tenant', ['setDefaultTenant']),
-    ...mapMutations('sideNav', { closeSideNav: 'close' }),
+    ...mapMutations('sideNav', { closeSideNav: 'close', openSideNav: 'open' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
         this.closeSideNav()
+      } else if (e.key === 't') {
+        this.openSideNav()
       }
     },
     handleOffline() {
