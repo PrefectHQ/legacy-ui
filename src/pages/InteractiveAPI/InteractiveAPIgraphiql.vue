@@ -1,5 +1,7 @@
 <script>
 import { mapGetters } from 'vuex'
+import gql from 'graphql-tag'
+import { print } from 'graphql'
 // Load GraphiQL React based UI within a Vue Component from CDN
 // example: https://gist.github.com/metafeather/ebda15c00c737c4d95cdc11ea71af32a
 // ref: https://github.com/graphql/graphiql/tree/main/packages/graphiql#cdn-bundle
@@ -27,10 +29,33 @@ export default {
       defaultQuery:
         this.role === 'READ_ONLY_USER'
           ? 'Sorry this page is not available to Read-only users.'
-          : `# Enter your query/mutation here
+          : `# Enter your query or mutation here
 # Example:
-query { hello }`,
-      readOnly: this.role === 'READ_ONLY_USER'
+
+query { hello }
+
+# Queries are limited to 100 results, inline query limits under 100 will be respected
+# To paginate results, add the 'offset' argument`,
+      readOnly: this.role === 'READ_ONLY_USER',
+      queriesWithoutLimits: [
+        'agent',
+        'agents',
+        '_aggregate',
+        'api',
+        'auth_info',
+        'authInfo',
+        // *_by_pk queries are helper queries that don't have offset and limit
+        // arguments since by their nature they return just 1 result using a
+        // UUID!
+        '_by_pk',
+        'hello',
+        'taskTagUsage',
+        'reference',
+        'reference_data',
+        'task_tag_limit',
+        'taskTagUsage',
+        'task_tag_usage'
+      ]
     }
   },
   computed: {
@@ -46,8 +71,9 @@ query { hello }`,
       'https://unpkg.com/react-dom/umd/react-dom.production.min.js'
     )
     await js('graphiql-js', 'https://unpkg.com/graphiql/graphiql.min.js')
-    const fetcher = params =>
-      fetch(this.url, {
+    const fetcher = params => {
+      params.query = this.addQueryLimits(params.query)
+      return fetch(this.url, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -55,6 +81,7 @@ query { hello }`,
         },
         body: JSON.stringify(params)
       }).then(res => res.json())
+    }
     /* eslint-disable no-undef */
     ReactDOM.render(
       React.createElement(GraphiQL, {
@@ -65,6 +92,48 @@ query { hello }`,
       /* eslint-enable no-undef */
       document.getElementById('graphiql')
     )
+  },
+  methods: {
+    addQueryLimits(query) {
+      if (query.includes('IntrospectionQuery')) return query
+      const queryObject = gql`
+        ${query}
+      `
+      queryObject.definitions[0].selectionSet.selections.forEach(selection => {
+        // Exclude queries that do not support limiting
+        let exclude = false
+        this.queriesWithoutLimits.forEach(query => {
+          exclude = selection.name.value.includes(query) ? true : exclude
+        })
+
+        if (exclude) return
+
+        let limitArg = {
+          kind: 'Argument',
+          manual: true,
+          name: { kind: 'Name', value: 'limit' },
+          value: {
+            kind: 'IntValue',
+            value: 100
+          }
+        }
+
+        let limitIndex = selection.arguments.findIndex(
+          arg => arg.name.value == 'limit'
+        )
+
+        if (
+          limitIndex > -1 &&
+          selection.arguments[limitIndex].value.value > 100
+        ) {
+          selection.arguments[limitIndex] = limitArg
+        } else if (limitIndex == -1) {
+          selection.arguments.push(limitArg)
+        }
+      })
+
+      return print(queryObject)
+    }
   }
 }
 </script>
@@ -303,7 +372,8 @@ $brackets-gray: #8d98a5;
     color: var(--v-accentOrange-base);
   }
 
-  .cm-punctuation {
+  .cm-punctuation,
+  .cm-ws {
     color: $brackets-gray;
   }
   /* scrollbar styling */
