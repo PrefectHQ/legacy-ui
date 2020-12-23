@@ -220,7 +220,7 @@ export default {
                       v-bind="attrs"
                       v-on="menu"
                     >
-                      <v-icon small dense>fa-plus</v-icon>
+                      <i class="far fa-plus fa-2x" />
                     </v-btn>
                   </div>
                 </template>
@@ -283,7 +283,7 @@ export default {
                 @click="labelReset"
                 v-on="on"
               >
-                <v-icon small dense>fa-undo</v-icon>
+                <i class="far fa-undo-alt fa-2x" />
               </v-btn>
             </template>
             <span>Reset to labels from flow registration</span>
@@ -317,13 +317,12 @@ export default {
           <v-btn
             class="mt-0"
             icon
-            :disabled="labelResetDisabled"
             color="codePink"
             small
             @click="labelReset"
             v-on="on"
           >
-            <v-icon small dense>fa-undo</v-icon>
+            <i class="far fa-undo-alt fa-2x" />
           </v-btn>
         </template>
         <span>Reset to labels from flow registration</span>
@@ -342,7 +341,7 @@ export default {
                   v-bind="attrs"
                   v-on="menu"
                 >
-                  <v-icon small dense>fa-plus</v-icon>
+                  <i class="far fa-plus fa-2x" />
                 </v-btn>
               </div>
             </template>

@@ -43,14 +43,6 @@ export default {
         }
       }
     }
-    // throttledRouting() {
-    //   return throttle(this.handleSelect, 1000)
-    // },
-    // throttledSelect: function(val) {
-    //   return throttle(() => {
-    //     this.handleSelect(val)
-    //   }, 1000)
-    // }
   },
   watch: {
     flows() {
@@ -194,6 +186,7 @@ export default {
         Projects
         <v-divider class="mx-4" />
       </v-subheader>
+      {{ activeIds }}
 
       <tree
         class="px-4"

@@ -70,10 +70,12 @@ export default {
           :color="duplicatedColor"
           :loading="loading"
           icon
+          small
           @click="handleRemove"
-          ><v-icon small :color="duplicatedColor" v-on="on"
-            >fa-times-circle</v-icon
-          >
+        >
+          <span v-on="on">
+            <i class="fas fa-times-circle fa-lg" />
+          </span>
         </v-btn>
       </template>
       Remove this label
