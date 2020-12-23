@@ -96,10 +96,15 @@ export default {
     handleSelect: debounce(
       function(val) {
         requestAnimationFrame(() => {
+          const id =
+            val.type == 'flow'
+              ? this.flows.find(f => f.id == val.id)?.flow_group_id || val.id
+              : val.id
+
           this.$router.push({
             name: val.type,
             params: {
-              id: val.id,
+              id: id,
               tenant: this.tenant.slug
             }
           })
