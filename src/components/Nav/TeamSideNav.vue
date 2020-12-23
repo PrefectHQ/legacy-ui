@@ -69,14 +69,30 @@ export default {
     }
   },
   mounted() {
+    // Adds the event listener for the t search shortcut
+    window.addEventListener('keyup', this.handleKeyboardShortcut)
+
     this.updateItems()
   },
   beforeDestroy() {
+    // Removes the t search shortcut event listener when
+    // the component is destroyed
+    window.removeEventListener('keyup', this.handleKeyboardShortcut)
+
     clearTimeout(this.activateTimeout)
   },
   methods: {
-    ...mapMutations('sideNav', ['close']),
+    ...mapMutations('sideNav', ['close', 'open']),
     ...mapMutations('task', ['addTasks', 'removeFlowTasks']),
+    handleKeyboardShortcut(e) {
+      if (
+        e?.key === 't' &&
+        e?.srcElement?.tagName !== 'INPUT' &&
+        e?.srcElement?.tagName !== 'TEXTAREA'
+      ) {
+        this.open()
+      }
+    },
     handleSelect: debounce(
       function(val) {
         requestAnimationFrame(() => {

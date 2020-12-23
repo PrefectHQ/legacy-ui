@@ -204,7 +204,7 @@ export const routes = [
   // ----------------------------//
   {
     name: 'calendar',
-    path: '/:tenant/calendar',
+    path: '/:tenant?/calendar',
     component: () =>
       import(
         /*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
