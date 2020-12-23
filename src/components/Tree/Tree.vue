@@ -72,6 +72,9 @@ export default {
     }
   },
   watch: {
+    activeIds() {
+      this.active_ = this.activeIds.includes(this.id)
+    },
     items(val) {
       this.children_ = val
     },

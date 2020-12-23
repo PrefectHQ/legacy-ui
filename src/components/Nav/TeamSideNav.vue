@@ -22,10 +22,17 @@ export default {
 
   computed: {
     ...mapGetters('sideNav', ['isOpen']),
-    ...mapGetters('flow', ['flows']),
-    ...mapGetters('project', ['projects']),
+    ...mapGetters('flow', ['flows', 'activeFlow']),
+    ...mapGetters('project', ['projects', 'activeProject']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('task', ['tasks']),
+    ...mapGetters('task', ['tasks', 'activeTask']),
+    activeIds() {
+      return [
+        this.activeProject?.id,
+        this.activeFlow?.id,
+        this.activeTask?.id
+      ].filter(id => !!id)
+    },
     model: {
       get() {
         return this.isOpen
@@ -156,7 +163,7 @@ export default {
     v-model="model"
     temporary
     hide-overlay
-    absolute
+    fixed
     disable-route-watcher
     width="375"
     class="drawer"
@@ -169,7 +176,7 @@ export default {
 
       <tree
         class="px-4"
-        :active-ids="[]"
+        :active-ids="activeIds"
         :items="items"
         :options="{
           noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
@@ -183,8 +190,10 @@ export default {
 
 <style lang="scss" scoped>
 .drawer {
-  height: calc(100vh - 64px);
+  height: calc(100vh - 64px) !important;
+  overflow: scroll;
   padding: 8px 0;
+  top: 64px !important;
 
   .focusable {
     /* stylelint-disable-next-line */
