@@ -22,10 +22,15 @@ export default {
 
   computed: {
     ...mapGetters('sideNav', ['isOpen']),
-    ...mapGetters('flow', ['flows', 'activeFlow']),
-    ...mapGetters('project', ['projects', 'activeProject']),
+    ...mapGetters('data', [
+      'flows',
+      'activeFlow',
+      'projects',
+      'activeProject',
+      'tasks',
+      'activeTask'
+    ]),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('task', ['tasks', 'activeTask']),
     activeIds() {
       return [
         this.activeProject?.id,
@@ -75,7 +80,7 @@ export default {
   },
   methods: {
     ...mapMutations('sideNav', ['close', 'open']),
-    ...mapMutations('task', ['addTasks', 'removeFlowTasks']),
+    ...mapMutations('data', ['addTasks']),
     handleKeyboardShortcut(e) {
       if (
         e?.key === 't' &&
@@ -88,15 +93,17 @@ export default {
     handleSelect: debounce(
       function(val) {
         requestAnimationFrame(() => {
-          const id =
-            val.type == 'flow'
-              ? this.flows.find(f => f.id == val.id)?.flow_group_id || val.id
-              : val.id
-
+          console.log({
+            name: val.type,
+            params: {
+              id: val.id,
+              tenant: this.tenant.slug
+            }
+          })
           this.$router.push({
             name: val.type,
             params: {
-              id: id,
+              id: val.id,
               tenant: this.tenant.slug
             }
           })

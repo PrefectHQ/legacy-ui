@@ -200,15 +200,14 @@ export default {
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
+    ...mapMutations('agent', ['setAgents']),
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth0', ['authenticate', 'authorize']),
+    ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
-    ...mapActions('user', ['getUser']),
-    ...mapMutations('agent', ['setAgents']),
-    ...mapMutations('flow', ['setFlows']),
-    ...mapMutations('project', ['setProjects']),
-    ...mapMutations('tenant', ['setDefaultTenant']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
+    ...mapMutations('tenant', ['setDefaultTenant']),
+    ...mapActions('user', ['getUser']),
     handleKeydown(e) {
       if (e.key === 'Escape') {
         this.closeSideNav()

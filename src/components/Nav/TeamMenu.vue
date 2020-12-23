@@ -93,7 +93,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="{ name: 'flow-concurrency' }">
+        <v-list-item :to="{ name: 'flow-groups' }">
           <v-list-item-avatar tile>
             <v-icon large color="#999">
               pi-flow

@@ -23,7 +23,7 @@ export default {
   computed: {
     ...mapGetters('api', ['backend']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('project', ['activeProject', 'projects']),
+    ...mapGetters('data', ['activeProject', 'projects']),
     project() {
       return this.activeProject
     },

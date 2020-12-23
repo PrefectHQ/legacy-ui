@@ -18,7 +18,7 @@ import TileLayoutFull from '@/layouts/TileLayout-Full'
 import FlowRunHistoryTile from '@/pages/Flow/FlowRunHistory-Tile'
 import UpcomingRunsTile from '@/pages/Flow/UpcomingRuns-Tile'
 import VersionsTile from '@/pages/Flow/Versions-Tile'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   metaInfo() {
@@ -45,6 +45,14 @@ export default {
     FlowRunHistoryTile,
     UpcomingRunsTile,
     VersionsTile
+  },
+  async beforeRouteLeave(to, from, next) {
+    if (to.name == 'flow') {
+      await this.activateFlow(to.params.id)
+    } else {
+      this.resetActiveData()
+    }
+    return next()
   },
   data() {
     return {
@@ -162,7 +170,11 @@ export default {
       }
     }
   },
+  async beforeMount() {
+    await this.activateFlow(this.$route.params.id)
+  },
   methods: {
+    ...mapActions('data', ['activateFlow', 'resetActiveData']),
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
         let target = Object.keys(this.$route.query)[0]

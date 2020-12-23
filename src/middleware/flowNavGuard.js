@@ -3,7 +3,7 @@ import store from '@/store/index'
 
 const flowNavGuard = async (to, from, next) => {
   const id = to.params?.id
-  const flows = store.getters['flow/flows']
+  const flows = store.getters['data/flows']
 
   const group = flows.find(flow => flow.flow_group_id == id)
 

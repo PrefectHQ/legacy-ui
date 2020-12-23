@@ -14,7 +14,8 @@ import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import { mapGetters, mapActions } from 'vuex'
-import gql from 'graphql-tag'
+// import store from ''
+// import gql from 'graphql-tag'
 
 const serverTabs = [
   {
@@ -59,27 +60,36 @@ export default {
     FlowRunHistoryTile,
     UpcomingRunsTile
   },
-  async beforeRouteLeave(to, from, next) {
-    if (!to.query?.notification_id) return next()
-    try {
-      if (to.query?.notification_id) {
-        let mutationString = gql`
-        mutation MarkMessagesAsRead {
-          mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
-            success
-            error
-          }
-        }
-      `
-        await this.$apollo.mutate({
-          mutation: mutationString
-        })
+  // async beforeRouteLeave(to, from, next) {
+  //   if (!to.query?.notification_id) return next()
+  //   try {
+  //     if (to.query?.notification_id) {
+  //       let mutationString = gql`
+  //       mutation MarkMessagesAsRead {
+  //         mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
+  //           success
+  //           error
+  //         }
+  //       }
+  //     `
+  //       await this.$apollo.mutate({
+  //         mutation: mutationString
+  //       })
 
-        delete to.query.notification_id
-      }
-    } finally {
-      next({ name: to.name, params: to.params })
+  //       delete to.query.notification_id
+  //     }
+  //   } finally {
+  //     next({ name: to.name, params: to.params })
+  //   }
+  // },
+  // created() {}
+  async beforeRouteLeave(to, from, next) {
+    if (to.name == 'project') {
+      await this.activateProject(to.params.id)
+    } else {
+      this.resetActiveData()
     }
+    return next()
   },
   data() {
     return {
@@ -95,7 +105,7 @@ export default {
   computed: {
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('api', ['backend', 'isCloud', 'connected']),
-    ...mapGetters('project', ['activeProject']),
+    ...mapGetters('data', ['activeProject']),
     ...mapGetters('tenant', ['tenant']),
     project() {
       return this.activeProject
@@ -139,12 +149,17 @@ export default {
       }
     }
   },
+  async beforeMount() {
+    if (this.$route.name == 'project') {
+      await this.activateProject(this.$route.params.id)
+    }
+    console.log('entering', this.$route)
+  },
   mounted() {
-    if (this.projectId?.length > 0) this.activateProject(this.projectId)
     this.refresh()
   },
   methods: {
-    ...mapActions('project', ['activateProject']),
+    ...mapActions('data', ['activateProject', 'resetActiveData']),
     handleAgentDetailsClick() {
       this.$router.push({
         name: this.projectId ? 'project' : 'dashboard',
