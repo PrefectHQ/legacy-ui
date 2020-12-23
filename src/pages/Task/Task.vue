@@ -28,6 +28,7 @@ export default {
     TileLayoutFull
   },
   async beforeRouteLeave(to, from, next) {
+    console.log(to)
     if (to.name == 'task') {
       await this.activateTask(to.params.id)
     } else {
@@ -86,8 +87,12 @@ export default {
     }
   },
   watch: {
-    $route() {
+    async $route() {
       this.tab = this.getTab()
+
+      if (this.$route.name == 'task') {
+        await this.activateTask(this.$route.params.id)
+      }
     },
     tab(val) {
       let query = { ...this.$route.query }

@@ -87,7 +87,7 @@ export default {
         e?.srcElement?.tagName !== 'INPUT' &&
         e?.srcElement?.tagName !== 'TEXTAREA'
       ) {
-        this.open()
+        this.isOpen ? this.close() : this.open()
       }
     },
     handleSelect: debounce(
@@ -124,6 +124,7 @@ export default {
         .map(t => {
           return {
             id: t.id,
+            idToMatch: t.id,
             name: t.name,
             icon: this.types['task'],
             type: 'task'
@@ -142,6 +143,7 @@ export default {
           .map(project => {
             const val = {
               id: project.id,
+              idToMatch: project.id,
               name: project.name,
               icon: this.types['project'],
               iconActive: this.types['projectActive'],
@@ -152,6 +154,7 @@ export default {
                   .map(f => {
                     return {
                       id: f.id,
+                      idToMatch: f.flow_group_id,
                       name: f.name,
                       children: this.loadTasks, // These are loaded async
                       icon: this.types['flow'],
@@ -191,8 +194,6 @@ export default {
         Projects
         <v-divider class="mx-4" />
       </v-subheader>
-      {{ activeIds }}
-
       <tree
         class="px-4"
         :active-ids="activeIds"

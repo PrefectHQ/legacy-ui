@@ -14,6 +14,11 @@ export default {
       required: false,
       default: () => 0
     },
+    idToMatch: {
+      type: [String, Number],
+      required: false,
+      default: () => 0
+    },
     depth: {
       type: Number,
       required: false,
@@ -67,11 +72,19 @@ export default {
     }
   },
   computed: {
+    activeRoute() {
+      return this.$route.params?.id == this.idToMatch
+    },
     canExpand() {
       return this.items || this.children_?.length
     }
   },
   watch: {
+    active_(val) {
+      if (val && !this.open) {
+        this.toggle()
+      }
+    },
     activeIds() {
       this.active_ = this.activeIds.includes(this.id)
     },
@@ -126,58 +139,62 @@ export default {
 
 <template>
   <div>
-    <v-list-item
+    <div
       v-if="icon || name_"
-      class="pa-0"
-      dense
-      :input-value="active_"
-      :class="'pl-' + (depth - 1) * 4"
-      :disabled="loading"
+      :class="['pl-' + (depth - 1) * 4, { 'leaf-active': active_ }]"
+      class="cursor-pointer d-flex justify-start align-center py-1 leaf"
+      v-on="canExpand ? { click: toggle } : {}"
     >
-      <v-list-item-avatar
-        class="my-0 mr-0 cursor-pointer"
-        tile
-        size="20"
-        v-on="canExpand ? { click: toggle } : {}"
-      >
+      <div class="icon-block flex-shrink-0">
         <span v-if="loading" key="loading-spinner">
           <i class="fas fa-spinner-third fa-spin fa-sm" />
         </span>
+
         <v-icon
           v-else-if="canExpand"
           class="drop-arrow"
           :class="open && 'open'"
           small
         >
+          keyboard_arrow_right
+        </v-icon>
+      </div>
+
+      <div class="icon-block flex-shrink-0">
+        <v-icon :color="open ? 'primaryDark' : 'grey'" size="20" class="mr-2">
+          {{ open && iconActive_ ? iconActive_ : icon_ }}
+        </v-icon>
+      </div>
+
+      <div
+        class="text-subtitle-1 text-truncate flex-grow-1"
+        :class="{ 'font-weight-medium': active_ }"
+      >
+        {{ name_ }}
+      </div>
+
+      <div
+        v-if="!activeRoute"
+        class="mr-2 text-caption px-1 d-flex align-center justify-space-between view-button"
+        @click.stop="select({ id: id, type: type })"
+      >
+        <div>View</div>
+        <v-icon small>
           arrow_right
         </v-icon>
-      </v-list-item-avatar>
+      </div>
 
-      <v-list-item-content class="cursor-pointer pa-0">
-        <div
-          v-ripple
-          style="
-            height: 40px;
-            line-height: 40px;
-            user-select: none;
-          "
-          class="px-2"
-          @click.stop="select({ id: id, type: type })"
-          @click.self="toggle"
-        >
-          <v-icon :color="open ? 'primaryDark' : 'grey'" size="20" class="mr-2">
-            {{ open && iconActive_ ? iconActive_ : icon_ }}
-          </v-icon>
+      <div v-else class="mr-2 text-caption px-1 font-italic grey--text">
+        Current
+      </div>
+    </div>
 
-          {{ name_ }}
-        </div>
-      </v-list-item-content>
-    </v-list-item>
     <div v-if="depth == 0 || (open && children_ && children_.length > 0)">
       <tree
         v-for="child in children_"
         :id="child.id"
         :key="child.id"
+        :id-to-match="child.idToMatch"
         :depth="depth + 1"
         :icon="child.icon"
         :icon-active="child.iconActive"
@@ -190,7 +207,7 @@ export default {
       />
     </div>
 
-    <v-list-item
+    <div
       v-else-if="
         open &&
           children_ &&
@@ -198,16 +215,11 @@ export default {
           options.noData &&
           options.noData[depth]
       "
-      class="pa-0"
-      dense
-      :class="'pl-' + depth * 5"
+      class="font-italic text-body-2 grey--text text--darken-1"
+      :class="'pl-' + depth * 8"
     >
-      <v-list-item-content
-        class="font-italic text-body-2 grey--text text--darken-1"
-      >
-        ({{ options.noData[depth] }})
-      </v-list-item-content>
-    </v-list-item>
+      ({{ options.noData[depth] }})
+    </div>
   </div>
 </template>
 
@@ -218,6 +230,35 @@ export default {
 
   &.open {
     transform: rotate(90deg);
+  }
+}
+
+.icon-block {
+  height: 24px;
+  width: 24px;
+}
+
+.leaf {
+  .view-button {
+    opacity: 0;
+  }
+
+  &:focus,
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+
+    .view-button {
+      opacity: 0.5;
+
+      &:focus,
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &.leaf-active {
+    color: var(--v-primaryDark-base);
   }
 }
 </style>

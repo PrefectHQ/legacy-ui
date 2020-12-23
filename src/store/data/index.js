@@ -45,7 +45,6 @@ const mutations = {
   unsetActiveFlow(state) {
     state.activeFlow = null
   },
-
   setActiveTask(state, task) {
     state.activeTask = task
   },

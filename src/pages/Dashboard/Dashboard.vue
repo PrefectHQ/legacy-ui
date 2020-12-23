@@ -14,8 +14,7 @@ import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import { mapGetters, mapActions } from 'vuex'
-// import store from ''
-// import gql from 'graphql-tag'
+import gql from 'graphql-tag'
 
 const serverTabs = [
   {
@@ -60,36 +59,34 @@ export default {
     FlowRunHistoryTile,
     UpcomingRunsTile
   },
-  // async beforeRouteLeave(to, from, next) {
-  //   if (!to.query?.notification_id) return next()
-  //   try {
-  //     if (to.query?.notification_id) {
-  //       let mutationString = gql`
-  //       mutation MarkMessagesAsRead {
-  //         mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
-  //           success
-  //           error
-  //         }
-  //       }
-  //     `
-  //       await this.$apollo.mutate({
-  //         mutation: mutationString
-  //       })
-
-  //       delete to.query.notification_id
-  //     }
-  //   } finally {
-  //     next({ name: to.name, params: to.params })
-  //   }
-  // },
-  // created() {}
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'project') {
       await this.activateProject(to.params.id)
     } else {
       this.resetActiveData()
     }
-    return next()
+
+    if (!to.query?.notification_id) return next()
+
+    try {
+      if (to.query?.notification_id) {
+        let mutationString = gql`
+        mutation MarkMessagesAsRead {
+          mark_message_as_read(input: { message_id: "${to.query.notification_id}" }) {
+            success
+            error
+          }
+        }
+      `
+        await this.$apollo.mutate({
+          mutation: mutationString
+        })
+
+        delete to.query.notification_id
+      }
+    } finally {
+      next({ name: to.name, params: to.params })
+    }
   },
   data() {
     return {
@@ -153,7 +150,6 @@ export default {
     if (this.$route.name == 'project') {
       await this.activateProject(this.$route.params.id)
     }
-    console.log('entering', this.$route)
   },
   mounted() {
     this.refresh()
