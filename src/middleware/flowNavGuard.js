@@ -1,15 +1,13 @@
 import { fallbackApolloClient } from '@/vue-apollo'
+import store from '@/store/index'
 
 const flowNavGuard = async (to, from, next) => {
-  let id = to.params?.id
+  const id = to.params?.id
+  const flows = store.getters['flow/flows']
 
-  let group = await fallbackApolloClient.query({
-    query: require('@/graphql/Middleware/flow-group.gql'),
-    variables: {
-      id: id
-    }
-  })
-  if (group?.data?.flow_group_by_pk?.id) return next()
+  const group = flows.find(flow => flow.flow_group_id == id)
+
+  if (group) return next()
 
   let version = await fallbackApolloClient.query({
     query: require('@/graphql/Middleware/flow.gql'),

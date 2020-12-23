@@ -1,3 +1,5 @@
+import { fallbackApolloClient } from '@/vue-apollo'
+
 const state = {
   activeFlow: null,
   flows: []
@@ -32,7 +34,7 @@ const actions = {
     let flow = getters['flows'].find(t => t.id == id)
 
     if (!flow) {
-      const { data } = await this.$apollo.query({
+      const { data } = await fallbackApolloClient.query({
         query: require('@/graphql/Nav/flows.gql')
       })
 

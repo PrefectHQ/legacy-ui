@@ -13,7 +13,7 @@ import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import gql from 'graphql-tag'
 
 const serverTabs = [
@@ -95,7 +95,11 @@ export default {
   computed: {
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('api', ['backend', 'isCloud', 'connected']),
+    ...mapGetters('project', ['activeProject']),
     ...mapGetters('tenant', ['tenant']),
+    project() {
+      return this.activeProject
+    },
     tabs() {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
     }
@@ -136,9 +140,11 @@ export default {
     }
   },
   mounted() {
+    if (this.projectId?.length > 0) this.activateProject(this.projectId)
     this.refresh()
   },
   methods: {
+    ...mapActions('project', ['activateProject']),
     handleAgentDetailsClick() {
       this.$router.push({
         name: this.projectId ? 'project' : 'dashboard',
@@ -148,7 +154,7 @@ export default {
     },
     handleProjectSelect(val) {
       this.projectId = val
-      this.$apollo.queries.project.refetch()
+      if (this.projectId?.length > 0) this.activateProject(this.projectId)
     },
     getTab() {
       if ('flows' in this.$route.query) return 'flows'
@@ -175,21 +181,6 @@ export default {
       }
 
       requestAnimationFrame(loadTiles)
-      this.$apollo.queries.project.refetch()
-    }
-  },
-  apollo: {
-    project: {
-      query: require('@/graphql/Dashboard/project-name.gql'),
-      variables() {
-        return { id: this.projectId }
-      },
-      loadingKey: 'loading',
-      update: data => (data.project ? data.project : null),
-      skip() {
-        return !this.projectId
-      },
-      fetchPolicy: 'no-cache'
     }
   }
 }

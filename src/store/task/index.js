@@ -1,3 +1,5 @@
+import { fallbackApolloClient } from '@/vue-apollo'
+
 const state = {
   activeTask: null,
   tasks: []
@@ -43,7 +45,7 @@ const actions = {
     let task = getters['tasks'].find(t => t.id == id)
 
     if (!task) {
-      const { data } = await this.$apollo.query({
+      const { data } = await fallbackApolloClient.query({
         query: require('@/graphql/Nav/task.gql'),
         variables: {
           taskId: id
