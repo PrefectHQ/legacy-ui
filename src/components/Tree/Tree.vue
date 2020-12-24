@@ -126,6 +126,16 @@ export default {
       const data = { id: this.id, type: this.type }
       return this.select(data)
     },
+    close() {
+      this.open = false
+
+      let i = 0
+
+      while (this.$refs[`leaf_${i}`]?.[0]) {
+        this.$refs[`leaf_${i}`]?.[0]?.close()
+        ++i
+      }
+    },
     async select(data) {
       this.$emit('select', data)
     },
@@ -205,8 +215,9 @@ export default {
 
     <div v-if="depth == 0 || (open && children_ && children_.length > 0)">
       <tree
-        v-for="child in children_"
+        v-for="(child, i) in children_"
         :id="child.id"
+        :ref="`leaf_${i}`"
         :key="child.id"
         :id-to-match="child.idToMatch"
         :depth="depth + 1"

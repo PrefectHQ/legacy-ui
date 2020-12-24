@@ -81,6 +81,9 @@ export default {
   methods: {
     ...mapMutations('sideNav', ['close', 'open']),
     ...mapMutations('data', ['addTasks']),
+    closeAll() {
+      this.$refs['tree'].close()
+    },
     handleKeyboardShortcut(e) {
       if (
         e?.key === 't' &&
@@ -208,9 +211,18 @@ export default {
     <div ref="drawer" class="focusable" tabindex="-1">
       <v-subheader>
         Projects
-        <v-divider class="mx-4" />
+        <v-divider class="ml-4 mr-2" />
+
+        <div
+          v-ripple
+          class="cursor-pointer px-2 py-1 caption font-weight-light collapse-button"
+          @click="closeAll"
+        >
+          Collapse
+        </div>
       </v-subheader>
       <tree
+        ref="tree"
         class="px-4"
         :active-ids="activeIds"
         :items="items"
@@ -243,5 +255,14 @@ export default {
 .logo {
   height: 38px;
   width: 24px;
+}
+
+.collapse-button {
+  letter-spacing: 1px !important;
+
+  &:focus,
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
 }
 </style>
