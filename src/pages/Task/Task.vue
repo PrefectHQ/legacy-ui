@@ -28,7 +28,6 @@ export default {
     TileLayoutFull
   },
   async beforeRouteLeave(to, from, next) {
-    console.log(to)
     if (to.name == 'task') {
       await this.activateTask(to.params.id)
     } else {

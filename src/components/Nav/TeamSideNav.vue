@@ -91,21 +91,22 @@ export default {
       }
     },
     handleSelect: debounce(
-      function(val) {
-        requestAnimationFrame(() => {
-          let id = val.id
-          if (val.type == 'flow') {
-            id = this.flows.find(f => f.id == val.id).flow_group_id
-          }
-
-          this.$router.push({
-            name: val.type,
-            params: {
-              id: id,
-              tenant: this.tenant.slug
-            }
-          })
-        })
+      function() {
+        // We can do something when an item is selected
+        // but routing is handled with the link attribute
+        // requestAnimationFrame(() => {
+        //   let id = val.id
+        //   if (val.type == 'flow') {
+        //     id = this.flows.find(f => f.id == val.id).flow_group_id
+        //   }
+        //   this.$router.push({
+        //     name: val.type,
+        //     params: {
+        //       id: id,
+        //       tenant: this.tenant.slug
+        //     }
+        //   })
+        // })
       },
       1500,
       { leading: true, trailing: true }
@@ -125,6 +126,10 @@ export default {
           return {
             id: t.id,
             idToMatch: t.id,
+            link: {
+              name: 'task',
+              params: { id: t.id, tenant: this.tenant.slug }
+            },
             name: t.name,
             icon: this.types['task'],
             type: 'task'
@@ -144,9 +149,13 @@ export default {
             const val = {
               id: project.id,
               idToMatch: project.id,
-              name: project.name,
               icon: this.types['project'],
               iconActive: this.types['projectActive'],
+              link: {
+                name: 'project',
+                params: { id: project.id, tenant: this.tenant.slug }
+              },
+              name: project.name,
               type: 'project',
               children: [
                 ...(this.flows ?? [])
@@ -155,8 +164,15 @@ export default {
                     return {
                       id: f.id,
                       idToMatch: f.flow_group_id,
-                      name: f.name,
                       children: this.loadTasks, // These are loaded async
+                      link: {
+                        name: 'flow',
+                        params: {
+                          id: f.flow_group_id,
+                          tenant: this.tenant.slug
+                        }
+                      },
+                      name: f.name,
                       icon: this.types['flow'],
                       type: 'flow'
                     }

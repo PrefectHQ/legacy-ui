@@ -9,16 +9,7 @@ export default {
       required: false,
       default: () => []
     },
-    id: {
-      type: [String, Number],
-      required: false,
-      default: () => 0
-    },
-    idToMatch: {
-      type: [String, Number],
-      required: false,
-      default: () => 0
-    },
+
     depth: {
       type: Number,
       required: false,
@@ -34,18 +25,23 @@ export default {
       required: false,
       default: () => null
     },
-    name: {
-      type: String,
+    id: {
+      type: [String, Number],
       required: false,
-      default: () => null
+      default: () => 0
+    },
+    idToMatch: {
+      type: [String, Number],
+      required: false,
+      default: () => 0
     },
     items: {
       type: [Array, Function],
       required: false,
       default: () => null
     },
-    type: {
-      type: String,
+    link: {
+      type: [Object, String],
       required: false,
       default: () => null
     },
@@ -55,6 +51,16 @@ export default {
       default: () => {
         return {}
       }
+    },
+    name: {
+      type: String,
+      required: false,
+      default: () => null
+    },
+    type: {
+      type: String,
+      required: false,
+      default: () => null
     }
   },
   data() {
@@ -115,6 +121,11 @@ export default {
     }
   },
   methods: {
+    clickHandler() {
+      if (this.canExpand) return this.toggle()
+      const data = { id: this.id, type: this.type }
+      return this.select(data)
+    },
     async select(data) {
       this.$emit('select', data)
     },
@@ -139,11 +150,13 @@ export default {
 
 <template>
   <div>
-    <div
+    <component
+      :is="canExpand ? 'div' : 'router-link'"
       v-if="icon || name_"
       :class="['pl-' + (depth - 1) * 4, { 'leaf-active': active_ }]"
       class="cursor-pointer d-flex justify-start align-center py-1 leaf"
-      v-on="canExpand ? { click: toggle } : {}"
+      :to="canExpand ? null : link"
+      @click.stop="clickHandler"
     >
       <div class="icon-block flex-shrink-0">
         <span v-if="loading" key="loading-spinner">
@@ -173,21 +186,22 @@ export default {
         {{ name_ }}
       </div>
 
-      <div
+      <router-link
         v-if="!activeRoute"
         class="mr-2 text-caption px-1 d-flex align-center justify-space-between view-button"
+        :to="link"
         @click.stop="select({ id: id, type: type })"
       >
         <div>View</div>
         <v-icon small>
           arrow_right
         </v-icon>
-      </div>
+      </router-link>
 
-      <div v-else class="mr-2 text-caption px-1 font-italic grey--text">
+      <div v-else class="mr-2 text-caption px-1 grey--text">
         Current
       </div>
-    </div>
+    </component>
 
     <div v-if="depth == 0 || (open && children_ && children_.length > 0)">
       <tree
@@ -198,6 +212,7 @@ export default {
         :depth="depth + 1"
         :icon="child.icon"
         :icon-active="child.iconActive"
+        :link="child.link"
         :name="child.name"
         :items="child.children"
         :type="child.type"
@@ -239,8 +254,14 @@ export default {
 }
 
 .leaf {
+  color: unset;
+  text-decoration: inherit;
+  user-select: none;
+
   .view-button {
+    color: unset;
     opacity: 0;
+    text-decoration: inherit;
   }
 
   &:focus,
@@ -248,6 +269,7 @@ export default {
     background-color: rgba(0, 0, 0, 0.03);
 
     .view-button {
+      color: #444 !important;
       opacity: 0.5;
 
       &:focus,
