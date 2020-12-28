@@ -86,20 +86,21 @@ export default {
             }
           }
         }
-        if (run.flows && run.flows[0]?.id) {
+        if (run.flows && run.flows[0]) {
+          let flow = run.flows[0]
           let flowId = run.flows[0]?.id
           if (this.selectFlow && this.selectFlow[0] === flowId) return accum
           if (!accum[flowId]) {
             accum[flowId] = {
-              name: run.flows[0].name,
+              name: flow.name,
               active: false,
               id: flowId,
-              version: run.flows[0].version,
+              version: flow.version,
               fgId: run.id
             }
           } else {
-            accum[flowId].name = run.flows[0].name
-            accum[flowId].version = run.flows[0].version
+            accum[flowId].name = flow.name
+            accum[flowId].version = flow.version
             accum[flowId].fgId = run.id
           }
         }
