@@ -88,8 +88,7 @@ export default {
         }
         if (run.flows && run.flows[0]?.id) {
           let flowId = run.flows[0]?.id
-          if (this.selectFlow && this.selectFlow[0] === run.flows[0].id)
-            return accum
+          if (this.selectFlow && this.selectFlow[0] === flowId) return accum
           if (!accum[flowId]) {
             accum[flowId] = {
               name: run.flows[0].name,
