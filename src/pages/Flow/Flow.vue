@@ -143,6 +143,10 @@ export default {
   watch: {
     $route() {
       this.tab = this.getTab()
+
+      if (this.$route.name == 'flow') {
+        this.activateFlow(this.$route.params.id)
+      }
     },
     tab(val) {
       let query = { ...this.$route.query }

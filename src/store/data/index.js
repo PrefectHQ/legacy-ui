@@ -13,11 +13,20 @@ const getters = {
   activeFlow(state) {
     return state.activeFlow
   },
+  activeFlowId(state) {
+    return state.activeFlow?.id
+  },
   activeProject(state) {
     return state.activeProject
   },
+  activeProjectId(state) {
+    return state.activeProject?.id
+  },
   activeTask(state) {
     return state.activeTask
+  },
+  activeTaskId(state) {
+    return state.activeTask?.id
   },
   flows(state) {
     return state.flows

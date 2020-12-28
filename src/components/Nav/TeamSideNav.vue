@@ -9,6 +9,7 @@ export default {
   },
   data() {
     return {
+      // activeIds: [],
       activateTimeout: null,
       items: [],
       types: {
@@ -24,18 +25,18 @@ export default {
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('data', [
       'flows',
-      'activeFlow',
+      'activeFlowId',
       'projects',
-      'activeProject',
+      'activeProjectId',
       'tasks',
-      'activeTask'
+      'activeTaskId'
     ]),
     ...mapGetters('tenant', ['tenant']),
     activeIds() {
       return [
-        this.activeProject?.id,
-        this.activeFlow?.id,
-        this.activeTask?.id
+        this.activeFlowId,
+        this.activeProjectId,
+        this.activeTaskId
       ].filter(id => !!id)
     },
     model: {

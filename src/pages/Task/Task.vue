@@ -86,11 +86,11 @@ export default {
     }
   },
   watch: {
-    async $route() {
+    $route() {
       this.tab = this.getTab()
 
       if (this.$route.name == 'task') {
-        await this.activateTask(this.$route.params.id)
+        this.activateTask(this.$route.params.id)
       }
     },
     tab(val) {

@@ -91,9 +91,13 @@ export default {
         this.toggle()
       }
     },
-    activeIds() {
-      this.active_ = this.activeIds.includes(this.id)
+    activeIds: {
+      deep: true,
+      handler: function() {
+        this.active_ = this.activeIds.includes(this.id)
+      }
     },
+
     items(val) {
       this.children_ = val
     },
@@ -200,7 +204,7 @@ export default {
         v-if="!activeRoute"
         class="mr-2 text-caption px-1 d-flex align-center justify-space-between view-button"
         :to="link"
-        @click.stop="select({ id: id, type: type })"
+        @click.native.stop="select({ id: id, type: type })"
       >
         <div>View</div>
         <v-icon small>
