@@ -123,22 +123,6 @@ export default {
     }
   },
   watch: {
-    // async tenant() {
-    //   this.selectFlow = null
-    //   this.$apollo.queries.flowRuns.refetch()
-    //   this.$apollo.queries.scheduledFlowRuns.refetch()
-    //   this.$apollo.queries.ongoingFlowRuns.refetch()
-    //   this.$apollo.queries.runningFlowRuns.refetch()
-    //   this.$apollo.queries.allFlows.refetch()
-    // },
-    // async backend() {
-    //   this.selectFlow = null
-    //   this.$apollo.queries.flowRuns.refetch()
-    //   this.$apollo.queries.scheduledFlowRuns.refetch()
-    //   this.$apollo.queries.ongoingFlowRuns.refetch()
-    //   this.$apollo.queries.runningFlowRuns.refetch()
-    //   this.$apollo.queries.allFlows.refetch()
-    // },
     allIds(val) {
       if (val[0] && !this.selectFlow) this.$emit('update', this.allIds[0][0])
     },
