@@ -44,7 +44,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
+    ...mapGetters('api', ['connected']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     intervalCount() {
@@ -242,7 +242,6 @@ export default {
       skip() {
         return this.skip
       },
-      fetchPolicy: 'cache-first',
       loadingKey: 'loadingKey',
       update: data => data.flow_by_pk
     }
@@ -251,7 +250,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet height="100vh" class="sheet-tweaks">
+  <v-sheet v-if="connected" height="100vh" class="sheet-tweaks">
     <v-snackbar
       v-model="scheduleBanner"
       top

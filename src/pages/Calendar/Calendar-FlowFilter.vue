@@ -27,7 +27,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
+    ...mapGetters('api', ['connected']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     ...mapGetters('api', ['backend']),
@@ -123,22 +123,22 @@ export default {
     }
   },
   watch: {
-    async tenant() {
-      this.selectFlow = null
-      this.$apollo.queries.flowRuns.refetch()
-      this.$apollo.queries.scheduledFlowRuns.refetch()
-      this.$apollo.queries.ongoingFlowRuns.refetch()
-      this.$apollo.queries.runningFlowRuns.refetch()
-      this.$apollo.queries.allFlows.refetch()
-    },
-    async backend() {
-      this.selectFlow = null
-      this.$apollo.queries.flowRuns.refetch()
-      this.$apollo.queries.scheduledFlowRuns.refetch()
-      this.$apollo.queries.ongoingFlowRuns.refetch()
-      this.$apollo.queries.runningFlowRuns.refetch()
-      this.$apollo.queries.allFlows.refetch()
-    },
+    // async tenant() {
+    //   this.selectFlow = null
+    //   this.$apollo.queries.flowRuns.refetch()
+    //   this.$apollo.queries.scheduledFlowRuns.refetch()
+    //   this.$apollo.queries.ongoingFlowRuns.refetch()
+    //   this.$apollo.queries.runningFlowRuns.refetch()
+    //   this.$apollo.queries.allFlows.refetch()
+    // },
+    // async backend() {
+    //   this.selectFlow = null
+    //   this.$apollo.queries.flowRuns.refetch()
+    //   this.$apollo.queries.scheduledFlowRuns.refetch()
+    //   this.$apollo.queries.ongoingFlowRuns.refetch()
+    //   this.$apollo.queries.runningFlowRuns.refetch()
+    //   this.$apollo.queries.allFlows.refetch()
+    // },
     allIds(val) {
       if (val[0] && !this.selectFlow) this.$emit('update', this.allIds[0][0])
     },
@@ -226,7 +226,7 @@ export default {
 </script>
 
 <template>
-  <div class="expansion text-center">
+  <div v-if="connected" class="expansion text-center">
     <v-expansion-panels class="expansion" flat :value="0">
       <v-expansion-panel v-for="(filter, index) in filters" :key="index">
         <v-expansion-panel-header class=" py-0">

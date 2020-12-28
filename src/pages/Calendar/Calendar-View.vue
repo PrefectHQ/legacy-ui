@@ -21,23 +21,35 @@ export default {
       typeToLabel: {
         day: 'Day',
         '4day': '4 Days'
-      }
+      },
+      refresh: false,
+      timeout: null
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
-    ...mapGetters('api', ['backend']),
+    ...mapGetters('api', ['backend', 'connected']),
     calTitle() {
       return this.getMonth(this.date)
     }
   },
   watch: {
     async tenant() {
+      clearTimeout(this.timeout)
+      this.refresh = true
+      this.timeout = setTimeout(() => {
+        this.refresh = false
+      }, 2000)
       this.flowId = null
     },
     async backend() {
+      clearTimeout(this.timeout)
+      this.refresh = true
+      this.timeout = setTimeout(() => {
+        this.refresh = false
+      }, 3000)
       this.flowId = null
     }
   },
@@ -64,7 +76,7 @@ export default {
 </script>
 
 <template>
-  <v-container class="ma-2 pl-0 pt-0">
+  <v-container v-if="!refresh" class="ma-2 pl-0 pt-0">
     <v-row>
       <v-col class="pa-0" cols="12" md="3" lg="2">
         <v-date-picker
