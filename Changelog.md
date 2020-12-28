@@ -5,7 +5,8 @@
 ### Features and Improvements
 
 - Add a flow run calendar view page - [#433](https://github.com/PrefectHQ/ui/pull/433)
-- Move to GraphiQL for our Interactive API = [#509](https://github.com/PrefectHQ/ui/pull/509)
+- Move to GraphiQL for our Interactive API  - [#509](https://github.com/PrefectHQ/ui/pull/509)
+- Simplify the flow run query for calendar view - [#518](https://github.com/PrefectHQ/ui/pull/518)
 
 ### Bugfixes
 
