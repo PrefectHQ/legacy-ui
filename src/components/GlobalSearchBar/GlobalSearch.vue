@@ -4,6 +4,7 @@ import globalIDSearchQuery from '@/graphql/GlobalSearch/search-by-id.gql'
 import GlobalSearchIcon from '@/components/GlobalSearchBar/GlobalSearchIcon'
 import GlobalSearchResult from '@/components/GlobalSearchBar/GlobalSearchResult'
 import MResult from '@/components/GlobalSearchBar/MResult'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { GlobalSearchIcon, GlobalSearchResult, MResult },
@@ -20,6 +21,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     id() {
       if (!this.input) return ''
 
@@ -77,10 +79,10 @@ export default {
     _deactivate() {
       clearTimeout(this.activateTimeout)
       this.$refs['global-search'].reset()
+
       this.input = null
       this.model = null
       this.search = null
-
       this.results = []
 
       this.activateTimeout = setTimeout(() => {
@@ -132,7 +134,7 @@ export default {
         this.$apollo.queries.idQuery.skip = true
       }
     },
-    handleResultSelected(searchResultName) {
+    async handleResultSelected(searchResultName) {
       // If this is called with no argument
       // we return immediately
       if (!searchResultName) return
@@ -151,11 +153,12 @@ export default {
       const routeToNavigateTo = this.routeName(searchResult.__typename)
 
       // Navigate to the URL based on the search result
-      this.$router.push({
+      await this.$router.push({
         name: routeToNavigateTo,
-        params: { id: searchResult.id }
+        params: { id: searchResult.id, tenant: this.tenant.slug }
       })
 
+      console.log('result selected')
       this._deactivate()
     },
     routeName(name) {
@@ -257,13 +260,12 @@ export default {
 
     <div class="global-search" :class="{ active: active }">
       <v-autocomplete
-        v-show="active"
+        v-if="active"
         ref="global-search"
         v-model="model"
         single-line
         dense
         outlined
-        rounded
         multiple
         dark
         clearable
@@ -288,34 +290,34 @@ export default {
           handleSearch(input)
         "
       >
-        <template v-if="input == null" #no-data>
-          <v-list-item>
+        <template #no-data>
+          <v-list-item v-if="input == null">
             <v-list-item-title class="text-subtitle-1 font-weight-light">
               Type to search for a <strong>Project</strong>,
               <strong>Flow</strong>, <strong>Task</strong>, or
               <strong>Run</strong>
             </v-list-item-title>
           </v-list-item>
-        </template>
-        <template v-else-if="isLoading" #no-data>
-          <v-list-item>
+
+          <v-list-item v-else-if="isLoading">
             <v-list-item-title>
               Searching...
             </v-list-item-title>
           </v-list-item>
-        </template>
-        <template v-else #no-data>
-          <MResult v-if="mResult" />
+
+          <MResult v-else-if="mResult" />
           <v-list-item v-else>
             <v-list-item-title>
               No results matched your search.
             </v-list-item-title>
           </v-list-item>
         </template>
+
         <template #item="data">
           <GlobalSearchIcon v-if="data" :type="data.item.__typename" />
           <GlobalSearchResult
             v-if="data"
+            ref="result"
             :search-result="data.item"
             :parent="data.parent"
           />
