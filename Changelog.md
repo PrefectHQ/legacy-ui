@@ -10,7 +10,7 @@
 
 ### Bugfixes
 
-- None
+- Fix tenant and backend switch on the calendar view - [#524](https://github.com/PrefectHQ/ui/pull/524)
 
 ## 2020-12-18
 
