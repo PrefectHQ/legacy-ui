@@ -19,7 +19,7 @@ const state = {
     picture: null
   },
   userIsSet: false,
-  invitations: []
+  invitations: null
 }
 
 const getters = {
@@ -97,6 +97,9 @@ const mutations = {
   },
   setInvitations(state, invitations) {
     state.invitations = invitations
+  },
+  unsetInvitations(state) {
+    state.invitations = null
   }
 }
 

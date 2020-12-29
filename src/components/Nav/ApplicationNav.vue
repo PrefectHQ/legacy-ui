@@ -25,13 +25,32 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('api', ['isCloud']),
+    ...mapGetters('tenant', ['tenant']),
+    isTransparent() {
+      return this.$route.name === 'not-found'
+    },
+    isWelcome() {
+      return (
+        this.$route.name === 'welcome' ||
+        this.$route.name === 'onboard-resources' ||
+        this.$route.name === 'name-team' ||
+        this.$route.name === 'accept'
+      )
+    },
+    navBarColor() {
+      return this.isTransparent
+        ? 'transparent'
+        : this.isCloud
+        ? 'primary'
+        : 'secondary'
+    }
   }
 }
 </script>
 
 <template>
-  <v-app-bar app elevate-on-scroll fixed color="primary">
+  <v-app-bar app elevate-on-scroll fixed :color="navBarColor">
     <router-link
       :to="{
         name: 'dashboard',

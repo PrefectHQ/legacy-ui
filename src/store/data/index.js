@@ -5,7 +5,7 @@ const state = {
   activeProject: null,
   activeTask: null,
   flows: [],
-  projects: [],
+  projects: null,
   tasks: []
 }
 
@@ -84,7 +84,7 @@ const mutations = {
     state.projects = projects
   },
   unsetProjects(state) {
-    state.projects = []
+    state.projects = null
   }
 }
 

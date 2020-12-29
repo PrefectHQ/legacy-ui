@@ -187,7 +187,13 @@ export default {
     <div class="pt-6 px-4">
       <div>
         <div class="text-h4">
-          {{ tenant.name ? tenant.name : loading ? '...' : 'No team selected' }}
+          {{
+            tenant && tenant.name
+              ? tenant.name
+              : loading
+              ? '...'
+              : 'No team selected'
+          }}
         </div>
 
         <div class="text-body-1 grey--text text--darken-1">{{ role }}</div>
@@ -195,7 +201,11 @@ export default {
     </div>
     <v-menu v-model="model" offset-x :close-on-content-click="false">
       <template #activator="{ on }">
-        <v-list-item class="py-0" v-on="on">
+        <v-list-item
+          class="py-0"
+          :disabled="!tenants || tenants.length === 0"
+          v-on="on"
+        >
           <v-list-item-avatar tile class="mr-2" size="16">
             <v-icon :color="model ? 'primaryDark' : 'grey darken-1'" small>
               sync_alt
@@ -206,8 +216,8 @@ export default {
               Switch team
 
               <v-badge
-                :value="invitations.length"
-                :content="invitations.length"
+                :value="invitations && invitations.length"
+                :content="invitations && invitations.length"
                 color="accentPink"
                 class="ml-1 white--text"
               />
@@ -252,7 +262,10 @@ export default {
           </v-list-item>
         </v-list>
 
-        <v-list v-if="invitations.length > 0" :disabled="loading">
+        <v-list
+          v-if="invitations && invitations.length > 0"
+          :disabled="loading"
+        >
           <v-subheader>
             <v-icon x-small class="mr-2">
               fas fa-envelope

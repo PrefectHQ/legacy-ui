@@ -248,11 +248,11 @@ export default {
         <div class="mt-4 mb-2">
           <v-divider class="mx-10 mb-5" />
 
-          <div class="mx-4 d-flex justify-space-between">
+          <div v-if="projects" class="mx-4 d-flex justify-space-between">
             <div class="text-h5">Projects</div>
 
             <div
-              v-if="projects && projects.length > 0"
+              v-if="projects.length > 0"
               v-ripple
               class="cursor-pointer px-2 py-2 caption font-weight-normal collapse-button rounded grey--text text--darken-1"
               @click="closeAll"
@@ -264,7 +264,7 @@ export default {
 
         <div
           ref="drawer"
-          class="focusable tree-view flex-grow-0 flex-shrink-1"
+          class="focusable tree-view flex-grow-1 flex-shrink-1"
           tabindex="-1"
         >
           <div class="pa-0 mx-4">
@@ -281,7 +281,7 @@ export default {
               @select="handleSelect"
             />
 
-            <div v-else>
+            <div v-else-if="projects && projects.length === 0">
               <div class="text-subtitle-1">You have no projects</div>
 
               <v-btn
@@ -296,6 +296,19 @@ export default {
                 New project
               </v-btn>
             </div>
+
+            <v-progress-circular
+              v-else
+              indeterminate
+              size="70"
+              color="primaryDark"
+              class="position-absolute"
+              style="
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+              "
+            />
           </div>
         </div>
 
@@ -305,13 +318,17 @@ export default {
           <div
             class="text-caption d-flex align-end justify-space-between mx-10"
           >
-            <div v-if="lastDeployment_UI" class="text-right">
+            <div
+              v-if="lastDeployment_UI"
+              class="text-right"
+              style="width: 35%;"
+            >
               <div class="grey--text text--darken-1 font-weight-light">
                 UI Release
               </div>
               <div>{{ lastDeployment_UI }}</div>
             </div>
-            <div>
+            <div class="flex-grow-1">
               <div v-show="coreVersion" class="text-center">
                 <div class="grey--text text--darken-1 font-weight-light">
                   Core Version
@@ -328,7 +345,7 @@ export default {
                 alt="Prefect Logo"
               />
             </div>
-            <div v-if="lastDeployment_Cloud">
+            <div v-if="lastDeployment_Cloud" style="width: 35%;">
               <div class="grey--text text--darken-1 font-weight-light">
                 API Release
               </div>

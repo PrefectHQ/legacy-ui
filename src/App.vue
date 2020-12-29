@@ -58,6 +58,7 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
+    ...mapGetters('data', ['projects']),
     ...mapGetters('auth0', [
       'isAuthenticated',
       'isAuthorized',
@@ -101,14 +102,17 @@ export default {
   },
   watch: {
     backend() {
-      // this.loadedComponents = 0
-      // this.shown = false
+      this.loadedComponents = 0
+      clearCache()
+      this.resetData()
 
-      // this.refreshTimeout = setTimeout(() => {
-      //   this.shown = true
-      //   this.refresh()
-      //   clearTimeout(this.refreshTimeout)
-      // }, 3000)
+      this.refreshTimeout = setTimeout(() => {
+        this.resetData()
+        this.unsetInvitations()
+        this.unsetTenants()
+        this.refresh()
+        clearTimeout(this.refreshTimeout)
+      }, 1000)
       this.setAgents(null)
     },
     async connected(val) {
@@ -210,9 +214,9 @@ export default {
     ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
-    ...mapMutations('tenant', ['setDefaultTenant']),
+    ...mapMutations('tenant', ['setDefaultTenant', 'unsetTenants']),
     ...mapActions('user', ['getUser']),
-    ...mapMutations('user', ['setInvitations']),
+    ...mapMutations('user', ['setInvitations', 'unsetInvitations']),
     handleKeydown(e) {
       if (e.key === 'Escape') {
         this.closeSideNav()
@@ -283,7 +287,7 @@ export default {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
       skip() {
-        return this.isCloud && !this.isAuthorized
+        return (this.isCloud && !this.isAuthorized) || !this.connected
       },
       pollInterval: 3000,
       //Without this, server UI with no actual server shows results
@@ -295,7 +299,7 @@ export default {
         return require('@/graphql/Nav/flows.gql')
       },
       skip() {
-        return this.isCloud && !this.isAuthorized
+        return (this.isCloud && !this.isAuthorized) || !this.connected
       },
       pollInterval: 10000,
       update(data) {
@@ -333,7 +337,7 @@ export default {
         return require('@/graphql/Nav/projects.gql')
       },
       skip() {
-        return this.isCloud && !this.isAuthorized
+        return (this.isCloud && !this.isAuthorized) || !this.connected
       },
       pollInterval: 10000,
       update(data) {
