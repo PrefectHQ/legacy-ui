@@ -160,7 +160,6 @@ export default {
         params: { id: searchResult.id, tenant: this.tenant.slug }
       })
 
-      console.log('result selected')
       this._deactivate()
     },
     routeName(name) {
