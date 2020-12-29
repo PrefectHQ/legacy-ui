@@ -226,17 +226,20 @@ export default {
             Collapse
           </div>
         </v-subheader>
-        <tree
-          ref="tree"
-          class="px-4"
-          :active-ids="activeIds"
-          :items="items"
-          :options="{
-            noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
-            activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
-          }"
-          @select="handleSelect"
-        />
+
+        <div class="tree-view">
+          <tree
+            ref="tree"
+            class="px-4"
+            :active-ids="activeIds"
+            :items="items"
+            :options="{
+              noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
+              activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
+            }"
+            @select="handleSelect"
+          />
+        </div>
       </div>
     </v-navigation-drawer>
   </div>
@@ -254,6 +257,11 @@ export default {
       // This allows us to auto-focus the nav drawer but not show the outline
       outline: none;
     }
+  }
+
+  .tree-view {
+    max-height: calc(100vh - 64px - 145px - 48px - 125px);
+    overflow: scroll;
   }
 }
 
