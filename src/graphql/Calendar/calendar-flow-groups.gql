@@ -5,6 +5,7 @@ query flowGroups {
         flows (where: {archived: {_eq: false}}) {
             name
             id
+            version
         }
     }
 }

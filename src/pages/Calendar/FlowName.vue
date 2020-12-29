@@ -13,11 +13,6 @@ export default {
       required: false,
       default: false
     },
-    fgIds: {
-      type: Array,
-      required: false,
-      default: () => []
-    },
     truncate: {
       type: Boolean,
       required: false,
@@ -29,12 +24,7 @@ export default {
       default: null
     },
     version: {
-      type: String,
-      required: false,
-      default: null
-    },
-    fgId: {
-      type: String,
+      type: Number,
       required: false,
       default: null
     }
@@ -45,30 +35,21 @@ export default {
     }
   },
   computed: {
+    includeVersion() {
+      return !this.name ? `(Version ${this.version || this.flow?.version})` : ''
+    },
     flowDetails() {
-      const version =
-        this.fgIds.filter(id => id === this.fgId).length > 1
-          ? `(Version ${this.version})`
-          : ''
+      const name = this.name ? `${this.name}` : `${this.flow?.name}`
       const active = this.active ? '' : '- no current runs'
-      return `${this.name} ${version} ${active}`
+      return `${name} ${this.includeVersion} ${active}`
     },
     flowNameText() {
-      const version =
-        this.fgIds.filter(id => id === this.fgId).length > 1
-          ? `(Version ${this.version})`
-          : ''
       const name = this.name ? `${this.name}` : `${this.flow?.name}`
-      return `${name} ${version}`
+      return `${name} ${this.includeVersion}`
     },
     textAlign() {
       if (this.left) return 'text-left'
       return 'text-center'
-    }
-  },
-  watch: {
-    flow(val) {
-      if (val && this.active) this.$emit('fg', val.flow_group_id)
     }
   },
   methods: {
