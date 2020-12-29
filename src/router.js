@@ -291,7 +291,7 @@ export const routes = [
     path: '/home',
     component: () =>
       import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue'),
-    beforeEnter: multiguard([authNavGuard])
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
     name: 'dashboard',
