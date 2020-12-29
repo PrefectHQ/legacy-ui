@@ -22,6 +22,7 @@ export default {
         class="navbar-icon mx-1"
         :input-value="$route.path.includes('/help')"
         icon
+        title="Open the help menu"
         v-on="on"
       >
         <i

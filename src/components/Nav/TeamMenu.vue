@@ -23,6 +23,7 @@ export default {
         small
         depressed
         color="transparent"
+        title="Open the team menu"
         v-on="on"
       >
         Team

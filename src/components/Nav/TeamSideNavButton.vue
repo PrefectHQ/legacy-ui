@@ -26,6 +26,7 @@ export default {
     style="
       background-color: rgba(255, 255, 255, 0.1);
       transition: width 200ms;"
+    title="Open the team sidebar"
     @click.stop="toggle"
   >
     <div style="font-size: 1.05rem;" class="d-flex align-center justify-start">

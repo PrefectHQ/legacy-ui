@@ -25,7 +25,12 @@ export default {
 </script>
 
 <template>
-  <v-btn :to="{ name: 'notifications' }" class="navbar-icon mx-1" icon>
+  <v-btn
+    :to="{ name: 'notifications' }"
+    class="navbar-icon mx-1"
+    icon
+    title="Navigation to your notifications page"
+  >
     <span class="fa-stack" :class="{ active: active }">
       <i
         class="fad fa-circle nav-bar-duotone-icon fa-stack-1x fa-xs overflow-hidden"

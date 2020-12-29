@@ -253,6 +253,7 @@ export default {
       class="navbar-icon mx-1 global-search-activator cursor-pointer"
       icon
       :class="{ active: active }"
+      title="Search your team for projects, flows, and runs"
       @click.native="_activate"
     >
       <i class="fad fa-search fa-2x nav-bar-duotone-icon" />

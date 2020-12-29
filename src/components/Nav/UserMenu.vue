@@ -57,7 +57,13 @@ export default {
   >
     <template #activator="{ on }">
       <v-scale-transition>
-        <v-btn class="white ml-3 mr-1" large icon v-on="on">
+        <v-btn
+          class="white ml-3 mr-1"
+          large
+          icon
+          title="Open the user menu"
+          v-on="on"
+        >
           <v-icon large color="grey">
             face
           </v-icon>

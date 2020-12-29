@@ -65,6 +65,7 @@ export default {
       small
       depressed
       color="transparent"
+      title="Visit your Dashboard"
     >
       Dashboard
     </v-btn>
@@ -78,6 +79,7 @@ export default {
       small
       depressed
       color="transparent"
+      title="Learn how to get started with Prefect"
     >
       Getting Started
     </v-btn>
@@ -92,6 +94,7 @@ export default {
       small
       depressed
       color="transparent"
+      title="Experiment with GraphQL queries using the Interactive API"
     >
       Interactive API
     </v-btn>
@@ -106,6 +109,7 @@ export default {
       small
       depressed
       color="transparent"
+      title="View your flow runs in a calendar view"
     >
       Calendar
     </v-btn>

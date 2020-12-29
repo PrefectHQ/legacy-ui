@@ -133,7 +133,13 @@ export default {
     nudge-bottom="20"
   >
     <template #activator="{ on }">
-      <v-btn class="navbar-icon mx-1" :class="iconClass" icon v-on="on">
+      <v-btn
+        class="navbar-icon mx-1"
+        :class="iconClass"
+        icon
+        title="Open the connection menu"
+        v-on="on"
+      >
         <i class="fad fa-server fa-2x nav-bar-duotone-icon" />
       </v-btn>
     </template>
