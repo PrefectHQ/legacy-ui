@@ -71,10 +71,10 @@ export default {
     lastDeployment_UI() {
       return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
     },
-    navLogo() {
+    logoAlt() {
       return require(`@/assets/logos/${
-        this.isCloud ? 'cloud' : 'core'
-      }-side-nav-logo.svg`)
+        this.isCloud ? 'core' : 'cloud'
+      }-logo-no-text.svg`)
     }
   },
   watch: {
@@ -245,12 +245,8 @@ export default {
       >
         <TeamSwitcher />
 
-        <div
-          ref="drawer"
-          class="focusable flex-grow-1 flex-shrink-0"
-          tabindex="-1"
-        >
-          <v-divider class="mx-10 mt-4 mb-5" />
+        <div class="mt-4 mb-2">
+          <v-divider class="mx-10 mb-5" />
 
           <div class="mx-4 d-flex justify-space-between">
             <div class="text-h5">Projects</div>
@@ -264,8 +260,14 @@ export default {
               Collapse All
             </div>
           </div>
+        </div>
 
-          <div class="tree-view pa-0 mx-4">
+        <div
+          ref="drawer"
+          class="focusable tree-view flex-grow-0 flex-shrink-1"
+          tabindex="-1"
+        >
+          <div class="pa-0 mx-4">
             <tree
               v-if="projects && projects.length > 0"
               ref="tree"
@@ -297,23 +299,40 @@ export default {
           </div>
         </div>
 
-        <div class="flex-grow-0 flex-shrink-0">
-          <v-divider class="mx-10 my-4" />
-          <div class="text-caption d-flex justify-space-between px-4">
-            <span v-if="lastDeployment_UI">{{ lastDeployment_UI }}</span>
-            <span v-if="coreVersion">{{ coreVersion }}</span>
-            <span v-if="lastDeployment_Cloud">{{ lastDeployment_Cloud }}</span>
-          </div>
+        <div class="flex-grow-0 flex-shrink-0 mt-6 pb-6">
+          <v-divider class="mx-10 mb-4" />
 
-          <v-img
-            max-height="100"
-            width="80%"
-            contain
-            position="center center"
-            class="mx-auto"
-            :src="navLogo"
-            alt="Prefect Logo"
-          />
+          <div class="text-caption d-flex align-end justify-space-between mx-4">
+            <div v-if="lastDeployment_UI" class="text-right">
+              <div class="grey--text text--darken-1 font-weight-light"
+                >UI Release</div
+              >
+              <div>{{ lastDeployment_UI }}</div>
+            </div>
+            <div>
+              <div v-show="!coreVersion" class="text-center">
+                <div class="grey--text text--darken-1 font-weight-light">
+                  Core Version
+                </div>
+                <div>{{ coreVersion || '0.14.0' }}</div>
+              </div>
+              <v-img
+                max-height="100"
+                width="40px"
+                contain
+                position="center center"
+                class="mx-auto"
+                :src="logoAlt"
+                alt="Prefect Logo"
+              />
+            </div>
+            <div v-if="lastDeployment_Cloud">
+              <div class="grey--text text--darken-1 font-weight-light"
+                >API Release</div
+              >
+              <div>{{ lastDeployment_Cloud }}</div>
+            </div>
+          </div>
         </div>
       </div>
     </v-navigation-drawer>
@@ -337,7 +356,6 @@ export default {
   }
 
   .tree-view {
-    max-height: calc(100vh - 64px - 145px - 48px - 125px);
     overflow: scroll;
   }
 }

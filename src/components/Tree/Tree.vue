@@ -170,7 +170,9 @@ export default {
       :class="['pl-' + (depth - 1) * 4, { 'leaf-active': active_ }]"
       class="cursor-pointer d-flex justify-start align-center py-1 leaf"
       :to="canExpand ? null : link"
+      tabindex="0"
       @click.stop="clickHandler"
+      @keyup.enter="clickHandler"
     >
       <div class="icon-block flex-shrink-0">
         <span v-if="loading" key="loading-spinner">
@@ -268,6 +270,8 @@ export default {
   width: 24px;
 }
 
+/* stylelint-disable */
+
 .leaf {
   color: unset;
   text-decoration: inherit;
@@ -280,8 +284,10 @@ export default {
   }
 
   &:focus,
-  &:hover {
+  &:hover,
+  &:focus-within {
     background-color: rgba(0, 0, 0, 0.03);
+    outline: none;
 
     .view-button {
       color: #444 !important;
@@ -289,7 +295,9 @@ export default {
 
       &:focus,
       &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
         opacity: 1;
+        outline: none;
       }
     }
   }
@@ -298,4 +306,6 @@ export default {
     color: var(--v-primaryDark-base);
   }
 }
+
+/* stylelint-enable */
 </style>
