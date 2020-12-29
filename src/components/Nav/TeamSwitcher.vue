@@ -195,13 +195,20 @@ export default {
     <v-menu v-model="model" offset-x :close-on-content-click="false">
       <template #activator="{ on }">
         <v-list-item v-on="on">
+          <v-list-item-avatar tile class="mr-2" size="16">
+            <v-icon :color="model ? 'primaryDark' : 'grey darken-1'" small>
+              sync_alt
+            </v-icon>
+          </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="text-body-1 text-none">
               Switch team
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-action>
-            <v-icon>arrow_right</v-icon>
+            <v-icon :color="model ? 'primaryDark' : 'grey darken-1'">
+              arrow_right
+            </v-icon>
           </v-list-item-action>
         </v-list-item>
       </template>
@@ -278,21 +285,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-// $dark-grey-icon: #999;
-// $dark-blue-icon: var(--v-primaryDark-base);
-
-// .o-100 {
-//   &.svg-inline--fa {
-//     --fa-primary-opacity: 0.8;
-//     --fa-secondary-opacity: 0.8;
-//   }
-// }
-
-// .fa-users {
-//   --fa-primary-color: #{$dark-grey-icon};
-//   --fa-secondary-color: #{$dark-blue-icon};
-// }
-
 /* stylelint-disable-next-line */
 .v-list-item--active::before {
   opacity: 0 !important;
@@ -325,34 +317,6 @@ export default {
     &.disabled-list-item {
       border-left: 0 !important;
       cursor: auto;
-    }
-  }
-}
-
-.team-switcher {
-  transition: all 150ms linear;
-  user-select: none;
-  width: 100%;
-
-  .svg-inline--fa {
-    transition: all 150ms linear;
-
-    &.fa-swatchbook {
-      --fa-primary-color: #aaa;
-      --fa-secondary-color: #444;
-      --fa-secondary-opacity: 1;
-    }
-  }
-
-  &.active {
-    background-color: #ccc;
-  }
-
-  &.active,
-  &:hover,
-  &:focus {
-    .svg-inline--fa {
-      --fa-primary-color: var(--v-primary-base);
     }
   }
 }
