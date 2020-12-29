@@ -16,21 +16,8 @@ jest.mock('@/vue-apollo', () => {
   return {
     fallbackApolloClient: {
       query: arg => {
-        if (arg.query == 'flow group') {
-          if (arg.variables.id == '123') {
-            return {
-              data: {
-                flow_group_by_pk: {
-                  id: '123'
-                }
-              }
-            }
-          } else {
-            return { data: 'error' }
-          }
-        }
         if (arg.query == 'flow') {
-          if (arg.variables.id == '456') {
+          if (arg.variables.id == 'flow_id_2') {
             return {
               data: {
                 flow_by_pk: {
@@ -57,12 +44,11 @@ localVue.use(Vuex)
 
 describe('flowNavGuard', () => {
   afterEach(() => {
-    store.dispatch.restore()
-    store.commit('flow/unsetFlows')
+    store.commit('data/unsetFlows')
   })
 
   test('if there is a flow group that matches the passed id, it returns next', async () => {
-    store.commit('flow/setFlows', flows)
+    store.commit('data/setFlows', flows)
     const next = jest.fn()
     await flowNavGuard(
       { name: 'flow', params: { id: 'flow_group_id_1' } },
