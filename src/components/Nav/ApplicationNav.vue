@@ -4,7 +4,7 @@ import ConnectionMenu from '@/components/Nav/ConnectionMenu'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import HelpMenu from '@/components/Nav/HelpMenu'
 import NotificationMenu from '@/components/Nav/NotificationMenu'
-import TeamMenu from '@/components/Nav/TeamMenu'
+import Links from '@/components/Nav/Links'
 import TeamSideNavButton from '@/components/Nav/TeamSideNavButton'
 import UserMenu from '@/components/Nav/UserMenu'
 
@@ -13,8 +13,8 @@ export default {
     ConnectionMenu,
     GlobalSearch,
     HelpMenu,
+    Links,
     NotificationMenu,
-    TeamMenu,
     TeamSideNavButton,
     UserMenu
   },
@@ -76,69 +76,14 @@ export default {
 
     <v-divider vertical class="white vertical-divider my-auto mx-2" />
 
-    <v-btn
-      :to="{
-        name: 'dashboard',
-        params: {
-          tenant: slug
-        }
-      }"
-      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
-      dark
-      small
-      depressed
-      color="transparent"
-      :input-value="$route.name == 'dashboard' || $route.name == 'project'"
-      title="Visit your Dashboard"
-    >
-      Dashboard
-    </v-btn>
+    <!-- We can't use a v-if-else chain here; -->
+    <!-- For some reason the default slot never renders if we do. -->
+    <!-- (likely a Vuetify bug) -->
+    <template v-if="$vuetify.breakpoint.mdAndDown" #extension>
+      <Links />
+    </template>
 
-    <v-btn
-      :to="{
-        name: 'home'
-      }"
-      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
-      dark
-      small
-      depressed
-      color="transparent"
-      title="Learn how to get started with Prefect"
-    >
-      Getting Started
-    </v-btn>
-
-    <v-btn
-      :to="{
-        name: 'api',
-        params: { tenant: slug }
-      }"
-      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
-      dark
-      small
-      depressed
-      color="transparent"
-      title="Experiment with GraphQL queries using the Interactive API"
-    >
-      Interactive API
-    </v-btn>
-
-    <v-btn
-      :to="{
-        name: 'calendar',
-        params: { tenant: slug }
-      }"
-      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
-      dark
-      small
-      depressed
-      color="transparent"
-      title="View your flow runs in a calendar view"
-    >
-      Calendar
-    </v-btn>
-
-    <TeamMenu />
+    <Links v-if="!$vuetify.breakpoint.mdAndDown" />
 
     <v-spacer></v-spacer>
 
