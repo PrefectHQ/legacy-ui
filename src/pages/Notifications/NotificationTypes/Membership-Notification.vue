@@ -172,8 +172,7 @@ export default {
       </v-list-item-title>
     </truncate>
     <div v-else>
-      <v-skeleton-loader v-if="loading > 0" type="text" tile />
-      <v-list-item-title v-else-if="tempMember || isMember">
+      <v-list-item-title v-if="tempMember || isMember">
         You joined
         <span class="font-weight-medium">
           {{ content.sender_tenant_name }}
