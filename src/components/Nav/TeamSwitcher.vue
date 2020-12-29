@@ -69,6 +69,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     ...mapActions('data', ['resetData']),
     ...mapActions('tenant', ['setCurrentTenant']),
     async handleAcceptPendingInvitation(id, name, slug) {
@@ -194,7 +195,7 @@ export default {
     </div>
     <v-menu v-model="model" offset-x :close-on-content-click="false">
       <template #activator="{ on }">
-        <v-list-item v-on="on">
+        <v-list-item class="py-2" v-on="on">
           <v-list-item-avatar tile class="mr-2" size="16">
             <v-icon :color="model ? 'primaryDark' : 'grey darken-1'" small>
               sync_alt
@@ -203,6 +204,13 @@ export default {
           <v-list-item-content>
             <v-list-item-title class="text-body-1 text-none">
               Switch team
+
+              <v-badge
+                :value="invitations.length"
+                :content="invitations.length"
+                color="accentPink"
+                class="ml-1 white--text"
+              />
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-action>
@@ -315,7 +323,7 @@ export default {
     }
 
     &.disabled-list-item {
-      border-left: 0 !important;
+      border-left: 10px solid var(--v-accentPink-base);
       cursor: auto;
     }
   }

@@ -30,10 +30,6 @@ export default {
     </template>
 
     <v-sheet width="400" class="white">
-      <!-- <div class="text-h6 font-weight-light px-4">
-        Stuck? We can help!
-      </div> -->
-
       <v-list>
         <v-list-item :to="{ name: 'account' }">
           <v-list-item-avatar tile>
@@ -168,42 +164,6 @@ export default {
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-
-        <!-- <v-list-item
-          href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
-          target="_blank"
-        >
-          <v-list-item-avatar tile>
-            <img src="@/assets/icon-illustrations/slack-community.svg" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Join our Slack!
-              <sup>
-                <v-icon x-small>
-                  open_in_new
-                </v-icon>
-              </sup>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Chat with us, ask questions, and share tips
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="{ name: 'help' }">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-life-ring fa-2x" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Feedback & Support
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Having trouble or have a question for us?
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item> -->
       </v-list>
     </v-sheet>
   </v-menu>

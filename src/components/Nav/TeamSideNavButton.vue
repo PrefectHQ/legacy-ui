@@ -28,7 +28,15 @@ export default {
       transition: width 200ms;"
     @click.stop="toggle"
   >
-    <div style="font-size: 1.05rem;">{{ tenant.name }}</div>
+    <div style="font-size: 1.05rem;" class="d-flex align-center justify-start">
+      <div>{{ tenant.name }}</div>
+      <v-badge
+        inline
+        :value="invitations.length"
+        :content="invitations.length"
+        color="accentPink"
+      />
+    </div>
     <v-icon>
       {{ isOpen ? 'chevron_left' : 'chevron_right' }}
     </v-icon>
