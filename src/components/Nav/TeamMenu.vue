@@ -1,9 +1,14 @@
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
       model: false
     }
+  },
+  computed: {
+    ...mapGetters('api', ['isCloud'])
   }
 }
 </script>
@@ -40,13 +45,76 @@ export default {
             <v-list-item-title class="text-subtitle-1">
               Account
             </v-list-item-title>
-            <v-list-item-subtitle>
+            <v-list-item-subtitle v-if="isCloud">
               Manage your team's plan, profile, and data
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-else>
+              Manage your team's profile and data
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="{ name: 'members' }">
+        <v-list-item :disabled="!isCloud" :to="{ name: 'tokens' }">
+          <v-list-item-avatar tile>
+            <i class="o-100 fad fa-exchange-alt fa-2x" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              API Tokens
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Manage your team's API tokens
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :to="{ name: 'cloud-hooks' }">
+          <v-list-item-avatar tile>
+            <i class="o-100 fad fa-clouds fa-2x" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Cloud Hooks
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Create and modify team-wide Cloud Hooks
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :disabled="!isCloud" :to="{ name: 'flow-concurrency' }">
+          <v-list-item-avatar tile>
+            <v-icon large color="#999">
+              pi-flow-run
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Flow Concurrency
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Manage flow concurrency
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :to="{ name: 'flow-groups' }">
+          <v-list-item-avatar tile>
+            <v-icon large color="#999">
+              pi-flow
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Flow Groups
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              View all your team's flows
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :disabled="!isCloud" :to="{ name: 'members' }">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-users fa-2x" />
           </v-list-item-avatar>
@@ -76,67 +144,21 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="{ name: 'tokens' }">
+        <v-list-item :disabled="!isCloud" :to="{ name: 'secrets' }">
           <v-list-item-avatar tile>
-            <i class="o-100 fad fa-exchange-alt fa-2x" />
+            <i class="o-100 fad fa-key-skeleton fa-2x" />
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="text-subtitle-1">
-              API Tokens
+              Secrets
             </v-list-item-title>
             <v-list-item-subtitle>
-              Manage your team's API tokens
+              Create and manage team-wide Secrets used by your flows
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="{ name: 'flow-groups' }">
-          <v-list-item-avatar tile>
-            <v-icon large color="#999">
-              pi-flow
-            </v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Flow Groups
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              View all your team's flows
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="{ name: 'cloud-hooks' }">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-clouds fa-2x" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Cloud Hooks
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Create and modify team-wide Cloud Hooks
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="{ name: 'flow-concurrency' }">
-          <v-list-item-avatar tile>
-            <v-icon large color="#999">
-              pi-flow-run
-            </v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Flow Concurrency
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Manage flow concurrency
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="{ name: 'task-concurrency' }">
+        <v-list-item :disabled="!isCloud" :to="{ name: 'task-concurrency' }">
           <v-list-item-avatar tile>
             <v-icon large color="primaryDark">
               pi-task-run
@@ -148,20 +170,6 @@ export default {
             </v-list-item-title>
             <v-list-item-subtitle>
               Manage task run concurrency
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="{ name: 'secrets' }">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-key-skeleton fa-2x" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Secrets
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Create and manage team-wide Secrets used by your flows
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -204,5 +212,18 @@ $dark-blue-icon: var(--v-primaryDark-base);
 .fa-exchange-alt {
   --fa-primary-color: #{$dark-blue-icon};
   --fa-secondary-color: #{$dark-grey-icon};
+}
+
+/* stylelint-disable-next-line */
+.v-list-item--disabled {
+  /* stylelint-disable-next-line */
+  .v-list-item__avatar {
+    opacity: 0.25 !important;
+  }
+
+  /* stylelint-disable-next-line */
+  .v-list-item__subtitle {
+    opacity: 0.4 !important;
+  }
 }
 </style>

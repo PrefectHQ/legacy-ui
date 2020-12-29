@@ -30,6 +30,7 @@ import { insertedActions, updatedActions } from '@/directives/disable-read-only'
 // Functional Components
 import TransitionHeight from '@/components/Functional/Transition-Height'
 import TruncatedSpan from '@/components/Functional/TruncatedSpan'
+import GetCloud from '@/components/GetCloud'
 
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
@@ -160,6 +161,7 @@ Vue.filter('roundThousands', roundThousands)
 
 Vue.component('HeightTransition', TransitionHeight)
 Vue.component('Truncate', TruncatedSpan)
+Vue.component('GetCloud', GetCloud)
 
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.

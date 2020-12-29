@@ -28,6 +28,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['license']),
@@ -51,7 +52,7 @@ export default {
 
 <template>
   <ManagementLayout>
-    <template v-if="needAlert" #alert>
+    <template v-if="needAlert && isCloud" #alert>
       <v-alert
         dismissible
         class="mx-auto mb-12"
@@ -74,10 +75,10 @@ export default {
     </template>
 
     <Profile />
-    <License />
-    <Users />
-    <Billing />
-    <ClearDataDialog />
+    <License v-if="isCloud" />
+    <Users v-if="isCloud" />
+    <Billing v-if="isCloud" />
+    <ClearDataDialog v-if="isCloud" />
   </ManagementLayout>
 </template>
 
