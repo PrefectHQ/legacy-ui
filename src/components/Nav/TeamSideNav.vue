@@ -73,7 +73,7 @@ export default {
     },
     logoAlt() {
       return require(`@/assets/logos/${
-        this.isCloud ? 'core' : 'cloud'
+        this.isCloud ? 'cloud' : 'core'
       }-logo-no-text.svg`)
     }
   },
@@ -302,19 +302,21 @@ export default {
         <div class="flex-grow-0 flex-shrink-0 mt-6 pb-6">
           <v-divider class="mx-10 mb-4" />
 
-          <div class="text-caption d-flex align-end justify-space-between mx-4">
+          <div
+            class="text-caption d-flex align-end justify-space-between mx-10"
+          >
             <div v-if="lastDeployment_UI" class="text-right">
-              <div class="grey--text text--darken-1 font-weight-light"
-                >UI Release</div
-              >
+              <div class="grey--text text--darken-1 font-weight-light">
+                UI Release
+              </div>
               <div>{{ lastDeployment_UI }}</div>
             </div>
             <div>
-              <div v-show="!coreVersion" class="text-center">
+              <div v-show="coreVersion" class="text-center">
                 <div class="grey--text text--darken-1 font-weight-light">
                   Core Version
                 </div>
-                <div>{{ coreVersion || '0.14.0' }}</div>
+                <div>{{ coreVersion }}</div>
               </div>
               <v-img
                 max-height="100"
@@ -327,9 +329,9 @@ export default {
               />
             </div>
             <div v-if="lastDeployment_Cloud">
-              <div class="grey--text text--darken-1 font-weight-light"
-                >API Release</div
-              >
+              <div class="grey--text text--darken-1 font-weight-light">
+                API Release
+              </div>
               <div>{{ lastDeployment_Cloud }}</div>
             </div>
           </div>
