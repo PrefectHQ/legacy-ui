@@ -176,7 +176,7 @@ export default {
 </script>
 
 <template>
-  <div class="pl-4">
+  <v-container fluid class="pl-4">
     <v-progress-linear
       absolute
       :active="loading"
@@ -289,7 +289,7 @@ export default {
         </v-list>
       </v-card>
     </v-menu>
-  </div>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>

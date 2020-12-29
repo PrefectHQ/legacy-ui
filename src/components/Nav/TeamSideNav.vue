@@ -1,8 +1,11 @@
 <script>
 import debounce from 'lodash.throttle'
+import moment from 'moment-timezone'
 import { mapGetters, mapMutations } from 'vuex'
 import TeamSwitcher from '@/components/Nav/TeamSwitcher'
 import Tree from '@/components/Tree/Tree'
+
+const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
 export default {
   components: {
@@ -23,6 +26,13 @@ export default {
   },
 
   computed: {
+    ...mapGetters('api', [
+      'isServer',
+      'isCloud',
+      'version',
+      'releaseTimestamp',
+      'coreVersion'
+    ]),
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('data', [
       'flows',
@@ -49,6 +59,19 @@ export default {
           this.close()
         }
       }
+    },
+    lastDeployment_Cloud() {
+      return this.releaseTimestamp
+        ? moment(this.releaseTimestamp).format('MMM D [•] h:mmA')
+        : 'Unknown'
+    },
+    lastDeployment_UI() {
+      return moment(UI_DEPLOY_TIMESTAMP).format('MMM D [•] h:mmA')
+    },
+    navLogo() {
+      return require(`@/assets/logos/${
+        this.isCloud ? 'cloud' : 'core'
+      }-side-nav-logo.svg`)
     }
   },
   watch: {
@@ -211,33 +234,62 @@ export default {
       width="375"
       class="drawer pb-1"
     >
-      <TeamSwitcher />
+      <div
+        class="d-flex flex-column"
+        style="
+        height: 100%;
+        width: 100%;"
+      >
+        <TeamSwitcher />
 
-      <div ref="drawer" class="focusable" tabindex="-1">
-        <v-subheader>
-          Projects
-          <v-divider class="ml-4 mr-2" />
+        <div
+          ref="drawer"
+          class="focusable flex-grow-0 flex-shrink-0"
+          tabindex="-1"
+        >
+          <v-subheader>
+            Projects
+            <v-divider class="ml-4 mr-2" />
 
-          <div
-            v-ripple
-            class="cursor-pointer px-2 py-1 caption font-weight-light collapse-button"
-            @click="closeAll"
-          >
-            Collapse
+            <div
+              v-ripple
+              class="cursor-pointer px-2 py-1 caption font-weight-light collapse-button"
+              @click="closeAll"
+            >
+              Collapse
+            </div>
+          </v-subheader>
+
+          <v-container fluid class="tree-view">
+            <tree
+              ref="tree"
+              class="px-4"
+              :active-ids="activeIds"
+              :items="items"
+              :options="{
+                noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
+                activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
+              }"
+              @select="handleSelect"
+            />
+          </v-container>
+        </div>
+
+        <div class="flex-grow-1 flex-shrink-0">
+          <div class="text-caption">
+            <span>{{ lastDeployment_UI }}</span>
+            <span>{{ lastDeployment_Cloud }}</span>
+            <span>{{ coreVersion }}</span>
           </div>
-        </v-subheader>
 
-        <div class="tree-view">
-          <tree
-            ref="tree"
-            class="px-4"
-            :active-ids="activeIds"
-            :items="items"
-            :options="{
-              noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
-              activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
-            }"
-            @select="handleSelect"
+          <v-img
+            max-height="100"
+            width="80%"
+            contain
+            position="center center"
+            class="mx-auto"
+            :src="navLogo"
+            alt="Prefect Logo"
           />
         </div>
       </div>
@@ -263,11 +315,6 @@ export default {
     max-height: calc(100vh - 64px - 145px - 48px - 125px);
     overflow: scroll;
   }
-}
-
-.logo {
-  height: 38px;
-  width: 24px;
 }
 
 .collapse-button {
