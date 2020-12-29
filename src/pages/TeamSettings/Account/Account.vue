@@ -70,8 +70,11 @@ export default {
     </template>
     <template #title>Account</template>
 
-    <template #subtitle>
+    <template v-if="isCloud" #subtitle>
       Manage your team's billing, data, and profile information.
+    </template>
+    <template v-else #subtitle>
+      Update your team's profile.
     </template>
 
     <Profile />
