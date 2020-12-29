@@ -72,7 +72,7 @@ export default {
       'tenantIsSet',
       'isLoadingTenant'
     ]),
-    ...mapGetters('user', ['userIsSet']),
+    ...mapGetters('user', ['memberships', 'userIsSet', 'user']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -129,7 +129,10 @@ export default {
 
         clearTimeout(this.refreshTimeout)
         this.refresh()
+        this.resetData()
         this.$apollo.queries.agents.refresh()
+        this.$apollo.queries.projects.refresh()
+        this.$apollo.queries.flows.refresh()
       }
     },
     agents(val) {
@@ -203,11 +206,13 @@ export default {
     ...mapMutations('agent', ['setAgents']),
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth0', ['authenticate', 'authorize']),
+    ...mapActions('data', ['resetData']),
     ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
     ...mapMutations('tenant', ['setDefaultTenant']),
     ...mapActions('user', ['getUser']),
+    ...mapMutations('user', ['setInvitations']),
     handleKeydown(e) {
       if (e.key === 'Escape') {
         this.closeSideNav()
@@ -297,6 +302,30 @@ export default {
         if (!data?.flow) return []
         this.setFlows(data.flow)
         return data.flow
+      }
+    },
+    membershipInvitations: {
+      query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
+      variables() {
+        return {
+          email: this.user.email
+        }
+      },
+      skip() {
+        return (
+          !this.isCloud ||
+          !this.memberships ||
+          !this.user ||
+          !this.user.email ||
+          !this.tenantIsSet
+        )
+      },
+      fetchPolicy: 'network-only',
+      pollInterval: 60000,
+      update(data) {
+        if (!data?.pendingInvitations) return []
+        this.setInvitations(data.pendingInvitations)
+        return data.pendingInvitations
       }
     },
     projects: {

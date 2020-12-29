@@ -1,15 +1,16 @@
 <script>
 import debounce from 'lodash.throttle'
 import { mapGetters, mapMutations } from 'vuex'
+import TeamSwitcher from '@/components/Nav/TeamSwitcher'
 import Tree from '@/components/Tree/Tree'
 
 export default {
   components: {
+    TeamSwitcher,
     Tree
   },
   data() {
     return {
-      // activeIds: [],
       activateTimeout: null,
       items: [],
       types: {
@@ -200,48 +201,51 @@ export default {
 </script>
 
 <template>
-  <v-navigation-drawer
-    v-model="model"
-    temporary
-    hide-overlay
-    fixed
-    disable-route-watcher
-    width="375"
-    class="drawer"
-  >
-    <div ref="drawer" class="focusable" tabindex="-1">
-      <v-subheader>
-        Projects
-        <v-divider class="ml-4 mr-2" />
+  <div>
+    <v-navigation-drawer
+      v-model="model"
+      temporary
+      hide-overlay
+      fixed
+      disable-route-watcher
+      width="375"
+      class="drawer pb-1"
+    >
+      <TeamSwitcher />
 
-        <div
-          v-ripple
-          class="cursor-pointer px-2 py-1 caption font-weight-light collapse-button"
-          @click="closeAll"
-        >
-          Collapse
-        </div>
-      </v-subheader>
-      <tree
-        ref="tree"
-        class="px-4"
-        :active-ids="activeIds"
-        :items="items"
-        :options="{
-          noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
-          activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
-        }"
-        @select="handleSelect"
-      />
-    </div>
-  </v-navigation-drawer>
+      <div ref="drawer" class="focusable" tabindex="-1">
+        <v-subheader>
+          Projects
+          <v-divider class="ml-4 mr-2" />
+
+          <div
+            v-ripple
+            class="cursor-pointer px-2 py-1 caption font-weight-light collapse-button"
+            @click="closeAll"
+          >
+            Collapse
+          </div>
+        </v-subheader>
+        <tree
+          ref="tree"
+          class="px-4"
+          :active-ids="activeIds"
+          :items="items"
+          :options="{
+            noData: { 0: 'no projects', 1: 'no flows', 2: 'no tasks' },
+            activateButton: { 0: 'Visit', 1: 'Visit', 2: false }
+          }"
+          @select="handleSelect"
+        />
+      </div>
+    </v-navigation-drawer>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .drawer {
   height: calc(100vh - 64px) !important;
-  overflow: scroll;
-  padding: 8px 0;
+  overflow: auto;
   top: 64px !important;
 
   .focusable {

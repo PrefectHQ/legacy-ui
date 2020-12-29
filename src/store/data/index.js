@@ -151,6 +151,14 @@ const actions = {
     commit('unsetActiveFlow')
     commit('unsetActiveProject')
     commit('unsetActiveTask')
+  },
+  resetData({ commit }) {
+    commit('unsetActiveFlow')
+    commit('unsetActiveProject')
+    commit('unsetActiveTask')
+    commit('unsetFlows')
+    commit('unsetProjects')
+    commit('unsetTasks')
   }
 }
 

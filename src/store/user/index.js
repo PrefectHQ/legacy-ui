@@ -18,7 +18,8 @@ const state = {
     email: null,
     picture: null
   },
-  userIsSet: false
+  userIsSet: false,
+  invitations: []
 }
 
 const getters = {
@@ -48,6 +49,9 @@ const getters = {
   },
   lastName(state) {
     return state.user.last_name
+  },
+  invitations(state) {
+    return state.invitations
   }
 }
 
@@ -90,6 +94,9 @@ const mutations = {
   },
   setUserDefaultMembershipId(state, membershipId) {
     state.user.default_membership_id = membershipId
+  },
+  setInvitations(state, invitations) {
+    state.invitations = invitations
   }
 }
 

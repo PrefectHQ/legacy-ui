@@ -7,7 +7,8 @@ export default {
   },
   computed: {
     ...mapGetters('sideNav', ['isOpen']),
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('user', ['invitations'])
   },
   methods: {
     ...mapMutations('sideNav', ['toggle'])
