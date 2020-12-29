@@ -184,7 +184,7 @@ export default {
       color="accentPink"
     />
 
-    <div class="pt-6 px-4">
+    <div class="pt-6 px-4 text-center">
       <div>
         <div class="text-h4">
           {{

@@ -33,8 +33,8 @@ export default {
       <div>{{ tenant.name }}</div>
       <v-badge
         inline
-        :value="invitations.length"
-        :content="invitations.length"
+        :value="invitations && invitations.length"
+        :content="invitations && invitations.length"
         color="accentPink"
       />
     </div>
