@@ -1,7 +1,14 @@
 <template>
-  <v-icon v-if="!isCloud" dense color="primary lighten-1" title="Get Cloud!"
-    >cloud</v-icon
+  <a
+    title="Get Cloud!"
+    href="https://www.prefect.io/get-prefect#pricing"
+    target="_blank"
   >
+    <v-icon v-if="!isCloud" dense class="mr-2">
+      cloud
+    </v-icon>
+    Get Cloud
+  </a>
 </template>
 
 <script>
