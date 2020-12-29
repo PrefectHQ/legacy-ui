@@ -98,7 +98,7 @@ export default {
           },
           3000
         )
-        await this.$apollo.queries.pendingInvitations.refetch()
+        await this.$globalApolloQueries['membershipInvitations']?.refetch()
         this.loading = false
       }
     },
@@ -121,7 +121,7 @@ export default {
           },
           3000
         )
-        await this.$apollo.queries.pendingInvitations.refetch()
+        await this.$globalApolloQueries['membershipInvitations']?.refetch()
         this.loading = false
       }
     },
@@ -206,21 +206,26 @@ export default {
           :disabled="!tenants || tenants.length === 0"
           v-on="on"
         >
-          <v-list-item-avatar tile class="mr-2" size="16">
-            <v-icon :color="model ? 'primaryDark' : 'grey darken-1'" small>
+          <v-list-item-avatar tile class="mr-2">
+            <v-badge
+              v-if="invitations && invitations.length > 0"
+              :value="invitations && invitations.length"
+              :content="invitations && invitations.length"
+              color="accentPink"
+              inline
+              class="ml-1 white--text"
+            />
+            <v-icon
+              v-else
+              :color="model ? 'primaryDark' : 'grey darken-1'"
+              small
+            >
               sync_alt
             </v-icon>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="text-body-1 text-none">
               Switch team
-
-              <v-badge
-                :value="invitations && invitations.length"
-                :content="invitations && invitations.length"
-                color="accentPink"
-                class="ml-1 white--text"
-              />
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-action>

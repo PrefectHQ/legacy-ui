@@ -139,9 +139,6 @@ export default {
         this.$apollo.queries.flows.refresh()
       }
     },
-    agents(val) {
-      this.setAgents(val)
-    },
     async $route(new_route, old_route) {
       this.showFooter = false
 
@@ -191,6 +188,83 @@ export default {
         this.$router.push({ name: 'home' })
       }
     }
+
+    this.$globalApolloQueries['agents'] = this.$apollo.addSmartQuery('agents', {
+      query() {
+        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+      },
+      skip() {
+        return (this.isCloud && !this.isAuthorized) || !this.connected
+      },
+      pollInterval: 3000,
+      //Without this, server UI with no actual server shows results
+      fetchPolicy: 'no-cache',
+      update(data) {
+        if (!data?.agent) return null
+        this.setAgents(data.agent)
+        return data.agent
+      }
+    })
+
+    this.$globalApolloQueries['projects'] = this.$apollo.addSmartQuery(
+      'projects',
+      {
+        query() {
+          return require('@/graphql/Nav/projects.gql')
+        },
+        skip() {
+          return (this.isCloud && !this.isAuthorized) || !this.connected
+        },
+        pollInterval: 10000,
+        update(data) {
+          if (!data?.project) return []
+          this.setProjects(data.project)
+          return data.project
+        }
+      }
+    )
+
+    this.$globalApolloQueries['flows'] = this.$apollo.addSmartQuery('flows', {
+      query() {
+        return require('@/graphql/Nav/flows.gql')
+      },
+      skip() {
+        return (this.isCloud && !this.isAuthorized) || !this.connected
+      },
+      pollInterval: 10000,
+      update(data) {
+        if (!data?.flow) return []
+        this.setFlows(data.flow)
+        return data.flow
+      }
+    })
+
+    this.$globalApolloQueries[
+      'membershipInvitations'
+    ] = this.$apollo.addSmartQuery('membershipInvitations', {
+      query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
+      variables() {
+        return {
+          email: this.user.email
+        }
+      },
+      skip() {
+        return (
+          !this.isCloud ||
+          !this.memberships ||
+          !this.user ||
+          !this.user.email ||
+          !this.tenantIsSet
+        )
+      },
+      fetchPolicy: 'network-only',
+      pollInterval: 60000,
+      update(data) {
+        if (!data?.pendingInvitations) return []
+        this.setInvitations(data.pendingInvitations)
+        return data.pendingInvitations
+      }
+    })
   },
   async beforeMount() {
     document.addEventListener('keydown', this.handleKeydown)
@@ -279,72 +353,6 @@ export default {
       }
 
       requestAnimationFrame(loadTiles)
-    }
-  },
-  apollo: {
-    agents: {
-      query() {
-        return require('@/graphql/Agent/agents.js').default(this.isCloud)
-      },
-      skip() {
-        return (this.isCloud && !this.isAuthorized) || !this.connected
-      },
-      pollInterval: 3000,
-      //Without this, server UI with no actual server shows results
-      fetchPolicy: 'no-cache',
-      update: data => data.agent ?? null
-    },
-    flows: {
-      query() {
-        return require('@/graphql/Nav/flows.gql')
-      },
-      skip() {
-        return (this.isCloud && !this.isAuthorized) || !this.connected
-      },
-      pollInterval: 10000,
-      update(data) {
-        if (!data?.flow) return []
-        this.setFlows(data.flow)
-        return data.flow
-      }
-    },
-    membershipInvitations: {
-      query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
-      variables() {
-        return {
-          email: this.user.email
-        }
-      },
-      skip() {
-        return (
-          !this.isCloud ||
-          !this.memberships ||
-          !this.user ||
-          !this.user.email ||
-          !this.tenantIsSet
-        )
-      },
-      fetchPolicy: 'network-only',
-      pollInterval: 60000,
-      update(data) {
-        if (!data?.pendingInvitations) return []
-        this.setInvitations(data.pendingInvitations)
-        return data.pendingInvitations
-      }
-    },
-    projects: {
-      query() {
-        return require('@/graphql/Nav/projects.gql')
-      },
-      skip() {
-        return (this.isCloud && !this.isAuthorized) || !this.connected
-      },
-      pollInterval: 10000,
-      update(data) {
-        if (!data?.project) return []
-        this.setProjects(data.project)
-        return data.project
-      }
     }
   }
 }
