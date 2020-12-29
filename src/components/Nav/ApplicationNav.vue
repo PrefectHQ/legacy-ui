@@ -44,6 +44,9 @@ export default {
         : this.isCloud
         ? 'primary'
         : 'secondary'
+    },
+    slug() {
+      return this.tenant?.slug
     }
   }
 }
@@ -55,9 +58,10 @@ export default {
       :to="{
         name: 'dashboard',
         params: {
-          tenant: tenant.slug
+          tenant: slug
         }
       }"
+      exact
     >
       <v-btn icon x-large>
         <img
@@ -76,7 +80,7 @@ export default {
       :to="{
         name: 'dashboard',
         params: {
-          tenant: tenant.slug
+          tenant: slug
         }
       }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
@@ -84,6 +88,7 @@ export default {
       small
       depressed
       color="transparent"
+      :input-value="$route.name == 'dashboard' || $route.name == 'project'"
       title="Visit your Dashboard"
     >
       Dashboard
@@ -106,7 +111,7 @@ export default {
     <v-btn
       :to="{
         name: 'api',
-        params: { tenant: tenant.slug }
+        params: { tenant: slug }
       }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
       dark
@@ -121,7 +126,7 @@ export default {
     <v-btn
       :to="{
         name: 'calendar',
-        params: { tenant: tenant.slug }
+        params: { tenant: slug }
       }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
       dark
