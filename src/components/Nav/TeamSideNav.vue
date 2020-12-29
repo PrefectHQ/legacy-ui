@@ -2,6 +2,7 @@
 import debounce from 'lodash.throttle'
 import moment from 'moment-timezone'
 import { mapGetters, mapMutations } from 'vuex'
+import NewProjectDialog from '@/pages/Dashboard/NewProject-Dialog'
 import TeamSwitcher from '@/components/Nav/TeamSwitcher'
 import Tree from '@/components/Tree/Tree'
 
@@ -9,6 +10,7 @@ const UI_DEPLOY_TIMESTAMP = process.env.VUE_APP_RELEASE_TIMESTAMP
 
 export default {
   components: {
+    NewProjectDialog,
     TeamSwitcher,
     Tree
   },
@@ -16,6 +18,7 @@ export default {
     return {
       activateTimeout: null,
       items: [],
+      newProjectDialog: false,
       types: {
         project: 'folder',
         projectActive: 'pi-project',
@@ -244,24 +247,27 @@ export default {
 
         <div
           ref="drawer"
-          class="focusable flex-grow-0 flex-shrink-0"
+          class="focusable flex-grow-1 flex-shrink-0"
           tabindex="-1"
         >
-          <v-subheader>
-            Projects
-            <v-divider class="ml-4 mr-2" />
+          <v-divider class="mx-10 mt-4 mb-5" />
+
+          <div class="mx-4 d-flex justify-space-between">
+            <div class="text-h5">Projects</div>
 
             <div
+              v-if="projects && projects.length > 0"
               v-ripple
-              class="cursor-pointer px-2 py-1 caption font-weight-light collapse-button"
+              class="cursor-pointer px-2 py-2 caption font-weight-normal collapse-button rounded grey--text text--darken-1"
               @click="closeAll"
             >
-              Collapse
+              Collapse All
             </div>
-          </v-subheader>
+          </div>
 
-          <v-container fluid class="tree-view">
+          <div class="tree-view pa-0 mx-4">
             <tree
+              v-if="projects && projects.length > 0"
               ref="tree"
               class="px-4"
               :active-ids="activeIds"
@@ -272,14 +278,31 @@ export default {
               }"
               @select="handleSelect"
             />
-          </v-container>
+
+            <div v-else>
+              <div class="text-subtitle-1">You have no projects</div>
+
+              <v-btn
+                depressed
+                color="primaryDark"
+                class="my-4"
+                block
+                dark
+                @click="newProjectDialog = true"
+              >
+                <v-icon class="mr-2">folder</v-icon>
+                New project
+              </v-btn>
+            </div>
+          </div>
         </div>
 
-        <div class="flex-grow-1 flex-shrink-0">
-          <div class="text-caption">
-            <span>{{ lastDeployment_UI }}</span>
-            <span>{{ lastDeployment_Cloud }}</span>
-            <span>{{ coreVersion }}</span>
+        <div class="flex-grow-0 flex-shrink-0">
+          <v-divider class="mx-10 my-4" />
+          <div class="text-caption d-flex justify-space-between px-4">
+            <span v-if="lastDeployment_UI">{{ lastDeployment_UI }}</span>
+            <span v-if="coreVersion">{{ coreVersion }}</span>
+            <span v-if="lastDeployment_Cloud">{{ lastDeployment_Cloud }}</span>
           </div>
 
           <v-img
@@ -294,6 +317,8 @@ export default {
         </div>
       </div>
     </v-navigation-drawer>
+
+    <NewProjectDialog :show.sync="newProjectDialog" />
   </div>
 </template>
 
