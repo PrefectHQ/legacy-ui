@@ -55,6 +55,22 @@ export default {
 
     <v-btn
       :to="{
+        name: 'dashboard',
+        params: {
+          tenant: tenant.slug
+        }
+      }"
+      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
+      dark
+      small
+      depressed
+      color="transparent"
+    >
+      Dashboard
+    </v-btn>
+
+    <v-btn
+      :to="{
         name: 'home'
       }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
