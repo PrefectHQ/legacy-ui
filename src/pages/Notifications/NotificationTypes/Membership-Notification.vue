@@ -38,11 +38,13 @@ export default {
     itemTitle() {
       return this.tempMember || this.isMember
         ? `You joined ${this.content.sender_tenant_name}`
-        : this.tempDecline || !this.membershipInvitationIsValid
-        ? `An invitation to join
+        : !this.tempDecline &&
+          !this.isMember &&
+          this.membershipInvitationIsValid
+        ? `${this.content.sender_user_name} invited you to join ${this.content.sender_tenant_name}`
+        : `An invitation to join
       ${this.content.sender_tenant_name}
       has expired or was declined.`
-        : ''
     },
     rowLabel() {
       return `
