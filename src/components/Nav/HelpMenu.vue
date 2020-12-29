@@ -1,9 +1,14 @@
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
       model: false
     }
+  },
+  computed: {
+    ...mapGetters('api', ['isCloud'])
   }
 }
 </script>
@@ -100,7 +105,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="{ name: 'help' }">
+        <v-list-item v-if="isCloud" :to="{ name: 'help' }">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-life-ring fa-2x" />
           </v-list-item-avatar>

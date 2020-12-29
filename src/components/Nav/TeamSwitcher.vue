@@ -45,7 +45,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['invitations', 'memberships']),
     role() {
       if (!this.tenant) return

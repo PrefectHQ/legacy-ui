@@ -150,7 +150,7 @@ export default {
 
     <ConnectionMenu />
 
-    <UserMenu />
+    <UserMenu v-if="isCloud" />
   </v-app-bar>
 </template>
 

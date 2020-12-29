@@ -5,9 +5,10 @@ import GlobalSearchIcon from '@/components/GlobalSearchBar/GlobalSearchIcon'
 import GlobalSearchResult from '@/components/GlobalSearchBar/GlobalSearchResult'
 import MResult from '@/components/GlobalSearchBar/MResult'
 import { mapGetters } from 'vuex'
+import HavingTrouble from '@/components/HavingTrouble'
 
 export default {
-  components: { GlobalSearchIcon, GlobalSearchResult, MResult },
+  components: { HavingTrouble, GlobalSearchIcon, GlobalSearchResult, MResult },
   data() {
     return {
       activateTimeout: null,
@@ -21,6 +22,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['connected']),
     ...mapGetters('tenant', ['tenant']),
     id() {
       if (!this.input) return ''
@@ -292,7 +294,22 @@ export default {
         "
       >
         <template #no-data>
-          <v-list-item v-if="input == null">
+          <div
+            v-if="!connected"
+            class="text-subtitle-1 pa-4"
+            style="width: 500px;"
+          >
+            <div class="font-weight-light">
+              You aren't connected, so you won't be able to search for
+              anything...
+            </div>
+
+            <v-divider class="my-6 mx-6" />
+
+            <HavingTrouble />
+          </div>
+
+          <v-list-item v-else-if="input == null">
             <v-list-item-title class="text-subtitle-1 font-weight-light">
               Type to search for a <strong>Project</strong>,
               <strong>Flow</strong>, <strong>Task</strong>, or
