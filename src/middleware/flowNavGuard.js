@@ -5,7 +5,7 @@ const flowNavGuard = async (to, from, next) => {
   const id = to.params?.id
   const flows = store.getters['data/flows']
 
-  const group = flows.find(flow => flow.flow_group_id == id)
+  const group = flows?.find(flow => flow.flow_group_id == id)
 
   if (group) return next()
 
