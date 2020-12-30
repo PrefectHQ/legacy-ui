@@ -46,7 +46,7 @@ jest.mock('@/vue-apollo', () => {
 
 jest.mock('@/graphql/Nav/flows.gql', () => 'flows query string')
 jest.mock('@/graphql/Nav/projects.gql', () => 'projects query string')
-jest.mock('@/graphql/Nav/tasks.gql', () => 'tasks query string')
+jest.mock('@/graphql/Nav/task.gql', () => 'tasks query string')
 
 const dataObjects = ['flow', 'project', 'task']
 
@@ -437,6 +437,8 @@ describe('data Vuex Module', () => {
             f => f.id !== state['activeFlow'].id
           ).id // Find the first flow in the store that isn't the activeFlow
 
+          expect(store.getters['activeFlow'].id).not.toEqual(id)
+
           await store.dispatch('activateFlow', id)
 
           expect(store.getters['activeFlow'].id).toEqual(id)
@@ -530,6 +532,8 @@ describe('data Vuex Module', () => {
             p => p.id !== state['activeProject'].id
           ).id // Find the first project in the store that isn't the activeProject
 
+          expect(store.getters['activeProject'].id).not.toEqual(id)
+
           await store.dispatch('activateProject', id)
 
           expect(store.getters['activeProject'].id).toEqual(id)
@@ -560,6 +564,58 @@ describe('data Vuex Module', () => {
 
           expect(store.dispatch('activateProject', id)).rejects.toThrow(
             "Couldn't retrieve project."
+          )
+        })
+      })
+
+      describe('activateTask', () => {
+        beforeEach(() => {
+          state = setState()
+          store = new Vuex.Store({
+            state: state,
+            getters: data.getters,
+            actions: data.actions,
+            mutations: data.mutations
+          })
+        })
+
+        it('sets the activeTask from the store when the task exists in the store', async () => {
+          expect(store.getters['activeTask'].id).toEqual(state['activeTask'].id)
+
+          const id = store.getters['tasks'].find(
+            p => p.id !== state['activeTask'].id
+          ).id // Find the first task in the store that isn't the activeTask
+
+          expect(store.getters['activeTask'].id).not.toEqual(id)
+
+          await store.dispatch('activateTask', id)
+
+          expect(store.getters['activeTask'].id).toEqual(id)
+        })
+
+        it("re-fetches and sets both the tasks and the activeTask if the task doesn't exist in the store", async () => {
+          expect(store.getters['activeTask'].id).toEqual(state['activeTask'].id)
+
+          const id = 't-111' // Known task id
+
+          expect(state['activeTask'].id).not.toEqual(id)
+
+          expect(store.getters['tasks'].find(p => p.id == id)).toBeFalsy()
+
+          await store.dispatch('activateTask', id)
+
+          expect(store.getters['activeTask'].id).toEqual(id)
+        })
+
+        it("throws an error if the task doesn't exist in the store and can't be fetched", async () => {
+          expect(store.getters['tasks']).toEqual(state['tasks'])
+
+          const id = 't-222' // Unknown task id
+
+          expect(store.getters['tasks'].find(p => p.id == id)).toBeFalsy()
+
+          expect(store.dispatch('activateTask', id)).rejects.toThrow(
+            "Couldn't retrieve task."
           )
         })
       })
