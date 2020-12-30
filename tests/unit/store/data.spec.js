@@ -24,34 +24,64 @@ jest.mock('@/vue-apollo', () => {
 
 const dataObjects = ['flow', 'project', 'task']
 
-const flowGenerator = (len = 5) => {
-  return Array.from({ length: len }, (v, i) => {
-    return {
-      id: 'f' + i,
-      flow_group_id: 'fg' + i,
-      name: 'Flow ' + i,
-      project_id: 'p' + Math.floor(Math.random() * 5) // Random project id between p0 and p5
-    }
-  })
+const generators = {
+  flow: (len = 5) => {
+    return Array.from({ length: len }, (v, i) => {
+      return {
+        id: 'f' + i,
+        flow_group_id: 'fg' + i,
+        name: 'Flow ' + i,
+        project_id: 'p' + Math.floor(Math.random() * 5) // Random project id between p0 and p5
+      }
+    })
+  },
+  project: (len = 5) => {
+    return Array.from({ length: len }, (v, i) => {
+      return {
+        id: 'p' + i,
+        name: 'Project ' + i
+      }
+    })
+  },
+  task: (len = 5) => {
+    return Array.from({ length: len }, (v, i) => {
+      return {
+        id: 't' + i,
+        name: 'Task ' + i,
+        flow_id: 'f' + Math.floor(Math.random() * 5) // Random flow id between f0 and f5
+      }
+    })
+  }
 }
 
-const projectGenerator = (len = 5) => {
-  return Array.from({ length: len }, (v, i) => {
-    return {
-      id: 'p' + i,
-      name: 'Project ' + i
-    }
-  })
-}
-const taskGenerator = (len = 5) => {
-  return Array.from({ length: len }, (v, i) => {
-    return {
-      id: 't' + i,
-      name: 'Task ' + i,
-      flow_id: 'f' + Math.floor(Math.random() * 5) // Random flow id between f0 and f5
-    }
-  })
-}
+// const flowGenerator = (len = 5) => {
+//   return Array.from({ length: len }, (v, i) => {
+//     return {
+//       id: 'f' + i,
+//       flow_group_id: 'fg' + i,
+//       name: 'Flow ' + i,
+//       project_id: 'p' + Math.floor(Math.random() * 5) // Random project id between p0 and p5
+//     }
+//   })
+// }
+
+// const projectGenerator = (len = 5) => {
+//   return Array.from({ length: len }, (v, i) => {
+//     return {
+//       id: 'p' + i,
+//       name: 'Project ' + i
+//     }
+//   })
+// }
+// const taskGenerator = (len = 5) => {
+//   return Array.from({ length: len }, (v, i) => {
+//     return {
+//       id: 't' + i,
+//       name: 'Task ' + i,
+//       flow_id: 'f' + Math.floor(Math.random() * 5) // Random flow id between f0 and f5
+//     }
+//   })
+// }
 
 describe('data Vuex Module', () => {
   const unsetState = () => {
@@ -66,9 +96,9 @@ describe('data Vuex Module', () => {
   }
 
   const setState = () => {
-    const flows = flowGenerator()
-    const projects = projectGenerator()
-    const tasks = taskGenerator()
+    const flows = generators.flow()
+    const projects = generators.project()
+    const tasks = generators.task()
 
     const activeTask = tasks[Math.floor(Math.random() * 5)] // Random activeTask
     const activeFlow = flows.find(f => f.id == activeTask.flow_id) // activeFlow based on activeTask
@@ -168,29 +198,29 @@ describe('data Vuex Module', () => {
       })
     })
 
-    describe('setActiveProject', () => {
-      it('should set the activeProject', () => {
-        const project = projectGenerator(1)[0]
-        store.commit('setActiveProject', project)
-        expect(store.getters['activeProject']).toEqual(project)
-      })
+    const activeDataMutations = ['Flow', 'Project', 'Task']
 
-      it('should throw an error if passed an invalid project', () => {
-        expect(() => store.commit('setActiveProject', [1, 2, 3])).toThrow(
-          'passed invalid or empty project; Expected Object, Got:'
-        )
-      })
+    activeDataMutations.forEach(d => {
+      describe(`setActive${d}`, () => {
+        const error = `passed invalid or empty ${d}; Expected Object, got:`
 
-      it('should throw an error if passed no project', () => {
-        expect(() => store.commit('setActiveProject')).toThrow(
-          'passed invalid or empty project; Expected Object, Got:'
-        )
-      })
+        it(`should set the active${d}`, () => {
+          const generated = generators[d.toLowerCase()](1)[0] // Creates a new random object
+          store.commit(`setActive${d}`, generated)
+          expect(store.getters[`active${d}`]).toEqual(generated)
+        })
 
-      it('should throw an error if passed an project tenant', () => {
-        expect(() => store.commit('setActiveProject', {})).toThrow(
-          'passed invalid or empty project; Expected Object, Got:'
-        )
+        it(`should throw an error if passed an invalid ${d} data type`, () => {
+          expect(() => store.commit(`setActive${d}`, [1, 2, 3])).toThrow(error)
+        })
+
+        it(`should throw an error if passed no ${d}`, () => {
+          expect(() => store.commit(`setActive${d}`)).toThrow(error)
+        })
+
+        it(`should throw an error if passed an empty ${d} object`, () => {
+          expect(() => store.commit(`setActive${d}`, {})).toThrow(error)
+        })
       })
     })
   })

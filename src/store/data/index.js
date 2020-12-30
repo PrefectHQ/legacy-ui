@@ -48,7 +48,7 @@ const mutations = {
       Object.keys(project) < 1
     ) {
       throw new Error(
-        'passed invalid or empty project; Expected Object, Got:',
+        'passed invalid or empty Project; Expected Object, got:',
         project
       )
     }
@@ -59,12 +59,34 @@ const mutations = {
     state.activeProject = null
   },
   setActiveFlow(state, flow) {
+    if (
+      !flow ||
+      typeof flow !== 'object' ||
+      Array.isArray(flow) ||
+      Object.keys(flow) < 1
+    ) {
+      throw new Error(
+        'passed invalid or empty Flow; Expected Object, got:',
+        flow
+      )
+    }
     state.activeFlow = flow
   },
   unsetActiveFlow(state) {
     state.activeFlow = null
   },
   setActiveTask(state, task) {
+    if (
+      !task ||
+      typeof task !== 'object' ||
+      Array.isArray(task) ||
+      Object.keys(task) < 1
+    ) {
+      throw new Error(
+        'passed invalid or empty Task; Expected Object, got:',
+        task
+      )
+    }
     state.activeTask = task
   },
   unsetActiveTask(state) {
