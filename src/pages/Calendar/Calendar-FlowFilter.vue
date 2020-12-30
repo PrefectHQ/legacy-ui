@@ -81,21 +81,27 @@ export default {
             return accum
           if (!accum[run.flow_id]) {
             accum[run.flow_id] = {
-              name: run.flow?.name,
               active: true,
               id: run.flow_id
             }
           }
         }
-        if (run.flows && run.flows[0]?.id) {
-          if (this.selectFlow && this.selectFlow[0] === run.flows[0].id)
-            return accum
-          if (!accum[run.flows[0]?.id]) {
-            accum[run.flows[0].id] = {
-              name: run.flows[0].name,
+        if (run.flows && run.flows[0]) {
+          let flow = run.flows[0]
+          let flowId = run.flows[0]?.id
+          if (this.selectFlow && this.selectFlow[0] === flowId) return accum
+          if (!accum[flowId]) {
+            accum[flowId] = {
+              name: flow.name,
               active: false,
-              id: run.flows[0].id
+              id: flowId,
+              version: flow.version,
+              fgId: run.id
             }
+          } else {
+            accum[flowId].name = flow.name
+            accum[flowId].version = flow.version
+            accum[flowId].fgId = run.id
           }
         }
         return accum
@@ -249,7 +255,6 @@ export default {
                       :name="item[1].name"
                       :version="item[1].version"
                       left
-                      :fg-ids="flowGroupIds"
                       :active="item[1].active"
                       @fg="updateFlowGroupList"
                     />
