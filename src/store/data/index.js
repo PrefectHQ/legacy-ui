@@ -4,9 +4,9 @@ const state = {
   activeFlow: null,
   activeProject: null,
   activeTask: null,
-  flows: [],
+  flows: null,
   projects: null,
-  tasks: []
+  tasks: null
 }
 
 const getters = {
@@ -72,13 +72,13 @@ const mutations = {
     state.tasks = tasks
   },
   unsetTasks(state) {
-    state.tasks = []
+    state.tasks = null
   },
   setFlows(state, flows) {
     state.flows = flows
   },
   unsetFlows(state) {
-    state.flows = []
+    state.flows = null
   },
   setProjects(state, projects) {
     state.projects = projects
@@ -90,7 +90,7 @@ const mutations = {
 
 const actions = {
   async activateFlow({ commit, getters, dispatch }, id) {
-    let flow = getters['flows'].find(t => t.id == id || t.flow_group_id == id)
+    let flow = getters['flows']?.find(t => t.id == id || t.flow_group_id == id)
 
     if (!flow || flow.id !== id) {
       id = flow?.id || id
@@ -110,7 +110,7 @@ const actions = {
     await dispatch('activateProject', flow.project_id)
   },
   async activateProject({ commit, getters }, id) {
-    let project = getters['projects'].find(t => t.id == id)
+    let project = getters['projects']?.find(t => t.id == id)
 
     if (!project) {
       const { data } = await fallbackApolloClient.query({
@@ -127,7 +127,7 @@ const actions = {
     commit('setActiveProject', project)
   },
   async activateTask({ commit, getters, dispatch }, id) {
-    let task = getters['tasks'].find(t => t.id == id)
+    let task = getters['tasks']?.find(t => t.id == id)
 
     if (!task) {
       const { data } = await fallbackApolloClient.query({
