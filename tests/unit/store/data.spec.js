@@ -444,9 +444,9 @@ describe('data Vuex Module', () => {
           expect(store.getters['activeFlow'].id).toEqual(id)
         })
 
-        it('sets the activeProject action after setting the activeFlow', async () => {
+        it('sets the activeProject after setting the activeFlow', async () => {
           state = unsetState()
-          jest.spyOn(data.actions, 'activateProject')
+          const spy = jest.spyOn(data.actions, 'activateProject')
 
           store = new Vuex.Store({
             state: state,
@@ -473,6 +473,8 @@ describe('data Vuex Module', () => {
 
           expect(store.getters['activeFlow'].id).toEqual(id)
           expect(store.getters['activeProject'].id).toEqual(project_id)
+
+          spy.mockRestore()
         })
 
         it('sets the activeFlow from a flow_group_id', async () => {
@@ -591,6 +593,53 @@ describe('data Vuex Module', () => {
           await store.dispatch('activateTask', id)
 
           expect(store.getters['activeTask'].id).toEqual(id)
+        })
+
+        it('sets the activeFlow and activeProject after setting the activeTask', async () => {
+          state = unsetState()
+          const flowSpy = jest.spyOn(data.actions, 'activateFlow')
+          const projectSpy = jest.spyOn(data.actions, 'activateProject')
+
+          store = new Vuex.Store({
+            state: state,
+            getters: data.getters,
+            actions: data.actions,
+            mutations: data.mutations
+          })
+          const tasks = generators['task'](5)
+
+          store.commit('setTasks', tasks)
+          expect(store.getters['tasks']).toEqual(tasks)
+
+          expect(store.getters['activeTask']).toEqual(null)
+          expect(store.getters['activeFlow']).toEqual(null)
+          expect(store.getters['activeProject']).toEqual(null)
+
+          const id = 't2'
+          const flow_id = tasks.find(f => f.id == id).flow_id
+          const project_id = 'p-444'
+          store.commit('setFlows', [
+            {
+              id: flow_id,
+              flow_group_id: 'fg-444',
+              name: 'Some Flow Name',
+              project_id: project_id
+            }
+          ])
+          store.commit('setProjects', [
+            { id: project_id, name: 'Some Project Name' }
+          ])
+
+          await store.dispatch('activateTask', id)
+          await expect(data.actions['activateFlow']).toHaveBeenCalledTimes(1)
+          await expect(data.actions['activateProject']).toHaveBeenCalledTimes(1)
+
+          expect(store.getters['activeTask'].id).toEqual(id)
+          expect(store.getters['activeFlow'].id).toEqual(flow_id)
+          expect(store.getters['activeProject'].id).toEqual(project_id)
+
+          flowSpy.mockRestore()
+          projectSpy.mockRestore()
         })
 
         it("re-fetches and sets both the tasks and the activeTask if the task doesn't exist in the store", async () => {
