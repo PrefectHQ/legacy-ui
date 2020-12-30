@@ -442,8 +442,10 @@ describe('data Vuex Module', () => {
           expect(store.getters['activeFlow'].id).toEqual(id)
         })
 
-        it('calls the activateProject action after setting the activeFlow', async () => {
+        it('sets the activeProject action after setting the activeFlow', async () => {
           state = unsetState()
+          jest.spyOn(data.actions, 'activateProject')
+
           store = new Vuex.Store({
             state: state,
             getters: data.getters,
@@ -465,6 +467,7 @@ describe('data Vuex Module', () => {
           ])
 
           await store.dispatch('activateFlow', id)
+          await expect(data.actions['activateProject']).toHaveBeenCalledTimes(1)
 
           expect(store.getters['activeFlow'].id).toEqual(id)
           expect(store.getters['activeProject'].id).toEqual(project_id)
@@ -476,7 +479,6 @@ describe('data Vuex Module', () => {
           const id = 'fg-111' // Known flow group id
 
           await store.dispatch('activateFlow', id)
-          await expect(store.actions['activateProject']).toHaveBeenCalled()
 
           expect(store.getters['activeFlow'].id).toEqual('f-111')
         })
