@@ -434,12 +434,40 @@ describe('data Vuex Module', () => {
           expect(store.getters['activeFlow'].id).toEqual(state['activeFlow'].id)
 
           const id = store.getters['flows'].find(
-            p => p.id !== state['activeFlow'].id
+            f => f.id !== state['activeFlow'].id
           ).id // Find the first flow in the store that isn't the activeFlow
 
           await store.dispatch('activateFlow', id)
 
           expect(store.getters['activeFlow'].id).toEqual(id)
+        })
+
+        it('calls the activateProject action after setting the activeFlow', async () => {
+          state = unsetState()
+          store = new Vuex.Store({
+            state: state,
+            getters: data.getters,
+            actions: data.actions,
+            mutations: data.mutations
+          })
+          const flows = generators['flow'](5)
+
+          store.commit('setFlows', flows)
+          expect(store.getters['flows']).toEqual(flows)
+
+          expect(store.getters['activeFlow']).toEqual(null)
+          expect(store.getters['activeProject']).toEqual(null)
+
+          const id = 'f2'
+          const project_id = flows.find(f => f.id == id).project_id
+          store.commit('setProjects', [
+            { id: project_id, name: 'Some Project Name' }
+          ])
+
+          await store.dispatch('activateFlow', id)
+
+          expect(store.getters['activeFlow'].id).toEqual(id)
+          expect(store.getters['activeProject'].id).toEqual(project_id)
         })
 
         it('sets the activeFlow from a flow_group_id', async () => {
@@ -471,7 +499,7 @@ describe('data Vuex Module', () => {
 
           const id = 'f-222' // Unknown flow id
 
-          expect(store.getters['flows'].find(p => p.id == id)).toBeFalsy()
+          expect(store.getters['flows'].find(f => f.id == id)).toBeFalsy()
 
           expect(store.dispatch('activateFlow', id)).rejects.toThrow(
             "Couldn't retrieve flow."
