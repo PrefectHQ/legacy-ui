@@ -35,6 +35,7 @@ export default {
       color="transparent"
       :input-value="$route.name == 'dashboard' || $route.name == 'project'"
       title="Visit your Dashboard"
+      exact
     >
       Dashboard
     </v-btn>

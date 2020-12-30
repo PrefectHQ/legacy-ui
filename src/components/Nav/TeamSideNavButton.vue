@@ -29,8 +29,14 @@ export default {
     title="Open the team sidebar"
     @click.stop="toggle"
   >
-    <div style="font-size: 1.05rem;" class="d-flex align-center justify-start">
-      <div>{{ tenant.name }}</div>
+    <div
+      style="font-size: 1.05rem;"
+      class="d-flex align-center justify-start"
+      :style="{ width: isOpen ? '236px' : '136px' }"
+    >
+      <div class="text-truncate">
+        {{ tenant.name }}
+      </div>
       <v-badge
         inline
         :value="invitations && invitations.length"
@@ -38,7 +44,7 @@ export default {
         color="accentPink"
       />
     </div>
-    <v-icon>
+    <v-icon class="flex-shrink-0">
       {{ isOpen ? 'chevron_left' : 'chevron_right' }}
     </v-icon>
   </v-btn>
