@@ -320,6 +320,11 @@ $brackets-gray: #8d98a5;
       * {
         fill: var(--v-secondaryGrayLight-base);
       }
+      /* stylelint-disable-next-line a11y/no-outline-none */
+      &:focus {
+        box-shadow: 0 0 4px 3px var(--v-primary-base);
+        outline: none;
+      }
     }
 
     .toolbar-button {
