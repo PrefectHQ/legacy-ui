@@ -45,7 +45,7 @@ export default {
       <ExternalLink
         href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
       >
-        Prefect Scheduler
+        The Prefect Scheduler
       </ExternalLink>
       will only schedule 10 runs in advance.
     </v-alert>
