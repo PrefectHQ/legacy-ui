@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div style="white-space: nowrap;">
     <v-btn
       :to="{
         name: 'dashboard',
