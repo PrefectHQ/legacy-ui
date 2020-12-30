@@ -476,6 +476,7 @@ describe('data Vuex Module', () => {
           const id = 'fg-111' // Known flow group id
 
           await store.dispatch('activateFlow', id)
+          await expect(store.actions['activateProject']).toHaveBeenCalled()
 
           expect(store.getters['activeFlow'].id).toEqual('f-111')
         })
