@@ -345,5 +345,40 @@ describe('data Vuex Module', () => {
         expect(store.getters['activeTask']).toEqual(null)
       })
     })
+
+    describe('resetData', () => {
+      it('removes all data', () => {
+        state = setState()
+        store = new Vuex.Store({
+          state: state,
+          getters: data.getters,
+          actions: data.actions,
+          mutations: data.mutations
+        })
+
+        expect(store.getters['activeFlow'].id).toEqual(state['activeFlow'].id)
+        expect(store.getters['activeProject'].id).toEqual(
+          state['activeProject'].id
+        )
+        expect(store.getters['activeTask'].id).toEqual(state['activeTask'].id)
+
+        expect(store.getters['flows'].length).toEqual(5)
+        expect(store.getters['projects'].length).toEqual(5)
+        expect(store.getters['tasks'].length).toEqual(5)
+
+        expect(store.getters['flows'][0].id).toEqual(state['flows'][0].id)
+        expect(store.getters['projects'][0].id).toEqual(state['projects'][0].id)
+        expect(store.getters['tasks'][0].id).toEqual(state['tasks'][0].id)
+
+        store.dispatch('resetData')
+
+        expect(store.getters['activeFlow']).toEqual(null)
+        expect(store.getters['activeProject']).toEqual(null)
+        expect(store.getters['activeTask']).toEqual(null)
+        expect(store.getters['flows']).toEqual(null)
+        expect(store.getters['projects']).toEqual(null)
+        expect(store.getters['tasks']).toEqual(null)
+      })
+    })
   })
 })
