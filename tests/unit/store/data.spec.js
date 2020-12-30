@@ -12,7 +12,29 @@ jest.mock('@/vue-apollo', () => {
       query: () => {
         if (!mockError) {
           return {
-            data: {}
+            data: {
+              flow: [
+                {
+                  id: 'f-111',
+                  flow_group_id: 'fg-111',
+                  project_id: 'p-111',
+                  name: 'Flow 111'
+                }
+              ],
+              project: [
+                {
+                  id: 'p-111',
+                  name: 'Project 111'
+                }
+              ],
+              task: [
+                {
+                  id: 't-111',
+                  flow_id: 'f-111',
+                  name: 'Name 111'
+                }
+              ]
+            }
           }
         } else {
           return { data: 'error' }
@@ -21,6 +43,10 @@ jest.mock('@/vue-apollo', () => {
     }
   }
 })
+
+jest.mock('@/graphql/Nav/flows.gql', () => 'flows query string')
+jest.mock('@/graphql/Nav/projects.gql', () => 'projects query string')
+jest.mock('@/graphql/Nav/tasks.gql', () => 'tasks query string')
 
 const dataObjects = ['flow', 'project', 'task']
 
@@ -378,6 +404,133 @@ describe('data Vuex Module', () => {
         expect(store.getters['flows']).toEqual(null)
         expect(store.getters['projects']).toEqual(null)
         expect(store.getters['tasks']).toEqual(null)
+      })
+    })
+
+    describe('activating projects, flows, and tasks', () => {
+      let state, store
+      beforeEach(() => {
+        state = unsetState()
+        store = new Vuex.Store({
+          state: state,
+          getters: data.getters,
+          actions: data.actions,
+          mutations: data.mutations
+        })
+      })
+
+      describe('activateFlow', () => {
+        beforeEach(() => {
+          state = setState()
+          store = new Vuex.Store({
+            state: state,
+            getters: data.getters,
+            actions: data.actions,
+            mutations: data.mutations
+          })
+        })
+
+        it('sets the activeFlow from the store when the flow exists in the store', async () => {
+          expect(store.getters['activeFlow'].id).toEqual(state['activeFlow'].id)
+
+          const id = store.getters['flows'].find(
+            p => p.id !== state['activeFlow'].id
+          ).id // Find the first flow in the store that isn't the activeFlow
+
+          await store.dispatch('activateFlow', id)
+
+          expect(store.getters['activeFlow'].id).toEqual(id)
+        })
+
+        it('sets the activeFlow from a flow_group_id', async () => {
+          expect(store.getters['activeFlow'].id).toEqual(state['activeFlow'].id)
+
+          const id = 'fg-111' // Known flow group id
+
+          await store.dispatch('activateFlow', id)
+
+          expect(store.getters['activeFlow'].id).toEqual('f-111')
+        })
+
+        it("re-fetches and sets both the flows and the activeFlow if the flow doesn't exist in the store", async () => {
+          expect(store.getters['activeFlow'].id).toEqual(state['activeFlow'].id)
+
+          const id = 'f-111' // Known flow id
+
+          expect(state['activeFlow'].id).not.toEqual(id)
+
+          expect(store.getters['flows'].find(p => p.id == id)).toBeFalsy()
+
+          await store.dispatch('activateFlow', id)
+
+          expect(store.getters['activeFlow'].id).toEqual(id)
+        })
+
+        it("throws an error if the flow doesn't exist in the store and can't be fetched", async () => {
+          expect(store.getters['flows']).toEqual(state['flows'])
+
+          const id = 'f-222' // Unknown flow id
+
+          expect(store.getters['flows'].find(p => p.id == id)).toBeFalsy()
+
+          expect(store.dispatch('activateFlow', id)).rejects.toThrow(
+            "Couldn't retrieve flow."
+          )
+        })
+      })
+
+      describe('activateProject', () => {
+        beforeEach(() => {
+          state = setState()
+          store = new Vuex.Store({
+            state: state,
+            getters: data.getters,
+            actions: data.actions,
+            mutations: data.mutations
+          })
+        })
+
+        it('sets the activeProject from the store when the project exists in the store', async () => {
+          expect(store.getters['activeProject'].id).toEqual(
+            state['activeProject'].id
+          )
+
+          const id = store.getters['projects'].find(
+            p => p.id !== state['activeProject'].id
+          ).id // Find the first project in the store that isn't the activeProject
+
+          await store.dispatch('activateProject', id)
+
+          expect(store.getters['activeProject'].id).toEqual(id)
+        })
+
+        it("re-fetches and sets both the projects and the activeProject if the project doesn't exist in the store", async () => {
+          expect(store.getters['activeProject'].id).toEqual(
+            state['activeProject'].id
+          )
+
+          const id = 'p-111' // Known project id
+
+          expect(state['activeProject'].id).not.toEqual(id)
+
+          expect(store.getters['projects'].find(p => p.id == id)).toBeFalsy()
+
+          await store.dispatch('activateProject', id)
+
+          expect(store.getters['activeProject'].id).toEqual(id)
+        })
+
+        it("throws an error if the project doesn't exist in the store and can't be fetched", async () => {
+          expect(store.getters['projects']).toEqual(state['projects'])
+
+          const id = 'p-222' // Unknown project id
+
+          expect(store.getters['projects'].find(p => p.id == id)).toBeFalsy()
+
+          expect(store.dispatch('activateProject', id)).rejects.toThrow(
+            "Couldn't retrieve project."
+          )
+        })
       })
     })
   })

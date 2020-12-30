@@ -140,7 +140,7 @@ const mutations = {
 
 const actions = {
   async activateFlow({ commit, getters, dispatch }, id) {
-    let flow = getters['flows']?.find(t => t.id == id || t.flow_group_id == id)
+    let flow = getters['flows']?.find(f => f.id == id || f.flow_group_id == id)
 
     if (!flow || flow.id !== id) {
       id = flow?.id || id
@@ -151,16 +151,16 @@ const actions = {
 
       commit('setFlows', data.flow)
 
-      flow = getters['flows'].find(t => t.id == id)
+      flow = getters['flows']?.find(f => f.id == id || f.flow_group_id == id)
     }
 
-    if (!flow) throw Error("Couldn't retrieve flow.")
+    if (!flow) throw new Error("Couldn't retrieve flow.")
 
     commit('setActiveFlow', flow)
     await dispatch('activateProject', flow.project_id)
   },
   async activateProject({ commit, getters }, id) {
-    let project = getters['projects']?.find(t => t.id == id)
+    let project = getters['projects']?.find(p => p.id == id)
 
     if (!project) {
       const { data } = await fallbackApolloClient.query({
@@ -169,10 +169,10 @@ const actions = {
 
       commit('setProjects', data.project)
 
-      project = getters['projects'].find(t => t.id == id)
+      project = getters['projects'].find(p => p.id == id)
     }
 
-    if (!project) throw Error("Couldn't retrieve project.")
+    if (!project) throw new Error("Couldn't retrieve project.")
 
     commit('setActiveProject', project)
   },
@@ -192,7 +192,7 @@ const actions = {
       task = getters['tasks'].find(t => t.id == id)
     }
 
-    if (!task) throw Error("Couldn't retrieve task.")
+    if (!task) throw new Error("Couldn't retrieve task.")
 
     commit('setActiveTask', task)
     await dispatch('activateFlow', task.flow_id)
