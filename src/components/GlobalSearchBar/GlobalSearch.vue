@@ -353,6 +353,7 @@ export default {
 }
 
 .global-search {
+  background-color: rgba(255, 255, 255, 0.1);
   font-size: 1rem;
   max-width: 500px;
   transition: all 250ms;
