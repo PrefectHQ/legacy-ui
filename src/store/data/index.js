@@ -48,8 +48,7 @@ const mutations = {
       Object.keys(project) < 1
     ) {
       throw new Error(
-        'passed invalid or empty Project; Expected Object, got:',
-        project
+        'passed invalid or empty Project; Expected Object, got: ' + project
       )
     }
 
@@ -66,8 +65,7 @@ const mutations = {
       Object.keys(flow) < 1
     ) {
       throw new Error(
-        'passed invalid or empty Flow; Expected Object, got:',
-        flow
+        'passed invalid or empty Flow; Expected Object, got: ' + flow
       )
     }
     state.activeFlow = flow
@@ -83,8 +81,7 @@ const mutations = {
       Object.keys(task) < 1
     ) {
       throw new Error(
-        'passed invalid or empty Task; Expected Object, got:',
-        task
+        'passed invalid or empty Task; Expected Object, got: ' + task
       )
     }
     state.activeTask = task
@@ -93,10 +90,20 @@ const mutations = {
     state.activeTask = null
   },
   addTasks(state, tasks) {
-    tasks.forEach(task => {
-      let taskIndex = state.tasks.find(t => t.id == task.id)
+    if (!tasks || !Array.isArray(tasks)) {
+      throw new Error(
+        'passed null or invalid Tasks; Expected Array, got: ' + tasks
+      )
+    }
 
-      if (taskIndex > -1) state.tasks[taskIndex] = task
+    if (!state.tasks) {
+      state.tasks = tasks
+      return
+    }
+
+    tasks.forEach(task => {
+      let i = state.tasks.findIndex(t => t.id == task.id)
+      if (i > -1) state.tasks[i] = task
       else state.tasks.push(task)
     })
   },

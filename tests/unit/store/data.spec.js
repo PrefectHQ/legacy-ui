@@ -54,35 +54,6 @@ const generators = {
   }
 }
 
-// const flowGenerator = (len = 5) => {
-//   return Array.from({ length: len }, (v, i) => {
-//     return {
-//       id: 'f' + i,
-//       flow_group_id: 'fg' + i,
-//       name: 'Flow ' + i,
-//       project_id: 'p' + Math.floor(Math.random() * 5) // Random project id between p0 and p5
-//     }
-//   })
-// }
-
-// const projectGenerator = (len = 5) => {
-//   return Array.from({ length: len }, (v, i) => {
-//     return {
-//       id: 'p' + i,
-//       name: 'Project ' + i
-//     }
-//   })
-// }
-// const taskGenerator = (len = 5) => {
-//   return Array.from({ length: len }, (v, i) => {
-//     return {
-//       id: 't' + i,
-//       name: 'Task ' + i,
-//       flow_id: 'f' + Math.floor(Math.random() * 5) // Random flow id between f0 and f5
-//     }
-//   })
-// }
-
 describe('data Vuex Module', () => {
   const unsetState = () => {
     return {
@@ -202,7 +173,7 @@ describe('data Vuex Module', () => {
 
     activeDataMutations.forEach(d => {
       describe(`setActive${d}`, () => {
-        const error = `passed invalid or empty ${d}; Expected Object, got:`
+        const error = `passed invalid or empty ${d}; Expected Object, got: `
 
         it(`should set the active${d}`, () => {
           const generated = generators[d.toLowerCase()](1)[0] // Creates a new random object
@@ -211,16 +182,76 @@ describe('data Vuex Module', () => {
         })
 
         it(`should throw an error if passed an invalid ${d} data type`, () => {
-          expect(() => store.commit(`setActive${d}`, [1, 2, 3])).toThrow(error)
+          const toPass = [1, 2, 3]
+          expect(() => store.commit(`setActive${d}`, toPass)).toThrow(
+            error + toPass
+          )
         })
 
         it(`should throw an error if passed no ${d}`, () => {
-          expect(() => store.commit(`setActive${d}`)).toThrow(error)
+          expect(() => store.commit(`setActive${d}`)).toThrow(
+            error + 'undefined'
+          )
         })
 
         it(`should throw an error if passed an empty ${d} object`, () => {
-          expect(() => store.commit(`setActive${d}`, {})).toThrow(error)
+          const toPass = {}
+          expect(() => store.commit(`setActive${d}`, toPass)).toThrow(
+            error + toPass
+          )
         })
+      })
+
+      describe(`unsetActive${d}`, () => {
+        let state
+        beforeEach(() => {
+          state = setState()
+          store = new Vuex.Store({
+            state: state,
+            getters: data.getters,
+            actions: data.actions,
+            mutations: data.mutations
+          })
+        })
+
+        it(`should unset the active${d}`, () => {
+          expect(store.getters[`active${d}`].id).toEqual(state[`active${d}`].id)
+          store.commit(`unsetActive${d}`)
+          expect(store.getters[`active${d}`]).toEqual(null)
+        })
+      })
+    })
+
+    describe('addTasks', () => {
+      it("should add passed tasks to the tasks array and should create it if it doesn't exist", () => {
+        expect(state.tasks).toEqual(null)
+
+        const tasks = generators.task(5)
+        store.commit('addTasks', tasks)
+
+        expect(state.tasks).toEqual(tasks)
+        expect(state.tasks.length).toEqual(5)
+      })
+
+      it('should update existing tasks in the store if matching ids are passed', () => {
+        expect(state.tasks).toEqual(null)
+
+        const tasks = generators.task(5)
+        const taskToChange = tasks[0]
+
+        store.commit('addTasks', tasks)
+        expect(state.tasks).toEqual(tasks)
+        expect(state.tasks.length).toEqual(5)
+
+        taskToChange.name = 'Some updated task name'
+        store.commit('addTasks', [taskToChange])
+
+        expect(state.tasks.length).toEqual(5)
+
+        const storedTasks = store.getters['tasks']
+        const changedTask = storedTasks.find(t => t.id == taskToChange.id)
+        expect(changedTask).toEqual(taskToChange)
+        expect(changedTask.name).toEqual(taskToChange.name)
       })
     })
   })
