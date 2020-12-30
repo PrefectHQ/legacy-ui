@@ -100,7 +100,7 @@ describe('data Vuex Module', () => {
 
   describe('Getters', () => {
     describe('while unset', () => {
-      let store, state
+      let state, store
       beforeEach(() => {
         state = unsetState()
         store = new Vuex.Store({
@@ -126,7 +126,7 @@ describe('data Vuex Module', () => {
     })
 
     describe('while set', () => {
-      let store, state
+      let state, store
       beforeEach(() => {
         state = setState()
         store = new Vuex.Store({
@@ -158,7 +158,7 @@ describe('data Vuex Module', () => {
   })
 
   describe('Mutations', () => {
-    let store, state
+    let state, store
     beforeEach(() => {
       state = unsetState()
       store = new Vuex.Store({
@@ -203,7 +203,7 @@ describe('data Vuex Module', () => {
       })
 
       describe(`unsetActive${d}`, () => {
-        let state
+        let state, store
         beforeEach(() => {
           state = setState()
           store = new Vuex.Store({
@@ -252,6 +252,60 @@ describe('data Vuex Module', () => {
         const changedTask = storedTasks.find(t => t.id == taskToChange.id)
         expect(changedTask).toEqual(taskToChange)
         expect(changedTask.name).toEqual(taskToChange.name)
+      })
+
+      it('should throw an error if passed an invalid data type', () => {
+        const toPass = { 1: 'foo', 2: 'bar' }
+        expect(() => store.commit('addTasks', toPass)).toThrow(
+          'passed null or invalid Tasks; Expected Array, got: ' + toPass
+        )
+      })
+    })
+
+    const dataMutations = ['Flows', 'Projects', 'Tasks']
+
+    dataMutations.forEach(d => {
+      const ref = d.toLowerCase()
+      const error = `passed invalid ${d}; Expected Array, got: `
+
+      describe(`set${d}`, () => {
+        it(`should set the ${d} array`, () => {
+          const generated = generators[
+            ref.substring(0, d.length - 1) // Uncapitalize and remove plural
+          ](5) // Creates a new random array of objects
+          store.commit(`set${d}`, generated)
+          expect(store.getters[ref]).toEqual(generated)
+          expect(store.getters[ref].length).toEqual(5)
+        })
+
+        it(`should throw an error if passed an invalid ${d} data type`, () => {
+          const toPass = { 1: 'foo', 2: 'bar' }
+          expect(() => store.commit(`set${d}`, toPass)).toThrow(error + toPass)
+        })
+
+        it(`should throw an error if passed no ${d}`, () => {
+          expect(() => store.commit(`set${d}`)).toThrow(error + 'undefined')
+        })
+      })
+
+      describe(`unset${d}`, () => {
+        let state, store
+        beforeEach(() => {
+          state = setState()
+          store = new Vuex.Store({
+            state: state,
+            getters: data.getters,
+            actions: data.actions,
+            mutations: data.mutations
+          })
+        })
+
+        it(`should unset the ${d} array`, () => {
+          expect(store.getters[ref][0].id).toEqual(state[ref][0].id)
+
+          store.commit(`unset${d}`)
+          expect(store.getters[ref]).toEqual(null)
+        })
       })
     })
   })

@@ -108,18 +108,29 @@ const mutations = {
     })
   },
   setTasks(state, tasks) {
+    if (!tasks || !Array.isArray(tasks)) {
+      throw new Error('passed invalid Tasks; Expected Array, got: ' + tasks)
+    }
     state.tasks = tasks
   },
   unsetTasks(state) {
     state.tasks = null
   },
   setFlows(state, flows) {
+    if (!flows || !Array.isArray(flows)) {
+      throw new Error('passed invalid Flows; Expected Array, got: ' + flows)
+    }
     state.flows = flows
   },
   unsetFlows(state) {
     state.flows = null
   },
   setProjects(state, projects) {
+    if (!projects || !Array.isArray(projects)) {
+      throw new Error(
+        'passed invalid Projects; Expected Array, got: ' + projects
+      )
+    }
     state.projects = projects
   },
   unsetProjects(state) {
@@ -143,7 +154,7 @@ const actions = {
       flow = getters['flows'].find(t => t.id == id)
     }
 
-    if (!flow) throw Error("Couldn't retreive flow.")
+    if (!flow) throw Error("Couldn't retrieve flow.")
 
     commit('setActiveFlow', flow)
     await dispatch('activateProject', flow.project_id)
@@ -181,7 +192,7 @@ const actions = {
       task = getters['tasks'].find(t => t.id == id)
     }
 
-    if (!task) throw Error("Couldn't retreive task.")
+    if (!task) throw Error("Couldn't retrieve task.")
 
     commit('setActiveTask', task)
     await dispatch('activateFlow', task.flow_id)
