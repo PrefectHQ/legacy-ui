@@ -97,12 +97,11 @@ describe('data Vuex Module', () => {
     })
   })
 
-  describe('getters', () => {
+  describe('Getters', () => {
     describe('while unset', () => {
       let store, state
       beforeEach(() => {
         state = unsetState()
-        console.log('State: ', state)
         store = new Vuex.Store({
           state: state,
           getters: data.getters,
@@ -129,7 +128,6 @@ describe('data Vuex Module', () => {
       let store, state
       beforeEach(() => {
         state = setState()
-        console.log('State: ', state)
         store = new Vuex.Store({
           state: state,
           getters: data.getters,
@@ -141,6 +139,7 @@ describe('data Vuex Module', () => {
       dataObjects.forEach(d => {
         const active = 'active' + d.charAt(0).toUpperCase() + d.slice(1)
         const plural = d + 's'
+        const id = active + 'Id'
 
         test(`${active} getter should return the state activeFlow object`, () => {
           expect(store.getters[active]).toEqual(state[active])
@@ -149,9 +148,50 @@ describe('data Vuex Module', () => {
         test(`${plural} getter should return a list of flows`, () => {
           expect(store.getters[plural]).toEqual(state[plural])
         })
+
+        test(`${id} getter should return the id of ${active}`, () => {
+          expect(store.getters[id]).toEqual(state[active].id)
+        })
       })
     })
   })
 
-  describe('Mutations', () => {})
+  describe('Mutations', () => {
+    let store, state
+    beforeEach(() => {
+      state = unsetState()
+      store = new Vuex.Store({
+        state: state,
+        getters: data.getters,
+        actions: data.actions,
+        mutations: data.mutations
+      })
+    })
+
+    describe('setActiveProject', () => {
+      it('should set the activeProject', () => {
+        const project = projectGenerator(1)[0]
+        store.commit('setActiveProject', project)
+        expect(store.getters['activeProject']).toEqual(project)
+      })
+
+      it('should throw an error if passed an invalid project', () => {
+        expect(() => store.commit('setActiveProject', [1, 2, 3])).toThrow(
+          'passed invalid or empty project; Expected Object, Got:'
+        )
+      })
+
+      it('should throw an error if passed no project', () => {
+        expect(() => store.commit('setActiveProject')).toThrow(
+          'passed invalid or empty project; Expected Object, Got:'
+        )
+      })
+
+      it('should throw an error if passed an project tenant', () => {
+        expect(() => store.commit('setActiveProject', {})).toThrow(
+          'passed invalid or empty project; Expected Object, Got:'
+        )
+      })
+    })
+  })
 })

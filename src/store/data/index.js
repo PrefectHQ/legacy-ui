@@ -34,7 +34,6 @@ const getters = {
   projects(state) {
     return state.projects
   },
-
   tasks(state) {
     return state.tasks
   }
@@ -42,12 +41,23 @@ const getters = {
 
 const mutations = {
   setActiveProject(state, project) {
+    if (
+      !project ||
+      typeof project !== 'object' ||
+      Array.isArray(project) ||
+      Object.keys(project) < 1
+    ) {
+      throw new Error(
+        'passed invalid or empty project; Expected Object, Got:',
+        project
+      )
+    }
+
     state.activeProject = project
   },
   unsetActiveProject(state) {
     state.activeProject = null
   },
-
   setActiveFlow(state, flow) {
     state.activeFlow = flow
   },
