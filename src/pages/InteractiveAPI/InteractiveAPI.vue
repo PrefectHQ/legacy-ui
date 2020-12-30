@@ -93,6 +93,10 @@ query { hello }
       document.getElementById('graphiql')
     )
   },
+  beforeDestroy() {
+    const cdnScripts = ['react', 'react-dom', 'graphiql-js']
+    cdnScripts.forEach(script => document.getElementById(script).remove())
+  },
   methods: {
     addQueryLimits(query) {
       if (query.includes('IntrospectionQuery')) return query
@@ -315,6 +319,11 @@ $brackets-gray: #8d98a5;
       /* stylelint-disable-next-line selector-max-compound-selectors */
       * {
         fill: var(--v-secondaryGrayLight-base);
+      }
+      /* stylelint-disable-next-line a11y/no-outline-none */
+      &:focus {
+        box-shadow: 0 0 4px 3px var(--v-primary-base);
+        outline: none;
       }
     }
 
