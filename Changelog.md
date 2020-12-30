@@ -10,7 +10,7 @@
 
 ### Bugfixes
 
-- None
+- Add tooltip to notifications tile to ensure title is visible - [#527](https://github.com/PrefectHQ/ui/pull/527)
 
 ## 2020-12-18
 
