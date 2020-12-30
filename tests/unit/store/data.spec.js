@@ -309,4 +309,41 @@ describe('data Vuex Module', () => {
       })
     })
   })
+
+  describe('Actions', () => {
+    let state, store
+    beforeEach(() => {
+      state = unsetState()
+      store = new Vuex.Store({
+        state: state,
+        getters: data.getters,
+        actions: data.actions,
+        mutations: data.mutations
+      })
+    })
+
+    describe('resetActiveData', () => {
+      it('removes all active* data', () => {
+        state = setState()
+        store = new Vuex.Store({
+          state: state,
+          getters: data.getters,
+          actions: data.actions,
+          mutations: data.mutations
+        })
+
+        expect(store.getters['activeFlow'].id).toEqual(state['activeFlow'].id)
+        expect(store.getters['activeProject'].id).toEqual(
+          state['activeProject'].id
+        )
+        expect(store.getters['activeTask'].id).toEqual(state['activeTask'].id)
+
+        store.dispatch('resetActiveData')
+
+        expect(store.getters['activeFlow']).toEqual(null)
+        expect(store.getters['activeProject']).toEqual(null)
+        expect(store.getters['activeTask']).toEqual(null)
+      })
+    })
+  })
 })
