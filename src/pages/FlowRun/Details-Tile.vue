@@ -169,7 +169,7 @@ export default {
               <div class="subtitle-2">
                 {{
                   flowRun.auto_scheduled
-                    ? 'Prefect Scheduler'
+                    ? 'The Prefect Scheduler'
                     : flowRun.created_by
                     ? flowRun.created_by.username
                     : 'A nonexistant user'

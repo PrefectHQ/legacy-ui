@@ -10,6 +10,7 @@ import createPlugin from 'logrocket-vuex'
 import agent from '@/store/agent'
 import api from '@/store/api'
 import auth0 from '@/store/auth0'
+import data from '@/store/data'
 import license from '@/store/license'
 import refresh from '@/store/refresh'
 import sideNav from '@/store/sideNav'
@@ -39,6 +40,7 @@ const store = new Vuex.Store({
     alert,
     api,
     auth0,
+    data,
     license,
     refresh,
     sideNav,

@@ -28,6 +28,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['license']),
@@ -51,7 +52,7 @@ export default {
 
 <template>
   <ManagementLayout>
-    <template v-if="needAlert" #alert>
+    <template v-if="needAlert && isCloud" #alert>
       <v-alert
         dismissible
         class="mx-auto mb-12"
@@ -69,15 +70,18 @@ export default {
     </template>
     <template #title>Account</template>
 
-    <template #subtitle>
+    <template v-if="isCloud" #subtitle>
       Manage your team's billing, data, and profile information.
+    </template>
+    <template v-else #subtitle>
+      Update your team's profile.
     </template>
 
     <Profile />
-    <License />
-    <Users />
-    <Billing />
-    <ClearDataDialog />
+    <License v-if="isCloud" />
+    <Users v-if="isCloud" />
+    <Billing v-if="isCloud" />
+    <ClearDataDialog v-if="isCloud" />
   </ManagementLayout>
 </template>
 

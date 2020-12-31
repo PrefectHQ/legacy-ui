@@ -4,8 +4,9 @@ import Footer from '@/components/Footer'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
-import NavBar from '@/components/NavBar'
-import SideNav from '@/components/SideNav'
+import ApplicationNavBar from '@/components/Nav/ApplicationNav'
+import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
+import TeamSideNav from '@/components/Nav/TeamSideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
 
@@ -28,9 +29,10 @@ export default {
   },
   components: {
     Alert,
+    ApplicationNavBar,
     Footer,
-    NavBar,
-    SideNav
+    GlobalSearch,
+    TeamSideNav
   },
   mixins: [eventsMixin],
   data() {
@@ -58,6 +60,7 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
+    ...mapGetters('data', ['projects']),
     ...mapGetters('auth0', [
       'isAuthenticated',
       'isAuthorized',
@@ -72,7 +75,7 @@ export default {
       'tenantIsSet',
       'isLoadingTenant'
     ]),
-    ...mapGetters('user', ['userIsSet']),
+    ...mapGetters('user', ['memberships', 'userIsSet', 'user']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -102,13 +105,16 @@ export default {
   watch: {
     backend() {
       this.loadedComponents = 0
-      this.shown = false
+      clearCache()
+      this.resetData()
 
       this.refreshTimeout = setTimeout(() => {
-        this.shown = true
+        this.resetData()
+        this.unsetInvitations()
+        this.unsetTenants()
         this.refresh()
         clearTimeout(this.refreshTimeout)
-      }, 3000)
+      }, 1000)
       this.setAgents(null)
     },
     async connected(val) {
@@ -129,11 +135,11 @@ export default {
 
         clearTimeout(this.refreshTimeout)
         this.refresh()
+        this.resetData()
         this.$apollo.queries.agents.refresh()
+        this.$apollo.queries.projects.refresh()
+        this.$apollo.queries.flows.refresh()
       }
-    },
-    agents(val) {
-      this.setAgents(val)
     },
     async $route(new_route, old_route) {
       this.showFooter = false
@@ -184,6 +190,83 @@ export default {
         this.$router.push({ name: 'home' })
       }
     }
+
+    this.$globalApolloQueries['agents'] = this.$apollo.addSmartQuery('agents', {
+      query() {
+        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+      },
+      skip() {
+        return (this.isCloud && !this.isAuthorized) || !this.connected
+      },
+      pollInterval: 3000,
+      //Without this, server UI with no actual server shows results
+      fetchPolicy: 'no-cache',
+      update(data) {
+        if (!data?.agent) return null
+        this.setAgents(data.agent)
+        return data.agent
+      }
+    })
+
+    this.$globalApolloQueries['projects'] = this.$apollo.addSmartQuery(
+      'projects',
+      {
+        query() {
+          return require('@/graphql/Nav/projects.gql')
+        },
+        skip() {
+          return (this.isCloud && !this.isAuthorized) || !this.connected
+        },
+        pollInterval: 10000,
+        update(data) {
+          if (!data?.project) return []
+          this.setProjects(data.project)
+          return data.project
+        }
+      }
+    )
+
+    this.$globalApolloQueries['flows'] = this.$apollo.addSmartQuery('flows', {
+      query() {
+        return require('@/graphql/Nav/flows.gql')
+      },
+      skip() {
+        return (this.isCloud && !this.isAuthorized) || !this.connected
+      },
+      pollInterval: 10000,
+      update(data) {
+        if (!data?.flow) return []
+        this.setFlows(data.flow)
+        return data.flow
+      }
+    })
+
+    this.$globalApolloQueries[
+      'membershipInvitations'
+    ] = this.$apollo.addSmartQuery('membershipInvitations', {
+      query: require('@/graphql/Tenant/pending-invitations-by-email.gql'),
+      variables() {
+        return {
+          email: this.user.email
+        }
+      },
+      skip() {
+        return (
+          !this.isCloud ||
+          !this.memberships ||
+          !this.user ||
+          !this.user.email ||
+          !this.tenantIsSet
+        )
+      },
+      fetchPolicy: 'network-only',
+      pollInterval: 60000,
+      update(data) {
+        if (!data?.pendingInvitations) return []
+        this.setInvitations(data.pendingInvitations)
+        return data.pendingInvitations
+      }
+    })
   },
   async beforeMount() {
     document.addEventListener('keydown', this.handleKeydown)
@@ -200,13 +283,16 @@ export default {
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
+    ...mapMutations('agent', ['setAgents']),
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth0', ['authenticate', 'authorize']),
+    ...mapActions('data', ['resetData']),
+    ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
-    ...mapActions('user', ['getUser']),
-    ...mapMutations('tenant', ['setDefaultTenant']),
-    ...mapMutations('agent', ['setAgents']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
+    ...mapMutations('tenant', ['setDefaultTenant', 'unsetTenants']),
+    ...mapActions('user', ['getUser']),
+    ...mapMutations('user', ['setInvitations', 'unsetInvitations']),
     handleKeydown(e) {
       if (e.key === 'Escape') {
         this.closeSideNav()
@@ -270,20 +356,6 @@ export default {
 
       requestAnimationFrame(loadTiles)
     }
-  },
-  apollo: {
-    agents: {
-      query() {
-        return require('@/graphql/Agent/agents.js').default(this.isCloud)
-      },
-      skip() {
-        return this.isCloud && !this.isAuthorized
-      },
-      pollInterval: 3000,
-      //Without this, server UI with no actual server shows results
-      fetchPolicy: 'no-cache',
-      update: data => data.agent ?? null
-    }
   }
 }
 </script>
@@ -294,14 +366,14 @@ export default {
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
       <v-slide-y-transition>
-        <NavBar
+        <ApplicationNavBar
           v-if="
             ((isCloud && isAuthenticated) || isServer) && loadedComponents > 0
           "
         />
       </v-slide-y-transition>
 
-      <SideNav />
+      <TeamSideNav />
 
       <v-fade-transition mode="out-in">
         <router-view
@@ -318,6 +390,8 @@ export default {
           <v-card-text>{{ error }}</v-card-text>
         </v-card>
       </v-container>
+
+      <GlobalSearch v-if="$vuetify.breakpoint.xsOnly" />
 
       <v-slide-y-reverse-transition>
         <Footer v-if="!fullPageRoute && showFooter" />

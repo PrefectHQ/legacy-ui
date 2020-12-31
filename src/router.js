@@ -204,7 +204,7 @@ export const routes = [
   // ----------------------------//
   {
     name: 'calendar',
-    path: '/:tenant/calendar',
+    path: '/:tenant?/calendar',
     component: () =>
       import(
         /*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
@@ -270,7 +270,7 @@ export const routes = [
   // --------------------------- //
   {
     name: 'tutorial',
-    path: '/:tenant?/tutorial/:id?',
+    path: '/tutorial/:id?',
     component: () =>
       import(
         /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
@@ -291,7 +291,7 @@ export const routes = [
     path: '/home',
     component: () =>
       import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue'),
-    beforeEnter: multiguard([authNavGuard])
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
     name: 'dashboard',
