@@ -8,7 +8,10 @@ export default {
   computed: {
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('user', ['invitations'])
+    ...mapGetters('user', ['invitations']),
+    size() {
+      return this.$vuetify.breakpoint.mdAndUp ? (this.isOpen ? 300 : 200) : 150
+    }
   },
   methods: {
     ...mapMutations('sideNav', ['toggle'])
@@ -22,7 +25,7 @@ export default {
     dark
     large
     depressed
-    :width="isOpen ? 300 : 200"
+    :width="size"
     style="
       background-color: rgba(255, 255, 255, 0.1);
       transition: width 200ms;"
@@ -32,7 +35,7 @@ export default {
     <div
       style="font-size: 1.05rem;"
       class="d-flex align-center justify-start"
-      :style="{ width: isOpen ? '236px' : '136px' }"
+      :style="{ width: size - 74 + 'px' }"
     >
       <div class="text-truncate">
         {{ tenant.name }}
