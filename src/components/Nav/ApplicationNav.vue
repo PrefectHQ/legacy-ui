@@ -87,7 +87,7 @@ export default {
 
     <v-spacer></v-spacer>
 
-    <GlobalSearch />
+    <GlobalSearch v-if="$vuetify.breakpoint.smAndUp" />
 
     <HelpMenu />
 
