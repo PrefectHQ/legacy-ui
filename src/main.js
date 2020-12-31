@@ -6,7 +6,7 @@ import App from '@/App.vue'
 
 // Plugins
 import store from '@/store'
-import { defaultApolloProvider } from '@/vue-apollo'
+import { loadCache, defaultApolloProvider } from '@/vue-apollo'
 import router from '@/router'
 import VueMeta from 'vue-meta'
 
@@ -272,7 +272,10 @@ const initialize = async () => {
     }).$mount('#app')
   }
 }
-initialize()
+
+loadCache.then(() => {
+  initialize()
+})
 
 // This can be used in testing to destroy the entire application and remove
 // the root node associated with it.

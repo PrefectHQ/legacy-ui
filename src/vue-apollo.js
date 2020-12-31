@@ -12,6 +12,7 @@ import { ApolloLink, Observable } from 'apollo-link'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
+import { persistCache, LocalStorageWrapper } from 'apollo3-cache-persist'
 import LogRocket from 'logrocket'
 
 // Install the vue plugin
@@ -235,6 +236,9 @@ const link = ApolloLink.from([
 export const cache = new InMemoryCache({
   resultCaching: false
 })
+
+const storage = new LocalStorageWrapper(window.localStorage)
+export const loadCache = persistCache({ cache, storage })
 
 // Config
 export const defaultOptions = {
