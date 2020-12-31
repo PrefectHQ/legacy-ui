@@ -358,9 +358,9 @@ export default {
 <style lang="scss" scoped>
 .global-search-container {
   height: 100%;
-  max-width: 100%;
+  max-width: 500px;
   transition: all 250ms;
-  width: 500px;
+  width: 20%;
 }
 
 .global-search-activator {
