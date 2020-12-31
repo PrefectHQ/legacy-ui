@@ -80,7 +80,7 @@ export default {
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <v-toolbar flat color="appBackground" class="pa-0 tbar">
           <v-row>
-            <v-col cols="12" sm="4">
+            <v-col cols="6" sm="4">
               <v-btn
                 outlined
                 class="mx-4"
@@ -89,23 +89,41 @@ export default {
               >
                 Today
               </v-btn>
-              <v-btn fab text small color="grey darken-2" @click="prev">
+              <v-btn
+                v-if="$vuetify.breakpoint.smAndUp"
+                fab
+                text
+                small
+                color="grey darken-2"
+                @click="prev"
+              >
                 <v-icon>
                   chevron_left
                 </v-icon>
               </v-btn>
-              <v-btn fab text small color="grey darken-2" @click="next">
+              <v-btn
+                v-if="$vuetify.breakpoint.smAndUp"
+                fab
+                text
+                small
+                color="grey darken-2"
+                @click="next"
+              >
                 <v-icon>
                   chevron_right
                 </v-icon>
               </v-btn>
             </v-col>
-            <v-col cols="12" sm="4" class="text-center mt-2">
+            <v-col
+              v-if="$vuetify.breakpoint.smAndUp"
+              cols="4"
+              class="text-center mt-2"
+            >
               <v-toolbar-title>
                 {{ calTitle }}
               </v-toolbar-title>
             </v-col>
-            <v-col cols="12" sm="4" class="text-right">
+            <v-col cols="6" sm="4" class="text-right">
               <v-menu bottom right>
                 <template #activator="{ on, attrs }">
                   <v-btn

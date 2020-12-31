@@ -11,6 +11,11 @@ export default {
       type: Object,
       required: true
     },
+    dense: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
     timestamp: {
       type: String,
       required: false,
@@ -34,6 +39,17 @@ export default {
     },
     membershipInvitationIsValid() {
       return this.membershipInvitation
+    },
+    itemTitle() {
+      return this.tempMember || this.isMember
+        ? `You joined ${this.content.sender_tenant_name}`
+        : !this.tempDecline &&
+          !this.isMember &&
+          this.membershipInvitationIsValid
+        ? `${this.content.sender_user_name} invited you to join ${this.content.sender_tenant_name}`
+        : `An invitation to join
+      ${this.content.sender_tenant_name}
+      has expired or was declined.`
     },
     rowLabel() {
       return `
@@ -131,27 +147,54 @@ export default {
 <template>
   <v-list-item-content>
     <v-skeleton-loader v-if="loading > 0" type="text" tile />
-    <v-list-item-title v-else-if="tempMember || isMember">
-      You joined
-      <span class="font-weight-medium"> {{ content.sender_tenant_name }} </span>
-      !
-    </v-list-item-title>
-    <v-list-item-title
-      v-else-if="!tempDecline && !isMember && membershipInvitationIsValid"
-    >
-      <AcceptConfirmInputRow
-        :label="rowLabel"
-        :loading="loading > 0"
-        @accept="_acceptInvitation"
-        @decline="_declineInvitation"
-      />
-    </v-list-item-title>
-    <v-list-item-title v-else>
-      An invitation to join
-      <span class="font-weight-medium">{{ content.sender_tenant_name }}</span>
-      has expired or was declined.
-    </v-list-item-title>
-
+    <truncate v-else-if="dense" :content="itemTitle">
+      <v-list-item-title v-if="tempMember || isMember">
+        You joined
+        <span class="font-weight-medium">
+          {{ content.sender_tenant_name }}
+        </span>
+        !
+      </v-list-item-title>
+      <v-list-item-title
+        v-else-if="!tempDecline && !isMember && membershipInvitationIsValid"
+      >
+        <AcceptConfirmInputRow
+          :label="rowLabel"
+          :loading="loading > 0"
+          @accept="_acceptInvitation"
+          @decline="_declineInvitation"
+        />
+      </v-list-item-title>
+      <v-list-item-title v-else>
+        An invitation to join
+        <span class="font-weight-medium">{{ content.sender_tenant_name }}</span>
+        has expired or was declined.
+      </v-list-item-title>
+    </truncate>
+    <div v-else>
+      <v-list-item-title v-if="tempMember || isMember">
+        You joined
+        <span class="font-weight-medium">
+          {{ content.sender_tenant_name }}
+        </span>
+        !
+      </v-list-item-title>
+      <v-list-item-title
+        v-else-if="!tempDecline && !isMember && membershipInvitationIsValid"
+      >
+        <AcceptConfirmInputRow
+          :label="rowLabel"
+          :loading="loading > 0"
+          @accept="_acceptInvitation"
+          @decline="_declineInvitation"
+        />
+      </v-list-item-title>
+      <v-list-item-title v-else>
+        An invitation to join
+        <span class="font-weight-medium">{{ content.sender_tenant_name }}</span>
+        has expired or was declined.
+      </v-list-item-title>
+    </div>
     <v-list-item-subtitle v-if="timestamp">
       {{ timestamp }}
     </v-list-item-subtitle>

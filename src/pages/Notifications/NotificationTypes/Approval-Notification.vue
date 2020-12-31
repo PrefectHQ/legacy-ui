@@ -16,6 +16,12 @@ export default {
       default: () => null
     }
   },
+  computed: {
+    itemTitle() {
+      return `${this.task?.flow?.name} has a
+          paused run that requires approval to resume.`
+    }
+  },
   apollo: {
     task: {
       query: require('@/graphql/Task/task.gql'),
@@ -35,8 +41,10 @@ export default {
   <v-list-item-content v-if="dense">
     <v-list-item-title>
       <div v-if="task">
-        <span class="font-weight-medium">{{ task.flow.name }}</span> has a
-        paused run that requires approval to resume.
+        <truncate :content="itemTitle">
+          <span class="font-weight-medium">{{ task.flow.name }}</span> has a
+          paused run that requires approval to resume.
+        </truncate>
       </div>
       <div v-else>
         <v-skeleton-loader type="heading" tile></v-skeleton-loader>
