@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-  <div style="white-space: nowrap;">
+  <div class="links-container">
     <v-btn
       :to="{
         name: 'dashboard',
@@ -87,3 +87,11 @@ export default {
     <TeamMenu />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.links-container {
+  max-width: 100%;
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+</style>
