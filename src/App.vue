@@ -5,6 +5,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
+import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
@@ -30,6 +31,7 @@ export default {
     Alert,
     ApplicationNavBar,
     Footer,
+    GlobalSearch,
     TeamSideNav
   },
   mixins: [eventsMixin],
@@ -388,6 +390,8 @@ export default {
           <v-card-text>{{ error }}</v-card-text>
         </v-card>
       </v-container>
+
+      <GlobalSearch v-if="$vuetify.breakpoint.xsOnly" />
 
       <v-slide-y-reverse-transition>
         <Footer v-if="!fullPageRoute && showFooter" />

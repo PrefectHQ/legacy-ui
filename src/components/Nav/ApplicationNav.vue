@@ -63,7 +63,11 @@ export default {
       }"
       exact
     >
-      <v-btn icon x-large>
+      <v-btn
+        icon
+        :x-large="$vuetify.breakpoint.smAndUp"
+        :large="$vuetify.breakpoint.xsOnly"
+      >
         <img
           class="logo"
           src="@/assets/logos/logomark-white.svg"
@@ -87,7 +91,7 @@ export default {
 
     <v-spacer></v-spacer>
 
-    <GlobalSearch />
+    <GlobalSearch v-if="$vuetify.breakpoint.smAndUp" />
 
     <HelpMenu />
 
@@ -108,5 +112,16 @@ export default {
 
 .logo {
   height: 100%;
+}
+</style>
+
+<style lang="scss">
+.v-app-bar {
+  @media screen and (max-width: 600px) {
+    /* stylelint-disable-next-line */
+    .v-toolbar__content {
+      padding: 0 !important;
+    }
+  }
 }
 </style>

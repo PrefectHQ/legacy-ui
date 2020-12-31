@@ -4,37 +4,6 @@ import ExternalLink from '@/components/ExternalLink'
 import HavingTrouble from '@/components/HavingTrouble'
 import { clearCache } from '@/vue-apollo'
 
-const tenantProtectedRoutes = [
-  'project',
-  'flow',
-  'flow-run',
-  'task',
-  'task-run',
-  'flow-run-logs',
-  'select-plan',
-  'billing',
-  'welcome',
-  'current-plan',
-  'payment',
-  'api',
-  'name-team'
-]
-
-const backendProtectedRoutes = [
-  'team',
-  'account',
-  'task-concurrency',
-  'members',
-  'secrets',
-  'tokens',
-  'user',
-  'profile',
-  'user-tokens',
-  'welcome',
-  'name-team',
-  'onboard-resources'
-]
-
 export default {
   components: { ExternalLink, HavingTrouble },
   data() {
@@ -102,20 +71,10 @@ export default {
         })
 
         return
-      }
-
-      if (
-        tenantProtectedRoutes.includes(this.$route.name) ||
-        (this.isServer && backendProtectedRoutes.includes(this.$route.name))
-      ) {
+      } else {
         this.$router.push({
           name: 'dashboard',
           params: { tenant: this.tenant.slug }
-        })
-      } else {
-        this.$router.push({
-          name: this.$route.name,
-          params: { ...this.$route.params, tenant: this.tenant.slug }
         })
       }
     }
