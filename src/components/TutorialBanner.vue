@@ -28,6 +28,9 @@ export default {
         show = false
       }
       return show
+    },
+    mobile() {
+      return !this.$vuetify.breakpoint.smAndDown
     }
   },
   apollo: {
@@ -53,13 +56,12 @@ export default {
 </script>
 
 <template>
-  <v-banner :value="showBanner" single-line>
+  <v-banner :value="showBanner" :single-line="mobile">
     <v-avatar slot="icon" color="#3b8dff" size="40">
       <v-icon icon="mdi-lock" color="white">
         school
       </v-icon>
     </v-avatar>
-
     Looks like you don't have any flows. Check out our
     <router-link
       :to="{ name: 'tutorial', params: { tenant: tenantSlug } }"
