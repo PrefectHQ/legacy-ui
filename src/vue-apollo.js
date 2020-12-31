@@ -233,9 +233,7 @@ const link = ApolloLink.from([
   batchLink
 ])
 
-export const cache = new InMemoryCache({
-  resultCaching: false
-})
+export const cache = new InMemoryCache()
 
 const storage = new LocalStorageWrapper(window.localStorage)
 export const loadCache = persistCache({ cache, storage })
