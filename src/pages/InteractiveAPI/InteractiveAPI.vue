@@ -71,6 +71,12 @@ query { hello }
       'https://unpkg.com/react-dom/umd/react-dom.production.min.js'
     )
     await js('graphiql-js', 'https://unpkg.com/graphiql/graphiql.min.js')
+    let urlQuery
+    if (this.$route.query.query) {
+      urlQuery = print(gql`
+        ${this.$route.query.query}
+      `)
+    }
     const fetcher = params => {
       params.query = this.addQueryLimits(params.query)
       return fetch(this.url, {
@@ -80,12 +86,16 @@ query { hello }
           authorization: `Bearer ${this.authorizationToken}`
         },
         body: JSON.stringify(params)
-      }).then(res => res.json())
+      }).then(res => {
+        this.$router.push(this.urlEncoder(params))
+        return res.json()
+      })
     }
     /* eslint-disable no-undef */
     ReactDOM.render(
       React.createElement(GraphiQL, {
         fetcher,
+        query: urlQuery,
         defaultQuery: this.defaultQuery,
         readOnly: this.readOnly
       }),
@@ -137,6 +147,23 @@ query { hello }
       })
 
       return print(queryObject)
+    },
+    urlEncoder(params) {
+      if (params.query.includes('IntrospectionQuery')) return
+      const query =
+        '?query=' +
+        encodeURIComponent(params.query)
+          .replace(/'/g, '%27')
+          .replace(/"/g, '%22')
+      let variables = ''
+      if ('variable' in params) {
+        variables =
+          '&variables=' +
+          encodeURIComponent(params.variable)
+            .replace(/'/g, '%27')
+            .replace(/"/g, '%22')
+      }
+      return query + variables
     }
   }
 }
