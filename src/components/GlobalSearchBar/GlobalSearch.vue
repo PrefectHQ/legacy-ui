@@ -261,6 +261,7 @@ export default {
       title="Search your team for projects, flows, and runs"
       :absolute="$vuetify.breakpoint.xsOnly"
       :fab="$vuetify.breakpoint.xsOnly"
+      :elevation="$vuetify.breakpoint.xsOnly ? 2 : null"
       :style="activatorStyle"
       @click.native="_activate"
     >
