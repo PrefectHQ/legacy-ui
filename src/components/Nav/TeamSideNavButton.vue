@@ -29,7 +29,7 @@ export default {
     style="
       background-color: rgba(255, 255, 255, 0.1);
       transition: width 200ms;"
-    title="Open the team sidebar"
+    title="Open the sidebar"
     @click.stop="toggle"
   >
     <div

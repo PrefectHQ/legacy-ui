@@ -401,7 +401,7 @@ export default {
 }
 
 .v-select-list {
-  max-width: unset !important;
+  max-width: 500px !important;
   width: 100% !important;
 }
 </style>
