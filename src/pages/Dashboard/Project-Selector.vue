@@ -21,8 +21,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['backend']),
+    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('data', ['activeProject', 'projects']),
+    project() {
+      return this.activeProject
+    },
     sortedProjects() {
       if (!this.projects) return []
       let fullySorted = [...this.projects].sort((a, b) =>
@@ -64,8 +68,6 @@ export default {
       if (!val) {
         this.projectSelect =
           this.$route.params.id === '' ? null : this.$route.params.id
-
-        this.$apollo.queries.projects.refetch()
       }
     },
     $route(val) {
@@ -82,21 +84,6 @@ export default {
         // happens in the watcher above
         this.projectSelect = val.params.id
       }
-    },
-    tenant(val) {
-      this.projects = []
-
-      if (val) {
-        this.loading = true
-        this.projects = []
-
-        setTimeout(async () => {
-          await this.$apollo.queries.projects.refetch(), (this.loading = false)
-        }, 1000)
-      }
-    },
-    backend() {
-      this.$apollo.queries.projects.refetch()
     }
   },
   methods: {
@@ -105,26 +92,6 @@ export default {
         'new-project': item.id == 'new_project',
         'blue--text': item.id == null,
         'text--darken-4': item.id == null
-      }
-    }
-  },
-  apollo: {
-    project: {
-      query: require('@/graphql/Dashboard/project.gql'),
-      variables() {
-        return { id: this.projectId }
-      },
-      update: data => data.project,
-      skip() {
-        return !this.projectId
-      }
-    },
-    projects: {
-      query: require('@/graphql/Dashboard/projects.gql'),
-      fetchPolicy: 'no-cache',
-      update: data => {
-        // New Project is part of the read only user test.  If you change the name, update the test
-        return data.project
       }
     }
   }

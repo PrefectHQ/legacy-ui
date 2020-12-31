@@ -73,7 +73,7 @@
               $slots['row-1-tile-1'] || $slots['row-1-tile-2'] ? 'pt-0' : ''
             "
           >
-            <v-row style="height: 351px;">
+            <v-row>
               <v-col v-if="$slots['row-2-tile-1']">
                 <slot name="row-2-tile-1" />
               </v-col>

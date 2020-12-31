@@ -4,9 +4,11 @@ import globalIDSearchQuery from '@/graphql/GlobalSearch/search-by-id.gql'
 import GlobalSearchIcon from '@/components/GlobalSearchBar/GlobalSearchIcon'
 import GlobalSearchResult from '@/components/GlobalSearchBar/GlobalSearchResult'
 import MResult from '@/components/GlobalSearchBar/MResult'
+import { mapGetters } from 'vuex'
+import HavingTrouble from '@/components/HavingTrouble'
 
 export default {
-  components: { GlobalSearchIcon, GlobalSearchResult, MResult },
+  components: { HavingTrouble, GlobalSearchIcon, GlobalSearchResult, MResult },
   data() {
     return {
       activateTimeout: null,
@@ -20,6 +22,8 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['connected']),
+    ...mapGetters('tenant', ['tenant']),
     id() {
       if (!this.input) return ''
 
@@ -77,10 +81,10 @@ export default {
     _deactivate() {
       clearTimeout(this.activateTimeout)
       this.$refs['global-search'].reset()
+
       this.input = null
       this.model = null
       this.search = null
-
       this.results = []
 
       this.activateTimeout = setTimeout(() => {
@@ -132,7 +136,7 @@ export default {
         this.$apollo.queries.idQuery.skip = true
       }
     },
-    handleResultSelected(searchResultName) {
+    async handleResultSelected(searchResultName) {
       // If this is called with no argument
       // we return immediately
       if (!searchResultName) return
@@ -151,9 +155,9 @@ export default {
       const routeToNavigateTo = this.routeName(searchResult.__typename)
 
       // Navigate to the URL based on the search result
-      this.$router.push({
+      await this.$router.push({
         name: routeToNavigateTo,
-        params: { id: searchResult.id }
+        params: { id: searchResult.id, tenant: this.tenant.slug }
       })
 
       this._deactivate()
@@ -246,38 +250,42 @@ export default {
     class="d-flex align-center justify-end global-search-container"
     :class="{ 'justify-center': active }"
   >
-    <!-- <v-icon
-      color="white"
-      class="global-search-activator cursor-pointer"
-      :class="{ 'mr-2': active, active: active }"
-      @click.native="_activate"
-    >
-      search
-    </v-icon> -->
-
     <v-btn
-      class="global-search-activator cursor-pointer"
-      :class="{ active: active }"
-      text
-      icon
-      large
-      color="white"
+      class="mx-1 global-search-activator cursor-pointer"
+      :icon="$vuetify.breakpoint.smAndUp"
+      :class="{
+        active: active,
+        'navbar-icon': $vuetify.breakpoint.smAndUp,
+        fixed: $vuetify.breakpoint.xsOnly
+      }"
+      title="Search your team for projects, flows, and runs"
+      :absolute="$vuetify.breakpoint.xsOnly"
+      :fab="$vuetify.breakpoint.xsOnly"
+      :elevation="$vuetify.breakpoint.xsOnly ? 2 : null"
+      :style="activatorStyle"
       @click.native="_activate"
     >
-      <v-icon>
-        search
-      </v-icon>
+      <i class="fad fa-search fa-2x nav-bar-duotone-icon" />
     </v-btn>
 
-    <div class="global-search" :class="{ active: active }">
+    <div
+      class="global-search"
+      :class="{ active: active, fixed: $vuetify.breakpoint.xsOnly }"
+    >
       <v-autocomplete
-        v-show="active"
+        v-if="active"
         ref="global-search"
         v-model="model"
         single-line
         dense
-        dark
+        outlined
+        multiple
+        :dark="$vuetify.breakpoint.smAndUp"
         clearable
+        :menu-props="{
+          closeOnContentClick: false,
+          closeOnClick: false
+        }"
         :items="entries"
         :loading="isLoading ? 'green accent-3' : false"
         :search-input.sync="search"
@@ -288,41 +296,56 @@ export default {
         hide-details
         clear-icon="close"
         open-on-clear
-        @clear="results = []"
         @blur="_deactivate"
+        @clear="results = []"
         @focus="
           results = []
           handleSearch(input)
         "
       >
-        <template v-if="input == null" #no-data>
-          <v-list-item>
-            <v-list-item-title>
+        <template #no-data>
+          <div
+            v-if="!connected"
+            class="text-subtitle-1 pa-4"
+            style="width: 500px;"
+          >
+            <div class="font-weight-light">
+              You aren't connected, so you won't be able to search for
+              anything...
+            </div>
+
+            <v-divider class="my-6 mx-6" />
+
+            <HavingTrouble />
+          </div>
+
+          <v-list-item v-else-if="input == null">
+            <v-list-item-title class="text-subtitle-1 font-weight-light">
               Type to search for a <strong>Project</strong>,
               <strong>Flow</strong>, <strong>Task</strong>, or
               <strong>Run</strong>
             </v-list-item-title>
           </v-list-item>
-        </template>
-        <template v-else-if="isLoading" #no-data>
-          <v-list-item>
+
+          <v-list-item v-else-if="isLoading">
             <v-list-item-title>
               Searching...
             </v-list-item-title>
           </v-list-item>
-        </template>
-        <template v-else #no-data>
-          <MResult v-if="mResult" />
+
+          <MResult v-else-if="mResult" />
           <v-list-item v-else>
             <v-list-item-title>
               No results matched your search.
             </v-list-item-title>
           </v-list-item>
         </template>
+
         <template #item="data">
           <GlobalSearchIcon v-if="data" :type="data.item.__typename" />
           <GlobalSearchResult
             v-if="data"
+            ref="result"
             :search-result="data.item"
             :parent="data.parent"
           />
@@ -335,23 +358,50 @@ export default {
 <style lang="scss" scoped>
 .global-search-container {
   height: 100%;
+  max-width: 500px;
   transition: all 250ms;
-  width: 100%;
+  width: 20%;
+}
+
+.global-search-activator {
+  &.fixed {
+    background-color: var(--v-primary-base);
+    position: fixed;
+    right: 10px;
+    top: 114px;
+    transition: all 250ms;
+    z-index: 4;
+
+    &.active {
+      right: calc(100% - 74px);
+    }
+  }
 }
 
 .global-search {
+  background-color: rgba(255, 255, 255, 0.1);
   font-size: 1rem;
-  max-width: 1000px;
+  max-width: 500px;
   transition: all 250ms;
   width: 0;
 
   &.active {
     width: 100%;
   }
+
+  &.fixed {
+    background-color: rgba(255, 255, 255, 1);
+    left: 74px;
+    max-width: calc(100% - 84px);
+    position: fixed;
+    top: 120px;
+    // right: 10px;
+    z-index: 4;
+  }
 }
 
 .v-select-list {
-  max-width: unset !important;
+  max-width: 500px !important;
   width: 100% !important;
 }
 </style>

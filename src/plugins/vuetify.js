@@ -16,7 +16,7 @@ import Hashicorp from '@/components/Icons/Hashicorp.vue'
 export const THEME_COLORS = {
   prefect: '#27b1ff', // prefect blue
   primary: '#3b8dff', // primary blue
-  primaryDark: '#0075b8',
+  primaryDark: '#2580FF',
   primaryLight: '#e0f4ff',
   secondaryGray: '#465968',
   secondaryGrayDark: '#1d252b',

@@ -15,8 +15,12 @@ export default {
     ...mapGetters('tenant', ['tenant'])
   },
   mounted() {
-    const path = `/${this.tenant.slug}/tutorial/${this.routes[0].name}`
-    if (this.$route.path !== path) this.$router.push(path)
+    if (!this.$route.params?.id) {
+      this.$router.push({
+        params: { id: this.routes[0].name },
+        hash: this.routes[0].children[0].name
+      })
+    }
   },
   methods: {
     mdParser(md) {
@@ -85,7 +89,7 @@ export default {
             link
             :to="{
               name: 'tutorial',
-              params: { tenant: tenant.slug, id: child.file },
+              params: { id: child.file },
               hash: child.name
             }"
           >
