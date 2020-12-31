@@ -318,7 +318,7 @@ export default {
     </SubPageNav>
 
     <NotificationsLayout>
-      <v-card slot="col-1" class="py-2 px-4 text-left" tile>
+      <v-card slot="col-1" class="py-6 px-4 text-left" tile>
         <v-progress-linear
           :active="loading > 0"
           indeterminate=""

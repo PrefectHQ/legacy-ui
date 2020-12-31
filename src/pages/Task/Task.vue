@@ -8,6 +8,7 @@ import TaskRunHeartbeatTile from '@/pages/Task/TaskRunHeartbeat-Tile'
 import TaskRunTableTile from '@/pages/Task/TaskRunTable-Tile'
 import TileLayoutAlternate from '@/layouts/TileLayout-Alternate'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
+import { mapActions } from 'vuex'
 
 export default {
   metaInfo() {
@@ -25,6 +26,14 @@ export default {
     TaskRunTableTile,
     TileLayoutAlternate,
     TileLayoutFull
+  },
+  async beforeRouteLeave(to, from, next) {
+    if (to.name == 'task') {
+      await this.activateTask(to.params.id)
+    } else {
+      this.resetActiveData()
+    }
+    return next()
   },
   data() {
     return {
@@ -79,6 +88,10 @@ export default {
   watch: {
     $route() {
       this.tab = this.getTab()
+
+      if (this.$route.name == 'task') {
+        this.activateTask(this.$route.params.id)
+      }
     },
     tab(val) {
       let query = { ...this.$route.query }
@@ -98,6 +111,9 @@ export default {
       if (val === 'not-found') this.$router.push({ name: 'not-found' })
     }
   },
+  async beforeMount() {
+    await this.activateTask(this.$route.params.id)
+  },
   mounted() {
     if (!this.$route.query || !this.$route.query.schematic) {
       this.$router
@@ -110,6 +126,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('data', ['activateTask', 'resetActiveData']),
     getTab() {
       if (Object.keys(this.$route.query).length != 0) {
         let target = Object.keys(this.$route.query)[0]

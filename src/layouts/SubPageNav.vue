@@ -26,7 +26,7 @@ export default {
 </script>
 
 <template>
-  <v-app-bar
+  <v-toolbar
     v-scroll="scrolled"
     :elevation="
       pageScrolled && (!$slots.tabs || $vuetify.breakpoint.smAndDown)
@@ -87,5 +87,5 @@ export default {
       slot="extension"
       ><slot name="page-actions"></slot
     ></template>
-  </v-app-bar>
+  </v-toolbar>
 </template>

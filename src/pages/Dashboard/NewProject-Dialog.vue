@@ -55,6 +55,7 @@ export default {
           this.projectId = data.create_project.id
           this.projectSuccess = true
           this.projectLoading = false
+          this.$globalApolloQueries['projects']?.refetch()
           //adding this here to make sure the dialog resets, even if a user clicks outside the box instead of going to the project (the persistent prop in vuetify is currently unreliable)
           setTimeout(() => (this.projectSuccess = false), 8000)
         } else if (errors) {

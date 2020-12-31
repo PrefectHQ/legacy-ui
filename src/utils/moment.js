@@ -6,7 +6,7 @@ For example, with the code below Vue components can now:
 import { duration } from '@/utils/moment'
 and use duration({{ input }}).format() without having to import moment and moment-duration-format.
 */
-import moment from 'moment'
+import moment from 'moment-timezone'
 // eslint-disable-next-line no-unused-vars
 import momentDurationFormat from 'moment-duration-format'
 

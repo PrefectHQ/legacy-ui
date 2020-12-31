@@ -26,6 +26,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role'])
   },
   watch: {
@@ -119,69 +120,22 @@ export default {
             <v-list-item-title>Account</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
         <v-list-item
-          :to="{ name: 'members', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-          data-cy="members"
-        >
-          <v-list-item-action>
-            <v-icon>people</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Members</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item
-          :to="{ name: 'projects', params: { tenant: tenant.slug } }"
+          :disabled="!isCloud"
+          :to="{ name: 'tokens', params: { tenant: tenant.slug } }"
+          data-cy="team-settings-api-tokens"
           ripple
           exact
         >
           <v-list-item-action>
-            <v-icon>pi-project</v-icon>
+            <v-icon>sync_alt</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Projects</v-list-item-title>
+            <v-list-item-title>API Tokens</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item
-          :to="{ name: 'flow-groups', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-        >
-          <v-list-item-action>
-            <v-icon>pi-flow</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Flow Groups</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item
-          :to="{ name: 'flow-concurrency', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-          data-cy="flow-concurrency"
-        >
-          <v-list-item-action>
-            <v-icon>pi-flow-run</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Flow Concurrency</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item
-          :to="{ name: 'task-concurrency', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-          data-cy="task-concurrency"
-        >
-          <v-list-item-action>
-            <v-icon>pi-task-run</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Task Concurrency</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+
         <v-list-item
           :to="{ name: 'cloud-hooks', params: { tenant: tenant.slug } }"
           ripple
@@ -195,20 +149,65 @@ export default {
             <v-list-item-title>Cloud Hooks</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
         <v-list-item
-          :to="{ name: 'tokens', params: { tenant: tenant.slug } }"
-          data-cy="team-settings-api-tokens"
+          :disabled="!isCloud"
+          :to="{ name: 'flow-concurrency', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+          data-cy="flow-concurrency"
+        >
+          <v-list-item-action>
+            <v-icon>pi-flow-run</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Flow Concurrency</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :to="{ name: 'flow-groups', params: { tenant: tenant.slug } }"
           ripple
           exact
         >
           <v-list-item-action>
-            <v-icon>sync_alt</v-icon>
+            <v-icon>pi-flow</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>API Tokens</v-list-item-title>
+            <v-list-item-title>Flow Groups</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
         <v-list-item
+          :disabled="!isCloud"
+          :to="{ name: 'members', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+          data-cy="members"
+        >
+          <v-list-item-action>
+            <v-icon>people</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Members</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :to="{ name: 'projects', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>pi-project</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Projects</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :disabled="!isCloud"
           :to="{ name: 'secrets', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -218,6 +217,21 @@ export default {
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Secrets</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :disabled="!isCloud"
+          :to="{ name: 'task-concurrency', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+          data-cy="task-concurrency"
+        >
+          <v-list-item-action>
+            <v-icon>pi-task-run</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Task Concurrency</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>

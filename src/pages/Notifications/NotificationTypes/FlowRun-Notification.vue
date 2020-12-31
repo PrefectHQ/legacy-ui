@@ -31,6 +31,9 @@ export default {
         : 'white--text'
 
       return [this.content.event.state, textColor]
+    },
+    itemTitle() {
+      return ` ${this.content.event.flow.name}: ${this.content.event.state}`
     }
   }
 }
@@ -39,16 +42,18 @@ export default {
 <template>
   <v-list-item-content v-if="dense">
     <v-list-item-title>
-      {{ content.event.flow.name }}:
-      <span
-        :class="{
-          [content.event.state]: true,
-          'white--text': content.event.state !== 'Submitted'
-        }"
-        class="px-2 rounded-pill d-inline-block text-body-2"
-      >
-        {{ content.event.state }}
-      </span>
+      <truncate :content="itemTitle">
+        {{ content.event.flow.name }}:
+        <span
+          :class="{
+            [content.event.state]: true,
+            'white--text': content.event.state !== 'Submitted'
+          }"
+          class="px-2 rounded-pill d-inline-block text-body-2"
+        >
+          {{ content.event.state }}
+        </span>
+      </truncate>
     </v-list-item-title>
     <v-list-item-subtitle v-if="timestamp">
       {{ timestamp }}
