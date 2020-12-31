@@ -1,5 +1,5 @@
 <script>
-import gql from 'graphql-tag'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -20,8 +20,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('data', ['flows']),
     showBanner() {
-      let show = this.flowCount === 0
+      let show = this.flows?.length === 0
       if (!this.dismissed && this.pageScroll) {
         show = !this.pageScroll
       } else if (this.dismissed) {
@@ -31,25 +32,6 @@ export default {
     },
     mobile() {
       return !this.$vuetify.breakpoint.smAndDown
-    }
-  },
-  apollo: {
-    flowCount: {
-      query: gql`
-        query {
-          flow_aggregate {
-            aggregate {
-              count
-            }
-          }
-        }
-      `,
-      update: data => data.flow_aggregate.aggregate.count
-    }
-  },
-  watch: {
-    $route() {
-      this.$apollo.queries.flowCount.refetch()
     }
   }
 }
