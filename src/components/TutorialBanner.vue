@@ -7,11 +7,6 @@ export default {
       type: Boolean,
       required: false,
       default: () => false
-    },
-    tenantSlug: {
-      type: String,
-      required: false,
-      default: () => null
     }
   },
   data() {
@@ -29,39 +24,35 @@ export default {
         show = false
       }
       return show
-    },
-    mobile() {
-      return !this.$vuetify.breakpoint.smAndDown
     }
   }
 }
 </script>
 
 <template>
-  <v-banner :value="showBanner" :single-line="mobile">
+  <v-banner :value="showBanner">
     <v-avatar slot="icon" color="#3b8dff" size="40">
       <v-icon icon="mdi-lock" color="white">
         school
       </v-icon>
     </v-avatar>
-    Looks like you don't have any flows. Check out our
-    <router-link
-      :to="{ name: 'tutorial', params: { tenant: tenantSlug } }"
-      class="text-decoration-none"
-      >tutorials</router-link
-    >
-    to learn more!
+    Pst! It looks like you don't have any flows yet; check out the
+    <a href="tutorial">tutorials</a> for walkthroughs on writing and registering
+    flows with Prefect and the
+    <a href="https://docs.prefect.io/">documentation</a> for more in-depth looks
+    at the Prefect APIs
 
     <template #actions>
       <v-btn
         text
-        color="#3b8dff"
-        :to="{ name: 'tutorial', params: { tenant: tenantSlug } }"
+        dark
+        color="#ff5252"
+        class="mb-3"
+        @click="dismissed = !dismissed"
       >
-        Go to tutorials
-      </v-btn>
-      <v-btn text color="#ff5252" class="mr-2" @click="dismissed = !dismissed">
-        Dismiss
+        <v-icon>
+          close
+        </v-icon>
       </v-btn>
     </template>
   </v-banner>

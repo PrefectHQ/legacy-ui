@@ -12,11 +12,6 @@ export default {
       type: String,
       required: false,
       default: () => null
-    },
-    tenantSlug: {
-      type: String,
-      required: false,
-      default: () => null
     }
   },
   data() {
@@ -34,7 +29,7 @@ export default {
 
 <template>
   <div>
-    <TutorialBanner :page-scroll="pageScrolled" :tenant-slug="tenantSlug" />
+    <TutorialBanner :page-scroll="pageScrolled" />
     <v-toolbar
       v-scroll="scrolled"
       :elevation="
