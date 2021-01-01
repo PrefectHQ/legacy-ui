@@ -168,11 +168,11 @@ describe('data Vuex Module', () => {
         const plural = d + 's'
         const id = active + 'Id'
 
-        test(`${active} getter should return the state activeFlow object`, () => {
+        test(`${active} getter should return the state ${active} object`, () => {
           expect(store.getters[active]).toEqual(state[active])
         })
 
-        test(`${plural} getter should return a list of flows`, () => {
+        test(`${plural} getter should return a list of ${plural}`, () => {
           expect(store.getters[plural]).toEqual(state[plural])
         })
 

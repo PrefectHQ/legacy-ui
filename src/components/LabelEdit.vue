@@ -317,6 +317,7 @@ export default {
           <v-btn
             class="mt-0"
             icon
+            :disabled="labelResetDisabled"
             color="codePink"
             small
             @click="labelReset"

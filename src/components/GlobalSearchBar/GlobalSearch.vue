@@ -251,16 +251,27 @@ export default {
     :class="{ 'justify-center': active }"
   >
     <v-btn
-      class="navbar-icon mx-1 global-search-activator cursor-pointer"
-      icon
-      :class="{ active: active }"
+      class="mx-1 global-search-activator cursor-pointer"
+      :icon="$vuetify.breakpoint.smAndUp"
+      :class="{
+        active: active,
+        'navbar-icon': $vuetify.breakpoint.smAndUp,
+        fixed: $vuetify.breakpoint.xsOnly
+      }"
       title="Search your team for projects, flows, and runs"
+      :absolute="$vuetify.breakpoint.xsOnly"
+      :fab="$vuetify.breakpoint.xsOnly"
+      :elevation="$vuetify.breakpoint.xsOnly ? 2 : null"
+      :style="activatorStyle"
       @click.native="_activate"
     >
       <i class="fad fa-search fa-2x nav-bar-duotone-icon" />
     </v-btn>
 
-    <div class="global-search" :class="{ active: active }">
+    <div
+      class="global-search"
+      :class="{ active: active, fixed: $vuetify.breakpoint.xsOnly }"
+    >
       <v-autocomplete
         v-if="active"
         ref="global-search"
@@ -269,7 +280,7 @@ export default {
         dense
         outlined
         multiple
-        dark
+        :dark="$vuetify.breakpoint.smAndUp"
         clearable
         :menu-props="{
           closeOnContentClick: false,
@@ -347,9 +358,24 @@ export default {
 <style lang="scss" scoped>
 .global-search-container {
   height: 100%;
-  max-width: 100%;
+  max-width: 500px;
   transition: all 250ms;
-  width: 500px;
+  width: 20%;
+}
+
+.global-search-activator {
+  &.fixed {
+    background-color: var(--v-primary-base);
+    position: fixed;
+    right: 10px;
+    top: 114px;
+    transition: all 250ms;
+    z-index: 4;
+
+    &.active {
+      right: calc(100% - 74px);
+    }
+  }
 }
 
 .global-search {
@@ -362,10 +388,20 @@ export default {
   &.active {
     width: 100%;
   }
+
+  &.fixed {
+    background-color: rgba(255, 255, 255, 1);
+    left: 74px;
+    max-width: calc(100% - 84px);
+    position: fixed;
+    top: 120px;
+    // right: 10px;
+    z-index: 4;
+  }
 }
 
 .v-select-list {
-  max-width: unset !important;
+  max-width: 500px !important;
   width: 100% !important;
 }
 </style>
