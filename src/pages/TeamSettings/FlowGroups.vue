@@ -208,7 +208,11 @@ export default {
       }
     },
     versionGroups: {
-      query: require('@/graphql/TeamSettings/flow-version-groups.gql'),
+      query() {
+        return require('@/graphql/TeamSettings/flow-version-groups.js').default(
+          this.isCloud
+        )
+      },
       error() {
         this.handleError(
           'Something went wrong while trying to fetch your flows.'
