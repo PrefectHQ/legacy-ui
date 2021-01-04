@@ -262,7 +262,6 @@ export default {
       :absolute="$vuetify.breakpoint.xsOnly"
       :fab="$vuetify.breakpoint.xsOnly"
       :elevation="$vuetify.breakpoint.xsOnly ? 2 : null"
-      :style="activatorStyle"
       @click.native="_activate"
     >
       <i class="fad fa-search fa-2x nav-bar-duotone-icon" />
