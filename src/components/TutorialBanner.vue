@@ -1,7 +1,8 @@
 <script>
 import { mapGetters } from 'vuex'
-
+import ExternalLink from '@/components/ExternalLink'
 export default {
+  components: { ExternalLink },
   props: {
     pageScroll: {
       type: Boolean,
@@ -37,10 +38,12 @@ export default {
       </v-icon>
     </v-avatar>
     Pst! It looks like you don't have any flows yet; check out the
-    <a href="tutorial">tutorials</a> for walkthroughs on writing and registering
-    flows with Prefect and the
-    <a href="https://docs.prefect.io/">documentation</a> for more in-depth looks
-    at the Prefect APIs
+    <router-link :to="{ name: 'tutorial' }">
+      tutorials
+    </router-link>
+    for walkthroughs on writing and registering flows with Prefect and the
+    <ExternalLink href="https://docs.prefect.io/">documentation</ExternalLink>
+    for more in-depth looks at the Prefect APIs
 
     <template #actions>
       <v-btn
