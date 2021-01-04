@@ -112,6 +112,7 @@ export default {
         this.resetData()
         this.unsetInvitations()
         this.unsetTenants()
+        this.unsetUser()
         this.refresh()
         clearTimeout(this.refreshTimeout)
       }, 1000)
@@ -292,7 +293,11 @@ export default {
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
     ...mapMutations('tenant', ['setDefaultTenant', 'unsetTenants']),
     ...mapActions('user', ['getUser']),
-    ...mapMutations('user', ['setInvitations', 'unsetInvitations']),
+    ...mapMutations('user', [
+      'setInvitations',
+      'unsetInvitations',
+      'unsetUser'
+    ]),
     handleKeydown(e) {
       if (e.key === 'Escape') {
         this.closeSideNav()
