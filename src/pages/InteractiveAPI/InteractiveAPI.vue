@@ -87,9 +87,40 @@ query { hello }
         },
         body: JSON.stringify(params)
       }).then(res => {
-        this.$router.push(this.urlEncoder(params))
         return res.json()
       })
+    }
+    const encodeQuery = query => {
+      let variables = ''
+      if (this.$router.history.current.query.variables) {
+        variables =
+          '&variables=' +
+          encodeURIComponent(this.$router.history.current.query.variables)
+            .replace(/'/g, '%27')
+            .replace(/"/g, '%22')
+      }
+      return this.$router.push(
+        '?query=' +
+          encodeURIComponent(query)
+            .replace(/'/g, '%27')
+            .replace(/"/g, '%22') +
+          variables
+      )
+    }
+    const encodeVariables = vars => {
+      let query = '?query='
+      if (this.$router.history.current.query.query) {
+        query += encodeURIComponent(this.$router.history.current.query.query)
+          .replace(/'/g, '%27')
+          .replace(/"/g, '%22')
+      }
+      return this.$router.push(
+        query +
+          '&variables=' +
+          encodeURIComponent(vars)
+            .replace(/'/g, '%27')
+            .replace(/"/g, '%22')
+      )
     }
     /* eslint-disable no-undef */
     ReactDOM.render(
@@ -97,7 +128,9 @@ query { hello }
         fetcher,
         query: urlQuery,
         defaultQuery: this.defaultQuery,
-        readOnly: this.readOnly
+        readOnly: this.readOnly,
+        onEditQuery: encodeQuery,
+        onEditVariables: encodeVariables
       }),
       /* eslint-enable no-undef */
       document.getElementById('graphiql')
@@ -147,23 +180,6 @@ query { hello }
       })
 
       return print(queryObject)
-    },
-    urlEncoder(params) {
-      if (params.query.includes('IntrospectionQuery')) return
-      const query =
-        '?query=' +
-        encodeURIComponent(params.query)
-          .replace(/'/g, '%27')
-          .replace(/"/g, '%22')
-      let variables = ''
-      if ('variable' in params) {
-        variables =
-          '&variables=' +
-          encodeURIComponent(params.variable)
-            .replace(/'/g, '%27')
-            .replace(/"/g, '%22')
-      }
-      return query + variables
     }
   }
 }
