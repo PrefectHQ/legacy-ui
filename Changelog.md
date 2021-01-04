@@ -11,6 +11,7 @@
 
 ### Bugfixes
 
+- Fix tenant and backend switch on the calendar view - [#524](https://github.com/PrefectHQ/ui/pull/524)
 - Add tooltip to notifications tile to ensure title is visible - [#527](https://github.com/PrefectHQ/ui/pull/527)
 
 ## 2020-12-18
