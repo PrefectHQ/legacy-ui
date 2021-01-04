@@ -66,7 +66,7 @@ export default {
         this.$router.push({
           name: 'welcome',
           params: {
-            tenant: this.tenant.slug
+            tenant: this.tenant?.slug
           }
         })
 
@@ -74,7 +74,7 @@ export default {
       } else {
         this.$router.push({
           name: 'dashboard',
-          params: { tenant: this.tenant.slug }
+          params: { tenant: this.tenant?.slug }
         })
       }
     }

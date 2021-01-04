@@ -366,13 +366,14 @@ export default {
   overflow: auto;
   top: 64px !important;
 
+  /* stylelint-disable */
   .focusable {
-    /* stylelint-disable-next-line */
     &:focus {
       // This allows us to auto-focus the nav drawer but not show the outline
       outline: none;
     }
   }
+  /* stylelint-enable */
 
   .tree-view {
     overflow: scroll;

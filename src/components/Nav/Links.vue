@@ -91,7 +91,7 @@ export default {
 <style lang="scss" scoped>
 .links-container {
   max-width: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
   white-space: nowrap;
 }
 </style>
