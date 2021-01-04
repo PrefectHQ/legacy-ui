@@ -90,37 +90,26 @@ query { hello }
         return res.json()
       })
     }
+    const encodeComponent = component => {
+      return encodeURIComponent(component)
+        .replace(/'/g, '%27')
+        .replace(/"/g, '%22')
+    }
     const encodeQuery = query => {
       let variables = ''
       if (this.$router.history.current.query.variables) {
         variables =
           '&variables=' +
-          encodeURIComponent(this.$router.history.current.query.variables)
-            .replace(/'/g, '%27')
-            .replace(/"/g, '%22')
+          encodeComponent(this.$router.history.current.query.variables)
       }
-      return this.$router.push(
-        '?query=' +
-          encodeURIComponent(query)
-            .replace(/'/g, '%27')
-            .replace(/"/g, '%22') +
-          variables
-      )
+      return this.$router.push('?query=' + encodeComponent(query) + variables)
     }
     const encodeVariables = vars => {
       let query = '?query='
       if (this.$router.history.current.query.query) {
-        query += encodeURIComponent(this.$router.history.current.query.query)
-          .replace(/'/g, '%27')
-          .replace(/"/g, '%22')
+        query += encodeComponent(this.$router.history.current.query.query)
       }
-      return this.$router.push(
-        query +
-          '&variables=' +
-          encodeURIComponent(vars)
-            .replace(/'/g, '%27')
-            .replace(/"/g, '%22')
-      )
+      return this.$router.push(query + '&variables=' + encodeComponent(vars))
     }
     /* eslint-disable no-undef */
     ReactDOM.render(
