@@ -13,6 +13,11 @@ export default {
       type: Boolean,
       required: false,
       default: () => false
+    },
+    timezone: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   computed: {
@@ -30,5 +35,8 @@ export default {
 </script>
 
 <template>
-  <span v-html="highlightedText"></span>
+  <div>
+    <span v-html="highlightedText"></span>
+    <span class="primary--text"> ({{ timezone }})</span>
+  </div>
 </template>

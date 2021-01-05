@@ -1,5 +1,6 @@
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import moment from 'moment-timezone'
 
 import ConfirmDialog from '@/components/ConfirmDialog'
 import CronClock from '@/components/Functional/CronClock'
@@ -37,6 +38,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('user', ['timezone']),
     flowClocks() {
       return this.flow.schedule?.clocks.map(c => {
         // This is so we know where each clock originates while allowing us to put them in a single array
@@ -50,6 +52,11 @@ export default {
         c.scheduleType = 'flow-group'
         return c
       })
+    },
+    timezoneAbbr() {
+      return moment()
+        .tz(this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone)
+        .zoneAbbr()
     }
   },
   watch: {
@@ -141,7 +148,10 @@ export default {
               input: {
                 flow_group_id: this.flowGroup.id,
                 cron_clocks: cronClocks,
-                interval_clocks: intervalClocks
+                interval_clocks: intervalClocks,
+                timezone:
+                  this.timezone ||
+                  Intl.DateTimeFormat().resolvedOptions().timeZone
               }
             }
           })
@@ -301,6 +311,7 @@ export default {
                     <CronClock
                       v-if="clock.type == 'CronClock'"
                       :cron="clock.cron"
+                      :timezone="timezoneAbbr"
                     />
                     <IntervalClock
                       v-else-if="clock.type == 'IntervalClock'"
