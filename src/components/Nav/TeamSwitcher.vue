@@ -45,6 +45,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['invitations', 'memberships']),
     role() {
@@ -66,6 +67,13 @@ export default {
           break
       }
       return role
+    },
+    teams() {
+      return this.isCloud
+        ? this.memberships.map(m => {
+            return { ...m, ...m.tenant }
+          })
+        : this.tenants
     }
   },
   methods: {
@@ -246,19 +254,19 @@ export default {
             <v-divider class="ml-4" />
           </v-subheader>
           <v-list-item
-            v-for="membership in memberships"
-            :key="membership.id"
+            v-for="team in teams"
+            :key="team.id"
             class="pl-4 py-2"
-            :input-value="tenant.id == membership.tenant.id"
+            :input-value="tenant.id == team.id"
             active-class="active"
-            @click="handleSwitchTenant(membership.tenant)"
+            @click="handleSwitchTenant(team)"
           >
             <v-list-item-content>
               <v-list-item-title>
-                {{ membership.tenant.name }}
+                {{ team.name }}
               </v-list-item-title>
               <v-list-item-subtitle
-                v-if="tenant.id == membership.tenant.id"
+                v-if="tenant.id == team.id"
                 class="font-weight-light"
               >
                 Current
