@@ -138,7 +138,6 @@ export default {
             v-if="advancedType == 'cron'"
             v-model="selectedTimezone"
             style="margin-top: 120px;"
-            outlined
             :items="tzs"
             label="Time Zone (Optional)"
             prepend-inner-icon="access_time"
