@@ -55,7 +55,7 @@ export default {
     },
     timezoneAbbr() {
       return moment()
-        .tz(this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone)
+        .tz(this.clocks[0].timezone || this.timezone)
         .zoneAbbr()
     }
   },

@@ -26,9 +26,17 @@ export default {
     },
     highlightedText() {
       if (!this.parsedCron) return ''
-      return this.parsedCron.replace(PARSED_SCHEDULE_REGEX, match => {
-        return `<span class="primary--text">${match}</span>`
-      })
+      if (this.timezone) {
+        return this.parsedCron
+          .replace(PARSED_SCHEDULE_REGEX, match => {
+            return `<span class="primary--text">${match}</span>`
+          })
+          .concat(`<span class="primary--text"> (${this.timezone})</span>`)
+      } else {
+        return this.parsedCron.replace(PARSED_SCHEDULE_REGEX, match => {
+          return `<span class="primary--text">${match}</span>`
+        })
+      }
     }
   }
 }

@@ -135,8 +135,9 @@ export default {
           </v-fade-transition>
 
           <v-select
+            v-if="advancedType == 'cron'"
             v-model="selectedTimezone"
-            outlined
+            style="margin-top: 80px;"
             :items="tzs"
             label="Time Zone (Optional)"
             prepend-inner-icon="access_time"
