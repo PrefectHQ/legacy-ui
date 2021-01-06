@@ -1,5 +1,6 @@
 <script>
 import TeamMenu from '@/components/Nav/TeamMenu'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -12,6 +13,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     slug() {
       return this.tenant?.slug
     }
