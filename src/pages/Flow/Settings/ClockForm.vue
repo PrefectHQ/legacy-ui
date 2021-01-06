@@ -2,6 +2,7 @@
 import CronForm from '@/pages/Flow/Settings/ClockForms/Cron'
 import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
+import moment from 'moment-timezone'
 
 export default {
   components: {
@@ -28,6 +29,8 @@ export default {
   },
   data() {
     return {
+      tzs: [...moment.tz.names()],
+      selectedTimezone: null,
       advanced: false,
       // Sets the default advanced tab
       // if a certain type was specific
@@ -61,9 +64,9 @@ export default {
         type: clockType,
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
-        ]
+        ],
+        timezone: this.selectedTimezone
       }
-
       this.$emit('confirm', clock)
     }
   }
@@ -130,6 +133,14 @@ export default {
               class="mt-4"
             />
           </v-fade-transition>
+
+          <v-select
+            v-model="selectedTimezone"
+            outlined
+            :items="tzs"
+            label="Time Zone (Optional)"
+            prepend-inner-icon="access_time"
+          ></v-select>
         </div>
         <div v-else key="2" class="mt-4 d-block" style="max-width: 100%;">
           <SimpleForm v-model="simpleModel" />

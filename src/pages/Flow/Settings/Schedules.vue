@@ -149,9 +149,7 @@ export default {
                 flow_group_id: this.flowGroup.id,
                 cron_clocks: cronClocks,
                 interval_clocks: intervalClocks,
-                timezone:
-                  this.timezone ||
-                  Intl.DateTimeFormat().resolvedOptions().timeZone
+                timezone: this.clocks[0].timezone || this.timezone
               }
             }
           })

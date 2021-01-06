@@ -35,8 +35,5 @@ export default {
 </script>
 
 <template>
-  <div>
-    <span v-html="highlightedText"></span>
-    <span class="primary--text"> ({{ timezone }})</span>
-  </div>
+  <span v-html="highlightedText"></span>
 </template>
