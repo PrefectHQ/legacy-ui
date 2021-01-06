@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Adds a banner to direct new users to the tutorials page - [#516](https://github.com/PrefectHQ/ui/pull/516)
 
 ### Bugfixes
 
