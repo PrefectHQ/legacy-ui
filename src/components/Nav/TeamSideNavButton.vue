@@ -10,7 +10,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['invitations']),
     size() {
-      return this.$vuetify.breakpoint.mdAndUp ? (this.isOpen ? 300 : 200) : 150
+      return this.$vuetify.breakpoint.mdAndUp ? (this.isOpen ? 325 : 225) : 175
     }
   },
   methods: {
