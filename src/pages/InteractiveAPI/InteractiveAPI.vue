@@ -71,6 +71,12 @@ query { hello }
       'https://unpkg.com/react-dom/umd/react-dom.production.min.js'
     )
     await js('graphiql-js', 'https://unpkg.com/graphiql/graphiql.min.js')
+    let urlQuery
+    if (this.$route.query.query) {
+      urlQuery = print(gql`
+        ${this.$route.query.query}
+      `)
+    }
     const fetcher = params => {
       params.query = this.addQueryLimits(params.query)
       return fetch(this.url, {
@@ -80,14 +86,40 @@ query { hello }
           authorization: `Bearer ${this.authorizationToken}`
         },
         body: JSON.stringify(params)
-      }).then(res => res.json())
+      }).then(res => {
+        return res.json()
+      })
+    }
+    const encodeComponent = component => {
+      return encodeURIComponent(component)
+        .replace(/'/g, '%27')
+        .replace(/"/g, '%22')
+    }
+    const encodeQuery = query => {
+      let variables = ''
+      if (this.$router.history.current.query.variables) {
+        variables =
+          '&variables=' +
+          encodeComponent(this.$router.history.current.query.variables)
+      }
+      return this.$router.push('?query=' + encodeComponent(query) + variables)
+    }
+    const encodeVariables = vars => {
+      let query = '?query='
+      if (this.$router.history.current.query.query) {
+        query += encodeComponent(this.$router.history.current.query.query)
+      }
+      return this.$router.push(query + '&variables=' + encodeComponent(vars))
     }
     /* eslint-disable no-undef */
     ReactDOM.render(
       React.createElement(GraphiQL, {
         fetcher,
+        query: urlQuery,
         defaultQuery: this.defaultQuery,
-        readOnly: this.readOnly
+        readOnly: this.readOnly,
+        onEditQuery: encodeQuery,
+        onEditVariables: encodeVariables
       }),
       /* eslint-enable no-undef */
       document.getElementById('graphiql')
