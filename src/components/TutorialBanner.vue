@@ -34,7 +34,7 @@ export default {
   <v-banner :value="showBanner">
     <template #default>
       <div class="d-flex align-center">
-        <v-avatar slot="icon" color="#3b8dff" size="35">
+        <v-avatar slot="icon" color="#3b8dff" size="40">
           <v-icon icon="mdi-lock" color="white">
             school
           </v-icon>
@@ -49,7 +49,9 @@ export default {
           for more in-depth looks at the Prefect APIs
         </div>
         <v-btn
-          class="mr-2 mb-3"
+          class="ml-auto"
+          width="40"
+          height="40"
           icon
           text
           dark
