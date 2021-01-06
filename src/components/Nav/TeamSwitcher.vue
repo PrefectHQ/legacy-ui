@@ -70,7 +70,7 @@ export default {
     },
     teams() {
       return this.isCloud
-        ? this.memberships.map(m => {
+        ? this.memberships?.map(m => {
             return { ...m, ...m.tenant }
           })
         : this.tenants
