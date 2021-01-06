@@ -94,6 +94,13 @@ export default {
 .links-container {
   max-width: 100%;
   overflow-x: auto;
+  scrollbar-width: none;
   white-space: nowrap;
+
+  // stylelint-disable
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  // stylelint-enable
 }
 </style>
