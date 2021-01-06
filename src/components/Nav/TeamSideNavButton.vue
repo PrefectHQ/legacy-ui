@@ -21,7 +21,7 @@ export default {
 
 <template>
   <v-btn
-    class="text-subtitle-1 text-capitalize mx-1 font-weight-medium d-flex justify-space-between"
+    class="text-subtitle-1 text-capitalize mx-1 font-weight-medium d-flex justify-space-between px-3"
     dark
     large
     depressed
@@ -35,7 +35,7 @@ export default {
     <div
       style="font-size: 1.05rem;"
       class="d-flex align-center justify-start"
-      :style="{ width: size - 74 + 'px' }"
+      :style="{ width: size - 45 + 'px' }"
     >
       <div class="text-truncate">
         {{ tenant.name }}
