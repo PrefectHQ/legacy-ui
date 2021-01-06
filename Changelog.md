@@ -8,15 +8,14 @@
 
 ### Bugfixes
 
-- None
-
+- Fix bad refs to memberships and tenants on load (top nav slug fix) - [#534](https://github.com/PrefectHQ/ui/pull/534)
 
 ## 2021-01-05
 
 ### Features and Improvements
 
 - Add a flow run calendar view page - [#433](https://github.com/PrefectHQ/ui/pull/433)
-- Move to GraphiQL for our Interactive API  - [#509](https://github.com/PrefectHQ/ui/pull/509)
+- Move to GraphiQL for our Interactive API - [#509](https://github.com/PrefectHQ/ui/pull/509)
 - Simplify the flow run query for calendar view - [#518](https://github.com/PrefectHQ/ui/pull/518)
 - VU for top level nav and sidebar - [#520](https://github.com/PrefectHQ/ui/pull/520)
 - Introduce directory-based project - flow - task view to the sidebar - [#520](https://github.com/PrefectHQ/ui/pull/520)
