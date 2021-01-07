@@ -140,9 +140,7 @@ export default {
             :items="tzs"
             label="Time Zone"
             style="margin-top: 150px;"
-            outlined
             prepend-inner-icon="access_time"
-            :menu-props="{ offsetY: true }"
           />
         </div>
         <div v-else key="2" class="mt-4 d-block" style="max-width: 100%;">
@@ -168,3 +166,10 @@ export default {
     </div>
   </v-container>
 </template>
+
+<style>
+/* stylelint-disable */
+.v-autocomplete__content.v-menu__content .v-select-list {
+  max-width: 100%;
+}
+</style>
