@@ -1,0 +1,7 @@
+query Task($taskId: uuid!) {
+  task(where: { id: { _eq: $taskId } }) {
+    id
+    flow_id
+    name
+  }
+}

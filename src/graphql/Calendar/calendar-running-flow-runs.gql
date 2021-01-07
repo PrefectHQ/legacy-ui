@@ -1,0 +1,16 @@
+query CalendarRunningFlowRuns($startTime:timestamptz) {
+  flow_run (
+    where: { 
+      _and: [
+    {state: { _eq: "Running"}},
+    {start_time: {_lt: $startTime}}
+      ]
+    }
+    limit: 1
+    distinct_on: flow_id
+  ) 
+  {
+    id
+    flow_id
+  }
+}

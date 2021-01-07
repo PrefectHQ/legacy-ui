@@ -197,6 +197,20 @@ export const routes = [
       }
     ]
   },
+  // ---------------------------//
+  //
+  // Calendar
+  //
+  // ----------------------------//
+  {
+    name: 'calendar',
+    path: '/:tenant?/calendar',
+    component: () =>
+      import(
+        /*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
+      ),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
   // --------------------------- //
   //
   // Onboarding
@@ -285,7 +299,7 @@ export const routes = [
   // --------------------------- //
   {
     name: 'tutorial',
-    path: '/:tenant?/tutorial/:id?',
+    path: '/tutorial/:id?',
     component: () =>
       import(
         /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
@@ -306,7 +320,7 @@ export const routes = [
     path: '/home',
     component: () =>
       import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue'),
-    beforeEnter: multiguard([authNavGuard])
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
     name: 'dashboard',

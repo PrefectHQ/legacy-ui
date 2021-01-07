@@ -1,33 +1,28 @@
 import flowNavGuard from '@/middleware/flowNavGuard'
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
+import store from '@/store'
+
+const flows = [
+  {
+    id: 'flow_id_1',
+    flow_group_id: 'flow_group_id_1',
+    version: 1
+  }
+]
 
 //simple mock for gql api query
-
 jest.mock('@/vue-apollo', () => {
   return {
     fallbackApolloClient: {
       query: arg => {
-        if (arg.query == 'flow group') {
-          if (arg.variables.id == '123') {
-            return {
-              data: {
-                flow_group_by_pk: {
-                  id: '123'
-                }
-              }
-            }
-          } else {
-            return { data: 'error' }
-          }
-        }
         if (arg.query == 'flow') {
-          if (arg.variables.id == '456') {
+          if (arg.variables.id == 'flow_id_2') {
             return {
               data: {
                 flow_by_pk: {
-                  flow_group_id: '123',
-                  id: '12345',
+                  id: 'flow_id_2',
+                  flow_group_id: 'flow_group_id_2',
                   version: 3
                 }
               }
@@ -48,23 +43,36 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 describe('flowNavGuard', () => {
+  afterEach(() => {
+    store.commit('data/unsetFlows')
+  })
+
   test('if there is a flow group that matches the passed id, it returns next', async () => {
+    store.commit('data/setFlows', flows)
     const next = jest.fn()
-    await flowNavGuard({ name: 'flow', params: { id: '123' } }, {}, next)
+    await flowNavGuard(
+      { name: 'flow', params: { id: 'flow_group_id_1' } },
+      {},
+      next
+    )
     expect(next).toBeCalledWith()
   })
   test('if there is no flow group that matches the passed id, it checks the flow id and returns next if it matches', async () => {
     const next = jest.fn()
-    await flowNavGuard({ name: 'flow', params: { id: '456' } }, {}, next)
+    await flowNavGuard({ name: 'flow', params: { id: 'flow_id_2' } }, {}, next)
     expect(next).toBeCalledWith({
       name: 'flow',
-      params: { id: '123' },
+      params: { id: 'flow_group_id_2' },
       query: { version: 3 }
     })
   })
   test('if there is no flow or flow group that matches the passed id, it forwards to a 404', async () => {
     const next = jest.fn()
-    await flowNavGuard({ name: 'flow', params: { id: '789' } }, {}, next)
+    await flowNavGuard(
+      { name: 'flow', params: { id: 'flow_group_id_3' } },
+      {},
+      next
+    )
     expect(next).toBeCalledWith({
       name: 'not-found'
     })

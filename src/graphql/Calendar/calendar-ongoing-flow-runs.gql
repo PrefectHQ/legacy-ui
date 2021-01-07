@@ -1,0 +1,16 @@
+query CalendarOngoingFlowRuns($startTime:timestamptz, $endTime: timestamptz) {
+  flow_run (
+    where: { 
+      _and: [
+    {start_time: {_lt: $startTime}}
+    {end_time: {_gte: $endTime}}
+      ]
+    }
+    distinct_on: flow_id
+    limit: 1
+  ) 
+  {
+    id
+    flow_id
+  }
+}

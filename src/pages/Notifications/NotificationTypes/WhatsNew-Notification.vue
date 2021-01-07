@@ -40,15 +40,17 @@ export default {
 <template>
   <v-list-item-content v-if="dense">
     <v-list-item-title>
-      <span
-        class="px-2 rounded-pill d-inline-block caption white--text codePink"
-      >
-        New
-      </span>
-      {{ content.title }}
-      <v-icon v-if="content.link" x-small class="ml-1">
-        open_in_new
-      </v-icon>
+      <truncate :content="content.title">
+        <span
+          class="px-2 rounded-pill d-inline-block caption white--text codePink"
+        >
+          New
+        </span>
+        {{ content.title }}
+        <v-icon v-if="content.link" x-small class="ml-1">
+          open_in_new
+        </v-icon>
+      </truncate>
     </v-list-item-title>
     <v-list-item-subtitle v-if="timestamp">
       {{ timestamp }}

@@ -208,7 +208,11 @@ export default {
       }
     },
     versionGroups: {
-      query: require('@/graphql/TeamSettings/flow-version-groups.gql'),
+      query() {
+        return require('@/graphql/TeamSettings/flow-version-groups.js').default(
+          this.isCloud
+        )
+      },
       error() {
         this.handleError(
           'Something went wrong while trying to fetch your flows.'
@@ -313,19 +317,19 @@ export default {
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.active="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.version_group_id="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created_by.username="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.project.name="{ header }">
-            <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+            <span class="subtitle-2">{{ header.text }}</span>
           </template>
 
           <!-- FVG ID -->
