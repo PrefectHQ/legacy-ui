@@ -359,7 +359,6 @@ export default {
   height: 100%;
   max-width: 500px;
   transition: all 250ms;
-  width: 20%;
 }
 
 .global-search-activator {
