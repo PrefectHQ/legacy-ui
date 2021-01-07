@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- Exempt mutations from query limits in the InteractiveAPI (and fix some aggressive truncation in the team sidebar button) - [#533](https://github.com/PrefectHQ/ui/pull/533)
 - Fix bad refs to memberships and tenants on load (top nav slug fix) - [#534](https://github.com/PrefectHQ/ui/pull/534)
 
 ## 2021-01-05

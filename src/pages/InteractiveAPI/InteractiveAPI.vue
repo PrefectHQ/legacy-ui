@@ -135,6 +135,10 @@ query { hello }
       const queryObject = gql`
         ${query}
       `
+
+      // Mutations don't need to be limited (and also limits are supported on mutations)
+      if (queryObject.definitions?.[0]?.operation == 'mutation') return query
+
       queryObject.definitions[0].selectionSet.selections.forEach(selection => {
         // Exclude queries that do not support limiting
         let exclude = false
