@@ -134,14 +134,16 @@ export default {
             />
           </v-fade-transition>
 
-          <!-- <v-select
-            v-if="advancedType == 'cron'"
+          <v-autocomplete
+            v-show="advancedType == 'cron'"
             v-model="selectedTimezone"
-            style="margin-top: 100px;"
             :items="tzs"
-            label="Time Zone (Optional)"
+            label="Time Zone"
+            style="margin-top: 150px;"
+            outlined
             prepend-inner-icon="access_time"
-          ></v-select> -->
+            :menu-props="{ offsetY: true }"
+          />
         </div>
         <div v-else key="2" class="mt-4 d-block" style="max-width: 100%;">
           <SimpleForm v-model="simpleModel" />
