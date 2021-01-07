@@ -1,6 +1,5 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import moment from 'moment-timezone'
 
 import ConfirmDialog from '@/components/ConfirmDialog'
 import CronClock from '@/components/Functional/CronClock'
@@ -52,11 +51,6 @@ export default {
         c.scheduleType = 'flow-group'
         return c
       })
-    },
-    timezoneAbbr() {
-      return moment()
-        .tz(this.clocks[0].timezone || this.timezone)
-        .zoneAbbr()
     }
   },
   watch: {
@@ -309,7 +303,7 @@ export default {
                     <CronClock
                       v-if="clock.type == 'CronClock'"
                       :cron="clock.cron"
-                      :timezone="timezoneAbbr"
+                      :timezone="clocks[0].timezone || timezone"
                     />
                     <IntervalClock
                       v-else-if="clock.type == 'IntervalClock'"

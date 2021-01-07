@@ -1,6 +1,7 @@
 <script>
 /* eslint-disable vue/no-v-html */
 import cronstrue from 'cronstrue'
+import moment from 'moment-timezone'
 import { PARSED_SCHEDULE_REGEX } from '@/utils/regEx'
 
 export default {
@@ -24,6 +25,11 @@ export default {
     parsedCron() {
       return cronstrue.toString(this.cron, { verbose: this.verbose })
     },
+    timezoneAbbr() {
+      return moment()
+        .tz(this.timezone)
+        .zoneAbbr()
+    },
     highlightedText() {
       if (!this.parsedCron) return ''
       if (this.timezone) {
@@ -31,7 +37,7 @@ export default {
           .replace(PARSED_SCHEDULE_REGEX, match => {
             return `<span class="primary--text">${match}</span>`
           })
-          .concat(`<span class="primary--text"> (${this.timezone})</span>`)
+          .concat(`<span class="primary--text"> (${this.timezoneAbbr})</span>`)
       } else {
         return this.parsedCron.replace(PARSED_SCHEDULE_REGEX, match => {
           return `<span class="primary--text">${match}</span>`
