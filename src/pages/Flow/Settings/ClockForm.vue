@@ -119,30 +119,21 @@ export default {
           </v-chip-group>
 
           <v-fade-transition mode="out-in">
-            <CronForm
-              v-if="advancedType == 'cron'"
-              key="Cron"
-              v-model="cronModel"
-              :valid.sync="valid"
-              class="mt-4"
-            />
-            <IntervalForm
-              v-else-if="advancedType == 'interval'"
-              key="Interval"
-              v-model="intervalModel"
-              class="mt-4"
-            />
+            <div v-if="advancedType == 'cron'" key="Cron">
+              <CronForm v-model="cronModel" :valid.sync="valid" class="mt-4" />
+              <v-autocomplete
+                v-model="selectedTimezone"
+                :items="tzs"
+                outlined
+                label="Time Zone"
+                style="margin-top: 110px;"
+                prepend-inner-icon="access_time"
+              />
+            </div>
+            <div v-else-if="advancedType == 'interval'" key="Interval">
+              <IntervalForm v-model="intervalModel" class="mt-4" />
+            </div>
           </v-fade-transition>
-
-          <v-autocomplete
-            v-show="advancedType == 'cron'"
-            v-model="selectedTimezone"
-            :items="tzs"
-            outlined
-            label="Time Zone"
-            style="margin-top: 150px;"
-            prepend-inner-icon="access_time"
-          />
         </div>
         <div v-else key="2" class="mt-4 d-block" style="max-width: 100%;">
           <SimpleForm v-model="simpleModel" />
