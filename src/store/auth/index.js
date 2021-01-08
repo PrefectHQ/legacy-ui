@@ -9,7 +9,7 @@ const { VUE_APP_PUBLIC_CLIENT_ID, VUE_APP_PUBLIC_ISSUER } = process.env
 const authClient = new OktaAuth({
   clientId: VUE_APP_PUBLIC_CLIENT_ID,
   issuer: VUE_APP_PUBLIC_ISSUER,
-  redirectUri: 'http://localhost:8080',
+  redirectUri: window.location.href,
   scopes: ['openid', 'profile', 'email'],
   testing: {
     disableHttpsCheck: true
@@ -256,14 +256,15 @@ const mutations = {
 
 const actions = {
   async authenticate({ dispatch, commit }) {
-    // if (!tokens) {
-    //   commit('isAuthenticated', false)
-    //   await dispatch('login')
-    // } else {
-    //   dispatch('commitTokens', tokens)
+    if (window.location?.pathname && !getters['redirectRoute']) {
+      dispatch('setRedirectRoute', window.location.pathname)
+    }
 
-    //   commit('isAuthenticated', true)
-    // }
+    if (window.location?.search?.includes('invitation_id=')) {
+      const invitationID = window.location.search.split('=')
+      sessionStorage.setItem('invitationId', invitationID[1])
+    }
+
     const isLoginRedirect = authClient.token.isLoginRedirect()
     const { tokens } = isLoginRedirect
       ? await authClient.token.parseFromUrl()
