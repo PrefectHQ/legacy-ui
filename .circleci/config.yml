@@ -167,14 +167,14 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - dev
       - deploy-dev:
           requires:
             - build-dev
           filters:
             branches:
               only:
-                - master
+                - dev
   'Deploy staging':
     jobs:
       - build-staging:
