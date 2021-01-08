@@ -26,6 +26,7 @@ export const authMixin = {
     ...mapActions('auth', ['authenticate']),
     async checkSession() {
       const session = await authClient.session.exists()
+      // eslint-disable-next-line
       console.log(session)
     },
     async getSession() {
@@ -44,6 +45,7 @@ export const authMixin = {
       this.authenticate(tokens)
     },
     async login() {
+      // eslint-disable-next-line
       console.log('login pressed')
 
       const { sessionToken } = await authClient.signInWithCredentials({
@@ -56,9 +58,11 @@ export const authMixin = {
       this.$router.push({ name: 'dashboard' })
     },
     loginWithGitHub() {
+      // eslint-disable-next-line
       console.log('logging in with GitHub')
     },
     loginWithGoogle() {
+      // eslint-disable-next-line
       console.log('logging in with Google')
     }
   }

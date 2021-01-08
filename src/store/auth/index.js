@@ -269,6 +269,7 @@ const actions = {
       ? await authClient.token.parseFromUrl()
       : await authClient.tokenManager.getTokens()
 
+    // eslint-disable-next-line
     console.log(tokens)
 
     if (!tokens) {
@@ -351,12 +352,16 @@ const actions = {
     const idToken = await authClient.tokenManager.get('idToken')
     const accessToken = await authClient.tokenManager.get('accessToken')
 
+    // eslint-disable-next-line
     console.log(idToken, accessToken)
     if (!idToken || !accessToken) {
       commit('isAuthenticated', false)
       await dispatch('login')
     } else {
-      dispatch('commitTokens', { idToken: idToken, accessToken: accessToken })
+      dispatch('commitTokens', {
+        idToken: idToken,
+        accessToken: accessToken
+      })
     }
 
     commit('isRefreshingAuthentication', false)
