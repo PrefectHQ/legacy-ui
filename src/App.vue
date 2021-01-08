@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
-import { authMixin } from '@/mixins/authMixin'
+// import { authMixin } from '@/mixins/authMixin'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
@@ -35,7 +35,7 @@ export default {
     GlobalSearch,
     TeamSideNav
   },
-  mixins: [authMixin, eventsMixin],
+  mixins: [eventsMixin],
   data() {
     return {
       error: null,
@@ -196,19 +196,19 @@ export default {
       }
     }
 
-    if (this.isCloud) {
-      await this.getSession()
+    // if (this.isCloud) {
+    //   await this.getSession()
 
-      if (!this.isAuthenticated) {
-        this.$router.push({
-          name: 'login'
-        })
-      } else {
-        this.$router.push({
-          name: 'dashboard'
-        })
-      }
-    }
+    //   if (!this.isAuthenticated) {
+    //     this.$router.push({
+    //       name: 'login'
+    //     })
+    //   } else {
+    //     this.$router.push({
+    //       name: 'dashboard'
+    //     })
+    //   }
+    // }
     this.$globalApolloQueries['agents'] = this.$apollo.addSmartQuery('agents', {
       query() {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)

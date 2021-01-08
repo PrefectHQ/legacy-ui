@@ -60,11 +60,11 @@ const mutations = {
     state.user = { ...user }
     state.userIsSet = true
   },
-  setOktaUser(state, auth0User) {
-    state.auth0User = {
-      name: auth0User.name,
-      email: auth0User.email,
-      picture: auth0User.picture
+  setOktaUser(state, oktaUser) {
+    state.oktaUser = {
+      name: oktaUser.name,
+      email: oktaUser.email,
+      picture: oktaUser.picture
     }
   },
   setUserSettings(state, settings) {
@@ -86,7 +86,7 @@ const mutations = {
     state.userIsSet = false
   },
   unsetOktaUser(state) {
-    state.auth0User = {
+    state.oktaUser = {
       name: null,
       email: null,
       picture: null

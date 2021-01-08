@@ -28,8 +28,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('auth0', ['isAuthorized']),
-    ...mapGetters('user', ['user', 'auth0User'])
+    ...mapGetters('auth', ['isAuthorized']),
+    ...mapGetters('user', ['user', 'oktaUser'])
   },
   mounted() {
     clearInterval(this.clock)
@@ -38,7 +38,7 @@ export default {
     }, 1000)
   },
   methods: {
-    ...mapActions('auth0', ['logout']),
+    ...mapActions('auth', ['logout']),
     trackAndLogout() {
       this.logout(this.$apolloProvider.clients.defaultClient)
     }
@@ -74,7 +74,7 @@ export default {
     <v-sheet width="300" class="pt-6 text-center">
       <div class="text-center">
         <v-avatar size="64">
-          <img :src="auth0User.picture" :alt="auth0User.name" />
+          <img :src="oktaUser.picture" :alt="oktaUser.name" />
         </v-avatar>
 
         <div class="mt-2 text-h6">

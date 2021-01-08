@@ -29,7 +29,6 @@ export default {
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('auth0', ['authorizationToken']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['license']),
     isMobile() {

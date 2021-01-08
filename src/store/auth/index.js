@@ -11,7 +11,6 @@ const authClient = new OktaAuth({
   issuer: VUE_APP_PUBLIC_ISSUER,
   redirectUri: 'http://localhost:8080',
   scopes: ['openid', 'profile', 'email'],
-  authorizeUrl: 'http://localhost:8081',
   testing: {
     disableHttpsCheck: true
   }
@@ -256,10 +255,25 @@ const mutations = {
 }
 
 const actions = {
-  async authenticate({ dispatch, commit }, tokens) {
+  async authenticate({ dispatch, commit }) {
+    // if (!tokens) {
+    //   commit('isAuthenticated', false)
+    //   await dispatch('login')
+    // } else {
+    //   dispatch('commitTokens', tokens)
+
+    //   commit('isAuthenticated', true)
+    // }
+    const isLoginRedirect = authClient.token.isLoginRedirect()
+    const { tokens } = isLoginRedirect
+      ? await authClient.token.parseFromUrl()
+      : await authClient.tokenManager.getTokens()
+
+    console.log(tokens)
+
     if (!tokens) {
       commit('isAuthenticated', false)
-      // await dispatch('login')
+      await dispatch('login')
     } else {
       dispatch('commitTokens', tokens)
 
@@ -274,7 +288,7 @@ const actions = {
 
     commit('user', user)
     dispatch('reportUserToLogRocket')
-    console.log(user)
+
     commit('user/setOktaUser', user, {
       root: true
     })
@@ -355,8 +369,8 @@ const actions = {
     setTimeout(() => {
       // console.log(authClient)
       authClient.token.getWithRedirect({
-        responseType: ['code'],
-        state: 'ui-testing'
+        responseType: ['token', 'id_token']
+        // state: 'ui-testing'
       })
       commit('isLoggingInUser', false)
     }, 2000)
