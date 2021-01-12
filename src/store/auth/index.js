@@ -369,17 +369,10 @@ const actions = {
   },
   async login({ commit }) {
     commit('isLoggingInUser', true)
-    // NO IDEA WHY THIS TIMEOUT IS NECESSARY
-    // the redirect "fails" (succeeds but login doesn't show, despite the DOM all being present)
-    // about 50% of the time without this timeout.
-    setTimeout(() => {
-      // console.log(authClient)
-      authClient.token.getWithRedirect({
-        responseType: ['token', 'id_token']
-        // state: 'ui-testing'
-      })
-      commit('isLoggingInUser', false)
-    }, 2000)
+    authClient.token.getWithRedirect({
+      responseType: ['token', 'id_token']
+    })
+    commit('isLoggingInUser', false)
   },
   async logout({ commit }) {
     commit('unsetRedirectRoute')
