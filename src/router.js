@@ -289,6 +289,12 @@ export const routes = [
     ]
   },
   {
+    name: 'logout',
+    path: '/logout',
+    component: () =>
+      import(/* webpackChunkName: "Auth" */ '@/pages/Auth/Logout.vue')
+  },
+  {
     path: '/accept',
     redirect: 'welcome/accept'
   },

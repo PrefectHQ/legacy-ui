@@ -9,7 +9,8 @@ const { VUE_APP_PUBLIC_CLIENT_ID, VUE_APP_PUBLIC_ISSUER } = process.env
 const authClient = new OktaAuth({
   clientId: VUE_APP_PUBLIC_CLIENT_ID,
   issuer: VUE_APP_PUBLIC_ISSUER,
-  redirectUri: window.location.href,
+  redirectUri: window.location.origin,
+  postLogoutRedirectUri: window.location.origin + '/logout',
   scopes: ['openid', 'profile', 'email'],
   testing: {
     disableHttpsCheck: true
@@ -376,7 +377,7 @@ const actions = {
   },
   async logout({ commit }) {
     commit('unsetRedirectRoute')
-    authClient.signOut({})
+    await authClient.signOut()
   },
   setRedirectRoute({ commit }, redirectRoute) {
     commit('redirectRoute', redirectRoute)
