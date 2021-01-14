@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['logout']),
-    async trackAndLogout() {
+    async wipeClientAndLogout() {
       await this.logout(this.$apolloProvider.clients.defaultClient)
     }
   }
@@ -141,7 +141,7 @@ export default {
           class="text-capitalize py-6"
           depressed
           block
-          @click="trackAndLogout"
+          @click="wipeClientAndLogout"
         >
           <span class="mr-2">Sign out</span>
           <i class="fad fa-sign-out" />
