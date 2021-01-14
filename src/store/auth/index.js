@@ -266,27 +266,36 @@ const actions = {
       sessionStorage.setItem('invitationId', invitationID[1])
     }
 
+    const isAuthenticated = await authClient.isAuthenticated()
     const isLoginRedirect = authClient.token.isLoginRedirect()
+
     const { tokens } = isLoginRedirect
       ? await authClient.token.parseFromUrl()
       : await authClient.tokenManager.getTokens()
 
-    // eslint-disable-next-line
-    console.log(tokens)
+    if (tokens) {
+      dispatch('commitTokens', tokens)
+      commit('isAuthenticated', true)
+      return
+    } else if (isAuthenticated) {
+      const idToken = await authClient.tokenManager.get('idToken')
+      const accessToken = await authClient.tokenManager.get('accessToken')
 
-    if (!tokens) {
+      dispatch('commitTokens', {
+        idToken: idToken,
+        accessToken: accessToken
+      })
+      commit('isAuthenticated', true)
+    } else {
       commit('isAuthenticated', false)
       await dispatch('login')
-    } else {
-      dispatch('commitTokens', tokens)
-
-      commit('isAuthenticated', true)
     }
   },
   async authorize({ commit, getters, dispatch }) {
     commit('isAuthorizingUser', true)
 
     const user = await authClient.getUser()
+    console.log(user)
     if (!user) return
 
     commit('user', user)
