@@ -5,10 +5,9 @@ const { VUE_APP_PUBLIC_CLIENT_ID, VUE_APP_PUBLIC_ISSUER } = process.env
 const authClient = new OktaAuth({
   clientId: VUE_APP_PUBLIC_CLIENT_ID,
   issuer: VUE_APP_PUBLIC_ISSUER,
-  redirectUri: 'http://localhost:8080',
+  redirectUri: window.location.origin,
   scopes: ['openid', 'profile', 'email'],
   responseType: 'token',
-  //   authorizeUrl: 'http://localhost:8081',
   testing: {
     disableHttpsCheck: true
   }
@@ -25,9 +24,7 @@ export const authMixin = {
   methods: {
     ...mapActions('auth', ['authenticate']),
     async checkSession() {
-      const session = await authClient.session.exists()
-      // eslint-disable-next-line
-      console.log(session)
+      // const session = await authClient.session.exists()
     },
     async getSession() {
       const sessionExists = await authClient.session.exists()
@@ -45,9 +42,6 @@ export const authMixin = {
       this.authenticate(tokens)
     },
     async login() {
-      // eslint-disable-next-line
-      console.log('login pressed')
-
       const { sessionToken } = await authClient.signInWithCredentials({
         username: this.email,
         password: this.password
@@ -57,13 +51,7 @@ export const authMixin = {
 
       this.$router.push({ name: 'dashboard' })
     },
-    loginWithGitHub() {
-      // eslint-disable-next-line
-      console.log('logging in with GitHub')
-    },
-    loginWithGoogle() {
-      // eslint-disable-next-line
-      console.log('logging in with Google')
-    }
+    loginWithGitHub() {},
+    loginWithGoogle() {}
   }
 }

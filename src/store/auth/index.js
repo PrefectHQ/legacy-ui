@@ -4,7 +4,11 @@ import jwt_decode from 'jwt-decode'
 
 import { OktaAuth } from '@okta/okta-auth-js'
 
-const { VUE_APP_PUBLIC_CLIENT_ID, VUE_APP_PUBLIC_ISSUER } = process.env
+const {
+  VUE_APP_PUBLIC_CLIENT_ID,
+  VUE_APP_PUBLIC_ISSUER,
+  VUE_APP_ENVIRONMENT
+} = process.env
 
 const authClient = new OktaAuth({
   clientId: VUE_APP_PUBLIC_CLIENT_ID,
@@ -13,7 +17,7 @@ const authClient = new OktaAuth({
   postLogoutRedirectUri: window.location.origin + '/logout',
   scopes: ['openid', 'profile', 'email'],
   testing: {
-    disableHttpsCheck: true
+    disableHttpsCheck: VUE_APP_ENVIRONMENT !== 'production'
   }
 })
 
