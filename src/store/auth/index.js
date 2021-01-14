@@ -366,8 +366,6 @@ const actions = {
     const idToken = await authClient.tokenManager.get('idToken')
     const accessToken = await authClient.tokenManager.get('accessToken')
 
-    // eslint-disable-next-line
-    console.log(idToken, accessToken)
     if (!idToken || !accessToken) {
       commit('isAuthenticated', false)
       await dispatch('login')
