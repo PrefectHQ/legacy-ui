@@ -1,4 +1,6 @@
 <script>
+import { mapActions } from 'vuex'
+
 const quotes = [
   'The first ten million years were the worst," said Marvin, "and the second ten million years, they were the worst too. The third ten million years I didn\'t enjoy at all. After that I went into a bit of a decline.',
   "Sorry, did I say something wrong? Pardon me for breathing, which I never do anyway so I don't know why I bother to say it.",
@@ -10,7 +12,17 @@ const quotes = [
 export default {
   data() {
     return {
+      redirecting: false,
       quote: quotes[Math.floor(Math.random() * quotes.length)]
+    }
+  },
+  methods: {
+    ...mapActions('auth', ['login']),
+    redirectToLogin() {
+      this.redirecting = true
+      setTimeout(() => {
+        this.login()
+      }, 1500)
     }
   }
 }
@@ -29,7 +41,16 @@ export default {
         {{ quote }}
       </blockquote>
     </div>
-    <v-btn color="prefect" dark class="mt-8" large>Sign In</v-btn>
+    <v-btn
+      color="prefect"
+      dark
+      class="mt-8"
+      large
+      :loading="redirecting"
+      @click="redirectToLogin"
+    >
+      Sign In
+    </v-btn>
   </v-container>
 </template>
 
