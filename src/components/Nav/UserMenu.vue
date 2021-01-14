@@ -39,8 +39,8 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['logout']),
-    trackAndLogout() {
-      this.logout(this.$apolloProvider.clients.defaultClient)
+    async trackAndLogout() {
+      await this.logout(this.$apolloProvider.clients.defaultClient)
     }
   }
 }
@@ -73,8 +73,14 @@ export default {
 
     <v-sheet width="300" class="pt-6 text-center">
       <div class="text-center">
-        <v-avatar size="64">
-          <img :src="oktaUser.picture" :alt="oktaUser.name" />
+        <v-avatar size="64" :tile="!oktaUser.picture">
+          <img
+            :src="
+              oktaUser.picture ||
+                require('@/assets/logos/logomark-cerulean.svg')
+            "
+            :alt="oktaUser.name"
+          />
         </v-avatar>
 
         <div class="mt-2 text-h6">

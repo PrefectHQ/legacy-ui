@@ -384,6 +384,9 @@ const actions = {
     commit('isLoggingInUser', false)
   },
   async logout({ commit }) {
+    commit('isAuthenticated', false)
+    commit('unsetIdToken')
+    commit('unsetAccessToken')
     commit('unsetRedirectRoute')
     await authClient.signOut()
   },

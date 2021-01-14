@@ -13,7 +13,7 @@ import debounce from 'lodash.debounce'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
-const fullPageRoutes = ['api', '404', 'calendar']
+const fullPageRoutes = ['api', '404', 'calendar', 'logout']
 
 export default {
   metaInfo() {
@@ -196,19 +196,6 @@ export default {
       }
     }
 
-    // if (this.isCloud) {
-    //   await this.getSession()
-
-    //   if (!this.isAuthenticated) {
-    //     this.$router.push({
-    //       name: 'login'
-    //     })
-    //   } else {
-    //     this.$router.push({
-    //       name: 'dashboard'
-    //     })
-    //   }
-    // }
     this.$globalApolloQueries['agents'] = this.$apollo.addSmartQuery('agents', {
       query() {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
@@ -217,7 +204,7 @@ export default {
         return (this.isCloud && !this.isAuthorized) || !this.connected
       },
       pollInterval: 3000,
-      //Without this, server UI with no actual server shows results
+      // Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
       update(data) {
         if (!data?.agent) return null
@@ -292,27 +279,6 @@ export default {
     window.addEventListener('online', this.handleOnline)
     window.addEventListener('mousewheel', this.handleScroll)
 
-    // clientId: '0oa255485udf0Aiok5d6',
-    // domain: 'https://dev-1174844.okta.com',
-    // issuer: 'https://dev-1174844.okta.com/oauth2/aus253yqnnV3LqpiR5d6'
-    // console.log(this.isCloud)
-    // if (this.isCloud) {
-    //   this.oktaClient = new OktaSignIn({
-    //     el: '#okta-client',
-    //     baseUrl: 'https://dev-1174844.okta.com',
-    //     clientId: '0oa255485udf0Aiok5d6',
-    //     redirectUri: 'http://localhost:8080',
-    //     authParams: {
-    //       issuer: 'https://dev-1174844.okta.com/oauth2/aus253yqnnV3LqpiR5d6',
-    //       responseType: ['code'],
-    //       // scopes: this.scope,
-    //       display: 'page'
-    //     },
-    //     features: {
-    //       // router: true
-    //     }
-    //   })
-    // }
     // document.addEventListener(
     //   'visibilitychange',
     //   this.handleVisibilityChange,
@@ -418,7 +384,13 @@ export default {
         />
       </v-slide-y-transition>
 
-      <TeamSideNav />
+      <TeamSideNav
+        v-if="
+          ((isCloud && isAuthenticated) || isServer) &&
+            loadedComponents > 0 &&
+            !isWelcome
+        "
+      />
 
       <v-fade-transition mode="out-in">
         <router-view
