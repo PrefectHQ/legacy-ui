@@ -64,7 +64,7 @@ const mutations = {
     state.oktaUser = {
       name: oktaUser.name,
       email: oktaUser.email,
-      picture: oktaUser.picture
+      picture: oktaUser.picture || oktaUser.picture_url
     }
   },
   setUserSettings(state, settings) {

@@ -295,7 +295,6 @@ const actions = {
     commit('isAuthorizingUser', true)
 
     const user = await authClient.getUser()
-    console.log(user)
     if (!user) return
 
     commit('user', user)
