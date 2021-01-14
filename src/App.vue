@@ -411,7 +411,9 @@ export default {
       <v-slide-y-transition>
         <ApplicationNavBar
           v-if="
-            ((isCloud && isAuthenticated) || isServer) && loadedComponents > 0
+            ((isCloud && isAuthenticated) || isServer) &&
+              loadedComponents > 0 &&
+              !isWelcome
           "
         />
       </v-slide-y-transition>
@@ -437,7 +439,7 @@ export default {
       <GlobalSearch v-if="$vuetify.breakpoint.xsOnly" />
 
       <v-slide-y-reverse-transition>
-        <Footer v-if="!fullPageRoute && showFooter" />
+        <Footer v-if="!fullPageRoute && showFooter && !isWelcome" />
       </v-slide-y-reverse-transition>
     </v-main>
 
