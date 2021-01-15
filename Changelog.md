@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix bug where some flows with schedules were showing None in details card - [#553](https://github.com/PrefectHQ/ui/pull/553)
 
 ## 2021-01-07
 
