@@ -271,24 +271,17 @@ const actions = {
     }
 
     const isAuthenticated = await authClient.isAuthenticated()
-    const isLoginRedirect = authClient.isLoginRedirect()
+    const isLoginRedirect = await authClient.isLoginRedirect()
 
     const { tokens } = isLoginRedirect
       ? await authClient.token.parseFromUrl()
-      : await authClient.tokenManager.getTokens()
+      : { tokens: await authClient.tokenManager.getTokens() }
 
     if (tokens) {
       dispatch('commitTokens', tokens)
       commit('isAuthenticated', true)
     } else if (isAuthenticated) {
-      const idToken = await authClient.tokenManager.get('idToken')
-      const accessToken = await authClient.tokenManager.get('accessToken')
-
-      dispatch('commitTokens', {
-        idToken: idToken,
-        accessToken: accessToken
-      })
-      commit('isAuthenticated', true)
+      await dispatch('updateAuthentication')
     } else {
       commit('isAuthenticated', false)
       await dispatch('login')
@@ -358,9 +351,6 @@ const actions = {
     )
   },
   async updateAuthentication({ dispatch, commit }) {
-    const bypassAuthentication = await authClient.isAuthenticated()
-    if (bypassAuthentication) return
-
     commit('isRefreshingAuthentication', true)
 
     // This should manually update authentication
@@ -371,6 +361,7 @@ const actions = {
       commit('isAuthenticated', false)
       await dispatch('login')
     } else {
+      commit('isAuthenticated', true)
       dispatch('commitTokens', {
         idToken: idToken,
         accessToken: accessToken

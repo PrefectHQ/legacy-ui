@@ -1,7 +1,7 @@
 const raw_jwt =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYXdkYXdkYWRhLTQ5NDItNDhhNS04YzY2LWFkYXdkYWRhZCIsInRlbmFudF9pZCI6ImF3ZGF3ZGFkLWQ1NzAtNGYwYy05MTFkLWRjYWFiNWNlYzNkMCIsInJvbGUiOiJURU5BTlRfQURNSU4iLCJpYXQiOjE1Njg4NDAyODQsImV4cCI6MTU2ODg0MDI5OSwianRpIjoiMThiNDRhMTgtNTU2Yy00M2YzLTkxOWEtZDAwOWIwNDIzOTA3IiwiaXNzIjoiUHJlZmVjdCBDbG91ZCIsImF1ZCI6IlByZWZlY3QgQ2xvdWQgQVBJIC0gREVWIn0.3rI7CM3lT_u-8PPuTmR78ZlPeRZd4zRxsuIT9GYtr3A'
 
-const idToken = {
+export const idToken = {
   authorizeUrl: 'https://some.authorization.url/oauth2/authorize',
   claims: {
     sub: 'abc123',
@@ -21,7 +21,7 @@ const idToken = {
   value: raw_jwt
 }
 
-const accessToken = {
+export const accessToken = {
   accessToken: raw_jwt,
   authorizeUrl:
     'https://universal.prefect.io/oauth2/aus9ej78aeaYy8Lcf1d6/v1/authorize',
@@ -44,14 +44,16 @@ const accessToken = {
   value: raw_jwt
 }
 
-const MOCK_TOKEN_PAYLOAD = { idToken: idToken, accessToken: accessToken }
+const MOCK_TOKEN_PAYLOAD = {
+  tokens: { idToken: idToken, accessToken: accessToken }
+}
 
 export const parseFromUrl = jest.fn().mockReturnValue(MOCK_TOKEN_PAYLOAD)
-export const getTokens = jest.fn().mockReturnValue(MOCK_TOKEN_PAYLOAD)
+export const getTokens = jest.fn().mockReturnValue(MOCK_TOKEN_PAYLOAD.tokens)
 export const getWithRedirect = jest.fn().mockReturnValue(MOCK_TOKEN_PAYLOAD)
-export const getTokenByKey = jest.fn(key => [key])
-export const isAuthenticated = jest.fn().mockReturnValue(Math.random() >= 0.5)
-export const isLoginRedirect = jest.fn().mockReturnValue(Math.random() >= 0.5)
+export const getTokenByKey = jest.fn().mockReturnValue(false)
+export const isAuthenticated = jest.fn().mockReturnValue(false)
+export const isLoginRedirect = jest.fn().mockReturnValue(false)
 export const getUser = jest.fn().mockReturnValue({})
 export const setTokens = jest.fn()
 export const signOut = jest.fn()

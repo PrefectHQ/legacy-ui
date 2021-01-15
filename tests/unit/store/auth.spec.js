@@ -6,8 +6,11 @@ import {
   isAuthenticated,
   isLoginRedirect,
   getUser,
+  idToken,
+  accessToken,
   setTokens,
-  signOut
+  signOut,
+  OktaAuth
 } from '@okta/okta-auth-js'
 jest.mock('@okta/okta-auth-js')
 
@@ -590,6 +593,21 @@ describe('auth Vuex Module', () => {
     })
 
     describe('authenticate', () => {
+      beforeEach(() => {
+        store = new Vuex.Store({
+          state: auth.state,
+          getters: auth.getters,
+          actions: auth.actions,
+          mutations: auth.mutations
+        })
+
+        isAuthenticated.mockClear()
+        isLoginRedirect.mockClear()
+        parseFromUrl.mockClear()
+        getTokens.mockClear()
+        getUser.mockClear()
+      })
+
       it('calls the isAuthenticated method', async () => {
         await store.dispatch('authenticate')
         expect(isAuthenticated).toHaveBeenCalled()
@@ -602,11 +620,12 @@ describe('auth Vuex Module', () => {
 
       it('correctly returns the value of isAuthenticated', async () => {
         isAuthenticated.mockReturnValueOnce(false)
+        getTokens.mockReturnValueOnce(false)
         let authenticateResult = await store.dispatch('authenticate')
         expect(authenticateResult).toBe(false)
 
-        isAuthenticated.mockReturnValueOnce(true)
         isLoginRedirect.mockReturnValueOnce(true)
+        parseFromUrl.mockClear()
         authenticateResult = await store.dispatch('authenticate')
         expect(store.getters.isAuthenticated).toBe(true)
         expect(authenticateResult).toBe(true)
@@ -615,12 +634,14 @@ describe('auth Vuex Module', () => {
       it('tries to pull tokens from the token manager if is not a login redirect', async () => {
         isLoginRedirect.mockReturnValueOnce(false)
         await store.dispatch('authenticate')
+        expect(parseFromUrl).not.toHaveBeenCalled()
         expect(getTokens).toHaveBeenCalled()
       })
 
       it('tries to pull tokens from the url if isLoginRedirect is true', async () => {
         isLoginRedirect.mockReturnValueOnce(true)
         await store.dispatch('authenticate')
+        expect(getTokens).not.toHaveBeenCalled()
         expect(parseFromUrl).toHaveBeenCalled()
       })
 
@@ -675,51 +696,22 @@ describe('auth Vuex Module', () => {
           expect(store.getters['user']).toBe(user)
         })
 
-        it('is reported to logrocket it exists', async () => {
+        it('is reported to logrocket if exists', async () => {
           getUser.mockReturnValueOnce(loggedInState().user)
           await store.dispatch('authorize')
           expect(LogRocket.identify).toHaveBeenCalled()
         })
       })
 
-      describe('idToken', () => {
-        beforeEach(() => {
-          prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-        })
-
-        it('is stored', () => {
-          getTokenByKey.mockReturnValueOnce(MOCK_ID_TOKEN)
-
-          expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
-        })
-      })
-
-      describe('idTokenExpiry', () => {
-        beforeEach(() => {
-          prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-        })
-
-        it('is stored', () => {
-          getTokenByKey.mockReturnValueOnce(MOCK_ID_TOKEN)
-
-          expect(store.getters['idTokenExpiry']).toBe(
-            jwt_decode(MOCK_ID_TOKEN).exp * 1000
-          )
-        })
-      })
-
       describe('prefectAuthorization', () => {
         beforeEach(() => {
-          getTokenByKey.mockReturnValueOnce(MOCK_ID_TOKEN)
-
           prefectAuth.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-
           LogRocket.identify.mockReset()
         })
 
         it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
+          store.commit('idToken', MOCK_ID_TOKEN)
           await store.dispatch('authorize')
-
           expect(prefectAuth).toHaveBeenCalledWith(MOCK_ID_TOKEN)
         })
 
@@ -745,20 +737,15 @@ describe('auth Vuex Module', () => {
     describe('refreshAuthorization', () => {
       describe('prefectAuthorization', () => {
         beforeEach(() => {
-          getTokenByKey.mockReturnValueOnce(MOCK_ID_TOKEN)
-
+          store.commit('refreshToken', MOCK_REFRESH_TOKEN)
           prefectRefresh.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
-
           LogRocket.identify.mockReset()
-
-          store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
         })
 
         it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
-          store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
           await store.dispatch('refreshAuthorization')
 
-          expect(prefectRefresh).toHaveBeenCalledWith(MOCK_AUTHORIZATION_TOKEN)
+          expect(prefectRefresh).toHaveBeenCalledWith(MOCK_REFRESH_TOKEN)
         })
 
         it('is stored', async () => {
@@ -794,50 +781,17 @@ describe('auth Vuex Module', () => {
         const user = loggedInState().user
         getUser.mockReturnValue(user)
 
-        getTokenByKey.mockReturnValueOnce(MOCK_ID_TOKEN)
-      })
-
-      afterEach(() => {
-        isAuthenticated.mockReset()
-        getUser.mockReset()
         getTokenByKey.mockReset()
-        getTokens.mockReset()
       })
 
-      it('checks authentication once and returns if user is authenticated', async () => {
-        isAuthenticated.mockReset()
-        isAuthenticated.mockReturnValueOnce(true)
-
+      it('gets idToken and accessTokens from the token manager', async () => {
         await store.dispatch('updateAuthentication')
-
-        expect(isAuthenticated).toHaveBeenCalledTimes(1)
+        expect(getTokenByKey).toHaveBeenCalledTimes(2)
       })
 
-      it('checks authentication twice if user is not authenticated', async () => {
+      it('calls getWithRedirect when not authenticated', async () => {
         await store.dispatch('updateAuthentication')
-
-        expect(isAuthenticated).toHaveBeenCalledTimes(2)
-      })
-
-      it('calls getTokenSilently when not authenticated', async () => {
-        await store.dispatch('updateAuthentication')
-
-        expect(getTokens).toHaveBeenCalled()
-      })
-
-      it('calls getUser', async () => {
-        await store.dispatch('updateAuthentication')
-
-        expect(getUser).toHaveBeenCalled()
-      })
-
-      it('commits the results of getUser', async () => {
-        store.commit('unsetUser')
-        expect(store.getters['user']).toBe(null)
-
-        const user = loggedInState().user
-        await store.dispatch('updateAuthentication')
-        expect(store.getters['user']).toStrictEqual(user)
+        expect(getWithRedirect).toHaveBeenCalled()
       })
 
       it('commits new idToken', async () => {
@@ -845,14 +799,14 @@ describe('auth Vuex Module', () => {
         expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN)
 
         getTokenByKey.mockReset()
-        getTokenByKey.mockReturnValueOnce({
-          __raw: MOCK_ID_TOKEN_2
-        })
+        getTokenByKey
+          .mockReturnValueOnce(idToken)
+          .mockReturnValueOnce(accessToken)
 
         await store.dispatch('updateAuthentication')
 
-        expect(getTokens).toHaveBeenCalledTimes(1)
-        expect(store.getters['idToken']).toBe(MOCK_ID_TOKEN_2)
+        expect(getTokenByKey).toHaveBeenCalledTimes(2)
+        expect(store.getters['idToken']).toBe(idToken.value)
       })
     })
 
