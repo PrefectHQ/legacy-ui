@@ -277,7 +277,7 @@ const actions = {
       ? await authClient.token.parseFromUrl()
       : { tokens: await authClient.tokenManager.getTokens() }
 
-    if (tokens) {
+    if (tokens?.accessToken && tokens?.idToken) {
       dispatch('commitTokens', tokens)
       commit('isAuthenticated', true)
     } else if (isAuthenticated) {
