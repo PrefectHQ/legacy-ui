@@ -260,7 +260,7 @@ const mutations = {
 }
 
 const actions = {
-  async authenticate({ dispatch, commit }) {
+  async authenticate({ dispatch, commit, getters }) {
     if (window.location?.pathname && !getters['redirectRoute']) {
       dispatch('setRedirectRoute', window.location.pathname)
     }
@@ -271,7 +271,7 @@ const actions = {
     }
 
     const isAuthenticated = await authClient.isAuthenticated()
-    const isLoginRedirect = authClient.token.isLoginRedirect()
+    const isLoginRedirect = authClient.isLoginRedirect()
 
     const { tokens } = isLoginRedirect
       ? await authClient.token.parseFromUrl()
@@ -280,7 +280,6 @@ const actions = {
     if (tokens) {
       dispatch('commitTokens', tokens)
       commit('isAuthenticated', true)
-      return
     } else if (isAuthenticated) {
       const idToken = await authClient.tokenManager.get('idToken')
       const accessToken = await authClient.tokenManager.get('accessToken')
@@ -294,6 +293,8 @@ const actions = {
       commit('isAuthenticated', false)
       await dispatch('login')
     }
+
+    return getters['isAuthenticated']
   },
   async authorize({ commit, getters, dispatch }) {
     commit('isAuthorizingUser', true)
