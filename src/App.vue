@@ -408,7 +408,12 @@ export default {
         </v-card>
       </v-container>
 
-      <GlobalSearch v-if="$vuetify.breakpoint.xsOnly" />
+      <GlobalSearch
+        v-if="
+          ((isCloud && isAuthenticated) || isServer) &&
+            $vuetify.breakpoint.xsOnly
+        "
+      />
 
       <v-slide-y-reverse-transition>
         <Footer v-if="!fullPageRoute && showFooter && !isWelcome" />
