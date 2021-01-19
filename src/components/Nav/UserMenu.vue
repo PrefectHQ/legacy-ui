@@ -40,6 +40,7 @@ export default {
   methods: {
     ...mapActions('auth', ['logout']),
     async wipeClientAndLogout() {
+      document.querySelector('.router-view').style.opacity = 0
       await this.logout(this.$apolloProvider.clients.defaultClient)
     }
   }
