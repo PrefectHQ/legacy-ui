@@ -183,6 +183,9 @@ describe('API Vuex Module', () => {
     it('should return the active url', () => {
       expect(store.getters.url).toBe(undefined)
     })
+    it('should return the websockets url', () => {
+      expect(store.getters.wsUrl).toBe(null)
+    })
     it('should return the version', () => {
       expect(store.getters.version).toBe(null)
     })

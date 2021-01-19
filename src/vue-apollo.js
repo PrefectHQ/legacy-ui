@@ -10,6 +10,10 @@ import { setContext } from 'apollo-link-context'
 import { ApolloLink, Observable } from 'apollo-link'
 
 import { BatchHttpLink } from 'apollo-link-batch-http'
+import { WebSocketLink } from 'apollo-link-ws'
+import { split } from 'apollo-link'
+import { getMainDefinition } from 'apollo-utilities'
+import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import LogRocket from 'logrocket'
@@ -40,6 +44,29 @@ const batchLink = new BatchHttpLink({
   batchInterval: 200,
   uri: () => store.getters['api/url']
 })
+
+const subscriptionClient = new SubscriptionClient(
+  'ws://localhost:4200/graphql',
+  {
+    reconnect: true
+  }
+)
+
+const wsLink = new WebSocketLink(subscriptionClient)
+
+const batchOrWsLink = split(
+  // Splits based on operation type, sending subscriptions through the websockets link
+  // and non-subscriptions through the batch link
+  ({ query }) => {
+    const definition = getMainDefinition(query)
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    )
+  },
+  wsLink,
+  batchLink
+)
 
 const backendMiddleware = new ApolloLink((operation, forward) => {
   const context = operation.getContext()
@@ -229,7 +256,7 @@ const link = ApolloLink.from([
   headerMiddleware,
   backendMiddleware,
   errorAfterware,
-  batchLink
+  batchOrWsLink
 ])
 
 export const cache = new InMemoryCache({

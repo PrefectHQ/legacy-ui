@@ -2,7 +2,7 @@ import { fallbackApolloClient } from '@/vue-apollo'
 import LogRocket from 'logrocket'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
-
+const httpRegex = /^(https?)/
 const maxRetries = 3
 
 const state = {
@@ -63,6 +63,16 @@ const getters = {
         return state.cloudUrl
       case 'SERVER':
         return state.serverUrl
+      default:
+        return null
+    }
+  },
+  wsUrl(state) {
+    switch (state.backend) {
+      case 'CLOUD':
+        return state.cloudUrl?.replace(httpRegex, 'ws')
+      case 'SERVER':
+        return state.serverUrl?.replace(httpRegex, 'ws')
       default:
         return null
     }
