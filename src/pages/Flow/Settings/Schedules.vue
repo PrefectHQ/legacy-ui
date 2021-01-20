@@ -143,7 +143,7 @@ export default {
                 flow_group_id: this.flowGroup.id,
                 cron_clocks: cronClocks,
                 interval_clocks: intervalClocks,
-                timezone: this.clocks[0].timezone || this.timezone
+                timezone: this.clocks[0]?.timezone || this.timezone
               }
             }
           })
@@ -184,6 +184,9 @@ export default {
           alertType: 'error'
         })
       }
+    },
+    timezoneVal(clock) {
+      return clock?.timezone || clock?.start_date?.tz || this.timezone
     }
   }
 }
@@ -282,6 +285,7 @@ export default {
               <ClockForm
                 :cron="clock.cron"
                 :interval="clock.interval"
+                :timezone="timezoneVal(clock)"
                 title="Modify schedule"
                 @cancel="selectedClock = null"
                 @confirm="createClock"
@@ -303,7 +307,7 @@ export default {
                     <CronClock
                       v-if="clock.type == 'CronClock'"
                       :cron="clock.cron"
-                      :timezone="clocks[0].timezone || timezone"
+                      :timezone="timezoneVal(clock)"
                     />
                     <IntervalClock
                       v-else-if="clock.type == 'IntervalClock'"

@@ -25,6 +25,11 @@ export default {
       type: String,
       required: false,
       default: () => 'New Schedule'
+    },
+    timezone: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -69,6 +74,9 @@ export default {
       }
       this.$emit('confirm', clock)
     }
+  },
+  beforeMount() {
+    this.selectedTimezone = this.timezone
   }
 }
 </script>
