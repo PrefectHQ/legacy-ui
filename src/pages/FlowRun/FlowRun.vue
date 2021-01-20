@@ -123,6 +123,9 @@ export default {
       if (val === 'not-found') this.$router.push({ name: 'not-found' })
     }
   },
+  beforeMount() {
+    this.tab = this.getTab()
+  },
   methods: {
     ...mapActions('alert', ['setAlert']),
     getTab() {
