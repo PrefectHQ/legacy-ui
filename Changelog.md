@@ -4,11 +4,13 @@
 
 ### Features and Improvements
 
-- None
+- Improve dashboard and flow page query performance - [#558](https://github.com/PrefectHQ/ui/pull/558)
+- Hard-cap dashboard timeline queries to 1 month out (improves performance) - [#558](https://github.com/PrefectHQ/ui/pull/558)
 
 ### Bugfixes
 
 - Fix bug where some flows with schedules were showing None in details card - [#553](https://github.com/PrefectHQ/ui/pull/553)
+- Fix an issue with task error pane stuttering every few seconds - [#558](https://github.com/PrefectHQ/ui/pull/558)
 
 ## 2021-01-07
 

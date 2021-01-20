@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import { oneAgo } from '@/utils/dateTime'
+import { roundedOneAgo } from '@/utils/dateTime'
 import CardTitle from '@/components/Card-Title'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -69,7 +69,7 @@ export default {
       variables() {
         return {
           projectId: this.projectId ? this.projectId : null,
-          heartbeat: oneAgo(this.selectedDateFilter)
+          heartbeat: roundedOneAgo(this.selectedDateFilter)
         }
       },
       loadingKey: 'loading',
