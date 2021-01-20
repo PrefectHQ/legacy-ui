@@ -20,9 +20,18 @@ export default {
 
 <template>
   <div
+    v-if="artifact.kind == 'md'"
     class="artifact md grey--text text--darken-3 mx-4"
-    v-html="mdParser(artifact.data.markdown || artifact.data.link)"
+    v-html="mdParser(artifact.data.markdown)"
   >
+  </div>
+  <div v-else-if="artifact.kind == 'link'">
+    <router-link :to="{ path: artifact.data.link }">
+      {{ artifact.data.link }}
+    </router-link>
+  </div>
+  <div v-else>
+    {{ artifact }}
   </div>
 </template>
 
