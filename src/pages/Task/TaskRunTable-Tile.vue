@@ -1,6 +1,6 @@
 <script>
 import CardTitle from '@/components/Card-Title'
-import { oneAgo } from '@/utils/dateTime'
+import { roundedOneAgo } from '@/utils/dateTime'
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -74,7 +74,7 @@ export default {
         orderBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
         return {
           taskId: this.taskId,
-          heartbeat: oneAgo(this.selectedDateFilter),
+          heartbeat: roundedOneAgo(this.selectedDateFilter),
           limit: this.itemsPerPage,
           offset: this.offset,
           orderBy
@@ -91,7 +91,7 @@ export default {
       variables() {
         return {
           taskId: this.taskId,
-          heartbeat: oneAgo(this.selectedDateFilter)
+          heartbeat: roundedOneAgo(this.selectedDateFilter)
         }
       },
       pollInterval: 5000,

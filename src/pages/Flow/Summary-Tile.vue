@@ -2,7 +2,7 @@
 import CardTitle from '@/components/Card-Title'
 import StackedLineChart from '@/components/Visualizations/StackedLineChart'
 import { STATE_COLORS, STATE_PAST_TENSE } from '@/utils/states'
-import { oneAgo } from '@/utils/dateTime'
+import { roundedOneAgo } from '@/utils/dateTime'
 
 export default {
   components: {
@@ -110,7 +110,7 @@ export default {
         }
 
         if (!this.flow.archived) {
-          variables.heartbeat = oneAgo(this.selectedDateFilter)
+          variables.heartbeat = roundedOneAgo(this.selectedDateFilter)
         }
         return variables
       },
