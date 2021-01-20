@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-01-19
+
+### Features and Improvements
+
 - Improve dashboard and flow page query performance - [#558](https://github.com/PrefectHQ/ui/pull/558)
 - Hard-cap dashboard timeline queries to 1 month out (improves performance) - [#558](https://github.com/PrefectHQ/ui/pull/558)
 
