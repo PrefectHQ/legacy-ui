@@ -1,7 +1,7 @@
 <script>
 import CardTitle from '@/components/Card-Title'
 import { mapGetters } from 'vuex'
-import { oneAgo } from '@/utils/dateTime'
+import { roundedOneAgo } from '@/utils/dateTime'
 import moment from '@/utils/moment'
 
 export default {
@@ -88,7 +88,9 @@ export default {
     errors: {
       query: require('@/graphql/Flow/errors.gql'),
       variables() {
-        let variables = { updated: { _gte: oneAgo(this.selectedDateFilter) } }
+        let variables = {
+          updated: { _gte: roundedOneAgo(this.selectedDateFilter) }
+        }
 
         if (this.aggregate) {
           variables.flow_group_id = this.flow.flow_group_id

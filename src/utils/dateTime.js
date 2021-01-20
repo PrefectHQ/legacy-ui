@@ -94,3 +94,31 @@ export const oneAgo = unitOftime => {
     .subtract(1, unitOftime)
     .format()
 }
+
+export const roundedOneAgo = unitOftime => {
+  let roundedTo
+
+  switch (unitOftime) {
+    case 'year':
+      roundedTo = 'month'
+      break
+    case 'month':
+      roundedTo = 'day'
+      break
+    case 'day':
+      roundedTo = 'hour'
+      break
+    case 'hour':
+      roundedTo = 'minute'
+      break
+    case 'minute':
+      roundedTo = 'second'
+      break
+  }
+
+  return moment
+    .utc()
+    .subtract(1, unitOftime)
+    .startOf(roundedTo)
+    .format()
+}
