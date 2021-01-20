@@ -2,6 +2,7 @@
 import BarChart from '@/components/Visualizations/BarChart.vue'
 import { flowRunHistoryMixin } from '@/mixins/flowRunHistoryMixin'
 import TimelineTooltip from '@/components/TimelineTooltip'
+import { roundedOneAgo } from '@/utils/dateTime'
 
 export default {
   components: {
@@ -40,7 +41,8 @@ export default {
       variables() {
         return {
           limit: this.scheduledFlowRuns?.length === 0 ? 100 : 90,
-          project_id: this.projectId == '' ? null : this.projectId
+          project_id: this.projectId == '' ? null : this.projectId,
+          date: roundedOneAgo('month')
         }
       },
       pollInterval: 5000,
@@ -72,7 +74,7 @@ export default {
       v-if="!loading && reversedRuns.length === 0"
       class="caption text-center grey--text timeline-no-runs"
     >
-      No run history
+      No run history in the last month
     </div>
     <BarChart
       :loading="loading"

@@ -1,7 +1,7 @@
 <script>
 import CardTitle from '@/components/Card-Title'
 import HeartbeatTimeline from '@/components/HeartbeatTimeline'
-import { oneAgo } from '@/utils/dateTime'
+import { roundedOneAgo } from '@/utils/dateTime'
 import { heartbeatMixin } from '@/mixins/heartbeatMixin.js'
 
 export default {
@@ -20,7 +20,7 @@ export default {
     timestamp: {
       type: String,
       required: false,
-      default: () => oneAgo('hour')
+      default: () => roundedOneAgo('hour')
     }
   },
   data() {
@@ -35,7 +35,7 @@ export default {
       variables() {
         return {
           taskId: this.taskId,
-          timestamp: oneAgo('hour'),
+          timestamp: roundedOneAgo('hour'),
           state: this.checkedState
         }
       }

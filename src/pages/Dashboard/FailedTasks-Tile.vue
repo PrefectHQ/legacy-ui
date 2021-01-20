@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import { oneAgo } from '@/utils/dateTime'
+import { roundedOneAgo } from '@/utils/dateTime'
 import CardTitle from '@/components/Card-Title'
 import TaskItem from '@/pages/Dashboard/Task-Item'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -93,7 +93,7 @@ export default {
       query: require('@/graphql/Dashboard/task-failures.gql'),
       variables() {
         return {
-          heartbeat: oneAgo(this.selectedDateFilter)
+          heartbeat: roundedOneAgo(this.selectedDateFilter)
         }
       },
       loadingKey: 'loading',

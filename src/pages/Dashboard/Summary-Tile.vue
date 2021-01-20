@@ -2,7 +2,7 @@
 import CardTitle from '@/components/Card-Title'
 import StackedLineChart from '@/components/Visualizations/StackedLineChart'
 import { STATE_COLORS, STATE_PAST_TENSE } from '@/utils/states'
-import { oneAgo } from '@/utils/dateTime'
+import { roundedOneAgo } from '@/utils/dateTime'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -96,7 +96,7 @@ export default {
       variables() {
         return {
           projectId: this.projectId ? this.projectId : null,
-          heartbeat: oneAgo(this.selectedDateFilter)
+          heartbeat: roundedOneAgo(this.selectedDateFilter)
         }
       },
       pollInterval: 3000,
