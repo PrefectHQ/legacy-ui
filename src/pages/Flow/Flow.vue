@@ -135,7 +135,12 @@ export default {
       return flow ? flow : this.latest
     },
     description() {
-      return this.selectedFlow.description || this.flowGroup?.description
+      if(!this.flowVersionId) return this.flowGroup?.description || this.selectedFlow.description 
+      return this.selectedFlow.description 
+    },
+    flowOrFlowGroup() {
+      if(!this.flowVersionId) return "Flow Group"
+      return "Flow"
     },
     versions() {
       if (!this.flowGroup) return
@@ -404,7 +409,7 @@ export default {
         reverse-transition="tab-fade"
       >
         <TileLayoutFull>
-          <DescribeTile slot="row-2-tile" :description="description" :flow-group-id="flowGroup.id" />
+          <DescribeTile slot="row-2-tile" :description="description" :title="flowOrFlowGroup" :flow-group-id="flowGroup.id" />
         </TileLayoutFull>
       </v-tab-item>
 

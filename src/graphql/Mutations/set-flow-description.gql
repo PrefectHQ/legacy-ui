@@ -1,0 +1,5 @@
+mutation setFlowGroupDescription ($description: String!, $flowGroupId: UUID!) {
+  set_flow_group_description (input: {description: $description, flow_group_id: $flowGroupId}) {
+    success
+  }
+}
