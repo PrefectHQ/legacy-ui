@@ -12,6 +12,7 @@ import SchematicTile from '@/pages/Flow/Schematic-Tile'
 import Settings from '@/pages/Flow/Settings'
 import SubPageNav from '@/layouts/SubPageNav'
 import SummaryTile from '@/pages/Flow/Summary-Tile'
+import DescribeTile from '@/pages/Flow/Describe'
 import TasksTableTile from '@/pages/Flow/TasksTable-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
@@ -44,7 +45,8 @@ export default {
     TileLayoutFull,
     FlowRunHistoryTile,
     UpcomingRunsTile,
-    VersionsTile
+    VersionsTile,
+    DescribeTile
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'flow') {
@@ -80,10 +82,15 @@ export default {
           icon: 'pi-schematic'
         },
         {
-          name: 'Versions',
-          target: 'versions',
-          icon: 'loop'
+          name: 'Description', 
+          target: 'description',
+          icon: 'history_edu'
         },
+        // {
+        //   name: 'Versions',
+        //   target: 'versions',
+        //   icon: 'loop'
+        // },
         {
           name: 'Run',
           target: 'run',
@@ -159,6 +166,9 @@ export default {
           break
         case 'tasks':
           query = 'tasks'
+          break
+        case 'description':
+          query = 'description'
           break
         case 'versions':
           query = 'versions'
@@ -386,6 +396,16 @@ export default {
       </v-tab-item>
 
       <v-tab-item
+        value="description"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
+      >
+        <TileLayoutFull>
+          <DescribeTile slot="row-2-tile" :flow="selectedFlow" />
+        </TileLayoutFull>
+      </v-tab-item>
+
+      <v-tab-item
         value="versions"
         transition="tab-fade"
         reverse-transition="tab-fade"
@@ -444,9 +464,9 @@ export default {
         <v-icon>pi-schematic</v-icon>
       </v-btn>
 
-      <v-btn :input-value="tab == 'versions'" @click="tab = 'versions'">
-        Versions
-        <v-icon>loop</v-icon>
+      <v-btn :input-value="tab == 'versions'" @click="tab = 'description'">
+        Description
+        <v-icon>history_edu</v-icon>
       </v-btn>
 
       <!-- <v-btn disabled @click="tab = 'analytics'">
