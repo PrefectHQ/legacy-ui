@@ -57,6 +57,9 @@ export default {
       return this.advanced ? `${this.advancedType}Model` : 'simpleModel'
     }
   },
+  beforeMount() {
+    this.selectedTimezone = this.timezone
+  },
   methods: {
     cancel() {
       this.$emit('cancel')
@@ -74,9 +77,6 @@ export default {
       }
       this.$emit('confirm', clock)
     }
-  },
-  beforeMount() {
-    this.selectedTimezone = this.timezone
   }
 }
 </script>
@@ -136,6 +136,7 @@ export default {
                 label="Time Zone"
                 style="margin-top: 110px;"
                 prepend-inner-icon="access_time"
+                :menu-props="{ contentClass: 'tz' }"
               />
             </div>
             <div v-else-if="advancedType == 'interval'" key="Interval">
@@ -169,7 +170,7 @@ export default {
 
 <style>
 /* stylelint-disable */
-.v-autocomplete__content.v-menu__content .v-select-list {
+.tz.v-menu__content .v-select-list {
   max-width: 100%;
 }
 </style>
