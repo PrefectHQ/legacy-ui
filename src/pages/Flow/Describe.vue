@@ -29,10 +29,6 @@ export default {
     }
   },
   computed: {
-    print() {
-      console.log('fd', !!this.flowDescription, 'd', this.description)
-      return true
-    },
     fullTitle() {
       return `${this.title} Description`
     }
