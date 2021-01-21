@@ -12,7 +12,7 @@ import debounce from 'lodash.debounce'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
-const fullPageRoutes = ['api', '404', 'calendar']
+const fullPageRoutes = ['api', '404', 'calendar', 'not-found']
 
 export default {
   metaInfo() {
