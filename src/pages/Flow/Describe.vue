@@ -9,20 +9,25 @@ export default {
     CardTitle
   },
   props: {
-    flow: {
-      type: Object,
+    description: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    flowGroupId: {
+      type: String,
       required: true
     }
   },
   data() {
     return {
-      flowDescription: this.flow.description,
+      flowDescription: this.description,
       textArea: false
     }
   },
   computed: {
     print() {
-      console.log(this.flowDescription)
+      console.log('fd', !!this.flowDescription, 'd', !!this.description)
       return true
     }
   },
@@ -51,7 +56,7 @@ export default {
 
     <v-card-text v-if="print" class="full-height position-relative">
       <div
-        v-if="flowDescription && !textArea"
+        v-if="description && !textArea"
         class="artifact md grey--text text--darken-3
             mx-4 px-8"
         v-html="mdParser(flowDescription)"

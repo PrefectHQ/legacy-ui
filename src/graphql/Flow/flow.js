@@ -7,6 +7,7 @@ export default function(isCloud) {
         id
         labels
         created
+        description
         name
         default_parameters
         schedule

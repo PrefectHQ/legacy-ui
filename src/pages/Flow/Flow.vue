@@ -134,6 +134,9 @@ export default {
       let flow = this.flowGroup.flows.find(f => f.version == this.flowVersionId)
       return flow ? flow : this.latest
     },
+    description() {
+      return this.selectedFlow.description || this.flowGroup?.description
+    },
     versions() {
       if (!this.flowGroup) return
       let versions = this.flows.map((f, i) => {
@@ -401,7 +404,7 @@ export default {
         reverse-transition="tab-fade"
       >
         <TileLayoutFull>
-          <DescribeTile slot="row-2-tile" :flow="selectedFlow" />
+          <DescribeTile slot="row-2-tile" :description="description" :flow-group-id="flowGroup.id" />
         </TileLayoutFull>
       </v-tab-item>
 
