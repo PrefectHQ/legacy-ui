@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Neaten up the 404 page and better handle invalid flow ids - [#562](https://github.com/PrefectHQ/ui/pull/562)
 
 ## 2021-01-19
 
