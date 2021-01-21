@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Adds the timezone field to the set_flow_group_schedule mutation to allow the clocks to be set to the user's desired timezone - [#532](https://github.com/PrefectHQ/ui/pull/532)
 
 ## 2021-01-19
 
