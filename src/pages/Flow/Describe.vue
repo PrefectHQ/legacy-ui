@@ -2,8 +2,12 @@
 /* eslint-disable vue/no-v-html */
 import { artifact_parser } from '@/utils/markdownParser'
 import '@/styles/atelier-sulphurpool-light.scss'
+import CardTitle from '@/components/Card-Title'
 
 export default {
+  components: {
+    CardTitle
+  },
   props: {
     flow: {
       type: Object,
@@ -31,10 +35,23 @@ export default {
 </script>
 
 <template>
-  <v-row v-if="print" no-gutters class="pb-0">
-    <v-col>
+  <v-card class="pa-2 mt-2" tile>
+    <CardTitle title="Flow Description" icon="history_edu">
+      <div slot="action" class="d-flex align-end justify-center flex-column">
+        <v-btn
+          class="pr-4"
+          small
+          :disabled="textArea"
+          icon
+          @click="textArea = true"
+          ><v-icon>edit</v-icon></v-btn
+        >
+      </div>
+    </CardTitle>
+
+    <v-card-text v-if="print" class="full-height position-relative">
       <div
-        v-if="flow.description && !textArea"
+        v-if="flowDescription && !textArea"
         class="artifact md grey--text text--darken-3
             mx-4 px-8"
         v-html="mdParser(flowDescription)"
@@ -42,7 +59,7 @@ export default {
       </div>
       <div
         v-else-if="!textArea"
-        class="text-h5 
+        class="subtitle-1
           grey--text text--darken-2 px-8"
       >
         This flow has no <span class="font-weight-medium"> description</span>.
@@ -59,14 +76,8 @@ export default {
           >
         </div>
       </div>
-
-      <div v-if="!textArea" class="pa-8 text-right">
-        <v-btn icon @click="textArea = true"
-          ><v-icon color="codePink">edit</v-icon></v-btn
-        >
-      </div>
-    </v-col>
-  </v-row>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style lang="scss">
