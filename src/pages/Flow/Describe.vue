@@ -15,14 +15,15 @@ export default {
       type: String,
       required: true
     },
-    title: {
-      type: String,
+    all: {
+      type: Boolean,
       required: true
     }
   },
   data() {
     return {
       flowDescription: this.description,
+      newDescription: null,
       textArea: false,
       loading: false
     }
@@ -34,6 +35,12 @@ export default {
     },
     fullTitle() {
       return `${this.title} Description`
+    }
+  },
+  watch: {
+    description(val) {
+      this.flowDescription = val
+      this.newDescription = null
     }
   },
   methods: {
@@ -55,8 +62,8 @@ export default {
             description: this.flowDescription
           }
         })
-        console.log(data)
         if (data.set_flow_group_description.success) {
+          this.newDescription = this.flowDescription
           this.closeTextArea()
           this.loading = false
         }
@@ -74,79 +81,90 @@ export default {
 </script>
 
 <template>
-  <!-- <v-card class="pa-2 mt-2" tile>
-    <CardTitle :title="fullTitle" icon="history_edu">
-      <div slot="action" class="d-flex align-end justify-center flex-column">
-        <v-btn
-          class="pr-4"
-          small
-          :disabled="textArea"
-          icon
-          @click="textArea = true"
-          ><v-icon>edit</v-icon></v-btn
-        >
-      </div>
-    </CardTitle> -->
-
-  <!-- <v-card-text v-if="print" class="full-height position-relative"> -->
   <v-row>
     <v-col>
-      <v-btn
-        v-if="!textArea"
-        fab
-        right
-        small
-        dark
-        absolute
-        style="z-index: 0;"
-        color="codePink"
-        @click="textArea = true"
-        ><v-icon>edit</v-icon></v-btn
-      >
+      <v-tooltip v-if="!textArea" bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn
+            elevation="1"
+            fab
+            right
+            small
+            dark
+            absolute
+            style="z-index: 0;"
+            color="primary"
+            v-bind="attrs"
+            v-on="on"
+            @click="textArea = true"
+            ><v-icon>edit</v-icon></v-btn
+          >
+        </template>
+        <span v-if="!flowDescription && all">Add flow group description</span>
+        <span v-else-if="!all">Edit or add flow group description</span>
+        <span v-else>Edit flow group description</span>
+      </v-tooltip>
       <div
         v-if="flowDescription && !textArea"
         class="artifact md grey--text text--darken-3
             mx-4 px-8"
-        v-html="mdParser(flowDescription)"
+        v-html="mdParser(newDescription || description)"
       >
       </div>
       <div
         v-else-if="!textArea"
         class="subtitle-1
-          grey--text text--darken-2 px-8"
+          grey--text text--darken-2 pl-8 pr-12 "
       >
-        This flow has no <span class="font-weight-medium"> description</span>.
-        You can add one here or learn more about flow descriptions in the
-        <a href="https://docs.prefect.io/api/latest/flow.html" target="_blank">
-          Flow API Docs</a
-        >.
+        <div v-if="!all"
+          >This flow has no
+          <span class="font-weight-medium"> description</span>. Change the
+          <span class="font-weight-medium">version </span> to 'All' to see your
+          flow group description. Learn more about flow descriptions in the
+          <a
+            href="https://docs.prefect.io/api/latest/flow.html"
+            target="_blank"
+          >
+            Flow API Docs</a
+          >.</div
+        >
+        <span v-if="all">
+          This flow group has no description. You can add one here or learn more
+          about flow descriptions in the
+          <a
+            href="https://docs.prefect.io/api/latest/flow.html"
+            target="_blank"
+          >
+            Flow API Docs</a
+          >.</span
+        >
       </div>
       <v-expand-transition v-if="textArea">
         <v-textarea v-model="flowDescription" class="bigger"> </v-textarea>
       </v-expand-transition>
       <div v-if="textArea" class="px-8 text-right">
-        <v-btn text @click="closeTextArea">Close</v-btn
-        ><v-btn
-          color="primary"
-          :loading="loading"
-          @click="setFlowGroupDescription"
-          >Update</v-btn
-        >
+        <v-btn text @click="closeTextArea">Close</v-btn>
+        <v-tooltip top>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              :loading="loading"
+              v-bind="attrs"
+              @click="setFlowGroupDescription"
+              v-on="on"
+            >
+              Update
+            </v-btn>
+          </template>
+          <span>Update your flow group description</span>
+        </v-tooltip>
       </div>
     </v-col>
   </v-row>
-  <!-- </v-card-text>
-  </v-card> -->
 </template>
 
-<style lang="scss" scoped>
-// .bigger {
-//   min-height: 50vh;
-
-// .v-textarea {
-textarea {
+<style>
+.bigger.v-textarea textarea {
   min-height: 50vh !important;
 }
-// }
-// }
 </style>
