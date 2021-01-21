@@ -28,11 +28,7 @@ export default {
       loading: false
     }
   },
-  computed: {
-    fullTitle() {
-      return `${this.title} Description`
-    }
-  },
+  computed: {},
   watch: {
     description(val) {
       this.flowDescription = val
