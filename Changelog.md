@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add a description tab to the flow page - [#563](https://github.com/PrefectHQ/ui/pull/563)
 
 ### Bugfixes
 
