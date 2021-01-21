@@ -90,6 +90,13 @@ export default {
         this.isLoadingTenant
       )
     },
+    showNav() {
+      if (this.$route.name === 'not-found') return false
+      return (
+        ((this.isCloud && this.isAuthenticated) || this.isServer) &&
+        this.loadedComponents > 0
+      )
+    },
     isCloud() {
       return this.backend == 'CLOUD'
     },
@@ -371,11 +378,7 @@ export default {
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
       <v-slide-y-transition>
-        <ApplicationNavBar
-          v-if="
-            ((isCloud && isAuthenticated) || isServer) && loadedComponents > 0
-          "
-        />
+        <ApplicationNavBar v-if="showNav" />
       </v-slide-y-transition>
 
       <TeamSideNav />
