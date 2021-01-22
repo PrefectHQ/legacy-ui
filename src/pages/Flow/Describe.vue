@@ -133,7 +133,7 @@ export default {
           grey--text text--darken-2 pl-8 pr-12 "
       >
         This flow group has no
-        <span class="font-weight-medium"> description</span>.. You can add one
+        <span class="font-weight-medium"> description</span>. You can add one
         here using
         <ExternalLink href="https://www.markdownguide.org/basic-syntax/"
           >markdown
