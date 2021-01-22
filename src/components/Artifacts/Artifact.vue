@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     isRelativeLink() {
-      return httpRegex.test(this.artifact.data?.link)
+      return !httpRegex.test(this.artifact.data?.link)
     }
   },
   methods: {
@@ -35,7 +35,7 @@ export default {
   >
   </div>
   <div v-else-if="artifact.kind == 'link'">
-    <router-link v-if="!isRelativeLink" :to="{ path: artifact.data.link }">
+    <router-link v-if="isRelativeLink" :to="{ path: artifact.data.link }">
       {{ artifact.data.link }}
     </router-link>
     <ExternalLink v-else :href="artifact.data.link">
