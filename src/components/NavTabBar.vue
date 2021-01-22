@@ -35,9 +35,12 @@ export default {
       let query = {}
       if (val) {
         if (this.$route.params.id) {
-          query = { [val]: this.$route.params.id } // schematic uses this
+          query[val] = this.$route.params.id // schematic uses this
         }
-        query = { [val]: '' }
+        if (this.$route.query.version) {
+          query.version = this.$route.query.version
+        }
+        query[val] = ''
       }
       this.$router
         .replace({
