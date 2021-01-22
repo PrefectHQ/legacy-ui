@@ -135,8 +135,7 @@ export default {
       return flow ? flow : this.latest
     },
     description() {
-      if(!this.flowVersionId) return this.flowGroup?.description || this.selectedFlow.description 
-      return this.selectedFlow.description 
+      return this.flowGroup?.description || this.selectedFlow.description 
     },
     all() {
       if(!this.flowVersionId) return true

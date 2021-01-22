@@ -93,7 +93,6 @@ export default {
           >
         </template>
         <span v-if="!flowDescription && all">Add flow group description</span>
-        <span v-else-if="!all">Edit or add flow group description</span>
         <span v-else>Edit flow group description</span>
       </v-tooltip>
       <div
@@ -108,31 +107,16 @@ export default {
         class="subtitle-1
           grey--text text--darken-2 pl-8 pr-12 "
       >
-        <div v-if="!all"
-          >This flow has no
-          <span class="font-weight-medium"> description</span>. Change the
-          <span class="font-weight-medium">version </span> to 'All' to see your
-          flow group description. Learn more about flow descriptions in the
-          <a
-            href="https://docs.prefect.io/api/latest/flow.html"
-            target="_blank"
-          >
-            Flow API Docs</a
-          >.</div
-        >
-        <span v-if="all">
-          This flow group has no description. You can add one here or learn more
-          about flow descriptions in the
-          <a
-            href="https://docs.prefect.io/api/latest/flow.html"
-            target="_blank"
-          >
-            Flow API Docs</a
-          >.</span
-        >
+        This flow group has no
+        <span class="font-weight-medium"> description</span>.. You can add one
+        here or learn more about flow descriptions in the
+        <a href="https://docs.prefect.io/api/latest/flow.html" target="_blank">
+          Flow API Docs</a
+        >.
       </div>
       <v-expand-transition v-if="textArea">
-        <v-textarea v-model="flowDescription" class="bigger"> </v-textarea>
+        <v-textarea v-model="flowDescription" class="bigger" autofocus>
+        </v-textarea>
       </v-expand-transition>
       <div v-if="textArea" class="px-8 text-right">
         <v-btn text @click="closeTextArea">Close</v-btn>
