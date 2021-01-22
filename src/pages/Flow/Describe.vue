@@ -6,7 +6,12 @@ import { mapActions } from 'vuex'
 export default {
   components: {},
   props: {
-    description: {
+    flowDescription: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    fgDescription: {
       type: String,
       required: false,
       default: ''
@@ -22,40 +27,43 @@ export default {
   },
   data() {
     return {
-      flowDescription: this.description,
+      description: this.fgDescription || this.flowDescription,
       newDescription: null,
       textArea: false,
+      clear: false,
       loading: false
     }
   },
   computed: {},
-  watch: {
-    description(val) {
-      this.flowDescription = val
-      this.newDescription = null
-    }
-  },
   methods: {
     ...mapActions('alert', ['setAlert']),
     mdParser(md) {
       return artifact_parser(md)
     },
+    resetDescription() {
+      this.clear = true
+      this.setFlowGroupDescription(true)
+    },
     closeTextArea() {
       this.textArea = false
-      this.flowDescription = this.description
+      this.description = this.fgDescription || this.flowDescription
+      this.clear = false
     },
     async setFlowGroupDescription() {
+      if (this.clear) this.description = ''
       this.loading = true
       try {
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/set-flow-description.gql'),
           variables: {
             flowGroupId: this.flowGroupId,
-            description: this.flowDescription
+            description: this.description
           }
         })
         if (data.set_flow_group_description.success) {
-          this.newDescription = this.flowDescription
+          this.newDescription = this.clear
+            ? this.flowDescription
+            : this.description
           this.closeTextArea()
           this.loading = false
         }
@@ -74,31 +82,42 @@ export default {
 
 <template>
   <v-row>
-    <v-col>
-      <v-tooltip v-if="!textArea" bottom>
-        <template #activator="{ on, attrs }">
-          <v-btn
-            elevation="1"
-            fab
-            right
-            small
-            dark
-            absolute
-            style="z-index: 0;"
-            color="primary"
-            v-bind="attrs"
-            v-on="on"
-            @click="textArea = true"
-            ><v-icon>edit</v-icon></v-btn
-          >
-        </template>
-        <span v-if="!flowDescription && all">Add flow group description</span>
-        <span v-else>Edit flow group description</span>
-      </v-tooltip>
+    <v-col class="pt-0">
+      <v-toolbar v-if="!textArea" flat color="appBackground" dense>
+        <v-spacer></v-spacer>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              color="primary"
+              v-bind="attrs"
+              v-on="on"
+              @click="textArea = true"
+              ><v-icon>edit</v-icon></v-btn
+            >
+          </template>
+          <span v-if="!flowDescription && all">Add flow group description</span>
+          <span v-else>Edit flow group description</span>
+        </v-tooltip>
+        <v-tooltip v-if="flowDescription" bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              color="codePink"
+              :disabled="!fgDescription"
+              v-bind="attrs"
+              v-on="on"
+              @click="resetDescription"
+              ><v-icon>undo</v-icon></v-btn
+            >
+          </template>
+          <span>Reset to description given at flow registration</span>
+        </v-tooltip>
+      </v-toolbar>
       <div
         v-if="flowDescription && !textArea"
         class="artifact md grey--text text--darken-3
-            mx-4 px-8"
+            mx-4 px-8 mt-o"
         v-html="mdParser(newDescription || description)"
       >
       </div>
@@ -115,7 +134,7 @@ export default {
         >.
       </div>
       <v-expand-transition v-if="textArea">
-        <v-textarea v-model="flowDescription" class="bigger" autofocus>
+        <v-textarea v-model="description" class="bigger" autofocus>
         </v-textarea>
       </v-expand-transition>
       <div v-if="textArea" class="px-8 text-right">

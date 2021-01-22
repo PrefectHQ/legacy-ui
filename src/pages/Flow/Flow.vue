@@ -84,7 +84,13 @@ export default {
         {
           name: 'Description', 
           target: 'description',
-          icon: 'history_edu'
+          icon: 'history_edu',
+          badgeText: 'Beta',
+          cardText:
+            'Flow Group Descriptions can now be added in the UI. For more information on Flow Group Descriptions, check out the',
+          cardLink:
+            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLinkText: 'Flow Group Docs'
         },
         // {
         //   name: 'Versions',
@@ -133,9 +139,6 @@ export default {
       if (!this.flowVersionId) return this.latest
       let flow = this.flowGroup.flows.find(f => f.version == this.flowVersionId)
       return flow ? flow : this.latest
-    },
-    description() {
-      return this.flowGroup?.description || this.selectedFlow.description 
     },
     all() {
       if(!this.flowVersionId) return true
@@ -409,7 +412,7 @@ export default {
         reverse-transition="tab-fade"
       >
         <TileLayoutFull>
-          <DescribeTile slot="row-2-tile" :description="description" :all="all" :flow-group-id="flowGroup.id" />
+          <DescribeTile slot="row-2-tile" :fg-description="flowGroup.description" :flow-description="selectedFlow.description" :all="all" :flow-group-id="flowGroup.id" />
         </TileLayoutFull>
       </v-tab-item>
 
