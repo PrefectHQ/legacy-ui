@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Neaten up the 404 page and better handle invalid flow ids - [#562](https://github.com/PrefectHQ/ui/pull/562)
+- Show proper page tab on page reload - [#561](https://github.com/PrefectHQ/ui/pull/561)
 
 ## 2021-01-19
 
