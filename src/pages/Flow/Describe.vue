@@ -2,9 +2,10 @@
 /* eslint-disable vue/no-v-html */
 import { artifact_parser } from '@/utils/markdownParser'
 import { mapActions } from 'vuex'
+import ExternalLink from '../../components/ExternalLink.vue'
 
 export default {
-  components: {},
+  components: { ExternalLink },
   props: {
     flowDescription: {
       type: String,
@@ -133,9 +134,15 @@ export default {
       >
         This flow group has no
         <span class="font-weight-medium"> description</span>.. You can add one
-        here or learn more about flow descriptions in the
-        <a href="https://docs.prefect.io/api/latest/flow.html" target="_blank">
-          Flow API Docs</a
+        here using
+        <ExternalLink href="https://www.markdownguide.org/basic-syntax/"
+          >markdown
+        </ExternalLink>
+        or learn more about flow descriptions in the
+        <ExternalLink
+          href="https://docs.prefect.io/orchestration/ui/flow.html#versions"
+        >
+          UI Flow Docs</ExternalLink
         >.
       </div>
 

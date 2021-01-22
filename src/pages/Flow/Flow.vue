@@ -87,10 +87,10 @@ export default {
           icon: 'history_edu',
           badgeText: 'Beta',
           cardText:
-            'Flow Group Descriptions can now be added in the UI. For more information on Flow Group Descriptions, check out the',
+            'Flow Group Descriptions can now be added in the UI. For more information check out the',
           cardLink:
-            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
-          cardLinkText: 'Flow Group Docs'
+            'https://docs.prefect.io/orchestration/ui/flow.html#description',
+          cardLinkText: 'UI Flow Docs'
         },
         // {
         //   name: 'Versions',
