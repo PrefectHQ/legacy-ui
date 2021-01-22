@@ -238,7 +238,9 @@ const actions = {
     commit('isAuthenticated', isAuthenticated)
 
     if (window.location?.pathname && !getters['redirectRoute']) {
-      dispatch('setRedirectRoute', window.location.pathname)
+      const pathnameWithParams =
+        window.location.pathname + window.location.search
+      dispatch('setRedirectRoute', pathnameWithParams)
     }
 
     if (window.location?.search?.includes('invitation_id=')) {

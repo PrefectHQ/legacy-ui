@@ -12,7 +12,7 @@ import debounce from 'lodash.debounce'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
-const fullPageRoutes = ['api', '404', 'calendar']
+const fullPageRoutes = ['api', '404', 'calendar', 'not-found']
 
 export default {
   metaInfo() {
@@ -88,6 +88,13 @@ export default {
         this.isLoggingInUser ||
         this.connecting ||
         this.isLoadingTenant
+      )
+    },
+    showNav() {
+      if (this.$route.name === 'not-found') return false
+      return (
+        ((this.isCloud && this.isAuthenticated) || this.isServer) &&
+        this.loadedComponents > 0
       )
     },
     isCloud() {
@@ -371,11 +378,7 @@ export default {
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
       <v-slide-y-transition>
-        <ApplicationNavBar
-          v-if="
-            ((isCloud && isAuthenticated) || isServer) && loadedComponents > 0
-          "
-        />
+        <ApplicationNavBar v-if="showNav" />
       </v-slide-y-transition>
 
       <TeamSideNav />
@@ -396,7 +399,7 @@ export default {
         </v-card>
       </v-container>
 
-      <GlobalSearch v-if="$vuetify.breakpoint.xsOnly" />
+      <GlobalSearch v-if="$vuetify.breakpoint.xsOnly && showNav" />
 
       <v-slide-y-reverse-transition>
         <Footer v-if="!fullPageRoute && showFooter" />

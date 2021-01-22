@@ -3,7 +3,7 @@ import CardTitle from '@/components/Card-Title'
 import HeartbeatTimeline from '@/components/HeartbeatTimeline'
 import { heartbeatMixin } from '@/mixins/heartbeatMixin.js'
 import { mapGetters } from 'vuex'
-import { oneAgo } from '@/utils/dateTime'
+import { roundedOneAgo } from '@/utils/dateTime'
 
 export default {
   components: { CardTitle, HeartbeatTimeline },
@@ -41,7 +41,7 @@ export default {
       variables() {
         return {
           projectId: this.projectId ? this.projectId : null,
-          timestamp: oneAgo('month'),
+          timestamp: roundedOneAgo('month'),
           state: this.checkedState,
           filterOutStates: 'Scheduled'
         }

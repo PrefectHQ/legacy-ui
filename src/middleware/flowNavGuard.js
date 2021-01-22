@@ -9,12 +9,19 @@ const flowNavGuard = async (to, from, next) => {
 
   if (group) return next()
 
-  let version = await fallbackApolloClient.query({
-    query: require('@/graphql/Middleware/flow.gql'),
-    variables: {
-      id: id
-    }
-  })
+  let version
+  try {
+    version = await fallbackApolloClient.query({
+      query: require('@/graphql/Middleware/flow.gql'),
+      variables: {
+        id: id
+      }
+    })
+  } catch {
+    return next({
+      name: 'not-found'
+    })
+  }
 
   if (version?.data?.flow_by_pk?.flow_group_id) {
     return next({
