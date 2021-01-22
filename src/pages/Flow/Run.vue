@@ -2,20 +2,22 @@
 /* eslint-disable vue/no-v-html */
 import { mapGetters, mapActions } from 'vuex'
 
-import CardTitle from '@/components/Card-Title'
-import JsonInput from '@/components/JsonInput'
-import Parameters from '@/components/Parameters'
-import PrefectSchedule from '@/components/PrefectSchedule'
-import DateTime from '@/components/DateTime'
+// import CardTitle from '@/components/Card-Title'
+// import JsonInput from '@/components/JsonInput'
+// import Parameters from '@/components/Parameters'
+// import PrefectSchedule from '@/components/PrefectSchedule'
+// import DateTime from '@/components/DateTime'
+import RunConfig from '@/components/RunConfig'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 
 export default {
   components: {
-    CardTitle,
-    JsonInput,
-    Parameters,
-    PrefectSchedule,
-    DateTime
+    // CardTitle,
+    // JsonInput,
+    // Parameters,
+    // PrefectSchedule,
+    // DateTime,
+    RunConfig
   },
   mixins: [parametersMixin],
   props: {
@@ -154,8 +156,9 @@ export default {
 </script>
 
 <template>
-  <v-container class="fill-height" fluid justify-center>
-    <v-layout
+  <div>
+    <RunConfig />
+    <!-- <v-layout
       align-content-start
       fill-height
       wrap
@@ -319,7 +322,6 @@ export default {
           </CardTitle>
           <v-card-text class="px-2">
             <v-layout class="mb-3 position-relative" align-center>
-              <!-- This text is in the read only E2E test - please adjust test if you adjust text -->
               <div v-if="isReadOnlyUser" class="font-weight-black">
                 Read-only users cannot run flows from the UI.
               </div>
@@ -472,8 +474,8 @@ export default {
           </v-card-text>
         </v-card>
       </v-flex>
-    </v-layout>
-  </v-container>
+    </v-layout> -->
+  </div>
 </template>
 
 <style lang="scss" scoped>
