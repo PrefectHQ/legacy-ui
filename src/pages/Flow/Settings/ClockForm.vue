@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       tzs: [...moment.tz.names()],
-      selectedTimezone: null,
+      selectedTimezone: this.timezone,
       advanced: false,
       // Sets the default advanced tab
       // if a certain type was specific
@@ -56,9 +56,6 @@ export default {
     clockToAdd() {
       return this.advanced ? `${this.advancedType}Model` : 'simpleModel'
     }
-  },
-  beforeMount() {
-    this.selectedTimezone = this.timezone
   },
   methods: {
     cancel() {
