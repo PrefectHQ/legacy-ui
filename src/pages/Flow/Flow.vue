@@ -194,6 +194,7 @@ export default {
   },
   async beforeMount() {
     await this.activateFlow(this.$route.params.id)
+    this.tab = this.getTab()
   },
   methods: {
     ...mapActions('data', ['activateFlow', 'resetActiveData']),

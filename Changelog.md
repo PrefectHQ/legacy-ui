@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Show proper page tab on page reload - [#561](https://github.com/PrefectHQ/ui/pull/561)
 
 ## 2021-01-19
 
