@@ -46,7 +46,6 @@ export default {
     },
     closeTextArea() {
       this.textArea = false
-      this.description = this.fgDescription || this.flowDescription
       this.clear = false
     },
     async setFlowGroupDescription() {
@@ -99,12 +98,11 @@ export default {
           <span v-if="!flowDescription && all">Add flow group description</span>
           <span v-else>Edit flow group description</span>
         </v-tooltip>
-        <v-tooltip v-if="flowDescription" bottom>
+        <v-tooltip v-if="flowDescription && fgDescription" bottom>
           <template #activator="{ on, attrs }">
             <v-btn
               icon
               color="codePink"
-              :disabled="!fgDescription"
               v-bind="attrs"
               v-on="on"
               @click="resetDescription"
@@ -114,15 +112,22 @@ export default {
           <span>Reset to description given at flow registration</span>
         </v-tooltip>
       </v-toolbar>
-      <div
-        v-if="flowDescription && !textArea"
-        class="artifact md grey--text text--darken-3
-            mx-4 px-8 mt-o"
-        v-html="mdParser(newDescription || description)"
+
+      <v-textarea
+        v-if="textArea"
+        v-model="description"
+        class="bigger"
+        autofocus
       >
-      </div>
+      </v-textarea>
+
       <div
-        v-else-if="!textArea"
+        v-else-if="description"
+        class="artifact md grey--text text--darken-3 mx-4 px-8 mt-o"
+        v-html="mdParser(newDescription || description)"
+      ></div>
+      <div
+        v-else
         class="subtitle-1
           grey--text text--darken-2 pl-8 pr-12 "
       >
@@ -133,10 +138,7 @@ export default {
           Flow API Docs</a
         >.
       </div>
-      <v-expand-transition v-if="textArea">
-        <v-textarea v-model="description" class="bigger" autofocus>
-        </v-textarea>
-      </v-expand-transition>
+
       <div v-if="textArea" class="px-8 text-right">
         <v-btn text @click="closeTextArea">Close</v-btn>
         <v-tooltip top>
