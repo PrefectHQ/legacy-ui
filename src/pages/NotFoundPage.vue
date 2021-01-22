@@ -35,7 +35,6 @@ i {
   background-size: cover !important;
   color: #f0faff;
   height: 100vh;
-  margin-top: -64px;
 
   .text {
     position: fixed;

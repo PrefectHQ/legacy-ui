@@ -4,6 +4,17 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- Neaten up the 404 page and better handle invalid flow ids - [#562](https://github.com/PrefectHQ/ui/pull/562)
+- Show proper page tab on page reload - [#561](https://github.com/PrefectHQ/ui/pull/561)
+
+## 2021-01-19
+
+### Features and Improvements
+
 - Improve dashboard and flow page query performance - [#558](https://github.com/PrefectHQ/ui/pull/558)
 - Hard-cap dashboard timeline queries to 1 month out (improves performance) - [#558](https://github.com/PrefectHQ/ui/pull/558)
 
