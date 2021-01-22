@@ -4,6 +4,10 @@ import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
 import moment from 'moment-timezone'
 
+const timezones = [...moment.tz.names()].map(tz => {
+  return { text: tz.replace(/_/g, ' '), value: tz }
+})
+
 export default {
   components: {
     CronForm,
@@ -34,7 +38,7 @@ export default {
   },
   data() {
     return {
-      tzs: [...moment.tz.names()],
+      tzs: timezones,
       selectedTimezone: this.timezone,
       advanced: false,
       // Sets the default advanced tab
