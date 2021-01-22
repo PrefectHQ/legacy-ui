@@ -143,7 +143,10 @@ export default {
                 flow_group_id: this.flowGroup.id,
                 cron_clocks: cronClocks,
                 interval_clocks: intervalClocks,
-                timezone: this.clocks[0]?.timezone || this.timezone
+                timezone:
+                  this.clocks[0]?.timezone || this.timezone !== ''
+                    ? this.timezone
+                    : Intl.DateTimeFormat().resolvedOptions().timeZone
               }
             }
           })
@@ -186,7 +189,9 @@ export default {
       }
     },
     timezoneVal(clock) {
-      return clock?.timezone || clock?.start_date?.tz || this.timezone
+      return clock?.timezone || clock?.start_date?.tz || this.timezone !== ''
+        ? this.timezone
+        : Intl.DateTimeFormat().resolvedOptions().timeZone
     }
   }
 }
