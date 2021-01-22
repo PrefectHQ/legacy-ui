@@ -20,7 +20,7 @@ export default {
 
 <template>
   <div
-    v-if="artifact.kind == 'md'"
+    v-if="artifact.kind == 'md' || artifact.kind == 'markdown'"
     class="artifact md grey--text text--darken-3 mx-4"
     v-html="mdParser(artifact.data.markdown)"
   >
