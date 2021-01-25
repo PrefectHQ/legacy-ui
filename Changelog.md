@@ -4,6 +4,24 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-01-25
+
+### Bugfixes
+
+- Adds the timezone field to the set_flow_group_schedule mutation to allow the clocks to be set to the user's desired timezone - [#532](https://github.com/PrefectHQ/ui/pull/532)
+- Neaten up the 404 page and better handle invalid flow ids - [#562](https://github.com/PrefectHQ/ui/pull/562)
+- Show proper page tab on page reload - [#561](https://github.com/PrefectHQ/ui/pull/561)
+
+## 2021-01-19
+
+### Features and Improvements
+
 - Improve dashboard and flow page query performance - [#558](https://github.com/PrefectHQ/ui/pull/558)
 - Hard-cap dashboard timeline queries to 1 month out (improves performance) - [#558](https://github.com/PrefectHQ/ui/pull/558)
 

@@ -113,17 +113,7 @@ export default {
   },
   async beforeMount() {
     await this.activateTask(this.$route.params.id)
-  },
-  mounted() {
-    if (!this.$route.query || !this.$route.query.schematic) {
-      this.$router
-        .replace({
-          query: {
-            schematic: this.taskId
-          }
-        })
-        .catch(e => e)
-    }
+    this.tab = this.getTab()
   },
   methods: {
     ...mapActions('data', ['activateTask', 'resetActiveData']),
