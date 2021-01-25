@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- Adds the timezone field to the set_flow_group_schedule mutation to allow the clocks to be set to the user's desired timezone - [#532](https://github.com/PrefectHQ/ui/pull/532)
 - Neaten up the 404 page and better handle invalid flow ids - [#562](https://github.com/PrefectHQ/ui/pull/562)
 - Show proper page tab on page reload - [#561](https://github.com/PrefectHQ/ui/pull/561)
 
