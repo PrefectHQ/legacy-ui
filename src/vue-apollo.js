@@ -162,24 +162,24 @@ const authMiddleware = setContext(async (_, { headers }) => {
   }
 
   const authRefreshRequired =
-    store.getters['auth0/authorizationToken'] &&
-    aboutToExpire(store.getters['auth0/authorizationTokenExpiry'])
+    store.getters['auth/authorizationToken'] &&
+    aboutToExpire(store.getters['auth/authorizationTokenExpiry'])
 
   const validRefreshToken =
-    store.getters['auth0/refreshToken'] &&
-    notExpired(store.getters['auth0/refreshTokenExpiry'])
+    store.getters['auth/refreshToken'] &&
+    notExpired(store.getters['auth/refreshTokenExpiry'])
 
   const isAuthenticatedUser =
-    store.getters['auth0/idToken'] &&
-    notExpired(store.getters['auth0/idTokenExpiry'])
+    store.getters['auth/idToken'] &&
+    notExpired(store.getters['auth/idTokenExpiry'])
 
   const middleOfRefresh =
-    store.getters['auth0/isRefreshingAuthorization'] ||
-    store.getters['auth0/isAuthorizingUser'] ||
-    store.getters['auth0/isLoggingInUser']
+    store.getters['auth/isRefreshingAuthorization'] ||
+    store.getters['auth/isAuthorizingUser'] ||
+    store.getters['auth/isLoggingInUser']
 
   if (store.getters['api/backend'] !== 'SERVER' && !isAuthenticatedUser) {
-    await store.dispatch('auth0/updateAuthentication')
+    // await store.dispatch('auth/updateAuthentication')
   }
 
   if (_.operationName == 'RefreshToken') {
@@ -189,7 +189,7 @@ const authMiddleware = setContext(async (_, { headers }) => {
     return {
       headers: {
         ...headers,
-        authorization: `Bearer ${store.getters['auth0/refreshToken']}`
+        authorization: `Bearer ${store.getters['auth/refreshToken']}`
       }
     }
   }
@@ -206,15 +206,15 @@ const authMiddleware = setContext(async (_, { headers }) => {
   if (authRefreshRequired && !middleOfRefresh) {
     defaultApolloClient.cache.reset()
     if (validRefreshToken) {
-      await store.dispatch('auth0/refreshAuthorization')
+      // await store.dispatch('auth/refreshAuthorization')
     } else if (isAuthenticatedUser) {
-      await store.dispatch('auth0/authorize')
+      // await store.dispatch('auth/authorize')
     } else {
-      await store.dispatch('auth0/login')
+      // await store.dispatch('auth/login')
     }
   }
 
-  const bearer = `Bearer ${store.getters['auth0/authorizationToken']}`
+  const bearer = `Bearer ${store.getters['auth/authorizationToken']}`
   return {
     headers: {
       ...headers,

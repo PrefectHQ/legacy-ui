@@ -31,7 +31,7 @@ describe('user Vuex Module', () => {
           timezone: ''
         }
       },
-      auth0User: {
+      oktaUser: {
         name: null,
         email: null,
         picture: null
@@ -65,7 +65,7 @@ describe('user Vuex Module', () => {
           timezone: 'utc'
         }
       },
-      auth0User: {
+      oktaUser: {
         name: 'testtest',
         email: 'test@test.com',
         picture: 'linktopicture'
@@ -94,9 +94,9 @@ describe('user Vuex Module', () => {
         }
       })
     })
-    test('auth0User details should initally be empty', () => {
+    test('oktaUser details should initally be empty', () => {
       const state = user.state
-      expect(state.auth0User).toEqual({
+      expect(state.oktaUser).toEqual({
         name: null,
         email: null,
         picture: null
@@ -120,8 +120,8 @@ describe('user Vuex Module', () => {
     test('defaultMembershipId should return membership id if user membership id is set', () => {
       expect(store.getters.defaultMembershipId).toEqual('5678')
     })
-    test('auth0user should return auth0user details', () => {
-      expect(store.getters.auth0User).toEqual({
+    test('oktaUser should return oktaUser details', () => {
+      expect(store.getters.oktaUser).toEqual({
         name: 'testtest',
         email: 'test@test.com',
         picture: 'linktopicture'
@@ -164,11 +164,11 @@ describe('user Vuex Module', () => {
       expect(store.getters.user.email).toEqual('test@test.com')
       expect(store.getters.userIsSet).toBe(true)
     })
-    test('setAuth0User mutation sets the auth0 user', () => {
-      expect(store.getters.auth0User).toEqual(initialState().auth0User)
-      store.commit('setAuth0User', userState().auth0User)
-      expect(store.getters.auth0User).toEqual(userState().auth0User)
-      expect(store.getters.auth0User.email).toEqual('test@test.com')
+    test('setOktaUser mutation sets the okta user', () => {
+      expect(store.getters.oktaUser).toEqual(initialState().oktaUser)
+      store.commit('setOktaUser', userState().oktaUser)
+      expect(store.getters.oktaUser).toEqual(userState().oktaUser)
+      expect(store.getters.oktaUser.email).toEqual('test@test.com')
     })
     test('setUsetSettings mutation sets the user settings', () => {
       expect(store.getters.user).toEqual(initialState().user)
@@ -185,13 +185,13 @@ describe('user Vuex Module', () => {
       expect(store.getters.user).toEqual(initialState().user)
       expect(store.getters.userIsSet).toBe(false)
     })
-    test('unsetAuth0User mutation un-sets the auth0 user', () => {
-      store.commit('setAuth0User', userState().auth0User)
-      expect(store.getters.auth0User).toEqual(userState().auth0User)
-      expect(store.getters.auth0User.email).toEqual('test@test.com')
-      store.commit('unsetAuth0User')
-      expect(store.getters.auth0User).toEqual(initialState().auth0User)
-      expect(store.getters.auth0User.email).toEqual(null)
+    test('unsetOktaUser mutation un-sets the okta user', () => {
+      store.commit('setOktaUser', userState().oktaUser)
+      expect(store.getters.oktaUser).toEqual(userState().oktaUser)
+      expect(store.getters.oktaUser.email).toEqual('test@test.com')
+      store.commit('unsetOktaUser')
+      expect(store.getters.oktaUser).toEqual(initialState().oktaUser)
+      expect(store.getters.oktaUser.email).toEqual(null)
     })
     test('setUserDefaultMembershipId mutation sets the default membership', () => {
       expect(store.getters.defaultMembershipId).toEqual(null)

@@ -221,8 +221,8 @@ const actions = {
     commit('tenant/unsetTenants', null, { root: true })
 
     if (backend == 'CLOUD') {
-      await dispatch('auth0/authenticate', null, { root: true })
-      await dispatch('auth0/authorize', null, { root: true })
+      await dispatch('auth/authenticate', null, { root: true })
+      await dispatch('auth/authorize', null, { root: true })
       await dispatch('user/getUser', null, { root: true })
     }
 

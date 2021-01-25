@@ -502,8 +502,8 @@ describe('API Vuex Module', () => {
         api.mutations['tenant/unsetTenants'] = jest.fn()
         api.mutations['tenant/unsetTenant'] = jest.fn()
         api.actions['tenant/getTenants'] = jest.fn()
-        api.actions['auth0/authenticate'] = jest.fn()
-        api.actions['auth0/authorize'] = jest.fn()
+        api.actions['auth/authenticate'] = jest.fn()
+        api.actions['auth/authorize'] = jest.fn()
         api.actions['user/getUser'] = jest.fn()
 
         const state = localStoreAPIState()
@@ -558,11 +558,11 @@ describe('API Vuex Module', () => {
         })
         it('should authenticate', async () => {
           await store.dispatch('switchBackend', 'CLOUD')
-          expect(api.actions['auth0/authenticate']).toHaveBeenCalled()
+          expect(api.actions['auth/authenticate']).toHaveBeenCalled()
         })
         it('should authorize', async () => {
           await store.dispatch('switchBackend', 'CLOUD')
-          expect(api.actions['auth0/authorize']).toHaveBeenCalled()
+          expect(api.actions['auth/authorize']).toHaveBeenCalled()
         })
         it('should get the user details', async () => {
           await store.dispatch('switchBackend', 'CLOUD')

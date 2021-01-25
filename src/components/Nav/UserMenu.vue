@@ -28,8 +28,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('auth0', ['isAuthorized']),
-    ...mapGetters('user', ['user', 'auth0User'])
+    ...mapGetters('auth', ['isAuthorized']),
+    ...mapGetters('user', ['user', 'oktaUser'])
   },
   mounted() {
     clearInterval(this.clock)
@@ -38,9 +38,10 @@ export default {
     }, 1000)
   },
   methods: {
-    ...mapActions('auth0', ['logout']),
-    trackAndLogout() {
-      this.logout(this.$apolloProvider.clients.defaultClient)
+    ...mapActions('auth', ['logout']),
+    async wipeClientAndLogout() {
+      document.querySelector('.router-view').style.opacity = 0
+      await this.logout(this.$apolloProvider.clients.defaultClient)
     }
   }
 }
@@ -73,8 +74,14 @@ export default {
 
     <v-sheet width="300" class="pt-6 text-center">
       <div class="text-center">
-        <v-avatar size="64">
-          <img :src="auth0User.picture" :alt="auth0User.name" />
+        <v-avatar size="64" :tile="!oktaUser.picture">
+          <img
+            :src="
+              oktaUser.picture ||
+                require('@/assets/logos/logomark-cerulean.svg')
+            "
+            :alt="oktaUser.name"
+          />
         </v-avatar>
 
         <div class="mt-2 text-h6">
@@ -135,7 +142,7 @@ export default {
           class="text-capitalize py-6"
           depressed
           block
-          @click="trackAndLogout"
+          @click="wipeClientAndLogout"
         >
           <span class="mr-2">Sign out</span>
           <i class="fad fa-sign-out" />
