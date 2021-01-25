@@ -1,13 +1,22 @@
 <script>
 /* eslint-disable vue/no-v-html */
+import ExternalLink from '@/components/ExternalLink'
 import { artifact_parser } from '@/utils/markdownParser'
 import '@/styles/atelier-sulphurpool-light.scss'
 
+const httpRegex = /^(http|https)/
+
 export default {
+  components: { ExternalLink },
   props: {
     artifact: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    isRelativeLink() {
+      return !httpRegex.test(this.artifact.data?.link)
     }
   },
   methods: {
@@ -20,9 +29,21 @@ export default {
 
 <template>
   <div
+    v-if="artifact.kind == 'md' || artifact.kind == 'markdown'"
     class="artifact md grey--text text--darken-3 mx-4"
-    v-html="mdParser(artifact.data.markdown || artifact.data.link)"
+    v-html="mdParser(artifact.data.markdown)"
   >
+  </div>
+  <div v-else-if="artifact.kind == 'link'">
+    <router-link v-if="isRelativeLink" :to="{ path: artifact.data.link }">
+      {{ artifact.data.link }}
+    </router-link>
+    <ExternalLink v-else :href="artifact.data.link">
+      {{ artifact.data.link }}
+    </ExternalLink>
+  </div>
+  <div v-else>
+    {{ artifact }}
   </div>
 </template>
 
