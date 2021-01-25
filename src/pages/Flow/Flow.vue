@@ -67,6 +67,17 @@ export default {
           icon: 'view_module'
         },
         {
+          name: 'Read Me', 
+          target: 'description',
+          icon: 'history_edu',
+          badgeText: 'New',
+          cardText:
+            'A Flow Read Me can now be added in the UI. For more information check out the',
+          cardLink:
+            'https://docs.prefect.io/orchestration/ui/flow.html#description',
+          cardLinkText: 'UI Flow Docs'
+        },
+        {
           name: 'Tasks',
           target: 'tasks',
           icon: 'pi-task'
@@ -80,17 +91,6 @@ export default {
           name: 'Schematic',
           target: 'schematic',
           icon: 'pi-schematic'
-        },
-        {
-          name: 'Description', 
-          target: 'description',
-          icon: 'history_edu',
-          badgeText: 'Beta',
-          cardText:
-            'Flow Group Descriptions can now be added in the UI. For more information check out the',
-          cardLink:
-            'https://docs.prefect.io/orchestration/ui/flow.html#description',
-          cardLinkText: 'UI Flow Docs'
         },
         // {
         //   name: 'Versions',

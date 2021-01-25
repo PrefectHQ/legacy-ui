@@ -43,7 +43,7 @@ export default {
     },
     resetDescription() {
       this.clear = true
-      this.setFlowGroupDescription(true)
+      this.setFlowGroupDescription()
     },
     closeTextArea() {
       this.textArea = false
@@ -61,11 +61,8 @@ export default {
           }
         })
         if (data.set_flow_group_description.success) {
-          this.newDescription = this.clear
-            ? this.flowDescription
-            : this.description
-          this.closeTextArea()
-          this.loading = false
+          if (this.clear || !this.description)
+            this.description = this.flowDescription
         }
       } catch (error) {
         const errString = `${error}`
@@ -74,6 +71,9 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
+      } finally {
+        this.closeTextArea()
+        this.loading = false
       }
     }
   }
@@ -82,7 +82,7 @@ export default {
 
 <template>
   <v-row>
-    <v-col class="pt-0">
+    <v-col v-if="!loading" class="pt-0">
       <v-toolbar v-if="!textArea" flat color="appBackground" dense>
         <v-spacer></v-spacer>
         <v-tooltip bottom>
@@ -96,8 +96,8 @@ export default {
               ><v-icon>edit</v-icon></v-btn
             >
           </template>
-          <span v-if="!flowDescription && all">Add flow group description</span>
-          <span v-else>Edit flow group description</span>
+          <span v-if="!flowDescription">Add Read Me</span>
+          <span v-else>Edit Read Me</span>
         </v-tooltip>
         <v-tooltip v-if="flowDescription && fgDescription" bottom>
           <template #activator="{ on, attrs }">
@@ -110,7 +110,7 @@ export default {
               ><v-icon>undo</v-icon></v-btn
             >
           </template>
-          <span>Reset to description given at flow registration</span>
+          <span>Reset to Read Me added at registration</span>
         </v-tooltip>
       </v-toolbar>
 
@@ -125,20 +125,20 @@ export default {
       <div
         v-else-if="description"
         class="artifact md grey--text text--darken-3 mx-4 px-8 mt-o"
-        v-html="mdParser(newDescription || description)"
+        v-html="mdParser(description)"
       ></div>
       <div
         v-else
         class="subtitle-1
           grey--text text--darken-2 pl-8 pr-12 "
       >
-        This flow group has no
-        <span class="font-weight-medium"> description</span>. You can add one
-        here using
+        This Flow Group has no
+        <span class="font-weight-medium"> Read Me </span>. You can add one here
+        using
         <ExternalLink href="https://www.markdownguide.org/basic-syntax/"
           >markdown
         </ExternalLink>
-        or learn more about flow descriptions in the
+        or learn more about adding a Flow Group Read Me in the
         <ExternalLink
           href="https://docs.prefect.io/orchestration/ui/flow.html#versions"
         >
@@ -160,7 +160,7 @@ export default {
               Update
             </v-btn>
           </template>
-          <span>Update your flow group description</span>
+          <span>Update Read Me</span>
         </v-tooltip>
       </div>
     </v-col>
