@@ -11,6 +11,9 @@ a "regional" stylesheet, and import it only on the pages needed. This will keep 
 concise and snappy, and the files easier to read!
 */
 
+@import './scss/fontawesome';
+@import './scss/brands';
+
 html,
 body {
   overflow: overlay;
