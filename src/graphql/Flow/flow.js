@@ -13,7 +13,9 @@ export default function(isCloud) {
 
         flows {
           id
-
+          flow_runs(limit: 2) {
+            scheduled_start_time
+          }
           archived
           core_version
           created
