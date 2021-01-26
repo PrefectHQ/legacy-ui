@@ -1,9 +1,12 @@
 <script>
 import { mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
+import NewLicenseAlert from '@/components/License/NewLicenseAlert'
 
 export default {
-  components: {},
+  components: {
+    NewLicenseAlert
+  },
   data() {
     return {
       allFeatures: featureTypes,
@@ -121,8 +124,11 @@ export default {
     data-cy="license-card"
     :loading="loading"
   >
-    <v-card-title class="mb-2">
-      <span>Your plan</span>
+    <v-card-title>
+      <NewLicenseAlert :license="license" />
+    </v-card-title>
+    <v-card-title>
+      Your plan
     </v-card-title>
     <v-card-subtitle class="pb-0">
       Your team is on
