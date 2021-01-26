@@ -4,6 +4,7 @@ import Footer from '@/components/Footer'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
+// import { authMixin } from '@/mixins/authMixin'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
@@ -12,7 +13,7 @@ import debounce from 'lodash.debounce'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
-const fullPageRoutes = ['api', '404', 'calendar', 'not-found']
+const fullPageRoutes = ['api', '404', 'calendar', 'not-found', 'logout']
 
 export default {
   metaInfo() {
@@ -61,7 +62,7 @@ export default {
     ]),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('data', ['projects']),
-    ...mapGetters('auth0', [
+    ...mapGetters('auth', [
       'isAuthenticated',
       'isAuthorized',
       'isAuthenticatingUser',
@@ -84,10 +85,11 @@ export default {
     },
     loading() {
       return (
-        this.isAuthorizingUser ||
-        this.isLoggingInUser ||
-        this.connecting ||
-        this.isLoadingTenant
+        this.isAuthenticated &&
+        (this.isAuthorizingUser ||
+          this.isLoggingInUser ||
+          this.connecting ||
+          this.isLoadingTenant)
       )
     },
     showNav() {
@@ -172,6 +174,8 @@ export default {
     window.removeEventListener('online', this.handleOnline)
     window.removeEventListener('mousewheel', this.handleScroll)
 
+    // this.oktaClient?.remove()
+
     // document.removeEventListener(
     //   'visibilitychange',
     //   this.handleVisibilityChange
@@ -207,7 +211,7 @@ export default {
         return (this.isCloud && !this.isAuthorized) || !this.connected
       },
       pollInterval: 3000,
-      //Without this, server UI with no actual server shows results
+      // Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
       update(data) {
         if (!data?.agent) return null
@@ -293,7 +297,7 @@ export default {
   methods: {
     ...mapMutations('agent', ['setAgents']),
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
-    ...mapActions('auth0', ['authenticate', 'authorize']),
+    ...mapActions('auth', ['authenticate', 'authorize']),
     ...mapActions('data', ['resetData']),
     ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
@@ -381,7 +385,13 @@ export default {
         <ApplicationNavBar v-if="showNav" />
       </v-slide-y-transition>
 
-      <TeamSideNav />
+      <TeamSideNav
+        v-if="
+          ((isCloud && isAuthenticated) || isServer) &&
+            loadedComponents > 0 &&
+            !isWelcome
+        "
+      />
 
       <v-fade-transition mode="out-in">
         <router-view
@@ -402,7 +412,7 @@ export default {
       <GlobalSearch v-if="$vuetify.breakpoint.xsOnly && showNav" />
 
       <v-slide-y-reverse-transition>
-        <Footer v-if="!fullPageRoute && showFooter" />
+        <Footer v-if="!fullPageRoute && showFooter && !isWelcome" />
       </v-slide-y-reverse-transition>
     </v-main>
 
@@ -469,7 +479,7 @@ html {
   max-width: 100% !important;
   min-height: calc(100vh - 64px - 123px);
   padding-bottom: 18px;
-  transition: height none !important;
+  transition: height none, opacity 250ms !important;
 
   &.full-page {
     margin-bottom: 0 !important;

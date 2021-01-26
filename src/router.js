@@ -158,7 +158,7 @@ export const routes = [
   },
   // --------------------------- //
   //
-  // Onboarding
+  // User Settings
   //
   // --------------------------- //
   {
@@ -213,7 +213,7 @@ export const routes = [
   },
   // --------------------------- //
   //
-  // Onboard
+  // Onboarding
   //
   // --------------------------- //
   {
@@ -258,6 +258,41 @@ export const routes = [
         beforeEnter: multiguard([authNavGuard, tenantNavGuard])
       }
     ]
+  },
+  {
+    name: 'login',
+    path: '/login',
+    redirect: { name: 'sign-in' },
+    component: () =>
+      import(/* webpackChunkName: "Auth" */ '@/pages/Auth/Auth.vue'),
+    children: [
+      {
+        name: 'sign-in',
+        path: '',
+        component: () =>
+          import(/* webpackChunkName: "login" */ '@/pages/Auth/SignIn.vue')
+      },
+      {
+        name: 'sign-up',
+        path: 'sign-up',
+        component: () =>
+          import(/* webpackChunkName: "sign-up" */ '@/pages/Auth/SignUp.vue')
+      },
+      {
+        name: 'forgot-password',
+        path: 'forgot-password',
+        component: () =>
+          import(
+            /* webpackChunkName: "forgot-password" */ '@/pages/Auth/ForgotPassword.vue'
+          )
+      }
+    ]
+  },
+  {
+    name: 'logout',
+    path: '/logout',
+    component: () =>
+      import(/* webpackChunkName: "Auth" */ '@/pages/Auth/Logout.vue')
   },
   {
     path: '/accept',
