@@ -18,7 +18,6 @@ const flowNavGuard = async (to, from, next) => {
       }
     })
   } catch {
-    console.log('redirecting')
     return next({
       name: 'not-found'
     })
