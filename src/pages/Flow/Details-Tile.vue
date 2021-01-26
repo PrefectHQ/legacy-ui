@@ -226,7 +226,6 @@ export default {
                 Schedule
               </v-list-item-subtitle>
               <div class="subtitle-2">
-                {{ flowGroup }}
                 <PrefectSchedule
                   v-if="flow.schedule || flowGroup.schedule"
                   :schedule="flow.schedule ? flow.schedule : flowGroup.schedule"
