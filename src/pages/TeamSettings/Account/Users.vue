@@ -224,9 +224,9 @@ export default {
       </v-slider>
     </v-card-text>
     <div v-if="showPay" clas="mt-12">
-      <v-card-title>
+      <v-card-text>
         <NewLicenseAlert :license="license" />
-      </v-card-title>
+      </v-card-text>
       <v-card-title>
         {{ upgradeOrDowngrade }} to {{ desiredUsers }} {{ desiredUserOrUsers }}
       </v-card-title>

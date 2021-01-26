@@ -34,7 +34,6 @@ export default {
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['license']),
     needAlert() {
-      console.log('license', this.license)
       return !location.href.includes('prefect.io')
     },
     isUsageBased() {

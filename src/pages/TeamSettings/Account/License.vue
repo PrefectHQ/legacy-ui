@@ -1,12 +1,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
-import NewLicenseAlert from '@/components/License/NewLicenseAlert'
 
 export default {
-  components: {
-    NewLicenseAlert
-  },
+  components: {},
   data() {
     return {
       allFeatures: featureTypes,
@@ -20,16 +17,16 @@ export default {
       return true
     },
     isSelfServe() {
-      return !this.license.terms.is_self_serve
+      return this.license.terms.is_self_serve
     },
     planType() {
       if (this.license?.terms?.plan == 'FREE_2021') return 'Standard'
       if (this.license?.terms?.plan == 'GOOD_2021') return 'Development'
-      if (this.license?.terms?.plan == 'BETTER_2021') return 'Profressional'
+      if (this.license?.terms?.plan == 'BETTER_2021') return 'Professional'
       return 'Custom'
     },
     planColor() {
-      return 'codeBlueBright'
+      return 'primary'
     },
     readNum() {
       return this.license?.terms?.read_only_users?.toLocaleString()
@@ -129,9 +126,6 @@ export default {
     data-cy="license-card"
     :loading="loading"
   >
-    <v-card-title v-if="!license.terms.is_usage_based">
-      <NewLicenseAlert :license="license" />
-    </v-card-title>
     <v-card-title class="pb-0">
       Your plan
     </v-card-title>
@@ -153,12 +147,17 @@ export default {
         </a>
         plan.
         <br />
-        <!-- <span v-if="!isSelfServe && isTenantAdmin">
+        <span v-if="!isSelfServe && isTenantAdmin">
           <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
             Contact us</a
           >
-          to change your plan or to get access to cool new features!</span
-        > -->
+          to change your plan or</span
+        ><span v-else>
+          <router-link :to="{ name: 'plans' }"
+            >Check out our new plans</router-link
+          ></span
+        >
+        to get access to cool new features!
       </div>
       <div class="d-flex flex-wrap mt-6">
         <div
@@ -250,26 +249,6 @@ export default {
           </div>
         </div>
       </div>
-      <v-alert
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="info"
-        tile
-        color="codePink"
-        icon="upgrade"
-        max-width="540"
-      >
-        <v-row>
-          <v-col cols="12" md="8">
-            Upgrade your plan to access more great features!
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-btn outlined color="codePink"> Find Out More</v-btn>
-          </v-col>
-        </v-row>
-      </v-alert>
     </v-card-text>
   </v-card>
 </template>

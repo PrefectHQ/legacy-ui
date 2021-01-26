@@ -145,6 +145,10 @@ export default {
       <br />
     </v-card-subtitle>
     <v-card-text>
+      <NewLicenseAlert
+        v-if="!license.terms.is_usage_based"
+        :license="license"
+      />
       <div class="d-flex flex-wrap mt-6">
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
@@ -241,10 +245,6 @@ export default {
           </div>
         </div>
       </div>
-      <NewLicenseAlert
-        v-if="!license.terms.is_usage_based"
-        :license="license"
-      />
     </v-card-text>
   </v-card>
 </template>
