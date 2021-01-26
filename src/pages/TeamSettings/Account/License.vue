@@ -19,6 +19,9 @@ export default {
     isTenantAdmin() {
       return true
     },
+    isSelfServe() {
+      return !this.license.terms.is_self_serve
+    },
     planType() {
       if (this.license?.terms?.plan == 'FREE_2021') return 'Standard'
       if (this.license?.terms?.plan == 'GOOD_2021') return 'Development'
@@ -129,31 +132,34 @@ export default {
     <v-card-title v-if="!license.terms.is_usage_based">
       <NewLicenseAlert :license="license" />
     </v-card-title>
-    <v-card-title>
+    <v-card-title class="pb-0">
       Your plan
     </v-card-title>
-    <v-card-subtitle class="pb-0">
-      Your team is on
-      {{ planType !== 'Custom' ? 'the Prefect' : 'a' }}
-      <a href="https://www.prefect.io/get-prefect#pricing" target="_blank">
-        <v-icon
-          v-if="planType !== 'Custom'"
-          :color="planColor"
-          class="mr-1 pb-1"
-          x-small
-        >
-          cloud
-        </v-icon>
-        <span :class="`${planColor}--text`">{{ planType }}</span>
-      </a>
-      plan.
-      <br />
-      <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
-        Contact us</a
-      >
-      to change your plan or to get access to cool new features!
-    </v-card-subtitle>
-    <v-card-text v-if="isTenantAdmin">
+
+    <v-card-text>
+      <div class="subtitle-1">
+        Your team is on
+        {{ planType !== 'Custom' ? 'the Prefect' : 'a' }}
+        <a href="https://www.prefect.io/get-prefect#pricing" target="_blank">
+          <v-icon
+            v-if="planType !== 'Custom'"
+            :color="planColor"
+            class="mr-1 pb-1"
+            x-small
+          >
+            cloud
+          </v-icon>
+          <span :class="`${planColor}--text`">{{ planType }}</span>
+        </a>
+        plan.
+        <br />
+        <!-- <span v-if="!isSelfServe && isTenantAdmin">
+          <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
+            Contact us</a
+          >
+          to change your plan or to get access to cool new features!</span
+        > -->
+      </div>
       <div class="d-flex flex-wrap mt-6">
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
@@ -176,33 +182,6 @@ export default {
             </div>
           </div>
         </div>
-
-        <!-- <div
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon color="primary" large style="width: 36px;">
-              fa-glasses
-            </v-icon>
-          </div> -->
-        <!-- <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
-              {{ readNum ? readNum : 'Unlimited' }} read-only
-              {{ readOnlyUserOrUsers }}
-            </div>
-            <div v-if="readNum === '0'" class="text-body-1">
-              You do not have any read only users in your account.
-            </div>
-            <div v-else-if="readNum" class="text-body-1">
-              You can invite up to {{ readNum }} read-only
-              {{ readOnlyUserOrUsers }}.
-            </div>
-            <div v-else class="text-body-1">
-              You have unlimited read-only users!
-            </div>
-          </div>
-        </div> -->
 
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
@@ -271,6 +250,26 @@ export default {
           </div>
         </div>
       </div>
+      <v-alert
+        class="mx-auto mb-12"
+        border="left"
+        colored-border
+        elevation="2"
+        type="info"
+        tile
+        color="codePink"
+        icon="upgrade"
+        max-width="540"
+      >
+        <v-row>
+          <v-col cols="12" md="8">
+            Upgrade your plan to access more great features!
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-btn outlined color="codePink"> Find Out More</v-btn>
+          </v-col>
+        </v-row>
+      </v-alert>
     </v-card-text>
   </v-card>
 </template>

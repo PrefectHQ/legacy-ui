@@ -124,9 +124,6 @@ export default {
     data-cy="license-card"
     :loading="loading"
   >
-    <v-card-title v-if="!license.terms.is_usage_based">
-      <NewLicenseAlert :license="license" />
-    </v-card-title>
     <v-card-title>
       Your plan
     </v-card-title>
@@ -146,12 +143,8 @@ export default {
       </a>
       plan.
       <br />
-      <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
-        Contact us</a
-      >
-      to change your plan or to get access to cool new features!
     </v-card-subtitle>
-    <v-card-text v-if="isTenantAdmin">
+    <v-card-text>
       <div class="d-flex flex-wrap mt-6">
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
@@ -248,65 +241,10 @@ export default {
           </div>
         </div>
       </div>
-
-      <!-- <div class="text-h5 mb-4 mt-10 grey--text text--darken-4">
-        {{
-          planType == 'Cloud Enterprise'
-            ? 'Also included with your plan'
-            : 'Upgrade your plan to access these great features...'
-        }}
-      </div>
-
-      <div v-if="features" class="d-flex flex-wrap">
-        <div
-          v-for="(item, i) in features"
-          :key="i"
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon :color="colorType(item.type)" large>
-              {{ iconType(item.type) }}
-            </v-icon>
-          </div>
-          <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
-              {{ titleType(item.type) }}
-            </div>
-            <div class="text-body-1">{{ textType(item.type) }}</div>
-          </div>
-        </div> -->
-      <!-- </div> -->
-
-      <!-- <div v-else class="d-flex flex-wrap">
-        <div
-          v-for="(item, i) in allFeatures"
-          :key="i"
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon :color="item.color" large>{{ iconType(item.type) }}</v-icon>
-          </div>
-          <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
-              {{ titleType(item.type) }}
-            </div>
-            <div class="text-body-1">{{ textType(item.type) }}</div>
-          </div>
-        </div> -->
-
-      <!-- <div
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div>
-            <div class="text-h6 ml-6 mb-2 grey--text text--darken-3">
-              ... and more coming soon!
-            </div>
-          </div>
-        </div>
-      </div> -->
+      <NewLicenseAlert
+        v-if="!license.terms.is_usage_based"
+        :license="license"
+      />
     </v-card-text>
   </v-card>
 </template>

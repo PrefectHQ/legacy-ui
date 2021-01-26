@@ -16,40 +16,40 @@ export default {
 
 <template>
   <v-alert
-    width="100%"
-    class="mx-auto "
+    class="mx-auto mt-4"
     border="left"
     colored-border
     elevation="2"
     type="info"
     tile
     color="codePink"
+    icon="upgrade"
   >
-    <div class="subtitle-1 grey--text text--darken-2">
-      Pssst.... We noticed you have a legacy license type. </div
-    ><div class="subtitle-1 grey--text text--darken-2">
-      Prefect now has
-      <ExternalLink href="https://www.prefect.io/get-prefect#pricing">
-        new licenses
-      </ExternalLink>
-      that include
-      <span class="font-weight-bold">more users</span> and
-      <span class="font-weight-bold">less limits.</span></div
-    >
-    <div
-      v-if="!license.terms.is_self_serve"
-      class="subtitle-1 grey--text text--darken-2"
-      ><ExternalLink
-        href="https://www.prefect.io/get-prefect#contact"
-        target="_blank"
-        >Contact us </ExternalLink
-      >to find out more!</div
-    >
+    <v-row>
+      <v-col cols="12" lg="8">
+        Pssst.... We noticed you have a legacy license type. Prefect now has
+        <ExternalLink href="https://www.prefect.io/get-prefect#pricing">
+          new licenses
+        </ExternalLink>
+        that include
+        <span class="font-weight-bold">more users</span> and
+        <span class="font-weight-bold">less limits.</span>
+        <div
+          v-if="!license.terms.is_self_serve"
+          class="subtitle-1 grey--text text--darken-2"
+          ><ExternalLink
+            href="https://www.prefect.io/get-prefect#contact"
+            target="_blank"
+            >Contact us </ExternalLink
+          >to find out more!</div
+        >
+      </v-col>
 
-    <div v-else class="text-right">
-      <v-btn dark color="codePink">
-        Find Out More
-      </v-btn>
-    </div>
+      <v-col v-if="license.terms.is_self_serve" cols="12" lg="4">
+        <v-btn outlined color="codePink">
+          Find Out More
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-alert>
 </template>
