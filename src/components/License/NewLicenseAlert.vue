@@ -16,7 +16,7 @@ export default {
 
 <template>
   <v-alert
-    class="mx-auto mt-4"
+    class="mx-auto mt-4 alert"
     border="left"
     colored-border
     elevation="2"
@@ -27,11 +27,8 @@ export default {
   >
     <v-row>
       <v-col cols="12" lg="8">
-        Pssst.... We noticed you have a legacy license type. Prefect now has
-        <ExternalLink href="https://www.prefect.io/get-prefect#pricing">
-          new licenses
-        </ExternalLink>
-        that include
+        Pssst.... We noticed you have a legacy license type. Prefect now has new
+        licenses that include
         <span class="font-weight-bold">more users</span> and
         <span class="font-weight-bold">less limits.</span>
         <div
@@ -53,3 +50,10 @@ export default {
     </v-row>
   </v-alert>
 </template>
+
+<style>
+/* stylelint-disable */
+.alert .v-alert__icon.v-icon {
+  padding-top: 24px;
+}
+</style>
