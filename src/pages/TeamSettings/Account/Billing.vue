@@ -41,13 +41,7 @@ export default {
       return 'Add'
     },
     isSelfServe() {
-      console.log(this.license.terms)
       return this.license?.terms?.is_self_serve
-    },
-    planType() {
-      if (this.license?.terms?.plan == 'SELF_SERVE') return 'Cloud Developer'
-      if (this.license?.terms?.plan == 'PLATFORM') return 'Cloud Enterprise'
-      return 'Custom'
     }
   },
   watch: {
@@ -86,8 +80,7 @@ export default {
         icon="lock"
         max-width="540"
       >
-        You are on a {{ planType }} license. To update your payment details,
-        please
+        To update your payment details, please
         <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
           contact our sales team
         </a>

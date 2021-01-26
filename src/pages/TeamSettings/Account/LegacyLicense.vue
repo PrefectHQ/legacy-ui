@@ -19,14 +19,15 @@ export default {
     isTenantAdmin() {
       return true
     },
-    planType() {
-      if (this.license?.terms?.plan == 'FREE_2021') return 'Standard'
-      if (this.license?.terms?.plan == 'GOOD_2021') return 'Development'
-      if (this.license?.terms?.plan == 'BETTER_2021') return 'Profressional'
-      return 'Custom'
-    },
     planColor() {
+      if (this.license?.terms?.plan == 'SELF_SERVE') return 'primary'
+      if (this.license?.terms?.plan == 'PLATFORM') return 'cloudUIPrimaryBlue'
       return 'codeBlueBright'
+    },
+    planType() {
+      if (this.license?.terms?.plan == 'SELF_SERVE') return 'Cloud Developer'
+      if (this.license?.terms?.plan == 'PLATFORM') return 'Cloud Enterprise'
+      return 'Custom'
     },
     readNum() {
       return this.license?.terms?.read_only_users?.toLocaleString()
@@ -73,9 +74,6 @@ export default {
         return { type: featureText }
       })
       return featuresObjArray?.length > 0 ? featuresObjArray : null
-    },
-    taskRuns() {
-      return this.license?.terms.task_runs_usage_limit
     }
   },
   watch: {
@@ -177,7 +175,7 @@ export default {
           </div>
         </div>
 
-        <!-- <div
+        <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
         >
@@ -185,39 +183,18 @@ export default {
             <v-icon color="primary" large style="width: 36px;">
               fa-glasses
             </v-icon>
-          </div> -->
-        <!-- <div>
+          </div>
+          <div>
             <div class="text-h6 mb-2 grey--text text--darken-3">
               {{ readNum ? readNum : 'Unlimited' }} read-only
               {{ readOnlyUserOrUsers }}
             </div>
-            <div v-if="readNum === '0'" class="text-body-1">
-              You do not have any read only users in your account.
-            </div>
-            <div v-else-if="readNum" class="text-body-1">
+            <div v-if="readNum" class="text-body-1">
               You can invite up to {{ readNum }} read-only
               {{ readOnlyUserOrUsers }}.
             </div>
             <div v-else class="text-body-1">
               You have unlimited read-only users!
-            </div>
-          </div>
-        </div> -->
-
-        <div
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon color="primary" large>pi-task-run</v-icon>
-          </div>
-          <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
-              {{ taskRuns }}
-              Task Runs
-            </div>
-            <div class="text-body-1">
-              Your account includes {{ taskRuns }} Task Runs per month
             </div>
           </div>
         </div>
@@ -271,6 +248,75 @@ export default {
           </div>
         </div>
       </div>
+
+      <!-- <div class="text-h5 mb-4 mt-10 grey--text text--darken-4">
+        {{
+          planType == 'Cloud Enterprise'
+            ? 'Also included with your plan'
+            : 'Upgrade your plan to access these great features...'
+        }}
+      </div>
+
+      <div v-if="features" class="d-flex flex-wrap">
+        <div
+          v-for="(item, i) in features"
+          :key="i"
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div class="mr-4">
+            <v-icon :color="colorType(item.type)" large>
+              {{ iconType(item.type) }}
+            </v-icon>
+          </div>
+          <div>
+            <div class="text-h6 mb-2 grey--text text--darken-3">
+              {{ titleType(item.type) }}
+            </div>
+            <div class="text-body-1">{{ textType(item.type) }}</div>
+          </div>
+        </div> -->
+      <!-- </div> -->
+
+      <!-- <div v-else class="d-flex flex-wrap">
+        <div
+          v-for="(item, i) in allFeatures"
+          :key="i"
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div class="mr-4">
+            <v-icon :color="item.color" large>{{ iconType(item.type) }}</v-icon>
+          </div>
+          <div>
+            <div class="text-h6 mb-2 grey--text text--darken-3">
+              {{ titleType(item.type) }}
+            </div>
+            <div class="text-body-1">{{ textType(item.type) }}</div>
+          </div>
+        </div> -->
+
+      <!-- <div
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div>
+            <div class="text-h6 ml-6 mb-2 grey--text text--darken-3">
+              ... and more coming soon!
+            </div>
+          </div>
+        </div>
+      </div> -->
     </v-card-text>
   </v-card>
 </template>
+
+<style scoped>
+.capitalize {
+  text-transform: capitalize;
+}
+
+a {
+  text-decoration: none;
+}
+</style>

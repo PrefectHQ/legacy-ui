@@ -3,6 +3,7 @@ import { mapGetters, mapActions } from 'vuex'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import Profile from '@/pages/TeamSettings/Account/Profile'
+import LegacyLicense from '@/pages/TeamSettings/Account/LegacyLicense'
 import License from '@/pages/TeamSettings/Account/License'
 import Users from '@/pages/TeamSettings/Account/Users'
 import Billing from '@/pages/TeamSettings/Account/Billing'
@@ -14,6 +15,7 @@ export default {
     Profile,
     Users,
     ClearDataDialog,
+    LegacyLicense,
     License,
     Billing
   },
@@ -35,7 +37,7 @@ export default {
       console.log('license', this.license)
       return !location.href.includes('prefect.io')
     },
-    isUsageBilling() {
+    isUsageBased() {
       return this.license.terms.is_usage_based
     }
   },
@@ -75,8 +77,9 @@ export default {
     </template>
 
     <Profile />
-    <License v-if="isCloud" />
-    <Users v-if="isCloud && !isUsageBilling" />
+    <LegacyLicense v-if="isCloud && !isUsageBased" />
+    <License v-if="isCloud && isUsageBased" />
+    <Users v-if="isCloud && !isUsageBased" />
     <Billing v-if="isCloud" />
     <ClearDataDialog v-if="isCloud" />
   </ManagementLayout>
