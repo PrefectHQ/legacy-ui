@@ -78,8 +78,6 @@ export default {
 
         const partnerSource = sessionStorage.getItem('partnerSource')
 
-        console.log(partnerSource + ' in name team step')
-
         // Create the self serve license
         await this.$apollo.mutate({
           mutation: require('@/graphql/License/create-self-serve-license.gql'),
@@ -94,7 +92,6 @@ export default {
           }
         })
       } catch (e) {
-        console.log(e)
         if (!e?.message.includes('This tenant already has an active license'))
           this.updateServerError = true
       }
