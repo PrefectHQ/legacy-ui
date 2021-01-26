@@ -126,11 +126,11 @@ export default {
     data-cy="license-card"
     :loading="loading"
   >
-    <v-card-title>
+    <v-card-title class="mb-2">
       Your plan
     </v-card-title>
 
-    <v-card-subtitle>
+    <v-card-subtitle class="pb-0">
       Your team is on
       {{ planType !== 'Custom' ? 'the Prefect' : 'a' }}
       <a href="https://www.prefect.io/get-prefect#pricing" target="_blank">
