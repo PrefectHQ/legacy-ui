@@ -227,12 +227,8 @@ export default {
               </v-list-item-subtitle>
               <div class="subtitle-2">
                 <PrefectSchedule
-                  v-if="
-                    flow.schedule ||
-                      (flowGroup.schedule && flow.flow_runs.length > 1)
-                  "
+                  v-if="flow.schedule || flowGroup.schedule"
                   :schedule="flow.schedule ? flow.schedule : flowGroup.schedule"
-                  :scheduled-start-time="flow.flow_runs"
                 />
                 <span v-else>None</span>
               </div>
