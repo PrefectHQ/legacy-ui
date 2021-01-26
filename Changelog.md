@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Displays the scheduled time in the user's timezone in the Schedule section of the Details Tile - [#570](https://github.com/PrefectHQ/ui/pull/570)
 
 ## 2021-01-25
 
