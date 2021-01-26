@@ -124,7 +124,7 @@ export default {
     data-cy="license-card"
     :loading="loading"
   >
-    <v-card-title>
+    <v-card-title v-if="!license.terms.is_usage_based">
       <NewLicenseAlert :license="license" />
     </v-card-title>
     <v-card-title>
@@ -249,7 +249,7 @@ export default {
         </div>
       </div>
 
-      <div class="text-h5 mb-4 mt-10 grey--text text--darken-4">
+      <!-- <div class="text-h5 mb-4 mt-10 grey--text text--darken-4">
         {{
           planType == 'Cloud Enterprise'
             ? 'Also included with your plan'
@@ -275,10 +275,10 @@ export default {
             </div>
             <div class="text-body-1">{{ textType(item.type) }}</div>
           </div>
-        </div>
-      </div>
+        </div> -->
+      <!-- </div> -->
 
-      <div v-else class="d-flex flex-wrap">
+      <!-- <div v-else class="d-flex flex-wrap">
         <div
           v-for="(item, i) in allFeatures"
           :key="i"
@@ -294,9 +294,9 @@ export default {
             </div>
             <div class="text-body-1">{{ textType(item.type) }}</div>
           </div>
-        </div>
+        </div> -->
 
-        <div
+      <!-- <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
         >
@@ -306,7 +306,7 @@ export default {
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </v-card-text>
   </v-card>
 </template>

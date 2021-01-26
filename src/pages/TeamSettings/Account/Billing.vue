@@ -41,7 +41,8 @@ export default {
       return 'Add'
     },
     isSelfServe() {
-      return this.license?.terms?.plan == 'SELF_SERVE'
+      console.log(this.license.terms)
+      return this.license?.terms?.is_self_serve
     },
     planType() {
       if (this.license?.terms?.plan == 'SELF_SERVE') return 'Cloud Developer'

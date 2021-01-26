@@ -3,7 +3,7 @@ import { mapGetters, mapActions } from 'vuex'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import Profile from '@/pages/TeamSettings/Account/Profile'
-import LegacyLicense from '@/pages/TeamSettings/Account/License'
+import License from '@/pages/TeamSettings/Account/License'
 import Users from '@/pages/TeamSettings/Account/Users'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
@@ -14,7 +14,7 @@ export default {
     Profile,
     Users,
     ClearDataDialog,
-    LegacyLicense,
+    License,
     Billing
   },
   mixins: [teamProfileMixin],
@@ -75,7 +75,7 @@ export default {
     </template>
 
     <Profile />
-    <LegacyLicense v-if="isCloud && !isUsageBilling" />
+    <License v-if="isCloud" />
     <Users v-if="isCloud && !isUsageBilling" />
     <Billing v-if="isCloud" />
     <ClearDataDialog v-if="isCloud" />
