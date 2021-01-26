@@ -261,13 +261,20 @@ const mutations = {
 
 const actions = {
   async authenticate({ dispatch, commit, getters }) {
+    const urlParams = new URLSearchParams(window.location.search)
+    const invitationId = urlParams.get('invitation_id')
+    const source = urlParams.get('partner_source')
+
     if (window.location?.pathname && !getters['redirectRoute']) {
       dispatch('setRedirectRoute', window.location.pathname)
     }
 
-    if (window.location?.search?.includes('invitation_id=')) {
-      const invitationID = window.location.search.split('=')
-      sessionStorage.setItem('invitationId', invitationID[1])
+    if (invitationId) {
+      sessionStorage.setItem('invitationId', invitationId)
+    }
+
+    if (source) {
+      sessionStorage.setItem('partnerSource', source)
     }
 
     const isAuthenticated = await authClient.isAuthenticated()
