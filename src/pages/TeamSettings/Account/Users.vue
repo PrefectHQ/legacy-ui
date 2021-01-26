@@ -1,11 +1,12 @@
 <script>
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
+import NewLicenseAlert from '@/components/License/NewLicenseAlert'
 // import { paymentMixin } from '@/mixins/paymentMixin.js'
 import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
 
 export default {
-  // components: { Card },
+  components: { NewLicenseAlert },
   mixins: [teamProfileMixin],
   data() {
     return {
@@ -224,11 +225,14 @@ export default {
     </v-card-text>
     <div v-if="showPay" clas="mt-12">
       <v-card-title>
+        <NewLicenseAlert :license="license" />
+      </v-card-title>
+      <v-card-title>
         {{ upgradeOrDowngrade }} to {{ desiredUsers }} {{ desiredUserOrUsers }}
       </v-card-title>
       <v-list hide-details>
         <v-list-item
-          ><v-avatar><v-icon x-small>fas fa-asterisk</v-icon></v-avatar> You'll
+          ><v-icon small class="pr-4">star_rate</v-icon> You'll
           {{ addOrRemove }}
           <span class="font-weight-bold mx-1">{{ Math.abs(diff) }}</span>
           {{ userOrUsers }} at
@@ -239,8 +243,7 @@ export default {
           total)
         </v-list-item>
         <v-list-item
-          ><v-avatar><v-icon x-small>fas fa-asterisk</v-icon></v-avatar> Your
-          card
+          ><v-icon small class="pr-4">star_rate</v-icon> Your card
           <span v-if="existingCard" class="mx-1">
             ending in
             <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
