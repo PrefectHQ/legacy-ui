@@ -17,7 +17,7 @@ export default {
       return true
     },
     isSelfServe() {
-      return this.license.terms.is_self_serve
+      return !this.license.terms.is_self_serve
     },
     planType() {
       if (this.license?.terms?.plan == 'FREE_2021') return 'Standard'
@@ -126,39 +126,39 @@ export default {
     data-cy="license-card"
     :loading="loading"
   >
-    <v-card-title class="pb-0">
+    <v-card-title>
       Your plan
     </v-card-title>
 
-    <v-card-text>
-      <div class="subtitle-1">
-        Your team is on
-        {{ planType !== 'Custom' ? 'the Prefect' : 'a' }}
-        <a href="https://www.prefect.io/get-prefect#pricing" target="_blank">
-          <v-icon
-            v-if="planType !== 'Custom'"
-            :color="planColor"
-            class="mr-1 pb-1"
-            x-small
-          >
-            cloud
-          </v-icon>
-          <span :class="`${planColor}--text`">{{ planType }}</span>
-        </a>
-        plan.
-        <br />
-        <span v-if="!isSelfServe && isTenantAdmin">
-          <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
-            Contact us</a
-          >
-          to change your plan or</span
-        ><span v-else>
-          <router-link :to="{ name: 'plans' }"
-            >Check out our new plans</router-link
-          ></span
+    <v-card-subtitle>
+      Your team is on
+      {{ planType !== 'Custom' ? 'the Prefect' : 'a' }}
+      <a href="https://www.prefect.io/get-prefect#pricing" target="_blank">
+        <v-icon
+          v-if="planType !== 'Custom'"
+          :color="planColor"
+          class="mr-1 pb-1"
+          x-small
         >
-        to get access to cool new features!
-      </div>
+          cloud
+        </v-icon>
+        <span :class="`${planColor}--text`">{{ planType }}</span>
+      </a>
+      plan.
+      <br />
+      <span v-if="!isSelfServe && isTenantAdmin">
+        <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
+          Contact us</a
+        >
+        to change your plan or</span
+      ><span v-else>
+        <router-link :to="{ name: 'plans' }"
+          >Check out our license plans</router-link
+        ></span
+      >
+      to get access to cool new features!
+    </v-card-subtitle>
+    <v-card-text>
       <div class="d-flex flex-wrap mt-6">
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
