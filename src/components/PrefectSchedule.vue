@@ -24,8 +24,9 @@ export default {
           this.schedule.clocks[0].start_date.tz
             ? ` ${this.schedule.clocks[0].start_date.tz}`
             : ''
-        return `${cronstrue.toString(this.schedule.clocks[0].cron)}${timeZone ||
-          this.timezone}`
+        return `${cronstrue.toString(
+          this.schedule.clocks[0].cron
+        )} (${timeZone || this.timezone})`
       } else if (this.schedule.clocks[0].type === 'IntervalClock') {
         const microsecondsString = this.schedule.clocks[0].interval
         const numberOfMilliseconds = Number(microsecondsString) * 0.001
