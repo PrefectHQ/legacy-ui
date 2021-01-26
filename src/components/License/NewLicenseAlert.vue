@@ -26,7 +26,7 @@ export default {
     color="codePink"
   >
     <div class="subtitle-1 grey--text text--darken-2">
-      Pssst.... We noticed you have an old license type. </div
+      Pssst.... We noticed you have a legacy license type. </div
     ><div class="subtitle-1 grey--text text--darken-2">
       Prefect now has
       <ExternalLink href="https://www.prefect.io/get-prefect#pricing">

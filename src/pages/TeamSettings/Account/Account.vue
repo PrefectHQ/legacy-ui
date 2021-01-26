@@ -3,7 +3,7 @@ import { mapGetters, mapActions } from 'vuex'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import Profile from '@/pages/TeamSettings/Account/Profile'
-import License from '@/pages/TeamSettings/Account/License'
+import LegacyLicense from '@/pages/TeamSettings/Account/License'
 import Users from '@/pages/TeamSettings/Account/Users'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
@@ -14,7 +14,7 @@ export default {
     Profile,
     Users,
     ClearDataDialog,
-    License,
+    LegacyLicense,
     Billing
   },
   mixins: [teamProfileMixin],
@@ -31,14 +31,12 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['license']),
-    isMobile() {
-      return this.$vuetify.breakpoint.xsOnly
-    },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
-    },
     needAlert() {
+      console.log('license', this.license)
       return !location.href.includes('prefect.io')
+    },
+    isUsageBilling() {
+      return this.license.terms.is_usage_based
     }
   },
   watch: {},
@@ -77,8 +75,8 @@ export default {
     </template>
 
     <Profile />
-    <License v-if="isCloud" />
-    <Users v-if="isCloud" />
+    <LegacyLicense v-if="isCloud && !isUsageBilling" />
+    <Users v-if="isCloud && !isUsageBilling" />
     <Billing v-if="isCloud" />
     <ClearDataDialog v-if="isCloud" />
   </ManagementLayout>
