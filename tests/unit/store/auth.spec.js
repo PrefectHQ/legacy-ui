@@ -98,7 +98,7 @@ describe('auth Vuex Module', () => {
     it('should be initialized properly without tokens in localStorage ', () => {
       const state = auth.state
 
-      expect(Object.keys(state).length).toBe(15)
+      expect(Object.keys(state).length).toBe(16)
 
       expect(state.user).toBe(null)
       expect(state.authorizationToken).toBe(null)
