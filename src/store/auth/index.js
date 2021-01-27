@@ -275,7 +275,10 @@ const actions = {
     // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
 
     if (window.location?.pathname && !getters['redirectRoute']) {
-      dispatch('setRedirectRoute', window.location.pathname)
+      dispatch(
+        'setRedirectRoute',
+        window.location.pathname + window.location.search
+      )
     }
 
     if (invitationId) {
