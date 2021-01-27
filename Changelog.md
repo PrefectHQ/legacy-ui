@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Displays the timezone of the scheduled time in the Details Tile - [#570](https://github.com/PrefectHQ/ui/pull/570)
+- Fix issues related to token refresh - [#574](https://github.com/PrefectHQ/ui/pull/574)
 
 ## 2021-01-25
 
