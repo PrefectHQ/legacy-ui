@@ -21,7 +21,7 @@ export default {
             ` (${moment()
               .tz(this.schedule.clocks[0]?.start_date?.tz)
               .zoneAbbr()})`) ||
-          ''
+          ' (UTC)'
         return `${cronstrue.toString(this.schedule.clocks[0].cron)}${timezone}`
       } else if (this.schedule.clocks[0].type === 'IntervalClock') {
         const microsecondsString = this.schedule.clocks[0].interval
