@@ -12,7 +12,7 @@ export default {
 
     setTimeout(() => {
       this.$router.push({
-        name: 'name-team'
+        name: 'plan'
       })
     }, 3500)
   }

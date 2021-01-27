@@ -236,7 +236,7 @@ export default {
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
             <div class="display-1 text-center">
-              Let's start by creating your team
+              First let's name your team
               <v-menu
                 :close-on-content-click="false"
                 offset-y

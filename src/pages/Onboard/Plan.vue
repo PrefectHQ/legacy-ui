@@ -1,0 +1,121 @@
+<script>
+import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
+export default {
+  mixins: [teamProfileMixin],
+  data() {
+    return {
+      disabled: false,
+      loading: false,
+      height: 0,
+      // Reveal animation bools
+      revealNote: false,
+      revealNameInput: false,
+      revealUrlInput: false,
+      revealPendingTeams: false,
+      revealConfirm: false
+    }
+  },
+  computed: {},
+  mounted() {
+    this.tenantChanges.name = this.tenant.name
+    this.tenantChanges.slug = this.tenant.slug
+
+    setTimeout(() => {
+      this.revealNote = true
+
+      setTimeout(() => {
+        this.height = getComputedStyle(this.$refs['main-row']).height
+      })
+    }, 500)
+
+    setTimeout(() => {
+      this.revealNameInput = true
+      this.revealUrlInput = true
+      this.revealPendingTeams = true
+      this.revealConfirm = true
+
+      setTimeout(() => {
+        this.height = getComputedStyle(this.$refs['main-row']).height
+      })
+    }, 1000)
+  },
+  methods: {
+    goToNameTeam() {
+      this.$router.push({
+        name: 'name-team',
+        params: { tenant: this.tenant.slug }
+      })
+    }
+  }
+}
+</script>
+<template>
+  <v-card
+    v-if="tenant.id"
+    class="text-center mx-auto px-12 py-8 white--text"
+    flat
+    tile
+    style="width: fit-content !important;"
+    color="transparent"
+  >
+    <v-row
+      align="center"
+      justify="center"
+      :style="{ 'max-height': height }"
+      class="transition-height"
+    >
+      <div ref="main-row">
+        <transition-group name="fade">
+          <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
+            <div class="display-1 text-center"
+              >You'll start on the Standard Plan:</div
+            >
+
+            <div class="body-2 text--darken-1">
+              (If you want to add more task runs or get cool features like
+              alerts or concurrency limits, you can upgrade later.)
+            </div>
+            <v-card height="500px">Plan Card</v-card>
+          </v-col>
+          <v-col
+            v-if="revealConfirm"
+            key="revealConfirm"
+            cols="12"
+            class="my-2"
+          >
+            <v-btn
+              v-if="tenant.role == 'TENANT_ADMIN'"
+              color="primary"
+              width="auto"
+              data-cy="submit-team-info"
+              :loading="loading > 0"
+              :disabled="disabled"
+              @click="updateTenant"
+            >
+              OK!
+              <v-icon right>arrow_right</v-icon>
+            </v-btn>
+          </v-col>
+        </transition-group>
+      </div>
+    </v-row>
+  </v-card>
+</template>
+
+<style lang="scss" scoped>
+.h-80 {
+  min-height: calc(80vh - 64px) !important;
+}
+
+.transition-height {
+  transition: max-height 500ms ease;
+}
+
+.name-team-input {
+  max-width: 700px;
+}
+
+.w-100 {
+  width: 100vw;
+}
+</style>
