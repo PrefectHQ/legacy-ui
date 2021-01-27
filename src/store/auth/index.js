@@ -261,7 +261,7 @@ const mutations = {
 
 const actions = {
   async authenticate({ dispatch, commit, getters }) {
-    const urlParams = new URLSearchParams(window.location.search)
+    const urlParams = new URLSearchParams(window?.location?.search)
     const invitationId = urlParams.get('invitation_id')
     const source = urlParams.get('partner_source')
 
@@ -362,7 +362,7 @@ const actions = {
       jwt_decode(authorization.refresh_token).exp * 1000
     )
   },
-  async updateAuthentication({ dispatch, commit }) {
+  async updateAuthentication({ dispatch, commit, getters }) {
     if (getters['isRefreshingAuthentication']) return
 
     commit('isRefreshingAuthentication', true)
