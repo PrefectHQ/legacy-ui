@@ -303,7 +303,6 @@ const actions = {
     })
 
     const prefectAuthorization = await prefectAuth(getters['idToken'])
-
     if (prefectAuthorization) {
       // Update authorization credentials if user is authorized
       await dispatch('updateAuthorization', prefectAuthorization)
@@ -331,10 +330,16 @@ const actions = {
     commit('idTokenExpiry', idToken.expiresAt)
   },
   async refreshAuthorization({ getters, commit, dispatch }) {
+    if (getters['isRefreshingAuthorization']) return
+
     await dispatch('updateAuthentication')
 
     commit('isRefreshingAuthorization', true)
-    const prefectAuthorization = await prefectRefresh(getters['refreshToken'])
+
+    const prefectAuthorization = await prefectRefresh(
+      getters['authorizationToken']
+    )
+
     dispatch('updateAuthorization', prefectAuthorization)
     commit('isRefreshingAuthorization', false)
   },
@@ -351,6 +356,8 @@ const actions = {
     )
   },
   async updateAuthentication({ dispatch, commit }) {
+    if (getters['isRefreshingAuthentication']) return
+
     commit('isRefreshingAuthentication', true)
 
     // This should manually update authentication
