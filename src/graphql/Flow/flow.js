@@ -13,6 +13,7 @@ export default function(isCloud) {
 
         flows {
           id
+          
           archived
           core_version
           created
