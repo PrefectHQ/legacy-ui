@@ -932,7 +932,7 @@ describe('auth Vuex Module', () => {
       })
     })
 
-    describe('updateAuthentication  with query params', () => {
+    describe('authentication flow with query params', () => {
       let store
 
       beforeEach(() => {
