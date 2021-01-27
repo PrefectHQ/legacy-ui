@@ -81,19 +81,20 @@ export const KubernetesRun = {
       arg: 'job_template_path',
       input_type: 'string',
       label: 'Job template path',
-      description: ''
+      description:
+        'The path to a job template to use. If this is a local path, the job template will be loaded on initialization and store on the KubernetesRun object as the job template field. Otherwise the job template will be loaded at runtime by the agent; supported runtime file schemes include s3, gcs, and agent.'
     },
     {
       arg: 'job_template',
-      input_type: 'string',
+      input_type: 'multiline',
       label: 'Job template',
-      description: ''
+      description: 'An in-memory job template to use.'
     },
     {
       arg: 'image',
       input_type: 'string',
       label: 'Image',
-      description: ''
+      description: 'The image to use.'
     },
     {
       arg: 'env',
@@ -105,37 +106,39 @@ export const KubernetesRun = {
       arg: 'cpu_limit',
       input_type: 'string',
       label: 'CPU limit',
-      description: ''
+      description: 'The CPU limit for the job.'
     },
     {
       arg: 'cpu_request',
       input_type: 'string',
       label: 'CPU request',
-      description: ''
+      description: 'The CPU request for the job.'
     },
     {
       arg: 'memory_limit',
       input_type: 'string',
       label: 'Memory limit',
-      description: ''
+      description: 'The memory limit for the job.'
     },
     {
       arg: 'memory_request',
       input_type: 'string',
       label: 'Memory request',
-      description: ''
+      description: 'The memory request to use for the job.'
     },
     {
       arg: 'service_account_name',
       input_type: 'string',
       label: 'Service account name',
-      description: ''
+      description:
+        'A service account name to use for this job. Note: if present, this overrides any service account configured on the agent or in the job template.'
     },
     {
       arg: 'image_pull_secrets',
       input_type: 'list',
       label: 'Image pull secrets',
-      description: ''
+      description:
+        'A list of image pull secrets to use for this job. Note: if present, these override any image pull secrets configured on the agent or in the job template.'
     },
     {
       arg: 'labels',
