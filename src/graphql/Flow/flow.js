@@ -10,14 +10,11 @@ export default function(isCloud) {
         name
         default_parameters
         schedule
-
         flows {
           id
-          
           archived
           core_version
           created
-
           ${
             isCloud
               ? `
@@ -27,31 +24,23 @@ export default function(isCloud) {
               }`
               : ''
           }
-
           description
           run_config
           environment
           flow_group_id
-
           is_schedule_active
-
           name
           parameters
-
           project {
             id
             name
           }
-
           schedule
-
           storage
-
           updated
           version
           version_group_id
         }
-
         settings
         updated
       }
