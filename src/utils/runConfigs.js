@@ -12,7 +12,7 @@ export const LocalRun = {
     },
     {
       arg: 'working_dir',
-      input_type: 'object',
+      input_type: 'string',
       label: 'Working directory',
       description:
         'The working directory in which to start the process; the directory must already exist. If not provided, will be run in the same directory as the agent was started.'
@@ -151,12 +151,12 @@ export const KubernetesRun = {
 }
 
 // TODO: Add ECSRun
-// export const ECSRun = {}
+export const ECSRun = {}
 
 export const runConfigs = {
   LocalRun,
   UniversalRun,
   DockerRun,
-  KubernetesRun
-  // ECSRun
+  KubernetesRun,
+  ECSRun
 }

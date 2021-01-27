@@ -157,7 +157,7 @@ export default {
 
 <template>
   <div>
-    <RunConfig />
+    <RunConfig :config="flow.run_config" />
     <!-- <v-layout
       align-content-start
       fill-height
