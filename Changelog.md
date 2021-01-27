@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix issues related to token refresh - [#574](https://github.com/PrefectHQ/ui/pull/574)
 
 ## 2021-01-25
 
