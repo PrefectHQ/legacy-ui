@@ -686,15 +686,21 @@ describe('auth Vuex Module', () => {
         isAuthenticated.mockReturnValueOnce(false)
 
         const redirectRoute = '/path/to/some/place',
-          otherRedirectRoute = '/path/to/some/other/place'
+          otherRedirectRoute = '/path/to/some/other/place',
+          searchParams = '?some_query=123'
         await store.dispatch('setRedirectRoute', redirectRoute)
         expect(store.getters['redirectRoute']).toBe(redirectRoute)
 
         delete window.location
-        window.location = { pathname: otherRedirectRoute, search: '' }
+        window.location = {
+          pathname: otherRedirectRoute,
+          search: searchParams
+        }
 
         await store.dispatch('authenticate')
-        expect(store.getters['redirectRoute']).not.toBe(otherRedirectRoute)
+        expect(store.getters['redirectRoute']).not.toBe(
+          otherRedirectRoute + searchParams
+        )
       })
     })
 
