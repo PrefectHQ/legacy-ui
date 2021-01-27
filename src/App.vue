@@ -94,6 +94,7 @@ export default {
     },
     showNav() {
       if (this.$route.name === 'not-found') return false
+      if (this.isWelcome) return false
       return (
         ((this.isCloud && this.isAuthenticated) || this.isServer) &&
         this.loadedComponents > 0

@@ -242,9 +242,11 @@ export default {
                 offset-y
                 transition="slide-y-transition"
               >
-                <template #activator="{ on }">
-                  <v-icon class="white--text" v-on="on"
-                    >fa-question-circle</v-icon
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on"
+                    ><v-icon class="white--text"
+                      >fa-question-circle</v-icon
+                    ></v-btn
                   >
                 </template>
                 <v-card tile class="pa-3 mt-1" max-width="320">
