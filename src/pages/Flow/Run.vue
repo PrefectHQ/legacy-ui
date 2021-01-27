@@ -157,7 +157,9 @@ export default {
 
 <template>
   <div>
-    <RunConfig :config="flow.run_config" />
+    <v-card tile>
+      <RunConfig :config="flow.run_config" />
+    </v-card>
     <!-- <v-layout
       align-content-start
       fill-height

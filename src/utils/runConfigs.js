@@ -106,25 +106,29 @@ export const KubernetesRun = {
       arg: 'cpu_limit',
       input_type: 'string',
       label: 'CPU limit',
-      description: 'The CPU limit for the job.'
+      description:
+        'The CPU limit for the job; when this is specified, the kubelet does not allow the container to use more than this amount of CPU. See the <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank">Kubernetes docs</a><sup><i class="v-icon notranslate material-icons theme--light" style="font-size: 12px !important;">open_in_new</i></sup> for more information.'
     },
     {
       arg: 'cpu_request',
       input_type: 'string',
       label: 'CPU request',
-      description: 'The CPU request for the job.'
+      description:
+        'The CPU request for the job; when this is specified, the kubelet reserves at least this amount of CPU for the container to use. See the <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank">Kubernetes docs</a><sup><i class="v-icon notranslate material-icons theme--light" style="font-size: 12px !important;">open_in_new</i></sup> for more information.'
     },
     {
       arg: 'memory_limit',
       input_type: 'string',
       label: 'Memory limit',
-      description: 'The memory limit for the job.'
+      description:
+        'The memory limit for the job; when this is specified, the kubelet does not allow the container to use more than this amount of memory. See the <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank">Kubernetes docs</a><sup><i class="v-icon notranslate material-icons theme--light" style="font-size: 12px !important;">open_in_new</i></sup> for more information.'
     },
     {
       arg: 'memory_request',
       input_type: 'string',
       label: 'Memory request',
-      description: 'The memory request to use for the job.'
+      description:
+        'The memory request to use for the job; when this is specified, the kubelet reserves at least this amount of memory for the container to use. See the <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank">Kubernetes docs</a><sup><i class="v-icon notranslate material-icons theme--light" style="font-size: 12px !important;">open_in_new</i></sup> for more information.'
     },
     {
       arg: 'service_account_name',
