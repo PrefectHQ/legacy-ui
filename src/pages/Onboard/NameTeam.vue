@@ -77,18 +77,32 @@ export default {
         })
 
         // Create the self serve license
+        // await this.$apollo.mutate({
+        //   mutation: require('@/graphql/License/create-self-serve-license.gql'),
+        //   variables: {
+        //     input: {
+        //       confirm: true,
+        //       users: 1,
+        //       stripe_coupon_id: null
+        //     }
+        //   }
+        // })
+        // Create usage license
         await this.$apollo.mutate({
-          mutation: require('@/graphql/License/create-self-serve-license.gql'),
+          mutation: require('@/graphql/License/create-usage-based-license.gql'),
           variables: {
             input: {
-              confirm: true,
-              users: 1,
-              stripe_coupon_id: null
+              tenant_id: this.tenant.id,
+              plan_name: 'FREE_2021'
             }
           }
         })
       } catch (e) {
-        if (!e?.message.includes('This tenant already has an active license'))
+        /// Temp Fix - We should create a license that has permission to do this!!
+        if (
+          !e?.message.includes('This tenant already has an active license') &&
+          !e?.message.includes('Unauthorized')
+        )
           this.updateServerError = true
       }
 
@@ -136,7 +150,7 @@ export default {
 
       this.loading--
       await this.createLicense()
-      if (!this.updateServerError) this.goToResources()
+      if (!this.updateServerError) this.goToPlan()
     },
     async accept(pt) {
       this.loading++
@@ -187,7 +201,7 @@ export default {
       this.activeInvite = null
       this.loading--
     },
-    async goToResources() {
+    async goToPlan() {
       this.revealNameInput = false
       this.revealUrlInput = false
       this.revealConfirm = false
@@ -197,7 +211,7 @@ export default {
       )
 
       this.$router.push({
-        name: 'onboard-resources',
+        name: 'plan',
         params: { tenant: this.tenant.slug }
       })
     }

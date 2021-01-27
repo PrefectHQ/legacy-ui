@@ -6,7 +6,7 @@ export default {
     return {
       disabled: false,
       loading: false,
-      height: 0,
+      height: '',
       // Reveal animation bools
       revealNote: false,
       revealNameInput: false,
@@ -40,9 +40,9 @@ export default {
     }, 1000)
   },
   methods: {
-    goToNameTeam() {
+    goToResources() {
       this.$router.push({
-        name: 'name-team',
+        name: 'onboard-resources',
         params: { tenant: this.tenant.slug }
       })
     }
@@ -68,14 +68,14 @@ export default {
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
             <div class="display-1 text-center"
-              >You'll start on the Standard Plan:</div
+              >You'll start on the Standard Plan</div
             >
 
-            <div class="body-2 text--darken-1">
+            <div class="body-2 text--darken-1 pb-4">
               (If you want to add more task runs or get cool features like
               alerts or concurrency limits, you can upgrade later.)
             </div>
-            <v-card height="500px">Plan Card</v-card>
+            <v-card height="300px">Plan Card</v-card>
           </v-col>
           <v-col
             v-if="revealConfirm"
@@ -90,7 +90,7 @@ export default {
               data-cy="submit-team-info"
               :loading="loading > 0"
               :disabled="disabled"
-              @click="updateTenant"
+              @click="goToResources"
             >
               OK!
               <v-icon right>arrow_right</v-icon>
