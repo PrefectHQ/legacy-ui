@@ -13,7 +13,16 @@ import debounce from 'lodash.debounce'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
-const fullPageRoutes = ['api', '404', 'calendar', 'not-found', 'logout']
+const fullPageRoutes = [
+  'api',
+  '404',
+  'calendar',
+  'not-found',
+  'logout',
+  'welcome'
+]
+
+const onboardRoutes = ['welcome', 'name-team', 'onboard-resources', 'accept']
 
 export default {
   metaInfo() {
@@ -93,7 +102,11 @@ export default {
       )
     },
     showNav() {
-      if (this.$route.name === 'not-found') return false
+      if (
+        this.$route.name === 'not-found' ||
+        onboardRoutes.includes(this.$route.name)
+      )
+        return false
       return (
         ((this.isCloud && this.isAuthenticated) || this.isServer) &&
         this.loadedComponents > 0
