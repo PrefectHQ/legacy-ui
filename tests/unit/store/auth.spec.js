@@ -932,7 +932,7 @@ describe('auth Vuex Module', () => {
       })
     })
 
-    describe('a user comes from an email invite link', () => {
+    describe('updateAuthentication  with query params', () => {
       let store
 
       beforeEach(() => {
@@ -942,14 +942,37 @@ describe('auth Vuex Module', () => {
           actions: auth.actions,
           mutations: auth.mutations
         })
+
+        delete window.location
+
         isAuthenticated.mockReturnValue(false)
       })
-      delete window.location
-      window.location = { search: '?invitation_id=xyz' }
 
-      it('stores the invitation id in local storage', async () => {
-        await store.dispatch('authenticate')
-        expect(sessionStorage.getItem('invitationId')).toBe('xyz')
+      describe('a user comes from an email invite link', () => {
+        it('stores the invitation id in local storage', async () => {
+          window.location = { search: '?invitation_id=xyz' }
+
+          await store.dispatch('authenticate')
+          expect(sessionStorage.getItem('invitationId')).toBe('xyz')
+        })
+      })
+
+      describe('the url contains a partner source', () => {
+        it('stores the partner source in session storage', async () => {
+          window.location = { search: '?partner_source=prefect' }
+
+          await store.dispatch('authenticate')
+          expect(sessionStorage.getItem('partnerSource')).toBe('prefect')
+        })
+      })
+
+      describe('the url contains an authentication error', () => {
+        it('stores the error and aborts the authentication flow', async () => {
+          window.location = { search: '?error=access_denied' }
+
+          await store.dispatch('authenticate')
+          expect(store.getters['error']).toBe('access_denied')
+        })
       })
     })
   })
