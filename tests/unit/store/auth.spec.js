@@ -58,6 +58,7 @@ describe('auth Vuex Module', () => {
     return {
       authorizationToken: MOCK_AUTHORIZATION_TOKEN,
       authorizationTokenExpiry: new Date().getTime() + 10000,
+      error: null,
       idToken: MOCK_ID_TOKEN,
       idTokenExpiry: jwt_decode(MOCK_ID_TOKEN).exp * 1000,
       isAuthenticated: true,
@@ -80,6 +81,7 @@ describe('auth Vuex Module', () => {
     return {
       authorizationToken: null,
       authorizationTokenExpiry: null,
+      error: null,
       idToken: null,
       idTokenExpiry: null,
       isAuthenticated: false,
@@ -134,6 +136,21 @@ describe('auth Vuex Module', () => {
 
     it('should return the user', () => {
       expect(store.getters.user).toBe(store.state.user)
+    })
+
+    it('should return the error property', () => {
+      const errorState = loggedOutState()
+
+      errorState.error = 'access_denied'
+
+      store = new Vuex.Store({
+        state: errorState,
+        getters: auth.getters,
+        actions: auth.actions,
+        mutations: auth.mutations
+      })
+
+      expect(store.getters.error).toBe(store.state.error)
     })
 
     it('should return the idToken', () => {
@@ -226,6 +243,12 @@ describe('auth Vuex Module', () => {
         const idToken = loggedInState().idToken
         store.commit('idToken', idToken)
         expect(store.getters['idToken']).toBe(idToken)
+      })
+
+      it('should set the error property', () => {
+        const error = 'access_denied'
+        store.commit('error', error)
+        expect(store.getters['error']).toBe(error)
       })
 
       it('should set isAuthenticated', () => {
