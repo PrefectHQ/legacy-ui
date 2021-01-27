@@ -78,18 +78,36 @@ export const KubernetesRun = {
   icon: '',
   args: [
     {
-      arg: 'job_template_path',
-      input_type: 'string',
-      label: 'Job template path',
+      arg: null,
+      label: 'Choose a job template',
+      input_type: 'arg_override',
       description:
-        'The path to a job template to use. If this is a local path, the job template will be loaded on initialization and store on the KubernetesRun object as the job template field. Otherwise the job template will be loaded at runtime by the agent; supported runtime file schemes include s3, gcs, and agent.'
+        'The source of the job template to use. If default is selected, the job will use the template specified by your agent.',
+      ref: 'job_template_choice',
+      options: [
+        {
+          arg: null,
+          input_type: null,
+          label: 'Default',
+          description:
+            "Don't specify a template; use the default job configured on the agent instead."
+        },
+        {
+          arg: 'job_template_path',
+          input_type: 'string',
+          label: 'Job template path',
+          description:
+            'Specify a path to a job template to use. If this is a local path, the job template will be loaded on initialization and store on the KubernetesRun object as the job template field. Otherwise the job template will be loaded at runtime by the agent; supported runtime file schemes include s3, gcs, and agent.'
+        },
+        {
+          arg: 'job_template',
+          input_type: 'multiline',
+          label: 'Job template',
+          description: 'Specify an in-memory job template to use.'
+        }
+      ]
     },
-    {
-      arg: 'job_template',
-      input_type: 'multiline',
-      label: 'Job template',
-      description: 'An in-memory job template to use.'
-    },
+
     {
       arg: 'image',
       input_type: 'string',

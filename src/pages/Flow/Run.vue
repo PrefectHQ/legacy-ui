@@ -7,7 +7,7 @@ import { mapGetters, mapActions } from 'vuex'
 // import Parameters from '@/components/Parameters'
 // import PrefectSchedule from '@/components/PrefectSchedule'
 // import DateTime from '@/components/DateTime'
-import RunConfig from '@/components/RunConfig'
+import RunConfig from '@/components/RunConfig/RunConfig'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 
 export default {
