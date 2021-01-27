@@ -1,5 +1,5 @@
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import ConfirmDialog from '@/components/ConfirmDialog'
 import CronClock from '@/components/Functional/CronClock'
@@ -37,6 +37,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('user', ['timezone']),
     flowClocks() {
       return this.flow.schedule?.clocks.map(c => {
         // This is so we know where each clock originates while allowing us to put them in a single array
@@ -141,7 +142,11 @@ export default {
               input: {
                 flow_group_id: this.flowGroup.id,
                 cron_clocks: cronClocks,
-                interval_clocks: intervalClocks
+                interval_clocks: intervalClocks,
+                timezone: this.clocks[0]?.timezone
+                  ? this.clocks[0]?.timezone
+                  : this.timezone ||
+                    Intl.DateTimeFormat().resolvedOptions().timeZone
               }
             }
           })
@@ -182,6 +187,15 @@ export default {
           alertType: 'error'
         })
       }
+    },
+    timezoneVal(clock) {
+      let tz = this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+      if (clock?.timezone) {
+        tz = clock?.timezone
+      } else if (clock?.start_date?.tz) {
+        tz = clock?.start_date?.tz
+      }
+      return tz
     }
   }
 }
@@ -280,6 +294,7 @@ export default {
               <ClockForm
                 :cron="clock.cron"
                 :interval="clock.interval"
+                :timezone="timezoneVal(clock)"
                 title="Modify schedule"
                 @cancel="selectedClock = null"
                 @confirm="createClock"
@@ -301,6 +316,7 @@ export default {
                     <CronClock
                       v-if="clock.type == 'CronClock'"
                       :cron="clock.cron"
+                      :timezone="timezoneVal(clock)"
                     />
                     <IntervalClock
                       v-else-if="clock.type == 'IntervalClock'"

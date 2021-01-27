@@ -148,7 +148,7 @@ const actions = {
 
         // Set our new auth token
         await dispatch(
-          'auth0/updateAuthorization',
+          'auth/updateAuthorization',
           tenantToken.data.switch_tenant,
           {
             root: true

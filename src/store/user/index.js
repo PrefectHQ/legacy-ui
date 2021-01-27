@@ -13,7 +13,7 @@ const state = {
       timezone: ''
     }
   },
-  auth0User: {
+  oktaUser: {
     name: null,
     email: null,
     picture: null
@@ -26,8 +26,8 @@ const getters = {
   user(state) {
     return state.user
   },
-  auth0User(state) {
-    return state.auth0User
+  oktaUser(state) {
+    return state.oktaUser
   },
   defaultMembershipId(state) {
     return state.user.default_membership_id
@@ -60,11 +60,11 @@ const mutations = {
     state.user = { ...user }
     state.userIsSet = true
   },
-  setAuth0User(state, auth0User) {
-    state.auth0User = {
-      name: auth0User.name,
-      email: auth0User.email,
-      picture: auth0User.picture
+  setOktaUser(state, oktaUser) {
+    state.oktaUser = {
+      name: oktaUser.name,
+      email: oktaUser.email,
+      picture: oktaUser.picture || oktaUser.picture_url
     }
   },
   setUserSettings(state, settings) {
@@ -85,8 +85,8 @@ const mutations = {
     }
     state.userIsSet = false
   },
-  unsetAuth0User(state) {
-    state.auth0User = {
+  unsetOktaUser(state) {
+    state.oktaUser = {
       name: null,
       email: null,
       picture: null

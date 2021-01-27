@@ -76,6 +76,8 @@ export default {
           }
         })
 
+        const partnerSource = sessionStorage.getItem('partnerSource')
+
         // Create the self serve license
         await this.$apollo.mutate({
           mutation: require('@/graphql/License/create-self-serve-license.gql'),
@@ -83,7 +85,9 @@ export default {
             input: {
               confirm: true,
               users: 1,
-              stripe_coupon_id: null
+              stripe_coupon_id: partnerSource
+                ? `partner:${partnerSource}`
+                : null
             }
           }
         })

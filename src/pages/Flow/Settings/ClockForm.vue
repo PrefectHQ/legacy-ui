@@ -2,6 +2,11 @@
 import CronForm from '@/pages/Flow/Settings/ClockForms/Cron'
 import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
+import moment from 'moment-timezone'
+
+const timezones = [...moment.tz.names()].map(tz => {
+  return { text: tz.replace(/_/g, ' '), value: tz }
+})
 
 export default {
   components: {
@@ -24,10 +29,17 @@ export default {
       type: String,
       required: false,
       default: () => 'New Schedule'
+    },
+    timezone: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
     return {
+      tzs: timezones,
+      selectedTimezone: this.timezone,
       advanced: false,
       // Sets the default advanced tab
       // if a certain type was specific
@@ -61,9 +73,9 @@ export default {
         type: clockType,
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
-        ]
+        ],
+        timezone: this.selectedTimezone
       }
-
       this.$emit('confirm', clock)
     }
   }
@@ -116,19 +128,21 @@ export default {
           </v-chip-group>
 
           <v-fade-transition mode="out-in">
-            <CronForm
-              v-if="advancedType == 'cron'"
-              key="Cron"
-              v-model="cronModel"
-              :valid.sync="valid"
-              class="mt-4"
-            />
-            <IntervalForm
-              v-else-if="advancedType == 'interval'"
-              key="Interval"
-              v-model="intervalModel"
-              class="mt-4"
-            />
+            <div v-if="advancedType == 'cron'" key="Cron">
+              <CronForm v-model="cronModel" :valid.sync="valid" class="mt-4" />
+              <v-autocomplete
+                v-model="selectedTimezone"
+                :items="tzs"
+                outlined
+                label="Time Zone"
+                style="margin-top: 110px;"
+                prepend-inner-icon="access_time"
+                :menu-props="{ contentClass: 'tz' }"
+              />
+            </div>
+            <div v-else-if="advancedType == 'interval'" key="Interval">
+              <IntervalForm v-model="intervalModel" class="mt-4" />
+            </div>
           </v-fade-transition>
         </div>
         <div v-else key="2" class="mt-4 d-block" style="max-width: 100%;">
@@ -154,3 +168,10 @@ export default {
     </div>
   </v-container>
 </template>
+
+<style>
+/* stylelint-disable */
+.tz.v-menu__content .v-select-list {
+  max-width: 100%;
+}
+</style>

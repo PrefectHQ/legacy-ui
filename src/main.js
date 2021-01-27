@@ -1,12 +1,17 @@
 // Base imports
 import Vue from 'vue'
 import vuetify from '@/plugins/vuetify'
+
 import Router from 'vue-router'
 import App from '@/App.vue'
 
 // Plugins
 import store from '@/store'
 import { defaultApolloProvider } from '@/vue-apollo'
+
+// eslint-disable-next-line
+// import okta from '@/plugins/okta'
+
 import router from '@/router'
 import VueMeta from 'vue-meta'
 

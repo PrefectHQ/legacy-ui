@@ -19,6 +19,12 @@ commands:
             - node_modules
   build:
     parameters:
+      VUE_APP_OKTA_DOMAIN:
+        type: string
+      VUE_APP_PUBLIC_CLIENT_ID:
+        type: string
+      VUE_APP_PUBLIC_ISSUER:
+        type: string
       VUE_APP_AUTH0_PUBLIC_CLIENT_ID:
         type: string
       VUE_APP_STRIPE_PUBLIC_TOKEN:
@@ -34,6 +40,9 @@ commands:
       - run:
           name: NPM Build
           command: |
+            export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
+            export VUE_APP_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_PUBLIC_CLIENT_ID >>
+            export VUE_APP_PUBLIC_ISSUER=<< parameters.VUE_APP_PUBLIC_ISSUER >>
             export VUE_APP_AUTH0_DOMAIN=<< parameters.VUE_APP_AUTH0_DOMAIN >>
             export VUE_APP_AUTH0_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_AUTH0_PUBLIC_CLIENT_ID >>
             export VUE_APP_STRIPE_PUBLIC_TOKEN=<< parameters.VUE_APP_STRIPE_PUBLIC_TOKEN >>
@@ -55,7 +64,6 @@ commands:
       - run: gsutil -m cp -r dist/* gs://<< parameters.BUCKET_NAME >>/
 
 jobs:
-
   unit-test:
     # TODO: bump this to large in the future if needed. The default (medium) is resulting in test instabilities (ENOMEM: not enough memory, read)
     resource_class: medium
@@ -73,6 +81,9 @@ jobs:
       - image: node:14.7
     steps:
       - build:
+          VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__DEV}
+          VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__DEV}
+          VUE_APP_PUBLIC_ISSUER: ${VUE_APP_PUBLIC_ISSUER__DEV}
           VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__DEV}
           VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__DEV}
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
@@ -98,6 +109,9 @@ jobs:
       - image: node:14.7
     steps:
       - build:
+          VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__STAGING}
+          VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__STAGING}
+          VUE_APP_PUBLIC_ISSUER: ${VUE_APP_PUBLIC_ISSUER__STAGING}
           VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__STAGING}
           VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__STAGING}
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__STAGING}
@@ -123,6 +137,9 @@ jobs:
       - image: node:14.7
     steps:
       - build:
+          VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__PROD}
+          VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__PROD}
+          VUE_APP_PUBLIC_ISSUER: ${VUE_APP_PUBLIC_ISSUER__PROD}
           VUE_APP_AUTH0_DOMAIN: ${VUE_APP_AUTH0_DOMAIN__PROD}
           VUE_APP_AUTH0_PUBLIC_CLIENT_ID: ${VUE_APP_AUTH0_CLIENT_ID__PROD}
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__PROD}
@@ -192,8 +209,8 @@ workflows:
   'Deploy prod':
     jobs:
       - slack/approval-notification:
-          mentions: "nicholas,chris"
-          message: "Release Prod"
+          mentions: 'nicholas,chris'
+          message: 'Release Prod'
           filters:
             branches:
               ignore:
