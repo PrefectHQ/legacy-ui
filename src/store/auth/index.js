@@ -317,6 +317,8 @@ const actions = {
     return getters['isAuthenticated']
   },
   async authorize({ commit, getters, dispatch }) {
+    if (!getters['isAuthenticated']) return
+
     commit('isAuthorizingUser', true)
 
     const user = await authClient.getUser()
