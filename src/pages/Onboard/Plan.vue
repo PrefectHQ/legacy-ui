@@ -1,7 +1,10 @@
 <script>
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
+import PlanCard from '@/pages/Onboard/PlanCard'
 export default {
+  components: { PlanCard },
   mixins: [teamProfileMixin],
+
   data() {
     return {
       disabled: false,
@@ -68,14 +71,31 @@ export default {
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
             <div class="display-1 text-center"
-              >You'll start on the Standard Plan</div
+              >You're currently on the Starter Plan</div
             >
 
             <div class="body-2 text--darken-1 pb-4">
               (If you want to add more task runs or get cool features like
               alerts or concurrency limits, you can upgrade later.)
             </div>
-            <v-card height="300px">Plan Card</v-card>
+            <div
+              style="display: flex;
+            flex-direction: row;"
+            >
+              <PlanCard plan="good" selected />
+              <span
+                style="
+              transform: scale(0.9);
+              transform-origin: left;"
+                ><PlanCard plan="better"
+              /></span>
+              <span
+                style="
+              transform: scale(0.8);
+              transform-origin: -50%;"
+                ><PlanCard plan="best"
+              /></span>
+            </div>
           </v-col>
           <v-col
             v-if="revealConfirm"
