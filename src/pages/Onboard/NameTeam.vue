@@ -76,23 +76,33 @@ export default {
           }
         })
 
-        const partnerSource = sessionStorage.getItem('partnerSource')
-
         // Create the self serve license
+        // await this.$apollo.mutate({
+        //   mutation: require('@/graphql/License/create-self-serve-license.gql'),
+        //   variables: {
+        //     input: {
+        //       confirm: true,
+        //       users: 1,
+        //       stripe_coupon_id: null
+        //     }
+        //   }
+        // })
+        // Create usage license
         await this.$apollo.mutate({
-          mutation: require('@/graphql/License/create-self-serve-license.gql'),
+          mutation: require('@/graphql/License/create-usage-based-license.gql'),
           variables: {
             input: {
-              confirm: true,
-              users: 1,
-              stripe_coupon_id: partnerSource
-                ? `partner:${partnerSource}`
-                : null
+              tenant_id: this.tenant.id,
+              plan_name: 'FREE_2021'
             }
           }
         })
       } catch (e) {
-        if (!e?.message.includes('This tenant already has an active license'))
+        /// Temp Fix - We should create a license that has permission to do this!!
+        if (
+          !e?.message.includes('This tenant already has an active license') &&
+          !e?.message.includes('Unauthorized')
+        )
           this.updateServerError = true
       }
 
@@ -140,7 +150,7 @@ export default {
 
       this.loading--
       await this.createLicense()
-      if (!this.updateServerError) this.goToResources()
+      if (!this.updateServerError) this.goToPlan()
     },
     async accept(pt) {
       this.loading++
@@ -191,7 +201,7 @@ export default {
       this.activeInvite = null
       this.loading--
     },
-    async goToResources() {
+    async goToPlan() {
       this.revealNameInput = false
       this.revealUrlInput = false
       this.revealConfirm = false
@@ -201,7 +211,7 @@ export default {
       )
 
       this.$router.push({
-        name: 'onboard-resources',
+        name: 'plan',
         params: { tenant: this.tenant.slug }
       })
     }
@@ -246,9 +256,11 @@ export default {
                 offset-y
                 transition="slide-y-transition"
               >
-                <template #activator="{ on }">
-                  <v-icon class="white--text" v-on="on"
-                    >fa-question-circle</v-icon
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on"
+                    ><v-icon class="white--text"
+                      >fa-question-circle</v-icon
+                    ></v-btn
                   >
                 </template>
                 <v-card tile class="pa-3 mt-1" max-width="320">

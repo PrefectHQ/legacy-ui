@@ -94,6 +94,7 @@ export default {
     },
     showNav() {
       if (this.$route.name === 'not-found') return false
+      if (this.isWelcome) return false
       return (
         ((this.isCloud && this.isAuthenticated) || this.isServer) &&
         this.loadedComponents > 0
@@ -107,6 +108,7 @@ export default {
         this.$route.name === 'welcome' ||
         this.$route.name === 'onboard-resources' ||
         this.$route.name === 'name-team' ||
+        this.$route.name == 'plan' ||
         this.$route.name === 'accept'
       )
     }
