@@ -89,7 +89,7 @@ export default {
       class="my-2 d-inline-block pa-4"
       :class="arg.input_type == 'string' ? 'w-50' : 'w-100'"
     >
-      <div class="text-h6 primary--text">
+      <div class="text-h6">
         {{ arg.label }}
         <span
           v-if="arg.arg"
@@ -105,7 +105,7 @@ export default {
       <v-text-field
         v-if="arg.input_type == 'string'"
         v-model="config_[arg.arg]"
-        :placeholder="arg.label"
+        placeholder="Default"
         hide-details
       />
       <MultiLineInput v-else-if="arg.input_type == 'multiline'" />
@@ -131,8 +131,12 @@ export default {
             <div class="mt-2 text-body-2" v-html="option.description" />
           </div>
         </div>
+
         <v-fade-transition mode="out-in">
-          <div v-if="shownArgs[arg.ref] && arg.options[shownArgs[arg.ref]].arg">
+          <div
+            v-if="shownArgs[arg.ref] && arg.options[shownArgs[arg.ref]].arg"
+            class="mt-4"
+          >
             <div class="text-h6 primary--text">
               {{ arg.options[shownArgs[arg.ref]].label }}
               <span
@@ -152,7 +156,7 @@ export default {
             <v-text-field
               v-if="arg.options[shownArgs[arg.ref]].input_type == 'string'"
               v-model="config_[arg.options[shownArgs[arg.ref]].arg]"
-              :placeholder="arg.options[shownArgs[arg.ref]].label"
+              placeholder="Default"
             />
             <MultiLineInput
               v-else-if="
