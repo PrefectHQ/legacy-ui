@@ -738,14 +738,15 @@ describe('auth Vuex Module', () => {
       describe('prefectAuthorization', () => {
         beforeEach(() => {
           store.commit('refreshToken', MOCK_REFRESH_TOKEN)
+          store.commit('authorizationToken', MOCK_AUTHORIZATION_TOKEN)
           prefectRefresh.mockReturnValueOnce(MOCK_PREFECT_AUTH_PAYLOAD)
           LogRocket.identify.mockReset()
         })
 
-        it('is retrieved from the prefectAuth method by passing in the stored idToken', async () => {
+        it('is retrieved from the prefectAuth method by passing in the stored authorizationToken', async () => {
           await store.dispatch('refreshAuthorization')
 
-          expect(prefectRefresh).toHaveBeenCalledWith(MOCK_REFRESH_TOKEN)
+          expect(prefectRefresh).toHaveBeenCalledWith(MOCK_AUTHORIZATION_TOKEN)
         })
 
         it('is stored', async () => {
