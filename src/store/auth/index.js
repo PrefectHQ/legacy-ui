@@ -261,13 +261,20 @@ const mutations = {
 
 const actions = {
   async authenticate({ dispatch, commit, getters }) {
+    const urlParams = new URLSearchParams(window?.location?.search)
+    const invitationId = urlParams.get('invitation_id')
+    const source = urlParams.get('partner_source')
+
     if (window.location?.pathname && !getters['redirectRoute']) {
       dispatch('setRedirectRoute', window.location.pathname)
     }
 
-    if (window.location?.search?.includes('invitation_id=')) {
-      const invitationID = window.location.search.split('=')
-      sessionStorage.setItem('invitationId', invitationID[1])
+    if (invitationId) {
+      sessionStorage.setItem('invitationId', invitationId)
+    }
+
+    if (source) {
+      sessionStorage.setItem('partnerSource', source)
     }
 
     const isAuthenticated = await authClient.isAuthenticated()
@@ -303,7 +310,6 @@ const actions = {
     })
 
     const prefectAuthorization = await prefectAuth(getters['idToken'])
-
     if (prefectAuthorization) {
       // Update authorization credentials if user is authorized
       await dispatch('updateAuthorization', prefectAuthorization)
@@ -331,10 +337,16 @@ const actions = {
     commit('idTokenExpiry', idToken.expiresAt)
   },
   async refreshAuthorization({ getters, commit, dispatch }) {
+    if (getters['isRefreshingAuthorization']) return
+
     await dispatch('updateAuthentication')
 
     commit('isRefreshingAuthorization', true)
-    const prefectAuthorization = await prefectRefresh(getters['refreshToken'])
+
+    const prefectAuthorization = await prefectRefresh(
+      getters['authorizationToken']
+    )
+
     dispatch('updateAuthorization', prefectAuthorization)
     commit('isRefreshingAuthorization', false)
   },
@@ -350,7 +362,9 @@ const actions = {
       jwt_decode(authorization.refresh_token).exp * 1000
     )
   },
-  async updateAuthentication({ dispatch, commit }) {
+  async updateAuthentication({ dispatch, commit, getters }) {
+    if (getters['isRefreshingAuthentication']) return
+
     commit('isRefreshingAuthentication', true)
 
     // This should manually update authentication

@@ -10,7 +10,7 @@ export default function(isCloud) {
         name
         default_parameters
         schedule
-
+        
         flows {
           id
 
@@ -32,7 +32,6 @@ export default function(isCloud) {
           run_config
           environment
           flow_group_id
-
           is_schedule_active
 
           name

@@ -233,6 +233,14 @@ export const routes = [
           )
       },
       {
+        name: 'plan',
+        path: 'plan',
+        component: () =>
+          import(
+            /* webpackChunkName: "onboard-plan" */ '@/pages/Onboard/Plan.vue'
+          )
+      },
+      {
         name: 'name-team',
         path: 'name-team',
         component: () =>

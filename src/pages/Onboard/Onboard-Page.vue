@@ -24,7 +24,11 @@ export default {
         : 5
     },
     nameTeamOrAcceptRoute() {
-      return this.$route.name == 'name-team' || this.$route.name == 'accept'
+      return (
+        this.$route.name == 'name-team' ||
+        this.$route.name == 'accept' ||
+        this.$route.name == 'plan'
+      )
     },
     slashClass() {
       return {

@@ -4,6 +4,7 @@ import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters('api', ['connected']),
+    ...mapGetters('auth', ['isAuthorized']),
     ...mapGetters('tenant', ['tenant', 'tenantIsSet']),
     active() {
       return this.notificationsCount
@@ -16,7 +17,7 @@ export default {
       update: data => data?.message_aggregate?.aggregate?.count,
       fetchPolicy: 'no-cache',
       skip() {
-        return !this.connected || !this.tenantIsSet
+        return !this.connected || !this.tenantIsSet || !this.isAuthorized
       },
       pollInterval: 10000
     }
