@@ -85,7 +85,7 @@ export default {
         <div class="mt-2 text-body-2" v-html="arg.description" />
       </v-col>
 
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="mt-md-8 mt-sm-8 mt-xs-8">
         <v-text-field
           v-if="arg.input_type == 'string'"
           v-model="config_[arg.arg]"
@@ -128,7 +128,7 @@ export default {
       <v-fade-transition mode="out-in">
         <v-col v-if="shownArgs[arg.ref]" cols="12">
           <v-row no-gutters class="my-4">
-            <v-col cols="12" md="6" class="pl-8 pr-24">
+            <v-col cols="12" md="6" class="pl-md-8 pr-24 pl-sm-0">
               <div class="text-h6">
                 {{ arg.options[shownArgs[arg.ref]].label }}
                 <span
