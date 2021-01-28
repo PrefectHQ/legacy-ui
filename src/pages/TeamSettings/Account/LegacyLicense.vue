@@ -1,11 +1,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
-import NewLicenseAlert from '@/components/License/NewLicenseAlert'
+import UpgradeAlert from '@/components/License/UpgradeAlert'
 
 export default {
   components: {
-    NewLicenseAlert
+    UpgradeAlert
   },
   data() {
     return {
@@ -145,10 +145,7 @@ export default {
       <br />
     </v-card-subtitle>
     <v-card-text>
-      <NewLicenseAlert
-        v-if="!license.terms.is_usage_based"
-        :license="license"
-      />
+      <UpgradeAlert :license="license" />
       <div class="d-flex flex-wrap mt-6">
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"

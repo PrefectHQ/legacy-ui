@@ -1,9 +1,12 @@
 <script>
 import { mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
+import UpgradeAlert from '@/components/License/UpgradeAlert'
 
 export default {
-  components: {},
+  components: {
+    UpgradeAlert
+  },
   data() {
     return {
       allFeatures: featureTypes,
@@ -17,11 +20,11 @@ export default {
       return true
     },
     isSelfServe() {
-      return this.license.terms.is_self_serve
+      return this.license?.terms?.is_self_serve
     },
     planType() {
-      if (this.license?.terms?.plan == 'FREE_2021') return 'Standard'
-      if (this.license?.terms?.plan == 'GOOD_2021') return 'Development'
+      if (this.license?.terms?.plan == 'FREE_2021') return 'Starter'
+      if (this.license?.terms?.plan == 'GOOD_2021') return 'Standard'
       if (this.license?.terms?.plan == 'BETTER_2021') return 'Professional'
       return 'Custom'
     },
@@ -75,7 +78,7 @@ export default {
       return featuresObjArray?.length > 0 ? featuresObjArray : null
     },
     taskRuns() {
-      return this.license?.terms.task_runs_usage_limit
+      return this.license?.terms?.task_runs_usage_limit
     }
   },
   watch: {
@@ -146,20 +149,9 @@ export default {
       </a>
       plan.
       <br />
-      <span v-if="!isSelfServe">
-        <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
-          Contact us</a
-        >
-        to change your plan or</span
-      ><span v-else>
-        <router-link :to="{ name: 'plans' }"
-          >Check out our license plans</router-link
-        ></span
-      >
-      to get access to cool new features!
     </v-card-subtitle>
     <v-card-text>
-      <div class="d-flex flex-wrap mt-6">
+      <div class="d-flex flex-wrap mt-4">
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
@@ -249,6 +241,7 @@ export default {
           </div>
         </div>
       </div>
+      <UpgradeAlert :license="license" />
     </v-card-text>
   </v-card>
 </template>

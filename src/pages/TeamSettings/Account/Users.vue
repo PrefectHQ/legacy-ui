@@ -1,12 +1,12 @@
 <script>
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
-import NewLicenseAlert from '@/components/License/NewLicenseAlert'
+import UpgradeAlert from '@/components/License/UpgradeAlert'
 // import { paymentMixin } from '@/mixins/paymentMixin.js'
 import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
 
 export default {
-  components: { NewLicenseAlert },
+  components: { UpgradeAlert },
   mixins: [teamProfileMixin],
   data() {
     return {
@@ -41,7 +41,10 @@ export default {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
     },
     isSelfServe() {
-      return this.license?.terms?.plan === 'SELF_SERVE'
+      return (
+        this.license?.terms?.plan === 'SELF_SERVE' ||
+        this.license?.terms?.is_self_serve
+      )
     },
     max() {
       return 4
@@ -225,7 +228,7 @@ export default {
     </v-card-text>
     <div v-if="showPay" clas="mt-12">
       <v-card-text>
-        <NewLicenseAlert :license="license" />
+        <UpgradeAlert :license="license" />
       </v-card-text>
       <v-card-title>
         {{ upgradeOrDowngrade }} to {{ desiredUsers }} {{ desiredUserOrUsers }}
