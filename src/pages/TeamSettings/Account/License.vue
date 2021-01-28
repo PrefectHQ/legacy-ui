@@ -17,7 +17,7 @@ export default {
       return true
     },
     isSelfServe() {
-      return !this.license.terms.is_self_serve
+      return this.license.terms.is_self_serve
     },
     planType() {
       if (this.license?.terms?.plan == 'FREE_2021') return 'Standard'
@@ -146,7 +146,7 @@ export default {
       </a>
       plan.
       <br />
-      <span v-if="!isSelfServe && isTenantAdmin">
+      <span v-if="!isSelfServe">
         <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
           Contact us</a
         >
