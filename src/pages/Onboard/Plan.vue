@@ -69,18 +69,19 @@ export default {
     >
       <div ref="main-row">
         <transition-group name="fade">
-          <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
+          <v-col v-if="revealNote" key="name" cols="12" class="pb-4">
             <div class="display-1 text-center"
               >You're currently on the Starter Plan</div
             >
 
-            <div class="body-2 text--darken-1 pb-4">
+            <div class="body-2 text--darken-1 py-4">
               (If you want to add more task runs or get cool features like
               alerts or concurrency limits, you can upgrade later.)
             </div>
             <div
               style="display: flex;
             flex-direction: row;"
+              class="py-8"
             >
               <PlanCard plan="good" selected />
               <span

@@ -60,7 +60,7 @@ export default {
     :style="{
       filter: selected ? '' : 'contrast(50%)'
     }"
-    class="pa-3"
+    class="pa-4"
   >
     <h2>{{ activePlan.name }}</h2>
     <v-list>
