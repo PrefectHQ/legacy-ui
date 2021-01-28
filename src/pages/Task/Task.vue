@@ -6,7 +6,7 @@ import DetailsTile from '@/pages/Task/Details-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TaskRunHeartbeatTile from '@/pages/Task/TaskRunHeartbeat-Tile'
 import TaskRunTableTile from '@/pages/Task/TaskRunTable-Tile'
-import TileLayoutAlternate from '@/layouts/TileLayout-Alternate'
+import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
 import { mapActions } from 'vuex'
 
@@ -24,7 +24,7 @@ export default {
     SubPageNav,
     TaskRunHeartbeatTile,
     TaskRunTableTile,
-    TileLayoutAlternate,
+    TileLayout,
     TileLayoutFull
   },
   async beforeRouteLeave(to, from, next) {
@@ -250,25 +250,28 @@ export default {
         transition="quick-fade"
         reverse-transition="quick-fade"
       >
-        <TileLayoutAlternate>
+        <TileLayout>
           <DetailsTile
-            slot="col-1-tile-1"
+            slot="row-2-col-1-row-1-tile-1"
             :task="task"
             :last-run="lastTaskRun"
             :loading="loading > 0"
           />
 
-          <TaskRunHeartbeatTile slot="col-1-tile-2" :task-id="taskId" />
+          <TaskRunHeartbeatTile
+            slot="row-2-col-1-row-4-tile-1"
+            :task-id="taskId"
+          />
 
           <DependenciesTile
-            slot="row-2-tile-1"
+            slot="row-2-col-2-row-3-tile-1"
             :downstream-count="downstreamCount"
             :loading="loading > 0"
             :flow="task ? task.flow : null"
             :tasks="dependencies"
             :upstream-count="upstreamCount"
           />
-        </TileLayoutAlternate>
+        </TileLayout>
       </v-tab-item>
     </v-tabs-items>
 
