@@ -26,7 +26,7 @@ export default {
     icon="upgrade"
   >
     <v-row>
-      <v-col cols="12" lg="8">
+      <v-col v-if="!license.is_usage_based" cols="12" lg="8">
         Pssst.... We noticed you have a legacy license type. Prefect now has new
         licenses that include
         <span class="font-weight-bold">more users</span> and
@@ -40,6 +40,15 @@ export default {
             >Contact us </ExternalLink
           >to find out more!</div
         >
+      </v-col>
+      <v-col v-else>
+        <span v-if="!isSelfServe">
+          <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
+            Contact us</a
+          >
+          to change your plan or</span
+        ><span v-else> Check out our license plans</span>
+        to get access to cool new features!
       </v-col>
 
       <v-col v-if="license.terms.is_self_serve" cols="12" lg="4">
