@@ -1,7 +1,7 @@
 <script>
 import ManagementLayout from '@/layouts/ManagementLayout'
 import PlanCard from '@/components/PlanCard'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -203,7 +203,8 @@ export default {
     }
   },
   methods: {
-    async upgrade() {
+    ...mapActions('alert', ['setAlert']),
+    async changePlan() {
       try {
         console.log(this.selected, this.planType)
         await this.$apollo.mutate({
@@ -216,13 +217,13 @@ export default {
           }
         })
       } catch (e) {
-        /// Temp Fix - We should create a license that has permission to do this!!
-        if (
-          !e?.message.includes('This tenant already has an active license')
-          //   !e?.message.includes('Unauthorized')
-        )
-          //   this.updateServerError = true
-          console.log(e)
+        this.setAlert({
+          alertShow: true,
+          alertMessage:
+            'There was an error changing your plan.  Please try again or contact help@prefect.io',
+          alertType: 'error'
+        })
+        console.log(e)
       }
     }
   }
@@ -256,9 +257,17 @@ export default {
           </v-col>
         </v-row>
       </v-item-group>
-      <div>
-        <v-btn @click="upgrade">Upgrade</v-btn>
-      </div>
+    </div>
+    <div class="text-center">
+      <v-btn
+        v-if="selected === 2"
+        color="primary"
+        href="https://www.prefect.io/get-prefect#contact"
+        target="_blank"
+      >
+        Contact Sales
+      </v-btn>
+      <v-btn v-else color="primary" @click="changePlan">Change Plan</v-btn>
     </div>
     All plans come with:
     <v-list>
