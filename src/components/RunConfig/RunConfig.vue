@@ -40,10 +40,10 @@ export default {
     },
     template() {
       return runConfigs[this.templateType]
+    },
+    runConfigs() {
+      return runConfigs
     }
-  },
-  watch: {
-    templateType() {}
   },
   mounted() {
     /* eslint-disable no-console */
@@ -64,120 +64,151 @@ export default {
 
 <template>
   <v-container class="pa-0 blue-grey--text text--darken-2">
-    <v-row
-      v-for="(arg, i) in template.args"
-      :key="i"
-      class="my-2 py-8 row-divider"
-      no-gutters
-    >
-      <v-col cols="12" md="6" class="pr-24">
-        <div class="text-h6">
-          {{ arg.label }}
-          <span
-            v-if="arg.arg"
-            class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-            style="border: 1px solid #b0bec5 !important;"
-          >
-            {{ arg.arg }}
-          </span>
+    <div>
+      <div class="text-h5">
+        Configuration
+      </div>
+
+      <div class="config-selection-container">
+        <div
+          v-for="runConfig in runConfigs"
+          :key="runConfig.type"
+          class="config-type white py-2 d-flex align-center justify-start px-4 my-2 cursor-pointer user-select-none"
+          :class="{ active: runConfig.type == templateType }"
+          @click="templateType = runConfig.type"
+        >
+          <div class="text-center" style="width: 50px;">
+            <i :class="runConfig.icon" class="fa-2x"> </i>
+          </div>
+
+          <div class="" style="width: 250px;">
+            <div class="text-h6"> {{ runConfig.label }}</div>
+            <div class="text-body-1 grey--text text--darken-1">
+              {{ runConfig.description }}
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <div class="mt-2 text-body-2" v-html="arg.description" />
-      </v-col>
+    <transition-group name="fade" mode="out-in">
+      <v-row
+        v-for="(arg, i) in template.args"
+        :key="i"
+        class="my-2 py-8 row-divider"
+        no-gutters
+      >
+        <v-col cols="12" md="6" class="pr-24">
+          <div class="text-h6">
+            {{ arg.label }}
+            <span
+              v-if="arg.arg"
+              class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
+              style="border: 1px solid #b0bec5 !important;"
+            >
+              {{ arg.arg }}
+            </span>
+          </div>
 
-      <v-col cols="12" md="6" class="mt-md-8 mt-sm-8 mt-xs-8">
-        <v-text-field
-          v-if="arg.input_type == 'string'"
-          v-model="config_[arg.arg]"
-          placeholder="Default"
-          class="white"
-          :label="arg.label"
-          hide-details
-          outlined
-          dense
-        />
-        <MultiLineInput
-          v-else-if="arg.input_type == 'multiline'"
-          v-model="config_[arg.arg]"
-        />
-        <DictInput
-          v-else-if="arg.input_type == 'object'"
-          v-model="config_[arg.arg]"
-        />
-        <ListInput
-          v-else-if="arg.input_type == 'list'"
-          v-model="config_[arg.arg]"
-        />
-
-        <div v-else-if="arg.input_type == 'arg_override'">
-          <v-radio-group
-            v-model="shownArgs[arg.ref]"
-            mandatory
-            @change="handleArgOptionClick(arg)"
-          >
-            <v-radio
-              v-for="(option, j) in arg.options"
-              :key="j"
-              :label="option.label"
-              :value="j"
-            ></v-radio>
-          </v-radio-group>
-        </div>
-      </v-col>
-
-      <v-fade-transition mode="out-in">
-        <v-col v-if="shownArgs[arg.ref]" cols="12">
-          <v-row no-gutters class="my-4">
-            <v-col cols="12" md="6" class="pl-md-8 pr-24 pl-sm-0">
-              <div class="text-h6">
-                {{ arg.options[shownArgs[arg.ref]].label }}
-                <span
-                  v-if="arg.arg"
-                  class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-                  style="border: 1px solid #b0bec5 !important;"
-                >
-                  {{ arg.arg }}
-                </span>
-              </div>
-
-              <div
-                class="mt-2 text-body-2"
-                v-html="arg.options[shownArgs[arg.ref]].description"
-              />
-            </v-col>
-
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-if="arg.options[shownArgs[arg.ref]].input_type == 'string'"
-                v-model="config_[arg.options[shownArgs[arg.ref]].arg]"
-                placeholder="Default"
-                class="white"
-                :label="arg.options[shownArgs[arg.ref]].label"
-                hide-details
-                outlined
-                dense
-              />
-              <MultiLineInput
-                v-else-if="
-                  arg.options[shownArgs[arg.ref]].input_type == 'multiline'
-                "
-                v-model="config_[arg.options[shownArgs[arg.ref]]]"
-              />
-              <DictInput
-                v-else-if="
-                  arg.options[shownArgs[arg.ref]].input_type == 'object'
-                "
-                v-model="config_[arg.options[shownArgs[arg.ref]]]"
-              />
-              <ListInput
-                v-else-if="arg.options[shownArgs[arg.ref]].input_type == 'list'"
-                v-model="config_[arg.options[shownArgs[arg.ref]]]"
-              />
-            </v-col>
-          </v-row>
+          <div class="mt-2 text-body-2" v-html="arg.description" />
         </v-col>
-      </v-fade-transition>
-    </v-row>
+
+        <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+          <v-text-field
+            v-if="arg.input_type == 'string'"
+            v-model="config_[arg.arg]"
+            placeholder="Default"
+            class="white"
+            :label="arg.label"
+            hide-details
+            outlined
+            dense
+          />
+          <MultiLineInput
+            v-else-if="arg.input_type == 'multiline'"
+            v-model="config_[arg.arg]"
+          />
+          <DictInput
+            v-else-if="arg.input_type == 'object'"
+            v-model="config_[arg.arg]"
+          />
+          <ListInput
+            v-else-if="arg.input_type == 'list'"
+            v-model="config_[arg.arg]"
+          />
+
+          <div v-else-if="arg.input_type == 'arg_override'">
+            <v-radio-group
+              v-model="shownArgs[arg.ref]"
+              mandatory
+              @change="handleArgOptionClick(arg)"
+            >
+              <v-radio
+                v-for="(option, j) in arg.options"
+                :key="j"
+                :label="option.label"
+                :value="j"
+              ></v-radio>
+            </v-radio-group>
+          </div>
+        </v-col>
+
+        <v-fade-transition mode="out-in">
+          <v-col v-if="shownArgs[arg.ref]" cols="12">
+            <v-row no-gutters class="my-4">
+              <v-col cols="12" md="6" class="pl-md-8 pr-24 pl-sm-0">
+                <div class="text-h6">
+                  {{ arg.options[shownArgs[arg.ref]].label }}
+                  <span
+                    v-if="arg.arg"
+                    class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
+                    style="border: 1px solid #b0bec5 !important;"
+                  >
+                    {{ arg.arg }}
+                  </span>
+                </div>
+
+                <div
+                  class="mt-2 text-body-2"
+                  v-html="arg.options[shownArgs[arg.ref]].description"
+                />
+              </v-col>
+
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-if="arg.options[shownArgs[arg.ref]].input_type == 'string'"
+                  v-model="config_[arg.options[shownArgs[arg.ref]].arg]"
+                  placeholder="Default"
+                  class="white"
+                  :label="arg.options[shownArgs[arg.ref]].label"
+                  hide-details
+                  outlined
+                  dense
+                />
+                <MultiLineInput
+                  v-else-if="
+                    arg.options[shownArgs[arg.ref]].input_type == 'multiline'
+                  "
+                  v-model="config_[arg.options[shownArgs[arg.ref]]]"
+                />
+                <DictInput
+                  v-else-if="
+                    arg.options[shownArgs[arg.ref]].input_type == 'object'
+                  "
+                  v-model="config_[arg.options[shownArgs[arg.ref]]]"
+                />
+                <ListInput
+                  v-else-if="
+                    arg.options[shownArgs[arg.ref]].input_type == 'list'
+                  "
+                  v-model="config_[arg.options[shownArgs[arg.ref]]]"
+                />
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-fade-transition>
+      </v-row>
+    </transition-group>
   </v-container>
 </template>
 
@@ -208,21 +239,29 @@ export default {
   width: 100%;
 }
 
-.arg-override-option {
+.config-selection-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.config-type {
   border: 2px solid;
-  border-color: #ddd;
-  height: 125px;
-  max-width: 250px;
-  overflow: hidden;
-  width: 30%;
+  border-color: #ddd !important;
+  height: 110px;
+  width: 350px;
 
   &.active {
-    border-color: var(--v-primary-base);
+    border-color: var(--v-primary-base) !important;
   }
+}
+</style>
 
-  .arg-override-option-description {
-    height: 175px;
-    overflow-y: auto;
+<style lang="scss">
+.config-type {
+  &.active {
+    .svg-inline--fa path {
+      fill: var(--v-primary-base) !important;
+    }
   }
 }
 </style>

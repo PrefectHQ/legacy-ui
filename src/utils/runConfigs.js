@@ -1,8 +1,15 @@
+// { type: 'DockerAgent', icon: '$docker' },
+// { type: 'FargateAgent', icon: '$fargate' },
+// { type: 'KubernetesAgent', icon: '$kubernetes' },
+// { type: 'LocalAgent', icon: 'fas fa-globe' },
+// { type: 'NomadAgent', icon: '$nomad' }
+
 export const LocalRun = {
+  type: 'LocalRun',
   label: 'Local',
   description: 'Run the flow in a local process',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#localrun',
-  icon: '',
+  icon: 'fad fa-laptop-house',
   args: [
     {
       arg: 'env',
@@ -28,10 +35,11 @@ export const LocalRun = {
 }
 
 export const UniversalRun = {
+  type: 'UniversalRun',
   label: 'Universal',
   description: 'Run the flow on any agent with matching labels',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#universalrun',
-  icon: '',
+  icon: 'fad fa-globe',
   args: [
     {
       arg: 'labels',
@@ -44,10 +52,11 @@ export const UniversalRun = {
 }
 
 export const DockerRun = {
+  type: 'DockerRun',
   label: 'Docker',
   description: 'Run the flow as a Docker container',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#dockerrun',
-  icon: '',
+  icon: 'fab fa-docker',
   args: [
     {
       arg: 'image',
@@ -72,10 +81,11 @@ export const DockerRun = {
 }
 
 export const KubernetesRun = {
+  type: 'KubernetesRun',
   label: 'Kubernetes',
   description: 'Run the flow as a Kubernetes job',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#kubernetesrun',
-  icon: '',
+  icon: 'fak fa-kubernetes',
   args: [
     {
       arg: null,
@@ -173,12 +183,14 @@ export const KubernetesRun = {
 }
 
 // TODO: Add ECSRun
-export const ECSRun = {}
+// export const ECSRun = {
+// icon: 'fa fa-aws'
+// }
 
 export const runConfigs = {
   LocalRun,
   UniversalRun,
   DockerRun,
-  KubernetesRun,
-  ECSRun
+  KubernetesRun
+  // ECSRun
 }
