@@ -1,14 +1,18 @@
 <script>
 import ExternalLink from '@/components/ExternalLink'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
     ExternalLink
   },
-  props: {
-    license: {
-      type: Object,
-      required: true
+  computed: {
+    ...mapGetters('license', ['license']),
+    isSelfServe() {
+      return this.license?.terms?.is_self_serve
+    },
+    isUsageBased() {
+      return this.license?.terms?.is_usage_based
     }
   }
 }
@@ -26,12 +30,12 @@ export default {
     icon="upgrade"
   >
     <v-row>
-      <v-col v-if="!license.terms.is_usage_based" cols="12" lg="8">
+      <v-col v-if="!isUsageBased" cols="12" lg="8">
         Pssst.... We noticed you have a legacy license type. Prefect now has new
         licenses that include
         <span class="font-weight-bold">more users</span> and
         <span class="font-weight-bold">less limits.</span>
-        <div v-if="!license.terms.is_self_serve"
+        <div v-if="!isSelfServe"
           ><ExternalLink
             href="https://www.prefect.io/get-prefect#contact"
             target="_blank"
@@ -40,7 +44,7 @@ export default {
         >
       </v-col>
       <v-col v-else>
-        <span v-if="!license.terms.is_self_serve"
+        <span v-if="!isSelfServe"
           >If you'd like to change your plan or get access to cool new features
           please
           <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
@@ -52,7 +56,7 @@ export default {
         >
       </v-col>
 
-      <v-col v-if="license.terms.is_self_serve" cols="12" lg="4">
+      <v-col v-if="isSelfServe" cols="12" lg="4">
         <v-btn outlined color="codePink">
           Find Out More
         </v-btn>
