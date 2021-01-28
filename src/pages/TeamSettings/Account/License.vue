@@ -78,7 +78,7 @@ export default {
       return featuresObjArray?.length > 0 ? featuresObjArray : null
     },
     taskRuns() {
-      return this.license?.terms.task_runs_usage_limit
+      return this.license?.terms?.task_runs_usage_limit
     }
   },
   watch: {

@@ -145,7 +145,7 @@ export default {
       <br />
     </v-card-subtitle>
     <v-card-text>
-      <UpgradeAlert v-if="!license.terms.is_usage_based" :license="license" />
+      <UpgradeAlert :license="license" />
       <div class="d-flex flex-wrap mt-6">
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
