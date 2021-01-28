@@ -186,7 +186,7 @@ export default {
   padding-right: 124px;
 }
 
-.row-divider {
+.row-divider:not(:last-child) {
   position: relative;
 
   &::after {
