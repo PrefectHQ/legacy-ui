@@ -33,9 +33,9 @@ export default {
   data() {
     return {
       json: false,
-      jsonInput: null,
-      keys: [],
-      values: []
+      jsonInput: '{}',
+      keys: [null],
+      values: [null]
     }
   },
   computed: {
@@ -149,6 +149,7 @@ export default {
           </v-col>
 
           <v-btn
+            v-if="i !== 0"
             class="remove-button"
             depressed
             icon
