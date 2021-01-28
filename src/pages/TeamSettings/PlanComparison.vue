@@ -196,10 +196,6 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     planType() {
       return this.plans[this.selected].value
-    },
-    print() {
-      console.log(this.active)
-      return true
     }
   },
   methods: {
@@ -235,7 +231,6 @@ export default {
     <template #title>Prefect Plans</template>
 
     <div
-      v-if="print"
       style="display: flex;
             flex-direction: row;"
       class="py-8"
