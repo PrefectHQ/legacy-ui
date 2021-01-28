@@ -20,7 +20,7 @@ export default {
       return true
     },
     isSelfServe() {
-      return !this.license.terms.is_self_serve
+      return this.license.terms.is_self_serve
     },
     planType() {
       if (this.license?.terms?.plan == 'FREE_2021') return 'Standard'
