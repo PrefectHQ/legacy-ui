@@ -4,6 +4,7 @@ query PendingInvitations($email: String!) {
   ) {
     id
     role_detail {
+      id
       name
     }
     email
