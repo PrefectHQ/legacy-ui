@@ -1,5 +1,6 @@
 <script>
 import JsonInput from '@/components/JsonInput'
+import jsBeautify from 'js-beautify'
 
 export default {
   components: {
@@ -39,19 +40,52 @@ export default {
   },
   computed: {
     pairs() {
-      return [...this.keys]
+      return this.keys.map((p, i) => i)
     },
     value() {
+      // if (this.json) {
+      //   try {
+      //     return JSON.parse(this.jsonInput)
+      //   } catch {
+      //     return {}
+      //   }
+      // }
       const dict = {}
       this.keys.map((k, i) => (dict[k] = this.values[i]))
       return dict
     }
   },
+  watch: {
+    // Allows swapping between json input and key value pairs
+    json(val) {
+      if (val) {
+        this.jsonInput = jsBeautify(this.jsonInput, {
+          indent_size: 4,
+          space_in_empty_paren: true,
+          preserve_newlines: false
+        })
+
+        // Use next tick to make sure the json input element exists
+        this.$nextTick(() => {
+          this.$refs['json-input'].validateJson()
+        })
+      }
+    }
+  },
   methods: {
     _handleJsonInput() {
-      console.log(this.jsonInput)
+      // Allows swapping between json input and key value pairs
+      try {
+        const json = JSON.parse(this.jsonInput)
+
+        this.keys = Object.keys(json)
+        this.values = Object.values(json)
+      } catch {
+        this.$refs['json-input'].validateJson()
+      }
     },
     _handleKeypress() {
+      this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
       this.$emit('change', this.value)
     },
     addKeyValuePair() {
@@ -81,6 +115,7 @@ export default {
 
     <div v-if="json">
       <JsonInput
+        ref="json-input"
         v-model="jsonInput"
         background-color="white"
         prepend-icon="fad fa-key"
