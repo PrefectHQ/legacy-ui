@@ -188,7 +188,7 @@ export default {
 
 <template>
   <ManagementLayout>
-    <template #title>Account</template>
+    <template #title>Prefect Plans</template>
 
     <div
       style="display: flex;
@@ -198,6 +198,75 @@ export default {
       <PlanCard plan="good" selected />
       <span><PlanCard plan="better"/></span>
       <span><PlanCard plan="best"/></span>
+    </div>
+    All plans come with:
+    <v-list>
+      <v-list-item v-for="(feature, i) in basicFeatures" :key="i">
+        <v-list-item-content>
+          <v-list-item-title v-text="feature.name"></v-list-item-title>
+          <v-list-item-subtitle
+            v-text="feature.description"
+          ></v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+    Additionally, this plan includes:
+    <div
+      style="display: flex;
+            flex-direction: row;"
+    >
+      <div>
+        <h3>Infrasctructure</h3>
+        <v-list>
+          <v-list-item v-for="(feature, i) in infrastructureFeatures" :key="i">
+            <v-list-item-content>
+              <v-list-item-title v-text="feature.name"></v-list-item-title>
+              <v-list-item-subtitle
+                v-text="feature.description"
+              ></v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
+      <div>
+        <h3>Observability</h3>
+        <v-list>
+          <v-list-item v-for="(feature, i) in observabilityFeatures" :key="i">
+            <v-list-item-content>
+              <v-list-item-title v-text="feature.name"></v-list-item-title>
+              <v-list-item-subtitle
+                v-text="feature.description"
+              ></v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
+      <div>
+        <h3>Orchestration</h3>
+        <v-list>
+          <v-list-item v-for="(feature, i) in orchestrationFeatures" :key="i">
+            <v-list-item-content>
+              <v-list-item-title v-text="feature.name"></v-list-item-title>
+              <v-list-item-subtitle
+                v-text="feature.description"
+              ></v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
+      <div>
+        <h3>Authorization</h3>
+        <v-list>
+          <v-list-item v-for="(feature, i) in authorizationFeatures" :key="i">
+            <v-list-item-content>
+              <v-list-item-title v-text="feature.name"></v-list-item-title>
+              <v-list-item-subtitle
+                v-text="feature.description"
+              ></v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
     </div>
   </ManagementLayout>
 </template>
