@@ -11,9 +11,9 @@ export default {
   data() {
     return {
       plans: [
-        { value: 'FREE_2021', name: 'Good' },
-        { value: 'GOOD_2021', name: 'Better' },
-        { value: 'BETTER_2021', name: 'Best' }
+        { value: 'FREE_2021', name: 'good' },
+        { value: 'STARTER_2021', name: 'better' },
+        { value: 'BETTER_2021', name: 'best' }
       ],
       selected: 0,
       basicFeatures: {
@@ -193,24 +193,37 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['license']),
-    planType: {
-      get() {
-        const match = this.plans.findIndex(
-          plan => plan.value === this.license?.terms?.plan
-        )
-        return match >= 0 ? match : 0
-      },
-      set(x) {
-        this.selected = x
-      }
+    ...mapGetters('tenant', ['tenant']),
+    planType() {
+      return this.plans[this.selected].value
     },
     print() {
+      console.log(this.active)
       return true
     }
   },
   methods: {
-    upgrade() {
-      console.log(this.selected || this.planType)
+    async upgrade() {
+      try {
+        console.log(this.selected, this.planType)
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/License/create-usage-based-license.gql'),
+          variables: {
+            input: {
+              tenant_id: this.tenant.id,
+              plan_name: this.planType
+            }
+          }
+        })
+      } catch (e) {
+        /// Temp Fix - We should create a license that has permission to do this!!
+        if (
+          !e?.message.includes('This tenant already has an active license')
+          //   !e?.message.includes('Unauthorized')
+        )
+          //   this.updateServerError = true
+          console.log(e)
+      }
     }
   }
 }
@@ -221,23 +234,31 @@ export default {
     <template #title>Prefect Plans</template>
 
     <div
+      v-if="print"
       style="display: flex;
             flex-direction: row;"
       class="py-8"
     >
-      <v-item-group v-model="selected">
+      <v-item-group v-model="selected" mandatory>
         <v-row>
           <v-col
-            v-for="(plan, i) in ['good', 'better', 'best']"
+            v-for="(plan, i) in plans"
             :key="i"
             cols="12"
             md="4"
             class="pa-0"
           >
-            <PlanCard :plan="plan" :selected="selected === i" />
+            <v-item v-slot="{ active, toggle }">
+              <div @click="toggle">
+                <PlanCard :plan="plan.name" :selected="active" />
+              </div>
+            </v-item>
           </v-col>
         </v-row>
       </v-item-group>
+      <div>
+        <v-btn @click="upgrade">Upgrade</v-btn>
+      </div>
     </div>
     All plans come with:
     <v-list>
