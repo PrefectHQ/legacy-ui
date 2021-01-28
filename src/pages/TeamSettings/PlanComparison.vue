@@ -182,6 +182,11 @@ export default {
         }
       }
     }
+  },
+  computed: {
+    included() {
+      return true
+    }
   }
 }
 </script>
@@ -192,81 +197,111 @@ export default {
 
     <div
       style="display: flex;
-            flex-direction: row;"
+            flex-direction: row;
+            justify-content: center;"
       class="py-8"
     >
       <PlanCard plan="good" selected />
       <span><PlanCard plan="better"/></span>
       <span><PlanCard plan="best"/></span>
     </div>
-    All plans come with:
-    <v-list>
-      <v-list-item v-for="(feature, i) in basicFeatures" :key="i">
-        <v-list-item-content>
-          <v-list-item-title v-text="feature.name"></v-list-item-title>
-          <v-list-item-subtitle
-            v-text="feature.description"
-          ></v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
-    Additionally, this plan includes:
+
+    <v-card class="pa-3 mb-8">
+      <h3 class="py-2">All plans come with:</h3>
+      <ul
+        style="column-count: 2;
+    column-gap: 40px;
+    list-style-type: none;"
+      >
+        <li
+          v-for="(feature, i) in basicFeatures"
+          :key="i"
+          style="flex-direction: column;"
+        >
+          <p class="feature-title">{{ feature.name }}</p>
+          <p class="subtitle">{{ feature.description }}</p>
+        </li>
+      </ul>
+    </v-card>
+
+    <h2>Additionally, this plan includes:</h2>
+
     <div
       style="display: flex;
-            flex-direction: row;"
+            flex-direction: row;
+            width: 100%;"
     >
-      <div>
-        <h3>Infrasctructure</h3>
-        <v-list>
-          <v-list-item v-for="(feature, i) in infrastructureFeatures" :key="i">
-            <v-list-item-content>
-              <v-list-item-title v-text="feature.name"></v-list-item-title>
-              <v-list-item-subtitle
-                v-text="feature.description"
-              ></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </div>
-      <div>
-        <h3>Observability</h3>
-        <v-list>
-          <v-list-item v-for="(feature, i) in observabilityFeatures" :key="i">
-            <v-list-item-content>
-              <v-list-item-title v-text="feature.name"></v-list-item-title>
-              <v-list-item-subtitle
-                v-text="feature.description"
-              ></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </div>
-      <div>
-        <h3>Orchestration</h3>
-        <v-list>
-          <v-list-item v-for="(feature, i) in orchestrationFeatures" :key="i">
-            <v-list-item-content>
-              <v-list-item-title v-text="feature.name"></v-list-item-title>
-              <v-list-item-subtitle
-                v-text="feature.description"
-              ></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </div>
-      <div>
-        <h3>Authorization</h3>
-        <v-list>
-          <v-list-item v-for="(feature, i) in authorizationFeatures" :key="i">
-            <v-list-item-content>
-              <v-list-item-title v-text="feature.name"></v-list-item-title>
-              <v-list-item-subtitle
-                v-text="feature.description"
-              ></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </div>
+      <v-card style="width: 25%;" class="pa-3 mb-8">
+        <h3 class="py-2">Infrastructure</h3>
+        <ul style="list-style-type: none;">
+          <li v-for="(feature, i) in infrastructureFeatures" :key="i">
+            <p class="feature-title" :class="{ 'not-available': !included }">{{
+              feature.name
+            }}</p>
+            <p class="subtitle" :class="{ 'not-available': !included }">{{
+              feature.description
+            }}</p>
+          </li>
+        </ul>
+      </v-card>
+      <v-card style="width: 25%;" class="pa-3 mb-8">
+        <h3 class="py-2">Observability</h3>
+        <ul style="list-style-type: none;">
+          <li v-for="(feature, i) in observabilityFeatures" :key="i">
+            <p class="feature-title" :class="{ 'not-available': !included }">{{
+              feature.name
+            }}</p>
+            <p class="subtitle" :class="{ 'not-available': !included }">{{
+              feature.description
+            }}</p>
+          </li>
+        </ul>
+      </v-card>
+      <v-card style="width: 25%;" class="pa-3 mb-8">
+        <h3 class="py-2">Orchestration</h3>
+        <ul style="list-style-type: none;">
+          <li v-for="(feature, i) in orchestrationFeatures" :key="i">
+            <p class="feature-title" :class="{ 'not-available': !included }">{{
+              feature.name
+            }}</p>
+            <p class="subtitle" :class="{ 'not-available': !included }">{{
+              feature.description
+            }}</p>
+          </li>
+        </ul>
+      </v-card>
+      <v-card style="width: 25%;" class="pa-3 mb-8">
+        <h3 class="py-2">Authorization</h3>
+        <ul style="list-style-type: none;">
+          <li v-for="(feature, i) in authorizationFeatures" :key="i">
+            <p class="feature-title" :class="{ 'not-available': !included }">{{
+              feature.name
+            }}</p>
+            <p class="subtitle" :class="{ 'not-available': !included }">{{
+              feature.description
+            }}</p>
+          </li>
+        </ul>
+      </v-card>
     </div>
   </ManagementLayout>
 </template>
+
+<style scoped>
+.feature-title {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.subtitle {
+  color: #444;
+  font-size: 0.875rem;
+}
+
+.not-available {
+  color: rgba(0, 0, 0, 0.25);
+}
+</style>
