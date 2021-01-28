@@ -3,7 +3,9 @@ query PendingInvitations($email: String!) {
     where: { email: { _eq: $email } }
   ) {
     id
-    role
+    role_detail {
+      name
+    }
     email
     created
     tenant {

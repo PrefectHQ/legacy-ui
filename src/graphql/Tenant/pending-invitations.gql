@@ -3,7 +3,9 @@ query PendingInvitations {
     id
     created
     email
-    role
+    role_detail {
+      name
+    }
     tenant {
       id
     }

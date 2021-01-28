@@ -7,8 +7,11 @@ query TenantUsers {
     last_name
     memberships {
       id
-      role
       tenant_id
+      role_detail {
+        id
+        name
+      }
     }
   }
 }

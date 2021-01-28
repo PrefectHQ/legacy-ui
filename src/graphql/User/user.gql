@@ -9,11 +9,13 @@ query User {
     last_name
     memberships {
       id
-      role
       tenant {
         id
         name
         slug
+      }
+      role_detail {
+        name
       }
     }
   }
