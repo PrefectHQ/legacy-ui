@@ -82,8 +82,9 @@ export default {
     <div v-if="json">
       <JsonInput
         v-model="jsonInput"
+        background-color="white"
         prepend-icon="fad fa-key"
-        @input="_handleInput"
+        @input="_handleJsonInput"
       />
     </div>
 

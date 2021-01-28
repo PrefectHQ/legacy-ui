@@ -5,14 +5,20 @@ import debounce from 'lodash.debounce'
 
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/edit/closebrackets'
+import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/display/placeholder'
+import '@/styles/json-input-style.scss'
 
 export default {
   components: {
     CodeMirror: codemirror
   },
   props: {
+    backgroundColor: {
+      type: String,
+      default: () => 'transparent'
+    },
     disabled: {
       type: Boolean,
       default: () => false
@@ -74,11 +80,12 @@ export default {
         autoCloseBrackets: true,
         matchBrackets: true,
         mode: 'application/json',
+        theme: 'json-input',
         readOnly: this.disabled,
         smartIndent: true,
         lineWrapping: true,
         placeholder: this.placeholderText,
-        tabSize: 2
+        tabSize: 4
       }
     }
   },
@@ -91,7 +98,7 @@ export default {
   methods: {
     formatJson() {
       this.internalValue = jsBeautify(this.internalValue, {
-        indent_size: 2,
+        indent_size: 4,
         space_in_empty_paren: true,
         preserve_newlines: false
       })
@@ -182,7 +189,8 @@ export default {
         'blue-border': prependIcon && focussed && !jsonError,
         'red-border': prependIcon && jsonError,
         'plain-border': prependIcon && !focussed && !jsonError,
-        'original-border': !prependIcon
+        'original-border': !prependIcon,
+        [backgroundColor]: true
       }"
       :options="editorOptions"
       @input="handleJsonInput($event)"
