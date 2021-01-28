@@ -153,6 +153,14 @@ export const routes = [
           import(
             /* webpackChunkName: "team-settings--tokens" */ '@/pages/TeamSettings/Tokens.vue'
           )
+      },
+      {
+        name: 'plan-comparison',
+        path: 'plan-comparison',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--plan-comparison" */ '@/pages/TeamSettings/PlanComparison.vue'
+          )
       }
     ]
   },

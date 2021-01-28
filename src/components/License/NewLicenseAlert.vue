@@ -43,9 +43,14 @@ export default {
       </v-col>
 
       <v-col v-if="license.terms.is_self_serve" cols="12" lg="4">
-        <v-btn outlined color="codePink">
-          Find Out More
-        </v-btn>
+        <router-link
+          :to="{ name: 'plan-comparison' }"
+          style="text-decoration: none;"
+        >
+          <v-btn outlined color="codePink">
+            Find Out More
+          </v-btn>
+        </router-link>
       </v-col>
     </v-row>
   </v-alert>
