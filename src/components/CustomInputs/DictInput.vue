@@ -92,7 +92,7 @@ export default {
       <transition-group name="fade" mode="out-in">
         <v-row
           v-for="(pair, i) in pairs"
-          :key="i"
+          :key="pair"
           no-gutters
           align="center"
           class="my-4 position-relative pr-8"
