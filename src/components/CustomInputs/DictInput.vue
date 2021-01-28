@@ -1,5 +1,10 @@
 <script>
+import JsonInput from '@/components/JsonInput'
+
 export default {
+  components: {
+    JsonInput
+  },
   props: {
     addLabel: {
       type: String,
@@ -26,7 +31,8 @@ export default {
   },
   data() {
     return {
-      inputMode: 'simple',
+      json: true,
+      jsonInput: null,
       keys: [],
       values: []
     }
@@ -42,6 +48,12 @@ export default {
     }
   },
   methods: {
+    _handleJsonInput() {
+      console.log(this.jsonInput)
+    },
+    _handleKeypress() {
+      this.$emit('change', this.value)
+    },
     addKeyValuePair() {
       this.keys.push(null)
       this.values.push(null)
@@ -50,17 +62,31 @@ export default {
       this.keys.splice(i, 1)
       this.values.splice(i, 1)
       this.$emit('change', this.value)
-    },
-    _handleKeypress() {
-      this.$emit('change', this.value)
     }
   }
 }
 </script>
 
 <template>
-  <div>
-    <div v-if="inputMode == 'json'"></div>
+  <div class="position-relative">
+    <div class="d-flex justify-end align-start mb-1" style="width: 100%;">
+      <v-switch
+        v-model="json"
+        inset
+        label="JSON"
+        class="mt-0 small-switch v-input--reverse"
+        hide-details
+      ></v-switch>
+    </div>
+
+    <div v-if="json">
+      <JsonInput
+        v-model="jsonInput"
+        prepend-icon="fad fa-key"
+        @input="_handleInput"
+      />
+    </div>
+
     <div v-else>
       <transition-group name="fade" mode="out-in">
         <v-row

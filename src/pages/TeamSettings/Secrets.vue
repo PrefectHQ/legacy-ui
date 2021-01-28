@@ -502,6 +502,7 @@ export default {
         ref="secretRef"
         v-model="secretValueInput"
         prepend-icon="lock"
+        class="text-body-1"
         :selected-type="secretTypes[selectedTypeIndex].value"
         :placeholder-text="placeholderText"
         @input="validSecretJSON"

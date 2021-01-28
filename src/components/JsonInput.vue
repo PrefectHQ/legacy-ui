@@ -228,6 +228,7 @@ export default {
 
 /* stylelint-disable selector-class-pattern */
 .CodeMirror {
+  font-family: inherit !important;
   height: 300px;
 }
 
@@ -261,25 +262,45 @@ export default {
 }
 
 .cm-style {
-  font-size: 1.3em;
-}
+  color: rgba(0, 0, 0, 0.38);
+  font-size: inherit !important;
+  height: auto;
+  position: relative;
 
-.red-border {
-  border: 2px solid #ff5252;
-  border-radius: 5px;
-}
+  &:hover,
+  &:focus {
+    color: rgba(0, 0, 0, 0.86);
+  }
 
-.blue-border {
-  border: 2px solid #3b8dff;
-  border-radius: 5px;
-}
+  &::after {
+    background: transparent;
+    content: '';
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transition: all 50ms;
+    width: 100%;
+  }
 
-.plain-border {
-  border: 2px solid #ddd;
-  border-radius: 5px;
-}
+  &.red-border::after {
+    border: 2px solid #ff5252;
+    border-radius: 4px;
+  }
 
-.original-border {
-  border: 1px solid #ddd;
+  &.blue-border::after {
+    border: 2px solid #3b8dff;
+    border-radius: 4px;
+  }
+
+  &.plain-border::after {
+    border: 1px solid currentColor;
+    border-radius: 4px;
+  }
+
+  &.original-border::after {
+    border: 1px solid currentColor;
+  }
 }
 </style>

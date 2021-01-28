@@ -192,6 +192,12 @@ body {
   }
 }
 
+.small-switch.v-input {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  transform: scale(0.8);
+}
+
 .theme--light.v-tabs-items {
   background-color: var(--v-appBackground-base) !important;
 }
