@@ -1,6 +1,6 @@
 <script>
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
-import PlanCard from '@/pages/Onboard/PlanCard'
+import PlanCard from '@/components/PlanCard'
 export default {
   components: { PlanCard },
   mixins: [teamProfileMixin],
