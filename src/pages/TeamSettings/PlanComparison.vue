@@ -1,6 +1,8 @@
 <script>
 import ManagementLayout from '@/layouts/ManagementLayout'
 import PlanCard from '@/components/PlanCard'
+import { mapGetters } from 'vuex'
+
 export default {
   components: {
     ManagementLayout,
@@ -8,6 +10,12 @@ export default {
   },
   data() {
     return {
+      plans: [
+        { value: 'FREE_2021', name: 'Good' },
+        { value: 'GOOD_2021', name: 'Better' },
+        { value: 'BETTER_2021', name: 'Best' }
+      ],
+      selected: 0,
       basicFeatures: {
         a: {
           name: 'Robust Scheduling',
@@ -182,6 +190,28 @@ export default {
         }
       }
     }
+  },
+  computed: {
+    ...mapGetters('license', ['license']),
+    planType: {
+      get() {
+        const match = this.plans.findIndex(
+          plan => plan.value === this.license?.terms?.plan
+        )
+        return match >= 0 ? match : 0
+      },
+      set(x) {
+        this.selected = x
+      }
+    },
+    print() {
+      return true
+    }
+  },
+  methods: {
+    upgrade() {
+      console.log(this.selected || this.planType)
+    }
   }
 }
 </script>
@@ -195,9 +225,19 @@ export default {
             flex-direction: row;"
       class="py-8"
     >
-      <PlanCard plan="good" selected />
-      <span><PlanCard plan="better"/></span>
-      <span><PlanCard plan="best"/></span>
+      <v-item-group v-model="selected">
+        <v-row>
+          <v-col
+            v-for="(plan, i) in ['good', 'better', 'best']"
+            :key="i"
+            cols="12"
+            md="4"
+            class="pa-0"
+          >
+            <PlanCard :plan="plan" :selected="selected === i" />
+          </v-col>
+        </v-row>
+      </v-item-group>
     </div>
     All plans come with:
     <v-list>
