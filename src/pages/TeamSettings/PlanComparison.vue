@@ -1,18 +1,20 @@
 <script>
 import ManagementLayout from '@/layouts/ManagementLayout'
 import PlanCard from '@/components/PlanCard'
+import ChangePlanDialog from '@/components/License/ChangePlanDialog'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     ManagementLayout,
-    PlanCard
+    PlanCard,
+    ChangePlanDialog
   },
   data() {
     return {
       plans: [
-        { value: 'FREE_2021', name: 'good' },
-        { value: 'STARTER_2021', name: 'better' },
+        { value: 'FREE_2021', name: 'good', cost: 0 },
+        { value: 'STARTER_2021', name: 'better', cost: 500 },
         { value: 'BETTER_2021', name: 'best' }
       ],
       selected: 0,
@@ -195,7 +197,7 @@ export default {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
     planType() {
-      return this.plans[this.selected].value
+      return this.plans[this.selected]
     },
     included() {
       return true
@@ -211,7 +213,7 @@ export default {
           variables: {
             input: {
               tenant_id: this.tenant.id,
-              plan_name: this.planType
+              plan_name: this.planType.value
             }
           }
         })
@@ -265,7 +267,7 @@ export default {
       >
         Contact Sales
       </v-btn>
-      <v-btn v-else color="primary" @click="changePlan">Change Plan</v-btn>
+      <ChangePlanDialog :plan="planType" />
     </div>
 
     <v-card class="pa-3 mb-8">

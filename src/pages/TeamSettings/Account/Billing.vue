@@ -114,9 +114,7 @@ export default {
 
       <v-row v-if="paymentDetails && isSelfServe">
         <v-col cols="12" md="6" class="px-8">
-          <div class="text-h6 mb-4 grey--text text--darken-3">
-            Address
-          </div>
+          <div class="text-h6 mb-4 grey--text text--darken-3">Address</div>
 
           <div class="d-flex justify-start align-start">
             <div class="mr-2">
