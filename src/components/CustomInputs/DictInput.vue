@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      json: true,
+      json: false,
       jsonInput: null,
       keys: [],
       values: []
@@ -43,13 +43,6 @@ export default {
       return this.keys.map((p, i) => i)
     },
     value() {
-      // if (this.json) {
-      //   try {
-      //     return JSON.parse(this.jsonInput)
-      //   } catch {
-      //     return {}
-      //   }
-      // }
       const dict = {}
       this.keys.map((k, i) => (dict[k] = this.values[i]))
       return dict
