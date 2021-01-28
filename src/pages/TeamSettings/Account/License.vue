@@ -20,11 +20,11 @@ export default {
       return true
     },
     isSelfServe() {
-      return this.license.terms.is_self_serve
+      return this.license?.terms?.is_self_serve
     },
     planType() {
-      if (this.license?.terms?.plan == 'FREE_2021') return 'Standard'
-      if (this.license?.terms?.plan == 'GOOD_2021') return 'Development'
+      if (this.license?.terms?.plan == 'FREE_2021') return 'Starter'
+      if (this.license?.terms?.plan == 'GOOD_2021') return 'Standard'
       if (this.license?.terms?.plan == 'BETTER_2021') return 'Professional'
       return 'Custom'
     },
