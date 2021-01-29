@@ -2,6 +2,7 @@
 import ManagementLayout from '@/layouts/ManagementLayout'
 import PlanCard from '@/components/PlanCard'
 import ChangePlanDialog from '@/components/License/ChangePlanDialog'
+import { PLANS_2021 } from '@/utils/plans'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -12,25 +13,7 @@ export default {
   },
   data() {
     return {
-      plans: [
-        {
-          value: 'FREE_2021',
-          name: 'good',
-          cost: 0,
-          title: 'Starter',
-          taskRuns: 10000,
-          additionalCost: '0.0025'
-        },
-        {
-          value: 'STARTER_2021',
-          name: 'better',
-          cost: 500,
-          title: 'Standard',
-          taskRuns: 10000,
-          additionalCost: '0.0050'
-        },
-        { value: 'BETTER_2021', name: 'best', title: 'Enterprise' }
-      ],
+      plans: Object.values(PLANS_2021),
       selected: 0,
       basicFeatures: {
         a: {
@@ -253,7 +236,7 @@ export default {
             <v-item v-slot="{ active, toggle }">
               <div @click="toggle">
                 <PlanCard
-                  :plan="plan.name"
+                  :plan="plan.title"
                   :selected="active"
                   :class="
                     Math.abs(selected - i) > 1

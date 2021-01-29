@@ -1,4 +1,6 @@
 <script>
+import { PLANS_2021 } from '@/utils/plans'
+
 export default {
   props: {
     plan: {
@@ -13,32 +15,7 @@ export default {
   },
   data() {
     return {
-      plans: {
-        good: {
-          name: 'Starter',
-          price: 0,
-          taskRuns: 10000,
-          additionalCost: '0.0025',
-          users: 5,
-          history: 'week'
-        },
-        better: {
-          name: 'Standard',
-          price: 500,
-          taskRuns: 10000,
-          additionalCost: '0.0050',
-          users: 10,
-          history: 'month'
-        },
-        best: {
-          name: 'Enterprise',
-          price: 'contact',
-          taskRuns: 10000,
-          additionalCost: 0.0025,
-          users: 'unlimited',
-          history: 'year'
-        }
-      }
+      plans: PLANS_2021
     }
   },
   computed: {

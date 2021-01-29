@@ -34,18 +34,25 @@ export default {
       )
     },
     planName() {
-      return this.plan?.title
+      return this.plan?.name
     },
     planCost() {
       return this.plan?.cost
     },
     additionalCost() {
       return this.plan?.additionalCost
+    },
+    limit() {
+      return this.plan.taskRuns
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     async changePlan() {
+      const planvalue =
+        this.plan.value === 'FREE_2021' && this.existingCard
+          ? 'STARTER_2021'
+          : this.plan.value
       this.loading = true
       try {
         await this.$apollo.mutate({
@@ -53,7 +60,7 @@ export default {
           variables: {
             input: {
               tenant_id: this.tenant.id,
-              plan_name: this.plan.value
+              plan_name: planvalue
             }
           }
         })
@@ -126,8 +133,8 @@ export default {
         <div v-if="planCost && !existingCard"> <Billing page="plan"/></div>
         <div v-if="!planCost">
           <v-icon small class="pr-4">star_rate</v-icon>Your plan is free! You
-          will pay {{ additionalCost }} for succesful task runs after 10
-          000/month</div
+          will pay {{ additionalCost }} for succesful task runs after
+          {{ limit }}/month</div
         >
       </v-card-text>
       <v-card-actions>
