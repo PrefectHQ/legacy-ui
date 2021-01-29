@@ -14,6 +14,7 @@ describe('Auth Nav Guard', () => {
     store.dispatch.restore()
     store.commit('user/unsetUser')
     store.commit('auth/isAuthenticated', false)
+    store.commit('auth/error', false)
     store.commit('auth/unsetAuthorizationToken')
     store.commit('auth/unsetAuthorizationTokenExpiry')
     store.commit('api/unsetBackend')
@@ -113,9 +114,27 @@ describe('Auth Nav Guard', () => {
       )
       store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     })
+    store.commit('auth/error', false)
     const next = jest.fn()
     await authNavGuard({}, {}, next)
     expect(next).toHaveBeenCalledWith(false)
+  })
+
+  it('redirects to the access-denied page when the user cannot be authenticated and an access_denied error is present', async () => {
+    dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
+      store.commit('auth/isAuthenticated', false)
+    })
+    dispatchStub.withArgs('auth/authorize').callsFake(async () => {
+      store.commit(
+        'auth/authorizationTokenExpiry',
+        new Date().getTime() + 100000000
+      )
+      store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    })
+    store.commit('auth/error', 'access_denied')
+    const next = jest.fn()
+    await authNavGuard({}, {}, next)
+    expect(next).toHaveBeenCalledWith({ name: 'access-denied' })
   })
 
   it('aborts navigation if authorization fails', async () => {

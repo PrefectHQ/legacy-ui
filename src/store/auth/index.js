@@ -26,6 +26,7 @@ const state = {
   authorizationTokenExpiry: null,
   accessToken: null,
   accessTokenExpiry: null,
+  error: null,
   idToken: null,
   idTokenExpiry: null,
   isAuthenticated: false,
@@ -57,6 +58,9 @@ const getters = {
   },
   accessTokenExpiry(state) {
     return state.accessTokenExpiry
+  },
+  error(state) {
+    return state.error
   },
   idToken(state) {
     return state.idToken
@@ -94,6 +98,9 @@ const getters = {
 }
 
 const mutations = {
+  error(state, error) {
+    state.error = error
+  },
   isAuthenticated(state, isAuthenticated) {
     if (typeof isAuthenticated !== 'boolean' || isAuthenticated == null)
       throw new TypeError(
@@ -264,9 +271,14 @@ const actions = {
     const urlParams = new URLSearchParams(window?.location?.search)
     const invitationId = urlParams.get('invitation_id')
     const source = urlParams.get('partner_source')
+    const error = urlParams.get('error')
+    // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
 
     if (window.location?.pathname && !getters['redirectRoute']) {
-      dispatch('setRedirectRoute', window.location.pathname)
+      dispatch(
+        'setRedirectRoute',
+        window.location.pathname + window.location.search
+      )
     }
 
     if (invitationId) {
@@ -277,26 +289,39 @@ const actions = {
       sessionStorage.setItem('partnerSource', source)
     }
 
-    const isAuthenticated = await authClient.isAuthenticated()
-    const isLoginRedirect = await authClient.isLoginRedirect()
+    if (error) {
+      commit('error', error)
+      return
+    }
 
-    const { tokens } = isLoginRedirect
-      ? await authClient.token.parseFromUrl()
-      : { tokens: await authClient.tokenManager.getTokens() }
+    try {
+      const isAuthenticated = await authClient.isAuthenticated()
+      const isLoginRedirect = await authClient.isLoginRedirect()
 
-    if (tokens?.accessToken && tokens?.idToken) {
-      dispatch('commitTokens', tokens)
-      commit('isAuthenticated', true)
-    } else if (isAuthenticated) {
-      await dispatch('updateAuthentication')
-    } else {
-      commit('isAuthenticated', false)
-      await dispatch('login')
+      const { tokens } = isLoginRedirect
+        ? await authClient.token.parseFromUrl()
+        : { tokens: await authClient.tokenManager.getTokens() }
+
+      if (tokens?.accessToken && tokens?.idToken) {
+        dispatch('commitTokens', tokens)
+        commit('isAuthenticated', true)
+      } else if (isAuthenticated) {
+        await dispatch('updateAuthentication')
+      } else {
+        commit('isAuthenticated', false)
+        await dispatch('login')
+      }
+    } catch (e) {
+      // eslint-disable-next-line
+      console.error(e)
+      commit('error', e)
     }
 
     return getters['isAuthenticated']
   },
   async authorize({ commit, getters, dispatch }) {
+    if (!getters['isAuthenticated']) return
+
     commit('isAuthorizingUser', true)
 
     const user = await authClient.getUser()
@@ -367,19 +392,25 @@ const actions = {
 
     commit('isRefreshingAuthentication', true)
 
-    // This should manually update authentication
-    const idToken = await authClient.tokenManager.get('idToken')
-    const accessToken = await authClient.tokenManager.get('accessToken')
+    try {
+      // This should manually update authentication
+      const idToken = await authClient.tokenManager.get('idToken')
+      const accessToken = await authClient.tokenManager.get('accessToken')
 
-    if (!idToken || !accessToken) {
-      commit('isAuthenticated', false)
-      await dispatch('login')
-    } else {
-      commit('isAuthenticated', true)
-      dispatch('commitTokens', {
-        idToken: idToken,
-        accessToken: accessToken
-      })
+      if (!idToken || !accessToken) {
+        commit('isAuthenticated', false)
+        await dispatch('login')
+      } else {
+        commit('isAuthenticated', true)
+        dispatch('commitTokens', {
+          idToken: idToken,
+          accessToken: accessToken
+        })
+      }
+    } catch (e) {
+      // eslint-disable-next-line
+      console.error(e)
+      commit('error', e)
     }
 
     commit('isRefreshingAuthentication', false)

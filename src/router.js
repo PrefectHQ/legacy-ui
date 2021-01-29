@@ -339,6 +339,12 @@ export const routes = [
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
+    name: 'access-denied',
+    path: '/access-denied',
+    component: () =>
+      import(/* webpackChunkName: "access-denied" */ '@/pages/AccessDenied.vue')
+  },
+  {
     path: '*',
     redirect: '404'
   }
