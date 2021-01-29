@@ -15,7 +15,8 @@ export default {
   data() {
     return {
       loading: false,
-      changePlanDialog: false
+      changePlanDialog: false,
+      alertMessage: ''
     }
   },
   computed: {
@@ -48,6 +49,7 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    ...mapActions('license', ['getLicense']),
     async changePlan() {
       const planvalue =
         this.plan.value === 'FREE_2021' && this.existingCard
@@ -55,7 +57,7 @@ export default {
           : this.plan.value
       this.loading = true
       try {
-        await this.$apollo.mutate({
+        const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/License/create-usage-based-license.gql'),
           variables: {
             input: {
@@ -64,14 +66,23 @@ export default {
             }
           }
         })
+        if (data.create_usage_license.id) {
+          this.alertMessage = {
+            alertShow: true,
+            alertMessage: 'Your license has been updated',
+            alertType: 'success'
+          }
+        }
       } catch (e) {
-        this.setAlert({
+        this.alertMessage = {
           alertShow: true,
           alertMessage:
-            'There was an error changing your plan.  Please try again or contact help@prefect.io',
+            'There was a problem updating your license.  Please try again or contact help@prefect.io',
           alertType: 'error'
-        })
+        }
       } finally {
+        await this.getLicense()
+        this.setAlert(this.alertMessage)
         this.loading = false
         this.changePlanDialog = false
       }
@@ -83,7 +94,11 @@ export default {
 <template>
   <v-dialog v-model="changePlanDialog" max-width="600" min-height="500px">
     <template #activator="{ on: dialog }">
-      <v-btn color="primary" v-on="{ ...dialog }">
+      <v-btn
+        color="primary"
+        :disabled="!isSelfServe || !isTenantAdmin"
+        v-on="{ ...dialog }"
+      >
         Change Plan
       </v-btn>
     </template>
@@ -95,7 +110,19 @@ export default {
       </v-card-title>
       <v-card-text>
         <v-alert
-          v-if="!isSelfServe & !loading"
+          v-if="!isTenantAdmin & !loading"
+          class="mx-auto mb-12"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="540"
+          >Only your team's administrators can modify these settings.
+        </v-alert>
+        <v-alert
+          v-else-if="!isSelfServe & !loading"
           class="mx-auto mb-12"
           border="left"
           colored-border
@@ -109,18 +136,6 @@ export default {
           <a href="https://www.prefect.io/get-prefect#contact" target="_blank"
             >contact our sales team</a
           >
-        </v-alert>
-        <v-alert
-          v-else-if="!isTenantAdmin & !loading"
-          class="mx-auto mb-12"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          icon="lock"
-          max-width="540"
-          >Only your team's administrators can modify these settings.
         </v-alert>
         <div v-else-if="existingCard && planCost">
           <v-icon small class="pr-4">star_rate</v-icon>Your card ending in
@@ -139,7 +154,12 @@ export default {
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn :loading="loading" color="primary" @click="changePlan">
+        <v-btn
+          v-if="isSelfServe && isTenantAdmin"
+          :loading="loading"
+          color="primary"
+          @click="changePlan"
+        >
           Confirm
         </v-btn>
       </v-card-actions>
