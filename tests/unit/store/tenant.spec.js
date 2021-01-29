@@ -362,7 +362,7 @@ describe('tenant Vuex Module', () => {
       let store
 
       beforeEach(() => {
-        tenant.actions['auth0/updateAuthorization'] = jest.fn
+        tenant.actions['auth/updateAuthorization'] = jest.fn()
         tenant.actions['license/getLicense'] = jest.fn()
         store = new Vuex.Store({
           state: initialTenantState(),
