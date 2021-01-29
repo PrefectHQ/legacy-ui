@@ -111,7 +111,7 @@ export default {
     <v-card :loading="loading">
       <v-card-title class="grey--text text--darken-2">
         Change to the
-        <span class="primary--text px-2"> Prefect {{ planName }}</span> Plan
+        <span class="primary--text px-1"> Prefect {{ planName }}</span> Plan
       </v-card-title>
       <v-card-text>
         <v-alert
@@ -143,6 +143,7 @@ export default {
           >
         </v-alert>
         <div v-else-if="existingCard && planCost">
+          <i class="fas fa-credit-card" />
           Your card ending in
           <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
 
@@ -157,8 +158,14 @@ export default {
           page.
         </div>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="py-4">
         <v-spacer />
+        <v-btn
+          v-if="isSelfServe && isTenantAdmin"
+          @click="changePlanDialog = false"
+        >
+          Cancel
+        </v-btn>
         <v-btn
           v-if="isSelfServe && isTenantAdmin"
           :loading="loading"
