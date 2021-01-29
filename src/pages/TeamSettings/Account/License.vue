@@ -1,6 +1,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
+import { PLANS_2021 } from '@/utils/plans'
 import UpgradeAlert from '@/components/License/UpgradeAlert'
 
 export default {
@@ -10,7 +11,8 @@ export default {
   data() {
     return {
       allFeatures: featureTypes,
-      loading: false
+      loading: false,
+      plans: Object.values(PLANS_2021)
     }
   },
   computed: {
@@ -23,10 +25,11 @@ export default {
       return this.license?.terms?.is_self_serve
     },
     planType() {
-      if (this.license?.terms?.plan == 'FREE_2021') return 'Starter'
-      if (this.license?.terms?.plan == 'GOOD_2021') return 'Standard'
-      if (this.license?.terms?.plan == 'BETTER_2021') return 'Professional'
-      return 'Custom'
+      const plan = this.plans.filter(
+        planType => planType.value === this.license?.terms?.plan
+      )
+      console.log('plans', this.plans, 'plan', plan)
+      return plan[0] ? plan[0]?.name : 'Custom'
     },
     planColor() {
       return 'primary'
