@@ -7,6 +7,13 @@ import { mapGetters } from 'vuex'
 export default {
   components: { PaymentCard },
   mixins: [teamProfileMixin, paymentMixin],
+  props: {
+    page: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  },
   data() {
     return {
       editCardDetails: false,
@@ -66,8 +73,13 @@ export default {
     class="mx-auto my-4"
     :loading="loading"
   >
-    <v-card-title> Billing </v-card-title>
-    <v-card-subtitle> See and edit your billing information.</v-card-subtitle>
+    <v-card-title v-if="page === 'plan'">
+      Add payment information
+    </v-card-title>
+    <v-card-title v-else> Billing</v-card-title>
+    <v-card-subtitle v-if="page !== 'plan'">
+      See and edit your billing information.</v-card-subtitle
+    >
     <v-card-text>
       <v-alert
         v-if="!isSelfServe && !loading"

@@ -2,7 +2,7 @@
 import ManagementLayout from '@/layouts/ManagementLayout'
 import PlanCard from '@/components/PlanCard'
 import ChangePlanDialog from '@/components/License/ChangePlanDialog'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -13,9 +13,23 @@ export default {
   data() {
     return {
       plans: [
-        { value: 'FREE_2021', name: 'good', cost: 0 },
-        { value: 'STARTER_2021', name: 'better', cost: 500 },
-        { value: 'BETTER_2021', name: 'best' }
+        {
+          value: 'FREE_2021',
+          name: 'good',
+          cost: 0,
+          title: 'Starter',
+          taskRuns: 10000,
+          additionalCost: '0.0025'
+        },
+        {
+          value: 'STARTER_2021',
+          name: 'better',
+          cost: 500,
+          title: 'Standard',
+          taskRuns: 10000,
+          additionalCost: '0.0050'
+        },
+        { value: 'BETTER_2021', name: 'best', title: 'Enterpreise' }
       ],
       selected: 0,
       basicFeatures: {
@@ -203,30 +217,7 @@ export default {
       return true
     }
   },
-  methods: {
-    ...mapActions('alert', ['setAlert']),
-    async changePlan() {
-      try {
-        console.log(this.selected, this.planType)
-        await this.$apollo.mutate({
-          mutation: require('@/graphql/License/create-usage-based-license.gql'),
-          variables: {
-            input: {
-              tenant_id: this.tenant.id,
-              plan_name: this.planType.value
-            }
-          }
-        })
-      } catch (e) {
-        this.setAlert({
-          alertShow: true,
-          alertMessage:
-            'There was an error changing your plan.  Please try again or contact help@prefect.io',
-          alertType: 'error'
-        })
-      }
-    }
-  }
+  methods: {}
 }
 </script>
 
