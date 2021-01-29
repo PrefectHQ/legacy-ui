@@ -45,6 +45,13 @@ export default {
     },
     limit() {
       return this.plan.taskRuns
+    },
+    disableChangePlan() {
+      return (
+        !this.isTenantAdmin ||
+        !this.isSelfServe ||
+        this.license?.terms?.plan === this.plan.value
+      )
     }
   },
   methods: {
@@ -69,7 +76,7 @@ export default {
         if (data.create_usage_license.id) {
           this.alertMessage = {
             alertShow: true,
-            alertMessage: 'Your license has been updated',
+            alertMessage: `You are now on the Prefect ${this.planName} plan`,
             alertType: 'success'
           }
         }
@@ -94,11 +101,7 @@ export default {
 <template>
   <v-dialog v-model="changePlanDialog" max-width="600" min-height="500px">
     <template #activator="{ on: dialog }">
-      <v-btn
-        color="primary"
-        :disabled="!isSelfServe || !isTenantAdmin"
-        v-on="{ ...dialog }"
-      >
+      <v-btn color="primary" :disabled="disableChangePlan" v-on="{ ...dialog }">
         Change Plan
       </v-btn>
     </template>
@@ -138,18 +141,18 @@ export default {
           >
         </v-alert>
         <div v-else-if="existingCard && planCost">
-          <v-icon small class="pr-4">star_rate</v-icon>Your card ending in
+          Your card ending in
           <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
 
           will be charged
-          <span class="font-weight-bold mx-1">${{ planCost }} </span> on a
-          monthly basis
+          <span class="font-weight-bold ">${{ planCost }} </span> on a monthly
+          basis.
         </div>
         <div v-else-if="planCost && !existingCard"> <Billing page="plan"/></div>
         <div v-if="!planCost && isSelfServe">
-          <v-icon small class="pr-4">star_rate</v-icon>Your plan is free! If you
-          want to run more than {{ limit }} task runs/month you will need to add
-          a credit card in the Team Account page.
+          This plan is free. If you want to run more than {{ limit }} task
+          runs/month you will need to add a credit card in the Team Account
+          page.
         </div>
       </v-card-text>
       <v-card-actions>
