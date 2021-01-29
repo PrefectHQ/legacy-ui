@@ -28,6 +28,7 @@ export default {
       return this.tenant.role === 'TENANT_ADMIN'
     },
     isSelfServe() {
+      console.log(this.plan)
       return (
         this.license?.terms?.plan === 'SELF_SERVE' ||
         this.license?.terms?.is_self_serve
@@ -37,7 +38,7 @@ export default {
       return this.plan?.name
     },
     planCost() {
-      return this.plan?.cost
+      return this.plan?.price
     },
     additionalCost() {
       return this.plan?.additionalCost
@@ -53,6 +54,7 @@ export default {
         this.plan.value === 'FREE_2021' && this.existingCard
           ? 'STARTER_2021'
           : this.plan.value
+      console.log(planvalue)
       this.loading = true
       try {
         await this.$apollo.mutate({
@@ -131,7 +133,7 @@ export default {
           monthly basis
         </div>
         <div v-if="planCost && !existingCard"> <Billing page="plan"/></div>
-        <div v-if="!planCost">
+        <div v-if="!planCost && isSelfServe">
           <v-icon small class="pr-4">star_rate</v-icon>Your plan is free! You
           will pay {{ additionalCost }} for succesful task runs after
           {{ limit }}/month</div

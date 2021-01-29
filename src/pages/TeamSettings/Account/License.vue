@@ -25,6 +25,7 @@ export default {
       return this.license?.terms?.is_self_serve
     },
     planType() {
+      if (this.license?.terms?.plan === 'STARTER_2021') return 'Starter'
       const plan = this.plans.filter(
         planType => planType.value === this.license?.terms?.plan
       )
