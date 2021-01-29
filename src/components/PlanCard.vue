@@ -55,13 +55,7 @@ export default {
 }
 </script>
 <template>
-  <v-card
-    :class="{ 'elevation-0': !selected }"
-    :style="{
-      filter: selected ? '' : 'contrast(50%)'
-    }"
-    class="pa-4"
-  >
+  <v-card class="pa-4">
     <h2>{{ activePlan.name }}</h2>
     <v-list>
       <v-list-item two-line>

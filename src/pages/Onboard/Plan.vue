@@ -83,18 +83,24 @@ export default {
             flex-direction: row;"
               class="py-8"
             >
-              <PlanCard plan="good" selected />
+              <PlanCard plan="good" selected class="elevation-4" />
               <span
                 style="
               transform: scale(0.9);
               transform-origin: left;"
-                ><PlanCard plan="better"
+                ><PlanCard
+                  plan="better"
+                  class="elevation-2"
+                  style="filter: contrast(65%);"
               /></span>
               <span
                 style="
               transform: scale(0.8);
               transform-origin: -50%;"
-                ><PlanCard plan="best"
+                ><PlanCard
+                  plan="best"
+                  class="elevation-0"
+                  style="filter: contrast(35%);"
               /></span>
             </div>
           </v-col>

@@ -252,7 +252,17 @@ export default {
           >
             <v-item v-slot="{ active, toggle }">
               <div @click="toggle">
-                <PlanCard :plan="plan.name" :selected="active" />
+                <PlanCard
+                  :plan="plan.name"
+                  :selected="active"
+                  :class="
+                    Math.abs(selected - i) > 1
+                      ? 'away elevation-0'
+                      : Math.abs(selected - i) === 1
+                      ? 'adjacent elevation-2'
+                      : 'active elevation-4'
+                  "
+                />
               </div>
             </v-item>
           </v-col>
@@ -412,6 +422,20 @@ export default {
 </template>
 
 <style scoped>
+.active {
+  transform: scale(1);
+}
+
+.adjacent {
+  filter: contrast(65%);
+  transform: scale(0.9);
+}
+
+.away {
+  filter: contrast(35%);
+  transform: scale(0.8);
+}
+
 .feature-title {
   font-size: 1rem;
   font-weight: 500;
