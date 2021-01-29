@@ -24,11 +24,16 @@ export default {
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
+    plan() {
+      const name =
+        this.license?.terms?.plan === 'STARTER_2021'
+          ? 'FREE_2021'
+          : this.license?.terms?.plan
+      const plan = this.plans.filter(planType => planType.value === name)
+      return plan[0]
+    },
     planType() {
-      const plan = this.plans.filter(
-        planType => planType.value === this.license?.terms?.plan
-      )
-      return plan[0] ? plan[0]?.name : 'Custom'
+      return this.plan ? this.plan.name : 'Custom'
     },
     planColor() {
       return 'primary'
@@ -80,7 +85,7 @@ export default {
       return featuresObjArray?.length > 0 ? featuresObjArray : null
     },
     taskRuns() {
-      return this.license?.terms?.task_runs_usage_limit
+      return this.license?.terms?.task_runs_usage_limit || this.plan.taskRuns
     }
   },
   watch: {

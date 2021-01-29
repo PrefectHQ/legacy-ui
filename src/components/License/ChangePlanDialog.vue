@@ -37,7 +37,7 @@ export default {
       return this.plan?.name
     },
     planCost() {
-      return this.plan?.cost
+      return this.plan?.price
     },
     additionalCost() {
       return this.plan?.additionalCost
@@ -130,12 +130,12 @@ export default {
           <span class="font-weight-bold mx-1">${{ planCost }} </span> on a
           monthly basis
         </div>
-        <div v-if="planCost && !existingCard"> <Billing page="plan"/></div>
-        <div v-if="!planCost">
-          <v-icon small class="pr-4">star_rate</v-icon>Your plan is free! You
-          will pay {{ additionalCost }} for succesful task runs after
-          {{ limit }}/month</div
-        >
+        <div v-else-if="planCost && !existingCard"> <Billing page="plan"/></div>
+        <div v-if="!planCost && isSelfServe">
+          <v-icon small class="pr-4">star_rate</v-icon>Your plan is free! If you
+          want to run more than {{ limit }} task runs/month you will need to add
+          a credit card in the Team Account page.
+        </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
