@@ -195,12 +195,22 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     planType() {
       return this.plans[this.selected]
-    },
-    included() {
-      return true
     }
   },
-  methods: {}
+  methods: {
+    excluded(feature) {
+      if (
+        this.planType.name === 'good' &&
+        (feature.plan === 'better' || feature.plan === 'best')
+      ) {
+        return true
+      } else if (this.planType.name === 'better' && feature.plan === 'best') {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
 }
 </script>
 
@@ -266,58 +276,106 @@ export default {
 
     <div
       style="display: flex;
-            flex-direction: row;
-            width: 100%;"
+    flex-direction: row;"
+      :style="
+        $vuetify.breakpoint.mdAndDown
+          ? { width: 'auto', flexWrap: 'wrap' }
+          : { width: '100%' }
+      "
     >
-      <v-card style="width: 25%;" class="pa-3 mb-8">
+      <v-card
+        :style="
+          $vuetify.breakpoint.mdAndDown
+            ? { flexBasis: '50%' }
+            : { flexBasis: '25%' }
+        "
+        class="pa-3 mb-8"
+      >
         <h3 class="py-2">Infrastructure</h3>
         <ul style="list-style-type: none;">
           <li v-for="(feature, i) in infrastructureFeatures" :key="i">
-            <p class="feature-title" :class="{ 'not-available': !included }">{{
-              feature.name
-            }}</p>
-            <p class="subtitle" :class="{ 'not-available': !included }">{{
-              feature.description
-            }}</p>
+            <p
+              class="feature-title"
+              :class="{ 'not-available': excluded(feature) }"
+              >{{ feature.name }}</p
+            >
+            <p
+              class="subtitle"
+              :class="{ 'not-available': excluded(feature) }"
+              >{{ feature.description }}</p
+            >
           </li>
         </ul>
       </v-card>
-      <v-card style="width: 25%;" class="pa-3 mb-8">
+      <v-card
+        :style="
+          $vuetify.breakpoint.mdAndDown
+            ? { flexBasis: '50%' }
+            : { flexBasis: '25%' }
+        "
+        class="pa-3 mb-8"
+      >
         <h3 class="py-2">Observability</h3>
         <ul style="list-style-type: none;">
           <li v-for="(feature, i) in observabilityFeatures" :key="i">
-            <p class="feature-title" :class="{ 'not-available': !included }">{{
-              feature.name
-            }}</p>
-            <p class="subtitle" :class="{ 'not-available': !included }">{{
-              feature.description
-            }}</p>
+            <p
+              class="feature-title"
+              :class="{ 'not-available': excluded(feature) }"
+              >{{ feature.name }}</p
+            >
+            <p
+              class="subtitle"
+              :class="{ 'not-available': excluded(feature) }"
+              >{{ feature.description }}</p
+            >
           </li>
         </ul>
       </v-card>
-      <v-card style="width: 25%;" class="pa-3 mb-8">
+      <v-card
+        :style="
+          $vuetify.breakpoint.mdAndDown
+            ? { flexBasis: '50%' }
+            : { flexBasis: '25%' }
+        "
+        class="pa-3 mb-8"
+      >
         <h3 class="py-2">Orchestration</h3>
         <ul style="list-style-type: none;">
           <li v-for="(feature, i) in orchestrationFeatures" :key="i">
-            <p class="feature-title" :class="{ 'not-available': !included }">{{
-              feature.name
-            }}</p>
-            <p class="subtitle" :class="{ 'not-available': !included }">{{
-              feature.description
-            }}</p>
+            <p
+              class="feature-title"
+              :class="{ 'not-available': excluded(feature) }"
+              >{{ feature.name }}</p
+            >
+            <p
+              class="subtitle"
+              :class="{ 'not-available': excluded(feature) }"
+              >{{ feature.description }}</p
+            >
           </li>
         </ul>
       </v-card>
-      <v-card style="width: 25%;" class="pa-3 mb-8">
+      <v-card
+        :style="
+          $vuetify.breakpoint.mdAndDown
+            ? { flexBasis: '50%' }
+            : { flexBasis: '25%' }
+        "
+        class="pa-3 mb-8"
+      >
         <h3 class="py-2">Authorization</h3>
         <ul style="list-style-type: none;">
           <li v-for="(feature, i) in authorizationFeatures" :key="i">
-            <p class="feature-title" :class="{ 'not-available': !included }">{{
-              feature.name
-            }}</p>
-            <p class="subtitle" :class="{ 'not-available': !included }">{{
-              feature.description
-            }}</p>
+            <p
+              class="feature-title"
+              :class="{ 'not-available': excluded(feature) }"
+              >{{ feature.name }}</p
+            >
+            <p
+              class="subtitle"
+              :class="{ 'not-available': excluded(feature) }"
+              >{{ feature.description }}</p
+            >
           </li>
         </ul>
       </v-card>
