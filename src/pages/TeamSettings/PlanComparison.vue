@@ -209,11 +209,11 @@ export default {
   methods: {
     excluded(feature) {
       if (
-        this.planType.title === 'good' &&
+        this.planType?.title === 'good' &&
         (feature.plan === 'better' || feature.plan === 'best')
       ) {
         return true
-      } else if (this.planType.title === 'better' && feature.plan === 'best') {
+      } else if (this.planType?.title === 'better' && feature.plan === 'best') {
         return true
       } else {
         return false
