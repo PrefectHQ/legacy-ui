@@ -28,7 +28,6 @@ export default {
       const plan = this.plans.filter(
         planType => planType.value === this.license?.terms?.plan
       )
-      console.log('plans', this.plans, 'plan', plan)
       return plan[0] ? plan[0]?.name : 'Custom'
     },
     planColor() {

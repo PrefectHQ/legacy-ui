@@ -37,7 +37,6 @@ export default {
       return !location.href.includes('prefect.io')
     },
     isUsageBased() {
-      console.log('license', this.license)
       return this.license?.terms?.is_usage_based
     }
   },
