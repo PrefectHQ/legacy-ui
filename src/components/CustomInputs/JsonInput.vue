@@ -28,6 +28,11 @@ export default {
       required: false,
       default: ''
     },
+    prependIconLabel: {
+      type: String,
+      required: false,
+      default: null
+    },
     selectedType: {
       type: String,
       default: null,
@@ -168,17 +173,21 @@ export default {
     class="position-relative json-input-empty-text"
     :class="{ 'json-input-height-auto': heightAuto }"
   >
-    <v-icon
-      :color="iconColor"
-      class="position-absolute"
+    <div
+      class="position-absolute text-center"
       :style="{
         top: '12px',
         left: '12px',
         'z-index': 3
       }"
     >
-      {{ prependIcon }}
-    </v-icon>
+      <v-icon :color="iconColor">
+        {{ prependIcon }}
+      </v-icon>
+      <div class="caption o-20">
+        {{ prependIconLabel }}
+      </div>
+    </div>
     <CodeMirror
       ref="cmRef"
       data-cy="code-mirror-input"
@@ -186,6 +195,7 @@ export default {
       class="pt-2 cm-style json-input"
       :class="{
         'pl-9': prependIcon,
+        'pl-12': prependIconLabel,
         'blue-border': prependIcon && focussed && !jsonError,
         'red-border': prependIcon && jsonError,
         'plain-border': prependIcon && !focussed && !jsonError,

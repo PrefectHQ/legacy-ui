@@ -198,6 +198,13 @@ body {
   transform: scale(0.8);
 }
 
+.multi-color-switch {
+  .v-input--switch__track,
+  .v-input--switch__thumb {
+    color: inherit !important;
+  }
+}
+
 .theme--light.v-tabs-items {
   background-color: var(--v-appBackground-base) !important;
 }

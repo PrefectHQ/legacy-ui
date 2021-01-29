@@ -1,304 +1,144 @@
 <script>
-// import jsBeautify from 'js-beautify'
-import { codemirror } from 'vue-codemirror'
-import debounce from 'lodash.debounce'
-
-import 'codemirror/mode/yaml/yaml.js'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/display/placeholder'
-import '@/styles/yaml-input-style.scss'
+import JsonInput from '@/components/CustomInputs/JsonInput'
+import YamlInput from '@/components/CustomInputs/YamlInput'
+import jsBeautify from 'js-beautify'
 
 export default {
   components: {
-    CodeMirror: codemirror
+    JsonInput,
+    YamlInput
   },
   props: {
-    backgroundColor: {
-      type: String,
-      default: () => 'transparent'
-    },
-    disabled: {
-      type: Boolean,
-      default: () => false
-    },
-    prependIcon: {
-      type: String,
+    input: {
+      type: [Object, String],
       required: false,
-      default: ''
-    },
-    selectedType: {
-      type: String,
-      default: 'yaml',
-      required: false
-    },
-    // If true, editor height updates based on content.
-    heightAuto: {
-      type: Boolean,
-      default: () => false,
-      required: false
-    },
-    value: {
-      type: String,
-      default: () => '',
-      required: false
-    },
-    newParameterInput: {
-      type: String,
-      default: '',
-      required: false
-    },
-    placeholderText: {
-      type: String,
-      default: '',
-      required: false
+      default: () => {
+        return ''
+      }
     }
   },
   data() {
     return {
-      // Line that contains a syntax error
-      errorLine: null,
-      // The value may need to be modified for formatting.
-      // Store the value prop's value internally as data so it can be modified.
-      internalValue: this.value,
-      error: null,
-      focussed: false
+      mode: 'yaml',
+      jsonInput: '{}',
+      yamlInput: ''
     }
   },
   computed: {
-    cmInstance() {
-      return this.$refs.cmRef && this.$refs.cmRef.codemirror
-    },
-    iconColor() {
-      if (this.error) return 'error'
-      if (this.focussed) return 'primary'
-      return 'grey'
-    },
-    editorOptions() {
-      return {
-        mode: 'text/x-yaml',
-        theme: 'yaml-input',
-        readOnly: this.disabled,
-        lint: true,
-        smartIndent: true,
-        lineWrapping: true,
-        placeholder: this.placeholderText,
-        tabSize: 4
+    value() {
+      if (this.mode == 'yaml') return this.yamlInput
+      if (this.mode == 'json') {
+        try {
+          return JSON.parse(this.jsonInput)
+        } catch {
+          this.jsonInput
+        }
       }
+      return null
     }
   },
   watch: {
-    // Keep value prop in sync with value saved as data
-    value() {
-      this.internalValue = this.value
+    // Allows swapping between json input and yaml inputs
+    mode(val) {
+      if (val == 'json') {
+        this.jsonInput = jsBeautify(this.jsonInput, {
+          indent_size: 4,
+          space_in_empty_paren: true,
+          preserve_newlines: false
+        })
+
+        // Use next tick to make sure the json input element exists
+        this.$nextTick(() => {
+          this.$refs['json-input'].validateJson()
+        })
+      }
     }
   },
   methods: {
-    _handleInput(event) {
-      this.removeErrors()
-      this.$emit('input', event)
-      if (this.selectedType === 'json') this.validate(event)
-    },
-    markErrors(syntaxError) {
-      const errorIndex = syntaxError?.message?.split(' ').pop()
-      const errorPosition = this.cmInstance.doc.posFromIndex(errorIndex)
-      this.errorLine = errorPosition.line
-      this.cmInstance.doc.addLineClass(
-        this.errorLine,
-        'text',
-        'input-error-text'
-      )
-    },
-    removeErrors() {
-      this.error = null
-      if (this.errorLine == null) return
-      this.cmInstance.doc.removeLineClass(
-        this.errorLine,
-        'text',
-        'input-error-text'
-      )
-
-      this.errorLine = null
-    },
-    // Parent components are responsible for imperatively validating using a ref to this component.
-    validate: debounce(function(event) {
-      if (this.newParameterInput) this.internalValue = this.newParameterInput
-      const input = event || this.internalValue
+    _handleJsonInput() {
+      // Allows swapping between json input and key value pairs
       try {
-        // Treat empty or null inputs as valid
-        if (!input || (input && input.trim() === '')) {
-          this.error = 'Please enter a value.'
-          this.$emit('invalid', true)
-          return 'MissingError'
-        }
-        // Attempt to parse JSON and catch syntax errors
-        JSON.parse(input)
-        this.removeErrors()
-        this.$emit('invalid', false)
-        return true
-      } catch (err) {
-        if (err instanceof SyntaxError) {
-          this.markErrors(err)
-          this.$emit('invalid', true)
-          this.error = `
-          There is a syntax error in your input.
-        `
-          return 'SyntaxError'
-        } else {
-          throw err
-        }
+        const json = JSON.parse(this.jsonInput)
+
+        this.keys = Object.keys(json)
+        this.values = Object.values(json)
+      } catch {
+        this.$refs['json-input'].validateJson()
       }
-    }, 300)
+    },
+    _handleKeypress() {
+      this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
+      this.$emit('change', this.value)
+    },
+    _handleYamlInput() {},
+    switchMode() {
+      this.mode = this.mode == 'yaml' ? 'json' : 'yaml'
+    }
   }
 }
 </script>
 
 <template>
-  <div
-    class="position-relative input-empty-text"
-    :class="{ 'input-height-auto': heightAuto }"
-  >
-    <v-icon
-      :color="iconColor"
-      class="position-absolute"
-      :style="{
-        top: '12px',
-        left: '12px',
-        'z-index': 3
-      }"
-    >
-      {{ prependIcon }}
-    </v-icon>
-    <CodeMirror
-      ref="cmRef"
-      data-cy="code-mirror-input"
-      :value="internalValue"
-      class="pt-2 cm-style"
-      :class="{
-        'pl-9': prependIcon,
-        'blue-border': prependIcon && focussed && !error,
-        'red-border': prependIcon && error,
-        'plain-border': prependIcon && !focussed && !error,
-        'original-border': !prependIcon,
-        [backgroundColor]: true
-      }"
-      :options="editorOptions"
-      @input="_handleInput($event)"
-      @focus="focussed = true"
-      @blur="focussed = false"
-    ></CodeMirror>
+  <div class="position-relative">
+    <div class="d-flex justify-end align-center mb-1" style="width: 100%;">
+      <span
+        class="d-flex justify-end align-center cursor-pointer"
+        @click="switchMode"
+      >
+        <span
+          class="text-body-2"
+          :class="{ 'font-weight-medium': mode == 'json' }"
+        >
+          JSON
+        </span>
+        <v-switch
+          inset
+          color="orange"
+          class="mt-0 small-switch v-input--reverse multi-color-switch"
+          :class="{
+            'green--text': mode == 'json',
+            'orange--text': mode == 'yaml'
+          }"
+          hide-details
+          :value="mode == 'yaml'"
+          @click.stop="switchMode"
+        ></v-switch>
+        <span
+          class="text-body-2"
+          :class="{ 'font-weight-medium': mode == 'yaml' }"
+        >
+          YAML
+        </span>
+      </span>
+    </div>
 
-    <slot></slot>
-    <!-- <v-btn
-      class="position-absolute"
-      :style="{
-        bottom: '25px',
-        right: '10px',
-        'z-index': 3
-      }"
-      text
-      small
-      color="accent"
-      @click="format"
-    >
-      Format
-    </v-btn> -->
+    <div v-if="mode == 'json'">
+      <JsonInput
+        ref="json-input"
+        v-model="jsonInput"
+        background-color="white"
+        prepend-icon="fad fa-file-code"
+        prepend-icon-label="JSON"
+        @input="_handleJsonInput"
+      />
+    </div>
 
-    <div class="caption red--text min-height pl-4">{{ error }}</div>
+    <div v-else-if="mode == 'yaml'">
+      <YamlInput
+        ref="yaml-input"
+        v-model="yamlInput"
+        background-color="white"
+        prepend-icon="fad fa-file-alt"
+        prepend-icon-label="YAML"
+        @input="_handleYamlInput"
+      />
+    </div>
   </div>
 </template>
 
-<style lang="scss">
-/*
-  IMPORTANT: These styles must be globally scoped.
-
-  There is CodeMirror code in <script /> that sets the .json-input-error-text class on any
-  lines in the JSON editor with JSON syntax issues.
-
-  Due to low CSS specificity, the styles in the .json-input-error-text class will not set
-  if the component is locally scoped.
-
-  For the same reason, the .json-input-error-text styles must also be marked as !important.
-
-  To mitigate the effect of these global styles, each style will be prepended
-  with json-input-, for "Run Flow Page".
-*/
-
-/* stylelint-disable selector-class-pattern */
-.CodeMirror.CodeMirror-wrap {
-  font-family: inherit !important;
-  height: 300px;
-  resize: vertical;
-}
-
-.input-height-auto {
-  .CodeMirror {
-    height: auto;
-    min-height: 108px;
-  }
-}
-
-.input-empty-text {
-  .CodeMirror-empty {
-    color: #808080;
-  }
-
-  .CodeMirror-cursor {
-    height: auto !important;
-  }
-}
-
-/* stylelint-enable selector-class-pattern */
-
-.input-error-text {
-  text-decoration: #ff5252 wavy underline !important;
-}
-</style>
-
 <style lang="scss" scoped>
-.min-height {
-  height: 15px;
-}
-
-.cm-style {
-  color: rgba(0, 0, 0, 0.38);
-  font-size: inherit !important;
-  height: auto;
-  position: relative;
-
-  &:hover,
-  &:focus {
-    color: rgba(0, 0, 0, 0.86);
-  }
-
-  &::after {
-    background: transparent;
-    content: '';
-    height: 100%;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    transition: all 50ms;
-    width: 100%;
-  }
-
-  &.red-border::after {
-    border: 2px solid #ff5252;
-    border-radius: 4px;
-  }
-
-  &.blue-border::after {
-    border: 2px solid #3b8dff;
-    border-radius: 4px;
-  }
-
-  &.plain-border::after {
-    border: 1px solid currentColor;
-    border-radius: 4px;
-  }
-
-  &.original-border::after {
-    border: 1px solid currentColor;
-  }
+.remove-button {
+  position: absolute;
+  right: 0;
 }
 </style>

@@ -23,6 +23,11 @@ export default {
       required: false,
       default: ''
     },
+    prependIconLabel: {
+      type: String,
+      required: false,
+      default: null
+    },
     selectedType: {
       type: String,
       default: 'yaml',
@@ -124,17 +129,21 @@ export default {
     class="position-relative input-empty-text"
     :class="{ 'input-height-auto': heightAuto }"
   >
-    <v-icon
-      :color="iconColor"
-      class="position-absolute"
+    <div
+      class="position-absolute text-center"
       :style="{
         top: '12px',
         left: '12px',
         'z-index': 3
       }"
     >
-      {{ prependIcon }}
-    </v-icon>
+      <v-icon :color="iconColor">
+        {{ prependIcon }}
+      </v-icon>
+      <div class="caption o-20">
+        {{ prependIconLabel }}
+      </div>
+    </div>
     <CodeMirror
       ref="cmRef"
       data-cy="code-mirror-input"
@@ -142,6 +151,7 @@ export default {
       class="pt-2 cm-style yaml-input"
       :class="{
         'pl-9': prependIcon,
+        'pl-12': prependIconLabel,
         'blue-border': prependIcon && focussed && !error,
         'red-border': prependIcon && error,
         'plain-border': prependIcon && !focussed && !error,
