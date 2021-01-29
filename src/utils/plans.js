@@ -9,6 +9,7 @@ export const PLANS_2021 = {
     history: 'week',
     title: 'good'
   },
+  //Same details for STARTER_2021 and FREE_2021 but we'll check in the change plan dialog if we should call FREE or STARTER depending on whether they have a card on file
   better: {
     name: 'Standard',
     price: 500,

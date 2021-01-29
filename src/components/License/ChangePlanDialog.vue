@@ -49,7 +49,10 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     async changePlan() {
-      console.log(this.plan)
+      const planvalue =
+        this.plan.value === 'FREE_2021' && this.existingCard
+          ? 'STARTER_2021'
+          : this.plan.value
       this.loading = true
       try {
         await this.$apollo.mutate({
@@ -57,7 +60,7 @@ export default {
           variables: {
             input: {
               tenant_id: this.tenant.id,
-              plan_name: this.plan.value
+              plan_name: planvalue
             }
           }
         })
