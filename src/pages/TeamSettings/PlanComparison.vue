@@ -198,12 +198,13 @@ export default {
     }
   },
   created() {
-    //creates a non-reactive property that isn't tracked by Vue - so that allIds does not reset
+    //creates a non-reactive property that isn't tracked by Vue - so that selected doesn't reset
     const name =
       this.license?.terms?.plan === 'STARTER_2021'
         ? 'FREE_2021'
         : this.license?.terms?.plan
     const plan = this.plans.findIndex(planType => planType.value === name)
+    console.log(plan)
     this.selected = plan
   },
   methods: {
