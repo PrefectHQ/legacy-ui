@@ -204,7 +204,6 @@ export default {
         ? 'FREE_2021'
         : this.license?.terms?.plan
     const plan = this.plans.findIndex(planType => planType.value === name)
-    console.log(plan)
     this.selected = plan
   },
   methods: {
