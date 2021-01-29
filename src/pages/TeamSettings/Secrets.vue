@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import JsonInput from '@/components/JsonInput'
+import JsonInput from '@/components/CustomInputs/JsonInput'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'

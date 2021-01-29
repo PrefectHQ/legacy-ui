@@ -127,6 +127,8 @@ export default {
           <MultiLineInput
             v-else-if="arg.input_type == 'multiline'"
             v-model="config_[arg.arg]"
+            background-color="white"
+            prepend-icon="fad fa-file-code"
           />
           <DictInput
             v-else-if="arg.input_type == 'object'"
@@ -190,6 +192,8 @@ export default {
                     arg.options[shownArgs[arg.ref]].input_type == 'multiline'
                   "
                   v-model="config_[arg.options[shownArgs[arg.ref]]]"
+                  background-color="white"
+                  prepend-icon="fad fa-file-code"
                 />
                 <DictInput
                   v-else-if="

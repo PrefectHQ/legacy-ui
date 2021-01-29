@@ -183,7 +183,7 @@ export default {
       ref="cmRef"
       data-cy="code-mirror-input"
       :value="internalValue"
-      class="pt-2 cm-style"
+      class="pt-2 cm-style json-input"
       :class="{
         'pl-9': prependIcon,
         'blue-border': prependIcon && focussed && !jsonError,
@@ -235,32 +235,34 @@ export default {
 */
 
 /* stylelint-disable selector-class-pattern */
-.CodeMirror {
-  font-family: inherit !important;
-  height: 300px;
-}
-
-.json-input-height-auto {
+.json-input {
   .CodeMirror {
-    height: auto;
-    min-height: 108px;
-  }
-}
-
-.json-input-empty-text {
-  .CodeMirror-empty {
-    color: #808080;
+    font-family: inherit !important;
+    height: 300px;
   }
 
-  .CodeMirror-cursor {
-    height: auto !important;
+  .json-input-height-auto {
+    .CodeMirror {
+      height: auto;
+      min-height: 108px;
+    }
   }
-}
 
-/* stylelint-enable selector-class-pattern */
+  .json-input-empty-text {
+    .CodeMirror-empty {
+      color: #808080;
+    }
 
-.json-input-error-text {
-  text-decoration: #ff5252 wavy underline !important;
+    .CodeMirror-cursor {
+      height: auto !important;
+    }
+  }
+
+  /* stylelint-enable selector-class-pattern */
+
+  .json-input-error-text {
+    text-decoration: #ff5252 wavy underline !important;
+  }
 }
 </style>
 

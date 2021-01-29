@@ -1,8 +1,5 @@
 <script>
-// import jsBeautify from 'js-beautify'
 import { codemirror } from 'vue-codemirror'
-import debounce from 'lodash.debounce'
-
 import 'codemirror/mode/yaml/yaml.js'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/display/placeholder'
@@ -96,7 +93,6 @@ export default {
     _handleInput(event) {
       this.removeErrors()
       this.$emit('input', event)
-      if (this.selectedType === 'json') this.validate(event)
     },
     markErrors(syntaxError) {
       const errorIndex = syntaxError?.message?.split(' ').pop()
@@ -118,36 +114,7 @@ export default {
       )
 
       this.errorLine = null
-    },
-    // Parent components are responsible for imperatively validating using a ref to this component.
-    validate: debounce(function(event) {
-      if (this.newParameterInput) this.internalValue = this.newParameterInput
-      const input = event || this.internalValue
-      try {
-        // Treat empty or null inputs as valid
-        if (!input || (input && input.trim() === '')) {
-          this.error = 'Please enter a value.'
-          this.$emit('invalid', true)
-          return 'MissingError'
-        }
-        // Attempt to parse JSON and catch syntax errors
-        JSON.parse(input)
-        this.removeErrors()
-        this.$emit('invalid', false)
-        return true
-      } catch (err) {
-        if (err instanceof SyntaxError) {
-          this.markErrors(err)
-          this.$emit('invalid', true)
-          this.error = `
-          There is a syntax error in your input.
-        `
-          return 'SyntaxError'
-        } else {
-          throw err
-        }
-      }
-    }, 300)
+    }
   }
 }
 </script>
@@ -172,7 +139,7 @@ export default {
       ref="cmRef"
       data-cy="code-mirror-input"
       :value="internalValue"
-      class="pt-2 cm-style"
+      class="pt-2 cm-style yaml-input"
       :class="{
         'pl-9': prependIcon,
         'blue-border': prependIcon && focussed && !error,
@@ -188,69 +155,35 @@ export default {
     ></CodeMirror>
 
     <slot></slot>
-    <!-- <v-btn
-      class="position-absolute"
-      :style="{
-        bottom: '25px',
-        right: '10px',
-        'z-index': 3
-      }"
-      text
-      small
-      color="accent"
-      @click="format"
-    >
-      Format
-    </v-btn> -->
-
     <div class="caption red--text min-height pl-4">{{ error }}</div>
   </div>
 </template>
 
 <style lang="scss">
-/*
-  IMPORTANT: These styles must be globally scoped.
-
-  There is CodeMirror code in <script /> that sets the .json-input-error-text class on any
-  lines in the JSON editor with JSON syntax issues.
-
-  Due to low CSS specificity, the styles in the .json-input-error-text class will not set
-  if the component is locally scoped.
-
-  For the same reason, the .json-input-error-text styles must also be marked as !important.
-
-  To mitigate the effect of these global styles, each style will be prepended
-  with json-input-, for "Run Flow Page".
-*/
-
 /* stylelint-disable selector-class-pattern */
-.CodeMirror.CodeMirror-wrap {
-  font-family: inherit !important;
-  height: 300px;
-  resize: vertical;
-}
-
-.input-height-auto {
-  .CodeMirror {
-    height: auto;
-    min-height: 108px;
-  }
-}
-
-.input-empty-text {
-  .CodeMirror-empty {
-    color: #808080;
+.yaml-input {
+  .CodeMirror.CodeMirror-wrap {
+    font-family: inherit !important;
+    height: 300px;
+    resize: vertical;
   }
 
-  .CodeMirror-cursor {
-    height: auto !important;
+  .input-height-auto {
+    .CodeMirror {
+      height: auto;
+      min-height: 108px;
+    }
   }
-}
 
-/* stylelint-enable selector-class-pattern */
+  .input-empty-text {
+    .CodeMirror-empty {
+      color: #808080;
+    }
 
-.input-error-text {
-  text-decoration: #ff5252 wavy underline !important;
+    .CodeMirror-cursor {
+      height: auto !important;
+    }
+  }
 }
 </style>
 

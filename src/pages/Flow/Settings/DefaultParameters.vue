@@ -2,7 +2,7 @@
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 import CardTitle from '@/components/Card-Title'
 import ParametersForm from '@/components/ParametersForm'
-import JsonInput from '@/components/JsonInput'
+import JsonInput from '@/components/CustomInputs/JsonInput'
 
 export default {
   components: { JsonInput, CardTitle, ParametersForm },

@@ -1,5 +1,5 @@
 <script>
-import JsonInput from '@/components/JsonInput'
+import JsonInput from '@/components/CustomInputs/JsonInput'
 import jsBeautify from 'js-beautify'
 
 export default {

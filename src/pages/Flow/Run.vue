@@ -3,7 +3,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 // import CardTitle from '@/components/Card-Title'
-// import JsonInput from '@/components/JsonInput'
+// import JsonInput from '@/components/CustomInputs/JsonInput'
 // import Parameters from '@/components/Parameters'
 // import PrefectSchedule from '@/components/PrefectSchedule'
 // import DateTime from '@/components/DateTime'
