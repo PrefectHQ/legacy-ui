@@ -58,7 +58,6 @@ export default {
           }
         })
       } catch (e) {
-        console.log(e)
         this.setAlert({
           alertShow: true,
           alertMessage:
@@ -117,7 +116,7 @@ export default {
           >Only your team's administrators can modify these settings.
         </v-alert>
         <div v-else-if="existingCard && planCost">
-          Your card ending in
+          <v-icon small class="pr-4">star_rate</v-icon>Your card ending in
           <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
 
           will be charged
@@ -126,8 +125,9 @@ export default {
         </div>
         <div v-if="planCost && !existingCard"> <Billing page="plan"/></div>
         <div v-if="!planCost">
-          Your plan is free! You will pay {{ additionalCost }} for succesful
-          task runs after 10 000/month</div
+          <v-icon small class="pr-4">star_rate</v-icon>Your plan is free! You
+          will pay {{ additionalCost }} for succesful task runs after 10
+          000/month</div
         >
       </v-card-text>
       <v-card-actions>
