@@ -102,10 +102,7 @@ export default {
         })
       } catch (e) {
         /// Temp Fix - We should create a license that has permission to do this!!
-        if (
-          !e?.message.includes('This tenant already has an active license') &&
-          !e?.message.includes('Unauthorized')
-        )
+        if (!e?.message.includes('This tenant already has an active license'))
           this.updateServerError = true
       }
 
