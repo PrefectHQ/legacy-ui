@@ -58,6 +58,7 @@ describe('auth Vuex Module', () => {
     return {
       authorizationToken: MOCK_AUTHORIZATION_TOKEN,
       authorizationTokenExpiry: new Date().getTime() + 10000,
+      error: null,
       idToken: MOCK_ID_TOKEN,
       idTokenExpiry: jwt_decode(MOCK_ID_TOKEN).exp * 1000,
       isAuthenticated: true,
@@ -80,6 +81,7 @@ describe('auth Vuex Module', () => {
     return {
       authorizationToken: null,
       authorizationTokenExpiry: null,
+      error: null,
       idToken: null,
       idTokenExpiry: null,
       isAuthenticated: false,
@@ -98,7 +100,7 @@ describe('auth Vuex Module', () => {
     it('should be initialized properly without tokens in localStorage ', () => {
       const state = auth.state
 
-      expect(Object.keys(state).length).toBe(15)
+      expect(Object.keys(state).length).toBe(16)
 
       expect(state.user).toBe(null)
       expect(state.authorizationToken).toBe(null)
@@ -134,6 +136,21 @@ describe('auth Vuex Module', () => {
 
     it('should return the user', () => {
       expect(store.getters.user).toBe(store.state.user)
+    })
+
+    it('should return the error property', () => {
+      const errorState = loggedOutState()
+
+      errorState.error = 'access_denied'
+
+      store = new Vuex.Store({
+        state: errorState,
+        getters: auth.getters,
+        actions: auth.actions,
+        mutations: auth.mutations
+      })
+
+      expect(store.getters.error).toBe(store.state.error)
     })
 
     it('should return the idToken', () => {
@@ -226,6 +243,12 @@ describe('auth Vuex Module', () => {
         const idToken = loggedInState().idToken
         store.commit('idToken', idToken)
         expect(store.getters['idToken']).toBe(idToken)
+      })
+
+      it('should set the error property', () => {
+        const error = 'access_denied'
+        store.commit('error', error)
+        expect(store.getters['error']).toBe(error)
       })
 
       it('should set isAuthenticated', () => {
@@ -663,15 +686,21 @@ describe('auth Vuex Module', () => {
         isAuthenticated.mockReturnValueOnce(false)
 
         const redirectRoute = '/path/to/some/place',
-          otherRedirectRoute = '/path/to/some/other/place'
+          otherRedirectRoute = '/path/to/some/other/place',
+          searchParams = '?some_query=123'
         await store.dispatch('setRedirectRoute', redirectRoute)
         expect(store.getters['redirectRoute']).toBe(redirectRoute)
 
         delete window.location
-        window.location = { pathname: otherRedirectRoute, search: '' }
+        window.location = {
+          pathname: otherRedirectRoute,
+          search: searchParams
+        }
 
         await store.dispatch('authenticate')
-        expect(store.getters['redirectRoute']).not.toBe(otherRedirectRoute)
+        expect(store.getters['redirectRoute']).not.toBe(
+          otherRedirectRoute + searchParams
+        )
       })
     })
 
@@ -903,7 +932,7 @@ describe('auth Vuex Module', () => {
       })
     })
 
-    describe('a user comes from an email invite link', () => {
+    describe('authentication flow with query params', () => {
       let store
 
       beforeEach(() => {
@@ -913,14 +942,37 @@ describe('auth Vuex Module', () => {
           actions: auth.actions,
           mutations: auth.mutations
         })
+
+        delete window.location
+
         isAuthenticated.mockReturnValue(false)
       })
-      delete window.location
-      window.location = { search: '?invitation_id=xyz' }
 
-      it('stores the invitation id in local storage', async () => {
-        await store.dispatch('authenticate')
-        expect(sessionStorage.getItem('invitationId')).toBe('xyz')
+      describe('a user comes from an email invite link', () => {
+        it('stores the invitation id in local storage', async () => {
+          window.location = { search: '?invitation_id=xyz' }
+
+          await store.dispatch('authenticate')
+          expect(sessionStorage.getItem('invitationId')).toBe('xyz')
+        })
+      })
+
+      describe('the url contains a partner source', () => {
+        it('stores the partner source in session storage', async () => {
+          window.location = { search: '?partner_source=prefect' }
+
+          await store.dispatch('authenticate')
+          expect(sessionStorage.getItem('partnerSource')).toBe('prefect')
+        })
+      })
+
+      describe('the url contains an authentication error', () => {
+        it('stores the error and aborts the authentication flow', async () => {
+          window.location = { search: '?error=access_denied' }
+
+          await store.dispatch('authenticate')
+          expect(store.getters['error']).toBe('access_denied')
+        })
       })
     })
   })

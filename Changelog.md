@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Improve auth error handling in access_denied circumstances and add a new error page - [#576](https://github.com/PrefectHQ/ui/pull/576)
 
 ### Bugfixes
 
