@@ -15,7 +15,8 @@ export default {
   data() {
     return {
       loading: false,
-      changePlanDialog: false
+      changePlanDialog: false,
+      alertMessage: ''
     }
   },
   computed: {
@@ -44,10 +45,18 @@ export default {
     },
     limit() {
       return this.plan.taskRuns
+    },
+    disableChangePlan() {
+      return (
+        !this.isTenantAdmin ||
+        !this.isSelfServe ||
+        this.license?.terms?.plan === this.plan.value
+      )
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    ...mapActions('license', ['getLicense']),
     async changePlan() {
       const planvalue =
         this.plan.value === 'FREE_2021' && this.existingCard
@@ -55,7 +64,7 @@ export default {
           : this.plan.value
       this.loading = true
       try {
-        await this.$apollo.mutate({
+        const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/License/create-usage-based-license.gql'),
           variables: {
             input: {
@@ -64,14 +73,23 @@ export default {
             }
           }
         })
+        if (data.create_usage_license.id) {
+          this.alertMessage = {
+            alertShow: true,
+            alertMessage: `You are now on the Prefect ${this.planName} plan`,
+            alertType: 'success'
+          }
+        }
       } catch (e) {
-        this.setAlert({
+        this.alertMessage = {
           alertShow: true,
           alertMessage:
-            'There was an error changing your plan.  Please try again or contact help@prefect.io',
+            'There was a problem updating your license.  Please try again or contact help@prefect.io',
           alertType: 'error'
-        })
+        }
       } finally {
+        await this.getLicense()
+        this.setAlert(this.alertMessage)
         this.loading = false
         this.changePlanDialog = false
       }
@@ -83,7 +101,7 @@ export default {
 <template>
   <v-dialog v-model="changePlanDialog" max-width="600" min-height="500px">
     <template #activator="{ on: dialog }">
-      <v-btn color="primary" v-on="{ ...dialog }">
+      <v-btn color="primary" :disabled="disableChangePlan" v-on="{ ...dialog }">
         Change Plan
       </v-btn>
     </template>
@@ -95,7 +113,19 @@ export default {
       </v-card-title>
       <v-card-text>
         <v-alert
-          v-if="!isSelfServe & !loading"
+          v-if="!isTenantAdmin & !loading"
+          class="mx-auto mb-12"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="540"
+          >Only your team's administrators can modify these settings.
+        </v-alert>
+        <v-alert
+          v-else-if="!isSelfServe & !loading"
           class="mx-auto mb-12"
           border="left"
           colored-border
@@ -110,36 +140,29 @@ export default {
             >contact our sales team</a
           >
         </v-alert>
-        <v-alert
-          v-else-if="!isTenantAdmin & !loading"
-          class="mx-auto mb-12"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          icon="lock"
-          max-width="540"
-          >Only your team's administrators can modify these settings.
-        </v-alert>
         <div v-else-if="existingCard && planCost">
-          <v-icon small class="pr-4">star_rate</v-icon>Your card ending in
+          Your card ending in
           <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
 
           will be charged
-          <span class="font-weight-bold mx-1">${{ planCost }} </span> on a
-          monthly basis
+          <span class="font-weight-bold ">${{ planCost }} </span> on a monthly
+          basis.
         </div>
         <div v-else-if="planCost && !existingCard"> <Billing page="plan"/></div>
         <div v-if="!planCost && isSelfServe">
-          <v-icon small class="pr-4">star_rate</v-icon>Your plan is free! If you
-          want to run more than {{ limit }} task runs/month you will need to add
-          a credit card in the Team Account page.
+          This plan is free. If you want to run more than {{ limit }} task
+          runs/month you will need to add a credit card in the Team Account
+          page.
         </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn :loading="loading" color="primary" @click="changePlan">
+        <v-btn
+          v-if="isSelfServe && isTenantAdmin"
+          :loading="loading"
+          color="primary"
+          @click="changePlan"
+        >
           Confirm
         </v-btn>
       </v-card-actions>
