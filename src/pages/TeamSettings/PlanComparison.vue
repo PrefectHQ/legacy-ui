@@ -405,18 +405,37 @@ export default {
 </template>
 
 <style scoped>
+@keyframes adjacent {
+  100% {
+    filter: contrast(65%);
+    transform: scale(0.9);
+  }
+}
+
+@keyframes away {
+  100% {
+    filter: contrast(35%);
+    transform: scale(0.8);
+  }
+}
+
+@keyframes active {
+  100% {
+    filter: contrast(100%);
+    transform: scale(1);
+  }
+}
+
 .active {
-  transform: scale(1);
+  animation: active 1s forwards;
 }
 
 .adjacent {
-  filter: contrast(65%);
-  transform: scale(0.9);
+  animation: adjacent 1s forwards;
 }
 
 .away {
-  filter: contrast(35%);
-  transform: scale(0.8);
+  animation: away 1s forwards;
 }
 
 .feature-title {
