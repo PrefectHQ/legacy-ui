@@ -71,7 +71,7 @@ export default {
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-4">
             <div class="display-1 text-center"
-              >You're currently on the Starter Plan</div
+              >You'll start on the Starter Plan</div
             >
 
             <div class="body-2 text--darken-1 py-4">

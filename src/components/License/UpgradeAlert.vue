@@ -38,7 +38,7 @@ export default {
         Pssst.... We noticed you have a legacy license type. Prefect now has new
         licenses that include
         <span class="font-weight-bold">more users</span> and
-        <span class="font-weight-bold">less limits.</span>
+        <span class="font-weight-bold">fewer limits.</span>
         <div v-if="!isSelfServe"
           ><ExternalLink
             href="https://www.prefect.io/get-prefect#contact"
