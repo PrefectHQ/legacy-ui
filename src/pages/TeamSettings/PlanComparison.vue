@@ -258,7 +258,7 @@ export default {
       >
         Contact Sales
       </v-btn>
-      <ChangePlanDialog :plan="planType" />
+      <ChangePlanDialog v-else :plan="planType" />
     </div>
 
     <v-card class="pa-3 mb-8">
@@ -338,6 +338,17 @@ export default {
           </li>
         </ul>
       </v-card>
+    </div>
+    <div class="text-center pb-4">
+      <v-btn
+        v-if="selected === 2"
+        color="primary"
+        href="https://www.prefect.io/get-prefect#contact"
+        target="_blank"
+      >
+        Contact Sales
+      </v-btn>
+      <ChangePlanDialog v-else :plan="planType" />
     </div>
   </ManagementLayout>
 </template>
