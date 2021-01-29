@@ -198,7 +198,7 @@ export default {
     }
   },
   created() {
-    //creates a non-reactive property that isn't tracked by Vue - so that allIds does not reset
+    //creates a non-reactive property that isn't tracked by Vue - so that selected doesn't reset
     const name =
       this.license?.terms?.plan === 'STARTER_2021'
         ? 'FREE_2021'

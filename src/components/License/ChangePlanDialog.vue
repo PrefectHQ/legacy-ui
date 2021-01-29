@@ -47,10 +47,12 @@ export default {
       return this.plan.taskRuns
     },
     disableChangePlan() {
+      const name =
+        this.license?.terms?.plan === 'STARTER_2021'
+          ? 'FREE_2021'
+          : this.license?.terms?.plan
       return (
-        !this.isTenantAdmin ||
-        !this.isSelfServe ||
-        this.license?.terms?.plan === this.plan.value
+        !this.isTenantAdmin || !this.isSelfServe || this.plan.value === name
       )
     }
   },

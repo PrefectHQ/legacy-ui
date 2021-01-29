@@ -8,11 +8,15 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['license']),
+    ...mapGetters('tenant', ['tenant']),
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
+    },
+    isTenantAdmin() {
+      return this.tenant.role === 'TENANT_ADMIN'
     }
   }
 }
@@ -56,7 +60,7 @@ export default {
         >
       </v-col>
 
-      <v-col v-if="isSelfServe" cols="12" lg="4">
+      <v-col v-if="isSelfServe && isTenantAdmin" cols="12" lg="4">
         <router-link
           :to="{ name: 'plan-comparison' }"
           style="text-decoration: none;"

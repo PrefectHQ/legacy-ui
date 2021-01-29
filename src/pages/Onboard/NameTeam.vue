@@ -300,7 +300,7 @@ export default {
             <div v-if="isTenantAdmin" class="body-2 text--darken-1">
               (You can always change this later)
             </div>
-            <div class="body-2 text--darken-1">
+            <div v-else class="body-2 text--darken-1">
               Contact your team administrators to complete onboarding</div
             >
           </v-col>
