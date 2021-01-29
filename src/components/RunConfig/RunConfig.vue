@@ -93,8 +93,8 @@ export default {
 
     <transition-group name="fade" mode="out-in">
       <v-row
-        v-for="(arg, i) in template.args"
-        :key="i"
+        v-for="arg in template.args"
+        :key="arg.arg || i"
         class="my-2 py-8 row-divider"
         no-gutters
       >
