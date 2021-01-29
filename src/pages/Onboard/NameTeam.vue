@@ -32,6 +32,9 @@ export default {
     ...mapGetters('api', ['isCloud']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
+    },
+    isTenantAdmin() {
+      return this.tenant.role === 'TENANT_ADMIN'
     }
   },
   mounted() {
@@ -249,7 +252,7 @@ export default {
       <div ref="main-row">
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
-            <div class="display-1 text-center">
+            <div v-if="isTenantAdmin" class="display-1 text-center">
               Let's start by creating your team
               <v-menu
                 :close-on-content-click="false"
@@ -290,12 +293,16 @@ export default {
                 </v-card>
               </v-menu>
             </div>
+            <div v-else class="display-1 text-center"> Team Details </div>
           </v-col>
 
           <v-col v-if="revealNote" key="revealNote" cols="12">
-            <div class="body-2 text--darken-1">
+            <div v-if="isTenantAdmin" class="body-2 text--darken-1">
               (You can always change this later)
             </div>
+            <div class="body-2 text--darken-1">
+              Contact your team administrators to complete onboarding</div
+            >
           </v-col>
 
           <v-col
@@ -307,11 +314,11 @@ export default {
             <div class="overline">
               Team Name
             </div>
-            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline">
+            <div v-if="!isTenantAdmin" class="headline">
               {{ tenant.name }}
             </div>
             <v-text-field
-              v-if="tenant.role == 'TENANT_ADMIN'"
+              v-if="isTenantAdmin"
               v-model="name"
               data-cy="team-name"
               :disabled="disabled"
@@ -354,11 +361,11 @@ export default {
                 </v-icon>
               </Truncate>
             </div>
-            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
+            <div v-if="!isTenantAdmin" class="headline medium">
               {{ tenant.slug }}
             </div>
             <v-text-field
-              v-if="tenant.role == 'TENANT_ADMIN'"
+              v-if="isTenantAdmin"
               v-model="slug"
               data-cy="team-slug"
               :disabled="disabled"
@@ -434,7 +441,7 @@ export default {
             class="my-2"
           >
             <v-btn
-              v-if="tenant.role == 'TENANT_ADMIN'"
+              v-if="isTenantAdmin"
               color="primary"
               width="auto"
               data-cy="submit-team-info"
