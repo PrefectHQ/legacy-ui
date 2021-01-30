@@ -8,6 +8,16 @@
 
 ### Bugfixes
 
+- None
+
+## 2021-01-28
+
+### Features and Improvements
+
+- Improve auth error handling in access_denied circumstances and add a new error page - [#576](https://github.com/PrefectHQ/ui/pull/576)
+
+### Bugfixes
+
 - Displays the timezone of the scheduled time in the Details Tile - [#570](https://github.com/PrefectHQ/ui/pull/570)
 - Fix issues related to token refresh - [#574](https://github.com/PrefectHQ/ui/pull/574)
 

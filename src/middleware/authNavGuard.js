@@ -31,6 +31,11 @@ const authNavGuard = async (to, from, next) => {
   // If the user isn't authenticated or authorized
   // at this point, we abort navigation
   if (!isAuthenticated() || !isAuthorized()) {
+    if (store.getters['auth/error'] == 'access_denied') {
+      return next({
+        name: 'access-denied'
+      })
+    }
     return next(false)
   }
 
