@@ -160,7 +160,7 @@ const actions = {
 
         tenant.role = rootGetters['user/memberships'].find(
           membership => membership.tenant.id == tenant.id
-        )?.role
+        )?.role_detail?.name
       } else {
         tenant.role = 'TENANT_ADMIN'
       }

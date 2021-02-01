@@ -131,7 +131,7 @@ export default {
             return {
               email: invitation.email,
               membershipInvitationId: invitation.id,
-              role: invitation.role,
+              role: invitation.role_detail.name,
               pending: true,
               created: invitation.created
             }
