@@ -46,7 +46,7 @@ const actions = {
       if (data?.auth_info?.license) {
         commit('setLicense', data.auth_info.license)
       }
-
+      console.log('license data', data)
       if (data?.auth_info?.permissions) {
         commit('setPermissions', data.auth_info.permissions)
       }

@@ -75,12 +75,14 @@ export default {
             }
           }
         })
+        console.log('update', data)
         if (data.create_usage_license.id) {
           this.alertMessage = {
             alertShow: true,
             alertMessage: `You are now on the Prefect ${this.planName} plan`,
             alertType: 'success'
           }
+          await this.getLicense()
         }
       } catch (e) {
         this.alertMessage = {
@@ -90,7 +92,6 @@ export default {
           alertType: 'error'
         }
       } finally {
-        await this.getLicense()
         this.setAlert(this.alertMessage)
         this.loading = false
         this.changePlanDialog = false
@@ -162,6 +163,7 @@ export default {
         <v-spacer />
         <v-btn
           v-if="isSelfServe && isTenantAdmin"
+          text
           @click="changePlanDialog = false"
         >
           Cancel

@@ -23,6 +23,11 @@ export const formatTime = {
     ...mapGetters('user', ['user', 'timezone'])
   },
   methods: {
+    dateDiff(date1, date2) {
+      const a = moment(date1)
+      const b = moment(date2)
+      return b.diff(a, 'days')
+    },
     datePartHour(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone)
