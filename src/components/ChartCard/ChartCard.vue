@@ -1,5 +1,5 @@
 <script>
-import RingChartHeader from '@/components/ChartCard/ChardCardHeader-Ring'
+import RingChartHeader from '@/components/ChartCard/ChartCardHeader-Ring'
 import SimpleChartHeader from '@/components/ChartCard/ChartCardHeader-Simple'
 
 export default {
@@ -21,7 +21,11 @@ export default {
     chartOverlayOverline: { type: String, default: () => null },
     chartOverlaySub: { type: String, default: () => null },
     chartOverlayCenter: { type: String, default: () => 'check' },
-    chartData: { type: Array, default: () => [] }
+    chartOverlayCenterTwo: { type: String, default: () => '' },
+    chartOverlayCenterType: { type: String, default: () => 'icon' },
+    chartData: { type: Array, default: () => [] },
+    extra: { type: Boolean, default: true },
+    colors: { type: Array, default: () => null }
   },
   computed: {
     chartStyle() {
@@ -29,6 +33,9 @@ export default {
         'background-color': this.accentColor,
         color: '#fff'
       }
+    },
+    mainContainer() {
+      return this.extra ? 'main-container' : 'no-extra-container'
     },
     overlayStyle() {
       return {
@@ -43,7 +50,7 @@ export default {
 </script>
 
 <template>
-  <v-container ref="mainContainer" class="main-container relative">
+  <v-container ref="mainContainer" :class="mainContainer" class="relative">
     <RingChartHeader
       v-if="chartType == 'ring'"
       :chart-data="chartData"
@@ -52,7 +59,10 @@ export default {
       :chart-overlay-overline="chartOverlayOverline"
       :chart-overlay-sub="chartOverlaySub"
       :chart-overlay-center="chartOverlayCenter"
+      :chart-overlay-center-two="chartOverlayCenterTwo"
+      :chart-overlay-center-type="chartOverlayCenterType"
       :accent-color="accentColor"
+      :colors="colors"
     />
 
     <SimpleChartHeader
@@ -65,6 +75,7 @@ export default {
     />
 
     <v-container
+      v-if="extra"
       class="absolute box text-box elevation-2 d-flex flex-column pa-8"
     >
       <v-row no-gutters align="end" justify="start">
@@ -119,12 +130,17 @@ export default {
   width: 100%;
 }
 
+.no-extra-container {
+  min-height: 250px;
+  text-align: left;
+  width: 100%;
+}
+
 .container {
   .box {
     border-radius: 4px;
 
     &.chart-box {
-      height: 70%;
       left: 50%;
       top: 0;
       transform: translate(-50%);

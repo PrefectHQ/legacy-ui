@@ -13,7 +13,7 @@ export const PLANS_2021 = {
   better: {
     name: 'Standard',
     price: 500,
-    taskRuns: 10000,
+    taskRuns: 0,
     additionalCost: '0.0050',
     value: 'STANDARD_2021',
     users: 10,
@@ -24,7 +24,7 @@ export const PLANS_2021 = {
     name: 'Enterprise',
     price: 'contact',
     value: 'BEST_2021',
-    taskRuns: 10000,
+    taskRuns: 0,
     additionalCost: 0.0025,
     users: 'unlimited',
     history: 'year',

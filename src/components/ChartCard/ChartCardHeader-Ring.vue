@@ -15,7 +15,10 @@ export default {
     chartOverlayOverline: { type: String, default: () => null },
     chartOverlaySub: { type: String, default: () => null },
     chartOverlayCenter: { type: String, default: () => 'check' },
-    chartData: { type: Array, default: () => [] }
+    chartOverlayCenterTwo: { type: String, default: () => '' },
+    chartOverlayCenterType: { type: String, default: () => 'icon' },
+    chartData: { type: Array, default: () => [] },
+    colors: { type: Array, default: () => null }
   },
   computed: {
     notMobile() {
@@ -52,7 +55,11 @@ export default {
     :style="chartStyle"
     class="absolute box chart-box elevation-4 d-flex justify-center"
   >
-    <v-container class="absolute overlay" :style="overlayStyle">
+    <v-container
+      v-if="chartOverlayMain"
+      class="absolute overlay"
+      :style="overlayStyle"
+    >
       <div class="overline">
         {{ chartOverlayOverline }}
       </div>
@@ -74,10 +81,21 @@ export default {
     </v-container>
 
     <v-container class="absolute overlay-center">
-      <v-icon>{{ chartOverlayCenter }}</v-icon>
+      <v-icon v-if="chartOverlayCenterType === 'icon'">{{
+        chartOverlayCenter
+      }}</v-icon>
+      <div v-else class="grey--text text--darken-2">
+        <div>{{ chartOverlayCenter }}</div>
+        <div>{{ chartOverlayCenterTwo }}</div>
+      </div>
     </v-container>
 
-    <RingChart :segments="chartData" :width="250" :height="250" />
+    <RingChart
+      :segments="chartData"
+      :width="200"
+      :height="200"
+      :colors="colors"
+    />
   </v-container>
   <v-container
     v-else
@@ -85,6 +103,7 @@ export default {
     class="absolute box chart-box elevation-4 d-flex justify-center"
   >
     <v-container
+      v-if="chartOverlayMain"
       class="absolute overlay"
       style="
       text-align: 'right';
@@ -118,7 +137,6 @@ export default {
   border-radius: 4px;
 
   &.chart-box {
-    height: 70%;
     left: 50%;
     top: 0;
     transform: translate(-50%);
