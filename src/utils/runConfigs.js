@@ -1,9 +1,3 @@
-// { type: 'DockerAgent', icon: '$docker' },
-// { type: 'FargateAgent', icon: '$fargate' },
-// { type: 'KubernetesAgent', icon: '$kubernetes' },
-// { type: 'LocalAgent', icon: 'fas fa-globe' },
-// { type: 'NomadAgent', icon: '$nomad' }
-
 export const LocalRun = {
   type: 'LocalRun',
   label: 'Local',
