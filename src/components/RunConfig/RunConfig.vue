@@ -64,7 +64,7 @@ export default {
 
 <template>
   <v-container class="pa-0 blue-grey--text text--darken-2">
-    <div>
+    <div class="row-divider pb-8">
       <div class="text-h5">
         Configuration
       </div>
@@ -141,6 +141,7 @@ export default {
             <v-radio-group
               v-model="shownArgs[arg.ref]"
               mandatory
+              row
               @change="handleArgOptionClick(arg)"
             >
               <v-radio
