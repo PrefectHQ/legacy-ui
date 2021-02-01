@@ -63,12 +63,8 @@ export default {
 </script>
 
 <template>
-  <v-container class="pa-0 blue-grey--text text--darken-2">
+  <div>
     <div class="row-divider pb-8">
-      <div class="text-h5">
-        Configuration
-      </div>
-
       <div class="config-selection-container">
         <div
           v-for="runConfig in runConfigs"
@@ -210,7 +206,7 @@ export default {
         </v-fade-transition>
       </v-row>
     </transition-group>
-  </v-container>
+  </div>
 </template>
 
 <style lang="scss" scoped>

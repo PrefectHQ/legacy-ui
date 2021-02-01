@@ -41,7 +41,7 @@ export default {
       scheduledStartDateTime: null,
 
       // Flow run name input
-      flowRunName: '',
+      flowRunName: null,
 
       // ID of newly-created flow run
       flowRunId: null,
@@ -156,10 +156,49 @@ export default {
 </script>
 
 <template>
-  <div>
+  <v-container class="pa-0 blue-grey--text text--darken-2">
+    <v-row class="my-2 py-8 row-divider" no-gutters>
+      <v-col cols="12" md="6" class="pr-24">
+        <div class="text-h5">
+          Name
+        </div>
+      </v-col>
+
+      <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+        <v-text-field
+          v-model="flowRunName"
+          placeholder="Default"
+          class="white"
+          label="Name"
+          hide-details
+          outlined
+          dense
+        />
+      </v-col>
+    </v-row>
+
+    <v-row class="my-2 py-8 row-divider" no-gutters>
+      <v-col cols="12" md="6" class="pr-24">
+        <div class="text-h5">
+          Schedule
+        </div>
+      </v-col>
+
+      <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+        Schedule
+      </v-col>
+    </v-row>
+
+    <div>
+      <div class="text-h5">
+        Configuration
+      </div>
+
+      <RunConfig :config="flow.run_config" />
+    </div>
+
     <!-- <v-card tile> -->
     <!-- <v-card-text> -->
-    <RunConfig :config="flow.run_config" />
     <!-- </v-card-text> -->
     <!-- </v-card> -->
     <!-- <v-layout
@@ -479,7 +518,7 @@ export default {
         </v-card>
       </v-flex>
     </v-layout> -->
-  </div>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
