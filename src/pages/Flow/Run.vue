@@ -8,6 +8,7 @@ import { mapGetters, mapActions } from 'vuex'
 // import PrefectSchedule from '@/components/PrefectSchedule'
 // import DateTime from '@/components/DateTime'
 import DictInput from '@/components/CustomInputs/DictInput'
+import ExternalLink from '@/components/ExternalLink'
 import RunConfig from '@/components/RunConfig/RunConfig'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 
@@ -19,6 +20,7 @@ export default {
     // PrefectSchedule,
     // DateTime,
     DictInput,
+    ExternalLink,
     RunConfig
   },
   mixins: [parametersMixin],
@@ -197,6 +199,26 @@ export default {
         <div class="text-h5">
           Parameters
         </div>
+
+        <div class="mt-2 text-body-2">
+          <p>
+            The
+            <strong>run-time parameters</strong> for your run. To update your
+            flow group's default parameters, visit the parameters tab of the
+            <router-link :to="{ name: 'flow', query: { tab: 'settings' } }">
+              settings</router-link
+            >.
+          </p>
+          <p>
+            Refer to the
+            <ExternalLink
+              href="https://docs.prefect.io/core/concepts/parameters.html#parameters"
+              >documentation</ExternalLink
+            >
+
+            for more details on parameters.
+          </p>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
@@ -208,6 +230,23 @@ export default {
       <v-col cols="12" md="6" class="pr-24">
         <div class="text-h5">
           Context
+        </div>
+
+        <div class="mt-2 text-body-2">
+          <p>
+            (Optional) The
+            <strong>context</strong> for your run to share information between
+            tasks without the need for explicit task arguments.
+          </p>
+
+          <p>
+            Refer to the
+            <ExternalLink
+              href="https://docs.prefect.io/core/concepts/execution.html#context"
+              >documentation</ExternalLink
+            >
+            for more details on context.
+          </p>
         </div>
       </v-col>
 
@@ -549,6 +588,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.pr-24 {
+  padding-right: 124px;
+}
+
 .flow-root {
   display: flow-root;
 }
