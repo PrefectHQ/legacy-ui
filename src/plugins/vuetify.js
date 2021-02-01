@@ -2,6 +2,9 @@ import { STATE_COLORS } from '@/utils/states'
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 
+//material design icons
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+
 // Custom icons
 import DockerIcon from '@/components/Icons/Docker.vue'
 import FargateIcon from '@/components/Icons/Fargate.vue'

@@ -85,6 +85,7 @@
     "jest-canvas-mock": "^2.3.0",
     "jest-fetch-mock": ">=3.0.1",
     "jest-localstorage-mock": ">=2.4.2",
+    "material-design-icons-iconfont": "^6.1.0",
     "node-sass": "^5.0.0",
     "postcss-scss": "^3.0.4",
     "pre-commit": ">=1.2.2",
