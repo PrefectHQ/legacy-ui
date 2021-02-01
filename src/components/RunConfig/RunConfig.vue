@@ -77,9 +77,12 @@ export default {
             <i :class="runConfig.icon" class="fa-2x"> </i>
           </div>
 
-          <div class="" style="width: 250px;">
+          <div class="w-100 ml-2">
             <div class="text-h6"> {{ runConfig.label }}</div>
-            <div class="text-body-1 grey--text text--darken-1">
+            <div
+              v-if="$vuetify.breakpoint.mdAndUp"
+              class="text-body-1 grey--text text--darken-1"
+            >
               {{ runConfig.description }}
             </div>
           </div>
@@ -94,7 +97,7 @@ export default {
         class="my-2 py-8 row-divider"
         no-gutters
       >
-        <v-col cols="12" md="6" class="pr-24">
+        <v-col cols="12" md="6" class="pr-24 mb-6 mb-md-0">
           <div class="text-h6">
             {{ arg.label }}
             <span
@@ -109,7 +112,7 @@ export default {
           <div class="mt-2 text-body-2" v-html="arg.description" />
         </v-col>
 
-        <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+        <v-col cols="12" md="6">
           <v-text-field
             v-if="arg.input_type == 'string'"
             v-model="config_[arg.arg]"
@@ -153,7 +156,11 @@ export default {
         <v-fade-transition mode="out-in">
           <v-col v-if="shownArgs[arg.ref]" cols="12">
             <v-row no-gutters class="my-4">
-              <v-col cols="12" md="6" class="pl-md-8 pr-24 pl-sm-0">
+              <v-col
+                cols="12"
+                md="6"
+                class="pl-md-8 pr-24 pl-sm-0 mb-6 mb-md-0"
+              >
                 <div class="text-h6">
                   {{ arg.options[shownArgs[arg.ref]].label }}
                   <span
@@ -238,14 +245,15 @@ export default {
 
 .config-selection-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-column-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 300px));
 }
 
 .config-type {
   border: 2px solid;
   border-color: #ddd !important;
   height: 110px;
-  width: 350px;
+  width: 100%;
 
   &.active {
     border-color: var(--v-primary-base) !important;

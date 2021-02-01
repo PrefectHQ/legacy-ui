@@ -7,6 +7,7 @@ import { mapGetters, mapActions } from 'vuex'
 // import Parameters from '@/components/Parameters'
 // import PrefectSchedule from '@/components/PrefectSchedule'
 // import DateTime from '@/components/DateTime'
+import DictInput from '@/components/CustomInputs/DictInput'
 import RunConfig from '@/components/RunConfig/RunConfig'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 
@@ -17,6 +18,7 @@ export default {
     // Parameters,
     // PrefectSchedule,
     // DateTime,
+    DictInput,
     RunConfig
   },
   mixins: [parametersMixin],
@@ -29,12 +31,11 @@ export default {
   data() {
     return {
       // Parameters
-      errorInParameterInput: false,
-      paramInfoOpen: false,
+      parameters: {},
 
       // Context
       contextInfoOpen: false,
-      contextInput: '{}',
+      contextInput: null,
       errorInContextInput: false,
 
       // Schedule
@@ -47,8 +48,7 @@ export default {
       flowRunId: null,
 
       // Loading state
-      loading: false,
-      codeMirrorLoading: false
+      loading: false
     }
   },
   computed: {
@@ -62,6 +62,9 @@ export default {
         this.codeMirrorLoading = false
       }, 5)
     }
+  },
+  mounted() {
+    this.parameters = this.selectedFlowParameters
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
@@ -156,7 +159,7 @@ export default {
 </script>
 
 <template>
-  <v-container class="pa-0 blue-grey--text text--darken-2">
+  <v-container class="pa-0 blue-grey--text text--darken-2" fluid>
     <v-row class="my-2 py-8 row-divider" no-gutters>
       <v-col cols="12" md="6" class="pr-24">
         <div class="text-h5">
@@ -186,6 +189,30 @@ export default {
 
       <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
         Schedule
+      </v-col>
+    </v-row>
+
+    <v-row class="my-2 py-8 row-divider" no-gutters>
+      <v-col cols="12" md="6" class="pr-24">
+        <div class="text-h5">
+          Parameters
+        </div>
+      </v-col>
+
+      <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+        <DictInput v-model="parameters" :dict="selectedFlowParameters" />
+      </v-col>
+    </v-row>
+
+    <v-row class="my-2 py-8 row-divider" no-gutters>
+      <v-col cols="12" md="6" class="pr-24">
+        <div class="text-h5">
+          Context
+        </div>
+      </v-col>
+
+      <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+        <DictInput v-model="contextInput" />
       </v-col>
     </v-row>
 
@@ -532,6 +559,20 @@ export default {
 
 .width-100 {
   width: 100%;
+}
+
+.row-divider:not(:last-child) {
+  position: relative;
+
+  &::after {
+    background-color: #ddd;
+    bottom: 0;
+    content: '';
+    height: 1px;
+    margin: auto;
+    position: absolute;
+    width: 100%;
+  }
 }
 </style>
 

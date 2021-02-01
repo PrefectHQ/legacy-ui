@@ -16,7 +16,7 @@ export default {
       type: Object,
       required: false,
       default: () => {
-        return {}
+        return null
       }
     },
     keyLabel: {
@@ -34,8 +34,8 @@ export default {
     return {
       json: false,
       jsonInput: '{}',
-      keys: [null],
-      values: [null]
+      keys: this.dict ? Object.keys(this.dict) : [null],
+      values: this.dict ? Object.values(this.dict) : [null]
     }
   },
   computed: {
