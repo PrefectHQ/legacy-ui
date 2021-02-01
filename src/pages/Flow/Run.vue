@@ -211,7 +211,7 @@ export default {
         </div>
       </v-col>
 
-      <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+      <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8 text-body-1">
         <DictInput v-model="contextInput" />
       </v-col>
     </v-row>

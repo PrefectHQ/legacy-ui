@@ -128,7 +128,7 @@ export default {
           <v-col cols="4" class="pr-3">
             <v-text-field
               v-model="keys[i]"
-              class="white"
+              class="white text-body-1"
               hide-details
               outlined
               dense
@@ -139,7 +139,7 @@ export default {
           <v-col cols="8" class="pl-3">
             <v-text-field
               v-model="values[i]"
-              class="white"
+              class="white text-body-1"
               hide-details
               outlined
               dense
