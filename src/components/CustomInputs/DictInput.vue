@@ -33,7 +33,13 @@ export default {
   data() {
     return {
       json: false,
-      jsonInput: '{}',
+      jsonInput: this.dict
+        ? JSON.stringify(this.dict)
+        : `
+{
+
+}
+      `,
       keys: this.dict ? Object.keys(this.dict) : [null],
       values: this.dict ? Object.values(this.dict) : [null]
     }
@@ -55,7 +61,8 @@ export default {
         this.jsonInput = jsBeautify(this.jsonInput, {
           indent_size: 4,
           space_in_empty_paren: true,
-          preserve_newlines: false
+          preserve_newlines: true,
+          indent_empty_lines: true
         })
 
         // Use next tick to make sure the json input element exists
