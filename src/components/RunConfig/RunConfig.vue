@@ -160,11 +160,11 @@ export default {
                 <div class="text-h6">
                   {{ arg.options[shownArgs[arg.ref]].label }}
                   <span
-                    v-if="arg.arg"
+                    v-if="arg.options[shownArgs[arg.ref]].arg"
                     class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
                     style="border: 1px solid #b0bec5 !important;"
                   >
-                    {{ arg.arg }}
+                    {{ arg.options[shownArgs[arg.ref]].arg }}
                   </span>
                 </div>
 
