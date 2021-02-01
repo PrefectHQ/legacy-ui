@@ -1,7 +1,10 @@
 query Membership($membershipId: uuid!) {
   membership(where: { id: { _eq: $membershipId } }) {
     id
-    role
+    role_detail {
+      id
+      name
+    }
     tenant {
       id
       name
