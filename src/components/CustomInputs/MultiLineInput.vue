@@ -19,7 +19,7 @@ export default {
   },
   data() {
     return {
-      mode: 'yaml',
+      mode: 'json',
       jsonInput: '{}',
       yamlInput: ''
     }
@@ -87,7 +87,7 @@ export default {
       >
         <span
           class="text-body-2"
-          :class="{ 'font-weight-medium': mode == 'json' }"
+          :class="{ 'font-weight-bold': mode == 'json' }"
         >
           JSON
         </span>
@@ -100,12 +100,12 @@ export default {
             'orange--text': mode == 'yaml'
           }"
           hide-details
-          :value="mode == 'yaml'"
+          :value="false"
           @click.stop="switchMode"
         ></v-switch>
         <span
           class="text-body-2"
-          :class="{ 'font-weight-medium': mode == 'yaml' }"
+          :class="{ 'font-weight-bold': mode == 'yaml' }"
         >
           YAML
         </span>
