@@ -370,9 +370,15 @@ describe('tenant Vuex Module', () => {
             ...tenant.getters,
             'api/isCloud': () => true,
             'user/memberships': () => [
-              { tenant: { id: '12345' }, role: 'USER' },
-              { tenant: { id: '45678' }, role: 'TENANT_ADMIN' },
-              { tenant: { id: '9101112' }, role: 'READ_ONLY_USER' }
+              { tenant: { id: '12345' }, role_detail: { name: 'USER' } },
+              {
+                tenant: { id: '45678' },
+                role_detail: { name: 'TENANT_ADMIN' }
+              },
+              {
+                tenant: { id: '9101112' },
+                role_detail: { name: 'READ_ONLY_USER' }
+              }
             ]
           },
           mutations: tenant.mutations,
@@ -400,6 +406,7 @@ describe('tenant Vuex Module', () => {
         ]
         prefectTenants.mockReturnValueOnce(tenantsArray)
         await store.dispatch('setCurrentTenant', 'team1')
+
         expect(store.getters.role).toEqual('READ_ONLY_USER')
       })
     })
