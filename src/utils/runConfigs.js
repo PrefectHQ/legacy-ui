@@ -107,7 +107,7 @@ export const KubernetesRun = {
           input_type: 'string',
           label: 'Template path',
           description:
-            'Specify a path to a job template to use. If this is a local path, the job template will be loaded on initialization and store on the KubernetesRun object as the job template field. Otherwise the job template will be loaded at runtime by the agent; supported runtime file schemes include s3, gcs, and agent.'
+            'Specify a path to a job template to use. If this is a local path, the job template will be loaded on initialization and stored on the KubernetesRun object as the job template field. Otherwise the job template will be loaded at runtime by the agent; supported runtime file schemes include s3, gcs, and agent.'
         },
         {
           arg: 'job_template',
@@ -182,15 +182,114 @@ export const KubernetesRun = {
   ]
 }
 
-// TODO: Add ECSRun
-// export const ECSRun = {
-// icon: 'fa fa-aws'
-// }
+export const ECSRun = {
+  type: 'ECSRun',
+  label: 'ECS',
+  description: 'Run the flow as an ECS task',
+  ref: 'https://docs.prefect.io/api/latest/run_configs.html#ecsrun',
+  icon: 'fab fa-aws',
+  args: [
+    {
+      arg: null,
+      label: 'Task Definition',
+      input_type: 'arg_override',
+      description:
+        'The source of the task definition to use. If default is selected, the task will use the definition specified by your agent.',
+      ref: 'task_definition_choice',
+      options: [
+        {
+          arg: null,
+          input_type: null,
+          label: 'Default',
+          description:
+            "Don't specify a task definition; use the default definition configured on the agent instead."
+        },
+        {
+          arg: 'task_definition_path',
+          input_type: 'string',
+          label: 'Template path',
+          description:
+            'Specify a path to a task definition to use. If this is a local path, the definition will be loaded on initialization and stored on the ECSRun object as the task_definition field. Otherwise the definition will be loaded at runtime by the agent; supported runtime file schemes include s3, gcs, and agent.'
+        },
+        {
+          arg: 'task_definition',
+          input_type: 'multiline',
+          label: 'Template',
+          description:
+            'Specify an in-memory task definition spec to use; see the <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task" target="_blank">ECS docs</a> for more information on task definitions.'
+        },
+        {
+          arg: 'task_definition_arn',
+          input_type: 'string',
+          label: 'ARN',
+          description:
+            'Specify a pre-registered task definition ARN to use (either <code>family</code>, <code>family:version</code>, or a full task definition ARN).'
+        }
+      ]
+    },
+
+    {
+      arg: 'image',
+      input_type: 'string',
+      label: 'Image',
+      description:
+        "The image to use; if not provided, the image will be inferred from either the flow's storage or the default image configured on the agent."
+    },
+    {
+      arg: 'env',
+      input_type: 'object',
+      label: 'Environment variables',
+      description: 'Additional environment variables to set on the task.'
+    },
+    {
+      arg: 'cpu',
+      input_type: 'string',
+      label: 'CPU',
+      description:
+        'The CPU made available to the task; see the <a href="https://docs.aws.amazon.com/AmazonECS/latest/userguide/task-cpu-memory-error.html" target="_blank">ECS docs</a><sup><i class="v-icon notranslate material-icons theme--light" style="font-size: 12px !important;">open_in_new</i></sup> for available values.'
+    },
+    {
+      arg: 'memory',
+      input_type: 'string',
+      label: 'Memory',
+      description:
+        'The memory made available to the task; see the <a href="https://docs.aws.amazon.com/AmazonECS/latest/userguide/task-cpu-memory-error.html" target="_blank">ECS docs</a><sup><i class="v-icon notranslate material-icons theme--light" style="font-size: 12px !important;">open_in_new</i></sup> for available values.'
+    },
+    {
+      arg: 'task_role_arn',
+      input_type: 'string',
+      label: 'Task role ARN',
+      description:
+        'The name or full ARN for the IAM role to use for this task. If not provided, the default on the agent will be used (if configured).'
+    },
+    {
+      arg: 'execution_role_arn',
+      input_type: 'string',
+      label: 'Execution role ARN',
+      description:
+        'The execution role ARN to use when registering a task definition for this task. If not provided, the default on the agent will be used (if configured).'
+    },
+    {
+      arg: 'run_task_kwargs',
+      input_type: 'object',
+      label: 'Run task arguments',
+      description:
+        'Additional key word arguments to pass to <code>run_task</code> when starting this task; see the <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.register_task_definition" target="_blank">ECS docs</a><sup><i class="v-icon notranslate material-icons theme--light" style="font-size: 12px !important;">open_in_new</i></sup> for more information.'
+    },
+    {
+      arg: 'labels',
+      input_type: 'list',
+      label: 'Labels',
+      description:
+        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
+    }
+  ]
+}
 
 export const runConfigs = {
   LocalRun,
   UniversalRun,
   DockerRun,
-  KubernetesRun
-  // ECSRun
+  KubernetesRun,
+  ECSRun
 }
