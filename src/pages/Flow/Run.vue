@@ -190,7 +190,7 @@ export default {
     <v-row class="my-2 py-8 row-divider" no-gutters>
       <v-col cols="12" md="6" class="pr-24">
         <div class="text-h5">
-          Schedule
+          Scheduled Start
         </div>
       </v-col>
 
