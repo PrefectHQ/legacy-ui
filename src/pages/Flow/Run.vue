@@ -6,7 +6,7 @@ import { mapGetters, mapActions } from 'vuex'
 // import JsonInput from '@/components/CustomInputs/JsonInput'
 // import Parameters from '@/components/Parameters'
 // import PrefectSchedule from '@/components/PrefectSchedule'
-// import DateTime from '@/components/DateTime'
+import DateTimeSelector from '@/components/RunConfig/DateTimeSelector'
 import DictInput from '@/components/CustomInputs/DictInput'
 import ExternalLink from '@/components/ExternalLink'
 import RunConfig from '@/components/RunConfig/RunConfig'
@@ -18,7 +18,7 @@ export default {
     // JsonInput,
     // Parameters,
     // PrefectSchedule,
-    // DateTime,
+    DateTimeSelector,
     DictInput,
     ExternalLink,
     RunConfig
@@ -50,7 +50,9 @@ export default {
       flowRunId: null,
 
       // Loading state
-      loading: false
+      loading: false,
+
+      when: 'future'
     }
   },
   computed: {
@@ -63,6 +65,9 @@ export default {
       setTimeout(() => {
         this.codeMirrorLoading = false
       }, 5)
+    },
+    scheduledStartDateTime(val) {
+      console.log(val)
     }
   },
   mounted() {
@@ -190,7 +195,39 @@ export default {
       </v-col>
 
       <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
-        Schedule
+        <div class="d-flex justify-start align-center">
+          <span>Run this flow...</span>
+          <v-btn
+            depressed
+            color="blue-grey"
+            dark
+            active-class="primary font-weight-bold"
+            class="text-none ml-1 mr-2"
+            :class="{ 'lighten-3': when == 'future' }"
+            :input-value="when == 'immediately'"
+            @click="when = 'immediately'"
+            >immediately</v-btn
+          >
+          <v-btn
+            depressed
+            color="blue-grey"
+            dark
+            active-class="primary font-weight-bold"
+            class="text-none "
+            :class="{ 'lighten-3': when == 'immediately' }"
+            :input-value="when == 'future'"
+            @click="when = 'future'"
+            >at this point in the future...</v-btn
+          >
+        </div>
+
+        <v-fade-transition mode="out-in">
+          <DateTimeSelector
+            v-if="when == 'future'"
+            v-model="scheduledStartDateTime"
+            class="mt-8"
+          />
+        </v-fade-transition>
       </v-col>
     </v-row>
 
