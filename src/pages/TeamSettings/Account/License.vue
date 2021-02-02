@@ -181,16 +181,13 @@ export default {
           </div>
           <div>
             <div class="text-h6 mb-2 grey--text text--darken-3">
-              {{ readNum === 0 ? 0 : readNum ? readNum : 'Unlimited' }}
+              {{ readNum ? readNum : 'Unlimited' }}
               read-only
               {{ readOnlyUserOrUsers }}
             </div>
             <div v-if="readNum" class="text-body-1">
               You can invite up to {{ readNum }} read-only
               {{ readOnlyUserOrUsers }}.
-            </div>
-            <div v-else-if="readNum === 0" class="text-body-1"
-              >Your account does not include read-only users.
             </div>
 
             <div v-else class="text-body-1">
