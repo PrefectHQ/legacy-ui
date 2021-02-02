@@ -64,7 +64,7 @@ export default {
 
 <template>
   <div>
-    <div class=" pb-8">
+    <div class="pb-8">
       <div class="config-selection-container">
         <div
           v-for="runConfig in runConfigs"

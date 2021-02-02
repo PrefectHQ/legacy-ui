@@ -217,7 +217,7 @@ export default {
 
       <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
         <div>
-          <div class="mt-8">Run this flow...</div>
+          <div class="mt-md-8">Run this flow...</div>
           <div>
             <v-btn
               depressed
@@ -324,18 +324,19 @@ export default {
 
         <div class="mt-2 text-body-2">
           <p>
-            The
-            <strong>context</strong> for your run to share information between
-            tasks without the need for explicit task arguments.
+            The settings that determine where and how your flow should be
+            executed. Each run config type corresponds to an agent; options
+            displayed depend on the type of config selected.
           </p>
 
           <p>
             Refer to the
             <ExternalLink
-              href="https://docs.prefect.io/core/concepts/execution.html#context"
+              href="https://docs.prefect.io/orchestration/flow_config/run_configs.html#labels"
               >documentation</ExternalLink
             >
-            for more details on context.
+            for more details on run configs, including setting them at
+            registration time.
           </p>
         </div>
       </div>

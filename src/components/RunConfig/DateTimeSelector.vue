@@ -221,7 +221,6 @@ export default {
           color="primary"
           class="transparent blue-grey--text text--darken-2"
           width="100%"
-          scrollable
           :min="previousDay"
           @change="handleChangeDate"
         />
