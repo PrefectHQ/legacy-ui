@@ -82,7 +82,7 @@ export default {
     <License v-if="isCloud && isUsageBased" />
     <Users v-if="isCloud && !isUsageBased" />
     <Billing v-if="isCloud" />
-    <Usage v-if="isCloud" />
+    <Usage v-if="isCloud && isUsageBased" />
     <ClearDataDialog v-if="isCloud" />
   </ManagementLayout>
 </template>

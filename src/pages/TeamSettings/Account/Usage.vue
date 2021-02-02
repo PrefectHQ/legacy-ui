@@ -39,7 +39,7 @@ export default {
       return this.$vuetify.breakpoint.xs ? '' : 'pt-12'
     },
     usedTaskRuns() {
-      return 221000
+      return 221
     },
     subscriptionPeriodEnd() {
       const dtFormat = new Intl.DateTimeFormat('en-US', {
