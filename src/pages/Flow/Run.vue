@@ -7,6 +7,11 @@ import DictInput from '@/components/CustomInputs/DictInput'
 import ExternalLink from '@/components/ExternalLink'
 import RunConfig from '@/components/RunConfig/RunConfig'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
+import { adjectives } from '@/components/RunConfig/adjectives'
+import { animals } from '@/components/RunConfig/animals'
+
+const adjectivesLength = adjectives.length
+const animalsLength = animals.length
 
 export default {
   components: {
@@ -36,7 +41,7 @@ export default {
       scheduledStartDateTime: null,
 
       // Flow run name input
-      flowRunName: null,
+      flowRunName: this.generateRandomName(),
 
       // ID of newly-created flow run
       flowRunId: null,
@@ -104,6 +109,11 @@ export default {
         this.loading = false
       }
     },
+    generateRandomName() {
+      const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
+      const animal = animals[Math.floor(Math.random() * animalsLength)]
+      return adjective + '-' + animal
+    },
     goToFlowRunPage() {
       this.$router.push({
         name: 'flow-run',
@@ -166,11 +176,26 @@ export default {
         </div>
       </v-col>
 
-      <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+      <v-col
+        cols="12"
+        md="6"
+        class="mt-md-0 mt-sm-8 mt-xs-8 d-flex align-center"
+      >
+        <v-btn
+          color="primary"
+          fab
+          depressed
+          x-small
+          title="Randomize run name"
+          @click="flowRunName = generateRandomName()"
+        >
+          <v-icon>fad fa-random</v-icon>
+        </v-btn>
+
         <v-text-field
           v-model="flowRunName"
           placeholder="Default"
-          class="white"
+          class="white ml-2"
           label="Name"
           hide-details
           outlined
