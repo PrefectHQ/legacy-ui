@@ -174,6 +174,12 @@ export default {
         <div class="text-h5">
           Name
         </div>
+
+        <div class="mt-2 text-body-2">
+          This is the name that'll be used as a non-unique random identifier for
+          your run across the app; you can modify it at any time here or on the
+          run page. Hint: press the randomize button to find fun combinations!
+        </div>
       </v-col>
 
       <v-col
