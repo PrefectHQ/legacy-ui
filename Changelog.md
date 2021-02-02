@@ -5,9 +5,28 @@
 ### Features and Improvements
 
 - Add a description tab to the flow page - [#563](https://github.com/PrefectHQ/ui/pull/563)
+- Update .env file with new auth variables - [#583](https://github.com/PrefectHQ/ui/pull/583)
 
 ### Bugfixes
 
+- None
+
+## 2021-01-28
+
+### Features and Improvements
+
+- Improve auth error handling in access_denied circumstances and add a new error page - [#576](https://github.com/PrefectHQ/ui/pull/576)
+
+### Bugfixes
+
+- Displays the timezone of the scheduled time in the Details Tile - [#570](https://github.com/PrefectHQ/ui/pull/570)
+- Fix issues related to token refresh - [#574](https://github.com/PrefectHQ/ui/pull/574)
+
+## 2021-01-25
+
+### Bugfixes
+
+- Adds the timezone field to the set_flow_group_schedule mutation to allow the clocks to be set to the user's desired timezone - [#532](https://github.com/PrefectHQ/ui/pull/532)
 - Neaten up the 404 page and better handle invalid flow ids - [#562](https://github.com/PrefectHQ/ui/pull/562)
 - Show proper page tab on page reload - [#561](https://github.com/PrefectHQ/ui/pull/561)
 
