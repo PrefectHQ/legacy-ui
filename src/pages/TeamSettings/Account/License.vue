@@ -26,8 +26,7 @@ export default {
     },
     plan() {
       const type = this.tempLicenseType || this.license?.terms?.plan
-      const name =
-        type === 'STARTER_2021' ? 'FREE_2021' : this.license?.terms?.plan
+      const name = type === 'STARTER_2021' ? 'FREE_2021' : type
       const plan = this.plans.filter(planType => planType.value === name)
       return plan[0]
     },
@@ -84,7 +83,7 @@ export default {
       return featuresObjArray?.length > 0 ? featuresObjArray : null
     },
     taskRuns() {
-      return this.license?.terms?.task_runs_usage_limit || this.plan.taskRuns
+      return this.license?.terms?.task_runs_usage_limit || this.plan?.taskRuns
     }
   },
   watch: {

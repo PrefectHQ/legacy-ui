@@ -21,10 +21,8 @@ export default {
     ...mapGetters('license', ['license', 'tempLicenseType']),
     ...mapGetters('user', ['timezone']),
     plan() {
-      const name =
-        this.license?.terms?.plan === 'STARTER_2021'
-          ? 'FREE_2021'
-          : this.license?.terms?.plan
+      const type = this.tempLicenseType || this.license?.terms?.plan
+      const name = type === 'STARTER_2021' ? 'FREE_2021' : type
       const plan = this.plans.filter(planType => planType.value === name)
       return plan[0]
     },
@@ -107,10 +105,10 @@ export default {
           />
         </v-col>
         <v-col cols="12" sm="5"
-          ><ul
-            ><li :class="smallScreen">
-              You have used {{ usedTaskRuns }} task runs!</li
-            >
+          ><ul>
+            <li :class="smallScreen"
+              >You are on the Prefect {{ plan.name }} Plan. </li
+            ><li> You have used {{ usedTaskRuns }} task runs!</li>
             <li>
               You have {{ taskRunsLeft }} task runs left until
               {{ subscriptionPeriodEnd }}
@@ -140,6 +138,8 @@ export default {
         <v-col cols="12" sm="5"
           ><ul
             ><li :class="smallScreen"
+              >You are on the Prefect {{ plan.name }} Plan. </li
+            ><li
               >Your billing period started on {{ subscriptionPeriodBegun }} and
               will end on {{ subscriptionPeriodEnd }}.
             </li>
