@@ -8,6 +8,12 @@ export default {
   components: {
     ChartCard
   },
+  filters: {
+    numFormat(value) {
+      if (!value) return ''
+      return new Intl.NumberFormat().format(value)
+    }
+  },
   mixins: [formatTime],
   data() {
     return {
@@ -30,7 +36,7 @@ export default {
       return this.$vuetify.breakpoint.xs ? '' : 'pt-12'
     },
     usedTaskRuns() {
-      return 20000
+      return 221245
     },
     subscriptionPeriodEnd() {
       const dtFormat = new Intl.DateTimeFormat('en-US', {
@@ -58,7 +64,10 @@ export default {
       return this.usedTaskRuns - this.planTaskRuns
     },
     costSoFar() {
-      return this.chargeableRuns * this.plan.additionalCost
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(this.chargeableRuns * this.plan.additionalCost)
     },
     noExtra() {
       return (
@@ -66,7 +75,9 @@ export default {
       )
     },
     taskRunsPerDay() {
-      return Math.round(this.usedTaskRuns / this.daysFromInvoice())
+      return new Intl.NumberFormat().format(
+        Math.round(this.usedTaskRuns / this.daysFromInvoice())
+      )
     }
   },
   watch: {},
@@ -108,9 +119,9 @@ export default {
           ><ul>
             <li :class="smallScreen"
               >You are on the Prefect {{ plan.name }} Plan. </li
-            ><li> You have used {{ usedTaskRuns }} task runs!</li>
+            ><li> You have used {{ usedTaskRuns | numFormat }} task runs!</li>
             <li>
-              You have {{ taskRunsLeft }} task runs left until
+              You have {{ taskRunsLeft | numFormat }} task runs left until
               {{ subscriptionPeriodEnd }}
             </li>
           </ul>
@@ -144,17 +155,17 @@ export default {
               will end on {{ subscriptionPeriodEnd }}.
             </li>
             <li v-if="planTaskRuns">
-              You have {{ planTaskRuns }} in your plan and have used
-              {{ chargeableRuns }} extra runs at ${{
+              You have {{ planTaskRuns | numFormat }} in your plan and have used
+              {{ chargeableRuns | numFormat }} extra runs at ${{
                 plan.additionalCost
               }}/run.</li
             >
             <li v-else>
-              You have used {{ chargeableRuns }} task runs at ${{
+              You have used {{ chargeableRuns | numFormat }} task runs at ${{
                 plan.additionalCost
               }}/run.</li
             >
-            <li> Your total so far is ${{ costSoFar }}.</li>
+            <li> Your total so far is {{ costSoFar }}.</li>
             <!-- <li>We predict your final monthly cost will be.... </li> -->
           </ul>
         </v-col>
