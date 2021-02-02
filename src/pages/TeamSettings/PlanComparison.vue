@@ -221,7 +221,6 @@ export default {
     },
     updatePlan(type) {
       const index = this.plans.findIndex(planType => planType.value === type)
-      console.log('type', type, index)
       this.selected = index
     }
   }
