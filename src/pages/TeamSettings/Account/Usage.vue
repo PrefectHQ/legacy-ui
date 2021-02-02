@@ -18,7 +18,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'tempLicenseType']),
     ...mapGetters('user', ['timezone']),
     plan() {
       const name =

@@ -16,7 +16,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'tempLicenseType']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
       return true
@@ -25,10 +25,9 @@ export default {
       return this.license?.terms?.is_self_serve
     },
     plan() {
+      const type = this.tempLicenseType || this.license?.terms?.plan
       const name =
-        this.license?.terms?.plan === 'STARTER_2021'
-          ? 'FREE_2021'
-          : this.license?.terms?.plan
+        type === 'STARTER_2021' ? 'FREE_2021' : this.license?.terms?.plan
       const plan = this.plans.filter(planType => planType.value === name)
       return plan[0]
     },

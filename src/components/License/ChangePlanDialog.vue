@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 
 export default {
@@ -16,7 +16,8 @@ export default {
     return {
       loading: false,
       changePlanDialog: false,
-      alertMessage: ''
+      alertMessage: '',
+      tempPlanName: null
     }
   },
   computed: {
@@ -47,18 +48,17 @@ export default {
       return this.plan.taskRuns
     },
     disableChangePlan() {
-      const name =
-        this.license?.terms?.plan === 'STARTER_2021'
-          ? 'FREE_2021'
-          : this.license?.terms?.plan
+      const type = this.tempPlanName || this.license?.terms?.plan
+      const planName = type === 'STARTER_2021' ? 'FREE_2021' : type
       return (
-        !this.isTenantAdmin || !this.isSelfServe || this.plan.value === name
+        !this.isTenantAdmin || !this.isSelfServe || this.plan.value === planName
       )
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapActions('license', ['getLicense']),
+    ...mapMutations('license', ['setTempLicenseType']),
     async changePlan() {
       const planvalue =
         this.plan.value === 'FREE_2021' && this.existingCard
@@ -75,14 +75,15 @@ export default {
             }
           }
         })
-        console.log('update', data)
         if (data.create_usage_license.id) {
           this.alertMessage = {
             alertShow: true,
             alertMessage: `You are now on the Prefect ${this.planName} plan`,
             alertType: 'success'
           }
-          await this.getLicense()
+          this.setTempLicenseType(planvalue)
+          this.$emit('update', this.plan.value)
+          this.tempPlanName = planvalue
         }
       } catch (e) {
         this.alertMessage = {
