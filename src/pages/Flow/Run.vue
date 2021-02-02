@@ -2,10 +2,6 @@
 /* eslint-disable vue/no-v-html */
 import { mapGetters, mapActions } from 'vuex'
 
-// import CardTitle from '@/components/Card-Title'
-// import JsonInput from '@/components/CustomInputs/JsonInput'
-// import Parameters from '@/components/Parameters'
-// import PrefectSchedule from '@/components/PrefectSchedule'
 import DateTimeSelector from '@/components/RunConfig/DateTimeSelector'
 import DictInput from '@/components/CustomInputs/DictInput'
 import ExternalLink from '@/components/ExternalLink'
@@ -14,10 +10,6 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 
 export default {
   components: {
-    // CardTitle,
-    // JsonInput,
-    // Parameters,
-    // PrefectSchedule,
     DateTimeSelector,
     DictInput,
     ExternalLink,
