@@ -2,26 +2,12 @@
 import { mapGetters } from 'vuex'
 import gql from 'graphql-tag'
 import { print } from 'graphql'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import GraphiQL from 'graphiql'
 // Load GraphiQL React based UI within a Vue Component from CDN
 // example: https://gist.github.com/metafeather/ebda15c00c737c4d95cdc11ea71af32a
 // ref: https://github.com/graphql/graphiql/tree/main/packages/graphiql#cdn-bundle
-const js = (id, url) =>
-  new Promise((resolve, reject) => {
-    if (document.getElementById(id)) {
-      return
-    }
-    const el = document.createElement('script')
-    el.src = url
-    el.async = true
-    el.id = id
-    el.onload = () => {
-      resolve()
-    }
-    el.onerror = err => {
-      reject(err)
-    }
-    document.body.appendChild(el)
-  })
 
 export default {
   data() {
@@ -64,13 +50,6 @@ query { hello }
     ...mapGetters('tenant', ['role'])
   },
   async mounted() {
-    // wait for latest CDN scripts
-    await js('react', 'https://unpkg.com/react/umd/react.production.min.js')
-    await js(
-      'react-dom',
-      'https://unpkg.com/react-dom/umd/react-dom.production.min.js'
-    )
-    await js('graphiql-js', 'https://unpkg.com/graphiql/graphiql.min.js')
     let urlQuery
     if (this.$route.query.query) {
       urlQuery = print(gql`
@@ -187,7 +166,7 @@ query { hello }
 </template>
 
 <style lang="scss">
-@import 'https://unpkg.com/graphiql/graphiql.min.css';
+@import 'graphiql.css';
 $toolbar-black: #21262b;
 $divider-gray: #4e5965;
 $brackets-gray: #8d98a5;
