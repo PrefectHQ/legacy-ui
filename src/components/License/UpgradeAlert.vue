@@ -10,7 +10,7 @@ export default {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
     isSelfServe() {
-      return this.license?.terms?.is_self_serve
+      return !this.license?.terms?.is_self_serve
     },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
@@ -34,17 +34,17 @@ export default {
     icon="upgrade"
   >
     <v-row>
-      <v-col v-if="!isUsageBased" cols="12" lg="8">
-        Pssst.... We noticed you have a legacy license type. Prefect now has new
+      <v-col v-if="!isUsageBased" cols="12">
+        Pssst! We noticed you have a legacy license type. Prefect now has new
         licenses that include
         <span class="font-weight-bold">more users</span> and
         <span class="font-weight-bold">fewer limits.</span>
-        <div v-if="!isSelfServe"
+        <span v-if="!isSelfServe" class="pl-2"
           ><ExternalLink
             href="https://www.prefect.io/get-prefect#contact"
             target="_blank"
             >Contact us </ExternalLink
-          >to find out more!</div
+          >to find out more!</span
         >
       </v-col>
       <v-col v-else>
@@ -60,7 +60,7 @@ export default {
         >
       </v-col>
 
-      <v-col v-if="isSelfServe && isTenantAdmin" cols="12" lg="4">
+      <v-col v-if="isSelfServe" cols="12" lg="4">
         <router-link
           :to="{ name: 'plan-comparison' }"
           style="text-decoration: none;"
