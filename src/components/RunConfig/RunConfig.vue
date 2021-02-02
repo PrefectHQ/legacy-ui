@@ -69,8 +69,11 @@ export default {
         <div
           v-for="runConfig in runConfigs"
           :key="runConfig.type"
-          class="config-type white py-2 d-flex align-center justify-start px-4 my-2 cursor-pointer user-select-none"
+          v-ripple
+          class="config-type py-2 d-flex align-center justify-start px-4 my-2 cursor-pointer user-select-none"
           :class="{ active: runConfig.type == templateType }"
+          role="button"
+          tabindex="0"
           @click="templateType = runConfig.type"
         >
           <div class="text-center" style="width: 50px;">
@@ -250,13 +253,20 @@ export default {
 }
 
 .config-type {
+  background-color: rgba(255, 255, 255, 1);
   border: 2px solid;
   border-color: #ddd !important;
   height: 110px;
+  transition: all 50ms;
   width: 100%;
 
   &.active {
     border-color: var(--v-primary-base) !important;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: rgba(0, 0, 0, 0.05);
   }
 }
 </style>
