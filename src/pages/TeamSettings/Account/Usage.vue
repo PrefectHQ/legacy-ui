@@ -77,7 +77,7 @@ export default {
     },
     daysFromInvoice() {
       const today = new Date()
-      return this.dateDiff(today, this.subscriptionPeriodBegun) + 1
+      return this.dateDiff(this.subscriptionPeriodBegun, today) + 1
     }
   }
 }
