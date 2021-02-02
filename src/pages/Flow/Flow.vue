@@ -74,7 +74,7 @@ export default {
           cardText:
             'A Flow Read Me can now be added in the UI. For more information check out the',
           cardLink:
-            'https://docs.prefect.io/orchestration/ui/flow.html#description',
+            'https://docs.prefect.io/orchestration/ui/flow.html#readme',
           cardLinkText: 'UI Flow Docs'
         },
         {

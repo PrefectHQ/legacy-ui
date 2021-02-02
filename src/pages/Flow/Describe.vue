@@ -140,7 +140,7 @@ export default {
         </ExternalLink>
         or learn more about adding a Flow Group Read Me in the
         <ExternalLink
-          href="https://docs.prefect.io/orchestration/ui/flow.html#versions"
+          href="https://docs.prefect.io/orchestration/ui/flow.html#readme"
         >
           UI Flow Docs</ExternalLink
         >.
