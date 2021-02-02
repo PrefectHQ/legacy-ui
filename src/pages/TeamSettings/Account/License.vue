@@ -27,7 +27,6 @@ export default {
       return 'Custom'
     },
     readNum() {
-      console.log(this.license?.terms)
       return this.license?.terms?.read_only_users?.toLocaleString()
     },
     userNum() {

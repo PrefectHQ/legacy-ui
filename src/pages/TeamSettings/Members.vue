@@ -82,7 +82,6 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license']),
     allowedFullUsers() {
-      if (this.license?.terms?.users === 0) return 0
       return this.license?.terms?.users ?? Infinity
     },
     allowedReadOnlyUsers() {
