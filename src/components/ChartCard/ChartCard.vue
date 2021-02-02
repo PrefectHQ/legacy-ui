@@ -76,7 +76,7 @@ export default {
 
     <v-container
       v-if="extra"
-      class="absolute box text-box elevation-2 d-flex flex-column pa-8"
+      class="absolute box text-box d-flex flex-column pa-8"
     >
       <v-row no-gutters align="end" justify="start">
         <v-col cols="12">

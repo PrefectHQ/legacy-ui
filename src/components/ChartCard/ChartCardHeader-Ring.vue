@@ -53,7 +53,7 @@ export default {
   <v-container
     v-if="notMobile"
     :style="chartStyle"
-    class="absolute box chart-box elevation-4 d-flex justify-center"
+    class="absolute box chart-box d-flex justify-center"
   >
     <v-container
       v-if="chartOverlayMain"
@@ -92,15 +92,15 @@ export default {
 
     <RingChart
       :segments="chartData"
-      :width="200"
-      :height="200"
+      :width="250"
+      :height="250"
       :colors="colors"
     />
   </v-container>
   <v-container
     v-else
     :style="chartStyle"
-    class="absolute box chart-box elevation-4 d-flex justify-center"
+    class="absolute box chart-box d-flex justify-center"
   >
     <v-container
       v-if="chartOverlayMain"

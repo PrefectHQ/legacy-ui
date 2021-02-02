@@ -36,7 +36,7 @@ export default {
       return this.license?.terms?.plan === 'STARTER_2021'
     },
     smallScreen() {
-      return this.$vuetify.breakpoint.xs ? '' : 'pt-12'
+      return this.$vuetify.breakpoint.xs ? '' : 'pt-16'
     },
     usedTaskRuns() {
       return 221000
@@ -109,7 +109,7 @@ export default {
 <template>
   <v-card tile max-width="720" class="mx-auto my-4" :loading="loading">
     <v-card-title> Usage</v-card-title>
-    <v-card-subtitle> Check your task run usage.</v-card-subtitle>
+    <v-card-subtitle class="pb-0"> Check your task run usage.</v-card-subtitle>
     <v-card-text>
       <v-row>
         <v-col v-if="!$vuetify.breakpoint.xs" cols="0" sm="7">
