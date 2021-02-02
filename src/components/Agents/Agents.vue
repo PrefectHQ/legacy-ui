@@ -1,7 +1,7 @@
 <script>
 import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import moment from '@/utils/moment'
 
@@ -21,7 +21,8 @@ export default {
       loading: 0,
       labelInput: [],
       showUnlabeledAgentsOnly: false,
-      statusInput: STATUSES
+      statusInput: STATUSES,
+      clearingAgents: false
     }
   },
   computed: {
@@ -106,14 +107,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     async clearUnhealthyAgents() {
-      this.agents
-        .filter(
+      this.clearingAgents = true
+      try {
+        const unhealthyAgents = this.agents.filter(
           agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
         )
-        .forEach(agent => {
+        unhealthyAgents.forEach(agent => {
           agent.isDeleting = true
-
           this.$apollo
             .mutate({
               mutation: require('@/graphql/Agent/delete-agent.gql'),
@@ -131,6 +133,15 @@ export default {
             agent.isDeleting = false
           }, 2000)
         })
+      } catch (e) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: 'Error clearing agents',
+          alertType: 'error'
+        })
+      } finally {
+        this.clearingAgents = false
+      }
     },
     handleLabelClick(lbl) {
       let label = lbl.trim()
@@ -243,7 +254,13 @@ export default {
             <v-btn text tile @click="cleanUpDialog = false">
               Cancel
             </v-btn>
-            <v-btn dark color="red" depressed @click="clearUnhealthyAgents">
+            <v-btn
+              :loading="clearingAgents"
+              dark
+              color="red"
+              depressed
+              @click="clearUnhealthyAgents"
+            >
               Confirm
             </v-btn>
           </v-card-actions>
