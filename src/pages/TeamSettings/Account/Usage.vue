@@ -39,7 +39,7 @@ export default {
       return this.$vuetify.breakpoint.xs ? '' : 'pt-12'
     },
     usedTaskRuns() {
-      return 221
+      return 221000
     },
     subscriptionPeriodEnd() {
       const dtFormat = new Intl.DateTimeFormat('en-US', {
@@ -111,9 +111,10 @@ export default {
     <v-card-title> Usage</v-card-title>
     <v-card-subtitle> Check your task run usage.</v-card-subtitle>
     <v-card-text>
-      <v-row v-if="noExtra">
+      <v-row>
         <v-col v-if="!$vuetify.breakpoint.xs" cols="0" sm="7">
           <ChartCard
+            v-if="plan.value === 'FREE_2021'"
             :chart-data="[
               { label: 'used', value: usedTaskRuns, color: '#ff8cc6' },
               { name: 'Plan Runs', value: taskRunsLeft, color: '#de369d' }
@@ -126,26 +127,8 @@ export default {
             :chart-overlay-center="`${usedTaskRuns}/${planTaskRuns}`"
             chart-overlay-center-two="Task Runs Used"
           />
-        </v-col>
-        <v-col cols="12" sm="5"
-          ><ul>
-            <li :class="smallScreen"
-              >You are on the Prefect {{ plan.name }} Plan. </li
-            ><li> You have used {{ usedTaskRuns | numFormat }} task runs</li>
-            <li>
-              You have {{ taskRunsLeft | numFormat }} task runs left until
-              {{ subscriptionPeriodEnd }}.
-              <span v-if="isStarter">
-                You will then be charged ${{ plan.additionalCost }}/task
-                run.</span
-              >
-            </li>
-          </ul>
-        </v-col>
-      </v-row>
-      <v-row v-else>
-        <v-col v-if="!$vuetify.breakpoint.xs" cols="0" sm="7">
           <ChartCard
+            v-else
             :chart-data="[
               {
                 label: 'daysPassed',
@@ -161,8 +144,24 @@ export default {
             chart-overlay-center-type="text"
             :chart-overlay-center="`${taskRunsPerDay}`"
             chart-overlay-center-two="Task Runs/Day"
-        /></v-col>
-        <v-col cols="12" sm="5"
+          />
+        </v-col>
+        <v-col v-if="noExtra" cols="12" sm="5"
+          ><ul>
+            <li :class="smallScreen"
+              >You are on the Prefect {{ plan.name }} Plan. </li
+            ><li> You have used {{ usedTaskRuns | numFormat }} task runs</li>
+            <li>
+              You have {{ taskRunsLeft | numFormat }} task runs left until
+              {{ subscriptionPeriodEnd }}.
+              <span v-if="isStarter">
+                You will then be charged ${{ plan.additionalCost }}/task
+                run.</span
+              >
+            </li>
+          </ul>
+        </v-col>
+        <v-col v-else cols="12" sm="5"
           ><ul
             ><li :class="smallScreen"
               >You are on the Prefect {{ plan.name }} Plan. </li
