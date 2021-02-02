@@ -39,8 +39,7 @@ export default {
       return this.$vuetify.breakpoint.xs ? '' : 'pt-12'
     },
     usedTaskRuns() {
-      console.log(this.license)
-      return 221
+      return 221000
     },
     subscriptionPeriodEnd() {
       const dtFormat = new Intl.DateTimeFormat('en-US', {
