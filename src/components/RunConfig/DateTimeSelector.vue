@@ -186,10 +186,16 @@ export default {
 </script>
 
 <template>
-  <v-container fluid>
+  <v-container class="pa-0 ma-0" fluid>
     <v-row no-gutters>
-      <v-col cols="12" md="5" class="d-flex align-center justify-space-between">
-        <div class="pb-16 text-h5 mx-auto">
+      <v-col cols="12" md="4" class="d-flex align-center justify-start">
+        <div
+          class="pb-16 text-h5"
+          :class="{
+            'mx-auto': $vuetify.breakpoint.smAndDown,
+            'text-center': $vuetify.breakpoint.smAndDown
+          }"
+        >
           <div>
             {{ displayMonth }}
             <span class="primary--text"> {{ displayDay }}</span
@@ -208,7 +214,7 @@ export default {
         <v-divider :vertical="$vuetify.breakpoint.mdAndUp" />
       </v-col>
 
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="7">
         <v-date-picker
           v-model="date"
           no-title
