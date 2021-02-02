@@ -78,11 +78,11 @@ export default {
     </template>
 
     <Profile />
+    <Usage v-if="isCloud && isUsageBased" />
     <LegacyLicense v-if="isCloud && !isUsageBased" />
     <License v-if="isCloud && isUsageBased" />
     <Users v-if="isCloud && !isUsageBased" />
     <Billing v-if="isCloud" />
-    <Usage v-if="isCloud && isUsageBased" />
     <ClearDataDialog v-if="isCloud" />
   </ManagementLayout>
 </template>
