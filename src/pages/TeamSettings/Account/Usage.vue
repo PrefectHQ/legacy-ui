@@ -32,11 +32,15 @@ export default {
       const plan = this.plans.filter(planType => planType.value === name)
       return plan[0]
     },
+    isStarter() {
+      return this.license?.terms?.plan === 'STARTER_2021'
+    },
     smallScreen() {
       return this.$vuetify.breakpoint.xs ? '' : 'pt-12'
     },
     usedTaskRuns() {
-      return 221245
+      console.log(this.license)
+      return 221
     },
     subscriptionPeriodEnd() {
       const dtFormat = new Intl.DateTimeFormat('en-US', {
@@ -80,7 +84,16 @@ export default {
       )
     }
   },
-  watch: {},
+  watch: {
+    tenant(val) {
+      this.loading = true
+      if (val) {
+        setTimeout(() => {
+          this.loading = false
+        }, 1000)
+      }
+    }
+  },
   methods: {
     daysUntilInvoice() {
       const today = new Date()
@@ -95,7 +108,7 @@ export default {
 </script>
 
 <template>
-  <v-card tile max-width="720" class="mx-auto my-4">
+  <v-card tile max-width="720" class="mx-auto my-4" :loading="loading">
     <v-card-title> Usage</v-card-title>
     <v-card-subtitle> Check your task run usage.</v-card-subtitle>
     <v-card-text>
@@ -119,10 +132,14 @@ export default {
           ><ul>
             <li :class="smallScreen"
               >You are on the Prefect {{ plan.name }} Plan. </li
-            ><li> You have used {{ usedTaskRuns | numFormat }} task runs!</li>
+            ><li> You have used {{ usedTaskRuns | numFormat }} task runs</li>
             <li>
               You have {{ taskRunsLeft | numFormat }} task runs left until
-              {{ subscriptionPeriodEnd }}
+              {{ subscriptionPeriodEnd }}.
+              <span v-if="isStarter">
+                You will then be charged ${{ plan.additionalCost }}/task
+                run.</span
+              >
             </li>
           </ul>
         </v-col>
@@ -155,8 +172,8 @@ export default {
               will end on {{ subscriptionPeriodEnd }}.
             </li>
             <li v-if="planTaskRuns">
-              You have {{ planTaskRuns | numFormat }} in your plan and have used
-              {{ chargeableRuns | numFormat }} extra runs at ${{
+              You have {{ planTaskRuns | numFormat }} task runs in your plan and
+              have used {{ chargeableRuns | numFormat }} extra runs at ${{
                 plan.additionalCost
               }}/run.</li
             >
