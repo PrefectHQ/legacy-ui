@@ -62,9 +62,6 @@ export default {
       setTimeout(() => {
         this.codeMirrorLoading = false
       }, 5)
-    },
-    scheduledStartDateTime(val) {
-      console.log(val)
     }
   },
   mounted() {
