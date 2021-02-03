@@ -69,6 +69,9 @@ export default {
     displayYear() {
       return this.dateTime?.format('YYYY')
     },
+    displayTimezone() {
+      return this.dateTime?.zoneAbbr()
+    },
     timezoneIcon() {
       const region = this.timezone_?.split('/')?.[0]?.toLowerCase()
       let icon
@@ -215,6 +218,9 @@ export default {
   watch: {
     internalValue(val) {
       this.$emit('input', val)
+    },
+    timezone_() {
+      this.dateTime = this.momentWithTimezone(this.dateTime)
     }
   },
   mounted() {
@@ -275,9 +281,12 @@ export default {
             {{ displayYear }}
           </div>
 
-          <div class="text-h3">
+          <div class="text-h4">
             <span class="primary--text">{{ hour }}</span
             >:<span class="primary--text">{{ minute }} {{ meridian }} </span>
+            <span class="text-h5" style="line-height: 0.9rem;"
+              >({{ displayTimezone }})</span
+            >
           </div>
         </div>
       </v-col>
@@ -294,6 +303,7 @@ export default {
           class="transparent blue-grey--text text--darken-2"
           width="100%"
           :min="previousDay"
+          :value="date"
           @change="handleChangeDate"
         />
 
