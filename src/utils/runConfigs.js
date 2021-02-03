@@ -48,7 +48,7 @@ export const UniversalRun = {
 export const DockerRun = {
   type: 'DockerRun',
   label: 'Docker',
-  description: 'Run the flow as a Docker container on a Docker agent',
+  description: 'Run the flow as a container on a Docker agent',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#dockerrun',
   icon: 'fab fa-docker',
   args: [
@@ -77,7 +77,7 @@ export const DockerRun = {
 export const KubernetesRun = {
   type: 'KubernetesRun',
   label: 'Kubernetes',
-  description: 'Run the flow as a Kubernetes job on a Kubernetes agent',
+  description: 'Run the flow as a job on a Kubernetes agent',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#kubernetesrun',
   icon: 'fak fa-kubernetes',
   args: [
@@ -178,7 +178,7 @@ export const KubernetesRun = {
 export const ECSRun = {
   type: 'ECSRun',
   label: 'ECS',
-  description: 'Run the flow as an ECS task on an ECS agent',
+  description: 'Run the flow as a task on an ECS agent',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#ecsrun',
   icon: 'fab fa-aws',
   args: [
