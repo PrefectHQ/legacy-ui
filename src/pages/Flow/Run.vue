@@ -84,32 +84,14 @@ export default {
         this.loading = true
         if (!this.validParameters()) return
         if (!this.validContext()) return
-        const parametersToSet = this.newParameterInput || this.parameterInput
-
-        console.log(
-          this.context,
-          this.flow.id,
-          this.flowRunName,
-          this.parameters,
-          this.scheduledStartDateTime,
-          this.runConfig
-        )
-
-        if (console) return
 
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
-            context:
-              this.contextInput && this.contextInput.trim() !== ''
-                ? JSON.parse(this.contextInput)
-                : null,
+            context: this.context,
             id: this.flow.id,
-            flowRunName: this.flowRunName || null,
-            parameters:
-              parametersToSet && parametersToSet.trim() !== ''
-                ? JSON.parse(parametersToSet)
-                : null,
+            flowRunName: this.flowRunName,
+            parameters: this.parameters,
             scheduledStartTime: this.scheduledStartDateTime,
             runConfig: this.runConfig
           },
