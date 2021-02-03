@@ -17,7 +17,9 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['flows']),
+    ...mapGetters('api', ['isCloud']),
     showBanner() {
+      if (!this.isCloud) return false
       let show = this.flows?.length === 0
       if (!this.dismissed && this.pageScroll) {
         show = !this.pageScroll
