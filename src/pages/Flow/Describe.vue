@@ -32,12 +32,37 @@ export default {
       newDescription: null,
       textArea: false,
       clear: false,
-      loading: false
+      loading: false,
+      tab: 'edit'
     }
   },
-  computed: {},
+  computed: {
+    editButtonTitle() {
+      if (!this.flowDescription && !this.description) return 'Add Read Me'
+      return 'Edit Read Me'
+    },
+    cardColor() {
+      return this.textArea ? 'white' : 'appBackground'
+    },
+    toolBarStyle() {
+      return this.textArea
+        ? {
+            'border-color': '#DADAD2 !important',
+            'border-style': 'solid',
+            'border-radius': '5px',
+            'border-width': '1px'
+          }
+        : ''
+    }
+  },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    edit() {
+      this.tab = 'edit'
+    },
+    preview() {
+      this.tab = 'preview'
+    },
     mdParser(md) {
       return artifact_parser(md)
     },
@@ -48,6 +73,7 @@ export default {
     closeTextArea() {
       this.textArea = false
       this.clear = false
+      this.tab = 'edit'
     },
     async setFlowGroupDescription() {
       if (this.clear) this.description = ''
@@ -82,93 +108,152 @@ export default {
 
 <template>
   <v-row>
-    <v-col v-if="!loading" class="pt-0">
-      <v-toolbar v-if="!textArea" flat color="appBackground" dense>
-        <v-spacer></v-spacer>
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              color="primary"
-              v-bind="attrs"
-              v-on="on"
-              @click="textArea = true"
-              ><v-icon>edit</v-icon></v-btn
-            >
-          </template>
-          <span v-if="!flowDescription">Add Read Me</span>
-          <span v-else>Edit Read Me</span>
-        </v-tooltip>
-        <v-tooltip v-if="flowDescription && fgDescription" bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              color="codePink"
-              v-bind="attrs"
-              v-on="on"
-              @click="resetDescription"
-              ><v-icon>undo</v-icon></v-btn
-            >
-          </template>
-          <span>Reset to Read Me added at registration</span>
-        </v-tooltip>
-      </v-toolbar>
-
-      <v-textarea
-        v-if="textArea"
-        v-model="description"
-        class="bigger"
-        autofocus
-      >
-      </v-textarea>
-
-      <div
-        v-else-if="description"
-        class="artifact md grey--text text--darken-3 mx-4 px-8 mt-o"
-        v-html="mdParser(description)"
-      ></div>
-      <div
-        v-else
-        class="subtitle-1
-          grey--text text--darken-2 pl-8 pr-12 "
-      >
-        This Flow Group has no
-        <span class="font-weight-medium"> Read Me </span>. You can add one here
-        using
-        <ExternalLink href="https://www.markdownguide.org/basic-syntax/"
-          >markdown
-        </ExternalLink>
-        or learn more about adding a Flow Group Read Me in the
-        <ExternalLink
-          href="https://docs.prefect.io/orchestration/ui/flow.html#readme"
+    <v-card
+      v-if="!loading"
+      class="pt-0 readme"
+      outlined
+      :color="cardColor"
+      min-height="80vh"
+      width="100%"
+      :style="{ 'border-color': '#DADAD2 !important' }"
+      ><v-card-title>
+        <v-toolbar
+          v-if="description || flowDescription || textArea"
+          color="appBackground"
+          :style="toolBarStyle"
+          flat
         >
-          UI Flow Docs</ExternalLink
-        >.
-      </div>
+          <v-btn v-if="textArea" text @click="edit"> edit</v-btn>
+          <v-btn v-if="textArea" text @click="preview"> preview </v-btn>
+          <v-spacer />
+          <v-btn v-if="textArea" text @click="closeTextArea">Close</v-btn>
 
-      <div v-if="textArea" class="px-8 text-right">
+          <v-btn
+            v-if="textArea"
+            color="primary"
+            :loading="loading"
+            v-bind="attrs"
+            class="mr-2"
+            title="Update Read Me"
+            @click="setFlowGroupDescription"
+            v-on="on"
+          >
+            Update
+          </v-btn>
+          <v-btn
+            v-if="flowDescription && fgDescription && textArea"
+            title="Reset to Read Me added at registration"
+            color="codePink"
+            dark
+            @click="resetDescription"
+            >Reset</v-btn
+          >
+          <v-btn
+            v-if="!textArea"
+            :title="editButtonTitle"
+            icon
+            dark
+            color="primary"
+            @click="textArea = true"
+            ><v-icon>edit</v-icon></v-btn
+          >
+        </v-toolbar>
+      </v-card-title>
+      <v-card-text class="pt-0">
+        <v-textarea
+          v-if="textArea && tab === 'edit'"
+          v-model="description"
+          outlined
+          class="bigger"
+          autofocus
+        >
+        </v-textarea>
+
+        <div
+          v-else-if="textArea && tab === 'preview'"
+          :style="{
+            'border-color': '#3b8dff',
+            'border-style': 'solid',
+            'border-radius': '5px',
+            'border-width': '2px',
+            'min-height': '50vh'
+          }"
+          class="artifact md grey--text text--darken-3 px-8 mt-0"
+          v-html="mdParser(description)"
+        ></div>
+
+        <div
+          v-else-if="description"
+          class="artifact md grey--text text--darken-3 mx-4 px-8 mt-0"
+          v-html="mdParser(description)"
+        ></div>
+        <div
+          v-else
+          class="headline
+          grey--text text--darken-2 pl-8 pr-12 pt-8"
+        >
+          This Flow Group has no
+          <span class="font-weight-medium"> Read Me </span>. You can add one
+          here using
+          <ExternalLink href="https://www.markdownguide.org/basic-syntax/"
+            >markdown
+          </ExternalLink>
+          or learn more about adding a Flow Group Read Me in the
+          <ExternalLink
+            href="https://docs.prefect.io/orchestration/ui/flow.html#readme"
+          >
+            UI Flow Docs</ExternalLink
+          >.
+        </div>
+        <div
+          v-if="!textArea && !description && !flowDescription"
+          class="text-center pt-8"
+        >
+          <v-btn
+            large
+            class="vertical-button"
+            :title="editButtonTitle"
+            color="primary"
+            @click="textArea = true"
+            ><v-icon>edit</v-icon>{{ editButtonTitle }}</v-btn
+          >
+        </div>
+      </v-card-text>
+
+      <v-card-actions v-if="textArea" class="px-8 text-right">
+        <v-spacer />
         <v-btn text @click="closeTextArea">Close</v-btn>
-        <v-tooltip top>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              :loading="loading"
-              v-bind="attrs"
-              @click="setFlowGroupDescription"
-              v-on="on"
-            >
-              Update
-            </v-btn>
-          </template>
-          <span>Update Read Me</span>
-        </v-tooltip>
-      </div>
-    </v-col>
+
+        <v-btn
+          color="primary"
+          class="mr-2"
+          :loading="loading"
+          v-bind="attrs"
+          title="Update Read Me"
+          @click="setFlowGroupDescription"
+          v-on="on"
+        >
+          Update
+        </v-btn>
+        <v-btn
+          v-if="flowDescription && fgDescription"
+          title="Reset to Read Me added at registration"
+          color="codePink"
+          dark
+          @click="resetDescription"
+          >Reset</v-btn
+        >
+      </v-card-actions>
+    </v-card>
   </v-row>
 </template>
 
 <style>
 .bigger.v-textarea textarea {
   min-height: 50vh !important;
+}
+
+.readme >>> div {
+  border-color: #56494e !important;
 }
 </style>
