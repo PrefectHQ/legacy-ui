@@ -6,6 +6,13 @@ export const LocalRun = {
   icon: 'fad fa-laptop-house',
   args: [
     {
+      arg: 'labels',
+      input_type: 'list',
+      label: 'Labels',
+      description:
+        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
+    },
+    {
       arg: 'env',
       input_type: 'object',
       label: 'Environment variables',
@@ -17,13 +24,6 @@ export const LocalRun = {
       label: 'Working directory',
       description:
         'The working directory in which to start the process; the directory must already exist. If not provided, will be run in the same directory as the agent was started.'
-    },
-    {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
     }
   ]
 }
@@ -53,6 +53,13 @@ export const DockerRun = {
   icon: 'fab fa-docker',
   args: [
     {
+      arg: 'labels',
+      input_type: 'list',
+      label: 'Labels',
+      description:
+        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
+    },
+    {
       arg: 'image',
       input_type: 'string',
       label: 'Image',
@@ -63,13 +70,6 @@ export const DockerRun = {
       input_type: 'object',
       label: 'Environment variables',
       description: 'Additional environment variables to set in the container.'
-    },
-    {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
     }
   ]
 }
@@ -111,7 +111,13 @@ export const KubernetesRun = {
         }
       ]
     },
-
+    {
+      arg: 'labels',
+      input_type: 'list',
+      label: 'Labels',
+      description:
+        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
+    },
     {
       arg: 'image',
       input_type: 'string',
@@ -165,13 +171,6 @@ export const KubernetesRun = {
       label: 'Image pull secrets',
       description:
         'A list of image pull secrets to use for this job. Note: if present, these override any image pull secrets configured on the agent or in the job template.'
-    },
-    {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
     }
   ]
 }
@@ -221,7 +220,13 @@ export const ECSRun = {
         }
       ]
     },
-
+    {
+      arg: 'labels',
+      input_type: 'list',
+      label: 'Labels',
+      description:
+        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
+    },
     {
       arg: 'image',
       input_type: 'string',
@@ -269,13 +274,6 @@ export const ECSRun = {
       label: 'Run task arguments',
       description:
         'Additional key word arguments to pass to <code>run_task</code> when starting this task; see the <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.register_task_definition" target="_blank">ECS docs</a><sup><i class="v-icon notranslate material-icons theme--light" style="font-size: 12px !important;">open_in_new</i></sup> for more information.'
-    },
-    {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
     }
   ]
 }
