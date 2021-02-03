@@ -36,6 +36,9 @@ export default {
     needAlert() {
       return !location.href.includes('prefect.io')
     },
+    isTenantAdmin() {
+      return this.tenant.role === 'TENANT_ADMIN'
+    },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
     }
@@ -76,8 +79,8 @@ export default {
     </template>
 
     <Profile />
-    <LegacyLicense v-if="isCloud && !isUsageBased" />
-    <License v-if="isCloud && isUsageBased" />
+    <LegacyLicense v-if="isCloud && !isUsageBased && isTenantAdmin" />
+    <License v-if="isCloud && isUsageBased && isTenantAdmin" />
     <Users v-if="isCloud && !isUsageBased" />
     <Billing v-if="isCloud" />
     <ClearDataDialog v-if="isCloud" />
