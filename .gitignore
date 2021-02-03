@@ -32,3 +32,9 @@ yarn-error.log*
 __pycache__/
 *.py[cod]
 *$py.class
+
+# external font/JS files downloaded during build
+src/styles/graphiql.css
+public/fonts/*.ttf
+public/fonts/*.otf
+src/assets/external-files
