@@ -10,6 +10,16 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    showClear: {
+      type: Boolean,
+      required: false,
+      default: () => true
+    },
+    showReset: {
+      type: Boolean,
+      required: false,
+      default: () => true
     }
   },
   data() {
@@ -48,10 +58,14 @@ export default {
 
 <template>
   <div>
-    <div class="d-flex align-center justify-end mb-2">
+    <div
+      v-if="showClear || showReset"
+      class="d-flex align-center justify-end mb-2"
+    >
       <v-btn
+        v-if="showReset"
         x-small
-        class="text-normal mr-2"
+        class="text-normal"
         depressed
         color="blue-grey lighten-4"
         title="Reset"
@@ -63,8 +77,9 @@ export default {
       </v-btn>
 
       <v-btn
+        v-if="showClear"
         x-small
-        class="text-normal"
+        class="text-normal ml-2"
         depressed
         color="primary"
         title="Clear"
