@@ -85,7 +85,7 @@ export default {
       return this.license?.terms?.users ?? Infinity
     },
     allowedReadOnlyUsers() {
-      return this.license?.terms?.read_only_users ?? Infinity
+      return 0
     },
     insufficientUsers() {
       return (
@@ -109,13 +109,13 @@ export default {
           label: 'User',
           color: 'codeBlueBright',
           disabled: this.totalFullUsers >= this.allowedFullUsers
-        },
-        {
-          role: 'READ_ONLY_USER',
-          label: 'Read-Only',
-          color: 'cloudUIPrimaryDark',
-          disabled: this.totalReadOnlyUsers >= this.allowedReadOnlyUsers
         }
+        // {
+        //   role: 'READ_ONLY_USER',
+        //   label: 'Read-Only',
+        //   color: 'cloudUIPrimaryDark',
+        //   disabled: this.totalReadOnlyUsers >= this.allowedReadOnlyUsers
+        // }
       ]
     },
     totalMembers() {
@@ -451,7 +451,7 @@ export default {
           </p>
         </v-alert>
 
-        <v-alert
+        <!-- <v-alert
           v-else-if="totalReadOnlyUsers >= allowedReadOnlyUsers"
           class="mx-auto my-4 mb-12"
           border="left"
@@ -471,7 +471,7 @@ export default {
             </a>
             to increase the number of Read-Only users in your team.
           </p>
-        </v-alert>
+        </v-alert> -->
 
         <v-text-field
           v-model="inviteEmailInput"
