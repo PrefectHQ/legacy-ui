@@ -297,7 +297,10 @@ export default {
                   class="text-none mr-2"
                   :class="{ 'lighten-4': when == 'future' }"
                   :input-value="when == 'immediately'"
-                  @click="when = 'immediately'"
+                  @click="
+                    when = 'immediately'
+                    scheduledStartDateTime = null
+                  "
                   >immediately</v-btn
                 >
                 <v-btn
