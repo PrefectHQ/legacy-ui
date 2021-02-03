@@ -93,8 +93,15 @@ export default {
       this.values.push(null)
     },
     removeKeyValuePair(i) {
+      console.log(i, this.keys.length)
       this.keys.splice(i, 1)
       this.values.splice(i, 1)
+
+      if (this.keys.length === 0) {
+        this.keys = [null]
+        this.values = [null]
+      }
+
       this.$emit('input', { ...this.value })
     }
   }
@@ -156,7 +163,7 @@ export default {
           </v-col>
 
           <v-btn
-            v-if="i !== 0"
+            v-if="i !== 0 || keys[i] !== null || values[i] !== null"
             class="remove-button"
             depressed
             icon
