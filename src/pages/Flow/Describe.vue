@@ -122,6 +122,7 @@ export default {
           v-if="description || flowDescription || textArea"
           color="appBackground"
           width="100%"
+          dense
           :style="toolBarStyle"
           flat
         >
@@ -133,6 +134,7 @@ export default {
           <v-btn
             v-if="textArea && !this.$vuetify.breakpoint.xs"
             text
+            class="mb-2"
             @click="closeTextArea"
             >Close</v-btn
           >
@@ -142,7 +144,7 @@ export default {
             color="primary"
             :loading="loading"
             v-bind="attrs"
-            class="mr-2"
+            class="mr-2 mb-2"
             title="Update Read Me"
             @click="setFlowGroupDescription"
             v-on="on"
@@ -158,6 +160,8 @@ export default {
             "
             title="Reset to Read Me added at registration"
             color="codePink"
+            class="mb-2"
+            outlined
             dark
             @click="resetDescription"
             >Reset</v-btn
@@ -254,6 +258,7 @@ export default {
           title="Reset to Read Me added at registration"
           color="codePink"
           dark
+          outlined
           @click="resetDescription"
           >Reset</v-btn
         >
