@@ -2,6 +2,7 @@
 import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
 import { mapGetters, mapActions } from 'vuex'
+import LogRocket from 'logrocket'
 
 import moment from '@/utils/moment'
 
@@ -110,38 +111,51 @@ export default {
     ...mapActions('alert', ['setAlert']),
     async clearUnhealthyAgents() {
       this.clearingAgents = true
-      try {
-        const unhealthyAgents = this.agents.filter(
-          agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
-        )
-        unhealthyAgents.forEach(agent => {
-          agent.isDeleting = true
-          this.$apollo
-            .mutate({
-              mutation: require('@/graphql/Agent/delete-agent.gql'),
-              variables: {
-                agentId: agent.id
-              }
-            })
-            .then(() => {
-              this.cleanUpDialog = false
-              setTimeout(() => {
-                agent.isDeleting = false
-              }, 10000)
-            })
-          setTimeout(() => {
-            agent.isDeleting = false
-          }, 2000)
-        })
-      } catch (e) {
+      const unhealthyAgents = this.agents.filter(
+        agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
+      )
+      if (!unhealthyAgents) {
+        LogRocket.captureMessage('Clean Up button open but no agents found')
         this.setAlert({
           alertShow: true,
           alertMessage: 'Error clearing agents',
           alertType: 'error'
         })
-      } finally {
-        this.clearingAgents = false
       }
+      unhealthyAgents.forEach(agent => {
+        agent.isDeleting = true
+        this.$apollo
+          .mutate({
+            mutation: require('@/graphql/Agent/delete-agent.gql'),
+            variables: {
+              agentId: agent.ids
+            }
+          })
+          .then(() => {
+            this.cleanUpDialog = false
+            setTimeout(() => {
+              agent.isDeleting = false
+            }, 10000)
+          })
+          .catch(e => {
+            console.log(e)
+            LogRocket.captureError(e)
+            setTimeout(() => {
+              agent.isDeleting = false
+              this.setAlert({
+                alertShow: true,
+                alertMessage: 'Error clearing agents',
+                alertType: 'error'
+              })
+            }, 2000)
+          })
+      })
+      setTimeout(() => {
+        this.clearingAgents = false
+      }, 500)
+      setTimeout(() => {
+        this.cleanUpDialog = false
+      }, 800)
     },
     handleLabelClick(lbl) {
       let label = lbl.trim()
