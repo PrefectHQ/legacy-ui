@@ -31,7 +31,7 @@ export default {
     type="info"
     tile
     color="codePink"
-    icon="upgrade"
+    icon="auto_awesome"
   >
     <v-row>
       <v-col v-if="!isUsageBased" cols="12">
