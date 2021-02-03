@@ -138,7 +138,6 @@ export default {
             }, 10000)
           })
           .catch(e => {
-            console.log(e)
             LogRocket.captureError(e)
             setTimeout(() => {
               agent.isDeleting = false
