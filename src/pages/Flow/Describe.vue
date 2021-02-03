@@ -50,7 +50,8 @@ export default {
             'border-color': '#DADAD2 !important',
             'border-style': 'solid',
             'border-radius': '5px',
-            'border-width': '1px'
+            'border-width': '1px',
+            'margin-bottom': '20px'
           }
         : ''
     }
@@ -107,7 +108,7 @@ export default {
 </script>
 
 <template>
-  <v-row>
+  <v-row class="pt-0">
     <v-card
       v-if="!loading"
       class="pt-0 readme"
@@ -116,20 +117,28 @@ export default {
       min-height="80vh"
       width="100%"
       :style="{ 'border-color': '#DADAD2 !important' }"
-      ><v-card-title>
+      ><v-card-title class="pa-0">
         <v-toolbar
           v-if="description || flowDescription || textArea"
           color="appBackground"
+          width="100%"
           :style="toolBarStyle"
           flat
         >
           <v-btn v-if="textArea" text @click="edit"> edit</v-btn>
-          <v-btn v-if="textArea" text @click="preview"> preview </v-btn>
+          <v-btn v-if="textArea" text @click="preview">
+            preview
+          </v-btn>
           <v-spacer />
-          <v-btn v-if="textArea" text @click="closeTextArea">Close</v-btn>
+          <v-btn
+            v-if="textArea && !this.$vuetify.breakpoint.xs"
+            text
+            @click="closeTextArea"
+            >Close</v-btn
+          >
 
           <v-btn
-            v-if="textArea"
+            v-if="textArea && !this.$vuetify.breakpoint.xs"
             color="primary"
             :loading="loading"
             v-bind="attrs"
@@ -141,7 +150,12 @@ export default {
             Update
           </v-btn>
           <v-btn
-            v-if="flowDescription && fgDescription && textArea"
+            v-if="
+              flowDescription &&
+                fgDescription &&
+                textArea &&
+                !this.$vuetify.breakpoint.xs
+            "
             title="Reset to Read Me added at registration"
             color="codePink"
             dark
