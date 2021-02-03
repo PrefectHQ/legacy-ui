@@ -204,7 +204,7 @@ export default {
         ? 'FREE_2021'
         : this.license?.terms?.plan
     const plan = this.plans.findIndex(planType => planType.value === name)
-    this.selected = plan
+    this.selected = plan > 0 ? plan : 0
   },
   methods: {
     excluded(feature) {
