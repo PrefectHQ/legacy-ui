@@ -19,16 +19,62 @@ export default {
       initialValue: this.value
     }
   },
+  computed: {
+    clearDisabled() {
+      return this.internalValue.length === 0
+    },
+    resetDisabled() {
+      return (
+        this.initialValue.every(val => this.internalValue.includes(val)) &&
+        this.initialValue.length === this.internalValue.length
+      )
+    }
+  },
   watch: {
     internalValue(val) {
       this.$emit('input', val)
+    }
+  },
+  methods: {
+    clear() {
+      this.internalValue = []
+    },
+    reset() {
+      this.internalValue = this.initialValue
     }
   }
 }
 </script>
 
 <template>
-  <div class="list-input">
+  <div>
+    <div class="d-flex align-center justify-end mb-2">
+      <v-btn
+        x-small
+        class="text-normal mr-2"
+        depressed
+        color="blue-grey lighten-4"
+        title="Reset"
+        :disabled="resetDisabled"
+        @click="reset"
+      >
+        Reset
+        <v-icon small>refresh</v-icon>
+      </v-btn>
+
+      <v-btn
+        x-small
+        class="text-normal"
+        depressed
+        color="primary"
+        title="Clear"
+        :disabled="clearDisabled"
+        @click="clear"
+      >
+        Clear
+        <v-icon small>clear</v-icon>
+      </v-btn>
+    </div>
     <v-combobox
       v-model="internalValue"
       hide-selected
