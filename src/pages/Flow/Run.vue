@@ -54,7 +54,7 @@ export default {
 
       showAdvanced: false,
 
-      when: 'future'
+      when: 'immediately'
     }
   },
   computed: {
