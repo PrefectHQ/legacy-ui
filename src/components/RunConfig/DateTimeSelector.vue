@@ -1,7 +1,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import moment from 'moment-timezone'
-// import range from 'lodash.range'
+
+const timezones = [...moment.tz.names()].map(tz => {
+  return { text: tz.replace(/_/g, ' '), value: tz }
+})
 
 export default {
   props: {
@@ -28,6 +31,7 @@ export default {
       // Get either the user-set timezone or the resolved local timezone
       timezone_:
         this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timezones: timezones,
 
       // These are set to true if a user has edited the date/time fields
       // so that the counter doesn't continue to increment values
@@ -64,6 +68,9 @@ export default {
     },
     displayYear() {
       return this.dateTime?.format('YYYY')
+    },
+    timezoneIcon() {
+      return 'fad fa-africa'
     },
     hour: {
       get() {
@@ -240,7 +247,7 @@ export default {
               style="width: 20%;"
               @input="handleChangeTime"
             />
-            :
+            <span class="text-h4">:</span>
             <v-text-field
               v-model="minute"
               type="number"
@@ -269,8 +276,29 @@ export default {
               @input="handleChangeTime"
             />
           </v-col>
+
+          <v-col cols="12" class="mt-4">
+            <v-autocomplete
+              v-model="timezone_"
+              :items="timezones"
+              outlined
+              dense
+              class="mx-2"
+              hide-details
+              label="Time Zone"
+              :prepend-inner-icon="timezoneIcon"
+              :menu-props="{ contentClass: 'tz' }"
+            />
+          </v-col>
         </v-row>
       </v-col>
     </v-row>
   </v-container>
 </template>
+
+<style>
+/* stylelint-disable */
+.tz.v-menu__content .v-select-list {
+  max-width: 100%;
+}
+</style>
