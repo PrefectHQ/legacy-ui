@@ -34,6 +34,11 @@ const flowNavGuard = async (to, from, next) => {
     })
   }
 
+  await store.dispatch('data/activateFlow', id)
+  const renewedFlows = store.getters['data/flows']
+  const renewedGroup = renewedFlows?.find(flow => flow.flow_group_id == id)
+  if (renewedGroup) return next()
+
   return next({
     name: 'not-found'
   })
