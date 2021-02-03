@@ -148,7 +148,8 @@ const actions = {
       const { data } = await fallbackApolloClient.query({
         query: require('@/graphql/Nav/flows.gql')
       })
-
+      //test refetch for flow navguard without throwing an error
+      if (data === 'test-error') return
       commit('setFlows', data.flow)
 
       flow = getters['flows']?.find(f => f.id == id || f.flow_group_id == id)
