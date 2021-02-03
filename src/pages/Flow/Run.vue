@@ -36,9 +36,7 @@ export default {
       parameters: {},
 
       // Context
-      contextInfoOpen: false,
-      contextInput: null,
-      errorInContextInput: false,
+      context: {},
 
       // Schedule
       scheduledStartDateTime: null,
@@ -48,6 +46,8 @@ export default {
 
       // ID of newly-created flow run
       flowRunId: null,
+
+      runConfig: this.flow.run_config,
 
       // Loading state
       loading: false,
@@ -86,6 +86,17 @@ export default {
         if (!this.validContext()) return
         const parametersToSet = this.newParameterInput || this.parameterInput
 
+        console.log(
+          this.context,
+          this.flow.id,
+          this.flowRunName,
+          this.parameters,
+          this.scheduledStartDateTime,
+          this.runConfig
+        )
+
+        if (console) return
+
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
@@ -99,7 +110,8 @@ export default {
               parametersToSet && parametersToSet.trim() !== ''
                 ? JSON.parse(parametersToSet)
                 : null,
-            scheduledStartTime: this.scheduledStartDateTime
+            scheduledStartTime: this.scheduledStartDateTime,
+            runConfig: this.runConfig
           },
           errorPolicy: 'all'
         })
@@ -378,7 +390,7 @@ export default {
           </v-col>
 
           <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8 text-body-1">
-            <DictInput v-model="contextInput" />
+            <DictInput v-model="context" />
           </v-col>
         </v-row>
 
@@ -406,7 +418,7 @@ export default {
             </div>
           </div>
 
-          <RunConfig :config="flow.run_config" />
+          <RunConfig :config="runConfig" />
         </div>
 
         <v-btn
@@ -472,6 +484,7 @@ export default {
         :color="stickyActions ? 'white' : 'primary'"
         depressed
         x-large
+        @click="run"
       >
         Run
         <i class="fad fa-rocket ml-2" />

@@ -86,7 +86,7 @@ export default {
     },
     _handleKeypress() {
       this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
-      this.$emit('change', this.value)
+      this.$emit('input', { ...this.value })
     },
     addKeyValuePair() {
       this.keys.push(null)
@@ -95,7 +95,7 @@ export default {
     removeKeyValuePair(i) {
       this.keys.splice(i, 1)
       this.values.splice(i, 1)
-      this.$emit('change', this.value)
+      this.$emit('input', { ...this.value })
     }
   }
 }
