@@ -2,9 +2,9 @@
 import { mapGetters } from 'vuex'
 import gql from 'graphql-tag'
 import { print } from 'graphql'
-import React from 'react'
-import ReactDOM from 'react-dom'
-import GraphiQL from 'graphiql'
+// const React = require('@/assets/external-files/react.js')
+// const ReactDOM = require('@/assets/external-files/react-dom.js')
+// const GraphiQL = require('@/assets/external-files/graphiql-js.js')
 // Load GraphiQL React based UI within a Vue Component from CDN
 // example: https://gist.github.com/metafeather/ebda15c00c737c4d95cdc11ea71af32a
 // ref: https://github.com/graphql/graphiql/tree/main/packages/graphiql#cdn-bundle
@@ -50,6 +50,19 @@ query { hello }
     ...mapGetters('tenant', ['role'])
   },
   async mounted() {
+    // const addScript = (id, filePath) => {
+    //   if (document.getElementById(id)) {
+    //     return
+    //   }
+    //   const el = document.createElement('script')
+    //   el.src = filePath
+    //   el.type = 'application/javascript'
+    //   el.id = id
+    //   document.body.appendChild(el)
+    // }
+    // addScript('react', '../assets/external-files/react.js')
+    // addScript('react-dom', '../assets/external-files/react-dom.js')
+    // addScript('graphiql-js', '../assets/external-files/graphiql-js.js')
     let urlQuery
     if (this.$route.query.query) {
       urlQuery = print(gql`
@@ -166,7 +179,7 @@ query { hello }
 </template>
 
 <style lang="scss">
-@import 'graphiql.css';
+@import '../../styles/graphiql.css';
 $toolbar-black: #21262b;
 $divider-gray: #4e5965;
 $brackets-gray: #8d98a5;

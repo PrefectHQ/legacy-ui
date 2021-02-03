@@ -1,3 +1,4 @@
 src/styles/playground.scss
 src/styles/scss
-src/pages/InteractiveAPI/graphiql.css
+src/styles/graphiql.css
+public/fonts.css
