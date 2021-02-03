@@ -100,7 +100,7 @@ export default {
         class="my-2 py-8 row-divider"
         no-gutters
       >
-        <v-col cols="12" md="6" class="pr-24 mb-6 mb-md-0">
+        <v-col cols="12" md="6" class="pr-24 pr-xs-0 mb-6 mb-md-0">
           <div class="text-h6">
             {{ arg.label }}
             <span
@@ -162,7 +162,7 @@ export default {
               <v-col
                 cols="12"
                 md="6"
-                class="pl-md-8 pr-24 pl-sm-0 mb-6 mb-md-0"
+                class="pl-md-8 pr-24 pr-xs-0 pl-sm-0 mb-6 mb-md-0"
               >
                 <div class="text-h6">
                   {{ arg.options[shownArgs[arg.ref]].label }}
