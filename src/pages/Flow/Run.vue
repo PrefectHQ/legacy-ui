@@ -52,6 +52,8 @@ export default {
       // Loading state
       loading: false,
 
+      showAdvanced: false,
+
       when: 'future'
     }
   },
@@ -348,7 +350,7 @@ export default {
           </v-col>
         </v-row>
 
-        <v-row class="my-2 py-8 row-divider" no-gutters>
+        <v-row v-if="showAdvanced" class="my-2 py-8 row-divider" no-gutters>
           <v-col cols="12" md="6">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
@@ -380,7 +382,7 @@ export default {
           </v-col>
         </v-row>
 
-        <div>
+        <div v-if="showAdvanced">
           <div class="text-h5">
             Run Configuration
             <span class="text-body-2 text--disabled">(Optional)</span>
@@ -406,6 +408,10 @@ export default {
 
           <RunConfig :config="flow.run_config" />
         </div>
+
+        <v-btn block text color="primary" @click="showAdvanced = !showAdvanced">
+          {{ showAdvanced ? 'Hide' : 'Show' }} advanced
+        </v-btn>
       </v-container>
     </v-card-text>
 
