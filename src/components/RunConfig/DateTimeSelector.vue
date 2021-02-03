@@ -70,7 +70,72 @@ export default {
       return this.dateTime?.format('YYYY')
     },
     timezoneIcon() {
-      return 'fad fa-africa'
+      const region = this.timezone_?.split('/')?.[0]?.toLowerCase()
+      let icon
+      switch (region) {
+        case 'africa':
+        case 'egypt':
+        case 'zulu':
+        case 'iran':
+        case 'israel':
+        case 'libya':
+          icon = 'fad fa-globe-africa'
+          break
+
+        case 'asia':
+        case 'australia':
+        case 'pacific':
+        case 'kwajalein':
+        case 'hongkong':
+        case 'indian':
+        case 'japan':
+        case 'rok':
+        case 'roc':
+        case 'singapore':
+          icon = 'fad fa-globe-asia'
+          break
+
+        case 'america':
+        case 'canada':
+        case 'us':
+        case 'atlantic':
+        case 'brazil':
+        case 'cuba':
+        case 'mexico':
+        case 'jamaica':
+        case 'navajo':
+        case 'mst':
+          icon = 'fad fa-globe-americas'
+          break
+
+        case 'europe':
+        case 'gb':
+        case 'gb-eire':
+        case 'gmt':
+        case 'greenwich':
+        case 'hst':
+        case 'iceland':
+        case 'poland':
+        case 'portugal':
+        case 'turkey':
+        case 'met':
+          icon = 'fad fa-globe-europe'
+          break
+
+        case 'universal':
+          icon = 'fad fa-planet-ringed'
+          break
+
+        case 'antarctica':
+          icon = 'fad fa-snowman'
+          break
+
+        case 'etc':
+        default:
+          icon = 'fad fa-globe'
+          break
+      }
+      return icon
     },
     hour: {
       get() {
@@ -277,7 +342,14 @@ export default {
             />
           </v-col>
 
-          <v-col cols="12" class="mt-4">
+          <v-col cols="12" class="mt-4 d-flex align-center">
+            <div class="icon-placeholder mx-2">
+              <v-fade-transition mode="out-in">
+                <span :key="timezoneIcon">
+                  <v-icon>{{ timezoneIcon }}</v-icon>
+                </span>
+              </v-fade-transition>
+            </div>
             <v-autocomplete
               v-model="timezone_"
               :items="timezones"
@@ -286,7 +358,6 @@ export default {
               class="mx-2"
               hide-details
               label="Time Zone"
-              :prepend-inner-icon="timezoneIcon"
               :menu-props="{ contentClass: 'tz' }"
             />
           </v-col>
@@ -296,7 +367,14 @@ export default {
   </v-container>
 </template>
 
-<style>
+<style lang="scss" scoped>
+.icon-placeholder {
+  height: 26px;
+  width: 26px;
+}
+</style>
+
+<style lang="scss">
 /* stylelint-disable */
 .tz.v-menu__content .v-select-list {
   max-width: 100%;
