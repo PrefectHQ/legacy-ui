@@ -428,11 +428,12 @@ export default {
         sm: $vuetify.breakpoint.smAndDown
       }"
     >
-      <truncate
+      <div
         class="text-h4"
         :class="{
           'white--text': stickyActions
         }"
+        style="max-width: 50%;"
       >
         <div
           class="text-body-2 text--disabled text-uppercase font-weight-medium"
@@ -440,8 +441,8 @@ export default {
         >
           Run
         </div>
-        {{ flowRunName }}
-      </truncate>
+        <div class="text-truncate">{{ flowRunName }}</div>
+      </div>
 
       <v-spacer></v-spacer>
 
