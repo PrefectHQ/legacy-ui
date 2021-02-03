@@ -6,10 +6,17 @@
 
 - Add a description tab to the flow page - [#563](https://github.com/PrefectHQ/ui/pull/563)
 - Update .env file with new auth variables - [#583](https://github.com/PrefectHQ/ui/pull/583)
+- None
 
 ### Bugfixes
 
 - None
+
+## 2021-02-03
+
+### Features and Improvements
+
+- Update .env file with new auth variables - [#583](https://github.com/PrefectHQ/ui/pull/583)
 
 ## 2021-01-28
 
