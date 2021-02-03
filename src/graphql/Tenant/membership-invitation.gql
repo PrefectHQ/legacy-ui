@@ -3,7 +3,10 @@ query Memberships($id: uuid!) {
     id
     created
     email
-    role
+    role_detail {
+      id
+      name
+    }
     tenant {
       id
       name

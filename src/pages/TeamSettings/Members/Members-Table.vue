@@ -197,7 +197,7 @@ export default {
               firstName: user.first_name,
               lastName: user.last_name,
               userId: user.id,
-              role: membership.role,
+              role: membership.role_detail.name,
               membershipId: membership.id
             }
           })
