@@ -19,7 +19,7 @@ export default {
     MultiLineInput
   },
   props: {
-    config: {
+    value: {
       type: Object,
       required: false,
       default: () => {
@@ -31,9 +31,9 @@ export default {
   },
   data() {
     return {
-      config_: this.config,
+      internalValue: this.value,
       shownArgs: {},
-      templateType: this.config.type
+      templateType: this.value?.type || 'UniversalRun'
     }
   },
   computed: {
@@ -47,16 +47,24 @@ export default {
       return runConfigs
     }
   },
+  watch: {
+    internalValue: {
+      handler: function(val) {
+        this.$emit('input', { ...val })
+      },
+      deep: true
+    }
+  },
   mounted() {
     /* eslint-disable no-console */
-    console.log(this.config_)
+    console.log(this.internalValue)
   },
   methods: {
     handleArgOptionClick(arg) {
       arg.options.forEach(o => {
         if (!o.arg) return
         // If the option arg is defined (not a "default" option), set it to its null value
-        this.config_[o.arg] =
+        this.internalValue[o.arg] =
           nullValues[this.template.args.find(a => a.arg == o.arg)?.type]
       })
     }
@@ -125,7 +133,7 @@ export default {
         <v-col cols="12" md="6">
           <v-text-field
             v-if="arg.input_type == 'string'"
-            v-model="config_[arg.arg]"
+            v-model="internalValue[arg.arg]"
             placeholder="Default"
             class="white"
             :label="arg.label"
@@ -135,15 +143,15 @@ export default {
           />
           <MultiLineInput
             v-else-if="arg.input_type == 'multiline'"
-            v-model="config_[arg.arg]"
+            v-model="internalValue[arg.arg]"
           />
           <DictInput
             v-else-if="arg.input_type == 'object'"
-            v-model="config_[arg.arg]"
+            v-model="internalValue[arg.arg]"
           />
           <ListInput
             v-else-if="arg.input_type == 'list'"
-            v-model="config_[arg.arg]"
+            v-model="internalValue[arg.arg]"
           />
 
           <div v-else-if="arg.input_type == 'arg_override'">
@@ -192,7 +200,7 @@ export default {
               <v-col cols="12" md="6">
                 <v-text-field
                   v-if="arg.options[shownArgs[arg.ref]].input_type == 'string'"
-                  v-model="config_[arg.options[shownArgs[arg.ref]].arg]"
+                  v-model="internalValue[arg.options[shownArgs[arg.ref]].arg]"
                   placeholder="Default"
                   class="white"
                   :label="arg.options[shownArgs[arg.ref]].label"
@@ -204,19 +212,19 @@ export default {
                   v-else-if="
                     arg.options[shownArgs[arg.ref]].input_type == 'multiline'
                   "
-                  v-model="config_[arg.options[shownArgs[arg.ref]]]"
+                  v-model="internalValue[arg.options[shownArgs[arg.ref]]]"
                 />
                 <DictInput
                   v-else-if="
                     arg.options[shownArgs[arg.ref]].input_type == 'object'
                   "
-                  v-model="config_[arg.options[shownArgs[arg.ref]]]"
+                  v-model="internalValue[arg.options[shownArgs[arg.ref]]]"
                 />
                 <ListInput
                   v-else-if="
                     arg.options[shownArgs[arg.ref]].input_type == 'list'
                   "
-                  v-model="config_[arg.options[shownArgs[arg.ref]]]"
+                  v-model="internalValue[arg.options[shownArgs[arg.ref]]]"
                 />
               </v-col>
             </v-row>

@@ -421,7 +421,7 @@ export default {
             </div>
           </div>
 
-          <RunConfig :config="runConfig" />
+          <RunConfig v-model="runConfig" />
         </div>
 
         <v-btn

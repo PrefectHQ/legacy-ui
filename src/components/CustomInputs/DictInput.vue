@@ -93,7 +93,6 @@ export default {
       this.values.push(null)
     },
     removeKeyValuePair(i) {
-      console.log(i, this.keys.length)
       this.keys.splice(i, 1)
       this.values.splice(i, 1)
 
