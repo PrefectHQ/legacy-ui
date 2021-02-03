@@ -100,19 +100,24 @@ export default {
         class="my-2 py-8 row-divider"
         no-gutters
       >
-        <v-col cols="12" md="6" class="pr-24 pr-xs-0 mb-6 mb-md-0">
-          <div class="text-h6">
-            {{ arg.label }}
-            <span
-              v-if="arg.arg"
-              class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-              style="border: 1px solid #b0bec5 !important;"
-            >
-              {{ arg.arg }}
-            </span>
-          </div>
+        <v-col cols="12" md="6">
+          <div
+            class="pl-md-8 mb-6 mb-md-0 pl-sm-0 py-0"
+            :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }"
+          >
+            <div class="text-h6">
+              {{ arg.label }}
+              <span
+                v-if="arg.arg"
+                class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
+                style="border: 1px solid #b0bec5 !important;"
+              >
+                {{ arg.arg }}
+              </span>
+            </div>
 
-          <div class="mt-2 text-body-2" v-html="arg.description" />
+            <div class="mt-2 text-body-2" v-html="arg.description" />
+          </div>
         </v-col>
 
         <v-col cols="12" md="6">
@@ -159,26 +164,27 @@ export default {
         <v-fade-transition mode="out-in">
           <v-col v-if="shownArgs[arg.ref]" cols="12">
             <v-row no-gutters class="my-4">
-              <v-col
-                cols="12"
-                md="6"
-                class="pl-md-8 pr-24 pr-xs-0 pl-sm-0 mb-6 mb-md-0"
-              >
-                <div class="text-h6">
-                  {{ arg.options[shownArgs[arg.ref]].label }}
-                  <span
-                    v-if="arg.options[shownArgs[arg.ref]].arg"
-                    class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-                    style="border: 1px solid #b0bec5 !important;"
-                  >
-                    {{ arg.options[shownArgs[arg.ref]].arg }}
-                  </span>
-                </div>
-
+              <v-col cols="12" md="6">
                 <div
-                  class="mt-2 text-body-2"
-                  v-html="arg.options[shownArgs[arg.ref]].description"
-                />
+                  class="pl-md-8 mb-6 mb-md-0 pl-sm-0 py-0"
+                  :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }"
+                >
+                  <div class="text-h6">
+                    {{ arg.options[shownArgs[arg.ref]].label }}
+                    <span
+                      v-if="arg.options[shownArgs[arg.ref]].arg"
+                      class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
+                      style="border: 1px solid #b0bec5 !important;"
+                    >
+                      {{ arg.options[shownArgs[arg.ref]].arg }}
+                    </span>
+                  </div>
+
+                  <div
+                    class="mt-2 text-body-2"
+                    v-html="arg.options[shownArgs[arg.ref]].description"
+                  />
+                </div>
               </v-col>
 
               <v-col cols="12" md="6">

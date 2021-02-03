@@ -455,13 +455,6 @@ export default {
       >
         Run
         <i class="fad fa-rocket ml-2" />
-
-        <!-- <v-icon v-if="stickyActions" right large color="primary">
-          fad fa-rocket
-        </v-icon>
-        <v-icon v-else right large color="white">
-          fad fa-rocket
-        </v-icon> -->
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -497,6 +490,7 @@ export default {
     transition: none;
 
     &.sticky {
+      border-bottom: 0 !important;
       border-top: 0 !important;
       height: 0 !important;
     }
@@ -518,7 +512,7 @@ export default {
     &.sm {
       border-bottom: 1px solid #eee;
       bottom: 56px;
-      height: 64px;
+      height: 80px;
       z-index: 5;
     }
   }
