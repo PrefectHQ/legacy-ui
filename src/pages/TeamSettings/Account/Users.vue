@@ -184,7 +184,19 @@ export default {
     </v-card-subtitle>
     <v-card-text>
       <v-alert
-        v-if="!isSelfServe & !loading"
+        v-if="!isTenantAdmin & !loading"
+        class="mx-auto mb-12"
+        border="left"
+        colored-border
+        elevation="2"
+        type="warning"
+        tile
+        icon="lock"
+        max-width="540"
+        >Only your team's administrators can modify these settings.
+      </v-alert>
+      <v-alert
+        v-else-if="!isSelfServe & !loading"
         class="mx-auto mb-12"
         border="left"
         colored-border
@@ -200,18 +212,7 @@ export default {
           >contact our sales team</a
         >
       </v-alert>
-      <v-alert
-        v-else-if="!isTenantAdmin & !loading"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="540"
-        >Only your team's administrators can modify these settings.
-      </v-alert>
+
       <v-slider
         v-if="isSelfServe"
         data-cy="user-slider"

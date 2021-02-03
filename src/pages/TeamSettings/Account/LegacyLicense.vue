@@ -17,7 +17,7 @@ export default {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
-      return true
+      return this.tenant.role === 'TENANT_ADMIN'
     },
     planColor() {
       if (this.license?.terms?.plan == 'SELF_SERVE') return 'primary'

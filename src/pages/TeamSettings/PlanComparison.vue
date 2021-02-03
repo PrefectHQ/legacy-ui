@@ -191,7 +191,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'tempLicenseType']),
     ...mapGetters('tenant', ['tenant']),
     planType() {
       return this.plans[this.selected]
@@ -200,7 +200,7 @@ export default {
   created() {
     //creates a non-reactive property that isn't tracked by Vue - so that selected doesn't reset
     const name =
-      this.license?.terms?.plan === 'STARTER_2021'
+      this.license?.terms.plan === 'STARTER_2021'
         ? 'FREE_2021'
         : this.license?.terms?.plan
     const plan = this.plans.findIndex(planType => planType.value === name)
@@ -218,6 +218,10 @@ export default {
       } else {
         return false
       }
+    },
+    updatePlan(type) {
+      const index = this.plans.findIndex(planType => planType.value === type)
+      this.selected = index
     }
   }
 }
@@ -270,7 +274,7 @@ export default {
       >
         Contact Sales
       </v-btn>
-      <ChangePlanDialog v-else :plan="planType" />
+      <ChangePlanDialog v-else :plan="planType" @update="updatePlan" />
     </div>
 
     <v-card class="pa-6 mb-8">

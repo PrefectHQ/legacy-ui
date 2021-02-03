@@ -52,13 +52,11 @@ export default {
     }
   },
   watch: {
-    license(val) {
+    license() {
       this.loading = true
-      if (!val) {
-        setTimeout(() => {
-          this.loading = false
-        }, 1000)
-      }
+      setTimeout(() => {
+        this.loading = false
+      }, 1000)
     }
   },
   methods: {}
@@ -82,7 +80,20 @@ export default {
     >
     <v-card-text>
       <v-alert
-        v-if="!isSelfServe && !loading"
+        v-if="!isTenantAdmin"
+        class="mx-auto mb-12"
+        border="left"
+        colored-border
+        elevation="2"
+        type="warning"
+        tile
+        icon="lock"
+        max-width="540"
+      >
+        Only your team's administrators can modify billing settings.
+      </v-alert>
+      <v-alert
+        v-else-if="!isSelfServe && !loading"
         class="mx-auto mb-12"
         border="left"
         colored-border
@@ -109,19 +120,6 @@ export default {
         max-width="540"
       >
         We could not find any payment details associated with this account.
-      </v-alert>
-      <v-alert
-        v-else-if="!isTenantAdmin"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="540"
-      >
-        Only your team's administrators can modify billing settings.
       </v-alert>
 
       <v-row v-if="paymentDetails && isSelfServe">

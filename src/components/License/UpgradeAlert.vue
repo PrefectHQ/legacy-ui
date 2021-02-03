@@ -10,7 +10,7 @@ export default {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
     isSelfServe() {
-      return !this.license?.terms?.is_self_serve
+      return this.license?.terms?.is_self_serve
     },
     isUsageBased() {
       return this.license?.terms?.is_usage_based

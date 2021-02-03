@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Update .env file with new auth variables - [#583](https://github.com/PrefectHQ/ui/pull/583)
 
 ### Bugfixes
 
