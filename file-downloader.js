@@ -3,18 +3,6 @@ const fs = require('fs')
 
 const downloads = [
   {
-    filePath: './src/assets/external-files/react.js',
-    url: 'https://unpkg.com/react/umd/react.production.min.js'
-  },
-  {
-    filePath: './src/assets/external-files/react-dom.js',
-    url: 'https://unpkg.com/react-dom/umd/react-dom.production.min.js'
-  },
-  {
-    filePath: './src/assets/external-files/graphiql-js.js',
-    url: 'https://unpkg.com/graphiql/graphiql.min.js'
-  },
-  {
     filePath: './src/styles/graphiql.css',
     url: 'https://unpkg.com/graphiql/graphiql.min.css'
   },
