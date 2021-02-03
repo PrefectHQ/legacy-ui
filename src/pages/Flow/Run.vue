@@ -409,8 +409,22 @@ export default {
           <RunConfig :config="flow.run_config" />
         </div>
 
-        <v-btn block text color="primary" @click="showAdvanced = !showAdvanced">
-          {{ showAdvanced ? 'Hide' : 'Show' }} advanced
+        <v-btn
+          block
+          text
+          color="primary"
+          class="text-none"
+          @click="showAdvanced = !showAdvanced"
+        >
+          <div>
+            <v-icon v-if="showAdvanced" small>
+              expand_less
+            </v-icon>
+            <div> {{ showAdvanced ? 'Hide' : 'Show' }} advanced </div>
+            <v-icon v-if="!showAdvanced" small>
+              expand_more
+            </v-icon>
+          </div>
         </v-btn>
       </v-container>
     </v-card-text>
@@ -524,7 +538,7 @@ export default {
   }
 }
 
-.row-divider:not(:last-child) {
+.row-divider:not(:last-of-type) {
   position: relative;
 
   &::after {
