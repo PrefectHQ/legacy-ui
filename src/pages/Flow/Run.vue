@@ -81,7 +81,6 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   mounted() {
-    console.log(this.flow)
     this.parameters = this.selectedFlowParameters
 
     window.addEventListener('scroll', this.handleScroll)
