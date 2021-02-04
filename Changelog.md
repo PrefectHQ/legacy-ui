@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Add extra check for flow group to the flow nav guard - [#590](https://github.com/PrefectHQ/ui/pull/590)
 
 ## 2021-02-03
 
