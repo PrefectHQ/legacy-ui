@@ -412,7 +412,7 @@ export default {
         reverse-transition="tab-fade"
       >
         <TileLayoutFull>
-          <DescribeTile slot="row-2-tile" :fg-description="flowGroup.description" :flow-description="selectedFlow.description" :all="all" :flow-group-id="flowGroup.id" />
+          <DescribeTile slot="row-2a-tile" :fg-description="flowGroup.description" :flow-description="selectedFlow.description" :all="all" :flow-group-id="flowGroup.id" />
         </TileLayoutFull>
       </v-tab-item>
 
