@@ -52,3 +52,8 @@ downloads.forEach(loc => {
     })
   })
 })
+
+fs.copyFileSync(
+  './node_modules/@fortawesome/fontawesome-pro/js/all.min.js',
+  './public/fonts/font-awesome.min.js'
+)
