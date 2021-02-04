@@ -35,7 +35,7 @@ export default {
       stickyActions: true,
 
       // Parameters
-      parameters: {},
+      parameters: this.selectedFlowParameters,
 
       // Context
       context: {},
@@ -55,6 +55,7 @@ export default {
       loading: false,
 
       showAdvanced: false,
+      showParameters: this.flow.parameters?.length > 0,
 
       when: 'now'
     }
@@ -75,6 +76,7 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   mounted() {
+    console.log(this.flow)
     this.parameters = this.selectedFlowParameters
 
     window.addEventListener('scroll', this.handleScroll)
@@ -278,7 +280,7 @@ export default {
           </v-row>
         </v-fade-transition>
 
-        <v-row class="my-2 py-8" no-gutters>
+        <v-row v-if="showParameters" class="my-2 py-8" no-gutters>
           <v-col cols="12" md="6">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
