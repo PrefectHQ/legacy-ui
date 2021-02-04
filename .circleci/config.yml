@@ -42,8 +42,6 @@ commands:
       - run:
           name: NPM Build
           command: |
-            echo "@fortawesome:registry=https://npm.fontawesome.com/" > ~/.npmrc
-            echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> ~/.npmrc
             export FA_TOKEN=<< parameters.FA_TOKEN >>
             export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
             export VUE_APP_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_PUBLIC_CLIENT_ID >>
@@ -56,6 +54,8 @@ commands:
             export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
             export VUE_APP_BACKEND=CLOUD
             export VUE_APP_BASE_URL=<< parameters.VUE_APP_BASE_URL >>
+            echo "@fortawesome:registry=https://npm.fontawesome.com/" > ~/.npmrc
+            echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> ~/.npmrc
             npm run build
   deploy_env:
     parameters:
