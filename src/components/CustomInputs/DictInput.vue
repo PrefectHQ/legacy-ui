@@ -43,25 +43,9 @@ export default {
             .map(entry => entry.key)
         : [],
       json: false,
-      jsonInput: Array.isArray(this.dict)
-        ? Object.fromEntries(this.dict.map(entry => [entry.key, entry.value]))
-        : this.dict
-        ? JSON.stringify(this.dict)
-        : `
-{
-
-}
-      `,
-      keys: Array.isArray(this.dict)
-        ? this.dict.map(entry => entry.key)
-        : this.dict
-        ? Object.keys(this.dict)
-        : [null],
-      values: Array.isArray(this.dict)
-        ? this.dict.map(entry => entry.value)
-        : this.dict
-        ? Object.values(this.dict)
-        : [null]
+      jsonInput: '{}',
+      keys: [],
+      values: []
     }
   },
   computed: {
@@ -93,7 +77,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.disabledKeys)
+    this.reset()
   },
   methods: {
     _handleJsonInput() {
@@ -125,6 +109,31 @@ export default {
       }
 
       this.$emit('input', { ...this.value })
+    },
+    reset() {
+      this.jsonInput = Array.isArray(this.dict)
+        ? JSON.stringify(
+            Object.fromEntries(this.dict.map(entry => [entry.key, entry.value]))
+          )
+        : this.dict
+        ? JSON.stringify(this.dict)
+        : `
+{
+
+}
+      `
+
+      this.keys = Array.isArray(this.dict)
+        ? this.dict.map(entry => entry.key)
+        : this.dict
+        ? Object.keys(this.dict)
+        : [null]
+
+      this.values = Array.isArray(this.dict)
+        ? this.dict.map(entry => entry.value)
+        : this.dict
+        ? Object.values(this.dict)
+        : [null]
     }
   }
 }
@@ -225,5 +234,9 @@ export default {
 .remove-button {
   position: absolute;
   right: 0;
+}
+
+.v-input--is-readonly {
+  background-color: rgba(0, 0, 0, 0.03) !important;
 }
 </style>
