@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('agent', ['agents'])
+    ...mapGetters('agent', ['agents']),
     agentOrLabel() {
       if (!this.agents || !this.agents.length) return 'Agent Problem'
       if (!this.labelsAlign) return 'Label Problem'
