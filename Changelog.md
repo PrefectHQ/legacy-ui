@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- Check for missing or mismatched labels on Server - []()
+- Check for missing or mismatched labels on Server - [#593](https://github.com/PrefectHQ/ui/pull/593)
 
 ### Bugfixes
 
