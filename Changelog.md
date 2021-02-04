@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Update wording on tutorial banner for server users - [#592](https://github.com/PrefectHQ/ui/pull/592)
 
 ### Bugfixes
 
