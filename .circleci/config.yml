@@ -44,6 +44,7 @@ commands:
           command: |
             echo "@fortawesome:registry=https://npm.fontawesome.com/" > ~/.npmrc
             echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> ~/.npmrc
+            export FA_TOKEN=<< parameters.FA_TOKEN >>
             export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
             export VUE_APP_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_PUBLIC_CLIENT_ID >>
             export VUE_APP_PUBLIC_ISSUER=<< parameters.VUE_APP_PUBLIC_ISSUER >>
