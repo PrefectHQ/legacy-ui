@@ -13,11 +13,16 @@ export default {
       default: 'Add key / value'
     },
     dict: {
-      type: Object,
+      type: [Object, Array],
       required: false,
       default: () => {
         return null
       }
+    },
+    disableEdit: {
+      type: Boolean,
+      required: false,
+      default: () => false
     },
     keyLabel: {
       type: String,
@@ -32,16 +37,31 @@ export default {
   },
   data() {
     return {
+      disabledKeys: Array.isArray(this.dict)
+        ? this.dict
+            .filter(entry => entry.disabled == true)
+            .map(entry => entry.key)
+        : [],
       json: false,
-      jsonInput: this.dict
+      jsonInput: Array.isArray(this.dict)
+        ? Object.fromEntries(this.dict.map(entry => [entry.key, entry.value]))
+        : this.dict
         ? JSON.stringify(this.dict)
         : `
 {
 
 }
       `,
-      keys: this.dict ? Object.keys(this.dict) : [null],
-      values: this.dict ? Object.values(this.dict) : [null]
+      keys: Array.isArray(this.dict)
+        ? this.dict.map(entry => entry.key)
+        : this.dict
+        ? Object.keys(this.dict)
+        : [null],
+      values: Array.isArray(this.dict)
+        ? this.dict.map(entry => entry.value)
+        : this.dict
+        ? Object.values(this.dict)
+        : [null]
     }
   },
   computed: {
@@ -71,6 +91,9 @@ export default {
         })
       }
     }
+  },
+  mounted() {
+    console.log(this.disabledKeys)
   },
   methods: {
     _handleJsonInput() {
@@ -136,7 +159,8 @@ export default {
           :key="pair"
           no-gutters
           align="center"
-          class="my-4 position-relative pr-8"
+          class="my-4 position-relative"
+          :class="{ 'pr-8': !disableEdit }"
         >
           <v-col cols="4" class="pr-3">
             <v-text-field
@@ -146,6 +170,7 @@ export default {
               outlined
               dense
               :placeholder="keyLabel"
+              :readonly="disabledKeys.includes(keys[i])"
               @keyup="_handleKeypress"
             />
           </v-col>
@@ -162,7 +187,10 @@ export default {
           </v-col>
 
           <v-btn
-            v-if="i !== 0 || keys[i] !== null || values[i] !== null"
+            v-if="
+              !disableEdit &&
+                (i !== 0 || keys[i] !== null || values[i] !== null)
+            "
             class="remove-button"
             depressed
             icon
@@ -175,7 +203,7 @@ export default {
         </v-row>
       </transition-group>
 
-      <div class="text-center">
+      <div v-if="!disableEdit" class="text-center">
         <v-btn
           class="mx-auto px-8 text-none"
           depressed

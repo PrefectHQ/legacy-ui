@@ -61,7 +61,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'role'])
+    ...mapGetters('tenant', ['tenant', 'role']),
+    parameterItems() {
+      return this.flow.parameters?.map(parameter => {
+        return { disabled: true, key: parameter.name, value: parameter.default }
+      })
+    }
   },
   watch: {
     //Makes sure that codemirror updates if new defaults are set in the settings tab
@@ -306,7 +311,11 @@ export default {
           </v-col>
 
           <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
-            <DictInput v-model="parameters" :dict="selectedFlowParameters" />
+            <DictInput
+              v-model="parameters"
+              :dict="parameterItems"
+              disable-edit
+            />
           </v-col>
         </v-row>
 
