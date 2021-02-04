@@ -5,6 +5,7 @@ import { mapGetters, mapActions } from 'vuex'
 import DateTimeSelector from '@/components/RunConfig/DateTimeSelector'
 import DictInput from '@/components/CustomInputs/DictInput'
 import ExternalLink from '@/components/ExternalLink'
+import MenuTooltip from '@/components/MenuTooltip'
 import RunConfig from '@/components/RunConfig/RunConfig'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
@@ -19,6 +20,7 @@ export default {
     DateTimeSelector,
     DictInput,
     ExternalLink,
+    MenuTooltip,
     RunConfig
   },
   mixins: [parametersMixin],
@@ -54,7 +56,7 @@ export default {
 
       showAdvanced: false,
 
-      when: 'immediately'
+      when: 'now'
     }
   },
   computed: {
@@ -188,24 +190,17 @@ export default {
   >
     <v-card-text class="run-body">
       <v-container fluid>
-        <v-row class="my-2 pb-8 row-divider" no-gutters>
+        <v-row class="my-2 pb-8" no-gutters>
           <v-col cols="12" md="6">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                Name
-              </div>
-
-              <div class="mt-2 text-body-2">
-                This is the name that'll be used as a non-unique random
-                identifier for your run across the app; you can modify it at any
-                time here or on the run page. Hint: press the randomize button
-                to find fun combinations!
+                What do you want to call this run?
               </div>
             </div>
           </v-col>
 
           <v-col cols="12" md="6">
-            <div class="mt-md-0 mt-sm-10 mt-8 d-flex align-center">
+            <div class=" mt-4 mt-md-0 d-flex align-center">
               <v-btn
                 color="primary"
                 fab
@@ -219,9 +214,8 @@ export default {
 
               <v-text-field
                 v-model="flowRunName"
-                placeholder="Default"
-                class="white ml-2"
-                label="Name"
+                placeholder="name"
+                class="white ml-2 text-h5"
                 hide-details
                 outlined
                 dense
@@ -230,114 +224,81 @@ export default {
           </v-col>
         </v-row>
 
-        <v-row class="my-2 py-8 row-divider" no-gutters>
-          <v-col cols="12" md="6">
+        <v-row class="mt-2 py-8" no-gutters>
+          <v-col cols="12" md="6" class="d-flex align-center">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                Scheduled Start
-              </div>
-
-              <div class="mt-2 text-body-2">
-                <p>
-                  You can run this flow immediately or schedule it for some
-                  point in the future.
-                </p>
-                <p>
-                  Note that this will run this flow just <em>once</em>. To run
-                  your flow on a regular schedule, visit the schedules tab of
-                  the
-                  <router-link
-                    :to="{ name: 'flow', query: { tab: 'settings' } }"
-                  >
-                    settings</router-link
-                  >
-                  and create a schedule. Alternatively, you can attach a
-                  schedule to your flow at registration time; for more
-                  information on schedules in your flow code, visit the
-                  <ExternalLink
-                    href="https://docs.prefect.io/core/concepts/schedules.html#schedules"
-                    >documentation</ExternalLink
-                  >.
-                </p>
+                When do you want to run it?
               </div>
             </div>
           </v-col>
 
-          <v-col cols="12" md="6">
-            <div
-              class="mt-md-0 mt-sm-10 mt-8 mx-auto"
-              :class="{ 'text-center': $vuetify.breakpoint.smAndDown }"
+          <v-col cols="12" md="6" class="d-flex align-center mt-4 mt-md-0">
+            <v-btn
+              depressed
+              color="blue-grey"
+              dark
+              large
+              active-class="primary font-weight-bold"
+              class="text-none mr-2 text-h6"
+              :class="{ 'lighten-4': when == 'later' }"
+              :input-value="when == 'now'"
+              @click="
+                when = 'now'
+                scheduledStartDateTime = null
+              "
+              >now</v-btn
             >
-              <div class="mt-md-8 mb-4 mb-sm-0">Run this flow...</div>
-              <div>
-                <v-btn
-                  depressed
-                  color="blue-grey"
-                  dark
-                  large
-                  active-class="primary font-weight-bold"
-                  class="text-none mr-2"
-                  :class="{ 'lighten-4': when == 'future' }"
-                  :input-value="when == 'immediately'"
-                  @click="
-                    when = 'immediately'
-                    scheduledStartDateTime = null
-                  "
-                  >immediately</v-btn
-                >
-                <v-btn
-                  depressed
-                  color="blue-grey"
-                  dark
-                  large
-                  active-class="primary font-weight-bold"
-                  class="text-none "
-                  :class="{ 'lighten-4': when == 'immediately' }"
-                  :input-value="when == 'future'"
-                  @click="when = 'future'"
-                  >at this point in the future...</v-btn
-                >
-              </div>
-            </div>
-
-            <v-fade-transition mode="out-in">
-              <DateTimeSelector
-                v-if="when == 'future'"
-                v-model="scheduledStartDateTime"
-                class="mt-8"
-              />
-            </v-fade-transition>
+            <v-btn
+              depressed
+              color="blue-grey"
+              dark
+              large
+              active-class="primary font-weight-bold"
+              class="text-none text-h6"
+              :class="{ 'lighten-4': when == 'now' }"
+              :input-value="when == 'later'"
+              @click="when = 'later'"
+              >later...</v-btn
+            >
           </v-col>
         </v-row>
 
-        <v-row class="my-2 py-8 row-divider" no-gutters>
+        <v-fade-transition mode="out-in">
+          <v-row
+            v-if="when == 'later'"
+            class="pt-n8 pb-8 row-divider"
+            no-gutters
+          >
+            <v-col cols="0" md="2" />
+            <v-col cols="12" md="8">
+              <DateTimeSelector v-model="scheduledStartDateTime" class="mt-8" />
+            </v-col>
+            <v-col cols="0" md="2" />
+          </v-row>
+        </v-fade-transition>
+
+        <v-row class="my-2 py-8" no-gutters>
           <v-col cols="12" md="6">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                Parameters
-              </div>
-
-              <div class="mt-2 text-body-2">
-                <p>
-                  The
-                  <strong>run-time parameters</strong> for your run. To update
-                  your flow group's default parameters, visit the parameters tab
-                  of the
-                  <router-link
-                    :to="{ name: 'flow', query: { tab: 'settings' } }"
-                  >
-                    settings</router-link
-                  >.
-                </p>
-                <p>
-                  Refer to the
-                  <ExternalLink
-                    href="https://docs.prefect.io/core/concepts/parameters.html#parameters"
-                    >documentation</ExternalLink
-                  >
-
-                  for more details on parameters.
-                </p>
+                Modify your parameters
+                <MenuTooltip>
+                  <p>
+                    These are the parameters that are passed to your flow
+                    through
+                    <ExternalLink
+                      href="https://docs.prefect.io/api/latest/core/parameters.html#parameter-2"
+                      >Parameter tasks</ExternalLink
+                    >. To update your flow group's default parameters, visit the
+                    parameters tab of the
+                    <router-link
+                      :to="{ name: 'flow', query: { tab: 'settings' } }"
+                    >
+                      settings</router-link
+                    >.
+                  </p>
+                </MenuTooltip>
               </div>
             </div>
           </v-col>
@@ -351,25 +312,24 @@ export default {
           <v-col cols="12" md="6">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                Context
-                <span class="text-body-2 text--disabled">(Optional)</span>
-              </div>
+                Modify run context
+                <MenuTooltip>
+                  <p>
+                    The
+                    <strong>context</strong> for your run to share information
+                    between tasks without the need for explicit task arguments.
+                  </p>
 
-              <div class="mt-2 text-body-2">
-                <p>
-                  The
-                  <strong>context</strong> for your run to share information
-                  between tasks without the need for explicit task arguments.
-                </p>
-
-                <p>
-                  Refer to the
-                  <ExternalLink
-                    href="https://docs.prefect.io/core/concepts/execution.html#context"
-                    >documentation</ExternalLink
-                  >
-                  for more details on context.
-                </p>
+                  <p>
+                    Refer to the
+                    <ExternalLink
+                      href="https://docs.prefect.io/core/concepts/execution.html#context"
+                      >documentation</ExternalLink
+                    >
+                    for more details on context.
+                  </p>
+                </MenuTooltip>
+                <span class="text-body-2 text--disabled ml-2">(Optional)</span>
               </div>
             </div>
           </v-col>
@@ -379,12 +339,10 @@ export default {
           </v-col>
         </v-row>
 
-        <div v-if="showAdvanced">
+        <v-row v-if="showAdvanced" class="mt-8" no-gutters>
           <div class="text-h5">
             Run Configuration
-            <span class="text-body-2 text--disabled">(Optional)</span>
-
-            <div class="mt-2 text-body-2">
+            <MenuTooltip>
               <p>
                 The settings that determine where and how your flow should be
                 executed. Each run config type corresponds to an agent; options
@@ -400,24 +358,28 @@ export default {
                 for more details on run configs, including setting them at
                 registration time.
               </p>
-            </div>
+            </MenuTooltip>
+            <span class="text-body-2 text--disabled ml-2">(Optional)</span>
           </div>
 
           <RunConfig v-model="runConfig" />
-        </div>
+        </v-row>
 
         <v-btn
           block
+          depressed
           text
-          color="primary"
-          class="text-none"
+          class="text-none blue-grey--text mt-8 text--darken-2"
           @click="showAdvanced = !showAdvanced"
         >
           <div>
             <v-icon v-if="showAdvanced" small>
               expand_less
             </v-icon>
-            <div> {{ showAdvanced ? 'Hide' : 'Show' }} advanced </div>
+            <div>
+              {{ showAdvanced ? 'Hide' : 'Show' }}
+              <span class="font-weight-medium">advanced run configuration</span>
+            </div>
             <v-icon v-if="!showAdvanced" small>
               expand_more
             </v-icon>
@@ -469,6 +431,7 @@ export default {
         :color="stickyActions ? 'white' : 'primary'"
         depressed
         x-large
+        :loading="loading"
         @click="run"
       >
         Run

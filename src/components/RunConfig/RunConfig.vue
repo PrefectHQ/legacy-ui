@@ -3,6 +3,7 @@
 import { runConfigs } from '@/utils/runConfigs'
 import DictInput from '@/components/CustomInputs/DictInput'
 import ListInput from '@/components/CustomInputs/ListInput'
+import MenuTooltip from '@/components/MenuTooltip'
 import MultiLineInput from '@/components/CustomInputs/MultiLineInput'
 
 const nullValues = {
@@ -16,6 +17,7 @@ export default {
   components: {
     DictInput,
     ListInput,
+    MenuTooltip,
     MultiLineInput
   },
   props: {
@@ -31,7 +33,7 @@ export default {
   },
   data() {
     return {
-      internalValue: this.value,
+      internalValue: this.value ?? { type: 'UniversalRun' },
       shownArgs: {},
       templateType: this.value?.type || 'UniversalRun'
     }
@@ -91,13 +93,13 @@ export default {
           </div>
 
           <div class="w-100 ml-2">
-            <div class="text-h6"> {{ runConfig.label }}</div>
-            <div
-              v-if="$vuetify.breakpoint.mdAndUp"
-              class="text-body-1 grey--text text--darken-1"
-            >
-              {{ runConfig.description }}
-            </div>
+            <span class="text-h6 mr-2"> {{ runConfig.label }}</span>
+
+            <MenuTooltip v-if="$vuetify.breakpoint.mdAndUp">
+              <div class="text-body-1 grey--text text--darken-1">
+                {{ runConfig.description }}
+              </div>
+            </MenuTooltip>
           </div>
         </div>
       </div>
@@ -265,14 +267,14 @@ export default {
 .config-selection-container {
   display: grid;
   grid-column-gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 300px));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 225px));
 }
 
 .config-type {
   background-color: rgba(255, 255, 255, 1);
   border: 2px solid;
   border-color: #ddd !important;
-  height: 110px;
+  height: 80px;
   transition: all 50ms;
   width: 100%;
 
