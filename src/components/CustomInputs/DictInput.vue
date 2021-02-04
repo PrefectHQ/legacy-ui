@@ -42,11 +42,7 @@ export default {
   },
   data() {
     return {
-      disabledKeys: this.inputIsArray
-        ? this.dict
-            .filter(entry => entry.disabled == true)
-            .map(entry => entry.key)
-        : [],
+      disabledKeys: [],
       json: false,
       jsonInput: '{}',
       keys: [],
@@ -119,6 +115,12 @@ export default {
       this.$emit('input', { ...this.value })
     },
     reset() {
+      this.disabledKeys = this.inputIsArray
+        ? this.dict
+            .filter(entry => entry.disabled == true)
+            .map(entry => entry.key)
+        : []
+
       this.jsonInput = this.inputIsArray
         ? JSON.stringify(
             Object.fromEntries(this.dict.map(entry => [entry.key, entry.value]))
