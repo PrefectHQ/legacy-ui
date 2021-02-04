@@ -35,6 +35,7 @@ export default {
     return {
       internalValue: this.value ?? { type: 'UniversalRun' },
       shownArgs: {},
+      storedValues: {},
       templateType: this.value?.type || 'UniversalRun'
     }
   },
@@ -43,7 +44,14 @@ export default {
       return Object.keys(this.template.args)
     },
     template() {
-      return runConfigs[this.templateType]
+      return runConfigs[this.internalValue.type]
+    },
+    templateArgs() {
+      return runConfigs[this.internalValue.type].args
+        .map(a =>
+          a.options ? a.options.filter(a_ => !!a_.arg).map(a_ => a_.arg) : a.arg
+        )
+        .flat()
     },
     runConfigs() {
       return runConfigs
@@ -52,7 +60,27 @@ export default {
   watch: {
     internalValue: {
       handler: function(val) {
-        this.$emit('input', { ...val })
+        const dict = { type: val.type }
+        // Filter values that don't exist as template args
+        Object.keys(val).map(key => {
+          if (this.templateArgs.includes(key)) {
+            dict[key] = val[key]
+          }
+        })
+
+        // Add any missing template args to the emitted internal value
+        this.templateArgs.forEach(key => {
+          if (key in dict) return
+          dict[key] = null
+        })
+
+        this.$emit('input', dict)
+      },
+      deep: true
+    },
+    templateType: {
+      handler: function() {
+        this.$emit('input', { ...this.internalValue })
       },
       deep: true
     }
@@ -83,10 +111,10 @@ export default {
           :key="runConfig.type"
           v-ripple
           class="config-type py-2 d-flex align-center justify-start px-4 my-2 cursor-pointer user-select-none"
-          :class="{ active: runConfig.type == templateType }"
+          :class="{ active: internalValue.type == runConfig.type }"
           role="button"
           tabindex="0"
-          @click="templateType = runConfig.type"
+          @click="internalValue.type = runConfig.type"
         >
           <div class="text-center" style="width: 50px;">
             <i :class="runConfig.icon" class="fa-2x"> </i>
