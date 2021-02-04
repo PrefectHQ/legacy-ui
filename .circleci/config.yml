@@ -13,8 +13,6 @@ commands:
       - run:
           name: NPM Install
           command: npm install
-      - env:
-          FA_TOKEN: ${FA_TOKEN}
       - save_cache:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
           paths:
@@ -43,6 +41,8 @@ commands:
       - prep
       - run:
           name: NPM Build
+          environment:
+            FA_TOKEN: ${FA_TOKEN}
           command: |
             export FA_TOKEN=<< parameters.FA_TOKEN >>
             export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
