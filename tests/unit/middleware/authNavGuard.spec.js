@@ -13,11 +13,12 @@ describe('Auth Nav Guard', () => {
   afterEach(() => {
     store.dispatch.restore()
     store.commit('user/unsetUser')
-    store.commit('auth0/isAuthenticated', false)
-    store.commit('auth0/unsetAuthorizationToken')
-    store.commit('auth0/unsetAuthorizationTokenExpiry')
+    store.commit('auth/isAuthenticated', false)
+    store.commit('auth/error', false)
+    store.commit('auth/unsetAuthorizationToken')
+    store.commit('auth/unsetAuthorizationTokenExpiry')
     store.commit('api/unsetBackend')
-    store.commit('auth0/unsetRedirectRoute')
+    store.commit('auth/unsetRedirectRoute')
   })
 
   describe('...when the backend is server', () => {
@@ -33,15 +34,15 @@ describe('Auth Nav Guard', () => {
   describe('...when the backend is Cloud and the user is neither authenticated authorized', () => {
     it('calls the authentication route', async () => {
       // Having trouble mocking 'authenticate' here to see if it's called so mocking the result of that call with dispatchStub and checking that 'authenticate' is passed by checking that the instructions passed in dispatchStub are followed
-      dispatchStub.withArgs('auth0/authorize').callsFake()
-      dispatchStub.withArgs('auth0/authenticate').callsFake(async () => {
-        store.commit('auth0/isAuthenticated', true)
+      dispatchStub.withArgs('auth/authorize').callsFake()
+      dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
+        store.commit('auth/isAuthenticated', true)
       })
-      expect(store.getters['auth0/isAuthorized']).toBe(false)
-      expect(store.getters['auth0/isAuthenticated']).toBe(false)
+      expect(store.getters['auth/isAuthorized']).toBe(false)
+      expect(store.getters['auth/isAuthenticated']).toBe(false)
       const next = jest.fn()
       await authNavGuard({}, {}, next)
-      expect(store.getters['auth0/isAuthenticated']).toBe(true)
+      expect(store.getters['auth/isAuthenticated']).toBe(true)
     })
 
     it('calls the authorization route', async () => {
@@ -50,30 +51,30 @@ describe('Auth Nav Guard', () => {
       dispatchStub.withArgs('user/getUser').callsFake(async () => {
         store.commit('user/user', { name: 'test_user' })
       })
-      dispatchStub.withArgs('auth0/authorize').callsFake(async () => {
-        store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
-        store.commit('auth0/authorizationTokenExpiry', expiry)
+      dispatchStub.withArgs('auth/authorize').callsFake(async () => {
+        store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+        store.commit('auth/authorizationTokenExpiry', expiry)
       })
-      dispatchStub.withArgs('auth0/authenticate').callsFake(async () => {
-        store.commit('auth0/isAuthenticated', true)
+      dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
+        store.commit('auth/isAuthenticated', true)
       })
-      expect(store.getters['auth0/isAuthorized']).toBe(false)
-      expect(store.getters['auth0/isAuthenticated']).toBe(false)
+      expect(store.getters['auth/isAuthorized']).toBe(false)
+      expect(store.getters['auth/isAuthenticated']).toBe(false)
       const next = jest.fn()
       await authNavGuard({}, {}, next)
-      expect(store.getters['auth0/isAuthorized']).toBe(true)
-      expect(store.getters['auth0/authorizationToken']).toEqual(
+      expect(store.getters['auth/isAuthorized']).toBe(true)
+      expect(store.getters['auth/authorizationToken']).toEqual(
         MOCK_AUTHORIZATION_TOKEN
       )
-      expect(store.getters['auth0/authorizationTokenExpiry']).toEqual(expiry)
+      expect(store.getters['auth/authorizationTokenExpiry']).toEqual(expiry)
     })
   })
 
   it('calls the getUser route', async () => {
-    store.commit('auth0/isAuthenticated', true)
-    store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    store.commit('auth/isAuthenticated', true)
+    store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     store.commit(
-      'auth0/authorizationTokenExpiry',
+      'auth/authorizationTokenExpiry',
       new Date().getTime() + 100000000
     )
     dispatchStub.withArgs('user/getUser').callsFake(async () => {
@@ -88,10 +89,10 @@ describe('Auth Nav Guard', () => {
 
   it('calls next when the user is authorized, authenticated, and set', () => {
     store.commit('user/user', { name: 'test_user' })
-    store.commit('auth0/isAuthenticated', true)
-    store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    store.commit('auth/isAuthenticated', true)
+    store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     store.commit(
-      'auth0/authorizationTokenExpiry',
+      'auth/authorizationTokenExpiry',
       new Date().getTime() + 100000000
     )
     const next = jest.fn()
@@ -103,46 +104,64 @@ describe('Auth Nav Guard', () => {
   })
 
   it('aborts navigation when the user cannot be authenticated', async () => {
-    dispatchStub.withArgs('auth0/authenticate').callsFake(async () => {
-      store.commit('auth0/isAuthenticated', false)
+    dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
+      store.commit('auth/isAuthenticated', false)
     })
-    dispatchStub.withArgs('auth0/authorize').callsFake(async () => {
+    dispatchStub.withArgs('auth/authorize').callsFake(async () => {
       store.commit(
-        'auth0/authorizationTokenExpiry',
+        'auth/authorizationTokenExpiry',
         new Date().getTime() + 100000000
       )
-      store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+      store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     })
+    store.commit('auth/error', false)
     const next = jest.fn()
     await authNavGuard({}, {}, next)
     expect(next).toHaveBeenCalledWith(false)
   })
 
-  it('aborts navigation if authorization fails', async () => {
-    store.commit('auth0/isAuthenticated', true)
-    dispatchStub.withArgs('auth0/authorize').resolves()
+  it('redirects to the access-denied page when the user cannot be authenticated and an access_denied error is present', async () => {
+    dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
+      store.commit('auth/isAuthenticated', false)
+    })
+    dispatchStub.withArgs('auth/authorize').callsFake(async () => {
+      store.commit(
+        'auth/authorizationTokenExpiry',
+        new Date().getTime() + 100000000
+      )
+      store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    })
+    store.commit('auth/error', 'access_denied')
     const next = jest.fn()
-    expect(store.getters['auth0/isAuthorized']).toBe(false)
-    expect(store.getters['auth0/isAuthenticated']).toBe(true)
     await authNavGuard({}, {}, next)
-    expect(store.getters['auth0/isAuthorized']).toBe(false)
-    expect(store.getters['auth0/isAuthenticated']).toBe(true)
+    expect(next).toHaveBeenCalledWith({ name: 'access-denied' })
+  })
+
+  it('aborts navigation if authorization fails', async () => {
+    store.commit('auth/isAuthenticated', true)
+    dispatchStub.withArgs('auth/authorize').resolves()
+    const next = jest.fn()
+    expect(store.getters['auth/isAuthorized']).toBe(false)
+    expect(store.getters['auth/isAuthenticated']).toBe(true)
+    await authNavGuard({}, {}, next)
+    expect(store.getters['auth/isAuthorized']).toBe(false)
+    expect(store.getters['auth/isAuthenticated']).toBe(true)
     expect(next).toHaveBeenCalledWith(false)
   })
 
   it('calls next with a redirect route, if one is present in the store', async () => {
     let redirectRoute = '/some/path'
-    store.commit('auth0/isAuthenticated', true)
-    store.commit('auth0/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
+    store.commit('auth/isAuthenticated', true)
+    store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     store.commit(
-      'auth0/authorizationTokenExpiry',
+      'auth/authorizationTokenExpiry',
       new Date().getTime() + 100000000
     )
     dispatchStub.withArgs('user/getUser').callsFake(async () => {
       store.commit('user/user', { name: 'test_user' })
     })
-    store.commit('auth0/redirectRoute', redirectRoute)
-    expect(store.getters['auth0/redirectRoute']).toBe(redirectRoute)
+    store.commit('auth/redirectRoute', redirectRoute)
+    expect(store.getters['auth/redirectRoute']).toBe(redirectRoute)
     const next = jest.fn()
     await authNavGuard({}, {}, next)
     expect(next).toHaveBeenCalledWith({ path: redirectRoute })

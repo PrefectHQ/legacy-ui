@@ -41,7 +41,7 @@ query { hello }
     }
   },
   computed: {
-    ...mapGetters('auth0', ['authorizationToken']),
+    ...mapGetters('auth', ['authorizationToken']),
     ...mapGetters('api', ['url']),
     ...mapGetters('tenant', ['role'])
   },
