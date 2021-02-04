@@ -27,12 +27,14 @@ export default {
   },
   data() {
     return {
-      description: this.fgDescription || this.flowDescription || '',
+      description:
+        this.newDescription || this.fgDescription || this.flowDescription || '',
       newDescription: this.fgDescription || this.flowDescription || '',
       textArea: false,
       clear: false,
       loading: false,
-      tab: 'edit'
+      tab: 'edit',
+      reload: false
     }
   },
   computed: {
@@ -41,19 +43,27 @@ export default {
       return 'Edit Read Me'
     },
     cardColor() {
-      console.log('textA', this.$refs)
-      return this.textArea || this.description ? 'white' : 'appBackground'
+      return this.textArea || this.newDescription ? 'white' : 'appBackground'
     },
     toolBarStyle() {
       return this.textArea
         ? {
             'border-color': '#DADAD2 !important',
             'border-style': 'solid',
-            'border-radius': '5px',
             'border-width': '1px',
             'margin-bottom': '20px'
           }
         : ''
+    }
+  },
+  watch: {
+    flowGroupId() {
+      this.reload = true
+      this.newDescription = ''
+      this.$nextTick(() => {
+        this.newDescription = this.fgDescription || this.flowDescription || ''
+        this.reload = false
+      })
     }
   },
   methods: {
@@ -75,6 +85,7 @@ export default {
       this.textArea = false
       this.clear = false
       this.tab = 'edit'
+      this.description = this.fgDescription || this.flowDescription || ''
     },
     async setFlowGroupDescription() {
       if (this.clear) this.description = ''
@@ -101,10 +112,8 @@ export default {
           alertType: 'error'
         })
       } finally {
-        setTimeout(() => {
-          this.closeTextArea()
-          this.loading = false
-        }, 1000)
+        this.closeTextArea()
+        this.loading = false
       }
     }
   }
@@ -113,8 +122,9 @@ export default {
 
 <template>
   <v-card
+    v-if="!reload"
     class="readme"
-    :outlined="textArea || newDescription"
+    :outlined="!!textArea || !!newDescription"
     elevation="0"
     :color="cardColor"
     min-height="80vh"
@@ -140,32 +150,34 @@ export default {
         v-if="textArea"
         color="appBackground"
         width="100%"
+        height="40px"
         dense
+        class="ma-0"
         :style="toolBarStyle"
         flat
       >
-        <v-btn v-if="textArea" text @click="edit"> edit</v-btn>
-        <v-btn v-if="textArea" text @click="preview">
-          preview
-        </v-btn>
         <v-spacer />
         <v-btn
           v-if="textArea && !this.$vuetify.breakpoint.xs"
           text
-          class="mb-2"
+          color="rgba(0, 0, 0, 0.54)"
+          small
           @click="closeTextArea"
-          >Close</v-btn
+          ><v-icon>fa-times</v-icon><span class="pl-2">Close</span></v-btn
         >
 
         <v-btn
           v-if="textArea && !this.$vuetify.breakpoint.xs"
-          color="primary"
+          text
+          small
+          color="rgba(0, 0, 0, 0.54)"
           :loading="loading"
-          class="mr-2 mb-2"
+          class="mr-2"
           title="Update Read Me"
           @click="setFlowGroupDescription"
         >
-          Update
+          <v-icon>fa-save</v-icon>
+          <span class="pl-2">Save</span>
         </v-btn>
         <v-btn
           v-if="
@@ -175,16 +187,45 @@ export default {
               !this.$vuetify.breakpoint.xs
           "
           title="Reset to Read Me added at registration"
-          color="codePink"
-          class="mb-2"
-          outlined
-          dark
+          text
+          small
+          color="rgba(0, 0, 0, 0.54)"
           @click="resetDescription"
-          >Reset</v-btn
+          ><v-icon small>fa-undo-alt</v-icon>
+          <span class="ml-2">reset</span></v-btn
         >
       </v-toolbar>
+      <v-toolbar
+        v-if="textArea"
+        color="appBackground"
+        width="100%"
+        dense
+        height="45px"
+        class="ma-0"
+        :style="toolBarStyle"
+        flat
+      >
+        <v-btn-toggle v-model="tab" tile color="primary" group>
+          <v-btn value="edit" class="ma-0">
+            <v-icon class="mr-0">
+              chevron_left
+            </v-icon>
+            <v-icon :style="{ 'margin-left': '-10px' }">
+              chevron_right
+            </v-icon>
+            Editor
+          </v-btn>
+
+          <v-btn value="preview" class="ma-0">
+            <v-icon small>
+              fa-eye
+            </v-icon>
+            <span class="pl-4"> Preview</span>
+          </v-btn>
+        </v-btn-toggle>
+      </v-toolbar>
     </v-card-title>
-    <v-card-text>
+    <v-card-text class="pa-0">
       <v-textarea
         v-if="textArea && tab === 'edit'"
         ref="textA"
@@ -199,10 +240,10 @@ export default {
       <div
         v-else-if="textArea && tab === 'preview'"
         :style="{
-          'border-color': '#3b8dff',
+          'border-color': '#d3d3d3',
           'border-style': 'solid',
           'border-radius': '5px',
-          'border-width': '2px',
+          'border-width': '1px',
           'min-height': '50vh'
         }"
         class="artifact md grey--text text--darken-3 px-8"
@@ -266,7 +307,7 @@ export default {
 }
 
 .readme >>> div {
-  border-color: #56494e !important;
+  border-color: #d3d3d3 !important;
 }
 
 .readme.pa-0 {
