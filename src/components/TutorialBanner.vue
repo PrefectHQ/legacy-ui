@@ -19,14 +19,13 @@ export default {
     ...mapGetters('data', ['flows']),
     ...mapGetters('api', ['isCloud']),
     showBanner() {
-      return true
-      // let show = this.flows?.length === 0
-      // if (!this.dismissed && this.pageScroll) {
-      //   show = !this.pageScroll
-      // } else if (this.dismissed || this.$vuetify.breakpoint.smAndDown) {
-      //   show = false
-      // }
-      // return show
+      let show = this.flows?.length === 0
+      if (!this.dismissed && this.pageScroll) {
+        show = !this.pageScroll
+      } else if (this.dismissed || this.$vuetify.breakpoint.smAndDown) {
+        show = false
+      }
+      return show
     }
   }
 }
