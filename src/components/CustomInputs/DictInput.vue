@@ -58,7 +58,9 @@ export default {
     },
     value() {
       const dict = {}
-      this.keys.map((k, i) => (dict[k] = this.values[i]))
+      this.keys
+        .filter(k => k !== null)
+        .map((k, i) => (dict[k] = this.values[i]))
       return dict
     }
   },
@@ -144,6 +146,8 @@ export default {
         : this.dict
         ? Object.values(this.dict)
         : [null]
+
+      this.$emit('input', { ...this.value })
     }
   }
 }

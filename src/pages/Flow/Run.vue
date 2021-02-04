@@ -11,6 +11,7 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
+import { runConfigs } from '@/utils/runConfigs'
 
 const adjectivesLength = adjectives.length
 const animalsLength = animals.length
@@ -56,6 +57,7 @@ export default {
 
       showAdvanced: false,
       showParameters: this.flow.parameters?.length > 0,
+      parameterDefaults: this.flow.parameters,
 
       when: 'now'
     }
@@ -64,8 +66,36 @@ export default {
     ...mapGetters('tenant', ['tenant', 'role']),
     parameterItems() {
       return this.flow.parameters?.map(parameter => {
-        return { disabled: true, key: parameter.name, value: parameter.default }
+        return {
+          disabled: true,
+          key: parameter.name,
+          value: parameter.default,
+          required: parameter.required
+        }
       })
+    },
+    contextModified() {
+      if (!this.context) return false
+      return Object.keys(this.context).filter(c => c !== '').length > 0
+    },
+    parametersModified() {
+      if (!this.parameters) return false
+
+      const entries = Object.entries(this.parameters)
+      const defaults = Object.fromEntries(
+        this.parameterDefaults?.map(entry => [entry.name, entry.default]) ?? []
+      )
+
+      const keysModified = entries.length !== this.parameterDefaults?.length
+      const valuesModified = entries.some(
+        entry => defaults[entry[0]] != entry[1]
+      )
+
+      return keysModified || valuesModified
+    },
+    runConfigTemplate() {
+      if (!this.runConfig) return
+      return runConfigs[this.runConfig.type]
     }
   },
   watch: {
@@ -434,6 +464,57 @@ export default {
         <div class="text-truncate">{{ flowRunName }}</div>
       </div>
 
+      <v-divider
+        class="mx-4 vertical-divider my-auto"
+        vertical
+        :style="{
+          'border-color': stickyActions ? '#fff' : null
+        }"
+      />
+
+      <div
+        class="text-caption py-2 summary"
+        :class="{ 'summary-background': stickyActions }"
+      >
+        <div>
+          <span>When:</span>
+          <span class="float-right font-weight-medium ml-2"
+            >{{ when == 'now' ? 'now' : scheduledStartDateTime }}
+          </span>
+        </div>
+
+        <div v-if="showParameters">
+          <span>Parameters:</span>
+          <span class="float-right font-weight-medium ml-2">
+            <span v-if="parametersModified" class="accentGreen--text">
+              modified
+            </span>
+            <span v-else>default</span>
+          </span>
+        </div>
+
+        <div>
+          <span>Context:</span>
+          <span class="float-right font-weight-medium ml-2">
+            <span v-if="contextModified" class="accentGreen--text">
+              modified
+            </span>
+            <span v-else>default</span>
+          </span>
+        </div>
+
+        <div>
+          <span>RunConfig:</span>
+          <span class="float-right font-weight-medium ml-2">
+            <span v-if="runConfigTemplate" class="accentGreen--text">
+              <i :class="runConfigTemplate.icon" class="fa-sm"> </i>
+              <span> {{ runConfigTemplate.label }}</span>
+            </span>
+            <span v-else>none</span>
+          </span>
+        </div>
+      </div>
+
       <v-spacer></v-spacer>
 
       <v-btn
@@ -453,6 +534,12 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.vertical-divider {
+  height: 70%;
+  min-height: 0;
+  opacity: 0.6;
+}
+
 .pr-24 {
   padding-right: 124px !important;
 }
@@ -507,6 +594,28 @@ export default {
       height: 80px;
       z-index: 5;
     }
+  }
+}
+
+.summary {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 1fr);
+  height: 60px;
+  width: auto;
+
+  div {
+    min-width: 165px;
+    padding: 0 16px;
+  }
+
+  div:nth-child(n + 3) {
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &.summary-background {
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
   }
 }
 
