@@ -12,6 +12,11 @@ export default {
       requird: false,
       default: 'Add key / value'
     },
+    allowReset: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
     dict: {
       type: [Object, Array],
       required: false,
@@ -37,7 +42,7 @@ export default {
   },
   data() {
     return {
-      disabledKeys: Array.isArray(this.dict)
+      disabledKeys: this.inputIsArray
         ? this.dict
             .filter(entry => entry.disabled == true)
             .map(entry => entry.key)
@@ -49,6 +54,9 @@ export default {
     }
   },
   computed: {
+    inputIsArray() {
+      return Array.isArray(this.dict)
+    },
     pairs() {
       return this.keys.map((p, i) => i)
     },
@@ -111,7 +119,7 @@ export default {
       this.$emit('input', { ...this.value })
     },
     reset() {
-      this.jsonInput = Array.isArray(this.dict)
+      this.jsonInput = this.inputIsArray
         ? JSON.stringify(
             Object.fromEntries(this.dict.map(entry => [entry.key, entry.value]))
           )
@@ -123,13 +131,13 @@ export default {
 }
       `
 
-      this.keys = Array.isArray(this.dict)
+      this.keys = this.inputIsArray
         ? this.dict.map(entry => entry.key)
         : this.dict
         ? Object.keys(this.dict)
         : [null]
 
-      this.values = Array.isArray(this.dict)
+      this.values = this.inputIsArray
         ? this.dict.map(entry => entry.value)
         : this.dict
         ? Object.values(this.dict)
@@ -141,7 +149,20 @@ export default {
 
 <template>
   <div class="position-relative">
-    <div class="d-flex justify-end align-start mb-1" style="width: 100%;">
+    <div class="d-flex justify-end align-end mb-1" style="width: 100%;">
+      <v-btn
+        v-if="allowReset"
+        x-small
+        class="text-normal mr-2"
+        depressed
+        color="blue-grey lighten-5"
+        title="Reset"
+        @click="reset"
+      >
+        Reset
+        <v-icon small>refresh</v-icon>
+      </v-btn>
+
       <v-switch
         v-model="json"
         inset
@@ -190,7 +211,11 @@ export default {
               hide-details
               outlined
               dense
-              :placeholder="valueLabel"
+              :placeholder="
+                inputIsArray && dict[i].value
+                  ? dict[i].value.toString()
+                  : valueLabel
+              "
               @keyup="_handleKeypress"
             />
           </v-col>

@@ -315,6 +315,7 @@ export default {
               v-model="parameters"
               :dict="parameterItems"
               disable-edit
+              allow-reset
             />
           </v-col>
         </v-row>
