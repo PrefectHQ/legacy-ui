@@ -19,6 +19,8 @@ commands:
             - node_modules
   build:
     parameters:
+      FA_TOKEN:
+        type: string
       VUE_APP_OKTA_DOMAIN:
         type: string
       VUE_APP_PUBLIC_CLIENT_ID:
@@ -35,6 +37,9 @@ commands:
         type: string
       VUE_APP_BASE_URL:
         type: string
+    pre:
+      - echo "@fortawesome:registry=https://npm.fontawesome.com/" > ~/.npmrc
+      - echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> ~/.npmrc
     steps:
       - prep
       - run:
