@@ -100,10 +100,6 @@ query { hello }
       document.getElementById('graphiql')
     )
   },
-  beforeDestroy() {
-    const cdnScripts = ['react', 'react-dom', 'graphiql-js']
-    cdnScripts.forEach(script => document.getElementById(script).remove())
-  },
   methods: {
     addQueryLimits(query) {
       if (query.includes('IntrospectionQuery')) return query
