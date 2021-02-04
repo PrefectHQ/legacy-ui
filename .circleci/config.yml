@@ -37,11 +37,10 @@ commands:
         type: string
       VUE_APP_BASE_URL:
         type: string
-    pre:
-      - echo "@fortawesome:registry=https://npm.fontawesome.com/" > ~/.npmrc
-      - echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> ~/.npmrc
     steps:
-      - prep
+      - prep:
+          - echo "@fortawesome:registry=https://npm.fontawesome.com/" > ~/.npmrc
+          - echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> ~/.npmrc
       - run:
           name: NPM Build
           command: |
