@@ -27,8 +27,8 @@ export default {
   },
   data() {
     return {
-      description: this.fgDescription || this.flowDescription,
-      newDescription: null,
+      description: this.fgDescription || this.flowDescription || '',
+      newDescription: this.fgDescription || this.flowDescription || '',
       textArea: false,
       clear: false,
       loading: false,
@@ -41,7 +41,8 @@ export default {
       return 'Edit Read Me'
     },
     cardColor() {
-      return this.textArea ? 'white' : 'appBackground'
+      console.log('textA', this.$refs)
+      return this.textArea || this.description ? 'white' : 'appBackground'
     },
     toolBarStyle() {
       return this.textArea
@@ -87,8 +88,10 @@ export default {
           }
         })
         if (data.set_flow_group_description.success) {
-          if (this.clear || !this.description)
+          if (this.clear || !this.description) {
             this.description = this.flowDescription
+          }
+          this.newDescription = this.description
         }
       } catch (error) {
         const errString = `${error}`
@@ -98,8 +101,10 @@ export default {
           alertType: 'error'
         })
       } finally {
-        this.closeTextArea()
-        this.loading = false
+        setTimeout(() => {
+          this.closeTextArea()
+          this.loading = false
+        }, 1000)
       }
     }
   }
@@ -107,115 +112,117 @@ export default {
 </script>
 
 <template>
-  <v-row class="pt-0">
-    <v-card
-      v-if="!loading"
-      class="pt-0 readme"
-      outlined
-      :color="cardColor"
-      min-height="80vh"
-      width="100%"
-      :style="{ 'border-color': '#DADAD2 !important' }"
-      ><v-card-title class="pa-0">
-        <v-toolbar
-          v-if="description || flowDescription || textArea"
-          color="appBackground"
-          width="100%"
-          dense
-          :style="toolBarStyle"
-          flat
-        >
-          <v-btn v-if="textArea" text @click="edit"> edit</v-btn>
-          <v-btn v-if="textArea" text @click="preview">
-            preview
-          </v-btn>
-          <v-spacer />
-          <v-btn
-            v-if="textArea && !this.$vuetify.breakpoint.xs"
-            text
-            class="mb-2"
-            @click="closeTextArea"
-            >Close</v-btn
-          >
+  <v-card
+    class="readme"
+    :outlined="textArea || newDescription"
+    elevation="0"
+    :color="cardColor"
+    min-height="80vh"
+    width="100%"
+    :style="{ 'border-color': '#DADAD2 !important' }"
+  >
+    <v-btn
+      v-if="newDescription && !textArea"
+      :title="editButtonTitle"
+      icon
+      class="mt-4"
+      absolute
+      depressed
+      right
+      color="primary"
+      @click="textArea = true"
+    >
+      <v-icon>edit</v-icon>
+    </v-btn>
 
-          <v-btn
-            v-if="textArea && !this.$vuetify.breakpoint.xs"
-            color="primary"
-            :loading="loading"
-            v-bind="attrs"
-            class="mr-2 mb-2"
-            title="Update Read Me"
-            @click="setFlowGroupDescription"
-            v-on="on"
-          >
-            Update
-          </v-btn>
-          <v-btn
-            v-if="
-              flowDescription &&
-                fgDescription &&
-                textArea &&
-                !this.$vuetify.breakpoint.xs
-            "
-            title="Reset to Read Me added at registration"
-            color="codePink"
-            class="mb-2"
-            outlined
-            dark
-            @click="resetDescription"
-            >Reset</v-btn
-          >
-          <v-btn
-            v-if="!textArea"
-            :title="editButtonTitle"
-            icon
-            dark
-            color="primary"
-            @click="textArea = true"
-            ><v-icon>edit</v-icon></v-btn
-          >
-        </v-toolbar>
-      </v-card-title>
-      <v-card-text class="pt-0">
-        <v-textarea
-          v-if="textArea && tab === 'edit'"
-          v-model="description"
+    <v-card-title v-if="textArea" class="pa-0">
+      <v-toolbar
+        v-if="textArea"
+        color="appBackground"
+        width="100%"
+        dense
+        :style="toolBarStyle"
+        flat
+      >
+        <v-btn v-if="textArea" text @click="edit"> edit</v-btn>
+        <v-btn v-if="textArea" text @click="preview">
+          preview
+        </v-btn>
+        <v-spacer />
+        <v-btn
+          v-if="textArea && !this.$vuetify.breakpoint.xs"
+          text
+          class="mb-2"
+          @click="closeTextArea"
+          >Close</v-btn
+        >
+
+        <v-btn
+          v-if="textArea && !this.$vuetify.breakpoint.xs"
+          color="primary"
+          :loading="loading"
+          class="mr-2 mb-2"
+          title="Update Read Me"
+          @click="setFlowGroupDescription"
+        >
+          Update
+        </v-btn>
+        <v-btn
+          v-if="
+            flowDescription &&
+              fgDescription &&
+              textArea &&
+              !this.$vuetify.breakpoint.xs
+          "
+          title="Reset to Read Me added at registration"
+          color="codePink"
+          class="mb-2"
           outlined
-          class="bigger"
-          autofocus
+          dark
+          @click="resetDescription"
+          >Reset</v-btn
         >
-        </v-textarea>
+      </v-toolbar>
+    </v-card-title>
+    <v-card-text>
+      <v-textarea
+        v-if="textArea && tab === 'edit'"
+        ref="textA"
+        v-model="description"
+        outlined
+        type="markdown"
+        class="bigger"
+        autofocus
+      >
+      </v-textarea>
 
-        <div
-          v-else-if="textArea && tab === 'preview'"
-          :style="{
-            'border-color': '#3b8dff',
-            'border-style': 'solid',
-            'border-radius': '5px',
-            'border-width': '2px',
-            'min-height': '50vh'
-          }"
-          class="artifact md grey--text text--darken-3 px-8 mt-0"
-          v-html="mdParser(description)"
-        ></div>
+      <div
+        v-else-if="textArea && tab === 'preview'"
+        :style="{
+          'border-color': '#3b8dff',
+          'border-style': 'solid',
+          'border-radius': '5px',
+          'border-width': '2px',
+          'min-height': '50vh'
+        }"
+        class="artifact md grey--text text--darken-3 px-8"
+        v-html="mdParser(description)"
+      ></div>
 
-        <div
-          v-else-if="description"
-          class="artifact md grey--text text--darken-3 mx-4 px-8 mt-0"
-          v-html="mdParser(description)"
-        ></div>
-        <div
-          v-else
-          class="headline
+      <div
+        v-else-if="newDescription && !loading"
+        class="artifact md grey--text text--darken-3 mx-4 px-8 pt-4"
+        v-html="mdParser(newDescription)"
+      ></div>
+      <div
+        v-else
+        class="headline
           grey--text text--darken-2 pl-8 pr-12 pt-8 text-center"
-        >
-          This Flow has no
-          <span class="font-weight-medium"> Read Me! </span>
-        </div>
-        <div
-          v-if="!textArea && !description && !flowDescription"
-          class="text-center pt-8"
-        >
+      >
+        This Flow has no
+        <span class="font-weight-medium"> Read Me! </span>
+
+        <div class="text-center pt-8">
           <v-btn
             fab
             :title="editButtonTitle"
@@ -224,35 +231,33 @@ export default {
             ><v-icon>add</v-icon></v-btn
           >
         </div>
-      </v-card-text>
+      </div>
+    </v-card-text>
 
-      <v-card-actions v-if="textArea" class="px-8 text-right">
-        <v-spacer />
-        <v-btn text @click="closeTextArea">Close</v-btn>
+    <v-card-actions v-if="textArea" class="px-8 text-right">
+      <v-spacer />
+      <v-btn text @click="closeTextArea">Close</v-btn>
 
-        <v-btn
-          color="primary"
-          class="mr-2"
-          :loading="loading"
-          v-bind="attrs"
-          title="Update Read Me"
-          @click="setFlowGroupDescription"
-          v-on="on"
-        >
-          Update
-        </v-btn>
-        <v-btn
-          v-if="flowDescription && fgDescription"
-          title="Reset to Read Me added at registration"
-          color="codePink"
-          dark
-          outlined
-          @click="resetDescription"
-          >Reset</v-btn
-        >
-      </v-card-actions>
-    </v-card>
-  </v-row>
+      <v-btn
+        color="primary"
+        class="mr-2"
+        :loading="loading"
+        title="Update Read Me"
+        @click="setFlowGroupDescription"
+      >
+        Update
+      </v-btn>
+      <v-btn
+        v-if="flowDescription && fgDescription"
+        title="Reset to Read Me added at registration"
+        color="codePink"
+        dark
+        outlined
+        @click="resetDescription"
+        >Reset</v-btn
+      >
+    </v-card-actions>
+  </v-card>
 </template>
 
 <style>
@@ -262,5 +267,9 @@ export default {
 
 .readme >>> div {
   border-color: #56494e !important;
+}
+
+.readme.pa-0 {
+  padding-top: 50px !important;
 }
 </style>
