@@ -2,10 +2,9 @@
 /* eslint-disable vue/no-v-html */
 import { artifact_parser } from '@/utils/markdownParser'
 import { mapActions } from 'vuex'
-import ExternalLink from '../../components/ExternalLink.vue'
 
 export default {
-  components: { ExternalLink },
+  components: {},
   props: {
     flowDescription: {
       type: String,
@@ -208,32 +207,21 @@ export default {
         <div
           v-else
           class="headline
-          grey--text text--darken-2 pl-8 pr-12 pt-8"
+          grey--text text--darken-2 pl-8 pr-12 pt-8 text-center"
         >
-          This Flow Group has no
-          <span class="font-weight-medium"> Read Me </span>. You can add one
-          here using
-          <ExternalLink href="https://www.markdownguide.org/basic-syntax/"
-            >markdown
-          </ExternalLink>
-          or learn more about adding a Flow Group Read Me in the
-          <ExternalLink
-            href="https://docs.prefect.io/orchestration/ui/flow.html#readme"
-          >
-            UI Flow Docs</ExternalLink
-          >.
+          This Flow has no
+          <span class="font-weight-medium"> Read Me! </span>
         </div>
         <div
           v-if="!textArea && !description && !flowDescription"
           class="text-center pt-8"
         >
           <v-btn
-            large
-            class="vertical-button"
+            fab
             :title="editButtonTitle"
             color="primary"
             @click="textArea = true"
-            ><v-icon>edit</v-icon>{{ editButtonTitle }}</v-btn
+            ><v-icon>add</v-icon></v-btn
           >
         </div>
       </v-card-text>
