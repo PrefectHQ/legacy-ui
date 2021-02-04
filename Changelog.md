@@ -4,7 +4,8 @@
 
 ### Features and Improvements
 
-- None
+- Check for missing or mismatched labels on Server - [#593](https://github.com/PrefectHQ/ui/pull/593)
+- Update wording on tutorial banner for server users - [#592](https://github.com/PrefectHQ/ui/pull/592)
 
 ### Bugfixes
 
