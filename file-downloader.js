@@ -35,11 +35,6 @@ const downloads = [
   {
     filePath: './public/fonts/roboto-700.ttf',
     url: 'https://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmWUlvAw.ttf'
-  },
-  {
-    filePath: './public/fonts/font-awesome.js',
-    url: 'https://pro.fontawesome.com/releases/v5.15.2/js/all.js',
-    options: { headers: { Origin: 'https://cloud.prefect.io' } }
   }
 ]
 
