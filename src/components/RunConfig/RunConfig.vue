@@ -267,7 +267,7 @@ export default {
 .config-selection-container {
   display: grid;
   grid-column-gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 225px));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 195px));
 }
 
 .config-type {
