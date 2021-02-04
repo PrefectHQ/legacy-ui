@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      stickyActions: true,
+      stickyActions: false,
 
       // Parameters
       parameters: this.selectedFlowParameters,
@@ -201,7 +201,7 @@ export default {
           <v-col cols="12" md="6">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                What do you want to call this run?
+                Name your run
               </div>
             </div>
           </v-col>
@@ -235,7 +235,7 @@ export default {
           <v-col cols="12" md="6" class="d-flex align-center">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                When do you want to run it?
+                Run this flow
               </div>
             </div>
           </v-col>
@@ -279,7 +279,7 @@ export default {
           >
             <v-col cols="0" md="2" />
             <v-col cols="12" md="8">
-              <DateTimeSelector v-model="scheduledStartDateTime" class="mt-8" />
+              <DateTimeSelector v-model="scheduledStartDateTime" />
             </v-col>
             <v-col cols="0" md="2" />
           </v-row>
