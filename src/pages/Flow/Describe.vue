@@ -52,7 +52,7 @@ export default {
       return this.textArea
         ? {
             'border-color': '#DADAD2 !important',
-            'border-style': 'solid',
+            'border-bottom-style': 'solid',
             'border-width': '1px',
             'margin-bottom': '20px'
           }
