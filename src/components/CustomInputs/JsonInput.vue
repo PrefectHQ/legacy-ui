@@ -85,7 +85,7 @@ export default {
         autoCloseBrackets: true,
         matchBrackets: true,
         mode: 'application/json',
-        theme: 'json-input',
+        theme: this.selectedType == 'json' ? 'json-input' : 'light',
         readOnly: this.disabled,
         smartIndent: true,
         lineWrapping: true,
