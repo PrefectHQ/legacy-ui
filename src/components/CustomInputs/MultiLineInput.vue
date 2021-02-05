@@ -116,6 +116,7 @@ export default {
         ref="json-input"
         v-model="jsonInput"
         background-color="white"
+        selected-type="json"
         prepend-icon="fad fa-file-code"
         prepend-icon-label="JSON"
         @input="_handleKeypress"
