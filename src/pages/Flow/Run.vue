@@ -214,7 +214,18 @@ export default {
     flat
     outlined
   >
-    <v-card-text class="run-body">
+    <v-card-text
+      v-if="flow.archived"
+      class="run-body d-flex align-center justify-center"
+      style="min-height: 400px;"
+    >
+      <div class="text-h5 text-center blue-grey--text">
+        <v-icon x-large>archive</v-icon>
+        <div>This flow is archived</div>
+      </div>
+    </v-card-text>
+
+    <v-card-text v-else class="run-body">
       <v-container fluid>
         <v-row class="my-2 pb-8" no-gutters>
           <v-col cols="12" md="3">
@@ -424,6 +435,7 @@ export default {
 
     <!-- This is used to make sure the height of the document doesn't change during the scroll event handling -->
     <div
+      v-if="!flow.archived"
       class="run-actions placeholder"
       :class="{
         sticky: !stickyActions,
@@ -433,6 +445,7 @@ export default {
     />
 
     <v-card-actions
+      v-if="!flow.archived"
       class="run-actions px-4 d-flex align-center"
       :class="{
         sticky: stickyActions,
@@ -527,6 +540,7 @@ export default {
         depressed
         x-large
         :loading="loading"
+        :disabled="flow.archived"
         @click="run"
       >
         Run
