@@ -2,9 +2,12 @@
 /* eslint-disable vue/no-v-html */
 import { artifact_parser } from '@/utils/markdownParser'
 import { mapActions } from 'vuex'
+import { codemirror } from 'vue-codemirror'
 
 export default {
-  components: {},
+  components: {
+    CodeMirror: codemirror
+  },
   props: {
     flowDescription: {
       type: String,
@@ -127,7 +130,7 @@ export default {
     :outlined="!!textArea || !!newDescription"
     elevation="0"
     :color="cardColor"
-    min-height="80vh"
+    min-height="50vh"
     width="100%"
     :style="{ 'border-color': '#DADAD2 !important' }"
   >
@@ -145,165 +148,155 @@ export default {
       <v-icon>edit</v-icon>
     </v-btn>
 
-    <v-card-title v-if="textArea" class="pa-0">
-      <v-toolbar
-        v-if="textArea"
-        color="appBackground"
-        width="100%"
-        height="40px"
-        dense
-        class="ma-0"
-        :style="toolBarStyle"
-        flat
-      >
-        <v-spacer />
-        <v-btn
-          v-if="textArea && !this.$vuetify.breakpoint.xs"
-          text
-          color="rgba(0, 0, 0, 0.54)"
-          small
-          @click="closeTextArea"
-          ><v-icon>fa-times</v-icon><span class="pl-2">Close</span></v-btn
-        >
-
-        <v-btn
-          v-if="textArea && !this.$vuetify.breakpoint.xs"
-          text
-          small
-          color="rgba(0, 0, 0, 0.54)"
-          :loading="loading"
-          class="mr-2"
-          title="Update Read Me"
-          @click="setFlowGroupDescription"
-        >
-          <v-icon>fa-save</v-icon>
-          <span class="pl-2">Save</span>
-        </v-btn>
-        <v-btn
-          v-if="
-            flowDescription &&
-              fgDescription &&
-              textArea &&
-              !this.$vuetify.breakpoint.xs
-          "
-          title="Reset to Read Me added at registration"
-          text
-          small
-          color="rgba(0, 0, 0, 0.54)"
-          @click="resetDescription"
-          ><v-icon small>fa-undo-alt</v-icon>
-          <span class="ml-2">reset</span></v-btn
-        >
-      </v-toolbar>
-      <v-toolbar
-        v-if="textArea"
-        color="appBackground"
-        width="100%"
-        dense
-        height="45px"
-        class="ma-0"
-        :style="toolBarStyle"
-        flat
-      >
-        <v-btn-toggle v-model="tab" tile color="primary" group>
-          <v-btn value="edit" class="ma-0">
-            <v-icon class="mr-0">
-              chevron_left
-            </v-icon>
-            <v-icon :style="{ 'margin-left': '-10px' }">
-              chevron_right
-            </v-icon>
-            Editor
-          </v-btn>
-
-          <v-btn value="preview" class="ma-0">
-            <v-icon small>
-              fa-eye
-            </v-icon>
-            <span class="pl-4"> Preview</span>
-          </v-btn>
-        </v-btn-toggle>
-      </v-toolbar>
-    </v-card-title>
-    <v-card-text class="pa-0">
-      <v-textarea
-        v-if="textArea && tab === 'edit'"
-        ref="textA"
-        v-model="description"
-        outlined
-        type="markdown"
-        class="bigger"
-        autofocus
-      >
-      </v-textarea>
-
-      <div
-        v-else-if="textArea && tab === 'preview'"
-        :style="{
-          'border-color': '#d3d3d3',
-          'border-style': 'solid',
-          'border-radius': '5px',
-          'border-width': '1px',
-          'min-height': '50vh'
-        }"
-        class="artifact md grey--text text--darken-3 px-8"
-        v-html="mdParser(description)"
-      ></div>
-
-      <div
-        v-else-if="newDescription && !loading"
-        class="artifact md grey--text text--darken-3 mx-4 px-8 pt-4"
-        v-html="mdParser(newDescription)"
-      ></div>
-      <div
-        v-else
-        class="headline
-          grey--text text--darken-2 pl-8 pr-12 pt-8 text-center"
-      >
-        This Flow has no
-        <span class="font-weight-medium"> Read Me! </span>
-
-        <div class="text-center pt-8">
-          <v-btn
-            fab
-            :title="editButtonTitle"
-            color="primary"
-            @click="textArea = true"
-            ><v-icon>add</v-icon></v-btn
-          >
-        </div>
-      </div>
-    </v-card-text>
-
-    <v-card-actions v-if="textArea" class="px-8 text-right">
+    <v-toolbar
+      v-if="textArea"
+      color="white"
+      width="100%"
+      height="40px"
+      dense
+      class="ma-0"
+      :style="toolBarStyle"
+      flat
+    >
       <v-spacer />
-      <v-btn text @click="closeTextArea">Close</v-btn>
-
       <v-btn
+        v-if="textArea"
+        text
+        small
         color="primary"
-        class="mr-2"
         :loading="loading"
         title="Update Read Me"
         @click="setFlowGroupDescription"
       >
-        Update
+        <v-icon>fa-save</v-icon>
+        <span class="pl-2">Save</span>
       </v-btn>
+
       <v-btn
-        v-if="flowDescription && fgDescription"
-        title="Reset to Read Me added at registration"
-        color="codePink"
-        dark
-        outlined
-        @click="resetDescription"
-        >Reset</v-btn
+        v-if="textArea"
+        text
+        color="rgba(0, 0, 0, 0.54)"
+        small
+        @click="closeTextArea"
+        ><v-icon>close</v-icon><span>Cancel</span></v-btn
       >
-    </v-card-actions>
+      <v-btn
+        v-if="flowDescription && fgDescription && textArea"
+        title="Reset to Read Me added at registration"
+        text
+        small
+        color="rgba(0, 0, 0, 0.54)"
+        @click="resetDescription"
+        ><v-icon small>fa-undo-alt</v-icon>
+        <span class="ml-2">reset</span></v-btn
+      >
+    </v-toolbar>
+    <v-toolbar
+      v-if="textArea"
+      color="white"
+      width="100%"
+      dense
+      height="45px"
+      class="ma-0"
+      :style="toolBarStyle"
+      flat
+    >
+      <v-btn-toggle v-model="tab" tile group>
+        <v-btn value="edit" class="ma-0">
+          <v-icon class="mr-0">
+            chevron_left
+          </v-icon>
+          <v-icon :style="{ 'margin-left': '-10px' }">
+            chevron_right
+          </v-icon>
+          Editor
+        </v-btn>
+
+        <v-btn value="preview" class="ma-0">
+          <v-icon small>
+            fa-eye
+          </v-icon>
+          <span class="pl-4"> Preview</span>
+        </v-btn>
+      </v-btn-toggle>
+    </v-toolbar>
+    <div v-if="textArea && tab === 'edit'" class="cmirror">
+      <CodeMirror
+        ref="textA"
+        v-model="description"
+        outlined
+        :options="{
+          lineNumbers: true
+        }"
+        line-numbers
+        type="markdown"
+        class="bigger"
+        autofocus
+      >
+      </CodeMirror>
+    </div>
+
+    <div
+      v-else-if="textArea && tab === 'preview'"
+      :style="{
+        'border-color': '#d3d3d3',
+        'border-style': 'solid',
+        'border-radius': '5px',
+        'border-width': '1px',
+        'min-height': '50vh',
+        width: '100%',
+        'background-color': '#ffff'
+      }"
+      class="artifact md grey--text text--darken-3 px-8"
+      v-html="mdParser(description)"
+    ></div>
+
+    <div
+      v-else-if="newDescription && !loading"
+      class="artifact md grey--text text--darken-3 mx-4 px-8 pt-4 wide"
+      v-html="mdParser(newDescription)"
+    ></div>
+    <div
+      v-else
+      class="headline
+          grey--text text--darken-2 pl-8 pr-12 pt-8 text-center wide"
+    >
+      This Flow has no
+      <span class="font-weight-medium"> Read Me! </span>
+
+      <div class="text-center pt-8">
+        <v-btn
+          fab
+          :title="editButtonTitle"
+          color="primary"
+          @click="textArea = true"
+          ><v-icon>add</v-icon></v-btn
+        >
+      </div>
+    </div>
   </v-card>
 </template>
 
 <style>
+.white-background-color {
+  background-color: #ffff;
+}
+
+.app-background-color {
+  background-color: #f9f9f9;
+}
+
 .bigger.v-textarea textarea {
   min-height: 50vh !important;
+}
+
+.wide {
+  min-height: 50vh !important;
+  width: 100%;
+}
+/* stylelint-disable */
+.bigger.v-text-field--outlined > .v-input__control > .v-input__slot {
+  background: white;
 }
 
 .readme >>> div {
@@ -312,5 +305,14 @@ export default {
 
 .readme.pa-0 {
   padding-top: 50px !important;
+}
+
+.cmirror .CodeMirror {
+  width: 100%;
+  height: 50vh;
+}
+
+.cmirror .CodeMirror-vscrollbar {
+  z-index: 4;
 }
 </style>
