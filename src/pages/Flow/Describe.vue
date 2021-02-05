@@ -290,17 +290,9 @@ export default {
   background-color: #f9f9f9;
 }
 
-.bigger.v-textarea textarea {
-  min-height: 70vh !important;
-}
-
 .wide {
   min-height: 70vh !important;
   width: 100%;
-}
-/* stylelint-disable */
-.bigger.v-text-field--outlined > .v-input__control > .v-input__slot {
-  background: white;
 }
 
 .readme >>> div {
