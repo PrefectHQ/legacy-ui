@@ -261,7 +261,7 @@ export default {
       class="headline
           grey--text text--darken-2 pl-8 pr-12 pt-8 text-center wide"
     >
-      This Flow has no
+      This flow has no
       <span class="font-weight-medium"> Read Me! </span>
 
       <div class="text-center pt-8">
