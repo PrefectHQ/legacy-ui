@@ -23,7 +23,8 @@ export default {
       labelInput: [],
       showUnlabeledAgentsOnly: false,
       statusInput: STATUSES,
-      clearingAgents: false
+      clearingAgents: false,
+      clearingError: false
     }
   },
   computed: {
@@ -110,51 +111,62 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     async clearUnhealthyAgents() {
-      this.clearingAgents = true
-      const unhealthyAgents = this.agents.filter(
-        agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
-      )
-      if (!unhealthyAgents) {
-        LogRocket.captureMessage('Clean Up button open but no agents found')
+      try {
+        this.clearingAgents = true
+        const unhealthyAgents = this.agents.filter(
+          agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
+        )
+        if (!unhealthyAgents) {
+          LogRocket.captureMessage('Clean Up button open but no agents found')
+          this.setAlert({
+            alertShow: true,
+            alertMessage: 'Error clearing agents',
+            alertType: 'error'
+          })
+        }
+        await unhealthyAgents.forEach(agent => {
+          agent.isDeleting = true
+          this.$apollo
+            .mutate({
+              mutation: require('@/graphql/Agent/delete-agent.gql'),
+              variables: {
+                agentId: agent.id
+              }
+            })
+            .then(() => {
+              this.cleanUpDialog = false
+              setTimeout(() => {
+                agent.isDeleting = false
+              }, 10000)
+            })
+            .catch(e => {
+              LogRocket.captureException(e)
+              this.clearingError = true
+              agent.isDeleting = false
+            })
+        })
+      } catch (e) {
         this.setAlert({
           alertShow: true,
           alertMessage: 'Error clearing agents',
           alertType: 'error'
         })
+      } finally {
+        setTimeout(() => {
+          this.clearingAgents = false
+        }, 500)
+        setTimeout(() => {
+          this.cleanUpDialog = false
+          if (this.clearingError) {
+            this.setAlert({
+              alertShow: true,
+              alertMessage: 'Error clearing agents',
+              alertType: 'error'
+            })
+            this.clearingError = false
+          }
+        }, 800)
       }
-      unhealthyAgents.forEach(agent => {
-        agent.isDeleting = true
-        this.$apollo
-          .mutate({
-            mutation: require('@/graphql/Agent/delete-agent.gql'),
-            variables: {
-              agentId: agent.ids
-            }
-          })
-          .then(() => {
-            this.cleanUpDialog = false
-            setTimeout(() => {
-              agent.isDeleting = false
-            }, 10000)
-          })
-          .catch(e => {
-            LogRocket.captureError(e)
-            setTimeout(() => {
-              agent.isDeleting = false
-              this.setAlert({
-                alertShow: true,
-                alertMessage: 'Error clearing agents',
-                alertType: 'error'
-              })
-            }, 2000)
-          })
-      })
-      setTimeout(() => {
-        this.clearingAgents = false
-      }, 500)
-      setTimeout(() => {
-        this.cleanUpDialog = false
-      }, 800)
     },
     handleLabelClick(lbl) {
       let label = lbl.trim()
