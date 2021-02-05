@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      internalValue: this.value ?? { type: 'UniversalRun' },
+      internalValue: this.value || { type: 'UniversalRun' },
       shownArgs: {},
       storedValues: {},
       templateType: this.value?.type || 'UniversalRun'
@@ -86,8 +86,6 @@ export default {
     }
   },
   mounted() {
-    /* eslint-disable no-console */
-    console.log(this.internalValue)
     this.createArgs()
   },
   methods: {
@@ -96,17 +94,17 @@ export default {
       Object.keys(runConfigs).forEach(config => {
         runConfigs[config].args.forEach(arg => {
           if (arg.arg) {
-            dict[arg.arg] = this.value[arg.arg]
+            dict[arg.arg] = this.value?.[arg.arg] || nullValues[arg.type]
           }
 
           arg.options?.forEach(option => {
             if (option.arg) {
-              dict[option.arg] = this.value[arg]
+              dict[option.arg] = this.value?.[arg] || nullValues[arg.type]
             }
           })
         })
       })
-      this.internalValue = { type: this.template.type, ...dict }
+      this.internalValue = { type: this.templateType, ...dict }
     },
     handleArgOptionClick(arg) {
       arg.options.forEach(o => {
