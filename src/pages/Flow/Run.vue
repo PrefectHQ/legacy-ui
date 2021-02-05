@@ -8,6 +8,7 @@ import ExternalLink from '@/components/ExternalLink'
 import MenuTooltip from '@/components/MenuTooltip'
 import RunConfig from '@/components/RunConfig/RunConfig'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
+import { formatTime } from '@/mixins/formatTimeMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
@@ -24,7 +25,7 @@ export default {
     MenuTooltip,
     RunConfig
   },
-  mixins: [parametersMixin],
+  mixins: [parametersMixin, formatTime],
   props: {
     flow: {
       required: true,
@@ -43,6 +44,7 @@ export default {
 
       // Schedule
       scheduledStartDateTime: null,
+      scheduledStartTimezone: null,
 
       // Flow run name input
       flowRunName: this.generateRandomName(),
@@ -310,7 +312,10 @@ export default {
           >
             <v-col cols="0" md="2" />
             <v-col cols="12" md="8">
-              <DateTimeSelector v-model="scheduledStartDateTime" />
+              <DateTimeSelector
+                v-model="scheduledStartDateTime"
+                :timezone.sync="scheduledStartTimezone"
+              />
             </v-col>
             <v-col cols="0" md="2" />
           </v-row>
@@ -481,7 +486,14 @@ export default {
         <div>
           <span>When:</span>
           <span class="float-right font-weight-medium ml-2"
-            >{{ when == 'now' ? 'now' : scheduledStartDateTime }}
+            >{{
+              when == 'now'
+                ? 'now'
+                : formatDateTimeFromUTC(
+                    scheduledStartDateTime,
+                    scheduledStartTimezone
+                  )
+            }}
           </span>
         </div>
 

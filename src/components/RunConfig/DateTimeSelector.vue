@@ -44,21 +44,8 @@ export default {
     internalValue() {
       if (!this.dateTime) return
 
-      // Determine the user's timezone (-05:00, Z, etc)
-      const tz = moment()
-        .tz(this.timezone_)
-        .format('Z')
-
-      // If user's timezone is set...
-      return (
-        this.dateTime
-          // format to ISO 8601,
-          .format()
-          // Remove timezone identifier (-05:00, Z, etc),
-          .replace(/([+|-]\d{2}:\d{2})|Z$/g, '')
-          // Append new timezone identifier based on user's timezone.
-          .concat(tz)
-      )
+      // format to ISO 8601,
+      return this.dateTime.format()
     },
     displayDay() {
       return this.dateTime?.format('D')
@@ -219,12 +206,14 @@ export default {
     internalValue(val) {
       this.$emit('input', val)
     },
-    timezone_() {
+    timezone_(val) {
       this.dateTime = this.momentWithTimezone(this.dateTime)
+      this.$emit('update:timezone', val)
     }
   },
   mounted() {
     this.dateTime = this.momentWithTimezone()
+    this.$emit('update:timezone', this.timezone_)
 
     const updateCurrentDateTime = () => {
       // If both date and time have been changed, exit immediately
@@ -266,7 +255,11 @@ export default {
 <template>
   <v-container class="pa-0 ma-0" fluid>
     <v-row no-gutters>
-      <v-col cols="12" md="4" class="d-flex align-center justify-start">
+      <v-col
+        cols="12"
+        md="4"
+        class="d-flex align-center justify-start text-right"
+      >
         <div
           class="pb-16 text-h5"
           :class="{
