@@ -67,8 +67,7 @@ export default {
       }
     },
     _handleKeypress() {
-      this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
-      this.$emit('change', this.value)
+      this.$emit('input', this.value)
     },
     _handleYamlInput() {},
     switchMode() {
@@ -119,7 +118,7 @@ export default {
         background-color="white"
         prepend-icon="fad fa-file-code"
         prepend-icon-label="JSON"
-        @input="_handleJsonInput"
+        @input="_handleKeypress"
       />
     </div>
 
@@ -130,7 +129,7 @@ export default {
         background-color="white"
         prepend-icon="fad fa-file-alt"
         prepend-icon-label="YAML"
-        @input="_handleYamlInput"
+        @input="_handleKeypress"
       />
     </div>
   </div>

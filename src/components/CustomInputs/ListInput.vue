@@ -24,9 +24,9 @@ export default {
   },
   data() {
     return {
-      internalValue: this.value,
+      internalValue: this.value ?? [],
       // Used to reset the list
-      initialValue: this.value
+      initialValue: this.value ?? []
     }
   },
   computed: {

@@ -88,8 +88,26 @@ export default {
   mounted() {
     /* eslint-disable no-console */
     console.log(this.internalValue)
+    this.createArgs()
   },
   methods: {
+    createArgs() {
+      const dict = {}
+      Object.keys(runConfigs).forEach(config => {
+        runConfigs[config].args.forEach(arg => {
+          if (arg.arg) {
+            dict[arg.arg] = this.value[arg.arg]
+          }
+
+          arg.options?.forEach(option => {
+            if (option.arg) {
+              dict[option.arg] = this.value[arg]
+            }
+          })
+        })
+      })
+      this.internalValue = { type: this.template.type, ...dict }
+    },
     handleArgOptionClick(arg) {
       arg.options.forEach(o => {
         if (!o.arg) return
@@ -97,6 +115,9 @@ export default {
         this.internalValue[o.arg] =
           nullValues[this.template.args.find(a => a.arg == o.arg)?.type]
       })
+    },
+    handleInput(arg, val) {
+      this.$set(this.internalValue, arg, val)
     }
   }
 }
@@ -201,65 +222,57 @@ export default {
           </div>
         </v-col>
 
-        <v-fade-transition mode="out-in">
-          <v-col v-if="shownArgs[arg.ref]" cols="12">
-            <v-row no-gutters class="my-4">
-              <v-col cols="12" md="6">
-                <div
-                  class="pl-md-8 mb-6 mb-md-0 pl-sm-0 py-0"
-                  :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }"
-                >
-                  <div class="text-h6">
-                    {{ arg.options[shownArgs[arg.ref]].label }}
-                    <span
-                      v-if="arg.options[shownArgs[arg.ref]].arg"
-                      class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-                      style="border: 1px solid #b0bec5 !important;"
-                    >
-                      {{ arg.options[shownArgs[arg.ref]].arg }}
-                    </span>
-                  </div>
-
-                  <div
-                    class="mt-2 text-body-2"
-                    v-html="arg.options[shownArgs[arg.ref]].description"
-                  />
+        <v-col v-for="(option, j) in arg.options" :key="option.label" cols="12">
+          <v-row
+            v-if="option.arg && shownArgs[arg.ref] == j"
+            no-gutters
+            class="my-4"
+          >
+            <v-col cols="12" md="6">
+              <div
+                class="pl-md-8 mb-6 mb-md-0 pl-sm-0 py-0"
+                :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }"
+              >
+                <div class="text-h6">
+                  {{ option.label }}
+                  <span
+                    v-if="option.arg"
+                    class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
+                    style="border: 1px solid #b0bec5 !important;"
+                  >
+                    {{ option.arg }}
+                  </span>
                 </div>
-              </v-col>
 
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-if="arg.options[shownArgs[arg.ref]].input_type == 'string'"
-                  v-model="internalValue[arg.options[shownArgs[arg.ref]].arg]"
-                  placeholder="Default"
-                  class="white"
-                  :label="arg.options[shownArgs[arg.ref]].label"
-                  hide-details
-                  outlined
-                  dense
-                />
-                <MultiLineInput
-                  v-else-if="
-                    arg.options[shownArgs[arg.ref]].input_type == 'multiline'
-                  "
-                  v-model="internalValue[arg.options[shownArgs[arg.ref]]]"
-                />
-                <DictInput
-                  v-else-if="
-                    arg.options[shownArgs[arg.ref]].input_type == 'object'
-                  "
-                  v-model="internalValue[arg.options[shownArgs[arg.ref]]]"
-                />
-                <ListInput
-                  v-else-if="
-                    arg.options[shownArgs[arg.ref]].input_type == 'list'
-                  "
-                  v-model="internalValue[arg.options[shownArgs[arg.ref]]]"
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-fade-transition>
+                <div class="mt-2 text-body-2" v-html="option.description" />
+              </div>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-if="option.input_type == 'string'"
+                placeholder="Default"
+                class="white"
+                :label="option.label"
+                hide-details
+                outlined
+                dense
+                @input="handleInput(option.arg, $event)"
+              />
+              <MultiLineInput
+                v-else-if="option.input_type == 'multiline'"
+                @input="handleInput(option.arg, $event)"
+              />
+              <DictInput
+                v-else-if="option.input_type == 'object'"
+                @input="handleInput(option.arg, $event)"
+              />
+              <ListInput
+                v-else-if="option.input_type == 'list'"
+                @input="handleInput(option.arg, $event)"
+              />
+            </v-col>
+          </v-row>
+        </v-col>
       </v-row>
     </transition-group>
   </div>
