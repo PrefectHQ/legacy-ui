@@ -76,7 +76,7 @@ export default {
 </script>
 
 <template>
-  <v-container v-if="!refresh" class="ma-2 pl-0 pt-0">
+  <v-container v-if="!refresh" class="mt-6 ma-2 pl-0 pt-0">
     <v-row>
       <v-col class="pa-0" cols="12" md="3" lg="2">
         <v-date-picker
