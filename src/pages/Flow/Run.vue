@@ -412,7 +412,7 @@ export default {
           block
           depressed
           text
-          class="text-none blue-grey--text mt-8 text--darken-2"
+          class="text-none blue-grey--text mt-8 py-8 text--darken-2"
           @click="showAdvanced = !showAdvanced"
         >
           <div>
