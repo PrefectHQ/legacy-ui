@@ -472,7 +472,7 @@ export default {
       </v-btn>
 
       <v-btn :input-value="tab == 'versions'" @click="tab = 'description'">
-        Description
+        ReadMe
         <v-icon>far fa-file-code</v-icon>
       </v-btn>
 
