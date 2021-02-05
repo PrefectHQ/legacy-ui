@@ -247,10 +247,6 @@ export default {
     <div
       v-else-if="textArea && tab === 'preview'"
       :style="{
-        'border-color': '#d3d3d3',
-        'border-style': 'solid',
-        'border-radius': '5px',
-        'border-width': '1px',
         height: '70vh',
         width: '100%',
         'background-color': '#ffff'
