@@ -137,7 +137,7 @@ export default {
     :outlined="!!textArea || !!newDescription"
     elevation="0"
     :color="cardColor"
-    min-height="50vh"
+    min-height="70vh"
     width="100%"
     :style="{ 'border-color': '#DADAD2 !important' }"
   >
@@ -260,7 +260,7 @@ export default {
         'border-style': 'solid',
         'border-radius': '5px',
         'border-width': '1px',
-        'min-height': '50vh',
+        'min-height': '70vh',
         width: '100%',
         'background-color': '#ffff'
       }"
@@ -304,11 +304,11 @@ export default {
 }
 
 .bigger.v-textarea textarea {
-  min-height: 50vh !important;
+  min-height: 70vh !important;
 }
 
 .wide {
-  min-height: 50vh !important;
+  min-height: 70vh !important;
   width: 100%;
 }
 /* stylelint-disable */
@@ -326,7 +326,7 @@ export default {
 
 .cmirror .CodeMirror {
   width: 100%;
-  height: 50vh;
+  height: 70vh;
 }
 
 .cmirror .CodeMirror-vscrollbar {
