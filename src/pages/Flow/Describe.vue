@@ -46,7 +46,6 @@ export default {
       return 'Edit Read Me'
     },
     cardColor() {
-      console.log('modes', codemirror.modes, codemirror.mimeModes)
       return this.textArea || this.newDescription ? 'white' : 'appBackground'
     },
     toolBarStyle() {
