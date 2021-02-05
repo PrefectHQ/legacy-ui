@@ -22,10 +22,6 @@ export default {
     flowGroupId: {
       type: String,
       required: true
-    },
-    all: {
-      type: Boolean,
-      required: true
     }
   },
   data() {
