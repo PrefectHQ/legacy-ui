@@ -46,6 +46,7 @@ export default {
       return 'Edit Read Me'
     },
     cardColor() {
+      console.log('modes', codemirror.modes, codemirror.mimeModes)
       return this.textArea || this.newDescription ? 'white' : 'appBackground'
     },
     toolBarStyle() {
@@ -63,8 +64,14 @@ export default {
     flowGroupId() {
       this.reload = true
       this.newDescription = ''
+      this.description = ''
       this.$nextTick(() => {
         this.newDescription = this.fgDescription || this.flowDescription || ''
+        this.description =
+          this.newDescription ||
+          this.fgDescription ||
+          this.flowDescription ||
+          ''
         this.reload = false
       })
     }
@@ -88,7 +95,8 @@ export default {
       this.textArea = false
       this.clear = false
       this.tab = 'edit'
-      this.description = this.fgDescription || this.flowDescription || ''
+      this.description =
+        this.newDescription || this.fgDescription || this.flowDescription || ''
     },
     async setFlowGroupDescription() {
       if (this.clear) this.description = ''
@@ -152,25 +160,13 @@ export default {
       v-if="textArea"
       color="white"
       width="100%"
-      height="40px"
+      height="30px"
       dense
       class="ma-0"
       :style="toolBarStyle"
       flat
     >
       <v-spacer />
-      <v-btn
-        v-if="textArea"
-        text
-        small
-        color="primary"
-        :loading="loading"
-        title="Update Read Me"
-        @click="setFlowGroupDescription"
-      >
-        <v-icon>fa-save</v-icon>
-        <span class="pl-2">Save</span>
-      </v-btn>
 
       <v-btn
         v-if="textArea"
@@ -178,7 +174,8 @@ export default {
         color="rgba(0, 0, 0, 0.54)"
         small
         @click="closeTextArea"
-        ><v-icon>close</v-icon><span>Cancel</span></v-btn
+        ><v-icon x-small>fa-times</v-icon
+        ><span style="text-transform: none;" class="pl-1">Cancel</span></v-btn
       >
       <v-btn
         v-if="flowDescription && fgDescription && textArea"
@@ -187,36 +184,55 @@ export default {
         small
         color="rgba(0, 0, 0, 0.54)"
         @click="resetDescription"
-        ><v-icon small>fa-undo-alt</v-icon>
-        <span class="ml-2">reset</span></v-btn
+        ><v-icon x-small>fa-undo-alt</v-icon>
+        <span style="text-transform: none;" class="pl-1">Reset</span></v-btn
       >
+      <v-btn
+        v-if="textArea"
+        text
+        small
+        color="rgba(0, 0, 0, 0.54)"
+        :loading="loading"
+        title="Update Read Me"
+        @click="setFlowGroupDescription"
+      >
+        <v-icon x-small>fa-save</v-icon>
+        <span style="text-transform: none;" class="pl-1">Save</span>
+      </v-btn>
     </v-toolbar>
     <v-toolbar
       v-if="textArea"
       color="white"
       width="100%"
       dense
-      height="45px"
+      height="30px"
       class="ma-0"
       :style="toolBarStyle"
       flat
     >
-      <v-btn-toggle v-model="tab" tile group>
-        <v-btn value="edit" class="ma-0">
-          <v-icon class="mr-0">
+      <v-btn-toggle
+        v-model="tab"
+        tile
+        class="ma-0"
+        :style="{ height: '30px' }"
+        color="primary"
+        group
+      >
+        <v-btn class="ma-0" height="100%" small value="edit">
+          <v-icon small class="mr-0">
             chevron_left
           </v-icon>
-          <v-icon :style="{ 'margin-left': '-10px' }">
+          <v-icon small :style="{ 'margin-left': '-10px' }">
             chevron_right
           </v-icon>
-          Editor
+          <span style="text-transform: none;"> Editor</span>
         </v-btn>
 
-        <v-btn value="preview" class="ma-0">
-          <v-icon small>
+        <v-btn height="100%" class="ma-0" small value="preview">
+          <v-icon x-small>
             fa-eye
           </v-icon>
-          <span class="pl-4"> Preview</span>
+          <span style="text-transform: none;" class="pl-2"> Preview</span>
         </v-btn>
       </v-btn-toggle>
     </v-toolbar>
@@ -227,7 +243,8 @@ export default {
         outlined
         :options="{
           lineNumbers: true,
-          lineWrapping: true
+          lineWrapping: true,
+          mode: 'markdown'
         }"
         line-numbers
         type="markdown"
