@@ -131,7 +131,7 @@ export default {
     :color="cardColor"
     min-height="70vh"
     width="100%"
-    :style="{ 'border-color': '#DADAD2 !important' }"
+    :style="{ 'border-color': '#DADAD2 !important', overflow: 'auto' }"
   >
     <v-btn
       v-if="newDescription && !textArea"
@@ -251,7 +251,7 @@ export default {
         'border-style': 'solid',
         'border-radius': '5px',
         'border-width': '1px',
-        'min-height': '70vh',
+        height: '70vh',
         width: '100%',
         'background-color': '#ffff'
       }"
@@ -291,7 +291,7 @@ export default {
 }
 
 .wide {
-  min-height: 70vh !important;
+  height: 70vh !important;
   width: 100%;
 }
 /* stylelint-disable */
