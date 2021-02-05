@@ -485,7 +485,7 @@ export default {
       >
         <div>
           <span>When:</span>
-          <span class="float-right font-weight-medium ml-2"
+          <span class="float-right font-weight-medium ml-2 accentGreen--text"
             >{{
               when == 'now'
                 ? 'now'
@@ -521,7 +521,10 @@ export default {
           <span>RunConfig:</span>
           <span class="float-right font-weight-medium ml-2">
             <span v-if="runConfigTemplate" class="accentGreen--text">
-              <i :class="runConfigTemplate.icon" class="fa-sm"> </i>
+              <span :key="runConfigTemplate.icon">
+                <i :class="runConfigTemplate.icon" class="fa-sm"> </i>
+              </span>
+
               <span> {{ runConfigTemplate.label }}</span>
             </span>
             <span v-else>none</span>
@@ -624,12 +627,13 @@ export default {
   }
 
   div:nth-child(n + 3) {
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   &.summary-background {
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(0, 0, 0, 0.2);
     border-radius: 2px;
+    color: #fff;
   }
 }
 
