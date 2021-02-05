@@ -33,6 +33,8 @@ export default {
         this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
       timezones: timezones,
 
+      previousDay: null,
+
       // These are set to true if a user has edited the date/time fields
       // so that the counter doesn't continue to increment values
       dateChanged: false,
@@ -195,11 +197,6 @@ export default {
 
         this.dateTime = this.momentWithTimezone(dateTime)
       }
-    },
-    previousDay() {
-      return moment(this.dateTime)
-        .startOf('day')
-        .format('YYYY-MM-DD')
     }
   },
   watch: {
@@ -213,6 +210,8 @@ export default {
   },
   mounted() {
     this.dateTime = this.momentWithTimezone()
+    this.previousDay = new moment().startOf('day').format('YYYY-MM-DD')
+
     this.$emit('update:timezone', this.timezone_)
 
     const updateCurrentDateTime = () => {
@@ -233,6 +232,9 @@ export default {
     }
 
     this.dateInterval = setInterval(updateCurrentDateTime, 5000)
+  },
+  updated() {
+    this.previousDay = new moment().startOf('day').format('YYYY-MM-DD')
   },
   destroyed() {
     clearInterval(this.dateInterval)
