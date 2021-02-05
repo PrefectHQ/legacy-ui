@@ -226,7 +226,8 @@ export default {
         v-model="description"
         outlined
         :options="{
-          lineNumbers: true
+          lineNumbers: true,
+          lineWrapping: true
         }"
         line-numbers
         type="markdown"

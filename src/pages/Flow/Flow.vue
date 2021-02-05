@@ -69,7 +69,7 @@ export default {
         {
           name: 'Read Me', 
           target: 'description',
-          icon: 'fab fa-readme',
+          icon: 'far fa-file-code',
           badgeText: 'New',
           cardText:
             'A Flow Read Me can now be added in the UI. For more information check out the',
@@ -477,7 +477,7 @@ export default {
 
       <v-btn :input-value="tab == 'versions'" @click="tab = 'description'">
         Description
-        <v-icon>fab fa-readme</v-icon>
+        <v-icon>far fa-file-code</v-icon>
       </v-btn>
 
       <!-- <v-btn disabled @click="tab = 'analytics'">
