@@ -146,6 +146,7 @@ export default {
             })
         })
       } catch (e) {
+        LogRocket.captureException(e)
         this.setAlert({
           alertShow: true,
           alertMessage: 'Error clearing agents',
