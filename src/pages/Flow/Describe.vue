@@ -249,7 +249,8 @@ export default {
       :style="{
         height: '70vh',
         width: '100%',
-        'background-color': '#ffff'
+        'background-color': '#ffff',
+        overflow: 'auto'
       }"
       class="artifact md grey--text text--darken-3 px-8"
       v-html="mdParser(description)"
@@ -302,6 +303,7 @@ export default {
 .cmirror .CodeMirror {
   width: 100%;
   height: 70vh;
+  overflow: auto;
 }
 
 .cmirror .CodeMirror-vscrollbar {
