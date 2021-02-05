@@ -11,7 +11,7 @@
   publish = "dist/"
 
   # Default build command.
-  command = "echo 'FA_TOKEN=$FA_TOKEN' >> .env && npm run build"
+  command = "mv .npmrc.netlify .npmrc && npm run build"
 
 
 # The following redirect is intended for use with most SPAs that handle
