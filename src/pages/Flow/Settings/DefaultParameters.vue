@@ -127,7 +127,7 @@ export default {
         Flow. Here you can set new flow group default parameters or reset them
         to the parameters you set at registration.
       </div>
-      <v-row>
+      <v-row class="mt-4">
         <v-col cols="12" class="pt-0">
           <v-row>
             <v-col cols="12">
