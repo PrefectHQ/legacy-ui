@@ -122,11 +122,7 @@ export default {
     async run() {
       try {
         this.loading = true
-        if (!this.validParameters()) return
-        if (!this.validContext()) return
 
-        console.log(this.runConfig)
-        if (console) return
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
