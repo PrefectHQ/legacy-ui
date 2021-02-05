@@ -134,7 +134,7 @@ export default {
   >
     <v-btn
       v-if="newDescription && !textArea"
-      title="Edit Read Me"
+      title="Edit ReadMe"
       icon
       class="mt-4"
       absolute
@@ -170,7 +170,7 @@ export default {
       >
       <v-btn
         v-if="flowDescription && fgDescription && textArea"
-        title="Reset to Read Me added at registration"
+        title="Reset to ReadMe added at registration"
         text
         small
         tile
@@ -186,7 +186,7 @@ export default {
         tile
         color="rgba(0, 0, 0, 0.54)"
         :loading="loading"
-        title="Update Read Me"
+        title="Update ReadMe"
         @click="setFlowGroupDescription"
       >
         <v-icon x-small>fa-save</v-icon>
@@ -270,10 +270,10 @@ export default {
           grey--text text--darken-2 pl-8 pr-12 pt-8 text-center wide"
     >
       This flow has no
-      <span class="font-weight-medium"> Read Me! </span>
+      <span class="font-weight-medium"> ReadMe! </span>
 
       <div class="text-center pt-8">
-        <v-btn fab title="Add Read Me" color="primary" @click="textArea = true"
+        <v-btn fab title="Add ReadMe" color="primary" @click="textArea = true"
           ><v-icon>add</v-icon></v-btn
         >
       </div>
