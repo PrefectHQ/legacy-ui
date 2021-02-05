@@ -129,7 +129,6 @@ export default {
     :outlined="!!textArea || !!newDescription"
     elevation="0"
     :color="cardColor"
-    min-height="70vh"
     width="100%"
     :style="{ 'border-color': '#DADAD2 !important', overflow: 'auto' }"
   >
@@ -292,7 +291,8 @@ export default {
 }
 
 .wide {
-  height: 70vh !important;
+  max-height: 80vh;
+  min-height: 30vh !important;
   width: 100%;
 }
 /* stylelint-disable */
