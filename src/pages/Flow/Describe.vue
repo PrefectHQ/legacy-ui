@@ -294,7 +294,7 @@ export default {
   min-height: 70vh !important;
   width: 100%;
 }
-
+/* stylelint-disable */
 .readme >>> div {
   border-color: #d3d3d3 !important;
 }
