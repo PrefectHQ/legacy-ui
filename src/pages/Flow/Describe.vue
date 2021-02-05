@@ -162,6 +162,7 @@ export default {
       <v-btn
         v-if="textArea"
         text
+        tile
         color="rgba(0, 0, 0, 0.54)"
         small
         @click="closeTextArea"
@@ -173,6 +174,7 @@ export default {
         title="Reset to Read Me added at registration"
         text
         small
+        tile
         color="rgba(0, 0, 0, 0.54)"
         @click="resetDescription"
         ><v-icon x-small>fa-undo-alt</v-icon>
@@ -182,6 +184,7 @@ export default {
         v-if="textArea"
         text
         small
+        tile
         color="rgba(0, 0, 0, 0.54)"
         :loading="loading"
         title="Update Read Me"
@@ -196,20 +199,21 @@ export default {
       color="white"
       width="100%"
       dense
-      height="30px"
-      class="ma-0"
+      height="28px"
+      class="ma-0 pa-0 tbar"
       :style="toolBarStyle"
       flat
     >
       <v-btn-toggle
         v-model="tab"
         tile
+        borderless
         class="ma-0"
-        :style="{ height: '30px' }"
+        :style="{ height: '100%' }"
         color="primary"
         group
       >
-        <v-btn class="ma-0" height="100%" small value="edit">
+        <v-btn class="ma-0" height="100%" small tile value="edit">
           <v-icon small class="mr-0">
             chevron_left
           </v-icon>
@@ -219,7 +223,7 @@ export default {
           <span style="text-transform: none;"> Editor</span>
         </v-btn>
 
-        <v-btn height="100%" class="ma-0" small value="preview">
+        <v-btn height="100%" class="ma-0" tile small value="preview">
           <v-icon x-small>
             fa-eye
           </v-icon>
@@ -300,6 +304,9 @@ export default {
   padding-top: 50px !important;
 }
 
+.tbar .v-toolbar__content {
+  padding-left: 0;
+}
 .cmirror .CodeMirror {
   width: 100%;
   height: 70vh;
