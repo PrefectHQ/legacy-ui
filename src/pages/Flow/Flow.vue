@@ -401,7 +401,11 @@ export default {
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <RunTiles :flow="selectedFlow" :flow-group="flowGroup" />
+        <RunTiles
+          v-if="tab == 'run'"
+          :flow="selectedFlow"
+          :flow-group="flowGroup"
+        />
       </v-tab-item>
 
       <v-tab-item

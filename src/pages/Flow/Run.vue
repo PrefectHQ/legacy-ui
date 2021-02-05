@@ -7,7 +7,6 @@ import DictInput from '@/components/CustomInputs/DictInput'
 import ExternalLink from '@/components/ExternalLink'
 import MenuTooltip from '@/components/MenuTooltip'
 import RunConfig from '@/components/RunConfig/RunConfig'
-import { parametersMixin } from '@/mixins/parametersMixin.js'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
@@ -25,7 +24,7 @@ export default {
     MenuTooltip,
     RunConfig
   },
-  mixins: [parametersMixin, formatTime],
+  mixins: [formatTime],
   props: {
     flow: {
       required: true,
@@ -98,15 +97,6 @@ export default {
     runConfigTemplate() {
       if (!this.runConfig) return
       return runConfigs[this.runConfig.type]
-    }
-  },
-  watch: {
-    //Makes sure that codemirror updates if new defaults are set in the settings tab
-    $route() {
-      this.codeMirrorLoading = true
-      setTimeout(() => {
-        this.codeMirrorLoading = false
-      }, 5)
     }
   },
   destroyed() {
@@ -227,15 +217,15 @@ export default {
     <v-card-text class="run-body">
       <v-container fluid>
         <v-row class="my-2 pb-8" no-gutters>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="3">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                Name your run
+                Name
               </div>
             </div>
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="9">
             <div class=" mt-4 mt-md-0 d-flex align-center">
               <v-btn
                 color="primary"
@@ -261,15 +251,15 @@ export default {
         </v-row>
 
         <v-row class="mt-2 py-8" no-gutters>
-          <v-col cols="12" md="6" class="d-flex align-center">
+          <v-col cols="12" md="3" class="d-flex align-center">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                Run this flow
+                Start
               </div>
             </div>
           </v-col>
 
-          <v-col cols="12" md="6" class="d-flex align-center mt-4 mt-md-0">
+          <v-col cols="12" md="9" class="d-flex align-center mt-4 mt-md-0">
             <v-btn
               depressed
               color="blue-grey"
@@ -318,10 +308,10 @@ export default {
         </v-fade-transition>
 
         <v-row v-if="showParameters" class="my-2 py-8" no-gutters>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="3">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                Modify your parameters
+                Inputs
                 <MenuTooltip>
                   <p>
                     These are the parameters that are passed to your flow
@@ -342,7 +332,7 @@ export default {
             </div>
           </v-col>
 
-          <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8">
+          <v-col cols="12" md="9" class="mt-n4 mt-md-0 ">
             <DictInput
               v-model="parameters"
               :dict="parameterItems"
@@ -353,10 +343,10 @@ export default {
         </v-row>
 
         <v-row v-if="showAdvanced" class="my-2 py-8 row-divider" no-gutters>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="3">
             <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
               <div class="text-h5">
-                Modify run context
+                Context
                 <MenuTooltip>
                   <p>
                     The
@@ -378,7 +368,7 @@ export default {
             </div>
           </v-col>
 
-          <v-col cols="12" md="6" class="mt-md-0 mt-sm-8 mt-xs-8 text-body-1">
+          <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
             <DictInput v-model="context" />
           </v-col>
         </v-row>
