@@ -7,7 +7,7 @@ ENV FA_TOKEN=$FA_TOKEN
 
 # Write the arg into the .env file
 RUN echo "VUE_APP_PREFECT_VERSION=${PREFECT_VERSION}" >> .env
-RUN echo RUN echo FA_TOKEN=$FA_TOKEN >> .env
+RUN echo FA_TOKEN=$FA_TOKEN >> .env
 
 # Move application files to the app directory
 COPY ./ /app
