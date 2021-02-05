@@ -221,7 +221,24 @@ export default {
     >
       <div class="text-h5 text-center blue-grey--text">
         <v-icon x-large>archive</v-icon>
-        <div>This flow is archived</div>
+        <div>
+          This version of your flow is archived
+
+          <MenuTooltip>
+            <p>
+              Archived versions of flows cannot be run.
+            </p>
+
+            <p>
+              Refer to the
+              <ExternalLink
+                href="https://docs.prefect.io/orchestration/concepts/flows.html#flow-versions-and-archiving"
+                >documentation</ExternalLink
+              >
+              for more details on versions and archiving.
+            </p>
+          </MenuTooltip>
+        </div>
       </div>
     </v-card-text>
 
