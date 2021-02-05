@@ -239,7 +239,6 @@ export default {
         }"
         line-numbers
         type="markdown"
-        class="bigger"
         autofocus
       >
       </CodeMirror>
