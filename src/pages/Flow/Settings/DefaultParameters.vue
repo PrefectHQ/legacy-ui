@@ -116,7 +116,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile :loading="loading">
+  <v-card class="pa-2 mt-2" :loading="loading" outlined>
     <CardTitle title="Default Parameters" icon="perm_data_setting" />
 
     <v-card-text class="pl-12">
