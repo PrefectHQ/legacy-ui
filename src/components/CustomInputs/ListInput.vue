@@ -6,6 +6,11 @@ export default {
       required: false,
       default: () => []
     },
+    label: {
+      type: String,
+      required: false,
+      default: () => null
+    },
     items: {
       type: Array,
       required: false,
@@ -93,7 +98,7 @@ export default {
     <v-combobox
       v-model="internalValue"
       hide-selected
-      label="Labels"
+      :label="label"
       :items="items"
       :append-icon="items.length > 0 ? '$dropdown' : null"
       multiple

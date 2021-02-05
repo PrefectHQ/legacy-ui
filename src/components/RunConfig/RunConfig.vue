@@ -203,6 +203,7 @@ export default {
           <ListInput
             v-else-if="arg.input_type == 'list'"
             v-model="internalValue[arg.arg]"
+            :label="arg.label"
           />
 
           <div v-else-if="arg.input_type == 'arg_override'">
@@ -268,6 +269,7 @@ export default {
               />
               <ListInput
                 v-else-if="option.input_type == 'list'"
+                :label="option.label"
                 @input="handleInput(option.arg, $event)"
               />
             </v-col>
