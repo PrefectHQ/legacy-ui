@@ -37,10 +37,6 @@ export default {
     }
   },
   computed: {
-    editButtonTitle() {
-      if (!this.flowDescription && !this.description) return 'Add Read Me'
-      return 'Edit Read Me'
-    },
     cardColor() {
       return this.textArea || this.newDescription ? 'white' : 'appBackground'
     },
@@ -139,7 +135,7 @@ export default {
   >
     <v-btn
       v-if="newDescription && !textArea"
-      :title="editButtonTitle"
+      title="Edit Read Me"
       icon
       class="mt-4"
       absolute
@@ -278,11 +274,7 @@ export default {
       <span class="font-weight-medium"> Read Me! </span>
 
       <div class="text-center pt-8">
-        <v-btn
-          fab
-          :title="editButtonTitle"
-          color="primary"
-          @click="textArea = true"
+        <v-btn fab title="Add Read Me" color="primary" @click="textArea = true"
           ><v-icon>add</v-icon></v-btn
         >
       </div>
