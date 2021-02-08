@@ -141,7 +141,8 @@ export default {
             flowRunName: this.flowRunName,
             parameters: this.parameters,
             scheduledStartTime: this.scheduledStartDateTime,
-            runConfig: this.runConfig
+            runConfig: this.runConfig,
+            labels: this.labels
           },
           errorPolicy: 'all'
         })
