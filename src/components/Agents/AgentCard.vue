@@ -7,11 +7,11 @@ import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 const AGENT_TYPES = [
-  { type: 'DockerAgent', icon: '$docker' },
-  { type: 'ECSAgent', icon: 'fab fa-aws' },
-  { type: 'FargateAgent', icon: '$fargate' },
+  { type: 'DockerAgent', icon: 'fab fa-docker pa-1' },
+  { type: 'ECSAgent', icon: 'fab fa-aws pa-1' },
+  { type: 'FargateAgent', icon: 'fab fa-aws pa-1' },
   { type: 'KubernetesAgent', icon: 'pi-kubernetes' },
-  { type: 'LocalAgent', icon: 'fad fa-laptop-house' },
+  { type: 'LocalAgent', icon: 'fad fa-laptop-house pa-1' },
   { type: 'NomadAgent', icon: '$nomad' }
 ]
 
@@ -133,7 +133,7 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     agentIcon(type) {
-      return AGENT_TYPES.find(a => a.type == type)?.icon
+      return AGENT_TYPES.find(a => a.type == type)?.icon || 'fad fa-globe'
     },
     anyLabelsSelected(labels) {
       return labels.reduce((result, label) => this.labelSelected(label), false)
@@ -195,7 +195,7 @@ export default {
       :subtitle="type"
       :icon="agent.type ? agentIcon(agent.type) : 'fas fa-robot'"
       :icon-color="statusColor"
-      icon-class="mb-2"
+      icon-class="mb-2 fa-2x pi-2x"
       class="pt-3 mb-4"
     >
       <template v-if="['stale', 'unhealthy'].includes(status)" slot="action">

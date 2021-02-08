@@ -3,10 +3,11 @@ import ExternalLink from '@/components/ExternalLink'
 import { mapGetters } from 'vuex'
 
 const AGENT_TYPES = [
-  { type: 'DockerAgent', icon: '$docker' },
-  { type: 'FargateAgent', icon: '$fargate' },
-  { type: 'KubernetesAgent', icon: '$kubernetes' },
-  { type: 'LocalAgent', icon: 'fas fa-globe' },
+  { type: 'DockerAgent', icon: 'fab fa-docker pa-1' },
+  { type: 'ECSAgent', icon: 'fab fa-aws pa-1' },
+  { type: 'FargateAgent', icon: 'fab fa-aws pa-1' },
+  { type: 'KubernetesAgent', icon: 'pi-kubernetes' },
+  { type: 'LocalAgent', icon: 'fad fa-laptop-house pa-1' },
   { type: 'NomadAgent', icon: '$nomad' }
 ]
 
