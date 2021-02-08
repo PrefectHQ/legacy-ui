@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      internalValue: this.value || { type: 'UniversalRun' },
+      internalValue: { type: 'UniversalRun', ...this.value },
       shownArgs: {},
       storedValues: {},
       templateType: this.value?.type || 'UniversalRun'
@@ -92,6 +92,7 @@ export default {
     createArgs() {
       const dict = {}
       Object.keys(runConfigs).forEach(config => {
+        if (!runConfigs[config]) return
         runConfigs[config].args.forEach(arg => {
           if (arg.arg) {
             dict[arg.arg] = this.value?.[arg.arg] || nullValues[arg.type]
@@ -108,7 +109,7 @@ export default {
     },
     handleArgOptionClick(arg) {
       arg.options.forEach(o => {
-        if (!o.arg) return
+        if (!o.arg || !this.template) return
         // If the option arg is defined (not a "default" option), set it to its null value
         this.internalValue[o.arg] =
           nullValues[this.template.args.find(a => a.arg == o.arg)?.type]
@@ -152,6 +153,7 @@ export default {
       </div>
     </div>
 
+    {{ template }}
     <transition-group name="fade" mode="out-in">
       <v-row
         v-for="(arg, i) in template.args"

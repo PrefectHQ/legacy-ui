@@ -29,6 +29,10 @@ export default {
     flow: {
       required: true,
       type: Object
+    },
+    flowGroup: {
+      required: true,
+      type: Object
     }
   },
   data() {
@@ -51,7 +55,7 @@ export default {
       // ID of newly-created flow run
       flowRunId: null,
 
-      runConfig: this.flow.run_config,
+      runConfig: { ...this.flow.run_config, labels: this.labels },
 
       // Loading state
       loading: false,
@@ -78,6 +82,16 @@ export default {
     contextModified() {
       if (!this.context) return false
       return Object.keys(this.context).filter(c => c !== '').length > 0
+    },
+    labels() {
+      console.log(this.runConfig)
+      return (
+        this.runConfig?.labels ||
+        this.flowGroup?.labels ||
+        this.flowGroup?.run_config?.labels ||
+        this.flow?.environment?.labels ||
+        []
+      )
     },
     parametersModified() {
       if (!this.parameters) return false
