@@ -8,9 +8,10 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 
 const AGENT_TYPES = [
   { type: 'DockerAgent', icon: '$docker' },
+  { type: 'ECSAgent', icon: 'fab fa-aws' },
   { type: 'FargateAgent', icon: '$fargate' },
-  { type: 'KubernetesAgent', icon: '$kubernetes' },
-  { type: 'LocalAgent', icon: 'fas fa-globe' },
+  { type: 'KubernetesAgent', icon: 'pi-kubernetes' },
+  { type: 'LocalAgent', icon: 'fad fa-laptop-house' },
   { type: 'NomadAgent', icon: '$nomad' }
 ]
 
