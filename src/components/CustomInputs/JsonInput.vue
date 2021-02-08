@@ -251,6 +251,10 @@ export default {
     height: 300px;
   }
 
+  .CodeMirror-placeholder {
+    color: #808080 !important;
+  }
+
   .json-input-height-auto {
     .CodeMirror {
       height: auto;
