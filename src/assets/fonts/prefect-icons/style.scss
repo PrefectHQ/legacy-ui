@@ -68,7 +68,7 @@
 }
 
 .pi-kubernetes {
-  &:before {
+  &::before {
     content: $pi-kubernetes;
   }
 }
