@@ -79,7 +79,7 @@ export const KubernetesRun = {
   label: 'Kubernetes',
   description: 'Run the flow as a job on a Kubernetes agent',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#kubernetesrun',
-  icon: 'fak fa-kubernetes',
+  icon: 'pi-kubernetes',
   args: [
     {
       arg: null,

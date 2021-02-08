@@ -136,7 +136,7 @@ export default {
           @click="internalValue.type = runConfig.type"
         >
           <div class="text-center" style="width: 50px;">
-            <i :class="runConfig.icon" class="fa-2x"> </i>
+            <i :class="runConfig.icon" class="fa-2x pi-2x"> </i>
           </div>
 
           <div class="w-100 ml-2">
