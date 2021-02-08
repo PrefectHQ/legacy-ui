@@ -204,6 +204,7 @@ export default {
 
 .cm-style {
   color: rgba(0, 0, 0, 0.38);
+  cursor: text !important;
   font-size: inherit !important;
   height: auto;
   position: relative;
