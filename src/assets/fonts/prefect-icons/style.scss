@@ -67,6 +67,12 @@
   }
 }
 
+.pi-kubernetes {
+  &:before {
+    content: $pi-kubernetes;
+  }
+}
+
 .pi-schematic {
   &::before {
     content: $pi-schematic;
