@@ -12,8 +12,11 @@
     <v-row no-gutters>
       <v-col cols="12" class="py-0 px-4">
         <v-row>
-          <v-col class="pa-0">
+          <v-col class="pa-0" cols="12">
             <slot name="row-2-tile" />
+          </v-col>
+          <v-col>
+            <slot name="row-2a-tile" cols="12" />
           </v-col>
         </v-row>
       </v-col>
