@@ -247,6 +247,7 @@ export default {
 /* stylelint-disable selector-class-pattern */
 .json-input {
   .CodeMirror {
+    cursor: text !important;
     font-family: inherit !important;
     height: 300px;
   }
