@@ -99,7 +99,7 @@ export default {
             'orange--text': mode == 'yaml'
           }"
           hide-details
-          :value="false"
+          :value="mode == 'yaml'"
           @click.stop="switchMode"
         ></v-switch>
         <span
