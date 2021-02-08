@@ -448,26 +448,28 @@ export default {
           <RunConfig v-model="runConfig" />
         </v-row>
 
-        <v-btn
-          block
-          depressed
-          text
-          class="text-none blue-grey--text mt-8 py-8 text--darken-2"
-          @click="showAdvanced = !showAdvanced"
-        >
-          <div>
-            <v-icon v-if="showAdvanced" small>
-              expand_less
-            </v-icon>
+        <div class="text-center">
+          <v-btn
+            depressed
+            text
+            outlined
+            class="text-none blue-grey--text mt-8 py-6 text--darken-2"
+            @click="showAdvanced = !showAdvanced"
+          >
             <div>
-              {{ showAdvanced ? 'Hide' : 'Show' }}
-              <span class="font-weight-medium">advanced run configuration</span>
+              <v-icon v-if="showAdvanced" small>
+                expand_less
+              </v-icon>
+              <div class="font-weight-regular">
+                {{ showAdvanced ? 'Hide' : 'Show' }}
+                advanced run configuration
+              </div>
+              <v-icon v-if="!showAdvanced" small>
+                expand_more
+              </v-icon>
             </div>
-            <v-icon v-if="!showAdvanced" small>
-              expand_more
-            </v-icon>
-          </div>
-        </v-btn>
+          </v-btn>
+        </div>
       </v-container>
     </v-card-text>
 
