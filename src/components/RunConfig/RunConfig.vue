@@ -153,7 +153,6 @@ export default {
       </div>
     </div>
 
-    {{ template }}
     <transition-group name="fade" mode="out-in">
       <v-row
         v-for="(arg, i) in template.args"

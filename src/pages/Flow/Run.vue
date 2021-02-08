@@ -55,7 +55,7 @@ export default {
       // ID of newly-created flow run
       flowRunId: null,
 
-      runConfig: { ...this.flow.run_config, labels: this.labels },
+      runConfig: null,
 
       // Loading state
       loading: false,
@@ -84,14 +84,19 @@ export default {
       return Object.keys(this.context).filter(c => c !== '').length > 0
     },
     labels() {
-      console.log(this.runConfig)
-      return (
-        this.runConfig?.labels ||
-        this.flowGroup?.labels ||
-        this.flowGroup?.run_config?.labels ||
-        this.flow?.environment?.labels ||
-        []
-      )
+      let labels = []
+      if (this.runConfig?.labels?.length > 0) {
+        labels = this.runConfig.labels
+      } else if (this.flow?.run_config?.labels?.length > 0) {
+        labels = this.flow.run_config.labels
+      } else if (this.flowGroup?.labels?.length > 0) {
+        labels = this.runConfig.labels
+      } else if (this.flowGroup?.run_config?.labels?.length > 0) {
+        labels = this.flowGroup.run_config.labels
+      } else if (this.flow?.environment?.labels?.length > 0) {
+        labels = this.flow.environment.labels
+      }
+      return labels
     },
     parametersModified() {
       if (!this.parameters) return false
@@ -118,6 +123,7 @@ export default {
   },
   mounted() {
     this.parameters = this.selectedFlowParameters
+    this.runConfig = { ...this.flow.run_config, labels: this.labels }
 
     window.addEventListener('scroll', this.handleScroll)
   },
@@ -552,7 +558,7 @@ export default {
           <span class="float-right font-weight-medium ml-2">
             <span v-if="runConfigTemplate" class="accentGreen--text">
               <span :key="runConfigTemplate.icon">
-                <i :class="runConfigTemplate.icon" class="fa-sm"> </i>
+                <i :class="runConfigTemplate.icon" class="fa-sm pi-1x"> </i>
               </span>
 
               <span> {{ runConfigTemplate.label }}</span>
