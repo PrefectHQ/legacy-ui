@@ -12,6 +12,7 @@ import SchematicTile from '@/pages/Flow/Schematic-Tile'
 import Settings from '@/pages/Flow/Settings'
 import SubPageNav from '@/layouts/SubPageNav'
 import SummaryTile from '@/pages/Flow/Summary-Tile'
+import DescribeTile from '@/pages/Flow/Describe'
 import TasksTableTile from '@/pages/Flow/TasksTable-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
@@ -44,7 +45,8 @@ export default {
     TileLayoutFull,
     FlowRunHistoryTile,
     UpcomingRunsTile,
-    VersionsTile
+    VersionsTile,
+    DescribeTile
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'flow') {
@@ -65,6 +67,17 @@ export default {
           icon: 'view_module'
         },
         {
+          name: 'ReadMe', 
+          target: 'description',
+          icon: 'far fa-file-code',
+          badgeText: 'New!',
+          cardText:
+            'A Flow ReadMe can now be added in the UI. For more information check out the',
+          cardLink:
+            'https://docs.prefect.io/orchestration/ui/flow.html#readme',
+          cardLinkText: 'UI Flow Docs'
+        },
+        {
           name: 'Tasks',
           target: 'tasks',
           icon: 'pi-task'
@@ -79,11 +92,11 @@ export default {
           target: 'schematic',
           icon: 'pi-schematic'
         },
-        {
-          name: 'Versions',
-          target: 'versions',
-          icon: 'loop'
-        },
+        // {
+        //   name: 'Versions',
+        //   target: 'versions',
+        //   icon: 'loop'
+        // },
         {
           name: 'Run',
           target: 'run',
@@ -159,6 +172,9 @@ export default {
           break
         case 'tasks':
           query = 'tasks'
+          break
+        case 'description':
+          query = 'description'
           break
         case 'versions':
           query = 'versions'
@@ -387,6 +403,16 @@ export default {
       </v-tab-item>
 
       <v-tab-item
+        value="description"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
+      >
+        <TileLayoutFull>
+          <DescribeTile slot="row-2a-tile" :fg-description="flowGroup.description" :flow-description="selectedFlow.description" :flow-group-id="flowGroup.id" />
+        </TileLayoutFull>
+      </v-tab-item>
+
+      <v-tab-item
         value="versions"
         transition="tab-fade"
         reverse-transition="tab-fade"
@@ -445,9 +471,9 @@ export default {
         <v-icon>pi-schematic</v-icon>
       </v-btn>
 
-      <v-btn :input-value="tab == 'versions'" @click="tab = 'versions'">
-        Versions
-        <v-icon>loop</v-icon>
+      <v-btn :input-value="tab == 'versions'" @click="tab = 'description'">
+        ReadMe
+        <v-icon>far fa-file-code</v-icon>
       </v-btn>
 
       <!-- <v-btn disabled @click="tab = 'analytics'">
