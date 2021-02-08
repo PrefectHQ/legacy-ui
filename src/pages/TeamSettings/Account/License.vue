@@ -179,7 +179,7 @@ export default {
           </div>
         </div>
 
-        <div
+        <!-- <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
         >
@@ -195,7 +195,7 @@ export default {
               Your account includes {{ taskRuns }} Task Runs per month
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
