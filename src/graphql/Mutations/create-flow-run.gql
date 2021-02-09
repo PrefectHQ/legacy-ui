@@ -4,6 +4,7 @@ mutation CreateFlowRun(
   $flowRunName: String
   $parameters: JSON
   $scheduledStartTime: DateTime
+  $runConfig: JSON
 ) {
   create_flow_run(
     input: {
@@ -12,6 +13,7 @@ mutation CreateFlowRun(
       flow_run_name: $flowRunName
       parameters: $parameters
       scheduled_start_time: $scheduledStartTime
+      run_config: $runConfig
     }
   ) {
     id

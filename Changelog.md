@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Update run form and add runconfig form - [#585](https://github.com/PrefectHQ/ui/pull/585)
 - Add a description tab to the flow page - [#563](https://github.com/PrefectHQ/ui/pull/563)
 - Check for missing or mismatched labels on Server - [#593](https://github.com/PrefectHQ/ui/pull/593)
 - Update wording on tutorial banner for server users - [#592](https://github.com/PrefectHQ/ui/pull/592)
