@@ -153,6 +153,7 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__PROD}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__PROD}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__PROD}
+          DOCKER_BUILDKIT: ${DOCKER_BUILDKIT}
       - persist_to_workspace:
           root: /root/project
           paths:
