@@ -1,7 +1,6 @@
 version: 2.1
 
 orbs:
-  docker: circleci/docker@1.0.0
   slack: circleci/slack@3.4.2
 
 commands:
@@ -39,10 +38,13 @@ commands:
         type: string
     steps:
       - prep
+      - setup_remote_docker:
+        version: 19.03.13
       - run:
           name: NPM Build
           environment:
             FA_TOKEN: ${FA_TOKEN}
+            DOCKER_BUILDKIT: '1'
           command: |
             export FA_TOKEN=<< parameters.FA_TOKEN >>
             export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
@@ -141,6 +143,8 @@ jobs:
     resource_class: large
     docker:
       - image: node:14.7
+    environment:
+      DOCKER_BUILDKIT: '1'
     steps:
       - build:
           FA_TOKEN: ${FA_TOKEN}
@@ -176,7 +180,7 @@ workflows:
 
   'Build and publish development UI artifacts':
     jobs:
-      - docker/publish:
+      - publish:
           docker-password: DOCKER_HUB_PW
           docker-username: DOCKER_HUB_USER
           image: 'prefecthq/ui'
@@ -248,6 +252,9 @@ workflows:
           docker-username: DOCKER_HUB_USER
           image: 'prefecthq/ui'
           path: '.'
+          environment:
+            DOCKER_BUILDKIT: '1'
+          extra_build_args: --secret id=FA_TOKEN,src=NPMRC_DOCKER
           tag: $CIRCLE_TAG,latest
           filters:
             branches:
