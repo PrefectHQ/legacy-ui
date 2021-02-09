@@ -7,8 +7,6 @@ commands:
   prep:
     steps:
       - checkout
-      -setup_remote_docker:
-        version: 19.03.13
       - restore_cache:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
       - run:
@@ -40,6 +38,8 @@ commands:
         type: string
     steps:
       - prep
+      - setup_remote_docker:
+        version: 19.03.13
       - run:
           name: NPM Build
           environment:
@@ -145,8 +145,6 @@ jobs:
     environment:
       DOCKER_BUILDKIT: '1'
     steps:
-      - setup_remote_docker:
-        version: 19.03.13
       - build:
           FA_TOKEN: ${FA_TOKEN}
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__PROD}
