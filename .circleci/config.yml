@@ -116,6 +116,7 @@ jobs:
               docker tag $IMAGE:master $IMAGE:$CIRCLE_TAG
               docker tag $IMAGE:master $IMAGE:latest
             fi
+            echo $DOCKER_HUB_PW | docker login -u $DOCKER_HUB_USER --password-stdin docker.io
             docker images $IMAGE
             docker push $IMAGE
 
