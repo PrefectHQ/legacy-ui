@@ -248,6 +248,8 @@ workflows:
           docker-username: DOCKER_HUB_USER
           image: 'prefecthq/ui'
           path: '.'
+          environment:
+            DOCKER_BUILDKIT: '1'
           extra_build_args: --secret id=FA_TOKEN,src=NPMRC_DOCKER
           tag: $CIRCLE_TAG,latest
           filters:
