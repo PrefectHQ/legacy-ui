@@ -93,6 +93,7 @@ export default {
 
         this.keys = Object.keys(json)
         this.values = Object.values(json)
+        this.$emit('input', { ...this.value })
       } catch {
         this.$refs['json-input'].validateJson()
       }
