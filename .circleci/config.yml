@@ -94,7 +94,7 @@ jobs:
 
   build-docker:
     docker:
-      - image: docker/docker
+      - image: circleci/python
         auth:
           username: $DOCKER_HUB_USER
           password: $DOCKER_HUB_PW
