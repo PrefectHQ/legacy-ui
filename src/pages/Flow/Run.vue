@@ -130,16 +130,28 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     async run() {
+      const parseObject = obj => {
+        if (!obj) return
+        Object.keys(obj).forEach(key => {
+          try {
+            obj[key] = JSON.parse(obj[key])
+          } catch {
+            //
+          }
+        })
+        return obj
+      }
+
       try {
         this.loading = true
 
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
-            context: this.context,
+            context: parseObject(this.context),
             id: this.flow.id,
             flowRunName: this.flowRunName,
-            parameters: this.parameters,
+            parameters: parseObject(this.parameters),
             scheduledStartTime: this.scheduledStartDateTime,
             runConfig: this.runConfig,
             labels: this.labels
