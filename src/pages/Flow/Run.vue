@@ -41,7 +41,7 @@ export default {
       stickyActions: false,
 
       // Parameters
-      parameters: this.defaultParameters,
+      parameters: null,
 
       // Context
       context: {},
@@ -123,7 +123,10 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   mounted() {
-    this.parameters = this.defaultParameters
+    this.parameters = this.defaultParameters.reduce((acc, param) => {
+      acc[param.name] = param.default
+      return acc
+    }, {})
     this.runConfig = { ...this.flow.run_config, labels: this.labels }
 
     window.addEventListener('scroll', this.handleScroll)
