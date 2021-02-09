@@ -4,6 +4,19 @@ orbs:
   docker: circleci/docker@1.0.0
   slack: circleci/slack@3.4.2
 
+aliases:
+  - &install_docker
+    run:
+      name: Install Docker client
+      command: |
+        set -x
+        VER="19.03.13"
+        curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+        tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+        rm /usr/local/bin/docker
+        mv /tmp/docker/* /usr/bin
+        
+
 commands:
   prep:
     steps:
@@ -56,6 +69,28 @@ commands:
             export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
             export VUE_APP_BACKEND=CLOUD
             npm run build
+  build_publish_image:
+    description: Builds Docker Images for Apollo or Cloud
+    parameters:
+      IMAGE_NAME:
+        type: string
+      DOCKERFILE_PATH:
+        type: string
+      DOCKER_BUILD_FLAGS:
+        type: string
+    steps:
+      - run:
+          name: Docker Build
+          #command: DOCKER_BUILDKIT=1 docker build --no-cache -q -t << parameters.IMAGE_NAME >>:${CIRCLE_SHA1} << parameters.DOCKER_BUILD_FLAGS >> << parameters.DOCKERFILE_PATH >>
+          command: DOCKER_BUILDKIT=1 docker build --no-cache -q -t << parameters.IMAGE_NAME >>:${CIRCLE_SHA1} << parameters.DOCKER_BUILD_FLAGS >> .
+      - run:
+          name: Docker Push
+          command: |
+            IMAGE=<< parameters.IMAGE_NAME >>
+              docker tag $IMAGE:${CIRCLE_SHA1} $IMAGE:latest
+            fi
+            docker images $IMAGE
+            docker push $IMAGE
   deploy_env:
     parameters:
       GCP_CREDS:
@@ -78,6 +113,24 @@ jobs:
       - run:
           # name: NPM Test:Unit
           command: npm run test:unit
+
+  build_docker:
+    docker:
+      - image: docker/docker
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PW
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+      - *install_docker
+      - run:
+          name: Docker Build
+          command: DOCKER_BUILDKIT=1 docker build --no-cache -q -t prefecthq/ui:master --secret id=FA_TOKEN,src=NPMRC_DOCKER .
+      - build_publish_image:
+          IMAGE_NAME: prefecthq/ui
+          DOCKER_BUILD_FLAGS: 
 
   build-dev:
     resource_class: large
