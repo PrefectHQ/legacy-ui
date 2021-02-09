@@ -296,23 +296,6 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 // stylelint-enable
 /* End common UI elements */
 
-/* Plans global styles */
-.plans-feature-icon {
-  align-items: center;
-  display: inline-flex;
-  height: 20px;
-  justify-content: center;
-  width: 20px;
-
-  .svg-inline--fa {
-    --fa-primary-color: #27b1ff;
-    --fa-secondary-color: #e0f4ff;
-    --fa-secondary-opacity: 1;
-    transition: all 150ms linear;
-  }
-}
-/* End plans global styles */
-
 /* Navbar global styles */
 .navbar-icon {
   font-size: 0.85rem;
@@ -372,3 +355,30 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 }
 
 /* End Navbar global styles */
+
+/* Plans global styles */
+/* stylelint-disable no-descending-specificity */
+.plans-feature-icon {
+  align-items: center;
+  display: inline-flex;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+
+  .svg-inline--fa {
+    --fa-primary-color: #27b1ff;
+    --fa-secondary-color: #546e7a;
+    --fa-secondary-opacity: 1;
+    transition: all 150ms linear;
+  }
+
+  &.plans-feature-icon-light {
+    .svg-inline--fa {
+      --fa-primary-color: #27b1ff;
+      --fa-secondary-color: #e0f4ff;
+      --fa-secondary-opacity: 1;
+    }
+  }
+}
+/* stylelint-enable no-descending-specificity */
+/* End plans global styles */

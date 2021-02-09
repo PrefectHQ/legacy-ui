@@ -263,12 +263,15 @@ export default {
             <div
               class="text-h6 font-weight-regular text-center grey--text text--lighten-3"
             >
-              <div class="mt-5">
+              <div class="mt-8">
                 Cloud-native workflow orchestration
               </div>
-              <div class="mt-5 text-h2 font-weight-regular white--text">
-                0.25
-                <span class="ml-1 font-weight-light">
+              <div
+                class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price"
+              >
+                0.25<span
+                  class="ml-2 font-weight-light d-inline-block plan-cent"
+                >
                   ¢
                 </span>
               </div>
@@ -277,10 +280,12 @@ export default {
               </div>
 
               <div
-                class="mt-16 text-left plan-body d-flex align-start justify-center flex-column pl-4"
+                class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
               >
                 <div class="d-flex align-center justify-center">
-                  <span class="rounded-circle plans-feature-icon">
+                  <span
+                    class="rounded-circle plans-feature-icon plans-feature-icon-light"
+                  >
                     <v-icon small>
                       fad fa-tasks
                     </v-icon>
@@ -288,17 +293,10 @@ export default {
                   <span class="ml-2">10,000 free task runs per month</span>
                 </div>
 
-                <div class="my-3 d-flex align-center justify-center">
-                  <span class="rounded-circle plans-feature-icon">
-                    <v-icon small>
-                      fad fa-shield
-                    </v-icon>
-                  </span>
-                  <span class="ml-2">Best-in-class automatic security</span>
-                </div>
-
-                <div class="d-flex align-center justify-center">
-                  <span class="rounded-circle plans-feature-icon">
+                <div class="mt-3 d-flex align-center justify-center">
+                  <span
+                    class="rounded-circle plans-feature-icon plans-feature-icon-light"
+                  >
                     <v-icon small>
                       fad fa-clouds
                     </v-icon>
@@ -307,7 +305,7 @@ export default {
                 </div>
               </div>
 
-              <div class="plan-cta py-7 mt-16 blue-grey darken-1">
+              <div class="plan-cta plan-cta-dark py-7 mt-16">
                 Get started now
               </div>
             </div>
@@ -321,11 +319,79 @@ export default {
             </div>
             <v-divider class="divider-dark" />
             <div class="text-h6 font-weight-regular text-center">
-              <div class="my-6">
+              <div class="mt-8 blue-grey--text text--darken-2">
                 A complete workflow automation platform
+              </div>
+              <div
+                class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price"
+              >
+                0.50<span
+                  class="ml-2 font-weight-light d-inline-block plan-cent"
+                >
+                  ¢
+                </span>
+              </div>
+              <div class="mt-2 text-h6 font-weight-light">
+                per successful task run
+              </div>
+
+              <div
+                class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
+              >
+                <div class="d-flex align-center justify-center">
+                  <span class="rounded-circle plans-feature-icon">
+                    <v-icon small>
+                      fad fa-toolbox
+                    </v-icon>
+                  </span>
+                  <span class="ml-2">
+                    Seamlessly integrate your existing tools
+                  </span>
+                </div>
+
+                <div class="mt-3 d-flex align-center justify-center">
+                  <span class="rounded-circle plans-feature-icon">
+                    <v-icon small>
+                      fad fa-user-shield
+                    </v-icon>
+                  </span>
+                  <span class="ml-2">Basic role-based permissioning</span>
+                </div>
+
+                <div class="mt-3 d-flex align-center justify-center">
+                  <span class="rounded-circle plans-feature-icon">
+                    <v-icon small>
+                      fad fa-siren-on
+                    </v-icon>
+                  </span>
+                  <span class="ml-2">Workflow and infrastructure SLAs</span>
+                </div>
+
+                <div class="mt-3 d-flex align-center justify-center">
+                  <span class="rounded-circle plans-feature-icon">
+                    <v-icon small>
+                      fad fa-random
+                    </v-icon>
+                  </span>
+                  <span class="ml-2">Customizable stateful actions</span>
+                </div>
+
+                <div class="mt-3 d-flex align-center justify-center">
+                  <span class="rounded-circle plans-feature-icon">
+                    <v-icon small>
+                      fad fa-shield
+                    </v-icon>
+                  </span>
+                  <span class="ml-2">Best-in-class automatic security</span>
+                </div>
+              </div>
+
+              <div class="plan-cta py-7 mt-16">
+                Get started now
               </div>
             </div>
           </div>
+
           <div
             class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded-sm"
           >
@@ -334,7 +400,7 @@ export default {
             </div>
             <v-divider class="divider-light" />
             <div class="text-h6 font-weight-regular text-center">
-              <div class="my-6">
+              <div class="mt-8">
                 Built for your business
               </div>
             </div>
@@ -595,6 +661,7 @@ export default {
 }
 
 .plan-card {
+  height: min-content;
   width: 500px;
 
   .plan-title {
@@ -615,7 +682,8 @@ export default {
     font-size: 1.2rem !important;
     font-weight: 400 !important;
     margin: auto;
-    max-width: 300px;
+    max-width: 350px;
+    width: max-content;
   }
 
   .plan-feature-icon {
@@ -624,6 +692,37 @@ export default {
     height: 20px;
     justify-content: center;
     width: 20px;
+  }
+
+  .plan-cent {
+    font-size: 3rem !important;
+    margin-top: -1rem !important;
+    vertical-align: middle;
+  }
+
+  .plan-cta {
+    background-color: #f7fcfd;
+    cursor: pointer;
+    font-size: 1rem;
+    letter-spacing: 0.15rem;
+    text-transform: uppercase;
+    transition: all 50ms;
+
+    &.plan-cta-dark {
+      background-color: #546e7a;
+
+      &:focus,
+      &:hover {
+        background-color: #5a7581 !important;
+        color: #fff;
+      }
+    }
+
+    &:focus,
+    &:hover {
+      background-color: #e9f7fc !important;
+      font-weight: 500 !important;
+    }
   }
 }
 
