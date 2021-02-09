@@ -55,6 +55,7 @@ commands:
             export VUE_APP_ENVIRONMENT=production
             export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
             export VUE_APP_BACKEND=CLOUD
+            export DOCKER_BUILDKIT=1
             npm run build
   deploy_env:
     parameters:
