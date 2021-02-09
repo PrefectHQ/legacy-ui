@@ -104,7 +104,9 @@ jobs:
       - *install_docker
       - run:
           name: Docker Build
-          command: DOCKER_BUILDKIT=1 docker build --no-cache -q -t prefecthq/ui:master --secret id=FA_TOKEN,src=NPMRC_DOCKER .
+          command: |
+            echo $NPMRC_DOCKER > .NPMRC_DOCKER
+            DOCKER_BUILDKIT=1 docker build --no-cache -q -t prefecthq/ui:master --secret id=FA_TOKEN,src=.NPMRC_DOCKER .
       - run:
           name: Docker Push
           command: |
