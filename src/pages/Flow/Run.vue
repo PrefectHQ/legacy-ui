@@ -90,7 +90,7 @@ export default {
       } else if (this.flow?.run_config?.labels?.length > 0) {
         labels = this.flow.run_config.labels
       } else if (this.flowGroup?.labels?.length > 0) {
-        labels = this.runConfig.labels
+        labels = this.flowGroup.labels
       } else if (this.flowGroup?.run_config?.labels?.length > 0) {
         labels = this.flowGroup.run_config.labels
       } else if (this.flow?.environment?.labels?.length > 0) {
