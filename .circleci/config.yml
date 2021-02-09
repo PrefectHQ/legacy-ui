@@ -44,6 +44,7 @@ commands:
           name: NPM Build
           environment:
             FA_TOKEN: ${FA_TOKEN}
+            DOCKER_BUILDKIT: '1'
           command: |
             export FA_TOKEN=<< parameters.FA_TOKEN >>
             export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
@@ -179,7 +180,7 @@ workflows:
 
   'Build and publish development UI artifacts':
     jobs:
-      - docker/publish:
+      - publish:
           docker-password: DOCKER_HUB_PW
           docker-username: DOCKER_HUB_USER
           image: 'prefecthq/ui'
