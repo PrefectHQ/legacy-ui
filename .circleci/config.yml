@@ -39,13 +39,10 @@ commands:
         type: string
     steps:
       - prep
-      - setup_remote_docker:
-        version: 19.03.13
       - run:
           name: NPM Build
           environment:
             FA_TOKEN: ${FA_TOKEN}
-            DOCKER_BUILDKIT: '1'
           command: |
             export FA_TOKEN=<< parameters.FA_TOKEN >>
             export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
@@ -144,8 +141,6 @@ jobs:
     resource_class: large
     docker:
       - image: node:14.7
-    environment:
-      DOCKER_BUILDKIT: '1'
     steps:
       - build:
           FA_TOKEN: ${FA_TOKEN}
