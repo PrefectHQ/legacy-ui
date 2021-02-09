@@ -111,9 +111,10 @@ jobs:
       - run:
           name: Docker Push
           command: |
+            export IMAGE=prefecthq/ui
             if [[ $CIRCLE_TAG ]]; then
-              docker tag $IMAGE:master prefecthq/ui:$CIRCLE_TAG
-              docker tag $IMAGE:master prefecthq/ui:latest
+              docker tag $IMAGE:master $IMAGE:$CIRCLE_TAG
+              docker tag $IMAGE:master $IMAGE:latest
             fi
             docker images $IMAGE
             docker push $IMAGE
