@@ -95,6 +95,7 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__DEV}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__DEV}
+          DOCKER_BUILDKIT: ${DOCKER_BUILDKIT}
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -124,6 +125,7 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__STAGING}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__STAGING}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__STAGING}
+          DOCKER_BUILDKIT: ${DOCKER_BUILDKIT}
       - persist_to_workspace:
           root: /root/project
           paths:
