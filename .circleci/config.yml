@@ -115,6 +115,7 @@ jobs:
             if [[ $CIRCLE_TAG ]]; then
               docker tag $IMAGE:master $IMAGE:$CIRCLE_TAG
               docker tag $IMAGE:master $IMAGE:latest
+              docker rmi $IMAGE:master
             fi
             echo $DOCKER_HUB_PW | docker login -u $DOCKER_HUB_USER --password-stdin docker.io
             docker images $IMAGE
@@ -222,7 +223,8 @@ workflows:
             branches:
               only: 
                 - master
-                - airgap
+            tags:
+              only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
   'Deploy dev':
     jobs:
       - build-dev:
