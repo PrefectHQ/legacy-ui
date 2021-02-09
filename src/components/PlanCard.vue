@@ -32,8 +32,12 @@ export default {
 }
 </script>
 <template>
-  <v-card class="pa-4">
-    <h2>{{ activePlan.name }}</h2>
+  <v-card class="pa-0">
+    <div class="font-weight-light">
+      {{ activePlan.name }}
+    </div>
+    <v-divider />
+    <!-- <h2>{{ activePlan.name }}</h2>
     <v-list>
       <v-list-item two-line>
         <v-list-item-icon style="margin-left: 0;"
@@ -73,6 +77,6 @@ export default {
         >1 {{ activePlan.history }} result history</v-list-item
       >
     </v-list>
-    <div class="display-1 text-center">{{ monthlyCost }}</div>
+    <div class="display-1 text-center">{{ monthlyCost }}</div> -->
   </v-card>
 </template>

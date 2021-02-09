@@ -5,11 +5,15 @@ import ChangePlanDialog from '@/components/License/ChangePlanDialog'
 import { PLANS_2021 } from '@/utils/plans'
 import { mapGetters } from 'vuex'
 
+ManagementLayout
+PlanCard
+ChangePlanDialog
+
 export default {
   components: {
-    ManagementLayout,
-    PlanCard,
-    ChangePlanDialog
+    // ManagementLayout,
+    // PlanCard,
+    // ChangePlanDialog
   },
   data() {
     return {
@@ -228,10 +232,65 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout>
-    <template #title>Prefect Plans</template>
+  <v-container fluid class="pa-0">
+    <div class="position-relative my-0">
+      <div class="slash-container">
+        <div class="slash slash-0"></div>
+        <div class="slash slash-1"></div>
+        <div class="slash slash-2"></div>
+        <div class="slash slash-3"></div>
+        <div class="slash slash-4"></div>
+      </div>
 
-    <div
+      <div class="header-container">
+        <div class="text-h3 font-weight-light text-center">
+          <div class="blue-grey--text text--darken-4">
+            Pay for what you use.
+          </div>
+          <div class="white--text">
+            Eliminate negative engineering.
+          </div>
+        </div>
+
+        <div class="mt-8 mt-md-16 d-flex justify-space-around">
+          <div
+            class="plan-card blue-grey darken-3 white--text mr-0 ml-auto mt-8 rounded-sm"
+          >
+            <div class="font-weight-regular text-center py-8 plan-title">
+              Starter
+            </div>
+            <v-divider class="divider-light" />
+            <div>
+              awdwadadaa
+            </div>
+          </div>
+          <div class="plan-card white rounded-sm">
+            <div class="font-weight-regular text-center py-8 plan-title">
+              Standard
+            </div>
+            <v-divider class="divider-dark" />
+            <div>
+              awdwadadaa
+            </div>
+          </div>
+          <div
+            class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded-sm"
+          >
+            <div class="font-weight-regular text-center py-8 plan-title">
+              Enterprise
+            </div>
+            <v-divider class="divider-light" />
+            <div>
+              awdwadadaa
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <ManagementLayout> -->
+
+    <!-- <div
       style="display: flex;
             flex-direction: row;
             justify-content: center;"
@@ -414,12 +473,91 @@ export default {
         Contact Sales
       </v-btn>
       <ChangePlanDialog v-else :plan="planType" />
-    </div>
-  </ManagementLayout>
+    </div> -->
+  </v-container>
 </template>
 
-<style scoped>
-@keyframes adjacent {
+<style lang="scss" scoped>
+.slash-container {
+  bottom: 10px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: calc(50% + 275px);
+  transform: skewY(-12deg);
+
+  .slash {
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: auto;
+    width: 100%;
+
+    &.slash-0 {
+      background-image: linear-gradient(105deg, #0e50f5, #2edaff) !important;
+      bottom: 10px;
+      height: 5000px;
+    }
+
+    &.slash-1 {
+      background: #27b1ff !important;
+      bottom: 160px;
+      height: 150px;
+      width: 500px;
+    }
+
+    &.slash-2 {
+      background: #3b8dff !important;
+      bottom: 160px;
+      height: 150px;
+      left: auto;
+      right: 0;
+      width: 500px;
+    }
+
+    &.slash-3 {
+      background: #2580ff !important;
+      bottom: 10px;
+      height: 150px;
+      left: 100px;
+      width: 500px;
+    }
+
+    &.slash-4 {
+      background: #e0f4ff !important;
+      bottom: 310px;
+      height: 150px;
+      left: 1000px;
+      width: 500px;
+    }
+  }
+}
+
+.header-container {
+  padding-top: 124px;
+  position: relative;
+  z-index: 1;
+}
+
+.plan-card {
+  width: 500px;
+
+  .plan-title {
+    font-size: 1.15rem;
+    letter-spacing: 0.3rem;
+    text-transform: uppercase;
+  }
+
+  .divider-dark {
+    border-color: #eee;
+  }
+
+  .divider-light {
+    border-color: #3f515a;
+  }
+}
+
+/* @keyframes adjacent {
   100% {
     filter: contrast(65%);
     transform: scale(0.9);
@@ -438,9 +576,9 @@ export default {
     filter: contrast(100%);
     transform: scale(1);
   }
-}
+} */
 
-.active {
+/* .active {
   animation: active 1s forwards;
 }
 
@@ -450,9 +588,9 @@ export default {
 
 .away {
   animation: away 1s forwards;
-}
+} */
 
-.feature-title {
+/* .feature-title {
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.5rem;
@@ -463,5 +601,5 @@ export default {
 .subtitle {
   color: #444;
   font-size: 0.875rem;
-}
+} */
 </style>

@@ -19,7 +19,8 @@ const fullPageRoutes = [
   'calendar',
   'not-found',
   'logout',
-  'welcome'
+  'welcome',
+  'plans'
 ]
 
 const onboardRoutes = ['welcome', 'name-team', 'onboard-resources', 'accept']
@@ -103,6 +104,7 @@ export default {
     },
     showNav() {
       if (
+        this.$route.name == 'plans' ||
         this.$route.name === 'not-found' ||
         onboardRoutes.includes(this.$route.name)
       )
@@ -121,6 +123,7 @@ export default {
         this.$route.name === 'onboard-resources' ||
         this.$route.name === 'name-team' ||
         this.$route.name == 'plan' ||
+        this.$route.name == 'plans' ||
         this.$route.name === 'accept'
       )
     }
