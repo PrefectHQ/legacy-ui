@@ -69,28 +69,6 @@ commands:
             export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
             export VUE_APP_BACKEND=CLOUD
             npm run build
-  build_publish_image:
-    description: Builds Docker Images for Apollo or Cloud
-    parameters:
-      IMAGE_NAME:
-        type: string
-      DOCKERFILE_PATH:
-        type: string
-      DOCKER_BUILD_FLAGS:
-        type: string
-    steps:
-      - run:
-          name: Docker Build
-          #command: DOCKER_BUILDKIT=1 docker build --no-cache -q -t << parameters.IMAGE_NAME >>:${CIRCLE_SHA1} << parameters.DOCKER_BUILD_FLAGS >> << parameters.DOCKERFILE_PATH >>
-          command: DOCKER_BUILDKIT=1 docker build --no-cache -q -t << parameters.IMAGE_NAME >>:${CIRCLE_SHA1} << parameters.DOCKER_BUILD_FLAGS >> .
-      - run:
-          name: Docker Push
-          command: |
-            IMAGE=<< parameters.IMAGE_NAME >>
-              docker tag $IMAGE:${CIRCLE_SHA1} $IMAGE:latest
-            fi
-            docker images $IMAGE
-            docker push $IMAGE
   deploy_env:
     parameters:
       GCP_CREDS:
@@ -114,7 +92,7 @@ jobs:
           # name: NPM Test:Unit
           command: npm run test:unit
 
-  build_docker:
+  build-docker:
     docker:
       - image: docker/docker
         auth:
@@ -128,9 +106,15 @@ jobs:
       - run:
           name: Docker Build
           command: DOCKER_BUILDKIT=1 docker build --no-cache -q -t prefecthq/ui:master --secret id=FA_TOKEN,src=NPMRC_DOCKER .
-      - build_publish_image:
-          IMAGE_NAME: prefecthq/ui
-          DOCKER_BUILD_FLAGS: 
+      - run:
+          name: Docker Push
+          command: |
+            if [[ $CIRCLE_TAG ]]; then
+              docker tag $IMAGE:master prefecthq/ui:$CIRCLE_TAG
+              docker tag $IMAGE:master prefecthq/ui:latest
+            fi
+            docker images $IMAGE
+            docker push $IMAGE
 
   build-dev:
     resource_class: large
@@ -229,15 +213,12 @@ workflows:
 
   'Build and publish development UI artifacts':
     jobs:
-      - docker/publish:
-          docker-password: DOCKER_HUB_PW
-          docker-username: DOCKER_HUB_USER
-          image: 'prefecthq/ui'
-          path: '.'
-          tag: master
+      - build-docker:
           filters:
             branches:
-              only: master
+              only: 
+                - master
+                - airgap
   'Deploy dev':
     jobs:
       - build-dev:
@@ -301,7 +282,6 @@ workflows:
           docker-username: DOCKER_HUB_USER
           image: 'prefecthq/ui'
           path: '.'
-          extra_build_args: --secret id=FA_TOKEN,src=NPMRC_DOCKER
           tag: $CIRCLE_TAG,latest
           filters:
             branches:
