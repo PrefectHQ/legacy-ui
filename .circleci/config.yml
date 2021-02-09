@@ -107,7 +107,7 @@ jobs:
           command: |
             echo "@fortawesome:registry=https://npm.fontawesome.com/" > .NPMRC_DOCKER
             echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> .NPMRC_DOCKER
-            DOCKER_BUILDKIT=1 docker build --no-cache -q -t prefecthq/ui:master --secret id=FA_TOKEN,src=.NPMRC_DOCKER .
+            DOCKER_BUILDKIT=1 docker build --no-cache -t prefecthq/ui:master --secret id=FA_TOKEN,src=.NPMRC_DOCKER .
       - run:
           name: Docker Push
           command: |
