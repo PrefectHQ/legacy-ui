@@ -5,14 +5,20 @@ import debounce from 'lodash.debounce'
 
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/edit/closebrackets'
+import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/display/placeholder'
+import '@/styles/json-input-style.scss'
 
 export default {
   components: {
     CodeMirror: codemirror
   },
   props: {
+    backgroundColor: {
+      type: String,
+      default: () => 'transparent'
+    },
     disabled: {
       type: Boolean,
       default: () => false
@@ -21,6 +27,11 @@ export default {
       type: String,
       required: false,
       default: ''
+    },
+    prependIconLabel: {
+      type: String,
+      required: false,
+      default: null
     },
     selectedType: {
       type: String,
@@ -74,11 +85,12 @@ export default {
         autoCloseBrackets: true,
         matchBrackets: true,
         mode: 'application/json',
+        theme: this.selectedType == 'json' ? 'json-input' : 'light',
         readOnly: this.disabled,
         smartIndent: true,
         lineWrapping: true,
         placeholder: this.placeholderText,
-        tabSize: 2
+        tabSize: 4
       }
     }
   },
@@ -91,7 +103,7 @@ export default {
   methods: {
     formatJson() {
       this.internalValue = jsBeautify(this.internalValue, {
-        indent_size: 2,
+        indent_size: 4,
         space_in_empty_paren: true,
         preserve_newlines: false
       })
@@ -161,28 +173,34 @@ export default {
     class="position-relative json-input-empty-text"
     :class="{ 'json-input-height-auto': heightAuto }"
   >
-    <v-icon
-      :color="iconColor"
-      class="position-absolute"
+    <div
+      class="position-absolute text-center"
       :style="{
         top: '12px',
         left: '12px',
         'z-index': 3
       }"
     >
-      {{ prependIcon }}
-    </v-icon>
+      <v-icon :color="iconColor">
+        {{ prependIcon }}
+      </v-icon>
+      <div class="caption o-20">
+        {{ prependIconLabel }}
+      </div>
+    </div>
     <CodeMirror
       ref="cmRef"
       data-cy="code-mirror-input"
       :value="internalValue"
-      class="pt-2 cm-style"
+      class="pt-2 cm-style json-input"
       :class="{
         'pl-9': prependIcon,
+        'pl-12': prependIconLabel,
         'blue-border': prependIcon && focussed && !jsonError,
         'red-border': prependIcon && jsonError,
         'plain-border': prependIcon && !focussed && !jsonError,
-        'original-border': !prependIcon
+        'original-border': !prependIcon,
+        [backgroundColor]: true
       }"
       :options="editorOptions"
       @input="handleJsonInput($event)"
@@ -227,31 +245,39 @@ export default {
 */
 
 /* stylelint-disable selector-class-pattern */
-.CodeMirror {
-  height: 300px;
-}
-
-.json-input-height-auto {
+.json-input {
   .CodeMirror {
-    height: auto;
-    min-height: 108px;
-  }
-}
-
-.json-input-empty-text {
-  .CodeMirror-empty {
-    color: #808080;
+    cursor: text !important;
+    font-family: inherit !important;
+    height: 300px;
   }
 
-  .CodeMirror-cursor {
-    height: auto !important;
+  .CodeMirror-placeholder {
+    color: #808080 !important;
   }
-}
 
-/* stylelint-enable selector-class-pattern */
+  .json-input-height-auto {
+    .CodeMirror {
+      height: auto;
+      min-height: 108px;
+    }
+  }
 
-.json-input-error-text {
-  text-decoration: #ff5252 wavy underline !important;
+  .json-input-empty-text {
+    .CodeMirror-empty {
+      color: #808080;
+    }
+
+    .CodeMirror-cursor {
+      height: auto !important;
+    }
+  }
+
+  /* stylelint-enable selector-class-pattern */
+
+  .json-input-error-text {
+    text-decoration: #ff5252 wavy underline !important;
+  }
 }
 </style>
 
@@ -261,25 +287,45 @@ export default {
 }
 
 .cm-style {
-  font-size: 1.3em;
-}
+  color: rgba(0, 0, 0, 0.38);
+  font-size: inherit !important;
+  height: auto;
+  position: relative;
 
-.red-border {
-  border: 2px solid #ff5252;
-  border-radius: 5px;
-}
+  &:hover,
+  &:focus {
+    color: rgba(0, 0, 0, 0.86);
+  }
 
-.blue-border {
-  border: 2px solid #3b8dff;
-  border-radius: 5px;
-}
+  &::after {
+    background: transparent;
+    content: '';
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transition: all 50ms;
+    width: 100%;
+  }
 
-.plain-border {
-  border: 2px solid #ddd;
-  border-radius: 5px;
-}
+  &.red-border::after {
+    border: 2px solid #ff5252;
+    border-radius: 4px;
+  }
 
-.original-border {
-  border: 1px solid #ddd;
+  &.blue-border::after {
+    border: 2px solid #3b8dff;
+    border-radius: 4px;
+  }
+
+  &.plain-border::after {
+    border: 1px solid currentColor;
+    border-radius: 4px;
+  }
+
+  &.original-border::after {
+    border: 1px solid currentColor;
+  }
 }
 </style>

@@ -2,88 +2,163 @@
 /* eslint-disable vue/no-v-html */
 import { mapGetters, mapActions } from 'vuex'
 
-import CardTitle from '@/components/Card-Title'
-import JsonInput from '@/components/JsonInput'
-import Parameters from '@/components/Parameters'
-import PrefectSchedule from '@/components/PrefectSchedule'
-import DateTime from '@/components/DateTime'
+import DateTimeSelector from '@/components/RunConfig/DateTimeSelector'
+import DictInput from '@/components/CustomInputs/DictInput'
+import ExternalLink from '@/components/ExternalLink'
+import MenuTooltip from '@/components/MenuTooltip'
+import RunConfig from '@/components/RunConfig/RunConfig'
+import { formatTime } from '@/mixins/formatTimeMixin.js'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
+import throttle from 'lodash.throttle'
+import { adjectives } from '@/components/RunConfig/adjectives'
+import { animals } from '@/components/RunConfig/animals'
+import { runConfigs } from '@/utils/runConfigs'
+
+const adjectivesLength = adjectives.length
+const animalsLength = animals.length
 
 export default {
   components: {
-    CardTitle,
-    JsonInput,
-    Parameters,
-    PrefectSchedule,
-    DateTime
+    DateTimeSelector,
+    DictInput,
+    ExternalLink,
+    MenuTooltip,
+    RunConfig
   },
-  mixins: [parametersMixin],
+  mixins: [formatTime, parametersMixin],
   props: {
     flow: {
+      required: true,
+      type: Object
+    },
+    flowGroup: {
       required: true,
       type: Object
     }
   },
   data() {
     return {
+      stickyActions: false,
+
       // Parameters
-      errorInParameterInput: false,
-      paramInfoOpen: false,
+      parameters: null,
 
       // Context
-      contextInfoOpen: false,
-      contextInput: '{}',
-      errorInContextInput: false,
+      context: {},
 
       // Schedule
       scheduledStartDateTime: null,
+      scheduledStartTimezone: null,
 
       // Flow run name input
-      flowRunName: '',
+      flowRunName: this.generateRandomName(),
 
       // ID of newly-created flow run
       flowRunId: null,
 
+      runConfig: null,
+
       // Loading state
       loading: false,
-      codeMirrorLoading: false
+
+      showAdvanced: false,
+      showParameters: this.flow.parameters?.length > 0,
+      parameterDefaults: this.flow.parameters,
+
+      when: 'now'
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'role'])
-  },
-  watch: {
-    //Makes sure that codemirror updates if new defaults are set in the settings tab
-    $route() {
-      this.codeMirrorLoading = true
-      setTimeout(() => {
-        this.codeMirrorLoading = false
-      }, 5)
+    ...mapGetters('tenant', ['tenant', 'role']),
+    parameterItems() {
+      return this.defaultParameters?.map(parameter => {
+        return {
+          disabled: true,
+          key: parameter.name,
+          value: parameter.default,
+          required: parameter.required
+        }
+      })
+    },
+    contextModified() {
+      if (!this.context) return false
+      return Object.keys(this.context).filter(c => c !== '').length > 0
+    },
+    labels() {
+      let labels = []
+      if (this.runConfig?.labels?.length > 0) {
+        labels = this.runConfig.labels
+      } else if (this.flow?.run_config?.labels?.length > 0) {
+        labels = this.flow.run_config.labels
+      } else if (this.flowGroup?.labels?.length > 0) {
+        labels = this.flowGroup.labels
+      } else if (this.flowGroup?.run_config?.labels?.length > 0) {
+        labels = this.flowGroup.run_config.labels
+      } else if (this.flow?.environment?.labels?.length > 0) {
+        labels = this.flow.environment.labels
+      }
+      return labels
+    },
+    parametersModified() {
+      if (!this.parameters) return false
+
+      const entries = Object.entries(this.parameters)
+      const defaults = Object.fromEntries(
+        this.parameterDefaults?.map(entry => [entry.name, entry.default]) ?? []
+      )
+
+      const keysModified = entries.length !== this.parameterDefaults?.length
+      const valuesModified = entries.some(
+        entry => defaults[entry[0]] != entry[1]
+      )
+
+      return keysModified || valuesModified
+    },
+    runConfigTemplate() {
+      if (!this.runConfig) return
+      return runConfigs[this.runConfig.type]
     }
+  },
+  destroyed() {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
+  mounted() {
+    this.parameters = this.defaultParameters.reduce((acc, param) => {
+      acc[param.name] = param.default
+      return acc
+    }, {})
+    this.runConfig = { ...this.flow.run_config, labels: this.labels }
+
+    window.addEventListener('scroll', this.handleScroll)
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     async run() {
+      const parseObject = obj => {
+        if (!obj) return
+        Object.keys(obj).forEach(key => {
+          try {
+            obj[key] = JSON.parse(obj[key])
+          } catch {
+            //
+          }
+        })
+        return obj
+      }
+
       try {
         this.loading = true
-        if (!this.validParameters()) return
-        if (!this.validContext()) return
-        const parametersToSet = this.newParameterInput || this.parameterInput
 
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
-            context:
-              this.contextInput && this.contextInput.trim() !== ''
-                ? JSON.parse(this.contextInput)
-                : null,
+            context: parseObject(this.context),
             id: this.flow.id,
-            flowRunName: this.flowRunName || null,
-            parameters:
-              parametersToSet && parametersToSet.trim() !== ''
-                ? JSON.parse(parametersToSet)
-                : null,
-            scheduledStartTime: this.scheduledStartDateTime
+            flowRunName: this.flowRunName,
+            parameters: parseObject(this.parameters),
+            scheduledStartTime: this.scheduledStartDateTime,
+            runConfig: this.runConfig,
+            labels: this.labels
           },
           errorPolicy: 'all'
         })
@@ -99,6 +174,11 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    generateRandomName() {
+      const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
+      const animal = animals[Math.floor(Math.random() * animalsLength)]
+      return adjective + '-' + animal
     },
     goToFlowRunPage() {
       this.$router.push({
@@ -148,335 +228,395 @@ export default {
       }
 
       return true
-    }
+    },
+    handleScroll: throttle(
+      function() {
+        if (
+          window.innerHeight + window.pageYOffset + 188 >=
+          document.body.offsetHeight
+        ) {
+          this.stickyActions = false
+        } else this.stickyActions = true
+      },
+      150,
+      { leading: true, trailing: true }
+    )
   }
 }
 </script>
 
 <template>
-  <v-container class="fill-height" fluid justify-center>
-    <v-layout
-      align-content-start
-      fill-height
-      wrap
-      :style="{ maxWidth: `${$vuetify.breakpoint.thresholds.md}px` }"
+  <v-card
+    class="blue-grey--text text--darken-2 mt-2 run-container"
+    flat
+    outlined
+  >
+    <v-card-text
+      v-if="flow.archived"
+      class="run-body d-flex align-center justify-center"
+      style="min-height: 400px;"
     >
-      <v-flex xs12 sm4>
-        <v-card tile class="mx-2 mt-1 mb-2">
-          <CardTitle title="Run Details" icon="pi-flow-run" />
+      <div class="text-h5 text-center blue-grey--text">
+        <v-icon x-large>archive</v-icon>
+        <div>
+          This version of your flow is archived
 
-          <v-card-text v-if="flow.archived">
-            <v-alert
-              class="mt-4"
-              border="left"
-              colored-border
-              elevation="2"
-              type="warning"
-            >
-              This version is archived and cannot be run.
-            </v-alert>
-            <div class="py-4">
-              For more information, check out the
-              <router-link
-                to="docs"
-                target="_blank"
-                href="https://docs.prefect.io/cloud/concepts/flows.html#flow-versions-and-archiving"
+          <MenuTooltip>
+            <p>
+              Archived versions of flows cannot be run.
+            </p>
+
+            <p>
+              Refer to the
+              <ExternalLink
+                href="https://docs.prefect.io/orchestration/concepts/flows.html#flow-versions-and-archiving"
+                >documentation</ExternalLink
               >
-                documentation on Flow Versions and Archiving
-              </router-link>
-              .
+              for more details on versions and archiving.
+            </p>
+          </MenuTooltip>
+        </div>
+      </div>
+    </v-card-text>
+
+    <v-card-text v-else class="run-body">
+      <v-container fluid>
+        <v-row class="my-2 pb-8" no-gutters>
+          <v-col cols="12" md="3">
+            <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
+              <div class="text-h5">
+                Name
+              </div>
             </div>
-          </v-card-text>
-          <v-card-text v-else>
-            <div class="mb-4">
+          </v-col>
+
+          <v-col cols="12" md="9">
+            <div class=" mt-4 mt-md-0 d-flex align-center">
+              <v-btn
+                color="primary"
+                fab
+                depressed
+                x-small
+                title="Randomize run name"
+                @click="flowRunName = generateRandomName()"
+              >
+                <v-icon>fad fa-random</v-icon>
+              </v-btn>
+
               <v-text-field
                 v-model="flowRunName"
-                label="Flow run name"
-                hint="You can leave this field blank if desired. Prefect will
-                instead generate a random name for your flow run."
-                persistent-hint
-              ></v-text-field>
+                placeholder="name"
+                class="white ml-2 text-h5"
+                hide-details
+                outlined
+                dense
+              />
             </div>
-            <DateTime
-              v-model="scheduledStartDateTime"
-              :text-field-props="{
-                label: 'Scheduled Start Time',
-                hint:
-                  'Leave this field blank if you want to run the flow immediately.',
-                persistentHint: true
-              }"
-              warning="Since this time is in the past, your flow will be scheduled to run immediately."
-            />
-            <div class="mb-6 mt-6">
-              <v-subheader class="pl-0 subheader-height font-weight-bold">
-                SCHEDULE
-              </v-subheader>
-              <div v-if="!flow.schedule">
-                No Schedule
-              </div>
-              <div v-if="flow.schedule && flow.schedule.active">
-                Schedule Active
-              </div>
-              <div v-else-if="flow.schedule && !flow.schedule.active">
-                Schedule Inactive
-              </div>
-              <div v-if="flow.schedule && flow.schedule.active" class="mt-3">
-                <v-icon>query_builder</v-icon>
-                <PrefectSchedule
-                  class="ml-1 body-1"
-                  :schedule="flow.schedule.schedule"
-                />
-              </div>
-            </div>
-            <div class="pb-6">
-              <div class="pa-0 pr-3 position-relative">
-                <v-subheader class="pl-0 subheader-height font-weight-bold">
-                  PARAMETERS
-                </v-subheader>
-              </div>
-              <div v-if="defaultParameters && defaultParameters.length > 0">
-                <Parameters :parameters="defaultParameters"></Parameters>
-              </div>
-              <div v-else>
-                No Parameters
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-      <v-flex xs12 sm8>
-        <v-card tile class="ma-2 flow-root">
-          <CardTitle icon="perm_data_setting">
-            <template slot="title">
-              Parameters
-              <v-menu
-                v-model="paramInfoOpen"
-                offset-y
-                :close-on-content-click="false"
-                open-on-hover
-              >
-                <template #activator="{ on }">
-                  <div class="d-inline-block pr-4" v-on="on">
-                    <v-icon
-                      small
-                      class="material-icons-outlined"
-                      @focus="paramInfoOpen = true"
-                      @blur="paramInfoOpen = false"
-                    >
-                      info
-                    </v-icon>
-                  </div>
-                </template>
-                <v-card tile class="pa-0" max-width="320">
-                  <v-card-text class="pb-0">
-                    <p>
-                      Here you can provide
-                      <strong>run-time parameters</strong> for a flow run. If
-                      you want to update your flow group's default parameters,
-                      you can do so on the parameters tab in
-                      <router-link
-                        :to="{ name: 'flow', query: { tab: 'settings' } }"
-                        >Flow Settings</router-link
-                      >.
-                    </p>
-                    <p>
-                      Refer to the
-                      <a
-                        href="https://docs.prefect.io/core/concepts/parameters.html#parameters"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        @click="paramInfoOpen = false"
-                      >
-                        documentation</a
-                      >
-                      <sup
-                        ><v-icon x-small>
-                          open_in_new
-                        </v-icon></sup
-                      >
-                      for more details on parameters.
-                    </p>
-                  </v-card-text>
-                  <v-card-actions class="pt-0">
-                    <v-spacer></v-spacer>
-                    <v-btn small text @click="paramInfoOpen = false"
-                      >Close</v-btn
-                    >
-                  </v-card-actions>
-                </v-card>
-              </v-menu>
+          </v-col>
+        </v-row>
 
-              <v-fade-transition>
-                <v-icon
-                  v-if="errorInParameterInput"
-                  class="float-right mr-4"
-                  color="error"
-                >
-                  error
-                </v-icon>
-              </v-fade-transition>
-            </template>
-          </CardTitle>
-          <v-card-text class="px-2">
-            <v-layout class="mb-3 position-relative" align-center>
-              <!-- This text is in the read only E2E test - please adjust test if you adjust text -->
-              <div v-if="isReadOnlyUser" class="font-weight-black">
-                Read-only users cannot run flows from the UI.
+        <v-row class="mt-2 py-8" no-gutters>
+          <v-col cols="12" md="3" class="d-flex align-center">
+            <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
+              <div class="text-h5">
+                Start
               </div>
-              <div
-                v-else-if="
-                  !codeMirrorLoading &&
-                    defaultParameters &&
-                    defaultParameters.length > 0
-                "
-                class="width-100"
-                :class="{
-                  'ml-9': this.$vuetify.breakpoint.mdAndUp
-                }"
-              >
-                <JsonInput
-                  ref="parameterRef"
-                  v-model="parameterInput"
-                  :new-parameter-input="newParameterInput"
-                  :disabled="flow.archived"
-                  data-cy="flow-run-parameter-input"
-                  @input="errorInParameterInput = false"
-                ></JsonInput>
-              </div>
-              <div v-else class="px-2 ma-auto text-center">
-                This flow has no parameters
-                {{
-                  flow.archived
-                    ? 'but is archived and cannot be run.'
-                    : '; Click "Run" to launch your flow!'
-                }}
-              </div>
-            </v-layout>
-            <v-layout class="mt-7 mb-2">
-              <v-btn
-                v-disable-read-only-user="flow.archived"
-                class="vertical-button white--text ma-auto"
-                color="primary"
-                data-cy="submit-new-flow-run"
-                fab
-                large
-                :loading="loading"
-                elevation="2"
-                @click="run"
-              >
-                <v-icon
-                  class="mt-1 v-size--default"
-                  :style="{
-                    height: '24px',
-                    'font-size': '24px',
-                    'min-width': '24px'
-                  }"
-                >
-                  fa-rocket
-                </v-icon>
-                <div>Run</div>
-              </v-btn>
-            </v-layout>
-          </v-card-text>
-        </v-card>
-        <v-card tile class="mx-2 mt-6 flow-root">
-          <CardTitle icon="list">
-            <template slot="title">
-              Context
-              <v-menu
-                v-model="contextInfoOpen"
-                offset-y
-                :close-on-content-click="false"
-                open-on-hover
-              >
-                <template #activator="{ on }">
-                  <div class="d-inline-block pr-4" v-on="on">
-                    <v-icon
-                      small
-                      class="material-icons-outlined"
-                      @focus="contextInfoOpen = true"
-                      @blur="contextInfoOpen = false"
+            </div>
+          </v-col>
+
+          <v-col cols="12" md="9" class="d-flex align-center mt-4 mt-md-0">
+            <v-btn
+              depressed
+              color="blue-grey"
+              dark
+              large
+              active-class="primary font-weight-bold"
+              class="text-none mr-2 text-h6"
+              :class="{ 'lighten-4': when == 'later' }"
+              :input-value="when == 'now'"
+              @click="
+                when = 'now'
+                scheduledStartDateTime = null
+              "
+              >now</v-btn
+            >
+            <v-btn
+              depressed
+              color="blue-grey"
+              dark
+              large
+              active-class="primary font-weight-bold"
+              class="text-none text-h6"
+              :class="{ 'lighten-4': when == 'now' }"
+              :input-value="when == 'later'"
+              @click="when = 'later'"
+              >later...</v-btn
+            >
+          </v-col>
+        </v-row>
+
+        <v-fade-transition mode="out-in">
+          <v-row
+            v-if="when == 'later'"
+            class="pt-n8 pb-8 row-divider"
+            no-gutters
+          >
+            <v-col cols="0" md="2" />
+            <v-col cols="12" md="8">
+              <DateTimeSelector
+                v-model="scheduledStartDateTime"
+                :timezone.sync="scheduledStartTimezone"
+              />
+            </v-col>
+            <v-col cols="0" md="2" />
+          </v-row>
+        </v-fade-transition>
+
+        <v-row v-if="showParameters" class="my-2 py-8" no-gutters>
+          <v-col cols="12" md="3">
+            <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
+              <div class="text-h5">
+                Inputs
+                <MenuTooltip>
+                  <p>
+                    These are the parameters that are passed to your flow
+                    through
+                    <ExternalLink
+                      href="https://docs.prefect.io/api/latest/core/parameters.html#parameter-2"
+                      >Parameter tasks</ExternalLink
+                    >. To update your flow group's default parameters, visit the
+                    parameters tab of the
+                    <router-link
+                      :to="{ name: 'flow', query: { tab: 'settings' } }"
                     >
-                      info
-                    </v-icon>
-                  </div>
-                </template>
-                <v-card tile class="pa-0" max-width="320">
-                  <v-card-text class="pb-0">
-                    <p>
-                      (Optional) Provide
-                      <strong>Context</strong> for your flow run to share
-                      information between tasks without the need for explicit
-                      task run arguments.
-                    </p>
-                    <p>
-                      Refer to the
-                      <a
-                        href="https://docs.prefect.io/core/concepts/execution.html#context"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        @click="contextInfoOpen = false"
-                      >
-                        documentation</a
-                      >
-                      <sup
-                        ><v-icon x-small>
-                          open_in_new
-                        </v-icon></sup
-                      >
-                      for more details on Context.
-                    </p>
-                  </v-card-text>
-                  <v-card-actions class="pt-0">
-                    <v-spacer></v-spacer>
-                    <v-btn small text @click="contextInfoOpen = false"
-                      >Close</v-btn
+                      settings</router-link
+                    >.
+                  </p>
+                </MenuTooltip>
+              </div>
+            </div>
+          </v-col>
+
+          <v-col cols="12" md="9" class="mt-n4 mt-md-0 ">
+            <DictInput
+              v-model="parameters"
+              :dict="parameterItems"
+              disable-edit
+              allow-reset
+            />
+          </v-col>
+        </v-row>
+
+        <v-row v-if="showAdvanced" class="my-2 py-8 row-divider" no-gutters>
+          <v-col cols="12" md="3">
+            <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
+              <div class="text-h5">
+                Context
+                <MenuTooltip>
+                  <p>
+                    The
+                    <strong>context</strong> for your run to share information
+                    between tasks without the need for explicit task arguments.
+                  </p>
+
+                  <p>
+                    Refer to the
+                    <ExternalLink
+                      href="https://docs.prefect.io/core/concepts/execution.html#context"
+                      >documentation</ExternalLink
                     >
-                  </v-card-actions>
-                </v-card>
-              </v-menu>
-              <v-fade-transition>
-                <v-icon
-                  v-if="errorInContextInput"
-                  class="float-right mr-4"
-                  color="error"
+                    for more details on context.
+                  </p>
+                </MenuTooltip>
+                <span class="text-body-2 text--disabled ml-2">(Optional)</span>
+              </div>
+            </div>
+          </v-col>
+
+          <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
+            <DictInput v-model="context" />
+          </v-col>
+        </v-row>
+
+        <v-row v-if="showAdvanced" class="mt-8" no-gutters>
+          <div class="text-h5">
+            Run Configuration
+            <MenuTooltip>
+              <p>
+                The settings that determine where and how your flow should be
+                executed. Each run config type corresponds to an agent; options
+                displayed depend on the type of config selected.
+              </p>
+
+              <p>
+                Refer to the
+                <ExternalLink
+                  href="https://docs.prefect.io/orchestration/flow_config/run_configs.html#labels"
+                  >documentation</ExternalLink
                 >
-                  error
-                </v-icon>
-              </v-fade-transition>
-            </template>
-          </CardTitle>
-          <v-card-text class="px-2">
-            <v-layout class="mb-3 position-relative" align-center>
-              <div v-if="isReadOnlyUser" class="font-weight-black">
-                Read-only users cannot run flows from the UI.
+                for more details on run configs, including setting them at
+                registration time.
+              </p>
+            </MenuTooltip>
+            <span class="text-body-2 text--disabled ml-2">(Optional)</span>
+          </div>
+
+          <RunConfig v-model="runConfig" />
+        </v-row>
+
+        <div class="text-center">
+          <v-btn
+            depressed
+            text
+            outlined
+            class="text-none blue-grey--text mt-8 py-6 text--darken-2"
+            @click="showAdvanced = !showAdvanced"
+          >
+            <div>
+              <v-icon v-if="showAdvanced" small>
+                expand_less
+              </v-icon>
+              <div class="font-weight-regular">
+                {{ showAdvanced ? 'Hide' : 'Show' }}
+                advanced run configuration
               </div>
-              <div v-else-if="flow.archived" class="px-2">
-                This version is archived and cannot be run.
-              </div>
-              <div
-                v-else
-                class="width-100"
-                :class="{
-                  'ml-9': this.$vuetify.breakpoint.mdAndUp
-                }"
-              >
-                <JsonInput
-                  ref="contextRef"
-                  v-model="contextInput"
-                  height-auto
-                  @input="errorInContextInput = false"
-                ></JsonInput>
-              </div>
-            </v-layout>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-  </v-container>
+              <v-icon v-if="!showAdvanced" small>
+                expand_more
+              </v-icon>
+            </div>
+          </v-btn>
+        </div>
+      </v-container>
+    </v-card-text>
+
+    <!-- This is used to make sure the height of the document doesn't change during the scroll event handling -->
+    <div
+      v-if="!flow.archived"
+      class="run-actions placeholder"
+      :class="{
+        sticky: !stickyActions,
+        lg: $vuetify.breakpoint.mdAndUp,
+        sm: $vuetify.breakpoint.smAndDown
+      }"
+    />
+
+    <v-card-actions
+      v-if="!flow.archived"
+      class="run-actions px-4 d-flex align-center"
+      :class="{
+        sticky: stickyActions,
+        'px-12': stickyActions,
+        lg: $vuetify.breakpoint.mdAndUp,
+        sm: $vuetify.breakpoint.smAndDown
+      }"
+    >
+      <div
+        class="text-h4"
+        :class="{
+          'white--text': stickyActions
+        }"
+        style="max-width: 50%;"
+      >
+        <div
+          class="text-body-2 text--disabled text-uppercase font-weight-medium"
+          style="line-height: 0.8rem !important;"
+        >
+          Run
+        </div>
+        <div class="text-truncate">{{ flowRunName }}</div>
+      </div>
+
+      <v-divider
+        class="mx-4 vertical-divider my-auto"
+        vertical
+        :style="{
+          'border-color': stickyActions ? '#fff' : null
+        }"
+      />
+
+      <div
+        class="text-caption py-2 summary"
+        :class="{ 'summary-background': stickyActions }"
+      >
+        <div>
+          <span>When:</span>
+          <span class="float-right font-weight-medium ml-2 accentGreen--text"
+            >{{
+              when == 'now'
+                ? 'now'
+                : formatDateTimeFromUTC(
+                    scheduledStartDateTime,
+                    scheduledStartTimezone
+                  )
+            }}
+          </span>
+        </div>
+
+        <div v-if="showParameters">
+          <span>Parameters:</span>
+          <span class="float-right font-weight-medium ml-2">
+            <span v-if="parametersModified" class="accentGreen--text">
+              modified
+            </span>
+            <span v-else>default</span>
+          </span>
+        </div>
+
+        <div>
+          <span>Context:</span>
+          <span class="float-right font-weight-medium ml-2">
+            <span v-if="contextModified" class="accentGreen--text">
+              modified
+            </span>
+            <span v-else>default</span>
+          </span>
+        </div>
+
+        <div>
+          <span>RunConfig:</span>
+          <span class="float-right font-weight-medium ml-2">
+            <span v-if="runConfigTemplate" class="accentGreen--text">
+              <span :key="runConfigTemplate.icon">
+                <i :class="runConfigTemplate.icon" class="fa-sm pi-1x"> </i>
+              </span>
+
+              <span> {{ runConfigTemplate.label }}</span>
+            </span>
+            <span v-else>none</span>
+          </span>
+        </div>
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        class="text-none text-h5 px-4 run-tab-icon"
+        :class="{ 'blue--icon': stickyActions }"
+        :color="stickyActions ? 'white' : 'primary'"
+        depressed
+        x-large
+        :loading="loading"
+        :disabled="flow.archived"
+        @click="run"
+      >
+        Run
+        <i class="fad fa-rocket ml-2" />
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <style lang="scss" scoped>
+.vertical-divider {
+  height: 70%;
+  min-height: 0;
+  opacity: 0.6;
+}
+
+.pr-24 {
+  padding-right: 124px !important;
+}
+
 .flow-root {
   display: flow-root;
 }
@@ -488,12 +628,109 @@ export default {
 .width-100 {
   width: 100%;
 }
+
+.run-actions {
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  height: 86px;
+  transition: all 150ms;
+  width: 100%;
+
+  &.placeholder {
+    background-color: #fff !important;
+    position: relative !important;
+    transition: none;
+
+    &.sticky {
+      border-bottom: 0 !important;
+      border-top: 0 !important;
+      height: 0 !important;
+    }
+  }
+
+  &.sticky {
+    background-color: var(--v-primary-base);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+
+    // Makes sure the actions are always z-index above the footer (which is z-index 3)
+    z-index: 4;
+
+    &.lg {
+      height: 86px;
+    }
+
+    &.sm {
+      border-bottom: 1px solid #eee;
+      bottom: 56px;
+      height: 80px;
+      z-index: 5;
+    }
+  }
+}
+
+.summary {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 1fr);
+  height: 60px;
+  width: auto;
+
+  div {
+    min-width: 165px;
+    padding: 0 16px;
+  }
+
+  div:nth-child(n + 3) {
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  &.summary-background {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    color: #fff;
+  }
+}
+
+.row-divider:not(:last-of-type) {
+  position: relative;
+
+  &::after {
+    background-color: #ddd;
+    bottom: 0;
+    content: '';
+    height: 1px;
+    margin: auto;
+    position: absolute;
+    width: 100%;
+  }
+}
 </style>
 
 <style lang="scss">
-.tab-height-custom {
-  .v-tabs-bar {
-    height: 36px !important;
+.run-tab-icon {
+  .svg-inline--fa {
+    --fa-primary-color: #fff;
+    --fa-secondary-color: #efefef;
+    --fa-secondary-opacity: 0.5;
+    transition: all 150ms linear;
+  }
+
+  &.blue--icon {
+    .svg-inline--fa {
+      --fa-primary-color: var(--v-primary-base);
+      --fa-secondary-color: #ccc;
+      --fa-secondary-opacity: 1;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    .svg-inline--fa {
+      --fa-secondary-color: var(--v-accentPink-base);
+      --fa-secondary-opacity: 1;
+    }
   }
 }
 </style>

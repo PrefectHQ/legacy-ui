@@ -1,0 +1,140 @@
+/* stylelint-disable */
+
+.cm-s-json-input.CodeMirror {
+  background-color: #fff !important;
+  color: #455a64 !important;
+
+  .CodeMirror-code {
+    letter-spacing: 0.15rem;
+  }
+
+  div.CodeMirror-selected {
+    background: #e0f4ff !important;
+  }
+
+  .CodeMirror-line {
+    &::selection,
+    > span::selection,
+    > span > span::selection {
+      background: #e0f4ff !important;
+    }
+  }
+
+  .CodeMirror-gutters {
+    background: #f8f8f8 !important;
+    border-left: 6px solid rgba(0, 83, 159, 0.65) !important;
+    color: #333 !important;
+  }
+
+  .CodeMirror-linenumber {
+    color: #aaa !important;
+    padding-left: 8px !important;
+  }
+
+  .CodeMirror-cursor {
+    border-left: 1px solid rgba(0, 0, 0, 0.38) !important;
+  }
+
+  .cm-keyword {
+    color: #6262ff !important;
+  }
+
+  .cm-atom {
+    color: #f77062 !important;
+  }
+
+  .cm-number {
+    color: #07e798 !important;
+  }
+
+  .cm-def {
+    color: #8da6ce !important;
+  }
+
+  span.cm-variable-2,
+  span.cm-tag {
+    color: #690 !important;
+  }
+
+  span.cm-variable-3,
+  span.cm-def,
+  span.cm-type {
+    color: var(--v-error-base) !important;
+  }
+
+  .cm-variable {
+    color: var(--v-error-base) !important;
+  }
+
+  .cm-qualifier {
+    color: #690 !important;
+  }
+
+  .cm-operator {
+    color: var(--v-error-base) !important;
+  }
+
+  .cm-comment {
+    color: #777 !important;
+    font-weight: normal !important;
+  }
+  .cm-string {
+    color: #fe5196 !important;
+  }
+
+  .cm-property.cm-string {
+    color: #3b8dff !important;
+  }
+
+  .cm-property {
+    color: var(--v-error-base) !important;
+  }
+
+  .cm-string-2 {
+    color: var(--v-error-base) !important;
+  }
+  .cm-meta {
+    color: #000 !important;
+  }
+
+  .cm-builtin {
+    color: #9b7536 !important;
+  }
+
+  .cm-tag {
+    color: #997643 !important;
+  }
+
+  .cm-attribute {
+    color: #d6bb6d !important;
+  }
+
+  .cm-header {
+    color: #ff6400 !important;
+  }
+
+  .cm-hr {
+    color: #aeaeae !important;
+  }
+
+  .cm-link {
+    color: #ad9361 !important;
+    font-style: italic !important;
+    text-decoration: none !important;
+  }
+
+  .cm-error {
+    border-bottom: 1px solid red !important;
+  }
+
+  div .CodeMirror-activeline-background {
+    background: #efefff !important;
+  }
+
+  div span.CodeMirror-matchingbracket {
+    background-color: rgb(69, 90, 100, 0.35) !important;
+    color: inherit !important;
+  }
+}
+
+/* stylelint-enable */
