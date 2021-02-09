@@ -1,13 +1,14 @@
 version: 2.1
 
 orbs:
-  docker: circleci/docker@1.0.0
   slack: circleci/slack@3.4.2
 
 commands:
   prep:
     steps:
       - checkout
+      -setup_remote_docker:
+        version: 19.03.13
       - restore_cache:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
       - run:
