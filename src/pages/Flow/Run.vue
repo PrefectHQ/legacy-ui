@@ -8,6 +8,7 @@ import ExternalLink from '@/components/ExternalLink'
 import MenuTooltip from '@/components/MenuTooltip'
 import RunConfig from '@/components/RunConfig/RunConfig'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
+import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
@@ -24,7 +25,7 @@ export default {
     MenuTooltip,
     RunConfig
   },
-  mixins: [formatTime],
+  mixins: [formatTime, parametersMixin],
   props: {
     flow: {
       required: true,
@@ -40,7 +41,7 @@ export default {
       stickyActions: false,
 
       // Parameters
-      parameters: this.selectedFlowParameters,
+      parameters: this.defaultParameters,
 
       // Context
       context: {},
@@ -70,7 +71,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
     parameterItems() {
-      return this.flow.parameters?.map(parameter => {
+      return this.defaultParameters?.map(parameter => {
         return {
           disabled: true,
           key: parameter.name,
@@ -122,7 +123,7 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   mounted() {
-    this.parameters = this.selectedFlowParameters
+    this.parameters = this.defaultParameters
     this.runConfig = { ...this.flow.run_config, labels: this.labels }
 
     window.addEventListener('scroll', this.handleScroll)

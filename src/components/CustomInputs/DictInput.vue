@@ -143,9 +143,9 @@ export default {
         : [null]
 
       this.values = this.inputIsArray
-        ? this.dict.map(entry => entry.value)
+        ? this.dict.map(entry => JSON.stringify(entry.value))
         : this.dict
-        ? Object.values(this.dict)
+        ? Object.values(this.dict).map(value => JSON.stringify(value))
         : [null]
 
       this.$emit('input', { ...this.value })
