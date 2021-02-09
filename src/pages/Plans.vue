@@ -254,23 +254,76 @@ export default {
 
         <div class="mt-8 mt-md-16 d-flex justify-space-around">
           <div
-            class="plan-card blue-grey darken-3 white--text mr-0 ml-auto mt-8 rounded-sm"
+            class="plan-card blue-grey darken-2 white--text mr-0 ml-auto mt-8 rounded-sm"
           >
             <div class="font-weight-regular text-center py-8 plan-title">
               Starter
             </div>
             <v-divider class="divider-light" />
-            <div>
-              awdwadadaa
+            <div
+              class="text-h6 font-weight-regular text-center grey--text text--lighten-3"
+            >
+              <div class="mt-5">
+                Cloud-native workflow orchestration
+              </div>
+              <div class="mt-5 text-h2 font-weight-regular white--text">
+                0.25
+                <span class="ml-1 font-weight-light">
+                  ¢
+                </span>
+              </div>
+              <div class="mt-2 text-h6 font-weight-light">
+                per successful task run
+              </div>
+
+              <div
+                class="mt-16 text-left plan-body d-flex align-start justify-center flex-column pl-4"
+              >
+                <div class="d-flex align-center justify-center">
+                  <span class="rounded-circle plans-feature-icon">
+                    <v-icon small>
+                      fad fa-tasks
+                    </v-icon>
+                  </span>
+                  <span class="ml-2">10,000 free task runs per month</span>
+                </div>
+
+                <div class="my-3 d-flex align-center justify-center">
+                  <span class="rounded-circle plans-feature-icon">
+                    <v-icon small>
+                      fad fa-shield
+                    </v-icon>
+                  </span>
+                  <span class="ml-2">Best-in-class automatic security</span>
+                </div>
+
+                <div class="d-flex align-center justify-center">
+                  <span class="rounded-circle plans-feature-icon">
+                    <v-icon small>
+                      fad fa-clouds
+                    </v-icon>
+                  </span>
+                  <span class="ml-2">You build, we orchestrate</span>
+                </div>
+              </div>
+
+              <div class="plan-cta py-7 mt-16 blue-grey darken-1">
+                Get started now
+              </div>
             </div>
           </div>
           <div class="plan-card white rounded-sm">
             <div class="font-weight-regular text-center py-8 plan-title">
               Standard
+              <div class="text-body-1 prefect--text text-none">
+                Recommended
+              </div>
             </div>
             <v-divider class="divider-dark" />
-            <div>
-              awdwadadaa
+            <div class="text-h6 font-weight-regular text-center">
+              <div class="my-6">
+                A complete workflow automation platform
+              </div>
             </div>
           </div>
           <div
@@ -280,8 +333,10 @@ export default {
               Enterprise
             </div>
             <v-divider class="divider-light" />
-            <div>
-              awdwadadaa
+            <div class="text-h6 font-weight-regular text-center">
+              <div class="my-6">
+                Built for your business
+              </div>
             </div>
           </div>
         </div>
@@ -524,7 +579,7 @@ export default {
     }
 
     &.slash-4 {
-      background: #e0f4ff !important;
+      background: #2580ff !important;
       bottom: 310px;
       height: 150px;
       left: 1000px;
@@ -544,7 +599,7 @@ export default {
 
   .plan-title {
     font-size: 1.15rem;
-    letter-spacing: 0.3rem;
+    letter-spacing: 0.15rem;
     text-transform: uppercase;
   }
 
@@ -554,6 +609,21 @@ export default {
 
   .divider-light {
     border-color: #3f515a;
+  }
+
+  .plan-body {
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    margin: auto;
+    max-width: 300px;
+  }
+
+  .plan-feature-icon {
+    align-items: center;
+    display: inline-flex;
+    height: 20px;
+    justify-content: center;
+    width: 20px;
   }
 }
 
