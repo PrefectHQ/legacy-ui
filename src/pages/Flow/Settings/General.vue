@@ -280,7 +280,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile>
+  <v-card class="pa-2 pb-6 mt-2" outlined>
     <CardTitle title="Flow Settings" icon="settings" />
 
     <v-card-text class="pl-12" style="max-width: 1000px;">
