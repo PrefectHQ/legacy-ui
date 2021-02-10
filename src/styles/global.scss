@@ -384,9 +384,14 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
   .svg-inline--fa {
     --fa-primary-color: #27b1ff;
-    --fa-secondary-color: #6c8a99;
-    --fa-secondary-opacity: 1;
+    --fa-secondary-color: #27b1ff;
+    --fa-secondary-opacity: 0.6;
     transition: all 150ms linear;
+  }
+
+  .fa-toolbox.svg-inline--fa {
+    --fa-primary-opacity: 0.6 !important;
+    --fa-secondary-opacity: 1 !important;
   }
 
   &.plans-feature-icon-light {
@@ -434,6 +439,20 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
   &.feature-list-icon-disabled .svg-inline--fa {
     opacity: 0.3 !important;
+  }
+}
+
+.support-icon {
+  .svg-inline--fa {
+    --fa-primary-color: #27b1ff;
+    --fa-secondary-color: #27b1ff;
+    --fa-secondary-opacity: 0.5;
+  }
+
+  .fa-badge-check.svg-inline--fa {
+    --fa-primary-color: var(--v-accentGreen-darken2);
+    --fa-secondary-color: var(--v-accentGreen-base);
+    --fa-secondary-opacity: 0.6;
   }
 }
 /* stylelint-enable no-descending-specificity */

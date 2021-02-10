@@ -79,7 +79,7 @@ export default {
 </script>
 
 <template>
-  <v-container fluid class="pa-0">
+  <div>
     <div class="position-relative">
       <div class="position-relative my-0">
         <div class="slash-container">
@@ -365,7 +365,7 @@ export default {
             cols="12"
             sm="6"
             md="4"
-            class="d-flex align-start justify-center text-sm-left text-center my-8"
+            class="d-flex align-start justify-center my-8"
           >
             <div class="features-category">
               <div class="feature-category-icon">
@@ -461,6 +461,72 @@ export default {
           </v-col>
         </v-row>
       </div>
+    </div>
+
+    <div class="support-container">
+      <div class="slash-container">
+        <div class="slash slash-5"></div>
+        <div class="slash slash-6"></div>
+      </div>
+
+      <v-card
+        class="white pa-8 margin-auto support-card elevation-4 rounded d-flex align-start justify-start"
+        tile
+      >
+        <div class="d-inline-block support-icon">
+          <v-icon large>fad fa-concierge-bell</v-icon>
+        </div>
+
+        <v-row class="ml-4" no-gutters>
+          <v-col cols="12" sm="9">
+            <div class="text-h4 font-weight-light pa-0">
+              <span>Premium Support</span>
+            </div>
+            <div
+              class="mt-2 text-h6 font-weight-light blue-grey--text text--darken-1 pa-0"
+            >
+              A support plan built to help you quickly grow your workflows.
+
+              <div class="mt-2 support-table text-h6 font-weight-light">
+                <div class="my-2 mr-8">
+                  <span class="support-icon mr-2">
+                    <v-icon>fad fa-badge-check</v-icon>
+                  </span>
+                  Faster, prioritized support responses
+                </div>
+                <div class="my-2 mr-8">
+                  <span class="support-icon mr-2">
+                    <v-icon>fad fa-badge-check</v-icon>
+                  </span>
+                  Dedicated support manager for your team
+                </div>
+                <div class="my-2 mr-8">
+                  <span class="support-icon mr-2">
+                    <v-icon>fad fa-badge-check</v-icon>
+                  </span>
+                  Emergency support for critical issues
+                </div>
+              </div>
+            </div>
+          </v-col>
+          <v-col cols="12" sm="3" class="d-flex align-center justify-start">
+            <v-divider class="d-inline-block" vertical />
+            <div class="ml-8">
+              <div class="text-h4 accentGreen--text">Starting at $2,000</div>
+              <div class="text-subtitle-1 font-weight-light">
+                per month
+              </div>
+              <a
+                class="support-link text-h6 font-weight-regular mt-4"
+                href="https://www.prefect.io/get-prefect#contact"
+                target="_blank"
+                >Contact sales
+                <v-icon class="mb-1" color="grey">arrow_right</v-icon>
+              </a>
+            </div>
+          </v-col>
+        </v-row>
+      </v-card>
     </div>
 
     <!-- <ManagementLayout> -->
@@ -649,7 +715,7 @@ export default {
       </v-btn>
       <ChangePlanDialog v-else :plan="planType" />
     </div> -->
-  </v-container>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -704,6 +770,23 @@ export default {
       height: 150px;
       left: 1200px;
       width: 800px;
+    }
+
+    &.slash-5 {
+      background: #27b1ff !important;
+      bottom: 160px;
+      height: 75px;
+      left: 0;
+      width: 500px;
+    }
+
+    &.slash-6 {
+      background: #2edaff !important;
+      bottom: -75px;
+      height: 75px;
+      left: auto;
+      right: 0;
+      width: 500px;
     }
   }
 }
@@ -795,8 +878,8 @@ export default {
 }
 
 .features-container {
-  margin-bottom: 175px;
   margin-top: 175px;
+  position: relative;
 
   .features-body {
     margin: auto;
@@ -806,6 +889,7 @@ export default {
 
   .features-category {
     height: 100%;
+    max-width: 400px;
     min-width: 300px;
     padding: 0 50px;
     width: 100%;
@@ -886,6 +970,29 @@ export default {
     padding: 6px 0;
     position: relative;
     user-select: none;
+  }
+}
+
+.support-container {
+  margin-bottom: 264px;
+  margin-top: 64px;
+  position: relative;
+
+  .support-card {
+    margin: auto;
+    max-width: 1600px;
+
+    .support-table {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .support-link {
+      color: inherit !important;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+    }
   }
 }
 </style>
