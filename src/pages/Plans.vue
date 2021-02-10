@@ -1,7 +1,5 @@
 <script>
 import MenuTooltip from '@/components/MenuTooltip'
-import PlanCard from '@/components/PlanCard'
-import ChangePlanDialog from '@/components/License/ChangePlanDialog'
 import {
   PLANS_2021,
   basicFeatures,
@@ -12,15 +10,9 @@ import {
 } from '@/utils/plans'
 import { mapGetters } from 'vuex'
 
-PlanCard
-ChangePlanDialog
-
 export default {
   components: {
     MenuTooltip
-    // ManagementLayout,
-    // PlanCard,
-    // ChangePlanDialog
   },
   data() {
     return {
@@ -48,9 +40,8 @@ export default {
         }
       ],
       plans: PLANS_2021,
-      plan: 'standard',
+      plan: null,
       planValue: 2
-      // selected: 0
     }
   },
   computed: {
@@ -58,21 +49,8 @@ export default {
     ...mapGetters('tenant', ['tenant'])
   },
   methods: {
-    excluded(feature) {
-      if (
-        this.planType?.title === 'good' &&
-        (feature.plan === 'better' || feature.plan === 'best')
-      ) {
-        return true
-      } else if (this.planType?.title === 'better' && feature.plan === 'best') {
-        return true
-      } else {
-        return false
-      }
-    },
-    updatePlan(type) {
-      const index = this.plans.findIndex(planType => planType.value === type)
-      this.selected = index
+    handlePlanSelection(type) {
+      this.plan = type ? PLANS_2021[type] : null
     }
   }
 }
@@ -151,10 +129,10 @@ export default {
                       class="rounded-circle plans-feature-icon plans-feature-icon-light"
                     >
                       <v-icon small>
-                        fad fa-tasks
+                        fad fa-users
                       </v-icon>
                     </span>
-                    <span class="ml-2">10,000 free task runs per month</span>
+                    <span class="ml-2">Up to 3 users</span>
                   </div>
 
                   <div class="mt-3 d-flex align-center justify-center">
@@ -162,14 +140,28 @@ export default {
                       class="rounded-circle plans-feature-icon plans-feature-icon-light"
                     >
                       <v-icon small>
-                        fad fa-clouds
+                        fad fa-history
                       </v-icon>
                     </span>
-                    <span class="ml-2">You build, we orchestrate</span>
+                    <span class="ml-2">1 week of run history</span>
+                  </div>
+
+                  <div class="mt-3 d-flex align-center justify-center">
+                    <span
+                      class="rounded-circle plans-feature-icon plans-feature-icon-light"
+                    >
+                      <v-icon small>
+                        fad fa-tasks
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">10,000 free task runs per month</span>
                   </div>
                 </div>
 
-                <div class="plan-cta plan-cta-dark py-7 mt-16">
+                <div
+                  class="plan-cta plan-cta-dark py-7 mt-16"
+                  @click="handlePlanSelection('starter')"
+                >
                   Get started now
                 </div>
               </div>
@@ -219,11 +211,22 @@ export default {
                   <div class="d-flex align-center justify-center">
                     <span class="rounded-circle plans-feature-icon">
                       <v-icon small>
-                        fad fa-toolbox
+                        fad fa-users
                       </v-icon>
                     </span>
                     <span class="ml-2">
-                      Seamlessly integrate your existing tools
+                      Up to 10 users
+                    </span>
+                  </div>
+
+                  <div class="mt-3 d-flex align-center justify-center">
+                    <span class="rounded-circle plans-feature-icon">
+                      <v-icon small>
+                        fad fa-history
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">
+                      1 month of run history
                     </span>
                   </div>
 
@@ -234,6 +237,17 @@ export default {
                       </v-icon>
                     </span>
                     <span class="ml-2">Basic role-based permissioning</span>
+                  </div>
+
+                  <div class="mt-3 d-flex align-center justify-center">
+                    <span class="rounded-circle plans-feature-icon">
+                      <v-icon small>
+                        fad fa-toolbox
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">
+                      Seamlessly integrate your existing tools
+                    </span>
                   </div>
 
                   <div class="mt-3 d-flex align-center justify-center">
@@ -264,7 +278,10 @@ export default {
                   </div>
                 </div>
 
-                <div class="plan-cta py-7 mt-16">
+                <div
+                  class="plan-cta py-7 mt-16"
+                  @click="handlePlanSelection('standard')"
+                >
                   Get started now
                 </div>
               </div>
@@ -291,7 +308,7 @@ export default {
                   class="mt-16 d-flex align-center justify-center flex-column"
                 >
                   <div class="plan-table">
-                    <div class="py-2 px-8">Unlimited users</div>
+                    <div class="py-2 px-8">100+ users</div>
                     <div class="py-2 px-8">Custom RBAC / SSO</div>
                     <div class="py-2 px-8">Volume discounts</div>
                     <div class="py-2 px-8">Audit trail</div>
@@ -528,193 +545,6 @@ export default {
         </v-row>
       </v-card>
     </div>
-
-    <!-- <ManagementLayout> -->
-
-    <!-- <div
-      style="display: flex;
-            flex-direction: row;
-            justify-content: center;"
-      class="py-8"
-    >
-      <v-item-group v-model="selected" mandatory>
-        <v-row>
-          <v-col
-            v-for="(plan, i) in plans"
-            :key="i"
-            cols="12"
-            md="4"
-            class="pa-0"
-          >
-            <v-item v-slot="{ active, toggle }">
-              <div @click="toggle">
-                <PlanCard
-                  :plan="plan.title"
-                  :selected="active"
-                  :class="
-                    Math.abs(selected - i) > 1
-                      ? 'away elevation-0'
-                      : Math.abs(selected - i) === 1
-                      ? 'adjacent elevation-2'
-                      : 'active elevation-4'
-                  "
-                />
-              </div>
-            </v-item>
-          </v-col>
-        </v-row>
-      </v-item-group>
-    </div>
-    <div class="text-center pb-8">
-      <v-btn
-        v-if="selected === 2"
-        color="primary"
-        href="https://www.prefect.io/get-prefect#contact"
-        target="_blank"
-      >
-        Contact Sales
-      </v-btn>
-      <ChangePlanDialog v-else :plan="planType" @update="updatePlan" />
-    </div>
-
-    <v-card class="pa-6 mb-8">
-      <h3 class="py-2">All plans come with:</h3>
-      <ul
-        style="column-count: 2;
-    column-gap: 40px;
-    list-style-type: none;"
-      >
-        <li
-          v-for="(feature, i) in basicFeatures"
-          :key="i"
-          style="flex-direction: column;"
-        >
-          <p class="feature-title">{{ feature.name }}</p>
-          <p class="subtitle">{{ feature.description }}</p>
-        </li>
-      </ul>
-    </v-card>
-
-    <h2 class="pt-4">Additionally, this plan includes:</h2>
-
-    <div
-      class="pt-4 pb-8"
-      style="display: flex;
-    flex-direction: row;"
-      :style="
-        $vuetify.breakpoint.lgAndDown
-          ? { width: 'auto', flexWrap: 'wrap' }
-          : { width: '100%' }
-      "
-    >
-      <v-card
-        :style="
-          $vuetify.breakpoint.lgAndDown
-            ? { flexBasis: '50%' }
-            : { flexBasis: '25%' }
-        "
-        class="pa-4 mb-8"
-      >
-        <h3 class="py-2">Infrastructure</h3>
-        <ul style="list-style-type: none;">
-          <li v-for="(feature, i) in infrastructureFeatures" :key="i">
-            <p
-              class="feature-title"
-              :class="{ 'text--disabled': excluded(feature) }"
-              >{{ feature.name }}</p
-            >
-            <p
-              class="subtitle"
-              :class="{ 'text--disabled': excluded(feature) }"
-              >{{ feature.description }}</p
-            >
-          </li>
-        </ul>
-      </v-card>
-      <v-card
-        :style="
-          $vuetify.breakpoint.lgAndDown
-            ? { flexBasis: '50%' }
-            : { flexBasis: '25%' }
-        "
-        class="pa-4 mb-8"
-      >
-        <h3 class="py-2">Observability</h3>
-        <ul style="list-style-type: none;">
-          <li v-for="(feature, i) in observabilityFeatures" :key="i">
-            <p
-              class="feature-title"
-              :class="{ 'text--disabled': excluded(feature) }"
-              >{{ feature.name }}</p
-            >
-            <p
-              class="subtitle"
-              :class="{ 'text--disabled': excluded(feature) }"
-              >{{ feature.description }}</p
-            >
-          </li>
-        </ul>
-      </v-card>
-      <v-card
-        :style="
-          $vuetify.breakpoint.lgAndDown
-            ? { flexBasis: '50%' }
-            : { flexBasis: '25%' }
-        "
-        class="pa-4 mb-8"
-      >
-        <h3 class="py-2">Orchestration</h3>
-        <ul style="list-style-type: none;">
-          <li v-for="(feature, i) in orchestrationFeatures" :key="i">
-            <p
-              class="feature-title"
-              :class="{ 'text--disabled': excluded(feature) }"
-              >{{ feature.name }}</p
-            >
-            <p
-              class="subtitle"
-              :class="{ 'text--disabled': excluded(feature) }"
-              >{{ feature.description }}</p
-            >
-          </li>
-        </ul>
-      </v-card>
-      <v-card
-        :style="
-          $vuetify.breakpoint.lgAndDown
-            ? { flexBasis: '50%' }
-            : { flexBasis: '25%' }
-        "
-        class="pa-4 mb-8"
-      >
-        <h3 class="py-2">Authorization</h3>
-        <ul style="list-style-type: none;">
-          <li v-for="(feature, i) in authorizationFeatures" :key="i">
-            <p
-              class="feature-title"
-              :class="{ 'text--disabled': excluded(feature) }"
-              >{{ feature.name }}</p
-            >
-            <p
-              class="subtitle"
-              :class="{ 'text--disabled': excluded(feature) }"
-              >{{ feature.description }}</p
-            >
-          </li>
-        </ul>
-      </v-card>
-    </div>
-    <div class="text-center pb-4">
-      <v-btn
-        v-if="selected === 2"
-        color="primary"
-        href="https://www.prefect.io/get-prefect#contact"
-        target="_blank"
-      >
-        Contact Sales
-      </v-btn>
-      <ChangePlanDialog v-else :plan="planType" />
-    </div> -->
   </div>
 </template>
 
