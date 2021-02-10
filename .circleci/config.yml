@@ -17,10 +17,11 @@ aliases:
         
 
 commands:
-  prep:
+  build:
     parameters:
       FA_TOKEN:
-        type: string
+        type: VUE_APP_STRIPE_PK__STAGING
+  prep:
     steps:
       - checkout
       - restore_cache:
