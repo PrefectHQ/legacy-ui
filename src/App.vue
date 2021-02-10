@@ -189,7 +189,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeydown)
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
-    window.removeEventListener('mousewheel', this.handleScroll)
+    window.removeEventListener('scroll', this.handleScroll)
 
     // this.oktaClient?.remove()
 
@@ -301,7 +301,7 @@ export default {
     document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
-    window.addEventListener('mousewheel', this.handleScroll)
+    window.addEventListener('scroll', this.handleScroll)
 
     // document.addEventListener(
     //   'visibilitychange',
