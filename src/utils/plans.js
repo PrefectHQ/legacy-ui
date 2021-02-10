@@ -91,60 +91,60 @@ export const infrastructureFeatures = [
     name: 'Hosted Orchestration Platform',
     description:
       'Focus on your code while Prefect Cloud manages a highly-available orchestration API',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'Performance',
     description: 'Run tasks as fast as your internet connection allows for',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'API Security',
     description: 'Permission access via API tokens',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'Automatic Updates',
     description:
       'Prefect Cloud releases every two weeks with new features and performance enhancements',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'Raise Rate Limits',
     description: 'TK',
-    plan: 'best'
+    plan: 'enterprise'
   }
 ]
 export const observabilityFeatures = [
   {
     name: 'Log Management',
     description: 'Stream, filter, and examine all of your workflow logs',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'Advanced Alerting',
     description: 'Configure notifications when custom criteria are met',
-    plan: 'better'
+    plan: 'standard'
   },
   {
     name: 'Flow SLAs',
     description: 'Set SLAs for late or long-running workflows',
-    plan: 'better'
+    plan: 'standard'
   },
   {
     name: 'Agent SLAs',
     description: 'Set SLAs for agents to ensure uptime',
-    plan: 'better'
+    plan: 'standard'
   },
   {
     name: 'History Retention',
     description: 'Track one year of run history',
-    plan: 'best'
+    plan: 'enterprise'
   },
   {
     name: 'Audit Trail',
     description: 'Track every action taken via the Prefect API',
-    plan: 'best'
+    plan: 'enterprise'
   }
 ]
 export const orchestrationFeatures = [
@@ -152,30 +152,30 @@ export const orchestrationFeatures = [
     name: 'Stateless Deployments',
     description:
       'Spin up and tear down agent deployments with ease - Prefect Cloud manages all state for you',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'Multiple Execution Environments',
     description:
       'Promote your workflows from dev to prod with a single API call, or schedule them to run in multiple places at once!',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'Secrets',
     description: 'Manage sensitive information',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'Advanced Automation',
     description:
       'Automatically configure API actions when custom criteria are met',
-    plan: 'better'
+    plan: 'standard'
   },
   {
     name: 'Concurrency Limits',
     description:
       'Set concurrency limits at the flow or task level to control access to resources',
-    plan: 'better'
+    plan: 'standard'
   }
 ]
 export const authorizationFeatures = [
@@ -183,31 +183,31 @@ export const authorizationFeatures = [
     name: 'Team Management',
     description:
       'Get a complete view of everyone who can access your workflows',
-    plan: 'good'
+    plan: 'starter'
   },
   {
     name: 'Read-Only Users',
     description: 'Invite analyts to work with the output of your workflows',
-    plan: 'better'
+    plan: 'standard'
   },
   {
     name: 'RBAC',
     description: 'Assign roles to users to control access',
-    plan: 'best'
+    plan: 'enterprise'
   },
   {
     name: 'Custom Permissions',
     description: 'Assign granular permissions, including per-project limits',
-    plan: 'best'
+    plan: 'enterprise'
   },
   {
     name: 'SSO',
     description: 'Log in to Prefect Cloud via SSO',
-    plan: 'best'
+    plan: 'enterprise'
   },
   {
     name: 'Custom Roles',
     description: 'Create and assign custom roles',
-    plan: 'best'
+    plan: 'enterprise'
   }
 ]

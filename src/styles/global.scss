@@ -397,5 +397,19 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
     }
   }
 }
+
+.feature-category-icon {
+  .svg-inline--fa {
+    --fa-primary-color: #27b1ff;
+    --fa-secondary-color: #fe5196;
+    --fa-secondary-opacity: 1;
+    transition: all 150ms linear;
+
+    &.fa-chart-scatter {
+      --fa-primary-color: #fe5196;
+      --fa-secondary-color: #27b1ff;
+    }
+  }
+}
 /* stylelint-enable no-descending-specificity */
 /* End plans global styles */

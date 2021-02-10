@@ -2,7 +2,14 @@
 // import MenuTooltip from '@/components/MenuTooltip'
 import PlanCard from '@/components/PlanCard'
 import ChangePlanDialog from '@/components/License/ChangePlanDialog'
-import { PLANS_2021 } from '@/utils/plans'
+import {
+  PLANS_2021,
+  basicFeatures,
+  infrastructureFeatures,
+  observabilityFeatures,
+  orchestrationFeatures,
+  authorizationFeatures
+} from '@/utils/plans'
 import { mapGetters } from 'vuex'
 
 PlanCard
@@ -17,25 +24,48 @@ export default {
   },
   data() {
     return {
-      plans: Object.values(PLANS_2021),
-      selected: 0
+      categories: [
+        { title: 'Basic', icon: 'fad fa-atom-alt', features: basicFeatures },
+        {
+          title: 'Infrastructure',
+          icon: 'fad fa-network-wired',
+          features: infrastructureFeatures
+        },
+        {
+          title: 'Observability',
+          icon: 'fad fa-chart-scatter',
+          features: observabilityFeatures
+        },
+        {
+          title: 'Orchestration',
+          icon: 'fad fa-chart-network',
+          features: orchestrationFeatures
+        },
+        {
+          title: 'Auth',
+          icon: 'fad fa-user-shield',
+          features: authorizationFeatures
+        }
+      ],
+      plans: PLANS_2021
+      // selected: 0
     }
   },
   computed: {
     ...mapGetters('license', ['license', 'tempLicenseType']),
-    ...mapGetters('tenant', ['tenant']),
-    planType() {
-      return this.plans[this.selected]
-    }
+    ...mapGetters('tenant', ['tenant'])
+    // planType() {
+    //   return this.plans[this.selected]
+    // }
   },
   created() {
     //creates a non-reactive property that isn't tracked by Vue - so that selected doesn't reset
-    const name =
-      this.license?.terms.plan === 'STARTER_2021'
-        ? 'FREE_2021'
-        : this.license?.terms?.plan
-    const plan = this.plans.findIndex(planType => planType.value === name)
-    this.selected = plan > 0 ? plan : 0
+    // const name =
+    //   this.license?.terms.plan === 'STARTER_2021'
+    //     ? 'FREE_2021'
+    //     : this.license?.terms?.plan
+    // const plan = this.plans.findIndex(planType => planType.value === name)
+    // this.selected = plan > 0 ? plan : 0
   },
   methods: {
     excluded(feature) {
@@ -60,48 +90,49 @@ export default {
 
 <template>
   <v-container fluid class="pa-0">
-    <div class="position-relative my-0">
-      <div class="slash-container">
-        <div class="slash slash-0"></div>
-        <div class="slash slash-1"></div>
-        <div class="slash slash-2"></div>
-        <div class="slash slash-3"></div>
-        <div class="slash slash-4"></div>
-      </div>
-
-      <div class="header-container">
-        <div class="text-h3 font-weight-light text-center">
-          <div class="blue-grey--text text--darken-4">
-            Pay for what you use.
-          </div>
-          <div class="mt-4 white--text">
-            Eliminate negative engineering.
-          </div>
+    <div class="position-relative">
+      <div class="position-relative my-0">
+        <div class="slash-container">
+          <div class="slash slash-0"></div>
+          <div class="slash slash-1"></div>
+          <div class="slash slash-2"></div>
+          <div class="slash slash-3"></div>
+          <div class="slash slash-4"></div>
         </div>
 
-        <div class="mt-8 mt-md-16 d-flex justify-space-around">
-          <div
-            class="plan-card blue-grey darken-2 white--text mr-0 ml-auto mt-8 rounded elevation-4"
-          >
-            <div class="font-weight-regular text-center py-8 plan-title">
-              Starter
+        <div class="header-container">
+          <div class="text-h3 font-weight-light text-center">
+            <div class="blue-grey--text text--darken-4">
+              Pay for what you use.
             </div>
-            <v-divider class="divider-light" />
-            <div
-              class="text-h6 font-weight-regular text-center grey--text text--lighten-3"
-            >
-              <div class="mt-8">
-                Cloud-native workflow orchestration
-              </div>
-              <div
-                class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price d-flex align-center justify-center"
-              >
-                <span class="mr-2 font-weight-light d-inline-block plan-cent">
-                  $ </span
-                >0.0025
+            <div class="mt-4 white--text">
+              Eliminate negative engineering.
+            </div>
+          </div>
 
-                <!-- Hiding this for now until we can link to the success-based pricing page; that page will have a much more helpful breakdown as well as calculators that take automatic volume discounts into account! -->
-                <!-- <MenuTooltip
+          <div class="mt-8 mt-md-16 d-flex justify-space-around">
+            <div
+              class="plan-card blue-grey darken-2 white--text mr-0 ml-auto mt-8 rounded elevation-4"
+            >
+              <div class="font-weight-regular text-center py-8 plan-title">
+                Starter
+              </div>
+              <v-divider class="divider-light" />
+              <div
+                class="text-h6 font-weight-regular text-center grey--text text--lighten-3"
+              >
+                <div class="mt-8">
+                  Cloud-native workflow orchestration
+                </div>
+                <div
+                  class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price d-flex align-center justify-center"
+                >
+                  <span class="mr-2 font-weight-light d-inline-block plan-cent">
+                    $ </span
+                  >0.0025
+
+                  <!-- Hiding this for now until we can link to the success-based pricing page; that page will have a much more helpful breakdown as well as calculators that take automatic volume discounts into account! -->
+                  <!-- <MenuTooltip
                   offset-y
                   hide-close
                   icon-color="white"
@@ -117,64 +148,64 @@ export default {
                   >). That means the next 10,000 would cost just
                   <span class="font-weight-medium primary--text">$25</span>!
                 </MenuTooltip> -->
-              </div>
-              <div class="mt-2 text-h6 font-weight-light">
-                per successful task run
-              </div>
-
-              <div
-                class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
-              >
-                <div class="d-flex align-center justify-center">
-                  <span
-                    class="rounded-circle plans-feature-icon plans-feature-icon-light"
-                  >
-                    <v-icon small>
-                      fad fa-tasks
-                    </v-icon>
-                  </span>
-                  <span class="ml-2">10,000 free task runs per month</span>
+                </div>
+                <div class="mt-2 text-h6 font-weight-light">
+                  per successful task run
                 </div>
 
-                <div class="mt-3 d-flex align-center justify-center">
-                  <span
-                    class="rounded-circle plans-feature-icon plans-feature-icon-light"
-                  >
-                    <v-icon small>
-                      fad fa-clouds
-                    </v-icon>
-                  </span>
-                  <span class="ml-2">You build, we orchestrate</span>
+                <div
+                  class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
+                >
+                  <div class="d-flex align-center justify-center">
+                    <span
+                      class="rounded-circle plans-feature-icon plans-feature-icon-light"
+                    >
+                      <v-icon small>
+                        fad fa-tasks
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">10,000 free task runs per month</span>
+                  </div>
+
+                  <div class="mt-3 d-flex align-center justify-center">
+                    <span
+                      class="rounded-circle plans-feature-icon plans-feature-icon-light"
+                    >
+                      <v-icon small>
+                        fad fa-clouds
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">You build, we orchestrate</span>
+                  </div>
+                </div>
+
+                <div class="plan-cta plan-cta-dark py-7 mt-16">
+                  Get started now
                 </div>
               </div>
-
-              <div class="plan-cta plan-cta-dark py-7 mt-16">
-                Get started now
-              </div>
             </div>
-          </div>
 
-          <div class="plan-card white rounded elevation-7">
-            <div class="font-weight-regular text-center py-8 plan-title">
-              Standard
-              <div class="text-body-1 prefect--text text-none">
-                Recommended
+            <div class="plan-card white rounded elevation-7">
+              <div class="font-weight-regular text-center py-8 plan-title">
+                Standard
+                <div class="text-body-1 prefect--text text-none">
+                  Recommended
+                </div>
               </div>
-            </div>
-            <v-divider class="divider-dark" />
-            <div class="text-h6 font-weight-regular text-center">
-              <div class="mt-8 blue-grey--text text--darken-2">
-                A complete workflow automation platform
-              </div>
-              <div
-                class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
-              >
-                <span class="mr-2 font-weight-light d-inline-block plan-cent">
-                  $ </span
-                >0.0050
+              <v-divider class="divider-dark" />
+              <div class="text-h6 font-weight-regular text-center">
+                <div class="mt-8 blue-grey--text text--darken-2">
+                  A complete workflow automation platform
+                </div>
+                <div
+                  class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
+                >
+                  <span class="mr-2 font-weight-light d-inline-block plan-cent">
+                    $ </span
+                  >0.0050
 
-                <!-- Hiding this for now until we can link to the success-based pricing page; that page will have a much more helpful breakdown as well as calculators that take automatic volume discounts into account! -->
-                <!-- <MenuTooltip
+                  <!-- Hiding this for now until we can link to the success-based pricing page; that page will have a much more helpful breakdown as well as calculators that take automatic volume discounts into account! -->
+                  <!-- <MenuTooltip
                   offset-y
                   hide-close
                   icon-class="align-self-start ml-1"
@@ -187,100 +218,139 @@ export default {
                     >10,000 successful task runs</span
                   >.
                 </MenuTooltip> -->
-              </div>
-              <div class="mt-2 text-h6 font-weight-light">
-                per successful task run
-              </div>
-
-              <div
-                class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
-              >
-                <div class="d-flex align-center justify-center">
-                  <span class="rounded-circle plans-feature-icon">
-                    <v-icon small>
-                      fad fa-toolbox
-                    </v-icon>
-                  </span>
-                  <span class="ml-2">
-                    Seamlessly integrate your existing tools
-                  </span>
+                </div>
+                <div class="mt-2 text-h6 font-weight-light">
+                  per successful task run
                 </div>
 
-                <div class="mt-3 d-flex align-center justify-center">
-                  <span class="rounded-circle plans-feature-icon">
-                    <v-icon small>
-                      fad fa-user-shield
-                    </v-icon>
-                  </span>
-                  <span class="ml-2">Basic role-based permissioning</span>
+                <div
+                  class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
+                >
+                  <div class="d-flex align-center justify-center">
+                    <span class="rounded-circle plans-feature-icon">
+                      <v-icon small>
+                        fad fa-toolbox
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">
+                      Seamlessly integrate your existing tools
+                    </span>
+                  </div>
+
+                  <div class="mt-3 d-flex align-center justify-center">
+                    <span class="rounded-circle plans-feature-icon">
+                      <v-icon small>
+                        fad fa-user-shield
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">Basic role-based permissioning</span>
+                  </div>
+
+                  <div class="mt-3 d-flex align-center justify-center">
+                    <span class="rounded-circle plans-feature-icon">
+                      <v-icon small>
+                        fad fa-siren-on
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">Workflow and infrastructure SLAs</span>
+                  </div>
+
+                  <div class="mt-3 d-flex align-center justify-center">
+                    <span class="rounded-circle plans-feature-icon">
+                      <v-icon small>
+                        fad fa-random
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">Customizable stateful actions</span>
+                  </div>
+
+                  <div class="mt-3 d-flex align-center justify-center">
+                    <span class="rounded-circle plans-feature-icon">
+                      <v-icon small>
+                        fad fa-shield
+                      </v-icon>
+                    </span>
+                    <span class="ml-2">Best-in-class automatic security</span>
+                  </div>
                 </div>
 
-                <div class="mt-3 d-flex align-center justify-center">
-                  <span class="rounded-circle plans-feature-icon">
-                    <v-icon small>
-                      fad fa-siren-on
-                    </v-icon>
-                  </span>
-                  <span class="ml-2">Workflow and infrastructure SLAs</span>
+                <div class="plan-cta py-7 mt-16">
+                  Get started now
                 </div>
-
-                <div class="mt-3 d-flex align-center justify-center">
-                  <span class="rounded-circle plans-feature-icon">
-                    <v-icon small>
-                      fad fa-random
-                    </v-icon>
-                  </span>
-                  <span class="ml-2">Customizable stateful actions</span>
-                </div>
-
-                <div class="mt-3 d-flex align-center justify-center">
-                  <span class="rounded-circle plans-feature-icon">
-                    <v-icon small>
-                      fad fa-shield
-                    </v-icon>
-                  </span>
-                  <span class="ml-2">Best-in-class automatic security</span>
-                </div>
-              </div>
-
-              <div class="plan-cta py-7 mt-16">
-                Get started now
               </div>
             </div>
-          </div>
 
-          <div
-            class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded-sm elevation-3"
-          >
-            <div class="font-weight-regular text-center py-8 plan-title">
-              Enterprise
-            </div>
-
-            <v-divider class="divider-light" />
-            <div class="text-h6 font-weight-regular text-center">
-              <div class="mt-8">
-                Built for your business
-
-                <div class="mt-2 font-weight-light">
-                  Get in touch to build your Prefect Cloud
-                </div>
+            <div
+              class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded-sm elevation-3"
+            >
+              <div class="font-weight-regular text-center py-8 plan-title">
+                Enterprise
               </div>
 
-              <div class="mt-16 d-flex align-center justify-center flex-column">
-                <div class="plan-table">
-                  <div class="py-2 px-8">Unlimited users</div>
-                  <div class="py-2 px-8">Custom RBAC / SSO</div>
-                  <div class="py-2 px-8">Volume discounts</div>
-                  <div class="py-2 px-8">Audit trail</div>
-                </div>
-              </div>
+              <v-divider class="divider-light" />
+              <div class="text-h6 font-weight-regular text-center">
+                <div class="mt-8">
+                  Built for your business
 
-              <div class="plan-cta plan-cta-dark py-7 mt-16">
-                Contact sales <v-icon color="grey">arrow_right</v-icon>
+                  <div class="mt-2 font-weight-light">
+                    Get in touch to build your Prefect Cloud
+                  </div>
+                </div>
+
+                <div
+                  class="mt-16 d-flex align-center justify-center flex-column"
+                >
+                  <div class="plan-table">
+                    <div class="py-2 px-8">Unlimited users</div>
+                    <div class="py-2 px-8">Custom RBAC / SSO</div>
+                    <div class="py-2 px-8">Volume discounts</div>
+                    <div class="py-2 px-8">Audit trail</div>
+                  </div>
+                </div>
+
+                <div class="plan-cta plan-cta-dark py-7 mt-16">
+                  Contact sales <v-icon color="grey">arrow_right</v-icon>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="features-container blue-grey--text text--darken-3">
+      <div class="text-center text-h3 font-weight-light">Features</div>
+
+      <div class="features-body">
+        <v-row no-gutters>
+          <v-col
+            v-for="category in categories"
+            :key="category.title"
+            cols="12"
+            sm="6"
+            md="4"
+            class="d-flex align-start justify-center text-left my-8"
+          >
+            <div class="features-category">
+              <div class="feature-category-icon">
+                <v-icon large>
+                  {{ category.icon }}
+                </v-icon>
+              </div>
+
+              <div class="text-h4 font-weight-light my-4">
+                {{ category.title }}
+              </div>
+              <div
+                v-for="feature in category.features"
+                :key="feature.name"
+                class="text-h6 font-weight-light"
+              >
+                {{ feature.name }}
+              </div>
+            </div>
+          </v-col>
+        </v-row>
       </div>
     </div>
 
@@ -609,6 +679,19 @@ export default {
       background-color: #e9f7fc !important;
       font-weight: 500 !important;
     }
+  }
+}
+
+.features-container {
+  margin-top: 150px;
+
+  .features-body {
+    margin-top: 100px;
+  }
+
+  .features-category {
+    height: 100%;
+    min-width: 300px;
   }
 }
 
