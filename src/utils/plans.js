@@ -21,7 +21,7 @@ export const PLANS_2021 = {
   },
   standard: {
     name: 'Standard',
-    price: 500,
+    price: 0,
     taskRuns: 0,
     additionalCost: '0.0050',
     value: 'STANDARD_2021',
