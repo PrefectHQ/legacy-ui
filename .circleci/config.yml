@@ -17,10 +17,6 @@ aliases:
         
 
 commands:
-  build:
-    parameters:
-      FA_TOKEN:
-        type: VUE_APP_STRIPE_PK__STAGING
   prep:
     steps:
       - checkout
@@ -30,8 +26,7 @@ commands:
           name: NPM Install
           environment:
             FA_TOKEN: ${FA_TOKEN}
-          command: |
-            export FA_TOKEN=<< parameters.FA_TOKEN >>
+          command:
             npm install
       - save_cache:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
