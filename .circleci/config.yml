@@ -24,6 +24,8 @@ commands:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
       - run:
           name: NPM Install
+          environment:
+            FA_TOKEN: ${FA_TOKEN}
           command: npm install
       - save_cache:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
