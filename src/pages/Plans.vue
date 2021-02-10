@@ -27,6 +27,11 @@ export default {
       categories: [
         { title: 'Basic', icon: 'fad fa-atom-alt', features: basicFeatures },
         {
+          title: 'Auth',
+          icon: 'fad fa-user-shield',
+          features: authorizationFeatures
+        },
+        {
           title: 'Infrastructure',
           icon: 'fad fa-network-wired',
           features: infrastructureFeatures
@@ -40,11 +45,6 @@ export default {
           title: 'Orchestration',
           icon: 'fad fa-chart-network',
           features: orchestrationFeatures
-        },
-        {
-          title: 'Auth',
-          icon: 'fad fa-user-shield',
-          features: authorizationFeatures
         }
       ],
       plans: PLANS_2021
@@ -54,18 +54,6 @@ export default {
   computed: {
     ...mapGetters('license', ['license', 'tempLicenseType']),
     ...mapGetters('tenant', ['tenant'])
-    // planType() {
-    //   return this.plans[this.selected]
-    // }
-  },
-  created() {
-    //creates a non-reactive property that isn't tracked by Vue - so that selected doesn't reset
-    // const name =
-    //   this.license?.terms.plan === 'STARTER_2021'
-    //     ? 'FREE_2021'
-    //     : this.license?.terms?.plan
-    // const plan = this.plans.findIndex(planType => planType.value === name)
-    // this.selected = plan > 0 ? plan : 0
   },
   methods: {
     excluded(feature) {
@@ -320,6 +308,25 @@ export default {
 
     <div class="features-container blue-grey--text text--darken-3">
       <div class="text-center text-h3 font-weight-light">Features</div>
+
+      <div class="text-center mt-8">
+        <fieldset class="multiswitch">
+          <legend class="text-h5 font-weight-light">
+            Select a plan to view features
+          </legend>
+
+          <div class="slide-container text-h6 font-weight-light">
+            <input id="starter" type="radio" name="plan" />
+            <label for="starter">Starter</label>
+            <input id="standard" type="radio" name="plan" checked required />
+            <label for="standard">Standard</label>
+            <input id="enterprise" type="radio" name="plan" />
+            <label for="enterprise">Enterprise</label>
+
+            <a class="slide" aria-hidden="true"></a>
+          </div>
+        </fieldset>
+      </div>
 
       <div class="features-body">
         <v-row no-gutters>
@@ -778,49 +785,66 @@ export default {
   }
 }
 
-/* @keyframes adjacent {
-  100% {
-    filter: contrast(65%);
-    transform: scale(0.9);
+.multiswitch {
+  $steps: 6, 8, 10, 12;
+  $third: calc(100% / 3);
+
+  border: 0;
+  margin: auto;
+  width: 450px;
+
+  a {
+    background: #27b1ff;
+    border-radius: 4px;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    transition: all 0.15s ease-in-out;
+    width: #{$third};
+    z-index: 1;
+  }
+
+  input {
+    left: -200vw;
+    position: absolute;
+  }
+
+  label {
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease-in-out;
+    width: #{$third};
+    z-index: 2;
+  }
+
+  input:checked {
+    ~ a {
+      left: 0;
+    }
+
+    + label {
+      color: #fff;
+      font-weight: 400;
+    }
+  }
+
+  @for $i from 1 through 3 {
+    input:nth-of-type(#{$i}):checked ~ a {
+      left: calc(#{$third} * (#{$i} - 1));
+    }
+  }
+
+  .slide-container {
+    background-color: #eee;
+    border-radius: 4px;
+    box-sizing: content-box;
+    display: flex;
+    margin-top: 8px;
+    overflow: hidden;
+    padding: 6px 0;
+    position: relative;
+    user-select: none;
   }
 }
-
-@keyframes away {
-  100% {
-    filter: contrast(35%);
-    transform: scale(0.8);
-  }
-}
-
-@keyframes active {
-  100% {
-    filter: contrast(100%);
-    transform: scale(1);
-  }
-} */
-
-/* .active {
-  animation: active 1s forwards;
-}
-
-.adjacent {
-  animation: adjacent 1s forwards;
-}
-
-.away {
-  animation: away 1s forwards;
-} */
-
-/* .feature-title {
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5rem;
-  margin-bottom: 4px;
-  text-align: left;
-}
-
-.subtitle {
-  color: #444;
-  font-size: 0.875rem;
-} */
 </style>
