@@ -1,16 +1,25 @@
 export const PLANS_2021 = {
-  good: {
+  free: {
+    name: 'Developer',
+    price: 0,
+    taskRuns: 10000,
+    additionalCost: 0,
+    users: 1,
+    value: 'FREE_2021',
+    history: 'week',
+    title: 'developer'
+  },
+  starter: {
     name: 'Starter',
     price: 0,
     taskRuns: 10000,
     additionalCost: '0.0025',
     users: 3,
-    value: 'FREE_2021',
+    value: 'STARTER_2021',
     history: 'week',
-    title: 'good'
+    title: 'starter'
   },
-  //Same details for STARTER_2021 and FREE_2021 but we'll check in the change plan dialog if we should call FREE or STARTER depending on whether they have a card on file
-  better: {
+  standard: {
     name: 'Standard',
     price: 500,
     taskRuns: 0,
@@ -18,16 +27,16 @@ export const PLANS_2021 = {
     value: 'STANDARD_2021',
     users: 10,
     history: 'month',
-    title: 'better'
+    title: 'standard'
   },
-  best: {
+  enterprise: {
     name: 'Enterprise',
     price: 'contact',
-    value: 'BEST_2021',
+    value: 'ENTERPRISE_2021',
     taskRuns: 0,
     additionalCost: 0.0025,
     users: 'unlimited',
     history: 'year',
-    title: 'best'
+    title: 'enterprise'
   }
 }
