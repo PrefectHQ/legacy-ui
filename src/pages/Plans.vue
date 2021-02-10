@@ -1,16 +1,16 @@
 <script>
-import ManagementLayout from '@/layouts/ManagementLayout'
+// import MenuTooltip from '@/components/MenuTooltip'
 import PlanCard from '@/components/PlanCard'
 import ChangePlanDialog from '@/components/License/ChangePlanDialog'
 import { PLANS_2021 } from '@/utils/plans'
 import { mapGetters } from 'vuex'
 
-ManagementLayout
 PlanCard
 ChangePlanDialog
 
 export default {
   components: {
+    // MenuTooltip
     // ManagementLayout,
     // PlanCard,
     // ChangePlanDialog
@@ -18,180 +18,7 @@ export default {
   data() {
     return {
       plans: Object.values(PLANS_2021),
-      selected: 0,
-      basicFeatures: {
-        a: {
-          name: 'Robust Scheduling',
-          description:
-            'Create custom schedules including business days, offsets, and blackout windows, or fall back on good old cron.'
-        },
-        b: {
-          name: 'Intelligent Scheduling',
-          description:
-            'Schedule varying parameter values or even where your runs should occur'
-        },
-        c: {
-          name: 'Artifacts',
-          description: 'Publish custom data and render it in the Prefect UI'
-        },
-        d: {
-          name: 'Mapping',
-          description: 'Dynamically generate parallel pipelines at runtime'
-        },
-        e: {
-          name: 'Retries',
-          description:
-            'Advanced checkpointing and real-time state reporting protect you from the unexpected'
-        },
-        f: {
-          name: 'Run History',
-          description:
-            'Use the Prefect UI to manage all of your flow runs, no matter how often or where they run'
-        },
-        g: {
-          name: 'Dataflow Automation',
-          description:
-            'Pass data between tasks for complex processing and advanced analytics'
-        },
-        h: {
-          name: 'Caching',
-          description:
-            'Persist the results of complex tasks with custom validation logic'
-        },
-        i: {
-          name: 'Versioning',
-          description:
-            "Every Prefect flow is automatically versioned, so you're always up-to-date"
-        }
-      },
-      infrastructureFeatures: {
-        a: {
-          name: 'Hosted Orchestration Platform',
-          description:
-            'Focus on your code while Prefect Cloud manages a highly-available orchestration API',
-          plan: 'good'
-        },
-        b: {
-          name: 'Performance',
-          description:
-            'Run tasks as fast as your internet connection allows for',
-          plan: 'good'
-        },
-        c: {
-          name: 'API Security',
-          description: 'Permission access via API tokens',
-          plan: 'good'
-        },
-        d: {
-          name: 'Automatic Updates',
-          description:
-            'Prefect Cloud releases every two weeks with new features and performance enhancements',
-          plan: 'good'
-        },
-        e: {
-          name: 'Raise Rate Limits',
-          description: 'TK',
-          plan: 'best'
-        }
-      },
-      observabilityFeatures: {
-        a: {
-          name: 'Log Management',
-          description: 'Stream, filter, and examine all of your workflow logs',
-          plan: 'good'
-        },
-        b: {
-          name: 'Advanced Alerting',
-          description: 'Configure notifications when custom criteria are met',
-          plan: 'better'
-        },
-        c: {
-          name: 'Flow SLAs',
-          description: 'Set SLAs for late or long-running workflows',
-          plan: 'better'
-        },
-        d: {
-          name: 'Agent SLAs',
-          description: 'Set SLAs for agents to ensure uptime',
-          plan: 'better'
-        },
-        e: {
-          name: 'History Retention',
-          description: 'Track one year of run history',
-          plan: 'best'
-        },
-        f: {
-          name: 'Audit Trail',
-          description: 'Track every action taken via the Prefect API',
-          plan: 'best'
-        }
-      },
-      orchestrationFeatures: {
-        a: {
-          name: 'Stateless Deployments',
-          description:
-            'Spin up and tear down agent deployments with ease - Prefect Cloud manages all state for you',
-          plan: 'good'
-        },
-        b: {
-          name: 'Multiple Execution Environments',
-          description:
-            'Promote your workflows from dev to prod with a single API call, or schedule them to run in multiple places at once!',
-          plan: 'good'
-        },
-        c: {
-          name: 'Secrets',
-          description: 'Manage sensitive information',
-          plan: 'good'
-        },
-        d: {
-          name: 'Advanced Automation',
-          description:
-            'Automatically configure API actions when custom criteria are met',
-          plan: 'better'
-        },
-        e: {
-          name: 'Concurrency Limits',
-          description:
-            'Set concurrency limits at the flow or task level to control access to resources',
-          plan: 'better'
-        }
-      },
-      authorizationFeatures: {
-        a: {
-          name: 'Team Management',
-          description:
-            'Get a complete view of everyone who can access your workflows',
-          plan: 'good'
-        },
-        b: {
-          name: 'Read-Only Users',
-          description:
-            'Invite analyts to work with the output of your workflows',
-          plan: 'better'
-        },
-        c: {
-          name: 'RBAC',
-          description: 'Assign roles to users to control access',
-          plan: 'best'
-        },
-        d: {
-          name: 'Custom Permissions',
-          description:
-            'Assign granular permissions, including per-project limits',
-          plan: 'best'
-        },
-        e: {
-          name: 'SSO',
-          description: 'Log in to Prefect Cloud via SSO',
-          plan: 'best'
-        },
-        f: {
-          name: 'Custom Roles',
-          description: 'Create and assign custom roles',
-          plan: 'best'
-        }
-      }
+      selected: 0
     }
   },
   computed: {
@@ -267,11 +94,29 @@ export default {
                 Cloud-native workflow orchestration
               </div>
               <div
-                class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price"
+                class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price d-flex align-center justify-center"
               >
                 <span class="mr-2 font-weight-light d-inline-block plan-cent">
                   $ </span
                 >0.0025
+
+                <!-- Hiding this for now until we can link to the success-based pricing page; that page will have a much more helpful breakdown as well as calculators that take automatic volume discounts into account! -->
+                <!-- <MenuTooltip
+                  offset-y
+                  hide-close
+                  icon-color="white"
+                  icon-class="align-self-start ml-1"
+                >
+                  On this plan you get
+                  <span class="font-weight-bold"
+                    >10,000 successful task runs</span
+                  >
+                  for free each month; after that, task runs are billed at a
+                  quarter of a cent per successful run (<em
+                    >you never pay for failure!</em
+                  >). That means the next 10,000 would cost just
+                  <span class="font-weight-medium primary--text">$25</span>!
+                </MenuTooltip> -->
               </div>
               <div class="mt-2 text-h6 font-weight-light">
                 per successful task run
@@ -322,11 +167,26 @@ export default {
                 A complete workflow automation platform
               </div>
               <div
-                class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price"
+                class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
               >
                 <span class="mr-2 font-weight-light d-inline-block plan-cent">
                   $ </span
                 >0.0050
+
+                <!-- Hiding this for now until we can link to the success-based pricing page; that page will have a much more helpful breakdown as well as calculators that take automatic volume discounts into account! -->
+                <!-- <MenuTooltip
+                  offset-y
+                  hide-close
+                  icon-class="align-self-start ml-1"
+                >
+                  On this plan, task runs are billed at a half a cent per
+                  succesful run (<em>you never pay for failure!</em>). That
+                  means you'd pay
+                  <span class="font-weight-bold primary--text">$50</span> for
+                  <span class="font-weight-bold"
+                    >10,000 successful task runs</span
+                  >.
+                </MenuTooltip> -->
               </div>
               <div class="mt-2 text-h6 font-weight-light">
                 per successful task run
@@ -712,7 +572,6 @@ export default {
 
   .plan-cent {
     font-size: 3rem !important;
-    margin-top: -0.5rem !important;
     vertical-align: middle;
   }
 

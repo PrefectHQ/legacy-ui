@@ -11,36 +11,72 @@ export default {
       required: false,
       default: 'far fa-info-circle'
     },
+    iconClass: {
+      type: [String, Object, Array],
+      required: false,
+      default: null
+    },
+    iconColor: {
+      type: String,
+      required: false,
+      default: null
+    },
     maxWidth: {
       type: [String, Number],
       required: false,
       default: '320px'
+    },
+    offsetX: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    offsetY: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+    hideClose: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
     return {
-      open: false
+      open: true
     }
   }
 }
 </script>
 
 <template>
-  <v-menu v-model="open" offset-y :close-on-content-click="false" open-on-hover>
+  <v-menu
+    v-model="open"
+    :offset-y="offsetY"
+    :offset-x="offsetX"
+    :close-on-content-click="false"
+    open-on-hover
+  >
     <template #activator="{ on }">
-      <div class="d-inline-flex align-start" v-on="on">
-        <v-icon x-small @focus="open = true" @blur="open = false">
+      <div class="d-inline-flex align-start" :class="iconClass" v-on="on">
+        <v-icon
+          :color="iconColor"
+          x-small
+          @focus="open = true"
+          @blur="open = false"
+        >
           {{ icon }}
         </v-icon>
       </div>
     </template>
     <v-card tile class="pa-0" :max-width="maxWidth">
-      <v-card-text class="pb-0 text-body-2">
+      <v-card-text class="pa-4 text-body-2">
         <slot>
           {{ content }}
         </slot>
       </v-card-text>
-      <v-card-actions class="pt-0">
+      <v-card-actions v-if="!hideClose" class="pa-2">
         <v-spacer></v-spacer>
         <v-btn
           class="text-none"
