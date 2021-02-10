@@ -4,7 +4,7 @@ export const PLANS_2021 = {
     price: 0,
     taskRuns: 10000,
     additionalCost: '0.0025',
-    users: 5,
+    users: 3,
     value: 'FREE_2021',
     history: 'week',
     title: 'good'

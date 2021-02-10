@@ -247,14 +247,14 @@ export default {
           <div class="blue-grey--text text--darken-4">
             Pay for what you use.
           </div>
-          <div class="white--text">
+          <div class="mt-4 white--text">
             Eliminate negative engineering.
           </div>
         </div>
 
         <div class="mt-8 mt-md-16 d-flex justify-space-around">
           <div
-            class="plan-card blue-grey darken-2 white--text mr-0 ml-auto mt-8 rounded-sm"
+            class="plan-card blue-grey darken-2 white--text mr-0 ml-auto mt-8 rounded elevation-4"
           >
             <div class="font-weight-regular text-center py-8 plan-title">
               Starter
@@ -269,11 +269,9 @@ export default {
               <div
                 class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price"
               >
-                0.25<span
-                  class="ml-2 font-weight-light d-inline-block plan-cent"
-                >
-                  ¢
-                </span>
+                <span class="mr-2 font-weight-light d-inline-block plan-cent">
+                  $ </span
+                >0.0025
               </div>
               <div class="mt-2 text-h6 font-weight-light">
                 per successful task run
@@ -310,7 +308,8 @@ export default {
               </div>
             </div>
           </div>
-          <div class="plan-card white rounded-sm">
+
+          <div class="plan-card white rounded elevation-7">
             <div class="font-weight-regular text-center py-8 plan-title">
               Standard
               <div class="text-body-1 prefect--text text-none">
@@ -325,11 +324,9 @@ export default {
               <div
                 class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price"
               >
-                0.50<span
-                  class="ml-2 font-weight-light d-inline-block plan-cent"
-                >
-                  ¢
-                </span>
+                <span class="mr-2 font-weight-light d-inline-block plan-cent">
+                  $ </span
+                >0.0050
               </div>
               <div class="mt-2 text-h6 font-weight-light">
                 per successful task run
@@ -393,15 +390,33 @@ export default {
           </div>
 
           <div
-            class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded-sm"
+            class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded-sm elevation-3"
           >
             <div class="font-weight-regular text-center py-8 plan-title">
               Enterprise
             </div>
+
             <v-divider class="divider-light" />
             <div class="text-h6 font-weight-regular text-center">
               <div class="mt-8">
                 Built for your business
+
+                <div class="mt-2 font-weight-light">
+                  Get in touch to build your Prefect Cloud
+                </div>
+              </div>
+
+              <div class="mt-16 d-flex align-center justify-center flex-column">
+                <div class="plan-table">
+                  <div class="py-2 px-8">Unlimited users</div>
+                  <div class="py-2 px-8">Custom RBAC / SSO</div>
+                  <div class="py-2 px-8">Volume discounts</div>
+                  <div class="py-2 px-8">Audit trail</div>
+                </div>
+              </div>
+
+              <div class="plan-cta plan-cta-dark py-7 mt-16">
+                Contact sales <v-icon color="grey">arrow_right</v-icon>
               </div>
             </div>
           </div>
@@ -600,11 +615,11 @@ export default {
 
 <style lang="scss" scoped>
 .slash-container {
-  bottom: 10px;
+  bottom: 100px;
   left: 0;
   position: absolute;
   right: 0;
-  top: calc(50% + 275px);
+  top: calc(50% + 75px);
   transform: skewY(-12deg);
 
   .slash {
@@ -629,7 +644,7 @@ export default {
 
     &.slash-2 {
       background: #3b8dff !important;
-      bottom: 160px;
+      bottom: 660px;
       height: 150px;
       left: auto;
       right: 0;
@@ -645,11 +660,11 @@ export default {
     }
 
     &.slash-4 {
-      background: #2580ff !important;
+      background: #27b1ff !important;
       bottom: 310px;
       height: 150px;
-      left: 1000px;
-      width: 500px;
+      left: 1200px;
+      width: 800px;
     }
   }
 }
@@ -662,6 +677,7 @@ export default {
 
 .plan-card {
   height: min-content;
+  overflow: hidden;
   width: 500px;
 
   .plan-title {
@@ -696,8 +712,19 @@ export default {
 
   .plan-cent {
     font-size: 3rem !important;
-    margin-top: -1rem !important;
+    margin-top: -0.5rem !important;
     vertical-align: middle;
+  }
+
+  .plan-table {
+    column-gap: 2px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 2px;
+
+    div {
+      background-color: #455a64;
+    }
   }
 
   .plan-cta {
