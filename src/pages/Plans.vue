@@ -396,11 +396,14 @@ export default {
                         'text--lighten-4':
                           feature.value && planValue < feature.value
                       }"
+                      style="transition: all 150ms ease-in-out;"
                     >
                       <span
                         class="flex-grow-0 flex-shrink-0 feature-list-icon"
                         :class="{
-                          'empty-circle': feature.plan == 'starter'
+                          'empty-circle': feature.plan == 'starter',
+                          'feature-list-icon-disabled':
+                            feature.value && planValue < feature.value
                         }"
                       >
                         <v-icon v-if="feature.plan == 'enterprise'" x-small>

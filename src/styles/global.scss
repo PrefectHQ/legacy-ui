@@ -420,6 +420,7 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
     --fa-secondary-color: #{$color};
     --fa-secondary-opacity: 1;
     color: $color;
+    opacity: 1;
     transition: all 150ms linear;
   }
 
@@ -429,6 +430,10 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
   &.empty-outline .svg-inline--fa {
     --fa-secondary-opacity: 0 !important;
+  }
+
+  &.feature-list-icon-disabled .svg-inline--fa {
+    opacity: 0.3 !important;
   }
 }
 /* stylelint-enable no-descending-specificity */
