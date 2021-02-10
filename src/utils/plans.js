@@ -95,7 +95,7 @@ export const infrastructureFeatures = [
   },
   {
     name: 'Performance',
-    description: 'Run tasks as fast as your internet connection allows for',
+    description: 'Run tasks as fast as your infrastructure allows',
     plan: 'starter'
   },
   {
@@ -117,7 +117,7 @@ export const infrastructureFeatures = [
 ]
 export const observabilityFeatures = [
   {
-    name: 'Log Management',
+    name: 'Logs Management',
     description: 'Stream, filter, and examine all of your workflow logs',
     plan: 'starter'
   },

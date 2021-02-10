@@ -6,6 +6,11 @@ export default {
       required: false,
       default: null
     },
+    hideClose: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     icon: {
       type: String,
       required: false,
@@ -26,6 +31,16 @@ export default {
       required: false,
       default: '320px'
     },
+    nudgeBottom: {
+      type: String,
+      required: false,
+      default: null
+    },
+    nudgeTop: {
+      type: String,
+      required: false,
+      default: null
+    },
     offsetX: {
       type: Boolean,
       required: false,
@@ -36,15 +51,20 @@ export default {
       required: false,
       default: true
     },
-    hideClose: {
+    top: {
       type: Boolean,
       required: false,
       default: false
+    },
+    transition: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
     return {
-      open: true
+      open: false
     }
   }
 }
@@ -56,21 +76,27 @@ export default {
     :offset-y="offsetY"
     :offset-x="offsetX"
     :close-on-content-click="false"
+    :top="top"
+    :nudge-bottom="nudgeBottom"
+    :nudge-top="nudgeTop"
+    :max-width="maxWidth"
     open-on-hover
+    tile
+    :transition="transition"
+    class="elevation-1"
   >
     <template #activator="{ on }">
-      <div class="d-inline-flex align-start" :class="iconClass" v-on="on">
-        <v-icon
-          :color="iconColor"
-          x-small
-          @focus="open = true"
-          @blur="open = false"
-        >
-          {{ icon }}
-        </v-icon>
-      </div>
+      <span v-on="on">
+        <slot name="activator">
+          <div class="d-inline-flex align-start" :class="iconClass">
+            <v-icon :color="iconColor" x-small @focus="open = true">
+              {{ icon }}
+            </v-icon>
+          </div>
+        </slot>
+      </span>
     </template>
-    <v-card tile class="pa-0" :max-width="maxWidth">
+    <v-card tile class="pa-0">
       <v-card-text class="pa-4 text-body-2">
         <slot>
           {{ content }}

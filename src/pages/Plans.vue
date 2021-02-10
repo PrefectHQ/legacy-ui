@@ -1,5 +1,5 @@
 <script>
-// import MenuTooltip from '@/components/MenuTooltip'
+import MenuTooltip from '@/components/MenuTooltip'
 import PlanCard from '@/components/PlanCard'
 import ChangePlanDialog from '@/components/License/ChangePlanDialog'
 import {
@@ -17,7 +17,7 @@ ChangePlanDialog
 
 export default {
   components: {
-    // MenuTooltip
+    MenuTooltip
     // ManagementLayout,
     // PlanCard,
     // ChangePlanDialog
@@ -329,7 +329,7 @@ export default {
             cols="12"
             sm="6"
             md="4"
-            class="d-flex align-start justify-center text-left my-8"
+            class="d-flex align-start justify-center text-sm-left text-center my-8"
           >
             <div class="features-category">
               <div class="feature-category-icon">
@@ -341,12 +341,77 @@ export default {
               <div class="text-h4 font-weight-light my-4">
                 {{ category.title }}
               </div>
+
               <div
                 v-for="feature in category.features"
                 :key="feature.name"
-                class="text-h6 font-weight-light"
+                class="text-h6 font-weight-light my-2"
               >
-                {{ feature.name }}
+                <MenuTooltip
+                  hide-close
+                  offset-y
+                  top
+                  nudge-top="12px"
+                  transition="slide-y-reverse-transition"
+                >
+                  <template #activator>
+                    <div
+                      class="d-flex justify-start align-center blue-grey--text flex-grow-1 feature-list-title"
+                      :class="{
+                        'empty-circle': feature.plan == 'starter'
+                      }"
+                    >
+                      <span class="flex-grow-0 flex-shrink-0 feature-list-icon">
+                        <v-icon v-if="feature.plan == 'enterprise'" x-small>
+                          fas fa-circle fa-fw
+                        </v-icon>
+                        <v-icon v-else-if="feature.plan == 'standard'" x-small>
+                          fad fa-dot-circle fa-fw
+                        </v-icon>
+                        <v-icon v-else-if="feature.plan == 'starter'" x-small>
+                          fad fa-dot-circle fa-fw
+                        </v-icon>
+                        <v-icon v-else x-small>fas fa-check fa-fw</v-icon>
+                      </span>
+                      <div class="flex-shrink-0 flex-grow-1 ml-2">
+                        {{ feature.name }}
+                      </div>
+                    </div>
+                  </template>
+
+                  <div class="blue-grey--text text--darken-1 text-subtitle-1">
+                    {{ feature.description }}
+                    <div
+                      v-if="feature.plan == 'enterprise'"
+                      class="text--disabled font-weight-light mt-4"
+                    >
+                      Available only on
+                      <span class="text-overline primary--text"
+                        >enterprise</span
+                      >
+                      plans
+                    </div>
+                    <div
+                      v-else-if="feature.plan == 'standard'"
+                      class="text--disabled font-weight-light mt-4"
+                    >
+                      Available on
+                      <span class="text-overline primary--text">standard</span>
+                      plans and above
+                    </div>
+                    <div
+                      v-else-if="feature.plan == 'starter'"
+                      class="text--disabled font-weight-light mt-4"
+                    >
+                      Available on
+                      <span class="text-overline primary--text">starter</span>
+                      plans and above
+                    </div>
+                    <div v-else class="text--disabled font-weight-light mt-4">
+                      Available on all plans
+                    </div>
+                  </div>
+                </MenuTooltip>
               </div>
             </div>
           </v-col>
@@ -683,15 +748,33 @@ export default {
 }
 
 .features-container {
-  margin-top: 150px;
+  margin-top: 175px;
 
   .features-body {
-    margin-top: 100px;
+    margin: auto;
+    margin-top: 48px;
+    max-width: 1600px;
   }
 
   .features-category {
     height: 100%;
     min-width: 300px;
+    padding: 0 50px;
+    width: 100%;
+  }
+
+  .feature-list-title {
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      color: var(--v-primary-base) !important;
+    }
+  }
+
+  .plan-title {
+    letter-spacing: 0.15rem;
+    text-transform: uppercase;
   }
 }
 
