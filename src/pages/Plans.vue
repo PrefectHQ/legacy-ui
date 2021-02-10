@@ -47,7 +47,9 @@ export default {
           features: orchestrationFeatures
         }
       ],
-      plans: PLANS_2021
+      plans: PLANS_2021,
+      plan: 'standard',
+      planValue: 2
       // selected: 0
     }
   },
@@ -269,7 +271,7 @@ export default {
             </div>
 
             <div
-              class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded-sm elevation-3"
+              class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded elevation-3"
             >
               <div class="font-weight-regular text-center py-8 plan-title">
                 Enterprise
@@ -296,9 +298,16 @@ export default {
                   </div>
                 </div>
 
-                <div class="plan-cta plan-cta-dark py-7 mt-16">
-                  Contact sales <v-icon color="grey">arrow_right</v-icon>
-                </div>
+                <a
+                  class="plan-cta plan-cta-dark py-7 mt-16 d-flex align-center justify-center"
+                  href="https://www.prefect.io/get-prefect#contact"
+                  target="_blank"
+                >
+                  Contact sales
+                  <v-icon class="mb-1" color="grey lighten-2"
+                    >arrow_right</v-icon
+                  >
+                </a>
               </div>
             </div>
           </div>
@@ -316,11 +325,31 @@ export default {
           </legend>
 
           <div class="slide-container text-h6 font-weight-light">
-            <input id="starter" type="radio" name="plan" />
+            <input
+              id="starter"
+              v-model="planValue"
+              type="radio"
+              name="plan"
+              :value="1"
+            />
             <label for="starter">Starter</label>
-            <input id="standard" type="radio" name="plan" checked required />
+            <input
+              id="standard"
+              v-model="planValue"
+              type="radio"
+              name="plan"
+              :value="2"
+              checked
+              required
+            />
             <label for="standard">Standard</label>
-            <input id="enterprise" type="radio" name="plan" />
+            <input
+              id="enterprise"
+              v-model="planValue"
+              type="radio"
+              name="plan"
+              :value="3"
+            />
             <label for="enterprise">Enterprise</label>
 
             <a class="slide" aria-hidden="true"></a>
@@ -348,11 +377,10 @@ export default {
               <div class="text-h4 font-weight-light my-4">
                 {{ category.title }}
               </div>
-
               <div
                 v-for="feature in category.features"
                 :key="feature.name"
-                class="text-h6 font-weight-light my-2"
+                class="text-h6 font-weight-regular my-2"
               >
                 <MenuTooltip
                   hide-close
@@ -365,10 +393,16 @@ export default {
                     <div
                       class="d-flex justify-start align-center blue-grey--text flex-grow-1 feature-list-title"
                       :class="{
-                        'empty-circle': feature.plan == 'starter'
+                        'text--lighten-4':
+                          feature.value && planValue < feature.value
                       }"
                     >
-                      <span class="flex-grow-0 flex-shrink-0 feature-list-icon">
+                      <span
+                        class="flex-grow-0 flex-shrink-0 feature-list-icon"
+                        :class="{
+                          'empty-circle': feature.plan == 'starter'
+                        }"
+                      >
                         <v-icon v-if="feature.plan == 'enterprise'" x-small>
                           fas fa-circle fa-fw
                         </v-icon>
@@ -730,9 +764,12 @@ export default {
 
   .plan-cta {
     background-color: #f7fcfd;
+    color: inherit !important;
     cursor: pointer;
+    display: block;
     font-size: 1rem;
     letter-spacing: 0.15rem;
+    text-decoration: none;
     text-transform: uppercase;
     transition: all 50ms;
 
@@ -755,6 +792,7 @@ export default {
 }
 
 .features-container {
+  margin-bottom: 175px;
   margin-top: 175px;
 
   .features-body {

@@ -19,8 +19,7 @@ const fullPageRoutes = [
   'calendar',
   'not-found',
   'logout',
-  'welcome',
-  'plans'
+  'welcome'
 ]
 
 const onboardRoutes = ['welcome', 'name-team', 'onboard-resources', 'accept']
@@ -122,8 +121,6 @@ export default {
         this.$route.name === 'welcome' ||
         this.$route.name === 'onboard-resources' ||
         this.$route.name === 'name-team' ||
-        this.$route.name == 'plan' ||
-        this.$route.name == 'plans' ||
         this.$route.name === 'accept'
       )
     }
@@ -341,6 +338,7 @@ export default {
     },
     handleScroll: debounce(
       function() {
+        if (this.$route.name == 'plans') return (this.showFooter = true)
         if (
           window.innerHeight + window.pageYOffset + 50 >=
           document.body.offsetHeight

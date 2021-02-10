@@ -91,60 +91,71 @@ export const infrastructureFeatures = [
     name: 'Hosted Orchestration Platform',
     description:
       'Focus on your code while Prefect Cloud manages a highly-available orchestration API',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'Performance',
     description: 'Run tasks as fast as your infrastructure allows',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'API Security',
     description: 'Permission access via API tokens',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'Automatic Updates',
     description:
       'Prefect Cloud releases every two weeks with new features and performance enhancements',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'Raise Rate Limits',
     description: 'TK',
-    plan: 'enterprise'
+    plan: 'enterprise',
+    value: 3
   }
 ]
 export const observabilityFeatures = [
   {
     name: 'Logs Management',
     description: 'Stream, filter, and examine all of your workflow logs',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'Advanced Alerting',
     description: 'Configure notifications when custom criteria are met',
-    plan: 'standard'
+    plan: 'standard',
+    value: 2
   },
   {
     name: 'Flow SLAs',
     description: 'Set SLAs for late or long-running workflows',
-    plan: 'standard'
+    plan: 'standard',
+    value: 2
   },
   {
     name: 'Agent SLAs',
     description: 'Set SLAs for agents to ensure uptime',
-    plan: 'standard'
+    plan: 'standard',
+    value: 2
   },
   {
     name: 'History Retention',
     description: 'Track one year of run history',
-    plan: 'enterprise'
+    plan: 'enterprise',
+    value: 3
   },
   {
     name: 'Audit Trail',
     description: 'Track every action taken via the Prefect API',
-    plan: 'enterprise'
+    plan: 'enterprise',
+    value: 3
   }
 ]
 export const orchestrationFeatures = [
@@ -152,30 +163,35 @@ export const orchestrationFeatures = [
     name: 'Stateless Deployments',
     description:
       'Spin up and tear down agent deployments with ease - Prefect Cloud manages all state for you',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'Multiple Execution Environments',
     description:
       'Promote your workflows from dev to prod with a single API call, or schedule them to run in multiple places at once!',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'Secrets',
     description: 'Manage sensitive information',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'Advanced Automation',
     description:
       'Automatically configure API actions when custom criteria are met',
-    plan: 'standard'
+    plan: 'standard',
+    value: 2
   },
   {
     name: 'Concurrency Limits',
     description:
       'Set concurrency limits at the flow or task level to control access to resources',
-    plan: 'standard'
+    plan: 'standard',
+    value: 2
   }
 ]
 export const authorizationFeatures = [
@@ -183,31 +199,37 @@ export const authorizationFeatures = [
     name: 'Team Management',
     description:
       'Get a complete view of everyone who can access your workflows',
-    plan: 'starter'
+    plan: 'starter',
+    value: 1
   },
   {
     name: 'Read-Only Users',
     description: 'Invite analyts to work with the output of your workflows',
-    plan: 'standard'
+    plan: 'standard',
+    value: 2
   },
   {
     name: 'RBAC',
     description: 'Assign roles to users to control access',
-    plan: 'enterprise'
+    plan: 'enterprise',
+    value: 3
   },
   {
     name: 'Custom Permissions',
     description: 'Assign granular permissions, including per-project limits',
-    plan: 'enterprise'
+    plan: 'enterprise',
+    value: 3
   },
   {
     name: 'SSO',
     description: 'Log in to Prefect Cloud via SSO',
-    plan: 'enterprise'
+    plan: 'enterprise',
+    value: 3
   },
   {
     name: 'Custom Roles',
     description: 'Create and assign custom roles',
-    plan: 'enterprise'
+    plan: 'enterprise',
+    value: 3
   }
 ]
