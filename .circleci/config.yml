@@ -18,6 +18,9 @@ aliases:
 
 commands:
   prep:
+    parameters:
+      FA_TOKEN:
+        type: string
     steps:
       - checkout
       - restore_cache:
