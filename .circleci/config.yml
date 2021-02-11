@@ -19,6 +19,8 @@ commands:
   prep:
     steps:
       - checkout
+      - restore_cache:
+          key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
       - run:
           name: NPM Setup
           command: |
