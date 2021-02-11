@@ -118,5 +118,8 @@ export default {
         </v-chip>
       </template>
     </v-combobox>
+    <div class="mt-1 text-caption">
+      Hint: add to the list after typing by pressing the Enter key
+    </div>
   </div>
 </template>
