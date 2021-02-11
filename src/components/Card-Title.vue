@@ -43,7 +43,7 @@ export default {
 <template>
   <div>
     <v-list-item dense class="px-0" :to="params">
-      <v-list-item-avatar class="mr-2">
+      <v-list-item-avatar class="mr-2" tile>
         <v-icon :color="iconColor" :class="iconClass">
           {{ icon }}
         </v-icon>

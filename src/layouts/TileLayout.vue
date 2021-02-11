@@ -23,6 +23,7 @@ export default {
           $slots['row-1-col-3-tile-1'] ||
           $slots['row-1-col-4-tile-1']
       "
+      no-gutters
       class="justify-start"
     >
       <v-col
@@ -113,7 +114,7 @@ export default {
           </v-col>
         </v-row>
 
-        <v-row v-if="$slots['row-2-col-1-row-4-tile-1']">
+        <v-row v-if="$slots['row-2-col-1-row-4-tile-1']" no-gutters>
           <v-col
             :class="{
               'pt-1': $slots['row-0']

@@ -148,12 +148,6 @@ export default {
 </template>
 
 <style lang="scss">
-.small-switch.v-input {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-  transform: scale(0.8);
-}
-
 .schedule-toggle {
   left: 50%;
   position: absolute;

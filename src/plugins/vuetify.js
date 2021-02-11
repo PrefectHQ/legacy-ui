@@ -3,9 +3,6 @@ import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 
 // Custom icons
-import DockerIcon from '@/components/Icons/Docker.vue'
-import FargateIcon from '@/components/Icons/Fargate.vue'
-import KubernetesIcon from '@/components/Icons/Kubernetes.vue'
 import mrIcon from '@/components/Icons/mr.vue'
 import NomadIcon from '@/components/Icons/Nomad.vue'
 import PrefectIcon from '@/components/Icons/Prefect.vue'
@@ -55,9 +52,6 @@ export const THEME_COLORS_ALT = {
 Vue.use(Vuetify)
 
 const CUSTOM_ICONS = {
-  docker: { component: DockerIcon },
-  fargate: { component: FargateIcon },
-  kubernetes: { component: KubernetesIcon },
   mr: { component: mrIcon },
   nomad: { component: NomadIcon },
   prefect: { component: PrefectIcon },

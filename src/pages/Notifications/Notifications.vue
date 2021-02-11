@@ -496,7 +496,7 @@ export default {
                 class="d-flex justify-center flex-column text-center"
               >
                 <img
-                  class="photo"
+                  class="photo mx-auto"
                   src="@/assets/backgrounds/build-a-flow.svg"
                   alt="All Caught Up Image"
                 />
@@ -528,4 +528,15 @@ export default {
   opacity: 0 !important;
 }
 // stylelint-enable
+</style>
+
+<style lang="scss" scoped>
+.photo {
+  max-width: 500px;
+  width: 100%;
+
+  @media screen and (max-width: 1366px) {
+    max-width: 470px;
+  }
+}
 </style>
