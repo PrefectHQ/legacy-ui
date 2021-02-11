@@ -11,7 +11,7 @@ export const PLANS_2021 = {
   },
   starter: {
     name: 'Starter',
-    price: 0,
+    price: 0.0025,
     taskRuns: 10000,
     additionalCost: '0.0025',
     users: 3,
@@ -21,7 +21,7 @@ export const PLANS_2021 = {
   },
   standard: {
     name: 'Standard',
-    price: 0,
+    price: 0.005,
     taskRuns: 0,
     additionalCost: '0.0050',
     value: 'STANDARD_2021',

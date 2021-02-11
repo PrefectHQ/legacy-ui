@@ -2,7 +2,7 @@
   <div class="plan-card white rounded elevation-7">
     <div class="font-weight-regular text-center py-8 plan-title">
       Standard
-      <div class="text-body-1 prefect--text text-none">
+      <div v-if="!hideDetails" class="text-body-1 prefect--text text-none">
         Recommended
       </div>
     </div>
@@ -94,7 +94,9 @@
         </div>
       </div>
 
-      <div class="plan-cta py-7 mt-16" @click="select">
+      <div v-if="hideDetails" class="py-7 mt-16" />
+
+      <div v-else class="plan-cta py-7 mt-16" @click="select">
         Get started now
       </div>
     </div>
@@ -103,6 +105,13 @@
 
 <script>
 export default {
+  props: {
+    hideDetails: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    }
+  },
   methods: {
     select() {
       this.$emit('click')

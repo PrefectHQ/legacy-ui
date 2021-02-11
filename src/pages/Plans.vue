@@ -1,9 +1,11 @@
 <script>
 import ChangePlanDialog from '@/components/License/ChangePlanDialog'
+import EnterprisePlan from '@/components/Plans/Enterprise'
+import PlanSelectionForm from '@/components/Plans/PlanSelectionForm'
 import MenuTooltip from '@/components/MenuTooltip'
 import StarterPlan from '@/components/Plans/Starter'
 import StandardPlan from '@/components/Plans/Standard'
-import EnterprisePlan from '@/components/Plans/Enterprise'
+
 import {
   PLANS_2021,
   basicFeatures,
@@ -12,6 +14,7 @@ import {
   orchestrationFeatures,
   authorizationFeatures
 } from '@/utils/plans'
+
 import { mapGetters } from 'vuex'
 
 ChangePlanDialog
@@ -21,6 +24,7 @@ export default {
     // ChangePlanDialog,
     EnterprisePlan,
     MenuTooltip,
+    PlanSelectionForm,
     StandardPlan,
     StarterPlan
   },
@@ -100,15 +104,25 @@ export default {
                 @click="handlePlanSelection('starter')"
               />
             </v-fade-transition>
+
             <v-fade-transition mode="out-in">
               <StandardPlan
                 v-if="!plan || plan == 'standard'"
                 key="standard"
+                :hide-details="!!plan"
                 @click="handlePlanSelection('standard')"
               />
             </v-fade-transition>
             <v-fade-transition mode="out-in">
-              <EnterprisePlan v-if="!plan" key="enterprise" />
+              <EnterprisePlan
+                v-if="!plan"
+                key="enterprise"
+                :hide-details="!!plan"
+              />
+            </v-fade-transition>
+
+            <v-fade-transition mode="out-in">
+              <PlanSelectionForm v-if="plan" :plan-reference="plan" />
             </v-fade-transition>
           </div>
 

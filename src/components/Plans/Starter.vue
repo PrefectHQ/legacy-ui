@@ -59,7 +59,9 @@
         </div>
       </div>
 
-      <div class="plan-cta plan-cta-dark py-7 mt-16" @click="select">
+      <div v-if="hideDetails" class="py-7 mt-16" />
+
+      <div v-else class="plan-cta plan-cta-dark py-7 mt-16" @click="select">
         Get started now
       </div>
     </div>
@@ -68,6 +70,13 @@
 
 <script>
 export default {
+  props: {
+    hideDetails: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    }
+  },
   methods: {
     select() {
       this.$emit('click')
