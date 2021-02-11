@@ -15,9 +15,10 @@
 
 [context.deploy-preview]
 
-  command = "echo '@fortawesome:registry=https://npm.fontawesome.com/' > .npmrc"
-  command = "echo '//npm.fontawesome.com/:_authToken=${FA_TOKEN}' >> .npmrc"
-  command = "npm run build"
+  command = "|
+  echo '@fortawesome:registry=https://npm.fontawesome.com/' > .npmrc
+  echo '//npm.fontawesome.com/:_authToken=${FA_TOKEN}' >> .npmrc
+  npm run build"
 
 
 # The following redirect is intended for use with most SPAs that handle
