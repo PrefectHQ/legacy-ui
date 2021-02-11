@@ -17,13 +17,18 @@ aliases:
 
 commands:
   prep:
+    parameters:
+      FA_TOKEN:
+        type: string
     steps:
       - checkout
       - run:
           name: NPM Install
           environment:
             FA_TOKEN: ${FA_TOKEN}
-          command: npm install
+          command: |
+            export FA_TOKEN=<< parameters.FA_TOKEN >>
+            npm install
       - save_cache:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
           paths:
