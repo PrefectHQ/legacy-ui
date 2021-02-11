@@ -19,8 +19,6 @@ commands:
   prep:
     steps:
       - checkout
-      - restore_cache:
-          key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
       - run:
           name: NPM Install
           environment:
@@ -282,15 +280,18 @@ workflows:
                 - /.*/
             tags:
               only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
-      - build-docker:
-      requires:
+      - docker/publish:
+          requires:
             - request-release
+          docker-password: DOCKER_HUB_PW
+          docker-username: DOCKER_HUB_USER
+          image: 'prefecthq/ui'
+          path: '.'
+          tag: $CIRCLE_TAG,latest
           filters:
             branches:
-            ignore:
+              ignore:
                 - /.*/
-              only:
-                - master
             tags:
               only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
       - deploy-prod:
