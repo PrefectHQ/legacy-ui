@@ -122,7 +122,11 @@ export default {
             </v-fade-transition>
 
             <v-fade-transition mode="out-in">
-              <PlanSelectionForm v-if="plan" :plan-reference="plan" />
+              <PlanSelectionForm
+                v-if="plan"
+                :plan-reference="plan"
+                class="mt-n8"
+              />
             </v-fade-transition>
           </div>
 

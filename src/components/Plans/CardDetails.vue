@@ -35,26 +35,6 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   components: {},
   mixins: [teamProfileMixin, paymentMixin],
-  props: {
-    desiredUsers: {
-      type: Number,
-      required: false,
-      default: 0
-    },
-    diff: {
-      type: Number,
-      required: false,
-      default: 0
-    },
-    updateCard: {
-      type: Boolean,
-      required: true
-    },
-    updateUsers: {
-      type: Boolean,
-      required: true
-    }
-  },
   data() {
     return {
       nameRules: [
@@ -72,17 +52,8 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('license', ['license']),
     ...mapGetters('user', ['user']),
-    disableButton() {
-      if (this.updateUsers)
-        return this.diff === 0 || (this.showPayment && !this.valid)
+    disabled() {
       return !this.valid
-    },
-    showPayment() {
-      if (!this.existingCard || this.updateCard) return true
-      return false
-    },
-    needUpdate() {
-      return this.license?.terms?.plan === 'FREE_2021'
     }
   },
   mounted() {
@@ -92,15 +63,15 @@ export default {
         style: style,
         classes: elementClasses
       })
-      if (this.updateCard) card.mount(this.$refs.card)
+      card.mount(this.$refs.card)
       this.card = card
     }
   },
-  beforeDestroy() {
-    if (card) card.unmount()
+  destroyed() {
+    // if (card) card.unmount()
   },
   updated() {
-    if (card && this.updateCard) card.mount(this.$refs.card)
+    if (card) card.mount(this.$refs.card)
   },
   methods: {
     ...mapActions('license', ['getLicense']),
@@ -110,8 +81,10 @@ export default {
     async checkForm() {
       const options = {
         owner: {
+          name: this.updatedName || this.username,
+          email: this.updatedEmail || this.email,
           address: {
-            line1: this.updatedAddress ? this.updatedAddress : this.address
+            line1: this.address
           }
         },
         usage: 'reusable'
@@ -127,7 +100,7 @@ export default {
         return true
       }
     },
-    async confirmAdd() {
+    async confirm() {
       this.loading = true
       try {
         const continueAdding = await this.checkForm()
@@ -135,34 +108,18 @@ export default {
           const customer = await this.$apollo.mutate({
             mutation: require('@/graphql/License/update-customer.gql'),
             variables: {
-              email: this.updatedEmail ? this.updatedEmail : this.email,
-              name: this.updatedName ? this.updatedName : this.username,
+              email: this.updatedEmail || this.email,
+              name: this.updatedName || this.username,
               source: this.source ? this.source.id : null
             },
             errorPolicy: 'all'
           })
-          if (customer.data.update_stripe_customer.id) {
-            if (this.needUpdate) {
-              await this.$apollo.mutate({
-                mutation: require('@/graphql/License/create-usage-based-license.gql'),
-                variables: {
-                  input: {
-                    tenant_id: this.tenant.id,
-                    plan_name: 'STARTER_2021'
-                  }
-                }
-              })
-            }
-            this.setAlert({
-              alertShow: true,
-              alertMessage: 'Payment details updated.',
-              alertType: 'Success'
-            })
-            this.reset()
-          } else {
+          if (!customer.data.update_stripe_customer.id) {
             this.loading = false
             this.cardError = customer.errors[0].message
           }
+
+          this.$emit('confirm')
         }
       } catch (e) {
         LogRocket.captureException(e, {
@@ -174,96 +131,75 @@ export default {
         this.loading = false
         this.cardError = 'There was a problem adding your card information.'
       }
-    },
-    async reset() {
-      this.$emit('close')
-      this.email = null
-      this.address = null
-      this.cardError = null
-      this.username = null
-
-      await this.getUser()
-
-      const tenantSlug = this.user.memberships.filter(
-        membership => membership.tenant.id === this.tenant.id
-      )?.tenant?.slug
-
-      if (tenantSlug) {
-        await this.setCurrentTenant(tenantSlug)
-      }
-      this.loading = false
     }
   }
 }
 </script>
 
 <template>
-  <div>
-    <v-card-text>
-      <v-form v-if="showPayment" v-model="valid">
-        <v-text-field
-          v-model="username"
-          data-cy="full-name"
-          outlined
-          :rules="nameRules"
-          class="mt-3"
-          prepend-inner-icon="face"
-          label="Full Name"
-          type="text"
-          required
-        ></v-text-field>
-        <v-text-field
-          v-model="email"
-          outlined
-          :rules="emailRules"
-          prepend-inner-icon="email"
-          label="Email"
-          type="email"
-          default="this.user.email"
-          required
-        ></v-text-field>
-        <v-text-field
-          v-model="address"
-          data-cy="address"
-          outlined
-          prepend-inner-icon="home"
-          label="Address"
-          type="text"
-          required
-        ></v-text-field>
+  <div class="card-form d-flex align-center justify-center flex-column">
+    <v-form v-model="valid" class="my-auto">
+      <v-text-field
+        v-model="name"
+        data-cy="full-name"
+        outlined
+        :rules="nameRules"
+        class="mt-3"
+        prepend-inner-icon="face"
+        label="Full Name"
+        type="text"
+        required
+      ></v-text-field>
+      <v-text-field
+        v-model="email"
+        outlined
+        :rules="emailRules"
+        prepend-inner-icon="email"
+        label="Email"
+        type="email"
+        default="this.user.email"
+        required
+      ></v-text-field>
+      <v-text-field
+        v-model="address"
+        data-cy="address"
+        outlined
+        prepend-inner-icon="home"
+        label="Address"
+        type="text"
+        required
+      ></v-text-field>
 
-        <div ref="card"> </div>
+      <div ref="card"> </div>
 
-        <div class="red--text">
-          {{ cardError }}
-        </div>
-      </v-form>
-    </v-card-text>
-    <v-card-actions v-if="isTenantAdmin">
-      <v-spacer></v-spacer>
-      <v-btn text @click="reset">Cancel</v-btn>
-      <v-btn
-        v-if="updateUsers"
-        color="primary"
-        :disabled="disableButton"
-        :loading="loading"
-        @click="confirmAdd"
-        >{{ upgradeOrDowngrade }}</v-btn
-      >
-      <v-btn
-        v-else
-        color="primary"
-        :disabled="disableButton"
-        :loading="loading"
-        data-cy="save-payment"
-        @click="confirmAdd"
-        >Update</v-btn
-      >
-    </v-card-actions>
+      <div class="red--text">
+        {{ cardError }}
+      </div>
+    </v-form>
+
+    <v-btn
+      color="prefect"
+      class="mt-auto white--text"
+      :disabled="loading"
+      :loading="loading"
+      data-cy="save-payment"
+      @click="confirm"
+    >
+      {{ loading ? 'Submitting' : 'Confirm' }}
+    </v-btn>
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+.card-form {
+  height: 669px !important;
+
+  form,
+  button {
+    width: 100%;
+  }
+}
+
 /*stylelint-disable */
 .StripeElement {
   background-color: white;

@@ -16,8 +16,10 @@ export default {
   },
   data() {
     return {
+      cardSource: null,
       loading: false,
-      newCard: false
+      previousHeight: 0,
+      showCardForm: false
     }
   },
   computed: {
@@ -28,7 +30,7 @@ export default {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
     },
     cards() {
-      return this.tenant?.stripe_customer?.source?.data
+      return this.tenant?.stripe_customer?.sources?.data
     },
     isSelfServe() {
       return (
@@ -102,12 +104,18 @@ export default {
         this.changePlanDialog = false
       }
     },
-    selectCard(id) {
-      if (id == 'new') {
-        this.newCard = true
+    handleConfirm() {
+      console.log('confirming')
+    },
+    handleNext() {
+      if (this.cardSource == 'new') {
+        this.showCardForm = true
       } else {
-        this.updateCustomer(id)
+        this.updateCustomer(this.cardSource)
       }
+    },
+    selectCard(id) {
+      this.cardSource = id
     },
     async updateCustomer(sourceId) {
       try {
@@ -125,6 +133,20 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    afterEnter(element) {
+      element.style.height = 'auto'
+    },
+    beforeLeave(element) {
+      this.previousHeight = getComputedStyle(element).height
+    },
+    enter(element) {
+      const { height } = getComputedStyle(element)
+      element.style.height = this.previousHeight
+
+      setTimeout(() => {
+        element.style.height = height
+      })
     }
   }
 }
@@ -138,27 +160,94 @@ export default {
       Confirm your payment details
     </div>
 
-    <div v-if="newCard">
-      <CardDetails />
-    </div>
+    <div class="card-container" key="card-form-container">
+      <transition
+        name="fade"
+        mode="out-in"
+        @beforeLeave="beforeLeave"
+        @enter="enter"
+        @afterEnter="afterEnter"
+      >
+        <div v-if="showCardForm" key="card-form">
+          <div
+            v-if="showCardForm"
+            class="d-inline-block text-subtitle-1 font-weight-light mx-auto cursor-pointer mt-4 h-auto"
+            @click="showCardForm = false"
+          >
+            <v-icon color="blue-grey">chevron_left</v-icon>
+            Choose an existing card instead
+          </div>
 
-    <div v-else>
-      <div @click="selectCard('new')">Enter new card</div>
-      <div v-for="card in cards" :key="card.id" @click="selectCard(card.id)">
-        {{ card }}
-      </div>
-      <!-- <div v-if="existingCard && planCost">
-        <i class="fas fa-credit-card" />
-        Your card ending in
-        <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
+          <CardDetails @confirm="handleConfirm" />
+        </div>
 
-        will be charged
-        <span class="font-weight-bold ">${{ planCost }} </span> per successful
-        task run on a recurring monthly basis.
-      </div>
-      <div v-else>
-        <CardDetails :update-card="true" :update-users="false" />
-      </div> -->
+        <div
+          v-else
+          class="card-selection d-flex align-center justify-center flex-column"
+          key="card-selection"
+        >
+          <div
+            class="card-display mt-auto"
+            :class="{ active: cardSource == 'new' }"
+            @click.stop="selectCard('new')"
+          >
+            <div class="text-h6 font-weight-light">
+              Enter new card
+            </div>
+          </div>
+
+          <div v-if="cards && cards.length" class="card-or text-center my-8">
+            <div class="d-inline-block position-relative white py-2 px-8">
+              OR
+            </div>
+          </div>
+
+          <div
+            v-for="card in cards"
+            :key="card.id"
+            class="card-display mb-auto d-flex align-center justify--start"
+            :class="{ active: cardSource == card.source }"
+            @click="selectCard(card.source)"
+          >
+            <div>
+              <div v-if="card.owner.name" class="text-h5 font-weight-light">
+                {{ card.owner.name }}
+              </div>
+              <div class="mt-1">
+                <div class="text-subtitle-1">{{ card.card.brand }}</div>
+
+                <div class="mt-n2">
+                  <span class="text-h6 font-weight-regular">
+                    •••• •••• •••• {{ card.card.last4 }}
+                  </span>
+                  <span class="ml-1 text-subtitle-1 font-weight-light">
+                    {{ card.card.exp_month }}/{{ card.card.exp_year }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ml-auto">
+              <v-icon large>
+                fab fa-cc-{{ card.card.brand.toLowerCase() }}
+              </v-icon>
+            </div>
+          </div>
+
+          <v-btn
+            v-if="!showCardForm"
+            color="prefect"
+            class="mt-auto white--text"
+            :disabled="loading || !cardSource"
+            :loading="loading"
+            style="width: 100%;"
+            data-cy="save-payment"
+            @click="handleNext"
+          >
+            Next
+          </v-btn>
+        </div>
+      </transition>
     </div>
   </div>
   <!-- <v-card :loading="loading">
@@ -234,10 +323,100 @@ export default {
 <style lang="scss" scoped>
 .form-container {
   height: min-content;
-  min-height: 800px;
   overflow: hidden;
-  transition: all 150ms;
+  transition: max-height 150ms;
   width: 600px;
+}
+
+.form-actions {
+  min-height: 36px;
+}
+
+.h-auto {
+  height: auto !important;
+}
+
+.card-container {
+  position: relative;
+  transition: all 150ms;
+
+  .card-selection {
+    min-height: 710px;
+  }
+
+  .card-display {
+    border: 2px solid #efefef;
+    border-radius: 4px;
+    box-sizing: content-box;
+    cursor: pointer;
+    height: auto;
+    padding: 24px 24px 24px 48px;
+    position: relative;
+    text-align: left;
+    transition: all 50ms;
+    width: 400px;
+
+    &.active {
+      border: 2px solid var(--v-primary-base);
+
+      &::before {
+        border-color: var(--v-primary-base);
+      }
+
+      &::after {
+        background-color: var(--v-primary-base);
+        border-radius: 50%;
+        height: 10px;
+        left: 17px;
+        width: 10px;
+      }
+    }
+
+    &::after,
+    &::before {
+      box-sizing: border-box;
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+      transition: all 150ms;
+    }
+
+    &::after {
+      border-radius: 0;
+      height: 0;
+      left: 22px;
+      width: 0;
+    }
+
+    &::before {
+      border: 2px solid #eee;
+      border-radius: 50%;
+      height: 20px;
+      left: 12px;
+      width: 20px;
+    }
+  }
+
+  .card-or {
+    position: relative;
+    width: 100%;
+
+    &::before {
+      background-color: #eee;
+      content: '';
+      height: 1px;
+      left: 0;
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+      width: 100%;
+    }
+  }
+}
+
+.h-100 {
+  height: 100%;
 }
 
 .theme--light.v-subheader {
