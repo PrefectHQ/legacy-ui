@@ -11,10 +11,6 @@
   publish = "dist/"
 
   # Default build command.
-  command = "npm run build"
-
-[context.deploy-preview]
-
   command = "echo '@fortawesome:registry=https://npm.fontawesome.com/' > .npmrc && echo '//npm.fontawesome.com/:_authToken=${FA_TOKEN}' >> .npmrc && npm install && npm run build"
 
 
