@@ -9,10 +9,11 @@
 - Check for missing or mismatched labels on Server - [#593](https://github.com/PrefectHQ/ui/pull/593)
 - Update wording on tutorial banner for server users - [#592](https://github.com/PrefectHQ/ui/pull/592)
 - Minimizes reliance on network connection to have a functioning UI (allows Server UI to be completely airgapped after install) - [#595](https://github.com/PrefectHQ/ui/pull/595)
+- Add hints and improve JSON input prepended icon clarity - [#606](https://github.com/PrefectHQ/ui/pull/606)
 
 ### Bugfixes
 
-- None
+- Fixes an issue with runconfig dict input not being populated correctly - [#606](https://github.com/PrefectHQ/ui/pull/606)
 
 ## 2021-02-03
 
