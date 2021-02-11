@@ -2,7 +2,7 @@
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 import CardTitle from '@/components/Card-Title'
 import ParametersForm from '@/components/ParametersForm'
-import JsonInput from '@/components/JsonInput'
+import JsonInput from '@/components/CustomInputs/JsonInput'
 
 export default {
   components: { JsonInput, CardTitle, ParametersForm },
@@ -116,7 +116,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile :loading="loading">
+  <v-card class="pa-2 mt-2" :loading="loading" outlined>
     <CardTitle title="Default Parameters" icon="perm_data_setting" />
 
     <v-card-text class="pl-12">
@@ -127,7 +127,7 @@ export default {
         Flow. Here you can set new flow group default parameters or reset them
         to the parameters you set at registration.
       </div>
-      <v-row>
+      <v-row class="mt-4">
         <v-col cols="12" class="pt-0">
           <v-row>
             <v-col cols="12">

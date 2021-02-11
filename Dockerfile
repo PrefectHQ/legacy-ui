@@ -1,4 +1,5 @@
-FROM node:10.16.0 as ui
+# syntax = docker/dockerfile:1.0-experimental
+FROM node:14.7.0 as ui
 
 # Set version args from CMD input
 ARG PREFECT_VERSION=development
@@ -15,6 +16,7 @@ COPY ./LICENSE LICENSE
 WORKDIR /app
 
 # Install dependencies
+RUN --mount=type=secret,id=FA_TOKEN cp /run/secrets/FA_TOKEN .npmrc
 RUN npm ci
 
 # Build static files

@@ -67,6 +67,12 @@
   }
 }
 
+.pi-kubernetes {
+  &::before {
+    content: $pi-kubernetes;
+  }
+}
+
 .pi-schematic {
   &::before {
     content: $pi-schematic;
@@ -86,49 +92,49 @@
 }
 
 .pi-lg {
-  font-size: 1.33333em;
+  font-size: 1.33333em !important;
   line-height: 0.75em;
   vertical-align: -0.0667em;
 }
 
 .pi-xs {
-  font-size: 0.75em;
+  font-size: 0.75em !important;
 }
 
 .pi-sm {
-  font-size: 0.875em;
+  font-size: 0.875em !important;
 }
 
 .pi-1x {
-  font-size: 1em;
+  font-size: 1em !important;
 }
 
 .pi-2x {
-  font-size: 2em;
+  font-size: 2em !important;
 }
 
 .pi-3x {
-  font-size: 3em;
+  font-size: 3em !important;
 }
 
 .pi-4x {
-  font-size: 4em;
+  font-size: 4em !important;
 }
 
 .pi-5x {
-  font-size: 5em;
+  font-size: 5em !important;
 }
 
 .pi-6x {
-  font-size: 6em;
+  font-size: 6em !important;
 }
 
 .pi-7x {
-  font-size: 7em;
+  font-size: 7em !important;
 }
 
 .pi-8x {
-  font-size: 8em;
+  font-size: 8em !important;
 }
 
 .pi-9x {
@@ -136,7 +142,7 @@
 }
 
 .pi-10x {
-  font-size: 10em;
+  font-size: 10em !important;
 }
 
 .pi-fw {
