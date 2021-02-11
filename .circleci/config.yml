@@ -22,8 +22,8 @@ commands:
       - run:
           name: NPM Setup
           command: |
-          echo "@fortawesome:registry=https://npm.fontawesome.com/" >> ~/.npmrc
-          echo "//npm.fontawesome.com/:_authToken=$FA_TOKEN" > ~/.npmrc
+            echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
+            echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> .npmrc
       - run:
           name: NPM Install
           environment:
