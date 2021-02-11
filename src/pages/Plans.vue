@@ -61,13 +61,10 @@ export default {
   methods: {
     handlePlanSelection(type) {
       this.plan = type
-      // this.$set(this, 'plan', type)
-
-      console.log(this.plan)
+      this.planValue = type == 'starter' ? 1 : 2
     },
     handlePlanDeselection() {
       this.plan = null
-      // this.$set(this, 'plan', null)
     }
   }
 }
