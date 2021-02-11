@@ -1,2 +1,0 @@
-from prefect.utilities.docker_util import get_docker_ip
-print(get_docker_ip())
