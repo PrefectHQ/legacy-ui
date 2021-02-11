@@ -103,83 +103,82 @@ export default {
 </script>
 
 <template>
-  <v-dialog v-model="changePlanDialog" max-width="600" min-height="500px">
+  <!-- <v-dialog v-model="changePlanDialog" max-width="600" min-height="500px">
     <template #activator="{ on: dialog }">
       <v-btn color="primary" :disabled="disableChangePlan" v-on="{ ...dialog }">
         Change Plan
       </v-btn>
-    </template>
+    </template> -->
 
-    <v-card :loading="loading">
-      <v-card-title class="grey--text text--darken-2">
-        Change to the
-        <span class="primary--text px-1"> Prefect {{ planName }}</span> Plan
-      </v-card-title>
-      <v-card-text>
-        <v-alert
-          v-if="!isTenantAdmin & !loading"
-          class="mx-auto mb-12"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          icon="lock"
-          max-width="540"
-          >Only your team's administrators can modify these settings.
-        </v-alert>
-        <v-alert
-          v-else-if="!isSelfServe & !loading"
-          class="mx-auto mb-12"
-          border="left"
-          colored-border
-          elevation="2"
-          type="info"
-          tile
-          icon="lock"
-          max-width="540"
+  <v-card :loading="loading">
+    <v-card-title class="grey--text text--darken-2">
+      Change to the
+      <span class="primary--text px-1"> Prefect {{ planName }}</span> Plan
+    </v-card-title>
+    <v-card-text>
+      <v-alert
+        v-if="!isTenantAdmin & !loading"
+        class="mx-auto mb-12"
+        border="left"
+        colored-border
+        elevation="2"
+        type="warning"
+        tile
+        icon="lock"
+        max-width="540"
+        >Only your team's administrators can modify these settings.
+      </v-alert>
+      <v-alert
+        v-else-if="!isSelfServe & !loading"
+        class="mx-auto mb-12"
+        border="left"
+        colored-border
+        elevation="2"
+        type="info"
+        tile
+        icon="lock"
+        max-width="540"
+      >
+        To change your license terms, please
+        <a href="https://www.prefect.io/get-prefect#contact" target="_blank"
+          >contact our sales team</a
         >
-          To change your license terms, please
-          <a href="https://www.prefect.io/get-prefect#contact" target="_blank"
-            >contact our sales team</a
-          >
-        </v-alert>
-        <div v-else-if="existingCard && planCost">
-          <i class="fas fa-credit-card" />
-          Your card ending in
-          <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
+      </v-alert>
+      <div v-else-if="existingCard && planCost">
+        <i class="fas fa-credit-card" />
+        Your card ending in
+        <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
 
-          will be charged
-          <span class="font-weight-bold ">${{ planCost }} </span> on a monthly
-          basis.
-        </div>
-        <div v-else-if="planCost && !existingCard"> <Billing page="plan"/></div>
-        <div v-if="!planCost && isSelfServe">
-          This plan is free. If you want to run more than {{ limit }} task
-          runs/month you will need to add a credit card in the Team Account
-          page.
-        </div>
-      </v-card-text>
-      <v-card-actions class="py-4">
-        <v-spacer />
-        <v-btn
-          v-if="isSelfServe && isTenantAdmin"
-          text
-          @click="changePlanDialog = false"
-        >
-          Cancel
-        </v-btn>
-        <v-btn
-          v-if="isSelfServe && isTenantAdmin"
-          :loading="loading"
-          color="primary"
-          @click="changePlan"
-        >
-          Confirm
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        will be charged
+        <span class="font-weight-bold ">${{ planCost }} </span> on a monthly
+        basis.
+      </div>
+      <div v-else-if="planCost && !existingCard"> <Billing page="plan"/></div>
+      <div v-if="!planCost && isSelfServe">
+        This plan is free. If you want to run more than {{ limit }} task
+        runs/month you will need to add a credit card in the Team Account page.
+      </div>
+    </v-card-text>
+    <v-card-actions class="py-4">
+      <v-spacer />
+      <v-btn
+        v-if="isSelfServe && isTenantAdmin"
+        text
+        @click="changePlanDialog = false"
+      >
+        Cancel
+      </v-btn>
+      <v-btn
+        v-if="isSelfServe && isTenantAdmin"
+        :loading="loading"
+        color="primary"
+        @click="changePlan"
+      >
+        Confirm
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+  <!-- </v-dialog> -->
 </template>
 
 <style>

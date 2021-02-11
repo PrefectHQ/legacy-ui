@@ -1,5 +1,9 @@
 <script>
+import ChangePlanDialog from '@/components/License/ChangePlanDialog'
 import MenuTooltip from '@/components/MenuTooltip'
+import StarterPlan from '@/components/Plans/Starter'
+import StandardPlan from '@/components/Plans/Standard'
+import EnterprisePlan from '@/components/Plans/Enterprise'
 import {
   PLANS_2021,
   basicFeatures,
@@ -10,9 +14,15 @@ import {
 } from '@/utils/plans'
 import { mapGetters } from 'vuex'
 
+ChangePlanDialog
+
 export default {
   components: {
-    MenuTooltip
+    // ChangePlanDialog,
+    EnterprisePlan,
+    MenuTooltip,
+    StandardPlan,
+    StarterPlan
   },
   data() {
     return {
@@ -50,7 +60,14 @@ export default {
   },
   methods: {
     handlePlanSelection(type) {
-      this.plan = type ? PLANS_2021[type] : null
+      this.plan = type
+      // this.$set(this, 'plan', type)
+
+      console.log(this.plan)
+    },
+    handlePlanDeselection() {
+      this.plan = null
+      // this.$set(this, 'plan', null)
     }
   }
 }
@@ -69,7 +86,7 @@ export default {
         </div>
 
         <div class="header-container">
-          <div class="text-h3 font-weight-light text-center">
+          <div v-show="!plan" class="text-h3 font-weight-light text-center">
             <div class="blue-grey--text text--darken-4">
               Pay for what you use.
             </div>
@@ -78,254 +95,33 @@ export default {
             </div>
           </div>
 
-          <div class="mt-8 mt-md-16 d-flex justify-space-around">
+          <div class="mt-8 mt-md-16 d-flex justify-center">
+            <v-fade-transition mode="out-in">
+              <StarterPlan
+                v-if="!plan || plan == 'starter'"
+                key="starter"
+                @click="handlePlanSelection('starter')"
+              />
+            </v-fade-transition>
+            <v-fade-transition mode="out-in">
+              <StandardPlan
+                v-if="!plan || plan == 'standard'"
+                key="standard"
+                @click="handlePlanSelection('standard')"
+              />
+            </v-fade-transition>
+            <v-fade-transition mode="out-in">
+              <EnterprisePlan v-if="!plan" key="enterprise" />
+            </v-fade-transition>
+          </div>
+
+          <div v-if="plan" class="text-center mt-8">
             <div
-              class="plan-card blue-grey darken-2 white--text mr-0 ml-auto mt-8 rounded elevation-4"
+              class="d-inline-block text-h6 font-weight-light mx-auto cursor-pointer"
+              @click="handlePlanDeselection"
             >
-              <div class="font-weight-regular text-center py-8 plan-title">
-                Starter
-              </div>
-              <v-divider class="divider-light" />
-              <div
-                class="text-h6 font-weight-regular text-center grey--text text--lighten-3"
-              >
-                <div class="mt-8">
-                  Cloud-native workflow orchestration
-                </div>
-                <div
-                  class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price d-flex align-center justify-center"
-                >
-                  <span class="mr-2 font-weight-light d-inline-block plan-cent">
-                    $ </span
-                  >0.0025
-
-                  <!-- Hiding this for now until we can link to the success-based pricing page; that page will have a much more helpful breakdown as well as calculators that take automatic volume discounts into account! -->
-                  <!-- <MenuTooltip
-                  offset-y
-                  hide-close
-                  icon-color="white"
-                  icon-class="align-self-start ml-1"
-                >
-                  On this plan you get
-                  <span class="font-weight-bold"
-                    >10,000 successful task runs</span
-                  >
-                  for free each month; after that, task runs are billed at a
-                  quarter of a cent per successful run (<em
-                    >you never pay for failure!</em
-                  >). That means the next 10,000 would cost just
-                  <span class="font-weight-medium primary--text">$25</span>!
-                </MenuTooltip> -->
-                </div>
-                <div class="mt-2 text-h6 font-weight-light">
-                  per successful task run
-                </div>
-
-                <div
-                  class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
-                >
-                  <div class="d-flex align-center justify-center">
-                    <span
-                      class="rounded-circle plans-feature-icon plans-feature-icon-light"
-                    >
-                      <v-icon small>
-                        fad fa-users
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">Up to 3 users</span>
-                  </div>
-
-                  <div class="mt-3 d-flex align-center justify-center">
-                    <span
-                      class="rounded-circle plans-feature-icon plans-feature-icon-light"
-                    >
-                      <v-icon small>
-                        fad fa-history
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">1 week of run history</span>
-                  </div>
-
-                  <div class="mt-3 d-flex align-center justify-center">
-                    <span
-                      class="rounded-circle plans-feature-icon plans-feature-icon-light"
-                    >
-                      <v-icon small>
-                        fad fa-tasks
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">10,000 free task runs per month</span>
-                  </div>
-                </div>
-
-                <div
-                  class="plan-cta plan-cta-dark py-7 mt-16"
-                  @click="handlePlanSelection('starter')"
-                >
-                  Get started now
-                </div>
-              </div>
-            </div>
-
-            <div class="plan-card white rounded elevation-7">
-              <div class="font-weight-regular text-center py-8 plan-title">
-                Standard
-                <div class="text-body-1 prefect--text text-none">
-                  Recommended
-                </div>
-              </div>
-              <v-divider class="divider-dark" />
-              <div class="text-h6 font-weight-regular text-center">
-                <div class="mt-8 blue-grey--text text--darken-2">
-                  A complete workflow automation platform
-                </div>
-                <div
-                  class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
-                >
-                  <span class="mr-2 font-weight-light d-inline-block plan-cent">
-                    $ </span
-                  >0.0050
-
-                  <!-- Hiding this for now until we can link to the success-based pricing page; that page will have a much more helpful breakdown as well as calculators that take automatic volume discounts into account! -->
-                  <!-- <MenuTooltip
-                  offset-y
-                  hide-close
-                  icon-class="align-self-start ml-1"
-                >
-                  On this plan, task runs are billed at a half a cent per
-                  succesful run (<em>you never pay for failure!</em>). That
-                  means you'd pay
-                  <span class="font-weight-bold primary--text">$50</span> for
-                  <span class="font-weight-bold"
-                    >10,000 successful task runs</span
-                  >.
-                </MenuTooltip> -->
-                </div>
-                <div class="mt-2 text-h6 font-weight-light">
-                  per successful task run
-                </div>
-
-                <div
-                  class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
-                >
-                  <div class="d-flex align-center justify-center">
-                    <span class="rounded-circle plans-feature-icon">
-                      <v-icon small>
-                        fad fa-users
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">
-                      Up to 10 users
-                    </span>
-                  </div>
-
-                  <div class="mt-3 d-flex align-center justify-center">
-                    <span class="rounded-circle plans-feature-icon">
-                      <v-icon small>
-                        fad fa-history
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">
-                      1 month of run history
-                    </span>
-                  </div>
-
-                  <div class="mt-3 d-flex align-center justify-center">
-                    <span class="rounded-circle plans-feature-icon">
-                      <v-icon small>
-                        fad fa-user-shield
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">Basic role-based permissioning</span>
-                  </div>
-
-                  <div class="mt-3 d-flex align-center justify-center">
-                    <span class="rounded-circle plans-feature-icon">
-                      <v-icon small>
-                        fad fa-toolbox
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">
-                      Seamlessly integrate your existing tools
-                    </span>
-                  </div>
-
-                  <div class="mt-3 d-flex align-center justify-center">
-                    <span class="rounded-circle plans-feature-icon">
-                      <v-icon small>
-                        fad fa-siren-on
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">Workflow and infrastructure SLAs</span>
-                  </div>
-
-                  <div class="mt-3 d-flex align-center justify-center">
-                    <span class="rounded-circle plans-feature-icon">
-                      <v-icon small>
-                        fad fa-random
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">Customizable stateful actions</span>
-                  </div>
-
-                  <div class="mt-3 d-flex align-center justify-center">
-                    <span class="rounded-circle plans-feature-icon">
-                      <v-icon small>
-                        fad fa-shield
-                      </v-icon>
-                    </span>
-                    <span class="ml-2">Best-in-class automatic security</span>
-                  </div>
-                </div>
-
-                <div
-                  class="plan-cta py-7 mt-16"
-                  @click="handlePlanSelection('standard')"
-                >
-                  Get started now
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="plan-card blue-grey darken-3 white--text ml-0 mr-auto mt-16 rounded elevation-3"
-            >
-              <div class="font-weight-regular text-center py-8 plan-title">
-                Enterprise
-              </div>
-
-              <v-divider class="divider-light" />
-              <div class="text-h6 font-weight-regular text-center">
-                <div class="mt-8">
-                  Built for your business
-
-                  <div class="mt-2 font-weight-light">
-                    Get in touch to build your Prefect Cloud
-                  </div>
-                </div>
-
-                <div
-                  class="mt-16 d-flex align-center justify-center flex-column"
-                >
-                  <div class="plan-table">
-                    <div class="py-2 px-8">100+ users</div>
-                    <div class="py-2 px-8">Custom RBAC / SSO</div>
-                    <div class="py-2 px-8">Volume discounts</div>
-                    <div class="py-2 px-8">Audit trail</div>
-                  </div>
-                </div>
-
-                <a
-                  class="plan-cta plan-cta-dark py-7 mt-16 d-flex align-center justify-center"
-                  href="https://www.prefect.io/get-prefect#contact"
-                  target="_blank"
-                >
-                  Contact sales
-                  <v-icon class="mb-1" color="grey lighten-2"
-                    >arrow_right</v-icon
-                  >
-                </a>
-              </div>
+              <v-icon color="blue-grey">chevron_left</v-icon>
+              Choose a different plan
             </div>
           </div>
         </div>
@@ -495,7 +291,7 @@ export default {
         </div>
 
         <v-row class="ml-4" no-gutters>
-          <v-col cols="12" sm="9">
+          <v-col cols="12" sm="8">
             <div class="text-h4 font-weight-light pa-0">
               <span>Premium Support</span>
             </div>
@@ -505,19 +301,19 @@ export default {
               A support plan built to help you quickly grow your workflows.
 
               <div class="mt-2 support-table text-h6 font-weight-light">
-                <div class="my-2 mr-8">
+                <div class="my-2 mr-6">
                   <span class="support-icon mr-2">
                     <v-icon>fad fa-badge-check</v-icon>
                   </span>
                   Faster, prioritized support responses
                 </div>
-                <div class="my-2 mr-8">
+                <div class="my-2 mr-6">
                   <span class="support-icon mr-2">
                     <v-icon>fad fa-badge-check</v-icon>
                   </span>
-                  Dedicated support manager for your team
+                  Dedicated support manager
                 </div>
-                <div class="my-2 mr-8">
+                <div class="my-2 mr-6">
                   <span class="support-icon mr-2">
                     <v-icon>fad fa-badge-check</v-icon>
                   </span>
@@ -526,7 +322,7 @@ export default {
               </div>
             </div>
           </v-col>
-          <v-col cols="12" sm="3" class="d-flex align-center justify-start">
+          <v-col cols="12" sm="4" class="d-flex align-center justify-start">
             <v-divider class="d-inline-block" vertical />
             <div class="ml-8">
               <div class="text-h4 accentGreen--text">Starting at $2,000</div>
@@ -622,89 +418,9 @@ export default {
 }
 
 .header-container {
-  padding-top: 124px;
+  padding-top: 64px;
   position: relative;
   z-index: 1;
-}
-
-.plan-card {
-  height: min-content;
-  overflow: hidden;
-  width: 500px;
-
-  .plan-title {
-    font-size: 1.15rem;
-    letter-spacing: 0.15rem;
-    text-transform: uppercase;
-  }
-
-  .divider-dark {
-    border-color: #eee;
-  }
-
-  .divider-light {
-    border-color: #3f515a;
-  }
-
-  .plan-body {
-    font-size: 1.2rem !important;
-    font-weight: 400 !important;
-    margin: auto;
-    max-width: 350px;
-    width: max-content;
-  }
-
-  .plan-feature-icon {
-    align-items: center;
-    display: inline-flex;
-    height: 20px;
-    justify-content: center;
-    width: 20px;
-  }
-
-  .plan-cent {
-    font-size: 3rem !important;
-    vertical-align: middle;
-  }
-
-  .plan-table {
-    column-gap: 2px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 2px;
-
-    div {
-      background-color: #455a64;
-    }
-  }
-
-  .plan-cta {
-    background-color: #f7fcfd;
-    color: inherit !important;
-    cursor: pointer;
-    display: block;
-    font-size: 1rem;
-    letter-spacing: 0.15rem;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: all 50ms;
-
-    &.plan-cta-dark {
-      background-color: #546e7a;
-
-      &:focus,
-      &:hover {
-        background-color: #5a7581 !important;
-        color: #fff;
-      }
-    }
-
-    &:focus,
-    &:hover {
-      background-color: #e9f7fc !important;
-      font-weight: 500 !important;
-    }
-  }
 }
 
 .features-container {
@@ -714,7 +430,7 @@ export default {
   .features-body {
     margin: auto;
     margin-top: 48px;
-    max-width: 1600px;
+    max-width: 1200px;
   }
 
   .features-category {
@@ -810,7 +526,7 @@ export default {
 
   .support-card {
     margin: auto;
-    max-width: 1600px;
+    max-width: 1200px;
 
     .support-table {
       display: grid;
