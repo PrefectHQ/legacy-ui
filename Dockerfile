@@ -1,13 +1,12 @@
-FROM node:10.16.0 as ui
+# syntax = docker/dockerfile:1.0-experimental
+FROM node:14.7.0 as ui
 
 # Set version args from CMD input
 ARG PREFECT_VERSION=development
 ENV PREFECT_VERSION=$PREFECT_VERSION
-ENV FA_TOKEN=$FA_TOKEN
 
 # Write the arg into the .env file
 RUN echo "VUE_APP_PREFECT_VERSION=${PREFECT_VERSION}" >> .env
-RUN echo FA_TOKEN=$FA_TOKEN >> .env
 
 # Move application files to the app directory
 COPY ./ /app
@@ -17,6 +16,7 @@ COPY ./LICENSE LICENSE
 WORKDIR /app
 
 # Install dependencies
+RUN --mount=type=secret,id=FA_TOKEN cp /run/secrets/FA_TOKEN .npmrc
 RUN npm ci
 
 # Build static files
