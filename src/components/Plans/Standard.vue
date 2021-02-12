@@ -94,7 +94,9 @@
         </div>
       </div>
 
-      <div v-if="hideDetails" class="py-7 mt-16" />
+      <div v-if="hideDetails" class="py-7 mt-16 o-0">
+        Get started now
+      </div>
 
       <div v-else class="plan-cta py-7 mt-16" @click="select">
         Get started now

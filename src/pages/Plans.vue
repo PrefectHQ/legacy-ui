@@ -53,6 +53,7 @@ export default {
           features: orchestrationFeatures
         }
       ],
+      complete: false,
       plans: PLANS_2021,
       plan: null,
       planValue: 2
@@ -87,7 +88,7 @@ export default {
         </div>
 
         <div class="header-container">
-          <div v-show="!plan" class="text-h3 font-weight-light text-center">
+          <div class="text-h3 font-weight-light text-center">
             <div class="blue-grey--text text--darken-4">
               Pay for what you use.
             </div>
@@ -96,39 +97,39 @@ export default {
             </div>
           </div>
 
-          <div class="mt-8 mt-md-16 d-flex justify-center">
-            <v-fade-transition mode="out-in">
-              <StarterPlan
-                v-if="!plan || plan == 'starter'"
-                key="starter"
-                @click="handlePlanSelection('starter')"
-              />
-            </v-fade-transition>
+          <transition-group
+            name="flex"
+            mode="out-in"
+            class="plans-container mt-8 mt-md-16 d-flex justify-center"
+          >
+            <StarterPlan
+              v-if="!plan || plan == 'starter'"
+              key="starter"
+              :hide-details="!!plan"
+              @click="handlePlanSelection('starter')"
+            />
 
-            <v-fade-transition mode="out-in">
-              <StandardPlan
-                v-if="!plan || plan == 'standard'"
-                key="standard"
-                :hide-details="!!plan"
-                @click="handlePlanSelection('standard')"
-              />
-            </v-fade-transition>
-            <v-fade-transition mode="out-in">
-              <EnterprisePlan
-                v-if="!plan"
-                key="enterprise"
-                :hide-details="!!plan"
-              />
-            </v-fade-transition>
+            <StandardPlan
+              v-if="!plan || plan == 'standard'"
+              key="standard"
+              :hide-details="!!plan"
+              @click="handlePlanSelection('standard')"
+            />
 
-            <v-fade-transition mode="out-in">
-              <PlanSelectionForm
-                v-if="plan"
-                :plan-reference="plan"
-                class="mt-n8"
-              />
-            </v-fade-transition>
-          </div>
+            <EnterprisePlan
+              v-if="!plan"
+              key="enterprise"
+              :hide-details="!!plan"
+            />
+
+            <PlanSelectionForm
+              v-if="plan && !complete"
+              :plan-reference="plan"
+              class="mt-n8"
+              key="payment-form"
+              @complete="complete = true"
+            />
+          </transition-group>
 
           <div v-if="plan" class="text-center mt-8">
             <div
@@ -433,6 +434,7 @@ export default {
 }
 
 .header-container {
+  min-height: 1072px;
   padding-top: 64px;
   position: relative;
   z-index: 1;
@@ -554,6 +556,52 @@ export default {
       display: block;
       text-decoration: none;
     }
+  }
+}
+</style>
+
+<style lang="scss">
+.flex-enter-active {
+  animation: flex-enter 750ms ease;
+}
+
+.flex-leave-active {
+  animation: flex-leave 500ms ease;
+  position: absolute;
+  z-index: -1;
+}
+
+@keyframes flex-enter {
+  0% {
+    opacity: 0;
+    transform: translate(0) scale(0);
+  }
+
+  50% {
+    opacity: 0;
+    transform: translate(0) scale(0.4);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0) scale(1);
+  }
+}
+
+@keyframes flex-leave {
+  0% {
+    opacity: 1;
+    transform: translate(0) scale(1);
+  }
+
+  50% {
+    opacity: 0.1;
+    transform: translate(0) scale(0.4);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(100px) scale(0);
   }
 }
 </style>

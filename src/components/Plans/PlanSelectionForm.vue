@@ -20,7 +20,7 @@ export default {
     return {
       cardSource: null,
       loading: false,
-      step: 'complete'
+      step: 'select-card'
     }
   },
   computed: {
@@ -95,8 +95,10 @@ export default {
     },
     async handleSubmit() {
       await this.updatePlan()
-      if (!this.error) this.step = 'complete'
-      else this.step = 'error'
+      if (!this.error) {
+        this.$emit('complete')
+        this.step = 'complete'
+      } else this.step = 'error'
     }
   }
 }
