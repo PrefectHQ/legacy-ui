@@ -1,12 +1,14 @@
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import CardDetails from '@/components/Plans/CardDetails'
+import ExternalLink from '@/components/ExternalLink'
 
 import { PLANS_2021 } from '@/utils/plans'
 
 export default {
   components: {
-    CardDetails
+    CardDetails,
+    ExternalLink
   },
   props: {
     planReference: {
@@ -18,58 +20,45 @@ export default {
     return {
       cardSource: null,
       loading: false,
-      previousHeight: 0,
-      showCardForm: false
+      step: 'select-card'
     }
   },
   computed: {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
-    existingCard() {
-      console.log(this.tenant.stripe_customer)
-      return this.tenant?.stripe_customer?.sources?.data[0]?.card
-    },
     cards() {
       return this.tenant?.stripe_customer?.sources?.data
-    },
-    isSelfServe() {
-      return (
-        this.license?.terms?.plan === 'SELF_SERVE' ||
-        this.license?.terms?.is_self_serve
-      )
-    },
-    planName() {
-      return this.plan?.name
-    },
-    planCost() {
-      return this.plan?.price
     },
     plan() {
       return PLANS_2021[this.planReference]
     },
-    additionalCost() {
-      return this.plan?.additionalCost
-    },
-    limit() {
-      return this.plan.taskRuns
-    },
-    disableChangePlan() {
-      const type = this.tempPlanName || this.license?.terms?.plan
-      const planName = type === 'STARTER_2021' ? 'FREE_2021' : type
-      return (
-        !this.isTenantAdmin || !this.isSelfServe || this.plan.value === planName
-      )
+    title() {
+      let title
+      switch (this.step) {
+        case 'select-card':
+          title = 'Confirm your payment details'
+          break
+        case 'add-card':
+          title = 'Add a new payment method'
+          break
+        case 'confirm':
+          title = 'Summary'
+          break
+        case 'complete':
+          title = 'Complete!'
+          break
+        case 'error':
+        default:
+          title = 'Oops'
+          break
+      }
+      return title
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapActions('license', ['getLicense']),
-    ...mapMutations('license', ['setTempLicenseType']),
-    async changePlan() {
-      const planvalue =
-        this.plan.value === 'FREE_2021' && this.existingCard
-          ? 'STARTER_2021'
-          : this.plan.value
+    async updatePlan() {
       this.loading = true
       try {
         const { data } = await this.$apollo.mutate({
@@ -77,76 +66,37 @@ export default {
           variables: {
             input: {
               tenant_id: this.tenant.id,
-              plan_name: planvalue
+              plan_name: this.plan.value
             }
           }
         })
         if (data.create_usage_license.id) {
-          this.alertMessage = {
-            alertShow: true,
-            alertMessage: `You are now on the Prefect ${this.planName} plan`,
-            alertType: 'success'
-          }
-          this.setTempLicenseType(planvalue)
-          this.$emit('update', this.plan.value)
-          this.tempPlanName = planvalue
+          this.getLicense()
         }
       } catch (e) {
-        this.alertMessage = {
-          alertShow: true,
-          alertMessage:
-            'There was a problem updating your license.  Please try again or contact help@prefect.io',
-          alertType: 'error'
-        }
+        this.error = true
       } finally {
-        this.setAlert(this.alertMessage)
         this.loading = false
-        this.changePlanDialog = false
       }
     },
-    handleConfirm() {
-      console.log('confirming')
+    async handleConfirm(sourceId) {
+      this.cardSource = sourceId
+      this.showConfirmation = true
     },
     handleNext() {
       if (this.cardSource == 'new') {
-        this.showCardForm = true
+        this.step = 'add-card'
       } else {
-        this.updateCustomer(this.cardSource)
+        this.step = 'confirm'
       }
     },
     selectCard(id) {
       this.cardSource = id
     },
-    async updateCustomer(sourceId) {
-      try {
-        const customer = await this.$apollo.mutate({
-          mutation: require('@/graphql/License/update-customer.gql'),
-          variables: {
-            email: this.email,
-            name: this.username,
-            source: sourceId
-          },
-          errorPolicy: 'all'
-        })
-
-        console.log(customer)
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    afterEnter(element) {
-      element.style.height = 'auto'
-    },
-    beforeLeave(element) {
-      this.previousHeight = getComputedStyle(element).height
-    },
-    enter(element) {
-      const { height } = getComputedStyle(element)
-      element.style.height = this.previousHeight
-
-      setTimeout(() => {
-        element.style.height = height
-      })
+    async handleSubmit() {
+      await this.updatePlan()
+      if (!this.error) this.step = 'complete'
+      else this.step = 'error'
     }
   }
 }
@@ -154,25 +104,18 @@ export default {
 
 <template>
   <div
-    class="form-container text-center blue-grey--text text--darken-2 white rounded elevation-8 pa-8"
+    class="form-container blue-grey--text text--darken-2 white rounded elevation-8 pa-8"
   >
     <div class="text-h4 font-weight-light">
-      Confirm your payment details
+      {{ title }}
     </div>
 
     <div class="card-container" key="card-form-container">
-      <transition
-        name="fade"
-        mode="out-in"
-        @beforeLeave="beforeLeave"
-        @enter="enter"
-        @afterEnter="afterEnter"
-      >
-        <div v-if="showCardForm" key="card-form">
+      <v-fade-transition mode="out-in">
+        <div v-if="step == 'add-card'" key="add-card">
           <div
-            v-if="showCardForm"
             class="d-inline-block text-subtitle-1 font-weight-light mx-auto cursor-pointer mt-4 h-auto"
-            @click="showCardForm = false"
+            @click="step = 'select-card'"
           >
             <v-icon color="blue-grey">chevron_left</v-icon>
             Choose an existing card instead
@@ -182,9 +125,9 @@ export default {
         </div>
 
         <div
-          v-else
+          v-else-if="step == 'select-card'"
           class="card-selection d-flex align-center justify-center flex-column"
-          key="card-selection"
+          key="select-card"
         >
           <div
             class="card-display mt-auto"
@@ -192,7 +135,7 @@ export default {
             @click.stop="selectCard('new')"
           >
             <div class="text-h6 font-weight-light">
-              Enter new card
+              Add new card
             </div>
           </div>
 
@@ -206,8 +149,8 @@ export default {
             v-for="card in cards"
             :key="card.id"
             class="card-display mb-auto d-flex align-center justify--start"
-            :class="{ active: cardSource == card.source }"
-            @click="selectCard(card.source)"
+            :class="{ active: cardSource == card.id }"
+            @click="selectCard(card.id)"
           >
             <div>
               <div v-if="card.owner.name" class="text-h5 font-weight-light">
@@ -235,7 +178,6 @@ export default {
           </div>
 
           <v-btn
-            v-if="!showCardForm"
             color="prefect"
             class="mt-auto white--text"
             :disabled="loading || !cardSource"
@@ -247,77 +189,135 @@ export default {
             Next
           </v-btn>
         </div>
-      </transition>
+
+        <div
+          v-else-if="step == 'confirm'"
+          key="confirm"
+          class="confirm-container d-flex align-start justify-center flex-column"
+        >
+          <div
+            class="d-inline-block text-subtitle-1 font-weight-light cursor-pointer mt-4 h-auto"
+            @click="step = 'select-card'"
+          >
+            <v-icon color="blue-grey">chevron_left</v-icon>
+            Change payment method
+          </div>
+
+          <div class="text-left mt-auto w-100">
+            <div
+              class="text-h5 font-weight-light d-flex align-end justify-start"
+            >
+              <span>Plan</span>
+              <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+              <span class="ml-auto white--text plan-title">
+                {{ plan.name }}
+              </span>
+            </div>
+            <div class="mt-4 text-h6 font-weight-light">
+              <div class="mt-4 d-flex align-end justify-start">
+                <span>Users</span>
+                <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+                <span class="mr-3 font-weight-regular">
+                  {{ plan.users }}
+                </span>
+                <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-users fa-fw
+                  </v-icon>
+                </span>
+              </div>
+
+              <div class="mt-4 d-flex align-end justify-start">
+                <span>Run history</span>
+                <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+                <span class="mr-3 font-weight-regular">
+                  1 {{ plan.history }}
+                </span>
+                <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-history fa-fw
+                  </v-icon>
+                </span>
+              </div>
+
+              <div class="mt-4 d-flex align-end justify-start">
+                <span>Task runs</span>
+                <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+                <span
+                  v-if="plan.price && !plan.taskRuns"
+                  class="mr-3 font-weight-regular text-right mb-n2"
+                >
+                  ${{ plan.price }}
+                  <div class="text-caption mt-n2">/ successful task run</div>
+                </span>
+                <span
+                  v-else-if="plan.price && plan.taskRuns"
+                  class="mr-3 font-weight-regular text-right mb-n4"
+                >
+                  <span v-if="plan.taskRuns">
+                    {{ plan.taskRuns.toLocaleString() }}
+                    <div class="text-caption mt-n2">
+                      / month
+                    </div>
+                    <div class="text-caption mt-n2">
+                      then ${{ plan.price }} / successful task run
+                    </div>
+                  </span>
+                </span>
+                <span v-else class="mr-3 font-weight-regular">
+                  10,000
+                  <div class="text-caption mt-n2">/ month</div>
+                </span>
+                <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-check fa-fw
+                  </v-icon>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 text-h5 font-weight-light text-right w-100">
+            Due today:
+            <span class="font-weight-medium"
+              >${{ plan.additionalCost ? plan.additionalCost : '0.00' }}</span
+            >
+          </div>
+
+          <v-btn
+            color="prefect"
+            class="mt-auto white--text w-100"
+            :disabled="loading || !cardSource"
+            :loading="loading"
+            data-cy="save-payment"
+            @click="handleSubmit"
+          >
+            Finish
+          </v-btn>
+
+          <div class="text-caption mb-n4 mt-2 mx-auto">
+            By clicking finish, you assert that you have read & agree to the
+            <ExternalLink
+              href="https://www.prefect.io/legal/terms-and-conditions"
+              >Terms & Conditions</ExternalLink
+            >
+          </div>
+        </div>
+
+        <div
+          v-else-if="step == 'complete'"
+          key="complete"
+          class="complete-container"
+        >
+          COMPLETE!
+        </div>
+
+        <div v-else key="error" class="error-container">
+          Something went wrong...
+        </div>
+      </v-fade-transition>
     </div>
   </div>
-  <!-- <v-card :loading="loading">
-    <v-card-title class="grey--text text--darken-2">
-      Change to the
-      <span class="primary--text px-1"> Prefect {{ planName }}</span> Plan
-    </v-card-title>
-    <v-card-text>
-      <v-alert
-        v-if="!isTenantAdmin & !loading"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="540"
-        >Only your team's administrators can modify these settings.
-      </v-alert>
-      <v-alert
-        v-else-if="!isSelfServe & !loading"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="info"
-        tile
-        icon="lock"
-        max-width="540"
-      >
-        To change your license terms, please
-        <a href="https://www.prefect.io/get-prefect#contact" target="_blank"
-          >contact our sales team</a
-        >
-      </v-alert>
-      <div v-else-if="existingCard && planCost">
-        <i class="fas fa-credit-card" />
-        Your card ending in
-        <span class="font-weight-bold"> {{ existingCard.last4 }}</span>
-
-        will be charged
-        <span class="font-weight-bold ">${{ planCost }} </span> on a monthly
-        basis.
-      </div>
-      <div v-else-if="planCost && !existingCard"> <Billing page="plan"/></div>
-      <div v-if="!planCost && isSelfServe">
-        This plan is free. If you want to run more than {{ limit }} task
-        runs/month you will need to add a credit card in the Team Account page.
-      </div>
-    </v-card-text>
-    <v-card-actions class="py-4">
-      <v-spacer />
-      <v-btn
-        v-if="isSelfServe && isTenantAdmin"
-        text
-        @click="changePlanDialog = false"
-      >
-        Cancel
-      </v-btn>
-      <v-btn
-        v-if="isSelfServe && isTenantAdmin"
-        :loading="loading"
-        color="primary"
-        @click="changePlan"
-      >
-        Confirm
-      </v-btn>
-    </v-card-actions>
-  </v-card> -->
 </template>
 
 <style lang="scss" scoped>
@@ -415,8 +415,22 @@ export default {
   }
 }
 
+.confirm-container,
+.complete-container,
+.error-container {
+  min-height: 710px;
+}
+
+.dotted-line {
+  border-top: 2px dotted #eee;
+}
+
 .h-100 {
   height: 100%;
+}
+
+.w-100 {
+  width: 100%;
 }
 
 .theme--light.v-subheader {
@@ -437,5 +451,13 @@ export default {
   margin-left: -12px;
   margin-top: -10px;
   margin-bottom: 10px;
+}
+
+.plan-title {
+  background-color: var(--v-primary-base);
+  border-radius: 6px;
+  letter-spacing: 0.15rem;
+  padding: 0 8px;
+  text-transform: uppercase;
 }
 </style>

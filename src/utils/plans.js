@@ -1,7 +1,7 @@
 export const PLANS_2021 = {
   free: {
     name: 'Developer',
-    price: 0,
+    price: 'Free',
     taskRuns: 10000,
     additionalCost: 0,
     users: 1,
@@ -11,9 +11,9 @@ export const PLANS_2021 = {
   },
   starter: {
     name: 'Starter',
-    price: 0.0025,
+    price: '0.0025',
     taskRuns: 10000,
-    additionalCost: '0.0025',
+    additionalCost: null,
     users: 3,
     value: 'STARTER_2021',
     history: 'week',
@@ -21,9 +21,9 @@ export const PLANS_2021 = {
   },
   standard: {
     name: 'Standard',
-    price: 0.005,
+    price: '0.0050',
     taskRuns: 0,
-    additionalCost: '0.0050',
+    additionalCost: null,
     value: 'STANDARD_2021',
     users: 10,
     history: 'month',

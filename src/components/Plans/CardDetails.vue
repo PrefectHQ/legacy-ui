@@ -119,7 +119,7 @@ export default {
             this.cardError = customer.errors[0].message
           }
 
-          this.$emit('confirm')
+          this.$emit('confirm', this.source.id)
         }
       } catch (e) {
         LogRocket.captureException(e, {
