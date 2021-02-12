@@ -23,8 +23,20 @@ export default {
       revealNote: false,
       revealNameInput: false,
       revealUrlInput: false,
+      revealDropdown: false,
       revealPendingTeams: false,
-      revealConfirm: false
+      revealConfirm: false,
+
+      // "how did you hear about us" options
+      options: [
+        'Twitter',
+        'Google',
+        'LinkedIn',
+        'Colleague',
+        'Conference',
+        'Meetup',
+        'Other'
+      ]
     }
   },
   computed: {
@@ -49,6 +61,7 @@ export default {
     setTimeout(() => {
       this.revealNameInput = true
       this.revealUrlInput = true
+      this.revealDropdown = true
       this.revealPendingTeams = true
       this.revealConfirm = true
 
@@ -194,6 +207,7 @@ export default {
     async goToResources() {
       this.revealNameInput = false
       this.revealUrlInput = false
+      this.revealDropdown = false
       this.revealConfirm = false
 
       await this.setCurrentTenant(
@@ -307,8 +321,7 @@ export default {
               :disabled="disabled"
               :error-messages="nameErrors"
               :loading="isCheckingName"
-              class="white--text v-text-field-input-color"
-              color="white"
+              dark
               @blur="checkName(name)"
               @input="resetNameMetadata"
             >
@@ -332,7 +345,7 @@ export default {
             v-if="revealUrlInput"
             key="input-2"
             cols="12"
-            class="my-2 mb-12 name-team-input mx-auto"
+            class="my-2 name-team-input mx-auto"
           >
             <div class="overline d-flex justify-center align-center">
               <span class="mr-1">Team Slug</span>
@@ -345,7 +358,6 @@ export default {
               </Truncate>
             </div>
             <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
-              {{ tenant.slug }}
             </div>
             <v-text-field
               v-if="tenant.role == 'TENANT_ADMIN'"
@@ -354,8 +366,7 @@ export default {
               :disabled="disabled"
               :error-messages="slugErrors"
               :loading="isCheckingSlug"
-              class="white--text v-text-field-input-color"
-              color="white"
+              dark
               @blur="checkSlug(slug)"
               @input="resetSlugMetadata"
             >
@@ -374,6 +385,23 @@ export default {
                 clear
               </v-icon>
             </v-text-field>
+          </v-col>
+
+          <v-col
+            v-if="revealDropdown"
+            key="input-3"
+            cols="12"
+            class="my-2 mb-12 mx-auto"
+          >
+            <div class="overline">
+              How did you hear about us?
+            </div>
+            <v-select
+              :items="options"
+              dark
+              :menu-props="{ dark: true, maxHeight: 400 }"
+              label="Options"
+            ></v-select>
           </v-col>
 
           <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
@@ -503,11 +531,5 @@ export default {
 
 .w-100 {
   width: 100vw;
-}
-
-.name-team-card {
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
 }
 </style>
