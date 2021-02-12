@@ -112,7 +112,7 @@ export default {
       {{ title }}
     </div>
 
-    <div class="card-container" key="card-form-container">
+    <div key="card-form-container" class="card-container">
       <v-fade-transition mode="out-in">
         <div v-if="step == 'add-card'" key="add-card">
           <div
@@ -128,8 +128,8 @@ export default {
 
         <div
           v-else-if="step == 'select-card'"
-          class="card-selection d-flex align-center justify-center flex-column"
           key="select-card"
+          class="card-selection d-flex align-center justify-center flex-column"
         >
           <div
             class="card-display mt-auto"
@@ -323,7 +323,7 @@ export default {
           <v-btn
             color="prefect"
             class="mt-auto white--text w-100"
-            :to="{ name: 'dashboard', params: { tenant: this.tenant.slug } }"
+            :to="{ name: 'dashboard', params: { tenant: tenant.slug } }"
           >
             Take me to the dashboard
           </v-btn>

@@ -124,9 +124,9 @@ export default {
 
             <PlanSelectionForm
               v-if="plan && !complete"
+              key="payment-form"
               :plan-reference="plan"
               class="mt-n8"
-              key="payment-form"
               @complete="complete = true"
             />
           </transition-group>
