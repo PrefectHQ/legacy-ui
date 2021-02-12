@@ -100,7 +100,7 @@ export default {
           <transition-group
             name="flex"
             mode="out-in"
-            class="plans-container mt-8 mt-md-16 d-flex justify-center"
+            class="plans-container mt-8 d-flex justify-center"
           >
             <StarterPlan
               v-if="!plan || plan == 'starter'"
@@ -126,7 +126,7 @@ export default {
               v-if="plan && !complete"
               key="payment-form"
               :plan-reference="plan"
-              class="mt-n8"
+              class="mt-n4"
               @complete="complete = true"
             />
           </transition-group>
@@ -435,7 +435,7 @@ export default {
 
 .header-container {
   min-height: 1072px;
-  padding-top: 64px;
+  padding-top: 48px;
   position: relative;
   z-index: 1;
 }

@@ -358,7 +358,7 @@ export default {
   transition: all 150ms;
 
   .card-selection {
-    min-height: 710px;
+    min-height: 650px;
   }
 
   .card-display {
@@ -371,6 +371,7 @@ export default {
     position: relative;
     text-align: left;
     transition: all 50ms;
+    user-select: none;
     width: 400px;
 
     &.active {
@@ -435,7 +436,7 @@ export default {
 .confirm-container,
 .complete-container,
 .error-container {
-  min-height: 710px;
+  min-height: 650px;
 }
 
 .dotted-line {
