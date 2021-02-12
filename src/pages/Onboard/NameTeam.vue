@@ -227,7 +227,9 @@ export default {
     class="text-center mx-auto px-12 py-8 white--text"
     flat
     tile
-    style="width: fit-content !important;"
+    style="align-items: center;
+    display: flex;
+    width: fit-content !important;"
     color="transparent"
   >
     <v-row
