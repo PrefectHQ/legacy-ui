@@ -20,7 +20,7 @@ export default {
     return {
       cardSource: null,
       loading: false,
-      step: 'select-card'
+      step: 'complete'
     }
   },
   computed: {
@@ -45,7 +45,7 @@ export default {
           title = 'Summary'
           break
         case 'complete':
-          title = 'Complete!'
+          title = ''
           break
         case 'error':
         default:
@@ -183,7 +183,7 @@ export default {
             :disabled="loading || !cardSource"
             :loading="loading"
             style="width: 100%;"
-            data-cy="save-payment"
+            data-cy="next"
             @click="handleNext"
           >
             Next
@@ -289,7 +289,7 @@ export default {
             class="mt-auto white--text w-100"
             :disabled="loading || !cardSource"
             :loading="loading"
-            data-cy="save-payment"
+            data-cy="finish"
             @click="handleSubmit"
           >
             Finish
@@ -307,9 +307,24 @@ export default {
         <div
           v-else-if="step == 'complete'"
           key="complete"
-          class="complete-container"
+          class="complete-container d-flex align-start justify-center flex-column"
         >
-          COMPLETE!
+          <div class="mt-auto text-h4 font-weight-light w-100 text-center">
+            You're all set - happy engineering!
+            <img
+              class="mt-8 mx-auto"
+              src="@/assets/backgrounds/your-flow-runs.svg"
+              alt="You're all set image"
+            />
+          </div>
+
+          <v-btn
+            color="prefect"
+            class="mt-auto white--text w-100"
+            :to="{ name: 'dashboard', params: { tenant: this.tenant.slug } }"
+          >
+            Take me to the dashboard
+          </v-btn>
         </div>
 
         <div v-else key="error" class="error-container">

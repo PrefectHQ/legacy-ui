@@ -10,7 +10,7 @@ let style = {
     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
     fontSmoothing: 'antialiased',
     fontSize: '16px',
-    iconColor: '#767676',
+    iconColor: '#aaa',
     '::placeholder': {
       color: '#767676'
     }
@@ -145,8 +145,8 @@ export default {
         outlined
         :rules="nameRules"
         class="mt-3"
-        prepend-inner-icon="face"
-        label="Full Name"
+        prepend-inner-icon="fad fa-smile fa-fw"
+        label="Name"
         type="text"
         required
       ></v-text-field>
@@ -154,7 +154,7 @@ export default {
         v-model="email"
         outlined
         :rules="emailRules"
-        prepend-inner-icon="email"
+        prepend-inner-icon="fad fa-envelope fa-fw"
         label="Email"
         type="email"
         default="this.user.email"
@@ -164,7 +164,7 @@ export default {
         v-model="address"
         data-cy="address"
         outlined
-        prepend-inner-icon="home"
+        prepend-inner-icon="fad fa-map-marker-alt fa-fw"
         label="Address"
         type="text"
         required
