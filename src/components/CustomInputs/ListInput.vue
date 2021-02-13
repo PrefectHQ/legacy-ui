@@ -48,6 +48,9 @@ export default {
   watch: {
     internalValue(val) {
       this.$emit('input', val)
+    },
+    value(val) {
+      this.internalValue = val
     }
   },
   methods: {
