@@ -8,6 +8,12 @@
 
 ### Bugfixes
 
+- None
+
+## 2021-02-12
+
+### Bugfixes
+
 - Hotfix runconfigs; remove labels from the run config and put them in the `create_flow_run` mutation instead - [#610](https://github.com/PrefectHQ/ui/pull/610)
 
 ## 2021-02-11
