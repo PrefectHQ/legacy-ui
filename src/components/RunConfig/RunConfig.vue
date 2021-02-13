@@ -322,7 +322,6 @@ export default {
   display: grid;
   grid-column-gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(150px, 195px));
-  min-width: 100%;
 }
 
 .config-type {
