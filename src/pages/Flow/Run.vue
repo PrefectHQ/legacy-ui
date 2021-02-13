@@ -127,7 +127,7 @@ export default {
       acc[param.name] = param.default
       return acc
     }, {})
-    this.runConfig = { ...this.flow.run_config, labels: this.labels }
+    this.runConfig = { ...this.flow.run_config }
 
     window.addEventListener('scroll', this.handleScroll)
   },
