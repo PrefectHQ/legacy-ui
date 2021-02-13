@@ -5,6 +5,7 @@ import { mapGetters, mapActions } from 'vuex'
 import DateTimeSelector from '@/components/RunConfig/DateTimeSelector'
 import DictInput from '@/components/CustomInputs/DictInput'
 import ExternalLink from '@/components/ExternalLink'
+import ListInput from '@/components/CustomInputs/ListInput'
 import MenuTooltip from '@/components/MenuTooltip'
 import RunConfig from '@/components/RunConfig/RunConfig'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
@@ -22,6 +23,7 @@ export default {
     DateTimeSelector,
     DictInput,
     ExternalLink,
+    ListInput,
     MenuTooltip,
     RunConfig
   },
@@ -45,6 +47,7 @@ export default {
 
       // Context
       context: {},
+      labels: null,
 
       // Schedule
       scheduledStartDateTime: null,
@@ -84,21 +87,6 @@ export default {
       if (!this.context) return false
       return Object.keys(this.context).filter(c => c !== '').length > 0
     },
-    labels() {
-      let labels = []
-      if (this.runConfig?.labels?.length > 0) {
-        labels = this.runConfig.labels
-      } else if (this.flow?.run_config?.labels?.length > 0) {
-        labels = this.flow.run_config.labels
-      } else if (this.flowGroup?.labels?.length > 0) {
-        labels = this.flowGroup.labels
-      } else if (this.flowGroup?.run_config?.labels?.length > 0) {
-        labels = this.flowGroup.run_config.labels
-      } else if (this.flow?.environment?.labels?.length > 0) {
-        labels = this.flow.environment.labels
-      }
-      return labels
-    },
     parametersModified() {
       if (!this.parameters) return false
 
@@ -127,7 +115,20 @@ export default {
       acc[param.name] = param.default
       return acc
     }, {})
-    this.runConfig = { ...this.flow.run_config, labels: this.labels }
+    this.runConfig = { ...this.flow.run_config }
+
+    // run config > flow group > flow group run config > flow run config > flow > flow environment ?
+    if (this.flowGroup.labels?.length > 0) {
+      this.labels = this.flowGroup.labels
+    } else if (this.flowGroup.run_config?.labels?.length > 0) {
+      this.labels = this.flowGroup.run_config.labels
+    } else if (this.flow.run_config?.labels?.length > 0) {
+      this.labels = this.flow.run_config.labels
+    } else if (this.flow.labels?.length > 0) {
+      this.labels = this.flow.labels
+    } else if (this.flow.environment?.labels?.length > 0) {
+      this.labels = this.flow.environment.labels
+    }
 
     window.addEventListener('scroll', this.handleScroll)
   },
@@ -157,7 +158,9 @@ export default {
             flowRunName: this.flowRunName,
             parameters: parseObject(this.parameters),
             scheduledStartTime: this.scheduledStartDateTime,
-            runConfig: this.runConfig,
+            runConfig: this.runConfig?.type
+              ? { ...this.runConfig, labels: [] }
+              : null,
             labels: this.labels
           },
           errorPolicy: 'all'
@@ -174,6 +177,9 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    handleLabelInput(val) {
+      this.labels = val
     },
     generateRandomName() {
       const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
@@ -403,6 +409,41 @@ export default {
               :dict="parameterItems"
               disable-edit
               allow-reset
+            />
+          </v-col>
+        </v-row>
+
+        <v-row class="my-2 py-8 row-divider" no-gutters>
+          <v-col cols="12" md="3">
+            <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
+              <div class="text-h5">
+                Labels
+                <MenuTooltip>
+                  <p>
+                    Labels are identifiers used by Prefect Agents for selecting
+                    flow runs when polling for work. Labels that exist on both
+                    the run and the agent will be submitted!
+                  </p>
+
+                  <p>
+                    Refer to the
+                    <ExternalLink
+                      href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
+                      >documentation</ExternalLink
+                    >
+                    for more details on labels.
+                  </p>
+                </MenuTooltip>
+                <span class="text-body-2 text--disabled ml-2">(Optional)</span>
+              </div>
+            </div>
+          </v-col>
+
+          <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
+            <ListInput
+              label="Labels"
+              :value="labels"
+              @input="handleLabelInput"
             />
           </v-col>
         </v-row>
