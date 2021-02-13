@@ -133,7 +133,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div style="min-width: 100%;">
     <div class="pb-8">
       <div class="config-selection-container">
         <div
