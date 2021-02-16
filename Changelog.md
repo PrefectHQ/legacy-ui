@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add a "How did you hear about us" dropdown to the signup flow - [#615](https://github.com/PrefectHQ/ui/pull/615)
 
 ### Bugfixes
 
