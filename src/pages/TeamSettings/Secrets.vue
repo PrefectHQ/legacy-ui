@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import JsonInput from '@/components/JsonInput'
+import JsonInput from '@/components/CustomInputs/JsonInput'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -502,6 +502,7 @@ export default {
         ref="secretRef"
         v-model="secretValueInput"
         prepend-icon="lock"
+        class="text-body-1"
         :selected-type="secretTypes[selectedTypeIndex].value"
         :placeholder-text="placeholderText"
         @input="validSecretJSON"

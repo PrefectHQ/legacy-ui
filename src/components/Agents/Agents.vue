@@ -235,8 +235,9 @@ export default {
     <div
       class="agent-controls"
       :class="{
-        'md-and-down': $vuetify.breakpoint.mdAndDown,
-        'md-and-up': $vuetify.breakpoint.mdAndUp
+        'sm-and-down': $vuetify.breakpoint.smAndDown,
+        md: $vuetify.breakpoint.mdOnly,
+        'lg-and-up': $vuetify.breakpoint.lgAndUp
       }"
     >
       <v-dialog v-model="cleanUpDialog" max-width="480">
@@ -509,11 +510,15 @@ export default {
   transform: translate(570px);
   z-index: 4;
 
-  &.md-and-down {
-    top: 120px;
+  &.sm-and-down {
+    top: 156px;
   }
 
-  &.md-and-up {
+  &.md {
+    top: 184px;
+  }
+
+  &.lg-and-up {
     top: 136px;
   }
 
