@@ -5,6 +5,7 @@ import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
+import Actions from '@/pages/Dashboard/Actions'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import NavTabBar from '@/components/NavTabBar'
 import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
@@ -51,6 +52,7 @@ export default {
   },
   components: {
     Agents,
+    Actions,
     AgentsTile,
     BreadCrumbs,
     FailedFlowsTile,
@@ -99,7 +101,7 @@ export default {
       key: 0,
       loading: 0,
       loadedTiles: 0,
-      numberOfTiles: 9,
+      numberOfTiles: 10,
       projectId: this.$route.params.id,
       refreshTimeout: null,
       tab: this.getTab()
@@ -136,6 +138,10 @@ export default {
         case 'agents':
           /* eslint-disable-next-line */
           query = 'agents'
+          break
+        case 'actions':
+          /* eslint-disable-next-line */
+          query = 'actions'
           break
         default:
           break
@@ -176,6 +182,7 @@ export default {
     getTab() {
       if ('flows' in this.$route.query) return 'flows'
       if ('agents' in this.$route.query) return 'agents'
+      if ('actions' in this.$route.query) return 'actions'
       return 'overview'
     },
     refresh() {
@@ -409,6 +416,15 @@ export default {
         reverse-transition="tab-fade"
       >
         <Agents v-if="loadedTiles > 9" class="mx-3 my-6" />
+      </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height"
+        value="actions"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
+      >
+        <Actions v-if="loadedTiles > 10" class="mx-3 my-6" />
       </v-tab-item>
 
       <v-tab-item
