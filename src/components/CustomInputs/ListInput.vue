@@ -48,6 +48,9 @@ export default {
   watch: {
     internalValue(val) {
       this.$emit('input', val)
+    },
+    value(val) {
+      this.internalValue = val
     }
   },
   methods: {
@@ -118,5 +121,8 @@ export default {
         </v-chip>
       </template>
     </v-combobox>
+    <div class="mt-1 text-caption">
+      Hint: add to the list after typing by pressing the Enter key
+    </div>
   </div>
 </template>

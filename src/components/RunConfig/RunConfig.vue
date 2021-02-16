@@ -95,12 +95,22 @@ export default {
         if (!runConfigs[config]) return
         runConfigs[config].args.forEach(arg => {
           if (arg.arg) {
-            dict[arg.arg] = this.value?.[arg.arg] || nullValues[arg.type]
+            try {
+              dict[arg.arg] =
+                JSON.parse(this.value?.[arg.arg]) || nullValues[arg.type]
+            } catch {
+              dict[arg.arg] = this.value?.[arg.arg] || nullValues[arg.type]
+            }
           }
 
           arg.options?.forEach(option => {
             if (option.arg) {
-              dict[option.arg] = this.value?.[arg] || nullValues[arg.type]
+              try {
+                dict[option.arg] =
+                  JSON.parse(this.value?.[arg]) || nullValues[arg.type]
+              } catch {
+                dict[option.arg] = this.value?.[arg] || nullValues[arg.type]
+              }
             }
           })
         })
@@ -123,7 +133,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div style="min-width: 100%;">
     <div class="pb-8">
       <div class="config-selection-container">
         <div
@@ -198,6 +208,7 @@ export default {
           <DictInput
             v-else-if="arg.input_type == 'object'"
             v-model="internalValue[arg.arg]"
+            :dict="internalValue[arg.arg]"
           />
           <ListInput
             v-else-if="arg.input_type == 'list'"
@@ -264,6 +275,7 @@ export default {
               />
               <DictInput
                 v-else-if="option.input_type == 'object'"
+                :dict="internalValue[arg.arg]"
                 @input="handleInput(option.arg, $event)"
               />
               <ListInput
