@@ -32,15 +32,16 @@ const serverTabs = [
     target: 'agents',
     icon: 'pi-agent',
     iconSize: 'small'
-  },
-  {
-    name: 'Actions',
-    target: 'actions',
-    icon: 'far fa-hurricane'
   }
 ]
 
-const cloudTabs = []
+const cloudTabs = [
+  {
+    name: 'Actions',
+    target: 'actions',
+    icon: 'fad fa-random'
+  }
+]
 
 export default {
   metaInfo() {
