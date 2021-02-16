@@ -553,19 +553,11 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.h-80 {
-  min-height: calc(80vh - 64px) !important;
-}
-
 .transition-height {
   transition: max-height 500ms ease;
 }
 
 .name-team-input {
   max-width: 700px;
-}
-
-.w-100 {
-  width: 100vw;
 }
 </style>

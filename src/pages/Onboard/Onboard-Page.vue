@@ -173,10 +173,9 @@ export default {
     </transition-group>
 
     <v-container class="position-absolute onboard-content pa-0" fluid>
-      <transition name="fade" mode="out-in">
-        <router-view class="router-view" />
-      </transition>
+      <transition name="fade" mode="out-in"> </transition>
     </v-container>
+    <router-view class="router-view" style="z-index: 3;" />
   </v-container>
 </template>
 
@@ -201,7 +200,6 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 3;
 }
 
 .o-slash {

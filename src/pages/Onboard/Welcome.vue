@@ -49,7 +49,7 @@ export default {
   top: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  z-index: 1;
+  z-index: 3;
 }
 
 .logo {
