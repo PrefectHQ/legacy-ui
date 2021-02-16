@@ -154,11 +154,15 @@ export default {
             :class="{ active: cardSource == card.id }"
             @click="selectCard(card.id)"
           >
+            {{ card }}
             <div>
-              <div v-if="card.owner.name" class="text-h5 font-weight-light">
+              <div
+                v-if="card && card.owner && card.owner.name"
+                class="text-h5 font-weight-light"
+              >
                 {{ card.owner.name }}
               </div>
-              <div class="mt-1">
+              <div v-if="card.card" class="mt-1">
                 <div class="text-subtitle-1">{{ card.card.brand }}</div>
 
                 <div class="mt-n2">
@@ -172,7 +176,7 @@ export default {
               </div>
             </div>
 
-            <div class="ml-auto">
+            <div v-if="card.card" class="ml-auto">
               <v-icon large>
                 fab fa-cc-{{ card.card.brand.toLowerCase() }}
               </v-icon>

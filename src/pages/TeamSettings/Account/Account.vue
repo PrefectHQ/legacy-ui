@@ -8,6 +8,7 @@ import License from '@/pages/TeamSettings/Account/License'
 import Users from '@/pages/TeamSettings/Account/Users'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
+import Usage from '@/pages/TeamSettings/Account/Usage'
 
 export default {
   components: {
@@ -17,7 +18,8 @@ export default {
     ClearDataDialog,
     LegacyLicense,
     License,
-    Billing
+    Billing,
+    Usage
   },
   mixins: [teamProfileMixin],
   data() {
@@ -79,8 +81,9 @@ export default {
     </template>
 
     <Profile />
-    <LegacyLicense v-if="isCloud && !isUsageBased && isTenantAdmin" />
-    <License v-if="isCloud && isUsageBased && isTenantAdmin" />
+    <Usage v-if="isCloud && isUsageBased" />
+    <LegacyLicense v-if="isCloud && !isUsageBased" />
+    <License v-if="isCloud && isUsageBased" />
     <Users v-if="isCloud && !isUsageBased" />
     <Billing v-if="isCloud" />
     <ClearDataDialog v-if="isCloud" />
