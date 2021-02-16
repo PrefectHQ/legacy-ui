@@ -32,6 +32,11 @@ const serverTabs = [
     target: 'agents',
     icon: 'pi-agent',
     iconSize: 'small'
+  },
+  {
+    name: 'Actions',
+    target: 'actions',
+    icon: 'far fa-hurricane'
   }
 ]
 
