@@ -6,13 +6,6 @@ export const LocalRun = {
   icon: 'fad fa-laptop-house',
   args: [
     {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
-    },
-    {
       arg: 'env',
       input_type: 'object',
       label: 'Environment variables',
@@ -34,15 +27,7 @@ export const UniversalRun = {
   description: 'Run the flow on any agent with matching labels',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#universalrun',
   icon: 'fad fa-globe',
-  args: [
-    {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
-    }
-  ]
+  args: []
 }
 
 export const DockerRun = {
@@ -52,13 +37,6 @@ export const DockerRun = {
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#dockerrun',
   icon: 'fab fa-docker',
   args: [
-    {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
-    },
     {
       arg: 'image',
       input_type: 'string',
@@ -110,13 +88,6 @@ export const KubernetesRun = {
           description: 'Specify an in-memory job template to use.'
         }
       ]
-    },
-    {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
     },
     {
       arg: 'image',
@@ -219,13 +190,6 @@ export const ECSRun = {
             'Specify a pre-registered task definition ARN to use (either <code>family</code>, <code>family:version</code>, or a full task definition ARN).'
         }
       ]
-    },
-    {
-      arg: 'labels',
-      input_type: 'list',
-      label: 'Labels',
-      description:
-        'Labels are identifiers used by Prefect Agents for selecting flow runs when polling for work. Labels that exist on both the run and the agent will be submitted!'
     },
     {
       arg: 'image',

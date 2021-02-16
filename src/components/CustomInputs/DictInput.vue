@@ -184,7 +184,8 @@ export default {
         ref="json-input"
         v-model="jsonInput"
         background-color="white"
-        prepend-icon="fad fa-key"
+        prepend-icon="fad fa-file-code"
+        prepend-icon-label="JSON"
         selected-type="json"
         @input="_handleJsonInput"
       />
