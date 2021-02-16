@@ -435,7 +435,7 @@ export default {
               v-show="selectedOption == 'Other'"
               dark
               autofocus
-              placeholder="Where did you hear about us?"
+              placeholder="Newsletter, advertisement, etc..."
               @input="setExtraInfo"
             ></v-text-field>
           </v-col>
