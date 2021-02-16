@@ -36,7 +36,9 @@ export default {
         'Conference',
         'Meetup',
         'Other'
-      ]
+      ],
+      selectedOption: '',
+      extraInfo: ''
     }
   },
   computed: {
@@ -203,6 +205,12 @@ export default {
       this.declining = false
       this.activeInvite = null
       this.loading--
+    },
+    setSelectedOption(option) {
+      this.selectedOption = option
+    },
+    setExtraInfo(extraInfo) {
+      this.extraInfo = extraInfo
     },
     async goToResources() {
       this.revealNameInput = false
@@ -401,7 +409,15 @@ export default {
               dark
               :menu-props="{ dark: true, maxHeight: 400 }"
               label="Options"
+              @change="setSelectedOption"
             ></v-select>
+            <v-text-field
+              v-show="selectedOption == 'Other'"
+              dark
+              autofocus
+              placeholder="Where did you hear about us?"
+              @input="setExtraInfo"
+            ></v-text-field>
           </v-col>
 
           <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
