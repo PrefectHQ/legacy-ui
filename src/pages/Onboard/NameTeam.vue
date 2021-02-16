@@ -222,6 +222,26 @@ export default {
         this.redirectTenant ?? this.tenantChanges.slug ?? this.tenant.slug
       )
 
+      const eventSource = this.isCloud ? 'prefect_cloud' : 'prefect_server'
+
+      fetch('https://sens-o-matic.prefect.io', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-prefect-event': eventSource
+        },
+        body: JSON.stringify({
+          source: eventSource,
+          type: 'welcome_survey',
+          payload: {
+            location: this.selectedOption,
+            info: this.extraInfo
+          }
+        })
+      }).then(res => {
+        return res.json()
+      })
+
       this.$router.push({
         name: 'onboard-resources',
         params: { tenant: this.tenant.slug }
