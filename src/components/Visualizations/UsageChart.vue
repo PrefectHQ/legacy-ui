@@ -36,7 +36,7 @@ export default {
 
       // Scales
       x: d3.scaleBand(),
-      y: d3.scaleLog()
+      y: d3.scaleLinear()
     }
   },
   computed: {
@@ -276,7 +276,7 @@ export default {
 </script>
 
 <template>
-  <v-container fluid class="pa-0">
+  <v-container fluid class="pa-0 text-center chart-container">
     <svg :id="`${id}-svg`" class="svg" />
 
     <div v-if="hovered">
@@ -286,8 +286,13 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.chart-container {
+  max-width: 1400px;
+}
+
 svg {
   height: 100%;
+  margin: auto;
   width: 100%;
 }
 </style>

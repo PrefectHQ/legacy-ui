@@ -4,11 +4,12 @@
 
 ### Features and Improvements
 
-- None
+- Add a "How did you hear about us" dropdown to the signup flow - [#615](https://github.com/PrefectHQ/ui/pull/615)
 
 ### Bugfixes
 
-- None
+- Add extra check for flow group to the flow nav guard - [#590](https://github.com/PrefectHQ/ui/pull/590)
+- Add error handling to the agents clean-up button - [#591](https://github.com/PrefectHQ/ui/pull/591)
 
 ## 2021-02-12
 

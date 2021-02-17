@@ -17,7 +17,7 @@ jest.mock('@/vue-apollo', () => {
     fallbackApolloClient: {
       query: arg => {
         if (arg.query == 'flow') {
-          if (arg.variables.id == 'flow_id_2') {
+          if (arg.variables?.id == 'flow_id_2') {
             return {
               data: {
                 flow_by_pk: {
@@ -28,7 +28,7 @@ jest.mock('@/vue-apollo', () => {
               }
             }
           } else {
-            return { data: 'error' }
+            return { data: 'test-error' }
           }
         }
       }
@@ -38,6 +38,7 @@ jest.mock('@/vue-apollo', () => {
 
 jest.mock('@/graphql/Middleware/flow-group.gql', () => 'flow group')
 jest.mock('@/graphql/Middleware/flow.gql', () => 'flow')
+jest.mock('@/graphql/Nav/flows.gql', () => 'flow')
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
