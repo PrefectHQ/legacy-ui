@@ -9,6 +9,7 @@ import Users from '@/pages/TeamSettings/Account/Users'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
 import Usage from '@/pages/TeamSettings/Account/Usage'
+import UsageChart from '@/components/Visualizations/UsageChart'
 
 export default {
   components: {
@@ -19,7 +20,8 @@ export default {
     LegacyLicense,
     License,
     Billing,
-    Usage
+    Usage,
+    UsageChart
   },
   mixins: [teamProfileMixin],
   data() {
@@ -28,7 +30,6 @@ export default {
       changeProfile: false,
       // Clear data
       clearDataDialog: false
-      //Billing
     }
   },
   computed: {
@@ -46,7 +47,6 @@ export default {
     }
   },
   watch: {},
-  mounted() {},
   methods: {
     ...mapActions('license', ['getLicense'])
   }
@@ -54,8 +54,9 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout>
-    <template v-if="needAlert && isCloud" #alert>
+  <div>
+    <ManagementLayout>
+      <!-- <template v-if="needAlert && isCloud" #alert>
       <v-alert
         dismissible
         class="mx-auto mb-12"
@@ -78,16 +79,19 @@ export default {
     </template>
     <template v-else #subtitle>
       Update your team's profile.
-    </template>
+    </template> -->
 
-    <Profile />
-    <Usage v-if="isCloud && isUsageBased" />
-    <LegacyLicense v-if="isCloud && !isUsageBased" />
-    <License v-if="isCloud && isUsageBased" />
-    <Users v-if="isCloud && !isUsageBased" />
-    <Billing v-if="isCloud" />
-    <ClearDataDialog v-if="isCloud" />
-  </ManagementLayout>
+      <UsageChart />
+
+      <Profile />
+      <Usage v-if="isCloud && isUsageBased" />
+      <LegacyLicense v-if="isCloud && !isUsageBased" />
+      <License v-if="isCloud && isUsageBased" />
+      <Users v-if="isCloud && !isUsageBased" />
+      <Billing v-if="isCloud" />
+      <ClearDataDialog v-if="isCloud" />
+    </ManagementLayout>
+  </div>
 </template>
 
 <style lang="scss" scoped>

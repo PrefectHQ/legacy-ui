@@ -1,0 +1,14 @@
+query Usage($from: timestamptz, $to: timestamptz) {
+  usage: billing_usage(
+    where: {
+      _and: [{ timestamp: { _gte: $from } }, { timestamp: { _lte: $to } }]
+    }
+  ) {
+    id
+    kind
+    runs
+    tenant_id
+    timestamp
+    usage_last_updated
+  }
+}
