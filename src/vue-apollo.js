@@ -62,6 +62,7 @@ const headerMiddleware = setContext((_, { headers }) => {
   }
 
   headers['X-Backend'] = store.getters['api/backend']
+  headers['X-Tenant'] = store.getters['tenant/tenant'].id
 
   return {
     headers: {
