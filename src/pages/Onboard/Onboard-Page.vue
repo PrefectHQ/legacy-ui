@@ -206,7 +206,6 @@ export default {
   backface-visibility: hidden;
   position: absolute;
   transition: all 250ms;
-  z-index: 2;
 
   &.slash-full {
     height: 100vh !important;
