@@ -20,6 +20,10 @@ export default {
     }
   },
   computed: {
+    items() {
+      if (!this.usage) return []
+      return this.usage
+    },
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
@@ -28,9 +32,9 @@ export default {
   },
   watch: {
     usage(val) {
+      console.log('usage watcher')
       if (!val) return
-
-      // this.updateChart()
+      this.updateChart()
     }
   },
   mounted() {
@@ -60,73 +64,62 @@ export default {
       this.chart = d3.select(`#${this.id}-svg`)
 
       window.addEventListener('resize', this.resizeChart)
-      console.log(`#${this.id}-svg`, this.chart)
 
       requestAnimationFrame(this.resizeChart)
     },
     rawResizeChart() {
       if (!this.chart) return
-      console.log(
-        this.chart.select(function() {
-          console.log('HElllo')
-          return this.parentNode
-        })
-      )
 
       let parent = this.chart.select(function() {
-        console.log('HELLO')
-        console.log(this)
         return this.parentNode
       })
-      console.log(parent)
 
       let computedStyle = window.getComputedStyle(parent._groups[0][0], null)
-      console.log(computedStyle)
 
-      // let paddingLeft = parseFloat(
-      //     computedStyle.getPropertyValue('padding-left')
-      //   ),
-      //   paddingRight = parseFloat(
-      //     computedStyle.getPropertyValue('padding-right')
-      //   ),
-      //   paddingTop = parseFloat(computedStyle.getPropertyValue('padding-top')),
-      //   paddingBottom = parseFloat(
-      //     computedStyle.getPropertyValue('padding-bottom')
-      //   )
+      let paddingLeft = parseFloat(
+          computedStyle.getPropertyValue('padding-left')
+        ),
+        paddingRight = parseFloat(
+          computedStyle.getPropertyValue('padding-right')
+        ),
+        paddingTop = parseFloat(computedStyle.getPropertyValue('padding-top')),
+        paddingBottom = parseFloat(
+          computedStyle.getPropertyValue('padding-bottom')
+        )
 
-      // this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
+      this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
 
-      // const width =
-      //   parent._groups[0][0].clientWidth - paddingLeft - paddingRight
+      const width =
+        parent._groups[0][0].clientWidth - paddingLeft - paddingRight
 
-      // const height =
-      //   parent._groups[0][0].clientHeight - paddingTop - paddingBottom
+      const height =
+        parent._groups[0][0].clientHeight - paddingTop - paddingBottom
 
-      // console.log('raw resize chart')
-      // if (!height || !width || height <= 0 || width <= 0) {
-      //   return
-      // }
+      if (!height || !width || height <= 0 || width <= 0) {
+        return
+      }
 
-      // this.chartWidth = width
-      // this.chartHeight = height
+      this.chartWidth = width
+      this.chartHeight = height
 
-      // this.chart
-      //   .attr('viewbox', `0 0 ${this.chartWidth} ${this.chartHeight}`)
-      //   .attr('width', this.chartWidth)
-      //   .attr('height', this.chartHeight)
+      this.chart
+        .attr('viewbox', `0 0 ${this.chartWidth} ${this.chartHeight}`)
+        .attr('width', this.chartWidth)
+        .attr('height', this.chartHeight)
 
-      // this.barGroup = this.chart.append('g').attr('.bar-group')
+      this.barGroup = this.chart.append('g').attr('class', 'bar-group')
 
-      // this.updateChart()
+      this.updateChart()
     },
     updateChart() {
       this.barGroup
         .selectAll('.bar')
-        .data(this.usage)
+        .data(this.items)
         .join(
           enter =>
             enter
               .append('rect')
+              .attr('class', 'bar')
               .attr('height', 10)
               .attr('width', 5),
           update => update.attr('height', 5),
@@ -155,7 +148,7 @@ export default {
       skip() {
         return !this.from || !this.to
       },
-      result: ({ data }) => data?.usage || []
+      update: data => data?.usage
     }
   }
 }
