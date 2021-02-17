@@ -3,6 +3,8 @@ import * as d3 from 'd3'
 import uniqueId from 'lodash.uniqueid'
 import debounce from 'lodash.debounce'
 
+const xAxisHeight = 20
+
 export default {
   props: {
     height: { type: Number, default: () => null },
@@ -13,16 +15,56 @@ export default {
       id: uniqueId('usage'),
       barGroup: null,
       chart: null,
-      chartHeight: null,
-      chartWidth: null,
+      xAxisGroup: null,
+      height_: null,
+      width_: null,
+
+      padding: {
+        bottom: xAxisHeight,
+        left: 5,
+        right: 5,
+        top: 20,
+        x: 10,
+        y: xAxisHeight + 20
+      },
+
+      hovered: null,
+
+      // Domain
       from: null,
-      to: null
+      to: null,
+
+      // Scales
+      x: d3.scaleBand(),
+      y: d3.scaleLog()
     }
   },
   computed: {
     items() {
       if (!this.usage) return []
+
       return this.usage
+        .filter(d => d.kind == 'USAGE')
+        .reduce((arr, d) => {
+          const date = new Date(d.timestamp)
+          date.setMilliseconds(0)
+          date.setSeconds(0)
+          date.setMinutes(0)
+          date.setHours(0)
+          date.setDate(1)
+
+          const index = arr.findIndex(d_ => d_.timestamp == date.toISOString())
+          if (index > -1) {
+            arr[index].runs += d.runs * -1
+          } else {
+            arr.push({
+              timestamp: date.toISOString(),
+              runs: d.runs * -1
+            })
+          }
+
+          return arr
+        }, [])
     },
     resizeChart: function() {
       return debounce(() => {
@@ -32,8 +74,8 @@ export default {
   },
   watch: {
     usage(val) {
-      console.log('usage watcher')
       if (!val) return
+      this.updateScales()
       this.updateChart()
     }
   },
@@ -60,8 +102,16 @@ export default {
     window.removeEventListener('resize', this.resizeChart)
   },
   methods: {
+    barMouseover(e) {
+      this.hovered = e.currentTarget?.__data__
+    },
+    barMouseout() {
+      this.hovered = null
+    },
     createChart() {
       this.chart = d3.select(`#${this.id}-svg`)
+      this.barGroup = this.chart.append('g').attr('class', 'bar-group')
+      this.xAxisGroup = this.chart.append('g').attr('class', 'x-axis-group')
 
       window.addEventListener('resize', this.resizeChart)
 
@@ -99,30 +149,78 @@ export default {
         return
       }
 
-      this.chartWidth = width
-      this.chartHeight = height
+      this.width_ = width
+      this.height_ = height
 
       this.chart
-        .attr('viewbox', `0 0 ${this.chartWidth} ${this.chartHeight}`)
-        .attr('width', this.chartWidth)
-        .attr('height', this.chartHeight)
+        .attr('viewbox', `0 0 ${this.width_} ${this.height_}`)
+        .attr('width', this.width_)
+        .attr('height', this.height_)
 
-      this.barGroup = this.chart.append('g').attr('class', 'bar-group')
+      if (!this.items.length) return
 
+      this.updateScales()
       this.updateChart()
     },
     updateChart() {
       this.barGroup
-        .selectAll('.bar')
+        .selectAll('.bar-group')
         .data(this.items)
         .join(
-          enter =>
-            enter
-              .append('rect')
+          enter => {
+            const g = enter
+              .append('g')
+              .attr('class', 'bar-group')
+              .style('transform', `translate(${this.x.bandwidth() / -2 ?? 0})`)
+
+              .on('mouseover', this.barMouseover)
+              .on('mouseout', this.barMouseout)
+
+            g.append('rect')
               .attr('class', 'bar')
-              .attr('height', 10)
-              .attr('width', 5),
-          update => update.attr('height', 5),
+              .attr('height', d => this.y(d.runs) || 0)
+              .attr('width', this.x.bandwidth())
+              .attr('fill', '#27b1ff')
+              // .attr('stroke-width', 3)
+              // .attr('stroke', 'rgba(0, 0, 0, 0.12)')
+              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+              .attr(
+                'y',
+                d => this.height_ - this.padding.bottom - (this.y(d.runs) || 0)
+              )
+
+            g.append('text')
+              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+              .attr(
+                'y',
+                d => this.height_ - this.padding.bottom - (this.y(d.runs) || 0)
+              )
+              .text(d => d.runs)
+
+            return g
+          },
+          update => {
+            const bar = update.selectAll('rect')
+
+            bar
+              .attr('height', d => this.y(d.runs) || 0)
+              .attr('width', this.x.bandwidth())
+              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+              .attr(
+                'y',
+                d => this.height_ - this.padding.bottom - (this.y(d.runs) || 0)
+              )
+
+            const text = update.select('text')
+
+            text
+              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+              .attr(
+                'y',
+                d => this.height_ - this.padding.bottom - (this.y(d.runs) || 0)
+              )
+              .text(d => d.runs)
+          },
           exit =>
             exit.call(exit =>
               exit
@@ -134,6 +232,29 @@ export default {
                 .remove()
             )
         )
+    },
+    updateScales() {
+      const xRange = [this.padding.left, this.width_ - this.padding.right]
+
+      this.x
+        .rangeRound(xRange)
+        .paddingInner(0.6)
+        .paddingOuter(0.2)
+
+      this.x.domain(d3.timeMonth.range(this.from, this.to))
+
+      this.y.domain([1, d3.max(this.items.map(d => d.runs))])
+      this.y.range([this.padding.bottom, this.height_ - this.padding.y])
+
+      const xAxis = d3
+        .axisBottom(this.x)
+        .ticks(12)
+        .tickSizeOuter(0)
+        .tickFormat(d3.timeFormat('%B'))
+
+      this.xAxisGroup
+        .attr('transform', `translate(0,${this.height_ - this.padding.bottom})`)
+        .call(xAxis)
     }
   },
   apollo: {
@@ -157,13 +278,37 @@ export default {
 <template>
   <v-container fluid class="pa-0">
     <svg :id="`${id}-svg`" class="svg" />
+
+    <div v-if="hovered">
+      {{ hovered }}
+    </div>
   </v-container>
 </template>
 
 <style lang="scss" scoped>
 svg {
-  background-color: #ffc0cb;
   height: 100%;
   width: 100%;
+}
+</style>
+
+<style lang="scss">
+// We use unscoped css here
+// so that we don't need to do a post-selection
+// on the axis
+.x-axis-group {
+  color: #9e9e9e !important;
+  font: 10px Roboto, sans-serif;
+  opacity: 0.8;
+  user-select: none;
+
+  .domain {
+    stroke: rgba(0, 0, 0, 0.12);
+    stroke-width: 1.65px;
+  }
+
+  .tick line {
+    opacity: 0;
+  }
 }
 </style>
