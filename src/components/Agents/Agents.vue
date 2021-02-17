@@ -508,7 +508,7 @@ export default {
   left: 50%;
   position: fixed;
   transform: translate(570px);
-  z-index: 4;
+  z-index: 6;
 
   &.sm-and-down {
     top: 156px;
