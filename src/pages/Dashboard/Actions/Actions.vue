@@ -62,7 +62,7 @@ export default {
 </script>
 
 <template>
-  <v-container>
+  <v-container class="ma-0 pa-0">
     <v-row>
       <v-col cols="9"> </v-col>
       <v-col cols="3" class="text-right">
