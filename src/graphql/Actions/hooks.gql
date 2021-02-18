@@ -1,0 +1,12 @@
+query Actions {
+  hook{
+    event_tags
+    event_type
+    __typename
+    action {
+      name
+      action_type
+      
+    }
+  }
+}
