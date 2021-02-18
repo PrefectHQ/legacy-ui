@@ -8,8 +8,8 @@ import License from '@/pages/TeamSettings/Account/License'
 import Users from '@/pages/TeamSettings/Account/Users'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
-import Usage from '@/pages/TeamSettings/Account/Usage'
-import UsageChart from '@/components/Visualizations/UsageChart'
+import Usage from '@/pages/TeamSettings/Account/Usage/Usage'
+import UsageTimeline from '@/pages/TeamSettings/Account/Usage/UsageTimeline'
 
 export default {
   components: {
@@ -21,7 +21,7 @@ export default {
     License,
     Billing,
     Usage,
-    UsageChart
+    UsageTimeline
   },
   mixins: [teamProfileMixin],
   data() {
@@ -81,10 +81,20 @@ export default {
       Update your team's profile.
     </template> -->
 
-      <UsageChart />
+      <v-row no-gutters>
+        <v-col cols="12">
+          <UsageTimeline />
+        </v-col>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-col cols="12" md="6"> </v-col>
+        <v-col cols="12" md="6">
+          <Usage v-if="isCloud && isUsageBased" />
+        </v-col>
+      </v-row>
 
       <Profile />
-      <Usage v-if="isCloud && isUsageBased" />
       <LegacyLicense v-if="isCloud && !isUsageBased" />
       <License v-if="isCloud && isUsageBased" />
       <Users v-if="isCloud && !isUsageBased" />

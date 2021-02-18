@@ -163,6 +163,9 @@ export default {
       this.updateChart()
     },
     updateChart() {
+      const yOffset = this.height_ - this.padding.bottom
+      const bandwidth = this.x.bandwidth()
+
       this.barGroup
         .selectAll('.bar-group')
         .data(this.items)
@@ -171,31 +174,27 @@ export default {
             const g = enter
               .append('g')
               .attr('class', 'bar-group')
-              .style('transform', `translate(${this.x.bandwidth() / -2 ?? 0})`)
-
               .on('mouseover', this.barMouseover)
               .on('mouseout', this.barMouseout)
 
             g.append('rect')
               .attr('class', 'bar')
               .attr('height', d => this.y(d.runs) || 0)
-              .attr('width', this.x.bandwidth())
+              .attr('width', bandwidth)
               .attr('fill', '#27b1ff')
               // .attr('stroke-width', 3)
               // .attr('stroke', 'rgba(0, 0, 0, 0.12)')
               .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-              .attr(
-                'y',
-                d => this.height_ - this.padding.bottom - (this.y(d.runs) || 0)
-              )
+              .attr('y', d => yOffset - (this.y(d.runs) || 0))
 
             g.append('text')
               .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-              .attr(
-                'y',
-                d => this.height_ - this.padding.bottom - (this.y(d.runs) || 0)
-              )
-              .text(d => d.runs)
+              .attr('y', d => yOffset - (this.y(d.runs) + 5 || 0))
+              .style('text-anchor', 'middle')
+              .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
+              .style('font', '10px Roboto, sans-serif')
+              .attr('fill', '#546E7A')
+              .text(d => d.runs.toLocaleString())
 
             return g
           },
@@ -204,22 +203,17 @@ export default {
 
             bar
               .attr('height', d => this.y(d.runs) || 0)
-              .attr('width', this.x.bandwidth())
+              .attr('width', bandwidth)
               .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-              .attr(
-                'y',
-                d => this.height_ - this.padding.bottom - (this.y(d.runs) || 0)
-              )
+              .attr('y', d => yOffset - (this.y(d.runs) || 0))
 
             const text = update.select('text')
 
             text
               .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-              .attr(
-                'y',
-                d => this.height_ - this.padding.bottom - (this.y(d.runs) || 0)
-              )
-              .text(d => d.runs)
+              .attr('y', d => yOffset - (this.y(d.runs) + 5 || 0))
+              .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
+              .text(d => d.runs.toLocaleString())
           },
           exit =>
             exit.call(exit =>
@@ -278,10 +272,6 @@ export default {
 <template>
   <v-container fluid class="pa-0 text-center chart-container">
     <svg :id="`${id}-svg`" class="svg" />
-
-    <div v-if="hovered">
-      {{ hovered }}
-    </div>
   </v-container>
 </template>
 
