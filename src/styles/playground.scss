@@ -53,7 +53,7 @@
 
     &.cm-property,
     &.cm-attribute {
-      color: #f77062;
+      color: var(--v-accentOrange-base);
     }
 
     &.cm-keyword {
@@ -149,7 +149,7 @@
 
     &.cm-property,
     &.cm-attribute {
-      color: #f77062 !important;
+      color: var(--v-accentOrange-base) !important;
     }
 
     &.cm-keyword {
