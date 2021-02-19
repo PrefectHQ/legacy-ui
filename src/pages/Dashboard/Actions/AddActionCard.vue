@@ -2,6 +2,7 @@
 export default {
   data() {
     return {
+      selectedEvent: false,
       chosenEventType: 'FlowRunStateChangedEvent',
       chosenStates: [],
       chosenAction: 'select',
@@ -63,6 +64,9 @@ export default {
   methods: {
     closeCard() {
       this.$emit('close')
+    },
+    handleSelectClick() {
+      this.selectedEvent = true
     }
   }
 }
@@ -70,11 +74,26 @@ export default {
 
 <template>
   <v-card width="100%" :height="height">
-    <div class="text-right pa-2">
-      <v-btn icon @click="closeCard"><v-icon>close</v-icon></v-btn>
+    <div v-if="!selectedEvent" class="text-right pa-2">
+      <v-btn icon @click="closeCard"><v-icon>close</v-icon></v-btn></div
+    >
+    <div v-if="selectedEvent" class="pb-12 pt-2 pl-2"
+      ><v-btn
+        text
+        class="grey--text text--darken-2 light-weight-text"
+        @click="selectedEvent = false"
+      >
+        <v-icon>chevron_left</v-icon
+        ><span style="text-transform: none;">Back </span></v-btn
+      >
     </div>
-    <v-alert class="mx-8 pa-8" color="codePink" outlined>
-      <v-row no-gutters></v-row>
+
+    <v-alert
+      class="mx-8 pa-8"
+      color="codePink"
+      outlined
+      @click="handleSelectClick"
+    >
       <v-row
         ><v-col cols="12" class="headline black--text"
           ><v-icon color="codePink" class="pr-2">{{
@@ -89,41 +108,40 @@ export default {
       </v-row></v-alert
     >
     <v-item-group>
-      <v-row class="mx-8">
+      <v-row v-if="!selectedEvent" class="mx-8">
         <v-col
           v-for="(hook, i) in hookTypes"
           :key="i"
+          v-model="chosenEventType"
           cols="12"
           :md="colSize"
           class="pl-0"
         >
-          <v-item v-slot="{ active, toggle }">
-            <v-alert
-              :color="active ? 'white' : 'codePink'"
-              :style="active ? 'opacity: 1;' : 'opacity: 0.5;'"
-              :outlined="active ? false : true"
-              :elevation="active ? '4' : '0'"
-              height="200"
-              @click="toggle"
-            >
-              <v-scroll-y-transition>
-                <div width="100%">
-                  <div class="headline codePink--text text-center pa-8">
-                    <v-icon color="codePink" class="pr-2">{{
-                      hookDetails[hook].icon
-                    }}</v-icon>
-                    {{ hookDetails[hook].type }}
-                    {{ hookDetails[hook].action }}
-                  </div>
-                  <div class="text-center">
-                    <v-btn text color="primary" @click="chosenEventType = hook"
-                      ><v-icon>add</v-icon>Add Hook</v-btn
-                    ></div
-                  >
+          <v-alert
+            :color="chosenEventType === hook ? 'white' : 'codePink'"
+            :style="chosenEventType === hook ? 'opacity: 1;' : 'opacity: 0.5;'"
+            :outlined="chosenEventType === hook ? false : true"
+            :elevation="chosenEventType === hook ? '4' : '0'"
+            height="200"
+            @click="chosenEventType = hook"
+          >
+            <v-scroll-y-transition>
+              <div width="100%">
+                <div class="headline codePink--text text-center pa-8">
+                  <v-icon color="codePink" class="pr-2">{{
+                    hookDetails[hook].icon
+                  }}</v-icon>
+                  {{ hookDetails[hook].type }}
+                  {{ hookDetails[hook].action }}
                 </div>
-              </v-scroll-y-transition>
-            </v-alert>
-          </v-item>
+                <div class="text-center">
+                  <v-btn text color="primary" @click="chosenEventType = hook"
+                    ><v-icon>add</v-icon>Add Hook</v-btn
+                  ></div
+                >
+              </div>
+            </v-scroll-y-transition>
+          </v-alert>
         </v-col>
       </v-row>
     </v-item-group>
