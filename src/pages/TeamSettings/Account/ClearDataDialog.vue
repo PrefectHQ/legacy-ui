@@ -526,8 +526,8 @@ $circle-size: $container-size;
 $check-height: $circle-size/2;
 $check-width: $check-height/2.5;
 $check-left: ($container-size/6 + $container-size/8);
-$color: #27b1ff;
-$color-success: #27b1ff;
+$color: var(--v-prefect-base);
+$color-success: var(--v-prefect-base);
 
 .loading-container {
   height: $container-size;
