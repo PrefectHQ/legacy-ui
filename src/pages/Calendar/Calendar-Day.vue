@@ -333,8 +333,8 @@ export default {
     135deg,
     #ffeec4,
     #ffeec4 5px,
-    #ffbe1e 5px,
-    #ffbe1e 10px
+    var(--v-Scheduled-base) 5px,
+    var(--v-Scheduled-base) 10px
   );
   color: #3d2c00;
 }

@@ -317,7 +317,9 @@ export default {
       context.fillStyle = '#FFEEC4'
       context.fillRect(0, 0, x, x)
 
-      context.strokeStyle = '#ffbe1e'
+      context.strokeStyle = getComputedStyle(document.body).getPropertyValue(
+        '--v-Scheduled-base'
+      )
       context.lineWidth = 6
       context.beginPath()
       context.moveTo(x0, y0)
