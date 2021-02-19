@@ -34,7 +34,7 @@
 
   .CodeMirror-guttermarker-subtle,
   .CodeMirror-linenumber {
-    color: #465968;
+    color: var(--v-secondaryGray-base);
   }
 
   .CodeMirror-cursor {
@@ -130,7 +130,7 @@
 
   .CodeMirror-guttermarker-subtle,
   .CodeMirror-linenumber {
-    color: #465968;
+    color: var(--v-secondaryGray-base);
   }
 
   .CodeMirror-cursor {
