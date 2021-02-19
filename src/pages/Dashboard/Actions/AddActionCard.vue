@@ -109,14 +109,14 @@ export default {
               <v-scroll-y-transition>
                 <div width="100%">
                   <div class="headline codePink--text text-center pa-8">
-                    <v-icon color="codePink">{{
+                    <v-icon color="codePink" class="pr-2">{{
                       hookDetails[hook].icon
                     }}</v-icon>
                     {{ hookDetails[hook].type }}
                     {{ hookDetails[hook].action }}
                   </div>
                   <div class="text-center">
-                    <v-btn text color="primary" @click="chosenAction = hook"
+                    <v-btn text color="primary" @click="chosenEventType = hook"
                       ><v-icon>add</v-icon>Add Hook</v-btn
                     ></div
                   >
