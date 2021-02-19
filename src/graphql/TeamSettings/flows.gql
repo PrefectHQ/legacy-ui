@@ -3,6 +3,7 @@ query Flows ($project: uuid) {
     id
     archived
     name
+    flow_group_id
     version_group_id
     project {
       id
