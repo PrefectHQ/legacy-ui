@@ -1,9 +1,11 @@
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
       flowName: '',
-      projectName: '',
+      project: '',
       selectedEvent: false,
       chosenEventType: 'FlowRunStateChangedEvent',
       chosenStates: [],
@@ -36,7 +38,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('data', ['projects']),
     colSize() {
+      console.log(this.projects)
       return 12 / this.hookTypes.length
     },
     hookTypes() {
@@ -65,23 +69,67 @@ export default {
       return this.actionDetails[action]?.title || '...action(s)'
     },
     completeAction() {
-      const disabled2 = !!this.chosenEventType && !!this.chosenAction
-      console.log(disabled2)
-      if (!this.includeTo) return disabled2
-      const disabled =
+      if (!this.includeTo) return !!this.chosenEventType && !!this.chosenAction
+      return (
         !!this.chosenAction &&
         !!this.chosenStates.length &&
         !!this.chosenEventType
-      console.log(disabled)
-      return disabled
+      )
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     closeCard() {
       this.$emit('close')
     },
     handleSelectClick() {
       this.selectedEvent = true
+    },
+    async createHook() {
+      if (this.chosenEventType === 'FlowRunStateChangedEvent') {
+        try {
+          const { data } = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
+            variables: {
+              input: {
+                flowGroupId: [this.flowGroupId],
+                actionId: this.chosenAction.id,
+                state: this.chosenStates
+              }
+            }
+          })
+          console.log('data', data)
+        } catch (error) {
+          const errString = `${error}`
+          this.setAlert({
+            alertShow: true,
+            alertMessage: errString,
+            alertType: 'error'
+          })
+        } finally {
+          ///needs updating
+        }
+      }
+    }
+  },
+  apollo: {
+    flows: {
+      query: require('@/graphql/TeamSettings/flows.gql'),
+      variables() {
+        return {
+          project: this.project
+        }
+      },
+      skip() {
+        return !this.project
+      },
+      result({ data }) {
+        if (!data) return
+      },
+      update(data) {
+        return data.flow
+      },
+      fetchPolicy: 'no-cache'
     }
   }
 }
@@ -129,14 +177,22 @@ export default {
             <v-card
               ><v-card-actions>
                 <v-autocomplete
-                  v-model="projectName"
-                  :items="['project1', 'project2']"
-                  >{{ projectName }}</v-autocomplete
+                  v-model="project"
+                  :items="projects"
+                  item-text="name"
+                  item-value="id"
+                  class="pa-4"
+                  label="Select Project"
+                  >{{ project.name }}</v-autocomplete
                 >
                 <v-autocomplete
                   v-model="flowName"
-                  :disabled="!projectName"
-                  :items="['flow1', 'flow2']"
+                  :disabled="!project"
+                  item-text="name"
+                  item-value="flow_group_id"
+                  class="pa-4"
+                  label="Select Flow"
+                  :items="flows"
                   >{{ flowName }}</v-autocomplete
                 ></v-card-actions
               >
