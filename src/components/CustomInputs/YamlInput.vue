@@ -232,7 +232,7 @@ export default {
   }
 
   &.blue-border::after {
-    border: 2px solid #3b8dff;
+    border: 2px solid var(--v-primary-base);
     border-radius: 4px;
   }
 

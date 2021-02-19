@@ -195,7 +195,7 @@ export default {
     }
 
     &::after {
-      background-color: #3b8dff;
+      background-color: var(--v-primary-base);
       bottom: 0;
       content: '';
       height: 2px;

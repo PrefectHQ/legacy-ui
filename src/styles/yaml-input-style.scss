@@ -83,15 +83,15 @@
   }
 
   .cm-property.cm-string {
-    color: #3b8dff !important;
+    color: var(--v-primary-base) !important;
   }
 
   .cm-property {
-    color: #3b8dff !important;
+    color: var(--v-primary-base) !important;
   }
 
   .cm-string-2 {
-    color: #3b8dff !important;
+    color: var(--v-primary-base) !important;
   }
   .cm-meta {
     color: #000 !important;

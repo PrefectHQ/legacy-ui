@@ -89,7 +89,7 @@ export default {
 
 <style lang="scss">
 .blockquote-border-left {
-  border-left: 3px solid #3b8dff;
+  border-left: 3px solid var(--v-primary-base);
 }
 
 .clickable-step {
@@ -102,7 +102,7 @@ export default {
 
   /* stylelint-disable selector-class-pattern */
   .v-stepper__step__step {
-    background-color: #3b8dff !important;
+    background-color: var(--v-primary-base) !important;
   }
 
   .v-stepper__label {
