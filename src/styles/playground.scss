@@ -6,13 +6,13 @@
 
 .cm-s-playground {
   &.CodeMirror {
-    background: #1d252b;
+    background: var(--v-secondaryGrayDark-base);
     color: #d6d5d4;
   }
 
   &.CodeMirror.light {
     background: #edf0f3;
-    color: #1d252b;
+    color: var(--v-secondaryGrayDark-base);
   }
 
   div.CodeMirror-selected {
@@ -24,7 +24,7 @@
   }
 
   .CodeMirror-gutters {
-    background: #1d252b;
+    background: var(--v-secondaryGrayDark-base);
     border-right: 0;
   }
 
@@ -107,7 +107,7 @@
 .cm-s-playground-light {
   &.CodeMirror {
     background: #edf0f3;
-    color: #1d252b;
+    color: var(--v-secondaryGrayDark-base);
     font-size: 0.85rem;
   }
 
@@ -120,7 +120,7 @@
   }
 
   .CodeMirror-gutters {
-    background: #1d252b;
+    background: var(--v-secondaryGrayDark-base);
     border-right: 0;
   }
 
