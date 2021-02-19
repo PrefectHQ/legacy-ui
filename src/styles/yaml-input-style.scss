@@ -9,14 +9,14 @@
   }
 
   div.CodeMirror-selected {
-    background: #e0f4ff !important;
+    background: var(--v-primaryLight-base) !important;
   }
 
   .CodeMirror-line {
     &::selection,
     > span::selection,
     > span > span::selection {
-      background: #e0f4ff !important;
+      background: var(--v-primaryLight-base) !important;
     }
   }
 

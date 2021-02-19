@@ -220,7 +220,7 @@ export default {
 }
 
 .log-row-color-queried {
-  background-color: #e0f4ff;
+  background-color: var(--v-primaryLight-base);
 }
 
 .log-message {
