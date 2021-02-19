@@ -198,7 +198,11 @@ export default {
 }
 
 .bg-grey {
-  background-image: linear-gradient(105deg, #2f383f, #647489) !important;
+  background-image: linear-gradient(
+    105deg,
+    var(--v-secondary-base),
+    #647489
+  ) !important;
 }
 
 .onboard-content {

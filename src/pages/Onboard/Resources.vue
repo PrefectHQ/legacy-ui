@@ -283,7 +283,11 @@ export default {
   }
 
   &.grey--gradient::before {
-    background-image: linear-gradient(105deg, #647489, #2f383f) !important;
+    background-image: linear-gradient(
+      105deg,
+      #647489,
+      var(--v-secondary-base)
+    ) !important;
   }
 }
 </style>
