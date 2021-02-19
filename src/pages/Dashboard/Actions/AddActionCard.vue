@@ -4,7 +4,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      flowName: '',
+      flow: '',
       project: '',
       selectedEvent: false,
       chosenEventType: 'FlowRunStateChangedEvent',
@@ -40,7 +40,6 @@ export default {
   computed: {
     ...mapGetters('data', ['projects']),
     colSize() {
-      console.log(this.projects)
       return 12 / this.hookTypes.length
     },
     hookTypes() {
@@ -75,6 +74,9 @@ export default {
         !!this.chosenStates.length &&
         !!this.chosenEventType
       )
+    },
+    flowName() {
+      return this.flow.name || 'named ...'
     }
   },
   methods: {
@@ -186,14 +188,13 @@ export default {
                   >{{ project.name }}</v-autocomplete
                 >
                 <v-autocomplete
-                  v-model="flowName"
+                  v-model="flow"
                   :disabled="!project"
                   item-text="name"
-                  item-value="flow_group_id"
                   class="pa-4"
                   label="Select Flow"
                   :items="flows"
-                  >{{ flowName }}</v-autocomplete
+                  >{{ flow.name }}</v-autocomplete
                 ></v-card-actions
               >
             </v-card>
