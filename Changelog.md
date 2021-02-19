@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add a "How did you hear about us" dropdown to the signup flow - [#615](https://github.com/PrefectHQ/ui/pull/615)
+- Add tenant and user ids to API requests as headers - [#621](https://github.com/PrefectHQ/ui/pull/621)
 
 ### Bugfixes
 
