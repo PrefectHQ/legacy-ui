@@ -29,7 +29,6 @@ export const THEME_COLORS = {
   cloudUIPrimaryDark: '#003d66',
   cloudUIPrimaryLight: '#e0f3ff',
   secondaryBlue: '#3b8dff',
-  plan: '#2edaff',
   tertiaryBlue: '#0076ff',
   secondary: '#2F383F', // primary grey-light
   accent: '#1b5da4', // accent blue
