@@ -15,6 +15,11 @@ export default {
           type: 'flow',
           action: 'SLA fails',
           icon: 'pi-flow'
+        },
+        AgentSLAFailed: {
+          type: 'agent',
+          action: 'SLA fails',
+          icon: 'pi-agent'
         }
       },
       actionDetails: {
@@ -28,6 +33,12 @@ export default {
     }
   },
   computed: {
+    colSize() {
+      return 12 / this.hookTypes.length
+    },
+    hookTypes() {
+      return Object.keys(this.hookDetails)
+    },
     height() {
       return this.$vuetify.breakpoint.lgAndUp ? '75vh' : '60vh'
     },
@@ -62,7 +73,7 @@ export default {
     <div class="text-right pa-2">
       <v-btn icon @click="closeCard"><v-icon>close</v-icon></v-btn>
     </div>
-    <v-alert class="ma-12 pa-8" color="codePink" outlined>
+    <v-alert class="mx-8 pa-8" color="codePink" outlined>
       <v-row no-gutters></v-row>
       <v-row
         ><v-col cols="12" class="headline black--text"
@@ -77,5 +88,44 @@ export default {
         >
       </v-row></v-alert
     >
+    <v-item-group>
+      <v-row class="mx-8">
+        <v-col
+          v-for="(hook, i) in hookTypes"
+          :key="i"
+          cols="12"
+          :md="colSize"
+          class="pl-0"
+        >
+          <v-item v-slot="{ active, toggle }">
+            <v-alert
+              :color="active ? 'white' : 'codePink'"
+              :style="active ? 'opacity: 1;' : 'opacity: 0.5;'"
+              :outlined="active ? false : true"
+              :elevation="active ? '4' : '0'"
+              height="200"
+              @click="toggle"
+            >
+              <v-scroll-y-transition>
+                <div width="100%">
+                  <div class="headline codePink--text text-center pa-8">
+                    <v-icon color="codePink">{{
+                      hookDetails[hook].icon
+                    }}</v-icon>
+                    {{ hookDetails[hook].type }}
+                    {{ hookDetails[hook].action }}
+                  </div>
+                  <div class="text-center">
+                    <v-btn text color="primary" @click="chosenAction = hook"
+                      ><v-icon>add</v-icon>Add Hook</v-btn
+                    ></div
+                  >
+                </div>
+              </v-scroll-y-transition>
+            </v-alert>
+          </v-item>
+        </v-col>
+      </v-row>
+    </v-item-group>
   </v-card>
 </template>
