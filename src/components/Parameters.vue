@@ -94,7 +94,7 @@ export default {
 .code-custom {
   background-color: #fafafa;
   box-shadow: none;
-  color: #0073df;
+  color: var(--v-codeBlue-base);
   font-size: 0.9em;
 }
 
