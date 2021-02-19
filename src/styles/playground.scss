@@ -73,7 +73,7 @@
     }
 
     &.cm-def {
-      color: #da2072;
+      color: var(--v-codePink-base);
     }
 
     &.cm-bracket {
@@ -144,7 +144,7 @@
 
     &.cm-atom,
     &.cm-number {
-      color: #da2072;
+      color: var(--v-codePink-base);
     }
 
     &.cm-property,
@@ -169,7 +169,7 @@
     }
 
     &.cm-def {
-      color: #da2072;
+      color: var(--v-codePink-base);
     }
 
     &.cm-bracket {
