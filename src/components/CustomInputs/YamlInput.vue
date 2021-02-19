@@ -227,7 +227,7 @@ export default {
   }
 
   &.red-border::after {
-    border: 2px solid #ff5252;
+    border: 2px solid var(--v-error-base);
     border-radius: 4px;
   }
 

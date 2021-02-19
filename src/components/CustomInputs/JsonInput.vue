@@ -276,7 +276,7 @@ export default {
   /* stylelint-enable selector-class-pattern */
 
   .json-input-error-text {
-    text-decoration: #ff5252 wavy underline !important;
+    text-decoration: var(--v-error-base) wavy underline !important;
   }
 }
 </style>
@@ -310,7 +310,7 @@ export default {
   }
 
   &.red-border::after {
-    border: 2px solid #ff5252;
+    border: 2px solid var(--v-error-base);
     border-radius: 4px;
   }
 

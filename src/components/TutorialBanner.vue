@@ -62,7 +62,7 @@ export default {
           icon
           text
           dark
-          color="#ff5252"
+          color="var(--v-error-base)"
           @click="dismissed = !dismissed"
         >
           <v-icon>
