@@ -82,8 +82,8 @@
   }
 
   pre > code {
-    background-color: #f9f9f9;
-    border: 1px solid #f9f9f9;
+    background-color: var(--v-appBackground-base);
+    border: 1px solid var(--v-appBackground-base);
     border-radius: 2px;
     color: #5e6687;
     display: block;

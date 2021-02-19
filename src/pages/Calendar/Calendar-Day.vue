@@ -351,19 +351,19 @@ export default {
 
 .sheet-tweaks {
   .theme--light {
-    background-color: #f9f9f9 !important;
+    background-color: var(--v-appBackground-base) !important;
   }
 }
 .skeleton-tweak {
   .theme--light {
-    background-color: #f9f9f9 !important;
+    background-color: var(--v-appBackground-base) !important;
   }
 }
 .calendar-tweaks {
   overflow: auto;
 
   .theme--light {
-    background-color: #f9f9f9 !important;
+    background-color: var(--v-appBackground-base) !important;
   }
   .v-calendar-daily__intervals-body {
     max-width: 45px !important;

@@ -333,7 +333,9 @@ export default {
 
       context.save()
       context.lineWidth = 2
-      context.strokeStyle = '#f9f9f9'
+      context.strokeStyle = getComputedStyle(document.body).getPropertyValue(
+        '--v-appBackground-base'
+      )
 
       context.clearRect(0, 0, this.chartWidth, this.chartHeight)
 

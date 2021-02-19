@@ -287,7 +287,7 @@ export default {
 }
 
 .app-background-color {
-  background-color: #f9f9f9;
+  background-color: var(--v-appBackground-base);
 }
 
 .wide {

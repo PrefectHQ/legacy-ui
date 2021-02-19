@@ -216,11 +216,11 @@ export default {
   }
 
   .v-btn:before {
-    background-color: #f9f9f9;
+    background-color: var(--v-appBackground-base);
   }
 
   .theme--light {
-    background: #f9f9f9;
+    background: var(--v-appBackground-base);
   }
 
   .v-date-picker-table--month td {
