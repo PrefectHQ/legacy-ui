@@ -33,7 +33,6 @@ export const THEME_COLORS = {
   tertiaryBlue: '#0076ff',
   secondary: '#2F383F', // primary grey-light
   accent: '#1b5da4', // accent blue
-  'accent-pink': '#fe5196',
   error: '#FF5252', // alerts error
   info: '#2196F3', // vuetify default
   success: '#4CAF50', // alerts success
