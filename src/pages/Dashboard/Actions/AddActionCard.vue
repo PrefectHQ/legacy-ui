@@ -62,7 +62,18 @@ export default {
     },
     hookAction() {
       const action = this.chosenAction
-      return this.actionDetails[action]?.title || '...action'
+      return this.actionDetails[action]?.title || '...action(s)'
+    },
+    completeAction() {
+      const disabled2 = !!this.chosenEventType && !!this.chosenAction
+      console.log(disabled2)
+      if (!this.includeTo) return disabled2
+      const disabled =
+        !!this.chosenAction &&
+        !!this.chosenStates.length &&
+        !!this.chosenEventType
+      console.log(disabled)
+      return disabled
     }
   },
   methods: {
@@ -220,5 +231,10 @@ export default {
         </v-col>
       </v-row>
     </v-item-group>
+    <v-card-actions v-if="selectedEvent" class="px-8">
+      <v-spacer /><v-btn large color="primary" :disabled="!completeAction"
+        ><v-icon class="pr-2">far fa-file-plus</v-icon>Save Action</v-btn
+      >
+    </v-card-actions>
   </v-card>
 </template>
