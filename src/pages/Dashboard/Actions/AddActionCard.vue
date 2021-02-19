@@ -2,14 +2,16 @@
 export default {
   data() {
     return {
+      flowName: '',
+      projectName: '',
       selectedEvent: false,
       chosenEventType: 'FlowRunStateChangedEvent',
       chosenStates: [],
-      chosenAction: 'select',
+      chosenAction: '',
       hookDetails: {
         FlowRunStateChangedEvent: {
           type: 'flow',
-          action: 'changes state',
+          action: 'changes',
           icon: 'pi-flow'
         },
         FlowSLAFailedEvent: {
@@ -46,19 +48,21 @@ export default {
     includeTo() {
       return this.chosenEventType === 'FlowRunStateChangedEvent'
     },
-    hookText() {
-      const event = this.chosenEventType
-      // name is if a flow group is named on the evnt - to add later
-      const name = '...'
-      return `${this.hookDetails[event]?.type} ${name} ${this.hookDetails[event]?.action}`
+    hookType() {
+      return `${this.hookDetails[this.chosenEventType]?.type} `
+    },
+    typeName() {
+      return ' named...'
+    },
+    hookEvent() {
+      return `${this.hookDetails[this.chosenEventType]?.action}`
     },
     hookStates() {
-      const states = this.chosenStates
-      return states.toString().toLowerCase() || '...'
+      return this.chosenStates?.toString().toLowerCase() || '... state'
     },
     hookAction() {
       const action = this.chosenAction
-      return this.actionDetails[action]?.title
+      return this.actionDetails[action]?.title || '...action'
     }
   },
   methods: {
@@ -98,12 +102,83 @@ export default {
         ><v-col cols="12" class="headline black--text"
           ><v-icon color="codePink" class="pr-2">{{
             hookDetails[chosenEventType].icon
-          }}</v-icon
-          ><span> When </span
-          ><span class="font-weight-bold">{{ hookText }}</span>
-          <span v-if="includeTo">
-            to <span class="font-weight-bold">{{ hookStates }} </span></span
-          >, then <span class="font-weight-bold">{{ hookAction }}</span></v-col
+          }}</v-icon>
+          When {{ hookType
+          }}<v-menu :disabled="!selectedEvent" :close-on-content-click="false">
+            <template #activator="{ on, attrs }">
+              <v-btn
+                :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                class="px-0 pb-1 headline text-decoration-underline text--secondary"
+                text
+                v-bind="attrs"
+                v-on="on"
+                >{{ flowName || typeName }}</v-btn
+              ></template
+            >
+            <v-card
+              ><v-card-actions>
+                <v-autocomplete
+                  v-model="projectName"
+                  :items="['project1', 'project2']"
+                  >{{ projectName }}</v-autocomplete
+                >
+                <v-autocomplete
+                  v-model="flowName"
+                  :disabled="!projectName"
+                  :items="['flow1', 'flow2']"
+                  >{{ flowName }}</v-autocomplete
+                ></v-card-actions
+              >
+            </v-card>
+          </v-menu>
+          {{ hookEvent
+          }}<span v-if="includeTo">
+            to
+            <v-menu :close-on-content-click="false" :disabled="!selectedEvent">
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                  class="px-0 pb-1 headline text-decoration-underline text--secondary"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  >{{ hookStates }}</v-btn
+                ></template
+              >
+              <v-card
+                ><v-card-actions>
+                  <v-autocomplete
+                    v-model="chosenStates"
+                    multiple
+                    :items="['failed', 'success']"
+                    >{{ hookStates }}</v-autocomplete
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-menu></span
+          >, then
+          <v-menu :close-on-content-click="false" :disabled="!selectedEvent">
+            <template #activator="{ on, attrs }">
+              <v-btn
+                :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                class="px-0 pb-1 headline text-decoration-underline text--secondary"
+                text
+                v-bind="attrs"
+                v-on="on"
+                >{{ hookAction }}</v-btn
+              ></template
+            >
+            <v-card
+              ><v-card-actions>
+                <v-autocomplete
+                  v-model="chosenAction"
+                  multiple
+                  :items="['select', 'SlackNotificationAction']"
+                  >{{ chosenAction }}</v-autocomplete
+                >
+              </v-card-actions>
+            </v-card> </v-menu
+          >.</v-col
         >
       </v-row></v-alert
     >
