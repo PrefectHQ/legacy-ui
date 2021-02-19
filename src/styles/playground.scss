@@ -11,7 +11,7 @@
   }
 
   &.CodeMirror.light {
-    background: #edf0f3;
+    background: var(--v-secondaryGrayLight-base);
     color: var(--v-secondaryGrayDark-base);
   }
 
@@ -106,7 +106,7 @@
 
 .cm-s-playground-light {
   &.CodeMirror {
-    background: #edf0f3;
+    background: var(--v-secondaryGrayLight-base);
     color: var(--v-secondaryGrayDark-base);
     font-size: 0.85rem;
   }

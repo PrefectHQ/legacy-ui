@@ -537,7 +537,7 @@ $color-success: var(--v-prefect-base);
 
   .circle {
     animation: circle-indeterminate 1.2s infinite linear;
-    border: $circle-stroke solid #edf0f3;
+    border: $circle-stroke solid var(--v-secondaryGrayLight-base);
     border-left-color: $color;
     border-radius: 50%;
     height: $circle-size;
