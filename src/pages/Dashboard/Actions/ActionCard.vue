@@ -48,8 +48,10 @@ export default {
     },
     hookAction() {
       const action = this.hook?.action?.action_type
-      const name = this.hook?.action?.name
-      return name || this.actionDetails[action]?.title
+      return this.actionDetails[action]?.title
+    },
+    hookName() {
+      return this.hook?.action?.name
     }
   }
 }
@@ -67,7 +69,7 @@ export default {
         ><v-icon color="codePink" class="pr-2">{{
           hookDetails[hook.event_type].icon
         }}</v-icon
-        ><span class="font-weight-bold"> When {{ hookText }} </span>
+        ><span class="font-weight-bold"> When {{ hookText }}</span>
         <span v-if="includeTo"> to {{ hookStates }}</span
         >, then <span class="font-weight-bold">{{ hookAction }}</span></v-col
       >
