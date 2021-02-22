@@ -7,6 +7,7 @@ export default {
       flow: '',
       project: '',
       selectedEvent: false,
+      SLAType: 'SCHEDULED_NOT_STARTED',
       chosenEventType: 'FlowRunStateChangedEvent',
       chosenStates: [],
       chosenAction: '',
@@ -34,11 +35,29 @@ export default {
         select: {
           title: '...'
         }
-      }
+      },
+      SLATypes: [
+        { name: 'starts but does not finish', enum: 'STARTED_NOT_FINISHED' },
+        {
+          name: 'is scheduled but does not start',
+          enum: 'SCHEDULED_NOT_STARTED'
+        }
+      ]
     }
   },
   computed: {
     ...mapGetters('data', ['projects']),
+    isSLA() {
+      return (
+        this.chosenEventType === 'FlowSLAFailedEvent' ||
+        this.chosenEventType === 'AgentSLAFailed'
+      )
+    },
+    SLATypeFormat() {
+      const type = this.SLATypes?.filter(sla => sla.enum === this.SLAType)[0]
+        ?.name
+      return type?.toString()
+    },
     colSize() {
       return 12 / this.hookTypes.length
     },
@@ -104,9 +123,10 @@ export default {
       this.selectedEvent = true
     },
     async createHook() {
-      if (this.chosenEventType === 'FlowRunStateChangedEvent') {
-        try {
-          const { data } = await this.$apollo.mutate({
+      let data
+      try {
+        if (this.chosenEventType === 'FlowRunStateChangedEvent') {
+          const flowRunStateChangedSuccess = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
             variables: {
               input: {
@@ -117,17 +137,41 @@ export default {
               }
             }
           })
-          console.log('data', data)
-        } catch (error) {
-          const errString = `${error}`
-          this.setAlert({
-            alertShow: true,
-            alertMessage: errString,
-            alertType: 'error'
-          })
-        } finally {
-          ///needs updating
+          data = flowRunStateChangedSuccess.data
         }
+        if (this.chosenEventType === 'FlowSLAFailedEvent') {
+          const configId = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/create_flow_sla.gql'),
+            variables: {
+              input: {
+                kind: this.SLAType,
+                duration_seconds: Number(this.seconds)
+              }
+            }
+          })
+          console.log('config id', configId)
+          const flowSLAEventSuccess = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/create_flow_sla_failed_hook.gql'),
+            variables: {
+              input: {
+                action_id: this.chosenAction[0],
+                sla_config_ids: [configId.data.create_flow_sla_config.id]
+              }
+            }
+          })
+          console.log(flowSLAEventSuccess)
+          data = flowSLAEventSuccess.data
+        }
+        console.log('data', data)
+      } catch (error) {
+        const errString = `${error}`
+        this.setAlert({
+          alertShow: true,
+          alertMessage: errString,
+          alertType: 'error'
+        })
+      } finally {
+        ///needs updating
       }
     }
   },
@@ -217,10 +261,49 @@ export default {
                   >{{ flow.name }}</v-autocomplete
                 ></v-card-actions
               >
-            </v-card>
-          </v-menu>
-          {{ hookEvent
-          }}<span v-if="includeTo">
+            </v-card> </v-menu
+          ><span v-if="!isSLA"> {{ hookEvent }}</span
+          ><span v-else
+            >{{ ' ' }}
+            <v-menu :disabled="!selectedEvent" :close-on-content-click="false">
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                  class="px-0 pb-1 headline text-decoration-underline text--secondary"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ SLATypeFormat }}</v-btn
+                ></template
+              ></v-menu
+            >
+            for
+            <v-menu :disabled="!selectedEvent" :close-on-content-click="false">
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                  class="px-0 pb-1 headline text-decoration-underline text--secondary"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ seconds || '...' }}</v-btn
+                ></template
+              >
+              <v-card
+                ><v-card-text>
+                  <v-text-field
+                    v-model="seconds"
+                    min-width="50px"
+                    type="number"
+                  ></v-text-field>
+                </v-card-text>
+              </v-card>
+            </v-menu>
+            seconds</span
+          >
+          <span v-if="includeTo">
             to
             <v-menu :close-on-content-click="false" :disabled="!selectedEvent">
               <template #activator="{ on, attrs }">
