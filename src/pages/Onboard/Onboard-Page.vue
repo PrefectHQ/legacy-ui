@@ -12,8 +12,6 @@ export default {
       let route = this.$route.name
       return {
         'overflow-y-hidden': this.$vuetify.breakpoint.mdAndUp,
-        'h-100': route == 'welcome',
-        'mh-100': this.nameTeamOrAcceptRoute,
         'bg-blue': route == 'welcome',
         'bg-grey': this.nameTeamOrAcceptRoute
       }
@@ -107,7 +105,7 @@ export default {
 
 <template>
   <v-container
-    class="ma-0 pa-0 position-relative test-bg"
+    class="ma-0 pa-0 position-relative test-bg mh-100"
     :class="containerClass"
     fluid
   >
@@ -181,10 +179,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.h-100 {
-  height: 100vh !important;
-}
-
 .mh-100 {
   min-height: 100vh !important;
 }

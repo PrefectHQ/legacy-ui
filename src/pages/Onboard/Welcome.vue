@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-  <v-container class="text-center fill-height pa-0" fluid>
+  <v-container class="text-center pa-0" fluid>
     <v-slide-x-transition>
       <div v-if="welcome" class="grey--text text--lighten-5 welcome-text">
         <div class="display-1">
@@ -38,10 +38,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.fill-height {
-  height: 100vh !important;
-}
-
 .welcome-text {
   left: 50%;
   max-width: 700px;
