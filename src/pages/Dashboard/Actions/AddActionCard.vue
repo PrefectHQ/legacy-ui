@@ -64,8 +64,21 @@ export default {
       return this.chosenStates?.toString().toLowerCase() || '... state'
     },
     hookAction() {
-      const action = this.chosenAction
-      return this.actionDetails[action]?.title || '...action(s)'
+      let action
+      if (this.chosenAction?.length > 1) {
+        action = this.chosenAction?.map(chosen => {
+          const chosenName = this.actions?.filter(
+            action => action.id === chosen
+          )[0]?.name
+          return chosenName
+        })
+      }
+      action = this.actions?.filter(
+        action => action.id === this.chosenAction[0]
+      )[0]?.name
+
+      console.log('action', this.actions, this.chosenAction, action)
+      return action?.length > 0 ? action.toString() : '...action(s)'
     },
     completeAction() {
       if (!this.includeTo) return !!this.chosenEventType && !!this.chosenAction
@@ -76,7 +89,10 @@ export default {
       )
     },
     flowName() {
-      return this.flow.name || 'named ...'
+      const name = this.flows?.filter(
+        flow => flow.flow_group_id === this.flow
+      )[0]?.name
+      return name || 'named ...'
     }
   },
   methods: {
@@ -94,9 +110,10 @@ export default {
             mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
             variables: {
               input: {
-                flowGroupId: [this.flowGroupId],
-                actionId: this.chosenAction.id,
-                state: this.chosenStates
+                //flow_group_id not working??
+                // flow_group_ids: [this.flow],
+                action_id: this.chosenAction[0],
+                states: this.chosenStates
               }
             }
           })
@@ -116,7 +133,7 @@ export default {
   },
   apollo: {
     flows: {
-      query: require('@/graphql/TeamSettings/flows.gql'),
+      query: require('@/graphql/Actions/flows.gql'),
       variables() {
         return {
           project: this.project
@@ -125,13 +142,15 @@ export default {
       skip() {
         return !this.project
       },
-      result({ data }) {
-        if (!data) return
-      },
-      update(data) {
+      update: data => {
         return data.flow
-      },
-      fetchPolicy: 'no-cache'
+      }
+    },
+    actions: {
+      query: require('@/graphql/Actions/actions.gql'),
+      update: data => {
+        return data.action
+      }
     }
   }
 }
@@ -191,6 +210,7 @@ export default {
                   v-model="flow"
                   :disabled="!project"
                   item-text="name"
+                  item-value="flow_group_id"
                   class="pa-4"
                   label="Select Flow"
                   :items="flows"
@@ -218,7 +238,7 @@ export default {
                   <v-autocomplete
                     v-model="chosenStates"
                     multiple
-                    :items="['failed', 'success']"
+                    :items="['Failed', 'Success']"
                     >{{ hookStates }}</v-autocomplete
                   >
                 </v-card-actions>
@@ -241,7 +261,9 @@ export default {
                 <v-autocomplete
                   v-model="chosenAction"
                   multiple
-                  :items="['select', 'SlackNotificationAction']"
+                  :items="actions"
+                  item-text="name"
+                  item-value="id"
                   >{{ chosenAction }}</v-autocomplete
                 >
               </v-card-actions>
@@ -289,7 +311,11 @@ export default {
       </v-row>
     </v-item-group>
     <v-card-actions v-if="selectedEvent" class="px-8">
-      <v-spacer /><v-btn large color="primary" :disabled="!completeAction"
+      <v-spacer /><v-btn
+        large
+        color="primary"
+        :disabled="!completeAction"
+        @click="createHook"
         ><v-icon class="pr-2">far fa-file-plus</v-icon>Save Action</v-btn
       >
     </v-card-actions>
