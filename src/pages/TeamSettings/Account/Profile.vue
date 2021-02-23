@@ -13,10 +13,10 @@ export default {
 </script>
 
 <template>
-  <v-card tile max-width="720" class="mx-auto my-4" data-cy="profile-card">
+  <v-card tile data-cy="profile-card" class="h-100 d-flex flex-column">
     <v-card-title> Profile </v-card-title>
     <v-card-subtitle> See and edit your team profile.</v-card-subtitle>
-    <v-card-text>
+    <v-card-text class="align-self-stretch">
       <v-alert
         v-if="!isTenantAdmin"
         class="mx-auto mb-12"
@@ -77,7 +77,9 @@ export default {
       </v-text-field>
     </v-card-text>
 
-    <v-card-actions v-if="isTenantAdmin">
+    <v-spacer />
+
+    <v-card-actions v-if="isTenantAdmin" class="mt-auto">
       <v-spacer></v-spacer>
       <v-btn
         :disabled="!isUpdatable"
@@ -89,3 +91,9 @@ export default {
     </v-card-actions>
   </v-card>
 </template>
+
+<style lang="scss" scoped>
+.h-100 {
+  height: 100%;
+}
+</style>

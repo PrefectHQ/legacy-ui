@@ -1,0 +1,12 @@
+query Memberships {
+  memberships: user_view_same_tenant {
+    id
+    memberships {
+      id
+    }
+  }
+
+  membershipInvitations: membership_invitation {
+    id
+  }
+}

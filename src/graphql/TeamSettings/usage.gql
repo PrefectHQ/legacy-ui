@@ -1,9 +1,5 @@
 query Usage($from: timestamptz, $to: timestamptz) {
-  usage: billing_usage(
-    where: {
-      _and: [{ timestamp: { _gte: $from } }, { timestamp: { _lte: $to } }]
-    }
-  ) {
+  usage: billing_usage(where: { timestamp: { _gte: $from, _lte: $to } }) {
     id
     kind
     runs

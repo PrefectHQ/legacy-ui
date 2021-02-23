@@ -154,7 +154,6 @@ export default {
             :class="{ active: cardSource == card.id }"
             @click="selectCard(card.id)"
           >
-            {{ card }}
             <div>
               <div
                 v-if="card && card.owner && card.owner.name"

@@ -8,13 +8,12 @@ import License from '@/pages/TeamSettings/Account/License'
 import Users from '@/pages/TeamSettings/Account/Users'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
-// import Usage from '@/pages/TeamSettings/Account/Usage/Usage'
+import UsageToday from '@/pages/TeamSettings/Account/Usage/UsageToday'
+import CurrentUsers from '@/pages/TeamSettings/Account/Usage/CurrentUsers'
 import UsageTimeline from '@/pages/TeamSettings/Account/Usage/UsageTimeline'
-import ChartCard from '@/components/ChartCard/ChartCard'
 
 export default {
   components: {
-    ChartCard,
     ManagementLayout,
     Profile,
     Users,
@@ -22,8 +21,9 @@ export default {
     LegacyLicense,
     License,
     Billing,
-    // Usage,
-    UsageTimeline
+    UsageTimeline,
+    CurrentUsers,
+    UsageToday
   },
   mixins: [teamProfileMixin],
   data() {
@@ -57,53 +57,51 @@ export default {
 
 <template>
   <div>
-    <div v-if="isCloud && isUsageBased">
-      <v-row no-gutters class="my-16">
-        <v-col cols="12" md="6">
-          <ChartCard
-            :chart-data="[
-              { label: 'used', value: 3230, color: '#ff8cc6' },
-              { label: 'total', value: 10000, color: '#de369d' }
-            ]"
-            :extra="false"
-            chart-type="ring"
-            :colors="['#fff', 'rgb(59, 141, 255, 0.05)']"
-            accent-color="rgb(59, 141, 255, 1)"
-            chart-overlay-center-type="icon"
-            chart-overlay-main="3230"
-            chart-overlay-units="runs"
-            chart-overlay-center="fad fa-tasks"
-          />
+    <v-container v-if="isCloud && isUsageBased" fluid>
+      <v-row>
+        <v-col cols="12" class="text-center pb-2 ">
+          <h1 class="display-1">Account & Usage</h1>
         </v-col>
-        <v-col cols="12" md="6">
-          <ChartCard
-            :chart-data="[
-              { label: 'used', value: 1, color: '#ff8cc6' },
-              { label: 'total', value: 3, color: '#de369d' }
-            ]"
-            :extra="false"
-            chart-type="ring"
-            :colors="['#fff', 'rgb(59, 141, 255, 0.05)']"
-            accent-color="rgb(59, 141, 255, 1)"
-            chart-overlay-center-type="icon"
-            chart-overlay-main="1"
-            chart-overlay-units="user"
-            chart-overlay-center="fad fa-users"
-          />
+      </v-row>
+      <v-row>
+        <v-col cols="12" class="text-center py-0">
+          <div class="subtitle-1">
+            Manage data associated with your team
+          </div>
         </v-col>
       </v-row>
 
-      <v-row no-gutters>
-        <v-col cols="12">
-          <UsageTimeline />
+      <v-row class="usage-row">
+        <v-col cols="12" class="usage-grid">
+          <UsageTimeline class="usage" />
+          <UsageToday class="runs" />
+          <CurrentUsers class="users" />
         </v-col>
       </v-row>
 
-      <Profile />
-      <License />
-      <Billing />
-      <ClearDataDialog />
-    </div>
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-row>
+            <v-col cols="12">
+              <Profile />
+            </v-col>
+            <v-col cols="12">
+              <ClearDataDialog />
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-row>
+            <v-col cols="12">
+              <License />
+            </v-col>
+            <v-col cols="12">
+              <Billing />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
 
     <ManagementLayout v-else-if="isCloud">
       <template v-if="needAlert && isCloud" #alert>
@@ -117,10 +115,8 @@ export default {
           tile
           prominent
           ><div>You are connected to Prefect Cloud. </div
-          ><div>
-            Any changes you make here will affect your Cloud account.</div
-          ></v-alert
-        >
+          ><div> Any changes you make here will affect your Cloud account.</div>
+        </v-alert>
       </template>
       <template #title>Account</template>
 
@@ -138,29 +134,72 @@ export default {
       <ClearDataDialog />
     </ManagementLayout>
 
-    <div v-else>
-      <v-alert
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="primary"
-        tile
-        prominent
-        ><div>You are connected to Prefect Server. </div
-        ><div>
-          Account management is only available on
-          <ExternalLink href="https://www.prefect.io/cloud"
-            >Prefect Cloud</ExternalLink
-          >
-        </div>
-      </v-alert>
-    </div>
+    <ManagementLayout v-else>
+      <template #title>Account</template>
+
+      <template v-if="isCloud" #subtitle>
+        Update your team profile.
+      </template>
+
+      <Profile />
+      <ClearDataDialog />
+    </ManagementLayout>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .v-sheet.v-alert:not(.v-sheet--outlined) {
   padding-left: 25px;
+}
+
+.account-container {
+  margin: auto;
+  max-width: 1600px;
+}
+
+.usage-row {
+  position: relative;
+
+  .usage-grid {
+    column-gap: 16px;
+    display: grid;
+    grid-template-areas:
+      'usage runs'
+      'usage users';
+    grid-template-columns: 4fr 1fr;
+    height: 500px;
+    row-gap: 16px;
+  }
+
+  @media screen and (max-width: 960px) {
+    .usage-grid {
+      grid-template-areas:
+        'usage usage'
+        'runs users';
+      grid-template-columns: auto;
+      grid-template-rows: 4fr 1fr;
+      height: 800px;
+    }
+  }
+
+  .usage {
+    grid-area: usage;
+  }
+
+  .runs {
+    grid-area: runs;
+  }
+
+  .users {
+    grid-area: users;
+  }
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.h-50 {
+  height: 50%;
 }
 </style>

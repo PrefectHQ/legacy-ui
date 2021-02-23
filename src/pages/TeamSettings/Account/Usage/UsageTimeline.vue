@@ -6,18 +6,14 @@ import debounce from 'lodash.debounce'
 const xAxisHeight = 20
 
 export default {
-  props: {
-    height: { type: Number, default: () => null },
-    width: { type: Number, default: () => null }
-  },
   data() {
     return {
       id: uniqueId('usage'),
       barGroup: null,
       chart: null,
       xAxisGroup: null,
-      height_: null,
-      width_: null,
+      height: null,
+      width: null,
 
       padding: {
         bottom: xAxisHeight,
@@ -122,40 +118,28 @@ export default {
 
       let parent = this.chart.select(function() {
         return this.parentNode
-      })
+      })?._groups?.[0]?.[0]
 
-      let computedStyle = window.getComputedStyle(parent._groups[0][0], null)
+      let computedStyle = window.getComputedStyle(parent, null)
 
-      let paddingLeft = parseFloat(
-          computedStyle.getPropertyValue('padding-left')
-        ),
-        paddingRight = parseFloat(
-          computedStyle.getPropertyValue('padding-right')
-        ),
-        paddingTop = parseFloat(computedStyle.getPropertyValue('padding-top')),
-        paddingBottom = parseFloat(
-          computedStyle.getPropertyValue('padding-bottom')
-        )
+      // This is the padding that the parent element has
+      // NOT the internal padding
+      let padding = {
+        left: parseFloat(computedStyle.getPropertyValue('padding-left')),
+        right: parseFloat(computedStyle.getPropertyValue('padding-right')),
+        top: parseFloat(computedStyle.getPropertyValue('padding-top')),
+        bottom: parseFloat(computedStyle.getPropertyValue('padding-bottom'))
+      }
 
       this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
 
-      const width =
-        parent._groups[0][0].clientWidth - paddingLeft - paddingRight
+      this.width = Math.floor(parent.clientWidth - padding.left - padding.right)
 
-      const height =
-        parent._groups[0][0].clientHeight - paddingTop - paddingBottom
+      this.height = Math.floor(
+        parent.clientHeight - padding.top - padding.bottom
+      )
 
-      if (!height || !width || height <= 0 || width <= 0) {
-        return
-      }
-
-      this.width_ = width
-      this.height_ = height
-
-      this.chart
-        .attr('viewbox', `0 0 ${this.width_} ${this.height_}`)
-        .attr('width', this.width_)
-        .attr('height', this.height_)
+      this.chart.attr('viewbox', `0 0 ${this.width} ${this.height}`)
 
       if (!this.items.length) return
 
@@ -163,7 +147,7 @@ export default {
       this.updateChart()
     },
     updateChart() {
-      const yOffset = this.height_ - this.padding.bottom
+      const yOffset = this.height - this.padding.bottom
       const bandwidth = this.x.bandwidth()
 
       this.barGroup
@@ -228,7 +212,7 @@ export default {
         )
     },
     updateScales() {
-      const xRange = [this.padding.left, this.width_ - this.padding.right]
+      const xRange = [this.padding.left, this.width - this.padding.right]
 
       this.x
         .rangeRound(xRange)
@@ -238,7 +222,7 @@ export default {
       this.x.domain(d3.timeMonth.range(this.from, this.to))
 
       this.y.domain([1, d3.max(this.items.map(d => d.runs))])
-      this.y.range([this.padding.bottom, this.height_ - this.padding.y])
+      this.y.range([this.padding.top, this.height - this.padding.y])
 
       const xAxis = d3
         .axisBottom(this.x)
@@ -247,7 +231,7 @@ export default {
         .tickFormat(d3.timeFormat('%B'))
 
       this.xAxisGroup
-        .attr('transform', `translate(0,${this.height_ - this.padding.bottom})`)
+        .attr('transform', `translate(0,${this.height - this.padding.bottom})`)
         .call(xAxis)
     }
   },
@@ -270,20 +254,34 @@ export default {
 </script>
 
 <template>
-  <v-container fluid class="pa-0 text-center chart-container">
-    <svg :id="`${id}-svg`" class="svg" />
-  </v-container>
+  <v-card class="position-relative" tile fluid>
+    <div class="caption text-left grey--text card-title">
+      <v-icon x-small>pi-gantt</v-icon><span class="ml-1">Timeline</span>
+    </div>
+
+    <v-card-text ref="parent" class="chart-container pa-0">
+      <svg :id="`${id}-svg`" class="svg" />
+    </v-card-text>
+  </v-card>
 </template>
 
 <style lang="scss" scoped>
 .chart-container {
-  max-width: 1400px;
+  height: 100%;
+  position: relative;
+  width: 100%;
 }
 
 svg {
   height: 100%;
   margin: auto;
   width: 100%;
+}
+
+.card-title {
+  left: 8px;
+  position: absolute;
+  top: 8px;
 }
 </style>
 

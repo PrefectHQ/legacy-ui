@@ -64,13 +64,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    data-cy="billing-card"
-    tile
-    max-width="720"
-    class="mx-auto my-4"
-    :loading="loading"
-  >
+  <v-card data-cy="billing-card" tile :loading="loading">
     <v-card-title v-if="page === 'plan'">
       Add payment information
     </v-card-title>
@@ -171,7 +165,7 @@ export default {
       />
     </v-card-text>
 
-    <v-card-actions v-if="isTenantAdmin">
+    <v-card-actions v-if="isTenantAdmin" class="mt-auto">
       <v-spacer></v-spacer>
       <v-btn
         v-if="!editCardDetails && isSelfServe"
