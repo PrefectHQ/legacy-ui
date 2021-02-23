@@ -38,7 +38,8 @@ let errors = 0,
 const batchLink = new BatchHttpLink({
   batchMax: 20,
   batchInterval: 200,
-  uri: () => store.getters['api/url']
+  uri: () => store.getters['api/url'],
+  credentials: 'include'
 })
 
 const backendMiddleware = new ApolloLink((operation, forward) => {
