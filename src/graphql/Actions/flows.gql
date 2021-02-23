@@ -1,5 +1,5 @@
-query ActionFlows ($project: uuid) {
-  flow(distinct_on: flow_group_id, where: {_and: [{project_id: {_eq: $project}, archived: {_eq: false}}]}) {
+query ActionFlows ($project: uuid, $flowGroupId: uuid) {
+  flow(distinct_on: flow_group_id, where: {_and: [{project_id: {_eq: $project}, archived: {_eq: false}, flow_group_id: {_eq: $flowGroupId}}]}) {
     id
     archived
     name

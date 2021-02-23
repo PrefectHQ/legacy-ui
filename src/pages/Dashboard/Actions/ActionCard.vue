@@ -12,13 +12,19 @@ export default {
       hookDetails: {
         FlowRunStateChangedEvent: {
           type: 'flow',
-          action: 'changes',
+          action: 'changes state',
           icon: 'pi-flow'
         },
         FlowSLAFailedEvent: {
           type: 'flow',
           action: 'SLA fails',
           icon: 'pi-flow'
+        },
+        SCHEDULED_NOT_STARTED: {
+          action: 'is scheduled but does not start'
+        },
+        STARTED_NOT_FINISHED: {
+          action: 'starts but does not finish'
         }
       },
       actionDetails: {
@@ -38,20 +44,66 @@ export default {
     },
     hookText() {
       const event = this.hook?.event_type
-      // name is if a flow group is named on the evnt - to add later
-      const name = ''
-      return `${this.hookDetails[event]?.type} ${name} ${this.hookDetails[event]?.action}`
+      // name is if a flow group is named on the evnt - may need to updated to handle multiple
+      const name = this.flowName ? this.flowName[0]?.name : ''
+      const hook = this.flowConfig
+        ? `${this.hookDetails[this.flowConfig.kind]?.action} for ${
+            this.flowConfig.duration_seconds
+          } seconds`
+        : this.hookDetails[event]?.action
+      return `${this.hookDetails[event]?.type} ${name} ${hook}`
     },
     hookStates() {
       const states = this.hook?.event_tags?.state
       return states.toString().toLowerCase()
     },
     hookAction() {
-      const action = this.hook?.action?.action_type
-      return this.actionDetails[action]?.title
+      return this.hook?.action?.name
     },
     hookName() {
       return this.hook?.action?.name
+    }
+  },
+  apollo: {
+    flowName: {
+      query: require('@/graphql/Actions/flows.gql'),
+      variables() {
+        return {
+          flowGroupId: this.hook?.event_tags?.flow_group_id
+            ? this.hook?.event_tags?.flow_group_id[0]
+            : this.flowConfig?.flow_groups[0]?.flow_group_id
+        }
+      },
+      skip() {
+        const skippy =
+          (!this.hook?.event_tags?.flow_group_id ||
+            !this.hook?.event_tags?.flow_group_id[0]) &&
+          !this.flowConfig?.flow_groups[0]?.flow_group_id
+        console.log('fgID', this.flowConfig?.flow_groups[0]?.flow_group_id)
+        return skippy
+      },
+      update: data => {
+        return data.flow
+      }
+    },
+    flowConfig: {
+      query: require('@/graphql/Actions/flowConfigs.gql'),
+      variables() {
+        return {
+          flowSLAConfigId: this.hook?.event_tags?.flow_sla_config_id
+            ? this.hook?.event_tags?.flow_sla_config_id[0]
+            : ''
+        }
+      },
+      skip() {
+        return (
+          !this.hook?.event_tags?.flow_sla_config_id ||
+          !this.hook?.event_tags?.flow_sla_config_id[0]
+        )
+      },
+      update: data => {
+        return data.flow_sla_config_by_pk
+      }
     }
   }
 }
@@ -69,8 +121,9 @@ export default {
         ><v-icon color="codePink" class="pr-2">{{
           hookDetails[hook.event_type].icon
         }}</v-icon
-        ><span class="font-weight-bold"> When {{ hookText }}</span>
-        <span v-if="includeTo"> to {{ hookStates }}</span
+        >When <span class="font-weight-bold"> {{ hookText }}</span>
+        <span v-if="includeTo">
+          to <span class="font-weight-bold">{{ hookStates }}</span></span
         >, then <span class="font-weight-bold">{{ hookAction }}</span></v-col
       >
     </v-row></v-card

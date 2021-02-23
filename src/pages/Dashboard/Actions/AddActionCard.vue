@@ -11,6 +11,7 @@ export default {
       chosenEventType: 'FlowRunStateChangedEvent',
       chosenStates: [],
       chosenAction: '',
+      seconds: 0,
       hookDetails: {
         FlowRunStateChangedEvent: {
           type: 'flow',
@@ -96,7 +97,6 @@ export default {
         action => action.id === this.chosenAction[0]
       )[0]?.name
 
-      console.log('action', this.actions, this.chosenAction, action)
       return action?.length > 0 ? action.toString() : '...action(s)'
     },
     completeAction() {
@@ -131,7 +131,7 @@ export default {
             variables: {
               input: {
                 //flow_group_id not working??
-                // flow_group_ids: [this.flow],
+                flow_group_ids: [this.flow],
                 action_id: this.chosenAction[0],
                 states: this.chosenStates
               }
@@ -150,6 +150,16 @@ export default {
             }
           })
           console.log('config id', configId)
+          const addConfigToFlow = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/add_config_to_flow.gql'),
+            variables: {
+              input: {
+                flow_sla_config_id: configId.data.create_flow_sla_config.id,
+                flow_group_id: this.flow
+              }
+            }
+          })
+          console.log(addConfigToFlow)
           const flowSLAEventSuccess = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create_flow_sla_failed_hook.gql'),
             variables: {
