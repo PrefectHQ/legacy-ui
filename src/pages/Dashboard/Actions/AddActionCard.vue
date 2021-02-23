@@ -149,8 +149,7 @@ export default {
               }
             }
           })
-          console.log('config id', configId)
-          const addConfigToFlow = await this.$apollo.mutate({
+          await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/add_config_to_flow.gql'),
             variables: {
               input: {
@@ -159,7 +158,6 @@ export default {
               }
             }
           })
-          console.log(addConfigToFlow)
           const flowSLAEventSuccess = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create_flow_sla_failed_hook.gql'),
             variables: {
@@ -169,10 +167,8 @@ export default {
               }
             }
           })
-          console.log(flowSLAEventSuccess)
           data = flowSLAEventSuccess.data
         }
-        console.log('data', data)
       } catch (error) {
         const errString = `${error}`
         this.setAlert({
@@ -181,7 +177,14 @@ export default {
           alertType: 'error'
         })
       } finally {
-        ///needs updating
+        //needs updating - alert simply for deving at the mo
+        if (data) {
+          this.setAlert({
+            alertShow: true,
+            alertMessage: 'hook created',
+            alertType: 'success'
+          })
+        }
       }
     }
   },

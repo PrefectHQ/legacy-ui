@@ -79,7 +79,6 @@ export default {
           (!this.hook?.event_tags?.flow_group_id ||
             !this.hook?.event_tags?.flow_group_id[0]) &&
           !this.flowConfig?.flow_groups[0]?.flow_group_id
-        console.log('fgID', this.flowConfig?.flow_groups[0]?.flow_group_id)
         return skippy
       },
       update: data => {
