@@ -12,6 +12,7 @@ export default {
       chosenStates: [],
       chosenAction: '',
       seconds: 0,
+      addAction: false,
       hookDetails: {
         FlowRunStateChangedEvent: {
           type: 'flow',
@@ -64,9 +65,6 @@ export default {
     },
     hookTypes() {
       return Object.keys(this.hookDetails)
-    },
-    height() {
-      return this.$vuetify.breakpoint.lgAndUp ? '75vh' : '60vh'
     },
     includeTo() {
       return this.chosenEventType === 'FlowRunStateChangedEvent'
@@ -214,7 +212,7 @@ export default {
 </script>
 
 <template>
-  <v-card width="100%" :height="height">
+  <v-card width="100%">
     <div v-if="!selectedEvent" class="text-right pa-2">
       <v-btn icon @click="closeCard"><v-icon>close</v-icon></v-btn></div
     >
@@ -352,7 +350,7 @@ export default {
                 >{{ hookAction }}</v-btn
               ></template
             >
-            <v-card
+            <v-card v-if="!addAction"
               ><v-card-actions>
                 <v-autocomplete
                   v-model="chosenAction"
@@ -362,8 +360,22 @@ export default {
                   item-value="id"
                   >{{ chosenAction }}</v-autocomplete
                 >
+                <v-btn
+                  small
+                  class="ml-8"
+                  color="primary"
+                  @click="addAction = true"
+                  ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New
+                  Action</v-btn
+                >
               </v-card-actions>
-            </v-card> </v-menu
+            </v-card>
+            <v-card v-else>
+              ADD ACTIONACTION action type / action name / action config
+              <v-btn icon @click="addAction = false"
+                ><v-icon>close</v-icon></v-btn
+              >
+            </v-card></v-menu
           >.</v-col
         >
       </v-row></v-alert
