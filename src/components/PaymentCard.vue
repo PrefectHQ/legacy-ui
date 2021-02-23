@@ -9,12 +9,11 @@ let style = {
     outlineStyle: 'solid',
     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
     fontSmoothing: 'antialiased',
-    fontSize:
-      '16px' /*,
-    iconColor: 'colors.grey.darken1',
+    fontSize: '16px',
+    iconColor: '#767676',
     '::placeholder': {
-      color: getComputedStyle(document.body).getPropertyValue('grey--darken-1')
-    }*/
+      color: '#767676'
+    }
   },
   invalid: {
     color: getComputedStyle(document.body).getPropertyValue(
