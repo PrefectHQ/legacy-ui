@@ -303,14 +303,7 @@ export default {
         transition="slide-y-transition"
       >
         <template #activator="{ on }">
-          <v-btn
-            class="vertical-button py-1 "
-            color="#666"
-            text
-            tile
-            small
-            v-on="on"
-          >
+          <v-btn class="vertical-button py-1" text tile small v-on="on">
             <v-icon>
               filter_list
             </v-icon>
@@ -508,7 +501,7 @@ export default {
   left: 50%;
   position: fixed;
   transform: translate(570px);
-  z-index: 4;
+  z-index: 6;
 
   &.sm-and-down {
     top: 156px;

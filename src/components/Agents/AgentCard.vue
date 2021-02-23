@@ -417,7 +417,7 @@ export default {
 }
 
 .fa-robot {
-  color: #666;
+  color: var(--v-secondaryGray-base);
   float: right;
   font-size: 1.8em;
 }
