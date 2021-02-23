@@ -9,15 +9,28 @@ let style = {
     outlineStyle: 'solid',
     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
     fontSmoothing: 'antialiased',
-    fontSize: '16px',
-    iconColor: '#767676',
+    fontSize:
+      '16px' /*,
+    iconColor: 'colors.grey.darken1',
     '::placeholder': {
-      color: '#767676'
-    }
+      color: getComputedStyle(document.body).getPropertyValue('grey--darken-1')
+    }*/
   },
   invalid: {
-    color: '#fa755a',
-    iconColor: '#fa755a'
+    color: getComputedStyle(document.body).getPropertyValue(
+      '--v-accentOrange-base'
+    ),
+    iconColor: getComputedStyle(document.body).getPropertyValue(
+      '--v-accentOrange-base'
+    )
+  },
+  focus: {
+    iconColor: getComputedStyle(document.body).getPropertyValue(
+      '--v-primary-base'
+    ),
+    borderColor: getComputedStyle(document.body).getPropertyValue(
+      '--v-primary-base'
+    )
   }
 }
 
@@ -252,26 +265,23 @@ export default {
 <style scoped>
 /*stylelint-disable */
 .StripeElement {
-  background-color: white;
   border: 1px solid;
-  border-color: #0009;
   border-radius: 4px;
   height: 56px;
 
   padding: 15px;
-  -webkit-transition: box-shadow 150ms ease;
-  transition: box-shadow 150ms ease;
 }
 
-.StripeElement--focus {
-  box-shadow: 0 1px 3px 0 #cfd7df;
+.StripeElement.focused {
+  border-color: var(--v-primary-base);
+  border-width: 2px;
 }
 
-.StripeElement--invalid {
-  border-color: #fa755a;
+.StripeElement.invalid {
+  border-color: var(--v-accentOrange-base);
 }
 
-.StripeElement--webkit-autofill {
+.StripeElement.webkit-autofill {
   background-color: #fefde5 !important;
 }
 </style>

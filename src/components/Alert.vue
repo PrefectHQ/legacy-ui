@@ -125,7 +125,7 @@ export default {
     :left="left"
     :value="internalValue"
     :timeout="-1"
-    :color="light ? '#fff' : null"
+    :color="light ? 'var(--v-appForeground-base)' : null"
     :style="{
       'margin-left': offsetX > 0 ? `${offsetX}px` : '0',
       'margin-right': offsetX < 0 ? `${Math.abs(offsetX)}px` : '0'

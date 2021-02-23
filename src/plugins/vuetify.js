@@ -38,7 +38,8 @@ export const THEME_COLORS = {
   warning: '#FFC107', // alerts warning
   deepRed: '#B00000',
   failRed: '#D50000',
-  appBackground: '#f9f9f9'
+  appBackground: '#f9f9f9',
+  appForeground: '#fff'
 }
 
 export const THEME_COLORS_ALT = {
