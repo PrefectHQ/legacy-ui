@@ -109,7 +109,7 @@ export default {
 
 <template>
   <v-container
-    class="ma-0 pa-0 position-relative h-100 test-bg"
+    class="ma-0 pa-0 position-relative test-bg mh-100"
     :class="containerClass"
     fluid
   >
@@ -176,16 +176,14 @@ export default {
       </div>
     </transition-group>
 
-    <v-container class="position-absolute onboard-content pa-0" fluid>
-      <transition name="fade" mode="out-in">
-        <router-view class="router-view" />
-      </transition>
-    </v-container>
+    <transition name="fade" mode="out-in"
+      ><router-view class="router-view" style="z-index: 3;" />
+    </transition>
   </v-container>
 </template>
 
 <style lang="scss" scoped>
-.h-100 {
+.mh-100 {
   min-height: 100vh !important;
 }
 
@@ -201,18 +199,10 @@ export default {
   background-image: linear-gradient(105deg, #2f383f, #647489) !important;
 }
 
-.onboard-content {
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-}
-
 .o-slash {
   backface-visibility: hidden;
   position: absolute;
   transition: all 250ms;
-  z-index: 2;
 
   &.slash-full {
     height: 100vh !important;
