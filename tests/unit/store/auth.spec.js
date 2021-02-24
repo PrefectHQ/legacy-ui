@@ -117,8 +117,8 @@ describe('auth Vuex Module', () => {
       expect(state.refreshTokenExpiry).toBe(null)
     })
 
-    it('should be checking against localstorage for the redirect route ', () => {
-      expect(localStorage.getItem).toHaveBeenCalledWith('redirectRoute')
+    it('should be checking against sessionStorage for the redirect route ', () => {
+      expect(sessionStorage.getItem).toHaveBeenCalledWith('redirectRoute')
     })
   })
 
@@ -332,7 +332,7 @@ describe('auth Vuex Module', () => {
         store.commit('redirectRoute', route)
         expect(store.getters['redirectRoute']).toBe(route)
 
-        expect(localStorage.getItem('redirectRoute')).toBe(route)
+        expect(sessionStorage.getItem('redirectRoute')).toBe(route)
       })
 
       it('should unset the redirectRoute', () => {
@@ -342,12 +342,12 @@ describe('auth Vuex Module', () => {
 
         store.commit('redirectRoute', route)
         expect(store.getters['redirectRoute']).toBe(route)
-        expect(localStorage.getItem('redirectRoute')).toBe(route)
+        expect(sessionStorage.getItem('redirectRoute')).toBe(route)
 
         store.commit('unsetRedirectRoute')
         expect(store.getters['redirectRoute']).toBe(null)
-        expect(localStorage.removeItem).toHaveBeenCalledWith('redirectRoute')
-        expect(localStorage.getItem('redirectRoute')).toBeFalsy()
+        expect(sessionStorage.removeItem).toHaveBeenCalledWith('redirectRoute')
+        expect(sessionStorage.getItem('redirectRoute')).toBeFalsy()
       })
     })
 
@@ -868,14 +868,14 @@ describe('auth Vuex Module', () => {
     })
 
     describe('logout', () => {
-      it('removes the redirect route from localStorage', async () => {
+      it('removes the redirect route from sessionStorage', async () => {
         const redirectRoute = '/before/logging/out/redirect'
         await store.dispatch('setRedirectRoute', redirectRoute)
 
-        expect(localStorage.getItem('redirectRoute')).toBe(redirectRoute)
+        expect(sessionStorage.getItem('redirectRoute')).toBe(redirectRoute)
 
         await store.dispatch('logout')
-        expect(localStorage.getItem('redirectRoute')).toBeFalsy()
+        expect(sessionStorage.getItem('redirectRoute')).toBeFalsy()
       })
 
       it('calls the logout method', async () => {
