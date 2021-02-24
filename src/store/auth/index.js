@@ -34,7 +34,10 @@ const state = {
   isLoggingInUser: false,
   isRefreshingAuthentication: false,
   isRefreshingAuthorization: false,
-  redirectRoute: localStorage.getItem('redirectRoute') || null,
+  redirectRoute:
+    localStorage.getItem('redirectRoute') ||
+    window.location?.pathname + window.location?.search ||
+    null,
   refreshToken: null,
   refreshTokenExpiry: null,
   user: null
@@ -273,12 +276,7 @@ const actions = {
     const source = urlParams.get('partner_source')
     const error = urlParams.get('error')
     // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
-
-    if (
-      (window.location?.pathname && !getters['redirectRoute']) ||
-      getters['redirectRoute'] !==
-        window.location.pathname + window.location.search
-    ) {
+    if (window.location?.pathname && !getters['redirectRoute']) {
       dispatch(
         'setRedirectRoute',
         window.location.pathname + window.location.search
