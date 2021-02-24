@@ -20,6 +20,12 @@ const authClient = new OktaAuth({
     disableHttpsCheck: VUE_APP_ENVIRONMENT !== 'production'
   }
 })
+const redirect =
+  localStorage.getItem('redirectRoute') &&
+  localStorage.getItem('redirectRoute') ===
+    window.location?.pathname + window.location?.search
+    ? localStorage.getItem('redirectRoute')
+    : null
 
 const state = {
   authorizationToken: null,
@@ -34,7 +40,7 @@ const state = {
   isLoggingInUser: false,
   isRefreshingAuthentication: false,
   isRefreshingAuthorization: false,
-  redirectRoute: localStorage.getItem('redirectRoute') || null,
+  redirectRoute: redirect,
   refreshToken: null,
   refreshTokenExpiry: null,
   user: null
@@ -272,13 +278,8 @@ const actions = {
     const invitationId = urlParams.get('invitation_id')
     const source = urlParams.get('partner_source')
     const error = urlParams.get('error')
-    // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
-    if (
-      (window.location?.pathname && !getters['redirectRoute']) ||
-      (getters['redirectRoute'] &&
-        getters['redirectRoute'] !==
-          window?.location.pathname + window?.location.search)
-    ) {
+
+    if (window.location?.pathname && !getters['redirectRoute']) {
       dispatch(
         'setRedirectRoute',
         window.location.pathname + window.location.search
