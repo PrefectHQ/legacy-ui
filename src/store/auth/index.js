@@ -273,7 +273,12 @@ const actions = {
     const source = urlParams.get('partner_source')
     const error = urlParams.get('error')
     // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
-    if (window.location?.pathname && !getters['redirectRoute']) {
+    if (
+      (window.location?.pathname && !getters['redirectRoute']) ||
+      (getters['redirectRoute'] &&
+        getters['redirectRoute'] !==
+          window?.location.pathname + window?.location.search)
+    ) {
       dispatch(
         'setRedirectRoute',
         window.location.pathname + window.location.search
