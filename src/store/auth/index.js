@@ -273,16 +273,23 @@ const actions = {
     const source = urlParams.get('partner_source')
     const error = urlParams.get('error')
     // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
-    if (window.location?.pathname) {
-      if (
-        getters['redirectRoute'] !==
+    // if (window.location?.pathname) {
+    //   if (
+    //     getters['redirectRoute'] !==
+    //     window.location.pathname + window.location.search
+    //   ) {
+    // dispatch(
+    //   'setRedirectRoute',
+    //   window.location.pathname + window.location.search
+    // )
+    //   }
+    // }
+
+    if (window.location?.pathname && !getters['redirectRoute']) {
+      dispatch(
+        'setRedirectRoute',
         window.location.pathname + window.location.search
-      ) {
-        dispatch(
-          'setRedirectRoute',
-          window.location.pathname + window.location.search
-        )
-      }
+      )
     }
 
     if (invitationId) {
