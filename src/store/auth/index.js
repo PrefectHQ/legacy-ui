@@ -34,10 +34,7 @@ const state = {
   isLoggingInUser: false,
   isRefreshingAuthentication: false,
   isRefreshingAuthorization: false,
-  redirectRoute:
-    localStorage.getItem('redirectRoute') ||
-    window.location?.pathname + window.location?.search ||
-    null,
+  redirectRoute: localStorage.getItem('redirectRoute') || null,
   refreshToken: null,
   refreshTokenExpiry: null,
   user: null
