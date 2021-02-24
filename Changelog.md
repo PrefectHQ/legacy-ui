@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Enables you to open up multiple links at the same time without redirecting to the first link - [#631](https://github.com/PrefectHQ/ui/pull/631)
 
 ### Bugfixes
 
