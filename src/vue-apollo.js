@@ -56,12 +56,7 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
 })
 
 const headerMiddleware = setContext((_, { headers }) => {
-  if (_.query && _.query.source && _.query.source == 'InteractiveAPI') {
-    headers['X-Prefect-Interactive-API'] = true
-  } else {
-    headers['X-Prefect-UI'] = true
-  }
-
+  headers['X-Prefect-UI'] = true
   headers['X-Backend'] = store.getters['api/backend']
   headers['X-Prefect-Tenant-ID'] = store.getters['tenant/tenant'].id
   headers['X-Prefect-User-ID'] = store.getters['user/user'].id
