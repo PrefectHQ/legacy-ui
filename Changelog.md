@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add interactive-api header - [#628](https://github.com/PrefectHQ/ui/pull/628)
 
 ### Bugfixes
 
