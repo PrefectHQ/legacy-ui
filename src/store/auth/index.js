@@ -272,6 +272,7 @@ const actions = {
     const invitationId = urlParams.get('invitation_id')
     const source = urlParams.get('partner_source')
     const error = urlParams.get('error')
+    // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
     if (window.location?.pathname && !getters['redirectRoute']) {
       dispatch(
         'setRedirectRoute',
@@ -298,7 +299,9 @@ const actions = {
 
       const { tokens } = isLoginRedirect
         ? await authClient.token.parseFromUrl()
-        : { tokens: await authClient.tokenManager.getTokens() }
+        : {
+            tokens: await authClient.tokenManager.getTokens()
+          }
 
       if (tokens?.accessToken && tokens?.idToken) {
         dispatch('commitTokens', tokens)
