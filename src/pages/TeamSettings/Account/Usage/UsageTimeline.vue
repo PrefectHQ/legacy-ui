@@ -1,15 +1,28 @@
 <script>
-import * as d3 from 'd3'
+import * as d3_base from 'd3'
+import * as d3_regression from 'd3-regression'
+
 import uniqueId from 'lodash.uniqueid'
 import debounce from 'lodash.debounce'
 
-const xAxisHeight = 20
+const d3 = Object.assign({}, d3_base, d3_regression)
+
+const xAxisHeight = 50
+
+const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
 
 export default {
+  props: {
+    baseline: {
+      type: Number,
+      required: false,
+      default: () => 10000
+    }
+  },
   data() {
     return {
       id: uniqueId('usage'),
-      barGroup: null,
+      mainGroup: null,
       chart: null,
       xAxisGroup: null,
       height: null,
@@ -17,50 +30,111 @@ export default {
 
       padding: {
         bottom: xAxisHeight,
-        left: 5,
-        right: 5,
-        top: 20,
-        x: 10,
-        y: xAxisHeight + 20
+        left: 50,
+        right: 50,
+        top: 70,
+        x: 100,
+        y: xAxisHeight + 70
       },
 
       hovered: null,
+
+      line: null,
+      predict: null,
+      regression: null,
 
       // Domain
       from: null,
       to: null,
 
       // Scales
-      x: d3.scaleBand(),
+      x: d3.scaleTime(),
       y: d3.scaleLinear()
     }
   },
   computed: {
+    predictedItems() {
+      if (!this.usage || !this.predict) return []
+      const from = new Date(this.from)
+      from.setMonth(this.from.getMonth() - 1)
+
+      const to = new Date(this.to)
+      to.setMonth(this.to.getMonth() + 1)
+
+      const months = d3.timeMonth.range(from, to)
+
+      const pastPrediction = Math.floor(this.predict(this.x(months[0])))
+      const past = {
+        timestamp: months[0],
+        runs: pastPrediction < 0 ? 0 : pastPrediction
+      }
+
+      const futurePrediction = Math.floor(
+        this.predict(this.x(months[months.length - 1]))
+      )
+      const future = {
+        timestamp: months[months.length - 1],
+        runs: futurePrediction < 0 ? 0 : futurePrediction
+      }
+
+      return [
+        past,
+        this.items[0],
+        this.items[1],
+        { timestamp: this.items[1].timestamp, runs: undefined },
+        this.items[this.items.length - 2],
+        this.items[this.items.length - 1],
+        future
+      ]
+    },
     items() {
       if (!this.usage) return []
-
       return this.usage
         .filter(d => d.kind == 'USAGE')
-        .reduce((arr, d) => {
-          const date = new Date(d.timestamp)
-          date.setMilliseconds(0)
-          date.setSeconds(0)
-          date.setMinutes(0)
-          date.setHours(0)
-          date.setDate(1)
+        .reduce(
+          (arr, d) => {
+            const date = new Date(d.timestamp)
+            date.setMilliseconds(0)
+            date.setSeconds(0)
+            date.setMinutes(0)
+            date.setHours(0)
+            date.setDate(1)
 
-          const index = arr.findIndex(d_ => d_.timestamp == date.toISOString())
-          if (index > -1) {
-            arr[index].runs += d.runs * -1
-          } else {
-            arr.push({
-              timestamp: date.toISOString(),
-              runs: d.runs * -1
-            })
-          }
+            const index = arr.findIndex(
+              d_ => d_.timestamp == date.toISOString()
+            )
 
-          return arr
-        }, [])
+            if (index > -1) {
+              arr[index].runs += d.runs * -1
+            } else {
+              arr.push({
+                timestamp: date.toISOString(),
+                runs: d.runs * -1
+              })
+            }
+
+            return arr
+          },
+          d3.timeMonth.range(this.from, this.to).map(d => {
+            return { timestamp: new Date(d).toISOString(), runs: 0 }
+          })
+        )
+    },
+    regressionItems() {
+      // We do this to prevent modification of the original items array
+      const items = Array.from(this.items, d => Object.assign({}, d))
+
+      const lastIndex = items.length - 1
+      const lastItem = items[lastIndex]
+      const timestamp = new Date()
+      const interpolatedRuns = Math.ceil(
+        (lastItem.runs *
+          daysInMonth(timestamp.getFullYear(), timestamp.getMonth())) /
+          timestamp.getDate()
+      )
+
+      items[items.length - 1].runs = interpolatedRuns
+      return items
     },
     resizeChart: function() {
       return debounce(() => {
@@ -82,7 +156,7 @@ export default {
     this.from.setFullYear(year - 1)
     this.from.setMinutes(0)
     this.from.setHours(0)
-    this.from.setDate(0)
+    this.from.setDate(1)
 
     this.to = new Date()
     this.to.setMinutes(59)
@@ -106,7 +180,10 @@ export default {
     },
     createChart() {
       this.chart = d3.select(`#${this.id}-svg`)
-      this.barGroup = this.chart.append('g').attr('class', 'bar-group')
+      this.mainGroup = this.chart.append('g').attr('class', 'main-group')
+      this.predictionGroup = this.chart
+        .append('g')
+        .attr('class', 'prediction-group')
       this.xAxisGroup = this.chart.append('g').attr('class', 'x-axis-group')
 
       window.addEventListener('resize', this.resizeChart)
@@ -147,82 +224,195 @@ export default {
       this.updateChart()
     },
     updateChart() {
-      const yOffset = this.height - this.padding.bottom
-      const bandwidth = this.x.bandwidth()
+      // const yOffset = this.height - this.padding.bottom
+      // const bandwidth = this.x.bandwidth()
+      //  .x(d => this.x(new Date(d.timestamp)) ?? 0)
+      //         .y(d => this.y(d.runs) || 0)
 
-      this.barGroup
-        .selectAll('.bar-group')
-        .data(this.items)
+      console.log(this.items)
+      // this.mainGroup
+      //   .selectAll('circle')
+      //   .data(this.items)
+      //   .enter()
+      //   .append('circle')
+      //   .attr('cx', d => this.x(new Date(d.timestamp)) ?? 0)
+      //   .attr('cy', d => this.height - this.y(d.runs))
+      //   .attr('r', 5)
+
+      this.mainGroup
+        .selectAll('path')
+        .data([this.items])
         .join(
-          enter => {
-            const g = enter
-              .append('g')
-              .attr('class', 'bar-group')
-              .on('mouseover', this.barMouseover)
-              .on('mouseout', this.barMouseout)
-
-            g.append('rect')
-              .attr('class', 'bar')
-              .attr('height', d => this.y(d.runs) || 0)
-              .attr('width', bandwidth)
-              .attr('fill', '#27b1ff')
-              // .attr('stroke-width', 3)
-              // .attr('stroke', 'rgba(0, 0, 0, 0.12)')
-              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-              .attr('y', d => yOffset - (this.y(d.runs) || 0))
-
-            g.append('text')
-              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-              .attr('y', d => yOffset - (this.y(d.runs) + 5 || 0))
-              .style('text-anchor', 'middle')
-              .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
-              .style('font', '10px Roboto, sans-serif')
-              .attr('fill', '#546E7A')
-              .text(d => d.runs.toLocaleString())
-
-            return g
-          },
-          update => {
-            const bar = update.selectAll('rect')
-
-            bar
-              .attr('height', d => this.y(d.runs) || 0)
-              .attr('width', bandwidth)
-              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-              .attr('y', d => yOffset - (this.y(d.runs) || 0))
-
-            const text = update.select('text')
-
-            text
-              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-              .attr('y', d => yOffset - (this.y(d.runs) + 5 || 0))
-              .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
-              .text(d => d.runs.toLocaleString())
-          },
-          exit =>
-            exit.call(exit =>
-              exit
-                .on('click', null)
-                .on('mouseout', null)
-                .on('mouseover', null)
-                .transition('exit')
-                .duration(500)
-                .remove()
+          enter =>
+            enter
+              .append('path')
+              .attr('stroke-width', 1)
+              .attr('stroke', '#000')
+              .attr('fill', 'none')
+              .attr('d', d =>
+                this.line(
+                  Array.from(d, d_ => {
+                    return { ...d_, runs: 0 }
+                  })
+                )
+              )
+              .call(enter =>
+                enter
+                  .transition()
+                  .duration(1000)
+                  .ease(d3.easeQuad)
+                  .attr('d', this.line)
+              ),
+          update =>
+            update.call(update =>
+              update
+                .transition()
+                .duration(1000)
+                .ease(d3.easeQuad)
+                .attr('d', this.line)
             )
         )
+
+      this.predictionGroup
+        .selectAll('path')
+        .data([this.predictedItems])
+        .join(
+          enter =>
+            enter
+              .append('path')
+              .attr('stroke-width', 1)
+              .attr('stroke', '#FF5733')
+              .attr('fill', 'none')
+              .attr('d', d =>
+                this.line(
+                  Array.from(d, d_ => {
+                    return { ...d_, runs: 0 }
+                  })
+                )
+              )
+              .call(enter =>
+                enter
+                  .transition()
+                  .duration(1000)
+                  .ease(d3.easeQuad)
+                  .attr('d', this.line)
+              ),
+          update =>
+            update.call(update =>
+              update
+                .transition()
+                .duration(1000)
+                .ease(d3.easeQuad)
+                .attr('d', this.line)
+            )
+        )
+
+      // this.mainGroup
+      //   // .append('g')
+      //   .selectAll('path')
+      //   .data([this.items])
+      //   .join('path')
+      //   // .style('mix-blend-mode', 'multiply')
+      //   .attr('d', this.line)
+      // this.mainGroup
+      //   .selectAll('path')
+      //   .data(this.items)
+      //   .join(
+      //     enter => {
+      //       return enter.append('path').attr(
+      //         'd',
+      //         d3
+      //           .area()
+      //           .x(d => this.x(new Date(d.timestamp)) ?? 0)
+      //           .y0(this.y(0))
+      //           .y1(d => yOffset - (this.y(d.runs) || 0))
+      //       )
+      //     },
+      //     update =>
+      //       update.attr(
+      //         'd',
+      //         d3
+      //           .area()
+      //           .x(d => this.x(new Date(d.timestamp)) ?? 0)
+      //           .y0(this.y(0))
+      //           .y1(d => yOffset - (this.y(d.runs) || 0))
+      //       )
+      //   )
+      // this.mainGroup
+      //   .selectAll('.bar-group')
+      //   .data(this.items)
+      //   .join(
+      //     enter => {
+      //       const g = enter
+      //         .append('g')
+      //         .attr('class', 'bar-group')
+      //         .on('mouseover', this.barMouseover)
+      //         .on('mouseout', this.barMouseout)
+      //       g.append('rect')
+      //         .attr('class', 'bar')
+      //         .attr('height', d => this.y(d.runs) || 0)
+      //         .attr('width', bandwidth)
+      //         .attr('fill', '#27b1ff')
+      //         // .attr('stroke-width', 3)
+      //         // .attr('stroke', 'rgba(0, 0, 0, 0.12)')
+      //         .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+      //         .attr('y', d => yOffset - (this.y(d.runs) || 0))
+      //       g.append('text')
+      //         .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+      //         .attr('y', d => yOffset - (this.y(d.runs) + 5 || 0))
+      //         .style('text-anchor', 'middle')
+      //         .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
+      //         .style('font', '10px Roboto, sans-serif')
+      //         .attr('fill', '#546E7A')
+      //         .text(d => d.runs.toLocaleString())
+      //       return g
+      //     },
+      //     update => {
+      //       const bar = update.selectAll('rect')
+      //       bar
+      //         .attr('height', d => this.y(d.runs) || 0)
+      //         .attr('width', bandwidth)
+      //         .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+      //         .attr('y', d => yOffset - (this.y(d.runs) || 0))
+      //       const text = update.select('text')
+      //       text
+      //         .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+      //         .attr('y', d => yOffset - (this.y(d.runs) + 5 || 0))
+      //         .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
+      //         .text(d => d.runs.toLocaleString())
+      //     },
+      //     exit =>
+      //       exit.call(exit =>
+      //         exit
+      //           .on('click', null)
+      //           .on('mouseout', null)
+      //           .on('mouseover', null)
+      //           .transition('exit')
+      //           .duration(500)
+      //           .remove()
+      //       )
+      //   )
     },
     updateScales() {
-      const xRange = [this.padding.left, this.width - this.padding.right]
+      this.x.domain([this.from, this.to])
+      this.x.range([this.padding.left, this.width - this.padding.right])
 
-      this.x
-        .rangeRound(xRange)
-        .paddingInner(0.6)
-        .paddingOuter(0.2)
-
-      this.x.domain(d3.timeMonth.range(this.from, this.to))
-
-      this.y.domain([1, d3.max(this.items.map(d => d.runs))])
+      this.y.domain([0, d3.max(this.items.map(d => d.runs))])
       this.y.range([this.padding.top, this.height - this.padding.y])
+
+      this.line = d3
+        .line()
+        .curve(d3.curveMonotoneX)
+        .defined(d => !isNaN(d.runs)) // Use this to create gaps in data
+        .x(d => this.x(new Date(d.timestamp)) ?? 0)
+        .y(d => this.height - this.y(d.runs) || 0)
+
+      this.regression = d3
+        .regressionLinear()
+        .x(d => this.x(new Date(d.timestamp)))
+        .y(d => d.runs)(this.regressionItems)
+
+      this.predict = this.regression.predict
 
       const xAxis = d3
         .axisBottom(this.x)
