@@ -95,7 +95,7 @@ export default {
         action => action.id === this.chosenAction[0]
       )[0]?.name
 
-      return action?.length > 0 ? action.toString() : '...action(s)'
+      return action?.length > 0 ? action.toString() : '...do this'
     },
     completeAction() {
       if (!this.includeTo) return !!this.chosenEventType && !!this.chosenAction
@@ -287,6 +287,16 @@ export default {
                 >
                   {{ SLATypeFormat }}</v-btn
                 ></template
+              ><v-card
+                ><v-autocomplete
+                  v-model="SLAType"
+                  item-text="name"
+                  item-value="enum"
+                  class="pa-4"
+                  label="Select SLA Type"
+                  :items="SLATypes"
+                  >{{ SLATypeFormat }}</v-autocomplete
+                ></v-card
               ></v-menu
             >
             for
@@ -332,6 +342,7 @@ export default {
                   <v-autocomplete
                     v-model="chosenStates"
                     multiple
+                    label="Choose states"
                     :items="['Failed', 'Success']"
                     >{{ hookStates }}</v-autocomplete
                   >
@@ -355,6 +366,7 @@ export default {
                 <v-autocomplete
                   v-model="chosenAction"
                   multiple
+                  label="What should happen?"
                   :items="actions"
                   item-text="name"
                   item-value="id"
@@ -366,8 +378,7 @@ export default {
                   color="primary"
                   @click="addAction = true"
                   ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New
-                  Action</v-btn
-                >
+                </v-btn>
               </v-card-actions>
             </v-card>
             <v-card v-else>
