@@ -46,6 +46,10 @@ export default {
       const action = hook?.action?.action_type
       const name = hook?.action?.name
       return name || this.actionDetails[action]?.title
+    },
+    openEdit(hookAndConfig) {
+      this.hookConfig = hookAndConfig
+      this.addAction = true
     }
   },
   apollo: {
@@ -76,13 +80,16 @@ export default {
     </v-row>
     <v-row v-if="!addAction">
       <v-col v-for="(hook, i) in hooks" :key="i" cols="12">
-        <ActionCard :hook="hook" />
+        <ActionCard :hook="hook" @edit-action="openEdit" />
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
         <v-scale-transition v-if="addAction">
-          <AddActionCard @close="addAction = false" />
+          <AddActionCard
+            :hook-details="hookConfig"
+            @close="addAction = false"
+          />
         </v-scale-transition>
       </v-col>
     </v-row>

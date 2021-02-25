@@ -1,0 +1,5 @@
+mutation deleteHook ($hookId: UUID!) {
+  delete_hook (input: {hook_id: $hookId}) {
+    success
+  }
+}
