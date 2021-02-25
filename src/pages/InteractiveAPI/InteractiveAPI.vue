@@ -58,7 +58,8 @@ query { hello }
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
-          authorization: `Bearer ${this.authorizationToken}`
+          authorization: `Bearer ${this.authorizationToken}`,
+          'X-Prefect-Interactive-API': 'true'
         },
         body: JSON.stringify(params)
       }).then(res => {
