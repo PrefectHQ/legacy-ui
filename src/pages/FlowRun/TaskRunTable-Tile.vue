@@ -61,6 +61,7 @@ export default {
       itemsPerPage: 15,
       page: 1,
       searchTerm: null,
+      state: null,
       sortBy: 'start_time',
       sortDesc: true,
       taskRunDurations: {}
@@ -97,6 +98,7 @@ export default {
   },
   apollo: {
     flowRun: {
+      //this.itemsPerPage
       query: require('@/graphql/FlowRun/table-task-runs.gql'),
       variables() {
         const orderBy = {}
@@ -105,6 +107,7 @@ export default {
           flowRunId: this.flowRunId,
           limit: this.itemsPerPage,
           name: this.searchFormatted,
+          state: this.state,
           offset: this.offset,
           orderBy
         }
@@ -136,6 +139,34 @@ export default {
 <template>
   <v-card class="pa-2" tile>
     <CardTitle :title="tableTitle" icon="pi-task-run">
+      <v-select
+        slot="sort"
+        v-model="state"
+        flat
+        solo
+        dense
+        class="task-search"
+        hide-details
+        style="width: 140px;"
+        :items="[
+          { header: 'Finished States' },
+          { divider: '...' },
+          'Failed',
+          'Success',
+          'Cancelled',
+          'Finished',
+          'Skipped',
+          'TimedOut',
+          { header: 'Scheduled States - To Re-run Task Run' },
+          { divider: '...' },
+          'Scheduled',
+          'Resume',
+          { header: 'Pending - to clear the state' },
+          { divider: '...' },
+          'Pending'
+        ]"
+        label="Sort by state"
+      ></v-select>
       <v-text-field
         slot="action"
         v-model="searchTerm"
@@ -150,7 +181,6 @@ export default {
       >
       </v-text-field>
     </CardTitle>
-
     <v-card-text>
       <v-data-table
         :footer-props="{

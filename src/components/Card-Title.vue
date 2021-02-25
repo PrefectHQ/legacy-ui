@@ -58,6 +58,7 @@ export default {
             <v-skeleton-loader v-else type="heading" tile></v-skeleton-loader>
           </div>
           <div class="action-slot d-flex align-center justify-end">
+            <slot name="sort" />
             <slot name="action" />
           </div>
         </v-list-item-title>
