@@ -22,6 +22,8 @@ export default {
   data() {
     return {
       id: uniqueId('usage'),
+      format: null,
+      ticks: null,
       period: 'Year',
       mainGroup: null,
       chart: null,
@@ -293,10 +295,10 @@ export default {
       this.updateChart()
     },
     updateChart() {
-      // const yOffset = this.height - this.padding.bottom
-      // const bandwidth = this.x.bandwidth()
-      //  .x(d => this.x(new Date(d.timestamp)) ?? 0)
-      //         .y(d => this.y(d.runs) || 0)
+      const yOffset = this.height
+      const bandwidth = Math.floor(
+        ((this.width - this.padding.x) / this.ticks) * 0.8
+      )
 
       console.log(this.items)
       // this.mainGroup
@@ -378,91 +380,69 @@ export default {
       //   )
 
       // Bars
-      // this.mainGroup
-      //   // .append('g')
-      //   .selectAll('path')
-      //   .data([this.items])
-      //   .join('path')
-      //   // .style('mix-blend-mode', 'multiply')
-      //   .attr('d', this.line)
-      // this.mainGroup
-      //   .selectAll('path')
-      //   .data(this.items)
-      //   .join(
-      //     enter => {
-      //       return enter.append('path').attr(
-      //         'd',
-      //         d3
-      //           .area()
-      //           .x(d => this.x(new Date(d.timestamp)) ?? 0)
-      //           .y0(this.y(0))
-      //           .y1(d => yOffset - (this.y(d.runs) || 0))
-      //       )
-      //     },
-      //     update =>
-      //       update.attr(
-      //         'd',
-      //         d3
-      //           .area()
-      //           .x(d => this.x(new Date(d.timestamp)) ?? 0)
-      //           .y0(this.y(0))
-      //           .y1(d => yOffset - (this.y(d.runs) || 0))
-      //       )
-      //   )
-      // this.mainGroup
-      //   .selectAll('.bar-group')
-      //   .data(this.items)
-      //   .join(
-      //     enter => {
-      //       const g = enter
-      //         .append('g')
-      //         .attr('class', 'bar-group')
-      //         .on('mouseover', this.barMouseover)
-      //         .on('mouseout', this.barMouseout)
-      //       g.append('rect')
-      //         .attr('class', 'bar')
-      //         .attr('height', d => this.y(d.runs) || 0)
-      //         .attr('width', bandwidth)
-      //         .attr('fill', '#27b1ff')
-      //         // .attr('stroke-width', 3)
-      //         // .attr('stroke', 'rgba(0, 0, 0, 0.12)')
-      //         .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-      //         .attr('y', d => yOffset - (this.y(d.runs) || 0))
-      //       g.append('text')
-      //         .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-      //         .attr('y', d => yOffset - (this.y(d.runs) + 5 || 0))
-      //         .style('text-anchor', 'middle')
-      //         .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
-      //         .style('font', '10px Roboto, sans-serif')
-      //         .attr('fill', '#546E7A')
-      //         .text(d => d.runs.toLocaleString())
-      //       return g
-      //     },
-      //     update => {
-      //       const bar = update.selectAll('rect')
-      //       bar
-      //         .attr('height', d => this.y(d.runs) || 0)
-      //         .attr('width', bandwidth)
-      //         .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-      //         .attr('y', d => yOffset - (this.y(d.runs) || 0))
-      //       const text = update.select('text')
-      //       text
-      //         .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-      //         .attr('y', d => yOffset - (this.y(d.runs) + 5 || 0))
-      //         .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
-      //         .text(d => d.runs.toLocaleString())
-      //     },
-      //     exit =>
-      //       exit.call(exit =>
-      //         exit
-      //           .on('click', null)
-      //           .on('mouseout', null)
-      //           .on('mouseover', null)
-      //           .transition('exit')
-      //           .duration(500)
-      //           .remove()
-      //       )
-      //   )
+
+      this.mainGroup
+        .selectAll('.bar-group')
+        .data(this.items)
+        .join(
+          enter => {
+            const g = enter
+              .append('g')
+              .attr('class', 'bar-group')
+              .on('mouseover', this.barMouseover)
+              .on('mouseout', this.barMouseout)
+            g.append('rect')
+              .attr('class', 'bar')
+              .attr('height', d => (d.runs ? this.y(d.runs) : 0))
+              .attr('width', bandwidth)
+              .attr('fill', 'rgba(0,0,0,0.05)')
+              // .attr('stroke-width', 3)
+              // .attr('stroke', 'rgba(0, 0, 0, 0.12)')
+              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+              .attr('y', d => (d.runs ? yOffset - this.y(d.runs) : 0))
+              .style('transform', `translate(-${bandwidth / 2 ?? 0}px)`)
+
+            // g.append('text')
+            //   .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+            //   .attr('y', d =>
+            //     d.runs ? yOffset - (this.y(d.runs) + 5 || 0) : yOffset
+            //   )
+            //   .style('text-anchor', 'middle')
+            //   .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
+            //   .style('font', '10px Roboto, sans-serif')
+            //   .attr('fill', '#546E7A')
+            //   .text(d => d.runs?.toLocaleString())
+            return g
+          },
+          update => {
+            const bar = update.selectAll('rect')
+            bar
+              .attr('height', d => (d.runs ? this.y(d.runs) : 0))
+              .attr('width', bandwidth)
+              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+              .attr('y', d => (d.runs ? yOffset - this.y(d.runs) : 0))
+              .style('transform', `translate(-${bandwidth / 2 ?? 0}px)`)
+
+            // const text = update.select('text')
+            // text
+            //   .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+            //   .attr('y', d =>
+            //     d.runs ? yOffset - (this.y(d.runs) + 5 || 0) : yOffset
+            //   )
+            //   .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
+            //   .text(d => d.runs?.toLocaleString())
+          },
+          exit =>
+            exit.call(exit =>
+              exit
+                .on('click', null)
+                .on('mouseout', null)
+                .on('mouseover', null)
+                .transition('exit')
+                .duration(500)
+                .remove()
+            )
+        )
     },
     updateScales() {
       this.x.domain([this.from, this.to])
@@ -487,20 +467,18 @@ export default {
 
       this.predict = this.regression.predict
 
-      let ticks, format
-
       switch (this.period) {
         case 'Year':
-          ticks = 12
-          format = '%B'
+          this.ticks = 12
+          this.format = '%B'
           break
         case 'Month':
-          ticks = 31
-          format = '%e'
+          this.ticks = 31
+          this.format = '%e'
           break
         case 'Week':
-          ticks = 7
-          format = '%A'
+          this.ticks = 7
+          this.format = '%A'
           break
         default:
           break
@@ -508,9 +486,9 @@ export default {
 
       const xAxis = d3
         .axisBottom(this.x)
-        .ticks(ticks)
+        .ticks(this.ticks)
         .tickSizeOuter(0)
-        .tickFormat(d3.timeFormat(format))
+        .tickFormat(d3.timeFormat(this.format))
 
       const yAxis = d3
         .axisRight(this.y)
