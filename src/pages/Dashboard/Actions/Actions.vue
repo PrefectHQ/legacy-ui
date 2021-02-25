@@ -9,8 +9,9 @@ export default {
   data() {
     return {
       addAction: false,
+      hookConfig: null,
       hookDetails: {
-        FlowRunStateChangedEvent: {
+        RunStateChangedEvent: {
           type: 'flow',
           action: 'changes',
           icon: 'pi-flow'
@@ -50,6 +51,10 @@ export default {
     openEdit(hookAndConfig) {
       this.hookConfig = hookAndConfig
       this.addAction = true
+    },
+    closeCard() {
+      this.addAction = false
+      this.hookConfig = null
     }
   },
   apollo: {
@@ -86,10 +91,7 @@ export default {
     <v-row>
       <v-col cols="12">
         <v-scale-transition v-if="addAction">
-          <AddActionCard
-            :hook-details="hookConfig"
-            @close="addAction = false"
-          />
+          <AddActionCard :hook-detail="hookConfig" @close="closeCard" />
         </v-scale-transition>
       </v-col>
     </v-row>

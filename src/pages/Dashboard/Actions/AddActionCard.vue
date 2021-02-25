@@ -7,7 +7,7 @@ export default {
     AddDoThis
   },
   props: {
-    hookDetails: {
+    hookDetail: {
       type: Object,
       required: false,
       default: null
@@ -16,9 +16,10 @@ export default {
   data() {
     return {
       flow: '',
+      hookDetails: this.hookDetail,
       project: '',
       selectedEvent: false,
-      flowEventType: '...',
+      flowEventType: '',
       chosenEventType: '',
       chosenStates: [],
       chosenAction: '',
@@ -79,25 +80,29 @@ export default {
     },
     isSLA() {
       return (
-        this.hookDetails?.flowConfig ||
+        this.hookDetails?.flowConfig?.kind ||
         this.flowEventType === 'STARTED_NOT_FINISHED' ||
         this.flowEventType == 'SCHEDULED_NOT_STARTED'
       )
     },
     eventTypeFormat() {
-      if (this.hookDetails?.flowConfig) {
-        const type = this.flowEventTypes?.filter(
-          sla => sla.enum === this.hookDetails?.flowConfig?.kind
-        )[0]?.name
-        return type?.toString()
-      }
-      if (this.chosenEventType == 'flow') {
+      if (this.flowEventType) {
         const type = this.flowEventTypes?.filter(
           sla => sla.enum === this.flowEventType
         )[0]?.name
         return type?.toString() || 'does something'
       }
-      return 'agent does something'
+      if (this.hookDetails?.flowName) {
+        if (this.hookDetails.flowConfig) {
+          const type = this.flowEventTypes?.filter(
+            sla => sla.enum === this.hookDetails?.flowConfig?.kind
+          )[0]?.name
+          return type?.toString()
+        } else {
+          return 'changes state to'
+        }
+      }
+      return 'does something'
     },
     // colSize() {
     //   return 12 / this.hookTypes.length
@@ -111,6 +116,10 @@ export default {
         this.hookDetails?.hook?.event_type === 'FlowRunStateChangedEvent'
       )
     },
+    durationSeconds() {
+      return this.seconds || this.hookDetails?.flowConfig?.duration_seconds
+    },
+
     // hookType() {
     //   return `${} `
     // },
@@ -147,6 +156,7 @@ export default {
       return action?.length > 0 ? action.toString() : 'do this'
     },
     completeAction() {
+      if (this.hookDetail) return true
       if (!this.includeTo) return !!this.chosenEventType && !!this.chosenAction
       return (
         !!this.chosenAction &&
@@ -157,14 +167,15 @@ export default {
     agentName() {
       const name = this.agents?.filter(agent => agent.id === this.agent)[0]
         ?.name
-      return name || 'name'
+      return name || '???'
     },
     flowName() {
-      if (this.hookDetails.flowName) return this.hookDetails.flowName[0].name
-      const name = this.flows?.filter(
-        flow => flow.flow_group_id === this.flow
-      )[0]?.name
-      return name || 'name'
+      if (this.flow) {
+        return this.flows?.filter(flow => flow.flow_group_id === this.flow)[0]
+          ?.name
+      }
+      if (this.hookDetails?.flowName) return this.hookDetails?.flowName[0]?.name
+      return '???'
     }
   },
   methods: {
@@ -177,28 +188,37 @@ export default {
     // },
     async createHook() {
       let data
+      const flow = this.flow || this.hookDetails?.flowName[0]?.flow_group_id
+      const action = this.chosenAction[0] || this.hookDetails?.hook?.action?.id
+      console.log('action', this.hookDetails?.flowName)
       try {
-        if (this.chosenEventType === 'flow') {
-          if (this.flowEventType == 'CHANGES_STATE') {
+        if (this.chosenEventType === 'flow' || this.hookDetails?.flowName[0]) {
+          if (this.includeTo) {
+            const states = this.chosenStates.length
+              ? this.chosenStates
+              : this.hookDetails?.hook?.event_tags?.state
             const flowRunStateChangedSuccess = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
               variables: {
                 input: {
-                  flow_group_ids: [this.flow],
-                  action_id: this.chosenAction[0],
-                  states: this.chosenStates
+                  flow_group_ids: [flow],
+                  action_id: action,
+                  states: states
                 }
               }
             })
             data = flowRunStateChangedSuccess.data
           }
           if (this.isSLA) {
+            const kind =
+              this.flowEventType || this.hookDetails?.flowConfig?.kind
+
             const configId = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_flow_sla.gql'),
               variables: {
                 input: {
-                  kind: this.flowEventType,
-                  duration_seconds: Number(this.seconds)
+                  kind: kind,
+                  duration_seconds: this.durationSeconds
                 }
               }
             })
@@ -207,7 +227,7 @@ export default {
               variables: {
                 input: {
                   flow_sla_config_id: configId.data.create_flow_sla_config.id,
-                  flow_group_id: this.flow
+                  flow_group_id: flow
                 }
               }
             })
@@ -215,12 +235,20 @@ export default {
               mutation: require('@/graphql/Mutations/create_flow_sla_failed_hook.gql'),
               variables: {
                 input: {
-                  action_id: this.chosenAction[0],
+                  action_id: action,
                   sla_config_ids: [configId.data.create_flow_sla_config.id]
                 }
               }
             })
             data = flowSLAEventSuccess.data
+          }
+          if (data && this.hookDetails) {
+            await this.$apollo.mutate({
+              mutation: require('@/graphql/Mutations/delete-hook.gql'),
+              variables: {
+                hookId: this.hookDetails.hook.id
+              }
+            })
           }
         }
       } catch (error) {
@@ -231,6 +259,7 @@ export default {
           alertType: 'error'
         })
       } finally {
+        this.hookDetails = null
         //needs updating - alert simply for deving at the mo
         if (data) {
           this.setAlert({
@@ -238,6 +267,7 @@ export default {
             alertMessage: 'hook created',
             alertType: 'success'
           })
+          this.closeCard()
         }
       }
     }
@@ -392,7 +422,10 @@ export default {
                 ></template
               ><v-card
                 ><v-autocomplete
-                  v-if="chosenEventType === 'flow'"
+                  v-if="
+                    chosenEventType === 'flow' ||
+                      (hookDetails && hookDetails.flowName)
+                  "
                   v-model="flowEventType"
                   item-text="name"
                   item-value="enum"

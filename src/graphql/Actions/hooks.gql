@@ -6,8 +6,8 @@ query Actions {
     __typename
     action {
       name
+      id
       action_type
-      
     }
   }
 }
