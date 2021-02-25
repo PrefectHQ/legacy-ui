@@ -22,9 +22,11 @@ export default {
   data() {
     return {
       id: uniqueId('usage'),
+      period: 'Year',
       mainGroup: null,
       chart: null,
       xAxisGroup: null,
+      yAxisGroup: null,
       height: null,
       width: null,
 
@@ -32,9 +34,9 @@ export default {
         bottom: xAxisHeight,
         left: 50,
         right: 50,
-        top: 70,
+        top: 30,
         x: 100,
-        y: xAxisHeight + 70
+        y: xAxisHeight + 30
       },
 
       hovered: null,
@@ -44,8 +46,8 @@ export default {
       regression: null,
 
       // Domain
-      from: null,
-      to: null,
+      // from: null, // we use a computed prop for this based on the period
+      // to: null, // we use a computed prop for this based on the period
 
       // Scales
       x: d3.scaleTime(),
@@ -89,6 +91,33 @@ export default {
     },
     items() {
       if (!this.usage) return []
+      const now = new Date()
+      let range,
+        setDate = true,
+        setHours = true,
+        setMinutes = true
+
+      switch (this.period) {
+        case 'Year':
+          range = d3.timeMonth
+          break
+        case 'Month':
+          range = d3.timeDay
+          setDate = false
+          break
+        case 'Week':
+          range = d3.timeDay
+          setDate = false
+          break
+        case 'Day':
+        default:
+          range = d3.timeHour
+          setDate = false
+          setHours = false
+          setMinutes = false
+          break
+      }
+
       return this.usage
         .filter(d => d.kind == 'USAGE')
         .reduce(
@@ -96,9 +125,18 @@ export default {
             const date = new Date(d.timestamp)
             date.setMilliseconds(0)
             date.setSeconds(0)
-            date.setMinutes(0)
-            date.setHours(0)
-            date.setDate(1)
+
+            if (setMinutes) {
+              date.setMinutes(0)
+            }
+
+            if (setHours) {
+              date.setHours(0)
+            }
+
+            if (setDate) {
+              date.setDate(1)
+            }
 
             const index = arr.findIndex(
               d_ => d_.timestamp == date.toISOString()
@@ -115,10 +153,15 @@ export default {
 
             return arr
           },
-          d3.timeMonth.range(this.from, this.to).map(d => {
-            return { timestamp: new Date(d).toISOString(), runs: 0 }
+          range.range(this.from, this.to).map(d => {
+            const date = new Date(d)
+            return {
+              timestamp: date.toISOString(),
+              runs: date > now ? undefined : 0
+            }
           })
         )
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
     },
     regressionItems() {
       // We do this to prevent modification of the original items array
@@ -140,6 +183,40 @@ export default {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
       }, 300)
+    },
+    from() {
+      const from = new Date()
+
+      if (this.period == 'Year') {
+        const year = new Date().getFullYear()
+        from.setFullYear(year - 1)
+        from.setDate(1)
+      } else if (this.period == 'Month') {
+        from.setDate(1)
+      } else if (this.period == 'Week') {
+        const diff =
+          from.getDate() - from.getDay() + (from.getDay() === 0 ? -6 : 1)
+        from.setDate(diff)
+      }
+
+      from.setMinutes(1)
+      from.setHours(0)
+      return from
+    },
+    to() {
+      const to = new Date()
+
+      if (this.period == 'Year' || this.period == 'Month') {
+        to.setMonth(to.getMonth() + 1)
+        to.setDate(0)
+      } else if (this.period == 'Week') {
+        const diff = to.getDate() + (6 - to.getDay())
+        to.setDate(diff)
+      }
+
+      to.setMinutes(59)
+      to.setHours(23)
+      return to
     }
   },
   watch: {
@@ -147,21 +224,12 @@ export default {
       if (!val) return
       this.updateScales()
       this.updateChart()
+    },
+    from() {
+      this.$apollo.queries['usage'].refetch()
     }
   },
   mounted() {
-    const year = new Date().getFullYear()
-    this.from = new Date()
-
-    this.from.setFullYear(year - 1)
-    this.from.setMinutes(0)
-    this.from.setHours(0)
-    this.from.setDate(1)
-
-    this.to = new Date()
-    this.to.setMinutes(59)
-    this.to.setHours(23)
-
     this.createChart()
     this.$apollo.queries['usage'].refetch()
   },
@@ -185,6 +253,7 @@ export default {
         .append('g')
         .attr('class', 'prediction-group')
       this.xAxisGroup = this.chart.append('g').attr('class', 'x-axis-group')
+      this.yAxisGroup = this.chart.append('g').attr('class', 'y-axis-group')
 
       window.addEventListener('resize', this.resizeChart)
 
@@ -213,7 +282,7 @@ export default {
       this.width = Math.floor(parent.clientWidth - padding.left - padding.right)
 
       this.height = Math.floor(
-        parent.clientHeight - padding.top - padding.bottom
+        parent.clientHeight - padding.top - padding.bottom - this.padding.top
       )
 
       this.chart.attr('viewbox', `0 0 ${this.width} ${this.height}`)
@@ -246,8 +315,8 @@ export default {
           enter =>
             enter
               .append('path')
-              .attr('stroke-width', 1)
-              .attr('stroke', '#000')
+              .attr('stroke-width', 2)
+              .attr('stroke', '#27b1ff')
               .attr('fill', 'none')
               .attr('d', d =>
                 this.line(
@@ -273,40 +342,42 @@ export default {
             )
         )
 
-      this.predictionGroup
-        .selectAll('path')
-        .data([this.predictedItems])
-        .join(
-          enter =>
-            enter
-              .append('path')
-              .attr('stroke-width', 1)
-              .attr('stroke', '#FF5733')
-              .attr('fill', 'none')
-              .attr('d', d =>
-                this.line(
-                  Array.from(d, d_ => {
-                    return { ...d_, runs: 0 }
-                  })
-                )
-              )
-              .call(enter =>
-                enter
-                  .transition()
-                  .duration(1000)
-                  .ease(d3.easeQuad)
-                  .attr('d', this.line)
-              ),
-          update =>
-            update.call(update =>
-              update
-                .transition()
-                .duration(1000)
-                .ease(d3.easeQuad)
-                .attr('d', this.line)
-            )
-        )
+      // Prediction pathing
+      // this.predictionGroup
+      //   .selectAll('path')
+      //   .data([this.predictedItems])
+      //   .join(
+      //     enter =>
+      //       enter
+      //         .append('path')
+      //         .attr('stroke-width', 1)
+      //         .attr('stroke', '#FF5733')
+      //         .attr('fill', 'none')
+      //         .attr('d', d =>
+      //           this.line(
+      //             Array.from(d, d_ => {
+      //               return { ...d_, runs: 0 }
+      //             })
+      //           )
+      //         )
+      //         .call(enter =>
+      //           enter
+      //             .transition()
+      //             .duration(1000)
+      //             .ease(d3.easeQuad)
+      //             .attr('d', this.line)
+      //         ),
+      //     update =>
+      //       update.call(update =>
+      //         update
+      //           .transition()
+      //           .duration(1000)
+      //           .ease(d3.easeQuad)
+      //           .attr('d', this.line)
+      //       )
+      //   )
 
+      // Bars
       // this.mainGroup
       //   // .append('g')
       //   .selectAll('path')
@@ -397,15 +468,17 @@ export default {
       this.x.domain([this.from, this.to])
       this.x.range([this.padding.left, this.width - this.padding.right])
 
-      this.y.domain([0, d3.max(this.items.map(d => d.runs))])
+      this.y.domain([d3.max(this.items.map(d => d.runs)), 0])
       this.y.range([this.padding.top, this.height - this.padding.y])
+
+      const nullY = this.y(0)
 
       this.line = d3
         .line()
         .curve(d3.curveMonotoneX)
         .defined(d => !isNaN(d.runs)) // Use this to create gaps in data
         .x(d => this.x(new Date(d.timestamp)) ?? 0)
-        .y(d => this.height - this.y(d.runs) || 0)
+        .y(d => this.height + (this.y(d.runs) - nullY) || 0)
 
       this.regression = d3
         .regressionLinear()
@@ -414,15 +487,53 @@ export default {
 
       this.predict = this.regression.predict
 
+      let ticks, format
+
+      switch (this.period) {
+        case 'Year':
+          ticks = 12
+          format = '%B'
+          break
+        case 'Month':
+          ticks = 31
+          format = '%e'
+          break
+        case 'Week':
+          ticks = 7
+          format = '%A'
+          break
+        default:
+          break
+      }
+
       const xAxis = d3
         .axisBottom(this.x)
-        .ticks(12)
+        .ticks(ticks)
         .tickSizeOuter(0)
-        .tickFormat(d3.timeFormat('%B'))
+        .tickFormat(d3.timeFormat(format))
+
+      const yAxis = d3
+        .axisRight(this.y)
+        // .ticks(12)
+        .tickSizeOuter(0)
+        .tickSize(this.width - this.padding.x)
 
       this.xAxisGroup
-        .attr('transform', `translate(0,${this.height - this.padding.bottom})`)
+        .attr('transform', `translate(0,${this.height})`)
+        .transition()
+        .duration(1000)
+        .ease(d3.easeQuad)
         .call(xAxis)
+
+      this.yAxisGroup
+        .attr(
+          'transform',
+          `translate(${this.padding.right}, ${this.padding.y})`
+        )
+        .transition()
+        .duration(1000)
+        .ease(d3.easeQuad)
+        .call(yAxis)
     }
   },
   apollo: {
@@ -445,8 +556,27 @@ export default {
 
 <template>
   <v-card class="position-relative" tile fluid>
-    <div class="caption text-left grey--text card-title">
+    <!-- <div class="caption text-left grey--text card-title">
       <v-icon x-small>pi-gantt</v-icon><span class="ml-1">Timeline</span>
+    </div> -->
+
+    <div class="d-flex align-center justify-space-between py-4 px-8 card-title">
+      <div class="text-h4">Usage</div>
+      <div style="max-width: 300px;">
+        <v-select
+          v-model="period"
+          :items="['Year', 'Month', 'Week']"
+          :menu-props="{
+            'offset-y': true,
+            transition: 'slide-y-transition'
+          }"
+          outlined
+          dense
+          hide-details
+          label="Show by"
+          required
+        ></v-select>
+      </div>
     </div>
 
     <v-card-text ref="parent" class="chart-container pa-0">
@@ -469,9 +599,11 @@ svg {
 }
 
 .card-title {
-  left: 8px;
+  // left: 8px;
   position: absolute;
-  top: 8px;
+  width: 100%;
+  z-index: 1;
+  // top: 8px;
 }
 </style>
 
@@ -491,6 +623,27 @@ svg {
   }
 
   .tick line {
+    opacity: 0;
+  }
+}
+
+.y-axis-group {
+  color: #9e9e9e !important;
+  font: 9px Roboto, sans-serif;
+  opacity: 0.8;
+  user-select: none;
+
+  .domain {
+    opacity: 0;
+  }
+
+  .tick line {
+    stroke: rgba(0, 0, 0, 0.05);
+    stroke-dasharray: 10, 10;
+    stroke-width: 1.65px;
+  }
+
+  .tick:last-of-type line {
     opacity: 0;
   }
 }
