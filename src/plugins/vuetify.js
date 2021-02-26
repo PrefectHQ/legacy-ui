@@ -39,7 +39,8 @@ export const THEME_COLORS = {
   deepRed: '#B00000',
   failRed: '#D50000',
   appBackground: '#f9f9f9',
-  appForeground: '#fff'
+  appForeground: '#fff',
+  navIcons: '#999'
 }
 
 export const THEME_COLORS_ALT = {

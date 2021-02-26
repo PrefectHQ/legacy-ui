@@ -694,7 +694,7 @@ export default {
 
 <style lang="scss" scoped>
 .bg-white {
-  background-color: #fff;
+  background-color: var(--v-appForeground-base);
 }
 
 .date-picker {
@@ -706,7 +706,6 @@ export default {
 }
 
 .toolbar-text {
-  color: #fff;
   font-size: 0.9em;
 
   @media only screen and (min-width: 960px) {
@@ -719,15 +718,15 @@ export default {
 }
 
 .load-logs-border-bottom {
-  border-bottom: 1px solid #dedede;
+  border-bottom: 1px solid var(--v-secondaryGrayLight-base);
 }
 
 .load-logs-border-top {
-  border-top: 1px solid #dedede;
+  border-top: 1px solid var(--v-secondaryGrayLight-base);
 }
 
 .load-logs-pagination {
-  background-color: #fff;
+  background-color: var(--v-appForeground-base);
   border-radius: 0;
   height: 100%;
   width: 100%;
@@ -783,7 +782,7 @@ export default {
 }
 
 .state-indicator-icon {
-  border: 1px solid #777;
+  border: 1px solid var(--v-secondaryGray-base);
   border-radius: 50%;
 }
 

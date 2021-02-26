@@ -84,7 +84,7 @@ export default {
 
         <v-list-item :disabled="!isCloud" :to="{ name: 'flow-concurrency' }">
           <v-list-item-avatar tile>
-            <v-icon large color="#999">
+            <v-icon large color="var(--v-navIcons-base)">
               pi-flow-run
             </v-icon>
           </v-list-item-avatar>
@@ -100,7 +100,7 @@ export default {
 
         <v-list-item :to="{ name: 'flow-groups' }">
           <v-list-item-avatar tile>
-            <v-icon large color="#999">
+            <v-icon large color="var(--v-navIcons-base)">
               pi-flow
             </v-icon>
           </v-list-item-avatar>
@@ -130,7 +130,7 @@ export default {
 
         <v-list-item :to="{ name: 'projects' }">
           <v-list-item-avatar tile>
-            <v-icon large color="#999">
+            <v-icon large color="var(--v-navIcons-base)">
               pi-project
             </v-icon>
           </v-list-item-avatar>
@@ -179,7 +179,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-$dark-grey-icon: #999;
+$dark-grey-icon: var(--v-navIcons-base);
 $dark-blue-icon: var(--v-primaryDark-base);
 
 .o-100 {
