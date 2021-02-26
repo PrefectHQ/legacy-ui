@@ -190,7 +190,6 @@ export default {
       let data
       const flow = this.flow || this.hookDetails?.flowName[0]?.flow_group_id
       const action = this.chosenAction[0] || this.hookDetails?.hook?.action?.id
-      console.log('action', this.hookDetails?.flowName)
       try {
         if (this.chosenEventType === 'flow' || this.hookDetails?.flowName[0]) {
           if (this.includeTo) {
