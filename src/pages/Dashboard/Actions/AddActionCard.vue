@@ -85,6 +85,11 @@ export default {
         this.flowEventType == 'SCHEDULED_NOT_STARTED'
       )
     },
+    editedActions() {
+      return this.actions
+        ? [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
+        : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
+    },
     eventTypeFormat() {
       if (this.flowEventType) {
         const type = this.flowEventTypes?.filter(
@@ -142,10 +147,14 @@ export default {
         return this.hookDetails?.hook?.action?.name
       let action
       if (this.chosenAction?.length > 1) {
+        let chosenName
         action = this.chosenAction?.map(chosen => {
-          const chosenName = this.actions?.filter(
-            action => action.id === chosen
-          )[0]?.name
+          chosenName = this.actions?.filter(action => action.id === chosen)[0]
+            ?.name
+          if (chosen === 'CANCEL_RUN') {
+            console.log('cancel')
+            chosenName = 'cancel that run'
+          }
           return chosenName
         })
       }
@@ -186,10 +195,23 @@ export default {
     // handleSelectClick() {
     //   this.selectedEvent = true
     // },
+    async createAction(cancel) {
+      if (cancel) {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/create_action.gql'),
+          variables: {
+            input: { config: { cancel_flow_run: {} } }
+          }
+        })
+      }
+    },
     async createHook() {
       let data
       const flow = this.flow || this.hookDetails?.flowName[0]?.flow_group_id
       const action = this.chosenAction[0] || this.hookDetails?.hook?.action?.id
+      if (action === 'CANCEL_RUN') {
+        this.createAction(true)
+      }
       try {
         if (this.chosenEventType === 'flow' || this.hookDetails?.flowName[0]) {
           if (this.includeTo) {
@@ -217,7 +239,7 @@ export default {
               variables: {
                 input: {
                   kind: kind,
-                  duration_seconds: this.durationSeconds
+                  duration_seconds: Number(this.durationSeconds)
                 }
               }
             })
@@ -276,11 +298,8 @@ export default {
       query: require('@/graphql/Actions/flows.gql'),
       variables() {
         return {
-          project: this.project
+          //   project: this.project
         }
-      },
-      skip() {
-        return !this.project
       },
       update: data => {
         return data.flow
@@ -301,7 +320,7 @@ export default {
     <!-- <div v-if="!selectedEvent" class="text-right pa-2">
       <v-btn icon @click="closeCard"><v-icon>close</v-icon></v-btn></div
     > -->
-    <div class="pb-12 pt-2 pl-2"
+    <div class="pb-2 pt-2 pl-2"
       ><v-btn
         text
         class="grey--text text--darken-2 light-weight-text"
@@ -312,32 +331,57 @@ export default {
       >
     </div>
 
-    <v-alert class="mx-8 pa-8" color="codePink" outlined>
+    <v-card class="px-8" elevation="0" height="20vh">
       <v-row
         ><v-col cols="12" class="headline black--text"
           ><v-icon color="codePink" class="pr-2">{{ iconType }}</v-icon>
           When the
-          <v-menu :close-on-content-click="false">
+          <v-menu
+            :close-on-content-click="false"
+            content-class="elevation-0"
+            nudge-bottom="48"
+            nudge-left="150"
+          >
             <template #activator="{ on, attrs }">
               <v-btn
                 :style="{ 'text-transform': 'none', 'min-width': '0px' }"
                 class="px-0 pb-1 headline text-decoration-underline text--secondary"
                 text
+                position-x="50"
                 v-bind="attrs"
                 v-on="on"
                 >{{ agentOrFlow }}</v-btn
               ></template
             >
+            <div v-if="!chosenEventType" elevation="0" class="pl-12 ml-12">
+              <v-chip
+                v-for="item in ['flow', 'agent']"
+                :key="item"
+                label
+                class="mx-2"
+                outlined
+                @click="chosenEventType = item"
+                ><v-icon class="pr-2">{{
+                  item === 'flow' ? 'pi-flow' : 'pi-agent'
+                }}</v-icon
+                >{{ item }}</v-chip
+              >
+            </div>
             <v-card
-              ><v-card-actions>
-                <v-autocomplete
-                  v-model="chosenEventType"
-                  :items="['flow', 'agent']"
-                  class="pa-4"
-                  label="Agent or flow?"
-                  >{{ chosenEventType }}</v-autocomplete
-                >
-              </v-card-actions>
+              v-if="chosenEventType === 'flow'"
+              max-height="100px"
+              width="1250px"
+              :style="{ overflow: 'auto' }"
+            >
+              <v-chip
+                v-for="item in flows"
+                :key="item"
+                label
+                class="mx-2"
+                outlined
+                @click="flow = item"
+                >{{ item.name }}({{ item.project }})</v-chip
+              >
             </v-card>
           </v-menu>
           named
@@ -352,7 +396,7 @@ export default {
                 text
                 v-bind="attrs"
                 v-on="on"
-                >{{ flowName }}</v-btn
+                >{{ flow.name }}</v-btn
               ></template
             >
             <v-card
@@ -407,7 +451,14 @@ export default {
 
           <!-- <span> {{ hookEvent }}</span> -->
           <span
-            >{{ ' ' }}
+            >{{ ' '
+            }}<span
+              v-if="
+                chosenEventType === 'flow' ||
+                  (hookDetails && hookDetails.flowName)
+              "
+              >has a flow run that
+            </span>
             <v-menu :close-on-content-click="false">
               <template #activator="{ on, attrs }">
                 <v-btn
@@ -434,7 +485,8 @@ export default {
                   >{{ flowEventType.name }}</v-autocomplete
                 ></v-card
               ></v-menu
-            ><span v-if="isSLA">
+            >
+            <span v-if="isSLA">
               for
               <v-menu :close-on-content-click="false">
                 <template #activator="{ on, attrs }">
@@ -504,7 +556,7 @@ export default {
                   v-model="chosenAction"
                   multiple
                   label="What should happen?"
-                  :items="actions"
+                  :items="editedActions"
                   item-text="name"
                   item-value="id"
                   >{{ chosenAction }}</v-autocomplete
@@ -521,7 +573,7 @@ export default {
             <AddDoThis v-else @close-action="addAction = false"/></v-menu
           >.</v-col
         >
-      </v-row></v-alert
+      </v-row></v-card
     >
     <!-- <v-item-group>
       <v-row v-if="!selectedEvent" class="mx-8">
@@ -561,9 +613,10 @@ export default {
         </v-col>
       </v-row>
     </v-item-group> -->
-    <v-card-actions class="px-8">
+    <v-card-actions class="pa-8">
       <v-spacer /><v-btn
         large
+        class="mx-12"
         color="primary"
         :disabled="!completeAction"
         @click="createHook"
