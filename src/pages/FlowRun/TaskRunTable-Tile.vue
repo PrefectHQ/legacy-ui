@@ -142,12 +142,13 @@ export default {
       <v-select
         slot="sort"
         v-model="state"
-        flat
+        deletable-chips
+        style="width: 180px;"
+        chips
         solo
+        flat
         dense
-        class="task-search"
         hide-details
-        style="width: 140px;"
         :items="[
           { header: 'Finished States' },
           { divider: '...' },
