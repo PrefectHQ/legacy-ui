@@ -331,99 +331,23 @@ export default {
       >
     </div>
 
-    <v-card class="px-8" elevation="0" height="20vh">
+    <v-card class="px-8" elevation="0">
       <v-row
         ><v-col cols="12" class="headline black--text"
           ><v-icon color="codePink" class="pr-2">{{ iconType }}</v-icon>
-          When the
-          <v-menu
-            :close-on-content-click="false"
-            content-class="elevation-0"
-            nudge-bottom="48"
-            nudge-left="150"
+          When
+
+          <v-btn
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            class="px-0 pb-1 headline text-decoration-underline text--secondary"
+            text
+            position-x="50"
+            v-bind="attrs"
+            v-on="on"
+            >{{ flow.name || agentOrFlow }}</v-btn
           >
-            <template #activator="{ on, attrs }">
-              <v-btn
-                :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-                class="px-0 pb-1 headline text-decoration-underline text--secondary"
-                text
-                position-x="50"
-                v-bind="attrs"
-                v-on="on"
-                >{{ agentOrFlow }}</v-btn
-              ></template
-            >
-            <div v-if="!chosenEventType" elevation="0" class="pl-12 ml-12">
-              <v-chip
-                v-for="item in ['flow', 'agent']"
-                :key="item"
-                label
-                class="mx-2"
-                outlined
-                @click="chosenEventType = item"
-                ><v-icon class="pr-2">{{
-                  item === 'flow' ? 'pi-flow' : 'pi-agent'
-                }}</v-icon
-                >{{ item }}</v-chip
-              >
-            </div>
-            <v-card
-              v-if="chosenEventType === 'flow'"
-              max-height="100px"
-              width="1250px"
-              :style="{ overflow: 'auto' }"
-            >
-              <v-chip
-                v-for="item in flows"
-                :key="item"
-                label
-                class="mx-2"
-                outlined
-                @click="flow = item"
-                >{{ item.name }}({{ item.project }})</v-chip
-              >
-            </v-card>
-          </v-menu>
-          named
-          <v-menu
-            v-if="chosenEventType !== 'agent'"
-            :close-on-content-click="false"
-          >
-            <template #activator="{ on, attrs }">
-              <v-btn
-                :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-                class="px-0 pb-1 headline text-decoration-underline text--secondary"
-                text
-                v-bind="attrs"
-                v-on="on"
-                >{{ flow.name }}</v-btn
-              ></template
-            >
-            <v-card
-              ><v-card-actions>
-                <v-autocomplete
-                  v-model="project"
-                  :items="projects"
-                  item-text="name"
-                  item-value="id"
-                  class="pa-4"
-                  label="Which project?"
-                  >{{ project.name }}</v-autocomplete
-                >
-                <v-autocomplete
-                  v-model="flow"
-                  :disabled="!project"
-                  item-text="name"
-                  item-value="flow_group_id"
-                  class="pa-4"
-                  label="Which flow?"
-                  :items="flows"
-                  >{{ flow.name }}</v-autocomplete
-                ></v-card-actions
-              >
-            </v-card>
-          </v-menu>
-          <v-menu v-else :close-on-content-click="false">
+
+          <!-- <v-menu v-else :close-on-content-click="false">
             <template #activator="{ on, attrs }">
               <v-btn
                 :style="{ 'text-transform': 'none', 'min-width': '0px' }"
@@ -435,7 +359,7 @@ export default {
               ></template
             >
             <v-card>
-              <!-- <v-card-actions>
+               <v-card-actions>
                 <v-autocomplete
                   v-model="agent"
                   item-text="name"
@@ -445,9 +369,9 @@ export default {
                   :items="agents"
                   >{{ agent }}</v-autocomplete
                 ></v-card-actions
-              > -->
+              > 
             </v-card>
-          </v-menu>
+          </v-menu> -->
 
           <!-- <span> {{ hookEvent }}</span> -->
           <span
@@ -613,6 +537,37 @@ export default {
         </v-col>
       </v-row>
     </v-item-group> -->
+    <v-card v-if="!chosenEventType" elevation="0" class="pl-12 ml-12">
+      <v-chip
+        v-for="item in ['flow', 'agent']"
+        :key="item"
+        label
+        class="mx-2"
+        outlined
+        @click="chosenEventType = item"
+        ><v-icon class="pr-2">{{
+          item === 'flow' ? 'pi-flow' : 'pi-agent'
+        }}</v-icon
+        >{{ item }}</v-chip
+      >
+    </v-card>
+    <v-card
+      v-else-if="chosenEventType === 'flow'"
+      max-height="100px"
+      width="1250px"
+      elevation="0"
+      :style="{ overflow: 'auto' }"
+    >
+      <v-chip
+        v-for="item in flows"
+        :key="item"
+        label
+        class="mx-2"
+        outlined
+        @click="flow = item"
+        >{{ item.name }}({{ item.project }})</v-chip
+      >
+    </v-card>
     <v-card-actions class="pa-8">
       <v-spacer /><v-btn
         large
