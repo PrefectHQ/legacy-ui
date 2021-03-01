@@ -16,6 +16,7 @@ export default {
   data() {
     return {
       flow: '',
+      openSeconds: false,
       hookDetails: this.hookDetail,
       project: '',
       selectedEvent: false,
@@ -333,17 +334,13 @@ export default {
 
     <v-card class="px-8" elevation="0">
       <v-row
-        ><v-col cols="12" class="headline black--text"
-          ><v-icon color="codePink" class="pr-2">{{ iconType }}</v-icon>
+        ><v-col cols="12" class="headline black--text">
           When
-
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 headline text-decoration-underline text--secondary"
+            :color="!flow.name || !chosenEventType ? 'codePink' : 'grey'"
+            class="px-0 pb-1 headline"
             text
-            position-x="50"
-            v-bind="attrs"
-            v-on="on"
             >{{ flow.name || agentOrFlow }}</v-btn
           >
 
@@ -381,59 +378,36 @@ export default {
                 chosenEventType === 'flow' ||
                   (hookDetails && hookDetails.flowName)
               "
-              >has a flow run that
+              >has a run that
             </span>
-            <v-menu :close-on-content-click="false">
-              <template #activator="{ on, attrs }">
-                <v-btn
-                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-                  class="px-0 pb-1 headline text-decoration-underline text--secondary"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ eventTypeFormat }}</v-btn
-                ></template
-              ><v-card
-                ><v-autocomplete
-                  v-if="
-                    chosenEventType === 'flow' ||
-                      (hookDetails && hookDetails.flowName)
-                  "
-                  v-model="flowEventType"
-                  item-text="name"
-                  item-value="enum"
-                  class="pa-4"
-                  label="What does it do?"
-                  :items="flowEventTypes"
-                  >{{ flowEventType.name }}</v-autocomplete
-                ></v-card
-              ></v-menu
+
+            <v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              class="px-0 pb-1 headline"
+              text
+              :color="
+                (chosenEventType === 'flow' ||
+                  (hookDetails && hookDetails.flowName)) &&
+                flow &&
+                !flowEventType
+                  ? 'codePink'
+                  : 'grey'
+              "
+            >
+              {{ eventTypeFormat }}</v-btn
             >
             <span v-if="isSLA">
               for
-              <v-menu :close-on-content-click="false">
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-                    class="px-0 pb-1 headline text-decoration-underline text--secondary"
-                    text
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    {{ seconds }}</v-btn
-                  ></template
-                >
-                <v-card
-                  ><v-card-text>
-                    <v-text-field
-                      v-model="seconds"
-                      min-width="50px"
-                      type="number"
-                    ></v-text-field>
-                  </v-card-text>
-                </v-card>
-              </v-menu>
+
+              <v-btn
+                :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                class="px-0 pb-1 headline text-decoration-underliney"
+                text
+                :color="openSeconds ? 'codePink' : 'grey'"
+                @click="openSeconds = !openSeconds"
+              >
+                {{ seconds }}</v-btn
+              >
               seconds</span
             ></span
           >
@@ -552,9 +526,7 @@ export default {
       >
     </v-card>
     <v-card
-      v-else-if="chosenEventType === 'flow'"
-      max-height="100px"
-      width="1250px"
+      v-else-if="chosenEventType === 'flow' && !flow"
       elevation="0"
       :style="{ overflow: 'auto' }"
     >
@@ -567,6 +539,32 @@ export default {
         @click="flow = item"
         >{{ item.name }}({{ item.project }})</v-chip
       >
+    </v-card>
+    <v-card
+      v-else-if="
+        (chosenEventType === 'flow' || (hookDetails && hookDetails.flowName)) &&
+          flow &&
+          !flowEventType
+      "
+      elevation="0"
+      ><v-autocomplete
+        v-model="flowEventType"
+        item-text="name"
+        item-value="enum"
+        class="pa-4"
+        label="What does it do?"
+        :items="flowEventTypes"
+        >{{ flowEventType.name }}</v-autocomplete
+      ></v-card
+    ><v-card v-else-if="openSeconds" elevation="0"
+      ><v-card-text>
+        <v-text-field
+          v-model="seconds"
+          min-width="50px"
+          type="number"
+          @blur="openSeconds = false"
+        ></v-text-field>
+      </v-card-text>
     </v-card>
     <v-card-actions class="pa-8">
       <v-spacer /><v-btn
