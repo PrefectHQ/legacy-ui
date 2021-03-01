@@ -57,7 +57,7 @@ export default {
       return this.all
     },
     tileColor() {
-      let color = this.loading ? 'grey' : '#93d2cc'
+      let color = this.loading ? 'grey' : 'InProgress'
 
       if (this.tab == 'submitted') {
         color = 'Submitted'
@@ -183,7 +183,9 @@ export default {
           :color="tab == 'running' ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
-              tab == 'running' ? 'var(--v-primary-base)' : '#fff'
+              tab == 'running'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
             }`,
             'box-sizing': 'content-box',
             'min-width': '100px'
@@ -202,7 +204,9 @@ export default {
           :color="tab == 'submitted' ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
-              tab == 'submitted' ? 'var(--v-primary-base)' : '#fff'
+              tab == 'submitted'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
             }`,
             'box-sizing': 'content-box',
             'min-width': '100px'

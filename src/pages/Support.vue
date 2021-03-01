@@ -288,16 +288,4 @@ export default {
     max-width: 470px;
   }
 }
-
-.photo-caption {
-  bottom: 0;
-  position: absolute;
-  right: 10px;
-
-  .photo-caption-link {
-    color: #fff;
-    font-weight: bold;
-    text-decoration: none;
-  }
-}
 </style>

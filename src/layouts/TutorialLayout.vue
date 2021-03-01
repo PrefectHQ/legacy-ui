@@ -97,7 +97,7 @@ export default {
 
   &:focus,
   &:hover {
-    background-color: #f7f7f7;
+    background-color: var(--v-secondaryGrayLight-base);
   }
 
   /* stylelint-disable selector-class-pattern */
@@ -106,7 +106,7 @@ export default {
   }
 
   .v-stepper__label {
-    color: #000 !important;
+    color: var(--v-secondaryGrayDark-base) !important;
     text-shadow: none !important;
   }
   /* stylelint-enable selector-class-pattern */

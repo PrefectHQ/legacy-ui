@@ -40,7 +40,10 @@ export const THEME_COLORS = {
   failRed: '#D50000',
   appBackground: '#f9f9f9',
   appForeground: '#fff',
-  navIcons: '#999'
+  navIcons: '#999',
+  utilGrayLight: '#ddd',
+  utilGrayMid: '#767676',
+  utilGrayDark: '#333'
 }
 
 export const THEME_COLORS_ALT = {

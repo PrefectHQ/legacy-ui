@@ -180,7 +180,7 @@ export default {
               <span
                 v-if="arg.arg"
                 class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-                style="border: 1px solid #b0bec5 !important;"
+                style="border: 1px solid var(--v-utilGrayLight-base) !important;"
               >
                 {{ arg.arg }}
               </span>
@@ -249,7 +249,7 @@ export default {
                   <span
                     v-if="option.arg"
                     class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-                    style="border: 1px solid #b0bec5 !important;"
+                    style="border: 1px solid var(--v-utilGrayLight-base) !important;"
                   >
                     {{ option.arg }}
                   </span>
@@ -300,7 +300,7 @@ export default {
   position: relative;
 
   &::after {
-    background-color: #ddd;
+    background-color: var(--v-utilGrayLight-base);
     bottom: 0;
     content: '';
     height: 1px;
@@ -327,7 +327,7 @@ export default {
 .config-type {
   background-color: rgba(255, 255, 255, 1);
   border: 2px solid;
-  border-color: #ddd !important;
+  border-color: var(--v-utilGrayLight-base) !important;
   height: 80px;
   transition: all 50ms;
   width: 100%;

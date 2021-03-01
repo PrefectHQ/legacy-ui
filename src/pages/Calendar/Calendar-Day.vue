@@ -260,7 +260,7 @@ export default {
       color="amber"
       transition="slide-y-transition"
     >
-      <span :style="{ color: '#3d2c00' }">
+      <span :style="{ color: 'var(--v-utilGrayDark-base' }">
         Reminder!
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
@@ -331,16 +331,16 @@ export default {
 .striped {
   background: repeating-linear-gradient(
     135deg,
-    #ffeec4,
-    #ffeec4 5px,
+    var(--v-ScheduledAlt-base),
+    var(--v-ScheduledAlt-base) 5px,
     var(--v-Scheduled-base) 5px,
     var(--v-Scheduled-base) 10px
   );
-  color: #3d2c00;
+  color: var(--v-utilGrayDark-base);
 }
 
 .darker {
-  color: #3d2c00;
+  color: var(--v-utilGrayDark-base);
 }
 
 .limit-width {

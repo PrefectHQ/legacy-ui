@@ -186,7 +186,7 @@ export default {
     }
 
     &.disabled {
-      color: #90a4ae !important;
+      color: var(--v-utilGrayMid-base) !important;
       cursor: progress;
 
       input {
@@ -214,7 +214,7 @@ export default {
 
   &.focused {
     .input-container {
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--v-utilGrayLight-base);
       height: 100%;
     }
 

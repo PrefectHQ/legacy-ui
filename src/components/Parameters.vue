@@ -84,7 +84,7 @@ export default {
 
 <style lang="scss" scoped>
 .border-left {
-  border-left: 2px solid #eee;
+  border-left: 2px solid (var(--v-secondaryGrayLight-base));
 }
 
 .border-radius-0 {

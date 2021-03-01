@@ -314,7 +314,9 @@ export default {
       const y1 = 18
       const offset = 32
 
-      context.fillStyle = '#FFEEC4'
+      context.fillStyle = getComputedStyle(document.body).getPropertyValue(
+        '--v-ScheduledAlt-base'
+      )
       context.fillRect(0, 0, x, x)
 
       context.strokeStyle = getComputedStyle(document.body).getPropertyValue(
@@ -349,7 +351,10 @@ export default {
         context.globalAlpha = bar.alpha
         context.fillStyle = bar.usePattern
           ? context.createPattern(this.pattern, 'repeat')
-          : bar.color || '#eee'
+          : bar.color ||
+            getComputedStyle(document.body).getPropertyValue(
+              '--v-secondaryGrayLight-base'
+            )
 
         context.rect(bar.x, bar.y, bar.width, bar.height)
         context.fill()
@@ -418,7 +423,12 @@ export default {
               .attr('class', 'breaklines-group')
 
             g.append('path')
-              .attr('stroke', '#999')
+              .attr(
+                'stroke',
+                getComputedStyle(document.body).getPropertyValue(
+                  '--v-utilGrayMid-base'
+                )
+              )
               .attr('stroke-width', 1)
               .attr('stroke-dasharray', 5)
               .attr('d', `M0,10L0,${this.chartHeight}`)
@@ -427,7 +437,12 @@ export default {
             g.append('text')
               .style('font-size', '8px')
               .style('pointer-events', 'none')
-              .attr('fill', '#999')
+              .attr(
+                'fill',
+                getComputedStyle(document.body).getPropertyValue(
+                  '--v-utilGrayMid-base'
+                )
+              )
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
               .attr('y', 6)

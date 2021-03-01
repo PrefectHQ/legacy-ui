@@ -43,7 +43,7 @@ export default {
     toolBarStyle() {
       return this.textArea
         ? {
-            'border-color': '#DADAD2 !important',
+            'border-color': 'var(--v-utilGrayLight-base) !important',
             'border-bottom-style': 'solid',
             'border-width': '1px',
             'margin-bottom': '20px'
@@ -130,7 +130,10 @@ export default {
     elevation="0"
     :color="cardColor"
     width="100%"
-    :style="{ 'border-color': '#DADAD2 !important', overflow: 'auto' }"
+    :style="{
+      'border-color': 'var(--v-utilGrayLight-base) !important',
+      overflow: 'auto'
+    }"
   >
     <v-btn
       v-if="newDescription && !textArea"
@@ -252,7 +255,7 @@ export default {
       :style="{
         height: '70vh',
         width: '100%',
-        'background-color': '#ffff',
+        'background-color': 'var(--v-appForeground-base)',
         overflow: 'auto'
       }"
       class="artifact md grey--text text--darken-3 px-8"
@@ -283,7 +286,7 @@ export default {
 
 <style>
 .white-background-color {
-  background-color: #ffff;
+  background-color: var(--v-appForeground-base);
 }
 
 .app-background-color {
@@ -297,7 +300,7 @@ export default {
 }
 /* stylelint-disable */
 .readme >>> div {
-  border-color: #d3d3d3 !important;
+  border-color: var(--v-utilGrayLight-base) !important;
 }
 
 .readme.pa-0 {

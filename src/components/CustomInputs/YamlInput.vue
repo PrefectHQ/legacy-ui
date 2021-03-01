@@ -187,7 +187,7 @@ export default {
 
   .input-empty-text {
     .CodeMirror-empty {
-      color: #808080;
+      color: var(--v-utilGrayMid-base);
     }
 
     .CodeMirror-cursor {

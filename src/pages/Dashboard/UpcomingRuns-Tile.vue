@@ -187,7 +187,9 @@ export default {
           :color="tab == 'upcoming' ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
-              tab == 'upcoming' ? 'var(--v-primary-base)' : '#fff'
+              tab == 'upcoming'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
             }`,
             'box-sizing': 'content-box',
             'min-width': '100px'
@@ -216,7 +218,7 @@ export default {
                 ? lateRuns && lateRuns.length > 0
                   ? 'var(--v-deepRed-base)'
                   : 'var(--v-primary-base)'
-                : '#fff'
+                : 'var(--v-appForeground-base)'
             }`,
             'box-sizing': 'content-box',
             'min-width': '100px'

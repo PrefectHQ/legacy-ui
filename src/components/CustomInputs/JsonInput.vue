@@ -253,7 +253,7 @@ export default {
   }
 
   .CodeMirror-placeholder {
-    color: #808080 !important;
+    color: var(--v-utilGrayMid-base) !important;
   }
 
   .json-input-height-auto {
@@ -265,7 +265,7 @@ export default {
 
   .json-input-empty-text {
     .CodeMirror-empty {
-      color: #808080;
+      color: var(--v-utilGrayMid-base);
     }
 
     .CodeMirror-cursor {
