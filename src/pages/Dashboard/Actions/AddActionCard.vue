@@ -24,8 +24,9 @@ export default {
       openAgentOrFlow: true,
       openActions: false,
       flowNamesList: [],
+      allFlows: false,
       hookDetails: this.hookDetail,
-      project: '',
+      project: null,
       flowEventType: this.hookDetails?.hook?.event_type || {
         name: 'does this'
       },
@@ -52,6 +53,11 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['projects']),
+    projectsList() {
+      return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
+        a.name > b.name ? 1 : -1
+      )
+    },
     agentOrFlow() {
       if (this.hookDetails?.flowName) return 'flow'
       if (!this.agentFlowOrSomethingElse) return 'flow'
@@ -103,6 +109,12 @@ export default {
     closeCard() {
       this.$emit('close')
     },
+    handleOpenAgentOrFlow() {
+      this.openAgentOrFlow = !this.openAgentOrFlow
+      this.selectedFlows = []
+      this.flowNamesList = []
+      this.project = null
+    },
     selectAgentorFlow(choice) {
       this.agentFlowOrSomethingElse = choice
       this.openAgentOrFlow = false
@@ -124,6 +136,7 @@ export default {
     selectAllFlows() {
       this.selectedFlows = this.flows
       this.flowNamesList.push('any flow')
+      this.allFlows = true
       this.openFlow = false
       this.openSelectFlowEventType = true
     },
@@ -301,7 +314,7 @@ export default {
             :color="openAgentOrFlow || openFlow ? 'codePink' : 'grey'"
             class="px-0 pb-1 headline"
             text
-            @click="openAgentOrFlow = !openAgentOrFlow"
+            @click="handleOpenAgentOrFlow"
             >{{ flowNames }}</v-btn
           >
           <span
@@ -373,12 +386,13 @@ export default {
     </v-card>
     <v-card v-else-if="openFlow" elevation="0" :style="{ overflow: 'auto' }">
       <v-card-title
-        ><v-btn color="primary" @click="selectAllFlows">Select All Flows</v-btn
+        ><v-btn color="primary" text @click="selectAllFlows"
+          ><v-icon>pi-flow</v-icon>All flows</v-btn
         ><v-autocomplete
           v-model="project"
           width="100px"
           class="px-2"
-          :items="projects"
+          :items="projectsList"
           item-text="name"
           item-value="id"
           label="Filter by Project"
