@@ -109,7 +109,6 @@ export default {
   },
   apollo: {
     flowRun: {
-      //this.itemsPerPage
       query: require('@/graphql/FlowRun/table-task-runs.gql'),
       variables() {
         const orderBy = {}
@@ -153,9 +152,11 @@ export default {
       <v-select
         slot="sort"
         v-model="state"
-        style="width: 180px;"
+        class="state-sort"
         solo
         flat
+        outlined
+        hide-selected
         dense
         clearable
         hide-details
@@ -215,22 +216,6 @@ export default {
           <div class="text-truncate">
             <v-tooltip top>
               <template #activator="{ on }">
-                <!-- <router-link
-                  class="link text-truncate"
-                  :data-cy="'task-run-table-link|' + item.task.name"
-                  :to="{ name: 'task-run', params: { id: item.id } }"
-                >
-                  <span v-if="item.name">{{ item.name }}</span>
-                  <span v-else v-on="on"
-                    >{{ item.task.name
-                    }}<span v-if="item.map_index > -1">
-                      (Mapped Child {{ item.map_index }})</span
-                    ><span v-else-if="hasChild(item.task.name)">
-                      (Parent)
-                    </span>
-                  </span>
-                </router-link> -->
-
                 <router-link
                   class="link text-truncate"
                   :data-cy="'task-run-table-link|' + item.task.name"
@@ -263,23 +248,11 @@ export default {
           </truncate>
         </template>
 
-        <!-- <template #item.start_time="{ item }">
-          <truncate :content="formatTime(item.start_time)">
-            {{ formDate(item.start_time) }}
-          </truncate>
-        </template> -->
-
         <template #item.end_time="{ item }">
           <truncate :content="formatTime(item.details.end_time)">
             {{ formDate(item.details.end_time) }}
           </truncate>
         </template>
-
-        <!-- <template #item.end_time="{ item }">
-          <truncate :content="formatTime(item.end_time)">
-            {{ formDate(item.end_time) }}
-          </truncate>
-        </template> -->
 
         <template #item.duration="{ item }">
           <DurationSpan
@@ -296,21 +269,6 @@ export default {
           <span v-else>...</span>
         </template>
 
-        <!-- <template #item.duration="{ item }">
-          <DurationSpan
-            v-if="item.start_time"
-            :start-time="item.start_time"
-            :end-time="
-              item.end_time
-                ? item.end_time
-                : isFinished(item.state)
-                ? item.start_time
-                : null
-            "
-          />
-          <span v-else>...</span>
-        </template> -->
-
         <template #item.state="{ item }">
           <truncate :content="item.details.state">
             <v-icon class="mr-1 pointer" small :color="item.details.state">
@@ -319,14 +277,6 @@ export default {
           </truncate>
         </template>
 
-        <!-- <template #item.state="{ item }">
-          <truncate :content="item.state">
-            <v-icon class="mr-1 pointer" small :color="item.state">
-              brightness_1
-            </v-icon>
-          </truncate>
-        </template> -->
-
         <template #item.action="{ item }">
           <ResumeButton
             v-if="item.details.state == 'Paused'"
@@ -334,14 +284,6 @@ export default {
             dialog-type="resume"
           />
         </template>
-
-        <!-- <template #item.action="{ item }">
-          <ResumeButton
-            v-if="item.state == 'Paused'"
-            :task-run="{ ...item, flow_run: flowRun }"
-            dialog-type="resume"
-          />
-        </template> -->
       </v-data-table>
     </v-card-text>
   </v-card>
@@ -356,13 +298,17 @@ export default {
     font-size: 20px !important;
   }
 }
-// .v-chip {}
+
 .sort-chip {
   justify-content: center;
   width: 100px;
 }
 
-.v-label {
-  font-size: 1em;
+.state-sort {
+  width: 180px;
+
+  .v-label {
+    font-size: 0.85rem;
+  }
 }
 </style>
