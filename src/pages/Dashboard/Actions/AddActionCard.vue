@@ -15,47 +15,21 @@ export default {
   },
   data() {
     return {
-      flow: '',
+      flow: {},
       openSeconds: false,
+      openSelectFlowEventType: false,
+      openFlow: false,
+      openAgentOrFlow: true,
       hookDetails: this.hookDetail,
       project: '',
-      selectedEvent: false,
-      flowEventType: '',
-      chosenEventType: '',
-      chosenStates: [],
-      chosenAction: '',
-      seconds: 60,
-      addAction: false,
-      //   flowHookDetails: [
-      //     {
-      //       name: 'FlowRunStateChangedEvent',
-      //       type: 'flow',
-      //       action: 'changes',
-      //       icon: 'pi-flow'
-      //     },
-      //     {
-      //       name: 'FlowSLAFailedEvent',
-      //       type: 'flow',
-      //       action: 'SLA fails',
-      //       icon: 'pi-flow'
-      //     }
-      //   ],
-      //   agentHookDetails: [
-      //     {
-      //       name: 'AgentSLAFailed',
-      //       type: 'agent',
-      //       action: 'SLA fails',
-      //       icon: 'pi-agent'
-      //     }
-      //   ],
-      actionDetails: {
-        SlackNotificationAction: {
-          title: 'send a slack notification'
-        },
-        select: {
-          title: '...'
-        }
+      flowEventType: this.hookDetails?.hook?.event_type || {
+        name: 'does this'
       },
+      agentFlowOrSomethingElse: '',
+      chosenStates: this.hookDetails?.hook?.event_tags?.state || [],
+      chosenAction: this.hookDetails?.hook?.action || [],
+      seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
+      addAction: false,
       flowEventTypes: [
         { name: 'starts but does not finish', enum: 'STARTED_NOT_FINISHED' },
         {
@@ -71,127 +45,77 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['projects']),
-    iconType() {
-      return this.chosenEventType === 'agent' ? 'pi-agent' : 'pi-flow'
-    },
     agentOrFlow() {
       if (this.hookDetails?.flowName) return 'flow'
-      if (!this.chosenEventType) return 'agent or flow'
-      return this.chosenEventType
+      if (!this.agentFlowOrSomethingElse) return 'flow'
+      return this.agentFlowOrSomethingElse
     },
     isSLA() {
       return (
-        this.hookDetails?.flowConfig?.kind ||
-        this.flowEventType === 'STARTED_NOT_FINISHED' ||
-        this.flowEventType == 'SCHEDULED_NOT_STARTED'
+        this.flowEventType?.enum === 'STARTED_NOT_FINISHED' ||
+        this.flowEventType?.enum === 'SCHEDULED_NOT_STARTED'
       )
     },
     editedActions() {
       return this.actions
-        ? [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
+        ? this.actions.find(action => action.name === 'cancel that run')
+          ? this.actions
+          : [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
     },
-    eventTypeFormat() {
-      if (this.flowEventType) {
-        const type = this.flowEventTypes?.filter(
-          sla => sla.enum === this.flowEventType
-        )[0]?.name
-        return type?.toString() || 'does something'
-      }
-      if (this.hookDetails?.flowName) {
-        if (this.hookDetails.flowConfig) {
-          const type = this.flowEventTypes?.filter(
-            sla => sla.enum === this.hookDetails?.flowConfig?.kind
-          )[0]?.name
-          return type?.toString()
-        } else {
-          return 'changes state to'
-        }
-      }
-      return 'does something'
-    },
-    // colSize() {
-    //   return 12 / this.hookTypes.length
-    // },
-    // hookTypes() {
-    //   return Object.keys(this.hookDetails)
-    // },
     includeTo() {
-      return (
-        this.flowEventType == 'CHANGES_STATE' ||
-        this.hookDetails?.hook?.event_type === 'FlowRunStateChangedEvent'
-      )
+      console.log(this.flowEventType)
+      return this.flowEventType.enum == 'CHANGES_STATE'
     },
     durationSeconds() {
       return this.seconds || this.hookDetails?.flowConfig?.duration_seconds
     },
-
-    // hookType() {
-    //   return `${} `
-    // },
-    // typeName() {
-    //   return ' name'
-    // },
-    // hookEvent() {
-    //   return `${this.hookDetails[this.chosenEventType]?.action}`
-    // },
     hookStates() {
-      this.hookDetails?.hook?.event_tags?.state?.toString().toLowerCase()
-      return (
-        this.chosenStates?.toString().toLowerCase() ||
-        this.hookDetails?.hook?.event_tags?.state?.toString().toLowerCase() ||
-        'state'
-      )
+      return this.chosenStates?.toString().toLowerCase() || 'state'
     },
     hookAction() {
-      if (this.hookDetails?.hook?.action)
-        return this.hookDetails?.hook?.action?.name
-      let action
-      if (this.chosenAction?.length > 1) {
-        let chosenName
-        action = this.chosenAction?.map(chosen => {
-          chosenName = this.actions?.filter(action => action.id === chosen)[0]
-            ?.name
-          if (chosen === 'CANCEL_RUN') {
-            console.log('cancel')
-            chosenName = 'cancel that run'
-          }
-          return chosenName
-        })
-      }
-      action = this.actions?.filter(
-        action => action.id === this.chosenAction[0]
-      )[0]?.name
-
-      return action?.length > 0 ? action.toString() : 'do this'
+      return this.chosenAction.name || 'do this'
     },
     completeAction() {
       if (this.hookDetail) return true
-      if (!this.includeTo) return !!this.chosenEventType && !!this.chosenAction
+      if (!this.includeTo)
+        return !!this.agentFlowOrSomethingElse && !!this.chosenAction
       return (
         !!this.chosenAction &&
         !!this.chosenStates.length &&
-        !!this.chosenEventType
+        !!this.agentFlowOrSomethingElse
       )
-    },
-    agentName() {
-      const name = this.agents?.filter(agent => agent.id === this.agent)[0]
-        ?.name
-      return name || '???'
-    },
-    flowName() {
-      if (this.flow) {
-        return this.flows?.filter(flow => flow.flow_group_id === this.flow)[0]
-          ?.name
-      }
-      if (this.hookDetails?.flowName) return this.hookDetails?.flowName[0]?.name
-      return '???'
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     closeCard() {
       this.$emit('close')
+    },
+    selectAgentorFlow(choice) {
+      this.agentFlowOrSomethingElse = choice
+      this.openAgentOrFlow = false
+      if (choice === 'flow') this.openFlow = true
+      if (choice === 'agent') {
+        this.openAgent = true
+        this.flow = {}
+        this.openSelectFlowEventType = false
+      }
+    },
+    selectFlow(flow) {
+      this.flow = flow
+      this.openFlow = false
+      this.openSelectFlowEventType = true
+    },
+    selectFlowEventType(type) {
+      console.log('type', type)
+      this.flowEventType = type
+      this.openSelectFlowEventType = false
+      this.isSLA
+        ? (this.openSeconds = true)
+        : this.includeTo
+        ? (this.openStates = true)
+        : ''
     },
     // handleSelectClick() {
     //   this.selectedEvent = true
@@ -214,7 +138,10 @@ export default {
         this.createAction(true)
       }
       try {
-        if (this.chosenEventType === 'flow' || this.hookDetails?.flowName[0]) {
+        if (
+          this.agentFlowOrSomethingElse === 'flow' ||
+          this.hookDetails?.flowName[0]
+        ) {
           if (this.includeTo) {
             const states = this.chosenStates.length
               ? this.chosenStates
@@ -338,9 +265,10 @@ export default {
           When
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            :color="!flow.name || !chosenEventType ? 'codePink' : 'grey'"
+            :color="openAgentOrFlow || openFlow ? 'codePink' : 'grey'"
             class="px-0 pb-1 headline"
             text
+            @click="openAgentOrFlow = !openAgentOrFlow"
             >{{ flow.name || agentOrFlow }}</v-btn
           >
 
@@ -372,29 +300,16 @@ export default {
 
           <!-- <span> {{ hookEvent }}</span> -->
           <span
-            >{{ ' '
-            }}<span
-              v-if="
-                chosenEventType === 'flow' ||
-                  (hookDetails && hookDetails.flowName)
-              "
-              >has a run that
-            </span>
+            >{{ ' ' }}<span v-if="agentOrFlow === 'flow'">has a run that </span>
 
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class="px-0 pb-1 headline"
               text
-              :color="
-                (chosenEventType === 'flow' ||
-                  (hookDetails && hookDetails.flowName)) &&
-                flow &&
-                !flowEventType
-                  ? 'codePink'
-                  : 'grey'
-              "
+              :color="openSelectFlowEventType ? 'codePink' : 'grey'"
+              @click="openSelectFlowEventType = !openSelectFlowEventType"
             >
-              {{ eventTypeFormat }}</v-btn
+              {{ flowEventType.name }}</v-btn
             >
             <span v-if="isSLA">
               for
@@ -412,7 +327,6 @@ export default {
             ></span
           >
           <span v-if="includeTo">
-            to
             <v-menu :close-on-content-click="false">
               <template #activator="{ on, attrs }">
                 <v-btn
@@ -478,18 +392,18 @@ export default {
         <v-col
           v-for="(hook, i) in hookTypes"
           :key="i"
-          v-model="chosenEventType"
+          v-model="agentFlowOrSomethingElse"
           cols="12"
           :md="colSize"
           class="pl-0"
         >
           <v-alert
-            :color="chosenEventType === hook ? 'white' : 'codePink'"
-            :style="chosenEventType === hook ? 'opacity: 1;' : 'opacity: 0.5;'"
-            :outlined="chosenEventType === hook ? false : true"
-            :elevation="chosenEventType === hook ? '4' : '0'"
+            :color="agentFlowOrSomethingElse === hook ? 'white' : 'codePink'"
+            :style="agentFlowOrSomethingElse === hook ? 'opacity: 1;' : 'opacity: 0.5;'"
+            :outlined="agentFlowOrSomethingElse === hook ? false : true"
+            :elevation="agentFlowOrSomethingElse === hook ? '4' : '0'"
             height="200"
-            @click="chosenEventType = hook"
+            @click="agentFlowOrSomethingElse = hook"
           >
             <v-scroll-y-transition>
               <div width="100%">
@@ -501,7 +415,7 @@ export default {
                   {{ hookDetails[hook].action }}
                 </div>
                 <div class="text-center">
-                  <v-btn text color="primary" @click="chosenEventType = hook"
+                  <v-btn text color="primary" @click="agentFlowOrSomethingElse = hook"
                     ><v-icon>add</v-icon>Add Hook</v-btn
                   ></div
                 >
@@ -511,43 +425,46 @@ export default {
         </v-col>
       </v-row>
     </v-item-group> -->
-    <v-card v-if="!chosenEventType" elevation="0" class="pl-12 ml-12">
+    <v-card v-if="openAgentOrFlow" elevation="0" class="pl-8">
       <v-chip
         v-for="item in ['flow', 'agent']"
         :key="item"
         label
         class="mx-2"
         outlined
-        @click="chosenEventType = item"
+        @click="selectAgentorFlow(item)"
         ><v-icon class="pr-2">{{
           item === 'flow' ? 'pi-flow' : 'pi-agent'
         }}</v-icon
         >{{ item }}</v-chip
       >
     </v-card>
-    <v-card
-      v-else-if="chosenEventType === 'flow' && !flow"
-      elevation="0"
-      :style="{ overflow: 'auto' }"
-    >
+    <v-card v-else-if="openFlow" elevation="0" :style="{ overflow: 'auto' }">
       <v-chip
         v-for="item in flows"
-        :key="item"
+        :key="item.id"
         label
         class="mx-2"
         outlined
-        @click="flow = item"
+        @click="selectFlow(item)"
         >{{ item.name }}({{ item.project }})</v-chip
       >
     </v-card>
     <v-card
-      v-else-if="
-        (chosenEventType === 'flow' || (hookDetails && hookDetails.flowName)) &&
-          flow &&
-          !flowEventType
-      "
+      v-else-if="openSelectFlowEventType"
       elevation="0"
-      ><v-autocomplete
+      class="text-center"
+      ><v-chip
+        v-for="item in flowEventTypes"
+        :key="item.enum"
+        label
+        class="mx-2"
+        outlined
+        @click="selectFlowEventType(item)"
+        >{{ item.name }}</v-chip
+      >
+
+      <!-- <v-autocomplete
         v-model="flowEventType"
         item-text="name"
         item-value="enum"
@@ -555,7 +472,7 @@ export default {
         label="What does it do?"
         :items="flowEventTypes"
         >{{ flowEventType.name }}</v-autocomplete
-      ></v-card
+      > --> </v-card
     ><v-card v-else-if="openSeconds" elevation="0"
       ><v-card-text>
         <v-text-field
