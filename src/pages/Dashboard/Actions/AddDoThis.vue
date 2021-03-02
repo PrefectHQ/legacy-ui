@@ -39,7 +39,7 @@ export default {
 </script>
 
 <template>
-  <v-card>
+  <v-card elevation="0">
     <div class="text-right">
       <v-btn icon @click="handleClose"><v-icon>close</v-icon></v-btn>
     </div>

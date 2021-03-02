@@ -1,6 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import AddDoThis from '@/pages/Dashboard/Actions/AddDoThis'
+import { STATES } from '@/utils/cloudHooks'
 
 export default {
   components: {
@@ -19,12 +20,17 @@ export default {
       openSeconds: false,
       openSelectFlowEventType: false,
       openFlow: false,
+      openStates: false,
       openAgentOrFlow: true,
+      openActions: false,
       hookDetails: this.hookDetail,
       project: '',
       flowEventType: this.hookDetails?.hook?.event_type || {
         name: 'does this'
       },
+      stateGroups: Object.keys(STATES),
+      states: STATES,
+      selectedStateGroup: null,
       agentFlowOrSomethingElse: '',
       chosenStates: this.hookDetails?.hook?.event_tags?.state || [],
       chosenAction: this.hookDetails?.hook?.action || [],
@@ -37,7 +43,7 @@ export default {
           enum: 'SCHEDULED_NOT_STARTED'
         },
         {
-          name: 'changes state to',
+          name: 'changes state',
           enum: 'CHANGES_STATE'
         }
       ]
@@ -58,7 +64,7 @@ export default {
     },
     editedActions() {
       return this.actions
-        ? this.actions.find(action => action.name === 'cancel that run')
+        ? this.actions.find(action => action.action_type === 'CancelFlowRun')
           ? this.actions
           : [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
@@ -73,7 +79,9 @@ export default {
       return this.chosenStates?.toString().toLowerCase() || 'state'
     },
     hookAction() {
-      return this.chosenAction.name || 'do this'
+      return (
+        this.chosenAction.name || this.chosenAction.action_type || 'do this'
+      )
     },
     completeAction() {
       if (this.hookDetail) return true
@@ -115,9 +123,25 @@ export default {
         ? (this.openStates = true)
         : ''
     },
-    // handleSelectClick() {
-    //   this.selectedEvent = true
-    // },
+    selectStateGroup(group) {
+      this.selectedStateGroup = STATES[group]
+    },
+    selectStates(state) {
+      this.chosenStates.find(item => item === state)
+        ? (this.chosenStates = this.chosenStates.filter(item => item != state))
+        : this.chosenStates.push(state)
+    },
+    selectAction(action) {
+      this.chosenAction = action
+      this.openActions = false
+    },
+    closeStates() {
+      this.openStates = false
+    },
+    addNewAction() {
+      this.addAction = true
+      this.openActions = false
+    },
     async createAction(cancel) {
       if (cancel) {
         await this.$apollo.mutate({
@@ -325,104 +349,31 @@ export default {
             ></span
           >
           <span v-if="includeTo">
-            <v-menu :close-on-content-click="false">
-              <template #activator="{ on, attrs }">
-                <v-btn
-                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-                  class="px-0 pb-1 headline text-decoration-underline text--secondary"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  >{{ hookStates }}</v-btn
-                ></template
-              >
-              <v-card
-                ><v-card-actions>
-                  <v-autocomplete
-                    v-model="chosenStates"
-                    multiple
-                    label="Which states?"
-                    :items="['Failed', 'Success']"
-                    >{{ hookStates }}</v-autocomplete
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-menu></span
-          >, then
-          <v-menu :close-on-content-click="false">
-            <template #activator="{ on, attrs }">
-              <v-btn
-                :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-                class="px-0 pb-1 headline text-decoration-underline text--secondary"
-                text
-                v-bind="attrs"
-                v-on="on"
-                >{{ hookAction }}</v-btn
-              ></template
+            to
+            <v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              class=" px-0 pb-1 headline"
+              text
+              :color="openStates ? 'codePink' : 'grey'"
+              @click="openStates = !openStates"
             >
-            <v-card v-if="!addAction"
-              ><v-card-actions>
-                <v-autocomplete
-                  v-model="chosenAction"
-                  multiple
-                  label="What should happen?"
-                  :items="editedActions"
-                  item-text="name"
-                  item-value="id"
-                  >{{ chosenAction }}</v-autocomplete
-                >
-                <v-btn
-                  small
-                  class="ml-8"
-                  color="primary"
-                  @click="addAction = true"
-                  ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-            <AddDoThis v-else @close-action="addAction = false"/></v-menu
-          >.</v-col
+              {{ hookStates }}</v-btn
+            > </span
+          >, then
+
+          <v-btn
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            class="px-0 pb-1 headline"
+            text
+            :color="openActions ? 'codePink' : 'grey'"
+            @click="openActions = !openActions"
+            >{{ hookAction }}</v-btn
+          >
+
+          .</v-col
         >
       </v-row></v-card
     >
-    <!-- <v-item-group>
-      <v-row v-if="!selectedEvent" class="mx-8">
-        <v-col
-          v-for="(hook, i) in hookTypes"
-          :key="i"
-          v-model="agentFlowOrSomethingElse"
-          cols="12"
-          :md="colSize"
-          class="pl-0"
-        >
-          <v-alert
-            :color="agentFlowOrSomethingElse === hook ? 'white' : 'codePink'"
-            :style="agentFlowOrSomethingElse === hook ? 'opacity: 1;' : 'opacity: 0.5;'"
-            :outlined="agentFlowOrSomethingElse === hook ? false : true"
-            :elevation="agentFlowOrSomethingElse === hook ? '4' : '0'"
-            height="200"
-            @click="agentFlowOrSomethingElse = hook"
-          >
-            <v-scroll-y-transition>
-              <div width="100%">
-                <div class="headline codePink--text text-center pa-8">
-                  <v-icon color="codePink" class="pr-2">{{
-                    hookDetails[hook].icon
-                  }}</v-icon>
-                  {{ hookDetails[hook].type }}
-                  {{ hookDetails[hook].action }}
-                </div>
-                <div class="text-center">
-                  <v-btn text color="primary" @click="agentFlowOrSomethingElse = hook"
-                    ><v-icon>add</v-icon>Add Hook</v-btn
-                  ></div
-                >
-              </div>
-            </v-scroll-y-transition>
-          </v-alert>
-        </v-col>
-      </v-row>
-    </v-item-group> -->
     <v-card v-if="openAgentOrFlow" elevation="0" class="pl-8">
       <v-chip
         v-for="item in ['flow', 'agent']"
@@ -460,18 +411,9 @@ export default {
         outlined
         @click="selectFlowEventType(item)"
         >{{ item.name }}</v-chip
-      >
-
-      <!-- <v-autocomplete
-        v-model="flowEventType"
-        item-text="name"
-        item-value="enum"
-        class="pa-4"
-        label="What does it do?"
-        :items="flowEventTypes"
-        >{{ flowEventType.name }}</v-autocomplete
-      > --> </v-card
-    ><v-card v-else-if="openSeconds" elevation="0"
+      ></v-card
+    >
+    <v-card v-else-if="openSeconds" elevation="0"
       ><v-card-text>
         <v-text-field
           v-model="seconds"
@@ -481,6 +423,45 @@ export default {
         ></v-text-field>
       </v-card-text>
     </v-card>
+    <v-card v-else-if="openStates && !selectedStateGroup" elevation="0">
+      <v-chip
+        v-for="item in stateGroups"
+        :key="item.id"
+        label
+        class="mx-2"
+        outlined
+        @click="selectStateGroup(item)"
+        >{{ item }}</v-chip
+      >
+    </v-card>
+    <v-card v-else-if="openStates" v-click-outside="closeStates" elevation="0">
+      <v-chip
+        v-for="item in selectedStateGroup"
+        :key="item.id"
+        label
+        class="mx-2"
+        outlined
+        @click="selectStates(item)"
+        >{{ item }}</v-chip
+      >
+    </v-card>
+    <v-card v-else-if="openActions" elevation="0"
+      ><v-card-actions>
+        <v-chip
+          v-for="item in editedActions"
+          :key="item.id"
+          label
+          class="mx-2"
+          outlined
+          @click="selectAction(item)"
+          >{{ item.name || item.action_type }}</v-chip
+        >
+        <v-btn small class="ml-8" color="primary" @click="addNewAction"
+          ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    <AddDoThis v-else-if="addAction" @close-action="addAction = false" />
     <v-card-actions class="pa-8">
       <v-spacer /><v-btn
         large

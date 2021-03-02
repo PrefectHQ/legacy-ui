@@ -13,20 +13,20 @@ export default {
       deletingHook: false,
       hookDetails: {
         FlowRunStateChangedEvent: {
-          type: 'flow',
+          type: 'a run from',
           action: 'changes state',
           icon: 'pi-flow'
         },
         FlowSLAFailedEvent: {
-          type: 'flow',
+          type: 'a run from',
           action: 'SLA fails',
           icon: 'pi-flow'
         },
         SCHEDULED_NOT_STARTED: {
-          action: 'is scheduled but does not start'
+          action: 'does not start'
         },
         STARTED_NOT_FINISHED: {
-          action: 'starts but does not finish'
+          action: 'does not finish'
         }
       },
       hookSwitch: true
@@ -190,7 +190,8 @@ export default {
         for <span class="font-weight-bold">{{ seconds }} seconds</span> </span
       ><span v-if="includeTo">
         to <span class="font-weight-bold">{{ hookStates }}</span></span
-      >, then <span class="font-weight-bold">{{ hookAction }}</span></div
+      >, then <span class="font-weight-bold">{{ hookAction }}</span
+      >.</div
     ></v-card
   >
 </template>
