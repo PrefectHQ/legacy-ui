@@ -4,11 +4,22 @@
 
 ### Features and Improvements
 
-- Add interactive-api header - [#628](https://github.com/PrefectHQ/ui/pull/628)
+- None
 
 ### Bugfixes
 
 - None
+
+## 2021-03-02
+
+### Features and Improvements
+
+- Enables you to open up multiple links at the same time without redirecting to the first link - [#631](https://github.com/PrefectHQ/ui/pull/631)
+- Add interactive-api header - [#628](https://github.com/PrefectHQ/ui/pull/628)
+
+### Bugfixes
+
+- Fix z order positioning on agent controls - [#617](https://github.com/PrefectHQ/ui/pull/617)
 
 ## 2021-02-23
 
@@ -21,7 +32,6 @@
 
 - Add extra check for flow group to the flow nav guard - [#590](https://github.com/PrefectHQ/ui/pull/590)
 - Add error handling to the agents clean-up button - [#591](https://github.com/PrefectHQ/ui/pull/591)
-- Fix z order positioning on agent controls - [#617](https://github.com/PrefectHQ/ui/pull/617)
 
 ## 2021-02-12
 
