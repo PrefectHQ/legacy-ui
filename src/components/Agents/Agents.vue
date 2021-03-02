@@ -1,7 +1,8 @@
 <script>
 import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import LogRocket from 'logrocket'
 
 import moment from '@/utils/moment'
 
@@ -21,7 +22,9 @@ export default {
       loading: 0,
       labelInput: [],
       showUnlabeledAgentsOnly: false,
-      statusInput: STATUSES
+      statusInput: STATUSES,
+      clearingAgents: false,
+      clearingError: false
     }
   },
   computed: {
@@ -106,14 +109,23 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     async clearUnhealthyAgents() {
-      this.agents
-        .filter(
+      try {
+        this.clearingAgents = true
+        const unhealthyAgents = this.agents.filter(
           agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
         )
-        .forEach(agent => {
+        if (!unhealthyAgents) {
+          LogRocket.captureMessage('Clean Up button open but no agents found')
+          this.setAlert({
+            alertShow: true,
+            alertMessage: 'Error clearing agents',
+            alertType: 'error'
+          })
+        }
+        await unhealthyAgents.forEach(agent => {
           agent.isDeleting = true
-
           this.$apollo
             .mutate({
               mutation: require('@/graphql/Agent/delete-agent.gql'),
@@ -127,10 +139,35 @@ export default {
                 agent.isDeleting = false
               }, 10000)
             })
-          setTimeout(() => {
-            agent.isDeleting = false
-          }, 2000)
+            .catch(e => {
+              LogRocket.captureException(e)
+              this.clearingError = true
+              agent.isDeleting = false
+            })
         })
+      } catch (e) {
+        LogRocket.captureException(e)
+        this.setAlert({
+          alertShow: true,
+          alertMessage: 'Error clearing agents',
+          alertType: 'error'
+        })
+      } finally {
+        setTimeout(() => {
+          this.clearingAgents = false
+        }, 500)
+        setTimeout(() => {
+          this.cleanUpDialog = false
+          if (this.clearingError) {
+            this.setAlert({
+              alertShow: true,
+              alertMessage: 'Error clearing agents',
+              alertType: 'error'
+            })
+            this.clearingError = false
+          }
+        }, 800)
+      }
     },
     handleLabelClick(lbl) {
       let label = lbl.trim()
@@ -198,8 +235,9 @@ export default {
     <div
       class="agent-controls"
       :class="{
-        'md-and-down': $vuetify.breakpoint.mdAndDown,
-        'md-and-up': $vuetify.breakpoint.mdAndUp
+        'sm-and-down': $vuetify.breakpoint.smAndDown,
+        md: $vuetify.breakpoint.mdOnly,
+        'lg-and-up': $vuetify.breakpoint.lgAndUp
       }"
     >
       <v-dialog v-model="cleanUpDialog" max-width="480">
@@ -243,7 +281,13 @@ export default {
             <v-btn text tile @click="cleanUpDialog = false">
               Cancel
             </v-btn>
-            <v-btn dark color="red" depressed @click="clearUnhealthyAgents">
+            <v-btn
+              :loading="clearingAgents"
+              dark
+              color="red"
+              depressed
+              @click="clearUnhealthyAgents"
+            >
               Confirm
             </v-btn>
           </v-card-actions>
@@ -464,13 +508,17 @@ export default {
   left: 50%;
   position: fixed;
   transform: translate(570px);
-  z-index: 4;
+  z-index: 6;
 
-  &.md-and-down {
-    top: 120px;
+  &.sm-and-down {
+    top: 156px;
   }
 
-  &.md-and-up {
+  &.md {
+    top: 184px;
+  }
+
+  &.lg-and-up {
     top: 136px;
   }
 

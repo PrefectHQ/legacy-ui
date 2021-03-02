@@ -34,9 +34,9 @@ export default {
 
 <template>
   <v-container class="pa-0 h-100 fill-height" style="max-width: 2560px;" fluid>
-    <v-row v-if="$vuetify.breakpoint.mdAndUp">
+    <v-row v-if="$vuetify.breakpoint.mdAndUp" style="z-index: 3;">
       <v-slide-x-transition>
-        <v-col v-if="showResources" cols="12" md="5" class="pl-0">
+        <v-col v-if="showResources" cols="12" md="5">
           <div
             class="d-flex align-center justify-center white--text fill-height"
             style="width: 100%;"
@@ -146,7 +146,7 @@ export default {
                 height="100%"
                 class="text-center gradient-background orange--gradient d-flex align-center justify-center "
               >
-                <div class="d-flex flex-column z-1">
+                <div class="d-flex flex-column" style="z-index: 3;">
                   <div class="mb-8">
                     <img
                       class="photo mx-auto"
@@ -182,7 +182,10 @@ export default {
                 height="100%"
                 class="text-center gradient-background grey--gradient d-flex align-center justify-center"
               >
-                <div class="d-flex flex-column align white--text z-1">
+                <div
+                  class="d-flex flex-column align white--text"
+                  style="z-index: 3;"
+                >
                   <div class="mb-8">
                     <img
                       class="photo mx-auto"
@@ -225,6 +228,7 @@ export default {
             class="mx-auto"
             color="primary"
             x-large
+            style="z-index: 3;"
           >
             To the dashboard!
             <v-icon right>fas fa-rocket</v-icon>
@@ -241,7 +245,6 @@ export default {
   left: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
-  z-index: 2;
 }
 
 .dashboard-button-row-small {
@@ -255,11 +258,6 @@ export default {
   position: absolute;
   top: 25px;
   transform: translate(-50%);
-  z-index: 2;
-}
-
-.z-1 {
-  z-index: 1 !important;
 }
 
 .gradient-background {

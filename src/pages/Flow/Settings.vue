@@ -42,7 +42,7 @@ export default {
       icons-and-text
       color="accentPink"
       tabs-border-bottom
-      class="ml-n1"
+      class="ml-n1 pt-2"
       style="width: calc(100% + 8px);"
     >
       <v-tab key="general" data-cy="flow-settings-general-tab">

@@ -4,14 +4,46 @@
 
 ### Features and Improvements
 
-- Add a description tab to the flow page - [#563](https://github.com/PrefectHQ/ui/pull/563)
-- Check for missing or mismatched labels on Server - [#593](https://github.com/PrefectHQ/ui/pull/593)
-- Update wording on tutorial banner for server users - [#592](https://github.com/PrefectHQ/ui/pull/592)
-- Minimizes reliance on network connection to have a functioning UI (allows Server UI to be completely airgapped after install) - [#595](https://github.com/PrefectHQ/ui/pull/595)
+- Enables you to open up multiple links at the same time without redirecting to the first link - [#631](https://github.com/PrefectHQ/ui/pull/631)
+- Add interactive-api header - [#628](https://github.com/PrefectHQ/ui/pull/628)
 
 ### Bugfixes
 
 - None
+
+## 2021-02-23
+
+### Features and Improvements
+
+- Add a "How did you hear about us" dropdown to the signup flow - [#615](https://github.com/PrefectHQ/ui/pull/615)
+- Add tenant and user ids to API requests as headers - [#621](https://github.com/PrefectHQ/ui/pull/621)
+
+### Bugfixes
+
+- Add extra check for flow group to the flow nav guard - [#590](https://github.com/PrefectHQ/ui/pull/590)
+- Add error handling to the agents clean-up button - [#591](https://github.com/PrefectHQ/ui/pull/591)
+- Fix z order positioning on agent controls - [#617](https://github.com/PrefectHQ/ui/pull/617)
+
+## 2021-02-12
+
+### Bugfixes
+
+- Hotfix runconfigs; remove labels from the run config and put them in the `create_flow_run` mutation instead - [#610](https://github.com/PrefectHQ/ui/pull/610)
+
+## 2021-02-11
+
+### Features and Improvements
+
+- Update run form and add runconfig form - [#585](https://github.com/PrefectHQ/ui/pull/585)
+- Add a description tab to the flow page - [#563](https://github.com/PrefectHQ/ui/pull/563)
+- Check for missing or mismatched labels on Server - [#593](https://github.com/PrefectHQ/ui/pull/593)
+- Update wording on tutorial banner for server users - [#592](https://github.com/PrefectHQ/ui/pull/592)
+- Minimizes reliance on network connection to have a functioning UI (allows Server UI to be completely airgapped after install) - [#595](https://github.com/PrefectHQ/ui/pull/595)
+- Add hints and improve JSON input prepended icon clarity - [#606](https://github.com/PrefectHQ/ui/pull/606)
+
+### Bugfixes
+
+- Fixes an issue with runconfig dict input not being populated correctly - [#606](https://github.com/PrefectHQ/ui/pull/606)
 
 ## 2021-02-03
 

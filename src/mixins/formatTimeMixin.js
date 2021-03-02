@@ -229,6 +229,17 @@ export const formatTime = {
         sameElse: 'MMMM D, YYYY [at] h:mma'
       })
       return `${formatted} ${shortenedTz}`
+    },
+    formatDateTimeFromUTC(timestamp, timezone) {
+      if (!timestamp) return
+
+      let timeObj = moment.tz(timestamp, timezone)
+
+      let formatted = timeObj.calendar(null, {
+        sameDay: 'h:mma z',
+        sameElse: 'MMMM D, YYYY [at] h:mma z'
+      })
+      return formatted
     }
   }
 }

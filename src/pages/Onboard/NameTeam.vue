@@ -23,8 +23,22 @@ export default {
       revealNote: false,
       revealNameInput: false,
       revealUrlInput: false,
+      revealDropdown: false,
       revealPendingTeams: false,
-      revealConfirm: false
+      revealConfirm: false,
+
+      // "how did you hear about us" options
+      options: [
+        'Twitter',
+        'Google',
+        'LinkedIn',
+        'Colleague',
+        'Conference',
+        'Meetup',
+        'Other'
+      ],
+      selectedOption: '',
+      extraInfo: ''
     }
   },
   computed: {
@@ -52,6 +66,7 @@ export default {
     setTimeout(() => {
       this.revealNameInput = true
       this.revealUrlInput = true
+      this.revealDropdown = true
       this.revealPendingTeams = true
       this.revealConfirm = true
 
@@ -201,14 +216,41 @@ export default {
       this.activeInvite = null
       this.loading--
     },
-    async goToPlan() {
+    setSelectedOption(option) {
+      this.selectedOption = option
+    },
+    setExtraInfo(extraInfo) {
+      this.extraInfo = extraInfo
+    },
+    async goToResources() {
       this.revealNameInput = false
       this.revealUrlInput = false
+      this.revealDropdown = false
       this.revealConfirm = false
 
       await this.setCurrentTenant(
         this.redirectTenant ?? this.tenantChanges.slug ?? this.tenant.slug
       )
+
+      const eventSource = this.isCloud ? 'prefect_cloud' : 'prefect_server'
+
+      fetch('https://sens-o-matic.prefect.io', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-prefect-event': eventSource
+        },
+        body: JSON.stringify({
+          source: eventSource,
+          type: 'welcome_survey',
+          payload: {
+            location: this.selectedOption,
+            info: this.extraInfo
+          }
+        })
+      }).then(res => {
+        return res.json()
+      })
 
       this.$router.push({
         name: 'plan',
@@ -237,7 +279,9 @@ export default {
     class="text-center mx-auto px-12 py-8 white--text"
     flat
     tile
-    style="width: fit-content !important;"
+    style="align-items: center;
+    display: flex;
+    width: fit-content !important;"
     color="transparent"
   >
     <v-row
@@ -321,8 +365,7 @@ export default {
               :disabled="disabled"
               :error-messages="nameErrors"
               :loading="isCheckingName"
-              class="white--text v-text-field-input-color"
-              color="white"
+              dark
               @blur="checkName(name)"
               @input="resetNameMetadata"
             >
@@ -346,7 +389,7 @@ export default {
             v-if="revealUrlInput"
             key="input-2"
             cols="12"
-            class="my-2 mb-12 name-team-input mx-auto"
+            class="my-2 name-team-input mx-auto"
           >
             <div class="overline d-flex justify-center align-center">
               <span class="mr-1">Team Slug</span>
@@ -358,8 +401,7 @@ export default {
                 </v-icon>
               </Truncate>
             </div>
-            <div v-if="!isTenantAdmin" class="headline medium">
-              {{ tenant.slug }}
+            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
             </div>
             <v-text-field
               v-if="isTenantAdmin"
@@ -368,8 +410,7 @@ export default {
               :disabled="disabled"
               :error-messages="slugErrors"
               :loading="isCheckingSlug"
-              class="white--text v-text-field-input-color"
-              color="white"
+              dark
               @blur="checkSlug(slug)"
               @input="resetSlugMetadata"
             >
@@ -388,6 +429,31 @@ export default {
                 clear
               </v-icon>
             </v-text-field>
+          </v-col>
+
+          <v-col
+            v-if="revealDropdown"
+            key="input-3"
+            cols="12"
+            class="my-2 mb-12 mx-auto"
+          >
+            <div class="overline">
+              How did you hear about us?
+            </div>
+            <v-select
+              :items="options"
+              dark
+              :menu-props="{ dark: true, maxHeight: 400 }"
+              label="Options"
+              @change="setSelectedOption"
+            ></v-select>
+            <v-text-field
+              v-show="selectedOption == 'Other'"
+              dark
+              autofocus
+              placeholder="Newsletter, advertisement, etc..."
+              @input="setExtraInfo"
+            ></v-text-field>
           </v-col>
 
           <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
@@ -503,25 +569,11 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.h-80 {
-  min-height: calc(80vh - 64px) !important;
-}
-
 .transition-height {
   transition: max-height 500ms ease;
 }
 
 .name-team-input {
   max-width: 700px;
-}
-
-.w-100 {
-  width: 100vw;
-}
-
-.name-team-card {
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
 }
 </style>
