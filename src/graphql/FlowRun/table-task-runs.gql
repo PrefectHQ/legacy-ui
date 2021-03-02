@@ -10,17 +10,19 @@ query TableTaskRuns(
     id
     name
     task_runs(
-      where: { task: { name: { _ilike: $name } }, state: { _ilike: $state } }
+      where: { task: { name: { _ilike: $name } }, state: { _eq: $state } }
       order_by: $orderBy
       limit: $limit
       offset: $offset
     ) {
-      end_time
       map_index
-      start_time
-      state
-      version
-      id
+      details {
+        end_time
+        start_time
+        state
+        id
+        version
+      }
       task {
         id
         name

@@ -62,6 +62,17 @@ export default {
       page: 1,
       searchTerm: null,
       state: null,
+      states: [
+        'Failed',
+        'Success',
+        'Pending',
+        'Cancelled',
+        'Finished',
+        'Skipped',
+        'TimedOut',
+        'Scheduled',
+        'Resume'
+      ],
       sortBy: 'start_time',
       sortDesc: true,
       taskRunDurations: {}
@@ -142,32 +153,19 @@ export default {
       <v-select
         slot="sort"
         v-model="state"
-        deletable-chips
         style="width: 180px;"
-        chips
         solo
         flat
         dense
         hide-details
-        :items="[
-          { header: 'Finished States' },
-          { divider: '...' },
-          'Failed',
-          'Success',
-          'Cancelled',
-          'Finished',
-          'Skipped',
-          'TimedOut',
-          { header: 'Scheduled States - To Re-run Task Run' },
-          { divider: '...' },
-          'Scheduled',
-          'Resume',
-          { header: 'Pending - to clear the state' },
-          { divider: '...' },
-          'Pending'
-        ]"
+        clearable
+        :items="states"
         label="Sort by state"
-      ></v-select>
+      >
+        <template #selection="{ item }">
+          <v-chip :color="item" label text-color="white">{{ item }}</v-chip>
+        </template>
+      </v-select>
       <v-text-field
         slot="action"
         v-model="searchTerm"
@@ -210,10 +208,26 @@ export default {
           <div class="text-truncate">
             <v-tooltip top>
               <template #activator="{ on }">
-                <router-link
+                <!-- <router-link
                   class="link text-truncate"
                   :data-cy="'task-run-table-link|' + item.task.name"
                   :to="{ name: 'task-run', params: { id: item.id } }"
+                >
+                  <span v-if="item.name">{{ item.name }}</span>
+                  <span v-else v-on="on"
+                    >{{ item.task.name
+                    }}<span v-if="item.map_index > -1">
+                      (Mapped Child {{ item.map_index }})</span
+                    ><span v-else-if="hasChild(item.task.name)">
+                      (Parent)
+                    </span>
+                  </span>
+                </router-link> -->
+
+                <router-link
+                  class="link text-truncate"
+                  :data-cy="'task-run-table-link|' + item.task.name"
+                  :to="{ name: 'task-run', params: { id: item.details.id } }"
                 >
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else v-on="on"
@@ -237,18 +251,45 @@ export default {
         </template>
 
         <template #item.start_time="{ item }">
+          <truncate :content="formatTime(item.details.start_time)">
+            {{ formDate(item.details.start_time) }}
+          </truncate>
+        </template>
+
+        <!-- <template #item.start_time="{ item }">
           <truncate :content="formatTime(item.start_time)">
             {{ formDate(item.start_time) }}
           </truncate>
-        </template>
+        </template> -->
 
         <template #item.end_time="{ item }">
-          <truncate :content="formatTime(item.end_time)">
-            {{ formDate(item.end_time) }}
+          <truncate :content="formatTime(item.details.end_time)">
+            {{ formDate(item.details.end_time) }}
           </truncate>
         </template>
 
+        <!-- <template #item.end_time="{ item }">
+          <truncate :content="formatTime(item.end_time)">
+            {{ formDate(item.end_time) }}
+          </truncate>
+        </template> -->
+
         <template #item.duration="{ item }">
+          <DurationSpan
+            v-if="item.details.start_time"
+            :start-time="item.details.start_time"
+            :end-time="
+              item.details.end_time
+                ? item.details.end_time
+                : isFinished(item.details.state)
+                ? item.details.start_time
+                : null
+            "
+          />
+          <span v-else>...</span>
+        </template>
+
+        <!-- <template #item.duration="{ item }">
           <DurationSpan
             v-if="item.start_time"
             :start-time="item.start_time"
@@ -261,23 +302,39 @@ export default {
             "
           />
           <span v-else>...</span>
-        </template>
+        </template> -->
 
         <template #item.state="{ item }">
-          <truncate :content="item.state">
-            <v-icon class="mr-1 pointer" small :color="item.state">
+          <truncate :content="item.details.state">
+            <v-icon class="mr-1 pointer" small :color="item.details.state">
               brightness_1
             </v-icon>
           </truncate>
         </template>
 
+        <!-- <template #item.state="{ item }">
+          <truncate :content="item.state">
+            <v-icon class="mr-1 pointer" small :color="item.state">
+              brightness_1
+            </v-icon>
+          </truncate>
+        </template> -->
+
         <template #item.action="{ item }">
+          <ResumeButton
+            v-if="item.details.state == 'Paused'"
+            :task-run="{ ...item, flow_run: flowRun }"
+            dialog-type="resume"
+          />
+        </template>
+
+        <!-- <template #item.action="{ item }">
           <ResumeButton
             v-if="item.state == 'Paused'"
             :task-run="{ ...item, flow_run: flowRun }"
             dialog-type="resume"
           />
-        </template>
+        </template> -->
       </v-data-table>
     </v-card-text>
   </v-card>
