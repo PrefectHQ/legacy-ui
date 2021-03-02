@@ -29,11 +29,6 @@ export default {
           action: 'starts but does not finish'
         }
       },
-      actionDetails: {
-        SlackNotificationAction: {
-          title: 'send a slack notification'
-        }
-      },
       hookSwitch: true
     }
   },

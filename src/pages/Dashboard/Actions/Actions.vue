@@ -21,11 +21,6 @@ export default {
           action: 'SLA fails',
           icon: 'pi-flow'
         }
-      },
-      actionDetails: {
-        SlackNotificationAction: {
-          title: 'send a slack notification'
-        }
       }
     }
   },
