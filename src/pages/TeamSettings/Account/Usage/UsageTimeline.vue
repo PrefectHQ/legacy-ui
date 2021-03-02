@@ -300,7 +300,7 @@ export default {
         ((this.width - this.padding.x) / this.ticks) * 0.8
       )
 
-      console.log(this.items)
+      console.log(this.from, this.to, this.items)
       // this.mainGroup
       //   .selectAll('circle')
       //   .data(this.items)
@@ -391,6 +391,7 @@ export default {
               .attr('class', 'bar-group')
               .on('mouseover', this.barMouseover)
               .on('mouseout', this.barMouseout)
+
             g.append('rect')
               .attr('class', 'bar')
               .attr('height', d => (d.runs ? this.y(d.runs) : 0))
@@ -398,9 +399,9 @@ export default {
               .attr('fill', 'rgba(0,0,0,0.05)')
               // .attr('stroke-width', 3)
               // .attr('stroke', 'rgba(0, 0, 0, 0.12)')
-              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+              .attr('x', d => this.x(new Date(d.timestamp)))
               .attr('y', d => (d.runs ? yOffset - this.y(d.runs) : 0))
-              .style('transform', `translate(-${bandwidth / 2 ?? 0}px)`)
+            // .style('transform', `translate(-${bandwidth / 2 ?? 0}px)`)
 
             // g.append('text')
             //   .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
@@ -419,9 +420,15 @@ export default {
             bar
               .attr('height', d => (d.runs ? this.y(d.runs) : 0))
               .attr('width', bandwidth)
-              .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
+              .attr('x', d => {
+                console.log(
+                  this.x(new Date(d.timestamp)),
+                  new Date(d.timestamp)
+                )
+                return this.x(new Date(d.timestamp))
+              })
               .attr('y', d => (d.runs ? yOffset - this.y(d.runs) : 0))
-              .style('transform', `translate(-${bandwidth / 2 ?? 0}px)`)
+            // .style('transform', `translate(-${bandwidth / 2 ?? 0}px)`)
 
             // const text = update.select('text')
             // text
