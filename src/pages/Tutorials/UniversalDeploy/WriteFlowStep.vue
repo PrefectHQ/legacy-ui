@@ -37,7 +37,7 @@ export default {
 
     <div
       class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-      style="border: 1px solid #b0bec5 !important;"
+      style="border: 1px solid var(--v-utilGrayLight-base) !important;"
     >
       <pre id="ud-code" class="code-block">
 import prefect
@@ -62,7 +62,7 @@ flow.run()
 
     <div
       class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4 logs-block"
-      style="border: 1px solid #b0bec5 !important;"
+      style="border: 1px solid var(--v-utilGrayLight-base) !important;"
     >
       [2020-01-08 23:49:00,239] INFO - prefect.FlowRunner | Beginning Flow run
       for 'hello-flow'
@@ -101,7 +101,7 @@ flow.run()
 
 <style lang="scss" scoped>
 .logs-block {
-  background-color: #f6f6f6;
+  background-color: var(--v-appBackground-base);
   border-radius: 4px;
   font-family: 'Source Code Pro', monospace;
   font-size: 0.85em;

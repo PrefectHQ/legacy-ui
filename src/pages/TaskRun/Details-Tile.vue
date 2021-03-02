@@ -272,7 +272,7 @@ a {
 }
 
 .code-custom {
-  background-color: #fafafa;
+  background-color: var(--v-appBackground-base);
   box-shadow: none;
   color: var(--v-codeBlue-base);
   font-size: 0.9em;

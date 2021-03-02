@@ -124,7 +124,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  background: #fff;
+  background: var(--v-appForeground-base);
 }
 
 .cursor-point {
