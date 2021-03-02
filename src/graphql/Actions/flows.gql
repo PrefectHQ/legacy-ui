@@ -5,5 +5,8 @@ query ActionFlows ($project: uuid, $flowGroupId: uuid) {
     name
     flow_group_id
     version_group_id
+    project {
+      name
+    }
   }
 }

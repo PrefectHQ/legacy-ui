@@ -16,13 +16,14 @@ export default {
   },
   data() {
     return {
-      flow: {},
+      selectedFlows: [],
       openSeconds: false,
       openSelectFlowEventType: false,
       openFlow: false,
       openStates: false,
       openAgentOrFlow: true,
       openActions: false,
+      flowNamesList: [],
       hookDetails: this.hookDetail,
       project: '',
       flowEventType: this.hookDetails?.hook?.event_type || {
@@ -75,6 +76,9 @@ export default {
     durationSeconds() {
       return this.seconds || this.hookDetails?.flowConfig?.duration_seconds
     },
+    flowNames() {
+      return this.flowNamesList?.toString() || this.agentOrFlow
+    },
     hookStates() {
       return this.chosenStates?.toString().toLowerCase() || 'state'
     },
@@ -109,8 +113,17 @@ export default {
         this.openSelectFlowEventType = false
       }
     },
-    selectFlow(flow) {
-      this.flow = flow
+    selectFlow(event, flow) {
+      this.selectedFlows.push(flow)
+      this.flowNamesList.push(flow.name)
+      if (!event.shiftKey) {
+        this.openFlow = false
+        this.openSelectFlowEventType = true
+      }
+    },
+    selectAllFlows() {
+      this.selectedFlows = this.flows
+      this.flowNamesList.push('any flow')
       this.openFlow = false
       this.openSelectFlowEventType = true
     },
@@ -154,7 +167,8 @@ export default {
     },
     async createHook() {
       let data
-      const flow = this.flow || this.hookDetails?.flowName[0]?.flow_group_id
+      const flow =
+        this.selectedFlows[0] || this.hookDetails?.flowName[0]?.flow_group_id
       const action = this.chosenAction[0] || this.hookDetails?.hook?.action?.id
       if (action === 'CANCEL_RUN') {
         this.createAction(true)
@@ -248,7 +262,7 @@ export default {
       query: require('@/graphql/Actions/flows.gql'),
       variables() {
         return {
-          //   project: this.project
+          project: this.project || null
         }
       },
       update: data => {
@@ -288,7 +302,7 @@ export default {
             class="px-0 pb-1 headline"
             text
             @click="openAgentOrFlow = !openAgentOrFlow"
-            >{{ flow.name || agentOrFlow }}</v-btn
+            >{{ flowNames }}</v-btn
           >
           <span
             >{{ ' ' }}<span v-if="agentOrFlow === 'flow'">has a run that </span>
@@ -358,14 +372,31 @@ export default {
       >
     </v-card>
     <v-card v-else-if="openFlow" elevation="0" :style="{ overflow: 'auto' }">
+      <v-card-title
+        ><v-btn color="primary" @click="selectAllFlows">Select All Flows</v-btn
+        ><v-autocomplete
+          v-model="project"
+          width="100px"
+          class="px-2"
+          :items="projects"
+          item-text="name"
+          item-value="id"
+          label="Filter by Project"
+        ></v-autocomplete
+        >Hold "shift" to choose multiple flows
+      </v-card-title>
       <v-chip
         v-for="item in flows"
         :key="item.id"
         label
+        :color="selectedFlows.includes(item) ? 'pink' : ''"
         class="mx-2"
         outlined
-        @click="selectFlow(item)"
-        >{{ item.name }}({{ item.project }})</v-chip
+        @click="selectFlow($event, item)"
+        >{{ item.name
+        }}<span class="font-weight-light">
+          ({{ item.project.name }})</span
+        ></v-chip
       >
     </v-card>
     <v-card
@@ -388,6 +419,7 @@ export default {
           v-model="seconds"
           min-width="50px"
           type="number"
+          @keydown.enter="openSeconds = false"
           @blur="openSeconds = false"
         ></v-text-field>
       </v-card-text>
