@@ -267,9 +267,6 @@ export default {
 
 <template>
   <v-card width="100%">
-    <!-- <div v-if="!selectedEvent" class="text-right pa-2">
-      <v-btn icon @click="closeCard"><v-icon>close</v-icon></v-btn></div
-    > -->
     <div class="pb-2 pt-2 pl-2"
       ><v-btn
         text
@@ -293,34 +290,6 @@ export default {
             @click="openAgentOrFlow = !openAgentOrFlow"
             >{{ flow.name || agentOrFlow }}</v-btn
           >
-
-          <!-- <v-menu v-else :close-on-content-click="false">
-            <template #activator="{ on, attrs }">
-              <v-btn
-                :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-                class="px-0 pb-1 headline text-decoration-underline text--secondary"
-                text
-                v-bind="attrs"
-                v-on="on"
-                >{{ agentName }}</v-btn
-              ></template
-            >
-            <v-card>
-               <v-card-actions>
-                <v-autocomplete
-                  v-model="agent"
-                  item-text="name"
-                  item-value="id"
-                  class="pa-4"
-                  label="Which agent?"
-                  :items="agents"
-                  >{{ agent }}</v-autocomplete
-                ></v-card-actions
-              > 
-            </v-card>
-          </v-menu> -->
-
-          <!-- <span> {{ hookEvent }}</span> -->
           <span
             >{{ ' ' }}<span v-if="agentOrFlow === 'flow'">has a run that </span>
 

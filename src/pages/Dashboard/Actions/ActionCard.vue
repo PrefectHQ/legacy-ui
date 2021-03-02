@@ -28,14 +28,10 @@ export default {
         STARTED_NOT_FINISHED: {
           action: 'does not finish'
         }
-      },
-      hookSwitch: true
+      }
     }
   },
   computed: {
-    offOrOn() {
-      return this.hookSwitch ? 'Off' : 'On'
-    },
     includeTo() {
       return this.hook.event_type === 'FlowRunStateChangedEvent'
     },
@@ -146,7 +142,6 @@ export default {
 <template>
   <v-card class="mb-2 headline " outlined>
     <div class="text-right">
-      <!-- <v-switch v-model="hookSwitch" inset color="primary"></v-switch> -->
       <v-menu :close-on-content-click="false">
         <template #activator="{ on, attrs }">
           <v-btn class="pa-8" icon title="More Actions" v-bind="attrs" v-on="on"
@@ -161,9 +156,7 @@ export default {
               :loading="deletingHook"
               color="secondaryGray"
               @click="deleteHook"
-              ><v-icon class="pr-4">delete</v-icon>
-
-              Delete Action</v-btn
+              ><v-icon class="pr-4">delete</v-icon> Delete Action</v-btn
             ></div
           >
           <div>
@@ -172,9 +165,7 @@ export default {
               text
               color="secondaryGray"
               @click="editHook"
-              ><v-icon class="pr-4">edit</v-icon>
-
-              Edit Action</v-btn
+              ><v-icon class="pr-4">edit</v-icon> Edit Action</v-btn
             ></div
           >
         </v-card></v-menu
