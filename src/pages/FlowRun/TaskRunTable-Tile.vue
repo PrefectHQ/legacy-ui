@@ -157,13 +157,20 @@ export default {
         solo
         flat
         dense
-        hide-details
         clearable
+        hide-details
         :items="states"
         label="Sort by state"
       >
         <template #selection="{ item }">
-          <v-chip :color="item" label text-color="white">{{ item }}</v-chip>
+          <v-chip
+            :color="item"
+            label
+            small
+            text-color="white"
+            class="sort-chip"
+            >{{ item }}</v-chip
+          >
         </template>
       </v-select>
       <v-text-field
@@ -340,7 +347,7 @@ export default {
   </v-card>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .task-search {
   border-radius: 0 !important;
   font-size: 0.85rem;
@@ -348,5 +355,14 @@ export default {
   .v-icon {
     font-size: 20px !important;
   }
+}
+// .v-chip {}
+.sort-chip {
+  justify-content: center;
+  width: 100px;
+}
+
+.v-label {
+  font-size: 1em;
 }
 </style>
