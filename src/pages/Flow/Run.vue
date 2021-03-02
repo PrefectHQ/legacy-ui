@@ -571,7 +571,7 @@ export default {
         class="mx-4 vertical-divider my-auto"
         vertical
         :style="{
-          'border-color': stickyActions ? '#fff' : null
+          'border-color': stickyActions ? 'var(--v-appForeground-base)' : null
         }"
       />
 
@@ -671,14 +671,14 @@ export default {
 }
 
 .run-actions {
-  background-color: #fff;
-  border-top: 1px solid #ddd;
+  background-color: var(--v-appForeground-base);
+  border-top: 1px solid var(--v-utilGrayLight-base);
   height: 86px;
   transition: all 150ms;
   width: 100%;
 
   &.placeholder {
-    background-color: #fff !important;
+    background-color: var(--v-appForeground-base) !important;
     position: relative !important;
     transition: none;
 
@@ -703,7 +703,7 @@ export default {
     }
 
     &.sm {
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--v-utilGrayLight-base);
       bottom: 56px;
       height: 80px;
       z-index: 5;
@@ -730,7 +730,7 @@ export default {
   &.summary-background {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 2px;
-    color: #fff;
+    color: var(--v-appForeground-base);
   }
 }
 
@@ -738,7 +738,7 @@ export default {
   position: relative;
 
   &::after {
-    background-color: #ddd;
+    background-color: var(--v-utilGrayLight-base);
     bottom: 0;
     content: '';
     height: 1px;
@@ -752,8 +752,8 @@ export default {
 <style lang="scss">
 .run-tab-icon {
   .svg-inline--fa {
-    --fa-primary-color: #fff;
-    --fa-secondary-color: #efefef;
+    --fa-primary-color: var(--v-appForeground-base);
+    --fa-secondary-color: var(--v-secondaryGrayLight-base);
     --fa-secondary-opacity: 0.5;
     transition: all 150ms linear;
   }
@@ -761,7 +761,7 @@ export default {
   &.blue--icon {
     .svg-inline--fa {
       --fa-primary-color: var(--v-primary-base);
-      --fa-secondary-color: #ccc;
+      --fa-secondary-color: var(--v-utilGrayLight-base);
       --fa-secondary-opacity: 1;
     }
   }

@@ -191,7 +191,7 @@ export default {
         breakpoints.push({
           label: '(now)',
           time: this.now,
-          color: '#999'
+          color: 'var(--v-utilGrayMid-base)'
         })
       }
 
@@ -199,7 +199,7 @@ export default {
         breakpoints.push({
           label: this.hoveredBreakpoint.label,
           time: this.hoveredBreakpoint.time,
-          color: '#999'
+          color: 'var(--v-utilGrayMid-base)'
         })
       }
 
@@ -562,8 +562,8 @@ export default {
           context.beginPath()
           // context.lineWidth = 1 * (1 / this.transform.k)
           // context.strokeStyle = colors[0]
-          context.fillStyle = '#eee'
-          context.shadowColor = '#666'
+          context.fillStyle = 'var(--v-utilGrayLight-base)'
+          context.shadowColor = 'var(--v-utilGrayMid-base)'
           context.shadowBlur = bar.shadow
           const compress = 2 * (1 / this.transform.k)
           const x = bar.x + radius / 2 + compress / 2
@@ -592,13 +592,13 @@ export default {
         }
 
         context.shadowBlur = 0
-        context.strokeStyle = '#fff'
+        context.strokeStyle = '#fff' // this isn't working with a var, why?
         context.lineWidth = 2 / this.transform.k
 
         bar.colors.forEach((color, j) => {
           context.beginPath()
 
-          context.fillStyle = color.color || '#eee'
+          context.fillStyle = color.color || 'var(--v-utilGrayLight-base)'
 
           const capLeft = new Path2D(),
             capRight = new Path2D(),
@@ -680,7 +680,7 @@ export default {
           context.font = `${fontSize}px Roboto`
           // context.textAlign = overLeft && leftEdge > tX1 ? 'end' : 'start'
           context.textAlign = 'start'
-          context.fillStyle = '#999'
+          context.fillStyle = 'var(--v-utilGrayMid-base)'
           context.fillText(bar.label, textX, textY)
           context.fillStyle = savedStrokeStyle
         }
@@ -992,7 +992,7 @@ export default {
             )
 
           g.append('path')
-            .attr('stroke', '#999')
+            .attr('stroke', 'var(--v-utilGrayMid-base)')
             .attr('stroke-width', 1.5)
             .attr('stroke-dasharray', 5)
             .attr('d', `M0,${this.height - 25}L0,10`)
@@ -1006,7 +1006,7 @@ export default {
           g.append('text')
             .style('font-size', '8px')
             .style('pointer-events', 'none')
-            .attr('fill', '#999')
+            .attr('fill', 'var(--v-utilGrayMid-base)')
             .attr('alignment-baseline', 'hanging')
             .attr('text-anchor', d => d.anchor || 'middle')
             .style('user-select', 'none')
@@ -1044,7 +1044,7 @@ export default {
               .select('path')
               .transition('update')
               .duration(this.animationDuration)
-              .attr('stroke', '#999')
+              .attr('stroke', 'var(--v-utilGrayMid-base)')
 
             update
               .select('text')
@@ -1111,7 +1111,7 @@ export default {
               })
               .attr('r', radius)
               .attr('stroke-width', 0.5)
-              .attr('stroke', '#fff')
+              .attr('stroke', 'var(--v-appForeground-base)')
               .attr('fill', d => d.color)
 
             return g
@@ -1293,7 +1293,7 @@ export default {
         depressed
         icon
         tile
-        color="#999"
+        color="var(--v-utilGrayMid-base)"
         :disabled="transform.k == scaleExtent[1]"
         @click="zoomIn"
       >
@@ -1306,7 +1306,7 @@ export default {
           icon
           depressed
           tile
-          color="#999"
+          color="var(--v-utilGrayMid-base)"
           :disabled="transform.k === 1 || transform.x == translateExtent[0][0]"
           @click="panLeft"
         >
@@ -1317,7 +1317,7 @@ export default {
           icon
           depressed
           tile
-          color="#999"
+          color="var(--v-utilGrayMid-base)"
           :disabled="
             transform.k === 1 ||
               transform.k * translateExtent[1][0] + transform.x <=
@@ -1334,7 +1334,7 @@ export default {
         depressed
         icon
         tile
-        color="#999"
+        color="var(--v-utilGrayMid-base)"
         :disabled="transform.k == scaleExtent[0]"
         @click="zoomOut"
       >
@@ -1491,7 +1491,7 @@ export default {
   position: relative;
 
   .controls-overlay {
-    background-color: #fff;
+    background-color: var(--v-appForeground-base);
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
       1px 2px 2px 0 rgba(0, 0, 0, 0.14), 3px 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
     position: absolute;
@@ -1549,7 +1549,7 @@ export default {
 // so that we don't need to do a post-selection
 // on the axis
 .x-axis-group {
-  color: #9e9e9e !important;
+  color: var(--v-utilGrayLight-base) !important;
   font: 10px Roboto, sans-serif;
   opacity: 0.8;
   user-select: none;

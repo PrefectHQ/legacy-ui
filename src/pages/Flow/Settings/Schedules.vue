@@ -370,7 +370,7 @@ export default {
                 <v-col
                   cols="2"
                   class="d-flex align-center flex-column justify-end pa-1 my-auto"
-                  style="border-left: 1px solid #eee;
+                  style="border-left: 1px solid var(--v-utilGrayLight-base);
           height: 90%;"
                 >
                   <v-menu

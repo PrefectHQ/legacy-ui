@@ -10,9 +10,13 @@ let style = {
     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
     fontSmoothing: 'antialiased',
     fontSize: '16px',
-    iconColor: '#767676',
+    iconColor: getComputedStyle(document.body).getPropertyValue(
+      '--v-utilGrayMid-base'
+    ),
     '::placeholder': {
-      color: '#767676'
+      color: getComputedStyle(document.body).getPropertyValue(
+        '--v-utilGrayMid-base'
+      )
     }
   },
   invalid: {
@@ -281,6 +285,6 @@ export default {
 }
 
 .StripeElement.webkit-autofill {
-  background-color: #fefde5 !important;
+  background-color: var(--v-Queued-base) !important;
 }
 </style>
