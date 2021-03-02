@@ -120,7 +120,7 @@ export default {
           break
       }
 
-      return this.usage
+      const items = this.usage
         .filter(d => d.kind == 'USAGE')
         .reduce(
           (arr, d) => {
@@ -158,12 +158,19 @@ export default {
           range.range(this.from, this.to).map(d => {
             const date = new Date(d)
             return {
+              id: date.toISOString(),
               timestamp: date.toISOString(),
               runs: date > now ? undefined : 0
             }
           })
         )
         .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+
+      if (this.period == 'Month' || this.period == 'Week') {
+        items.shift()
+      }
+
+      return items
     },
     regressionItems() {
       // We do this to prevent modification of the original items array
@@ -194,10 +201,10 @@ export default {
         from.setFullYear(year - 1)
         from.setDate(1)
       } else if (this.period == 'Month') {
-        from.setDate(1)
+        from.setDate(0)
       } else if (this.period == 'Week') {
         const diff =
-          from.getDate() - from.getDay() + (from.getDay() === 0 ? -6 : 1)
+          from.getDate() - from.getDay() + (from.getDay() === 0 ? -8 : -1)
         from.setDate(diff)
       }
 
@@ -229,6 +236,8 @@ export default {
     },
     from() {
       this.$apollo.queries['usage'].refetch()
+      this.updateScales()
+      this.updateChart()
     }
   },
   mounted() {
@@ -295,20 +304,12 @@ export default {
       this.updateChart()
     },
     updateChart() {
-      const yOffset = this.height
-      const bandwidth = Math.floor(
+      const yOffset = this.height - this.padding.y
+
+      const maxBandwidth = Math.floor(
         ((this.width - this.padding.x) / this.ticks) * 0.8
       )
-
-      console.log(this.from, this.to, this.items)
-      // this.mainGroup
-      //   .selectAll('circle')
-      //   .data(this.items)
-      //   .enter()
-      //   .append('circle')
-      //   .attr('cx', d => this.x(new Date(d.timestamp)) ?? 0)
-      //   .attr('cy', d => this.height - this.y(d.runs))
-      //   .attr('r', 5)
+      const bandwidth = maxBandwidth < 100 ? maxBandwidth : 100
 
       this.mainGroup
         .selectAll('path')
@@ -379,8 +380,22 @@ export default {
       //       )
       //   )
 
-      // Bars
+      const xPosition = d => this.x(new Date(d.timestamp)) - bandwidth / 2
+      const yPosition = d =>
+        d.runs ? this.padding.y + this.y(d.runs) : yOffset
+      const height = d => (d.runs ? yOffset - this.y(d.runs) : 0)
+      const transform = `translate(${bandwidth / 2 ?? 0}px)`
+      const textContent = d =>
+        d.runs
+          ? d.runs?.toLocaleString() +
+            ' - ' +
+            new Date(d.timestamp).toLocaleString('en-US', {
+              dateStyle: 'short',
+              timeStyle: undefined
+            })
+          : null
 
+      // Bars
       this.mainGroup
         .selectAll('.bar-group')
         .data(this.items)
@@ -388,56 +403,47 @@ export default {
           enter => {
             const g = enter
               .append('g')
+              .attr('id', d => `bar-${d.id}`)
               .attr('class', 'bar-group')
               .on('mouseover', this.barMouseover)
               .on('mouseout', this.barMouseout)
 
             g.append('rect')
               .attr('class', 'bar')
-              .attr('height', d => (d.runs ? this.y(d.runs) : 0))
+              .attr('height', height)
               .attr('width', bandwidth)
-              .attr('fill', 'rgba(0,0,0,0.05)')
-              // .attr('stroke-width', 3)
-              // .attr('stroke', 'rgba(0, 0, 0, 0.12)')
-              .attr('x', d => this.x(new Date(d.timestamp)))
-              .attr('y', d => (d.runs ? yOffset - this.y(d.runs) : 0))
-            // .style('transform', `translate(-${bandwidth / 2 ?? 0}px)`)
+              .attr('fill', 'rgba(0,0,0,0.025)')
+              .attr('x', xPosition)
+              .attr('y', yPosition)
 
-            // g.append('text')
-            //   .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-            //   .attr('y', d =>
-            //     d.runs ? yOffset - (this.y(d.runs) + 5 || 0) : yOffset
-            //   )
-            //   .style('text-anchor', 'middle')
-            //   .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
-            //   .style('font', '10px Roboto, sans-serif')
-            //   .attr('fill', '#546E7A')
-            //   .text(d => d.runs?.toLocaleString())
+            g.append('text')
+              .attr('x', xPosition)
+              .attr('y', d =>
+                d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
+              )
+              .style('text-anchor', 'middle')
+              .style('transform', transform)
+              .style('font', '10px Roboto, sans-serif')
+              .attr('fill', '#546E7A')
+              .text(textContent)
             return g
           },
           update => {
-            const bar = update.selectAll('rect')
-            bar
-              .attr('height', d => (d.runs ? this.y(d.runs) : 0))
+            update
+              .select('rect')
+              .attr('height', height)
               .attr('width', bandwidth)
-              .attr('x', d => {
-                console.log(
-                  this.x(new Date(d.timestamp)),
-                  new Date(d.timestamp)
-                )
-                return this.x(new Date(d.timestamp))
-              })
-              .attr('y', d => (d.runs ? yOffset - this.y(d.runs) : 0))
-            // .style('transform', `translate(-${bandwidth / 2 ?? 0}px)`)
+              .attr('x', xPosition)
+              .attr('y', yPosition)
 
-            // const text = update.select('text')
-            // text
-            //   .attr('x', d => this.x(new Date(d.timestamp)) ?? 0)
-            //   .attr('y', d =>
-            //     d.runs ? yOffset - (this.y(d.runs) + 5 || 0) : yOffset
-            //   )
-            //   .style('transform', `translate(${bandwidth / 2 ?? 0}px)`)
-            //   .text(d => d.runs?.toLocaleString())
+            update
+              .select('text')
+              .attr('x', xPosition)
+              .attr('y', d =>
+                d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
+              )
+              .style('transform', transform)
+              .text(textContent)
           },
           exit =>
             exit.call(exit =>
