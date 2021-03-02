@@ -34,7 +34,7 @@ const state = {
   isLoggingInUser: false,
   isRefreshingAuthentication: false,
   isRefreshingAuthorization: false,
-  redirectRoute: localStorage.getItem('redirectRoute') || null,
+  redirectRoute: sessionStorage.getItem('redirectRoute'),
   refreshToken: null,
   refreshTokenExpiry: null,
   user: null
@@ -257,12 +257,12 @@ const mutations = {
         `redirectRoute must be a string, got ${typeof redirectRoute} instead`
       )
 
-    localStorage.setItem('redirectRoute', redirectRoute)
+    sessionStorage.setItem('redirectRoute', redirectRoute)
     state.redirectRoute = redirectRoute
   },
   unsetRedirectRoute(state) {
     state.redirectRoute = null
-    localStorage.removeItem('redirectRoute')
+    sessionStorage.removeItem('redirectRoute')
   }
 }
 
@@ -273,7 +273,6 @@ const actions = {
     const source = urlParams.get('partner_source')
     const error = urlParams.get('error')
     // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
-
     if (window.location?.pathname && !getters['redirectRoute']) {
       dispatch(
         'setRedirectRoute',
@@ -300,7 +299,9 @@ const actions = {
 
       const { tokens } = isLoginRedirect
         ? await authClient.token.parseFromUrl()
-        : { tokens: await authClient.tokenManager.getTokens() }
+        : {
+            tokens: await authClient.tokenManager.getTokens()
+          }
 
       if (tokens?.accessToken && tokens?.idToken) {
         dispatch('commitTokens', tokens)
