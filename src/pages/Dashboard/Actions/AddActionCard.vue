@@ -64,7 +64,6 @@ export default {
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
     },
     includeTo() {
-      console.log(this.flowEventType)
       return this.flowEventType.enum == 'CHANGES_STATE'
     },
     durationSeconds() {
@@ -108,7 +107,6 @@ export default {
       this.openSelectFlowEventType = true
     },
     selectFlowEventType(type) {
-      console.log('type', type)
       this.flowEventType = type
       this.openSelectFlowEventType = false
       this.isSLA
