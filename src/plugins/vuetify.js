@@ -47,9 +47,11 @@ export const THEME_COLORS = {
 }
 
 export const THEME_COLORS_ALT = {
-  appBackground: '#f9f9f9',
+  appBackground: '#333743',
+  appForeground: '#404452',
   prefect: '#003d66',
-  primary: '#007acc'
+  primary: '#007acc',
+  utilGrayLight: '#666'
 }
 
 Vue.use(Vuetify)
@@ -69,6 +71,7 @@ export default new Vuetify({
     values: CUSTOM_ICONS
   },
   theme: {
+    dark: true,
     options: {
       customProperties: true
     },

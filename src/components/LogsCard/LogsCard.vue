@@ -520,7 +520,7 @@ export default {
         <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->
       </v-system-bar>
 
-      <v-toolbar class="mb-0 logs-card-title" color="white" elevation="4">
+      <v-toolbar class="mb-0 logs-card-title" elevation="4">
         <div v-if="showFilterDescription" v-html="logsFilterDescription"> </div>
 
         <v-spacer></v-spacer>

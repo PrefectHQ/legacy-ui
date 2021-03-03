@@ -260,13 +260,13 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 /* Common UI elements */
 .tabs-border-bottom {
   .v-tabs-bar {
-    border-bottom: 1px solid #ddd !important;
+    border-bottom: 1px solid var(--v-utilGrayLight-base) !important;
   }
 }
 
 .tabs-border-top {
   .v-tabs-bar {
-    border-top: 1px solid #ddd !important;
+    border-top: 1px solid var(--v-utilGrayLight-base) !important;
   }
 }
 
@@ -372,3 +372,23 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 }
 
 /* End Navbar global styles */
+
+/* Dark Mode background overrides */
+// stylelint-disable
+.theme--dark {
+  .v-tabs-items {
+    background-color: var(--v-appBackground-base);
+  }
+
+  &.v-calendar-daily,
+  &.v-card,
+  &.v-data-table,
+  &.v-data-table.v-data-table--fixed-header thead th,
+  &.v-navigation-drawer,
+  .v-sheet,
+  &.v-tabs > .v-tabs-bar,
+  &.v-text-field--solo > .v-input__control > .v-input__slot,
+  &.v-toolbar.v-sheet {
+    background-color: var(--v-appForeground-base);
+  }
+}
