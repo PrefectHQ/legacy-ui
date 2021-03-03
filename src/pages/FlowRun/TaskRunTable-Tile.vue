@@ -152,23 +152,32 @@ export default {
       <v-select
         slot="sort"
         v-model="state"
-        class="state-sort"
-        solo
-        flat
-        multiple
         outlined
-        :menu-props="{ top: true, offsetY: true }"
-        hide-selected
+        class="filter-sort"
         dense
-        clearable
+        flat
+        solo
         hide-details
+        :menu-props="{ top: true, offsetY: true }"
+        clearable
         :items="states"
         label="Filter by state"
+        multiple
       >
-        <template #selection="{ item }">
-          <v-chip :color="item" label small text-color="white">{{
-            item
-          }}</v-chip>
+        <template #selection="{ item, index }">
+          <v-chip
+            v-if="index === 0 || index === 1"
+            :color="item"
+            label
+            small
+            text-color="white"
+          >
+            {{ item }}
+          </v-chip>
+          <span v-if="index === 2" class="grey--text caption">
+            (+{{ state.length - 2 }}
+            {{ state.length - 2 === 1 ? 'other' : 'others' }})
+          </span>
         </template>
       </v-select>
       <v-text-field
@@ -296,8 +305,8 @@ export default {
   }
 }
 
-.state-sort {
-  max-width: 300px;
+.filter-sort {
+  max-width: 310px;
 
   .v-label {
     font-size: 0.85rem;
