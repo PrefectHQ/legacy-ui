@@ -57,8 +57,20 @@ export default {
             <div v-if="!loading">{{ title }}</div>
             <v-skeleton-loader v-else type="heading" tile></v-skeleton-loader>
           </div>
-          <div class="action-slot d-flex align-center justify-end">
-            <slot name="sort" />
+          <div
+            :class="{
+              'action-slot': $vuetify.breakpoint.mdAndUp,
+              'justify-end': $vuetify.breakpoint.mdAndUp
+            }"
+            class="d-flex align-center"
+          >
+            <div
+              :class="{
+                'my-6': $vuetify.breakpoint.smAndDown
+              }"
+            >
+              <slot name="sort" />
+            </div>
             <slot name="action" />
           </div>
         </v-list-item-title>
