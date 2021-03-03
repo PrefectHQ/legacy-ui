@@ -78,7 +78,7 @@ export default {
 
       <div
         class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-        style="border: 1px solid var(--v-utilGrayLight-base) !important;"
+        style="border: 1px solid utilGrayLight !important;"
       >
         <div class="code-block">
           <span class="blue-grey--text text--lighten-1 user-select-none"
@@ -96,7 +96,7 @@ export default {
       <li value="2" class="text-h6 mt-6 mb-2">Run the CLI Command</li>
       <div
         class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-        style="border: 1px solid var(--v-utilGrayLight-base) !important;"
+        style="border: 1px solid utilGrayLight !important;"
       >
         <div class="code-block">
           <span class="blue-grey--text text--lighten-1 user-select-none"

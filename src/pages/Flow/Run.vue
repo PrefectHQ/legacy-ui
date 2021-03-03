@@ -571,7 +571,7 @@ export default {
         class="mx-4 vertical-divider my-auto"
         vertical
         :style="{
-          'border-color': stickyActions ? 'var(--v-appForeground-base)' : null
+          'border-color': stickyActions ? 'appForeground' : null
         }"
       />
 

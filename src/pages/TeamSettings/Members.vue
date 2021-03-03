@@ -312,7 +312,7 @@ export default {
         >
           <v-badge
             bordered
-            color="var(--v-codePink-base)"
+            color="codePink"
             :content="readOnlyInvitations + fullInvitations"
             :value="readOnlyInvitations + fullInvitations"
             left
@@ -351,7 +351,7 @@ export default {
         <v-tab href="#pending">
           <v-badge
             bordered
-            color="var(--v-codePink-base)"
+            color="codePink"
             :content="readOnlyInvitations + fullInvitations"
             :value="readOnlyInvitations + fullInvitations"
             left

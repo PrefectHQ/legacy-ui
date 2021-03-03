@@ -260,7 +260,7 @@ export default {
       color="amber"
       transition="slide-y-transition"
     >
-      <span :style="{ color: 'var(--v-utilGrayDark-base' }">
+      <span :style="{ color: 'utilGrayDark' }">
         Reminder!
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"

@@ -131,7 +131,7 @@ export default {
     :color="cardColor"
     width="100%"
     :style="{
-      'border-color': 'var(--v-utilGrayLight-base) !important',
+      'border-color': 'utilGrayLight !important',
       overflow: 'auto'
     }"
   >
@@ -255,7 +255,7 @@ export default {
       :style="{
         height: '70vh',
         width: '100%',
-        'background-color': 'var(--v-appForeground-base)',
+        'background-color': 'appForeground',
         overflow: 'auto'
       }"
       class="artifact md grey--text text--darken-3 px-8"
