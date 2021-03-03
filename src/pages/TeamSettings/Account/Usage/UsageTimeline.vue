@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce'
 
 const d3 = Object.assign({}, d3_base, d3_regression)
 
-const xAxisHeight = 50
+const xAxisHeight = 25
 
 const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
 
@@ -36,12 +36,15 @@ export default {
         bottom: xAxisHeight,
         left: 90,
         right: 10,
-        top: 30,
+        top: 10,
         x: 100,
-        y: xAxisHeight + 30
+        y: xAxisHeight + 10
       },
 
       hovered: null,
+      showPath: true,
+      showBars: false,
+      showText: false,
 
       items: [],
       line: null,
@@ -235,7 +238,7 @@ export default {
       this.width = Math.floor(parent.clientWidth - padding.left - padding.right)
 
       this.height = Math.floor(
-        parent.clientHeight - padding.top - padding.bottom - this.padding.top
+        parent.clientHeight - padding.top - padding.bottom
       )
 
       this.chart.attr('viewbox', `0 0 ${this.width} ${this.height}`)
@@ -268,12 +271,14 @@ export default {
 
       const yAxis = d3
         .axisLeft(this.y)
-        // .ticks(12)
         .tickSizeOuter(0)
-        .tickSize(this.width - this.padding.x)
+        .tickSize(this.width)
 
       this.xAxisGroup
-        .attr('transform', `translate(0,${this.height})`)
+        .style(
+          'transform',
+          `translate(0, ${this.height - this.padding.bottom}px)`
+        )
         .transition()
         .duration(1000)
         .ease(d3.easeQuad)
@@ -282,9 +287,11 @@ export default {
       this.yAxisGroup
         .transition()
         .duration(1000)
-        .attr(
+        .style(
           'transform',
-          `translate(${this.width - this.padding.left}, ${this.padding.y})`
+          `translate(${this.width + this.padding.right}px, ${
+            this.padding.top
+          }px)`
         )
         .ease(d3.easeQuad)
         .call(yAxis)
@@ -296,8 +303,11 @@ export default {
           enter =>
             enter
               .append('path')
-              .attr('stroke-width', 2)
-              .attr('stroke', '#27b1ff')
+              .attr('stroke-width', 4.5)
+              .attr(
+                'stroke',
+                this.showPath ? 'var(--v-prefect-base)' : 'transparent'
+              )
               .attr('fill', 'none')
               .attr('d', d =>
                 this.line(
@@ -319,7 +329,26 @@ export default {
                 .transition()
                 .duration(1000)
                 .ease(d3.easeQuad)
+                .attr(
+                  'stroke',
+                  this.showPath ? 'var(--v-prefect-base)' : 'transparent'
+                )
                 .attr('d', this.line)
+            ),
+          exit =>
+            exit.call(exit =>
+              exit
+                .transition()
+                .duration(1000)
+                .ease(d3.easeQuad)
+                .attr('d', d =>
+                  this.line(
+                    Array.from(d, d_ => {
+                      return { ...d_, runs: 0 }
+                    })
+                  )
+                )
+                .remove()
             )
         )
 
@@ -359,8 +388,7 @@ export default {
       //   )
 
       const xPosition = d => this.x(new Date(d.timestamp)) - bandwidth / 2
-      const yPosition = d =>
-        d.runs ? this.padding.y + this.y(d.runs) : yOffset
+      const yPosition = d => (d.runs ? this.y(d.runs) : yOffset)
       const height = d => (d.runs ? yOffset - this.y(d.runs) : 0)
       const transform = `translate(${bandwidth / 2 ?? 0}px)`
       const textContent = d =>
@@ -373,6 +401,8 @@ export default {
             })
           : null
 
+      this.mainGroup.style('transform', `translate(0, ${this.padding.top}px)`)
+
       // Bars
       this.mainGroup
         .selectAll('.bar-group')
@@ -383,6 +413,7 @@ export default {
               .append('g')
               .attr('id', d => `bar-${d.id}-${this.period}`)
               .attr('class', 'bar-group')
+              .attr('opacity', this.showBars ? 1 : 0)
               .on('mouseover', this.barMouseover)
               .on('mouseout', this.barMouseout)
 
@@ -402,7 +433,6 @@ export default {
               .style('text-anchor', 'middle')
               .style('transform', transform)
               .style('font', '10px Roboto, sans-serif')
-              // .attr('fill', '#546E7A')
               .attr('fill', 'transparent')
               .text(textContent)
 
@@ -426,8 +456,7 @@ export default {
                   d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
                 )
                 .style('font', '10px Roboto, sans-serif')
-                // .attr('fill', '#546E7A')
-                .attr('fill', 'transparent')
+                .attr('fill', this.showText ? '#546E7A' : 'transparent')
 
               return enter
             })
@@ -435,10 +464,15 @@ export default {
           update => {
             return update.call(update => {
               update
+                .transition('update')
+                .duration(1000)
+                .ease(d3.easeQuad)
+                .attr('opacity', this.showBars ? 1 : 0)
+
+              update
                 .select('rect')
                 .transition('update')
                 .duration(1000)
-                // .delay(500)
                 .ease(d3.easeQuad)
                 .attr('height', height)
                 .attr('y', yPosition)
@@ -449,8 +483,9 @@ export default {
                 .select('text')
                 .transition('update')
                 .duration(1000)
-                // .delay(500)
+                .delay(500)
                 .ease(d3.easeQuad)
+                .attr('fill', this.showText ? '#546E7A' : 'transparent')
                 .attr('y', d =>
                   d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
                 )
@@ -567,15 +602,12 @@ export default {
           })
         )
         .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-      // .filter((d, i) =>
-      //   this.period == 'Month' || this.period == 'Week' ? i > 0 : true
-      // )
     },
     rawUpdateScales() {
       this.x.domain([this.from, this.to])
       this.x.range([this.padding.left, this.width - this.padding.right])
 
-      this.y.domain([d3.max(this.items.map(d => d.runs)), 0])
+      this.y.domain([d3.max(this.items.map(d => d.runs)) || 10000, 0])
       this.y.range([this.padding.top, this.height - this.padding.y])
 
       const nullY = this.y(0)
@@ -585,7 +617,7 @@ export default {
         .curve(d3.curveMonotoneX)
         .defined(d => !isNaN(d.runs)) // Use this to create gaps in data
         .x(d => this.x(new Date(d.timestamp)) ?? 0)
-        .y(d => this.height + (this.y(d.runs) - nullY) || 0)
+        .y(d => this.height - this.padding.y + (this.y(d.runs) - nullY) || 0)
 
       this.regression = d3
         .regressionLinear()
@@ -699,7 +731,7 @@ export default {
       </div>
     </div>
 
-    <v-card-text ref="parent" class="chart-container pa-0">
+    <v-card-text ref="parent" class="chart-container pt-16">
       <svg :id="`${id}-svg`" class="svg">
         <defs>
           <linearGradient id="grad" x1="0%" y1="50%" x2="100%" y2="50%">
@@ -779,13 +811,14 @@ svg {
   }
 
   .tick:nth-child(even) {
-    opacity: 0;
+    // opacity: 0;
   }
 
   .tick line {
     stroke: rgba(0, 0, 0, 0.05);
     stroke-dasharray: 10, 10;
     stroke-width: 1.65px;
+    transform: translate(75px);
   }
 
   .tick:last-of-type line {
