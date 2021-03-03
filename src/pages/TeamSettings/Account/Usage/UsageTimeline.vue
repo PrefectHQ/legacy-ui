@@ -34,8 +34,8 @@ export default {
 
       padding: {
         bottom: xAxisHeight,
-        left: 50,
-        right: 50,
+        left: 30,
+        right: 70,
         top: 30,
         x: 100,
         y: xAxisHeight + 30
@@ -43,6 +43,7 @@ export default {
 
       hovered: null,
 
+      items: [],
       line: null,
       predict: null,
       regression: null,
@@ -91,87 +92,6 @@ export default {
         future
       ]
     },
-    items() {
-      if (!this.usage) return []
-      const now = new Date()
-      let range,
-        setDate = true,
-        setHours = true,
-        setMinutes = true
-
-      switch (this.period) {
-        case 'Year':
-          range = d3.timeMonth
-          break
-        case 'Month':
-          range = d3.timeDay
-          setDate = false
-          break
-        case 'Week':
-          range = d3.timeDay
-          setDate = false
-          break
-        case 'Day':
-        default:
-          range = d3.timeHour
-          setDate = false
-          setHours = false
-          setMinutes = false
-          break
-      }
-
-      const items = this.usage
-        .filter(d => d.kind == 'USAGE')
-        .reduce(
-          (arr, d) => {
-            const date = new Date(d.timestamp)
-            date.setMilliseconds(0)
-            date.setSeconds(0)
-
-            if (setMinutes) {
-              date.setMinutes(0)
-            }
-
-            if (setHours) {
-              date.setHours(0)
-            }
-
-            if (setDate) {
-              date.setDate(1)
-            }
-
-            const index = arr.findIndex(
-              d_ => d_.timestamp == date.toISOString()
-            )
-
-            if (index > -1) {
-              arr[index].runs += d.runs * -1
-            } else {
-              arr.push({
-                timestamp: date.toISOString(),
-                runs: d.runs * -1
-              })
-            }
-
-            return arr
-          },
-          range.range(this.from, this.to).map(d => {
-            const date = new Date(d)
-            return {
-              id: date.toISOString(),
-              timestamp: date.toISOString(),
-              runs: date > now ? undefined : 0
-            }
-          })
-        )
-        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-
-      if (this.period == 'Month' || this.period == 'Week') {
-        items.shift()
-      }
-
-      return items
-    },
     regressionItems() {
       // We do this to prevent modification of the original items array
       const items = Array.from(this.items, d => Object.assign({}, d))
@@ -193,6 +113,21 @@ export default {
         requestAnimationFrame(this.rawResizeChart)
       }, 300)
     },
+    updateChart: function() {
+      return debounce(() => {
+        requestAnimationFrame(this.rawUpdateChart)
+      }, 50)
+    },
+    updateItems: function() {
+      return debounce(() => {
+        requestAnimationFrame(this.rawUpdateItems)
+      }, 50)
+    },
+    updateScales: function() {
+      return debounce(() => {
+        requestAnimationFrame(this.rawUpdateScales)
+      }, 50)
+    },
     from() {
       const from = new Date()
 
@@ -208,7 +143,7 @@ export default {
         from.setDate(diff)
       }
 
-      from.setMinutes(1)
+      from.setMinutes(0)
       from.setHours(0)
       return from
     },
@@ -229,15 +164,18 @@ export default {
     }
   },
   watch: {
-    usage(val) {
-      if (!val) return
-      this.updateScales()
+    items() {
       this.updateChart()
     },
-    from() {
-      this.$apollo.queries['usage'].refetch()
+    usage(val) {
+      if (!val) return
+      this.$apollo.queries['usage'].stop()
+      this.updateItems()
       this.updateScales()
-      this.updateChart()
+    },
+    period() {
+      this.updateItems()
+      this.updateScales()
     }
   },
   mounted() {
@@ -303,7 +241,7 @@ export default {
       this.updateScales()
       this.updateChart()
     },
-    updateChart() {
+    rawUpdateChart() {
       const yOffset = this.height - this.padding.y
 
       const maxBandwidth = Math.floor(
@@ -398,66 +336,230 @@ export default {
       // Bars
       this.mainGroup
         .selectAll('.bar-group')
-        .data(this.items)
+        .data(this.items, d => d.id)
         .join(
           enter => {
             const g = enter
               .append('g')
-              .attr('id', d => `bar-${d.id}`)
+              .attr('id', d => `bar-${d.id}-${this.period}`)
               .attr('class', 'bar-group')
               .on('mouseover', this.barMouseover)
               .on('mouseout', this.barMouseout)
 
             g.append('rect')
               .attr('class', 'bar')
-              .attr('height', height)
+              .attr('height', 0)
               .attr('width', bandwidth)
-              .attr('fill', 'rgba(0,0,0,0.025)')
+              .attr('fill', (d, i) =>
+                i > 0 ? 'rgba(0,0,0,0.025)' : 'url(#grad)'
+              )
               .attr('x', xPosition)
-              .attr('y', yPosition)
+              .attr('y', this.height)
 
             g.append('text')
               .attr('x', xPosition)
-              .attr('y', d =>
-                d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
-              )
+              .attr('y', yOffset - 5)
               .style('text-anchor', 'middle')
               .style('transform', transform)
               .style('font', '10px Roboto, sans-serif')
-              .attr('fill', '#546E7A')
+              // .attr('fill', '#546E7A')
+              .attr('fill', 'transparent')
               .text(textContent)
-            return g
+
+            return g.call(enter => {
+              enter
+                .select('rect')
+                .transition('enter')
+                .duration(1000)
+                // .delay(500)
+                .ease(d3.easeQuad)
+                .attr('height', height)
+                .attr('y', yPosition)
+
+              enter
+                .select('text')
+                .transition('enter')
+                .duration(1000)
+                // .delay(500)
+                .ease(d3.easeQuad)
+                .attr('y', d =>
+                  d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
+                )
+                .style('font', '10px Roboto, sans-serif')
+                // .attr('fill', '#546E7A')
+                .attr('fill', 'transparent')
+
+              return enter
+            })
           },
           update => {
-            update
-              .select('rect')
-              .attr('height', height)
-              .attr('width', bandwidth)
-              .attr('x', xPosition)
-              .attr('y', yPosition)
+            return update.call(update => {
+              update
+                .select('rect')
+                .transition('update')
+                .duration(1000)
+                // .delay(500)
+                .ease(d3.easeQuad)
+                .attr('height', height)
+                .attr('y', yPosition)
+                .transition('update')
+                .attr('width', bandwidth)
+                .attr('x', xPosition)
 
-            update
-              .select('text')
-              .attr('x', xPosition)
-              .attr('y', d =>
-                d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
-              )
-              .style('transform', transform)
-              .text(textContent)
+              update
+                .select('text')
+                .transition('update')
+                .duration(1000)
+                // .delay(500)
+                .ease(d3.easeQuad)
+                .attr('y', d =>
+                  d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
+                )
+                .transition('update')
+                .attr('x', xPosition)
+            })
           },
           exit =>
-            exit.call(exit =>
+            exit.call(exit => {
               exit
-                .on('click', null)
-                .on('mouseout', null)
-                .on('mouseover', null)
+                .select('rect')
                 .transition('exit')
-                .duration(500)
-                .remove()
-            )
+                .duration(250)
+                .ease(d3.easeQuad)
+                .attr('height', 0)
+                .attr('y', this.height)
+
+              exit
+                .select('text')
+                .transition('exit')
+                .duration(250)
+                .ease(d3.easeQuad)
+                .attr('y', yOffset - 5)
+
+              return exit.call(exit =>
+                exit
+                  .on('click', null)
+                  .on('mouseout', null)
+                  .on('mouseover', null)
+                  .transition('exit')
+                  .delay(250)
+                  .remove()
+              )
+            })
         )
+
+      const xAxis = d3
+        .axisBottom(this.x)
+        .ticks(this.ticks)
+        .tickSizeOuter(0)
+        .tickFormat(d3.timeFormat(this.format))
+
+      const yAxis = d3
+        .axisRight(this.y)
+        // .ticks(12)
+        .tickSizeOuter(0)
+        .tickSize(this.width - this.padding.x)
+
+      this.xAxisGroup
+        .attr('transform', `translate(0,${this.height})`)
+        .transition()
+        .duration(1000)
+        .ease(d3.easeQuad)
+        .call(xAxis)
+
+      this.yAxisGroup
+        .attr('transform', `translate(${this.padding.left}, ${this.padding.y})`)
+        .transition()
+        .duration(1000)
+        .ease(d3.easeQuad)
+        .call(yAxis)
     },
-    updateScales() {
+    rawUpdateItems() {
+      const now = new Date()
+      now.setMinutes(59)
+      now.setHours(23)
+
+      let range,
+        setDate = true,
+        setHours = true,
+        setMinutes = true
+
+      switch (this.period) {
+        case 'Year':
+          range = d3.timeMonth
+          break
+        case 'Month':
+          range = d3.timeDay
+          setDate = false
+          break
+        case 'Week':
+          range = d3.timeDay
+          setDate = false
+          break
+        case 'Day':
+        default:
+          range = d3.timeHour
+          setDate = false
+          setHours = false
+          setMinutes = false
+          break
+      }
+
+      this.items = this.usage
+        .filter(d => {
+          if (d.kind !== 'USAGE') return
+
+          const date = new Date(d.timestamp)
+          return date >= this.from && date <= this.to
+        })
+        .reduce(
+          (arr, d) => {
+            const date = new Date(d.timestamp)
+            date.setMilliseconds(0)
+            date.setSeconds(0)
+
+            if (setMinutes) {
+              date.setMinutes(0)
+            }
+
+            if (setHours) {
+              date.setHours(0)
+            }
+
+            if (setDate) {
+              date.setDate(1)
+            }
+
+            const index = arr.findIndex(
+              d_ => d_.timestamp == date.toISOString()
+            )
+
+            if (index > -1) {
+              arr[index].runs += d.runs * -1
+            } else {
+              arr.push({
+                timestamp: date.toISOString(),
+                runs: d.runs * -1
+              })
+            }
+
+            return arr
+          },
+          range.range(this.from, this.to).map(d => {
+            const date = new Date(d)
+            return {
+              id: date.toISOString() + '-' + this.period,
+              timestamp: date.toISOString(),
+              runs: date > now ? undefined : 0
+            }
+          })
+        )
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+      // .filter((d, i) =>
+      //   this.period == 'Month' || this.period == 'Week' ? i > 0 : true
+      // )
+    },
+    rawUpdateScales() {
       this.x.domain([this.from, this.to])
       this.x.range([this.padding.left, this.width - this.padding.right])
 
@@ -496,35 +598,6 @@ export default {
         default:
           break
       }
-
-      const xAxis = d3
-        .axisBottom(this.x)
-        .ticks(this.ticks)
-        .tickSizeOuter(0)
-        .tickFormat(d3.timeFormat(this.format))
-
-      const yAxis = d3
-        .axisRight(this.y)
-        // .ticks(12)
-        .tickSizeOuter(0)
-        .tickSize(this.width - this.padding.x)
-
-      this.xAxisGroup
-        .attr('transform', `translate(0,${this.height})`)
-        .transition()
-        .duration(1000)
-        .ease(d3.easeQuad)
-        .call(xAxis)
-
-      this.yAxisGroup
-        .attr(
-          'transform',
-          `translate(${this.padding.right}, ${this.padding.y})`
-        )
-        .transition()
-        .duration(1000)
-        .ease(d3.easeQuad)
-        .call(yAxis)
     }
   },
   apollo: {
@@ -571,7 +644,26 @@ export default {
     </div>
 
     <v-card-text ref="parent" class="chart-container pa-0">
-      <svg :id="`${id}-svg`" class="svg" />
+      <svg :id="`${id}-svg`" class="svg">
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="50%" x2="100%" y2="50%">
+            <stop
+              offset="0%"
+              style="
+                stop-color: rgb(0, 0, 0);
+                stop-opacity: 0;
+              "
+            />
+            <stop
+              offset="100%"
+              style="
+                stop-color: rgb(0, 0, 0);
+                stop-opacity: 0.025;
+              "
+            />
+          </linearGradient>
+        </defs>
+      </svg>
     </v-card-text>
   </v-card>
 </template>
