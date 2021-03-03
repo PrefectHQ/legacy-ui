@@ -61,7 +61,7 @@ export default {
       itemsPerPage: 15,
       page: 1,
       searchTerm: null,
-      state: null,
+      state: [],
       states: [
         'Failed',
         'Success',
@@ -117,7 +117,7 @@ export default {
           flowRunId: this.flowRunId,
           limit: this.itemsPerPage,
           name: this.searchFormatted,
-          state: this.state,
+          state: this.state.length === 0 ? null : this.state,
           offset: this.offset,
           orderBy
         }
@@ -155,23 +155,20 @@ export default {
         class="state-sort"
         solo
         flat
+        multiple
         outlined
+        :menu-props="{ top: true, offsetY: true }"
         hide-selected
         dense
         clearable
         hide-details
         :items="states"
-        label="Sort by state"
+        label="Filter by state"
       >
         <template #selection="{ item }">
-          <v-chip
-            :color="item"
-            label
-            small
-            text-color="white"
-            class="sort-chip"
-            >{{ item }}</v-chip
-          >
+          <v-chip :color="item" label small text-color="white">{{
+            item
+          }}</v-chip>
         </template>
       </v-select>
       <v-text-field
@@ -184,7 +181,7 @@ export default {
         prepend-inner-icon="search"
         hide-details
         placeholder="Search by Task or Run Name"
-        style="min-width: 300px;"
+        style="min-width: 250px;"
       >
       </v-text-field>
     </CardTitle>
@@ -299,13 +296,8 @@ export default {
   }
 }
 
-.sort-chip {
-  justify-content: center;
-  width: 100px;
-}
-
 .state-sort {
-  width: 180px;
+  max-width: 300px;
 
   .v-label {
     font-size: 0.85rem;
