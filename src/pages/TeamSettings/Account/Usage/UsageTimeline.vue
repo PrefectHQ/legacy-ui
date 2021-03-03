@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce'
 
 const d3 = Object.assign({}, d3_base, d3_regression)
 
-const xAxisHeight = 25
+const xAxisHeight = 40
 
 const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
 
@@ -35,7 +35,7 @@ export default {
       padding: {
         bottom: xAxisHeight,
         left: 90,
-        right: 10,
+        right: 20,
         top: 10,
         x: 100,
         y: xAxisHeight + 10
@@ -137,32 +137,36 @@ export default {
       if (this.period == 'Year') {
         const year = new Date().getFullYear()
         from.setFullYear(year - 1)
-        from.setDate(1)
+        from.setDate(0)
       } else if (this.period == 'Month') {
         from.setDate(0)
+        from.setMinutes(1)
       } else if (this.period == 'Week') {
-        const diff =
-          from.getDate() - from.getDay() + (from.getDay() === 0 ? -8 : -1)
+        const day = from.getDay()
+        const diff = from.getDate() - ((day + 6) % 7)
+        from.setMinutes(0)
         from.setDate(diff)
       }
 
-      from.setMinutes(0)
+      from.setMilliseconds(0)
+      from.setSeconds(0)
       from.setHours(0)
       return from
     },
     to() {
       const to = new Date()
+      to.setHours(23)
 
       if (this.period == 'Year' || this.period == 'Month') {
         to.setMonth(to.getMonth() + 1)
         to.setDate(0)
+        to.setMinutes(59)
       } else if (this.period == 'Week') {
         const diff = to.getDate() + (6 - to.getDay())
         to.setDate(diff)
+        to.setMinutes(60)
       }
 
-      to.setMinutes(59)
-      to.setHours(23)
       return to
     }
   },
@@ -272,12 +276,15 @@ export default {
       const yAxis = d3
         .axisLeft(this.y)
         .tickSizeOuter(0)
-        .tickSize(this.width)
+        .tickSize(this.width - this.padding.x)
 
       this.xAxisGroup
         .style(
           'transform',
-          `translate(0, ${this.height - this.padding.bottom}px)`
+          `translate(0, ${this.height -
+            this.padding.bottom +
+            this.padding.bottom -
+            25}px)`
         )
         .transition()
         .duration(1000)
@@ -289,7 +296,7 @@ export default {
         .duration(1000)
         .style(
           'transform',
-          `translate(${this.width + this.padding.right}px, ${
+          `translate(${this.width - this.padding.left}px, ${
             this.padding.top
           }px)`
         )
@@ -628,7 +635,7 @@ export default {
 
       switch (this.period) {
         case 'Year':
-          this.ticks = 12
+          this.ticks = 13
           this.format = '%b'
           break
         case 'Month':
@@ -663,13 +670,13 @@ export default {
 </script>
 
 <template>
-  <v-card class="position-relative pb-6 px-10" tile fluid>
+  <v-card class="position-relative pb-6 pt-4 px-2" tile fluid>
     <!-- <div class="caption text-left grey--text card-title">
       <v-icon x-small>pi-gantt</v-icon><span class="ml-1">Timeline</span>
     </div> -->
 
     <div
-      class="d-flex align-center justify-space-between py-4 ml-n10 px-8 card-title"
+      class="d-flex align-center justify-space-between py-4 ml-n2 px-7 card-title"
     >
       <div class="text-h4">Usage</div>
       <div>
@@ -770,11 +777,9 @@ svg {
 }
 
 .card-title {
-  // left: 8px;
   position: absolute;
   width: 100%;
   z-index: 1;
-  // top: 8px;
 }
 </style>
 
@@ -810,8 +815,8 @@ svg {
     opacity: 0;
   }
 
-  .tick:nth-child(even) {
-    // opacity: 0;
+  .tick:nth-child(odd) {
+    opacity: 0;
   }
 
   .tick line {
