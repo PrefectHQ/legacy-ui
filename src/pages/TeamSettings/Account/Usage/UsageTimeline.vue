@@ -34,8 +34,8 @@ export default {
 
       padding: {
         bottom: xAxisHeight,
-        left: 30,
-        right: 70,
+        left: 90,
+        right: 10,
         top: 30,
         x: 100,
         y: xAxisHeight + 30
@@ -201,8 +201,12 @@ export default {
       this.predictionGroup = this.chart
         .append('g')
         .attr('class', 'prediction-group')
-      this.xAxisGroup = this.chart.append('g').attr('class', 'x-axis-group')
-      this.yAxisGroup = this.chart.append('g').attr('class', 'y-axis-group')
+      this.xAxisGroup = this.chart
+        .append('g')
+        .attr('class', 'usage-x-axis-group')
+      this.yAxisGroup = this.chart
+        .append('g')
+        .attr('class', 'usage-y-axis-group')
 
       window.addEventListener('resize', this.resizeChart)
 
@@ -248,6 +252,42 @@ export default {
         ((this.width - this.padding.x) / this.ticks) * 0.8
       )
       const bandwidth = maxBandwidth < 100 ? maxBandwidth : 100
+
+      const xAxis = d3
+        .axisBottom(this.x)
+        .ticks(this.ticks)
+        .tickSizeOuter(0)
+        .tickFormat(date => {
+          let formatted = d3.timeFormat(this.format)(date)
+
+          if (this.period === 'Week') {
+            formatted = formatted[0]
+          }
+          return formatted
+        })
+
+      const yAxis = d3
+        .axisLeft(this.y)
+        // .ticks(12)
+        .tickSizeOuter(0)
+        .tickSize(this.width - this.padding.x)
+
+      this.xAxisGroup
+        .attr('transform', `translate(0,${this.height})`)
+        .transition()
+        .duration(1000)
+        .ease(d3.easeQuad)
+        .call(xAxis)
+
+      this.yAxisGroup
+        .transition()
+        .duration(1000)
+        .attr(
+          'transform',
+          `translate(${this.width - this.padding.left}, ${this.padding.y})`
+        )
+        .ease(d3.easeQuad)
+        .call(yAxis)
 
       this.mainGroup
         .selectAll('path')
@@ -402,7 +442,6 @@ export default {
                 .ease(d3.easeQuad)
                 .attr('height', height)
                 .attr('y', yPosition)
-                .transition('update')
                 .attr('width', bandwidth)
                 .attr('x', xPosition)
 
@@ -415,7 +454,6 @@ export default {
                 .attr('y', d =>
                   d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
                 )
-                .transition('update')
                 .attr('x', xPosition)
             })
           },
@@ -447,32 +485,6 @@ export default {
               )
             })
         )
-
-      const xAxis = d3
-        .axisBottom(this.x)
-        .ticks(this.ticks)
-        .tickSizeOuter(0)
-        .tickFormat(d3.timeFormat(this.format))
-
-      const yAxis = d3
-        .axisRight(this.y)
-        // .ticks(12)
-        .tickSizeOuter(0)
-        .tickSize(this.width - this.padding.x)
-
-      this.xAxisGroup
-        .attr('transform', `translate(0,${this.height})`)
-        .transition()
-        .duration(1000)
-        .ease(d3.easeQuad)
-        .call(xAxis)
-
-      this.yAxisGroup
-        .attr('transform', `translate(${this.padding.left}, ${this.padding.y})`)
-        .transition()
-        .duration(1000)
-        .ease(d3.easeQuad)
-        .call(yAxis)
     },
     rawUpdateItems() {
       const now = new Date()
@@ -585,7 +597,7 @@ export default {
       switch (this.period) {
         case 'Year':
           this.ticks = 12
-          this.format = '%B'
+          this.format = '%b'
           break
         case 'Month':
           this.ticks = 31
@@ -593,7 +605,7 @@ export default {
           break
         case 'Week':
           this.ticks = 7
-          this.format = '%A'
+          this.format = '%a'
           break
         default:
           break
@@ -619,27 +631,71 @@ export default {
 </script>
 
 <template>
-  <v-card class="position-relative" tile fluid>
+  <v-card class="position-relative pb-6 px-10" tile fluid>
     <!-- <div class="caption text-left grey--text card-title">
       <v-icon x-small>pi-gantt</v-icon><span class="ml-1">Timeline</span>
     </div> -->
 
-    <div class="d-flex align-center justify-space-between py-4 px-8 card-title">
+    <div
+      class="d-flex align-center justify-space-between py-4 ml-n10 px-8 card-title"
+    >
       <div class="text-h4">Usage</div>
-      <div style="max-width: 300px;">
-        <v-select
-          v-model="period"
-          :items="['Year', 'Month', 'Week']"
-          :menu-props="{
-            'offset-y': true,
-            transition: 'slide-y-transition'
-          }"
-          outlined
-          dense
-          hide-details
-          label="Show by"
-          required
-        ></v-select>
+      <div>
+        <span
+          class="cursor-pointer px-4 text-title d-inline-flex align-center justify-center"
+          :class="
+            period == 'Week'
+              ? 'blue-grey--text'
+              : 'blue-grey--text text--lighten-4'
+          "
+          @click="period = 'Week'"
+        >
+          <v-icon
+            x-small
+            class="mr-2"
+            :color="period == 'Week' ? 'primary' : 'grey lighten-2'"
+          >
+            fiber_manual_record
+          </v-icon>
+          Week
+        </span>
+        <span
+          class="cursor-pointer px-4 text-title d-inline-flex align-center justify-center"
+          :class="
+            period == 'Month'
+              ? 'blue-grey--text'
+              : 'blue-grey--text text--lighten-4'
+          "
+          @click="period = 'Month'"
+        >
+          <v-icon
+            x-small
+            class="mr-2"
+            :color="period == 'Month' ? 'primary' : 'grey lighten-2'"
+          >
+            fiber_manual_record
+          </v-icon>
+          Month
+        </span>
+        <span
+          class="cursor-pointer px-4 text-title d-inline-flex align-center justify-center"
+          :class="
+            period == 'Year'
+              ? 'blue-grey--text'
+              : 'blue-grey--text text--lighten-4'
+          "
+          @click="period = 'Year'"
+        >
+          <v-icon
+            x-small
+            class="mr-2"
+            :color="period == 'Year' ? 'primary' : 'grey lighten-2'"
+          >
+            fiber_manual_record
+          </v-icon>
+          Year
+        </span>
+        <!-- </div> -->
       </div>
     </div>
 
@@ -694,13 +750,14 @@ svg {
 // We use unscoped css here
 // so that we don't need to do a post-selection
 // on the axis
-.x-axis-group {
+.usage-x-axis-group {
   color: #9e9e9e !important;
-  font: 10px Roboto, sans-serif;
+  font: 18px Roboto, sans-serif;
   opacity: 0.8;
   user-select: none;
 
   .domain {
+    opacity: 0;
     stroke: rgba(0, 0, 0, 0.12);
     stroke-width: 1.65px;
   }
@@ -710,13 +767,18 @@ svg {
   }
 }
 
-.y-axis-group {
+.usage-y-axis-group {
   color: #9e9e9e !important;
-  font: 9px Roboto, sans-serif;
+  font: 16px Roboto, sans-serif;
   opacity: 0.8;
+  text-anchor: start;
   user-select: none;
 
   .domain {
+    opacity: 0;
+  }
+
+  .tick:nth-child(even) {
     opacity: 0;
   }
 
