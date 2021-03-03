@@ -592,7 +592,9 @@ export default {
         }
 
         context.shadowBlur = 0
-        context.strokeStyle = '#fff' // this isn't working with a var, why?
+        context.strokeStyle = getComputedStyle(document.body).getPropertyValue(
+          '--v-appForeground-base'
+        )
         context.lineWidth = 2 / this.transform.k
 
         bar.colors.forEach((color, j) => {

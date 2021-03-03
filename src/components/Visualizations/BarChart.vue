@@ -56,6 +56,9 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
+    computedStyle() {
+      return getComputedStyle(document.body)
+    },
     computedItems() {
       return this.loading ? this.loadingItems : this.items
     },
@@ -314,12 +317,12 @@ export default {
       const y1 = 18
       const offset = 32
 
-      context.fillStyle = getComputedStyle(document.body).getPropertyValue(
+      context.fillStyle = this.computedStyle.getPropertyValue(
         '--v-ScheduledAlt-base'
       )
       context.fillRect(0, 0, x, x)
 
-      context.strokeStyle = getComputedStyle(document.body).getPropertyValue(
+      context.strokeStyle = this.computedStyle.getPropertyValue(
         '--v-Scheduled-base'
       )
       context.lineWidth = 6
@@ -337,7 +340,7 @@ export default {
 
       context.save()
       context.lineWidth = 2
-      context.strokeStyle = getComputedStyle(document.body).getPropertyValue(
+      context.strokeStyle = this.computedStyle.getPropertyValue(
         '--v-appBackground-base'
       )
 
@@ -352,9 +355,7 @@ export default {
         context.fillStyle = bar.usePattern
           ? context.createPattern(this.pattern, 'repeat')
           : bar.color ||
-            getComputedStyle(document.body).getPropertyValue(
-              '--v-secondaryGrayLight-base'
-            )
+            this.computedStyle.getPropertyValue('--v-secondaryGrayLight-base')
 
         context.rect(bar.x, bar.y, bar.width, bar.height)
         context.fill()
@@ -425,9 +426,7 @@ export default {
             g.append('path')
               .attr(
                 'stroke',
-                getComputedStyle(document.body).getPropertyValue(
-                  '--v-utilGrayMid-base'
-                )
+                this.computedStyle.getPropertyValue('--v-utilGrayMid-base')
               )
               .attr('stroke-width', 1)
               .attr('stroke-dasharray', 5)
@@ -439,9 +438,7 @@ export default {
               .style('pointer-events', 'none')
               .attr(
                 'fill',
-                getComputedStyle(document.body).getPropertyValue(
-                  '--v-utilGrayMid-base'
-                )
+                this.computedStyle.getPropertyValue('--v-utilGrayMid-base')
               )
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
