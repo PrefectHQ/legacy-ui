@@ -150,10 +150,10 @@ export default {
   <v-card class="pa-2" tile>
     <CardTitle :title="tableTitle" icon="pi-task-run">
       <v-select
-        slot="sort"
+        slot="state-filter"
         v-model="state"
         outlined
-        class="filter-sort"
+        class="state-filter"
         dense
         flat
         solo
@@ -305,7 +305,7 @@ export default {
   }
 }
 
-.filter-sort {
+.state-filter {
   max-width: 310px;
 
   .v-label {

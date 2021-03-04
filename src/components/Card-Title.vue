@@ -73,7 +73,7 @@ export default {
                 'my-6': $vuetify.breakpoint.mdAndDown
               }"
             >
-              <slot name="sort" />
+              <slot name="state-filter" />
             </div>
             <slot name="action" />
           </div>
