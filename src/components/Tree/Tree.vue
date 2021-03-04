@@ -290,7 +290,7 @@ export default {
     outline: none;
 
     .view-button {
-      color: #444 !important;
+      color: var(--v-secondary-base) !important;
       opacity: 0.5;
 
       &:focus,

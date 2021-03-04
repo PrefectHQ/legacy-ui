@@ -415,7 +415,7 @@ export default {
 <style lang="scss">
 .filter-menu-card {
   .v-label.v-label--active {
-    background-color: #fff;
+    background-color: var(--v-appForeground-base);
   }
 }
 </style>

@@ -21,11 +21,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.divider {
-  border: 1px solid #fff;
-  margin: 8px 0;
-}
-
 .tooltip {
   height: auto;
   width: 100%;

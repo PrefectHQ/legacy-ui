@@ -73,7 +73,7 @@ export default {
       let size = 48 * (1 / this.transform.k)
       size = size < 48 ? 48 : size > 64 ? 64 : size
       return {
-        color: this.disabled ? '#bbb' : '',
+        color: this.disabled ? 'var(--v-utilGrayLight-base)' : '',
         'font-size': `${size}px !important`,
         'line-height': `${size}px !important`
       }
@@ -101,7 +101,7 @@ export default {
       size = size < 64 ? 64 : size > 84 ? 84 : size
       return {
         'background-color': 'var(--v-accentOrange-base)',
-        color: '#fff !important',
+        color: 'var(--v-appForeground-base) !important',
         'font-size': `${size}px !important`,
         'line-height': `${size}px !important`
       }
@@ -110,7 +110,7 @@ export default {
       let size = 84 * (1 / this.transform.k)
       size = size < 84 ? 84 : size > 96 ? 96 : size
       return {
-        color: this.disabled ? '#bbb' : '',
+        color: this.disabled ? 'var(--v-utilGrayLight-base)' : '',
         'font-size': `${size}px !important`,
         'line-height': `${size + 10}px !important`
       }

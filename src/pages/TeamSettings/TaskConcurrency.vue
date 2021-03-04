@@ -609,10 +609,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.card-title-color {
-  color: #444;
-}
-
 .custom-header {
   font-size: 1.15em;
 }

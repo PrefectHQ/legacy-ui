@@ -258,14 +258,14 @@ export default {
 
 .expansion > div {
   overflow: auto;
-  background-color: #f9f9f9 !important;
+  background-color: var(--v-appBackground-base) !important;
 
   .theme--light > div {
-    background-color: #f9f9f9 !important;
+    background-color: var(--v-appBackground-base) !important;
   }
 
   .theme--light.v-list {
-    background-color: #f9f9f9 !important;
+    background-color: var(--v-appBackground-base) !important;
   }
 
   .v-expansion-panel-header {

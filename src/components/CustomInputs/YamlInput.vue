@@ -187,7 +187,7 @@ export default {
 
   .input-empty-text {
     .CodeMirror-empty {
-      color: #808080;
+      color: var(--v-utilGrayMid-base);
     }
 
     .CodeMirror-cursor {
@@ -227,12 +227,12 @@ export default {
   }
 
   &.red-border::after {
-    border: 2px solid #ff5252;
+    border: 2px solid var(--v-error-base);
     border-radius: 4px;
   }
 
   &.blue-border::after {
-    border: 2px solid #3b8dff;
+    border: 2px solid var(--v-primary-base);
     border-radius: 4px;
   }
 

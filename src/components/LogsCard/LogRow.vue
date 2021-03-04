@@ -212,15 +212,15 @@ export default {
 }
 
 .log-row-color-1 {
-  background-color: #fff;
+  background-color: var(--v-appForeground-base);
 }
 
 .log-row-color-2 {
-  background-color: #f7f7f7;
+  background-color: var(--v-appBackground-base);
 }
 
 .log-row-color-queried {
-  background-color: #e0f4ff;
+  background-color: var(--v-primaryLight-base);
 }
 
 .log-message {

@@ -303,14 +303,7 @@ export default {
         transition="slide-y-transition"
       >
         <template #activator="{ on }">
-          <v-btn
-            class="vertical-button py-1 "
-            color="#666"
-            text
-            tile
-            small
-            v-on="on"
-          >
+          <v-btn class="vertical-button py-1" text tile small v-on="on">
             <v-icon>
               filter_list
             </v-icon>

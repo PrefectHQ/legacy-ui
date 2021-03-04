@@ -29,18 +29,21 @@ export const THEME_COLORS = {
   cloudUIPrimaryDark: '#003d66',
   cloudUIPrimaryLight: '#e0f3ff',
   secondaryBlue: '#3b8dff',
-  plan: '#2edaff',
   tertiaryBlue: '#0076ff',
   secondary: '#2F383F', // primary grey-light
   accent: '#1b5da4', // accent blue
-  'accent-pink': '#fe5196',
   error: '#FF5252', // alerts error
   info: '#2196F3', // vuetify default
   success: '#4CAF50', // alerts success
   warning: '#FFC107', // alerts warning
   deepRed: '#B00000',
   failRed: '#D50000',
-  appBackground: '#f9f9f9'
+  appBackground: '#f9f9f9',
+  appForeground: '#fff',
+  navIcons: '#999',
+  utilGrayLight: '#ddd',
+  utilGrayMid: '#767676',
+  utilGrayDark: '#333'
 }
 
 export const THEME_COLORS_ALT = {

@@ -84,11 +84,19 @@
   }
 
   &.slash-grey::before {
-    background-image: linear-gradient(105deg, #647489, #2f383f) !important;
+    background-image: linear-gradient(
+      105deg,
+      #647489,
+      var(--v-secondary-base)
+    ) !important;
   }
 
   &.slash-grey-reverse::before {
-    background-image: linear-gradient(105deg, #2f383f, #647489) !important;
+    background-image: linear-gradient(
+      105deg,
+      var(--v-secondary-base),
+      #647489
+    ) !important;
   }
 
   &.slash-orange::before {
@@ -100,11 +108,19 @@
   }
 
   &.slash-blue::before {
-    background-image: linear-gradient(105deg, #2edaff, #0e50f5) !important;
+    background-image: linear-gradient(
+      105deg,
+      var(--v-accentCyan-base),
+      #0e50f5
+    ) !important;
   }
 
   &.slash-light-blue::before {
-    background-image: linear-gradient(105deg, #0e50f5, #2edaff) !important;
+    background-image: linear-gradient(
+      105deg,
+      #0e50f5,
+      var(--v-accentCyan-base)
+    ) !important;
   }
 
   div {
@@ -132,15 +148,27 @@
   }
 
   &.slash-grey::before {
-    background-image: linear-gradient(105deg, #647489, #2f383f) !important;
+    background-image: linear-gradient(
+      105deg,
+      #647489,
+      var(--v-secondary-base)
+    ) !important;
   }
 
   &.slash-grey-reverse::before {
-    background-image: linear-gradient(105deg, #2f383f, #647489) !important;
+    background-image: linear-gradient(
+      105deg,
+      var(--v-secondary-base),
+      #647489
+    ) !important;
   }
 
   &.slash-blue::before {
-    background-image: linear-gradient(105deg, #2edaff, #0e50f5) !important;
+    background-image: linear-gradient(
+      105deg,
+      var(--v-accentCyan-base),
+      #0e50f5
+    ) !important;
   }
 
   &.slash-orange::before {

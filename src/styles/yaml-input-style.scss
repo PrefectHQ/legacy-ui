@@ -9,14 +9,14 @@
   }
 
   div.CodeMirror-selected {
-    background: #e0f4ff !important;
+    background: var(--v-primaryLight-base) !important;
   }
 
   .CodeMirror-line {
     &::selection,
     > span::selection,
     > span > span::selection {
-      background: #e0f4ff !important;
+      background: var(--v-primaryLight-base) !important;
     }
   }
 
@@ -40,11 +40,11 @@
   }
 
   .cm-atom {
-    color: #f77062 !important;
+    color: var(--v-accentOrange-base) !important;
   }
 
   .cm-number {
-    color: #07e798 !important;
+    color: var(--v-accentGreen-base) !important;
   }
 
   .cm-def {
@@ -79,19 +79,19 @@
     font-weight: normal !important;
   }
   .cm-string {
-    color: #fe5196 !important;
+    color: var(--v-accentPink-base) !important;
   }
 
   .cm-property.cm-string {
-    color: #3b8dff !important;
+    color: var(--v-primary-base) !important;
   }
 
   .cm-property {
-    color: #3b8dff !important;
+    color: var(--v-primary-base) !important;
   }
 
   .cm-string-2 {
-    color: #3b8dff !important;
+    color: var(--v-primary-base) !important;
   }
   .cm-meta {
     color: #000 !important;
