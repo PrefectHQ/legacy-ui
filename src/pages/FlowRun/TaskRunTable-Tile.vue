@@ -175,8 +175,7 @@ export default {
             {{ item }}
           </v-chip>
           <span v-if="index === 2" class="grey--text caption">
-            (+{{ state.length - 2 }}
-            {{ state.length - 2 === 1 ? 'other' : 'others' }})
+            (+{{ state.length - 2 }})
           </span>
         </template>
       </v-select>
@@ -190,7 +189,7 @@ export default {
         prepend-inner-icon="search"
         hide-details
         placeholder="Search by Task or Run Name"
-        style="min-width: 250px;"
+        style="min-width: 210px;"
       >
       </v-text-field>
     </CardTitle>
@@ -306,7 +305,7 @@ export default {
 }
 
 .state-filter {
-  max-width: 310px;
+  width: 275px;
 
   .v-label {
     font-size: 0.85rem;

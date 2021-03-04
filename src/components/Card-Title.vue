@@ -64,9 +64,9 @@ export default {
             :class="{
               'action-slot': $vuetify.breakpoint.lgAndUp,
               'justify-end': $vuetify.breakpoint.lgAndUp,
-              'd-flex': $vuetify.breakpoint.lgAndUp,
-              'align-center': $vuetify.breakpoint.lgAndUp
+              'd-flex': $vuetify.breakpoint.mdAndUp
             }"
+            class="align-center"
           >
             <div
               :class="{
