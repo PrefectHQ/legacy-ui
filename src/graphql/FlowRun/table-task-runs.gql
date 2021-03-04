@@ -1,6 +1,7 @@
 query TableTaskRuns(
   $flowRunId: uuid
   $name: String
+  $state: [String!]
   $limit: Int
   $offset: Int
   $orderBy: [task_run_order_by!]
@@ -9,17 +10,22 @@ query TableTaskRuns(
     id
     name
     task_runs(
-      where: { task: { name: { _ilike: $name } } }
+      where: {
+        task: { name: { _ilike: $name } }
+        details: { state: { _in: $state } }
+      }
       order_by: $orderBy
       limit: $limit
       offset: $offset
     ) {
-      end_time
       map_index
-      start_time
-      state
-      version
-      id
+      details {
+        end_time
+        start_time
+        state
+        id
+        version
+      }
       task {
         id
         name

@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add a state sort to the task run table - [#633](https://github.com/PrefectHQ/ui/pull/633)
 
 ### Bugfixes
 
