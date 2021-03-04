@@ -592,7 +592,9 @@ export default {
         }
 
         context.shadowBlur = 0
-        context.strokeStyle = '#fff' // this isn't working with a var, why?
+        context.strokeStyle = getComputedStyle(document.body).getPropertyValue(
+          '--v-appForeground-base'
+        )
         context.lineWidth = 2 / this.transform.k
 
         bar.colors.forEach((color, j) => {
@@ -1293,7 +1295,7 @@ export default {
         depressed
         icon
         tile
-        color="var(--v-utilGrayMid-base)"
+        color="utilGrayMid"
         :disabled="transform.k == scaleExtent[1]"
         @click="zoomIn"
       >
@@ -1306,7 +1308,7 @@ export default {
           icon
           depressed
           tile
-          color="var(--v-utilGrayMid-base)"
+          color="utilGrayMid"
           :disabled="transform.k === 1 || transform.x == translateExtent[0][0]"
           @click="panLeft"
         >
@@ -1317,7 +1319,7 @@ export default {
           icon
           depressed
           tile
-          color="var(--v-utilGrayMid-base)"
+          color="utilGrayMid"
           :disabled="
             transform.k === 1 ||
               transform.k * translateExtent[1][0] + transform.x <=
@@ -1334,7 +1336,7 @@ export default {
         depressed
         icon
         tile
-        color="var(--v-utilGrayMid-base)"
+        color="utilGrayMid"
         :disabled="transform.k == scaleExtent[0]"
         @click="zoomOut"
       >

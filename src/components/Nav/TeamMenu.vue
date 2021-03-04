@@ -84,7 +84,7 @@ export default {
 
         <v-list-item :disabled="!isCloud" :to="{ name: 'flow-concurrency' }">
           <v-list-item-avatar tile>
-            <v-icon large color="var(--v-navIcons-base)">
+            <v-icon large color="navIcons">
               pi-flow-run
             </v-icon>
           </v-list-item-avatar>
@@ -100,7 +100,7 @@ export default {
 
         <v-list-item :to="{ name: 'flow-groups' }">
           <v-list-item-avatar tile>
-            <v-icon large color="var(--v-navIcons-base)">
+            <v-icon large color="navIcons">
               pi-flow
             </v-icon>
           </v-list-item-avatar>
@@ -130,7 +130,7 @@ export default {
 
         <v-list-item :to="{ name: 'projects' }">
           <v-list-item-avatar tile>
-            <v-icon large color="var(--v-navIcons-base)">
+            <v-icon large color="navIcons">
               pi-project
             </v-icon>
           </v-list-item-avatar>

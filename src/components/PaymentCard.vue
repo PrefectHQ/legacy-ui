@@ -3,6 +3,7 @@
 const stripe = Stripe(process.env.VUE_APP_STRIPE_PUBLIC_TOKEN)
 let elements = stripe.elements()
 let card = undefined
+const computedStyle = getComputedStyle(document.body)
 let style = {
   iconStyle: 'Solid',
   base: {
@@ -10,30 +11,18 @@ let style = {
     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
     fontSmoothing: 'antialiased',
     fontSize: '16px',
-    iconColor: getComputedStyle(document.body).getPropertyValue(
-      '--v-utilGrayMid-base'
-    ),
+    iconColor: computedStyle.getPropertyValue('--v-utilGrayMid-base'),
     '::placeholder': {
-      color: getComputedStyle(document.body).getPropertyValue(
-        '--v-utilGrayMid-base'
-      )
+      color: computedStyle.getPropertyValue('--v-utilGrayMid-base')
     }
   },
   invalid: {
-    color: getComputedStyle(document.body).getPropertyValue(
-      '--v-accentOrange-base'
-    ),
-    iconColor: getComputedStyle(document.body).getPropertyValue(
-      '--v-accentOrange-base'
-    )
+    color: computedStyle.getPropertyValue('--v-accentOrange-base'),
+    iconColor: computedStyle.getPropertyValue('--v-accentOrange-base')
   },
   focus: {
-    iconColor: getComputedStyle(document.body).getPropertyValue(
-      '--v-primary-base'
-    ),
-    borderColor: getComputedStyle(document.body).getPropertyValue(
-      '--v-primary-base'
-    )
+    iconColor: computedStyle.getPropertyValue('--v-primary-base'),
+    borderColor: computedStyle.getPropertyValue('--v-primary-base')
   }
 }
 

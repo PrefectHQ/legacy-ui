@@ -37,7 +37,7 @@ export default {
 
     <div
       class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-      style="border: 1px solid var(--v-utilGrayLight-base) !important;"
+      style="border: 1px solid utilGrayLight !important;"
     >
       <pre id="ud-code" class="code-block">
 import prefect
@@ -62,7 +62,7 @@ flow.run()
 
     <div
       class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4 logs-block"
-      style="border: 1px solid var(--v-utilGrayLight-base) !important;"
+      style="border: 1px solid utilGrayLight !important;"
     >
       [2020-01-08 23:49:00,239] INFO - prefect.FlowRunner | Beginning Flow run
       for 'hello-flow'

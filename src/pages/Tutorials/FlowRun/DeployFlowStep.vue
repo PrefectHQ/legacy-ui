@@ -65,7 +65,7 @@ export default {
       <v-card flat class="my-6">
         <div
           class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-          style="border: 1px solid var(--v-utilGrayLight-base) !important;"
+          style="border: 1px solid utilGrayLight !important;"
         >
           <pre class="code-block">
 import prefect

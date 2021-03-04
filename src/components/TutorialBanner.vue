@@ -35,7 +35,7 @@ export default {
   <v-banner :value="showBanner">
     <template #default>
       <div class="d-flex align-center">
-        <v-avatar slot="icon" color="var(--v-primary-base)" size="40">
+        <v-avatar slot="icon" color="primary" size="40">
           <v-icon icon="mdi-lock" color="white">
             school
           </v-icon>
@@ -62,7 +62,7 @@ export default {
           icon
           text
           dark
-          color="var(--v-error-base)"
+          color="error"
           @click="dismissed = !dismissed"
         >
           <v-icon>
