@@ -346,7 +346,7 @@ export default {
   max-width: 600px;
   overflow: hidden;
   transition: max-height 150ms;
-  width: max-content;
+  width: 600px;
 }
 
 .form-actions {
@@ -362,7 +362,7 @@ export default {
   transition: all 150ms;
 
   .card-selection {
-    min-height: 650px;
+    min-height: 600px;
   }
 
   .card-display {
@@ -440,7 +440,7 @@ export default {
 .confirm-container,
 .complete-container,
 .error-container {
-  min-height: 650px;
+  min-height: 600px;
 }
 
 .dotted-line {
