@@ -274,7 +274,7 @@ export default {
         <v-card
           class="clock-card text-truncate"
           :class="{ 'clock-card-large': selectedClock === i }"
-          :color="clock.scheduleType == 'flow' ? 'grey lighten-4' : 'white'"
+          :color="appForeground"
           :style="{
             'border-left':
               clock.scheduleType == 'flow'

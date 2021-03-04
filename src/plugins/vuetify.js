@@ -51,7 +51,9 @@ export const THEME_COLORS_ALT = {
   appForeground: '#404452',
   prefect: '#003d66',
   primary: '#007acc',
-  utilGrayLight: '#666'
+  utilGrayLight: '#666',
+  utilGrayMid: '#aaa',
+  utilGrayDark: '#eee'
 }
 
 Vue.use(Vuetify)

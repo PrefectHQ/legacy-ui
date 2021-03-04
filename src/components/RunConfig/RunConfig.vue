@@ -195,7 +195,6 @@ export default {
             v-if="arg.input_type == 'string'"
             v-model="internalValue[arg.arg]"
             placeholder="Default"
-            class="white"
             :label="arg.label"
             hide-details
             outlined
@@ -325,7 +324,6 @@ export default {
 }
 
 .config-type {
-  background-color: rgba(255, 255, 255, 1);
   border: 2px solid;
   border-color: var(--v-utilGrayLight-base) !important;
   height: 80px;
@@ -339,6 +337,15 @@ export default {
   &:hover,
   &:focus {
     background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.theme--dark {
+  .config-type {
+    &:hover,
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.12);
+    }
   }
 }
 </style>

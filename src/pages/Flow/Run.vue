@@ -252,11 +252,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="blue-grey--text text--darken-2 mt-2 run-container"
-    flat
-    outlined
-  >
+  <v-card class="utilGrayDark--text mt-2 run-container" flat outlined>
     <v-card-text
       v-if="flow.archived"
       class="run-body d-flex align-center justify-center"
@@ -312,7 +308,7 @@ export default {
               <v-text-field
                 v-model="flowRunName"
                 placeholder="name"
-                class="white ml-2 text-h5"
+                class="ml-2 text-h5"
                 hide-details
                 outlined
                 dense
@@ -510,7 +506,7 @@ export default {
             depressed
             text
             outlined
-            class="text-none blue-grey--text mt-8 py-6 text--darken-2"
+            class="text-none utilGrayDark--text mt-8 py-6"
             @click="showAdvanced = !showAdvanced"
           >
             <div>
@@ -579,7 +575,11 @@ export default {
         class="text-caption py-2 summary"
         :class="{ 'summary-background': stickyActions }"
       >
-        <div>
+        <div
+          :class="{
+            'white--text': stickyActions
+          }"
+        >
           <span>When:</span>
           <span class="float-right font-weight-medium ml-2 accentGreen--text"
             >{{
@@ -593,7 +593,12 @@ export default {
           </span>
         </div>
 
-        <div v-if="showParameters">
+        <div
+          v-if="showParameters"
+          :class="{
+            'white--text': stickyActions
+          }"
+        >
           <span>Parameters:</span>
           <span class="float-right font-weight-medium ml-2">
             <span v-if="parametersModified" class="accentGreen--text">
@@ -603,7 +608,11 @@ export default {
           </span>
         </div>
 
-        <div>
+        <div
+          :class="{
+            'white--text': stickyActions
+          }"
+        >
           <span>Context:</span>
           <span class="float-right font-weight-medium ml-2">
             <span v-if="contextModified" class="accentGreen--text">
@@ -613,7 +622,11 @@ export default {
           </span>
         </div>
 
-        <div>
+        <div
+          :class="{
+            'white--text': stickyActions
+          }"
+        >
           <span>RunConfig:</span>
           <span class="float-right font-weight-medium ml-2">
             <span v-if="runConfigTemplate" class="accentGreen--text">
@@ -633,7 +646,7 @@ export default {
       <v-btn
         class="text-none text-h5 px-4 run-tab-icon"
         :class="{ 'blue--icon': stickyActions }"
-        :color="stickyActions ? 'white' : 'primary'"
+        :color="stickyActions ? 'appForeground' : 'primary'"
         depressed
         x-large
         :loading="loading"

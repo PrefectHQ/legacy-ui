@@ -176,7 +176,7 @@ export default {
 <template>
   <div
     v-ripple
-    class="grey lighten-3 d-flex align-center node ripple"
+    class="utilGrayLight d-flex align-center node ripple"
     :class="showDetails ? 'elevation-3' : ''"
     :style="cardStyle"
     tile

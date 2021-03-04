@@ -183,7 +183,6 @@ export default {
       <JsonInput
         ref="json-input"
         v-model="jsonInput"
-        background-color="white"
         prepend-icon="fad fa-file-code"
         prepend-icon-label="JSON"
         selected-type="json"
@@ -204,7 +203,7 @@ export default {
           <v-col cols="4" class="pr-3">
             <v-text-field
               v-model="keys[i]"
-              class="white text-body-1"
+              class="text-body-1"
               hide-details
               outlined
               dense
@@ -216,7 +215,7 @@ export default {
           <v-col cols="8" class="pl-3">
             <v-text-field
               v-model="values[i]"
-              class="white text-body-1"
+              class="text-body-1"
               hide-details
               outlined
               dense
