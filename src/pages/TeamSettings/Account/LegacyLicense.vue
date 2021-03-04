@@ -117,13 +117,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    tile
-    max-width="720"
-    class="mx-auto my-4"
-    data-cy="license-card"
-    :loading="loading"
-  >
+  <v-card tile class="mx-auto" data-cy="license-card" :loading="loading">
     <v-card-title>
       Your plan
     </v-card-title>

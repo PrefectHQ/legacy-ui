@@ -57,7 +57,7 @@ export default {
 
 <template>
   <div>
-    <v-container v-if="isCloud && isUsageBased" fluid>
+    <v-container v-if="isCloud" fluid>
       <v-row>
         <v-col cols="12" class="text-center pb-2 ">
           <h1 class="display-1">Account & Usage</h1>
@@ -93,46 +93,20 @@ export default {
         <v-col cols="12" md="6">
           <v-row>
             <v-col cols="12">
-              <License />
+              <License v-if="isUsageBased" />
+              <LegacyLicense v-else />
             </v-col>
             <v-col cols="12">
               <Billing />
+            </v-col>
+
+            <v-col cols="12">
+              <Users v-if="isUsageBased" />
             </v-col>
           </v-row>
         </v-col>
       </v-row>
     </v-container>
-
-    <ManagementLayout v-else-if="isCloud">
-      <template v-if="needAlert && isCloud" #alert>
-        <v-alert
-          dismissible
-          class="mx-auto mb-12"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          prominent
-          ><div>You are connected to Prefect Cloud. </div
-          ><div> Any changes you make here will affect your Cloud account.</div>
-        </v-alert>
-      </template>
-      <template #title>Account</template>
-
-      <template v-if="isCloud" #subtitle>
-        Manage your team's billing, data, and profile information.
-      </template>
-      <template v-else #subtitle>
-        Update your team's profile.
-      </template>
-
-      <Profile />
-      <LegacyLicense />
-      <Users />
-      <Billing />
-      <ClearDataDialog />
-    </ManagementLayout>
 
     <ManagementLayout v-else>
       <template #title>Account</template>

@@ -164,13 +164,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    data-cy="users-card"
-    tile
-    max-width="720"
-    class="mx-auto my-4"
-    :loading="loading"
-  >
+  <v-card data-cy="users-card" tile class="mx-auto" :loading="loading">
     <v-card-title>
       Users
     </v-card-title>
