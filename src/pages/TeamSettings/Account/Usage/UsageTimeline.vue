@@ -434,17 +434,19 @@ export default {
               .attr('fill', 'transparent')
               .style('cursor', 'pointer')
               .on('mousemove', (e, d) => {
-                const x = this.x(new Date(d.timestamp))
-                const y = this.y(d.runs)
-                const runs = d.runs ? d.runs.toLocaleString() : 0
+                if (d.runs) {
+                  const x = this.x(new Date(d.timestamp))
+                  const y = this.y(d.runs)
+                  const runs = d.runs ? d.runs.toLocaleString() : 0
 
-                this.hovered = {
-                  x: x,
-                  y: y,
-                  runs: runs
+                  this.hovered = {
+                    x: x,
+                    y: y,
+                    runs: runs
+                  }
+
+                  this.updateHovered(this.hovered)
                 }
-
-                this.updateHovered(this.hovered)
               }),
           update => update,
           exit =>
