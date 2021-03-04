@@ -48,6 +48,7 @@ export default {
 
       items: [],
       line: null,
+      previousLine: null,
       predict: null,
       regression: null,
 
@@ -56,8 +57,10 @@ export default {
       // to: null, // we use a computed prop for this based on the period
 
       // Scales
-      x: d3.scaleTime(),
-      y: d3.scaleLinear()
+      previousX: null,
+      previousY: null,
+      x: null,
+      y: null
     }
   },
   computed: {
@@ -219,6 +222,20 @@ export default {
 
       requestAnimationFrame(this.resizeChart)
     },
+    createX() {
+      const x = d3.scaleTime()
+      x.domain([this.from, this.to])
+      x.range([this.padding.left, this.width - this.padding.right])
+
+      return x
+    },
+    createY() {
+      const y = d3.scaleLinear()
+      y.domain([d3.max(this.items.map(d => d.runs)) || 10000, 0])
+      y.range([this.padding.top, this.height - this.padding.y])
+
+      return y
+    },
     rawResizeChart() {
       if (!this.chart) return
 
@@ -305,7 +322,7 @@ export default {
 
       this.mainGroup
         .selectAll('path')
-        .data([this.items])
+        .data([{ id: this.period, items: this.items }], d => d.id)
         .join(
           enter =>
             enter
@@ -316,19 +333,21 @@ export default {
                 this.showPath ? 'var(--v-prefect-base)' : 'transparent'
               )
               .attr('fill', 'none')
-              .attr('d', d =>
-                this.line(
-                  Array.from(d, d_ => {
-                    return { ...d_, runs: 0 }
-                  })
-                )
-              )
               .call(enter =>
                 enter
                   .transition()
+                  .delay(1000)
+                  .attr('d', d =>
+                    this.line(
+                      Array.from(d.items, d_ => {
+                        return { ...d_, runs: !isNaN(d_.runs) ? 0 : undefined }
+                      })
+                    )
+                  )
+                  .transition()
                   .duration(1000)
                   .ease(d3.easeQuad)
-                  .attr('d', this.line)
+                  .attr('d', d => this.line(d.items))
               ),
           update =>
             update.call(update =>
@@ -340,7 +359,7 @@ export default {
                   'stroke',
                   this.showPath ? 'var(--v-prefect-base)' : 'transparent'
                 )
-                .attr('d', this.line)
+                .attr('d', d => this.line(d.items))
             ),
           exit =>
             exit.call(exit =>
@@ -349,12 +368,15 @@ export default {
                 .duration(1000)
                 .ease(d3.easeQuad)
                 .attr('d', d =>
-                  this.line(
-                    Array.from(d, d_ => {
-                      return { ...d_, runs: 0 }
+                  this.previousLine(
+                    Array.from(d.items, d_ => {
+                      return { ...d_, runs: !isNaN(d_.runs) ? 0 : undefined }
                     })
                   )
                 )
+                .transition()
+                .duration(1000)
+                .style('opacity', 0)
                 .remove()
             )
         )
@@ -611,20 +633,34 @@ export default {
         .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
     },
     rawUpdateScales() {
-      this.x.domain([this.from, this.to])
-      this.x.range([this.padding.left, this.width - this.padding.right])
+      const x = this.createX()
+      this.previousX = this.x
+      this.x = x
 
-      this.y.domain([d3.max(this.items.map(d => d.runs)) || 10000, 0])
-      this.y.range([this.padding.top, this.height - this.padding.y])
-
-      const nullY = this.y(0)
+      const y = this.createY()
+      this.previousY = this.y
+      this.y = y
 
       this.line = d3
         .line()
         .curve(d3.curveMonotoneX)
         .defined(d => !isNaN(d.runs)) // Use this to create gaps in data
         .x(d => this.x(new Date(d.timestamp)) ?? 0)
-        .y(d => this.height - this.padding.y + (this.y(d.runs) - nullY) || 0)
+        .y(
+          d => this.height - this.padding.y + (this.y(d.runs) - this.y(0)) || 0
+        )
+
+      this.previousLine = d3
+        .line()
+        .curve(d3.curveMonotoneX)
+        .defined(d => !isNaN(d.runs)) // Use this to create gaps in data
+        .x(d => this.previousX(new Date(d.timestamp)) ?? 0)
+        .y(
+          d =>
+            this.height -
+              this.padding.y +
+              (this.previousY(d.runs) - this.previousY(0)) || 0
+        )
 
       this.regression = d3
         .regressionLinear()
@@ -806,7 +842,7 @@ svg {
 
 .usage-y-axis-group {
   color: #9e9e9e !important;
-  font: 16px Roboto, sans-serif;
+  font: 12px Roboto, sans-serif;
   opacity: 0.8;
   text-anchor: start;
   user-select: none;
@@ -823,7 +859,7 @@ svg {
     stroke: rgba(0, 0, 0, 0.05);
     stroke-dasharray: 10, 10;
     stroke-width: 1.65px;
-    transform: translate(75px);
+    transform: translate(50px);
   }
 
   .tick:last-of-type line {
