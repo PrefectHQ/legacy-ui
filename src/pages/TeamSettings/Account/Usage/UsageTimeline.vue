@@ -25,6 +25,8 @@ export default {
       format: null,
       ticks: null,
       period: 'Year',
+      hoverGroup: null,
+      interactionGroup: null,
       mainGroup: null,
       chart: null,
       xAxisGroup: null,
@@ -208,6 +210,7 @@ export default {
     createChart() {
       this.chart = d3.select(`#${this.id}-svg`)
       this.mainGroup = this.chart.append('g').attr('class', 'main-group')
+      this.hoverGroup = this.chart.append('g').attr('class', 'hover-group')
       this.predictionGroup = this.chart
         .append('g')
         .attr('class', 'prediction-group')
@@ -217,6 +220,10 @@ export default {
       this.yAxisGroup = this.chart
         .append('g')
         .attr('class', 'usage-y-axis-group')
+
+      this.interactionGroup = this.chart
+        .append('g')
+        .attr('class', 'interaction-group')
 
       window.addEventListener('resize', this.resizeChart)
 
@@ -269,6 +276,42 @@ export default {
       this.updateScales()
       this.updateChart()
     },
+    updateHovered(e) {
+      const hoverline = e ? [e] : []
+
+      this.hoverGroup
+        .selectAll('path')
+        .data(hoverline)
+        .join(
+          enter => {
+            console.log('entering')
+            const g = enter.append('g').attr('class', 'hover-group')
+
+            g.append('path')
+              .attr('stroke', '#999')
+              .attr('stroke-width', 1.5)
+              .attr('stroke-dasharray', 5)
+              .attr('d', `M0,${this.height - 25}L0,10`)
+              .style('pointer-events', 'none')
+              .style('opacity', 1)
+
+            return g
+          },
+          update => {
+            console.log('updating')
+            return update.attr('transform', d => `translate(${d.x})`)
+          },
+          exit => {
+            return exit.call(exit =>
+              exit
+                .transition('exit')
+                // .duration(50)
+                // .style('opacity', 0)
+                .remove()
+            )
+          }
+        )
+    },
     rawUpdateChart() {
       const yOffset = this.height - this.padding.y
 
@@ -276,6 +319,7 @@ export default {
         ((this.width - this.padding.x) / this.ticks) * 0.8
       )
       const bandwidth = maxBandwidth < 100 ? maxBandwidth : 100
+      const bandwidthNoPadding = (this.width - this.padding.x) / this.ticks
 
       const xAxis = d3
         .axisBottom(this.x)
@@ -319,6 +363,41 @@ export default {
         )
         .ease(d3.easeQuad)
         .call(yAxis)
+
+      this.interactionGroup
+        .selectAll('rect')
+        .data(this.items, d => d.id)
+        .join(
+          enter =>
+            enter
+              .append('rect')
+              .attr('width', bandwidthNoPadding)
+              .attr('height', this.height)
+              .attr(
+                'x',
+                d => this.x(new Date(d.timestamp)) - bandwidthNoPadding / 2
+              )
+              .attr('fill', 'transparent')
+              .on('mousemove', (e, d) => {
+                const hovered = {
+                  x: this.x(new Date(d.timestamp)),
+                  y: this.height
+                }
+
+                console.log(e)
+                this.updateHovered(hovered)
+              })
+              .on('mouseout', () => {
+                this.updateHovered()
+              }),
+          update => update,
+          exit =>
+            exit
+              .on('mouseout', null)
+              .on('mouseover', null)
+              .transition('exit')
+              .remove()
+        )
 
       this.mainGroup
         .selectAll('path')
@@ -460,6 +539,7 @@ export default {
               .attr('x', xPosition)
               .attr('y', yOffset - 5)
               .style('text-anchor', 'middle')
+              .style('user-select', 'none')
               .style('transform', transform)
               .style('font', '10px Roboto, sans-serif')
               .attr('fill', 'transparent')
