@@ -4,6 +4,8 @@
 
 ### Features and Improvements
 
+- Add a state filter to the flow run table - [#645](https://github.com/PrefectHQ/ui/pull/645)
+
 - Add a state sort to the task run table - [#633](https://github.com/PrefectHQ/ui/pull/633)
 
 ### Bugfixes
