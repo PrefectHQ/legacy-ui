@@ -7,98 +7,102 @@
       </div>
     </div>
     <v-divider class="divider-dark" />
-    <div class="text-h6 font-weight-regular text-center">
-      <div class="mt-8 blue-grey--text text--darken-2">
-        A complete workflow automation platform
+    <div
+      class="text-h6 text-md-subtitle-1 text-lg-h6 font-weight-regular text-center"
+    >
+      <div class="px-4">
+        <div class="mt-8 blue-grey--text text--darken-2">
+          A complete workflow automation platform
+        </div>
+        <div
+          class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
+        >
+          <span class="mr-2 font-weight-light d-inline-block plan-cent">
+            $ </span
+          >0.0050
+        </div>
+        <div class="mt-2 text-h6 font-weight-light">
+          per successful task run
+        </div>
+
+        <div
+          class="my-12 my-md-8 my-lg-12 text-left plan-body d-flex align-start justify-center flex-column"
+        >
+          <div class="d-flex align-center justify-center">
+            <span class="rounded-circle plans-feature-icon">
+              <v-icon small>
+                fad fa-users
+              </v-icon>
+            </span>
+            <span class="ml-2">
+              Up to 10 users
+            </span>
+          </div>
+
+          <div class="mt-3 d-flex align-center justify-center">
+            <span class="rounded-circle plans-feature-icon">
+              <v-icon small>
+                fad fa-history
+              </v-icon>
+            </span>
+            <span class="ml-2">
+              1 month of run history
+            </span>
+          </div>
+
+          <div class="mt-3 d-flex align-center justify-center">
+            <span class="rounded-circle plans-feature-icon">
+              <v-icon small>
+                fad fa-user-shield
+              </v-icon>
+            </span>
+            <span class="ml-2">Basic role-based permissioning</span>
+          </div>
+
+          <!-- <div class="mt-3 d-flex align-center justify-center">
+            <span class="rounded-circle plans-feature-icon">
+              <v-icon small>
+                fad fa-toolbox
+              </v-icon>
+            </span>
+            <span class="ml-2">
+              Seamlessly integrate your existing tools
+            </span>
+          </div> -->
+
+          <div class="mt-3 d-flex align-center justify-center">
+            <span class="rounded-circle plans-feature-icon">
+              <v-icon small>
+                fad fa-siren-on
+              </v-icon>
+            </span>
+            <span class="ml-2">Workflow and infrastructure SLAs</span>
+          </div>
+
+          <div class="mt-3 d-flex align-center justify-center">
+            <span class="rounded-circle plans-feature-icon">
+              <v-icon small>
+                fad fa-random
+              </v-icon>
+            </span>
+            <span class="ml-2">Customizable stateful actions</span>
+          </div>
+
+          <div class="mt-3 d-flex align-center justify-center">
+            <span class="rounded-circle plans-feature-icon">
+              <v-icon small>
+                fad fa-shield
+              </v-icon>
+            </span>
+            <span class="ml-2">Best-in-class automatic security</span>
+          </div>
+        </div>
       </div>
-      <div
-        class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
-      >
-        <span class="mr-2 font-weight-light d-inline-block plan-cent"> $ </span
-        >0.0050
-      </div>
-      <div class="mt-2 text-h6 font-weight-light">
-        per successful task run
-      </div>
-
-      <div
-        class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
-      >
-        <div class="d-flex align-center justify-center">
-          <span class="rounded-circle plans-feature-icon">
-            <v-icon small>
-              fad fa-users
-            </v-icon>
-          </span>
-          <span class="ml-2">
-            Up to 10 users
-          </span>
-        </div>
-
-        <div class="mt-3 d-flex align-center justify-center">
-          <span class="rounded-circle plans-feature-icon">
-            <v-icon small>
-              fad fa-history
-            </v-icon>
-          </span>
-          <span class="ml-2">
-            1 month of run history
-          </span>
-        </div>
-
-        <div class="mt-3 d-flex align-center justify-center">
-          <span class="rounded-circle plans-feature-icon">
-            <v-icon small>
-              fad fa-user-shield
-            </v-icon>
-          </span>
-          <span class="ml-2">Basic role-based permissioning</span>
-        </div>
-
-        <div class="mt-3 d-flex align-center justify-center">
-          <span class="rounded-circle plans-feature-icon">
-            <v-icon small>
-              fad fa-toolbox
-            </v-icon>
-          </span>
-          <span class="ml-2">
-            Seamlessly integrate your existing tools
-          </span>
-        </div>
-
-        <div class="mt-3 d-flex align-center justify-center">
-          <span class="rounded-circle plans-feature-icon">
-            <v-icon small>
-              fad fa-siren-on
-            </v-icon>
-          </span>
-          <span class="ml-2">Workflow and infrastructure SLAs</span>
-        </div>
-
-        <div class="mt-3 d-flex align-center justify-center">
-          <span class="rounded-circle plans-feature-icon">
-            <v-icon small>
-              fad fa-random
-            </v-icon>
-          </span>
-          <span class="ml-2">Customizable stateful actions</span>
-        </div>
-
-        <div class="mt-3 d-flex align-center justify-center">
-          <span class="rounded-circle plans-feature-icon">
-            <v-icon small>
-              fad fa-shield
-            </v-icon>
-          </span>
-          <span class="ml-2">Best-in-class automatic security</span>
-        </div>
-      </div>
-
-      <div v-if="hideDetails" class="py-7 mt-8 o-0">
+      <div v-if="hideDetails" class="py-7 mt-12 mt-md-8 mt-lg-12 o-0">
         Get started now
       </div>
 
-      <div v-else class="plan-cta py-7 mt-8" @click="select">
+      <div v-else class="plan-cta py-7 mt-12 mt-md-8 mt-lg-12" @click="select">
         Get started now
       </div>
     </div>
@@ -144,10 +148,10 @@ export default {
   }
 
   .plan-body {
-    font-size: 1.2rem !important;
+    // font-size: 1.2rem !important;
     font-weight: 400 !important;
     margin: auto;
-    max-width: 350px;
+    max-width: 375px;
     width: max-content;
   }
 

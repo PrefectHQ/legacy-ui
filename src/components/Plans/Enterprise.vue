@@ -1,32 +1,35 @@
 <template>
-  <div
-    class="plan-card blue-grey darken-3 white--text mt-16 rounded elevation-3"
-  >
+  <div class="plan-card blue-grey darken-3 white--text rounded elevation-3">
     <div class="font-weight-regular text-center py-8 plan-title">
       Enterprise
     </div>
 
     <v-divider class="divider-light" />
-    <div class="text-h6 font-weight-regular text-center">
-      <div class="mt-8">
-        Built for your business
+    <div
+      class="text-h6 text-md-subtitle-1 text-lg-h6 font-weight-regular text-center"
+    >
+      <div class="px-4">
+        <div class="mt-8">
+          Built for your business
 
-        <div class="mt-2 font-weight-light">
-          Get in touch to build your Prefect Cloud
+          <div class="mt-2 font-weight-light">
+            Get in touch to build your Prefect Cloud
+          </div>
+        </div>
+
+        <div
+          class="my-12 my-md-8 my-lg-12 d-flex align-center justify-center flex-column"
+        >
+          <div class="plan-table">
+            <div class="py-2 px-3">100+ users</div>
+            <div class="py-2 px-3">Audit trail</div>
+            <div class="py-2 px-3">Custom RBAC / SSO</div>
+            <div class="py-2 px-3">Volume discounts</div>
+          </div>
         </div>
       </div>
-
-      <div class="mt-16 d-flex align-center justify-center flex-column">
-        <div class="plan-table">
-          <div class="py-2 px-4">100+ users</div>
-          <div class="py-2 px-4">Custom RBAC / SSO</div>
-          <div class="py-2 px-4">Volume discounts</div>
-          <div class="py-2 px-4">Audit trail</div>
-        </div>
-      </div>
-
       <a
-        class="plan-cta plan-cta-dark py-7 mt-16 d-flex align-center justify-center"
+        class="plan-cta plan-cta-dark py-7 mt-12 mt-md-8 mt-lg-12 d-flex align-center justify-center"
         href="https://www.prefect.io/get-prefect#contact"
         target="_blank"
       >
@@ -63,7 +66,6 @@ export default {}
   }
 
   .plan-body {
-    font-size: 1.2rem !important;
     font-weight: 400 !important;
     margin: auto;
     max-width: 350px;

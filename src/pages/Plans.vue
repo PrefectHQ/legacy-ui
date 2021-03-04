@@ -61,7 +61,22 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['license', 'tempLicenseType']),
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('tenant', ['tenant']),
+    planClass() {
+      return {
+        'scale-100': this.$vuetify.breakpoint.lgAndUp,
+        'scale-85': this.$vuetify.breakpoint.mdOnly,
+        'scale-75': this.$vuetify.breakpoint.smOnly
+      }
+    },
+    plansContainerClass() {
+      return {
+        'd-flex': true,
+        'justify-center': true,
+        'align-center': true,
+        'flex-column': this.$vuetify.breakpoint.smAndDown
+      }
+    }
   },
   methods: {
     handlePlanSelection(type) {
@@ -100,7 +115,8 @@ export default {
           <transition-group
             name="flex"
             mode="out-in"
-            class="plans-container mt-8 d-flex justify-center"
+            class="plans-container mt-8 mx-8"
+            :class="plansContainerClass"
           >
             <StarterPlan
               v-if="!plan || plan == 'starter'"
@@ -119,16 +135,20 @@ export default {
             <EnterprisePlan
               v-if="!plan"
               key="enterprise"
+              class="mt-md-16 mt-0"
               :hide-details="!!plan"
             />
 
-            <PlanSelectionForm
+            <div
               v-if="plan && !complete"
               key="payment-form"
-              :plan-reference="plan"
-              class="mt-n4"
-              @complete="complete = true"
-            />
+              class="mt-n4 px-12 px-md-0"
+            >
+              <PlanSelectionForm
+                :plan-reference="plan"
+                @complete="complete = true"
+              />
+            </div>
           </transition-group>
 
           <div v-if="plan" class="text-center mt-8">

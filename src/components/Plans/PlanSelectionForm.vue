@@ -343,9 +343,10 @@ export default {
 <style lang="scss" scoped>
 .form-container {
   height: min-content;
+  max-width: 600px;
   overflow: hidden;
   transition: max-height 150ms;
-  width: 600px;
+  width: max-content;
 }
 
 .form-actions {

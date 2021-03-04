@@ -7,63 +7,70 @@
     </div>
     <v-divider class="divider-light" />
     <div
-      class="text-h6 font-weight-regular text-center grey--text text--lighten-3"
+      class="text-h6 text-md-subtitle-1 text-lg-h6  font-weight-regular text-center grey--text text--lighten-3"
     >
-      <div class="mt-8">
-        Cloud-native workflow orchestration
-      </div>
-      <div
-        class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price d-flex align-center justify-center"
-      >
-        <span class="mr-2 font-weight-light d-inline-block plan-cent"> $ </span
-        >0.0025
-      </div>
-      <div class="mt-2 text-h6 font-weight-light">
-        per successful task run
-      </div>
-
-      <div
-        class="mt-16 text-left plan-body d-flex align-start justify-center flex-column"
-      >
-        <div class="d-flex align-center justify-center">
-          <span
-            class="rounded-circle plans-feature-icon plans-feature-icon-light"
-          >
-            <v-icon small>
-              fad fa-users
-            </v-icon>
-          </span>
-          <span class="ml-2">Up to 3 users</span>
+      <div class="px-4">
+        <div class="mt-8">
+          Cloud-native workflow orchestration
+        </div>
+        <div
+          class="mt-4 text-h2 font-weight-regular white--text plan-task-run-price d-flex align-center justify-center"
+        >
+          <span class="mr-2 font-weight-light d-inline-block plan-cent">
+            $ </span
+          >0.0025
+        </div>
+        <div class="mt-2 text-h6 font-weight-light">
+          per successful task run
         </div>
 
-        <div class="mt-3 d-flex align-center justify-center">
-          <span
-            class="rounded-circle plans-feature-icon plans-feature-icon-light"
-          >
-            <v-icon small>
-              fad fa-history
-            </v-icon>
-          </span>
-          <span class="ml-2">1 week of run history</span>
-        </div>
+        <div
+          class="my-12 my-md-8 my-lg-12 text-left plan-body d-flex align-start justify-center flex-column"
+        >
+          <div class="d-flex align-center justify-center">
+            <span
+              class="rounded-circle plans-feature-icon plans-feature-icon-light"
+            >
+              <v-icon small>
+                fad fa-users
+              </v-icon>
+            </span>
+            <span class="ml-2">Up to 3 users</span>
+          </div>
 
-        <div class="mt-3 d-flex align-center justify-center">
-          <span
-            class="rounded-circle plans-feature-icon plans-feature-icon-light"
-          >
-            <v-icon small>
-              fad fa-tasks
-            </v-icon>
-          </span>
-          <span class="ml-2">10,000 free task runs per month</span>
+          <div class="mt-3 d-flex align-center justify-center">
+            <span
+              class="rounded-circle plans-feature-icon plans-feature-icon-light"
+            >
+              <v-icon small>
+                fad fa-history
+              </v-icon>
+            </span>
+            <span class="ml-2">1 week of run history</span>
+          </div>
+
+          <div class="mt-3 d-flex align-center justify-center">
+            <span
+              class="rounded-circle plans-feature-icon plans-feature-icon-light"
+            >
+              <v-icon small>
+                fad fa-tasks
+              </v-icon>
+            </span>
+            <span class="ml-2">10,000 free task runs per month</span>
+          </div>
         </div>
       </div>
 
-      <div v-if="hideDetails" class="py-7 mt-16 o-0">
+      <div v-if="hideDetails" class="py-7 my-12 mt-md-8 mt-lg-12 o-0">
         Get started now
       </div>
 
-      <div v-else class="plan-cta plan-cta-dark py-7 mt-16" @click="select">
+      <div
+        v-else
+        class="plan-cta plan-cta-dark py-7 mt-12 mt-md-8 mt-lg-12"
+        @click="select"
+      >
         Get started now
       </div>
     </div>
@@ -109,10 +116,9 @@ export default {
   }
 
   .plan-body {
-    font-size: 1.2rem !important;
     font-weight: 400 !important;
     margin: auto;
-    max-width: 350px;
+    max-width: 375px;
     width: max-content;
   }
 
