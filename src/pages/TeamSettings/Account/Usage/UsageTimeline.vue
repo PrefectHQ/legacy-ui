@@ -434,7 +434,7 @@ export default {
               .attr('fill', 'transparent')
               .style('cursor', 'pointer')
               .on('mousemove', (e, d) => {
-                if (d.runs) {
+                if (!isNaN(d.runs)) {
                   const x = this.x(new Date(d.timestamp))
                   const y = this.y(d.runs)
                   const runs = d.runs ? d.runs.toLocaleString() : 0
@@ -986,9 +986,21 @@ svg {
 // on the axis
 .usage-x-axis-group {
   color: #9e9e9e !important;
-  font: 18px Roboto, sans-serif;
+  font: 16px Roboto, sans-serif;
   opacity: 0.8;
   user-select: none;
+
+  @media screen and (max-width: 1440px) {
+    font: 12px Roboto, sans-serif;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font: 10px Roboto, sans-serif;
+  }
+
+  @media screen and (max-width: 800px) {
+    font: 8px Roboto, sans-serif;
+  }
 
   .domain {
     opacity: 0;
