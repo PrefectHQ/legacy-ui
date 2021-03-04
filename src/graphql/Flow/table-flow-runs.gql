@@ -5,12 +5,13 @@ query TableFlowRuns(
   $orderBy: [flow_run_order_by!]
   $flow_group_id: uuid
   $flow_id: uuid
+  $state: [String!]
 ) {
   flow_run(
     where: {
       flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
       name: { _ilike: $name }
-      state: { _neq: "Scheduled" }
+      state: { _in: $state, _neq: "Scheduled" }
     }
     order_by: $orderBy
     limit: $limit
