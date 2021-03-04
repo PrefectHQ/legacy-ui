@@ -4,6 +4,7 @@ import * as d3_regression from 'd3-regression'
 
 import uniqueId from 'lodash.uniqueid'
 import debounce from 'lodash.debounce'
+import throttle from 'lodash.throttle'
 
 const d3 = Object.assign({}, d3_base, d3_regression)
 
@@ -121,6 +122,13 @@ export default {
         requestAnimationFrame(this.rawResizeChart)
       }, 300)
     },
+    tooltipStyle() {
+      if (!this.hovered) return
+      return {
+        left: `${this.hovered.x}px`,
+        top: `${this.hovered.y + this.padding.top + 35}px`
+      }
+    },
     updateChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawUpdateChart)
@@ -135,6 +143,17 @@ export default {
       return debounce(() => {
         requestAnimationFrame(this.rawUpdateScales)
       }, 50)
+    },
+    updateHovered: function() {
+      return throttle(
+        e => {
+          requestAnimationFrame(() => {
+            this.rawUpdateHovered(e)
+          })
+        },
+        16,
+        { leading: true, trailing: true }
+      )
     },
     from() {
       const from = new Date()
@@ -276,41 +295,76 @@ export default {
       this.updateScales()
       this.updateChart()
     },
-    updateHovered(e) {
+    rawUpdateHovered(e) {
       const hoverline = e ? [e] : []
 
+      const path = d =>
+        `M0,${d.y + this.padding.top}L0,${this.height -
+          this.padding.top -
+          xAxisHeight / 2}`
+
+      const cy = d => d.y + this.padding.top
+
       this.hoverGroup
-        .selectAll('path')
-        .data(hoverline)
+        .selectAll('.hover-group')
+        .data(hoverline, d => d.x)
         .join(
           enter => {
-            console.log('entering')
-            const g = enter.append('g').attr('class', 'hover-group')
+            const g = enter
+              .append('g')
+              .attr('class', 'hover-group')
+              .attr('transform', d => `translate(${d.x})`)
 
             g.append('path')
-              .attr('stroke', '#999')
-              .attr('stroke-width', 1.5)
-              .attr('stroke-dasharray', 5)
-              .attr('d', `M0,${this.height - 25}L0,10`)
+              .attr('stroke', 'var(--v-prefect-base')
+              .attr('stroke-width', 2)
+              .attr('stroke-dasharray', 2.5)
+              .attr('d', path)
               .style('pointer-events', 'none')
-              .style('opacity', 1)
+              .style('opacity', 0.3)
 
+            g.append('circle')
+              .attr('cy', cy)
+              .attr('r', 5)
+              .attr('fill', 'var(--v-accentPink-base)')
             return g
           },
           update => {
-            console.log('updating')
-            return update.attr('transform', d => `translate(${d.x})`)
+            update.attr('transform', d => `translate(${d.x})`)
+
+            // update.select('path').attr('d', path)
+
+            update.select('circle').attr('cy', cy)
+
+            update
+              .select('text')
+              .attr('y', cy)
+              .text(d => (d.runs ? d.runs.toLocaleString() : 0))
+
+            return update
           },
-          exit => {
-            return exit.call(exit =>
-              exit
-                .transition('exit')
-                // .duration(50)
-                // .style('opacity', 0)
-                .remove()
-            )
-          }
+          exit => exit.remove()
         )
+
+      this.xAxisGroup
+        .selectAll('.tick')
+        .select('text')
+        .attr('fill', '#9e9e9e')
+
+      if (e) {
+        this.xAxisGroup
+          .selectAll('.tick')
+          .filter(function() {
+            const selection = d3.select(this)
+            const transform = Math.floor(
+              selection.attr('transform').replace(/[^\d.]/g, '')
+            )
+            const x = Math.floor(e.x)
+            return transform - x <= 5 && transform - x >= -5
+          })
+          .select('text')
+          .attr('fill', 'var(--v-prefect-base')
+      }
     },
     rawUpdateChart() {
       const yOffset = this.height - this.padding.y
@@ -378,17 +432,19 @@ export default {
                 d => this.x(new Date(d.timestamp)) - bandwidthNoPadding / 2
               )
               .attr('fill', 'transparent')
+              .style('cursor', 'pointer')
               .on('mousemove', (e, d) => {
-                const hovered = {
-                  x: this.x(new Date(d.timestamp)),
-                  y: this.height
+                const x = this.x(new Date(d.timestamp))
+                const y = this.y(d.runs)
+                const runs = d.runs ? d.runs.toLocaleString() : 0
+
+                this.hovered = {
+                  x: x,
+                  y: y,
+                  runs: runs
                 }
 
-                console.log(e)
-                this.updateHovered(hovered)
-              })
-              .on('mouseout', () => {
-                this.updateHovered()
+                this.updateHovered(this.hovered)
               }),
           update => update,
           exit =>
@@ -398,6 +454,11 @@ export default {
               .transition('exit')
               .remove()
         )
+
+      this.interactionGroup.on('mouseout', () => {
+        this.hovered = null
+        this.updateHovered()
+      })
 
       this.mainGroup
         .selectAll('path')
@@ -876,6 +937,14 @@ export default {
         </defs>
       </svg>
     </v-card-text>
+
+    <div
+      v-if="hovered"
+      class="tooltip v-tooltip__content rounded"
+      :style="tooltipStyle"
+    >
+      {{ hovered.runs }} runs
+    </div>
   </v-card>
 </template>
 
@@ -896,6 +965,16 @@ svg {
   position: absolute;
   width: 100%;
   z-index: 1;
+}
+
+.tooltip {
+  pointer-events: none;
+  position: absolute;
+  text-overflow: initial;
+  transform: translate(-50%);
+  transition: all 50ms;
+  user-select: none;
+  z-index: 4;
 }
 </style>
 
