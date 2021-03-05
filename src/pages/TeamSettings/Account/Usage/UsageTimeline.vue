@@ -45,8 +45,8 @@ export default {
       },
 
       hovered: null,
-      showPath: true,
-      showBars: false,
+      showPath: false,
+      showBars: true,
       showText: false,
 
       items: [],
@@ -210,7 +210,10 @@ export default {
     }
   },
   mounted() {
-    this.createChart()
+    setTimeout(() => {
+      this.createChart()
+    }, 1000)
+
     this.$apollo.queries['usage'].refetch()
   },
   updated() {
@@ -595,7 +598,7 @@ export default {
               .attr('height', 0)
               .attr('width', bandwidth)
               .attr('fill', (d, i) =>
-                i > 0 ? 'rgba(0,0,0,0.025)' : 'url(#grad)'
+                i > 0 ? 'var(--v-prefect-base)' : 'url(#grad)'
               )
               .attr('x', xPosition)
               .attr('y', this.height)
@@ -925,15 +928,15 @@ export default {
             <stop
               offset="0%"
               style="
-                stop-color: rgb(0, 0, 0);
+                stop-color: rgb(39, 177, 255);
                 stop-opacity: 0;
               "
             />
             <stop
               offset="100%"
               style="
-                stop-color: rgb(0, 0, 0);
-                stop-opacity: 0.025;
+                stop-color: rgb(39, 177, 255);
+                stop-opacity: 0.25;
               "
             />
           </linearGradient>
