@@ -132,7 +132,8 @@ export default {
       variables() {
         return {
           flowRunId: this.flowRunId,
-          name: this.searchFormatted
+          name: this.searchFormatted,
+          state: this.state.length === 0 ? null : this.state
         }
       },
       pollInterval: 5000,

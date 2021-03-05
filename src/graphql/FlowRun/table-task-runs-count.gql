@@ -1,12 +1,18 @@
 query TableTaskRunsCount(
   $flowRunId: uuid
   $name: String
+  $state: [String!]
   $heartbeat: timestamptz
 ) {
   task_run_aggregate(
     where: {
       flow_run_id: { _eq: $flowRunId }
-      _or: [{ task: { name: { _ilike: $name } } }]
+      _or: [
+        {
+          task: { name: { _ilike: $name } }
+          details: { state: { _in: $state } }
+        }
+      ]
       updated: { _gte: $heartbeat }
     }
   ) {

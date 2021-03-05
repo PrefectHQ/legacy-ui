@@ -50,11 +50,25 @@ export default {
       state: [],
       states: [
         'Failed',
+        'Pending',
+        'Retrying',
+        'Resume',
+        'Queued',
+        'Submitted',
+        'Paused',
+        'Running',
+        'Listening',
+        'Finished',
         'Success',
         'Cancelled',
-        'Running',
+        'Cancelling',
+        'Cached',
+        'TriggerFailed',
         'Skipped',
-        'Finished'
+        'TimedOut',
+        'Mapped',
+        'Looped',
+        'InProgress'
       ]
     }
   },
@@ -118,7 +132,10 @@ export default {
     flowRunsCount: {
       query: require('@/graphql/Flow/table-flow-runs-count.gql'),
       variables() {
-        let variables = { name: this.searchFormatted }
+        let variables = {
+          name: this.searchFormatted,
+          state: this.state.length === 0 ? null : this.state
+        }
 
         if (this.aggregate) {
           variables.flow_group_id = this.flow.flow_group_id
@@ -149,7 +166,7 @@ export default {
         flat
         solo
         hide-details
-        :menu-props="{ top: true, offsetY: true }"
+        :menu-props="{ bottom: true, offsetY: true }"
         clearable
         :items="states"
         label="Filter by state"
