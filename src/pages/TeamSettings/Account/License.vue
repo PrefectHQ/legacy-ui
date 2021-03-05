@@ -123,7 +123,7 @@ export default {
     </v-card-title>
 
     <v-card-subtitle class="pb-0">
-      Your're on
+      You're on
       {{ planType !== 'Custom' ? 'the' : 'a' }}
       <v-icon
         v-if="planType !== 'Custom'"
@@ -180,6 +180,7 @@ export default {
         </div> -->
 
         <div
+          v-if="flowConcurrency"
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
         >
@@ -188,18 +189,11 @@ export default {
           </div>
           <div>
             <div class="text-h6 mb-2 grey--text text--darken-3">
-              {{
-                flowConcurrency
-                  ? `${flowConcurrency} concurrent ${flowOrFlows}`
-                  : 'Unlimited concurrency'
-              }}
+              {{ `${flowConcurrency} concurrent ${flowOrFlows}` }}
             </div>
-            <div v-if="flowConcurrency" class="text-body-1">
+            <div class="text-body-1">
               You can have {{ flowConcurrency }} {{ flowOrFlows }} running at a
               time.
-            </div>
-            <div v-else class="text-body-1">
-              You can run as many concurrent flows as you'd like!
             </div>
           </div>
         </div>
