@@ -57,7 +57,7 @@ export default {
       return states.toString().toLowerCase()
     },
     hookAction() {
-      return this.hook?.action?.name
+      return this.hook?.action?.name || this.hook?.action?.action_type
     },
     hookName() {
       // name is if a flow group is named on the evnt - may need to updated to handle multiple
@@ -91,7 +91,8 @@ export default {
       this.$emit('edit-action', {
         hook: this.hook,
         flowConfig: this.flowConfig,
-        flowName: this.flowName
+        flowName: this.flowName,
+        flowNameList: this.flowName.map(flow => flow.name)
       })
     }
   },

@@ -16,32 +16,31 @@ export default {
   },
   data() {
     return {
-      selectedFlows: [],
+      searchEntry: null,
+      selectedFlows: this.hookDetail?.flowName || [],
       openSeconds: false,
       openSelectFlowEventType: false,
       openFlow: false,
       openStates: false,
       openAgentOrFlow: true,
       openActions: false,
-      flowNamesList: [],
+      flowNamesList: this.hookDetail?.flowNameList || [],
       allFlows: false,
       hookDetails: this.hookDetail,
       project: null,
-      flowEventType: this.hookDetails?.hook?.event_type || {
-        name: 'does this'
-      },
       stateGroups: Object.keys(STATES),
       states: STATES,
       selectedStateGroup: null,
       agentFlowOrSomethingElse: '',
-      chosenStates: this.hookDetails?.hook?.event_tags?.state || [],
-      chosenAction: this.hookDetails?.hook?.action || [],
+      chosenStates: this.hookDetail?.hook?.event_tags?.state || [],
+      chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
       addAction: false,
+      flowEventType: null,
       flowEventTypes: [
-        { name: 'starts but does not finish', enum: 'STARTED_NOT_FINISHED' },
+        { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
         {
-          name: 'does not start at the scheduled start time',
+          name: 'does not start',
           enum: 'SCHEDULED_NOT_STARTED'
         },
         {
@@ -69,9 +68,15 @@ export default {
         this.flowEventType?.enum === 'SCHEDULED_NOT_STARTED'
       )
     },
+    haveOrHas() {
+      if (this.selectedFlows?.length > 1) return 'have'
+      return 'has'
+    },
     editedActions() {
       return this.actions
-        ? this.actions.find(action => action.action_type === 'CancelFlowRun')
+        ? this.actions.find(
+            action => action.action_type === 'CancelFlowRunAction'
+          )
           ? this.actions
           : [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
@@ -90,19 +95,53 @@ export default {
     },
     hookAction() {
       return (
-        this.chosenAction.name || this.chosenAction.action_type || 'do this'
+        this.chosenAction?.name || this.chosenAction?.action_type || 'do this'
       )
     },
     completeAction() {
-      if (this.hookDetail) return true
       if (!this.includeTo)
-        return !!this.agentFlowOrSomethingElse && !!this.chosenAction
+        return !!this.selectedFlows.length && !!this.chosenAction
       return (
         !!this.chosenAction &&
         !!this.chosenStates.length &&
-        !!this.agentFlowOrSomethingElse
+        !!this.selectedFlows.length
       )
+    },
+    placeholderMessage() {
+      if (this.$vuetify.breakpoint.mdAndUp) {
+        return `Search by Flow, ${!this.isCloud ? 'or' : ''} Project${
+          this.isCloud ? ', or User' : ''
+        } `
+      }
+      return ''
+    },
+    searchFormatted() {
+      if (!this.searchEntry) return null
+      return `%${this.searchEntry}%`
+    },
+    validUUID() {
+      if (!this.searchEntry) return false
+
+      const UUIDRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
+
+      // Call .trim() to get rid of whitespace on the ends of the
+      // string before making the query
+      return UUIDRegex.test(this.searchEntry.trim())
     }
+  },
+  created() {
+    this.flowEventType = this.hookDetail?.flowConfig?.kind
+      ? this.flowEventTypes.find(
+          type => type.enum === this.hookDetail?.flowConfig?.kind
+        )
+      : this.hookDetail?.hook?.event_type === 'FlowRunStateChangedEvent'
+      ? {
+          name: 'changes state',
+          enum: 'CHANGES_STATE'
+        }
+      : {
+          name: 'does this'
+        }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
@@ -111,8 +150,6 @@ export default {
     },
     handleOpenAgentOrFlow() {
       this.openAgentOrFlow = !this.openAgentOrFlow
-      this.selectedFlows = []
-      this.flowNamesList = []
       this.project = null
     },
     selectAgentorFlow(choice) {
@@ -126,8 +163,14 @@ export default {
       }
     },
     selectFlow(event, flow) {
-      this.selectedFlows.push(flow)
-      this.flowNamesList.push(flow.name)
+      if (flow) {
+        this.selectedFlows.find(item => item === flow)
+          ? (this.selectedFlows = this.selectedFlows.filter(
+              item => item != flow
+            ))
+          : this.selectedFlows.push(flow)
+        this.flowNamesList = this.selectedFlows.map(flow => flow.name)
+      }
       if (!event.shiftKey) {
         this.openFlow = false
         this.openSelectFlowEventType = true
@@ -150,12 +193,16 @@ export default {
         : ''
     },
     selectStateGroup(group) {
-      this.selectedStateGroup = STATES[group]
+      this.states[group].forEach(state => this.chosenStates.push(` ${state}`))
     },
     selectStates(state) {
-      this.chosenStates.find(item => item === state)
-        ? (this.chosenStates = this.chosenStates.filter(item => item != state))
-        : this.chosenStates.push(state)
+      this.chosenStates.find(
+        item => item === ` ${state}` || item.toUpperCase() == state
+      )
+        ? (this.chosenStates = this.chosenStates.filter(
+            item => item != ` ${state}` && item.toUpperCase() != state
+          ))
+        : this.chosenStates.push(` ${state}`)
     },
     selectAction(action) {
       this.chosenAction = action
@@ -169,48 +216,49 @@ export default {
       this.openActions = false
     },
     async createAction(cancel) {
-      if (cancel) {
-        await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/create_action.gql'),
-          variables: {
-            input: { config: { cancel_flow_run: {} } }
-          }
+      try {
+        if (cancel) {
+          const { data } = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/create_action.gql'),
+            variables: {
+              input: { config: { cancel_flow_run: {} } }
+            }
+          })
+          return data?.create_action
+        }
+      } catch (error) {
+        const errString = `${error}`
+        this.setAlert({
+          alertShow: true,
+          alertMessage: errString,
+          alertType: 'error'
         })
       }
     },
     async createHook() {
       let data
-      const flow =
-        this.selectedFlows[0] || this.hookDetails?.flowName[0]?.flow_group_id
-      const action = this.chosenAction[0] || this.hookDetails?.hook?.action?.id
-      if (action === 'CANCEL_RUN') {
-        this.createAction(true)
-      }
       try {
-        if (
-          this.agentFlowOrSomethingElse === 'flow' ||
-          this.hookDetails?.flowName[0]
-        ) {
+        const flow = this.selectedFlows[0].flow_group_id
+        let action = this.chosenAction || this.hookDetails?.hook?.action
+        if (action?.value === 'CANCEL_RUN') {
+          action = this.createAction(true)
+        }
+        if (flow) {
           if (this.includeTo) {
-            const states = this.chosenStates.length
-              ? this.chosenStates
-              : this.hookDetails?.hook?.event_tags?.state
             const flowRunStateChangedSuccess = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
               variables: {
                 input: {
                   flow_group_ids: [flow],
-                  action_id: action,
-                  states: states
+                  action_id: action.id,
+                  states: this.chosenStates
                 }
               }
             })
             data = flowRunStateChangedSuccess.data
           }
           if (this.isSLA) {
-            const kind =
-              this.flowEventType || this.hookDetails?.flowConfig?.kind
-
+            const kind = this.flowEventType.enum
             const configId = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_flow_sla.gql'),
               variables: {
@@ -229,11 +277,12 @@ export default {
                 }
               }
             })
+
             const flowSLAEventSuccess = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_flow_sla_failed_hook.gql'),
               variables: {
                 input: {
-                  action_id: action,
+                  action_id: action.id,
                   sla_config_ids: [configId.data.create_flow_sla_config.id]
                 }
               }
@@ -272,14 +321,57 @@ export default {
   },
   apollo: {
     flows: {
-      query: require('@/graphql/Actions/flows.gql'),
+      query() {
+        return require('@/graphql/Dashboard/flows.js').default(this.isCloud)
+      },
       variables() {
+        let sortBy = {}
+        if (this.sortBy) {
+          if (this.isCloud && this.sortBy.includes('created_by.username')) {
+            sortBy['created_by'] = {}
+            sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
+          } else if (Object.keys(this.sortBy) < 1) {
+            sortBy = { name: 'asc' }
+          } else {
+            sortBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
+          }
+        }
+
+        let searchParams = [
+          { archived: { _eq: this.showArchived ? null : false } },
+          { project_id: { _eq: this.projectId ? this.projectId : null } }
+        ]
+
+        let orParams = [
+          {
+            name: { _ilike: this.searchFormatted }
+          },
+          { project: { name: { _ilike: this.searchFormatted } } }
+        ]
+
+        if (this.validUUID) {
+          orParams.push({ id: { _eq: this.search } })
+        }
+
+        if (this.isCloud) {
+          orParams.push({
+            created_by: { username: { _ilike: this.searchFormatted } }
+          })
+        }
+
         return {
-          project: this.project || null
+          limit: this.limit,
+          offset: this.limit * (this.page - 1),
+          orderBy: sortBy,
+          searchParams: {
+            _and: [...searchParams, { _or: [...orParams] }]
+          }
         }
       },
+      loadingKey: 'loading',
+      pollInterval: 60000,
       update: data => {
-        return data.flow
+        return data?.flow
       }
     },
     actions: {
@@ -318,7 +410,10 @@ export default {
             >{{ flowNames }}</v-btn
           >
           <span
-            >{{ ' ' }}<span v-if="agentOrFlow === 'flow'">has a run that </span>
+            >{{ ' '
+            }}<span v-if="agentOrFlow === 'flow'"
+              >{{ haveOrHas }} a run that
+            </span>
 
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
@@ -364,10 +459,8 @@ export default {
             :color="openActions ? 'codePink' : 'grey'"
             @click="openActions = !openActions"
             >{{ hookAction }}</v-btn
-          >
-
-          .</v-col
-        >
+          >.
+        </v-col>
       </v-row></v-card
     >
     <v-card v-if="openAgentOrFlow" elevation="0" class="pl-8">
@@ -384,39 +477,55 @@ export default {
         >{{ item }}</v-chip
       >
     </v-card>
-    <v-card v-else-if="openFlow" elevation="0" :style="{ overflow: 'auto' }">
-      <v-card-title
-        ><v-btn color="primary" text @click="selectAllFlows"
-          ><v-icon>pi-flow</v-icon>All flows</v-btn
-        ><v-autocomplete
-          v-model="project"
-          width="100px"
-          class="px-2"
-          :items="projectsList"
-          item-text="name"
-          item-value="id"
-          label="Filter by Project"
-        ></v-autocomplete
-        >Hold "shift" to choose multiple flows
-      </v-card-title>
-      <v-chip
-        v-for="item in flows"
-        :key="item.id"
-        label
-        :color="selectedFlows.includes(item) ? 'pink' : ''"
-        class="mx-2"
-        outlined
-        @click="selectFlow($event, item)"
-        >{{ item.name
-        }}<span class="font-weight-light">
-          ({{ item.project.name }})</span
-        ></v-chip
-      >
-    </v-card>
     <v-card
-      v-else-if="openSelectFlowEventType"
+      v-else-if="openFlow"
+      v-click-outside="selectFlow"
       elevation="0"
-      class="text-center"
+      :style="{ overflow: 'auto' }"
+    >
+      <v-card-title>
+        <v-text-field
+          v-model="searchEntry"
+          class="flow-search"
+          dense
+          hide-details
+          single-line
+          solo
+          flat
+          :placeholder="placeholderMessage"
+          prepend-inner-icon="search"
+          autocomplete="new-password"
+          style="min-width: 400px;"
+        />
+      </v-card-title>
+      <v-card-text>
+        <v-chip
+          v-if="!searchEntry"
+          color="primary"
+          label
+          class="ma-1"
+          @click="selectAllFlows"
+        >
+          <v-icon>pi-flow</v-icon>
+          Select all flows
+        </v-chip>
+        <v-chip
+          v-for="item in flows"
+          :key="item.id"
+          label
+          title="Press shift to select multiple flows"
+          :color="selectedFlows.includes(item) ? 'pink' : ''"
+          class="ma-1"
+          outlined
+          @click="selectFlow($event, item)"
+          >{{ item.name
+          }}<span class="font-weight-light pl-1">
+            ({{ item.project.name }})</span
+          ></v-chip
+        >
+      </v-card-text>
+    </v-card>
+    <v-card v-else-if="openSelectFlowEventType" elevation="0"
       ><v-chip
         v-for="item in flowEventTypes"
         :key="item.enum"
@@ -438,27 +547,33 @@ export default {
         ></v-text-field>
       </v-card-text>
     </v-card>
-    <v-card v-else-if="openStates && !selectedStateGroup" elevation="0">
-      <v-chip
-        v-for="item in stateGroups"
-        :key="item.id"
-        label
-        class="mx-2"
-        outlined
-        @click="selectStateGroup(item)"
-        >{{ item }}</v-chip
-      >
-    </v-card>
     <v-card v-else-if="openStates" v-click-outside="closeStates" elevation="0">
-      <v-chip
-        v-for="item in selectedStateGroup"
-        :key="item.id"
-        label
-        class="mx-2"
-        outlined
-        @click="selectStates(item)"
-        >{{ item }}</v-chip
-      >
+      <v-card-text>
+        <v-chip
+          v-for="item in stateGroups"
+          :key="item.id"
+          color="primary"
+          label
+          :title="
+            item == 'All'
+              ? `Select all states`
+              : `Select ${item} and all connected states`
+          "
+          class="ma-1"
+          @click="selectStateGroup(item)"
+          >{{ item }}</v-chip
+        >
+        <v-chip
+          v-for="item in states['All']"
+          :key="item"
+          label
+          class="ma-1"
+          outlined
+          :color="chosenStates.includes(` ${item}`) ? 'pink' : ''"
+          @click="selectStates(item)"
+          >{{ item }}</v-chip
+        >
+      </v-card-text>
     </v-card>
     <v-card v-else-if="openActions" elevation="0"
       ><v-card-actions>
