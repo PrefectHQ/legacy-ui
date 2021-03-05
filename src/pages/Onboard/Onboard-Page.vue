@@ -192,11 +192,19 @@ export default {
 }
 
 .bg-blue {
-  background-image: linear-gradient(105deg, #0e50f5, #2edaff) !important;
+  background-image: linear-gradient(
+    105deg,
+    #0e50f5,
+    var(--v-accentCyan-base)
+  ) !important;
 }
 
 .bg-grey {
-  background-image: linear-gradient(105deg, #2f383f, #647489) !important;
+  background-image: linear-gradient(
+    105deg,
+    var(--v-secondary-base),
+    #647489
+  ) !important;
 }
 
 .o-slash {

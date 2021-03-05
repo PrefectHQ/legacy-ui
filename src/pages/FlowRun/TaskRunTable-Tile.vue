@@ -61,6 +61,18 @@ export default {
       itemsPerPage: 15,
       page: 1,
       searchTerm: null,
+      state: [],
+      states: [
+        'Failed',
+        'Success',
+        'Pending',
+        'Cancelled',
+        'Finished',
+        'Skipped',
+        'TimedOut',
+        'Scheduled',
+        'Resume'
+      ],
       sortBy: 'start_time',
       sortDesc: true,
       taskRunDurations: {}
@@ -105,6 +117,7 @@ export default {
           flowRunId: this.flowRunId,
           limit: this.itemsPerPage,
           name: this.searchFormatted,
+          state: this.state.length === 0 ? null : this.state,
           offset: this.offset,
           orderBy
         }
@@ -136,6 +149,36 @@ export default {
 <template>
   <v-card class="pa-2" tile>
     <CardTitle :title="tableTitle" icon="pi-task-run">
+      <v-select
+        slot="state-filter"
+        v-model="state"
+        outlined
+        class="state-filter"
+        dense
+        flat
+        solo
+        hide-details
+        :menu-props="{ top: true, offsetY: true }"
+        clearable
+        :items="states"
+        label="Filter by state"
+        multiple
+      >
+        <template #selection="{ item, index }">
+          <v-chip
+            v-if="index === 0 || index === 1"
+            :color="item"
+            label
+            small
+            text-color="white"
+          >
+            {{ item }}
+          </v-chip>
+          <span v-if="index === 2" class="grey--text caption">
+            (+{{ state.length - 2 }})
+          </span>
+        </template>
+      </v-select>
       <v-text-field
         slot="action"
         v-model="searchTerm"
@@ -146,11 +189,10 @@ export default {
         prepend-inner-icon="search"
         hide-details
         placeholder="Search by Task or Run Name"
-        style="min-width: 300px;"
+        style="min-width: 210px;"
       >
       </v-text-field>
     </CardTitle>
-
     <v-card-text>
       <v-data-table
         :footer-props="{
@@ -182,7 +224,7 @@ export default {
                 <router-link
                   class="link text-truncate"
                   :data-cy="'task-run-table-link|' + item.task.name"
-                  :to="{ name: 'task-run', params: { id: item.id } }"
+                  :to="{ name: 'task-run', params: { id: item.details.id } }"
                 >
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else v-on="on"
@@ -206,26 +248,26 @@ export default {
         </template>
 
         <template #item.start_time="{ item }">
-          <truncate :content="formatTime(item.start_time)">
-            {{ formDate(item.start_time) }}
+          <truncate :content="formatTime(item.details.start_time)">
+            {{ formDate(item.details.start_time) }}
           </truncate>
         </template>
 
         <template #item.end_time="{ item }">
-          <truncate :content="formatTime(item.end_time)">
-            {{ formDate(item.end_time) }}
+          <truncate :content="formatTime(item.details.end_time)">
+            {{ formDate(item.details.end_time) }}
           </truncate>
         </template>
 
         <template #item.duration="{ item }">
           <DurationSpan
-            v-if="item.start_time"
-            :start-time="item.start_time"
+            v-if="item.details.start_time"
+            :start-time="item.details.start_time"
             :end-time="
-              item.end_time
-                ? item.end_time
-                : isFinished(item.state)
-                ? item.start_time
+              item.details.end_time
+                ? item.details.end_time
+                : isFinished(item.details.state)
+                ? item.details.start_time
                 : null
             "
           />
@@ -233,8 +275,8 @@ export default {
         </template>
 
         <template #item.state="{ item }">
-          <truncate :content="item.state">
-            <v-icon class="mr-1 pointer" small :color="item.state">
+          <truncate :content="item.details.state">
+            <v-icon class="mr-1 pointer" small :color="item.details.state">
               brightness_1
             </v-icon>
           </truncate>
@@ -242,7 +284,7 @@ export default {
 
         <template #item.action="{ item }">
           <ResumeButton
-            v-if="item.state == 'Paused'"
+            v-if="item.details.state == 'Paused'"
             :task-run="{ ...item, flow_run: flowRun }"
             dialog-type="resume"
           />
@@ -252,13 +294,21 @@ export default {
   </v-card>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .task-search {
   border-radius: 0 !important;
   font-size: 0.85rem;
 
   .v-icon {
     font-size: 20px !important;
+  }
+}
+
+.state-filter {
+  width: 275px;
+
+  .v-label {
+    font-size: 0.85rem;
   }
 }
 </style>

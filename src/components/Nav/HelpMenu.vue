@@ -138,7 +138,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-$dark-grey-icon: #999;
+$dark-grey-icon: var(--v-navIcons-base);
 $dark-blue-icon: var(--v-primaryDark-base);
 
 .o-100 {

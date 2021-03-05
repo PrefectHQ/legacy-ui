@@ -302,7 +302,7 @@ export default {
 
 <style lang="scss" scoped>
 .hoverable {
-  border-bottom: 1px dotted #ddd;
+  border-bottom: 1px dotted var(--v-utilGrayLight-base);
   box-sizing: content-box;
 }
 

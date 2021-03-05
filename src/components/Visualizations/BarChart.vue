@@ -56,6 +56,9 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
+    computedStyle() {
+      return getComputedStyle(document.body)
+    },
     computedItems() {
       return this.loading ? this.loadingItems : this.items
     },
@@ -314,10 +317,14 @@ export default {
       const y1 = 18
       const offset = 32
 
-      context.fillStyle = '#FFEEC4'
+      context.fillStyle = this.computedStyle.getPropertyValue(
+        '--v-ScheduledAlt-base'
+      )
       context.fillRect(0, 0, x, x)
 
-      context.strokeStyle = '#ffbe1e'
+      context.strokeStyle = this.computedStyle.getPropertyValue(
+        '--v-Scheduled-base'
+      )
       context.lineWidth = 6
       context.beginPath()
       context.moveTo(x0, y0)
@@ -333,7 +340,9 @@ export default {
 
       context.save()
       context.lineWidth = 2
-      context.strokeStyle = '#f9f9f9'
+      context.strokeStyle = this.computedStyle.getPropertyValue(
+        '--v-appBackground-base'
+      )
 
       context.clearRect(0, 0, this.chartWidth, this.chartHeight)
 
@@ -345,7 +354,8 @@ export default {
         context.globalAlpha = bar.alpha
         context.fillStyle = bar.usePattern
           ? context.createPattern(this.pattern, 'repeat')
-          : bar.color || '#eee'
+          : bar.color ||
+            this.computedStyle.getPropertyValue('--v-secondaryGrayLight-base')
 
         context.rect(bar.x, bar.y, bar.width, bar.height)
         context.fill()
@@ -414,7 +424,10 @@ export default {
               .attr('class', 'breaklines-group')
 
             g.append('path')
-              .attr('stroke', '#999')
+              .attr(
+                'stroke',
+                this.computedStyle.getPropertyValue('--v-utilGrayMid-base')
+              )
               .attr('stroke-width', 1)
               .attr('stroke-dasharray', 5)
               .attr('d', `M0,10L0,${this.chartHeight}`)
@@ -423,7 +436,10 @@ export default {
             g.append('text')
               .style('font-size', '8px')
               .style('pointer-events', 'none')
-              .attr('fill', '#999')
+              .attr(
+                'fill',
+                this.computedStyle.getPropertyValue('--v-utilGrayMid-base')
+              )
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
               .attr('y', 6)

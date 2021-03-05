@@ -32,7 +32,7 @@ export default {
       return ['disconnected']
     },
     statusColor() {
-      if (this.connected) return '#06e797'
+      if (this.connected) return 'var(--v-accentGreen-base)'
       if (this.connecting) return 'var(--v-warning-base)'
       return 'var(--v-Failed-base)'
     }
@@ -209,11 +209,11 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-$primary-base: #fff;
-$secondary-base: #efefef;
+$primary-base: var(--v-appForeground-base);
+$secondary-base: var(--v-secondaryGrayLight-base);
 
 $statuses: (
-  'connected': #06e797,
+  'connected': var(--v-accentGreen-base),
   'connecting': var(--v-warning-base),
   'disconnected': var(--v-Failed-base)
 );

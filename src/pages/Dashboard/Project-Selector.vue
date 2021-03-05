@@ -144,7 +144,7 @@ export default {
 }
 
 .new-project {
-  color: #3b8dff;
+  color: var(--v-primary-base);
   font-weight: 500;
 }
 </style>

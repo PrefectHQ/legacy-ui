@@ -93,7 +93,7 @@ export default {
       <div
         v-ripple
         class="mx-auto my-4 py-2 px-6 text-center rounded-lg d-inline-block cursor-pointer"
-        style="border: 2px solid #eee;"
+        style="border: 2px solid secondaryGrayLight;"
         @click="$router.push({ name: 'profile' })"
       >
         <div>

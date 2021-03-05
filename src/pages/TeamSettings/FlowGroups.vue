@@ -388,7 +388,7 @@ export default {
                 <v-icon v-if="item.active" small dark color="green" v-on="on">
                   pi-flow
                 </v-icon>
-                <v-icon v-else small dark color="accent-pink" v-on="on">
+                <v-icon v-else small dark color="accentPink" v-on="on">
                   archive
                 </v-icon>
               </template>

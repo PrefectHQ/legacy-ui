@@ -3,6 +3,7 @@
 const stripe = Stripe(process.env.VUE_APP_STRIPE_PUBLIC_TOKEN)
 let elements = stripe.elements()
 let card = undefined
+const computedStyle = getComputedStyle(document.body)
 let style = {
   iconStyle: 'Solid',
   base: {
@@ -10,14 +11,18 @@ let style = {
     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
     fontSmoothing: 'antialiased',
     fontSize: '16px',
-    iconColor: '#767676',
+    iconColor: computedStyle.getPropertyValue('--v-utilGrayMid-base'),
     '::placeholder': {
-      color: '#767676'
+      color: computedStyle.getPropertyValue('--v-utilGrayMid-base')
     }
   },
   invalid: {
-    color: '#fa755a',
-    iconColor: '#fa755a'
+    color: computedStyle.getPropertyValue('--v-accentOrange-base'),
+    iconColor: computedStyle.getPropertyValue('--v-accentOrange-base')
+  },
+  focus: {
+    iconColor: computedStyle.getPropertyValue('--v-primary-base'),
+    borderColor: computedStyle.getPropertyValue('--v-primary-base')
   }
 }
 
@@ -266,26 +271,23 @@ export default {
 <style scoped>
 /*stylelint-disable */
 .StripeElement {
-  background-color: white;
   border: 1px solid;
-  border-color: #0009;
   border-radius: 4px;
   height: 56px;
 
   padding: 15px;
-  -webkit-transition: box-shadow 150ms ease;
-  transition: box-shadow 150ms ease;
 }
 
-.StripeElement--focus {
-  box-shadow: 0 1px 3px 0 #cfd7df;
+.StripeElement.focused {
+  border-color: var(--v-primary-base);
+  border-width: 2px;
 }
 
-.StripeElement--invalid {
-  border-color: #fa755a;
+.StripeElement.invalid {
+  border-color: var(--v-accentOrange-base);
 }
 
-.StripeElement--webkit-autofill {
-  background-color: #fefde5 !important;
+.StripeElement.webkit-autofill {
+  background-color: var(--v-Queued-base) !important;
 }
 </style>

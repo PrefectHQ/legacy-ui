@@ -49,15 +49,15 @@ export default {
 <style lang="scss">
 /* stylelint-disable */
 input:-webkit-autofill {
-  box-shadow: 0 0 0 50px white inset !important;
-  -webkit-box-shadow: 0 0 0 50px white inset !important;
-  -webkit-text-fill-color: #333 !important;
+  box-shadow: 0 0 0 50px var(--v-appForeground-base) inset !important;
+  -webkit-box-shadow: 0 0 0 50px var(--v-appForeground-base) inset !important;
+  -webkit-text-fill-color: var(--v-utilGrayDark-base) !important;
 }
 
 input:-webkit-autofill:focus {
-  box-shadow: 0 0 0 50px white inset !important;
-  -webkit-box-shadow: 0 0 0 50px white inset !important;
-  -webkit-text-fill-color: #333 !important;
+  box-shadow: 0 0 0 50px var(--v-appForeground-base) inset !important;
+  -webkit-box-shadow: 0 0 0 50px var(--v-appForeground-base) inset !important;
+  -webkit-text-fill-color: var(--v-utilGrayDark-base) !important;
 }
 /* stylelint-enable */
 

@@ -553,12 +553,12 @@ export default {
 
 <style lang="scss">
 .bg-gray-transition {
-  background-color: #efefef;
+  background-color: var(--v-appBackground-base);
   transition: background-color 300ms;
 }
 
 .bg-white-transition {
-  background-color: #fff;
+  background-color: var(--v-appForeground-base);
   transition: background-color 300ms;
 }
 
