@@ -749,7 +749,11 @@ export default {
 }
 
 .logs-footer {
-  background-image: linear-gradient(transparent, 60%, rgba(221, 221, 221));
+  background-image: linear-gradient(
+    transparent,
+    60%,
+    var(--v-utilGrayLight-base)
+  );
   height: 12px !important;
   position: relative;
   top: -12px;
