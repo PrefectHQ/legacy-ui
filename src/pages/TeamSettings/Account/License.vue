@@ -2,12 +2,8 @@
 import { mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
 import { PLANS_2021 } from '@/utils/plans'
-import UpgradeAlert from '@/components/License/UpgradeAlert'
 
 export default {
-  components: {
-    UpgradeAlert
-  },
   data() {
     return {
       allFeatures: featureTypes,
@@ -25,13 +21,16 @@ export default {
       return this.license?.terms?.is_self_serve
     },
     plan() {
-      const type = this.tempLicenseType || this.license?.terms?.plan
-      const name = type === 'STARTER_2021' ? 'FREE_2021' : type
-      const plan = this.plans.filter(planType => planType.value === name)
-      return plan[0]
+      return this.plans.find(planType => planType.value === this.planType)
+    },
+    planName() {
+      return this.plan ? this.plan.name : 'Custom'
     },
     planType() {
-      return this.plan ? this.plan.name : 'Custom'
+      return this.tempLicenseType || this.license?.terms?.plan
+    },
+    runCost() {
+      return this.plan?.price
     },
     planColor() {
       return 'primary'
@@ -120,6 +119,18 @@ export default {
   <v-card tile data-cy="license-card" :loading="loading">
     <v-card-title class="mb-2 text-h4 font-weight-light">
       Your plan
+      <v-spacer />
+
+      <v-btn
+        v-if="planType !== 'ENTERPRISE_2021'"
+        color="accentPink"
+        depressed
+        dark
+        small
+        :to="{ name: 'plans' }"
+      >
+        Upgrade
+      </v-btn>
     </v-card-title>
 
     <v-card-subtitle class="pb-0">
@@ -133,7 +144,7 @@ export default {
       >
         cloud
       </v-icon>
-      <span :class="`${planColor}--text`">{{ planType }}</span>
+      <span :class="`${planColor}--text`">{{ planName }}</span>
       plan.
       <br />
     </v-card-subtitle>
@@ -145,11 +156,11 @@ export default {
         >
           <div class="mr-4">
             <v-icon color="primary" large style="width: 36px;">
-              fas fa-user{{ userNum > 1 ? 's' : '' }}
+              fad fa-user{{ userNum > 1 ? 's' : '' }}
             </v-icon>
           </div>
           <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 grey--text text--darken-3">
               {{ userNum ? userNum : 'Unlimited' }} {{ userOrUsers }}
             </div>
             <div v-if="userNum" class="text-body-1">
@@ -161,24 +172,6 @@ export default {
           </div>
         </div>
 
-        <!-- <div
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon color="primary" large>pi-task-run</v-icon>
-          </div>
-          <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
-              {{ taskRuns }}
-              Task Runs
-            </div>
-            <div class="text-body-1">
-              Your account includes {{ taskRuns }} Task Runs per month
-            </div>
-          </div>
-        </div> -->
-
         <div
           v-if="flowConcurrency"
           class="d-flex justify-start align-start py-4 px-8 my-2"
@@ -188,7 +181,7 @@ export default {
             <v-icon color="primary" large>pi-flow</v-icon>
           </div>
           <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 grey--text text--darken-3">
               {{ `${flowConcurrency} concurrent ${flowOrFlows}` }}
             </div>
             <div class="text-body-1">
@@ -199,21 +192,60 @@ export default {
         </div>
 
         <div
+          v-if="planType === 'FREE_2021' || planType === 'STARTER_2021'"
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
         >
           <div class="mr-4">
-            <v-icon color="primary" large>history</v-icon>
+            <v-icon color="primary" large>fad fa-tasks</v-icon>
           </div>
           <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 grey--text text--darken-3">
+              10,000 runs
+            </div>
+            <div class="text-body-1">
+              Run 10,000 successful task runs per month.
+              <span v-if="planType === 'STARTER_2021'"
+                >Runs past that cost ${{ runCost }} per run
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-else-if="planType === 'STANDARD_2021'"
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div class="mr-4">
+            <v-icon color="primary" large>fad fa-tasks</v-icon>
+          </div>
+          <div>
+            <div class="text-h6 font-weight-light grey--text text--darken-3">
+              ${{ runCost }} per successful run
+            </div>
+            <div class="text-body-1">
+              Failure doesn't cost anything.
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div class="mr-4">
+            <v-icon color="primary" large>fad fa-history</v-icon>
+          </div>
+          <div>
+            <div class="text-h6 grey--text text--darken-3">
               {{
                 historyRetention ? historyRetention + ' days of ' : 'Unlimited'
               }}
               history
             </div>
             <div v-if="historyRetention" class="text-body-1">
-              You can view flow and task run history for up to
+              Flow and task run history sticks around for
               {{ historyRetention }} days.
             </div>
             <div v-else class="text-body-1">
@@ -222,7 +254,6 @@ export default {
           </div>
         </div>
       </div>
-      <UpgradeAlert :license="license" />
     </v-card-text>
   </v-card>
 </template>
