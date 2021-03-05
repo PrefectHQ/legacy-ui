@@ -451,7 +451,7 @@ export default {
             >
               <v-list-item
                 style="align-items: baseline;
-                color: #fff !important;
+                color: appForeground !important;
                 justify-content: space-between;"
               >
                 <span class="pr-2">{{ pt.tenant.name }}</span>

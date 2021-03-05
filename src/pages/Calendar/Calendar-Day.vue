@@ -260,7 +260,7 @@ export default {
       color="amber"
       transition="slide-y-transition"
     >
-      <span :style="{ color: '#3d2c00' }">
+      <span :style="{ color: 'utilGrayDark' }">
         Reminder!
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/services.html#scheduler"
@@ -331,16 +331,16 @@ export default {
 .striped {
   background: repeating-linear-gradient(
     135deg,
-    #ffeec4,
-    #ffeec4 5px,
-    #ffbe1e 5px,
-    #ffbe1e 10px
+    var(--v-ScheduledAlt-base),
+    var(--v-ScheduledAlt-base) 5px,
+    var(--v-Scheduled-base) 5px,
+    var(--v-Scheduled-base) 10px
   );
-  color: #3d2c00;
+  color: var(--v-utilGrayDark-base);
 }
 
 .darker {
-  color: #3d2c00;
+  color: var(--v-utilGrayDark-base);
 }
 
 .limit-width {
@@ -351,19 +351,19 @@ export default {
 
 .sheet-tweaks {
   .theme--light {
-    background-color: #f9f9f9 !important;
+    background-color: var(--v-appBackground-base) !important;
   }
 }
 .skeleton-tweak {
   .theme--light {
-    background-color: #f9f9f9 !important;
+    background-color: var(--v-appBackground-base) !important;
   }
 }
 .calendar-tweaks {
   overflow: auto;
 
   .theme--light {
-    background-color: #f9f9f9 !important;
+    background-color: var(--v-appBackground-base) !important;
   }
   .v-calendar-daily__intervals-body {
     max-width: 45px !important;

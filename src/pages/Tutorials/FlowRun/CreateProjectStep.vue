@@ -193,7 +193,7 @@ export default {
 <style lang="scss">
 /* stylelint-disable */
 .custom-list-item .v-list-item:first-child .v-list-item__title {
-  color: #3b8dff;
+  color: var(--v-primary-base);
   font-weight: 500;
 }
 /* stylelint-enable */

@@ -67,7 +67,7 @@ i {
   background-position: left !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
-  color: #f0faff;
+  color: var(--v-cloudUIPrimaryLight-base);
   height: 100vh;
 
   .text {

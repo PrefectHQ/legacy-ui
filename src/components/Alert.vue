@@ -125,7 +125,7 @@ export default {
     :left="left"
     :value="internalValue"
     :timeout="-1"
-    :color="light ? '#fff' : null"
+    :color="light ? 'appForeground' : null"
     :style="{
       'margin-left': offsetX > 0 ? `${offsetX}px` : '0',
       'margin-right': offsetX < 0 ? `${Math.abs(offsetX)}px` : '0'
@@ -135,7 +135,7 @@ export default {
     <v-icon v-if="type == 'error'" class="mr-4" color="red">warning</v-icon>
 
     <span
-      :style="{ color: light ? '#333' : 'auto' }"
+      :style="{ color: light ? 'secondaryGrayDark' : 'auto' }"
       class="subtitle-1"
       v-html="message"
     >

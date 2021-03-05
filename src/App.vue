@@ -476,7 +476,6 @@ html {
 }
 
 .link {
-  color: #0f4880;
   text-decoration: none;
 
   &:hover,

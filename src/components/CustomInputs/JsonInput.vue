@@ -253,7 +253,7 @@ export default {
   }
 
   .CodeMirror-placeholder {
-    color: #808080 !important;
+    color: var(--v-utilGrayMid-base) !important;
   }
 
   .json-input-height-auto {
@@ -265,7 +265,7 @@ export default {
 
   .json-input-empty-text {
     .CodeMirror-empty {
-      color: #808080;
+      color: var(--v-utilGrayMid-base);
     }
 
     .CodeMirror-cursor {
@@ -276,7 +276,7 @@ export default {
   /* stylelint-enable selector-class-pattern */
 
   .json-input-error-text {
-    text-decoration: #ff5252 wavy underline !important;
+    text-decoration: var(--v-error-base) wavy underline !important;
   }
 }
 </style>
@@ -310,12 +310,12 @@ export default {
   }
 
   &.red-border::after {
-    border: 2px solid #ff5252;
+    border: 2px solid var(--v-error-base);
     border-radius: 4px;
   }
 
   &.blue-border::after {
-    border: 2px solid #3b8dff;
+    border: 2px solid var(--v-primary-base);
     border-radius: 4px;
   }
 

@@ -84,7 +84,7 @@ export default {
 
 <style lang="scss" scoped>
 .border-left {
-  border-left: 2px solid #eee;
+  border-left: 2px solid (var(--v-secondaryGrayLight-base));
 }
 
 .border-radius-0 {
@@ -92,9 +92,9 @@ export default {
 }
 
 .code-custom {
-  background-color: #fafafa;
+  background-color: var(--v-appBackground-base);
   box-shadow: none;
-  color: #0073df;
+  color: var(--v-codeBlue-base);
   font-size: 0.9em;
 }
 

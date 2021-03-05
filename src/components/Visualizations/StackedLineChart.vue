@@ -152,7 +152,8 @@ export default {
               .attr('class', 'rect')
               .attr('id', d => d.label)
               .style('fill', (d, i) => {
-                if (this.sum === 0 && i === 0) return '#efefef'
+                if (this.sum === 0 && i === 0)
+                  return 'var(--v-secondaryGrayLight-base)'
                 if (this.sum === 0) return 'transparent'
                 return this.colors[d.label]
               })
@@ -180,7 +181,8 @@ export default {
                 .transition()
                 .duration(500)
                 .style('fill', (d, i) => {
-                  if (this.sum === 0 && i === 0) return '#efefef'
+                  if (this.sum === 0 && i === 0)
+                    return 'var(--v-secondaryGrayLight-base)'
                   if (this.sum === 0) return 'transparent'
                   return this.colors[d.label]
                 })

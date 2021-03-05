@@ -249,9 +249,7 @@ export default {
                       :disabled="checkSame(parameter)"
                       @click.stop="switchVal(parameter)"
                     >
-                      <v-icon small class="ml-0 mr-2" color="#0000008A"
-                        >fa-undo</v-icon
-                      >
+                      <v-icon small class="ml-0 mr-2">fa-undo</v-icon>
                     </v-btn>
                   </div>
                 </template>

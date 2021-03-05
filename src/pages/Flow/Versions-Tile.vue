@@ -222,7 +222,7 @@ export default {
 
         <template #item.archived="{ item }">
           <truncate :content="item.archived ? 'Archived' : 'Active'">
-            <v-icon small dark :color="item.archived ? 'accent-pink' : 'green'">
+            <v-icon small dark :color="item.archived ? 'accentPink' : 'green'">
               {{ item.archived ? 'archive' : 'pi-flow' }}
             </v-icon>
           </truncate>

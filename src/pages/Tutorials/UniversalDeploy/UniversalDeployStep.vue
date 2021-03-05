@@ -52,7 +52,7 @@ export default {
 
     <div
       class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4 pb-0"
-      style="border: 1px solid #b0bec5 !important;"
+      style="border: 1px solid utilGrayLight !important;"
     >
       <pre id="ud-code" class="code-block" style="font-size: 12px;">
 import prefect
@@ -83,7 +83,7 @@ flow = Flow("hello-flow", tasks=[hello_task])
 
     <div
       class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4 pb-0"
-      style="border: 1px solid #b0bec5 !important;"
+      style="border: 1px solid utilGrayLight !important;"
     >
       <pre style="font-size: 12px;">
 <div class="d-inline-block code-added w-100"><span>+ </span>flow.run_agent(token="&lt;YOUR_RUNNER_TOKEN&gt;")</div>
