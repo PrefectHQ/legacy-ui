@@ -79,6 +79,9 @@ export default {
     }
   },
   methods: {
+    goBack() {
+      this.$router.back()
+    },
     handlePlanSelection(type) {
       this.plan = type
       this.planValue = type == 'starter' ? 1 : 2
@@ -103,6 +106,14 @@ export default {
         </div>
 
         <div class="header-container">
+          <div
+            class="back-button d-inline-block text-h6 font-weight-light mx-auto cursor-pointer white--text"
+            @click="goBack"
+          >
+            <v-icon color="blue-grey lighten-3">chevron_left</v-icon>
+            Back
+          </div>
+
           <div class="text-h3 font-weight-light text-center">
             <div class="blue-grey--text text--darken-4">
               Pay for what you use.
@@ -458,6 +469,12 @@ export default {
   padding-top: 48px;
   position: relative;
   z-index: 1;
+}
+
+.back-button {
+  left: 24px;
+  position: absolute;
+  top: 24px;
 }
 
 .features-container {
