@@ -1,3 +1,34 @@
+<script>
+import { mapGetters } from 'vuex'
+
+export default {
+  props: {
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
+    hideDetails: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    }
+  },
+  computed: {
+    ...mapGetters('license', ['license']),
+    isCurrent() {
+      return this.license?.terms?.plan === 'STANDARD_2021'
+    }
+  },
+  methods: {
+    select() {
+      if (this.isCurrent || this.disabled) return
+      this.$emit('click')
+    }
+  }
+}
+</script>
+
 <template>
   <div class="plan-card white rounded elevation-7">
     <div class="font-weight-regular text-center py-8 plan-title">
@@ -15,7 +46,7 @@
           A complete workflow automation platform
         </div>
         <div
-          class="mt-4 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
+          class="mt-8 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
         >
           <span class="mr-2 font-weight-light d-inline-block plan-cent">
             $ </span
@@ -99,32 +130,32 @@
         </div>
       </div>
       <div v-if="hideDetails" class="py-7 mt-12 mt-md-8 mt-lg-12 o-0">
-        Get started now
+        {{
+          isCurrent
+            ? 'Current'
+            : disabled
+            ? 'Contact your team admin to upgrade'
+            : 'Get started now'
+        }}
       </div>
 
-      <div v-else class="plan-cta py-7 mt-12 mt-md-8 mt-lg-12" @click="select">
-        Get started now
+      <div
+        v-else
+        class="plan-cta py-7 mt-12 mt-md-8 mt-lg-12"
+        :class="{ 'cursor-pointer': !isCurrent }"
+        @click="select"
+      >
+        {{
+          isCurrent
+            ? 'Current'
+            : disabled
+            ? 'Contact your team admin to upgrade'
+            : 'Get started now'
+        }}
       </div>
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    hideDetails: {
-      type: Boolean,
-      required: false,
-      default: () => false
-    }
-  },
-  methods: {
-    select() {
-      this.$emit('click')
-    }
-  }
-}
-</script>
 
 <style lang="scss" scoped>
 .plan-card {
@@ -182,7 +213,6 @@ export default {
   .plan-cta {
     background-color: #f7fcfd;
     color: inherit !important;
-    cursor: pointer;
     display: block;
     font-size: 1rem;
     letter-spacing: 0.15rem;

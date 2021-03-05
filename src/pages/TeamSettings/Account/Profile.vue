@@ -40,7 +40,7 @@ export default {
         outlined
         class="mb-3"
         counter
-        maxlength="30"
+        maxlength="80"
         :disabled="isUpdatingTenant"
         :loading="isCheckingName"
         prepend-inner-icon="supervised_user_circle"
@@ -62,7 +62,7 @@ export default {
         label="URL Slug"
         outlined
         counter
-        maxlength="30"
+        maxlength="80"
         :disabled="isUpdatingTenant"
         :error-messages="slugErrors"
         :loading="isCheckingSlug"

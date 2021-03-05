@@ -1,12 +1,11 @@
 <script>
-import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import { paymentMixin } from '@/mixins/paymentMixin.js'
 import CardDetails from '@/components/Plans/CardDetails'
 import { mapGetters } from 'vuex'
 
 export default {
   components: { CardDetails },
-  mixins: [teamProfileMixin, paymentMixin],
+  mixins: [paymentMixin],
   props: {
     page: {
       type: String,
@@ -33,6 +32,9 @@ export default {
     },
     isSelfServe() {
       return this.license?.terms?.is_self_serve
+    },
+    isTenantAdmin() {
+      return this.tenant.role === 'TENANT_ADMIN'
     }
   },
   methods: {}
@@ -49,7 +51,7 @@ export default {
       <v-spacer />
 
       <v-btn
-        v-if="!editCardDetails && isSelfServe"
+        v-if="!editCardDetails && isSelfServe && isTenantAdmin"
         data-cy="add-payment-card"
         color="primary"
         depressed
@@ -62,21 +64,7 @@ export default {
     <v-card-text style="min-height: 100px;">
       <transition name="fade-expand" mode="out-in">
         <v-alert
-          v-if="!isTenantAdmin"
-          key="alert-1"
-          class="mx-auto mb-12"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          icon="lock"
-          max-width="540"
-        >
-          Only your team's administrators can modify billing settings.
-        </v-alert>
-        <v-alert
-          v-else-if="!isSelfServe && !loading"
+          v-if="!isSelfServe && !loading"
           key="alert-2"
           class="mx-auto mb-12"
           border="left"

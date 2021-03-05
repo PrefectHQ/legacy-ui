@@ -76,6 +76,9 @@ export default {
         'align-center': true,
         'flex-column': this.$vuetify.breakpoint.smAndDown
       }
+    },
+    isTenantAdmin() {
+      return this.tenant.role === 'TENANT_ADMIN'
     }
   },
   methods: {
@@ -133,6 +136,7 @@ export default {
               v-if="!plan || plan == 'starter'"
               key="starter"
               :hide-details="!!plan"
+              :disabled="!isTenantAdmin"
               @click="handlePlanSelection('starter')"
             />
 
@@ -140,6 +144,7 @@ export default {
               v-if="!plan || plan == 'standard'"
               key="standard"
               :hide-details="!!plan"
+              :disabled="!isTenantAdmin"
               @click="handlePlanSelection('standard')"
             />
 

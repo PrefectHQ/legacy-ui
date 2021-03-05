@@ -15,7 +15,7 @@ export default {
     ...mapGetters('license', ['license', 'tempLicenseType']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
-      return true
+      return this.tenant.role === 'TENANT_ADMIN'
     },
     isSelfServe() {
       return this.license?.terms?.is_self_serve
