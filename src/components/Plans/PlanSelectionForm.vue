@@ -20,14 +20,13 @@ export default {
     return {
       cardSource: null,
       loading: false,
-      step: 'select-card'
+      step: 'add-card'
     }
   },
   computed: {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
     cards() {
-      console.log(this.tenant?.stripe_customer?.sources)
       return this.tenant?.stripe_customer?.sources?.data
     },
     plan() {
@@ -56,9 +55,20 @@ export default {
       return title
     }
   },
+  watch: {
+    step(val) {
+      if (val == 'select-card') {
+        this.getTenants()
+      }
+    }
+  },
+  mounted() {
+    this.getTenants()
+  },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapActions('license', ['getLicense']),
+    ...mapActions('tenant', ['getTenants']),
     async updatePlan() {
       this.loading = true
       try {
@@ -80,9 +90,9 @@ export default {
         this.loading = false
       }
     },
-    async handleConfirm(sourceId) {
+    handleConfirm(sourceId) {
       this.cardSource = sourceId
-      this.showConfirmation = true
+      this.step = 'confirm'
     },
     handleNext() {
       if (this.cardSource == 'new') {

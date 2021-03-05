@@ -5,45 +5,59 @@ export const paymentMixin = {
   data() {
     return {
       cardError: '',
-      updatedEmail: null,
-      updatedAddress: null,
-      updatedName: null,
+      address: this.tenant?.stripe_customer?.sources?.data[0]?.owner?.address
+        ?.line1,
+      email: this.tenant?.stripe_customer?.email || this.user?.email,
+      name: this.user
+        ? this.user?.first_name + ' ' + this.user?.last_name
+        : null,
+      // updatedEmail: this.user?.email,
+      // updatedAddress: null,
+      // updatedName: this.user
+      //   ? this.user?.first_name + ' ' + this.user?.last_name
+      //   : null,
       loading: false
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('license', ['license']),
-    ...mapGetters('user', ['user']),
-    email: {
-      get() {
-        return this.tenant.stripe_customer?.email
-      },
-      set(x) {
-        this.updatedEmail = x
-      }
-    },
-    address: {
-      get() {
-        return this.tenant?.stripe_customer?.sources?.data[0]?.owner?.address
-          ?.line1
-      },
-      set(x) {
-        this.updatedAddress = x
-      }
-    },
-    username: {
-      get() {
-        //stripe_customer returns empty customer name as string 'nullnull' so need to explicitly check for that
-        if (this.tenant?.stripe_customer?.name == 'nullnull') return ''
-        return this.tenant?.stripe_customer?.name
-          ? this.tenant?.stripe_customer?.name
-          : ''
-      },
-      set(x) {
-        this.updatedName = x
-      }
-    }
+    ...mapGetters('user', ['user'])
+    // email: {
+    //   get() {
+    //     return this.tenant.stripe_customer?.email
+    //   },
+    //   set(x) {
+    //     this.updatedEmail = x
+    //   }
+    // },
+    // address: {
+    //   get() {
+    //     return this.tenant?.stripe_customer?.sources?.data[0]?.owner?.address
+    //       ?.line1
+    //   },
+    //   set(x) {
+    //     this.updatedAddress = x
+    //   }
+    // },
+    // username: {
+    //   get() {
+    //     //stripe_customer returns empty customer name as string 'nullnull' so need to explicitly check for that
+    //     if (this.tenant?.stripe_customer?.name == 'nullnull') return ''
+    //     return this.tenant?.stripe_customer?.name
+    //       ? this.tenant?.stripe_customer?.name
+    //       : ''
+    //   },
+    //   set(x) {
+    //     this.updatedName = x
+    //   }
+    // }
   },
-  methods: {}
+  methods: {},
+  mounted() {
+    console.log(this.tenant, this.user)
+    console.log(
+      this.user ? this.user?.first_name + ' ' + this.user?.last_name : null
+    )
+  }
 }

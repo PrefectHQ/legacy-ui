@@ -4,7 +4,7 @@ const stripe = Stripe(process.env.VUE_APP_STRIPE_PUBLIC_TOKEN)
 let elements = stripe.elements()
 let card = undefined
 let style = {
-  iconStyle: 'Solid',
+  iconStyle: 'solid',
   base: {
     outlineStyle: 'solid',
     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
@@ -27,24 +27,28 @@ const elementClasses = {
   invalid: 'invalid'
 }
 
-import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
-import { paymentMixin } from '@/mixins/paymentMixin.js'
 import LogRocket from 'logrocket'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {},
-  mixins: [teamProfileMixin, paymentMixin],
   data() {
     return {
+      cardError: '',
+      address: this.tenant?.stripe_customer?.sources?.data[0]?.owner?.address
+        ?.line1,
+      email: this.tenant?.stripe_customer?.email,
+      name: this.tenant?.stripe_customer?.name,
+      loading: false,
       nameRules: [
         v => !!v || 'Name is required',
-        v => v.length <= 20 || 'Name must be less than 20 characters'
+        v => v?.length <= 80 || 'Name must be less than 80 characters'
       ],
       emailRules: [
         v => !!v || 'E-mail is required',
         v => /.+@.+/.test(v) || 'E-mail must be valid'
       ],
+      addressRules: [v => !!v || 'Address is required'],
       valid: false
     }
   },
@@ -59,13 +63,17 @@ export default {
   mounted() {
     if (!card) {
       card = elements.create('card', {
-        iconStyle: 'solid',
         style: style,
         classes: elementClasses
       })
       card.mount(this.$refs.card)
       this.card = card
     }
+
+    this.email = this.tenant.stripe_customer?.email
+    this.name = this.tenant.stripe_customer?.name
+
+    this.address = this.tenant?.stripe_customer?.sources?.data[0]?.owner?.address?.line1
   },
   destroyed() {
     // if (card) card.unmount()
@@ -81,14 +89,15 @@ export default {
     async checkForm() {
       const options = {
         owner: {
-          name: this.updatedName || this.username,
-          email: this.updatedEmail || this.email,
+          name: this.name,
+          email: this.email,
           address: {
             line1: this.address
           }
         },
         usage: 'reusable'
       }
+
       const result = await stripe.createSource(card, options)
       if (result.error) {
         // Inform the user if there was an error
@@ -108,8 +117,8 @@ export default {
           const customer = await this.$apollo.mutate({
             mutation: require('@/graphql/License/update-customer.gql'),
             variables: {
-              email: this.updatedEmail || this.email,
-              name: this.updatedName || this.username,
+              email: this.email,
+              name: this.name,
               source: this.source ? this.source.id : null
             },
             errorPolicy: 'all'
@@ -145,30 +154,53 @@ export default {
         outlined
         :rules="nameRules"
         class="mt-3"
-        prepend-inner-icon="fad fa-smile fa-fw"
         label="Name"
         type="text"
+        :value="name"
         required
-      ></v-text-field>
+      >
+        <template #prepend-inner>
+          <span>
+            <v-icon>
+              fad fa-smile fa-fw
+            </v-icon>
+          </span>
+        </template>
+      </v-text-field>
       <v-text-field
         v-model="email"
         outlined
         :rules="emailRules"
-        prepend-inner-icon="fad fa-envelope fa-fw"
         label="Email"
         type="email"
-        default="this.user.email"
         required
-      ></v-text-field>
+      >
+        <template #prepend-inner>
+          <span>
+            <v-icon>
+              fad fa-envelope fa-fw
+            </v-icon>
+          </span>
+        </template>
+      </v-text-field>
+
       <v-text-field
         v-model="address"
         data-cy="address"
         outlined
-        prepend-inner-icon="fad fa-map-marker-alt fa-fw"
+        :rules="addressRules"
         label="Address"
         type="text"
         required
-      ></v-text-field>
+      >
+        <template #prepend-inner>
+          <span>
+            <v-icon>
+              fad fa-map-marker-alt fa-fw
+            </v-icon>
+          </span>
+        </template>
+      </v-text-field>
 
       <div ref="card"> </div>
 
@@ -180,7 +212,7 @@ export default {
     <v-btn
       color="prefect"
       class="mt-auto white--text"
-      :disabled="loading"
+      :disabled="loading || !valid"
       :loading="loading"
       data-cy="save-payment"
       @click="confirm"
@@ -203,14 +235,30 @@ export default {
 /*stylelint-disable */
 .StripeElement {
   background-color: white;
-  border: 1px solid;
-  border-color: #0009;
-  border-radius: 4px;
-  height: 56px;
 
+  height: 56px;
   padding: 15px;
-  -webkit-transition: box-shadow 150ms ease;
+  position: relative;
   transition: box-shadow 150ms ease;
+
+  &:before {
+    border: 1px solid rgba(0, 0, 0, 0.42);
+    border-radius: 4px;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: all 50ms;
+    user-select: none;
+    width: 100%;
+  }
+
+  &:hover {
+    &:before {
+      border-color: #000;
+    }
+  }
 }
 
 .StripeElement--focus {
@@ -223,5 +271,11 @@ export default {
 
 .StripeElement--webkit-autofill {
   background-color: #fefde5 !important;
+}
+
+.focused {
+  &:before {
+    border: 2px solid var(--v-primary-base) !important;
+  }
 }
 </style>
