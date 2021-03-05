@@ -35,14 +35,6 @@ export default {
       return this.license?.terms?.is_self_serve
     }
   },
-  watch: {
-    license() {
-      this.loading = true
-      setTimeout(() => {
-        this.loading = false
-      }, 1000)
-    }
-  },
   methods: {}
 }
 </script>

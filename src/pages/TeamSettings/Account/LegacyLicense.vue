@@ -76,16 +76,6 @@ export default {
       return featuresObjArray?.length > 0 ? featuresObjArray : null
     }
   },
-  watch: {
-    tenant(val) {
-      this.loading = true
-      if (val) {
-        setTimeout(() => {
-          this.loading = false
-        }, 1000)
-      }
-    }
-  },
   methods: {
     colorType(type) {
       const feature = featureTypes.find(f => f.type == type)

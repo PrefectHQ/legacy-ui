@@ -218,6 +218,8 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resizeChart)
+
+    this.interactionGroup.on('mouseout', null)
   },
   methods: {
     barMouseover(e) {
@@ -434,7 +436,6 @@ export default {
               .attr('fill', 'transparent')
               .style('cursor', 'pointer')
               .on('mousemove', (e, d) => {
-                console.log(d.runs)
                 if (!isNaN(d.runs)) {
                   const x = this.x(new Date(d.timestamp))
                   const y = this.y(d.runs)

@@ -86,16 +86,6 @@ export default {
       return this.license?.terms?.task_runs_usage_limit || this.plan?.taskRuns
     }
   },
-  watch: {
-    tenant(val) {
-      this.loading = true
-      if (val) {
-        setTimeout(() => {
-          this.loading = false
-        }, 1000)
-      }
-    }
-  },
   methods: {
     colorType(type) {
       const feature = featureTypes.find(f => f.type == type)
