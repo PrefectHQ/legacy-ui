@@ -494,6 +494,8 @@ export default {
         v-if="!show && isTenantAdmin"
         color="primary"
         :disabled="noDataToClear"
+        depressed
+        small
         @click="show = true"
         >Clear Data
       </v-btn>

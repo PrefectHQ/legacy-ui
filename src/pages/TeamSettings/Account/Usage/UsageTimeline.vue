@@ -434,6 +434,7 @@ export default {
               .attr('fill', 'transparent')
               .style('cursor', 'pointer')
               .on('mousemove', (e, d) => {
+                console.log(d.runs)
                 if (!isNaN(d.runs)) {
                   const x = this.x(new Date(d.timestamp))
                   const y = this.y(d.runs)
@@ -849,7 +850,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="position-relative py-2" tile fluid>
+  <v-card class="position-relative py-2 h-100" tile fluid>
     <div
       class="d-flex align-center justify-space-between py-2 ml-n2 px-5 card-title"
     >
@@ -950,6 +951,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.h-100 {
+  height: 100%;
+}
+
 .chart-container {
   height: 100%;
   position: relative;

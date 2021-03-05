@@ -88,6 +88,8 @@ export default {
         :disabled="!isUpdatable"
         data-cy="update-profile"
         color="primary"
+        depressed
+        small
         @click="updateTenant"
         >Update Profile</v-btn
       >

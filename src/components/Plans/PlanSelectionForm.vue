@@ -20,7 +20,7 @@ export default {
     return {
       cardSource: null,
       loading: false,
-      step: 'add-card'
+      step: 'select-card'
     }
   },
   computed: {

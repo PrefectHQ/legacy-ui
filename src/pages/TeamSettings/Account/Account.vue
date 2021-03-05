@@ -29,7 +29,11 @@ export default {
       //profile
       changeProfile: false,
       // Clear data
-      clearDataDialog: false
+      clearDataDialog: false,
+
+      loadedTiles: 0,
+      numberOfTiles: 9,
+      refreshTimeout: null
     }
   },
   computed: {
@@ -46,9 +50,41 @@ export default {
       return this.license?.terms?.is_usage_based
     }
   },
-  watch: {},
+  watch: {
+    tenant(val) {
+      if (val?.id) {
+        this.loadedTiles = 0
+        clearTimeout(this.refreshTimeout)
+        this.refresh()
+      }
+    }
+  },
+  mounted() {
+    this.refresh()
+  },
   methods: {
-    ...mapActions('license', ['getLicense'])
+    ...mapActions('license', ['getLicense']),
+    refresh() {
+      let start
+
+      const animationDuration = 150
+
+      const loadTiles = time => {
+        if (!start) start = time
+
+        const elapsed = time - start
+
+        if (elapsed > this.loadedTiles * animationDuration + 500) {
+          this.loadedTiles++
+        }
+
+        if (this.loadedTiles <= this.numberOfTiles) {
+          requestAnimationFrame(loadTiles)
+        }
+      }
+
+      requestAnimationFrame(loadTiles)
+    }
   }
 }
 </script>
@@ -71,9 +107,39 @@ export default {
 
       <v-row class="usage-row">
         <v-col cols="12" class="usage-grid">
-          <UsageTimeline class="usage" />
-          <UsageToday class="runs" />
-          <CurrentUsers class="users" />
+          <v-skeleton-loader
+            :loading="loadedTiles < 3"
+            type="image"
+            height="476"
+            class="usage"
+            transition="quick-fade"
+            tile
+          >
+            <UsageTimeline />
+          </v-skeleton-loader>
+
+          <v-skeleton-loader
+            :loading="loadedTiles < 2"
+            type="image"
+            height="230"
+            min-height="230"
+            class="runs"
+            transition="quick-fade"
+            tile
+          >
+            <UsageToday />
+          </v-skeleton-loader>
+
+          <v-skeleton-loader
+            :loading="loadedTiles < 1"
+            type="image"
+            height="230"
+            transition="quick-fade"
+            class="users"
+            tile
+          >
+            <CurrentUsers />
+          </v-skeleton-loader>
         </v-col>
       </v-row>
 
@@ -81,21 +147,57 @@ export default {
         <v-col cols="12" md="6">
           <v-row>
             <v-col cols="12">
-              <Profile />
+              <v-skeleton-loader
+                :loading="loadedTiles < 5"
+                type="image"
+                height="339"
+                class="usage"
+                transition="quick-fade"
+                tile
+              >
+                <Profile />
+              </v-skeleton-loader>
             </v-col>
             <v-col cols="12">
-              <ClearDataDialog />
+              <v-skeleton-loader
+                :loading="loadedTiles < 7"
+                type="image"
+                height="282"
+                class="usage"
+                transition="quick-fade"
+                tile
+              >
+                <ClearDataDialog />
+              </v-skeleton-loader>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" md="6">
           <v-row>
             <v-col cols="12">
-              <Billing />
+              <v-skeleton-loader
+                :loading="loadedTiles < 6"
+                type="image"
+                height="176"
+                class="usage"
+                transition="quick-fade"
+                tile
+              >
+                <Billing />
+              </v-skeleton-loader>
             </v-col>
             <v-col cols="12">
-              <License v-if="isUsageBased" />
-              <LegacyLicense v-else />
+              <v-skeleton-loader
+                :loading="loadedTiles < 4"
+                type="image"
+                height="463"
+                class="usage"
+                transition="quick-fade"
+                tile
+              >
+                <License v-if="isUsageBased" />
+                <LegacyLicense v-else />
+              </v-skeleton-loader>
             </v-col>
           </v-row>
         </v-col>
@@ -170,4 +272,12 @@ export default {
 .h-50 {
   height: 50%;
 }
+</style>
+
+<style lang="scss">
+// stylelint-disable
+.v-skeleton-loader__image {
+  height: inherit !important;
+}
+// stylelint-enable
 </style>

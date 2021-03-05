@@ -46,7 +46,7 @@
               </v-icon>
             </span>
             <span class="ml-2">
-              1 month of run history
+              2 weeks of run history
             </span>
           </div>
 
