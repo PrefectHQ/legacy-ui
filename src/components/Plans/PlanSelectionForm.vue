@@ -27,6 +27,7 @@ export default {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
     cards() {
+      console.log(this.tenant?.stripe_customer?.sources)
       return this.tenant?.stripe_customer?.sources?.data
     },
     plan() {
@@ -114,7 +115,11 @@ export default {
 
     <div key="card-form-container" class="card-container">
       <v-fade-transition mode="out-in">
-        <div v-if="step == 'add-card'" key="add-card">
+        <div
+          v-if="step == 'add-card'"
+          key="add-card"
+          class="card-entry-container"
+        >
           <div
             class="d-inline-block text-subtitle-1 font-weight-light mx-auto cursor-pointer mt-4 h-auto"
             @click="step = 'select-card'"
@@ -156,20 +161,26 @@ export default {
           >
             <div>
               <div
-                v-if="card && card.owner && card.owner.name"
+                v-if="
+                  (card && card.owner && card.owner.name) || (card && card.name)
+                "
                 class="text-h5 font-weight-light"
               >
                 {{ card.owner.name }}
               </div>
-              <div v-if="card.card" class="mt-1">
-                <div class="text-subtitle-1">{{ card.card.brand }}</div>
+              <div v-if="card" class="mt-1">
+                <div class="text-subtitle-1">
+                  {{ card.brand || card.card.brand }}
+                </div>
 
                 <div class="mt-n2">
                   <span class="text-h6 font-weight-regular">
-                    •••• •••• •••• {{ card.card.last4 }}
+                    •••• •••• •••• {{ card.last4 || card.card.last4 }}
                   </span>
                   <span class="ml-1 text-subtitle-1 font-weight-light">
-                    {{ card.card.exp_month }}/{{ card.card.exp_year }}
+                    {{ card.exp_month || card.card.exp_month }}/{{
+                      card.exp_year || card.card.exp_year
+                    }}
                   </span>
                 </div>
               </div>
@@ -439,7 +450,8 @@ export default {
 
 .confirm-container,
 .complete-container,
-.error-container {
+.error-container,
+.card-entry-container {
   min-height: 600px;
 }
 

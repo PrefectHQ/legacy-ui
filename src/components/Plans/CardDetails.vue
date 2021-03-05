@@ -192,7 +192,7 @@ export default {
 
 <style lang="scss" scoped>
 .card-form {
-  height: 669px !important;
+  height: 559px !important;
 
   form,
   button {
