@@ -13,7 +13,8 @@ export default {
       openSendMessage: true,
       openMessageConfig: false,
       messageConfig: { name: 'a URL' },
-      messageText: 'default message',
+      // To do - can we check what the default message will be?
+      messageText: 'the default message',
       openMessageText: false,
       openName: false,
       newConfigName: '',
@@ -36,6 +37,8 @@ export default {
   methods: {
     selectMessageType(type) {
       this.messageType = type
+      this.openSendMessage = false
+      this.openMessageText = true
     },
     handleClose() {
       this.$emit('close-action')
@@ -128,20 +131,23 @@ export default {
         {{ type.title }}
       </v-chip>
     </v-card-text>
+    <v-card-text v-if="openMessageText" class="pt-0">
+      <v-text-field v-model="messageText" />
+    </v-card-text>
     <div class="mx-4">
-      <v-checkbox
-        v-model="addName"
-        label="Save this config so I can use it again"
-      >
-      </v-checkbox>
-      <v-text-field
-        v-if="addName"
-        v-model="configName"
-        label="Save as"
-        @keyup.enter="saveName()"
-      ></v-text-field>
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-text-field
+            v-model="configName"
+            label="Save As"
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        Give your config a name so you can find and re-use it with more hooks.
+      </v-tooltip>
     </div>
-    <div class="text-right mb-4 mr-4">
+    <div class="text-right pb-4 pr-4">
       <v-btn color="primary">
         Save Config
       </v-btn>
