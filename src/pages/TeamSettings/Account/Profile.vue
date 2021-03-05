@@ -14,7 +14,10 @@ export default {
 
 <template>
   <v-card tile data-cy="profile-card" class="h-100 d-flex flex-column">
-    <v-card-title> Profile </v-card-title>
+    <v-card-title class="mb-2 text-h4 font-weight-light">
+      Profile
+    </v-card-title>
+
     <v-card-subtitle> See and edit your team profile.</v-card-subtitle>
     <v-card-text class="align-self-stretch">
       <v-alert

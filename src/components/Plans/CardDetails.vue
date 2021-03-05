@@ -158,6 +158,7 @@ export default {
         type="text"
         :value="name"
         required
+        validate-on-blur
       >
         <template #prepend-inner>
           <span>
@@ -174,6 +175,7 @@ export default {
         label="Email"
         type="email"
         required
+        validate-on-blur
       >
         <template #prepend-inner>
           <span>
@@ -192,6 +194,7 @@ export default {
         label="Address"
         type="text"
         required
+        validate-on-blur
       >
         <template #prepend-inner>
           <span>
@@ -224,7 +227,7 @@ export default {
 
 <style lang="scss" scoped>
 .card-form {
-  height: 559px !important;
+  height: 100% !important;
 
   form,
   button {

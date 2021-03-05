@@ -85,11 +85,14 @@ body {
 .fade-expand-leave-active {
   max-height: 1000px;
   opacity: 1;
-  transition: all linear 500ms 250ms;
+}
+
+.fade-expand-enter-active {
+  transition: max-height linear 200ms 200ms, opacity linear 200ms 400ms;
 }
 
 .fade-expand-leave-active {
-  transition: all linear 200ms;
+  transition: max-height linear 200ms 200ms, opacity linear 200ms;
 }
 
 .fade-expand-enter,

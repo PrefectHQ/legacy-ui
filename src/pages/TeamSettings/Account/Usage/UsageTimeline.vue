@@ -849,15 +849,14 @@ export default {
 </script>
 
 <template>
-  <v-card class="position-relative pb-6 pt-4 px-2" tile fluid>
-    <!-- <div class="caption text-left grey--text card-title">
-      <v-icon x-small>pi-gantt</v-icon><span class="ml-1">Timeline</span>
-    </div> -->
-
+  <v-card class="position-relative py-2" tile fluid>
     <div
-      class="d-flex align-center justify-space-between py-4 ml-n2 px-7 card-title"
+      class="d-flex align-center justify-space-between py-2 ml-n2 px-5 card-title"
     >
-      <div class="text-h4">Usage</div>
+      <div class="text-h4 font-weight-light">
+        Usage
+      </div>
+
       <div>
         <span
           class="cursor-pointer px-4 text-title d-inline-flex align-center justify-center"

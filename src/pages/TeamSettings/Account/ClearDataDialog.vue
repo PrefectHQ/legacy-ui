@@ -268,9 +268,10 @@ export default {
 
 <template>
   <v-card data-cy="data-card" tile class="h-100 d-flex flex-column">
-    <v-card-title>
-      Current Data
+    <v-card-title class="mb-2 text-h4 font-weight-light">
+      Your data
     </v-card-title>
+
     <v-card-subtitle>
       See and clear the data in your account such as projects, flows, members
       and secrets

@@ -5,7 +5,6 @@ import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import Profile from '@/pages/TeamSettings/Account/Profile'
 import LegacyLicense from '@/pages/TeamSettings/Account/LegacyLicense'
 import License from '@/pages/TeamSettings/Account/License'
-import Users from '@/pages/TeamSettings/Account/Users'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
 import UsageToday from '@/pages/TeamSettings/Account/Usage/UsageToday'
@@ -16,7 +15,6 @@ export default {
   components: {
     ManagementLayout,
     Profile,
-    Users,
     ClearDataDialog,
     LegacyLicense,
     License,
@@ -93,15 +91,11 @@ export default {
         <v-col cols="12" md="6">
           <v-row>
             <v-col cols="12">
-              <License v-if="isUsageBased" />
-              <LegacyLicense v-else />
-            </v-col>
-            <v-col cols="12">
               <Billing />
             </v-col>
-
             <v-col cols="12">
-              <Users v-if="isUsageBased" />
+              <License v-if="isUsageBased" />
+              <LegacyLicense v-else />
             </v-col>
           </v-row>
         </v-col>

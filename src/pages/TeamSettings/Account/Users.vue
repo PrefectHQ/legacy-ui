@@ -165,9 +165,10 @@ export default {
 
 <template>
   <v-card data-cy="users-card" tile class="mx-auto" :loading="loading">
-    <v-card-title>
-      Users
+    <v-card-title class="mb-2 text-h4 font-weight-light">
+      Add users
     </v-card-title>
+
     <v-card-subtitle>
       Check and update the number of users in your account. To see active
       membership information visit the

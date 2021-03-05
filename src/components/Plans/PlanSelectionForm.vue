@@ -138,7 +138,9 @@ export default {
             Choose an existing card instead
           </div>
 
-          <CardDetails @confirm="handleConfirm" />
+          <div style="height: 559px;">
+            <CardDetails @confirm="handleConfirm" />
+          </div>
         </div>
 
         <div

@@ -128,7 +128,7 @@ export default {
 
 <template>
   <v-card tile data-cy="license-card" :loading="loading">
-    <v-card-title class="mb-2">
+    <v-card-title class="mb-2 text-h4 font-weight-light">
       Your plan
     </v-card-title>
 
