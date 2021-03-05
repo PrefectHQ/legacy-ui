@@ -215,17 +215,16 @@ export default {
       this.addAction = true
       this.openActions = false
     },
-    async createAction(cancel) {
+    async createAction(config) {
       try {
-        if (cancel) {
-          const { data } = await this.$apollo.mutate({
-            mutation: require('@/graphql/Mutations/create_action.gql'),
-            variables: {
-              input: { config: { cancel_flow_run: {} } }
-            }
-          })
-          return data?.create_action
-        }
+        // NEED TO ADD NAME FOR ACTION HERE
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/create_action.gql'),
+          variables: {
+            input: { config: config }
+          }
+        })
+        return data?.create_action
       } catch (error) {
         const errString = `${error}`
         this.setAlert({
@@ -241,7 +240,8 @@ export default {
         const flow = this.selectedFlows[0].flow_group_id
         let action = this.chosenAction || this.hookDetails?.hook?.action
         if (action?.value === 'CANCEL_RUN') {
-          action = this.createAction(true)
+          const cancelConfig = { cancel_flow_run: {} }
+          action = this.createAction(cancelConfig)
         }
         if (flow) {
           if (this.includeTo) {
@@ -468,6 +468,7 @@ export default {
         v-for="item in ['flow', 'agent']"
         :key="item"
         label
+        max-width="300px"
         class="mx-2"
         outlined
         @click="selectAgentorFlow(item)"
@@ -503,6 +504,7 @@ export default {
           v-if="!searchEntry"
           color="primary"
           label
+          max-width="300px"
           class="ma-1"
           @click="selectAllFlows"
         >
@@ -513,14 +515,17 @@ export default {
           v-for="item in flows"
           :key="item.id"
           label
+          style="width: 200px;"
           title="Press shift to select multiple flows"
           :color="selectedFlows.includes(item) ? 'pink' : ''"
           class="ma-1"
           outlined
           @click="selectFlow($event, item)"
-          >{{ item.name
-          }}<span class="font-weight-light pl-1">
-            ({{ item.project.name }})</span
+          ><truncate :content="`${item.name} - ${item.project.name}`"
+            >{{ item.name
+            }}<span class="font-weight-light pl-1">
+              ({{ item.project.name }})</span
+            ></truncate
           ></v-chip
         >
       </v-card-text>
@@ -530,6 +535,7 @@ export default {
         v-for="item in flowEventTypes"
         :key="item.enum"
         label
+        max-width="300px"
         class="mx-2"
         outlined
         @click="selectFlowEventType(item)"
@@ -541,6 +547,7 @@ export default {
         <v-text-field
           v-model="seconds"
           min-width="50px"
+          max-width="300px"
           type="number"
           @keydown.enter="openSeconds = false"
           @blur="openSeconds = false"
@@ -554,6 +561,7 @@ export default {
           :key="item.id"
           color="primary"
           label
+          max-width="300px"
           :title="
             item == 'All'
               ? `Select all states`
@@ -567,6 +575,7 @@ export default {
           v-for="item in states['All']"
           :key="item"
           label
+          max-width="300px"
           class="ma-1"
           outlined
           :color="chosenStates.includes(` ${item}`) ? 'pink' : ''"
@@ -581,6 +590,7 @@ export default {
           v-for="item in editedActions"
           :key="item.id"
           label
+          max-width="300px"
           class="mx-2"
           outlined
           @click="selectAction(item)"
