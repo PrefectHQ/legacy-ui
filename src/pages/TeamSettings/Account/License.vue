@@ -157,7 +157,7 @@ export default {
             </v-icon>
           </div>
           <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 mb-2 utilGrayMid--text">
               {{ userNum ? userNum : 'Unlimited' }} {{ userOrUsers }}
             </div>
             <div v-if="userNum" class="text-body-1">
@@ -203,7 +203,7 @@ export default {
             <v-icon color="primary" large>pi-flow</v-icon>
           </div>
           <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 mb-2 utilGrayMid--text">
               {{
                 flowConcurrency
                   ? `${flowConcurrency} concurrent ${flowOrFlows}`
@@ -228,7 +228,7 @@ export default {
             <v-icon color="primary" large>history</v-icon>
           </div>
           <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 mb-2 utilGrayMid--text">
               {{
                 historyRetention ? historyRetention + ' days of ' : 'Unlimited'
               }}
@@ -245,7 +245,7 @@ export default {
         </div>
       </div>
 
-      <div class="text-h5 mb-4 mt-10 grey--text text--darken-4">
+      <div class="text-h5 mb-4 mt-10 utilGrayDark--text">
         {{
           planType == 'Cloud Enterprise'
             ? 'Also included with your plan'
@@ -266,7 +266,7 @@ export default {
             </v-icon>
           </div>
           <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 mb-2 utilGrayMid--text">
               {{ titleType(item.type) }}
             </div>
             <div class="text-body-1">{{ textType(item.type) }}</div>
@@ -285,7 +285,7 @@ export default {
             <v-icon :color="item.color" large>{{ iconType(item.type) }}</v-icon>
           </div>
           <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 mb-2 utilGrayMid--text">
               {{ titleType(item.type) }}
             </div>
             <div class="text-body-1">{{ textType(item.type) }}</div>
@@ -297,7 +297,7 @@ export default {
           style="width: 50%;"
         >
           <div>
-            <div class="text-h6 ml-6 mb-2 grey--text text--darken-3">
+            <div class="text-h6 ml-6 mb-2 utilGrayMid--text">
               ... and more coming soon!
             </div>
           </div>

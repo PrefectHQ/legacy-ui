@@ -120,7 +120,7 @@ export default {
 
       <v-row v-if="paymentDetails && isSelfServe">
         <v-col cols="12" md="6" class="px-8">
-          <div class="text-h6 mb-4 grey--text text--darken-3">
+          <div class="text-h6 mb-4 utilGrayMid--text">
             Address
           </div>
 
@@ -139,7 +139,7 @@ export default {
         </v-col>
 
         <v-col cols="12" md="6" class="px-8">
-          <div class="text-h6 mb-4 grey--text text--darken-3">
+          <div class="text-h6 mb-4 utilGrayMid--text">
             Payment Method
           </div>
 
