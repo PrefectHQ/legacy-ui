@@ -3,7 +3,6 @@ import { mapGetters, mapActions } from 'vuex'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import Profile from '@/pages/TeamSettings/Account/Profile'
-import LegacyLicense from '@/pages/TeamSettings/Account/LegacyLicense'
 import License from '@/pages/TeamSettings/Account/License'
 import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
@@ -16,7 +15,6 @@ export default {
     ManagementLayout,
     Profile,
     ClearDataDialog,
-    LegacyLicense,
     License,
     Billing,
     UsageTimeline,
@@ -195,8 +193,7 @@ export default {
                 transition="quick-fade"
                 tile
               >
-                <License v-if="isUsageBased" />
-                <LegacyLicense v-else />
+                <License />
               </v-skeleton-loader>
             </v-col>
           </v-row>
