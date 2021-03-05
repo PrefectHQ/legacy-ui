@@ -12,7 +12,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license', 'tempLicenseType']),
+    ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
@@ -20,14 +20,33 @@ export default {
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
+    isCustom() {
+      return (
+        !this.plan &&
+        this.planType !== 'SELF_SERVE' &&
+        this.planType !== 'PLATFORM' &&
+        this.planType !== 'TEAM'
+      )
+    },
+    isLegacy() {
+      return !this.license?.terms?.is_usage_based
+    },
     plan() {
       return this.plans.find(planType => planType.value === this.planType)
     },
     planName() {
-      return this.plan ? this.plan.name : 'Custom'
+      if (this.isLegacy)
+        return `Legacy ${
+          this.planType == 'SELF_SERVE'
+            ? 'developer'
+            : this.planType
+            ? this.planType.toLowerCase()
+            : ''
+        }`
+      return this.plan.name
     },
     planType() {
-      return this.tempLicenseType || this.license?.terms?.plan
+      return this.license?.terms?.plan
     },
     runCost() {
       return this.plan?.price
@@ -135,17 +154,16 @@ export default {
 
     <v-card-subtitle class="pb-0">
       You're on
-      {{ planType !== 'Custom' ? 'the' : 'a' }}
-      <v-icon
-        v-if="planType !== 'Custom'"
-        :color="planColor"
-        class="mr-1 pb-1"
-        x-small
-      >
+      {{ !isLegacy ? 'the' : 'a' }}
+      <v-icon :color="planColor" class="mr-1 pb-1" x-small>
         cloud
       </v-icon>
       <span :class="`${planColor}--text`">{{ planName }}</span>
       plan.
+      <span v-if="isLegacy && !isCustom">
+        <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
+        access to usage-based pricing and new features!
+      </span>
       <br />
     </v-card-subtitle>
     <v-card-text>
