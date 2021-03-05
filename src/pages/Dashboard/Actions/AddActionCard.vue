@@ -35,7 +35,7 @@ export default {
       chosenStates: this.hookDetail?.hook?.event_tags?.state || [],
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
-      addAction: false,
+      addAction: true,
       flowEventType: null,
       flowEventTypes: [
         { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
@@ -210,6 +210,11 @@ export default {
     },
     closeStates() {
       this.openStates = false
+      this.openActions = true
+    },
+    closeSeconds() {
+      this.openSeconds = false
+      this.openActions = true
     },
     addNewAction() {
       this.addAction = true
@@ -385,7 +390,7 @@ export default {
 </script>
 
 <template>
-  <v-card width="100%">
+  <v-card v-if="!addAction" width="100%">
     <div class="pb-2 pt-2 pl-2"
       ><v-btn
         text
@@ -463,13 +468,14 @@ export default {
         </v-col>
       </v-row></v-card
     >
-    <v-card v-if="openAgentOrFlow" elevation="0" class="pl-8">
+    <v-card v-if="openAgentOrFlow" elevation="0">
       <v-chip
         v-for="item in ['flow', 'agent']"
         :key="item"
         label
+        :color="agentOrFlow === 'item' ? 'codePink' : 'grey'"
         max-width="300px"
-        class="mx-2"
+        class="ma-1"
         outlined
         @click="selectAgentorFlow(item)"
         ><v-icon class="pr-2">{{
@@ -535,22 +541,20 @@ export default {
         v-for="item in flowEventTypes"
         :key="item.enum"
         label
-        max-width="300px"
         class="mx-2"
         outlined
         @click="selectFlowEventType(item)"
         >{{ item.name }}</v-chip
       ></v-card
     >
-    <v-card v-else-if="openSeconds" elevation="0"
+    <v-card v-else-if="openSeconds" v-click-outside="closeSeconds" elevation="0"
       ><v-card-text>
         <v-text-field
           v-model="seconds"
-          min-width="50px"
-          max-width="300px"
+          class="width=300px"
           type="number"
-          @keydown.enter="openSeconds = false"
-          @blur="openSeconds = false"
+          @keydown.enter="closeSeconds"
+          @blur="closeSeconds"
         ></v-text-field>
       </v-card-text>
     </v-card>
@@ -601,7 +605,6 @@ export default {
         </v-btn>
       </v-card-actions>
     </v-card>
-    <AddDoThis v-else-if="addAction" @close-action="addAction = false" />
     <v-card-actions class="pa-8">
       <v-spacer /><v-btn
         large
@@ -613,4 +616,5 @@ export default {
       >
     </v-card-actions>
   </v-card>
+  <AddDoThis v-else @close-action="addAction = false" />
 </template>
