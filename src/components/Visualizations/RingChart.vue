@@ -6,8 +6,8 @@ export default {
   props: {
     colors: { type: Array, default: () => null },
     segments: { type: Array, default: () => [] },
-    width: { type: Number, default: () => null },
-    height: { type: Number, default: () => null },
+    width: { type: Number, default: () => 200 },
+    height: { type: Number, default: () => 200 },
     outerRadius: { type: Number, default: () => null },
     innerRadius: { type: Number, default: () => null }
   },
@@ -47,8 +47,6 @@ export default {
         .remove()
     },
     createRingChart() {
-      this.width = this.width || 200
-      this.height = this.height || 200
       this.radius = Math.min(this.width, this.height) / 2
 
       this.color = d3

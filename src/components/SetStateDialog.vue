@@ -201,7 +201,7 @@ export default {
 
 <style>
 .theme--light.v-subheader {
-  color: #000;
+  color: var(--v-secondaryGray-dark);
   font-weight: bold !important;
 }
 
@@ -211,7 +211,7 @@ export default {
 }
 /* stylelint-disable */
 .set-state .v-btn__loader {
-  color: #fff;
+  color: var(--v-appForeground-base);
 }
 
 .card-title {

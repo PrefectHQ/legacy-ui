@@ -89,7 +89,7 @@ export default {
 
 <style lang="scss">
 .blockquote-border-left {
-  border-left: 3px solid #3b8dff;
+  border-left: 3px solid var(--v-primary-base);
 }
 
 .clickable-step {
@@ -97,16 +97,16 @@ export default {
 
   &:focus,
   &:hover {
-    background-color: #f7f7f7;
+    background-color: var(--v-secondaryGrayLight-base);
   }
 
   /* stylelint-disable selector-class-pattern */
   .v-stepper__step__step {
-    background-color: #3b8dff !important;
+    background-color: var(--v-primary-base) !important;
   }
 
   .v-stepper__label {
-    color: #000 !important;
+    color: var(--v-secondaryGrayDark-base) !important;
     text-shadow: none !important;
   }
   /* stylelint-enable selector-class-pattern */

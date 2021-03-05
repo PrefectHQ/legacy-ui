@@ -101,7 +101,9 @@ export default {
           :color="tab == 'overview' ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
-              tab == 'overview' ? 'var(--v-primary-base)' : '#fff'
+              tab == 'overview'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
             }`,
             'box-sizing': 'content-box',
             'min-width': '100px'
@@ -122,7 +124,9 @@ export default {
           :color="tab == 'parameters' ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
-              tab == 'parameters' ? 'var(--v-primary-base)' : '#fff'
+              tab == 'parameters'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
             }`,
             'box-sizing': 'content-box',
             'min-width': '100px'
@@ -143,7 +147,9 @@ export default {
           :color="tab == 'context' ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
-              tab == 'context' ? 'var(--v-primary-base)' : '#fff'
+              tab == 'context'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
             }`,
             'box-sizing': 'content-box',
             'min-width': '100px'
@@ -328,7 +334,7 @@ export default {
 }
 
 .code-block {
-  border: 1px solid #b0bec5 !important;
+  border: 1px solid var(--v-utilGrayLight-base) !important;
   font-family: 'Source Code Pro', monospace !important;
   white-space: pre-wrap;
 }

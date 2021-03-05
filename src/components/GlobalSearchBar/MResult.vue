@@ -42,8 +42,4 @@ export default {
 .id-subtitle {
   font-size: 0.8rem !important;
 }
-
-.text--secondary {
-  background-color: #123456 !important;
-}
 </style>

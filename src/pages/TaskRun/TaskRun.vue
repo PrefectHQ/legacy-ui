@@ -379,10 +379,6 @@ export default {
 </template>
 
 <style lang="scss">
-.custom-tab-active {
-  background-color: #c8e1ff !important;
-}
-
 /* stylelint-disable */
 .v-tab--disabled .v-badge__badge {
   pointer-events: none;

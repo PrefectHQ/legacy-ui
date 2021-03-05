@@ -2,6 +2,7 @@ export const STATE_COLORS = {
   Failed: '#eb0000',
   Pending: '#b9dcff',
   Scheduled: '#ffbe1e',
+  ScheduledAlt: '#ffeec4',
   Retrying: '#fc7b09',
   Resume: '#f58c0c',
   Queued: '#fff9c2',
@@ -18,7 +19,8 @@ export const STATE_COLORS = {
   Skipped: '#607583',
   TimedOut: '#dc370b',
   Mapped: '#4067a2',
-  Looped: '#4c4cff'
+  Looped: '#4c4cff',
+  InProgress: '#93d2cc'
 }
 
 export const STATE_TYPES = {

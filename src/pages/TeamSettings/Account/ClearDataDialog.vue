@@ -44,7 +44,7 @@ export default {
           icon: 'pi-flow'
         },
         memberships: {
-          label: 'Membership',
+          label: 'User',
           count: null,
           icon: 'people'
         }
@@ -267,17 +267,11 @@ export default {
 </script>
 
 <template>
-  <!-- <v-dialog
-    v-model="show"
-    max-width="600"
-    class="pa-0"
-    :persistent="loading"
-    @click:outside="loading ? null : _close()"
-  > -->
-  <v-card data-cy="data-card" tile max-width="720" class=" mx-auto my-4">
-    <v-card-title>
-      Current Data
+  <v-card data-cy="data-card" tile class="h-100 d-flex flex-column">
+    <v-card-title class="mb-2 text-h4 font-weight-light">
+      Your data
     </v-card-title>
+
     <v-card-subtitle>
       See and clear the data in your account such as projects, flows, members
       and secrets
@@ -500,12 +494,13 @@ export default {
         v-if="!show && isTenantAdmin"
         color="primary"
         :disabled="noDataToClear"
+        depressed
+        small
         @click="show = true"
         >Clear Data
       </v-btn>
     </v-card-actions>
   </v-card>
-  <!-- </v-dialog> -->
 </template>
 
 <style lang="scss">
@@ -526,8 +521,12 @@ $circle-size: $container-size;
 $check-height: $circle-size/2;
 $check-width: $check-height/2.5;
 $check-left: ($container-size/6 + $container-size/8);
-$color: #27b1ff;
-$color-success: #27b1ff;
+$color: var(--v-prefect-base);
+$color-success: var(--v-prefect-base);
+
+.h-100 {
+  height: 100%;
+}
 
 .loading-container {
   height: $container-size;
@@ -537,7 +536,7 @@ $color-success: #27b1ff;
 
   .circle {
     animation: circle-indeterminate 1.2s infinite linear;
-    border: $circle-stroke solid #edf0f3;
+    border: $circle-stroke solid var(--v-secondaryGrayLight-base);
     border-left-color: $color;
     border-radius: 50%;
     height: $circle-size;

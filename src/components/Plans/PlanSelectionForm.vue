@@ -1,0 +1,509 @@
+<script>
+import { mapGetters, mapActions } from 'vuex'
+import CardDetails from '@/components/Plans/CardDetails'
+import ExternalLink from '@/components/ExternalLink'
+
+import { PLANS_2021 } from '@/utils/plans'
+
+export default {
+  components: {
+    CardDetails,
+    ExternalLink
+  },
+  props: {
+    planReference: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      cardSource: null,
+      loading: false,
+      step: 'select-card'
+    }
+  },
+  computed: {
+    ...mapGetters('license', ['license']),
+    ...mapGetters('tenant', ['tenant']),
+    cards() {
+      return this.tenant?.stripe_customer?.sources?.data
+    },
+    plan() {
+      return PLANS_2021[this.planReference]
+    },
+    title() {
+      let title
+      switch (this.step) {
+        case 'select-card':
+          title = 'Confirm your payment details'
+          break
+        case 'add-card':
+          title = 'Add a new payment method'
+          break
+        case 'confirm':
+          title = 'Summary'
+          break
+        case 'complete':
+          title = ''
+          break
+        case 'error':
+        default:
+          title = 'Oops'
+          break
+      }
+      return title
+    }
+  },
+  watch: {
+    step(val) {
+      if (val == 'select-card') {
+        this.getTenants()
+      }
+    }
+  },
+  mounted() {
+    this.getTenants()
+  },
+  methods: {
+    ...mapActions('alert', ['setAlert']),
+    ...mapActions('license', ['getLicense']),
+    ...mapActions('tenant', ['getTenants']),
+    async updatePlan() {
+      this.loading = true
+      try {
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/License/create-usage-based-license.gql'),
+          variables: {
+            input: {
+              tenant_id: this.tenant.id,
+              plan_name: this.plan.value
+            }
+          }
+        })
+        if (data.create_usage_license.id) {
+          this.getLicense()
+        }
+      } catch (e) {
+        this.error = true
+      } finally {
+        this.loading = false
+      }
+    },
+    handleConfirm(sourceId) {
+      this.cardSource = sourceId
+      this.step = 'confirm'
+    },
+    handleNext() {
+      if (this.cardSource == 'new') {
+        this.step = 'add-card'
+      } else {
+        this.step = 'confirm'
+      }
+    },
+    selectCard(id) {
+      this.cardSource = id
+    },
+    async handleSubmit() {
+      await this.updatePlan()
+      if (!this.error) {
+        this.$emit('complete')
+        this.step = 'complete'
+      } else this.step = 'error'
+    }
+  }
+}
+</script>
+
+<template>
+  <div
+    class="form-container blue-grey--text text--darken-2 white rounded elevation-8 pa-8"
+  >
+    <div class="text-h4 font-weight-light">
+      {{ title }}
+    </div>
+
+    <div key="card-form-container" class="card-container">
+      <v-fade-transition mode="out-in">
+        <div
+          v-if="step == 'add-card'"
+          key="add-card"
+          class="card-entry-container"
+        >
+          <div
+            class="d-inline-block text-subtitle-1 font-weight-light mx-auto cursor-pointer mt-4 h-auto"
+            @click="step = 'select-card'"
+          >
+            <v-icon color="blue-grey">chevron_left</v-icon>
+            Choose an existing card instead
+          </div>
+
+          <div style="height: 559px;">
+            <CardDetails @confirm="handleConfirm" />
+          </div>
+        </div>
+
+        <div
+          v-else-if="step == 'select-card'"
+          key="select-card"
+          class="card-selection d-flex align-center justify-center flex-column"
+        >
+          <div
+            class="card-display mt-auto"
+            :class="{ active: cardSource == 'new' }"
+            @click.stop="selectCard('new')"
+          >
+            <div class="text-h6 font-weight-light">
+              Add new card
+            </div>
+          </div>
+
+          <div v-if="cards && cards.length" class="card-or text-center my-8">
+            <div class="d-inline-block position-relative white py-2 px-8">
+              OR
+            </div>
+          </div>
+
+          <div
+            v-for="card in cards"
+            :key="card.id"
+            class="card-display mb-auto d-flex align-center justify--start"
+            :class="{ active: cardSource == card.id }"
+            @click="selectCard(card.id)"
+          >
+            <div>
+              <div
+                v-if="
+                  (card && card.owner && card.owner.name) || (card && card.name)
+                "
+                class="text-h5 font-weight-light"
+              >
+                {{ card.owner.name }}
+              </div>
+              <div v-if="card" class="mt-1">
+                <div class="text-subtitle-1">
+                  {{ card.brand || card.card.brand }}
+                </div>
+
+                <div class="mt-n2">
+                  <span class="text-h6 font-weight-regular">
+                    •••• •••• •••• {{ card.last4 || card.card.last4 }}
+                  </span>
+                  <span class="ml-1 text-subtitle-1 font-weight-light">
+                    {{ card.exp_month || card.card.exp_month }}/{{
+                      card.exp_year || card.card.exp_year
+                    }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="card.card" class="ml-auto">
+              <v-icon large>
+                fab fa-cc-{{ card.card.brand.toLowerCase() }}
+              </v-icon>
+            </div>
+          </div>
+
+          <v-btn
+            color="prefect"
+            class="mt-auto white--text"
+            :disabled="loading || !cardSource"
+            :loading="loading"
+            style="width: 100%;"
+            data-cy="next"
+            @click="handleNext"
+          >
+            Next
+          </v-btn>
+        </div>
+
+        <div
+          v-else-if="step == 'confirm'"
+          key="confirm"
+          class="confirm-container d-flex align-start justify-center flex-column"
+        >
+          <div
+            class="d-inline-block text-subtitle-1 font-weight-light cursor-pointer mt-4 h-auto"
+            @click="step = 'select-card'"
+          >
+            <v-icon color="blue-grey">chevron_left</v-icon>
+            Change payment method
+          </div>
+
+          <div class="text-left mt-auto w-100">
+            <div
+              class="text-h5 font-weight-light d-flex align-end justify-start"
+            >
+              <span>Plan</span>
+              <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+              <span class="ml-auto white--text plan-title">
+                {{ plan.name }}
+              </span>
+            </div>
+            <div class="mt-4 text-h6 font-weight-light">
+              <div class="mt-4 d-flex align-end justify-start">
+                <span>Users</span>
+                <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+                <span class="mr-3 font-weight-regular">
+                  {{ plan.users }}
+                </span>
+                <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-users fa-fw
+                  </v-icon>
+                </span>
+              </div>
+
+              <div class="mt-4 d-flex align-end justify-start">
+                <span>Run history</span>
+                <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+                <span class="mr-3 font-weight-regular">
+                  1 {{ plan.history }}
+                </span>
+                <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-history fa-fw
+                  </v-icon>
+                </span>
+              </div>
+
+              <div class="mt-4 d-flex align-end justify-start">
+                <span>Task runs</span>
+                <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+                <span
+                  v-if="plan.price && !plan.taskRuns"
+                  class="mr-3 font-weight-regular text-right mb-n2"
+                >
+                  ${{ plan.price }}
+                  <div class="text-caption mt-n2">/ successful task run</div>
+                </span>
+                <span
+                  v-else-if="plan.price && plan.taskRuns"
+                  class="mr-3 font-weight-regular text-right mb-n4"
+                >
+                  <span v-if="plan.taskRuns">
+                    {{ plan.taskRuns.toLocaleString() }}
+                    <div class="text-caption mt-n2">
+                      / month
+                    </div>
+                    <div class="text-caption mt-n2">
+                      then ${{ plan.price }} / successful task run
+                    </div>
+                  </span>
+                </span>
+                <span v-else class="mr-3 font-weight-regular">
+                  10,000
+                  <div class="text-caption mt-n2">/ month</div>
+                </span>
+                <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-check fa-fw
+                  </v-icon>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 text-h5 font-weight-light text-right w-100">
+            Due today:
+            <span class="font-weight-medium"
+              >${{ plan.additionalCost ? plan.additionalCost : '0.00' }}</span
+            >
+          </div>
+
+          <v-btn
+            color="prefect"
+            class="mt-auto white--text w-100"
+            :disabled="loading || !cardSource"
+            :loading="loading"
+            data-cy="finish"
+            @click="handleSubmit"
+          >
+            Finish
+          </v-btn>
+
+          <div class="text-caption mb-n4 mt-2 mx-auto">
+            By clicking finish, you assert that you have read & agree to the
+            <ExternalLink
+              href="https://www.prefect.io/legal/terms-and-conditions"
+              >Terms & Conditions</ExternalLink
+            >
+          </div>
+        </div>
+
+        <div
+          v-else-if="step == 'complete'"
+          key="complete"
+          class="complete-container d-flex align-start justify-center flex-column"
+        >
+          <div class="mt-auto text-h4 font-weight-light w-100 text-center">
+            You're all set - happy engineering!
+            <img
+              class="mt-8 mx-auto"
+              src="@/assets/backgrounds/your-flow-runs.svg"
+              alt="You're all set image"
+            />
+          </div>
+
+          <v-btn
+            color="prefect"
+            class="mt-auto white--text w-100"
+            :to="{ name: 'dashboard', params: { tenant: tenant.slug } }"
+          >
+            Take me to the dashboard
+          </v-btn>
+        </div>
+
+        <div v-else key="error" class="error-container">
+          Something went wrong...
+        </div>
+      </v-fade-transition>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.form-container {
+  height: min-content;
+  max-width: 600px;
+  overflow: hidden;
+  transition: max-height 150ms;
+  width: 600px;
+}
+
+.form-actions {
+  min-height: 36px;
+}
+
+.h-auto {
+  height: auto !important;
+}
+
+.card-container {
+  position: relative;
+  transition: all 150ms;
+
+  .card-selection {
+    min-height: 600px;
+  }
+
+  .card-display {
+    border: 2px solid #efefef;
+    border-radius: 4px;
+    box-sizing: content-box;
+    cursor: pointer;
+    height: auto;
+    padding: 24px 24px 24px 48px;
+    position: relative;
+    text-align: left;
+    transition: all 50ms;
+    user-select: none;
+    width: 400px;
+
+    &.active {
+      border: 2px solid var(--v-primary-base);
+
+      &::before {
+        border-color: var(--v-primary-base);
+      }
+
+      &::after {
+        background-color: var(--v-primary-base);
+        border-radius: 50%;
+        height: 10px;
+        left: 17px;
+        width: 10px;
+      }
+    }
+
+    &::after,
+    &::before {
+      box-sizing: border-box;
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+      transition: all 150ms;
+    }
+
+    &::after {
+      border-radius: 0;
+      height: 0;
+      left: 22px;
+      width: 0;
+    }
+
+    &::before {
+      border: 2px solid #eee;
+      border-radius: 50%;
+      height: 20px;
+      left: 12px;
+      width: 20px;
+    }
+  }
+
+  .card-or {
+    position: relative;
+    width: 100%;
+
+    &::before {
+      background-color: #eee;
+      content: '';
+      height: 1px;
+      left: 0;
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+      width: 100%;
+    }
+  }
+}
+
+.confirm-container,
+.complete-container,
+.error-container,
+.card-entry-container {
+  min-height: 600px;
+}
+
+.dotted-line {
+  border-top: 2px dotted #eee;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.theme--light.v-subheader {
+  color: #000;
+  font-weight: bold !important;
+}
+
+.checkbox-container {
+  margin-left: 30px;
+  margin-top: -20px;
+}
+/* stylelint-disable */
+.set-state .v-btn__loader {
+  color: #fff;
+}
+
+.card-title {
+  margin-left: -12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.plan-title {
+  background-color: var(--v-primary-base);
+  border-radius: 6px;
+  letter-spacing: 0.15rem;
+  padding: 0 8px;
+  text-transform: uppercase;
+}
+</style>

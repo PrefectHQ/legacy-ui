@@ -149,7 +149,7 @@ export default {
 
 <style lang="scss" scoped>
 .divider {
-  border: 1px solid #fff;
+  border: 1px solid;
   margin: 8px 0;
 }
 

@@ -153,14 +153,6 @@ export const routes = [
           import(
             /* webpackChunkName: "team-settings--tokens" */ '@/pages/TeamSettings/Tokens.vue'
           )
-      },
-      {
-        name: 'plan-comparison',
-        path: 'plan-comparison',
-        component: () =>
-          import(
-            /* webpackChunkName: "team-settings--plan-comparison" */ '@/pages/TeamSettings/PlanComparison.vue'
-          )
       }
     ]
   },
@@ -275,6 +267,23 @@ export const routes = [
       }
     ]
   },
+  // --------------------------- //
+  //
+  // Plans
+  //
+  // --------------------------- //
+  {
+    name: 'plans',
+    path: '/plans',
+    component: () =>
+      import(/* webpackChunkName: "plans" */ '@/pages/Plans.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
+  // --------------------------- //
+  //
+  // Login
+  //
+  // --------------------------- //
   {
     name: 'login',
     path: '/login',

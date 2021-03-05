@@ -76,16 +76,6 @@ export default {
       return featuresObjArray?.length > 0 ? featuresObjArray : null
     }
   },
-  watch: {
-    tenant(val) {
-      this.loading = true
-      if (val) {
-        setTimeout(() => {
-          this.loading = false
-        }, 1000)
-      }
-    }
-  },
   methods: {
     colorType(type) {
       const feature = featureTypes.find(f => f.type == type)
@@ -117,13 +107,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    tile
-    max-width="720"
-    class="mx-auto my-4"
-    data-cy="license-card"
-    :loading="loading"
-  >
+  <v-card tile class="mx-auto" data-cy="license-card" :loading="loading">
     <v-card-title>
       Your plan
     </v-card-title>

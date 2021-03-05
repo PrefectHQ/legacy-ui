@@ -300,7 +300,7 @@ export default {
   position: relative;
 
   &::before {
-    background-color: #eee;
+    background-color: var(--v-utilGrayLight-base);
     bottom: -4px;
     content: '';
     display: block;
@@ -313,7 +313,7 @@ export default {
   &:hover,
   &:focus {
     &::before {
-      background-color: #333;
+      background-color: var(--v-utilGrayDark-base);
     }
   }
 

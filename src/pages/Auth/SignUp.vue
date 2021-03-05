@@ -281,7 +281,7 @@ export default {
     width: 250px;
 
     &::before {
-      background-color: #fff;
+      background-color: var(--v-appForeground-base);
       box-shadow: 0 0 2px -2px rgba(0, 0, 0, 0.2), 0 0 2px 0 rgba(0, 0, 0, 0.14),
         0 -1px 5px 0 rgba(0, 0, 0, 0.12);
       content: '';
@@ -298,7 +298,7 @@ export default {
     &::after {
       // stylelint-enable
       border: solid transparent;
-      border-color: #fff;
+      border-color: var(--v-appForeground-base);
       border-top-color: rgba(255, 255, 255, 0);
       border-width: 20px;
       bottom: 100%;

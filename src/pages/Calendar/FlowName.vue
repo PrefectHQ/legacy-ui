@@ -101,6 +101,6 @@ export default {
 
 <style lang="scss" scoped>
 div >>> div {
-  background-color: #f9f9f9;
+  background-color: var(--v-appBackground-base);
 }
 </style>

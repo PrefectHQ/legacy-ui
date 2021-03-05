@@ -216,6 +216,6 @@ export default {
 
 <style lang="scss" scoped>
 .link-color {
-  color: #27b1ff;
+  color: var(v-prefect-base);
 }
 </style>

@@ -219,7 +219,7 @@ export default {
               background-color="cloudUIPrimaryBlue primary"
               dark
               class="mt-4"
-              style="border: 1px solid #b0bec5 !important;
+              style="border: 1px solid utilGrayLight !important;
                 border-bottom: unset !important;"
             >
               <v-tab key="pip">Pip</v-tab>
@@ -229,7 +229,7 @@ export default {
 
             <div
               class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-5 code-block"
-              style="border: 1px solid #b0bec5 !important;
+              style="border: 1px solid utilGrayLight !important;
                 border-top: unset !important;"
             >
               <v-tabs-items v-model="sdkTab">

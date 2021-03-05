@@ -86,16 +86,6 @@ export default {
       return this.license?.terms?.task_runs_usage_limit || this.plan?.taskRuns
     }
   },
-  watch: {
-    tenant(val) {
-      this.loading = true
-      if (val) {
-        setTimeout(() => {
-          this.loading = false
-        }, 1000)
-      }
-    }
-  },
   methods: {
     colorType(type) {
       const feature = featureTypes.find(f => f.type == type)
@@ -127,31 +117,23 @@ export default {
 </script>
 
 <template>
-  <v-card
-    tile
-    max-width="720"
-    class="mx-auto my-4"
-    data-cy="license-card"
-    :loading="loading"
-  >
-    <v-card-title class="mb-2">
+  <v-card tile data-cy="license-card" :loading="loading">
+    <v-card-title class="mb-2 text-h4 font-weight-light">
       Your plan
     </v-card-title>
 
     <v-card-subtitle class="pb-0">
-      Your team is on
-      {{ planType !== 'Custom' ? 'the Prefect' : 'a' }}
-      <a href="https://www.prefect.io/get-prefect#pricing" target="_blank">
-        <v-icon
-          v-if="planType !== 'Custom'"
-          :color="planColor"
-          class="mr-1 pb-1"
-          x-small
-        >
-          cloud
-        </v-icon>
-        <span :class="`${planColor}--text`">{{ planType }}</span>
-      </a>
+      Your're on
+      {{ planType !== 'Custom' ? 'the' : 'a' }}
+      <v-icon
+        v-if="planType !== 'Custom'"
+        :color="planColor"
+        class="mr-1 pb-1"
+        x-small
+      >
+        cloud
+      </v-icon>
+      <span :class="`${planColor}--text`">{{ planType }}</span>
       plan.
       <br />
     </v-card-subtitle>
