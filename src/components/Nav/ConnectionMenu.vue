@@ -145,10 +145,10 @@ export default {
           </v-btn>
 
           <v-btn
-            color="secondary lighten-2"
-            class="px-3 white--text font-weight-bold text-subtitle-1"
+            class="px-3 font-weight-bold text-subtitle-1"
             depressed
             tile
+            :color="isServer ? 'primary' : 'utilGrayDark'"
             :outlined="isCloud"
             :disabled="loading"
             style="width: 50%;"
@@ -160,7 +160,8 @@ export default {
               src="@/assets/logos/core-logo-no-text.svg"
               style="opacity: 0.5;"
               :style="
-                isServer && 'filter: brightness(0) invert(1); opacity: 1;'
+                (isServer || 'dark') &&
+                  'filter: brightness(0) invert(1); opacity: 1;'
               "
             />
           </v-btn>
@@ -175,7 +176,7 @@ export default {
           to
           <span class="font-weight-bold">
             <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
-            <span v-else class="secondaryGray--text">Prefect Server</span>
+            <span v-else class="utilGrayDark--text">Prefect Server</span>
           </span>
           <span v-if="isServer">
             at
@@ -209,7 +210,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-$primary-base: var(--v-appForeground-base);
+$primary-base: #fff; /* true in light and dark */
 $secondary-base: var(--v-secondaryGrayLight-base);
 
 $statuses: (
