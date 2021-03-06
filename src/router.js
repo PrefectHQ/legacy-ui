@@ -233,6 +233,14 @@ export const routes = [
           )
       },
       {
+        name: 'plan',
+        path: 'plan',
+        component: () =>
+          import(
+            /* webpackChunkName: "onboard-plan" */ '@/pages/Onboard/Plan.vue'
+          )
+      },
+      {
         name: 'name-team',
         path: 'name-team',
         component: () =>
@@ -259,6 +267,23 @@ export const routes = [
       }
     ]
   },
+  // --------------------------- //
+  //
+  // Plans
+  //
+  // --------------------------- //
+  {
+    name: 'plans',
+    path: '/plans',
+    component: () =>
+      import(/* webpackChunkName: "plans" */ '@/pages/Plans.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
+  // --------------------------- //
+  //
+  // Login
+  //
+  // --------------------------- //
   {
     name: 'login',
     path: '/login',

@@ -1,11 +1,12 @@
 <script>
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
+import UpgradeAlert from '@/components/License/UpgradeAlert'
 // import { paymentMixin } from '@/mixins/paymentMixin.js'
 import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
 
 export default {
-  // components: { Card },
+  components: { UpgradeAlert },
   mixins: [teamProfileMixin],
   data() {
     return {
@@ -40,7 +41,10 @@ export default {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
     },
     isSelfServe() {
-      return this.license?.terms?.plan === 'SELF_SERVE'
+      return (
+        this.license?.terms?.plan === 'SELF_SERVE' ||
+        this.license?.terms?.is_self_serve
+      )
     },
     max() {
       return 4
@@ -160,16 +164,11 @@ export default {
 </script>
 
 <template>
-  <v-card
-    data-cy="users-card"
-    tile
-    max-width="720"
-    class="mx-auto my-4"
-    :loading="loading"
-  >
-    <v-card-title>
-      Users
+  <v-card data-cy="users-card" tile class="mx-auto" :loading="loading">
+    <v-card-title class="mb-2 text-h4 font-weight-light">
+      Add users
     </v-card-title>
+
     <v-card-subtitle>
       Check and update the number of users in your account. To see active
       membership information visit the
@@ -180,7 +179,19 @@ export default {
     </v-card-subtitle>
     <v-card-text>
       <v-alert
-        v-if="!isSelfServe & !loading"
+        v-if="!isTenantAdmin & !loading"
+        class="mx-auto mb-12"
+        border="left"
+        colored-border
+        elevation="2"
+        type="warning"
+        tile
+        icon="lock"
+        max-width="540"
+        >Only your team's administrators can modify these settings.
+      </v-alert>
+      <v-alert
+        v-else-if="!isSelfServe & !loading"
         class="mx-auto mb-12"
         border="left"
         colored-border
@@ -196,18 +207,7 @@ export default {
           >contact our sales team</a
         >
       </v-alert>
-      <v-alert
-        v-else-if="!isTenantAdmin & !loading"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="540"
-        >Only your team's administrators can modify these settings.
-      </v-alert>
+
       <v-slider
         v-if="isSelfServe"
         data-cy="user-slider"
@@ -223,12 +223,15 @@ export default {
       </v-slider>
     </v-card-text>
     <div v-if="showPay" clas="mt-12">
+      <v-card-text>
+        <UpgradeAlert :license="license" />
+      </v-card-text>
       <v-card-title>
         {{ upgradeOrDowngrade }} to {{ desiredUsers }} {{ desiredUserOrUsers }}
       </v-card-title>
       <v-list hide-details>
         <v-list-item
-          ><v-avatar><v-icon x-small>fas fa-asterisk</v-icon></v-avatar> You'll
+          ><v-icon small class="pr-4">star_rate</v-icon> You'll
           {{ addOrRemove }}
           <span class="font-weight-bold mx-1">{{ Math.abs(diff) }}</span>
           {{ userOrUsers }} at
@@ -239,8 +242,7 @@ export default {
           total)
         </v-list-item>
         <v-list-item
-          ><v-avatar><v-icon x-small>fas fa-asterisk</v-icon></v-avatar> Your
-          card
+          ><v-icon small class="pr-4">star_rate</v-icon> Your card
           <span v-if="existingCard" class="mx-1">
             ending in
             <span class="font-weight-bold"> {{ existingCard.last4 }}</span>

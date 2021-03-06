@@ -85,7 +85,7 @@ export default {
       'tenantIsSet',
       'isLoadingTenant'
     ]),
-    ...mapGetters('user', ['memberships', 'userIsSet', 'user']),
+    ...mapGetters('user', ['memberships', 'userIsSet', 'user', 'plan']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -103,6 +103,7 @@ export default {
     },
     showNav() {
       if (
+        this.$route.name == 'plans' ||
         this.$route.name === 'not-found' ||
         onboardRoutes.includes(this.$route.name)
       )
@@ -337,6 +338,7 @@ export default {
     },
     handleScroll: debounce(
       function() {
+        if (this.$route.name == 'plans') return (this.showFooter = true)
         if (
           window.innerHeight + window.pageYOffset + 50 >=
           document.body.offsetHeight

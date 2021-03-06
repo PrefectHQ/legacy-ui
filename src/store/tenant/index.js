@@ -12,7 +12,7 @@ const state = {
     licenses: [],
     settings: {},
     prefectAdminSettings: {},
-    stripeCustomerID: ''
+    stripe_customer: null
   },
   isLoadingTenant: false,
   tenantIsSet: false,
@@ -88,7 +88,7 @@ const mutations = {
       licenses: [],
       settings: {},
       prefectAdminSettings: {},
-      stripeCustomerID: ''
+      stripe_customer: null
     }
   },
   unsetTenants(state) {
