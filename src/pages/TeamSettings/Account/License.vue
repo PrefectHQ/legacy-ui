@@ -20,14 +20,6 @@ export default {
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
-    isCustom() {
-      return (
-        !this.plan &&
-        this.planType !== 'SELF_SERVE' &&
-        this.planType !== 'PLATFORM' &&
-        this.planType !== 'TEAM'
-      )
-    },
     isLegacy() {
       return !this.license?.terms?.is_usage_based
     },
@@ -37,7 +29,7 @@ export default {
     planName() {
       if (this.isLegacy)
         return `Legacy ${
-          this.planType == 'SELF_SERVE'
+          this.isSelfServe
             ? 'developer'
             : this.planType
             ? this.planType.toLowerCase()
@@ -141,7 +133,7 @@ export default {
       <v-spacer />
 
       <v-btn
-        v-if="planType !== 'ENTERPRISE_2021'"
+        v-if="isSelfServe"
         color="accentPink"
         depressed
         dark
@@ -160,7 +152,7 @@ export default {
       </v-icon>
       <span :class="`${planColor}--text`">{{ planName }}</span>
       plan.
-      <span v-if="isLegacy && !isCustom">
+      <span v-if="isLegacy && isSelfServe">
         <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
         access to usage-based pricing and new features!
       </span>
