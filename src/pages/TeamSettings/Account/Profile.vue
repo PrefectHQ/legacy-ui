@@ -18,7 +18,6 @@ export default {
       Profile
     </v-card-title>
 
-    <v-card-subtitle> See and edit your team profile.</v-card-subtitle>
     <v-card-text class="align-self-stretch">
       <v-alert
         v-if="!isTenantAdmin"
@@ -31,7 +30,7 @@ export default {
         icon="lock"
         max-width="540"
       >
-        Only your team's administrators can modify these profile settings.
+        Only team admins can modify these profile settings.
       </v-alert>
       <v-text-field
         v-model="name"

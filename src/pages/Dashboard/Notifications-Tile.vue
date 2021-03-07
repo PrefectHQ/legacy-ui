@@ -33,11 +33,11 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     cardTitle() {
-      return `${parseInt(
-        this.notificationsCount
-      ).toLocaleString()} Unread Notification${
-        this.notificationsCount === 1 ? '' : 's'
-      }`
+      return `${
+        this.notificationsCount === 0
+          ? 'No'
+          : parseInt(this.notificationsCount).toLocaleString()
+      } Unread Notification${this.notificationsCount === 1 ? '' : 's'}`
     },
     iconColor() {
       return this.isLoading
@@ -185,7 +185,7 @@ export default {
               class="subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
-              You're all caught up!
+              All caught up!
             </div>
           </v-list-item-content>
         </v-list-item>

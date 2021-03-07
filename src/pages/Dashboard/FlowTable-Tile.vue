@@ -110,8 +110,8 @@ export default {
     },
     placeholderMessage() {
       if (this.$vuetify.breakpoint.mdAndUp) {
-        return `Search by Flow, ${!this.isCloud ? 'or' : ''} Project${
-          this.isCloud ? ', or User' : ''
+        return `Search by flow, ${!this.isCloud ? 'or' : ''} project${
+          this.isCloud ? ', or user' : ''
         } `
       }
       return ''
@@ -286,9 +286,7 @@ export default {
         :items-per-page.sync="limit"
         class="ma-2 overflow-table"
         must-sort
-        :no-data-text="
-          `You have no flows${projectId ? ' in this project!' : '!'}`
-        "
+        :no-data-text="`No flows found${projectId ? ' in this project' : ''}`"
         :server-items-length="flowCount"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
@@ -373,7 +371,7 @@ export default {
               <v-switch
                 v-model="showArchived"
                 class="archived-checkbox mr-7"
-                label="Show Archived"
+                label="Show archived flows"
               ></v-switch>
             </v-row>
           </td>

@@ -412,7 +412,7 @@ export default {
               Read-only users cannot modify flow settings.
             </span>
             <span v-if="!versionLockingPermitted">
-              Your team doesn't have access to version locking.
+              Version locking is not available.
             </span>
             <span v-else>
               {{ isVersionLocked ? 'Disable' : 'Enable' }} version locking for

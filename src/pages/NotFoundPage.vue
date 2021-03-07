@@ -8,10 +8,10 @@
     }"
   >
     <div class="text">
-      <h1>Oh no!</h1>
+      <h1>Don't panic.</h1>
       <p>
-        This page seems to have gone missing.<br />
-        Sorry for disrupting your <em>flow</em>.
+        This page seems to be missing.<br />
+        We apologize for the inconvenience.
       </p>
 
       <v-btn text dark @click="$router.push({ name: 'dashboard' })">

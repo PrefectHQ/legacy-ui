@@ -342,7 +342,7 @@ export default {
               (You can always change this later)
             </div>
             <div v-else class="body-2 text--darken-1">
-              Contact your team administrators to complete onboarding</div
+              Contact your team admin to complete onboarding</div
             >
           </v-col>
 

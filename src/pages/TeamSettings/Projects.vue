@@ -548,7 +548,7 @@ export default {
             nextIcon: 'keyboard_arrow_right'
           }"
           no-results-text="No projects found. Try expanding your search?"
-          no-data-text="This team does not have any projects yet."
+          no-data-text="No projects found"
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">

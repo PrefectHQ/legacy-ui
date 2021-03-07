@@ -251,7 +251,7 @@ export default {
 
     <v-card-text class="px-0 py-0" style="height: 250px;">
       <div class="px-3">
-        <div class="overline">
+        <div class="caption">
           LAST QUERY
         </div>
         <transition name="fade">
@@ -352,7 +352,7 @@ export default {
           </div>
         </div>
 
-        <div class="overline mb-0 mt-2">
+        <div class="caption mt-2">
           LABELS
         </div>
       </div>

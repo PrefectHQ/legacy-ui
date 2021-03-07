@@ -74,7 +74,7 @@ export default {
       v-if="!loading && reversedRuns.length === 0"
       class="caption text-center grey--text timeline-no-runs"
     >
-      No run history in the last month
+      No run history found
     </div>
     <BarChart
       :loading="loading"

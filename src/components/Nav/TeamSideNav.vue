@@ -257,7 +257,7 @@ export default {
               class="cursor-pointer px-2 py-2 caption font-weight-normal collapse-button rounded grey--text text--darken-1"
               @click="closeAll"
             >
-              Collapse All
+              Collapse all
             </div>
           </div>
         </div>
@@ -282,7 +282,7 @@ export default {
             />
 
             <div v-else-if="projects && projects.length === 0">
-              <div class="text-subtitle-1">You have no projects</div>
+              <div class="text-subtitle-1">No projects</div>
 
               <v-btn
                 depressed

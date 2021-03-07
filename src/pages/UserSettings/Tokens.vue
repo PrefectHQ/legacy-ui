@@ -189,7 +189,7 @@ export default {
       dense
       hide-details
       single-line
-      placeholder="Search for an API Token"
+      placeholder="Search for an API token"
       prepend-inner-icon="search"
       autocomplete="new-password"
     ></v-text-field>
@@ -204,7 +204,7 @@ export default {
             dense
             hide-details
             single-line
-            placeholder="Search for an API Token"
+            placeholder="Search for an API token"
             prepend-inner-icon="search"
             autocomplete="new-password"
             :style="{

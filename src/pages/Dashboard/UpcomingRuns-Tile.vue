@@ -64,7 +64,7 @@ export default {
         title =
           this.loading > 0
             ? 'Upcoming Runs'
-            : `${this.upcomingRuns?.length || 0} Upcoming Runs`
+            : `${this.upcomingRuns?.length || 'No'} Upcoming Runs`
       }
 
       if (this.tab == 'late') {
@@ -258,7 +258,7 @@ export default {
             class="subtitle-1 font-weight-light"
             style="line-height: 1.25rem;"
           >
-            No upcoming runs.
+            No upcoming runs
           </div>
         </v-list-item-content>
       </v-list-item>
@@ -350,7 +350,7 @@ export default {
             class="subtitle-1 font-weight-light"
             style="line-height: 1.25rem;"
           >
-            Everything is running on schedule!
+            No late runs
           </div>
         </v-list-item-content>
       </v-list-item>

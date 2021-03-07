@@ -320,9 +320,9 @@ export default {
 
           <v-list-item v-else-if="input == null">
             <v-list-item-title class="text-subtitle-1 font-weight-light">
-              Type to search for a <strong>Project</strong>,
-              <strong>Flow</strong>, <strong>Task</strong>, or
-              <strong>Run</strong>
+              Type to search for a <strong>project</strong>,
+              <strong>flow</strong>, <strong>task</strong>, or
+              <strong>run</strong>
             </v-list-item-title>
           </v-list-item>
 

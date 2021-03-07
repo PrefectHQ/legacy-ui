@@ -95,14 +95,6 @@ export default {
           <h1 class="display-1">Account & Usage</h1>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12" class="text-center py-0">
-          <div class="subtitle-1">
-            Manage data associated with your team
-          </div>
-        </v-col>
-      </v-row>
-
       <v-row class="usage-row">
         <v-col cols="12" class="usage-grid">
           <v-skeleton-loader

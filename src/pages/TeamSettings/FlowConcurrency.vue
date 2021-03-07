@@ -297,7 +297,7 @@ export default {
         icon="lock"
         max-width="600"
       >
-        Only team administrators can manage flow concurrency limits.
+        Only team admins can manage flow concurrency limits.
       </v-alert>
     </template>
 
@@ -352,7 +352,7 @@ export default {
             nextIcon: 'keyboard_arrow_right'
           }"
           no-results-text="No concurrency limits found. Try expanding your search?"
-          no-data-text="This team has not set any flow concurrency limits yet."
+          no-data-text="No flow concurrency limits found"
         >
           <template #header.tag="{ header }">
             <span class="subtitle-2">{{ header.text }}</span>

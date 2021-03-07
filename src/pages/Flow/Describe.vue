@@ -272,9 +272,9 @@ export default {
       class="headline
           grey--text text--darken-2 pl-8 pr-12 pt-8 text-center wide"
     >
-      This flow has no
-      <span class="font-weight-medium"> ReadMe! </span>
-
+      Create a
+      <span class="font-weight-medium"> ReadMe </span>
+      for this flow
       <div class="text-center pt-8">
         <v-btn fab title="Add ReadMe" color="primary" @click="textArea = true"
           ><v-icon>add</v-icon></v-btn

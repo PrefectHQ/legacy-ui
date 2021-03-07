@@ -272,10 +272,6 @@ export default {
       Your data
     </v-card-title>
 
-    <v-card-subtitle>
-      See and clear the data in your account such as projects, flows, members
-      and secrets
-    </v-card-subtitle>
     <v-card-text>
       <v-alert
         v-if="!isTenantAdmin"
@@ -288,7 +284,7 @@ export default {
         icon="lock"
         max-width="540"
       >
-        Only your team's administrators can modify these settings.
+        Only team admins can modify these settings.
       </v-alert>
       <transition name="fade-expand" mode="out-in">
         <div v-show="activeClearScreen == 'form'" class=" pa-6">
@@ -424,7 +420,7 @@ export default {
             :loading="loading"
             @click="clearData"
           >
-            Clear all data?
+            Clear all data
           </v-btn>
         </div>
       </transition>

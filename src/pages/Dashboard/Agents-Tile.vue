@@ -44,7 +44,7 @@ export default {
     },
     cardTitle() {
       if (!this.agents) return
-      if (this.agents && this.agents.length === 0) return '0 Agents'
+      if (this.agents && this.agents.length === 0) return 'No Agents'
 
       return `${this.agents?.length} ${
         this.agents?.length === 1 ? 'Agent' : 'Agents'
@@ -100,7 +100,7 @@ export default {
           key="no-agents"
           color="grey"
         >
-          <v-list-item-avatar class="mr-0">
+          <v-list-item-avatar class="mr-0 top-0">
             <v-icon class="error--text mb-1">
               error
             </v-icon>
@@ -110,18 +110,22 @@ export default {
               class=" text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
-              You do not have any agents querying for flow runs. Without an
-              agent, your flow runs will not be picked up.</div
-            >
+              Flows won't run without an agent.
+            </div>
             <div
               class=" text-subtitle-1 font-weight-light pt-4"
               style="line-height: 1.25rem;"
-              >See
+            >
+              To learn more, please see the
               <ExternalLink
                 href="https://docs.prefect.io/orchestration/agents/overview.html"
-                >the Prefect docs</ExternalLink
+                >agent docs</ExternalLink
               >
-              for more information on agents.</div
+              or the
+              <ExternalLink
+                href="https://docs.prefect.io/orchestration/tutorial/first.html#start-an-agent"
+                >getting started tutorial.</ExternalLink
+              ></div
             >
           </v-list-item-content>
         </v-list-item>
@@ -143,8 +147,7 @@ export default {
             >
               <span class="font-weight-medium">{{ agentTracker.healthy }}</span>
               agent{{ agentTracker.healthy === 1 ? '' : 's' }}
-              {{ agentTracker.healthy === 1 ? 'is' : 'are' }} querying for flow
-              runs
+              {{ agentTracker.healthy === 1 ? 'is' : 'are' }} active
             </div>
           </v-list-item-content>
         </v-list-item>
@@ -165,12 +168,9 @@ export default {
               style="line-height: 1.25rem;"
             >
               <span class="font-weight-medium">{{ agentTracker.stale }}</span>
-              agent{{ agentTracker.stale === 1 ? '' : 's' }}
-              {{ agentTracker.stale === 1 ? 'has' : 'have' }}
-              not queried for flow runs in the last
-              {{
-                staleThreshold === 1 ? 'minute' : `${staleThreshold} minutes`
-              }}.
+              agent{{ agentTracker.unhealthy === 1 ? '' : 's' }}
+              {{ agentTracker.unhealthy === 1 ? 'is' : 'are' }}
+              inactive
             </div>
           </v-list-item-content>
         </v-list-item>
@@ -195,13 +195,8 @@ export default {
                   {{ agentTracker.unhealthy }}
                 </span>
                 agent{{ agentTracker.unhealthy === 1 ? '' : 's' }}
-                {{ agentTracker.unhealthy === 1 ? 'has' : 'have' }}
-                not queried for flow runs in the last
-                {{
-                  unhealthyThreshold === 1
-                    ? 'minute'
-                    : `${unhealthyThreshold} minutes`
-                }}.
+                {{ agentTracker.unhealthy === 1 ? 'is' : 'are' }}
+                inactive
               </span>
             </div>
             <div

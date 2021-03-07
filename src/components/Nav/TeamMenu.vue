@@ -123,7 +123,7 @@ export default {
               Members
             </v-list-item-title>
             <v-list-item-subtitle>
-              Invite people to your team and manage permissions
+              Invite users to your team and manage permissions
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>

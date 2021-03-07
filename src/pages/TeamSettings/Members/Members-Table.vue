@@ -245,7 +245,7 @@ export default {
       }"
       :search="search"
       no-results-text="No members found. Try expanding your search?"
-      no-data-text="This team does not have any members yet."
+      no-data-text="No members found"
     >
       <!-- HEADERS -->
       <template #header.email="{ header }">

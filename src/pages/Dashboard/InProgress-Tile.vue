@@ -72,18 +72,18 @@ export default {
     title() {
       let title = this.loading
         ? 'In Progress Flow Runs'
-        : `${this.all?.length || 0} Runs In Progress`
+        : `${this.all?.length || 'No'} Runs In Progress`
 
       if (this.tab == 'submitted') {
         title = this.loading
           ? 'Submitted Flow Runs'
-          : `${this.submitted?.length || 0} Submitted Runs`
+          : `${this.submitted?.length || 'No'} Submitted Runs`
       }
 
       if (this.tab == 'running') {
         title = this.loading
           ? 'Running Flow Runs'
-          : `${this.running?.length || 0} Running Flows`
+          : `${this.running?.length || 'No'} Running Flows`
       }
 
       return title
@@ -236,7 +236,7 @@ export default {
               class="subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
-              You have no
+              No
               {{
                 tab == 'running'
                   ? 'running flows'

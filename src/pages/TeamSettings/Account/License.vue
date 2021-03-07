@@ -174,10 +174,10 @@ export default {
               {{ userNum ? userNum : 'Unlimited' }} {{ userOrUsers }}
             </div>
             <div v-if="userNum" class="text-body-1">
-              You can invite up to {{ userNum }} full {{ userOrUsers }}.
+              You can invite up to {{ userNum }} {{ userOrUsers }}.
             </div>
             <div v-else class="text-body-1">
-              You have unlimited full users!
+              You have unlimited users!
             </div>
           </div>
         </div>

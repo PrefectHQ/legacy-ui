@@ -183,7 +183,7 @@ export default {
       }"
       :search="search"
       no-results-text="No invitations found. Try expanding your search?"
-      no-data-text="There are no pending membership invitations."
+      no-data-text="No invitations found"
     >
       <!-- HEADERS -->
       <template #header.email="{ header }">

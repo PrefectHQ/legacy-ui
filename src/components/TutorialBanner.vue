@@ -1,8 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import ExternalLink from '@/components/ExternalLink'
 export default {
-  components: { ExternalLink },
   props: {
     pageScroll: {
       type: Boolean,
@@ -41,19 +39,11 @@ export default {
           </v-icon>
         </v-avatar>
         <div class="ml-4">
-          Pst! It looks like you don't have any flows yet;
-          <span v-if="isCloud"
-            >check out the
-            <router-link :to="{ name: 'tutorial' }"> tutorials</router-link> for
-            walkthroughs on writing and registering flows with Prefect and the
-            for more in-depth looks at the Prefect APIs</span
-          ><span v-else>
-            check out our
-            <ExternalLink href="https://docs.prefect.io/"
-              >documentation</ExternalLink
-            >
-            for help on getting started.</span
+          Getting started? Check out
+          <a href="https://docs.prefect.io/orchestration/tutorial/overview.html"
+            >this tutorial</a
           >
+          on deploying and running your first flow!
         </div>
         <v-btn
           class="ml-auto"

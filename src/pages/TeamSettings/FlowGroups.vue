@@ -245,10 +245,10 @@ export default {
 
     <template #subtitle>
       <span v-if="isTenantAdmin">
-        View and manage your team's flows by
+        View and manage your team's
         <ExternalLink
           href="https://docs.prefect.io/cloud/concepts/flows.html#versioning"
-          >version group</ExternalLink
+          >flow groups</ExternalLink
         >
       </span>
       <span v-else
@@ -270,7 +270,7 @@ export default {
       dense
       hide-details
       single-line
-      placeholder="Search by flow name, project name or creator"
+      placeholder="Search by flow, project, or creator"
       prepend-inner-icon="search"
       autocomplete="new-password"
     ></v-text-field>
@@ -286,7 +286,7 @@ export default {
             dense
             hide-details
             single-line
-            placeholder="Search by flow name, project name or creator"
+            placeholder="Search by flow, project, or creator"
             prepend-inner-icon="search"
             autocomplete="new-password"
             :style="{

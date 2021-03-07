@@ -420,7 +420,7 @@ export default {
             showFirstLastPage: true
           }"
           no-results-text="No secrets found. Try expanding your search?"
-          no-data-text="Your team does not have any secrets yet."
+          no-data-text="No secrets found"
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">

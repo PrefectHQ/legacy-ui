@@ -3,6 +3,7 @@ import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
 import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
+import ExternalLink from '@/components/ExternalLink'
 
 import moment from '@/utils/moment'
 
@@ -12,7 +13,8 @@ const STATUSES = ['healthy', 'stale', 'unhealthy']
 
 export default {
   components: {
-    AgentCard
+    AgentCard,
+    ExternalLink
   },
   data() {
     return {
@@ -456,24 +458,19 @@ export default {
       max-width="600"
     >
       <p>
-        You do not have any agents querying for flow runs.
+        No agents found!
       </p>
 
-      <p class="mb-0">
-        Refer to the Prefect documentation on
-        <a
+      <p>
+        Flows won't run without an agent. To learn more, please see the
+        <ExternalLink
           href="https://docs.prefect.io/orchestration/agents/overview.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          >agents</a
+          >agent docs</ExternalLink
         >
-        to understand their role in your infrastructure.
-        <span v-if="isCloud">
-          You can also go through the
-          <router-link class="link" :to="{ path: 'tutorial/Universal-Deploy' }">
-            <u>Universal Deploy</u>
-          </router-link>
-          tutorial for guidance on running agents in Cloud.</span
+        or the
+        <ExternalLink
+          href="https://docs.prefect.io/orchestration/tutorial/first.html#start-an-agent"
+          >getting started tutorial.</ExternalLink
         >
       </p>
     </v-alert>

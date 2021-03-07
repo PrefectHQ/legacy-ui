@@ -57,7 +57,7 @@ export default {
           role = 'Restricted User'
           break
         case 'TENANT_ADMIN':
-          role = 'Administrator'
+          role = 'Team Admin'
           break
         default:
           role = ''

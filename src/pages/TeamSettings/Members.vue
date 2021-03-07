@@ -66,7 +66,7 @@ export default {
       roleMap: {
         USER: 'User',
         READ_ONLY_USER: 'Read-Only',
-        TENANT_ADMIN: 'Administrator',
+        TENANT_ADMIN: 'Team Admin',
         PENDING: 'Pending'
       },
       roleColorMap: {
@@ -100,7 +100,7 @@ export default {
       return [
         {
           role: 'TENANT_ADMIN',
-          label: 'Administrator',
+          label: 'Admin',
           color: 'cloudUIPrimaryBlue',
           disabled: this.totalFullUsers >= this.allowedFullUsers
         },
@@ -233,7 +233,7 @@ export default {
 
     <template #subtitle>
       <span v-if="isTenantAdmin">
-        View your team's members, manage permissions, and send invitations
+        View your team's members and send invitations
       </span>
       <span v-else data-cy="non-admin-message">
         View the other members of {{ tenant.name }}
@@ -445,7 +445,7 @@ export default {
           icon="warning"
         >
           <p>
-            Your team has no full users available. You'll only be able to add
+            Your team has no more users available. You'll only be able to add
             Read-Only users until you add more from the
             <router-link :to="{ name: 'account' }"> Account Page</router-link>
           </p>

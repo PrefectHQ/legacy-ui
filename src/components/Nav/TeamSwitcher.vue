@@ -60,7 +60,7 @@ export default {
           role = 'Restricted User'
           break
         case 'TENANT_ADMIN':
-          role = 'Administrator'
+          role = 'Team Admin'
           break
         default:
           role = ''
@@ -102,7 +102,7 @@ export default {
                   params: { tenant: slug }
                 }
               : null,
-            linkText: success ? 'Take me to my new tenant!' : ''
+            linkText: success ? 'Go to team' : ''
           },
           3000
         )

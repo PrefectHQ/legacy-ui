@@ -268,11 +268,11 @@ export default {
         </ExternalLink>
       </div>
       <div v-else>
-        View and manage your team's
+        View
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/cloud_hooks.html"
         >
-          Cloud Hooks
+          Cloud Hook documentation
         </ExternalLink>
       </div>
     </template>

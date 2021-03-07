@@ -210,8 +210,7 @@ export default {
                 class="subtitle-1 font-weight-light"
                 style="line-height: 1.25rem;"
               >
-                No reported failures in the last {{ selectedDateFilter }}...
-                Everything looks good!
+                Everything looks great!
               </div>
             </v-list-item-content>
           </v-list-item>

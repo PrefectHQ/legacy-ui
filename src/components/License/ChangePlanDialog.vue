@@ -126,7 +126,7 @@ export default {
           tile
           icon="lock"
           max-width="540"
-          >Only your team's administrators can modify these settings.
+          >Only team admins can modify these settings.
         </v-alert>
         <v-alert
           v-else-if="!isSelfServe & !loading"

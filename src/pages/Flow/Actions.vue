@@ -282,13 +282,11 @@ export default {
       </span>
       <span v-else>
         <p>
-          Run this flow immediately, with a generated flow run name and default
-          parameters.
+          Run this flow immediately with default settings.
         </p>
 
         <p class="mb-0">
-          Select the RUN tab if you want to customize the flow run name, set
-          specific parameters, or provide context.
+          Select the RUN tab to customize settings or parameters.
         </p>
       </span>
     </v-tooltip>

@@ -299,7 +299,7 @@ export default {
       dense
       hide-details
       single-line
-      placeholder="Search for an API Token"
+      placeholder="Search for an API token"
       prepend-inner-icon="search"
       autocomplete="new-password"
     ></v-text-field>
@@ -317,7 +317,7 @@ export default {
             dense
             hide-details
             single-line
-            placeholder="Search for an API Token"
+            placeholder="Search for an API token"
             prepend-inner-icon="search"
             autocomplete="new-password"
             :style="{
@@ -344,8 +344,8 @@ export default {
             prevIcon: 'keyboard_arrow_left',
             nextIcon: 'keyboard_arrow_right'
           }"
-          no-results-text=" No API Tokens found. Try expanding your search?"
-          no-data-text="Your team does not have any API Tokens yet."
+          no-results-text=" No API tokens found. Try expanding your search?"
+          no-data-text="No API tokens found"
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">
