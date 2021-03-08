@@ -196,6 +196,7 @@ export default {
   },
   watch: {
     items() {
+      if (!this.chart) this.createChart()
       this.updateChart()
     },
     usage(val) {
@@ -377,8 +378,12 @@ export default {
       const maxBandwidth = Math.floor(
         ((this.width - this.padding.x) / this.ticks) * 0.8
       )
-      const bandwidth = maxBandwidth < 100 ? maxBandwidth : 100
-      const bandwidthNoPadding = (this.width - this.padding.x) / this.ticks
+      const bandwidth =
+        maxBandwidth < 100 ? (maxBandwidth < 0 ? 0 : maxBandwidth) : 100
+      const bandwidthNoPadding = Math.max(
+        (this.width - this.padding.x) / this.ticks,
+        0
+      )
 
       const xAxis = d3
         .axisBottom(this.x)

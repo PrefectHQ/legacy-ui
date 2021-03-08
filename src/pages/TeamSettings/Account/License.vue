@@ -152,9 +152,9 @@ export default {
         cloud
       </v-icon>
       <span :class="`${planColor}--text`">{{ planName }}</span>
-      plan.
+      plan
       <span v-if="isLegacy && isSelfServe">
-        <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
+        . <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
         access to usage-based pricing and new features!
       </span>
       <br />
