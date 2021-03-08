@@ -36,7 +36,7 @@ export default {
             : this.planType
             ? this.planType.toLowerCase()
             : ''
-        } (legacy)`
+        }`
       return this.plan.name
     },
     planType() {
@@ -152,7 +152,10 @@ export default {
       <v-icon :color="planColor" class="mr-1 pb-1" x-small>
         cloud
       </v-icon>
-      <span :class="`${planColor}--text`">{{ planName }}</span>
+      <span :class="`${planColor}--text`" class="text-capitalize"
+        >{{ planName
+        }}<span v-if="isLegacy" class="text-none"> (legacy)</span></span
+      >
       plan<span v-if="isLegacy && isSelfServe"
         >. <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
         access to usage-based pricing and new features!
@@ -170,9 +173,12 @@ export default {
           </div>
           <div>
             <div
-              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
+              class="text-h6 font-weight-regular text-capitalize blue-grey--text text--darken-3"
             >
-              {{ planName }} plan
+              {{ planName
+              }}<span class="text-none">
+                {{ isLegacy ? '(legacy)' : '' }} plan
+              </span>
             </div>
             <div class="text-body-1">
               Visit the
