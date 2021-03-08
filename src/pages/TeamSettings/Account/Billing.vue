@@ -54,6 +54,7 @@ export default {
       this.loading = true
       this.editCardDetails = false
       await this.getTenants()
+      console.log(this.tenant)
       this.loading = false
     }
   }

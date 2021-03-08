@@ -109,7 +109,7 @@ const actions = {
       commit('setTenants', tenants)
 
       // Make sure the current tenant object is updated
-      if (state['tenantIsSet']) {
+      if (getters['tenantIsSet']) {
         let tenant = getters['tenants']?.find(
           t => t.id === getters['tenant'].id
         )

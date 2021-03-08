@@ -49,8 +49,8 @@ export default {
     }
   },
   watch: {
-    tenant(val) {
-      if (val?.id) {
+    tenant(val, oldVal) {
+      if (val?.id !== oldVal?.id) {
         this.loadedTiles = 0
         clearTimeout(this.refreshTimeout)
         this.refresh()
