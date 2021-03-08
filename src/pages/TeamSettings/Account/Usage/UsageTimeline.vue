@@ -10,7 +10,8 @@ const d3 = Object.assign({}, d3_base, d3_regression)
 
 const xAxisHeight = 40
 
-const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
+const startDate = new Date('2018-01-17T00:00:00+00:00')
+// const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
 
 export default {
   props: {
@@ -25,7 +26,7 @@ export default {
       id: uniqueId('usage'),
       format: null,
       ticks: null,
-      period: 'Year',
+      period: 'Week',
       hoverGroup: null,
       interactionGroup: null,
       mainGroup: null,
@@ -102,22 +103,22 @@ export default {
         future
       ]
     },
-    regressionItems() {
-      // We do this to prevent modification of the original items array
-      const items = Array.from(this.items, d => Object.assign({}, d))
+    // regressionItems() {
+    //   // We do this to prevent modification of the original items array
+    //   const items = Array.from(this.items, d => Object.assign({}, d))
 
-      const lastIndex = items.length - 1
-      const lastItem = items[lastIndex]
-      const timestamp = new Date()
-      const interpolatedRuns = Math.ceil(
-        (lastItem.runs *
-          daysInMonth(timestamp.getFullYear(), timestamp.getMonth())) /
-          timestamp.getDate()
-      )
+    //   const lastIndex = items.length - 1
+    //   const lastItem = items[lastIndex]
+    //   const timestamp = new Date()
+    //   const interpolatedRuns = Math.ceil(
+    //     (lastItem.runs *
+    //       daysInMonth(timestamp.getFullYear(), timestamp.getMonth())) /
+    //       timestamp.getDate()
+    //   )
 
-      items[items.length - 1].runs = interpolatedRuns
-      return items
-    },
+    //   items[items.length - 1].runs = interpolatedRuns
+    //   return items
+    // },
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
@@ -161,14 +162,15 @@ export default {
 
       if (this.period == 'Year') {
         const year = new Date().getFullYear()
-        from.setFullYear(year - 1)
+        from.setFullYear(year - 1 + this.offset)
         from.setDate(0)
       } else if (this.period == 'Month') {
         from.setDate(0)
         from.setMinutes(1)
+        from.setMonth(from.getMonth() + this.offset)
       } else if (this.period == 'Week') {
         const day = from.getDay()
-        const diff = from.getDate() - ((day + 6) % 7) - this.offset
+        const diff = from.getDate() + this.offset - ((day + 6) % 7)
         from.setMinutes(0)
         from.setDate(diff)
       }
@@ -181,18 +183,26 @@ export default {
     to() {
       const to = new Date()
       to.setHours(23)
-
-      if (this.period == 'Year' || this.period == 'Month') {
+      if (this.period == 'Year') {
+        const year = new Date().getFullYear()
+        to.setFullYear(year + this.offset)
         to.setMonth(to.getMonth() + 1)
         to.setDate(0)
         to.setMinutes(59)
+      } else if (this.period == 'Month') {
+        to.setMonth(to.getMonth() + 1 + this.offset)
+        to.setDate(0)
+        to.setMinutes(59)
       } else if (this.period == 'Week') {
-        const diff = to.getDate() + (6 - to.getDay()) + this.offset
+        const diff = to.getDate() + this.offset + (6 - to.getDay())
         to.setDate(diff)
         to.setMinutes(60)
       }
 
       return to
+    },
+    decrementOffsetDisabled() {
+      return this.from <= startDate
     }
   },
   watch: {
@@ -207,6 +217,11 @@ export default {
       this.updateScales()
     },
     period() {
+      this.offset = 0
+      this.updateItems()
+      this.updateScales()
+    },
+    offset() {
       this.updateItems()
       this.updateScales()
     }
@@ -815,12 +830,12 @@ export default {
               (this.previousY(d.runs) - this.previousY(0)) || 0
         )
 
-      this.regression = d3
-        .regressionLinear()
-        .x(d => this.x(new Date(d.timestamp)))
-        .y(d => d.runs)(this.regressionItems)
+      // this.regression = d3
+      //   .regressionLinear()
+      //   .x(d => this.x(new Date(d.timestamp)))
+      //   .y(d => d.runs)(this.regressionItems)
 
-      this.predict = this.regression.predict
+      // this.predict = this.regression.predict
 
       switch (this.period) {
         case 'Year':
@@ -838,6 +853,32 @@ export default {
         default:
           break
       }
+    },
+    decrementOffset() {
+      switch (this.period) {
+        case 'Year':
+        case 'Month':
+          this.offset -= 1
+          break
+        case 'Week':
+          this.offset -= 7
+          break
+        default:
+          break
+      }
+    },
+    incrementOffset() {
+      switch (this.period) {
+        case 'Year':
+        case 'Month':
+          this.offset += 1
+          break
+        case 'Week':
+          this.offset += 7
+          break
+        default:
+          break
+      }
     }
   },
   apollo: {
@@ -845,7 +886,7 @@ export default {
       query: require('@/graphql/TeamSettings/usage.gql'),
       variables() {
         return {
-          from: this.from,
+          from: startDate,
           to: this.to
         }
       },
@@ -868,6 +909,26 @@ export default {
       </div>
 
       <div>
+        <v-btn
+          :disabled="decrementOffsetDisabled"
+          class="mr-2"
+          icon
+          depressed
+          @click="decrementOffset"
+        >
+          <v-icon>arrow_left</v-icon>
+        </v-btn>
+
+        <v-btn
+          :disabled="offset === 0"
+          icon
+          depressed
+          class="mr-4"
+          @click="incrementOffset"
+        >
+          <v-icon>arrow_right</v-icon>
+        </v-btn>
+
         <span
           class="cursor-pointer px-4 text-title d-inline-flex align-center justify-center"
           :class="
