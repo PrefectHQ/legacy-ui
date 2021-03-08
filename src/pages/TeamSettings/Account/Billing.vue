@@ -76,7 +76,6 @@ export default {
         Payment
       </div>
       <v-spacer />
-      {{ tenant.role }}
       <v-btn
         v-if="!editCardDetails && isSelfServe && isTenantAdmin"
         data-cy="add-payment-card"
