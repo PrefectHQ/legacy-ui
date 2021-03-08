@@ -29,7 +29,6 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['user']),
     messageConfigLabel() {
-      console.log(this.messageType)
       return this.messageType?.type === 'EMAIL' ||
         this.messageType.type === 'WEBHOOK'
         ? 'Email address(es)'
@@ -74,10 +73,19 @@ export default {
       this.$emit('close-action')
     },
     saveConfig() {
-      this.messageConfig =
-        this.messageType.type === 'SLACK_WEBHOOK'
-          ? { webhook_url: this.messageConfigTo }
-          : {}
+      if (this.messageConfigTo) {
+        this.messageConfig =
+          this.messageType.type === 'SLACK_WEBHOOK'
+            ? { webhook_url: this.messageConfigTo }
+            : { to: this.messageConfigTo }
+      }
+      this.openMessageConfig ? (this.openMessageConfig = false) : null
+    },
+    saveMessage() {
+      if (this.openMessageText) {
+        this.openMessageText = false
+        this.openMessageConfig = true
+      }
     },
     actionTypes() {
       let allHooks
@@ -165,7 +173,11 @@ export default {
         {{ type.title }}
       </v-chip>
     </v-card-text>
-    <v-card-text v-if="openMessageText" class="pt-0">
+    <v-card-text
+      v-else-if="openMessageText"
+      v-click-outside="saveMessage"
+      class="pt-0"
+    >
       <span class="primary--text"
         >Type your message here or leave blank to send a default message.</span
       ><v-menu
@@ -224,22 +236,21 @@ export default {
       <v-text-field
         v-model="messageText"
         class="pt-0"
-        @keydown.enter="openMessageText = false"
+        @keydown.enter="saveMessage"
       />
     </v-card-text>
-    <v-card-text v-else-if="openMessageConfig" v-click-outside="saveConfig()">
+    <v-card-text v-else-if="openMessageConfig" v-click-outside="saveConfig">
       <v-text-field
         v-model="messageConfigTo"
         :label="messageConfigLabel"
         :rules="messageConfigRules"
-        @keyup.enter="saveConfig()"
+        @keyup.enter="saveConfig"
       ></v-text-field>
     </v-card-text>
-    <div class="mx-4">
+    <v-card-text v-else-if="completeConfig" class="mx-4">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-text-field
-            v-if="completeConfig"
             v-model="saveAs"
             :disabled="!messageType"
             label="Save As"
@@ -249,7 +260,7 @@ export default {
         </template>
         Give your config a name so you can find and re-use it with more hooks.
       </v-tooltip>
-    </div>
+    </v-card-text>
     <div class="text-right pb-4 pr-4">
       <v-btn color="primary">
         Save Config
