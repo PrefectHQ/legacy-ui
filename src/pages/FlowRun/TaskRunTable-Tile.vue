@@ -288,8 +288,8 @@ export default {
         </template>
 
         <template #item.state="{ item }">
-          <truncate :content="item.details.state">
-            <v-icon class="mr-1 pointer" small :color="item.details.state">
+          <truncate :content="item.state">
+            <v-icon class="mr-1 pointer" small :color="item.state">
               brightness_1
             </v-icon>
           </truncate>

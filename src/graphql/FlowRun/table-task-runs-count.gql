@@ -7,12 +7,7 @@ query TableTaskRunsCount(
   task_run_aggregate(
     where: {
       flow_run_id: { _eq: $flowRunId }
-      _or: [
-        {
-          task: { name: { _ilike: $name } }
-          details: { state: { _in: $state } }
-        }
-      ]
+      _or: [{ task: { name: { _ilike: $name } }, state: { _in: $state } }]
       updated: { _gte: $heartbeat }
     }
   ) {
