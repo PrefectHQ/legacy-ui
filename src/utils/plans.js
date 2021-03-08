@@ -1,6 +1,6 @@
 export const PLANS_2021 = {
   free: {
-    name: 'Developer',
+    name: 'Free',
     price: 'Free',
     taskRuns: 10000,
     additionalCost: 0,

@@ -174,7 +174,7 @@ export default {
               {{ userNum ? userNum : 'Unlimited' }} {{ userOrUsers }}
             </div>
             <div v-if="userNum" class="text-body-1">
-              You can invite up to {{ userNum }} full {{ userOrUsers }}.
+              You can invite up to {{ userNum }} full {{ userOrUsers }}
             </div>
             <div v-else class="text-body-1">
               You have unlimited full users!
@@ -196,7 +196,7 @@ export default {
             </div>
             <div class="text-body-1">
               You can have {{ flowConcurrency }} {{ flowOrFlows }} running at a
-              time.
+              time
             </div>
           </div>
         </div>
@@ -214,7 +214,7 @@ export default {
               10,000 runs
             </div>
             <div class="text-body-1">
-              Run 10,000 successful task runs per month.
+              Run 10,000 successful task runs per month
               <span v-if="planType === 'STARTER_2021'"
                 >Runs past that cost ${{ runCost }} per run
               </span>
@@ -235,7 +235,7 @@ export default {
               ${{ runCost }} per successful run
             </div>
             <div class="text-body-1">
-              Failure doesn't cost anything.
+              Failure doesn't cost anything
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@ export default {
             </div>
             <div v-if="historyRetention" class="text-body-1">
               Flow and task run history sticks around for
-              {{ historyRetention }} days.
+              {{ historyRetention }} days
             </div>
             <div v-else class="text-body-1">
               You can view run history forever!
