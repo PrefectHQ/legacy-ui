@@ -621,7 +621,7 @@ export default {
                   : 'var(--v-prefect-base)'
               )
               .attr('x', xPosition)
-              .attr('y', this.height)
+              .attr('y', yOffset)
 
             g.append('text')
               .attr('x', xPosition)
@@ -638,7 +638,7 @@ export default {
                 .select('rect')
                 .transition('enter')
                 .duration(1000)
-                // .delay(500)
+                .delay(250)
                 .ease(d3.easeQuad)
                 .attr('height', height)
                 .attr('y', yPosition)
@@ -647,7 +647,7 @@ export default {
                 .select('text')
                 .transition('enter')
                 .duration(1000)
-                // .delay(500)
+                .delay(250)
                 .ease(d3.easeQuad)
                 .attr('y', d =>
                   d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
@@ -697,7 +697,7 @@ export default {
                 .duration(250)
                 .ease(d3.easeQuad)
                 .attr('height', 0)
-                .attr('y', this.height)
+                .attr('y', yOffset)
 
               exit
                 .select('text')
@@ -712,7 +712,7 @@ export default {
                   .on('mouseout', null)
                   .on('mouseover', null)
                   .transition('exit')
-                  .delay(250)
+                  // .delay(250)
                   .remove()
               )
             })
