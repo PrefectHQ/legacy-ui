@@ -157,6 +157,40 @@ export default {
         { leading: true, trailing: true }
       )
     },
+    fromDisplay() {
+      let format
+      switch (this.period) {
+        case 'Year':
+          format = '%b %Y'
+          break
+        case 'Month':
+          format = '%e %b %Y'
+          break
+        case 'Week':
+          format = '%e %b'
+          break
+        default:
+          break
+      }
+      return d3.timeFormat(format)(this.from)
+    },
+    toDisplay() {
+      let format
+      switch (this.period) {
+        case 'Year':
+          format = '%b %Y'
+          break
+        case 'Month':
+          format = '%e %b %Y'
+          break
+        case 'Week':
+          format = '%e %b'
+          break
+        default:
+          break
+      }
+      return d3.timeFormat(format)(this.to)
+    },
     from() {
       const from = new Date()
 
@@ -908,27 +942,45 @@ export default {
         Usage
       </div>
 
-      <div>
+      <div
+        v-if="$vuetify.breakpoint.smAndUp"
+        class="font-weight-light d-flex align-center justify-center"
+        :class="{ 'text-caption': $vuetify.breakpoint.smOnly }"
+      >
         <v-btn
           :disabled="decrementOffsetDisabled"
-          class="mr-2"
           icon
           depressed
+          small
           @click="decrementOffset"
         >
-          <v-icon>arrow_left</v-icon>
+          <v-icon>chevron_left</v-icon>
+        </v-btn>
+
+        <span class="mx-2"> {{ fromDisplay }} - {{ toDisplay }} </span>
+
+        <v-btn
+          :disabled="offset === 0"
+          icon
+          depressed
+          small
+          @click="incrementOffset"
+        >
+          <v-icon>chevron_right</v-icon>
         </v-btn>
 
         <v-btn
           :disabled="offset === 0"
           icon
           depressed
-          class="mr-4"
-          @click="incrementOffset"
+          small
+          @click="offset = 0"
         >
-          <v-icon>arrow_right</v-icon>
+          <v-icon>last_page</v-icon>
         </v-btn>
+      </div>
 
+      <div>
         <span
           class="cursor-pointer px-4 text-title d-inline-flex align-center justify-center"
           :class="
