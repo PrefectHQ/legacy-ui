@@ -162,7 +162,7 @@ export default {
         x-small
         class="text-normal mr-2"
         depressed
-        color="blue-grey lighten-5"
+        color="utilGrayLight"
         title="Reset"
         @click="reset"
       >

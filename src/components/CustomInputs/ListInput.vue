@@ -75,7 +75,7 @@ export default {
         x-small
         class="text-normal"
         depressed
-        color="blue-grey lighten-4"
+        color="utilGrayLight"
         title="Reset"
         :disabled="resetDisabled"
         @click="reset"
