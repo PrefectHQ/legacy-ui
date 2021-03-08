@@ -177,7 +177,7 @@ export default {
               <v-skeleton-loader
                 :loading="loadedTiles < 6"
                 type="image"
-                height="176"
+                height="168"
                 class="usage"
                 transition="quick-fade"
                 tile

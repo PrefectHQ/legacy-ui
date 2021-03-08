@@ -113,7 +113,10 @@ const actions = {
         let tenant = getters['tenants']?.find(
           t => t.id === getters['tenant'].id
         )
-        console.log(tenant)
+
+        tenant.role = rootGetters['user/memberships'].find(
+          membership => membership.tenant.id == tenant.id
+        )?.role_detail?.name
         commit('setTenant', tenant)
       }
     } catch {

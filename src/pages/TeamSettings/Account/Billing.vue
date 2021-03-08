@@ -52,10 +52,9 @@ export default {
     ...mapActions('tenant', ['getTenants']),
     async confirmCard() {
       this.loading = true
-      this.editCardDetails = false
       await this.getTenants()
-      console.log(this.tenant)
       this.loading = false
+      this.editCardDetails = false
     }
   }
 }
@@ -77,7 +76,7 @@ export default {
         Payment
       </div>
       <v-spacer />
-
+      {{ tenant.role }}
       <v-btn
         v-if="!editCardDetails && isSelfServe && isTenantAdmin"
         data-cy="add-payment-card"
