@@ -1,4 +1,5 @@
 <script>
+import LogRocket from 'logrocket'
 import { mapGetters, mapActions } from 'vuex'
 import CardDetails from '@/components/Plans/CardDetails'
 import ExternalLink from '@/components/ExternalLink'
@@ -81,11 +82,18 @@ export default {
             }
           }
         })
-        if (data.create_usage_license.id) {
-          this.getLicense()
+        if (data.create_self_serve_usage_license.id) {
+          await this.getLicense()
+          await this.getTenants()
         }
       } catch (e) {
         this.error = true
+        LogRocket.captureException(e, {
+          extra: {
+            pageName: 'Plan selection',
+            stage: 'Create usage based license'
+          }
+        })
       } finally {
         this.loading = false
       }
