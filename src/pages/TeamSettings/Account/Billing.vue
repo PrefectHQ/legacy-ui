@@ -31,7 +31,7 @@ export default {
       return this.payment?.type == 'card'
     },
     updateOrAdd() {
-      if (this.card) return 'Update'
+      if (this.payment) return 'Update'
       return 'Add'
     },
     isSelfServe() {
