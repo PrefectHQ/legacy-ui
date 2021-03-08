@@ -377,9 +377,8 @@ export default {
           <v-col cols="12" sm="4" class="d-flex align-center justify-start">
             <v-divider class="d-inline-block" vertical />
             <div class="ml-8">
-              <div class="text-h4 accentGreen--text">Starting at $2,000</div>
-              <div class="text-subtitle-1 font-weight-light">
-                per month
+              <div class="text-h4 accentGreen--text">
+                Support built for you
               </div>
               <a
                 class="support-link text-h6 font-weight-regular mt-4"
