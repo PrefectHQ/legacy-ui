@@ -59,8 +59,6 @@ export default {
   },
   mounted() {
     this.refresh()
-
-    console.log(this.tenant, this.license)
   },
   methods: {
     ...mapActions('license', ['getLicense']),
