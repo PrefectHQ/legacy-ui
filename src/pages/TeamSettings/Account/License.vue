@@ -24,7 +24,6 @@ export default {
       return !this.license?.terms?.is_usage_based
     },
     plan() {
-      console.log(this.license)
       return this.plans.find(planType => planType.value === this.planType)
     },
     planName() {

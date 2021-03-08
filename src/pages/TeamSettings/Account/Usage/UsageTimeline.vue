@@ -30,6 +30,7 @@ export default {
       interactionGroup: null,
       mainGroup: null,
       chart: null,
+      offset: 0,
       xAxisGroup: null,
       yAxisGroup: null,
       height: null,
@@ -37,7 +38,7 @@ export default {
 
       padding: {
         bottom: xAxisHeight,
-        left: 90,
+        left: 80,
         right: 20,
         top: 10,
         x: 100,
@@ -167,7 +168,7 @@ export default {
         from.setMinutes(1)
       } else if (this.period == 'Week') {
         const day = from.getDay()
-        const diff = from.getDate() - ((day + 6) % 7)
+        const diff = from.getDate() - ((day + 6) % 7) - this.offset
         from.setMinutes(0)
         from.setDate(diff)
       }
@@ -186,7 +187,7 @@ export default {
         to.setDate(0)
         to.setMinutes(59)
       } else if (this.period == 'Week') {
-        const diff = to.getDate() + (6 - to.getDay())
+        const diff = to.getDate() + (6 - to.getDay()) + this.offset
         to.setDate(diff)
         to.setMinutes(60)
       }
@@ -196,7 +197,7 @@ export default {
   },
   watch: {
     items() {
-      if (!this.chart) this.createChart()
+      // if (!this.chart) this.createChart()
       this.updateChart()
     },
     usage(val) {
@@ -257,7 +258,7 @@ export default {
     createX() {
       const x = d3.scaleTime()
       x.domain([this.from, this.to])
-      x.range([this.padding.left, this.width - this.padding.right])
+      x.range([this.padding.left * 2, this.width - this.padding.right * 2])
 
       return x
     },
@@ -373,12 +374,13 @@ export default {
       }
     },
     rawUpdateChart() {
+      if (!this.chart) return
       const yOffset = this.height - this.padding.y
 
       const maxBandwidth = Math.floor(
         ((this.width - this.padding.x) / this.ticks) * 0.8
       )
-      const bandwidth = maxBandwidth < 100 ? maxBandwidth : 100
+      const bandwidth = maxBandwidth < 75 ? maxBandwidth : 75
       const bandwidthNoPadding = (this.width - this.padding.x) / this.ticks
 
       const xAxis = d3
@@ -415,13 +417,13 @@ export default {
       this.yAxisGroup
         .transition()
         .duration(1000)
+        .ease(d3.easeQuad)
         .style(
           'transform',
           `translate(${this.width - this.padding.left}px, ${
             this.padding.top
           }px)`
         )
-        .ease(d3.easeQuad)
         .call(yAxis)
 
       this.interactionGroup
@@ -599,7 +601,9 @@ export default {
               .attr('height', 0)
               .attr('width', bandwidth)
               .attr('fill', (d, i) =>
-                i > 0 ? 'var(--v-prefect-base)' : 'url(#grad)'
+                i === 0 && this.ticks < this.items.length
+                  ? 'url(#grad)'
+                  : 'var(--v-prefect-base)'
               )
               .attr('x', xPosition)
               .attr('y', this.height)
@@ -918,11 +922,10 @@ export default {
           </v-icon>
           Year
         </span>
-        <!-- </div> -->
       </div>
     </div>
 
-    <v-card-text ref="parent" class="chart-container pt-16">
+    <v-card-text ref="parent" class="chart-container pt-16 pr-8">
       <svg :id="`${id}-svg`" class="svg">
         <defs>
           <linearGradient id="grad" x1="0%" y1="50%" x2="100%" y2="50%">
