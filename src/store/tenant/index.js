@@ -107,6 +107,15 @@ const actions = {
     try {
       const tenants = await prefectTenants(rootGetters['api/isCloud'])
       commit('setTenants', tenants)
+
+      // Make sure the current tenant object is updated
+      if (state['tenantIsSet']) {
+        let tenant = getters['tenants']?.find(
+          t => t.id === getters['tenant'].id
+        )
+        console.log(tenant)
+        commit('setTenant', tenant)
+      }
     } catch {
       // Do nothing since the GraphQL error should be logged by Apollo afterware
     }

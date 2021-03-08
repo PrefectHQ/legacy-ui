@@ -1,6 +1,6 @@
 <script>
 import CardDetails from '@/components/Plans/CardDetails'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: { CardDetails },
@@ -18,7 +18,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license']),
     isBank() {
@@ -48,14 +48,26 @@ export default {
       )
     }
   },
-  methods: {}
+  methods: {
+    ...mapActions('tenant', ['getTenants']),
+    async confirmCard() {
+      this.loading = true
+      this.editCardDetails = false
+      await this.getTenants()
+      this.loading = false
+    }
+  }
 }
 </script>
 
 <template>
   <v-card
     data-cy="billing-card"
-    :class="{ 'warning-border': !payment }"
+    :class="{
+      'warning-border': !payment,
+      'success-border': payment,
+      'prefect-border': editCardDetails
+    }"
     tile
     :loading="loading"
   >
@@ -86,13 +98,13 @@ export default {
           </a>
         </div>
 
-        <div v-else-if="!payment" class="text-subtitle-1">
+        <div v-else-if="!payment && !editCardDetails" class="text-subtitle-1">
           You haven't added a payment method
         </div>
 
         <div v-else-if="editCardDetails" key="card-details">
           <div style="height: 500px;">
-            <CardDetails @confirm="editCardDetails = false" />
+            <CardDetails @confirm="confirmCard" />
           </div>
 
           <v-btn
@@ -231,5 +243,16 @@ export default {
 <style lang="scss" scoped>
 .warning-border {
   border-left: 6px solid var(--v-warning-base);
+  transition: border-left 100ms;
+}
+
+.success-border {
+  border-left: 6px solid var(--v-Success-base);
+  transition: border-left 100ms;
+}
+
+.prefect-border {
+  border-left: 6px solid var(--v-prefect-base);
+  transition: border-left 100ms;
 }
 </style>
