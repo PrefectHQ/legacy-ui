@@ -1,5 +1,4 @@
 <script>
-import ChangePlanDialog from '@/components/License/ChangePlanDialog'
 import EnterprisePlan from '@/components/Plans/Enterprise'
 import PlanSelectionForm from '@/components/Plans/PlanSelectionForm'
 import MenuTooltip from '@/components/MenuTooltip'
@@ -16,8 +15,6 @@ import {
 } from '@/utils/plans'
 
 import { mapGetters } from 'vuex'
-
-ChangePlanDialog
 
 export default {
   components: {
