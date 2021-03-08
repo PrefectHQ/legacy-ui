@@ -359,7 +359,7 @@ export default {
             class="mt-auto white--text w-100"
             :to="{ name: 'dashboard', params: { tenant: tenant.slug } }"
           >
-            Take me to the dashboard
+            Go to the dashboard
           </v-btn>
         </div>
 

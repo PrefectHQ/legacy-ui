@@ -88,9 +88,6 @@ export default {
     },
     handlePlanDeselection() {
       this.plan = null
-    },
-    test() {
-      this.complete = !this.complete
     }
   }
 }
@@ -118,7 +115,7 @@ export default {
           </div>
 
           <div class="text-h3 font-weight-light text-center">
-            <div class="blue-grey--text text--darken-4" @click="test">
+            <div class="blue-grey--text text--darken-4">
               Pay for what you use.
             </div>
             <div class="mt-4 white--text">
