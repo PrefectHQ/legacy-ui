@@ -93,7 +93,7 @@ export default {
       <div
         v-ripple
         class="mx-auto my-4 py-2 px-6 text-center rounded-lg d-inline-block cursor-pointer"
-        style="border: 2px solid secondaryGrayLight;"
+        style="border: 2px solid var(--v-utilGrayMid-base);"
         @click="$router.push({ name: 'profile' })"
       >
         <div>
@@ -110,9 +110,9 @@ export default {
       <v-divider class="grey lighten-3 mx-auto my-2" style="width: 50%;" />
 
       <div class="my-4 text-h4 text-center primary--text">
-        {{ datePartHour(time) }}<span class="black--text">:</span
+        {{ datePartHour(time) }}<span class="utilGrayDark--text">:</span
         >{{ datePartMinute(time) }}
-        <span class="text-overline black--text">
+        <span class="text-overline utilGrayDark--text">
           {{ datePartMeridian(time) }}
         </span>
 
@@ -139,7 +139,7 @@ export default {
         /> -->
 
         <v-btn
-          class="text-capitalize py-6"
+          class="appBackground text-capitalize py-6"
           depressed
           block
           @click="wipeClientAndLogout"
