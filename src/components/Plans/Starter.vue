@@ -81,32 +81,6 @@ export default {
             <span class="ml-2">1 week of run history</span>
           </div>
         </div>
-
-        <div
-          class="my-12 my-md-8 my-lg-12 text-left plan-body d-flex align-start justify-center flex-column"
-        >
-          <div class="d-flex align-center justify-center">
-            <span
-              class="rounded-circle plans-feature-icon plans-feature-icon-light"
-            >
-              <v-icon small>
-                fad fa-users
-              </v-icon>
-            </span>
-            <span class="ml-2">Up to 3 users</span>
-          </div>
-
-          <div class="mt-3 d-flex align-center justify-center">
-            <span
-              class="rounded-circle plans-feature-icon plans-feature-icon-light"
-            >
-              <v-icon small>
-                fad fa-history
-              </v-icon>
-            </span>
-            <span class="ml-2">1 week of run history</span>
-          </div>
-        </div>
       </div>
 
       <div v-if="hideDetails" class="py-7 my-12 mt-md-8 mt-lg-12 o-0">
