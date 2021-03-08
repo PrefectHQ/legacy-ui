@@ -79,15 +79,15 @@ export default {
 
     <v-card-text style="min-height: 100px;">
       <transition name="fade-expand" mode="out-in">
-        <div v-if="!isSelfServe && !loading">
+        <div v-if="!isSelfServe && !loading" class="text-subtitle-1">
           To update your payment details, please
           <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
             contact our sales team
           </a>
         </div>
 
-        <div v-else-if="!payment">
-          You haven't added any payment details
+        <div v-else-if="!payment" class="text-subtitle-1">
+          You haven't added a payment method
         </div>
 
         <div v-else-if="editCardDetails" key="card-details">
@@ -213,6 +213,13 @@ export default {
               </v-icon>
             </div>
           </div>
+        </div>
+
+        <div v-else class="text-subtitle-1">
+          Sorry, we're having trouble displaying your payment method. For
+          questions, please contact us via email at
+          <span class="primary--text">support@prefect.io</span> or on our
+          <router-link :to="{ name: 'help' }">support page</router-link>
         </div>
       </transition>
     </v-card-text>
