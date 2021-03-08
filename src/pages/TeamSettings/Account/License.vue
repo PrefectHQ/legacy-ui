@@ -204,8 +204,11 @@ export default {
             >
               10,000 runs / month
             </div>
-            <div class="text-body-1">
+            <div v-if="planType !== 'FREE_2021'" class="text-body-1">
               Your first 10,000 successful runs per month are on us!
+            </div>
+            <div v-else class="text-body-1">
+              10,000 successful runs each month!
             </div>
           </div>
         </div>
