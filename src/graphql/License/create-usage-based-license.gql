@@ -1,0 +1,7 @@
+mutation CreateUsageBasedLicense(
+  $input: create_usage_license_input!
+) {
+  create_usage_license(input: $input) {
+    id
+  }
+}

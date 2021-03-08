@@ -1,12 +1,18 @@
 <script>
-import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import { paymentMixin } from '@/mixins/paymentMixin.js'
-import PaymentCard from '@/components/PaymentCard'
+import CardDetails from '@/components/Plans/CardDetails'
 import { mapGetters } from 'vuex'
 
 export default {
-  components: { PaymentCard },
-  mixins: [teamProfileMixin, paymentMixin],
+  components: { CardDetails },
+  mixins: [paymentMixin],
+  props: {
+    page: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  },
   data() {
     return {
       editCardDetails: false,
@@ -17,46 +23,18 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license']),
-    exisitingCard() {
-      if (!this.tenant?.stripe_customer?.sources?.data[0]?.card.last4) return ''
-      return this.tenant?.stripe_customer?.sources?.data[0]?.card.last4
-    },
-    cardType() {
-      return this.tenant?.stripe_customer?.sources?.data[0]?.card?.brand
-    },
-    exisitingCardExpiry() {
-      if (!this.tenant?.stripe_customer?.sources?.data[0]?.card?.exp_month)
-        return ''
-      return `${this.tenant?.stripe_customer?.sources?.data[0].card.exp_month}/${this.tenant?.stripe_customer?.sources?.data[0].card.exp_year}`
-    },
-    zip() {
-      return this.tenant?.stripe_customer?.sources?.data[0]?.owner?.address
-        ?.postal_code
-    },
-    paymentDetails() {
+    card() {
       return this.tenant?.stripe_customer?.sources?.data[0]
     },
     updateOrAdd() {
-      if (this.paymentDetails) return 'Update'
+      if (this.card) return 'Update'
       return 'Add'
     },
     isSelfServe() {
-      return this.license?.terms?.plan == 'SELF_SERVE'
+      return this.license?.terms?.is_self_serve
     },
-    planType() {
-      if (this.license?.terms?.plan == 'SELF_SERVE') return 'Cloud Developer'
-      if (this.license?.terms?.plan == 'PLATFORM') return 'Cloud Enterprise'
-      return 'Custom'
-    }
-  },
-  watch: {
-    license(val) {
-      this.loading = true
-      if (!val) {
-        setTimeout(() => {
-          this.loading = false
-        }, 1000)
-      }
+    isTenantAdmin() {
+      return this.tenant.role === 'TENANT_ADMIN'
     }
   },
   methods: {}
@@ -64,121 +42,115 @@ export default {
 </script>
 
 <template>
-  <v-card
-    data-cy="billing-card"
-    tile
-    max-width="720"
-    class="mx-auto my-4"
-    :loading="loading"
-  >
-    <v-card-title> Billing </v-card-title>
-    <v-card-subtitle> See and edit your billing information.</v-card-subtitle>
-    <v-card-text>
-      <v-alert
-        v-if="!isSelfServe && !loading"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="info"
-        tile
-        icon="lock"
-        max-width="540"
-      >
-        You are on a {{ planType }} license. To update your payment details,
-        please
-        <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
-          contact our sales team
-        </a>
-      </v-alert>
-      <v-alert
-        v-else-if="!paymentDetails"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="540"
-      >
-        We could not find any payment details associated with this account.
-      </v-alert>
-      <v-alert
-        v-else-if="!isTenantAdmin"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="540"
-      >
-        Only your team's administrators can modify billing settings.
-      </v-alert>
+  <v-card data-cy="billing-card" tile :loading="loading">
+    <v-card-title class="mb-2 text-h4 font-weight-light">
+      <div>
+        Payment
+      </div>
 
-      <v-row v-if="paymentDetails && isSelfServe">
-        <v-col cols="12" md="6" class="px-8">
-          <div class="text-h6 mb-4 grey--text text--darken-3">
-            Address
-          </div>
+      <v-spacer />
 
-          <div class="d-flex justify-start align-start">
-            <div class="mr-2">
-              <v-icon color="primary">fas fa-home</v-icon>
-            </div>
-            <div>
-              <div class="my-1 text-body-1 font-weight-medium">
-                {{ username }}
-              </div>
-              <div class="my-1 text-body-1">{{ address }}</div>
-              <div class="my-1 text-body-1">{{ zip }}</div>
-            </div>
-          </div>
-        </v-col>
-
-        <v-col cols="12" md="6" class="px-8">
-          <div class="text-h6 mb-4 grey--text text--darken-3">
-            Payment Method
-          </div>
-
-          <div class="d-flex justify-start align-start">
-            <div class="mr-2">
-              <v-icon color="primary">
-                {{ `fa fa-cc-${cardType.toLowerCase()}` }}
-              </v-icon>
-            </div>
-            <div>
-              <div class="my-1 text-body-1 font-weight-medium">
-                {{ cardType }} -
-                {{ exisitingCard }}
-              </div>
-              <div class="my-1 text-body-1">
-                Exp. {{ exisitingCardExpiry }}
-              </div>
-            </div>
-          </div>
-        </v-col>
-      </v-row>
-      <PaymentCard
-        v-if="editCardDetails"
-        :update-card="true"
-        :update-users="false"
-        @close="editCardDetails = false"
-      />
-    </v-card-text>
-
-    <v-card-actions v-if="isTenantAdmin">
-      <v-spacer></v-spacer>
       <v-btn
-        v-if="!editCardDetails && isSelfServe"
+        v-if="!editCardDetails && isSelfServe && isTenantAdmin"
         data-cy="add-payment-card"
         color="primary"
+        depressed
+        small
         @click="editCardDetails = true"
       >
-        {{ updateOrAdd }} Payment
+        {{ updateOrAdd }} payment
       </v-btn>
-    </v-card-actions>
+    </v-card-title>
+    <v-card-text style="min-height: 100px;">
+      <transition name="fade-expand" mode="out-in">
+        <v-alert
+          v-if="!isSelfServe && !loading"
+          key="alert-2"
+          class="mx-auto mb-12"
+          border="left"
+          colored-border
+          elevation="2"
+          type="info"
+          tile
+          icon="lock"
+          max-width="540"
+        >
+          To update your payment details, please
+          <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
+            contact our sales team
+          </a>
+        </v-alert>
+        <v-alert
+          v-else-if="!card"
+          key="alert-3"
+          class="mx-auto mb-12"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="540"
+        >
+          We could not find any payment details associated with this account.
+        </v-alert>
+
+        <div v-else-if="editCardDetails" key="card-details">
+          <div style="height: 500px;">
+            <CardDetails @confirm="editCardDetails = false" />
+          </div>
+
+          <v-btn
+            v-if="editCardDetails"
+            class="text-none mt-4"
+            depressed
+            block
+            text
+            @click="editCardDetails = false"
+          >
+            Cancel
+          </v-btn>
+        </div>
+
+        <div v-else key="card-display">
+          <div class="mb-auto d-flex align-center justify--start">
+            <div>
+              <div
+                v-if="
+                  (card && card.owner && card.owner.name) || (card && card.name)
+                "
+                class="text-h5 font-weight-light"
+              >
+                {{ card.owner.name }}
+              </div>
+              <div v-if="card" class="mt-1">
+                <div class="text-subtitle-1">
+                  {{ card.brand || card.card.brand }}
+                </div>
+
+                <div class="mt-n2">
+                  <span class="text-h6 font-weight-regular">
+                    •••• •••• •••• {{ card.last4 || card.card.last4 }}
+                  </span>
+                  <span class="ml-1 text-subtitle-1 font-weight-light">
+                    {{ card.exp_month || card.card.exp_month }}/{{
+                      card.exp_year || card.card.exp_year
+                    }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="card.card" class="ml-auto">
+              <v-icon large>
+                fab fa-cc-{{ card.card.brand.toLowerCase() }}
+              </v-icon>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </v-card-text>
+
+    <!-- <v-card-actions v-if="isTenantAdmin" class="mt-auto px-4"> </v-card-actions> -->
   </v-card>
 </template>

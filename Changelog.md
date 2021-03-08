@@ -10,7 +10,7 @@
 
 ### Bugfixes
 
-- None
+- Cleans up agents with no last query time = [#646](https://github.com/PrefectHQ/ui/pull/646)
 
 ## 2021-03-02
 

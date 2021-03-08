@@ -85,6 +85,9 @@ export default {
     showPayment() {
       if (!this.existingCard || this.updateCard) return true
       return false
+    },
+    needUpdate() {
+      return this.license?.terms?.plan === 'FREE_2021'
     }
   },
   mounted() {
@@ -144,6 +147,17 @@ export default {
             errorPolicy: 'all'
           })
           if (customer.data.update_stripe_customer.id) {
+            if (this.needUpdate) {
+              await this.$apollo.mutate({
+                mutation: require('@/graphql/License/create-usage-based-license.gql'),
+                variables: {
+                  input: {
+                    tenant_id: this.tenant.id,
+                    plan_name: 'STARTER_2021'
+                  }
+                }
+              })
+            }
             this.setAlert({
               alertShow: true,
               alertMessage: 'Payment details updated.',
