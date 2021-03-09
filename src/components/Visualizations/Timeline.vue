@@ -1497,7 +1497,7 @@ export default {
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
       1px 2px 2px 0 rgba(0, 0, 0, 0.14), 3px 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
     position: absolute;
-    right: -68px;
+    right: -50px;
     top: 50%;
     transform: translate(0, -60%);
     transition: all 250ms;
