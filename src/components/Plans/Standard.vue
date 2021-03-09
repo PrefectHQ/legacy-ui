@@ -1,7 +1,11 @@
 <script>
 import { mapGetters } from 'vuex'
+import MenuTooltip from '@/components/MenuTooltip'
 
 export default {
+  components: {
+    MenuTooltip
+  },
   props: {
     disabled: {
       type: Boolean,
@@ -12,6 +16,18 @@ export default {
       type: Boolean,
       required: false,
       default: () => false
+    }
+  },
+  data() {
+    return {
+      volumeDiscounts: [
+        { runs: '10,000', price: 'free' },
+        { runs: '100,000', price: '$0.0050' },
+        { runs: '1,000,000', price: '$0.0025' },
+        { runs: '10,000,000', price: '$0.00125' },
+        { runs: '100,000,000', price: '$0.000625' },
+        { runs: '...and up', price: '', final: true }
+      ]
     }
   },
   computed: {
@@ -42,57 +58,79 @@ export default {
       class="text-h6 text-md-subtitle-1 text-lg-h6 font-weight-regular text-center"
     >
       <div class="px-4">
-        <!-- <div class="mt-8 blue-grey--text text--darken-2">
-          A complete workflow automation platform
-        </div> -->
+        <MenuTooltip hide-close>
+          <template #activator>
+            <div
+              class="mt-12 ml-10 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
+            >
+              <span class="mr-2 font-weight-light d-inline-block plan-cent">
+                $ </span
+              >0.0050
 
-        <div
-          class="mt-12 ml-10 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
-        >
-          <span class="mr-2 font-weight-light d-inline-block plan-cent">
-            $ </span
-          >0.0050
-
-          <span class="mx-1 font-weight-light text-h5 align-self-end mr-n1"
-            >/
-          </span>
-          <div
-            class="ml-2 font-weight-light text-body-2 align-self-end text-left"
-          >
-            <div>successful</div>
-            <div style="margin-top: -6px;">
-              <span>
-                task run
+              <span class="mx-1 font-weight-light text-h5 align-self-end mr-n1"
+                >/
               </span>
+              <div
+                class="ml-2 font-weight-light text-body-2 align-self-end text-left"
+              >
+                <div>successful</div>
+                <div style="margin-top: -6px;">
+                  <span>
+                    task run
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="font-weight-regular">
+              +
+
+              <a class="accentPink--text volume-link"
+                >automatic volume discounts</a
+              >
+            </div></template
+          >
+          <div>
+            <div class="text-h6 font-weight-regular">
+              Only pay for successful runs.
+            </div>
+            <div class="mt-4 text-subtitle-1 font-weight-light">
+              There's no charge for retries, failures, or tasks that run in less
+              than a second.
+            </div>
+            <div class="mt-4 text-subtitle-1 font-weight-light">
+              As usage increases, the price per run automatically drops:
+            </div>
+            <div class="mt-4 text-subtitle-1 font-weight-light">
+              <v-simple-table dense>
+                <thead>
+                  <tr>
+                    <th class="text-left font-weight-light text-h6">
+                      Runs
+                    </th>
+                    <th class="text-left font-weight-light text-h6">
+                      Price per run
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in volumeDiscounts" :key="item.runs">
+                    <td class="font-weight-light">
+                      <span v-if="!item.final" class="text-caption"
+                        >up to
+                      </span>
+
+                      <span class="text-subtitle-1">{{ item.runs }}</span>
+                    </td>
+                    <td class="text-subtitle-1 font-weight-light">{{
+                      item.price
+                    }}</td>
+                  </tr>
+                </tbody>
+              </v-simple-table>
             </div>
           </div>
-        </div>
-
-        <div class="font-weight-regular">
-          +
-          <a class="accentPink--text volume-link">automatic volume discounts</a>
-        </div>
-
-        <!-- <div> + </div> -->
-        <!-- <div class="mt-n2 text-subtitle-1 font-weight-light text-right">
-          + <a>automatic volume discounts</a>
-        </div> -->
-
-        <!-- 
-        <div
-          class="mt-6 text-h2 font-weight-regular blue-grey--text text--darken-3 plan-task-run-price d-flex align-center justify-center"
-        >
-          <span class="mr-2 font-weight-light d-inline-block plan-cent">
-            $ </span
-          >0.0050
-        </div>
-        <div class="mt-2 text-h6 font-weight-light">
-          per successful task run
-        </div>
-        <div class="mt-n2 blue-grey--text text--darken-3">+</div>
-        <div class="mt-n2">
-          <a>automatic volume discounts</a>
-        </div> -->
+        </MenuTooltip>
 
         <div
           class="my-12 my-md-8 my-lg-12 text-left plan-body d-flex align-start justify-center flex-column"
@@ -130,17 +168,6 @@ export default {
             </span>
           </div>
 
-          <!-- <v-divider class="my-6 feature-divider" />
-
-          <div class="d-flex align-center justify-center">
-            <span class="rounded-circle plans-feature-icon">
-              <v-icon small>
-                fad fa-analytics
-              </v-icon>
-            </span>
-            <span class="ml-2">Automatic volume discounts</span>
-          </div> -->
-
           <div class="mt-3 d-flex align-center justify-center">
             <span class="rounded-circle plans-feature-icon">
               <v-icon small>
@@ -149,17 +176,6 @@ export default {
             </span>
             <span class="ml-2">Role-based permissioning</span>
           </div>
-
-          <!-- <div class="mt-3 d-flex align-center justify-center">
-            <span class="rounded-circle plans-feature-icon">
-              <v-icon small>
-                fad fa-toolbox
-              </v-icon>
-            </span>
-            <span class="ml-2">
-              Seamlessly integrate your existing tools
-            </span>
-          </div> -->
 
           <div class="mt-3 d-flex align-center justify-center">
             <span class="rounded-circle plans-feature-icon">

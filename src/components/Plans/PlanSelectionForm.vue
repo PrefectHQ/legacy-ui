@@ -85,7 +85,6 @@ export default {
         if (data.create_self_serve_usage_license.id) {
           await this.getLicense()
           await this.getTenants()
-          console.log('updated tenants')
         }
       } catch (e) {
         this.error = true
