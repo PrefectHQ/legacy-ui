@@ -168,6 +168,9 @@ export default {
           v-model="state"
           outlined
           class="state-filter"
+          :style="[
+            $vuetify.breakpoint.mdAndUp ? { width: '280px' } : { width: '100%' }
+          ]"
           dense
           flat
           solo
