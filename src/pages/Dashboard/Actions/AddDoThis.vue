@@ -43,7 +43,7 @@ export default {
     },
     saveAs: {
       get() {
-        return `${this.messageType.title} to ${this.to}`
+        return `${this.messageType.title} ${this.messageConfigTo}`
       },
       set(x) {
         this.newSaveAs = x
@@ -78,6 +78,11 @@ export default {
           this.messageType.type === 'SLACK_WEBHOOK'
             ? { webhook_url: this.messageConfigTo }
             : { to: this.messageConfigTo }
+        if (this.messageText) {
+          this.messageConfig.message = this.bothMessages
+            ? `{} ${this.messageText}`
+            : this.messageText
+        }
       }
       this.openMessageConfig ? (this.openMessageConfig = false) : null
     },
@@ -104,6 +109,17 @@ export default {
       return allHooks.filter(
         t => (t.requiresCloud && this.isCloud) || !t.requiresCloud
       )
+    },
+    createAction() {
+      const config =
+        this.messageType.type === 'SLACK_WEBHOOK'
+          ? {
+              slack_notification: this.messageConfig
+            }
+          : {}
+      const input = { name: this.newSaveAs, config }
+      const success = this.$emit('new-action', input)
+      console.log('success?', success)
     }
   }
 }
@@ -262,7 +278,7 @@ export default {
       </v-tooltip>
     </v-card-text>
     <div class="text-right pb-4 pr-4">
-      <v-btn color="primary">
+      <v-btn color="primary" @click="createAction">
         Save Config
       </v-btn>
     </div>

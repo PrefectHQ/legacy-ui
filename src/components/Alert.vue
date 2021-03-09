@@ -135,7 +135,7 @@ export default {
     <v-icon v-if="type == 'error'" class="mr-4" color="red">warning</v-icon>
 
     <span
-      :style="{ color: light ? 'secondaryGrayDark' : 'auto' }"
+      :style="{ color: light ? 'secondaryGrayDark' : 'black' }"
       class="subtitle-1"
       v-html="message"
     >

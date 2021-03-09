@@ -220,13 +220,13 @@ export default {
       this.addAction = true
       this.openActions = false
     },
-    async createAction(config) {
+    async createAction(input) {
       try {
         // NEED TO ADD NAME FOR ACTION HERE
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create_action.gql'),
           variables: {
-            input: { config: config }
+            input: { config: input.config, name: input.name }
           }
         })
         return data?.create_action
@@ -316,7 +316,7 @@ export default {
         if (data) {
           this.setAlert({
             alertShow: true,
-            alertMessage: 'hook created',
+            alertMessage: 'Hook created',
             alertType: 'success'
           })
           this.closeCard()
@@ -616,5 +616,9 @@ export default {
       >
     </v-card-actions>
   </v-card>
-  <AddDoThis v-else @close-action="addAction = false" />
+  <AddDoThis
+    v-else
+    @close-action="addAction = false"
+    @new-action="createAction"
+  />
 </template>
