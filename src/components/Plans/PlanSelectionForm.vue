@@ -276,20 +276,14 @@ export default {
                 </span>
               </div>
 
-              <div class="mt-6 d-flex align-end justify-start">
+              <div
+                v-if="plan.taskRuns"
+                class="mt-6 d-flex align-end justify-start"
+              >
                 <span>Free runs</span>
                 <span class="flex-grow-1 dotted-line mx-2 mb-1" />
-                <span
-                  v-if="plan.price && !plan.taskRuns"
-                  class="mr-3 font-weight-regular text-right mb-n2"
-                >
-                  ${{ plan.price }}
-                </span>
-                <span
-                  v-else-if="plan.price && plan.taskRuns"
-                  class="mr-3 font-weight-regular text-right mb-n4"
-                >
-                  <span v-if="plan.taskRuns">
+                <span class="mr-3 font-weight-regular text-right mb-n2">
+                  <span>
                     {{ plan.taskRuns.toLocaleString() }}
                     <div class="text-caption mt-n2">
                       / month
@@ -304,20 +298,14 @@ export default {
                 </span>
               </div>
 
-              <div class="mt-6 d-flex align-end justify-start">
+              <div
+                v-if="plan.price"
+                class="mt-6 d-flex align-end justify-start"
+              >
                 <span>Price per additional run</span>
                 <span class="flex-grow-1 dotted-line mx-2 mb-1" />
-                <span
-                  v-if="plan.price && !plan.taskRuns"
-                  class="mr-3 font-weight-regular text-right mb-n2"
-                >
-                  ${{ plan.price }}
-                </span>
-                <span
-                  v-else-if="plan.price && plan.taskRuns"
-                  class="mr-3 font-weight-regular text-right mb-n4"
-                >
-                  <span v-if="plan.taskRuns">
+                <span class="mr-3 font-weight-regular text-right mb-n2">
+                  <span>
                     ${{ plan.price }}
                     <div class="text-caption mt-n2">
                       / successful task run
@@ -337,7 +325,7 @@ export default {
               >
                 <span>Volume discounts</span>
                 <span class="flex-grow-1 mx-2 mb-1 dotted-line" />
-                <span class="mr-3 font-weight-regular"
+                <span class="mr-3 font-weight-regular mb-n2"
                   >Automatic
                   <div class="text-caption mt-n2">
                     applied monthly
