@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import '@/styles/slash.scss'
 
 export default {
@@ -9,6 +10,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     slashClass() {
       return {
         slash: this.$vuetify.breakpoint.mdAndUp,
@@ -74,7 +76,7 @@ export default {
         <transition name="fade">
           <v-btn
             v-if="showDashboardNavigation"
-            :to="{ name: 'dashboard' }"
+            :href="`/${tenant.slug}`"
             data-cy="go-to-dashboard"
             class="dashboard-link-absolute"
             color="primary"

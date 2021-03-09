@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['user']),
+    ...mapGetters('auth', ['user']),
     ...mapGetters('api', ['isCloud']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
@@ -88,7 +88,7 @@ export default {
           variables: {
             input: {
               email: this.user.email,
-              name: `${this.user.first_name}${this.user.last_name}`.trim(),
+              name: `${this.user.name ? this.user.name : ''}`.trim(),
               source: null
             }
           }
