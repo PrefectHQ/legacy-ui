@@ -398,7 +398,7 @@ export default {
           <v-btn
             color="prefect"
             class="mt-auto white--text w-100"
-            :to="{ name: 'dashboard', params: { tenant: tenant.slug } }"
+            :href="`/${tenant.slug}`"
           >
             Go to the dashboard
           </v-btn>
