@@ -67,9 +67,8 @@ export default {
         'Skipped',
         'TimedOut',
         'Mapped',
-        'Looped',
-        'InProgress'
-      ]
+        'Looped'
+      ].sort()
     }
   },
   computed: {
@@ -156,50 +155,58 @@ export default {
 
 <template>
   <v-card class="pa-2 mt-2" tile>
-    <CardTitle title="Flow Runs" icon="pi-flow-run">
-      <v-select
-        slot="state-filter"
-        v-model="state"
-        outlined
-        class="state-filter"
-        dense
-        flat
-        solo
-        hide-details
-        :menu-props="{ bottom: true, offsetY: true }"
-        clearable
-        :items="states"
-        label="Filter by state"
-        multiple
+    <CardTitle icon="pi-task-run">
+      <div :slot="$vuetify.breakpoint.lgAndUp && 'title'">
+        Flow Runs
+      </div>
+
+      <div
+        :slot="$vuetify.breakpoint.mdAndDown ? 'title' : 'state-filter'"
+        class="d-flex"
       >
-        <template #selection="{ item, index }">
-          <v-chip
-            v-if="index === 0 || index === 1"
-            :color="item"
-            label
-            small
-            text-color="white"
-          >
-            {{ item }}
-          </v-chip>
-          <span v-if="index === 2" class="grey--text caption">
-            (+{{ state.length - 2 }})
-          </span>
-        </template>
-      </v-select>
-      <v-text-field
-        slot="action"
-        v-model="searchTerm"
-        class="search"
-        dense
-        solo
-        prepend-inner-icon="search"
-        hide-details
-        placeholder="Search for a Flow Run"
-        flat
-        style="min-width: 200px;"
-      >
-      </v-text-field>
+        <v-select
+          v-model="state"
+          outlined
+          class="state-filter"
+          dense
+          flat
+          solo
+          hide-details
+          :menu-props="{ bottom: true, offsetY: true }"
+          clearable
+          :items="states"
+          label="Filter by state"
+          multiple
+        >
+          <template #selection="{ item, index }">
+            <v-chip
+              v-if="index === 0 || index === 1"
+              :color="item"
+              label
+              small
+              text-color="white"
+            >
+              {{ item }}
+            </v-chip>
+            <span v-if="index === 2" class="grey--text caption">
+              (+{{ state.length - 2 }})
+            </span>
+          </template>
+        </v-select>
+        <v-text-field
+          slot="action"
+          v-model="searchTerm"
+          class="search"
+          dense
+          solo
+          prepend-inner-icon="search"
+          hide-details
+          placeholder="Search for a Flow Run"
+          flat
+          style="min-width: 200px;"
+        >
+        </v-text-field>
+      </div>
     </CardTitle>
 
     <v-card-text>

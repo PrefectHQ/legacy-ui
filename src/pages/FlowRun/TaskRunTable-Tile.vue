@@ -72,7 +72,7 @@ export default {
         'TimedOut',
         'Scheduled',
         'Resume'
-      ],
+      ].sort(),
       sortBy: 'start_time',
       sortDesc: true,
       taskRunDurations: {}
@@ -237,7 +237,7 @@ export default {
                 <router-link
                   class="link text-truncate"
                   :data-cy="'task-run-table-link|' + item.task.name"
-                  :to="{ name: 'task-run', params: { id: item.details.id } }"
+                  :to="{ name: 'task-run', params: { id: item.id } }"
                 >
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else v-on="on"
@@ -297,7 +297,7 @@ export default {
 
         <template #item.action="{ item }">
           <ResumeButton
-            v-if="item.details.state == 'Paused'"
+            v-if="item.state == 'Paused'"
             :task-run="{ ...item, flow_run: flowRun }"
             dialog-type="resume"
           />

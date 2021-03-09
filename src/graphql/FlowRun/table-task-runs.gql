@@ -17,11 +17,11 @@ query TableTaskRuns(
     ) {
       map_index
       state
+      id
+      version
       details {
         end_time
         start_time
-        id
-        version
       }
       task {
         id
