@@ -26,7 +26,7 @@ export default {
       id: uniqueId('usage'),
       format: null,
       ticks: null,
-      period: 'Week',
+      period: 'Year', // tooltip centering, plan updates need refresh
       hoverGroup: null,
       interactionGroup: null,
       mainGroup: null,
@@ -127,7 +127,7 @@ export default {
     tooltipStyle() {
       if (!this.hovered) return
       return {
-        left: `${this.hovered.x}px`,
+        left: `${this.hovered.x + this.hovered.bandwidth / 4}px`,
         top: `${this.hovered.y + this.padding.top + 35}px`
       }
     },
@@ -499,7 +499,8 @@ export default {
                   this.hovered = {
                     x: x,
                     y: y,
-                    runs: runs
+                    runs: runs,
+                    bandwidth: bandwidth
                   }
 
                   this.updateHovered(this.hovered)
