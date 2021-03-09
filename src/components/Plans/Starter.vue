@@ -84,7 +84,7 @@ export default {
             <div class="font-weight-regular">
               +
 
-              <a class="accentPink--text volume-link"
+              <a class="prefect--text text--lighten-1 volume-link"
                 >automatic volume discounts</a
               >
             </div></template
