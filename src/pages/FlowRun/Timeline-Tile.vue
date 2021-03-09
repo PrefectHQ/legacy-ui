@@ -162,6 +162,8 @@ export default {
 
           if ((this.isFinished || taskRunIsFinished) && !item.end_time) {
             item.end_time = taskRun.start_time
+              ? taskRun.start_time
+              : taskRun.state_timestamp
           }
 
           if ((this.isFinished || taskRunIsFinished) && !item.start_time) {
