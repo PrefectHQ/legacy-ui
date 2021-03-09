@@ -74,6 +74,10 @@ export default {
     this.name = this.tenant.stripe_customer?.name
 
     this.address = this.tenant?.stripe_customer?.sources?.data[0]?.owner?.address?.line1
+
+    this.$nextTick(() => {
+      this.$refs['form']?.validate()
+    })
   },
   destroyed() {
     // if (card) card.unmount()
@@ -147,7 +151,7 @@ export default {
 
 <template>
   <div class="card-form d-flex align-center justify-center flex-column">
-    <v-form v-model="valid" class="my-auto">
+    <v-form ref="form" v-model="valid" class="my-auto">
       <v-text-field
         v-model="name"
         data-cy="full-name"

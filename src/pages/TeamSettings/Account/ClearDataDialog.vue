@@ -256,7 +256,7 @@ export default {
         this.flows = data?.flow
         this.secrets = data?.secret_names
         this.tokens = data?.api_token
-        this.dataMapping.memberships.count = this.memberships?.length
+        this.dataMapping.memberships.count = this.memberships?.length + 1
         this.dataMapping.projects.count = this.projects?.length
         this.dataMapping.flows.count = this.flows?.length
       },

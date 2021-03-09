@@ -9,7 +9,7 @@
       class="text-h6 text-md-subtitle-1 text-lg-h6 font-weight-regular text-center"
     >
       <div class="px-4">
-        <div class="mt-8">
+        <div class="mt-4">
           Built for your business
 
           <div class="mt-2 font-weight-light">
@@ -24,7 +24,7 @@
             <div class="py-2 px-3">100+ users</div>
             <div class="py-2 px-3">Audit trail</div>
             <div class="py-2 px-3">Custom RBAC / SSO</div>
-            <div class="py-2 px-3">Volume discounts</div>
+            <div class="py-2 px-3">6+ months history</div>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
         href="https://www.prefect.io/get-prefect#contact"
         target="_blank"
       >
-        Contact sales
+        Contact Us
         <v-icon class="mb-1" color="grey lighten-2">arrow_right</v-icon>
       </a>
     </div>
