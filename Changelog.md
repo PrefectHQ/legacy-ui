@@ -4,11 +4,22 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-03-09
+
+### Features and Improvements
+
+- Add account/usage dashboards and new usage pricing - Merged directly
 - Add a state sort to the task run table - [#633](https://github.com/PrefectHQ/ui/pull/633)
 
 ### Bugfixes
 
-- Cleans up agents with no last query time = [#646](https://github.com/PrefectHQ/ui/pull/646)
+- Cleans up agents with no last query time - [#646](https://github.com/PrefectHQ/ui/pull/646)
 
 ## 2021-03-02
 
