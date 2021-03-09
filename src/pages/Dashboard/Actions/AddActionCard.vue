@@ -221,6 +221,7 @@ export default {
       this.openActions = false
     },
     async createAction(input) {
+      console.log('input', input)
       try {
         // NEED TO ADD NAME FOR ACTION HERE
         const { data } = await this.$apollo.mutate({
@@ -229,6 +230,7 @@ export default {
             input: { config: input.config, name: input.name }
           }
         })
+        console.log(data)
         return data?.create_action
       } catch (error) {
         const errString = `${error}`

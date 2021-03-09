@@ -52,7 +52,7 @@ export default {
     to() {
       return this.messageType?.type === 'EMAIL' ||
         this.messageType.type === 'WEBHOOK'
-        ? this.messageType?.config?.to || 'this email address.'
+        ? this.messageType?.config?.to || ' this email address.'
         : this.messageType?.type === 'TWILIO'
         ? this.messageType?.config?.to?.toString() || ' this address.'
         : this.messageType?.type === 'SLACK_WEBHOOK'
@@ -74,14 +74,27 @@ export default {
     },
     saveConfig() {
       if (this.messageConfigTo) {
-        this.messageConfig =
-          this.messageType.type === 'SLACK_WEBHOOK'
-            ? { webhook_url: this.messageConfigTo }
-            : { to: this.messageConfigTo }
-        if (this.messageText) {
-          this.messageConfig.message = this.bothMessages
-            ? `{} ${this.messageText}`
-            : this.messageText
+        switch (this.messageType.type) {
+          case 'SLACK_WEBHOOK':
+            {
+              this.messageConfig = { webhook_url: this.messageConfigTo }
+              if (this.messageText) {
+                this.messageConfig.message = this.bothMessages
+                  ? `{} ${this.messageText}`
+                  : this.messageText
+              }
+            }
+            break
+          case 'EMAIL':
+            {
+              this.messageConfig = { to_emails: this.messageConfigTo }
+              if (this.messageText) {
+                this.messageConfig.body = this.bothMessages
+                  ? `{} ${this.messageText}`
+                  : this.messageText
+              }
+            }
+            break
         }
       }
       this.openMessageConfig ? (this.openMessageConfig = false) : null
@@ -111,15 +124,24 @@ export default {
       )
     },
     createAction() {
-      const config =
-        this.messageType.type === 'SLACK_WEBHOOK'
-          ? {
-              slack_notification: this.messageConfig
-            }
-          : {}
-      const input = { name: this.newSaveAs, config }
-      const success = this.$emit('new-action', input)
-      console.log('success?', success)
+      let config
+      switch (this.messageType.type) {
+        case 'SLACK_WEBHOOK':
+          config = {
+            slack_notification: this.messageConfig
+          }
+          break
+        case 'EMAIL':
+          config = {
+            email_notification: this.messageConfig
+          }
+          break
+        default:
+          config = {}
+      }
+      const name = this.newSaveAs || this.saveAs
+      const input = { name: name, config }
+      this.$emit('new-action', input)
     }
   }
 }
