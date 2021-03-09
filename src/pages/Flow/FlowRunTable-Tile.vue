@@ -162,7 +162,7 @@ export default {
 
       <div
         :slot="$vuetify.breakpoint.mdAndDown ? 'title' : 'state-filter'"
-        class="d-flex"
+        :class="{ 'd-flex': $vuetify.breakpoint.mdAndUp }"
       >
         <v-select
           v-model="state"
@@ -293,8 +293,6 @@ export default {
 }
 
 .state-filter {
-  width: 275px;
-
   .v-label {
     font-size: 0.85rem;
   }
