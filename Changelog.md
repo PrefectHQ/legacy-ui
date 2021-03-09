@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- Fix indefinite task run duration when using mapped cases - [#650](https://github.com/PrefectHQ/ui/pull/650)
 - Cleans up agents with no last query time = [#646](https://github.com/PrefectHQ/ui/pull/646)
 
 ## 2021-03-02
