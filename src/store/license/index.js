@@ -51,6 +51,8 @@ const actions = {
         fetchPolicy: 'no-cache'
       })
 
+      console.log(data.auth_info.license.terms.plan)
+
       if (data?.auth_info?.license) {
         commit('setLicense', data.auth_info.license)
       }

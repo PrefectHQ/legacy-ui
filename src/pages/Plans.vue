@@ -116,7 +116,8 @@ export default {
 
           <div class="text-h3 font-weight-light text-center">
             <div class="blue-grey--text text--darken-4">
-              Pay for what you use.
+              Simple,
+              <span>success-based pricing</span>.
             </div>
             <div class="mt-4 white--text">
               Eliminate negative engineering.

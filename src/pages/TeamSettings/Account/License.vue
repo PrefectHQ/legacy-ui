@@ -202,7 +202,7 @@ export default {
             <div
               class="text-h6 font-weight-regular blue-grey--text text--darken-3"
             >
-              10,000 runs / month
+              10,000 free runs / month
             </div>
             <div v-if="planType !== 'FREE_2021'" class="text-body-1">
               Your first 10,000 successful runs per month are on us!
