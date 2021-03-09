@@ -256,7 +256,7 @@ export default {
                   <p class="mb-0">
                     You can change your system's timezone from your user
                     profile.
-                    <router-link :to="{ name: 'profile' }">
+                    <router-link :to="'/user/profile'">
                       Update timezone
                     </router-link>
                     .

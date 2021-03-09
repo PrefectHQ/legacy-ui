@@ -50,7 +50,7 @@ describe('tenant Vuex Module', () => {
         settings: {},
         prefectAdminSettings: {},
         licenses: [],
-        stripeCustomerID: ''
+        stripe_customer: null
       },
       tenantIsSet: false,
       tenants: []

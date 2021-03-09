@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['user']),
+    ...mapGetters('auth', ['user']),
     ...mapGetters('api', ['isCloud']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
@@ -88,7 +88,7 @@ export default {
           variables: {
             input: {
               email: this.user.email,
-              name: `${this.user.first_name}${this.user.last_name}`.trim(),
+              name: `${this.user.name ? this.user.name : ''}`.trim(),
               source: null
             }
           }
@@ -165,7 +165,7 @@ export default {
 
       this.loading--
       await this.createLicense()
-      if (!this.updateServerError) this.goToPlan()
+      if (!this.updateServerError) this.goToResources()
     },
     async accept(pt) {
       this.loading++
@@ -253,7 +253,7 @@ export default {
       })
 
       this.$router.push({
-        name: 'plan',
+        name: 'onboard-resources',
         params: { tenant: this.tenant.slug }
       })
     }
@@ -322,7 +322,7 @@ export default {
                     <ExternalLink
                       href="https://www.prefect.io/get-prefect/#contact"
                     >
-                      contact sales</ExternalLink
+                      contact us</ExternalLink
                     >
                     to add another team. For more information about teams in
                     Prefect, check out our

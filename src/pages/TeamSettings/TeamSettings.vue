@@ -39,7 +39,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('tenant', ['setTenant', 'unsetTenant', 'tenant']),
+    ...mapMutations('tenant', ['setTenant', 'unsetTenant']),
     _closeTeamDialog() {
       this.deleteTeamDialog = false
       this.teamName = null
