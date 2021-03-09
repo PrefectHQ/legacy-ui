@@ -29,7 +29,7 @@ export const cancelLateRunsMixin = {
     IdCheck() {
       return this.lateRuns?.map(run => {
         if (run.flow?.is_schedule_active) {
-          this.ids.push(run.flow?.id)
+          this.scheduleIds.push(run.flow?.id)
         } else {
           this.individualRuns.push(run)
         }
@@ -48,7 +48,7 @@ export const cancelLateRunsMixin = {
         this.showClearLateRunsDialog = false
         this.isClearingLateRuns = true
         if (this.scheduleIds.length > 1) {
-          const uniqueIds = [...new Set(this.ids)]
+          const uniqueIds = [...new Set(this.scheduleIds)]
           const clearMutation = uniqueIds.map(
             (id, ind) => `
             set_schedule_inactive${ind}: set_schedule_inactive(input: { flow_id: "${id}" }) {
