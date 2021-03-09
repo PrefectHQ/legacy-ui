@@ -165,7 +165,7 @@ export default {
 
       this.loading--
       await this.createLicense()
-      if (!this.updateServerError) this.goToPlan()
+      if (!this.updateServerError) this.goToResources()
     },
     async accept(pt) {
       this.loading++
@@ -253,7 +253,7 @@ export default {
       })
 
       this.$router.push({
-        name: 'plan',
+        name: 'onboard-resources',
         params: { tenant: this.tenant.slug }
       })
     }

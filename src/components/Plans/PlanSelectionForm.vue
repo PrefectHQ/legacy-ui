@@ -1,4 +1,5 @@
 <script>
+import LogRocket from 'logrocket'
 import { mapGetters, mapActions } from 'vuex'
 import CardDetails from '@/components/Plans/CardDetails'
 import ExternalLink from '@/components/ExternalLink'
@@ -81,11 +82,18 @@ export default {
             }
           }
         })
-        if (data.create_usage_license.id) {
-          this.getLicense()
+        if (data.create_self_serve_usage_license.id) {
+          await this.getLicense()
+          await this.getTenants()
         }
       } catch (e) {
         this.error = true
+        LogRocket.captureException(e, {
+          extra: {
+            pageName: 'Plan selection',
+            stage: 'Create usage based license'
+          }
+        })
       } finally {
         this.loading = false
       }
@@ -233,11 +241,11 @@ export default {
 
           <div class="text-left mt-auto w-100">
             <div
-              class="text-h5 font-weight-light d-flex align-end justify-start"
+              class="text-h4 font-weight-light d-flex align-end justify-start"
             >
               <span>Plan</span>
               <span class="flex-grow-1 dotted-line mx-2 mb-1" />
-              <span class="ml-auto white--text plan-title">
+              <span class="text-subtitle-1 ml-auto white--text plan-title">
                 {{ plan.name }}
               </span>
             </div>
@@ -255,7 +263,7 @@ export default {
                 </span>
               </div>
 
-              <div class="mt-4 d-flex align-end justify-start">
+              <div class="mt-6 d-flex align-end justify-start">
                 <span>Run history</span>
                 <span class="flex-grow-1 dotted-line mx-2 mb-1" />
                 <span class="mr-3 font-weight-regular">
@@ -268,35 +276,64 @@ export default {
                 </span>
               </div>
 
-              <div class="mt-4 d-flex align-end justify-start">
-                <span>Task runs</span>
+              <div
+                v-if="plan.taskRuns"
+                class="mt-6 d-flex align-end justify-start"
+              >
+                <span>Free runs</span>
                 <span class="flex-grow-1 dotted-line mx-2 mb-1" />
-                <span
-                  v-if="plan.price && !plan.taskRuns"
-                  class="mr-3 font-weight-regular text-right mb-n2"
-                >
-                  ${{ plan.price }}
-                  <div class="text-caption mt-n2">/ successful task run</div>
-                </span>
-                <span
-                  v-else-if="plan.price && plan.taskRuns"
-                  class="mr-3 font-weight-regular text-right mb-n4"
-                >
-                  <span v-if="plan.taskRuns">
+                <span class="mr-3 font-weight-regular text-right mb-n2">
+                  <span>
                     {{ plan.taskRuns.toLocaleString() }}
                     <div class="text-caption mt-n2">
                       / month
                     </div>
+                  </span>
+                </span>
+
+                <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-lightbulb fa-fw
+                  </v-icon>
+                </span>
+              </div>
+
+              <div
+                v-if="plan.price"
+                class="mt-6 d-flex align-end justify-start"
+              >
+                <span>Price per additional run</span>
+                <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+                <span class="mr-3 font-weight-regular text-right mb-n2">
+                  <span>
+                    ${{ plan.price }}
                     <div class="text-caption mt-n2">
-                      then ${{ plan.price }} / successful task run
+                      / successful task run
                     </div>
                   </span>
                 </span>
-                <span v-else class="mr-3 font-weight-regular">
-                  10,000
-                  <div class="text-caption mt-n2">/ month</div>
-                </span>
+
                 <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-tasks fa-fw
+                  </v-icon>
+                </span>
+              </div>
+
+              <div
+                class="mt-6 font-weight-light d-flex align-end justify-start"
+              >
+                <span>Volume discounts</span>
+                <span class="flex-grow-1 mx-2 mb-1 dotted-line" />
+                <span class="mr-3 font-weight-regular mb-n2"
+                  >Automatic
+                  <div class="text-caption mt-n2">
+                    applied monthly
+                  </div>
+                </span>
+                <span
+                  class="plans-feature-icon feature-green align-self-center"
+                >
                   <v-icon small>
                     fad fa-check fa-fw
                   </v-icon>
@@ -349,9 +386,9 @@ export default {
           <v-btn
             color="prefect"
             class="mt-auto white--text w-100"
-            :to="{ name: 'dashboard', params: { tenant: tenant.slug } }"
+            :href="`/${tenant.slug}`"
           >
-            Take me to the dashboard
+            Go to the dashboard
           </v-btn>
         </div>
 

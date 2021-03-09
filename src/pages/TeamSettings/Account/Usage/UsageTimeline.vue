@@ -10,7 +10,8 @@ const d3 = Object.assign({}, d3_base, d3_regression)
 
 const xAxisHeight = 40
 
-const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
+const startDate = new Date('2018-01-17T00:00:00+00:00')
+// const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
 
 export default {
   props: {
@@ -25,11 +26,12 @@ export default {
       id: uniqueId('usage'),
       format: null,
       ticks: null,
-      period: 'Year',
+      period: 'Year', // tooltip centering, plan updates need refresh
       hoverGroup: null,
       interactionGroup: null,
       mainGroup: null,
       chart: null,
+      offset: 0,
       xAxisGroup: null,
       yAxisGroup: null,
       height: null,
@@ -37,7 +39,7 @@ export default {
 
       padding: {
         bottom: xAxisHeight,
-        left: 90,
+        left: 80,
         right: 20,
         top: 10,
         x: 100,
@@ -101,22 +103,22 @@ export default {
         future
       ]
     },
-    regressionItems() {
-      // We do this to prevent modification of the original items array
-      const items = Array.from(this.items, d => Object.assign({}, d))
+    // regressionItems() {
+    //   // We do this to prevent modification of the original items array
+    //   const items = Array.from(this.items, d => Object.assign({}, d))
 
-      const lastIndex = items.length - 1
-      const lastItem = items[lastIndex]
-      const timestamp = new Date()
-      const interpolatedRuns = Math.ceil(
-        (lastItem.runs *
-          daysInMonth(timestamp.getFullYear(), timestamp.getMonth())) /
-          timestamp.getDate()
-      )
+    //   const lastIndex = items.length - 1
+    //   const lastItem = items[lastIndex]
+    //   const timestamp = new Date()
+    //   const interpolatedRuns = Math.ceil(
+    //     (lastItem.runs *
+    //       daysInMonth(timestamp.getFullYear(), timestamp.getMonth())) /
+    //       timestamp.getDate()
+    //   )
 
-      items[items.length - 1].runs = interpolatedRuns
-      return items
-    },
+    //   items[items.length - 1].runs = interpolatedRuns
+    //   return items
+    // },
     resizeChart: function() {
       return debounce(() => {
         requestAnimationFrame(this.rawResizeChart)
@@ -125,7 +127,7 @@ export default {
     tooltipStyle() {
       if (!this.hovered) return
       return {
-        left: `${this.hovered.x}px`,
+        left: `${this.hovered.x + this.hovered.bandwidth / 4}px`,
         top: `${this.hovered.y + this.padding.top + 35}px`
       }
     },
@@ -155,19 +157,54 @@ export default {
         { leading: true, trailing: true }
       )
     },
+    fromDisplay() {
+      let format
+      switch (this.period) {
+        case 'Year':
+          format = '%b %Y'
+          break
+        case 'Month':
+          format = '%e %b %Y'
+          break
+        case 'Week':
+          format = '%e %b'
+          break
+        default:
+          break
+      }
+      return d3.timeFormat(format)(this.from)
+    },
+    toDisplay() {
+      let format
+      switch (this.period) {
+        case 'Year':
+          format = '%b %Y'
+          break
+        case 'Month':
+          format = '%e %b %Y'
+          break
+        case 'Week':
+          format = '%e %b'
+          break
+        default:
+          break
+      }
+      return d3.timeFormat(format)(this.to)
+    },
     from() {
       const from = new Date()
 
       if (this.period == 'Year') {
         const year = new Date().getFullYear()
-        from.setFullYear(year - 1)
+        from.setFullYear(year - 1 + this.offset)
         from.setDate(0)
       } else if (this.period == 'Month') {
         from.setDate(0)
         from.setMinutes(1)
+        from.setMonth(from.getMonth() + this.offset)
       } else if (this.period == 'Week') {
         const day = from.getDay()
-        const diff = from.getDate() - ((day + 6) % 7)
+        const diff = from.getDate() + this.offset - ((day + 6) % 7)
         from.setMinutes(0)
         from.setDate(diff)
       }
@@ -180,22 +217,31 @@ export default {
     to() {
       const to = new Date()
       to.setHours(23)
-
-      if (this.period == 'Year' || this.period == 'Month') {
+      if (this.period == 'Year') {
+        const year = new Date().getFullYear()
+        to.setFullYear(year + this.offset)
         to.setMonth(to.getMonth() + 1)
         to.setDate(0)
         to.setMinutes(59)
+      } else if (this.period == 'Month') {
+        to.setMonth(to.getMonth() + 1 + this.offset)
+        to.setDate(0)
+        to.setMinutes(59)
       } else if (this.period == 'Week') {
-        const diff = to.getDate() + (6 - to.getDay())
+        const diff = to.getDate() + this.offset + (6 - to.getDay())
         to.setDate(diff)
         to.setMinutes(60)
       }
 
       return to
+    },
+    decrementOffsetDisabled() {
+      return this.from <= startDate
     }
   },
   watch: {
     items() {
+      // if (!this.chart) this.createChart()
       this.updateChart()
     },
     usage(val) {
@@ -205,6 +251,11 @@ export default {
       this.updateScales()
     },
     period() {
+      this.offset = 0
+      this.updateItems()
+      this.updateScales()
+    },
+    offset() {
       this.updateItems()
       this.updateScales()
     }
@@ -256,7 +307,7 @@ export default {
     createX() {
       const x = d3.scaleTime()
       x.domain([this.from, this.to])
-      x.range([this.padding.left, this.width - this.padding.right])
+      x.range([this.padding.left * 2, this.width - this.padding.right * 2])
 
       return x
     },
@@ -372,12 +423,13 @@ export default {
       }
     },
     rawUpdateChart() {
+      if (!this.chart) return
       const yOffset = this.height - this.padding.y
 
       const maxBandwidth = Math.floor(
         ((this.width - this.padding.x) / this.ticks) * 0.8
       )
-      const bandwidth = maxBandwidth < 100 ? maxBandwidth : 100
+      const bandwidth = maxBandwidth < 75 ? maxBandwidth : 75
       const bandwidthNoPadding = (this.width - this.padding.x) / this.ticks
 
       const xAxis = d3
@@ -414,13 +466,13 @@ export default {
       this.yAxisGroup
         .transition()
         .duration(1000)
+        .ease(d3.easeQuad)
         .style(
           'transform',
           `translate(${this.width - this.padding.left}px, ${
             this.padding.top
           }px)`
         )
-        .ease(d3.easeQuad)
         .call(yAxis)
 
       this.interactionGroup
@@ -447,7 +499,8 @@ export default {
                   this.hovered = {
                     x: x,
                     y: y,
-                    runs: runs
+                    runs: runs,
+                    bandwidth: bandwidth
                   }
 
                   this.updateHovered(this.hovered)
@@ -598,10 +651,12 @@ export default {
               .attr('height', 0)
               .attr('width', bandwidth)
               .attr('fill', (d, i) =>
-                i > 0 ? 'var(--v-prefect-base)' : 'url(#grad)'
+                i === 0 && this.ticks < this.items.length
+                  ? 'url(#grad)'
+                  : 'var(--v-prefect-base)'
               )
               .attr('x', xPosition)
-              .attr('y', this.height)
+              .attr('y', yOffset)
 
             g.append('text')
               .attr('x', xPosition)
@@ -618,7 +673,7 @@ export default {
                 .select('rect')
                 .transition('enter')
                 .duration(1000)
-                // .delay(500)
+                .delay(250)
                 .ease(d3.easeQuad)
                 .attr('height', height)
                 .attr('y', yPosition)
@@ -627,7 +682,7 @@ export default {
                 .select('text')
                 .transition('enter')
                 .duration(1000)
-                // .delay(500)
+                .delay(250)
                 .ease(d3.easeQuad)
                 .attr('y', d =>
                   d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
@@ -677,7 +732,7 @@ export default {
                 .duration(250)
                 .ease(d3.easeQuad)
                 .attr('height', 0)
-                .attr('y', this.height)
+                .attr('y', yOffset)
 
               exit
                 .select('text')
@@ -692,7 +747,7 @@ export default {
                   .on('mouseout', null)
                   .on('mouseover', null)
                   .transition('exit')
-                  .delay(250)
+                  // .delay(250)
                   .remove()
               )
             })
@@ -810,12 +865,12 @@ export default {
               (this.previousY(d.runs) - this.previousY(0)) || 0
         )
 
-      this.regression = d3
-        .regressionLinear()
-        .x(d => this.x(new Date(d.timestamp)))
-        .y(d => d.runs)(this.regressionItems)
+      // this.regression = d3
+      //   .regressionLinear()
+      //   .x(d => this.x(new Date(d.timestamp)))
+      //   .y(d => d.runs)(this.regressionItems)
 
-      this.predict = this.regression.predict
+      // this.predict = this.regression.predict
 
       switch (this.period) {
         case 'Year':
@@ -833,6 +888,32 @@ export default {
         default:
           break
       }
+    },
+    decrementOffset() {
+      switch (this.period) {
+        case 'Year':
+        case 'Month':
+          this.offset -= 1
+          break
+        case 'Week':
+          this.offset -= 7
+          break
+        default:
+          break
+      }
+    },
+    incrementOffset() {
+      switch (this.period) {
+        case 'Year':
+        case 'Month':
+          this.offset += 1
+          break
+        case 'Week':
+          this.offset += 7
+          break
+        default:
+          break
+      }
     }
   },
   apollo: {
@@ -840,7 +921,7 @@ export default {
       query: require('@/graphql/TeamSettings/usage.gql'),
       variables() {
         return {
-          from: this.from,
+          from: startDate,
           to: this.to
         }
       },
@@ -860,6 +941,44 @@ export default {
     >
       <div class="text-h4 font-weight-light">
         Usage
+      </div>
+
+      <div
+        v-if="$vuetify.breakpoint.smAndUp"
+        class="font-weight-light d-flex align-center justify-center"
+        :class="{ 'text-caption': $vuetify.breakpoint.smOnly }"
+      >
+        <v-btn
+          :disabled="decrementOffsetDisabled"
+          icon
+          depressed
+          small
+          @click="decrementOffset"
+        >
+          <v-icon>chevron_left</v-icon>
+        </v-btn>
+
+        <span class="mx-2"> {{ fromDisplay }} - {{ toDisplay }} </span>
+
+        <v-btn
+          :disabled="offset === 0"
+          icon
+          depressed
+          small
+          @click="incrementOffset"
+        >
+          <v-icon>chevron_right</v-icon>
+        </v-btn>
+
+        <v-btn
+          :disabled="offset === 0"
+          icon
+          depressed
+          small
+          @click="offset = 0"
+        >
+          <v-icon>last_page</v-icon>
+        </v-btn>
       </div>
 
       <div>
@@ -917,11 +1036,10 @@ export default {
           </v-icon>
           Year
         </span>
-        <!-- </div> -->
       </div>
     </div>
 
-    <v-card-text ref="parent" class="chart-container pt-16">
+    <v-card-text ref="parent" class="chart-container pt-16 pr-8">
       <svg :id="`${id}-svg`" class="svg">
         <defs>
           <linearGradient id="grad" x1="0%" y1="50%" x2="100%" y2="50%">

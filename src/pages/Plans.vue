@@ -1,5 +1,4 @@
 <script>
-import ChangePlanDialog from '@/components/License/ChangePlanDialog'
 import EnterprisePlan from '@/components/Plans/Enterprise'
 import PlanSelectionForm from '@/components/Plans/PlanSelectionForm'
 import MenuTooltip from '@/components/MenuTooltip'
@@ -16,8 +15,6 @@ import {
 } from '@/utils/plans'
 
 import { mapGetters } from 'vuex'
-
-ChangePlanDialog
 
 export default {
   components: {
@@ -119,7 +116,8 @@ export default {
 
           <div class="text-h3 font-weight-light text-center">
             <div class="blue-grey--text text--darken-4">
-              Pay for what you use.
+              Simple,
+              <span>success-based pricing</span>.
             </div>
             <div class="mt-4 white--text">
               Eliminate negative engineering.
@@ -133,7 +131,7 @@ export default {
             :class="plansContainerClass"
           >
             <StarterPlan
-              v-if="!plan || plan == 'starter'"
+              v-if="(!plan || plan == 'starter') && !complete"
               key="starter"
               :hide-details="!!plan"
               :disabled="!isTenantAdmin"
@@ -141,7 +139,7 @@ export default {
             />
 
             <StandardPlan
-              v-if="!plan || plan == 'standard'"
+              v-if="(!plan || plan == 'standard') && !complete"
               key="standard"
               :hide-details="!!plan"
               :disabled="!isTenantAdmin"
@@ -149,16 +147,16 @@ export default {
             />
 
             <EnterprisePlan
-              v-if="!plan"
+              v-if="!plan && !complete"
               key="enterprise"
               class="mt-md-16 mt-0"
               :hide-details="!!plan"
             />
 
             <div
-              v-if="plan && !complete"
+              v-if="plan"
               key="payment-form"
-              class="mt-n4 px-12 px-md-0"
+              class="plan-container mt-n4 px-12 px-md-0"
             >
               <PlanSelectionForm
                 :plan-reference="plan"
@@ -167,7 +165,7 @@ export default {
             </div>
           </transition-group>
 
-          <div v-if="plan" class="text-center mt-8">
+          <div v-if="plan && !complete" class="text-center mt-8">
             <div
               class="d-inline-block text-h6 font-weight-light mx-auto cursor-pointer"
               @click="handlePlanDeselection"
@@ -180,219 +178,229 @@ export default {
       </div>
     </div>
 
-    <div class="features-container blue-grey--text text--darken-3">
-      <div class="text-center text-h3 font-weight-light">Features</div>
-
-      <div class="text-center mt-8">
-        <fieldset class="multiswitch">
-          <legend class="text-h5 font-weight-light">
-            Select a plan to view features
-          </legend>
-
-          <div class="slide-container text-h6 font-weight-light">
-            <input
-              id="starter"
-              v-model="planValue"
-              type="radio"
-              name="plan"
-              :value="1"
-            />
-            <label for="starter">Starter</label>
-            <input
-              id="standard"
-              v-model="planValue"
-              type="radio"
-              name="plan"
-              :value="2"
-              checked
-              required
-            />
-            <label for="standard">Standard</label>
-            <input
-              id="enterprise"
-              v-model="planValue"
-              type="radio"
-              name="plan"
-              :value="3"
-            />
-            <label for="enterprise">Enterprise</label>
-
-            <a class="slide" aria-hidden="true"></a>
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="features-body">
-        <v-row no-gutters>
-          <v-col
-            v-for="category in categories"
-            :key="category.title"
-            cols="12"
-            sm="6"
-            md="4"
-            class="d-flex align-start justify-center my-8"
-          >
-            <div class="features-category">
-              <div class="feature-category-icon">
-                <v-icon large>
-                  {{ category.icon }}
-                </v-icon>
-              </div>
-
-              <div class="text-h4 font-weight-light my-4">
-                {{ category.title }}
-              </div>
-              <div
-                v-for="feature in category.features"
-                :key="feature.name"
-                class="text-h6 font-weight-regular my-2"
-              >
-                <MenuTooltip
-                  hide-close
-                  offset-y
-                  top
-                  nudge-top="12px"
-                  transition="slide-y-reverse-transition"
-                >
-                  <template #activator>
-                    <div
-                      class="d-flex justify-start align-center blue-grey--text flex-grow-1 feature-list-title"
-                      :class="{
-                        'text--lighten-4':
-                          feature.value && planValue < feature.value
-                      }"
-                      style="transition: all 150ms ease-in-out;"
-                    >
-                      <span
-                        class="flex-grow-0 flex-shrink-0 feature-list-icon"
-                        :class="{
-                          'empty-circle': feature.plan == 'starter',
-                          'feature-list-icon-disabled':
-                            feature.value && planValue < feature.value
-                        }"
-                      >
-                        <v-icon v-if="feature.plan == 'enterprise'" x-small>
-                          fas fa-circle fa-fw
-                        </v-icon>
-                        <v-icon v-else-if="feature.plan == 'standard'" x-small>
-                          fad fa-dot-circle fa-fw
-                        </v-icon>
-                        <v-icon v-else-if="feature.plan == 'starter'" x-small>
-                          fad fa-dot-circle fa-fw
-                        </v-icon>
-                        <v-icon v-else x-small>fas fa-check fa-fw</v-icon>
-                      </span>
-                      <div class="flex-shrink-0 flex-grow-1 ml-2">
-                        {{ feature.name }}
-                      </div>
-                    </div>
-                  </template>
-
-                  <div class="blue-grey--text text--darken-1 text-subtitle-1">
-                    {{ feature.description }}
-                    <div
-                      v-if="feature.plan == 'enterprise'"
-                      class="text--disabled font-weight-light mt-4"
-                    >
-                      Available only on
-                      <span class="text-overline primary--text"
-                        >enterprise</span
-                      >
-                      plans
-                    </div>
-                    <div
-                      v-else-if="feature.plan == 'standard'"
-                      class="text--disabled font-weight-light mt-4"
-                    >
-                      Available on
-                      <span class="text-overline primary--text">standard</span>
-                      plans and above
-                    </div>
-                    <div
-                      v-else-if="feature.plan == 'starter'"
-                      class="text--disabled font-weight-light mt-4"
-                    >
-                      Available on
-                      <span class="text-overline primary--text">starter</span>
-                      plans and above
-                    </div>
-                    <div v-else class="text--disabled font-weight-light mt-4">
-                      Available on all plans
-                    </div>
-                  </div>
-                </MenuTooltip>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
-      </div>
-    </div>
-
-    <div class="support-container">
-      <div class="slash-container">
-        <div class="slash slash-5"></div>
-        <div class="slash slash-6"></div>
-      </div>
-
-      <v-card
-        class="white pa-8 margin-auto support-card elevation-4 rounded d-flex align-start justify-start"
-        tile
+    <transition name="quick-fade">
+      <div
+        v-if="!complete"
+        class="features-container blue-grey--text text--darken-3"
       >
-        <div class="d-inline-block support-icon">
-          <v-icon large>fad fa-concierge-bell</v-icon>
+        <div class="text-center text-h3 font-weight-light">Features</div>
+
+        <div class="text-center mt-8">
+          <fieldset class="multiswitch">
+            <legend class="text-h5 font-weight-light">
+              Select a plan to view features
+            </legend>
+
+            <div class="slide-container text-h6 font-weight-light">
+              <input
+                id="starter"
+                v-model="planValue"
+                type="radio"
+                name="plan"
+                :value="1"
+              />
+              <label for="starter">Starter</label>
+              <input
+                id="standard"
+                v-model="planValue"
+                type="radio"
+                name="plan"
+                :value="2"
+                checked
+                required
+              />
+              <label for="standard">Standard</label>
+              <input
+                id="enterprise"
+                v-model="planValue"
+                type="radio"
+                name="plan"
+                :value="3"
+              />
+              <label for="enterprise">Enterprise</label>
+
+              <a class="slide" aria-hidden="true"></a>
+            </div>
+          </fieldset>
         </div>
 
-        <v-row class="ml-4" no-gutters>
-          <v-col cols="12" sm="8">
-            <div class="text-h4 font-weight-light pa-0">
-              <span>Premium Support</span>
-            </div>
-            <div
-              class="mt-2 text-h6 font-weight-light blue-grey--text text--darken-1 pa-0"
+        <div class="features-body">
+          <v-row no-gutters>
+            <v-col
+              v-for="category in categories"
+              :key="category.title"
+              cols="12"
+              sm="6"
+              md="4"
+              class="d-flex align-start justify-center my-8"
             >
-              A support plan built to help you quickly grow your workflows.
+              <div class="features-category">
+                <div class="feature-category-icon">
+                  <v-icon large>
+                    {{ category.icon }}
+                  </v-icon>
+                </div>
 
-              <div class="mt-2 support-table text-h6 font-weight-light">
-                <div class="my-2 mr-6">
-                  <span class="support-icon mr-2">
-                    <v-icon>fad fa-badge-check</v-icon>
-                  </span>
-                  Faster, prioritized support responses
+                <div class="text-h4 font-weight-light my-4">
+                  {{ category.title }}
                 </div>
-                <div class="my-2 mr-6">
-                  <span class="support-icon mr-2">
-                    <v-icon>fad fa-badge-check</v-icon>
-                  </span>
-                  Dedicated support manager
-                </div>
-                <div class="my-2 mr-6">
-                  <span class="support-icon mr-2">
-                    <v-icon>fad fa-badge-check</v-icon>
-                  </span>
-                  Emergency support for critical issues
+                <div
+                  v-for="feature in category.features"
+                  :key="feature.name"
+                  class="text-h6 font-weight-regular my-2"
+                >
+                  <MenuTooltip
+                    hide-close
+                    offset-y
+                    top
+                    nudge-top="12px"
+                    transition="slide-y-reverse-transition"
+                  >
+                    <template #activator>
+                      <div
+                        class="d-flex justify-start align-center blue-grey--text flex-grow-1 feature-list-title"
+                        :class="{
+                          'text--lighten-4':
+                            feature.value && planValue < feature.value
+                        }"
+                        style="transition: all 150ms ease-in-out;"
+                      >
+                        <span
+                          class="flex-grow-0 flex-shrink-0 feature-list-icon"
+                          :class="{
+                            'empty-circle': feature.plan == 'starter',
+                            'feature-list-icon-disabled':
+                              feature.value && planValue < feature.value
+                          }"
+                        >
+                          <v-icon v-if="feature.plan == 'enterprise'" x-small>
+                            fas fa-circle fa-fw
+                          </v-icon>
+                          <v-icon
+                            v-else-if="feature.plan == 'standard'"
+                            x-small
+                          >
+                            fad fa-dot-circle fa-fw
+                          </v-icon>
+                          <v-icon v-else-if="feature.plan == 'starter'" x-small>
+                            fad fa-dot-circle fa-fw
+                          </v-icon>
+                          <v-icon v-else x-small>fas fa-check fa-fw</v-icon>
+                        </span>
+                        <div class="flex-shrink-0 flex-grow-1 ml-2">
+                          {{ feature.name }}
+                        </div>
+                      </div>
+                    </template>
+
+                    <div class="blue-grey--text text--darken-1 text-subtitle-1">
+                      {{ feature.description }}
+                      <div
+                        v-if="feature.plan == 'enterprise'"
+                        class="text--disabled font-weight-light mt-4"
+                      >
+                        Available only on
+                        <span class="text-overline primary--text"
+                          >enterprise</span
+                        >
+                        plans
+                      </div>
+                      <div
+                        v-else-if="feature.plan == 'standard'"
+                        class="text--disabled font-weight-light mt-4"
+                      >
+                        Available on
+                        <span class="text-overline primary--text"
+                          >standard</span
+                        >
+                        plans and above
+                      </div>
+                      <div
+                        v-else-if="feature.plan == 'starter'"
+                        class="text--disabled font-weight-light mt-4"
+                      >
+                        Available on
+                        <span class="text-overline primary--text">starter</span>
+                        plans and above
+                      </div>
+                      <div v-else class="text--disabled font-weight-light mt-4">
+                        Available on all plans
+                      </div>
+                    </div>
+                  </MenuTooltip>
                 </div>
               </div>
-            </div>
-          </v-col>
-          <v-col cols="12" sm="4" class="d-flex align-center justify-start">
-            <v-divider class="d-inline-block" vertical />
-            <div class="ml-8">
-              <div class="text-h4 accentGreen--text">Starting at $2,000</div>
-              <div class="text-subtitle-1 font-weight-light">
-                per month
+            </v-col>
+          </v-row>
+        </div>
+      </div>
+    </transition>
+    <transition name="quick-fade">
+      <div v-if="!complete" class="support-container">
+        <div class="slash-container">
+          <div class="slash slash-5"></div>
+          <div class="slash slash-6"></div>
+        </div>
+
+        <v-card
+          class="white pa-8 margin-auto support-card elevation-4 rounded d-flex align-start justify-start"
+          tile
+        >
+          <div class="d-inline-block support-icon">
+            <v-icon large>fad fa-concierge-bell</v-icon>
+          </div>
+
+          <v-row class="ml-4" no-gutters>
+            <v-col cols="12" sm="8">
+              <div class="text-h4 font-weight-light pa-0">
+                <span>Premium Support</span>
               </div>
-              <a
-                class="support-link text-h6 font-weight-regular mt-4"
-                href="https://www.prefect.io/get-prefect#contact"
-                target="_blank"
-                >Contact sales
-                <v-icon class="mb-1" color="grey">arrow_right</v-icon>
-              </a>
-            </div>
-          </v-col>
-        </v-row>
-      </v-card>
-    </div>
+              <div
+                class="mt-2 text-h6 font-weight-light blue-grey--text text--darken-1 pa-0"
+              >
+                A support plan built to help you quickly grow your workflows.
+
+                <div class="mt-2 support-table text-h6 font-weight-light">
+                  <div class="my-2 mr-6">
+                    <span class="support-icon mr-2">
+                      <v-icon>fad fa-badge-check</v-icon>
+                    </span>
+                    Faster, prioritized support responses
+                  </div>
+                  <div class="my-2 mr-6">
+                    <span class="support-icon mr-2">
+                      <v-icon>fad fa-badge-check</v-icon>
+                    </span>
+                    Dedicated support manager
+                  </div>
+                  <div class="my-2 mr-6">
+                    <span class="support-icon mr-2">
+                      <v-icon>fad fa-badge-check</v-icon>
+                    </span>
+                    Emergency support for critical issues
+                  </div>
+                </div>
+              </div>
+            </v-col>
+            <v-col cols="12" sm="4" class="d-flex align-center justify-start">
+              <v-divider class="d-inline-block" vertical />
+              <div class="ml-8">
+                <div class="text-h4 accentGreen--text">
+                  Support built for you
+                </div>
+                <a
+                  class="support-link text-h6 font-weight-regular mt-4"
+                  href="https://www.prefect.io/get-prefect#contact"
+                  target="_blank"
+                  >Contact sales
+                  <v-icon class="mb-1" color="grey">arrow_right</v-icon>
+                </a>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -480,6 +488,10 @@ export default {
   left: 24px;
   position: absolute;
   top: 24px;
+}
+
+.plan-container {
+  transition: all 250ms;
 }
 
 .features-container {

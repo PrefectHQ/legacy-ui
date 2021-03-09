@@ -2,8 +2,10 @@
 import { mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
 import { PLANS_2021 } from '@/utils/plans'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
+  components: { ExternalLink },
   data() {
     return {
       allFeatures: featureTypes,
@@ -28,9 +30,9 @@ export default {
     },
     planName() {
       if (this.isLegacy)
-        return `Legacy ${
+        return `${
           this.isSelfServe
-            ? 'developer'
+            ? 'Developer'
             : this.planType
             ? this.planType.toLowerCase()
             : ''
@@ -138,7 +140,7 @@ export default {
         depressed
         dark
         small
-        :to="{ name: 'plans' }"
+        :to="'/plans'"
       >
         Upgrade
       </v-btn>
@@ -150,10 +152,12 @@ export default {
       <v-icon :color="planColor" class="mr-1 pb-1" x-small>
         cloud
       </v-icon>
-      <span :class="`${planColor}--text`">{{ planName }}</span>
-      plan.
-      <span v-if="isLegacy && isSelfServe">
-        <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
+      <span :class="`${planColor}--text`" class="text-capitalize"
+        >{{ planName
+        }}<span v-if="isLegacy" class="text-none"> (legacy)</span></span
+      >
+      plan<span v-if="isLegacy && isSelfServe"
+        >. <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
         access to usage-based pricing and new features!
       </span>
       <br />
@@ -165,19 +169,76 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <v-icon color="primary" large style="width: 36px;">
-              fad fa-user{{ userNum > 1 ? 's' : '' }}
-            </v-icon>
+            <i class="prefect--text fad fa-clouds fa-fw fa-3x" />
           </div>
           <div>
-            <div class="text-h6 grey--text text--darken-3">
+            <div
+              class="text-h6 font-weight-regular text-capitalize blue-grey--text text--darken-3"
+            >
+              {{ planName
+              }}<span class="text-none">
+                {{ isLegacy ? '(legacy)' : '' }} plan
+              </span>
+            </div>
+            <div class="text-body-1">
+              Visit the
+              <ExternalLink href="https://prefect.io/pricing" target="_blank"
+                >pricing page</ExternalLink
+              >
+              for more details
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="
+            planType === 'FREE_2021' ||
+              planType === 'STARTER_2021' ||
+              planType === 'STANDARD_2021'
+          "
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div class="mr-4">
+            <i class="prefect--text fad fa-tasks fa-fw fa-3x" />
+          </div>
+          <div>
+            <div
+              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
+            >
+              10,000 free runs / month
+            </div>
+            <div v-if="planType !== 'FREE_2021'" class="text-body-1">
+              Your first 10,000 successful runs per month are on us!
+            </div>
+            <div v-else class="text-body-1">
+              10,000 successful runs each month!
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div class="mr-4">
+            <i
+              :class="
+                `prefect--text fad fa-user${userNum > 1 ? 's' : ''} fa-fw fa-3x`
+              "
+            />
+          </div>
+          <div>
+            <div
+              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
+            >
               {{ userNum ? userNum : 'Unlimited' }} {{ userOrUsers }}
             </div>
             <div v-if="userNum" class="text-body-1">
-              You can invite up to {{ userNum }} full {{ userOrUsers }}.
+              You can invite up to {{ userNum }} {{ userOrUsers }}
             </div>
             <div v-else class="text-body-1">
-              You have unlimited full users!
+              You have unlimited users!
             </div>
           </div>
         </div>
@@ -188,54 +249,17 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <v-icon color="primary" large>pi-flow</v-icon>
+            <i class="prefect--text pi-flow pi-3x pi-fw" />
           </div>
           <div>
-            <div class="text-h6 grey--text text--darken-3">
+            <div
+              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
+            >
               {{ `${flowConcurrency} concurrent ${flowOrFlows}` }}
             </div>
             <div class="text-body-1">
               You can have {{ flowConcurrency }} {{ flowOrFlows }} running at a
-              time.
-            </div>
-          </div>
-        </div>
-
-        <div
-          v-if="planType === 'FREE_2021' || planType === 'STARTER_2021'"
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon color="primary" large>fad fa-tasks</v-icon>
-          </div>
-          <div>
-            <div class="text-h6 grey--text text--darken-3">
-              10,000 runs
-            </div>
-            <div class="text-body-1">
-              Run 10,000 successful task runs per month.
-              <span v-if="planType === 'STARTER_2021'"
-                >Runs past that cost ${{ runCost }} per run
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div
-          v-else-if="planType === 'STANDARD_2021'"
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon color="primary" large>fad fa-tasks</v-icon>
-          </div>
-          <div>
-            <div class="text-h6 font-weight-light grey--text text--darken-3">
-              ${{ runCost }} per successful run
-            </div>
-            <div class="text-body-1">
-              Failure doesn't cost anything.
+              time
             </div>
           </div>
         </div>
@@ -245,18 +269,20 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <v-icon color="primary" large>fad fa-history</v-icon>
+            <i class="prefect--text fad fa-history fa-fw fa-3x" />
           </div>
           <div>
-            <div class="text-h6 grey--text text--darken-3">
+            <div
+              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
+            >
               {{
                 historyRetention ? historyRetention + ' days of ' : 'Unlimited'
               }}
               history
             </div>
             <div v-if="historyRetention" class="text-body-1">
-              Flow and task run history sticks around for
-              {{ historyRetention }} days.
+              Flow and task run history is retained for
+              {{ historyRetention }} days
             </div>
             <div v-else class="text-body-1">
               You can view run history forever!
