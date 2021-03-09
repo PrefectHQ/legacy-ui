@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       volumeDiscounts: [
-        { runs: '10,000', price: 'free' },
+        { runs: '10,000', price: 'Free' },
         { runs: '100,000', price: '$0.0050' },
         { runs: '1,000,000', price: '$0.0025' },
         { runs: '10,000,000', price: '$0.00125' },
@@ -95,29 +95,36 @@ export default {
               Only pay for successful runs.
             </div>
             <div class="mt-4 text-subtitle-1 font-weight-light">
-              There's no charge for retries, failures, or tasks that run in less
-              than a second.
+              There's no charge for retries, failures, or any task that runs in
+              less than one second.
             </div>
             <div class="mt-4 text-subtitle-1 font-weight-light">
-              As usage increases, the price per run automatically drops:
+              As usage increases each month, the price per run automatically
+              drops:
             </div>
             <div class="mt-4 text-subtitle-1 font-weight-light">
               <v-simple-table dense>
                 <thead>
                   <tr>
-                    <th class="text-left font-weight-light text-h6">
-                      Runs
+                    <th class="text-left font-weight-light text-subtitle-1">
+                      Monthly run tier
                     </th>
-                    <th class="text-left font-weight-light text-h6">
+                    <th class="text-left font-weight-light text-subtitle-1">
                       Price per run
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in volumeDiscounts" :key="item.runs">
+                  <tr v-for="(item, i) in volumeDiscounts" :key="item.runs">
                     <td class="font-weight-light">
-                      <span v-if="!item.final" class="text-caption"
-                        >up to
+                      <span v-if="i == 0" class="text-subtitle-1"
+                        >0 <span class="text-caption">to </span></span
+                      >
+
+                      <span
+                        v-if="i !== 0 && i !== volumeDiscounts.length - 1"
+                        class="text-caption"
+                        >then to
                       </span>
 
                       <span class="text-subtitle-1">{{ item.runs }}</span>
@@ -142,7 +149,7 @@ export default {
               </v-icon>
             </span>
             <span class="ml-2">
-              10,000 free runs / month
+              10,000 free runs every month
             </span>
           </div>
 
