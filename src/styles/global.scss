@@ -391,4 +391,31 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   &.v-toolbar.v-sheet {
     background-color: var(--v-appForeground-base);
   }
+
+  &.v-data-table
+    > .v-data-table__wrapper
+    > table
+    > tbody
+    > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper),
+  &.v-tooltip__content {
+    background-color: var(--v-utilGrayMid-darken2);
+  }
+
+  scrollbar-color: var(--v-utilGrayMid-darken2) transparent;
+  scrollbar-width: thin;
+
+  ::-webkit-scrollbar {
+    background-color: transparent;
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--v-utilGrayMid-darken2);
+    border-radius: 16px;
+    min-height: 25px;
+  }
 }

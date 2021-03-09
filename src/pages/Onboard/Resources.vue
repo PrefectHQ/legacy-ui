@@ -101,7 +101,6 @@ export default {
               </div>
               <div>
                 <v-btn
-                  color="white"
                   target="_blank"
                   href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
                 >

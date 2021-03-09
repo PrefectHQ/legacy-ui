@@ -47,13 +47,13 @@ export const THEME_COLORS = {
 }
 
 export const THEME_COLORS_ALT = {
-  appBackground: '#333743',
-  appForeground: '#404452',
+  appBackground: '#2a2d37',
+  appForeground: '#393e4c',
   prefect: '#003d66',
   primary: '#007acc',
-  utilGrayLight: '#666',
-  utilGrayMid: '#aaa',
-  utilGrayDark: '#eee'
+  utilGrayLight: '#585f74',
+  utilGrayMid: '#9ea4b6',
+  utilGrayDark: '#ecedf0'
 }
 
 Vue.use(Vuetify)
