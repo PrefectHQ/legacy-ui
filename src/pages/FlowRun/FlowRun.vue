@@ -118,9 +118,6 @@ export default {
         default:
           break
       }
-    },
-    flowRun(val) {
-      if (val === 'not-found') this.$router.push({ name: 'not-found' })
     }
   },
   beforeMount() {
@@ -192,7 +189,7 @@ export default {
           this.$router.push({ name: 'not-found' })
       },
       pollInterval: 5000,
-      update: data => data.flow_run_by_pk || 'not-found'
+      update: data => data.flow_run_by_pk
     }
   }
 }

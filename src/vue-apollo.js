@@ -37,7 +37,7 @@ let errors = 0,
 
 const batchLink = new BatchHttpLink({
   batchMax: 20,
-  batchInterval: 200,
+  batchInterval: 1000,
   uri: () => store.getters['api/url']
 })
 
