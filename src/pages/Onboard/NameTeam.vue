@@ -322,7 +322,7 @@ export default {
                     <ExternalLink
                       href="https://www.prefect.io/get-prefect/#contact"
                     >
-                      contact sales</ExternalLink
+                      contact us</ExternalLink
                     >
                     to add another team. For more information about teams in
                     Prefect, check out our

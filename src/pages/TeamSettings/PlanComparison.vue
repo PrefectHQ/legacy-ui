@@ -272,7 +272,7 @@ export default {
         href="https://www.prefect.io/get-prefect#contact"
         target="_blank"
       >
-        Contact Sales
+        Contact Us
       </v-btn>
       <ChangePlanDialog v-else :plan="planType" @update="updatePlan" />
     </div>
@@ -411,7 +411,7 @@ export default {
         href="https://www.prefect.io/get-prefect#contact"
         target="_blank"
       >
-        Contact Sales
+        Contact Us
       </v-btn>
       <ChangePlanDialog v-else :plan="planType" />
     </div>

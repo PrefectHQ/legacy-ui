@@ -33,7 +33,7 @@
         href="https://www.prefect.io/get-prefect#contact"
         target="_blank"
       >
-        Contact sales
+        Contact Us
         <v-icon class="mb-1" color="grey lighten-2">arrow_right</v-icon>
       </a>
     </div>

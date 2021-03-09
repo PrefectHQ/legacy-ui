@@ -19,7 +19,7 @@ export default {
   },
   data() {
     return {
-      cardSource: null,
+      paymentSource: null,
       loading: false,
       step: 'select-card'
     }
@@ -27,11 +27,11 @@ export default {
   computed: {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
-    cards() {
-      return this.tenant?.stripe_customer?.sources?.data
-    },
     plan() {
       return PLANS_2021[this.planReference]
+    },
+    payments() {
+      return this.tenant?.stripe_customer?.sources?.data
     },
     title() {
       let title
@@ -99,18 +99,18 @@ export default {
       }
     },
     handleConfirm(sourceId) {
-      this.cardSource = sourceId
+      this.paymentSource = sourceId
       this.step = 'confirm'
     },
     handleNext() {
-      if (this.cardSource == 'new') {
+      if (this.paymentSource == 'new') {
         this.step = 'add-card'
       } else {
         this.step = 'confirm'
       }
     },
-    selectCard(id) {
-      this.cardSource = id
+    selectPayment(id) {
+      this.paymentSource = id
     },
     async handleSubmit() {
       await this.updatePlan()
@@ -143,7 +143,7 @@ export default {
             @click="step = 'select-card'"
           >
             <v-icon color="blue-grey">chevron_left</v-icon>
-            Choose an existing card instead
+            Choose an existing method instead
           </div>
 
           <div style="height: 559px;">
@@ -158,57 +158,151 @@ export default {
         >
           <div
             class="card-display mt-auto"
-            :class="{ active: cardSource == 'new' }"
-            @click.stop="selectCard('new')"
+            :class="{ active: paymentSource == 'new' }"
+            @click.stop="selectPayment('new')"
           >
             <div class="text-h6 font-weight-light">
               Add new card
             </div>
           </div>
 
-          <div v-if="cards && cards.length" class="card-or text-center my-8">
+          <div
+            v-if="payments && payments.length"
+            class="card-or text-center my-8"
+          >
             <div class="d-inline-block position-relative white py-2 px-8">
               OR
             </div>
           </div>
 
           <div
-            v-for="card in cards"
-            :key="card.id"
+            v-for="payment in payments"
+            :key="payment.id"
+            :class="{ active: paymentSource == payment.id }"
             class="card-display mb-auto d-flex align-center justify--start"
-            :class="{ active: cardSource == card.id }"
-            @click="selectCard(card.id)"
+            @click="selectPayment(payment.id)"
           >
-            <div>
-              <div
-                v-if="
-                  (card && card.owner && card.owner.name) || (card && card.name)
-                "
-                class="text-h5 font-weight-light"
-              >
-                {{ card.owner.name }}
-              </div>
-              <div v-if="card" class="mt-1">
-                <div class="text-subtitle-1">
-                  {{ card.brand || card.card.brand }}
-                </div>
+            <div v-if="payment.type == 'card'">
+              <div class="mb-auto d-flex align-center justify--start">
+                <div>
+                  <div v-if="payment.owner" class="text-h5 font-weight-light">
+                    {{ payment.owner.name }}
+                  </div>
+                  <div v-if="payment.card" class="mt-1">
+                    <div class="text-subtitle-1">
+                      {{ payment.brand || payment.card.brand }}
+                    </div>
 
-                <div class="mt-n2">
-                  <span class="text-h6 font-weight-regular">
-                    •••• •••• •••• {{ card.last4 || card.card.last4 }}
-                  </span>
-                  <span class="ml-1 text-subtitle-1 font-weight-light">
-                    {{ card.exp_month || card.card.exp_month }}/{{
-                      card.exp_year || card.card.exp_year
-                    }}
-                  </span>
+                    <div class="mt-n2">
+                      <span class="text-h6 font-weight-regular">
+                        •••• •••• •••• {{ payment.last4 || payment.card.last4 }}
+                      </span>
+                      <span
+                        v-if="payment.exp_month || payment.card"
+                        class="ml-1 text-subtitle-1 font-weight-light"
+                      >
+                        {{ payment.exp_month || payment.card.exp_month }}/{{
+                          payment.exp_year || payment.card.exp_year
+                        }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div v-if="card.card" class="ml-auto">
+            <div v-else-if="payment.type == 'ach_credit_transfer'">
+              <div class="mb-auto d-flex align-center justify--start">
+                <div>
+                  <div v-if="payment.owner" class="text-h5 font-weight-light">
+                    {{ payment.owner.name }}
+                  </div>
+                  <div class="mt-1">
+                    <div class="text-subtitle-1">
+                      {{ payment.ach_credit_transfer.bank_name }}
+                    </div>
+
+                    <div class="mt-n2">
+                      <div class="text-h6 font-weight-regular">
+                        ••••••••••••
+                        {{
+                          payment.ach_credit_transfer.account_number &&
+                            payment.ach_credit_transfer.account_number.substring(
+                              payment.ach_credit_transfer.account_number
+                                .length - 4
+                            )
+                        }}
+                      </div>
+                      <div class="text-subtitle-1 font-weight-light">
+                        ••••••••••••
+                        {{
+                          payment.ach_credit_transfer.routing_number &&
+                            payment.ach_credit_transfer.routing_number.substring(
+                              payment.ach_credit_transfer.routing_number
+                                .length - 4
+                            )
+                        }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="payment.type == 'ach_debit'">
+              <div class="mb-auto d-flex align-center justify--start">
+                <div v-if="payment.owner" class="text-h5 font-weight-light">
+                  {{ payment.owner.name }}
+                </div>
+
+                <div class="mt-1">
+                  <div class="text-subtitle-1">
+                    {{ payment.ach_debit.bank_name }}
+                  </div>
+
+                  <div class="mt-n2">
+                    <div
+                      v-if="payment.ach_debit.account_number"
+                      class="text-h6 font-weight-regular"
+                    >
+                      ••••••••••••
+                      {{
+                        payment.ach_debit.account_number.substring(
+                          payment.ach_debit.account_number.length - 4
+                        )
+                      }}
+                    </div>
+                    <div
+                      v-if="payment.ach_debit.routing_number"
+                      class="text-subtitle-1 font-weight-light"
+                    >
+                      ••••••••••••
+                      {{
+                        payment.ach_debit.routing_number.substring(
+                          payment.ach_debit.routing_number.length - 4
+                        )
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="payment.type == 'card' && payment.card" class="ml-auto">
               <v-icon large>
-                fab fa-cc-{{ card.card.brand.toLowerCase() }}
+                fab fa-cc-{{ payment.card.brand.toLowerCase() }}
+              </v-icon>
+            </div>
+
+            <div
+              v-else-if="
+                payment.type == 'ach_debit' ||
+                  payment.type == 'ach_credit_transfer'
+              "
+              class="ml-auto"
+            >
+              <v-icon large>
+                fad fa-university
               </v-icon>
             </div>
           </div>
@@ -216,7 +310,7 @@ export default {
           <v-btn
             color="prefect"
             class="mt-auto white--text"
-            :disabled="loading || !cardSource"
+            :disabled="loading || !paymentSource"
             :loading="loading"
             style="width: 100%;"
             data-cy="next"
@@ -352,7 +446,7 @@ export default {
           <v-btn
             color="prefect"
             class="mt-auto white--text w-100"
-            :disabled="loading || !cardSource"
+            :disabled="loading || !paymentSource"
             :loading="loading"
             data-cy="finish"
             @click="handleSubmit"
