@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- Fix the clear button on the dashboard so that it clears scheduled runs - []()
+- Fix the clear button on the dashboard so that it clears scheduled runs - [#653](https://github.com/PrefectHQ/ui/pull/653)
 - Fix indefinite task run duration when using mapped cases - [#650](https://github.com/PrefectHQ/ui/pull/650)
 
 ## 2021-03-09
