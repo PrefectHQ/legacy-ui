@@ -1,7 +1,7 @@
 mutation CreateUsageBasedLicense(
-  $input: create_usage_license_input!
+  $input: create_self_serve_usage_license_input!
 ) {
-  create_usage_license(input: $input) {
+  create_self_serve_usage_license(input: $input) {
     id
   }
 }
