@@ -285,7 +285,6 @@ export default {
                   class="mr-3 font-weight-regular text-right mb-n2"
                 >
                   ${{ plan.price }}
-                  <!-- <div class="text-caption mt-n2">/ successful task run</div> -->
                 </span>
                 <span
                   v-else-if="plan.price && plan.taskRuns"
@@ -296,15 +295,9 @@ export default {
                     <div class="text-caption mt-n2">
                       / month
                     </div>
-                    <!-- <div class="text-caption mt-n2">
-                      then ${{ plan.price }} / successful task run
-                    </div> -->
                   </span>
                 </span>
-                <!-- <span v-else class="mr-3 font-weight-regular">
-                  10,000
-                  <div class="text-caption mt-n2">/ month</div>
-                </span> -->
+
                 <span class="plans-feature-icon align-self-center">
                   <v-icon small>
                     fad fa-lightbulb fa-fw
@@ -320,7 +313,6 @@ export default {
                   class="mr-3 font-weight-regular text-right mb-n2"
                 >
                   ${{ plan.price }}
-                  <!-- <div class="text-caption mt-n2">/ successful task run</div> -->
                 </span>
                 <span
                   v-else-if="plan.price && plan.taskRuns"
@@ -333,10 +325,7 @@ export default {
                     </div>
                   </span>
                 </span>
-                <!-- <span v-else class="mr-3 font-weight-regular">
-                  10,000
-                  <div class="text-caption mt-n2">/ month</div>
-                </span> -->
+
                 <span class="plans-feature-icon align-self-center">
                   <v-icon small>
                     fad fa-tasks fa-fw
@@ -347,9 +336,14 @@ export default {
               <div
                 class="mt-6 font-weight-light d-flex align-end justify-start"
               >
-                <span>Automatic volume discounts</span>
+                <span>Volume discounts</span>
                 <span class="flex-grow-1 mx-2 mb-1 dotted-line" />
-                <span class="mr-3 font-weight-regular">GREAT SUCCESS</span>
+                <span class="mr-3 font-weight-regular"
+                  >Automatic
+                  <div class="text-caption mt-n2">
+                    applied monthly
+                  </div>
+                </span>
                 <span
                   class="plans-feature-icon feature-green align-self-center"
                 >

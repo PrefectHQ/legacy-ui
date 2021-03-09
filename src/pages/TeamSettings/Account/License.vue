@@ -140,7 +140,7 @@ export default {
         depressed
         dark
         small
-        :to="{ name: 'plans' }"
+        :to="'/plans'"
       >
         Upgrade
       </v-btn>
