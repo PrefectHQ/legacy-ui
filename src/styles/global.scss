@@ -392,6 +392,15 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
     transition: all 150ms linear;
   }
 
+  &.feature-green {
+    .svg-inline--fa {
+      --fa-primary-color: #07e798;
+      --fa-secondary-color: #07e798;
+      --fa-secondary-opacity: 0.6;
+      transition: all 150ms linear;
+    }
+  }
+
   .fa-toolbox.svg-inline--fa {
     --fa-primary-opacity: 0.6 !important;
     --fa-secondary-opacity: 1 !important;

@@ -242,11 +242,11 @@ export default {
 
           <div class="text-left mt-auto w-100">
             <div
-              class="text-h5 font-weight-light d-flex align-end justify-start"
+              class="text-h4 font-weight-light d-flex align-end justify-start"
             >
               <span>Plan</span>
               <span class="flex-grow-1 dotted-line mx-2 mb-1" />
-              <span class="ml-auto white--text plan-title">
+              <span class="text-subtitle-1 ml-auto white--text plan-title">
                 {{ plan.name }}
               </span>
             </div>
@@ -264,7 +264,7 @@ export default {
                 </span>
               </div>
 
-              <div class="mt-4 d-flex align-end justify-start">
+              <div class="mt-6 d-flex align-end justify-start">
                 <span>Run history</span>
                 <span class="flex-grow-1 dotted-line mx-2 mb-1" />
                 <span class="mr-3 font-weight-regular">
@@ -277,15 +277,15 @@ export default {
                 </span>
               </div>
 
-              <div class="mt-4 d-flex align-end justify-start">
-                <span>Task runs</span>
+              <div class="mt-6 d-flex align-end justify-start">
+                <span>Free runs</span>
                 <span class="flex-grow-1 dotted-line mx-2 mb-1" />
                 <span
                   v-if="plan.price && !plan.taskRuns"
                   class="mr-3 font-weight-regular text-right mb-n2"
                 >
                   ${{ plan.price }}
-                  <div class="text-caption mt-n2">/ successful task run</div>
+                  <!-- <div class="text-caption mt-n2">/ successful task run</div> -->
                 </span>
                 <span
                   v-else-if="plan.price && plan.taskRuns"
@@ -296,16 +296,63 @@ export default {
                     <div class="text-caption mt-n2">
                       / month
                     </div>
-                    <div class="text-caption mt-n2">
+                    <!-- <div class="text-caption mt-n2">
                       then ${{ plan.price }} / successful task run
+                    </div> -->
+                  </span>
+                </span>
+                <!-- <span v-else class="mr-3 font-weight-regular">
+                  10,000
+                  <div class="text-caption mt-n2">/ month</div>
+                </span> -->
+                <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-lightbulb fa-fw
+                  </v-icon>
+                </span>
+              </div>
+
+              <div class="mt-6 d-flex align-end justify-start">
+                <span>Price per additional run</span>
+                <span class="flex-grow-1 dotted-line mx-2 mb-1" />
+                <span
+                  v-if="plan.price && !plan.taskRuns"
+                  class="mr-3 font-weight-regular text-right mb-n2"
+                >
+                  ${{ plan.price }}
+                  <!-- <div class="text-caption mt-n2">/ successful task run</div> -->
+                </span>
+                <span
+                  v-else-if="plan.price && plan.taskRuns"
+                  class="mr-3 font-weight-regular text-right mb-n4"
+                >
+                  <span v-if="plan.taskRuns">
+                    ${{ plan.price }}
+                    <div class="text-caption mt-n2">
+                      / successful task run
                     </div>
                   </span>
                 </span>
-                <span v-else class="mr-3 font-weight-regular">
+                <!-- <span v-else class="mr-3 font-weight-regular">
                   10,000
                   <div class="text-caption mt-n2">/ month</div>
-                </span>
+                </span> -->
                 <span class="plans-feature-icon align-self-center">
+                  <v-icon small>
+                    fad fa-tasks fa-fw
+                  </v-icon>
+                </span>
+              </div>
+
+              <div
+                class="mt-6 font-weight-light d-flex align-end justify-start"
+              >
+                <span>Automatic volume discounts</span>
+                <span class="flex-grow-1 mx-2 mb-1 dotted-line" />
+                <span class="mr-3 font-weight-regular">GREAT SUCCESS</span>
+                <span
+                  class="plans-feature-icon feature-green align-self-center"
+                >
                   <v-icon small>
                     fad fa-check fa-fw
                   </v-icon>

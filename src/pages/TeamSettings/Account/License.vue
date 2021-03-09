@@ -191,7 +191,11 @@ export default {
         </div>
 
         <div
-          v-if="planType === 'FREE_2021' || planType === 'STARTER_2021'"
+          v-if="
+            planType === 'FREE_2021' ||
+              planType === 'STARTER_2021' ||
+              planType === 'STANDARD_2021'
+          "
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
         >
@@ -277,7 +281,7 @@ export default {
               history
             </div>
             <div v-if="historyRetention" class="text-body-1">
-              Flow and task run history sticks around for
+              Flow and task run history is retained for
               {{ historyRetention }} days
             </div>
             <div v-else class="text-body-1">
