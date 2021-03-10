@@ -62,7 +62,8 @@ describe('user Vuex Module', () => {
         first_name: 'first',
         last_name: 'last',
         settings: {
-          timezone: 'utc'
+          timezone: 'utc',
+          isDark: false
         }
       },
       oktaUser: {
@@ -90,7 +91,8 @@ describe('user Vuex Module', () => {
         first_name: '',
         last_name: '',
         settings: {
-          timezone: ''
+          timezone: '',
+          isDark: false
         }
       })
     })
