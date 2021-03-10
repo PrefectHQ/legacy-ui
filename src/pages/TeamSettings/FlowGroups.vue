@@ -85,6 +85,8 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('api', ['isCloud']),
+
     deleteFvgMutation() {
       if (!this.versionGroupFlows) return {}
 
