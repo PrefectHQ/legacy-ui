@@ -46,7 +46,29 @@ export default {
       page: 1,
       searchTerm: null,
       sortBy: 'scheduled_start_time',
-      sortDesc: true
+      sortDesc: true,
+      state: [],
+      states: [
+        'Failed',
+        'Pending',
+        'Retrying',
+        'Resume',
+        'Queued',
+        'Submitted',
+        'Paused',
+        'Running',
+        'Listening',
+        'Finished',
+        'Success',
+        'Cancelled',
+        'Cancelling',
+        'Cached',
+        'TriggerFailed',
+        'Skipped',
+        'TimedOut',
+        'Mapped',
+        'Looped'
+      ].sort()
     }
   },
   computed: {
@@ -92,6 +114,7 @@ export default {
           limit: this.itemsPerPage,
           name: this.searchFormatted,
           offset: this.offset,
+          state: this.state.length === 0 ? null : this.state,
           orderBy
         }
 
@@ -108,7 +131,10 @@ export default {
     flowRunsCount: {
       query: require('@/graphql/Flow/table-flow-runs-count.gql'),
       variables() {
-        let variables = { name: this.searchFormatted }
+        let variables = {
+          name: this.searchFormatted,
+          state: this.state.length === 0 ? null : this.state
+        }
 
         if (this.aggregate) {
           variables.flow_group_id = this.flow.flow_group_id
@@ -129,20 +155,61 @@ export default {
 
 <template>
   <v-card class="pa-2 mt-2" tile>
-    <CardTitle title="Flow Runs" icon="pi-flow-run">
-      <v-text-field
-        slot="action"
-        v-model="searchTerm"
-        class="search"
-        dense
-        solo
-        prepend-inner-icon="search"
-        hide-details
-        placeholder="Search for a Flow Run"
-        flat
-        style="min-width: 400px;"
+    <CardTitle icon="pi-task-run">
+      <div :slot="$vuetify.breakpoint.lgAndUp && 'title'">
+        Flow Runs
+      </div>
+
+      <div
+        :slot="$vuetify.breakpoint.mdAndDown ? 'title' : 'state-filter'"
+        :class="{ 'd-flex': $vuetify.breakpoint.mdAndUp }"
       >
-      </v-text-field>
+        <v-select
+          v-model="state"
+          outlined
+          class="state-filter"
+          :style="[
+            $vuetify.breakpoint.mdAndUp ? { width: '280px' } : { width: '100%' }
+          ]"
+          dense
+          flat
+          solo
+          hide-details
+          :menu-props="{ bottom: true, offsetY: true }"
+          clearable
+          :items="states"
+          label="Filter by state"
+          multiple
+        >
+          <template #selection="{ item, index }">
+            <v-chip
+              v-if="index === 0 || index === 1"
+              :color="item"
+              label
+              small
+              text-color="white"
+            >
+              {{ item }}
+            </v-chip>
+            <span v-if="index === 2" class="grey--text caption">
+              (+{{ state.length - 2 }})
+            </span>
+          </template>
+        </v-select>
+        <v-text-field
+          slot="action"
+          v-model="searchTerm"
+          class="search"
+          dense
+          solo
+          prepend-inner-icon="search"
+          hide-details
+          placeholder="Search for a Flow Run"
+          flat
+          style="min-width: 200px;"
+        >
+        </v-text-field>
+      </div>
     </CardTitle>
 
     <v-card-text>
@@ -218,13 +285,19 @@ export default {
   </v-card>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .search {
   border-radius: 0 !important;
   font-size: 0.85rem;
 
   .v-icon {
     font-size: 20px !important;
+  }
+}
+
+.state-filter {
+  .v-label {
+    font-size: 0.85rem;
   }
 }
 </style>

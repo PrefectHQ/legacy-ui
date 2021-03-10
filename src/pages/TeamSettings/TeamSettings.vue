@@ -39,7 +39,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('tenant', ['setTenant', 'unsetTenant', 'tenant']),
+    ...mapMutations('tenant', ['setTenant', 'unsetTenant']),
     _closeTeamDialog() {
       this.deleteTeamDialog = false
       this.teamName = null
@@ -82,6 +82,7 @@ export default {
       fixed
       permanent
       touchless
+      expand-on-hover
       :mini-variant="$vuetify.breakpoint.smAndDown"
       :style="{
         height: `calc(100% - ${$vuetify.breakpoint.smAndDown ? 56 : 64}px)`,
@@ -334,7 +335,7 @@ export default {
 
 .sm-and-up-left-padding {
   // Match left padding with User Settings sidebar width
-  padding-left: 256px;
+  padding-left: 56px;
 }
 
 .sm-and-down-left-padding {

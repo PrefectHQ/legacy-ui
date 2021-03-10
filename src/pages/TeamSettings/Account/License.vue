@@ -1,30 +1,52 @@
 <script>
 import { mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
+import { PLANS_2021 } from '@/utils/plans'
+import ExternalLink from '@/components/ExternalLink'
 
 export default {
-  components: {},
+  components: { ExternalLink },
   data() {
     return {
       allFeatures: featureTypes,
-      loading: false
+      loading: false,
+      plans: Object.values(PLANS_2021)
     }
   },
   computed: {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
-      return true
+      return this.tenant.role === 'TENANT_ADMIN'
     },
-    planColor() {
-      if (this.license?.terms?.plan == 'SELF_SERVE') return 'primary'
-      if (this.license?.terms?.plan == 'PLATFORM') return 'cloudUIPrimaryBlue'
-      return 'codeBlueBright'
+    isSelfServe() {
+      return this.license?.terms?.is_self_serve
+    },
+    isLegacy() {
+      return !this.license?.terms?.is_usage_based
+    },
+    plan() {
+      return this.plans.find(planType => planType.value === this.planType)
+    },
+    planName() {
+      if (this.isLegacy)
+        return `${
+          this.isSelfServe
+            ? 'Developer'
+            : this.planType
+            ? this.planType.toLowerCase()
+            : ''
+        }`
+      return this.plan.name
     },
     planType() {
-      if (this.license?.terms?.plan == 'SELF_SERVE') return 'Cloud Developer'
-      if (this.license?.terms?.plan == 'PLATFORM') return 'Cloud Enterprise'
-      return 'Custom'
+      return this.license?.terms?.plan
+    },
+    runCost() {
+      return this.plan?.price
+    },
+    planColor() {
+      return 'primary'
     },
     readNum() {
       return this.license?.terms?.read_only_users?.toLocaleString()
@@ -71,16 +93,9 @@ export default {
         return { type: featureText }
       })
       return featuresObjArray?.length > 0 ? featuresObjArray : null
-    }
-  },
-  watch: {
-    tenant(val) {
-      this.loading = true
-      if (val) {
-        setTimeout(() => {
-          this.loading = false
-        }, 1000)
-      }
+    },
+    taskRuns() {
+      return this.license?.terms?.task_runs_usage_limit || this.plan?.taskRuns
     }
   },
   methods: {
@@ -114,108 +129,131 @@ export default {
 </script>
 
 <template>
-  <v-card
-    tile
-    max-width="720"
-    class="mx-auto my-4"
-    data-cy="license-card"
-    :loading="loading"
-  >
-    <v-card-title class="mb-2">
-      <span>Your plan</span>
-    </v-card-title>
-    <v-card-subtitle class="pb-0">
-      Your team is on
-      {{ planType !== 'Custom' ? 'the Prefect' : 'a' }}
-      <a href="https://www.prefect.io/get-prefect#pricing" target="_blank">
-        <v-icon
-          v-if="planType !== 'Custom'"
-          :color="planColor"
-          class="mr-1 pb-1"
-          x-small
-        >
-          cloud
-        </v-icon>
-        <span :class="`${planColor}--text`">{{ planType }}</span>
-      </a>
-      plan.
-      <br />
-      <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
-        Contact us</a
+  <v-card tile data-cy="license-card" :loading="loading">
+    <v-card-title class="mb-2 text-h4 font-weight-light">
+      Your plan
+      <v-spacer />
+
+      <v-btn
+        v-if="isSelfServe"
+        color="accentPink"
+        depressed
+        dark
+        small
+        :to="'/plans'"
       >
-      to change your plan or to get access to cool new features!
+        Upgrade
+      </v-btn>
+    </v-card-title>
+
+    <v-card-subtitle class="pb-0">
+      You're on
+      {{ !isLegacy ? 'the' : 'a' }}
+      <v-icon :color="planColor" class="mr-1 pb-1" x-small>
+        cloud
+      </v-icon>
+      <span :class="`${planColor}--text`" class="text-capitalize"
+        >{{ planName
+        }}<span v-if="isLegacy" class="text-none"> (legacy)</span></span
+      >
+      plan<span v-if="isLegacy && isSelfServe"
+        >. <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
+        access to usage-based pricing and new features!
+      </span>
+      <br />
     </v-card-subtitle>
-    <v-card-text v-if="isTenantAdmin">
-      <div class="d-flex flex-wrap mt-6">
+    <v-card-text>
+      <div class="d-flex flex-wrap mt-4">
         <div
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
         >
           <div class="mr-4">
-            <v-icon color="primary" large style="width: 36px;">
-              fas fa-user{{ userNum > 1 ? 's' : '' }}
-            </v-icon>
+            <i class="prefect--text fad fa-clouds fa-fw fa-3x" />
           </div>
           <div>
-            <div class="text-h6 mb-2 utilGrayMid--text">
+            <div
+              class="text-h6 font-weight-regular text-capitalize utilGrayMid--text"
+            >
+              {{ planName
+              }}<span class="text-none">
+                {{ isLegacy ? '(legacy)' : '' }} plan
+              </span>
+            </div>
+            <div class="text-body-1">
+              Visit the
+              <ExternalLink href="https://prefect.io/pricing" target="_blank"
+                >pricing page</ExternalLink
+              >
+              for more details
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="
+            planType === 'FREE_2021' ||
+              planType === 'STARTER_2021' ||
+              planType === 'STANDARD_2021'
+          "
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div class="mr-4">
+            <i class="prefect--text fad fa-tasks fa-fw fa-3x" />
+          </div>
+          <div>
+            <div class="text-h6 font-weight-regular utilGrayMid--text">
+              10,000 free runs / month
+            </div>
+            <div v-if="planType !== 'FREE_2021'" class="text-body-1">
+              Your first 10,000 successful runs per month are on us!
+            </div>
+            <div v-else class="text-body-1">
+              10,000 successful runs each month!
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="d-flex justify-start align-start py-4 px-8 my-2"
+          style="width: 50%;"
+        >
+          <div class="mr-4">
+            <i
+              :class="
+                `prefect--text fad fa-user${userNum > 1 ? 's' : ''} fa-fw fa-3x`
+              "
+            />
+          </div>
+          <div>
+            <div class="text-h6 font-weight-regular utilGrayMid--text">
               {{ userNum ? userNum : 'Unlimited' }} {{ userOrUsers }}
             </div>
             <div v-if="userNum" class="text-body-1">
-              You can invite up to {{ userNum }} full {{ userOrUsers }}.
+              You can invite up to {{ userNum }} {{ userOrUsers }}
             </div>
             <div v-else class="text-body-1">
-              You have unlimited full users!
+              You have unlimited users!
             </div>
           </div>
         </div>
 
-        <!-- <div
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon color="primary" large style="width: 36px;">
-              fa-glasses
-            </v-icon>
-          </div>
-          <div>
-            <div class="text-h6 mb-2 grey--text text--darken-3">
-              {{ readNum ? readNum : 'Unlimited' }}
-              read-only
-              {{ readOnlyUserOrUsers }}
-            </div>
-            <div v-if="readNum" class="text-body-1">
-              You can invite up to {{ readNum }} read-only
-              {{ readOnlyUserOrUsers }}.
-            </div>
-
-            <div v-else class="text-body-1">
-              You have unlimited read-only users!
-            </div>
-          </div>
-        </div> -->
-
         <div
+          v-if="flowConcurrency"
           class="d-flex justify-start align-start py-4 px-8 my-2"
           style="width: 50%;"
         >
           <div class="mr-4">
-            <v-icon color="primary" large>pi-flow</v-icon>
+            <i class="prefect--text pi-flow pi-3x pi-fw" />
           </div>
           <div>
-            <div class="text-h6 mb-2 utilGrayMid--text">
-              {{
-                flowConcurrency
-                  ? `${flowConcurrency} concurrent ${flowOrFlows}`
-                  : 'Unlimited concurrency'
-              }}
+            <div class="text-h6 font-weight-regular utilGrayMid--text">
+              {{ `${flowConcurrency} concurrent ${flowOrFlows}` }}
             </div>
-            <div v-if="flowConcurrency" class="text-body-1">
+            <div class="text-body-1">
               You can have {{ flowConcurrency }} {{ flowOrFlows }} running at a
-              time.
-            </div>
-            <div v-else class="text-body-1">
-              You can run as many concurrent flows as you'd like!
+              time
             </div>
           </div>
         </div>
@@ -225,18 +263,18 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <v-icon color="primary" large>history</v-icon>
+            <i class="prefect--text fad fa-history fa-fw fa-3x" />
           </div>
           <div>
-            <div class="text-h6 mb-2 utilGrayMid--text">
+            <div class="text-h6 font-weight-regular utilGrayMid--text">
               {{
                 historyRetention ? historyRetention + ' days of ' : 'Unlimited'
               }}
               history
             </div>
             <div v-if="historyRetention" class="text-body-1">
-              You can view flow and task run history for up to
-              {{ historyRetention }} days.
+              Flow and task run history is retained for
+              {{ historyRetention }} days
             </div>
             <div v-else class="text-body-1">
               You can view run history forever!
@@ -244,75 +282,6 @@ export default {
           </div>
         </div>
       </div>
-
-      <div class="text-h5 mb-4 mt-10 utilGrayDark--text">
-        {{
-          planType == 'Cloud Enterprise'
-            ? 'Also included with your plan'
-            : 'Upgrade your plan to access these great features...'
-        }}
-      </div>
-
-      <div v-if="features" class="d-flex flex-wrap">
-        <div
-          v-for="(item, i) in features"
-          :key="i"
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon :color="colorType(item.type)" large>
-              {{ iconType(item.type) }}
-            </v-icon>
-          </div>
-          <div>
-            <div class="text-h6 mb-2 utilGrayMid--text">
-              {{ titleType(item.type) }}
-            </div>
-            <div class="text-body-1">{{ textType(item.type) }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div v-else class="d-flex flex-wrap">
-        <div
-          v-for="(item, i) in allFeatures"
-          :key="i"
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div class="mr-4">
-            <v-icon :color="item.color" large>{{ iconType(item.type) }}</v-icon>
-          </div>
-          <div>
-            <div class="text-h6 mb-2 utilGrayMid--text">
-              {{ titleType(item.type) }}
-            </div>
-            <div class="text-body-1">{{ textType(item.type) }}</div>
-          </div>
-        </div>
-
-        <div
-          class="d-flex justify-start align-start py-4 px-8 my-2"
-          style="width: 50%;"
-        >
-          <div>
-            <div class="text-h6 ml-6 mb-2 utilGrayMid--text">
-              ... and more coming soon!
-            </div>
-          </div>
-        </div>
-      </div>
     </v-card-text>
   </v-card>
 </template>
-
-<style scoped>
-.capitalize {
-  text-transform: capitalize;
-}
-
-a {
-  text-decoration: none;
-}
-</style>

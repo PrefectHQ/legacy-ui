@@ -4,11 +4,23 @@
 
 ### Features and Improvements
 
+- Add a state filter to the flow run table - [#645](https://github.com/PrefectHQ/ui/pull/645)
+
+### Bugfixes
+
+- Fix the clear button on the dashboard so that it clears scheduled runs - [#653](https://github.com/PrefectHQ/ui/pull/653)
+- Fix indefinite task run duration when using mapped cases - [#650](https://github.com/PrefectHQ/ui/pull/650)
+
+## 2021-03-09
+
+### Features and Improvements
+
+- Add account/usage dashboards and new usage pricing - Merged directly
 - Add a state sort to the task run table - [#633](https://github.com/PrefectHQ/ui/pull/633)
 
 ### Bugfixes
 
-- None
+- Cleans up agents with no last query time - [#646](https://github.com/PrefectHQ/ui/pull/646)
 
 ## 2021-03-02
 

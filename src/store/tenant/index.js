@@ -12,7 +12,7 @@ const state = {
     licenses: [],
     settings: {},
     prefectAdminSettings: {},
-    stripeCustomerID: ''
+    stripe_customer: null
   },
   isLoadingTenant: false,
   tenantIsSet: false,
@@ -88,7 +88,7 @@ const mutations = {
       licenses: [],
       settings: {},
       prefectAdminSettings: {},
-      stripeCustomerID: ''
+      stripe_customer: null
     }
   },
   unsetTenants(state) {
@@ -107,6 +107,18 @@ const actions = {
     try {
       const tenants = await prefectTenants(rootGetters['api/isCloud'])
       commit('setTenants', tenants)
+
+      // Make sure the current tenant object is updated
+      if (getters['tenantIsSet']) {
+        let tenant = getters['tenants']?.find(
+          t => t.id === getters['tenant'].id
+        )
+
+        tenant.role = rootGetters['user/memberships'].find(
+          membership => membership.tenant.id == tenant.id
+        )?.role_detail?.name
+        commit('setTenant', tenant)
+      }
     } catch {
       // Do nothing since the GraphQL error should be logged by Apollo afterware
     }

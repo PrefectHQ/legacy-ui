@@ -114,9 +114,11 @@ export default {
       try {
         this.clearingAgents = true
         const unhealthyAgents = this.agents.filter(
-          agent => agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold
+          agent =>
+            agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold ||
+            isNaN(agent.secondsSinceLastQuery)
         )
-        if (!unhealthyAgents) {
+        if (unhealthyAgents.length === 0) {
           LogRocket.captureMessage('Clean Up button open but no agents found')
           this.setAlert({
             alertShow: true,

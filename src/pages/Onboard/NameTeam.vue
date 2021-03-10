@@ -42,10 +42,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['user']),
+    ...mapGetters('auth', ['user']),
     ...mapGetters('api', ['isCloud']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
+    },
+    isTenantAdmin() {
+      return this.tenant.role === 'TENANT_ADMIN'
     }
   },
   mounted() {
@@ -85,28 +88,35 @@ export default {
           variables: {
             input: {
               email: this.user.email,
-              name: `${this.user.first_name}${this.user.last_name}`.trim(),
+              name: `${this.user.name ? this.user.name : ''}`.trim(),
               source: null
             }
           }
         })
 
-        const partnerSource = sessionStorage.getItem('partnerSource')
-
         // Create the self serve license
+        // await this.$apollo.mutate({
+        //   mutation: require('@/graphql/License/create-self-serve-license.gql'),
+        //   variables: {
+        //     input: {
+        //       confirm: true,
+        //       users: 1,
+        //       stripe_coupon_id: null
+        //     }
+        //   }
+        // })
+        // Create usage license
         await this.$apollo.mutate({
-          mutation: require('@/graphql/License/create-self-serve-license.gql'),
+          mutation: require('@/graphql/License/create-usage-based-license.gql'),
           variables: {
             input: {
-              confirm: true,
-              users: 1,
-              stripe_coupon_id: partnerSource
-                ? `partner:${partnerSource}`
-                : null
+              tenant_id: this.tenant.id,
+              plan_name: 'FREE_2021'
             }
           }
         })
       } catch (e) {
+        /// Temp Fix - We should create a license that has permission to do this!!
         if (!e?.message.includes('This tenant already has an active license'))
           this.updateServerError = true
       }
@@ -283,16 +293,18 @@ export default {
       <div ref="main-row">
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
-            <div class="display-1 text-center">
+            <div v-if="isTenantAdmin" class="display-1 text-center">
               Let's start by creating your team
               <v-menu
                 :close-on-content-click="false"
                 offset-y
                 transition="slide-y-transition"
               >
-                <template #activator="{ on }">
-                  <v-icon class="white--text" v-on="on"
-                    >fa-question-circle</v-icon
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on"
+                    ><v-icon class="white--text"
+                      >fa-question-circle</v-icon
+                    ></v-btn
                   >
                 </template>
                 <v-card tile class="pa-3 mt-1" max-width="320">
@@ -310,7 +322,7 @@ export default {
                     <ExternalLink
                       href="https://www.prefect.io/get-prefect/#contact"
                     >
-                      contact sales</ExternalLink
+                      contact us</ExternalLink
                     >
                     to add another team. For more information about teams in
                     Prefect, check out our
@@ -322,12 +334,16 @@ export default {
                 </v-card>
               </v-menu>
             </div>
+            <div v-else class="display-1 text-center"> Team Details </div>
           </v-col>
 
           <v-col v-if="revealNote" key="revealNote" cols="12">
-            <div class="body-2 text--darken-1">
+            <div v-if="isTenantAdmin" class="body-2 text--darken-1">
               (You can always change this later)
             </div>
+            <div v-else class="body-2 text--darken-1">
+              Contact your team administrators to complete onboarding</div
+            >
           </v-col>
 
           <v-col
@@ -339,11 +355,11 @@ export default {
             <div class="overline">
               Team Name
             </div>
-            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline">
+            <div v-if="!isTenantAdmin" class="headline">
               {{ tenant.name }}
             </div>
             <v-text-field
-              v-if="tenant.role == 'TENANT_ADMIN'"
+              v-if="isTenantAdmin"
               v-model="name"
               data-cy="team-name"
               :disabled="disabled"
@@ -388,7 +404,7 @@ export default {
             <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
             </div>
             <v-text-field
-              v-if="tenant.role == 'TENANT_ADMIN'"
+              v-if="isTenantAdmin"
               v-model="slug"
               data-cy="team-slug"
               :disabled="disabled"
@@ -488,7 +504,7 @@ export default {
             class="my-2"
           >
             <v-btn
-              v-if="tenant.role == 'TENANT_ADMIN'"
+              v-if="isTenantAdmin"
               color="primary"
               width="auto"
               data-cy="submit-team-info"
