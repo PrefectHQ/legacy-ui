@@ -85,7 +85,7 @@ export default {
       'tenantIsSet',
       'isLoadingTenant'
     ]),
-    ...mapGetters('user', ['memberships', 'userIsSet', 'user']),
+    ...mapGetters('user', ['isDark', 'memberships', 'userIsSet', 'user']),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -125,6 +125,9 @@ export default {
     }
   },
   watch: {
+    isDark(val) {
+      this.$vuetify.theme.dark = val
+    },
     backend() {
       this.loadedComponents = 0
       clearCache()
@@ -298,6 +301,12 @@ export default {
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
     window.addEventListener('scroll', this.handleScroll)
+    const dark = localStorage.getItem('dark_mode') === 'true' || this.isDark
+    if (dark) {
+      this.$vuetify.theme.dark = true
+    } else {
+      this.$vuetify.theme.dark = false
+    }
 
     // document.addEventListener(
     //   'visibilitychange',

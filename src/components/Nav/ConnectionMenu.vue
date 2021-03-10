@@ -160,7 +160,7 @@ export default {
               src="@/assets/logos/core-logo-no-text.svg"
               style="opacity: 0.5;"
               :style="
-                (isServer || 'dark') &&
+                (isServer || $vuetify.theme.dark) &&
                   'filter: brightness(0) invert(1); opacity: 1;'
               "
             />

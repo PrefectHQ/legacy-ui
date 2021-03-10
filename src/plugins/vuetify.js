@@ -73,6 +73,7 @@ export default new Vuetify({
     values: CUSTOM_ICONS
   },
   theme: {
+    dark: localStorage.getItem('dark_mode') === 'true',
     options: {
       customProperties: true
     },

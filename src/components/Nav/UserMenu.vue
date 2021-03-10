@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
@@ -29,21 +29,9 @@ export default {
   },
   computed: {
     ...mapGetters('auth', ['isAuthorized']),
-    ...mapGetters('user', ['user', 'oktaUser']),
-    theme() {
-      return localStorage.getItem('dark_mode')
-    }
+    ...mapGetters('user', ['user', 'oktaUser', 'isDark'])
   },
   mounted() {
-    if (this.theme === 'true') {
-      this.$vuetify.theme.dark = true
-    } else if (this.theme === 'false') {
-      this.$vuetify.theme.dark = false
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      this.$vuetify.theme.dark = true
-    }
-    localStorage.setItem('dark_mode', this.$vuetify.theme.dark.toString())
-
     clearInterval(this.clock)
     this.clockInterval = setInterval(() => {
       this.time = Date.now()
@@ -51,13 +39,30 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['logout']),
+    ...mapMutations('user', ['setUserSettings']),
     async wipeClientAndLogout() {
       document.querySelector('.router-view').style.opacity = 0
       await this.logout(this.$apolloProvider.clients.defaultClient)
     },
-    toggleDarkMode() {
+    async toggleDarkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
       localStorage.setItem('dark_mode', this.$vuetify.theme.dark.toString())
+      let settings = { isDark: this.$vuetify.theme.dark }
+      settings = { ...this.user.settings, ...settings }
+      this.setUserSettings(settings)
+
+      try {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/User/update-user-settings.gql'),
+          variables: {
+            input: settings
+          }
+        })
+        return true
+      } catch (error) {
+        this.handleAlert('error', 'Sorry, something went wrong!')
+        return false
+      }
     }
   }
 }
@@ -122,11 +127,13 @@ export default {
           Manage profile, access tokens, and teams
         </div>
       </div>
-      <v-btn class="appBackground" @click="toggleDarkMode()"
-        ><i v-if="theme === 'true'" class="fad fa-lightbulb-on"/><i
-          v-else
-          class="fad fa-lightbulb"
-      /></v-btn>
+      <v-btn class="appBackground" @click="toggleDarkMode()">
+        <span v-show="isDark"><v-icon>fad fa-lightbulb-on</v-icon></span>
+        <span v-show="!isDark"><v-icon>fad fa-lightbulb</v-icon></span>
+        <span class="ml-1">
+          Switch to {{ isDark ? 'light' : 'dark' }} mode
+        </span>
+      </v-btn>
 
       <v-divider class="grey lighten-3 mx-auto my-2" style="width: 50%;" />
 
