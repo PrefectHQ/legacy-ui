@@ -53,7 +53,9 @@ export default {
   },
   data() {
     return {
+      error: false,
       flowRunNameLoading: false,
+      loadingKey: 0,
       tab: this.getTab(),
       tabs: [
         {
@@ -93,6 +95,9 @@ export default {
     },
     flowRunId() {
       return this.$route.params.id
+    },
+    loading() {
+      return this.loadingKey > 0
     }
   },
   watch: {
@@ -184,9 +189,11 @@ export default {
           id: this.flowRunId
         }
       },
+      loadingKey: 'loadingKey',
       error(error) {
-        if (error.toString().includes('invalid input'))
-          this.$router.push({ name: 'not-found' })
+        if (error.toString().includes('invalid input')) {
+          this.error = true
+        }
       },
       pollInterval: 5000,
       update: data => data.flow_run_by_pk
@@ -196,7 +203,19 @@ export default {
 </script>
 
 <template>
-  <v-sheet v-if="flowRun" color="appBackground">
+  <v-sheet
+    v-if="error && !flowRun"
+    color="appBackground"
+    class="position-relative"
+  >
+    <div
+      class="text-center position-absolute center-absolute text-h4 grey--text text--darken-2"
+      style="z-index: 1;"
+    >
+      Sorry, we weren't able to find this run.
+    </div>
+  </v-sheet>
+  <v-sheet v-else-if="flowRun" color="appBackground">
     <SubPageNav icon="pi-flow-run" page-type="Flow Run">
       <span
         slot="page-title"
@@ -356,6 +375,14 @@ export default {
     </v-bottom-navigation>
   </v-sheet>
 </template>
+
+<style lang="scss" scoped>
+.center-absolute {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>
 
 <style lang="scss">
 /* stylelint-disable */
