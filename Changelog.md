@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add a state filter to the flow run table - [#645](https://github.com/PrefectHQ/ui/pull/645)
 
 ### Bugfixes
 
