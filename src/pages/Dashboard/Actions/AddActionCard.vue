@@ -575,16 +575,28 @@ export default {
       </v-card-text>
     </v-card>
     <v-card v-else-if="openSelectFlowEventType" elevation="0" class="pa-2"
-      ><v-chip
-        v-for="item in flowEventTypes"
-        :key="item.enum"
-        label
-        class="mx-2"
-        outlined
-        @click="selectFlowEventType(item)"
-        >{{ item.name }}</v-chip
-      ></v-card
-    >
+      ><v-tooltip v-for="item in flowEventTypes" :key="item.enum" bottom>
+        <template #activator="{ on, attrs }">
+          <span v-bind="attrs" v-on="on">
+            <v-chip
+              label
+              class="mx-2"
+              :disabled="
+                item.enum != 'CHANGES_STATE' && selectedFlows.length > 1
+              "
+              outlined
+              @click="selectFlowEventType(item)"
+              >{{ item.name }}</v-chip
+            >
+          </span>
+        </template>
+        <span>{{
+          item.enum != 'CHANGES_STATE' && selectedFlows.length > 1
+            ? `We can only monitor one flow for this`
+            : item.name
+        }}</span>
+      </v-tooltip>
+    </v-card>
     <v-card
       v-else-if="openSeconds"
       v-click-outside="closeSeconds"
