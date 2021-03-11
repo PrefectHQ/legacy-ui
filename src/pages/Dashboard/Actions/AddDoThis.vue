@@ -22,7 +22,23 @@ export default {
       isPagerDuty: false,
       isTwilio: false,
       menu: false,
-      bothMessages: false
+      bothMessages: false,
+      rules: {
+        EMAIL: val => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return (
+            val.split(',').every(email => pattern.test(email.trim())) ||
+            'Invalid e-mail.'
+          )
+        },
+        required: val => !!val || 'Required.',
+        requiredCombo: val =>
+          (!!val && val.length > 0) || 'At least one number is required',
+        url: val => {
+          const pattern = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
+          return pattern.test(val) || 'Invalid URL.'
+        }
+      }
     }
   },
   computed: {
@@ -40,6 +56,14 @@ export default {
     },
     messageConfigRules() {
       return []
+    },
+    allowSave() {
+      const type = this.messageType.type
+      return (
+        !!this.messageType &&
+        !!this.messageConfigTo &&
+        this.rules[type](this.messageConfigTo)
+      )
     },
     saveAs: {
       get() {
@@ -73,6 +97,8 @@ export default {
       this.$emit('close-action')
     },
     saveConfig() {
+      const type = this.messageType.type
+      console.log(this.rules, this.rules[type](this.messageConfigTo))
       if (this.messageConfigTo) {
         switch (this.messageType.type) {
           case 'SLACK_WEBHOOK':
@@ -124,6 +150,7 @@ export default {
       )
     },
     createAction() {
+      this.saveConfig()
       let config
       switch (this.messageType.type) {
         case 'SLACK_WEBHOOK':
@@ -177,7 +204,7 @@ export default {
           :color="openMessageText ? 'codePink' : 'grey'"
           @click="openMessageText = !openMessageText"
         >
-          {{ messageName }}</v-btn
+          {{ messageText || messageName }}</v-btn
         >
       </span>
       to
@@ -277,11 +304,12 @@ export default {
         @keydown.enter="saveMessage"
       />
     </v-card-text>
-    <v-card-text v-else-if="openMessageConfig" v-click-outside="saveConfig">
+    <v-card-text v-else-if="openMessageConfig">
       <v-text-field
         v-model="messageConfigTo"
         :label="messageConfigLabel"
-        :rules="messageConfigRules"
+        :rules="[rules[messageType.type]]"
+        validate-on-blur
         @keyup.enter="saveConfig"
       ></v-text-field>
     </v-card-text>
@@ -300,7 +328,7 @@ export default {
       </v-tooltip>
     </v-card-text>
     <div class="text-right pb-4 pr-4">
-      <v-btn color="primary" @click="createAction">
+      <v-btn color="primary" :disabled="!allowSave" @click="createAction">
         Save Config
       </v-btn>
     </div>

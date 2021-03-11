@@ -221,7 +221,6 @@ export default {
       this.openActions = false
     },
     async createAction(input) {
-      console.log('input', input)
       try {
         // NEED TO ADD NAME FOR ACTION HERE
         const { data } = await this.$apollo.mutate({
@@ -230,8 +229,24 @@ export default {
             input: { config: input.config, name: input.name }
           }
         })
-        console.log(data)
         return data?.create_action
+      } catch (error) {
+        const errString = `${error}`
+        this.setAlert({
+          alertShow: true,
+          alertMessage: errString,
+          alertType: 'error'
+        })
+      }
+    },
+    async removeToDo(toDo) {
+      try {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/delete_action.gql'),
+          variables: {
+            id: toDo.id
+          }
+        })
       } catch (error) {
         const errString = `${error}`
         this.setAlert({
@@ -560,7 +575,12 @@ export default {
         ></v-text-field>
       </v-card-text>
     </v-card>
-    <v-card v-else-if="openStates" v-click-outside="closeStates" elevation="0">
+    <v-card
+      v-else-if="openStates"
+      v-click-outside="closeStates"
+      elevation="0"
+      class="pa-2"
+    >
       <v-card-text>
         <v-chip
           v-for="item in stateGroups"
@@ -590,22 +610,30 @@ export default {
         >
       </v-card-text>
     </v-card>
-    <v-card v-else-if="openActions" elevation="0"
-      ><v-card-actions>
-        <v-chip
-          v-for="item in editedActions"
-          :key="item.id"
-          label
-          max-width="300px"
-          class="mx-2"
-          outlined
-          @click="selectAction(item)"
-          >{{ item.name || item.action_type }}</v-chip
+    <v-card v-else-if="openActions" elevation="0" class="pa-2">
+      <v-chip class="ma-1" color="primary" label @click="addNewAction"
+        ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New Config
+      </v-chip>
+      <v-chip
+        v-for="item in editedActions"
+        :key="item.id"
+        label
+        max-width="500px"
+        class="ma-1"
+        outlined
+        @click="selectAction(item)"
+        ><truncate :content="item.name || item.action_type">{{
+          item.name || item.action_type
+        }}</truncate>
+        <v-btn
+          small
+          icon
+          title="Remove"
+          color="red"
+          @click.stop="removeToDo(item)"
         >
-        <v-btn small class="ml-8" color="primary" @click="addNewAction"
-          ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New
-        </v-btn>
-      </v-card-actions>
+          <i class="fas fa-minus-circle"/></v-btn
+      ></v-chip>
     </v-card>
     <v-card-actions class="pa-8">
       <v-spacer /><v-btn
