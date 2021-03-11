@@ -60,7 +60,6 @@ export default {
       return this.hook?.action?.name || this.hook?.action?.action_type
     },
     hookName() {
-      console.log(this.hook)
       // name is if a flow group is named on the evnt - may need to updated to handle multiple
       const idList = this.hook?.event_tags?.flow_group_id
       const name = this.flowName
