@@ -42,7 +42,7 @@ export default {
                 small
                 depressed
                 :disabled="role === 'READ_ONLY_USER'"
-                color="grey darken-2"
+                color="utilGrayMid"
               >
                 <v-icon>label_important</v-icon>
                 <div>Set State</div>

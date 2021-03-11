@@ -50,7 +50,7 @@ export const THEME_COLORS_ALT = {
   appBackground: '#2a2d37',
   appForeground: '#393e4c',
   prefect: '#003d66',
-  primary: '#007acc',
+  primary: '#1aa3ff',
   utilGrayLight: '#585f74',
   utilGrayMid: '#9ea4b6',
   utilGrayDark: '#ecedf0'

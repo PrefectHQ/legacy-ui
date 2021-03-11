@@ -169,7 +169,7 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <i class="prefect--text fad fa-clouds fa-fw fa-3x" />
+            <i class="primary--text fad fa-clouds fa-fw fa-3x" />
           </div>
           <div>
             <div
@@ -200,7 +200,7 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <i class="prefect--text fad fa-tasks fa-fw fa-3x" />
+            <i class="primary--text fad fa-tasks fa-fw fa-3x" />
           </div>
           <div>
             <div class="text-h6 font-weight-regular utilGrayMid--text">
@@ -222,7 +222,7 @@ export default {
           <div class="mr-4">
             <i
               :class="
-                `prefect--text fad fa-user${userNum > 1 ? 's' : ''} fa-fw fa-3x`
+                `primary--text fad fa-user${userNum > 1 ? 's' : ''} fa-fw fa-3x`
               "
             />
           </div>
@@ -245,7 +245,7 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <i class="prefect--text pi-flow pi-3x pi-fw" />
+            <i class="primary--text pi-flow pi-3x pi-fw" />
           </div>
           <div>
             <div class="text-h6 font-weight-regular utilGrayMid--text">
@@ -263,7 +263,7 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <i class="prefect--text fad fa-history fa-fw fa-3x" />
+            <i class="primary--text fad fa-history fa-fw fa-3x" />
           </div>
           <div>
             <div class="text-h6 font-weight-regular utilGrayMid--text">

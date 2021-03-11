@@ -314,6 +314,18 @@ export default {
   width: 100%;
   height: 70vh;
   overflow: auto;
+  background-color: var(--v-appForeground-base);
+  color: var(--v-utilGrayDark-base);
+}
+
+.CodeMirror-gutters {
+  background-color: var(--v-appForeground-base);
+  border-color: var(--v-utilGrayLight-base);
+  color: var(--v-utilGrayMid-base);
+}
+
+.CodeMirror-cursor {
+  border-color: var(--v-utilGrayMid-base);
 }
 
 .cmirror .CodeMirror-vscrollbar {

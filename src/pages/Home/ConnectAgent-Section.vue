@@ -112,7 +112,7 @@ export default {
         {{ isCloud ? 'Prefect Cloud' : 'your Prefect Server' }}
       </div>
       <div
-        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
+        class="text-body-1 appBackground utilGrayDark--text rounded-sm pa-3 mt-4"
         style="border: 1px solid var(--v-utilGrayLight-base) !important;"
       >
         <div class="code-block">
@@ -141,7 +141,7 @@ export default {
       </div>
 
       <div
-        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
+        class="text-body-1 appBackground utilGrayDark--text rounded-sm pa-3 mt-4"
         style="border: 1px solid var(--v-utilGrayLight-base) !important;"
       >
         <div class="code-block">

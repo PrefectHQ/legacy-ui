@@ -379,7 +379,8 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 /* Dark Mode background overrides */
 // stylelint-disable
 .theme--dark {
-  .v-tabs-items {
+  .v-tabs-items,
+  &.v-application {
     background-color: var(--v-appBackground-base) !important;
   }
 
@@ -420,6 +421,10 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
     background-color: var(--v-utilGrayMid-darken2);
     border-radius: 16px;
     min-height: 25px;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: transparent;
   }
 }
 /* End Dark Mode background overrides */
