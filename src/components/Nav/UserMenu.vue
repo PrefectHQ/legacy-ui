@@ -118,7 +118,7 @@ export default {
         @click="$router.push({ name: 'profile' })"
       >
         <div>
-          <v-icon x-small>
+          <v-icon x-small class="utilGrayDark--text">
             fad fa-cogs
           </v-icon>
           Account Settings
@@ -127,13 +127,13 @@ export default {
           Manage profile, access tokens, and teams
         </div>
       </div>
-      <v-btn class="appBackground" @click="toggleDarkMode()">
-        <span v-show="isDark"><v-icon>fad fa-lightbulb-on</v-icon></span>
-        <span v-show="!isDark"><v-icon>fad fa-lightbulb</v-icon></span>
-        <span class="ml-1">
-          Switch to {{ isDark ? 'light' : 'dark' }} mode
-        </span>
-      </v-btn>
+      <div class="d-flex flex-row align-center justify-center">
+        <span class="mx-3 sun"><v-icon size="36px">fad fa-sun</v-icon></span>
+        <v-switch v-model="isDark" @change="toggleDarkMode()"> </v-switch>
+        <span class="mx-3 moon"
+          ><v-icon size="36px">fad fa-moon-stars</v-icon></span
+        >
+      </div>
 
       <v-divider class="grey lighten-3 mx-auto my-2" style="width: 50%;" />
 
@@ -179,3 +179,17 @@ export default {
     </v-sheet>
   </v-menu>
 </template>
+
+<style lang="scss" scoped>
+.sun .v-icon {
+  color: #ffd932;
+}
+
+.moon {
+  margin-top: -12px;
+
+  .v-icon {
+    color: #93c1e9;
+  }
+}
+</style>
