@@ -48,6 +48,23 @@ export const openCloudHookTypes = [
   }
 ]
 
+export const actionTypes = [
+  {
+    title: 'Email',
+    type: 'EMAIL',
+    icon: 'fas fa-envelope',
+    config: { to: null },
+    requiresCloud: true
+  },
+  {
+    title: 'Slack',
+    type: 'SLACK_WEBHOOK',
+    icon: 'fab fa-slack',
+    config: { url: null },
+    requiresCloud: false
+  }
+]
+
 export const featureFlaggedCloudHookTypes = [...openCloudHookTypes]
 
 export const GROUP_COLORS = {

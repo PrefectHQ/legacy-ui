@@ -1,6 +1,6 @@
 <script>
 //This page will need updating!
-import { featureFlaggedCloudHookTypes } from '@/utils/cloudHooks'
+import { actionTypes } from '@/utils/cloudHooks'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -23,7 +23,9 @@ export default {
       isTwilio: false,
       menu: false,
       bothMessages: false,
+      errorMessage: '',
       rules: {
+        SLACK_WEBHOOK: () => true,
         EMAIL: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           return (
@@ -98,32 +100,34 @@ export default {
     },
     saveConfig() {
       const type = this.messageType.type
-      console.log(this.rules, this.rules[type](this.messageConfigTo))
-      if (this.messageConfigTo) {
-        switch (this.messageType.type) {
-          case 'SLACK_WEBHOOK':
-            {
-              this.messageConfig = { webhook_url: this.messageConfigTo }
-              if (this.messageText) {
-                this.messageConfig.message = this.bothMessages
-                  ? `{} ${this.messageText}`
-                  : this.messageText
+      const checked = this.rules[type](this.messageConfigTo)
+      if (checked === true) {
+        if (this.messageConfigTo) {
+          switch (this.messageType.type) {
+            case 'SLACK_WEBHOOK':
+              {
+                this.messageConfig = { webhook_url: this.messageConfigTo }
+                if (this.messageText) {
+                  this.messageConfig.message = this.bothMessages
+                    ? `{} ${this.messageText}`
+                    : this.messageText
+                }
               }
-            }
-            break
-          case 'EMAIL':
-            {
-              this.messageConfig = { to_emails: this.messageConfigTo }
-              if (this.messageText) {
-                this.messageConfig.body = this.bothMessages
-                  ? `{} ${this.messageText}`
-                  : this.messageText
+              break
+            case 'EMAIL':
+              {
+                this.messageConfig = { to_emails: [this.messageConfigTo] }
+                if (this.messageText) {
+                  this.messageConfig.body = this.bothMessages
+                    ? `{} ${this.messageText}`
+                    : this.messageText
+                }
               }
-            }
-            break
+              break
+          }
         }
-      }
-      this.openMessageConfig ? (this.openMessageConfig = false) : null
+        this.openMessageConfig ? (this.openMessageConfig = false) : null
+      } else this.errorMessage = checked
     },
     saveMessage() {
       if (this.openMessageText) {
@@ -138,7 +142,7 @@ export default {
       //     this.editable &&
       //     this.tenant.prefectAdminSettings?.notifications
       //   ) {
-      allHooks = featureFlaggedCloudHookTypes
+      allHooks = actionTypes
       //   } else {
       //     allHooks =
       //       this.canEdit && this.editable
@@ -310,6 +314,7 @@ export default {
         :label="messageConfigLabel"
         :rules="[rules[messageType.type]]"
         validate-on-blur
+        :error-messages="errorMessage"
         @keyup.enter="saveConfig"
       ></v-text-field>
     </v-card-text>

@@ -69,7 +69,7 @@ export default {
       )
     },
     haveOrHas() {
-      if (this.selectedFlows?.length > 1) return 'have'
+      if (this.selectedFlows?.length > 1 && !this.allFlows) return 'have'
       return 'has'
     },
     editedActions() {
@@ -164,12 +164,12 @@ export default {
     },
     selectFlow(event, flow) {
       if (flow) {
-        this.selectedFlows.find(item => item === flow)
-          ? (this.selectedFlows = this.selectedFlows.filter(
+        this.selectedFlows?.find(item => item === flow)
+          ? (this.selectedFlows = this.selectedFlows?.filter(
               item => item != flow
             ))
           : this.selectedFlows.push(flow)
-        this.flowNamesList = this.selectedFlows.map(flow => flow.name)
+        this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
       }
       if (!event.shiftKey) {
         this.openFlow = false
@@ -177,11 +177,17 @@ export default {
       }
     },
     selectAllFlows() {
-      this.selectedFlows = this.flows
-      this.flowNamesList.push('any flow')
-      this.allFlows = true
-      this.openFlow = false
-      this.openSelectFlowEventType = true
+      if (!this.allFlows) {
+        this.selectedFlows = this.flows
+        this.flowNamesList = ['any flow']
+        this.allFlows = true
+        this.openFlow = false
+        this.openSelectFlowEventType = true
+      } else {
+        this.selectedFlows = []
+        this.flowNamesList = []
+        this.allFlows = false
+      }
     },
     selectFlowEventType(type) {
       this.flowEventType = type
@@ -222,13 +228,13 @@ export default {
     },
     async createAction(input) {
       try {
-        // NEED TO ADD NAME FOR ACTION HERE
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create_action.gql'),
           variables: {
             input: { config: input.config, name: input.name }
           }
         })
+        await this.$apollo.queries.actions.refresh()
         return data?.create_action
       } catch (error) {
         const errString = `${error}`
@@ -241,12 +247,19 @@ export default {
     },
     async removeToDo(toDo) {
       try {
-        await this.$apollo.mutate({
+        const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/delete_action.gql'),
           variables: {
             id: toDo.id
           }
         })
+        data.delete_action?.success
+          ? await this.$apollo.queries.actions.refresh()
+          : this.setAlert({
+              alertShow: true,
+              alertMessage: 'We hit an error!',
+              alertType: 'error'
+            })
       } catch (error) {
         const errString = `${error}`
         this.setAlert({
@@ -263,15 +276,21 @@ export default {
         let action = this.chosenAction || this.hookDetails?.hook?.action
         if (action?.value === 'CANCEL_RUN') {
           const cancelConfig = { cancel_flow_run: {} }
-          action = this.createAction(cancelConfig)
+          action = this.createAction({
+            config: cancelConfig,
+            name: 'cancel that run'
+          })
         }
         if (flow) {
           if (this.includeTo) {
+            const flowGroupIds = this.selectedFlows?.map(
+              flow => flow.flow_group_id
+            )
             const flowRunStateChangedSuccess = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
               variables: {
                 input: {
-                  flow_group_ids: [flow],
+                  flow_group_ids: this.allFlows ? [] : flowGroupIds,
                   action_id: action.id,
                   states: this.chosenStates
                 }
@@ -290,6 +309,7 @@ export default {
                 }
               }
             })
+
             await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/add_config_to_flow.gql'),
               variables: {
@@ -485,7 +505,7 @@ export default {
         </v-col>
       </v-row></v-card
     >
-    <v-card v-if="openAgentOrFlow" elevation="0">
+    <v-card v-if="openAgentOrFlow" elevation="0" class="pa-2">
       <v-chip
         v-for="item in ['flow', 'agent']"
         :key="item"
@@ -505,6 +525,7 @@ export default {
       v-else-if="openFlow"
       v-click-outside="selectFlow"
       elevation="0"
+      class="pa-2"
       :style="{ overflow: 'auto' }"
     >
       <v-card-title>
@@ -553,7 +574,7 @@ export default {
         >
       </v-card-text>
     </v-card>
-    <v-card v-else-if="openSelectFlowEventType" elevation="0"
+    <v-card v-else-if="openSelectFlowEventType" elevation="0" class="pa-2"
       ><v-chip
         v-for="item in flowEventTypes"
         :key="item.enum"
@@ -564,7 +585,11 @@ export default {
         >{{ item.name }}</v-chip
       ></v-card
     >
-    <v-card v-else-if="openSeconds" v-click-outside="closeSeconds" elevation="0"
+    <v-card
+      v-else-if="openSeconds"
+      v-click-outside="closeSeconds"
+      elevation="0"
+      class="pa-2"
       ><v-card-text>
         <v-text-field
           v-model="seconds"
@@ -632,7 +657,7 @@ export default {
           color="red"
           @click.stop="removeToDo(item)"
         >
-          <i class="fas fa-minus-circle"/></v-btn
+          <i class="fas fa-times-circle fa-lg"/></v-btn
       ></v-chip>
     </v-card>
     <v-card-actions class="pa-8">

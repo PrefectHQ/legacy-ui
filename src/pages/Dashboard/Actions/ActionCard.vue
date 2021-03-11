@@ -60,8 +60,14 @@ export default {
       return this.hook?.action?.name || this.hook?.action?.action_type
     },
     hookName() {
+      console.log(this.hook)
       // name is if a flow group is named on the evnt - may need to updated to handle multiple
-      const name = this.flowName ? this.flowName[0]?.name : ''
+      const idList = this.hook?.event_tags?.flow_group_id
+      const name = this.flowName
+        ? this.flowName[0]?.name
+        : idList && !idList.length
+        ? 'any flow'
+        : ''
       return name
     }
   },
@@ -92,7 +98,7 @@ export default {
         hook: this.hook,
         flowConfig: this.flowConfig,
         flowName: this.flowName,
-        flowNameList: this.flowName.map(flow => flow.name)
+        flowNameList: this.flowName?.map(flow => flow.name)
       })
     }
   },
@@ -172,7 +178,7 @@ export default {
         </v-card></v-menu
       ></div
     >
-    <div class="pl-8 pb-8 pt-0"
+    <div class="pl-8 pb-8 pt-0 pr-4"
       ><v-icon color="codePink" class="pr-2">{{
         hookDetails[hook.event_type].icon
       }}</v-icon
