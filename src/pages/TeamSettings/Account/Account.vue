@@ -49,8 +49,8 @@ export default {
     }
   },
   watch: {
-    tenant(val) {
-      if (val?.id) {
+    tenant(val, oldVal) {
+      if (val?.id !== oldVal?.id) {
         this.loadedTiles = 0
         clearTimeout(this.refreshTimeout)
         this.refresh()
@@ -169,7 +169,7 @@ export default {
               <v-skeleton-loader
                 :loading="loadedTiles < 6"
                 type="image"
-                height="176"
+                height="168"
                 class="usage"
                 transition="quick-fade"
                 tile

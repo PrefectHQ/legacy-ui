@@ -37,7 +37,7 @@ export default {
 
     <v-sheet width="400" class="white">
       <v-list>
-        <v-list-item :to="{ name: 'account' }">
+        <v-list-item :to="'/team/account'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-abacus fa-2x" />
           </v-list-item-avatar>
@@ -54,7 +54,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="{ name: 'tokens' }">
+        <v-list-item :disabled="!isCloud" :to="'/team/tokens'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-exchange-alt fa-2x" />
           </v-list-item-avatar>
@@ -68,7 +68,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="{ name: 'cloud-hooks' }">
+        <v-list-item :to="'/team/cloud-hooks'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-clouds fa-2x" />
           </v-list-item-avatar>
@@ -82,7 +82,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="{ name: 'flow-concurrency' }">
+        <v-list-item :disabled="!isCloud" :to="'/team/flow-concurrency'">
           <v-list-item-avatar tile>
             <v-icon large color="navIcons">
               pi-flow-run
@@ -98,7 +98,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="{ name: 'flow-groups' }">
+        <v-list-item :to="'/team/flow-groups'">
           <v-list-item-avatar tile>
             <v-icon large color="navIcons">
               pi-flow
@@ -114,7 +114,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="{ name: 'members' }">
+        <v-list-item :disabled="!isCloud" :to="'/team/members'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-users fa-2x" />
           </v-list-item-avatar>
@@ -128,7 +128,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="{ name: 'projects' }">
+        <v-list-item :to="'/team/projects'">
           <v-list-item-avatar tile>
             <v-icon large color="navIcons">
               pi-project
@@ -144,7 +144,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="{ name: 'secrets' }">
+        <v-list-item :disabled="!isCloud" :to="'/team/secrets'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-key-skeleton fa-2x" />
           </v-list-item-avatar>
@@ -158,7 +158,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="{ name: 'task-concurrency' }">
+        <v-list-item :disabled="!isCloud" :to="'/team/task-concurrency'">
           <v-list-item-avatar tile>
             <v-icon large color="primaryDark">
               pi-task-run

@@ -427,7 +427,7 @@ export default {
               Are you sure you want to clear all late runs?
             </v-card-title>
 
-            <v-card-text v-if="scheduleIds.length > 1">
+            <v-card-text v-if="scheduledRunIds.length > 1">
               This will toggle the schedule for all flows with late runs. If you
               did not set a
               <ExternalLink

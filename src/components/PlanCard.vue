@@ -24,7 +24,7 @@ export default {
     },
     monthlyCost() {
       if (this.activePlan.price == 'contact') {
-        return 'Contact Sales'
+        return 'Contact Us'
       }
       return `$${this.activePlan.price}/month`
     }
