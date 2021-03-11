@@ -85,11 +85,14 @@ body {
 .fade-expand-leave-active {
   max-height: 1000px;
   opacity: 1;
-  transition: all linear 500ms 250ms;
+}
+
+.fade-expand-enter-active {
+  transition: max-height linear 200ms 200ms, opacity linear 200ms 400ms;
 }
 
 .fade-expand-leave-active {
-  transition: all linear 200ms;
+  transition: max-height linear 200ms 200ms, opacity linear 200ms;
 }
 
 .fade-expand-enter,
@@ -228,7 +231,7 @@ body {
   word-break: normal;
 }
 
-$percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
+$percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
 @each $percent in $percents {
   .o-#{$percent} {
@@ -372,3 +375,138 @@ $percents: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 }
 
 /* End Navbar global styles */
+
+/* Plans global styles */
+/* stylelint-disable no-descending-specificity */
+.plans-feature-icon {
+  align-items: center;
+  display: inline-flex;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+
+  .svg-inline--fa {
+    --fa-primary-color: #27b1ff;
+    --fa-secondary-color: #27b1ff;
+    --fa-secondary-opacity: 0.6;
+    transition: all 150ms linear;
+  }
+
+  &.feature-green {
+    .svg-inline--fa {
+      --fa-primary-color: #07e798;
+      --fa-secondary-color: #07e798;
+      --fa-secondary-opacity: 0.6;
+      transition: all 150ms linear;
+    }
+  }
+
+  .fa-toolbox.svg-inline--fa {
+    --fa-primary-opacity: 0.6 !important;
+    --fa-secondary-opacity: 1 !important;
+  }
+
+  &.plans-feature-icon-light {
+    .svg-inline--fa {
+      --fa-primary-color: #27b1ff;
+      --fa-secondary-color: #e0f4ff;
+      --fa-secondary-opacity: 1;
+    }
+  }
+}
+
+.feature-category-icon {
+  .svg-inline--fa {
+    --fa-primary-color: #27b1ff;
+    --fa-secondary-color: #fe5196;
+    --fa-secondary-opacity: 1;
+    transition: all 150ms linear;
+
+    &.fa-chart-scatter {
+      --fa-primary-color: #fe5196;
+      --fa-secondary-color: #27b1ff;
+    }
+  }
+}
+
+.feature-list-icon {
+  $color: #607d8b;
+
+  .svg-inline--fa {
+    --fa-primary-color: #{$color};
+    --fa-secondary-color: #{$color};
+    --fa-secondary-opacity: 1;
+    color: $color;
+    opacity: 1;
+    transition: all 150ms linear;
+  }
+
+  &.empty-circle .svg-inline--fa {
+    --fa-primary-opacity: 0 !important;
+  }
+
+  &.empty-outline .svg-inline--fa {
+    --fa-secondary-opacity: 0 !important;
+  }
+
+  &.feature-list-icon-disabled .svg-inline--fa {
+    opacity: 0.3 !important;
+  }
+}
+
+.support-icon {
+  .svg-inline--fa {
+    --fa-primary-color: #27b1ff;
+    --fa-secondary-color: #27b1ff;
+    --fa-secondary-opacity: 0.5;
+  }
+
+  .fa-badge-check.svg-inline--fa {
+    --fa-primary-color: var(--v-accentGreen-darken2);
+    --fa-secondary-color: var(--v-accentGreen-base);
+    --fa-secondary-opacity: 0.6;
+  }
+}
+/* stylelint-enable no-descending-specificity */
+/* End plans global styles */
+
+$fa-cc-amex: #007bc1;
+$fa-cc-diners-club: #004a97;
+$fa-cc-discover: #f68121;
+$fa-cc-jcb: #003a8f;
+$fa-cc-mastercard: #0a3a82;
+$fa-cc-paypal: #253b80;
+$fa-cc-stripe: #00afe1;
+$fa-cc-visa: #0157a2;
+
+.fa-cc-amex {
+  color: $fa-cc-amex !important;
+}
+
+.fa-cc-diners-club {
+  color: $fa-cc-diners-club !important;
+}
+
+.fa-cc-discover {
+  color: $fa-cc-discover !important;
+}
+
+.fa-cc-jcb {
+  color: $fa-cc-jcb !important;
+}
+
+.fa-cc-mastercard {
+  color: $fa-cc-mastercard !important;
+}
+
+.fa-cc-paypal {
+  color: $fa-cc-paypal !important;
+}
+
+.fa-cc-stripe {
+  color: $fa-cc-stripe !important;
+}
+
+.fa-cc-visa {
+  color: $fa-cc-visa !important;
+}

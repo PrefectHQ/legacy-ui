@@ -48,7 +48,7 @@ const links = [
   }
 ]
 
-const insetRoutes = ['team', 'user', 'tutorials']
+const insetRoutes = ['user', 'tutorials']
 
 export default {
   computed: {
