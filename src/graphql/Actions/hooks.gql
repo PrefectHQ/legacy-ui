@@ -7,6 +7,7 @@ query Actions {
     action {
       name
       id
+      action_config
       action_type
     }
   }

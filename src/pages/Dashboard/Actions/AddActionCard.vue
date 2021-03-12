@@ -21,6 +21,7 @@ export default {
       openSeconds: false,
       openSelectFlowEventType: false,
       openFlow: false,
+      openAgent: false,
       openStates: false,
       openAgentOrFlow: true,
       openActions: false,
@@ -28,14 +29,17 @@ export default {
       allFlows: false,
       hookDetails: this.hookDetail,
       project: null,
-      stateGroups: Object.keys(STATES),
+      stateGroups: [...Object.keys(STATES), 'Custom'],
       states: STATES,
       selectedStateGroup: null,
       agentFlowOrSomethingElse: '',
-      chosenStates: this.hookDetail?.hook?.event_tags?.state || [],
+      selectedAgent: null,
+      chosenStates: this.hookDetail?.hook?.event_tags?.state || STATES['All'],
+      stateNames: this.hookDetail?.hook?.event_tags?.state || [],
+      disableClick: true,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
-      addAction: true,
+      addAction: false,
       flowEventType: null,
       flowEventTypes: [
         { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
@@ -52,6 +56,7 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['projects']),
+    ...mapGetters('agent', ['agents']),
     projectsList() {
       return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
         a.name > b.name ? 1 : -1
@@ -76,7 +81,7 @@ export default {
       return this.actions
         ? this.actions.find(
             action => action.action_type === 'CancelFlowRunAction'
-          )
+          ) || this.agentOrFlow === 'agent'
           ? this.actions
           : [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
@@ -91,7 +96,7 @@ export default {
       return this.flowNamesList?.toString() || this.agentOrFlow
     },
     hookStates() {
-      return this.chosenStates?.toString().toLowerCase() || 'state'
+      return this.stateNames?.toString().toLowerCase() || ''
     },
     hookAction() {
       return (
@@ -162,13 +167,21 @@ export default {
         this.openSelectFlowEventType = false
       }
     },
+    selectAgent(choice) {
+      this.selectedAgent = choice
+      this.openAgent = false
+      this.openSelectFlowEventType = true
+    },
     selectFlow(event, flow) {
       if (flow) {
-        this.selectedFlows?.find(item => item === flow)
+        this.selectedFlows?.find(
+          item => item.flow_group_id === flow.flow_group_id
+        )
           ? (this.selectedFlows = this.selectedFlows?.filter(
-              item => item != flow
+              item => item.flow_group_id != flow.flow_group_id
             ))
           : this.selectedFlows.push(flow)
+        console.log(this.selectedFlows)
         this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
       }
       if (!event.shiftKey) {
@@ -199,16 +212,23 @@ export default {
         : ''
     },
     selectStateGroup(group) {
-      this.states[group].forEach(state => this.chosenStates.push(` ${state}`))
+      if (group !== 'Custom') {
+        this.disableClick = true
+        this.stateNames = group === 'All' ? '' : [` to ${group}`]
+        this.chosenStates = this.states[group]
+      } else {
+        this.stateNames = 'to selected States'
+        this.disableClick = false
+      }
     },
     selectStates(state) {
       this.chosenStates.find(
-        item => item === ` ${state}` || item.toUpperCase() == state
+        item => item === state || item.toUpperCase() == state
       )
         ? (this.chosenStates = this.chosenStates.filter(
-            item => item != ` ${state}` && item.toUpperCase() != state
+            item => item != state && item.toUpperCase() != state
           ))
-        : this.chosenStates.push(` ${state}`)
+        : this.chosenStates.push(state)
     },
     selectAction(action) {
       this.chosenAction = action
@@ -225,6 +245,12 @@ export default {
     addNewAction() {
       this.addAction = true
       this.openActions = false
+    },
+    disableChip(item) {
+      return (
+        (item.enum != 'CHANGES_STATE' && this.selectedFlows.length > 1) ||
+        (item.enum === 'CHANGES_STATE' && this.agentOrFlow === 'agent')
+      )
     },
     async createAction(input) {
       try {
@@ -276,7 +302,7 @@ export default {
         let action = this.chosenAction || this.hookDetails?.hook?.action
         if (action?.value === 'CANCEL_RUN') {
           const cancelConfig = { cancel_flow_run: {} }
-          action = this.createAction({
+          action = await this.createAction({
             config: cancelConfig,
             name: 'cancel that run'
           })
@@ -482,7 +508,6 @@ export default {
             ></span
           >
           <span v-if="includeTo">
-            to
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class=" px-0 pb-1 headline"
@@ -521,6 +546,20 @@ export default {
         >{{ item }}</v-chip
       >
     </v-card>
+    <v-card v-else-if="openAgent" elevation="0" class="pa-2">
+      <v-chip
+        v-for="item in agents"
+        :key="item.id"
+        label
+        max-width="300px"
+        class="ma-1"
+        outlined
+        @click="selectAgent(item)"
+        ><truncate :content="item.id">{{
+          item.name != 'agent' ? item.name : item.type
+        }}</truncate></v-chip
+      ></v-card
+    >
     <v-card
       v-else-if="openFlow"
       v-click-outside="selectFlow"
@@ -581,9 +620,7 @@ export default {
             <v-chip
               label
               class="mx-2"
-              :disabled="
-                item.enum != 'CHANGES_STATE' && selectedFlows.length > 1
-              "
+              :disabled="disableChip(item)"
               outlined
               @click="selectFlowEventType(item)"
               >{{ item.name }}</v-chip
@@ -591,9 +628,7 @@ export default {
           </span>
         </template>
         <span>{{
-          item.enum != 'CHANGES_STATE' && selectedFlows.length > 1
-            ? `We can only monitor one flow for this`
-            : item.name
+          disableChip(item) ? 'Selection not available' : item.name
         }}</span>
       </v-tooltip>
     </v-card>
@@ -619,32 +654,38 @@ export default {
       class="pa-2"
     >
       <v-card-text>
-        <v-chip
-          v-for="item in stateGroups"
-          :key="item.id"
-          color="primary"
-          label
-          max-width="300px"
-          :title="
-            item == 'All'
-              ? `Select all states`
-              : `Select ${item} and all connected states`
-          "
-          class="ma-1"
-          @click="selectStateGroup(item)"
-          >{{ item }}</v-chip
-        >
-        <v-chip
-          v-for="item in states['All']"
-          :key="item"
-          label
-          max-width="300px"
-          class="ma-1"
-          outlined
-          :color="chosenStates.includes(` ${item}`) ? 'pink' : ''"
-          @click="selectStates(item)"
-          >{{ item }}</v-chip
-        >
+        <div>
+          <v-chip
+            v-for="item in stateGroups"
+            :key="item.id"
+            color="primary"
+            label
+            max-width="300px"
+            :title="
+              item == 'All'
+                ? `Select all states`
+                : `Select ${item} and all connected states`
+            "
+            class="ma-1"
+            @click="selectStateGroup(item)"
+            >{{ item }}</v-chip
+          >
+        </div>
+        <v-divider class="ma-2" />
+        <div>
+          <v-chip
+            v-for="item in states['All']"
+            :key="item"
+            label
+            :disabled="disableClick"
+            max-width="300px"
+            class="ma-1"
+            outlined
+            :color="chosenStates.includes(item) ? 'pink' : ''"
+            @click="selectStates(item)"
+            >{{ item }}</v-chip
+          >
+        </div>
       </v-card-text>
     </v-card>
     <v-card v-else-if="openActions" elevation="0" class="pa-2">

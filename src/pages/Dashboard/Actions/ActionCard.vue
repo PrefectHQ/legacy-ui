@@ -60,13 +60,16 @@ export default {
       return this.hook?.action?.name || this.hook?.action?.action_type
     },
     hookName() {
-      // name is if a flow group is named on the evnt - may need to updated to handle multiple
+      console.log('hook', this.hook)
       const idList = this.hook?.event_tags?.flow_group_id
-      const name = this.flowName
-        ? this.flowName[0]?.name
-        : idList && !idList.length
-        ? 'any flow'
-        : ''
+      const name =
+        this.hook?.event_tags?.flow_group_id?.length > 1 && this.flowName
+          ? `${this.flowName[0]?.name} and others`
+          : this.flowName
+          ? this.flowName[0]?.name
+          : idList && !idList.length
+          ? 'any flow'
+          : ''
       return name
     }
   },
@@ -106,6 +109,7 @@ export default {
       query: require('@/graphql/Actions/flows.gql'),
       variables() {
         return {
+          //Should we update this to include all flow names if more than one?
           flowGroupId: this.hook?.event_tags?.flow_group_id
             ? this.hook?.event_tags?.flow_group_id[0]
             : this.flowConfig?.flow_groups[0]?.flow_group_id
