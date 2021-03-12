@@ -3,6 +3,7 @@ query AgentConfigs ($agentConfigId: uuid!) {
     id
     agents {
         id
+        type
         name
     }
   }

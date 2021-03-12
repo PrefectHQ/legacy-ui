@@ -27,7 +27,7 @@ export default {
         AgentSLAFailedEvent: {
           type: 'agent',
           icon: 'pi-agent',
-          action: 'SLA fails'
+          action: 'is unhealthy'
         },
         SCHEDULED_NOT_STARTED: {
           action: 'does not start'
@@ -74,11 +74,19 @@ export default {
       const idList = this.hook?.event_tags?.flow_group_id
       const agentName =
         this.agentConfig?.agents[0]?.name === 'agent'
-          ? this.agentConfig?.agents[0]?.id
-          : this.agentConfig?.agents[0]?.name
+          ? this.agentConfig?.agents
+              .map((agent, index) =>
+                index === 0 ? agent.type : `or ${agent.type}`
+              )
+              .toString()
+          : this.agentConfig?.agents
+              .map((agent, index) =>
+                index === 0 ? agent.name : `or ${agent.name}`
+              )
+              .toString()
       const name = this.hook.event_tags.agent_config_id
         ? this.agentConfig?.agents?.length > 1
-          ? `${agentName} and others`
+          ? `${agentName}`
           : agentName
         : this.hook?.event_tags?.flow_group_id?.length > 1 && this.flowName
         ? `${this.flowName[0]?.name} and others`
