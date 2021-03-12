@@ -296,3 +296,7 @@ try {
   // eslint-disable-next-line no-console
   console.info('Unable to apply platform-specific scrollbar styles.')
 }
+
+// // Initializes the service worker that handles token refresh
+// import TokenWorker from 'workerize-loader?inline!@/workers/token'
+// new TokenWorker()

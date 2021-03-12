@@ -27,8 +27,9 @@ const prefectAuth = async idToken => {
   }
 }
 
-const prefectRefresh = async accessToken => {
+const prefectRefresh = async (accessToken, src) => {
   try {
+    console.log('Refreshing token from...', src)
     const result = await fallbackApolloClient.mutate({
       mutation: require('@/graphql/refresh-token.gql'),
       variables: {
@@ -37,13 +38,16 @@ const prefectRefresh = async accessToken => {
     })
 
     if (result?.data?.refresh_token) {
+      console.log('Token refreshed!')
       return result.data.refresh_token
     } else if (result.error) {
+      console.log("Unable to refresh token, here's the result: ", result)
       throw new Error(result.error)
     } else {
       throw new Error('No token returned')
     }
   } catch (error) {
+    console.log('General refresh token error: ', error)
     throw new Error('Error refreshing token in prefectRefresh', error)
   }
 }

@@ -149,6 +149,8 @@ const errorAfterware = onError(
   }
 )
 
+export { errorAfterware }
+
 const authMiddleware = setContext(async (_, { headers }) => {
   if (store.getters['api/isServer']) {
     return {
@@ -271,10 +273,10 @@ let defaultApolloClient
 let fallbackApolloClient
 
 // Create apollo client
-export const createApolloProvider = () => {
+export const createApolloProvider = (options = defaultOptions) => {
   const { apolloClient, wsClient } = createApolloClient({
     id: 'initial',
-    ...defaultOptions
+    ...options
   })
   apolloClient.wsClient = wsClient
 
@@ -306,7 +308,6 @@ export { defaultApolloClient }
 export const fallbackApolloProvider = createApolloProvider()
 fallbackApolloClient = fallbackApolloProvider.defaultClient
 export { fallbackApolloClient }
-// export const fallbackApolloClient = fallbackApolloProvider.defaultClient
 
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
