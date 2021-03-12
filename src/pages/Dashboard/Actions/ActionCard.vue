@@ -76,7 +76,7 @@ export default {
         this.agentConfig?.agents[0]?.name === 'agent'
           ? this.agentConfig?.agents[0]?.id
           : this.agentConfig?.agents[0]?.name
-      const name = this.agentConfig
+      const name = this.hook.event_tags.agent_config_id
         ? this.agentConfig?.agents?.length > 1
           ? `${agentName} and others`
           : agentName
