@@ -1,0 +1,295 @@
+<script>
+import ConfirmDialog from '@/components/ConfirmDialog'
+
+export default {
+  components: {
+    ConfirmDialog
+  },
+  props: {
+    // Check admin privileges
+    isTenantAdmin: {
+      type: Boolean,
+      required: true
+    },
+    // Number that updates every time tenantUsers should be refetched
+    refetchSignal: {
+      type: Number,
+      required: true
+    },
+    // Search input
+    search: {
+      type: String,
+      required: true
+    },
+    // Tenant information
+    tenant: {
+      type: Object,
+      required: true
+    },
+    // Current user information
+    user: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      // Dialogs
+      dialogModifyRole: false,
+      dialogRemoveUser: false,
+
+      // Table headers
+      allHeaders: [
+        {
+          mobile: false,
+          text: 'Username',
+          value: 'username',
+          width: '20%'
+        },
+        {
+          mobile: true,
+          text: 'Created?',
+          value: 'created',
+          align: 'left',
+          width: '20%'
+        },
+        {
+          mobile: true,
+          text: 'Last Used?',
+          value: 'lastUsed',
+          align: 'left',
+          width: '20%'
+        },
+        {
+          mobile: true,
+          text: '',
+          value: 'actions',
+          align: 'end',
+          sortable: false,
+          width: '10%'
+        }
+      ],
+
+      // Table items (populated by Apollo query)
+      membersItems: [],
+
+      // Loading states
+      isFetchingMembers: false,
+      isRemovingUser: false,
+      isSettingRole: false,
+
+      // Inputs
+      roleInput: 'USER',
+
+      // Selected user
+      // Set when modifying a user's role or removing user membership
+      selectedUser: null
+    }
+  },
+  computed: {
+    headers() {
+      return this.$vuetify.breakpoint.mdAndUp
+        ? this.allHeaders
+        : this.allHeaders.filter(header => header.mobile)
+    }
+  },
+  watch: {
+    refetchSignal() {
+      this.$apollo.queries.tenantUsers.refetch()
+    }
+  },
+  methods: {
+    async removeUser(membershipId) {
+      this.isRemovingUser = true
+
+      const res = await this.$apollo.mutate({
+        mutation: require('@/graphql/Tenant/delete-membership.gql'),
+        variables: { membershipId }
+      })
+
+      if (res?.data?.delete_membership?.success) {
+        this.$emit(
+          'successful-action',
+          'The user has been removed from your team.'
+        )
+        this.$apollo.queries.tenantUsers.refetch()
+      } else {
+        this.$emit(
+          'failed-action',
+          'Something went wrong while trying to remove this member from your team. Please try again.'
+        )
+      }
+
+      this.isRemovingUser = false
+      this.dialogRemoveUser = false
+      this.selectedUser = null
+    }
+  },
+  apollo: {
+    tenantUsers: {
+      query: require('@/graphql/Tenant/tenant-users.gql'),
+      watchLoading(isLoading) {
+        this.isFetchingMembers = isLoading
+      },
+      result({ data }) {
+        if (!data) return
+
+        this.membersItems = data.tenantUsers
+          // we'll filter for just service accounts here, and filter them out in MembersTable
+          .filter(user =>
+            user.memberships.find(mem => mem.tenant_id == this.tenant.id)
+          )
+          .map(user => {
+            let membership = user.memberships.find(
+              mem => mem.tenant_id == this.tenant.id
+            )
+            return {
+              id: user.id,
+              username: user.username,
+              userId: user.id,
+              membershipId: membership.id
+            }
+          })
+
+        this.$emit('load-end', {
+          fullUsers: this.membersItems.filter(m => m.role !== 'READ_ONLY_USER'),
+          readOnlyUsers: this.membersItems.filter(
+            m => m.role == 'READ_ONLY_USER'
+          )
+        })
+        return data
+      },
+      error() {
+        this.$emit(
+          'failed-action',
+          'Something went wrong while trying to fetch your team members. Please try again.'
+        )
+        this.$emit('load-end')
+      },
+      fetchPolicy: 'no-cache',
+      skip() {
+        return !this.tenant
+      }
+    }
+  }
+}
+</script>
+
+<template>
+  <div>
+    <v-data-table
+      fixed-header
+      :headers="headers"
+      :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+      :items="membersItems"
+      :items-per-page="10"
+      class="elevation-2 rounded-0 truncate-table"
+      :footer-props="{
+        showFirstLastPage: true,
+        itemsPerPageOptions: [10, 15, 20, -1],
+        firstIcon: 'first_page',
+        lastIcon: 'last_page',
+        prevIcon: 'keyboard_arrow_left',
+        nextIcon: 'keyboard_arrow_right'
+      }"
+      :search="search"
+      no-results-text="No members found. Try expanding your search?"
+      no-data-text="This team does not have any members yet."
+    >
+      <!-- HEADERS -->
+      <template #header.username="{ header }">
+        <span class="subtitle-2">{{ header.text }}</span>
+      </template>
+      <template #header.created="{ header }">
+        <span class="subtitle-2">{{ header.text }}</span>
+      </template>
+      <template #header.lastUsed="{ header }">
+        <span class="subtitle-2">{{ header.text }}</span>
+      </template>
+
+      <!-- ACTIONS -->
+      <template v-if="isTenantAdmin" #item.actions="{ item }">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn
+              text
+              fab
+              x-small
+              color="primary"
+              v-on="on"
+              @click="
+                selectedUser = item
+                dialogModifyRole = true
+              "
+            >
+              <v-icon>edit</v-icon>
+            </v-btn>
+          </template>
+          Create a new API key
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn
+              text
+              fab
+              x-small
+              color="error"
+              v-on="on"
+              @click="
+                selectedUser = item
+                dialogRemoveUser = true
+              "
+            >
+              <v-icon>delete</v-icon>
+            </v-btn>
+          </template>
+          Remove account
+        </v-tooltip>
+      </template>
+    </v-data-table>
+
+    <!-- MODIFY USER ROLE DIALOG -->
+    <ConfirmDialog
+      v-if="selectedUser"
+      v-model="dialogModifyRole"
+      :dialog-props="{ 'max-width': '600' }"
+      :title="`Modify ${selectedUser.email}'s role`"
+      :disabled="isSettingRole"
+      :loading="isSettingRole"
+      confirm-text="Save"
+      @cancel="roleInput = 'USER'"
+      @confirm="updateRole(selectedUser.membershipId, roleInput)"
+    >
+      <v-select
+        v-model="roleInput"
+        class="mt-6"
+        outlined
+        dense
+        autofocus
+        label="Role"
+        prepend-icon="supervised_user_circle"
+        :items="['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']"
+      >
+      </v-select>
+    </ConfirmDialog>
+
+    <!-- DELETE USER DIALOG -->
+    <ConfirmDialog
+      v-if="selectedUser"
+      v-model="dialogRemoveUser"
+      type="error"
+      :title="
+        `Are you sure you want to remove ${selectedUser.username} from your team?`
+      "
+      :dialog-props="{ 'max-width': '600' }"
+      :disabled="isRemovingUser"
+      :loading="isRemovingUser"
+      @confirm="removeUser(selectedUser.membershipId)"
+    >
+      <div>
+        <span class="font-weight-bold">{{ selectedUser.username }}</span>
+        and all of their API keys will be deleted.</div
+      >
+    </ConfirmDialog>
+  </div>
+</template>

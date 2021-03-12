@@ -6,6 +6,7 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 import InvitationsTable from '@/pages/TeamSettings/Members/Invitations-Table'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import MembersTable from '@/pages/TeamSettings/Members/Members-Table'
+import ServiceAccountsTable from '@/pages/TeamSettings/Members/Service-Accounts-Table'
 import { EMAIL_REGEX } from '@/utils/regEx'
 
 export default {
@@ -14,7 +15,8 @@ export default {
     ConfirmDialog,
     InvitationsTable,
     ManagementLayout,
-    MembersTable
+    MembersTable,
+    ServiceAccountsTable
   },
   data() {
     return {
@@ -303,6 +305,15 @@ export default {
           Users
         </v-tab>
         <v-tab
+          href="#service-accounts"
+          :style="{
+            'min-width': '160px'
+          }"
+        >
+          <v-icon class="mr-2">engineering</v-icon>
+          Service Accounts
+        </v-tab>
+        <v-tab
           href="#pending"
           :style="{
             'min-width': '160px'
@@ -346,6 +357,10 @@ export default {
           <v-icon class="mr-2">people</v-icon>
           Users
         </v-tab>
+        <v-tab href="#service-accounts">
+          <v-icon class="mr-2">engineering</v-icon>
+          Service Accounts
+        </v-tab>
         <v-tab href="#pending">
           <v-badge
             bordered
@@ -378,6 +393,19 @@ export default {
           @successful-action="handleAlert('success', $event)"
           @failed-action="handleAlert('error', $event)"
         ></MembersTable>
+      </v-tab-item>
+
+      <v-tab-item value="service-accounts" eager>
+        <ServiceAccountsTable
+          :is-tenant-admin="isTenantAdmin"
+          :search="searchInput"
+          :tenant="tenant"
+          :user="user"
+          :refetch-signal="membersSignal"
+          @load-end="loadEnd($event)"
+          @successful-action="handleAlert('success', $event)"
+          @failed-action="handleAlert('error', $event)"
+        ></ServiceAccountsTable>
       </v-tab-item>
 
       <!-- PENDING INVITATIONS TABLE -->
