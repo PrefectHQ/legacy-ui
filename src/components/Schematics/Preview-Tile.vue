@@ -110,8 +110,7 @@ export default {
       autocomplete="new-password"
       class="mx-0 py-0"
       auto-select-first
-      light
-      background-color="white"
+      background-color="appForeground"
       hide-details
       single-line
       flat

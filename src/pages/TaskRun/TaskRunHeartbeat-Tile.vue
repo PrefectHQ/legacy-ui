@@ -75,7 +75,7 @@ export default {
         flat
       >
         <template #prepend-inner>
-          <v-icon color="black" x-small>
+          <v-icon color="utilGrayDark" x-small>
             label_important
           </v-icon>
         </template>

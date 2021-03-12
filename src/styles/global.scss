@@ -263,13 +263,13 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 /* Common UI elements */
 .tabs-border-bottom {
   .v-tabs-bar {
-    border-bottom: 1px solid #ddd !important;
+    border-bottom: 1px solid var(--v-utilGrayLight-base) !important;
   }
 }
 
 .tabs-border-top {
   .v-tabs-bar {
-    border-top: 1px solid #ddd !important;
+    border-top: 1px solid var(--v-utilGrayLight-base) !important;
   }
 }
 
@@ -376,6 +376,58 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
 /* End Navbar global styles */
 
+/* Dark Mode background overrides */
+// stylelint-disable
+.theme--dark {
+  .v-tabs-items,
+  &.v-application {
+    background-color: var(--v-appBackground-base) !important;
+  }
+
+  &.v-calendar-daily,
+  &.v-card,
+  &.v-data-table,
+  &.v-data-table.v-data-table--fixed-header thead th,
+  &.v-navigation-drawer,
+  .v-sheet,
+  &.v-tabs > .v-tabs-bar,
+  &.v-text-field--solo > .v-input__control > .v-input__slot,
+  &.v-toolbar.v-sheet:not(header) {
+    background-color: var(--v-appForeground-base) !important;
+  }
+
+  &.v-data-table
+    > .v-data-table__wrapper
+    > table
+    > tbody
+    > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper),
+  &.v-tooltip__content {
+    background-color: var(--v-utilGrayMid-darken2) !important;
+  }
+
+  scrollbar-color: var(--v-utilGrayMid-darken2) transparent;
+  scrollbar-width: thin;
+
+  ::-webkit-scrollbar {
+    background-color: transparent;
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--v-utilGrayMid-darken2);
+    border-radius: 16px;
+    min-height: 25px;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
+/* End Dark Mode background overrides */
 /* Plans global styles */
 /* stylelint-disable no-descending-specificity */
 .plans-feature-icon {
@@ -386,16 +438,16 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   width: 20px;
 
   .svg-inline--fa {
-    --fa-primary-color: #27b1ff;
-    --fa-secondary-color: #27b1ff;
+    --fa-primary-color: var(--v-prefect-base);
+    --fa-secondary-color: var(--v-prefect-base);
     --fa-secondary-opacity: 0.6;
     transition: all 150ms linear;
   }
 
   &.feature-green {
     .svg-inline--fa {
-      --fa-primary-color: #07e798;
-      --fa-secondary-color: #07e798;
+      --fa-primary-color: var(--v-accentGreen-base);
+      --fa-secondary-color: var(--v-accentGreen-base);
       --fa-secondary-opacity: 0.6;
       transition: all 150ms linear;
     }
@@ -408,8 +460,8 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
   &.plans-feature-icon-light {
     .svg-inline--fa {
-      --fa-primary-color: #27b1ff;
-      --fa-secondary-color: #e0f4ff;
+      --fa-primary-color: var(--v-prefect-base);
+      --fa-secondary-color: var(--v-primaryLight-base);
       --fa-secondary-opacity: 1;
     }
   }
@@ -417,14 +469,14 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
 .feature-category-icon {
   .svg-inline--fa {
-    --fa-primary-color: #27b1ff;
-    --fa-secondary-color: #fe5196;
+    --fa-primary-color: var(--v-prefect-base);
+    --fa-secondary-color: var(--v-accentPink-base);
     --fa-secondary-opacity: 1;
     transition: all 150ms linear;
 
     &.fa-chart-scatter {
-      --fa-primary-color: #fe5196;
-      --fa-secondary-color: #27b1ff;
+      --fa-primary-color: var(--v-accentPink-base);
+      --fa-secondary-color: var(--v-prefect-base);
     }
   }
 }
@@ -456,8 +508,8 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
 .support-icon {
   .svg-inline--fa {
-    --fa-primary-color: #27b1ff;
-    --fa-secondary-color: #27b1ff;
+    --fa-primary-color: var(--v-prefect-base);
+    --fa-secondary-color: var(--v-prefect-base);
     --fa-secondary-opacity: 0.5;
   }
 

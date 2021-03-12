@@ -114,7 +114,7 @@ export default {
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-avatar class="body-2">
-        <v-icon class="grey--text text--darken-2">
+        <v-icon class="utilGrayMid--text">
           arrow_right
         </v-icon>
       </v-list-item-avatar>
@@ -135,7 +135,7 @@ export default {
       </v-list-item-content>
 
       <v-list-item-avatar class="body-2">
-        <v-icon class="grey--text">
+        <v-icon class="utilGrayMid--text">
           arrow_right
         </v-icon>
       </v-list-item-avatar>
@@ -146,7 +146,7 @@ export default {
     <v-card-text class="pb-0 pl-3 pr-2 caption">
       <v-row>
         <v-col cols="12" class="pb-0 pt-0">
-          <span class="black--text">Task Run State Message:</span>
+          <span class="utilGrayDark--text">Task Run State Message:</span>
         </v-col>
         <v-col cols="12" class="pt-0">
           {{ task.state_message }}
@@ -155,7 +155,7 @@ export default {
 
       <v-row>
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Max retries:</span>
+          <span class="utilGrayDark--text">Max retries:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           {{ task.task.max_retries }}
@@ -164,7 +164,7 @@ export default {
 
       <v-row v-if="task.task.max_retries > 0">
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Retry delay:</span>
+          <span class="utilGrayDark--text">Retry delay:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           {{ task.task.retry_delay }}
@@ -173,7 +173,7 @@ export default {
 
       <v-row v-if="task.state == 'Mapped'">
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Expected Runs:</span>
+          <span class="utilGrayDark--text">Expected Runs:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           <v-tooltip max-width="300px" top>
@@ -197,7 +197,7 @@ export default {
 
       <v-row v-if="resultExists">
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Result Type:</span>
+          <span class="utilGrayDark--text">Result Type:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           {{ task.serialized_state._result.type | typeClass }}
@@ -206,7 +206,7 @@ export default {
 
       <v-row v-if="resultExists">
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Result Location:</span>
+          <span class="utilGrayDark--text">Result Location:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           <v-tooltip top>
@@ -228,7 +228,7 @@ export default {
 
     <v-card-actions v-if="mappedChildren" class="pl-3">
       <div>
-        <div class="body-1 black--text">Mapped Runs</div>
+        <div class="body-1 utilGrayDark--text">Mapped Runs</div>
 
         <v-chip-group column>
           <v-chip
@@ -254,7 +254,9 @@ export default {
           <template #activator>
             <v-list-item-content class="pa-0">
               <v-list-item-title class="body-2 d-flex align-end">
-                <v-icon class="black--text mr-6" small>trending_up</v-icon>
+                <v-icon class="utilGrayDark--text mr-6" small
+                  >trending_up</v-icon
+                >
                 <span class="font-weight-black mr-1">
                   {{ runs.length }}
                 </span>
