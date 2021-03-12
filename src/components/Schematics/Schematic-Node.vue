@@ -110,7 +110,9 @@ export default {
       let size = 84 * (1 / this.transform.k)
       size = size < 84 ? 84 : size > 96 ? 96 : size
       return {
-        color: this.disabled ? 'var(--v-utilGrayLight-base)' : '',
+        color: this.disabled
+          ? 'var(--v-navIcons-base)'
+          : 'var(--v-utilGrayDark-base)',
         'font-size': `${size}px !important`,
         'line-height': `${size + 10}px !important`
       }
@@ -176,7 +178,7 @@ export default {
 <template>
   <div
     v-ripple
-    class="grey lighten-3 d-flex align-center node ripple"
+    class="utilGrayLight d-flex align-center node ripple"
     :class="showDetails ? 'elevation-3' : ''"
     :style="cardStyle"
     tile

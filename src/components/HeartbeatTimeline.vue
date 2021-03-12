@@ -166,7 +166,7 @@ export default {
                 </v-icon>
 
                 <div
-                  class="text-body-2 grey--text text--darken-2 flex-grow-1 flex-shrink-0 py-2"
+                  class="text-body-2 utilGrayMid--text flex-grow-1 flex-shrink-0 py-2"
                   style="max-width: 100%;"
                 >
                   <div class="caption">
@@ -178,7 +178,9 @@ export default {
                     }}
                   </div>
 
-                  <div class="text-subtitle-1 black--text mt-n1 text-truncate">
+                  <div
+                    class="text-subtitle-1 utilGrayDark--text mt-n1 text-truncate"
+                  >
                     {{ timelineItemTitle(item) }}
                     <v-icon v-if="item.map_index > -1" x-small class="mx-1"
                       >dynamic_feed</v-icon

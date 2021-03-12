@@ -204,7 +204,7 @@ export default {
           }}
         </div>
 
-        <div class="text-body-1 grey--text text--darken-1">{{ role }}</div>
+        <div class="text-body-1 utilGrayMid--text">{{ role }}</div>
       </div>
     </div>
     <v-menu v-model="model" offset-x :close-on-content-click="false">
@@ -267,7 +267,7 @@ export default {
               </v-list-item-title>
               <v-list-item-subtitle
                 v-if="tenant.id == team.id"
-                class="font-weight-light"
+                class="font-weight-light appForeground--text"
               >
                 Current
               </v-list-item-subtitle>

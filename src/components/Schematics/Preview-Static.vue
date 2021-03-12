@@ -40,7 +40,7 @@ export default {
     <v-card-text class="pb-0 pl-3 pr-2 caption">
       <v-row>
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Mapped:</span>
+          <span class="utilGrayDark--text">Mapped:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           {{ task.mapped ? 'Yes' : 'No' }}
@@ -49,7 +49,7 @@ export default {
 
       <v-row>
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Max retries:</span>
+          <span class="utilGrayDark--text">Max retries:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           {{ task.max_retries }}
@@ -58,7 +58,7 @@ export default {
 
       <v-row v-if="task.max_retries > 0">
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Retry delay:</span>
+          <span class="utilGrayDark--text">Retry delay:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           {{ task.retry_delay }}
@@ -67,7 +67,7 @@ export default {
 
       <v-row>
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Class:</span>
+          <span class="utilGrayDark--text">Class:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           {{ task.type | typeClass }}
@@ -76,7 +76,7 @@ export default {
 
       <v-row>
         <v-col cols="6" class="pt-0">
-          <span class="black--text">Trigger:</span>
+          <span class="utilGrayDark--text">Trigger:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">
           {{ task.trigger | typeClass }}

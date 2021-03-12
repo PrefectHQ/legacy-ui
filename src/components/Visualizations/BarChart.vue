@@ -773,6 +773,7 @@ export default {
 
 <style lang="scss" scoped>
 .barchart-tooltip {
+  background-color: var(--v-utilGrayMid-darken2);
   pointer-events: none;
   position: absolute;
   text-overflow: initial;

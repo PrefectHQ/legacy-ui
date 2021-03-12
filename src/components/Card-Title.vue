@@ -57,30 +57,16 @@ export default {
             <div v-if="!loading">
               {{ title }}
             </div>
-
             <v-skeleton-loader v-else type="heading" tile></v-skeleton-loader>
           </div>
-          <div
-            :class="{
-              'action-slot': $vuetify.breakpoint.lgAndUp,
-              'justify-end': $vuetify.breakpoint.lgAndUp,
-              'd-flex': $vuetify.breakpoint.mdAndUp
-            }"
-            class="align-center"
-          >
-            <div
-              :class="{
-                'my-6': $vuetify.breakpoint.mdAndDown
-              }"
-            >
-              <slot name="state-filter" />
-            </div>
+          <div class="action-slot d-flex align-center justify-end">
+            <slot name="state-filter" />
             <slot name="action" />
           </div>
         </v-list-item-title>
         <div
           v-if="$slots['subtitle'] || subtitle"
-          class="subtitle-2 grey--text text--darken-2 caption position-absolute font-weight-medium"
+          class="subtitle-2 utilGrayDark--text caption position-absolute font-weight-medium"
           style="bottom: 2px;"
         >
           <slot v-if="$slots['subtitle']" name="subtitle" />

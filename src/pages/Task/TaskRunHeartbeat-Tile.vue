@@ -60,7 +60,7 @@ export default {
         style="max-width: 150px;"
       >
         <template #prepend-inner>
-          <v-icon color="black" x-small>
+          <v-icon color="utilGrayDark" x-small>
             label_important
           </v-icon>
         </template>

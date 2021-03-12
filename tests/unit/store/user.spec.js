@@ -62,7 +62,8 @@ describe('user Vuex Module', () => {
         first_name: 'first',
         last_name: 'last',
         settings: {
-          timezone: 'utc'
+          timezone: 'utc',
+          isDark: false
         }
       },
       oktaUser: {
@@ -90,7 +91,8 @@ describe('user Vuex Module', () => {
         first_name: '',
         last_name: '',
         settings: {
-          timezone: ''
+          timezone: '',
+          isDark: false
         }
       })
     })
@@ -132,7 +134,8 @@ describe('user Vuex Module', () => {
     })
     test('settings should return user settings', () => {
       expect(store.getters.settings).toEqual({
-        timezone: 'utc'
+        timezone: 'utc',
+        isDark: false
       })
     })
     test('firstName should return user first name', () => {
@@ -175,6 +178,7 @@ describe('user Vuex Module', () => {
       store.commit('setUserSettings', userState().user.settings)
       expect(store.getters.settings).toEqual(userState().user.settings)
       expect(store.getters.timezone).toEqual('utc')
+      expect(store.getters.isDark).toEqual(false)
     })
     test('unsetUser mutation un-sets the user and updates user is set', () => {
       store.commit('user', userState().user)
