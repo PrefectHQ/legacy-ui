@@ -127,10 +127,14 @@ export default {
           Manage profile, access tokens, and teams
         </div>
       </div>
+
+      <div class="text-caption mb-n2">Theme (experimental)</div>
       <div class="d-flex flex-row align-center justify-center">
-        <span class="mx-3 sun"><v-icon size="36px">fad fa-sun</v-icon></span>
+        <span class="mx-3 sun cursor-pointer" @click="toggleDarkMode()"
+          ><v-icon size="36px">fad fa-sun</v-icon></span
+        >
         <v-switch v-model="isDark" @change="toggleDarkMode()"> </v-switch>
-        <span class="mx-3 moon"
+        <span class="mx-3 moon cursor-pointer" @click="toggleDarkMode()"
           ><v-icon size="36px">fad fa-moon-stars</v-icon></span
         >
       </div>
