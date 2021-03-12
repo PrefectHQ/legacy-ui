@@ -31,6 +31,7 @@ export default {
       project: null,
       stateGroups: [...Object.keys(STATES), 'Custom'],
       states: STATES,
+      stateSelected: false,
       selectedStateGroup: null,
       agentFlowOrSomethingElse: '',
       selectedAgent: null,
@@ -96,7 +97,9 @@ export default {
       return this.flowNamesList?.toString() || this.agentOrFlow
     },
     hookStates() {
-      return this.stateNames?.toString().toLowerCase() || ''
+      return this.stateNames === 'All'
+        ? ''
+        : this.stateNames.toString().toLowerCase() || 'state'
     },
     hookAction() {
       return (
@@ -173,20 +176,21 @@ export default {
       this.openSelectFlowEventType = true
     },
     selectFlow(event, flow) {
-      if (flow) {
+      if (
         this.selectedFlows?.find(
           item => item.flow_group_id === flow.flow_group_id
         )
-          ? (this.selectedFlows = this.selectedFlows?.filter(
-              item => item.flow_group_id != flow.flow_group_id
-            ))
-          : this.selectedFlows.push(flow)
-        console.log(this.selectedFlows)
+      ) {
+        this.selectedFlows = this.selectedFlows?.filter(
+          item => item.flow_group_id != flow.flow_group_id
+        )
+      } else {
+        this.selectedFlows.push(flow)
         this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
-      }
-      if (!event.shiftKey) {
-        this.openFlow = false
-        this.openSelectFlowEventType = true
+        if (!event.shiftKey) {
+          this.openFlow = false
+          this.openSelectFlowEventType = true
+        }
       }
     },
     selectAllFlows() {
@@ -212,12 +216,13 @@ export default {
         : ''
     },
     selectStateGroup(group) {
+      this.stateSelected = true
       if (group !== 'Custom') {
         this.disableClick = true
-        this.stateNames = group === 'All' ? '' : [` to ${group}`]
+        this.stateNames = [group]
         this.chosenStates = this.states[group]
       } else {
-        this.stateNames = 'to selected States'
+        this.stateNames = 'selected States'
         this.disableClick = false
       }
     },
@@ -506,8 +511,8 @@ export default {
               >
               seconds</span
             ></span
-          >
-          <span v-if="includeTo">
+          ><span v-if="includeTo">
+            {{ hookStates || !stateSelected ? 'to' : '' }}
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class=" px-0 pb-1 headline"
@@ -516,7 +521,7 @@ export default {
               @click="openStates = !openStates"
             >
               {{ hookStates }}</v-btn
-            > </span
+            ></span
           >, then
 
           <v-btn

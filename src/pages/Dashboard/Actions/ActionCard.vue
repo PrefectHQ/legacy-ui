@@ -1,5 +1,7 @@
 <script>
 import { mapActions } from 'vuex'
+import { STATES } from '@/utils/cloudHooks'
+
 export default {
   components: {},
   props: {
@@ -21,6 +23,11 @@ export default {
           type: 'a run from',
           action: 'SLA fails',
           icon: 'pi-flow'
+        },
+        AgentSLAFailedEvent: {
+          type: 'agent',
+          icon: 'pi-agent',
+          action: 'SLA fails'
         },
         SCHEDULED_NOT_STARTED: {
           action: 'does not start'
@@ -54,22 +61,32 @@ export default {
     },
     hookStates() {
       const states = this.hook?.event_tags?.state
-      return states.toString().toLowerCase()
+      return states.length === STATES['All'].length
+        ? 'any state'
+        : states.length > 1
+        ? 'multiple states'
+        : states.toString().toLowerCase()
     },
     hookAction() {
       return this.hook?.action?.name || this.hook?.action?.action_type
     },
     hookName() {
-      console.log('hook', this.hook)
       const idList = this.hook?.event_tags?.flow_group_id
-      const name =
-        this.hook?.event_tags?.flow_group_id?.length > 1 && this.flowName
-          ? `${this.flowName[0]?.name} and others`
-          : this.flowName
-          ? this.flowName[0]?.name
-          : idList && !idList.length
-          ? 'any flow'
-          : ''
+      const agentName =
+        this.agentConfig?.agents[0]?.name === 'agent'
+          ? this.agentConfig?.agents[0]?.id
+          : this.agentConfig?.agents[0]?.name
+      const name = this.agentConfig
+        ? this.agentConfig?.agents?.length > 1
+          ? `${agentName} and others`
+          : agentName
+        : this.hook?.event_tags?.flow_group_id?.length > 1 && this.flowName
+        ? `${this.flowName[0]?.name} and others`
+        : this.flowName
+        ? this.flowName[0]?.name
+        : idList && !idList.length
+        ? 'any flow'
+        : ''
       return name
     }
   },
@@ -124,6 +141,23 @@ export default {
       },
       update: data => {
         return data.flow
+      }
+    },
+    agentConfig: {
+      query: require('@/graphql/Actions/agentConfig.gql'),
+      variables() {
+        return {
+          agentConfigId: this.hook?.event_tags?.agent_config_id[0] || ''
+        }
+      },
+      skip() {
+        return (
+          !this.hook?.event_tags?.agent_config_id ||
+          !this.hook?.event_tags?.agent_config_id[0]
+        )
+      },
+      update: data => {
+        return data.agent_config_by_pk
       }
     },
     flowConfig: {
@@ -183,16 +217,19 @@ export default {
     >
     <div class="pl-8 pb-8 pt-0 pr-4"
       ><v-icon color="codePink" class="pr-2">{{
-        hookDetails[hook.event_type].icon
+        hookDetails[hook.event_type] ? hookDetails[hook.event_type].icon : ''
       }}</v-icon
-      >When {{ hookType }}<span class="font-weight-bold">{{ hookName }}</span>
-      {{ hookDetail }}
-      <span v-if="includeSeconds">
-        for <span class="font-weight-bold">{{ seconds }} seconds</span> </span
-      ><span v-if="includeTo">
-        to <span class="font-weight-bold">{{ hookStates }}</span></span
-      >, then <span class="font-weight-bold">{{ hookAction }}</span
-      >.</div
+      ><span
+        >When {{ hookType }}
+        <span class="font-weight-bold">{{ hookName }}</span>
+        {{ hookDetail
+        }}<span v-if="includeSeconds">
+          for <span class="font-weight-bold">{{ seconds }} seconds</span> </span
+        ><span v-if="includeTo">
+          to <span class="font-weight-bold">{{ hookStates }}</span></span
+        >, then <span class="font-weight-bold">{{ hookAction }}</span
+        >.</span
+      ></div
     ></v-card
   >
 </template>

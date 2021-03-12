@@ -1,6 +1,7 @@
 <script>
 import ActionCard from '@/pages/Dashboard/Actions/ActionCard'
 import AddActionCard from '@/pages/Dashboard/Actions/AddActionCard'
+
 export default {
   components: {
     ActionCard,
@@ -30,7 +31,7 @@ export default {
     },
     hookText(hook) {
       const event = hook?.event_type
-      // name is if a flow group is named on the evnt - to add later
+      // name is if a flow group is named on the event - to add later
       const name = ''
       return `${this.hookDetails[event]?.type} ${name} ${this.hookDetails[event]?.action}`
     },
