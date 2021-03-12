@@ -82,7 +82,7 @@ export default {
       </p>
       <p>
         You can find and manage your personal access tokens on the
-        <router-link :to="{ name: 'user-tokens' }"
+        <router-link :to="'/user/tokens'"
           >User > Personal Access Tokens page</router-link
         >.
       </p>
@@ -97,7 +97,7 @@ export default {
         Personal Access (or <code>USER</code>) tokens are used to represent a
         single user and to grant access to any teams or projects the user has
         access to. You can create new tokens and manage existing tokens on the
-        <router-link :to="{ name: 'user-tokens' }">
+        <router-link :to="'/user/tokens'">
           Personal Access Tokens page
         </router-link>
         of the UI.

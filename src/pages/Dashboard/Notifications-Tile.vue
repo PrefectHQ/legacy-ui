@@ -193,7 +193,7 @@ export default {
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn small color="primary" text :to="{ name: 'notifications' }">
+      <v-btn small color="primary" text :to="'/notifications'">
         View all notifications
       </v-btn>
     </v-card-actions>

@@ -269,7 +269,7 @@ export default {
       >
         <p>
           Your team has no users available. You can add more from the
-          <router-link :to="{ name: 'account' }"> Account Page</router-link>
+          <router-link :to="'/team/account'"> Account Page</router-link>
         </p>
       </v-alert>
     </template>
@@ -430,7 +430,7 @@ export default {
           <p>
             Your team has no users available. You won't be able to invite new
             users until you add more users from the
-            <router-link :to="{ name: 'account' }"> Account Page</router-link>
+            <router-link :to="'/team/account'"> Account Page</router-link>
           </p>
         </v-alert>
 
@@ -447,7 +447,7 @@ export default {
           <p>
             Your team has no full users available. You'll only be able to add
             Read-Only users until you add more from the
-            <router-link :to="{ name: 'account' }"> Account Page</router-link>
+            <router-link :to="'/team/account'"> Account Page</router-link>
           </p>
         </v-alert>
 
