@@ -2,8 +2,12 @@
 //This page will need updating!
 import { actionTypes } from '@/utils/cloudHooks'
 import { mapGetters } from 'vuex'
+import ListInput from '@/components/CustomInputs/ListInput'
 
 export default {
+  components: {
+    ListInput
+  },
   data() {
     return {
       addName: false,
@@ -13,6 +17,7 @@ export default {
       openMessageConfig: false,
       messageConfig: null,
       messageConfigTo: '',
+      messageConfigEmails: [],
       // To do - can we check what the default message will be?
       messageName: 'this message',
       messageText: '',
@@ -61,6 +66,13 @@ export default {
     },
     allowSave() {
       const type = this.messageType.type
+      if (type === 'EMAIL') {
+        const filtered =
+          this.messageConfigEmails.filter(
+            email => this.rules['EMAIL'](email) != true
+          ).length < 1
+        return filtered.length < 1
+      }
       return (
         !!this.messageType &&
         !!this.messageConfigTo &&
@@ -98,9 +110,18 @@ export default {
     handleClose() {
       this.$emit('close-action')
     },
+    handleListInput(val) {
+      this.messageConfigEmails = val
+    },
     saveConfig() {
+      console.log(this.messageConfigTo, this.messageConfigEmails)
       const type = this.messageType.type
-      const checked = this.rules[type](this.messageConfigTo)
+      const checked =
+        type != 'EMAIL'
+          ? this.rules[type](this.messageConfigTo)
+          : this.messageConfigEmails.filter(
+              email => this.rules['EMAIL'](email) !== true
+            ).length < 1
       if (checked === true) {
         if (this.messageConfigTo) {
           switch (this.messageType.type) {
@@ -116,7 +137,7 @@ export default {
               break
             case 'EMAIL':
               {
-                this.messageConfig = { to_emails: [this.messageConfigTo] }
+                this.messageConfig = { to_emails: this.messageConfigEmails }
                 if (this.messageText) {
                   this.messageConfig.body = this.bothMessages
                     ? `{} ${this.messageText}`
@@ -172,7 +193,8 @@ export default {
       }
       const name = this.newSaveAs || this.saveAs
       const input = { name: name, config }
-      this.$emit('new-action', input)
+      console.log(input)
+      // this.$emit('new-action', input)
     }
   }
 }
@@ -317,6 +339,11 @@ export default {
         :error-messages="errorMessage"
         @keyup.enter="saveConfig"
       ></v-text-field>
+      <ListInput
+        label="Emails"
+        :value="[]"
+        @input="handleListInput"
+      ></ListInput>
     </v-card-text>
     <v-card-text v-else-if="completeConfig" class="mx-4">
       <v-tooltip bottom>
