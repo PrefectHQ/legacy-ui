@@ -10,7 +10,8 @@ const state = {
     first_name: '',
     last_name: '',
     settings: {
-      timezone: ''
+      timezone: '',
+      isDark: false
     }
   },
   oktaUser: {
@@ -43,6 +44,9 @@ const getters = {
   },
   timezone(state) {
     return state.user.settings.timezone
+  },
+  isDark(state) {
+    return state.user.settings.isDark
   },
   settings(state) {
     return state.user.settings

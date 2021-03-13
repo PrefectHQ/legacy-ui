@@ -336,7 +336,7 @@ export default {
     var(--v-Scheduled-base) 5px,
     var(--v-Scheduled-base) 10px
   );
-  color: var(--v-utilGrayDark-base);
+  color: #333; //true for light and dark
 }
 
 .darker {

@@ -63,7 +63,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="appForeground">
     <div class="text-body-1">
       Before you can begin to schedule work with
       <ExternalLink
@@ -91,7 +91,7 @@ export default {
 
       <div
         class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-        style="border: 1px solid utilGrayLight !important;"
+        style="border: 1px solid var(--v-utilGrayLight-base) !important;"
       >
         <div class="code-block">
           <span class="blue-grey--text text--lighten-1 user-select-none"
@@ -117,7 +117,7 @@ export default {
       </div>
 
       <div
-        class="d-flex align-end justify-start text-h5 blue-grey--text text--darken-2 mt-6 mb-10"
+        class="d-flex align-end justify-start text-h5 utilGrayDark--text mt-6 mb-10"
       >
         <div>Prefect Server GraphQL endpoint:</div>
         <v-text-field
@@ -187,7 +187,7 @@ export default {
       </div>
       <div
         class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-        style="border: 1px solid utilGrayLight !important;"
+        style="border: 1px solid var(--v-utilGrayLight-base) !important;"
       >
         <div class="code-block">
           <pre>

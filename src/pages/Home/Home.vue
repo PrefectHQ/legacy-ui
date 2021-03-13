@@ -165,19 +165,16 @@ export default {
             </v-tabs>
 
             <div class="pa-5">
-              <v-tabs-items
-                v-model="gettingStartedTab"
-                background-color="white"
-              >
-                <v-tab-item value="infrastructure" class="white">
+              <v-tabs-items v-model="gettingStartedTab">
+                <v-tab-item value="infrastructure">
                   <StartPrefectServerSection />
                 </v-tab-item>
 
-                <v-tab-item v-if="isServer" value="tenant" class="white">
+                <v-tab-item v-if="isServer" value="tenant">
                   <CreateTenantSection />
                 </v-tab-item>
 
-                <v-tab-item value="agent" class="white">
+                <v-tab-item value="agent">
                   <ConnectAgentSection />
                 </v-tab-item>
               </v-tabs-items>
@@ -228,16 +225,14 @@ export default {
             </v-tabs>
 
             <div
-              class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-5 code-block"
-              style="border: 1px solid utilGrayLight !important;
+              class="text-body-1 appBackground utilGrayDark--text rounded-sm pa-5 code-block"
+              style="border: 1px solid var(--v-utilGrayLight-base) !important;
                 border-top: unset !important;"
             >
               <v-tabs-items v-model="sdkTab">
                 <v-tab-item key="pip">
                   <div class="">
-                    <span
-                      class="blue-grey--text text--lighten-1 user-select-none"
-                      >$ </span
+                    <span class="utilGrayMid--text user-select-none">$ </span
                     >pip
                     <span class="primary--text font-weight-medium"
                       >install</span
@@ -248,9 +243,7 @@ export default {
 
                 <v-tab-item key="conda">
                   <div class="">
-                    <span
-                      class="blue-grey--text text--lighten-1 user-select-none"
-                      >$ </span
+                    <span class="utilGrayMid--text user-select-none">$ </span
                     >conda
                     <span class="primary--text font-weight-medium"
                       >install</span
@@ -261,9 +254,7 @@ export default {
 
                 <v-tab-item key="pipenv">
                   <div class="">
-                    <span
-                      class="blue-grey--text text--lighten-1 user-select-none"
-                      >$ </span
+                    <span class="utilGrayMid--text user-select-none">$ </span
                     >pipenv
                     <span class="primary--text font-weight-medium"
                       >install</span

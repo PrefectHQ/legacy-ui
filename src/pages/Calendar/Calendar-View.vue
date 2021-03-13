@@ -96,7 +96,7 @@ export default {
               <v-btn
                 outlined
                 class="mx-4"
-                color="grey darken-2"
+                color="utilGrayMid"
                 @click="setToday"
               >
                 Today
@@ -106,7 +106,7 @@ export default {
                 fab
                 text
                 small
-                color="grey darken-2"
+                color="utilGrayMid"
                 @click="prev"
               >
                 <v-icon>
@@ -118,7 +118,7 @@ export default {
                 fab
                 text
                 small
-                color="grey darken-2"
+                color="utilGrayMid"
                 @click="next"
               >
                 <v-icon>
@@ -140,7 +140,7 @@ export default {
                 <template #activator="{ on, attrs }">
                   <v-btn
                     outlined
-                    color="grey darken-2"
+                    color="utilGrayMid"
                     class="mr-4"
                     v-bind="attrs"
                     v-on="on"
