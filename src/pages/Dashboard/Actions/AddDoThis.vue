@@ -2,8 +2,12 @@
 //This page will need updating!
 import { actionTypes } from '@/utils/cloudHooks'
 import { mapGetters } from 'vuex'
+import ListInput from '@/components/CustomInputs/ListInput'
 
 export default {
+  components: {
+    ListInput
+  },
   data() {
     return {
       addName: false,
@@ -97,6 +101,9 @@ export default {
     },
     handleClose() {
       this.$emit('close-action')
+    },
+    handleListInput(val) {
+      this.messageConfigEmails.push(val)
     },
     saveConfig() {
       const type = this.messageType.type
@@ -317,6 +324,11 @@ export default {
         :error-messages="errorMessage"
         @keyup.enter="saveConfig"
       ></v-text-field>
+      <ListInput
+        label="Emails"
+        :value="messageConfigTo"
+        @input="handleListInput"
+      ></ListInput>
     </v-card-text>
     <v-card-text v-else-if="completeConfig" class="mx-4">
       <v-tooltip bottom>
