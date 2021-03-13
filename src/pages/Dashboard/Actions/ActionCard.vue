@@ -12,6 +12,7 @@ export default {
   },
   data() {
     return {
+      copiedText: {},
       deletingHook: false,
       hookDetails: {
         FlowRunStateChangedEvent: {
@@ -106,6 +107,16 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    copyToClipboard(value) {
+      this.copiedText = {}
+      this.copiedText[value] = true
+      navigator.clipboard.writeText(value)
+
+      setTimeout(() => {
+        this.copiedText = {}
+        this.copiedText[value] = false
+      }, 600)
+    },
     async deleteHook() {
       try {
         this.deletingHook = true
@@ -246,8 +257,25 @@ export default {
       >
     </div>
     <div v-if="isAgent" class=" pa-4 subtitle-2 font-weight-light"
-      >To use this hook, add this agent config ID when you create an agent:
-      {{ agentConfigId }}</div
-    ></v-card
+      >To use with a new agent, add this id as the agent-config-id:
+      <v-tooltip bottom>
+        <template #activator="{ on }">
+          <span
+            class="cursor-pointer show-icon-hover-focus-only pa-2px"
+            role="button"
+            @click="copyToClipboard(agentConfigId)"
+            v-on="on"
+          >
+            <v-icon x-small class="mb-2px mr-2" tabindex="0">
+              {{ copiedText[agentConfigId] ? 'check' : 'file_copy' }}
+            </v-icon>
+            {{ agentConfigId }}
+          </span>
+        </template>
+        <span>
+          {{ agentConfigId }}
+        </span>
+      </v-tooltip>
+    </div></v-card
   >
 </template>
