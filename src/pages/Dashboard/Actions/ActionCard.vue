@@ -42,6 +42,12 @@ export default {
     includeTo() {
       return this.hook.event_type === 'FlowRunStateChangedEvent'
     },
+    isAgent() {
+      return !!this.hook?.event_tags?.agent_config_id
+    },
+    agentConfigId() {
+      return this.hook?.event_tags?.agent_config_id[0]
+    },
     includeSeconds() {
       return this.flowConfig
     },
@@ -237,7 +243,11 @@ export default {
           to <span class="font-weight-bold">{{ hookStates }}</span></span
         >, then <span class="font-weight-bold">{{ hookAction }}</span
         >.</span
-      ></div
+      >
+    </div>
+    <div v-if="isAgent" class=" pa-4 subtitle-2 font-weight-light"
+      >To use this hook, add this agent config ID when you create an agent:
+      {{ agentConfigId }}</div
     ></v-card
   >
 </template>

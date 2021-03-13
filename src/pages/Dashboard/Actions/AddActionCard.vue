@@ -57,7 +57,8 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['projects']),
-    ...mapGetters('agent', ['agents']),
+    //We can not update an agent for now - config id needs to be added at agent creation
+    // ...mapGetters('agent', ['agents']),
     projectsList() {
       return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
         a.name > b.name ? 1 : -1
@@ -107,6 +108,7 @@ export default {
       )
     },
     completeAction() {
+      if (this.agentOrFlow === 'agent') return !!this.chosenAction
       if (!this.includeTo)
         return !!this.selectedFlows.length && !!this.chosenAction
       return (
@@ -165,16 +167,19 @@ export default {
       this.openAgentOrFlow = false
       if (choice === 'flow') this.openFlow = true
       if (choice === 'agent') {
-        this.openAgent = true
-        this.flow = {}
-        this.openSelectFlowEventType = false
+        this.flowEventType = { name: 'is unhealthy' }
+        this.openActions = true
+        // this.openSelectFlowEventType = true
+        // this.openAgent = true
+        // this.flow = {}
+        // this.openSelectFlowEventType = false
       }
     },
-    selectAgent(choice) {
-      this.selectedAgent = choice
-      this.openAgent = false
-      this.openSelectFlowEventType = true
-    },
+    // selectAgent(choice) {
+    //   this.selectedAgent = choice
+    //   this.openAgent = false
+    //   this.openSelectFlowEventType = true
+    // },
     selectFlow(event, flow) {
       if (
         this.selectedFlows?.find(
@@ -303,7 +308,7 @@ export default {
     async createHook() {
       let data
       try {
-        const flow = this.selectedFlows[0].flow_group_id
+        const flow = this.selectedFlows[0]?.flow_group_id
         let action = this.chosenAction || this.hookDetails?.hook?.action
         if (action?.value === 'CANCEL_RUN') {
           const cancelConfig = { cancel_flow_run: {} }
@@ -370,6 +375,24 @@ export default {
               }
             })
           }
+        } else if (this.agentOrFlow === 'agent') {
+          console.log('agent')
+          const agentConfig = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/create_agent_config.gql'),
+            variables: {
+              input: {}
+            }
+          })
+          console.log('agent config', agentConfig)
+          await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/create_agent_sla_failed_hook.gql'),
+            variables: {
+              input: {
+                action_id: action.id,
+                agent_config_ids: [agentConfig.data.create_agent_config.id]
+              }
+            }
+          })
         }
       } catch (error) {
         const errString = `${error}`
@@ -551,7 +574,7 @@ export default {
         >{{ item }}</v-chip
       >
     </v-card>
-    <v-card v-else-if="openAgent" elevation="0" class="pa-2">
+    <!-- <v-card v-else-if="openAgent" elevation="0" class="pa-2">
       <v-chip
         v-for="item in agents"
         :key="item.id"
@@ -564,7 +587,7 @@ export default {
           item.name != 'agent' ? item.name : item.type
         }}</truncate></v-chip
       ></v-card
-    >
+    > -->
     <v-card
       v-else-if="openFlow"
       v-click-outside="selectFlow"
@@ -701,6 +724,9 @@ export default {
         v-for="item in editedActions"
         :key="item.id"
         label
+        :disabled="
+          item.action_type === 'CancelFlowRunAction' && agentOrFlow === 'agent'
+        "
         max-width="500px"
         class="ma-1"
         outlined
