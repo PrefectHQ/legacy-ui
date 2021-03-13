@@ -376,14 +376,12 @@ export default {
             })
           }
         } else if (this.agentOrFlow === 'agent') {
-          console.log('agent')
           const agentConfig = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create_agent_config.gql'),
             variables: {
               input: {}
             }
           })
-          console.log('agent config', agentConfig)
           await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create_agent_sla_failed_hook.gql'),
             variables: {
