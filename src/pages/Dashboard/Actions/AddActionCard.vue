@@ -382,7 +382,7 @@ export default {
               input: {}
             }
           })
-          await this.$apollo.mutate({
+          const agentHook = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create_agent_sla_failed_hook.gql'),
             variables: {
               input: {
@@ -391,6 +391,7 @@ export default {
               }
             }
           })
+          data = agentHook.data
         }
       } catch (error) {
         const errString = `${error}`
