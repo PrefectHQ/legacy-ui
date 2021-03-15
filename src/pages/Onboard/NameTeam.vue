@@ -125,16 +125,16 @@ export default {
       return
     },
     async updateTenant() {
+      // Async tenant checks
+      await this.checkNameAsync()
+      await this.checkSlugAsync()
+
       if (this.nameErrors.length > 0 || this.slugErrors.length > 0) {
         return
       }
 
       this.updateServerError = false
       this.loading++
-
-      // Async tenant checks
-      await this.checkNameAsync()
-      await this.checkSlugAsync()
 
       if (
         this.tenantChanges.slug == this.tenant.slug &&
