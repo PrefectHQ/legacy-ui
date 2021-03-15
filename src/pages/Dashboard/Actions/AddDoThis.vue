@@ -342,6 +342,7 @@ export default {
       <ListInput
         label="Emails"
         :value="[]"
+        :outline="false"
         @input="handleListInput"
       ></ListInput>
     </v-card-text>

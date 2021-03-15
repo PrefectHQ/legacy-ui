@@ -25,6 +25,11 @@ export default {
       type: Boolean,
       required: false,
       default: () => true
+    },
+    outline: {
+      type: Boolean,
+      required: false,
+      default: () => true
     }
   },
   data() {
@@ -107,7 +112,7 @@ export default {
       multiple
       small-chips
       hide-details
-      outlined
+      :outlined="outline"
     >
       <template #selection="{ item, parent }">
         <v-chip label small color="primary">
