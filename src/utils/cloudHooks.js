@@ -74,6 +74,13 @@ export const actionTypes = [
       messaging_service_sid: null
     },
     requiresCloud: false
+  },
+  {
+    title: 'Pager Duty',
+    type: 'PAGERDUTY',
+    icon: '$pagerDuty',
+    config: { routing_key: null, api_token: null, severity: [] },
+    requiresCloud: false
   }
 ]
 

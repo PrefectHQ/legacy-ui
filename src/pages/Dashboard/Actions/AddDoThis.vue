@@ -21,17 +21,27 @@ export default {
       messageText: '',
       openMessageText: false,
       openTwilioConfig: false,
+      openPDConfig: false,
       openName: false,
       newSaveAs: '',
-      isPagerDuty: false,
       authToken: '',
       accountSid: '',
+      apiToken: '',
+      routingKey: '',
+      severity: '',
+      severityLevels: [
+        { text: 'Info', value: 'info' },
+        { text: 'Warning', value: 'warning' },
+        { text: 'Error', value: 'error' },
+        { text: 'Critical', value: 'critical' }
+      ],
       messagingService: '',
       menu: false,
       bothMessages: false,
       errorMessage: '',
       rules: {
         SLACK_WEBHOOK: () => true,
+        PAGERDUTY: () => true,
         EMAIL: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           if (!val) return 'Email is required.'
@@ -113,7 +123,17 @@ export default {
     isTwilio() {
       return this.messageType.type === 'TWILIO'
     },
+    isPagerDuty() {
+      return this.messageType.type === 'PAGERDUTY'
+    },
     completeConfig() {
+      if (this.isPagerDuty)
+        return (
+          !!this.messageType &&
+          !!this.apiToken &&
+          !!this.routingKey &&
+          !!this.severity
+        )
       return this.messageType && this.messageConfigTo
     }
   },
@@ -160,12 +180,26 @@ export default {
                 }
               }
               break
-            case 'TWILIO': {
+            case 'TWILIO':
+              {
+                this.messageConfig = {
+                  phone_numbers: this.messageConfigTo,
+                  auth_token: this.authToken,
+                  account_sid: this.accountSid,
+                  messaging_service_sid: this.messagingService
+                }
+                if (this.messageText) {
+                  this.messageConfig.message = this.bothMessages
+                    ? `{} ${this.messageText}`
+                    : this.messageText
+                }
+              }
+              break
+            case 'PAGERDUTY': {
               this.messageConfig = {
-                phone_numbers: this.messageConfigTo,
-                auth_token: this.authToken,
-                account_sid: this.accountSid,
-                messaging_service_sid: this.messagingService
+                api_token: this.apiToken,
+                routing_key: this.routingKey,
+                severity: this.severity
               }
               if (this.messageText) {
                 this.messageConfig.message = this.bothMessages
@@ -226,6 +260,11 @@ export default {
             twilio_notification: this.messageConfig
           }
           break
+        case 'PAGERDUTY':
+          config = {
+            pagerduty_notification: this.messageConfig
+          }
+          break
         default:
           config = {}
       }
@@ -270,30 +309,41 @@ export default {
           {{ messageText || messageName }}</v-btn
         >
       </span>
-      to
-      <v-btn
-        :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-        class="px-0 pb-1 headline"
-        text
-        :color="openMessageConfig ? 'codePink' : 'grey'"
-        @click="openMessageConfig = !openMessageConfig"
-      >
-        {{ to }}</v-btn
-      >
-      <span v-if="isTwilio">
+      <span v-if="isPagerDuty">
         with this
         <v-btn
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
           class="px-0 pb-1 headline"
           text
-          :color="openTwilioConfig ? 'codePink' : 'grey'"
-          @click="openTwilioConfigSection()"
+          :color="openPDConfig ? 'codePink' : 'grey'"
+          @click="openPDConfig = !openPDConfig"
         >
           config</v-btn
         ></span
+      ><span v-else>
+        to
+        <v-btn
+          :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+          class="px-0 pb-1 headline"
+          text
+          :color="openMessageConfig ? 'codePink' : 'grey'"
+          @click="openMessageConfig = !openMessageConfig"
+        >
+          {{ to }}</v-btn
+        >
+        <span v-if="isTwilio">
+          with this
+          <v-btn
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            class="px-0 pb-1 headline"
+            text
+            :color="openTwilioConfig ? 'codePink' : 'grey'"
+            @click="openTwilioConfigSection()"
+          >
+            config</v-btn
+          ></span
+        ></span
       >
-
-      <span v-if="isPagerDuty"> </span>
     </div>
 
     <v-card-text v-if="openSendMessage" class="pt-0">
@@ -388,8 +438,49 @@ export default {
         :error-messages="errorMessage"
         @keyup.enter="saveConfig"
       ></v-text-field>
+      <div v-else-if="isPagerDuty">
+        <span>
+          Prefect Cloud will send a PagerDuty notification. Create your
+          <a
+            href="https://support.pagerduty.com/docs/generating-api-keys"
+            target="_blank"
+            >Pager Duty API token</a
+          >
+          in the Pager Duty app by visiting Configuration > API Access. You'll
+          also need an Integration Key, which can be created by visiting the
+          Integrations tab of the Service Details page and setting up an
+          <a
+            href="https://support.pagerduty.com/docs/services-and-integrations"
+            target="_blank"
+            >Events API v2</a
+          >
+          integration.
+        </span>
+        <v-text-field
+          v-model="apiToken"
+          :rules="[rules.required]"
+          label="Name of your PagerDuty API Token Secret"
+          class="my-8"
+          dense
+        />
+        <v-text-field
+          v-model="routingKey"
+          :rules="[rules.required]"
+          label="Integration key"
+          dense
+          class="mb-8"
+        />
+        <v-select
+          v-model="severity"
+          :items="severityLevels"
+          label="Severity"
+          dense
+        />
+      </div>
       <ListInput
-        v-else
+        v-else-if="
+          messageType.type === 'EMAIL' || messageType.type === 'TWILIO'
+        "
         v-click-outside="() => (openMessageConfig = !openMessageConfig)"
         :label="messageConfigLabel"
         :value="messageConfigTo"
