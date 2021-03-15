@@ -8,6 +8,12 @@
 
 ### Bugfixes
 
+- None
+
+## 2021-03-15a
+
+### Bugfixes
+
 - Remove details references from the task run table tile - [#670](https://github.com/PrefectHQ/ui/pull/670)
 
 ## 2021-03-15
