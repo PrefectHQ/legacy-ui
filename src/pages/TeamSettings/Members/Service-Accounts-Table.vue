@@ -1,9 +1,11 @@
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
+import DateTime from '@/components/DateTime'
 
 export default {
   components: {
-    ConfirmDialog
+    ConfirmDialog,
+    DateTime
   },
   props: {
     // Check admin privileges
@@ -35,30 +37,33 @@ export default {
   data() {
     return {
       // Dialogs
-      dialogModifyRole: false,
+      dialogCreateToken: false,
+      dialogViewTokens: false,
       dialogRemoveUser: false,
 
       // Table headers
       allHeaders: [
         {
-          mobile: false,
+          mobile: true,
           text: 'Username',
           value: 'username',
           width: '20%'
         },
         {
           mobile: true,
-          text: 'Created?',
-          value: 'created',
-          align: 'left',
-          width: '20%'
+          text: '',
+          value: 'view',
+          align: 'center',
+          sortable: false,
+          width: '35%'
         },
         {
           mobile: true,
-          text: 'Last Used?',
-          value: 'lastUsed',
-          align: 'left',
-          width: '20%'
+          text: '',
+          value: 'create',
+          align: 'center',
+          sortable: false,
+          width: '35%'
         },
         {
           mobile: true,
@@ -67,6 +72,30 @@ export default {
           align: 'end',
           sortable: false,
           width: '10%'
+        }
+      ],
+      tokenHeaders: [
+        {
+          text: 'Name',
+          value: 'name'
+        },
+        {
+          text: 'Created At',
+          value: 'created'
+        },
+        {
+          text: 'Last Used',
+          value: 'last_used'
+        },
+        {
+          text: 'Expires',
+          value: 'expires_at'
+        },
+        {
+          text: '',
+          value: 'actions',
+          align: 'right',
+          sortable: false
         }
       ],
 
@@ -99,6 +128,56 @@ export default {
     }
   },
   methods: {
+    copyNewToken() {
+      var copyText = document.querySelector('#new-api-token')
+      copyText.select()
+      document.execCommand('copy')
+      this.apiTokenCopied = true
+      setTimeout(() => {
+        this.apiTokenCopied = false
+      }, 2000)
+    },
+    async createAPIToken(variables) {
+      const result = await this.$apollo.mutate({
+        mutation: require('@/graphql/Tokens/create-api-token.gql'),
+        variables
+      })
+
+      if (
+        result?.data?.create_api_token?.id &&
+        result?.data?.create_api_token?.token
+      ) {
+        this.resetNewToken()
+        this.newAPIToken = result.data.create_api_token.token
+        this.createTokenDialog = false
+        this.copyTokenDialog = true
+        this.$apollo.queries.tokens.refetch()
+      } else {
+        this.handleAlert(
+          'error',
+          'Something went wrong while trying to create your token. Please try again. If this error persists, please contact help@prefect.io.'
+        )
+      }
+    },
+    async deleteToken(token) {
+      const result = await this.$apollo.mutate({
+        mutation: require('@/graphql/Tokens/delete-token.gql'),
+        variables: {
+          id: token.id
+        }
+      })
+
+      if (result?.data?.delete_api_token?.success) {
+        this.tokenToDeleteDialog = false
+        this.handleAlert('success', 'The token has been successfully revoked.')
+        this.$apollo.queries.tokens.refetch()
+      } else {
+        this.handleAlert(
+          'error',
+          'Something went wrong while trying to delete your token. Please try again. If this error persists, please contact help@prefect.io.'
+        )
+      }
+    },
     async removeUser(membershipId) {
       this.isRemovingUser = true
 
@@ -200,33 +279,41 @@ export default {
       <template #header.username="{ header }">
         <span class="subtitle-2">{{ header.text }}</span>
       </template>
-      <template #header.created="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+
+      <template v-if="isTenantAdmin" #item.view="{ item }">
+        <v-btn
+          small
+          color="primary"
+          class="white--text"
+          v-on="on"
+          @click="
+            selectedUser = item
+            dialogViewTokens = true
+          "
+        >
+          <v-icon left>visibility</v-icon>
+          View Tokens
+        </v-btn>
       </template>
-      <template #header.lastUsed="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+
+      <template v-if="isTenantAdmin" #item.create="{ item }">
+        <v-btn
+          small
+          color="primary"
+          class="white--text"
+          @click="
+            selectedUser = item
+            dialogCreateToken = true
+          "
+          ><v-icon left>
+            add
+          </v-icon>
+          Create Token
+        </v-btn>
       </template>
 
       <!-- ACTIONS -->
       <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip bottom>
-          <template #activator="{ on }">
-            <v-btn
-              text
-              fab
-              x-small
-              color="primary"
-              v-on="on"
-              @click="
-                selectedUser = item
-                dialogModifyRole = true
-              "
-            >
-              <v-icon>edit</v-icon>
-            </v-btn>
-          </template>
-          Create a new API key
-        </v-tooltip>
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
@@ -248,29 +335,78 @@ export default {
       </template>
     </v-data-table>
 
-    <!-- MODIFY USER ROLE DIALOG -->
+    <!-- CREATE TOKEN DIALOG -->
     <ConfirmDialog
-      v-if="selectedUser"
-      v-model="dialogModifyRole"
-      :dialog-props="{ 'max-width': '600' }"
-      :title="`Modify ${selectedUser.email}'s role`"
-      :disabled="isSettingRole"
-      :loading="isSettingRole"
-      confirm-text="Save"
-      @cancel="roleInput = 'USER'"
-      @confirm="updateRole(selectedUser.membershipId, roleInput)"
+      v-model="dialogCreateToken"
+      :dialog-props="{ 'max-width': '500' }"
+      :confirm-props="{ 'data-cy': 'submit-new-api-token' }"
+      :disabled="!newTokenFormFilled"
+      title="Create an API token"
+      confirm-text="Create"
+      @cancel="resetNewToken"
+      @confirm="
+        createAPIToken({
+          name: newTokenName,
+          scope: newTokenScope,
+          expires_at: expiresAt
+        })
+      "
     >
-      <v-select
-        v-model="roleInput"
-        class="mt-6"
+      <v-text-field
+        v-model="newTokenName"
+        class="mb-3"
+        single-line
+        data-cy="new-api-token-name"
+        placeholder="Token Name"
+        autofocus
         outlined
         dense
-        autofocus
-        label="Role"
-        prepend-icon="supervised_user_circle"
-        :items="['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']"
+      />
+      <DateTime
+        v-model="expiresAt"
+        class="mb-3"
+        warning="
+           You have selected a time in the past; as a result, your token will have already expired.
+        "
+        :text-field-props="{
+          outlined: true,
+          dense: true,
+          hint: `Leave blank to never expire this token`,
+          label: 'Token Expiration',
+          persistentHint: true
+        }"
+      />
+    </ConfirmDialog>
+
+    <!-- VIEW TOKENS DIALOG -->
+
+    <ConfirmDialog
+      v-if="selectedUser"
+      v-model="dialogViewTokens"
+      :dialog-props="{ 'max-width': '600' }"
+      :title="`${selectedUser.username}'s Tokens`"
+      :disabled="isSettingRole"
+      :loading="isSettingRole"
+      @cancel="dialogViewTokens = false"
+    >
+      <v-data-table
+        fixed-header
+        :headers="tokenHeaders"
+        :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+        :items="membersItems"
+        :items-per-page="10"
+        class="elevation-2 rounded-0 truncate-table"
+        :footer-props="{
+          showFirstLastPage: true,
+          itemsPerPageOptions: [10, 15, 20, -1],
+          firstIcon: 'first_page',
+          lastIcon: 'last_page',
+          prevIcon: 'keyboard_arrow_left',
+          nextIcon: 'keyboard_arrow_right'
+        }"
+        no-data-text="This team does not have any members yet."
       >
-      </v-select>
+      </v-data-table>
     </ConfirmDialog>
 
     <!-- DELETE USER DIALOG -->
