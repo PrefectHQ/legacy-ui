@@ -30,6 +30,16 @@ export default {
       type: Boolean,
       required: false,
       default: () => true
+    },
+    rules: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
+    hide: {
+      type: Boolean,
+      required: false,
+      default: () => true
     }
   },
   data() {
@@ -111,7 +121,8 @@ export default {
       :append-icon="items.length > 0 ? '$dropdown' : null"
       multiple
       small-chips
-      hide-details
+      :rules="rules"
+      :hide-details="hide"
       :outlined="outline"
     >
       <template #selection="{ item, parent }">

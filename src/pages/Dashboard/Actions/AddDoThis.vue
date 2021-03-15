@@ -33,9 +33,11 @@ export default {
         SLACK_WEBHOOK: () => true,
         EMAIL: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          if (!val) return 'Email is required.'
+          if (!Array.isArray(val))
+            return pattern.test(val.trim()) || 'Invalid e-mail.'
           return (
-            val.split(',').every(email => pattern.test(email.trim())) ||
-            'Invalid e-mail.'
+            val.every(email => pattern.test(email.trim())) || 'Invalid e-mail.'
           )
         },
         required: val => !!val || 'Required.',
@@ -66,17 +68,11 @@ export default {
     },
     allowSave() {
       const type = this.messageType.type
-      if (type === 'EMAIL') {
-        const filtered =
-          this.messageConfigEmails.filter(
-            email => this.rules['EMAIL'](email) != true
-          ).length < 1
-        return filtered.length < 1
-      }
       return (
-        !!this.messageType &&
-        !!this.messageConfigTo &&
-        this.rules[type](this.messageConfigTo)
+        (!!this.messageType &&
+          !!this.messageConfigTo &&
+          this.rules[type](this.messageConfigTo)) ||
+        (!!this.messageType && !!this.messageConfigEmails)
       )
     },
     saveAs: {
@@ -88,9 +84,12 @@ export default {
       }
     },
     to() {
-      return this.messageType?.type === 'EMAIL' ||
-        this.messageType.type === 'WEBHOOK'
-        ? this.messageType?.config?.to || ' this email address.'
+      return this.messageType?.type === 'EMAIL'
+        ? this.messageConfigEmails.toString() ||
+            this.messageType?.config?.to ||
+            'this email address'
+        : this.messageType.type === 'WEBHOOK'
+        ? this.messageType?.config?.to || ' this web address.'
         : this.messageType?.type === 'TWILIO'
         ? this.messageType?.config?.to?.toString() || ' this address.'
         : this.messageType?.type === 'SLACK_WEBHOOK'
@@ -98,7 +97,10 @@ export default {
         : 'who?'
     },
     completeConfig() {
-      return this.messageType && this.messageConfig
+      return (
+        (this.messageType && this.messageConfigTo) ||
+        (this.messageType && this.messageConfigEmails)
+      )
     }
   },
   methods: {
@@ -114,7 +116,6 @@ export default {
       this.messageConfigEmails = val
     },
     saveConfig() {
-      console.log(this.messageConfigTo, this.messageConfigEmails)
       const type = this.messageType.type
       const checked =
         type != 'EMAIL'
@@ -123,7 +124,7 @@ export default {
               email => this.rules['EMAIL'](email) !== true
             ).length < 1
       if (checked === true) {
-        if (this.messageConfigTo) {
+        if (this.messageConfigTo || this.messageConfigEmails) {
           switch (this.messageType.type) {
             case 'SLACK_WEBHOOK':
               {
@@ -148,7 +149,9 @@ export default {
           }
         }
         this.openMessageConfig ? (this.openMessageConfig = false) : null
-      } else this.errorMessage = checked
+      } else {
+        this.errorMessage = checked
+      }
     },
     saveMessage() {
       if (this.openMessageText) {
@@ -193,8 +196,7 @@ export default {
       }
       const name = this.newSaveAs || this.saveAs
       const input = { name: name, config }
-      console.log(input)
-      // this.$emit('new-action', input)
+      this.$emit('new-action', input)
     }
   }
 }
@@ -331,18 +333,21 @@ export default {
       />
     </v-card-text>
     <v-card-text v-else-if="openMessageConfig">
-      <v-text-field
+      <!-- <v-text-field
         v-model="messageConfigTo"
         :label="messageConfigLabel"
         :rules="[rules[messageType.type]]"
         validate-on-blur
         :error-messages="errorMessage"
         @keyup.enter="saveConfig"
-      ></v-text-field>
+      ></v-text-field> -->
       <ListInput
         label="Emails"
-        :value="[]"
+        :value="messageConfigEmails"
         :outline="false"
+        :rules="[rules[messageType.type]]"
+        :hide="false"
+        :show-reset="false"
         @input="handleListInput"
       ></ListInput>
     </v-card-text>
