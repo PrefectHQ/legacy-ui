@@ -11,21 +11,22 @@ export default {
   data() {
     return {
       addName: false,
-      tempType: '',
       messageType: { title: 'Send' },
       openSendMessage: true,
       openMessageConfig: false,
       messageConfig: null,
-      messageConfigTo: '',
-      messageConfigEmails: [],
+      messageConfigTo: [],
       // To do - can we check what the default message will be?
       messageName: 'this message',
       messageText: '',
       openMessageText: false,
+      openTwilioConfig: false,
       openName: false,
       newSaveAs: '',
       isPagerDuty: false,
-      isTwilio: false,
+      authToken: '',
+      accountSid: '',
+      messagingService: '',
       menu: false,
       bothMessages: false,
       errorMessage: '',
@@ -40,7 +41,15 @@ export default {
             val.every(email => pattern.test(email.trim())) || 'Invalid e-mail.'
           )
         },
-        required: val => !!val || 'Required.',
+        TWILIO: val => {
+          if (!val) return 'Phone number is required.'
+          if (!Array.isArray(val))
+            return !isNaN(parseFloat(val)) || 'Entries must be a number'
+          return val.every(
+            item => !isNaN(parseFloat(item)) || 'Entries must be a number'
+          )
+        },
+        required: val => !!val || 'Required',
         requiredCombo: val =>
           (!!val && val.length > 0) || 'At least one number is required',
         url: val => {
@@ -58,7 +67,7 @@ export default {
         this.messageType.type === 'WEBHOOK'
         ? 'Email address(es)'
         : this.messageType?.type === 'TWILIO'
-        ? 'Twilio Hook'
+        ? 'Twilio Phone Numbers'
         : this.messageType?.type === 'SLACK_WEBHOOK'
         ? 'What is the name of the secret your slack webhook is stored as?'
         : 'config details'
@@ -69,10 +78,11 @@ export default {
     allowSave() {
       const type = this.messageType.type
       return (
-        (!!this.messageType &&
-          !!this.messageConfigTo &&
-          this.rules[type](this.messageConfigTo)) ||
-        (!!this.messageType && !!this.messageConfigEmails)
+        !!this.messageType &&
+        !!this.messageConfigTo &&
+        this.messageConfigTo.filter(item => this.rules[type](item) !== true)
+          .length < 1 &&
+        this.newSaveAs
       )
     },
     saveAs: {
@@ -85,22 +95,26 @@ export default {
     },
     to() {
       return this.messageType?.type === 'EMAIL'
-        ? this.messageConfigEmails.toString() ||
+        ? this.messageConfigTo.toString() ||
             this.messageType?.config?.to ||
-            'this email address'
+            'this email address.'
         : this.messageType.type === 'WEBHOOK'
         ? this.messageType?.config?.to || ' this web address.'
         : this.messageType?.type === 'TWILIO'
-        ? this.messageType?.config?.to?.toString() || ' this address.'
+        ? this.messageConfigTo.toString() ||
+          this.messageType?.config?.to?.toString() ||
+          'this phone number'
         : this.messageType?.type === 'SLACK_WEBHOOK'
-        ? this.messageType?.config?.url || ' this webhook.'
+        ? this.messageConfigTo ||
+          this.messageType?.config?.url ||
+          ' this webhook.'
         : 'who?'
     },
+    isTwilio() {
+      return this.messageType.type === 'TWILIO'
+    },
     completeConfig() {
-      return (
-        (this.messageType && this.messageConfigTo) ||
-        (this.messageType && this.messageConfigEmails)
-      )
+      return this.messageType && this.messageConfigTo
     }
   },
   methods: {
@@ -113,18 +127,18 @@ export default {
       this.$emit('close-action')
     },
     handleListInput(val) {
-      this.messageConfigEmails = val
+      this.messageConfigTo = val
     },
     saveConfig() {
       const type = this.messageType.type
       const checked =
         type != 'EMAIL'
           ? this.rules[type](this.messageConfigTo)
-          : this.messageConfigEmails.filter(
+          : this.messageConfigTo.filter(
               email => this.rules['EMAIL'](email) !== true
             ).length < 1
       if (checked === true) {
-        if (this.messageConfigTo || this.messageConfigEmails) {
+        if (this.messageConfigTo) {
           switch (this.messageType.type) {
             case 'SLACK_WEBHOOK':
               {
@@ -138,7 +152,7 @@ export default {
               break
             case 'EMAIL':
               {
-                this.messageConfig = { to_emails: this.messageConfigEmails }
+                this.messageConfig = { to_emails: this.messageConfigTo }
                 if (this.messageText) {
                   this.messageConfig.body = this.bothMessages
                     ? `{} ${this.messageText}`
@@ -146,12 +160,28 @@ export default {
                 }
               }
               break
+            case 'TWILIO': {
+              this.messageConfig = {
+                phone_numbers: this.messageConfigTo,
+                auth_token: this.authToken,
+                account_sid: this.accountSid,
+                messaging_service_sid: this.messagingService
+              }
+              if (this.messageText) {
+                this.messageConfig.message = this.bothMessages
+                  ? `{} ${this.messageText}`
+                  : this.messageText
+              }
+            }
           }
         }
         this.openMessageConfig ? (this.openMessageConfig = false) : null
       } else {
         this.errorMessage = checked
       }
+    },
+    openTwilioConfigSection() {
+      this.openTwilioConfig = !this.openTwilioConfig
     },
     saveMessage() {
       if (this.openMessageText) {
@@ -189,6 +219,11 @@ export default {
         case 'EMAIL':
           config = {
             email_notification: this.messageConfig
+          }
+          break
+        case 'TWILIO':
+          config = {
+            twilio_notification: this.messageConfig
           }
           break
         default:
@@ -243,9 +278,20 @@ export default {
         :color="openMessageConfig ? 'codePink' : 'grey'"
         @click="openMessageConfig = !openMessageConfig"
       >
-        {{ messageConfigTo || to }}</v-btn
+        {{ to }}</v-btn
       >
-      <span v-if="isTwilio"> for</span>
+      <span v-if="isTwilio">
+        with this
+        <v-btn
+          :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+          class="px-0 pb-1 headline"
+          text
+          :color="openTwilioConfig ? 'codePink' : 'grey'"
+          @click="openTwilioConfigSection()"
+        >
+          config</v-btn
+        ></span
+      >
 
       <span v-if="isPagerDuty"> </span>
     </div>
@@ -333,23 +379,68 @@ export default {
       />
     </v-card-text>
     <v-card-text v-else-if="openMessageConfig">
-      <!-- <v-text-field
+      <v-text-field
+        v-if="messageType.type === 'SLACK_WEBHOOK'"
         v-model="messageConfigTo"
         :label="messageConfigLabel"
         :rules="[rules[messageType.type]]"
         validate-on-blur
         :error-messages="errorMessage"
         @keyup.enter="saveConfig"
-      ></v-text-field> -->
+      ></v-text-field>
       <ListInput
-        label="Emails"
-        :value="messageConfigEmails"
+        v-else
+        v-click-outside="() => (openMessageConfig = !openMessageConfig)"
+        :label="messageConfigLabel"
+        :value="messageConfigTo"
         :outline="false"
         :rules="[rules[messageType.type]]"
         :hide="false"
         :show-reset="false"
         @input="handleListInput"
       ></ListInput>
+    </v-card-text>
+    <v-card-text v-else-if="openTwilioConfig">
+      <span>
+        Prefect Cloud will send a message via the
+        <a href="https://www.twilio.com/docs" target="_blank">
+          Twilio SMS API </a
+        >. You can retrieve the <code class="my-1 mx-1">ACCOUNT SID</code> and
+        <code class="my-1 mx-1">AUTH TOKEN</code> from the dashboard of your
+        Twilio account. You'll need to configure a
+        <a
+          href="https://www.twilio.com/docs/sms/services/api#messaging-services-resource"
+          target="_blank"
+        >
+          Messaging Service
+        </a>
+        to recieve messages.
+      </span>
+      <v-text-field
+        v-if="messageType.type == 'TWILIO'"
+        v-model="authToken"
+        class="my-8"
+        :rules="[rules.required]"
+        label="Name of Auth Token Secret"
+        dense
+      />
+
+      <v-text-field
+        v-if="messageType.type == 'TWILIO'"
+        v-model="accountSid"
+        :rules="[rules.required]"
+        label="Account SID"
+        class="mb-8"
+        dense
+      />
+
+      <v-text-field
+        v-if="messageType.type == 'TWILIO'"
+        v-model="messagingService"
+        :rules="[rules.required]"
+        label="Messaging service SID"
+        dense
+      />
     </v-card-text>
     <v-card-text v-else-if="completeConfig" class="mx-4">
       <v-tooltip bottom>

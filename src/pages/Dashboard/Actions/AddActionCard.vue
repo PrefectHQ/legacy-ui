@@ -40,7 +40,7 @@ export default {
       disableClick: true,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
-      addAction: false,
+      addAction: true,
       flowEventType: null,
       flowEventTypes: [
         { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
@@ -265,7 +265,6 @@ export default {
       )
     },
     async createAction(input) {
-      console.log('input', input)
       try {
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create_action.gql'),
