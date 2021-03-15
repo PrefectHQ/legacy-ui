@@ -1,8 +1,8 @@
-import { fallbackApolloClient } from '@/vue-apollo'
+import { authApolloClient } from '@/vue-apollo'
 
 const prefectAuth = async idToken => {
   try {
-    const result = await fallbackApolloClient.mutate({
+    const result = await authApolloClient.mutate({
       mutation: require('@/graphql/log-in.gql'),
       variables: {
         input: { id_token: idToken }
@@ -30,7 +30,7 @@ const prefectAuth = async idToken => {
 const prefectRefresh = async (accessToken, src) => {
   try {
     console.log('Refreshing token from...', src)
-    const result = await fallbackApolloClient.mutate({
+    const result = await authApolloClient.mutate({
       mutation: require('@/graphql/refresh-token.gql'),
       variables: {
         input: { access_token: accessToken }
@@ -38,23 +38,20 @@ const prefectRefresh = async (accessToken, src) => {
     })
 
     if (result?.data?.refresh_token) {
-      console.log('Token refreshed!')
       return result.data.refresh_token
     } else if (result.error) {
-      console.log("Unable to refresh token, here's the result: ", result)
       throw new Error(result.error)
     } else {
       throw new Error('No token returned')
     }
   } catch (error) {
-    console.log('General refresh token error: ', error)
     throw new Error('Error refreshing token in prefectRefresh', error)
   }
 }
 
 const prefectUser = async () => {
   try {
-    const user = await fallbackApolloClient.query({
+    const user = await authApolloClient.query({
       query: require('@/graphql/User/user.gql'),
       fetchPolicy: 'no-cache'
     })
@@ -65,15 +62,11 @@ const prefectUser = async () => {
 }
 
 const prefectTenants = async isCloud => {
-  // try {
-  const result = await fallbackApolloClient.query({
+  const result = await authApolloClient.query({
     query: require('@/graphql/Tenant/tenants.js').default(isCloud),
     fetchPolicy: 'no-cache'
   })
   return result.data.tenant
-  // } catch (error) {
-  //   throw new Error('Error retrieving tenants in prefectTenants', error)
-  // }
 }
 
 export { prefectAuth, prefectRefresh, prefectUser, prefectTenants }

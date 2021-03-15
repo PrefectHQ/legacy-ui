@@ -16,6 +16,8 @@ import TileLayout from '@/layouts/TileLayout'
 import { mapGetters, mapActions } from 'vuex'
 import gql from 'graphql-tag'
 
+import { worker } from '@/main'
+
 const serverTabs = [
   {
     name: 'Overview',
@@ -156,6 +158,14 @@ export default {
   },
   methods: {
     ...mapActions('data', ['activateProject', 'resetActiveData']),
+    postMessage() {
+      console.log('posting message to worker', worker)
+      if (worker.port) {
+        worker.port.postMessage({ bar: 'batz' })
+      } else {
+        worker.postMessage({ foo: 'bar' })
+      }
+    },
     handleAgentDetailsClick() {
       this.$router.push({
         name: this.projectId ? 'project' : 'dashboard',
@@ -199,6 +209,8 @@ export default {
 
 <template>
   <v-sheet color="appBackground">
+    <div @click="postMessage">HELLO</div>
+
     <SubPageNav
       :icon="projectId && project ? 'pi-project' : 'view_quilt'"
       :page-type="projectId && project ? 'Project' : 'Dashboard'"
