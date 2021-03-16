@@ -452,7 +452,7 @@ export default {
             <v-select
               :items="shuffledOptions"
               dark
-              :menu-props="{ dark: true, maxHeight: 400 }"
+              :menu-props="{ maxHeight: 400 }"
               label="Options"
               @change="setSelectedOption"
             ></v-select>
