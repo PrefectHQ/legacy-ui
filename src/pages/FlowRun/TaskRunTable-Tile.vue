@@ -71,7 +71,8 @@ export default {
         'Skipped',
         'TimedOut',
         'Scheduled',
-        'Resume'
+        'Resume',
+        'Running'
       ].sort(),
       sortBy: 'start_time',
       sortDesc: true,
