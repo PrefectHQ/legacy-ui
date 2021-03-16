@@ -80,7 +80,6 @@ export default {
     ...mapActions('user', ['getUser']),
     async createLicense() {
       this.loading++
-
       try {
         // Create the stripe customer (necessary for creating a self serve license)
         await this.$apollo.mutate({
@@ -93,7 +92,6 @@ export default {
             }
           }
         })
-
         // Create the self serve license
         // await this.$apollo.mutate({
         //   mutation: require('@/graphql/License/create-self-serve-license.gql'),
@@ -159,11 +157,20 @@ export default {
 
           await this.getTenants()
         } catch (e) {
-          this.updateServerError = true
+          if (e.message.includes('Uniqueness violation')) {
+            this.slugErrors = [
+              'Sorry, that URL slug is already in use. Please try another URL Slug.'
+            ]
+          } else {
+            this.updateServerError = true
+          }
         }
       }
 
       this.loading--
+      if (this.slugErrors.length > 0) {
+        return
+      }
       await this.createLicense()
       if (!this.updateServerError) this.goToResources()
     },
