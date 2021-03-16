@@ -8,7 +8,14 @@
 
 ### Bugfixes
 
+- None
+## 2021-03-16
+
+### Bugfixes
+
 - Fix a bug where a license would get created even though there are validation errors present - [#672](https://github.com/PrefectHQ/ui/pull/672)
+- Updates links to the website - [#673](https://github.com/PrefectHQ/ui/pull/673)
+- Remove unhelpful tooltip on Secrets - [#665](https://github.com/PrefectHQ/ui/pull/665)
 
 ## 2021-03-15a
 
