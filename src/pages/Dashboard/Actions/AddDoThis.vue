@@ -161,7 +161,9 @@ export default {
           switch (this.messageType.type) {
             case 'SLACK_WEBHOOK':
               {
-                this.messageConfig = { webhook_url: this.messageConfigTo }
+                this.messageConfig = {
+                  webhook_url_secret: this.messageConfigTo
+                }
                 if (this.messageText) {
                   this.messageConfig.message = this.bothMessages
                     ? `{} ${this.messageText}`
@@ -183,7 +185,7 @@ export default {
               {
                 this.messageConfig = {
                   phone_numbers: this.messageConfigTo,
-                  auth_token: this.authToken,
+                  auth_token_secret: this.authToken,
                   account_sid: this.accountSid,
                   messaging_service_sid: this.messagingService
                 }
@@ -196,7 +198,7 @@ export default {
               break
             case 'PAGERDUTY': {
               this.messageConfig = {
-                api_token: this.apiToken,
+                api_token_secret: this.apiToken,
                 routing_key: this.routingKey,
                 severity: this.severity
               }
