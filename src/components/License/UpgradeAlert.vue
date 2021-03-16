@@ -41,7 +41,7 @@ export default {
         <span class="font-weight-bold">fewer limits.</span>
         <span v-if="!isSelfServe" class="pl-2"
           ><ExternalLink
-            href="https://www.prefect.io/get-prefect#contact"
+            href="https://www.prefect.io/pricing#contact"
             target="_blank"
             >Contact us </ExternalLink
           >to find out more!</span
@@ -51,7 +51,7 @@ export default {
         <span v-if="!isSelfServe"
           >If you'd like to change your plan or get access to cool new features
           please
-          <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
+          <a href="https://www.prefect.io/pricing#contact" target="_blank">
             contact us!</a
           >
         </span>
