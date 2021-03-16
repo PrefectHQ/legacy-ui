@@ -103,10 +103,7 @@ export default {
             until a concurrency slot becomes available.
           </p>
           <p v-if="flowConcurrency">
-            <a
-              href="https://www.prefect.io/pricing#contact"
-              target="_blank"
-            >
+            <a href="https://www.prefect.io/pricing#contact" target="_blank">
               Contact us</a
             >
             to add concurrency slots and to get access to lots of other cool

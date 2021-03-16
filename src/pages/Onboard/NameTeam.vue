@@ -318,15 +318,11 @@ export default {
                     you to use &mdash; this is a great place to test and deploy
                     flows as you explore Prefect. When you're ready to
                     collaborate with others, you can
-                    <ExternalLink
-                      href="https://www.prefect.io/pricing"
-                    >
+                    <ExternalLink href="https://www.prefect.io/pricing">
                       upgrade this team</ExternalLink
                     >
                     to invite more users or
-                    <ExternalLink
-                      href="https://www.prefect.io/pricing#contact"
-                    >
+                    <ExternalLink href="https://www.prefect.io/pricing#contact">
                       contact us</ExternalLink
                     >
                     to add another team. For more information about teams in
