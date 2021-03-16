@@ -36,7 +36,7 @@ export default {
       agentFlowOrSomethingElse: '',
       selectedAgent: null,
       chosenStates: this.hookDetail?.hook?.event_tags?.state || STATES['All'],
-      stateNames: this.hookDetail?.hook?.event_tags?.state || [],
+      stateNames: this.hookDetail?.hook?.event_tags?.state || '',
       disableClick: true,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
@@ -224,10 +224,11 @@ export default {
       this.stateSelected = true
       if (group !== 'Custom') {
         this.disableClick = true
-        this.stateNames = [group]
+        this.stateNames = group
         this.chosenStates = this.states[group]
       } else {
         this.stateNames = 'selected States'
+        this.chosenStates = []
         this.disableClick = false
       }
     },
@@ -239,6 +240,7 @@ export default {
             item => item != state && item.toUpperCase() != state
           ))
         : this.chosenStates.push(state)
+      if (this.chosenStates.length < 2) this.stateNames = state
     },
     selectAction(action) {
       this.chosenAction = action
@@ -279,6 +281,8 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
+      } finally {
+        this.addAction = false
       }
     },
     async removeToDo(toDo) {

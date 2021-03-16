@@ -2,38 +2,64 @@
 //This page will need updating!
 import { actionTypes } from '@/utils/cloudHooks'
 import { mapGetters } from 'vuex'
+import ListInput from '@/components/CustomInputs/ListInput'
 
 export default {
+  components: {
+    ListInput
+  },
   data() {
     return {
       addName: false,
-      tempType: '',
+      enableSave: false,
       messageType: { title: 'Send' },
       openSendMessage: true,
       openMessageConfig: false,
       messageConfig: null,
-      messageConfigTo: '',
+      messageConfigTo: [],
       // To do - can we check what the default message will be?
       messageName: 'this message',
       messageText: '',
       openMessageText: false,
+      openTwilioConfig: false,
       openName: false,
       newSaveAs: '',
-      isPagerDuty: false,
-      isTwilio: false,
+      authToken: '',
+      accountSid: '',
+      apiToken: '',
+      routingKey: '',
+      severity: '',
+      severityLevels: [
+        { text: 'Info', value: 'info' },
+        { text: 'Warning', value: 'warning' },
+        { text: 'Error', value: 'error' },
+        { text: 'Critical', value: 'critical' }
+      ],
+      messagingService: '',
       menu: false,
       bothMessages: false,
       errorMessage: '',
       rules: {
         SLACK_WEBHOOK: () => true,
+        PAGERDUTY: () => true,
         EMAIL: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          if (!val) return 'Email is required.'
+          if (!Array.isArray(val))
+            return pattern.test(val.trim()) || 'Invalid e-mail.'
           return (
-            val.split(',').every(email => pattern.test(email.trim())) ||
-            'Invalid e-mail.'
+            val.every(email => pattern.test(email.trim())) || 'Invalid e-mail.'
           )
         },
-        required: val => !!val || 'Required.',
+        TWILIO: val => {
+          if (!val) return 'Phone number is required.'
+          if (!Array.isArray(val))
+            return !isNaN(parseFloat(val)) || 'Entries must be a number'
+          return val.every(
+            item => !isNaN(parseFloat(item)) || 'Entries must be a number'
+          )
+        },
+        required: val => !!val || 'Required',
         requiredCombo: val =>
           (!!val && val.length > 0) || 'At least one number is required',
         url: val => {
@@ -51,7 +77,7 @@ export default {
         this.messageType.type === 'WEBHOOK'
         ? 'Email address(es)'
         : this.messageType?.type === 'TWILIO'
-        ? 'Twilio Hook'
+        ? 'Twilio Phone Numbers'
         : this.messageType?.type === 'SLACK_WEBHOOK'
         ? 'What is the name of the secret your slack webhook is stored as?'
         : 'config details'
@@ -60,11 +86,14 @@ export default {
       return []
     },
     allowSave() {
+      if (this.enableSave) return true
       const type = this.messageType.type
       return (
         !!this.messageType &&
         !!this.messageConfigTo &&
-        this.rules[type](this.messageConfigTo)
+        this.messageConfigTo.filter(item => this.rules[type](item) !== true)
+          .length < 1 &&
+        this.newSaveAs
       )
     },
     saveAs: {
@@ -76,17 +105,37 @@ export default {
       }
     },
     to() {
-      return this.messageType?.type === 'EMAIL' ||
-        this.messageType.type === 'WEBHOOK'
-        ? this.messageType?.config?.to || ' this email address.'
+      const configTo =
+        this.messageConfigTo.length > 0 ? this.messageConfigTo.toString() : ''
+      return this.messageType?.type === 'EMAIL'
+        ? configTo || this.messageType?.config?.to || 'to this email address.'
+        : this.messageType.type === 'WEBHOOK'
+        ? this.messageType?.config?.to || ' to this web address.'
         : this.messageType?.type === 'TWILIO'
-        ? this.messageType?.config?.to?.toString() || ' this address.'
+        ? configTo ||
+          this.messageType?.config?.to?.toString() ||
+          'to this phone number'
         : this.messageType?.type === 'SLACK_WEBHOOK'
-        ? this.messageType?.config?.url || ' this webhook.'
-        : 'who?'
+        ? configTo || this.messageType?.config?.url || 'to this webhook.'
+        : this.messageType.type === 'PAGERDUTY'
+        ? 'with this config.'
+        : 'to who?'
+    },
+    isTwilio() {
+      return this.messageType.type === 'TWILIO'
+    },
+    isPagerDuty() {
+      return this.messageType.type === 'PAGERDUTY'
     },
     completeConfig() {
-      return this.messageType && this.messageConfig
+      if (this.isPagerDuty)
+        return (
+          !!this.messageType &&
+          !!this.apiToken &&
+          !!this.routingKey &&
+          !!this.severity
+        )
+      return this.messageType && this.messageConfigTo
     }
   },
   methods: {
@@ -98,15 +147,25 @@ export default {
     handleClose() {
       this.$emit('close-action')
     },
+    handleListInput(val) {
+      this.messageConfigTo = val
+    },
     saveConfig() {
       const type = this.messageType.type
-      const checked = this.rules[type](this.messageConfigTo)
+      const checked =
+        type != 'EMAIL'
+          ? this.rules[type](this.messageConfigTo)
+          : this.messageConfigTo.filter(
+              email => this.rules['EMAIL'](email) !== true
+            ).length < 1
       if (checked === true) {
         if (this.messageConfigTo) {
           switch (this.messageType.type) {
             case 'SLACK_WEBHOOK':
               {
-                this.messageConfig = { webhook_url: this.messageConfigTo }
+                this.messageConfig = {
+                  webhook_url_secret: this.messageConfigTo
+                }
                 if (this.messageText) {
                   this.messageConfig.message = this.bothMessages
                     ? `{} ${this.messageText}`
@@ -116,7 +175,7 @@ export default {
               break
             case 'EMAIL':
               {
-                this.messageConfig = { to_emails: [this.messageConfigTo] }
+                this.messageConfig = { to_emails: this.messageConfigTo }
                 if (this.messageText) {
                   this.messageConfig.body = this.bothMessages
                     ? `{} ${this.messageText}`
@@ -124,10 +183,42 @@ export default {
                 }
               }
               break
+            case 'TWILIO':
+              {
+                this.messageConfig = {
+                  phone_numbers: this.messageConfigTo,
+                  auth_token_secret: this.authToken,
+                  account_sid: this.accountSid,
+                  messaging_service_sid: this.messagingService
+                }
+                if (this.messageText) {
+                  this.messageConfig.message = this.bothMessages
+                    ? `{} ${this.messageText}`
+                    : this.messageText
+                }
+              }
+              break
+            case 'PAGERDUTY': {
+              this.messageConfig = {
+                api_token_secret: this.apiToken,
+                routing_key: this.routingKey,
+                severity: this.severity
+              }
+              if (this.messageText) {
+                this.messageConfig.message = this.bothMessages
+                  ? `{} ${this.messageText}`
+                  : this.messageText
+              }
+            }
           }
         }
         this.openMessageConfig ? (this.openMessageConfig = false) : null
-      } else this.errorMessage = checked
+      } else {
+        this.errorMessage = checked
+      }
+    },
+    openTwilioConfigSection() {
+      this.openTwilioConfig = !this.openTwilioConfig
     },
     saveMessage() {
       if (this.openMessageText) {
@@ -165,6 +256,16 @@ export default {
         case 'EMAIL':
           config = {
             email_notification: this.messageConfig
+          }
+          break
+        case 'TWILIO':
+          config = {
+            twilio_notification: this.messageConfig
+          }
+          break
+        case 'PAGERDUTY':
+          config = {
+            pagerduty_notification: this.messageConfig
           }
           break
         default:
@@ -211,19 +312,29 @@ export default {
           {{ messageText || messageName }}</v-btn
         >
       </span>
-      to
-      <v-btn
-        :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-        class="px-0 pb-1 headline"
-        text
-        :color="openMessageConfig ? 'codePink' : 'grey'"
-        @click="openMessageConfig = !openMessageConfig"
+      <span>
+        <v-btn
+          :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+          class="px-1 pb-1 headline"
+          text
+          :color="openMessageConfig ? 'codePink' : 'grey'"
+          @click="openMessageConfig = !openMessageConfig"
+        >
+          {{ to }}</v-btn
+        >
+        <span v-if="isTwilio">
+          with this
+          <v-btn
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            class="px-0 pb-1 headline"
+            text
+            :color="openTwilioConfig ? 'codePink' : 'grey'"
+            @click="openTwilioConfigSection()"
+          >
+            config</v-btn
+          ></span
+        ></span
       >
-        {{ messageConfigTo || to }}</v-btn
-      >
-      <span v-if="isTwilio"> for</span>
-
-      <span v-if="isPagerDuty"> </span>
     </div>
 
     <v-card-text v-if="openSendMessage" class="pt-0">
@@ -310,6 +421,7 @@ export default {
     </v-card-text>
     <v-card-text v-else-if="openMessageConfig">
       <v-text-field
+        v-if="messageType.type === 'SLACK_WEBHOOK'"
         v-model="messageConfigTo"
         :label="messageConfigLabel"
         :rules="[rules[messageType.type]]"
@@ -317,15 +429,108 @@ export default {
         :error-messages="errorMessage"
         @keyup.enter="saveConfig"
       ></v-text-field>
+      <div v-else-if="isPagerDuty">
+        <span>
+          Prefect Cloud will send a PagerDuty notification. Create your
+          <a
+            href="https://support.pagerduty.com/docs/generating-api-keys"
+            target="_blank"
+            >Pager Duty API token</a
+          >
+          in the Pager Duty app by visiting Configuration > API Access. You'll
+          also need an Integration Key, which can be created by visiting the
+          Integrations tab of the Service Details page and setting up an
+          <a
+            href="https://support.pagerduty.com/docs/services-and-integrations"
+            target="_blank"
+            >Events API v2</a
+          >
+          integration.
+        </span>
+        <v-text-field
+          v-model="apiToken"
+          :rules="[rules.required]"
+          label="Name of your PagerDuty API Token Secret"
+          class="my-8"
+          dense
+        />
+        <v-text-field
+          v-model="routingKey"
+          :rules="[rules.required]"
+          label="Integration key"
+          dense
+          class="mb-8"
+        />
+        <v-select
+          v-model="severity"
+          :items="severityLevels"
+          label="Severity"
+          dense
+        />
+      </div>
+      <ListInput
+        v-else-if="
+          messageType.type === 'EMAIL' || messageType.type === 'TWILIO'
+        "
+        v-click-outside="() => (openMessageConfig = !openMessageConfig)"
+        :label="messageConfigLabel"
+        :value="messageConfigTo"
+        :outline="false"
+        :rules="[rules[messageType.type]]"
+        :hide="false"
+        :show-reset="false"
+        @input="handleListInput"
+      ></ListInput>
     </v-card-text>
-    <v-card-text v-else-if="completeConfig" class="mx-4">
+    <v-card-text v-else-if="openTwilioConfig">
+      <span>
+        Prefect Cloud will send a message via the
+        <a href="https://www.twilio.com/docs" target="_blank">
+          Twilio SMS API </a
+        >. You can retrieve the <code class="my-1 mx-1">ACCOUNT SID</code> and
+        <code class="my-1 mx-1">AUTH TOKEN</code> from the dashboard of your
+        Twilio account. You'll need to configure a
+        <a
+          href="https://www.twilio.com/docs/sms/services/api#messaging-services-resource"
+          target="_blank"
+        >
+          Messaging Service
+        </a>
+        to recieve messages.
+      </span>
+      <v-text-field
+        v-model="authToken"
+        class="my-8"
+        :rules="[rules.required]"
+        label="Name of Auth Token Secret"
+        dense
+      />
+
+      <v-text-field
+        v-model="accountSid"
+        :rules="[rules.required]"
+        label="Account SID"
+        class="mb-8"
+        dense
+      />
+
+      <v-text-field
+        v-model="messagingService"
+        :rules="[rules.required]"
+        label="Messaging service SID"
+        dense
+      />
+    </v-card-text>
+    <v-card-text v-else-if="completeConfig" class="pr-4">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-text-field
             v-model="saveAs"
+            class="pr-4"
             :disabled="!messageType"
             label="Save As"
             v-bind="attrs"
+            @focus="enableSave = true"
             v-on="on"
           ></v-text-field>
         </template>

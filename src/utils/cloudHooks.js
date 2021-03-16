@@ -62,6 +62,25 @@ export const actionTypes = [
     icon: 'fab fa-slack',
     config: { url: null },
     requiresCloud: false
+  },
+  {
+    title: 'Twilio',
+    type: 'TWILIO',
+    icon: '$twilio',
+    config: {
+      account_sid: null,
+      auth_token: null,
+      to: [],
+      messaging_service_sid: null
+    },
+    requiresCloud: false
+  },
+  {
+    title: 'Pager Duty',
+    type: 'PAGERDUTY',
+    icon: '$pagerDuty',
+    config: { routing_key: null, api_token: null, severity: [] },
+    requiresCloud: false
   }
 ]
 
