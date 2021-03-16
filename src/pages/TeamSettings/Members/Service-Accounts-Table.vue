@@ -45,8 +45,8 @@ export default {
       allHeaders: [
         {
           mobile: true,
-          text: 'Username',
-          value: 'username',
+          text: 'Name',
+          value: 'firstName',
           width: '20%'
         },
         {
@@ -214,17 +214,19 @@ export default {
         if (!data) return
 
         this.membersItems = data.tenantUsers
-          // we'll filter for just service accounts here, and filter them out in MembersTable
           .filter(user =>
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
           )
+          .filter(user => user.account_type === 'SERVICE')
           .map(user => {
             let membership = user.memberships.find(
               mem => mem.tenant_id == this.tenant.id
             )
+
             return {
               id: user.id,
               username: user.username,
+              firstName: user.first_name,
               userId: user.id,
               membershipId: membership.id
             }
@@ -276,7 +278,7 @@ export default {
       no-data-text="This team does not have any members yet."
     >
       <!-- HEADERS -->
-      <template #header.username="{ header }">
+      <template #header.firstName="{ header }">
         <span class="subtitle-2">{{ header.text }}</span>
       </template>
 
@@ -380,34 +382,34 @@ export default {
 
     <!-- VIEW TOKENS DIALOG -->
 
-    <ConfirmDialog
+    <v-dialog
       v-if="selectedUser"
       v-model="dialogViewTokens"
-      :dialog-props="{ 'max-width': '600' }"
-      :title="`${selectedUser.username}'s Tokens`"
       :disabled="isSettingRole"
       :loading="isSettingRole"
       @cancel="dialogViewTokens = false"
-    >
-      <v-data-table
-        fixed-header
-        :headers="tokenHeaders"
-        :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-        :items="membersItems"
-        :items-per-page="10"
-        class="elevation-2 rounded-0 truncate-table"
-        :footer-props="{
-          showFirstLastPage: true,
-          itemsPerPageOptions: [10, 15, 20, -1],
-          firstIcon: 'first_page',
-          lastIcon: 'last_page',
-          prevIcon: 'keyboard_arrow_left',
-          nextIcon: 'keyboard_arrow_right'
-        }"
-        no-data-text="This team does not have any members yet."
-      >
-      </v-data-table>
-    </ConfirmDialog>
+      ><v-card>
+        <v-card-title>{{ selectedUser.firstName }}'s Tokens</v-card-title>
+        <v-data-table
+          fixed-header
+          :headers="tokenHeaders"
+          :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+          :items="membersItems"
+          :items-per-page="10"
+          class="rounded-0 truncate-table"
+          :footer-props="{
+            showFirstLastPage: true,
+            itemsPerPageOptions: [10, 15, 20, -1],
+            firstIcon: 'first_page',
+            lastIcon: 'last_page',
+            prevIcon: 'keyboard_arrow_left',
+            nextIcon: 'keyboard_arrow_right'
+          }"
+          no-data-text="This team does not have any members yet."
+        >
+        </v-data-table>
+      </v-card>
+    </v-dialog>
 
     <!-- DELETE USER DIALOG -->
     <ConfirmDialog
@@ -415,7 +417,7 @@ export default {
       v-model="dialogRemoveUser"
       type="error"
       :title="
-        `Are you sure you want to remove ${selectedUser.username} from your team?`
+        `Are you sure you want to remove ${selectedUser.firstName} from your team?`
       "
       :dialog-props="{ 'max-width': '600' }"
       :disabled="isRemovingUser"
@@ -423,7 +425,7 @@ export default {
       @confirm="removeUser(selectedUser.membershipId)"
     >
       <div>
-        <span class="font-weight-bold">{{ selectedUser.username }}</span>
+        <span class="font-weight-bold">{{ selectedUser.firstName }}</span>
         and all of their API keys will be deleted.</div
       >
     </ConfirmDialog>
