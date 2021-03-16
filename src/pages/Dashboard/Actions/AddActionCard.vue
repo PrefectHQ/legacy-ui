@@ -40,7 +40,7 @@ export default {
       disableClick: true,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
-      addAction: true,
+      addAction: false,
       flowEventType: null,
       flowEventTypes: [
         { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
