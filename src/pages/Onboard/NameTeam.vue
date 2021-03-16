@@ -3,6 +3,7 @@ import { mapActions, mapGetters } from 'vuex'
 import ExternalLink from '@/components/ExternalLink'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin.js'
+import { shuffle } from '@/utils/array'
 
 export default {
   components: { ExternalLink },
@@ -49,6 +50,13 @@ export default {
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
+    },
+    shuffledOptions() {
+      let optionsCopy = [...this.options]
+      let other = optionsCopy.pop()
+      let shuffledArray = shuffle(optionsCopy)
+
+      return [...shuffledArray, other]
     }
   },
   mounted() {
@@ -442,7 +450,7 @@ export default {
               How did you hear about us?
             </div>
             <v-select
-              :items="options"
+              :items="shuffledOptions"
               dark
               :menu-props="{ dark: true, maxHeight: 400 }"
               label="Options"
