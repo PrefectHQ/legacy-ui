@@ -158,9 +158,7 @@ export default {
           await this.getTenants()
         } catch (e) {
           if (e.message.includes('Uniqueness violation')) {
-            this.slugErrors = [
-              'Sorry, that URL slug is already in use. Please try another URL Slug.'
-            ]
+            this.slugErrors = ['Sorry, that slug is already in use.']
           } else {
             this.updateServerError = true
           }
