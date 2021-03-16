@@ -665,7 +665,7 @@ export default {
             <v-chip
               label
               class="mx-2"
-              :disabled="disableChip(item)"
+              :disabled="!disableChip(item)"
               outlined
               @click="selectFlowEventType(item)"
               >{{ item.name }}</v-chip

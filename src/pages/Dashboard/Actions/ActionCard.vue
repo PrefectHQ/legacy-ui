@@ -71,9 +71,9 @@ export default {
       const states = this.hook?.event_tags?.state
       return states.length === STATES['All'].length
         ? 'changes to any state'
-        : states.length > 1
+        : states?.length > 1
         ? 'changes to multiple states'
-        : presentTenseStates[states]
+        : presentTenseStates[states[0]]
     },
     hookAction() {
       return this.hook?.action?.name || this.hook?.action?.action_type

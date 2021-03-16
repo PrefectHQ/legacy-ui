@@ -79,7 +79,7 @@ export default {
         : this.messageType?.type === 'TWILIO'
         ? 'Twilio Phone Numbers'
         : this.messageType?.type === 'SLACK_WEBHOOK'
-        ? 'What is the name of the secret your slack webhook is stored as?'
+        ? 'Slack Webhook Secret Name'
         : 'config details'
     },
     messageConfigRules() {
