@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add the "Running" state to the state filter - [#675](https://github.com/PrefectHQ/ui/pull/675)
 
 ### Bugfixes
 
