@@ -67,6 +67,11 @@ export default {
     value: {
       type: Boolean,
       required: true
+    },
+    width: {
+      type: String,
+      required: false,
+      default: ''
     }
   },
   data() {
@@ -106,6 +111,7 @@ export default {
   <v-dialog
     :value="internalValue"
     v-bind="dialogProps"
+    :width="width"
     @input="handleInput"
     @click:outside="handleCancel"
     @keydown.esc="handleCancel"

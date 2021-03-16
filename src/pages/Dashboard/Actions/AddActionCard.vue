@@ -2,10 +2,12 @@
 import { mapActions, mapGetters } from 'vuex'
 import AddDoThis from '@/pages/Dashboard/Actions/AddDoThis'
 import { STATES } from '@/utils/cloudHooks'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
   components: {
-    AddDoThis
+    AddDoThis,
+    ConfirmDialog
   },
   props: {
     hookDetail: {
@@ -25,6 +27,7 @@ export default {
       openStates: false,
       openAgentOrFlow: true,
       openActions: false,
+      removeDoThisDialog: false,
       flowNamesList: this.hookDetail?.flowNameList || [],
       allFlows: false,
       hookDetails: this.hookDetail,
@@ -310,12 +313,16 @@ export default {
         })
       }
     },
-    async removeToDo(toDo) {
+    handleRemoveClick(toDo) {
+      this.removeToDoId = toDo.id
+      this.removeDoThisDialog = true
+    },
+    async removeDoThis() {
       try {
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/delete_action.gql'),
           variables: {
-            id: toDo.id
+            id: this.removeToDoId
           }
         })
         data.delete_action?.success
@@ -332,6 +339,8 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
+      } finally {
+        this.removeDoThisDialog = false
       }
     },
     async createHook() {
@@ -784,11 +793,27 @@ export default {
           icon
           title="Remove"
           color="red"
-          @click.stop="removeToDo(item)"
+          @click.stop="handleRemoveClick(item)"
         >
-          <i class="fas fa-times-circle fa-lg"/></v-btn
-      ></v-chip>
+          <i class="fas fa-times-circle fa-lg"
+        /></v-btn>
+      </v-chip>
+      <ConfirmDialog
+        :value="removeDoThisDialog"
+        width="30vW"
+        title="Are
+      you sure you want to delete this?"
+        type="error"
+        @cancel="removeDoThisDialog = false"
+        @confirm="removeDoThis"
+        ><slot
+          ><span class="red--text"
+            >This will also delete any associated Actions.</span
+          ></slot
+        ></ConfirmDialog
+      >
     </v-card>
+
     <v-card-actions class="pa-8">
       <v-spacer /><v-btn
         large
