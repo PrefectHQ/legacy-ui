@@ -42,7 +42,7 @@ export default {
     <v-list-item-title>
       {{ content.title }}
     </v-list-item-title>
-    <v-list-item-subtitle>
+    <v-list-item-subtitle v-html="renderedContents">
       {{ renderedContents }}
     </v-list-item-subtitle>
   </v-list-item-content>
