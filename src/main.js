@@ -311,8 +311,6 @@ if (typeof Worker !== 'undefined') {
 
 if (TokenWorker?.port) {
   TokenWorker.port.onmessage = e => {
-    console.log('Message received from worker', e)
-    // store.dispatch('auth/refreshAuthorization')
     const type = e.data?.type
     const payload = e.data?.payload
 
@@ -326,7 +324,9 @@ if (TokenWorker?.port) {
     }
   }
 
+  // TODO: Implement error handling from the token worker
   TokenWorker.port.onmessageerror = e => {
+    // eslint-disable-next-line no-console
     console.log('Message received from worker', e)
   }
 

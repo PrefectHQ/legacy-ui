@@ -160,54 +160,56 @@ const authMiddleware = setContext(async (_, { headers }) => {
     }
   }
 
-  if (_.operationName == 'RefreshToken') {
-    // The refresh route requires the refresh token to be
-    // sent as the authorization header, with the
-    // access token as the body
-    return {
-      headers: {
-        ...headers,
-        authorization: `Bearer ${store.getters['auth/refreshToken']}`
+  if (store.getters['auth/legacy']) {
+    if (_.operationName == 'RefreshToken') {
+      // The refresh route requires the refresh token to be
+      // sent as the authorization header, with the
+      // access token as the body
+      return {
+        headers: {
+          ...headers,
+          authorization: `Bearer ${store.getters['auth/refreshToken']}`
+        }
       }
     }
-  }
 
-  // The login route requires that no authorization header be sent
-  if (_.operationName == 'LogIn') {
-    return {
-      headers: {
-        ...headers
+    // The login route requires that no authorization header be sent
+    if (_.operationName == 'LogIn') {
+      return {
+        headers: {
+          ...headers
+        }
       }
     }
-  }
 
-  const authRefreshRequired =
-    store.getters['auth/authorizationToken'] &&
-    aboutToExpire(store.getters['auth/authorizationTokenExpiry'])
+    const authRefreshRequired =
+      store.getters['auth/authorizationToken'] &&
+      aboutToExpire(store.getters['auth/authorizationTokenExpiry'])
 
-  const validRefreshToken =
-    store.getters['auth/refreshToken'] &&
-    notExpired(store.getters['auth/refreshTokenExpiry'])
+    const validRefreshToken =
+      store.getters['auth/refreshToken'] &&
+      notExpired(store.getters['auth/refreshTokenExpiry'])
 
-  const isAuthenticatedUser =
-    store.getters['auth/idToken'] &&
-    notExpired(store.getters['auth/idTokenExpiry'])
+    const isAuthenticatedUser =
+      store.getters['auth/idToken'] &&
+      notExpired(store.getters['auth/idTokenExpiry'])
 
-  const middleOfRefresh =
-    store.getters['auth/isRefreshingAuthorization'] ||
-    store.getters['auth/isAuthorizingUser'] ||
-    store.getters['auth/isLoggingInUser']
+    const middleOfRefresh =
+      store.getters['auth/isRefreshingAuthorization'] ||
+      store.getters['auth/isAuthorizingUser'] ||
+      store.getters['auth/isLoggingInUser']
 
-  if (authRefreshRequired && !middleOfRefresh) {
-    // console.log(authRefreshRequired, _.operationName)
-    defaultApolloClient.cache.reset()
-    if (validRefreshToken) {
-      // console.log(validRefreshToken, _.operationName)
-      await store.dispatch('auth/refreshAuthorization')
-    } else if (isAuthenticatedUser) {
-      await store.dispatch('auth/authorize')
-    } else {
-      await store.dispatch('auth/login')
+    if (authRefreshRequired && !middleOfRefresh) {
+      // console.log(authRefreshRequired, _.operationName)
+      defaultApolloClient.cache.reset()
+      if (validRefreshToken) {
+        // console.log(validRefreshToken, _.operationName)
+        await store.dispatch('auth/refreshAuthorization')
+      } else if (isAuthenticatedUser) {
+        await store.dispatch('auth/authorize')
+      } else {
+        await store.dispatch('auth/login')
+      }
     }
   }
 
@@ -227,13 +229,6 @@ const link = ApolloLink.from([
   backendMiddleware,
   errorAfterware,
   batchLink
-])
-
-const authLink = ApolloLink.from([
-  authMiddleware,
-  headerMiddleware,
-  backendMiddleware,
-  errorAfterware
 ])
 
 export const cache = new InMemoryCache({
@@ -317,14 +312,6 @@ export { defaultApolloClient }
 export const fallbackApolloProvider = createApolloProvider()
 fallbackApolloClient = fallbackApolloProvider.defaultClient
 export { fallbackApolloClient }
-
-export const authApolloProvider = createApolloProvider({
-  ...defaultOptions,
-  link: authLink,
-  defaultHttpLink: true
-})
-const authApolloClient = authApolloProvider.defaultClient
-export { authApolloClient }
 
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)

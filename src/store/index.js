@@ -44,6 +44,7 @@ if (typeof Worker !== 'undefined') {
     "Shared service worker couldn't be registered, falling back to legacy auth pattern."
   )
   authActions = require('@/store/auth/legacy-actions.js').default.actions
+  auth.state.legacy = true
 }
 
 const store = new Vuex.Store({

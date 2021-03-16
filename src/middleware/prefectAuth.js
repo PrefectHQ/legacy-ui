@@ -1,8 +1,8 @@
-import { authApolloClient } from '@/vue-apollo'
+import { fallbackApolloClient } from '@/vue-apollo'
 
 const prefectAuth = async idToken => {
   try {
-    const result = await authApolloClient.mutate({
+    const result = await fallbackApolloClient.mutate({
       mutation: require('@/graphql/log-in.gql'),
       variables: {
         input: { id_token: idToken }
@@ -29,8 +29,7 @@ const prefectAuth = async idToken => {
 
 const prefectRefresh = async (accessToken, src) => {
   try {
-    console.log('Refreshing token from...', src)
-    const result = await authApolloClient.mutate({
+    const result = await fallbackApolloClient.mutate({
       mutation: require('@/graphql/refresh-token.gql'),
       variables: {
         input: { access_token: accessToken }
@@ -51,7 +50,7 @@ const prefectRefresh = async (accessToken, src) => {
 
 const prefectUser = async () => {
   try {
-    const user = await authApolloClient.query({
+    const user = await fallbackApolloClient.query({
       query: require('@/graphql/User/user.gql'),
       fetchPolicy: 'no-cache'
     })
@@ -62,7 +61,7 @@ const prefectUser = async () => {
 }
 
 const prefectTenants = async isCloud => {
-  const result = await authApolloClient.query({
+  const result = await fallbackApolloClient.query({
     query: require('@/graphql/Tenant/tenants.js').default(isCloud),
     fetchPolicy: 'no-cache'
   })

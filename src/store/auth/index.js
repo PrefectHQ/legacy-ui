@@ -13,6 +13,7 @@ const state = {
   isLoggingInUser: false,
   isRefreshingAuthentication: false,
   isRefreshingAuthorization: false,
+  legacy: false,
   redirectRoute: sessionStorage.getItem('redirectRoute'),
   refreshToken: null,
   refreshTokenExpiry: null,
@@ -31,6 +32,9 @@ const getters = {
   },
   user(state) {
     return state.user
+  },
+  legacy(state) {
+    return state.legacy
   },
   accessToken(state) {
     return state.accessToken

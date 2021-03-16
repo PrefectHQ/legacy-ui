@@ -1,4 +1,5 @@
 import jwt_decode from 'jwt-decode'
+import LogRocket from 'logrocket'
 import { OktaAuth } from '@okta/okta-auth-js'
 import { TokenWorker } from '@/main'
 
@@ -18,6 +19,23 @@ const authClient = new OktaAuth({
     disableHttpsCheck: VUE_APP_ENVIRONMENT !== 'production'
   }
 })
+
+const authorize = () =>
+  new Promise((res, rej) => {
+    const channel = new MessageChannel()
+
+    channel.port1.onmessage = data => {
+      channel.port1.close()
+      console.log('recieved data on port1', data)
+      if (data.type == 'error') {
+        rej(data)
+      } else {
+        res(data.data.payload)
+      }
+    }
+
+    TokenWorker.port.postMessage({ type: 'authorization' }, [channel.port2])
+  })
 
 const actions = {
   async authenticate({ dispatch, commit, getters }) {
@@ -78,6 +96,36 @@ const actions = {
 
     return getters['isAuthenticated']
   },
+  async authorize({ commit, getters, dispatch }) {
+    if (!getters['isAuthenticated']) return
+
+    commit('isAuthorizingUser', true)
+
+    const user = await authClient.getUser()
+    if (!user) return
+
+    commit('user', user)
+    dispatch('reportUserToLogRocket')
+
+    commit('user/setOktaUser', user, {
+      root: true
+    })
+
+    const tokens = await authorize()
+    if (tokens) {
+      // Update authorization credentials if user is authorized
+      await dispatch('updateAuthorizationTokens', tokens)
+    } else {
+      // Unset authorization if user is not authorized
+      commit('unsetAuthorizationToken')
+      commit('unsetAuthorizationTokenExpiry')
+      commit('unsetRefreshToken')
+      commit('unsetRefreshTokenExpiry')
+    }
+
+    commit('isAuthorizingUser', false)
+    return getters['authorizationToken']
+  },
   async updateAuthenticationTokens({ commit }, payload) {
     const idToken = payload.idToken
     const accessToken = payload.accessToken
@@ -91,6 +139,7 @@ const actions = {
     commit('idTokenExpiry', idToken.expiresAt)
   },
   async updateAuthorizationTokens({ commit }, payload) {
+    console.log('updating authorization tokens')
     commit('authorizationToken', payload.access_token)
     commit('refreshToken', payload.refresh_token)
     commit('authorizationTokenExpiry', new Date(payload.expires_at).getTime())
@@ -112,6 +161,14 @@ const actions = {
       type: 'logout'
     })
     await authClient.signOut()
+  },
+  reportUserToLogRocket({ getters }) {
+    if (!getters['user']) return
+
+    LogRocket.identify(getters['user'].sub, {
+      name: getters['user'].name || '',
+      email: getters['user'].email || ''
+    })
   }
 }
 
