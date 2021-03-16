@@ -10,6 +10,7 @@
 
 - None
 ## 2021-03-16
+
 ### Bugfixes
 
 - Fix a bug where a license would get created even though there are validation errors present - [#672](https://github.com/PrefectHQ/ui/pull/672)
