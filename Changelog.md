@@ -4,6 +4,22 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-03-15a
+
+### Bugfixes
+
+- Remove details references from the task run table tile - [#670](https://github.com/PrefectHQ/ui/pull/670)
+
+## 2021-03-15
+
+### Features and Improvements
+
 - Add a state filter to the flow run table - [#645](https://github.com/PrefectHQ/ui/pull/645)
 - Create a UI dark mode - [#656](https://github.com/PrefectHQ/ui/pull/656)
 
