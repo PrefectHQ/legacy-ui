@@ -58,7 +58,6 @@ export default {
     },
     hookDetail() {
       const event = this.hook?.event_type
-      console.log(event)
       if (event === 'FlowRunStateChangedEvent') return ''
       const hook = this.flowConfig
         ? `${this.hookDetails[this.flowConfig.kind]?.action}`
