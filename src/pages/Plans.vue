@@ -390,7 +390,7 @@ export default {
                 </div>
                 <a
                   class="support-link text-h6 font-weight-regular mt-4"
-                  href="https://www.prefect.io/get-prefect#contact"
+                  href="https://www.prefect.io/pricing#contact"
                   target="_blank"
                   >Contact us
                   <v-icon class="mb-1" color="grey">arrow_right</v-icon>

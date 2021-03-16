@@ -269,7 +269,7 @@ export default {
       <v-btn
         v-if="selected === 2"
         color="primary"
-        href="https://www.prefect.io/get-prefect#contact"
+        href="https://www.prefect.io/pricing#contact"
         target="_blank"
       >
         Contact Us
@@ -408,7 +408,7 @@ export default {
       <v-btn
         v-if="selected === 2"
         color="primary"
-        href="https://www.prefect.io/get-prefect#contact"
+        href="https://www.prefect.io/pricing#contact"
         target="_blank"
       >
         Contact Us

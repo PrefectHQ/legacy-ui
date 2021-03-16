@@ -462,7 +462,7 @@ export default {
           <p>
             Your team has no Read-Only users available.
             <a
-              href="https://www.prefect.io/get-prefect#contact"
+              href="https://www.prefect.io/pricing#contact"
               target="_blank"
             >
               Contact us
