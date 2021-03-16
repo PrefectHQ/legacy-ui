@@ -1,9 +1,10 @@
 /* eslint-disable */
+// prettier-ignore
 // eslint disable is required to get around bad babel rules for workers
-
-import { ApolloLink } from 'apollo-link'
+// import { ApolloLink } from 'apollo-link'
 import { ApolloClient } from '@apollo/client/core'
-import { setContext } from 'apollo-link-context'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+// import { setContext } from 'apollo-link-context'
 // import { refreshQuery } from '@/graphql/refresh-token.gql'
 
 const ports = []
@@ -14,34 +15,12 @@ const state = {
   refreshToken: null
 }
 
-// const authMiddleware = setContext(async (_, { headers }) => {
-//   if (_.operationName == 'RefreshToken') {
-//     // The refresh route requires the refresh token to be
-//     // sent as the authorization header, with the
-//     // access token as the body
-//     return {
-//       headers: {
-//         ...headers,
-//         authorization: `Bearer ${state.refreshToken}`
-//       }
-//     }
-//   }
-
-//   // The login route requires that no authorization header be sent
-//   if (_.operationName == 'LogIn') {
-//     return {
-//       headers: {
-//         ...headers
-//       }
-//     }
-//   }
-// })
-
-// const link = ApolloLink.from([authMiddleware])
+const cache = new InMemoryCache()
 
 const defaultOptions = {
   name: 'token-worker-client',
   httpEndpoint: 'https://cloud.prefect.io',
+  cache: cache,
   // link: link,
   queryDeduplication: false,
   defaultOptions: {
@@ -58,28 +37,27 @@ const defaultOptions = {
 // // Create apollo client
 const client = new ApolloClient(defaultOptions)
 
-// const client = createApolloProvider().defaultClient
+let interval = null
+const restartAuthorizationInterval = () => {
+  clearInterval(interval)
 
-// let interval = null
-// const restartAuthorizationInterval = () => {
-//   clearInterval(interval)
-
-//   interval = setInterval(async () => {
-//     if (state.refreshToken) {
-//       const result = await client.mutate({
-//         mutation: refreshQuery,
-//         variables: {
-//           input: { access_token: state.authorizationToken }
-//         }
-//       })
-//       // let result = { data: { refresh_token: null } }
-//       postToConnections({
-//         type: 'authorization',
-//         payload: result.data.refresh_token
-//       })
-//     }
-//   }, 5000)
-// }
+  interval = setInterval(async () => {
+    console.log('refreshing')
+    if (state.refreshToken) {
+      const result = await client.mutate({
+        mutation: refreshQuery,
+        variables: {
+          input: { access_token: state.authorizationToken }
+        }
+      })
+      // let result = { data: { refresh_token: null } }
+      postToConnections({
+        type: 'authorization',
+        payload: result.data.refresh_token
+      })
+    }
+  }, 5000)
+}
 
 const postToConnections = payload => {
   for (let i = 0; i < ports.length; ++i) {
@@ -102,6 +80,8 @@ const connect = c => {
 
   port.onmessage = e => {
     const type = e.data?.type
+
+    console.log(e.data)
 
     // When a connection sends new authentication tokens
     // update the worker state and publish the new tokens to all connections

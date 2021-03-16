@@ -29,10 +29,7 @@ const actions = {
     const error = urlParams.get('error')
     // const errorDescription = urlParams.get('error_description') // We don't need to capture this at the moment
     if (window.location?.pathname && !getters['redirectRoute']) {
-      dispatch(
-        'setRedirectRoute',
-        window.location.pathname + window.location.search
-      )
+      commit('redirectRoute', window.location.pathname + window.location.search)
     }
 
     if (invitationId) {
@@ -98,6 +95,23 @@ const actions = {
     commit('refreshToken', payload.refresh_token)
     commit('authorizationTokenExpiry', new Date(payload.expires_at).getTime())
     commit('refreshTokenExpiry', jwt_decode(payload.refresh_token).exp * 1000)
+  },
+  async login({ commit }) {
+    commit('isLoggingInUser', true)
+    authClient.token.getWithRedirect({
+      responseType: ['token', 'id_token']
+    })
+    commit('isLoggingInUser', false)
+  },
+  async logout({ commit }) {
+    commit('isAuthenticated', false)
+    commit('unsetIdToken')
+    commit('unsetAccessToken')
+    commit('unsetRedirectRoute')
+    TokenWorker.port.postMessage({
+      type: 'logout'
+    })
+    await authClient.signOut()
   }
 }
 

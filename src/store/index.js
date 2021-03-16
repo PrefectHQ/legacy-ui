@@ -36,9 +36,9 @@ const logrocketPlugin = createPlugin(LogRocket, mutation => {
 
 let authActions
 
-import { TokenWorker } from '@/main'
-if (TokenWorker && !console) {
-  authActions = require('@/store/auth/worker-actions.js').default.actions
+// Checks that we'll be able to install service workers
+if (typeof Worker !== 'undefined') {
+  authActions = require('@/store/auth/actions.js').default.actions
 } else {
   console.log(
     "Shared service worker couldn't be registered, falling back to legacy auth pattern."
