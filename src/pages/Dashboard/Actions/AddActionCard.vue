@@ -298,6 +298,8 @@ export default {
           }
         })
         await this.$apollo.queries.actions.refresh()
+        this.addAction = false
+        // this.step = 'selectAction'
         return data?.create_action
       } catch (error) {
         const errString = `${error}`
@@ -306,8 +308,6 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
-      } finally {
-        this.addAction = false
       }
     },
     async removeToDo(toDo) {
