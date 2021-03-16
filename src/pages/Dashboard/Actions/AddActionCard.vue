@@ -195,6 +195,7 @@ export default {
       if (choice === 'agent') {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
+        this.selectedFlows = []
         this.openActions = true
         this.switchStep('selectDoThis')
         // this.openSelectFlowEventType = true
