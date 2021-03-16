@@ -624,6 +624,9 @@ export default {
           style="min-width: 400px;"
         />
       </v-card-title>
+      <v-card-subtitle class="caption mx-4 py-1"
+        >Hint: Shift-click to select multiple flows</v-card-subtitle
+      >
       <v-card-text>
         <v-chip
           v-if="!searchEntry"
