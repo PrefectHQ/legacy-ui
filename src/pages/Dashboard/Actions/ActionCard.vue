@@ -1,6 +1,6 @@
 <script>
 import { mapActions } from 'vuex'
-import { STATES } from '@/utils/cloudHooks'
+import { STATES, presentTenseStates } from '@/utils/cloudHooks'
 
 export default {
   components: {},
@@ -58,6 +58,8 @@ export default {
     },
     hookDetail() {
       const event = this.hook?.event_type
+      console.log(event)
+      if (event === 'FlowRunStateChangedEvent') return ''
       const hook = this.flowConfig
         ? `${this.hookDetails[this.flowConfig.kind]?.action}`
         : this.hookDetails[event]?.action
@@ -69,10 +71,10 @@ export default {
     hookStates() {
       const states = this.hook?.event_tags?.state
       return states.length === STATES['All'].length
-        ? 'any state'
+        ? 'changes to any state'
         : states.length > 1
-        ? 'multiple states'
-        : states.toString().toLowerCase()
+        ? 'changes to multiple states'
+        : presentTenseStates[states]
     },
     hookAction() {
       return this.hook?.action?.name || this.hook?.action?.action_type
@@ -116,6 +118,9 @@ export default {
         this.copiedText = {}
         this.copiedText[value] = false
       }, 600)
+    },
+    stateVerb(state) {
+      return presentTenseStates[state] || 'changes state'
     },
     async deleteHook() {
       try {
@@ -251,7 +256,7 @@ export default {
         }}<span v-if="includeSeconds">
           for <span class="font-weight-bold">{{ seconds }} seconds</span> </span
         ><span v-if="includeTo">
-          to <span class="font-weight-bold">{{ hookStates }}</span></span
+          <span>{{ hookStates }}</span></span
         >, then <span class="font-weight-bold">{{ hookAction }}</span
         >.</span
       >
