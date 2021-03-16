@@ -10,19 +10,15 @@ export default {
   },
   data() {
     return {
-      addName: false,
       enableSave: false,
       messageType: { title: 'Send' },
-      openSendMessage: true,
-      openMessageConfig: false,
+      step: 'selectMessageType',
       messageConfig: null,
       messageConfigTo: [],
       // To do - can we check what the default message will be?
       messageName: 'this message',
       messageText: '',
-      openMessageText: false,
       openTwilioConfig: false,
-      openName: false,
       newSaveAs: '',
       authToken: '',
       accountSid: '',
@@ -52,12 +48,18 @@ export default {
           )
         },
         TWILIO: val => {
+          const pattern = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
           if (!val) return 'Phone number is required.'
-          if (!Array.isArray(val))
-            return !isNaN(parseFloat(val)) || 'Entries must be a number'
-          return val.every(
-            item => !isNaN(parseFloat(item)) || 'Entries must be a number'
-          )
+          else if (!Array.isArray(val)) {
+            return (
+              pattern.text(val.trim()) || 'Entries must be a valid phone number'
+            )
+          } else {
+            const check =
+              val.every(item => pattern.test(item.trim())) ||
+              'Entries must be a valid phone number'
+            return check
+          }
         },
         required: val => !!val || 'Required',
         requiredCombo: val =>
@@ -86,30 +88,22 @@ export default {
       return []
     },
     allowSave() {
-      if (this.isPagerDuty) {
-        return (
-          !!this.messageType &&
+      const type = this.messageType.type
+      const allow = this.isPagerDuty
+        ? !!this.messageType &&
           !!this.apiToken &&
           !!this.routingKey &&
           !!this.severity
-        )
-      }
-      if (this.isTwilio) {
-        return (
-          !!this.messageConfigTo &&
+        : this.isTwilio
+        ? !!this.messageConfigTo &&
           !!this.authToken &&
           !!this.messagingService &&
           this.accountSid
-        )
-      }
-      const type = this.messageType.type
-      return (
-        !!this.messageType &&
-        !!this.messageConfigTo.length &&
-        this.messageConfigTo.filter(item => this.rules[type](item) !== true)
-          .length < 1 &&
-        !this.openMessageConfig
-      )
+        : !!this.messageType &&
+          !!this.messageConfigTo.length &&
+          this.messageConfigTo.filter(item => this.rules[type](item) !== true)
+            .length < 1
+      return allow && this.step === 'addName'
     },
     saveAs: {
       get() {
@@ -144,11 +138,18 @@ export default {
     }
   },
   methods: {
+    switchStep(type) {
+      if (type) this.step = type
+    },
+    handleNext(type) {
+      if (type === 'EMAIL') this.switchStep('addName')
+      else if (type === 'TWILIO') this.switchStep('addTwilioConfig')
+      else this.switchStep('addName')
+    },
     selectMessageType(type) {
       this.messageType = type
       this.messageConfigTo = []
-      this.openSendMessage = false
-      this.openMessageText = true
+      this.switchStep('openMessageText')
     },
     handleClose() {
       this.$emit('close-action')
@@ -218,7 +219,6 @@ export default {
             }
           }
         }
-        this.openMessageConfig ? (this.openMessageConfig = false) : null
       } else {
         this.errorMessage = checked
       }
@@ -227,10 +227,7 @@ export default {
       this.openTwilioConfig = !this.openTwilioConfig
     },
     saveMessage() {
-      if (this.openMessageText) {
-        this.openMessageText = false
-        this.openMessageConfig = true
-      }
+      this.switchStep('openToConfig')
     },
     actionTypes() {
       let allHooks
@@ -300,10 +297,10 @@ export default {
     <div class="headline black--text mx-4">
       <v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-        :color="openSendMessage ? 'codePink' : 'grey'"
+        :color="step === 'selectMessageType' ? 'codePink' : 'grey'"
         class="px-0 pb-1 headline"
         text
-        @click="openSendMessage = !openSendMessage"
+        @click="switchStep('selectMessageType')"
         >{{ messageType.title }}</v-btn
       >
       {{ ' ' }}
@@ -312,8 +309,8 @@ export default {
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
           class="px-0 pb-1 headline"
           text
-          :color="openMessageText ? 'codePink' : 'grey'"
-          @click="openMessageText = !openMessageText"
+          :color="step === 'openMessageText' ? 'codePink' : 'grey'"
+          @click="switchStep('openMessageText')"
         >
           {{ messageText || messageName }}</v-btn
         >
@@ -323,8 +320,8 @@ export default {
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
           class="px-1 pb-1 headline"
           text
-          :color="openMessageConfig ? 'codePink' : 'grey'"
-          @click="openMessageConfig = !openMessageConfig"
+          :color="step === 'openToConfig' ? 'codePink' : 'grey'"
+          @click="switchStep('openToConfig')"
         >
           {{ to }}</v-btn
         >
@@ -334,8 +331,8 @@ export default {
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             class="px-0 pb-1 headline"
             text
-            :color="openTwilioConfig ? 'codePink' : 'grey'"
-            @click="openTwilioConfigSection()"
+            :color="step === 'TwilioConfig' ? 'codePink' : 'grey'"
+            @click="switchStep('addTwilioConfig')"
           >
             config</v-btn
           ></span
@@ -343,7 +340,7 @@ export default {
       >
     </div>
 
-    <v-card-text v-if="openSendMessage" class="pt-0">
+    <v-card-text v-if="step === 'selectMessageType'" class="pt-0">
       <v-chip
         v-for="type in actionTypes()"
         :key="type.title"
@@ -359,11 +356,7 @@ export default {
         {{ type.title }}
       </v-chip>
     </v-card-text>
-    <v-card-text
-      v-else-if="openMessageText"
-      v-click-outside="saveMessage"
-      class="pt-0"
-    >
+    <v-card-text v-else-if="step === 'openMessageText'" class="pt-0">
       <span class="primary--text"
         >Type your message here or leave blank to send a default message.</span
       ><v-menu
@@ -425,7 +418,7 @@ export default {
         @keydown.enter="saveMessage"
       />
     </v-card-text>
-    <v-card-text v-else-if="openMessageConfig">
+    <v-card-text v-else-if="step === 'openToConfig'">
       <v-text-field
         v-if="messageType.type === 'SLACK_WEBHOOK'"
         v-model="messageConfigTo"
@@ -453,6 +446,20 @@ export default {
           >
           integration.
         </span>
+        <div class="text-right">
+          <v-btn
+            x-small
+            class="text-normal"
+            depressed
+            color="primary"
+            title="Next"
+            dark
+            @click="switchStep('addName')"
+          >
+            Next
+            <v-icon small>call_made</v-icon>
+          </v-btn>
+        </div>
         <v-text-field
           v-model="apiToken"
           :rules="[rules.required]"
@@ -487,49 +494,67 @@ export default {
         :show-clear="false"
         :show-close="true"
         @input="handleListInput"
-        @next="openMessageConfig = false"
+        @next="handleNext(messageType.type)"
       ></ListInput>
     </v-card-text>
-    <v-card-text v-else-if="openTwilioConfig">
-      <span>
-        Prefect Cloud will send a message via the
-        <a href="https://www.twilio.com/docs" target="_blank">
-          Twilio SMS API </a
-        >. You can retrieve the <code class="my-1 mx-1">ACCOUNT SID</code> and
-        <code class="my-1 mx-1">AUTH TOKEN</code> from the dashboard of your
-        Twilio account. You'll need to configure a
-        <a
-          href="https://www.twilio.com/docs/sms/services/api#messaging-services-resource"
-          target="_blank"
+    <v-card-text v-else-if="step === 'addTwilioConfig'">
+      <div>
+        <span>
+          Prefect Cloud will send a message via the
+          <a href="https://www.twilio.com/docs" target="_blank">
+            Twilio SMS API </a
+          >. You can retrieve the <code class="my-1 mx-1">ACCOUNT SID</code> and
+          <code class="my-1 mx-1">AUTH TOKEN</code> from the dashboard of your
+          Twilio account. You'll need to configure a
+          <a
+            href="https://www.twilio.com/docs/sms/services/api#messaging-services-resource"
+            target="_blank"
+          >
+            Messaging Service
+          </a>
+          to recieve messages.
+        </span>
+      </div>
+      <div class="text-right">
+        <v-btn
+          x-small
+          class="text-normal"
+          depressed
+          color="primary"
+          title="Next"
+          dark
+          @click="switchStep('addName')"
         >
-          Messaging Service
-        </a>
-        to recieve messages.
-      </span>
-      <v-text-field
-        v-model="authToken"
-        class="my-8"
-        :rules="[rules.required]"
-        label="Name of Auth Token Secret"
-        dense
-      />
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn>
+      </div>
+      <div>
+        <v-text-field
+          v-model="authToken"
+          class="my-8"
+          :rules="[rules.required]"
+          label="Name of Auth Token Secret"
+          dense
+        />
 
-      <v-text-field
-        v-model="accountSid"
-        :rules="[rules.required]"
-        label="Account SID"
-        class="mb-8"
-        dense
-      />
+        <v-text-field
+          v-model="accountSid"
+          :rules="[rules.required]"
+          label="Account SID"
+          class="mb-8"
+          dense
+        />
 
-      <v-text-field
-        v-model="messagingService"
-        :rules="[rules.required]"
-        label="Messaging service SID"
-        dense
-      />
+        <v-text-field
+          v-model="messagingService"
+          :rules="[rules.required]"
+          label="Messaging service SID"
+          dense
+        />
+      </div>
     </v-card-text>
-    <v-card-text v-else-if="openConfigName" class="pr-4">
+    <v-card-text v-else-if="step === 'addName'" class="pr-4">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-text-field

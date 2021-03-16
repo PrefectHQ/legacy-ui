@@ -108,6 +108,7 @@ export default {
       </v-btn>
       <v-btn
         v-if="showClose"
+        :disabled="clearDisabled"
         x-small
         class="text-normal"
         depressed
