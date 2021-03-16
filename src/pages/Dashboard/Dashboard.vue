@@ -16,7 +16,7 @@ import TileLayout from '@/layouts/TileLayout'
 import { mapGetters, mapActions } from 'vuex'
 import gql from 'graphql-tag'
 
-import { worker } from '@/main'
+import { TokenWorker } from '@/main'
 
 const serverTabs = [
   {
@@ -159,11 +159,11 @@ export default {
   methods: {
     ...mapActions('data', ['activateProject', 'resetActiveData']),
     postMessage() {
-      console.log('posting message to worker', worker)
-      if (worker.port) {
-        worker.port.postMessage({ bar: 'batz' })
+      console.log('posting message to worker', TokenWorker)
+      if (TokenWorker.port) {
+        TokenWorker.port.postMessage({ bar: 'batz' })
       } else {
-        worker.postMessage({ foo: 'bar' })
+        TokenWorker.postMessage({ foo: 'bar' })
       }
     },
     handleAgentDetailsClick() {

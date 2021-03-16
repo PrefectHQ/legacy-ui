@@ -1,31 +1,20 @@
-// import VueApollo from 'vue-apollo'
-// import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
-// import store from '@/store/index'
-// import { errorAfterware } from '@/vue-apollo'
-// import { setContext } from 'apollo-link-context'
+/* eslint-disable */
+// eslint disable is required to get around bad babel rules for workers
 
-// import { ApolloLink } from 'apollo-link'
-// import { InMemoryCache } from 'apollo-cache-inmemory'
-// // import LogRocket from 'logrocket'
+import { ApolloLink } from 'apollo-link'
+import { ApolloClient } from '@apollo/client/core'
+import { setContext } from 'apollo-link-context'
+// import { refreshQuery } from '@/graphql/refresh-token.gql'
 
-// function isExpired(expiry) {
-//   return new Date().getTime() > expiry
-// }
+const ports = []
 
-// function notExpired(expiry) {
-//   return !isExpired(expiry)
-// }
+const state = {
+  authenticationTokens: null,
+  authorizationToken: null,
+  refreshToken: null
+}
 
-// function aboutToExpire(expiry) {
-//   return notExpired(expiry) && new Date().getTime() + 5000 >= expiry
-// }
-
-// const headerMiddleware = setContext((_, { headers }) => {
-//   headers['X-Prefect-UI'] = true
-//   headers['X-Backend'] = store.getters['api/backend']
-//   headers['X-Prefect-Tenant-ID'] = store.getters['tenant/tenant'].id
-//   headers['X-Prefect-User-ID'] = store.getters['user/user'].id
-
+// const authMiddleware = setContext(async (_, { headers }) => {
 //   if (_.operationName == 'RefreshToken') {
 //     // The refresh route requires the refresh token to be
 //     // sent as the authorization header, with the
@@ -33,7 +22,7 @@
 //     return {
 //       headers: {
 //         ...headers,
-//         authorization: `Bearer ${store.getters['auth/refreshToken']}`
+//         authorization: `Bearer ${state.refreshToken}`
 //       }
 //     }
 //   }
@@ -46,155 +35,91 @@
 //       }
 //     }
 //   }
-
-//   return {
-//     headers: {
-//       ...headers
-//     }
-//   }
 // })
 
-// // Links used exclusively for auth calls e.g. login and refresh
-// const link = ApolloLink.from([headerMiddleware, errorAfterware])
+// const link = ApolloLink.from([authMiddleware])
 
-// export const cache = new InMemoryCache({
-//   resultCaching: false
-// })
-
-// // Config
-// export const defaultOptions = {
-//   httpEndpoint: () => store.getters['api/url'],
-//   wsEndpoint: null,
-//   persisting: false,
-//   websocketsOnly: false,
-//   ssr: false,
-//   link: link,
-//   cache: cache,
-//   queryDeduplication: true
-// }
+const defaultOptions = {
+  name: 'token-worker-client',
+  httpEndpoint: 'https://cloud.prefect.io',
+  // link: link,
+  queryDeduplication: false,
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all'
+    },
+    mutate: {
+      errorPolicy: 'all'
+    }
+  }
+}
 
 // // Create apollo client
-// export const createApolloProvider = (options = defaultOptions) => {
-//   const { apolloClient, wsClient } = createApolloClient({
-//     id: 'auth',
-//     ...options
-//   })
-//   apolloClient.wsClient = wsClient
+const client = new ApolloClient(defaultOptions)
 
-//   // Create vue apollo provider
-//   const apolloProvider = new VueApollo({
-//     defaultClient: apolloClient,
-//     defaultOptions: {
-//       $query: {
-//         errorPolicy: 'all',
-//         fetchPolicy: 'cache-and-network'
-//       },
-//       $subscription: {
-//         errorPolicy: 'all'
-//       }
+// const client = createApolloProvider().defaultClient
+
+// let interval = null
+// const restartAuthorizationInterval = () => {
+//   clearInterval(interval)
+
+//   interval = setInterval(async () => {
+//     if (state.refreshToken) {
+//       const result = await client.mutate({
+//         mutation: refreshQuery,
+//         variables: {
+//           input: { access_token: state.authorizationToken }
+//         }
+//       })
+//       // let result = { data: { refresh_token: null } }
+//       postToConnections({
+//         type: 'authorization',
+//         payload: result.data.refresh_token
+//       })
 //     }
-//   })
-//   return apolloProvider
+//   }, 5000)
 // }
 
-// export const authApolloProvider = createApolloProvider()
-// const authApolloClient = authApolloProvider.defaultClient
-
-// const authorize = async idToken => {
-//   try {
-//     const result = await authApolloClient.mutate({
-//       mutation: require('@/graphql/log-in.gql'),
-//       variables: {
-//         input: { id_token: idToken }
-//       },
-//       errorPolicy: 'all'
-//     })
-
-//     if (result?.data?.log_in) {
-//       return result.data.log_in
-//     } else if (result?.errors) {
-//       if (
-//         result.errors[0].message ===
-//         "We get it, you're reeaally interested. Unfortunately, the timing isn't quite Prefect yet."
-//       ) {
-//         return null
-//       } else {
-//         throw new Error(result.errors[0].message)
-//       }
-//     }
-//   } catch (error) {
-//     throw new Error('Error authorizing prefectAuth', error)
-//   }
-// }
-
-// const refresh = async (accessToken, src) => {
-//   try {
-//     console.log('Refreshing token from...', src)
-//     const result = await authApolloClient.mutate({
-//       mutation: require('@/graphql/refresh-token.gql'),
-//       variables: {
-//         input: { access_token: accessToken }
-//       }
-//     })
-
-//     if (result?.data?.refresh_token) {
-//       console.log('Token refreshed!')
-//       return result.data.refresh_token
-//     } else if (result.error) {
-//       console.log("Unable to refresh token, here's the result: ", result)
-//       throw new Error(result.error)
-//     } else {
-//       throw new Error('No token returned')
-//     }
-//   } catch (error) {
-//     console.log('General refresh token error: ', error)
-//     throw new Error('Error refreshing token in prefectRefresh', error)
-//   }
-// }
-
-// authorize, refresh
-// let i = 0
-
-// setInterval(() => {
-//   console.log('token worker interval', ++i)
-
-//   //   const authorizationToken = localStorage.getItem('PREFECT_AUTHORIZATION_TOKEN')
-//   //   const refreshToken = localStorage.getItem('PREFECT_REFRESH_TOKEN')
-
-//   //   const authorizationTokenExpiry = localStorage.getItem(
-//   //     'PREFECT_AUTHORIZATION_TOKEN_EXPIRY'
-//   //   )
-//   //   const refreshTokenExpiry = localStorage.getItem(
-//   //     'PREFECT_REFRESH_TOKEN_EXPIRY'
-//   //   )
-
-//   //   const idToken = localStorage.getItem('PREFECT_ID_TOKEN')
-//   //   const idTokenExpiry = localStorage.getItem('PREFECT_ID_TOKEN_EXPIRY')
-
-//   //   const authRefreshRequired =
-//   //     authorizationToken && aboutToExpire(authorizationTokenExpiry)
-
-//   //   const validRefreshToken = refreshToken && notExpired(refreshTokenExpiry)
-
-//   //   const isAuthenticatedUser = idToken && notExpired(idTokenExpiry)
-
-//   //   console.log(authRefreshRequired, validRefreshToken, isAuthenticatedUser)
-// }, 2000)
-
-/* eslint-disable */
-console.log('worker load starting!')
-const ports = []
+const postToConnections = payload => {
+  for (let i = 0; i < ports.length; ++i) {
+    ports[i].postMessage(payload)
+  }
+}
 
 const connect = c => {
   const port = c.ports[0]
   ports.push(port)
   self.console.log('connected', port)
 
+  // On new connection, publish the existing authenticationTokens, if they exist
+  if (state.authenticationTokens) {
+    port.postMessage({
+      type: 'authentication',
+      authenticationTokens: state.authenticationTokens
+    })
+  }
+
   port.onmessage = e => {
-    console.log('recieved message', ports)
-    for (let i = 0; i < ports.length; ++i) {
-      console.log('my port', ports[i])
-      ports[i].postMessage(e.data)
+    const type = e.data?.type
+
+    // When a connection sends new authentication tokens
+    // update the worker state and publish the new tokens to all connections
+    if (type == 'authentication') {
+      state.authenticationTokens = e.data
+      postToConnections(e.data)
+      restartAuthorizationInterval()
+      return
+    }
+
+    // If a logout signal is sent, unset the tokens on the worker state and
+    // publish the logout event to all connections
+    if (type == 'logout') {
+      state.authenticationTokens = null
+      state.authorizationToken = null
+      state.refreshToken = null
+      postToConnections({ type: 'logout' })
+      return
     }
   }
 
@@ -202,7 +127,6 @@ const connect = c => {
 }
 
 self.onconnect = connect
-this.onconnect = connect
 onconnect = connect
 
 const post = e => {

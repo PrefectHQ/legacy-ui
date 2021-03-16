@@ -248,47 +248,6 @@ const mutations = {
 let actions
 let worker
 
-try {
-  // // Initializes the shared service worker that handles token refresh
-  worker = new SharedWorker('../../workers/token.worker.js', {
-    type: 'module'
-  })
-
-  console.log(worker)
-
-  if (worker.port) {
-    worker.port.onmessage = e => {
-      console.log('Message received from worker', e)
-    }
-
-    worker.port.onmessageerror = e => {
-      console.log('Message received from worker', e)
-    }
-
-    let start = worker.port.start()
-    console.log(start)
-  }
-
-  worker.onmessage = e => {
-    console.log('Message received from worker', e)
-  }
-
-  worker.onmessageerror = e => {
-    console.log('Message received from worker', e)
-  }
-
-  actions = require('./worker-actions.js').default.actions
-
-  throw new Error('testing dynamic import/export')
-} catch (e) {
-  console.log(
-    'Unable to install Shared Service worker, falling back to legacy auth pattern.',
-    e
-  )
-
-  actions = require('./legacy-actions.js').default.actions
-}
-
 export default {
   state,
   getters,

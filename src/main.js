@@ -296,3 +296,41 @@ try {
   // eslint-disable-next-line no-console
   console.info('Unable to apply platform-specific scrollbar styles.')
 }
+
+let TokenWorker
+
+if (typeof Worker !== 'undefined') {
+  // // Initializes the shared service worker that handles token refresh
+  TokenWorker = new SharedWorker('@/workers/token.worker.js', {
+    type: 'module'
+  })
+  console.log(TokenWorker)
+} else {
+  //not supported
+}
+
+if (TokenWorker?.port) {
+  TokenWorker.port.onmessage = e => {
+    console.log('Message received from worker', e)
+    // store.dispatch('auth/refreshAuthorization')
+    const type = e.data?.type
+    const payload = e.data?.payload
+
+    if (type == 'authentication') {
+      store.dispatch('auth/updateAuthenticationTokens', payload)
+      return
+    }
+
+    if (type == 'authorization') {
+      store.dispatch('auth/updateAuthorizationTokens', payload)
+    }
+  }
+
+  TokenWorker.port.onmessageerror = e => {
+    console.log('Message received from worker', e)
+  }
+
+  TokenWorker.port.start()
+}
+
+export { TokenWorker }

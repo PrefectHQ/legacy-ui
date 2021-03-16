@@ -121,19 +121,21 @@ const actions = {
     commit('idToken', idToken.value)
     commit('idTokenExpiry', idToken.expiresAt)
   },
-  async refreshAuthorization({ getters, commit, dispatch }) {
-    if (getters['isRefreshingAuthorization']) return
+  async refreshAuthorization(state) {
+    console.log('calling refresh', state)
 
-    await dispatch('updateAuthentication')
+    if (state.getters['isRefreshingAuthorization']) return
 
-    commit('isRefreshingAuthorization', true)
+    await state.dispatch('updateAuthentication')
+
+    state.commit('isRefreshingAuthorization', true)
 
     const prefectAuthorization = await prefectRefresh(
-      getters['authorizationToken']
+      state.getters['authorizationToken']
     )
 
-    dispatch('updateAuthorization', prefectAuthorization)
-    commit('isRefreshingAuthorization', false)
+    state.dispatch('updateAuthorization', prefectAuthorization)
+    state.commit('isRefreshingAuthorization', false)
   },
   async updateAuthorization({ commit }, authorization) {
     commit('authorizationToken', authorization.access_token)

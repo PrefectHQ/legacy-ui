@@ -34,12 +34,24 @@ const logrocketPlugin = createPlugin(LogRocket, mutation => {
   return mutation
 })
 
+let authActions
+
+import { TokenWorker } from '@/main'
+if (TokenWorker && !console) {
+  authActions = require('@/store/auth/worker-actions.js').default.actions
+} else {
+  console.log(
+    "Shared service worker couldn't be registered, falling back to legacy auth pattern."
+  )
+  authActions = require('@/store/auth/legacy-actions.js').default.actions
+}
+
 const store = new Vuex.Store({
   modules: {
     agent,
     alert,
     api,
-    auth,
+    auth: { ...auth, actions: authActions },
     data,
     license,
     refresh,
