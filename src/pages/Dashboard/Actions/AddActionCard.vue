@@ -95,7 +95,9 @@ export default {
       return this.seconds || this.hookDetails?.flowConfig?.duration_seconds
     },
     flowNames() {
-      return this.flowNamesList?.length > 1
+      return this.agentOrFlow === 'agent'
+        ? 'agent'
+        : this.flowNamesList?.length > 1
         ? 'mulitiple flows'
         : this.flowNamesList.toString() || this.agentOrFlow
     },
@@ -166,7 +168,9 @@ export default {
     selectAgentorFlow(choice) {
       this.agentFlowOrSomethingElse = choice
       this.openAgentOrFlow = false
-      if (choice === 'flow') this.openFlow = true
+      if (choice === 'flow') {
+        this.openFlow = true
+      }
       if (choice === 'agent') {
         this.flowEventType = { name: 'is unhealthy' }
         this.openActions = true
@@ -515,9 +519,11 @@ export default {
             text
             max-width="300px"
             @click="handleOpenAgentOrFlow"
-            ><truncate :content="flowNamesList.toString()">{{
-              flowNames
-            }}</truncate></v-btn
+            ><truncate
+              v-if="flowNamesList && flowNamesList.length"
+              :content="flowNamesList.toString()"
+              >{{ flowNames }}</truncate
+            ><span v-else>{{ flowNames }}</span></v-btn
           >
           <span
             >{{ ' '
@@ -659,23 +665,18 @@ export default {
       </v-card-text>
     </v-card>
     <v-card v-else-if="openSelectFlowEventType" elevation="0" class="pa-2"
-      ><v-tooltip v-for="item in flowEventTypes" :key="item.enum" bottom>
-        <template #activator="{ on, attrs }">
-          <span v-bind="attrs" v-on="on">
-            <v-chip
-              label
-              class="mx-2"
-              :disabled="!disableChip(item)"
-              outlined
-              @click="selectFlowEventType(item)"
-              >{{ item.name }}</v-chip
-            >
-          </span>
-        </template>
-        <span>{{
-          disableChip(item) ? 'Selection not available' : item.name
-        }}</span>
-      </v-tooltip>
+      ><span v-for="item in flowEventTypes" :key="item.enum">
+        <span v-if="!disableChip(item)">
+          <v-chip
+            label
+            class="mx-2"
+            :disabled="disableChip(item)"
+            outlined
+            @click="selectFlowEventType(item)"
+            >{{ item.name }}</v-chip
+          >
+        </span>
+      </span>
     </v-card>
     <v-card
       v-else-if="openSeconds"
