@@ -314,13 +314,13 @@ export default {
                     flows as you explore Prefect. When you're ready to
                     collaborate with others, you can
                     <ExternalLink
-                      href="https://www.prefect.io/get-prefect#pricing"
+                      href="https://www.prefect.io/pricing"
                     >
                       upgrade this team</ExternalLink
                     >
                     to invite more users or
                     <ExternalLink
-                      href="https://www.prefect.io/get-prefect/#contact"
+                      href="https://www.prefect.io/pricing#contact"
                     >
                       contact us</ExternalLink
                     >

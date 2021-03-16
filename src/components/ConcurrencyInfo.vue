@@ -104,7 +104,7 @@ export default {
           </p>
           <p v-if="flowConcurrency">
             <a
-              href="https://www.prefect.io/get-prefect#contact"
+              href="https://www.prefect.io/pricing#contact"
               target="_blank"
             >
               Contact us</a
