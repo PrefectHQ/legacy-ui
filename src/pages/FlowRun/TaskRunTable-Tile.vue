@@ -4,8 +4,7 @@ import moment from 'moment-timezone'
 import DurationSpan from '@/components/DurationSpan'
 import ResumeButton from '@/components/ResumeButton'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import { FINISHED_STATES } from '@/utils/states'
-
+import { FINISHED_STATES, STATE_NAMES } from '@/utils/states'
 export default {
   components: {
     CardTitle,
@@ -62,18 +61,7 @@ export default {
       page: 1,
       searchTerm: null,
       state: [],
-      states: [
-        'Failed',
-        'Success',
-        'Pending',
-        'Cancelled',
-        'Finished',
-        'Skipped',
-        'TimedOut',
-        'Scheduled',
-        'Resume',
-        'Running'
-      ].sort(),
+      states: STATE_NAMES.slice(1).sort(),
       sortBy: 'start_time',
       sortDesc: true,
       taskRunDurations: {}
