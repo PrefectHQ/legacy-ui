@@ -21,6 +21,7 @@ export default {
       searchEntry: null,
       selectedFlows: this.hookDetail?.flowName || [],
       openSeconds: false,
+      step: 'openAgentOrFlow',
       openSelectFlowEventType: false,
       openFlow: false,
       openAgent: false,
@@ -165,12 +166,17 @@ export default {
     closeCard() {
       this.$emit('close')
     },
-    handleOpenAgentOrFlow() {
-      this.openAgentOrFlow = !this.openAgentOrFlow
+    // handleOpenAgentOrFlow() {
+    //   this.openAgentOrFlow = !this.openAgentOrFlow
+    // },
+    switchStep(step) {
+      //steps = 'openAgentOrFlow', 'selectEventType', 'selectFlow', 'selectState', 'openDuration', 'selectDoThis'
+      this.step = step
     },
-    selectAgentorFlow(choice) {
+    selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
-      this.openAgentOrFlow = false
+
+      // this.openAgentOrFlow = false
       if (choice === 'flow') {
         this.flowEventType = this.hookDetail?.flowConfig?.kind
           ? this.flowEventTypes.find(
@@ -184,12 +190,13 @@ export default {
           : {
               name: 'does this'
             }
-        this.openFlow = true
+        this.switchStep('selectFlow')
       }
       if (choice === 'agent') {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.openActions = true
+        this.switchStep('selectDoThis')
         // this.openSelectFlowEventType = true
         // this.openAgent = true
         // this.flow = {}
@@ -213,8 +220,7 @@ export default {
       } else {
         this.selectedFlows.push(flow)
         if (!event.shiftKey) {
-          this.openFlow = false
-          this.openSelectFlowEventType = true
+          this.switchStep('selectEventType')
         }
       }
       this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
@@ -224,8 +230,7 @@ export default {
         this.selectedFlows = this.flows
         this.flowNamesList = ['any flow']
         this.allFlows = true
-        this.openFlow = false
-        this.openSelectFlowEventType = true
+        this.switchStep('selectEventType')
       } else {
         this.selectedFlows = []
         this.flowNamesList = []
@@ -234,12 +239,11 @@ export default {
     },
     selectFlowEventType(type) {
       this.flowEventType = type
-      this.openSelectFlowEventType = false
       this.isSLA
-        ? (this.openSeconds = true)
+        ? this.switchStep('openDuration')
         : this.includeTo
-        ? (this.openStates = true)
-        : ''
+        ? this.switchStep('selectState')
+        : this.switchStep('selectDoThis')
     },
     selectStateGroup(group) {
       this.stateSelected = true
@@ -268,12 +272,10 @@ export default {
       this.openActions = false
     },
     closeStates() {
-      this.openStates = false
-      this.openActions = true
+      this.switchStep('selectDoThis')
     },
     closeSeconds() {
-      this.openSeconds = false
-      this.openActions = true
+      this.switchStep('selectDoThis')
     },
     addNewAction() {
       this.addAction = true
@@ -302,7 +304,7 @@ export default {
         })
         await this.$apollo.queries.actions.refresh()
         this.addAction = false
-        // this.step = 'selectAction'
+        this.step = 'selectDoThis'
         return data?.create_action
       } catch (error) {
         const errString = `${error}`
@@ -536,11 +538,15 @@ export default {
           When
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            :color="openAgentOrFlow || openFlow ? 'codePink' : 'grey'"
+            :color="
+              step === 'openAgentOrFlow' || step === 'selectFlow'
+                ? 'codePink'
+                : 'grey'
+            "
             class="px-0 pb-1 headline text-truncate"
             text
             max-width="300px"
-            @click="handleOpenAgentOrFlow"
+            @click="step = 'openAgentOrFlow'"
             ><truncate
               v-if="flowNamesList && flowNamesList.length"
               :content="flowNamesList.toString()"
@@ -558,8 +564,8 @@ export default {
               class="px-0 pb-1 headline"
               text
               :disabled="agentOrFlow === 'agent'"
-              :color="openSelectFlowEventType ? 'codePink' : 'grey'"
-              @click="openSelectFlowEventType = !openSelectFlowEventType"
+              :color="step === 'selectEventType' ? 'codePink' : 'grey'"
+              @click="switchStep('selectEventType')"
             >
               {{ flowEventType.name }}</v-btn
             >
@@ -570,8 +576,8 @@ export default {
                 :style="{ 'text-transform': 'none', 'min-width': '0px' }"
                 class="px-0 pb-1 headline text-decoration-underliney"
                 text
-                :color="openSeconds ? 'codePink' : 'grey'"
-                @click="openSeconds = !openSeconds"
+                :color="step === 'openDuration' ? 'codePink' : 'grey'"
+                @click="switchStep('openDuration')"
               >
                 {{ seconds }}</v-btn
               >
@@ -583,8 +589,8 @@ export default {
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class=" px-0 pb-1 headline"
               text
-              :color="openStates ? 'codePink' : 'grey'"
-              @click="openStates = !openStates"
+              :color="step === 'selectState' ? 'codePink' : 'grey'"
+              @click="switchStep('selectState')"
             >
               {{ hookStates }}</v-btn
             ></span
@@ -594,14 +600,14 @@ export default {
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             class="px-0 pb-1 headline"
             text
-            :color="openActions ? 'codePink' : 'grey'"
-            @click="openActions = !openActions"
+            :color="step === 'selectDoThis' ? 'codePink' : 'grey'"
+            @click="switchStep('selectDoThis')"
             >{{ hookAction }}</v-btn
           >.
         </v-col>
       </v-row>
     </v-card>
-    <v-card v-if="openAgentOrFlow" elevation="0" class="pa-2">
+    <v-card v-if="step === 'openAgentOrFlow'" elevation="0" class="pa-2">
       <v-chip
         v-for="item in ['flow', 'agent']"
         :key="item"
@@ -610,7 +616,7 @@ export default {
         max-width="300px"
         class="ma-1"
         outlined
-        @click="selectAgentorFlow(item)"
+        @click="selectAgentOrFlow(item)"
         ><v-icon class="pr-2">{{
           item === 'flow' ? 'pi-flow' : 'pi-agent'
         }}</v-icon
@@ -632,7 +638,7 @@ export default {
       ></v-card
     > -->
     <v-card
-      v-else-if="openFlow"
+      v-else-if="step === 'selectFlow'"
       elevation="0"
       class="pa-2"
       :style="{ overflow: 'auto' }"
@@ -659,7 +665,7 @@ export default {
             color="primary"
             title="Next"
             dark
-            @click="openFlow = false"
+            @click="switchStep('selectEventType')"
           >
             Next
             <v-icon small>call_made</v-icon>
@@ -700,7 +706,7 @@ export default {
         >
       </v-card-text>
     </v-card>
-    <v-card v-else-if="openSelectFlowEventType" elevation="0" class="pa-2"
+    <v-card v-else-if="step === 'selectEventType'" elevation="0" class="pa-2"
       ><span v-for="item in flowEventTypes" :key="item.enum">
         <span v-if="!disableChip(item)">
           <v-chip
@@ -714,11 +720,7 @@ export default {
         </span>
       </span>
     </v-card>
-    <v-card
-      v-else-if="openSeconds"
-      v-click-outside="closeSeconds"
-      elevation="0"
-      class="pa-2"
+    <v-card v-else-if="step === 'openDuration'" elevation="0" class="pa-2"
       ><v-card-text>
         <v-text-field
           v-model="seconds"
@@ -729,13 +731,22 @@ export default {
         ></v-text-field>
       </v-card-text>
     </v-card>
-    <v-card
-      v-else-if="openStates"
-      v-click-outside="closeStates"
-      elevation="0"
-      class="pa-2"
-    >
+    <v-card v-else-if="step === 'selectState'" elevation="0" class="pa-2">
       <v-card-text>
+        <div class="text-right">
+          <v-btn
+            x-small
+            class="text-normal"
+            depressed
+            color="primary"
+            title="Next"
+            dark
+            @click="switchStep('selectDoThis')"
+          >
+            Next
+            <v-icon small>call_made</v-icon>
+          </v-btn>
+        </div>
         <div>
           <v-chip
             v-for="item in stateGroups"
@@ -753,6 +764,7 @@ export default {
             >{{ item }}</v-chip
           >
         </div>
+
         <v-divider class="ma-2" />
         <div>
           <v-chip
@@ -770,7 +782,7 @@ export default {
         </div>
       </v-card-text>
     </v-card>
-    <v-card v-else-if="openActions" elevation="0" class="pa-2">
+    <v-card v-else-if="step === 'selectDoThis'" elevation="0" class="pa-2">
       <v-chip class="ma-1" color="primary" label @click="addNewAction"
         ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New Config
       </v-chip>
