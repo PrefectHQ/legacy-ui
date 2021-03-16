@@ -21,7 +21,6 @@ export default {
       messageText: '',
       openMessageText: false,
       openTwilioConfig: false,
-      openPDConfig: false,
       openName: false,
       newSaveAs: '',
       authToken: '',
@@ -104,21 +103,21 @@ export default {
       }
     },
     to() {
+      const configTo =
+        this.messageConfigTo.length > 0 ? this.messageConfigTo.toString() : ''
       return this.messageType?.type === 'EMAIL'
-        ? this.messageConfigTo.toString() ||
-            this.messageType?.config?.to ||
-            'this email address.'
+        ? configTo || this.messageType?.config?.to || 'to this email address.'
         : this.messageType.type === 'WEBHOOK'
-        ? this.messageType?.config?.to || ' this web address.'
+        ? this.messageType?.config?.to || ' to this web address.'
         : this.messageType?.type === 'TWILIO'
-        ? this.messageConfigTo.toString() ||
+        ? configTo ||
           this.messageType?.config?.to?.toString() ||
-          'this phone number'
+          'to this phone number'
         : this.messageType?.type === 'SLACK_WEBHOOK'
-        ? this.messageConfigTo ||
-          this.messageType?.config?.url ||
-          ' this webhook.'
-        : 'who?'
+        ? configTo || this.messageType?.config?.url || 'to this webhook.'
+        : this.messageType.type === 'PAGERDUTY'
+        ? 'with this config.'
+        : 'to who?'
     },
     isTwilio() {
       return this.messageType.type === 'TWILIO'
@@ -309,22 +308,10 @@ export default {
           {{ messageText || messageName }}</v-btn
         >
       </span>
-      <span v-if="isPagerDuty">
-        with this
+      <span>
         <v-btn
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-0 pb-1 headline"
-          text
-          :color="openPDConfig ? 'codePink' : 'grey'"
-          @click="openPDConfig = !openPDConfig"
-        >
-          config</v-btn
-        ></span
-      ><span v-else>
-        to
-        <v-btn
-          :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-0 pb-1 headline"
+          class="px-1 pb-1 headline"
           text
           :color="openMessageConfig ? 'codePink' : 'grey'"
           @click="openMessageConfig = !openMessageConfig"
@@ -508,7 +495,6 @@ export default {
         to recieve messages.
       </span>
       <v-text-field
-        v-if="messageType.type == 'TWILIO'"
         v-model="authToken"
         class="my-8"
         :rules="[rules.required]"
@@ -517,7 +503,6 @@ export default {
       />
 
       <v-text-field
-        v-if="messageType.type == 'TWILIO'"
         v-model="accountSid"
         :rules="[rules.required]"
         label="Account SID"
@@ -526,7 +511,6 @@ export default {
       />
 
       <v-text-field
-        v-if="messageType.type == 'TWILIO'"
         v-model="messagingService"
         :rules="[rules.required]"
         label="Messaging service SID"

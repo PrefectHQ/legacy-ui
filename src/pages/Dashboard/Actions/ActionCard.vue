@@ -41,7 +41,6 @@ export default {
   },
   computed: {
     includeTo() {
-      console.log(this.hook)
       return this.hook.event_type === 'FlowRunStateChangedEvent'
     },
     isAgent() {
