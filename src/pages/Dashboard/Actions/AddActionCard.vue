@@ -169,10 +169,23 @@ export default {
       this.agentFlowOrSomethingElse = choice
       this.openAgentOrFlow = false
       if (choice === 'flow') {
+        this.flowEventType = this.hookDetail?.flowConfig?.kind
+          ? this.flowEventTypes.find(
+              type => type.enum === this.hookDetail?.flowConfig?.kind
+            )
+          : this.hookDetail?.hook?.event_type === 'FlowRunStateChangedEvent'
+          ? {
+              name: 'changes state',
+              enum: 'CHANGES_STATE'
+            }
+          : {
+              name: 'does this'
+            }
         this.openFlow = true
       }
       if (choice === 'agent') {
         this.flowEventType = { name: 'is unhealthy' }
+        this.flowNamesList = []
         this.openActions = true
         // this.openSelectFlowEventType = true
         // this.openAgent = true
@@ -266,7 +279,7 @@ export default {
     disableChip(item) {
       return (
         (item.enum != 'CHANGES_STATE' && this.selectedFlows.length > 1) ||
-        (item.enum === 'CHANGES_STATE' && this.agentOrFlow === 'agent')
+        this.agentOrFlow === 'agent'
       )
     },
     includesFlow(flow) {
@@ -535,6 +548,7 @@ export default {
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class="px-0 pb-1 headline"
               text
+              :disabled="agentOrFlow === 'agent'"
               :color="openSelectFlowEventType ? 'codePink' : 'grey'"
               @click="openSelectFlowEventType = !openSelectFlowEventType"
             >
@@ -576,8 +590,8 @@ export default {
             >{{ hookAction }}</v-btn
           >.
         </v-col>
-      </v-row></v-card
-    >
+      </v-row>
+    </v-card>
     <v-card v-if="openAgentOrFlow" elevation="0" class="pa-2">
       <v-chip
         v-for="item in ['flow', 'agent']"
@@ -610,12 +624,11 @@ export default {
     > -->
     <v-card
       v-else-if="openFlow"
-      v-click-outside="selectFlow"
       elevation="0"
       class="pa-2"
       :style="{ overflow: 'auto' }"
     >
-      <v-card-title>
+      <v-card-title class="pt-0">
         <v-text-field
           v-model="searchEntry"
           class="flow-search"
@@ -629,6 +642,20 @@ export default {
           autocomplete="new-password"
           style="min-width: 400px;"
         />
+        <div class="text-right">
+          <v-btn
+            x-small
+            class="text-normal"
+            depressed
+            color="primary"
+            title="Next"
+            dark
+            @click="openFlow = false"
+          >
+            Next
+            <v-icon small>call_made</v-icon>
+          </v-btn>
+        </div>
       </v-card-title>
       <v-card-subtitle class="caption mx-4 py-1"
         >Hint: Shift-click to select multiple flows</v-card-subtitle

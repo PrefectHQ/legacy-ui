@@ -21,6 +21,11 @@ export default {
       required: false,
       default: () => true
     },
+    showClose: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
     showReset: {
       type: Boolean,
       required: false,
@@ -74,6 +79,9 @@ export default {
     },
     reset() {
       this.internalValue = this.initialValue
+    },
+    close() {
+      this.$emit('next')
     }
   }
 }
@@ -82,7 +90,7 @@ export default {
 <template>
   <div>
     <div
-      v-if="showClear || showReset"
+      v-if="showClear || showReset || showClose"
       class="d-flex align-center justify-end mb-2"
     >
       <v-btn
@@ -97,6 +105,19 @@ export default {
       >
         Reset
         <v-icon small>refresh</v-icon>
+      </v-btn>
+      <v-btn
+        v-if="showClose"
+        x-small
+        class="text-normal"
+        depressed
+        color="primary"
+        title="Next"
+        dark
+        @click="close"
+      >
+        Next
+        <v-icon small>call_made</v-icon>
       </v-btn>
 
       <v-btn

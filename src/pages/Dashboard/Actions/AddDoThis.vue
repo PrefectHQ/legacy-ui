@@ -86,14 +86,29 @@ export default {
       return []
     },
     allowSave() {
-      if (this.enableSave) return true
+      if (this.isPagerDuty) {
+        return (
+          !!this.messageType &&
+          !!this.apiToken &&
+          !!this.routingKey &&
+          !!this.severity
+        )
+      }
+      if (this.isTwilio) {
+        return (
+          !!this.messageConfigTo &&
+          !!this.authToken &&
+          !!this.messagingService &&
+          this.accountSid
+        )
+      }
       const type = this.messageType.type
       return (
         !!this.messageType &&
-        !!this.messageConfigTo &&
+        !!this.messageConfigTo.length &&
         this.messageConfigTo.filter(item => this.rules[type](item) !== true)
           .length < 1 &&
-        this.newSaveAs
+        !this.openMessageConfig
       )
     },
     saveAs: {
@@ -126,21 +141,12 @@ export default {
     },
     isPagerDuty() {
       return this.messageType.type === 'PAGERDUTY'
-    },
-    completeConfig() {
-      if (this.isPagerDuty)
-        return (
-          !!this.messageType &&
-          !!this.apiToken &&
-          !!this.routingKey &&
-          !!this.severity
-        )
-      return this.messageType && this.messageConfigTo
     }
   },
   methods: {
     selectMessageType(type) {
       this.messageType = type
+      this.messageConfigTo = []
       this.openSendMessage = false
       this.openMessageText = true
     },
@@ -472,14 +478,16 @@ export default {
         v-else-if="
           messageType.type === 'EMAIL' || messageType.type === 'TWILIO'
         "
-        v-click-outside="() => (openMessageConfig = !openMessageConfig)"
         :label="messageConfigLabel"
         :value="messageConfigTo"
         :outline="false"
         :rules="[rules[messageType.type]]"
         :hide="false"
         :show-reset="false"
+        :show-clear="false"
+        :show-close="true"
         @input="handleListInput"
+        @next="openMessageConfig = false"
       ></ListInput>
     </v-card-text>
     <v-card-text v-else-if="openTwilioConfig">
@@ -521,7 +529,7 @@ export default {
         dense
       />
     </v-card-text>
-    <v-card-text v-else-if="completeConfig" class="pr-4">
+    <v-card-text v-else-if="openConfigName" class="pr-4">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-text-field
@@ -530,7 +538,6 @@ export default {
             :disabled="!messageType"
             label="Save As"
             v-bind="attrs"
-            @focus="enableSave = true"
             v-on="on"
           ></v-text-field>
         </template>
