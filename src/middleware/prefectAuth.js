@@ -27,7 +27,7 @@ const prefectAuth = async idToken => {
   }
 }
 
-const prefectRefresh = async (accessToken, src) => {
+const prefectRefresh = async accessToken => {
   try {
     const result = await fallbackApolloClient.mutate({
       mutation: require('@/graphql/refresh-token.gql'),
