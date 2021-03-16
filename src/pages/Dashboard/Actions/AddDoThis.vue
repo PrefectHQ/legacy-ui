@@ -11,6 +11,7 @@ export default {
   data() {
     return {
       addName: false,
+      enableSave: false,
       messageType: { title: 'Send' },
       openSendMessage: true,
       openMessageConfig: false,
@@ -85,6 +86,7 @@ export default {
       return []
     },
     allowSave() {
+      if (this.enableSave) return true
       const type = this.messageType.type
       return (
         !!this.messageType &&
@@ -519,14 +521,16 @@ export default {
         dense
       />
     </v-card-text>
-    <v-card-text v-else-if="completeConfig" class="mx-4">
+    <v-card-text v-else-if="completeConfig" class="pr-4">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-text-field
             v-model="saveAs"
+            class="pr-4"
             :disabled="!messageType"
             label="Save As"
             v-bind="attrs"
+            @focus="enableSave = true"
             v-on="on"
           ></v-text-field>
         </template>
