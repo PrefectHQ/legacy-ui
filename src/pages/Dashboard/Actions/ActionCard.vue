@@ -156,9 +156,9 @@ export default {
       variables() {
         return {
           //Should we update this to include all flow names if more than one?
-          flowGroupId: this.hook?.event_tags?.flow_group_id
-            ? this.hook?.event_tags?.flow_group_id[0]
-            : this.flowConfig?.flow_groups[0]?.flow_group_id
+          flowGroupIds: this.hook?.event_tags?.flow_group_id
+            ? this.hook?.event_tags?.flow_group_id
+            : this.flowConfig?.flow_groups?.map(flow => flow.flow_group_id)
         }
       },
       skip() {

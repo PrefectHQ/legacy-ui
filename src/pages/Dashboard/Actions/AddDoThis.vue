@@ -291,7 +291,7 @@ export default {
         ><span style="text-transform: none;">Back </span></v-btn
       >
     </div>
-    <div class="headline black--text ma-4">
+    <div class="headline black--text mx-4">
       <v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
         :color="openSendMessage ? 'codePink' : 'grey'"

@@ -95,7 +95,9 @@ export default {
       return this.seconds || this.hookDetails?.flowConfig?.duration_seconds
     },
     flowNames() {
-      return this.flowNamesList?.toString() || this.agentOrFlow
+      return this.flowNamesList?.length > 1
+        ? 'mulitiple flows'
+        : this.flowNamesList.toString() || this.agentOrFlow
     },
     hookStates() {
       return this.stateNames === 'All'
@@ -160,7 +162,6 @@ export default {
     },
     handleOpenAgentOrFlow() {
       this.openAgentOrFlow = !this.openAgentOrFlow
-      this.project = null
     },
     selectAgentorFlow(choice) {
       this.agentFlowOrSomethingElse = choice
@@ -191,12 +192,12 @@ export default {
         )
       } else {
         this.selectedFlows.push(flow)
-        this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
         if (!event.shiftKey) {
           this.openFlow = false
           this.openSelectFlowEventType = true
         }
       }
+      this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
     },
     selectAllFlows() {
       if (!this.allFlows) {
@@ -262,6 +263,13 @@ export default {
       return (
         (item.enum != 'CHANGES_STATE' && this.selectedFlows.length > 1) ||
         (item.enum === 'CHANGES_STATE' && this.agentOrFlow === 'agent')
+      )
+    },
+    includesFlow(flow) {
+      return (
+        this.selectedFlows.filter(
+          item => item.flow_group_id === flow.flow_group_id
+        ).length > 0
       )
     },
     async createAction(input) {
@@ -503,10 +511,13 @@ export default {
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="openAgentOrFlow || openFlow ? 'codePink' : 'grey'"
-            class="px-0 pb-1 headline"
+            class="px-0 pb-1 headline text-truncate"
             text
+            max-width="300px"
             @click="handleOpenAgentOrFlow"
-            >{{ flowNames }}</v-btn
+            ><truncate :content="flowNamesList.toString()">{{
+              flowNames
+            }}</truncate></v-btn
           >
           <span
             >{{ ' '
@@ -613,6 +624,9 @@ export default {
           style="min-width: 400px;"
         />
       </v-card-title>
+      <v-card-subtitle class="caption mx-4 py-1"
+        >Hint: Shift-click to select multiple flows</v-card-subtitle
+      >
       <v-card-text>
         <v-chip
           v-if="!searchEntry"
@@ -631,7 +645,7 @@ export default {
           label
           style="width: 200px;"
           title="Press shift to select multiple flows"
-          :color="selectedFlows.includes(item) ? 'pink' : ''"
+          :color="includesFlow(item) ? 'pink' : ''"
           class="ma-1"
           outlined
           @click="selectFlow($event, item)"
