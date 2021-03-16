@@ -19,10 +19,9 @@ query TableTaskRuns(
       state
       id
       version
-      details {
-        end_time
-        start_time
-      }
+      start_time
+      end_time
+
       task {
         id
         name

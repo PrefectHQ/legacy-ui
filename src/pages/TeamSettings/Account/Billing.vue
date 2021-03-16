@@ -97,7 +97,10 @@ export default {
           </a>
         </div>
 
-        <div v-else-if="!payment && !editCardDetails" class="text-subtitle-1">
+        <div
+          v-else-if="!payment && !editCardDetails"
+          class="text-subtitle-1 utilGrayMid--text"
+        >
           You haven't added a payment method
         </div>
 
@@ -130,7 +133,7 @@ export default {
                 </div>
 
                 <div class="mt-n2">
-                  <span class="text-h6 font-weight-regular">
+                  <span class="text-h6 font-weight-regular utilGrayMid--text">
                     •••• •••• •••• {{ payment.last4 || payment.card.last4 }}
                   </span>
                   <span

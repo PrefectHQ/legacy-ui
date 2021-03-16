@@ -91,7 +91,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="appForeground">
     <div class="text-body-1">
       The Prefect Agent is a small entity created to orchestrate flow runs. The
       Agent works by querying the Prefect API for new or incomplete Flow Runs
@@ -112,8 +112,8 @@ export default {
         {{ isCloud ? 'Prefect Cloud' : 'your Prefect Server' }}
       </div>
       <div
-        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-        style="border: 1px solid utilGrayLight !important;"
+        class="text-body-1 appBackground utilGrayDark--text rounded-sm pa-3 mt-4"
+        style="border: 1px solid var(--v-utilGrayLight-base) !important;"
       >
         <div class="code-block">
           <span class="blue-grey--text text--lighten-1 user-select-none"
@@ -141,8 +141,8 @@ export default {
       </div>
 
       <div
-        class="text-body-1 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-3 mt-4"
-        style="border: 1px solid utilGrayLight !important;"
+        class="text-body-1 appBackground utilGrayDark--text rounded-sm pa-3 mt-4"
+        style="border: 1px solid var(--v-utilGrayLight-base) !important;"
       >
         <div class="code-block">
           <span class="blue-grey--text text--lighten-1 user-select-none"

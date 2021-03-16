@@ -4,10 +4,28 @@
 
 ### Features and Improvements
 
-- Add a state filter to the flow run table - [#645](https://github.com/PrefectHQ/ui/pull/645)
+- None
 
 ### Bugfixes
 
+- None
+
+## 2021-03-15a
+
+### Bugfixes
+
+- Remove details references from the task run table tile - [#670](https://github.com/PrefectHQ/ui/pull/670)
+
+## 2021-03-15
+
+### Features and Improvements
+
+- Add a state filter to the flow run table - [#645](https://github.com/PrefectHQ/ui/pull/645)
+- Create a UI dark mode - [#656](https://github.com/PrefectHQ/ui/pull/656)
+
+### Bugfixes
+
+- Fix the blank "Created by" column in the Flow Groups - [#657](https://github.com/PrefectHQ/ui/pull/657)
 - Fix the clear button on the dashboard so that it clears scheduled runs - [#653](https://github.com/PrefectHQ/ui/pull/653)
 - Fix indefinite task run duration when using mapped cases - [#650](https://github.com/PrefectHQ/ui/pull/650)
 

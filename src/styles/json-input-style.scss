@@ -1,8 +1,8 @@
 /* stylelint-disable */
 
 .cm-s-json-input.CodeMirror {
-  background-color: #fff !important;
-  color: #455a64 !important;
+  background-color: var(--v-appForeground-base) !important;
+  color: var(--v-utilGrayDark-base) !important;
 
   .CodeMirror-code {
     letter-spacing: 0.15rem;
@@ -32,7 +32,7 @@
   }
 
   .CodeMirror-cursor {
-    border-left: 1px solid rgba(0, 0, 0, 0.38) !important;
+    border-left: 1px solid var(--v-utilGrayMid-base) !important;
   }
 
   .cm-keyword {
@@ -75,7 +75,7 @@
   }
 
   .cm-comment {
-    color: #777 !important;
+    color: var(--v-utilGrayMid-base) !important;
     font-weight: normal !important;
   }
   .cm-string {
@@ -83,7 +83,7 @@
   }
 
   .cm-property.cm-string {
-    color: var(--v-primary-base) !important;
+    color: var(--v-tertiaryBlue-base) !important;
   }
 
   .cm-property {
@@ -98,11 +98,11 @@
   }
 
   .cm-builtin {
-    color: #9b7536 !important;
+    color: #deaa54 !important;
   }
 
   .cm-tag {
-    color: #997643 !important;
+    color: #ff9447 !important;
   }
 
   .cm-attribute {
@@ -110,7 +110,7 @@
   }
 
   .cm-header {
-    color: #ff6400 !important;
+    color: #ea5a2e !important;
   }
 
   .cm-hr {
@@ -118,7 +118,7 @@
   }
 
   .cm-link {
-    color: #ad9361 !important;
+    color: #42c1d6 !important;
     font-style: italic !important;
     text-decoration: none !important;
   }
