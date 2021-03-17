@@ -30,14 +30,17 @@ export default {
 
       // Dialogs
       dialogInviteUser: false,
+      dialogAddServiceAccount: false,
 
       // Inputs
       inviteEmailInput: null,
       roleInput: null,
       searchInput: '',
+      serviceAccountNameInput: null,
 
       // Forms
       inviteFormValid: true,
+      serviceAccountFormValid: true,
 
       inviteError: null,
       fullUsers: null,
@@ -54,11 +57,16 @@ export default {
 
       // Loading states
       isInvitingUser: false,
+      isCreatingServiceUser: false,
       isLoadingMembersTable: true,
 
       // Signal passed as prop to MembersTable
       // MembersTable watches this data attribute & refetches members every time this value changes.
       membersSignal: 0,
+
+      // Signal passed as prop to ServiceAccountsTable
+      // MembersTable watches this data attribute & refetches members every time this value changes.
+      serviceAccountsSignal: 0,
 
       // Signal passed as prop to InvitationsTable
       // InvitationsTable watches this data attribute & refetches invites every time this value changes.
@@ -133,6 +141,7 @@ export default {
   watch: {
     tenant() {
       this.membersSignal++
+      this.serviceAccountsSignal++
       this.inviteSignal++
     }
   },
@@ -219,11 +228,40 @@ export default {
 
       this.isInvitingUser = false
     },
+    async addServiceAccount() {
+      this.isCreatingServiceUser = true
+      this.inviteError = null
+
+      const res = await this.$apollo
+        .mutate({
+          mutation: require('@/graphql/User/create-service-account.gql'),
+          variables: {
+            tenant_id: this.tenant.id,
+            name: this.serviceAccountNameInput
+          }
+        })
+        .catch(({ graphQLErrors }) => {
+          return { error: graphQLErrors }
+        })
+
+      if (res?.data?.create_service_account?.id) {
+        this.serviceAccountsSignal++
+        this.dialogAddServiceAccount = false
+        this.serviceAccountNameInput = null
+      }
+
+      this.isCreatingServiceUser = false
+    },
     resetInviteUserDialog() {
       this.inviteEmailInput = null
       this.roleInput = null
       this.inviteError = null
       this.$refs['invite-user-form'].reset()
+    },
+    resetServiceAccountDialog() {
+      this.serviceAccountNameInput = null
+      this.inviteError = null
+      this.$refs['service-user-form'].reset()
     }
   }
 }
@@ -244,6 +282,20 @@ export default {
 
     <template v-if="isTenantAdmin" #cta>
       <v-btn
+        v-if="tab === 'service-accounts'"
+        color="primary"
+        class="white--text"
+        large
+        data-cy="invite-service-account"
+        @click="dialogAddServiceAccount = true"
+      >
+        <v-icon left>
+          person_add
+        </v-icon>
+        Add Service Account
+      </v-btn>
+      <v-btn
+        v-else
         :disabled="insufficientUsers"
         color="primary"
         class="white--text"
@@ -401,7 +453,7 @@ export default {
           :search="searchInput"
           :tenant="tenant"
           :user="user"
-          :refetch-signal="membersSignal"
+          :refetch-signal="serviceAccountsSignal"
           @load-end="loadEnd($event)"
           @successful-action="handleAlert('success', $event)"
           @failed-action="handleAlert('error', $event)"
@@ -526,6 +578,36 @@ export default {
           item-disabled="disabled"
         >
         </v-select>
+      </v-form>
+    </ConfirmDialog>
+
+    <!-- SERVICE ACCOUNT ADD DIALOG -->
+    <ConfirmDialog
+      v-model="dialogAddServiceAccount"
+      title="Add a new service account"
+      confirm-text="Add"
+      :error="inviteError"
+      :loading="isCreatingServiceUser"
+      :disabled="!serviceAccountFormValid || isCreatingServiceUser"
+      :dialog-props="{
+        'max-width': '600'
+      }"
+      @cancel="resetServiceAccountDialog"
+      @confirm="addServiceAccount"
+    >
+      <v-form ref="service-user-form" v-model="serviceAccountFormValid">
+        <v-text-field
+          v-model="serviceAccountNameInput"
+          class="mb-3"
+          autofocus
+          label="Account Name"
+          data-cy="service-account"
+          prepend-icon="engineering"
+          outlined
+          autocomplete="new-password"
+          :rules="[rules.required]"
+          validate-on-blur
+        />
       </v-form>
     </ConfirmDialog>
 
