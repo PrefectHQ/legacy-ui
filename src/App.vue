@@ -18,6 +18,8 @@ const fullPageRoutes = [
   '404',
   'calendar',
   'not-found',
+  'access-denied',
+  'team-switched',
   'logout',
   'welcome'
 ]
@@ -110,7 +112,8 @@ export default {
     showNav() {
       if (
         this.$route.name == 'plans' ||
-        this.$route.name === 'not-found' ||
+        this.$route.name == 'not-found' ||
+        this.$route.name == 'team-switched' ||
         onboardRoutes.includes(this.$route.name)
       )
         return false
@@ -155,8 +158,8 @@ export default {
         clearCache()
       }
     },
-    tenant(val) {
-      if (val?.id) {
+    tenant(val, oldVal) {
+      if (val?.id !== oldVal?.id) {
         if (this.isCloud && !this.tenant.settings.teamNamed) {
           this.$router.push({
             name: 'welcome',
@@ -237,7 +240,7 @@ export default {
       // Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
       update(data) {
-        if (!data?.agent) return null
+        if (!data?.agent || this.isLoadingTenant) return null
         this.setAgents(data.agent)
         return data.agent
       }
@@ -254,7 +257,7 @@ export default {
         },
         pollInterval: 10000,
         update(data) {
-          if (!data?.project) return []
+          if (!data?.project || this.isLoadingTenant) return []
           this.setProjects(data.project)
           return data.project
         }
@@ -270,7 +273,7 @@ export default {
       },
       pollInterval: 10000,
       update(data) {
-        if (!data?.flow) return []
+        if (!data?.flow || this.isLoadingTenant) return []
         this.setFlows(data.flow)
         return data.flow
       }
@@ -297,7 +300,7 @@ export default {
       fetchPolicy: 'network-only',
       pollInterval: 60000,
       update(data) {
-        if (!data?.pendingInvitations) return []
+        if (!data?.pendingInvitations || this.isLoadingTenant) return []
         this.setInvitations(data.pendingInvitations)
         return data.pendingInvitations
       }

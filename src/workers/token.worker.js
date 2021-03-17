@@ -11,7 +11,8 @@ const channelPorts = []
 
 const state = {
   authenticationTokens: null,
-  authorizationTokens: null
+  authorizationTokens: null,
+  tenantId: null
 }
 
 const cache = new InMemoryCache()
@@ -90,6 +91,8 @@ let interval = null
 const restartAuthorizationInterval = () => {
   clearTimeout(interval)
 
+  const id = state.tenantId
+
   interval = setTimeout(async () => {
     if (state.authorizationTokens) {
       const result = await client.mutate({
@@ -106,6 +109,10 @@ const restartAuthorizationInterval = () => {
         fetchPolicy: 'no-cache'
       })
 
+      // If the tenant id has changed since this
+      // method was instantiated, we don't broadcast token
+      // refresh updates
+      if (state.tenantId !== id) return
       state.authorizationTokens = result.data.refresh_token
       postToConnections({
         type: 'authorization',
@@ -140,16 +147,26 @@ const getAuthorizationTokens = async () => {
 }
 
 const switchTenant = async payload => {
+  state.tenantId = payload.tenantId
+
   const result = await client.mutate({
     mutation: require('@/graphql/Tenant/tenant-token.gql'),
       variables: {
-        tenantId: payload
+        tenantId: payload.tenantId
+      },
+      context: {
+        headers: {
+          ...headers,
+          authorization: `Bearer ${state.authorizationTokens.access_token}`
+        }
       },
       fetchPolicy: 'no-cache'
   })
-
+  
   state.authorizationTokens = result.data.switch_tenant
   postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
+  postToConnections({type: 'switch-tenant', payload: payload})
+  restartAuthorizationInterval()
 }
 
 const postToConnections = payload => {
@@ -160,7 +177,7 @@ const postToConnections = payload => {
 
 const postToChannelPorts = payload => {
   for (let i = 0; i < ports.length; ++i) {
-    channelPorts[i].postMessage(payload)
+    channelPorts[i]?.postMessage(payload)
   }
   channelPorts.length = 0
 }
@@ -177,12 +194,13 @@ const connect = c => {
   port.onmessage = e => {
     const type = e.data?.type
     const channelPort = e.ports[0]
+    const payload = e.data?.payload
 
 
     // When a connection sends new authentication tokens
     // update the worker state and publish the new tokens to all connections
     if (type == 'authentication') {
-      state.authenticationTokens = e.data.payload
+      state.authenticationTokens = payload
       postToConnections(e.data)
       restartAuthorizationInterval()
       return
@@ -201,9 +219,13 @@ const connect = c => {
     }
 
     if (type == 'switch-tenant') {
-      // Allows swapping tokens by a payload tenant id;
-      // this change will be propagated to all tabs
-      switchTenant(e.data.payload)
+      // Allows swapping tokens by a payload tenant id
+      // and propagates change to all connections if the switch call is new
+      if (state.tenantId == payload.tenantId) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
+      else {
+        channelPorts.push(channelPort)
+        switchTenant(payload)
+      }
     }
 
     // If a logout signal is sent, unset the tokens on the worker state and

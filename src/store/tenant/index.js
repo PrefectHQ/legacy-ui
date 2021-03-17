@@ -1,5 +1,25 @@
 import { fallbackApolloClient } from '@/vue-apollo'
 import { prefectTenants } from '@/middleware/prefectAuth'
+import { TokenWorker } from '@/main'
+
+const getTenantTokens = (id, slug) =>
+  new Promise((res, rej) => {
+    const channel = new MessageChannel()
+
+    channel.port1.onmessage = data => {
+      channel.port1.close()
+      if (data.type == 'error') {
+        rej(data)
+      } else {
+        res(data.data.payload)
+      }
+    }
+
+    TokenWorker.port.postMessage(
+      { type: 'switch-tenant', payload: { tenantId: id, slug: slug } },
+      [channel.port2]
+    )
+  })
 
 const state = {
   defaultTenant: null,
@@ -150,23 +170,31 @@ const actions = {
       }
 
       if (rootGetters['api/isCloud']) {
-        // Get our new auth token
-        const tenantToken = await fallbackApolloClient.mutate({
-          mutation: require('@/graphql/Tenant/tenant-token.gql'),
-          variables: {
-            tenantId: tenant.id
-          },
-          fetchPolicy: 'no-cache'
-        })
+        // We only need to get new tokens if we have a tenant
+        // already - otherwise tokens are fetched through the initial
+        // authorization process
+        if (getters['tenantIsSet']) {
+          let tokens
+          if (typeof Worker !== 'undefined') {
+            tokens = await getTenantTokens(tenant.id, slug)
+          } else {
+            // Get our new auth token
+            const tenantToken = await fallbackApolloClient.mutate({
+              mutation: require('@/graphql/Tenant/tenant-token.gql'),
+              variables: {
+                tenantId: tenant.id
+              },
+              fetchPolicy: 'no-cache'
+            })
 
-        // Set our new auth token
-        await dispatch(
-          'auth/updateAuthorizationTokens',
-          tenantToken.data.switch_tenant,
-          {
-            root: true
+            tokens = tenantToken.data.switch_tenant
           }
-        )
+
+          // Set our new auth token
+          await dispatch('auth/updateAuthorizationTokens', tokens, {
+            root: true
+          })
+        }
 
         // Get the current license
         await dispatch('license/getLicense', null, { root: true })

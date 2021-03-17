@@ -141,6 +141,7 @@ export default {
   beforeDestroy() {
     clearTimeout(this.loadingInterval)
     window.removeEventListener('resize', this.resizeChart)
+    document.removeEventListener('visibilitychange', this.handleVisbilityChange)
   },
   methods: {
     calcHeight(d) {
@@ -507,22 +508,24 @@ export default {
           }
         )
     },
+    handleVisbilityChange() {
+      if (document.visibilityState === 'visible') {
+        this.updateChart()
+        document.removeEventListener(
+          'visibilitychange',
+          this.handleVisbilityChange
+        )
+        this.visibilityListenerAdded = false
+      }
+    },
     updateChart() {
       if (document.hidden) {
         if (this.visibilityListenerAdded) return
-        const handleVisbilityChange = () => {
-          if (document.visibilityState === 'visible') {
-            this.updateChart()
-            document.removeEventListener(
-              'visibilitychange',
-              handleVisbilityChange
-            )
-            this.visibilityListenerAdded = false
-          }
-        }
-        document.addEventListener('visibilitychange', handleVisbilityChange)
+        document.addEventListener(
+          'visibilitychange',
+          this.handleVisbilityChange
+        )
         this.visibilityListenerAdded = true
-
         return
       }
 

@@ -346,6 +346,18 @@ export const routes = [
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
   {
+    name: 'team-switched',
+    path: '/team-switched',
+    component: () =>
+      import(/* webpackChunkName: "team-switched" */ '@/pages/TeamSwitched.vue')
+  },
+  {
+    name: 'access-denied',
+    path: '/access-denied',
+    component: () =>
+      import(/* webpackChunkName: "access-denied" */ '@/pages/AccessDenied.vue')
+  },
+  {
     name: 'dashboard',
     alias: '/',
     path: '/:tenant?',
@@ -354,12 +366,6 @@ export const routes = [
         /* webpackChunkName: "dashboard" */ '@/pages/Dashboard/Dashboard.vue'
       ),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
-  },
-  {
-    name: 'access-denied',
-    path: '/access-denied',
-    component: () =>
-      import(/* webpackChunkName: "access-denied" */ '@/pages/AccessDenied.vue')
   },
   {
     path: '*',
