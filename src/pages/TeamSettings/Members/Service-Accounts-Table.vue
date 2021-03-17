@@ -128,9 +128,6 @@ export default {
         ? this.allHeaders
         : this.allHeaders.filter(header => header.mobile)
     },
-    localExpiryDate() {
-      return this.formDate('2100-01-01T00:00:00+00:00')
-    },
     newTokenFormFilled() {
       return !!this.newTokenName
     }
@@ -202,9 +199,6 @@ export default {
       this.newAPIToken = ''
       this.expiresAt = null
     },
-    setExpiry(dateTime) {
-      this.expiresAt = dateTime
-    },
     async removeAccount(id) {
       this.isRemovingUser = true
 
@@ -214,15 +208,12 @@ export default {
       })
 
       if (res?.data?.delete_service_account?.success) {
-        this.$emit(
-          'successful-action',
-          'The user has been removed from your team.'
-        )
+        this.$emit('successful-action', 'The service account has been removed.')
         this.$apollo.queries.tenantUsers.refetch()
       } else {
         this.$emit(
           'failed-action',
-          'Something went wrong while trying to remove this member from your team. Please try again.'
+          'Something went wrong while trying to remove this service account. Please try again.'
         )
       }
 
@@ -258,13 +249,6 @@ export default {
               membershipId: membership.id
             }
           })
-
-        this.$emit('load-end', {
-          fullUsers: this.membersItems.filter(m => m.role !== 'READ_ONLY_USER'),
-          readOnlyUsers: this.membersItems.filter(
-            m => m.role == 'READ_ONLY_USER'
-          )
-        })
         return data
       },
       error() {

@@ -604,7 +604,6 @@ export default {
           data-cy="service-account"
           prepend-icon="engineering"
           outlined
-          autocomplete="new-password"
           :rules="[rules.required]"
           validate-on-blur
         />
