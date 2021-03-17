@@ -302,12 +302,13 @@ export default {
             input: { config: input.config, name: input.name }
           }
         })
-        await this.$apollo.queries.actions.refresh()
+        await this.$apollo.queries.actions.refetch()
         this.addAction = false
         this.step = 'selectDoThis'
-        const newAction = this.actions.filter(
-          action => action.id === data.create_action.id
-        )
+        const newAction = {
+          id: data.create_action.id,
+          name: input.name
+        }
         this.selectAction(newAction)
         return data?.create_action
       } catch (error) {
@@ -525,16 +526,27 @@ export default {
 
 <template>
   <v-card v-if="!addAction" width="100%">
-    <div class="pb-2 pt-2 pl-2"
-      ><v-btn
-        text
-        class="grey--text text--darken-2 light-weight-text"
-        @click="closeCard"
+    <v-row
+      ><v-col cols="6"
+        ><v-btn
+          text
+          class="grey--text text--darken-2 light-weight-text"
+          @click="closeCard"
+        >
+          <v-icon>chevron_left</v-icon
+          ><span style="text-transform: none;">Back </span></v-btn
+        ></v-col
       >
-        <v-icon>chevron_left</v-icon
-        ><span style="text-transform: none;">Back </span></v-btn
+      <v-col cols="6" class="text-right"
+        ><v-btn
+          class="mr-3"
+          color="primary"
+          :disabled="!completeAction"
+          @click="createHook"
+          ><v-icon class="pr-2">save_alt</v-icon>Save</v-btn
+        ></v-col
       >
-    </div>
+    </v-row>
 
     <v-card class="px-8" elevation="0">
       <v-row
@@ -829,17 +841,6 @@ export default {
         ></ConfirmDialog
       >
     </v-card>
-
-    <v-card-actions class="pa-8">
-      <v-spacer /><v-btn
-        large
-        class="mx-12"
-        color="primary"
-        :disabled="!completeAction"
-        @click="createHook"
-        ><v-icon class="pr-2">far fa-file-plus</v-icon>Save Action</v-btn
-      >
-    </v-card-actions>
   </v-card>
   <AddDoThis
     v-else
