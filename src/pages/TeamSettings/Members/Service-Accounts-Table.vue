@@ -1,12 +1,14 @@
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
 import DateTime from '@/components/DateTime'
+import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
     ConfirmDialog,
     DateTime
   },
+  mixins: [formatTime],
   props: {
     // Check admin privileges
     isTenantAdmin: {
@@ -117,7 +119,7 @@ export default {
       newTokenName: '',
       keys: [],
       tokenToDelete: null,
-      tokenToDeleteDialog: false
+      dialogRemoveToken: false
     }
   },
   computed: {
@@ -136,7 +138,6 @@ export default {
   watch: {
     refetchSignal() {
       this.$apollo.queries.tenantUsers.refetch()
-      //this.$apollo.queries.keys.refetch()
     }
   },
   methods: {
@@ -173,16 +174,16 @@ export default {
     },
     async deleteToken(token) {
       const result = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tokens/delete-token.gql'),
+        mutation: require('@/graphql/Tokens/delete-api-key.gql'),
         variables: {
           id: token.id
         }
       })
 
-      if (result?.data?.delete_api_token?.success) {
-        this.tokenToDeleteDialog = false
+      if (result?.data?.delete_api_key?.success) {
+        this.dialogRemoveToken = false
         this.handleAlert('success', 'The token has been successfully revoked.')
-        // this.$apollo.queries.tokens.refetch()
+        this.$apollo.queries.tokens.refetch()
       } else {
         this.handleAlert(
           'error',
@@ -288,9 +289,9 @@ export default {
         )
       },
       result({ data }) {
-        console.log(data.auth_api_key)
         this.keys = data.auth_api_key.map(key => {
           return {
+            id: key.id,
             name: key.name,
             created_at: key.created,
             expires: key.expires_at
@@ -456,10 +457,7 @@ export default {
 
     <!-- VIEW TOKENS DIALOG -->
 
-    <v-dialog
-      v-if="selectedUser"
-      v-model="dialogViewTokens"
-      @cancel="dialogViewTokens = false"
+    <v-dialog v-if="selectedUser" v-model="dialogViewTokens"
       ><v-card>
         <v-card-title>{{ selectedUser.firstName }}'s Tokens</v-card-title>
         <v-data-table
@@ -479,9 +477,78 @@ export default {
           }"
           no-data-text="This account doesn't have any keys yet."
         >
+          <template #item.name="{ item }">
+            {{ item.name }}
+          </template>
+
+          <template #item.created="{ item }">
+            <v-tooltip top>
+              <template #activator="{ on }">
+                <span v-on="on">
+                  {{ item.created_at ? formDate(item.created_at) : '' }}
+                </span>
+              </template>
+              <span>
+                {{ item.created_at ? formatTime(item.created_at) : '' }}
+              </span>
+            </v-tooltip>
+          </template>
+
+          <template #item.last_used="{ item }">
+            <v-tooltip top>
+              <template #activator="{ on }">
+                <span v-on="on">
+                  {{ item.last_used ? formDate(item.last_used) : '' }}
+                </span>
+              </template>
+              <span>
+                {{ item.last_used ? formatTime(item.last_used) : '' }}
+              </span>
+            </v-tooltip>
+          </template>
+
+          <template #item.expires_at="{ item }">
+            {{ item.expires ? formatTimeRelative(item.expires) : 'Never' }}
+          </template>
+          <template v-if="isTenantAdmin" #item.actions="{ item }">
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <v-btn
+                  text
+                  fab
+                  x-small
+                  color="error"
+                  v-on="on"
+                  @click="
+                    tokenToDelete = item
+                    dialogRemoveToken = true
+                  "
+                >
+                  <v-icon>delete</v-icon>
+                </v-btn>
+              </template>
+              Remove token
+            </v-tooltip>
+          </template>
         </v-data-table>
       </v-card>
     </v-dialog>
+
+    <ConfirmDialog
+      v-if="tokenToDelete"
+      v-model="dialogRemoveToken"
+      type="error"
+      :dialog-props="{ 'max-width': '500' }"
+      :title="
+        `Are you sure you want to revoke the token
+          ${tokenToDelete.name}?`
+      "
+      confirm-text="Revoke"
+      @confirm="deleteToken(tokenToDelete)"
+    >
+      Once you delete this token, you will not be able to use it again to
+      interact with the Prefect Cloud API.
+    </ConfirmDialog>
 
     <!-- DELETE USER DIALOG -->
     <ConfirmDialog
