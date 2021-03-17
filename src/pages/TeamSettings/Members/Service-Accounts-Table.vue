@@ -183,7 +183,7 @@ export default {
       if (result?.data?.delete_api_key?.success) {
         this.dialogRemoveToken = false
         this.handleAlert('success', 'The token has been successfully revoked.')
-        this.$apollo.queries.tokens.refetch()
+        this.$apollo.queries.keys.refetch()
       } else {
         this.handleAlert(
           'error',
@@ -205,15 +205,15 @@ export default {
     setExpiry(dateTime) {
       this.expiresAt = dateTime
     },
-    async removeUser(membershipId) {
+    async removeAccount(id) {
       this.isRemovingUser = true
 
       const res = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tenant/delete-membership.gql'),
-        variables: { membershipId }
+        mutation: require('@/graphql/User/delete-service-account.gql'),
+        variables: { id }
       })
 
-      if (res?.data?.delete_membership?.success) {
+      if (res?.data?.delete_service_account?.success) {
         this.$emit(
           'successful-action',
           'The user has been removed from your team.'
@@ -561,7 +561,7 @@ export default {
       :dialog-props="{ 'max-width': '600' }"
       :disabled="isRemovingUser"
       :loading="isRemovingUser"
-      @confirm="removeUser(selectedUser.membershipId)"
+      @confirm="removeAccount(selectedUser.id)"
     >
       <div>
         <span class="font-weight-bold">{{ selectedUser.firstName }}</span>
