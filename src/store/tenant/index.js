@@ -145,7 +145,6 @@ const actions = {
       if (!tenant) {
         // If the tenant doesn't exist
         // try to retrieve tenants again
-        console.log('dispatching get tenants')
 
         await dispatch('getTenants')
       }
