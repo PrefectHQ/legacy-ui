@@ -270,7 +270,6 @@ export default {
     },
     selectAction(action) {
       this.chosenAction = action
-      this.openActions = false
     },
     closeStates() {
       this.switchStep('selectDoThis')
@@ -306,6 +305,10 @@ export default {
         await this.$apollo.queries.actions.refresh()
         this.addAction = false
         this.step = 'selectDoThis'
+        const newAction = this.actions.filter(
+          action => action.id === data.create_action.id
+        )
+        this.selectAction(newAction)
         return data?.create_action
       } catch (error) {
         const errString = `${error}`

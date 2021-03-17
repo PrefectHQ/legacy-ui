@@ -107,7 +107,7 @@ export default {
     },
     saveAs: {
       get() {
-        return `${this.messageType.title} ${this.messageConfigTo}`
+        return `${this.messageType.verb} ${this.messageConfigTo}`
       },
       set(x) {
         this.newSaveAs = x

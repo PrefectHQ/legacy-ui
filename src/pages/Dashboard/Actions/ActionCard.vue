@@ -12,6 +12,7 @@ export default {
   },
   data() {
     return {
+      loadingHook: 0,
       copiedText: {},
       deletingHook: false,
       hookDetails: {
@@ -168,6 +169,7 @@ export default {
           !this.flowConfig?.flow_groups[0]?.flow_group_id
         return skippy
       },
+      loadingKey: 'loadingHook',
       update: data => {
         return data.flow
       }
@@ -179,6 +181,7 @@ export default {
           agentConfigId: this.hook?.event_tags?.agent_config_id[0] || ''
         }
       },
+      loadingKey: 'loadingHook',
       skip() {
         return (
           !this.hook?.event_tags?.agent_config_id ||
@@ -198,6 +201,7 @@ export default {
             : ''
         }
       },
+      loadingKey: 'loadingHook',
       skip() {
         return (
           !this.hook?.event_tags?.flow_sla_config_id ||
@@ -213,11 +217,15 @@ export default {
 </script>
 
 <template>
-  <v-card class="mb-2 headline " outlined>
+  <v-skeleton-loader
+    v-if="loadingHook > 0"
+    type="list-item-avatar-three-line"
+  ></v-skeleton-loader>
+  <v-card v-else class="mb-2 headline " outlined>
     <div class="text-right">
       <v-menu :close-on-content-click="false">
         <template #activator="{ on, attrs }">
-          <v-btn class="pa-8" icon title="More Actions" v-bind="attrs" v-on="on"
+          <v-btn class="px-8" icon title="More Actions" v-bind="attrs" v-on="on"
             ><v-icon>more_horiz</v-icon></v-btn
           ></template
         >
@@ -227,19 +235,22 @@ export default {
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               text
               :loading="deletingHook"
+              width="100%"
               color="secondaryGray"
               @click="deleteHook"
-              ><v-icon class="pr-4">delete</v-icon> Delete Action</v-btn
+              ><v-icon class="pr-4">delete</v-icon> Delete</v-btn
             ></div
           >
-          <div>
-            <v-btn
+          <div
+            ><v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               text
+              width="100%"
               color="secondaryGray"
               @click="editHook"
-              ><v-icon class="pr-4">edit</v-icon> Edit Action</v-btn
-            ></div
+              ><v-icon class="pl-0 pr-4">edit</v-icon>
+              <span class="pr-2">Edit</span>
+            </v-btn></div
           >
         </v-card></v-menu
       ></div
@@ -253,7 +264,8 @@ export default {
         <span class="font-weight-bold">{{ hookName }}</span>
         {{ hookDetail
         }}<span v-if="includeSeconds">
-          for <span class="font-weight-bold">{{ seconds }} seconds</span> </span
+          for
+          <span class="font-weight-bold">{{ seconds }} seconds</span> </span
         ><span v-if="includeTo">
           <span>{{ hookStates }}</span></span
         >, then <span class="font-weight-bold">{{ hookAction }}</span

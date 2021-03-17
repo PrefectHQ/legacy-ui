@@ -52,6 +52,7 @@ export const actionTypes = [
   {
     title: 'Email',
     type: 'EMAIL',
+    verb: 'email',
     icon: 'fas fa-envelope',
     config: { to: null },
     requiresCloud: true
@@ -59,6 +60,7 @@ export const actionTypes = [
   {
     title: 'Slack',
     type: 'SLACK_WEBHOOK',
+    verb: 'slack',
     icon: 'fab fa-slack',
     config: { url: null },
     requiresCloud: false
@@ -66,6 +68,7 @@ export const actionTypes = [
   {
     title: 'Twilio',
     type: 'TWILIO',
+    verb: 'twilio',
     icon: '$twilio',
     config: {
       account_sid: null,
@@ -78,6 +81,7 @@ export const actionTypes = [
   {
     title: 'Pager Duty',
     type: 'PAGERDUTY',
+    verb: 'PagerDuty',
     icon: '$pagerDuty',
     config: { routing_key: null, api_token: null, severity: [] },
     requiresCloud: false
