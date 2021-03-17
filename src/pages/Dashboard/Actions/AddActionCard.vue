@@ -30,17 +30,14 @@ export default {
       openActions: false,
       removeDoThisDialog: false,
       flowNamesList: this.hookDetail?.flowNameList || [],
-      allFlows: false,
       hookDetails: this.hookDetail,
       project: null,
       stateGroups: [...Object.keys(STATES), 'Custom'],
       states: STATES,
-      stateSelected: false,
-      selectedStateGroup: null,
+      stateName: 'All',
       agentFlowOrSomethingElse: '',
       selectedAgent: null,
       chosenStates: this.hookDetail?.hook?.event_tags?.state || STATES['All'],
-      stateNames: this.hookDetail?.hook?.event_tags?.state || '',
       disableClick: true,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
@@ -67,6 +64,9 @@ export default {
       return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
         a.name > b.name ? 1 : -1
       )
+    },
+    allFlows() {
+      return this.selectedFlows?.length === this.flows.length
     },
     agentOrFlow() {
       if (this.hookDetails?.flowName) return 'flow'
@@ -106,9 +106,13 @@ export default {
         : this.flowNamesList.toString() || this.agentOrFlow
     },
     hookStates() {
-      return this.stateNames === 'All'
-        ? ''
-        : this.stateNames.toString().toLowerCase() || 'state'
+      return this.stateName === 'All'
+        ? 'any state'
+        : this.stateName === 'Custom'
+        ? this.chosenStates.length != 1
+          ? 'selected states'
+          : this.chosenStates.toString().toLowerCase()
+        : this.stateName
     },
     hookAction() {
       return (
@@ -211,6 +215,7 @@ export default {
     // },
     selectFlow(event, flow) {
       if (
+        flow &&
         this.selectedFlows?.find(
           item => item.flow_group_id === flow.flow_group_id
         )
@@ -219,9 +224,17 @@ export default {
           item => item.flow_group_id != flow.flow_group_id
         )
       } else {
-        this.selectedFlows.push(flow)
-        if (!event.shiftKey) {
-          this.switchStep('selectEventType')
+        if (flow) this.selectedFlows.push(flow)
+        if (!event?.shiftKey) {
+          if (this.selectedFlows.length > 1) {
+            this.flowEventType = {
+              name: 'changes state',
+              enum: 'CHANGES_STATE'
+            }
+            this.switchStep('selectState')
+          } else {
+            this.switchStep('selectEventType')
+          }
         }
       }
       this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
@@ -230,12 +243,15 @@ export default {
       if (!this.allFlows) {
         this.selectedFlows = this.flows
         this.flowNamesList = ['any flow']
-        this.allFlows = true
-        this.switchStep('selectEventType')
+
+        this.flowEventType = {
+          name: 'changes state',
+          enum: 'CHANGES_STATE'
+        }
+        this.switchStep('selectState')
       } else {
         this.selectedFlows = []
         this.flowNamesList = []
-        this.allFlows = false
       }
     },
     selectFlowEventType(type) {
@@ -247,13 +263,11 @@ export default {
         : this.switchStep('selectDoThis')
     },
     selectStateGroup(group) {
-      this.stateSelected = true
+      this.stateName = group
       if (group !== 'Custom') {
         this.disableClick = true
-        this.stateNames = group
         this.chosenStates = this.states[group]
       } else {
-        this.stateNames = 'selected States'
         this.chosenStates = []
         this.disableClick = false
       }
@@ -266,7 +280,6 @@ export default {
             item => item != state && item.toUpperCase() != state
           ))
         : this.chosenStates.push(state)
-      if (this.chosenStates.length < 2) this.stateNames = state
     },
     selectAction(action) {
       this.chosenAction = action
@@ -581,7 +594,7 @@ export default {
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class="px-0 pb-1 headline"
               text
-              :disabled="agentOrFlow === 'agent'"
+              :disabled="agentOrFlow === 'agent' || chosenStates.length > 1"
               :color="step === 'selectEventType' ? 'codePink' : 'grey'"
               @click="switchStep('selectEventType')"
             >
@@ -602,7 +615,7 @@ export default {
               seconds</span
             ></span
           ><span v-if="includeTo">
-            {{ hookStates || !stateSelected ? 'to' : '' }}
+            to
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class=" px-0 pb-1 headline"
@@ -690,7 +703,7 @@ export default {
             @click="selectAllFlows"
           >
             <v-icon>pi-flow</v-icon>
-            Select all flows
+            {{ allFlows ? 'De-select all flows' : 'Select all flows' }}
           </v-chip>
           <v-chip
             small
@@ -698,7 +711,7 @@ export default {
             color="primary"
             title="Next"
             class="mx-1"
-            @click="switchStep('selectEventType')"
+            @click="selectFlow"
           >
             Next
             <v-icon small>call_made</v-icon>
@@ -772,10 +785,9 @@ export default {
           <v-btn
             x-small
             class="text-normal"
-            depressed
             color="primary"
             title="Next"
-            dark
+            :disabled="chosenStates.length < 1"
             @click="switchStep('selectDoThis')"
           >
             Next

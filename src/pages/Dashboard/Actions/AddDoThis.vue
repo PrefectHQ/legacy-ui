@@ -453,7 +453,6 @@ export default {
             depressed
             color="primary"
             title="Next"
-            dark
             @click="switchStep('addName')"
           >
             Next
@@ -522,7 +521,6 @@ export default {
           depressed
           color="primary"
           title="Next"
-          dark
           @click="switchStep('addName')"
         >
           Next

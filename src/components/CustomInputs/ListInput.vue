@@ -114,7 +114,6 @@ export default {
         depressed
         color="primary"
         title="Next"
-        dark
         @click="close"
       >
         Next
