@@ -8,9 +8,7 @@ import {
   getUser,
   idToken,
   accessToken,
-  setTokens,
-  signOut,
-  OktaAuth
+  signOut
 } from '@okta/okta-auth-js'
 jest.mock('@okta/okta-auth-js')
 
@@ -24,7 +22,6 @@ auth.mutations['user/setOktaUser'] = jest.fn()
 import {
   MOCK_AUTHORIZATION_TOKEN,
   MOCK_ID_TOKEN,
-  MOCK_ID_TOKEN_2,
   MOCK_REFRESH_TOKEN,
   MOCK_PREFECT_AUTH_PAYLOAD
 } from './mockTokens'
