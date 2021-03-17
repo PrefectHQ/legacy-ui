@@ -34,12 +34,26 @@ const logrocketPlugin = createPlugin(LogRocket, mutation => {
   return mutation
 })
 
+let authActions
+
+// Checks that we'll be able to install service workers
+if (typeof Worker !== 'undefined') {
+  authActions = require('@/store/auth/actions.js').default.actions
+} else {
+  // eslint-disable-next-line no-console
+  console.log(
+    "Shared service worker couldn't be registered, falling back to legacy auth pattern."
+  )
+  authActions = require('@/store/auth/legacy-actions.js').default.actions
+  auth.state.legacy = true
+}
+
 const store = new Vuex.Store({
   modules: {
     agent,
     alert,
     api,
-    auth,
+    auth: { ...auth, actions: authActions },
     data,
     license,
     refresh,
