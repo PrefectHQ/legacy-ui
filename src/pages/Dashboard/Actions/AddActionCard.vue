@@ -539,11 +539,13 @@ export default {
       >
       <v-col cols="6" class="text-right"
         ><v-btn
-          class="mr-3"
+          class="mr-3 mt-2"
           color="primary"
+          elevation="0"
           :disabled="!completeAction"
           @click="createHook"
-          ><v-icon class="pr-2">save_alt</v-icon>Save</v-btn
+          ><i class="far fa-cloud-upload-alt fa-lg"></i>
+          <span class="pl-2">Save</span></v-btn
         ></v-col
       >
     </v-row>
@@ -623,7 +625,11 @@ export default {
         </v-col>
       </v-row>
     </v-card>
-    <v-card v-if="step === 'openAgentOrFlow'" elevation="0" class="ml-6 pb-2">
+    <v-card
+      v-if="step === 'openAgentOrFlow'"
+      elevation="0"
+      class="ml-6 pb-4 pt-2"
+    >
       <v-chip
         v-for="item in ['flow', 'agent']"
         :key="item"
@@ -699,28 +705,40 @@ export default {
           </v-chip>
         </div>
       </v-card-title>
-      <v-card-subtitle class="caption mx-4 py-1"
+      <v-card-subtitle class="caption mx-4 pt-1 pb-2"
         >Hint: Shift-click to select multiple flows</v-card-subtitle
       >
       <v-card-text>
-        <v-chip
-          v-for="item in flows"
-          :key="item.id"
-          label
-          :style="{ width: '200px', height: '60px' }"
-          title="Press shift to select multiple flows"
-          :color="includesFlow(item) ? 'pink' : ''"
-          class="ma-1"
-          outlined
-          @click="selectFlow($event, item)"
-          ><truncate :content="`${item.name} - ${item.project.name}`"
-            ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
-            ><div class="font-weight-bold">{{ item.name }}</div></truncate
-          ></v-chip
-        >
+        <v-row class="px-4">
+          <v-col
+            v-for="item in flows"
+            :key="item.id"
+            cols="6"
+            sm="3"
+            lg="2"
+            class="px-1 py-0 "
+          >
+            <v-chip
+              label
+              :style="{ width: '100%', height: '60px' }"
+              title="Press shift to select multiple flows"
+              :color="includesFlow(item) ? 'pink' : ''"
+              class="ma-1"
+              outlined
+              @click="selectFlow($event, item)"
+              ><truncate :content="`${item.name} - ${item.project.name}`"
+                ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
+                ><div class="font-weight-bold">{{ item.name }}</div></truncate
+              ></v-chip
+            ></v-col
+          >
+        </v-row>
       </v-card-text>
     </v-card>
-    <v-card v-else-if="step === 'selectEventType'" elevation="0" class="pa-2"
+    <v-card
+      v-else-if="step === 'selectEventType'"
+      elevation="0"
+      class="pb-4 pl-6 pt-2"
       ><span v-for="item in flowEventTypes" :key="item.enum">
         <span v-if="!disableChip(item)">
           <v-chip
@@ -738,14 +756,17 @@ export default {
       ><v-card-text>
         <v-text-field
           v-model="seconds"
-          class="width=300px"
           type="number"
           @keydown.enter="closeSeconds"
           @blur="closeSeconds"
         ></v-text-field>
       </v-card-text>
     </v-card>
-    <v-card v-else-if="step === 'selectState'" elevation="0" class="pa-2">
+    <v-card
+      v-else-if="step === 'selectState'"
+      elevation="0"
+      class="pl-6 pb-4 pt-2"
+    >
       <v-card-text>
         <div class="text-right">
           <v-btn
@@ -796,7 +817,11 @@ export default {
         </div>
       </v-card-text>
     </v-card>
-    <v-card v-else-if="step === 'selectDoThis'" elevation="0" class="pa-2">
+    <v-card
+      v-else-if="step === 'selectDoThis'"
+      elevation="0"
+      class="pb-4 pl-6 pt-2"
+    >
       <v-chip class="ma-1" color="primary" label @click="addNewAction"
         ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New Config
       </v-chip>
