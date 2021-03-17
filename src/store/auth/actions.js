@@ -26,7 +26,6 @@ const authorize = () =>
 
     channel.port1.onmessage = data => {
       channel.port1.close()
-      console.log('recieved data on port1', data)
       if (data.type == 'error') {
         rej(data)
       } else {
@@ -39,8 +38,6 @@ const authorize = () =>
 
 const actions = {
   async authenticate({ dispatch, commit, getters }) {
-    // authClient.authStateManager.unsubscribe(dispatch('authenticate'))
-
     const urlParams = new URLSearchParams(window?.location?.search)
     const invitationId = urlParams.get('invitation_id')
     const source = urlParams.get('partner_source')
@@ -76,7 +73,6 @@ const actions = {
       // authClient.authStateManager.subscribe(dispatch('authenticate'))
 
       if (tokens?.accessToken && tokens?.idToken) {
-        // dispatch('commitTokens', tokens)
         TokenWorker.port.postMessage({
           type: 'authentication',
           payload: tokens
@@ -110,8 +106,8 @@ const actions = {
     commit('user/setOktaUser', user, {
       root: true
     })
-
     const tokens = await authorize()
+
     if (tokens) {
       // Update authorization credentials if user is authorized
       await dispatch('updateAuthorizationTokens', tokens)
@@ -127,6 +123,8 @@ const actions = {
     return getters['authorizationToken']
   },
   async updateAuthenticationTokens({ commit }, payload) {
+    if (!payload.idToken || !payload.accessToken) return
+
     const idToken = payload.idToken
     const accessToken = payload.accessToken
 
@@ -134,12 +132,13 @@ const actions = {
 
     commit('accessToken', accessToken.value)
     commit('accessTokenExpiry', accessToken.expiresAt)
-
     commit('idToken', idToken.value)
     commit('idTokenExpiry', idToken.expiresAt)
+    commit('isAuthenticated', true)
   },
   async updateAuthorizationTokens({ commit }, payload) {
-    console.log('updating authorization tokens')
+    if (!payload.access_token || !payload.refresh_token) return
+
     commit('authorizationToken', payload.access_token)
     commit('refreshToken', payload.refresh_token)
     commit('authorizationTokenExpiry', new Date(payload.expires_at).getTime())

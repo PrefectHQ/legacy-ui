@@ -154,13 +154,10 @@ const connect = c => {
   const port = c.ports[0]
   ports.push(port)
 
-  // On new connection, publish the existing authenticationTokens, if they exist
-  if (state.authenticationTokens) {
-    port.postMessage({
-      type: 'authentication',
-      payload: state.authenticationTokens
-    })
-  }
+  // Immediately post tokens to the connection, if tokens are already in the store
+  if (state.authenticationTokens) port.postMessage({type: 'authentication', payload: state.authenticationTokens})
+  if (state.authorizationTokens) port.postMessage({type: 'authorization', payload: state.authorizationTokens})
+
 
   port.onmessage = e => {
     const type = e.data?.type
@@ -177,9 +174,10 @@ const connect = c => {
     }
 
     if (type == 'authorization') {
+      console.log('authorization request', state.authorizationTokens)
       // When a connection sends a request for authorization
       // we send the stored tokens back immediately, if they exist, via the attached message port;
-      if (state.authorizationToken) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
+      if (state.authorizationTokens) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
       else {
       // otherwise we start the authorization process, which will 
       // post the retrieved tokens to all channelPorts

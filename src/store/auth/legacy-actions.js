@@ -122,8 +122,6 @@ const actions = {
     commit('idTokenExpiry', idToken.expiresAt)
   },
   async refreshAuthorization(state) {
-    console.log('calling refresh', state)
-
     if (state.getters['isRefreshingAuthorization']) return
 
     await state.dispatch('updateAuthentication')

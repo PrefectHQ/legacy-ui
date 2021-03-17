@@ -170,6 +170,43 @@ Vue.component('HeightTransition', TransitionHeight)
 Vue.component('Truncate', TruncatedSpan)
 Vue.component('GetCloud', GetCloud)
 
+let TokenWorker
+
+if (typeof Worker !== 'undefined') {
+  // // Initializes the shared service worker that handles token refresh
+  TokenWorker = new SharedWorker('@/workers/token.worker.js', {
+    type: 'module'
+  })
+} else {
+  //not supported
+}
+
+if (TokenWorker?.port) {
+  TokenWorker.port.onmessage = e => {
+    const type = e.data?.type
+    const payload = e.data?.payload
+
+    if (type == 'authentication') {
+      store.dispatch('auth/updateAuthenticationTokens', payload)
+      return
+    }
+
+    if (type == 'authorization') {
+      store.dispatch('auth/updateAuthorizationTokens', payload)
+    }
+  }
+
+  // TODO: Implement error handling from the token worker
+  TokenWorker.port.onmessageerror = e => {
+    // eslint-disable-next-line no-console
+    console.log('Error message received from Token Worker', e)
+  }
+
+  TokenWorker.port.start()
+}
+
+export { TokenWorker }
+
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
 // It's a pretty heavy-handed approach to what we're trying
@@ -296,41 +333,3 @@ try {
   // eslint-disable-next-line no-console
   console.info('Unable to apply platform-specific scrollbar styles.')
 }
-
-let TokenWorker
-
-if (typeof Worker !== 'undefined') {
-  // // Initializes the shared service worker that handles token refresh
-  TokenWorker = new SharedWorker('@/workers/token.worker.js', {
-    type: 'module'
-  })
-  console.log(TokenWorker)
-} else {
-  //not supported
-}
-
-if (TokenWorker?.port) {
-  TokenWorker.port.onmessage = e => {
-    const type = e.data?.type
-    const payload = e.data?.payload
-
-    if (type == 'authentication') {
-      store.dispatch('auth/updateAuthenticationTokens', payload)
-      return
-    }
-
-    if (type == 'authorization') {
-      store.dispatch('auth/updateAuthorizationTokens', payload)
-    }
-  }
-
-  // TODO: Implement error handling from the token worker
-  TokenWorker.port.onmessageerror = e => {
-    // eslint-disable-next-line no-console
-    console.log('Message received from worker', e)
-  }
-
-  TokenWorker.port.start()
-}
-
-export { TokenWorker }

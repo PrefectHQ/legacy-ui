@@ -40,6 +40,7 @@ let authActions
 if (typeof Worker !== 'undefined') {
   authActions = require('@/store/auth/actions.js').default.actions
 } else {
+  // eslint-disable-next-line no-console
   console.log(
     "Shared service worker couldn't be registered, falling back to legacy auth pattern."
   )
