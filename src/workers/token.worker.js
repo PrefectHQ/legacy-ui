@@ -186,7 +186,6 @@ const connect = c => {
   const port = c.ports[0]
   ports.push(port)
 
-  console.log('connected', state.authenticationTokens)
 
   // Immediately post tokens to the connection, if tokens are already in the store
   if (state.authenticationTokens) port.postMessage({type: 'authentication', payload: state.authenticationTokens})
@@ -202,7 +201,6 @@ const connect = c => {
     // When a connection sends new authentication tokens
     // update the worker state and publish the new tokens to all connections
     if (type == 'authentication') {
-      console.log('authentication request', payload)
       state.authenticationTokens = payload
       postToConnections(e.data)
       restartAuthorizationInterval()
