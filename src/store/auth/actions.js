@@ -66,6 +66,11 @@ const actions = {
 
       const { tokens } = isLoginRedirect
         ? await authClient.token.parseFromUrl()
+        : isAuthenticated
+        ? {
+            idToken: await authClient.tokenManager.get('idToken'),
+            accessToken: await authClient.tokenManager.get('accessToken')
+          }
         : {
             tokens: await authClient.tokenManager.getTokens()
           }
@@ -77,9 +82,7 @@ const actions = {
           type: 'authentication',
           payload: tokens
         })
-        commit('isAuthenticated', true)
-      } else if (isAuthenticated) {
-        await dispatch('updateAuthentication')
+        await dispatch('updateAuthenticationTokens', tokens)
       } else {
         commit('isAuthenticated', false)
         await dispatch('login')
