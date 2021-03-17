@@ -194,6 +194,15 @@ if (TokenWorker?.port) {
     if (type == 'authorization') {
       store.dispatch('auth/updateAuthorizationTokens', payload)
     }
+
+    if (
+      type == 'switch-tenant' &&
+      store.getters['tenant/tenant']?.id !== payload.tenantId &&
+      !store.getters['tenant/isLoadingTenant']
+    ) {
+      store.dispatch('tenant/setCurrentTenant', payload.slug)
+      router.push({ name: 'team-switched' })
+    }
   }
 
   // TODO: Implement error handling from the token worker

@@ -38,6 +38,9 @@ export default {
       groupText: null,
       hovered: null,
       hoveredId: null,
+      breaklineUnwatch: null,
+      itemUnwatch: null,
+      visibleUnwatch: null,
       loadingInterval: null,
       loadingItems: [],
       nowLine: null,
@@ -99,27 +102,11 @@ export default {
     }
   },
   watch: {
-    breaklines: debounce(function() {
-      if (!this.chart) this.createChart()
-      if (this.loading || !this.visible) return
-      this.updateBreaklines()
-    }, 500),
-    items: {
-      deep: true,
-      handler: debounce(function() {
-        this.updateChart()
-      }, 500)
-    },
     normalize() {
       this.updateChart()
     },
     restrictOutliers() {
       this.updateChart()
-    },
-    visible(val) {
-      if (val) {
-        this.resizeChart()
-      }
     }
   },
   mounted() {
@@ -134,13 +121,41 @@ export default {
     })
 
     this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
+
+    this.breaklineUnwatch = this.$watch(
+      'breaklines',
+      debounce(function() {
+        if (!this.chart) this.createChart()
+        if (this.loading || !this.visible) return
+        this.updateBreaklines()
+      }, 500)
+    )
+    this.itemUnwatch = this.$watch(
+      'items',
+      debounce(function() {
+        this.updateChart()
+      }, 500),
+      { deep: true }
+    )
+
+    this.visibleUnwatch = this.$watch('visible', val => {
+      if (val) {
+        this.resizeChart()
+      }
+    })
   },
   updated() {
     if (!this.chart) this.createChart()
   },
-  beforeDestroy() {
+  destroyed() {
     clearTimeout(this.loadingInterval)
+
     window.removeEventListener('resize', this.resizeChart)
+    window.removeEventListener('visibilitychange', this.handleVisbilityChange)
+
+    this.itemUnwatch()
+    this.breaklineUnwatch()
+    this.visibleUnwatch()
   },
   methods: {
     calcHeight(d) {
@@ -336,6 +351,7 @@ export default {
       context.stroke()
     },
     drawCanvas() {
+      if (!this.computedStyle) return
       const context = this.canvas.node().getContext('2d')
 
       context.save()
@@ -507,22 +523,21 @@ export default {
           }
         )
     },
+    handleVisbilityChange() {
+      if (document.visibilityState === 'visible') {
+        this.updateChart()
+        window.removeEventListener(
+          'visibilitychange',
+          this.handleVisbilityChange
+        )
+        this.visibilityListenerAdded = false
+      }
+    },
     updateChart() {
       if (document.hidden) {
         if (this.visibilityListenerAdded) return
-        const handleVisbilityChange = () => {
-          if (document.visibilityState === 'visible') {
-            this.updateChart()
-            document.removeEventListener(
-              'visibilitychange',
-              handleVisbilityChange
-            )
-            this.visibilityListenerAdded = false
-          }
-        }
-        document.addEventListener('visibilitychange', handleVisbilityChange)
+        window.addEventListener('visibilitychange', this.handleVisbilityChange)
         this.visibilityListenerAdded = true
-
         return
       }
 

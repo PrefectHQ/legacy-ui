@@ -45,7 +45,7 @@ export default {
       'tasks',
       'activeTaskId'
     ]),
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'isLoadingTenant']),
     activeIds() {
       return [
         this.activeFlowId,
@@ -176,6 +176,7 @@ export default {
     updateItems() {
       this.items = [
         ...(this.projects ?? [])
+          .filter(p => p.tenant_id == this.tenant.id)
           .map(project => {
             const val = {
               id: project.id,
@@ -269,7 +270,7 @@ export default {
         >
           <div class="pa-0 mx-4">
             <tree
-              v-if="projects && projects.length > 0"
+              v-if="!isLoadingTenant && projects && projects.length > 0"
               ref="tree"
               class="px-4"
               :active-ids="activeIds"
@@ -281,7 +282,9 @@ export default {
               @select="handleSelect"
             />
 
-            <div v-else-if="projects && projects.length === 0">
+            <div
+              v-else-if="!isLoadingTenant && projects && projects.length === 0"
+            >
               <div class="text-subtitle-1">You have no projects</div>
 
               <v-btn

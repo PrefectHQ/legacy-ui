@@ -2,5 +2,6 @@ query Projects {
   project {
     id
     name
+    tenant_id
   }
 }

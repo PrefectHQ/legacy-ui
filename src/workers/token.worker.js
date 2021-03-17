@@ -11,7 +11,8 @@ const channelPorts = []
 
 const state = {
   authenticationTokens: null,
-  authorizationTokens: null
+  authorizationTokens: null,
+  tenantId: null
 }
 
 const cache = new InMemoryCache()
@@ -88,9 +89,11 @@ const client = new ApolloClient({name: 'token-worker-client', version: '1.3', ..
 
 let interval = null
 const restartAuthorizationInterval = () => {
-  clearInterval(interval)
+  clearTimeout(interval)
 
-  interval = setInterval(async () => {
+  const id = state.tenantId
+
+  interval = setTimeout(async () => {
     if (state.authorizationTokens) {
       const result = await client.mutate({
         mutation: require('@/graphql/refresh-token.gql'),
@@ -106,11 +109,17 @@ const restartAuthorizationInterval = () => {
         fetchPolicy: 'no-cache'
       })
 
+      // If the tenant id has changed since this
+      // method was instantiated, we don't broadcast token
+      // refresh updates
+      if (state.tenantId !== id) return
       state.authorizationTokens = result.data.refresh_token
       postToConnections({
         type: 'authorization',
         payload: result.data.refresh_token
       })
+
+      interval = setTimeout(restartAuthorizationInterval, 5000)
     }
   }, 5000)
 }
@@ -137,6 +146,29 @@ const getAuthorizationTokens = async () => {
     authorizationInProgress = false
 }
 
+const switchTenant = async payload => {
+  state.tenantId = payload.tenantId
+
+  const result = await client.mutate({
+    mutation: require('@/graphql/Tenant/tenant-token.gql'),
+      variables: {
+        tenantId: payload.tenantId
+      },
+      context: {
+        headers: {
+          ...headers,
+          authorization: `Bearer ${state.authorizationTokens.access_token}`
+        }
+      },
+      fetchPolicy: 'no-cache'
+  })
+  
+  state.authorizationTokens = result.data.switch_tenant
+  postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
+  postToConnections({type: 'switch-tenant', payload: payload})
+  restartAuthorizationInterval()
+}
+
 const postToConnections = payload => {
   for (let i = 0; i < ports.length; ++i) {
     ports[i].postMessage(payload)
@@ -145,7 +177,7 @@ const postToConnections = payload => {
 
 const postToChannelPorts = payload => {
   for (let i = 0; i < ports.length; ++i) {
-    channelPorts[i].postMessage(payload)
+    channelPorts[i]?.postMessage(payload)
   }
   channelPorts.length = 0
 }
@@ -153,6 +185,7 @@ const postToChannelPorts = payload => {
 const connect = c => {
   const port = c.ports[0]
   ports.push(port)
+
 
   // Immediately post tokens to the connection, if tokens are already in the store
   if (state.authenticationTokens) port.postMessage({type: 'authentication', payload: state.authenticationTokens})
@@ -162,19 +195,19 @@ const connect = c => {
   port.onmessage = e => {
     const type = e.data?.type
     const channelPort = e.ports[0]
+    const payload = e.data?.payload
 
 
     // When a connection sends new authentication tokens
     // update the worker state and publish the new tokens to all connections
     if (type == 'authentication') {
-      state.authenticationTokens = e.data.payload
+      state.authenticationTokens = payload
       postToConnections(e.data)
       restartAuthorizationInterval()
       return
     }
 
     if (type == 'authorization') {
-      console.log('authorization request', state.authorizationTokens)
       // When a connection sends a request for authorization
       // we send the stored tokens back immediately, if they exist, via the attached message port;
       if (state.authorizationTokens) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
@@ -183,6 +216,16 @@ const connect = c => {
       // post the retrieved tokens to all channelPorts
         channelPorts.push(channelPort)
         if (!authorizationInProgress) getAuthorizationTokens()
+      }
+    }
+
+    if (type == 'switch-tenant') {
+      // Allows swapping tokens by a payload tenant id
+      // and propagates change to all connections if the switch call is new
+      if (state.tenantId == payload.tenantId) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
+      else {
+        channelPorts.push(channelPort)
+        switchTenant(payload)
       }
     }
 
