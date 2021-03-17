@@ -147,11 +147,11 @@ export default {
   updated() {
     if (!this.chart) this.createChart()
   },
-  destroyed() {
+  beforeDestroy() {
     clearTimeout(this.loadingInterval)
 
     window.removeEventListener('resize', this.resizeChart)
-    window.removeEventListener('visibilitychange', this.handleVisbilityChange)
+    window.removeEventListener('visibilitychange', this.handleVisibilityChange)
 
     this.itemUnwatch()
     this.breaklineUnwatch()
@@ -304,7 +304,11 @@ export default {
           bar.height = bar.height0 * (1 - t) + bar.height1 * t
         })
 
-        requestAnimationFrame(this.drawCanvas)
+        try {
+          requestAnimationFrame(this.drawCanvas)
+        } catch {
+          this.timer.stop()
+        }
 
         if (t === 1 || document.hidden) {
           this.timer.stop()
@@ -351,7 +355,6 @@ export default {
       context.stroke()
     },
     drawCanvas() {
-      if (!this.computedStyle) return
       const context = this.canvas.node().getContext('2d')
 
       context.save()
@@ -429,6 +432,8 @@ export default {
       this.updateChart()
     },
     updateBreaklines() {
+      if (!this.x) return
+
       this.groupBreaklines
         .selectAll('.breaklines-group')
         .data(this.loading ? [] : this.breaklines)
@@ -523,20 +528,23 @@ export default {
           }
         )
     },
-    handleVisbilityChange() {
+    handleVisibilityChange() {
       if (document.visibilityState === 'visible') {
-        this.updateChart()
+        if (this.$el) {
+          requestAnimationFrame(this.updateChart)
+        }
+
         window.removeEventListener(
           'visibilitychange',
-          this.handleVisbilityChange
+          this.handleVisibilityChange
         )
         this.visibilityListenerAdded = false
       }
     },
     updateChart() {
       if (document.hidden) {
-        if (this.visibilityListenerAdded) return
-        window.addEventListener('visibilitychange', this.handleVisbilityChange)
+        if (this.visibilityListenerAdded || !this.$el) return
+        window.addEventListener('visibilitychange', this.handleVisibilityChange)
         this.visibilityListenerAdded = true
         return
       }
