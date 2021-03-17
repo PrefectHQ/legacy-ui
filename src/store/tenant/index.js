@@ -1,4 +1,5 @@
 import { fallbackApolloClient } from '@/vue-apollo'
+import { prefectTenants } from '@/middleware/prefectAuth'
 
 const state = {
   defaultTenant: null,
@@ -104,14 +105,8 @@ const mutations = {
 const actions = {
   async getTenants({ commit, getters, rootGetters }) {
     try {
-      const tenants = await fallbackApolloClient.query({
-        query: require('@/graphql/Tenant/tenants.js').default(
-          rootGetters['api/isCloud']
-        ),
-        fetchPolicy: 'no-cache'
-      })
-
-      commit('setTenants', tenants.data.tenant)
+      const tenants = await prefectTenants(rootGetters['api/isCloud'])
+      commit('setTenants', tenants)
 
       // Make sure the current tenant object is updated
       if (getters['tenantIsSet']) {
