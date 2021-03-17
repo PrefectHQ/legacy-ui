@@ -623,7 +623,7 @@ export default {
         </v-col>
       </v-row>
     </v-card>
-    <v-card v-if="step === 'openAgentOrFlow'" elevation="0" class="pa-2">
+    <v-card v-if="step === 'openAgentOrFlow'" elevation="0" class="ml-6 pb-2">
       <v-chip
         v-for="item in ['flow', 'agent']"
         :key="item"
@@ -674,18 +674,29 @@ export default {
           style="min-width: 400px;"
         />
         <div class="text-right">
-          <v-btn
-            x-small
-            class="text-normal"
-            depressed
+          <v-chip
+            v-if="!searchEntry"
+            color="primary"
+            label
+            small
+            max-width="300px"
+            class="mx-1"
+            @click="selectAllFlows"
+          >
+            <v-icon>pi-flow</v-icon>
+            Select all flows
+          </v-chip>
+          <v-chip
+            small
+            label
             color="primary"
             title="Next"
-            dark
+            class="mx-1"
             @click="switchStep('selectEventType')"
           >
             Next
             <v-icon small>call_made</v-icon>
-          </v-btn>
+          </v-chip>
         </div>
       </v-card-title>
       <v-card-subtitle class="caption mx-4 py-1"
@@ -693,31 +704,18 @@ export default {
       >
       <v-card-text>
         <v-chip
-          v-if="!searchEntry"
-          color="primary"
-          label
-          max-width="300px"
-          class="ma-1"
-          @click="selectAllFlows"
-        >
-          <v-icon>pi-flow</v-icon>
-          Select all flows
-        </v-chip>
-        <v-chip
           v-for="item in flows"
           :key="item.id"
           label
-          style="width: 200px;"
+          :style="{ width: '200px', height: '60px' }"
           title="Press shift to select multiple flows"
           :color="includesFlow(item) ? 'pink' : ''"
           class="ma-1"
           outlined
           @click="selectFlow($event, item)"
           ><truncate :content="`${item.name} - ${item.project.name}`"
-            >{{ item.name
-            }}<span class="font-weight-light pl-1">
-              ({{ item.project.name }})</span
-            ></truncate
+            ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
+            ><div class="font-weight-bold">{{ item.name }}</div></truncate
           ></v-chip
         >
       </v-card-text>
