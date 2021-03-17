@@ -3,6 +3,7 @@ import { mapActions, mapGetters } from 'vuex'
 import ExternalLink from '@/components/ExternalLink'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin.js'
+import { shuffle } from '@/utils/array'
 
 export default {
   components: { ExternalLink },
@@ -49,6 +50,13 @@ export default {
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
+    },
+    shuffledOptions() {
+      let optionsCopy = [...this.options]
+      let other = optionsCopy.pop()
+      let shuffledArray = shuffle(optionsCopy)
+
+      return [...shuffledArray, other]
     }
   },
   mounted() {
@@ -80,7 +88,6 @@ export default {
     ...mapActions('user', ['getUser']),
     async createLicense() {
       this.loading++
-
       try {
         // Create the stripe customer (necessary for creating a self serve license)
         await this.$apollo.mutate({
@@ -93,7 +100,6 @@ export default {
             }
           }
         })
-
         // Create the self serve license
         // await this.$apollo.mutate({
         //   mutation: require('@/graphql/License/create-self-serve-license.gql'),
@@ -125,16 +131,16 @@ export default {
       return
     },
     async updateTenant() {
+      // Async tenant checks
+      await this.checkNameAsync()
+      await this.checkSlugAsync()
+
       if (this.nameErrors.length > 0 || this.slugErrors.length > 0) {
         return
       }
 
       this.updateServerError = false
       this.loading++
-
-      // Async tenant checks
-      await this.checkNameAsync()
-      await this.checkSlugAsync()
 
       if (
         this.tenantChanges.slug == this.tenant.slug &&
@@ -159,11 +165,18 @@ export default {
 
           await this.getTenants()
         } catch (e) {
-          this.updateServerError = true
+          if (e.message.includes('Uniqueness violation')) {
+            this.slugErrors = ['Sorry, that slug is already in use.']
+          } else {
+            this.updateServerError = true
+          }
         }
       }
 
       this.loading--
+      if (this.slugErrors.length > 0) {
+        return
+      }
       await this.createLicense()
       if (!this.updateServerError) this.goToResources()
     },
@@ -313,15 +326,11 @@ export default {
                     you to use &mdash; this is a great place to test and deploy
                     flows as you explore Prefect. When you're ready to
                     collaborate with others, you can
-                    <ExternalLink
-                      href="https://www.prefect.io/get-prefect#pricing"
-                    >
+                    <ExternalLink href="https://www.prefect.io/pricing">
                       upgrade this team</ExternalLink
                     >
                     to invite more users or
-                    <ExternalLink
-                      href="https://www.prefect.io/get-prefect/#contact"
-                    >
+                    <ExternalLink href="https://www.prefect.io/pricing#contact">
                       contact us</ExternalLink
                     >
                     to add another team. For more information about teams in
@@ -441,9 +450,9 @@ export default {
               How did you hear about us?
             </div>
             <v-select
-              :items="options"
+              :items="shuffledOptions"
               dark
-              :menu-props="{ dark: true, maxHeight: 400 }"
+              :menu-props="{ maxHeight: 400 }"
               label="Options"
               @change="setSelectedOption"
             ></v-select>
