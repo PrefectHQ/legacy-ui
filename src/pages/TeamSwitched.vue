@@ -24,7 +24,13 @@ export default {
         this is an error, contact us at help@prefect.io
       </div>
 
-      <v-btn color="white" class="primary--text" depressed href="/" exact>
+      <v-btn
+        color="white"
+        class="primary--text"
+        depressed
+        href="/prefect/flow-run/1226aeaf-e5de-4ad5-9d06-3bdc198bb63d"
+        exact
+      >
         <v-icon>arrow_back_ios</v-icon>
         Back to the dashboard
       </v-btn>

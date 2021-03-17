@@ -100,6 +100,12 @@ export default {
       updateXTimeout: null,
       zoom: d3.zoom(),
 
+      breakpointsUnwatch: null,
+      endTimeUnwatch: null,
+      itemUnwatch: null,
+      liveUnwatch: null,
+      startTimeUnwatch: null,
+
       followEdge: true,
 
       // DOM refs
@@ -242,32 +248,6 @@ export default {
       )
     }
   },
-  watch: {
-    breakpoints: {
-      deep: true,
-      handler: debounce(function() {
-        if (this.pauseUpdates) return
-        this.updateBreakpoints(true)
-      }, 500)
-    },
-    endTime() {
-      this.updateScales()
-    },
-    items: {
-      deep: true,
-      handler: debounce(function() {
-        if (this.pauseUpdates) return
-        this.calcRows()
-        this.updateBars()
-      }, 500)
-    },
-    live(val) {
-      this.live_ = val
-    },
-    startTime() {
-      this.updateScales()
-    }
-  },
   mounted() {
     this.timer?.stop()
 
@@ -292,6 +272,35 @@ export default {
     this.canvas.on('mouseout', this.mouseout)
 
     this.live_ = this.live
+
+    this.breakpointsUnwatch = this.$watch(
+      'breakpoints',
+      debounce(function() {
+        if (this.pauseUpdates) return
+        this.updateBreakpoints(true)
+      }, 500)
+    )
+    this.itemUnwatch = this.$watch(
+      'items',
+      debounce(function() {
+        if (this.pauseUpdates) return
+        this.calcRows()
+        this.updateBars()
+      }, 500),
+      { deep: true }
+    )
+
+    this.endTimeUnwatch = this.$watch('endTime', () => {
+      this.updateScales()
+    })
+
+    this.liveUnwatch = this.$watch('live', val => {
+      this.live_ = val
+    })
+
+    this.startTimeUnwatch = this.$watch('startTime', () => {
+      this.updateScales()
+    })
   },
   beforeDestroy() {
     this.timer?.stop()
@@ -302,6 +311,12 @@ export default {
     this.canvas.on('mousemove', null)
     this.canvas.on('mouseout', null)
     this.xAxisNode.on('end', null)
+
+    this.itemUnwatch()
+    this.breakpointsUnwatch()
+    this.endTimeUnwatch()
+    this.liveUnwatch()
+    this.startTimeUnwatch()
   },
   methods: {
     rawCalcRows() {
