@@ -1,5 +1,11 @@
 <script>
-export default {}
+export default {
+  metaInfo() {
+    return {
+      titleTemplate: '%s - Team switched'
+    }
+  }
+}
 </script>
 
 <template>

@@ -422,7 +422,8 @@ export default {
         v-if="
           ((isCloud && isAuthenticated) || isServer) &&
             loadedComponents > 0 &&
-            !isWelcome
+            !isWelcome &&
+            $route.name !== 'team-switched'
         "
       />
 
