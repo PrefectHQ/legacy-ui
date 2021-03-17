@@ -105,14 +105,19 @@ export default {
       // Loading states
       isFetchingMembers: false,
       isRemovingUser: false,
-      isSettingRole: false,
-
-      // Inputs
-      roleInput: 'USER',
 
       // Selected user
       // Set when modifying a user's role or removing user membership
-      selectedUser: null
+      selectedUser: null,
+      isFetchingTokens: true,
+      expiresAt: null,
+      copyTokenDialog: false,
+      apiTokenCopied: false,
+      newAPIToken: '',
+      newTokenName: '',
+      keys: [],
+      tokenToDelete: null,
+      tokenToDeleteDialog: false
     }
   },
   computed: {
@@ -120,11 +125,18 @@ export default {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
         : this.allHeaders.filter(header => header.mobile)
+    },
+    localExpiryDate() {
+      return this.formDate('2100-01-01T00:00:00+00:00')
+    },
+    newTokenFormFilled() {
+      return !!this.newTokenName
     }
   },
   watch: {
     refetchSignal() {
       this.$apollo.queries.tenantUsers.refetch()
+      //this.$apollo.queries.keys.refetch()
     }
   },
   methods: {
@@ -137,21 +149,21 @@ export default {
         this.apiTokenCopied = false
       }, 2000)
     },
-    async createAPIToken(variables) {
+    async createAPIKey(variables) {
       const result = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tokens/create-api-token.gql'),
+        mutation: require('@/graphql/Tokens/create-api-key.gql'),
         variables
       })
 
       if (
-        result?.data?.create_api_token?.id &&
-        result?.data?.create_api_token?.token
+        result?.data?.create_api_key?.id &&
+        result?.data?.create_api_key?.key
       ) {
         this.resetNewToken()
-        this.newAPIToken = result.data.create_api_token.token
-        this.createTokenDialog = false
+        this.newAPIToken = result.data.create_api_key.key
+        this.dialogCreateToken = false
         this.copyTokenDialog = true
-        this.$apollo.queries.tokens.refetch()
+        this.$apollo.queries.keys.refetch()
       } else {
         this.handleAlert(
           'error',
@@ -170,13 +182,27 @@ export default {
       if (result?.data?.delete_api_token?.success) {
         this.tokenToDeleteDialog = false
         this.handleAlert('success', 'The token has been successfully revoked.')
-        this.$apollo.queries.tokens.refetch()
+        // this.$apollo.queries.tokens.refetch()
       } else {
         this.handleAlert(
           'error',
           'Something went wrong while trying to delete your token. Please try again. If this error persists, please contact help@prefect.io.'
         )
       }
+    },
+    handleAlert(type, message) {
+      this.alertType = type
+      this.alertMessage = message
+      this.alertShow = true
+    },
+    resetNewToken() {
+      this.newTokenName = ''
+      this.newTokenScope = ''
+      this.newAPIToken = ''
+      this.expiresAt = null
+    },
+    setExpiry(dateTime) {
+      this.expiresAt = dateTime
     },
     async removeUser(membershipId) {
       this.isRemovingUser = true
@@ -251,6 +277,28 @@ export default {
       skip() {
         return !this.tenant
       }
+    },
+    keys: {
+      query: require('@/graphql/Tokens/api-keys.gql'),
+      fetchPolicy: 'network-only',
+      error() {
+        this.handleAlert(
+          'error',
+          'Something went wrong while trying to fetch your keys. Please refresh the page and try again. If this error persists, please email help@prefect.io.'
+        )
+      },
+      result({ data }) {
+        console.log(data.auth_api_key)
+        this.keys = data.auth_api_key.map(key => {
+          return {
+            name: key.name,
+            created_at: key.created,
+            expires: key.expires_at
+          }
+        })
+        this.isFetchingTokens = false
+      },
+      update: data => data
     }
   }
 }
@@ -287,7 +335,6 @@ export default {
           small
           color="primary"
           class="white--text"
-          v-on="on"
           @click="
             selectedUser = item
             dialogViewTokens = true
@@ -341,15 +388,14 @@ export default {
     <ConfirmDialog
       v-model="dialogCreateToken"
       :dialog-props="{ 'max-width': '500' }"
-      :confirm-props="{ 'data-cy': 'submit-new-api-token' }"
       :disabled="!newTokenFormFilled"
       title="Create an API token"
       confirm-text="Create"
       @cancel="resetNewToken"
       @confirm="
-        createAPIToken({
+        createAPIKey({
+          user_id: selectedUser.id,
           name: newTokenName,
-          scope: newTokenScope,
           expires_at: expiresAt
         })
       "
@@ -358,7 +404,6 @@ export default {
         v-model="newTokenName"
         class="mb-3"
         single-line
-        data-cy="new-api-token-name"
         placeholder="Token Name"
         autofocus
         outlined
@@ -380,13 +425,40 @@ export default {
       />
     </ConfirmDialog>
 
+    <!-- COPY TOKEN DIALOG -->
+    <ConfirmDialog
+      v-model="copyTokenDialog"
+      :dialog-props="{ 'max-width': '500' }"
+      title="Your token has been created"
+      :confirm-text="apiTokenCopied ? 'Copied' : 'Copy'"
+      cancel-text="Close"
+      @cancel="resetNewToken"
+      @confirm="copyNewToken"
+    >
+      <p>
+        Copy this token and put it in a secure place.
+        <strong>
+          You won't be able to see this token again once you close this dialog.
+        </strong>
+      </p>
+      <v-textarea
+        id="new-api-token"
+        v-model="newAPIToken"
+        data-private
+        class="_lr-hide"
+        auto-grow
+        rows="1"
+        readonly
+        outlined
+        spellcheck="false"
+      />
+    </ConfirmDialog>
+
     <!-- VIEW TOKENS DIALOG -->
 
     <v-dialog
       v-if="selectedUser"
       v-model="dialogViewTokens"
-      :disabled="isSettingRole"
-      :loading="isSettingRole"
       @cancel="dialogViewTokens = false"
       ><v-card>
         <v-card-title>{{ selectedUser.firstName }}'s Tokens</v-card-title>
@@ -394,7 +466,7 @@ export default {
           fixed-header
           :headers="tokenHeaders"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-          :items="membersItems"
+          :items="keys"
           :items-per-page="10"
           class="rounded-0 truncate-table"
           :footer-props="{
@@ -405,7 +477,7 @@ export default {
             prevIcon: 'keyboard_arrow_left',
             nextIcon: 'keyboard_arrow_right'
           }"
-          no-data-text="This team does not have any members yet."
+          no-data-text="This account doesn't have any keys yet."
         >
         </v-data-table>
       </v-card>
