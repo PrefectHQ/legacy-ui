@@ -88,9 +88,9 @@ const client = new ApolloClient({name: 'token-worker-client', version: '1.3', ..
 
 let interval = null
 const restartAuthorizationInterval = () => {
-  clearInterval(interval)
+  clearTimeout(interval)
 
-  interval = setInterval(async () => {
+  interval = setTimeout(async () => {
     if (state.authorizationTokens) {
       const result = await client.mutate({
         mutation: require('@/graphql/refresh-token.gql'),
@@ -111,6 +111,8 @@ const restartAuthorizationInterval = () => {
         type: 'authorization',
         payload: result.data.refresh_token
       })
+
+      interval = setTimeout(restartAuthorizationInterval, 5000)
     }
   }, 5000)
 }
@@ -135,6 +137,19 @@ const getAuthorizationTokens = async () => {
     state.authorizationTokens = result.data.log_in
     postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
     authorizationInProgress = false
+}
+
+const switchTenant = async payload => {
+  const result = await client.mutate({
+    mutation: require('@/graphql/Tenant/tenant-token.gql'),
+      variables: {
+        tenantId: payload
+      },
+      fetchPolicy: 'no-cache'
+  })
+
+  state.authorizationTokens = result.data.switch_tenant
+  postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
 }
 
 const postToConnections = payload => {
@@ -174,7 +189,6 @@ const connect = c => {
     }
 
     if (type == 'authorization') {
-      console.log('authorization request', state.authorizationTokens)
       // When a connection sends a request for authorization
       // we send the stored tokens back immediately, if they exist, via the attached message port;
       if (state.authorizationTokens) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
@@ -184,6 +198,12 @@ const connect = c => {
         channelPorts.push(channelPort)
         if (!authorizationInProgress) getAuthorizationTokens()
       }
+    }
+
+    if (type == 'switch-tenant') {
+      // Allows swapping tokens by a payload tenant id;
+      // this change will be propagated to all tabs
+      switchTenant(e.data.payload)
     }
 
     // If a logout signal is sent, unset the tokens on the worker state and
