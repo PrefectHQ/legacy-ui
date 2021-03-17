@@ -165,8 +165,6 @@ const actions = {
           fetchPolicy: 'no-cache'
         })
 
-        console.log('dispatching authorization token update')
-
         // Set our new auth token
         await dispatch(
           'auth/updateAuthorizationTokens',
@@ -175,8 +173,6 @@ const actions = {
             root: true
           }
         )
-
-        console.log('dispatching license update')
 
         // Get the current license
         await dispatch('license/getLicense', null, { root: true })
