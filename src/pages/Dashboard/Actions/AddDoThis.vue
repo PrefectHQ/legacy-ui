@@ -482,19 +482,18 @@ export default {
           :items="secretNames"
           label="Name of your PagerDuty API Token Secret"
         />
-
+        <v-select
+          v-model="severity"
+          :items="severityLevels"
+          label="Severity"
+          dense
+        />
         <v-text-field
           v-model="routingKey"
           :rules="[rules.required]"
           label="Integration key"
           dense
           class="mb-8"
-        />
-        <v-select
-          v-model="severity"
-          :items="severityLevels"
-          label="Severity"
-          dense
         />
       </div>
       <ListInput
@@ -550,23 +549,13 @@ export default {
           :items="secretNames"
           label="Name of Auth token Secret"
         />
-
-        <!-- <v-text-field
-          v-model="authToken"
-          class="my-8"
-          :rules="[rules.required]"
-          label="Name of Auth Token Secret"
-          dense
-        /> -->
-
         <v-text-field
           v-model="accountSid"
           :rules="[rules.required]"
           label="Account SID"
-          class="mb-8"
+          class="pb-2"
           dense
         />
-
         <v-text-field
           v-model="messagingService"
           :rules="[rules.required]"
