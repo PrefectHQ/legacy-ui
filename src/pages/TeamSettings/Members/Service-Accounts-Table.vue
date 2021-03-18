@@ -39,8 +39,8 @@ export default {
   data() {
     return {
       // Dialogs
-      dialogCreateToken: false,
-      dialogViewTokens: false,
+      dialogCreateKey: false,
+      dialogViewKeys: false,
       dialogRemoveUser: false,
 
       // Table headers
@@ -76,7 +76,7 @@ export default {
           width: '10%'
         }
       ],
-      tokenHeaders: [
+      keysHeaders: [
         {
           text: 'Name',
           value: 'name'
@@ -105,17 +105,17 @@ export default {
       isRemovingUser: false,
 
       // Selected user
-      // Set when modifying a user's role or removing user membership
+      // Set when removing account membership
       selectedUser: null,
-      isFetchingTokens: true,
+      isFetchingKeys: true,
       expiresAt: null,
-      copyTokenDialog: false,
-      apiTokenCopied: false,
-      newAPIToken: '',
-      newTokenName: '',
+      copyKeyDialog: false,
+      apiKeyCopied: false,
+      newAPIKey: '',
+      newKeyName: '',
       keys: [],
-      tokenToDelete: null,
-      dialogRemoveToken: false
+      keyToDelete: null,
+      dialogRemoveKey: false
     }
   },
   computed: {
@@ -124,8 +124,8 @@ export default {
         ? this.allHeaders
         : this.allHeaders.filter(header => header.mobile)
     },
-    newTokenFormFilled() {
-      return !!this.newTokenName
+    newKeyFormFilled() {
+      return !!this.newKeyName
     }
   },
   watch: {
@@ -134,13 +134,13 @@ export default {
     }
   },
   methods: {
-    copyNewToken() {
-      var copyText = document.querySelector('#new-api-token')
+    copyNewKey() {
+      var copyText = document.querySelector('#new-api-key')
       copyText.select()
       document.execCommand('copy')
-      this.apiTokenCopied = true
+      this.apiKeyCopied = true
       setTimeout(() => {
-        this.apiTokenCopied = false
+        this.apiKeyCopied = false
       }, 2000)
     },
     async createAPIKey(variables) {
@@ -153,34 +153,37 @@ export default {
         result?.data?.create_api_key?.id &&
         result?.data?.create_api_key?.key
       ) {
-        this.resetNewToken()
-        this.newAPIToken = result.data.create_api_key.key
-        this.dialogCreateToken = false
-        this.copyTokenDialog = true
+        this.resetNewKey()
+        this.newAPIKey = result.data.create_api_key.key
+        this.dialogCreateKey = false
+        this.copyKeyDialog = true
         this.$apollo.queries.keys.refetch()
       } else {
         this.handleAlert(
           'error',
-          'Something went wrong while trying to create your token. Please try again. If this error persists, please contact help@prefect.io.'
+          'Something went wrong while trying to create your API key. Please try again. If this error persists, please contact help@prefect.io.'
         )
       }
     },
-    async deleteToken(token) {
+    async deleteKey(key) {
       const result = await this.$apollo.mutate({
         mutation: require('@/graphql/Tokens/delete-api-key.gql'),
         variables: {
-          id: token.id
+          id: key.id
         }
       })
 
       if (result?.data?.delete_api_key?.success) {
-        this.dialogRemoveToken = false
-        this.handleAlert('success', 'The token has been successfully revoked.')
+        this.dialogRemoveKey = false
+        this.handleAlert(
+          'success',
+          'The API key has been successfully revoked.'
+        )
         this.$apollo.queries.keys.refetch()
       } else {
         this.handleAlert(
           'error',
-          'Something went wrong while trying to delete your token. Please try again. If this error persists, please contact help@prefect.io.'
+          'Something went wrong while trying to delete your API key. Please try again. If this error persists, please contact help@prefect.io.'
         )
       }
     },
@@ -189,10 +192,10 @@ export default {
       this.alertMessage = message
       this.alertShow = true
     },
-    resetNewToken() {
-      this.newTokenName = ''
-      this.newTokenScope = ''
-      this.newAPIToken = ''
+    resetNewKey() {
+      this.newKeyName = ''
+      this.newKeyScope = ''
+      this.newAPIKey = ''
       this.expiresAt = null
     },
     async removeAccount(id) {
@@ -260,7 +263,7 @@ export default {
       error() {
         this.handleAlert(
           'error',
-          'Something went wrong while trying to fetch your keys. Please refresh the page and try again. If this error persists, please email help@prefect.io.'
+          'Something went wrong while trying to fetch your API keys. Please refresh the page and try again. If this error persists, please email help@prefect.io.'
         )
       },
       result({ data }) {
@@ -273,7 +276,7 @@ export default {
             user_id: key.user_id
           }
         })
-        this.isFetchingTokens = false
+        this.isFetchingKeys = false
       },
       update: data => data
     }
@@ -299,8 +302,8 @@ export default {
         nextIcon: 'keyboard_arrow_right'
       }"
       :search="search"
-      no-results-text="No members found. Try expanding your search?"
-      no-data-text="This team does not have any members yet."
+      no-results-text="No service accounts found. Try expanding your search?"
+      no-data-text="This team does not have any service accounts yet."
     >
       <!-- HEADERS -->
       <template #header.firstName="{ header }">
@@ -314,11 +317,11 @@ export default {
           class="white--text"
           @click="
             selectedUser = item
-            dialogViewTokens = true
+            dialogViewKeys = true
           "
         >
           <v-icon left>visibility</v-icon>
-          View Tokens
+          View API Keys
         </v-btn>
       </template>
 
@@ -329,12 +332,12 @@ export default {
           class="white--text"
           @click="
             selectedUser = item
-            dialogCreateToken = true
+            dialogCreateKey = true
           "
           ><v-icon left>
             add
           </v-icon>
-          Create Token
+          Create API Key
         </v-btn>
       </template>
 
@@ -361,27 +364,27 @@ export default {
       </template>
     </v-data-table>
 
-    <!-- CREATE TOKEN DIALOG -->
+    <!-- CREATE KEY DIALOG -->
     <ConfirmDialog
-      v-model="dialogCreateToken"
+      v-model="dialogCreateKey"
       :dialog-props="{ 'max-width': '500' }"
-      :disabled="!newTokenFormFilled"
-      title="Create an API token"
+      :disabled="!newKeyFormFilled"
+      title="Create an API key"
       confirm-text="Create"
-      @cancel="resetNewToken"
+      @cancel="resetNewKey"
       @confirm="
         createAPIKey({
           user_id: selectedUser.id,
-          name: newTokenName,
+          name: newKeyName,
           expires_at: expiresAt
         })
       "
     >
       <v-text-field
-        v-model="newTokenName"
+        v-model="newKeyName"
         class="mb-3"
         single-line
-        placeholder="Token Name"
+        placeholder="API Key Name"
         autofocus
         outlined
         dense
@@ -390,37 +393,37 @@ export default {
         v-model="expiresAt"
         class="mb-3"
         warning="
-           You have selected a time in the past; as a result, your token will have already expired.
+           You have selected a time in the past; as a result, your key will have already expired.
         "
         :text-field-props="{
           outlined: true,
           dense: true,
-          hint: `Leave blank to never expire this token`,
-          label: 'Token Expiration',
+          hint: `Leave blank to never expire this API key`,
+          label: 'API Key Expiration',
           persistentHint: true
         }"
       />
     </ConfirmDialog>
 
-    <!-- COPY TOKEN DIALOG -->
+    <!-- COPY KEY DIALOG -->
     <ConfirmDialog
-      v-model="copyTokenDialog"
+      v-model="copyKeyDialog"
       :dialog-props="{ 'max-width': '500' }"
-      title="Your token has been created"
-      :confirm-text="apiTokenCopied ? 'Copied' : 'Copy'"
+      title="Your API key has been created"
+      :confirm-text="apiKeyCopied ? 'Copied' : 'Copy'"
       cancel-text="Close"
-      @cancel="resetNewToken"
-      @confirm="copyNewToken"
+      @cancel="resetNewKey"
+      @confirm="copyNewKey"
     >
       <p>
-        Copy this token and put it in a secure place.
+        Copy this key and put it in a secure place.
         <strong>
-          You won't be able to see this token again once you close this dialog.
+          You won't be able to see this key again once you close this dialog.
         </strong>
       </p>
       <v-textarea
-        id="new-api-token"
-        v-model="newAPIToken"
+        id="new-api-key"
+        v-model="newAPIKey"
         data-private
         class="_lr-hide"
         auto-grow
@@ -431,14 +434,14 @@ export default {
       />
     </ConfirmDialog>
 
-    <!-- VIEW TOKENS DIALOG -->
+    <!-- VIEW KEYS DIALOG -->
 
-    <v-dialog v-if="selectedUser" v-model="dialogViewTokens"
+    <v-dialog v-if="selectedUser" v-model="dialogViewKeys"
       ><v-card>
-        <v-card-title>{{ selectedUser.firstName }}'s Tokens</v-card-title>
+        <v-card-title>{{ selectedUser.firstName }}'s API Keys</v-card-title>
         <v-data-table
           fixed-header
-          :headers="tokenHeaders"
+          :headers="keysHeaders"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :items="keys.filter(key => key.user_id === selectedUser.id)"
           :items-per-page="10"
@@ -483,14 +486,14 @@ export default {
                   color="error"
                   v-on="on"
                   @click="
-                    tokenToDelete = item
-                    dialogRemoveToken = true
+                    keyToDelete = item
+                    dialogRemoveKey = true
                   "
                 >
                   <v-icon>delete</v-icon>
                 </v-btn>
               </template>
-              Remove token
+              Remove API key
             </v-tooltip>
           </template>
         </v-data-table>
@@ -498,18 +501,18 @@ export default {
     </v-dialog>
 
     <ConfirmDialog
-      v-if="tokenToDelete"
-      v-model="dialogRemoveToken"
+      v-if="keyToDelete"
+      v-model="dialogRemoveKey"
       type="error"
       :dialog-props="{ 'max-width': '500' }"
       :title="
-        `Are you sure you want to revoke the token
-          ${tokenToDelete.name}?`
+        `Are you sure you want to revoke the API key
+          ${keyToDelete.name}?`
       "
       confirm-text="Revoke"
-      @confirm="deleteToken(tokenToDelete)"
+      @confirm="deleteKey(keyToDelete)"
     >
-      Once you delete this token, you will not be able to use it again to
+      Once you delete this API key, you will not be able to use it again to
       interact with the Prefect Cloud API.
     </ConfirmDialog>
 
