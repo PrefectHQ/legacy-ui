@@ -39,7 +39,7 @@ export default {
       agentFlowOrSomethingElse: '',
       // selectedAgent: null,
       chosenStates: this.hookDetail?.hook?.event_tags?.state || STATES['All'],
-      disableClick: true,
+      disableClick: false,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
       addAction: false,
@@ -200,7 +200,7 @@ export default {
         this.switchStep('selectDoThis')
       }
     },
-    selectFlow(event, flow) {
+    selectFlow(flow) {
       if (
         flow &&
         this.selectedFlows?.find(
@@ -212,17 +212,6 @@ export default {
         )
       } else {
         if (flow) this.selectedFlows.push(flow)
-        if (!event?.shiftKey) {
-          if (this.selectedFlows?.length > 1) {
-            this.flowEventType = {
-              name: 'changes state',
-              enum: 'CHANGES_STATE'
-            }
-            this.switchStep('selectState')
-          } else {
-            this.switchStep('selectEventType')
-          }
-        }
       }
       this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
     },
@@ -239,6 +228,17 @@ export default {
       } else {
         this.selectedFlows = []
         this.flowNamesList = []
+      }
+    },
+    handleFlowNext() {
+      if (this.selectedFlows?.length > 1) {
+        this.flowEventType = {
+          name: 'changes state',
+          enum: 'CHANGES_STATE'
+        }
+        this.switchStep('selectState')
+      } else {
+        this.switchStep('selectEventType')
       }
     },
     selectFlowEventType(type) {
@@ -260,6 +260,7 @@ export default {
       }
     },
     selectStates(state) {
+      this.stateName = 'Custom'
       this.chosenStates.find(
         item => item === state || item.toUpperCase() == state
       )
@@ -702,7 +703,7 @@ export default {
             color="primary"
             title="Next"
             class="mx-1"
-            @click="selectFlow"
+            @click="handleFlowNext"
           >
             Next
             <v-icon small>call_made</v-icon>
@@ -729,7 +730,7 @@ export default {
               :color="includesFlow(item) ? 'pink' : ''"
               class="ma-1"
               outlined
-              @click="selectFlow($event, item)"
+              @click="selectFlow(item)"
               ><truncate :content="`${item.name} - ${item.project.name}`"
                 ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
                 ><div class="subtitle-2">{{ item.name }}</div></truncate
