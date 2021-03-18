@@ -61,15 +61,11 @@ const prefectUser = async () => {
 }
 
 const prefectTenants = async isCloud => {
-  // try {
   const result = await fallbackApolloClient.query({
     query: require('@/graphql/Tenant/tenants.js').default(isCloud),
     fetchPolicy: 'no-cache'
   })
   return result.data.tenant
-  // } catch (error) {
-  //   throw new Error('Error retrieving tenants in prefectTenants', error)
-  // }
 }
 
 export { prefectAuth, prefectRefresh, prefectUser, prefectTenants }

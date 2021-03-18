@@ -25,6 +25,7 @@ module.exports = {
     '\\.(css|scss|less)$': '<rootDir>/__mocks__/styleMock.js',
     '^@/(.*)$': '<rootDir>/src/$1'
   },
+  transformIgnorePatterns: ['<rootDir>/node_modules/'],
   roots: ['src', 'tests'],
   setupFiles: ['jest-localstorage-mock', 'jest-fetch-mock', 'jest-canvas-mock'],
   setupFilesAfterEnv: ['<rootDir>/tests/jestSetup.js'],

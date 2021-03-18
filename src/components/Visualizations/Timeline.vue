@@ -100,6 +100,12 @@ export default {
       updateXTimeout: null,
       zoom: d3.zoom(),
 
+      breakpointsUnwatch: null,
+      endTimeUnwatch: null,
+      itemUnwatch: null,
+      liveUnwatch: null,
+      startTimeUnwatch: null,
+
       followEdge: true,
 
       // DOM refs
@@ -242,32 +248,6 @@ export default {
       )
     }
   },
-  watch: {
-    breakpoints: {
-      deep: true,
-      handler: debounce(function() {
-        if (this.pauseUpdates) return
-        this.updateBreakpoints(true)
-      }, 500)
-    },
-    endTime() {
-      this.updateScales()
-    },
-    items: {
-      deep: true,
-      handler: debounce(function() {
-        if (this.pauseUpdates) return
-        this.calcRows()
-        this.updateBars()
-      }, 500)
-    },
-    live(val) {
-      this.live_ = val
-    },
-    startTime() {
-      this.updateScales()
-    }
-  },
   mounted() {
     this.timer?.stop()
 
@@ -292,6 +272,35 @@ export default {
     this.canvas.on('mouseout', this.mouseout)
 
     this.live_ = this.live
+
+    this.breakpointsUnwatch = this.$watch(
+      'breakpoints',
+      debounce(function() {
+        if (this.pauseUpdates) return
+        this.updateBreakpoints(true)
+      }, 500)
+    )
+    this.itemUnwatch = this.$watch(
+      'items',
+      debounce(function() {
+        if (this.pauseUpdates) return
+        this.calcRows()
+        this.updateBars()
+      }, 500),
+      { deep: true }
+    )
+
+    this.endTimeUnwatch = this.$watch('endTime', () => {
+      this.updateScales()
+    })
+
+    this.liveUnwatch = this.$watch('live', val => {
+      this.live_ = val
+    })
+
+    this.startTimeUnwatch = this.$watch('startTime', () => {
+      this.updateScales()
+    })
   },
   beforeDestroy() {
     this.timer?.stop()
@@ -302,6 +311,12 @@ export default {
     this.canvas.on('mousemove', null)
     this.canvas.on('mouseout', null)
     this.xAxisNode.on('end', null)
+
+    this.itemUnwatch()
+    this.breakpointsUnwatch()
+    this.endTimeUnwatch()
+    this.liveUnwatch()
+    this.startTimeUnwatch()
   },
   methods: {
     rawCalcRows() {
@@ -358,7 +373,7 @@ export default {
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
           let intersects = grid[row].some(
-            slot => end <= slot[0] - 1000 || start <= slot[1] + 1000
+            slot => end <= slot[0] - 2000 || start <= slot[1] + 2000
           )
 
           // let intersects = grid[row].some(
@@ -851,7 +866,7 @@ export default {
         parent.clientHeight - padding.top - padding.bottom
       )
 
-      if (this.width_ !== this.width) {
+      if (!this.width_ || (this.width && this.width_ !== this.width)) {
         this.setChartDimensions()
       }
     },
@@ -1167,7 +1182,7 @@ export default {
       // We only need this section if we want to draw the x-axis
       this.xAxisNode
         .transition()
-        .duration(shouldTransition ? 16 : 0)
+        .duration(shouldTransition ? 32 : 0)
         .call(xAxis)
         .on('end', () => {
           this.xAxisNode.on('end', null)
@@ -1497,7 +1512,7 @@ export default {
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
       1px 2px 2px 0 rgba(0, 0, 0, 0.14), 3px 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
     position: absolute;
-    right: -68px;
+    right: -50px;
     top: 50%;
     transform: translate(0, -60%);
     transition: all 250ms;
