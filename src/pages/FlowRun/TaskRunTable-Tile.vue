@@ -4,8 +4,7 @@ import moment from 'moment-timezone'
 import DurationSpan from '@/components/DurationSpan'
 import ResumeButton from '@/components/ResumeButton'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import { FINISHED_STATES } from '@/utils/states'
-
+import { FINISHED_STATES, STATE_NAMES } from '@/utils/states'
 export default {
   components: {
     CardTitle,
@@ -62,17 +61,7 @@ export default {
       page: 1,
       searchTerm: null,
       state: [],
-      states: [
-        'Failed',
-        'Success',
-        'Pending',
-        'Cancelled',
-        'Finished',
-        'Skipped',
-        'TimedOut',
-        'Scheduled',
-        'Resume'
-      ].sort(),
+      states: STATE_NAMES.slice(1).sort(),
       sortBy: 'start_time',
       sortDesc: true,
       taskRunDurations: {}
@@ -264,26 +253,26 @@ export default {
         </template>
 
         <template #item.start_time="{ item }">
-          <truncate :content="formatTime(item.details.start_time)">
-            {{ formDate(item.details.start_time) }}
+          <truncate :content="formatTime(item.start_time)">
+            {{ formDate(item.start_time) }}
           </truncate>
         </template>
 
         <template #item.end_time="{ item }">
-          <truncate :content="formatTime(item.details.end_time)">
-            {{ formDate(item.details.end_time) }}
+          <truncate :content="formatTime(item.end_time)">
+            {{ formDate(item.end_time) }}
           </truncate>
         </template>
 
         <template #item.duration="{ item }">
           <DurationSpan
-            v-if="item.details.start_time"
-            :start-time="item.details.start_time"
+            v-if="item.start_time"
+            :start-time="item.start_time"
             :end-time="
-              item.details.end_time
-                ? item.details.end_time
-                : isFinished(item.details.state)
-                ? item.details.start_time
+              item.end_time
+                ? item.end_time
+                : isFinished(item.state)
+                ? item.start_time
                 : null
             "
           />

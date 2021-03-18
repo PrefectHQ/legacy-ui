@@ -4,6 +4,29 @@
 
 ### Features and Improvements
 
+- Add the "Running" state to the state filter - [#675](https://github.com/PrefectHQ/ui/pull/675)
+
+### Bugfixes
+
+- None
+## 2021-03-16
+
+### Bugfixes
+
+- Fix a bug where a license would get created even though there are validation errors present - [#672](https://github.com/PrefectHQ/ui/pull/672)
+- Updates links to the website - [#673](https://github.com/PrefectHQ/ui/pull/673)
+- Remove unhelpful tooltip on Secrets - [#665](https://github.com/PrefectHQ/ui/pull/665)
+
+## 2021-03-15a
+
+### Bugfixes
+
+- Remove details references from the task run table tile - [#670](https://github.com/PrefectHQ/ui/pull/670)
+
+## 2021-03-15
+
+### Features and Improvements
+
 - Add a state filter to the flow run table - [#645](https://github.com/PrefectHQ/ui/pull/645)
 - Create a UI dark mode - [#656](https://github.com/PrefectHQ/ui/pull/656)
 
