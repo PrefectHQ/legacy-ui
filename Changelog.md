@@ -5,10 +5,12 @@
 ### Features and Improvements
 
 - Add the "Running" state to the state filter - [#675](https://github.com/PrefectHQ/ui/pull/675)
+- Add Service Accounts and API keys to the UI - [#678](https://github.com/PrefectHQ/ui/pull/678)
 
 ### Bugfixes
 
 - None
+
 ## 2021-03-16
 
 ### Bugfixes
