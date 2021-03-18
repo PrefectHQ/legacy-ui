@@ -5,7 +5,6 @@ import DateTime from '@/components/DateTime'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import ExternalLink from '@/components/ExternalLink'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -14,14 +13,13 @@ export default {
     DateTime,
     Alert,
     ConfirmDialog,
-    ExternalLink,
     ManagementLayout
   },
   mixins: [formatTime],
   data() {
     return {
-      createTokenDialog: false,
-      copyTokenDialog: false,
+      createKeyDialog: false,
+      copyKeyDialog: false,
       //alert
       alertShow: false,
       alertMessage: '',
@@ -36,10 +34,6 @@ export default {
           text: 'Created At',
           value: 'created'
         },
-        {
-          text: 'Last Used',
-          value: 'last_used'
-        },
         { text: 'Expires', value: 'expires_at' },
         {
           text: '',
@@ -49,34 +43,33 @@ export default {
         }
       ],
       search: null,
-      //token
-      newPersonalAccessToken: '',
-      newTokenName: '',
-      newTokenScope: 'USER',
-      tokens: [],
-      tokenCopied: false,
-      tokenToDelete: false,
-      tokenToDeleteDialog: false,
+      //key
+      newKey: '',
+      newKeyName: '',
+      keys: [],
+      keyCopied: false,
+      keyToDelete: false,
+      keyToDeleteDialog: false,
       expiresAt: null,
       label: 'Expiry Date',
       hint: 'Leave blank for an expiry of 2100-01-01 UTC',
       warning:
-        'You have selected a time in the past.  Your token will have an expiry of 2100-01-01 UTC'
+        'You have selected a time in the past.  Your API key will have an expiry of 2100-01-01 UTC'
     }
   },
   computed: {
-    ...mapGetters('tenant', ['role']),
-    newTokenFormFilled() {
-      return !!this.newTokenName && !!this.newTokenScope
+    ...mapGetters('user', ['user']),
+    newKeyFormFilled() {
+      return !!this.newKeyName
     },
     localExpiryDate() {
       return this.formDate('2100-01-01T00:00:00+00:00')
     }
   },
   watch: {
-    tokenToDeleteDialog(value) {
+    keyToDeleteDialog(value) {
       if (!value) {
-        this.tokenToDelete = false
+        this.keyToDelete = false
       }
     }
   },
@@ -86,67 +79,86 @@ export default {
       this.alertMessage = ''
       this.alertType = null
     },
-    copyNewToken() {
-      var copyText = document.querySelector('#new-api-token')
+    copyNewKey() {
+      var copyText = document.querySelector('#new-api-key')
       copyText.select()
       document.execCommand('copy')
-      this.tokenCopied = true
+      this.keyCopied = true
       setTimeout(() => {
-        this.tokenCopied = false
+        this.keyCopied = false
       }, 2000)
     },
-    async createAPIToken(variables) {
+    async createAPIKey(variables) {
       const result = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tokens/create-api-token.gql'),
+        mutation: require('@/graphql/Tokens/create-api-key.gql'),
         variables
       })
 
       if (
-        result?.data?.create_api_token?.id &&
-        result?.data?.create_api_token?.token
+        result?.data?.create_api_key?.id &&
+        result?.data?.create_api_key?.key
       ) {
-        this.resetNewToken()
-        this.newPersonalAccessToken = result.data.create_api_token.token
-        this.copyTokenDialog = true
+        this.resetNewKey()
+        this.newKey = result.data.create_api_key.key
+        this.copyKeyDialog = true
+        this.$apollo.queries.keys.refetch()
       } else {
         this.alertShow = true
-        this.alertMessage = 'Something went wrong when creating a token.'
+        this.alertMessage = 'Something went wrong when creating an API key.'
         this.alertType = 'error'
       }
     },
-    async deleteToken(token) {
+    async deleteKey(key) {
       const result = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tokens/delete-token.gql'),
+        mutation: require('@/graphql/Tokens/delete-api-key.gql'),
         variables: {
-          id: token.id
+          id: key.id
         }
       })
-      if (result?.data?.delete_api_token?.success) {
-        this.tokenToDeleteDialog = false
+      if (result?.data?.delete_api_key?.success) {
+        this.keyToDeleteDialog = false
         this.alertShow = true
-        this.alertMessage = 'Token was successfully revoked.'
+        this.alertMessage = 'API key was successfully revoked.'
         this.alertType = 'success'
+        this.$apollo.queries.keys.refetch()
       } else {
         this.alertShow = true
-        this.alertMessage = 'Something went wrong when deleting a token.'
+        this.alertMessage = 'Something went wrong when deleting this API key.'
         this.alertType = 'error'
       }
     },
-    resetNewToken() {
-      this.newTokenName = ''
-      this.newTokenScope = 'USER'
-      this.newPersonalAccessToken = ''
+    resetNewKey() {
+      this.newKeyName = ''
+      this.newKey = ''
       this.expiresAt = null
-      this.createTokenDialog = false
-      this.copyTokenDialog = false
+      this.createKeyDialog = false
+      this.copyKeyDialog = false
     }
   },
   apollo: {
-    tokens: {
-      query: require('@/graphql/Tokens/user-tokens.gql'),
+    keys: {
+      query: require('@/graphql/Tokens/api-keys.gql'),
       fetchPolicy: 'network-only',
-      pollInterval: 5000,
-      update: data => data.api_token
+      error() {
+        this.handleAlert(
+          'error',
+          'Something went wrong while trying to fetch your API keys. Please refresh the page and try again. If this error persists, please email help@prefect.io.'
+        )
+      },
+      result({ data }) {
+        this.keys = data.auth_api_key
+          .filter(key => key.user_id === this.user.id)
+          .map(key => {
+            return {
+              id: key.id,
+              name: key.name,
+              created_at: key.created,
+              expires: key.expires_at,
+              user_id: key.user_id
+            }
+          })
+      },
+      update: data => data
     }
   }
 }
@@ -154,31 +166,25 @@ export default {
 
 <template>
   <ManagementLayout show>
-    <template #title>Personal Access Tokens</template>
+    <template #title>API Keys</template>
 
     <template #subtitle>
-      Personal Access (or <code>USER</code>) tokens are used to represent a
-      single user, and are typically used by Prefect Cloud clients (such as the
-      Prefect Cloud CLI) to log in to any tenants the user has access to. View
-      your
-      <ExternalLink
-        href="https://docs.prefect.io/cloud/cloud_concepts/api.html#prefect-cloud-api"
-      >
-        Personal Access Tokens.</ExternalLink
-      >
+      API keys are used to represent a single user, and are typically used by
+      Prefect Cloud clients (such as the Prefect Cloud CLI) to perform actions
+      within Prefect.
     </template>
 
     <template #cta>
       <v-btn
         color="blue"
-        data-cy="create-personal-access-token"
+        data-cy="create-api-key"
         class="white--text"
-        @click="createTokenDialog = true"
+        @click="createKeyDialog = true"
       >
         <v-icon left>
           add
         </v-icon>
-        Create a Token
+        Create an API key
       </v-btn>
     </template>
 
@@ -189,7 +195,7 @@ export default {
       dense
       hide-details
       single-line
-      placeholder="Search for an API Token"
+      placeholder="Search for an API KEy"
       prepend-inner-icon="search"
       autocomplete="new-password"
     ></v-text-field>
@@ -204,7 +210,7 @@ export default {
             dense
             hide-details
             single-line
-            placeholder="Search for an API Token"
+            placeholder="Search for an API Key"
             prepend-inner-icon="search"
             autocomplete="new-password"
             :style="{
@@ -219,8 +225,8 @@ export default {
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :search="search"
-          :items="tokens"
-          :loading="$apollo.queries.tokens.loading"
+          :items="keys"
+          :loading="$apollo.queries.keys.loading"
           :items-per-page="10"
           :footer-props="{
             showFirstLastPage: true,
@@ -229,16 +235,13 @@ export default {
             prevIcon: 'keyboard_arrow_left',
             nextIcon: 'keyboard_arrow_right'
           }"
-          no-results-text="No tokens found. Try expanding your search?"
-          no-data-text="You do not have any personal access tokens yet."
+          no-results-text="No API keys found. Try expanding your search?"
+          no-data-text="You do not have any API keys yet."
         >
           <template #header.name="{ header }">
             <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
-          </template>
-          <template #header.last_used="{ header }">
             <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.expires_at="{ header }">
@@ -261,19 +264,6 @@ export default {
             </v-tooltip>
           </template>
 
-          <template #item.last_used="{ item }">
-            <v-tooltip top>
-              <template #activator="{ on }">
-                <span v-on="on">
-                  {{ item.last_used ? formDate(item.last_used) : '' }}
-                </span>
-              </template>
-              <span>
-                {{ item.last_used ? formatTime(item.last_used) : '' }}
-              </span>
-            </v-tooltip>
-          </template>
-
           <template #item.expires_at="{ item }">
             {{
               item.expires_at ? formatTimeRelative(item.expires_at) : 'Never'
@@ -289,14 +279,14 @@ export default {
                   color="error"
                   v-on="on"
                   @click="
-                    tokenToDelete = item
-                    tokenToDeleteDialog = true
+                    keyToDelete = item
+                    keyToDeleteDialog = true
                   "
                 >
                   <v-icon>delete</v-icon>
                 </v-btn>
               </template>
-              Revoke token
+              Revoke API key
             </v-tooltip>
           </template>
         </v-data-table>
@@ -304,30 +294,30 @@ export default {
     </v-card>
 
     <ConfirmDialog
-      v-model="createTokenDialog"
+      v-model="createKeyDialog"
       :dialog-props="{ 'max-width': '500' }"
-      :confirm-props="{ 'data-cy': 'submit-new-personal-access-token' }"
-      :disabled="!newTokenFormFilled"
-      title="Create a Personal Access token"
+      :confirm-props="{ 'data-cy': 'submit-new-api-key' }"
+      :disabled="!newKeyFormFilled"
+      title="Create an API key"
       confirm-text="Create"
       @cancel="
-        createTokenDialog = false
-        resetNewToken()
+        createKeyDialog = false
+        resetNewKey()
       "
       @confirm="
-        createAPIToken({
-          name: newTokenName,
-          scope: newTokenScope,
+        createAPIKey({
+          user_id: user.id,
+          name: newKeyName,
           expires_at: expiresAt
         })
       "
     >
       <v-text-field
-        v-model="newTokenName"
+        v-model="newKeyName"
         class="mb-3"
         single-line
-        data-cy="new-personal-access-token-name"
-        placeholder="Token Name"
+        data-cy="new-api-key-name"
+        placeholder="API Key Name"
         autofocus
         outlined
         dense
@@ -336,38 +326,38 @@ export default {
         v-model="expiresAt"
         class="mb-3"
         warning="
-          You have selected a time in the past; as a result, your token will have already expired.
+          You have selected a time in the past; as a result, your API key will have already expired.
         "
         :text-field-props="{
           outlined: true,
           dense: true,
-          hint: `Leave blank to never expire this token`,
-          label: 'Token Expiration',
+          hint: `Leave blank to never expire this key`,
+          label: 'API Key Expiration',
           persistentHint: true
         }"
       />
     </ConfirmDialog>
 
     <ConfirmDialog
-      v-model="copyTokenDialog"
+      v-model="copyKeyDialog"
       :dialog-props="{ 'max-width': '500' }"
-      :cancel-props="{ 'data-cy': 'close-personal-access-token-dialog' }"
-      title="Your token has been created"
-      :confirm-text="tokenCopied ? 'Copied' : 'Copy'"
+      :cancel-props="{ 'data-cy': 'close-api-key-dialog' }"
+      title="Your key has been created"
+      :confirm-text="keyCopied ? 'Copied' : 'Copy'"
       cancel-text="Close"
-      @cancel="resetNewToken"
-      @confirm="copyNewToken"
+      @cancel="resetNewKey"
+      @confirm="copyNewKey"
     >
       <p>
-        Copy this token and put it in a secure place.
+        Copy this key and put it in a secure place.
         <strong>
-          You won't be able to see this token again once you close this dialog.
+          You won't be able to see this key again once you close this dialog.
         </strong>
       </p>
       <v-textarea
-        id="new-api-token"
-        v-model="newPersonalAccessToken"
-        data-cy="personal-access-token-field"
+        id="new-api-key"
+        v-model="newKey"
+        data-cy="api-key-field"
         data-private
         class="_lr-hide"
         auto-grow
@@ -380,19 +370,19 @@ export default {
     </ConfirmDialog>
 
     <ConfirmDialog
-      v-if="tokenToDelete"
-      v-model="tokenToDeleteDialog"
+      v-if="keyToDelete"
+      v-model="keyToDeleteDialog"
       type="error"
       :dialog-props="{ 'max-width': '500' }"
       :title="
-        `Are you sure you want to revoke the token
-          ${tokenToDelete.name}?`
+        `Are you sure you want to revoke the API key
+          ${keyToDelete.name}?`
       "
       confirm-text="Revoke"
-      @confirm="deleteToken(tokenToDelete)"
+      @confirm="deleteKey(keyToDelete)"
     >
-      Once you delete this token, you will not be able to use it again to
-      interact with the Prefect Cloud API.
+      Once you delete this key, you will not be able to use it again to interact
+      with the Prefect Cloud API.
     </ConfirmDialog>
 
     <Alert
