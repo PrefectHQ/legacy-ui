@@ -574,9 +574,9 @@ export default {
                 ? 'codePink'
                 : 'grey'
             "
-            class="px-0 pb-1 headline text-truncate"
+            class="px-0 pb-1 headline d-inline-block text-truncate"
             text
-            max-width="300px"
+            max-width="500px"
             @click="step = 'openAgentOrFlow'"
             ><truncate
               v-if="flowNamesList && flowNamesList.length"
@@ -594,7 +594,7 @@ export default {
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class="px-0 pb-1 headline"
               text
-              :disabled="agentOrFlow === 'agent' || chosenStates.length > 1"
+              :disabled="agentOrFlow === 'agent' || selectedFlows.length > 1"
               :color="step === 'selectEventType' ? 'codePink' : 'grey'"
               @click="switchStep('selectEventType')"
             >
