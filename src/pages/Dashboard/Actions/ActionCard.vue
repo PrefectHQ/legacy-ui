@@ -52,7 +52,6 @@ export default {
       return this.hook?.event_tags?.agent_config_id[0]
     },
     includeSeconds() {
-      console.log(this.hook)
       return this.flowConfig
     },
     hookType() {
