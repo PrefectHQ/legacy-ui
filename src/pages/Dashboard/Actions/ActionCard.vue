@@ -28,7 +28,7 @@ export default {
           icon: 'pi-flow'
         },
         AgentSLAFailedEvent: {
-          type: 'agent',
+          type: 'an agent',
           icon: 'pi-agent',
           action: 'is unhealthy'
         },
@@ -162,7 +162,6 @@ export default {
       query: require('@/graphql/Actions/flows.gql'),
       variables() {
         return {
-          //Should we update this to include all flow names if more than one?
           flowGroupIds: this.hook?.event_tags?.flow_group_id
             ? this.hook?.event_tags?.flow_group_id
             : this.flowConfig?.flow_groups?.map(flow => flow.flow_group_id)
@@ -225,13 +224,14 @@ export default {
 <template>
   <v-skeleton-loader
     v-if="loadingHook > 0 && showHook"
+    class="pa-2 ma-2"
     type="list-item-avatar-three-line"
   ></v-skeleton-loader>
-  <v-card v-else-if="showHook" class="mb-2 headline " outlined>
+  <v-card v-else-if="showHook" class="my-2 headline " outlined>
     <div class="text-right">
       <v-menu :close-on-content-click="false">
         <template #activator="{ on, attrs }">
-          <v-btn class="px-8" icon title="More Actions" v-bind="attrs" v-on="on"
+          <v-btn class="px-2" text title="More Actions" v-bind="attrs" v-on="on"
             ><v-icon>more_horiz</v-icon></v-btn
           ></template
         >

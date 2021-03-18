@@ -18,16 +18,17 @@ export default {
   },
   data() {
     return {
+      saving: false,
       searchEntry: null,
       selectedFlows: this.hookDetail?.flowName || [],
-      openSeconds: false,
+      // openSeconds: false,
       step: 'openAgentOrFlow',
-      openSelectFlowEventType: false,
-      openFlow: false,
-      openAgent: false,
-      openStates: false,
-      openAgentOrFlow: true,
-      openActions: false,
+      // openSelectFlowEventType: false,
+      // openFlow: false,
+      // openAgent: false,
+      // openStates: false,
+      // openAgentOrFlow: true,
+      // openActions: false,
       removeDoThisDialog: false,
       flowNamesList: this.hookDetail?.flowNameList || [],
       hookDetails: this.hookDetail,
@@ -36,9 +37,9 @@ export default {
       states: STATES,
       stateName: 'All',
       agentFlowOrSomethingElse: '',
-      selectedAgent: null,
+      // selectedAgent: null,
       chosenStates: this.hookDetail?.hook?.event_tags?.state || STATES['All'],
-      disableClick: true,
+      disableClick: false,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
       addAction: false,
@@ -60,13 +61,16 @@ export default {
     ...mapGetters('data', ['projects']),
     //We can not update an agent for now - config id needs to be added at agent creation
     // ...mapGetters('agent', ['agents']),
-    projectsList() {
-      return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
-        a.name > b.name ? 1 : -1
-      )
-    },
+    // projectsList() {
+    //   return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
+    //     a.name > b.name ? 1 : -1
+    //   )
+    // },
     allFlows() {
       return this.selectedFlows?.length === this.flows?.length
+    },
+    formHeight() {
+      return '30Vh'
     },
     agentOrFlow() {
       if (this.hookDetails?.flowName) return 'flow'
@@ -130,12 +134,7 @@ export default {
       )
     },
     placeholderMessage() {
-      if (this.$vuetify.breakpoint.mdAndUp) {
-        return `Search by Flow, ${!this.isCloud ? 'or' : ''} Project${
-          this.isCloud ? ', or User' : ''
-        } `
-      }
-      return ''
+      return 'Search by Flow, or Project'
     },
     searchFormatted() {
       if (!this.searchEntry) return null
@@ -170,17 +169,12 @@ export default {
     closeCard() {
       this.$emit('close')
     },
-    // handleOpenAgentOrFlow() {
-    //   this.openAgentOrFlow = !this.openAgentOrFlow
-    // },
     switchStep(step) {
       //steps = 'openAgentOrFlow', 'selectEventType', 'selectFlow', 'selectState', 'openDuration', 'selectDoThis'
       this.step = step
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
-
-      // this.openAgentOrFlow = false
       if (choice === 'flow') {
         this.flowEventType = this.hookDetail?.flowConfig?.kind
           ? this.flowEventTypes.find(
@@ -200,20 +194,10 @@ export default {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
-        this.openActions = true
         this.switchStep('selectDoThis')
-        // this.openSelectFlowEventType = true
-        // this.openAgent = true
-        // this.flow = {}
-        // this.openSelectFlowEventType = false
       }
     },
-    // selectAgent(choice) {
-    //   this.selectedAgent = choice
-    //   this.openAgent = false
-    //   this.openSelectFlowEventType = true
-    // },
-    selectFlow(event, flow) {
+    selectFlow(flow) {
       if (
         flow &&
         this.selectedFlows?.find(
@@ -225,17 +209,6 @@ export default {
         )
       } else {
         if (flow) this.selectedFlows.push(flow)
-        if (!event?.shiftKey) {
-          if (this.selectedFlows?.length > 1) {
-            this.flowEventType = {
-              name: 'changes state',
-              enum: 'CHANGES_STATE'
-            }
-            this.switchStep('selectState')
-          } else {
-            this.switchStep('selectEventType')
-          }
-        }
       }
       this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
     },
@@ -252,6 +225,17 @@ export default {
       } else {
         this.selectedFlows = []
         this.flowNamesList = []
+      }
+    },
+    handleFlowNext() {
+      if (this.selectedFlows?.length > 1) {
+        this.flowEventType = {
+          name: 'changes state',
+          enum: 'CHANGES_STATE'
+        }
+        this.switchStep('selectState')
+      } else {
+        this.switchStep('selectEventType')
       }
     },
     selectFlowEventType(type) {
@@ -273,6 +257,7 @@ export default {
       }
     },
     selectStates(state) {
+      this.stateName = 'Custom'
       this.chosenStates.find(
         item => item === state || item.toUpperCase() == state
       )
@@ -292,7 +277,7 @@ export default {
     },
     addNewAction() {
       this.addAction = true
-      this.openActions = false
+      // this.openActions = false
     },
     disableChip(item) {
       return (
@@ -349,7 +334,7 @@ export default {
           ? await this.$apollo.queries.actions.refresh()
           : this.setAlert({
               alertShow: true,
-              alertMessage: 'We hit an error!',
+              alertMessage: data.delete_action.error,
               alertType: 'error'
             })
       } catch (error) {
@@ -364,6 +349,7 @@ export default {
       }
     },
     async createHook() {
+      this.saving = true
       let data
       try {
         const flow = this.selectedFlows[0]?.flow_group_id
@@ -403,7 +389,6 @@ export default {
                 }
               }
             })
-
             await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/add_config_to_flow.gql'),
               variables: {
@@ -460,13 +445,13 @@ export default {
         })
       } finally {
         this.hookDetails = null
-        //needs updating - alert simply for deving at the mo
         if (data) {
           this.setAlert({
             alertShow: true,
             alertMessage: 'Hook created',
             alertType: 'success'
           })
+          this.saving = false
           this.closeCard()
         }
       }
@@ -478,22 +463,7 @@ export default {
         return require('@/graphql/Dashboard/flows.js').default(this.isCloud)
       },
       variables() {
-        let sortBy = {}
-        if (this.sortBy) {
-          if (this.isCloud && this.sortBy.includes('created_by.username')) {
-            sortBy['created_by'] = {}
-            sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
-          } else if (Object.keys(this.sortBy) < 1) {
-            sortBy = { name: 'asc' }
-          } else {
-            sortBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
-          }
-        }
-
-        let searchParams = [
-          { archived: { _eq: this.showArchived ? null : false } },
-          { project_id: { _eq: this.projectId ? this.projectId : null } }
-        ]
+        let searchParams = [{ archived: { _eq: false } }]
 
         let orParams = [
           {
@@ -513,9 +483,6 @@ export default {
         }
 
         return {
-          limit: this.limit,
-          offset: this.limit * (this.page - 1),
-          orderBy: sortBy,
           searchParams: {
             _and: [...searchParams, { _or: [...orParams] }]
           }
@@ -540,21 +507,22 @@ export default {
 <template>
   <v-card v-if="!addAction" width="100%">
     <v-row
-      ><v-col cols="6"
+      ><v-col cols="6" class="pl-6"
         ><v-btn
           text
-          class="grey--text text--darken-2 light-weight-text"
+          class="grey--text text--darken-2 light-weight-text pl-0 ml-4 pb-2"
           @click="closeCard"
         >
-          <v-icon>chevron_left</v-icon
-          ><span style="text-transform: none;">Back </span></v-btn
+          <v-icon small>close</v-icon
+          ><span style="text-transform: none;">Close</span></v-btn
         ></v-col
       >
       <v-col cols="6" class="text-right"
         ><v-btn
-          class="mr-3 mt-2"
+          class="mr-3"
           color="primary"
           elevation="0"
+          :loading="saving"
           :disabled="!completeAction"
           @click="createHook"
           ><i class="far fa-cloud-upload-alt fa-lg"></i>
@@ -679,9 +647,9 @@ export default {
       v-else-if="step === 'selectFlow'"
       elevation="0"
       class="pa-2"
-      :style="{ overflow: 'auto' }"
+      :style="{ 'overflow-y': 'hidden' }"
     >
-      <v-card-title class="pt-0">
+      <v-card-title class="pt-0 pb-2">
         <v-text-field
           v-model="searchEntry"
           class="flow-search"
@@ -708,23 +676,14 @@ export default {
             <v-icon>pi-flow</v-icon>
             {{ allFlows ? 'De-select all flows' : 'Select all flows' }}
           </v-chip>
-          <v-chip
-            small
-            label
-            color="primary"
-            title="Next"
-            class="mx-1"
-            @click="selectFlow"
-          >
-            Next
-            <v-icon small>call_made</v-icon>
-          </v-chip>
         </div>
       </v-card-title>
-      <v-card-subtitle class="caption mx-4 pt-1 pb-2"
-        >Hint: Shift-click to select multiple flows</v-card-subtitle
+
+      <v-sheet
+        class="py-4"
+        :height="formHeight"
+        :style="{ 'overflow-y': 'auto', 'overflow-x': 'hidden' }"
       >
-      <v-card-text>
         <v-row class="px-4">
           <v-col
             v-for="item in flows"
@@ -741,15 +700,29 @@ export default {
               :color="includesFlow(item) ? 'pink' : ''"
               class="ma-1"
               outlined
-              @click="selectFlow($event, item)"
+              @click="selectFlow(item)"
               ><truncate :content="`${item.name} - ${item.project.name}`"
                 ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
-                ><div class="font-weight-bold">{{ item.name }}</div></truncate
+                ><div class="subtitle-2">{{ item.name }}</div></truncate
               ></v-chip
             ></v-col
           >
         </v-row>
-      </v-card-text>
+      </v-sheet>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          :disabled="!selectedFlows.length"
+          title="Next"
+          class="mx-1"
+          @click="handleFlowNext"
+        >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn></v-card-actions
+      >
     </v-card>
     <v-card
       v-else-if="step === 'selectEventType'"
@@ -780,6 +753,19 @@ export default {
           Hint: confirm duration by pressing the Enter key
         </div>
       </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          title="Next"
+          class="mx-1"
+          @click="closeSeconds"
+        >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn></v-card-actions
+      >
     </v-card>
     <v-card
       v-else-if="step === 'selectState'"
@@ -787,19 +773,6 @@ export default {
       class="pl-6 pb-4 pt-2"
     >
       <v-card-text>
-        <div class="text-right">
-          <v-btn
-            x-small
-            class="text-normal"
-            color="primary"
-            title="Next"
-            :disabled="chosenStates.length < 1"
-            @click="switchStep('selectDoThis')"
-          >
-            Next
-            <v-icon small>call_made</v-icon>
-          </v-btn>
-        </div>
         <div>
           <v-chip
             v-for="item in stateGroups"
@@ -834,6 +807,20 @@ export default {
           >
         </div>
       </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          title="Next"
+          class="mx-1"
+          :disabled="chosenStates.length < 1"
+          @click="switchStep('selectDoThis')"
+        >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn></v-card-actions
+      >
     </v-card>
     <v-card
       v-else-if="step === 'selectDoThis'"
