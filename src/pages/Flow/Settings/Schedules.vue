@@ -136,20 +136,20 @@ export default {
             }
           })
         } else {
-          result = await this.$apollo.mutate({
-            mutation: require('@/graphql/Mutations/set-flow-group-schedule.gql'),
-            variables: {
-              input: {
-                flow_group_id: this.flowGroup.id,
-                cron_clocks: cronClocks,
-                interval_clocks: intervalClocks,
-                timezone: this.clocks[0]?.timezone
-                  ? this.clocks[0]?.timezone
-                  : this.timezone ||
-                    Intl.DateTimeFormat().resolvedOptions().timeZone
-              }
-            }
-          })
+          // result = await this.$apollo.mutate({
+          //   mutation: require('@/graphql/Mutations/set-flow-group-schedule.gql'),
+          //   variables: {
+          //   input: {
+          //     flow_group_id: this.flowGroup.id,
+          //     cron_clocks: cronClocks,
+          //     interval_clocks: intervalClocks,
+          //     timezone: this.clocks[0]?.timezone
+          //       ? this.clocks[0]?.timezone
+          //       : this.timezone ||
+          //         Intl.DateTimeFormat().resolvedOptions().timeZone
+          //   }
+          // }
+          // })
         }
 
         if (
@@ -295,6 +295,7 @@ export default {
                 :cron="clock.cron"
                 :interval="clock.interval"
                 :timezone="timezoneVal(clock)"
+                :param="clock.parameter_defaults"
                 title="Modify schedule"
                 @cancel="selectedClock = null"
                 @confirm="createClock"

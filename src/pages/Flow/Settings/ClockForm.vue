@@ -2,6 +2,7 @@
 import CronForm from '@/pages/Flow/Settings/ClockForms/Cron'
 import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
+import ScheduleParamForm from '@/pages/Flow/Settings/ScheduleParamForm'
 import moment from 'moment-timezone'
 
 const timezones = [...moment.tz.names()].map(tz => {
@@ -12,7 +13,8 @@ export default {
   components: {
     CronForm,
     IntervalForm,
-    SimpleForm
+    SimpleForm,
+    ScheduleParamForm
   },
   props: {
     cron: {
@@ -33,7 +35,13 @@ export default {
     timezone: {
       type: String,
       required: false,
-      default: null
+      default: () => null
+    },
+    // TODO:  RENAME "PARAM"
+    param: {
+      type: Array,
+      required: false,
+      default: () => {}
     }
   },
   data() {
@@ -68,7 +76,6 @@ export default {
     confirm() {
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
-
       const clock = {
         type: clockType,
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
@@ -139,6 +146,7 @@ export default {
                 prepend-inner-icon="access_time"
                 :menu-props="{ contentClass: 'tz' }"
               />
+              <ScheduleParamForm v-if="param.length > 0" :param="param" />
             </div>
             <div v-else-if="advancedType == 'interval'" key="Interval">
               <IntervalForm v-model="intervalModel" class="mt-4" />
