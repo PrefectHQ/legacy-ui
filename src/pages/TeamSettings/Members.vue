@@ -357,6 +357,7 @@ export default {
           Users
         </v-tab>
         <v-tab
+          v-if="isTenantAdmin"
           href="#service-accounts"
           :style="{
             'min-width': '160px'
@@ -409,7 +410,7 @@ export default {
           <v-icon class="mr-2">people</v-icon>
           Users
         </v-tab>
-        <v-tab href="#service-accounts">
+        <v-tab v-if="isTenantAdmin" href="#service-accounts">
           <v-icon class="mr-2">engineering</v-icon>
           Service Accounts
         </v-tab>
@@ -447,7 +448,7 @@ export default {
         ></MembersTable>
       </v-tab-item>
 
-      <v-tab-item value="service-accounts" eager>
+      <v-tab-item v-if="isTenantAdmin" value="service-accounts" eager>
         <ServiceAccountsTable
           :is-tenant-admin="isTenantAdmin"
           :search="searchInput"
@@ -583,6 +584,7 @@ export default {
 
     <!-- SERVICE ACCOUNT ADD DIALOG -->
     <ConfirmDialog
+      v-if="isTenantAdmin"
       v-model="dialogAddServiceAccount"
       title="Add a new service account"
       confirm-text="Add"

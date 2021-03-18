@@ -287,6 +287,7 @@ export default {
 <template>
   <div>
     <v-data-table
+      v-if="isTenantAdmin"
       fixed-header
       :headers="headers"
       :header-props="{ 'sort-icon': 'arrow_drop_up' }"
