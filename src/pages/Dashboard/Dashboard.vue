@@ -117,6 +117,9 @@ export default {
     },
     tabs() {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
+    },
+    includeProjects() {
+      return this.tab != 'actions'
     }
   },
   watch: {
@@ -266,6 +269,7 @@ export default {
         :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
       >
         <v-skeleton-loader
+          v-if="includeProjects"
           slot="row-0"
           :loading="loadedTiles < 4"
           type="text"
