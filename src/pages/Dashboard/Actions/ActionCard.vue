@@ -224,9 +224,10 @@ export default {
 <template>
   <v-skeleton-loader
     v-if="loadingHook > 0 && showHook"
+    class="pa-2 ma-2"
     type="list-item-avatar-three-line"
   ></v-skeleton-loader>
-  <v-card v-else-if="showHook" class="mb-2 headline " outlined>
+  <v-card v-else-if="showHook" class="my-2 headline " outlined>
     <div class="text-right">
       <v-menu :close-on-content-click="false">
         <template #activator="{ on, attrs }">
