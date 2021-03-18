@@ -20,14 +20,14 @@ export default {
     return {
       searchEntry: null,
       selectedFlows: this.hookDetail?.flowName || [],
-      openSeconds: false,
+      // openSeconds: false,
       step: 'openAgentOrFlow',
-      openSelectFlowEventType: false,
-      openFlow: false,
-      openAgent: false,
-      openStates: false,
-      openAgentOrFlow: true,
-      openActions: false,
+      // openSelectFlowEventType: false,
+      // openFlow: false,
+      // openAgent: false,
+      // openStates: false,
+      // openAgentOrFlow: true,
+      // openActions: false,
       removeDoThisDialog: false,
       flowNamesList: this.hookDetail?.flowNameList || [],
       hookDetails: this.hookDetail,
@@ -36,7 +36,7 @@ export default {
       states: STATES,
       stateName: 'All',
       agentFlowOrSomethingElse: '',
-      selectedAgent: null,
+      // selectedAgent: null,
       chosenStates: this.hookDetail?.hook?.event_tags?.state || STATES['All'],
       disableClick: true,
       chosenAction: this.hookDetail?.hook?.action || null,
@@ -60,11 +60,11 @@ export default {
     ...mapGetters('data', ['projects']),
     //We can not update an agent for now - config id needs to be added at agent creation
     // ...mapGetters('agent', ['agents']),
-    projectsList() {
-      return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
-        a.name > b.name ? 1 : -1
-      )
-    },
+    // projectsList() {
+    //   return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
+    //     a.name > b.name ? 1 : -1
+    //   )
+    // },
     allFlows() {
       return this.selectedFlows?.length === this.flows?.length
     },
@@ -130,12 +130,7 @@ export default {
       )
     },
     placeholderMessage() {
-      if (this.$vuetify.breakpoint.mdAndUp) {
-        return `Search by Flow, ${!this.isCloud ? 'or' : ''} Project${
-          this.isCloud ? ', or User' : ''
-        } `
-      }
-      return ''
+      return 'Search by Flow, or Project'
     },
     searchFormatted() {
       if (!this.searchEntry) return null
@@ -200,19 +195,10 @@ export default {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
-        this.openActions = true
+        // this.openActions = true
         this.switchStep('selectDoThis')
-        // this.openSelectFlowEventType = true
-        // this.openAgent = true
-        // this.flow = {}
-        // this.openSelectFlowEventType = false
       }
     },
-    // selectAgent(choice) {
-    //   this.selectedAgent = choice
-    //   this.openAgent = false
-    //   this.openSelectFlowEventType = true
-    // },
     selectFlow(event, flow) {
       if (
         flow &&
@@ -292,7 +278,7 @@ export default {
     },
     addNewAction() {
       this.addAction = true
-      this.openActions = false
+      // this.openActions = false
     },
     disableChip(item) {
       return (
@@ -349,7 +335,7 @@ export default {
           ? await this.$apollo.queries.actions.refresh()
           : this.setAlert({
               alertShow: true,
-              alertMessage: 'We hit an error!',
+              alertMessage: data.delete_action.error,
               alertType: 'error'
             })
       } catch (error) {
@@ -403,7 +389,6 @@ export default {
                 }
               }
             })
-
             await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/add_config_to_flow.gql'),
               variables: {
@@ -460,7 +445,6 @@ export default {
         })
       } finally {
         this.hookDetails = null
-        //needs updating - alert simply for deving at the mo
         if (data) {
           this.setAlert({
             alertShow: true,
@@ -478,21 +462,21 @@ export default {
         return require('@/graphql/Dashboard/flows.js').default(this.isCloud)
       },
       variables() {
-        let sortBy = {}
-        if (this.sortBy) {
-          if (this.isCloud && this.sortBy.includes('created_by.username')) {
-            sortBy['created_by'] = {}
-            sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
-          } else if (Object.keys(this.sortBy) < 1) {
-            sortBy = { name: 'asc' }
-          } else {
-            sortBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
-          }
-        }
+        // let sortBy = {}
+        // if (this.sortBy) {
+        //   if (this.isCloud && this.sortBy.includes('created_by.username')) {
+        //     sortBy['created_by'] = {}
+        //     sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
+        //   } else if (Object.keys(this.sortBy) < 1) {
+        //     sortBy = { name: 'asc' }
+        //   } else {
+        //     sortBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
+        //   }
+        // }
 
         let searchParams = [
-          { archived: { _eq: this.showArchived ? null : false } },
-          { project_id: { _eq: this.projectId ? this.projectId : null } }
+          { archived: { _eq: false } }
+          //   { project_id: { _eq: this.projectId ? this.projectId : null } }
         ]
 
         let orParams = [
@@ -513,9 +497,9 @@ export default {
         }
 
         return {
-          limit: this.limit,
-          offset: this.limit * (this.page - 1),
-          orderBy: sortBy,
+          // limit: this.limit,
+          // offset: this.limit * (this.page - 1),
+          // orderBy: sortBy,
           searchParams: {
             _and: [...searchParams, { _or: [...orParams] }]
           }
