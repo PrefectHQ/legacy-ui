@@ -157,6 +157,14 @@ export default {
     <template #title>Personal Access Tokens</template>
 
     <template #subtitle>
+      <h4 class="error--text"
+        ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
+      >
+      <div
+        >Use the
+        <router-link :to="{ name: 'keys' }"> API Keys</router-link>
+        page going forward.</div
+      >
       Personal Access (or <code>USER</code>) tokens are used to represent a
       single user, and are typically used by Prefect Cloud clients (such as the
       Prefect Cloud CLI) to log in to any tenants the user has access to. View
@@ -166,20 +174,6 @@ export default {
       >
         Personal Access Tokens.</ExternalLink
       >
-    </template>
-
-    <template #cta>
-      <v-btn
-        color="blue"
-        data-cy="create-personal-access-token"
-        class="white--text"
-        @click="createTokenDialog = true"
-      >
-        <v-icon left>
-          add
-        </v-icon>
-        Create a Token
-      </v-btn>
     </template>
 
     <v-text-field

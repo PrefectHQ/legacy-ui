@@ -188,6 +188,14 @@ export const routes = [
           )
       },
       {
+        name: 'keys',
+        path: 'keys',
+        component: () =>
+          import(
+            /* webpackChunkName: "user-settings--keys" */ '@/pages/UserSettings/APIKeys.vue'
+          )
+      },
+      {
         name: 'teams',
         path: 'teams',
         component: () =>

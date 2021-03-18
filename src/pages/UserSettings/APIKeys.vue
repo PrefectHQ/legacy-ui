@@ -1,37 +1,36 @@
 <script>
 import { setTimeout } from 'timers'
 import { mapGetters } from 'vuex'
+import DateTime from '@/components/DateTime'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import ExternalLink from '@/components/ExternalLink'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
+    DateTime,
     Alert,
     ConfirmDialog,
+    ExternalLink,
     ManagementLayout
   },
   mixins: [formatTime],
   data() {
     return {
+      createTokenDialog: false,
+      copyTokenDialog: false,
+      //alert
       alertShow: false,
       alertMessage: '',
       alertType: null,
-      apiTokenCopied: false,
-      copyTokenDialog: false,
-      createTokenDialog: false,
-      expiresAt: null,
+      //data table
       headers: [
         {
           text: 'Name',
           value: 'name'
-        },
-        {
-          text: 'Created By',
-          value: 'created_by',
-          width: '5%'
         },
         {
           text: 'Created At',
@@ -41,14 +40,7 @@ export default {
           text: 'Last Used',
           value: 'last_used'
         },
-        {
-          text: 'Expires',
-          value: 'expires_at'
-        },
-        {
-          text: 'Scope',
-          value: 'scope'
-        },
+        { text: 'Expires', value: 'expires_at' },
         {
           text: '',
           value: 'actions',
@@ -56,36 +48,32 @@ export default {
           sortable: false
         }
       ],
-      isFetchingTokens: true,
-      newAPIToken: '',
-      newTokenName: '',
-      newTokenScope: 'TENANT',
       search: null,
+      //token
+      newPersonalAccessToken: '',
+      newTokenName: '',
+      newTokenScope: 'USER',
       tokens: [],
-      tokenToDelete: null,
-      tokenToDeleteDialog: false
+      tokenCopied: false,
+      tokenToDelete: false,
+      tokenToDeleteDialog: false,
+      expiresAt: null,
+      label: 'Expiry Date',
+      hint: 'Leave blank for an expiry of 2100-01-01 UTC',
+      warning:
+        'You have selected a time in the past.  Your token will have an expiry of 2100-01-01 UTC'
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'role']),
-    isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
-    },
-    isTenantAdmin() {
-      return this.role === 'TENANT_ADMIN'
+    ...mapGetters('tenant', ['role']),
+    newTokenFormFilled() {
+      return !!this.newTokenName && !!this.newTokenScope
     },
     localExpiryDate() {
       return this.formDate('2100-01-01T00:00:00+00:00')
-    },
-    newTokenFormFilled() {
-      return !!this.newTokenName && !!this.newTokenScope
     }
   },
-
   watch: {
-    tenant() {
-      this.$apollo.queries.tokens.refetch()
-    },
     tokenToDeleteDialog(value) {
       if (!value) {
         this.tokenToDelete = false
@@ -93,13 +81,18 @@ export default {
     }
   },
   methods: {
+    clearAlert() {
+      this.alertShow = false
+      this.alertMessage = ''
+      this.alertType = null
+    },
     copyNewToken() {
       var copyText = document.querySelector('#new-api-token')
       copyText.select()
       document.execCommand('copy')
-      this.apiTokenCopied = true
+      this.tokenCopied = true
       setTimeout(() => {
-        this.apiTokenCopied = false
+        this.tokenCopied = false
       }, 2000)
     },
     async createAPIToken(variables) {
@@ -113,15 +106,12 @@ export default {
         result?.data?.create_api_token?.token
       ) {
         this.resetNewToken()
-        this.newAPIToken = result.data.create_api_token.token
-        this.createTokenDialog = false
+        this.newPersonalAccessToken = result.data.create_api_token.token
         this.copyTokenDialog = true
-        this.$apollo.queries.tokens.refetch()
       } else {
-        this.handleAlert(
-          'error',
-          'Something went wrong while trying to create your token. Please try again. If this error persists, please contact help@prefect.io.'
-        )
+        this.alertShow = true
+        this.alertMessage = 'Something went wrong when creating a token.'
+        this.alertType = 'error'
       }
     },
     async deleteToken(token) {
@@ -131,162 +121,70 @@ export default {
           id: token.id
         }
       })
-
       if (result?.data?.delete_api_token?.success) {
         this.tokenToDeleteDialog = false
-        this.handleAlert('success', 'The token has been successfully revoked.')
-        this.$apollo.queries.tokens.refetch()
+        this.alertShow = true
+        this.alertMessage = 'Token was successfully revoked.'
+        this.alertType = 'success'
       } else {
-        this.handleAlert(
-          'error',
-          'Something went wrong while trying to delete your token. Please try again. If this error persists, please contact help@prefect.io.'
-        )
+        this.alertShow = true
+        this.alertMessage = 'Something went wrong when deleting a token.'
+        this.alertType = 'error'
       }
-    },
-    handleAlert(type, message) {
-      this.alertType = type
-      this.alertMessage = message
-      this.alertShow = true
     },
     resetNewToken() {
       this.newTokenName = ''
-      this.newTokenScope = ''
-      this.newAPIToken = ''
+      this.newTokenScope = 'USER'
+      this.newPersonalAccessToken = ''
       this.expiresAt = null
-    },
-    setExpiry(dateTime) {
-      this.expiresAt = dateTime
+      this.createTokenDialog = false
+      this.copyTokenDialog = false
     }
   },
   apollo: {
     tokens: {
-      query: require('@/graphql/Tokens/api-tokens.gql'),
+      query: require('@/graphql/Tokens/user-tokens.gql'),
       fetchPolicy: 'network-only',
-      error() {
-        this.handleAlert(
-          'error',
-          'Something went wrong while trying to fetch your tokens. Please refresh the page and try again. If this error persists, please email help@prefect.io.'
-        )
-      },
-      result({ data }) {
-        this.tokens = data.api_token.map(token => {
-          return {
-            ...token,
-            created_by: token.created_by ? token.created_by.username : ''
-          }
-        })
-        this.isFetchingTokens = false
-      },
-      update: data => data
+      pollInterval: 5000,
+      update: data => data.api_token
     }
   }
 }
 </script>
 
 <template>
-  <ManagementLayout :show="!isFetchingTokens" control-show>
-    <template #title>API Tokens</template>
+  <ManagementLayout show>
+    <template #title>Personal Access Tokens</template>
 
-    <template v-if="isTenantAdmin" #subtitle>
-      <h4 class="error--text"
-        ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
+    <template #subtitle>
+      Personal Access (or <code>USER</code>) tokens are used to represent a
+      single user, and are typically used by Prefect Cloud clients (such as the
+      Prefect Cloud CLI) to log in to any tenants the user has access to. View
+      your
+      <ExternalLink
+        href="https://docs.prefect.io/cloud/cloud_concepts/api.html#prefect-cloud-api"
       >
-      <div
-        >Use the
-        <router-link :to="{ name: 'members', hash: '#service-accounts' }">
-          Service Accounts</router-link
-        >
-        page for API keys going forward.</div
+        Personal Access Tokens.</ExternalLink
       >
-      Manage your
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
-        target="_blank"
-        rel="noopener noreferrer"
-        >TENANT</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens and your team's
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#runner"
-        target="_blank"
-        rel="noopener noreferrer"
-        >RUNNER</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens.
-    </template>
-    <template v-else-if="isReadOnlyUser" #subtitle>
-      Manage
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#runner"
-        target="_blank"
-        rel="noopener noreferrer"
-        >RUNNER</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      and
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
-        target="_blank"
-        rel="noopener noreferrer"
-        >TENANT</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens.
-    </template>
-    <template v-else #subtitle>
-      Manage and create your
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
-        target="_blank"
-        rel="noopener noreferrer"
-        >TENANT</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens.
     </template>
 
-    <template v-if="isReadOnlyUser" #alerts>
-      <v-alert
-        class="mx-auto"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="380"
+    <template #cta>
+      <v-btn
+        color="blue"
+        data-cy="create-personal-access-token"
+        class="white--text"
+        @click="createTokenDialog = true"
       >
-        Read-only users cannot manage API tokens.
-      </v-alert>
+        <v-icon left>
+          add
+        </v-icon>
+        Create a Token
+      </v-btn>
     </template>
 
-    <!-- SEARCH (MOBILE) -->
     <v-text-field
-      v-if="!$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+      v-if="!$vuetify.breakpoint.mdAndUp"
       v-model="search"
-      class="rounded-0 elevation-1 mb-1"
       solo
       dense
       hide-details
@@ -298,10 +196,7 @@ export default {
 
     <v-card tile>
       <v-card-text class="pa-0">
-        <div
-          v-if="$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
-          class="py-1 mr-2 flex"
-        >
+        <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
           <v-text-field
             v-model="search"
             class="rounded-0 elevation-1"
@@ -313,37 +208,31 @@ export default {
             prepend-inner-icon="search"
             autocomplete="new-password"
             :style="{
-              'max-width': $vuetify.breakpoint.mdAndUp ? '400px' : null
+              'max-width': $vuetify.breakpoint.mdAndUp ? '360px' : null
             }"
           ></v-text-field>
         </div>
 
-        <!-- TOKENS TABLE -->
         <v-data-table
-          v-if="!isReadOnlyUser"
           fixed-header
+          class="elevation-2 rounded-0 truncate-table"
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :search="search"
           :items="tokens"
+          :loading="$apollo.queries.tokens.loading"
           :items-per-page="10"
-          class="elevation-2 rounded-0 truncate-table"
           :footer-props="{
             showFirstLastPage: true,
-            itemsPerPageOptions: [10, 15, 20, -1],
             firstIcon: 'first_page',
             lastIcon: 'last_page',
             prevIcon: 'keyboard_arrow_left',
             nextIcon: 'keyboard_arrow_right'
           }"
-          no-results-text=" No API Tokens found. Try expanding your search?"
-          no-data-text="Your team does not have any API Tokens yet."
+          no-results-text="No tokens found. Try expanding your search?"
+          no-data-text="You do not have any personal access tokens yet."
         >
-          <!-- HEADERS -->
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
-          </template>
-          <template #header.created_by="{ header }">
             <span class="subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created="{ header }">
@@ -355,11 +244,10 @@ export default {
           <template #header.expires_at="{ header }">
             <span class="subtitle-2">{{ header.text }}</span>
           </template>
-          <template #header.scope="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+          <template #item.name="{ item }">
+            {{ item.name }}
           </template>
 
-          <!-- TOKEN CREATED-AT TIME -->
           <template #item.created="{ item }">
             <v-tooltip top>
               <template #activator="{ on }">
@@ -373,7 +261,6 @@ export default {
             </v-tooltip>
           </template>
 
-          <!-- TOKEN LAST-USED TIME -->
           <template #item.last_used="{ item }">
             <v-tooltip top>
               <template #activator="{ on }">
@@ -387,13 +274,12 @@ export default {
             </v-tooltip>
           </template>
 
-          <!-- TOKEN EXPIRES-AT TIME -->
           <template #item.expires_at="{ item }">
-            {{ item.expires_at ? formatTimeRelative(item.expires_at) : '' }}
+            {{
+              item.expires_at ? formatTimeRelative(item.expires_at) : 'Never'
+            }}
           </template>
-
-          <!-- TOKEN ACTIONS -->
-          <template v-if="!isReadOnlyUser" #item.actions="{ item }">
+          <template #item.actions="{ item }">
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn
@@ -417,7 +303,82 @@ export default {
       </v-card-text>
     </v-card>
 
-    <!-- REVOKE TOKEN DIALOG -->
+    <ConfirmDialog
+      v-model="createTokenDialog"
+      :dialog-props="{ 'max-width': '500' }"
+      :confirm-props="{ 'data-cy': 'submit-new-personal-access-token' }"
+      :disabled="!newTokenFormFilled"
+      title="Create a Personal Access token"
+      confirm-text="Create"
+      @cancel="
+        createTokenDialog = false
+        resetNewToken()
+      "
+      @confirm="
+        createAPIToken({
+          name: newTokenName,
+          scope: newTokenScope,
+          expires_at: expiresAt
+        })
+      "
+    >
+      <v-text-field
+        v-model="newTokenName"
+        class="mb-3"
+        single-line
+        data-cy="new-personal-access-token-name"
+        placeholder="Token Name"
+        autofocus
+        outlined
+        dense
+      />
+      <DateTime
+        v-model="expiresAt"
+        class="mb-3"
+        warning="
+          You have selected a time in the past; as a result, your token will have already expired.
+        "
+        :text-field-props="{
+          outlined: true,
+          dense: true,
+          hint: `Leave blank to never expire this token`,
+          label: 'Token Expiration',
+          persistentHint: true
+        }"
+      />
+    </ConfirmDialog>
+
+    <ConfirmDialog
+      v-model="copyTokenDialog"
+      :dialog-props="{ 'max-width': '500' }"
+      :cancel-props="{ 'data-cy': 'close-personal-access-token-dialog' }"
+      title="Your token has been created"
+      :confirm-text="tokenCopied ? 'Copied' : 'Copy'"
+      cancel-text="Close"
+      @cancel="resetNewToken"
+      @confirm="copyNewToken"
+    >
+      <p>
+        Copy this token and put it in a secure place.
+        <strong>
+          You won't be able to see this token again once you close this dialog.
+        </strong>
+      </p>
+      <v-textarea
+        id="new-api-token"
+        v-model="newPersonalAccessToken"
+        data-cy="personal-access-token-field"
+        data-private
+        class="_lr-hide"
+        auto-grow
+        rows="1"
+        readonly
+        single-line
+        outlined
+        spellcheck="false"
+      />
+    </ConfirmDialog>
+
     <ConfirmDialog
       v-if="tokenToDelete"
       v-model="tokenToDeleteDialog"
@@ -443,9 +404,12 @@ export default {
   </ManagementLayout>
 </template>
 
-<style lang="scss" scoped>
-a {
-  text-decoration: none;
+<style lang="scss">
+.hidewidth {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 .flex {
