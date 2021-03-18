@@ -52,6 +52,7 @@ export default {
       return this.hook?.event_tags?.agent_config_id[0]
     },
     includeSeconds() {
+      console.log(this.hook)
       return this.flowConfig
     },
     hookType() {
@@ -71,7 +72,7 @@ export default {
     },
     hookStates() {
       const states = this.hook?.event_tags?.state
-      return states.length === STATES['All'].length
+      return states?.length === STATES['All']?.length
         ? 'changes to any state'
         : states?.length > 1
         ? 'changes to multiple states'
@@ -261,13 +262,13 @@ export default {
         </v-card></v-menu
       ></div
     >
-    <div class="pl-8 pb-8 pt-0 pr-4"
+    <div class="pl-8 pt-0 pr-4" :class="isAgent ? 'pb-0' : 'pb-8'"
       ><v-icon color="codePink" class="pr-2">{{
         hookDetails[hook.event_type] ? hookDetails[hook.event_type].icon : ''
       }}</v-icon
       ><span
         >When {{ hookType }}
-        <v-tooltip v-if="flowName.length > 2" top>
+        <v-tooltip v-if="flowName && flowName.length > 2" top>
           <template #activator="{ on }">
             <span class="font-weight-bold" v-on="on">{{
               hookName
@@ -285,7 +286,7 @@ export default {
         >.</span
       >
     </div>
-    <div v-if="isAgent" class=" pa-4 subtitle-2 font-weight-light"
+    <div v-if="isAgent" class=" py-4 pl-8 subtitle-2 font-weight-light"
       >To use with a new agent, add this id as the agent-config-id:
       <v-tooltip bottom>
         <template #activator="{ on }">

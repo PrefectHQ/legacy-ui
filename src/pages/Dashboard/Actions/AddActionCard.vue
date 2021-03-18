@@ -776,6 +776,9 @@ export default {
           @keydown.enter="closeSeconds"
           @blur="closeSeconds"
         ></v-text-field>
+        <div class="mt-1 text-caption">
+          Hint: confirm duration by pressing the Enter key
+        </div>
       </v-card-text>
     </v-card>
     <v-card
