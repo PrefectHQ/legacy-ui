@@ -347,7 +347,7 @@ export default {
       </v-col>
     </v-row>
 
-    <div class="headline black--text mx-4">
+    <div class="headline mx-4">
       <v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
         :color="step === 'selectMessageType' ? 'codePink' : 'grey'"
