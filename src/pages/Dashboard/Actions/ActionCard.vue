@@ -28,7 +28,7 @@ export default {
           icon: 'pi-flow'
         },
         AgentSLAFailedEvent: {
-          type: 'agent',
+          type: 'an agent',
           icon: 'pi-agent',
           action: 'is unhealthy'
         },

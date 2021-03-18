@@ -166,17 +166,12 @@ export default {
     closeCard() {
       this.$emit('close')
     },
-    // handleOpenAgentOrFlow() {
-    //   this.openAgentOrFlow = !this.openAgentOrFlow
-    // },
     switchStep(step) {
       //steps = 'openAgentOrFlow', 'selectEventType', 'selectFlow', 'selectState', 'openDuration', 'selectDoThis'
       this.step = step
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
-
-      // this.openAgentOrFlow = false
       if (choice === 'flow') {
         this.flowEventType = this.hookDetail?.flowConfig?.kind
           ? this.flowEventTypes.find(
@@ -196,7 +191,6 @@ export default {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
-        // this.openActions = true
         this.switchStep('selectDoThis')
       }
     },
@@ -466,22 +460,7 @@ export default {
         return require('@/graphql/Dashboard/flows.js').default(this.isCloud)
       },
       variables() {
-        // let sortBy = {}
-        // if (this.sortBy) {
-        //   if (this.isCloud && this.sortBy.includes('created_by.username')) {
-        //     sortBy['created_by'] = {}
-        //     sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
-        //   } else if (Object.keys(this.sortBy) < 1) {
-        //     sortBy = { name: 'asc' }
-        //   } else {
-        //     sortBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
-        //   }
-        // }
-
-        let searchParams = [
-          { archived: { _eq: false } }
-          //   { project_id: { _eq: this.projectId ? this.projectId : null } }
-        ]
+        let searchParams = [{ archived: { _eq: false } }]
 
         let orParams = [
           {
@@ -501,9 +480,6 @@ export default {
         }
 
         return {
-          // limit: this.limit,
-          // offset: this.limit * (this.page - 1),
-          // orderBy: sortBy,
           searchParams: {
             _and: [...searchParams, { _or: [...orParams] }]
           }
