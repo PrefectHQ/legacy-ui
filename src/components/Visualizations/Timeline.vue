@@ -866,7 +866,7 @@ export default {
         parent.clientHeight - padding.top - padding.bottom
       )
 
-      if (this.width_ !== this.width) {
+      if (this.width_ && this.width && this.width_ !== this.width) {
         this.setChartDimensions()
       }
     },
