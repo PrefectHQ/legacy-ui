@@ -507,19 +507,19 @@ export default {
 <template>
   <v-card v-if="!addAction" width="100%">
     <v-row
-      ><v-col cols="6"
+      ><v-col cols="6" class="pl-6"
         ><v-btn
           text
-          class="grey--text text--darken-2 light-weight-text"
+          class="grey--text text--darken-2 light-weight-text pl-0 ml-4 pb-2"
           @click="closeCard"
         >
-          <v-icon>chevron_left</v-icon
-          ><span style="text-transform: none;">Back </span></v-btn
+          <v-icon small>close</v-icon
+          ><span style="text-transform: none;">Close</span></v-btn
         ></v-col
       >
       <v-col cols="6" class="text-right"
         ><v-btn
-          class="mr-3 mt-2"
+          class="mr-3"
           color="primary"
           elevation="0"
           :loading="saving"

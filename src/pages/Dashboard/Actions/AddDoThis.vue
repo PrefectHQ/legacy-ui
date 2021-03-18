@@ -9,12 +9,13 @@ export default {
   },
   data() {
     return {
+      saving: false,
       enableSave: false,
       messageType: { title: 'Send' },
       step: 'selectMessageType',
       messageConfig: null,
       messageConfigTo: [],
-      messageName: 'this message',
+      messageName: 'a message to',
       secretName: '',
       messageText: '',
       openTwilioConfig: false,
@@ -141,16 +142,38 @@ export default {
     },
     isPagerDuty() {
       return this.messageType.type === 'PAGERDUTY'
+    },
+    needsNext() {
+      if (
+        this.step === 'openToConfig' &&
+        this.messageType.type === 'SLACK_WEBHOOK'
+      )
+        return false
+      switch (this.step) {
+        case 'openMessageText':
+        case 'addTwilioConfig':
+        case 'openToConfig':
+          return true
+        default:
+          return false
+      }
     }
   },
   methods: {
     switchStep(type) {
       if (type) this.step = type
     },
-    handleNext(type) {
-      if (type === 'EMAIL') this.switchStep('addName')
-      else if (type === 'TWILIO') this.switchStep('addTwilioConfig')
-      else this.switchStep('addName')
+    handleNext() {
+      console.log('next', this.step)
+      if (this.step === 'openMessageText') {
+        this.switchStep('openToConfig')
+      } else if (this.step === 'openToConfig') {
+        if (this.messageType.type === 'TWILIO') {
+          this.switchStep('addTwilioConfig')
+        } else {
+          this.switchStep('addName')
+        }
+      }
     },
     selectMessageType(type) {
       this.messageType = type
@@ -247,6 +270,7 @@ export default {
       )
     },
     createAction() {
+      this.saving = true
       this.saveConfig()
       let config
       switch (this.messageType.type) {
@@ -289,16 +313,32 @@ export default {
 
 <template>
   <v-card elevation="0">
-    <div class="pb-1 pt-2"
-      ><v-btn
-        text
-        class="grey--text text--darken-2 light-weight-text"
-        @click="handleClose"
+    <v-row
+      ><v-col cols="6" class="pl-4"
+        ><v-btn
+          text
+          class="grey--text text--darken-2 light-weight-text pl-0 ml-4 pb-2"
+          @click="handleClose"
+        >
+          <v-icon small>close</v-icon
+          ><span style="text-transform: none;">Close </span></v-btn
+        ></v-col
       >
-        <v-icon>chevron_left</v-icon
-        ><span style="text-transform: none;">Back </span></v-btn
-      >
-    </div>
+      <v-col cols="6" class="text-right"
+        ><v-btn
+          class="mr-3"
+          color="primary"
+          elevation="0"
+          :loading="saving"
+          :disabled="!allowSave"
+          @click="createAction"
+        >
+          <i class="far fa-cloud-upload-alt fa-lg"></i>
+          <span class="pl-2">Save</span>
+        </v-btn>
+      </v-col>
+    </v-row>
+
     <div class="headline black--text mx-4">
       <v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
@@ -464,19 +504,7 @@ export default {
           >
           integration.
         </span>
-        <div class="text-right">
-          <v-btn
-            x-small
-            class="text-normal"
-            depressed
-            color="primary"
-            title="Next"
-            @click="switchStep('addName')"
-          >
-            Next
-            <v-icon small>call_made</v-icon>
-          </v-btn>
-        </div>
+
         <v-select
           v-model="apiToken"
           :items="secretNames"
@@ -507,9 +535,7 @@ export default {
         :hide="false"
         :show-reset="false"
         :show-clear="false"
-        :show-close="true"
         @input="handleListInput"
-        @next="handleNext(messageType.type)"
       ></ListInput>
     </v-card-text>
     <v-card-text v-else-if="step === 'addTwilioConfig'">
@@ -530,19 +556,7 @@ export default {
           to recieve messages.
         </span>
       </div>
-      <div class="text-right">
-        <v-btn
-          x-small
-          class="text-normal"
-          depressed
-          color="primary"
-          title="Next"
-          @click="switchStep('addName')"
-        >
-          Next
-          <v-icon small>call_made</v-icon>
-        </v-btn>
-      </div>
+
       <div>
         <v-select
           v-model="authToken"
@@ -579,12 +593,19 @@ export default {
         Give your config a name so you can find and re-use it with more hooks.
       </v-tooltip>
     </v-card-text>
-    <div class="text-right pb-4 pr-4">
-      <v-btn color="primary" :disabled="!allowSave" @click="createAction">
-        <i class="far fa-cloud-upload-alt fa-lg"></i>
-        <span class="pl-2">Save</span>
+    <v-card-actions v-if="needsNext">
+      <v-spacer></v-spacer>
+      <v-btn
+        class="text-normal mr-1 mb-1"
+        depressed
+        color="primary"
+        title="Next"
+        @click="handleNext"
+      >
+        Next
+        <v-icon small>call_made</v-icon>
       </v-btn>
-    </div>
+    </v-card-actions>
   </v-card>
 </template>
 
