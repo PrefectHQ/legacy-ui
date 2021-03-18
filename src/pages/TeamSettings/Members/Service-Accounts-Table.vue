@@ -237,16 +237,11 @@ export default {
           )
           .filter(user => user.account_type === 'SERVICE')
           .map(user => {
-            let membership = user.memberships.find(
-              mem => mem.tenant_id == this.tenant.id
-            )
+            user.memberships.find(mem => mem.tenant_id == this.tenant.id)
 
             return {
               id: user.id,
-              username: user.username,
-              firstName: user.first_name,
-              userId: user.id,
-              membershipId: membership.id
+              firstName: user.first_name
             }
           })
         return data
@@ -254,7 +249,7 @@ export default {
       error() {
         this.$emit(
           'failed-action',
-          'Something went wrong while trying to fetch your team members. Please try again.'
+          'Something went wrong while trying to fetch your service accounts. Please try again.'
         )
         this.$emit('load-end')
       },
@@ -278,7 +273,8 @@ export default {
             id: key.id,
             name: key.name,
             created_at: key.created,
-            expires: key.expires_at
+            expires: key.expires_at,
+            user_id: key.user_id
           }
         })
         this.isFetchingTokens = false
@@ -448,7 +444,7 @@ export default {
           fixed-header
           :headers="tokenHeaders"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-          :items="keys"
+          :items="keys.filter(key => key.user_id === selectedUser.id)"
           :items-per-page="10"
           class="rounded-0 truncate-table"
           :footer-props="{
