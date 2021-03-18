@@ -732,7 +732,7 @@ export default {
               @click="selectFlow($event, item)"
               ><truncate :content="`${item.name} - ${item.project.name}`"
                 ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
-                ><div class="font-weight-bold">{{ item.name }}</div></truncate
+                ><div class="subtitle-2">{{ item.name }}</div></truncate
               ></v-chip
             ></v-col
           >
