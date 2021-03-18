@@ -1,5 +1,4 @@
 <script>
-//This page will need updating!
 import { actionTypes } from '@/utils/cloudHooks'
 import { mapGetters } from 'vuex'
 import ListInput from '@/components/CustomInputs/ListInput'
@@ -15,8 +14,8 @@ export default {
       step: 'selectMessageType',
       messageConfig: null,
       messageConfigTo: [],
-      // To do - can we check what the default message will be?
       messageName: 'this message',
+      secretName: '',
       messageText: '',
       openTwilioConfig: false,
       newSaveAs: '',
@@ -100,14 +99,19 @@ export default {
           !!this.messagingService &&
           this.accountSid
         : !!this.messageType &&
-          !!this.messageConfigTo.length &&
-          this.messageConfigTo.filter(item => this.rules[type](item) !== true)
-            .length < 1
+          (!!this.secretName ||
+            (!!this.messageConfigTo.length &&
+              this.messageConfigTo.filter(
+                item => this.rules[type](item) !== true
+              ).length < 1))
       return allow && this.step === 'addName'
     },
     saveAs: {
       get() {
-        return `${this.messageType.verb} ${this.messageConfigTo}`
+        const whoTo = this.messageConfigTo.length
+          ? this.messageConfigTo
+          : this.secretName
+        return `${this.messageType.verb} ${whoTo}`
       },
       set(x) {
         this.newSaveAs = x
@@ -115,7 +119,9 @@ export default {
     },
     to() {
       const configTo =
-        this.messageConfigTo.length > 0 ? this.messageConfigTo.toString() : ''
+        this.messageConfigTo.length > 0
+          ? this.messageConfigTo.toString()
+          : this.secretName || ''
       return this.messageType?.type === 'EMAIL'
         ? configTo || this.messageType?.config?.to || 'to this email address.'
         : this.messageType.type === 'WEBHOOK'
@@ -171,7 +177,7 @@ export default {
             case 'SLACK_WEBHOOK':
               {
                 this.messageConfig = {
-                  webhook_url_secret: this.messageConfigTo
+                  webhook_url_secret: this.secretName
                 }
                 if (this.messageText) {
                   this.messageConfig.message = this.bothMessages
@@ -223,26 +229,19 @@ export default {
         this.errorMessage = checked
       }
     },
-    openTwilioConfigSection() {
-      this.openTwilioConfig = !this.openTwilioConfig
+    selectSecret(secretName) {
+      this.secretName = secretName
+      this.switchStep('addName')
     },
+    // openTwilioConfigSection() {
+    //   this.openTwilioConfig = !this.openTwilioConfig
+    // },
     saveMessage() {
       this.switchStep('openToConfig')
     },
     actionTypes() {
       let allHooks
-      //   if (
-      //     this.canEdit &&
-      //     this.editable &&
-      //     this.tenant.prefectAdminSettings?.notifications
-      //   ) {
       allHooks = actionTypes
-      //   } else {
-      //     allHooks =
-      //       this.canEdit && this.editable
-      //         ? openCloudHookTypes
-      //         : openCloudHookTypes.filter(t => t.type == this.hook.type)
-      //   }
       return allHooks.filter(
         t => (t.requiresCloud && this.isCloud) || !t.requiresCloud
       )
@@ -277,6 +276,12 @@ export default {
       const name = this.newSaveAs || this.saveAs
       const input = { name: name, config }
       this.$emit('new-action', input)
+    }
+  },
+  apollo: {
+    secretNames: {
+      query: require('@/graphql/Tenant/tenant-secret-names.gql'),
+      update: data => data.secret_names
     }
   }
 }
@@ -419,7 +424,20 @@ export default {
       />
     </v-card-text>
     <v-card-text v-else-if="step === 'openToConfig'">
-      <v-text-field
+      <span v-if="messageType.type === 'SLACK_WEBHOOK'"
+        ><v-chip
+          v-for="name in secretNames"
+          :key="name"
+          label
+          :color="secretName === name ? 'codePink' : 'grey'"
+          class="ma-1"
+          outlined
+          @click="selectSecret(name)"
+        >
+          {{ name }}
+        </v-chip>
+      </span>
+      <!-- <v-text-field
         v-if="messageType.type === 'SLACK_WEBHOOK'"
         v-model="messageConfigTo"
         :label="messageConfigLabel"
@@ -427,7 +445,7 @@ export default {
         validate-on-blur
         :error-messages="errorMessage"
         @keyup.enter="saveConfig"
-      ></v-text-field>
+      ></v-text-field> -->
       <div v-else-if="isPagerDuty">
         <span>
           Prefect Cloud will send a PagerDuty notification. Create your
@@ -459,13 +477,12 @@ export default {
             <v-icon small>call_made</v-icon>
           </v-btn>
         </div>
-        <v-text-field
+        <v-select
           v-model="apiToken"
-          :rules="[rules.required]"
+          :items="secretNames"
           label="Name of your PagerDuty API Token Secret"
-          class="my-8"
-          dense
         />
+
         <v-text-field
           v-model="routingKey"
           :rules="[rules.required]"
@@ -528,13 +545,19 @@ export default {
         </v-btn>
       </div>
       <div>
-        <v-text-field
+        <v-select
+          v-model="authToken"
+          :items="secretNames"
+          label="Name of Auth token Secret"
+        />
+
+        <!-- <v-text-field
           v-model="authToken"
           class="my-8"
           :rules="[rules.required]"
           label="Name of Auth Token Secret"
           dense
-        />
+        /> -->
 
         <v-text-field
           v-model="accountSid"
@@ -569,7 +592,8 @@ export default {
     </v-card-text>
     <div class="text-right pb-4 pr-4">
       <v-btn color="primary" :disabled="!allowSave" @click="createAction">
-        Save Config
+        <i class="far fa-cloud-upload-alt fa-lg"></i>
+        <span class="pl-2">Save</span>
       </v-btn>
     </div>
   </v-card>
