@@ -87,6 +87,14 @@ export default {
     messageConfigRules() {
       return []
     },
+    disableNext() {
+      if (this.step === 'openToConfig') {
+        if (!this.messageConfigTo.length) return true
+        else return false
+      } else {
+        return false
+      }
+    },
     allowSave() {
       const type = this.messageType.type
       const allow = this.isPagerDuty
@@ -240,6 +248,7 @@ export default {
                 severity: this.severity
               }
               if (this.messageText) {
+                //TO DO - Don't think this is working - need to fix!
                 this.messageConfig.message = this.bothMessages
                   ? `{} ${this.messageText}`
                   : this.messageText
@@ -338,7 +347,7 @@ export default {
       </v-col>
     </v-row>
 
-    <div class="headline black--text mx-4">
+    <div class="headline mx-4">
       <v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
         :color="step === 'selectMessageType' ? 'codePink' : 'grey'"
@@ -448,14 +457,14 @@ export default {
           >
         </v-card>
       </v-menu>
-      <v-checkbox v-model="bothMessages" class="mt-0 no-top" dense>
+      <!-- <v-checkbox v-model="bothMessages" class="mt-0 no-top" dense>
         <template #label
           ><span class="body-2"
             >Add this message <span class="font-weight-bold"> and</span> the
             default message.</span
           ></template
         >
-      </v-checkbox>
+      </v-checkbox> -->
       <v-text-field
         v-model="messageText"
         class="pt-0"
@@ -583,7 +592,6 @@ export default {
           <v-text-field
             v-model="saveAs"
             class="pr-4"
-            :disabled="!messageType"
             label="Save As"
             v-bind="attrs"
             v-on="on"
@@ -597,6 +605,7 @@ export default {
       <v-btn
         class="text-normal mr-1 mb-1"
         depressed
+        :disabled="disableNext"
         color="primary"
         title="Next"
         @click="handleNext"

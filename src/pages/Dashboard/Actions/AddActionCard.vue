@@ -22,14 +22,7 @@ export default {
       saving: false,
       searchEntry: null,
       selectedFlows: this.hookDetail?.flowName || [],
-      // openSeconds: false,
       step: 'openAgentOrFlow',
-      // openSelectFlowEventType: false,
-      // openFlow: false,
-      // openAgent: false,
-      // openStates: false,
-      // openAgentOrFlow: true,
-      // openActions: false,
       removeDoThisDialog: false,
       flowNamesList: this.hookDetail?.flowNameList || [],
       hookDetails: this.hookDetail,
@@ -38,7 +31,6 @@ export default {
       states: STATES,
       stateName: 'All',
       agentFlowOrSomethingElse: '',
-      // selectedAgent: null,
       chosenStates: this.hookDetail?.hook?.event_tags?.state || STATES['All'],
       disableClick: false,
       chosenAction: this.hookDetail?.hook?.action || null,
@@ -348,6 +340,7 @@ export default {
         })
       } finally {
         this.removeDoThisDialog = false
+        this.deleting = false
       }
     },
     async createHook() {
@@ -535,7 +528,7 @@ export default {
 
     <v-card class="px-8" elevation="0">
       <v-row
-        ><v-col cols="12" class="headline black--text">
+        ><v-col cols="12" class="headline">
           When
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
@@ -850,7 +843,7 @@ export default {
           small
           icon
           title="Remove"
-          color="red"
+          color="codePink"
           @click.stop="handleRemoveClick(item)"
         >
           <i class="fas fa-times-circle fa-lg"
