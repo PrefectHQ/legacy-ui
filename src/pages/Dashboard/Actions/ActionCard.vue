@@ -28,7 +28,7 @@ export default {
           icon: 'pi-flow'
         },
         AgentSLAFailedEvent: {
-          type: 'an agent',
+          type: 'agent',
           icon: 'pi-agent',
           action: 'is unhealthy'
         },
@@ -266,7 +266,7 @@ export default {
         hookDetails[hook.event_type] ? hookDetails[hook.event_type].icon : ''
       }}</v-icon
       ><span
-        >When {{ hookType }}
+        >When <span v-if="!hookName">an </span>{{ hookType }}
         <v-tooltip v-if="flowName && flowName.length > 2" top>
           <template #activator="{ on }">
             <span class="font-weight-bold" v-on="on">{{
