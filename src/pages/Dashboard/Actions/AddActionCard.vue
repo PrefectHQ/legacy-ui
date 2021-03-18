@@ -69,6 +69,9 @@ export default {
     allFlows() {
       return this.selectedFlows?.length === this.flows?.length
     },
+    formHeight() {
+      return '30Vh'
+    },
     agentOrFlow() {
       if (this.hookDetails?.flowName) return 'flow'
       if (!this.agentFlowOrSomethingElse) return 'flow'
@@ -644,9 +647,9 @@ export default {
       v-else-if="step === 'selectFlow'"
       elevation="0"
       class="pa-2"
-      :style="{ overflow: 'auto' }"
+      :style="{ 'overflow-y': 'hidden' }"
     >
-      <v-card-title class="pt-0">
+      <v-card-title class="pt-0 pb-2">
         <v-text-field
           v-model="searchEntry"
           class="flow-search"
@@ -673,21 +676,14 @@ export default {
             <v-icon>pi-flow</v-icon>
             {{ allFlows ? 'De-select all flows' : 'Select all flows' }}
           </v-chip>
-          <v-chip
-            small
-            label
-            color="primary"
-            title="Next"
-            class="mx-1"
-            @click="handleFlowNext"
-          >
-            Next
-            <v-icon small>call_made</v-icon>
-          </v-chip>
         </div>
       </v-card-title>
 
-      <v-card-text>
+      <v-sheet
+        class="py-4"
+        :height="formHeight"
+        :style="{ 'overflow-y': 'auto', 'overflow-x': 'hidden' }"
+      >
         <v-row class="px-4">
           <v-col
             v-for="item in flows"
@@ -712,7 +708,21 @@ export default {
             ></v-col
           >
         </v-row>
-      </v-card-text>
+      </v-sheet>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          :disabled="!selectedFlows.length"
+          title="Next"
+          class="mx-1"
+          @click="handleFlowNext"
+        >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn></v-card-actions
+      >
     </v-card>
     <v-card
       v-else-if="step === 'selectEventType'"
@@ -743,6 +753,19 @@ export default {
           Hint: confirm duration by pressing the Enter key
         </div>
       </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          title="Next"
+          class="mx-1"
+          @click="closeSeconds"
+        >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn></v-card-actions
+      >
     </v-card>
     <v-card
       v-else-if="step === 'selectState'"
@@ -750,19 +773,6 @@ export default {
       class="pl-6 pb-4 pt-2"
     >
       <v-card-text>
-        <div class="text-right">
-          <v-btn
-            x-small
-            class="text-normal"
-            color="primary"
-            title="Next"
-            :disabled="chosenStates.length < 1"
-            @click="switchStep('selectDoThis')"
-          >
-            Next
-            <v-icon small>call_made</v-icon>
-          </v-btn>
-        </div>
         <div>
           <v-chip
             v-for="item in stateGroups"
@@ -797,6 +807,20 @@ export default {
           >
         </div>
       </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          title="Next"
+          class="mx-1"
+          :disabled="chosenStates.length < 1"
+          @click="switchStep('selectDoThis')"
+        >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn></v-card-actions
+      >
     </v-card>
     <v-card
       v-else-if="step === 'selectDoThis'"
