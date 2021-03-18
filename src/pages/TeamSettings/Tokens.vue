@@ -1,5 +1,4 @@
 <script>
-import { setTimeout } from 'timers'
 import { mapGetters } from 'vuex'
 
 import Alert from '@/components/Alert'
@@ -73,12 +72,6 @@ export default {
     },
     isTenantAdmin() {
       return this.role === 'TENANT_ADMIN'
-    },
-    localExpiryDate() {
-      return this.formDate('2100-01-01T00:00:00+00:00')
-    },
-    newTokenFormFilled() {
-      return !!this.newTokenName && !!this.newTokenScope
     }
   },
 
@@ -93,37 +86,6 @@ export default {
     }
   },
   methods: {
-    copyNewToken() {
-      var copyText = document.querySelector('#new-api-token')
-      copyText.select()
-      document.execCommand('copy')
-      this.apiTokenCopied = true
-      setTimeout(() => {
-        this.apiTokenCopied = false
-      }, 2000)
-    },
-    async createAPIToken(variables) {
-      const result = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tokens/create-api-token.gql'),
-        variables
-      })
-
-      if (
-        result?.data?.create_api_token?.id &&
-        result?.data?.create_api_token?.token
-      ) {
-        this.resetNewToken()
-        this.newAPIToken = result.data.create_api_token.token
-        this.createTokenDialog = false
-        this.copyTokenDialog = true
-        this.$apollo.queries.tokens.refetch()
-      } else {
-        this.handleAlert(
-          'error',
-          'Something went wrong while trying to create your token. Please try again. If this error persists, please contact help@prefect.io.'
-        )
-      }
-    },
     async deleteToken(token) {
       const result = await this.$apollo.mutate({
         mutation: require('@/graphql/Tokens/delete-token.gql'),
@@ -147,15 +109,6 @@ export default {
       this.alertType = type
       this.alertMessage = message
       this.alertShow = true
-    },
-    resetNewToken() {
-      this.newTokenName = ''
-      this.newTokenScope = ''
-      this.newAPIToken = ''
-      this.expiresAt = null
-    },
-    setExpiry(dateTime) {
-      this.expiresAt = dateTime
     }
   },
   apollo: {
