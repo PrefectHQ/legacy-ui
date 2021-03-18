@@ -850,7 +850,7 @@ export default {
           small
           icon
           title="Remove"
-          color="red"
+          color="codePink"
           @click.stop="handleRemoveClick(item)"
         >
           <i class="fas fa-times-circle fa-lg"
