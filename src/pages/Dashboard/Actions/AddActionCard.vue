@@ -18,6 +18,7 @@ export default {
   },
   data() {
     return {
+      deleting: false,
       saving: false,
       searchEntry: null,
       selectedFlows: this.hookDetail?.flowName || [],
@@ -323,6 +324,7 @@ export default {
       this.removeDoThisDialog = true
     },
     async removeDoThis() {
+      this.deleting = true
       try {
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/delete_action.gql'),
@@ -856,6 +858,7 @@ export default {
       </v-chip>
       <ConfirmDialog
         :value="removeDoThisDialog"
+        :loading="deleting"
         width="30vW"
         title="Are
       you sure you want to delete this?"
