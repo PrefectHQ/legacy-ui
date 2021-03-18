@@ -26,25 +26,6 @@ export default {
     }
   },
   methods: {
-    // includeTo(hook) {
-    //   return hook.event_type === 'FlowRunStateChangedEvent'
-    // },
-    // hookText(hook) {
-    //   const event = hook?.event_type
-    //   // name is if a flow group is named on the event - to add later
-    //   const name = ''
-    //   return `${this.hookDetails[event]?.type} ${name} ${this.hookDetails[event]?.action}`
-    // },
-    // hookStates(hook) {
-    //   console.log('hook', hook)
-    //   const states = hook?.event_tags?.state
-    //   return states.toString().toLowerCase()
-    // },
-    // hookAction(hook) {
-    //   const action = hook?.action?.action_type
-    //   const name = hook?.action?.name
-    //   return name || this.actionDetails[action]?.title
-    // },
     openEdit(hookAndConfig) {
       this.hookConfig = hookAndConfig
       this.addAction = true

@@ -162,7 +162,6 @@ export default {
       query: require('@/graphql/Actions/flows.gql'),
       variables() {
         return {
-          //Should we update this to include all flow names if more than one?
           flowGroupIds: this.hook?.event_tags?.flow_group_id
             ? this.hook?.event_tags?.flow_group_id
             : this.flowConfig?.flow_groups?.map(flow => flow.flow_group_id)
