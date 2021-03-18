@@ -86,10 +86,6 @@ export default {
           value: 'created'
         },
         {
-          text: 'Last Used',
-          value: 'last_used'
-        },
-        {
           text: 'Expires',
           value: 'expires_at'
         },
@@ -470,19 +466,6 @@ export default {
               </template>
               <span>
                 {{ item.created_at ? formatTime(item.created_at) : '' }}
-              </span>
-            </v-tooltip>
-          </template>
-
-          <template #item.last_used="{ item }">
-            <v-tooltip top>
-              <template #activator="{ on }">
-                <span v-on="on">
-                  {{ item.last_used ? formDate(item.last_used) : '' }}
-                </span>
-              </template>
-              <span>
-                {{ item.last_used ? formatTime(item.last_used) : '' }}
               </span>
             </v-tooltip>
           </template>
