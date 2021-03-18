@@ -66,7 +66,7 @@ export default {
       )
     },
     allFlows() {
-      return this.selectedFlows?.length === this.flows.length
+      return this.selectedFlows?.length === this.flows?.length
     },
     agentOrFlow() {
       if (this.hookDetails?.flowName) return 'flow'
@@ -122,11 +122,11 @@ export default {
     completeAction() {
       if (this.agentOrFlow === 'agent') return !!this.chosenAction
       if (!this.includeTo)
-        return !!this.selectedFlows.length && !!this.chosenAction
+        return !!this.selectedFlows?.length && !!this.chosenAction
       return (
         !!this.chosenAction &&
-        !!this.chosenStates.length &&
-        !!this.selectedFlows.length
+        !!this.chosenStates?.length &&
+        !!this.selectedFlows?.length
       )
     },
     placeholderMessage() {
@@ -226,7 +226,7 @@ export default {
       } else {
         if (flow) this.selectedFlows.push(flow)
         if (!event?.shiftKey) {
-          if (this.selectedFlows.length > 1) {
+          if (this.selectedFlows?.length > 1) {
             this.flowEventType = {
               name: 'changes state',
               enum: 'CHANGES_STATE'
@@ -296,7 +296,7 @@ export default {
     },
     disableChip(item) {
       return (
-        (item.enum != 'CHANGES_STATE' && this.selectedFlows.length > 1) ||
+        (item.enum != 'CHANGES_STATE' && this.selectedFlows?.length > 1) ||
         this.agentOrFlow === 'agent'
       )
     },
@@ -304,7 +304,7 @@ export default {
       return (
         this.selectedFlows.filter(
           item => item.flow_group_id === flow.flow_group_id
-        ).length > 0
+        )?.length > 0
       )
     },
     async createAction(input) {
@@ -628,8 +628,11 @@ export default {
           >, then
 
           <v-btn
-            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 headline"
+            :style="{
+              'text-transform': 'none',
+              'min-width': '0px'
+            }"
+            class="px-0 pb-1 headline d-inline-block text-truncate"
             text
             :color="step === 'selectDoThis' ? 'codePink' : 'grey'"
             @click="switchStep('selectDoThis')"

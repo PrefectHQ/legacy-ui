@@ -12,6 +12,7 @@ export default {
   },
   data() {
     return {
+      showHook: true,
       loadingHook: 0,
       copiedText: {},
       deletingHook: false,
@@ -97,14 +98,19 @@ export default {
         ? this.agentConfig?.agents?.length > 1
           ? `${agentName}`
           : agentName
-        : this.hook?.event_tags?.flow_group_id?.length > 1 && this.flowName
+        : this.hook?.event_tags?.flow_group_id?.length > 2 && this.flowName
         ? `${this.flowName[0]?.name} and others`
+        : this.hook?.event_tags?.flow_group_id?.length == 2 && this.flowName
+        ? `${this.flowName[0].name} and ${this.flowName[1].name}`
         : this.flowName
         ? this.flowName[0]?.name
         : idList && !idList.length
         ? 'any flow'
         : ''
       return name
+    },
+    flowNameList() {
+      return this.flowName?.map(flow => flow.name)
     }
   },
   methods: {
@@ -123,14 +129,16 @@ export default {
       return presentTenseStates[state] || 'changes state'
     },
     async deleteHook() {
+      let success
       try {
         this.deletingHook = true
-        await this.$apollo.mutate({
+        success = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/delete-hook.gql'),
           variables: {
             hookId: this.hook.id
           }
         })
+        if (success.data?.delete_hook?.success) this.showHook = false
       } catch (error) {
         const errString = `${error}`
         this.setAlert({
@@ -138,8 +146,6 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
-      } finally {
-        this.deletingHook = false
       }
     },
     editHook() {
@@ -147,7 +153,7 @@ export default {
         hook: this.hook,
         flowConfig: this.flowConfig,
         flowName: this.flowName,
-        flowNameList: this.flowName?.map(flow => flow.name)
+        flowNameList: this.flowNameList
       })
     }
   },
@@ -218,10 +224,10 @@ export default {
 
 <template>
   <v-skeleton-loader
-    v-if="loadingHook > 0"
+    v-if="loadingHook > 0 && showHook"
     type="list-item-avatar-three-line"
   ></v-skeleton-loader>
-  <v-card v-else class="mb-2 headline " outlined>
+  <v-card v-else-if="showHook" class="mb-2 headline " outlined>
     <div class="text-right">
       <v-menu :close-on-content-click="false">
         <template #activator="{ on, attrs }">
@@ -261,7 +267,14 @@ export default {
       }}</v-icon
       ><span
         >When {{ hookType }}
-        <span class="font-weight-bold">{{ hookName }}</span>
+        <v-tooltip v-if="flowName.length > 2" top>
+          <template #activator="{ on }">
+            <span class="font-weight-bold" v-on="on">{{
+              hookName
+            }}</span> </template
+          >{{ flowNameList.toString() }}</v-tooltip
+        >
+        <span v-else class="font-weight-bold">{{ hookName }}</span>
         {{ hookDetail
         }}<span v-if="includeSeconds">
           for
