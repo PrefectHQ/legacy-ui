@@ -340,6 +340,7 @@ export default {
         })
       } finally {
         this.removeDoThisDialog = false
+        this.deleting = false
       }
     },
     async createHook() {
