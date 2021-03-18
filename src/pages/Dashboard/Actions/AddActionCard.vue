@@ -18,6 +18,7 @@ export default {
   },
   data() {
     return {
+      saving: false,
       searchEntry: null,
       selectedFlows: this.hookDetail?.flowName || [],
       // openSeconds: false,
@@ -350,6 +351,7 @@ export default {
       }
     },
     async createHook() {
+      this.saving = true
       let data
       try {
         const flow = this.selectedFlows[0]?.flow_group_id
@@ -451,6 +453,7 @@ export default {
             alertMessage: 'Hook created',
             alertType: 'success'
           })
+          this.saving = false
           this.closeCard()
         }
       }
@@ -539,6 +542,7 @@ export default {
           class="mr-3 mt-2"
           color="primary"
           elevation="0"
+          :loading="saving"
           :disabled="!completeAction"
           @click="createHook"
           ><i class="far fa-cloud-upload-alt fa-lg"></i>

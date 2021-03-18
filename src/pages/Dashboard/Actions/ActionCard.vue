@@ -230,7 +230,7 @@ export default {
     <div class="text-right">
       <v-menu :close-on-content-click="false">
         <template #activator="{ on, attrs }">
-          <v-btn class="px-8" icon title="More Actions" v-bind="attrs" v-on="on"
+          <v-btn class="px-2" text title="More Actions" v-bind="attrs" v-on="on"
             ><v-icon>more_horiz</v-icon></v-btn
           ></template
         >
