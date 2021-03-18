@@ -710,9 +710,7 @@ export default {
           </v-chip>
         </div>
       </v-card-title>
-      <v-card-subtitle class="caption mx-4 pt-1 pb-2"
-        >Hint: Shift-click to select multiple flows</v-card-subtitle
-      >
+
       <v-card-text>
         <v-row class="px-4">
           <v-col
