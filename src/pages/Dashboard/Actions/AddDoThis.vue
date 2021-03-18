@@ -164,7 +164,6 @@ export default {
       if (type) this.step = type
     },
     handleNext() {
-      console.log('next', this.step)
       if (this.step === 'openMessageText') {
         this.switchStep('openToConfig')
       } else if (this.step === 'openToConfig') {
