@@ -255,19 +255,17 @@ export default {
             <v-tooltip top>
               <template #activator="{ on }">
                 <span v-on="on">
-                  {{ item.created ? formDate(item.created) : '' }}
+                  {{ item.created_at ? formDate(item.created_at) : '' }}
                 </span>
               </template>
               <span>
-                {{ item.created ? formatTime(item.created) : '' }}
+                {{ item.created_at ? formatTime(item.created_at) : '' }}
               </span>
             </v-tooltip>
           </template>
 
           <template #item.expires_at="{ item }">
-            {{
-              item.expires_at ? formatTimeRelative(item.expires_at) : 'Never'
-            }}
+            {{ item.expires ? formatTimeRelative(item.expires) : 'Never' }}
           </template>
           <template #item.actions="{ item }">
             <v-tooltip bottom>
