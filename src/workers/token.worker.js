@@ -87,13 +87,18 @@ const headers = {
 // // Create apollo client
 const client = new ApolloClient({name: 'token-worker-client', version: '1.3', ...options})
 
+const setAuthorizationTokens = (tokens) => {
+  state.authorizationTokens = tokens
+  state.authorizationTokenExpiration = new Date(tokens.expires_at)
+}
+
 let interval = null
 const restartAuthorizationInterval = () => {
   clearTimeout(interval)
 
   const id = state.tenantId
 
-  interval = setTimeout(async () => {
+  const refreshTokens = async () => {
     if (state.authorizationTokens) {
       const result = await client.mutate({
         mutation: require('@/graphql/refresh-token.gql'),
@@ -109,19 +114,24 @@ const restartAuthorizationInterval = () => {
         fetchPolicy: 'no-cache'
       })
 
+
       // If the tenant id has changed since this
       // method was instantiated, we don't broadcast token
       // refresh updates
       if (state.tenantId !== id) return
-      state.authorizationTokens = result.data.refresh_token
+      setAuthorizationTokens(result.data.refresh_token)
       postToConnections({
         type: 'authorization',
         payload: result.data.refresh_token
       })
 
-      interval = setTimeout(restartAuthorizationInterval, 5000)
     }
-  }, 5000)
+
+    const timeout = Math.floor((state.authorizationTokenExpiration - new Date()) / 2) || 5000
+    interval = setTimeout(refreshTokens, timeout)
+  }
+
+  refreshTokens()
 }
 
 
@@ -141,7 +151,7 @@ const getAuthorizationTokens = async () => {
       fetchPolicy: 'no-cache'
     })
 
-    state.authorizationTokens = result.data.log_in
+    setAuthorizationTokens(result.data.log_in)
     postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
     authorizationInProgress = false
 }
@@ -186,6 +196,7 @@ const connect = c => {
   const port = c.ports[0]
   ports.push(port)
 
+  console.log('connected')
 
   // Immediately post tokens to the connection, if tokens are already in the store
   if (state.authenticationTokens) port.postMessage({type: 'authentication', payload: state.authenticationTokens})
@@ -196,8 +207,7 @@ const connect = c => {
     const type = e.data?.type
     const channelPort = e.ports[0]
     const payload = e.data?.payload
-
-
+    console.log(type, payload)
     // When a connection sends new authentication tokens
     // update the worker state and publish the new tokens to all connections
     if (type == 'authentication') {
