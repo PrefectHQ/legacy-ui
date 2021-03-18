@@ -373,7 +373,7 @@ export default {
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
           let intersects = grid[row].some(
-            slot => end <= slot[0] - 1000 || start <= slot[1] + 1000
+            slot => end <= slot[0] - 2000 || start <= slot[1] + 2000
           )
 
           // let intersects = grid[row].some(
@@ -1182,7 +1182,7 @@ export default {
       // We only need this section if we want to draw the x-axis
       this.xAxisNode
         .transition()
-        .duration(shouldTransition ? 16 : 0)
+        .duration(shouldTransition ? 32 : 0)
         .call(xAxis)
         .on('end', () => {
           this.xAxisNode.on('end', null)
