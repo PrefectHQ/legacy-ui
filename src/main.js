@@ -370,9 +370,16 @@ const handleVisibilityChange = () => {
     now < authenticationExpiration
   )
   if (document[hidden]) {
-    if (now >= authorizationExpiration && now < authenticationExpiration) {
+    if (
+      store.getters['auth/isAuthorized'] &&
+      now >= authorizationExpiration &&
+      now < authenticationExpiration
+    ) {
       store.dispatch('auth/authorize')
-    } else if (now >= authenticationExpiration) {
+    } else if (
+      store.getters['auth/isAuthenticatd'] &&
+      now >= authenticationExpiration
+    ) {
       store.dispatch('auth/authenticate')
     }
   }
