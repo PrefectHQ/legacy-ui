@@ -209,7 +209,7 @@ if (TokenWorker?.port) {
         }
         break
       case 'logout':
-        if (store.getters['isAuthenticated']) store.dispatch('auth/logout')
+        store.dispatch('auth/logout', false)
         break
     }
   }

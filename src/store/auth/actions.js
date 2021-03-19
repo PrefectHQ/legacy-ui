@@ -161,15 +161,21 @@ const actions = {
     })
     commit('isLoggingInUser', false)
   },
-  async logout({ commit }) {
+  async logout({ commit, getters }, postMessage = false) {
+    if (postMessage) {
+      TokenWorker.port.postMessage({
+        type: 'logout'
+      })
+    }
+
+    if (getters['isAuthenticated']) {
+      await authClient.signOut()
+    }
+
     commit('isAuthenticated', false)
     commit('unsetIdToken')
     commit('unsetAccessToken')
     commit('unsetRedirectRoute')
-    TokenWorker.port.postMessage({
-      type: 'logout'
-    })
-    await authClient.signOut()
   },
   reportUserToLogRocket({ getters }) {
     if (!getters['user']) return
