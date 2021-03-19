@@ -83,21 +83,23 @@ export default {
     hookName() {
       const idList = this.hook?.event_tags?.flow_group_id
       const agentName =
-        this.agentConfig?.agents[0]?.name === 'agent'
-          ? this.agentConfig?.agents
-              .map((agent, index) =>
-                index === 0 ? agent.type : `or ${agent.type}`
-              )
-              .toString()
+        this.agentConfig?.agents.length == 1
+          ? this.agentConfig.agents[0].name === 'agent'
+            ? this.agentConfig.agents[0].type
+            : this.agentConfig.agents[0].name
           : this.agentConfig?.agents
-              .map((agent, index) =>
-                index === 0 ? agent.name : `or ${agent.name}`
-              )
+              .map((agent, index) => {
+                if (index === 0) {
+                  return agent.name === 'agent' ? agent.type : agent.name
+                } else {
+                  return agent.name === 'agent'
+                    ? `or ${agent.type}`
+                    : `or ${agent.name}`
+                }
+              })
               .toString()
       const name = this.hook.event_tags.agent_config_id
-        ? this.agentConfig?.agents?.length > 1
-          ? `${agentName}`
-          : agentName
+        ? agentName
         : this.hook?.event_tags?.flow_group_id?.length > 2 && this.flowName
         ? `${this.flowName[0]?.name} and others`
         : this.hook?.event_tags?.flow_group_id?.length == 2 && this.flowName
@@ -153,7 +155,8 @@ export default {
         hook: this.hook,
         flowConfig: this.flowConfig,
         flowName: this.flowName,
-        flowNameList: this.flowNameList
+        flowNameList: this.flowNameList,
+        agentConfig: this.agentConfig
       })
     }
   },
@@ -295,15 +298,13 @@ export default {
             @click="copyToClipboard(agentConfigId)"
             v-on="on"
           >
+            {{ agentConfigId }}
             <v-icon x-small class="mb-2px mr-2" tabindex="0">
               {{ copiedText[agentConfigId] ? 'check' : 'file_copy' }}
             </v-icon>
-            {{ agentConfigId }}
           </span>
         </template>
-        <span>
-          {{ agentConfigId }}
-        </span>
+        <span> Click to copy {{ agentConfigId }} </span>
       </v-tooltip>
     </div></v-card
   >

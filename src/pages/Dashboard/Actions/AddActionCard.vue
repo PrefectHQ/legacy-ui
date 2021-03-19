@@ -66,9 +66,10 @@ export default {
       return '30Vh'
     },
     agentOrFlow() {
-      if (this.hookDetails?.flowName) return 'flow'
-      if (!this.agentFlowOrSomethingElse) return 'flow'
-      return this.agentFlowOrSomethingElse
+      if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
+      if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
+        return 'agent'
+      return 'flow'
     },
     isSLA() {
       return (
@@ -96,8 +97,24 @@ export default {
       return this.seconds || this.hookDetails?.flowConfig?.duration_seconds
     },
     flowNames() {
+      const agentName =
+        this.hookDetail?.agentConfig?.agents?.length == 1
+          ? this.HookDetail?.agentConfig?.agents[0]?.name === 'agent'
+            ? this.HookDetail?.agentConfig?.agents[0]?.type
+            : this.hookDetail?.agentConfig?.agents[0]?.name
+          : this.hookDetail?.agentConfig?.agents
+              .map((agent, index) => {
+                if (index === 0) {
+                  return agent.name === 'agent' ? agent.type : agent.name
+                } else {
+                  return agent.name === 'agent'
+                    ? `or ${agent.type}`
+                    : `or ${agent.name}`
+                }
+              })
+              .toString()
       return this.agentOrFlow === 'agent'
-        ? 'agent'
+        ? agentName || 'agent'
         : this.flowNamesList?.length > 1
         ? 'mulitiple flows'
         : this.flowNamesList.toString() || this.agentOrFlow
@@ -405,31 +422,33 @@ export default {
             })
             data = flowSLAEventSuccess.data
           }
-          if (data && this.hookDetails) {
-            await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/delete-hook.gql'),
-              variables: {
-                hookId: this.hookDetails.hook.id
-              }
-            })
-          }
         } else if (this.agentOrFlow === 'agent') {
-          const agentConfig = await this.$apollo.mutate({
-            mutation: require('@/graphql/Mutations/create_agent_config.gql'),
-            variables: {
-              input: {}
-            }
-          })
+          const agentConfig =
+            this.hookDetails?.agentConfig ||
+            (await this.$apollo.mutate({
+              mutation: require('@/graphql/Mutations/create_agent_config.gql'),
+              variables: {
+                input: {}
+              }
+            })?.data?.create_agent_config)
           const agentHook = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create_agent_sla_failed_hook.gql'),
             variables: {
               input: {
                 action_id: action.id,
-                agent_config_ids: [agentConfig.data.create_agent_config.id]
+                agent_config_ids: [agentConfig.id]
               }
             }
           })
           data = agentHook.data
+        }
+        if (data && this.hookDetails) {
+          await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/delete-hook.gql'),
+            variables: {
+              hookId: this.hookDetails.hook.id
+            }
+          })
         }
       } catch (error) {
         const errString = `${error}`
