@@ -131,6 +131,14 @@ export const routes = [
           )
       },
       {
+        name: 'service-accounts',
+        path: 'service-accounts',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--service-accounts" */ '@/pages/TeamSettings/Service-Accounts.vue'
+          )
+      },
+      {
         name: 'secrets',
         path: 'secrets',
         component: () =>
