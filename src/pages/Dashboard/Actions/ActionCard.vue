@@ -59,7 +59,6 @@ export default {
       return this.flowConfig
     },
     hookType() {
-      console.log(this.hook)
       const event = this.hook?.event_type
       return `${this.hookDetails[event]?.type} `
     },

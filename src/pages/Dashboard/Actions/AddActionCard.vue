@@ -379,17 +379,13 @@ export default {
             const flowGroupIds = this.selectedFlows?.map(
               flow => flow.flow_group_id
             )
-            const lowerCaseStates = this.chosenStates.map(
-              state => state[0].toUpperCase() + state.substring(1).toLowerCase()
-            )
-            console.log(lowerCaseStates)
             const flowRunStateChangedSuccess = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
               variables: {
                 input: {
                   flow_group_ids: this.allFlows ? [] : flowGroupIds,
                   action_id: action.id,
-                  states: lowerCaseStates
+                  states: this.chosenStates
                 }
               }
             })
