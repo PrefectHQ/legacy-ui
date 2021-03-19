@@ -68,6 +68,9 @@ const errorAfterware = onError(
 
 const link = from([errorAfterware, new HttpLink({uri: process.env.VUE_APP_CLOUD_URL})])
 
+function isExpired(expiry) {
+  return new Date() > new Date(expiry)
+}
 
 const options = {
   cache: cache,
@@ -93,14 +96,18 @@ let authenticationTimeout = null
 const setAuthenticationTokens = tokens => {
   clearTimeout(authenticationTimeout)
   state.authenticationTokens = tokens
-  state.authenticationTokenExpiration = tokens.idToken.expiresAt * 1000 // Okta returns token expiration in seconds
 
-  const timeout = state.authenticationTokenExpiration - Date.now()
+  try {
+    state.authenticationTokenExpiration = tokens.idToken.expiresAt * 1000 // Okta returns token expiration in seconds
+    const timeout = state.authenticationTokenExpiration - Date.now()
 
-
-  authenticationTimeout = setTimeout(() => {
+    authenticationTimeout = setTimeout(() => {
+      postToConnections({type: 'authentication-expiration'})
+    }, timeout)
+  } catch {
     postToConnections({type: 'authentication-expiration'})
-  }, timeout)
+  }
+
 }
 
 
@@ -109,13 +116,19 @@ const setAuthorizationTokens = tokens => {
   clearTimeout(authorizationTimeout)
 
   state.authorizationTokens = tokens
-  state.authorizationTokenExpiration = new Date(tokens.expires_at)
+  try {
+    state.authorizationTokenExpiration = new Date(tokens.expires_at)
+    const timeout = state.authorizationTokenExpiration - Date.now()
 
-  const timeout = state.authorizationTokenExpiration - Date.now()
+    authorizationTimeout = setTimeout(() => {
+      postToConnections({type: 'authorization-expiration'})
+    }, timeout)
 
-  authorizationTimeout = setTimeout(() => {
+  } catch {
     postToConnections({type: 'authorization-expiration'})
-  }, timeout)
+  }
+
+
 }
 
 let restartInterval = null
@@ -165,7 +178,9 @@ const restartAuthorizationInterval = () => {
 let authorizationInProgress = false
 const getAuthorizationTokens = async () => {
   authorizationInProgress = true
-  const result = await client.mutate({
+
+  try {
+    const result = await client.mutate({
       mutation: require('@/graphql/log-in.gql'),
       variables: {
         input: { id_token: state.authenticationTokens.idToken.value }
@@ -179,6 +194,10 @@ const getAuthorizationTokens = async () => {
 
     setAuthorizationTokens(result.data.log_in)
     postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
+  } catch {
+    postToConnections({type: 'authentication-expiration'})
+  }
+
     authorizationInProgress = false
 }
 
@@ -235,16 +254,15 @@ const connect = c => {
     // When a connection sends new authentication tokens
     // update the worker state and publish the new tokens to all connections
     if (type == 'authentication') {
-      setAuthenticationTokens(payload)
-      postToConnections(e.data)
-      restartAuthorizationInterval()
-      return
+        setAuthenticationTokens(payload)
+        postToConnections(e.data)
+        restartAuthorizationInterval()
     }
 
     if (type == 'authorization') {
       // When a connection sends a request for authorization
       // we send the stored tokens back immediately, if they exist, via the attached message port;
-      if (state.authorizationTokens) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
+      if (state.authorizationTokens && !isExpired(state.authorizationTokenExpiration)) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
       else {
       // otherwise we start the authorization process, which will 
       // post the retrieved tokens to all channelPorts

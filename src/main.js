@@ -351,3 +351,44 @@ try {
   // eslint-disable-next-line no-console
   console.info('Unable to apply platform-specific scrollbar styles.')
 }
+
+// Visibility change properties vary between browsers
+let hidden, visibilityChange
+
+const handleVisibilityChange = () => {
+  const now = new Date()
+  const authorizationExpiration = new Date(
+    store.getters['auth/authorizationTokenExpiry']
+  )
+  const authenticationExpiration = new Date(store.getters['auth/idTokenExpiry'])
+
+  // eslint-disable-next-line no-console
+  console.log(
+    'Handling visibility change',
+    document[hidden],
+    now >= authorizationExpiration,
+    now < authenticationExpiration
+  )
+  if (document[hidden]) {
+    if (now >= authorizationExpiration && now < authenticationExpiration) {
+      store.dispatch('auth/authorize')
+    } else if (now >= authenticationExpiration) {
+      store.dispatch('auth/authenticate')
+    }
+  }
+}
+
+if (window) {
+  if (typeof document.hidden !== 'undefined') {
+    // Opera 12.10 and Firefox 18 and later
+    hidden = 'hidden'
+    visibilityChange = 'visibilitychange'
+  } else if (typeof document.msHidden !== 'undefined') {
+    hidden = 'msHidden'
+    visibilityChange = 'msvisibilitychange'
+  } else if (typeof document.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden'
+    visibilityChange = 'webkitvisibilitychange'
+  }
+  window.addEventListener(visibilityChange, handleVisibilityChange, false)
+}
