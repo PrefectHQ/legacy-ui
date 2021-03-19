@@ -143,7 +143,7 @@ const actions = {
     commit('accessToken', accessToken.value)
     commit('accessTokenExpiry', accessToken.expiresAt)
     commit('idToken', idToken.value)
-    commit('idTokenExpiry', idToken.expiresAt)
+    commit('idTokenExpiry', idToken.expiresAt * 1000) // Okta returns token expiration in seconds
     commit('isAuthenticated', true)
   },
   async updateAuthorizationTokens({ commit }, payload) {
