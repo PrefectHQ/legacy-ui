@@ -105,7 +105,7 @@ export default {
 
     <template #subtitle>
       <span v-if="isTenantAdmin">
-        View your team's members, manage permissions, and send invitations
+        Manage service accounts and their API keys
       </span>
     </template>
 
