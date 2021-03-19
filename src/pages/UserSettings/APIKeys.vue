@@ -195,7 +195,7 @@ export default {
       dense
       hide-details
       single-line
-      placeholder="Search for an API KEy"
+      placeholder="Search for an API Key"
       prepend-inner-icon="search"
       autocomplete="new-password"
     ></v-text-field>

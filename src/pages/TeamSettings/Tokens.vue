@@ -144,38 +144,13 @@ export default {
       <h4 class="error--text"
         ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
       >
-      <div
-        >Use the
+      <div>
         <router-link :to="{ name: 'members', hash: '#service-accounts' }">
           Service Accounts</router-link
         >
-        page for API keys going forward.</div
+        are replacing API tokens</div
       >
-      Manage your
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
-        target="_blank"
-        rel="noopener noreferrer"
-        >TENANT</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens and your team's
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#runner"
-        target="_blank"
-        rel="noopener noreferrer"
-        >RUNNER</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens.
+      Existing tokens will continue to work, but new ones cannot be created.
     </template>
     <template v-else-if="isReadOnlyUser" #subtitle>
       Manage

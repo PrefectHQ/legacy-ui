@@ -3,7 +3,6 @@ import { mapGetters } from 'vuex'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import ExternalLink from '@/components/ExternalLink'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -11,7 +10,6 @@ export default {
   components: {
     Alert,
     ConfirmDialog,
-    ExternalLink,
     ManagementLayout
   },
   mixins: [formatTime],
@@ -115,15 +113,7 @@ export default {
         <router-link :to="{ name: 'keys' }"> API Keys</router-link>
         page going forward.</div
       >
-      Personal Access (or <code>USER</code>) tokens are used to represent a
-      single user, and are typically used by Prefect Cloud clients (such as the
-      Prefect Cloud CLI) to log in to any tenants the user has access to. View
-      your
-      <ExternalLink
-        href="https://docs.prefect.io/cloud/cloud_concepts/api.html#prefect-cloud-api"
-      >
-        Personal Access Tokens.</ExternalLink
-      >
+      Existing tokens will continue to work, but new ones cannot be created.
     </template>
 
     <v-text-field

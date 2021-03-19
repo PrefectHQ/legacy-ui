@@ -310,7 +310,7 @@ export default {
       </v-btn>
     </template>
 
-    <template v-if="insufficientUsers" #alerts>
+    <template v-if="insufficientUsers && tab != 'service-accounts'" #alerts>
       <v-alert
         class="mx-auto"
         border="left"
@@ -597,7 +597,11 @@ export default {
       @cancel="resetServiceAccountDialog"
       @confirm="addServiceAccount"
     >
-      <v-form ref="service-user-form" v-model="serviceAccountFormValid">
+      <v-form
+        ref="service-user-form"
+        v-model="serviceAccountFormValid"
+        @submit.prevent
+      >
         <v-text-field
           v-model="serviceAccountNameInput"
           class="mb-3"
@@ -607,7 +611,7 @@ export default {
           prepend-icon="engineering"
           outlined
           :rules="[rules.required]"
-          validate-on-blur
+          @keydown.enter="addServiceAccount"
         />
       </v-form>
     </ConfirmDialog>
