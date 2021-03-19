@@ -67,6 +67,10 @@ const actions = {
     }
 
     try {
+      authClient.authStateManager.subscribe(({ idToken, accessToken }) => {
+        dispatch('updateAuthenticationTokens', { idToken, accessToken })
+      })
+
       const isLoginRedirect = await authClient.isLoginRedirect()
 
       const { tokens } = isLoginRedirect
@@ -133,6 +137,8 @@ const actions = {
 
     const idToken = payload.idToken
     const accessToken = payload.accessToken
+
+    authClient.tokenManager.setTokens(payload)
 
     commit('accessToken', accessToken.value)
     commit('accessTokenExpiry', accessToken.expiresAt)
