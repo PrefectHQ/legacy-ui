@@ -30,7 +30,7 @@ export default {
       // Forms
       serviceAccountFormValid: true,
 
-      inviteError: null,
+      accountCreationError: null,
 
       // Input rules
       rules: {
@@ -66,7 +66,7 @@ export default {
     },
     async addServiceAccount() {
       this.isCreatingServiceUser = true
-      this.inviteError = null
+      this.accountCreationError = null
 
       const res = await this.$apollo
         .mutate({
@@ -77,6 +77,8 @@ export default {
           }
         })
         .catch(({ graphQLErrors }) => {
+          this.accountCreationError =
+            'There was an error in creating your service account. Try again?'
           return { error: graphQLErrors }
         })
 
@@ -90,7 +92,7 @@ export default {
     },
     resetServiceAccountDialog() {
       this.serviceAccountNameInput = null
-      this.inviteError = null
+      this.accountCreationError = null
       this.$refs['service-user-form'].reset()
     }
   }
