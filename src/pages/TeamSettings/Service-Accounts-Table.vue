@@ -49,15 +49,7 @@ export default {
           mobile: true,
           text: 'Name',
           value: 'firstName',
-          width: '20%'
-        },
-        {
-          mobile: true,
-          text: '',
-          value: 'view',
-          align: 'center',
-          sortable: false,
-          width: '35%'
+          width: '45%'
         },
         {
           mobile: true,
@@ -65,7 +57,7 @@ export default {
           value: 'create',
           align: 'center',
           sortable: false,
-          width: '35%'
+          width: '45%'
         },
         {
           mobile: true,
@@ -99,6 +91,7 @@ export default {
 
       // Table items (populated by Apollo query)
       membersItems: [],
+      expanded: [],
 
       // Loading states
       isFetchingMembers: false,
@@ -289,6 +282,8 @@ export default {
     <v-data-table
       v-if="isTenantAdmin"
       fixed-header
+      show-expand
+      :expanded.sync="expanded"
       :headers="headers"
       :header-props="{ 'sort-icon': 'arrow_drop_up' }"
       :items="membersItems"
@@ -311,19 +306,72 @@ export default {
         <span class="subtitle-2">{{ header.text }}</span>
       </template>
 
-      <template v-if="isTenantAdmin" #item.view="{ item }">
-        <v-btn
-          small
-          color="primary"
-          class="white--text"
-          @click="
-            selectedUser = item
-            dialogViewKeys = true
-          "
-        >
-          <v-icon left>visibility</v-icon>
-          View API Keys
-        </v-btn>
+      <template #expanded-item="{item}">
+        <td :colspan="headers.length">
+          <v-data-table
+            fixed-header
+            :headers="keysHeaders"
+            :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+            :items="keys.filter(key => key.user_id === item.id)"
+            :items-per-page="10"
+            class="rounded-0 truncate-table"
+            :footer-props="{
+              showFirstLastPage: true,
+              itemsPerPageOptions: [10, 15, 20, -1],
+              firstIcon: 'first_page',
+              lastIcon: 'last_page',
+              prevIcon: 'keyboard_arrow_left',
+              nextIcon: 'keyboard_arrow_right'
+            }"
+            no-data-text="This account doesn't have any keys yet."
+          >
+            <template
+              #item.created="{// eslint-disable-next-line
+             item }"
+            >
+              <v-tooltip top>
+                <template #activator="{ on }">
+                  <span v-on="on">
+                    {{ item.created_at ? formDate(item.created_at) : '' }}
+                  </span>
+                </template>
+                <span>
+                  {{ item.created_at ? formatTime(item.created_at) : '' }}
+                </span>
+              </v-tooltip>
+            </template>
+            <template
+              #item.expires_at="{// eslint-disable-next-line
+             item }"
+            >
+              {{ item.expires ? formatTimeRelative(item.expires) : 'Never' }}
+            </template>
+            <template
+              v-if="isTenantAdmin"
+              #item.actions="{// eslint-disable-next-line
+             item }"
+            >
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-btn
+                    text
+                    fab
+                    x-small
+                    color="error"
+                    v-on="on"
+                    @click="
+                      keyToDelete = item
+                      dialogRemoveKey = true
+                    "
+                  >
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </template>
+                Remove API key
+              </v-tooltip>
+            </template>
+          </v-data-table>
+        </td>
       </template>
 
       <template v-if="isTenantAdmin" #item.create="{ item }">
@@ -434,72 +482,6 @@ export default {
         spellcheck="false"
       />
     </ConfirmDialog>
-
-    <!-- VIEW KEYS DIALOG -->
-
-    <v-dialog v-if="selectedUser" v-model="dialogViewKeys"
-      ><v-card>
-        <v-card-title>{{ selectedUser.firstName }}'s API Keys</v-card-title>
-        <v-data-table
-          fixed-header
-          :headers="keysHeaders"
-          :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-          :items="keys.filter(key => key.user_id === selectedUser.id)"
-          :items-per-page="10"
-          class="rounded-0 truncate-table"
-          :footer-props="{
-            showFirstLastPage: true,
-            itemsPerPageOptions: [10, 15, 20, -1],
-            firstIcon: 'first_page',
-            lastIcon: 'last_page',
-            prevIcon: 'keyboard_arrow_left',
-            nextIcon: 'keyboard_arrow_right'
-          }"
-          no-data-text="This account doesn't have any keys yet."
-        >
-          <template #item.name="{ item }">
-            {{ item.name }}
-          </template>
-
-          <template #item.created="{ item }">
-            <v-tooltip top>
-              <template #activator="{ on }">
-                <span v-on="on">
-                  {{ item.created_at ? formDate(item.created_at) : '' }}
-                </span>
-              </template>
-              <span>
-                {{ item.created_at ? formatTime(item.created_at) : '' }}
-              </span>
-            </v-tooltip>
-          </template>
-
-          <template #item.expires_at="{ item }">
-            {{ item.expires ? formatTimeRelative(item.expires) : 'Never' }}
-          </template>
-          <template v-if="isTenantAdmin" #item.actions="{ item }">
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn
-                  text
-                  fab
-                  x-small
-                  color="error"
-                  v-on="on"
-                  @click="
-                    keyToDelete = item
-                    dialogRemoveKey = true
-                  "
-                >
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </template>
-              Remove API key
-            </v-tooltip>
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-dialog>
 
     <ConfirmDialog
       v-if="keyToDelete"

@@ -4,7 +4,7 @@ import { mapGetters } from 'vuex'
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ManagementLayout from '@/layouts/ManagementLayout'
-import ServiceAccountsTable from '@/pages/TeamSettings/Members/Service-Accounts-Table'
+import ServiceAccountsTable from '@/pages/TeamSettings/Service-Accounts-Table'
 
 export default {
   components: {
@@ -98,7 +98,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout :show="!isLoadingMembersTable" control-show>
+  <ManagementLayout>
     <template #title>Service Accounts</template>
 
     <template #subtitle>
