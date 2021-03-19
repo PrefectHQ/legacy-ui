@@ -1,6 +1,10 @@
 <script>
 import { mapActions } from 'vuex'
-import { STATES, presentTenseStates } from '@/utils/cloudHooks'
+import {
+  ACTIONSTATES,
+  titleCasePresentTenseStates,
+  presentTenseStates
+} from '@/utils/cloudHooks'
 
 export default {
   components: {},
@@ -55,6 +59,7 @@ export default {
       return this.flowConfig
     },
     hookType() {
+      console.log(this.hook)
       const event = this.hook?.event_type
       return `${this.hookDetails[event]?.type} `
     },
@@ -71,11 +76,12 @@ export default {
     },
     hookStates() {
       const states = this.hook?.event_tags?.state
-      return states?.length === STATES['All']?.length
+      return states?.length === ACTIONSTATES['All']?.length
         ? 'changes to any state'
         : states?.length > 1
         ? 'changes to multiple states'
-        : presentTenseStates[states[0]]
+        : presentTenseStates[states[0]] ||
+          titleCasePresentTenseStates[states[0]]
     },
     hookAction() {
       return this.hook?.action?.name || this.hook?.action?.action_type
@@ -128,7 +134,11 @@ export default {
       }, 600)
     },
     stateVerb(state) {
-      return presentTenseStates[state] || 'changes state'
+      return (
+        presentTenseStates[state] ||
+        titleCasePresentTenseStates[state] ||
+        'changes state'
+      )
     },
     async deleteHook() {
       let success

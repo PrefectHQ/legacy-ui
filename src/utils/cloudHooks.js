@@ -109,6 +109,27 @@ export const presentTenseStates = {
   LOOPED: 'loops'
 }
 
+export const titleCasePresentTenseStates = {
+  Failed: 'fails',
+  Pending: 'is pending',
+  Scheduled: 'is scheduled',
+  Retrying: 'retries',
+  // RESUME: 'resumes',
+  Queued: 'is queued',
+  Submitted: 'is submitted',
+  // PAUSED: 'pauses',
+  Running: 'runs',
+  Finished: 'finishes',
+  Success: 'succeeds',
+  Cancelled: 'is cancelled',
+  Cached: 'is cached',
+  Triggerfailed: 'trigger fails',
+  Skipped: 'skips',
+  Timedout: 'times out',
+  Mapped: 'maps',
+  Looped: 'loops'
+}
+
 export const featureFlaggedCloudHookTypes = [...openCloudHookTypes]
 
 export const GROUP_COLORS = {
@@ -151,4 +172,38 @@ export const STATES = {
     'SKIPPED'
   ],
   Success: ['SUCCESS', 'CACHED', 'MAPPED', 'SKIPPED']
+}
+
+export const ACTIONSTATES = {
+  All: [
+    'Failed',
+    'Pending',
+    'Scheduled',
+    'Retrying',
+    'Resume',
+    'Queued',
+    'Submitted',
+    'Paused',
+    'Running',
+    'Finished',
+    'Success',
+    'Cancelled',
+    'Cached',
+    'Triggerfailed',
+    'Skipped',
+    'Timedout',
+    'Mapped',
+    'Lopped'
+  ],
+  Failed: ['Failed', 'Timedout', 'Triggerfailed'],
+  Finished: [
+    'Finished',
+    'Looped',
+    'Cancelled',
+    'Success',
+    'Cached',
+    'Mapped',
+    'Skipped'
+  ],
+  Success: ['Success', 'Cached', 'Mapped', 'Skipped']
 }

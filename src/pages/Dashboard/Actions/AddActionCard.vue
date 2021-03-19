@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import AddDoThis from '@/pages/Dashboard/Actions/AddDoThis'
-import { STATES } from '@/utils/cloudHooks'
+import { ACTIONSTATES } from '@/utils/cloudHooks'
 import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
@@ -27,11 +27,12 @@ export default {
       flowNamesList: this.hookDetail?.flowNameList || [],
       hookDetails: this.hookDetail,
       project: null,
-      stateGroups: [...Object.keys(STATES), 'Custom'],
-      states: STATES,
+      stateGroups: [...Object.keys(ACTIONSTATES), 'Custom'],
+      states: ACTIONSTATES,
       stateName: 'All',
       agentFlowOrSomethingElse: '',
-      chosenStates: this.hookDetail?.hook?.event_tags?.state || STATES['All'],
+      chosenStates:
+        this.hookDetail?.hook?.event_tags?.state || ACTIONSTATES['All'],
       disableClick: false,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
@@ -378,13 +379,17 @@ export default {
             const flowGroupIds = this.selectedFlows?.map(
               flow => flow.flow_group_id
             )
+            const lowerCaseStates = this.chosenStates.map(
+              state => state[0].toUpperCase() + state.substring(1).toLowerCase()
+            )
+            console.log(lowerCaseStates)
             const flowRunStateChangedSuccess = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
               variables: {
                 input: {
                   flow_group_ids: this.allFlows ? [] : flowGroupIds,
                   action_id: action.id,
-                  states: this.chosenStates
+                  states: lowerCaseStates
                 }
               }
             })
