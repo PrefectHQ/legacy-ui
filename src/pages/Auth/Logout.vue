@@ -1,5 +1,5 @@
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 const quotes = [
   '"The first ten million years were the worst," said Marvin, "and the second ten million years, they were the worst too. The third ten million years I didn\'t enjoy at all. After that I went into a bit of a decline."',
@@ -13,6 +13,16 @@ export default {
     return {
       redirecting: false,
       quote: quotes[Math.floor(Math.random() * quotes.length)]
+    }
+  },
+  computed: {
+    ...mapGetters('auth', ['isAuthenticated'])
+  },
+  watch: {
+    isAuthenticated(val, oldVal) {
+      if (val && oldVal !== val) {
+        this.$router.push({ name: 'dashboard' })
+      }
     }
   },
   methods: {

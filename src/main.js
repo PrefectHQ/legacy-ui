@@ -209,7 +209,7 @@ if (TokenWorker?.port) {
         }
         break
       case 'logout':
-        if (store.getters['isAuthenticated']) store.dispatch('auth/logout')
+        store.dispatch('auth/logout', false)
         break
     }
   }
@@ -370,9 +370,16 @@ const handleVisibilityChange = () => {
     now < authenticationExpiration
   )
   if (document[hidden]) {
-    if (now >= authorizationExpiration && now < authenticationExpiration) {
+    if (
+      store.getters['auth/isAuthorized'] &&
+      now >= authorizationExpiration &&
+      now < authenticationExpiration
+    ) {
       store.dispatch('auth/authorize')
-    } else if (now >= authenticationExpiration) {
+    } else if (
+      store.getters['auth/isAuthenticatd'] &&
+      now >= authenticationExpiration
+    ) {
       store.dispatch('auth/authenticate')
     }
   }
