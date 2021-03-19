@@ -162,14 +162,14 @@ const actions = {
     commit('isLoggingInUser', false)
   },
   async logout({ commit, getters }, postMessage = false) {
+    if (getters['isAuthenticated']) {
+      await authClient.signOut()
+    }
+
     if (postMessage) {
       TokenWorker.port.postMessage({
         type: 'logout'
       })
-    }
-
-    if (getters['isAuthenticated']) {
-      await authClient.signOut()
     }
 
     commit('isAuthenticated', false)
