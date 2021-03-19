@@ -145,7 +145,7 @@ export default {
         ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
       >
       <div>
-        <router-link :to="{ name: 'members', hash: '#service-accounts' }">
+        <router-link :to="{ name: 'service-accounts' }">
           Service Accounts</router-link
         >
         are replacing API tokens</div
