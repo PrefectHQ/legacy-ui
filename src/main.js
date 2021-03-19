@@ -186,22 +186,31 @@ if (TokenWorker?.port) {
     const type = e.data?.type
     const payload = e.data?.payload
 
-    if (type == 'authentication') {
-      store.dispatch('auth/updateAuthenticationTokens', payload)
-      return
-    }
-
-    if (type == 'authorization') {
-      store.dispatch('auth/updateAuthorizationTokens', payload)
-    }
-
-    if (
-      type == 'switch-tenant' &&
-      store.getters['tenant/tenant']?.id !== payload.tenantId &&
-      !store.getters['tenant/isLoadingTenant']
-    ) {
-      store.dispatch('tenant/setCurrentTenant', payload.slug)
-      router.push({ name: 'team-switched' })
+    switch (type) {
+      case 'authentication':
+        store.dispatch('auth/updateAuthenticationTokens', payload)
+        break
+      case 'authorization':
+        store.dispatch('auth/updateAuthorizationTokens', payload)
+        break
+      case 'authentication-expiration':
+        store.dispatch('auth/authenticate')
+        break
+      case 'authorization-expiration':
+        store.dispatch('auth/authorize')
+        break
+      case 'switch-tenant':
+        if (
+          store.getters['tenant/tenant']?.id !== payload.tenantId &&
+          !store.getters['tenant/isLoadingTenant']
+        ) {
+          store.dispatch('tenant/setCurrentTenant', payload.slug)
+          router.push({ name: 'team-switched' })
+        }
+        break
+      case 'logout':
+        if (store.getters['isAuthenticated']) store.dispatch('auth/logout')
+        break
     }
   }
 

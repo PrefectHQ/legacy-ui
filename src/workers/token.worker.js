@@ -12,7 +12,9 @@ const channelPorts = []
 const state = {
   authenticationTokens: null,
   authorizationTokens: null,
-  tenantId: null
+  tenantId: null,
+  authenticationTokenExpiration: null,
+  authorizationTokenExpiration: null
 }
 
 const cache = new InMemoryCache()
@@ -87,13 +89,42 @@ const headers = {
 // // Create apollo client
 const client = new ApolloClient({name: 'token-worker-client', version: '1.3', ...options})
 
-let interval = null
+let authenticationTimeout = null
+const setAuthenticationTokens = tokens => {
+  clearTimeout(authenticationTimeout)
+  state.authenticationTokens = tokens
+  state.authenticationTokenExpiration = tokens.idToken.expiresAt * 1000 // Okta returns token expiration in seconds
+
+  const timeout = state.authenticationTokenExpiration - Date.now()
+
+
+  authenticationTimeout = setTimeout(() => {
+    postToConnections({type: 'authentication-expiration'})
+  }, timeout)
+}
+
+
+let authorizationTimeout = null
+const setAuthorizationTokens = tokens => {
+  clearTimeout(authorizationTimeout)
+
+  state.authorizationTokens = tokens
+  state.authorizationTokenExpiration = new Date(tokens.expires_at)
+
+  const timeout = state.authorizationTokenExpiration - Date.now()
+
+  authorizationTimeout = setTimeout(() => {
+    postToConnections({type: 'authorization-expiration'})
+  }, timeout)
+}
+
+let restartInterval = null
 const restartAuthorizationInterval = () => {
-  clearTimeout(interval)
+  clearTimeout(restartInterval)
 
   const id = state.tenantId
 
-  interval = setTimeout(async () => {
+  const refreshTokens = async () => {
     if (state.authorizationTokens) {
       const result = await client.mutate({
         mutation: require('@/graphql/refresh-token.gql'),
@@ -109,19 +140,24 @@ const restartAuthorizationInterval = () => {
         fetchPolicy: 'no-cache'
       })
 
+
       // If the tenant id has changed since this
       // method was instantiated, we don't broadcast token
       // refresh updates
       if (state.tenantId !== id) return
-      state.authorizationTokens = result.data.refresh_token
+      setAuthorizationTokens(result.data.refresh_token)
       postToConnections({
         type: 'authorization',
         payload: result.data.refresh_token
       })
 
-      interval = setTimeout(restartAuthorizationInterval, 5000)
     }
-  }, 5000)
+
+    const timeout = Math.floor((state.authorizationTokenExpiration - new Date()) / 2) || 5000
+    restartInterval = setTimeout(refreshTokens, timeout)
+  }
+
+  refreshTokens()
 }
 
 
@@ -141,7 +177,7 @@ const getAuthorizationTokens = async () => {
       fetchPolicy: 'no-cache'
     })
 
-    state.authorizationTokens = result.data.log_in
+    setAuthorizationTokens(result.data.log_in)
     postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
     authorizationInProgress = false
 }
@@ -163,7 +199,7 @@ const switchTenant = async payload => {
       fetchPolicy: 'no-cache'
   })
   
-  state.authorizationTokens = result.data.switch_tenant
+  setAuthorizationTokens(result.data.switch_tenant)
   postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
   postToConnections({type: 'switch-tenant', payload: payload})
   restartAuthorizationInterval()
@@ -185,8 +221,7 @@ const postToChannelPorts = payload => {
 const connect = c => {
   const port = c.ports[0]
   ports.push(port)
-
-
+  
   // Immediately post tokens to the connection, if tokens are already in the store
   if (state.authenticationTokens) port.postMessage({type: 'authentication', payload: state.authenticationTokens})
   if (state.authorizationTokens) port.postMessage({type: 'authorization', payload: state.authorizationTokens})
@@ -197,11 +232,10 @@ const connect = c => {
     const channelPort = e.ports[0]
     const payload = e.data?.payload
 
-
     // When a connection sends new authentication tokens
     // update the worker state and publish the new tokens to all connections
     if (type == 'authentication') {
-      state.authenticationTokens = payload
+      setAuthenticationTokens(payload)
       postToConnections(e.data)
       restartAuthorizationInterval()
       return
