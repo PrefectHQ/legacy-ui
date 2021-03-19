@@ -157,7 +157,7 @@ export default {
       v-model="dialogAddServiceAccount"
       title="Add a new service account"
       confirm-text="Add"
-      :error="inviteError"
+      :error="accountCreationError"
       :loading="isCreatingServiceUser"
       :disabled="!serviceAccountFormValid || isCreatingServiceUser"
       :dialog-props="{
