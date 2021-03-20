@@ -9,6 +9,8 @@ export default {
   },
   data() {
     return {
+      editHook: null,
+      editAction: null,
       addAction: false,
       hookConfig: null,
       hookDetails: {
@@ -25,15 +27,24 @@ export default {
       }
     }
   },
-  methods: {
-    openEdit(hookAndConfig) {
-      this.hookConfig = hookAndConfig
-      this.addAction = true
-    },
-    closeCard() {
-      this.addAction = false
-      this.hookConfig = null
+  computed: {
+    sortedHooks() {
+      const hooks = this.hooks ? [...this.hooks] : []
+      const sorted = hooks.sort((a, b) => a.id - b.id)
+      // return this.editHook ? [this.editHook, ...sorted] : sorted
+      return sorted
     }
+  },
+  methods: {
+    handleEdit(a, b, c) {
+      console.log('clicked', a, b, c)
+      this.editHook = a
+      this.editAction = b
+    }
+    // closeCard() {
+    //   this.addAction = false
+    //   this.hookConfig = null
+    // }
   },
   apollo: {
     hooks: {
@@ -52,8 +63,8 @@ export default {
 </script>
 
 <template>
-  <div class="ma-4 pa-0">
-    <v-row v-if="!addAction && hooks.length" class="pt-0 mt-0">
+  <div>
+    <!-- <v-row v-if="!addAction && hooks.length" class="pt-0 mt-0">
       <v-col cols="0" sm="9" class="pt-0"> </v-col>
       <v-col cols="12" sm="3" class="text-right pt-0 mb-2">
         <v-btn dark color="codePink" @click="addAction = true"
@@ -74,17 +85,15 @@ export default {
           ><v-icon class="pr-2">far fa-file-plus</v-icon> Add Action</v-btn
         >
       </v-col>
-    </v-row>
-    <v-row v-if="!addAction" class="pa-0 ma-0">
-      <v-col v-for="(hook, i) in hooks" :key="i" cols="12" class="pa-0 ma-0">
-        <ActionCard :hook="hook" @edit-action="openEdit" />
+    </v-row> -->
+    <v-row>
+      <v-col>
+        <AddActionCard />
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12">
-        <v-scale-transition v-if="addAction">
-          <AddActionCard :hook-detail="hookConfig" @close="closeCard" />
-        </v-scale-transition>
+      <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
+        <ActionCard :hook="hook" @open-edit="handleEdit(hook, i)" />
       </v-col>
     </v-row>
   </div>

@@ -5,9 +5,12 @@ import {
   titleCasePresentTenseStates,
   presentTenseStates
 } from '@/utils/cloudHooks'
+import AddActionCard from '@/pages/Dashboard/Actions/AddActionCard'
 
 export default {
-  components: {},
+  components: {
+    AddActionCard
+  },
   props: {
     hook: {
       type: Object,
@@ -16,6 +19,8 @@ export default {
   },
   data() {
     return {
+      openEdit: false,
+      hookConfig: {},
       showHook: true,
       loadingHook: 0,
       copiedText: {},
@@ -52,6 +57,9 @@ export default {
     isAgent() {
       return !!this.hook?.event_tags?.agent_config_id
     },
+    states() {
+      return this.hook?.event_tags?.state
+    },
     agentConfigId() {
       return this.hook?.event_tags?.agent_config_id[0]
     },
@@ -74,13 +82,12 @@ export default {
       return this.flowConfig?.duration_seconds
     },
     hookStates() {
-      const states = this.hook?.event_tags?.state
-      return states?.length === ACTIONSTATES['All']?.length
+      return this.states?.length === ACTIONSTATES['All']?.length
         ? 'changes to any state'
-        : states?.length > 1
-        ? 'changes to multiple states'
-        : presentTenseStates[states[0]] ||
-          titleCasePresentTenseStates[states[0]]
+        : this.states?.length != 1
+        ? 'changes to selected states'
+        : presentTenseStates[this.states[0]] ||
+          titleCasePresentTenseStates[this.states[0]]
     },
     hookAction() {
       return this.hook?.action?.name || this.hook?.action?.action_type
@@ -159,14 +166,26 @@ export default {
         })
       }
     },
+    closeCard() {
+      this.openEdit = false
+    },
     editHook() {
-      this.$emit('edit-action', {
+      this.hookConfig = {
         hook: this.hook,
         flowConfig: this.flowConfig,
         flowName: this.flowName,
         flowNameList: this.flowNameList,
         agentConfig: this.agentConfig
-      })
+      }
+      this.$emit('open-edit')
+      this.openEdit = true
+      // this.$emit('edit-action', {
+      //   hook: this.hook,
+      //   flowConfig: this.flowConfig,
+      //   flowName: this.flowName,
+      //   flowNameList: this.flowNameList,
+      //   agentConfig: this.agentConfig
+      // })
     }
   },
   apollo: {
@@ -236,11 +255,22 @@ export default {
 <template>
   <v-skeleton-loader
     v-if="loadingHook > 0 && showHook"
-    class="pa-2 ma-2"
     type="list-item-avatar-three-line"
   ></v-skeleton-loader>
-  <v-card v-else-if="showHook" class="my-2 headline " outlined>
-    <div class="text-right">
+  <AddActionCard
+    v-else-if="openEdit"
+    :hook-detail="hookConfig"
+    class="my-2"
+    @close="closeCard"
+  />
+  <v-card
+    v-else-if="showHook"
+    class="my-2 headline "
+    outlined
+    @click="editHook"
+  >
+    <v-card-title class="py-0 px-0">
+      <v-spacer></v-spacer>
       <v-menu :close-on-content-click="false">
         <template #activator="{ on, attrs }">
           <v-btn class="px-2" text title="More Actions" v-bind="attrs" v-on="on"
@@ -271,9 +301,9 @@ export default {
             </v-btn></div
           >
         </v-card></v-menu
-      ></div
+      ></v-card-title
     >
-    <div class="pl-8 pt-0 pr-4" :class="isAgent ? 'pb-0' : 'pb-8'"
+    <v-card-text class="headline"
       ><v-icon color="codePink" class="pr-2">{{
         hookDetails[hook.event_type] ? hookDetails[hook.event_type].icon : ''
       }}</v-icon
@@ -291,30 +321,32 @@ export default {
         }}<span v-if="includeSeconds">
           for
           <span class="font-weight-bold">{{ seconds }} seconds</span> </span
-        ><span v-if="includeTo">
-          <span>{{ hookStates }}</span></span
+        ><v-tooltip v-if="includeTo" top>
+          <template #activator="{ on }">
+            <span v-on="on">{{ hookStates }}</span></template
+          ><span>{{ states.toString() }}</span></v-tooltip
         >, then <span class="font-weight-bold">{{ hookAction }}</span
         >.</span
       >
-    </div>
-    <div v-if="isAgent" class=" py-4 pl-8 subtitle-2 font-weight-light"
-      >To use with a new agent, add this id as the agent-config-id:
-      <v-tooltip bottom>
-        <template #activator="{ on }">
-          <span
-            class="cursor-pointer show-icon-hover-focus-only pa-2px"
-            role="button"
-            @click="copyToClipboard(agentConfigId)"
-            v-on="on"
-          >
-            {{ agentConfigId }}
-            <v-icon x-small class="mb-2px mr-2" tabindex="0">
-              {{ copiedText[agentConfigId] ? 'check' : 'file_copy' }}
-            </v-icon>
-          </span>
-        </template>
-        <span> Click to copy {{ agentConfigId }} </span>
-      </v-tooltip>
-    </div></v-card
+      <div v-if="isAgent" class="subtitle-2 font-weight-light"
+        >To use with a new agent, add this id as the agent-config-id:
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <span
+              class="cursor-pointer show-icon-hover-focus-only pa-2px"
+              role="button"
+              @click="copyToClipboard(agentConfigId)"
+              v-on="on"
+            >
+              {{ agentConfigId }}
+              <v-icon x-small class="mb-2px mr-2" tabindex="0">
+                {{ copiedText[agentConfigId] ? 'check' : 'file_copy' }}
+              </v-icon>
+            </span>
+          </template>
+          <span> Click to copy {{ agentConfigId }} </span>
+        </v-tooltip>
+      </div></v-card-text
+    ></v-card
   >
 </template>
