@@ -9,6 +9,7 @@ export default {
   },
   data() {
     return {
+      closeCard: false,
       editHook: null,
       editAction: null,
       addAction: false,
@@ -40,6 +41,10 @@ export default {
       console.log('clicked', a, b, c)
       this.editHook = a
       this.editAction = b
+    },
+    handleRefresh() {
+      this.closeCard = true
+      this.$nextTick(() => (this.closeCard = false))
     }
     // closeCard() {
     //   this.addAction = false
@@ -88,7 +93,7 @@ export default {
     </v-row> -->
     <v-row>
       <v-col>
-        <AddActionCard />
+        <AddActionCard v-if="!closeCard" @refresh="handleRefresh" />
       </v-col>
     </v-row>
     <v-row>

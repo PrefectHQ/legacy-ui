@@ -205,5 +205,6 @@ export const ACTIONSTATES = {
     'Mapped',
     'Skipped'
   ],
-  Success: ['Success', 'Cached', 'Mapped', 'Skipped']
+  Success: ['Success', 'Cached', 'Mapped', 'Skipped'],
+  Custom: []
 }

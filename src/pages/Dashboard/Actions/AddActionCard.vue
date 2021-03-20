@@ -28,7 +28,7 @@ export default {
       flowNamesList: this.hookDetail?.flowNameList || [],
       hookDetails: this.hookDetail,
       project: null,
-      stateGroups: [...Object.keys(ACTIONSTATES), 'Custom'],
+      stateGroups: Object.keys(ACTIONSTATES),
       states: ACTIONSTATES,
       stateName: '',
       agentFlowOrSomethingElse: '',
@@ -125,7 +125,7 @@ export default {
     hookStates() {
       return this.chosenStates.length === this.states['All'].length
         ? 'any state'
-        : this.stateName
+        : this.stateName && this.stateName != 'Custom'
         ? this.stateName
         : this.chosenStates.length != 1
         ? 'selected states'
@@ -199,7 +199,10 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     closeCard() {
-      this.$emit('close')
+      if (this.hookDetail) this.$emit('close')
+      else {
+        this.$emit('refresh')
+      }
     },
     switchStep(step) {
       //steps = 'openAgentOrFlow', 'selectEventType', 'selectFlow', 'selectState', 'openDuration', 'selectDoThis'
@@ -266,13 +269,7 @@ export default {
     },
     selectStateGroup(group) {
       this.stateName = group
-      if (group !== 'Custom') {
-        // this.disableClick = true
-        this.chosenStates = this.states[group]
-      } else {
-        // this.chosenStates = []
-        // this.disableClick = false
-      }
+      this.chosenStates = this.states[group]
     },
     selectStates(state) {
       this.stateName = 'Custom'
@@ -531,7 +528,6 @@ export default {
     <v-card-title>
       <v-spacer></v-spacer>
       <v-btn
-        v-if="hookDetail"
         text
         class="grey--text text--darken-2 light-weight-text "
         @click="closeCard"
@@ -622,20 +618,26 @@ export default {
       >.
     </v-card-text>
     <v-card-actions v-if="step === 'openAgentOrFlow'">
-      <v-chip
+      <v-col
         v-for="item in ['flow', 'agent']"
         :key="item"
-        label
-        :color="agentOrFlow === 'item' ? 'codePink' : 'grey'"
-        max-width="300px"
-        class="ma-1"
-        outlined
-        @click="selectAgentOrFlow(item)"
-        ><v-icon class="pr-2">{{
-          item === 'flow' ? 'pi-flow' : 'pi-agent'
-        }}</v-icon
-        >{{ item }}</v-chip
+        cols="6"
+        sm="3"
+        class="pa-2"
       >
+        <div
+          v-ripple
+          class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+          :class="{ active: agentOrFlow === item }"
+          @click="selectAgentOrFlow(item)"
+          ><div class="text-center"
+            ><v-icon class="pr-2">{{
+              item === 'flow' ? 'pi-flow' : 'pi-agent'
+            }}</v-icon
+            >{{ item }}</div
+          ></div
+        >
+      </v-col>
     </v-card-actions>
     <!-- <v-card v-else-if="openAgent" elevation="0" class="pa-2">
       <v-chip
@@ -651,56 +653,55 @@ export default {
         }}</truncate></v-chip
       ></v-card
     > -->
-    <v-card-text v-else-if="step === 'selectFlow'">
-      <v-row>
-        <!-- //need to fix v-model AND flow box color/style -->
-        <v-checkbox
-          v-if="!searchEntry"
-          v-model="selectAll"
-          class="mt-2 mx-2"
-          dense
-          label="Select All"
-          :indeterminate="notAll"
-        ></v-checkbox>
-        <v-text-field
-          v-model="searchEntry"
-          hide-details
-          single-line
-          solo
-          flat
-          :placeholder="placeholderMessage"
-          prepend-inner-icon="search"
-          autocomplete="new-password"
-        />
+    <v-sheet v-else-if="step === 'selectFlow'" class="pa-4">
+      <v-row
+        ><v-col cols="3">
+          <!-- //need to fix v-model AND flow box color/style -->
+          <v-checkbox
+            v-if="!searchEntry"
+            v-model="selectAll"
+            class="mx-2 mt-2"
+            dense
+            label="Select All"
+            :indeterminate="notAll"
+          ></v-checkbox> </v-col
+        ><v-col cols="9">
+          <v-text-field
+            v-model="searchEntry"
+            hide-details
+            single-line
+            solo
+            flat
+            :placeholder="placeholderMessage"
+            prepend-inner-icon="search"
+            autocomplete="new-password"
+        /></v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
           <v-sheet
-            class="py-4"
             :height="formHeight"
             :style="{ 'overflow-y': 'auto', 'overflow-x': 'hidden' }"
           >
-            <v-row class="px-4">
+            <v-row class="py-2">
               <v-col
                 v-for="item in flows"
                 :key="item.id"
                 cols="6"
                 sm="3"
                 lg="2"
-                class="px-1 py-0 "
               >
-                <v-chip
-                  label
-                  :style="{ width: '100%', height: '50px' }"
-                  :color="includesFlow(item) ? 'pink' : ''"
-                  class="ma-1"
-                  outlined
+                <div
+                  v-ripple
+                  class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+                  :class="{ active: includesFlow(item) }"
                   @click="selectFlow(item)"
-                  ><truncate :content="`${item.name} - ${item.project.name}`"
-                    ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
+                >
+                  <truncate :content="`${item.name} - ${item.project.name}`"
+                    ><div class="caption">{{ item.project.name }}</div
                     ><div class="subtitle-2">{{ item.name }}</div></truncate
-                  ></v-chip
-                ></v-col
+                  >
+                </div></v-col
               >
             </v-row>
           </v-sheet>
@@ -720,7 +721,7 @@ export default {
           <v-icon small>call_made</v-icon>
         </v-btn>
       </v-card-actions>
-    </v-card-text>
+    </v-sheet>
 
     <v-card-actions v-else-if="step === 'selectEventType'"
       ><span v-for="item in flowEventTypes" :key="item.enum">
@@ -736,30 +737,33 @@ export default {
         </span>
       </span>
     </v-card-actions>
-    <v-card-actions v-else-if="step === 'openDuration'">
-      <v-text-field
-        v-model="seconds"
-        type="number"
-        @keydown.enter="closeSeconds"
-        @blur="closeSeconds"
-      ></v-text-field>
-      <div class="mt-1 text-caption">
-        Hint: confirm duration by pressing the Enter key
-      </div>
-
-      <v-btn
-        color="primary"
-        elevation="0"
-        title="Next"
-        class="mx-1"
-        @click="closeSeconds"
-      >
-        Next
-        <v-icon small>call_made</v-icon>
-      </v-btn></v-card-actions
+    <div v-else-if="step === 'openDuration'">
+      <v-card-text>
+        <v-text-field
+          v-model="seconds"
+          type="number"
+          persistent-hint
+          hint="Hint: confirm duration by pressing the Enter key"
+          @keydown.enter="closeSeconds"
+          @blur="closeSeconds"
+        ></v-text-field>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          title="Next"
+          class="mx-1"
+          @click="closeSeconds"
+        >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn></v-card-actions
+      ></div
     >
 
-    <v-card-actions v-else-if="step === 'selectState'">
+    <v-card-text v-else-if="step === 'selectState'">
       <v-chip
         v-for="item in stateGroups"
         :key="item.id"
@@ -777,7 +781,26 @@ export default {
       >
 
       <v-divider class="ma-2" />
-      <div>
+      <v-row class="py-2">
+        <v-col
+          v-for="item in states['All']"
+          :key="item"
+          cols="4"
+          sm="3"
+          lg="1"
+          class="pa-2"
+        >
+          <div
+            v-ripple
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+            :class="{ active: chosenStates.includes(item) }"
+            @click="selectStates(item)"
+          >
+            {{ item }}
+          </div>
+        </v-col>
+      </v-row>
+      <!-- <div>
         <v-chip
           v-for="item in states['All']"
           :key="item"
@@ -790,50 +813,59 @@ export default {
           @click="selectStates(item)"
           >{{ item }}</v-chip
         >
-      </div>
-
-      <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        elevation="0"
-        title="Next"
-        class="mx-1"
-        :disabled="chosenStates.length < 1"
-        @click="switchStep('selectDoThis')"
-      >
-        Next
-        <v-icon small>call_made</v-icon>
-      </v-btn></v-card-actions
+      </div> -->
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          title="Next"
+          class="mx-1"
+          :disabled="chosenStates.length < 1"
+          @click="switchStep('selectDoThis')"
+        >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn></v-card-actions
+      ></v-card-text
     >
 
-    <v-card-actions v-else-if="step === 'selectDoThis'">
-      <v-chip class="ma-1" color="primary" label @click="addNewAction"
-        ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New Config
-      </v-chip>
-      <v-chip
-        v-for="item in editedActions"
-        :key="item.id"
-        label
-        :disabled="
-          item.action_type === 'CancelFlowRunAction' && agentOrFlow === 'agent'
-        "
-        max-width="500px"
-        class="ma-1"
-        outlined
-        @click="selectAction(item)"
-        ><truncate :content="item.name || item.action_type">{{
-          item.name || item.action_type
-        }}</truncate>
-        <v-btn
-          small
-          icon
-          title="Remove"
-          color="codePink"
-          @click.stop="handleRemoveClick(item)"
+    <v-card-text v-else-if="step === 'selectDoThis'">
+      <v-row class="px-3">
+        <v-btn small elevation="0" color="primary" @click="addNewAction"
+          ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New
+        </v-btn>
+      </v-row>
+
+      <v-row class="py-2 px-1">
+        <v-col
+          v-for="item in editedActions"
+          :key="item.id"
+          cols="6"
+          sm="3"
+          class="pa-2"
         >
-          <i class="fas fa-times-circle fa-lg"
-        /></v-btn>
-      </v-chip>
+          <div
+            v-ripple
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+            :class="{ active: chosenAction === item }"
+            :disabled="
+              item.action_type === 'CancelFlowRunAction' &&
+                agentOrFlow === 'agent'
+            "
+            @click="selectAction(item)"
+            >{{ item.name }}<v-spacer></v-spacer>
+            <v-btn
+              small
+              icon
+              title="Remove"
+              color="codePink"
+              @click.stop="handleRemoveClick(item)"
+            >
+              <i class="fas fa-times-circle fa-lg"/></v-btn
+          ></div>
+        </v-col>
+      </v-row>
       <ConfirmDialog
         :value="removeDoThisDialog"
         :loading="deleting"
@@ -849,7 +881,7 @@ export default {
           ></slot
         ></ConfirmDialog
       >
-    </v-card-actions>
+    </v-card-text>
   </v-card>
   <AddDoThis
     v-else
@@ -857,3 +889,39 @@ export default {
     @new-action="createAction"
   />
 </template>
+
+<style lang="scss" scoped>
+.chip-bigger {
+  border: 1px solid;
+  border-color: var(--v-utilGrayLight-base) !important;
+  height: 60px;
+  transition: all 50ms;
+  width: 100%;
+
+  &.active {
+    border-color: var(--v-codePink-base) !important;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.chip-small {
+  border: 1px solid;
+  border-color: var(--v-utilGrayLight-base) !important;
+  height: 30px;
+  transition: all 50ms;
+  width: 100%;
+
+  &.active {
+    border-color: var(--v-codePink-base) !important;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+</style>
