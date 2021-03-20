@@ -529,7 +529,7 @@ export default {
       <v-spacer></v-spacer>
       <v-btn
         text
-        class="grey--text text--darken-2 light-weight-text "
+        class="grey--text text--darken-2 light-weight-text mr-1"
         @click="closeCard"
       >
         <v-icon small>close</v-icon
