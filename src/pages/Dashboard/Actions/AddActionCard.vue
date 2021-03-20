@@ -647,7 +647,7 @@ export default {
     > -->
     <v-card-text v-else-if="step === 'selectFlow'">
       <v-row>
-        //need to fix v-model AND flow box color/style
+        <!-- //need to fix v-model AND flow box color/style -->
         <v-checkbox
           v-if="!searchEntry"
           class="mt-2 mx-2"
