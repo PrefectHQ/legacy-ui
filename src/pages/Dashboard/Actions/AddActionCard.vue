@@ -627,7 +627,7 @@ export default {
         v-for="item in ['flow', 'agent']"
         :key="item"
         cols="6"
-        sm="3"
+        sm="2"
         class="pa-2"
       >
         <div

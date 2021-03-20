@@ -325,7 +325,7 @@ export default {
       <v-spacer></v-spacer>
       <v-btn
         text
-        class="grey--text text--darken-2 light-weight-text "
+        class="grey--text text--darken-2 light-weight-text mr-1"
         @click="handleClose"
       >
         <v-icon small>close</v-icon
@@ -387,8 +387,28 @@ export default {
       >
     </v-card-text>
 
-    <v-card-actions v-if="step === 'selectMessageType'">
-      <v-chip
+    <v-card-text v-if="step === 'selectMessageType'">
+      <v-row class="py-3">
+        <v-col
+          v-for="type in actionTypes()"
+          :key="type.title"
+          cols="6"
+          sm="2"
+          lg="1"
+        >
+          <div
+            v-ripple
+            class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+            :class="{ active: messageType === type }"
+            @click="selectMessageType(type)"
+            ><v-icon left class="mx-4">
+              {{ type.icon }}
+            </v-icon>
+            {{ type.title }}</div
+          ></v-col
+        ></v-row
+      >
+      <!-- <v-chip
         v-for="type in actionTypes()"
         :key="type.title"
         label
@@ -401,9 +421,9 @@ export default {
           {{ type.icon }}
         </v-icon>
         {{ type.title }}
-      </v-chip>
-    </v-card-actions>
-    <v-card-actions v-else-if="step === 'openMessageText'" class="pt-0">
+      </v-chip> -->
+    </v-card-text>
+    <v-card-text v-else-if="step === 'openMessageText'" class="pt-0">
       <span class="primary--text"
         >Type your message here or leave blank to send a default message.</span
       ><v-menu
@@ -464,21 +484,28 @@ export default {
         class="pt-0"
         @keydown.enter="saveMessage"
       />
-    </v-card-actions>
-    <v-card-actions v-else-if="step === 'openToConfig'">
-      <span v-if="messageType.type === 'SLACK_WEBHOOK'"
-        ><v-chip
+    </v-card-text>
+    <v-card-text v-else-if="step === 'openToConfig'">
+      <v-row v-if="messageType.type === 'SLACK_WEBHOOK'" class="py-3">
+        <v-col
           v-for="name in secretNames"
           :key="name"
-          label
-          :color="secretName === name ? 'codePink' : 'grey'"
-          class="ma-1"
-          outlined
-          @click="selectSecret(name)"
+          cols="6"
+          sm="3"
+          lg="2"
+          class="pa-1"
         >
-          {{ name }}
-        </v-chip>
-      </span>
+          <div
+            v-ripple
+            class="chip-small d-flex align-center justify-start px-2 cursor-pointer user-select-none"
+            :class="{ active: secretName === name }"
+            @click="selectSecret(name)"
+            ><div class="text-truncate">
+              {{ name }}
+            </div></div
+          >
+        </v-col>
+      </v-row>
       <!-- <v-text-field
         v-if="messageType.type === 'SLACK_WEBHOOK'"
         v-model="messageConfigTo"
@@ -539,8 +566,8 @@ export default {
         :show-clear="false"
         @input="handleListInput"
       ></ListInput>
-    </v-card-actions>
-    <v-card-actions v-else-if="step === 'addTwilioConfig'">
+    </v-card-text>
+    <v-card-text v-else-if="step === 'addTwilioConfig'">
       <div>
         <span>
           Prefect Cloud will send a message via the
@@ -579,8 +606,8 @@ export default {
           dense
         />
       </div>
-    </v-card-actions>
-    <v-card-actions v-else-if="step === 'addName'" class="pr-4">
+    </v-card-text>
+    <v-card-text v-else-if="step === 'addName'" class="pr-4">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-text-field
@@ -593,7 +620,7 @@ export default {
         </template>
         Give your config a name so you can find and re-use it with more hooks.
       </v-tooltip>
-    </v-card-actions>
+    </v-card-text>
     <v-card-actions v-if="needsNext">
       <v-spacer></v-spacer>
       <v-btn
@@ -614,5 +641,41 @@ export default {
 <style scoped>
 .no-top {
   margin-top: 1px;
+}
+</style>
+
+<style lang="scss" scoped>
+.chip-bigger {
+  border: 1px solid;
+  border-color: var(--v-utilGrayLight-base) !important;
+  height: 60px;
+  transition: all 50ms;
+  width: 100%;
+
+  &.active {
+    border-color: var(--v-codePink-base) !important;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.chip-small {
+  border: 1px solid;
+  border-color: var(--v-utilGrayLight-base) !important;
+  height: 30px;
+  transition: all 50ms;
+  width: 100%;
+
+  &.active {
+    border-color: var(--v-codePink-base) !important;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
 }
 </style>
