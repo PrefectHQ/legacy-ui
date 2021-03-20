@@ -320,34 +320,28 @@ export default {
 </script>
 
 <template>
-  <v-card elevation="0">
-    <v-row
-      ><v-col cols="6" class="pl-4"
-        ><v-btn
-          text
-          class="grey--text text--darken-2 light-weight-text pl-0 ml-4 pb-2"
-          @click="handleClose"
-        >
-          <v-icon small>close</v-icon
-          ><span style="text-transform: none;">Close </span></v-btn
-        ></v-col
+  <v-card outlined>
+    <v-card-title>
+      <v-spacer></v-spacer>
+      <v-btn
+        text
+        class="grey--text text--darken-2 light-weight-text "
+        @click="handleClose"
       >
-      <v-col cols="6" class="text-right"
-        ><v-btn
-          class="mr-3"
-          color="primary"
-          elevation="0"
-          :loading="saving"
-          :disabled="!allowSave"
-          @click="createAction"
-        >
-          <i class="far fa-cloud-upload-alt fa-lg"></i>
-          <span class="pl-2">Save</span>
-        </v-btn>
-      </v-col>
-    </v-row>
+        <v-icon small>close</v-icon
+        ><span style="text-transform: none;">Cancel</span></v-btn
+      ><v-btn
+        color="primary"
+        elevation="0"
+        :loading="saving"
+        :disabled="!allowSave"
+        @click="createAction"
+        ><i class="far fa-cloud-upload-alt fa-lg"></i>
+        <span class="pl-2">Save</span></v-btn
+      ></v-card-title
+    >
 
-    <div class="headline mx-4">
+    <v-card-text class="headline">
       <v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
         :color="step === 'selectMessageType' ? 'codePink' : 'grey'"
@@ -391,9 +385,9 @@ export default {
           ></span
         ></span
       >
-    </div>
+    </v-card-text>
 
-    <v-card-text v-if="step === 'selectMessageType'" class="pt-0">
+    <v-card-actions v-if="step === 'selectMessageType'">
       <v-chip
         v-for="type in actionTypes()"
         :key="type.title"
@@ -408,8 +402,8 @@ export default {
         </v-icon>
         {{ type.title }}
       </v-chip>
-    </v-card-text>
-    <v-card-text v-else-if="step === 'openMessageText'" class="pt-0">
+    </v-card-actions>
+    <v-card-actions v-else-if="step === 'openMessageText'" class="pt-0">
       <span class="primary--text"
         >Type your message here or leave blank to send a default message.</span
       ><v-menu
@@ -470,8 +464,8 @@ export default {
         class="pt-0"
         @keydown.enter="saveMessage"
       />
-    </v-card-text>
-    <v-card-text v-else-if="step === 'openToConfig'">
+    </v-card-actions>
+    <v-card-actions v-else-if="step === 'openToConfig'">
       <span v-if="messageType.type === 'SLACK_WEBHOOK'"
         ><v-chip
           v-for="name in secretNames"
@@ -545,8 +539,8 @@ export default {
         :show-clear="false"
         @input="handleListInput"
       ></ListInput>
-    </v-card-text>
-    <v-card-text v-else-if="step === 'addTwilioConfig'">
+    </v-card-actions>
+    <v-card-actions v-else-if="step === 'addTwilioConfig'">
       <div>
         <span>
           Prefect Cloud will send a message via the
@@ -585,8 +579,8 @@ export default {
           dense
         />
       </div>
-    </v-card-text>
-    <v-card-text v-else-if="step === 'addName'" class="pr-4">
+    </v-card-actions>
+    <v-card-actions v-else-if="step === 'addName'" class="pr-4">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-text-field
@@ -599,7 +593,7 @@ export default {
         </template>
         Give your config a name so you can find and re-use it with more hooks.
       </v-tooltip>
-    </v-card-text>
+    </v-card-actions>
     <v-card-actions v-if="needsNext">
       <v-spacer></v-spacer>
       <v-btn

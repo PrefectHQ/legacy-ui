@@ -234,7 +234,6 @@ export default {
           name: 'changes state',
           enum: 'CHANGES_STATE'
         }
-        this.switchStep('selectState')
       } else {
         this.selectedFlows = []
         this.flowNamesList = []
@@ -532,7 +531,7 @@ export default {
         @click="closeCard"
       >
         <v-icon small>close</v-icon
-        ><span style="text-transform: none;">Close</span></v-btn
+        ><span style="text-transform: none;">Cancel</span></v-btn
       ><v-btn
         color="primary"
         elevation="0"
@@ -646,82 +645,77 @@ export default {
         }}</truncate></v-chip
       ></v-card
     > -->
-    <v-card-actions
-      v-else-if="step === 'selectFlow'"
-      :style="{ 'overflow-y': 'hidden' }"
-    >
-      <v-text-field
-        v-model="searchEntry"
-        class="flow-search"
-        dense
-        hide-details
-        single-line
-        solo
-        flat
-        :placeholder="placeholderMessage"
-        prepend-inner-icon="search"
-        autocomplete="new-password"
-        style="min-width: 400px;"
-      />
-      <div class="text-right">
-        <v-chip
+    <v-card-text v-else-if="step === 'selectFlow'">
+      <v-row>
+        //need to fix v-model AND flow box color/style
+        <v-checkbox
           v-if="!searchEntry"
-          color="primary"
-          label
-          small
-          max-width="300px"
-          class="mx-1"
+          class="mt-2 mx-2"
+          dense
+          label="Select All"
+          indeterminate
+          :messages="false"
           @click="selectAllFlows"
+        ></v-checkbox>
+        <v-text-field
+          v-model="searchEntry"
+          hide-details
+          single-line
+          solo
+          flat
+          :placeholder="placeholderMessage"
+          prepend-inner-icon="search"
+          autocomplete="new-password"
+        />
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-sheet
+            class="py-4"
+            :height="formHeight"
+            :style="{ 'overflow-y': 'auto', 'overflow-x': 'hidden' }"
+          >
+            <v-row class="px-4">
+              <v-col
+                v-for="item in flows"
+                :key="item.id"
+                cols="6"
+                sm="3"
+                lg="2"
+                class="px-1 py-0 "
+              >
+                <v-chip
+                  label
+                  :style="{ width: '100%', height: '50px' }"
+                  :color="includesFlow(item) ? 'pink' : ''"
+                  class="ma-1"
+                  outlined
+                  @click="selectFlow(item)"
+                  ><truncate :content="`${item.name} - ${item.project.name}`"
+                    ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
+                    ><div class="subtitle-2">{{ item.name }}</div></truncate
+                  ></v-chip
+                ></v-col
+              >
+            </v-row>
+          </v-sheet>
+        </v-col>
+      </v-row>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          :disabled="!selectedFlows.length"
+          title="Next"
+          class="mx-1"
+          @click="handleFlowNext"
         >
-          <v-icon>pi-flow</v-icon>
-          {{ allFlows ? 'De-select all flows' : 'Select all flows' }}
-        </v-chip>
-      </div>
-
-      <v-sheet
-        class="py-4"
-        :height="formHeight"
-        :style="{ 'overflow-y': 'auto', 'overflow-x': 'hidden' }"
-      >
-        <v-row class="px-4">
-          <v-col
-            v-for="item in flows"
-            :key="item.id"
-            cols="6"
-            sm="3"
-            lg="2"
-            class="px-1 py-0 "
-          >
-            <v-chip
-              label
-              :style="{ width: '100%', height: '60px' }"
-              title="Press shift to select multiple flows"
-              :color="includesFlow(item) ? 'pink' : ''"
-              class="ma-1"
-              outlined
-              @click="selectFlow(item)"
-              ><truncate :content="`${item.name} - ${item.project.name}`"
-                ><div class="caption mt-2 mb-0">{{ item.project.name }}</div
-                ><div class="subtitle-2">{{ item.name }}</div></truncate
-              ></v-chip
-            ></v-col
-          >
-        </v-row>
-      </v-sheet>
-
-      <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        elevation="0"
-        :disabled="!selectedFlows.length"
-        title="Next"
-        class="mx-1"
-        @click="handleFlowNext"
-      >
-        Next
-        <v-icon small>call_made</v-icon>
-      </v-btn></v-card-actions
-    >
+          Next
+          <v-icon small>call_made</v-icon>
+        </v-btn>
+      </v-card-actions>
+    </v-card-text>
 
     <v-card-actions v-else-if="step === 'selectEventType'"
       ><span v-for="item in flowEventTypes" :key="item.enum">
