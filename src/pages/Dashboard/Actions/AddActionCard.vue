@@ -18,6 +18,7 @@ export default {
   },
   data() {
     return {
+      selectAll: false,
       deleting: false,
       saving: false,
       searchEntry: null,
@@ -38,6 +39,7 @@ export default {
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
       addAction: false,
       flowEventType: null,
+      notAll: !!this.hookDetail?.flowName || false,
       flowEventTypes: [
         { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
         {
@@ -161,6 +163,23 @@ export default {
       return UUIDRegex.test(this.searchEntry.trim())
     }
   },
+  watch: {
+    selectAll(val) {
+      this.notAll = false
+      if (val) {
+        this.selectedFlows = this.flows
+        this.flowNamesList = ['any flow']
+
+        this.flowEventType = {
+          name: 'changes state',
+          enum: 'CHANGES_STATE'
+        }
+      } else {
+        this.selectedFlows = []
+        this.flowNamesList = []
+      }
+    }
+  },
   created() {
     this.flowEventType = this.hookDetail?.flowConfig?.kind
       ? this.flowEventTypes.find(
@@ -223,21 +242,8 @@ export default {
       } else {
         if (flow) this.selectedFlows.push(flow)
       }
+      this.notAll = true
       this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
-    },
-    selectAllFlows() {
-      if (!this.allFlows) {
-        this.selectedFlows = this.flows
-        this.flowNamesList = ['any flow']
-
-        this.flowEventType = {
-          name: 'changes state',
-          enum: 'CHANGES_STATE'
-        }
-      } else {
-        this.selectedFlows = []
-        this.flowNamesList = []
-      }
     },
     handleFlowNext() {
       if (this.selectedFlows?.length > 1) {
@@ -650,12 +656,11 @@ export default {
         <!-- //need to fix v-model AND flow box color/style -->
         <v-checkbox
           v-if="!searchEntry"
+          v-model="selectAll"
           class="mt-2 mx-2"
           dense
           label="Select All"
-          indeterminate
-          :messages="false"
-          @click="selectAllFlows"
+          :indeterminate="notAll"
         ></v-checkbox>
         <v-text-field
           v-model="searchEntry"
