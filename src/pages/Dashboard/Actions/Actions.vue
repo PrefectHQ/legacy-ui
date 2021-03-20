@@ -46,10 +46,6 @@ export default {
       this.closeCard = true
       this.$nextTick(() => (this.closeCard = false))
     }
-    // closeCard() {
-    //   this.addAction = false
-    //   this.hookConfig = null
-    // }
   },
   apollo: {
     hooks: {
