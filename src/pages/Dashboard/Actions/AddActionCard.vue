@@ -161,6 +161,11 @@ export default {
       // Call .trim() to get rid of whitespace on the ends of the
       // string before making the query
       return UUIDRegex.test(this.searchEntry.trim())
+    },
+    filteredFlowEventTypes() {
+      if (this.selectedFlows?.length > 1)
+        return this.flowEventTypes.filter(item => item.enum != 'CHANGES_STATE')
+      return this.flowEventTypes
     }
   },
   watch: {
@@ -639,20 +644,6 @@ export default {
         >
       </v-col>
     </v-card-actions>
-    <!-- <v-card v-else-if="openAgent" elevation="0" class="pa-2">
-      <v-chip
-        v-for="item in agents"
-        :key="item.id"
-        label
-        max-width="300px"
-        class="ma-1"
-        outlined
-        @click="selectAgent(item)"
-        ><truncate :content="item.id">{{
-          item.name != 'agent' ? item.name : item.type
-        }}</truncate></v-chip
-      ></v-card
-    > -->
     <v-sheet v-else-if="step === 'selectFlow'" class="pa-4">
       <v-row
         ><v-col cols="3">
@@ -723,20 +714,26 @@ export default {
       </v-card-actions>
     </v-sheet>
 
-    <v-card-actions v-else-if="step === 'selectEventType'"
-      ><span v-for="item in flowEventTypes" :key="item.enum">
-        <span v-if="!disableChip(item)">
-          <v-chip
-            label
-            class="mx-2"
-            :disabled="disableChip(item)"
-            outlined
+    <v-card-text v-else-if="step === 'selectEventType'"
+      ><v-row class="py-2">
+        <v-col
+          v-for="item in filteredFlowEventTypes"
+          :key="item.enum"
+          class="<span"
+          cols="6"
+          sm="2"
+          lg="1"
+        >
+          <div
+            v-ripple
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+            :class="{ active: includesFlow(item) }"
             @click="selectFlowEventType(item)"
-            >{{ item.name }}</v-chip
-          >
-        </span>
-      </span>
-    </v-card-actions>
+            ><div class="text-center">{{ item.name }}</div>
+          </div>
+        </v-col>
+      </v-row>
+    </v-card-text>
     <div v-else-if="step === 'openDuration'">
       <v-card-text>
         <v-text-field
