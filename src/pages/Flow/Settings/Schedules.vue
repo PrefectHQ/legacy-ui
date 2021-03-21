@@ -105,7 +105,7 @@ export default {
             .map(c => {
               return {
                 cron: c.cron,
-                parameter_defaults: c.parameter_defaults
+                parameter_defaults: JSON.parse(c.parameter_defaults)
               }
             })
         ]
@@ -136,20 +136,20 @@ export default {
             }
           })
         } else {
-          // result = await this.$apollo.mutate({
-          //   mutation: require('@/graphql/Mutations/set-flow-group-schedule.gql'),
-          //   variables: {
-          //   input: {
-          //     flow_group_id: this.flowGroup.id,
-          //     cron_clocks: cronClocks,
-          //     interval_clocks: intervalClocks,
-          //     timezone: this.clocks[0]?.timezone
-          //       ? this.clocks[0]?.timezone
-          //       : this.timezone ||
-          //         Intl.DateTimeFormat().resolvedOptions().timeZone
-          //   }
-          // }
-          // })
+          result = await this.$apollo.mutate({
+            mutation: require('@/graphql/Mutations/set-flow-group-schedule.gql'),
+            variables: {
+              input: {
+                flow_group_id: this.flowGroup.id,
+                cron_clocks: cronClocks,
+                interval_clocks: intervalClocks,
+                timezone: this.clocks[0]?.timezone
+                  ? this.clocks[0]?.timezone
+                  : this.timezone ||
+                    Intl.DateTimeFormat().resolvedOptions().timeZone
+              }
+            }
+          })
         }
 
         if (
@@ -244,6 +244,7 @@ export default {
               <div v-if="selectedClock == -1" key="1" style="height: 100%;">
                 <ClockForm
                   title="New schedule"
+                  :param="flow.parameters"
                   @cancel="selectedClock = null"
                   @confirm="createClock"
                 />
@@ -271,10 +272,11 @@ export default {
         class="grid-container"
         :class="{ 'grid-container-large': selectedClock === i }"
       >
+        <!-- :color="appForeground" -->
         <v-card
           class="clock-card text-truncate"
           :class="{ 'clock-card-large': selectedClock === i }"
-          :color="appForeground"
+          color="white"
           :style="{
             'border-left':
               clock.scheduleType == 'flow'
