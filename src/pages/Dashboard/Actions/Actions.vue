@@ -37,8 +37,7 @@ export default {
     }
   },
   methods: {
-    handleEdit(a, b, c) {
-      console.log('clicked', a, b, c)
+    handleEdit(a, b) {
       this.editHook = a
       this.editAction = b
     },
