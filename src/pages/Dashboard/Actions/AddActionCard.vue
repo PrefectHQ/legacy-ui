@@ -533,6 +533,7 @@ export default {
     <v-card-title>
       <v-spacer></v-spacer>
       <v-btn
+        v-if="step != 'openAgentOrFlow' || hookDetail"
         text
         class="grey--text text--darken-2 light-weight-text mr-1"
         @click="closeCard"

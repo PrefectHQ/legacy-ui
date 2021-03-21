@@ -277,18 +277,7 @@ export default {
             ><v-icon>more_horiz</v-icon></v-btn
           ></template
         >
-        <v-card
-          ><div
-            ><v-btn
-              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              text
-              :loading="deletingHook"
-              width="100%"
-              color="secondaryGray"
-              @click="deleteHook"
-              ><v-icon class="pr-4">delete</v-icon> Delete</v-btn
-            ></div
-          >
+        <v-card>
           <div
             ><v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
@@ -299,6 +288,16 @@ export default {
               ><v-icon class="pl-0 pr-4">edit</v-icon>
               <span class="pr-2">Edit</span>
             </v-btn></div
+          ><div
+            ><v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              text
+              :loading="deletingHook"
+              width="100%"
+              color="secondaryGray"
+              @click="deleteHook"
+              ><v-icon class="pr-4">delete</v-icon> Delete</v-btn
+            ></div
           >
         </v-card></v-menu
       ></v-card-title
