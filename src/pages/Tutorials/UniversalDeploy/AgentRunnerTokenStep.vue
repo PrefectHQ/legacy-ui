@@ -118,9 +118,7 @@ export default {
 
       <p>
         For future reference, agent tokens are managed on the
-        <router-link :to="{ name: 'tokens' }"
-          >Team > API Tokens page</router-link
-        >.
+        <router-link :to="'/team/tokens'">Team > API Tokens page</router-link>.
       </p>
     </div>
 

@@ -470,7 +470,7 @@ export default {
         to understand their role in your infrastructure.
         <span v-if="isCloud">
           You can also go through the
-          <router-link class="link" :to="{ path: 'tutorial/Universal-Deploy' }">
+          <router-link class="link" :to="'/tutorial/Universal-Deploy'">
             <u>Universal Deploy</u>
           </router-link>
           tutorial for guidance on running agents in Cloud.</span
