@@ -37,10 +37,9 @@ export default {
     }
   },
   methods: {
-    handleEdit(a, b, c) {
-      console.log('clicked', a, b, c)
-      this.editHook = a
-      this.editAction = b
+    handleEdit(hook, index) {
+      this.editHook = hook
+      this.editAction = index
     },
     handleRefresh() {
       this.closeCard = true
