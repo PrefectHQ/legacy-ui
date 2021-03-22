@@ -122,7 +122,9 @@ export default {
       return this.agentOrFlow === 'agent'
         ? agentName || 'agent'
         : this.flowNamesList?.length > 1
-        ? 'mulitiple flows'
+        ? this.flowNamesList?.length === this.flows.length
+          ? 'any flow'
+          : 'mulitiple flows'
         : this.flowNamesList.toString() || this.agentOrFlow
     },
     hookStates() {
