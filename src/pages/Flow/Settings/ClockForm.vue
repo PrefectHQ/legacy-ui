@@ -37,7 +37,7 @@ export default {
       required: false,
       default: () => null
     },
-    // TODO:  RENAME "PARAM"
+    // rename this
     param: {
       type: Array,
       required: false,
@@ -59,8 +59,8 @@ export default {
         : 'interval',
       advancedTypes: ['cron', 'interval'],
       cronModel: this.cron,
-      parameterModel: '',
-      name: {},
+      parameterModel: '', // rename this
+      name: {}, // renanme this
       intervalModel: this.interval,
       simpleModel: '0 * * * *',
       valid: true
@@ -70,18 +70,6 @@ export default {
     clockToAdd() {
       return this.advanced ? `${this.advancedType}Model` : 'simpleModel'
     }
-    // transformArr() {
-    //   let r = []
-    //   if (Array.isArray(this.param)) {
-    //     const mapped = this.param.map(item => ({
-    //       [item.name]: item.default
-    //     }))
-    //     const newObj = Object.assign({}, ...mapped)
-    //     r = newObj
-    //   }
-
-    //   return r
-    // }
   },
   methods: {
     cancel() {
@@ -90,14 +78,6 @@ export default {
     confirm() {
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
-      // const clock = {
-      //   type: clockType,
-      //   [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
-      //     this.clockToAdd
-      //   ],
-      //   parameter_defaults: JSON.stringify(this.name),
-      //   timezone: this.selectedTimezone
-      // }
 
       const clock = {
         type: clockType,
@@ -111,10 +91,6 @@ export default {
         timezone: this.selectedTimezone
       }
       this.$emit('confirm', clock)
-      /*
-      TODO: if it's not typed then it will be empty but if it is typed then it will append 
-      */
-      // console.log(Object.values(this.name).length)
     }
   }
 }
@@ -178,14 +154,80 @@ export default {
                 :menu-props="{ contentClass: 'tz' }"
               />
 
-              <!-- <div v-for="(n, index) in 10" :key="index">
-                <v-text-field
-                  v-model="name[n]"
-                  color="info"
-                  outline
-                  validate-on-blur
-                />
-              </div> -->
+              <!-- need to make a component for this ⬇ -->
+              <v-expansion-panels multiple>
+                <v-expansion-panel
+                  v-for="(parameter, i) in param"
+                  :key="i"
+                  height="90px"
+                >
+                  <v-expansion-panel-header disable-icon-rotate>
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title class="text-h6"
+                          >{{ parameter.name }}
+                        </v-list-item-title>
+                        <v-list-item-subtitle>
+                          Default Value:
+                          {{ parameter.default }}
+                        </v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <template #actions>
+                      <v-tooltip bottom>
+                        <template #activator="{ on }">
+                          <div v-on="on">
+                            <v-btn text>
+                              <v-icon small class="ml-0 mr-2">fa-undo</v-icon>
+                            </v-btn>
+                          </div>
+                        </template>
+                        <span
+                          >Reset to the parameters set at flow
+                          registration</span
+                        >
+                      </v-tooltip>
+                      <v-tooltip top>
+                        <template #activator="{ on, attrs }">
+                          <div v-bind="attrs" v-on="on">
+                            <v-btn icon
+                              ><v-icon v-if="false">expand_less</v-icon
+                              ><v-icon v-else>expand_more</v-icon>
+                            </v-btn>
+                          </div>
+                        </template>
+                        <span v-if="false">
+                          Read-only users cannot create or edit parameters.
+                        </span>
+                        <span v-else>
+                          Edit this parameter.
+                        </span>
+                      </v-tooltip>
+                    </template>
+                  </v-expansion-panel-header>
+
+                  <v-expansion-panel-content>
+                    <v-col cols="12">
+                      <v-row align-end>
+                        <v-text-field
+                          v-model="name[parameter.name]"
+                          class="mx-4"
+                          placeholder="Default value"
+                        ></v-text-field>
+                      </v-row>
+                    </v-col>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+
+              <!-- <ScheduleParamForm
+                v-if="param.length > 0"
+                :param="param"
+                v-bind:title.sync="parameterModel"
+              /> -->
+            </div>
+            <div v-else-if="advancedType == 'interval'" key="Interval">
+              <IntervalForm v-model="intervalModel" class="mt-4" />
 
               <v-expansion-panels multiple>
                 <v-expansion-panel
@@ -251,20 +293,6 @@ export default {
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
-              <!-- <ScheduleParamForm
-                      :parameter="parameter"
-                      :flow-parameter="param"
-                      v-bind:title.sync="parameterModel"
-                    /> -->
-
-              <!-- <ScheduleParamForm
-                v-if="param.length > 0"
-                :param="param"
-                v-bind:title.sync="parameterModel"
-              /> -->
-            </div>
-            <div v-else-if="advancedType == 'interval'" key="Interval">
-              <IntervalForm v-model="intervalModel" class="mt-4" />
             </div>
           </v-fade-transition>
         </div>

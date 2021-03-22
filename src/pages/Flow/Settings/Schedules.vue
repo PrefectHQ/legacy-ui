@@ -196,6 +196,14 @@ export default {
         tz = clock?.start_date?.tz
       }
       return tz
+    },
+    paramVal(clock) {
+      // rename this
+      let foo = []
+      for (const [key, value] of Object.entries(clock.parameter_defaults)) {
+        foo.push({ name: key, default: value })
+      }
+      return foo
     }
   }
 }
@@ -272,11 +280,10 @@ export default {
         class="grid-container"
         :class="{ 'grid-container-large': selectedClock === i }"
       >
-        <!-- :color="appForeground" -->
         <v-card
           class="clock-card text-truncate"
           :class="{ 'clock-card-large': selectedClock === i }"
-          color="white"
+          :color="appForeground"
           :style="{
             'border-left':
               clock.scheduleType == 'flow'
@@ -297,7 +304,7 @@ export default {
                 :cron="clock.cron"
                 :interval="clock.interval"
                 :timezone="timezoneVal(clock)"
-                :param="clock.parameter_defaults"
+                :param="paramVal(clock)"
                 title="Modify schedule"
                 @cancel="selectedClock = null"
                 @confirm="createClock"
