@@ -70,7 +70,7 @@ export default {
       ],
       keysHeaders: [
         {
-          text: 'Name',
+          text: 'Key Name',
           value: 'name'
         },
         {
@@ -307,14 +307,15 @@ export default {
       </template>
 
       <template #expanded-item="{item}">
-        <td :colspan="headers.length">
+        <td :colspan="4" class="subtable py-1">
+          <h4 class="mx-8 mt-4">{{ item.firstName }}'s Keys</h4>
           <v-data-table
             fixed-header
             :headers="keysHeaders"
             :header-props="{ 'sort-icon': 'arrow_drop_up' }"
             :items="keys.filter(key => key.user_id === item.id)"
             :items-per-page="10"
-            class="rounded-0 truncate-table"
+            class="rounded-0 truncate-table mx-8"
             :footer-props="{
               showFirstLastPage: true,
               itemsPerPageOptions: [10, 15, 20, -1],
@@ -519,3 +520,10 @@ export default {
     </ConfirmDialog>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.subtable {
+  border: 2px solid var(--v-utilGrayLight-base);
+  border-radius: 8px;
+}
+</style>
