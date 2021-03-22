@@ -107,6 +107,9 @@ export default {
       <span v-if="isTenantAdmin">
         Manage service accounts and their API keys
       </span>
+      <span v-else
+        >Service Accounts are only available to Administrator accounts</span
+      >
     </template>
 
     <template v-if="isTenantAdmin" #cta>
@@ -124,7 +127,7 @@ export default {
       </v-btn>
     </template>
 
-    <v-card tile>
+    <v-card v-if="isTenantAdmin" tile>
       <v-card-text class="pa-0">
         <v-text-field
           v-if="!$vuetify.breakpoint.mdAndUp"
