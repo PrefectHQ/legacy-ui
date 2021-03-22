@@ -74,6 +74,9 @@ export default {
         return 'agent'
       return 'flow'
     },
+    disableStep() {
+      return this.agentOrFlow === 'agent' || this.selectedFlows.length > 1
+    },
     isSLA() {
       return (
         this.flowEventType?.enum === 'STARTED_NOT_FINISHED' ||
@@ -576,15 +579,15 @@ export default {
         }}<span v-if="agentOrFlow === 'flow'">{{ haveOrHas }} a run that </span>
 
         <v-btn
+          v-if="!disableStep"
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
           class="px-0 pb-1 headline"
           text
-          :disabled="agentOrFlow === 'agent' || selectedFlows.length > 1"
           :color="step === 'selectEventType' ? 'codePink' : 'grey'"
           @click="switchStep('selectEventType')"
         >
           {{ flowEventType.name }}</v-btn
-        >
+        ><span v-else>{{ flowEventType.name }}</span>
         <span v-if="isSLA">
           for
 
