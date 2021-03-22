@@ -314,16 +314,8 @@ export default {
             :headers="keysHeaders"
             :header-props="{ 'sort-icon': 'arrow_drop_up' }"
             :items="keys.filter(key => key.user_id === item.id)"
-            :items-per-page="10"
             class="rounded-0 truncate-table mx-8"
-            :footer-props="{
-              showFirstLastPage: true,
-              itemsPerPageOptions: [10, 15, 20, -1],
-              firstIcon: 'first_page',
-              lastIcon: 'last_page',
-              prevIcon: 'keyboard_arrow_left',
-              nextIcon: 'keyboard_arrow_right'
-            }"
+            hide-default-footer
             no-data-text="This account doesn't have any keys yet."
           >
             <template
