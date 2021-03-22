@@ -17,6 +17,9 @@ const authClient = new OktaAuth({
   scopes: ['openid', 'profile', 'email'],
   testing: {
     disableHttpsCheck: VUE_APP_ENVIRONMENT !== 'production'
+  },
+  tokenManager: {
+    autoRenew: true
   }
 })
 
@@ -38,6 +41,9 @@ const authorize = () =>
 
 const actions = {
   async authenticate({ dispatch, commit, getters }) {
+    authClient.authStateManager.unsubscribe()
+    authClient.tokenManager.off('renewed')
+
     const urlParams = new URLSearchParams(window?.location?.search)
     const invitationId = urlParams.get('invitation_id')
     const source = urlParams.get('partner_source')
@@ -61,21 +67,17 @@ const actions = {
     }
 
     try {
-      const isAuthenticated = await authClient.isAuthenticated()
+      authClient.authStateManager.subscribe(({ idToken, accessToken }) => {
+        dispatch('updateAuthenticationTokens', { idToken, accessToken })
+      })
+
       const isLoginRedirect = await authClient.isLoginRedirect()
 
       const { tokens } = isLoginRedirect
         ? await authClient.token.parseFromUrl()
-        : isAuthenticated
-        ? {
-            idToken: await authClient.tokenManager.get('idToken'),
-            accessToken: await authClient.tokenManager.get('accessToken')
-          }
         : {
             tokens: await authClient.tokenManager.getTokens()
           }
-
-      // authClient.authStateManager.subscribe(dispatch('authenticate'))
 
       if (tokens?.accessToken && tokens?.idToken) {
         TokenWorker.port.postMessage({
@@ -83,6 +85,11 @@ const actions = {
           payload: tokens
         })
         await dispatch('updateAuthenticationTokens', tokens)
+
+        // Subscribe to renew events
+        authClient.tokenManager.on('renewed', () => {
+          dispatch('authenticate')
+        })
       } else {
         commit('isAuthenticated', false)
         await dispatch('login')
@@ -136,7 +143,7 @@ const actions = {
     commit('accessToken', accessToken.value)
     commit('accessTokenExpiry', accessToken.expiresAt)
     commit('idToken', idToken.value)
-    commit('idTokenExpiry', idToken.expiresAt)
+    commit('idTokenExpiry', idToken.expiresAt * 1000) // Okta returns token expiration in seconds
     commit('isAuthenticated', true)
   },
   async updateAuthorizationTokens({ commit }, payload) {
@@ -154,15 +161,21 @@ const actions = {
     })
     commit('isLoggingInUser', false)
   },
-  async logout({ commit }) {
+  async logout({ commit, getters }, postMessage = false) {
+    if (postMessage) {
+      TokenWorker.port.postMessage({
+        type: 'logout'
+      })
+    }
+
+    if (getters['isAuthenticated']) {
+      await authClient.signOut()
+    }
+
     commit('isAuthenticated', false)
     commit('unsetIdToken')
     commit('unsetAccessToken')
     commit('unsetRedirectRoute')
-    TokenWorker.port.postMessage({
-      type: 'logout'
-    })
-    await authClient.signOut()
   },
   reportUserToLogRocket({ getters }) {
     if (!getters['user']) return
