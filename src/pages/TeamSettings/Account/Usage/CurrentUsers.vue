@@ -27,7 +27,7 @@ export default {
 
 <template>
   <v-card tile class="f-wh py-8 d-flex flex-column align-center justify-center">
-    <div class="rounded pa-3 prefect">
+    <div class="rounded pa-3 primary">
       <v-icon x-large color="white">
         fad fa-users
       </v-icon>

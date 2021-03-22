@@ -169,11 +169,11 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <i class="prefect--text fad fa-clouds fa-fw fa-3x" />
+            <i class="primary--text fad fa-clouds fa-fw fa-3x" />
           </div>
           <div>
             <div
-              class="text-h6 font-weight-regular text-capitalize blue-grey--text text--darken-3"
+              class="text-h6 font-weight-regular text-capitalize utilGrayMid--text"
             >
               {{ planName
               }}<span class="text-none">
@@ -200,12 +200,10 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <i class="prefect--text fad fa-tasks fa-fw fa-3x" />
+            <i class="primary--text fad fa-tasks fa-fw fa-3x" />
           </div>
           <div>
-            <div
-              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
-            >
+            <div class="text-h6 font-weight-regular utilGrayMid--text">
               10,000 free runs / month
             </div>
             <div v-if="planType !== 'FREE_2021'" class="text-body-1">
@@ -224,14 +222,12 @@ export default {
           <div class="mr-4">
             <i
               :class="
-                `prefect--text fad fa-user${userNum > 1 ? 's' : ''} fa-fw fa-3x`
+                `primary--text fad fa-user${userNum > 1 ? 's' : ''} fa-fw fa-3x`
               "
             />
           </div>
           <div>
-            <div
-              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
-            >
+            <div class="text-h6 font-weight-regular utilGrayMid--text">
               {{ userNum ? userNum : 'Unlimited' }} {{ userOrUsers }}
             </div>
             <div v-if="userNum" class="text-body-1">
@@ -249,12 +245,10 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <i class="prefect--text pi-flow pi-3x pi-fw" />
+            <i class="primary--text pi-flow pi-3x pi-fw" />
           </div>
           <div>
-            <div
-              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
-            >
+            <div class="text-h6 font-weight-regular utilGrayMid--text">
               {{ `${flowConcurrency} concurrent ${flowOrFlows}` }}
             </div>
             <div class="text-body-1">
@@ -269,12 +263,10 @@ export default {
           style="width: 50%;"
         >
           <div class="mr-4">
-            <i class="prefect--text fad fa-history fa-fw fa-3x" />
+            <i class="primary--text fad fa-history fa-fw fa-3x" />
           </div>
           <div>
-            <div
-              class="text-h6 font-weight-regular blue-grey--text text--darken-3"
-            >
+            <div class="text-h6 font-weight-regular utilGrayMid--text">
               {{
                 historyRetention ? historyRetention + ' days of ' : 'Unlimited'
               }}

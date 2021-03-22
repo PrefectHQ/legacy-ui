@@ -38,7 +38,9 @@ export default {
   },
   computed: {
     cardColor() {
-      return this.textArea || this.newDescription ? 'white' : 'appBackground'
+      return this.textArea || this.newDescription
+        ? 'appForeground'
+        : 'appBackground'
     },
     toolBarStyle() {
       return this.textArea
@@ -151,7 +153,6 @@ export default {
 
     <v-toolbar
       v-if="textArea"
-      color="white"
       width="100%"
       height="30px"
       dense
@@ -165,7 +166,7 @@ export default {
         v-if="textArea"
         text
         tile
-        color="rgba(0, 0, 0, 0.54)"
+        color="utilGrayDark"
         small
         @click="closeTextArea"
         ><v-icon x-small>fa-times</v-icon
@@ -177,7 +178,7 @@ export default {
         text
         small
         tile
-        color="rgba(0, 0, 0, 0.54)"
+        color="utilGrayDark"
         @click="resetDescription"
         ><v-icon x-small>fa-undo-alt</v-icon>
         <span style="text-transform: none;" class="pl-1">Reset</span></v-btn
@@ -187,7 +188,7 @@ export default {
         text
         small
         tile
-        color="rgba(0, 0, 0, 0.54)"
+        color="utilGrayDark"
         :loading="loading"
         title="Update ReadMe"
         @click="setFlowGroupDescription"
@@ -198,7 +199,6 @@ export default {
     </v-toolbar>
     <v-toolbar
       v-if="textArea"
-      color="white"
       width="100%"
       dense
       height="28px"
@@ -258,19 +258,19 @@ export default {
         'background-color': 'appForeground',
         overflow: 'auto'
       }"
-      class="artifact md grey--text text--darken-3 px-8"
+      class="artifact md utilGreyDark--text px-8"
       v-html="mdParser(description)"
     ></div>
 
     <div
       v-else-if="newDescription && !loading"
-      class="artifact md grey--text text--darken-3 mx-4 px-8 pt-4 wide"
+      class="artifact md utilGreyDark--text mx-4 px-8 pt-4 wide"
       v-html="mdParser(newDescription)"
     ></div>
     <div
       v-else
       class="headline
-          grey--text text--darken-2 pl-8 pr-12 pt-8 text-center wide"
+          utilGreyDark--text pl-8 pr-12 pt-8 text-center wide"
     >
       This flow has no
       <span class="font-weight-medium"> ReadMe! </span>
@@ -314,6 +314,18 @@ export default {
   width: 100%;
   height: 70vh;
   overflow: auto;
+  background-color: var(--v-appForeground-base);
+  color: var(--v-utilGrayDark-base);
+}
+
+.CodeMirror-gutters {
+  background-color: var(--v-appForeground-base);
+  border-color: var(--v-utilGrayLight-base);
+  color: var(--v-utilGrayMid-base);
+}
+
+.CodeMirror-cursor {
+  border-color: var(--v-utilGrayMid-base);
 }
 
 .cmirror .CodeMirror-vscrollbar {

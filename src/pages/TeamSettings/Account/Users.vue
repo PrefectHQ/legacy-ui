@@ -203,7 +203,7 @@ export default {
       >
         You are on a {{ planType }} license. To change your license terms,
         please
-        <a href="https://www.prefect.io/get-prefect#contact" target="_blank"
+        <a href="https://www.prefect.io/pricing#contact" target="_blank"
           >contact our sales team</a
         >
       </v-alert>

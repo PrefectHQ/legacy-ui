@@ -92,12 +92,15 @@ export default {
       <transition name="fade-expand" mode="out-in">
         <div v-if="!isSelfServe && !loading" class="text-subtitle-1">
           To update your payment details, please
-          <a href="https://www.prefect.io/get-prefect#contact" target="_blank">
+          <a href="https://www.prefect.io/pricing#contact" target="_blank">
             contact our sales team
           </a>
         </div>
 
-        <div v-else-if="!payment && !editCardDetails" class="text-subtitle-1">
+        <div
+          v-else-if="!payment && !editCardDetails"
+          class="text-subtitle-1 utilGrayMid--text"
+        >
           You haven't added a payment method
         </div>
 
@@ -130,7 +133,7 @@ export default {
                 </div>
 
                 <div class="mt-n2">
-                  <span class="text-h6 font-weight-regular">
+                  <span class="text-h6 font-weight-regular utilGrayMid--text">
                     •••• •••• •••• {{ payment.last4 || payment.card.last4 }}
                   </span>
                   <span

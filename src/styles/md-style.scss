@@ -46,7 +46,7 @@
   h5,
   h6 {
     border-bottom: 1px solid #d2dadf;
-    color: #4d606e;
+    color: var(--v-utilGrayDark-base);
     font-weight: 700;
     line-height: 1.15;
     margin-top: 1em;
@@ -58,13 +58,13 @@
   ol,
   p,
   ul {
-    color: #4d606e;
+    color: var(--v-utilGrayDark-base);
     font-size: 1em;
     line-height: 1.75;
   }
 
   p {
-    color: #4d606e;
+    color: var(--v-utilGrayDark-base);
     display: block;
     margin-block-end: 1em;
     margin-block-start: 1em;
@@ -85,7 +85,7 @@
     background-color: var(--v-appBackground-base);
     border: 1px solid var(--v-appBackground-base);
     border-radius: 2px;
-    color: #5e6687;
+    color: var(--v-utilGrayMid-base);
     display: block;
     font-family: 'Source Code Pro', monospace;
     font-size: 1em;
@@ -101,7 +101,7 @@
   }
 
   p > code {
-    background-color: rgba(27, 31, 35, 0.05);
+    background-color: var(--v-appBackground-base);
     border-radius: 3px;
     color: var(--v-primary-base);
     font-size: 0.85em;

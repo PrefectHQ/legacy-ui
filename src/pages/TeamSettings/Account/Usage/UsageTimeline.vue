@@ -372,7 +372,7 @@ export default {
               .attr('transform', d => `translate(${d.x})`)
 
             g.append('path')
-              .attr('stroke', 'var(--v-prefect-base')
+              .attr('stroke', 'var(--v-primary-base')
               .attr('stroke-width', 2)
               .attr('stroke-dasharray', 2.5)
               .attr('d', path)
@@ -419,7 +419,7 @@ export default {
             return transform - x <= 5 && transform - x >= -5
           })
           .select('text')
-          .attr('fill', 'var(--v-prefect-base')
+          .attr('fill', 'var(--v-primary-base')
       }
     },
     rawUpdateChart() {
@@ -530,7 +530,7 @@ export default {
               .attr('stroke-width', 4.5)
               .attr(
                 'stroke',
-                this.showPath ? 'var(--v-prefect-base)' : 'transparent'
+                this.showPath ? 'var(--v-primary-base)' : 'transparent'
               )
               .attr('fill', 'none')
               .call(enter =>
@@ -557,7 +557,7 @@ export default {
                 .ease(d3.easeQuad)
                 .attr(
                   'stroke',
-                  this.showPath ? 'var(--v-prefect-base)' : 'transparent'
+                  this.showPath ? 'var(--v-primary-base)' : 'transparent'
                 )
                 .attr('d', d => this.line(d.items))
             ),
@@ -653,7 +653,7 @@ export default {
               .attr('fill', (d, i) =>
                 i === 0 && this.ticks < this.items.length
                   ? 'url(#grad)'
-                  : 'var(--v-prefect-base)'
+                  : 'var(--v-primary-base)'
               )
               .attr('x', xPosition)
               .attr('y', yOffset)
@@ -1163,6 +1163,13 @@ svg {
 
   .tick:last-of-type line {
     opacity: 0;
+  }
+}
+
+.theme--dark .usage-y-axis-group {
+  /* stylelint-disable-next-line */
+  .tick line {
+    stroke: rgba(255, 255, 255, 0.05);
   }
 }
 </style>

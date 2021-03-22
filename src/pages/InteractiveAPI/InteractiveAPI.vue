@@ -160,9 +160,9 @@ query { hello }
 
 <style lang="scss">
 @import '../../styles/graphiql.css';
-$toolbar-black: #21262b;
-$divider-gray: #4e5965;
-$brackets-gray: #8d98a5;
+$toolbar-black: var(--v-appBackground-base);
+$divider-gray: var(--v-appForeground-base);
+$brackets-gray: var(--v-utilGrayMid-base);
 /* stylelint-disable selector-class-pattern */
 /* since we're not writing these class names, we can't abide by stylelint's naming rules */
 .CodeMirror-info {
@@ -170,7 +170,7 @@ $brackets-gray: #8d98a5;
   background: $divider-gray;
 
   .info-description {
-    color: var(--v-secondaryGrayLight-base);
+    color: var(--v-utilGrayDark-base);
   }
 
   .type-name {
@@ -185,11 +185,11 @@ $brackets-gray: #8d98a5;
 .graphiql-container {
   /* overall styles */
   .CodeMirror {
-    background: var(--v-secondaryGrayDark-base) !important;
+    background: var(--v-appForeground-base) !important;
   }
 
   .CodeMirror-cursor {
-    border-left: 1px solid var(--v-secondaryGrayLight-base);
+    border-left: 1px solid $brackets-gray;
   }
 
   .CodeMirror-hints {
@@ -198,7 +198,7 @@ $brackets-gray: #8d98a5;
     /* stylelint-disable-next-line selector-max-compound-selectors */
     .CodeMirror-hint,
     .CodeMirror-hint-information .content {
-      color: var(--v-secondaryGrayLight-base);
+      color: var(--v-utilGrayDark-base);
     }
   }
 
@@ -206,9 +206,9 @@ $brackets-gray: #8d98a5;
   .result-window .CodeMirror-gutters,
   .resultWrap,
   .secondary-editor-title {
-    background: $divider-gray;
+    background: $toolbar-black;
     border: 0;
-    color: var(--v-secondaryGrayLight-base);
+    color: var(--v-utilGrayDark-base);
   }
 
   .secondary-editor {
@@ -216,12 +216,12 @@ $brackets-gray: #8d98a5;
   }
 
   .secondary-editor-title > div {
-    color: var(--v-secondaryGrayLight-base) !important;
+    color: var(--v-utilGrayDark-base) !important;
   }
 
   button,
   input {
-    color: var(--v-secondaryGrayLight-base);
+    color: var(--v-utilGrayDark-base);
   }
   /* History and Documentation sidebars */
   .historyPaneWrap {
@@ -231,7 +231,7 @@ $brackets-gray: #8d98a5;
   .doc-explorer-title-bar,
   .history-title-bar {
     background: $toolbar-black;
-    color: var(--v-secondaryGrayLight-base);
+    color: var(--v-utilGrayDark-base);
     height: 40px;
     padding: 0 8px;
 
@@ -255,7 +255,7 @@ $brackets-gray: #8d98a5;
   .doc-explorer-contents {
     background: $toolbar-black;
     border-top: 2px solid $divider-gray;
-    color: var(--v-secondaryGrayLight-base);
+    color: var(--v-utilGrayDark-base);
     top: 40px;
   }
 
@@ -291,7 +291,7 @@ $brackets-gray: #8d98a5;
     /* stylelint-disable-next-line selector-max-compound-selectors */
     .doc-category-title,
     .field-short-description > * {
-      color: var(--v-secondaryGrayLight-base);
+      color: var(--v-utilGrayDark-base);
     }
 
     .field-name {
@@ -338,7 +338,7 @@ $brackets-gray: #8d98a5;
     .toolbar-button {
       background: $divider-gray;
       box-shadow: none;
-      color: var(--v-secondaryGrayLight-base);
+      color: var(--v-utilGrayDark-base);
       padding: 2px 8px;
     }
   }
@@ -347,27 +347,27 @@ $brackets-gray: #8d98a5;
     background: $divider-gray;
     border: 0;
     box-shadow: none;
-    color: var(--v-secondaryGrayLight-base);
+    color: var(--v-utilGrayDark-base);
     padding: 2px 8px;
 
     &::before {
-      border-left: 2px solid var(--v-secondaryGrayLight-base);
-      border-top: 2px solid var(--v-secondaryGrayLight-base);
+      border-left: 2px solid var(--v-utilGrayDark-base);
+      border-top: 2px solid var(--v-utilGrayDark-base);
     }
   }
 
   .doc-explorer-back {
     background: $divider-gray;
     border-radius: 3px;
-    color: var(--v-secondaryGrayLight-base);
+    color: var(--v-utilGrayDark-base);
     height: 25px;
     margin: 8px 0 0;
     overflow: hidden;
     padding: 2px 8px;
 
     &::before {
-      border-left: 2px solid var(--v-secondaryGrayLight-base);
-      border-top: 2px solid var(--v-secondaryGrayLight-base);
+      border-left: 2px solid var(--v-utilGrayDark-base);
+      border-top: 2px solid var(--v-utilGrayDark-base);
     }
   }
   /* code colors */
@@ -395,7 +395,7 @@ $brackets-gray: #8d98a5;
   }
   /* scrollbar styling */
   ::-webkit-scrollbar-thumb {
-    background: radial-gradient($divider-gray, #434c56);
+    background: radial-gradient($divider-gray, var(--v-appForeground-darken2));
     border-radius: 6px;
   }
 

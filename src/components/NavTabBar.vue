@@ -76,7 +76,6 @@ export default {
       pageScrolled ? 'elevation-4' : ''
     ]"
     style="max-width: 1440px;"
-    light
   >
     <v-tabs-slider color="blue"></v-tabs-slider>
     <template v-for="tb in mainTabs">
