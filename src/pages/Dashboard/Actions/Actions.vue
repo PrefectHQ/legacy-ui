@@ -77,9 +77,9 @@ export default {
     <v-row>
       <v-col cols="12" class="text-center headline pa-12">
         You do not have access to Actions!
-        <v-router :to="{ name: 'plans' }">Upgrade</v-router> to create actions
-        that notify you (or even cancel your run) when there's a problem with an
-        agent or a run.
+        <router-link :to="{ name: 'plans' }">Upgrade</router-link> to create
+        actions that notify you (or even cancel your run) when there's a change
+        in your agent or a run.
       </v-col>
     </v-row>
   </div>
