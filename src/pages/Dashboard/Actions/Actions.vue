@@ -34,7 +34,6 @@ export default {
     sortedHooks() {
       const hooks = this.hooks ? [...this.hooks] : []
       const sorted = hooks.sort((a, b) => a.id - b.id)
-      // return this.editHook ? [this.editHook, ...sorted] : sorted
       return sorted
     },
     noAccess() {
@@ -77,9 +76,10 @@ export default {
   <div v-if="noAccess">
     <v-row>
       <v-col cols="12" class="text-center headline pa-12">
-        You do not have access to Actions! Upgrade to create actions that notify
-        you (or even cancel your run) when there's a problem with an agent or a
-        run.
+        You do not have access to Actions!
+        <v-router :to="{ name: 'plans' }">Upgrade</v-router> to create actions
+        that notify you (or even cancel your run) when there's a problem with an
+        agent or a run.
       </v-col>
     </v-row>
   </div>
