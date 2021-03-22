@@ -316,7 +316,7 @@ export default {
                     color="error"
                     v-on="on"
                     @click="
-                      keyToDelete = item
+                      keyToDelete = key
                       dialogRemoveKey = true
                     "
                   >
