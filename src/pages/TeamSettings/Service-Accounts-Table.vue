@@ -68,30 +68,11 @@ export default {
           width: '10%'
         }
       ],
-      keysHeaders: [
-        {
-          text: 'Key Name',
-          value: 'name'
-        },
-        {
-          text: 'Created At',
-          value: 'created'
-        },
-        {
-          text: 'Expires',
-          value: 'expires_at'
-        },
-        {
-          text: '',
-          value: 'actions',
-          align: 'right',
-          sortable: false
-        }
-      ],
 
       // Table items (populated by Apollo query)
       membersItems: [],
       expanded: [],
+      keys: [],
 
       // Loading states
       isFetchingMembers: false,
@@ -106,7 +87,6 @@ export default {
       apiKeyCopied: false,
       newAPIKey: '',
       newKeyName: '',
-      keys: [],
       keyToDelete: null,
       dialogRemoveKey: false
     }
@@ -307,43 +287,26 @@ export default {
       </template>
 
       <template #expanded-item="{item}">
-        <td :colspan="4" class="subtable py-1">
-          <h4 class="mx-8 mt-4">{{ item.firstName }}'s Keys</h4>
-          <v-data-table
-            fixed-header
-            :headers="keysHeaders"
-            :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-            :items="keys.filter(key => key.user_id === item.id)"
-            class="rounded-0 truncate-table mx-8"
-            hide-default-footer
-            no-data-text="This account doesn't have any keys yet."
-          >
-            <template
-              #item.created="{// eslint-disable-next-line
-             item }"
+        <td :colspan="4">
+          <v-list dense class="mx-8">
+            <v-subheader>{{ item.firstName }}'s Keys</v-subheader>
+            <v-list-item
+              v-for="key in keys.filter(key => key.user_id === item.id)"
+              :key="key.id"
             >
-              <v-tooltip top>
-                <template #activator="{ on }">
-                  <span v-on="on">
-                    {{ item.created_at ? formDate(item.created_at) : '' }}
-                  </span>
-                </template>
-                <span>
-                  {{ item.created_at ? formatTime(item.created_at) : '' }}
-                </span>
-              </v-tooltip>
-            </template>
-            <template
-              #item.expires_at="{// eslint-disable-next-line
-             item }"
-            >
-              {{ item.expires ? formatTimeRelative(item.expires) : 'Never' }}
-            </template>
-            <template
-              v-if="isTenantAdmin"
-              #item.actions="{// eslint-disable-next-line
-             item }"
-            >
+              <v-list-item-title>{{ key.name }}</v-list-item-title>
+              <v-list-item-subtitle
+                >Created
+                {{
+                  key.created_at ? formDate(key.created_at) : ''
+                }}</v-list-item-subtitle
+              >
+              <v-list-item-subtitle
+                >Expires
+                {{
+                  key.expires ? formatTimeRelative(key.expires) : 'Never'
+                }}</v-list-item-subtitle
+              >
               <v-tooltip bottom>
                 <template #activator="{ on }">
                   <v-btn
@@ -362,8 +325,8 @@ export default {
                 </template>
                 Remove API key
               </v-tooltip>
-            </template>
-          </v-data-table>
+            </v-list-item>
+          </v-list>
         </td>
       </template>
 
