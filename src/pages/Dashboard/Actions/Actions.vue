@@ -37,10 +37,10 @@ export default {
       return sorted
     },
     noAccess() {
-      return !this.permissions.find(item => item === 'read:hook')
+      return !this.permissions?.find(item => item === 'read:hook')
     },
     canEdit() {
-      return !!this.permissions.find(item => item === 'create:hook')
+      return !!this.permissions?.find(item => item === 'create:hook')
     }
   },
   methods: {
