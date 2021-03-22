@@ -193,7 +193,7 @@ export const ACTIONSTATES = {
     'Skipped',
     'Timedout',
     'Mapped',
-    'Lopped'
+    'Looped'
   ],
   Failed: ['Failed', 'Timedout', 'Triggerfailed'],
   Finished: [
