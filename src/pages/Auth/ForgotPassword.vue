@@ -80,7 +80,7 @@ export default {
     </v-form>
 
     <div class="caption mt-12 text-center d-flex align-center justify-center">
-      <router-link :to="{ name: 'login' }">
+      <router-link :to="'/login'">
         <div class="d-flex align-center justify-center">
           <v-icon>keyboard_arrow_left</v-icon>Back to sign in
         </div>
