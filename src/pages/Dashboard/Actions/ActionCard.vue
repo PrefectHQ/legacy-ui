@@ -15,6 +15,11 @@ export default {
     hook: {
       type: Object,
       required: true
+    },
+    canEdit: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -173,6 +178,7 @@ export default {
       this.$emit('refetch')
     },
     editHook() {
+      if (!this.canEdit) return
       this.hookConfig = {
         hook: this.hook,
         flowConfig: this.flowConfig,
@@ -273,9 +279,9 @@ export default {
     outlined
     @click="editHook"
   >
-    <v-card-title class="py-0 px-0">
+    <v-card-title :class="canEdit ? 'pa-0' : 'pa-4'">
       <v-spacer></v-spacer>
-      <v-menu :close-on-content-click="false">
+      <v-menu v-if="canEdit" :close-on-content-click="false">
         <template #activator="{ on, attrs }">
           <v-btn class="px-2" text title="More Actions" v-bind="attrs" v-on="on"
             ><v-icon>more_horiz</v-icon></v-btn
