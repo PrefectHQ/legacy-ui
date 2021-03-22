@@ -1,6 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ExternalLink from '@/components/ExternalLink'
+// import ExternalLink from '@/components/ExternalLink'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { cloudHookMixin } from '@/mixins/cloudHookMixin'
@@ -10,7 +10,7 @@ import LogRocket from 'logrocket'
 
 export default {
   components: {
-    ExternalLink,
+    // ExternalLink,
     ManagementLayout,
     CloudHookForm,
     CardTitle,
@@ -260,7 +260,16 @@ export default {
   <ManagementLayout :show="!isLoadingTable" control-show>
     <template #title>Cloud Hooks</template>
     <template #subtitle>
-      <div v-if="isReadOnlyUser">
+      <h4 class="error--text"
+        ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
+      >
+      <div>
+        <router-link :to="{ name: 'dashboard', query: 'actions' }">
+          Actions</router-link
+        >
+        are replacing Cloud Hooks. </div
+      >Existing Cloud Hooks will continue to work but new ones can not be added.
+      <!-- <div v-if="isReadOnlyUser">
         View your team's
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/cloud_hooks.html"
@@ -274,10 +283,10 @@ export default {
         >
           Cloud Hooks
         </ExternalLink>
-      </div>
+      </div> -->
     </template>
 
-    <template v-if="!isReadOnlyUser" #cta>
+    <!-- <template v-if="!isReadOnlyUser" #cta>
       <v-dialog v-model="createNewCloudHook" max-width="700">
         <template #activator="{ onD }">
           <v-tooltip top>
@@ -317,7 +326,7 @@ export default {
           </v-card-text>
         </v-card>
       </v-dialog>
-    </template>
+    </template> -->
 
     <v-card :class="{ 'mt-3': $vuetify.breakpoint.mdAndUp }" tile>
       <div class="py-1 mr-2 flex">

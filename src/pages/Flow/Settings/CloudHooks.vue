@@ -72,20 +72,31 @@ export default {
     <CardTitle title="Cloud Hooks" icon="cloud" />
 
     <v-card-text class="pl-12">
-      <div class="text-body-1" style="max-width: 1000px;">
+      <!-- <div class="text-body-1" style="max-width: 1000px;">
         Cloud Hooks allow you to send notifications to Slack, email, or any
         other endpoint when your flow enters a given state. For example, send a
         Slack message to your team when a production-critical flow has failed,
         along with the reason for the failure, so you can respond immediately.
         Note that some Cloud Hooks such as email are only available with Prefect
         Cloud.
-      </div>
+      </div> -->
 
       <v-row>
         <v-col cols="12" class="pt-0">
           <v-row>
-            <v-col cols="12">
-              <v-dialog v-model="createNewCloudHook" max-width="700">
+            <v-col cols="12" class="text-center mt-4">
+              <h4 class="error--text"
+                ><v-icon class="error--text mr-1">error_outline</v-icon
+                >DEPRECATED</h4
+              >
+              <div>
+                <router-link :to="{ name: 'dashboard', query: 'actions' }">
+                  Actions</router-link
+                >
+                are replacing Cloud Hooks. </div
+              >Existing Cloud Hooks will continue to work but new ones can not
+              be added.
+              <!-- <v-dialog v-model="createNewCloudHook" max-width="700">
                 <template #activator="{ onD }">
                   <v-tooltip top>
                     <template #activator="{ on }">
@@ -136,7 +147,7 @@ export default {
                     />
                   </v-card-text>
                 </v-card>
-              </v-dialog>
+              </v-dialog> -->
 
               <!-- Do we have any docs on this? -->
               <!--             
