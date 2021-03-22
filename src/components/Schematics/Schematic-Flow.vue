@@ -15,6 +15,8 @@ import {
   isDiagonal
 } from '@/utils/curveMetro'
 import { STATE_COLORS } from '@/utils/states'
+// TODO: Remove the workerize-loader package and adjust this worker to
+// a more classic pub/sub style
 import SchematicWorker from 'workerize-loader?inline!@/workers/schematic'
 
 // Add our custom curve to d3 base
@@ -170,7 +172,7 @@ export default {
   },
   mounted() {
     this.layout = null
-    this.worker = SchematicWorker()
+    this.worker = SchematicWorker({ type: 'module' })
     this.createCanvas()
 
     if (this.tasks?.length > 0) {

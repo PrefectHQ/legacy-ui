@@ -1,3 +1,5 @@
+const WorkerPlugin = require('worker-plugin')
+
 module.exports = {
   chainWebpack: config => {
     config.module
@@ -79,7 +81,8 @@ module.exports = {
           }
         }
       }
-    }
+    },
+    plugins: [new WorkerPlugin({ sharedWorker: true })]
   },
 
   pluginOptions: {

@@ -38,6 +38,9 @@ export default {
       groupText: null,
       hovered: null,
       hoveredId: null,
+      breaklineUnwatch: null,
+      itemUnwatch: null,
+      visibleUnwatch: null,
       loadingInterval: null,
       loadingItems: [],
       nowLine: null,
@@ -99,27 +102,11 @@ export default {
     }
   },
   watch: {
-    breaklines: debounce(function() {
-      if (!this.chart) this.createChart()
-      if (this.loading || !this.visible) return
-      this.updateBreaklines()
-    }, 500),
-    items: {
-      deep: true,
-      handler: debounce(function() {
-        this.updateChart()
-      }, 500)
-    },
     normalize() {
       this.updateChart()
     },
     restrictOutliers() {
       this.updateChart()
-    },
-    visible(val) {
-      if (val) {
-        this.resizeChart()
-      }
     }
   },
   mounted() {
@@ -134,13 +121,41 @@ export default {
     })
 
     this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
+
+    this.breaklineUnwatch = this.$watch(
+      'breaklines',
+      debounce(function() {
+        if (!this.chart) this.createChart()
+        if (this.loading || !this.visible) return
+        this.updateBreaklines()
+      }, 500)
+    )
+    this.itemUnwatch = this.$watch(
+      'items',
+      debounce(function() {
+        this.updateChart()
+      }, 500),
+      { deep: true }
+    )
+
+    this.visibleUnwatch = this.$watch('visible', val => {
+      if (val) {
+        this.resizeChart()
+      }
+    })
   },
   updated() {
     if (!this.chart) this.createChart()
   },
   beforeDestroy() {
     clearTimeout(this.loadingInterval)
+
     window.removeEventListener('resize', this.resizeChart)
+    window.removeEventListener('visibilitychange', this.handleVisibilityChange)
+
+    this.itemUnwatch()
+    this.breaklineUnwatch()
+    this.visibleUnwatch()
   },
   methods: {
     calcHeight(d) {
@@ -289,7 +304,11 @@ export default {
           bar.height = bar.height0 * (1 - t) + bar.height1 * t
         })
 
-        requestAnimationFrame(this.drawCanvas)
+        try {
+          requestAnimationFrame(this.drawCanvas)
+        } catch {
+          this.timer.stop()
+        }
 
         if (t === 1 || document.hidden) {
           this.timer.stop()
@@ -413,6 +432,8 @@ export default {
       this.updateChart()
     },
     updateBreaklines() {
+      if (!this.x) return
+
       this.groupBreaklines
         .selectAll('.breaklines-group')
         .data(this.loading ? [] : this.breaklines)
@@ -507,22 +528,24 @@ export default {
           }
         )
     },
+    handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        if (this.$el) {
+          requestAnimationFrame(this.updateChart)
+        }
+
+        window.removeEventListener(
+          'visibilitychange',
+          this.handleVisibilityChange
+        )
+        this.visibilityListenerAdded = false
+      }
+    },
     updateChart() {
       if (document.hidden) {
-        if (this.visibilityListenerAdded) return
-        const handleVisbilityChange = () => {
-          if (document.visibilityState === 'visible') {
-            this.updateChart()
-            document.removeEventListener(
-              'visibilitychange',
-              handleVisbilityChange
-            )
-            this.visibilityListenerAdded = false
-          }
-        }
-        document.addEventListener('visibilitychange', handleVisbilityChange)
+        if (this.visibilityListenerAdded || !this.$el) return
+        window.addEventListener('visibilitychange', this.handleVisibilityChange)
         this.visibilityListenerAdded = true
-
         return
       }
 

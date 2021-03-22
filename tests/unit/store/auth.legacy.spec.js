@@ -12,7 +12,10 @@ import {
 } from '@okta/okta-auth-js'
 jest.mock('@okta/okta-auth-js')
 
-import auth from '@/store/auth'
+import auth_base from '@/store/auth'
+import auth_actions from '@/store/auth/legacy-actions'
+
+const auth = { ...auth_base, ...auth_actions }
 
 // Mock the setauthUser method
 // which is a root module we don't want to
@@ -63,6 +66,7 @@ describe('auth Vuex Module', () => {
       isLoggingInUser: false,
       isRefreshingAuthentication: false,
       isRefreshingAuthorization: false,
+      legacy: false,
       redirectRoute: null,
       refreshToken: MOCK_REFRESH_TOKEN,
       refreshTokenExpiry: jwt_decode(MOCK_REFRESH_TOKEN).exp * 1000,
@@ -86,6 +90,7 @@ describe('auth Vuex Module', () => {
       isLoggingInUser: false,
       isRefreshingAuthentication: false,
       isRefreshingAuthorization: false,
+      legacy: false,
       redirectRoute: null,
       refreshToken: null,
       refreshTokenExpiry: null,
@@ -97,7 +102,7 @@ describe('auth Vuex Module', () => {
     it('should be initialized properly without tokens in localStorage ', () => {
       const state = auth.state
 
-      expect(Object.keys(state).length).toBe(16)
+      expect(Object.keys(state).length).toBe(17)
 
       expect(state.user).toBe(null)
       expect(state.authorizationToken).toBe(null)
@@ -208,6 +213,10 @@ describe('auth Vuex Module', () => {
       expect(store.getters.isAuthorizingUser).toBe(
         store.state.isAuthorizingUser
       )
+    })
+
+    it('should return legacy', () => {
+      expect(store.getters.legacy).toBe(store.state.legacy)
     })
 
     it('should return the redirectRoute', () => {
