@@ -37,7 +37,7 @@ const logrocketPlugin = createPlugin(LogRocket, mutation => {
 let authActions
 
 // Checks that we'll be able to install service workers
-if (typeof Worker !== 'undefined') {
+if (typeof window.SharedWorker !== 'undefined') {
   authActions = require('@/store/auth/actions.js').default.actions
 } else {
   // eslint-disable-next-line no-console
