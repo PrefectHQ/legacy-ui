@@ -169,6 +169,9 @@ export default {
     closeCard() {
       this.openEdit = false
     },
+    handleRefetch() {
+      this.$emit('refetch')
+    },
     editHook() {
       this.hookConfig = {
         hook: this.hook,
@@ -261,6 +264,7 @@ export default {
     v-else-if="openEdit"
     :hook-detail="hookConfig"
     class="my-2"
+    @refetch-hooks="handleRefetch"
     @close="closeCard"
   />
   <v-card

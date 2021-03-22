@@ -37,6 +37,9 @@ export default {
     }
   },
   methods: {
+    handleRefetch() {
+      this.$apollo.queries.hooks.refetch()
+    },
     handleEdit(hook, index) {
       this.editHook = hook
       this.editAction = index
@@ -64,28 +67,6 @@ export default {
 
 <template>
   <div>
-    <!-- <v-row v-if="!addAction && hooks.length" class="pt-0 mt-0">
-      <v-col cols="0" sm="9" class="pt-0"> </v-col>
-      <v-col cols="12" sm="3" class="text-right pt-0 mb-2">
-        <v-btn dark color="codePink" @click="addAction = true"
-          ><v-icon class="pr-2">far fa-file-plus</v-icon> Add Action</v-btn
-        >
-      </v-col>
-    </v-row>
-    <v-row v-if="!hooks.length && !addAction" class="pt-0 mt-0">
-      <v-col cols="12" class="pt-0  text-center">
-        <div
-          class="headline
-          utilGreyDark--text pl-8 pr-12 pt-8 pb-4 text-center wide"
-        >
-          You have no
-          <span class="font-weight-medium"> Actions! </span>
-        </div>
-        <v-btn dark color="codePink" @click="addAction = true"
-          ><v-icon class="pr-2">far fa-file-plus</v-icon> Add Action</v-btn
-        >
-      </v-col>
-    </v-row> -->
     <v-row>
       <v-col>
         <AddActionCard v-if="!closeCard" @refresh="handleRefresh" />
@@ -93,7 +74,11 @@ export default {
     </v-row>
     <v-row>
       <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
-        <ActionCard :hook="hook" @open-edit="handleEdit(hook, i)" />
+        <ActionCard
+          :hook="hook"
+          @open-edit="handleEdit(hook, i)"
+          @refetch="handleRefetch"
+        />
       </v-col>
     </v-row>
   </div>

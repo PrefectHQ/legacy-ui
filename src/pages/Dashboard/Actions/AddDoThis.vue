@@ -659,7 +659,8 @@ export default {
 .chip-small {
   border: 1px solid;
   border-color: var(--v-utilGrayLight-base) !important;
-  height: 30px;
+  border-radius: 5px;
+  height: 35px;
   transition: all 50ms;
   width: 100%;
 
