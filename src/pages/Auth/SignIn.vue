@@ -79,7 +79,7 @@ export default {
       </div>
 
       <div class="caption text-left">
-        <router-link :to="{ name: 'forgot-password' }">
+        <router-link :to="'/login/forgot-password'">
           Forgot password?
         </router-link>
       </div>
@@ -143,7 +143,7 @@ export default {
 
       <div class="caption mt-12 text-center d-flex align-center justify-center">
         New to Prefect Cloud?
-        <router-link :to="{ name: 'sign-up' }">
+        <router-link :to="'/login/sign-up'">
           <div class="ml-1">
             Create an account
           </div>

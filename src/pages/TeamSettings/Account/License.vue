@@ -157,8 +157,8 @@ export default {
         }}<span v-if="isLegacy" class="text-none"> (legacy)</span></span
       >
       plan<span v-if="isLegacy && isSelfServe"
-        >. <router-link :to="{ name: 'plans' }">Upgrade now</router-link> to get
-        access to usage-based pricing and new features!
+        >. <router-link :to="'/plans'">Upgrade now</router-link> to get access
+        to usage-based pricing and new features!
       </span>
       <br />
     </v-card-subtitle>

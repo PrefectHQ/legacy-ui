@@ -44,7 +44,7 @@ export default {
       <v-divider />
 
       <v-list dense>
-        <v-list-item :to="{ name: 'profile' }" ripple exact>
+        <v-list-item :to="'/user/profile'" ripple exact>
           <v-list-item-action>
             <v-icon>person</v-icon>
           </v-list-item-action>
@@ -62,7 +62,7 @@ export default {
         </v-list-item>
         <v-list-item
           data-cy="user-settings-personal-access-tokens"
-          :to="{ name: 'user-tokens' }"
+          :to="'/user/tokens'"
           ripple
           exact
         >
@@ -73,7 +73,7 @@ export default {
             <v-list-item-title>Personal Access Tokens</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item :to="{ name: 'teams' }" ripple exact>
+        <v-list-item :to="'/user/teams'" ripple exact>
           <v-list-item-action>
             <v-icon>people</v-icon>
           </v-list-item-action>
