@@ -43,9 +43,7 @@ export default {
     </v-btn>
 
     <v-btn
-      :to="{
-        name: 'home'
-      }"
+      :to="'/home'"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
       dark
       small
