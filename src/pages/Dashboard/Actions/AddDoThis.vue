@@ -389,13 +389,7 @@ export default {
 
     <v-card-text v-if="step === 'selectMessageType'">
       <v-row class="py-3">
-        <v-col
-          v-for="type in actionTypes()"
-          :key="type.title"
-          cols="6"
-          sm="2"
-          lg="1"
-        >
+        <v-col v-for="type in actionTypes()" :key="type.title" cols="6" sm="2">
           <div
             v-ripple
             class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer user-select-none"

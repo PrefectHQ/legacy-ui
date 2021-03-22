@@ -723,7 +723,6 @@ export default {
           class="<span"
           cols="6"
           sm="2"
-          lg="1"
         >
           <div
             v-ripple
@@ -785,7 +784,6 @@ export default {
           :key="item"
           cols="4"
           sm="3"
-          lg="1"
           class="pa-2"
         >
           <div
