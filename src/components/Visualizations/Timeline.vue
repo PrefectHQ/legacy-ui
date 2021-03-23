@@ -5,6 +5,10 @@ import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 import moment from '@/utils/moment'
 
+// TODO: Remove the workerize-loader package and adjust this worker to
+// a more classic pub/sub style
+import TimelineWorker from 'workerize-loader?inline!@/workers/timeline'
+
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters } from 'vuex'
 
@@ -88,6 +92,7 @@ export default {
       showLabels: true,
       showTimestampAtCursor: false,
       updateXTimeout: null,
+      worker: null,
       zoom: d3.zoom(),
 
       breakpointsUnwatch: null,
@@ -240,6 +245,7 @@ export default {
     }
   },
   mounted() {
+    this.worker = TimelineWorker({ type: 'module' })
     this.timer?.stop()
 
     this.canvas = d3.select(`#${this.id}-canvas`)
@@ -307,6 +313,8 @@ export default {
     })
   },
   beforeDestroy() {
+    this.worker?.terminate()
+    this.worker = null
     this.timer?.stop()
     this.interval?.stop()
     window.removeEventListener('resize', this.resizeChart)
@@ -326,76 +334,12 @@ export default {
     this.pauseUpdatesUnwatch()
   },
   methods: {
-    rawCalcRows() {
+    async rawCalcRows() {
       const prevRows = this.rows
-      const grid = []
-      const start = Date.now()
-      const end = Date.now()
+      const { rowMap, rows } = await this.worker.GenerateRows(this.items)
 
-      itemLoop: for (let i = 0; i < this.items.length; ++i) {
-        const item = this.items[i]
-
-        // If the item hasn't started yet, we distribute
-        // it to the row with the least items already
-        if (!item.start_time) {
-          const lengths = grid.map(row => row.length)
-          let row = lengths.indexOf(Math.min(...lengths))
-
-          this.rowMap[item.id] = row
-
-          if (!grid[row]) {
-            grid.push([[start, end]])
-          } else {
-            grid[row].push([start, end])
-          }
-          continue itemLoop
-        }
-
-        const start_ = item.start_time
-          ? new Date(item.start_time).getTime()
-          : null
-        const end_ = item.end_time
-          ? new Date(item.end_time).getTime()
-          : Date.now()
-
-        for (let row = 0; row <= grid.length; ++row) {
-          // If the current row doesn't exist, create it, put this item on it,
-          // and move to the next item
-          if (!grid[row]) {
-            this.rowMap[item.id] = row
-            grid.push([[start_, end_]])
-            continue itemLoop
-          }
-
-          if (!start_) {
-            const lengths = grid.map(row => row.length)
-            let row = lengths.indexOf(Math.min(...lengths))
-
-            this.rowMap[item.id] = row
-            grid[row].push([start_, end_])
-            continue itemLoop
-          }
-
-          // Otherwise check the start and end times against each
-          // start[0] and end[1] time in the row
-          let intersects = grid[row].some(
-            slot => end_ <= slot[0] - 2000 || start_ <= slot[1] + 2000
-          )
-
-          // let intersects = grid[row].some(
-          //   slot => end <= slot[0] || start <= slot[1]
-          // )
-
-          if (!intersects) {
-            this.rowMap[item.id] = row
-            grid[row].push([start_, end_])
-            continue itemLoop
-          }
-        }
-      }
-
-      this.rows = grid.length
-
+      this.rows = rows
+      this.rowMap = rowMap
       if (this.rows !== prevRows) this.updateScales()
     },
     click(e) {
