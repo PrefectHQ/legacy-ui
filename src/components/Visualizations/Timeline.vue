@@ -15,6 +15,21 @@ const breakpointTooltipWidth = 185
 const itemTooltipWidth = 375
 const condensed = true
 
+let hidden, visibilityChange
+if (window) {
+  if (typeof document.hidden !== 'undefined') {
+    // Opera 12.10 and Firefox 18 and later
+    hidden = 'hidden'
+    visibilityChange = 'visibilitychange'
+  } else if (typeof document.msHidden !== 'undefined') {
+    hidden = 'msHidden'
+    visibilityChange = 'msvisibilitychange'
+  } else if (typeof document.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden'
+    visibilityChange = 'webkitvisibilitychange'
+  }
+}
+
 export default {
   mixins: [formatTime],
   props: {
@@ -79,6 +94,7 @@ export default {
       endTimeUnwatch: null,
       itemUnwatch: null,
       liveUnwatch: null,
+      pauseUpdatesUnwatch: null,
       startTimeUnwatch: null,
 
       followEdge: true,
@@ -118,7 +134,7 @@ export default {
       interval: null,
       iterations: 0,
       live_: this.live,
-      pauseUpdates: false,
+      pauseUpdates: document[hidden],
       scaleExtent: [1, 10],
       translateExtent: [
         [-Infinity, -Infinity],
@@ -235,14 +251,15 @@ export default {
     this.resizeChart()
 
     if (!this.loading) {
-      // const t0 = performance.now()
       this.calcRows()
-      // const t1 = performance.now()
-
-      // console.log(`calcRows took ${precise(t1 - t0)}ms in mounted hook`)
     }
 
     window.addEventListener('resize', this.resizeChart)
+    window.addEventListener(
+      visibilityChange,
+      this.handleVisibilityChange,
+      false
+    )
 
     this.setChartDimensions()
 
@@ -270,6 +287,7 @@ export default {
     )
 
     this.endTimeUnwatch = this.$watch('endTime', () => {
+      if (this.pauseUpdates) return
       this.updateScales()
     })
 
@@ -278,13 +296,22 @@ export default {
     })
 
     this.startTimeUnwatch = this.$watch('startTime', () => {
+      if (this.pauseUpdates) return
       this.updateScales()
+    })
+
+    this.pauseUpdatesUnwatch = this.$watch('pauseUpdates', val => {
+      if (!val && !this.live_) {
+        this.updateScales()
+      }
     })
   },
   beforeDestroy() {
     this.timer?.stop()
     this.interval?.stop()
     window.removeEventListener('resize', this.resizeChart)
+    window.removeEventListener(visibilityChange, this.handleVisibilityChange)
+
     this.canvas.on('.zoom', null)
     this.canvas.on('click', null)
     this.canvas.on('mousemove', null)
@@ -296,6 +323,7 @@ export default {
     this.endTimeUnwatch()
     this.liveUnwatch()
     this.startTimeUnwatch()
+    this.pauseUpdatesUnwatch()
   },
   methods: {
     rawCalcRows() {
@@ -1160,7 +1188,7 @@ export default {
       // We only need this section if we want to draw the x-axis
       this.xAxisNode
         .transition()
-        .duration(shouldTransition ? 32 : 0)
+        .duration(shouldTransition ? 64 : 0)
         .call(xAxis)
         .on('end', () => {
           this.xAxisNode.on('end', null)
@@ -1211,8 +1239,6 @@ export default {
         this.transform.x += translateBy
 
         this.canvas.call(this.zoom, this.transform)
-        // this.zoom.translateBy(this.canvas, translateBy, 0)
-        // this.canvas.call(this.zoom, )¿
       } else {
         this.canvas.call(this.zoom)
       }
@@ -1234,6 +1260,9 @@ export default {
     },
     collapse() {
       this.resizeCanvas()
+    },
+    handleVisibilityChange() {
+      this.pauseUpdates = document[hidden]
     },
     panLeft() {
       this.canvas
