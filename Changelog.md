@@ -5,10 +5,12 @@
 ### Features and Improvements
 
 - Add the "Running" state to the state filter - [#675](https://github.com/PrefectHQ/ui/pull/675)
+- Add terminal link to apollo to abort requests with expired headers - [#690](https://github.com/PrefectHQ/ui/pull/690)
 
 ### Bugfixes
 
 - None
+
 ## 2021-03-16
 
 ### Bugfixes
