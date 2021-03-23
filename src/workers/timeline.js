@@ -4,8 +4,6 @@ export function GenerateRows(items) {
   const end = Date.now()
   const rowMap = {}
 
-  console.log(items)
-
   itemLoop: for (let i = 0; i < items.length; ++i) {
     const item = items[i]
 
@@ -68,7 +66,6 @@ export function GenerateRows(items) {
       }
     }
   }
-  console.log(rowMap, grid)
 
   return { rowMap, rows: grid.length }
 }
