@@ -15,7 +15,7 @@ export default {
       step: 'selectMessageType',
       messageConfig: null,
       messageConfigTo: [],
-      messageName: 'a message to',
+      messageName: 'a message',
       secretName: '',
       messageText: '',
       openTwilioConfig: false,
