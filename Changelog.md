@@ -5,10 +5,12 @@
 ### Features and Improvements
 
 - Add the "Running" state to the state filter - [#675](https://github.com/PrefectHQ/ui/pull/675)
+- Use `delete_flow_group` mutation when deleting flows - [#689](https://github.com/PrefectHQ/ui/pull/689)
 
 ### Bugfixes
 
 - None
+
 ## 2021-03-16
 
 ### Bugfixes
