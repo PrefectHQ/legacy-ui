@@ -325,7 +325,8 @@ export default {
       <v-spacer></v-spacer>
       <v-btn
         text
-        class="grey--text text--darken-2 light-weight-text mr-1"
+        color="utilGreyDark"
+        class="light-weight-text mr-1"
         @click="handleClose"
       >
         <v-icon small>close</v-icon
