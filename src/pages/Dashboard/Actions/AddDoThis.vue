@@ -7,6 +7,13 @@ export default {
   components: {
     ListInput
   },
+  props: {
+    eventType: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  },
   data() {
     return {
       saving: false,
@@ -83,6 +90,31 @@ export default {
         : this.messageType?.type === 'SLACK_WEBHOOK'
         ? 'Slack Webhook Secret Name'
         : 'config details'
+    },
+    messageLabel() {
+      let messageText
+      switch (this.eventType) {
+        case 'CHANGES_STATE':
+          messageText = `Run {flow_run_name} of flow {flow_name} entered state
+                {state} with message {state_message}. See {flow_run_link}
+                for more details.`
+          break
+        case 'SCHEDULED_NOT_STARTED':
+          messageText =
+            'Run {flow_run_name} ({flow_run_id}) of flow {flow_name} failed {kind} SLA {flow_sla_config_id} after {duration_seconds} seconds. See {flow_run_link} for more details.'
+          break
+        case 'STARTED_NOT_FINISHED':
+          messageText =
+            'Run {flow_run_name} ({flow_run_id}) of flow {flow_name} failed {kind} SLA {flow_sla_config_id} after {duration_seconds} seconds. See {flow_run_link} for more details.'
+          break
+        case 'AGENT':
+          messageText =
+            'Agents sharing the config {agent_config_id} have failed the minimum healthy count of {sla_min_healthy}. The following agents are unhealthy: {agent_ids}'
+          break
+        default:
+          'You have a notification from Prefect Cloud'
+      }
+      return messageText
     },
     messageConfigRules() {
       return []
@@ -355,8 +387,10 @@ export default {
       <span>
         <v-btn
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-0 pb-1 headline"
+          class="px-0 pb-1 headline d-inline-block text-truncate"
+          max-width="300px"
           text
+          :disabled="!messageType.type"
           :color="step === 'openMessageText' ? 'codePink' : 'grey'"
           @click="switchStep('openMessageText')"
         >
@@ -368,6 +402,7 @@ export default {
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
           class="px-1 pb-1 headline"
           text
+          :disabled="!messageType.type"
           :color="step === 'openToConfig' ? 'codePink' : 'grey'"
           @click="switchStep('openToConfig')"
         >
@@ -393,7 +428,7 @@ export default {
         <v-col v-for="type in actionTypes()" :key="type.title" cols="6" sm="2">
           <div
             v-ripple
-            class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+            class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer subtitle-1"
             :class="{ active: messageType === type }"
             @click="selectMessageType(type)"
             ><v-icon left class="mx-4">
@@ -466,22 +501,22 @@ export default {
           >
         </v-card>
       </v-menu>
-      <!-- <v-checkbox v-model="bothMessages" class="mt-0 no-top" dense>
-        <template #label
-          ><span class="body-2"
-            >Add this message <span class="font-weight-bold"> and</span> the
-            default message.</span
-          ></template
-        >
-      </v-checkbox> -->
       <v-text-field
         v-model="messageText"
+        min-height="500px"
         class="pt-0"
+        outlined
+        :placeholder="messageLabel"
         @keydown.enter="saveMessage"
       />
     </v-card-text>
     <v-card-text v-else-if="step === 'openToConfig'">
       <v-row v-if="messageType.type === 'SLACK_WEBHOOK'" class="py-3">
+        <v-col v-if="!secretNames || !secretNames.length">
+          To set up a slack webhook, you'll need to create a
+          <router-link :to="{ name: 'secrets' }">secret</router-link> with your
+          slack webhook url.
+        </v-col>
         <v-col
           v-for="name in secretNames"
           :key="name"
@@ -492,7 +527,7 @@ export default {
         >
           <div
             v-ripple
-            class="chip-small d-flex align-center justify-start px-2 cursor-pointer user-select-none"
+            class="chip-small d-flex align-center justify-start px-2 cursor-pointer subtitle-1"
             :class="{ active: secretName === name }"
             @click="selectSecret(name)"
             ><div class="text-truncate">
@@ -518,7 +553,9 @@ export default {
             target="_blank"
             >Pager Duty API token</a
           >
-          in the Pager Duty app by visiting Configuration > API Access. You'll
+          in the Pager Duty app by visiting Configuration > API Access. To
+          securely store your API Token, you'll need to create a
+          <router-link :to="{ name: 'secrets' }">secret</router-link>. You'll
           also need an Integration Key, which can be created by visiting the
           Integrations tab of the Service Details page and setting up an
           <a
@@ -533,6 +570,7 @@ export default {
           v-model="apiToken"
           :items="secretNames"
           label="Name of your PagerDuty API Token Secret"
+          no-data-text="You will need to create a secret with your PagerDuty API Token"
         />
         <v-select
           v-model="severity"
@@ -570,7 +608,9 @@ export default {
             Twilio SMS API </a
           >. You can retrieve the <code class="my-1 mx-1">ACCOUNT SID</code> and
           <code class="my-1 mx-1">AUTH TOKEN</code> from the dashboard of your
-          Twilio account. You'll need to configure a
+          Twilio account. To securely store your auth token, create a
+          <router-link :to="{ name: 'secrets' }"> Prefect secret</router-link>.
+          You'll also need to configure a
           <a
             href="https://www.twilio.com/docs/sms/services/api#messaging-services-resource"
             target="_blank"
@@ -586,6 +626,7 @@ export default {
           v-model="authToken"
           :items="secretNames"
           label="Name of Auth token Secret"
+          no-data-text="You will need to create a secret with your PagerDuty API Token"
         />
         <v-text-field
           v-model="accountSid"

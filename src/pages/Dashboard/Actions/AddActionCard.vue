@@ -634,28 +634,30 @@ export default {
         >{{ hookAction }}</v-btn
       >.
     </v-card-text>
-    <v-card-actions v-if="step === 'openAgentOrFlow'">
-      <v-col
-        v-for="item in ['flow', 'agent']"
-        :key="item"
-        cols="6"
-        sm="2"
-        class="pa-2"
-      >
-        <div
-          v-ripple
-          class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
-          :class="{ active: agentOrFlow === item }"
-          @click="selectAgentOrFlow(item)"
-          ><div class="text-center"
-            ><v-icon class="pr-2">{{
-              item === 'flow' ? 'pi-flow' : 'pi-agent'
-            }}</v-icon
-            >{{ item }}</div
-          ></div
+    <v-card-text v-if="step === 'openAgentOrFlow'">
+      <v-row>
+        <v-col
+          v-for="item in ['flow', 'agent']"
+          :key="item"
+          cols="6"
+          sm="2"
+          class="pa-2"
         >
-      </v-col>
-    </v-card-actions>
+          <div
+            v-ripple
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer subtitle-1"
+            :class="{ active: agentOrFlow === item }"
+            @click="selectAgentOrFlow(item)"
+            ><div class="text-center"
+              ><v-icon class="pr-2">{{
+                item === 'flow' ? 'pi-flow' : 'pi-agent'
+              }}</v-icon
+              >{{ item }}</div
+            ></div
+          >
+        </v-col>
+      </v-row>
+    </v-card-text>
     <v-sheet v-else-if="step === 'selectFlow'" class="pa-4">
       <v-row
         ><v-col cols="3">
@@ -702,7 +704,7 @@ export default {
                 >
                   <truncate :content="`${item.name} - ${item.project.name}`"
                     ><div class="caption">{{ item.project.name }}</div
-                    ><div class="subtitle-2">{{ item.name }}</div></truncate
+                    ><div class="subtitle-1">{{ item.name }}</div></truncate
                   >
                 </div></v-col
               >
@@ -731,7 +733,6 @@ export default {
         <v-col
           v-for="item in filteredFlowEventTypes"
           :key="item.enum"
-          class="<span"
           cols="6"
           sm="2"
         >
@@ -740,7 +741,7 @@ export default {
             class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
             :class="{ active: includesFlow(item) }"
             @click="selectFlowEventType(item)"
-            ><div class="text-center">{{ item.name }}</div>
+            ><div class="text-center subtitle-1">{{ item.name }}</div>
           </div>
         </v-col>
       </v-row>
@@ -799,7 +800,7 @@ export default {
         >
           <div
             v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer subtitle-1"
             :class="{ active: chosenStates.includes(item) }"
             @click="selectStates(item)"
           >
@@ -832,8 +833,12 @@ export default {
       </v-row>
 
       <v-row class="py-2 px-1">
+        <v-col v-if="!editedActions.length"
+          >Click on new to configure new notifications.</v-col
+        >
         <v-col
           v-for="item in editedActions"
+          v-else
           :key="item.id"
           cols="6"
           sm="3"
@@ -841,7 +846,7 @@ export default {
         >
           <div
             v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer subtitle-1"
             :class="{ active: chosenAction === item }"
             :disabled="
               item.action_type === 'CancelFlowRunAction' &&
@@ -879,6 +884,7 @@ export default {
   </v-card>
   <AddDoThis
     v-else
+    :event-type="flowEventType.enum || 'AGENT'"
     @close-action="addAction = false"
     @new-action="createAction"
   />
