@@ -48,24 +48,21 @@ export default {
         {
           mobile: true,
           text: 'Name',
-          value: 'firstName',
-          width: '45%'
+          value: 'firstName'
         },
         {
           mobile: true,
           text: '',
           value: 'create',
           align: 'center',
-          sortable: false,
-          width: '45%'
+          sortable: false
         },
         {
           mobile: true,
           text: '',
           value: 'actions',
           align: 'end',
-          sortable: false,
-          width: '10%'
+          sortable: false
         }
       ],
 
