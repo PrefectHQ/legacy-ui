@@ -1,3 +1,11 @@
+jest.mock('@/main', () => {
+  return {
+    TokenWorker: {
+      postMessage: jest.fn()
+    }
+  }
+})
+
 import store from '@/store'
 jest.useFakeTimers()
 

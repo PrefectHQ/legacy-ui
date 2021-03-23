@@ -1,3 +1,11 @@
+jest.mock('@/main', () => {
+  return {
+    TokenWorker: {
+      postMessage: jest.fn()
+    }
+  }
+})
+
 import tenant from '@/store/tenant'
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
