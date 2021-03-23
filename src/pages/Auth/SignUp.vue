@@ -258,7 +258,7 @@ export default {
 
     <div class="caption mt-12 text-center d-flex align-center justify-center">
       Already have an account?
-      <router-link :to="'/login'">
+      <router-link :to="{ name: 'login' }">
         <div class="ml-1">
           Sign in
         </div>

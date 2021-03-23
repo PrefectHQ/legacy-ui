@@ -172,7 +172,7 @@ export default {
     <v-card-subtitle>
       Check and update the number of users in your account. To see active
       membership information visit the
-      <router-link :to="'/team/members'">
+      <router-link :to="{ name: 'members' }">
         members page
       </router-link>
       .

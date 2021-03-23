@@ -233,7 +233,7 @@ export default {
           Sorry, we're having trouble displaying your payment method. For
           questions, please contact us via email at
           <span class="primary--text">support@prefect.io</span> or on our
-          <router-link :to="'/help'">support page</router-link>
+          <router-link :to="{ name: 'help' }">support page</router-link>
         </div>
       </transition>
     </v-card-text>

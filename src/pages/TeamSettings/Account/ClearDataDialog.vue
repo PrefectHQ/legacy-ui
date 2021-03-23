@@ -448,7 +448,7 @@ export default {
           <div>
             If the issue persists, please contact us via email at
             <span class="primary--text">support@prefect.io</span> or on our
-            <router-link :to="'/help'">Support page</router-link>
+            <router-link :to="{ name: 'help' }">Support page</router-link>
           </div>
 
           <template #close>

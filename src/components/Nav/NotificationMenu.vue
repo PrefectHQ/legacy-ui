@@ -27,7 +27,7 @@ export default {
 
 <template>
   <v-btn
-    :to="'/notifications'"
+    :to="{ name: 'notifications' }"
     class="navbar-icon mx-1"
     icon
     title="Navigation to your notifications page"
