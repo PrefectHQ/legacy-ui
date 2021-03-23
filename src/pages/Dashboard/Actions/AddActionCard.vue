@@ -884,6 +884,7 @@ export default {
 .chip-bigger {
   border: 1px solid;
   border-color: var(--v-utilGrayLight-base) !important;
+  border-radius: 5px;
   height: 60px;
   transition: all 50ms;
   width: 100%;
