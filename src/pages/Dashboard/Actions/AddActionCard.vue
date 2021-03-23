@@ -120,7 +120,7 @@ export default {
               })
               .toString()
       return this.agentOrFlow === 'agent'
-        ? agentName || 'agent'
+        ? agentName || 'an agent'
         : this.flowNamesList?.length > 1
         ? this.flowNamesList?.length === this.flows.length
           ? 'any flow'
@@ -438,14 +438,18 @@ export default {
             data = flowSLAEventSuccess.data
           }
         } else if (this.agentOrFlow === 'agent') {
-          const agentConfig =
-            this.hookDetails?.agentConfig ||
-            (await this.$apollo.mutate({
+          let agentConfig
+          if (this.hookDetails?.agentConfig) {
+            agentConfig = this.hookDetails?.agentConfig
+          } else {
+            const { data } = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create_agent_config.gql'),
               variables: {
                 input: {}
               }
-            })?.data?.create_agent_config)
+            })
+            agentConfig = data?.create_agent_config
+          }
           const agentHook = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create_agent_sla_failed_hook.gql'),
             variables: {
