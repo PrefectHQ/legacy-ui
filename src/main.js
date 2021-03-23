@@ -172,13 +172,13 @@ Vue.component('GetCloud', GetCloud)
 
 let TokenWorker
 
-if (typeof Worker !== 'undefined') {
+if (typeof window.SharedWorker !== 'undefined') {
   // // Initializes the shared service worker that handles token refresh
   TokenWorker = new SharedWorker('@/workers/token.worker.js', {
     type: 'module'
   })
 } else {
-  //not supported
+  // workers aren't supported; we'll fall back to the legacy auth pattern
 }
 
 if (TokenWorker?.port) {
