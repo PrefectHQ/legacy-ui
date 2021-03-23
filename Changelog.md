@@ -5,10 +5,13 @@
 ### Features and Improvements
 
 - Add the "Running" state to the state filter - [#675](https://github.com/PrefectHQ/ui/pull/675)
+- Flow run page performance improvements (part 1) and shared service worker for token refresh - [#679](https://github.com/PrefectHQ/ui/pull/679)
+- Flow run page performance improvements (part 2) - [#688](https://github.com/PrefectHQ/ui/pull/688)
 
 ### Bugfixes
 
 - None
+
 ## 2021-03-16
 
 ### Bugfixes
