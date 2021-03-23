@@ -16,10 +16,17 @@ export default {
   },
   data() {
     return {
+      steps: [
+        { name: 'openToConfig', complete: false },
+        { name: 'addName', complete: false },
+        { name: 'openMessageText', complete: false },
+        { name: 'addTwilioConfig', complete: false },
+        { name: 'selectMessageType', complete: false }
+      ],
       saving: false,
       enableSave: false,
       messageType: { title: 'Send' },
-      step: 'selectMessageType',
+      step: { name: 'selectMessageType', complete: false },
       messageConfig: null,
       messageConfigTo: [],
       messageName: 'a message',
@@ -200,8 +207,17 @@ export default {
     }
   },
   methods: {
-    switchStep(type) {
-      if (type) this.step = type
+    buttonColor(selectedStep) {
+      const stepComplete = this.steps.find(step => step.name === selectedStep)
+      return this.step.name === selectedStep
+        ? 'codePink'
+        : stepComplete.complete
+        ? 'utilGrayMid'
+        : 'utilGrayLight'
+    },
+    switchStep(selectedStep) {
+      this.step = this.steps.find(step => step.name === selectedStep)
+      this.step.complete = true
     },
     handleNext() {
       if (this.step === 'openMessageText') {
@@ -357,7 +373,7 @@ export default {
       <v-spacer></v-spacer>
       <v-btn
         text
-        color="utilGreyDark"
+        color="utilGreyMid"
         class="light-weight-text mr-1"
         @click="handleClose"
       >
@@ -377,7 +393,7 @@ export default {
     <v-card-text class="headline">
       <v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-        :color="step === 'selectMessageType' ? 'codePink' : 'grey'"
+        :color="buttonColor('selectMessageType')"
         class="px-0 pb-1 headline"
         text
         @click="switchStep('selectMessageType')"
@@ -391,7 +407,7 @@ export default {
           max-width="300px"
           text
           :disabled="!messageType.type"
-          :color="step === 'openMessageText' ? 'codePink' : 'grey'"
+          :color="buttonColor('openMessageText')"
           @click="switchStep('openMessageText')"
         >
           {{ messageText || messageName }}</v-btn
@@ -403,7 +419,7 @@ export default {
           class="px-1 pb-1 headline"
           text
           :disabled="!messageType.type"
-          :color="step === 'openToConfig' ? 'codePink' : 'grey'"
+          :color="buttonColor('openToConfig')"
           @click="switchStep('openToConfig')"
         >
           {{ to }}</v-btn
@@ -414,7 +430,7 @@ export default {
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             class="px-0 pb-1 headline"
             text
-            :color="step === 'TwilioConfig' ? 'codePink' : 'grey'"
+            :color="buttonColor('addTwilioConfig')"
             @click="switchStep('addTwilioConfig')"
           >
             config</v-btn
@@ -423,7 +439,7 @@ export default {
       >
     </v-card-text>
 
-    <v-card-text v-if="step === 'selectMessageType'">
+    <v-card-text v-if="step.name === 'selectMessageType'">
       <v-row class="py-3">
         <v-col v-for="type in actionTypes()" :key="type.title" cols="6" sm="2">
           <div
@@ -453,7 +469,7 @@ export default {
         {{ type.title }}
       </v-chip> -->
     </v-card-text>
-    <v-card-text v-else-if="step === 'openMessageText'" class="pt-0">
+    <v-card-text v-else-if="step.name === 'openMessageText'" class="pt-0">
       <span class="primary--text"
         >Type your message here or leave blank to send a default message.</span
       ><v-menu
@@ -510,7 +526,7 @@ export default {
         @keydown.enter="saveMessage"
       />
     </v-card-text>
-    <v-card-text v-else-if="step === 'openToConfig'">
+    <v-card-text v-else-if="step.name === 'openToConfig'">
       <v-row v-if="messageType.type === 'SLACK_WEBHOOK'" class="py-3">
         <v-col v-if="!secretNames || !secretNames.length">
           To set up a slack webhook, you'll need to create a
@@ -600,7 +616,7 @@ export default {
         @input="handleListInput"
       ></ListInput>
     </v-card-text>
-    <v-card-text v-else-if="step === 'addTwilioConfig'">
+    <v-card-text v-else-if="step.name === 'addTwilioConfig'">
       <div>
         <span>
           Prefect Cloud will send a message via the
@@ -643,7 +659,7 @@ export default {
         />
       </div>
     </v-card-text>
-    <v-card-text v-else-if="step === 'addName'" class="pr-4">
+    <v-card-text v-else-if="step.name === 'addName'" class="pr-4">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-text-field

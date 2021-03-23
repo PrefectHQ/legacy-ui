@@ -18,12 +18,20 @@ export default {
   },
   data() {
     return {
+      steps: [
+        { name: 'openAgentOrFlow', complete: false },
+        { name: 'selectEventType', complete: false },
+        { name: 'selectFlow', complete: false },
+        { name: 'selectState', complete: false },
+        { name: 'openDuration', complete: false },
+        { name: 'selectDoThis', complete: false }
+      ],
       selectAll: false,
       deleting: false,
       saving: false,
       searchEntry: null,
       selectedFlows: this.hookDetail?.flowName || [],
-      step: 'openAgentOrFlow',
+      step: null,
       removeDoThisDialog: false,
       flowNamesList: this.hookDetail?.flowNameList || [],
       hookDetails: this.hookDetail,
@@ -191,6 +199,7 @@ export default {
     }
   },
   created() {
+    this.step = this.steps[0]
     this.flowEventType = this.hookDetail?.flowConfig?.kind
       ? this.flowEventTypes.find(
           type => type.enum === this.hookDetail?.flowConfig?.kind
@@ -208,15 +217,23 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    buttonColor(selectedStep, otherStep) {
+      const stepComplete = this.steps.find(step => step.name === selectedStep)
+      return this.step.name === selectedStep || this.step.name === otherStep
+        ? 'codePink'
+        : stepComplete?.complete
+        ? 'utilGrayMid'
+        : 'utilGrayLight'
+    },
     closeCard() {
       if (this.hookDetail) this.$emit('close')
       else {
         this.$emit('refresh')
       }
     },
-    switchStep(step) {
-      //steps = 'openAgentOrFlow', 'selectEventType', 'selectFlow', 'selectState', 'openDuration', 'selectDoThis'
-      this.step = step
+    switchStep(selectedStep) {
+      this.step = this.steps.find(step => step.name === selectedStep)
+      this.step.complete = true
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
@@ -545,7 +562,7 @@ export default {
       <v-btn
         v-if="step != 'openAgentOrFlow' || hookDetail"
         text
-        color="utilGreyDark"
+        color="utilGreyMid"
         class="light-weight-text mr-1"
         @click="closeCard"
       >
@@ -563,18 +580,18 @@ export default {
     >
 
     <v-card-text class="headline" elevation="0">
-      When
-      <v-btn
+      When<v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-        :color="
-          step === 'openAgentOrFlow' || step === 'selectFlow'
-            ? 'codePink'
-            : 'grey'
+        :color="buttonColor('selectFlow', 'openAgentOrFlow')"
+        class="px-0 pb-1 pl-1 headline d-inline-block text-truncate"
+        :class="
+          buttonColor('openAgentOrFlow', 'selectFlow') === 'codePink'
+            ? ''
+            : 'text--darken-2'
         "
-        class="px-0 pb-1 headline d-inline-block text-truncate"
         text
         max-width="500px"
-        @click="step = 'openAgentOrFlow'"
+        @click="switchStep('openAgentOrFlow')"
         ><truncate
           v-if="flowNamesList && flowNamesList.length"
           :content="flowNamesList.toString()"
@@ -589,8 +606,13 @@ export default {
           v-if="!disableStep"
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
           class="px-0 pb-1 pl-1 headline"
+          :class="
+            buttonColor('selectEventType') === 'codePink'
+              ? ''
+              : 'text--darken-2'
+          "
           text
-          :color="step === 'selectEventType' ? 'codePink' : 'grey'"
+          :color="buttonColor('selectEventType')"
           @click="switchStep('selectEventType')"
         >
           {{ flowEventType.name }}</v-btn
@@ -602,7 +624,10 @@ export default {
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             class="px-0 pb-1 headline"
             text
-            :color="step === 'openDuration' ? 'codePink' : 'grey'"
+            :class="
+              buttonColor('openDuration') === 'codePink' ? '' : 'text--darken-2'
+            "
+            :color="buttonColor('openDuration')"
             @click="switchStep('openDuration')"
           >
             {{ seconds }}</v-btn
@@ -613,9 +638,12 @@ export default {
         to
         <v-btn
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class=" px-0 pb-1 headline"
+          class=" px-0 pb-1 headline text--darken-2"
+          :class="
+            buttonColor('selectState') === 'codePink' ? '' : 'text--darken-2'
+          "
           text
-          :color="step === 'selectState' ? 'codePink' : 'grey'"
+          :color="buttonColor('selectState')"
           @click="switchStep('selectState')"
         >
           {{ hookStates }}</v-btn
@@ -627,12 +655,15 @@ export default {
         }"
         class="px-0 pb-1 pl-1 headline d-inline-block text-truncate"
         text
-        :color="step === 'selectDoThis' ? 'codePink' : 'grey'"
+        :class="
+          buttonColor('selectDoThis') === 'codePink' ? '' : 'text--darken-2'
+        "
+        :color="buttonColor('selectDoThis')"
         @click="switchStep('selectDoThis')"
         >{{ hookAction }}</v-btn
       >.
     </v-card-text>
-    <v-card-text v-if="step === 'openAgentOrFlow'">
+    <v-card-text v-if="step.name === 'openAgentOrFlow'">
       <v-row>
         <v-col
           v-for="item in ['flow', 'agent']"
@@ -656,7 +687,7 @@ export default {
         </v-col>
       </v-row>
     </v-card-text>
-    <v-sheet v-else-if="step === 'selectFlow'" class="pa-4">
+    <v-sheet v-else-if="step.name === 'selectFlow'" class="pa-4">
       <v-row
         ><v-col cols="3">
           <!-- //need to fix v-model AND flow box color/style -->
@@ -726,7 +757,7 @@ export default {
       </v-card-actions>
     </v-sheet>
 
-    <v-card-text v-else-if="step === 'selectEventType'"
+    <v-card-text v-else-if="step.name === 'selectEventType'"
       ><v-row class="py-2">
         <v-col
           v-for="item in filteredFlowEventTypes"
@@ -744,7 +775,7 @@ export default {
         </v-col>
       </v-row>
     </v-card-text>
-    <div v-else-if="step === 'openDuration'">
+    <div v-else-if="step.name === 'openDuration'">
       <v-card-text>
         <v-text-field
           v-model="seconds"
@@ -770,7 +801,7 @@ export default {
       ></div
     >
 
-    <v-card-text v-else-if="step === 'selectState'">
+    <v-card-text v-else-if="step.name === 'selectState'">
       <v-chip
         v-for="item in stateGroups"
         :key="item.id"
@@ -823,7 +854,7 @@ export default {
       ></v-card-text
     >
 
-    <v-card-text v-else-if="step === 'selectDoThis'">
+    <v-card-text v-else-if="step.name === 'selectDoThis'">
       <v-row class="px-3">
         <v-btn small elevation="0" color="primary" @click="addNewAction"
           ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New
