@@ -211,7 +211,6 @@ export default {
       ])
     },
     isFinished() {
-      console.log('is finished')
       return (
         FINISHED_STATES.includes(this.flowRunState) &&
         this.flowRunState !== 'Scheduled'
