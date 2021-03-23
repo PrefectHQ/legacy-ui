@@ -95,6 +95,8 @@ export default {
         return this.parentNode
       })
 
+      if (!parent || !parent._groups[0][0]) return
+
       let computedStyle = window.getComputedStyle(parent._groups[0][0], null)
 
       let paddingLeft = parseFloat(

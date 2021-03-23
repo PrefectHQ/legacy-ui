@@ -170,6 +170,61 @@ Vue.component('HeightTransition', TransitionHeight)
 Vue.component('Truncate', TruncatedSpan)
 Vue.component('GetCloud', GetCloud)
 
+let TokenWorker
+
+if (typeof window.SharedWorker !== 'undefined') {
+  // // Initializes the shared service worker that handles token refresh
+  TokenWorker = new SharedWorker('@/workers/token.worker.js', {
+    type: 'module'
+  })
+} else {
+  // workers aren't supported; we'll fall back to the legacy auth pattern
+}
+
+if (TokenWorker?.port) {
+  TokenWorker.port.onmessage = e => {
+    const type = e.data?.type
+    const payload = e.data?.payload
+
+    switch (type) {
+      case 'authentication':
+        store.dispatch('auth/updateAuthenticationTokens', payload)
+        break
+      case 'authorization':
+        store.dispatch('auth/updateAuthorizationTokens', payload)
+        break
+      case 'authentication-expiration':
+        store.dispatch('auth/authenticate')
+        break
+      case 'authorization-expiration':
+        store.dispatch('auth/authorize')
+        break
+      case 'switch-tenant':
+        if (
+          store.getters['tenant/tenant']?.id !== payload.tenantId &&
+          !store.getters['tenant/isLoadingTenant']
+        ) {
+          store.dispatch('tenant/setCurrentTenant', payload.slug)
+          router.push({ name: 'team-switched' })
+        }
+        break
+      case 'logout':
+        store.dispatch('auth/logout', false)
+        break
+    }
+  }
+
+  // TODO: Implement error handling from the token worker
+  TokenWorker.port.onmessageerror = e => {
+    // eslint-disable-next-line no-console
+    console.log('Error message received from Token Worker', e)
+  }
+
+  TokenWorker.port.start()
+}
+
+export { TokenWorker }
+
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
 // It's a pretty heavy-handed approach to what we're trying
@@ -295,4 +350,52 @@ try {
 } catch {
   // eslint-disable-next-line no-console
   console.info('Unable to apply platform-specific scrollbar styles.')
+}
+
+// Visibility change properties vary between browsers
+let hidden, visibilityChange
+
+const handleVisibilityChange = () => {
+  const now = new Date()
+  const authorizationExpiration = new Date(
+    store.getters['auth/authorizationTokenExpiry']
+  )
+  const authenticationExpiration = new Date(store.getters['auth/idTokenExpiry'])
+
+  // eslint-disable-next-line no-console
+  console.log(
+    'Handling visibility change',
+    document[hidden],
+    now >= authorizationExpiration,
+    now < authenticationExpiration
+  )
+  if (document[hidden]) {
+    if (
+      store.getters['auth/isAuthorized'] &&
+      now >= authorizationExpiration &&
+      now < authenticationExpiration
+    ) {
+      store.dispatch('auth/authorize')
+    } else if (
+      store.getters['auth/isAuthenticatd'] &&
+      now >= authenticationExpiration
+    ) {
+      store.dispatch('auth/authenticate')
+    }
+  }
+}
+
+if (window) {
+  if (typeof document.hidden !== 'undefined') {
+    // Opera 12.10 and Firefox 18 and later
+    hidden = 'hidden'
+    visibilityChange = 'visibilitychange'
+  } else if (typeof document.msHidden !== 'undefined') {
+    hidden = 'msHidden'
+    visibilityChange = 'msvisibilitychange'
+  } else if (typeof document.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden'
+    visibilityChange = 'webkitvisibilitychange'
+  }
+  window.addEventListener(visibilityChange, handleVisibilityChange, false)
 }

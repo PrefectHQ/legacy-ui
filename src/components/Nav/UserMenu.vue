@@ -41,8 +41,8 @@ export default {
     ...mapActions('auth', ['logout']),
     ...mapMutations('user', ['setUserSettings']),
     async wipeClientAndLogout() {
+      await this.logout(true) // Pass true here to propagate this to all clients
       document.querySelector('.router-view').style.opacity = 0
-      await this.logout(this.$apolloProvider.clients.defaultClient)
     },
     async toggleDarkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
