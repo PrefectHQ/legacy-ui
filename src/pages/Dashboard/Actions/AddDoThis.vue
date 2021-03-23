@@ -91,7 +91,7 @@ export default {
         ? 'Slack Webhook Secret Name'
         : 'config details'
     },
-    messageLabel() {
+    messagePlaceholder() {
       let messageText
       switch (this.eventType) {
         case 'CHANGES_STATE':
@@ -506,7 +506,7 @@ export default {
         min-height="500px"
         class="pt-0"
         outlined
-        :placeholder="messageLabel"
+        :placeholder="messagePlaceholder"
         @keydown.enter="saveMessage"
       />
     </v-card-text>
