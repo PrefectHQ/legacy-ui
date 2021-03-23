@@ -583,12 +583,12 @@ export default {
       >
       <span
         >{{ ' '
-        }}<span v-if="agentOrFlow === 'flow'">{{ haveOrHas }} a run that </span>
+        }}<span v-if="agentOrFlow === 'flow'">{{ haveOrHas }} a run that</span>
 
         <v-btn
           v-if="!disableStep"
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-0 pb-1 headline"
+          class="px-0 pb-1 pl-1 headline"
           text
           :color="step === 'selectEventType' ? 'codePink' : 'grey'"
           @click="switchStep('selectEventType')"
@@ -620,14 +620,12 @@ export default {
         >
           {{ hookStates }}</v-btn
         ></span
-      >, then
-
-      <v-btn
+      >, then<v-btn
         :style="{
           'text-transform': 'none',
           'min-width': '0px'
         }"
-        class="px-0 pb-1 headline d-inline-block text-truncate"
+        class="px-0 pb-1 pl-1 headline d-inline-block text-truncate"
         text
         :color="step === 'selectDoThis' ? 'codePink' : 'grey'"
         @click="switchStep('selectDoThis')"
