@@ -23,7 +23,6 @@ export default {
     return {
       deleting: false,
       errorMessage: '',
-      allFlows: false,
       deleteDialog: false,
       // Alert data
       alertShow: false,
@@ -34,33 +33,14 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['role']),
-    all() {
-      if (this.allFlows) return true
-      if (this.type === 'group') return true
-      return false
-    },
     mutationString() {
-      if (!this.all) {
-        return gql`
-          mutation($flowId: UUID!) {
-            delete_flow(input: { flow_id: $flowId }) {
-              success
-            }
+      return gql`
+        mutation($flowGroupId: UUID!) {
+          delete_flow_group(input: { flow_group_id: $flowGroupId }) {
+            success
           }
-        `
-      } else {
-        let string = this.flowGroup.flows.map((flow, ind) => {
-          return `delete_${ind}: delete_flow(input: { flow_id: "${flow.id}" }) {
-              success
-            }`
-        })
-        const newString = gql`
-          mutation {
-            ${string}
-          }
-        `
-        return newString
-      }
+        }
+      `
     }
   },
   methods: {
@@ -71,40 +51,19 @@ export default {
         const { data } = await this.$apollo.mutate({
           mutation: this.mutationString,
           variables: {
-            flowId: this.flow.id
+            flowGroupId: this.flowGroup.id
           }
         })
 
-        if (
-          !this.all &&
-          data?.delete_flow?.success &&
-          this.flowGroup?.flows.length > 1
-        ) {
+        if (data?.delete_flow_group?.success) {
           this.deleting = false
           this.reset()
-          this.$router.push({
-            name: 'flow',
-            params: { id: this.flowGroup.id },
-            query: null
-          })
+          this.$router.push({ name: 'dashboard' })
           this.setAlert({
             alertShow: true,
-            alertMessage: `Version ${this.flow.version} of ${this.flow.name} Deleted`,
+            alertMessage: `${this.flow.name} Deleted`,
             alertType: 'info'
           })
-        } else if (this.all && data?.delete_0?.success) {
-          this.deleting = false
-          if (this.type === 'flow') {
-            this.$router.push({ name: 'dashboard' })
-            this.setAlert({
-              alertShow: true,
-              alertMessage: `All versions of ${this.flow.name} deleted`,
-              alertType: 'info'
-            })
-          } else {
-            this.$emit('refetch')
-            this.reset()
-          }
         } else {
           throw new Error('Something went wrong deleting a flow', data)
         }
@@ -118,7 +77,6 @@ export default {
       this.dialog = false
       this.deleting = false
       this.errorMessage = ''
-      this.allFlows = false
       this.deleteDialog = false
     }
   }
@@ -142,12 +100,11 @@ export default {
                 aria-label="delete"
               >
                 <v-icon>delete</v-icon>
-                <div v-if="type === 'flow'">Delete</div>
+                <div>Delete</div>
               </v-btn>
             </div>
           </template>
-          <span v-if="type === 'flow'">Delete this flow</span>
-          <span v-if="type === 'group'">Delete this flow group</span>
+          <span>Delete this flow</span>
         </v-tooltip>
       </template>
 
@@ -167,27 +124,11 @@ export default {
       </template> -->
 
       <v-card :loading="deleting">
-        <v-card-title v-if="!errorMessage && type === 'flow'">
-          Delete flow "{{ flow.name }}" version {{ flow.version }}?
-        </v-card-title>
-        <v-card-title v-if="!errorMessage && type === 'group'">
-          Delete all versions of this flow?
+        <v-card-title v-if="!errorMessage">
+          Delete flow "{{ flow.name }}"?
         </v-card-title>
         <v-card-text class="fix-height">
-          <v-checkbox
-            v-if="!errorMessage && type === 'flow'"
-            v-model="allFlows"
-            color="red accent-2"
-            :label="`Delete all versions of this flow.`"
-          ></v-checkbox>
-          <div
-            v-if="!errorMessage && !all && flow.archived === false"
-            class="font-weight-bold"
-          >
-            This is an active version of your flow. Only archived versions will
-            remain.
-          </div>
-          <div v-if="!errorMessage && all">
+          <div v-if="!errorMessage">
             This will delete <span class="font-weight-black">all </span>versions
             of your flow and cannot be undone.
           </div>
@@ -227,6 +168,6 @@ export default {
 
 <style scoped lang="scss">
 .fix-height {
-  height: 110px;
+  height: 80px;
 }
 </style>
