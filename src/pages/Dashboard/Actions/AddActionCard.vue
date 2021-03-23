@@ -803,20 +803,7 @@ export default {
           </div>
         </v-col>
       </v-row>
-      <!-- <div>
-        <v-chip
-          v-for="item in states['All']"
-          :key="item"
-          label
-          :disabled="disableClick"
-          max-width="300px"
-          class="ma-1"
-          outlined
-          :color="chosenStates.includes(item) ? 'pink' : ''"
-          @click="selectStates(item)"
-          >{{ item }}</v-chip
-        >
-      </div> -->
+
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
