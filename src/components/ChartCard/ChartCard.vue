@@ -96,7 +96,7 @@ export default {
           <div v-else-if="title === 'Users'" class="body-2">
             Invited users and actual members count towards your users total. You
             can add and remove members and invitations in the
-            <router-link :to="'/team/members'">
+            <router-link :to="{ name: 'members' }">
               team-members
             </router-link>
             page.
