@@ -291,6 +291,10 @@ export default {
           <v-list dense class="mx-8">
             <v-subheader>{{ item.firstName }}'s Keys</v-subheader>
             <v-list-item
+              v-if="!keys.filter(key => key.user_id === item.id).length"
+              >{{ item.firstName }} currently has no keys.</v-list-item
+            >
+            <v-list-item
               v-for="key in keys.filter(key => key.user_id === item.id)"
               :key="key.id"
             >
@@ -301,10 +305,11 @@ export default {
                   key.created_at ? formDate(key.created_at) : ''
                 }}</v-list-item-subtitle
               >
-              <v-list-item-subtitle
-                >Expires
+              <v-list-item-subtitle>
                 {{
-                  key.expires ? formatTimeRelative(key.expires) : 'Never'
+                  key.expires
+                    ? `Expires ${formatTimeRelative(key.expires)}`
+                    : 'Never Expires'
                 }}</v-list-item-subtitle
               >
               <v-tooltip bottom>
