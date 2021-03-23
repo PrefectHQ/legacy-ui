@@ -9,6 +9,11 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters } from 'vuex'
 
 const xAxisHeight = 20
+const minBarRadius = 10
+const maxBarRadius = 25
+const breakpointTooltipWidth = 185
+const itemTooltipWidth = 375
+const condensed = true
 
 export default {
   mixins: [formatTime],
@@ -23,40 +28,11 @@ export default {
       required: false,
       default: () => []
     },
-    condensed: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-
     loading: {
       type: Boolean,
       required: false,
       default: false
     },
-
-    maxBarRadius: {
-      type: Number,
-      required: false,
-      default: 25
-    },
-    minBarRadius: {
-      type: Number,
-      required: false,
-      default: null
-    },
-
-    breakpointTooltipWidth: {
-      type: Number,
-      required: false,
-      default: 185
-    },
-    itemTooltipWidth: {
-      type: Number,
-      required: false,
-      default: 375
-    },
-
     items: {
       type: Array,
       required: false,
@@ -83,7 +59,6 @@ export default {
   data() {
     return {
       animationDuration: 500,
-      condensed_: this.condensed,
       drawTimeout: null,
       easing: 'easePolyInOut',
       firstRenderComplete: false,
@@ -164,7 +139,7 @@ export default {
     ...mapGetters('user', ['user', 'timezone']),
     calcRows: function() {
       return debounce(() => {
-        requestAnimationFrame(this.rawCalcRows)
+        this.rawCalcRows()
       }, 300)
     },
     resizeChart: function() {
@@ -213,7 +188,7 @@ export default {
     },
     breakpointTooltipStyle() {
       if (!this.hovered) return
-      let half = this.breakpointTooltipWidth / 2
+      let half = breakpointTooltipWidth / 2
       let p = this.boundingClientRect
       let overRight = this.hovered.x + half - p.width > 0
       let overLeft = this.hovered.x - half < 0
@@ -222,12 +197,12 @@ export default {
           overRight ? p.width - half : overLeft ? half : this.hovered.x
         }px`,
         top: `${this.hovered.y}px`,
-        width: `${this.breakpointTooltipWidth}px`
+        width: `${breakpointTooltipWidth}px`
       }
     },
     itemTooltipStyle() {
       if (!this.hovered) return
-      let half = this.itemTooltipWidth / 2
+      let half = itemTooltipWidth / 2
       let p = this.boundingClientRect
       let overRight = this.hovered.x + half - p.width > 0
       let overLeft = this.hovered.x - half < 0
@@ -236,7 +211,7 @@ export default {
           overRight ? p.width - half : overLeft ? half : this.hovered.x
         }px`,
         top: `${this.hovered.y}px`,
-        width: `${this.itemTooltipWidth}px`
+        width: `${itemTooltipWidth}px`
       }
     },
     updateBars: function() {
@@ -244,7 +219,7 @@ export default {
         () => {
           this.rawUpdateBars()
         },
-        this.firstRenderComplete ? 16 : this.animationDuration
+        this.firstRenderComplete ? 32 : this.animationDuration
       )
     }
   },
@@ -260,7 +235,11 @@ export default {
     this.resizeChart()
 
     if (!this.loading) {
+      // const t0 = performance.now()
       this.calcRows()
+      // const t1 = performance.now()
+
+      // console.log(`calcRows took ${precise(t1 - t0)}ms in mounted hook`)
     }
 
     window.addEventListener('resize', this.resizeChart)
@@ -322,6 +301,8 @@ export default {
     rawCalcRows() {
       const prevRows = this.rows
       const grid = []
+      const start = Date.now()
+      const end = Date.now()
 
       itemLoop: for (let i = 0; i < this.items.length; ++i) {
         const item = this.items[i]
@@ -329,9 +310,6 @@ export default {
         // If the item hasn't started yet, we distribute
         // it to the row with the least items already
         if (!item.start_time) {
-          const start = Date.now()
-          const end = Date.now()
-
           const lengths = grid.map(row => row.length)
           let row = lengths.indexOf(Math.min(...lengths))
 
@@ -345,10 +323,10 @@ export default {
           continue itemLoop
         }
 
-        const start = item.start_time
+        const start_ = item.start_time
           ? new Date(item.start_time).getTime()
           : null
-        const end = item.end_time
+        const end_ = item.end_time
           ? new Date(item.end_time).getTime()
           : Date.now()
 
@@ -357,23 +335,23 @@ export default {
           // and move to the next item
           if (!grid[row]) {
             this.rowMap[item.id] = row
-            grid.push([[start, end]])
+            grid.push([[start_, end_]])
             continue itemLoop
           }
 
-          if (!start) {
+          if (!start_) {
             const lengths = grid.map(row => row.length)
             let row = lengths.indexOf(Math.min(...lengths))
 
             this.rowMap[item.id] = row
-            grid[row].push([start, end])
+            grid[row].push([start_, end_])
             continue itemLoop
           }
 
           // Otherwise check the start and end times against each
           // start[0] and end[1] time in the row
           let intersects = grid[row].some(
-            slot => end <= slot[0] - 2000 || start <= slot[1] + 2000
+            slot => end_ <= slot[0] - 2000 || start_ <= slot[1] + 2000
           )
 
           // let intersects = grid[row].some(
@@ -382,7 +360,7 @@ export default {
 
           if (!intersects) {
             this.rowMap[item.id] = row
-            grid[row].push([start, end])
+            grid[row].push([start_, end_])
             continue itemLoop
           }
         }
@@ -677,7 +655,7 @@ export default {
 
         // These are pretty fuzzy right now
         // so we'll probably want to move them to the svg layer
-        if (bar.label && !this.condensed_) {
+        if (bar.label && !condensed) {
           const savedStrokeStyle = context.fillStyle
           const fontSize = 10 * (1 / this.transform.k)
           const textY = (9 + bar.y + bar.height) * (1 / this.transform.k)
@@ -713,8 +691,8 @@ export default {
     },
     rawUpdateBars() {
       const height =
-        (this.y.bandwidth() > this.maxBarRadius
-          ? this.maxBarRadius
+        (this.y.bandwidth() > maxBarRadius
+          ? maxBarRadius
           : this.y.bandwidth()) ?? 0
 
       const calcBar = item => {
@@ -921,11 +899,11 @@ export default {
     },
     rawResizeCanvas() {
       const fullHeight =
-        this.rows * this.minBarRadius +
-        this.rows * this.minBarRadius * this.barPadding * 2
+        this.rows * minBarRadius +
+        this.rows * minBarRadius * this.barPadding * 2
 
       this.height_ =
-        (this.condensed_
+        (condensed
           ? this.height - this.padding.y
           : Math.max(fullHeight, this.height) - this.padding.y) -
         this.padding.bottom
@@ -1255,7 +1233,6 @@ export default {
       this.updateX()
     },
     collapse() {
-      this.condensed_ = !this.condensed_
       this.resizeCanvas()
     },
     panLeft() {
