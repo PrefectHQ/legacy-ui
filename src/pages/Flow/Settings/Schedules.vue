@@ -51,6 +51,13 @@ export default {
         c.scheduleType = 'flow-group'
         return c
       })
+    },
+    allDefaultParameters() {
+      const paramObj = this.flow.parameters.reduce(
+        (obj, item) => ((obj[item.name] = item.default), obj),
+        {}
+      )
+      return this.paramVal(paramObj)
     }
   },
   watch: {
@@ -105,7 +112,7 @@ export default {
             .map(c => {
               return {
                 cron: c.cron,
-                parameter_defaults: JSON.parse(c.parameter_defaults)
+                parameter_defaults: c.parameter_defaults
               }
             })
         ]
@@ -198,12 +205,11 @@ export default {
       return tz
     },
     paramVal(clock) {
-      // rename this
-      let foo = []
-      for (const [key, value] of Object.entries(clock.parameter_defaults)) {
-        foo.push({ name: key, default: value })
+      let parameters = []
+      for (const [key, value] of Object.entries(clock)) {
+        parameters.push({ key: key, value: value, disabled: true })
       }
-      return foo
+      return parameters
     }
   }
 }
@@ -252,7 +258,7 @@ export default {
               <div v-if="selectedClock == -1" key="1" style="height: 100%;">
                 <ClockForm
                   title="New schedule"
-                  :param="flow.parameters"
+                  :param="allDefaultParameters"
                   @cancel="selectedClock = null"
                   @confirm="createClock"
                 />
@@ -304,7 +310,7 @@ export default {
                 :cron="clock.cron"
                 :interval="clock.interval"
                 :timezone="timezoneVal(clock)"
-                :param="paramVal(clock)"
+                :param="paramVal(clock.parameter_defaults)"
                 title="Modify schedule"
                 @cancel="selectedClock = null"
                 @confirm="createClock"

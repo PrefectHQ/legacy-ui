@@ -2,8 +2,8 @@
 import CronForm from '@/pages/Flow/Settings/ClockForms/Cron'
 import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
-// import ScheduleParamForm from '@/pages/Flow/Settings/ScheduleParamForm'
 import moment from 'moment-timezone'
+import DictInput from '@/components/CustomInputs/DictInput'
 
 const timezones = [...moment.tz.names()].map(tz => {
   return { text: tz.replace(/_/g, ' '), value: tz }
@@ -13,8 +13,8 @@ export default {
   components: {
     CronForm,
     IntervalForm,
-    SimpleForm
-    // ScheduleParamForm
+    SimpleForm,
+    DictInput
   },
   props: {
     cron: {
@@ -37,7 +37,6 @@ export default {
       required: false,
       default: () => null
     },
-    // rename this
     param: {
       type: Array,
       required: false,
@@ -59,8 +58,7 @@ export default {
         : 'interval',
       advancedTypes: ['cron', 'interval'],
       cronModel: this.cron,
-      parameterModel: '', // rename this
-      name: {}, // renanme this
+      parameter: null,
       intervalModel: this.interval,
       simpleModel: '0 * * * *',
       valid: true
@@ -72,22 +70,34 @@ export default {
     }
   },
   methods: {
+    checkDefualtParameters(parameterObj) {
+      return Object.values(parameterObj).length > 0
+    },
     cancel() {
       this.$emit('cancel')
     },
     confirm() {
+      const parseObject = obj => {
+        if (!obj) return
+        Object.keys(obj).forEach(key => {
+          try {
+            obj[key] = JSON.parse(obj[key])
+          } catch {
+            //
+          }
+        })
+        return obj
+      }
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
-
       const clock = {
         type: clockType,
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
         ],
-        parameter_defaults:
-          Object.values(this.name).length > 0
-            ? JSON.stringify(this.name)
-            : null,
+        parameter_defaults: this.checkDefualtParameters(this.parameter)
+          ? parseObject(this.parameter)
+          : null,
         timezone: this.selectedTimezone
       }
       this.$emit('confirm', clock)
@@ -116,10 +126,9 @@ export default {
         hide-details
       ></v-switch>
     </div>
-
     <v-card-text
       style="max-height: fill;
-      overflow: scroll;"
+      overflow: auto;"
     >
       <v-fade-transition mode="out-in">
         <div
@@ -153,151 +162,37 @@ export default {
                 prepend-inner-icon="access_time"
                 :menu-props="{ contentClass: 'tz' }"
               />
-
-              <!-- need to make a component for this ⬇ -->
-              <v-expansion-panels multiple>
-                <v-expansion-panel
-                  v-for="(parameter, i) in param"
-                  :key="i"
-                  height="90px"
-                >
-                  <v-expansion-panel-header disable-icon-rotate>
-                    <v-list-item>
-                      <v-list-item-content>
-                        <v-list-item-title class="text-h6"
-                          >{{ parameter.name }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle>
-                          Default Value:
-                          {{ parameter.default }}
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <template #actions>
-                      <v-tooltip bottom>
-                        <template #activator="{ on }">
-                          <div v-on="on">
-                            <v-btn text>
-                              <v-icon small class="ml-0 mr-2">fa-undo</v-icon>
-                            </v-btn>
-                          </div>
-                        </template>
-                        <span
-                          >Reset to the parameters set at flow
-                          registration</span
-                        >
-                      </v-tooltip>
-                      <v-tooltip top>
-                        <template #activator="{ on, attrs }">
-                          <div v-bind="attrs" v-on="on">
-                            <v-btn icon
-                              ><v-icon v-if="false">expand_less</v-icon
-                              ><v-icon v-else>expand_more</v-icon>
-                            </v-btn>
-                          </div>
-                        </template>
-                        <span v-if="false">
-                          Read-only users cannot create or edit parameters.
-                        </span>
-                        <span v-else>
-                          Edit this parameter.
-                        </span>
-                      </v-tooltip>
-                    </template>
-                  </v-expansion-panel-header>
-
-                  <v-expansion-panel-content>
-                    <v-col cols="12">
-                      <v-row align-end>
-                        <v-text-field
-                          v-model="name[parameter.name]"
-                          class="mx-4"
-                          placeholder="Default value"
-                        ></v-text-field>
-                      </v-row>
-                    </v-col>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
-
-              <!-- <ScheduleParamForm
-                v-if="param.length > 0"
-                :param="param"
-                v-bind:title.sync="parameterModel"
-              /> -->
+              <DictInput
+                v-if="checkDefualtParameters(param)"
+                v-model="parameter"
+                :dict="param"
+                disable-edit
+                allow-reset
+              />
             </div>
             <div v-else-if="advancedType == 'interval'" key="Interval">
               <IntervalForm v-model="intervalModel" class="mt-4" />
 
-              <v-expansion-panels multiple>
-                <v-expansion-panel
-                  v-for="(parameter, i) in param"
-                  :key="i"
-                  height="90px"
-                >
-                  <v-expansion-panel-header disable-icon-rotate>
-                    <v-list-item>
-                      <v-list-item-content>
-                        <v-list-item-title class="text-h6"
-                          >{{ parameter.name }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle>
-                          Default Value:
-                          {{ parameter.default }}
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <template #actions>
-                      <v-tooltip bottom>
-                        <template #activator="{ on }">
-                          <div v-on="on">
-                            <v-btn text>
-                              <v-icon small class="ml-0 mr-2">fa-undo</v-icon>
-                            </v-btn>
-                          </div>
-                        </template>
-                        <span
-                          >Reset to the parameters set at flow
-                          registration</span
-                        >
-                      </v-tooltip>
-                      <v-tooltip top>
-                        <template #activator="{ on, attrs }">
-                          <div v-bind="attrs" v-on="on">
-                            <v-btn icon
-                              ><v-icon v-if="false">expand_less</v-icon
-                              ><v-icon v-else>expand_more</v-icon>
-                            </v-btn>
-                          </div>
-                        </template>
-                        <span v-if="false">
-                          Read-only users cannot create or edit parameters.
-                        </span>
-                        <span v-else>
-                          Edit this parameter.
-                        </span>
-                      </v-tooltip>
-                    </template>
-                  </v-expansion-panel-header>
-
-                  <v-expansion-panel-content>
-                    <v-col cols="12">
-                      <v-row align-end>
-                        <v-text-field
-                          v-model="name[parameter.name]"
-                          class="mx-4"
-                          placeholder="Default value"
-                        ></v-text-field>
-                      </v-row>
-                    </v-col>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
+              <DictInput
+                v-if="checkDefualtParameters(param)"
+                v-model="parameter"
+                :dict="param"
+                disable-edit
+                allow-reset
+              />
             </div>
           </v-fade-transition>
         </div>
         <div v-else key="2" class="mt-4 d-block" style="max-width: 100%;">
           <SimpleForm v-model="simpleModel" />
+
+          <DictInput
+            v-if="checkDefualtParameters(param)"
+            v-model="parameter"
+            :dict="param"
+            disable-edit
+            allow-reset
+          />
         </div>
       </v-fade-transition>
     </v-card-text>
