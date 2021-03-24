@@ -120,7 +120,11 @@ export default {
     <v-card class="py-2 d-flex flex-column" tile style="height: 330px;">
       <CardTitle title="Usage this month" icon="assessment" />
 
-      <v-card-text class="pb-0 text-right">
+      <v-card-text class="pb-0 d-flex">
+        <div>
+          <div class="title utilGrayDark--text">Successful task runs</div>
+          <div class="text-h3"> </div>
+        </div>
         <RingChart
           class="mx-auto"
           :segments="chartData"

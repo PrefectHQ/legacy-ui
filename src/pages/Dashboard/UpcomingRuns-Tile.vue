@@ -63,15 +63,15 @@ export default {
       if (this.tab == 'upcoming') {
         title =
           this.loading > 0
-            ? 'Upcoming Runs'
-            : `${this.upcomingRuns?.length || 0} Upcoming Runs`
+            ? 'Upcoming runs'
+            : `${this.upcomingRuns?.length || 0} upcoming runs`
       }
 
       if (this.tab == 'late') {
         title =
           this.loading || this.isClearingLateRuns
-            ? 'Late Runs'
-            : `${this.lateRuns?.length || 0} Late Runs`
+            ? 'Late runs'
+            : `${this.lateRuns?.length || 0} late runs`
       }
 
       return title

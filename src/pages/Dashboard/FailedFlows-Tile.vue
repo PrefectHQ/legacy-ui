@@ -39,8 +39,8 @@ export default {
       return 'Success'
     },
     cardTitle() {
-      if (this.hasError) return 'Failed Flows'
-      return `${this.failureCount} Failed Flows`
+      if (this.hasError) return 'Failed flows'
+      return `${this.failureCount} failed flows`
     },
     failureCount() {
       if (this.failures?.length) {

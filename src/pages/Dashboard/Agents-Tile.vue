@@ -44,10 +44,10 @@ export default {
     },
     cardTitle() {
       if (!this.agents) return
-      if (this.agents && this.agents.length === 0) return '0 Agents'
+      if (this.agents && this.agents.length === 0) return '0 agents'
 
       return `${this.agents?.length} ${
-        this.agents?.length === 1 ? 'Agent' : 'Agents'
+        this.agents?.length === 1 ? 'agent' : 'agents'
       }`
     },
     statusColor() {
