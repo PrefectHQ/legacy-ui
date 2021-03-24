@@ -222,8 +222,7 @@ export default {
       // const otherComplete = this.steps[otherStep]
       return this.step.name === selectedStep || this.step.name === otherStep
         ? 'codePink'
-        : // : stepComplete?.complete || otherComplete?.complete
-          'utilGrayDark'
+        : 'utilGrayDark'
     },
     format(selectedStep, otherStep) {
       const stepComplete = this.steps[selectedStep]

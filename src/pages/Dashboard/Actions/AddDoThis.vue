@@ -211,11 +211,7 @@ export default {
   },
   methods: {
     buttonColor(selectedStep) {
-      return this.step.name === selectedStep
-        ? 'codePink'
-        : this.steps[selectedStep].complete
-        ? 'utilGrayMid'
-        : 'utilGrayLight'
+      return this.step.name === selectedStep ? 'codePink' : 'utilGrayDark'
     },
     format(selectedStep, otherStep) {
       const stepComplete = this.steps[selectedStep]
@@ -223,8 +219,8 @@ export default {
       return this.step.name === selectedStep || this.step.name === otherStep
         ? ''
         : stepComplete?.complete || otherComplete?.complete
-        ? 'font-weight-bold'
-        : 'text-decoration-underline'
+        ? ''
+        : 'font-weight-light'
     },
     switchStep(selectedStep) {
       if (this.step.name === 'openMessageText')
