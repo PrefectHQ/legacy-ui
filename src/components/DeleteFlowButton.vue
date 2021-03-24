@@ -23,6 +23,7 @@ export default {
     return {
       deleting: false,
       errorMessage: '',
+      allFlows: false,
       deleteDialog: false,
       // Alert data
       alertShow: false,
@@ -33,14 +34,29 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['role']),
+    all() {
+      if (this.allFlows) return true
+      if (this.type === 'group') return true
+      return false
+    },
     mutationString() {
-      return gql`
-        mutation($flowGroupId: UUID!) {
-          delete_flow_group(input: { flow_group_id: $flowGroupId }) {
-            success
+      if (!this.all) {
+        return gql`
+          mutation($flowId: UUID!) {
+            delete_flow(input: { flow_id: $flowId }) {
+              success
+            }
           }
-        }
-      `
+        `
+      } else {
+        return gql`
+          mutation($flowGroupId: UUID!) {
+            delete_flow_group(input: { flow_group_id: $flowGroupId }) {
+              success
+            }
+          }
+        `
+      }
     }
   },
   methods: {
@@ -48,20 +64,34 @@ export default {
     async deleteFlow() {
       try {
         this.deleting = true
+        const variables = this.allFlows
+          ? { flowGroupId: this.flowGroup.id }
+          : { flowId: this.flow.id }
         const { data } = await this.$apollo.mutate({
           mutation: this.mutationString,
-          variables: {
-            flowGroupId: this.flowGroup.id
-          }
+          variables: variables
         })
 
-        if (data?.delete_flow_group?.success) {
+        if (this.all && data?.delete_flow_group?.success) {
           this.deleting = false
           this.reset()
           this.$router.push({ name: 'dashboard' })
           this.setAlert({
             alertShow: true,
             alertMessage: `${this.flow.name} Deleted`,
+            alertType: 'info'
+          })
+        } else if (!this.all && data?.delete_flow?.success) {
+          this.deleting = false
+          this.reset()
+          this.$router.push({
+            name: 'flow',
+            params: { id: this.flowGroup.id },
+            query: null
+          })
+          this.setAlert({
+            alertShow: true,
+            alertMessage: `Version ${this.flow.version} of ${this.flow.name} Deleted`,
             alertType: 'info'
           })
         } else {
@@ -77,6 +107,7 @@ export default {
       this.dialog = false
       this.deleting = false
       this.errorMessage = ''
+      this.allFlows = false
       this.deleteDialog = false
     }
   }
@@ -104,7 +135,8 @@ export default {
               </v-btn>
             </div>
           </template>
-          <span>Delete this flow</span>
+          <span v-if="type === 'flow'">Delete this flow</span>
+          <span v-if="type === 'group'">Delete this flow group</span>
         </v-tooltip>
       </template>
 
@@ -124,11 +156,27 @@ export default {
       </template> -->
 
       <v-card :loading="deleting">
-        <v-card-title v-if="!errorMessage">
-          Delete flow "{{ flow.name }}"?
+        <v-card-title v-if="!errorMessage && type === 'flow'">
+          Delete flow "{{ flow.name }}" version {{ flow.version }}?
+        </v-card-title>
+        <v-card-title v-if="!errorMessage && type === 'group'">
+          Delete all versions of this flow?
         </v-card-title>
         <v-card-text class="fix-height">
-          <div v-if="!errorMessage">
+          <v-checkbox
+            v-if="!errorMessage && type === 'flow'"
+            v-model="allFlows"
+            color="red accent-2"
+            :label="`Delete all versions of this flow.`"
+          ></v-checkbox>
+          <div
+            v-if="!errorMessage && !all && flow.archived === false"
+            class="font-weight-bold"
+          >
+            This is an active version of your flow. Only archived versions will
+            remain.
+          </div>
+          <div v-if="!errorMessage && all">
             This will delete <span class="font-weight-black">all </span>versions
             of your flow and cannot be undone.
           </div>
@@ -168,6 +216,6 @@ export default {
 
 <style scoped lang="scss">
 .fix-height {
-  height: 80px;
+  height: 110px;
 }
 </style>
