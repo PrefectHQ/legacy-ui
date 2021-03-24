@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       steps: [
-        { name: 'openAgentOrFlow', complete: false },
+        { name: 'openAgentOrFlow', complete: true },
         { name: 'selectEventType', complete: false },
         { name: 'selectFlow', complete: false },
         { name: 'selectState', complete: false },
@@ -219,9 +219,10 @@ export default {
     ...mapActions('alert', ['setAlert']),
     buttonColor(selectedStep, otherStep) {
       const stepComplete = this.steps.find(step => step.name === selectedStep)
+      const otherComplete = this.steps.find(step => step.name === otherStep)
       return this.step.name === selectedStep || this.step.name === otherStep
         ? 'codePink'
-        : stepComplete?.complete
+        : stepComplete?.complete || otherComplete?.complete
         ? 'utilGrayMid'
         : 'utilGrayLight'
     },
@@ -562,7 +563,7 @@ export default {
       <v-btn
         v-if="step != 'openAgentOrFlow' || hookDetail"
         text
-        color="utilGreyMid"
+        color="utilGrayMid"
         class="light-weight-text mr-1"
         @click="closeCard"
       >

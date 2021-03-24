@@ -16,19 +16,19 @@ export default {
   },
   data() {
     return {
-      steps: [
-        { name: 'openToConfig', complete: false },
-        { name: 'addName', complete: false },
-        { name: 'openMessageText', complete: false },
-        { name: 'addTwilioConfig', complete: false },
-        { name: 'selectMessageType', complete: false }
-      ],
+      steps: {
+        selectMessageType: { name: 'selectMessageType', complete: false },
+        openMessageText: { name: 'openMessageText', complete: false },
+        openToConfig: { name: 'openToConfig', complete: false },
+        addTwilioConfig: { name: 'addTwilioConfig', complete: false },
+        addName: { name: 'addName', complete: false }
+      },
       saving: false,
       enableSave: false,
       messageType: { title: 'Send' },
-      step: { name: 'selectMessageType', complete: false },
+      step: null,
       messageConfig: null,
-      messageConfigTo: [],
+      messageConfigArray: [],
       messageName: 'a message',
       secretName: '',
       messageText: '',
@@ -128,7 +128,7 @@ export default {
     },
     disableNext() {
       if (this.step === 'openToConfig') {
-        if (!this.messageConfigTo.length) return true
+        if (!this.messageConfigArray.length) return true
         else return false
       } else {
         return false
@@ -142,22 +142,22 @@ export default {
           !!this.routingKey &&
           !!this.severity
         : this.isTwilio
-        ? !!this.messageConfigTo &&
+        ? !!this.messageConfigArray &&
           !!this.authToken &&
           !!this.messagingService &&
           this.accountSid
         : !!this.messageType &&
           (!!this.secretName ||
-            (!!this.messageConfigTo.length &&
-              this.messageConfigTo.filter(
+            (!!this.messageConfigArray.length &&
+              this.messageConfigArray.filter(
                 item => this.rules[type](item) !== true
               ).length < 1))
       return allow && this.step === 'addName'
     },
     saveAs: {
       get() {
-        const whoTo = this.messageConfigTo.length
-          ? this.messageConfigTo
+        const whoTo = this.messageConfigArray.length
+          ? this.messageConfigArray
           : this.secretName
         return `${this.messageType.verb} ${whoTo}`
       },
@@ -167,8 +167,8 @@ export default {
     },
     to() {
       const configTo =
-        this.messageConfigTo.length > 0
-          ? this.messageConfigTo.toString()
+        this.messageConfigArray.length > 0
+          ? this.messageConfigArray.toString()
           : this.secretName || ''
       return this.messageType?.type === 'EMAIL'
         ? configTo || this.messageType?.config?.to || 'to this email address.'
@@ -189,26 +189,29 @@ export default {
     },
     isPagerDuty() {
       return this.messageType.type === 'PAGERDUTY'
-    },
-    needsNext() {
-      if (
-        this.step === 'openToConfig' &&
-        this.messageType.type === 'SLACK_WEBHOOK'
-      )
-        return false
-      switch (this.step) {
-        case 'openMessageText':
-        case 'addTwilioConfig':
-        case 'openToConfig':
-          return true
-        default:
-          return false
-      }
     }
+    // needsNext() {
+    //   if (
+    //     this.step === 'openToConfig' &&
+    //     this.messageType.type === 'SLACK_WEBHOOK'
+    //   )
+    //     return false
+    //   switch (this.step) {
+    //     case 'openMessageText':
+    //     case 'addTwilioConfig':
+    //     case 'openToConfig':
+    //       return true
+    //     default:
+    //       return false
+    //   }
+    // }
+  },
+  created() {
+    this.step = this.steps['selectMessageType']
   },
   methods: {
     buttonColor(selectedStep) {
-      const stepComplete = this.steps.find(step => step.name === selectedStep)
+      const stepComplete = this.steps[selectedStep]
       return this.step.name === selectedStep
         ? 'codePink'
         : stepComplete.complete
@@ -216,41 +219,68 @@ export default {
         : 'utilGrayLight'
     },
     switchStep(selectedStep) {
-      this.step = this.steps.find(step => step.name === selectedStep)
-      this.step.complete = true
+      if (this.step.name === 'openMessageText')
+        this.steps['openMessageText'].complete = true
+      this.step = this.steps[selectedStep]
     },
     handleNext() {
-      if (this.step === 'openMessageText') {
+      if (this.step.name === 'openMessageText') {
+        this.steps['openMessageText'].complete = true
         this.switchStep('openToConfig')
-      } else if (this.step === 'openToConfig') {
+      } else if (this.step.name === 'openToConfig') {
         if (this.messageType.type === 'TWILIO') {
+          if (this.messageConfigArray.length)
+            this.steps['openToConfig'].complete = true
           this.switchStep('addTwilioConfig')
         } else {
+          if (
+            this.messageType.type === 'EMAIL' &&
+            this.messageConfigArray.length
+          )
+            this.steps['openToConfig'].complete = true
+          else if (
+            this.isPagerDuty &&
+            this.apiToken &&
+            this.routingKey &&
+            this.severity
+          ) {
+            this.steps['openToConfig'].complete = true
+          }
+
           this.switchStep('addName')
         }
       }
     },
     selectMessageType(type) {
       this.messageType = type
-      this.messageConfigTo = []
+      this.messageConfigArray = []
+      this.steps = {
+        selectMessageType: { name: 'selectMessageType', complete: false },
+        openMessageText: { name: 'openMessageText', complete: false },
+        openToConfig: { name: 'openToConfig', complete: false },
+        addTwilioConfig: { name: 'addTwilioConfig', complete: false },
+        addName: { name: 'addName', complete: false }
+      }
+      this.steps.selectMessageType.complete = true
       this.switchStep('openMessageText')
     },
     handleClose() {
       this.$emit('close-action')
     },
     handleListInput(val) {
-      this.messageConfigTo = val
+      this.messageConfigArray = val
+      this.steps['openToConfig'].complete = true
     },
     saveConfig() {
       const type = this.messageType.type
       const checked =
         type != 'EMAIL'
-          ? this.rules[type](this.messageConfigTo)
-          : this.messageConfigTo.filter(
+          ? this.rules[type](this.messageConfigArray)
+          : this.messageConfigArray.filter(
               email => this.rules['EMAIL'](email) !== true
             ).length < 1
       if (checked === true) {
-        if (this.messageConfigTo) {
+        if (this.messageConfigArray) {
           switch (this.messageType.type) {
             case 'SLACK_WEBHOOK':
               {
@@ -266,7 +296,7 @@ export default {
               break
             case 'EMAIL':
               {
-                this.messageConfig = { to_emails: this.messageConfigTo }
+                this.messageConfig = { to_emails: this.messageConfigArray }
                 if (this.messageText) {
                   this.messageConfig.body = this.bothMessages
                     ? `{} ${this.messageText}`
@@ -277,7 +307,7 @@ export default {
             case 'TWILIO':
               {
                 this.messageConfig = {
-                  phone_numbers: this.messageConfigTo,
+                  phone_numbers: this.messageConfigArray,
                   auth_token_secret: this.authToken,
                   account_sid: this.accountSid,
                   messaging_service_sid: this.messagingService
@@ -310,12 +340,14 @@ export default {
     },
     selectSecret(secretName) {
       this.secretName = secretName
+      this.steps['openToConfig'].complete = true
       this.switchStep('addName')
     },
     // openTwilioConfigSection() {
     //   this.openTwilioConfig = !this.openTwilioConfig
     // },
     saveMessage() {
+      this.steps['openMessageText'].complete = true
       this.switchStep('openToConfig')
     },
     actionTypes() {
@@ -395,6 +427,11 @@ export default {
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
         :color="buttonColor('selectMessageType')"
         class="px-0 pb-1 headline"
+        :class="
+          buttonColor('selectMessageType') === 'codePink'
+            ? ''
+            : 'text--darken-2'
+        "
         text
         @click="switchStep('selectMessageType')"
         >{{ messageType.title }}</v-btn
@@ -406,6 +443,11 @@ export default {
           class="px-0 pb-1 headline d-inline-block text-truncate"
           max-width="300px"
           text
+          :class="
+            buttonColor('openMessageText') === 'codePink'
+              ? ''
+              : 'text--darken-2'
+          "
           :disabled="!messageType.type"
           :color="buttonColor('openMessageText')"
           @click="switchStep('openMessageText')"
@@ -418,6 +460,9 @@ export default {
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
           class="px-1 pb-1 headline"
           text
+          :class="
+            buttonColor('openToConfig') === 'codePink' ? '' : 'text--darken-2'
+          "
           :disabled="!messageType.type"
           :color="buttonColor('openToConfig')"
           @click="switchStep('openToConfig')"
@@ -429,6 +474,11 @@ export default {
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             class="px-0 pb-1 headline"
+            :class="
+              buttonColor('addTwilioConfig') === 'codePink'
+                ? ''
+                : 'text--darken-2'
+            "
             text
             :color="buttonColor('addTwilioConfig')"
             @click="switchStep('addTwilioConfig')"
@@ -554,7 +604,7 @@ export default {
       </v-row>
       <!-- <v-text-field
         v-if="messageType.type === 'SLACK_WEBHOOK'"
-        v-model="messageConfigTo"
+        v-model="messageConfigArray"
         :label="messageConfigLabel"
         :rules="[rules[messageType.type]]"
         validate-on-blur
@@ -607,7 +657,7 @@ export default {
           messageType.type === 'EMAIL' || messageType.type === 'TWILIO'
         "
         :label="messageConfigLabel"
-        :value="messageConfigTo"
+        :value="messageConfigArray"
         :outline="false"
         :rules="[rules[messageType.type]]"
         :hide="false"
@@ -673,7 +723,7 @@ export default {
         Give your config a name so you can find and re-use it with more hooks.
       </v-tooltip>
     </v-card-text>
-    <v-card-actions v-if="needsNext">
+    <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
         class="text-normal mr-1 mb-1"
