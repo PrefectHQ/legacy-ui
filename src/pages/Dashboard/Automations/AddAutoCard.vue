@@ -74,7 +74,7 @@ export default {
       return this.selectedFlows?.length === this.flows?.length
     },
     formHeight() {
-      return this.$vuetuify?.breakpoint?.smAndUp ? '30vh' : '20vh'
+      return this.$vuetuify?.breakpoint?.smAndUp ? '35vh' : '25vh'
     },
     agentOrFlow() {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
