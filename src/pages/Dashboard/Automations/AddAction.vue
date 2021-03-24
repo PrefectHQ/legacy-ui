@@ -482,7 +482,7 @@ export default {
         <v-col v-for="type in actionTypes()" :key="type.title" cols="6" sm="2">
           <div
             v-ripple
-            class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer subtitle-1"
+            class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer text-body-1"
             :class="{ active: messageType === type }"
             @click="selectMessageType(type)"
             ><v-icon left class="mx-4">
@@ -581,7 +581,7 @@ export default {
         >
           <div
             v-ripple
-            class="chip-small d-flex align-center justify-start px-2 cursor-pointer subtitle-1"
+            class="chip-small d-flex align-center justify-start px-2 cursor-pointer text-body-1"
             :class="{ active: secretName === name }"
             @click="selectSecret(name)"
             ><div class="text-truncate">
