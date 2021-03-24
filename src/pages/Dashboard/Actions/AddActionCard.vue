@@ -886,7 +886,8 @@ export default {
                 agentOrFlow === 'agent'
             "
             @click="selectAction(item)"
-            >{{ item.name }}<v-spacer></v-spacer>
+            >{{ item.name }}
+            <!-- <v-spacer></v-spacer>
             <v-btn
               small
               icon
@@ -894,8 +895,9 @@ export default {
               color="codePink"
               @click.stop="handleRemoveClick(item)"
             >
-              <i class="fas fa-times-circle fa-lg"/></v-btn
-          ></div>
+              <i class="fas fa-times-circle fa-lg"
+            /></v-btn> -->
+          </div>
         </v-col>
       </v-row>
       <ConfirmDialog
