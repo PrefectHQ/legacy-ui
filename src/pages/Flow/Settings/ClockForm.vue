@@ -1,9 +1,10 @@
 <script>
+/* eslint-disable */
+
 import CronForm from '@/pages/Flow/Settings/ClockForms/Cron'
 import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
 import moment from 'moment-timezone'
-import DictInput from '@/components/CustomInputs/DictInput'
 
 const timezones = [...moment.tz.names()].map(tz => {
   return { text: tz.replace(/_/g, ' '), value: tz }
@@ -13,8 +14,7 @@ export default {
   components: {
     CronForm,
     IntervalForm,
-    SimpleForm,
-    DictInput
+    SimpleForm
   },
   props: {
     cron: {
@@ -58,7 +58,6 @@ export default {
         : 'interval',
       advancedTypes: ['cron', 'interval'],
       cronModel: this.cron,
-      parameter: null,
       intervalModel: this.interval,
       simpleModel: '0 * * * *',
       valid: true
@@ -70,24 +69,10 @@ export default {
     }
   },
   methods: {
-    checkDefualtParameters(parameterObj) {
-      return Object.values(parameterObj).length > 0
-    },
     cancel() {
       this.$emit('cancel')
     },
     confirm() {
-      const parseObject = obj => {
-        if (!obj) return
-        Object.keys(obj).forEach(key => {
-          try {
-            obj[key] = JSON.parse(obj[key])
-          } catch {
-            //
-          }
-        })
-        return obj
-      }
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
       const clock = {
@@ -95,9 +80,6 @@ export default {
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
         ],
-        parameter_defaults: this.checkDefualtParameters(this.parameter)
-          ? parseObject(this.parameter)
-          : null,
         timezone: this.selectedTimezone
       }
       this.$emit('confirm', clock)
@@ -112,12 +94,7 @@ export default {
     style="height: 100%;
     width: 100%;"
   >
-    <div
-      class="d-flex justify-space-between align-start mb-1"
-      style="width: 100%;"
-    >
-      <span class="text-h5 black--text">{{ title }}</span>
-
+    <div class="d-flex justify-end mb-1" style="width: 100%;">
       <v-switch
         v-model="advanced"
         inset
@@ -162,42 +139,26 @@ export default {
                 prepend-inner-icon="access_time"
                 :menu-props="{ contentClass: 'tz' }"
               />
-              <DictInput
-                v-if="checkDefualtParameters(param)"
-                v-model="parameter"
-                :dict="param"
-                disable-edit
-                allow-reset
-              />
             </div>
             <div v-else-if="advancedType == 'interval'" key="Interval">
               <IntervalForm v-model="intervalModel" class="mt-4" />
-
-              <DictInput
-                v-if="checkDefualtParameters(param)"
-                v-model="parameter"
-                :dict="param"
-                disable-edit
-                allow-reset
-              />
             </div>
           </v-fade-transition>
         </div>
         <div v-else key="2" class="mt-4 d-block" style="max-width: 100%;">
           <SimpleForm v-model="simpleModel" />
-
-          <DictInput
-            v-if="checkDefualtParameters(param)"
-            v-model="parameter"
-            :dict="param"
-            disable-edit
-            allow-reset
-          />
         </div>
       </v-fade-transition>
     </v-card-text>
 
-    <div class="mt-auto text-right w-100">
+    <div
+      style="
+      bottom: 0;
+      padding: 20px;
+      position: absolute;
+      right: 0;
+      "
+    >
       <v-btn depressed class="mx-1" @click.stop="cancel">
         Cancel
       </v-btn>

@@ -7,6 +7,7 @@ import ExternalLink from '@/components/ExternalLink'
 import IntervalClock from '@/components/Functional/IntervalClock'
 import LogRocket from 'logrocket'
 import ClockForm from '@/pages/Flow/Settings/ClockForm'
+import DictInput from '@/components/CustomInputs/DictInput'
 
 export default {
   components: {
@@ -14,7 +15,8 @@ export default {
     CronClock,
     ExternalLink,
     IntervalClock,
-    ClockForm
+    ClockForm,
+    DictInput
   },
   props: {
     flow: { required: true, type: Object },
@@ -33,7 +35,9 @@ export default {
       loading: false,
       removeScheduleDialog: false,
       selectedClock: null,
-      scheduleBanner: false
+      scheduleBanner: false,
+      selectedTab: '',
+      parameter: null
     }
   },
   computed: {
@@ -53,6 +57,9 @@ export default {
       })
     },
     allDefaultParameters() {
+      if (!this.flow.parameters) {
+        return {}
+      }
       const paramObj = this.flow.parameters.reduce(
         (obj, item) => ((obj[item.name] = item.default), obj),
         {}
@@ -112,7 +119,7 @@ export default {
             .map(c => {
               return {
                 cron: c.cron,
-                parameter_defaults: c.parameter_defaults
+                parameter_defaults: this.parameter
               }
             })
         ]
@@ -126,7 +133,7 @@ export default {
                 // microseconds at the database level so we need to
                 // convert this back to microseconds
                 interval: c.interval / 1000000,
-                parameter_defaults: c.parameter_defaults
+                parameter_defaults: this.parameter
               }
             })
         ]
@@ -205,11 +212,18 @@ export default {
       return tz
     },
     paramVal(clock) {
+      if (!clock) {
+        return
+      }
       let parameters = []
+
       for (const [key, value] of Object.entries(clock)) {
         parameters.push({ key: key, value: value, disabled: true })
       }
       return parameters
+    },
+    checkDefualtParameters(parameterObj) {
+      return Object.values(parameterObj).length > 0
     }
   }
 }
@@ -251,17 +265,45 @@ export default {
           @click.native="selectedClock = -1"
         >
           <v-card-text
-            style="height: 100%;"
+            style="
+            height: 100%;
+            overflow: auto;
+            "
             :style="{ 'pointer-events': 'auto' }"
           >
             <v-fade-transition mode="out-in">
               <div v-if="selectedClock == -1" key="1" style="height: 100%;">
+                <span class="text-h5 black--text">New schedule</span>
+
+                <v-tabs v-model="selectedTab">
+                  <v-tab>Schedule</v-tab>
+                  <v-tab>Parameters</v-tab>
+                </v-tabs>
+
                 <ClockForm
+                  v-if="selectedTab === 0"
                   title="New schedule"
                   :param="allDefaultParameters"
                   @cancel="selectedClock = null"
                   @confirm="createClock"
                 />
+                <div v-if="selectedTab === 1">
+                  <DictInput
+                    v-if="checkDefualtParameters(allDefaultParameters)"
+                    v-model="parameter"
+                    style="padding: 20px;"
+                    :dict="allDefaultParameters"
+                    disable-edit
+                    allow-reset
+                  />
+                  <div
+                    v-else-if="!checkDefualtParameters(allDefaultParameters)"
+                    class="mt-8 text-body-1"
+                  >
+                    <span class="font-weight-bold">{{ flow.name }}</span>
+                    has no default parameters.
+                  </div>
+                </div>
               </div>
               <div
                 v-else
@@ -304,17 +346,45 @@ export default {
               v-if="selectedClock == i"
               key="1"
               style="height: 100%;
-        white-space: pre-wrap;"
+              overflow: auto;
+              padding: 20px;
+              white-space: pre-wrap;
+              "
             >
+              <span class="text-h5 black--text">Modify schedule</span>
+
+              <v-tabs v-model="selectedTab">
+                <v-tab>Schedule</v-tab>
+                <v-tab>Parameters</v-tab>
+              </v-tabs>
+
               <ClockForm
+                v-if="selectedTab === 0"
                 :cron="clock.cron"
                 :interval="clock.interval"
                 :timezone="timezoneVal(clock)"
-                :param="paramVal(clock.parameter_defaults)"
-                title="Modify schedule"
                 @cancel="selectedClock = null"
                 @confirm="createClock"
               />
+
+              <div v-if="selectedTab === 1">
+                <DictInput
+                  v-if="clock.parameter_defaults"
+                  v-model="parameter"
+                  style="padding: 20px;"
+                  :dict="paramVal(clock.parameter_defaults)"
+                  disable-edit
+                  allow-reset
+                />
+
+                <div
+                  v-else-if="!clock.parameter_defaults"
+                  class="mt-8 text-body-1"
+                >
+                  <span class="font-weight-bold">{{ flow.name }}</span>
+                  has no default parameters.
+                </div>
+              </div>
             </div>
 
             <div v-else key="2" style="height: 100%;">
