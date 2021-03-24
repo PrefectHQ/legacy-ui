@@ -329,6 +329,7 @@ export default {
               <v-btn
                 class="px-2"
                 text
+                fab
                 title="More Automations"
                 v-bind="attrs"
                 v-on="on"
