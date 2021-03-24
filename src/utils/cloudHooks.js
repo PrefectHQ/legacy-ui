@@ -174,7 +174,7 @@ export const STATES = {
   Success: ['SUCCESS', 'CACHED', 'MAPPED', 'SKIPPED']
 }
 
-export const ACTIONSTATES = {
+export const AUTOMATIONSTATES = {
   All: [
     'Failed',
     'Pending',

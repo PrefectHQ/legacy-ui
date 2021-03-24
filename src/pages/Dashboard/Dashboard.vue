@@ -5,7 +5,7 @@ import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
-import Actions from '@/pages/Dashboard/Actions/Actions'
+import Automations from '@/pages/Dashboard/Automations/Automations'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import NavTabBar from '@/components/NavTabBar'
 import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
@@ -52,7 +52,7 @@ export default {
   },
   components: {
     Agents,
-    Actions,
+    Automations,
     AgentsTile,
     BreadCrumbs,
     FailedFlowsTile,
@@ -428,7 +428,7 @@ export default {
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <Actions v-if="loadedTiles > 10" class="mx-3 my-6" />
+        <Automations v-if="loadedTiles > 10" class="mx-3 my-6" />
       </v-tab-item>
 
       <v-tab-item

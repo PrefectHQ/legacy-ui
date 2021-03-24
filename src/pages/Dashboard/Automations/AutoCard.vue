@@ -1,15 +1,15 @@
 <script>
 import { mapActions } from 'vuex'
 import {
-  ACTIONSTATES,
+  AUTOMATIONSTATES,
   titleCasePresentTenseStates,
   presentTenseStates
 } from '@/utils/cloudHooks'
-import AddActionCard from '@/pages/Dashboard/Actions/AddActionCard'
+import AddAutoCard from '@/pages/Dashboard/Automations/AddAutoCard'
 
 export default {
   components: {
-    AddActionCard
+    AddAutoCard
   },
   props: {
     hook: {
@@ -87,7 +87,7 @@ export default {
       return this.flowConfig?.duration_seconds
     },
     hookStates() {
-      return this.states?.length === ACTIONSTATES['All']?.length
+      return this.states?.length === AUTOMATIONSTATES['All']?.length
         ? 'changes to any state'
         : this.states?.length != 1
         ? 'changes to selected states'
@@ -199,7 +199,7 @@ export default {
   },
   apollo: {
     flowName: {
-      query: require('@/graphql/Actions/flows.gql'),
+      query: require('@/graphql/Automations/flows.gql'),
       variables() {
         return {
           flowGroupIds: this.hook?.event_tags?.flow_group_id
@@ -220,7 +220,7 @@ export default {
       }
     },
     agentConfig: {
-      query: require('@/graphql/Actions/agentConfig.gql'),
+      query: require('@/graphql/Automations/agentConfig.gql'),
       variables() {
         return {
           agentConfigId: this.hook?.event_tags?.agent_config_id[0] || ''
@@ -238,7 +238,7 @@ export default {
       }
     },
     flowConfig: {
-      query: require('@/graphql/Actions/flowConfigs.gql'),
+      query: require('@/graphql/Automations/flowConfigs.gql'),
       variables() {
         return {
           flowSLAConfigId: this.hook?.event_tags?.flow_sla_config_id
@@ -266,7 +266,7 @@ export default {
     v-if="loadingHook > 0 && showHook"
     type="list-item-avatar-three-line"
   ></v-skeleton-loader>
-  <AddActionCard
+  <AddAutoCard
     v-else-if="openEdit"
     :hook-detail="hookConfig"
     class="my-2"
@@ -278,7 +278,12 @@ export default {
       <v-spacer></v-spacer>
       <v-menu v-if="canEdit" :close-on-content-click="false">
         <template #activator="{ on, attrs }">
-          <v-btn class="px-2" text title="More Actions" v-bind="attrs" v-on="on"
+          <v-btn
+            class="px-2"
+            text
+            title="More Automations"
+            v-bind="attrs"
+            v-on="on"
             ><v-icon>more_horiz</v-icon></v-btn
           ></template
         >

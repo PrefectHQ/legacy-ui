@@ -1,12 +1,12 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import AddDoThis from '@/pages/Dashboard/Actions/AddDoThis'
-import { ACTIONSTATES } from '@/utils/cloudHooks'
+import AddAction from '@/pages/Dashboard/Automations/AddAction'
+import { AUTOMATIONSTATES } from '@/utils/cloudHooks'
 import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
   components: {
-    AddDoThis,
+    AddAction,
     ConfirmDialog
   },
   props: {
@@ -36,12 +36,12 @@ export default {
       flowNamesList: this.hookDetail?.flowNameList || [],
       hookDetails: this.hookDetail,
       project: null,
-      stateGroups: Object.keys(ACTIONSTATES),
-      states: ACTIONSTATES,
+      stateGroups: Object.keys(AUTOMATIONSTATES),
+      states: AUTOMATIONSTATES,
       stateName: '',
       agentFlowOrSomethingElse: '',
       chosenStates:
-        this.hookDetail?.hook?.event_tags?.state || ACTIONSTATES['All'],
+        this.hookDetail?.hook?.event_tags?.state || AUTOMATIONSTATES['All'],
       disableClick: false,
       chosenAction: this.hookDetail?.hook?.action || null,
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
@@ -565,7 +565,7 @@ export default {
       }
     },
     actions: {
-      query: require('@/graphql/Actions/actions.gql'),
+      query: require('@/graphql/Automations/actions.gql'),
       update: data => {
         return data.action
       }
@@ -627,7 +627,7 @@ export default {
         @click="switchStep('selectEventType')"
       >
         {{ flowEventType.name }}</v-btn
-      ><span v-else>{{ flowEventType.name }}</span>
+      ><span v-else class="pl-1">{{ flowEventType.name }}</span>
       <span v-if="isSLA">
         for
 
@@ -911,13 +911,13 @@ export default {
         @confirm="removeDoThis"
         ><slot
           ><span class="red--text"
-            >This will also delete any associated Actions.</span
+            >This will also delete any associated Automations.</span
           ></slot
         ></ConfirmDialog
       >
     </v-card-text>
   </v-card>
-  <AddDoThis
+  <AddAction
     v-else
     :event-type="flowEventType.enum || 'AGENT'"
     @close-action="addAction = false"
