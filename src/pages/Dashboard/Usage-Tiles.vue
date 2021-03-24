@@ -26,7 +26,7 @@ export default {
       return new Date(this.invoice.period_start * 1000)
     },
     freeUsage() {
-      if (!this.usage) return 0
+      if (isNaN(this.usage)) return null
       const percentage = this.usage / 10000
       return percentage > 1 ? 100 : percentage * 100
     },
@@ -35,6 +35,14 @@ export default {
     },
     invoiceLoading() {
       return this.invoiceLoadingKey > 0
+    },
+    freeUsageStyle() {
+      return {
+        'accentGreen--text': this.freeUsage > 0 && this.freeUsage < 60,
+        'yellow--text text--lighten-2':
+          this.freeUsage >= 60 && this.freeUsage < 80,
+        'deep-orange--text': this.freeUsage >= 80
+      }
     }
   },
   apollo: {
@@ -111,8 +119,13 @@ export default {
             class="d-inline-block"
             style="vertical-align: baseline;"
           >
-            <span> 10{{ freeUsage }} </span> </v-skeleton-loader
-          >% free runs used</div
+            <span class="font-weight-medium" :class="freeUsageStyle">
+              {{ freeUsage }}
+            </span> </v-skeleton-loader
+          ><span class="font-weight-medium" :class="freeUsageStyle">% </span>
+          <span class="text-normal text--disabled font-weight-light"
+            >of free runs used</span
+          ></div
         >
       </v-card-text>
       <v-card-actions class="mt-auto">
