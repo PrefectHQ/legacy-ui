@@ -38,7 +38,7 @@ const serverTabs = [
 
 const cloudTabs = [
   {
-    name: 'Actions',
+    name: 'Automations',
     target: 'actions',
     icon: 'fad fa-random'
   }
