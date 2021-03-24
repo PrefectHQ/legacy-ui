@@ -64,7 +64,7 @@ export default {
   computed: {
     ...mapGetters('data', ['projects']),
     //We can not update an agent for now - config id needs to be added at agent creation
-    // ...mapGetters('agent', ['agents']),
+    // ...mapGetters('Agent', ['agents']),
     // projectsList() {
     //   return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
     //     a.name > b.name ? 1 : -1
@@ -79,11 +79,11 @@ export default {
     agentOrFlow() {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
-        return 'agent'
+        return 'Agent'
       return 'this'
     },
     disableStep() {
-      return this.agentOrFlow === 'agent' || this.selectedFlows.length > 1
+      return this.agentOrFlow === 'Agent' || this.selectedFlows.length > 1
     },
     isSLA() {
       return (
@@ -99,7 +99,7 @@ export default {
       return this.actions
         ? this.actions.find(
             action => action.action_type === 'CancelFlowRunAction'
-          ) || this.agentOrFlow === 'agent'
+          ) || this.agentOrFlow === 'Agent'
           ? this.actions
           : [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
@@ -127,7 +127,7 @@ export default {
                 }
               })
               .toString()
-      return this.agentOrFlow === 'agent'
+      return this.agentOrFlow === 'Agent'
         ? agentName || 'an agent'
         : this.flowNamesList?.length > 1
         ? this.flowNamesList?.length === this.flows.length
@@ -150,7 +150,7 @@ export default {
       )
     },
     completeAction() {
-      if (this.agentOrFlow === 'agent') return !!this.chosenAction
+      if (this.agentOrFlow === 'Agent') return !!this.chosenAction
       if (!this.includeTo)
         return !!this.selectedFlows?.length && !!this.chosenAction
       return (
@@ -246,7 +246,7 @@ export default {
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
-      if (choice === 'flow') {
+      if (choice === 'Flow') {
         this.flowEventType = this.hookDetail?.flowConfig?.kind
           ? this.flowEventTypes.find(
               type => type.enum === this.hookDetail?.flowConfig?.kind
@@ -261,7 +261,7 @@ export default {
             }
         this.switchStep('selectFlow')
       }
-      if (choice === 'agent') {
+      if (choice === 'Agent') {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
@@ -342,7 +342,7 @@ export default {
     disableChip(item) {
       return (
         (item.enum != 'CHANGES_STATE' && this.selectedFlows?.length > 1) ||
-        this.agentOrFlow === 'agent'
+        this.agentOrFlow === 'Agent'
       )
     },
     includesFlow(flow) {
@@ -472,7 +472,7 @@ export default {
             })
             data = flowSLAEventSuccess.data
           }
-        } else if (this.agentOrFlow === 'agent') {
+        } else if (this.agentOrFlow === 'Agent') {
           let agentConfig
           if (this.hookDetails?.agentConfig) {
             agentConfig = this.hookDetails?.agentConfig
@@ -611,7 +611,7 @@ export default {
           >{{ flowNames }}</truncate
         ><span v-else>{{ flowNames }}</span></v-btn
       >
-      <span v-if="agentOrFlow === 'flow'"
+      <span v-if="agentOrFlow === 'Flow'"
         >{{ ' ' }}{{ haveOrHas }} a run that</span
       >
 
@@ -668,7 +668,7 @@ export default {
     <v-card-text v-if="step.name === 'openAgentOrFlow'">
       <v-row>
         <v-col
-          v-for="item in ['flow', 'agent']"
+          v-for="item in ['Flow', 'Agent']"
           :key="item"
           cols="6"
           sm="2"
@@ -676,12 +676,12 @@ export default {
         >
           <div
             v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer subtitle-1"
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer text-body-1"
             :class="{ active: agentOrFlow === item }"
             @click="selectAgentOrFlow(item)"
             ><div class="text-center"
               ><v-icon class="pr-2">{{
-                item === 'flow' ? 'pi-flow' : 'pi-agent'
+                item === 'Flow' ? 'pi-flow' : 'pi-agent'
               }}</v-icon
               >{{ item }}</div
             ></div
@@ -735,7 +735,7 @@ export default {
                 >
                   <truncate :content="`${item.name} - ${item.project.name}`"
                     ><div class="caption">{{ item.project.name }}</div
-                    ><div class="subtitle-1">{{ item.name }}</div></truncate
+                    ><div class="text-body-1">{{ item.name }}</div></truncate
                   >
                 </div></v-col
               >
@@ -771,7 +771,7 @@ export default {
             class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
             :class="{ active: includesFlow(item) }"
             @click="selectFlowEventType(item)"
-            ><div class="text-center subtitle-1">{{ item.name }}</div>
+            ><div class="text-center text-body-1">{{ item.name }}</div>
           </div>
         </v-col>
       </v-row>
@@ -829,7 +829,7 @@ export default {
         >
           <div
             v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer subtitle-1"
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer text-body-1"
             :class="{ active: chosenStates.includes(item) }"
             @click="selectStates(item)"
           >
@@ -874,11 +874,11 @@ export default {
         >
           <div
             v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer subtitle-1"
+            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer text-body-1"
             :class="{ active: chosenAction === item }"
             :disabled="
               item.action_type === 'CancelFlowRunAction' &&
-                agentOrFlow === 'agent'
+                agentOrFlow === 'Agent'
             "
             @click="selectAction(item)"
             >{{ item.name }}
