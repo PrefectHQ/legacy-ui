@@ -273,12 +273,7 @@ export default {
     @refetch-hooks="handleRefetch"
     @close="closeCard"
   />
-  <v-card
-    v-else-if="showHook"
-    class="my-2 headline "
-    outlined
-    @click="editHook"
-  >
+  <v-card v-else-if="showHook" class="my-2 text-h6" outlined @click="editHook">
     <v-card-title :class="canEdit ? 'pa-0' : 'pa-4'">
       <v-spacer></v-spacer>
       <v-menu v-if="canEdit" :close-on-content-click="false">
@@ -312,7 +307,7 @@ export default {
         </v-card></v-menu
       ></v-card-title
     >
-    <v-card-text class="headline"
+    <v-card-text class="text-h6"
       ><v-icon color="codePink" class="pr-2">{{
         hookDetails[hook.event_type] ? hookDetails[hook.event_type].icon : ''
       }}</v-icon

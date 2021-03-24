@@ -211,12 +211,20 @@ export default {
   },
   methods: {
     buttonColor(selectedStep) {
-      const stepComplete = this.steps[selectedStep]
       return this.step.name === selectedStep
         ? 'codePink'
-        : stepComplete.complete
+        : this.steps[selectedStep].complete
         ? 'utilGrayMid'
         : 'utilGrayLight'
+    },
+    format(selectedStep, otherStep) {
+      const stepComplete = this.steps[selectedStep]
+      const otherComplete = this.steps[otherStep]
+      return this.step.name === selectedStep || this.step.name === otherStep
+        ? ''
+        : stepComplete?.complete || otherComplete?.complete
+        ? 'font-weight-bold'
+        : 'text-decoration-underline'
     },
     switchStep(selectedStep) {
       if (this.step.name === 'openMessageText')
@@ -405,7 +413,7 @@ export default {
       <v-spacer></v-spacer>
       <v-btn
         text
-        color="utilGreyMid"
+        color="utilGrayMid"
         class="light-weight-text mr-1"
         @click="handleClose"
       >
@@ -422,34 +430,26 @@ export default {
       ></v-card-title
     >
 
-    <v-card-text class="headline">
+    <v-card-text class="text-h6">
       <v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
         :color="buttonColor('selectMessageType')"
-        class="px-0 pb-1 headline"
-        :class="
-          buttonColor('selectMessageType') === 'codePink'
-            ? ''
-            : 'text--darken-2'
-        "
+        :class="format('selectMessageType')"
+        class="px-0 pb-1 text-h6"
         text
         @click="switchStep('selectMessageType')"
-        >{{ messageType.title }}</v-btn
+        ><span>{{ messageType.title }}</span></v-btn
       >
       {{ ' ' }}
       <span>
         <v-btn
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-0 pb-1 headline d-inline-block text-truncate"
+          class="px-0 pb-1 text-h6 d-inline-block text-truncate"
           max-width="300px"
           text
-          :class="
-            buttonColor('openMessageText') === 'codePink'
-              ? ''
-              : 'text--darken-2'
-          "
           :disabled="!messageType.type"
           :color="buttonColor('openMessageText')"
+          :class="format('openMessageText')"
           @click="switchStep('openMessageText')"
         >
           {{ messageText || messageName }}</v-btn
@@ -458,13 +458,11 @@ export default {
       <span>
         <v-btn
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-1 pb-1 headline"
+          class="px-1 pb-1 text-h6"
           text
-          :class="
-            buttonColor('openToConfig') === 'codePink' ? '' : 'text--darken-2'
-          "
           :disabled="!messageType.type"
           :color="buttonColor('openToConfig')"
+          :class="format('openToConfig')"
           @click="switchStep('openToConfig')"
         >
           {{ to }}</v-btn
@@ -473,14 +471,10 @@ export default {
           with this
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 headline"
-            :class="
-              buttonColor('addTwilioConfig') === 'codePink'
-                ? ''
-                : 'text--darken-2'
-            "
+            class="px-0 pb-1 text-h6"
             text
             :color="buttonColor('addTwilioConfig')"
+            :class="format('openToConfig')"
             @click="switchStep('addTwilioConfig')"
           >
             config</v-btn

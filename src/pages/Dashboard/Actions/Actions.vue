@@ -75,7 +75,7 @@ export default {
 <template>
   <div v-if="noAccess">
     <v-row>
-      <v-col cols="12" class="text-center headline pa-12">
+      <v-col cols="12" class="text-center text-h6 pa-12">
         You do not have access to Actions. If you'd like to be able to create
         actions that notify you (or even cancel your run) when there's a change
         in your agent or a run,

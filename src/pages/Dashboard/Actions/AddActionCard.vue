@@ -18,14 +18,14 @@ export default {
   },
   data() {
     return {
-      steps: [
-        { name: 'openAgentOrFlow', complete: true },
-        { name: 'selectEventType', complete: false },
-        { name: 'selectFlow', complete: false },
-        { name: 'selectState', complete: false },
-        { name: 'openDuration', complete: false },
-        { name: 'selectDoThis', complete: false }
-      ],
+      steps: {
+        openAgentOrFlow: { name: 'openAgentOrFlow', complete: false },
+        selectFlow: { name: 'selectFlow', complete: false },
+        selectEventType: { name: 'selectEventType', complete: false },
+        SelectState: { name: 'selectState', complete: false },
+        openDuration: { name: 'openDuration', complete: false },
+        selectDoThis: { name: 'selectDoThis', complete: false }
+      },
       selectAll: false,
       deleting: false,
       saving: false,
@@ -80,7 +80,7 @@ export default {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
         return 'agent'
-      return 'flow'
+      return 'this'
     },
     disableStep() {
       return this.agentOrFlow === 'agent' || this.selectedFlows.length > 1
@@ -199,7 +199,7 @@ export default {
     }
   },
   created() {
-    this.step = this.steps[0]
+    this.step = this.steps['openAgentOrFlow']
     this.flowEventType = this.hookDetail?.flowConfig?.kind
       ? this.flowEventTypes.find(
           type => type.enum === this.hookDetail?.flowConfig?.kind
@@ -218,13 +218,22 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     buttonColor(selectedStep, otherStep) {
-      const stepComplete = this.steps.find(step => step.name === selectedStep)
-      const otherComplete = this.steps.find(step => step.name === otherStep)
+      // const stepComplete = this.steps[selectedStep]
+      // const otherComplete = this.steps[otherStep]
       return this.step.name === selectedStep || this.step.name === otherStep
         ? 'codePink'
+        : // : stepComplete?.complete || otherComplete?.complete
+          'utilGrayMid'
+      // : 'utilGrayLight'
+    },
+    format(selectedStep, otherStep) {
+      const stepComplete = this.steps[selectedStep]
+      const otherComplete = this.steps[otherStep]
+      return this.step.name === selectedStep || this.step.name === otherStep
+        ? ''
         : stepComplete?.complete || otherComplete?.complete
-        ? 'utilGrayMid'
-        : 'utilGrayLight'
+        ? 'font-weight-bold'
+        : 'text-decoration-underline'
     },
     closeCard() {
       if (this.hookDetail) this.$emit('close')
@@ -233,8 +242,9 @@ export default {
       }
     },
     switchStep(selectedStep) {
-      this.step = this.steps.find(step => step.name === selectedStep)
-      this.step.complete = true
+      if (this.step.name === 'openDuration')
+        this.steps['openDuration'].complete = true
+      this.step = this.steps[selectedStep]
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
@@ -257,6 +267,7 @@ export default {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
+        this.steps['openAgentOrFlow'].complete = true
         this.switchStep('selectDoThis')
       }
     },
@@ -275,8 +286,11 @@ export default {
       }
       this.notAll = true
       this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
+      this.steps['openAgentOrFlow'].complete = true
     },
     handleFlowNext() {
+      if (this.selectedFlows.length)
+        this.steps['openAgentOrFlow'].complete = true
       if (this.selectedFlows?.length > 1) {
         this.flowEventType = {
           name: 'changes state',
@@ -288,6 +302,7 @@ export default {
       }
     },
     selectFlowEventType(type) {
+      this.steps['selectEventType'].complete = true
       this.flowEventType = type
       this.isSLA
         ? this.switchStep('openDuration')
@@ -296,10 +311,12 @@ export default {
         : this.switchStep('selectDoThis')
     },
     selectStateGroup(group) {
+      this.steps['selectState'].complete = true
       this.stateName = group
       this.chosenStates = this.states[group]
     },
     selectStates(state) {
+      this.steps['selectState'].complete = true
       this.stateName = 'Custom'
       this.chosenStates.find(
         item => item === state || item.toUpperCase() == state
@@ -310,12 +327,14 @@ export default {
         : this.chosenStates.push(state)
     },
     selectAction(action) {
+      this.steps['selectDoThis'].complete = true
       this.chosenAction = action
     },
     closeStates() {
       this.switchStep('selectDoThis')
     },
     closeSeconds() {
+      this.steps['opneDuration'].complete = true
       this.switchStep('selectDoThis')
     },
     addNewAction() {
@@ -580,16 +599,12 @@ export default {
       ></v-card-title
     >
 
-    <v-card-text class="headline" elevation="0">
+    <v-card-text class="text-h6">
       When<v-btn
         :style="{ 'text-transform': 'none', 'min-width': '0px' }"
         :color="buttonColor('selectFlow', 'openAgentOrFlow')"
-        class="px-0 pb-1 pl-1 headline d-inline-block text-truncate"
-        :class="
-          buttonColor('openAgentOrFlow', 'selectFlow') === 'codePink'
-            ? ''
-            : 'text--darken-2'
-        "
+        :class="format('selectFlow', 'openAgentOrFlow')"
+        class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
         text
         max-width="500px"
         @click="switchStep('openAgentOrFlow')"
@@ -599,50 +614,41 @@ export default {
           >{{ flowNames }}</truncate
         ><span v-else>{{ flowNames }}</span></v-btn
       >
-      <span
-        >{{ ' '
-        }}<span v-if="agentOrFlow === 'flow'">{{ haveOrHas }} a run that</span>
+      <span v-if="agentOrFlow === 'flow'"
+        >{{ ' ' }}{{ haveOrHas }} a run that</span
+      >
+
+      <v-btn
+        v-if="!disableStep"
+        :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+        class="px-0 pb-1 pl-1 text-h6"
+        text
+        :color="buttonColor('selectEventType')"
+        :class="format('selectEventType')"
+        @click="switchStep('selectEventType')"
+      >
+        {{ flowEventType.name }}</v-btn
+      ><span v-else>{{ flowEventType.name }}</span>
+      <span v-if="isSLA">
+        for
 
         <v-btn
-          v-if="!disableStep"
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-0 pb-1 pl-1 headline"
-          :class="
-            buttonColor('selectEventType') === 'codePink'
-              ? ''
-              : 'text--darken-2'
-          "
+          class="px-0 pb-1 text-h6"
           text
-          :color="buttonColor('selectEventType')"
-          @click="switchStep('selectEventType')"
+          :color="buttonColor('openDuration')"
+          :class="format('openDuration')"
+          @click="switchStep('openDuration')"
         >
-          {{ flowEventType.name }}</v-btn
-        ><span v-else>{{ flowEventType.name }}</span>
-        <span v-if="isSLA">
-          for
-
-          <v-btn
-            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 headline"
-            text
-            :class="
-              buttonColor('openDuration') === 'codePink' ? '' : 'text--darken-2'
-            "
-            :color="buttonColor('openDuration')"
-            @click="switchStep('openDuration')"
-          >
-            {{ seconds }}</v-btn
-          >
-          seconds</span
-        ></span
+          {{ seconds }}</v-btn
+        >
+        seconds</span
       ><span v-if="includeTo">
         to
         <v-btn
           :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class=" px-0 pb-1 headline text--darken-2"
-          :class="
-            buttonColor('selectState') === 'codePink' ? '' : 'text--darken-2'
-          "
+          class=" px-0 pb-1 text-h6 text--darken-2"
+          :class="format('selectState')"
           text
           :color="buttonColor('selectState')"
           @click="switchStep('selectState')"
@@ -654,12 +660,10 @@ export default {
           'text-transform': 'none',
           'min-width': '0px'
         }"
-        class="px-0 pb-1 pl-1 headline d-inline-block text-truncate"
+        class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
         text
-        :class="
-          buttonColor('selectDoThis') === 'codePink' ? '' : 'text--darken-2'
-        "
         :color="buttonColor('selectDoThis')"
+        :class="format('selectDoThis')"
         @click="switchStep('selectDoThis')"
         >{{ hookAction }}</v-btn
       >.
