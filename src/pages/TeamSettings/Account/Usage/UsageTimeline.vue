@@ -5,6 +5,7 @@ import * as d3_regression from 'd3-regression'
 import uniqueId from 'lodash.uniqueid'
 import debounce from 'lodash.debounce'
 import throttle from 'lodash.throttle'
+import { mapGetters } from 'vuex'
 
 const d3 = Object.assign({}, d3_base, d3_regression)
 
@@ -69,6 +70,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     predictedItems() {
       if (!this.usage || !this.predict) return []
       const from = new Date(this.from)
@@ -922,7 +924,8 @@ export default {
       variables() {
         return {
           from: startDate,
-          to: this.to
+          to: this.to,
+          tenant_id: this.tenant.id
         }
       },
       skip() {

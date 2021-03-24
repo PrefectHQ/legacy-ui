@@ -1,5 +1,10 @@
-query Usage($from: timestamptz, $to: timestamptz) {
-  usage: billing_usage(where: { timestamp: { _gte: $from, _lte: $to } }) {
+query Usage($from: timestamptz, $to: timestamptz, $tenant_id: uuid) {
+  usage: billing_usage(
+    where: {
+      timestamp: { _gte: $from, _lte: $to }
+      tenant_id: { _eq: $tenant_id }
+    }
+  ) {
     id
     kind
     runs

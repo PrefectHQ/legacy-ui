@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -9,6 +10,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     loading() {
       return this.loadingKey > 0
     }
@@ -30,7 +32,8 @@ export default {
       variables() {
         return {
           from: this.from,
-          to: this.to
+          to: this.to,
+          tenant_id: this.tenant.id
         }
       },
       skip() {
