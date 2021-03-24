@@ -1,7 +1,12 @@
 <script>
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters } from 'vuex'
+
+import CardTitle from '@/components/Card-Title'
+import RingChart from '@/components/Visualizations/RingChart'
+
 export default {
+  components: { CardTitle, RingChart },
   mixins: [formatTime],
   data() {
     return {
@@ -55,6 +60,15 @@ export default {
         type = 'free'
       }
       return type
+    },
+    chartData() {
+      return [
+        { label: 'used', value: this.usage, color: '#ff8cc6' },
+        { name: 'total', value: 10000, color: '#de369d' }
+      ]
+    },
+    colors() {
+      return ['#27b1ff', 'transparent']
     }
   },
   apollo: {
@@ -102,7 +116,28 @@ export default {
     height="330"
     tile
   />
-  <div v-else-if="type == 'free'"> </div>
+  <div v-else-if="type !== 'free'">
+    <v-card class="py-2 d-flex flex-column" tile style="height: 330px;">
+      <CardTitle title="Usage this month" icon="assessment" />
+
+      <v-card-text class="pb-0 text-right">
+        <RingChart
+          class="mx-auto"
+          :segments="chartData"
+          :width="190"
+          :height="190"
+          :colors="colors"
+        />
+      </v-card-text>
+      <v-spacer />
+      <v-card-actions class="py-0">
+        <v-spacer />
+        <v-btn small color="primary" text :to="'/team/account'">
+          Details
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </div>
   <div v-else-if="type == 'committed'"></div>
   <div v-else>
     <v-card
@@ -150,6 +185,7 @@ export default {
           ></div
         >
       </v-card-text>
+      <v-spacer />
       <v-card-actions class="mt-auto">
         <v-spacer />
         <v-btn small color="primary" text :to="'/team/account'">
@@ -203,6 +239,7 @@ export default {
           </v-skeleton-loader>
         </div>
       </v-card-text>
+      <v-spacer />
       <v-card-actions class="mt-auto">
         <v-spacer />
         <v-btn small color="primary" text :to="'/team/account'">

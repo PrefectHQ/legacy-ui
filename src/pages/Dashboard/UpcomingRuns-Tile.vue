@@ -413,7 +413,7 @@ export default {
           color="deepRed"
           small
           class="position-absolute"
-          :style="{ bottom: '12px', right: '4px' }"
+          :style="{ bottom: '8px', right: '4px' }"
           tile
           :loading="isClearingLateRuns"
           @click="handleOpenDialog"

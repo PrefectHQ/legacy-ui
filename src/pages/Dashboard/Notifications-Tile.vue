@@ -128,7 +128,11 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2 position-relative" style="height: 330px;" tile>
+  <v-card
+    class="py-2 position-relative d-flex flex-column"
+    style="height: 330px;"
+    tile
+  >
     <CardTitle
       :title="cardTitle"
       icon="notifications"
@@ -191,7 +195,10 @@ export default {
         </v-list-item>
       </v-list>
     </v-card-text>
-    <v-card-actions>
+
+    <v-spacer />
+
+    <v-card-actions class="py-0">
       <v-spacer />
       <v-btn small color="primary" text :to="'/notifications'">
         View all notifications
