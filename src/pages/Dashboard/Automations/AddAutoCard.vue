@@ -240,7 +240,6 @@ export default {
       }
     },
     switchStep(selectedStep) {
-      console.log(this.steps['openDuration'])
       if (this.step.name === 'openDuration')
         this.steps['openDuration'].complete = true
       this.step = this.steps[selectedStep]
@@ -580,22 +579,21 @@ export default {
       <v-spacer></v-spacer>
       <v-btn
         v-if="step != 'openAgentOrFlow' || hookDetail"
-        text
+        outlined
         color="utilGrayMid"
         class="light-weight-text mr-1"
         @click="closeCard"
       >
-        <v-icon small>close</v-icon
-        ><span style="text-transform: none;">Cancel</span></v-btn
+        <span style="text-transform: none;">Cancel</span></v-btn
       ><v-btn
         color="primary"
         elevation="0"
         :loading="saving"
         :disabled="!completeAction"
         @click="createHook"
-        ><i class="far fa-cloud-upload-alt fa-lg"></i>
-        <span class="pl-2">Save</span></v-btn
-      ></v-card-title
+      >
+        <span style="text-transform: none;"> Save</span>
+      </v-btn></v-card-title
     >
 
     <v-card-text class="text-h6">
@@ -756,7 +754,6 @@ export default {
           @click="handleFlowNext"
         >
           Next
-          <v-icon small>call_made</v-icon>
         </v-btn>
       </v-card-actions>
     </v-sheet>
@@ -800,7 +797,6 @@ export default {
           @click="closeSeconds"
         >
           Next
-          <v-icon small>call_made</v-icon>
         </v-btn></v-card-actions
       ></div
     >
@@ -853,7 +849,6 @@ export default {
           @click="switchStep('selectDoThis')"
         >
           Next
-          <v-icon small>call_made</v-icon>
         </v-btn></v-card-actions
       ></v-card-text
     >
@@ -861,7 +856,7 @@ export default {
     <v-card-text v-else-if="step.name === 'selectDoThis'">
       <v-row class="px-3">
         <v-btn small elevation="0" color="primary" @click="addNewAction"
-          ><v-icon small class="mr-2">fal fa-plus-hexagon</v-icon> New
+          ><v-icon small class="mr-2">fal fa-plus</v-icon> New
         </v-btn>
       </v-row>
 

@@ -413,16 +413,14 @@ export default {
         class="light-weight-text mr-1"
         @click="handleClose"
       >
-        <v-icon small>close</v-icon
-        ><span style="text-transform: none;">Cancel</span></v-btn
+        <span style="text-transform: none;">Cancel</span></v-btn
       ><v-btn
         color="primary"
         elevation="0"
         :loading="saving"
         :disabled="!allowSave"
         @click="createAction"
-        ><i class="far fa-cloud-upload-alt fa-lg"></i>
-        <span class="pl-2">Save</span></v-btn
+        ><span style="text-transform: none;">Save</span></v-btn
       ></v-card-title
     >
 
@@ -724,7 +722,6 @@ export default {
         @click="handleNext"
       >
         Next
-        <v-icon small>call_made</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
