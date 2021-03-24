@@ -661,7 +661,7 @@ export default {
         <span>
           Prefect Cloud will send a message via the
           <a href="https://www.twilio.com/docs" target="_blank">
-            Twilio SMS API </a
+            Twilio SMS API</a
           >. You can retrieve the <code class="my-1 mx-1">ACCOUNT SID</code> and
           <code class="my-1 mx-1">AUTH TOKEN</code> from the dashboard of your
           Twilio account. To securely store your auth token, create a
@@ -671,8 +671,8 @@ export default {
             href="https://www.twilio.com/docs/sms/services/api#messaging-services-resource"
             target="_blank"
           >
-            Messaging Service
-          </a>
+            Messaging Service</a
+          >
           to recieve messages.
         </span>
       </div>
