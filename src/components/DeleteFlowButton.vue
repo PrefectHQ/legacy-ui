@@ -190,6 +190,7 @@ export default {
             v-if="!errorMessage"
             color="red accent-2"
             class="white--text"
+            :loading="deleting"
             @click="deleteFlow"
           >
             Delete
