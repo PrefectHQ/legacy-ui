@@ -306,8 +306,7 @@ export default {
             slot="row-1-col-1-tile-1"
             :loading="loadedTiles < 2"
             type="image"
-            min-height="329"
-            height="100%"
+            height="330"
             transition="quick-fade"
             class="my-2"
             tile
@@ -319,8 +318,7 @@ export default {
             slot="row-1-col-2-tile-1"
             :loading="loadedTiles < 6"
             type="image"
-            min-height="330px"
-            height="100%"
+            height="330"
             transition="quick-fade"
             class="my-2"
             tile
@@ -332,8 +330,7 @@ export default {
             slot="row-2-col-1-row-2-tile-1"
             :loading="loadedTiles < 7"
             type="image"
-            min-height="330px"
-            height="100%"
+            height="330"
             transition="quick-fade"
             class="my-2"
             tile
@@ -345,8 +342,7 @@ export default {
             slot="row-1-col-3-tile-1"
             :loading="loadedTiles < 1"
             type="image"
-            min-height="329"
-            height="100%"
+            height="330"
             transition="quick-fade"
             class="my-2"
             tile
@@ -358,8 +354,7 @@ export default {
             slot="row-2-col-1-row-3-tile-1"
             :loading="loadedTiles < 5"
             type="image"
-            min-height="329"
-            height="100%"
+            height="330"
             transition="quick-fade"
             class="my-2"
             tile
@@ -371,8 +366,7 @@ export default {
             slot="row-2-col-2-row-2-tile-1"
             :loading="loadedTiles < 3"
             type="image"
-            min-height="329"
-            height="100%"
+            height="330"
             transition="quick-fade"
             class="my-2"
             tile
@@ -384,8 +378,7 @@ export default {
             slot="row-2-col-2-row-2-tile-2"
             :loading="loadedTiles < 4"
             type="image"
-            min-height="329"
-            height="100%"
+            height="330"
             transition="quick-fade"
             class="my-2"
             tile

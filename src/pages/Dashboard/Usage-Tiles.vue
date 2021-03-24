@@ -43,6 +43,18 @@ export default {
           this.freeUsage >= 60 && this.freeUsage < 80,
         'deep-orange--text': this.freeUsage >= 80
       }
+    },
+    type() {
+      if (!this.license) return 'loading'
+
+      let type = 'monthly'
+
+      if (!this.license.terms.is_self_serve) {
+        type = 'committed'
+      } else if (!this.license.terms.is_usage_based) {
+        type = 'free'
+      }
+      return type
     }
   },
   apollo: {
@@ -82,7 +94,17 @@ export default {
 </script>
 
 <template>
-  <div>
+  <v-skeleton-loader
+    v-if="type == 'loading'"
+    loading
+    type="image"
+    transition="quick-fade"
+    height="330"
+    tile
+  />
+  <div v-else-if="type == 'free'"> </div>
+  <div v-else-if="type == 'committed'"></div>
+  <div v-else>
     <v-card
       class="mb-4 position-relative d-flex flex-column justify-space-between"
       style="height: 157px;"
