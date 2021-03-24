@@ -23,9 +23,11 @@ Note: This repo is for Prefect UI development. To run the Prefect UI as part of 
 
 ### Installation
 
-Prefect UI requires [Node.js](https://nodejs.org/) v10+ and [npm](https://www.npmjs.com/) v6+ to run.
+Prefect UI requires [Node.js](https://nodejs.org/) v14 and [npm](https://www.npmjs.com/) v6 to run.
 
-Before starting the Prefect UI development server, you'll need to install project dependencies:
+You'll also need an API token from a professional Font Awesome account to build the project locally; this token should be placed in a git-ignored `.env` file (e.g. `.env.development.local`) as it's referenced by `.npmrc` for accessing the private FA npm registry.
+
+Before starting the development server, you'll need to install project dependencies:
 
 ```sh
 $ git clone https://github.com/PrefectHQ/ui.git
@@ -43,7 +45,20 @@ The Prefect UI should be available at [http://localhost:8080](http://localhost:8
 
 ### Testing
 
-Coming soon...
+Prefect UI contains various unit tests for things like the Vuex store and Vue Router middleware; running theses tests locally requires [Jest](https://jestjs.io/). We recommend using a node package executor like [npx](https://www.npmjs.com/package/npx) for this dependency.
+
+Running all unit tests:
+
+```
+$ npx jest
+```
+
+Running specific tests:
+
+```
+$ npx jest auth
+# This will run tests found in middleware/authNavGuard.spec.js, store/auth.spec.js, and store/auth0.spec.js
+```
 
 ### Development
 
@@ -61,13 +76,13 @@ $ npm run build
 
 Compiled and minified code and assets are placed in the `dist/` folder; `dist/index.html` is the built application's entrypoint.
 
-### Building a Prefect UI Docker image
+### The Prefect UI Docker image
 
-Coming soon...
+This repo comes with a Dockerfile for building a UI image; it's generally not recommended to build this yourself but to instead use one of the versioned images found in the [PrefectHQ Dockerhub registry](https://hub.docker.com/r/prefecthq/ui).
 
 #### Serving the built application
 
-Coming soon...
+The Prefect UI requires a functional Prefect API to operate. For details on starting Prefect Server, visit the [docs](https://docs.prefect.io/api/latest/#ui-and-server).
 
 ## License
 
