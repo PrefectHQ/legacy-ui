@@ -96,19 +96,19 @@ export default {
             : ''
         "
       >
-        <v-row v-if="$slots['row-2-col-1-row-1-tile-1']">
+        <v-row v-if="$slots['row-2-col-1-row-1-tile-1']" no-gutters>
           <v-col>
             <slot name="row-2-col-1-row-1-tile-1" />
           </v-col>
         </v-row>
 
-        <v-row v-if="$slots['row-2-col-1-row-2-tile-1']">
+        <v-row v-if="$slots['row-2-col-1-row-2-tile-1']" no-gutters>
           <v-col>
             <slot name="row-2-col-1-row-2-tile-1" />
           </v-col>
         </v-row>
 
-        <v-row v-if="$slots['row-2-col-1-row-3-tile-1']">
+        <v-row v-if="$slots['row-2-col-1-row-3-tile-1']" no-gutters>
           <v-col>
             <slot name="row-2-col-1-row-3-tile-1" />
           </v-col>
@@ -142,7 +142,7 @@ export default {
             : ''
         "
       >
-        <v-row v-if="$slots['row-2-col-2-row-1-tile-1']">
+        <v-row v-if="$slots['row-2-col-2-row-1-tile-1']" no-gutters>
           <v-col>
             <slot name="row-2-col-2-row-1-tile-1" />
           </v-col>
@@ -154,11 +154,11 @@ export default {
               $slots['row-2-col-2-row-2-tile-2']
           "
         >
-          <v-col>
+          <v-col cols="12" md="6">
             <slot name="row-2-col-2-row-2-tile-1" />
           </v-col>
 
-          <v-col>
+          <v-col cols="12" md="6">
             <slot name="row-2-col-2-row-2-tile-2" />
           </v-col>
         </v-row>

@@ -11,6 +11,7 @@ import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
+import UsageTile from '@/pages/Dashboard/Usage-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import { mapGetters, mapActions } from 'vuex'
@@ -57,7 +58,8 @@ export default {
     SummaryTile,
     TileLayout,
     FlowRunHistoryTile,
-    UpcomingRunsTile
+    UpcomingRunsTile,
+    UsageTile
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'project') {
@@ -317,7 +319,20 @@ export default {
             slot="row-1-col-2-tile-1"
             :loading="loadedTiles < 6"
             type="image"
-            min-height="200px"
+            min-height="330px"
+            height="100%"
+            transition="quick-fade"
+            class="my-2"
+            tile
+          >
+            <UsageTile />
+          </v-skeleton-loader>
+
+          <v-skeleton-loader
+            slot="row-2-col-1-row-2-tile-1"
+            :loading="loadedTiles < 7"
+            type="image"
+            min-height="330px"
             height="100%"
             transition="quick-fade"
             class="my-2"
@@ -340,7 +355,7 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-2-col-1-row-2-tile-1"
+            slot="row-2-col-1-row-3-tile-1"
             :loading="loadedTiles < 5"
             type="image"
             min-height="329"

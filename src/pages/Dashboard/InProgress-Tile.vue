@@ -135,7 +135,6 @@ export default {
     tile
     :style="{
       height: fullHeight ? '330px' : 'auto',
-      'max-width': '100%',
       overflow: 'hidden'
     }"
   >
