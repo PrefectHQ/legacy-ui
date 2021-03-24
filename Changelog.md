@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add the "Running" state to the state filter - [#675](https://github.com/PrefectHQ/ui/pull/675)
+- Use `delete_flow_group` mutation when deleting flows - [#689](https://github.com/PrefectHQ/ui/pull/689)
 - Flow run page performance improvements (part 1) and shared service worker for token refresh - [#679](https://github.com/PrefectHQ/ui/pull/679)
 - Flow run page performance improvements (part 2) - [#688](https://github.com/PrefectHQ/ui/pull/688)
 
