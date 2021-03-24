@@ -46,7 +46,8 @@ export default {
         'accentGreen--text': this.freeUsage > 0 && this.freeUsage < 60,
         'yellow--text text--lighten-2':
           this.freeUsage >= 60 && this.freeUsage < 80,
-        'deep-orange--text': this.freeUsage >= 80
+        'deep-orange--text': this.freeUsage >= 80 && this.freeUsage < 100,
+        'red--text text--lighten-1': this.freeUsage == 100
       }
     },
     type() {
@@ -63,12 +64,12 @@ export default {
     },
     chartData() {
       return [
-        { label: 'used', value: this.usage, color: '#ff8cc6' },
-        { name: 'total', value: 10000, color: '#de369d' }
+        { label: 'used', value: this.usage },
+        { name: 'total', value: 10000 }
       ]
     },
     colors() {
-      return ['#27b1ff', 'transparent']
+      return ['#27b1ff', '#eee']
     }
   },
   apollo: {
@@ -116,22 +117,57 @@ export default {
     height="330"
     tile
   />
-  <div v-else-if="type !== 'free'">
+  <div v-else-if="type == 'free'">
     <v-card class="py-2 d-flex flex-column" tile style="height: 330px;">
       <CardTitle title="Usage this month" icon="assessment" />
 
-      <v-card-text class="pb-0 d-flex">
+      <v-card-text class="pb-0 d-flex align-center justify-space-around">
         <div>
-          <div class="title utilGrayDark--text">Successful task runs</div>
-          <div class="text-h3"> </div>
+          <div class="text-h3">
+            <v-skeleton-loader
+              :loading="!usage && (invoiceLoading || usageLoading)"
+              type="image"
+              transition="quick-fade"
+              height="45"
+              width="100"
+              tile
+              class="d-inline-block"
+            >
+              <span>
+                {{ usage && usage.toLocaleString() }}
+              </span>
+            </v-skeleton-loader>
+            <div class="text--disabled text-subtitle-1 ml-1"
+              >successful task runs</div
+            >
+          </div>
         </div>
-        <RingChart
-          class="mx-auto"
-          :segments="chartData"
-          :width="190"
-          :height="190"
-          :colors="colors"
-        />
+
+        <div class="position-relative">
+          <RingChart
+            :segments="chartData"
+            :width="190"
+            :height="190"
+            :colors="colors"
+          />
+
+          <div
+            class="text-h4 font-weight-light position-absolute center-absolute"
+          >
+            <v-skeleton-loader
+              :loading="!usage && (invoiceLoading || usageLoading)"
+              type="image"
+              transition="quick-fade"
+              height="12"
+              width="22"
+              tile
+            >
+              <span class="font-weight-medium" :class="freeUsageStyle">
+                {{ freeUsage }}%
+              </span>
+            </v-skeleton-loader></div
+          >
+        </div>
       </v-card-text>
       <v-spacer />
       <v-card-actions class="py-0">
@@ -253,3 +289,11 @@ export default {
     </v-card>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.center-absolute {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>

@@ -315,7 +315,7 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-1-col-2-tile-1"
+            slot="row-2-col-2-row-2-tile-2"
             :loading="loadedTiles < 6"
             type="image"
             height="330"
@@ -375,7 +375,7 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-2-col-2-row-2-tile-2"
+            slot="row-1-col-2-tile-1"
             :loading="loadedTiles < 4"
             type="image"
             height="330"
