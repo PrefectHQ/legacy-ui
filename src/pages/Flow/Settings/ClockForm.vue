@@ -38,9 +38,9 @@ export default {
       default: () => null
     },
     param: {
-      type: Array,
+      type: Object,
       required: false,
-      default: () => []
+      default: () => null
     }
   },
   data() {
@@ -73,6 +73,17 @@ export default {
       this.$emit('cancel')
     },
     confirm() {
+      const parseObject = obj => {
+        if (!obj) return
+        Object.keys(obj).forEach(key => {
+          try {
+            obj[key] = JSON.parse(obj[key])
+          } catch {
+            //
+          }
+        })
+        return obj
+      }
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
       const clock = {
@@ -80,6 +91,7 @@ export default {
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
         ],
+        parameter_defaults: this.param ? parseObject(this.param) : null,
         timezone: this.selectedTimezone
       }
       this.$emit('confirm', clock)

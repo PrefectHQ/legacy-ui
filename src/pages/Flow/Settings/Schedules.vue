@@ -119,7 +119,7 @@ export default {
             .map(c => {
               return {
                 cron: c.cron,
-                parameter_defaults: this.parameter
+                parameter_defaults: c.parameter_defaults
               }
             })
         ]
@@ -133,7 +133,7 @@ export default {
                 // microseconds at the database level so we need to
                 // convert this back to microseconds
                 interval: c.interval / 1000000,
-                parameter_defaults: this.parameter
+                parameter_defaults: c.parameter_defaults
               }
             })
         ]
@@ -280,14 +280,14 @@ export default {
                   <v-tab>Parameters</v-tab>
                 </v-tabs>
 
-                <ClockForm
-                  v-if="selectedTab === 0"
-                  title="New schedule"
-                  :param="allDefaultParameters"
-                  @cancel="selectedClock = null"
-                  @confirm="createClock"
-                />
-                <div v-if="selectedTab === 1">
+                <div v-show="selectedTab === 0">
+                  <ClockForm
+                    :param="parameter"
+                    @cancel="selectedClock = null"
+                    @confirm="createClock"
+                  />
+                </div>
+                <div v-show="selectedTab === 1">
                   <DictInput
                     v-if="checkDefualtParameters(allDefaultParameters)"
                     v-model="parameter"
@@ -358,16 +358,17 @@ export default {
                 <v-tab>Parameters</v-tab>
               </v-tabs>
 
-              <ClockForm
-                v-if="selectedTab === 0"
-                :cron="clock.cron"
-                :interval="clock.interval"
-                :timezone="timezoneVal(clock)"
-                @cancel="selectedClock = null"
-                @confirm="createClock"
-              />
-
-              <div v-if="selectedTab === 1">
+              <div v-show="selectedTab === 0">
+                <ClockForm
+                  :cron="clock.cron"
+                  :param="parameter"
+                  :interval="clock.interval"
+                  :timezone="timezoneVal(clock)"
+                  @cancel="selectedClock = null"
+                  @confirm="createClock"
+                />
+              </div>
+              <div v-show="selectedTab === 1">
                 <DictInput
                   v-if="clock.parameter_defaults"
                   v-model="parameter"
@@ -376,11 +377,7 @@ export default {
                   disable-edit
                   allow-reset
                 />
-
-                <div
-                  v-else-if="!clock.parameter_defaults"
-                  class="mt-8 text-body-1"
-                >
+                <div v-else class="mt-8 text-body-1">
                   <span class="font-weight-bold">{{ flow.name }}</span>
                   has no default parameters.
                 </div>
