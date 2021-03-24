@@ -405,80 +405,82 @@ export default {
 
 <template>
   <v-card outlined>
-    <v-card-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        text
-        color="utilGrayMid"
-        class="light-weight-text mr-1"
-        @click="handleClose"
-      >
-        <span style="text-transform: none;">Cancel</span></v-btn
-      ><v-btn
-        color="primary"
-        elevation="0"
-        :loading="saving"
-        :disabled="!allowSave"
-        @click="createAction"
-        ><span style="text-transform: none;">Save</span></v-btn
-      ></v-card-title
-    >
-
     <v-card-text class="text-h6">
-      <v-btn
-        :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-        :color="buttonColor('selectMessageType')"
-        :class="format('selectMessageType')"
-        class="px-0 pb-1 text-h6"
-        text
-        @click="switchStep('selectMessageType')"
-        ><span>{{ messageType.title }}</span></v-btn
-      >
-      {{ ' ' }}
-      <span>
-        <v-btn
-          :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-0 pb-1 text-h6 d-inline-block text-truncate"
-          max-width="300px"
-          text
-          :disabled="!messageType.type"
-          :color="buttonColor('openMessageText')"
-          :class="format('openMessageText')"
-          @click="switchStep('openMessageText')"
-        >
-          {{ messageText || messageName }}</v-btn
-        >
-      </span>
-      <span>
-        <v-btn
-          :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-1 pb-1 text-h6"
-          text
-          :disabled="!messageType.type"
-          :color="buttonColor('openToConfig')"
-          :class="format('openToConfig')"
-          @click="switchStep('openToConfig')"
-        >
-          {{ to }}</v-btn
-        >
-        <span v-if="isTwilio">
-          with this
+      <v-row>
+        <v-col cols="9" lg="10">
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            :color="buttonColor('selectMessageType')"
+            :class="format('selectMessageType')"
             class="px-0 pb-1 text-h6"
             text
-            :color="buttonColor('addTwilioConfig')"
-            :class="format('openToConfig')"
-            @click="switchStep('addTwilioConfig')"
+            @click="switchStep('selectMessageType')"
+            ><span>{{ messageType.title }}</span></v-btn
           >
-            config</v-btn
-          ></span
-        ></span
-      >
+          {{ ' ' }}
+          <span>
+            <v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              class="px-0 pb-1 text-h6 d-inline-block text-truncate"
+              max-width="300px"
+              text
+              :disabled="!messageType.type"
+              :color="buttonColor('openMessageText')"
+              :class="format('openMessageText')"
+              @click="switchStep('openMessageText')"
+            >
+              {{ messageText || messageName }}</v-btn
+            >
+          </span>
+          <span>
+            <v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              class="px-1 pb-1 text-h6"
+              text
+              :disabled="!messageType.type"
+              :color="buttonColor('openToConfig')"
+              :class="format('openToConfig')"
+              @click="switchStep('openToConfig')"
+            >
+              {{ to }}</v-btn
+            >
+            <span v-if="isTwilio">
+              with this
+              <v-btn
+                :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                class="px-0 pb-1 text-h6"
+                text
+                :color="buttonColor('addTwilioConfig')"
+                :class="format('openToConfig')"
+                @click="switchStep('addTwilioConfig')"
+              >
+                config</v-btn
+              ></span
+            ></span
+          ></v-col
+        >
+        <v-col cols="3" lg="2" class="text-right">
+          <v-btn
+            text
+            color="utilGrayMid"
+            class="light-weight-text mr-1"
+            @click="handleClose"
+          >
+            <span style="text-transform: none;">Cancel</span></v-btn
+          ><v-btn
+            color="primary"
+            elevation="0"
+            :loading="saving"
+            :disabled="!allowSave"
+            @click="createAction"
+            ><span style="text-transform: none;">Save</span></v-btn
+          ></v-col
+        >
+      </v-row>
     </v-card-text>
 
     <v-card-text v-if="step.name === 'selectMessageType'">
-      <v-row class="py-3">
+      <v-row>
         <v-col v-for="type in actionTypes()" :key="type.title" cols="6" sm="2">
           <div
             v-ripple

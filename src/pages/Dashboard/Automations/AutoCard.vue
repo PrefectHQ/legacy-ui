@@ -274,88 +274,93 @@ export default {
     @close="closeCard"
   />
   <v-card v-else-if="showHook" class="my-2 text-h6" outlined @click="editHook">
-    <v-card-title :class="canEdit ? 'pa-0' : 'pa-4'">
-      <v-spacer></v-spacer>
-      <v-menu v-if="canEdit" :close-on-content-click="false">
-        <template #activator="{ on, attrs }">
-          <v-btn
-            class="px-2"
-            text
-            title="More Automations"
-            v-bind="attrs"
-            v-on="on"
-            ><v-icon>more_horiz</v-icon></v-btn
-          ></template
-        >
-        <v-card>
-          <div
-            ><v-btn
-              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              text
-              width="100%"
-              color="utilGrayDark"
-              @click="editHook"
-              ><v-icon class="pl-0 pr-4">edit</v-icon>
-              <span class="pr-2">Edit</span>
-            </v-btn></div
-          ><div
-            ><v-btn
-              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              text
-              :loading="deletingHook"
-              width="100%"
-              color="utilGrayDark"
-              @click="deleteHook"
-              ><v-icon class="pr-4">delete</v-icon> Delete</v-btn
-            ></div
-          >
-        </v-card></v-menu
-      ></v-card-title
-    >
-    <v-card-text class="text-h6"
-      ><v-icon color="codePink" class="pr-2">{{
-        hookDetails[hook.event_type] ? hookDetails[hook.event_type].icon : ''
-      }}</v-icon
-      ><span
-        >When <span v-if="!hookName">an </span>{{ hookType }}
-        <v-tooltip v-if="flowName && flowName.length > 2" top>
-          <template #activator="{ on }">
-            <span class="font-weight-bold" v-on="on">{{
-              hookName
-            }}</span> </template
-          >{{ flowNameList.toString() }}</v-tooltip
-        >
-        <span v-else class="font-weight-bold">{{ hookName }}</span>
-        {{ hookDetail
-        }}<span v-if="includeSeconds">
-          for
-          <span class="font-weight-bold">{{ seconds }} seconds</span> </span
-        ><v-tooltip v-if="includeTo" top>
-          <template #activator="{ on }">
-            <span v-on="on">{{ hookStates }}</span></template
-          ><span>{{ states.toString() }}</span></v-tooltip
-        >, then <span class="font-weight-bold">{{ hookAction }}</span
-        >.</span
-      >
-      <div v-if="isAgent" class="subtitle-2 font-weight-light"
-        >To use with a new agent, add this id as the agent-config-id:
-        <v-tooltip bottom>
-          <template #activator="{ on }">
-            <span
-              class="cursor-pointer show-icon-hover-focus-only pa-2px"
-              role="button"
-              @click="copyToClipboard(agentConfigId)"
-              v-on="on"
+    <v-card-text class="text-h6">
+      <v-row>
+        <v-col cols="11" lg="11">
+          <v-icon color="codePink" class="pr-2">{{
+            hookDetails[hook.event_type]
+              ? hookDetails[hook.event_type].icon
+              : ''
+          }}</v-icon
+          ><span
+            >When <span v-if="!hookName">an </span>{{ hookType }}
+            <v-tooltip v-if="flowName && flowName.length > 2" top>
+              <template #activator="{ on }">
+                <span class="font-weight-bold" v-on="on">{{
+                  hookName
+                }}</span> </template
+              >{{ flowNameList.toString() }}</v-tooltip
             >
-              {{ agentConfigId }}
-              <v-icon x-small class="mb-2px mr-2" tabindex="0">
-                {{ copiedText[agentConfigId] ? 'check' : 'file_copy' }}
-              </v-icon>
-            </span>
-          </template>
-          <span> Click to copy {{ agentConfigId }} </span>
-        </v-tooltip>
-      </div></v-card-text
+            <span v-else class="font-weight-bold">{{ hookName }}</span>
+            {{ hookDetail
+            }}<span v-if="includeSeconds">
+              for
+              <span class="font-weight-bold">{{ seconds }} seconds</span> </span
+            ><v-tooltip v-if="includeTo" top>
+              <template #activator="{ on }">
+                <span v-on="on">{{ hookStates }}</span></template
+              ><span>{{ states.toString() }}</span></v-tooltip
+            >, then <span class="font-weight-bold">{{ hookAction }}</span
+            >.</span
+          >
+          <div v-if="isAgent" class="subtitle-2 font-weight-light"
+            >To use with a new agent, add this id as the agent-config-id:
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <span
+                  class="cursor-pointer show-icon-hover-focus-only pa-2px"
+                  role="button"
+                  @click="copyToClipboard(agentConfigId)"
+                  v-on="on"
+                >
+                  {{ agentConfigId }}
+                  <v-icon x-small class="mb-2px mr-2" tabindex="0">
+                    {{ copiedText[agentConfigId] ? 'check' : 'file_copy' }}
+                  </v-icon>
+                </span>
+              </template>
+              <span> Click to copy {{ agentConfigId }} </span>
+            </v-tooltip>
+          </div>
+        </v-col>
+        <v-col class="text-right" cols="1" lg="1">
+          <v-menu v-if="canEdit" :close-on-content-click="false">
+            <template #activator="{ on, attrs }">
+              <v-btn
+                class="px-2"
+                text
+                title="More Automations"
+                v-bind="attrs"
+                v-on="on"
+                ><v-icon>more_horiz</v-icon></v-btn
+              ></template
+            >
+            <v-card>
+              <div
+                ><v-btn
+                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                  text
+                  width="100%"
+                  color="utilGrayDark"
+                  @click="editHook"
+                  ><v-icon class="pl-0 pr-4">edit</v-icon>
+                  <span class="pr-2">Edit</span>
+                </v-btn></div
+              ><div
+                ><v-btn
+                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                  text
+                  :loading="deletingHook"
+                  width="100%"
+                  color="utilGrayDark"
+                  @click="deleteHook"
+                  ><v-icon class="pr-4">delete</v-icon> Delete</v-btn
+                ></div
+              >
+            </v-card></v-menu
+          >
+        </v-col>
+      </v-row></v-card-text
     ></v-card
   >
 </template>

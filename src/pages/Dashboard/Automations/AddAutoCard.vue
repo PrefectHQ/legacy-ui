@@ -575,95 +575,97 @@ export default {
 
 <template>
   <v-card v-if="!addAction" outlined>
-    <v-card-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        v-if="step != 'openAgentOrFlow' || hookDetail"
-        outlined
-        color="utilGrayMid"
-        class="light-weight-text mr-1"
-        @click="closeCard"
-      >
-        <span style="text-transform: none;">Cancel</span></v-btn
-      ><v-btn
-        color="primary"
-        elevation="0"
-        :loading="saving"
-        :disabled="!completeAction"
-        @click="createHook"
-      >
-        <span style="text-transform: none;"> Save</span>
-      </v-btn></v-card-title
-    >
-
     <v-card-text class="text-h6">
-      When<v-btn
-        :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-        :color="buttonColor('selectFlow', 'openAgentOrFlow')"
-        :class="format('selectFlow', 'openAgentOrFlow')"
-        class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
-        text
-        max-width="500px"
-        @click="switchStep('openAgentOrFlow')"
-        ><truncate
-          v-if="flowNamesList && flowNamesList.length"
-          :content="flowNamesList.toString()"
-          >{{ flowNames }}</truncate
-        ><span v-else>{{ flowNames }}</span></v-btn
-      >
-      <span v-if="agentOrFlow === 'Flow'"
-        >{{ ' ' }}{{ haveOrHas }} a run that</span
-      >
+      <v-row>
+        <v-col cols="9" lg="10">
+          When<v-btn
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            :color="buttonColor('selectFlow', 'openAgentOrFlow')"
+            :class="format('selectFlow', 'openAgentOrFlow')"
+            class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
+            text
+            max-width="500px"
+            @click="switchStep('openAgentOrFlow')"
+            ><truncate
+              v-if="flowNamesList && flowNamesList.length"
+              :content="flowNamesList.toString()"
+              >{{ flowNames }}</truncate
+            ><span v-else>{{ flowNames }}</span></v-btn
+          >
+          <span v-if="agentOrFlow === 'Flow'"
+            >{{ ' ' }}{{ haveOrHas }} a run that</span
+          >
 
-      <v-btn
-        v-if="!disableStep"
-        :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-        class="px-0 pb-1 pl-1 text-h6"
-        text
-        :color="buttonColor('selectEventType')"
-        :class="format('selectEventType')"
-        @click="switchStep('selectEventType')"
-      >
-        {{ flowEventType.name }}</v-btn
-      ><span v-else class="pl-1">{{ flowEventType.name }}</span>
-      <span v-if="isSLA">
-        for
+          <v-btn
+            v-if="!disableStep"
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            class="px-0 pb-1 pl-1 text-h6"
+            text
+            :color="buttonColor('selectEventType')"
+            :class="format('selectEventType')"
+            @click="switchStep('selectEventType')"
+          >
+            {{ flowEventType.name }}</v-btn
+          ><span v-else class="pl-1">{{ flowEventType.name }}</span>
+          <span v-if="isSLA">
+            for
 
-        <v-btn
-          :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class="px-0 pb-1 text-h6"
-          text
-          :color="buttonColor('openDuration')"
-          :class="format('openDuration')"
-          @click="switchStep('openDuration')"
-        >
-          {{ seconds }}</v-btn
-        >
-        seconds</span
-      ><span v-if="includeTo">
-        to
-        <v-btn
-          :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-          class=" px-0 pb-1 text-h6 text--darken-2"
-          :class="format('selectState')"
-          text
-          :color="buttonColor('selectState')"
-          @click="switchStep('selectState')"
-        >
-          {{ hookStates }}</v-btn
-        ></span
-      >, then<v-btn
-        :style="{
-          'text-transform': 'none',
-          'min-width': '0px'
-        }"
-        class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
-        text
-        :color="buttonColor('selectDoThis')"
-        :class="format('selectDoThis')"
-        @click="switchStep('selectDoThis')"
-        >{{ hookAction }}</v-btn
-      >.
+            <v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              class="px-0 pb-1 text-h6"
+              text
+              :color="buttonColor('openDuration')"
+              :class="format('openDuration')"
+              @click="switchStep('openDuration')"
+            >
+              {{ seconds }}</v-btn
+            >
+            seconds</span
+          ><span v-if="includeTo">
+            to
+            <v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              class=" px-0 pb-1 text-h6 text--darken-2"
+              :class="format('selectState')"
+              text
+              :color="buttonColor('selectState')"
+              @click="switchStep('selectState')"
+            >
+              {{ hookStates }}</v-btn
+            ></span
+          >, then<v-btn
+            :style="{
+              'text-transform': 'none',
+              'min-width': '0px'
+            }"
+            class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
+            text
+            :color="buttonColor('selectDoThis')"
+            :class="format('selectDoThis')"
+            @click="switchStep('selectDoThis')"
+            >{{ hookAction }}</v-btn
+          >.
+        </v-col>
+        <v-col cols="3" lg="2" class="text-right">
+          <v-btn
+            v-if="step != 'openAgentOrFlow' || hookDetail"
+            outlined
+            color="utilGrayMid"
+            class="light-weight-text mr-1"
+            @click="closeCard"
+          >
+            <span style="text-transform: none;">Cancel</span></v-btn
+          ><v-btn
+            color="primary"
+            elevation="0"
+            :loading="saving"
+            :disabled="!completeAction"
+            @click="createHook"
+          >
+            <span style="text-transform: none;"> Save</span>
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-card-text v-if="step.name === 'openAgentOrFlow'">
       <v-row>
