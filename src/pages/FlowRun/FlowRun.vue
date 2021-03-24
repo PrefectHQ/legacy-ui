@@ -16,6 +16,7 @@ import TaskRunTableTile from '@/pages/FlowRun/TaskRunTable-Tile'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
 import { parser } from '@/utils/markdownParser'
+import { FINISHED_STATES } from '@/utils/states'
 
 export default {
   metaInfo() {
@@ -196,7 +197,20 @@ export default {
         }
       },
       pollInterval: 5000,
-      update: data => data.flow_run_by_pk
+      update(data) {
+        if (!data) return
+
+        const flowRun = data.flow_run_by_pk
+        if (
+          FINISHED_STATES.includes(flowRun.state) &&
+          flowRun.state !== 'Scheduled'
+        ) {
+          this.$apollo.queries.flowRun.stopPolling()
+
+          this.$apollo.queries.flowRun.startPolling(60000)
+        }
+        return flowRun
+      }
     }
   }
 }
@@ -291,10 +305,13 @@ export default {
           <TimelineTile
             v-if="flowId"
             slot="row-0"
-            condensed
             :flow-id="flowId"
             :flow-run-id="flowRunId"
-            :flow-run="flowRun"
+            :flow-run-end-time="flowRun.end_time"
+            :flow-run-scheduled-start-time="flowRun.scheduled_start_time"
+            :flow-run-start-time="flowRun.start_time"
+            :flow-run-state="flowRun.state"
+            :flow-run-states="flowRun.states"
           />
 
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
