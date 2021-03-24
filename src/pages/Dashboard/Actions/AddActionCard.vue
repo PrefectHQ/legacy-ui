@@ -223,8 +223,7 @@ export default {
       return this.step.name === selectedStep || this.step.name === otherStep
         ? 'codePink'
         : // : stepComplete?.complete || otherComplete?.complete
-          'utilGrayMid'
-      // : 'utilGrayLight'
+          'utilGrayDark'
     },
     format(selectedStep, otherStep) {
       const stepComplete = this.steps[selectedStep]
@@ -232,8 +231,8 @@ export default {
       return this.step.name === selectedStep || this.step.name === otherStep
         ? ''
         : stepComplete?.complete || otherComplete?.complete
-        ? 'font-weight-bold'
-        : 'text-decoration-underline'
+        ? ''
+        : 'font-weight-light'
     },
     closeCard() {
       if (this.hookDetail) this.$emit('close')
@@ -242,6 +241,7 @@ export default {
       }
     },
     switchStep(selectedStep) {
+      console.log(this.steps['openDuration'])
       if (this.step.name === 'openDuration')
         this.steps['openDuration'].complete = true
       this.step = this.steps[selectedStep]
@@ -334,7 +334,7 @@ export default {
       this.switchStep('selectDoThis')
     },
     closeSeconds() {
-      this.steps['opneDuration'].complete = true
+      this.steps['openDuration'].complete = true
       this.switchStep('selectDoThis')
     },
     addNewAction() {
