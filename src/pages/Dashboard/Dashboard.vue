@@ -11,7 +11,7 @@ import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
-import UsageTile from '@/pages/Dashboard/Usage-Tile'
+import UsageTiles from '@/pages/Dashboard/Usage-Tiles'
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import { mapGetters, mapActions } from 'vuex'
@@ -59,7 +59,7 @@ export default {
     TileLayout,
     FlowRunHistoryTile,
     UpcomingRunsTile,
-    UsageTile
+    UsageTiles
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'project') {
@@ -325,7 +325,7 @@ export default {
             class="my-2"
             tile
           >
-            <UsageTile />
+            <UsageTiles />
           </v-skeleton-loader>
 
           <v-skeleton-loader

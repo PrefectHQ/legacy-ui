@@ -32,6 +32,7 @@ query { hello }
         // UUID!
         '_by_pk',
         'hello',
+        'preview_invoice',
         'reference',
         'reference_data',
         'task_tag_limit',
