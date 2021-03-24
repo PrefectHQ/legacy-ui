@@ -754,8 +754,7 @@ export default {
           title="Next"
           class="mx-1"
           @click="handleFlowNext"
-        >
-          Next
+          ><span style="text-transform: none;"> Next</span>
         </v-btn>
       </v-card-actions>
     </v-sheet>
@@ -797,8 +796,7 @@ export default {
           title="Next"
           class="mx-1"
           @click="closeSeconds"
-        >
-          Next
+          ><span style="text-transform: none;"> Next</span>
         </v-btn></v-card-actions
       ></div
     >
@@ -849,8 +847,7 @@ export default {
           class="mx-1"
           :disabled="chosenStates.length < 1"
           @click="switchStep('selectDoThis')"
-        >
-          Next
+          ><span style="text-transform: none;"> Next</span>
         </v-btn></v-card-actions
       ></v-card-text
     >
@@ -858,7 +855,8 @@ export default {
     <v-card-text v-else-if="step.name === 'selectDoThis'">
       <v-row class="px-3">
         <v-btn small elevation="0" color="primary" @click="addNewAction"
-          ><v-icon small class="mr-2">fal fa-plus</v-icon> New
+          ><v-icon small class="mr-2">fal fa-plus</v-icon
+          ><span style="text-transform: none;">New Action</span>
         </v-btn>
       </v-row>
 

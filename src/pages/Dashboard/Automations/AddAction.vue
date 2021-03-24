@@ -722,8 +722,7 @@ export default {
         color="primary"
         title="Next"
         @click="handleNext"
-      >
-        Next
+        ><span style="text-transform: none;"> Next</span>
       </v-btn>
     </v-card-actions>
   </v-card>
