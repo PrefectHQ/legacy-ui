@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add Automations page - [#695](https://github.com/PrefectHQ/ui/pull/695)
 
 ### Bugfixes
 
