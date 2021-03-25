@@ -74,6 +74,7 @@ export default {
       // Loading states
       isFetchingMembers: false,
       isRemovingUser: false,
+      isCreatingKey: false,
 
       // Selected user
       // Set when removing account membership
@@ -82,6 +83,7 @@ export default {
       expiresAt: null,
       copyKeyDialog: false,
       apiKeyCopied: false,
+
       newAPIKey: '',
       newKeyName: '',
       keyToDelete: null,
@@ -114,6 +116,7 @@ export default {
       }, 2000)
     },
     async createAPIKey(variables) {
+      this.isCreatingKey = true
       const result = await this.$apollo.mutate({
         mutation: require('@/graphql/Tokens/create-api-key.gql'),
         variables
@@ -123,6 +126,7 @@ export default {
         result?.data?.create_api_key?.id &&
         result?.data?.create_api_key?.key
       ) {
+        this.isCreatingKey = false
         this.resetNewKey()
         this.newAPIKey = result.data.create_api_key.key
         this.dialogCreateKey = false
@@ -133,6 +137,7 @@ export default {
           'error',
           'Something went wrong while trying to create your API key. Please try again. If this error persists, please contact help@prefect.io.'
         )
+        this.isCreatingKey = false
       }
     },
     async deleteKey(key) {
@@ -265,6 +270,7 @@ export default {
       :header-props="{ 'sort-icon': 'arrow_drop_up' }"
       :items="membersItems"
       :items-per-page="10"
+      :loading="isFetchingKeys"
       class="elevation-2 rounded-0 truncate-table"
       :footer-props="{
         showFirstLastPage: true,
@@ -304,9 +310,11 @@ export default {
               >
               <v-list-item-subtitle>
                 {{
-                  key.expires
-                    ? `Expires ${formatTimeRelative(key.expires)}`
-                    : 'Never Expires'
+                  !key.expires
+                    ? 'Never Expires'
+                    : formatTimeRelative(key.expires).includes('ago')
+                    ? `Expired ${formatTimeRelative(key.expires)}`
+                    : `Expires ${formatTimeRelative(key.expires)}`
                 }}</v-list-item-subtitle
               >
               <v-tooltip bottom>
@@ -376,6 +384,7 @@ export default {
       v-model="dialogCreateKey"
       :dialog-props="{ 'max-width': '500' }"
       :disabled="!newKeyFormFilled"
+      :loading="isCreatingKey"
       title="Create an API key"
       confirm-text="Create"
       @cancel="resetNewKey"

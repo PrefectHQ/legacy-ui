@@ -77,8 +77,8 @@ export default {
           }
         })
         .catch(({ graphQLErrors }) => {
-          this.accountCreationError =
-            'There was an error in creating your service account. Try again?'
+          this.accountCreationError = `There was an error in creating your service account. Try again?
+            ${{ graphQLErrors }}`
           return { error: graphQLErrors }
         })
 
