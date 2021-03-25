@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add generic markdown messages for action notifications - [#674](https://github.com/PrefectHQ/ui/pull/674)
 
 ### Bugfixes
 
