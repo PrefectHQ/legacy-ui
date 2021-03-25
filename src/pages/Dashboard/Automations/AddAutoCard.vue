@@ -48,7 +48,8 @@ export default {
       addAction: false,
       flowEventType: null,
       flowEventTypes: flowEventTypes,
-      notAll: !!this.hookDetail?.flowName || false
+      notAll: !!this.hookDetail?.flowName || false,
+      isActive: false
     }
   },
   computed: {
@@ -73,7 +74,7 @@ export default {
       return 'this'
     },
     disableStep() {
-      return this.agentOrFlow === 'Agent' || this.selectedFlows.length > 1
+      return this.agentOrFlow === ' an agent' || this.selectedFlows.length > 1
     },
     isSLA() {
       return (
@@ -254,6 +255,7 @@ export default {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
+        this.allFlows = false
         this.steps['openAgentOrFlow'].complete = true
         this.switchStep('selectDoThis')
       }
@@ -276,7 +278,7 @@ export default {
       this.steps['openAgentOrFlow'].complete = true
     },
     handleFlowNext() {
-      if (this.selectedFlows.length)
+      if (this.selectedFlows.length || this.allFlows)
         this.steps['openAgentOrFlow'].complete = true
       if (this.selectedFlows?.length > 1) {
         this.flowEventType = {
@@ -569,11 +571,12 @@ export default {
 </script>
 
 <template>
-  <v-card v-if="!addAction" outlined>
+  <v-card outlined>
     <v-card-text class="text-h6">
       <v-row>
         <v-col cols="9" lg="10">
-          When<v-btn
+          When<span v-if="agentOrFlow === 'a flow'"> a run from</span
+          ><v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectFlow', 'openAgentOrFlow')"
             :class="format('selectFlow', 'openAgentOrFlow')"
@@ -586,9 +589,6 @@ export default {
               :content="flowNamesList.toString()"
               >{{ flowNames }}</truncate
             ><span v-else>{{ flowNames }}</span></v-btn
-          >
-          <span v-if="agentOrFlow === 'a flow'"
-            >{{ ' ' }}{{ haveOrHas }} a run that</span
           >
 
           <v-btn
@@ -641,7 +641,7 @@ export default {
             >{{ hookAction }}</v-btn
           >.
         </v-col>
-        <v-col cols="3" lg="2" class="text-right">
+        <v-col v-if="!addAction" cols="3" lg="2" class="text-right">
           <v-btn
             v-if="step.name != 'openAgentOrFlow' || hookDetail"
             text
@@ -868,7 +868,7 @@ export default {
     <v-card-text v-else-if="step.name === 'selectDoThis'">
       <v-row class="px-3">
         <v-btn small elevation="0" color="primary" @click="addNewAction"
-          ><v-icon small class="mr-2">fal fa-plus</v-icon
+          ><v-icon small class="mr-2">fa-plus</v-icon
           ><span style="text-transform: none;">New Action</span>
         </v-btn>
       </v-row>
@@ -917,14 +917,14 @@ export default {
           ></slot
         ></ConfirmDialog
       >
+      <AddAction
+        v-if="addAction"
+        :event-type="flowEventType.enum || 'AGENT'"
+        @close-action="addAction = false"
+        @new-action="createAction"
+      />
     </v-card-text>
   </v-card>
-  <AddAction
-    v-else
-    :event-type="flowEventType.enum || 'AGENT'"
-    @close-action="addAction = false"
-    @new-action="createAction"
-  />
 </template>
 
 <style lang="scss" scoped>
