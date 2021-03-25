@@ -250,9 +250,9 @@ export default {
           ) {
             this.steps['openToConfig'].complete = true
           }
-
-          this.switchStep('addName')
         }
+      } else {
+        this.switchStep('addName')
       }
     },
     selectMessageType(type) {
@@ -621,40 +621,53 @@ export default {
           >
           integration.
         </span>
-
-        <v-select
-          v-model="apiToken"
-          :items="secretNames"
-          label="Name of your PagerDuty API Token Secret"
-          no-data-text="You will need to create a secret with your PagerDuty API Token"
-        />
-        <v-select
-          v-model="severity"
-          :items="severityLevels"
-          label="Severity"
-          dense
-        />
-        <v-text-field
-          v-model="routingKey"
-          :rules="[rules.required]"
-          label="Integration key"
-          dense
-          class="mb-8"
-        />
+        <v-row class="mt-2">
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="apiToken"
+              :items="secretNames"
+              outlined
+              label="PagerDuty API Token Secret"
+              no-data-text="You will need to create a secret with your PagerDuty API Token"
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="severity"
+              :items="severityLevels"
+              outlined
+              label="Severity"
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="routingKey"
+              :rules="[rules.required]"
+              label="Integration key"
+              outlined
+              class="mb-8"
+            />
+          </v-col>
+        </v-row>
       </div>
-      <ListInput
+      <div
         v-else-if="
           messageType.type === 'EMAIL' || messageType.type === 'TWILIO'
         "
-        :label="messageConfigLabel"
-        :value="messageConfigArray"
-        :outline="false"
-        :rules="[rules[messageType.type]]"
-        :hide="false"
-        :show-reset="false"
-        :show-clear="false"
-        @input="handleListInput"
-      ></ListInput>
+      >
+        <div class="mb-1 text-caption">
+          Hint: add to the list after typing by pressing the Enter key
+        </div>
+        <ListInput
+          :label="messageConfigLabel"
+          :value="messageConfigArray"
+          :rules="[rules[messageType.type]]"
+          :hide="false"
+          :show-reset="false"
+          :show-clear="false"
+          @input="handleListInput"
+        ></ListInput>
+      </div>
     </v-card-text>
     <v-card-text v-else-if="step.name === 'addTwilioConfig'">
       <div>
@@ -677,27 +690,33 @@ export default {
         </span>
       </div>
 
-      <div>
-        <v-select
-          v-model="authToken"
-          :items="secretNames"
-          label="Name of Auth token Secret"
-          no-data-text="You will need to create a secret with your PagerDuty API Token"
-        />
-        <v-text-field
-          v-model="accountSid"
-          :rules="[rules.required]"
-          label="Account SID"
-          class="pb-2"
-          dense
-        />
-        <v-text-field
-          v-model="messagingService"
-          :rules="[rules.required]"
-          label="Messaging service SID"
-          dense
-        />
-      </div>
+      <v-row class="mt-4">
+        <v-col cols="12" md="4">
+          <v-select
+            v-model="authToken"
+            outlined
+            :items="secretNames"
+            label="Name of Auth token Secret"
+            no-data-text="You will need to create a secret with your PagerDuty API Token"
+          />
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-text-field
+            v-model="accountSid"
+            outlined
+            :rules="[rules.required]"
+            label="Account SID"
+          />
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-text-field
+            v-model="messagingService"
+            outlined
+            :rules="[rules.required]"
+            label="Messaging service SID"
+          />
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-card-text v-else-if="step.name === 'addName'" class="pr-4">
       <div class="pb-2"
