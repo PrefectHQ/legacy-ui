@@ -48,13 +48,14 @@ export default {
       addAction: false,
       flowEventType: null,
       flowEventTypes: flowEventTypes,
-      notAll: !!this.hookDetail?.flowName || false
+      notAll: !!this.hookDetail?.flowName || false,
+      isActive: false
     }
   },
   computed: {
     ...mapGetters('data', ['projects']),
     //We can not update an agent for now - config id needs to be added at agent creation
-    // ...mapGetters('Agent', ['agents']),
+    // ...mapGetters('an agent', ['agents']),
     // projectsList() {
     //   return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
     //     a.name > b.name ? 1 : -1
@@ -69,14 +70,11 @@ export default {
     agentOrFlow() {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
-        return 'Agent'
-      return 'flow'
-    },
-    disableCancel() {
-      return this.agentOrFlow === 'flow'
+        return 'an agent'
+      return 'this'
     },
     disableStep() {
-      return this.agentOrFlow === 'Agent' || this.selectedFlows.length > 1
+      return this.agentOrFlow === 'an agent' || this.selectedFlows.length > 1
     },
     isSLA() {
       return (
@@ -92,7 +90,7 @@ export default {
       return this.actions
         ? this.actions.find(
             action => action.action_type === 'CancelFlowRunAction'
-          ) || this.agentOrFlow === 'Agent'
+          ) || this.agentOrFlow === 'an agent'
           ? this.actions
           : [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
@@ -106,21 +104,21 @@ export default {
     flowNames() {
       const agentName =
         this.hookDetail?.agentConfig?.agents?.length == 1
-          ? this.HookDetail?.agentConfig?.agents[0]?.name === 'agent'
+          ? this.HookDetail?.agentConfig?.agents[0]?.name === 'an agent'
             ? this.HookDetail?.agentConfig?.agents[0]?.type
             : this.hookDetail?.agentConfig?.agents[0]?.name
           : this.hookDetail?.agentConfig?.agents
               .map((agent, index) => {
                 if (index === 0) {
-                  return agent.name === 'agent' ? agent.type : agent.name
+                  return agent.name === 'an agent' ? agent.type : agent.name
                 } else {
-                  return agent.name === 'agent'
+                  return agent.name === 'an agent'
                     ? `or ${agent.type}`
                     : `or ${agent.name}`
                 }
               })
               .toString()
-      return this.agentOrFlow === 'Agent'
+      return this.agentOrFlow === 'an agent'
         ? agentName || 'an agent'
         : this.flowNamesList?.length > 1
         ? this.flowNamesList?.length === this.flows.length
@@ -143,7 +141,7 @@ export default {
       )
     },
     completeAction() {
-      if (this.agentOrFlow === 'Agent') return !!this.chosenAction
+      if (this.agentOrFlow === 'an agent') return !!this.chosenAction
       if (!this.includeTo)
         return !!this.selectedFlows?.length && !!this.chosenAction
       return (
@@ -238,7 +236,7 @@ export default {
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
-      if (choice === 'Flow') {
+      if (choice === 'a flow') {
         this.flowEventType = this.hookDetail?.flowConfig?.kind
           ? this.flowEventTypes.find(
               type => type.enum === this.hookDetail?.flowConfig?.kind
@@ -253,10 +251,11 @@ export default {
             }
         this.switchStep('selectFlow')
       }
-      if (choice === 'Agent') {
+      if (choice === 'an agent') {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
+        this.allFlows = false
         this.steps['openAgentOrFlow'].complete = true
         this.switchStep('selectDoThis')
       }
@@ -279,7 +278,7 @@ export default {
       this.steps['openAgentOrFlow'].complete = true
     },
     handleFlowNext() {
-      if (this.selectedFlows.length)
+      if (this.selectedFlows.length || this.allFlows)
         this.steps['openAgentOrFlow'].complete = true
       if (this.selectedFlows?.length > 1) {
         this.flowEventType = {
@@ -334,7 +333,7 @@ export default {
     disableChip(item) {
       return (
         (item.enum != 'CHANGES_STATE' && this.selectedFlows?.length > 1) ||
-        this.agentOrFlow === 'Agent'
+        this.agentOrFlow === 'an agent'
       )
     },
     includesFlow(flow) {
@@ -470,7 +469,7 @@ export default {
             })
             data = flowSLAEventSuccess.data
           }
-        } else if (this.agentOrFlow === 'Agent') {
+        } else if (this.agentOrFlow === 'an agent') {
           let agentConfig
           if (this.hookDetails?.agentConfig) {
             agentConfig = this.hookDetails?.agentConfig
@@ -572,15 +571,16 @@ export default {
 </script>
 
 <template>
-  <v-card v-if="!addAction" outlined>
+  <v-card outlined>
     <v-card-text class="text-h6">
       <v-row>
         <v-col cols="9" lg="10">
-          When<v-btn
+          When<span v-if="agentOrFlow === 'a flow'"> a run from</span
+          ><v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectFlow', 'openAgentOrFlow')"
             :class="format('selectFlow', 'openAgentOrFlow')"
-            class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
+            class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
             text
             max-width="500px"
             @click="switchStep('openAgentOrFlow')"
@@ -590,14 +590,11 @@ export default {
               >{{ flowNames }}</truncate
             ><span v-else>{{ flowNames }}</span></v-btn
           >
-          <span v-if="agentOrFlow === 'Flow'"
-            >{{ ' ' }}{{ haveOrHas }} a run that</span
-          >
 
           <v-btn
             v-if="!disableStep"
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 pl-1 text-h6"
+            class="px-0 pb-1 ml-1 text-h6"
             text
             :color="buttonColor('selectEventType')"
             :class="format('selectEventType')"
@@ -636,7 +633,7 @@ export default {
               'text-transform': 'none',
               'min-width': '0px'
             }"
-            class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
+            class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
             text
             :color="buttonColor('selectDoThis')"
             :class="format('selectDoThis')"
@@ -644,11 +641,11 @@ export default {
             >{{ hookAction }}</v-btn
           >.
         </v-col>
-        <v-col cols="3" lg="2" class="text-right">
+        <v-col v-if="!addAction" cols="3" lg="2" class="text-right">
           <v-btn
-            outlined
+            v-if="step.name != 'openAgentOrFlow' || hookDetail"
+            text
             color="utilGrayMid"
-            :disabled="disableCancel"
             class="light-weight-text mr-1 px-2"
             @click="closeCard"
           >
@@ -660,7 +657,7 @@ export default {
             :disabled="!completeAction"
             @click="createHook"
           >
-            <span style="text-transform: none;"> Save</span>
+            <span style="text-transform: none;">Save</span>
           </v-btn>
         </v-col>
       </v-row>
@@ -669,7 +666,7 @@ export default {
       <v-card-text>
         <v-row class="px-1">
           <div
-            v-for="item in ['Flow', 'Agent']"
+            v-for="item in ['a flow', 'an agent']"
             :key="item"
             v-ripple
             class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
@@ -677,23 +674,22 @@ export default {
             @click="selectAgentOrFlow(item)"
             ><div class="text-center"
               ><v-icon class="pr-2 pb-1">{{
-                item === 'Flow' ? 'pi-flow' : 'pi-agent'
+                item === 'a flow' ? 'pi-flow' : 'pi-agent'
               }}</v-icon
               >{{ item }}</div
             ></div
           >
         </v-row>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="agentOrFlow !== 'this'">
         <v-spacer></v-spacer>
         <v-btn
           color="primary"
           elevation="0"
-          :disabled="disableCancel"
           title="Next"
           class="mx-1"
           @click="
-            agentOrFlow === 'Agent'
+            agentOrFlow === 'an agent'
               ? switchStep('selectDoThis')
               : switchStep('selectFlow')
           "
@@ -705,15 +701,6 @@ export default {
       <v-row
         ><v-col cols="12" class="py-0">
           <!-- //need to fix v-model AND flow box color/style -->
-          <v-checkbox
-            v-if="!searchEntry"
-            v-model="selectAll"
-            class="mx-2 mt-2"
-            dense
-            hide-details
-            label="Select All"
-            :indeterminate="notAll"
-          ></v-checkbox>
           <v-text-field
             v-model="searchEntry"
             hide-details
@@ -724,7 +711,16 @@ export default {
             :placeholder="placeholderMessage"
             prepend-inner-icon="search"
             autocomplete="new-password"
-        /></v-col>
+          />
+          <v-checkbox
+            v-model="selectAll"
+            class="mx-2 mt-2"
+            dense
+            hide-details
+            label="Select All"
+            :indeterminate="notAll"
+          ></v-checkbox>
+        </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
@@ -742,14 +738,18 @@ export default {
               >
                 <div
                   v-ripple
-                  class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+                  class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer"
                   :class="{ active: includesFlow(item) }"
                   @click="selectFlow(item)"
                 >
-                  <truncate :content="`${item.name} - ${item.project.name}`"
-                    ><div class="caption">{{ item.project.name }}</div
-                    ><div class="text-body-1">{{ item.name }}</div></truncate
-                  >
+                  <div style="width: auto;" class="text-body-1 text-truncate">
+                    <div class="caption">{{ item.project.name }}</div
+                    ><div
+                      ><div style="width: 100%;" class="text-truncate">{{
+                        item.name
+                      }}</div></div
+                    >
+                  </div>
                 </div></v-col
               >
             </v-row>
@@ -784,12 +784,11 @@ export default {
           </div>
         </v-row>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="flowEventType.enum">
         <v-spacer></v-spacer>
         <v-btn
           color="primary"
           elevation="0"
-          :disabled="!flowEventType.name"
           title="Next"
           class="mx-1"
           @click="selectFlowEventType()"
@@ -867,14 +866,14 @@ export default {
     >
 
     <v-card-text v-else-if="step.name === 'selectDoThis'">
-      <v-row class="px-3">
+      <v-row v-if="!addAction" class="px-3">
         <v-btn small elevation="0" color="primary" @click="addNewAction"
-          ><v-icon small class="mr-2">fal fa-plus</v-icon
+          ><v-icon small class="mr-2">fa-plus</v-icon
           ><span style="text-transform: none;">New Action</span>
         </v-btn>
       </v-row>
 
-      <v-row class="py-2 px-1">
+      <v-row v-if="!addAction" class="py-2 px-1">
         <div v-if="!editedActions.length" class="mx-2"
           >You have no actions yet.</div
         >
@@ -887,7 +886,7 @@ export default {
           :class="{ active: chosenAction === item }"
           :disabled="
             item.action_type === 'CancelFlowRunAction' &&
-              agentOrFlow === 'Agent'
+              agentOrFlow === 'an agent'
           "
           @click="selectAction(item)"
           >{{ item.name }}
@@ -918,14 +917,14 @@ export default {
           ></slot
         ></ConfirmDialog
       >
+      <AddAction
+        v-if="addAction"
+        :event-type="flowEventType.enum || 'an agent'"
+        @close-action="addAction = false"
+        @new-action="createAction"
+      />
     </v-card-text>
   </v-card>
-  <AddAction
-    v-else
-    :event-type="flowEventType.enum || 'AGENT'"
-    @close-action="addAction = false"
-    @new-action="createAction"
-  />
 </template>
 
 <style lang="scss" scoped>

@@ -39,7 +39,7 @@ const serverTabs = [
 const cloudTabs = [
   {
     name: 'Automations',
-    target: 'actions',
+    target: 'automations',
     icon: 'fad fa-random'
   }
 ]
@@ -119,7 +119,7 @@ export default {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
     },
     includeProjects() {
-      return this.tab != 'actions'
+      return this.tab != 'automations'
     }
   },
   watch: {
@@ -142,9 +142,9 @@ export default {
           /* eslint-disable-next-line */
           query = 'agents'
           break
-        case 'actions':
+        case 'automations':
           /* eslint-disable-next-line */
-          query = 'actions'
+          query = 'automations'
           break
         default:
           break
@@ -185,7 +185,7 @@ export default {
     getTab() {
       if ('flows' in this.$route.query) return 'flows'
       if ('agents' in this.$route.query) return 'agents'
-      if ('actions' in this.$route.query) return 'actions'
+      if ('automations' in this.$route.query) return 'automations'
       return 'overview'
     },
     refresh() {
@@ -424,7 +424,7 @@ export default {
 
       <v-tab-item
         class="tab-full-height"
-        value="actions"
+        value="automations"
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
