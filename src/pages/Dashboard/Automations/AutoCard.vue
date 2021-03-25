@@ -69,7 +69,7 @@ export default {
       return this.hook?.event_tags?.agent_config_id[0]
     },
     includeSeconds() {
-      return this.flowConfig
+      return this.hook?.event_type === 'FlowSLAFailedEvent'
     },
     hookType() {
       const event = this.hook?.event_type
@@ -78,7 +78,7 @@ export default {
     hookDetail() {
       const event = this.hook?.event_type
       if (event === 'FlowRunStateChangedEvent') return ''
-      const hook = this.flowConfig
+      const hook = this.includeSeconds
         ? `${this.hookDetails[this.flowConfig.kind]?.action}`
         : this.hookDetails[event]?.action
       return hook
@@ -152,16 +152,15 @@ export default {
       )
     },
     async deleteHook() {
-      let success
       try {
         this.deletingHook = true
-        success = await this.$apollo.mutate({
+        const success = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/delete-hook.gql'),
           variables: {
             hookId: this.hook.id
           }
         })
-        if (success.data?.delete_hook?.success) this.showHook = false
+        console.log('success', success)
       } catch (error) {
         const errString = `${error}`
         this.setAlert({
@@ -169,6 +168,9 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
+      } finally {
+        this.handleRefetch()
+        this.deletingHook = false
       }
     },
     closeCard() {
@@ -254,7 +256,7 @@ export default {
         )
       },
       update: data => {
-        return data.flow_sla_config_by_pk
+        return data.flow_sla_config_by_pk || []
       }
     }
   }
@@ -269,11 +271,10 @@ export default {
   <AddAutoCard
     v-else-if="openEdit"
     :hook-detail="hookConfig"
-    class="my-2"
     @refetch-hooks="handleRefetch"
     @close="closeCard"
   />
-  <v-card v-else-if="showHook" class="my-2 text-h6" outlined @click="editHook">
+  <v-card v-else-if="showHook" class="text-h6" outlined @click="editHook">
     <v-card-text class="text-h6">
       <v-row>
         <v-col cols="11" lg="11" class="pt-8">

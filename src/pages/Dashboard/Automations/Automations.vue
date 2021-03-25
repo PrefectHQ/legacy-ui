@@ -33,7 +33,9 @@ export default {
     ...mapGetters('license', ['permissions']),
     sortedHooks() {
       const hooks = this.hooks ? [...this.hooks] : []
-      const sorted = hooks.sort((a, b) => a.id - b.id)
+      const sorted = hooks.sort(
+        (a, b) => new Date(b.created) - new Date(a.created)
+      )
       return sorted
     },
     noAccess() {
