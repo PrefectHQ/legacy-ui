@@ -10,6 +10,7 @@ export default {
   },
   data() {
     return {
+      showAutomations: false,
       loadingHook: 0,
       closeCard: false,
       editHook: null,
@@ -79,37 +80,40 @@ export default {
 </script>
 
 <template>
-  <div v-if="noAccess">
-    <v-row>
-      <v-col cols="12" class="text-center text-h6 pa-12">
-        You do not have access to Automations. If you'd like to be able to
-        create automations that notify you (or even cancel your run) when
-        there's a change in your agent or a run,
-        <router-link :to="{ name: 'plans' }">upgrade</router-link> your account.
-      </v-col>
-    </v-row>
-  </div>
-  <div v-else>
-    <v-row>
-      <v-col>
-        <div class="overline">New Automation</div>
-        <AddAutoCard v-if="canEdit && !closeCard" @refresh="handleRefresh" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
-        <v-skeleton-loader
-          v-if="loadingHook > 0 || closeCard"
-          type="list-item-avatar-three-line"
-        ></v-skeleton-loader>
-        <AutoCard
-          v-else
-          :hook="hook"
-          :can-edit="canEdit"
-          @open-edit="handleEdit(hook, i)"
-          @refetch="handleRefetch"
-        />
-      </v-col>
-    </v-row>
+  <div v-if="showAutomations">
+    <div v-if="noAccess">
+      <v-row>
+        <v-col cols="12" class="text-center text-h6 pa-12">
+          You do not have access to Automations. If you'd like to be able to
+          create automations that notify you (or even cancel your run) when
+          there's a change in your agent or a run,
+          <router-link :to="{ name: 'plans' }">upgrade</router-link> your
+          account.
+        </v-col>
+      </v-row>
+    </div>
+    <div v-else>
+      <v-row>
+        <v-col>
+          <div class="overline">New Automation</div>
+          <AddAutoCard v-if="canEdit && !closeCard" @refresh="handleRefresh" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
+          <v-skeleton-loader
+            v-if="loadingHook > 0 || closeCard"
+            type="list-item-avatar-three-line"
+          ></v-skeleton-loader>
+          <AutoCard
+            v-else
+            :hook="hook"
+            :can-edit="canEdit"
+            @open-edit="handleEdit(hook, i)"
+            @refetch="handleRefetch"
+          />
+        </v-col>
+      </v-row>
+    </div>
   </div>
 </template>
