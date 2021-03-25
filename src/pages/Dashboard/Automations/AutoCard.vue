@@ -276,7 +276,7 @@ export default {
   <v-card v-else-if="showHook" class="my-2 text-h6" outlined @click="editHook">
     <v-card-text class="text-h6">
       <v-row>
-        <v-col cols="11" lg="11">
+        <v-col cols="11" lg="11" class="pt-8">
           <v-icon color="codePink" class="pr-2">{{
             hookDetails[hook.event_type]
               ? hookDetails[hook.event_type].icon
