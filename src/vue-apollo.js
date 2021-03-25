@@ -41,6 +41,8 @@ const batchLink = new BatchHttpLink({
   uri: () => store.getters['api/url']
 })
 
+// Resets the cache and stops requests if
+// the backend has changed
 const backendMiddleware = new ApolloLink((operation, forward) => {
   const context = operation.getContext()
   if (context.headers?.['X-Backend'] !== store.getters['api/backend']) {
@@ -54,6 +56,7 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
   })
 })
 
+// Used to identify the request in the server
 const headerMiddleware = setContext((_, { headers }) => {
   headers['X-Prefect-UI'] = true
   headers['X-Backend'] = store.getters['api/backend']
@@ -67,6 +70,8 @@ const headerMiddleware = setContext((_, { headers }) => {
   }
 })
 
+// After requests have been made, formats errors for the JS console
+// to easily track the error sources in collapsible traces
 const errorAfterware = onError(
   ({ response, operation, graphQLErrors, networkError, forward }) => {
     // Only throw the API error once in a row
@@ -151,6 +156,8 @@ const errorAfterware = onError(
 
 export { errorAfterware }
 
+// Adds authorization headers to requests headed for the Cloud API;
+// just forwards requests if headed for a Server API
 const authMiddleware = setContext(async (_, { headers }) => {
   if (store.getters['api/isServer']) {
     return {
@@ -168,7 +175,8 @@ const authMiddleware = setContext(async (_, { headers }) => {
       return {
         headers: {
           ...headers,
-          authorization: `Bearer ${store.getters['auth/refreshToken']}`
+          authorization: `Bearer ${store.getters['auth/refreshToken']}`,
+          'authorization-expiry': store.getters['auth/refreshTokenExpiry']
         }
       }
     }
@@ -200,10 +208,8 @@ const authMiddleware = setContext(async (_, { headers }) => {
       store.getters['auth/isLoggingInUser']
 
     if (authRefreshRequired && !middleOfRefresh) {
-      // console.log(authRefreshRequired, _.operationName)
       defaultApolloClient.cache.reset()
       if (validRefreshToken) {
-        // console.log(validRefreshToken, _.operationName)
         await store.dispatch('auth/refreshAuthorization')
       } else if (isAuthenticatedUser) {
         await store.dispatch('auth/authorize')
@@ -217,9 +223,27 @@ const authMiddleware = setContext(async (_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: bearer
+      authorization: bearer,
+      'authorization-expiry': store.getters['auth/authorizationTokenExpiry']
     }
   }
+})
+
+// The last link in the chain before the request is sent;
+// Checks that the request should be sent based on authorization header expiration
+// and stops the request if it shouldn't be
+const terminalRequestLink = new ApolloLink((operation, forward) => {
+  if (store.getters['api/isServer']) return forward(operation)
+
+  const context = operation.getContext()
+  const expiration = context.headers?.['authorization-expiry']
+
+  // If there's no expiration, we forward the operation
+  if (!expiration) return forward(operation)
+
+  // otherwise we check that the authorization header hasn't expired before
+  // forwarding the request
+  if (notExpired(expiration)) return forward(operation)
 })
 
 // Apollo link chain; acts as middleware for GraphQL queries
@@ -228,6 +252,7 @@ const link = ApolloLink.from([
   headerMiddleware,
   backendMiddleware,
   errorAfterware,
+  terminalRequestLink,
   batchLink
 ])
 
