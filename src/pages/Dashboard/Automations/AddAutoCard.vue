@@ -577,7 +577,7 @@ export default {
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectFlow', 'openAgentOrFlow')"
             :class="format('selectFlow', 'openAgentOrFlow')"
-            class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
+            class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
             text
             max-width="500px"
             @click="switchStep('openAgentOrFlow')"
@@ -594,7 +594,7 @@ export default {
           <v-btn
             v-if="!disableStep"
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 pl-1 text-h6"
+            class="px-0 pb-1 ml-1 text-h6"
             text
             :color="buttonColor('selectEventType')"
             :class="format('selectEventType')"
@@ -633,7 +633,7 @@ export default {
               'text-transform': 'none',
               'min-width': '0px'
             }"
-            class="px-0 pb-1 pl-1 text-h6 d-inline-block text-truncate"
+            class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
             text
             :color="buttonColor('selectDoThis')"
             :class="format('selectDoThis')"
