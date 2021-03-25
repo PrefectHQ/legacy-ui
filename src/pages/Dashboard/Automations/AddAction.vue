@@ -532,26 +532,25 @@ export default {
             <div>
               For a state change event the message would be:
               <span class="font-weight-light"
-                >"Run `{flow_run_name}` of flow `{flow_name}` entered state
-                `{state}` with " "message `{state_message}`. See {flow_run_link}
-                for more details."</span
+                >"Run {flow_run_name} of flow {flow_name} entered state {state}
+                with message {state_message}. See {flow_run_link} for more
+                details."</span
               ></div
             >
             <div
               >For a flow SLA event the default message would be:
               <span class="font-weight-light"
-                >"Run `{flow_run_name}` (`{flow_run_id}`) of flow `{flow_name}`
-                failed `{kind}` " "SLA (`{flow_sla_config_id}`) after
-                {duration_seconds} seconds. " "See {flow_run_link} for more
-                details."</span
+                >"Run {flow_run_name} ({flow_run_id}) of flow {flow_name} failed
+                {kind} SLA ({flow_sla_config_id}) after {duration_seconds}
+                seconds. See {flow_run_link} for more details."</span
               ></div
             >
             <div
               >For an agent SLA event, the default message would be:
               <span class="font-weight-light"
                 >"Agents sharing the config {agent_config_id} have failed the
-                minimum healthy " "count of {sla_min_healthy}. The following
-                agents are unhealthy: {agent_ids}"</span
+                minimum healthy count of {sla_min_healthy}. The following agents
+                are unhealthy: {agent_ids}"</span
               ></div
             ></v-card-text
           >
