@@ -22,7 +22,7 @@ export default {
         openAgentOrFlow: { name: 'openAgentOrFlow', complete: false },
         selectFlow: { name: 'selectFlow', complete: false },
         selectEventType: { name: 'selectEventType', complete: false },
-        SelectState: { name: 'selectState', complete: false },
+        selectState: { name: 'selectState', complete: false },
         openDuration: { name: 'openDuration', complete: false },
         selectDoThis: { name: 'selectDoThis', complete: false }
       },
@@ -80,7 +80,10 @@ export default {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
         return 'Agent'
-      return 'this'
+      return 'flow'
+    },
+    disableCancel() {
+      return this.agentOrFlow === 'flow'
     },
     disableStep() {
       return this.agentOrFlow === 'Agent' || this.selectedFlows.length > 1
@@ -170,7 +173,6 @@ export default {
       if (!this.searchEntry) return false
 
       const UUIDRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
-
       // Call .trim() to get rid of whitespace on the ends of the
       // string before making the query
       return UUIDRegex.test(this.searchEntry.trim())
@@ -428,14 +430,20 @@ export default {
             const flowGroupIds = this.selectedFlows?.map(
               flow => flow.flow_group_id
             )
-            const flowRunStateChangedSuccess = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
-              variables: {
-                input: {
-                  flow_group_ids: this.allFlows ? [] : flowGroupIds,
+            const inputObject = this.allFlows
+              ? {
                   action_id: action.id,
                   states: this.chosenStates
                 }
+              : {
+                  flow_group_ids: flowGroupIds,
+                  action_id: action.id,
+                  states: this.chosenStates
+                }
+            const flowRunStateChangedSuccess = await this.$apollo.mutate({
+              mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
+              variables: {
+                input: inputObject
               }
             })
             data = flowRunStateChangedSuccess.data
@@ -625,7 +633,7 @@ export default {
             to
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              class=" px-0 pb-1 text-h6 text--darken-2"
+              class=" px-0 pb-1 text-h6"
               :class="format('selectState')"
               text
               :color="buttonColor('selectState')"
@@ -650,6 +658,7 @@ export default {
           <v-btn
             outlined
             color="utilGrayMid"
+            :disabled="disableCancel"
             class="light-weight-text mr-1 px-2"
             @click="closeCard"
           >
@@ -690,7 +699,7 @@ export default {
         <v-btn
           color="primary"
           elevation="0"
-          :disabled="agentOrFlow === 'this'"
+          :disabled="disableCancel"
           title="Next"
           class="mx-1"
           @click="
@@ -778,7 +787,7 @@ export default {
             v-for="item in filteredFlowEventTypes"
             :key="item.enum"
             v-ripple
-            class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+            class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
             :class="{ active: flowEventType.name === item.name }"
             @click="selectFlowEventType(item)"
             ><div class="text-center text-body-1">{{ item.name }}</div>
@@ -845,7 +854,7 @@ export default {
           v-for="item in states['All']"
           :key="item"
           v-ripple
-          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+          class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
           :class="{ active: chosenStates.includes(item) }"
           @click="selectStates(item)"
         >
@@ -884,7 +893,7 @@ export default {
           v-else
           :key="item.id"
           v-ripple
-          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+          class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
           :class="{ active: chosenAction === item }"
           :disabled="
             item.action_type === 'CancelFlowRunAction' &&

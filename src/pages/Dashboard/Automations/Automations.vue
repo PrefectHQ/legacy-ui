@@ -10,6 +10,7 @@ export default {
   },
   data() {
     return {
+      loadingHook: 0,
       closeCard: false,
       editHook: null,
       editAction: null,
@@ -46,8 +47,11 @@ export default {
     }
   },
   methods: {
-    handleRefetch() {
-      this.$apollo.queries.hooks.refetch()
+    async handleRefetch() {
+      this.loadingHook++
+      this.handleRefresh()
+      await this.$apollo.queries.hooks.refetch()
+      this.loadingHook = 0
     },
     handleEdit(hook, index) {
       this.editHook = hook
@@ -66,7 +70,7 @@ export default {
       variables() {
         return {}
       },
-      loadingKey: 'loadingKey',
+      loadingKey: 'loadingHook',
       pollInterval: 5000,
       update: data => data?.hook
     }
@@ -88,12 +92,18 @@ export default {
   <div v-else>
     <v-row>
       <v-col>
+        <div class="overline">New Automation</div>
         <AddAutoCard v-if="canEdit && !closeCard" @refresh="handleRefresh" />
       </v-col>
     </v-row>
     <v-row>
       <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
+        <v-skeleton-loader
+          v-if="loadingHook > 0 || closeCard"
+          type="list-item-avatar-three-line"
+        ></v-skeleton-loader>
         <AutoCard
+          v-else
           :hook="hook"
           :can-edit="canEdit"
           @open-edit="handleEdit(hook, i)"

@@ -98,7 +98,9 @@ export default {
       return this.hook?.action?.name || this.hook?.action?.action_type
     },
     hookName() {
-      const idList = this.hook?.event_tags?.flow_group_id
+      const allFlows =
+        this.hook?.event_type === 'FlowRunStateChangedEvent' &&
+        !this.hook?.event_tags?.flow_group_id
       const agentName =
         this.agentConfig?.agents.length == 1
           ? this.agentConfig.agents[0].name === 'agent'
@@ -121,10 +123,10 @@ export default {
         ? `${this.flowName[0]?.name} and others`
         : this.hook?.event_tags?.flow_group_id?.length == 2 && this.flowName
         ? `${this.flowName[0].name} and ${this.flowName[1].name}`
+        : allFlows
+        ? 'any flow'
         : this.flowName
         ? this.flowName[0]?.name
-        : idList && !idList.length
-        ? 'any flow'
         : ''
       return name
     },
@@ -154,13 +156,12 @@ export default {
     async deleteHook() {
       try {
         this.deletingHook = true
-        const success = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/delete-hook.gql'),
           variables: {
             hookId: this.hook.id
           }
         })
-        console.log('success', success)
       } catch (error) {
         const errString = `${error}`
         this.setAlert({
@@ -209,6 +210,7 @@ export default {
             : this.flowConfig?.flow_groups?.map(flow => flow.flow_group_id)
         }
       },
+      fetchPolicy: 'no-cache',
       skip() {
         const skippy =
           (!this.hook?.event_tags?.flow_group_id ||
@@ -235,6 +237,7 @@ export default {
           !this.hook?.event_tags?.agent_config_id[0]
         )
       },
+      fetchPolicy: 'no-cache',
       update: data => {
         return data.agent_config_by_pk
       }
@@ -248,6 +251,7 @@ export default {
             : ''
         }
       },
+      fetchPolicy: 'no-cache',
       loadingKey: 'loadingHook',
       skip() {
         return (
