@@ -79,7 +79,7 @@ export default {
       const event = this.hook?.event_type
       if (event === 'FlowRunStateChangedEvent') return ''
       const hook = this.includeSeconds
-        ? `${this.hookDetails[this.flowConfig.kind]?.action}`
+        ? `${this.hookDetails[this.flowConfig?.kind]?.action}`
         : this.hookDetails[event]?.action
       return hook
     },
@@ -91,7 +91,7 @@ export default {
         ? 'changes to any state'
         : this.states?.length != 1
         ? 'changes to selected states'
-        : presentTenseStates[this.states[0]] ||
+        : presentTenseStates[this.states[0].toUpperCase()] ||
           titleCasePresentTenseStates[this.states[0]]
     },
     hookAction() {
