@@ -113,6 +113,7 @@ export default {
                 v-if="tb.badgeText"
                 color="codePink"
                 class="text-none"
+                :style="tb.disabled ? 'pointer-events: none;' : ''"
                 :content="tb.badgeText"
                 bottom
                 inline
