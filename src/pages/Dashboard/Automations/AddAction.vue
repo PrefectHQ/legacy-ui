@@ -247,6 +247,7 @@ export default {
           ) {
             this.steps['openToConfig'].complete = true
           }
+          this.switchStep('addName')
         }
       } else {
         this.switchStep('addName')
@@ -401,7 +402,7 @@ export default {
 </script>
 
 <template>
-  <v-card outlined>
+  <v-card elevation="0">
     <v-card-text class="text-h6">
       <v-row>
         <v-col cols="9" lg="10">
