@@ -5,6 +5,8 @@ import FlowRunNotification from '@/pages/Notifications/NotificationTypes/FlowRun
 import MembershipNotification from '@/pages/Notifications/NotificationTypes/Membership-Notification'
 import ApprovalNotification from '@/pages/Notifications/NotificationTypes/Approval-Notification'
 import WhatsNewNotification from '@/pages/Notifications/NotificationTypes/WhatsNew-Notification'
+import MessageNotification from '@/pages/Notifications/NotificationTypes/Message-Notification'
+
 import {
   componentMap,
   iconMap,
@@ -17,6 +19,7 @@ export default {
     ApprovalNotification,
     FlowRunNotification,
     MembershipNotification,
+    MessageNotification,
     WhatsNewNotification
   },
   props: {
