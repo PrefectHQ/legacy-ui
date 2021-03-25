@@ -75,7 +75,7 @@ export default {
 
 <template>
   <div
-    class="log-row d-flex pr-12 justify-start align-center grey--text text--darken-3"
+    class="log-row d-flex pr-12 justify-start align-center"
     :class="{
       'log-row-color-1': !isQueriedLog() && index % 2 === 0,
       'log-row-color-2': !isQueriedLog() && index % 2 !== 0,
@@ -110,7 +110,7 @@ export default {
     <div class="log-info caption py-2 text-left">
       <v-tooltip top>
         <template #activator="{ on }">
-          <div class="log-datetime grey--text text--darken-1" v-on="on">
+          <div class="log-datetime utilGrayMid--text" v-on="on">
             {{ logTime(log.timestamp) }}
           </div>
         </template>

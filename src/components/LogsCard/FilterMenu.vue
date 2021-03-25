@@ -176,7 +176,7 @@ export default {
     transition="slide-y-transition"
   >
     <template #activator="{ on }">
-      <v-btn color="blue-grey darken-2" text small v-on="on">
+      <v-btn color="utilGrayMid" text small v-on="on">
         <v-icon>
           filter_list
         </v-icon>

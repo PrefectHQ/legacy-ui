@@ -307,7 +307,7 @@ export default {
             <v-text-field
               v-model="hour"
               type="number"
-              class="white mx-2"
+              class="mx-2"
               label="hour"
               hide-details
               outlined
@@ -321,7 +321,7 @@ export default {
             <v-text-field
               v-model="minute"
               type="number"
-              class="white mx-2"
+              class="mx-2"
               label="minute"
               hide-details
               outlined
@@ -333,7 +333,7 @@ export default {
             />
             <v-select
               v-model="meridian"
-              class="white mx-2"
+              class="mx-2"
               hide-details
               outlined
               dense

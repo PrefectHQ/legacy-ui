@@ -254,7 +254,7 @@ export default {
             <div
               v-if="projects.length > 0"
               v-ripple
-              class="cursor-pointer px-2 py-2 caption font-weight-normal collapse-button rounded grey--text text--darken-1"
+              class="cursor-pointer px-2 py-2 caption font-weight-normal collapse-button rounded utilGrayMid--text"
               @click="closeAll"
             >
               Collapse all
@@ -323,14 +323,14 @@ export default {
               class="text-right"
               style="width: 35%;"
             >
-              <div class="grey--text text--darken-1 font-weight-light">
+              <div class="utilGrayMid--text font-weight-light">
                 UI Release
               </div>
               <div>{{ lastDeployment_UI }}</div>
             </div>
             <div class="flex-grow-1">
               <div v-show="coreVersion" class="text-center">
-                <div class="grey--text text--darken-1 font-weight-light">
+                <div class="utilGrayMid--text font-weight-light">
                   Core Version
                 </div>
                 <div>{{ coreVersion }}</div>
@@ -346,7 +346,7 @@ export default {
               />
             </div>
             <div v-if="lastDeployment_Cloud" style="width: 35%;">
-              <div class="grey--text text--darken-1 font-weight-light">
+              <div class="utilGrayMid--text font-weight-light">
                 API Release
               </div>
               <div>{{ lastDeployment_Cloud }}</div>
