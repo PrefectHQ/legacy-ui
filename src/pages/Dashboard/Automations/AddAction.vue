@@ -173,15 +173,15 @@ export default {
       return this.actionType?.type === 'EMAIL'
         ? configTo || this.actionType?.config?.to || 'to this email address.'
         : this.actionType.type === 'WEBHOOK'
-        ? this.actionType?.config?.to || ' to this web address.'
+        ? this.actionType?.config?.to || 'to this web address.'
         : this.actionType?.type === 'TWILIO'
         ? configTo ||
           this.actionType?.config?.to?.toString() ||
           'to this phone number'
         : this.actionType?.type === 'SLACK_WEBHOOK'
-        ? configTo || this.actionType?.config?.url || 'to this webhook.'
+        ? configTo || this.actionType?.config?.url || 'here.'
         : this.actionType.type === 'PAGERDUTY'
-        ? 'with this config.'
+        ? 'using this config.'
         : 'to who?'
     },
     isTwilio() {
@@ -465,7 +465,7 @@ export default {
               {{ to }}</v-btn
             >
             <span v-if="isTwilio">
-              with this
+              using this
               <v-btn
                 :style="{ 'text-transform': 'none', 'min-width': '0px' }"
                 class="px-0 pb-1 text-h6"
@@ -474,7 +474,7 @@ export default {
                 :class="format('openToConfig')"
                 @click="switchStep('addTwilioConfig')"
               >
-                config</v-btn
+                config.</v-btn
               ></span
             ></span
           ></v-col
