@@ -48,46 +48,6 @@ export const openCloudHookTypes = [
   }
 ]
 
-export const actionTypes = [
-  {
-    title: 'Email',
-    type: 'EMAIL',
-    verb: 'email',
-    icon: 'fas fa-envelope',
-    config: { to: null },
-    requiresCloud: true
-  },
-  {
-    title: 'Slack',
-    type: 'SLACK_WEBHOOK',
-    verb: 'slack',
-    icon: 'fab fa-slack',
-    config: { url: null },
-    requiresCloud: false
-  },
-  {
-    title: 'Twilio',
-    type: 'TWILIO',
-    verb: 'twilio',
-    icon: '$twilio',
-    config: {
-      account_sid: null,
-      auth_token: null,
-      to: [],
-      messaging_service_sid: null
-    },
-    requiresCloud: false
-  },
-  {
-    title: 'Pager Duty',
-    type: 'PAGERDUTY',
-    verb: 'PagerDuty',
-    icon: '$pagerDuty',
-    config: { routing_key: null, api_token: null, severity: [] },
-    requiresCloud: false
-  }
-]
-
 export const presentTenseStates = {
   FAILED: 'fails',
   PENDING: 'is pending',
@@ -172,39 +132,4 @@ export const STATES = {
     'SKIPPED'
   ],
   Success: ['SUCCESS', 'CACHED', 'MAPPED', 'SKIPPED']
-}
-
-export const AUTOMATIONSTATES = {
-  All: [
-    'Failed',
-    'Pending',
-    'Scheduled',
-    'Retrying',
-    'Resume',
-    'Queued',
-    'Submitted',
-    'Paused',
-    'Running',
-    'Finished',
-    'Success',
-    'Cancelled',
-    'Cached',
-    'Triggerfailed',
-    'Skipped',
-    'Timedout',
-    'Mapped',
-    'Looped'
-  ],
-  Failed: ['Failed', 'Timedout', 'Triggerfailed'],
-  Finished: [
-    'Finished',
-    'Looped',
-    'Cancelled',
-    'Success',
-    'Cached',
-    'Mapped',
-    'Skipped'
-  ],
-  Success: ['Success', 'Cached', 'Mapped', 'Skipped'],
-  Custom: []
 }

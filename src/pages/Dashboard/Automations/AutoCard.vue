@@ -4,7 +4,7 @@ import {
   AUTOMATIONSTATES,
   titleCasePresentTenseStates,
   presentTenseStates
-} from '@/utils/cloudHooks'
+} from '@/utils/automations'
 import AddAutoCard from '@/pages/Dashboard/Automations/AddAutoCard'
 
 export default {

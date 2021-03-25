@@ -1,5 +1,5 @@
 <script>
-import { actionTypes } from '@/utils/cloudHooks'
+import { actionTypes } from '@/utils/automations'
 import { mapGetters } from 'vuex'
 import ListInput from '@/components/CustomInputs/ListInput'
 
