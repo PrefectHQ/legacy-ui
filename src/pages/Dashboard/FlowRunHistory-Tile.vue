@@ -80,7 +80,7 @@ export default {
       :loading="loading"
       :items="reversedRuns"
       :breaklines="breaklines"
-      :height="115"
+      :height="150"
       :min-bands="100"
       show-controls
       :visible="visible"

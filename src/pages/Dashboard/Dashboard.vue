@@ -131,21 +131,6 @@ export default {
         clearTimeout(this.refreshTimeout)
       }, 3000)
     },
-    tab(val) {
-      let query = { ...this.$route.query }
-
-      switch (val) {
-        case 'flows':
-          query = 'flows'
-          break
-        case 'agents':
-          /* eslint-disable-next-line */
-          query = 'agents'
-          break
-        default:
-          break
-      }
-    },
     $route() {
       this.tab = this.getTab()
     },
@@ -297,9 +282,10 @@ export default {
       >
         <div class="tile-grid my-4">
           <v-skeleton-loader
+            v-if="true"
             :loading="loadedTiles < 7"
             type="image"
-            height="200"
+            height="184px"
             transition="quick-fade"
             class="tile-container span-full span-row-1"
             tile
