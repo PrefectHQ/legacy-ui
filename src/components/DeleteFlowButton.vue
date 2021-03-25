@@ -49,17 +49,13 @@ export default {
           }
         `
       } else {
-        let string = this.flowGroup.flows.map((flow, ind) => {
-          return `delete_${ind}: delete_flow(input: { flow_id: "${flow.id}" }) {
+        return gql`
+          mutation($flowGroupId: UUID!) {
+            delete_flow_group(input: { flow_group_id: $flowGroupId }) {
               success
-            }`
-        })
-        const newString = gql`
-          mutation {
-            ${string}
+            }
           }
         `
-        return newString
       }
     }
   },
@@ -68,18 +64,24 @@ export default {
     async deleteFlow() {
       try {
         this.deleting = true
+        const variables = this.allFlows
+          ? { flowGroupId: this.flowGroup.id }
+          : { flowId: this.flow.id }
         const { data } = await this.$apollo.mutate({
           mutation: this.mutationString,
-          variables: {
-            flowId: this.flow.id
-          }
+          variables: variables
         })
 
-        if (
-          !this.all &&
-          data?.delete_flow?.success &&
-          this.flowGroup?.flows.length > 1
-        ) {
+        if (this.all && data?.delete_flow_group?.success) {
+          this.deleting = false
+          this.reset()
+          this.$router.push({ name: 'dashboard' })
+          this.setAlert({
+            alertShow: true,
+            alertMessage: `${this.flow.name} Deleted`,
+            alertType: 'info'
+          })
+        } else if (!this.all && data?.delete_flow?.success) {
           this.deleting = false
           this.reset()
           this.$router.push({
@@ -92,19 +94,6 @@ export default {
             alertMessage: `Version ${this.flow.version} of ${this.flow.name} Deleted`,
             alertType: 'info'
           })
-        } else if (this.all && data?.delete_0?.success) {
-          this.deleting = false
-          if (this.type === 'flow') {
-            this.$router.push({ name: 'dashboard' })
-            this.setAlert({
-              alertShow: true,
-              alertMessage: `All versions of ${this.flow.name} deleted`,
-              alertType: 'info'
-            })
-          } else {
-            this.$emit('refetch')
-            this.reset()
-          }
         } else {
           throw new Error('Something went wrong deleting a flow', data)
         }
@@ -142,7 +131,7 @@ export default {
                 aria-label="delete"
               >
                 <v-icon>delete</v-icon>
-                <div v-if="type === 'flow'">Delete</div>
+                <div>Delete</div>
               </v-btn>
             </div>
           </template>
@@ -201,6 +190,7 @@ export default {
             v-if="!errorMessage"
             color="red accent-2"
             class="white--text"
+            :loading="deleting"
             @click="deleteFlow"
           >
             Delete

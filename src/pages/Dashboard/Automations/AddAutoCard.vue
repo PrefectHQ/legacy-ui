@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import AddAction from '@/pages/Dashboard/Automations/AddAction'
-import { AUTOMATIONSTATES } from '@/utils/cloudHooks'
+import { AUTOMATIONSTATES, flowEventTypes } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
@@ -47,18 +47,8 @@ export default {
       seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
       addAction: false,
       flowEventType: null,
-      notAll: !!this.hookDetail?.flowName || false,
-      flowEventTypes: [
-        { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
-        {
-          name: 'does not start',
-          enum: 'SCHEDULED_NOT_STARTED'
-        },
-        {
-          name: 'changes state',
-          enum: 'CHANGES_STATE'
-        }
-      ]
+      flowEventTypes: flowEventTypes,
+      notAll: !!this.hookDetail?.flowName || false
     }
   },
   computed: {
