@@ -700,18 +700,18 @@ export default {
       </div>
     </v-card-text>
     <v-card-text v-else-if="step.name === 'addName'" class="pr-4">
-      <v-tooltip bottom>
-        <template #activator="{ on, attrs }">
-          <v-text-field
-            v-model="saveAs"
-            class="pr-4"
-            label="Save As"
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        Give your config a name so you can find and re-use it with more hooks.
-      </v-tooltip>
+      <div class="pb-2"
+        >Give your action a name so you can find and re-use it with more
+        automations.</div
+      >
+      <v-text-field
+        v-model="saveAs"
+        outlined
+        class="pr-4"
+        label="Save As"
+        v-bind="attrs"
+        v-on="on"
+      ></v-text-field>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
