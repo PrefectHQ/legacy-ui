@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable vue/no-v-html */
 import { parser } from '@/utils/markdownParser'
 
 export default {
@@ -16,6 +17,11 @@ export default {
       type: String,
       required: false,
       default: () => null
+    }
+  },
+  data() {
+    return {
+      showDetails: false
     }
   },
   computed: {
@@ -42,8 +48,19 @@ export default {
     <v-list-item-title>
       {{ content.title }}
     </v-list-item-title>
-    <v-list-item-subtitle v-html="renderedContents">
-      {{ renderedContents }}
-    </v-list-item-subtitle>
+
+    <v-fade-transition origin="center bottom" hide-on-leave mode="out-in">
+      <div
+        v-if="showDetails"
+        class="subtitle grey--text text--darken-1 pa-4"
+        v-html="renderedContents"
+      >
+      </div>
+    </v-fade-transition>
+    <span>
+      <a @click="showDetails = !showDetails">
+        {{ showDetails ? 'Hide' : 'Show' }} details
+      </a>
+    </span>
   </v-list-item-content>
 </template>
