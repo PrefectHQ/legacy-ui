@@ -1,10 +1,12 @@
 <script>
+import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import DateTime from '@/components/DateTime'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
+    Alert,
     ConfirmDialog,
     DateTime
   },
@@ -484,6 +486,13 @@ export default {
         and all of their API keys will be deleted.</div
       >
     </ConfirmDialog>
+
+    <Alert
+      v-model="alertShow"
+      :type="alertType"
+      :message="alertMessage"
+      :offset-x="$vuetify.breakpoint.mdAndUp ? 256 : 56"
+    ></Alert>
   </div>
 </template>
 
