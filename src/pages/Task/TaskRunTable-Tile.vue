@@ -71,7 +71,10 @@ export default {
       query: require('@/graphql/Task/table-task-runs.gql'),
       variables() {
         const orderBy = {}
-        orderBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
+        this.sortBy === 'duration'
+          ? (orderBy['details'] = { run_time: this.sortDesc ? 'asc' : 'desc' })
+          : (orderBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc')
+
         return {
           taskId: this.taskId,
           heartbeat: roundedOneAgo(this.selectedDateFilter),
