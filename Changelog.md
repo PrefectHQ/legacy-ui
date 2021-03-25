@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix a bug where double clicking could kick off multiple quick runs - [#696](https://github.com/PrefectHQ/ui/pull/696)
 
 ## 2021-03-25
 
