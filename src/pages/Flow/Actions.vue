@@ -38,7 +38,9 @@ export default {
       alertType: null,
       alertLink: null,
       scheduleLoading: false,
-      selectedVersion: +this.$route.query.version || null
+      selectedVersion: +this.$route.query.version || null,
+
+      isRunning: false
     }
   },
   computed: {
@@ -106,6 +108,7 @@ export default {
       })
     },
     async quickRunFlow() {
+      this.isRunning = true
       try {
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
@@ -127,6 +130,7 @@ export default {
         this.quickRunErrorAlert()
         LogRocket.captureException(err)
       }
+      this.isRunning = false
     },
     quickRunErrorAlert(err) {
       if (err && err?.includes('archived')) {
@@ -251,6 +255,7 @@ export default {
             small
             data-cy="start-flow-quick-run"
             :disabled="isReadOnlyUser || !isQuickRunnable || archived"
+            :loading="isRunning"
             @click="quickRunFlow"
           >
             <v-icon>fa-rocket</v-icon>
