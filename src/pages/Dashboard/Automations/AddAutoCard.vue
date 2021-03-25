@@ -648,7 +648,6 @@ export default {
         </v-col>
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
-            v-if="step != 'openAgentOrFlow' || hookDetail"
             outlined
             color="utilGrayMid"
             class="light-weight-text mr-1 px-2"
