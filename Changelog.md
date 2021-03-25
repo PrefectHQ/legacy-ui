@@ -13,7 +13,7 @@
 
 ### Bugfixes
 
-- None
+- Make artifacts legible in dark mode - [#693](https://github.com/PrefectHQ/ui/pull/693)
 
 ## 2021-03-16
 
