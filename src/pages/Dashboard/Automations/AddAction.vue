@@ -461,9 +461,9 @@ export default {
         >
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
-            text
+            outlined
             color="utilGrayMid"
-            class="light-weight-text mr-1"
+            class="light-weight-text mr-1 px-2"
             @click="handleClose"
           >
             <span style="text-transform: none;">Cancel</span></v-btn
@@ -567,30 +567,23 @@ export default {
       />
     </v-card-text>
     <v-card-text v-else-if="step.name === 'openToConfig'">
-      <v-row v-if="messageType.type === 'SLACK_WEBHOOK'" class="py-3">
-        <v-col v-if="!secretNames || !secretNames.length">
+      <v-row v-if="messageType.type === 'SLACK_WEBHOOK'" class="py-3 px-1">
+        <div v-if="!secretNames || !secretNames.length" class="mx-2">
           To set up a slack webhook, you'll need to create a
           <router-link :to="{ name: 'secrets' }">secret</router-link> with your
           slack webhook url.
-        </v-col>
-        <v-col
+        </div>
+        <div
           v-for="name in secretNames"
           :key="name"
-          cols="6"
-          sm="3"
-          lg="2"
-          class="pa-1"
+          v-ripple
+          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+          :class="{ active: secretName === name }"
+          @click="selectSecret(name)"
+          ><div class="text-truncate">
+            {{ name }}
+          </div></div
         >
-          <div
-            v-ripple
-            class="chip-small d-flex align-center justify-start px-2 cursor-pointer text-body-1"
-            :class="{ active: secretName === name }"
-            @click="selectSecret(name)"
-            ><div class="text-truncate">
-              {{ name }}
-            </div></div
-          >
-        </v-col>
       </v-row>
       <!-- <v-text-field
         v-if="messageType.type === 'SLACK_WEBHOOK'"
@@ -758,6 +751,7 @@ export default {
   border-color: var(--v-utilGrayLight-base) !important;
   border-radius: 5px;
   height: 35px;
+  max-width: fit-content;
   transition: all 50ms;
   width: 100%;
 

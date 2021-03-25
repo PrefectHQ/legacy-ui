@@ -651,7 +651,7 @@ export default {
             v-if="step != 'openAgentOrFlow' || hookDetail"
             outlined
             color="utilGrayMid"
-            class="light-weight-text mr-1"
+            class="light-weight-text mr-1 px-2"
             @click="closeCard"
           >
             <span style="text-transform: none;">Cancel</span></v-btn
@@ -668,27 +668,21 @@ export default {
       </v-row>
     </v-card-text>
     <v-card-text v-if="step.name === 'openAgentOrFlow'">
-      <v-row>
-        <v-col
+      <v-row class="px-1">
+        <div
           v-for="item in ['Flow', 'Agent']"
           :key="item"
-          cols="6"
-          sm="2"
-          class="pa-2"
+          v-ripple
+          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+          :class="{ active: agentOrFlow === item }"
+          @click="selectAgentOrFlow(item)"
+          ><div class="text-center"
+            ><v-icon class="pr-2 pb-1">{{
+              item === 'Flow' ? 'pi-flow' : 'pi-agent'
+            }}</v-icon
+            >{{ item }}</div
+          ></div
         >
-          <div
-            v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer text-body-1"
-            :class="{ active: agentOrFlow === item }"
-            @click="selectAgentOrFlow(item)"
-            ><div class="text-center"
-              ><v-icon class="pr-2">{{
-                item === 'Flow' ? 'pi-flow' : 'pi-agent'
-              }}</v-icon
-              >{{ item }}</div
-            ></div
-          >
-        </v-col>
       </v-row>
     </v-card-text>
     <v-sheet v-else-if="step.name === 'selectFlow'" class="pa-4">
@@ -760,21 +754,16 @@ export default {
     </v-sheet>
 
     <v-card-text v-else-if="step.name === 'selectEventType'"
-      ><v-row class="py-2">
-        <v-col
+      ><v-row class="px-1">
+        <div
           v-for="item in filteredFlowEventTypes"
           :key="item.enum"
-          cols="6"
-          sm="2"
-        >
-          <div
-            v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
-            :class="{ active: includesFlow(item) }"
-            @click="selectFlowEventType(item)"
-            ><div class="text-center text-body-1">{{ item.name }}</div>
-          </div>
-        </v-col>
+          v-ripple
+          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+          :class="{ active: includesFlow(item) }"
+          @click="selectFlowEventType(item)"
+          ><div class="text-center text-body-1">{{ item.name }}</div>
+        </div>
       </v-row>
     </v-card-text>
     <div v-else-if="step.name === 'openDuration'">
@@ -819,23 +808,17 @@ export default {
       >
 
       <v-divider class="ma-2" />
-      <v-row class="py-2">
-        <v-col
+      <v-row class="px-1">
+        <div
           v-for="item in states['All']"
           :key="item"
-          cols="4"
-          sm="3"
-          class="pa-2"
+          v-ripple
+          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+          :class="{ active: chosenStates.includes(item) }"
+          @click="selectStates(item)"
         >
-          <div
-            v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer text-body-1"
-            :class="{ active: chosenStates.includes(item) }"
-            @click="selectStates(item)"
-          >
-            {{ item }}
-          </div>
-        </v-col>
+          {{ item }}
+        </div>
       </v-row>
 
       <v-card-actions>
@@ -861,28 +844,23 @@ export default {
       </v-row>
 
       <v-row class="py-2 px-1">
-        <v-col v-if="!editedActions.length"
-          >Click on new to configure new notifications.</v-col
+        <div v-if="!editedActions.length" class="mx-2"
+          >You have no actions yet.</div
         >
-        <v-col
+        <div
           v-for="item in editedActions"
           v-else
           :key="item.id"
-          cols="6"
-          sm="3"
-          class="pa-2"
-        >
-          <div
-            v-ripple
-            class="chip-small d-flex align-center justify-start pa-2 cursor-pointer text-body-1"
-            :class="{ active: chosenAction === item }"
-            :disabled="
-              item.action_type === 'CancelFlowRunAction' &&
-                agentOrFlow === 'Agent'
-            "
-            @click="selectAction(item)"
-            >{{ item.name }}
-            <!-- <v-spacer></v-spacer>
+          v-ripple
+          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+          :class="{ active: chosenAction === item }"
+          :disabled="
+            item.action_type === 'CancelFlowRunAction' &&
+              agentOrFlow === 'Agent'
+          "
+          @click="selectAction(item)"
+          >{{ item.name }}
+          <!-- <v-spacer></v-spacer>
             <v-btn
               small
               icon
@@ -892,8 +870,7 @@ export default {
             >
               <i class="fas fa-times-circle fa-lg"
             /></v-btn> -->
-          </div>
-        </v-col>
+        </div>
       </v-row>
       <ConfirmDialog
         :value="removeDoThisDialog"
@@ -944,8 +921,8 @@ export default {
   border-color: var(--v-utilGrayLight-base) !important;
   border-radius: 5px;
   height: 35px;
+  max-width: fit-content;
   transition: all 50ms;
-  width: 100%;
 
   &.active {
     border-color: var(--v-codePink-base) !important;

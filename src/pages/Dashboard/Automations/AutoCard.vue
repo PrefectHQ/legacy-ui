@@ -303,8 +303,8 @@ export default {
             >, then <span class="font-weight-bold">{{ hookAction }}</span
             >.</span
           >
-          <div v-if="isAgent" class="subtitle-2 font-weight-light"
-            >To use with a new agent, add this id as the agent-config-id:
+          <div v-if="isAgent" class="subtitle-2 font-weight-light pl-8"
+            >To use with a new agent, add this flag:
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <span
@@ -313,13 +313,12 @@ export default {
                   @click="copyToClipboard(agentConfigId)"
                   v-on="on"
                 >
-                  {{ agentConfigId }}
-                  <v-icon x-small class="mb-2px mr-2" tabindex="0">
-                    {{ copiedText[agentConfigId] ? 'check' : 'file_copy' }}
-                  </v-icon>
+                  --agent-config--id {{ agentConfigId }}
                 </span>
               </template>
-              <span> Click to copy {{ agentConfigId }} </span>
+              <span>
+                Click to copy
+              </span>
             </v-tooltip>
           </div>
         </v-col>
