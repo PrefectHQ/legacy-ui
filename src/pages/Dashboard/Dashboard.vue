@@ -1,19 +1,20 @@
 <script>
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
+import CommittedUsageTile from '@/pages/Dashboard/UsageTiles/CommittedUsage-Tile'
+import CycleUsageTile from '@/pages/Dashboard/UsageTiles/CycleUsage-Tile'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
+import FreeUsageTile from '@/pages/Dashboard/UsageTiles/FreeUsage-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import NavTabBar from '@/components/NavTabBar'
 import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
-import UsageTiles from '@/pages/Dashboard/Usage-Tiles'
 import SubPageNav from '@/layouts/SubPageNav'
-import TileLayout from '@/layouts/TileLayout'
 import { mapGetters, mapActions } from 'vuex'
 import gql from 'graphql-tag'
 
@@ -47,19 +48,20 @@ export default {
   components: {
     Agents,
     AgentsTile,
+    CommittedUsageTile,
+    CycleUsageTile,
     BreadCrumbs,
     FailedFlowsTile,
     FlowTableTile,
+    FreeUsageTile,
     InProgressTile,
     NavTabBar,
     NotificationsTile,
     ProjectSelector,
     SubPageNav,
     SummaryTile,
-    TileLayout,
     FlowRunHistoryTile,
-    UpcomingRunsTile,
-    UsageTiles
+    UpcomingRunsTile
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'project') {
@@ -106,11 +108,25 @@ export default {
     ...mapGetters('api', ['backend', 'isCloud', 'connected']),
     ...mapGetters('data', ['activeProject']),
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['license']),
     project() {
       return this.activeProject
     },
     tabs() {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
+    },
+    usageTile() {
+      if (!this.isCloud) return null
+      if (!this.license) return 'loading'
+
+      let tile = 'monthly'
+
+      if (!this.license.terms.is_self_serve) {
+        tile = 'committed'
+      } else if (!this.license.terms.is_usage_based) {
+        tile = 'free'
+      }
+      return tile
     }
   },
   watch: {
@@ -286,14 +302,13 @@ export default {
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <TileLayout>
+        <div class="tile-grid my-4">
           <v-skeleton-loader
-            slot="row-0"
             :loading="loadedTiles < 7"
             type="image"
             height="200"
             transition="quick-fade"
-            class="my-2"
+            class="tile-container span-row-1 span-column-6"
             tile
           >
             <FlowRunHistoryTile
@@ -303,84 +318,68 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-1-col-1-tile-1"
             :loading="loadedTiles < 2"
             type="image"
             height="330"
             transition="quick-fade"
-            class="my-2"
+            class="tile-container span-row-2 span-column-2"
             tile
           >
             <SummaryTile :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-2-col-2-row-2-tile-2"
-            :loading="loadedTiles < 6"
-            type="image"
-            height="330"
-            transition="quick-fade"
-            class="my-2"
-            tile
-          >
-            <UsageTiles />
-          </v-skeleton-loader>
-
-          <v-skeleton-loader
-            slot="row-2-col-1-row-2-tile-1"
             :loading="loadedTiles < 7"
             type="image"
             height="330"
             transition="quick-fade"
-            class="my-2"
+            class="tile-container span-row-2 span-column-2"
             tile
           >
             <FailedFlowsTile :project-id="projectId" />
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-1-col-3-tile-1"
             :loading="loadedTiles < 1"
             type="image"
             height="330"
             transition="quick-fade"
-            class="my-2"
+            class="tile-container span-row-2 span-column-2"
             tile
           >
             <UpcomingRunsTile :key="key" :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-2-col-1-row-3-tile-1"
-            :loading="loadedTiles < 5"
+            :loading="loadedTiles < 6 || usageTile == 'loading'"
             type="image"
             height="330"
             transition="quick-fade"
-            class="my-2"
+            class="tile-container span-row-1 span-column-2"
             tile
           >
-            <NotificationsTile :project-id="projectId" full-height />
+            <CycleUsageTile v-if="usageTile == 'monthly'" />
+            <FreeUsageTile v-else-if="usageTile == 'free'" />
+            <CommittedUsageTile v-else-if="usageTile == 'committed'" />
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-2-col-2-row-2-tile-1"
             :loading="loadedTiles < 3"
             type="image"
             height="330"
             transition="quick-fade"
-            class="my-2"
+            class="tile-container span-row-2 span-column-2"
             tile
           >
             <InProgressTile :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            slot="row-1-col-2-tile-1"
             :loading="loadedTiles < 4"
             type="image"
             height="330"
             transition="quick-fade"
-            class="my-2"
+            class="tile-container span-row-2 span-column-2"
             tile
           >
             <AgentsTile
@@ -388,7 +387,18 @@ export default {
               @view-details-clicked="handleAgentDetailsClick"
             />
           </v-skeleton-loader>
-        </TileLayout>
+
+          <v-skeleton-loader
+            :loading="loadedTiles < 5"
+            type="image"
+            height="330"
+            transition="quick-fade"
+            class="tile-container span-row-2 span-column-2"
+            tile
+          >
+            <NotificationsTile :project-id="projectId" full-height />
+          </v-skeleton-loader>
+        </div>
       </v-tab-item>
 
       <v-tab-item
@@ -431,6 +441,40 @@ export default {
     </v-bottom-navigation>
   </v-sheet>
 </template>
+
+<style lang="scss" scoped>
+$cellsize: 212px;
+$rowsize: 153px;
+$guttersize: 24px;
+$spans: 1, 2, 3, 4, 5, 6;
+
+.tile-grid {
+  column-gap: $guttersize;
+  display: grid;
+  grid-auto-flow: dense;
+  grid-auto-rows: $rowsize;
+  grid-template-columns: repeat(auto-fill, $cellsize);
+  justify-content: normal;
+  row-gap: $guttersize;
+}
+
+.tile-container {
+  grid-column: span 2;
+  grid-row: span 2;
+  overflow: visible;
+  position: relative;
+
+  @each $span in $spans {
+    &.span-row-#{$span} {
+      grid-row: span $span;
+    }
+
+    &.span-column-#{$span} {
+      grid-column: span $span;
+    }
+  }
+}
+</style>
 
 <style lang="scss">
 // stylelint-disable

@@ -1,6 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-// import { mapMutations } from 'vuex'
 
 import CardTitle from '@/components/Card-Title'
 import moment from '@/utils/moment'
@@ -73,7 +72,7 @@ export default {
 <template>
   <v-card
     class="py-2 position-relative d-flex flex-column"
-    style="height: 330px;"
+    style="height: 100%;"
     tile
   >
     <v-system-bar :color="statusColor" :height="5" absolute>

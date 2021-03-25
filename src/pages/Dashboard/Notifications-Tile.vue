@@ -130,7 +130,7 @@ export default {
 <template>
   <v-card
     class="py-2 position-relative d-flex flex-column"
-    style="height: 330px;"
+    style="height: 100%;"
     tile
   >
     <CardTitle

@@ -114,11 +114,11 @@ export default {
     loading
     type="image"
     transition="quick-fade"
-    height="330"
+    height="100%"
     tile
   />
   <div v-else-if="type == 'free'">
-    <v-card class="py-2 d-flex flex-column" tile style="height: 330px;">
+    <v-card class="py-2 d-flex flex-column" tile style="height: 100%;">
       <CardTitle title="Usage this month" icon="assessment" />
 
       <v-card-text class="pb-0 d-flex align-center justify-space-around">
@@ -182,7 +182,7 @@ export default {
   <div v-else>
     <v-card
       class="mb-4 position-relative d-flex flex-column justify-space-between"
-      style="height: 157px;"
+      style="height: 330px;"
       tile
     >
       <v-card-text
@@ -203,7 +203,9 @@ export default {
               {{ usage && usage.toLocaleString() }}
             </span>
           </v-skeleton-loader>
-          <span class="text--disabled text-subtitle-1 ml-1">task runs</span>
+          <span class="text--disabled text-subtitle-1 ml-1"
+            >successful task runs</span
+          >
         </div>
         <div class="subtitle-2 font-weight-light">
           <v-skeleton-loader
@@ -224,60 +226,6 @@ export default {
             >of free runs used</span
           ></div
         >
-      </v-card-text>
-      <v-spacer />
-      <v-card-actions class="mt-auto">
-        <v-spacer />
-        <v-btn small color="primary" text :to="'/team/account'">
-          Details
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-
-    <v-card
-      class="mb-4 position-relative d-flex flex-column justify-space-between"
-      style="height: 157px;"
-      tile
-    >
-      <v-card-text
-        class="pa-0 px-3 pt-3 d-flex align-start justify-center flex-column mb-auto"
-      >
-        <div class="title utilGrayDark--text">Current balance</div>
-        <div class="text-h3"
-          ><span class="text-h5" style="vertical-align: top;">$</span>
-          <v-skeleton-loader
-            :loading="invoiceLoading"
-            type="image"
-            transition="quick-fade"
-            height="45"
-            width="75"
-            tile
-            class="d-inline-block"
-          >
-            <span>
-              {{ projectedCost
-              }}<span class="text--disabled text-subtitle-1">.00</span>
-            </span>
-          </v-skeleton-loader>
-        </div>
-        <div class="subtitle-2 font-weight-light"
-          >due
-          <v-skeleton-loader
-            :loading="invoiceLoading"
-            type="image"
-            transition="quick-fade"
-            height="12"
-            width="100"
-            tile
-            class="d-inline-block"
-            style="vertical-align: baseline;"
-          >
-            <span>
-              <span v-if="nextPaymentDate !== 'today'">on </span
-              >{{ nextPaymentDate }}
-            </span>
-          </v-skeleton-loader>
-        </div>
       </v-card-text>
       <v-spacer />
       <v-card-actions class="mt-auto">

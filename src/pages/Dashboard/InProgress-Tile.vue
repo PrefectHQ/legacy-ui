@@ -17,11 +17,6 @@ export default {
       required: false,
       type: String,
       default: () => null
-    },
-    fullHeight: {
-      required: false,
-      type: Boolean,
-      default: () => false
     }
   },
   data() {
@@ -130,14 +125,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="pb-2"
-    tile
-    :style="{
-      height: fullHeight ? '330px' : 'auto',
-      overflow: 'hidden'
-    }"
-  >
+  <v-card class="pb-2" tile style="height: 100%;">
     <v-progress-linear
       striped
       active

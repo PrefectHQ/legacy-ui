@@ -130,7 +130,7 @@ export default {
     class="py-2"
     tile
     :style="{
-      height: fullHeight ? '330px' : 'auto'
+      height: '100%'
     }"
   >
     <v-tooltip top>
