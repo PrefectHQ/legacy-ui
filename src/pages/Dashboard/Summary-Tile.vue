@@ -15,11 +15,6 @@ export default {
       type: String,
       required: false,
       default: () => null
-    },
-    fullHeight: {
-      required: false,
-      type: Boolean,
-      default: () => false
     }
   },
   data() {
@@ -126,13 +121,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="py-2"
-    tile
-    :style="{
-      height: '100%'
-    }"
-  >
+  <v-card class="py-2" tile style="height: 100%;">
     <v-tooltip top>
       <template #activator="{ on }">
         <CardTitle title="Summary" icon="pi-flow-run">
