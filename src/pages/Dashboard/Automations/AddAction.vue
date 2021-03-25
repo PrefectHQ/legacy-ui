@@ -573,6 +573,13 @@ export default {
           <router-link :to="{ name: 'secrets' }">secret</router-link> with your
           slack webhook url.
         </div>
+        <div v-else class="mx-2">
+          Select the name of the
+          <router-link :to="{ name: 'secrets' }">secret</router-link> for your
+          Slack webhook url.
+        </div>
+      </v-row>
+      <v-row v-if="messageType.type === 'SLACK_WEBHOOK'" class="px-1">
         <div
           v-for="name in secretNames"
           :key="name"
