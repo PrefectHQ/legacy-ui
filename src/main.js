@@ -362,14 +362,7 @@ const handleVisibilityChange = () => {
   )
   const authenticationExpiration = new Date(store.getters['auth/idTokenExpiry'])
 
-  // eslint-disable-next-line no-console
-  console.log(
-    'Handling visibility change',
-    document[hidden],
-    now >= authorizationExpiration,
-    now < authenticationExpiration
-  )
-  if (document[hidden]) {
+  if (!document[hidden]) {
     if (
       store.getters['auth/isAuthorized'] &&
       now >= authorizationExpiration &&
