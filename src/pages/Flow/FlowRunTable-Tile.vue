@@ -2,7 +2,7 @@
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
-
+import { STATE_NAMES } from '@/utils/states'
 export default {
   components: { CardTitle, DurationSpan },
   mixins: [formatTime],
@@ -48,27 +48,7 @@ export default {
       sortBy: 'scheduled_start_time',
       sortDesc: true,
       state: [],
-      states: [
-        'Failed',
-        'Pending',
-        'Retrying',
-        'Resume',
-        'Queued',
-        'Submitted',
-        'Paused',
-        'Running',
-        'Listening',
-        'Finished',
-        'Success',
-        'Cancelled',
-        'Cancelling',
-        'Cached',
-        'TriggerFailed',
-        'Skipped',
-        'TimedOut',
-        'Mapped',
-        'Looped'
-      ].sort()
+      states: STATE_NAMES.slice(1).sort()
     }
   },
   computed: {

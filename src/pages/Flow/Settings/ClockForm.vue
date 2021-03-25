@@ -1,4 +1,6 @@
 <script>
+/* eslint-disable */
+
 import CronForm from '@/pages/Flow/Settings/ClockForms/Cron'
 import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
@@ -33,7 +35,12 @@ export default {
     timezone: {
       type: String,
       required: false,
-      default: null
+      default: () => null
+    },
+    param: {
+      type: Object,
+      required: false,
+      default: () => null
     }
   },
   data() {
@@ -66,14 +73,25 @@ export default {
       this.$emit('cancel')
     },
     confirm() {
+      const parseObject = obj => {
+        if (!obj) return
+        Object.keys(obj).forEach(key => {
+          try {
+            obj[key] = JSON.parse(obj[key])
+          } catch {
+            //
+          }
+        })
+        return obj
+      }
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
-
       const clock = {
         type: clockType,
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
         ],
+        parameter_defaults: this.param ? parseObject(this.param) : null,
         timezone: this.selectedTimezone
       }
       this.$emit('confirm', clock)
@@ -88,12 +106,7 @@ export default {
     style="height: 100%;
     width: 100%;"
   >
-    <div
-      class="d-flex justify-space-between align-start mb-1"
-      style="width: 100%;"
-    >
-      <span class="text-h5 black--text">{{ title }}</span>
-
+    <div class="d-flex justify-end mb-1" style="width: 100%;">
       <v-switch
         v-model="advanced"
         inset
@@ -102,10 +115,9 @@ export default {
         hide-details
       ></v-switch>
     </div>
-
     <v-card-text
       style="max-height: fill;
-      overflow: scroll;"
+      overflow: auto;"
     >
       <v-fade-transition mode="out-in">
         <div
@@ -151,7 +163,14 @@ export default {
       </v-fade-transition>
     </v-card-text>
 
-    <div class="mt-auto text-right w-100">
+    <div
+      style="
+      bottom: 0;
+      padding: 20px;
+      position: absolute;
+      right: 0;
+      "
+    >
       <v-btn depressed class="mx-1" @click.stop="cancel">
         Cancel
       </v-btn>

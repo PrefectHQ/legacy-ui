@@ -10,6 +10,25 @@
 
 - None
 
+## 2021-03-25
+
+### Features and Improvements
+
+- Add default parameters to the schedules - [#683](https://github.com/PrefectHQ/ui/pull/683)
+- Add the "Running" state to the state filter - [#675](https://github.com/PrefectHQ/ui/pull/675)
+- Add terminal link to apollo to abort requests with expired headers - [#690](https://github.com/PrefectHQ/ui/pull/690)
+- Use `delete_flow_group` mutation when deleting flows - [#689](https://github.com/PrefectHQ/ui/pull/689)
+- Flow run page performance improvements (part 1) and shared service worker for token refresh - [#679](https://github.com/PrefectHQ/ui/pull/679)
+- Flow run page performance improvements (part 2) - [#688](https://github.com/PrefectHQ/ui/pull/688)
+
+## 2021-03-16
+
+### Bugfixes
+
+- Fix a bug where a license would get created even though there are validation errors present - [#672](https://github.com/PrefectHQ/ui/pull/672)
+- Updates links to the website - [#673](https://github.com/PrefectHQ/ui/pull/673)
+- Remove unhelpful tooltip on Secrets - [#665](https://github.com/PrefectHQ/ui/pull/665)
+
 ## 2021-03-15a
 
 ### Bugfixes

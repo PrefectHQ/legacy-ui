@@ -30,7 +30,7 @@
       </div>
       <a
         class="plan-cta plan-cta-dark py-7 mt-12 mt-md-8 mt-lg-12 d-flex align-center justify-center"
-        href="https://www.prefect.io/get-prefect#contact"
+        href="https://www.prefect.io/pricing#contact"
         target="_blank"
       >
         Contact Us

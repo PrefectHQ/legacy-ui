@@ -1,3 +1,11 @@
+jest.mock('@/main', () => {
+  return {
+    TokenWorker: {
+      postMessage: jest.fn()
+    }
+  }
+})
+
 import sinon from 'sinon'
 import store from '@/store'
 import authNavGuard from '@/middleware/authNavGuard'

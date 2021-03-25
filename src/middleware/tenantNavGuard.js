@@ -35,6 +35,7 @@ const tenantNavGuard = async (to, from, next) => {
       return next()
     } else if (defaultTenantSlug) {
       await store.dispatch('tenant/setCurrentTenant', defaultTenantSlug)
+
       return next({
         name: to.name,
         replace: true,

@@ -14,11 +14,6 @@ export default {
   },
   mixins: [formatTime],
   props: {
-    condensed: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
     flowId: {
       type: String,
       required: true
@@ -27,10 +22,35 @@ export default {
       type: String,
       required: true
     },
-    flowRun: {
-      type: Object,
+    // flowRun: {
+    //   type: Object,
+    //   required: false,
+    //   default: () => {}
+    // },
+    flowRunEndTime: {
+      type: String,
       required: false,
-      default: () => {}
+      default: () => null
+    },
+    flowRunScheduledStartTime: {
+      type: String,
+      required: false,
+      default: () => null
+    },
+    flowRunStartTime: {
+      type: String,
+      required: false,
+      default: () => null
+    },
+    flowRunState: {
+      type: String,
+      required: false,
+      default: () => null
+    },
+    flowRunStates: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data() {
@@ -45,31 +65,31 @@ export default {
   computed: {
     containerStyle() {
       return {
-        height: this.condensed ? '114px' : 'calc(100vh - 350px)'
+        height: '114px'
       }
     },
     endTime() {
-      return this.flowRun.end_time && this.isFinished
+      return this.flowRunEndTime && this.isFinished
         ? Math.max.apply(null, [
-            new Date(this.flowRun.scheduled_start_time),
-            new Date(this.flowRun.end_time),
+            new Date(this.flowRunScheduledStartTime),
+            new Date(this.flowRunEndTime),
             this.maxEndTime
           ])
         : null
     },
     filteredFlowRunStates() {
-      return this.flowRun.states.filter(state => state.state !== 'Pending')
+      return this.flowRunStates.filter(state => state.state !== 'Pending')
     },
     startTime() {
-      return this.flowRun.start_time
+      return this.flowRunStartTime
         ? Math.min.apply(null, [
-            new Date(this.flowRun.scheduled_start_time),
-            new Date(this.flowRun.start_time),
+            new Date(this.flowRunScheduledStartTime),
+            new Date(this.flowRunStartTime),
             ...this.filteredFlowRunStates.map(
               state => new Date(state.start_time ?? state.timestamp)
             )
           ])
-        : this.flowRun.scheduled_start_time
+        : this.flowRunScheduledStartTime
     },
     loading() {
       return this.loadingKey > 0
@@ -160,7 +180,10 @@ export default {
             // taskRun.state == 'Running' || taskRun.state == 'Pending'
           }
 
-          if ((this.isFinished || taskRunIsFinished) && !item.end_time) {
+          if (
+            (this.isFinished || (taskRunIsFinished && !isMapped)) &&
+            !item.end_time
+          ) {
             item.end_time = taskRun.start_time
               ? taskRun.start_time
               : taskRun.state_timestamp
@@ -184,13 +207,13 @@ export default {
     maxEndTime() {
       return Math.max.apply(null, [
         ...this.items.map(item => new Date(item.end_time)),
-        ...this.flowRun.states.map(state => new Date(state.timestamp))
+        ...this.flowRunStates.map(state => new Date(state.timestamp))
       ])
     },
     isFinished() {
       return (
-        FINISHED_STATES.includes(this.flowRun.state) &&
-        this.flowRun.state !== 'Scheduled'
+        FINISHED_STATES.includes(this.flowRunState) &&
+        this.flowRunState !== 'Scheduled'
       )
     },
     mappedTaskRuns() {
@@ -209,9 +232,6 @@ export default {
         )
         .join(' ')
     },
-    pollInterval() {
-      return this.flowRun.state === 'Running' ? 1000 : 0
-    },
     taskRunMap() {
       if (!this.taskRuns || !this.tasks) return {}
       const taskRunMap = {}
@@ -228,17 +248,32 @@ export default {
   watch: {
     flowRun() {
       this.$apollo.queries.taskRuns.stopPolling()
+      this.$apollo.queries.tasks.stopPolling()
+      this.$apollo.queries.mappedChildren.stopPolling()
 
-      if (this.pollInterval > 0) {
-        this.$apollo.queries.taskRuns.startPolling(this.pollInterval)
+      if (this.isFinished) {
+        this.$apollo.queries.taskRuns.startPolling(60000)
+        this.$apollo.queries.mappedChildren.startPolling(60000)
       } else {
-        this.$apollo.queries.taskRuns.refetch()
+        this.$apollo.queries.taskRuns.startPolling(3000)
+        this.$apollo.queries.tasks.startPolling(30000)
+        this.$apollo.queries.mappedChildren.startPolling(5000)
       }
 
       this.generateBreakpoints()
     }
   },
   mounted() {
+    if (this.isFinished) {
+      this.$apollo.queries.taskRuns.stopPolling()
+      this.$apollo.queries.tasks.stopPolling()
+      this.$apollo.queries.mappedChildren.stopPolling()
+
+      this.$apollo.queries.taskRuns.startPolling(60000)
+      this.$apollo.queries.tasks.startPolling(60000)
+      this.$apollo.queries.mappedChildren.startPolling(60000)
+    }
+
     this.generateBreakpoints()
 
     this.containerHeight = getComputedStyle(
@@ -284,7 +319,7 @@ export default {
         return !this.flowId || !this.tasks
       },
       loadingKey: 'loadingKey',
-      pollInterval: 3000,
+      pollInterval: 60000,
       update: data => data.task_run
     },
     tasks: {
@@ -298,7 +333,6 @@ export default {
         return !this.flowRunId
       },
       loadingKey: 'loadingKey',
-      pollInterval: 5000,
       update: data => data.task
     },
     mappedChildren: {
@@ -312,7 +346,7 @@ export default {
       skip() {
         return !this.taskRuns || !this.mappedTaskRuns.length
       },
-      pollInterval: 5000,
+      pollInterval: 60000,
       update(data) {
         // Since mapped_children doesn't return an id (and we can't do this mapping with GraphQL)
         // we map those here instead
@@ -356,9 +390,11 @@ export default {
       class="timeline-container pa-0"
       style="height: 150px;"
     >
+      <!-- 
+            :condensed="condensed"
+        :min-bar-radius="10" -->
       <Timeline
         v-if="taskRuns && items"
-        :condensed="condensed"
         :items="items"
         :start-time="startTime"
         :end-time="endTime"
@@ -366,7 +402,6 @@ export default {
         :breakpoints="breakpoints"
         :live="!isFinished"
         :height="containerHeight"
-        :min-bar-radius="10"
         @breakpoint-hover="handleBreakpointHover"
         @hover="handleHover"
         @click="handleClick"

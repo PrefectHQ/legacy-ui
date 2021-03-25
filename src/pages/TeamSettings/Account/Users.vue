@@ -172,7 +172,7 @@ export default {
     <v-card-subtitle>
       Check and update the number of users in your account. To see active
       membership information visit the
-      <router-link :to="{ name: 'members' }">
+      <router-link :to="'/team/members'">
         members page
       </router-link>
       .
@@ -203,7 +203,7 @@ export default {
       >
         You are on a {{ planType }} license. To change your license terms,
         please
-        <a href="https://www.prefect.io/get-prefect#contact" target="_blank"
+        <a href="https://www.prefect.io/pricing#contact" target="_blank"
           >contact our sales team</a
         >
       </v-alert>

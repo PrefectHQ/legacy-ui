@@ -37,10 +37,12 @@ let errors = 0,
 
 const batchLink = new BatchHttpLink({
   batchMax: 20,
-  batchInterval: 200,
+  batchInterval: 1000,
   uri: () => store.getters['api/url']
 })
 
+// Resets the cache and stops requests if
+// the backend has changed
 const backendMiddleware = new ApolloLink((operation, forward) => {
   const context = operation.getContext()
   if (context.headers?.['X-Backend'] !== store.getters['api/backend']) {
@@ -54,6 +56,7 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
   })
 })
 
+// Used to identify the request in the server
 const headerMiddleware = setContext((_, { headers }) => {
   headers['X-Prefect-UI'] = true
   headers['X-Backend'] = store.getters['api/backend']
@@ -67,6 +70,8 @@ const headerMiddleware = setContext((_, { headers }) => {
   }
 })
 
+// After requests have been made, formats errors for the JS console
+// to easily track the error sources in collapsible traces
 const errorAfterware = onError(
   ({ response, operation, graphQLErrors, networkError, forward }) => {
     // Only throw the API error once in a row
@@ -149,6 +154,10 @@ const errorAfterware = onError(
   }
 )
 
+export { errorAfterware }
+
+// Adds authorization headers to requests headed for the Cloud API;
+// just forwards requests if headed for a Server API
 const authMiddleware = setContext(async (_, { headers }) => {
   if (store.getters['api/isServer']) {
     return {
@@ -158,52 +167,55 @@ const authMiddleware = setContext(async (_, { headers }) => {
     }
   }
 
-  if (_.operationName == 'RefreshToken') {
-    // The refresh route requires the refresh token to be
-    // sent as the authorization header, with the
-    // access token as the body
-    return {
-      headers: {
-        ...headers,
-        authorization: `Bearer ${store.getters['auth/refreshToken']}`
+  if (store.getters['auth/legacy']) {
+    if (_.operationName == 'RefreshToken') {
+      // The refresh route requires the refresh token to be
+      // sent as the authorization header, with the
+      // access token as the body
+      return {
+        headers: {
+          ...headers,
+          authorization: `Bearer ${store.getters['auth/refreshToken']}`,
+          'authorization-expiry': store.getters['auth/refreshTokenExpiry']
+        }
       }
     }
-  }
 
-  // The login route requires that no authorization header be sent
-  if (_.operationName == 'LogIn') {
-    return {
-      headers: {
-        ...headers
+    // The login route requires that no authorization header be sent
+    if (_.operationName == 'LogIn') {
+      return {
+        headers: {
+          ...headers
+        }
       }
     }
-  }
 
-  const authRefreshRequired =
-    store.getters['auth/authorizationToken'] &&
-    aboutToExpire(store.getters['auth/authorizationTokenExpiry'])
+    const authRefreshRequired =
+      store.getters['auth/authorizationToken'] &&
+      aboutToExpire(store.getters['auth/authorizationTokenExpiry'])
 
-  const validRefreshToken =
-    store.getters['auth/refreshToken'] &&
-    notExpired(store.getters['auth/refreshTokenExpiry'])
+    const validRefreshToken =
+      store.getters['auth/refreshToken'] &&
+      notExpired(store.getters['auth/refreshTokenExpiry'])
 
-  const isAuthenticatedUser =
-    store.getters['auth/idToken'] &&
-    notExpired(store.getters['auth/idTokenExpiry'])
+    const isAuthenticatedUser =
+      store.getters['auth/idToken'] &&
+      notExpired(store.getters['auth/idTokenExpiry'])
 
-  const middleOfRefresh =
-    store.getters['auth/isRefreshingAuthorization'] ||
-    store.getters['auth/isAuthorizingUser'] ||
-    store.getters['auth/isLoggingInUser']
+    const middleOfRefresh =
+      store.getters['auth/isRefreshingAuthorization'] ||
+      store.getters['auth/isAuthorizingUser'] ||
+      store.getters['auth/isLoggingInUser']
 
-  if (authRefreshRequired && !middleOfRefresh) {
-    defaultApolloClient.cache.reset()
-    if (validRefreshToken) {
-      await store.dispatch('auth/refreshAuthorization')
-    } else if (isAuthenticatedUser) {
-      await store.dispatch('auth/authorize')
-    } else {
-      await store.dispatch('auth/login')
+    if (authRefreshRequired && !middleOfRefresh) {
+      defaultApolloClient.cache.reset()
+      if (validRefreshToken) {
+        await store.dispatch('auth/refreshAuthorization')
+      } else if (isAuthenticatedUser) {
+        await store.dispatch('auth/authorize')
+      } else {
+        await store.dispatch('auth/login')
+      }
     }
   }
 
@@ -211,9 +223,27 @@ const authMiddleware = setContext(async (_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: bearer
+      authorization: bearer,
+      'authorization-expiry': store.getters['auth/authorizationTokenExpiry']
     }
   }
+})
+
+// The last link in the chain before the request is sent;
+// Checks that the request should be sent based on authorization header expiration
+// and stops the request if it shouldn't be
+const terminalRequestLink = new ApolloLink((operation, forward) => {
+  if (store.getters['api/isServer']) return forward(operation)
+
+  const context = operation.getContext()
+  const expiration = context.headers?.['authorization-expiry']
+
+  // If there's no expiration, we forward the operation
+  if (!expiration) return forward(operation)
+
+  // otherwise we check that the authorization header hasn't expired before
+  // forwarding the request
+  if (notExpired(expiration)) return forward(operation)
 })
 
 // Apollo link chain; acts as middleware for GraphQL queries
@@ -222,6 +252,7 @@ const link = ApolloLink.from([
   headerMiddleware,
   backendMiddleware,
   errorAfterware,
+  terminalRequestLink,
   batchLink
 ])
 
@@ -271,10 +302,10 @@ let defaultApolloClient
 let fallbackApolloClient
 
 // Create apollo client
-export const createApolloProvider = () => {
+export const createApolloProvider = (options = defaultOptions) => {
   const { apolloClient, wsClient } = createApolloClient({
     id: 'initial',
-    ...defaultOptions
+    ...options
   })
   apolloClient.wsClient = wsClient
 
@@ -306,7 +337,6 @@ export { defaultApolloClient }
 export const fallbackApolloProvider = createApolloProvider()
 fallbackApolloClient = fallbackApolloProvider.defaultClient
 export { fallbackApolloClient }
-// export const fallbackApolloClient = fallbackApolloProvider.defaultClient
 
 export async function apolloOnLogin(apolloClient) {
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)

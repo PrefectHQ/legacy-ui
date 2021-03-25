@@ -5,10 +5,34 @@ import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 import moment from '@/utils/moment'
 
+// TODO: Remove the workerize-loader package and adjust this worker to
+// a more classic pub/sub style
+import TimelineWorker from 'workerize-loader?inline!@/workers/timeline'
+
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters } from 'vuex'
 
 const xAxisHeight = 20
+const minBarRadius = 10
+const maxBarRadius = 25
+const breakpointTooltipWidth = 185
+const itemTooltipWidth = 375
+const condensed = true
+
+let hidden, visibilityChange
+if (window) {
+  if (typeof document.hidden !== 'undefined') {
+    // Opera 12.10 and Firefox 18 and later
+    hidden = 'hidden'
+    visibilityChange = 'visibilitychange'
+  } else if (typeof document.msHidden !== 'undefined') {
+    hidden = 'msHidden'
+    visibilityChange = 'msvisibilitychange'
+  } else if (typeof document.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden'
+    visibilityChange = 'webkitvisibilitychange'
+  }
+}
 
 export default {
   mixins: [formatTime],
@@ -23,40 +47,11 @@ export default {
       required: false,
       default: () => []
     },
-    condensed: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-
     loading: {
       type: Boolean,
       required: false,
       default: false
     },
-
-    maxBarRadius: {
-      type: Number,
-      required: false,
-      default: 25
-    },
-    minBarRadius: {
-      type: Number,
-      required: false,
-      default: null
-    },
-
-    breakpointTooltipWidth: {
-      type: Number,
-      required: false,
-      default: 185
-    },
-    itemTooltipWidth: {
-      type: Number,
-      required: false,
-      default: 375
-    },
-
     items: {
       type: Array,
       required: false,
@@ -83,7 +78,6 @@ export default {
   data() {
     return {
       animationDuration: 500,
-      condensed_: this.condensed,
       drawTimeout: null,
       easing: 'easePolyInOut',
       firstRenderComplete: false,
@@ -98,7 +92,15 @@ export default {
       showLabels: true,
       showTimestampAtCursor: false,
       updateXTimeout: null,
+      worker: null,
       zoom: d3.zoom(),
+
+      breakpointsUnwatch: null,
+      endTimeUnwatch: null,
+      itemUnwatch: null,
+      liveUnwatch: null,
+      pauseUpdatesUnwatch: null,
+      startTimeUnwatch: null,
 
       followEdge: true,
 
@@ -137,7 +139,7 @@ export default {
       interval: null,
       iterations: 0,
       live_: this.live,
-      pauseUpdates: false,
+      pauseUpdates: document[hidden],
       scaleExtent: [1, 10],
       translateExtent: [
         [-Infinity, -Infinity],
@@ -158,7 +160,7 @@ export default {
     ...mapGetters('user', ['user', 'timezone']),
     calcRows: function() {
       return debounce(() => {
-        requestAnimationFrame(this.rawCalcRows)
+        this.rawCalcRows()
       }, 300)
     },
     resizeChart: function() {
@@ -207,7 +209,7 @@ export default {
     },
     breakpointTooltipStyle() {
       if (!this.hovered) return
-      let half = this.breakpointTooltipWidth / 2
+      let half = breakpointTooltipWidth / 2
       let p = this.boundingClientRect
       let overRight = this.hovered.x + half - p.width > 0
       let overLeft = this.hovered.x - half < 0
@@ -216,12 +218,12 @@ export default {
           overRight ? p.width - half : overLeft ? half : this.hovered.x
         }px`,
         top: `${this.hovered.y}px`,
-        width: `${this.breakpointTooltipWidth}px`
+        width: `${breakpointTooltipWidth}px`
       }
     },
     itemTooltipStyle() {
       if (!this.hovered) return
-      let half = this.itemTooltipWidth / 2
+      let half = itemTooltipWidth / 2
       let p = this.boundingClientRect
       let overRight = this.hovered.x + half - p.width > 0
       let overLeft = this.hovered.x - half < 0
@@ -230,7 +232,7 @@ export default {
           overRight ? p.width - half : overLeft ? half : this.hovered.x
         }px`,
         top: `${this.hovered.y}px`,
-        width: `${this.itemTooltipWidth}px`
+        width: `${itemTooltipWidth}px`
       }
     },
     updateBars: function() {
@@ -238,37 +240,12 @@ export default {
         () => {
           this.rawUpdateBars()
         },
-        this.firstRenderComplete ? 16 : this.animationDuration
+        this.firstRenderComplete ? 32 : this.animationDuration
       )
     }
   },
-  watch: {
-    breakpoints: {
-      deep: true,
-      handler: debounce(function() {
-        if (this.pauseUpdates) return
-        this.updateBreakpoints(true)
-      }, 500)
-    },
-    endTime() {
-      this.updateScales()
-    },
-    items: {
-      deep: true,
-      handler: debounce(function() {
-        if (this.pauseUpdates) return
-        this.calcRows()
-        this.updateBars()
-      }, 500)
-    },
-    live(val) {
-      this.live_ = val
-    },
-    startTime() {
-      this.updateScales()
-    }
-  },
   mounted() {
+    this.worker = TimelineWorker({ type: 'module' })
     this.timer?.stop()
 
     this.canvas = d3.select(`#${this.id}-canvas`)
@@ -284,6 +261,11 @@ export default {
     }
 
     window.addEventListener('resize', this.resizeChart)
+    window.addEventListener(
+      visibilityChange,
+      this.handleVisibilityChange,
+      false
+    )
 
     this.setChartDimensions()
 
@@ -292,89 +274,72 @@ export default {
     this.canvas.on('mouseout', this.mouseout)
 
     this.live_ = this.live
+
+    this.breakpointsUnwatch = this.$watch(
+      'breakpoints',
+      debounce(function() {
+        if (this.pauseUpdates) return
+        this.updateBreakpoints(true)
+      }, 500)
+    )
+    this.itemUnwatch = this.$watch(
+      'items',
+      debounce(function() {
+        if (this.pauseUpdates) return
+        this.calcRows()
+        this.updateBars()
+      }, 500),
+      { deep: true }
+    )
+
+    this.endTimeUnwatch = this.$watch('endTime', () => {
+      if (this.pauseUpdates) return
+      this.updateScales()
+    })
+
+    this.liveUnwatch = this.$watch('live', val => {
+      this.live_ = val
+    })
+
+    this.startTimeUnwatch = this.$watch('startTime', () => {
+      if (this.pauseUpdates) return
+      this.updateScales()
+    })
+
+    this.pauseUpdatesUnwatch = this.$watch('pauseUpdates', val => {
+      if (!val && !this.live_) {
+        this.updateScales()
+      }
+    })
   },
   beforeDestroy() {
+    this.worker?.terminate()
+    this.worker = null
     this.timer?.stop()
     this.interval?.stop()
     window.removeEventListener('resize', this.resizeChart)
+    window.removeEventListener(visibilityChange, this.handleVisibilityChange)
+
     this.canvas.on('.zoom', null)
     this.canvas.on('click', null)
     this.canvas.on('mousemove', null)
     this.canvas.on('mouseout', null)
     this.xAxisNode.on('end', null)
+
+    this.itemUnwatch()
+    this.breakpointsUnwatch()
+    this.endTimeUnwatch()
+    this.liveUnwatch()
+    this.startTimeUnwatch()
+    this.pauseUpdatesUnwatch()
   },
   methods: {
-    rawCalcRows() {
+    async rawCalcRows() {
       const prevRows = this.rows
-      const grid = []
+      const { rowMap, rows } = await this.worker.GenerateRows(this.items)
 
-      itemLoop: for (let i = 0; i < this.items.length; ++i) {
-        const item = this.items[i]
-
-        // If the item hasn't started yet, we distribute
-        // it to the row with the least items already
-        if (!item.start_time) {
-          const start = Date.now()
-          const end = Date.now()
-
-          const lengths = grid.map(row => row.length)
-          let row = lengths.indexOf(Math.min(...lengths))
-
-          this.rowMap[item.id] = row
-
-          if (!grid[row]) {
-            grid.push([[start, end]])
-          } else {
-            grid[row].push([start, end])
-          }
-          continue itemLoop
-        }
-
-        const start = item.start_time
-          ? new Date(item.start_time).getTime()
-          : null
-        const end = item.end_time
-          ? new Date(item.end_time).getTime()
-          : Date.now()
-
-        for (let row = 0; row <= grid.length; ++row) {
-          // If the current row doesn't exist, create it, put this item on it,
-          // and move to the next item
-          if (!grid[row]) {
-            this.rowMap[item.id] = row
-            grid.push([[start, end]])
-            continue itemLoop
-          }
-
-          if (!start) {
-            const lengths = grid.map(row => row.length)
-            let row = lengths.indexOf(Math.min(...lengths))
-
-            this.rowMap[item.id] = row
-            grid[row].push([start, end])
-            continue itemLoop
-          }
-
-          // Otherwise check the start and end times against each
-          // start[0] and end[1] time in the row
-          let intersects = grid[row].some(
-            slot => end <= slot[0] - 1000 || start <= slot[1] + 1000
-          )
-
-          // let intersects = grid[row].some(
-          //   slot => end <= slot[0] || start <= slot[1]
-          // )
-
-          if (!intersects) {
-            this.rowMap[item.id] = row
-            grid[row].push([start, end])
-            continue itemLoop
-          }
-        }
-      }
-
-      this.rows = grid.length
-
+      this.rows = rows
+      this.rowMap = rowMap
       if (this.rows !== prevRows) this.updateScales()
     },
     click(e) {
@@ -662,7 +627,7 @@ export default {
 
         // These are pretty fuzzy right now
         // so we'll probably want to move them to the svg layer
-        if (bar.label && !this.condensed_) {
+        if (bar.label && !condensed) {
           const savedStrokeStyle = context.fillStyle
           const fontSize = 10 * (1 / this.transform.k)
           const textY = (9 + bar.y + bar.height) * (1 / this.transform.k)
@@ -698,8 +663,8 @@ export default {
     },
     rawUpdateBars() {
       const height =
-        (this.y.bandwidth() > this.maxBarRadius
-          ? this.maxBarRadius
+        (this.y.bandwidth() > maxBarRadius
+          ? maxBarRadius
           : this.y.bandwidth()) ?? 0
 
       const calcBar = item => {
@@ -851,7 +816,7 @@ export default {
         parent.clientHeight - padding.top - padding.bottom
       )
 
-      if (this.width_ !== this.width) {
+      if (!this.width_ || (this.width && this.width_ !== this.width)) {
         this.setChartDimensions()
       }
     },
@@ -906,11 +871,11 @@ export default {
     },
     rawResizeCanvas() {
       const fullHeight =
-        this.rows * this.minBarRadius +
-        this.rows * this.minBarRadius * this.barPadding * 2
+        this.rows * minBarRadius +
+        this.rows * minBarRadius * this.barPadding * 2
 
       this.height_ =
-        (this.condensed_
+        (condensed
           ? this.height - this.padding.y
           : Math.max(fullHeight, this.height) - this.padding.y) -
         this.padding.bottom
@@ -1167,7 +1132,7 @@ export default {
       // We only need this section if we want to draw the x-axis
       this.xAxisNode
         .transition()
-        .duration(shouldTransition ? 16 : 0)
+        .duration(shouldTransition ? 64 : 0)
         .call(xAxis)
         .on('end', () => {
           this.xAxisNode.on('end', null)
@@ -1218,8 +1183,6 @@ export default {
         this.transform.x += translateBy
 
         this.canvas.call(this.zoom, this.transform)
-        // this.zoom.translateBy(this.canvas, translateBy, 0)
-        // this.canvas.call(this.zoom, )¿
       } else {
         this.canvas.call(this.zoom)
       }
@@ -1240,8 +1203,10 @@ export default {
       this.updateX()
     },
     collapse() {
-      this.condensed_ = !this.condensed_
       this.resizeCanvas()
+    },
+    handleVisibilityChange() {
+      this.pauseUpdates = document[hidden]
     },
     panLeft() {
       this.canvas
@@ -1497,7 +1462,7 @@ export default {
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
       1px 2px 2px 0 rgba(0, 0, 0, 0.14), 3px 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
     position: absolute;
-    right: -68px;
+    right: -50px;
     top: 50%;
     transform: translate(0, -60%);
     transition: all 250ms;
