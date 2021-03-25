@@ -7,6 +7,7 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 import ApprovalNotification from '@/pages/Notifications/NotificationTypes/Approval-Notification'
 import FlowRunNotification from '@/pages/Notifications/NotificationTypes/FlowRun-Notification'
 import MembershipNotification from '@/pages/Notifications/NotificationTypes/Membership-Notification'
+import MessageNotification from '@/pages/Notifications/NotificationTypes/Message-Notification'
 import WhatsNewNotification from '@/pages/Notifications/NotificationTypes/WhatsNew-Notification'
 
 import {
@@ -22,6 +23,7 @@ export default {
     CardTitle,
     FlowRunNotification,
     MembershipNotification,
+    MessageNotification,
     WhatsNewNotification
   },
   mixins: [formatTime],

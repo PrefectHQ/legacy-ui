@@ -178,7 +178,7 @@ export default {
       </v-card-actions>
     </v-card>
   </div>
-  <div v-else-if="type == 'committed'"></div>
+  <div v-else-if="type == 'committed'">HELLO :)</div>
   <div v-else>
     <v-card
       class="mb-4 position-relative d-flex flex-column justify-space-between"
