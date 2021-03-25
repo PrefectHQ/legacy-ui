@@ -29,7 +29,7 @@ export default {
       step: null,
       actionConfig: null,
       actionConfigArray: [],
-      messageName: 'a message',
+      messageName: 'message',
       secretName: '',
       messageText: '',
       openTwilioConfig: false,
@@ -406,6 +406,9 @@ export default {
     <v-card-text class="text-h6">
       <v-row>
         <v-col cols="9" lg="10">
+          <span v-if="actionType.sendText" class="mr-1">{{
+            actionType.sendText
+          }}</span>
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectActionType')"
@@ -418,6 +421,7 @@ export default {
           {{ ' ' }}
           <span>
             <v-btn
+              v-if="!messageText"
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class="px-0 pb-1 text-h6 d-inline-block text-truncate"
               max-width="300px"
@@ -427,7 +431,25 @@ export default {
               :class="format('openMessageText')"
               @click="switchStep('openMessageText')"
             >
-              {{ messageText || messageName }}</v-btn
+              message</v-btn
+            >
+            <v-tooltip v-else top>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                  class="px-0 pb-1 text-h6 d-inline-block text-truncate"
+                  max-width="300px"
+                  text
+                  :disabled="!actionType.type"
+                  :color="buttonColor('openMessageText')"
+                  :class="format('openMessageText')"
+                  v-bind="attrs"
+                  @click="switchStep('openMessageText')"
+                  v-on="on"
+                >
+                  message</v-btn
+                ></template
+              >{{ messageText }}</v-tooltip
             >
           </span>
           <span>
