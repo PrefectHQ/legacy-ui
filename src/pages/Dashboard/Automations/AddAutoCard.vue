@@ -701,15 +701,6 @@ export default {
       <v-row
         ><v-col cols="12" class="py-0">
           <!-- //need to fix v-model AND flow box color/style -->
-          <v-checkbox
-            v-if="!searchEntry"
-            v-model="selectAll"
-            class="mx-2 mt-2"
-            dense
-            hide-details
-            label="Select All"
-            :indeterminate="notAll"
-          ></v-checkbox>
           <v-text-field
             v-model="searchEntry"
             hide-details
@@ -720,7 +711,16 @@ export default {
             :placeholder="placeholderMessage"
             prepend-inner-icon="search"
             autocomplete="new-password"
-        /></v-col>
+          />
+          <v-checkbox
+            v-model="selectAll"
+            class="mx-2 mt-2"
+            dense
+            hide-details
+            label="Select All"
+            :indeterminate="notAll"
+          ></v-checkbox>
+        </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
