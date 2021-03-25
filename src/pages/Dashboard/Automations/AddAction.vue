@@ -458,7 +458,7 @@ export default {
         >
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
-            outlined
+            text
             color="utilGrayMid"
             class="light-weight-text mr-1 px-2"
             @click="handleClose"

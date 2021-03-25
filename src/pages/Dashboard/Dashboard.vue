@@ -424,7 +424,7 @@ export default {
 
       <v-tab-item
         class="tab-full-height"
-        value="actions"
+        value="automations"
         transition="tab-fade"
         reverse-transition="tab-fade"
       >

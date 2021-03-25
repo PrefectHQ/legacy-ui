@@ -70,10 +70,7 @@ export default {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
         return 'Agent'
-      return 'flow'
-    },
-    disableCancel() {
-      return this.agentOrFlow === 'flow'
+      return 'this'
     },
     disableStep() {
       return this.agentOrFlow === 'Agent' || this.selectedFlows.length > 1
@@ -238,7 +235,7 @@ export default {
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
-      if (choice === 'Flow') {
+      if (choice === 'a flow') {
         this.flowEventType = this.hookDetail?.flowConfig?.kind
           ? this.flowEventTypes.find(
               type => type.enum === this.hookDetail?.flowConfig?.kind
@@ -590,7 +587,7 @@ export default {
               >{{ flowNames }}</truncate
             ><span v-else>{{ flowNames }}</span></v-btn
           >
-          <span v-if="agentOrFlow === 'Flow'"
+          <span v-if="agentOrFlow === 'a flow'"
             >{{ ' ' }}{{ haveOrHas }} a run that</span
           >
 
@@ -646,9 +643,9 @@ export default {
         </v-col>
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
-            outlined
+            v-if="step.name != 'openAgentOrFlow' || hookDetail"
+            text
             color="utilGrayMid"
-            :disabled="disableCancel"
             class="light-weight-text mr-1 px-2"
             @click="closeCard"
           >
@@ -669,7 +666,7 @@ export default {
       <v-card-text>
         <v-row class="px-1">
           <div
-            v-for="item in ['Flow', 'Agent']"
+            v-for="item in ['a flow', 'an agent']"
             :key="item"
             v-ripple
             class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
@@ -677,19 +674,18 @@ export default {
             @click="selectAgentOrFlow(item)"
             ><div class="text-center"
               ><v-icon class="pr-2 pb-1">{{
-                item === 'Flow' ? 'pi-flow' : 'pi-agent'
+                item === 'a flow' ? 'pi-flow' : 'pi-agent'
               }}</v-icon
               >{{ item }}</div
             ></div
           >
         </v-row>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="agentOrFlow !== 'this'">
         <v-spacer></v-spacer>
         <v-btn
           color="primary"
           elevation="0"
-          :disabled="disableCancel"
           title="Next"
           class="mx-1"
           @click="
@@ -742,14 +738,18 @@ export default {
               >
                 <div
                   v-ripple
-                  class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer user-select-none"
+                  class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer"
                   :class="{ active: includesFlow(item) }"
                   @click="selectFlow(item)"
                 >
-                  <truncate :content="`${item.name} - ${item.project.name}`"
-                    ><div class="caption">{{ item.project.name }}</div
-                    ><div class="text-body-1">{{ item.name }}</div></truncate
-                  >
+                  <div style="width: auto;" class="text-body-1 text-truncate">
+                    <div class="caption">{{ item.project.name }}</div
+                    ><div
+                      ><div style="width: 100%;" class="text-truncate">{{
+                        item.name
+                      }}</div></div
+                    >
+                  </div>
                 </div></v-col
               >
             </v-row>
@@ -784,12 +784,11 @@ export default {
           </div>
         </v-row>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="flowEventType.enum">
         <v-spacer></v-spacer>
         <v-btn
           color="primary"
           elevation="0"
-          :disabled="!flowEventType.name"
           title="Next"
           class="mx-1"
           @click="selectFlowEventType()"
