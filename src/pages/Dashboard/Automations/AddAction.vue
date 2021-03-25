@@ -733,7 +733,7 @@ export default {
         v-on="on"
       ></v-text-field>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions v-if="step.name !== 'addName'">
       <v-spacer></v-spacer>
       <v-btn
         class="text-normal mr-1 mb-1"
