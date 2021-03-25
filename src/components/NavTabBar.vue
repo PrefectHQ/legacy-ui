@@ -112,8 +112,7 @@ export default {
               <v-badge
                 v-if="tb.badgeText"
                 color="codePink"
-                class="text-none"
-                :style="tb.disabled ? 'pointer-events: none;' : ''"
+                class="text-none disable"
                 :content="tb.badgeText"
                 bottom
                 inline
@@ -162,6 +161,7 @@ export default {
           v-if="tb.badgeText"
           :color="tb.badgeColor || 'codePink'"
           class="text-none"
+          :class="tb.disabled ? 'disable' : ''"
           :content="tb.badgeText"
           bottom
           inline
@@ -184,3 +184,11 @@ export default {
     </v-tab>
   </v-tabs>
 </template>
+
+<style>
+/* stylelint-disable */
+.disable.v-badge--inline .v-badge__badge,
+.v-badge--inline .v-badge__wrapper {
+  pointer-events: none;
+}
+</style>
