@@ -50,7 +50,7 @@ export default {
 <template>
   <v-card
     class="mb-4 position-relative d-flex flex-column justify-space-between"
-    style="height: 157px;"
+    style="height: 100%;"
     tile
   >
     <v-card-text

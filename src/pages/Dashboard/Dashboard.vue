@@ -7,7 +7,6 @@ import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
-import FreeUsageTile from '@/pages/Dashboard/UsageTiles/FreeUsage-Tile'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import NavTabBar from '@/components/NavTabBar'
 import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
@@ -53,7 +52,6 @@ export default {
     BreadCrumbs,
     FailedFlowsTile,
     FlowTableTile,
-    FreeUsageTile,
     InProgressTile,
     NavTabBar,
     NotificationsTile,
@@ -119,13 +117,8 @@ export default {
       if (!this.isCloud) return null
       if (!this.license) return 'loading'
 
-      let tile = 'monthly'
+      let tile = !this.license.terms.is_self_serve ? 'committed' : 'monthly'
 
-      if (!this.license.terms.is_self_serve) {
-        tile = 'committed'
-      } else if (!this.license.terms.is_usage_based) {
-        tile = 'free'
-      }
       return tile
     }
   },
@@ -308,7 +301,7 @@ export default {
             type="image"
             height="200"
             transition="quick-fade"
-            class="tile-container span-row-1 span-column-6"
+            class="tile-container span-full span-row-1"
             tile
           >
             <FlowRunHistoryTile
@@ -320,9 +313,9 @@ export default {
           <v-skeleton-loader
             :loading="loadedTiles < 2"
             type="image"
-            height="330"
+            height="100%"
             transition="quick-fade"
-            class="tile-container span-row-2 span-column-2"
+            class="tile-container span-row-2"
             tile
           >
             <SummaryTile :project-id="projectId" full-height />
@@ -331,9 +324,9 @@ export default {
           <v-skeleton-loader
             :loading="loadedTiles < 7"
             type="image"
-            height="330"
+            height="100%"
             transition="quick-fade"
-            class="tile-container span-row-2 span-column-2"
+            class="tile-container"
             tile
           >
             <FailedFlowsTile :project-id="projectId" />
@@ -342,33 +335,33 @@ export default {
           <v-skeleton-loader
             :loading="loadedTiles < 1"
             type="image"
-            height="330"
+            height="100%"
             transition="quick-fade"
-            class="tile-container span-row-2 span-column-2"
+            class="tile-container"
             tile
           >
             <UpcomingRunsTile :key="key" :project-id="projectId" full-height />
           </v-skeleton-loader>
 
           <v-skeleton-loader
+            v-if="license"
             :loading="loadedTiles < 6 || usageTile == 'loading'"
             type="image"
-            height="330"
+            height="100%"
             transition="quick-fade"
-            class="tile-container span-row-1 span-column-2"
+            class="tile-container span-row-1"
             tile
           >
             <CycleUsageTile v-if="usageTile == 'monthly'" />
-            <FreeUsageTile v-else-if="usageTile == 'free'" />
             <CommittedUsageTile v-else-if="usageTile == 'committed'" />
           </v-skeleton-loader>
 
           <v-skeleton-loader
             :loading="loadedTiles < 3"
             type="image"
-            height="330"
+            height="100%"
             transition="quick-fade"
-            class="tile-container span-row-2 span-column-2"
+            class="tile-container"
             tile
           >
             <InProgressTile :project-id="projectId" full-height />
@@ -377,9 +370,9 @@ export default {
           <v-skeleton-loader
             :loading="loadedTiles < 4"
             type="image"
-            height="330"
+            height="100%"
             transition="quick-fade"
-            class="tile-container span-row-2 span-column-2"
+            class="tile-container"
             tile
           >
             <AgentsTile
@@ -391,9 +384,9 @@ export default {
           <v-skeleton-loader
             :loading="loadedTiles < 5"
             type="image"
-            height="330"
+            height="100%"
             transition="quick-fade"
-            class="tile-container span-row-2 span-column-2"
+            class="tile-container"
             tile
           >
             <NotificationsTile :project-id="projectId" full-height />
@@ -443,7 +436,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-$cellsize: 212px;
+$cellsize: 412px;
 $rowsize: 153px;
 $guttersize: 24px;
 $spans: 1, 2, 3, 4, 5, 6;
@@ -451,27 +444,25 @@ $spans: 1, 2, 3, 4, 5, 6;
 .tile-grid {
   column-gap: $guttersize;
   display: grid;
-  grid-auto-flow: dense;
-  grid-auto-rows: $rowsize;
-  grid-template-columns: repeat(auto-fill, $cellsize);
-  justify-content: normal;
+  grid-auto-flow: row dense;
+  grid-auto-rows: minmax($rowsize, auto);
+  grid-template-columns: repeat(auto-fit, minmax($cellsize, 1fr));
   row-gap: $guttersize;
+  width: 100%;
 }
 
 .tile-container {
-  grid-column: span 2;
+  grid-column: span 1;
   grid-row: span 2;
-  overflow: visible;
-  position: relative;
 
   @each $span in $spans {
     &.span-row-#{$span} {
       grid-row: span $span;
     }
+  }
 
-    &.span-column-#{$span} {
-      grid-column: span $span;
-    }
+  &.span-full {
+    grid-column: 1 / -1;
   }
 }
 </style>

@@ -47,6 +47,9 @@ export default {
           this.freeUsage >= 80 && this.freeUsage < 100,
         'prefect--text text--darken-1': this.freeUsage == 100
       }
+    },
+    planType() {
+      return this.license?.terms?.plan
     }
   },
   apollo: {
@@ -88,7 +91,7 @@ export default {
 <template>
   <v-card
     class="mb-4 position-relative d-flex flex-column justify-space-between"
-    style="height: 157px;"
+    style="height: 100%;"
     tile
   >
     <v-card-text
@@ -106,8 +109,11 @@ export default {
           class="d-inline-block"
         >
           <span>
-            {{ usage && usage.toLocaleString() }}
-          </span>
+            {{ usage && usage.toLocaleString()
+            }}<span v-if="planType === 'FREE_2021'" class="text-h5 ml-1"
+              >/10,000</span
+            ></span
+          >
         </v-skeleton-loader>
         <span class="text--disabled text-subtitle-1 ml-1"
           >successful task runs</span
@@ -128,7 +134,11 @@ export default {
             {{ freeUsage }}
           </span> </v-skeleton-loader
         ><span class="font-weight-medium" :class="freeUsageStyle">% </span>
-        <span class="text-normal text--disabled font-weight-light"
+        <span
+          v-if="planType === 'FREE_2021'"
+          class="text-normal text--disabled font-weight-light"
+          >of runs used</span
+        ><span v-else class="text-normal text--disabled font-weight-light"
           >of free runs used</span
         ></div
       >

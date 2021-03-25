@@ -144,7 +144,7 @@ export default {
         <v-spacer />
 
         <v-btn
-          v-if="isSelfServe"
+          v-if="isSelfServe && planType !== 'FREE_2021'"
           class="mr-1 blue-grey--text"
           text
           small
