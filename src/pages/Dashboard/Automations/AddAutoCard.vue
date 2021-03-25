@@ -301,7 +301,7 @@ export default {
     },
     selectFlowEventType(type) {
       this.steps['selectEventType'].complete = true
-      this.flowEventType = type
+      if (type) this.flowEventType = type
       this.isSLA
         ? this.switchStep('openDuration')
         : this.includeTo
@@ -666,24 +666,42 @@ export default {
         </v-col>
       </v-row>
     </v-card-text>
-    <v-card-text v-if="step.name === 'openAgentOrFlow'">
-      <v-row class="px-1">
-        <div
-          v-for="item in ['Flow', 'Agent']"
-          :key="item"
-          v-ripple
-          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
-          :class="{ active: agentOrFlow === item }"
-          @click="selectAgentOrFlow(item)"
-          ><div class="text-center"
-            ><v-icon class="pr-2 pb-1">{{
-              item === 'Flow' ? 'pi-flow' : 'pi-agent'
-            }}</v-icon
-            >{{ item }}</div
-          ></div
-        >
-      </v-row>
-    </v-card-text>
+    <div v-if="step.name === 'openAgentOrFlow'">
+      <v-card-text>
+        <v-row class="px-1">
+          <div
+            v-for="item in ['Flow', 'Agent']"
+            :key="item"
+            v-ripple
+            class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+            :class="{ active: agentOrFlow === item }"
+            @click="selectAgentOrFlow(item)"
+            ><div class="text-center"
+              ><v-icon class="pr-2 pb-1">{{
+                item === 'Flow' ? 'pi-flow' : 'pi-agent'
+              }}</v-icon
+              >{{ item }}</div
+            ></div
+          >
+        </v-row>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          :disabled="agentOrFlow === 'this'"
+          title="Next"
+          class="mx-1"
+          @click="
+            agentOrFlow === 'Agent'
+              ? switchStep('selectDoThis')
+              : switchStep('selectFlow')
+          "
+          ><span style="text-transform: none;"> Next</span>
+        </v-btn>
+      </v-card-actions>
+    </div>
     <v-sheet v-else-if="step.name === 'selectFlow'" class="pa-4">
       <v-row
         ><v-col cols="3">
@@ -752,19 +770,33 @@ export default {
       </v-card-actions>
     </v-sheet>
 
-    <v-card-text v-else-if="step.name === 'selectEventType'"
-      ><v-row class="px-1">
-        <div
-          v-for="item in filteredFlowEventTypes"
-          :key="item.enum"
-          v-ripple
-          class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
-          :class="{ active: includesFlow(item) }"
-          @click="selectFlowEventType(item)"
-          ><div class="text-center text-body-1">{{ item.name }}</div>
-        </div>
-      </v-row>
-    </v-card-text>
+    <div v-else-if="step.name === 'selectEventType'"
+      ><v-card-text>
+        <v-row class="px-1">
+          <div
+            v-for="item in filteredFlowEventTypes"
+            :key="item.enum"
+            v-ripple
+            class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+            :class="{ active: flowEventType.name === item.name }"
+            @click="selectFlowEventType(item)"
+            ><div class="text-center text-body-1">{{ item.name }}</div>
+          </div>
+        </v-row>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          :disabled="!flowEventType.name"
+          title="Next"
+          class="mx-1"
+          @click="selectFlowEventType()"
+          ><span style="text-transform: none;"> Next</span>
+        </v-btn>
+      </v-card-actions>
+    </div>
     <div v-else-if="step.name === 'openDuration'">
       <v-card-text>
         <v-text-field
