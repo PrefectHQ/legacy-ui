@@ -49,14 +49,17 @@ export default {
 
 <template>
   <v-card
-    class="mb-4 position-relative d-flex flex-column justify-space-between"
+    class="position-relative d-flex flex-column justify-space-between"
     style="height: 100%;"
     tile
   >
+    <v-card-title class="text-h4 font-weight-light">
+      Current balance
+    </v-card-title>
+
     <v-card-text
-      class="pa-0 px-3 pt-3 d-flex align-start justify-center flex-column mb-auto"
+      class="pt-0 pa-3 d-flex align-start justify-center flex-column mb-auto"
     >
-      <div class="title utilGrayDark--text">Current balance</div>
       <div class="text-h3"
         ><span class="text-h5" style="vertical-align: top;">$</span>
         <v-skeleton-loader
@@ -93,12 +96,5 @@ export default {
         </v-skeleton-loader>
       </div>
     </v-card-text>
-    <v-spacer />
-    <v-card-actions class="mt-auto">
-      <v-spacer />
-      <v-btn small color="primary" text :to="'/team/account'">
-        Details
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
