@@ -186,6 +186,7 @@ export default {
           .filter(user =>
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
           )
+          .filter(user => user.account_type === 'USER')
           .map(user => {
             let membership = user.memberships.find(
               mem => mem.tenant_id == this.tenant.id

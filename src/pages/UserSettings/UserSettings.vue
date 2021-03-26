@@ -52,6 +52,14 @@ export default {
             <v-list-item-title>Profile</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item :to="{ name: 'keys' }" ripple exact>
+          <v-list-item-action>
+            <v-icon>vpn_key</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>API Keys</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item
           data-cy="user-settings-personal-access-tokens"
           :to="'/user/tokens'"
