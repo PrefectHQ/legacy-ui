@@ -578,7 +578,7 @@ export default {
 
 <template>
   <v-card outlined>
-    <v-card-text class="text-h6">
+    <v-card-text class="text-h6 ">
       <v-row>
         <v-col cols="9" lg="10">
           When<span v-if="agentOrFlow === 'a flow'"> a run from</span
@@ -601,7 +601,7 @@ export default {
           <v-btn
             v-if="!disableStep"
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 ml-1 text-h6"
+            class="px-0 pb-1 ml-1 text-h6 "
             text
             :disabled="addAction"
             :color="buttonColor('selectEventType')"
@@ -674,6 +674,9 @@ export default {
     </v-card-text>
     <div v-if="step.name === 'openAgentOrFlow'">
       <v-card-text>
+        <div class="pb-2"
+          >Select one of these options to build your automation.</div
+        >
         <v-row class="px-1">
           <div
             v-for="item in ['a flow', 'an agent']"
@@ -782,6 +785,7 @@ export default {
 
     <div v-else-if="step.name === 'selectEventType'"
       ><v-card-text>
+        Select one of these options to build your automation.
         <v-row class="px-1">
           <div
             v-for="item in filteredFlowEventTypes"
