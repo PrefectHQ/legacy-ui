@@ -255,7 +255,6 @@ export default {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
-        this.allFlows = false
         this.steps['openAgentOrFlow'].complete = true
         this.switchStep('selectDoThis')
       }
@@ -919,7 +918,7 @@ export default {
       >
       <AddAction
         v-if="addAction"
-        :event-type="flowEventType.enum || 'an agent'"
+        :event-type="flowEventType.enum || 'AGENT'"
         @close-action="addAction = false"
         @new-action="createAction"
       />

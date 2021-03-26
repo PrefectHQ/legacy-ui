@@ -121,6 +121,7 @@ export default {
         default:
           'You have a notification from Prefect Cloud'
       }
+      console.log('message text', messageText, this.eventType)
       return messageText
     },
     messageConfigRules() {
@@ -455,14 +456,13 @@ export default {
           <span>
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              class="px-1 pb-1 text-h6"
+              class="pb-1 px-0 ml-1 text-h6"
               text
               :disabled="!actionType.type"
               :color="buttonColor('openToConfig')"
               :class="format('openToConfig')"
               @click="switchStep('openToConfig')"
-            >
-              {{ to }}</v-btn
+              >{{ to }}</v-btn
             >
             <span v-if="isTwilio">
               using this
@@ -584,7 +584,6 @@ export default {
       </v-menu>
       <v-text-field
         v-model="messageText"
-        min-height="500px"
         class="pt-0"
         outlined
         :placeholder="messagePlaceholder"
