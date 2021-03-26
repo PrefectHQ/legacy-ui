@@ -158,6 +158,20 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item :disabled="!isCloud" :to="'/team/service-accounts'">
+          <v-list-item-avatar tile>
+            <i class="o-100 fad fa-user-hard-hat fa-2x" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Service Accounts
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Manage Service Accounts and API Keys
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :disabled="!isCloud" :to="'/team/task-concurrency'">
           <v-list-item-avatar tile>
             <v-icon large color="primaryDark">
@@ -200,6 +214,11 @@ $dark-blue-icon: var(--v-primaryDark-base);
 }
 
 .fa-users {
+  --fa-primary-color: #{$dark-blue-icon};
+  --fa-secondary-color: #{$dark-grey-icon};
+}
+
+.fa-user-hard-hat {
   --fa-primary-color: #{$dark-blue-icon};
   --fa-secondary-color: #{$dark-grey-icon};
 }

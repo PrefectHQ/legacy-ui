@@ -223,6 +223,20 @@ export default {
 
         <v-list-item
           :disabled="!isCloud"
+          :to="{ name: 'service-accounts', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>engineering</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Service Accounts</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :disabled="!isCloud"
           :to="{ name: 'task-concurrency', params: { tenant: tenant.slug } }"
           ripple
           exact

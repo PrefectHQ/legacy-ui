@@ -1,0 +1,5 @@
+mutation DeleteAPIKey($id: UUID!) {
+  delete_api_key(input: { key_id: $id }) {
+    success
+  }
+}
