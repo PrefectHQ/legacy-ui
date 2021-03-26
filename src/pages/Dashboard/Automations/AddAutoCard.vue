@@ -100,6 +100,7 @@ export default {
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
     },
     includeTo() {
+      this.hookDetail
       return this.flowEventType?.enum == 'CHANGES_STATE'
     },
     durationSeconds() {
@@ -241,18 +242,19 @@ export default {
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
       if (choice === 'a flow') {
-        this.flowEventType = this.hookDetail?.flowConfig?.kind
-          ? this.flowEventTypes.find(
-              type => type.enum === this.hookDetail?.flowConfig?.kind
-            )
-          : this.hookDetail?.hook?.event_type === 'FlowRunStateChangedEvent'
-          ? {
-              name: 'changes state',
-              enum: 'CHANGES_STATE'
-            }
-          : {
-              name: 'does this'
-            }
+        this.flowEventType =
+          this.hookDetail?.hook?.event_type === 'FlowSLAFailedEvent'
+            ? this.flowEventTypes.find(
+                type => type.enum === this.hookDetail?.flowConfig?.kind
+              )
+            : this.hookDetail?.hook?.event_type === 'FlowRunStateChangedEvent'
+            ? {
+                name: 'changes state',
+                enum: 'CHANGES_STATE'
+              }
+            : {
+                name: 'does this'
+              }
         this.switchStep('selectFlow')
       }
       if (choice === 'an agent') {
@@ -806,14 +808,17 @@ export default {
     </div>
     <div v-else-if="step.name === 'openDuration'">
       <v-card-text>
-        <v-text-field
-          v-model="seconds"
-          type="number"
-          persistent-hint
-          hint="Hint: confirm duration by pressing the Enter key"
-          @keydown.enter="closeSeconds"
-          @blur="closeSeconds"
-        ></v-text-field>
+        <v-col class="pa-0" cols="12" sm="6" lg="3">
+          <v-text-field
+            v-model="seconds"
+            type="number"
+            persistent-hint
+            outlined
+            hint="Hint: confirm duration by pressing the Enter key"
+            @keydown.enter="closeSeconds"
+            @blur="closeSeconds"
+          ></v-text-field>
+        </v-col>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>

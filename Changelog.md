@@ -5,10 +5,11 @@
 ### Features and Improvements
 
 - Add Automations page - [#695](https://github.com/PrefectHQ/ui/pull/695)
+- Add generic markdown messages for action notifications - [#674](https://github.com/PrefectHQ/ui/pull/674)
 
 ### Bugfixes
 
-- None
+- Fix a bug where double clicking could kick off multiple quick runs - [#696](https://github.com/PrefectHQ/ui/pull/696)
 
 ## 2021-03-25
 
