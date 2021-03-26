@@ -806,14 +806,17 @@ export default {
     </div>
     <div v-else-if="step.name === 'openDuration'">
       <v-card-text>
-        <v-text-field
-          v-model="seconds"
-          type="number"
-          persistent-hint
-          hint="Hint: confirm duration by pressing the Enter key"
-          @keydown.enter="closeSeconds"
-          @blur="closeSeconds"
-        ></v-text-field>
+        <v-col class="pa-0" cols="12" sm="6" lg="3">
+          <v-text-field
+            v-model="seconds"
+            type="number"
+            persistent-hint
+            outlined
+            hint="Hint: confirm duration by pressing the Enter key"
+            @keydown.enter="closeSeconds"
+            @blur="closeSeconds"
+          ></v-text-field>
+        </v-col>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
