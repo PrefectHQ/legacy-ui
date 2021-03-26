@@ -125,13 +125,13 @@ export default {
       if (!isSelfServe && !isUsageBased) return null
 
       // Legacy license, self-serve (so can upgrade)
-      if (isSelfServe && !isUsageBased) return 'upgrade'
+      if (isSelfServe && !isUsageBased) return 'UpgradeUsageTile'
 
       // Usage license, not self-serve (show committed runs)
-      if (!isSelfServe && isUsageBased) return 'committed'
+      if (!isSelfServe && isUsageBased) return 'CommittedUsageTile'
 
       // Usage license && self-serve
-      return 'monthly'
+      return 'CycleUsageTile'
     }
   },
   watch: {
@@ -147,6 +147,13 @@ export default {
       this.tab = this.getTab()
     },
     tenant(val) {
+      if (val?.id) {
+        this.loadedTiles = 0
+        clearTimeout(this.refreshTimeout)
+        this.refresh()
+      }
+    },
+    license(val) {
       if (val?.id) {
         this.loadedTiles = 0
         clearTimeout(this.refreshTimeout)
@@ -349,9 +356,7 @@ export default {
             class="tile-container span-row-1"
             tile
           >
-            <CycleUsageTile v-if="usageTile == 'monthly'" />
-            <CommittedUsageTile v-else-if="usageTile == 'committed'" />
-            <UpgradeUsageTile v-else-if="usageTile == 'upgrade'" />
+            <component :is="usageTile" />
           </v-skeleton-loader>
 
           <v-skeleton-loader

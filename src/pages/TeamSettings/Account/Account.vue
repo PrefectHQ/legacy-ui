@@ -175,7 +175,12 @@ export default {
         </v-col>
         <v-col cols="12" md="6">
           <v-row>
-            <v-col cols="12">
+            <v-col
+              v-if="
+                isUsageBased && license && license.terms.plan !== 'FREE_2021'
+              "
+              cols="12"
+            >
               <v-skeleton-loader
                 :loading="loadedTiles < 6"
                 type="image"

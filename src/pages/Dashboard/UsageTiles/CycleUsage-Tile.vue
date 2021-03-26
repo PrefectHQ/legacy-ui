@@ -26,7 +26,7 @@ export default {
       return new Date(this.invoice.period_start * 1000)
     },
     freeUsage() {
-      if (isNaN(this.usage)) return null
+      if (Number.isNaN(this.usage)) return null
       const percentage = this.usage / 10000
       return percentage > 1 ? 100 : percentage * 100
     },
@@ -68,7 +68,7 @@ export default {
       update: data =>
         data?.usage
           .filter(u => u.kind == 'USAGE')
-          .reduce((prev, val) => (prev += Math.abs(val.runs)), 0)
+          .reduce((prev, val) => (prev += Math.abs(val.runs)), 0) || 0
     },
     invoice: {
       query: require('@/graphql/Dashboard/invoice.gql'),
@@ -89,7 +89,7 @@ export default {
 
 <template>
   <v-card
-    class="mb-4 position-relative d-flex flex-column justify-space-between"
+    class="position-relative d-flex flex-column justify-space-between"
     style="height: 100%;"
     tile
   >
@@ -108,7 +108,7 @@ export default {
           class="d-inline-block"
         >
           <span>
-            {{ usage && usage.toLocaleString()
+            {{ !usage ? 0 : usage.toLocaleString()
             }}<span v-if="planType === 'FREE_2021'" class="text-h5 ml-1"
               >/10,000</span
             ></span
