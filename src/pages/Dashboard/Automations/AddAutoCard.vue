@@ -223,10 +223,10 @@ export default {
       const stepComplete = this.steps[selectedStep]
       const otherComplete = this.steps[otherStep]
       return this.step.name === selectedStep || this.step.name === otherStep
-        ? ''
+        ? 'font-weight-dark'
         : stepComplete?.complete || otherComplete?.complete
-        ? ''
-        : 'font-weight-light'
+        ? 'font-weight-light'
+        : 'font-weight-dark'
     },
     closeCard() {
       if (this.hookDetail) this.$emit('close')
@@ -578,7 +578,7 @@ export default {
 
 <template>
   <v-card outlined>
-    <v-card-text class="text-h6 ">
+    <v-card-text class="text-h6 font-weight-light">
       <v-row>
         <v-col cols="9" lg="10">
           When<span v-if="agentOrFlow === 'a flow'"> a run from</span
@@ -785,7 +785,6 @@ export default {
 
     <div v-else-if="step.name === 'selectEventType'"
       ><v-card-text>
-        Select one of these options to build your automation.
         <v-row class="px-1">
           <div
             v-for="item in filteredFlowEventTypes"
