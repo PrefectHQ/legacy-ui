@@ -1,0 +1,5 @@
+mutation createAction ($input:create_action_input!) {
+  create_action (input: $input) {
+    id
+  }
+}

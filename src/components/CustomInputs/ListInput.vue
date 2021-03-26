@@ -21,7 +21,27 @@ export default {
       required: false,
       default: () => true
     },
+    showClose: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
     showReset: {
+      type: Boolean,
+      required: false,
+      default: () => true
+    },
+    outline: {
+      type: Boolean,
+      required: false,
+      default: () => true
+    },
+    rules: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
+    hide: {
       type: Boolean,
       required: false,
       default: () => true
@@ -59,6 +79,9 @@ export default {
     },
     reset() {
       this.internalValue = this.initialValue
+    },
+    close() {
+      this.$emit('next')
     }
   }
 }
@@ -67,7 +90,7 @@ export default {
 <template>
   <div>
     <div
-      v-if="showClear || showReset"
+      v-if="showClear || showReset || showClose"
       class="d-flex align-center justify-end mb-2"
     >
       <v-btn
@@ -82,6 +105,19 @@ export default {
       >
         Reset
         <v-icon small>refresh</v-icon>
+      </v-btn>
+      <v-btn
+        v-if="showClose"
+        :disabled="clearDisabled"
+        x-small
+        class="text-normal"
+        depressed
+        color="primary"
+        title="Next"
+        @click="close"
+      >
+        Next
+        <v-icon small>call_made</v-icon>
       </v-btn>
 
       <v-btn
@@ -106,8 +142,9 @@ export default {
       :append-icon="items.length > 0 ? '$dropdown' : null"
       multiple
       small-chips
-      hide-details
-      outlined
+      :rules="rules"
+      :hide-details="hide"
+      :outlined="outline"
     >
       <template #selection="{ item, parent }">
         <v-chip label small color="primary">
@@ -121,7 +158,7 @@ export default {
         </v-chip>
       </template>
     </v-combobox>
-    <div class="mt-1 text-caption">
+    <div v-if="!rules.length" class="mt-1 text-caption">
       Hint: add to the list after typing by pressing the Enter key
     </div>
   </div>

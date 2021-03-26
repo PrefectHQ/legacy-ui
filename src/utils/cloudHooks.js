@@ -48,6 +48,48 @@ export const openCloudHookTypes = [
   }
 ]
 
+export const presentTenseStates = {
+  FAILED: 'fails',
+  PENDING: 'is pending',
+  SCHEDULED: 'is scheduled',
+  RETRYING: 'retries',
+  // RESUME: 'resumes',
+  QUEUED: 'is queued',
+  SUBMITTED: 'is submitted',
+  // PAUSED: 'pauses',
+  RUNNING: 'runs',
+  FINISHED: 'finishes',
+  SUCCESS: 'succeeds',
+  CANCELLED: 'is cancelled',
+  CACHED: 'is cached',
+  TRIGGERFAILED: 'trigger fails',
+  SKIPPED: 'skips',
+  TIMEDOUT: 'times out',
+  MAPPED: 'maps',
+  LOOPED: 'loops'
+}
+
+export const titleCasePresentTenseStates = {
+  Failed: 'fails',
+  Pending: 'is pending',
+  Scheduled: 'is scheduled',
+  Retrying: 'retries',
+  // RESUME: 'resumes',
+  Queued: 'is queued',
+  Submitted: 'is submitted',
+  // PAUSED: 'pauses',
+  Running: 'runs',
+  Finished: 'finishes',
+  Success: 'succeeds',
+  Cancelled: 'is cancelled',
+  Cached: 'is cached',
+  Triggerfailed: 'trigger fails',
+  Skipped: 'skips',
+  Timedout: 'times out',
+  Mapped: 'maps',
+  Looped: 'loops'
+}
+
 export const featureFlaggedCloudHookTypes = [...openCloudHookTypes]
 
 export const GROUP_COLORS = {

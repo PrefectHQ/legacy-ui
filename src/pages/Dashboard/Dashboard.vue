@@ -5,6 +5,7 @@ import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
+import Automations from '@/pages/Dashboard/Automations/Automations'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import NavTabBar from '@/components/NavTabBar'
 import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
@@ -35,7 +36,13 @@ const serverTabs = [
   }
 ]
 
-const cloudTabs = []
+const cloudTabs = [
+  {
+    name: 'Automations',
+    target: 'automations',
+    icon: 'fad fa-random'
+  }
+]
 
 export default {
   metaInfo() {
@@ -45,6 +52,7 @@ export default {
   },
   components: {
     Agents,
+    Automations,
     AgentsTile,
     BreadCrumbs,
     FailedFlowsTile,
@@ -93,7 +101,7 @@ export default {
       key: 0,
       loading: 0,
       loadedTiles: 0,
-      numberOfTiles: 9,
+      numberOfTiles: 10,
       projectId: this.$route.params.id,
       refreshTimeout: null,
       tab: this.getTab()
@@ -109,6 +117,9 @@ export default {
     },
     tabs() {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
+    },
+    includeProjects() {
+      return this.tab != 'automations'
     }
   },
   watch: {
@@ -130,6 +141,10 @@ export default {
         case 'agents':
           /* eslint-disable-next-line */
           query = 'agents'
+          break
+        case 'automations':
+          /* eslint-disable-next-line */
+          query = 'automations'
           break
         default:
           break
@@ -170,6 +185,7 @@ export default {
     getTab() {
       if ('flows' in this.$route.query) return 'flows'
       if ('agents' in this.$route.query) return 'agents'
+      if ('automations' in this.$route.query) return 'automations'
       return 'overview'
     },
     refresh() {
@@ -253,6 +269,7 @@ export default {
         :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
       >
         <v-skeleton-loader
+          v-if="includeProjects"
           slot="row-0"
           :loading="loadedTiles < 4"
           type="text"
@@ -403,6 +420,15 @@ export default {
         reverse-transition="tab-fade"
       >
         <Agents v-if="loadedTiles > 9" class="mx-3 my-6" />
+      </v-tab-item>
+
+      <v-tab-item
+        class="tab-full-height"
+        value="automations"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
+      >
+        <Automations v-if="loadedTiles > 10" class="mx-3 my-6" />
       </v-tab-item>
 
       <v-tab-item
