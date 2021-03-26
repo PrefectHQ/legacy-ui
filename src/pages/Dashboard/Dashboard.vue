@@ -130,10 +130,10 @@ export default {
       if (isSelfServe && !isUsageBased) return 'upgrade'
 
       // Usage license, not self-serve (show committed runs)
-      if (!isSelfServe && isUsageBased) return 'upgrade'
+      if (!isSelfServe && isUsageBased) return 'committed'
 
       // Usage license && self-serve
-      return 'upgrade'
+      return 'monthly'
     }
   },
   watch: {
@@ -351,7 +351,6 @@ export default {
             class="tile-container span-row-1"
             tile
           >
-            {{ usageTile }}
             <CycleUsageTile v-if="usageTile == 'monthly'" />
             <CommittedUsageTile v-else-if="usageTile == 'committed'" />
             <UpgradeUsageTile v-else-if="usageTile == 'upgrade'" />
