@@ -1,5 +1,5 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { featureTypes } from '@/utils/features'
 import { PLANS_2021 } from '@/utils/plans'
 
@@ -12,9 +12,12 @@ export default {
     return {
       allFeatures: featureTypes,
       cancelPlanDialog: false,
+      cancelPlanError: false,
       cancelPlanloading: false,
       loading: false,
-      plans: Object.values(PLANS_2021)
+      loadingKey: 0,
+      plans: Object.values(PLANS_2021),
+      usersCount: null
     }
   },
   computed: {
@@ -28,6 +31,9 @@ export default {
     },
     isLegacy() {
       return !this.license?.terms?.is_usage_based
+    },
+    freeUsersCount() {
+      return PLANS_2021['free'].users
     },
     plan() {
       return this.plans.find(planType => planType.value === this.planType)
@@ -103,6 +109,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('license', ['getLicense']),
+    ...mapActions('tenant', ['getTenants']),
+    ...mapActions('alert', ['setAlert']),
     colorType(type) {
       const feature = featureTypes.find(f => f.type == type)
       if (feature) return feature.color
@@ -128,9 +137,50 @@ export default {
       if (feature) return feature.link
       return ''
     },
-    cancelPlan() {
-      // Call the downgrade mutation here, then reload the page
-      // console.log('cancelling')
+    async cancelPlan() {
+      this.cancelPlanloading = true
+      try {
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/License/create-usage-based-license.gql'),
+          variables: {
+            input: {
+              tenant_id: this.tenant.id,
+              plan_name: PLANS_2021['free'].value
+            }
+          }
+        })
+        if (data.create_self_serve_usage_license.id) {
+          await this.getLicense()
+          await this.getTenants()
+
+          this.cancelPlanDialog = false
+
+          this.setAlert(
+            {
+              alertShow: true,
+              alertMessage: 'Your account has been downgraded.',
+              alertType: 'success'
+            },
+            3000
+          )
+        }
+      } catch (e) {
+        this.cancelPlanError = true
+      } finally {
+        this.cancelPlanloading = false
+      }
+    }
+  },
+  apollo: {
+    memberships: {
+      query: require('@/graphql/TeamSettings/memberships.gql'),
+      loadingKey: 'loadingKey',
+      result({ data }) {
+        if (!data) return
+        this.usersCount =
+          data.memberships.length + data.membershipInvitations.length
+      },
+      fetchPolicy: 'no-cache'
     }
   }
 }
@@ -312,14 +362,42 @@ export default {
       v-model="cancelPlanDialog"
       type="error"
       :dialog-props="{ 'max-width': '500' }"
-      :disabled="cancelPlanloading"
+      :disabled="cancelPlanloading || usersCount > freeUsersCount"
       :loading="cancelPlanloading"
-      title="Are you sure?"
       @confirm="cancelPlan"
     >
-      This will cancel your current plan and put you on the Free plan. Any
-      outstanding balance will be billed immediately. Also Jeremiah Lowin will
-      cry. 😢
+      <template slot="title">
+        <div class="text-h5 font-weight-light">
+          {{ cancelPlanError ? 'Oops' : 'Are you sure?' }}
+        </div>
+      </template>
+
+      <div class="text-subtitle-1">
+        <span v-if="cancelPlanError"
+          >Something went wrong trying to cancel your plan. If this error
+          persists, please contact help@prefect.io.</span
+        >
+        <span v-else
+          >This will cancel your current plan and put you on the Free plan. Any
+          outstanding balance will be billed immediately.</span
+        >
+
+        <v-alert
+          v-if="!cancelPlanError && usersCount > freeUsersCount"
+          color="warning"
+          colored-border
+          type="warning"
+          border="left"
+          tile
+          class="mt-4"
+        >
+          You have more users than the Free plan allows (3). You'll need to
+          <router-link :to="'/team/members'"
+            >remove users and pending invitations</router-link
+          >
+          from your team before proceeding.
+        </v-alert>
+      </div>
     </ConfirmDialog>
   </div>
 </template>

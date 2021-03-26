@@ -112,7 +112,8 @@ export default {
   >
     <v-card flat>
       <v-card-title class="headline word-break-normal mb-3" primary-title>
-        {{ title }}
+        <slot v-if="$slots['title']" name="title" />
+        <div v-else>{{ title }}</div>
       </v-card-title>
 
       <v-card-text class="pb-0">
