@@ -102,9 +102,8 @@ export default {
       let messageText
       switch (this.eventType) {
         case 'CHANGES_STATE':
-          messageText = `Run {flow_run_name} of flow {flow_name} entered state
-                {state} with message {state_message}. See {flow_run_link}
-                for more details.`
+          messageText =
+            'Run {flow_run_name} of flow {flow_name} entered state {state} with message {state_message}. See {flow_run_link} for more details.'
           break
         case 'SCHEDULED_NOT_STARTED':
           messageText =
