@@ -328,15 +328,9 @@ export default {
           </div>
         </v-col>
         <v-col class="text-right" cols="1" lg="1">
-          <v-menu v-if="canEdit" :close-on-content-click="false">
+          <v-menu v-if="canEdit" :close-on-content-click="false" offset-y>
             <template #activator="{ on, attrs }">
-              <v-btn
-                class="px-2"
-                text
-                fab
-                title="More Automations"
-                v-bind="attrs"
-                v-on="on"
+              <v-btn class="px-2" text small fab v-bind="attrs" v-on="on"
                 ><v-icon>more_horiz</v-icon></v-btn
               ></template
             >
@@ -345,21 +339,11 @@ export default {
                 ><v-btn
                   :style="{ 'text-transform': 'none', 'min-width': '0px' }"
                   text
-                  width="100%"
-                  color="utilGrayDark"
-                  @click="editHook"
-                  ><v-icon class="pl-0 pr-4">edit</v-icon>
-                  <span class="pr-2">Edit</span>
-                </v-btn></div
-              ><div
-                ><v-btn
-                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-                  text
                   :loading="deletingHook"
                   width="100%"
                   color="utilGrayDark"
-                  @click="deleteHook"
-                  ><v-icon class="pr-4">delete</v-icon> Delete</v-btn
+                  @click.stop="deleteHook"
+                  ><v-icon class="pr-4">delete</v-icon>Delete</v-btn
                 ></div
               >
             </v-card></v-menu
