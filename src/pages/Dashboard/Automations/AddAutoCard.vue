@@ -88,9 +88,13 @@ export default {
     },
     editedActions() {
       return this.actions
-        ? this.actions.find(
-            action => action.action_type === 'CancelFlowRunAction'
-          ) || this.agentOrFlow === 'an agent'
+        ? this.agentOrFlow === 'an agent'
+          ? this.actions.filter(
+              action => action.action_type !== 'CancelFlowRunAction'
+            )
+          : this.actions.find(
+              action => action.action_type === 'CancelFlowRunAction'
+            )
           ? this.actions
           : [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
@@ -315,6 +319,7 @@ export default {
         : this.chosenStates.push(state)
     },
     selectAction(action) {
+      console.log('actions', action)
       this.steps['selectDoThis'].complete = true
       this.chosenAction = action
     },
@@ -581,6 +586,7 @@ export default {
             :class="format('selectFlow', 'openAgentOrFlow')"
             class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
             text
+            :disabled="addAction"
             max-width="500px"
             @click="switchStep('openAgentOrFlow')"
             ><truncate
@@ -595,6 +601,7 @@ export default {
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             class="px-0 pb-1 ml-1 text-h6"
             text
+            :disabled="addAction"
             :color="buttonColor('selectEventType')"
             :class="format('selectEventType')"
             @click="switchStep('selectEventType')"
@@ -608,6 +615,7 @@ export default {
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class="px-0 pb-1 text-h6"
               text
+              :disabled="addAction"
               :color="buttonColor('openDuration')"
               :class="format('openDuration')"
               @click="switchStep('openDuration')"
@@ -622,6 +630,7 @@ export default {
               class=" px-0 pb-1 text-h6"
               :class="format('selectState')"
               text
+              :disabled="addAction"
               :color="buttonColor('selectState')"
               @click="switchStep('selectState')"
             >
@@ -883,10 +892,6 @@ export default {
           v-ripple
           class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
           :class="{ active: chosenAction === item }"
-          :disabled="
-            item.action_type === 'CancelFlowRunAction' &&
-              agentOrFlow === 'an agent'
-          "
           @click="selectAction(item)"
           >{{ item.name }}
           <!-- <v-spacer></v-spacer>
