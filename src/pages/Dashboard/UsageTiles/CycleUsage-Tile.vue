@@ -12,7 +12,6 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['license']),
-    ...mapGetters('tenant', ['tenant']),
     projectedCost() {
       if (!this.invoice) return 0
       return this.invoice.total * 100
@@ -39,13 +38,13 @@ export default {
     },
     freeUsageStyle() {
       return {
-        'prefect--text text--darken-4':
+        [`text--${this.isDark ? 'lighten' : 'darken'}-3`]:
           this.freeUsage > 0 && this.freeUsage < 60,
-        'prefect--text text--darken-3':
+        [`text--${this.isDark ? 'lighten' : 'darken'}-2`]:
           this.freeUsage >= 60 && this.freeUsage < 80,
-        'prefect--text text--darken-2':
+        [`text--${this.isDark ? 'lighten' : 'darken'}-1`]:
           this.freeUsage >= 80 && this.freeUsage < 100,
-        'prefect--text text--darken-1': this.freeUsage == 100
+        'primary--text': true
       }
     },
     planType() {
@@ -58,7 +57,7 @@ export default {
       variables() {
         return {
           from: this.periodStart,
-          tenant_id: this.tenant.id
+          license_id: this.license.id
         }
       },
       loadingKey: 'usageLoadingKey',
@@ -146,6 +145,16 @@ export default {
     <v-spacer />
     <v-card-actions class="mt-auto">
       <v-spacer />
+      <v-btn
+        v-if="planType === 'FREE_2021'"
+        color="accentPink"
+        depressed
+        dark
+        small
+        :to="'/plans'"
+      >
+        Get more runs
+      </v-btn>
       <v-btn small color="primary" text :to="'/team/account'">
         Details
       </v-btn>

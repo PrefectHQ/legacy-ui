@@ -44,6 +44,7 @@ export default {
       return this.plan.name
     },
     planType() {
+      console.log(this.license)
       return this.license?.terms?.plan
     },
     runCost() {
