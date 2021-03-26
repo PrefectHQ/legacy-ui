@@ -151,6 +151,7 @@ export default {
         depressed
         dark
         small
+        target="_blank"
         :to="'/plans'"
       >
         Get more runs

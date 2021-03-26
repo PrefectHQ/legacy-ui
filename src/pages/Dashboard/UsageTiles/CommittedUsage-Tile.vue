@@ -62,9 +62,9 @@ export default {
       <div class="title utilGrayDark--text"
         >Run balance
 
-        <MenuTooltip hide-close>
+        <MenuTooltip v-if="usage && usage < 0" hide-close>
           <template #activator>
-            <v-icon v-if="usage && usage < 0">error_outline</v-icon>
+            <v-icon>error_outline</v-icon>
           </template>
           <div>
             <div class="text-h5 font-weight-light">
@@ -101,6 +101,7 @@ export default {
         depressed
         dark
         small
+        target="_blank"
         href="https://www.prefect.io/pricing/#contact"
       >
         Add more runs
