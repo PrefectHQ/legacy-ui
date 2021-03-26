@@ -319,7 +319,6 @@ export default {
         : this.chosenStates.push(state)
     },
     selectAction(action) {
-      console.log('actions', action)
       this.steps['selectDoThis'].complete = true
       this.chosenAction = action
     },
@@ -407,6 +406,7 @@ export default {
     },
     async createHook() {
       this.saving = true
+
       let data
       try {
         const flow = this.selectedFlows[0]?.flow_group_id

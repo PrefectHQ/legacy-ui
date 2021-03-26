@@ -162,6 +162,7 @@ export default {
             hookId: this.hook.id
           }
         })
+        await this.handleRefetch()
       } catch (error) {
         const errString = `${error}`
         this.setAlert({
@@ -170,8 +171,8 @@ export default {
           alertType: 'error'
         })
       } finally {
-        this.handleRefetch()
         this.deletingHook = false
+        this.$emit('done')
       }
     },
     closeCard() {
@@ -251,7 +252,6 @@ export default {
             : ''
         }
       },
-      fetchPolicy: 'no-cache',
       loadingKey: 'loadingHook',
       skip() {
         return (
@@ -269,7 +269,7 @@ export default {
 
 <template>
   <v-skeleton-loader
-    v-if="loadingHook > 0 && showHook"
+    v-if="loadingHook > 0"
     type="list-item-avatar-three-line"
   ></v-skeleton-loader>
   <AddAutoCard
