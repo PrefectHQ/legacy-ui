@@ -2,6 +2,7 @@ export const componentMap = {
   CLOUD_HOOK: 'FlowRunNotification',
   MEMBERSHIP_INVITATION: 'MembershipNotification',
   REQUIRES_APPROVAL: 'ApprovalNotification',
+  MESSAGE: 'MessageNotification',
   WHATS_NEW: 'WhatsNewNotification'
 }
 
@@ -9,6 +10,7 @@ export const iconMap = {
   CLOUD_HOOK: 'pi-flow-run',
   MEMBERSHIP_INVITATION: 'group_add',
   REQUIRES_APPROVAL: 'pause_circle_outline',
+  MESSAGE: 'chat',
   WHATS_NEW: '🎉'
 }
 
@@ -18,6 +20,7 @@ export const iconColorMap = {
   },
   MEMBERSHIP_INVITATION: () => 'primary',
   WHATS_NEW: () => 'primary',
+  MESSAGE: () => 'primary',
   REQUIRES_APPROVAL: () => 'accentOrange'
 }
 
@@ -31,6 +34,7 @@ export const navigationMap = {
   },
   MEMBERSHIP_INVITATION: () => null,
   WHATS_NEW: () => null,
+  MESSAGE: () => null,
   REQUIRES_APPROVAL: (n, tenant) => {
     return {
       name: 'task-run',
