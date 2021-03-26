@@ -47,7 +47,13 @@ export default {
           width: '20%'
         },
         { text: 'End Time', value: 'end_time', align: 'start', width: '15%' },
-        { text: 'Duration', value: 'duration', align: 'end', width: '17.5%' },
+        {
+          text: 'Duration',
+          value: 'duration',
+          align: 'end',
+          width: '17.5%',
+          sortable: false
+        },
         { text: 'State', value: 'state', align: 'end', width: '10%' },
         {
           text: '',
