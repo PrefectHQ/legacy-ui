@@ -120,7 +120,6 @@ export default {
         default:
           'You have a notification from Prefect Cloud'
       }
-      console.log('message text', messageText, this.eventType)
       return messageText
     },
     messageConfigRules() {
