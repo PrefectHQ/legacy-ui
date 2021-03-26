@@ -13,10 +13,12 @@ export default {
       showAutomations: false,
       loadingHook: 0,
       closeCard: false,
+      loadCards: false,
       editHook: null,
       editAction: null,
       addAction: false,
       hookConfig: null,
+      sortedHooks: [],
       hookDetails: {
         RunStateChangedEvent: {
           type: 'flow',
@@ -33,13 +35,6 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['permissions']),
-    sortedHooks() {
-      const hooks = this.hooks ? [...this.hooks] : []
-      const sorted = hooks.sort(
-        (a, b) => new Date(b.created) - new Date(a.created)
-      )
-      return sorted
-    },
     noAccess() {
       return !this.permissions?.find(item => item === 'read:hook')
     },
@@ -47,12 +42,23 @@ export default {
       return !!this.permissions?.find(item => item === 'create:hook')
     }
   },
+  watch: {
+    hooks() {
+      this.sortHooks()
+    }
+  },
   methods: {
     async handleRefetch() {
-      this.loadingHook++
-      this.handleRefresh()
       await this.$apollo.queries.hooks.refetch()
-      this.loadingHook = 0
+    },
+    sortHooks() {
+      this.loadCards = true
+      const hooks = this.hooks ? [...this.hooks] : []
+      const sorted = hooks.sort(
+        (a, b) => new Date(b.created) - new Date(a.created)
+      )
+      this.sortedHooks = sorted
+      this.loadCards = false
     },
     handleEdit(hook, index) {
       this.editHook = hook
@@ -61,6 +67,9 @@ export default {
     handleRefresh() {
       this.closeCard = true
       this.$nextTick(() => (this.closeCard = false))
+    },
+    handleDone() {
+      this.sortHooks()
     }
   },
   apollo: {
@@ -96,21 +105,27 @@ export default {
       <v-row>
         <v-col>
           <div class="overline">New Automation</div>
-          <AddAutoCard v-if="canEdit && !closeCard" @refresh="handleRefresh" />
+          <AddAutoCard
+            v-if="canEdit && !closeCard"
+            @refresh="handleRefresh"
+            @saving="loadCards = true"
+            @done="handleDone"
+          />
         </v-col>
       </v-row>
       <v-row>
         <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
           <v-skeleton-loader
-            v-if="loadingHook > 0 || closeCard"
+            v-if="loadingHook > 0 || loadCards"
             type="list-item-avatar-three-line"
-          ></v-skeleton-loader>
-          <AutoCard
+          ></v-skeleton-loader
+          ><AutoCard
             v-else
             :hook="hook"
             :can-edit="canEdit"
             @open-edit="handleEdit(hook, i)"
             @refetch="handleRefetch"
+            @done="handleDone"
           />
         </v-col>
       </v-row>

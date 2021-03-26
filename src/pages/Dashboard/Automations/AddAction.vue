@@ -29,7 +29,7 @@ export default {
       step: null,
       actionConfig: null,
       actionConfigArray: [],
-      messageName: 'a message',
+      messageName: 'message',
       secretName: '',
       messageText: '',
       openTwilioConfig: false,
@@ -102,9 +102,8 @@ export default {
       let messageText
       switch (this.eventType) {
         case 'CHANGES_STATE':
-          messageText = `Run {flow_run_name} of flow {flow_name} entered state
-                {state} with message {state_message}. See {flow_run_link}
-                for more details.`
+          messageText =
+            'Run {flow_run_name} of flow {flow_name} entered state {state} with message {state_message}. See {flow_run_link} for more details.'
           break
         case 'SCHEDULED_NOT_STARTED':
           messageText =
@@ -173,15 +172,15 @@ export default {
       return this.actionType?.type === 'EMAIL'
         ? configTo || this.actionType?.config?.to || 'to this email address.'
         : this.actionType.type === 'WEBHOOK'
-        ? this.actionType?.config?.to || ' to this web address.'
+        ? this.actionType?.config?.to || 'to this web address.'
         : this.actionType?.type === 'TWILIO'
         ? configTo ||
           this.actionType?.config?.to?.toString() ||
           'to this phone number'
         : this.actionType?.type === 'SLACK_WEBHOOK'
-        ? configTo || this.actionType?.config?.url || 'to this webhook.'
+        ? configTo || this.actionType?.config?.url || 'here.'
         : this.actionType.type === 'PAGERDUTY'
-        ? 'with this config.'
+        ? 'using this config.'
         : 'to who?'
     },
     isTwilio() {
@@ -247,6 +246,7 @@ export default {
           ) {
             this.steps['openToConfig'].complete = true
           }
+          this.switchStep('addName')
         }
       } else {
         this.switchStep('addName')
@@ -401,10 +401,13 @@ export default {
 </script>
 
 <template>
-  <v-card outlined>
+  <v-card elevation="0">
     <v-card-text class="text-h6">
       <v-row>
         <v-col cols="9" lg="10">
+          <span v-if="actionType.sendText" class="mr-1">{{
+            actionType.sendText
+          }}</span>
           <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectActionType')"
@@ -417,6 +420,7 @@ export default {
           {{ ' ' }}
           <span>
             <v-btn
+              v-if="!messageText"
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
               class="px-0 pb-1 text-h6 d-inline-block text-truncate"
               max-width="300px"
@@ -426,23 +430,40 @@ export default {
               :class="format('openMessageText')"
               @click="switchStep('openMessageText')"
             >
-              {{ messageText || messageName }}</v-btn
+              message</v-btn
+            >
+            <v-tooltip v-else top>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+                  class="px-0 pb-1 text-h6 d-inline-block text-truncate"
+                  max-width="300px"
+                  text
+                  :disabled="!actionType.type"
+                  :color="buttonColor('openMessageText')"
+                  :class="format('openMessageText')"
+                  v-bind="attrs"
+                  @click="switchStep('openMessageText')"
+                  v-on="on"
+                >
+                  message</v-btn
+                ></template
+              >{{ messageText }}</v-tooltip
             >
           </span>
           <span>
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              class="px-1 pb-1 text-h6"
+              class="pb-1 px-0 ml-1 text-h6"
               text
               :disabled="!actionType.type"
               :color="buttonColor('openToConfig')"
               :class="format('openToConfig')"
               @click="switchStep('openToConfig')"
-            >
-              {{ to }}</v-btn
+              >{{ to }}</v-btn
             >
             <span v-if="isTwilio">
-              with this
+              using this
               <v-btn
                 :style="{ 'text-transform': 'none', 'min-width': '0px' }"
                 class="px-0 pb-1 text-h6"
@@ -451,14 +472,14 @@ export default {
                 :class="format('openToConfig')"
                 @click="switchStep('addTwilioConfig')"
               >
-                config</v-btn
+                config.</v-btn
               ></span
             ></span
           ></v-col
         >
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
-            outlined
+            text
             color="utilGrayMid"
             class="light-weight-text mr-1 px-2"
             @click="handleClose"
@@ -561,7 +582,6 @@ export default {
       </v-menu>
       <v-text-field
         v-model="messageText"
-        min-height="500px"
         class="pt-0"
         outlined
         :placeholder="messagePlaceholder"
@@ -732,7 +752,7 @@ export default {
         v-on="on"
       ></v-text-field>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions v-if="step.name !== 'addName'">
       <v-spacer></v-spacer>
       <v-btn
         class="text-normal mr-1 mb-1"
