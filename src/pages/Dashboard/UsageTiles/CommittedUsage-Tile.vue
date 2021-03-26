@@ -71,9 +71,7 @@ export default {
               You're out of runs!
             </div>
             <div class="text-subtitle-1">
-              You've used all your pre-purchased runs; since you have overage
-              billing configured, you're paying for each successful task run at
-              normal usage rates.
+              Please contact sales@prefect.io to refresh your committed runs.
             </div>
           </div>
         </MenuTooltip>
