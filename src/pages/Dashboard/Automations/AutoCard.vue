@@ -24,6 +24,7 @@ export default {
   },
   data() {
     return {
+      menu: false,
       openEdit: false,
       hookConfig: {},
       showHook: true,
@@ -308,24 +309,51 @@ export default {
             >, then <span class="font-weight-bold">{{ hookAction }}</span
             >.</span
           >
-          <div v-if="isAgent" class="subtitle-2 font-weight-light pl-8"
-            >To use with a new agent, add this flag:
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <span
-                  class="cursor-pointer show-icon-hover-focus-only pa-2px"
-                  role="button"
-                  @click="copyToClipboard(agentConfigId)"
-                  v-on="on"
+          <v-menu
+            v-if="isAgent"
+            v-model="menu"
+            :close-on-content-click="false"
+            :open-on-hover="true"
+          >
+            <template #activator="{ on, attrs }">
+              <v-btn icon small v-bind="attrs" v-on="on">
+                <v-icon>info</v-icon>
+              </v-btn>
+            </template>
+
+            <v-card width="30vW"
+              ><v-card-text
+                ><div class="pb-2"
+                  >To set up an automation for your agent, you need to add the
+                  agent-config-id flag at agent registration.</div
+                ><div> To use with a new agent, add this flag:</div>
+                <div class="pb-2"
+                  ><v-tooltip bottom>
+                    <template #activator="{ on }">
+                      <span
+                        class="cursor-pointer show-icon-hover-focus-only pa-2px"
+                        role="button"
+                        @click="copyToClipboard(agentConfigId)"
+                        v-on="on"
+                      >
+                        --agent-config--id {{ agentConfigId }}
+                      </span>
+                    </template>
+                    <span>
+                      Click to copy
+                    </span>
+                  </v-tooltip></div
                 >
-                  --agent-config--id {{ agentConfigId }}
-                </span>
-              </template>
-              <span>
-                Click to copy
-              </span>
-            </v-tooltip>
-          </div>
+
+                <div>
+                  Note that if you attach the agent-config-id to multiple
+                  agents, Prefect will only notify you if
+                  <span class="font-weight-bold">all</span> agents are
+                  unhealthy.</div
+                >
+              </v-card-text>
+            </v-card>
+          </v-menu>
         </v-col>
         <v-col class="text-right" cols="1" lg="1">
           <v-menu v-if="canEdit" :close-on-content-click="false" offset-y>
