@@ -219,7 +219,7 @@ export default {
         ? 'font-weight-dark'
         : stepComplete?.complete || otherComplete?.complete
         ? 'font-weight-light'
-        : 'font-weight-dark'
+        : ''
     },
     switchStep(selectedStep) {
       if (this.step.name === 'openMessageText')

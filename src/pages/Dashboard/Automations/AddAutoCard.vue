@@ -49,7 +49,11 @@ export default {
       flowEventType: null,
       flowEventTypes: flowEventTypes,
       notAll: !!this.hookDetail?.flowName || false,
-      isActive: false
+      isActive: false,
+      rules: {
+        required: val => !!val || 'Required',
+        notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
+      }
     }
   },
   computed: {
@@ -75,6 +79,12 @@ export default {
     },
     disableStep() {
       return this.agentOrFlow === 'an agent' || this.selectedFlows.length > 1
+    },
+    disableDoThis() {
+      if (this.agentOrFlow === 'this') return true
+      if (this.agentOrFlow === 'a flow' && this.selectedFlows.length < 1)
+        return true
+      return false
     },
     isSLA() {
       return (
@@ -226,7 +236,7 @@ export default {
         ? 'font-weight-dark'
         : stepComplete?.complete || otherComplete?.complete
         ? 'font-weight-light'
-        : 'font-weight-dark'
+        : ''
     },
     closeCard() {
       if (this.hookDetail) this.$emit('close')
@@ -603,7 +613,7 @@ export default {
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             class="px-0 pb-1 ml-1 text-h6 "
             text
-            :disabled="addAction"
+            :disabled="addAction || !selectedFlows.length"
             :color="buttonColor('selectEventType')"
             :class="format('selectEventType')"
             @click="switchStep('selectEventType')"
@@ -645,6 +655,7 @@ export default {
             }"
             class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
             text
+            :disabled="disableDoThis"
             :color="buttonColor('selectDoThis')"
             :class="format('selectDoThis')"
             @click="switchStep('selectDoThis')"
@@ -815,6 +826,7 @@ export default {
           <v-text-field
             v-model="seconds"
             type="number"
+            :rules="[rules.required, rules.notNull]"
             persistent-hint
             outlined
             hint="Hint: confirm duration by pressing the Enter key"
