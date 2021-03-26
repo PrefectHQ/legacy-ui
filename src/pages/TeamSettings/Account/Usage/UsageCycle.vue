@@ -12,9 +12,14 @@ export default {
   computed: {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
-    projectedCost() {
+    projectedCostDollars() {
       if (!this.invoice) return 0
-      return this.invoice.total * 100
+      return Math.floor(this.invoice.total / 100)
+    },
+    projectedCostCents() {
+      if (!this.invoice) return 0
+      const cents = ((this.invoice.total / 100) % 1).toFixed(2) * 100
+      return cents == 0 ? '00' : cents
     },
     nextPaymentDate() {
       if (!this.invoice) return null
@@ -72,8 +77,10 @@ export default {
           class="d-inline-block"
         >
           <span>
-            {{ projectedCost
-            }}<span class="text--disabled text-subtitle-1">.00</span>
+            {{ projectedCostDollars
+            }}<span class="text--disabled text-subtitle-1"
+              >.{{ projectedCostCents }}</span
+            >
           </span>
         </v-skeleton-loader>
       </div>
