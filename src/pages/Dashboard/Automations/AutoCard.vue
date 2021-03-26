@@ -132,7 +132,7 @@ export default {
       return name
     },
     flowNameList() {
-      return this.flowName?.map(flow => flow.name)
+      return this.flowName?.map(flow => `${flow.name} - ${flow.project.name}`)
     }
   },
   methods: {
@@ -290,7 +290,7 @@ export default {
           }}</v-icon
           ><span
             >When <span v-if="!hookName">an </span>{{ hookType }}
-            <v-tooltip v-if="flowName && flowName.length > 2" top>
+            <v-tooltip v-if="flowName" top>
               <template #activator="{ on }">
                 <span class="font-weight-bold" v-on="on">{{
                   hookName

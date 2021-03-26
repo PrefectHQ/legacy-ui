@@ -38,7 +38,13 @@ export default {
           width: '20%'
         },
         { text: 'End Time', value: 'end_time', align: 'start', width: '20%' },
-        { text: 'Duration', value: 'duration', align: 'end', width: '15%' },
+        {
+          text: 'Duration',
+          value: 'duration',
+          align: 'end',
+          width: '15%',
+          sortable: false
+        },
         { text: 'State', value: 'state', align: 'end', width: '15%' }
       ],
       itemsPerPage: 15,
