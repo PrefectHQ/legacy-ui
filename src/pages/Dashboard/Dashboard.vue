@@ -13,6 +13,7 @@ import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
+import UpgradeUsageTile from '@/pages/Dashboard/UsageTiles/UpgradeUsage-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import { mapGetters, mapActions } from 'vuex'
 import gql from 'graphql-tag'
@@ -59,7 +60,8 @@ export default {
     SubPageNav,
     SummaryTile,
     FlowRunHistoryTile,
-    UpcomingRunsTile
+    UpcomingRunsTile,
+    UpgradeUsageTile
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'project') {
@@ -114,12 +116,24 @@ export default {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
     },
     usageTile() {
+      console.log(this.license)
       if (!this.isCloud) return null
       if (!this.license) return 'loading'
+      const isSelfServe = this.license.terms.is_self_serve
+      const isUsageBased = this.license.terms.is_usage_based
 
-      let tile = !this.license.terms.is_self_serve ? 'committed' : 'monthly'
+      console.log(isSelfServe, isUsageBased)
+      // Legacy license, not self-serve (so no upgrade)
+      if (!isSelfServe && !isUsageBased) return null
 
-      return tile
+      // Legacy license, self-serve (so can upgrade)
+      if (isSelfServe && !isUsageBased) return 'upgrade'
+
+      // Usage license, not self-serve (show committed runs)
+      if (!isSelfServe && isUsageBased) return 'upgrade'
+
+      // Usage license && self-serve
+      return 'upgrade'
     }
   },
   watch: {
@@ -282,7 +296,6 @@ export default {
       >
         <div class="tile-grid my-4">
           <v-skeleton-loader
-            v-if="true"
             :loading="loadedTiles < 7"
             type="image"
             height="184px"
@@ -330,7 +343,7 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            v-if="license"
+            v-if="usageTile"
             :loading="loadedTiles < 6 || usageTile == 'loading'"
             type="image"
             height="100%"
@@ -338,8 +351,10 @@ export default {
             class="tile-container span-row-1"
             tile
           >
+            {{ usageTile }}
             <CycleUsageTile v-if="usageTile == 'monthly'" />
             <CommittedUsageTile v-else-if="usageTile == 'committed'" />
+            <UpgradeUsageTile v-else-if="usageTile == 'upgrade'" />
           </v-skeleton-loader>
 
           <v-skeleton-loader
