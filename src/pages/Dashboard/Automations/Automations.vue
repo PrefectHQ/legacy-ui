@@ -80,6 +80,9 @@ export default {
       variables() {
         return {}
       },
+      skip() {
+        return !this.showAutomations
+      },
       loadingKey: 'loadingHook',
       pollInterval: 5000,
       update: data => data?.hook
