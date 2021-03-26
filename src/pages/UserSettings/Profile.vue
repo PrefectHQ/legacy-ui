@@ -156,7 +156,7 @@ export default {
           label="Time Zone"
           outlined
           prepend-inner-icon="access_time"
-          :menu-props="{ offsetY: true }"
+          :menu-props="{ offsetY: true, contentClass: 'tz' }"
         />
       </v-card-text>
       <v-card-actions>
@@ -181,3 +181,10 @@ export default {
     ></Alert>
   </ManagementLayout>
 </template>
+
+<style>
+/* stylelint-disable */
+.tz.v-menu__content .v-select-list {
+  max-width: 100%;
+}
+</style>
