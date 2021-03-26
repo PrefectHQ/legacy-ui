@@ -151,6 +151,9 @@ export default {
         are replacing API tokens</div
       >
       Existing tokens will continue to work, but new ones cannot be created.
+      <br />
+      All tokens here will be migrated to a default service account on May 1st,
+      2021
     </template>
     <template v-else-if="isReadOnlyUser" #subtitle>
       Manage
