@@ -116,13 +116,11 @@ export default {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
     },
     usageTile() {
-      console.log(this.license)
       if (!this.isCloud) return null
       if (!this.license) return 'loading'
       const isSelfServe = this.license.terms.is_self_serve
       const isUsageBased = this.license.terms.is_usage_based
 
-      console.log(isSelfServe, isUsageBased)
       // Legacy license, not self-serve (so no upgrade)
       if (!isSelfServe && !isUsageBased) return null
 
