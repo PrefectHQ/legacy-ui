@@ -368,10 +368,9 @@ export default {
 
 <template>
   <v-card
-    class="px-3 pt-7 pb-2 mx-auto mt-4"
+    class="px-3 pt-7 pb-2 mx-auto"
     style="
-      max-height: 200px;
-      max-width: 1362px;"
+      max-height: 200px;"
     tile
   >
     <div class="text-caption text-left grey--text timeline-title">

@@ -36,7 +36,10 @@ export default {
           'pt-0': $slots['row-0']
         }"
       >
-        <v-row :style="{ height: $vuetify.breakpoint.mdAndUp ? '350px' : '' }">
+        <v-row
+          class="mt-0"
+          :style="{ height: $vuetify.breakpoint.mdAndUp ? '350px' : '' }"
+        >
           <v-col
             cols="12"
             md="4"
@@ -77,7 +80,7 @@ export default {
       </v-col>
     </v-row>
 
-    <v-row class="justify-start">
+    <v-row class="justify-start mt-0">
       <v-col
         v-if="
           $slots['row-2-col-1-row-1-tile-1'] ||
