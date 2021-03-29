@@ -66,6 +66,7 @@ const CUSTOM_ICONS = {
   pagerDuty: { component: PagerDutyIcon },
   hashicorp: { component: Hashicorp }
 }
+const scheduledAlt = { ScheduledAlt: '#ffeec4' }
 
 export default new Vuetify({
   icons: {
@@ -79,8 +80,14 @@ export default new Vuetify({
     },
     themes: {
       // We'll add Core and Cloud themes here
-      light: Object.assign({}, THEME_COLORS, STATE_COLORS),
-      dark: Object.assign({}, THEME_COLORS, THEME_COLORS_ALT, STATE_COLORS)
+      light: Object.assign({}, THEME_COLORS, STATE_COLORS, scheduledAlt),
+      dark: Object.assign(
+        {},
+        THEME_COLORS,
+        THEME_COLORS_ALT,
+        STATE_COLORS,
+        scheduledAlt
+      )
     }
   }
 })
