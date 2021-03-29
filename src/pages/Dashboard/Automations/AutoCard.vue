@@ -272,7 +272,7 @@ export default {
   <v-skeleton-loader
     v-if="loadingHook > 0"
     type="list-item-avatar-three-line"
-  ></v-skeleton-loader>
+  />
   <AddAutoCard
     v-else-if="openEdit"
     :hook-detail="hookConfig"
@@ -283,32 +283,35 @@ export default {
     <v-card-text class="text-h6">
       <v-row>
         <v-col cols="11" lg="11" class="pt-6">
-          <v-icon color="codePink" class="pr-2">{{
-            hookDetails[hook.event_type]
-              ? hookDetails[hook.event_type].icon
-              : ''
-          }}</v-icon
-          ><span
-            >When <span v-if="!hookName">an </span>{{ hookType }}
+          <v-icon color="codePink" class="pr-2">
+            {{
+              hookDetails[hook.event_type]
+                ? hookDetails[hook.event_type].icon
+                : ''
+            }}
+          </v-icon>
+          <span>
+            When <span v-if="!hookName">an </span>{{ hookType }}
             <v-tooltip v-if="flowName" top>
               <template #activator="{ on }">
-                <span class="font-weight-bold" v-on="on">{{
-                  hookName
-                }}</span> </template
-              >{{ flowNameList.toString() }}</v-tooltip
-            >
+                <span class="font-weight-bold" v-on="on">{{ hookName }} </span>
+              </template>
+              {{ flowNameList.toString() }}
+            </v-tooltip>
             <span v-else class="font-weight-bold">{{ hookName }}</span>
-            {{ hookDetail
-            }}<span v-if="includeSeconds">
+            {{ hookDetail }}
+            <span v-if="includeSeconds">
               for
-              <span class="font-weight-bold">{{ seconds }} seconds</span> </span
-            ><v-tooltip v-if="includeTo" top>
+              <span class="font-weight-bold">{{ seconds }} seconds</span>
+            </span>
+            <v-tooltip v-if="includeTo" top>
               <template #activator="{ on }">
-                <span v-on="on">{{ hookStates }}</span></template
-              ><span>{{ states.toString() }}</span></v-tooltip
+                <span v-on="on">{{ hookStates }}</span>
+              </template>
+              <span>{{ states.toString() }}</span> </v-tooltip
             >, then <span class="font-weight-bold">{{ hookAction }}</span
-            >.</span
-          >
+            >.
+          </span>
           <v-menu
             v-if="isAgent"
             v-model="menu"
@@ -321,12 +324,13 @@ export default {
               </v-btn>
             </template>
 
-            <v-card width="30vW"
-              ><v-card-text
-                ><div class="pb-2"
-                  >To set up an automation for your agent, you need to add the
-                  agent-config-id flag at agent registration.</div
-                ><div> To use with a new agent, add this flag:</div>
+            <v-card width="30vW">
+              <v-card-text>
+                <div class="pb-2">
+                  To set up an automation for your agent, you need to add the
+                  agent-config-id flag at agent registration.
+                </div>
+                <div> To use with a new agent, add this flag:</div>
                 <div class="pb-2"
                   ><v-tooltip bottom>
                     <template #activator="{ on }">
@@ -358,24 +362,26 @@ export default {
         <v-col class="text-right" cols="1" lg="1">
           <v-menu v-if="canEdit" :close-on-content-click="false" offset-y>
             <template #activator="{ on, attrs }">
-              <v-btn class="px-2" text small fab v-bind="attrs" v-on="on"
-                ><v-icon>more_horiz</v-icon></v-btn
-              ></template
-            >
+              <v-btn class="px-2" text small fab v-bind="attrs" v-on="on">
+                <v-icon>more_horiz</v-icon>
+              </v-btn>
+            </template>
             <v-card>
-              <div
-                ><v-btn
+              <div>
+                <v-btn
                   :style="{ 'text-transform': 'none', 'min-width': '0px' }"
                   text
                   :loading="deletingHook"
                   width="100%"
                   color="utilGrayDark"
                   @click.stop="deleteHook"
-                  ><v-icon class="pr-4">delete</v-icon>Delete</v-btn
-                ></div
-              >
-            </v-card></v-menu
-          >
+                >
+                  <v-icon class="pr-4">delete</v-icon>
+                  Delete
+                </v-btn>
+              </div>
+            </v-card>
+          </v-menu>
         </v-col>
       </v-row></v-card-text
     ></v-card
