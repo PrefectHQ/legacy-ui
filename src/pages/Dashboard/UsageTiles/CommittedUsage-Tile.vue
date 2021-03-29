@@ -59,7 +59,7 @@ export default {
     <v-card-text
       class="pa-0 px-3 pt-3 d-flex align-start justify-center flex-column mb-auto"
     >
-      <div class="title utilGrayDark--text"
+      <div class="text-h6 utilGrayDark--text"
         >Run balance
 
         <MenuTooltip v-if="usage && usage < 0" hide-close>

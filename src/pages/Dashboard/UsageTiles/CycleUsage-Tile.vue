@@ -96,7 +96,7 @@ export default {
     <v-card-text
       class="pa-0 px-3 pt-3 d-flex align-start justify-center flex-column mb-auto"
     >
-      <div class="title utilGrayDark--text">Usage this cycle</div>
+      <div class="text-h6 utilGrayDark--text">Usage this cycle</div>
       <div class="text-h3">
         <v-skeleton-loader
           :loading="!usage && (invoiceLoading || usageLoading)"
@@ -118,7 +118,7 @@ export default {
           >successful task runs</span
         >
       </div>
-      <div class="subtitle-2 font-weight-light">
+      <div class="text-subtitle-2 font-weight-light">
         <v-skeleton-loader
           :loading="!usage && (invoiceLoading || usageLoading)"
           type="image"

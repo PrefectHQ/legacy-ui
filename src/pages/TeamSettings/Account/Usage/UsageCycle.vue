@@ -84,7 +84,7 @@ export default {
           </span>
         </v-skeleton-loader>
       </div>
-      <div class="subtitle-2 font-weight-light"
+      <div class="text-subtitle-2 font-weight-light"
         >due
         <v-skeleton-loader
           :loading="invoiceLoading"
