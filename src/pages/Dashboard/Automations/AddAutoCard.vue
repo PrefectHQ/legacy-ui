@@ -58,8 +58,8 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['projects']),
-    //We can not update an agent for now - config id needs to be added at agent creation
-    // ...mapGetters('an agent', ['agents']),
+    //We can not update agent for now - config id needs to be added at agent creation
+    // ...mapGetters('agent', ['agents']),
     // projectsList() {
     //   return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
     //     a.name > b.name ? 1 : -1
@@ -74,15 +74,15 @@ export default {
     agentOrFlow() {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
-        return 'an agent'
+        return 'agent'
       return 'this'
     },
     disableStep() {
-      return this.agentOrFlow === 'an agent' || this.selectedFlows.length > 1
+      return this.agentOrFlow === 'agent' || this.selectedFlows.length > 1
     },
     disableDoThis() {
       if (this.agentOrFlow === 'this') return true
-      if (this.agentOrFlow === 'a flow' && this.selectedFlows.length < 1)
+      if (this.agentOrFlow === 'flow' && this.selectedFlows.length < 1)
         return true
       return false
     },
@@ -98,7 +98,7 @@ export default {
     },
     editedActions() {
       return this.actions
-        ? this.agentOrFlow === 'an agent'
+        ? this.agentOrFlow === 'agent'
           ? this.actions.filter(
               action => action.action_type !== 'CancelFlowRunAction'
             )
@@ -119,22 +119,22 @@ export default {
     flowNames() {
       const agentName =
         this.hookDetail?.agentConfig?.agents?.length == 1
-          ? this.HookDetail?.agentConfig?.agents[0]?.name === 'an agent'
+          ? this.HookDetail?.agentConfig?.agents[0]?.name === 'agent'
             ? this.HookDetail?.agentConfig?.agents[0]?.type
             : this.hookDetail?.agentConfig?.agents[0]?.name
           : this.hookDetail?.agentConfig?.agents
               .map((agent, index) => {
                 if (index === 0) {
-                  return agent.name === 'an agent' ? agent.type : agent.name
+                  return agent.name === 'agent' ? agent.type : agent.name
                 } else {
-                  return agent.name === 'an agent'
+                  return agent.name === 'agent'
                     ? `or ${agent.type}`
                     : `or ${agent.name}`
                 }
               })
               .toString()
-      return this.agentOrFlow === 'an agent'
-        ? agentName || 'an agent'
+      return this.agentOrFlow === 'agent'
+        ? agentName || 'agent'
         : this.flowNamesList?.length > 1
         ? this.flowNamesList?.length === this.flows.length
           ? 'any flow'
@@ -156,7 +156,7 @@ export default {
       )
     },
     completeAction() {
-      if (this.agentOrFlow === 'an agent') return !!this.chosenAction
+      if (this.agentOrFlow === 'agent') return !!this.chosenAction
       if (!this.includeTo)
         return !!this.selectedFlows?.length && !!this.chosenAction
       return (
@@ -251,7 +251,7 @@ export default {
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
-      if (choice === 'a flow') {
+      if (choice === 'flow') {
         this.flowEventType =
           this.hookDetail?.hook?.event_type === 'FlowSLAFailedEvent'
             ? this.flowEventTypes.find(
@@ -267,7 +267,7 @@ export default {
               }
         this.switchStep('selectFlow')
       }
-      if (choice === 'an agent') {
+      if (choice === 'agent') {
         this.flowEventType = { name: 'is unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
@@ -348,7 +348,7 @@ export default {
     disableChip(item) {
       return (
         (item.enum != 'CHANGES_STATE' && this.selectedFlows?.length > 1) ||
-        this.agentOrFlow === 'an agent'
+        this.agentOrFlow === 'agent'
       )
     },
     includesFlow(flow) {
@@ -485,7 +485,7 @@ export default {
             })
             data = flowSLAEventSuccess.data
           }
-        } else if (this.agentOrFlow === 'an agent') {
+        } else if (this.agentOrFlow === 'agent') {
           let agentConfig
           if (this.hookDetails?.agentConfig) {
             agentConfig = this.hookDetails?.agentConfig
@@ -591,7 +591,7 @@ export default {
     <v-card-text class="text-h6 font-weight-light">
       <v-row>
         <v-col cols="9" lg="10">
-          When<span v-if="agentOrFlow === 'a flow'"> a run from</span
+          When<span v-if="agentOrFlow === 'flow'"> a run from</span
           ><v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectFlow', 'openAgentOrFlow')"
@@ -685,24 +685,23 @@ export default {
     </v-card-text>
     <div v-if="step.name === 'openAgentOrFlow'">
       <v-card-text>
-        <div class="pb-2"
-          >Select one of these options to build your automation.</div
-        >
+        <div class="pb-2">Choose an automation type:</div>
         <v-row class="px-1">
           <div
-            v-for="item in ['a flow', 'an agent']"
+            v-for="item in ['flow', 'agent']"
             :key="item"
             v-ripple
-            class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
+            class="chip-small px-4 py-2 ma-2 cursor-pointer text-h6 font-weight-light"
             :class="{ active: agentOrFlow === item }"
             @click="selectAgentOrFlow(item)"
-            ><div class="text-center"
-              ><v-icon class="pr-2 pb-1">{{
-                item === 'a flow' ? 'pi-flow' : 'pi-agent'
-              }}</v-icon
-              >{{ item }}</div
-            ></div
           >
+            <div class="text-center">
+              <v-icon class="pr- pb-1">
+                {{ item === 'flow' ? 'pi-flow' : 'pi-agent' }}
+              </v-icon>
+              {{ item }}
+            </div>
+          </div>
         </v-row>
       </v-card-text>
       <v-card-actions v-if="agentOrFlow !== 'this'">
@@ -713,7 +712,7 @@ export default {
           title="Next"
           class="mx-1"
           @click="
-            agentOrFlow === 'an agent'
+            agentOrFlow === 'agent'
               ? switchStep('selectDoThis')
               : switchStep('selectFlow')
           "
@@ -767,12 +766,12 @@ export default {
                   @click="selectFlow(item)"
                 >
                   <div style="width: auto;" class="text-body-1 text-truncate">
-                    <div class="text-caption">{{ item.project.name }}</div
-                    ><div
-                      ><div style="width: 100%;" class="text-truncate">{{
-                        item.name
-                      }}</div></div
-                    >
+                    <div class="text-caption">{{ item.project.name }}</div>
+                    <div>
+                      <div style="width: 100%;" class="text-truncate">
+                        {{ item.name }}
+                      </div>
+                    </div>
                   </div>
                 </div></v-col
               >
@@ -974,7 +973,6 @@ export default {
   border: 1px solid;
   border-color: var(--v-utilGrayLight-base) !important;
   border-radius: 5px;
-  height: 35px;
   max-width: fit-content;
   transition: all 50ms;
 
