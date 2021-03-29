@@ -247,7 +247,7 @@ export default {
           options.noData &&
           options.noData[depth]
       "
-      class="font-italic text-text-body-2 grey--text text--darken-1"
+      class="font-italic text-body-2 grey--text text--darken-1"
       :class="'pl-' + depth * 8"
     >
       ({{ options.noData[depth] }})

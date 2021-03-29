@@ -143,7 +143,7 @@ export default {
             {{ flow.name }}
           </div>
           <div
-            class="grey--text text--darken-2 text-text-caption position-absolute font-weight-medium"
+            class="grey--text text--darken-2 text-caption position-absolute font-weight-medium"
             style="bottom: 2px;"
           >
             {{ `Version ${flow.version}` }}

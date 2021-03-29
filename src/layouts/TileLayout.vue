@@ -11,7 +11,7 @@ export default {
 <template>
   <v-container fluid class="mx-auto pt-0 px-3 pb-12">
     <v-row v-if="$slots['row-0']" no-gutters>
-      <v-col class="pa-0">
+      <v-col class="pa-0 mb-4">
         <slot name="row-0" />
       </v-col>
     </v-row>
