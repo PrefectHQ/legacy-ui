@@ -317,7 +317,7 @@ export default {
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
 
           <TaskRunHeartbeatTile
-            slot="row-2-col-1-row-4-tile-1"
+            slot="row-2-col-1-row-2-tile-1"
             :flow-run-id="$route.params.id"
           />
 

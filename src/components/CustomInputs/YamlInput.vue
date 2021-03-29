@@ -140,7 +140,7 @@ export default {
       <v-icon :color="iconColor">
         {{ prependIcon }}
       </v-icon>
-      <div class="caption o-20">
+      <div class="text-caption o-20">
         {{ prependIconLabel }}
       </div>
     </div>
@@ -165,7 +165,7 @@ export default {
     ></CodeMirror>
 
     <slot></slot>
-    <div class="caption red--text min-height pl-4">{{ error }}</div>
+    <div class="text-caption red--text min-height pl-4">{{ error }}</div>
   </div>
 </template>
 

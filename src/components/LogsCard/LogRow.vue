@@ -107,7 +107,7 @@ export default {
       </div>
     </div>
 
-    <div class="log-info caption py-2 text-left">
+    <div class="log-info text-caption py-2 text-left">
       <v-tooltip top>
         <template #activator="{ on }">
           <div class="log-datetime utilGrayMid--text" v-on="on">
@@ -120,7 +120,7 @@ export default {
         <v-icon :color="logLevelColor(log.level)" x-small>lens</v-icon>
         <span class="text-truncate ml-1 text-small-caps">{{ log.level }}</span>
       </div>
-      <div class="log-name caption font-weight-light">
+      <div class="log-name text-caption font-weight-light">
         <span class="text-truncate">{{ source }}</span>
       </div>
     </div>

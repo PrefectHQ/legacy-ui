@@ -80,7 +80,7 @@ export default {
 </script>
 
 <template>
-  <v-card-text class="full-height position-relative pa-0 caption">
+  <v-card-text class="full-height position-relative pa-0 text-caption">
     <v-list-item
       class="py-2 pr-2 pl-3"
       dense
@@ -88,7 +88,7 @@ export default {
       :style="runStyle(task.state)"
     >
       <v-list-item-content class="my-0 py-0">
-        <v-list-item-subtitle class="caption mb-0">
+        <v-list-item-subtitle class="text-caption mb-0">
           Task Run
         </v-list-item-subtitle>
         <v-list-item-title>
@@ -97,7 +97,7 @@ export default {
             {{ task.name ? task.name : task.task.name }}
           </span>
         </v-list-item-title>
-        <v-list-item-subtitle class="caption">
+        <v-list-item-subtitle class="text-caption">
           <v-tooltip top>
             <template #activator="{ on }">
               <span v-on="on">
@@ -113,7 +113,7 @@ export default {
           </v-tooltip>
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-avatar class="body-2">
+      <v-list-item-avatar class="text-body-2">
         <v-icon class="utilGrayMid--text">
           arrow_right
         </v-icon>
@@ -126,7 +126,7 @@ export default {
       :to="{ name: 'task', params: { id: task.task.id } }"
     >
       <v-list-item-content class="my-0 py-0">
-        <v-list-item-subtitle class="caption mb-0">
+        <v-list-item-subtitle class="text-caption mb-0">
           Task
         </v-list-item-subtitle>
         <v-list-item-title>
@@ -134,7 +134,7 @@ export default {
         </v-list-item-title>
       </v-list-item-content>
 
-      <v-list-item-avatar class="body-2">
+      <v-list-item-avatar class="text-body-2">
         <v-icon class="utilGrayMid--text">
           arrow_right
         </v-icon>
@@ -143,7 +143,7 @@ export default {
 
     <v-divider></v-divider>
 
-    <v-card-text class="pb-0 pl-3 pr-2 caption">
+    <v-card-text class="pb-0 pl-3 pr-2 text-caption">
       <v-row>
         <v-col cols="12" class="pb-0 pt-0">
           <span class="utilGrayDark--text">Task Run State Message:</span>
@@ -228,7 +228,7 @@ export default {
 
     <v-card-actions v-if="mappedChildren" class="pl-3">
       <div>
-        <div class="body-1 utilGrayDark--text">Mapped Runs</div>
+        <div class="text-body-1 utilGrayDark--text">Mapped Runs</div>
 
         <v-chip-group column>
           <v-chip
@@ -253,7 +253,7 @@ export default {
         <v-list-group v-model="expanded" no-action dense value="true">
           <template #activator>
             <v-list-item-content class="pa-0">
-              <v-list-item-title class="body-2 d-flex align-end">
+              <v-list-item-title class="text-body-2 d-flex align-end">
                 <v-icon class="utilGrayDark--text mr-6" small
                   >trending_up</v-icon
                 >
@@ -296,7 +296,7 @@ export default {
                       <v-list-item-title>
                         {{ run.state }}
                       </v-list-item-title>
-                      <v-list-item-subtitle class="caption">
+                      <v-list-item-subtitle class="text-caption">
                         {{ run.state_message }}
                       </v-list-item-subtitle>
                     </v-list-item-content>
@@ -306,7 +306,7 @@ export default {
                   </span>
                 </v-tooltip>
                 <v-list-item-avatar
-                  class="caption"
+                  class="text-caption"
                   style="
                   border-radius: unset !important;
                   min-width: 85px;"

@@ -22,7 +22,7 @@ export default {
             <v-icon :color="state">fas fa-square-full</v-icon>
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title class="body-2">
+            <v-list-item-title class="text-body-2">
               {{ state }}
             </v-list-item-title>
           </v-list-item-content>

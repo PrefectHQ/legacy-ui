@@ -386,7 +386,7 @@ export default {
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
 
           <!-- ACTIONS -->

@@ -153,7 +153,7 @@ export default {
             </v-list-item-avatar>
             <v-list-item-content class="my-0 py-3">
               <div
-                class="d-inline-block subtitle-1 font-weight-light"
+                class="d-inline-block text-subtitle-1 font-weight-light"
                 style="line-height: 1.25rem;"
               >
                 Something went wrong while trying to fetch failed flow
@@ -210,7 +210,7 @@ export default {
             </v-list-item-avatar>
             <v-list-item-content class="my-0 py-0">
               <div
-                class="subtitle-1 font-weight-light"
+                class="text-subtitle-1 font-weight-light"
                 style="line-height: 1.25rem;"
               >
                 No reported failures in the last {{ selectedDateFilter }}...

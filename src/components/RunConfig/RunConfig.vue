@@ -179,7 +179,7 @@ export default {
               {{ arg.label }}
               <span
                 v-if="arg.arg"
-                class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
+                class="text-caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
                 style="border: 1px solid utilGrayLight !important;"
               >
                 {{ arg.arg }}
@@ -247,7 +247,7 @@ export default {
                   {{ option.label }}
                   <span
                     v-if="option.arg"
-                    class="caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
+                    class="text-caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
                     style="border: 1px solid utilGrayLight !important;"
                   >
                     {{ option.arg }}

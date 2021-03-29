@@ -42,7 +42,7 @@ export default {
     <v-list-item-title>
       <truncate :content="content.title">
         <span
-          class="px-2 rounded-pill d-inline-block caption white--text codePink"
+          class="px-2 rounded-pill d-inline-block text-caption white--text codePink"
         >
           New
         </span>

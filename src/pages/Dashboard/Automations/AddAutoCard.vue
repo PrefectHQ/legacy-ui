@@ -767,7 +767,7 @@ export default {
                   @click="selectFlow(item)"
                 >
                   <div style="width: auto;" class="text-body-1 text-truncate">
-                    <div class="caption">{{ item.project.name }}</div
+                    <div class="text-caption">{{ item.project.name }}</div
                     ><div
                       ><div style="width: 100%;" class="text-truncate">{{
                         item.name

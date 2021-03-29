@@ -14,7 +14,7 @@ export default {
 
 <template functional>
   <div>
-    <div v-if="props.tooltip.data.flow" class="title text-truncate">
+    <div v-if="props.tooltip.data.flow" class="text-h6 text-truncate">
       {{ props.tooltip.data.flow.name }}
     </div>
     <div v-else-if="props.loading">
@@ -22,7 +22,9 @@ export default {
     </div>
     <div
       class="text-truncate"
-      :class="props.tooltip.data.flow || props.loading ? 'caption' : 'title'"
+      :class="
+        props.tooltip.data.flow || props.loading ? 'text-caption' : 'text-h6'
+      "
     >
       {{ props.tooltip.data.name }}
     </div>
@@ -34,28 +36,28 @@ export default {
 
     <div class="divider"></div>
 
-    <div v-if="props.tooltip.data.state == 'Scheduled'" class="subtitle">
+    <div v-if="props.tooltip.data.state == 'Scheduled'" class="text-subtitle-1">
       Scheduled for:
       <span class="font-weight-black">
         {{ props.tooltip.data.display_scheduled_start_time }}
       </span>
     </div>
 
-    <div v-if="props.tooltip.data.start_time" class="subtitle">
+    <div v-if="props.tooltip.data.start_time" class="text-subtitle-1">
       Started:
       <span class="font-weight-black">
         {{ props.tooltip.data.display_start_time }}
       </span>
     </div>
 
-    <div v-if="props.tooltip.data.end_time" class="subtitle">
+    <div v-if="props.tooltip.data.end_time" class="text-subtitle-1">
       Ended:
       <span class="font-weight-black">
         {{ props.tooltip.data.display_end_time }}
       </span>
     </div>
 
-    <div v-if="props.tooltip.data.start_time" class="subtitle">
+    <div v-if="props.tooltip.data.start_time" class="text-subtitle-1">
       Duration:
       <component
         :is="$options.components.DurationSpan"

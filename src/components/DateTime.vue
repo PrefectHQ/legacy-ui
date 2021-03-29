@@ -275,7 +275,7 @@ export default {
                       dense
                       class="mt-4 mb-0"
                     >
-                      <span class="body-2 ma-0">
+                      <span class="text-body-2 ma-0">
                         {{ warning }}
                       </span>
                     </v-alert>

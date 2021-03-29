@@ -101,7 +101,7 @@ export default {
   <div v-else>
     <v-row>
       <v-col>
-        <div class="overline">New Automation</div>
+        <div class="text-overline">New Automation</div>
         <AddAutoCard
           v-if="canEdit && !closeCard"
           @refresh="handleRefresh"
