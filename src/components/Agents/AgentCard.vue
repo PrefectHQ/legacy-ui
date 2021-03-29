@@ -227,7 +227,7 @@ export default {
           Are you sure you want to stop displaying this agent?
         </v-card-title>
 
-        <v-card-text class="my-4 body-2">
+        <v-card-text class="my-4 text-body-2">
           <strong>
             This action will not stop the agent process if it is still running
             in your infrastructure.</strong
@@ -251,11 +251,11 @@ export default {
 
     <v-card-text class="px-0 py-0" style="height: 250px;">
       <div class="px-3">
-        <div class="overline">
+        <div class="text-overline">
           LAST QUERY
         </div>
         <transition name="fade">
-          <div v-if="showLastQuery" class="body-1">
+          <div v-if="showLastQuery" class="text-body-1">
             <span class="font-weight-bold">{{
               agent.last_queried | formatDateTime
             }}</span>
@@ -265,19 +265,19 @@ export default {
 
         <div class="d-flex justify-space-between mb-2 mt-2">
           <div style="width: 50%;">
-            <div class="caption">
+            <div class="text-caption">
               CORE VERSION
             </div>
-            <div class="body-2 text-truncate">
+            <div class="text-body-2 text-truncate">
               {{ agent.core_version || 'Unknown' }}
             </div>
           </div>
 
           <div v-if="isCloud" style="width: 50%;">
-            <div class="caption">
+            <div class="text-caption">
               TOKEN NAME
             </div>
-            <div class="body-2">
+            <div class="text-body-2">
               <v-tooltip top>
                 <template #activator="{ on }">
                   <div
@@ -318,19 +318,19 @@ export default {
         </div>
 
         <div style="width: 50%;" class="mb-2">
-          <div class="caption">
+          <div class="text-caption">
             CREATED
           </div>
-          <div class="body-2">
+          <div class="text-body-2">
             {{ formDate(agent.created) || 'Unknown' }}
           </div>
         </div>
 
         <div>
-          <div class="caption">
+          <div class="text-caption">
             AGENT ID
           </div>
-          <div class="body-2 text-truncate">
+          <div class="text-body-2 text-truncate">
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <span
@@ -352,7 +352,7 @@ export default {
           </div>
         </div>
 
-        <div class="overline mb-0 mt-2">
+        <div class="text-overline mb-0 mt-2">
           LABELS
         </div>
       </div>
@@ -372,7 +372,7 @@ export default {
           {{ label }}
         </Label>
       </div>
-      <div v-else class="body-1 px-3">
+      <div v-else class="text-body-1 px-3">
         None
       </div>
     </v-card-text>

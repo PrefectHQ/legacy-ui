@@ -286,7 +286,7 @@ export default {
     <v-card-text class="pl-12" style="max-width: 1000px;">
       <v-row>
         <v-col cols="12" class="pb-0">
-          <div class="title primary--text">
+          <div class="text-h6 primary--text">
             <!-- We don't really have the visual language necessary to use these I think -->
             <!-- <v-icon class="mr-3">pi-project</v-icon> -->
             Project
@@ -368,7 +368,7 @@ export default {
       </v-row>
       <v-row v-if="isCloud" class="mt-8">
         <v-col cols="12" class="pb-0">
-          <div class="title primary--text">
+          <div class="text-h6 primary--text">
             <!-- We don't really have the visual language necessary to use these I think -->
             <!-- <v-icon class="mr-3">lock</v-icon> -->
             Version Locking
@@ -440,7 +440,7 @@ export default {
 
       <v-row class="mt-8">
         <v-col cols="12" class="pb-0">
-          <div class="title primary--text">
+          <div class="text-h6 primary--text">
             <!-- We don't really have the visual language necessary to use these I think -->
             <!-- <v-icon class="mr-3">favorite</v-icon> -->
             Heartbeat
@@ -520,7 +520,7 @@ export default {
 
       <v-row class="mt-8">
         <v-col cols="12" class="pb-0">
-          <div class="title primary--text">
+          <div class="text-h6 primary--text">
             <!-- We don't really have the visual language necessary to use these I think -->
             <!-- <v-icon class="mr-3">fas fa-book-dead</v-icon> -->
             Lazarus Process

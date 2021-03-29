@@ -7,6 +7,7 @@
 - Add Automations page - [#695](https://github.com/PrefectHQ/ui/pull/695)
 - Add Service Accounts and API keys to the UI - [#678](https://github.com/PrefectHQ/ui/pull/678)
 - Add generic markdown messages for action notifications - [#674](https://github.com/PrefectHQ/ui/pull/674)
+- Update packages - [#707](https://github.com/PrefectHQ/ui/pull/707)
 
 ### Bugfixes
 

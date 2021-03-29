@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-  <v-app>
+  <v-container>
     <v-navigation-drawer
       clipped
       left
@@ -93,7 +93,7 @@ export default {
         <router-view></router-view>
       </v-fade-transition>
     </div>
-  </v-app>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>

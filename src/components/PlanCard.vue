@@ -77,6 +77,6 @@ export default {
         >1 {{ activePlan.history }} result history</v-list-item
       >
     </v-list>
-    <div class="display-1 text-center">{{ monthlyCost }}</div> -->
+    <div class="text-h4 text-center">{{ monthlyCost }}</div> -->
   </v-card>
 </template>

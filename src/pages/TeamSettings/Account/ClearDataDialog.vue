@@ -309,7 +309,7 @@ export default {
                   tile
                   class="mx-auto text-center mt-1"
                 ></v-skeleton-loader>
-                <span v-else class="font-weight-bold headline">
+                <span v-else class="font-weight-bold text-h5">
                   {{ data.count.toLocaleString() }}
                 </span>
               </div>
@@ -351,12 +351,12 @@ export default {
           </template>
 
           <v-fade-transition mode="out-in">
-            <div v-if="dataLoading" class="headline">
+            <div v-if="dataLoading" class="text-h5">
               Analyzing...
             </div>
 
             <div v-else-if="!dataLoading && !noDataToClear">
-              <div class="headline">
+              <div class="text-h5">
                 <span class="font-weight-bold">WARNING:</span> This can't be
                 undone.
               </div>
@@ -367,7 +367,7 @@ export default {
             </div>
 
             <div v-else>
-              <div class="headline">
+              <div class="text-h5">
                 You have no data to remove!
               </div>
             </div>
@@ -441,7 +441,7 @@ export default {
           tile
           transition="fade"
         >
-          <div class="title">
+          <div class="text-h6">
             <span class="font-weight-bold">Error:</span> We're sorry, something
             went wrong.
           </div>
@@ -469,7 +469,7 @@ export default {
           "
           class="pa-6 text-center"
         >
-          <div class="headline word-break-normal mb-3 black--text">
+          <div class="text-h5 word-break-normal mb-3 black--text">
             {{
               loading ? loadingMessage + '...' : 'All data has been removed.'
             }}

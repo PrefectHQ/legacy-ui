@@ -171,7 +171,7 @@ export default {
           </div>
           <ConcurrencyInfo
             v-if="isCloud && tab === 'late'"
-            class="caption position-absolute"
+            class="text-caption position-absolute"
             style="bottom: 2px;"
           />
         </v-col>
@@ -255,7 +255,7 @@ export default {
         </v-list-item-avatar>
         <v-list-item-content class="my-0 py-0">
           <div
-            class="subtitle-1 font-weight-light"
+            class="text-subtitle-1 font-weight-light"
             style="line-height: 1.25rem;"
           >
             No upcoming runs.
@@ -275,7 +275,7 @@ export default {
         >
           <v-list-item dense :disabled="setToRun.includes(item.id)">
             <v-list-item-content>
-              <span class="caption mb-0 ml-n1 d-flex align-end">
+              <span class="text-caption mb-0 ml-n1 d-flex align-end">
                 <LabelWarning :flow="item.flow" :flow-run="item" />
                 <span class="ml-1">
                   Scheduled for
@@ -301,7 +301,7 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
 
-            <v-list-item-action tile min-width="5" class="body-2">
+            <v-list-item-action tile min-width="5" class="text-body-2">
               <v-tooltip top>
                 <template #activator="{ on }">
                   <v-btn
@@ -347,7 +347,7 @@ export default {
         </v-list-item-avatar>
         <v-list-item-content class="my-0 py-0">
           <div
-            class="subtitle-1 font-weight-light"
+            class="text-subtitle-1 font-weight-light"
             style="line-height: 1.25rem;"
           >
             Everything is running on schedule!
@@ -371,7 +371,7 @@ export default {
             :to="{ name: 'flow-run', params: { id: item.id } }"
           >
             <v-list-item-content>
-              <span class="caption mb-0 ml-n1 d-flex align-end">
+              <span class="text-caption mb-0 ml-n1 d-flex align-end">
                 <LabelWarning :flow="item.flow" :flow-run="item" />
                 <span class="ml-1">
                   Scheduled for
@@ -379,7 +379,7 @@ export default {
                 </span>
               </span>
 
-              <v-list-item-title class="body-2">
+              <v-list-item-title class="text-body-2">
                 <router-link
                   :to="{ name: 'flow', params: { id: item.flow.id } }"
                 >
@@ -396,13 +396,13 @@ export default {
                   {{ item.name }}
                 </router-link>
               </v-list-item-title>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <DurationSpan :start-time="item.scheduled_start_time" />
                 behind schedule
               </v-list-item-subtitle>
             </v-list-item-content>
 
-            <v-list-item-avatar class="body-2">
+            <v-list-item-avatar class="text-body-2">
               <v-icon class="grey--text">arrow_right</v-icon>
             </v-list-item-avatar>
           </v-list-item>
@@ -423,7 +423,7 @@ export default {
 
         <v-dialog v-model="showClearLateRunsDialog" max-width="480">
           <v-card flat>
-            <v-card-title class="title word-break-normal">
+            <v-card-title class="text-h6 word-break-normal">
               Are you sure you want to clear all late runs?
             </v-card-title>
 

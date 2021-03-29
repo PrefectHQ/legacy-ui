@@ -269,7 +269,7 @@ export default {
     ></div>
     <div
       v-else
-      class="headline
+      class="text-h5
           utilGreyDark--text pl-8 pr-12 pt-8 text-center wide"
     >
       This flow has no

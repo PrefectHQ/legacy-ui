@@ -291,7 +291,7 @@ export default {
       <template #event="{event}">
         <div
           :id="event.name"
-          class="caption pl-2 event"
+          class="text-caption pl-2 event"
           :class="striped(event)"
           @click.self="handleEventClick(event, $event)"
         >

@@ -368,19 +368,18 @@ export default {
 
 <template>
   <v-card
-    class="px-3 pt-7 pb-2 mx-auto mt-4"
+    class="px-3 pt-7 pb-2 mx-auto"
     style="
-      max-height: 200px;
-      max-width: 1362px;"
+      max-height: 200px;"
     tile
   >
-    <div class="caption text-left grey--text timeline-title">
+    <div class="text-caption text-left grey--text timeline-title">
       <v-icon x-small>pi-gantt</v-icon><span class="ml-1">Timeline</span>
     </div>
 
     <div
       v-if="!loading && items.length === 0"
-      class="caption text-center grey--text timeline-no-runs"
+      class="text-caption text-center grey--text timeline-no-runs"
     >
       No timeline
     </div>

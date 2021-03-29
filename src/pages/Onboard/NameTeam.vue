@@ -306,7 +306,7 @@ export default {
       <div ref="main-row">
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
-            <div v-if="isTenantAdmin" class="display-1 text-center">
+            <div v-if="isTenantAdmin" class="text-h4 text-center">
               Let's start by creating your team
               <v-menu
                 :close-on-content-click="false"
@@ -321,7 +321,7 @@ export default {
                   >
                 </template>
                 <v-card tile class="pa-3 mt-1" max-width="320">
-                  <div class="body-1">
+                  <div class="text-body-1">
                     Prefect automatically creates a sandbox development team for
                     you to use &mdash; this is a great place to test and deploy
                     flows as you explore Prefect. When you're ready to
@@ -343,14 +343,14 @@ export default {
                 </v-card>
               </v-menu>
             </div>
-            <div v-else class="display-1 text-center"> Team Details </div>
+            <div v-else class="text-h4 text-center"> Team Details </div>
           </v-col>
 
           <v-col v-if="revealNote" key="revealNote" cols="12">
-            <div v-if="isTenantAdmin" class="body-2 text--darken-1">
+            <div v-if="isTenantAdmin" class="text-body-2 text--darken-1">
               (You can always change this later)
             </div>
-            <div v-else class="body-2 text--darken-1">
+            <div v-else class="text-body-2 text--darken-1">
               Contact your team administrators to complete onboarding</div
             >
           </v-col>
@@ -361,10 +361,10 @@ export default {
             cols="12"
             class="my-2 mt-12 name-team-input mx-auto"
           >
-            <div class="overline">
+            <div class="text-overline">
               Team Name
             </div>
-            <div v-if="!isTenantAdmin" class="headline">
+            <div v-if="!isTenantAdmin" class="text-h5">
               {{ tenant.name }}
             </div>
             <v-text-field
@@ -400,7 +400,7 @@ export default {
             cols="12"
             class="my-2 name-team-input mx-auto"
           >
-            <div class="overline d-flex justify-center align-center">
+            <div class="text-overline d-flex justify-center align-center">
               <span class="mr-1">Team Slug</span>
               <Truncate
                 content="This slug is used to create shareable links for your flows and runs unique to your team."
@@ -410,7 +410,7 @@ export default {
                 </v-icon>
               </Truncate>
             </div>
-            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
+            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="text-h5 medium">
             </div>
             <v-text-field
               v-if="isTenantAdmin"
@@ -446,7 +446,7 @@ export default {
             cols="12"
             class="my-2 mb-12 mx-auto"
           >
-            <div class="overline">
+            <div class="text-overline">
               How did you hear about us?
             </div>
             <v-select
@@ -466,7 +466,7 @@ export default {
           </v-col>
 
           <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
-            <div v-if="pendingInvitations.length" class="body-1">
+            <div v-if="pendingInvitations.length" class="text-body-1">
               Your pending invitations:
             </div>
             <v-list
@@ -534,7 +534,7 @@ export default {
             "
             key="error"
             cols="12"
-            class="body-2 red--text text--darken-1"
+            class="text-body-2 red--text text--darken-1"
           >
             Sorry, something went wrong. Please try again.
           </v-col>
@@ -543,7 +543,7 @@ export default {
     </v-row>
     <v-dialog v-if="currentInvitation" v-model="dialog" max-width="500">
       <v-card>
-        <v-card-title class="headline">
+        <v-card-title class="text-h5">
           Are you sure you want to decline the invitation to
           {{ currentInvitation.tenant.name }}?
         </v-card-title>

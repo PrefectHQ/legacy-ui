@@ -169,7 +169,7 @@ export default {
                   class="text-body-2 utilGrayMid--text flex-grow-1 flex-shrink-0 py-2"
                   style="max-width: 100%;"
                 >
-                  <div class="caption">
+                  <div class="text-caption">
                     {{ item.state }}
                     {{
                       item.state == 'Scheduled'
@@ -241,7 +241,7 @@ export default {
                 </router-link>
               </div>
 
-              <div class="mb-1 caption">
+              <div class="mb-1 text-caption">
                 {{ formatTime(item.state_timestamp || item.timestamp) }}
               </div>
 

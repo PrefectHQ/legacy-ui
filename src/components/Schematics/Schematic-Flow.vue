@@ -1062,16 +1062,16 @@ export default {
       <v-card-text class="text-center">
         <transition name="fade-expand" mode="out-in">
           <div v-if="!errorSubmitted && !errorReportLoading" key="step1">
-            <div class="display-1">
+            <div class="text-h4">
               Sorry, we're unable to load this schematic.
             </div>
             <div class="mt-2">Help us improve by submitting a report.</div>
           </div>
-          <div v-else-if="errorReportLoading" key="step2" class="display-1">
+          <div v-else-if="errorReportLoading" key="step2" class="text-h4">
             Submitting report...
           </div>
           <div v-else key="step2">
-            <div class="display-1 mb-2">
+            <div class="text-h4 mb-2">
               Thanks! We'll get our team on it immediately.
             </div>
             By the way, you can
