@@ -119,7 +119,7 @@ export default {
                 </div>
 
                 <div class="text-h6">
-                  {{ block.text - h5 }}
+                  {{ block.headline }}
                 </div>
                 <div class="text-body-2 mb-4">
                   {{ block.body }}
@@ -153,7 +153,6 @@ export default {
             <v-tabs
               v-model="gettingStartedTab"
               :background-color="isCloud ? 'primary' : 'secondary'"
-              dark
             >
               <v-tab v-if="isServer" ref="infrastructure" href="#infrastructure"
                 >Prefect Server</v-tab
@@ -213,9 +212,8 @@ export default {
 
             <v-tabs
               v-model="sdkTab"
-              background-color="cloudUIPrimaryBlue primary"
-              dark
               class="mt-4"
+              background-color="primary"
               style="border: 1px solid utilGrayLight !important;
                 border-bottom: unset !important;"
             >
