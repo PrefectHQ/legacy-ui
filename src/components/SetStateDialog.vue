@@ -55,7 +55,7 @@ export default {
 
       <v-card flat :loading="markAsLoading">
         <div style="padding: 20px;">
-          <v-card-title class="headline word-break-normal card-title">
+          <v-card-title class="text-h5 word-break-normal card-title">
             <span v-if="taskRun && taskRun.name">
               Change the state of
               <span class="font-weight-medium">{{ taskRun.name }}</span>

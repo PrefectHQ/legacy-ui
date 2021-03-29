@@ -70,19 +70,19 @@ export default {
 <template>
   <div class="d-flex justify-end align-center">
     <div class="d-flex align-baseline justify-end">
-      <div class="mr-2 caption black--text">
+      <div class="mr-2 text-caption black--text">
         Items per page:
       </div>
       <div :style="style">
         <v-select
           v-model="selected"
-          class="caption"
+          class="text-caption"
           hide-details
           :items="countOptions"
           @change="handleChange"
         />
       </div>
-      <div class="caption mx-5 black--text">
+      <div class="text-caption mx-5 black--text">
         {{ startingNumber }}-{{ endingNumber }} of {{ totalItems }}
       </div>
       <div>

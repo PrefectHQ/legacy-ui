@@ -119,7 +119,7 @@ export default {
                 </div>
 
                 <div class="text-h6">
-                  {{ block.headline }}
+                  {{ block.text - h5 }}
                 </div>
                 <div class="text-body-2 mb-4">
                   {{ block.body }}

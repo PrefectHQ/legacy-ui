@@ -134,7 +134,7 @@ export default {
   >
     <v-icon v-if="type == 'error'" class="mr-4" color="red">warning</v-icon>
 
-    <span class="subtitle-1 utilGrayDark--text" v-html="message"> </span>
+    <span class="text-subtitle-1 utilGrayDark--text" v-html="message"> </span>
 
     <template #action>
       <v-btn v-if="alertLink" color="pink" text :to="alertLink">

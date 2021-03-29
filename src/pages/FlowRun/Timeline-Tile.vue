@@ -374,13 +374,13 @@ export default {
       max-width: 1362px;"
     tile
   >
-    <div class="caption text-left grey--text timeline-title">
+    <div class="text-caption text-left grey--text timeline-title">
       <v-icon x-small>pi-gantt</v-icon><span class="ml-1">Timeline</span>
     </div>
 
     <div
       v-if="!loading && items.length === 0"
-      class="caption text-center grey--text timeline-no-runs"
+      class="text-caption text-center grey--text timeline-no-runs"
     >
       No timeline
     </div>

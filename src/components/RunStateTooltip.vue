@@ -9,7 +9,7 @@ export default {
 <template functional>
   <div class="v-tooltip__content tooltip">
     <div v-for="(state, i) in props.states" :key="i">
-      <div class="body-1 ">
+      <div class="text-body-1 ">
         <span class="font-weight-medium" :style="{ color: state.color }">
           {{ state.label }}
         </span>

@@ -288,7 +288,7 @@ export default {
     >
       <!-- HEADERS -->
       <template #header.firstName="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
 
       <template #expanded-item="{item}">

@@ -80,20 +80,20 @@ export default {
     >
       <v-row no-gutters align="end" justify="start">
         <v-col cols="12">
-          <div class="overline grey--text">
+          <div class="text-overline grey--text">
             {{ subtitle }}
           </div>
 
           <div
-            class="display-1"
-            :class="$vuetify.breakpoint.mdAndUp ? 'display-1' : 'headline'"
+            class="text-h4"
+            :class="$vuetify.breakpoint.mdAndUp ? 'text-h4' : 'text-h5'"
           >
             {{ title }}
           </div>
-          <div v-if="!!body" class="body-2">
+          <div v-if="!!body" class="text-body-2">
             {{ body }}
           </div>
-          <div v-else-if="title === 'Users'" class="body-2">
+          <div v-else-if="title === 'Users'" class="text-body-2">
             Invited users and actual members count towards your users total. You
             can add and remove members and invitations in the
             <router-link :to="'/team/members'">
@@ -101,7 +101,7 @@ export default {
             </router-link>
             page.
           </div>
-          <div v-else-if="title === 'Flows'" class="body-2">
+          <div v-else-if="title === 'Flows'" class="text-body-2">
             Different versions all count as one flow. You can view and manage
             the flows that count towards your total on the
             <router-link :to="{ name: 'flow-version-groups' }">

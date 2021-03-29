@@ -90,7 +90,11 @@ export default {
 </script>
 
 <template>
-  <span v-if="loadingKey < 1" class="caption max-width" :class="[textAlign]">
+  <span
+    v-if="loadingKey < 1"
+    class="text-caption max-width"
+    :class="[textAlign]"
+  >
     <truncate v-if="truncate" :content="flowDetails">
       <span :style="addDot('primary')"></span>
       {{ flowNameText }}

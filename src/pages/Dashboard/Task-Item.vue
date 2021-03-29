@@ -27,7 +27,7 @@ export default {
       }"
     >
       <v-list-item-content>
-        <v-list-item-title class="subtitle-2">
+        <v-list-item-title class="text-subtitle-2">
           <router-link
             class="link"
             :to="{

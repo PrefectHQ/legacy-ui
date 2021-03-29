@@ -415,7 +415,7 @@ export default {
                   item-value="version_group_id"
                   :item-text="projectNamePrefix()"
                   label="Flow (Version Group)"
-                  class="headline overflow"
+                  class="text-h5 overflow"
                   :items="flows"
                 >
                   <template #item="{ item }">
@@ -432,14 +432,14 @@ export default {
                   v-model="tempName"
                   data-cy="hook-name"
                   label="Name"
-                  class="headline"
+                  class="text-h5"
                   hide-details
                 />
                 <div v-else>
-                  <div class="caption">Name</div>
-                  <div class="headline black--text">{{ tempName }}</div>
+                  <div class="text-caption">Name</div>
+                  <div class="text-h5 black--text">{{ tempName }}</div>
                 </div>
-                <div class="subtitle pt-2">
+                <div class="text-subtitle-1 pt-2">
                   This is a non-unique shorthand identifier for your Cloud Hook.
                 </div>
               </v-col>
@@ -528,7 +528,7 @@ export default {
 
             <v-row class="mt-2">
               <v-col cols="12" class="pt-2">
-                <div class="headline primary--text">
+                <div class="text-h5 primary--text">
                   Type
                 </div>
               </v-col>
@@ -586,7 +586,7 @@ export default {
               <v-col cols="12" class="pt-2">
                 <div
                   v-if="tempType !== 'PREFECT_MESSAGE'"
-                  class="headline primary--text"
+                  class="text-h5 primary--text"
                 >
                   Configuration
                 </div>
@@ -755,10 +755,10 @@ export default {
                   :key="key"
                   class="my-4"
                 >
-                  <div class="caption">
+                  <div class="text-caption">
                     {{ cloudHookKeyLabel(key) }}
                   </div>
-                  <div class="title">
+                  <div class="text-h6">
                     <span v-if="shouldObfuscate(key)">
                       {{ hook.config[key] || 'None' | obfuscate }}
                     </span>
@@ -780,10 +780,10 @@ export default {
 
             <v-row class="mt-2">
               <v-col cols="12" class="pt-2">
-                <div class="headline primary--text">
+                <div class="text-h5 primary--text">
                   States
                 </div>
-                <div class="subtitle">
+                <div class="text-subtitle-1">
                   Prefect Cloud will send information to your Cloud Hook when
                   your flow transitions to any of these states.
                   <div v-if="editable && canEdit" class="mt-2">

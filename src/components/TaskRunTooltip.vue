@@ -55,35 +55,35 @@ export default {
 <template>
   <div class="v-tooltip__content tooltip py-2">
     <div v-for="(taskRun, i) in displayedTaskRuns" :key="i">
-      <div class="title">{{ taskRun.data.task_name }}</div>
+      <div class="text-h6">{{ taskRun.data.task_name }}</div>
 
       <div class="d-flex align-center justify-start">
         <div :style="statusStyle(taskRun.data.state)"></div>
         <div class="ml-2">{{ taskRun.data.state }}</div>
       </div>
 
-      <div v-if="taskRun.state == 'Scheduled'" class="subtitle">
+      <div v-if="taskRun.state == 'Scheduled'" class="text-subtitle-1">
         Scheduled for:
         <span class="font-weight-black">
           {{ logTimeExtended(taskRun.data.scheduled_start_time) }}
         </span>
       </div>
 
-      <div v-if="taskRun.start_time" class="subtitle">
+      <div v-if="taskRun.start_time" class="text-subtitle-1">
         Started:
         <span class="font-weight-black">
           {{ logTimeExtended(taskRun.start_time) }}
         </span>
       </div>
 
-      <div v-if="taskRun.end_time" class="subtitle">
+      <div v-if="taskRun.end_time" class="text-subtitle-1">
         Ended:
         <span class="font-weight-black">
           {{ logTimeExtended(taskRun.end_time) }}
         </span>
       </div>
 
-      <div v-if="taskRun.start_time" class="subtitle">
+      <div v-if="taskRun.start_time" class="text-subtitle-1">
         Duration:
         <DurationSpan
           class="font-weight-bold"
@@ -97,7 +97,7 @@ export default {
         class="divider"
       ></div>
 
-      <div v-if="taskRun.data.state == 'Mapped'" class="subtitle">
+      <div v-if="taskRun.data.state == 'Mapped'" class="text-subtitle-1">
         Expected Runs:
         <span class="font-weight-black">
           {{ expectedRuns(taskRun) }}
@@ -106,7 +106,7 @@ export default {
 
       <div v-if="taskRun.data.mappedChildren">
         <div>
-          <div class="subtitle">Mapped Runs</div>
+          <div class="text-subtitle-1">Mapped Runs</div>
 
           <v-chip
             v-for="state in Object.keys(
@@ -140,7 +140,7 @@ export default {
 
     <div
       v-if="hiddenTaskRuns.length"
-      class="pt-4 caption font-weight-medium text-right"
+      class="pt-4 text-caption font-weight-medium text-right"
     >
       +{{ hiddenTaskRuns.length }} more
     </div>

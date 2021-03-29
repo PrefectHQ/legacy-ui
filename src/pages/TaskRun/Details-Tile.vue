@@ -63,13 +63,13 @@ export default {
         <v-icon small>pi-flow-run</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
-        <span class="caption mb-0">
+        <span class="text-text-caption mb-0">
           Flow Run
         </span>
-        <v-list-item-title class="body-2">
+        <v-list-item-title class="text-body-2">
           <span>{{ taskRun.flow_run.name }}</span>
         </v-list-item-title>
-        <v-list-item-title class="caption">
+        <v-list-item-title class="text-caption">
           <span :class="`${taskRun.flow_run.state}--text`">
             {{ taskRun.flow_run.state }}
           </span>
@@ -80,13 +80,13 @@ export default {
     <v-card-text class="pl-12 py-0">
       <v-list-item dense class="px-0">
         <v-list-item-content v-if="taskRun.state_message">
-          <v-list-item-subtitle class="caption">
+          <v-list-item-subtitle class="text-text-caption">
             Last State Message
           </v-list-item-subtitle>
-          <div class="subtitle-2">
+          <div class="text-subtitle-2">
             <v-tooltip top>
               <template #activator="{ on }">
-                <span class="caption" v-on="on">
+                <span class="text-text-caption" v-on="on">
                   [{{ formDate(taskRun.state_timestamp) }}]:
                 </span>
               </template>
@@ -101,7 +101,7 @@ export default {
 
       <v-list-item dense class="pa-0">
         <v-list-item-content>
-          <v-list-item-subtitle class="caption">
+          <v-list-item-subtitle class="text-text-caption">
             <v-row v-if="taskRun.state == 'Mapped'" no-gutters>
               <v-col cols="6">
                 Expected Mapped Runs
@@ -252,7 +252,7 @@ export default {
       >
         <v-list-item-content>
           <v-list-item-subtitle>
-            <div class="caption mb-0">
+            <div class="text-caption mb-0">
               Parameter:
             </div>
 

@@ -59,7 +59,7 @@ export default {
 <template>
   <v-card class="pa-2 mt-2" tile>
     <CardTitle title="Flow Run Schematic" icon="pi-schematic">
-      <div v-if="flowRun" slot="badge" class="body-2">
+      <div v-if="flowRun" slot="badge" class="text-body-2">
         <span>
           Run State:
           <span

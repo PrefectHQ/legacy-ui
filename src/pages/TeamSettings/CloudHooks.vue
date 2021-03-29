@@ -356,19 +356,20 @@ export default {
         no-data-text="No Cloud Hooks found."
         ><!-- HEADERS -->
         <template #header.name="{ header }">
-          <span class="subtitle-2 text-center">{{ header.text }}</span>
+          <span class="text-subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #header.active="{ header }">
-          <span class="subtitle-2 text-center">{{ header.text }}</span>
+          <span class="text-subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #header.version_group_id="{ header }">
-          <span class="subtitle-2 text-center">{{ header.text }}</span>
+          <span class="text-subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #header.type="{ header }">
-          <span class="subtitle-2 text-center">{{ header.text }}</span>
+          <span class="text-subtitle-2 text-center">{{ header.text }}</span>
         </template>
-        <template #header.states="{ header }">
-          <span class="subtitle-2 text-center">{{ header.text }}</span>
+        <template #header.states="{ header }"
+          >text-
+          <span class="text-subtitle-2 text-center">{{ header.text }}</span>
         </template>
         <template #item.version_group_id="{ item }">
           <ApolloQuery
@@ -464,7 +465,7 @@ export default {
         <template #item.states="{ item }">
           <v-tooltip bottom>
             <template #activator="{ on }">
-              <div class="body-2" v-on="on">
+              <div class="text-body-2" v-on="on">
                 <v-chip
                   label
                   small

@@ -49,7 +49,7 @@ export default {
       <v-avatar class="ml-4" size="80">
         <img src="@/assets/logos/marvin.jpg" alt="Marvin Avatar" />
       </v-avatar>
-      <blockquote class="blockquote body-1 text--secondary">
+      <blockquote class="blockquote text-body-1 text--secondary">
         {{ quote }}
       </blockquote>
     </div>

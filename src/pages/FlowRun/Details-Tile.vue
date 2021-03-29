@@ -169,10 +169,10 @@ export default {
         <v-list v-if="tab === 'overview'">
           <v-list-item v-if="isCloudOrAutoScheduled">
             <v-list-item-content>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 Created by
               </v-list-item-subtitle>
-              <div class="subtitle-2">
+              <div class="text-subtitle-2">
                 {{
                   flowRun.auto_scheduled
                     ? 'The Prefect Scheduler'
@@ -186,7 +186,7 @@ export default {
 
           <v-list-item v-if="flowRun.state_message" dense>
             <v-list-item-content>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 Last State Message
               </v-list-item-subtitle>
 
@@ -199,7 +199,7 @@ export default {
 
           <v-list-item v-if="flowRun.agent_id" dense>
             <v-list-item-content>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 Agent ID
               </v-list-item-subtitle>
               <router-link
@@ -217,7 +217,7 @@ export default {
 
           <v-list-item dense>
             <v-list-item-content>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <v-row no-gutters>
                   <v-col v-if="flowRun.start_time" cols="6">
                     Scheduled Start Time

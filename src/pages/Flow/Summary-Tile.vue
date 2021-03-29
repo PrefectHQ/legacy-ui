@@ -182,17 +182,17 @@ export default {
     >
       <div style="width: 100%;">
         <v-row no-gutters>
-          <v-col v-if="!flow.archived" class="subtitle-2 text-center">
+          <v-col v-if="!flow.archived" class="text-subtitle-2 text-center">
             In the last {{ selectedDateFilter }}
           </v-col>
-          <v-col v-else class="subtitle-2 text-center">
+          <v-col v-else class="text-subtitle-2 text-center">
             All Time
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="5">
             <div class="text-center">
-              <div class="font-weight-bold display-1" style="min-height: 36px;">
+              <div class="font-weight-bold text-h4" style="min-height: 36px;">
                 <v-skeleton-loader
                   v-if="!filteredStateSegments && loading > 0"
                   type="heading"
@@ -240,7 +240,7 @@ export default {
           </v-col>
           <v-col cols="5">
             <div class="text-center">
-              <div class="font-weight-bold display-1" style="min-height: 36px;">
+              <div class="font-weight-bold text-h5" style="min-height: 36px;">
                 <v-skeleton-loader
                   v-if="!filteredStateSegments && loading > 0"
                   type="heading"
@@ -255,7 +255,7 @@ export default {
                             | roundTenths
                         }}
                       </span>
-                      <span class="subtitle-2">%</span>
+                      <span class="text-subtitle-2">%</span>
                     </span>
                   </template>
                   <div>

@@ -143,7 +143,7 @@ export default {
             {{ flow.name }}
           </div>
           <div
-            class="subtitle-2 grey--text text--darken-2 caption position-absolute font-weight-medium"
+            class="grey--text text--darken-2 text-text-caption position-absolute font-weight-medium"
             style="bottom: 2px;"
           >
             {{ `Version ${flow.version}` }}
@@ -199,13 +199,16 @@ export default {
         <v-list v-if="tab == 'overview'" class="card-content">
           <v-list-item dense>
             <v-list-item-content>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 Created <span v-if="hasUser">by</span>
               </v-list-item-subtitle>
-              <div v-if="hasUser" class="subtitle-2">
+              <div v-if="hasUser" class="text-subtitle-2">
                 {{ flow.created_by.username }}
               </div>
-              <div class="caption" :class="{ 'font-weight-bold': !hasUser }">
+              <div
+                class="text-caption"
+                :class="{ 'font-weight-bold': !hasUser }"
+              >
                 {{ formatTime(flow.created) }}
               </div>
             </v-list-item-content>
@@ -213,19 +216,19 @@ export default {
 
           <v-list-item v-if="flow.core_version" dense>
             <v-list-item-content>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 Prefect Core Version:
               </v-list-item-subtitle>
-              <div class="subtitle-2">{{ flow.core_version }}</div>
+              <div class="text-subtitle-2">{{ flow.core_version }}</div>
             </v-list-item-content>
           </v-list-item>
 
           <v-list-item dense>
             <v-list-item-content>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 Schedule
               </v-list-item-subtitle>
-              <div class="subtitle-2">
+              <div class="text-subtitle-2">
                 <PrefectSchedule
                   v-if="flow.schedule || flowGroup.schedule"
                   :schedule="flow.schedule ? flow.schedule : flowGroup.schedule"
@@ -247,7 +250,7 @@ export default {
                 General
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <v-row no-gutters>
                   <v-col cols="6">
                     Flow ID
@@ -277,7 +280,7 @@ export default {
                   </v-col>
                 </v-row>
               </v-list-item-subtitle>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <v-row no-gutters>
                   <v-col cols="6">
                     Flow Group ID
@@ -311,7 +314,7 @@ export default {
                   </v-col>
                 </v-row>
               </v-list-item-subtitle>
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <v-row no-gutters>
                   <v-col cols="6">
                     Version Group ID
@@ -354,7 +357,7 @@ export default {
                 Run Config
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <v-row
                   v-for="field in runConfigDisplayFields"
                   :key="field"
@@ -377,7 +380,7 @@ export default {
                 Environment
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <v-row v-if="flow.environment.type" no-gutters>
                   <v-col cols="6">
                     Type
@@ -405,7 +408,7 @@ export default {
                 Storage
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <v-row
                   v-for="(value, key) in filteredStorage"
                   :key="key"
@@ -459,7 +462,7 @@ export default {
                 Flow Locations
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <v-row
                   v-for="(value, key) in flows"
                   :key="key"
