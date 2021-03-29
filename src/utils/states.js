@@ -2,6 +2,7 @@ export const STATE_COLORS = {
   Failed: '#eb0000',
   Pending: '#b9dcff',
   Scheduled: '#ffbe1e',
+  ScheduledAlt: '#ffeec4',
   Retrying: '#fc7b09',
   Resume: '#f58c0c',
   Queued: '#fff9c2',
