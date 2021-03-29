@@ -5,7 +5,7 @@ import {
   titleCasePresentTenseStates,
   presentTenseStates
 } from '@/utils/automations'
-import AddAutoCard from '@/pages/Dashboard/Automations/AddAutoCard'
+import AddAutoCard from '@/pages/Dashboard/Automations/AddAutomationCard'
 
 export default {
   components: {

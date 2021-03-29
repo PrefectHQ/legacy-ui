@@ -1,6 +1,6 @@
 <script>
-import AutoCard from '@/pages/Dashboard/Automations/AutoCard'
-import AddAutoCard from '@/pages/Dashboard/Automations/AddAutoCard'
+import AutoCard from '@/pages/Dashboard/Automations/AutomationCard'
+import AddAutoCard from '@/pages/Dashboard/Automations/AddAutomationCard'
 import { mapGetters } from 'vuex'
 
 export default {
