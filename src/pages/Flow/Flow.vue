@@ -362,7 +362,7 @@ export default {
           />
 
           <FlowRunHeartbeatTile
-            slot="row-2-col-1-row-4-tile-1"
+            slot="row-2-col-1-row-2-tile-1"
             :aggregate="!flowVersionId"
             :flow="selectedFlow"
           />

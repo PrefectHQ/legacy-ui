@@ -81,7 +81,7 @@ export default {
 
 <template>
   <v-card
-    class="pa-0 pt-7 mb-2 appBackground"
+    class="pa-0 pt-7 mb-4 appBackground"
     style="max-height: 114px;"
     tile
     flat
