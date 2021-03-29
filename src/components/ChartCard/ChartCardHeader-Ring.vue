@@ -40,7 +40,7 @@ export default {
     },
     mainClasses() {
       return {
-        'display-3': this.$vuetify.breakpoint.lgAndUp,
+        'text-h3': this.$vuetify.breakpoint.lgAndUp,
         'text-h4': !this.$vuetify.breakpoint.lgAndUp,
         'justify-end': this.$vuetify.breakpoint.lgAndUp
       }
@@ -65,7 +65,7 @@ export default {
       </div>
 
       <div
-        class="display-3 font-weight-bold d-flex align-start"
+        class="text-h3 font-weight-bold d-flex align-start"
         :class="mainClasses"
       >
         {{ chartOverlayMain
