@@ -214,7 +214,10 @@ export default {
     <v-progress-linear indeterminate color="primary"></v-progress-linear>
   </div>
 
-  <div v-else-if="!agents && queryFailed" class="subtitle-1 font-weight-light">
+  <div
+    v-else-if="!agents && queryFailed"
+    class="text-subtitle-1 font-weight-light"
+  >
     <v-alert
       border="left"
       colored-border
@@ -261,7 +264,7 @@ export default {
         </template>
 
         <v-card flat>
-          <v-card-title class="title word-break-normal">
+          <v-card-title class="text-h6 word-break-normal">
             Clean up unhealthy agents?
           </v-card-title>
 
@@ -447,7 +450,7 @@ export default {
     </v-alert>
   </div>
 
-  <div v-else class="subtitle-1 font-weight-light">
+  <div v-else class="text-subtitle-1 font-weight-light">
     <v-alert
       border="left"
       colored-border

@@ -319,19 +319,19 @@ export default {
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.active="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.version_group_id="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created_by.username="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.project.name="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
 
           <!-- FVG ID -->

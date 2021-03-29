@@ -1,8 +1,9 @@
-query Flows {
-  flow(distinct_on: version_group_id, where: { archived: { _eq: false } }) {
+query Flows ($project: uuid) {
+  flow(distinct_on: version_group_id, where: {_and: [{project_id: {_eq: $project}, archived: {_eq: false}}]}) {
     id
     archived
     name
+    flow_group_id
     version_group_id
     project {
       id

@@ -198,11 +198,11 @@ export default {
                                   >
                                     <div class="justify-self-start">
                                       <div
-                                        class="subtitle-1 font-weight-medium"
+                                        class="text-subtitle-1 font-weight-medium"
                                       >
                                         {{ item.name }}
                                       </div>
-                                      <div class="body-2">
+                                      <div class="text-body-2">
                                         {{ typeTitle(item.type) }}
                                       </div>
                                     </div>
@@ -264,7 +264,7 @@ export default {
                                     cols="4"
                                     class="d-flex align-center justify-end"
                                   >
-                                    <div class="body-2">
+                                    <div class="text-body-2">
                                       <span v-if="$vuetify.breakpoint.mdAndUp">
                                         States:
                                       </span>

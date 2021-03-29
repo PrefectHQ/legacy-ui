@@ -113,10 +113,10 @@ export default {
                 </v-btn>
               </template>
               <div>
-                <div class="title">
+                <div class="text-h6">
                   {{ a.task_run.task.name }}
                 </div>
-                <div v-if="a.task_run.name" class="subtitle-1">
+                <div v-if="a.task_run.name" class="text-subtitle-1">
                   {{ a.task_run.name }}
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default {
               </div>
               <div>
                 <div
-                  class="overline utilGrayMid--text"
+                  class="text-overline utilGrayMid--text"
                   style="line-height: 1rem;"
                 >
                   Artifact

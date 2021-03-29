@@ -1,20 +1,15 @@
 <script>
-import { setTimeout } from 'timers'
 import { mapGetters } from 'vuex'
-import DateTime from '@/components/DateTime'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import ExternalLink from '@/components/ExternalLink'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
-    DateTime,
     Alert,
     ConfirmDialog,
-    ExternalLink,
     ManagementLayout
   },
   mixins: [formatTime],
@@ -65,13 +60,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['role']),
-    newTokenFormFilled() {
-      return !!this.newTokenName && !!this.newTokenScope
-    },
-    localExpiryDate() {
-      return this.formDate('2100-01-01T00:00:00+00:00')
-    }
+    ...mapGetters('tenant', ['role'])
   },
   watch: {
     tokenToDeleteDialog(value) {
@@ -81,39 +70,6 @@ export default {
     }
   },
   methods: {
-    clearAlert() {
-      this.alertShow = false
-      this.alertMessage = ''
-      this.alertType = null
-    },
-    copyNewToken() {
-      var copyText = document.querySelector('#new-api-token')
-      copyText.select()
-      document.execCommand('copy')
-      this.tokenCopied = true
-      setTimeout(() => {
-        this.tokenCopied = false
-      }, 2000)
-    },
-    async createAPIToken(variables) {
-      const result = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tokens/create-api-token.gql'),
-        variables
-      })
-
-      if (
-        result?.data?.create_api_token?.id &&
-        result?.data?.create_api_token?.token
-      ) {
-        this.resetNewToken()
-        this.newPersonalAccessToken = result.data.create_api_token.token
-        this.copyTokenDialog = true
-      } else {
-        this.alertShow = true
-        this.alertMessage = 'Something went wrong when creating a token.'
-        this.alertType = 'error'
-      }
-    },
     async deleteToken(token) {
       const result = await this.$apollo.mutate({
         mutation: require('@/graphql/Tokens/delete-token.gql'),
@@ -131,14 +87,6 @@ export default {
         this.alertMessage = 'Something went wrong when deleting a token.'
         this.alertType = 'error'
       }
-    },
-    resetNewToken() {
-      this.newTokenName = ''
-      this.newTokenScope = 'USER'
-      this.newPersonalAccessToken = ''
-      this.expiresAt = null
-      this.createTokenDialog = false
-      this.copyTokenDialog = false
     }
   },
   apollo: {
@@ -157,29 +105,17 @@ export default {
     <template #title>Personal Access Tokens</template>
 
     <template #subtitle>
-      Personal Access (or <code>USER</code>) tokens are used to represent a
-      single user, and are typically used by Prefect Cloud clients (such as the
-      Prefect Cloud CLI) to log in to any tenants the user has access to. View
-      your
-      <ExternalLink
-        href="https://docs.prefect.io/cloud/cloud_concepts/api.html#prefect-cloud-api"
+      <h4 class="error--text"
+        ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
       >
-        Personal Access Tokens.</ExternalLink
+      <div
+        >Use the
+        <router-link :to="{ name: 'keys' }"> API Keys</router-link>
+        page going forward.</div
       >
-    </template>
-
-    <template #cta>
-      <v-btn
-        color="blue"
-        data-cy="create-personal-access-token"
-        class="white--text"
-        @click="createTokenDialog = true"
-      >
-        <v-icon left>
-          add
-        </v-icon>
-        Create a Token
-      </v-btn>
+      Existing tokens will continue to work, but new ones cannot be created.
+      <br />
+      All tokens here will be migrated to API keys on May 1st, 2021
     </template>
 
     <v-text-field
@@ -233,16 +169,16 @@ export default {
           no-data-text="You do not have any personal access tokens yet."
         >
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.last_used="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.expires_at="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #item.name="{ item }">
             {{ item.name }}
@@ -302,82 +238,6 @@ export default {
         </v-data-table>
       </v-card-text>
     </v-card>
-
-    <ConfirmDialog
-      v-model="createTokenDialog"
-      :dialog-props="{ 'max-width': '500' }"
-      :confirm-props="{ 'data-cy': 'submit-new-personal-access-token' }"
-      :disabled="!newTokenFormFilled"
-      title="Create a Personal Access token"
-      confirm-text="Create"
-      @cancel="
-        createTokenDialog = false
-        resetNewToken()
-      "
-      @confirm="
-        createAPIToken({
-          name: newTokenName,
-          scope: newTokenScope,
-          expires_at: expiresAt
-        })
-      "
-    >
-      <v-text-field
-        v-model="newTokenName"
-        class="mb-3"
-        single-line
-        data-cy="new-personal-access-token-name"
-        placeholder="Token Name"
-        autofocus
-        outlined
-        dense
-      />
-      <DateTime
-        v-model="expiresAt"
-        class="mb-3"
-        warning="
-          You have selected a time in the past; as a result, your token will have already expired.
-        "
-        :text-field-props="{
-          outlined: true,
-          dense: true,
-          hint: `Leave blank to never expire this token`,
-          label: 'Token Expiration',
-          persistentHint: true
-        }"
-      />
-    </ConfirmDialog>
-
-    <ConfirmDialog
-      v-model="copyTokenDialog"
-      :dialog-props="{ 'max-width': '500' }"
-      :cancel-props="{ 'data-cy': 'close-personal-access-token-dialog' }"
-      title="Your token has been created"
-      :confirm-text="tokenCopied ? 'Copied' : 'Copy'"
-      cancel-text="Close"
-      @cancel="resetNewToken"
-      @confirm="copyNewToken"
-    >
-      <p>
-        Copy this token and put it in a secure place.
-        <strong>
-          You won't be able to see this token again once you close this dialog.
-        </strong>
-      </p>
-      <v-textarea
-        id="new-api-token"
-        v-model="newPersonalAccessToken"
-        data-cy="personal-access-token-field"
-        data-private
-        class="_lr-hide"
-        auto-grow
-        rows="1"
-        readonly
-        single-line
-        outlined
-        spellcheck="false"
-      />
-    </ConfirmDialog>
 
     <ConfirmDialog
       v-if="tokenToDelete"

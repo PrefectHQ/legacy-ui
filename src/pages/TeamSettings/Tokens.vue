@@ -1,10 +1,8 @@
 <script>
-import { setTimeout } from 'timers'
 import { mapGetters } from 'vuex'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import DateTime from '@/components/DateTime'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -12,7 +10,6 @@ export default {
   components: {
     Alert,
     ConfirmDialog,
-    DateTime,
     ManagementLayout
   },
   mixins: [formatTime],
@@ -75,12 +72,6 @@ export default {
     },
     isTenantAdmin() {
       return this.role === 'TENANT_ADMIN'
-    },
-    localExpiryDate() {
-      return this.formDate('2100-01-01T00:00:00+00:00')
-    },
-    newTokenFormFilled() {
-      return !!this.newTokenName && !!this.newTokenScope
     }
   },
 
@@ -95,37 +86,6 @@ export default {
     }
   },
   methods: {
-    copyNewToken() {
-      var copyText = document.querySelector('#new-api-token')
-      copyText.select()
-      document.execCommand('copy')
-      this.apiTokenCopied = true
-      setTimeout(() => {
-        this.apiTokenCopied = false
-      }, 2000)
-    },
-    async createAPIToken(variables) {
-      const result = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tokens/create-api-token.gql'),
-        variables
-      })
-
-      if (
-        result?.data?.create_api_token?.id &&
-        result?.data?.create_api_token?.token
-      ) {
-        this.resetNewToken()
-        this.newAPIToken = result.data.create_api_token.token
-        this.createTokenDialog = false
-        this.copyTokenDialog = true
-        this.$apollo.queries.tokens.refetch()
-      } else {
-        this.handleAlert(
-          'error',
-          'Something went wrong while trying to create your token. Please try again. If this error persists, please contact help@prefect.io.'
-        )
-      }
-    },
     async deleteToken(token) {
       const result = await this.$apollo.mutate({
         mutation: require('@/graphql/Tokens/delete-token.gql'),
@@ -149,15 +109,6 @@ export default {
       this.alertType = type
       this.alertMessage = message
       this.alertShow = true
-    },
-    resetNewToken() {
-      this.newTokenName = ''
-      this.newTokenScope = ''
-      this.newAPIToken = ''
-      this.expiresAt = null
-    },
-    setExpiry(dateTime) {
-      this.expiresAt = dateTime
     }
   },
   apollo: {
@@ -190,31 +141,19 @@ export default {
     <template #title>API Tokens</template>
 
     <template v-if="isTenantAdmin" #subtitle>
-      Create and manage your
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
-        target="_blank"
-        rel="noopener noreferrer"
-        >TENANT</a
+      <h4 class="error--text"
+        ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
       >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens and your team's
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#runner"
-        target="_blank"
-        rel="noopener noreferrer"
-        >RUNNER</a
+      <div>
+        <router-link :to="{ name: 'service-accounts' }">
+          Service Accounts</router-link
+        >
+        are replacing API tokens</div
       >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens.
+      Existing tokens will continue to work, but new ones cannot be created.
+      <br />
+      All tokens here will be migrated to a default service account on May 1st,
+      2021
     </template>
     <template v-else-if="isReadOnlyUser" #subtitle>
       Manage
@@ -272,22 +211,6 @@ export default {
       >
         Read-only users cannot manage API tokens.
       </v-alert>
-    </template>
-
-    <template #cta>
-      <v-btn
-        v-if="!isReadOnlyUser"
-        color="primary"
-        class="white--text"
-        large
-        data-cy="create-api-token"
-        @click="createTokenDialog = true"
-      >
-        <v-icon left>
-          add
-        </v-icon>
-        Create Token
-      </v-btn>
     </template>
 
     <!-- SEARCH (MOBILE) -->
@@ -349,22 +272,22 @@ export default {
         >
           <!-- HEADERS -->
           <template #header.name="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created_by="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.created="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.last_used="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.expires_at="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.scope="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
 
           <!-- TOKEN CREATED-AT TIME -->
@@ -424,103 +347,6 @@ export default {
         </v-data-table>
       </v-card-text>
     </v-card>
-
-    <!-- CREATE TOKEN DIALOG -->
-    <ConfirmDialog
-      v-model="createTokenDialog"
-      :dialog-props="{ 'max-width': '500' }"
-      :confirm-props="{ 'data-cy': 'submit-new-api-token' }"
-      :disabled="!newTokenFormFilled"
-      title="Create an API token"
-      confirm-text="Create"
-      @cancel="resetNewToken"
-      @confirm="
-        createAPIToken({
-          name: newTokenName,
-          scope: newTokenScope,
-          expires_at: expiresAt
-        })
-      "
-    >
-      <v-text-field
-        v-model="newTokenName"
-        class="mb-3"
-        single-line
-        data-cy="new-api-token-name"
-        placeholder="Token Name"
-        autofocus
-        outlined
-        dense
-      />
-      <DateTime
-        v-model="expiresAt"
-        class="mb-3"
-        warning="
-           You have selected a time in the past; as a result, your token will have already expired.
-        "
-        :text-field-props="{
-          outlined: true,
-          dense: true,
-          hint: `Leave blank to never expire this token`,
-          label: 'Token Expiration',
-          persistentHint: true
-        }"
-      />
-      <v-select
-        v-model="newTokenScope"
-        data-cy="new-api-token-scope"
-        :items="isTenantAdmin ? ['TENANT', 'RUNNER'] : ['TENANT']"
-        :menu-props="{ offsetY: true }"
-        label="Scope"
-        outlined
-        dense
-        hide-details
-      />
-      <div class="ml-2 mt-1">
-        <a
-          href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
-          target="_blank"
-          rel="noopener noreferrer"
-          >What is this?</a
-        >
-        <sup>
-          <v-icon x-small>
-            open_in_new
-          </v-icon>
-        </sup>
-      </div>
-    </ConfirmDialog>
-
-    <!-- COPY TOKEN DIALOG -->
-    <ConfirmDialog
-      v-model="copyTokenDialog"
-      :dialog-props="{ 'max-width': '500' }"
-      :cancel-props="{ 'data-cy': 'close-api-token-dialog' }"
-      title="Your token has been created"
-      :confirm-text="apiTokenCopied ? 'Copied' : 'Copy'"
-      cancel-text="Close"
-      @cancel="resetNewToken"
-      @confirm="copyNewToken"
-    >
-      <p>
-        Copy this token and put it in a secure place.
-        <strong>
-          You won't be able to see this token again once you close this dialog.
-        </strong>
-      </p>
-      <v-textarea
-        id="new-api-token"
-        v-model="newAPIToken"
-        data-cy="api-token-field"
-        data-private
-        class="_lr-hide"
-        auto-grow
-        rows="1"
-        readonly
-        outlined
-        spellcheck="false"
-      />
-    </ConfirmDialog>
 
     <!-- REVOKE TOKEN DIALOG -->
     <ConfirmDialog

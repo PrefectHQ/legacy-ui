@@ -224,7 +224,7 @@ export default {
           </div>
           <ConcurrencyInfo
             v-if="isCloud && tab === 'late'"
-            class="caption position-absolute"
+            class="text-caption position-absolute"
             style="bottom: 0;"
           />
         </v-col>
@@ -298,7 +298,7 @@ export default {
         </v-list-item-avatar>
         <v-list-item-content class="my-0 py-0">
           <div
-            class="subtitle-1 font-weight-light"
+            class="text-subtitle-1 font-weight-light"
             style="line-height: 1.25rem;"
           >
             {{
@@ -324,7 +324,7 @@ export default {
             <v-list-item-content>
               <v-tooltip top>
                 <template #activator="{ on }">
-                  <span class="caption mb-0" v-on="on">
+                  <span class="text-caption mb-0" v-on="on">
                     <LabelWarning
                       :flow="flow"
                       :flow-run="item"
@@ -347,7 +347,7 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
 
-            <v-list-item-action tile min-width="5" class="body-2">
+            <v-list-item-action tile min-width="5" class="text-body-2">
               <v-tooltip top>
                 <template #activator="{ on }">
                   <v-btn
@@ -399,7 +399,7 @@ export default {
         </v-list-item-avatar>
         <v-list-item-content class="my-0 py-0">
           <div
-            class="subtitle-1 font-weight-light"
+            class="text-subtitle-1 font-weight-light"
             style="line-height: 1.25rem;"
           >
             Everything is running on schedule!
@@ -423,11 +423,11 @@ export default {
             :to="{ name: 'flow-run', params: { id: item.id } }"
           >
             <v-list-item-content>
-              <span class="caption mb-0">
+              <span class="text-caption mb-0">
                 <LabelWarning :flow-run="item" location="flowPage" />
                 Scheduled for {{ formatTime(item.scheduled_start_time) }}
               </span>
-              <v-list-item-title class="body-2">
+              <v-list-item-title class="text-body-2">
                 <router-link
                   :to="{ name: 'flow-run', params: { id: item.id } }"
                 >
@@ -435,13 +435,13 @@ export default {
                 </router-link>
               </v-list-item-title>
 
-              <v-list-item-subtitle class="caption">
+              <v-list-item-subtitle class="text-caption">
                 <DurationSpan :start-time="item.scheduled_start_time" />
                 behind schedule
               </v-list-item-subtitle>
             </v-list-item-content>
 
-            <v-list-item-avatar class="body-2">
+            <v-list-item-avatar class="text-body-2">
               <v-icon class="grey--text">arrow_right</v-icon>
             </v-list-item-avatar>
           </v-list-item>
@@ -462,7 +462,7 @@ export default {
 
         <v-dialog v-model="showClearLateRunsDialog" max-width="540">
           <v-card flat>
-            <v-card-title class="title word-break-normal">
+            <v-card-title class="text-h6 word-break-normal">
               Are you sure you want to clear all late runs for this flow?
             </v-card-title>
 

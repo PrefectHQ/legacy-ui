@@ -355,12 +355,12 @@ export default {
           no-data-text="This team has not set any flow concurrency limits yet."
         >
           <template #header.tag="{ header }">
-            <span class="subtitle-2">{{ header.text }}</span>
+            <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
           <template #header.usage="{ header }">
             <v-tooltip bottom open-delay="500">
               <template #activator="{ on }">
-                <div class="subtitle-2" v-on="on">
+                <div class="text-subtitle-2" v-on="on">
                   {{ header.text }}
                   <v-icon
                     x-small
@@ -376,7 +376,7 @@ export default {
           <template #header.limit="{ header }">
             <v-tooltip bottom open-delay="500">
               <template #activator="{ on }">
-                <div class="subtitle-2" v-on="on">
+                <div class="text-subtitle-2" v-on="on">
                   {{ header.text }}
                   <v-icon
                     x-small
@@ -392,7 +392,7 @@ export default {
           </template>
 
           <template #item.label="{ item }">
-            <div class="body-2">{{ item.name }}</div>
+            <div class="text-body-2">{{ item.name }}</div>
           </template>
 
           <template #item.usage="{ item }">
@@ -417,7 +417,7 @@ export default {
           </template>
 
           <template #item.limit="{ item }">
-            <div class="subtitle-1 position-relative">
+            <div class="text-subtitle-1 position-relative">
               <v-tooltip v-if="item.limit === 0" bottom open-delay="500">
                 <template #activator="{ on }">
                   <div v-on="on">

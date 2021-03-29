@@ -228,7 +228,7 @@ export default {
                 </div>
               </v-list-item-title>
               <v-list-item-subtitle class="font-weight-light">
-                <div class="caption">
+                <div class="text-caption">
                   {{ formatTimeRelative(error.state_timestamp) }}
                 </div>
 
@@ -255,7 +255,7 @@ export default {
           <v-list-item-content class="my-0 py-0">
             <div
               v-if="!flow.archived"
-              class="subtitle-1 font-weight-light"
+              class="text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               No reported errors in the last {{ selectedDateFilter }}...
@@ -263,7 +263,7 @@ export default {
             </div>
             <div
               v-else
-              class="subtitle-1 font-weight-light"
+              class="text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               No errors were reported in the last

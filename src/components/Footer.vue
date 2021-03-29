@@ -129,7 +129,7 @@ export default {
             'mx-2': $vuetify.breakpoint.smAndDown
           }"
         >
-          <div class="overline">Made with ♡ in DC</div>
+          <div class="text-overline">Made with ♡ in DC</div>
 
           <a href="https://prefect.io" target="_blank">
             <img

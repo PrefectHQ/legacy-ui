@@ -417,7 +417,9 @@ export default {
 
         <v-divider />
 
-        <v-card-title class="ml-4 pl-0 subtitle-2 grey--text text--darken-2">
+        <v-card-title
+          class="ml-4 pl-0 text-subtitle-2 grey--text text--darken-2"
+        >
           Filter
         </v-card-title>
         <v-list-item-group v-model="notificationFilters.team" color="primary">
@@ -500,7 +502,7 @@ export default {
                   src="@/assets/backgrounds/build-a-flow.svg"
                   alt="All Caught Up Image"
                 />
-                <div class="headline mt-12">
+                <div class="text-h5 mt-12">
                   You're all caught up!
                 </div>
               </v-col>

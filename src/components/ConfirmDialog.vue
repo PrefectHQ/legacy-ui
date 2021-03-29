@@ -67,6 +67,11 @@ export default {
     value: {
       type: Boolean,
       required: true
+    },
+    width: {
+      type: String,
+      required: false,
+      default: ''
     }
   },
   data() {
@@ -106,12 +111,13 @@ export default {
   <v-dialog
     :value="internalValue"
     v-bind="dialogProps"
+    :width="width"
     @input="handleInput"
     @click:outside="handleCancel"
     @keydown.esc="handleCancel"
   >
     <v-card flat>
-      <v-card-title class="headline word-break-normal mb-3" primary-title>
+      <v-card-title class="text-h5 word-break-normal mb-3" primary-title>
         <slot v-if="$slots['title']" name="title" />
         <div v-else>{{ title }}</div>
       </v-card-title>
@@ -121,7 +127,7 @@ export default {
       </v-card-text>
 
       <v-card-actions class="pb-4 px-6">
-        <div class="error--text .body-2	">{{ error }}</div>
+        <div class="error--text text-body-2	">{{ error }}</div>
         <v-spacer></v-spacer>
         <v-btn
           text

@@ -220,13 +220,13 @@ export default {
       }"
     >
       <template #header.name="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="text-subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
       <template #header.slug="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="text-subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
       <template #header.role="{ header }">
-        <span class="subtitle-2">{{ header.text.toUpperCase() }}</span>
+        <span class="text-subtitle-2">{{ header.text.toUpperCase() }}</span>
       </template>
 
       <template #item.id="{item}">

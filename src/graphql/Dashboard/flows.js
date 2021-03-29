@@ -16,7 +16,7 @@ export default function(isCloud) {
       ) {
 
       id
-
+      flow_group_id
       archived
       core_version
       created

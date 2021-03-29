@@ -255,7 +255,7 @@ export default {
             <div
               v-if="projects.length > 0"
               v-ripple
-              class="cursor-pointer px-2 py-2 caption font-weight-normal collapse-button rounded utilGrayMid--text"
+              class="cursor-pointer px-2 py-2 text-caption font-weight-normal collapse-button rounded utilGrayMid--text"
               @click="closeAll"
             >
               Collapse All

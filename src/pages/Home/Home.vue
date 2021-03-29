@@ -153,7 +153,6 @@ export default {
             <v-tabs
               v-model="gettingStartedTab"
               :background-color="isCloud ? 'primary' : 'secondary'"
-              dark
             >
               <v-tab v-if="isServer" ref="infrastructure" href="#infrastructure"
                 >Prefect Server</v-tab
@@ -213,9 +212,8 @@ export default {
 
             <v-tabs
               v-model="sdkTab"
-              background-color="cloudUIPrimaryBlue primary"
-              dark
               class="mt-4"
+              background-color="primary"
               style="border: 1px solid utilGrayLight !important;
                 border-bottom: unset !important;"
             >

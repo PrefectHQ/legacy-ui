@@ -188,7 +188,7 @@ export default {
 
           <v-list-item-content class="my-0 py-3">
             <div
-              class="subtitle-1 font-weight-light"
+              class="text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               You're all caught up!

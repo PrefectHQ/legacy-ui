@@ -73,7 +73,7 @@ export function artifact_parser(md) {
           },
           paragraph: function(h, node) {
             node.data = {
-              hProperties: { className: 'body-1' }
+              hProperties: { className: 'text-body-1' }
             }
             return h(node, 'p', all(h, node))
           },

@@ -27,6 +27,9 @@ const getters = {
   user(state) {
     return state.user
   },
+  username(state) {
+    return state.username
+  },
   oktaUser(state) {
     return state.oktaUser
   },

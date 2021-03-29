@@ -1,0 +1,5 @@
+mutation flowRunStateChangedHook ($input: create_flow_run_state_changed_hook_input!)	{
+  create_flow_run_state_changed_hook (input: $input) {
+    id
+  }
+}

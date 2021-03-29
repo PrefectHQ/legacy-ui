@@ -94,12 +94,12 @@ export default {
     <v-container v-if="isCloud" fluid>
       <v-row>
         <v-col cols="12" class="text-center pb-2 ">
-          <h1 class="display-1">Account & Usage</h1>
+          <h1 class="text-h4">Account & Usage</h1>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" class="text-center py-0">
-          <div class="subtitle-1">
+          <div class="text-subtitle-1">
             Manage data associated with your team
           </div>
         </v-col>

@@ -208,6 +208,14 @@ body {
   }
 }
 
+//ugly box shadow on expanded data tables
+.v-data-table
+  > .v-data-table__wrapper
+  tbody
+  tr.v-data-table__expanded__content {
+  box-shadow: none !important;
+}
+
 .theme--light.v-tabs-items {
   background-color: var(--v-appBackground-base) !important;
 }

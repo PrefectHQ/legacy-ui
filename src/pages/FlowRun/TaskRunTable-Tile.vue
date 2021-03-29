@@ -183,7 +183,7 @@ export default {
             >
               {{ item }}
             </v-chip>
-            <span v-if="index === 2" class="grey--text caption">
+            <span v-if="index === 2" class="grey--text text-caption">
               (+{{ state.length - 2 }})
             </span>
           </template>
@@ -225,7 +225,7 @@ export default {
         :server-items-length="taskRunsCount"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
-        :class="{ 'fixed-table': this.$vuetify.breakpoint.smAndUp }"
+        :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
         calculate-widths
       >
         <template #item.task.name="{ item }">
