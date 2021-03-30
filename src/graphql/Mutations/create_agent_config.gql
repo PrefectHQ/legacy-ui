@@ -1,5 +1,0 @@
-mutation createAgentConfig {
-  create_agent_config (input: {}) {
-    id
-  }
-}

@@ -1,5 +1,0 @@
-mutation createAgentSLAFailedHook ($input: create_agent_sla_failed_hook_input!){
-  create_agent_sla_failed_hook (input: $input) {
-    id
-  }
-}

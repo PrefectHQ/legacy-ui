@@ -226,7 +226,7 @@ export default {
       }
     },
     agentConfig: {
-      query: require('@/graphql/Automations/agentConfig.gql'),
+      query: require('@/graphql/Automations/agent-config-by-pk.gql'),
       variables() {
         return {
           agentConfigId: this.hook?.event_tags?.agent_config_id[0] || ''
@@ -245,7 +245,7 @@ export default {
       }
     },
     flowConfig: {
-      query: require('@/graphql/Automations/flowConfigs.gql'),
+      query: require('@/graphql/Automations/flow-config-by-pk.gql'),
       variables() {
         return {
           flowSLAConfigId: this.hook?.event_tags?.flow_sla_config_id

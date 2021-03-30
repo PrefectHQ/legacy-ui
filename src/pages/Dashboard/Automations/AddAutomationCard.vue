@@ -1,12 +1,14 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import AddAction from '@/pages/Dashboard/Automations/AddAction'
+import CreateAgentConfigForm from '@/pages/Dashboard/Automations/CreateAgentConfigForm'
 import { AUTOMATIONSTATES, flowEventTypes } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
   components: {
     AddAction,
+    CreateAgentConfigForm,
     ConfirmDialog
   },
   props: {
@@ -20,6 +22,7 @@ export default {
     return {
       steps: {
         openAgentOrFlow: { name: 'openAgentOrFlow', complete: false },
+        chooseAgentConfig: { name: 'chooseAgentConfig', complete: false },
         selectFlow: { name: 'selectFlow', complete: false },
         selectEventType: { name: 'selectEventType', complete: false },
         selectState: { name: 'selectState', complete: false },
@@ -30,7 +33,9 @@ export default {
       deleting: false,
       saving: false,
       searchEntry: null,
+      selectedAgentConfig: this.hookDetail?.agentConfig,
       selectedFlows: this.hookDetail?.flowName || [],
+      showAgentConfigForm: false,
       step: null,
       removeDoThisDialog: false,
       flowNamesList: this.hookDetail?.flowNameList || [],
@@ -215,7 +220,7 @@ export default {
           enum: 'CHANGES_STATE'
         }
       : this.hookDetail?.agentConfig
-      ? { name: 'is unhealthy' }
+      ? { name: 'are unhealthy' }
       : {
           name: 'does this'
         }
@@ -229,6 +234,7 @@ export default {
         ? 'codePink'
         : 'utilGrayDark'
     },
+    createAgentConfig() {},
     format(selectedStep, otherStep) {
       const stepComplete = this.steps[selectedStep]
       const otherComplete = this.steps[otherStep]
@@ -268,11 +274,12 @@ export default {
         this.switchStep('selectFlow')
       }
       if (choice === 'agent') {
-        this.flowEventType = { name: 'is unhealthy' }
+        this.flowEventType = { name: 'are unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
         this.steps['openAgentOrFlow'].complete = true
-        this.switchStep('selectDoThis')
+        // this.switchStep('selectDoThis')
+        this.switchStep('chooseAgentConfig')
       }
     },
     selectFlow(flow) {
@@ -330,6 +337,14 @@ export default {
           ))
         : this.chosenStates.push(state)
     },
+    async handleSaveAgentConfig() {
+      this.$apollo.queries.agentConfigs.refetch()
+      this.showAgentConfigForm = false
+    },
+    selectAgentConfig(config) {
+      this.steps['chooseAgentConfig'].complete = true
+      this.selectedAgentConfig = config
+    },
     selectAction(action) {
       this.steps['selectDoThis'].complete = true
       this.chosenAction = action
@@ -361,7 +376,7 @@ export default {
     async createAction(input) {
       try {
         const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/create_action.gql'),
+          mutation: require('@/graphql/Mutations/create-action.gql'),
           variables: {
             input: { config: input.config, name: input.name }
           }
@@ -446,7 +461,7 @@ export default {
                   states: this.chosenStates
                 }
             const flowRunStateChangedSuccess = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
+              mutation: require('@/graphql/Mutations/create-flow-run-state-changed-hook.gql'),
               variables: {
                 input: inputObject
               }
@@ -456,7 +471,7 @@ export default {
           if (this.isSLA) {
             const kind = this.flowEventType?.enum
             const configId = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_flow_sla.gql'),
+              mutation: require('@/graphql/Mutations/create-flow-sla.gql'),
               variables: {
                 input: {
                   kind: kind,
@@ -465,7 +480,7 @@ export default {
               }
             })
             await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/add_config_to_flow.gql'),
+              mutation: require('@/graphql/Mutations/add-config-to-flow.gql'),
               variables: {
                 input: {
                   flow_sla_config_id: configId.data.create_flow_sla_config.id,
@@ -475,7 +490,7 @@ export default {
             })
 
             const flowSLAEventSuccess = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_flow_sla_failed_hook.gql'),
+              mutation: require('@/graphql/Mutations/create-flow-sla-failed-hook.gql'),
               variables: {
                 input: {
                   action_id: action.id,
@@ -491,7 +506,7 @@ export default {
             agentConfig = this.hookDetails?.agentConfig
           } else {
             const { data } = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_agent_config.gql'),
+              mutation: require('@/graphql/Mutations/create-agent-config.gql'),
               variables: {
                 input: {}
               }
@@ -499,7 +514,7 @@ export default {
             agentConfig = data?.create_agent_config
           }
           const agentHook = await this.$apollo.mutate({
-            mutation: require('@/graphql/Mutations/create_agent_sla_failed_hook.gql'),
+            mutation: require('@/graphql/Mutations/create-agent-sla-failed-hook.gql'),
             variables: {
               input: {
                 action_id: action.id,
@@ -572,15 +587,15 @@ export default {
       },
       loadingKey: 'loading',
       pollInterval: 60000,
-      update: data => {
-        return data?.flow
-      }
+      update: data => data?.flow
     },
     actions: {
       query: require('@/graphql/Automations/actions.gql'),
-      update: data => {
-        return data.action
-      }
+      update: data => data?.action
+    },
+    agentConfigs: {
+      query: require('@/graphql/Automations/agent-config.gql'),
+      update: data => data.agent_config
     }
   }
 }
@@ -591,8 +606,9 @@ export default {
     <v-card-text class="text-h6 font-weight-light">
       <v-row>
         <v-col cols="9" lg="10">
-          When<span v-if="agentOrFlow === 'flow'"> a run from</span
-          ><v-btn
+          When<span v-if="agentOrFlow === 'flow'"> a run from</span>
+          <span v-else-if="agentOrFlow === 'agent'"> all</span>
+          <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectFlow', 'openAgentOrFlow')"
             :class="format('selectFlow', 'openAgentOrFlow')"
@@ -601,12 +617,35 @@ export default {
             :disabled="addAction"
             max-width="500px"
             @click="switchStep('openAgentOrFlow')"
-            ><truncate
+          >
+            <truncate
               v-if="flowNamesList && flowNamesList.length"
               :content="flowNamesList.toString()"
-              >{{ flowNames }}</truncate
-            ><span v-else>{{ flowNames }}</span></v-btn
-          >
+            >
+              {{ flowNames }}
+            </truncate>
+            <span v-else-if="agentOrFlow === 'agent'">{{ flowNames }}s</span>
+            <span v-else>{{ flowNames }}</span>
+          </v-btn>
+
+          <span v-if="agentOrFlow === 'agent'">
+            with<v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              :color="buttonColor('chooseAgentConfig')"
+              :class="format('chooseAgentConfig')"
+              class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
+              text
+              :disabled="addAction"
+              max-width="500px"
+              @click="switchStep('chooseAgentConfig')"
+            >
+              {{
+                selectedAgentConfig && selectedAgentConfig.name
+                  ? selectedAgentConfig.name + ' config'
+                  : 'this config'
+              }}
+            </v-btn>
+          </span>
 
           <v-btn
             v-if="!disableStep"
@@ -618,8 +657,9 @@ export default {
             :class="format('selectEventType')"
             @click="switchStep('selectEventType')"
           >
-            {{ flowEventType.name }}</v-btn
-          ><span v-else class="pl-1">{{ flowEventType.name }}</span>
+            {{ flowEventType.name }}
+          </v-btn>
+          <span v-else class="pl-1">{{ flowEventType.name }}</span>
           <span v-if="isSLA">
             for
 
@@ -632,8 +672,8 @@ export default {
               :class="format('openDuration')"
               @click="switchStep('openDuration')"
             >
-              {{ seconds }}</v-btn
-            >
+              {{ seconds }}
+            </v-btn>
             seconds</span
           ><span v-if="includeTo">
             to
@@ -648,7 +688,7 @@ export default {
             >
               {{ hookStates }}</v-btn
             ></span
-          >, then<v-btn
+          >,<v-btn
             :style="{
               'text-transform': 'none',
               'min-width': '0px'
@@ -716,6 +756,60 @@ export default {
               ? switchStep('selectDoThis')
               : switchStep('selectFlow')
           "
+          ><span style="text-transform: none;"> Next</span>
+        </v-btn>
+      </v-card-actions>
+    </div>
+    <div v-else-if="step.name === 'chooseAgentConfig'" class="pa-4">
+      <v-card-text class="pa-0">
+        <v-row v-if="!showAgentConfigForm" no-gutters>
+          <v-col cols="12">
+            <v-btn
+              small
+              elevation="0"
+              color="primary"
+              @click="showAgentConfigForm = true"
+            >
+              <v-icon small class="mr-2">fa-plus</v-icon>
+              <span style="text-transform: none;">Create agent config</span>
+            </v-btn>
+
+            <div v-if="agentConfigs && agentConfigs.length" class="mt-4">
+              <div
+                v-for="config in agentConfigs"
+                :key="config.id"
+                v-ripple
+                class="d-inline-block chip-small pa-2 my-2 mr-4 cursor-pointer text-body-1"
+                :class="{
+                  active:
+                    selectedAgentConfig && selectedAgentConfig.id === config.id
+                }"
+                @click="selectAgentConfig(config)"
+              >
+                <span v-if="config.name">{{ config.name }}</span>
+                <span v-else class="text--disabled">Unnamed agent config</span>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+
+        <div v-else>
+          <CreateAgentConfigForm
+            @close="showAgentConfigForm = false"
+            @save="handleSaveAgentConfig"
+          />
+        </div>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          elevation="0"
+          :disabled="!selectedAgentConfig"
+          title="Next"
+          class="mx-1"
+          @click="switchStep('selectDoThis')"
           ><span style="text-transform: none;"> Next</span>
         </v-btn>
       </v-card-actions>
