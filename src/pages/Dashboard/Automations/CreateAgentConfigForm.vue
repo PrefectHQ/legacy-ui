@@ -49,8 +49,15 @@ export default {
 <template>
   <div>
     <div>
-      <v-col class="pa-0" cols="12" sm="6" lg="3">
-        <v-text-field v-model="name" outlined />
+      <div class="text-overline">New agent config</div>
+      <v-col class="mb-4 pa-0" cols="12" sm="6" lg="3">
+        <v-text-field
+          v-model="name"
+          outlined
+          hide-details
+          dense
+          label="Config name"
+        />
       </v-col>
     </div>
     <v-btn
