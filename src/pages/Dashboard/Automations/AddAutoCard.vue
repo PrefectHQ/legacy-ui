@@ -49,7 +49,11 @@ export default {
       flowEventType: null,
       flowEventTypes: flowEventTypes,
       notAll: !!this.hookDetail?.flowName || false,
-      isActive: false
+      isActive: false,
+      rules: {
+        required: val => !!val || 'Required',
+        notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
+      }
     }
   },
   computed: {
@@ -76,6 +80,12 @@ export default {
     disableStep() {
       return this.agentOrFlow === 'an agent' || this.selectedFlows.length > 1
     },
+    disableDoThis() {
+      if (this.agentOrFlow === 'this') return true
+      if (this.agentOrFlow === 'a flow' && this.selectedFlows.length < 1)
+        return true
+      return false
+    },
     isSLA() {
       return (
         this.flowEventType?.enum === 'STARTED_NOT_FINISHED' ||
@@ -100,6 +110,7 @@ export default {
         : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
     },
     includeTo() {
+      this.hookDetail
       return this.flowEventType?.enum == 'CHANGES_STATE'
     },
     durationSeconds() {
@@ -222,10 +233,10 @@ export default {
       const stepComplete = this.steps[selectedStep]
       const otherComplete = this.steps[otherStep]
       return this.step.name === selectedStep || this.step.name === otherStep
-        ? ''
+        ? 'font-weight-dark'
         : stepComplete?.complete || otherComplete?.complete
-        ? ''
-        : 'font-weight-light'
+        ? 'font-weight-light'
+        : ''
     },
     closeCard() {
       if (this.hookDetail) this.$emit('close')
@@ -241,18 +252,19 @@ export default {
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
       if (choice === 'a flow') {
-        this.flowEventType = this.hookDetail?.flowConfig?.kind
-          ? this.flowEventTypes.find(
-              type => type.enum === this.hookDetail?.flowConfig?.kind
-            )
-          : this.hookDetail?.hook?.event_type === 'FlowRunStateChangedEvent'
-          ? {
-              name: 'changes state',
-              enum: 'CHANGES_STATE'
-            }
-          : {
-              name: 'does this'
-            }
+        this.flowEventType =
+          this.hookDetail?.hook?.event_type === 'FlowSLAFailedEvent'
+            ? this.flowEventTypes.find(
+                type => type.enum === this.hookDetail?.flowConfig?.kind
+              )
+            : this.hookDetail?.hook?.event_type === 'FlowRunStateChangedEvent'
+            ? {
+                name: 'changes state',
+                enum: 'CHANGES_STATE'
+              }
+            : {
+                name: 'does this'
+              }
         this.switchStep('selectFlow')
       }
       if (choice === 'an agent') {
@@ -576,7 +588,7 @@ export default {
 
 <template>
   <v-card outlined>
-    <v-card-text class="text-h6">
+    <v-card-text class="text-h6 font-weight-light">
       <v-row>
         <v-col cols="9" lg="10">
           When<span v-if="agentOrFlow === 'a flow'"> a run from</span
@@ -599,9 +611,9 @@ export default {
           <v-btn
             v-if="!disableStep"
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 ml-1 text-h6"
+            class="px-0 pb-1 ml-1 text-h6 "
             text
-            :disabled="addAction"
+            :disabled="addAction || !selectedFlows.length"
             :color="buttonColor('selectEventType')"
             :class="format('selectEventType')"
             @click="switchStep('selectEventType')"
@@ -643,6 +655,7 @@ export default {
             }"
             class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
             text
+            :disabled="disableDoThis"
             :color="buttonColor('selectDoThis')"
             :class="format('selectDoThis')"
             @click="switchStep('selectDoThis')"
@@ -672,6 +685,9 @@ export default {
     </v-card-text>
     <div v-if="step.name === 'openAgentOrFlow'">
       <v-card-text>
+        <div class="pb-2"
+          >Select one of these options to build your automation.</div
+        >
         <v-row class="px-1">
           <div
             v-for="item in ['a flow', 'an agent']"
@@ -751,7 +767,7 @@ export default {
                   @click="selectFlow(item)"
                 >
                   <div style="width: auto;" class="text-body-1 text-truncate">
-                    <div class="caption">{{ item.project.name }}</div
+                    <div class="text-caption">{{ item.project.name }}</div
                     ><div
                       ><div style="width: 100%;" class="text-truncate">{{
                         item.name
@@ -806,14 +822,18 @@ export default {
     </div>
     <div v-else-if="step.name === 'openDuration'">
       <v-card-text>
-        <v-text-field
-          v-model="seconds"
-          type="number"
-          persistent-hint
-          hint="Hint: confirm duration by pressing the Enter key"
-          @keydown.enter="closeSeconds"
-          @blur="closeSeconds"
-        ></v-text-field>
+        <v-col class="pa-0" cols="12" sm="6" lg="3">
+          <v-text-field
+            v-model="seconds"
+            type="number"
+            :rules="[rules.required, rules.notNull]"
+            persistent-hint
+            outlined
+            hint="Hint: confirm duration by pressing the Enter key"
+            @keydown.enter="closeSeconds"
+            @blur="closeSeconds"
+          ></v-text-field>
+        </v-col>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>

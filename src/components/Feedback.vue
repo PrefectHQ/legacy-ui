@@ -63,7 +63,12 @@ export default {
     </v-card-subtitle>
     <v-card-text>
       <v-scroll-x-transition mode="out-in">
-        <div v-if="success" key="message" class="body-2" style="height: 157px;">
+        <div
+          v-if="success"
+          key="message"
+          class="text-body-2"
+          style="height: 157px;"
+        >
           <v-icon small color="green">
             check
           </v-icon>
@@ -88,7 +93,7 @@ export default {
         }"
       >
         <v-scroll-x-transition>
-          <div v-if="error" class="body-2">
+          <div v-if="error" class="text-body-2">
             <v-icon small color="error">
               error
             </v-icon>

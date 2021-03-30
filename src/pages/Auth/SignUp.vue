@@ -93,7 +93,7 @@ export default {
 <template>
   <v-container fluid>
     <div
-      class="subtitle-1 my-4 font-weight-bold text-center grey--text text--darken-2"
+      class="text-subtitle-1 my-4 font-weight-bold text-center grey--text text--darken-2"
     >
       Create Account
     </div>
@@ -136,7 +136,7 @@ export default {
             class="password-hint-container"
           >
             <v-card
-              class="caption pa-4 text-left password-hint"
+              class="text-caption pa-4 text-left password-hint"
               tile
               elevation="4"
             >
@@ -256,7 +256,9 @@ export default {
 
     <v-divider class="my-5" />
 
-    <div class="caption mt-12 text-center d-flex align-center justify-center">
+    <div
+      class="text-caption mt-12 text-center d-flex align-center justify-center"
+    >
       Already have an account?
       <router-link :to="'/login'">
         <div class="ml-1">

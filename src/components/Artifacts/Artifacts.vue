@@ -113,10 +113,10 @@ export default {
                 </v-btn>
               </template>
               <div>
-                <div class="title">
+                <div class="text-h6">
                   {{ a.task_run.task.name }}
                 </div>
-                <div v-if="a.task_run.name" class="subtitle-1">
+                <div v-if="a.task_run.name" class="text-subtitle-1">
                   {{ a.task_run.name }}
                 </div>
               </div>
@@ -142,7 +142,7 @@ export default {
       </div>
       <div
         v-else
-        class="text-center position-absolute center-absolute text-h5 grey--text text--darken-2"
+        class="text-center position-absolute center-absolute text-h5 utilGrayDark--text"
         style="z-index: 1;"
       >
         This run has no
@@ -169,7 +169,7 @@ export default {
           reverse-transition="quick-fade"
         >
           <v-card class="artifact-card pa-0" tile>
-            <v-card-title class="artifact-card-title white">
+            <v-card-title class="artifact-card-title">
               <div class="position-relative">
                 <v-icon x-large color="primary">fiber_manual_record</v-icon>
                 <v-icon
@@ -182,7 +182,7 @@ export default {
               </div>
               <div>
                 <div
-                  class="overline grey--text text--darken-1"
+                  class="text-overline utilGrayMid--text"
                   style="line-height: 1rem;"
                 >
                   Artifact

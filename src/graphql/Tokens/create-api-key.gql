@@ -1,0 +1,8 @@
+mutation CreateAPIKey($user_id: UUID!, $name: String!, $expires_at: DateTime) {
+  create_api_key(
+    input: { user_id: $user_id, name: $name, expires_at: $expires_at }
+  ) {
+    id
+    key
+  }
+}

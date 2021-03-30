@@ -65,14 +65,14 @@ export default {
 </script>
 
 <template>
-  <v-card class="px-3 pt-7 pb-0 my-4" style="max-height: 200px;" tile>
-    <div class="caption text-left grey--text timeline-title">
+  <v-card class="px-3 pt-7 pb-0" style="max-height: 200px;" tile>
+    <div class="text-caption text-left grey--text timeline-title">
       <v-icon x-small>pi-flow-run</v-icon><span class="ml-1">Run History</span>
     </div>
 
     <div
       v-if="!loading && reversedRuns.length === 0"
-      class="caption text-center grey--text timeline-no-runs"
+      class="text-caption text-center grey--text timeline-no-runs"
     >
       No run history in the last month
     </div>

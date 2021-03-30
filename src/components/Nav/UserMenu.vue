@@ -108,7 +108,7 @@ export default {
         <div class="mt-2 text-h6">
           {{ user.first_name }} {{ user.last_name }}
         </div>
-        <div class="caption"> {{ user.email }} </div>
+        <div class="text-caption"> {{ user.email }} </div>
       </div>
 
       <div

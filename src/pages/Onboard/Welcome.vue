@@ -23,7 +23,7 @@ export default {
   <v-container class="text-center pa-0" fluid>
     <v-slide-x-transition>
       <div v-if="welcome" class="grey--text text--lighten-5 welcome-text">
-        <div class="display-1">
+        <div class="text-h4">
           welcome to
         </div>
         <div class="logo">

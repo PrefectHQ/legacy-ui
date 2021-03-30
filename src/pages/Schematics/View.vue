@@ -52,8 +52,8 @@ export default {
       v-if="!$route.params.id && loading === 0"
       class="no-flows pa-10 text-center"
     >
-      <div class="my-4 display-1">You have no flows 🤖</div>
-      <div class="body-2"
+      <div class="my-4 text-h4">You have no flows 🤖</div>
+      <div class="text-body-2"
         >To learn how to deploy a flow, visit our
         <a
           href="https://docs.prefect.io/cloud/flow-deploy.html#prefect-cloud-deploying-a-flow"

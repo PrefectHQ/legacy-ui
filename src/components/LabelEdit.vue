@@ -166,7 +166,7 @@ export default {
 <template>
   <v-list-item dense>
     <v-list-item-content width="800px" style="overflow-x: auto;">
-      <v-list-item-subtitle class="caption">
+      <v-list-item-subtitle class="text-caption">
         Labels
         <v-menu :close-on-content-click="false" offset-y open-on-hover>
           <template #activator="{ on }">
@@ -307,7 +307,7 @@ export default {
           >{{ label }}</Label
         >
       </div>
-      <div v-else class="subtitle-2">
+      <div v-else class="text-subtitle-2">
         None
       </div>
     </v-list-item-content>

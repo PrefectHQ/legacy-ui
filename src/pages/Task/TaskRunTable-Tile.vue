@@ -38,7 +38,13 @@ export default {
           width: '20%'
         },
         { text: 'End Time', value: 'end_time', align: 'start', width: '20%' },
-        { text: 'Duration', value: 'duration', align: 'end', width: '15%' },
+        {
+          text: 'Duration',
+          value: 'duration',
+          align: 'end',
+          width: '15%',
+          sortable: false
+        },
         { text: 'State', value: 'state', align: 'end', width: '15%' }
       ],
       itemsPerPage: 15,
@@ -156,7 +162,7 @@ export default {
         :server-items-length="taskRunsCount"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
-        :class="{ 'fixed-table': this.$vuetify.breakpoint.smAndUp }"
+        :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
         calculate-widths
       >
         <template #item.flow_run="{ item }">

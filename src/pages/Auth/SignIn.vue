@@ -37,7 +37,7 @@ export default {
 <template>
   <v-container fluid>
     <div
-      class="subtitle-1 my-4 font-weight-bold text-center grey--text text--darken-2"
+      class="text-subtitle-1 my-4 font-weight-bold text-center grey--text text--darken-2"
     >
       Sign in
     </div>
@@ -78,7 +78,7 @@ export default {
         />
       </div>
 
-      <div class="caption text-left">
+      <div class="text-caption text-left">
         <router-link :to="'/login/forgot-password'">
           Forgot password?
         </router-link>
@@ -141,7 +141,9 @@ export default {
 
       <v-divider class="my-5" />
 
-      <div class="caption mt-12 text-center d-flex align-center justify-center">
+      <div
+        class="text-caption mt-12 text-center d-flex align-center justify-center"
+      >
         New to Prefect Cloud?
         <router-link :to="'/login/sign-up'">
           <div class="ml-1">

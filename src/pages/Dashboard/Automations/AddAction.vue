@@ -216,10 +216,10 @@ export default {
       const stepComplete = this.steps[selectedStep]
       const otherComplete = this.steps[otherStep]
       return this.step.name === selectedStep || this.step.name === otherStep
-        ? ''
+        ? 'font-weight-dark'
         : stepComplete?.complete || otherComplete?.complete
-        ? ''
-        : 'font-weight-light'
+        ? 'font-weight-light'
+        : ''
     },
     switchStep(selectedStep) {
       if (this.step.name === 'openMessageText')
@@ -402,7 +402,7 @@ export default {
 
 <template>
   <v-card elevation="0">
-    <v-card-text class="text-h6">
+    <v-card-text class="text-h6 font-weight-light">
       <v-row>
         <v-col cols="9" lg="10">
           <span v-if="actionType.sendText" class="mr-1">{{

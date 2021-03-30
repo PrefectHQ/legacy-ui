@@ -39,7 +39,13 @@ export default {
           width: '18%'
         },
         { text: 'End Time', value: 'end_time', align: 'start', width: '18%' },
-        { text: 'Duration', value: 'duration', align: 'end', width: '15%' },
+        {
+          text: 'Duration',
+          value: 'duration',
+          align: 'end',
+          width: '15%',
+          sortable: false
+        },
         { text: 'State', value: 'state', align: 'end', width: '10%' }
       ],
       itemsPerPage: 15,
@@ -171,7 +177,7 @@ export default {
             >
               {{ item }}
             </v-chip>
-            <span v-if="index === 2" class="grey--text caption">
+            <span v-if="index === 2" class="grey--text text-caption">
               (+{{ state.length - 2 }})
             </span>
           </template>
@@ -213,7 +219,7 @@ export default {
         :server-items-length="flowRunsCount"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
-        :class="{ 'fixed-table': this.$vuetify.breakpoint.smAndUp }"
+        :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
         calculate-widths
       >
         <template #item.name="{ item }">

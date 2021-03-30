@@ -186,6 +186,7 @@ export default {
           .filter(user =>
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
           )
+          .filter(user => user.account_type === 'USER')
           .map(user => {
             let membership = user.memberships.find(
               mem => mem.tenant_id == this.tenant.id
@@ -249,19 +250,19 @@ export default {
     >
       <!-- HEADERS -->
       <template #header.email="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.username="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.firstName="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.lastName="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.role="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
 
       <!-- ROLE -->

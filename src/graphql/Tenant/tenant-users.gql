@@ -5,6 +5,7 @@ query TenantUsers {
     email
     first_name
     last_name
+    account_type
     memberships {
       id
       tenant_id

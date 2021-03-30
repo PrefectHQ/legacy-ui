@@ -223,6 +223,20 @@ export default {
 
         <v-list-item
           :disabled="!isCloud"
+          :to="{ name: 'service-accounts', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>engineering</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Service Accounts</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :disabled="!isCloud"
           :to="{ name: 'task-concurrency', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -273,7 +287,7 @@ export default {
     <template v-if="false && role == 'TENANT_ADMIN'">
       <v-dialog v-model="deleteTeamDialog" max-width="600">
         <v-card>
-          <v-card-title class="headline word-break-normal mb-3">
+          <v-card-title class="text-h5 word-break-normal mb-3">
             Delete
             <span class="font-weight-bold blue--text ml-2">
               {{ tenant.name }}
@@ -305,7 +319,7 @@ export default {
             </div>
           </v-card-text>
           <v-card-actions class="pb-4 px-6">
-            <span v-if="deleteTeamError" class="error--text body-2">
+            <span v-if="deleteTeamError" class="error--text text-body-2">
               {{ deleteTeamError }}
             </span>
             <v-spacer></v-spacer>

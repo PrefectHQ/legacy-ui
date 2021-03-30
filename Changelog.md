@@ -4,12 +4,17 @@
 
 ### Features and Improvements
 
+- Add the remaining states to the state filter - [#706](https://github.com/PrefectHQ/ui/pull/706)
 - Add Automations page - [#695](https://github.com/PrefectHQ/ui/pull/695)
+- Add Service Accounts and API keys to the UI - [#678](https://github.com/PrefectHQ/ui/pull/678)
 - Add generic markdown messages for action notifications - [#674](https://github.com/PrefectHQ/ui/pull/674)
+- Update packages - [#707](https://github.com/PrefectHQ/ui/pull/707)
 
 ### Bugfixes
 
+- Make the duration header not sortable - [#699](https://github.com/PrefectHQ/ui/pull/699)
 - Fix a bug where double clicking could kick off multiple quick runs - [#696](https://github.com/PrefectHQ/ui/pull/696)
+- Make artifacts legible in dark mode - [#693](https://github.com/PrefectHQ/ui/pull/693)
 
 ## 2021-03-25
 
