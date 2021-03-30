@@ -43,9 +43,9 @@ export default {
           icon: 'pi-flow'
         },
         AgentSLAFailedEvent: {
-          type: 'agent',
+          type: 'agents',
           icon: 'pi-agent',
-          action: 'is unhealthy'
+          action: 'are unhealthy'
         },
         SCHEDULED_NOT_STARTED: {
           action: 'does not start'
@@ -240,9 +240,7 @@ export default {
         )
       },
       fetchPolicy: 'no-cache',
-      update: data => {
-        return data.agent_config_by_pk
-      }
+      update: data => data.agent_config_by_pk
     },
     flowConfig: {
       query: require('@/graphql/Automations/flow-config-by-pk.gql'),
@@ -280,6 +278,7 @@ export default {
     @close="closeCard"
   />
   <v-card v-else-if="showHook" class="text-h6" outlined @click="editHook">
+    {{ agentConfig }}
     <v-card-text class="text-h6">
       <v-row>
         <v-col cols="11" lg="11" class="pt-6">
@@ -291,7 +290,7 @@ export default {
             }}
           </v-icon>
           <span>
-            When <span v-if="!hookName">an </span>{{ hookType }}
+            When <span v-if="!hookName">all </span>{{ hookType }}
             <v-tooltip v-if="flowName" top>
               <template #activator="{ on }">
                 <span class="font-weight-bold" v-on="on">{{ hookName }} </span>
@@ -299,7 +298,16 @@ export default {
               {{ flowNameList.toString() }}
             </v-tooltip>
             <span v-else class="font-weight-bold">{{ hookName }}</span>
+            <span v-if="isAgent">
+              with
+              {{
+                agentConfig && agentConfig.name
+                  ? agentConfig.name
+                  : 'this config'
+              }}</span
+            >
             {{ hookDetail }}
+
             <span v-if="includeSeconds">
               for
               <span class="font-weight-bold">{{ seconds }} seconds</span>
