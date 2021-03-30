@@ -801,7 +801,7 @@ export default {
         </div>
       </v-card-text>
 
-      <v-card-actions>
+      <v-card-actions v-if="!showAgentConfigForm">
         <v-spacer></v-spacer>
         <v-btn
           color="primary"
