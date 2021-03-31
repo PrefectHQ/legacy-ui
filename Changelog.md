@@ -12,6 +12,7 @@
 
 ### Bugfixes
 
+- Don't allow flow run restarts for archived flow versions - [#714](https://github.com/PrefectHQ/ui/pull/714)
 - Make the duration header not sortable - [#699](https://github.com/PrefectHQ/ui/pull/699)
 - Fix a bug where double clicking could kick off multiple quick runs - [#696](https://github.com/PrefectHQ/ui/pull/696)
 - Make artifacts legible in dark mode - [#693](https://github.com/PrefectHQ/ui/pull/693)
