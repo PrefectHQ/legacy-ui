@@ -26,7 +26,7 @@ export default {
       return new Date(this.invoice.period_start * 1000)
     },
     freeUsage() {
-      if (Number.isNaN(this.usage)) return null
+      if (isNaN(this.usage)) return null
       const percentage = this.usage / 10000
       return percentage > 1 ? 100 : percentage * 100
     },
