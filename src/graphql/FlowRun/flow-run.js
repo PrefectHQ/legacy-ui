@@ -52,6 +52,7 @@ export default function(isCloud) {
           version_group_id
           core_version
           parameters
+          archived
           project {
             id
             name
