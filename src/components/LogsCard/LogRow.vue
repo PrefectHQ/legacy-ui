@@ -44,7 +44,7 @@ export default {
       setTimeout(() => {
         this.linkCopied = true
         navigator.clipboard.writeText(
-          `${window.location.origin}${this.$route.path}?logId=${this.log.id}`
+          `${window.location.origin}${this.$route.path}?logs=&logId=${this.log.id}`
         )
 
         setTimeout(() => {
