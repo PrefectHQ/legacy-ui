@@ -50,11 +50,13 @@ export const STATE_NAMES = [
   'All',
   'Success',
   'Failed',
+  'Finished',
   'Scheduled',
   'Pending',
   'Running',
   'Cancelled',
   'Cancelling',
+  'Cached',
   'Retrying',
   'Queued',
   'Paused',
@@ -62,9 +64,9 @@ export const STATE_NAMES = [
   'Looped',
   'Skipped',
   'Resume',
-  'Paused',
   'Submitted',
-  'TriggerFailed'
+  'TriggerFailed',
+  'ValidationFailed'
 ]
 
 export const STATE_PAST_TENSE = {

@@ -162,6 +162,7 @@ export default {
           :color="tb.badgeColor || 'codePink'"
           class="text-none"
           :content="tb.badgeText"
+          :disabled="tb.disabled"
           bottom
           inline
         ></v-badge>

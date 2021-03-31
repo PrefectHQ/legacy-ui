@@ -42,7 +42,9 @@ const cloudTabs = [
   {
     name: 'Automations',
     target: 'automations',
-    icon: 'fad fa-random'
+    icon: 'fad fa-random',
+    badgeText: 'Coming Soon!',
+    disabled: true
   }
 ]
 
