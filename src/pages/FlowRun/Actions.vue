@@ -33,6 +33,7 @@ export default {
         'TimedOut',
         'TriggerFailed'
       ],
+      flow: null,
       restartDialog: false
     }
   },
@@ -49,8 +50,9 @@ export default {
     },
     canRestart() {
       return (
-        this.failedTaskRuns?.length > 0 ||
-        this.eligibleStates.includes(this.flowRun.state)
+        !this.flow?.archived &&
+        (this.failedTaskRuns?.length > 0 ||
+          this.eligibleStates.includes(this.flowRun.state))
       )
     }
   },
@@ -113,6 +115,15 @@ export default {
     }
   },
   apollo: {
+    flow: {
+      query: require('@/graphql/Flow/flow-by-pk.gql'),
+      variables() {
+        return {
+          flowId: this.flowRun.flow_id
+        }
+      },
+      update: data => data.flow_by_pk
+    },
     failedTaskRuns: {
       query: require('@/graphql/FlowRun/failed-task-runs.gql'),
       variables() {

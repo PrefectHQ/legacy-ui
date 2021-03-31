@@ -1,9 +1,10 @@
-query FlowByPk ($flowId: uuid!) {
-    flow_by_pk(id: $flowId) {
-        id
-        name
-        version
-        schedule
-        flow_group_id
-    }
+query FlowByPk($flowId: uuid!) {
+  flow_by_pk(id: $flowId) {
+    id
+    name
+    version
+    schedule
+    flow_group_id
+    archived
+  }
 }
