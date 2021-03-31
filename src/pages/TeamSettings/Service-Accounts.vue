@@ -78,7 +78,7 @@ export default {
         })
         .catch(({ graphQLErrors }) => {
           this.accountCreationError = `There was an error creating your service account:
-            ${{ graphQLErrors }}`
+            ${graphQLErrors[0].message}`
           return { error: graphQLErrors }
         })
 
