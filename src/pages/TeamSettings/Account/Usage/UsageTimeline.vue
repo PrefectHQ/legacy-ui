@@ -428,9 +428,11 @@ export default {
       if (!this.chart) return
       const yOffset = this.height - this.padding.y
 
-      const maxBandwidth = Math.floor(
-        ((this.width - this.padding.x) / this.ticks) * 0.8
-      )
+      const maxBandwidth =
+        ((this.width - this.padding.left * 2 - this.padding.right * 2) /
+          this.ticks) *
+        0.8
+
       const bandwidth = maxBandwidth < 75 ? maxBandwidth : 75
       const bandwidthNoPadding = (this.width - this.padding.x) / this.ticks
 
@@ -621,16 +623,19 @@ export default {
       const xPosition = d => this.x(new Date(d.timestamp)) - bandwidth / 2
       const yPosition = d => (d.runs ? this.y(d.runs) : yOffset)
       const height = d => (d.runs ? yOffset - this.y(d.runs) : 0)
-      const transform = `translate(${bandwidth / 2 ?? 0}px)`
-      const textContent = d =>
-        d.runs
-          ? d.runs?.toLocaleString() +
-            ' - ' +
-            new Date(d.timestamp).toLocaleString('en-US', {
-              dateStyle: 'short',
-              timeStyle: undefined
-            })
-          : null
+
+      // These are used for the text labels on the bars
+      // which are unused at the moment
+      // const transform = `translate(${bandwidth / 2 ?? 0}px)`
+      // const textContent = d =>
+      //   d.runs
+      //     ? d.runs?.toLocaleString() +
+      //       ' - ' +
+      //       new Date(d.timestamp).toLocaleString('en-US', {
+      //         dateStyle: 'short',
+      //         timeStyle: undefined
+      //       })
+      //     : null
 
       this.mainGroup.style('transform', `translate(0, ${this.padding.top}px)`)
 
@@ -660,15 +665,15 @@ export default {
               .attr('x', xPosition)
               .attr('y', yOffset)
 
-            g.append('text')
-              .attr('x', xPosition)
-              .attr('y', yOffset - 5)
-              .style('text-anchor', 'middle')
-              .style('user-select', 'none')
-              .style('transform', transform)
-              .style('font', '10px Roboto, sans-serif')
-              .attr('fill', 'transparent')
-              .text(textContent)
+            // g.append('text')
+            //   .attr('x', xPosition)
+            //   .attr('y', yOffset - 5)
+            //   .style('text-anchor', 'middle')
+            //   .style('user-select', 'none')
+            //   .style('transform', transform)
+            //   .style('font', '10px Roboto, sans-serif')
+            //   .attr('fill', 'transparent')
+            //   .text(textContent)
 
             return g.call(enter => {
               enter
@@ -680,17 +685,17 @@ export default {
                 .attr('height', height)
                 .attr('y', yPosition)
 
-              enter
-                .select('text')
-                .transition('enter')
-                .duration(1000)
-                .delay(250)
-                .ease(d3.easeQuad)
-                .attr('y', d =>
-                  d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
-                )
-                .style('font', '10px Roboto, sans-serif')
-                .attr('fill', this.showText ? '#546E7A' : 'transparent')
+              // enter
+              //   .select('text')
+              //   .transition('enter')
+              //   .duration(1000)
+              //   .delay(250)
+              //   .ease(d3.easeQuad)
+              //   .attr('y', d =>
+              //     d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
+              //   )
+              //   .style('font', '10px Roboto, sans-serif')
+              //   .attr('fill', this.showText ? '#546E7A' : 'transparent')
 
               return enter
             })
@@ -713,17 +718,17 @@ export default {
                 .attr('width', bandwidth)
                 .attr('x', xPosition)
 
-              update
-                .select('text')
-                .transition('update')
-                .duration(1000)
-                .delay(500)
-                .ease(d3.easeQuad)
-                .attr('fill', this.showText ? '#546E7A' : 'transparent')
-                .attr('y', d =>
-                  d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
-                )
-                .attr('x', xPosition)
+              // update
+              //   .select('text')
+              //   .transition('update')
+              //   .duration(1000)
+              //   .delay(500)
+              //   .ease(d3.easeQuad)
+              //   .attr('fill', this.showText ? '#546E7A' : 'transparent')
+              //   .attr('y', d =>
+              //     d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
+              //   )
+              //   .attr('x', xPosition)
             })
           },
           exit =>
