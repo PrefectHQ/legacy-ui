@@ -31,11 +31,7 @@ export default {
 
       // Inputs
       inviteEmailInput: null,
-      roleInput: {
-        role: 'TENANT_ADMIN',
-        label: 'Administrator',
-        color: 'cloudUIPrimaryBlue'
-      },
+      roleInput: 'TENANT_ADMIN',
       searchInput: '',
 
       // Forms
