@@ -434,7 +434,9 @@ export default {
         0.8
 
       const bandwidth = maxBandwidth < 75 ? maxBandwidth : 75
-      const bandwidthNoPadding = (this.width - this.padding.x) / this.ticks
+      const bandwidthNoPadding =
+        (this.width - this.padding.left * 2 - this.padding.right * 2) /
+        this.ticks
 
       const xAxis = d3
         .axisBottom(this.x)
