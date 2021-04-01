@@ -61,7 +61,6 @@ export default {
       })
     },
     async addServiceAccount() {
-      console.log('adding service account')
       this.isCreatingServiceUser = true
       this.accountCreationError = null
 
