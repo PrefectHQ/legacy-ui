@@ -122,8 +122,6 @@ export default {
       return this.isEligible && this.isTenantAdmin
     },
     // Determine if user has the proper permissions to access TCLs
-    // User is eligible if:
-    // - They are on a PLATFORM or ENTERPRISE tier, or
     // - They are on a license that grants explicit permission to access this feature
     isEligible() {
       // If permissions are still loading...
@@ -320,12 +318,9 @@ export default {
         icon="lock"
         max-width="600"
       >
-        Your license does not include task concurrency limits.
-
-        <p v-if="isTenantAdmin" class="mt-4 mb-0">
-          If you would like to upgrade, please contact
-          <a href="sales@prefect.io">sales@prefect.io</a>.
-        </p>
+        Your plan doesn't include task concurrency limiting.
+        <ExternalLink href="/plans">Upgrade</ExternalLink> to get access to task
+        concurrency and lots of other cool features!
       </v-alert>
     </template>
 
