@@ -6,10 +6,12 @@ import InvitationsTable from '@/pages/TeamSettings/Members/Invitations-Table'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import MembersTable from '@/pages/TeamSettings/Members/Members-Table'
 import { EMAIL_REGEX } from '@/utils/regEx'
+import ExternalLink from '@/components/ExternalLink.vue'
 
 export default {
   components: {
     ConfirmDialog,
+    ExternalLink,
     InvitationsTable,
     ManagementLayout,
     MembersTable
@@ -29,7 +31,11 @@ export default {
 
       // Inputs
       inviteEmailInput: null,
-      roleInput: null,
+      roleInput: {
+        role: 'TENANT_ADMIN',
+        label: 'Administrator',
+        color: 'cloudUIPrimaryBlue'
+      },
       searchInput: '',
 
       // Forms
@@ -109,6 +115,9 @@ export default {
     },
     totalUsers() {
       return this.users + this.invitations
+    },
+    hasRBAC() {
+      return this.license?.terms?.plan === 'ENTERPRISE_2021'
     }
   },
   watch: {
@@ -431,6 +440,7 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
+          :disabled="!hasRBAC"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
           :items="roleSelectionMap"
@@ -440,6 +450,15 @@ export default {
           item-disabled="disabled"
         >
         </v-select>
+
+        <div v-if="!hasRBAC" class="text-caption">
+          Looking for role-based access controls? This feature is only available
+          on Enterprise plans; check out our
+          <ExternalLink href="https://prefect.io/pricing"
+            >pricing page</ExternalLink
+          >
+          for more details.
+        </div>
       </v-form>
     </ConfirmDialog>
   </ManagementLayout>
