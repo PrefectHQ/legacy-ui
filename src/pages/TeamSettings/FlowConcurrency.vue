@@ -588,7 +588,7 @@ export default {
       v-model="alertShow"
       :type="alertType"
       :message="alertMessage"
-      :offset-x="$vuetify.breakpoint.mdAndUp ? 256 : 56"
+      :offset-x="56"
     ></Alert>
   </ManagementLayout>
 </template>
