@@ -1,6 +1,8 @@
 query DataToClear {
   memberships: user_view_same_tenant {
     id
+    account_type
+
     memberships {
       id
     }

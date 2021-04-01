@@ -403,13 +403,13 @@ export default {
 
       this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
 
-      const width = this.vertical
-        ? this.width
-        : parent._groups[0][0].clientWidth - paddingLeft - paddingRight
+      const width =
+        this.width ||
+        parent._groups[0][0].clientWidth - paddingLeft - paddingRight
 
-      const height = this.vertical
-        ? parent._groups[0][0].clientHeight - paddingTop - paddingBottom
-        : this.height
+      const height =
+        this.height ||
+        parent._groups[0][0].clientHeight - paddingTop - paddingBottom
 
       if (!height || !width || height <= 0 || width <= 0) {
         return

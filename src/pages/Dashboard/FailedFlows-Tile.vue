@@ -13,11 +13,6 @@ export default {
     projectId: {
       type: String,
       default: null
-    },
-    fullHeight: {
-      required: false,
-      type: Boolean,
-      default: () => true
     }
   },
   data() {
@@ -39,8 +34,8 @@ export default {
       return 'Success'
     },
     cardTitle() {
-      if (this.hasError) return 'Failed Flows'
-      return `${this.failureCount} Failed Flows`
+      if (this.hasError) return 'Failed flows'
+      return `${this.failureCount} failed flows`
     },
     failureCount() {
       if (this.failures?.length) {
@@ -92,13 +87,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="py-2 position-relative"
-    tile
-    :style="{
-      height: fullHeight ? '330px' : 'auto'
-    }"
-  >
+  <v-card class="py-2 position-relative" tile style="height: 100%;">
     <v-system-bar :color="stateColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->

@@ -1,6 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-// import { mapMutations } from 'vuex'
 
 import CardTitle from '@/components/Card-Title'
 import moment from '@/utils/moment'
@@ -44,10 +43,10 @@ export default {
     },
     cardTitle() {
       if (!this.agents) return
-      if (this.agents && this.agents.length === 0) return '0 Agents'
+      if (this.agents && this.agents.length === 0) return '0 agents'
 
       return `${this.agents?.length} ${
-        this.agents?.length === 1 ? 'Agent' : 'Agents'
+        this.agents?.length === 1 ? 'agent' : 'agents'
       }`
     },
     statusColor() {
@@ -71,7 +70,11 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2 position-relative" style="height: 330px;" tile>
+  <v-card
+    class="py-2 position-relative d-flex flex-column"
+    style="height: 100%;"
+    tile
+  >
     <v-system-bar :color="statusColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->
@@ -220,7 +223,9 @@ export default {
       </v-slide-y-reverse-transition>
     </v-list>
 
-    <v-card-actions>
+    <v-spacer />
+
+    <v-card-actions class="py-0">
       <v-spacer />
       <v-btn small color="primary" text @click="$emit('view-details-clicked')">
         View details

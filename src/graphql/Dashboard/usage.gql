@@ -1,14 +1,14 @@
-query Usage($from: timestamptz, $to: timestamptz, $tenant_id: uuid) {
+query Usage($from: timestamptz, $to: timestamptz, $license_id: uuid) {
   usage: billing_usage(
     where: {
       timestamp: { _gte: $from, _lte: $to }
-      tenant_id: { _eq: $tenant_id }
+      license_id: { _eq: $license_id }
     }
   ) {
     id
     kind
     runs
-    tenant_id
+    license_id
     timestamp
     usage_last_updated
   }
