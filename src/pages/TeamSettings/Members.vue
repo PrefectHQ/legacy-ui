@@ -1,7 +1,6 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
-import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import InvitationsTable from '@/pages/TeamSettings/Members/Invitations-Table'
 import ManagementLayout from '@/layouts/ManagementLayout'
@@ -10,7 +9,6 @@ import { EMAIL_REGEX } from '@/utils/regEx'
 
 export default {
   components: {
-    Alert,
     ConfirmDialog,
     InvitationsTable,
     ManagementLayout,
@@ -81,17 +79,11 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license']),
-    allowedFullUsers() {
+    allowedUsers() {
       return this.license?.terms?.users ?? Infinity
     },
-    allowedReadOnlyUsers() {
-      return 0
-    },
     insufficientUsers() {
-      return (
-        this.allowedFullUsers <= this.totalFullUsers &&
-        this.allowedReadOnlyUsers <= this.totalReadOnlyUsers
-      )
+      return this.users >= this.allowedUsers
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
@@ -101,31 +93,22 @@ export default {
         {
           role: 'TENANT_ADMIN',
           label: 'Administrator',
-          color: 'cloudUIPrimaryBlue',
-          disabled: this.totalFullUsers >= this.allowedFullUsers
+          color: 'cloudUIPrimaryBlue'
         },
         {
           role: 'USER',
           label: 'User',
-          color: 'codeBlueBright',
-          disabled: this.totalFullUsers >= this.allowedFullUsers
+          color: 'codeBlueBright'
+        },
+        {
+          role: 'READ_ONLY_USER',
+          label: 'Read-Only',
+          color: 'cloudUIPrimaryDark'
         }
-        // {
-        //   role: 'READ_ONLY_USER',
-        //   label: 'Read-Only',
-        //   color: 'cloudUIPrimaryDark',
-        //   disabled: this.totalReadOnlyUsers >= this.allowedReadOnlyUsers
-        // }
       ]
     },
-    totalMembers() {
-      return this.totalFullUsers + this.totalReadOnlyUsers
-    },
-    totalFullUsers() {
-      return this.fullInvitations + this.fullUsers
-    },
-    totalReadOnlyUsers() {
-      return this.readOnlyInvitations + this.readOnlyUsers
+    totalUsers() {
+      return this.users + this.invitations
     }
   },
   watch: {
@@ -150,22 +133,23 @@ export default {
     }, 400)
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     handleAlert(type, message) {
-      this.alertType = type
-      this.alertMessage = message
-      this.alertShow = true
+      this.setAlert({
+        alertShow: true,
+        alertMessage: message,
+        alertType: type
+      })
     },
     handleUpdateInvitations(event) {
-      if (event?.readOnlyInvitations && event?.fullInvitations) {
-        this.readOnlyInvitations = event.readOnlyInvitations.length
-        this.fullInvitations = event.fullInvitations.length
+      if (event) {
+        this.invitations = event
       }
     },
-    loadEnd(event) {
+    handleUpdateUsers(event) {
       this.isLoadingMembersTable = false
-      if (event?.fullUsers && event?.readOnlyUsers) {
-        this.fullUsers = event.fullUsers.length
-        this.readOnlyUsers = event.readOnlyUsers.length
+      if (event) {
+        this.users = event
       }
     },
     async inviteUser() {
@@ -374,7 +358,7 @@ export default {
           :tenant="tenant"
           :user="user"
           :refetch-signal="membersSignal"
-          @load-end="loadEnd($event)"
+          @load-end="handleUpdateUsers($event)"
           @successful-action="handleAlert('success', $event)"
           @failed-action="handleAlert('error', $event)"
         ></MembersTable>
@@ -392,7 +376,7 @@ export default {
           :refetch-signal="inviteSignal"
           @successful-action="handleAlert('success', $event)"
           @failed-action="handleAlert('error', $event)"
-          @update-invitations="handleUpdateInvitations($event)"
+          @load-end="handleUpdateInvitations($event)"
         ></InvitationsTable>
       </v-tab-item>
     </v-tabs>
@@ -413,10 +397,7 @@ export default {
     >
       <v-form ref="invite-user-form" v-model="inviteFormValid">
         <v-alert
-          v-if="
-            totalFullUsers >= allowedFullUsers &&
-              totalReadOnlyUsers >= allowedReadOnlyUsers
-          "
+          v-if="totalUsers >= allowedUsers"
           class="mx-auto my-4 mb-12"
           border="left"
           colored-border
@@ -426,50 +407,11 @@ export default {
           icon="warning"
         >
           <p>
-            Your team has no users available. You won't be able to invite new
-            users until you add more users from the
-            <router-link :to="'/team/account'"> Account Page</router-link>
+            Your team has no users available;
+            <router-link :to="'/plans'">upgrade your plan</router-link> to get
+            more users and access to more features!
           </p>
         </v-alert>
-
-        <v-alert
-          v-else-if="totalFullUsers >= allowedFullUsers"
-          class="mx-auto my-4 mb-12"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          icon="warning"
-        >
-          <p>
-            Your team has no full users available. You'll only be able to add
-            Read-Only users until you add more from the
-            <router-link :to="'/team/account'"> Account Page</router-link>
-          </p>
-        </v-alert>
-
-        <!-- <v-alert
-          v-else-if="totalReadOnlyUsers >= allowedReadOnlyUsers"
-          class="mx-auto my-4 mb-12"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          icon="warning"
-        >
-          <p>
-            Your team has no Read-Only users available.
-            <a
-              href="https://www.prefect.io/pricing#contact"
-              target="_blank"
-            >
-              Contact us
-            </a>
-            to increase the number of Read-Only users in your team.
-          </p>
-        </v-alert> -->
 
         <v-text-field
           v-model="inviteEmailInput"
@@ -500,12 +442,5 @@ export default {
         </v-select>
       </v-form>
     </ConfirmDialog>
-
-    <Alert
-      v-model="alertShow"
-      :type="alertType"
-      :message="alertMessage"
-      :offset-x="$vuetify.breakpoint.mdAndUp ? 256 : 56"
-    ></Alert>
   </ManagementLayout>
 </template>

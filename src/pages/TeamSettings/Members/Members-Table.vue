@@ -203,12 +203,7 @@ export default {
             }
           })
 
-        this.$emit('load-end', {
-          fullUsers: this.membersItems.filter(m => m.role !== 'READ_ONLY_USER'),
-          readOnlyUsers: this.membersItems.filter(
-            m => m.role == 'READ_ONLY_USER'
-          )
-        })
+        this.$emit('load-end', this.membersItems)
         return data
       },
       error() {
