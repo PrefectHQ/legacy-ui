@@ -9,6 +9,7 @@
 - Add Service Accounts and API keys to the UI - [#678](https://github.com/PrefectHQ/ui/pull/678)
 - Add generic markdown messages for action notifications - [#674](https://github.com/PrefectHQ/ui/pull/674)
 - Update packages - [#707](https://github.com/PrefectHQ/ui/pull/707)
+- Populate errors when creating a schedule - [#725](https://github.com/PrefectHQ/ui/pull/725)
 
 ### Bugfixes
 
