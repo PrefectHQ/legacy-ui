@@ -68,7 +68,7 @@ export default {
 
       setTimeout(() => {
         this.height = getComputedStyle(this.$refs['main-row']).height
-      })
+      }, 250)
     }, 500)
 
     setTimeout(() => {
@@ -80,8 +80,8 @@ export default {
 
       setTimeout(() => {
         this.height = getComputedStyle(this.$refs['main-row']).height
-      })
-    }, 1000)
+      }, 250)
+    }, 1250)
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'updateTenantSettings']),
@@ -240,6 +240,7 @@ export default {
       this.revealUrlInput = false
       this.revealDropdown = false
       this.revealConfirm = false
+      this.revealNote = false
 
       await this.setCurrentTenant(
         this.redirectTenant ?? this.tenantChanges.slug ?? this.tenant.slug
