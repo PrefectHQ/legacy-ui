@@ -278,8 +278,7 @@ export default {
     @close="closeCard"
   />
   <v-card v-else-if="showHook" class="text-h6" outlined @click="editHook">
-    {{ agentConfig }}
-    <v-card-text class="text-h6">
+    <v-card-text class="text-h6 font-weight-light">
       <v-row>
         <v-col cols="11" lg="11" class="d-flex align-center justify-start">
           <v-icon color="codePink" class="pr-2">
