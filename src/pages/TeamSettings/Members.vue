@@ -207,10 +207,12 @@ export default {
       this.isInvitingUser = false
     },
     resetInviteUserDialog() {
-      this.inviteEmailInput = null
-      this.roleInput = 'TENANT_ADMIN'
-      this.inviteError = null
       this.$refs['invite-user-form'].reset()
+      this.$nextTick(() => {
+        this.inviteEmailInput = null
+        this.inviteError = null
+        this.roleInput = 'TENANT_ADMIN'
+      })
     }
   }
 }
