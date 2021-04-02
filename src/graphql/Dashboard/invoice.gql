@@ -1,0 +1,3 @@
+query Invoice($licenseId: UUID!) {
+  preview_invoice(license_id: $licenseId)
+}

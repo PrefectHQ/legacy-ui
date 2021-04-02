@@ -65,7 +65,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="px-3 pt-7 pb-0" style="max-height: 200px;" tile>
+  <v-card class="px-3 pt-7 pb-0" style="height: 100%;" tile>
     <div class="text-caption text-left grey--text timeline-title">
       <v-icon x-small>pi-flow-run</v-icon><span class="ml-1">Run History</span>
     </div>
