@@ -3,6 +3,7 @@ import { mapGetters } from 'vuex'
 
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import ExternalLink from '../../components/ExternalLink.vue'
 import ManagementLayout from '@/layouts/ManagementLayout'
 
 const ADD_SUCCESS = 'A new label concurrency limit has been successfully added.'
@@ -23,6 +24,7 @@ export default {
   components: {
     Alert,
     ConfirmDialog,
+    ExternalLink,
     ManagementLayout
   },
   data() {
@@ -111,12 +113,21 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['permissions']),
     // Determine if user has permission to add, edit, and delete concurrency limits
     hasManagementPermission() {
       return this.isTenantAdmin
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
+    },
+    // Determine if user has the proper permissions to access TCLs
+    // - They are on a license that grants explicit permission to access this feature
+    isEligible() {
+      // If permissions are still loading...
+      if (!this.permissions) return true
+
+      return this.permissions.includes('feature:concurrency-limit')
     },
     // Merge usage details into labels array
     labelsWithUsage() {
@@ -271,7 +282,7 @@ export default {
       given time
     </template>
 
-    <template v-if="hasManagementPermission" #cta>
+    <template v-if="isEligible && hasManagementPermission" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -284,6 +295,23 @@ export default {
         </v-icon>
         Add Label
       </v-btn>
+    </template>
+
+    <template v-if="!isEligible" #alerts>
+      <v-alert
+        class="mx-auto"
+        border="left"
+        colored-border
+        elevation="2"
+        type="warning"
+        tile
+        icon="lock"
+        max-width="600"
+      >
+        Your plan doesn't include flow concurrency limiting.
+        <ExternalLink href="/plans">Upgrade</ExternalLink> to get access to flow
+        concurrency and lots of other cool features!
+      </v-alert>
     </template>
 
     <template v-else-if="!isTenantAdmin" #alerts>
@@ -314,7 +342,7 @@ export default {
       autocomplete="new-password"
     ></v-text-field>
 
-    <v-card tile>
+    <v-card v-if="isEligible" tile>
       <v-card-text class="pa-0">
         <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
           <v-text-field
@@ -560,7 +588,7 @@ export default {
       v-model="alertShow"
       :type="alertType"
       :message="alertMessage"
-      :offset-x="$vuetify.breakpoint.mdAndUp ? 256 : 56"
+      :offset-x="56"
     ></Alert>
   </ManagementLayout>
 </template>
