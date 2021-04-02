@@ -281,7 +281,7 @@ export default {
     {{ agentConfig }}
     <v-card-text class="text-h6">
       <v-row>
-        <v-col cols="11" lg="11" class="pt-6">
+        <v-col cols="11" lg="11" class="d-flex align-center justify-start">
           <v-icon color="codePink" class="pr-2">
             {{
               hookDetails[hook.event_type]
