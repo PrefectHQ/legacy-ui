@@ -196,7 +196,7 @@ export default {
         this.setAlert({
           alertShow: true,
           alertMessage: `There was a problem ${
-            options.new ? 'created' : options.delete ? 'deleted' : 'modified'
+            options.new ? 'creating' : options.delete ? 'deleting' : 'modifying'
           } your schedule, please try again shortly. Error message: ${
             this.error
           }`,
