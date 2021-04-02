@@ -26,7 +26,7 @@ export default {
       id: uniqueId('usage'),
       format: null,
       ticks: null,
-      period: 'Week',
+      period: 'Year',
       hoverGroup: null,
       interactionGroup: null,
       mainGroup: null,
