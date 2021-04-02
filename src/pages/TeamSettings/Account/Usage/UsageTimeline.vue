@@ -340,11 +340,9 @@ export default {
 
       this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
 
-      this.width = Math.floor(parent.clientWidth - padding.left - padding.right)
+      this.width = parent.clientWidth - padding.left - padding.right
 
-      this.height = Math.floor(
-        parent.clientHeight - padding.top - padding.bottom
-      )
+      this.height = parent.clientHeight - padding.top - padding.bottom
 
       this.chart.attr('viewbox', `0 0 ${this.width} ${this.height}`)
 
@@ -429,9 +427,8 @@ export default {
       const yOffset = this.height - this.padding.y
 
       const maxBandwidth =
-        ((this.width - this.padding.left * 2 - this.padding.right * 2) /
-          this.ticks) *
-        0.8
+        (this.width - this.padding.left * 2 - this.padding.right * 2) /
+        this.ticks
 
       const bandwidth = maxBandwidth < 75 ? maxBandwidth : 75
       const bandwidthNoPadding =
@@ -621,8 +618,10 @@ export default {
       //           .attr('d', this.line)
       //       )
       //   )
+      const start = this.padding.left * 2
 
-      const xPosition = d => this.x(new Date(d.timestamp)) - bandwidth / 2
+      const xPosition = (d, i) =>
+        start + (bandwidthNoPadding * i - bandwidth / 2)
       const yPosition = d => (d.runs ? this.y(d.runs) : yOffset)
       const height = d => (d.runs ? yOffset - this.y(d.runs) : 0)
 
