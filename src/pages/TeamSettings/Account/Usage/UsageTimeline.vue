@@ -12,7 +12,6 @@ const d3 = Object.assign({}, d3_base, d3_regression)
 const xAxisHeight = 40
 
 const startDate = new Date('2018-01-17T00:00:00+00:00')
-// const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
 
 export default {
   props: {
@@ -27,7 +26,7 @@ export default {
       id: uniqueId('usage'),
       format: null,
       ticks: null,
-      period: 'Year', // tooltip centering, plan updates need refresh
+      period: 'Week',
       hoverGroup: null,
       interactionGroup: null,
       mainGroup: null,
@@ -201,24 +200,24 @@ export default {
         from.setFullYear(year - 1 + this.offset)
         from.setDate(0)
       } else if (this.period == 'Month') {
-        from.setDate(0)
-        from.setMinutes(1)
+        from.setDate(1)
         from.setMonth(from.getMonth() + this.offset)
       } else if (this.period == 'Week') {
         const day = from.getDay()
         const diff = from.getDate() + this.offset - ((day + 6) % 7)
-        from.setMinutes(0)
         from.setDate(diff)
       }
 
       from.setMilliseconds(0)
       from.setSeconds(0)
+      from.setMinutes(0)
       from.setHours(0)
       return from
     },
     to() {
       const to = new Date()
       to.setHours(23)
+      to.setSeconds(59)
       if (this.period == 'Year') {
         const year = new Date().getFullYear()
         to.setFullYear(year + this.offset)
@@ -230,11 +229,15 @@ export default {
         to.setDate(0)
         to.setMinutes(59)
       } else if (this.period == 'Week') {
-        const diff = to.getDate() + this.offset + (6 - to.getDay())
+        const day = to.getDay()
+        const diff = to.getDate() + this.offset + (7 - day)
         to.setDate(diff)
-        to.setMinutes(60)
       }
 
+      to.setMilliseconds(999)
+      to.setSeconds(59)
+      to.setMinutes(59)
+      to.setHours(23)
       return to
     },
     decrementOffsetDisabled() {
@@ -644,7 +647,6 @@ export default {
       //       )
       //   )
       const start = this.padding.left * 2
-
       const xPosition = (d, i) =>
         start + (bandwidthNoPadding * i - bandwidth / 2)
       const yPosition = d => (d.runs ? this.y(d.runs) : yOffset)
