@@ -111,6 +111,12 @@ export default {
       </v-col>
     </v-row>
     <v-row>
+      <v-progress-circular
+        v-if="!sortedHooks.length && loadingHook > 0"
+        class="mx-auto my-4"
+        indeterminate
+        color="primary"
+      />
       <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
         <v-skeleton-loader
           v-if="loadingHook > 0 || loadCards"
