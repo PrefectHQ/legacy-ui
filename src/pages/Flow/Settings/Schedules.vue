@@ -197,7 +197,9 @@ export default {
           alertShow: true,
           alertMessage: `There was a problem ${
             options.new ? 'created' : options.delete ? 'deleted' : 'modified'
-          } your schedule, please try again shortly.`,
+          } your schedule, please try again shortly. Error message: ${
+            this.error
+          }`,
           alertType: 'error'
         })
       }
