@@ -304,7 +304,7 @@ export default {
 
       window.addEventListener('resize', this.resizeChart)
 
-      requestAnimationFrame(this.resizeChart)
+      this.rawResizeChart()
     },
     createX() {
       const x = d3.scaleTime()
@@ -427,8 +427,9 @@ export default {
       const yOffset = this.height - this.padding.y
 
       const maxBandwidth =
-        (this.width - this.padding.left * 2 - this.padding.right * 2) /
-        this.ticks
+        ((this.width - this.padding.left * 2 - this.padding.right * 2) /
+          this.ticks) *
+        0.8
 
       const bandwidth = maxBandwidth < 75 ? maxBandwidth : 75
       const bandwidthNoPadding =
@@ -485,7 +486,7 @@ export default {
           enter =>
             enter
               .append('rect')
-              .attr('width', bandwidthNoPadding)
+              .attr('width', bandwidthNoPadding < 0 ? 0 : bandwidthNoPadding)
               .attr('height', this.height)
               .attr(
                 'x',
@@ -509,7 +510,31 @@ export default {
                   this.updateHovered(this.hovered)
                 }
               }),
-          update => update,
+          update => {
+            update
+              .select('rect')
+              .attr('width', bandwidthNoPadding < 0 ? 0 : bandwidthNoPadding)
+              .attr(
+                'x',
+                d => this.x(new Date(d.timestamp)) - bandwidthNoPadding / 2
+              )
+              .on('mousemove', (e, d) => {
+                if (!isNaN(d.runs)) {
+                  const x = this.x(new Date(d.timestamp))
+                  const y = this.y(d.runs)
+                  const runs = d.runs ? d.runs.toLocaleString() : 0
+
+                  this.hovered = {
+                    x: x,
+                    y: y,
+                    runs: runs,
+                    bandwidth: bandwidth
+                  }
+
+                  this.updateHovered(this.hovered)
+                }
+              })
+          },
           exit =>
             exit
               .on('mouseout', null)
@@ -623,7 +648,10 @@ export default {
       const xPosition = (d, i) =>
         start + (bandwidthNoPadding * i - bandwidth / 2)
       const yPosition = d => (d.runs ? this.y(d.runs) : yOffset)
-      const height = d => (d.runs ? yOffset - this.y(d.runs) : 0)
+      const height = d => {
+        const h = d.runs ? yOffset - this.y(d.runs) : 0
+        return h >= 0 ? h : 0
+      }
 
       // These are used for the text labels on the bars
       // which are unused at the moment
