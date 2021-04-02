@@ -208,7 +208,7 @@ export default {
     },
     resetInviteUserDialog() {
       this.inviteEmailInput = null
-      this.roleInput = null
+      this.roleInput = 'TENANT_ADMIN'
       this.inviteError = null
       this.$refs['invite-user-form'].reset()
     }
