@@ -17,6 +17,10 @@
 - Make the duration header not sortable - [#699](https://github.com/PrefectHQ/ui/pull/699)
 - Fix a bug where double clicking could kick off multiple quick runs - [#696](https://github.com/PrefectHQ/ui/pull/696)
 - Make artifacts legible in dark mode - [#693](https://github.com/PrefectHQ/ui/pull/693)
+- Usage timeline bugfixes - [#722](https://github.com/PrefectHQ/ui/pull/722)
+- Add the proper permissions to role-based invitations - [#719](https://github.com/PrefectHQ/ui/pull/719)
+- Add the proper permissions to flow and task concurrency pages - [#720](https://github.com/PrefectHQ/ui/pull/720)
+- Small onboarding fixes - [#721](https://github.com/PrefectHQ/ui/pull/721)
 
 ## 2021-03-25
 
