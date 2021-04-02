@@ -1,25 +1,18 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
-import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ServiceAccountsTable from '@/pages/TeamSettings/Service-Accounts-Table'
 
 export default {
   components: {
-    Alert,
     ConfirmDialog,
     ManagementLayout,
     ServiceAccountsTable
   },
   data() {
     return {
-      // Alert data
-      alertShow: false,
-      alertMessage: '',
-      alertType: null,
-
       // Dialogs
       dialogAddServiceAccount: false,
 
@@ -59,36 +52,38 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     handleAlert(type, message) {
-      this.alertType = type
-      this.alertMessage = message
-      this.alertShow = true
+      this.setAlert({
+        alertShow: true,
+        alertMessage: message,
+        alertType: type
+      })
     },
     async addServiceAccount() {
       this.isCreatingServiceUser = true
       this.accountCreationError = null
 
-      const res = await this.$apollo
-        .mutate({
+      try {
+        const res = await this.$apollo.mutate({
           mutation: require('@/graphql/User/create-service-account.gql'),
           variables: {
             tenant_id: this.tenant.id,
             name: this.serviceAccountNameInput
           }
         })
-        .catch(({ graphQLErrors }) => {
-          this.accountCreationError = `There was an error creating your service account:
-            ${graphQLErrors?.[0].message}`
-          return { error: graphQLErrors }
-        })
 
-      if (res?.data?.create_service_account?.id) {
-        this.serviceAccountsSignal++
-        this.dialogAddServiceAccount = false
-        this.serviceAccountNameInput = null
+        if (res?.data?.create_service_account?.id) {
+          this.serviceAccountsSignal++
+          this.dialogAddServiceAccount = false
+          this.serviceAccountNameInput = null
+        }
+      } catch (e) {
+        this.accountCreationError = `There was an error creating your service account:
+            ${e}`
+      } finally {
+        this.isCreatingServiceUser = false
       }
-
-      this.isCreatingServiceUser = false
     },
     resetServiceAccountDialog() {
       this.serviceAccountNameInput = null
@@ -146,7 +141,6 @@ export default {
           :is-tenant-admin="isTenantAdmin"
           :search="searchInput"
           :tenant="tenant"
-          :user="user"
           :refetch-signal="serviceAccountsSignal"
           @successful-action="handleAlert('success', $event)"
           @failed-action="handleAlert('error', $event)"
@@ -187,12 +181,5 @@ export default {
         />
       </v-form>
     </ConfirmDialog>
-
-    <Alert
-      v-model="alertShow"
-      :type="alertType"
-      :message="alertMessage"
-      :offset-x="$vuetify.breakpoint.mdAndUp ? 256 : 56"
-    ></Alert>
   </ManagementLayout>
 </template>
