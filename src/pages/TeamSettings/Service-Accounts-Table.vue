@@ -1,12 +1,11 @@
 <script>
-import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import DateTime from '@/components/DateTime'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
-    Alert,
     ConfirmDialog,
     DateTime
   },
@@ -29,11 +28,6 @@ export default {
     },
     // Tenant information
     tenant: {
-      type: Object,
-      required: true
-    },
-    // Current user information
-    user: {
       type: Object,
       required: true
     }
@@ -77,6 +71,7 @@ export default {
       isFetchingMembers: false,
       isRemovingUser: false,
       isCreatingKey: false,
+      isDeletingKey: false,
 
       // Selected user
       // Set when removing account membership
@@ -108,8 +103,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     copyNewKey() {
-      var copyText = document.querySelector('#new-api-key')
+      const copyText = document.querySelector('#new-api-key')
       copyText.select()
       document.execCommand('copy')
       this.apiKeyCopied = true
@@ -143,6 +139,7 @@ export default {
       }
     },
     async deleteKey(key) {
+      this.isDeletingKey = true
       const result = await this.$apollo.mutate({
         mutation: require('@/graphql/Tokens/delete-api-key.gql'),
         variables: {
@@ -163,11 +160,15 @@ export default {
           'Something went wrong while trying to delete your API key. Please try again. If this error persists, please contact help@prefect.io.'
         )
       }
+
+      this.isDeletingKey = false
     },
     handleAlert(type, message) {
-      this.alertType = type
-      this.alertMessage = message
-      this.alertShow = true
+      this.setAlert({
+        alertShow: true,
+        alertMessage: message,
+        alertType: type
+      })
     },
     resetNewKey() {
       this.newKeyName = ''
@@ -385,7 +386,7 @@ export default {
     <ConfirmDialog
       v-model="dialogCreateKey"
       :dialog-props="{ 'max-width': '500' }"
-      :disabled="!newKeyFormFilled"
+      :disabled="!newKeyFormFilled || isCreatingKey"
       :loading="isCreatingKey"
       title="Create an API key"
       confirm-text="Create"
@@ -462,6 +463,8 @@ export default {
           ${keyToDelete.name}?`
       "
       confirm-text="Revoke"
+      :disabled="isDeletingKey"
+      :loading="isDeletingKey"
       @confirm="deleteKey(keyToDelete)"
     >
       Once you delete this API key, you will not be able to use it again to
@@ -486,13 +489,6 @@ export default {
         and all of their API keys will be deleted.</div
       >
     </ConfirmDialog>
-
-    <Alert
-      v-model="alertShow"
-      :type="alertType"
-      :message="alertMessage"
-      :offset-x="$vuetify.breakpoint.mdAndUp ? 256 : 56"
-    ></Alert>
   </div>
 </template>
 
