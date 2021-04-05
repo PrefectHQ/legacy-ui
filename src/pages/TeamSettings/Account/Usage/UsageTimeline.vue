@@ -12,7 +12,6 @@ const d3 = Object.assign({}, d3_base, d3_regression)
 const xAxisHeight = 40
 
 const startDate = new Date('2018-01-17T00:00:00+00:00')
-// const daysInMonth = (month, year) => new Date(year, month, 0).getDate()
 
 export default {
   props: {
@@ -27,7 +26,7 @@ export default {
       id: uniqueId('usage'),
       format: null,
       ticks: null,
-      period: 'Year', // tooltip centering, plan updates need refresh
+      period: 'Year',
       hoverGroup: null,
       interactionGroup: null,
       mainGroup: null,
@@ -201,24 +200,24 @@ export default {
         from.setFullYear(year - 1 + this.offset)
         from.setDate(0)
       } else if (this.period == 'Month') {
-        from.setDate(0)
-        from.setMinutes(1)
+        from.setDate(1)
         from.setMonth(from.getMonth() + this.offset)
       } else if (this.period == 'Week') {
         const day = from.getDay()
         const diff = from.getDate() + this.offset - ((day + 6) % 7)
-        from.setMinutes(0)
         from.setDate(diff)
       }
 
       from.setMilliseconds(0)
       from.setSeconds(0)
+      from.setMinutes(0)
       from.setHours(0)
       return from
     },
     to() {
       const to = new Date()
       to.setHours(23)
+      to.setSeconds(59)
       if (this.period == 'Year') {
         const year = new Date().getFullYear()
         to.setFullYear(year + this.offset)
@@ -230,11 +229,15 @@ export default {
         to.setDate(0)
         to.setMinutes(59)
       } else if (this.period == 'Week') {
-        const diff = to.getDate() + this.offset + (6 - to.getDay())
+        const day = to.getDay()
+        const diff = to.getDate() + this.offset + (7 - day)
         to.setDate(diff)
-        to.setMinutes(60)
       }
 
+      to.setMilliseconds(999)
+      to.setSeconds(59)
+      to.setMinutes(59)
+      to.setHours(23)
       return to
     },
     decrementOffsetDisabled() {
@@ -304,7 +307,7 @@ export default {
 
       window.addEventListener('resize', this.resizeChart)
 
-      requestAnimationFrame(this.resizeChart)
+      this.rawResizeChart()
     },
     createX() {
       const x = d3.scaleTime()
@@ -340,11 +343,9 @@ export default {
 
       this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
 
-      this.width = Math.floor(parent.clientWidth - padding.left - padding.right)
+      this.width = parent.clientWidth - padding.left - padding.right
 
-      this.height = Math.floor(
-        parent.clientHeight - padding.top - padding.bottom
-      )
+      this.height = parent.clientHeight - padding.top - padding.bottom
 
       this.chart.attr('viewbox', `0 0 ${this.width} ${this.height}`)
 
@@ -428,11 +429,15 @@ export default {
       if (!this.chart) return
       const yOffset = this.height - this.padding.y
 
-      const maxBandwidth = Math.floor(
-        ((this.width - this.padding.x) / this.ticks) * 0.8
-      )
+      const maxBandwidth =
+        ((this.width - this.padding.left * 2 - this.padding.right * 2) /
+          this.ticks) *
+        0.8
+
       const bandwidth = maxBandwidth < 75 ? maxBandwidth : 75
-      const bandwidthNoPadding = (this.width - this.padding.x) / this.ticks
+      const bandwidthNoPadding =
+        (this.width - this.padding.left * 2 - this.padding.right * 2) /
+        this.ticks
 
       const xAxis = d3
         .axisBottom(this.x)
@@ -484,7 +489,7 @@ export default {
           enter =>
             enter
               .append('rect')
-              .attr('width', bandwidthNoPadding)
+              .attr('width', bandwidthNoPadding < 0 ? 0 : bandwidthNoPadding)
               .attr('height', this.height)
               .attr(
                 'x',
@@ -508,7 +513,31 @@ export default {
                   this.updateHovered(this.hovered)
                 }
               }),
-          update => update,
+          update => {
+            update
+              .select('rect')
+              .attr('width', bandwidthNoPadding < 0 ? 0 : bandwidthNoPadding)
+              .attr(
+                'x',
+                d => this.x(new Date(d.timestamp)) - bandwidthNoPadding / 2
+              )
+              .on('mousemove', (e, d) => {
+                if (!isNaN(d.runs)) {
+                  const x = this.x(new Date(d.timestamp))
+                  const y = this.y(d.runs)
+                  const runs = d.runs ? d.runs.toLocaleString() : 0
+
+                  this.hovered = {
+                    x: x,
+                    y: y,
+                    runs: runs,
+                    bandwidth: bandwidth
+                  }
+
+                  this.updateHovered(this.hovered)
+                }
+              })
+          },
           exit =>
             exit
               .on('mouseout', null)
@@ -617,20 +646,27 @@ export default {
       //           .attr('d', this.line)
       //       )
       //   )
-
-      const xPosition = d => this.x(new Date(d.timestamp)) - bandwidth / 2
+      const start = this.padding.left * 2
+      const xPosition = (d, i) =>
+        start + (bandwidthNoPadding * i - bandwidth / 2)
       const yPosition = d => (d.runs ? this.y(d.runs) : yOffset)
-      const height = d => (d.runs ? yOffset - this.y(d.runs) : 0)
-      const transform = `translate(${bandwidth / 2 ?? 0}px)`
-      const textContent = d =>
-        d.runs
-          ? d.runs?.toLocaleString() +
-            ' - ' +
-            new Date(d.timestamp).toLocaleString('en-US', {
-              dateStyle: 'short',
-              timeStyle: undefined
-            })
-          : null
+      const height = d => {
+        const h = d.runs ? yOffset - this.y(d.runs) : 0
+        return h >= 0 ? h : 0
+      }
+
+      // These are used for the text labels on the bars
+      // which are unused at the moment
+      // const transform = `translate(${bandwidth / 2 ?? 0}px)`
+      // const textContent = d =>
+      //   d.runs
+      //     ? d.runs?.toLocaleString() +
+      //       ' - ' +
+      //       new Date(d.timestamp).toLocaleString('en-US', {
+      //         dateStyle: 'short',
+      //         timeStyle: undefined
+      //       })
+      //     : null
 
       this.mainGroup.style('transform', `translate(0, ${this.padding.top}px)`)
 
@@ -660,15 +696,15 @@ export default {
               .attr('x', xPosition)
               .attr('y', yOffset)
 
-            g.append('text')
-              .attr('x', xPosition)
-              .attr('y', yOffset - 5)
-              .style('text-anchor', 'middle')
-              .style('user-select', 'none')
-              .style('transform', transform)
-              .style('font', '10px Roboto, sans-serif')
-              .attr('fill', 'transparent')
-              .text(textContent)
+            // g.append('text')
+            //   .attr('x', xPosition)
+            //   .attr('y', yOffset - 5)
+            //   .style('text-anchor', 'middle')
+            //   .style('user-select', 'none')
+            //   .style('transform', transform)
+            //   .style('font', '10px Roboto, sans-serif')
+            //   .attr('fill', 'transparent')
+            //   .text(textContent)
 
             return g.call(enter => {
               enter
@@ -680,17 +716,17 @@ export default {
                 .attr('height', height)
                 .attr('y', yPosition)
 
-              enter
-                .select('text')
-                .transition('enter')
-                .duration(1000)
-                .delay(250)
-                .ease(d3.easeQuad)
-                .attr('y', d =>
-                  d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
-                )
-                .style('font', '10px Roboto, sans-serif')
-                .attr('fill', this.showText ? '#546E7A' : 'transparent')
+              // enter
+              //   .select('text')
+              //   .transition('enter')
+              //   .duration(1000)
+              //   .delay(250)
+              //   .ease(d3.easeQuad)
+              //   .attr('y', d =>
+              //     d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
+              //   )
+              //   .style('font', '10px Roboto, sans-serif')
+              //   .attr('fill', this.showText ? '#546E7A' : 'transparent')
 
               return enter
             })
@@ -713,17 +749,17 @@ export default {
                 .attr('width', bandwidth)
                 .attr('x', xPosition)
 
-              update
-                .select('text')
-                .transition('update')
-                .duration(1000)
-                .delay(500)
-                .ease(d3.easeQuad)
-                .attr('fill', this.showText ? '#546E7A' : 'transparent')
-                .attr('y', d =>
-                  d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
-                )
-                .attr('x', xPosition)
+              // update
+              //   .select('text')
+              //   .transition('update')
+              //   .duration(1000)
+              //   .delay(500)
+              //   .ease(d3.easeQuad)
+              //   .attr('fill', this.showText ? '#546E7A' : 'transparent')
+              //   .attr('y', d =>
+              //     d.runs ? yPosition(d) - 5 : yOffset + this.padding.y
+              //   )
+              //   .attr('x', xPosition)
             })
           },
           exit =>
