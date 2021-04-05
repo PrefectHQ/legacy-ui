@@ -1006,7 +1006,8 @@ export default {
           class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
           :class="{ active: chosenAction === item }"
           @click="selectAction(item)"
-          >{{ item.name }}
+        >
+          {{ item.name || item.action_type }}
           <!-- <v-spacer></v-spacer>
             <v-btn
               small
