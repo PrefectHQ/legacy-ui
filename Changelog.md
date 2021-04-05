@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add a label specifying which flow version the flow run has spawned from[#736](https://github.com/PrefectHQ/ui/pull/736)
 - Add the remaining states to the state filter - [#706](https://github.com/PrefectHQ/ui/pull/706)
 - Add Automations page - [#695](https://github.com/PrefectHQ/ui/pull/695)
 - Add Service Accounts and API keys to the UI - [#678](https://github.com/PrefectHQ/ui/pull/678)
