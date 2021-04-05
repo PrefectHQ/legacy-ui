@@ -121,6 +121,7 @@ export default {
         <v-skeleton-loader
           v-if="loadingHook > 0 || loadCards"
           type="list-item-avatar-three-line"
+          height="72"
         ></v-skeleton-loader
         ><AutoCard
           v-else
