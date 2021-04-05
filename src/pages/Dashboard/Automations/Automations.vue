@@ -117,16 +117,15 @@ export default {
     <v-divider class="my-10 mx-12" />
 
     <v-row>
+      <v-col cols="12" class="pb-0">
+        <div class="text-overline">Automations</div>
+      </v-col>
       <v-progress-circular
         v-if="!sortedHooks.length && loadingHook > 0"
         class="mx-auto my-4"
         indeterminate
         color="primary"
       />
-
-      <v-col cols="12" class="pb-0">
-        <div class="text-overline">Automations</div>
-      </v-col>
 
       <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
         <v-skeleton-loader
