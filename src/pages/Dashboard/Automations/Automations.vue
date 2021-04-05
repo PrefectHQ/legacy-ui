@@ -100,8 +100,11 @@ export default {
   </div>
   <div v-else>
     <v-row>
-      <v-col>
+      <v-col class="pb-0" cols="12">
         <div class="text-overline">New Automation</div>
+      </v-col>
+
+      <v-col cols="12">
         <AddAutoCard
           v-if="canEdit && !closeCard"
           @refresh="handleRefresh"
@@ -110,6 +113,9 @@ export default {
         />
       </v-col>
     </v-row>
+
+    <v-divider class="my-10 mx-12" />
+
     <v-row>
       <v-progress-circular
         v-if="!sortedHooks.length && loadingHook > 0"
@@ -117,6 +123,11 @@ export default {
         indeterminate
         color="primary"
       />
+
+      <v-col cols="12" class="pb-0">
+        <div class="text-overline">Automations</div>
+      </v-col>
+
       <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
         <v-skeleton-loader
           v-if="loadingHook > 0 || loadCards"
