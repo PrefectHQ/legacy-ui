@@ -5,6 +5,5 @@ query FlowByPk($flowId: uuid!) {
     version
     schedule
     flow_group_id
-    archived
   }
 }
