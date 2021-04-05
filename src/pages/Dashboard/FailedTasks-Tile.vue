@@ -15,11 +15,6 @@ export default {
     projectId: {
       type: String,
       default: null
-    },
-    fullHeight: {
-      required: false,
-      type: Boolean,
-      default: () => false
     }
   },
   data() {
@@ -111,13 +106,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="py-2"
-    tile
-    :style="{
-      height: fullHeight ? '330px' : 'auto'
-    }"
-  >
+  <v-card class="py-2" tile style="height: 100%;">
     <v-system-bar :color="stateColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->

@@ -63,15 +63,15 @@ export default {
       if (this.tab == 'upcoming') {
         title =
           this.loading > 0
-            ? 'Upcoming Runs'
-            : `${this.upcomingRuns?.length || 0} Upcoming Runs`
+            ? 'Upcoming runs'
+            : `${this.upcomingRuns?.length || 0} upcoming runs`
       }
 
       if (this.tab == 'late') {
         title =
           this.loading || this.isClearingLateRuns
-            ? 'Late Runs'
-            : `${this.lateRuns?.length || 0} Late Runs`
+            ? 'Late runs'
+            : `${this.lateRuns?.length || 0} late runs`
       }
 
       return title
@@ -413,7 +413,7 @@ export default {
           color="deepRed"
           small
           class="position-absolute"
-          :style="{ bottom: '12px', right: '4px' }"
+          :style="{ bottom: '8px', right: '4px' }"
           tile
           :loading="isClearingLateRuns"
           @click="handleOpenDialog"

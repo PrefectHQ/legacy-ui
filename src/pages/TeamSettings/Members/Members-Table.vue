@@ -1,5 +1,6 @@
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -110,6 +111,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['license']),
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
@@ -117,6 +119,9 @@ export default {
     },
     deleteSelfWarning() {
       return this.user.email === this.selectedUser.email
+    },
+    hasRBAC() {
+      return this.license?.terms?.plan === 'ENTERPRISE_2021'
     }
   },
   watch: {
@@ -203,12 +208,7 @@ export default {
             }
           })
 
-        this.$emit('load-end', {
-          fullUsers: this.membersItems.filter(m => m.role !== 'READ_ONLY_USER'),
-          readOnlyUsers: this.membersItems.filter(
-            m => m.role == 'READ_ONLY_USER'
-          )
-        })
+        this.$emit('load-end', this.membersItems)
         return data
       },
       error() {
@@ -274,7 +274,7 @@ export default {
 
       <!-- ACTIONS -->
       <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip v-if="hasRBAC" bottom>
           <template #activator="{ on }">
             <v-btn
               text

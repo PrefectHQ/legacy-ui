@@ -31,11 +31,6 @@ export default {
       this.createRingChart()
     })
   },
-  updated() {
-    this.$nextTick(() => {
-      this.createRingChart()
-    })
-  },
   methods: {
     refreshChart() {
       this.clearChart()

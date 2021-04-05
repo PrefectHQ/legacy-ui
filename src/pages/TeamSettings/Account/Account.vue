@@ -8,6 +8,7 @@ import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
 import UsageToday from '@/pages/TeamSettings/Account/Usage/UsageToday'
 import CurrentUsers from '@/pages/TeamSettings/Account/Usage/CurrentUsers'
+import UsageCycle from '@/pages/TeamSettings/Account/Usage/UsageCycle'
 import UsageTimeline from '@/pages/TeamSettings/Account/Usage/UsageTimeline'
 
 export default {
@@ -19,6 +20,7 @@ export default {
     Billing,
     UsageTimeline,
     CurrentUsers,
+    UsageCycle,
     UsageToday
   },
   mixins: [teamProfileMixin],
@@ -173,6 +175,23 @@ export default {
         </v-col>
         <v-col cols="12" md="6">
           <v-row>
+            <v-col
+              v-if="
+                isUsageBased && license && license.terms.plan !== 'FREE_2021'
+              "
+              cols="12"
+            >
+              <v-skeleton-loader
+                :loading="loadedTiles < 6"
+                type="image"
+                height="168"
+                class="usage"
+                transition="quick-fade"
+                tile
+              >
+                <UsageCycle />
+              </v-skeleton-loader>
+            </v-col>
             <v-col cols="12">
               <v-skeleton-loader
                 :loading="loadedTiles < 6"

@@ -137,15 +137,7 @@ export default {
             }
           })
 
-        this.$emit('load-end')
-        this.$emit('update-invitations', {
-          fullInvitations: this.pendingInvitationsItems.filter(
-            m => m.role !== 'READ_ONLY_USER'
-          ),
-          readOnlyInvitations: this.pendingInvitationsItems.filter(
-            m => m.role == 'READ_ONLY_USER'
-          )
-        })
+        this.$emit('load-end', this.pendingInvitationsItems)
         return data
       },
       error() {
