@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix an issue where we weren't correctly passing the license id to the committed usage query - [#741](https://github.com/PrefectHQ/ui/pull/741)
 
 ## 2021-04-05
 
