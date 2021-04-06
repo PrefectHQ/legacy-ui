@@ -1,0 +1,12 @@
+query AgentConfig($agentConfigId: uuid!) {
+  agent_config_by_pk(id: $agentConfigId) {
+    id
+    name
+
+    agents {
+      id
+      type
+      name
+    }
+  }
+}
