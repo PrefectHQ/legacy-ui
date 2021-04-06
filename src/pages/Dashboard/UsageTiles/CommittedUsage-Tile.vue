@@ -36,7 +36,7 @@ export default {
       query: require('@/graphql/Dashboard/committed-usage.gql'),
       variables() {
         return {
-          license: this.license?.id
+          license_id: this.license?.id
         }
       },
       skip() {
