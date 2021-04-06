@@ -88,14 +88,20 @@ export const actionTypes = [
 export const featureFlaggedEventTypes = [...actionTypes]
 
 export const flowEventTypes = [
-  { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
-  {
-    name: 'does not start',
-    enum: 'SCHEDULED_NOT_STARTED'
-  },
   {
     name: 'changes state',
-    enum: 'CHANGES_STATE'
+    enum: 'CHANGES_STATE',
+    permission: 'feature:hooks'
+  },
+  {
+    name: 'does not finish',
+    enum: 'STARTED_NOT_FINISHED',
+    permission: 'feature:flow-slas'
+  },
+  {
+    name: 'does not start',
+    enum: 'SCHEDULED_NOT_STARTED',
+    permission: 'feature:flow-slas'
   }
 ]
 

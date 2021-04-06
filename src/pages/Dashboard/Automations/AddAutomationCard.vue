@@ -4,14 +4,14 @@ import AddAction from '@/pages/Dashboard/Automations/AddAction'
 import CreateAgentConfigForm from '@/pages/Dashboard/Automations/CreateAgentConfigForm'
 import { AUTOMATIONSTATES, flowEventTypes } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import MenuTooltip from '@/components/MenuTooltip'
+import UpgradeBadge from '@/components/UpgradeBadge'
 
 export default {
   components: {
     AddAction,
     CreateAgentConfigForm,
     ConfirmDialog,
-    MenuTooltip
+    UpgradeBadge
   },
   props: {
     hookDetail: {
@@ -788,7 +788,7 @@ export default {
                 :color="
                   agentOrFlow === item.type ? 'accentPink' : 'utilGrayMid'
                 "
-                class="mr-2 cursor-pointer text-h6 font-weight-light remove--disabled"
+                class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
                 :disabled="!hasPermission(item.permission)"
                 :input-value="agentOrFlow === item.type"
                 @click="selectAgentOrFlow(item.type)"
@@ -798,33 +798,10 @@ export default {
                 </v-icon>
                 <span class="text-lowercase">{{ item.type }}</span>
 
-                <MenuTooltip v-if="!hasPermission(item.permission)" hide-close>
-                  <template #activator>
-                    <div class="p-badge">
-                      <v-icon>fa-fw fa-sm fa-cloud</v-icon>
-                    </div>
-                    <!-- <v-badge
-                      color="primary"
-                      offset-y="-10"
-                      offset-x="-5"
-                      class="pa-0"
-                    >
-                      <template #badge>
-                        <div
-                          class="white--text d-flex align-center justify-center center-absolute"
-                          style="
-                            font-size: 18px;
-                            height: 12px;
-                            width: 12px;
-                          "
-                        >
-                          
-                        </div>
-                      </template>
-                    </v-badge> -->
-                  </template>
-                  Hello!
-                </MenuTooltip>
+                <UpgradeBadge v-if="!hasPermission(item.permission)">
+                  <span class="font-weight-medium">Agent automations</span> are
+                  only available on Standard and Enterprise plans.
+                </UpgradeBadge>
               </v-btn>
             </v-col>
           </v-row>
@@ -1017,16 +994,32 @@ export default {
           Choose an event:
         </div>
         <div>
-          <v-row class="px-1">
-            <div
-              v-for="item in filteredFlowEventTypes"
-              :key="item.enum"
-              v-ripple
-              class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
-              :class="{ active: flowEventType.name === item.name }"
-              @click="selectFlowEventType(item)"
-              ><div class="text-center text-body-1">{{ item.name }}</div>
-            </div>
+          <v-row>
+            <v-col cols="12">
+              <v-btn
+                v-for="item in filteredFlowEventTypes"
+                :key="item.enum"
+                outlined
+                depressed
+                :color="
+                  flowEventType.name === item.name
+                    ? 'accentPink'
+                    : 'utilGrayMid'
+                "
+                class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
+                :input-value="flowEventType.name === item.name"
+                :disabled="!hasPermission(item.permission)"
+                @click="selectFlowEventType(item)"
+                ><div class="text-center text-body-1 text-none">
+                  {{ item.name }}
+                </div>
+
+                <UpgradeBadge v-if="!hasPermission(item.permission)">
+                  <span class="font-weight-medium">Flow SLA automations</span>
+                  are only available on Standard and Enterprise plans.
+                </UpgradeBadge>
+              </v-btn>
+            </v-col>
           </v-row>
         </div>
         <v-card-actions>
@@ -1282,11 +1275,5 @@ export default {
   &:focus {
     background-color: rgba(0, 0, 0, 0.05);
   }
-}
-
-.p-badge {
-  position: absolute;
-  right: 0;
-  top: 0;
 }
 </style>
