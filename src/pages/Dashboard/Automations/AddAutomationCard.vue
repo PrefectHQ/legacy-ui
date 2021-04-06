@@ -143,13 +143,13 @@ export default {
       return this.agentOrFlow === 'agent'
         ? agentName || 'agent'
         : this.flowNamesList?.length > 1
-        ? this.flowNamesList?.length === this.flows.length
+        ? this.flowNamesList?.length === this.flows?.length
           ? 'any flow'
-          : 'mulitiple flows'
+          : 'any of these flows'
         : this.flowNamesList.toString() || this.agentOrFlow
     },
     hookStates() {
-      return this.chosenStates.length === this.states['All'].length
+      return this.chosenStates?.length === this.states['All'].length
         ? 'any state'
         : this.stateName && this.stateName != 'Custom'
         ? this.stateName
@@ -623,7 +623,7 @@ export default {
       },
       loadingKey: 'loading',
       pollInterval: 60000,
-      update: data => data?.flow
+      update: data => data?.flow || []
     },
     actions: {
       query: require('@/graphql/Automations/actions.gql'),

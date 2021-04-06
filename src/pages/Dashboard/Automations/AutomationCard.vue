@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable vue/no-v-html */
 import { mapActions } from 'vuex'
 import {
   AUTOMATIONSTATES,
@@ -33,12 +34,12 @@ export default {
       deletingHook: false,
       hookDetails: {
         FlowRunStateChangedEvent: {
-          type: 'a run from',
+          type: 'any run from',
           action: 'changes state',
           icon: 'pi-flow'
         },
         FlowSLAFailedEvent: {
-          type: 'a run from',
+          type: 'any run from',
           action: 'SLA fails',
           icon: 'pi-flow'
         },
@@ -89,9 +90,9 @@ export default {
     },
     hookStates() {
       return this.states?.length === AUTOMATIONSTATES['All']?.length
-        ? 'changes to any state'
+        ? 'changes to <span class="font-weight-bold">any state</span>'
         : this.states?.length != 1
-        ? 'changes to selected states'
+        ? 'changes to <span class="font-weight-bold">any of these states</span>'
         : presentTenseStates[this.states[0].toUpperCase()] ||
           titleCasePresentTenseStates[this.states[0]]
     },
@@ -123,7 +124,7 @@ export default {
         : this.hook?.event_tags?.flow_group_id?.length > 2 && this.flowName
         ? `${this.flowName[0]?.name} and others`
         : this.hook?.event_tags?.flow_group_id?.length == 2 && this.flowName
-        ? `${this.flowName[0].name} and ${this.flowName[1].name}`
+        ? `${this.flowName[0].name} <span class="font-weight-regular">or</span> ${this.flowName[1].name}`
         : allFlows
         ? 'any flow'
         : this.flowName
@@ -292,11 +293,11 @@ export default {
             When <span v-if="!hookName">all </span>{{ hookType }}
             <v-tooltip v-if="flowName" top>
               <template #activator="{ on }">
-                <span class="font-weight-bold" v-on="on">{{ hookName }} </span>
+                <span class="font-weight-bold" v-on="on" v-html="hookName" />
               </template>
               {{ flowNameList.join(', ') }}
             </v-tooltip>
-            <span v-else class="font-weight-bold">{{ hookName }}</span>
+            <span v-else class="font-weight-bold" v-html="hookName" />
             <span v-if="isAgent">
               with
               {{
@@ -312,7 +313,7 @@ export default {
             </span>
             <v-tooltip v-if="includeTo" top>
               <template #activator="{ on }">
-                <span v-on="on">{{ hookStates }}</span>
+                <span v-on="on" v-html="hookStates" />
               </template>
               <span>{{ states.join(', ') }}</span></v-tooltip
             >, then <span class="font-weight-bold">{{ hookAction }}</span
