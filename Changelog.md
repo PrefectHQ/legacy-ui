@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Check role setting based on permissions blob instead of plan name - [#743](https://github.com/PrefectHQ/ui/pull/743)
 
 ### Bugfixes
 
