@@ -99,25 +99,25 @@ export default {
             : ''
         "
       >
-        <v-row v-if="$slots['row-2-col-1-row-1-tile-1']" no-gutters>
+        <v-row v-if="$slots['row-2-col-1-row-1-tile-1']">
           <v-col>
             <slot name="row-2-col-1-row-1-tile-1" />
           </v-col>
         </v-row>
 
-        <v-row v-if="$slots['row-2-col-1-row-2-tile-1']" no-gutters>
+        <v-row v-if="$slots['row-2-col-1-row-2-tile-1']">
           <v-col>
             <slot name="row-2-col-1-row-2-tile-1" />
           </v-col>
         </v-row>
 
-        <v-row v-if="$slots['row-2-col-1-row-3-tile-1']" no-gutters>
+        <v-row v-if="$slots['row-2-col-1-row-3-tile-1']">
           <v-col>
             <slot name="row-2-col-1-row-3-tile-1" />
           </v-col>
         </v-row>
 
-        <v-row v-if="$slots['row-2-col-1-row-4-tile-1']" no-gutters>
+        <v-row v-if="$slots['row-2-col-1-row-4-tile-1']">
           <v-col
             :class="{
               'pt-1': $slots['row-0']
