@@ -177,6 +177,26 @@ export default {
       if (!this.searchEntry) return null
       return `%${this.searchEntry}%`
     },
+    stateGroupAll() {
+      return this.stateGroup('All')
+    },
+    stateGroupCustom() {
+      return (
+        !this.stateGroupAll &&
+        !this.stateGroupFailed &&
+        !this.stateGroupFinished &&
+        !this.stateGroupSuccess
+      )
+    },
+    stateGroupFailed() {
+      return this.stateGroup('Failed')
+    },
+    stateGroupFinished() {
+      return this.stateGroup('Finished')
+    },
+    stateGroupSuccess() {
+      return this.stateGroup('Success')
+    },
     validUUID() {
       if (!this.searchEntry) return false
 
@@ -259,6 +279,9 @@ export default {
         AUTOMATIONSTATES[group].length == this.chosenStates.length
       )
     },
+    dynamicStateGroup(group) {
+      return this[`stateGroup${group}`]
+    },
     switchStep(selectedStep) {
       if (this.step.name === 'openDuration')
         this.steps['openDuration'].complete = true
@@ -333,7 +356,7 @@ export default {
     selectStateGroup(group) {
       this.steps['selectState'].complete = true
       this.stateName = group
-      this.chosenStates = this.states[group]
+      this.chosenStates = [...this.states[group]]
     },
     selectStates(state) {
       this.steps['selectState'].complete = true
@@ -629,7 +652,7 @@ export default {
           >
             <truncate
               v-if="flowNamesList && flowNamesList.length"
-              :content="flowNamesList.toString()"
+              :content="flowNamesList.join(', ')"
             >
               {{ flowNames }}
             </truncate>
@@ -685,10 +708,9 @@ export default {
             </v-btn>
             seconds</span
           ><span v-if="includeTo">
-            to
-            <v-btn
+            to<v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              class=" px-0 pb-1 text-h5"
+              class="ml-1 px-0 pb-1 text-h5"
               :class="format('selectState')"
               text
               :disabled="addAction"
@@ -738,7 +760,7 @@ export default {
     <transition name="quick-fade" mode="out-in">
       <!-- OPEN AGENT OR FLOW -->
       <div v-if="step.name === 'openAgentOrFlow'" key="openAgentOrFlow">
-        <v-card-text class="pa-0 pb-8">
+        <div>
           <div class="mb-2 text-subtitle-1 font-weight-light">
             Choose an automation type:
           </div>
@@ -759,7 +781,7 @@ export default {
               </div>
             </div>
           </v-row>
-        </v-card-text>
+        </div>
         <v-card-actions v-if="agentOrFlow !== 'this'">
           <v-spacer></v-spacer>
           <v-btn
@@ -988,43 +1010,36 @@ export default {
 
       <!-- SELECT STATE -->
       <div v-else-if="step.name === 'selectState'" key="selectState">
-        <!-- <v-chip-group mandatory >
-          
-        </v-chip-group> -->
-
-        <!-- :active="
-              states[item].every(state => chosenStates.includes(state)) &&
-                states[item].length === chosenStates.length
-            " -->
-
         <v-btn
           v-for="item in stateGroups"
           :key="item.id"
-          :color="{ primary: stateGroup(item) }"
-          label
+          :color="dynamicStateGroup(item) ? 'accentPink' : null"
+          depressed
           max-width="300px"
           :title="
             item == 'All'
               ? `Select all states`
               : `Select ${item} and all connected states`
           "
-          class="ma-1"
+          class="mr-2"
+          :class="{ 'white--text': dynamicStateGroup(item) }"
           @click="selectStateGroup(item)"
         >
           {{ item }}
         </v-btn>
 
-        <v-row class="mt-4 px-1">
+        <div class="mt-4">
           <div
             v-for="item in states['All']"
             :key="item"
             v-ripple
-            class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
+            class="d-inline-block chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1"
+            :class="{ active: chosenStates.includes(item) }"
             @click="selectStates(item)"
           >
             {{ item }}
           </div>
-        </v-row>
+        </div>
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -1096,15 +1111,27 @@ export default {
 
 <style lang="scss" scoped>
 .chip-bigger {
-  border: 1px solid;
-  border-color: var(--v-utilGrayLight-base) !important;
-  border-radius: 5px;
   height: 60px;
+  position: relative;
   transition: all 50ms;
   width: 100%;
 
+  &::after {
+    border: 1px solid var(--v-utilGrayLight-base);
+    border-radius: 5px;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
   &.active {
-    border-color: var(--v-codePink-base) !important;
+    &::after {
+      border: 2px solid;
+      border-color: var(--v-codePink-base) !important;
+    }
   }
 
   &:hover,
@@ -1114,14 +1141,26 @@ export default {
 }
 
 .chip-small {
-  border: 1px solid;
-  border-color: var(--v-utilGrayLight-base) !important;
-  border-radius: 5px;
   max-width: fit-content;
+  position: relative;
   transition: all 50ms;
 
+  &::after {
+    border: 1px solid var(--v-utilGrayLight-base);
+    border-radius: 5px;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
   &.active {
-    border-color: var(--v-codePink-base) !important;
+    &::after {
+      border: 2px solid;
+      border-color: var(--v-codePink-base) !important;
+    }
   }
 
   &:hover,
