@@ -113,7 +113,10 @@ export default {
       return this.users + this.invitations
     },
     hasRBAC() {
-      return this.license?.terms?.plan === 'ENTERPRISE_2021'
+      return (
+        this.license?.terms?.plan === 'ENTERPRISE_2021' ||
+        this.license?.terms?.plan === 'PLATFORM'
+      )
     }
   },
   watch: {

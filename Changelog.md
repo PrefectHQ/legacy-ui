@@ -10,6 +10,16 @@
 
 - None
 
+## 2021-04-06
+
+### Features and Improvements
+
+- Include legacy platform licenses in RBAC check - [#740](https://github.com/PrefectHQ/ui/pull/740)
+
+### Bugfixes
+
+- Fix an issue where we weren't correctly passing the license id to the committed usage query - [#741](https://github.com/PrefectHQ/ui/pull/741)
+
 ## 2021-04-05
 
 ### Features and Improvements
