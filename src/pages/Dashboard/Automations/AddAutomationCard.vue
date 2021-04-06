@@ -4,12 +4,14 @@ import AddAction from '@/pages/Dashboard/Automations/AddAction'
 import CreateAgentConfigForm from '@/pages/Dashboard/Automations/CreateAgentConfigForm'
 import { AUTOMATIONSTATES, flowEventTypes } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import MenuTooltip from '@/components/MenuTooltip'
 
 export default {
   components: {
     AddAction,
     CreateAgentConfigForm,
-    ConfirmDialog
+    ConfirmDialog,
+    MenuTooltip
   },
   props: {
     hookDetail: {
@@ -29,6 +31,10 @@ export default {
         openDuration: { name: 'openDuration', complete: false },
         selectDoThis: { name: 'selectDoThis', complete: false }
       },
+      hookTypes: [
+        { type: 'flow', permission: 'feature:hooks' },
+        { type: 'agent', permission: 'feature:agent-slas' }
+      ],
       selectAll: false,
       deleting: false,
       saving: false,
@@ -64,6 +70,7 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['projects']),
+    ...mapGetters('license', ['permissions']),
     //We can not update agent for now - config id needs to be added at agent creation
     // ...mapGetters('agent', ['agents']),
     // projectsList() {
@@ -253,7 +260,7 @@ export default {
       // const stepComplete = this.steps[selectedStep]
       // const otherComplete = this.steps[otherStep]
       return this.step.name === selectedStep || this.step.name === otherStep
-        ? 'codePink'
+        ? 'accentPink'
         : 'utilGrayDark'
     },
     createAgentConfig() {},
@@ -347,6 +354,9 @@ export default {
       } else {
         this.switchStep('selectEventType')
       }
+    },
+    hasPermission(permission) {
+      return this.permissions?.includes(permission)
     },
     selectFlowEventType(type) {
       this.steps['selectEventType'].complete = true
@@ -766,24 +776,57 @@ export default {
       <div v-if="step.name === 'openAgentOrFlow'" key="openAgentOrFlow">
         <div>
           <div class="mb-2 text-subtitle-1 font-weight-light">
-            Choose an automation type:
+            Choose an automation:
           </div>
-          <v-row class="px-1">
-            <div
-              v-for="item in ['flow', 'agent']"
-              :key="item"
-              v-ripple
-              class="chip-small px-4 py-2 ma-2 cursor-pointer text-h6 font-weight-light"
-              :class="{ active: agentOrFlow === item }"
-              @click="selectAgentOrFlow(item)"
-            >
-              <div class="text-center">
-                <v-icon class="pr- pb-1">
-                  {{ item === 'flow' ? 'pi-flow' : 'pi-agent' }}
+          <v-row>
+            <v-col cols="12">
+              <v-btn
+                v-for="item in hookTypes"
+                :key="item.type"
+                outlined
+                depressed
+                :color="
+                  agentOrFlow === item.type ? 'accentPink' : 'utilGrayMid'
+                "
+                class="mr-2 cursor-pointer text-h6 font-weight-light remove--disabled"
+                :disabled="!hasPermission(item.permission)"
+                :input-value="agentOrFlow === item.type"
+                @click="selectAgentOrFlow(item.type)"
+              >
+                <v-icon class="mr-3">
+                  {{ item.type === 'flow' ? 'pi-flow' : 'pi-agent' }}
                 </v-icon>
-                {{ item }}
-              </div>
-            </div>
+                <span class="text-lowercase">{{ item.type }}</span>
+
+                <MenuTooltip v-if="!hasPermission(item.permission)" hide-close>
+                  <template #activator>
+                    <div class="p-badge">
+                      <v-icon>fa-fw fa-sm fa-cloud</v-icon>
+                    </div>
+                    <!-- <v-badge
+                      color="primary"
+                      offset-y="-10"
+                      offset-x="-5"
+                      class="pa-0"
+                    >
+                      <template #badge>
+                        <div
+                          class="white--text d-flex align-center justify-center center-absolute"
+                          style="
+                            font-size: 18px;
+                            height: 12px;
+                            width: 12px;
+                          "
+                        >
+                          
+                        </div>
+                      </template>
+                    </v-badge> -->
+                  </template>
+                  Hello!
+                </MenuTooltip>
+              </v-btn>
+            </v-col>
           </v-row>
         </div>
         <v-card-actions v-if="agentOrFlow !== 'this'">
@@ -1202,7 +1245,7 @@ export default {
   &.active {
     &::after {
       border: 2px solid;
-      border-color: var(--v-codePink-base) !important;
+      border-color: var(--v-accentPink-base) !important;
     }
   }
 
@@ -1231,7 +1274,7 @@ export default {
   &.active {
     &::after {
       border: 2px solid;
-      border-color: var(--v-codePink-base) !important;
+      border-color: var(--v-accentPink-base) !important;
     }
   }
 
@@ -1239,5 +1282,11 @@ export default {
   &:focus {
     background-color: rgba(0, 0, 0, 0.05);
   }
+}
+
+.p-badge {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 </style>

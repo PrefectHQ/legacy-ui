@@ -298,6 +298,22 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   }
 }
 
+// .v-btn.v-btn--disabled,
+// .v-btn--disabled.remove--disabled {
+//   color: #f68121 !important;
+
+//   .v-icon {
+//     color: #f68121 !important;
+//   }
+// }
+
+.remove--disabled.theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn-outlined),
+.remove--disabled.theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn-outlined) {
+  .v-icon {
+    color: inherit !important;
+  }
+}
+
 /* stylelint-disable */
 .disabled.v-badge {
   pointer-events: none !important;

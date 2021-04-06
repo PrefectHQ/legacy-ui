@@ -282,7 +282,7 @@ export default {
     <v-card-text class="text-h6 font-weight-light">
       <v-row>
         <v-col cols="11" lg="11" class="d-flex align-center justify-start">
-          <v-icon color="codePink" class="pr-2">
+          <v-icon color="accentPink" class="pr-2">
             {{
               hookDetails[hook.event_type]
                 ? hookDetails[hook.event_type].icon
