@@ -64,7 +64,7 @@ export default {
     max-width: 31px;
     right: 0;
     transition: 250ms ease-in-out;
-    z-index: 10;
+    z-index: 4;
   }
   /* stylelint-enable */
 

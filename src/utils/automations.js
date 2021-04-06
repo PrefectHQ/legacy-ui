@@ -96,12 +96,12 @@ export const flowEventTypes = [
   {
     name: 'does not finish',
     enum: 'STARTED_NOT_FINISHED',
-    permission: 'feature:flow-slas'
+    permission: 'feature:flow-sla'
   },
   {
     name: 'does not start',
     enum: 'SCHEDULED_NOT_STARTED',
-    permission: 'feature:flow-slas'
+    permission: 'feature:flow-sla'
   }
 ]
 

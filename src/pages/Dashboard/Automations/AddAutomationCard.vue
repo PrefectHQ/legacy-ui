@@ -35,7 +35,7 @@ export default {
       },
       hookTypes: [
         { type: 'flow', label: 'flow run', permission: 'feature:hooks' },
-        { type: 'agent', label: 'agent', permission: 'feature:agent-slas' }
+        { type: 'agent', label: 'agent', permission: 'feature:agent-sla' }
       ],
       selectAll: false,
       deleting: false,
