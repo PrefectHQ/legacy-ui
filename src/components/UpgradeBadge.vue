@@ -3,28 +3,43 @@ import MenuTooltip from '@/components/MenuTooltip'
 export default {
   components: {
     MenuTooltip
+  },
+  props: {
+    inline: {
+      type: Boolean,
+      default: false,
+      required: false
+    }
   }
 }
 </script>
 
 <template>
-  <MenuTooltip hide-close nudge-top="16px" transition="slide-x-transition">
+  <MenuTooltip
+    hide-close
+    :nudge-top="inline ? '-4px' : '16px'"
+    :nudge-left="inline ? '-4px' : null"
+    transition="slide-x-transition"
+  >
     <template #activator>
-      <v-badge
-        color="accentPink"
-        offset-y="-12"
-        origin="center"
-        class="pa-0 upgrade-badge"
-      >
-        <template #badge>
-          <div class="white--text d-flex align-center justify-center px-1">
-            <div class="appearable text-none font-weight-medium">
-              Upgrade
+      <router-link :to="'/plans'">
+        <v-badge
+          color="accentPink"
+          offset-y="-12"
+          origin="center"
+          :inline="inline"
+          class="pa-0 upgrade-badge"
+        >
+          <template #badge>
+            <div class="white--text d-flex align-center justify-center px-1">
+              <div class="appearable text-none font-weight-medium">
+                Upgrade
+              </div>
+              <v-icon>fa-fw fa-sm fa-cloud</v-icon>
             </div>
-            <v-icon>fa-fw fa-sm fa-cloud</v-icon>
-          </div>
-        </template>
-      </v-badge>
+          </template>
+        </v-badge>
+      </router-link>
     </template>
 
     <div class="utilGrayMid--text text-h6 font-weight-light">
