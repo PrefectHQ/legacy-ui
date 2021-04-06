@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-04-06
+
+### Features and Improvements
+
 - Include legacy platform licenses in RBAC check - [#740](https://github.com/PrefectHQ/ui/pull/740)
 
 ### Bugfixes
