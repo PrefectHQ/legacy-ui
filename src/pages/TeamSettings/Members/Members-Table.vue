@@ -121,7 +121,10 @@ export default {
       return this.user.email === this.selectedUser.email
     },
     hasRBAC() {
-      return this.license?.terms?.plan === 'ENTERPRISE_2021'
+      return (
+        this.license?.terms?.plan === 'ENTERPRISE_2021' ||
+        this.license?.terms?.plan === 'PLATFORM'
+      )
     }
   },
   watch: {

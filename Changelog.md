@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Include legacy platform licenses in RBAC check - [#740](https://github.com/PrefectHQ/ui/pull/740)
 
 ### Bugfixes
 
