@@ -54,6 +54,7 @@ export default {
       flowEventType: null,
       flowEventTypes: flowEventTypes,
       notAll: !!this.hookDetail?.flowName || false,
+      previousStep: null,
       isActive: false,
       rules: {
         required: val => !!val || 'Required',
@@ -284,6 +285,8 @@ export default {
       return this[`stateGroup${group}`]
     },
     switchStep(selectedStep) {
+      this.previousStep = this.step.name
+
       if (this.step.name === 'openDuration')
         this.steps['openDuration'].complete = true
       this.step = this.steps[selectedStep]
@@ -789,13 +792,12 @@ export default {
             color="primary"
             elevation="0"
             title="Next"
-            class="mx-1"
             @click="
               agentOrFlow === 'agent'
                 ? switchStep('selectDoThis')
                 : switchStep('selectFlow')
             "
-            ><span style="text-transform: none;"> Next</span>
+            ><span style="text-transform: none;">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -859,14 +861,21 @@ export default {
         <v-card-actions v-if="!showAgentConfigForm" class="px-0">
           <v-spacer></v-spacer>
           <v-btn
+            text
+            title="Previous"
+            class="mr-1"
+            color="utilGrayMid"
+            @click="switchStep('openAgentOrFlow')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
             color="primary"
             elevation="0"
             :disabled="!selectedAgentConfig"
             title="Next"
-            class="mx-1"
             @click="switchStep('selectDoThis')"
           >
-            <span style="text-transform: none;"> Next</span>
+            <span style="text-transform: none;">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -940,13 +949,20 @@ export default {
         <v-card-actions class="px-0">
           <v-spacer></v-spacer>
           <v-btn
+            text
+            title="Previous"
+            color="utilGrayMid"
+            class="mr-1"
+            @click="switchStep('openAgentOrFlow')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
             color="primary"
             elevation="0"
             :disabled="!selectedFlows.length"
             title="Next"
-            class="mx-1"
             @click="handleFlowNext"
-            ><span style="text-transform: none;"> Next</span>
+            ><span style="text-transform: none;">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -954,6 +970,9 @@ export default {
 
       <!-- SELECT EVENT TYPE -->
       <div v-else-if="step.name === 'selectEventType'" key="selectEventType">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose an event:
+        </div>
         <div>
           <v-row class="px-1">
             <div
@@ -967,16 +986,24 @@ export default {
             </div>
           </v-row>
         </div>
-        <v-card-actions v-if="flowEventType.enum">
+        <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn
+            text
+            title="Previous"
+            color="utilGrayMid"
+            class="mr-1"
+            @click="switchStep('selectFlow')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
           <v-btn
             color="primary"
             elevation="0"
             title="Next"
-            class="mx-1"
+            :disabled="!flowEventType.enum"
             @click="selectFlowEventType()"
           >
-            <span style="text-transform: none;"> Next</span>
+            <span style="text-transform: none;">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -984,6 +1011,9 @@ export default {
 
       <!-- OPEN DURATION -->
       <div v-else-if="step.name === 'openDuration'" key="openDuration">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose SLA duration:
+        </div>
         <div>
           <v-col class="pa-0" cols="12" sm="6" lg="3">
             <v-text-field
@@ -992,22 +1022,27 @@ export default {
               :rules="[rules.required, rules.notNull]"
               persistent-hint
               outlined
-              hint="Hint: confirm duration by pressing the Enter key"
               @keydown.enter="closeSeconds"
-              @blur="closeSeconds"
             ></v-text-field>
           </v-col>
         </div>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
+            text
+            title="Previous"
+            class="mr-1"
+            color="utilGrayMid"
+            @click="switchStep('selectEventType')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
             color="primary"
             elevation="0"
             title="Next"
-            class="mx-1"
             @click="closeSeconds"
           >
-            <span style="text-transform: none;"> Next</span>
+            <span style="text-transform: none;">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -1049,13 +1084,20 @@ export default {
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
+            text
+            title="Previous"
+            class="mr-1"
+            color="utilGrayMid"
+            @click="switchStep('selectEventType')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
             color="primary"
             elevation="0"
             title="Next"
-            class="mx-1"
             :disabled="chosenStates.length < 1"
             @click="switchStep('selectDoThis')"
-            ><span style="text-transform: none;"> Next</span>
+            ><span style="text-transform: none;">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -1063,6 +1105,10 @@ export default {
 
       <!-- SELECT ACTION -->
       <div v-else-if="step.name === 'selectDoThis'" key="selectDoThis">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose an action:
+        </div>
+
         <v-row v-if="!addAction">
           <v-col>
             <v-btn small elevation="0" color="primary" @click="addNewAction">
@@ -1108,6 +1154,27 @@ export default {
           @close-action="addAction = false"
           @new-action="createAction"
         />
+
+        <v-card-actions v-if="!addAction">
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            title="Previous"
+            class="mr-1"
+            color="utilGrayMid"
+            @click="step = steps[previousStep]"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
+            color="primary"
+            elevation="0"
+            title="Save"
+            :loading="saving"
+            :disabled="!completeAction"
+            @click="createHook"
+            ><span style="text-transform: none;">Save</span>
+          </v-btn>
+        </v-card-actions>
       </div>
       <!-- END SELECT ACTION -->
     </transition>
