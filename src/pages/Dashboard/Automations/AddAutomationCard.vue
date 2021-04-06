@@ -44,7 +44,7 @@ export default {
       stateGroups: Object.keys(AUTOMATIONSTATES),
       states: AUTOMATIONSTATES,
       stateName: '',
-      agentFlowOrSomethingElse: '',
+      agentFlowOrSomethingElse: null,
       chosenStates:
         this.hookDetail?.hook?.event_tags?.state || AUTOMATIONSTATES['All'],
       disableClick: false,
@@ -80,13 +80,14 @@ export default {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
         return 'agent'
+      if (this.hookDetails) return 'flow'
       return 'this'
     },
     disableStep() {
       return this.agentOrFlow === 'agent' || this.selectedFlows.length > 1
     },
     disableDoThis() {
-      if (this.agentOrFlow === 'this') return true
+      if (this.agentOrFlow === 'this' && !this.hookDetail) return true
       if (this.agentOrFlow === 'flow' && this.selectedFlows.length < 1)
         return true
       return false
@@ -650,13 +651,13 @@ export default {
             max-width="500px"
             @click="switchStep('openAgentOrFlow')"
           >
+            <span v-if="agentOrFlow === 'agent'">{{ flowNames }}s</span>
             <truncate
-              v-if="flowNamesList && flowNamesList.length"
+              v-else-if="flowNamesList && flowNamesList.length"
               :content="flowNamesList.join(', ')"
             >
               {{ flowNames }}
             </truncate>
-            <span v-else-if="agentOrFlow === 'agent'">{{ flowNames }}s</span>
             <span v-else>{{ flowNames }}</span>
           </v-btn>
 
@@ -719,7 +720,7 @@ export default {
             >
               {{ hookStates }}</v-btn
             ></span
-          >,<v-btn
+          >, then<v-btn
             :style="{
               'text-transform': 'none',
               'min-width': '0px'
@@ -807,7 +808,11 @@ export default {
       >
         <div class="pt-0 pb-8">
           <div class="mb-2 text-subtitle-1 font-weight-light">
-            Choose an agent config:
+            {{
+              !showAgentConfigForm
+                ? 'Choose an agent config:'
+                : 'Name your agent config:'
+            }}
           </div>
           <v-row v-if="!showAgentConfigForm" no-gutters>
             <v-col cols="12">
@@ -1077,7 +1082,7 @@ export default {
             :key="item.id"
             v-ripple
             class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
-            :class="{ active: chosenAction === item }"
+            :class="{ active: chosenAction && chosenAction.id === item.id }"
             @click="selectAction(item)"
           >
             {{ item.name || item.action_type }}

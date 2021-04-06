@@ -294,7 +294,7 @@ export default {
               <template #activator="{ on }">
                 <span class="font-weight-bold" v-on="on">{{ hookName }} </span>
               </template>
-              {{ flowNameList.toString() }}
+              {{ flowNameList.join(', ') }}
             </v-tooltip>
             <span v-else class="font-weight-bold">{{ hookName }}</span>
             <span v-if="isAgent">
@@ -305,9 +305,8 @@ export default {
                   : 'this config'
               }}</span
             >
-            {{ hookDetail }}
-
-            <span v-if="includeSeconds">
+            {{ hookDetail
+            }}<span v-if="includeSeconds">
               for
               <span class="font-weight-bold">{{ seconds }} seconds</span>
             </span>
@@ -315,7 +314,7 @@ export default {
               <template #activator="{ on }">
                 <span v-on="on">{{ hookStates }}</span>
               </template>
-              <span>{{ states.toString() }}</span> </v-tooltip
+              <span>{{ states.join(', ') }}</span></v-tooltip
             >, then <span class="font-weight-bold">{{ hookAction }}</span
             >.
           </span>
