@@ -21,6 +21,7 @@
 - Add the proper permissions to role-based invitations - [#719](https://github.com/PrefectHQ/ui/pull/719)
 - Add the proper permissions to flow and task concurrency pages - [#720](https://github.com/PrefectHQ/ui/pull/720)
 - Small onboarding fixes - [#721](https://github.com/PrefectHQ/ui/pull/721)
+- Fix gutters on the tile layout for row-2-col-1 - [#738](https://github.com/PrefectHQ/ui/pull/738)
 
 ## 2021-03-25
 
