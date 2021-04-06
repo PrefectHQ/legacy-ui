@@ -648,7 +648,7 @@ export default {
 </script>
 
 <template>
-  <v-card outlined class="pb-4 px-4">
+  <v-card class="pb-4 px-4" elevation="4">
     <v-card-text class="text-h5 font-weight-light pb-0 pt-4 px-0">
       <v-row no-gutters>
         <v-col cols="9" lg="10">

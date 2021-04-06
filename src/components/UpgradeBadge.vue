@@ -27,7 +27,7 @@ export default {
       </v-badge>
     </template>
 
-    <div class="blue-grey--text text-h6 font-weight-light">
+    <div class="utilGrayMid--text text-h6 font-weight-light">
       <slot />
 
       <br />

@@ -278,7 +278,12 @@ export default {
     @refetch-hooks="handleRefetch"
     @close="closeCard"
   />
-  <v-card v-else-if="showHook" class="text-h6" outlined @click="editHook">
+  <v-card
+    v-else-if="showHook"
+    class="hover-card text-h6"
+    outlined
+    @click="editHook"
+  >
     <v-card-text class="text-h6 font-weight-light">
       <v-row>
         <v-col cols="11" lg="11" class="d-flex align-center justify-start">
@@ -394,3 +399,15 @@ export default {
     ></v-card
   >
 </template>
+
+<style lang="scss" scoped>
+.hover-card {
+  transition: box-shadow 150ms ease-in-out;
+
+  &:focus,
+  &:hover {
+    box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%),
+      0 1px 10px 0 rgb(0 0 0 / 12%) !important;
+  }
+}
+</style>
