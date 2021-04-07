@@ -1,0 +1,5 @@
+mutation CreateFlowSLAConfig($input: create_flow_sla_config_input!) {
+  create_flow_sla_config(input: $input) {
+    id
+  }
+}

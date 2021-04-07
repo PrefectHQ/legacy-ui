@@ -1,12 +1,14 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import AddAction from '@/pages/Dashboard/Automations/AddAction'
+import CreateAgentConfigForm from '@/pages/Dashboard/Automations/CreateAgentConfigForm'
 import { AUTOMATIONSTATES, flowEventTypes } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
   components: {
     AddAction,
+    CreateAgentConfigForm,
     ConfirmDialog
   },
   props: {
@@ -20,6 +22,7 @@ export default {
     return {
       steps: {
         openAgentOrFlow: { name: 'openAgentOrFlow', complete: false },
+        chooseAgentConfig: { name: 'chooseAgentConfig', complete: false },
         selectFlow: { name: 'selectFlow', complete: false },
         selectEventType: { name: 'selectEventType', complete: false },
         selectState: { name: 'selectState', complete: false },
@@ -30,7 +33,9 @@ export default {
       deleting: false,
       saving: false,
       searchEntry: null,
+      selectedAgentConfig: this.hookDetail?.agentConfig,
       selectedFlows: this.hookDetail?.flowName || [],
+      showAgentConfigForm: false,
       step: null,
       removeDoThisDialog: false,
       flowNamesList: this.hookDetail?.flowNameList || [],
@@ -39,7 +44,7 @@ export default {
       stateGroups: Object.keys(AUTOMATIONSTATES),
       states: AUTOMATIONSTATES,
       stateName: '',
-      agentFlowOrSomethingElse: '',
+      agentFlowOrSomethingElse: null,
       chosenStates:
         this.hookDetail?.hook?.event_tags?.state || AUTOMATIONSTATES['All'],
       disableClick: false,
@@ -49,6 +54,7 @@ export default {
       flowEventType: null,
       flowEventTypes: flowEventTypes,
       notAll: !!this.hookDetail?.flowName || false,
+      previousStep: null,
       isActive: false,
       rules: {
         required: val => !!val || 'Required',
@@ -58,8 +64,8 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['projects']),
-    //We can not update an agent for now - config id needs to be added at agent creation
-    // ...mapGetters('an agent', ['agents']),
+    //We can not update agent for now - config id needs to be added at agent creation
+    // ...mapGetters('agent', ['agents']),
     // projectsList() {
     //   return [...this.projects, { name: 'All', id: null }].sort((a, b) =>
     //     a.name > b.name ? 1 : -1
@@ -74,15 +80,16 @@ export default {
     agentOrFlow() {
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
-        return 'an agent'
+        return 'agent'
+      if (this.hookDetails) return 'flow'
       return 'this'
     },
     disableStep() {
-      return this.agentOrFlow === 'an agent' || this.selectedFlows.length > 1
+      return this.agentOrFlow === 'agent' || this.selectedFlows.length > 1
     },
     disableDoThis() {
-      if (this.agentOrFlow === 'this') return true
-      if (this.agentOrFlow === 'a flow' && this.selectedFlows.length < 1)
+      if (this.agentOrFlow === 'this' && !this.hookDetail) return true
+      if (this.agentOrFlow === 'flow' && this.selectedFlows.length < 1)
         return true
       return false
     },
@@ -98,7 +105,7 @@ export default {
     },
     editedActions() {
       return this.actions
-        ? this.agentOrFlow === 'an agent'
+        ? this.agentOrFlow === 'agent'
           ? this.actions.filter(
               action => action.action_type !== 'CancelFlowRunAction'
             )
@@ -119,30 +126,30 @@ export default {
     flowNames() {
       const agentName =
         this.hookDetail?.agentConfig?.agents?.length == 1
-          ? this.HookDetail?.agentConfig?.agents[0]?.name === 'an agent'
+          ? this.HookDetail?.agentConfig?.agents[0]?.name === 'agent'
             ? this.HookDetail?.agentConfig?.agents[0]?.type
             : this.hookDetail?.agentConfig?.agents[0]?.name
           : this.hookDetail?.agentConfig?.agents
               .map((agent, index) => {
                 if (index === 0) {
-                  return agent.name === 'an agent' ? agent.type : agent.name
+                  return agent.name === 'agent' ? agent.type : agent.name
                 } else {
-                  return agent.name === 'an agent'
+                  return agent.name === 'agent'
                     ? `or ${agent.type}`
                     : `or ${agent.name}`
                 }
               })
               .toString()
-      return this.agentOrFlow === 'an agent'
-        ? agentName || 'an agent'
+      return this.agentOrFlow === 'agent'
+        ? agentName || 'agent'
         : this.flowNamesList?.length > 1
-        ? this.flowNamesList?.length === this.flows.length
+        ? this.flowNamesList?.length === this.flows?.length
           ? 'any flow'
-          : 'mulitiple flows'
+          : 'any of these flows'
         : this.flowNamesList.toString() || this.agentOrFlow
     },
     hookStates() {
-      return this.chosenStates.length === this.states['All'].length
+      return this.chosenStates?.length === this.states['All'].length
         ? 'any state'
         : this.stateName && this.stateName != 'Custom'
         ? this.stateName
@@ -156,7 +163,7 @@ export default {
       )
     },
     completeAction() {
-      if (this.agentOrFlow === 'an agent') return !!this.chosenAction
+      if (this.agentOrFlow === 'agent') return !!this.chosenAction
       if (!this.includeTo)
         return !!this.selectedFlows?.length && !!this.chosenAction
       return (
@@ -171,6 +178,26 @@ export default {
     searchFormatted() {
       if (!this.searchEntry) return null
       return `%${this.searchEntry}%`
+    },
+    stateGroupAll() {
+      return this.stateGroup('All')
+    },
+    stateGroupCustom() {
+      return (
+        !this.stateGroupAll &&
+        !this.stateGroupFailed &&
+        !this.stateGroupFinished &&
+        !this.stateGroupSuccess
+      )
+    },
+    stateGroupFailed() {
+      return this.stateGroup('Failed')
+    },
+    stateGroupFinished() {
+      return this.stateGroup('Finished')
+    },
+    stateGroupSuccess() {
+      return this.stateGroup('Success')
     },
     validUUID() {
       if (!this.searchEntry) return false
@@ -215,7 +242,7 @@ export default {
           enum: 'CHANGES_STATE'
         }
       : this.hookDetail?.agentConfig
-      ? { name: 'is unhealthy' }
+      ? { name: 'are unhealthy' }
       : {
           name: 'does this'
         }
@@ -229,6 +256,7 @@ export default {
         ? 'codePink'
         : 'utilGrayDark'
     },
+    createAgentConfig() {},
     format(selectedStep, otherStep) {
       const stepComplete = this.steps[selectedStep]
       const otherComplete = this.steps[otherStep]
@@ -244,14 +272,28 @@ export default {
         this.$emit('refresh')
       }
     },
+    stateGroup(group) {
+      return (
+        AUTOMATIONSTATES[group] &&
+        AUTOMATIONSTATES[group].every(state =>
+          this.chosenStates?.includes(state)
+        ) &&
+        AUTOMATIONSTATES[group].length == this.chosenStates.length
+      )
+    },
+    dynamicStateGroup(group) {
+      return this[`stateGroup${group}`]
+    },
     switchStep(selectedStep) {
+      this.previousStep = this.step.name
+
       if (this.step.name === 'openDuration')
         this.steps['openDuration'].complete = true
       this.step = this.steps[selectedStep]
     },
     selectAgentOrFlow(choice) {
       this.agentFlowOrSomethingElse = choice
-      if (choice === 'a flow') {
+      if (choice === 'flow') {
         this.flowEventType =
           this.hookDetail?.hook?.event_type === 'FlowSLAFailedEvent'
             ? this.flowEventTypes.find(
@@ -267,12 +309,13 @@ export default {
               }
         this.switchStep('selectFlow')
       }
-      if (choice === 'an agent') {
-        this.flowEventType = { name: 'is unhealthy' }
+      if (choice === 'agent') {
+        this.flowEventType = { name: 'are unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
         this.steps['openAgentOrFlow'].complete = true
-        this.switchStep('selectDoThis')
+        // this.switchStep('selectDoThis')
+        this.switchStep('chooseAgentConfig')
       }
     },
     selectFlow(flow) {
@@ -317,7 +360,7 @@ export default {
     selectStateGroup(group) {
       this.steps['selectState'].complete = true
       this.stateName = group
-      this.chosenStates = this.states[group]
+      this.chosenStates = [...this.states[group]]
     },
     selectStates(state) {
       this.steps['selectState'].complete = true
@@ -329,6 +372,14 @@ export default {
             item => item != state && item.toUpperCase() != state
           ))
         : this.chosenStates.push(state)
+    },
+    async handleSaveAgentConfig() {
+      this.$apollo.queries.agentConfigs.refetch()
+      this.showAgentConfigForm = false
+    },
+    selectAgentConfig(config) {
+      this.steps['chooseAgentConfig'].complete = true
+      this.selectedAgentConfig = config
     },
     selectAction(action) {
       this.steps['selectDoThis'].complete = true
@@ -348,7 +399,7 @@ export default {
     disableChip(item) {
       return (
         (item.enum != 'CHANGES_STATE' && this.selectedFlows?.length > 1) ||
-        this.agentOrFlow === 'an agent'
+        this.agentOrFlow === 'agent'
       )
     },
     includesFlow(flow) {
@@ -361,7 +412,7 @@ export default {
     async createAction(input) {
       try {
         const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/create_action.gql'),
+          mutation: require('@/graphql/Mutations/create-action.gql'),
           variables: {
             input: { config: input.config, name: input.name }
           }
@@ -446,7 +497,7 @@ export default {
                   states: this.chosenStates
                 }
             const flowRunStateChangedSuccess = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_flow_run_state_changed_hook.gql'),
+              mutation: require('@/graphql/Mutations/create-flow-run-state-changed-hook.gql'),
               variables: {
                 input: inputObject
               }
@@ -456,7 +507,7 @@ export default {
           if (this.isSLA) {
             const kind = this.flowEventType?.enum
             const configId = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_flow_sla.gql'),
+              mutation: require('@/graphql/Mutations/create-flow-sla.gql'),
               variables: {
                 input: {
                   kind: kind,
@@ -465,7 +516,7 @@ export default {
               }
             })
             await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/add_config_to_flow.gql'),
+              mutation: require('@/graphql/Mutations/add-config-to-flow.gql'),
               variables: {
                 input: {
                   flow_sla_config_id: configId.data.create_flow_sla_config.id,
@@ -475,7 +526,7 @@ export default {
             })
 
             const flowSLAEventSuccess = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_flow_sla_failed_hook.gql'),
+              mutation: require('@/graphql/Mutations/create-flow-sla-failed-hook.gql'),
               variables: {
                 input: {
                   action_id: action.id,
@@ -485,13 +536,13 @@ export default {
             })
             data = flowSLAEventSuccess.data
           }
-        } else if (this.agentOrFlow === 'an agent') {
+        } else if (this.agentOrFlow === 'agent') {
           let agentConfig
           if (this.hookDetails?.agentConfig) {
             agentConfig = this.hookDetails?.agentConfig
           } else {
             const { data } = await this.$apollo.mutate({
-              mutation: require('@/graphql/Mutations/create_agent_config.gql'),
+              mutation: require('@/graphql/Mutations/create-agent-config.gql'),
               variables: {
                 input: {}
               }
@@ -499,7 +550,7 @@ export default {
             agentConfig = data?.create_agent_config
           }
           const agentHook = await this.$apollo.mutate({
-            mutation: require('@/graphql/Mutations/create_agent_sla_failed_hook.gql'),
+            mutation: require('@/graphql/Mutations/create-agent-sla-failed-hook.gql'),
             variables: {
               input: {
                 action_id: action.id,
@@ -572,74 +623,98 @@ export default {
       },
       loadingKey: 'loading',
       pollInterval: 60000,
-      update: data => {
-        return data?.flow
-      }
+      update: data => data?.flow || []
     },
     actions: {
       query: require('@/graphql/Automations/actions.gql'),
-      update: data => {
-        return data.action
-      }
+      update: data => data?.action
+    },
+    agentConfigs: {
+      query: require('@/graphql/Automations/agent-config.gql'),
+      update: data => data.agent_config
     }
   }
 }
 </script>
 
 <template>
-  <v-card outlined>
-    <v-card-text class="text-h6 font-weight-light">
-      <v-row>
+  <v-card outlined class="pb-4 px-4">
+    <v-card-text class="text-h5 font-weight-light pb-0 pt-4 px-0">
+      <v-row no-gutters>
         <v-col cols="9" lg="10">
-          When<span v-if="agentOrFlow === 'a flow'"> a run from</span
-          ><v-btn
+          When<span v-if="agentOrFlow === 'flow'"> a run from</span>
+          <span v-else-if="agentOrFlow === 'agent'"> all</span>
+          <v-btn
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectFlow', 'openAgentOrFlow')"
             :class="format('selectFlow', 'openAgentOrFlow')"
-            class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
+            class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
             text
             :disabled="addAction"
             max-width="500px"
             @click="switchStep('openAgentOrFlow')"
-            ><truncate
-              v-if="flowNamesList && flowNamesList.length"
-              :content="flowNamesList.toString()"
-              >{{ flowNames }}</truncate
-            ><span v-else>{{ flowNames }}</span></v-btn
           >
+            <span v-if="agentOrFlow === 'agent'">{{ flowNames }}s</span>
+            <truncate
+              v-else-if="flowNamesList && flowNamesList.length"
+              :content="flowNamesList.join(', ')"
+            >
+              {{ flowNames }}
+            </truncate>
+            <span v-else>{{ flowNames }}</span>
+          </v-btn>
+
+          <span v-if="agentOrFlow === 'agent'">
+            with<v-btn
+              :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+              :color="buttonColor('chooseAgentConfig')"
+              :class="format('chooseAgentConfig')"
+              class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
+              text
+              :disabled="addAction"
+              max-width="500px"
+              @click="switchStep('chooseAgentConfig')"
+            >
+              {{
+                selectedAgentConfig && selectedAgentConfig.name
+                  ? selectedAgentConfig.name + ' config'
+                  : 'this config'
+              }}
+            </v-btn>
+          </span>
 
           <v-btn
             v-if="!disableStep"
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            class="px-0 pb-1 ml-1 text-h6 "
+            class="px-0 pb-1 ml-1 text-h5"
             text
             :disabled="addAction || !selectedFlows.length"
             :color="buttonColor('selectEventType')"
             :class="format('selectEventType')"
             @click="switchStep('selectEventType')"
           >
-            {{ flowEventType.name }}</v-btn
-          ><span v-else class="pl-1">{{ flowEventType.name }}</span>
+            {{ flowEventType.name }}
+          </v-btn>
+          <span v-else class="pl-1">{{ flowEventType.name }}</span>
           <span v-if="isSLA">
             for
 
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              class="px-0 pb-1 text-h6"
+              class="px-0 pb-1 text-h5"
               text
               :disabled="addAction"
               :color="buttonColor('openDuration')"
               :class="format('openDuration')"
               @click="switchStep('openDuration')"
             >
-              {{ seconds }}</v-btn
-            >
+              {{ seconds }}
+            </v-btn>
             seconds</span
           ><span v-if="includeTo">
-            to
-            <v-btn
+            to<v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-              class=" px-0 pb-1 text-h6"
+              class="ml-1 px-0 pb-1 text-h5"
               :class="format('selectState')"
               text
               :disabled="addAction"
@@ -653,7 +728,7 @@ export default {
               'text-transform': 'none',
               'min-width': '0px'
             }"
-            class="px-0 pb-1 ml-1 text-h6 d-inline-block text-truncate"
+            class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
             text
             :disabled="disableDoThis"
             :color="buttonColor('selectDoThis')"
@@ -683,285 +758,452 @@ export default {
         </v-col>
       </v-row>
     </v-card-text>
-    <div v-if="step.name === 'openAgentOrFlow'">
-      <v-card-text>
-        <div class="pb-2"
-          >Select one of these options to build your automation.</div
-        >
-        <v-row class="px-1">
-          <div
-            v-for="item in ['a flow', 'an agent']"
-            :key="item"
-            v-ripple
-            class="chip-small px-2 pb-2 pt-1 ma-2 cursor-pointer text-body-1"
-            :class="{ active: agentOrFlow === item }"
-            @click="selectAgentOrFlow(item)"
-            ><div class="text-center"
-              ><v-icon class="pr-2 pb-1">{{
-                item === 'a flow' ? 'pi-flow' : 'pi-agent'
-              }}</v-icon
-              >{{ item }}</div
-            ></div
-          >
-        </v-row>
-      </v-card-text>
-      <v-card-actions v-if="agentOrFlow !== 'this'">
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          elevation="0"
-          title="Next"
-          class="mx-1"
-          @click="
-            agentOrFlow === 'an agent'
-              ? switchStep('selectDoThis')
-              : switchStep('selectFlow')
-          "
-          ><span style="text-transform: none;"> Next</span>
-        </v-btn>
-      </v-card-actions>
-    </div>
-    <v-sheet v-else-if="step.name === 'selectFlow'" class="pa-4">
-      <v-row
-        ><v-col cols="12" class="py-0">
-          <!-- //need to fix v-model AND flow box color/style -->
-          <v-text-field
-            v-model="searchEntry"
-            hide-details
-            single-line
-            solo
-            dense
-            flat
-            :placeholder="placeholderMessage"
-            prepend-inner-icon="search"
-            autocomplete="new-password"
-          />
-          <v-checkbox
-            v-model="selectAll"
-            class="mx-2 mt-2"
-            dense
-            hide-details
-            label="Select All"
-            :indeterminate="notAll"
-          ></v-checkbox>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <v-sheet
-            :height="formHeight"
-            :style="{ 'overflow-y': 'auto', 'overflow-x': 'hidden' }"
-          >
-            <v-row class="py-2">
-              <v-col
-                v-for="item in flows"
-                :key="item.id"
-                cols="6"
-                sm="3"
-                lg="2"
-              >
-                <div
-                  v-ripple
-                  class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer"
-                  :class="{ active: includesFlow(item) }"
-                  @click="selectFlow(item)"
-                >
-                  <div style="width: auto;" class="text-body-1 text-truncate">
-                    <div class="text-caption">{{ item.project.name }}</div
-                    ><div
-                      ><div style="width: 100%;" class="text-truncate">{{
-                        item.name
-                      }}</div></div
-                    >
-                  </div>
-                </div></v-col
-              >
-            </v-row>
-          </v-sheet>
-        </v-col>
-      </v-row>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          elevation="0"
-          :disabled="!selectedFlows.length"
-          title="Next"
-          class="mx-1"
-          @click="handleFlowNext"
-          ><span style="text-transform: none;"> Next</span>
-        </v-btn>
-      </v-card-actions>
-    </v-sheet>
 
-    <div v-else-if="step.name === 'selectEventType'"
-      ><v-card-text>
-        <v-row class="px-1">
-          <div
-            v-for="item in filteredFlowEventTypes"
-            :key="item.enum"
-            v-ripple
-            class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
-            :class="{ active: flowEventType.name === item.name }"
-            @click="selectFlowEventType(item)"
-            ><div class="text-center text-body-1">{{ item.name }}</div>
+    <v-divider class="my-4 " />
+
+    <transition name="quick-fade" mode="out-in">
+      <!-- OPEN AGENT OR FLOW -->
+      <div v-if="step.name === 'openAgentOrFlow'" key="openAgentOrFlow">
+        <div>
+          <div class="mb-2 text-subtitle-1 font-weight-light">
+            Choose an automation type:
           </div>
-        </v-row>
-      </v-card-text>
-      <v-card-actions v-if="flowEventType.enum">
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          elevation="0"
-          title="Next"
-          class="mx-1"
-          @click="selectFlowEventType()"
-          ><span style="text-transform: none;"> Next</span>
-        </v-btn>
-      </v-card-actions>
-    </div>
-    <div v-else-if="step.name === 'openDuration'">
-      <v-card-text>
-        <v-col class="pa-0" cols="12" sm="6" lg="3">
-          <v-text-field
-            v-model="seconds"
-            type="number"
-            :rules="[rules.required, rules.notNull]"
-            persistent-hint
-            outlined
-            hint="Hint: confirm duration by pressing the Enter key"
-            @keydown.enter="closeSeconds"
-            @blur="closeSeconds"
-          ></v-text-field>
-        </v-col>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          elevation="0"
-          title="Next"
-          class="mx-1"
-          @click="closeSeconds"
-          ><span style="text-transform: none;"> Next</span>
-        </v-btn></v-card-actions
-      ></div
-    >
+          <v-row class="px-1">
+            <div
+              v-for="item in ['flow', 'agent']"
+              :key="item"
+              v-ripple
+              class="chip-small px-4 py-2 ma-2 cursor-pointer text-h6 font-weight-light"
+              :class="{ active: agentOrFlow === item }"
+              @click="selectAgentOrFlow(item)"
+            >
+              <div class="text-center">
+                <v-icon class="pr- pb-1">
+                  {{ item === 'flow' ? 'pi-flow' : 'pi-agent' }}
+                </v-icon>
+                {{ item }}
+              </div>
+            </div>
+          </v-row>
+        </div>
+        <v-card-actions v-if="agentOrFlow !== 'this'">
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            elevation="0"
+            title="Next"
+            @click="
+              agentOrFlow === 'agent'
+                ? switchStep('selectDoThis')
+                : switchStep('selectFlow')
+            "
+            ><span style="text-transform: none;">Next</span>
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <!-- END OPEN AGENT OR FLOW -->
 
-    <v-card-text v-else-if="step.name === 'selectState'">
-      <v-chip
-        v-for="item in stateGroups"
-        :key="item.id"
-        color="primary"
-        label
-        max-width="300px"
-        :title="
-          item == 'All'
-            ? `Select all states`
-            : `Select ${item} and all connected states`
-        "
-        class="ma-1"
-        @click="selectStateGroup(item)"
-        >{{ item }}</v-chip
+      <!-- CHOOSE AGENT CONFIG -->
+      <div
+        v-else-if="step.name === 'chooseAgentConfig'"
+        key="chooseAgentConfig"
       >
+        <div class="pt-0 pb-8">
+          <div class="mb-2 text-subtitle-1 font-weight-light">
+            {{
+              !showAgentConfigForm
+                ? 'Choose an agent config:'
+                : 'Name your agent config:'
+            }}
+          </div>
+          <v-row v-if="!showAgentConfigForm" no-gutters>
+            <v-col cols="12">
+              <v-btn
+                small
+                elevation="0"
+                color="primary"
+                @click="showAgentConfigForm = true"
+              >
+                <v-icon small class="mr-2">fa-plus</v-icon>
+                <span style="text-transform: none;">Create agent config</span>
+              </v-btn>
 
-      <v-divider class="ma-2" />
-      <v-row class="px-1">
-        <div
-          v-for="item in states['All']"
-          :key="item"
-          v-ripple
-          class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
-          :class="{ active: chosenStates.includes(item) }"
-          @click="selectStates(item)"
+              <div v-if="agentConfigs && agentConfigs.length" class="mt-4">
+                <div
+                  v-for="config in agentConfigs"
+                  :key="config.id"
+                  v-ripple
+                  class="d-inline-block chip-small pa-2 my-2 mr-4 cursor-pointer text-body-1"
+                  :class="{
+                    active:
+                      selectedAgentConfig &&
+                      selectedAgentConfig.id === config.id
+                  }"
+                  @click="selectAgentConfig(config)"
+                >
+                  <span v-if="config.name">{{ config.name }}</span>
+                  <span v-else class="text--disabled"
+                    >Unnamed agent config</span
+                  >
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+
+          <div v-else>
+            <CreateAgentConfigForm
+              @close="showAgentConfigForm = false"
+              @save="handleSaveAgentConfig"
+            />
+          </div>
+        </div>
+
+        <v-card-actions v-if="!showAgentConfigForm" class="px-0">
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            title="Previous"
+            class="mr-1"
+            color="utilGrayMid"
+            @click="switchStep('openAgentOrFlow')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
+            color="primary"
+            elevation="0"
+            :disabled="!selectedAgentConfig"
+            title="Next"
+            @click="switchStep('selectDoThis')"
+          >
+            <span style="text-transform: none;">Next</span>
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <!-- END CHOOSE AGENT CONFIG -->
+
+      <!-- SELECT FLOW -->
+      <div v-else-if="step.name === 'selectFlow'" key="selectFlow">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose a flow:
+        </div>
+
+        <v-row>
+          <v-col cols="12" class="pb-0">
+            <!-- //need to fix v-model AND flow box color/style -->
+            <v-text-field
+              v-model="searchEntry"
+              hide-details
+              single-line
+              solo
+              dense
+              flat
+              :placeholder="placeholderMessage"
+              prepend-inner-icon="search"
+              autocomplete="new-password"
+              class="ml-n3"
+            />
+            <v-checkbox
+              v-model="selectAll"
+              class="mt-2 d-inline-block"
+              dense
+              hide-details
+              label="Select All"
+              :indeterminate="notAll"
+            ></v-checkbox>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <v-sheet
+              :height="formHeight"
+              :style="{ 'overflow-y': 'auto', 'overflow-x': 'hidden' }"
+            >
+              <v-row class="py-2">
+                <v-col
+                  v-for="item in flows"
+                  :key="item.id"
+                  cols="6"
+                  sm="3"
+                  lg="2"
+                >
+                  <div
+                    v-ripple
+                    class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer"
+                    :class="{ active: includesFlow(item) }"
+                    @click="selectFlow(item)"
+                  >
+                    <div style="width: auto;" class="text-body-1 text-truncate">
+                      <div class="text-caption">{{ item.project.name }}</div>
+                      <div>
+                        <div style="width: 100%;" class="text-truncate">
+                          {{ item.name }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-sheet>
+          </v-col>
+        </v-row>
+        <v-card-actions class="px-0">
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            title="Previous"
+            color="utilGrayMid"
+            class="mr-1"
+            @click="switchStep('openAgentOrFlow')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
+            color="primary"
+            elevation="0"
+            :disabled="!selectedFlows.length"
+            title="Next"
+            @click="handleFlowNext"
+            ><span style="text-transform: none;">Next</span>
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <!-- END SELECT FLOW -->
+
+      <!-- SELECT EVENT TYPE -->
+      <div v-else-if="step.name === 'selectEventType'" key="selectEventType">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose an event:
+        </div>
+        <div>
+          <v-row class="px-1">
+            <div
+              v-for="item in filteredFlowEventTypes"
+              :key="item.enum"
+              v-ripple
+              class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
+              :class="{ active: flowEventType.name === item.name }"
+              @click="selectFlowEventType(item)"
+              ><div class="text-center text-body-1">{{ item.name }}</div>
+            </div>
+          </v-row>
+        </div>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            title="Previous"
+            color="utilGrayMid"
+            class="mr-1"
+            @click="switchStep('selectFlow')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
+            color="primary"
+            elevation="0"
+            title="Next"
+            :disabled="!flowEventType.enum"
+            @click="selectFlowEventType()"
+          >
+            <span style="text-transform: none;">Next</span>
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <!-- END SELECT EVENT TYPE -->
+
+      <!-- OPEN DURATION -->
+      <div v-else-if="step.name === 'openDuration'" key="openDuration">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose SLA duration:
+        </div>
+        <div>
+          <v-col class="pa-0" cols="12" sm="6" lg="3">
+            <v-text-field
+              v-model="seconds"
+              type="number"
+              :rules="[rules.required, rules.notNull]"
+              persistent-hint
+              outlined
+              @keydown.enter="closeSeconds"
+            ></v-text-field>
+          </v-col>
+        </div>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            title="Previous"
+            class="mr-1"
+            color="utilGrayMid"
+            @click="switchStep('selectEventType')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
+            color="primary"
+            elevation="0"
+            title="Next"
+            @click="closeSeconds"
+          >
+            <span style="text-transform: none;">Next</span>
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <!-- END OPEN DURATION -->
+
+      <!-- SELECT STATE -->
+      <div v-else-if="step.name === 'selectState'" key="selectState">
+        <v-btn
+          v-for="item in stateGroups"
+          :key="item.id"
+          :color="dynamicStateGroup(item) ? 'accentPink' : null"
+          depressed
+          max-width="300px"
+          :title="
+            item == 'All'
+              ? `Select all states`
+              : `Select ${item} and all connected states`
+          "
+          class="mr-2"
+          :class="{ 'white--text': dynamicStateGroup(item) }"
+          @click="selectStateGroup(item)"
         >
           {{ item }}
-        </div>
-      </v-row>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          elevation="0"
-          title="Next"
-          class="mx-1"
-          :disabled="chosenStates.length < 1"
-          @click="switchStep('selectDoThis')"
-          ><span style="text-transform: none;"> Next</span>
-        </v-btn></v-card-actions
-      ></v-card-text
-    >
-
-    <v-card-text v-else-if="step.name === 'selectDoThis'">
-      <v-row v-if="!addAction" class="px-3">
-        <v-btn small elevation="0" color="primary" @click="addNewAction"
-          ><v-icon small class="mr-2">fa-plus</v-icon
-          ><span style="text-transform: none;">New Action</span>
         </v-btn>
-      </v-row>
 
-      <v-row v-if="!addAction" class="py-2 px-1">
-        <div v-if="!editedActions.length" class="mx-2"
-          >You have no actions yet.</div
-        >
-        <div
-          v-for="item in editedActions"
-          v-else
-          :key="item.id"
-          v-ripple
-          class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
-          :class="{ active: chosenAction === item }"
-          @click="selectAction(item)"
-          >{{ item.name }}
-          <!-- <v-spacer></v-spacer>
-            <v-btn
-              small
-              icon
-              title="Remove"
-              color="codePink"
-              @click.stop="handleRemoveClick(item)"
-            >
-              <i class="fas fa-times-circle fa-lg"
-            /></v-btn> -->
+        <div class="mt-4">
+          <div
+            v-for="item in states['All']"
+            :key="item"
+            v-ripple
+            class="d-inline-block chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1"
+            :class="{ active: chosenStates.includes(item) }"
+            @click="selectStates(item)"
+          >
+            {{ item }}
+          </div>
         </div>
-      </v-row>
-      <ConfirmDialog
-        :value="removeDoThisDialog"
-        :loading="deleting"
-        width="30vW"
-        title="Are
-      you sure you want to delete this?"
-        type="error"
-        @cancel="removeDoThisDialog = false"
-        @confirm="removeDoThis"
-        ><slot
-          ><span class="red--text"
-            >This will also delete any associated Automations.</span
-          ></slot
-        ></ConfirmDialog
-      >
-      <AddAction
-        v-if="addAction"
-        :event-type="flowEventType.enum || 'AGENT'"
-        @close-action="addAction = false"
-        @new-action="createAction"
-      />
-    </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            title="Previous"
+            class="mr-1"
+            color="utilGrayMid"
+            @click="switchStep('selectEventType')"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
+            color="primary"
+            elevation="0"
+            title="Next"
+            :disabled="chosenStates.length < 1"
+            @click="switchStep('selectDoThis')"
+            ><span style="text-transform: none;">Next</span>
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <!-- END SELECT STATE -->
+
+      <!-- SELECT ACTION -->
+      <div v-else-if="step.name === 'selectDoThis'" key="selectDoThis">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose an action:
+        </div>
+
+        <v-row v-if="!addAction">
+          <v-col>
+            <v-btn small elevation="0" color="primary" @click="addNewAction">
+              <v-icon small class="mr-2">fa-plus</v-icon>
+              <span style="text-transform: none;">New Action</span>
+            </v-btn>
+          </v-col>
+        </v-row>
+
+        <v-row v-if="!addAction" class="py-2 px-1">
+          <div v-if="!editedActions.length" class="mx-2">
+            You have no actions yet.
+          </div>
+          <div
+            v-for="item in editedActions"
+            v-else
+            :key="item.id"
+            v-ripple
+            class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
+            :class="{ active: chosenAction && chosenAction.id === item.id }"
+            @click="selectAction(item)"
+          >
+            {{ item.name || item.action_type }}
+          </div>
+        </v-row>
+        <ConfirmDialog
+          :value="removeDoThisDialog"
+          :loading="deleting"
+          width="30vW"
+          title="Are you sure you want to delete this?"
+          type="error"
+          @cancel="removeDoThisDialog = false"
+          @confirm="removeDoThis"
+          ><slot
+            ><span class="red--text"
+              >This will also delete any associated Automations.</span
+            ></slot
+          ></ConfirmDialog
+        >
+        <AddAction
+          v-if="addAction"
+          :event-type="flowEventType.enum || 'AGENT'"
+          @close-action="addAction = false"
+          @new-action="createAction"
+        />
+
+        <v-card-actions v-if="!addAction">
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            title="Previous"
+            class="mr-1"
+            color="utilGrayMid"
+            @click="step = steps[previousStep]"
+            ><span style="text-transform: none;">Previous</span>
+          </v-btn>
+          <v-btn
+            color="primary"
+            elevation="0"
+            title="Save"
+            :loading="saving"
+            :disabled="!completeAction"
+            @click="createHook"
+            ><span style="text-transform: none;">Save</span>
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <!-- END SELECT ACTION -->
+    </transition>
   </v-card>
 </template>
 
 <style lang="scss" scoped>
 .chip-bigger {
-  border: 1px solid;
-  border-color: var(--v-utilGrayLight-base) !important;
-  border-radius: 5px;
   height: 60px;
+  position: relative;
   transition: all 50ms;
   width: 100%;
 
+  &::after {
+    border: 1px solid var(--v-utilGrayLight-base);
+    border-radius: 5px;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
   &.active {
-    border-color: var(--v-codePink-base) !important;
+    &::after {
+      border: 2px solid;
+      border-color: var(--v-codePink-base) !important;
+    }
   }
 
   &:hover,
@@ -971,15 +1213,26 @@ export default {
 }
 
 .chip-small {
-  border: 1px solid;
-  border-color: var(--v-utilGrayLight-base) !important;
-  border-radius: 5px;
-  height: 35px;
   max-width: fit-content;
+  position: relative;
   transition: all 50ms;
 
+  &::after {
+    border: 1px solid var(--v-utilGrayLight-base);
+    border-radius: 5px;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
   &.active {
-    border-color: var(--v-codePink-base) !important;
+    &::after {
+      border: 2px solid;
+      border-color: var(--v-codePink-base) !important;
+    }
   }
 
   &:hover,

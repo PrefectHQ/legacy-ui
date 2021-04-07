@@ -1,0 +1,10 @@
+query FlowSLAConfig($flowSLAConfigId: uuid!) {
+  flow_sla_config_by_pk(id: $flowSLAConfigId) {
+    flow_groups {
+      id
+      flow_group_id
+    }
+    kind
+    duration_seconds
+  }
+}

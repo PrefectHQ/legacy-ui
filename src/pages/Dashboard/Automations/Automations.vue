@@ -1,6 +1,6 @@
 <script>
-import AutoCard from '@/pages/Dashboard/Automations/AutoCard'
-import AddAutoCard from '@/pages/Dashboard/Automations/AddAutoCard'
+import AutoCard from '@/pages/Dashboard/Automations/AutomationCard'
+import AddAutoCard from '@/pages/Dashboard/Automations/AddAutomationCard'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -100,8 +100,11 @@ export default {
   </div>
   <div v-else>
     <v-row>
-      <v-col>
+      <v-col class="pb-0" cols="12">
         <div class="text-overline">New Automation</div>
+      </v-col>
+
+      <v-col cols="12">
         <AddAutoCard
           v-if="canEdit && !closeCard"
           @refresh="handleRefresh"
@@ -110,11 +113,25 @@ export default {
         />
       </v-col>
     </v-row>
+
+    <v-divider class="my-10 mx-12" />
+
     <v-row>
+      <v-col cols="12" class="pb-0">
+        <div class="text-overline">Automations</div>
+      </v-col>
+      <v-progress-circular
+        v-if="!sortedHooks.length && loadingHook > 0"
+        class="mx-auto my-4"
+        indeterminate
+        color="primary"
+      />
+
       <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
         <v-skeleton-loader
           v-if="loadingHook > 0 || loadCards"
           type="list-item-avatar-three-line"
+          height="72"
         ></v-skeleton-loader
         ><AutoCard
           v-else

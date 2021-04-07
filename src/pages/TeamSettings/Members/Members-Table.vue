@@ -111,7 +111,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['permissions']),
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
@@ -121,7 +121,7 @@ export default {
       return this.user.email === this.selectedUser.email
     },
     hasRBAC() {
-      return this.license?.terms?.plan === 'ENTERPRISE_2021'
+      return this.permissions?.includes('feature:basic-rbac')
     }
   },
   watch: {
