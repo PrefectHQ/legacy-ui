@@ -21,6 +21,7 @@ export default {
         openMessageText: { name: 'openMessageText', complete: false },
         openToConfig: { name: 'openToConfig', complete: false },
         addTwilioConfig: { name: 'addTwilioConfig', complete: false },
+        addMSTeamsConfig: { name: 'addMSTeamsConfig', complete: false },
         addName: { name: 'addName', complete: false }
       },
       saving: false,
@@ -38,6 +39,7 @@ export default {
       accountSid: '',
       apiToken: '',
       routingKey: '',
+      webhookUrlSecret: null,
       severity: '',
       severityLevels: [
         { text: 'Info', value: 'info' },
@@ -126,6 +128,7 @@ export default {
       return []
     },
     disableNext() {
+      console.log(this.actionConfigArray)
       if (this.step.name === 'openToConfig') {
         if (!this.actionConfigArray.length) return true
         else return false
@@ -145,6 +148,8 @@ export default {
           !!this.authToken &&
           !!this.messagingService &&
           this.accountSid
+        : this.isMSTeams
+        ? !!this.webhookUrlSecret
         : !!this.actionType &&
           (!!this.secretName ||
             (!!this.actionConfigArray.length &&
@@ -181,6 +186,8 @@ export default {
         ? configTo || this.actionType?.config?.url || 'here.'
         : this.actionType.type === 'PAGERDUTY'
         ? 'using this config.'
+        : this.actionType.type === 'MS_TEAMS'
+        ? 'using this config.'
         : 'to who?'
     },
     isTwilio() {
@@ -188,6 +195,9 @@ export default {
     },
     isPagerDuty() {
       return this.actionType.type === 'PAGERDUTY'
+    },
+    isMSTeams() {
+      return this.actionType.type === 'MS_TEAMS'
     }
     // needsNext() {
     //   if (
@@ -272,6 +282,10 @@ export default {
       this.actionConfigArray = val
       this.steps['openToConfig'].complete = true
     },
+    handleWebHookURLSecretInput(val) {
+      this.actionConfigArray = val
+      this.steps['openToConfig'].complete = true
+    },
     saveConfig() {
       const type = this.actionType.type
       const checked =
@@ -320,19 +334,33 @@ export default {
                 }
               }
               break
-            case 'PAGERDUTY': {
-              this.actionConfig = {
-                api_token_secret: this.apiToken,
-                routing_key: this.routingKey,
-                severity: this.severity
+            case 'PAGERDUTY':
+              {
+                this.actionConfig = {
+                  api_token_secret: this.apiToken,
+                  routing_key: this.routingKey,
+                  severity: this.severity
+                }
+                if (this.messageText) {
+                  //TO DO - Don't think this is working - need to fix!
+                  this.actionConfig.message = this.bothMessages
+                    ? `{} ${this.messageText}`
+                    : this.messageText
+                }
               }
-              if (this.messageText) {
-                //TO DO - Don't think this is working - need to fix!
-                this.actionConfig.message = this.bothMessages
-                  ? `{} ${this.messageText}`
-                  : this.messageText
+              break
+            case 'MS_TEAMS':
+              {
+                this.actionConfig = {
+                  webhook_url_secret: this.webhookUrlSecret
+                }
+                if (this.messageText) {
+                  this.actionConfig.message = this.bothMessages
+                    ? `{} ${this.messageText}`
+                    : this.messageText
+                }
               }
-            }
+              break
           }
         }
       } else {
@@ -381,6 +409,11 @@ export default {
         case 'PAGERDUTY':
           config = {
             pagerduty_notification: this.actionConfig
+          }
+          break
+        case 'MS_TEAMS':
+          config = {
+            teams_webhook_notification: this.actionConfig
           }
           break
         default:
@@ -518,20 +551,6 @@ export default {
           ></v-col
         ></v-row
       >
-      <!-- <v-chip
-        v-for="type in actionTypes()"
-        :key="type.title"
-        label
-        :color="actionType === type ? 'codePink' : 'grey'"
-        class="ma-1"
-        outlined
-        @click="selectActionType(type)"
-      >
-        <v-icon left class="mr-2">
-          {{ type.icon }}
-        </v-icon>
-        {{ type.title }}
-      </v-chip> -->
     </v-card-text>
     <v-card-text v-else-if="step.name === 'openMessageText'" class="pt-0">
       <span class="primary--text"
@@ -580,7 +599,7 @@ export default {
           >
         </v-card>
       </v-menu>
-      <v-text-field
+      <v-textarea
         v-model="messageText"
         class="pt-0"
         outlined
@@ -614,15 +633,7 @@ export default {
           </div></div
         >
       </v-row>
-      <!-- <v-text-field
-        v-if="actionType.type === 'SLACK_WEBHOOK'"
-        v-model="actionConfigArray"
-        :label="messageConfigLabel"
-        :rules="[rules[actionType.type]]"
-        validate-on-blur
-        :error-messages="errorMessage"
-        @keyup.enter="saveConfig"
-      ></v-text-field> -->
+
       <div v-else-if="isPagerDuty">
         <span>
           Prefect Cloud will send a PagerDuty notification. Create your
@@ -688,7 +699,39 @@ export default {
           @input="handleListInput"
         ></ListInput>
       </div>
+
+      <div v-else-if="actionType.type === 'MS_TEAMS'">
+        <div>
+          <span>
+            Prefect Cloud will send a message via the
+            <a
+              href="https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using#setting-up-a-custom-incoming-webhook"
+              target="_blank"
+            >
+              MS Teams API</a
+            >; you'll need to set up a Teams Incoming Webhook Connector and
+            retreive the webhook URL. To securely store your webhook URL, create
+            a
+            <router-link :to="{ name: 'secrets' }"> Prefect secret</router-link
+            >.
+          </span>
+        </div>
+
+        <v-row class="mt-2">
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="webhookUrlSecret"
+              outlined
+              :items="secretNames"
+              label="Webhook URL Secret"
+              no-data-text="You will need to create a secret with your Webhook URL"
+              @change="handleWebHookURLSecretInput"
+            />
+          </v-col>
+        </v-row>
+      </div>
     </v-card-text>
+
     <v-card-text v-else-if="step.name === 'addTwilioConfig'">
       <div>
         <span>
@@ -738,6 +781,7 @@ export default {
         </v-col>
       </v-row>
     </v-card-text>
+
     <v-card-text v-else-if="step.name === 'addName'" class="pr-4">
       <div class="pb-2"
         >Give your action a name so you can find and re-use it with more
