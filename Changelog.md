@@ -8,6 +8,16 @@
 
 ### Bugfixes
 
+- None
+
+## Unreleased
+
+### Features and Improvements
+
+- Remove all static Slack invite links in favor of the centralized prefect.io/slack link - [#747](https://github.com/PrefectHQ/ui/pull/747)
+
+### Bugfixes
+
 - Fixes illegible /plans page when in dark mode - [#748](https://github.com/PrefectHQ/ui/pull/748)
 - Don't allow flow run restarts for archived flow versions - [#714](https://github.com/PrefectHQ/ui/pull/714)
 - Change the css class for the "current" label in the teams section to make it more legible - [#737](https://github.com/PrefectHQ/ui/pull/737)

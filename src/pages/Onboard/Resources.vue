@@ -102,10 +102,7 @@ export default {
                 Chat with us, ask questions, and share tips
               </div>
               <div>
-                <v-btn
-                  target="_blank"
-                  href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
-                >
+                <v-btn target="_blank" href="https://prefect.io/slack">
                   Join Slack
                 </v-btn>
               </div>
@@ -169,7 +166,7 @@ export default {
                       light
                       depressed
                       target="_blank"
-                      href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+                      href="https://prefect.io/slack"
                     >
                       Join Slack
                     </v-btn>
