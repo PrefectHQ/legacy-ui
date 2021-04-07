@@ -47,7 +47,9 @@ export default {
 
 <template>
   <div class="plan-card white rounded elevation-7">
-    <div class="font-weight-regular text-center py-8 plan-title">
+    <div
+      class="font-weight-regular secondaryGrayDark--text text-center py-8 plan-title"
+    >
       Standard
       <div v-if="!hideDetails" class="text-body-1 prefect--text text-none">
         Recommended
@@ -140,7 +142,7 @@ export default {
         </MenuTooltip>
 
         <div
-          class="my-12 my-md-8 my-lg-12 text-left plan-body d-flex align-start justify-center flex-column"
+          class="my-12 my-md-8 my-lg-12 text-left plan-body d-flex align-start justify-center flex-column secondaryGrayDark--text"
         >
           <div class="d-flex align-center justify-center">
             <span class="rounded-circle plans-feature-icon">
@@ -295,7 +297,7 @@ export default {
 
   .plan-cta {
     background-color: #f7fcfd;
-    color: inherit !important;
+    color: var(--v-secondaryGrayDark-base);
     display: block;
     font-size: 1rem;
     letter-spacing: 0.15rem;
