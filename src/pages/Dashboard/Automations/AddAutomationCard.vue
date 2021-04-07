@@ -113,7 +113,6 @@ export default {
       return 'has'
     },
     editedActions() {
-      console.log(this.actions)
       return this.actions
         ? this.agentOrFlow === 'agent'
           ? this.actions.filter(
@@ -1183,7 +1182,12 @@ export default {
             <div class="text-overline">
               System actions
 
-              <UpgradeBadge v-if="!hasPermission('feature:api-action')" inline>
+              <UpgradeBadge
+                v-if="
+                  systemActions.length && !hasPermission('feature:api-action')
+                "
+                inline
+              >
                 <span class="font-weight-medium">System actions</span> are only
                 available on Standard and Enterprise plans.
               </UpgradeBadge>
