@@ -1158,6 +1158,10 @@ export default {
 
       <!-- SELECT STATE -->
       <div v-else-if="step.name === 'selectState'" key="selectState">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose the states that trigger this automation:
+        </div>
+
         <v-btn
           v-for="item in stateGroups"
           :key="item.id"
@@ -1176,7 +1180,7 @@ export default {
           {{ item }}
         </v-btn>
 
-        <div class="mt-4">
+        <div v-if="dynamicStateGroup('Custom')" class="mt-4">
           <div
             v-for="item in states['All']"
             :key="item"
