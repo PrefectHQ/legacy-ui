@@ -54,6 +54,7 @@ export default {
       rules: {
         SLACK_WEBHOOK: () => true,
         PAGERDUTY: () => true,
+        MS_TEAMS: () => true,
         EMAIL: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           if (!val) return 'Email is required.'
@@ -128,7 +129,6 @@ export default {
       return []
     },
     disableNext() {
-      console.log(this.actionConfigArray)
       if (this.step.name === 'openToConfig') {
         if (!this.actionConfigArray.length) return true
         else return false
@@ -792,8 +792,6 @@ export default {
         outlined
         class="pr-4"
         label="Save As"
-        v-bind="attrs"
-        v-on="on"
       ></v-text-field>
     </v-card-text>
     <v-card-actions v-if="step.name !== 'addName'">
