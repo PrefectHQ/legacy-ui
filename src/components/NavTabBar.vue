@@ -161,8 +161,8 @@ export default {
           v-if="tb.badgeText"
           :color="tb.badgeColor || 'codePink'"
           class="text-none"
+          :class="{ disabled: tb.disabled }"
           :content="tb.badgeText"
-          :disabled="tb.disabled"
           bottom
           inline
         ></v-badge>

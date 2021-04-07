@@ -2,9 +2,37 @@
 
 ## Unreleased
 
+- Add a label specifying which flow version the flow run has spawned from[#736](https://github.com/PrefectHQ/ui/pull/736)
+
 ### Features and Improvements
 
-- Add a label specifying which flow version the flow run has spawned from[#736](https://github.com/PrefectHQ/ui/pull/736)
+- None
+
+### Bugfixes
+
+- Don't allow flow run restarts for archived flow versions - [#714](https://github.com/PrefectHQ/ui/pull/714)
+- Change the css class for the "current" label in the teams section to make it more legible - [#737](https://github.com/PrefectHQ/ui/pull/737)
+
+## 2021-04-06a
+
+### Features and Improvements
+
+- Check role setting based on permissions blob instead of plan name - [#743](https://github.com/PrefectHQ/ui/pull/743)
+
+## 2021-04-06
+
+### Features and Improvements
+
+- Include legacy platform licenses in RBAC check - [#740](https://github.com/PrefectHQ/ui/pull/740)
+
+### Bugfixes
+
+- Fix an issue where we weren't correctly passing the license id to the committed usage query - [#741](https://github.com/PrefectHQ/ui/pull/741)
+
+## 2021-04-05
+
+### Features and Improvements
+
 - Add the remaining states to the state filter - [#706](https://github.com/PrefectHQ/ui/pull/706)
 - Add Automations page - [#695](https://github.com/PrefectHQ/ui/pull/695)
 - Add Service Accounts and API keys to the UI - [#678](https://github.com/PrefectHQ/ui/pull/678)
@@ -22,6 +50,7 @@
 - Add the proper permissions to role-based invitations - [#719](https://github.com/PrefectHQ/ui/pull/719)
 - Add the proper permissions to flow and task concurrency pages - [#720](https://github.com/PrefectHQ/ui/pull/720)
 - Small onboarding fixes - [#721](https://github.com/PrefectHQ/ui/pull/721)
+- Fix gutters on the tile layout for row-2-col-1 - [#738](https://github.com/PrefectHQ/ui/pull/738)
 
 ## 2021-03-25
 

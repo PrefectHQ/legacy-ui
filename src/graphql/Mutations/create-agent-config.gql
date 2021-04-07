@@ -1,0 +1,5 @@
+mutation CreateAgentConfig($input: create_agent_config_input!) {
+  create_agent_config(input: $input) {
+    id
+  }
+}
