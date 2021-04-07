@@ -97,10 +97,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item
-          href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
-          target="_blank"
-        >
+        <v-list-item href="https://prefect.io/slack" target="_blank">
           <v-list-item-avatar tile class="d-flex justify-center align-center">
             <img src="@/assets/icon-illustrations/slack-community.svg" />
           </v-list-item-avatar>
