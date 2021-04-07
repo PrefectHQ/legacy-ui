@@ -82,6 +82,15 @@ export const actionTypes = [
     icon: '$pagerDuty',
     config: { routing_key: null, api_token: null, severity: [] },
     requiresCloud: false
+  },
+  {
+    title: 'Microsoft Teams',
+    sendText: 'Send a',
+    type: 'MS_TEAMS',
+    verb: 'teams',
+    icon: 'fab fa-microsoft',
+    config: { webhook_url_secret: null, message: null, title: null },
+    requiresCloud: true
   }
 ]
 
