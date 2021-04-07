@@ -288,8 +288,11 @@ export default {
     },
     createAgentConfig() {},
     format(selectedStep, otherStep) {
+      const stepComplete = this.steps[selectedStep].complete
       return this.step.name === selectedStep || this.step.name === otherStep
         ? 'font-weight-dark'
+        : stepComplete
+        ? 'font-weight-light text-decoration-dotted-underline'
         : 'font-weight-light'
     },
     closeCard() {
@@ -339,10 +342,10 @@ export default {
         this.flowEventType = { name: 'are unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
-        this.steps['openAgentOrFlow'].complete = true
-        // this.switchStep('selectDoThis')
+
         this.switchStep('chooseAgentConfig')
       }
+      this.steps['openAgentOrFlow'].complete = true
     },
     selectFlow(flow) {
       if (
@@ -683,12 +686,15 @@ export default {
             max-width="500px"
             @click="switchStep('openAgentOrFlow')"
           >
-            any run
+            <span>
+              any run
+            </span>
           </v-btn>
           <span v-if="agentOrFlow === 'flow'"> from</span>
           <span v-else-if="agentOrFlow === 'agent'"> all</span>
 
           <v-btn
+            v-if="agentOrFlow === 'flow'"
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('selectFlow')"
             :class="format('selectFlow')"
@@ -707,7 +713,28 @@ export default {
               v-else-if="flowNamesList && flowNamesList.length"
               :content="flowNamesList.join(', ')"
             >
-              {{ flowNames }}
+              <span>{{ flowNames }}</span>
+            </truncate>
+            <span v-else>{{ flowNames }}</span>
+          </v-btn>
+
+          <v-btn
+            v-else
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            :color="buttonColor('openAgentOrFlow')"
+            :class="format('openAgentOrFlow')"
+            class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
+            text
+            :disabled="addAction"
+            max-width="500px"
+            @click="switchStep('openAgentOrFlow')"
+          >
+            <span v-if="agentOrFlow === 'agent'">{{ flowNames }}s</span>
+            <truncate
+              v-else-if="flowNamesList && flowNamesList.length"
+              :content="flowNamesList.join(', ')"
+            >
+              <span>{{ flowNames }}</span>
             </truncate>
             <span v-else>{{ flowNames }}</span>
           </v-btn>
@@ -723,11 +750,13 @@ export default {
               max-width="500px"
               @click="switchStep('chooseAgentConfig')"
             >
-              {{
-                selectedAgentConfig && selectedAgentConfig.name
-                  ? selectedAgentConfig.name + ' config'
-                  : 'this config'
-              }}
+              <span>
+                {{
+                  selectedAgentConfig && selectedAgentConfig.name
+                    ? selectedAgentConfig.name + ' config'
+                    : 'this config'
+                }}
+              </span>
             </v-btn>
           </span>
 
@@ -741,7 +770,9 @@ export default {
             :class="format('selectEventType')"
             @click="switchStep('selectEventType')"
           >
-            {{ flowEventType.name }}
+            <span>
+              {{ flowEventType.name }}
+            </span>
           </v-btn>
           <span v-else class="pl-1">{{ flowEventType.name }}</span>
           <span v-if="isSLA">
@@ -756,7 +787,7 @@ export default {
               :class="format('openDuration')"
               @click="switchStep('openDuration')"
             >
-              {{ seconds }}
+              <span>{{ seconds }}</span>
             </v-btn>
             seconds</span
           ><span v-if="includeTo">
@@ -769,8 +800,8 @@ export default {
               :color="buttonColor('selectState')"
               @click="switchStep('selectState')"
             >
-              {{ hookStates }}</v-btn
-            ></span
+              <span>{{ hookStates }}</span>
+            </v-btn></span
           >, then<v-btn
             :style="{
               'text-transform': 'none',
@@ -782,7 +813,7 @@ export default {
             :color="buttonColor('selectDoThis')"
             :class="format('selectDoThis')"
             @click="switchStep('selectDoThis')"
-            >{{ hookAction }}</v-btn
+            ><span>{{ hookAction }}</span></v-btn
           >.
         </v-col>
         <v-col v-if="!addAction" cols="3" lg="2" class="text-right">
@@ -1173,7 +1204,10 @@ export default {
             elevation="0"
             title="Next"
             :disabled="chosenStates.length < 1"
-            @click="switchStep('selectDoThis')"
+            @click="
+              steps['selectState'].complete = true
+              switchStep('selectDoThis')
+            "
             ><span class="text-none">Next</span>
           </v-btn>
         </v-card-actions>
@@ -1365,6 +1399,19 @@ export default {
   &.disabled {
     color: rgba(0, 0, 0, 0.26) !important;
     pointer-events: none !important;
+  }
+}
+
+.text-decoration-dotted-underline {
+  span {
+    &::after {
+      border-bottom: rgba(0, 0, 0, 0.4) dashed 1.75px;
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      width: 100%;
+    }
   }
 }
 </style>
