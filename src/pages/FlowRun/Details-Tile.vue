@@ -220,7 +220,7 @@ export default {
               <v-list-item-subtitle class="text-caption">
                 <v-row no-gutters>
                   <v-col cols="6">
-                    Version
+                    {{ flowRun.flow.name }} version
                   </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
                     <router-link
