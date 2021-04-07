@@ -34,7 +34,7 @@ export default {
         selectDoThis: { name: 'selectDoThis', complete: false }
       },
       hookTypes: [
-        { type: 'flow', label: 'flow run', permission: 'feature:hooks' },
+        { type: 'flow', label: 'flow run', permission: null },
         { type: 'agent', label: 'agent', permission: 'feature:agent-sla' }
       ],
       selectAll: false,
@@ -288,13 +288,12 @@ export default {
     },
     createAgentConfig() {},
     format(selectedStep, otherStep) {
-      const stepComplete = this.steps[selectedStep]
-      const otherComplete = this.steps[otherStep]
+      const stepComplete = this.steps[selectedStep].complete
       return this.step.name === selectedStep || this.step.name === otherStep
         ? 'font-weight-dark'
-        : stepComplete?.complete || otherComplete?.complete
-        ? 'font-weight-light'
-        : ''
+        : stepComplete
+        ? 'font-weight-light text-decoration-dotted-underline'
+        : 'font-weight-light'
     },
     closeCard() {
       if (this.hookDetail) this.$emit('close')
@@ -343,10 +342,10 @@ export default {
         this.flowEventType = { name: 'are unhealthy' }
         this.flowNamesList = []
         this.selectedFlows = []
-        this.steps['openAgentOrFlow'].complete = true
-        // this.switchStep('selectDoThis')
+
         this.switchStep('chooseAgentConfig')
       }
+      this.steps['openAgentOrFlow'].complete = true
     },
     selectFlow(flow) {
       if (
@@ -364,6 +363,7 @@ export default {
       this.notAll = true
       this.flowNamesList = this.selectedFlows?.map(flow => flow.name)
       this.steps['openAgentOrFlow'].complete = true
+      this.steps['selectFlow'].complete = true
     },
     handleFlowNext() {
       if (this.selectedFlows.length || this.allFlows)
@@ -379,7 +379,7 @@ export default {
       }
     },
     hasPermission(permission) {
-      return this.permissions?.includes(permission)
+      return permission ? this.permissions?.includes(permission) : true
     },
     selectFlowEventType(type) {
       this.steps['selectEventType'].complete = true
@@ -391,12 +391,11 @@ export default {
         : this.switchStep('selectDoThis')
     },
     selectStateGroup(group) {
-      this.steps['selectState'].complete = true
       this.stateName = group
       this.chosenStates = [...this.states[group]]
+      this.steps['selectState'].complete = this.chosenStates.length > 0
     },
     selectStates(state) {
-      this.steps['selectState'].complete = true
       this.stateName = 'Custom'
       this.chosenStates.find(
         item => item === state || item.toUpperCase() == state
@@ -405,6 +404,7 @@ export default {
             item => item != state && item.toUpperCase() != state
           ))
         : this.chosenStates.push(state)
+      this.steps['selectState'].complete = this.chosenStates.length > 0
     },
     async handleSaveAgentConfig() {
       this.$apollo.queries.agentConfigs.refetch()
@@ -452,7 +452,6 @@ export default {
         })
         await this.$apollo.queries.actions.refetch()
         this.addAction = false
-        this.step = 'selectDoThis'
         const newAction = {
           id: data.create_action.id,
           name: input.name
@@ -675,12 +674,54 @@ export default {
     <v-card-text class="text-h5 font-weight-light pb-0 pt-4 px-0">
       <v-row no-gutters>
         <v-col cols="9" lg="10">
-          When<span v-if="agentOrFlow === 'flow'"> a run from</span>
-          <span v-else-if="agentOrFlow === 'agent'"> all</span>
-          <v-btn
+          When<v-btn
+            v-if="agentOrFlow === 'flow'"
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
-            :color="buttonColor('selectFlow', 'openAgentOrFlow')"
-            :class="format('selectFlow', 'openAgentOrFlow')"
+            :color="buttonColor('openAgentOrFlow')"
+            :class="format('openAgentOrFlow')"
+            class="px-0 pb-1 ml-1 text-h5 d-inline-block"
+            text
+            :disabled="addAction"
+            max-width="500px"
+            @click="switchStep('openAgentOrFlow')"
+          >
+            <span>
+              any run
+            </span>
+          </v-btn>
+          <span v-if="agentOrFlow === 'flow'"> from</span>
+          <span v-else-if="agentOrFlow === 'agent'"> all</span>
+
+          <v-btn
+            v-if="agentOrFlow === 'flow'"
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            :color="buttonColor('selectFlow')"
+            :class="format('selectFlow')"
+            class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
+            text
+            :disabled="addAction"
+            max-width="500px"
+            @click="
+              switchStep(
+                agentOrFlow === 'flow' ? 'selectFlow' : 'openAgentOrFlow'
+              )
+            "
+          >
+            <span v-if="agentOrFlow === 'agent'">{{ flowNames }}s</span>
+            <truncate
+              v-else-if="flowNamesList && flowNamesList.length"
+              :content="flowNamesList.join(', ')"
+            >
+              <span>{{ flowNames }}</span>
+            </truncate>
+            <span v-else>{{ flowNames }}</span>
+          </v-btn>
+
+          <v-btn
+            v-else
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            :color="buttonColor('openAgentOrFlow')"
+            :class="format('openAgentOrFlow')"
             class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
             text
             :disabled="addAction"
@@ -692,7 +733,7 @@ export default {
               v-else-if="flowNamesList && flowNamesList.length"
               :content="flowNamesList.join(', ')"
             >
-              {{ flowNames }}
+              <span>{{ flowNames }}</span>
             </truncate>
             <span v-else>{{ flowNames }}</span>
           </v-btn>
@@ -708,11 +749,13 @@ export default {
               max-width="500px"
               @click="switchStep('chooseAgentConfig')"
             >
-              {{
-                selectedAgentConfig && selectedAgentConfig.name
-                  ? selectedAgentConfig.name + ' config'
-                  : 'this config'
-              }}
+              <span>
+                {{
+                  selectedAgentConfig && selectedAgentConfig.name
+                    ? selectedAgentConfig.name + ' config'
+                    : 'this config'
+                }}
+              </span>
             </v-btn>
           </span>
 
@@ -726,11 +769,13 @@ export default {
             :class="format('selectEventType')"
             @click="switchStep('selectEventType')"
           >
-            {{ flowEventType.name }}
+            <span>
+              {{ flowEventType.name }}
+            </span>
           </v-btn>
           <span v-else class="pl-1">{{ flowEventType.name }}</span>
           <span v-if="isSLA">
-            for
+            after
 
             <v-btn
               :style="{ 'text-transform': 'none', 'min-width': '0px' }"
@@ -741,7 +786,7 @@ export default {
               :class="format('openDuration')"
               @click="switchStep('openDuration')"
             >
-              {{ seconds }}
+              <span>{{ seconds }}</span>
             </v-btn>
             seconds</span
           ><span v-if="includeTo">
@@ -754,8 +799,8 @@ export default {
               :color="buttonColor('selectState')"
               @click="switchStep('selectState')"
             >
-              {{ hookStates }}</v-btn
-            ></span
+              <span>{{ hookStates }}</span>
+            </v-btn></span
           >, then<v-btn
             :style="{
               'text-transform': 'none',
@@ -767,7 +812,7 @@ export default {
             :color="buttonColor('selectDoThis')"
             :class="format('selectDoThis')"
             @click="switchStep('selectDoThis')"
-            >{{ hookAction }}</v-btn
+            ><span>{{ addAction ? 'do this' : hookAction }}</span></v-btn
           >.
         </v-col>
         <v-col v-if="!addAction" cols="3" lg="2" class="text-right">
@@ -822,8 +867,11 @@ export default {
                 <span class="text-lowercase">{{ item.label }}</span>
 
                 <UpgradeBadge v-if="!hasPermission(item.permission)">
-                  <span class="font-weight-medium">Agent automations</span> are
-                  only available on Standard and Enterprise plans.
+                  <span class="font-weight-medium"
+                    ><span class="text-capitalize">{{ item.label }}</span>
+                    automations</span
+                  >
+                  are only available on Standard and Enterprise plans.
                 </UpgradeBadge>
               </v-btn>
             </v-col>
@@ -1109,6 +1157,10 @@ export default {
 
       <!-- SELECT STATE -->
       <div v-else-if="step.name === 'selectState'" key="selectState">
+        <div class="mb-2 text-subtitle-1 font-weight-light">
+          Choose the states that trigger this automation:
+        </div>
+
         <v-btn
           v-for="item in stateGroups"
           :key="item.id"
@@ -1127,7 +1179,7 @@ export default {
           {{ item }}
         </v-btn>
 
-        <div class="mt-4">
+        <div v-if="dynamicStateGroup('Custom')" class="mt-4">
           <div
             v-for="item in states['All']"
             :key="item"
@@ -1155,7 +1207,10 @@ export default {
             elevation="0"
             title="Next"
             :disabled="chosenStates.length < 1"
-            @click="switchStep('selectDoThis')"
+            @click="
+              steps['selectState'].complete = true
+              switchStep('selectDoThis')
+            "
             ><span class="text-none">Next</span>
           </v-btn>
         </v-card-actions>
@@ -1347,6 +1402,19 @@ export default {
   &.disabled {
     color: rgba(0, 0, 0, 0.26) !important;
     pointer-events: none !important;
+  }
+}
+
+.text-decoration-dotted-underline {
+  span {
+    &::after {
+      border-bottom: rgba(0, 0, 0, 0.4) dashed 1.75px;
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      width: 100%;
+    }
   }
 }
 </style>
