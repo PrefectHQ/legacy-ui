@@ -8,7 +8,25 @@
 
 ### Bugfixes
 
-- None
+- Fixes illegible /plans page when in dark mode - [#748](https://github.com/PrefectHQ/ui/pull/748)
+- Don't allow flow run restarts for archived flow versions - [#714](https://github.com/PrefectHQ/ui/pull/714)
+- Change the css class for the "current" label in the teams section to make it more legible - [#737](https://github.com/PrefectHQ/ui/pull/737)
+
+## 2021-04-06a
+
+### Features and Improvements
+
+- Check role setting based on permissions blob instead of plan name - [#743](https://github.com/PrefectHQ/ui/pull/743)
+
+## 2021-04-06
+
+### Features and Improvements
+
+- Include legacy platform licenses in RBAC check - [#740](https://github.com/PrefectHQ/ui/pull/740)
+
+### Bugfixes
+
+- Fix an issue where we weren't correctly passing the license id to the committed usage query - [#741](https://github.com/PrefectHQ/ui/pull/741)
 
 ## 2021-04-05
 
