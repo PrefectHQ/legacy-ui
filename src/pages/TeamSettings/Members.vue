@@ -80,7 +80,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'permissions']),
     allowedUsers() {
       return this.license?.terms?.users ?? Infinity
     },
@@ -113,10 +113,7 @@ export default {
       return this.users + this.invitations
     },
     hasRBAC() {
-      return (
-        this.license?.terms?.plan === 'ENTERPRISE_2021' ||
-        this.license?.terms?.plan === 'PLATFORM'
-      )
+      return this.permissions?.includes('feature:basic-rbac')
     }
   },
   watch: {

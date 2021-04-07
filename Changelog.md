@@ -8,7 +8,14 @@
 
 ### Bugfixes
 
-- None
+- Don't allow flow run restarts for archived flow versions - [#714](https://github.com/PrefectHQ/ui/pull/714)
+- Change the css class for the "current" label in the teams section to make it more legible - [#737](https://github.com/PrefectHQ/ui/pull/737)
+
+## 2021-04-06a
+
+### Features and Improvements
+
+- Check role setting based on permissions blob instead of plan name - [#743](https://github.com/PrefectHQ/ui/pull/743)
 
 ## 2021-04-06
 
