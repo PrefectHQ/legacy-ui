@@ -1,7 +1,0 @@
-mutation addFlowSLAConfigToFlowGroup ($input: create_flow_group_sla_input!) {
-  create_flow_group_sla  (
-    input: $input
-  ) {
-    id
-  }
-}

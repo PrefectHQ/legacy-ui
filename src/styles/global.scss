@@ -299,9 +299,13 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 }
 
 /* stylelint-disable */
-.disable.v-badge--inline .v-badge__badge,
-.v-badge--inline .v-badge__wrapper {
-  pointer-events: none;
+.disabled.v-badge {
+  pointer-events: none !important;
+
+  .v-badge__wrapper,
+  .v-badge__badge {
+    pointer-events: none !important;
+  }
 }
 
 .v-text-field-input-color {
