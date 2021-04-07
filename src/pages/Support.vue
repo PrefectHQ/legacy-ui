@@ -178,9 +178,7 @@ export default {
                       If you haven't already,
                     </span>
 
-                    <a
-                      target="_blank"
-                      href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+                    <a target="_blank" href="https://prefect.io/slack"
                       >join our Slack</a
                     >
                     to ask questions, provide feedback, or just to chat! You can
@@ -231,7 +229,7 @@ export default {
             dark
             depressed
             target="_blank"
-            href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+            href="https://prefect.io/slack"
           >
             Join Slack
           </v-btn>
