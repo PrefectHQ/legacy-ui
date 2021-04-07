@@ -179,10 +179,7 @@ export default {
     </div>
 
     <transition name="quick-fade">
-      <div
-        v-if="!complete"
-        class="features-container blue-grey--text text--darken-3"
-      >
+      <div v-if="!complete" class="features-container utilGrayDark--text">
         <div class="text-center text-h3 font-weight-light">Features</div>
 
         <div class="text-center mt-8">
@@ -258,10 +255,9 @@ export default {
                   >
                     <template #activator>
                       <div
-                        class="d-flex justify-start align-center blue-grey--text flex-grow-1 feature-list-title"
+                        class="d-flex justify-start align-center utilGrayDark--text flex-grow-1 feature-list-title"
                         :class="{
-                          'text--lighten-4':
-                            feature.value && planValue < feature.value
+                          'o-50': feature.value && planValue < feature.value
                         }"
                         style="transition: all 150ms ease-in-out;"
                       >
@@ -293,7 +289,9 @@ export default {
                       </div>
                     </template>
 
-                    <div class="blue-grey--text text--darken-1 text-subtitle-1">
+                    <div
+                      class="utilGrayDark--text text--darken-1 text-subtitle-1"
+                    >
                       {{ feature.description }}
                       <div
                         v-if="feature.plan == 'enterprise'"
@@ -343,7 +341,7 @@ export default {
         </div>
 
         <v-card
-          class="white pa-8 margin-auto support-card elevation-4 rounded d-flex align-start justify-start"
+          class="pa-8 margin-auto support-card elevation-4 rounded d-flex align-start justify-start"
           tile
         >
           <div class="d-inline-block support-icon">
@@ -352,11 +350,11 @@ export default {
 
           <v-row class="ml-4" no-gutters>
             <v-col cols="12" sm="8">
-              <div class="text-h4 font-weight-light pa-0">
+              <div class="utilGrayDark--text text-h4 font-weight-light pa-0">
                 <span>Premium Support</span>
               </div>
               <div
-                class="mt-2 text-h6 font-weight-light blue-grey--text text--darken-1 pa-0"
+                class="mt-2 text-h6 font-weight-light utilGrayDark--text pa-0"
               >
                 A support plan built to help you quickly grow your workflows.
 
@@ -389,7 +387,7 @@ export default {
                   Support built for you
                 </div>
                 <a
-                  class="support-link text-h6 font-weight-regular mt-4"
+                  class="utilGrayDark--text support-link text-h6 font-weight-regular mt-4"
                   href="https://www.prefect.io/pricing#contact"
                   target="_blank"
                   >Contact us
@@ -536,7 +534,7 @@ export default {
   width: 450px;
 
   a {
-    background: #27b1ff;
+    background: var(--v-primary-base);
     border-radius: 4px;
     height: 100%;
     position: absolute;
@@ -581,6 +579,7 @@ export default {
     background-color: #eee;
     border-radius: 4px;
     box-sizing: content-box;
+    color: var(--v-secondaryGrayDark-base);
     display: flex;
     margin-top: 8px;
     overflow: hidden;
