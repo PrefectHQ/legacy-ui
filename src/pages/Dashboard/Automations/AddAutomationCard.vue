@@ -812,7 +812,7 @@ export default {
             :color="buttonColor('selectDoThis')"
             :class="format('selectDoThis')"
             @click="switchStep('selectDoThis')"
-            ><span>{{ hookAction }}</span></v-btn
+            ><span>{{ addAction ? 'do this' : hookAction }}</span></v-btn
           >.
         </v-col>
         <v-col v-if="!addAction" cols="3" lg="2" class="text-right">
