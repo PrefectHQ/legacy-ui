@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Remove all static Slack invite links in favor of the centralized prefect.io/slack link - [#747](https://github.com/PrefectHQ/ui/pull/747)
 
 ### Bugfixes
 
