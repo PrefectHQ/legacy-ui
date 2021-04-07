@@ -8,7 +8,8 @@
 
 ### Bugfixes
 
-- None
+- Don't allow flow run restarts for archived flow versions - [#714](https://github.com/PrefectHQ/ui/pull/714)
+- Change the css class for the "current" label in the teams section to make it more legible - [#737](https://github.com/PrefectHQ/ui/pull/737)
 
 ## 2021-04-06a
 
@@ -39,7 +40,6 @@
 
 ### Bugfixes
 
-- Change the css class for the "current" label in the teams section to make it more legible - [#737](https://github.com/PrefectHQ/ui/pull/737)
 - Add log id to route query - [#712](https://github.com/PrefectHQ/ui/pull/712)
 - Make the duration header not sortable - [#699](https://github.com/PrefectHQ/ui/pull/699)
 - Fix a bug where double clicking could kick off multiple quick runs - [#696](https://github.com/PrefectHQ/ui/pull/696)
