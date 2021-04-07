@@ -267,7 +267,7 @@ export default {
               </v-list-item-title>
               <v-list-item-subtitle
                 v-if="tenant.id == team.id"
-                class="font-weight-light appForeground--text"
+                class="utilGrayMid--text"
               >
                 Current
               </v-list-item-subtitle>

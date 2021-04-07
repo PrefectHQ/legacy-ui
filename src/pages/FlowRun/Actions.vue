@@ -49,8 +49,9 @@ export default {
     },
     canRestart() {
       return (
-        this.failedTaskRuns?.length > 0 ||
-        this.eligibleStates.includes(this.flowRun.state)
+        !this.flowRun.flow.archived &&
+        (this.failedTaskRuns?.length > 0 ||
+          this.eligibleStates.includes(this.flowRun.state))
       )
     }
   },
@@ -187,7 +188,8 @@ export default {
         Read-only users cannot restart flow runs
       </span>
       <span v-else-if="!canRestart"
-        >You can only restart flow runs from a failed or cancelled state.
+        >You can only restart non-archived flow runs from a failed or cancelled
+        state.
         <span v-if="isFinished"
           >If you wish to run this flow run again, you can set it (and its task
           runs) into a scheduled state.</span
