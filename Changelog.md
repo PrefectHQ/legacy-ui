@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fixes illegible /plans page when in dark mode - [#748](https://github.com/PrefectHQ/ui/pull/748)
 
 ## 2021-04-06a
 
