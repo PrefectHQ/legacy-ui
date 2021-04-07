@@ -4,12 +4,16 @@ import AddAction from '@/pages/Dashboard/Automations/AddAction'
 import CreateAgentConfigForm from '@/pages/Dashboard/Automations/CreateAgentConfigForm'
 import { AUTOMATIONSTATES, flowEventTypes } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import UpgradeBadge from '@/components/UpgradeBadge'
+
+const systemActions = ['CancelFlowRunAction']
 
 export default {
   components: {
     AddAction,
     CreateAgentConfigForm,
-    ConfirmDialog
+    ConfirmDialog,
+    UpgradeBadge
   },
   props: {
     hookDetail: {
@@ -29,6 +33,10 @@ export default {
         openDuration: { name: 'openDuration', complete: false },
         selectDoThis: { name: 'selectDoThis', complete: false }
       },
+      hookTypes: [
+        { type: 'flow', label: 'flow run', permission: 'feature:hooks' },
+        { type: 'agent', label: 'agent', permission: 'feature:agent-sla' }
+      ],
       selectAll: false,
       deleting: false,
       saving: false,
@@ -64,6 +72,7 @@ export default {
   },
   computed: {
     ...mapGetters('data', ['projects']),
+    ...mapGetters('license', ['permissions']),
     //We can not update agent for now - config id needs to be added at agent creation
     // ...mapGetters('agent', ['agents']),
     // projectsList() {
@@ -113,8 +122,29 @@ export default {
               action => action.action_type === 'CancelFlowRunAction'
             )
           ? this.actions
-          : [...this.actions, { name: 'cancel that run', value: 'CANCEL_RUN' }]
-        : [{ name: 'cancel that run', value: 'CANCEL_RUN' }]
+          : [
+              ...this.actions,
+              {
+                name: 'cancel that run',
+                value: 'CANCEL_RUN'
+              }
+            ]
+        : [
+            {
+              name: 'cancel that run',
+              value: 'CANCEL_RUN'
+            }
+          ]
+    },
+    customActions() {
+      return this.editedActions.filter(
+        a => !systemActions.includes(a.action_type)
+      )
+    },
+    systemActions() {
+      return this.editedActions.filter(a =>
+        systemActions.includes(a.action_type)
+      )
     },
     includeTo() {
       this.hookDetail
@@ -253,7 +283,7 @@ export default {
       // const stepComplete = this.steps[selectedStep]
       // const otherComplete = this.steps[otherStep]
       return this.step.name === selectedStep || this.step.name === otherStep
-        ? 'codePink'
+        ? 'accentPink'
         : 'utilGrayDark'
     },
     createAgentConfig() {},
@@ -347,6 +377,9 @@ export default {
       } else {
         this.switchStep('selectEventType')
       }
+    },
+    hasPermission(permission) {
+      return this.permissions?.includes(permission)
     },
     selectFlowEventType(type) {
       this.steps['selectEventType'].complete = true
@@ -638,7 +671,7 @@ export default {
 </script>
 
 <template>
-  <v-card outlined class="pb-4 px-4">
+  <v-card class="pb-4 px-4" elevation="4">
     <v-card-text class="text-h5 font-weight-light pb-0 pt-4 px-0">
       <v-row no-gutters>
         <v-col cols="9" lg="10">
@@ -745,7 +778,7 @@ export default {
             class="light-weight-text mr-1 px-2"
             @click="closeCard"
           >
-            <span style="text-transform: none;">Cancel</span></v-btn
+            <span class="text-none">Cancel</span></v-btn
           ><v-btn
             color="primary"
             elevation="0"
@@ -753,7 +786,7 @@ export default {
             :disabled="!completeAction"
             @click="createHook"
           >
-            <span style="text-transform: none;">Save</span>
+            <span class="text-none">Save</span>
           </v-btn>
         </v-col>
       </v-row>
@@ -766,24 +799,34 @@ export default {
       <div v-if="step.name === 'openAgentOrFlow'" key="openAgentOrFlow">
         <div>
           <div class="mb-2 text-subtitle-1 font-weight-light">
-            Choose an automation type:
+            Choose an automation:
           </div>
-          <v-row class="px-1">
-            <div
-              v-for="item in ['flow', 'agent']"
-              :key="item"
-              v-ripple
-              class="chip-small px-4 py-2 ma-2 cursor-pointer text-h6 font-weight-light"
-              :class="{ active: agentOrFlow === item }"
-              @click="selectAgentOrFlow(item)"
-            >
-              <div class="text-center">
-                <v-icon class="pr- pb-1">
-                  {{ item === 'flow' ? 'pi-flow' : 'pi-agent' }}
+          <v-row>
+            <v-col cols="12">
+              <v-btn
+                v-for="item in hookTypes"
+                :key="item.type"
+                outlined
+                depressed
+                :color="
+                  agentOrFlow === item.type ? 'accentPink' : 'utilGrayMid'
+                "
+                class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
+                :disabled="!hasPermission(item.permission)"
+                :input-value="agentOrFlow === item.type"
+                @click="selectAgentOrFlow(item.type)"
+              >
+                <v-icon class="mr-3">
+                  {{ item.type === 'flow' ? 'pi-flow' : 'pi-agent' }}
                 </v-icon>
-                {{ item }}
-              </div>
-            </div>
+                <span class="text-lowercase">{{ item.label }}</span>
+
+                <UpgradeBadge v-if="!hasPermission(item.permission)">
+                  <span class="font-weight-medium">Agent automations</span> are
+                  only available on Standard and Enterprise plans.
+                </UpgradeBadge>
+              </v-btn>
+            </v-col>
           </v-row>
         </div>
         <v-card-actions v-if="agentOrFlow !== 'this'">
@@ -797,7 +840,7 @@ export default {
                 ? switchStep('selectDoThis')
                 : switchStep('selectFlow')
             "
-            ><span style="text-transform: none;">Next</span>
+            ><span class="text-none">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -825,7 +868,7 @@ export default {
                 @click="showAgentConfigForm = true"
               >
                 <v-icon small class="mr-2">fa-plus</v-icon>
-                <span style="text-transform: none;">Create agent config</span>
+                <span class="text-none">Create agent config</span>
               </v-btn>
 
               <div v-if="agentConfigs && agentConfigs.length" class="mt-4">
@@ -866,7 +909,7 @@ export default {
             class="mr-1"
             color="utilGrayMid"
             @click="switchStep('openAgentOrFlow')"
-            ><span style="text-transform: none;">Previous</span>
+            ><span class="text-none">Previous</span>
           </v-btn>
           <v-btn
             color="primary"
@@ -875,7 +918,7 @@ export default {
             title="Next"
             @click="switchStep('selectDoThis')"
           >
-            <span style="text-transform: none;">Next</span>
+            <span class="text-none">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -954,7 +997,7 @@ export default {
             color="utilGrayMid"
             class="mr-1"
             @click="switchStep('openAgentOrFlow')"
-            ><span style="text-transform: none;">Previous</span>
+            ><span class="text-none">Previous</span>
           </v-btn>
           <v-btn
             color="primary"
@@ -962,7 +1005,7 @@ export default {
             :disabled="!selectedFlows.length"
             title="Next"
             @click="handleFlowNext"
-            ><span style="text-transform: none;">Next</span>
+            ><span class="text-none">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -974,16 +1017,32 @@ export default {
           Choose an event:
         </div>
         <div>
-          <v-row class="px-1">
-            <div
-              v-for="item in filteredFlowEventTypes"
-              :key="item.enum"
-              v-ripple
-              class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
-              :class="{ active: flowEventType.name === item.name }"
-              @click="selectFlowEventType(item)"
-              ><div class="text-center text-body-1">{{ item.name }}</div>
-            </div>
+          <v-row>
+            <v-col cols="12">
+              <v-btn
+                v-for="item in filteredFlowEventTypes"
+                :key="item.enum"
+                outlined
+                depressed
+                :color="
+                  flowEventType.name === item.name
+                    ? 'accentPink'
+                    : 'utilGrayMid'
+                "
+                class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
+                :input-value="flowEventType.name === item.name"
+                :disabled="!hasPermission(item.permission)"
+                @click="selectFlowEventType(item)"
+                ><div class="text-center text-body-1 text-none">
+                  {{ item.name }}
+                </div>
+
+                <UpgradeBadge v-if="!hasPermission(item.permission)">
+                  <span class="font-weight-medium">Flow SLA automations</span>
+                  are only available on Standard and Enterprise plans.
+                </UpgradeBadge>
+              </v-btn>
+            </v-col>
           </v-row>
         </div>
         <v-card-actions>
@@ -994,7 +1053,7 @@ export default {
             color="utilGrayMid"
             class="mr-1"
             @click="switchStep('selectFlow')"
-            ><span style="text-transform: none;">Previous</span>
+            ><span class="text-none">Previous</span>
           </v-btn>
           <v-btn
             color="primary"
@@ -1003,7 +1062,7 @@ export default {
             :disabled="!flowEventType.enum"
             @click="selectFlowEventType()"
           >
-            <span style="text-transform: none;">Next</span>
+            <span class="text-none">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -1034,7 +1093,7 @@ export default {
             class="mr-1"
             color="utilGrayMid"
             @click="switchStep('selectEventType')"
-            ><span style="text-transform: none;">Previous</span>
+            ><span class="text-none">Previous</span>
           </v-btn>
           <v-btn
             color="primary"
@@ -1042,7 +1101,7 @@ export default {
             title="Next"
             @click="closeSeconds"
           >
-            <span style="text-transform: none;">Next</span>
+            <span class="text-none">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -1089,7 +1148,7 @@ export default {
             class="mr-1"
             color="utilGrayMid"
             @click="switchStep('selectEventType')"
-            ><span style="text-transform: none;">Previous</span>
+            ><span class="text-none">Previous</span>
           </v-btn>
           <v-btn
             color="primary"
@@ -1097,7 +1156,7 @@ export default {
             title="Next"
             :disabled="chosenStates.length < 1"
             @click="switchStep('selectDoThis')"
-            ><span style="text-transform: none;">Next</span>
+            ><span class="text-none">Next</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -1112,28 +1171,73 @@ export default {
         <v-row v-if="!addAction">
           <v-col>
             <v-btn small elevation="0" color="primary" @click="addNewAction">
-              <v-icon small class="mr-2">fa-plus</v-icon>
-              <span style="text-transform: none;">New Action</span>
+              <v-icon small class="mr-2">fa-plus fa-sm</v-icon>
+              <span class="text-none">New</span>
             </v-btn>
           </v-col>
         </v-row>
 
-        <v-row v-if="!addAction" class="py-2 px-1">
-          <div v-if="!editedActions.length" class="mx-2">
-            You have no actions yet.
-          </div>
-          <div
-            v-for="item in editedActions"
-            v-else
-            :key="item.id"
-            v-ripple
-            class="chip-small pa-2 ma-2 cursor-pointer text-body-1"
-            :class="{ active: chosenAction && chosenAction.id === item.id }"
-            @click="selectAction(item)"
-          >
-            {{ item.name || item.action_type }}
-          </div>
+        <v-row v-if="!addAction" class="mt-8" no-gutters>
+          <v-col cols="12">
+            <div class="text-overline">
+              System actions
+
+              <UpgradeBadge
+                v-if="
+                  systemActions.length && !hasPermission('feature:api-action')
+                "
+                inline
+              >
+                <span class="font-weight-medium">System actions</span> are only
+                available on Standard and Enterprise plans.
+              </UpgradeBadge>
+            </div>
+
+            <div
+              v-if="!systemActions.length"
+              class="utilGrayMid--text text-body-2 font-weight-light"
+            >
+              There are no system actions for this automation.
+            </div>
+
+            <div
+              v-for="item in systemActions"
+              v-else
+              :key="item.id"
+              v-ripple
+              class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1"
+              :class="{
+                active: chosenAction && chosenAction.id === item.id,
+                disabled: !hasPermission('feature:api-action')
+              }"
+              @click="selectAction(item)"
+            >
+              {{ item.name || item.action_type }}
+            </div>
+          </v-col>
         </v-row>
+
+        <v-row v-if="!addAction" class="mt-8" no-gutters>
+          <v-col cols="12">
+            <div class="text-overline">Your actions</div>
+
+            <div v-if="!customActions.length">
+              You have no actions.
+            </div>
+            <div
+              v-for="item in customActions"
+              v-else
+              :key="item.id"
+              v-ripple
+              class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1 d-inline-block"
+              :class="{ active: chosenAction && chosenAction.id === item.id }"
+              @click="selectAction(item)"
+            >
+              {{ item.name || item.action_type }}
+            </div>
+          </v-col>
+        </v-row>
+
         <ConfirmDialog
           :value="removeDoThisDialog"
           :loading="deleting"
@@ -1163,7 +1267,7 @@ export default {
             class="mr-1"
             color="utilGrayMid"
             @click="step = steps[previousStep]"
-            ><span style="text-transform: none;">Previous</span>
+            ><span class="text-none">Previous</span>
           </v-btn>
           <v-btn
             color="primary"
@@ -1172,7 +1276,7 @@ export default {
             :loading="saving"
             :disabled="!completeAction"
             @click="createHook"
-            ><span style="text-transform: none;">Save</span>
+            ><span class="text-none">Save</span>
           </v-btn>
         </v-card-actions>
       </div>
@@ -1202,7 +1306,7 @@ export default {
   &.active {
     &::after {
       border: 2px solid;
-      border-color: var(--v-codePink-base) !important;
+      border-color: var(--v-accentPink-base) !important;
     }
   }
 
@@ -1231,13 +1335,18 @@ export default {
   &.active {
     &::after {
       border: 2px solid;
-      border-color: var(--v-codePink-base) !important;
+      border-color: var(--v-accentPink-base) !important;
     }
   }
 
   &:hover,
   &:focus {
     background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &.disabled {
+    color: rgba(0, 0, 0, 0.26) !important;
+    pointer-events: none !important;
   }
 }
 </style>
