@@ -136,10 +136,6 @@ export default {
       $vuetify.breakpoint.xsOnly && 'mx-auto'
     ]"
   >
-    <v-chip label disabled>
-      From Flow Version {{ flowRun.flow.version }}
-    </v-chip>
-
     <v-tooltip v-if="isScheduled" bottom>
       <template #activator="{ on }">
         <div v-on="on">
