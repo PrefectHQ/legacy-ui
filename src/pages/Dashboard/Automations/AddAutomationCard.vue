@@ -2,7 +2,11 @@
 import { mapActions, mapGetters } from 'vuex'
 import AddAction from '@/pages/Dashboard/Automations/AddAction'
 import CreateAgentConfigForm from '@/pages/Dashboard/Automations/CreateAgentConfigForm'
-import { AUTOMATIONSTATES, flowEventTypes } from '@/utils/automations'
+import {
+  AUTOMATIONSTATES,
+  flowEventTypes,
+  actionTypes
+} from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import UpgradeBadge from '@/components/UpgradeBadge'
 
@@ -279,6 +283,9 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    actionIcon(type) {
+      return actionTypes.find(a => a.actionType == type)?.icon
+    },
     buttonColor(selectedStep, otherStep) {
       // const stepComplete = this.steps[selectedStep]
       // const otherComplete = this.steps[otherStep]
@@ -1267,7 +1274,8 @@ export default {
               }"
               @click="selectAction(item)"
             >
-              {{ item.name || item.action_type }}
+              <v-icon small class="mr-2">$prefect</v-icon
+              >{{ item.name || item.action_type }}
             </div>
           </v-col>
         </v-row>
@@ -1288,7 +1296,10 @@ export default {
               :class="{ active: chosenAction && chosenAction.id === item.id }"
               @click="selectAction(item)"
             >
-              {{ item.name || item.action_type }}
+              <v-icon small class="mr-2">{{
+                actionIcon(item.action_type) || 'fas fa-desktop'
+              }}</v-icon
+              >{{ item.name || item.action_type }}
             </div>
           </v-col>
         </v-row>
