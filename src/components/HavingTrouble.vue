@@ -11,8 +11,7 @@ export default { components: { ExternalLink } }
     </div>
     <div class="mt-4">
       The <v-icon x-small>fab fa-slack</v-icon>&nbsp;
-      <ExternalLink
-        href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+      <ExternalLink href="https://prefect.io/slack"
         >Prefect Slack community</ExternalLink
       >
       is a great place to ask questions, provide feedback, or just to chat!

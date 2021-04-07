@@ -29,8 +29,7 @@ const exploreBlocks = [
     body: 'Chat with us, ask questions, and share tips',
     src: require('@/assets/icon-illustrations/slack-community.svg'),
     alt: 'Join the community image',
-    href:
-      'https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE',
+    href: 'https://prefect.io/slack',
     linkText: 'Join Slack'
   }
 ]
