@@ -452,7 +452,6 @@ export default {
         })
         await this.$apollo.queries.actions.refetch()
         this.addAction = false
-        this.switchStep('selectDoThis')
         const newAction = {
           id: data.create_action.id,
           name: input.name
