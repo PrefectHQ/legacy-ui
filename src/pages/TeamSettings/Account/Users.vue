@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'isSelfServe']),
     ...mapGetters('user', ['user']),
     users: {
       get() {
@@ -40,12 +40,12 @@ export default {
     existingCard() {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
     },
-    isSelfServe() {
-      return (
-        this.license?.terms?.plan === 'SELF_SERVE' ||
-        this.license?.terms?.is_self_serve
-      )
-    },
+    // isSelfServe() {
+    //   return (
+    //     this.license?.terms?.plan === 'SELF_SERVE' ||
+    //     this.license?.terms?.is_self_serve
+    //   )
+    // },
     max() {
       return 4
     },

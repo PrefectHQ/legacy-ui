@@ -19,6 +19,21 @@ const getters = {
   },
   tempLicenseType(state) {
     return state.tempLicenseType
+  },
+  flowConcurrency(state) {
+    return state.license?.terms?.flow_concurrency
+  },
+  isSelfServe(state) {
+    return (
+      state.license?.terms?.plan === 'SELF_SERVE' ||
+      state.license?.terms?.is_self_serve
+    )
+  },
+  isUsageBased(state) {
+    return state.license?.terms?.is_usage_based
+  },
+  hasRBAC(state) {
+    return state.permissions?.includes('feature:basic-rbac')
   }
 }
 

@@ -20,7 +20,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'isSelfServe']),
     isBank() {
       return (
         this.payment?.type == 'ach_credit_transfer' ||
@@ -34,9 +34,9 @@ export default {
       if (this.payment) return 'Update'
       return 'Add'
     },
-    isSelfServe() {
-      return this.license?.terms?.is_self_serve
-    },
+    // isSelfServe() {
+    //   return this.license?.terms?.is_self_serve
+    // },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
     },

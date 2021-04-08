@@ -118,7 +118,7 @@ export default {
     ...mapGetters('api', ['backend', 'isCloud', 'connected']),
     ...mapGetters('data', ['activeProject']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'isSelfServe', 'isUsageBased']),
     project() {
       return this.activeProject
     },
@@ -128,17 +128,17 @@ export default {
     usageTile() {
       if (!this.isCloud) return null
       if (!this.license) return 'loading'
-      const isSelfServe = this.license.terms.is_self_serve
-      const isUsageBased = this.license.terms.is_usage_based
+      // const isSelfServe = this.license.terms.is_self_serve
+      // const isUsageBased = this.license.terms.is_usage_based
 
       // Legacy license, not self-serve (so no upgrade)
-      if (!isSelfServe && !isUsageBased) return null
+      if (!this.isSelfServe && !this.isUsageBased) return null
 
       // Legacy license, self-serve (so can upgrade)
-      if (isSelfServe && !isUsageBased) return 'UpgradeUsageTile'
+      if (this.isSelfServe && !this.isUsageBased) return 'UpgradeUsageTile'
 
       // Usage license, not self-serve (show committed runs)
-      if (!isSelfServe && isUsageBased) return 'CommittedUsageTile'
+      if (!this.isSelfServe && this.isUsageBased) return 'CommittedUsageTile'
 
       // Usage license && self-serve
       return 'CycleUsageTile'

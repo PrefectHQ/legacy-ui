@@ -39,16 +39,16 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'isUsageBased']),
     needAlert() {
       return !location.href.includes('prefect.io')
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
-    },
-    isUsageBased() {
-      return this.license?.terms?.is_usage_based
     }
+    // isUsageBased() {
+    //   return this.license?.terms?.is_usage_based
+    // }
   },
   watch: {
     tenant(val, oldVal) {

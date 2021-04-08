@@ -21,14 +21,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'flowConcurrency', 'isSelfServe']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
     },
-    isSelfServe() {
-      return this.license?.terms?.is_self_serve
-    },
+    // isSelfServe() {
+    //   return this.license?.terms?.is_self_serve
+    // },
     isLegacy() {
       return !this.license?.terms?.is_usage_based
     },
@@ -81,9 +81,9 @@ export default {
     historyRetention() {
       return this.license?.terms?.history_retention_days?.toLocaleString()
     },
-    flowConcurrency() {
-      return this.license?.terms?.flow_concurrency
-    },
+    // flowConcurrency() {
+    //   return this.license?.terms?.flow_concurrency
+    // },
     memberOrMembers() {
       return this.license?.terms?.users > 1 ? 'members' : 'member'
     },

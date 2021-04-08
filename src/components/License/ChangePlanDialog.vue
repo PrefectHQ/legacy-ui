@@ -21,7 +21,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'isSelfServe']),
     ...mapGetters('tenant', ['tenant']),
     existingCard() {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
@@ -29,12 +29,12 @@ export default {
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
     },
-    isSelfServe() {
-      return (
-        this.license?.terms?.plan === 'SELF_SERVE' ||
-        this.license?.terms?.is_self_serve
-      )
-    },
+    // isSelfServe() {
+    //   return (
+    //     this.license?.terms?.plan === 'SELF_SERVE' ||
+    //     this.license?.terms?.is_self_serve
+    //   )
+    // },
     planName() {
       return this.plan?.name
     },
