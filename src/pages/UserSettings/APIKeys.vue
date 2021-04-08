@@ -35,6 +35,7 @@ export default {
           value: 'created'
         },
         { text: 'Expires', value: 'expires_at' },
+        { text: 'Tenant', value: 'tenant' },
         {
           text: '',
           value: 'actions',
@@ -46,6 +47,7 @@ export default {
       //key
       newKey: '',
       newKeyName: '',
+      newKeyTenant: null,
       keys: [],
       keyCopied: false,
       keyToDelete: false,
@@ -59,19 +61,24 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['user']),
+    ...mapGetters('tenant', ['tenants', 'tenant']),
     newKeyFormFilled() {
-      return !!this.newKeyName
+      return !!this.newKeyName && !!this.newKeyTenant
     },
     localExpiryDate() {
       return this.formDate('2100-01-01T00:00:00+00:00')
     }
   },
+
   watch: {
     keyToDeleteDialog(value) {
       if (!value) {
         this.keyToDelete = false
       }
     }
+  },
+  mounted() {
+    return (this.newKeyTenant = this.tenant)
   },
   methods: {
     clearAlert() {
@@ -130,6 +137,7 @@ export default {
     resetNewKey() {
       this.newKeyName = ''
       this.newKey = ''
+      this.newKeyTenant = this.tenant
       this.expiresAt = null
       this.createKeyDialog = false
       this.copyKeyDialog = false
@@ -149,11 +157,15 @@ export default {
         this.keys = data.auth_api_key
           .filter(key => key.user_id === this.user.id)
           .map(key => {
+            const defaultTenant = this.tenants.find(
+              ({ id }) => id === key.default_tenant_id
+            )
             return {
               id: key.id,
               name: key.name,
               created_at: key.created,
               expires: key.expires_at,
+              tenant: defaultTenant.name,
               user_id: key.user_id
             }
           })
@@ -247,6 +259,9 @@ export default {
           <template #header.expires_at="{ header }">
             <span class="text-subtitle-2">{{ header.text }}</span>
           </template>
+          <template #header.tenant="{ header }">
+            <span class="text-subtitle-2">{{ header.text }}</span>
+          </template>
           <template #item.name="{ item }">
             {{ item.name }}
           </template>
@@ -306,7 +321,8 @@ export default {
         createAPIKey({
           user_id: user.id,
           name: newKeyName,
-          expires_at: expiresAt
+          expires_at: expiresAt,
+          tenant_id: newKeyTenant.id
         })
       "
     >
@@ -334,6 +350,17 @@ export default {
           persistentHint: true
         }"
       />
+      <v-select
+        v-model="newKeyTenant"
+        outlined
+        dense
+        return-object
+        label="Tenant"
+        :items="tenants"
+        item-text="name"
+        item-value="id"
+      >
+      </v-select>
     </ConfirmDialog>
 
     <ConfirmDialog
