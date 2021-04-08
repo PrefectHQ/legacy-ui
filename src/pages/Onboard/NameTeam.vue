@@ -108,6 +108,9 @@ export default {
       }, 250)
     }, 1250)
   },
+  beforeDestroy() {
+    window.removeEventListener(this.handleVisibilityChange)
+  },
   methods: {
     ...mapActions('tenant', ['getTenants', 'updateTenantSettings']),
     ...mapActions('user', ['getUser']),
