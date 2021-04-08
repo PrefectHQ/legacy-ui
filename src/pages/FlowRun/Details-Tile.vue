@@ -219,6 +219,18 @@ export default {
             <v-list-item-content>
               <v-list-item-subtitle class="text-caption">
                 <v-row no-gutters>
+                  <v-col cols="6"> {{ flowRun.flow.name }} version </v-col>
+                  <v-col cols="6" class="text-right font-weight-bold">
+                    <router-link
+                      class="link"
+                      :to="{ name: 'flow', params: { id: flowRun.flow.id } }"
+                    >
+                      {{ flowRun.flow.version }}
+                    </router-link>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
                   <v-col v-if="flowRun.start_time" cols="6">
                     Scheduled Start Time
                   </v-col>
