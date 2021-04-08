@@ -129,14 +129,16 @@ export default {
           : [
               ...this.actions,
               {
-                name: 'cancel that run',
-                value: 'CANCEL_RUN'
+                name: 'cancel run',
+                value: 'CANCEL_RUN',
+                action_type: 'CancelFlowRunAction'
               }
             ]
         : [
             {
-              name: 'cancel that run',
-              value: 'CANCEL_RUN'
+              name: 'cancel run',
+              value: 'CANCEL_RUN',
+              action_type: 'CancelFlowRunAction'
             }
           ]
     },
