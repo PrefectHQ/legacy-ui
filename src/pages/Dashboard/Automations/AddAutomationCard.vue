@@ -1269,14 +1269,14 @@ export default {
               v-else
               :key="item.id"
               v-ripple
-              class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1"
+              class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1 d-inline-block"
               :class="{
                 active: chosenAction && chosenAction.id === item.id,
                 disabled: !hasPermission('feature:api-action')
               }"
               @click="selectAction(item)"
             >
-              <v-icon small class="mr-2">$prefect</v-icon
+              <v-icon small class="mr-2">$prefect </v-icon
               >{{ item.name || item.action_type }}
             </div>
           </v-col>
@@ -1413,7 +1413,7 @@ export default {
   }
 
   &.disabled {
-    color: rgba(0, 0, 0, 0.26) !important;
+    color: var(--v-utilGrayLight-base) !important;
     pointer-events: none !important;
   }
 }
