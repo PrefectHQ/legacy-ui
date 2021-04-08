@@ -120,9 +120,6 @@ export default {
     deleteSelfWarning() {
       return this.user.email === this.selectedUser.email
     }
-    // hasRBAC() {
-    //   return this.permissions?.includes('feature:basic-rbac')
-    // }
   },
   watch: {
     refetchSignal() {

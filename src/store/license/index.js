@@ -34,6 +34,14 @@ const getters = {
   },
   hasRBAC(state) {
     return state.permissions?.includes('feature:basic-rbac')
+  },
+  // Determine if user has the proper permissions to access TCLs
+  // - They are on a license that grants explicit permission to access this feature
+  isEligible(state) {
+    // If permissions are still loading...
+    if (!state.permissions) return true
+
+    return state.permissions.includes('feature:concurrency-limit')
   }
 }
 

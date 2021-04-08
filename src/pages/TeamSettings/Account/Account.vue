@@ -46,9 +46,6 @@ export default {
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
     }
-    // isUsageBased() {
-    //   return this.license?.terms?.is_usage_based
-    // }
   },
   watch: {
     tenant(val, oldVal) {

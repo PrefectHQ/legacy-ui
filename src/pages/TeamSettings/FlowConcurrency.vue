@@ -113,21 +113,13 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['permissions']),
+    ...mapGetters('license', ['permissions', 'isEligible']),
     // Determine if user has permission to add, edit, and delete concurrency limits
     hasManagementPermission() {
       return this.isTenantAdmin
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
-    },
-    // Determine if user has the proper permissions to access TCLs
-    // - They are on a license that grants explicit permission to access this feature
-    isEligible() {
-      // If permissions are still loading...
-      if (!this.permissions) return true
-
-      return this.permissions.includes('feature:concurrency-limit')
     },
     // Merge usage details into labels array
     labelsWithUsage() {

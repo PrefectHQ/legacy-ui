@@ -128,9 +128,6 @@ export default {
     usageTile() {
       if (!this.isCloud) return null
       if (!this.license) return 'loading'
-      // const isSelfServe = this.license.terms.is_self_serve
-      // const isUsageBased = this.license.terms.is_usage_based
-
       // Legacy license, not self-serve (so no upgrade)
       if (!this.isSelfServe && !this.isUsageBased) return null
 

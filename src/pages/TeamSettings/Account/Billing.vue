@@ -34,9 +34,6 @@ export default {
       if (this.payment) return 'Update'
       return 'Add'
     },
-    // isSelfServe() {
-    //   return this.license?.terms?.is_self_serve
-    // },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
     },

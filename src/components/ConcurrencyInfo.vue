@@ -8,10 +8,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
-    flowConcurrency() {
-      return this.license?.terms?.flow_concurrency
-    }
+    ...mapGetters('license', ['license', 'flowConcurrency'])
   },
   apollo: {
     concurrentRuns: {

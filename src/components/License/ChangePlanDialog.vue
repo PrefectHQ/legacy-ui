@@ -29,12 +29,6 @@ export default {
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
     },
-    // isSelfServe() {
-    //   return (
-    //     this.license?.terms?.plan === 'SELF_SERVE' ||
-    //     this.license?.terms?.is_self_serve
-    //   )
-    // },
     planName() {
       return this.plan?.name
     },
