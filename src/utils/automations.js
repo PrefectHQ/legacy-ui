@@ -105,7 +105,7 @@ export const flowEventTypes = [
   {
     name: 'changes state',
     enum: 'CHANGES_STATE',
-    permission: 'feature:hooks'
+    permission: null
   },
   {
     name: 'does not finish',
