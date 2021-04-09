@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Adds breadcrumb to allow easy access to current flow version and spawning flow version from a flow run screen [#759](https://github.com/PrefectHQ/ui/pull/759)
 - Add a label specifying which flow version the flow run has spawned from[#736](https://github.com/PrefectHQ/ui/pull/736)
 - Adds a tenant selector to User > API Keys creation screen [#753](https://github.com/PrefectHQ/ui/pull/753)
 
