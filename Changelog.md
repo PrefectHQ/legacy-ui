@@ -4,11 +4,7 @@
 
 ### Features and Improvements
 
-- None
-
-### Bugfixes
-
-- None
+- Automations! - [#695](https://github.com/PrefectHQ/ui/pull/695)
 
 ## 2021-04-09
 
