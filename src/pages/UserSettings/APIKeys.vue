@@ -48,6 +48,7 @@ export default {
       newKey: '',
       newKeyName: '',
       newKeyTenant: null,
+      creatingKey: false,
       keys: [],
       keyCopied: false,
       keyToDelete: false,
@@ -96,6 +97,7 @@ export default {
       }, 2000)
     },
     async createAPIKey(variables) {
+      this.creatingKey = true
       const result = await this.$apollo.mutate({
         mutation: require('@/graphql/Tokens/create-api-key.gql'),
         variables
@@ -114,6 +116,7 @@ export default {
         this.alertMessage = 'Something went wrong when creating an API key.'
         this.alertType = 'error'
       }
+      this.creatingKey = false
     },
     async deleteKey(key) {
       const result = await this.$apollo.mutate({
@@ -313,6 +316,7 @@ export default {
       :disabled="!newKeyFormFilled"
       title="Create an API key"
       confirm-text="Create"
+      :loading="creatingKey"
       @cancel="
         createKeyDialog = false
         resetNewKey()
