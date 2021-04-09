@@ -36,6 +36,16 @@ export default {
       required: false,
       default: null
     },
+    nudgeLeft: {
+      type: String,
+      required: false,
+      default: null
+    },
+    nudgeRight: {
+      type: String,
+      required: false,
+      default: null
+    },
     nudgeTop: {
       type: String,
       required: false,
@@ -79,6 +89,8 @@ export default {
     :top="top"
     :nudge-bottom="nudgeBottom"
     :nudge-top="nudgeTop"
+    :nudge-left="nudgeLeft"
+    :nudge-right="nudgeRight"
     :max-width="maxWidth"
     open-on-hover
     tile

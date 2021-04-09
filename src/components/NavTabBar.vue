@@ -159,7 +159,7 @@ export default {
         {{ tb.name }}
         <v-badge
           v-if="tb.badgeText"
-          :color="tb.badgeColor || 'codePink'"
+          :color="tb.badgeColor || 'accentPink'"
           class="text-none"
           :class="{ disabled: tb.disabled }"
           :content="tb.badgeText"
