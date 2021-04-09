@@ -5,6 +5,22 @@ import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin.js'
 import { shuffle } from '@/utils/array'
 
+let hidden, visibilityChange
+
+if (window) {
+  if (typeof document.hidden !== 'undefined') {
+    // Opera 12.10 and Firefox 18 and later
+    hidden = 'hidden'
+    visibilityChange = 'visibilitychange'
+  } else if (typeof document.msHidden !== 'undefined') {
+    hidden = 'msHidden'
+    visibilityChange = 'msvisibilitychange'
+  } else if (typeof document.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden'
+    visibilityChange = 'webkitvisibilitychange'
+  }
+}
+
 export default {
   components: { ExternalLink },
   mixins: [teamProfileMixin, handleMembershipInvitations],
@@ -45,6 +61,7 @@ export default {
   computed: {
     ...mapGetters('auth', ['user']),
     ...mapGetters('api', ['isCloud']),
+    ...mapGetters('license', ['license']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
     },
@@ -60,8 +77,16 @@ export default {
     }
   },
   mounted() {
+    this.createLicense()
+
     this.tenantChanges.name = this.tenant.name
     this.tenantChanges.slug = this.tenant.slug
+
+    window.addEventListener(
+      visibilityChange,
+      this.handleVisibilityChange,
+      false
+    )
 
     setTimeout(() => {
       this.revealNote = true
@@ -83,10 +108,14 @@ export default {
       }, 250)
     }, 1250)
   },
+  beforeDestroy() {
+    window.removeEventListener(this.handleVisibilityChange)
+  },
   methods: {
     ...mapActions('tenant', ['getTenants', 'updateTenantSettings']),
     ...mapActions('user', ['getUser']),
     async createLicense() {
+      if (this.license) return
       this.loading++
       try {
         // Create the stripe customer (necessary for creating a self serve license)
@@ -100,17 +129,7 @@ export default {
             }
           }
         })
-        // Create the self serve license
-        // await this.$apollo.mutate({
-        //   mutation: require('@/graphql/License/create-self-serve-license.gql'),
-        //   variables: {
-        //     input: {
-        //       confirm: true,
-        //       users: 1,
-        //       stripe_coupon_id: null
-        //     }
-        //   }
-        // })
+
         // Create usage license
         await this.$apollo.mutate({
           mutation: require('@/graphql/License/create-usage-based-license.gql'),
@@ -122,13 +141,25 @@ export default {
           }
         })
       } catch (e) {
-        /// Temp Fix - We should create a license that has permission to do this!!
-        if (!e?.message.includes('This tenant already has an active license'))
-          this.updateServerError = true
+        /* eslint-disable no-console */
+        console.error(e)
       }
 
       this.loading--
       return
+    },
+    handleVisibilityChange() {
+      // Redundancy for the animation reveals (which are on timeouts)
+      if (!document[hidden]) {
+        this.height = getComputedStyle(this.$refs['main-row']).height
+
+        this.revealNote = true
+        this.revealNameInput = true
+        this.revealUrlInput = true
+        this.revealDropdown = true
+        this.revealPendingTeams = true
+        this.revealConfirm = true
+      }
     },
     async updateTenant() {
       // Async tenant checks
@@ -177,8 +208,18 @@ export default {
       if (this.slugErrors.length > 0) {
         return
       }
-      await this.createLicense()
+
       if (!this.updateServerError) this.goToResources()
+    },
+    async skip() {
+      this.updateTenantSettings({
+        teamNamed: true
+      })
+
+      this.$router.push({
+        name: 'onboard-resources',
+        params: { tenant: this.tenant.slug }
+      })
     },
     async accept(pt) {
       this.loading++
@@ -466,7 +507,11 @@ export default {
             ></v-text-field>
           </v-col>
 
-          <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
+          <v-col
+            v-if="revealPendingTeams && pendingInvitations"
+            key="pendingInvites"
+            cols="12"
+          >
             <div v-if="pendingInvitations.length" class="text-body-1">
               Your pending invitations:
             </div>
@@ -513,18 +558,31 @@ export default {
             cols="12"
             class="my-2"
           >
-            <v-btn
-              v-if="isTenantAdmin"
-              color="primary"
-              width="auto"
-              data-cy="submit-team-info"
-              :loading="loading > 0"
-              :disabled="disabled"
-              @click="updateTenant"
-            >
-              Next
-              <v-icon right>arrow_right</v-icon>
-            </v-btn>
+            <div>
+              <v-btn
+                v-if="isTenantAdmin"
+                color="primary"
+                width="200"
+                data-cy="submit-team-info"
+                :loading="loading > 0"
+                :disabled="disabled"
+                @click="updateTenant"
+              >
+                Next
+              </v-btn>
+            </div>
+            <div class="mt-4">
+              <v-btn
+                color="white"
+                :disabled="disabled"
+                text
+                width="auto"
+                @click="skip"
+              >
+                Skip
+                <v-icon right>arrow_right</v-icon>
+              </v-btn>
+            </div>
           </v-col>
 
           <v-col
