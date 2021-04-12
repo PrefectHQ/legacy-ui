@@ -45,6 +45,7 @@ export const actionTypes = [
   {
     title: 'Email',
     type: 'EMAIL',
+    actionType: 'EmailNotificationAction',
     verb: 'email',
     sendText: 'Send an',
     icon: 'fas fa-envelope',
@@ -54,6 +55,7 @@ export const actionTypes = [
   {
     title: 'Slack',
     type: 'SLACK_WEBHOOK',
+    actionType: 'SlackNotificationAction',
     verb: 'slack',
     sendText: 'Send a',
     icon: 'fab fa-slack',
@@ -63,6 +65,7 @@ export const actionTypes = [
   {
     title: 'Twilio',
     type: 'TWILIO',
+    actionType: 'TwilioNotificationAction',
     sendText: 'Send a',
     verb: 'twilio',
     icon: '$twilio',
@@ -78,24 +81,41 @@ export const actionTypes = [
     title: 'Pager Duty',
     sendText: 'Send a',
     type: 'PAGERDUTY',
+    actionType: 'PagerDutyNotificationAction',
     verb: 'PagerDuty',
     icon: '$pagerDuty',
     config: { routing_key: null, api_token: null, severity: [] },
     requiresCloud: false
+  },
+  {
+    title: 'Microsoft Teams',
+    sendText: 'Send a',
+    type: 'MS_TEAMS',
+    actionType: 'TeamsWebhookNotificationAction',
+    verb: 'teams',
+    icon: 'fab fa-microsoft',
+    config: { webhook_url_secret: null, message: null, title: null },
+    requiresCloud: true
   }
 ]
 
 export const featureFlaggedEventTypes = [...actionTypes]
 
 export const flowEventTypes = [
-  { name: 'does not finish', enum: 'STARTED_NOT_FINISHED' },
-  {
-    name: 'does not start',
-    enum: 'SCHEDULED_NOT_STARTED'
-  },
   {
     name: 'changes state',
-    enum: 'CHANGES_STATE'
+    enum: 'CHANGES_STATE',
+    permission: null
+  },
+  {
+    name: 'does not finish',
+    enum: 'STARTED_NOT_FINISHED',
+    permission: 'feature:flow-sla'
+  },
+  {
+    name: 'does not start',
+    enum: 'SCHEDULED_NOT_STARTED',
+    permission: 'feature:flow-sla'
   }
 ]
 
