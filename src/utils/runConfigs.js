@@ -27,7 +27,14 @@ export const UniversalRun = {
   description: 'Run the flow on any agent with matching labels',
   ref: 'https://docs.prefect.io/api/latest/run_configs.html#universalrun',
   icon: 'fad fa-globe',
-  args: []
+  args: [
+    {
+      arg: 'env',
+      input_type: 'object',
+      label: 'Environment variables',
+      description: 'Additional environment variables to set in the container.'
+    }
+  ]
 }
 
 export const DockerRun = {
