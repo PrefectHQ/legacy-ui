@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add loading state to sign out method - [#766](https://github.com/PrefectHQ/ui/pull/766)
 
 ### Bugfixes
 
