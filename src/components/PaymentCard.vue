@@ -86,9 +86,6 @@ export default {
       if (!this.existingCard || this.updateCard) return true
       return false
     }
-    // needUpdate() {
-    //   return this.license?.terms?.plan === 'FREE_2021'
-    // }
   },
   mounted() {
     if (!card) {

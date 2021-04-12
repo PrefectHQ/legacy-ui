@@ -34,12 +34,6 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['permissions', 'hasPermission'])
-    // noAccess() {
-    //   return !this.permissions?.find(item => item === 'read:hook')
-    // },
-    // canEdit() {
-    //   return !!this.permissions?.find(item => item === 'create:hook')
-    // }
   },
   watch: {
     hooks() {

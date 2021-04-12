@@ -49,9 +49,6 @@ export default {
         }`
       return this.plan.name
     },
-    // planType() {
-    //   return this.license?.terms?.plan
-    // },
     runCost() {
       return this.plan?.price
     },

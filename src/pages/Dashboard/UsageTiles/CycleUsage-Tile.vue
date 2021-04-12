@@ -47,9 +47,6 @@ export default {
         'primary--text': true
       }
     }
-    // planType() {
-    //   return this.license?.terms?.plan
-    // }
   },
   apollo: {
     usage: {

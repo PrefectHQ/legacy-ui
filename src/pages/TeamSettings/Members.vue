@@ -112,9 +112,6 @@ export default {
     totalUsers() {
       return this.users + this.invitations
     }
-    // hasRBAC() {
-    //   return this.permissions?.includes('feature:basic-rbac')
-    // }
   },
   watch: {
     tenant() {

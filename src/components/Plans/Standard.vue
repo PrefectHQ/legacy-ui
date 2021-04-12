@@ -32,9 +32,6 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['license', 'planType'])
-    // isCurrent() {
-    //   return this.license?.terms?.plan === 'STANDARD_2021'
-    // }
   },
   methods: {
     select() {

@@ -32,9 +32,6 @@ export default {
       const plan = this.plans.filter(planType => planType.value === name)
       return plan[0]
     },
-    // isStarter() {
-    //   return this.license?.terms?.plan === 'STARTER_2021'
-    // },
     smallScreen() {
       return this.$vuetify.breakpoint.xs ? '' : 'pt-16'
     },
