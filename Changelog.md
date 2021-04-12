@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Make team creation error text more legible - [#767](https://github.com/PrefectHQ/ui/pull/767)
 
 ## 2021-04-09a
 
