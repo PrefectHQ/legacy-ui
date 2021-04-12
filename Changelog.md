@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
 
 ## 2021-04-09a
 
