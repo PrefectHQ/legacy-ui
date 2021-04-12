@@ -24,7 +24,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'tempLicenseType']),
+    ...mapGetters('license', ['license', 'tempLicenseType', 'planType']),
     ...mapGetters('user', ['timezone']),
     plan() {
       const type = this.tempLicenseType || this.license?.terms?.plan
@@ -32,9 +32,9 @@ export default {
       const plan = this.plans.filter(planType => planType.value === name)
       return plan[0]
     },
-    isStarter() {
-      return this.license?.terms?.plan === 'STARTER_2021'
-    },
+    // isStarter() {
+    //   return this.license?.terms?.plan === 'STARTER_2021'
+    // },
     smallScreen() {
       return this.$vuetify.breakpoint.xs ? '' : 'pt-16'
     },
@@ -154,7 +154,7 @@ export default {
             <li>
               You have {{ taskRunsLeft | numFormat }} task runs left until
               {{ subscriptionPeriodEnd }}.
-              <span v-if="isStarter">
+              <span v-if="planType('STARTER_2021')">
                 You will then be charged ${{ plan.additionalCost }}/task
                 run.</span
               >

@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'planType']),
     ...mapGetters('user', ['user']),
     disableButton() {
       if (this.updateUsers)
@@ -85,10 +85,10 @@ export default {
     showPayment() {
       if (!this.existingCard || this.updateCard) return true
       return false
-    },
-    needUpdate() {
-      return this.license?.terms?.plan === 'FREE_2021'
     }
+    // needUpdate() {
+    //   return this.license?.terms?.plan === 'FREE_2021'
+    // }
   },
   mounted() {
     if (!card) {
@@ -147,7 +147,7 @@ export default {
             errorPolicy: 'all'
           })
           if (customer.data.update_stripe_customer.id) {
-            if (this.needUpdate) {
+            if (this.planType('FREE_2021')) {
               await this.$apollo.mutate({
                 mutation: require('@/graphql/License/create-usage-based-license.gql'),
                 variables: {

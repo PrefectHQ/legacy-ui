@@ -31,14 +31,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
-    isCurrent() {
-      return this.license?.terms?.plan === 'STARTER_2021'
-    }
+    ...mapGetters('license', ['license', 'planType'])
+    // isCurrent() {
+    //   return this.license?.terms?.plan === 'STARTER_2021'
+    // }
   },
   methods: {
     select() {
-      if (this.isCurrent || this.disabled) return
+      if (this.planType('STARTER_2021') || this.disabled) return
       this.$emit('click')
     }
   }
@@ -178,7 +178,7 @@ export default {
 
       <div v-if="hideDetails" class="py-7 mt-8 mt-md-6 mt-lg-8 o-0">
         {{
-          isCurrent
+          planType('STARTER_2021')
             ? 'Current'
             : disabled
             ? 'Contact your team admin to upgrade'
@@ -189,11 +189,11 @@ export default {
       <div
         v-else
         class="plan-cta plan-cta-dark py-7 mt-8 mt-md-6 mt-lg-8"
-        :class="{ 'cursor-pointer': !isCurrent }"
+        :class="{ 'cursor-pointer': !planType('STARTER_2021') }"
         @click="select"
       >
         {{
-          isCurrent
+          planType('STARTER_2021')
             ? 'Current'
             : disabled
             ? 'Contact your team admin to upgrade'
