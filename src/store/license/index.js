@@ -28,13 +28,6 @@ const getters = {
   },
   hasPermission: state => (operation, ref) => {
     return state.permissions?.includes(`${operation}:${ref}`)
-  },
-  userCount: state => type => {
-    if (type === 'read') {
-      return state.license?.terms?.read_only_users
-    }
-
-    return state.license?.terms?.users
   }
 }
 

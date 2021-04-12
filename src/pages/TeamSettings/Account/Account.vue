@@ -39,7 +39,7 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'planType']),
     needAlert() {
       return !location.href.includes('prefect.io')
     },
@@ -176,9 +176,7 @@ export default {
         <v-col cols="12" md="6">
           <v-row>
             <v-col
-              v-if="
-                isUsageBased && license && license.terms.plan !== 'FREE_2021'
-              "
+              v-if="isUsageBased && license && !planType('FREE_2021')"
               cols="12"
             >
               <v-skeleton-loader
