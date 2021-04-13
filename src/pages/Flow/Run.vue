@@ -501,7 +501,8 @@ export default {
                 <template #item="{ item }">
                   <div>
                     <v-chip
-                      :class="['ma-2', 'debuglevel', item.text.toLowerCase()]"
+                      class="ma-2 debuglevel"
+                      :class="item.text.toLowerCase()"
                     >
                       {{ item.text }}
                     </v-chip>
