@@ -8,7 +8,7 @@ import IntervalClock from '@/components/Functional/IntervalClock'
 import LogRocket from 'logrocket'
 import ClockForm from '@/pages/Flow/Settings/ClockForm'
 import DictInput from '@/components/CustomInputs/DictInput'
-
+import { parametersMixin } from '@/mixins/parametersMixin.js'
 export default {
   components: {
     ConfirmDialog,
@@ -18,6 +18,7 @@ export default {
     ClockForm,
     DictInput
   },
+  mixins: [parametersMixin],
   props: {
     flow: { required: true, type: Object },
     flowGroup: {
@@ -37,7 +38,7 @@ export default {
       selectedClock: null,
       scheduleBanner: false,
       selectedTab: '',
-      parameter: null
+      parameter: {}
     }
   },
   computed: {
@@ -57,11 +58,10 @@ export default {
       })
     },
     allDefaultParameters() {
-      console.log('param', this.parameter)
-      if (!this.flow.parameters) {
+      if (!this.defaultParameters) {
         return {}
       }
-      const paramObj = this.flow.parameters.reduce(
+      const paramObj = this.defaultParameters.reduce(
         (obj, item) => ((obj[item.name] = item.default), obj),
         {}
       )
@@ -118,12 +118,24 @@ export default {
           ...this.clocks
             .filter(c => c.type == 'CronClock' && c.scheduleType !== 'flow')
             .map(c => {
-              const filteredParams = c.parameter_defaults.filter(
-                param => param.default
-              )
+              if (c.parameter_defaults) {
+                if (
+                  c.parameter_defaults === null ||
+                  Object.keys(c.parameter_defaults).length === 0
+                ) {
+                  return {
+                    cron: c.cron
+                  }
+                } else {
+                  return {
+                    cron: c.cron,
+                    parameter_defaults: c.parameter_defaults
+                  }
+                }
+              }
+
               return {
-                cron: c.cron,
-                parameter_defaults: filteredParams
+                cron: c.cron
               }
             })
         ]
@@ -132,16 +144,27 @@ export default {
           ...this.clocks
             .filter(c => c.type == 'IntervalClock' && c.scheduleType !== 'flow')
             .map(c => {
-              console.log(c.parameter_defaults)
-              const paramsArray = Object.entries(c.parameter_defaults)
-              const filtered = paramsArray.filter(([key, val]) => key && val)
-              const filteredParams = Object.fromEntries(filtered)
+              if (c.parameter_defaults) {
+                if (
+                  c.parameter_defaults === null ||
+                  Object.keys(c.parameter_defaults).length === 0
+                ) {
+                  // input for interval clocks is seconds but are converted to
+                  // microseconds at the database level so we need to
+                  // convert this back to microseconds
+                  return {
+                    interval: c.interval / 1000000
+                  }
+                } else {
+                  return {
+                    interval: c.interval / 1000000,
+                    parameter_defaults: c.parameter_defaults
+                  }
+                }
+              }
+
               return {
-                // input for interval clocks is seconds but are converted to
-                // microseconds at the database level so we need to
-                // convert this back to microseconds
-                interval: c.interval / 1000000,
-                parameter_defaults: filteredParams
+                interval: c.interval / 1000000
               }
             })
         ]
@@ -298,6 +321,12 @@ export default {
                   />
                 </div>
                 <div v-show="selectedTab === 1">
+                  <p
+                    v-if="checkDefualtParameters(allDefaultParameters)"
+                    class="mt-8 text-body-1"
+                    >If checked, those parameters will be included in this
+                    schedule. If left unchecked, they will not be included.</p
+                  >
                   <DictInput
                     v-if="checkDefualtParameters(allDefaultParameters)"
                     v-model="parameter"
@@ -381,7 +410,7 @@ export default {
               </div>
               <div v-show="selectedTab === 1">
                 <DictInput
-                  v-if="clock.parameter_defaults"
+                  v-if="Object.keys(clock.parameter_defaults).length !== 0"
                   v-model="parameter"
                   style="padding: 20px;"
                   :dict="paramVal(clock.parameter_defaults)"
