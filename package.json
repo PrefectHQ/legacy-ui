@@ -93,7 +93,6 @@
     "jest-localstorage-mock": "^2.4.8",
     "node-sass": "^5.0.0",
     "postcss-scss": "^3.0.5",
-    "pre-commit": ">=1.2.2",
     "sass": "^1.32.8",
     "sass-loader": "^10.1.1",
     "sinon": "^9.2.4",
@@ -115,9 +114,5 @@
   },
   "peerDependencies": {
     "postcss": "^8.0.0"
-  },
-  "pre-commit": [
-    "lint",
-    "test:unit"
-  ]
+  }
 }
