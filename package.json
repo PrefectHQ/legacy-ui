@@ -4,11 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "node file-downloader.js && export VUE_APP_RELEASE_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && vue-cli-service serve --port 8080",
-    "lint": "vue-cli-service lint && vue-cli-service lint:style",
     "build": "node file-downloader.js && export VUE_APP_RELEASE_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && vue-cli-service build",
-    "lint:ci": "vue-cli-service lint --no-fix && vue-cli-service lint:style --no-fix",
-    "lint:css": "vue-cli-service lint:style",
-    "lint:js": "vue-cli-service lint",
+    "lint": "vue-cli-service lint",
+    "lint:ci": "vue-cli-service lint --no-fix",
     "test:e2e": "vue-cli-service test:e2e",
     "test:integration": "vue-cli-service test:e2e --headless --mode development",
     "test:snapshots": "vue-cli-service test:unit -u",
@@ -66,7 +64,6 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@ascendancyy/vue-cli-plugin-stylelint": ">=1.1.2",
     "@babel/core": "^7.13.14",
     "@babel/plugin-proposal-optional-chaining": "^7.13.12",
     "@babel/plugin-transform-runtime": "^7.13.10",
@@ -93,7 +90,6 @@
     "jest-localstorage-mock": "^2.4.8",
     "node-sass": "^5.0.0",
     "postcss-scss": "^3.0.5",
-    "pre-commit": ">=1.2.2",
     "sass": "^1.32.8",
     "sass-loader": "^10.1.1",
     "sinon": "^9.2.4",
@@ -115,9 +111,5 @@
   },
   "peerDependencies": {
     "postcss": "^8.0.0"
-  },
-  "pre-commit": [
-    "lint",
-    "test:unit"
-  ]
+  }
 }

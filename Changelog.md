@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
 - Make team creation error text more legible - [#767](https://github.com/PrefectHQ/ui/pull/767)
 - Don't allow non-Cloud users to get stuck in a redirect loop if they try out the toggle - [#772](https://github.com/PrefectHQ/ui/pull/772)
 
