@@ -593,7 +593,7 @@ export default {
             "
             key="error"
             cols="12"
-            class="text-body-2 red--text text--darken-1"
+            class="text-h6 red--text text--lighten-1"
           >
             Sorry, something went wrong. Please try again.
           </v-col>
