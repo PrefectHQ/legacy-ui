@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Update tutorial to reference API keys instead of personal access and runner tokens - [#770](https://github.com/PrefectHQ/ui/pull/770)
 
 ## 2021-04-09a
 
