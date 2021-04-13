@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add new states to the license store - [#763](https://github.com/PrefectHQ/ui/pull/763)
 - Add loading state to sign out method - [#766](https://github.com/PrefectHQ/ui/pull/766)
 
 ### Bugfixes
