@@ -44,33 +44,33 @@ If you're running into issues, check that your Python environment is properly se
 
 # Log into Prefect Cloud from the CLI
 
-To authenticate, you'll need to create a [Personal Access Token](/user/tokens) and configure it with the [Prefect Command Line Interface](https://docs.prefect.io/orchestration/concepts/cli.html#cli).
+To authenticate, you'll need to create an [API Key](/user/keys) and configure it with the [Prefect Command Line Interface](https://docs.prefect.io/orchestration/concepts/cli.html#cli).
 
-- In the hamburger menu in the top left corner go to **User -> Personal Access Tokens -> Create A Token**.
-- Copy the created token
-- Configure the CLI to use the access token by running
+- In the user menu in the top right corner go to **Account Settings -> API Keys -> Create An API Key**.
+- Copy the created key
+- Configure the CLI to use the key by running
 
 ```bash
-prefect auth login -t <COPIED_TOKEN>
+prefect auth login -t <COPIED_KEY>
 ```
 
-# Create an agent token
+# Create a service account key
 
-Our next goal is to generate an agent token.
+Our next goal is to generate a service account key.
 
-[Agents](https://docs.prefect.io/orchestration/agents/overview.html) are responsible for communicating with Prefect Cloud and submitting your flows for execution. Your agents will need tokens called RUNNER tokens to authenticate with Prefect Cloud. There is no limit to the number of agent tokens you can create. You can create one using the CLI:
+[Agents](https://docs.prefect.io/orchestration/agents/overview.html) are responsible for communicating with Prefect Cloud and submitting your flows for execution. Your agents will need a key attached to a service account to authenticate with Prefect Cloud. There is no limit to the number of these you can create. You can create one using the CLI:
 
 ```bash
 prefect auth create-token -n my-runner-token -s RUNNER
 ```
 
-You'll need this token later in the tutorial. You can save it in your local configuration either as an environment variable or by storing it in `~/.prefect/config.toml`:
+You'll need this key later in the tutorial. You can save it in your local configuration either as an environment variable or by storing it in `~/.prefect/config.toml`:
 
 ```bash
 export PREFECT__CLOUD__AGENT__AUTH_TOKEN=<COPIED_RUNNER_TOKEN>
 ```
 
-You can also create a RUNNER token using the API Tokens page in Team settings in the UI. 
+You can also create a service account key using the Service Accounts page in Team settings in the UI.
 
 # Creating a project
 
@@ -84,7 +84,7 @@ You can create a project using the CLI:
 prefect create project tester
 ```
 
-You can also create a project using the project selector on the dashboard page of the UI or using the API. 
+You can also create a project using the project selector on the dashboard page of the UI or using the API.
 
 # Deploy your flow with Universal Deploy
 
@@ -110,7 +110,7 @@ flow.run_agent()
 Click `"Copy"` above to copy the updated flow code. Paste the code into your interactive Python REPL session. If all goes well, you should see the local agent process start to run. If you're seeing the error message `"No agent API token provided"`, try passing in the agent token explicitly to the `run_agent()` method:
 
 ```python
-flow.run_agent(token="<YOUR_RUNNER_TOKEN>")
+flow.run_agent(token="<YOUR_SERVICE_ACCOUNT_KEY>")
 ```
 
 And that's it! Your flow is now registered with Prefect Cloud, and an agent process is running on your local machine waiting to execute your flow runs. For now, your flow is stored on your local machine in your `~/.prefect directory`. You can configure this later through the use of Storage.
@@ -121,7 +121,7 @@ We call this pattern `"Universal Deploy"` because all it requires is a working P
 
 To run your flow in Prefect Cloud, navigate to it from the `Flows` tab of the Dashboard and use the `Quick Run` button at the top of the page. This will run your flow with no additional settings.
 
-You can use the `Run` tab on your flow page to pass parameters or context to your flow or to schedule a run for some point in the future. You can update default parameters and add or modify schedules by selecting the `Settings` tab on the flow page. 
+You can use the `Run` tab on your flow page to pass parameters or context to your flow or to schedule a run for some point in the future. You can update default parameters and add or modify schedules by selecting the `Settings` tab on the flow page.
 
 **Universal Deploy and Labels**
 
