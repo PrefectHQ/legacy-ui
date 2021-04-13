@@ -28,7 +28,7 @@ export default {
     freeUsage() {
       if (isNaN(this.usage)) return null
       const percentage = this.usage / 10000
-      return percentage > 1 ? 100 : (percentage * 100).toFixed(2)
+      return percentage > 1 ? 100 : (percentage * 100).toFixed()
     },
     usageLoading() {
       return this.usageLoadingKey > 0
