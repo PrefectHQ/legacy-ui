@@ -64,9 +64,10 @@ export default {
     },
     value() {
       const dict = {}
-      this.keys
-        .filter(k => k !== null && this.paramsToAdd.includes(k))
-        .map((k, i) => (dict[k] = this.values[i]))
+      const keys = this.includeCheckbox
+        ? this.keys.filter(k => this.paramsToAdd.includes(k))
+        : this.keys
+      keys.filter(k => k !== null).map((k, i) => (dict[k] = this.values[i]))
       return dict
     }
   },
@@ -86,6 +87,9 @@ export default {
           this.$refs['json-input'].validateJson()
         })
       }
+    },
+    paramsToAdd() {
+      this.$emit('input', { ...this.value })
     }
   },
   mounted() {
