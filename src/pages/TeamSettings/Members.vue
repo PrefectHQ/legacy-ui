@@ -80,9 +80,9 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'permissions', 'hasPermission']),
+    ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
     allowedUsers() {
-      return this.license?.terms?.users ?? Infinity
+      return this.allowedUsers() ?? Infinity
     },
     insufficientUsers() {
       return this.users >= this.allowedUsers

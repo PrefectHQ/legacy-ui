@@ -21,7 +21,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license', 'planType']),
+    ...mapGetters('license', ['license', 'planType', 'allowedUsers']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
@@ -56,10 +56,10 @@ export default {
       return 'primary'
     },
     readNum() {
-      return this.license?.terms?.read_only_users?.toLocaleString()
+      return this.allowedUsers('read').toLocaleString()
     },
     userNum() {
-      return this.license?.terms?.users?.toLocaleString()
+      return this.allowedUsers().toLocaleString()
     },
     readOnlyUserOrUsers() {
       return !this.license?.terms?.read_only_users
@@ -69,9 +69,9 @@ export default {
         : 'user'
     },
     userOrUsers() {
-      return !this.license?.terms?.users
+      return !this.allowedUsers()
         ? 'users'
-        : this.license?.terms?.users > 1
+        : this.allowedUsers() > 1
         ? 'users'
         : 'user'
     },
@@ -82,7 +82,7 @@ export default {
       return this.license?.terms?.flow_concurrency
     },
     memberOrMembers() {
-      return this.license?.terms?.users > 1 ? 'members' : 'member'
+      return this.allowedUsers() > 1 ? 'members' : 'member'
     },
     flowOrFlows() {
       return !this.license?.terms?.flow_concurrency
