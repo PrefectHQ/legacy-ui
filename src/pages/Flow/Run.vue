@@ -830,7 +830,7 @@ export default {
 }
 
 .ma-2.debuglevel {
-  color: var(--v-utilGrayLight-lighten5);
+  color: var(--v-primaryLight-lighten5);
   font-weight: bold;
   justify-content: center;
   width: 75px;
