@@ -57,6 +57,7 @@ export default {
       })
     },
     allDefaultParameters() {
+      console.log('param', this.parameter)
       if (!this.flow.parameters) {
         return {}
       }
@@ -117,9 +118,12 @@ export default {
           ...this.clocks
             .filter(c => c.type == 'CronClock' && c.scheduleType !== 'flow')
             .map(c => {
+              const filteredParams = c.parameter_defaults.filter(
+                param => param.default
+              )
               return {
                 cron: c.cron,
-                parameter_defaults: c.parameter_defaults
+                parameter_defaults: filteredParams
               }
             })
         ]
@@ -128,12 +132,16 @@ export default {
           ...this.clocks
             .filter(c => c.type == 'IntervalClock' && c.scheduleType !== 'flow')
             .map(c => {
+              console.log(c.parameter_defaults)
+              const paramsArray = Object.entries(c.parameter_defaults)
+              const filtered = paramsArray.filter(([key, val]) => key && val)
+              const filteredParams = Object.fromEntries(filtered)
               return {
                 // input for interval clocks is seconds but are converted to
                 // microseconds at the database level so we need to
                 // convert this back to microseconds
                 interval: c.interval / 1000000,
-                parameter_defaults: c.parameter_defaults
+                parameter_defaults: filteredParams
               }
             })
         ]
@@ -294,6 +302,7 @@ export default {
                     v-if="checkDefualtParameters(allDefaultParameters)"
                     v-model="parameter"
                     style="padding: 20px;"
+                    include-checkbox
                     :dict="allDefaultParameters"
                     disable-edit
                     allow-reset

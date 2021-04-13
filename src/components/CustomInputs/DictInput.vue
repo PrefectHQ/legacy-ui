@@ -7,6 +7,11 @@ export default {
     JsonInput
   },
   props: {
+    includeCheckbox: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     addLabel: {
       type: String,
       requird: false,
@@ -46,7 +51,8 @@ export default {
       json: false,
       jsonInput: '{}',
       keys: [],
-      values: []
+      values: [],
+      paramsToAdd: []
     }
   },
   computed: {
@@ -59,7 +65,7 @@ export default {
     value() {
       const dict = {}
       this.keys
-        .filter(k => k !== null)
+        .filter(k => k !== null && this.paramsToAdd.includes(k))
         .map((k, i) => (dict[k] = this.values[i]))
       return dict
     }
@@ -200,7 +206,14 @@ export default {
           class="my-4 position-relative"
           :class="{ 'pr-8': !disableEdit }"
         >
-          <v-col cols="4" class="pr-3">
+          <v-col v-if="includeCheckbox" cols="1">
+            <v-checkbox
+              v-model="paramsToAdd"
+              multiple
+              :value="keys[i]"
+            ></v-checkbox>
+          </v-col>
+          <v-col :cols="includeCheckbox ? 3 : 4" class="pr-3">
             <v-text-field
               v-model="keys[i]"
               class="text-body-1"
