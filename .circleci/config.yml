@@ -229,6 +229,10 @@ workflows:
     jobs:
       - unit-test
 
+  'Lint application':
+    jobs:
+      - lint
+
   'Build and publish development UI artifacts':
     jobs:
       - build-docker:
