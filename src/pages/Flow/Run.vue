@@ -501,7 +501,17 @@ export default {
                 <template #item="{ item }">
                   <div>
                     <v-chip
-                      class="ma-2 debuglevel"
+                      class="ma-2 debuglevel cursor-pointer"
+                      :class="item.text.toLowerCase()"
+                    >
+                      {{ item.text }}
+                    </v-chip>
+                  </div>
+                </template>
+                <template #selection="{ item }">
+                  <div>
+                    <v-chip
+                      class="ma-2 debuglevel cursor-pointer"
                       :class="item.text.toLowerCase()"
                     >
                       {{ item.text }}
