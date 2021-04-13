@@ -94,7 +94,8 @@ jobs:
       - prep
       - run:
           command: npm run test:unit
-  unit-test:
+
+  lint:
     resource_class: medium
     docker:
       - image: node:14.7
