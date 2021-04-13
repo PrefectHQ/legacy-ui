@@ -828,9 +828,7 @@ export default {
     width: 100%;
   }
 }
-</style>
 
-<style lang="scss">
 .ma-2.debuglevel {
   color: var(--v-utilGrayLight-lighten5);
   font-weight: bold;
@@ -861,7 +859,9 @@ export default {
     background: var(--v-failRed-base);
   }
 }
+</style>
 
+<style lang="scss">
 .run-tab-icon {
   .svg-inline--fa {
     --fa-primary-color: var(--v-appForeground-base);
