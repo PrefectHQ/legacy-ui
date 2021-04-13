@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
 - Make team creation error text more legible - [#767](https://github.com/PrefectHQ/ui/pull/767)
 
 ## 2021-04-09a
