@@ -1,19 +1,30 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      workHalted: false
+      queueLoading: false,
+      queuePaused: this.tenant?.settings?.work_queue_paused
     }
   },
   computed: {
     ...mapGetters('data', ['flows']),
+    ...mapGetters('tenant', ['tenant']),
     flowIds() {
-      console.log(this.flows)
       return this.flows.map(f => f.id)
     }
   },
+  watch: {
+    'settings.work_queue_paused'(val) {
+      this.queuePaused = val
+    }
+  },
+  mounted() {
+    console.log(this.tenant.settings)
+  },
   methods: {
+    ...mapActions('alert', ['setAlert']),
+    ...mapActions('tenant', ['getTenants']),
     async cancelAll() {
       const { data } = await this.$apollo.query({
         query: require('@/graphql/Nav/flow-runs.gql'),
@@ -38,8 +49,34 @@ export default {
         })
       }
     },
-    async haltWork(val) {
-      console.log(val)
+    async haltWork() {
+      this.queueLoading = true
+
+      try {
+        const { data } = await this.$apollo.mutate({
+          mutation: require(`@/graphql/Nav/${
+            this.queuePaused ? 'resume' : 'pause'
+          }-tenant-work-queue.gql`),
+          variables: {
+            tenantId: this.tenant.id
+          }
+        })
+
+        if (data?.tenant_work_queue_result?.success) {
+          await this.getTenants()
+
+          this.queuePaused = this.tenant.settings.work_queue_paused
+        }
+      } catch (e) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: e,
+          alertType: 'error'
+        })
+      } finally {
+        this.queueLoading = false
+      }
+      // console.log(res)
     }
   }
 }
@@ -57,11 +94,12 @@ export default {
 
     <div class="text-center mr-4">
       <v-switch
-        v-model="workHalted"
         color="accentPink"
         inset
         hide-details
         class="small-switch pl-4"
+        :input-value="!queuePaused"
+        :loading="queueLoading"
         @change="haltWork"
       />
 

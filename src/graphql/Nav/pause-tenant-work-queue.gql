@@ -1,0 +1,7 @@
+mutation PauseTenantWorkQueue($tenantId: UUID!) {
+  tenant_work_queue_result: pause_tenant_work_queue(
+    input: { tenant_id: $tenantId }
+  ) {
+    success
+  }
+}
