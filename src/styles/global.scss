@@ -394,29 +394,26 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   height: 64px !important;
   width: 64px !important;
 
-  /* stylelint-disable */
   .svg-inline--fa {
     --fa-primary-color: #444;
     --fa-secondary-opacity: 0.75;
 
     transition: all 150ms linear;
 
-    .fa-film {
-      --fa-secondary-color: var(--v-warning-base);
+    &.fa-list-alt {
+      --fa-primary-color: var(--v-warning-base);
+      // --fa-secondary-color: #444;
+      --fa-secondary-opacity: 1;
     }
   }
-  /* stylelint-enable */
-
-  // &:hover,
-  // &:focus {
-  //   .svg-inline--fa {
-  //     --fa-primary-color: var(--v-accentPink-base);
-  //   }
-  // }
 
   &.active {
-    .svg-inline--fa.fa-film {
-      --fa-secondary-color: var(--v-primary-base);
+    .svg-inline--fa {
+      &.fa-list-alt {
+        --fa-primary-color: var(--v-primary-base);
+        // --fa-secondary-color: #babac0;
+        --fa-secondary-opacity: 1;
+      }
     }
   }
 }

@@ -550,4 +550,8 @@ html {
 .tab-full-height {
   min-height: 100%;
 }
+
+.v-overlay.v-overlay--active {
+  backdrop-filter: blur(10px);
+}
 </style>

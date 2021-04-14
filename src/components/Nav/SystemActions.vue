@@ -2,14 +2,17 @@
 import { mapActions, mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
+import WorkQueue from '@/components/Nav/SystemActionsTiles/WorkQueue'
+
 export default {
+  components: {
+    WorkQueue
+  },
   mixins: [formatTime],
   data() {
     return {
       cancelLoading: false,
       clockInterval: null,
-      queueLoading: false,
-      queuePaused: this.tenant?.settings?.work_queue_paused,
       time: Date.now()
     }
   },
@@ -20,27 +23,24 @@ export default {
       return this.flows.map(f => f.id)
     }
   },
-  watch: {
-    'tenant.settings.work_queue_paused'(val) {
-      console.log(val)
-      this.queuePaused = val
-    }
-  },
   mounted() {
     clearInterval(this.clock)
     this.clockInterval = setInterval(() => {
       this.time = Date.now()
     }, 1000)
+
+    window.addEventListener('keydown', this.close)
   },
   beforeDestroy() {
     clearInterval(this.clockInterval)
+    window.removeEventListener('keydown', this.close)
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    ...mapActions('tenant', ['getTenants']),
-    close() {
-      console.log('close')
-      this.$emit('close')
+    close(e) {
+      if (e?.key == 'Escape') {
+        this.$emit('close')
+      }
     },
     async cancelAll() {
       this.cancelLoading = true
@@ -77,36 +77,6 @@ export default {
       } finally {
         this.cancelLoading = false
       }
-    },
-    async haltWork() {
-      this.queueLoading = true
-
-      try {
-        const { data } = await this.$apollo.mutate({
-          mutation: require(`@/graphql/Nav/${
-            this.queuePaused ? 'resume' : 'pause'
-          }-tenant-work-queue.gql`),
-          variables: {
-            tenantId: this.tenant.id
-          }
-        })
-
-        if (data?.tenant_work_queue_result?.success) {
-          console.log(data.tenant_work_queue_result)
-          await this.getTenants()
-
-          this.queuePaused = this.tenant.settings.work_queue_paused
-        }
-      } catch (e) {
-        this.setAlert({
-          alertShow: true,
-          alertMessage: e,
-          alertType: 'error'
-        })
-      } finally {
-        this.queueLoading = false
-      }
-      // console.log(res)
     }
   }
 }
@@ -115,28 +85,27 @@ export default {
 <template>
   <div class="system-grid">
     <!-- @click="haltWork" -->
-    <div
+    <WorkQueue />
+
+    <!-- <div
       class="rounded system-action-container d-flex flex-column align-center justify-center"
     >
-      <!-- <v-switch
-        color="warning"
-        hide-details
-        class="pl-3 large-switch"
-        :input-value="queuePaused"
-        :loading="queueLoading"
-        @change.stop="haltWork"
-      /> -->
-
-      <div class="system-icon mx-auto" :class="{ active: queuePaused }">
+      <div class="system-icon mx-auto" :class="{ active: !queuePaused }">
         <i class="fad fa-film" />
       </div>
 
-      <div class="text-h6 white--text mt-6 mb-2">
-        Work queue
+      <div class="text-h6 utilGrayDark--text mt-6 mb-2">
+        Cancel all runs
       </div>
 
-      <input class="large-switch work-queue" type="checkbox" />
-    </div>
+      <input
+        :checked="!queuePaused"
+        :indeterminate="queueLoading"
+        class="large-switch work-queue"
+        type="checkbox"
+        @change.stop="haltWork"
+      />
+    </div> -->
   </div>
   <!-- <v-system-bar height="30" style="width: 100%;"> -->
   <!-- <div class="d-flex align-center justify-end px-4 system-actions">
@@ -214,59 +183,11 @@ $cellsize: 200px;
   text-align: center;
 
   .system-action-container {
-    // background-color: var(--v-primary-base);
-    backdrop-filter: blur(4px);
-    color: #fff;
+    background-color: #455a64;
     display: inline-block;
     margin: 16px;
-    // filter: ;
     height: $cellsize;
     width: $cellsize;
-  }
-}
-
-.large-switch {
-  appearance: none;
-  width: 124px;
-  height: 48px;
-  display: inline-block;
-  position: relative;
-  border-radius: 50px;
-  overflow: hidden;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.35);
-  transition: background-color ease 0.3s;
-
-  &::before {
-    background: var(--v-warning-base);
-    content: 'Active Paused';
-    display: block;
-    position: absolute;
-    z-index: 2;
-    width: 44px;
-    height: 44px;
-    left: 2px;
-    top: 2px;
-    border-radius: 50%;
-    font: 14px/44px “Source Code Pro”;
-    text-transform: uppercase;
-    font-weight: bold;
-    text-indent: -56px;
-    word-spacing: 48px;
-    color: #fff;
-    white-space: nowrap;
-    transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
-  }
-
-  &:checked {
-    background-color: rgba(59, 141, 255, 0.15);
-  }
-
-  &:checked::before {
-    background: var(--v-primary-base);
-    left: 78px;
   }
 }
 </style>
