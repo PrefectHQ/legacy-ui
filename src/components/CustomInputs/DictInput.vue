@@ -66,15 +66,18 @@ export default {
       const parametersDict = []
       const obj = Object.assign(
         {},
-        ...this.keys.filter(k => k !== null).map((e, i) => ({ [e]: this.values[i] }))
+        ...this.keys
+          .filter(k => k !== null)
+          .map((e, i) => ({ [e]: this.values[i] }))
       )
       for (const [key, value] of Object.entries(obj)) {
         if (this.includeCheckbox) {
-          if(this.paramsToAdd.includes(key)) {
+          if (this.paramsToAdd.includes(key)) {
+            parametersDict.push({ [key]: value })
+          }
+        } else {
           parametersDict.push({ [key]: value })
         }
-      } else {
-        parametersDict.push({ [key]: value })
       }
       return Object.assign({}, ...parametersDict)
     }
