@@ -63,23 +63,13 @@ export default {
       return this.keys.map((p, i) => i)
     },
     value() {
-      const parametersDict = []
-      const obj = Object.assign(
-        {},
-        ...this.keys
-          .filter(k => k !== null)
-          .map((e, i) => ({ [e]: this.values[i] }))
-      )
-      for (const [key, value] of Object.entries(obj)) {
-        if (this.includeCheckbox) {
-          if (this.paramsToAdd.includes(key)) {
-            parametersDict.push({ [key]: value })
-          }
-        } else {
-          parametersDict.push({ [key]: value })
+      const dict = {}
+      this.keys.forEach((k, i) => {
+        if (k && (!this.includeCheckbox || this.paramsToAdd.includes(k))) {
+          dict[k] = this.values[i]
         }
-      }
-      return Object.assign({}, ...parametersDict)
+      })
+      return dict
     }
   },
   watch: {
