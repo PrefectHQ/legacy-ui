@@ -324,9 +324,14 @@ export default {
                   <p
                     v-if="checkDefualtParameters(allDefaultParameters)"
                     class="mt-8 text-body-1"
-                    >If checked, those parameters will be included in this
-                    schedule. If left unchecked, they will not be included.</p
-                  >
+                    >If a clock has default parameters then that will override
+                    the flow group and flow parameters. If not, the flow group
+                    paramter will be used, else it will use the flow parameter.
+                    If checked, those parameters will be included in this
+                    schedule, If unchecked, it will not be included in this
+                    schedule
+                  </p>
+
                   <DictInput
                     v-if="checkDefualtParameters(allDefaultParameters)"
                     v-model="parameter"
