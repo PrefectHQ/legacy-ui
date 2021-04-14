@@ -284,7 +284,6 @@ const connect = c => {
     // If a logout signal is sent, unset the tokens on the worker state and
     // publish the logout event to all connections
     if (type == 'logout') {
-      console.log('handling logout')
       state.authenticationTokens = null
       state.authorizationTokens = null
       postToConnections({ type: 'logout' })
