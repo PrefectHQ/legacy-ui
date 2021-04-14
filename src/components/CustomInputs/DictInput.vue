@@ -63,12 +63,25 @@ export default {
       return this.keys.map((p, i) => i)
     },
     value() {
-      const dict = {}
-      const keys = this.includeCheckbox
-        ? this.keys.filter(k => this.paramsToAdd.includes(k))
-        : this.keys
-      keys.filter(k => k !== null).map((k, i) => (dict[k] = this.values[i]))
-      return dict
+      // const dict = {}
+      // const keys = this.includeCheckbox
+      //   ? this.keys.filter(k => this.paramsToAdd.includes(k))
+      //   : this.keys
+      // keys.filter(k => k !== null).map((k, i) => (dict[k] = this.values[i]))
+      // return dict
+
+      const parametersDict = []
+      const obj = Object.assign(
+        {},
+        ...this.keys.map((e, i) => ({ [e]: this.values[i] }))
+      )
+      for (const [key, value] of Object.entries(obj)) {
+        if (this.includeCheckbox && this.paramsToAdd.includes(key)) {
+          parametersDict.push({ [key]: value })
+        }
+      }
+
+      return Object.assign({}, ...parametersDict)
     }
   },
   watch: {
