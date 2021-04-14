@@ -60,7 +60,7 @@ describe('auth Vuex Module', () => {
       authorizationTokenExpiry: new Date().getTime() + 10000,
       error: null,
       idToken: MOCK_ID_TOKEN,
-      idTokenExpiry: jwt_decode(MOCK_ID_TOKEN).exp * 1000,
+      idTokenExpiry: new Date().getTime() + 10000,
       isAuthenticated: true,
       isAuthorizingUser: false,
       isLoggingInUser: false,
@@ -69,7 +69,7 @@ describe('auth Vuex Module', () => {
       legacy: false,
       redirectRoute: null,
       refreshToken: MOCK_REFRESH_TOKEN,
-      refreshTokenExpiry: jwt_decode(MOCK_REFRESH_TOKEN).exp * 1000,
+      refreshTokenExpiry: new Date().getTime() + 10000,
       user: {
         sub: 'user',
         name: 'user',
@@ -102,14 +102,13 @@ describe('auth Vuex Module', () => {
     it('should be initialized properly without tokens in localStorage ', () => {
       const state = auth.state
 
-      expect(Object.keys(state).length).toBe(17)
+      expect(Object.keys(state).length).toBe(16)
 
       expect(state.user).toBe(null)
       expect(state.authorizationToken).toBe(null)
       expect(state.authorizationTokenExpiry).toBe(null)
       expect(state.idToken).toBe(null)
       expect(state.idTokenExpiry).toBe(null)
-      expect(state.isAuthenticated).toBe(false)
       expect(state.isAuthorizingUser).toBe(false)
       expect(state.isLoggingInUser).toBe(false)
       expect(state.isRefreshingAuthentication).toBe(false)
@@ -160,7 +159,7 @@ describe('auth Vuex Module', () => {
     })
 
     it('should return isAuthenticated', () => {
-      expect(store.getters.isAuthenticated).toBe(store.state.isAuthenticated)
+      expect(store.getters.isAuthenticated).toBe(true)
     })
 
     it('should return isAuthorized', () => {
@@ -382,14 +381,6 @@ describe('auth Vuex Module', () => {
         expect(() => store.commit('idToken', 12345)).toThrow(TypeError)
       })
 
-      it('isAuthenticated throws error on invalid state', () => {
-        expect(() => store.commit('isAuthenticated', null)).toThrow(TypeError)
-        expect(() => store.commit('isAuthenticated', undefined)).toThrow(
-          TypeError
-        )
-        expect(() => store.commit('isAuthenticated', 'test')).toThrow(TypeError)
-        expect(() => store.commit('isAuthenticated', 12345)).toThrow(TypeError)
-      })
       it('authorizationToken throws error on invalid state', () => {
         expect(() => store.commit('authorizationToken', null)).toThrow(
           TypeError
@@ -622,6 +613,12 @@ describe('auth Vuex Module', () => {
           mutations: auth.mutations
         })
 
+        store.commit('unsetIdToken')
+        store.commit('unsetIdTokenExpiry', null)
+
+        store.commit('unsetAccessToken')
+        store.commit('unsetAccessTokenExpiry', null)
+
         isAuthenticated.mockClear()
         isLoginRedirect.mockClear()
         parseFromUrl.mockClear()
@@ -642,6 +639,8 @@ describe('auth Vuex Module', () => {
       it('correctly returns the value of isAuthenticated', async () => {
         isAuthenticated.mockReturnValueOnce(false)
         getTokens.mockReturnValueOnce(false)
+        expect(store.getters.isAuthenticated).toBe(false)
+
         let authenticateResult = await store.dispatch('authenticate')
         expect(authenticateResult).toBe(false)
 
