@@ -243,6 +243,7 @@ export default {
                   ? dict[i].value.toString()
                   : valueLabel
               "
+              :readonly="!includedKeys.includes(keys[i])"
               @keyup="_handleKeypress"
             />
           </v-col>
