@@ -87,15 +87,22 @@ commands:
 
 jobs:
   unit-test:
-    # TODO: bump this to large in the future if needed. The default (medium) is resulting in test instabilities (ENOMEM: not enough memory, read)
     resource_class: medium
     docker:
       - image: node:14.7
     steps:
       - prep
       - run:
-          # name: NPM Test:Unit
           command: npm run test:unit
+
+  lint:
+    resource_class: medium
+    docker:
+      - image: node:14.7
+    steps:
+      - prep
+      - run:
+          command: npm run lint
 
   build-docker:
     docker:
@@ -221,6 +228,10 @@ workflows:
   'Run unit tests':
     jobs:
       - unit-test
+
+  'Lint application':
+    jobs:
+      - lint
 
   'Build and publish development UI artifacts':
     jobs:

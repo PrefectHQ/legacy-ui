@@ -6,8 +6,7 @@ const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 const maxRetries = 3
 
 const state = {
-  backend:
-    localStorage.getItem('backend') || process.env.VUE_APP_BACKEND || 'SERVER',
+  backend: process.env.VUE_APP_BACKEND || 'SERVER',
   connected: true,
   connectionMessage: null,
   connectionTimeout: null,
@@ -81,11 +80,9 @@ const mutations = {
       throw new Error('Invalid backend')
     }
     state.backend = backend
-    localStorage.setItem('backend', backend)
   },
   unsetBackend(state) {
     state.backend = null
-    localStorage.removeItem('backend')
   },
   setConnected(state, connected) {
     if (typeof connected !== 'boolean') {

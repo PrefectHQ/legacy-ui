@@ -30,7 +30,7 @@ export default {
       <div class="text-overline">
         {{ chartOverlayOverline }}
       </div>
-      <div class="display-3 font-weight-bold">
+      <div class="text-h2 font-weight-bold">
         {{ chartOverlayMain }}
       </div>
       <div class="font-weight-light text-h5">
