@@ -91,7 +91,6 @@ const actions = {
           dispatch('authenticate')
         })
       } else {
-        commit('isAuthenticated', false)
         await dispatch('login')
       }
     } catch (e) {
@@ -141,10 +140,9 @@ const actions = {
     authClient.tokenManager.setTokens(payload)
 
     commit('accessToken', accessToken.value)
-    commit('accessTokenExpiry', accessToken.expiresAt)
+    commit('accessTokenExpiry', accessToken.expiresAt * 1000) // Okta returns token expiration in seconds
     commit('idToken', idToken.value)
     commit('idTokenExpiry', idToken.expiresAt * 1000) // Okta returns token expiration in seconds
-    commit('isAuthenticated', true)
   },
   async updateAuthorizationTokens({ commit }, payload) {
     if (!payload.access_token || !payload.refresh_token) return
@@ -172,7 +170,6 @@ const actions = {
       })
     }
 
-    commit('isAuthenticated', false)
     commit('unsetIdToken')
     commit('unsetAccessToken')
     commit('unsetRedirectRoute')
