@@ -324,8 +324,9 @@ export default {
                   <p
                     v-if="checkDefualtParameters(allDefaultParameters)"
                     class="mt-8 text-body-1"
-                    >
-                      Checked parameters will override their corresponding defaults for runs generated from this schedule.
+                  >
+                    Checked parameters will override their corresponding
+                    defaults for runs generated from this schedule.
                   </p>
 
                   <DictInput
