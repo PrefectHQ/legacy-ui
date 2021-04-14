@@ -257,14 +257,6 @@ describe('auth Vuex Module', () => {
         expect(store.getters['error']).toBe(error)
       })
 
-      it('should set isAuthenticated', () => {
-        store.commit('isAuthenticated', true)
-        expect(store.getters['isAuthenticated']).toBe(true)
-
-        store.commit('isAuthenticated', false)
-        expect(store.getters['isAuthenticated']).toBe(false)
-      })
-
       it('should set the authorizationToken', () => {
         store.commit('authorizationToken', loggedInState().authorizationToken)
         expect(store.getters['authorizationToken']).toBe(
