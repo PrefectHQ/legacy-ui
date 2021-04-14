@@ -22,7 +22,7 @@ const state = {
 
 const getters = {
   isAuthenticated(state) {
-    return !!state.isAuthenticated
+    return !!state.isAuthenticated && new Date().getTime() < state.idTokenExpiry
   },
   isAuthorized(state) {
     return (
