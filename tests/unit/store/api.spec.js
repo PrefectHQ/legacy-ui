@@ -220,14 +220,6 @@ describe('API Vuex Module', () => {
         store.commit('unsetBackend')
         expect(store.getters['backend']).toEqual(null)
       })
-      it('should remove backend from localstorage', () => {
-        store.commit('setBackend', 'CLOUD')
-        expect(store.getters['backend']).toEqual('CLOUD')
-        expect(localStorage.getItem('backend')).toEqual('CLOUD')
-        store.commit('unsetBackend')
-        expect(store.getters['backend']).toBe(null)
-        expect(localStorage.getItem('backend')).toBe(null)
-      })
     })
 
     describe('setConnected', () => {

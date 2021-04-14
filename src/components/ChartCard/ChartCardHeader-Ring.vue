@@ -69,7 +69,7 @@ export default {
         :class="mainClasses"
       >
         {{ chartOverlayMain
-        }}<span class="title font-weight-black">{{ chartOverlayUnits }}</span>
+        }}<span class="text-h6 font-weight-black">{{ chartOverlayUnits }}</span>
       </div>
       <div
         class="font-weight-light"
@@ -115,7 +115,7 @@ export default {
 
       <div class="text-h3 font-weight-bold d-flex align-start justify-end">
         {{ chartOverlayMain
-        }}<span class="title font-weight-black">{{ chartOverlayUnits }}</span>
+        }}<span class="text-h6 font-weight-black">{{ chartOverlayUnits }}</span>
       </div>
       <div
         class="font-weight-light"
