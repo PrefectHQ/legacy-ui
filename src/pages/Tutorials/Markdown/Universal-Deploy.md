@@ -54,23 +54,11 @@ To authenticate, you'll need to create an [API Key](/user/keys) and configure it
 prefect auth login -t <COPIED_KEY>
 ```
 
-# Create a service account key
-
-Our next goal is to generate a service account key.
-
-[Agents](https://docs.prefect.io/orchestration/agents/overview.html) are responsible for communicating with Prefect Cloud and submitting your flows for execution. Your agents will need a key attached to a service account to authenticate with Prefect Cloud. There is no limit to the number of these you can create. You can create one using the CLI:
+You'll need this key again later in the tutorial. You can save it in your local configuration either as an environment variable or by storing it in `~/.prefect/config.toml`:
 
 ```bash
-prefect auth create-token -n my-runner-token -s RUNNER
+export PREFECT__CLOUD__AGENT__AUTH_TOKEN=<COPIED_KEY>
 ```
-
-You'll need this key later in the tutorial. You can save it in your local configuration either as an environment variable or by storing it in `~/.prefect/config.toml`:
-
-```bash
-export PREFECT__CLOUD__AGENT__AUTH_TOKEN=<COPIED_RUNNER_TOKEN>
-```
-
-You can also create a service account key using the Service Accounts page in Team settings in the UI.
 
 # Creating a project
 
@@ -110,7 +98,7 @@ flow.run_agent()
 Click `"Copy"` above to copy the updated flow code. Paste the code into your interactive Python REPL session. If all goes well, you should see the local agent process start to run. If you're seeing the error message `"No agent API token provided"`, try passing in the agent token explicitly to the `run_agent()` method:
 
 ```python
-flow.run_agent(token="<YOUR_SERVICE_ACCOUNT_KEY>")
+flow.run_agent(token="<COPIED_KEY>")
 ```
 
 And that's it! Your flow is now registered with Prefect Cloud, and an agent process is running on your local machine waiting to execute your flow runs. For now, your flow is stored on your local machine in your `~/.prefect directory`. You can configure this later through the use of Storage.
