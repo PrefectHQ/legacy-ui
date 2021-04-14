@@ -412,7 +412,10 @@ export default {
               </div>
               <div v-show="selectedTab === 1">
                 <DictInput
-                  v-if="Object.keys(clock.parameter_defaults).length !== 0"
+                  v-if="
+                    clock.parameter_defaults &&
+                      Object.keys(clock.parameter_defaults).length
+                  "
                   v-model="parameter"
                   style="padding: 20px;"
                   :dict="paramVal(clock.parameter_defaults)"
