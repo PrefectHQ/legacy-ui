@@ -127,7 +127,7 @@ export default {
         @change.stop="haltWork"
       /> -->
 
-      <div class="system-icon mx-auto" :class="{ active: !queuePaused }">
+      <div class="system-icon mx-auto" :class="{ active: queuePaused }">
         <i class="fad fa-film" />
       </div>
 
