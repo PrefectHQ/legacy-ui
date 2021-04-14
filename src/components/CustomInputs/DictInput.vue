@@ -52,7 +52,7 @@ export default {
       jsonInput: '{}',
       keys: [],
       values: [],
-      paramsToAdd: []
+      includedKeys: []
     }
   },
   computed: {
@@ -65,7 +65,7 @@ export default {
     value() {
       const dict = {}
       this.keys.forEach((k, i) => {
-        if (k && (!this.includeCheckbox || this.paramsToAdd.includes(k))) {
+        if (k && (!this.includeCheckbox || this.includedKeys.includes(k))) {
           dict[k] = this.values[i]
         }
       })
@@ -89,7 +89,7 @@ export default {
         })
       }
     },
-    paramsToAdd() {
+    includedKeys() {
       this.$emit('input', { ...this.value })
       this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
     }
@@ -214,7 +214,7 @@ export default {
         >
           <v-col v-if="includeCheckbox" cols="1">
             <v-checkbox
-              v-model="paramsToAdd"
+              v-model="includedKeys"
               multiple
               :value="keys[i]"
             ></v-checkbox>
