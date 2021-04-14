@@ -90,6 +90,7 @@ export default {
     },
     paramsToAdd() {
       this.$emit('input', { ...this.value })
+      this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
     }
   },
   mounted() {
