@@ -324,10 +324,8 @@ export default {
                   <p
                     v-if="checkDefualtParameters(allDefaultParameters)"
                     class="mt-8 text-body-1"
-                    >If checked, these parameters will be included on your
-                    schedule. If a parameter value is included here, it will not
-                    be updated by later changes to your flow or flow group
-                    parameters.
+                    >
+                      Checked parameters will override their corresponding defaults for runs generated from this schedule.
                   </p>
 
                   <DictInput
