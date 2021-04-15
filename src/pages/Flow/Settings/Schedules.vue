@@ -259,11 +259,17 @@ export default {
       return Object.values(parameterObj).length > 0
     },
     removeDoubleParam(clock) {
-      return Object.values(
-        [...this.allDefaultParameters, ...clock]
-          .reverse()
-          .reduce((r, c) => ((r[c.key] = r[c.key] || c), r), {})
-      )
+      if (clock && this.allDefaultParameters.length !== 0) {
+        return Object.values(
+          [...this.allDefaultParameters, ...this.paramVal(clock)]
+            .reverse()
+            .reduce((r, c) => ((r[c.key] = r[c.key] || c), r), {})
+        )
+      }
+
+      if (this.allDefaultParameters.length !== 0) {
+        return this.allDefaultParameters
+      }
     }
   }
 }
@@ -418,23 +424,33 @@ export default {
                 />
               </div>
               <div v-show="selectedTab === 1">
-                <DictInput
+                <div
                   v-if="
-                    clock.parameter_defaults &&
-                      Object.keys(clock.parameter_defaults).length
+                    defaultParameters.length === 0 &&
+                      clock.parameter_defaults &&
+                      Object.keys(clock.parameter_defaults).length === 0
                   "
+                  class="mt-8 text-body-1"
+                >
+                  <span class="font-weight-bold">{{ flow.name }}</span>
+                  has no default parameters.
+                </div>
+                <DictInput
+                  v-else
                   v-model="parameter"
                   style="padding: 20px;"
-                  :dict="removeDoubleParam(paramVal(clock.parameter_defaults))"
-                  :default-checked-keys="Object.keys(clock.parameter_defaults)"
+                  :dict="removeDoubleParam(clock.parameter_defaults)"
+                  :default-checked-keys="
+                    Object.keys(
+                      clock.parameter_defaults
+                        ? clock.parameter_defaults
+                        : allDefaultParameters
+                    )
+                  "
                   include-checkbox
                   disable-edit
                   allow-reset
                 />
-                <div v-else class="mt-8 text-body-1">
-                  <span class="font-weight-bold">{{ flow.name }}</span>
-                  has no default parameters.
-                </div>
               </div>
             </div>
 
