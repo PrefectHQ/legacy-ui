@@ -334,7 +334,7 @@ export default {
 
         <template #item.project="{ item }">
           <truncate :content="item.project && item.project.name">
-            <router-link 
+            <router-link
               v-if="item.project"
               class="link"
               :to="{
@@ -344,6 +344,7 @@ export default {
             >
               <span>{{ item.project.name }}</span>
             </router-link>
+            <span v-else class="text-overline">no project</span>
           </truncate>
         </template>
 
