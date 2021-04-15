@@ -9,6 +9,7 @@
 
 ### Bugfixes
 
+- Update tutorial to reference API keys instead of personal access and runner tokens - [#770](https://github.com/PrefectHQ/ui/pull/770)
 - Update user menu for API keys - [#778](https://github.com/PrefectHQ/ui/pull/778)
 - Fix JSON stringification error - [#777](https://github.com/PrefectHQ/ui/pull/777)
 - Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
