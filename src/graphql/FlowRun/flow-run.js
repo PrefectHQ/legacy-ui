@@ -53,6 +53,7 @@ export default function(isCloud) {
           core_version
           parameters
           archived
+          flow_group_id
           project {
             id
             name
