@@ -76,7 +76,7 @@ export default {
 </script>
 
 <template>
-  <v-container v-if="!refresh" class="mt-6 ma-2 pl-0 pt-0">
+  <div v-if="!refresh" class="mt-6 ma-2 pl-0 pt-0">
     <v-row>
       <v-col class="pa-0" cols="12" md="3" lg="2">
         <v-date-picker
@@ -92,7 +92,7 @@ export default {
       <v-col class="pa-0" cols="12" md="9" lg="10">
         <v-toolbar flat color="appBackground" class="pa-0 tbar">
           <v-row>
-            <v-col cols="6" sm="4">
+            <v-col cols="12" sm="4">
               <v-btn
                 outlined
                 class="mx-4"
@@ -181,7 +181,7 @@ export default {
         />
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <style lang="scss">

@@ -227,6 +227,18 @@ export const routes = [
       ),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
+  // ---------------------------//
+  //
+  // Agents
+  //
+  // ----------------------------//
+  {
+    name: 'agents',
+    path: '/:tenant?/agents',
+    component: () =>
+      import(/*webpackChunkName: "calendar" */ '@/pages/Agents/Agents'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
   // --------------------------- //
   //
   // Onboarding
