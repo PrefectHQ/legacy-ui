@@ -281,7 +281,7 @@ export default {
         "
       >
         <BreadCrumbs
-          v-if="flowGroup"
+          v-if="flowGroup && project"
           slot="breadcrumbs"
           :crumbs="[
             {

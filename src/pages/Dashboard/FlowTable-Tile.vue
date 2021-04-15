@@ -22,7 +22,7 @@ const serverHeaders = [
   },
   {
     text: 'Project',
-    value: 'project.name',
+    value: 'project',
     sortable: false,
     width: '15%'
   },
@@ -332,9 +332,10 @@ export default {
           </truncate>
         </template>
 
-        <template #item.project.name="{ item }">
-          <truncate :content="item.project.name">
-            <router-link
+        <template #item.project="{ item }">
+          <truncate :content="item.project && item.project.name">
+            <router-link 
+              v-if="item.project"
               class="link"
               :to="{
                 name: 'project',
