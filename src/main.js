@@ -54,13 +54,17 @@ if (
   Vue.config.performance = true
 }
 
-const blockedResponses = ['CreateAPIToken', 'APITokens', 'CreateRunnerToken']
+const blockedResponses = [
+  'CreateAPIToken',
+  'APITokens',
+  'CreateRunnerToken',
+  'CreateAPIKey'
+]
 const blockedRequests = ['SetSecret']
-console.log(process.env.VUE_APP_BASE_URL)
+
 if (
-  // process.env.NODE_ENV === 'production' &&
-  process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID
-  // process.env.VUE_APP_BASE_URL?.includes('cloud.prefect.io')
+  process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
+  process.env.VUE_APP_BACKEND === 'CLOUD'
 ) {
   LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID, {
     release: process.env.VUE_APP_BASE_URL,
