@@ -5,10 +5,13 @@
 ### Features and Improvements
 
 - Adds breadcrumb to allow easy access to current flow version and spawning flow version from a flow run screen [#759](https://github.com/PrefectHQ/ui/pull/759)
+- Add loading state to sign out method - [#766](https://github.com/PrefectHQ/ui/pull/766)
 
 ### Bugfixes
 
-- None
+- Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
+- Make team creation error text more legible - [#767](https://github.com/PrefectHQ/ui/pull/767)
+- Don't allow non-Cloud users to get stuck in a redirect loop if they try out the toggle - [#772](https://github.com/PrefectHQ/ui/pull/772)
 
 ## 2021-04-09a
 
