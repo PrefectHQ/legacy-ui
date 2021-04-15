@@ -95,7 +95,7 @@ flow.register(project_name="tester")
 flow.run_agent()
 ```
 
-Click `"Copy"` above to copy the updated flow code. Paste the code into your interactive Python REPL session. If all goes well, you should see the local agent process start to run. If you're seeing the error message `"No agent API token provided"`, try passing in the agent token explicitly to the `run_agent()` method:
+Click `"Copy"` above to copy the updated flow code. Paste the code into your interactive Python REPL session. If all goes well, you should see the local agent process start to run. If you're seeing the error message `"No agent API token provided"`, try passing your API key explicitly to the `run_agent()` method:
 
 ```python
 flow.run_agent(token="<COPIED_KEY>")
