@@ -392,7 +392,8 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 .system-icon {
   font-size: 64px;
   height: 64px !important;
-  width: 64px !important;
+  line-height: 64px;
+  width: 80px !important;
 
   .svg-inline--fa {
     --fa-primary-color: #444;
@@ -402,7 +403,11 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
     &.fa-list-alt {
       --fa-primary-color: var(--v-warning-base);
-      // --fa-secondary-color: #444;
+      --fa-secondary-opacity: 1;
+    }
+
+    &.fa-align-slash {
+      --fa-primary-color: var(--v-error-base);
       --fa-secondary-opacity: 1;
     }
   }
@@ -411,7 +416,6 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
     .svg-inline--fa {
       &.fa-list-alt {
         --fa-primary-color: var(--v-primary-base);
-        // --fa-secondary-color: #babac0;
         --fa-secondary-opacity: 1;
       }
     }

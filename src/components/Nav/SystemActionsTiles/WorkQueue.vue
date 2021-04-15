@@ -46,35 +46,29 @@ export default {
 </script>
 
 <template>
-  <div
+  <button
     class="rounded-lg system-action-container d-flex flex-column align-center justify-center"
+    :disabled="loading"
+    @click="haltWork"
   >
-    <div
-      class="system-icon mx-auto"
-      :class="{ active: !paused }"
-      @click="paused = !paused"
-    >
+    <div class="system-icon mx-auto" :class="{ active: !paused }">
       <i class="fad fa-list-alt" />
     </div>
 
-    <div
-      class="text-h6 white--text mt-6 mb-2"
-      @click="
-        $refs['checkbox'].indeterminate = !$refs['checkbox'].indeterminate
-      "
-    >
+    <div class="text-h6 white--text mt-2 mb-2">
       Work queue
     </div>
 
-    <input
-      ref="checkbox"
-      class="large-switch work-queue"
-      :class="{ loading: loading, active: !paused }"
-      :disabled="loading"
-      type="checkbox"
-      @click="haltWork"
-    />
-  </div>
+    <div class="action-container">
+      <input
+        ref="checkbox"
+        class="large-switch work-queue"
+        :class="{ loading: loading, active: !paused }"
+        :disabled="loading"
+        type="checkbox"
+      />
+    </div>
+  </button>
 </template>
 
 <style lang="scss" scoped>
@@ -89,17 +83,17 @@ export default {
 
 .large-switch {
   appearance: none;
-  width: 124px;
-  height: 48px;
-  display: inline-block;
-  position: relative;
-  border-radius: 50px;
-  overflow: hidden;
-  outline: none;
-  border: none;
-  cursor: pointer;
   background-color: rgba(254, 81, 150, 0.15);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-block;
+  height: 48px;
+  outline: none;
+  overflow: hidden;
+  position: relative;
   transition: background-color ease 0.3s;
+  width: 124px;
 
   &:disabled {
     cursor: not-allowed;
@@ -111,7 +105,7 @@ export default {
     color: #fff;
     content: 'Active Paused';
     display: block;
-    font: 14px/44px “Source Code Pro”;
+    font: 14px/44px 'Roboto', sans-serif;
     font-weight: bold;
     height: 44px;
     left: 2px;
@@ -122,7 +116,7 @@ export default {
     transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
     white-space: nowrap;
     width: 44px;
-    word-spacing: 48px;
+    word-spacing: 58px;
     z-index: 2;
   }
 
