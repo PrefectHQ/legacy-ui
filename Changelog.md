@@ -14,11 +14,8 @@
 - Fix JSON stringification error - [#777](https://github.com/PrefectHQ/ui/pull/777)
 - Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
 - Make team creation error text more legible - [#767](https://github.com/PrefectHQ/ui/pull/767)
-<<<<<<< HEAD
 - Fix auth checks when returning to the application - [#774](https://github.com/PrefectHQ/ui/pull/774)
-=======
 - Don't allow non-Cloud users to get stuck in a redirect loop if they try out the toggle - [#772](https://github.com/PrefectHQ/ui/pull/772)
->>>>>>> e4b5ffc8d29b00b77c8c6b7f9f839f66eaa42232
 
 ## 2021-04-09a
 
