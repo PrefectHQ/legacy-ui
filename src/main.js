@@ -56,11 +56,11 @@ if (
 
 const blockedResponses = ['CreateAPIToken', 'APITokens', 'CreateRunnerToken']
 const blockedRequests = ['SetSecret']
-
+console.log(process.env.VUE_APP_BASE_URL)
 if (
-  process.env.NODE_ENV === 'production' &&
-  process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
-  process.env.VUE_APP_BASE_URL?.includes('cloud.prefect.io')
+  // process.env.NODE_ENV === 'production' &&
+  process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID
+  // process.env.VUE_APP_BASE_URL?.includes('cloud.prefect.io')
 ) {
   LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID, {
     release: process.env.VUE_APP_BASE_URL,
@@ -191,7 +191,11 @@ if (TokenWorker?.port) {
         store.dispatch('auth/updateAuthenticationTokens', payload)
         break
       case 'authorization':
-        store.dispatch('auth/updateAuthorizationTokens', payload)
+        if (payload) {
+          store.dispatch('auth/updateAuthorizationTokens', payload)
+        } else {
+          store.dispatch('auth/authorize')
+        }
         break
       case 'authentication-expiration':
         store.dispatch('auth/authenticate')
