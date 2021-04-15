@@ -257,6 +257,13 @@ export default {
     },
     checkDefualtParameters(parameterObj) {
       return Object.values(parameterObj).length > 0
+    },
+    removeDoubleParam(clock) {
+      return Object.values(
+        [...this.allDefaultParameters, ...clock]
+          .reverse()
+          .reduce((r, c) => ((r[c.key] = r[c.key] || c), r), {})
+      )
     }
   }
 }
@@ -418,7 +425,9 @@ export default {
                   "
                   v-model="parameter"
                   style="padding: 20px;"
-                  :dict="paramVal(clock.parameter_defaults)"
+                  :dict="removeDoubleParam(paramVal(clock.parameter_defaults))"
+                  :default-checked-keys="Object.keys(clock.parameter_defaults)"
+                  include-checkbox
                   disable-edit
                   allow-reset
                 />

@@ -43,6 +43,11 @@ export default {
       type: String,
       requird: false,
       default: 'Value'
+    },
+    defaultCheckedKeys: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data() {
@@ -52,7 +57,7 @@ export default {
       jsonInput: '{}',
       keys: [],
       values: [],
-      includedKeys: []
+      includedKeys: this.defaultCheckedKeys
     }
   },
   computed: {
