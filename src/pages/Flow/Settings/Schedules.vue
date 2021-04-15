@@ -426,9 +426,7 @@ export default {
               <div v-show="selectedTab === 1">
                 <div
                   v-if="
-                    defaultParameters.length === 0 &&
-                      clock.parameter_defaults &&
-                      Object.keys(clock.parameter_defaults).length === 0
+                    defaultParameters.length === 0 && !clock.parameter_defaults
                   "
                   class="mt-8 text-body-1"
                 >
