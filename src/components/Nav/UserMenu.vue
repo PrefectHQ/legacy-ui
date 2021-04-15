@@ -131,7 +131,7 @@ export default {
           Account Settings
         </div>
         <div class="text-caption text--secondary text-truncate">
-          Manage profile, access tokens, and teams
+          Manage profile, API keys, and teams
         </div>
       </div>
 

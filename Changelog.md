@@ -9,6 +9,7 @@
 
 ### Bugfixes
 
+- Update user menu for API keys - [#778](https://github.com/PrefectHQ/ui/pull/778)
 - Fix JSON stringification error - [#777](https://github.com/PrefectHQ/ui/pull/777)
 - Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
 - Make team creation error text more legible - [#767](https://github.com/PrefectHQ/ui/pull/767)
