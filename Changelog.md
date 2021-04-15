@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Adds breadcrumb to allow easy access to current flow version and spawning flow version from a flow run screen [#759](https://github.com/PrefectHQ/ui/pull/759)
 - Add loading state to sign out method - [#766](https://github.com/PrefectHQ/ui/pull/766)
 
 ### Bugfixes
