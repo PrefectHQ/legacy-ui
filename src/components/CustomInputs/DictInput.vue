@@ -92,7 +92,9 @@ export default {
         const json = JSON.parse(this.jsonInput)
 
         this.keys = Object.keys(json)
-        this.values = Object.values(json).map(value => JSON.stringify(value))
+        this.values = Object.values(json).map(value =>
+          typeof value === 'string' ? value : JSON.stringify(value)
+        )
         this.$emit('input', { ...this.value })
       } catch {
         this.$refs['json-input'].validateJson()
