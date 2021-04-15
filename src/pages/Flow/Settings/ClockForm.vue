@@ -91,7 +91,7 @@ export default {
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
         ],
-        parameter_defaults: this.param ? parseObject(this.param) : null,
+        parameter_defaults: this.param ? parseObject(this.param) : {},
         timezone: this.selectedTimezone
       }
       this.$emit('confirm', clock)
