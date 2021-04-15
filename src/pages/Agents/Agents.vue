@@ -3,6 +3,7 @@ import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
 import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
+import SubPageNav from '@/layouts/SubPageNav'
 
 import moment from '@/utils/moment'
 
@@ -12,10 +13,12 @@ const STATUSES = ['healthy', 'stale', 'unhealthy']
 
 export default {
   components: {
-    AgentCard
+    AgentCard,
+    SubPageNav
   },
   data() {
     return {
+      projectId: this.$route.params.id,
       cleanUpDialog: false,
       filterMenuOpen: false,
       queryFailed: false,
@@ -28,9 +31,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('data', ['activeProject']),
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
+    project() {
+      return this.activeProject
+    },
     agentTracker() {
       return this.agents?.reduce(
         (tracker, agent) => {
@@ -110,6 +117,8 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    ...mapActions('data', ['activateProject', 'resetActiveData']),
+
     async clearUnhealthyAgents() {
       try {
         this.clearingAgents = true
@@ -210,11 +219,11 @@ export default {
 </script>
 
 <template>
-  <div v-if="isLoading">
+  <v-sheet v-if="isLoading">
     <v-progress-linear indeterminate color="primary"></v-progress-linear>
-  </div>
+  </v-sheet>
 
-  <div
+  <v-sheet
     v-else-if="!agents && queryFailed"
     class="text-subtitle-1 font-weight-light"
   >
@@ -234,161 +243,183 @@ export default {
         page after a few minutes.
       </p>
     </v-alert>
-  </div>
+  </v-sheet>
 
-  <div v-else-if="agents && agents.length > 0">
-    <div
-      class="agent-controls"
-      :class="{
-        'sm-and-down': $vuetify.breakpoint.smAndDown,
-        md: $vuetify.breakpoint.mdOnly,
-        'lg-and-up': $vuetify.breakpoint.lgAndUp
-      }"
-    >
-      <v-dialog v-model="cleanUpDialog" max-width="480">
-        <template #activator="{ on }">
-          <v-btn
-            v-if="agentTracker.unhealthy > 0"
-            class="vertical-button py-1 "
-            color="red"
-            text
-            tile
-            small
-            v-on="on"
-          >
-            <v-icon>
-              delete_sweep
-            </v-icon>
-            <div class="mb-1">Clean Up</div>
-          </v-btn>
-        </template>
-
-        <v-card flat>
-          <v-card-title class="text-h6 word-break-normal">
-            Clean up unhealthy agents?
-          </v-card-title>
-
-          <v-card-text>
-            <p>
-              This will remove any agents that haven't queried
-              <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
-              <span v-else class="secondaryGray--text">Prefect Server</span> in
-              the last {{ unhealthyThreshold }} minutes.
-            </p>
-            <p>
-              Note: These agents will appear again if they become healthy by
-              querying the server.
-            </p>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn text tile @click="cleanUpDialog = false">
-              Cancel
-            </v-btn>
-            <v-btn
-              :loading="clearingAgents"
-              dark
-              color="red"
-              depressed
-              @click="clearUnhealthyAgents"
-            >
-              Confirm
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-menu
-        v-model="filterMenuOpen"
-        :close-on-content-click="false"
-        bottom
-        left
-        offset-y
-        transition="slide-y-transition"
+  <v-sheet v-else-if="agents && agents.length > 0" color="appBackground">
+    <SubPageNav icon="pi-agent" page-type="Agents">
+      <span
+        slot="page-title"
+        :style="
+          loading > 0
+            ? {
+                display: 'block',
+                height: '28px',
+                overflow: 'hidden'
+              }
+            : $vuetify.breakpoint.smAndDown && {
+                display: 'inline'
+              }
+        "
       >
-        <template #activator="{ on }">
-          <v-btn class="vertical-button py-1" text tile small v-on="on">
-            <v-icon>
-              filter_list
-            </v-icon>
-            <div class="mb-1">Filter</div>
-          </v-btn>
-        </template>
-        <v-card width="320">
-          <v-card-text class="pb-6">
-            <v-autocomplete
-              ref="agents"
-              v-model="labelInput"
-              :items="allLabels"
-              label="Filter agents by label"
-              outlined
-              multiple
-              chips
-              small-chips
-              :disabled="showUnlabeledAgentsOnly || allLabels.length === 0"
-              deletable-chips
-              hide-no-data
-              :menu-props="{
-                closeOnContentClick: true,
-                maxHeight: 300,
-                transition: 'slide-y-transition'
-              }"
-              @click:append="menuArrow"
-            ></v-autocomplete>
-            <v-switch
-              v-model="showUnlabeledAgentsOnly"
-              class="ma-0 mt-1 label-switch-position"
-              label="Only show agents with no labels"
-              hide-details
-            ></v-switch>
-            <v-checkbox
-              v-model="statusInput"
-              hide-details
-              label="Show healthy agents"
-              value="healthy"
-              color="success"
-            ></v-checkbox>
-            <v-checkbox
-              v-model="statusInput"
-              label="Show stale agents"
-              :hint="
-                `Stale agents have not queried for flows in the last ${
-                  staleThreshold === 1 ? 'minute' : `${staleThreshold} minutes`
-                }.`
-              "
-              persistent-hint
-              value="stale"
-              color="warning"
-            ></v-checkbox>
-            <v-checkbox
-              v-model="statusInput"
-              label="Show unhealthy agents"
-              :hint="
-                `Unhealthy agents have not queried for flows in the last ${
-                  unhealthyThreshold === 1
-                    ? 'minute'
-                    : `${unhealthyThreshold} minutes`
-                }.`
-              "
-              persistent-hint
-              value="unhealthy"
-              color="error"
-            ></v-checkbox>
-          </v-card-text>
+        <span v-if="loading === 0">
+          {{ tenant.name }}
+        </span>
+        <span v-else>
+          <v-skeleton-loader type="heading" tile></v-skeleton-loader>
+        </span>
+      </span>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="resetFilter">
-              Reset
+      <span
+        slot="page-actions"
+        :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
+      >
+        <v-dialog v-model="cleanUpDialog">
+          <template #activator="{ on }">
+            <v-btn
+              v-if="agentTracker.unhealthy > 0"
+              class="vertical-button py-1 "
+              color="red"
+              text
+              tile
+              small
+              v-on="on"
+            >
+              <v-icon>
+                delete_sweep
+              </v-icon>
+              <div class="mb-1">Clean Up</div>
             </v-btn>
-            <v-btn text @click="filterMenuOpen = false">
-              Close
+          </template>
+
+          <v-card flat>
+            <v-card-title class="text-h6 word-break-normal">
+              Clean up unhealthy agents?
+            </v-card-title>
+
+            <v-card-text>
+              <p>
+                This will remove any agents that haven't queried
+                <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
+                <span v-else class="secondaryGray--text">Prefect Server</span>
+                in the last {{ unhealthyThreshold }} minutes.
+              </p>
+              <p>
+                Note: These agents will appear again if they become healthy by
+                querying the server.
+              </p>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text tile @click="cleanUpDialog = false">
+                Cancel
+              </v-btn>
+              <v-btn
+                :loading="clearingAgents"
+                dark
+                color="red"
+                depressed
+                @click="clearUnhealthyAgents"
+              >
+                Confirm
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-menu
+          v-model="filterMenuOpen"
+          :close-on-content-click="false"
+          bottom
+          left
+          offset-y
+          transition="slide-y-transition"
+        >
+          <template #activator="{ on }">
+            <v-btn class="vertical-button py-1" text tile small v-on="on">
+              <v-icon>
+                filter_list
+              </v-icon>
+              <div class="mb-1">Filter</div>
             </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-menu>
-    </div>
+          </template>
+          <v-card width="320">
+            <v-card-text class="pb-6">
+              <v-autocomplete
+                ref="agents"
+                v-model="labelInput"
+                :items="allLabels"
+                label="Filter agents by label"
+                outlined
+                multiple
+                chips
+                small-chips
+                :disabled="showUnlabeledAgentsOnly || allLabels.length === 0"
+                deletable-chips
+                hide-no-data
+                :menu-props="{
+                  closeOnContentClick: true,
+                  maxHeight: 300,
+                  transition: 'slide-y-transition'
+                }"
+                @click:append="menuArrow"
+              ></v-autocomplete>
+              <v-switch
+                v-model="showUnlabeledAgentsOnly"
+                class="ma-0 mt-1 label-switch-position"
+                label="Only show agents with no labels"
+                hide-details
+              ></v-switch>
+              <v-checkbox
+                v-model="statusInput"
+                hide-details
+                label="Show healthy agents"
+                value="healthy"
+                color="success"
+              ></v-checkbox>
+              <v-checkbox
+                v-model="statusInput"
+                label="Show stale agents"
+                :hint="
+                  `Stale agents have not queried for flows in the last ${
+                    staleThreshold === 1
+                      ? 'minute'
+                      : `${staleThreshold} minutes`
+                  }.`
+                "
+                persistent-hint
+                value="stale"
+                color="warning"
+              ></v-checkbox>
+              <v-checkbox
+                v-model="statusInput"
+                label="Show unhealthy agents"
+                :hint="
+                  `Unhealthy agents have not queried for flows in the last ${
+                    unhealthyThreshold === 1
+                      ? 'minute'
+                      : `${unhealthyThreshold} minutes`
+                  }.`
+                "
+                persistent-hint
+                value="unhealthy"
+                color="error"
+              ></v-checkbox>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="resetFilter">
+                Reset
+              </v-btn>
+              <v-btn text @click="filterMenuOpen = false">
+                Close
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-menu>
+      </span>
+    </SubPageNav>
 
     <v-scroll-x-reverse-transition>
       <v-alert
@@ -419,7 +450,10 @@ export default {
       v-if="filteredAgents.length > 0"
       name="agents-list"
       tag="div"
-      class="row"
+      :style="{
+        'padding-top': $vuetify.breakpoint.smAndUp ? '80px' : '130px'
+      }"
+      class="row px-6 tab-full-height"
     >
       <v-col
         v-for="agent in filteredAgents"
@@ -448,9 +482,9 @@ export default {
     >
       No agents found. Try expanding your search?
     </v-alert>
-  </div>
+  </v-sheet>
 
-  <div v-else class="text-subtitle-1 font-weight-light">
+  <v-sheet v-else class="text-subtitle-1 font-weight-light">
     <v-alert
       border="left"
       colored-border
@@ -480,7 +514,7 @@ export default {
         >
       </p>
     </v-alert>
-  </div>
+  </v-sheet>
 </template>
 
 <style lang="scss" scoped>
