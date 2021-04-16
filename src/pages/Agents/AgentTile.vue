@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import CardTitle from '@/components/Card-Title'
+// import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
 import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -17,7 +17,7 @@ const AGENT_TYPES = [
 
 export default {
   components: {
-    CardTitle,
+    // CardTitle,
     Label
   },
   filters: {
@@ -182,15 +182,19 @@ export default {
 
 <template>
   <v-card
-    tile
     :disabled="agent.isDeleting || isDeleting"
     class="agent-card px-2 pb-3"
-    :min-height="$vuetify.breakpoint.smAndDown ? null : 260"
     style="overflow-y: auto;"
-  >
-    <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
-
-    <CardTitle
+    ><v-card-title>
+      <v-icon :color="statusColor" class="mr-2">{{
+        agent.type ? agentIcon(agent.type) : 'fas fa-robot'
+      }}</v-icon
+      >{{ name }}
+    </v-card-title>
+    <v-card-subtitle>
+      {{ type }}
+    </v-card-subtitle>
+    <!-- <CardTitle
       :title="name"
       :subtitle="type"
       :icon="agent.type ? agentIcon(agent.type) : 'fas fa-robot'"
@@ -198,28 +202,7 @@ export default {
       icon-class="mb-2 fa-2x pi-2x"
       class="pt-3 mb-4"
     >
-      <template v-if="['stale', 'unhealthy'].includes(status)" slot="action">
-        <v-tooltip bottom>
-          <template #activator="{ on }">
-            <v-icon class="float-right mr-4" :color="statusColor" v-on="on">
-              {{ status === 'stale' ? 'warning' : 'error' }}
-            </v-icon>
-          </template>
-          <span v-if="status === 'stale'">
-            This agent has not queried for flows in the last
-            {{ staleThreshold === 1 ? 'minute' : `${staleThreshold} minutes` }}
-          </span>
-          <span v-if="status === 'unhealthy'">
-            This agent has not queried for flows in the last
-            {{
-              unhealthyThreshold === 1
-                ? 'minute'
-                : `${unhealthyThreshold} minutes`
-            }}
-          </span>
-        </v-tooltip>
-      </template>
-    </CardTitle>
+    </CardTitle> -->
 
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
@@ -249,83 +232,8 @@ export default {
       </v-card>
     </v-dialog>
 
-    <v-card-text class="px-0 py-0" style="height: 250px;">
+    <v-card-text class="px-0 py-0">
       <div class="px-3">
-        <div class="text-overline">
-          LAST QUERY
-        </div>
-        <transition name="fade">
-          <div v-if="showLastQuery" class="text-body-1">
-            <span class="font-weight-bold">{{
-              agent.last_queried | formatDateTime
-            }}</span>
-            <span v-if="agent.last_queried">|</span> {{ timer }}
-          </div>
-        </transition>
-
-        <div class="d-flex justify-space-between mb-2 mt-2">
-          <div style="width: 50%;">
-            <div class="text-caption">
-              CORE VERSION
-            </div>
-            <div class="text-body-2 text-truncate">
-              {{ agent.core_version || 'Unknown' }}
-            </div>
-          </div>
-
-          <div v-if="isCloud" style="width: 50%;">
-            <div class="text-caption">
-              TOKEN NAME
-            </div>
-            <div class="text-body-2">
-              <v-tooltip top>
-                <template #activator="{ on }">
-                  <div
-                    class="text-truncate"
-                    :class="{
-                      pointer: agent.token_name,
-                      'bg-gray-transition': copiedText[agent.token_name],
-                      'bg-white-transition': !copiedText[agent.token_name]
-                    }"
-                    v-on="on"
-                    @click="copyTextToClipboard(agent.token_name)"
-                  >
-                    <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
-                      {{ agent.token_name || 'Unknown' }}
-                    </span>
-                  </div>
-                </template>
-
-                <span>
-                  <v-icon
-                    v-if="agent.token_name"
-                    x-small
-                    class="mb-2px mr-2"
-                    tabindex="0"
-                    color="white"
-                  >
-                    {{ copiedText[agent.token_name] ? 'check' : 'file_copy' }}
-                  </v-icon>
-                  {{
-                    agent.token_name
-                      ? 'Click to copy token name'
-                      : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
-                  }}</span
-                >
-              </v-tooltip>
-            </div>
-          </div>
-        </div>
-
-        <div style="width: 50%;" class="mb-2">
-          <div class="text-caption">
-            CREATED
-          </div>
-          <div class="text-body-2">
-            {{ formDate(agent.created) || 'Unknown' }}
-          </div>
-        </div>
-
         <div>
           <div class="text-caption">
             AGENT ID
@@ -359,7 +267,7 @@ export default {
       <div
         v-if="agent && agentModified.labels.length > 0"
         class="px-3 overflow-scroll"
-        style="height: 80px;"
+        style="height: 30px;"
       >
         <Label
           v-for="label in agentModified.labels"
@@ -372,14 +280,14 @@ export default {
           {{ label }}
         </Label>
       </div>
-      <div v-else class="text-body-1 px-3">
+      <div v-else class="text-body-1 px-3" style="height: 30px;">
         None
       </div>
     </v-card-text>
 
-    <v-divider class="mt-12 mb-4" />
+    <v-divider />
 
-    <!-- <v-card-actions class="pa-0" style="height: 28px;">
+    <v-card-actions class="pa-0">
       <v-btn
         small
         text
@@ -399,16 +307,12 @@ export default {
         color="primary"
         text
         class="mx-1"
-        :class="{
-          'bottom-right-loaded': !agent.isDeleting && !isDeleting,
-          'bottom-right-loading': agent.isDeleting || isDeleting
-        }"
         :loading="agent.isDeleting || isDeleting"
         @click="showConfirmDialog = true"
       >
         Remove
       </v-btn>
-    </v-card-actions> -->
+    </v-card-actions>
   </v-card>
 </template>
 

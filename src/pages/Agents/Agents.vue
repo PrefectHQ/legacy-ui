@@ -7,13 +7,13 @@ import SubPageNav from '@/layouts/SubPageNav'
 
 import moment from '@/utils/moment'
 
-import AgentCard from '@/pages/Agents/AgentCard'
+import AgentTile from '@/pages/Agents/AgentTile'
 
 const STATUSES = ['healthy', 'stale', 'unhealthy']
 
 export default {
   components: {
-    AgentCard,
+    AgentTile,
     SubPageNav
   },
   data() {
@@ -219,7 +219,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet v-if="isLoading">
+  <v-sheet v-if="isLoading" color="appBackground">
     <v-progress-linear indeterminate color="primary"></v-progress-linear>
   </v-sheet>
 
@@ -446,51 +446,53 @@ export default {
       </v-alert>
     </v-scroll-x-reverse-transition>
 
-    <transition-group
+    <v-row
       v-if="filteredAgents.length > 0"
-      name="agents-list"
       tag="div"
       :style="{
         'padding-top': $vuetify.breakpoint.smAndUp ? '80px' : '130px'
       }"
-      class="row px-6 tab-full-height"
+      class="tab-full-height px-4"
     >
       <v-col
         v-for="agent in filteredAgents"
         :key="agent.id"
-        cols="12"
-        sm="6"
-        md="4"
-        lg="3"
+        cols="6"
+        sm="3"
+        lg="2"
       >
-        <AgentCard
+        <AgentTile
           :agent="agent"
           :selected-labels="labelInput"
           @label-click="handleLabelClick"
-        ></AgentCard>
+        ></AgentTile>
       </v-col>
-    </transition-group>
-
-    <v-alert
-      v-else
-      border="left"
-      colored-border
-      elevation="2"
-      type="warning"
-      max-width="420"
-      class="ma-3"
-    >
-      No agents found. Try expanding your search?
-    </v-alert>
+    </v-row>
+    <v-row v-else>
+      <v-alert
+        border="left"
+        colored-border
+        elevation="2"
+        type="warning"
+        max-width="420"
+        class="ma-3"
+      >
+        No agents found. Try expanding your search?
+      </v-alert>
+    </v-row>
   </v-sheet>
 
-  <v-sheet v-else class="text-subtitle-1 font-weight-light">
+  <v-sheet
+    v-else
+    class="text-subtitle-1 font-weight-light"
+    color="appBackground"
+  >
     <v-alert
       border="left"
       colored-border
       elevation="2"
       type="warning"
-      max-width="600"
+      class="ma-4"
     >
       <p>
         You do not have any agents querying for flow runs.

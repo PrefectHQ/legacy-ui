@@ -239,6 +239,13 @@ export const routes = [
       import(/*webpackChunkName: "calendar" */ '@/pages/Agents/Agents'),
     beforeEnter: multiguard([authNavGuard, tenantNavGuard])
   },
+  {
+    name: 'agent',
+    path: '/:tenant?/agent/:id',
+    component: () =>
+      import(/* webpackChunkName: "flow" */ '@/pages/Agents/AgentPage.vue'),
+    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+  },
   // --------------------------- //
   //
   // Onboarding
