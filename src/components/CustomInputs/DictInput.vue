@@ -7,6 +7,11 @@ export default {
     JsonInput
   },
   props: {
+    includeCheckbox: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     addLabel: {
       type: String,
       requird: false,
@@ -38,6 +43,11 @@ export default {
       type: String,
       requird: false,
       default: 'Value'
+    },
+    defaultCheckedKeys: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data() {
@@ -46,7 +56,8 @@ export default {
       json: false,
       jsonInput: '{}',
       keys: [],
-      values: []
+      values: [],
+      includedKeys: this.defaultCheckedKeys
     }
   },
   computed: {
@@ -58,9 +69,11 @@ export default {
     },
     value() {
       const dict = {}
-      this.keys
-        .filter(k => k !== null)
-        .map((k, i) => (dict[k] = this.values[i]))
+      this.keys.forEach((k, i) => {
+        if (k && (!this.includeCheckbox || this.includedKeys.includes(k))) {
+          dict[k] = this.values[i]
+        }
+      })
       return dict
     }
   },
@@ -80,6 +93,10 @@ export default {
           this.$refs['json-input'].validateJson()
         })
       }
+    },
+    includedKeys() {
+      this.$emit('input', { ...this.value })
+      this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
     }
   },
   mounted() {
@@ -202,7 +219,14 @@ export default {
           class="my-4 position-relative"
           :class="{ 'pr-8': !disableEdit }"
         >
-          <v-col cols="4" class="pr-3">
+          <v-col v-if="includeCheckbox" cols="1">
+            <v-checkbox
+              v-model="includedKeys"
+              multiple
+              :value="keys[i]"
+            ></v-checkbox>
+          </v-col>
+          <v-col :cols="includeCheckbox ? 3 : 4" class="pr-3">
             <v-text-field
               v-model="keys[i]"
               class="text-body-1"
@@ -225,6 +249,9 @@ export default {
                 inputIsArray && dict[i].value
                   ? dict[i].value.toString()
                   : valueLabel
+              "
+              :readonly="
+                includeCheckbox ? !includedKeys.includes(keys[i]) : false
               "
               @keyup="_handleKeypress"
             />
