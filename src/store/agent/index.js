@@ -19,6 +19,9 @@ const getters = {
   },
   agents(state) {
     return state.agents
+  },
+  agent: state => id => {
+    return state.agents.filter(agent => agent.id === id)[0]
   }
 }
 

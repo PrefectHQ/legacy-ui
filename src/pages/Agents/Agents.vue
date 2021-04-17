@@ -27,7 +27,8 @@ export default {
       showUnlabeledAgentsOnly: false,
       statusInput: STATUSES,
       clearingAgents: false,
-      clearingError: false
+      clearingError: false,
+      tab: 'overview'
     }
   },
   computed: {
@@ -446,40 +447,56 @@ export default {
       </v-alert>
     </v-scroll-x-reverse-transition>
 
-    <v-row
-      v-if="filteredAgents.length > 0"
+    <v-tabs-items
+      v-model="tab"
       tag="div"
+      class="px-6 mx-auto tabs-border-bottom tab-full-height"
+      style="max-width: 1440px;"
       :style="{
-        'padding-top': $vuetify.breakpoint.smAndUp ? '80px' : '130px'
+        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '100px'
       }"
-      class="tab-full-height px-4"
     >
-      <v-col
-        v-for="agent in filteredAgents"
-        :key="agent.id"
-        cols="6"
-        sm="3"
-        lg="2"
+      <v-tab-item
+        class="pa-0"
+        value="overview"
+        transition="tab-fade"
+        reverse-transition="tab-fade"
       >
-        <AgentTile
-          :agent="agent"
-          :selected-labels="labelInput"
-          @label-click="handleLabelClick"
-        ></AgentTile>
-      </v-col>
-    </v-row>
-    <v-row v-else>
-      <v-alert
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        max-width="420"
-        class="ma-3"
-      >
-        No agents found. Try expanding your search?
-      </v-alert>
-    </v-row>
+        <v-row
+          v-if="filteredAgents.length > 0"
+          :style="{
+            'padding-top': $vuetify.breakpoint.smOnly ? '10px' : '1px',
+            'padding-bottom': $vuetify.breakpoint.smOnly ? '10px' : '10px'
+          }"
+        >
+          <v-col
+            v-for="agent in filteredAgents"
+            :key="agent.id"
+            cols="6"
+            sm="3"
+            lg="2"
+          >
+            <AgentTile
+              :agent="agent"
+              :selected-labels="labelInput"
+              @label-click="handleLabelClick"
+            ></AgentTile>
+          </v-col>
+        </v-row>
+        <v-row v-else>
+          <v-alert
+            border="left"
+            colored-border
+            elevation="2"
+            type="warning"
+            max-width="420"
+            class="ma-3"
+          >
+            No agents found. Try expanding your search?
+          </v-alert>
+        </v-row>
+      </v-tab-item>
+    </v-tabs-items>
   </v-sheet>
 
   <v-sheet
@@ -581,6 +598,7 @@ export default {
 .filter-alert-position {
   position: absolute;
   right: 16px;
+  top: 50px;
   z-index: 10;
 }
 

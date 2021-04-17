@@ -57,6 +57,7 @@ export default {
   computed: {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
     ...mapGetters('api', ['isCloud']),
+    ...mapGetters('tenant', ['tenant']),
     agentModified() {
       return {
         ...this.agent,
@@ -191,7 +192,7 @@ export default {
       }}</v-icon
       >{{ name }}
     </v-card-title>
-    <v-card-subtitle>
+    <v-card-subtitle class="pb-0">
       {{ type }}
     </v-card-subtitle>
     <!-- <CardTitle
@@ -232,60 +233,43 @@ export default {
       </v-card>
     </v-dialog>
 
-    <v-card-text class="px-0 py-0">
-      <div class="px-3">
-        <div>
-          <div class="text-caption">
-            AGENT ID
-          </div>
-          <div class="text-body-2 text-truncate">
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <span
-                  class="cursor-pointer show-icon-hover-focus-only pa-2px"
-                  role="button"
-                  @click="copyTextToClipboard(agent.id)"
-                  v-on="on"
-                >
-                  <v-icon x-small class="mb-2px mr-2" tabindex="0">
-                    {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
-                  </v-icon>
-                  {{ agent.id || 'Unknown' }}
-                </span>
-              </template>
-              <span>
-                {{ agent.id || 'Unknown' }}
-              </span>
-            </v-tooltip>
-          </div>
-        </div>
+    <v-card-text class="py-0">
+      <v-list>
+        <v-list-item class="pa-0">
+          <v-list-item-content class="pa-0">
+            <v-list-item-title>
+              Agent Id
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <truncate :content="agent.id">
+                {{ agent.id || unknown }}</truncate
+              >
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
 
-        <div class="text-overline mb-0 mt-2">
-          LABELS
-        </div>
-      </div>
-      <div
-        v-if="agent && agentModified.labels.length > 0"
-        class="px-3 overflow-scroll"
-        style="height: 30px;"
-      >
-        <Label
-          v-for="label in agentModified.labels"
-          :key="label"
-          class="mr-1 mt-1"
-          :outlined="!labelSelected(label)"
-          size="x-small"
-          @click="$emit('label-click', $event)"
-        >
-          {{ label }}
-        </Label>
-      </div>
-      <div v-else class="text-body-1 px-3" style="height: 30px;">
-        None
-      </div>
+        <v-list-item two-line class="pa-0">
+          <v-list-item-content class="pa-0 overflow-scroll">
+            <v-list-item-title>
+              Labels
+            </v-list-item-title>
+            <Label
+              v-for="label in agentModified.labels"
+              :key="label"
+              class="mr-1 mt-1"
+              :outlined="!labelSelected(label)"
+              size="x-small"
+              @click="$emit('label-click', $event)"
+            >
+              {{ label }}
+            </Label>
+            <span v-if="!agentModified.labels.length">
+              None
+            </span>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </v-card-text>
-
-    <v-divider />
 
     <v-card-actions class="pa-0">
       <v-btn
@@ -295,7 +279,7 @@ export default {
         class="mx-1"
         :to="{
           name: 'agent',
-          params: { tenant: slug, id: agent.id }
+          params: { tenant: tenant.slug, id: agent.id }
         }"
       >
         More
