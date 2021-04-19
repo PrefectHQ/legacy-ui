@@ -161,6 +161,16 @@ const actions = {
   async activateProject({ commit, getters }, id) {
     let project = getters['projects']?.find(p => p.id == id)
 
+    if (id === 'no_project') {
+      const { data } = await fallbackApolloClient.query({
+        query: require('@/graphql/Nav/no-project-flows.gql')
+      })
+
+      commit('setProjects', data.flow)
+      commit('setActiveProject', null)
+      return
+    }
+
     if (!project) {
       const { data } = await fallbackApolloClient.query({
         query: require('@/graphql/Nav/projects.gql')
