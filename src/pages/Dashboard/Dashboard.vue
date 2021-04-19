@@ -1,8 +1,6 @@
 <script>
 import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
-import CommittedUsageTile from '@/pages/Dashboard/UsageTiles/CommittedUsage-Tile'
-import CycleUsageTile from '@/pages/Dashboard/UsageTiles/CycleUsage-Tile'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
@@ -14,7 +12,6 @@ import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
-import UpgradeUsageTile from '@/pages/Dashboard/UsageTiles/UpgradeUsage-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import { mapGetters, mapActions } from 'vuex'
 import gql from 'graphql-tag'
@@ -57,8 +54,6 @@ export default {
     Agents,
     Automations,
     AgentsTile,
-    CommittedUsageTile,
-    CycleUsageTile,
     BreadCrumbs,
     FailedFlowsTile,
     FlowTableTile,
@@ -69,8 +64,7 @@ export default {
     SubPageNav,
     SummaryTile,
     FlowRunHistoryTile,
-    UpcomingRunsTile,
-    UpgradeUsageTile
+    UpcomingRunsTile
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'project') {
@@ -123,24 +117,6 @@ export default {
     },
     tabs() {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
-    },
-    usageTile() {
-      if (!this.isCloud) return null
-      if (!this.license) return 'loading'
-      const isSelfServe = this.license.terms.is_self_serve
-      const isUsageBased = this.license.terms.is_usage_based
-
-      // Legacy license, not self-serve (so no upgrade)
-      if (!isSelfServe && !isUsageBased) return null
-
-      // Legacy license, self-serve (so can upgrade)
-      if (isSelfServe && !isUsageBased) return 'UpgradeUsageTile'
-
-      // Usage license, not self-serve (show committed runs)
-      if (!isSelfServe && isUsageBased) return 'CommittedUsageTile'
-
-      // Usage license && self-serve
-      return 'CycleUsageTile'
     },
     includeProjects() {
       return this.tab != 'automations'
@@ -359,18 +335,6 @@ export default {
             tile
           >
             <UpcomingRunsTile :key="key" :project-id="projectId" full-height />
-          </v-skeleton-loader>
-
-          <v-skeleton-loader
-            v-if="usageTile"
-            :loading="loadedTiles < 6 || usageTile == 'loading'"
-            type="image"
-            height="100%"
-            transition="quick-fade"
-            class="tile-container span-row-1"
-            tile
-          >
-            <component :is="usageTile" />
           </v-skeleton-loader>
 
           <v-skeleton-loader
