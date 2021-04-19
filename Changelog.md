@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- take usage tile off dashboard and add to account page - [#782](https://github.com/PrefectHQ/ui/pull/782)
 
 ### Bugfixes
 
