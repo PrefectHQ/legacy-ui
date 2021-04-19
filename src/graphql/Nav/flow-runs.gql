@@ -1,10 +1,5 @@
-query FlowRuns($tenantId: uuid!) {
-  flow_run(
-    where: {
-      state: { _in: ["Running", "Submitted", "Queued"] }
-      tenant_id: { _eq: $tenantId }
-    }
-  ) {
+query FlowRuns($tenantId: uuid!, $states: [String!]) {
+  flow_run(where: { state: { _in: $states }, tenant_id: { _eq: $tenantId } }) {
     id
   }
 }

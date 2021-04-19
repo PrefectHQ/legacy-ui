@@ -87,6 +87,7 @@ export default {
 <template>
   <div class="system-grid">
     <CancelAll />
+    <ClearLate />
     <WorkQueue />
   </div>
 </template>
@@ -117,6 +118,8 @@ $cellsize: 200px;
     }
 
     &:disabled {
+      background-color: #90a4ae;
+      color: #eee;
       cursor: not-allowed;
     }
   }
