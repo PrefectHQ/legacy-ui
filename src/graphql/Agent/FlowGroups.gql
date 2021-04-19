@@ -1,0 +1,10 @@
+query FlowGroups {
+  flow_group {
+    labels
+    id
+    flows (where:{archived:{_eq: false}}) {
+      name
+      
+    }
+  }
+}

@@ -2,6 +2,9 @@
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import AgentCard from '@/pages/Agents/AgentCard'
+import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
+import AgentConfigCard from '@/pages/Agents/AgentConfigCard'
+import MatchingLabels from '@/pages/Agents/MatchingLabels'
 
 import { mapGetters } from 'vuex'
 
@@ -9,7 +12,10 @@ export default {
   components: {
     SubPageNav,
     TileLayout,
-    AgentCard
+    AgentCard,
+    AgentFlowRunHistory,
+    AgentConfigCard,
+    MatchingLabels
   },
   data() {
     return {
@@ -25,7 +31,6 @@ export default {
     },
     agentDetails() {
       const agent = this.agent(this.agentId)
-      console.log('agent', agent)
       return agent
     }
   }
@@ -34,29 +39,13 @@ export default {
 <template>
   <v-sheet color="appBackground">
     <SubPageNav icon="pi-agent" page-type="Agent">
-      <span
-        slot="page-title"
-        :style="
-          loading > 0
-            ? {
-                display: 'block',
-                height: '28px',
-                overflow: 'hidden'
-              }
-            : $vuetify.breakpoint.smAndDown && {
-                display: 'inline'
-              }
-        "
-      >
-        <span v-if="loading === 0">
+      <span slot="page-title">
+        <span>
           {{ agentId }}
         </span>
-        <span v-else>
+        <!-- <span v-else>
           <v-skeleton-loader type="heading" tile></v-skeleton-loader>
-        </span>
-      </span>
-      <span slot="tabs" style="width: 100%;">
-        <NavTabBar :tabs="tabs" page="flow-run" />
+        </span> -->
       </span>
     </SubPageNav>
 
@@ -75,7 +64,10 @@ export default {
         reverse-transition="tab-fade"
       >
         <TileLayout>
+          <AgentFlowRunHistory slot="row-0" :agent="agentDetails" />
           <AgentCard slot="row-1-col-1-tile-1" :agent="agentDetails" />
+          <AgentConfigCard slot="row-1-col-2-tile-1" :agent="agentDetails" />
+          <MatchingLabels slot="row-1-col-3-tile-1" :agent="agentDetails" />
         </TileLayout>
       </v-tab-item>
     </v-tabs-items>

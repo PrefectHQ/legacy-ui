@@ -336,12 +336,12 @@ export default {
       const y1 = 18
       const offset = 32
 
-      context.fillStyle = this.computedStyle.getPropertyValue(
+      context.fillStyle = this.computedStyle?.getPropertyValue(
         '--v-ScheduledAlt-base'
       )
       context.fillRect(0, 0, x, x)
 
-      context.strokeStyle = this.computedStyle.getPropertyValue(
+      context.strokeStyle = this.computedStyle?.getPropertyValue(
         '--v-Scheduled-base'
       )
       context.lineWidth = 6
@@ -359,7 +359,7 @@ export default {
 
       context.save()
       context.lineWidth = 2
-      context.strokeStyle = this.computedStyle.getPropertyValue(
+      context.strokeStyle = this.computedStyle?.getPropertyValue(
         '--v-appBackground-base'
       )
 
@@ -374,7 +374,7 @@ export default {
         context.fillStyle = bar.usePattern
           ? context.createPattern(this.pattern, 'repeat')
           : bar.color ||
-            this.computedStyle.getPropertyValue('--v-secondaryGrayLight-base')
+            this.computedStyle?.getPropertyValue('--v-secondaryGrayLight-base')
 
         context.rect(bar.x, bar.y, bar.width, bar.height)
         context.fill()
@@ -391,14 +391,14 @@ export default {
       let computedStyle = window.getComputedStyle(parent._groups[0][0], null)
 
       let paddingLeft = parseFloat(
-          computedStyle.getPropertyValue('padding-left')
+          computedStyle?.getPropertyValue('padding-left')
         ),
         paddingRight = parseFloat(
-          computedStyle.getPropertyValue('padding-right')
+          computedStyle?.getPropertyValue('padding-right')
         ),
-        paddingTop = parseFloat(computedStyle.getPropertyValue('padding-top')),
+        paddingTop = parseFloat(computedStyle?.getPropertyValue('padding-top')),
         paddingBottom = parseFloat(
-          computedStyle.getPropertyValue('padding-bottom')
+          computedStyle?.getPropertyValue('padding-bottom')
         )
 
       this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
@@ -447,7 +447,7 @@ export default {
             g.append('path')
               .attr(
                 'stroke',
-                this.computedStyle.getPropertyValue('--v-utilGrayMid-base')
+                this.computedStyle?.getPropertyValue('--v-utilGrayMid-base')
               )
               .attr('stroke-width', 1)
               .attr('stroke-dasharray', 5)
@@ -459,7 +459,7 @@ export default {
               .style('pointer-events', 'none')
               .attr(
                 'fill',
-                this.computedStyle.getPropertyValue('--v-utilGrayMid-base')
+                this.computedStyle?.getPropertyValue('--v-utilGrayMid-base')
               )
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
