@@ -12,6 +12,7 @@ import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
+import UpgradeUsageTile from '@/pages/Dashboard/UsageTiles/UpgradeUsage-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import { mapGetters, mapActions } from 'vuex'
 import gql from 'graphql-tag'
@@ -64,7 +65,8 @@ export default {
     SubPageNav,
     SummaryTile,
     FlowRunHistoryTile,
-    UpcomingRunsTile
+    UpcomingRunsTile,
+    UpgradeUsageTile
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'project') {
@@ -335,6 +337,18 @@ export default {
             tile
           >
             <UpcomingRunsTile :key="key" :project-id="projectId" full-height />
+          </v-skeleton-loader>
+
+          <v-skeleton-loader
+            v-if="license.terms.is_self_serve && !license.terms.is_usage_based"
+            :loading="loadedTiles < 6 || usageTile == 'loading'"
+            type="image"
+            height="100%"
+            transition="quick-fade"
+            class="tile-container span-row-1"
+            tile
+          >
+            <UpgradeUsageTile />
           </v-skeleton-loader>
 
           <v-skeleton-loader
