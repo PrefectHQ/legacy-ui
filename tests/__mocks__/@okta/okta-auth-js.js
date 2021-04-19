@@ -1,5 +1,5 @@
 const raw_jwt =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYXdkYXdkYWRhLTQ5NDItNDhhNS04YzY2LWFkYXdkYWRhZCIsInRlbmFudF9pZCI6ImF3ZGF3ZGFkLWQ1NzAtNGYwYy05MTFkLWRjYWFiNWNlYzNkMCIsInJvbGUiOiJURU5BTlRfQURNSU4iLCJpYXQiOjE1Njg4NDAyODQsImV4cCI6MTU2ODg0MDI5OSwianRpIjoiMThiNDRhMTgtNTU2Yy00M2YzLTkxOWEtZDAwOWIwNDIzOTA3IiwiaXNzIjoiUHJlZmVjdCBDbG91ZCIsImF1ZCI6IlByZWZlY3QgQ2xvdWQgQVBJIC0gREVWIn0.3rI7CM3lT_u-8PPuTmR78ZlPeRZd4zRxsuIT9GYtr3A'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYXdkYXdkYWRhLTQ5NDItNDhhNS04YzY2LWFkYXdkYWRhZCIsInRlbmFudF9pZCI6ImF3ZGF3ZGFkLWQ1NzAtNGYwYy05MTFkLWRjYWFiNWNlYzNkMCIsInJvbGUiOiJURU5BTlRfQURNSU4iLCJpYXQiOjE1Njg4NDAyODQsImV4cCI6MTkzMzk1NDA5OSwianRpIjoiMThiNDRhMTgtNTU2Yy00M2YzLTkxOWEtZDAwOWIwNDIzOTA3IiwiaXNzIjoiUHJlZmVjdCBDbG91ZCIsImF1ZCI6IlByZWZlY3QgQ2xvdWQgQVBJIC0gREVWIn0.iHL0fkdNxMnbRXNJuDwYlvdsaylh1gb-MaRJtuyaZLg'
 
 export const idToken = {
   authorizeUrl: 'https://some.authorization.url/oauth2/authorize',
@@ -22,7 +22,6 @@ export const idToken = {
 }
 
 export const accessToken = {
-  accessToken: raw_jwt,
   authorizeUrl:
     'https://universal.prefect.io/oauth2/aus9ej78aeaYy8Lcf1d6/v1/authorize',
   claims: {
