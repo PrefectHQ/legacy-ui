@@ -16,6 +16,7 @@ import router from '@/router'
 import VueMeta from 'vue-meta'
 
 import LogRocket from 'logrocket'
+import jwt_decode from 'jwt-decode'
 
 // Filters
 import duration from '@/filters/duration'
@@ -190,13 +191,22 @@ if (TokenWorker?.port) {
     const type = e.data?.type
     const payload = e.data?.payload
 
+    console.log('type', type, payload)
+
     switch (type) {
       case 'authentication':
         store.dispatch('auth/updateAuthenticationTokens', payload)
         break
       case 'authorization':
         if (payload) {
+          const authorizationToken = jwt_decode(payload.access_token)
           store.dispatch('auth/updateAuthorizationTokens', payload)
+
+          if (
+            store.getters['tenant/tenant']?.id !== authorizationToken.tenant_id
+          ) {
+            store.dispatch('tenant/getTenants')
+          }
         } else {
           store.dispatch('auth/authorize')
         }
@@ -399,3 +409,12 @@ if (window) {
   }
   window.addEventListener(visibilityChange, handleVisibilityChange, false)
 }
+
+const setup = async () => {
+  await store.dispatch('auth/authenticate')
+  await store.dispatch('auth/authorize')
+  await store.dispatch('tenant/getTenants')
+  await store.dispatch('user/getUser') // Also sets the default tenant
+}
+
+setup()

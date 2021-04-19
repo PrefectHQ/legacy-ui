@@ -359,7 +359,7 @@ export const routes = [
     path: '/home',
     component: () =>
       import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+    beforeEnter: multiguard([authNavGuard])
   },
   {
     name: 'team-switched',

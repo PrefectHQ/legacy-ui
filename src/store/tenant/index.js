@@ -50,7 +50,7 @@ const getters = {
     return state.tenant.role
   },
   tenant(state) {
-    return state.tenant
+    return state.tenant || state.defaultTenant
   },
   tenantIsSet(state) {
     return !!state.tenant?.id
