@@ -118,7 +118,7 @@ export default {
   >
     <v-row v-if="invitationError" align="center">
       <v-col class="grey--text text--lighten-5 mx-12">
-        <div class="display-1">
+        <div class="text-h4">
           <span> {{ mutationErrorMessage || errorMessage }} </span>
         </div>
         <div>
@@ -131,7 +131,7 @@ export default {
     </v-row>
     <v-row v-else align="center">
       <v-col>
-        <div class="display-1 grey--text text--lighten-5">
+        <div class="text-h4 grey--text text--lighten-5">
           You've been invited to join
           <span class="font-weight-bold"> {{ teamName }}</span>
         </div>
@@ -158,7 +158,7 @@ export default {
             </template>
 
             <v-card>
-              <v-card-title class="headline">
+              <v-card-title class="text-h5">
                 Are you sure you want to decline?
               </v-card-title>
 
@@ -199,7 +199,7 @@ export default {
     </v-row>
     <v-row align="center">
       <v-col>
-        <div class="ma-12 white--text body-1">
+        <div class="ma-12 white--text text-body-1">
           For more information about teams in Prefect Cloud, check out
           <a
             href="https://docs.prefect.io/orchestration/ui/team-settings.html"

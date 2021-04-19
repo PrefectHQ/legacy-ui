@@ -1,11 +1,12 @@
 <script>
+/* eslint-disable vue/no-v-html */
 import { mapActions } from 'vuex'
 import {
   AUTOMATIONSTATES,
   titleCasePresentTenseStates,
   presentTenseStates
 } from '@/utils/automations'
-import AddAutoCard from '@/pages/Dashboard/Automations/AddAutoCard'
+import AddAutoCard from '@/pages/Dashboard/Automations/AddAutomationCard'
 
 export default {
   components: {
@@ -33,19 +34,19 @@ export default {
       deletingHook: false,
       hookDetails: {
         FlowRunStateChangedEvent: {
-          type: 'a run from',
+          type: 'any run from',
           action: 'changes state',
           icon: 'pi-flow'
         },
         FlowSLAFailedEvent: {
-          type: 'a run from',
+          type: 'any run from',
           action: 'SLA fails',
           icon: 'pi-flow'
         },
         AgentSLAFailedEvent: {
-          type: 'agent',
+          type: 'agents',
           icon: 'pi-agent',
-          action: 'is unhealthy'
+          action: 'are unhealthy'
         },
         SCHEDULED_NOT_STARTED: {
           action: 'does not start'
@@ -89,9 +90,9 @@ export default {
     },
     hookStates() {
       return this.states?.length === AUTOMATIONSTATES['All']?.length
-        ? 'changes to any state'
+        ? 'changes to <span class="font-weight-bold">any state</span>'
         : this.states?.length != 1
-        ? 'changes to selected states'
+        ? 'changes to <span class="font-weight-bold">any of these states</span>'
         : presentTenseStates[this.states[0].toUpperCase()] ||
           titleCasePresentTenseStates[this.states[0]]
     },
@@ -123,7 +124,7 @@ export default {
         : this.hook?.event_tags?.flow_group_id?.length > 2 && this.flowName
         ? `${this.flowName[0]?.name} and others`
         : this.hook?.event_tags?.flow_group_id?.length == 2 && this.flowName
-        ? `${this.flowName[0].name} and ${this.flowName[1].name}`
+        ? `${this.flowName[0].name} <span class="font-weight-regular">or</span> ${this.flowName[1].name}`
         : allFlows
         ? 'any flow'
         : this.flowName
@@ -226,7 +227,7 @@ export default {
       }
     },
     agentConfig: {
-      query: require('@/graphql/Automations/agentConfig.gql'),
+      query: require('@/graphql/Automations/agent-config-by-pk.gql'),
       variables() {
         return {
           agentConfigId: this.hook?.event_tags?.agent_config_id[0] || ''
@@ -240,12 +241,10 @@ export default {
         )
       },
       fetchPolicy: 'no-cache',
-      update: data => {
-        return data.agent_config_by_pk
-      }
+      update: data => data.agent_config_by_pk
     },
     flowConfig: {
-      query: require('@/graphql/Automations/flowConfigs.gql'),
+      query: require('@/graphql/Automations/flow-config-by-pk.gql'),
       variables() {
         return {
           flowSLAConfigId: this.hook?.event_tags?.flow_sla_config_id
@@ -272,43 +271,59 @@ export default {
   <v-skeleton-loader
     v-if="loadingHook > 0"
     type="list-item-avatar-three-line"
-  ></v-skeleton-loader>
+  />
   <AddAutoCard
     v-else-if="openEdit"
     :hook-detail="hookConfig"
     @refetch-hooks="handleRefetch"
     @close="closeCard"
   />
-  <v-card v-else-if="showHook" class="text-h6" outlined @click="editHook">
-    <v-card-text class="text-h6">
+  <v-card
+    v-else-if="showHook"
+    class="hover-card text-h6"
+    outlined
+    @click="editHook"
+  >
+    <v-card-text class="text-h6 font-weight-light">
       <v-row>
-        <v-col cols="11" lg="11" class="pt-6">
-          <v-icon color="codePink" class="pr-2">{{
-            hookDetails[hook.event_type]
-              ? hookDetails[hook.event_type].icon
-              : ''
-          }}</v-icon
-          ><span
-            >When <span v-if="!hookName">an </span>{{ hookType }}
+        <v-col cols="11" lg="11" class="d-flex align-center justify-start">
+          <v-icon color="accentPink" class="pr-2">
+            {{
+              hookDetails[hook.event_type]
+                ? hookDetails[hook.event_type].icon
+                : ''
+            }}
+          </v-icon>
+          <span>
+            When <span v-if="!hookName">all </span>{{ hookType }}
             <v-tooltip v-if="flowName" top>
               <template #activator="{ on }">
-                <span class="font-weight-bold" v-on="on">{{
-                  hookName
-                }}</span> </template
-              >{{ flowNameList.toString() }}</v-tooltip
+                <span class="font-weight-bold" v-on="on" v-html="hookName" />
+              </template>
+              {{ flowNameList.join(', ') }}
+            </v-tooltip>
+            <span v-else class="font-weight-bold" v-html="hookName" />
+            <span v-if="isAgent">
+              with
+              {{
+                agentConfig && agentConfig.name
+                  ? agentConfig.name
+                  : 'this config'
+              }}</span
             >
-            <span v-else class="font-weight-bold">{{ hookName }}</span>
             {{ hookDetail
             }}<span v-if="includeSeconds">
               for
-              <span class="font-weight-bold">{{ seconds }} seconds</span> </span
-            ><v-tooltip v-if="includeTo" top>
+              <span class="font-weight-bold">{{ seconds }} seconds</span>
+            </span>
+            <v-tooltip v-if="includeTo" top>
               <template #activator="{ on }">
-                <span v-on="on">{{ hookStates }}</span></template
-              ><span>{{ states.toString() }}</span></v-tooltip
+                <span v-on="on" v-html="hookStates" />
+              </template>
+              <span>{{ states.join(', ') }}</span></v-tooltip
             >, then <span class="font-weight-bold">{{ hookAction }}</span
-            >.</span
-          >
+            >.
+          </span>
           <v-menu
             v-if="isAgent"
             v-model="menu"
@@ -321,12 +336,13 @@ export default {
               </v-btn>
             </template>
 
-            <v-card width="30vW"
-              ><v-card-text
-                ><div class="pb-2"
-                  >To set up an automation for your agent, you need to add the
-                  agent-config-id flag at agent registration.</div
-                ><div> To use with a new agent, add this flag:</div>
+            <v-card width="30vW">
+              <v-card-text>
+                <div class="pb-2">
+                  To set up an automation for your agent, you need to add the
+                  agent-config-id flag at agent registration.
+                </div>
+                <div> To use with a new agent, add this flag:</div>
                 <div class="pb-2"
                   ><v-tooltip bottom>
                     <template #activator="{ on }">
@@ -358,26 +374,40 @@ export default {
         <v-col class="text-right" cols="1" lg="1">
           <v-menu v-if="canEdit" :close-on-content-click="false" offset-y>
             <template #activator="{ on, attrs }">
-              <v-btn class="px-2" text small fab v-bind="attrs" v-on="on"
-                ><v-icon>more_horiz</v-icon></v-btn
-              ></template
-            >
+              <v-btn class="px-2" text small fab v-bind="attrs" v-on="on">
+                <v-icon>more_horiz</v-icon>
+              </v-btn>
+            </template>
             <v-card>
-              <div
-                ><v-btn
+              <div>
+                <v-btn
                   :style="{ 'text-transform': 'none', 'min-width': '0px' }"
                   text
                   :loading="deletingHook"
                   width="100%"
                   color="utilGrayDark"
                   @click.stop="deleteHook"
-                  ><v-icon class="pr-4">delete</v-icon>Delete</v-btn
-                ></div
-              >
-            </v-card></v-menu
-          >
+                >
+                  <v-icon class="pr-4">delete</v-icon>
+                  Delete
+                </v-btn>
+              </div>
+            </v-card>
+          </v-menu>
         </v-col>
       </v-row></v-card-text
     ></v-card
   >
 </template>
+
+<style lang="scss" scoped>
+.hover-card {
+  transition: box-shadow 150ms ease-in-out;
+
+  &:focus,
+  &:hover {
+    box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%),
+      0 1px 10px 0 rgb(0 0 0 / 12%) !important;
+  }
+}
+</style>

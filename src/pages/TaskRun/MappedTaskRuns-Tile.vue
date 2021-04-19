@@ -212,7 +212,7 @@ export default {
         :server-items-length="serverItemsLength"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
-        :class="{ 'fixed-table': this.$vuetify.breakpoint.smAndUp }"
+        :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
         calculate-widths
       >
         <template #item.name="{ item }">

@@ -51,10 +51,10 @@ export default {
                   alt="Support Image"
                 />
               </div>
-              <div class="display-2 font-weight-medium">
+              <div class="text-h3 font-weight-medium">
                 Explore the Docs
               </div>
-              <div class="headline my-6">
+              <div class="text-h5 my-6">
                 Get API references, walkthroughs, and tutorials
               </div>
               <div>
@@ -95,17 +95,14 @@ export default {
             style="width: 100%;"
           >
             <div class="d-flex flex-column slash-body white--text">
-              <div class="display-2 font-weight-medium">
+              <div class="text-h3 font-weight-medium">
                 Join our Community
               </div>
-              <div class="headline my-6">
+              <div class="text-h5 my-6">
                 Chat with us, ask questions, and share tips
               </div>
               <div>
-                <v-btn
-                  target="_blank"
-                  href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
-                >
+                <v-btn target="_blank" href="https://prefect.io/slack">
                   Join Slack
                 </v-btn>
               </div>
@@ -128,7 +125,7 @@ export default {
       class="pa-0 d-flex align-content-space-between flex-column"
       style="min-height: 100%;"
     >
-      <div class="display-1 white--text my-2 title-absolute text-center">
+      <div class="text-h4 white--text my-2 title-absolute text-center">
         You're all set!
       </div>
 
@@ -156,10 +153,10 @@ export default {
                       style="width: 65%;"
                     />
                   </div>
-                  <div class="display-1 font-weight-medium">
+                  <div class="text-h4 font-weight-medium">
                     Join our Community
                   </div>
-                  <div class="subtitle-1 my-6">
+                  <div class="text-subtitle-1 my-6">
                     Chat with us, ask questions, and share tips
                   </div>
 
@@ -169,7 +166,7 @@ export default {
                       light
                       depressed
                       target="_blank"
-                      href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+                      href="https://prefect.io/slack"
                     >
                       Join Slack
                     </v-btn>
@@ -195,10 +192,10 @@ export default {
                       style="width: 65%;"
                     />
                   </div>
-                  <div class="display-1 font-weight-medium">
+                  <div class="text-h4 font-weight-medium">
                     Explore the Docs
                   </div>
-                  <div class="subtitle-1 my-6">
+                  <div class="text-subtitle-1 my-6">
                     Get API references, walkthroughs, and tutorials
                   </div>
                   <div>
@@ -225,7 +222,7 @@ export default {
       >
         <v-col cols="12" class="text-center py-2">
           <v-btn
-            :to="{ name: 'dashboard' }"
+            href="/"
             class="mx-auto"
             color="primary"
             x-large

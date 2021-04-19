@@ -208,6 +208,14 @@ body {
   }
 }
 
+//ugly box shadow on expanded data tables
+.v-data-table
+  > .v-data-table__wrapper
+  tbody
+  tr.v-data-table__expanded__content {
+  box-shadow: none !important;
+}
+
 .theme--light.v-tabs-items {
   background-color: var(--v-appBackground-base) !important;
 }
@@ -290,8 +298,24 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   }
 }
 
+.remove--disabled.theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn-outlined),
+.remove--disabled.theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn-outlined) {
+  .v-icon {
+    color: inherit !important;
+  }
+}
+
+/* stylelint-disable */
+.disabled.v-badge {
+  pointer-events: none !important;
+
+  .v-badge__wrapper,
+  .v-badge__badge {
+    pointer-events: none !important;
+  }
+}
+
 .v-text-field-input-color {
-  // stylelint-disable
   .v-text-field__slot {
     input {
       color: inherit !important;
@@ -426,6 +450,10 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   ::-webkit-scrollbar-corner {
     background-color: transparent;
   }
+
+  .v-skeleton-loader__bone {
+    background-color: var(--v-utilGrayMid-darken3) !important;
+  }
 }
 /* End Dark Mode background overrides */
 /* Plans global styles */
@@ -438,8 +466,8 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   width: 20px;
 
   .svg-inline--fa {
-    --fa-primary-color: var(--v-prefect-base);
-    --fa-secondary-color: var(--v-prefect-base);
+    --fa-primary-color: var(--v-primary-base);
+    --fa-secondary-color: var(--v-primary-base);
     --fa-secondary-opacity: 0.6;
     transition: all 150ms linear;
   }
@@ -460,7 +488,7 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
   &.plans-feature-icon-light {
     .svg-inline--fa {
-      --fa-primary-color: var(--v-prefect-base);
+      --fa-primary-color: var(--v-primary-base);
       --fa-secondary-color: var(--v-primaryLight-base);
       --fa-secondary-opacity: 1;
     }
@@ -469,14 +497,14 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
 .feature-category-icon {
   .svg-inline--fa {
-    --fa-primary-color: var(--v-prefect-base);
+    --fa-primary-color: var(--v-primary-base);
     --fa-secondary-color: var(--v-accentPink-base);
     --fa-secondary-opacity: 1;
     transition: all 150ms linear;
 
     &.fa-chart-scatter {
       --fa-primary-color: var(--v-accentPink-base);
-      --fa-secondary-color: var(--v-prefect-base);
+      --fa-secondary-color: var(--v-primary-base);
     }
   }
 }
@@ -508,15 +536,14 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 
 .support-icon {
   .svg-inline--fa {
-    --fa-primary-color: var(--v-prefect-base);
-    --fa-secondary-color: var(--v-prefect-base);
+    --fa-primary-color: var(--v-primary-base);
+    --fa-secondary-color: var(--v-primary-base);
     --fa-secondary-opacity: 0.5;
   }
 
   .fa-badge-check.svg-inline--fa {
     --fa-primary-color: var(--v-accentGreen-darken2);
     --fa-secondary-color: var(--v-accentGreen-base);
-    --fa-secondary-opacity: 0.6;
   }
 }
 /* stylelint-enable no-descending-specificity */

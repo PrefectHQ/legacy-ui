@@ -131,6 +131,14 @@ export const routes = [
           )
       },
       {
+        name: 'service-accounts',
+        path: 'service-accounts',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--service-accounts" */ '@/pages/TeamSettings/Service-Accounts.vue'
+          )
+      },
+      {
         name: 'secrets',
         path: 'secrets',
         component: () =>
@@ -185,6 +193,14 @@ export const routes = [
         component: () =>
           import(
             /* webpackChunkName: "user-settings--tokens" */ '@/pages/UserSettings/Tokens.vue'
+          )
+      },
+      {
+        name: 'keys',
+        path: 'keys',
+        component: () =>
+          import(
+            /* webpackChunkName: "user-settings--keys" */ '@/pages/UserSettings/APIKeys.vue'
           )
       },
       {

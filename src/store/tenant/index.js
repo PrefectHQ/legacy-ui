@@ -175,8 +175,13 @@ const actions = {
         // authorization process
         if (getters['tenantIsSet']) {
           let tokens
-          if (typeof Worker !== 'undefined') {
+          if (typeof window.SharedWorker !== 'undefined') {
             tokens = await getTenantTokens(tenant.id, slug)
+
+            // Set our new auth token
+            await dispatch('auth/updateAuthorizationTokens', tokens, {
+              root: true
+            })
           } else {
             // Get our new auth token
             const tenantToken = await fallbackApolloClient.mutate({
@@ -188,12 +193,11 @@ const actions = {
             })
 
             tokens = tenantToken.data.switch_tenant
+            // Set our new auth token
+            await dispatch('auth/updateAuthorization', tokens, {
+              root: true
+            })
           }
-
-          // Set our new auth token
-          await dispatch('auth/updateAuthorizationTokens', tokens, {
-            root: true
-          })
         }
 
         // Get the current license

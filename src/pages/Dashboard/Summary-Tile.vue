@@ -15,11 +15,6 @@ export default {
       type: String,
       required: false,
       default: () => null
-    },
-    fullHeight: {
-      required: false,
-      type: Boolean,
-      default: () => false
     }
   },
   data() {
@@ -126,13 +121,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="py-2"
-    tile
-    :style="{
-      height: fullHeight ? '330px' : 'auto'
-    }"
-  >
+  <v-card class="py-2" tile style="height: 100%;">
     <v-tooltip top>
       <template #activator="{ on }">
         <CardTitle title="Summary" icon="pi-flow-run">
@@ -167,14 +156,14 @@ export default {
     >
       <div style="width: 100%;">
         <v-row no-gutters>
-          <v-col class="subtitle-2 text-center">
+          <v-col class="text-subtitle-2 text-center">
             In the last {{ selectedDateFilter }}
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="5">
             <div class="text-center">
-              <div class="font-weight-bold display-1" style="min-height: 36px;">
+              <div class="font-weight-bold text-h4" style="min-height: 36px;">
                 <v-skeleton-loader
                   v-if="loading > 0"
                   type="heading"
@@ -222,7 +211,7 @@ export default {
           </v-col>
           <v-col cols="5">
             <div class="text-center">
-              <div class="font-weight-bold display-1" style="min-height: 36px;">
+              <div class="font-weight-bold text-h4" style="min-height: 36px;">
                 <v-skeleton-loader
                   v-if="loading > 0"
                   type="heading"
@@ -237,7 +226,7 @@ export default {
                             | roundTenths
                         }}
                       </span>
-                      <span class="subtitle-2">%</span>
+                      <span class="text-subtitle-2">%</span>
                     </span>
                   </template>
                   <div>

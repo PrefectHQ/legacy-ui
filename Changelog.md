@@ -4,14 +4,83 @@
 
 ### Features and Improvements
 
-- Add Automations page - [#695](https://github.com/PrefectHQ/ui/pull/695)
-- Add generic markdown messages for action notifications - [#674](https://github.com/PrefectHQ/ui/pull/674)
+- Adds breadcrumb to allow easy access to current flow version and spawning flow version from a flow run screen [#759](https://github.com/PrefectHQ/ui/pull/759)
+- Add loading state to sign out method - [#766](https://github.com/PrefectHQ/ui/pull/766)
 
 ### Bugfixes
 
+- Update tutorial to reference API keys instead of personal access and runner tokens - [#770](https://github.com/PrefectHQ/ui/pull/770)
+- Update user menu for API keys - [#778](https://github.com/PrefectHQ/ui/pull/778)
+- Fix JSON stringification error - [#777](https://github.com/PrefectHQ/ui/pull/777)
+- Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
+- Make team creation error text more legible - [#767](https://github.com/PrefectHQ/ui/pull/767)
+- Fix auth checks when returning to the application - [#774](https://github.com/PrefectHQ/ui/pull/774)
+- Don't allow non-Cloud users to get stuck in a redirect loop if they try out the toggle - [#772](https://github.com/PrefectHQ/ui/pull/772)
+
+## 2021-04-09a
+
+### Features and Improvements
+
+- Automations! - [#695](https://github.com/PrefectHQ/ui/pull/695)
+
+## 2021-04-09
+
+### Features and Improvements
+
+- Add a label specifying which flow version the flow run has spawned from - [#736](https://github.com/PrefectHQ/ui/pull/736)
+- Adds a tenant selector to User > API Keys creation screen - [#753](https://github.com/PrefectHQ/ui/pull/753)
+- Add skip button to onboarding screens, create licenses without user interaction - [#754](https://github.com/PrefectHQ/ui/pull/754)
+
+## 2021-04-07
+
+### Features and Improvements
+
+- Remove all static Slack invite links in favor of the centralized prefect.io/slack link - [#747](https://github.com/PrefectHQ/ui/pull/747)
+
+### Bugfixes
+
+- Fixes illegible /plans page when in dark mode - [#748](https://github.com/PrefectHQ/ui/pull/748)
+- Don't allow flow run restarts for archived flow versions - [#714](https://github.com/PrefectHQ/ui/pull/714)
+- Change the css class for the "current" label in the teams section to make it more legible - [#737](https://github.com/PrefectHQ/ui/pull/737)
+
+## 2021-04-06a
+
+### Features and Improvements
+
+- Check role setting based on permissions blob instead of plan name - [#743](https://github.com/PrefectHQ/ui/pull/743)
+
+## 2021-04-06
+
+### Features and Improvements
+
+- Include legacy platform licenses in RBAC check - [#740](https://github.com/PrefectHQ/ui/pull/740)
+
+### Bugfixes
+
+- Fix an issue where we weren't correctly passing the license id to the committed usage query - [#741](https://github.com/PrefectHQ/ui/pull/741)
+
+## 2021-04-05
+
+### Features and Improvements
+
+- Add the remaining states to the state filter - [#706](https://github.com/PrefectHQ/ui/pull/706)
+- Add Automations page - [#695](https://github.com/PrefectHQ/ui/pull/695)
+- Add Service Accounts and API keys to the UI - [#678](https://github.com/PrefectHQ/ui/pull/678)
+- Add generic markdown messages for action notifications - [#674](https://github.com/PrefectHQ/ui/pull/674)
+- Update packages - [#707](https://github.com/PrefectHQ/ui/pull/707)
+- Populate errors when creating a schedule - [#725](https://github.com/PrefectHQ/ui/pull/725)
+
+### Bugfixes
+
+- Add log id to route query - [#712](https://github.com/PrefectHQ/ui/pull/712)
 - Make the duration header not sortable - [#699](https://github.com/PrefectHQ/ui/pull/699)
 - Fix a bug where double clicking could kick off multiple quick runs - [#696](https://github.com/PrefectHQ/ui/pull/696)
 - Make artifacts legible in dark mode - [#693](https://github.com/PrefectHQ/ui/pull/693)
+- Usage timeline bugfixes - [#722](https://github.com/PrefectHQ/ui/pull/722)
+- Add the proper permissions to role-based invitations - [#719](https://github.com/PrefectHQ/ui/pull/719)
+- Add the proper permissions to flow and task concurrency pages - [#720](https://github.com/PrefectHQ/ui/pull/720)
+- Small onboarding fixes - [#721](https://github.com/PrefectHQ/ui/pull/721)
+- Fix gutters on the tile layout for row-2-col-1 - [#738](https://github.com/PrefectHQ/ui/pull/738)
 
 ## 2021-03-25
 

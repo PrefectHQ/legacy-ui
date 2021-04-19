@@ -272,9 +272,19 @@ export default {
             {
               route: {
                 name: 'flow',
-                params: { id: flowRun.flow.id }
+                params: { id: flowRun.flow.flow_group_id }
               },
               text: flowRun.flow.name
+            },
+            {
+              route: {
+                name: 'flow',
+                params: { id: flowRun.flow.id }
+              },
+              text:
+                flowRun.flow.version == flowRun.version
+                  ? `Version ${flowRun.flow.version} (Current)`
+                  : `Version ${flowRun.flow.version}`
             }
           ]"
         />
@@ -317,7 +327,7 @@ export default {
           <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
 
           <TaskRunHeartbeatTile
-            slot="row-2-col-1-row-4-tile-1"
+            slot="row-2-col-1-row-2-tile-1"
             :flow-run-id="$route.params.id"
           />
 

@@ -27,13 +27,13 @@ export default {
     class="absolute box chart-box elevation-4 d-flex justify-center"
   >
     <v-container class="absolute overlay">
-      <div class="overline">
+      <div class="text-overline">
         {{ chartOverlayOverline }}
       </div>
-      <div class="display-3 font-weight-bold">
+      <div class="text-h2 font-weight-bold">
         {{ chartOverlayMain }}
       </div>
-      <div class="font-weight-light headline">
+      <div class="font-weight-light text-h5">
         {{ chartOverlaySub }}
       </div>
     </v-container>

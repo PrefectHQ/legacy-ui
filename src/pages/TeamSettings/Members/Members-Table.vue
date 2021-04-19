@@ -1,5 +1,6 @@
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -110,6 +111,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['permissions']),
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
@@ -117,6 +119,9 @@ export default {
     },
     deleteSelfWarning() {
       return this.user.email === this.selectedUser.email
+    },
+    hasRBAC() {
+      return this.permissions?.includes('feature:basic-rbac')
     }
   },
   watch: {
@@ -186,6 +191,7 @@ export default {
           .filter(user =>
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
           )
+          .filter(user => user.account_type === 'USER')
           .map(user => {
             let membership = user.memberships.find(
               mem => mem.tenant_id == this.tenant.id
@@ -202,12 +208,7 @@ export default {
             }
           })
 
-        this.$emit('load-end', {
-          fullUsers: this.membersItems.filter(m => m.role !== 'READ_ONLY_USER'),
-          readOnlyUsers: this.membersItems.filter(
-            m => m.role == 'READ_ONLY_USER'
-          )
-        })
+        this.$emit('load-end', this.membersItems)
         return data
       },
       error() {
@@ -249,19 +250,19 @@ export default {
     >
       <!-- HEADERS -->
       <template #header.email="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.username="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.firstName="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.lastName="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.role="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
 
       <!-- ROLE -->
@@ -273,7 +274,7 @@ export default {
 
       <!-- ACTIONS -->
       <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip v-if="hasRBAC" bottom>
           <template #activator="{ on }">
             <v-btn
               text

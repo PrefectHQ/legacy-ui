@@ -1,0 +1,15 @@
+query Usage($from: timestamptz, $to: timestamptz, $license_id: uuid) {
+  usage: billing_usage(
+    where: {
+      timestamp: { _gte: $from, _lte: $to }
+      license_id: { _eq: $license_id }
+    }
+  ) {
+    id
+    kind
+    runs
+    license_id
+    timestamp
+    usage_last_updated
+  }
+}

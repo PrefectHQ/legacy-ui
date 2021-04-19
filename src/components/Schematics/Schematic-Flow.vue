@@ -1062,22 +1062,20 @@ export default {
       <v-card-text class="text-center">
         <transition name="fade-expand" mode="out-in">
           <div v-if="!errorSubmitted && !errorReportLoading" key="step1">
-            <div class="display-1">
+            <div class="text-h4">
               Sorry, we're unable to load this schematic.
             </div>
             <div class="mt-2">Help us improve by submitting a report.</div>
           </div>
-          <div v-else-if="errorReportLoading" key="step2" class="display-1">
+          <div v-else-if="errorReportLoading" key="step2" class="text-h4">
             Submitting report...
           </div>
           <div v-else key="step2">
-            <div class="display-1 mb-2">
+            <div class="text-h4 mb-2">
               Thanks! We'll get our team on it immediately.
             </div>
             By the way, you can
-            <a
-              target="_blank"
-              href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+            <a target="_blank" href="https://prefect.io/slack"
               >join our Slack</a
             >
             to ask questions, provide feedback, or just to chat! You can also

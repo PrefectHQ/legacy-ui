@@ -8,7 +8,7 @@ import IntervalClock from '@/components/Functional/IntervalClock'
 import LogRocket from 'logrocket'
 import ClockForm from '@/pages/Flow/Settings/ClockForm'
 import DictInput from '@/components/CustomInputs/DictInput'
-
+import { parametersMixin } from '@/mixins/parametersMixin.js'
 export default {
   components: {
     ConfirmDialog,
@@ -18,6 +18,7 @@ export default {
     ClockForm,
     DictInput
   },
+  mixins: [parametersMixin],
   props: {
     flow: { required: true, type: Object },
     flowGroup: {
@@ -37,7 +38,7 @@ export default {
       selectedClock: null,
       scheduleBanner: false,
       selectedTab: '',
-      parameter: null
+      parameter: {}
     }
   },
   computed: {
@@ -57,10 +58,10 @@ export default {
       })
     },
     allDefaultParameters() {
-      if (!this.flow.parameters) {
+      if (!this.defaultParameters) {
         return {}
       }
-      const paramObj = this.flow.parameters.reduce(
+      const paramObj = this.defaultParameters.reduce(
         (obj, item) => ((obj[item.name] = item.default), obj),
         {}
       )
@@ -117,9 +118,24 @@ export default {
           ...this.clocks
             .filter(c => c.type == 'CronClock' && c.scheduleType !== 'flow')
             .map(c => {
+              if (c.parameter_defaults) {
+                if (
+                  c.parameter_defaults === null ||
+                  Object.keys(c.parameter_defaults).length === 0
+                ) {
+                  return {
+                    cron: c.cron
+                  }
+                } else {
+                  return {
+                    cron: c.cron,
+                    parameter_defaults: c.parameter_defaults
+                  }
+                }
+              }
+
               return {
-                cron: c.cron,
-                parameter_defaults: c.parameter_defaults
+                cron: c.cron
               }
             })
         ]
@@ -128,12 +144,27 @@ export default {
           ...this.clocks
             .filter(c => c.type == 'IntervalClock' && c.scheduleType !== 'flow')
             .map(c => {
+              if (c.parameter_defaults) {
+                if (
+                  c.parameter_defaults === null ||
+                  Object.keys(c.parameter_defaults).length === 0
+                ) {
+                  // input for interval clocks is seconds but are converted to
+                  // microseconds at the database level so we need to
+                  // convert this back to microseconds
+                  return {
+                    interval: c.interval / 1000000
+                  }
+                } else {
+                  return {
+                    interval: c.interval / 1000000,
+                    parameter_defaults: c.parameter_defaults
+                  }
+                }
+              }
+
               return {
-                // input for interval clocks is seconds but are converted to
-                // microseconds at the database level so we need to
-                // convert this back to microseconds
-                interval: c.interval / 1000000,
-                parameter_defaults: c.parameter_defaults
+                interval: c.interval / 1000000
               }
             })
         ]
@@ -196,8 +227,10 @@ export default {
         this.setAlert({
           alertShow: true,
           alertMessage: `There was a problem ${
-            options.new ? 'created' : options.delete ? 'deleted' : 'modified'
-          } your schedule, please try again shortly.`,
+            options.new ? 'creating' : options.delete ? 'deleting' : 'modifying'
+          } your schedule, please try again shortly. Error message: ${
+            this.error
+          }`,
           alertType: 'error'
         })
       }
@@ -224,6 +257,19 @@ export default {
     },
     checkDefualtParameters(parameterObj) {
       return Object.values(parameterObj).length > 0
+    },
+    removeDoubleParam(clock) {
+      if (clock && this.allDefaultParameters.length !== 0) {
+        return Object.values(
+          [...this.allDefaultParameters, ...this.paramVal(clock)]
+            .reverse()
+            .reduce((r, c) => ((r[c.key] = r[c.key] || c), r), {})
+        )
+      }
+
+      if (this.allDefaultParameters.length !== 0) {
+        return this.allDefaultParameters
+      }
     }
   }
 }
@@ -288,10 +334,19 @@ export default {
                   />
                 </div>
                 <div v-show="selectedTab === 1">
+                  <p
+                    v-if="checkDefualtParameters(allDefaultParameters)"
+                    class="mt-8 text-body-1"
+                  >
+                    Checked parameters will override their corresponding
+                    defaults for runs generated from this schedule.
+                  </p>
+
                   <DictInput
                     v-if="checkDefualtParameters(allDefaultParameters)"
                     v-model="parameter"
                     style="padding: 20px;"
+                    include-checkbox
                     :dict="allDefaultParameters"
                     disable-edit
                     allow-reset
@@ -331,7 +386,7 @@ export default {
         <v-card
           class="clock-card text-truncate"
           :class="{ 'clock-card-large': selectedClock === i }"
-          :color="appForeground"
+          color="appForeground"
           :style="{
             'border-left':
               clock.scheduleType == 'flow'
@@ -369,18 +424,29 @@ export default {
                 />
               </div>
               <div v-show="selectedTab === 1">
-                <DictInput
-                  v-if="clock.parameter_defaults"
-                  v-model="parameter"
-                  style="padding: 20px;"
-                  :dict="paramVal(clock.parameter_defaults)"
-                  disable-edit
-                  allow-reset
-                />
-                <div v-else class="mt-8 text-body-1">
+                <div
+                  v-if="!checkDefualtParameters(allDefaultParameters)"
+                  class="mt-8 text-body-1"
+                >
                   <span class="font-weight-bold">{{ flow.name }}</span>
                   has no default parameters.
                 </div>
+                <DictInput
+                  v-else
+                  v-model="parameter"
+                  style="padding: 20px;"
+                  :dict="removeDoubleParam(clock.parameter_defaults)"
+                  :default-checked-keys="
+                    Object.keys(
+                      clock.parameter_defaults
+                        ? clock.parameter_defaults
+                        : allDefaultParameters
+                    )
+                  "
+                  include-checkbox
+                  disable-edit
+                  allow-reset
+                />
               </div>
             </div>
 

@@ -7,12 +7,12 @@
       <img src="https://api.netlify.com/api/v1/badges/effeac10-a905-46ee-8e93-b59454ecc8bb/deploy-status" alt="Netlify Build Status" alt="Netlify status badge">
    </a>
 
-   <a href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE">
+   <a href="https://prefect.io/slack">
       <img src="https://prefect-slackin.herokuapp.com/badge.svg" alt="Slack members status badge">
    </a>
 </p>
 <p align="center">
-<a href="https://prefect.io">
+   <a href="https://prefect.io">
     <img src="https://images.ctfassets.net/gm98wzqotmnx/3mwImS57DEydMQXU1FCGG/6e36e2d49faf78cf4a166f123c2c43ca/image__5_.png" height="27" alt="Powered By Prefect">
     </a>
 </p>

@@ -1,0 +1,5 @@
+mutation CreateFlowSLAFailedHook($input: create_flow_sla_failed_hook_input!) {
+  create_flow_sla_failed_hook(input: $input) {
+    id
+  }
+}

@@ -8,6 +8,7 @@ import Billing from '@/pages/TeamSettings/Account/Billing'
 import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
 import UsageToday from '@/pages/TeamSettings/Account/Usage/UsageToday'
 import CurrentUsers from '@/pages/TeamSettings/Account/Usage/CurrentUsers'
+import UsageCycle from '@/pages/TeamSettings/Account/Usage/UsageCycle'
 import UsageTimeline from '@/pages/TeamSettings/Account/Usage/UsageTimeline'
 
 export default {
@@ -19,6 +20,7 @@ export default {
     Billing,
     UsageTimeline,
     CurrentUsers,
+    UsageCycle,
     UsageToday
   },
   mixins: [teamProfileMixin],
@@ -92,12 +94,12 @@ export default {
     <v-container v-if="isCloud" fluid>
       <v-row>
         <v-col cols="12" class="text-center pb-2 ">
-          <h1 class="display-1">Account & Usage</h1>
+          <h1 class="text-h4">Account & Usage</h1>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" class="text-center py-0">
-          <div class="subtitle-1">
+          <div class="text-subtitle-1">
             Manage data associated with your team
           </div>
         </v-col>
@@ -173,6 +175,23 @@ export default {
         </v-col>
         <v-col cols="12" md="6">
           <v-row>
+            <v-col
+              v-if="
+                isUsageBased && license && license.terms.plan !== 'FREE_2021'
+              "
+              cols="12"
+            >
+              <v-skeleton-loader
+                :loading="loadedTiles < 6"
+                type="image"
+                height="168"
+                class="usage"
+                transition="quick-fade"
+                tile
+              >
+                <UsageCycle />
+              </v-skeleton-loader>
+            </v-col>
             <v-col cols="12">
               <v-skeleton-loader
                 :loading="loadedTiles < 6"

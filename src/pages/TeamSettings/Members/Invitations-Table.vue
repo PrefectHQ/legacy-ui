@@ -137,15 +137,7 @@ export default {
             }
           })
 
-        this.$emit('load-end')
-        this.$emit('update-invitations', {
-          fullInvitations: this.pendingInvitationsItems.filter(
-            m => m.role !== 'READ_ONLY_USER'
-          ),
-          readOnlyInvitations: this.pendingInvitationsItems.filter(
-            m => m.role == 'READ_ONLY_USER'
-          )
-        })
+        this.$emit('load-end', this.pendingInvitationsItems)
         return data
       },
       error() {
@@ -187,13 +179,13 @@ export default {
     >
       <!-- HEADERS -->
       <template #header.email="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.role="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
       <template #header.created="{ header }">
-        <span class="subtitle-2">{{ header.text }}</span>
+        <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
 
       <!-- INVITATION SENT TIMESTAMP -->

@@ -53,7 +53,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2" tile>
+  <v-card class="pa-2" style="height: 100%;" tile>
     <CardTitle title="Activity" icon="show_chart">
       <v-select
         slot="action"

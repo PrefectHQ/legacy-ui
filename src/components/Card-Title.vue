@@ -49,7 +49,7 @@ export default {
         </v-icon>
       </v-list-item-avatar>
       <v-list-item-content class="position: relative;">
-        <v-list-item-title class="title pb-1">
+        <v-list-item-title class="text-h6 pb-1">
           <div v-if="$slots['title']">
             <slot name="title" />
           </div>
@@ -66,7 +66,7 @@ export default {
         </v-list-item-title>
         <div
           v-if="$slots['subtitle'] || subtitle"
-          class="subtitle-2 utilGrayDark--text caption position-absolute font-weight-medium"
+          class="text-subtitle-2 utilGrayDark--text text-caption position-absolute font-weight-medium"
           style="bottom: 2px;"
         >
           <slot v-if="$slots['subtitle']" name="subtitle" />

@@ -17,11 +17,6 @@ export default {
       required: false,
       type: String,
       default: () => null
-    },
-    fullHeight: {
-      required: false,
-      type: Boolean,
-      default: () => false
     }
   },
   data() {
@@ -71,19 +66,19 @@ export default {
     },
     title() {
       let title = this.loading
-        ? 'In Progress Flow Runs'
-        : `${this.all?.length || 0} Runs In Progress`
+        ? 'In progress flow runs'
+        : `${this.all?.length || 0} runs in progress`
 
       if (this.tab == 'submitted') {
         title = this.loading
-          ? 'Submitted Flow Runs'
-          : `${this.submitted?.length || 0} Submitted Runs`
+          ? 'Submitted flow runs'
+          : `${this.submitted?.length || 0} submitted runs`
       }
 
       if (this.tab == 'running') {
         title = this.loading
-          ? 'Running Flow Runs'
-          : `${this.running?.length || 0} Running Flows`
+          ? 'Running flow runs'
+          : `${this.running?.length || 0} running flows`
       }
 
       return title
@@ -130,15 +125,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="pb-2"
-    tile
-    :style="{
-      height: fullHeight ? '330px' : 'auto',
-      'max-width': '100%',
-      overflow: 'hidden'
-    }"
-  >
+  <v-card class="pb-2" tile style="height: 100%;">
     <v-progress-linear
       striped
       active
@@ -167,7 +154,7 @@ export default {
           </div>
           <ConcurrencyInfo
             v-if="isCloud"
-            class="caption position-absolute"
+            class="text-caption position-absolute"
             style="bottom: 2px;"
           />
         </v-col>
@@ -233,7 +220,7 @@ export default {
 
           <v-list-item-content class="my-0 py-3">
             <div
-              class="subtitle-1 font-weight-light"
+              class="text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               You have no

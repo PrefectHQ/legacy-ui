@@ -40,8 +40,8 @@ export default {
     },
     mainClasses() {
       return {
-        'display-3': this.$vuetify.breakpoint.lgAndUp,
-        'display-1': !this.$vuetify.breakpoint.lgAndUp,
+        'text-h3': this.$vuetify.breakpoint.lgAndUp,
+        'text-h4': !this.$vuetify.breakpoint.lgAndUp,
         'justify-end': this.$vuetify.breakpoint.lgAndUp
       }
     }
@@ -60,21 +60,21 @@ export default {
       class="absolute overlay"
       :style="overlayStyle"
     >
-      <div class="overline">
+      <div class="text-overline">
         {{ chartOverlayOverline }}
       </div>
 
       <div
-        class="display-3 font-weight-bold d-flex align-start"
+        class="text-h3 font-weight-bold d-flex align-start"
         :class="mainClasses"
       >
         {{ chartOverlayMain
-        }}<span class="title font-weight-black">{{ chartOverlayUnits }}</span>
+        }}<span class="text-h6 font-weight-black">{{ chartOverlayUnits }}</span>
       </div>
       <div
         class="font-weight-light"
         style="color: rgba(255, 255, 255, 0.8);"
-        :class="$vuetify.breakpoint.sm ? 'subtitle-2' : 'headline'"
+        :class="$vuetify.breakpoint.sm ? 'text-subtitle-2' : 'text-h6'"
       >
         {{ chartOverlaySub }}
       </div>
@@ -109,18 +109,18 @@ export default {
       text-align: 'right';
       width: 50%;"
     >
-      <div class="overline">
+      <div class="text-overline">
         {{ chartOverlayOverline }}
       </div>
 
-      <div class="display-2 font-weight-bold d-flex align-start justify-end">
+      <div class="text-h3 font-weight-bold d-flex align-start justify-end">
         {{ chartOverlayMain
-        }}<span class="title font-weight-black">{{ chartOverlayUnits }}</span>
+        }}<span class="text-h6 font-weight-black">{{ chartOverlayUnits }}</span>
       </div>
       <div
         class="font-weight-light"
         style="color: rgba(255, 255, 255, 0.8);"
-        :class="$vuetify.breakpoint.smAndDown ? 'subtitle-2' : 'headline'"
+        :class="$vuetify.breakpoint.smAndDown ? 'text-subtitle-2' : 'text-h6'"
       >
         {{ chartOverlaySub }}
       </div>

@@ -66,13 +66,13 @@ export default {
         class="px-0"
       >
         <v-list-item-content>
-          <span class="caption mb-0">
+          <span class="text-caption mb-0">
             Flow
           </span>
-          <v-list-item-title class="body-2">
+          <v-list-item-title class="text-body-2">
             <span>{{ task.flow.name }}</span>
           </v-list-item-title>
-          <v-list-item-subtitle class="caption">
+          <v-list-item-subtitle class="text-caption">
             Version {{ task.flow.version }}
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -86,16 +86,16 @@ export default {
         class="px-0"
       >
         <v-list-item-content>
-          <v-list-item-subtitle class="caption">
+          <v-list-item-subtitle class="text-caption">
             Description
           </v-list-item-subtitle>
-          <div class="caption">{{ task.description }} </div>
+          <div class="text-caption">{{ task.description }} </div>
         </v-list-item-content>
       </v-list-item>
 
       <v-list-item dense class="pa-0">
         <v-list-item-content>
-          <v-list-item-subtitle class="caption">
+          <v-list-item-subtitle class="text-caption">
             <v-row no-gutters>
               <v-col cols="6">
                 Created
@@ -150,7 +150,7 @@ export default {
         class="px-0"
       >
         <v-list-item-content>
-          <v-list-item-subtitle class="caption">
+          <v-list-item-subtitle class="text-caption">
             <span class="mb-0">
               Parameter:
             </span>

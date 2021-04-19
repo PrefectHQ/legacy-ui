@@ -85,7 +85,7 @@ export default {
         </v-list-item-avatar>
         <v-list-item-content>
           <div
-            class="subtitle-1 font-weight-light"
+            class="text-subtitle-1 font-weight-light"
             style="line-height: 1.25rem;"
           >
             <span v-if="connected">Connected</span>

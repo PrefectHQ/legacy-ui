@@ -7,6 +7,7 @@ export default {
   data() {
     return {
       clockInterval: null,
+      loading: false,
       model: false,
       routes: [
         {
@@ -41,8 +42,14 @@ export default {
     ...mapActions('auth', ['logout']),
     ...mapMutations('user', ['setUserSettings']),
     async wipeClientAndLogout() {
-      await this.logout(true) // Pass true here to propagate this to all clients
-      document.querySelector('.router-view').style.opacity = 0
+      this.loading = true
+
+      try {
+        await this.logout(true) // Pass true here to propagate this to all clients
+        document.querySelector('.router-view').style.opacity = 0
+      } catch {
+        this.loading = false
+      }
     },
     async toggleDarkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
@@ -108,7 +115,7 @@ export default {
         <div class="mt-2 text-h6">
           {{ user.first_name }} {{ user.last_name }}
         </div>
-        <div class="caption"> {{ user.email }} </div>
+        <div class="text-caption"> {{ user.email }} </div>
       </div>
 
       <div
@@ -124,7 +131,7 @@ export default {
           Account Settings
         </div>
         <div class="text-caption text--secondary text-truncate">
-          Manage profile, access tokens, and teams
+          Manage profile, API keys, and teams
         </div>
       </div>
 
@@ -174,6 +181,7 @@ export default {
           class="appBackground text-capitalize py-6"
           depressed
           block
+          :loading="loading"
           @click="wipeClientAndLogout"
         >
           <span class="mr-2">Sign out</span>

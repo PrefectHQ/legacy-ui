@@ -5,6 +5,22 @@ import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin.js'
 import { shuffle } from '@/utils/array'
 
+let hidden, visibilityChange
+
+if (window) {
+  if (typeof document.hidden !== 'undefined') {
+    // Opera 12.10 and Firefox 18 and later
+    hidden = 'hidden'
+    visibilityChange = 'visibilitychange'
+  } else if (typeof document.msHidden !== 'undefined') {
+    hidden = 'msHidden'
+    visibilityChange = 'msvisibilitychange'
+  } else if (typeof document.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden'
+    visibilityChange = 'webkitvisibilitychange'
+  }
+}
+
 export default {
   components: { ExternalLink },
   mixins: [teamProfileMixin, handleMembershipInvitations],
@@ -45,6 +61,7 @@ export default {
   computed: {
     ...mapGetters('auth', ['user']),
     ...mapGetters('api', ['isCloud']),
+    ...mapGetters('license', ['license']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
     },
@@ -60,15 +77,23 @@ export default {
     }
   },
   mounted() {
+    this.createLicense()
+
     this.tenantChanges.name = this.tenant.name
     this.tenantChanges.slug = this.tenant.slug
+
+    window.addEventListener(
+      visibilityChange,
+      this.handleVisibilityChange,
+      false
+    )
 
     setTimeout(() => {
       this.revealNote = true
 
       setTimeout(() => {
         this.height = getComputedStyle(this.$refs['main-row']).height
-      })
+      }, 250)
     }, 500)
 
     setTimeout(() => {
@@ -80,13 +105,17 @@ export default {
 
       setTimeout(() => {
         this.height = getComputedStyle(this.$refs['main-row']).height
-      })
-    }, 1000)
+      }, 250)
+    }, 1250)
+  },
+  beforeDestroy() {
+    window.removeEventListener(this.handleVisibilityChange)
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'updateTenantSettings']),
     ...mapActions('user', ['getUser']),
     async createLicense() {
+      if (this.license) return
       this.loading++
       try {
         // Create the stripe customer (necessary for creating a self serve license)
@@ -100,17 +129,7 @@ export default {
             }
           }
         })
-        // Create the self serve license
-        // await this.$apollo.mutate({
-        //   mutation: require('@/graphql/License/create-self-serve-license.gql'),
-        //   variables: {
-        //     input: {
-        //       confirm: true,
-        //       users: 1,
-        //       stripe_coupon_id: null
-        //     }
-        //   }
-        // })
+
         // Create usage license
         await this.$apollo.mutate({
           mutation: require('@/graphql/License/create-usage-based-license.gql'),
@@ -122,13 +141,25 @@ export default {
           }
         })
       } catch (e) {
-        /// Temp Fix - We should create a license that has permission to do this!!
-        if (!e?.message.includes('This tenant already has an active license'))
-          this.updateServerError = true
+        /* eslint-disable no-console */
+        console.error(e)
       }
 
       this.loading--
       return
+    },
+    handleVisibilityChange() {
+      // Redundancy for the animation reveals (which are on timeouts)
+      if (!document[hidden]) {
+        this.height = getComputedStyle(this.$refs['main-row']).height
+
+        this.revealNote = true
+        this.revealNameInput = true
+        this.revealUrlInput = true
+        this.revealDropdown = true
+        this.revealPendingTeams = true
+        this.revealConfirm = true
+      }
     },
     async updateTenant() {
       // Async tenant checks
@@ -177,8 +208,18 @@ export default {
       if (this.slugErrors.length > 0) {
         return
       }
-      await this.createLicense()
+
       if (!this.updateServerError) this.goToResources()
+    },
+    async skip() {
+      this.updateTenantSettings({
+        teamNamed: true
+      })
+
+      this.$router.push({
+        name: 'onboard-resources',
+        params: { tenant: this.tenant.slug }
+      })
     },
     async accept(pt) {
       this.loading++
@@ -240,6 +281,7 @@ export default {
       this.revealUrlInput = false
       this.revealDropdown = false
       this.revealConfirm = false
+      this.revealNote = false
 
       await this.setCurrentTenant(
         this.redirectTenant ?? this.tenantChanges.slug ?? this.tenant.slug
@@ -306,7 +348,7 @@ export default {
       <div ref="main-row">
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
-            <div v-if="isTenantAdmin" class="display-1 text-center">
+            <div v-if="isTenantAdmin" class="text-h4 text-center">
               Let's start by creating your team
               <v-menu
                 :close-on-content-click="false"
@@ -321,7 +363,7 @@ export default {
                   >
                 </template>
                 <v-card tile class="pa-3 mt-1" max-width="320">
-                  <div class="body-1">
+                  <div class="text-body-1">
                     Prefect automatically creates a sandbox development team for
                     you to use &mdash; this is a great place to test and deploy
                     flows as you explore Prefect. When you're ready to
@@ -343,14 +385,14 @@ export default {
                 </v-card>
               </v-menu>
             </div>
-            <div v-else class="display-1 text-center"> Team Details </div>
+            <div v-else class="text-h4 text-center"> Team Details </div>
           </v-col>
 
           <v-col v-if="revealNote" key="revealNote" cols="12">
-            <div v-if="isTenantAdmin" class="body-2 text--darken-1">
+            <div v-if="isTenantAdmin" class="text-body-2 text--darken-1">
               (You can always change this later)
             </div>
-            <div v-else class="body-2 text--darken-1">
+            <div v-else class="text-body-2 text--darken-1">
               Contact your team administrators to complete onboarding</div
             >
           </v-col>
@@ -361,10 +403,10 @@ export default {
             cols="12"
             class="my-2 mt-12 name-team-input mx-auto"
           >
-            <div class="overline">
+            <div class="text-overline">
               Team Name
             </div>
-            <div v-if="!isTenantAdmin" class="headline">
+            <div v-if="!isTenantAdmin" class="text-h5">
               {{ tenant.name }}
             </div>
             <v-text-field
@@ -400,7 +442,7 @@ export default {
             cols="12"
             class="my-2 name-team-input mx-auto"
           >
-            <div class="overline d-flex justify-center align-center">
+            <div class="text-overline d-flex justify-center align-center">
               <span class="mr-1">Team Slug</span>
               <Truncate
                 content="This slug is used to create shareable links for your flows and runs unique to your team."
@@ -410,7 +452,7 @@ export default {
                 </v-icon>
               </Truncate>
             </div>
-            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="headline medium">
+            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="text-h5 medium">
             </div>
             <v-text-field
               v-if="isTenantAdmin"
@@ -446,7 +488,7 @@ export default {
             cols="12"
             class="my-2 mb-12 mx-auto"
           >
-            <div class="overline">
+            <div class="text-overline">
               How did you hear about us?
             </div>
             <v-select
@@ -465,8 +507,12 @@ export default {
             ></v-text-field>
           </v-col>
 
-          <v-col v-if="revealPendingTeams" key="pendingInvites" cols="12">
-            <div v-if="pendingInvitations.length" class="body-1">
+          <v-col
+            v-if="revealPendingTeams && pendingInvitations"
+            key="pendingInvites"
+            cols="12"
+          >
+            <div v-if="pendingInvitations.length" class="text-body-1">
               Your pending invitations:
             </div>
             <v-list
@@ -512,18 +558,31 @@ export default {
             cols="12"
             class="my-2"
           >
-            <v-btn
-              v-if="isTenantAdmin"
-              color="primary"
-              width="auto"
-              data-cy="submit-team-info"
-              :loading="loading > 0"
-              :disabled="disabled"
-              @click="updateTenant"
-            >
-              Next
-              <v-icon right>arrow_right</v-icon>
-            </v-btn>
+            <div>
+              <v-btn
+                v-if="isTenantAdmin"
+                color="primary"
+                width="200"
+                data-cy="submit-team-info"
+                :loading="loading > 0"
+                :disabled="disabled"
+                @click="updateTenant"
+              >
+                Next
+              </v-btn>
+            </div>
+            <div class="mt-4">
+              <v-btn
+                color="white"
+                :disabled="disabled"
+                text
+                width="auto"
+                @click="skip"
+              >
+                Skip
+                <v-icon right>arrow_right</v-icon>
+              </v-btn>
+            </div>
           </v-col>
 
           <v-col
@@ -534,7 +593,7 @@ export default {
             "
             key="error"
             cols="12"
-            class="body-2 red--text text--darken-1"
+            class="text-h6 red--text text--lighten-1"
           >
             Sorry, something went wrong. Please try again.
           </v-col>
@@ -543,7 +602,7 @@ export default {
     </v-row>
     <v-dialog v-if="currentInvitation" v-model="dialog" max-width="500">
       <v-card>
-        <v-card-title class="headline">
+        <v-card-title class="text-h5">
           Are you sure you want to decline the invitation to
           {{ currentInvitation.tenant.name }}?
         </v-card-title>

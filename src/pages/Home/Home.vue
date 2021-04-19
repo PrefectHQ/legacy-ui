@@ -29,8 +29,7 @@ const exploreBlocks = [
     body: 'Chat with us, ask questions, and share tips',
     src: require('@/assets/icon-illustrations/slack-community.svg'),
     alt: 'Join the community image',
-    href:
-      'https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE',
+    href: 'https://prefect.io/slack',
     linkText: 'Join Slack'
   }
 ]
@@ -153,7 +152,6 @@ export default {
             <v-tabs
               v-model="gettingStartedTab"
               :background-color="isCloud ? 'primary' : 'secondary'"
-              dark
             >
               <v-tab v-if="isServer" ref="infrastructure" href="#infrastructure"
                 >Prefect Server</v-tab
@@ -213,9 +211,8 @@ export default {
 
             <v-tabs
               v-model="sdkTab"
-              background-color="cloudUIPrimaryBlue primary"
-              dark
               class="mt-4"
+              background-color="primary"
               style="border: 1px solid utilGrayLight !important;
                 border-bottom: unset !important;"
             >

@@ -17,7 +17,9 @@ export default {
       loadingKey: 'loadingKey',
       result({ data }) {
         if (!data) return
-        this.count = data.memberships.length + data.membershipInvitations.length
+        this.count =
+          data.memberships.filter(m => m.account_type !== 'SERVICE').length +
+          data.membershipInvitations.length
       },
       fetchPolicy: 'no-cache'
     }

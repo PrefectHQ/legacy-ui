@@ -67,14 +67,13 @@ export default {
           icon: 'view_module'
         },
         {
-          name: 'ReadMe', 
+          name: 'ReadMe',
           target: 'description',
           icon: 'far fa-file-code',
           badgeText: 'New!',
           cardText:
             'A Flow ReadMe can now be added in the UI. For more information check out the',
-          cardLink:
-            'https://docs.prefect.io/orchestration/ui/flow.html#readme',
+          cardLink: 'https://docs.prefect.io/orchestration/ui/flow.html#readme',
           cardLinkText: 'UI Flow Docs'
         },
         {
@@ -254,7 +253,10 @@ export default {
       >
         <div v-if="flowGroup">
           {{ selectedFlow.name }}
-          <span v-if="selectedFlow.archived" class="ml-1 body-1 grey--text">
+          <span
+            v-if="selectedFlow.archived"
+            class="ml-1 text-body-1 grey--text"
+          >
             (Archived)
           </span>
         </div>
@@ -360,7 +362,7 @@ export default {
           />
 
           <FlowRunHeartbeatTile
-            slot="row-2-col-1-row-4-tile-1"
+            slot="row-2-col-1-row-2-tile-1"
             :aggregate="!flowVersionId"
             :flow="selectedFlow"
           />
@@ -408,7 +410,12 @@ export default {
         reverse-transition="tab-fade"
       >
         <TileLayoutFull>
-          <DescribeTile slot="row-2a-tile" :fg-description="flowGroup.description" :flow-description="selectedFlow.description" :flow-group-id="flowGroup.id" />
+          <DescribeTile
+            slot="row-2a-tile"
+            :fg-description="flowGroup.description"
+            :flow-description="selectedFlow.description"
+            :flow-group-id="flowGroup.id"
+          />
         </TileLayoutFull>
       </v-tab-item>
 

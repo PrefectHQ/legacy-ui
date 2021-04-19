@@ -81,18 +81,18 @@ export default {
 
 <template>
   <v-card
-    class="pa-0 pt-7 mb-2 appBackground"
+    class="pa-0 pt-7 mb-4 appBackground"
     style="max-height: 114px;"
     tile
     flat
   >
-    <div class="caption text-left grey--text timeline-title">
+    <div class="text-caption text-left grey--text timeline-title">
       <v-icon x-small>pi-flow-run</v-icon><span class="ml-1">Run History</span>
     </div>
 
     <div
       v-if="!loading && reversedRuns.length === 0"
-      class="caption text-center grey--text timeline-no-runs"
+      class="text-caption text-center grey--text timeline-no-runs"
     >
       No run history
     </div>

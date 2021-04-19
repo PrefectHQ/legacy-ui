@@ -36,7 +36,7 @@ export default {
   <v-container class="fill-height mt-6" fluid justify-center>
     <v-layout align-content-start fill-height wrap style="max-width: 1440px;">
       <v-flex xs12>
-        <div class="headline full-width mb-3">
+        <div class="text-h5 full-width mb-3">
           <slot name="title"></slot>
         </div>
       </v-flex>
@@ -49,7 +49,7 @@ export default {
 
       <v-flex v-if="$slots.alert" xs12>
         <blockquote
-          class="blockquote blockquote-border-left mb-3 body-2 px-4 py-2"
+          class="blockquote blockquote-border-left mb-3 text-body-2 px-4 py-2"
         >
           <slot name="alert"></slot>
         </blockquote>
@@ -73,7 +73,7 @@ export default {
 
                 <v-stepper-content :key="`content-${step}`" :step="step">
                   <v-card flat class="mb-6">
-                    <v-card-text class="pa-0 body-1 black--text">
+                    <v-card-text class="pa-0 text-body-1 black--text">
                       <slot :name="`tutorial-step-${step}-content`"></slot>
                     </v-card-text>
                   </v-card>

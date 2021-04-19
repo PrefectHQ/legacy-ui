@@ -102,10 +102,10 @@ export default {
             >
               <v-fade-transition mode="out-in">
                 <div v-if="!success" key="description">
-                  <div class="headline">
+                  <div class="text-h5">
                     How can we help?
                   </div>
-                  <div class="subtitle-1 my-4">
+                  <div class="text-subtitle-1 my-4">
                     Let us know how our team can improve your experience. We're
                     up to the task!
                   </div>
@@ -151,10 +151,10 @@ export default {
                 </div>
 
                 <div v-else-if="success" key="success">
-                  <div class="headline">
+                  <div class="text-h5">
                     We got your message!
                   </div>
-                  <div class="subtitle-1 my-4">
+                  <div class="text-subtitle-1 my-4">
                     <span v-if="selectedCategory == 'I need help'">
                       Don't panic! We'll be in touch as soon as possible. <br />
                       While you wait, you can
@@ -178,9 +178,7 @@ export default {
                       If you haven't already,
                     </span>
 
-                    <a
-                      target="_blank"
-                      href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+                    <a target="_blank" href="https://prefect.io/slack"
                       >join our Slack</a
                     >
                     to ask questions, provide feedback, or just to chat! You can
@@ -198,10 +196,10 @@ export default {
     </v-row>
     <v-row class="text-center pa-12" align="end" justify="end">
       <v-col class="d-flex flex-column">
-        <div class="title font-weight-medium primary--text">
+        <div class="text-h6 font-weight-medium primary--text">
           Explore the Docs
         </div>
-        <div class="title my-6">
+        <div class="text-h6 my-6">
           Endless possibilities with Prefect automation
         </div>
         <div>
@@ -218,10 +216,10 @@ export default {
         </div>
       </v-col>
       <v-col>
-        <div class="title font-weight-medium primary--text">
+        <div class="text-h6 font-weight-medium primary--text">
           Join our Slack
         </div>
-        <div class="title my-6">
+        <div class="text-h6 my-6">
           Chat with us, ask questions, and share tips
         </div>
         <div>
@@ -231,17 +229,17 @@ export default {
             dark
             depressed
             target="_blank"
-            href="https://join.slack.com/t/prefect-community/shared_invite/enQtODQ3MTA2MjI4OTgyLTliYjEyYzljNTc2OThlMDE4YmViYzk3NDU4Y2EzMWZiODM0NmU3NjM0NjIyNWY0MGIxOGQzODMxNDMxYWYyOTE"
+            href="https://prefect.io/slack"
           >
             Join Slack
           </v-btn>
         </div>
       </v-col>
       <v-col>
-        <div class="title font-weight-medium primary--text">
+        <div class="text-h6 font-weight-medium primary--text">
           Read the Blog
         </div>
-        <div class="title my-6">
+        <div class="text-h6 my-6">
           Find our updates, tutorials, and announcements
         </div>
         <div>

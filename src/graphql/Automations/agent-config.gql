@@ -1,0 +1,6 @@
+query AgentConfig {
+  agent_config {
+    id
+    name
+  }
+}

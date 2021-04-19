@@ -36,7 +36,7 @@ export default {
   <v-card tile class="pointer">
     <v-alert
       v-if="run.state === 'Scheduled' && active"
-      class="mx-2 mt-2 mb-0 caption radius"
+      class="mx-2 mt-2 mb-0 text-caption radius"
       type="warning"
       icon="announcement"
       dense

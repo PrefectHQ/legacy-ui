@@ -51,17 +51,17 @@ export default {
       v-show="showPage"
       fluid
       justify-center
-      :style="{ 'max-width': `${this.$vuetify.breakpoint.thresholds.lg}px` }"
+      :style="{ 'max-width': `${$vuetify.breakpoint.thresholds.lg}px` }"
     >
       <v-row>
         <v-col cols="12" class="text-center pb-2 ">
           <slot name="alert"></slot>
-          <h1 class="display-1"><slot name="title"></slot></h1>
+          <h1 class="text-h4"><slot name="title"></slot></h1>
         </v-col>
       </v-row>
       <v-row v-if="$slots.subtitle">
         <v-col cols="12" class="text-center py-0">
-          <div class="subtitle-1">
+          <div class="text-subtitle-1">
             <slot name="subtitle"></slot>
           </div>
         </v-col>

@@ -16,7 +16,7 @@ export default {
 <template>
   <v-container fluid>
     <div
-      class="subtitle-1 my-4 font-weight-bold text-center grey--text text--darken-2"
+      class="text-subtitle-1 my-4 font-weight-bold text-center grey--text text--darken-2"
     >
       Recover Password
     </div>
@@ -29,9 +29,11 @@ export default {
     >
       <div
         v-if="!success && !error"
-        class="my-2 mb-10 arboria text-center body-2 mx-auto"
+        class="my-2 mb-10 arboria text-center text-body-2 mx-auto"
       >
-        <div class="primary--text font-weight-bold body-1">Don't panic!</div>
+        <div class="primary--text font-weight-bold text-body-1"
+          >Don't panic!</div
+        >
         We’ll email you instructions to reset your password.
       </div>
 
@@ -79,7 +81,9 @@ export default {
       </v-btn>
     </v-form>
 
-    <div class="caption mt-12 text-center d-flex align-center justify-center">
+    <div
+      class="text-caption mt-12 text-center d-flex align-center justify-center"
+    >
       <router-link :to="'/login'">
         <div class="d-flex align-center justify-center">
           <v-icon>keyboard_arrow_left</v-icon>Back to sign in

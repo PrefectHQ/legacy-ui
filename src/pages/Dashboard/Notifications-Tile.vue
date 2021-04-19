@@ -7,6 +7,7 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 import ApprovalNotification from '@/pages/Notifications/NotificationTypes/Approval-Notification'
 import FlowRunNotification from '@/pages/Notifications/NotificationTypes/FlowRun-Notification'
 import MembershipNotification from '@/pages/Notifications/NotificationTypes/Membership-Notification'
+import MessageNotification from '@/pages/Notifications/NotificationTypes/Message-Notification'
 import WhatsNewNotification from '@/pages/Notifications/NotificationTypes/WhatsNew-Notification'
 
 import {
@@ -22,6 +23,7 @@ export default {
     CardTitle,
     FlowRunNotification,
     MembershipNotification,
+    MessageNotification,
     WhatsNewNotification
   },
   mixins: [formatTime],
@@ -35,7 +37,7 @@ export default {
     cardTitle() {
       return `${parseInt(
         this.notificationsCount
-      ).toLocaleString()} Unread Notification${
+      ).toLocaleString()} unread notification${
         this.notificationsCount === 1 ? '' : 's'
       }`
     },
@@ -128,7 +130,11 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2 position-relative" style="height: 330px;" tile>
+  <v-card
+    class="py-2 position-relative d-flex flex-column"
+    style="height: 100%;"
+    tile
+  >
     <CardTitle
       :title="cardTitle"
       icon="notifications"
@@ -182,7 +188,7 @@ export default {
 
           <v-list-item-content class="my-0 py-3">
             <div
-              class="subtitle-1 font-weight-light"
+              class="text-subtitle-1 font-weight-light"
               style="line-height: 1.25rem;"
             >
               You're all caught up!
@@ -191,7 +197,10 @@ export default {
         </v-list-item>
       </v-list>
     </v-card-text>
-    <v-card-actions>
+
+    <v-spacer />
+
+    <v-card-actions class="py-0">
       <v-spacer />
       <v-btn small color="primary" text :to="'/notifications'">
         View all notifications

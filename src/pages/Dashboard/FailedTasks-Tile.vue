@@ -15,11 +15,6 @@ export default {
     projectId: {
       type: String,
       default: null
-    },
-    fullHeight: {
-      required: false,
-      type: Boolean,
-      default: () => false
     }
   },
   data() {
@@ -111,13 +106,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="py-2"
-    tile
-    :style="{
-      height: fullHeight ? '330px' : 'auto'
-    }"
-  >
+  <v-card class="py-2" tile style="height: 100%;">
     <v-system-bar :color="stateColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->
@@ -172,7 +161,7 @@ export default {
             </v-list-item-avatar>
             <v-list-item-content class="my-0 py-3">
               <div
-                class="d-inline-block subtitle-1 font-weight-light"
+                class="d-inline-block text-subtitle-1 font-weight-light"
                 style="line-height: 1.25rem;"
               >
                 Something went wrong while trying to fetch Task failures
@@ -207,7 +196,7 @@ export default {
             </v-list-item-avatar>
             <v-list-item-content class="my-0 py-0">
               <div
-                class="subtitle-1 font-weight-light"
+                class="text-subtitle-1 font-weight-light"
                 style="line-height: 1.25rem;"
               >
                 No reported failures in the last {{ selectedDateFilter }}...
