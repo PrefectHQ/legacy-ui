@@ -191,6 +191,7 @@ export default {
     isAuthorized(value) {
       if (value) {
         this.getApi()
+        this.getTenants()
       }
     }
   },
