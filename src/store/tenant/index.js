@@ -146,6 +146,8 @@ const actions = {
     return getters['tenants']
   },
   async setCurrentTenant({ commit, dispatch, getters, rootGetters }, slug) {
+    slug = slug || getters['defaultTenant']?.slug
+    console.log(slug)
     if (!slug) {
       throw new Error(
         'No slug was provided when trying to set the current tenant'

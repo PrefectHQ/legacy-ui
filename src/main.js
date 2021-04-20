@@ -329,6 +329,17 @@ Vue.mixin({
   }
 })
 
+const setup = async () => {
+  await store.dispatch('auth/authenticate')
+  await store.dispatch('auth/authorize')
+
+  const tenants = store.dispatch('tenant/getTenants')
+  const user = store.dispatch('user/getUser') // Also sets the default tenant
+  await tenants
+  await user
+  await store.dispatch('tenant/setCurrentTenant')
+}
+
 let PrefectUI
 
 const initialize = async () => {
@@ -338,6 +349,8 @@ const initialize = async () => {
       .then(data => data)
   } finally {
     // Let this fail silently
+
+    await setup()
 
     // Create application
     // eslint-disable-next-line no-unused-vars
@@ -409,12 +422,3 @@ if (window) {
   }
   window.addEventListener(visibilityChange, handleVisibilityChange, false)
 }
-
-const setup = async () => {
-  await store.dispatch('auth/authenticate')
-  await store.dispatch('auth/authorize')
-  await store.dispatch('tenant/getTenants')
-  await store.dispatch('user/getUser') // Also sets the default tenant
-}
-
-setup()
