@@ -1,10 +1,8 @@
 import Router from 'vue-router'
 
 //  Nav guards
-// import authNavGuard from '@/middleware/authNavGuard'
 import flowNavGuard from '@/middleware/flowNavGuard'
 import multiguard from 'vue-router-multiguard'
-// import tenantNavGuard from '@/middleware/tenantNavGuard'
 
 import store from '@/store/index'
 
