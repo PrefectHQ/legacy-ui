@@ -1,23 +1,23 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-// import CardTitle from '@/components/Card-Title'
+import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
 import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 const AGENT_TYPES = [
-  { type: 'DockerAgent', icon: 'fab fa-docker pa-1' },
-  { type: 'ECSAgent', icon: 'fab fa-aws pa-1' },
-  { type: 'FargateAgent', icon: 'fab fa-aws pa-1' },
-  { type: 'KubernetesAgent', icon: 'pi-kubernetes' },
-  { type: 'LocalAgent', icon: 'fad fa-laptop-house pa-1' },
-  { type: 'NomadAgent', icon: '$nomad' }
+  { type: 'DockerAgent', icon: 'fab fa-docker pa-1', name: 'Docker' },
+  { type: 'ECSAgent', icon: 'fab fa-aws pa-1', name: 'ECS' },
+  { type: 'FargateAgent', icon: 'fab fa-aws pa-1', name: 'Fargate' },
+  { type: 'KubernetesAgent', icon: 'pi-kubernetes', name: 'Kubernetes' },
+  { type: 'LocalAgent', icon: 'fad fa-laptop-house pa-1', name: 'Local' },
+  { type: 'NomadAgent', icon: '$nomad', name: 'Nomad' }
 ]
 
 export default {
   components: {
-    // CardTitle,
+    CardTitle,
     Label
   },
   filters: {
@@ -72,8 +72,11 @@ export default {
         })
       }
     },
+
     name() {
-      return this.agent?.name ? this.agent.name : 'Agent'
+      return this.agent?.name && this.agent.name !== 'agent'
+        ? this.agent.name
+        : AGENT_TYPES.find(a => a.type == this.agent?.type)?.name || 'Agent'
     },
     secondsSinceLastQuery() {
       return moment(this.currentDateTime).diff(
@@ -186,24 +189,26 @@ export default {
     :disabled="agent.isDeleting || isDeleting"
     class="agent-card px-2 pb-3"
     style="overflow-y: auto;"
-    ><v-card-title>
-      <v-icon :color="statusColor" class="mr-2">{{
-        agent.type ? agentIcon(agent.type) : 'fas fa-robot'
-      }}</v-icon
+  >
+    <!-- <v-card-title
+      :style="{ overflow: 'truncate', 'word-break': 'break-word' }"
+    >
+      <v-icon :color="statusColor" class="mr-2">
+        {{ agent.type ? agentIcon(agent.type) : 'fas fa-robot' }}</v-icon
       >{{ name }}
     </v-card-title>
     <v-card-subtitle class="pb-0">
       {{ type }}
-    </v-card-subtitle>
-    <!-- <CardTitle
+    </v-card-subtitle> -->
+
+    <CardTitle
       :title="name"
       :subtitle="type"
       :icon="agent.type ? agentIcon(agent.type) : 'fas fa-robot'"
       :icon-color="statusColor"
-      icon-class="mb-2 fa-2x pi-2x"
-      class="pt-3 mb-4"
+      icon-class="fa-2x pi-2x"
     >
-    </CardTitle> -->
+    </CardTitle>
 
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
@@ -235,37 +240,38 @@ export default {
 
     <v-card-text class="py-0">
       <v-list>
-        <v-list-item class="pa-0">
+        <v-list-item two-line class="pa-0">
           <v-list-item-content class="pa-0">
-            <v-list-item-title>
-              Agent Id
-            </v-list-item-title>
+            <v-list-item-title>Last Query </v-list-item-title>
             <v-list-item-subtitle>
-              <truncate :content="agent.id">
-                {{ agent.id || unknown }}</truncate
-              >
+              <span class="font-weight-bold">{{
+                agent.last_queried | formatDateTime
+              }}</span>
+              <span v-if="agent.last_queried">|</span>
+              {{ timer }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-
         <v-list-item two-line class="pa-0">
-          <v-list-item-content class="pa-0 overflow-scroll">
+          <v-list-item-content class="pa-0">
             <v-list-item-title>
               Labels
             </v-list-item-title>
-            <Label
-              v-for="label in agentModified.labels"
-              :key="label"
-              class="mr-1 mt-1"
-              :outlined="!labelSelected(label)"
-              size="x-small"
-              @click="$emit('label-click', $event)"
-            >
-              {{ label }}
-            </Label>
-            <span v-if="!agentModified.labels.length">
-              None
-            </span>
+            <v-sheet height="50px" :style="{ overflow: 'auto' }">
+              <Label
+                v-for="label in agentModified.labels"
+                :key="label"
+                class="mr-1 mt-1"
+                :outlined="!labelSelected(label)"
+                size="x-small"
+                @click="$emit('label-click', $event)"
+              >
+                {{ label }}
+              </Label>
+              <span v-if="!agentModified.labels.length">
+                None
+              </span>
+            </v-sheet>
           </v-list-item-content>
         </v-list-item>
       </v-list>
