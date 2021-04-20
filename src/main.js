@@ -191,6 +191,7 @@ if (TokenWorker?.port) {
     const type = e.data?.type
     const payload = e.data?.payload
 
+    // eslint-disable-next-line no-console
     console.log('type', type, payload)
 
     switch (type) {
