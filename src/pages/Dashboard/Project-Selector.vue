@@ -45,12 +45,12 @@ export default {
         return
       }
       if (val == 'no_project') {
-        this.projectId = val
+        this.projectId = null
         this.$emit('project-select', this.projectId)
         this.$router
           .push({
-            name: 'project',
-            params: { ...this.$route.params, id: 'no_project' },
+            name: 'no-project',
+            params: { ...this.$route.params, id: null },
             query: { ...this.$route.query }
           })
           .catch(e => e)

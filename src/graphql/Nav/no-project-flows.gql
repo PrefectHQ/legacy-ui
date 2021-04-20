@@ -2,6 +2,7 @@ query NoProjectFlows {
   flow(where: { project_id: { _is_null: true } }) {
     id
     flow_group_id
+    tenant_id
     name
   }
 }
