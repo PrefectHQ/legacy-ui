@@ -71,7 +71,8 @@ export default {
       rules: {
         required: val => !!val || 'Required',
         notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
-      }
+      },
+      animated: false
     }
   },
   computed: {
@@ -287,6 +288,10 @@ export default {
     ...mapActions('alert', ['setAlert']),
     actionIcon(type) {
       return actionTypes.find(a => a.actionType == type)?.icon
+    },
+    addHint() {
+      console.log('click!')
+      this.animated = true
     },
     buttonColor(selectedStep, otherStep) {
       // const stepComplete = this.steps[selectedStep]
@@ -727,6 +732,19 @@ export default {
           </v-btn>
 
           <v-btn
+            v-if="agentOrFlow === 'this'"
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            color="accentPink"
+            class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
+            text
+            :disabled="addAction"
+            max-width="500px"
+            @click="addHint"
+          >
+            <span>this</span>
+          </v-btn>
+
+          <v-btn
             v-else
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             :color="buttonColor('openAgentOrFlow')"
@@ -852,7 +870,7 @@ export default {
       <!-- OPEN AGENT OR FLOW -->
       <div v-if="step.name === 'openAgentOrFlow'" key="openAgentOrFlow">
         <div>
-          <div class="mb-2 text-subtitle-1 font-weight-light">
+          <div class="mb-2 text-subtitle-1 accentPink--text font-weight-light">
             Choose an automation:
           </div>
           <v-row>
@@ -866,9 +884,11 @@ export default {
                   agentOrFlow === item.type ? 'accentPink' : 'utilGrayMid'
                 "
                 class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
+                :class="{ grow: animated }"
                 :disabled="!hasPermission(item.permission)"
                 :input-value="agentOrFlow === item.type"
                 @click="selectAgentOrFlow(item.type)"
+                @animationend="animated = false"
               >
                 <v-icon class="mr-3">
                   {{ item.type === 'flow' ? 'pi-flow' : 'pi-agent' }}
@@ -1428,6 +1448,22 @@ export default {
       position: absolute;
       width: 100%;
     }
+  }
+}
+
+.grow {
+  animation: grow 1s;
+}
+
+@keyframes grow {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 </style>
