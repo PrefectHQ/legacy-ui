@@ -1,147 +1,143 @@
-<template>
-  <div>
-    <h1>Keys</h1>
-    <v-btn color="primary" class="white--text" large>
-      <v-icon left>
-        add
-      </v-icon>
-      Add Key
-    </v-btn>
-    <v-data-table
-      :headers="headers"
-      :items="desserts"
-      :single-expand="singleExpand"
-      :expanded.sync="expanded"
-      item-key="name"
-      show-expand
-      class="elevation-1"
-    >
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-toolbar-title>Expandable Table</v-toolbar-title>
-          <div class="flex-grow-1"></div>
-          <v-switch
-            v-model="singleExpand"
-            label="Single expand"
-            class="mt-2"
-          ></v-switch>
-        </v-toolbar>
-      </template>
-      <template v-slot:item.data-table-expand="{ expand, isExpanded }">
-        <v-icon @click="expand(!isExpanded)">store</v-icon>
-      </template>
-      <template v-slot:expanded-item="{ headers }">
-        <td :colspan="headers.length">Peek-a-boo!</td>
-      </template>
-    </v-data-table>
-
-    <!-- <v-treeview :items="items" hoverable></v-treeview> -->
-  </div>
-</template>
-
 <script>
+// "foo-moo.bar.baz".split(".") => [ 'foo-moo', 'bar', 'baz' ]
+// "foo.bar.baz".split(".") => [ 'foo', 'bar', 'baz' ]
+
+/*
+[{
+"dev.config.ram": "8 gb",
+"regular": "foo"
+}]
+*/
+
 export default {
   data() {
     return {
+      items: [
+        {
+          id: 1,
+          key: 'prod.config.ram',
+          value: '8GB'
+        },
+        {
+          id: 2,
+          key: 'beep',
+          value: 'boop'
+        },
+        {
+          id: 3,
+          key: 'dev.config.cpu',
+          value: '{a: 1, b: 2}'
+        }
+      ],
+      admins: [
+        ['Management', 'mdi-account-multiple-outline'],
+        ['Settings', 'mdi-cog-outline']
+      ],
+      cruds: [
+        ['Create', 'mdi-plus-outline'],
+        ['Read', 'mdi-file-outline'],
+        ['Update', 'mdi-update'],
+        ['Delete', 'mdi-delete']
+      ],
       expanded: [],
       singleExpand: false,
-      headers: [
+      dessertHeaders: [
         {
-          text: 'Dessert (100g serving)',
-          align: 'left',
-          sortable: false,
+          text: 'Name',
+          align: 'start',
+          sortable: true,
           value: 'name'
         },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Iron (%)', value: 'iron' },
-        { text: '', value: 'data-table-expand' }
+        {
+          text: '',
+          value: 'actions',
+          align: 'right',
+          sortable: false
+        }
       ],
       desserts: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          iron: '1%'
+          name: 'one'
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          iron: '1%'
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          iron: '6%'
+          name: 'two'
         }
       ]
+    }
+  },
+  computed: {
+    queryData() {
+      // return items.map(item => {
+      //   return item.key
+      //     .split('.')
+      //     .reduceRight(
+      //       (o, x) => ({ id: item.id, name: [x][0], children: [o] }),
+      //       {}
+      //     )
+      // })
+
+      return this.items.map(item => {
+        return item.key.split('.').reduceRight(
+          (o, x) => ({
+            name: [x][0],
+            children: Object.keys(o).length === 0 ? [] : [o]
+          }),
+          {}
+        )
+      })
+
+      // return null
+    },
+    queryData2() {
+      return null
     }
   }
 }
 </script>
+
+<template>
+  <div>
+    <v-card elevation="2" tile class="mx-auto mt-10">
+      <v-card-text class="pa-0">
+        <v-treeview :items="queryData" hoverable></v-treeview>
+      </v-card-text>
+    </v-card>
+    <v-card class="mt-10"> </v-card>
+
+    <!-- <v-card tile class="mx-auto mt-10">
+      <v-card-text class="pa-0">
+        <v-data-table
+          fixed-header
+          :headers="dessertHeaders"
+          :items="desserts"
+          sort-by="name"
+          show-expand
+          class="elevation-2 rounded-0 truncate-table"
+        >
+          <template #item.actions>
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <v-btn text fab x-small color="primary" v-on="on">
+                  <v-icon>edit</v-icon>
+                </v-btn>
+              </template>
+              Modify secret
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <v-btn text fab x-small color="error" v-on="on">
+                  <v-icon>delete</v-icon>
+                </v-btn>
+              </template>
+              Delete secret
+            </v-tooltip>
+          </template>
+
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length"> More info about {{ item.name }} </td>
+          </template>
+        </v-data-table>
+      </v-card-text>
+    </v-card> -->
+  </div>
+</template>

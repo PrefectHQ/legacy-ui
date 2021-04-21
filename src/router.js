@@ -143,7 +143,7 @@ export const routes = [
         path: 'kv',
         component: () =>
           import(
-            /* webpackChunkName: "team-settings--secrets" */ '@/pages/TeamSettings/KV.vue'
+            /* webpackChunkName: "team-settings--kv" */ '@/pages/TeamSettings/KV.vue'
           )
       },
       {
