@@ -54,13 +54,17 @@ if (
   Vue.config.performance = true
 }
 
-const blockedResponses = ['CreateAPIToken', 'APITokens', 'CreateRunnerToken']
+const blockedResponses = [
+  'CreateAPIToken',
+  'APITokens',
+  'CreateRunnerToken',
+  'CreateAPIKey'
+]
 const blockedRequests = ['SetSecret']
 
 if (
-  process.env.NODE_ENV === 'production' &&
   process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
-  process.env.VUE_APP_BASE_URL?.includes('cloud.prefect.io')
+  process.env.VUE_APP_BACKEND === 'CLOUD'
 ) {
   LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID, {
     release: process.env.VUE_APP_BASE_URL,
@@ -191,7 +195,11 @@ if (TokenWorker?.port) {
         store.dispatch('auth/updateAuthenticationTokens', payload)
         break
       case 'authorization':
-        store.dispatch('auth/updateAuthorizationTokens', payload)
+        if (payload) {
+          store.dispatch('auth/updateAuthorizationTokens', payload)
+        } else {
+          store.dispatch('auth/authorize')
+        }
         break
       case 'authentication-expiration':
         store.dispatch('auth/authenticate')
@@ -364,16 +372,15 @@ const handleVisibilityChange = () => {
 
   if (!document[hidden]) {
     if (
-      store.getters['auth/isAuthorized'] &&
-      now >= authorizationExpiration &&
-      now < authenticationExpiration
-    ) {
-      store.dispatch('auth/authorize')
-    } else if (
-      store.getters['auth/isAuthenticatd'] &&
+      !store.getters['auth/isAuthenticated'] ||
       now >= authenticationExpiration
     ) {
       store.dispatch('auth/authenticate')
+    } else if (
+      !store.getters['auth/isAuthorized'] ||
+      now >= authorizationExpiration
+    ) {
+      store.dispatch('auth/authorize')
     }
   }
 }
