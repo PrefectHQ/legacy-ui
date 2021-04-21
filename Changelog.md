@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix auth loop - [#783](https://github.com/PrefectHQ/ui/pull/783)
 
 ## 2021-04-15
 

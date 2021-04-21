@@ -16,6 +16,7 @@ import router from '@/router'
 import VueMeta from 'vue-meta'
 
 import LogRocket from 'logrocket'
+import jwt_decode from 'jwt-decode'
 
 // Filters
 import duration from '@/filters/duration'
@@ -190,13 +191,28 @@ if (TokenWorker?.port) {
     const type = e.data?.type
     const payload = e.data?.payload
 
+    if (
+      process.env.VUE_APP_ENVIRONMENT == 'staging' ||
+      process.env.VUE_APP_ENVIRONMENT == 'dev'
+    ) {
+      // eslint-disable-next-line no-console
+      console.log('type', type, payload)
+    }
+
     switch (type) {
       case 'authentication':
         store.dispatch('auth/updateAuthenticationTokens', payload)
         break
       case 'authorization':
         if (payload) {
+          const authorizationToken = jwt_decode(payload.access_token)
           store.dispatch('auth/updateAuthorizationTokens', payload)
+
+          if (
+            store.getters['tenant/tenant']?.id !== authorizationToken.tenant_id
+          ) {
+            store.dispatch('tenant/getTenants')
+          }
         } else {
           store.dispatch('auth/authorize')
         }
@@ -319,6 +335,17 @@ Vue.mixin({
   }
 })
 
+const setup = async () => {
+  await store.dispatch('auth/authenticate')
+  await store.dispatch('auth/authorize')
+
+  const tenants = store.dispatch('tenant/getTenants')
+  const user = store.dispatch('user/getUser') // Also sets the default tenant
+  await tenants
+  await user
+  await store.dispatch('tenant/setCurrentTenant')
+}
+
 let PrefectUI
 
 const initialize = async () => {
@@ -328,6 +355,8 @@ const initialize = async () => {
       .then(data => data)
   } finally {
     // Let this fail silently
+
+    await setup()
 
     // Create application
     // eslint-disable-next-line no-unused-vars

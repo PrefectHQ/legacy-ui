@@ -25,6 +25,11 @@ export default {
       }
     }
   },
+  mounted() {
+    if (this.isAuthenticated) {
+      this.$router.push({ name: 'dashboard' })
+    }
+  },
   methods: {
     ...mapActions('auth', ['login']),
     redirectToLogin() {
