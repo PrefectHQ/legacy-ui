@@ -50,7 +50,7 @@ const getters = {
     return state.tenant.role
   },
   tenant(state) {
-    return state.tenant
+    return state.tenant || state.defaultTenant
   },
   tenantIsSet(state) {
     return !!state.tenant?.id
@@ -146,6 +146,8 @@ const actions = {
     return getters['tenants']
   },
   async setCurrentTenant({ commit, dispatch, getters, rootGetters }, slug) {
+    slug = slug || getters['defaultTenant']?.slug
+
     if (!slug) {
       throw new Error(
         'No slug was provided when trying to set the current tenant'
