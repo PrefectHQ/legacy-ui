@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Adds animated hint for users creating new automations - [#784](https://github.com/PrefectHQ/ui/pull/784)
 
 ### Bugfixes
 
