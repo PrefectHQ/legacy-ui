@@ -97,7 +97,7 @@ export default {
       >Usage this cycle</v-card-title
     >
     <v-card-text
-      class="pa-0 px-3 pt-3 d-flex align-start justify-center flex-column mb-auto"
+      class="pa-3 pt-0 d-flex align-start justify-center flex-column mb-auto"
     >
       <div class="text-h3">
         <v-skeleton-loader
