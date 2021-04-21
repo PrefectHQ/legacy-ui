@@ -184,19 +184,6 @@ export default {
             </v-col>
             <v-col cols="12">
               <v-skeleton-loader
-                v-if="usageTile"
-                :loading="loadedTiles < 6 || usageTile == 'loading'"
-                type="image"
-                height="100%"
-                transition="quick-fade"
-                class="tile-container span-row-1"
-                tile
-              >
-                <component :is="usageTile" />
-              </v-skeleton-loader>
-            </v-col>
-            <v-col cols="12">
-              <v-skeleton-loader
                 v-if="isTenantAdmin"
                 :loading="loadedTiles < 7"
                 type="image"
@@ -227,6 +214,19 @@ export default {
                 tile
               >
                 <UsageCycle />
+              </v-skeleton-loader>
+            </v-col>
+            <v-col cols="12">
+              <v-skeleton-loader
+                v-if="usageTile"
+                :loading="loadedTiles < 6 || usageTile == 'loading'"
+                type="image"
+                height="100%"
+                transition="quick-fade"
+                class="tile-container span-row-1"
+                tile
+              >
+                <component :is="usageTile" />
               </v-skeleton-loader>
             </v-col>
             <v-col cols="12">

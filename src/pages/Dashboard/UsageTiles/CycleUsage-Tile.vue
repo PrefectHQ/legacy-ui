@@ -93,10 +93,12 @@ export default {
     style="height: 100%;"
     tile
   >
+    <v-card-title class="text-h4 font-weight-light"
+      >Usage this cycle</v-card-title
+    >
     <v-card-text
       class="pa-0 px-3 pt-3 d-flex align-start justify-center flex-column mb-auto"
     >
-      <div class="text-h6 utilGrayDark--text">Usage this cycle</div>
       <div class="text-h3">
         <v-skeleton-loader
           :loading="!usage && (invoiceLoading || usageLoading)"
@@ -155,9 +157,6 @@ export default {
         :to="'/plans'"
       >
         Get more runs
-      </v-btn>
-      <v-btn small color="primary" text :to="'/team/account'">
-        Details
       </v-btn>
     </v-card-actions>
   </v-card>
