@@ -290,7 +290,6 @@ export default {
       return actionTypes.find(a => a.actionType == type)?.icon
     },
     addHint() {
-      console.log('click!')
       this.animated = true
     },
     buttonColor(selectedStep, otherStep) {
