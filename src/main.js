@@ -336,16 +336,21 @@ Vue.mixin({
 })
 
 const setup = async () => {
-  if (store.getters['api/isCloud']) {
+  if (
+    (store.getters['api/isCloud'] && !store.getters['auth/isAuthenticated']) ||
+    !store.getters['auth/isAuthorized']
+  ) {
     await store.dispatch('auth/authenticate')
     await store.dispatch('auth/authorize')
   }
 
   const tenants = store.dispatch('tenant/getTenants')
+
   if (store.getters['api/isCloud']) {
     const user = store.dispatch('user/getUser') // Also sets the default tenant
     await user
   }
+
   await tenants
   await store.dispatch('tenant/setCurrentTenant')
 }
@@ -359,9 +364,18 @@ const initialize = async () => {
       .then(data => data)
   } finally {
     // Let this fail silently
+    let retries = 5
 
     try {
-      await setup()
+      while (retries-- > 0) {
+        try {
+          await setup()
+          break
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.log('Error in setup', e)
+        }
+      }
     } finally {
       // Create application
       // eslint-disable-next-line no-unused-vars
