@@ -319,6 +319,15 @@ export default {
       this.$vuetify.theme.dark = false
     }
 
+    if (this.isCloud && !this.tenant.settings.teamNamed) {
+      this.$router.push({
+        name: 'welcome',
+        params: {
+          tenant: this.tenant.slug
+        }
+      })
+    }
+
     // document.addEventListener(
     //   'visibilitychange',
     //   this.handleVisibilityChange,
