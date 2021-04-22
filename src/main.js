@@ -359,7 +359,6 @@ const initialize = async () => {
       .then(data => data)
   } finally {
     // Let this fail silently
-
     try {
       await setup()
     } finally {
@@ -372,6 +371,9 @@ const initialize = async () => {
         apolloProvider: defaultApolloProvider,
         render: h => h(App)
       }).$mount('#app')
+      
+      const loader = document.querySelector('div.loading')
+      loader.style.display = 'none'
     }
   }
 }

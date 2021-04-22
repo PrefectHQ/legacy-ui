@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
 
 ### Bugfixes
 
