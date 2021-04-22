@@ -66,12 +66,9 @@
 
 .loading {
   position: absolute;
-    width: 100%;
-    height: 100px;
     top: 50%;
     left: 50%;
-    margin-left: -50px; 
-    margin-top: -25px; 
+    transform: translate(-50%, -50%);
 }
 
 .loading span {
@@ -80,15 +77,10 @@
   width: .6em;
   height: .6em;
   margin: .19em;
-  background: #007DB6;
   border-radius: .6em;
   animation: loading 1s infinite alternate;
 }
 
-/*
- * Dots Colors
- * Smarter targeting vs nth-of-type?
- */
 .loading span:nth-of-type(2) {
   background: #0082cb;
   animation-delay: 0.2s;
@@ -114,10 +106,6 @@
   animation-delay: 1.2s;
 }
 
-/*
- * Animation keyframes
- * Use transition opacity instead of keyframes?
- */
 @keyframes loading {
   0% {
     opacity: 0;
