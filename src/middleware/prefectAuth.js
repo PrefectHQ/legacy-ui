@@ -11,6 +11,14 @@ const prefectAuth = async idToken => {
     })
 
     if (result?.data?.log_in) {
+      if (
+        process.env.VUE_APP_ENVIRONMENT == 'staging' ||
+        process.env.VUE_APP_ENVIRONMENT == 'dev'
+      ) {
+        // eslint-disable-next-line no-console
+        console.log('type', result)
+      }
+
       return result.data.log_in
     } else if (result?.errors) {
       if (

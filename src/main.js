@@ -344,6 +344,13 @@ const setup = async () => {
     await store.dispatch('auth/authorize')
   }
 
+  if (
+    !store.getters['auth/isAuthenticated'] ||
+    !store.getters['auth/isAuthorized']
+  ) {
+    throw new Error('Missing authorization')
+  }
+
   const tenants = store.dispatch('tenant/getTenants')
 
   if (store.getters['api/isCloud']) {
@@ -364,7 +371,7 @@ const initialize = async () => {
       .then(data => data)
   } finally {
     // Let this fail silently
-    let retries = 5
+    let retries = 15
 
     try {
       while (retries-- > 0) {
@@ -374,6 +381,12 @@ const initialize = async () => {
         } catch (e) {
           // eslint-disable-next-line no-console
           console.log('Error in setup', e)
+
+          await new Promise(res => {
+            setTimeout(() => {
+              res()
+            }, 500)
+          })
         }
       }
     } finally {
