@@ -360,17 +360,19 @@ const initialize = async () => {
   } finally {
     // Let this fail silently
 
-    await setup()
-
-    // Create application
-    // eslint-disable-next-line no-unused-vars
-    PrefectUI = new Vue({
-      vuetify,
-      router,
-      store,
-      apolloProvider: defaultApolloProvider,
-      render: h => h(App)
-    }).$mount('#app')
+    try {
+      await setup()
+    } finally {
+      // Create application
+      // eslint-disable-next-line no-unused-vars
+      PrefectUI = new Vue({
+        vuetify,
+        router,
+        store,
+        apolloProvider: defaultApolloProvider,
+        render: h => h(App)
+      }).$mount('#app')
+    }
   }
 }
 initialize()
