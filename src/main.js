@@ -386,6 +386,9 @@ const initialize = async () => {
         apolloProvider: defaultApolloProvider,
         render: h => h(App)
       }).$mount('#app')
+
+      const loader = document.querySelector('div.loading')
+      loader.style.display = 'none'
     }
   }
 }
