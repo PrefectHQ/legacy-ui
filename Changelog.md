@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Populate JSON editor with only checked parameters - [#787](https://github.com/PrefectHQ/ui/pull/787)
 - Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
 
 ### Bugfixes
