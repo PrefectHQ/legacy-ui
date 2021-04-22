@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix issue with Server check on startup - [#788](https://github.com/PrefectHQ/ui/pull/788)
 
 ## 2021-04-21
 
