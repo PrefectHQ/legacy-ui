@@ -336,13 +336,17 @@ Vue.mixin({
 })
 
 const setup = async () => {
-  await store.dispatch('auth/authenticate')
-  await store.dispatch('auth/authorize')
+  if (store.getters['api/isCloud']) {
+    await store.dispatch('auth/authenticate')
+    await store.dispatch('auth/authorize')
+  }
 
   const tenants = store.dispatch('tenant/getTenants')
-  const user = store.dispatch('user/getUser') // Also sets the default tenant
+  if (store.getters['api/isCloud']) {
+    const user = store.dispatch('user/getUser') // Also sets the default tenant
+    await user
+  }
   await tenants
-  await user
   await store.dispatch('tenant/setCurrentTenant')
 }
 
@@ -393,6 +397,8 @@ try {
 let hidden, visibilityChange
 
 const handleVisibilityChange = () => {
+  if (store.getters['api/isServer']) return
+
   const now = new Date()
   const authorizationExpiration = new Date(
     store.getters['auth/authorizationTokenExpiry']
