@@ -28,40 +28,6 @@ export default {
           key: 'dev.config.cpu',
           value: '{a: 1, b: 2}'
         }
-      ],
-      admins: [
-        ['Management', 'mdi-account-multiple-outline'],
-        ['Settings', 'mdi-cog-outline']
-      ],
-      cruds: [
-        ['Create', 'mdi-plus-outline'],
-        ['Read', 'mdi-file-outline'],
-        ['Update', 'mdi-update'],
-        ['Delete', 'mdi-delete']
-      ],
-      expanded: [],
-      singleExpand: false,
-      dessertHeaders: [
-        {
-          text: 'Name',
-          align: 'start',
-          sortable: true,
-          value: 'name'
-        },
-        {
-          text: '',
-          value: 'actions',
-          align: 'right',
-          sortable: false
-        }
-      ],
-      desserts: [
-        {
-          name: 'one'
-        },
-        {
-          name: 'two'
-        }
       ]
     }
   },
@@ -87,9 +53,6 @@ export default {
       })
 
       // return null
-    },
-    queryData2() {
-      return null
     }
   }
 }
@@ -99,45 +62,14 @@ export default {
   <div>
     <v-card elevation="2" tile class="mx-auto mt-10">
       <v-card-text class="pa-0">
-        <v-treeview :items="queryData" hoverable></v-treeview>
+        <v-treeview :items="queryData" hoverable>
+          <!-- <template v-slot:append="{ item }">
+            <v-icon>
+              folder
+            </v-icon>
+          </template> -->
+        </v-treeview>
       </v-card-text>
     </v-card>
-    <v-card class="mt-10"> </v-card>
-
-    <!-- <v-card tile class="mx-auto mt-10">
-      <v-card-text class="pa-0">
-        <v-data-table
-          fixed-header
-          :headers="dessertHeaders"
-          :items="desserts"
-          sort-by="name"
-          show-expand
-          class="elevation-2 rounded-0 truncate-table"
-        >
-          <template #item.actions>
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn text fab x-small color="primary" v-on="on">
-                  <v-icon>edit</v-icon>
-                </v-btn>
-              </template>
-              Modify secret
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn text fab x-small color="error" v-on="on">
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </template>
-              Delete secret
-            </v-tooltip>
-          </template>
-
-          <template v-slot:expanded-item="{ headers, item }">
-            <td :colspan="headers.length"> More info about {{ item.name }} </td>
-          </template>
-        </v-data-table>
-      </v-card-text>
-    </v-card> -->
   </div>
 </template>
