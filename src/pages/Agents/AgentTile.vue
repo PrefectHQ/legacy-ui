@@ -41,6 +41,11 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    showAll: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -189,18 +194,9 @@ export default {
     :disabled="agent.isDeleting || isDeleting"
     class="agent-card px-2 pb-3"
     style="overflow-y: auto;"
+    :tile="showAll"
+    height="380px"
   >
-    <!-- <v-card-title
-      :style="{ overflow: 'truncate', 'word-break': 'break-word' }"
-    >
-      <v-icon :color="statusColor" class="mr-2">
-        {{ agent.type ? agentIcon(agent.type) : 'fas fa-robot' }}</v-icon
-      >{{ name }}
-    </v-card-title>
-    <v-card-subtitle class="pb-0">
-      {{ type }}
-    </v-card-subtitle> -->
-
     <CardTitle
       :title="name"
       :subtitle="type"
@@ -240,8 +236,8 @@ export default {
 
     <v-card-text class="py-0">
       <v-list>
-        <v-list-item two-line class="pa-0">
-          <v-list-item-content class="pa-0">
+        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
+          <v-list-item-content min-height="10px" class="pa-0">
             <v-list-item-title>Last Query </v-list-item-title>
             <v-list-item-subtitle>
               <span class="font-weight-bold">{{
@@ -252,12 +248,122 @@ export default {
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item two-line class="pa-0">
+
+        <v-list-item
+          v-if="showAll"
+          :style="{ 'min-height': '45px' }"
+          two-line
+          class="pa-0"
+        >
+          <v-list-item-content class="pa-0">
+            <v-list-item-title>Core Version</v-list-item-title>
+            <v-list-item-subtitle>
+              {{ agent.core_version || 'Unknown' }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          v-if="showAll"
+          :style="{ 'min-height': '45px' }"
+          two-line
+          class="pa-0"
+        >
+          <v-list-item-content class="pa-0">
+            <v-list-item-title>Created</v-list-item-title>
+            <v-list-item-subtitle>
+              {{ agent.created || 'Unknown' }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          v-if="showAll"
+          :style="{ 'min-height': '45px' }"
+          two-line
+          class="pa-0"
+        >
+          <v-list-item-content class="pa-0">
+            <v-list-item-title>Token</v-list-item-title>
+            <v-list-item-subtitle>
+              <v-tooltip top>
+                <template #activator="{ on }">
+                  <div
+                    class="text-truncate"
+                    :class="{
+                      pointer: agent.token_name,
+                      'bg-gray-transition': copiedText[agent.token_id],
+                      'bg-white-transition': !copiedText[agent.token_id]
+                    }"
+                    v-on="on"
+                    @click="copyTextToClipboard(agent.token_id)"
+                  >
+                    <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
+                      {{ agent.token_name }}
+                    </span>
+                  </div>
+                </template>
+
+                <span>
+                  <v-icon
+                    v-if="agent.token_name && agent.token_id"
+                    x-small
+                    class="mb-2px mr-2"
+                    tabindex="0"
+                    color="white"
+                  >
+                    {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
+                  </v-icon>
+                  {{
+                    agent.token_name
+                      ? 'Click to copy token id'
+                      : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
+                  }}</span
+                >
+              </v-tooltip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          v-if="showAll"
+          :style="{ 'min-height': '45px' }"
+          class="pa-0"
+        >
+          <v-list-item-content min-height="45px" class="pa-0">
+            <v-list-item-title>Agent Id</v-list-item-title>
+            <v-list-item-subtitle>
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <span
+                    class="cursor-pointer show-icon-hover-focus-only pa-2px"
+                    role="button"
+                    @click="copyTextToClipboard(agent.id)"
+                    v-on="on"
+                  >
+                    <v-icon x-small class="mb-2px mr-2" tabindex="0">
+                      {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
+                    </v-icon>
+                    {{ agent.id || 'Unknown' }}
+                  </span>
+                </template>
+                <span>
+                  {{ agent.id || 'Unknown' }}
+                </span>
+              </v-tooltip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item class="pa-0 mt-2">
           <v-list-item-content class="pa-0">
             <v-list-item-title>
               Labels
             </v-list-item-title>
-            <v-sheet height="50px" :style="{ overflow: 'auto' }">
+            <v-sheet
+              :height="showAll ? '80px' : '50px'"
+              :style="{ overflow: 'auto' }"
+            >
               <Label
                 v-for="label in agentModified.labels"
                 :key="label"
@@ -277,7 +383,7 @@ export default {
       </v-list>
     </v-card-text>
 
-    <v-card-actions class="pa-0">
+    <v-card-actions v-if="!showAll" class="pa-0">
       <v-btn
         small
         text

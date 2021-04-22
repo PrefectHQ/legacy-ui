@@ -86,7 +86,7 @@ export default {
 <template>
   <v-card tile class="agent-card px-2 pb-3" style="overflow-y: auto;">
     <CardTitle
-      title="Matching Flows"
+      title="Submittable Runs"
       subtitle="Flows which have matching labels"
       icon="pi-flow"
     >

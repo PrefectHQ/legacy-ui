@@ -1,10 +1,10 @@
 <script>
 import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
-import AgentCard from '@/pages/Agents/AgentCard'
+import AgentTile from '@/pages/Agents/AgentTile'
 import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
 import AgentConfigCard from '@/pages/Agents/AgentConfigCard'
-import MatchingLabels from '@/pages/Agents/MatchingLabels'
+import SubmittableRuns from '@/pages/Agents/SubmittableRuns'
 
 import { mapGetters } from 'vuex'
 
@@ -12,10 +12,10 @@ export default {
   components: {
     SubPageNav,
     TileLayout,
-    AgentCard,
+    AgentTile,
     AgentFlowRunHistory,
     AgentConfigCard,
-    MatchingLabels
+    SubmittableRuns
   },
   data() {
     return {
@@ -65,9 +65,9 @@ export default {
       >
         <TileLayout>
           <AgentFlowRunHistory slot="row-0" :agent="agentDetails" />
-          <AgentCard slot="row-1-col-1-tile-1" :agent="agentDetails" />
+          <AgentTile slot="row-1-col-1-tile-1" show-all :agent="agentDetails" />
           <AgentConfigCard slot="row-1-col-2-tile-1" :agent="agentDetails" />
-          <MatchingLabels slot="row-1-col-3-tile-1" :agent="agentDetails" />
+          <SubmittableRuns slot="row-1-col-3-tile-1" :agent="agentDetails" />
         </TileLayout>
       </v-tab-item>
     </v-tabs-items>
