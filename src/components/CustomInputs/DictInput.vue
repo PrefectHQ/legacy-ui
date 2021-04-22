@@ -143,17 +143,29 @@ export default {
             .map(entry => entry.key)
         : []
 
-      this.jsonInput = this.inputIsArray
-        ? JSON.stringify(
-            Object.fromEntries(this.dict.map(entry => [entry.key, entry.value]))
-          )
-        : this.dict
-        ? JSON.stringify(this.dict)
-        : `
-{
+      if (this.includeCheckbox && this.includedKeys.length === 0) {
+        this.jsonInput = '{}'
+      } else if (this.includeCheckbox && this.includedKeys.length > 0) {
+        const v = this.dict.filter(i => this.includedKeys.includes(i.key))
 
-}
-      `
+        this.jsonInput = JSON.stringify(
+          Object.fromEntries(v.map(entry => [entry.key, entry.value]))
+        )
+      } else {
+        this.jsonInput = this.inputIsArray
+          ? JSON.stringify(
+              Object.fromEntries(
+                this.dict.map(entry => [entry.key, entry.value])
+              )
+            )
+          : this.dict
+          ? JSON.stringify(this.dict)
+          : `
+        {
+
+        }
+              `
+      }
 
       this.keys = this.inputIsArray
         ? this.dict.map(entry => entry.key)
