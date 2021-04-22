@@ -145,7 +145,11 @@ export default {
 
       if (this.includeCheckbox && this.includedKeys.length === 0) {
         this.jsonInput = '{}'
-      } else if (this.includeCheckbox && this.includedKeys.length > 0) {
+      } else if (
+        this.includeCheckbox &&
+        this.includedKeys.length > 0 &&
+        this.inputIsArray
+      ) {
         const v = this.dict.filter(i => this.includedKeys.includes(i.key))
 
         this.jsonInput = JSON.stringify(
