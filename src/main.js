@@ -363,6 +363,7 @@ const setup = async () => {
 }
 
 let PrefectUI
+let setupComplete = false
 
 const initialize = async () => {
   try {
@@ -377,6 +378,7 @@ const initialize = async () => {
       while (retries-- > 0) {
         try {
           await setup()
+
           break
         } catch (e) {
           // eslint-disable-next-line no-console
@@ -390,6 +392,7 @@ const initialize = async () => {
         }
       }
     } finally {
+      setupComplete = true
       // Create application
       // eslint-disable-next-line no-unused-vars
       PrefectUI = new Vue({
@@ -429,7 +432,7 @@ try {
 let hidden, visibilityChange
 
 const handleVisibilityChange = () => {
-  if (store.getters['api/isServer']) return
+  if (store.getters['api/isServer'] || !setupComplete) return
 
   const now = new Date()
   const authorizationExpiration = new Date(
