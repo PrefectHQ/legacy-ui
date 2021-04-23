@@ -882,7 +882,7 @@ export default {
                 :color="
                   agentOrFlow === item.type ? 'accentPink' : 'utilGrayMid'
                 "
-                class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
+                class="mr-6 cursor-pointer text-h6 font-weight-light remove--disabled"
                 :class="{ grow: animated }"
                 :disabled="!hasPermission(item.permission)"
                 :input-value="agentOrFlow === item.type"
