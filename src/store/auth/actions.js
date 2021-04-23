@@ -79,7 +79,13 @@ const actions = {
             tokens: await authClient.tokenManager.getTokens()
           }
 
-      if (tokens?.accessToken && tokens?.idToken) {
+      const expiration = tokens?.idToken.expiresAt * 1000
+
+      if (
+        tokens?.accessToken &&
+        tokens?.idToken &&
+        new Date().getTime() < expiration
+      ) {
         TokenWorker.port.postMessage({
           type: 'authentication',
           payload: tokens
