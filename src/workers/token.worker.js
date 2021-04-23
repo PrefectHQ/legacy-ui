@@ -179,27 +179,27 @@ let authorizationInProgress = false
 const getAuthorizationTokens = async () => {
   authorizationInProgress = true
 
-  try {
-    console.log(state.authenticationTokens)
-    const result = await client.mutate({
-      mutation: require('@/graphql/log-in.gql'),
-      variables: {
-        input: { id_token: state.authenticationTokens.idToken.value }
-      },
-      context: {
-        headers: headers
-      },
-      errorPolicy: 'all',
-      fetchPolicy: 'no-cache'
-    })
+  const result = await client.mutate({
+    mutation: require('@/graphql/log-in.gql'),
+    variables: {
+      input: { id_token: state.authenticationTokens.idToken.value }
+    },
+    context: {
+      headers: headers
+    },
+    errorPolicy: 'all',
+    fetchPolicy: 'no-cache'
+  })
 
+  if (result?.data?.log_in) {
     setAuthorizationTokens(result.data.log_in)
     postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
-  } catch {
-    postToConnections({type: 'authentication-expiration'})
-  }
 
-    authorizationInProgress = false
+  } else {
+    postToConnections({type: 'authentication-expiration'})
+
+  }
+  authorizationInProgress = false
 }
 
 const switchTenant = async payload => {

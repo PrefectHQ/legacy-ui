@@ -242,6 +242,7 @@ if (TokenWorker?.port) {
   TokenWorker.port.onmessageerror = e => {
     // eslint-disable-next-line no-console
     console.log('Error message received from Token Worker', e)
+    LogRocket.captureException(e)
   }
 
   TokenWorker.port.start()
