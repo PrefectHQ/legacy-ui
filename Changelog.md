@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
+- take usage tile off dashboard and add to account page - [#782](https://github.com/PrefectHQ/ui/pull/782)
 
 ### Bugfixes
 
