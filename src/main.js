@@ -393,7 +393,7 @@ const initialize = async () => {
           await new Promise(res => {
             setTimeout(() => {
               res()
-            }, 500)
+            }, 1500)
           })
         }
       }
