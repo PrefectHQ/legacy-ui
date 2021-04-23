@@ -114,18 +114,19 @@ const actions = {
 
       commit('isAuthorizingUser', true)
 
-      const user = await authClient.getUser()
-      if (!user) {
-        // eslint-disable-next-line no-console
-        console.log('No user was returned from Okta', user)
-        LogRocket.captureException(user)
-      } else {
+      try {
+        const user = await authClient.getUser()
+
         commit('user', user)
         dispatch('reportUserToLogRocket')
 
         commit('user/setOktaUser', user, {
           root: true
         })
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('No user was returned from Okta', e)
+        LogRocket.captureException(e)
       }
 
       const tokens = await authorize()
