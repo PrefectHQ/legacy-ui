@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
+- Adds animated hint for users creating new automations - [#784](https://github.com/PrefectHQ/ui/pull/784)
 
 ### Bugfixes
 
