@@ -79,7 +79,7 @@ const actions = {
             tokens: await authClient.tokenManager.getTokens()
           }
 
-      const expiration = tokens?.idToken.expiresAt * 1000
+      const expiration = tokens?.idToken?.expiresAt * 1000
 
       if (
         tokens?.accessToken &&
