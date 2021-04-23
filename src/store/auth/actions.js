@@ -96,40 +96,45 @@ const actions = {
     } catch (e) {
       // eslint-disable-next-line
       console.error(e)
+      LogRocket.captureException(e)
       commit('error', e)
     }
 
     return getters['isAuthenticated']
   },
   async authorize({ commit, getters, dispatch }) {
-    if (!getters['isAuthenticated']) return
+    try {
+      if (!getters['isAuthenticated']) return
 
-    commit('isAuthorizingUser', true)
+      commit('isAuthorizingUser', true)
 
-    const user = await authClient.getUser()
-    if (!user) return
+      const user = await authClient.getUser()
+      if (!user) return
 
-    commit('user', user)
-    dispatch('reportUserToLogRocket')
+      commit('user', user)
+      dispatch('reportUserToLogRocket')
 
-    commit('user/setOktaUser', user, {
-      root: true
-    })
-    const tokens = await authorize()
+      commit('user/setOktaUser', user, {
+        root: true
+      })
+      const tokens = await authorize()
 
-    if (tokens) {
-      // Update authorization credentials if user is authorized
-      await dispatch('updateAuthorizationTokens', tokens)
-    } else {
-      // Unset authorization if user is not authorized
-      commit('unsetAuthorizationToken')
-      commit('unsetAuthorizationTokenExpiry')
-      commit('unsetRefreshToken')
-      commit('unsetRefreshTokenExpiry')
+      if (tokens) {
+        // Update authorization credentials if user is authorized
+        await dispatch('updateAuthorizationTokens', tokens)
+      } else {
+        // Unset authorization if user is not authorized
+        commit('unsetAuthorizationToken')
+        commit('unsetAuthorizationTokenExpiry')
+        commit('unsetRefreshToken')
+        commit('unsetRefreshTokenExpiry')
+      }
+
+      commit('isAuthorizingUser', false)
+      return getters['authorizationToken']
+    } catch (e) {
+      LogRocket.captureException(e)
     }
-
-    commit('isAuthorizingUser', false)
-    return getters['authorizationToken']
   },
   async updateAuthenticationTokens({ commit }, payload) {
     if (!payload.idToken || !payload.accessToken) return
