@@ -235,6 +235,10 @@ if (TokenWorker?.port) {
       case 'logout':
         store.dispatch('auth/logout', false)
         break
+      case 'error':
+      default:
+        LogRocket.captureException(payload)
+        break
     }
   }
 
