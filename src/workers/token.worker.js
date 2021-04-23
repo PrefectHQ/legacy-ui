@@ -180,6 +180,7 @@ const getAuthorizationTokens = async () => {
   authorizationInProgress = true
 
   try {
+    console.log(state.authenticationTokens)
     const result = await client.mutate({
       mutation: require('@/graphql/log-in.gql'),
       variables: {

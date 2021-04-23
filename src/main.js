@@ -383,6 +383,7 @@ const initialize = async () => {
         } catch (e) {
           // eslint-disable-next-line no-console
           console.log('Error in setup', e)
+          LogRocket.captureException(e)
 
           await new Promise(res => {
             setTimeout(() => {
