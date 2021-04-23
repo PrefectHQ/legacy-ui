@@ -79,7 +79,13 @@ const actions = {
             tokens: await authClient.tokenManager.getTokens()
           }
 
-      if (tokens?.accessToken && tokens?.idToken) {
+      const expiration = tokens?.idToken?.expiresAt * 1000
+
+      if (
+        tokens?.accessToken &&
+        tokens?.idToken &&
+        new Date().getTime() < expiration
+      ) {
         TokenWorker.port.postMessage({
           type: 'authentication',
           payload: tokens
@@ -91,46 +97,57 @@ const actions = {
           dispatch('authenticate')
         })
       } else {
-        commit('isAuthenticated', false)
+        authClient.tokenManager.clear()
         await dispatch('login')
       }
     } catch (e) {
       // eslint-disable-next-line
       console.error(e)
+      LogRocket.captureException(e)
       commit('error', e)
     }
 
     return getters['isAuthenticated']
   },
   async authorize({ commit, getters, dispatch }) {
-    if (!getters['isAuthenticated']) return
+    try {
+      if (!getters['isAuthenticated']) return
 
-    commit('isAuthorizingUser', true)
+      commit('isAuthorizingUser', true)
 
-    const user = await authClient.getUser()
-    if (!user) return
+      try {
+        const user = await authClient.getUser()
 
-    commit('user', user)
-    dispatch('reportUserToLogRocket')
+        commit('user', user)
+        dispatch('reportUserToLogRocket')
 
-    commit('user/setOktaUser', user, {
-      root: true
-    })
-    const tokens = await authorize()
+        commit('user/setOktaUser', user, {
+          root: true
+        })
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('No user was returned from Okta', e)
+        LogRocket.captureException(e)
+      }
 
-    if (tokens) {
-      // Update authorization credentials if user is authorized
-      await dispatch('updateAuthorizationTokens', tokens)
-    } else {
-      // Unset authorization if user is not authorized
-      commit('unsetAuthorizationToken')
-      commit('unsetAuthorizationTokenExpiry')
-      commit('unsetRefreshToken')
-      commit('unsetRefreshTokenExpiry')
+      const tokens = await authorize()
+
+      if (tokens) {
+        // Update authorization credentials if user is authorized
+        await dispatch('updateAuthorizationTokens', tokens)
+      } else {
+        // Unset authorization if user is not authorized
+        commit('unsetAuthorizationToken')
+        commit('unsetAuthorizationTokenExpiry')
+        commit('unsetRefreshToken')
+        commit('unsetRefreshTokenExpiry')
+      }
+
+      commit('isAuthorizingUser', false)
+      return getters['authorizationToken']
+    } catch (e) {
+      LogRocket.captureException(e)
     }
-
-    commit('isAuthorizingUser', false)
-    return getters['authorizationToken']
   },
   async updateAuthenticationTokens({ commit }, payload) {
     if (!payload.idToken || !payload.accessToken) return
@@ -141,10 +158,9 @@ const actions = {
     authClient.tokenManager.setTokens(payload)
 
     commit('accessToken', accessToken.value)
-    commit('accessTokenExpiry', accessToken.expiresAt)
+    commit('accessTokenExpiry', accessToken.expiresAt * 1000) // Okta returns token expiration in seconds
     commit('idToken', idToken.value)
     commit('idTokenExpiry', idToken.expiresAt * 1000) // Okta returns token expiration in seconds
-    commit('isAuthenticated', true)
   },
   async updateAuthorizationTokens({ commit }, payload) {
     if (!payload.access_token || !payload.refresh_token) return
@@ -172,7 +188,6 @@ const actions = {
       })
     }
 
-    commit('isAuthenticated', false)
     commit('unsetIdToken')
     commit('unsetAccessToken')
     commit('unsetRedirectRoute')

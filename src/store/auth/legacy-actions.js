@@ -64,11 +64,9 @@ const actions = {
 
       if (tokens?.accessToken && tokens?.idToken) {
         dispatch('commitTokens', tokens)
-        commit('isAuthenticated', true)
       } else if (isAuthenticated) {
         await dispatch('updateAuthentication')
       } else {
-        commit('isAuthenticated', false)
         await dispatch('login')
       }
     } catch (e) {
@@ -116,10 +114,10 @@ const actions = {
     authClient.tokenManager.setTokens(tokens)
 
     commit('accessToken', accessToken.value)
-    commit('accessTokenExpiry', accessToken.expiresAt)
+    commit('accessTokenExpiry', accessToken.expiresAt * 1000) // Okta returns token expiration in seconds
 
     commit('idToken', idToken.value)
-    commit('idTokenExpiry', idToken.expiresAt)
+    commit('idTokenExpiry', idToken.expiresAt * 1000) // Okta returns token expiration in seconds
   },
   async refreshAuthorization(state) {
     if (state.getters['isRefreshingAuthorization']) return
@@ -158,10 +156,8 @@ const actions = {
       const accessToken = await authClient.tokenManager.get('accessToken')
 
       if (!idToken || !accessToken) {
-        commit('isAuthenticated', false)
         await dispatch('login')
       } else {
-        commit('isAuthenticated', true)
         dispatch('commitTokens', {
           idToken: idToken,
           accessToken: accessToken
@@ -183,7 +179,6 @@ const actions = {
     commit('isLoggingInUser', false)
   },
   async logout({ commit }) {
-    commit('isAuthenticated', false)
     commit('unsetIdToken')
     commit('unsetAccessToken')
     commit('unsetRedirectRoute')

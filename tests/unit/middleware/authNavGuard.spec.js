@@ -9,7 +9,7 @@ jest.mock('@/main', () => {
 import sinon from 'sinon'
 import store from '@/store'
 import authNavGuard from '@/middleware/authNavGuard'
-import { MOCK_AUTHORIZATION_TOKEN } from '../store/mockTokens'
+import { MOCK_AUTHORIZATION_TOKEN, MOCK_ID_TOKEN } from '../store/mockTokens'
 
 describe('Auth Nav Guard', () => {
   let dispatchStub
@@ -21,7 +21,10 @@ describe('Auth Nav Guard', () => {
   afterEach(() => {
     store.dispatch.restore()
     store.commit('user/unsetUser')
-    store.commit('auth/isAuthenticated', false)
+    store.commit('auth/unsetIdToken')
+    store.commit('auth/unsetIdTokenExpiry')
+    store.commit('auth/unsetAccessToken')
+    store.commit('auth/unsetAccessTokenExpiry')
     store.commit('auth/error', false)
     store.commit('auth/unsetAuthorizationToken')
     store.commit('auth/unsetAuthorizationTokenExpiry')
@@ -44,7 +47,8 @@ describe('Auth Nav Guard', () => {
       // Having trouble mocking 'authenticate' here to see if it's called so mocking the result of that call with dispatchStub and checking that 'authenticate' is passed by checking that the instructions passed in dispatchStub are followed
       dispatchStub.withArgs('auth/authorize').callsFake()
       dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
-        store.commit('auth/isAuthenticated', true)
+        store.commit('auth/idToken', MOCK_ID_TOKEN)
+        store.commit('auth/idTokenExpiry', new Date().getTime() + 100000000)
       })
       expect(store.getters['auth/isAuthorized']).toBe(false)
       expect(store.getters['auth/isAuthenticated']).toBe(false)
@@ -64,7 +68,8 @@ describe('Auth Nav Guard', () => {
         store.commit('auth/authorizationTokenExpiry', expiry)
       })
       dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
-        store.commit('auth/isAuthenticated', true)
+        store.commit('auth/idToken', MOCK_ID_TOKEN)
+        store.commit('auth/idTokenExpiry', new Date().getTime() + 100000000)
       })
       expect(store.getters['auth/isAuthorized']).toBe(false)
       expect(store.getters['auth/isAuthenticated']).toBe(false)
@@ -79,7 +84,8 @@ describe('Auth Nav Guard', () => {
   })
 
   it('calls the getUser route', async () => {
-    store.commit('auth/isAuthenticated', true)
+    store.commit('auth/idToken', MOCK_ID_TOKEN)
+    store.commit('auth/idTokenExpiry', new Date().getTime() + 100000000)
     store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     store.commit(
       'auth/authorizationTokenExpiry',
@@ -97,7 +103,8 @@ describe('Auth Nav Guard', () => {
 
   it('calls next when the user is authorized, authenticated, and set', () => {
     store.commit('user/user', { name: 'test_user' })
-    store.commit('auth/isAuthenticated', true)
+    store.commit('auth/idToken', MOCK_ID_TOKEN)
+    store.commit('auth/idTokenExpiry', new Date().getTime() + 100000000)
     store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     store.commit(
       'auth/authorizationTokenExpiry',
@@ -113,7 +120,8 @@ describe('Auth Nav Guard', () => {
 
   it('aborts navigation when the user cannot be authenticated', async () => {
     dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
-      store.commit('auth/isAuthenticated', false)
+      store.commit('auth/unsetIdToken')
+      store.commit('auth/unsetIdTokenExpiry')
     })
     dispatchStub.withArgs('auth/authorize').callsFake(async () => {
       store.commit(
@@ -130,7 +138,8 @@ describe('Auth Nav Guard', () => {
 
   it('redirects to the access-denied page when the user cannot be authenticated and an access_denied error is present', async () => {
     dispatchStub.withArgs('auth/authenticate').callsFake(async () => {
-      store.commit('auth/isAuthenticated', false)
+      store.commit('auth/unsetIdToken')
+      store.commit('auth/unsetIdTokenExpiry')
     })
     dispatchStub.withArgs('auth/authorize').callsFake(async () => {
       store.commit(
@@ -146,7 +155,8 @@ describe('Auth Nav Guard', () => {
   })
 
   it('aborts navigation if authorization fails', async () => {
-    store.commit('auth/isAuthenticated', true)
+    store.commit('auth/idToken', MOCK_ID_TOKEN)
+    store.commit('auth/idTokenExpiry', new Date().getTime() + 100000000)
     dispatchStub.withArgs('auth/authorize').resolves()
     const next = jest.fn()
     expect(store.getters['auth/isAuthorized']).toBe(false)
@@ -159,7 +169,7 @@ describe('Auth Nav Guard', () => {
 
   it('calls next with a redirect route, if one is present in the store', async () => {
     let redirectRoute = '/some/path'
-    store.commit('auth/isAuthenticated', true)
+    store.commit('auth/idTokenExpiry', new Date().getTime() + 100000000)
     store.commit('auth/authorizationToken', MOCK_AUTHORIZATION_TOKEN)
     store.commit(
       'auth/authorizationTokenExpiry',
