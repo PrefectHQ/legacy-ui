@@ -417,15 +417,18 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if ('tenant' in to?.params && !to?.params?.tenant) {
+  if (
+    'tenant' in to?.params &&
+    !to?.params?.tenant &&
+    store.getters['tenant/tenant']?.slug
+  ) {
     return next({
       name: to.name,
       replace: true,
-      params: { ...to.params, tenant: store.getters['tenant/tenant']?.slug },
+      params: { ...to.params, tenant: store.getters['tenant/tenant'].slug },
       query: to.query
     })
-  }
-  next()
+  } else next()
 })
 
 export default router
