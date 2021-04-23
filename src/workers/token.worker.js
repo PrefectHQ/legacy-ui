@@ -106,8 +106,9 @@ const setAuthenticationTokens = tokens => {
 
     authenticationTimeout = setTimeout(() => {
       postToConnections({ type: 'authentication-expiration' })
-    }, timeout)
+    }, timeout || 15000)
   } catch {
+    clearTimeout(authenticationTimeout)
     postToConnections({ type: 'authentication-expiration' })
   }
 }
@@ -123,8 +124,9 @@ const setAuthorizationTokens = tokens => {
 
     authorizationTimeout = setTimeout(() => {
       postToConnections({ type: 'authorization-expiration' })
-    }, timeout)
+    }, timeout || 15000)
   } catch (e) {
+    clearTimeout(authorizationTimeout)
     postToConnections({ type: 'error', payload: e })
   }
 }

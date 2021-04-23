@@ -79,7 +79,13 @@ const actions = {
             tokens: await authClient.tokenManager.getTokens()
           }
 
-      if (tokens?.accessToken && tokens?.idToken) {
+      const expiration = tokens?.idToken?.expiresAt * 1000
+
+      if (
+        tokens?.accessToken &&
+        tokens?.idToken &&
+        new Date().getTime() < expiration
+      ) {
         TokenWorker.port.postMessage({
           type: 'authentication',
           payload: tokens
@@ -91,6 +97,7 @@ const actions = {
           dispatch('authenticate')
         })
       } else {
+        authClient.tokenManager.clear()
         await dispatch('login')
       }
     } catch (e) {
@@ -108,15 +115,21 @@ const actions = {
 
       commit('isAuthorizingUser', true)
 
-      const user = await authClient.getUser()
-      if (!user) return
+      try {
+        const user = await authClient.getUser()
 
-      commit('user', user)
-      dispatch('reportUserToLogRocket')
+        commit('user', user)
+        dispatch('reportUserToLogRocket')
 
-      commit('user/setOktaUser', user, {
-        root: true
-      })
+        commit('user/setOktaUser', user, {
+          root: true
+        })
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('No user was returned from Okta', e)
+        LogRocket.captureException(e)
+      }
+
       const tokens = await authorize()
 
       if (tokens) {
