@@ -1,6 +1,3 @@
-/* eslint-disable */
-// prettier-ignore
-// eslint disable is required to get around bad babel rules for workers
 import { ApolloClient } from '@apollo/client/core'
 import { HttpLink, from } from '@apollo/client'
 import { onError } from 'apollo-link-error'
@@ -57,7 +54,7 @@ const errorAfterware = onError(
     if (response) {
       response.errors = null
     }
-    
+
     // Can return Observable.of returned from error link to supress errors
     //  otherwise return forward(operation)
     // for a single retry of the failure
@@ -66,7 +63,10 @@ const errorAfterware = onError(
   }
 )
 
-const link = from([errorAfterware, new HttpLink({uri: process.env.VUE_APP_CLOUD_URL})])
+const link = from([
+  errorAfterware,
+  new HttpLink({ uri: process.env.VUE_APP_CLOUD_URL })
+])
 
 function isExpired(expiry) {
   return new Date() > new Date(expiry)
@@ -83,14 +83,17 @@ const options = {
   }
 }
 
-
 const headers = {
   'X-PREFECT-UI': true,
   'X-Backend': 'cloud'
 }
 
 // // Create apollo client
-const client = new ApolloClient({name: 'token-worker-client', version: '1.3', ...options})
+const client = new ApolloClient({
+  name: 'token-worker-client',
+  version: '1.3',
+  ...options
+})
 
 let authenticationTimeout = null
 const setAuthenticationTokens = tokens => {
@@ -102,14 +105,13 @@ const setAuthenticationTokens = tokens => {
     const timeout = state.authenticationTokenExpiration - Date.now()
 
     authenticationTimeout = setTimeout(() => {
-      postToConnections({type: 'authentication-expiration'})
-    }, timeout)
+      postToConnections({ type: 'authentication-expiration' })
+    }, timeout || 15000)
   } catch {
-    postToConnections({type: 'authentication-expiration'})
+    clearTimeout(authenticationTimeout)
+    postToConnections({ type: 'authentication-expiration' })
   }
-
 }
-
 
 let authorizationTimeout = null
 const setAuthorizationTokens = tokens => {
@@ -121,59 +123,62 @@ const setAuthorizationTokens = tokens => {
     const timeout = state.authorizationTokenExpiration - Date.now()
 
     authorizationTimeout = setTimeout(() => {
-      postToConnections({type: 'authorization-expiration'})
-    }, timeout)
-
-  } catch {
-    postToConnections({type: 'authorization-expiration'})
+      postToConnections({ type: 'authorization-expiration' })
+    }, timeout || 15000)
+  } catch (e) {
+    clearTimeout(authorizationTimeout)
+    postToConnections({ type: 'error', payload: e })
   }
-
-
 }
 
 let restartInterval = null
 const restartAuthorizationInterval = () => {
-  clearTimeout(restartInterval)
+  try {
+    clearTimeout(restartInterval)
 
-  const id = state.tenantId
+    const id = state.tenantId
 
-  const refreshTokens = async () => {
-    if (state.authorizationTokens) {
-      const result = await client.mutate({
-        mutation: require('@/graphql/refresh-token.gql'),
-        variables: {
-          input: { access_token: state.authorizationTokens.access_token }
-        },
-        context: {
-          headers: {
-            ...headers,
-            authorization: `Bearer ${state.authorizationTokens.refresh_token}`
-          }
-        },
-        fetchPolicy: 'no-cache'
-      })
+    const refreshTokens = async () => {
+      if (state.authorizationTokens) {
+        const result = await client.mutate({
+          mutation: require('@/graphql/refresh-token.gql'),
+          variables: {
+            input: { access_token: state.authorizationTokens.access_token }
+          },
+          context: {
+            headers: {
+              ...headers,
+              authorization: `Bearer ${state.authorizationTokens.refresh_token}`
+            }
+          },
+          fetchPolicy: 'no-cache'
+        })
 
+        // If the tenant id has changed since this
+        // method was instantiated, we don't broadcast token
+        // refresh updates
+        if (state.tenantId !== id) return
+        setAuthorizationTokens(result.data.refresh_token)
+        postToConnections({
+          type: 'authorization',
+          payload: result.data.refresh_token
+        })
+      }
 
-      // If the tenant id has changed since this
-      // method was instantiated, we don't broadcast token
-      // refresh updates
-      if (state.tenantId !== id) return
-      setAuthorizationTokens(result.data.refresh_token)
-      postToConnections({
-        type: 'authorization',
-        payload: result.data.refresh_token
-      })
-
+      const timeout =
+        Math.floor((state.authorizationTokenExpiration - new Date()) / 2) ||
+        5000
+      restartInterval = setTimeout(refreshTokens, timeout)
     }
 
-    const timeout = Math.floor((state.authorizationTokenExpiration - new Date()) / 2) || 5000
-    restartInterval = setTimeout(refreshTokens, timeout)
+    refreshTokens()
+  } catch (e) {
+    postToConnections({
+      type: 'error',
+      payload: e
+    })
   }
-
-  refreshTokens()
 }
-
-
 
 let authorizationInProgress = false
 const getAuthorizationTokens = async () => {
@@ -192,13 +197,22 @@ const getAuthorizationTokens = async () => {
       fetchPolicy: 'no-cache'
     })
 
-    setAuthorizationTokens(result.data.log_in)
-    postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
-  } catch {
-    postToConnections({type: 'authentication-expiration'})
+    if (result?.data?.log_in) {
+      setAuthorizationTokens(result.data.log_in)
+      postToChannelPorts({
+        type: 'authorization',
+        payload: state.authorizationTokens
+      })
+    } else {
+      postToConnections({ type: 'authentication-expiration' })
+    }
+  } catch (e) {
+    postToConnections({
+      type: 'error',
+      payload: e
+    })
   }
-
-    authorizationInProgress = false
+  authorizationInProgress = false
 }
 
 const switchTenant = async payload => {
@@ -206,21 +220,24 @@ const switchTenant = async payload => {
 
   const result = await client.mutate({
     mutation: require('@/graphql/Tenant/tenant-token.gql'),
-      variables: {
-        tenantId: payload.tenantId
-      },
-      context: {
-        headers: {
-          ...headers,
-          authorization: `Bearer ${state.authorizationTokens.access_token}`
-        }
-      },
-      fetchPolicy: 'no-cache'
+    variables: {
+      tenantId: payload.tenantId
+    },
+    context: {
+      headers: {
+        ...headers,
+        authorization: `Bearer ${state.authorizationTokens.access_token}`
+      }
+    },
+    fetchPolicy: 'no-cache'
   })
-  
+
   setAuthorizationTokens(result.data.switch_tenant)
-  postToChannelPorts({type: 'authorization', payload: state.authorizationTokens})
-  postToConnections({type: 'switch-tenant', payload: payload})
+  postToChannelPorts({
+    type: 'authorization',
+    payload: state.authorizationTokens
+  })
+  postToConnections({ type: 'switch-tenant', payload: payload })
   restartAuthorizationInterval()
 }
 
@@ -240,11 +257,18 @@ const postToChannelPorts = payload => {
 const connect = c => {
   const port = c.ports[0]
   ports.push(port)
-  
-  // Immediately post tokens to the connection, if tokens are already in the store
-  if (state.authenticationTokens) port.postMessage({type: 'authentication', payload: state.authenticationTokens})
-  if (state.authorizationTokens) port.postMessage({type: 'authorization', payload: state.authorizationTokens})
 
+  // Immediately post tokens to the connection, if tokens are already in the store
+  if (state.authenticationTokens)
+    port.postMessage({
+      type: 'authentication',
+      payload: state.authenticationTokens
+    })
+  if (state.authorizationTokens)
+    port.postMessage({
+      type: 'authorization',
+      payload: state.authorizationTokens
+    })
 
   port.onmessage = e => {
     const type = e.data?.type
@@ -254,18 +278,25 @@ const connect = c => {
     // When a connection sends new authentication tokens
     // update the worker state and publish the new tokens to all connections
     if (type == 'authentication') {
-        setAuthenticationTokens(payload)
-        postToConnections(e.data)
-        restartAuthorizationInterval()
+      setAuthenticationTokens(payload)
+      postToConnections(e.data)
+      restartAuthorizationInterval()
     }
 
     if (type == 'authorization') {
       // When a connection sends a request for authorization
       // we send the stored tokens back immediately, if they exist, via the attached message port;
-      if (state.authorizationTokens && !isExpired(state.authorizationTokenExpiration)) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
+      if (
+        state.authorizationTokens &&
+        !isExpired(state.authorizationTokenExpiration)
+      )
+        channelPort.postMessage({
+          type: 'authorization',
+          payload: state.authorizationTokens
+        })
       else {
-      // otherwise we start the authorization process, which will 
-      // post the retrieved tokens to all channelPorts
+        // otherwise we start the authorization process, which will
+        // post the retrieved tokens to all channelPorts
         channelPorts.push(channelPort)
         if (!authorizationInProgress) getAuthorizationTokens()
       }
@@ -274,7 +305,11 @@ const connect = c => {
     if (type == 'switch-tenant') {
       // Allows swapping tokens by a payload tenant id
       // and propagates change to all connections if the switch call is new
-      if (state.tenantId == payload.tenantId) channelPort.postMessage({type: 'authorization', payload: state.authorizationTokens})
+      if (state.tenantId == payload.tenantId)
+        channelPort.postMessage({
+          type: 'authorization',
+          payload: state.authorizationTokens
+        })
       else {
         channelPorts.push(channelPort)
         switchTenant(payload)
@@ -296,4 +331,3 @@ const connect = c => {
 
 self.onconnect = connect
 onconnect = connect
-
