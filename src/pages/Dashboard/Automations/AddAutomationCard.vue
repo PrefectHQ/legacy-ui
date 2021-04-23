@@ -290,7 +290,12 @@ export default {
       return actionTypes.find(a => a.actionType == type)?.icon
     },
     addHint() {
+      clearTimeout(this.animationTimeout)
       this.animated = true
+
+      this.animationTimeout = setTimeout(() => {
+        this.animated = false
+      }, 1500)
     },
     buttonColor(selectedStep, otherStep) {
       // const stepComplete = this.steps[selectedStep]
@@ -327,6 +332,12 @@ export default {
       return this[`stateGroup${group}`]
     },
     switchStep(selectedStep) {
+      if (this.step.name == selectedStep) {
+        this.addHint()
+      } else {
+        clearTimeout(this.animationTimeout)
+      }
+
       this.previousStep = this.step.name
 
       if (this.step.name === 'openDuration')
@@ -731,7 +742,7 @@ export default {
           </v-btn>
 
           <v-btn
-            v-if="agentOrFlow === 'this'"
+            v-else-if="agentOrFlow === 'this'"
             :style="{ 'text-transform': 'none', 'min-width': '0px' }"
             color="accentPink"
             class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
@@ -883,11 +894,10 @@ export default {
                   agentOrFlow === item.type ? 'accentPink' : 'utilGrayMid'
                 "
                 class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
-                :class="{ grow: animated }"
+                :class="{ flash: animated }"
                 :disabled="!hasPermission(item.permission)"
                 :input-value="agentOrFlow === item.type"
                 @click="selectAgentOrFlow(item.type)"
-                @animationend="animated = false"
               >
                 <v-icon class="mr-3">
                   {{ item.type === 'flow' ? 'pi-flow' : 'pi-agent' }}
@@ -941,6 +951,7 @@ export default {
                 small
                 elevation="0"
                 color="primary"
+                :class="{ flash: animated }"
                 @click="showAgentConfigForm = true"
               >
                 <v-icon small class="mr-2">fa-plus</v-icon>
@@ -956,7 +967,8 @@ export default {
                   :class="{
                     active:
                       selectedAgentConfig &&
-                      selectedAgentConfig.id === config.id
+                      selectedAgentConfig.id === config.id,
+                    flash: animated
                   }"
                   @click="selectAgentConfig(config)"
                 >
@@ -1048,7 +1060,7 @@ export default {
                   <div
                     v-ripple
                     class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer"
-                    :class="{ active: includesFlow(item) }"
+                    :class="{ active: includesFlow(item), flash: animated }"
                     @click="selectFlow(item)"
                   >
                     <div style="width: auto;" class="text-body-1 text-truncate">
@@ -1105,6 +1117,7 @@ export default {
                     ? 'accentPink'
                     : 'utilGrayMid'
                 "
+                :class="{ flash: animated }"
                 class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
                 :input-value="flowEventType.name === item.name"
                 :disabled="!hasPermission(item.permission)"
@@ -1155,8 +1168,10 @@ export default {
               v-model="seconds"
               type="number"
               :rules="[rules.required, rules.notNull]"
+              :class="{ flash: animated }"
               persistent-hint
               outlined
+              hide-details
               @keydown.enter="closeSeconds"
             ></v-text-field>
           </v-col>
@@ -1201,7 +1216,7 @@ export default {
               : `Select ${item} and all connected states`
           "
           class="mr-2"
-          :class="{ 'white--text': dynamicStateGroup(item) }"
+          :class="{ 'white--text': dynamicStateGroup(item), flash: animated }"
           @click="selectStateGroup(item)"
         >
           {{ item }}
@@ -1213,7 +1228,7 @@ export default {
             :key="item"
             v-ripple
             class="d-inline-block chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1"
-            :class="{ active: chosenStates.includes(item) }"
+            :class="{ active: chosenStates.includes(item), flash: animated }"
             @click="selectStates(item)"
           >
             {{ item }}
@@ -1291,7 +1306,8 @@ export default {
               class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1 d-inline-block"
               :class="{
                 active: chosenAction && chosenAction.id === item.id,
-                disabled: !hasPermission('feature:api-action')
+                disabled: !hasPermission('feature:api-action'),
+                flash: animated
               }"
               @click="selectAction(item)"
             >
@@ -1314,7 +1330,10 @@ export default {
               :key="item.id"
               v-ripple
               class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1 d-inline-block"
-              :class="{ active: chosenAction && chosenAction.id === item.id }"
+              :class="{
+                active: chosenAction && chosenAction.id === item.id,
+                flash: animated
+              }"
               @click="selectAction(item)"
             >
               <v-icon small class="mr-2">{{
@@ -1374,6 +1393,7 @@ export default {
 
 <style lang="scss" scoped>
 .chip-bigger {
+  border-radius: 5px;
   height: 60px;
   position: relative;
   transition: all 50ms;
@@ -1404,6 +1424,7 @@ export default {
 }
 
 .chip-small {
+  border-radius: 5px;
   max-width: fit-content;
   position: relative;
   transition: all 50ms;
@@ -1450,19 +1471,24 @@ export default {
   }
 }
 
-.grow {
-  animation: grow 1s;
+.flash {
+  &:not(:disabled):not(.disabled) {
+    animation: flash 1.5s;
+  }
 }
 
-@keyframes grow {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.15);
-  }
+@keyframes flash {
+  0%,
+  50%,
   100% {
-    transform: scale(1);
+    background-color: transparent;
+    border-color: currentColor !important;
+  }
+
+  25%,
+  75% {
+    background-color: rgba(59, 141, 255, 0.2);
+    border-color: var(--v-primary-base) !important;
   }
 }
 </style>
