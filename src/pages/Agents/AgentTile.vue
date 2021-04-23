@@ -195,7 +195,7 @@ export default {
     class="agent-card px-2 pb-3"
     style="overflow-y: auto;"
     :tile="showAll"
-    height="380px"
+    :height="showAll ? '380px' : '250px'"
   >
     <CardTitle
       :title="name"

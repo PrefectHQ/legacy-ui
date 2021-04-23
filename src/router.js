@@ -224,15 +224,13 @@ export const routes = [
     name: 'agents',
     path: '/:tenant?/agents',
     component: () =>
-      import(/*webpackChunkName: "calendar" */ '@/pages/Agents/Agents'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/*webpackChunkName: "calendar" */ '@/pages/Agents/Agents')
   },
   {
     name: 'agent',
     path: '/:tenant?/agent/:id',
     component: () =>
-      import(/* webpackChunkName: "flow" */ '@/pages/Agents/AgentPage.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/* webpackChunkName: "flow" */ '@/pages/Agents/AgentPage.vue')
   },
   // --------------------------- //
   //

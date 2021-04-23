@@ -143,7 +143,7 @@ export default {
       return 'CycleUsageTile'
     },
     includeProjects() {
-      return this.tab != 'automations'
+      return this.tab != 'automations' && this.tab != 'calendar'
     }
   },
   watch: {
