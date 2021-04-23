@@ -216,7 +216,7 @@ export default {
                 <UsageCycle />
               </v-skeleton-loader>
             </v-col>
-            <v-col cols="12">
+            <v-col v-if="usageTile" cols="12">
               <v-skeleton-loader
                 v-if="usageTile"
                 :loading="loadedTiles < 6 || usageTile == 'loading'"

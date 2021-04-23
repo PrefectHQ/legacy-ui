@@ -145,10 +145,9 @@ export default {
       >
     </v-card-text>
     <v-spacer />
-    <v-card-actions class="mt-auto">
+    <v-card-actions v-if="planType === 'FREE_2021'" class="mt-auto">
       <v-spacer />
       <v-btn
-        v-if="planType === 'FREE_2021'"
         color="accentPink"
         depressed
         dark
