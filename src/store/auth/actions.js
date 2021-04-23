@@ -97,6 +97,7 @@ const actions = {
           dispatch('authenticate')
         })
       } else {
+        authClient.tokenManager.clear()
         await dispatch('login')
       }
     } catch (e) {
