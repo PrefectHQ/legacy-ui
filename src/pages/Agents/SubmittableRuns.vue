@@ -153,7 +153,6 @@ export default {
     addMatchingflowRun(flowRun) {
       if (!this.submittable.filter(item => item.id === flowRun.id).length)
         this.submittable.push(flowRun)
-      console.log('submittable', this.submittable)
     },
     flowRunName(flowRun) {
       return flowRun?.name
