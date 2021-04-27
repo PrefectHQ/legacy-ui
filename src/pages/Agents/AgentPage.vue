@@ -43,9 +43,6 @@ export default {
         <span>
           {{ agentId }}
         </span>
-        <!-- <span v-else>
-          <v-skeleton-loader type="heading" tile></v-skeleton-loader>
-        </span> -->
       </span>
     </SubPageNav>
 

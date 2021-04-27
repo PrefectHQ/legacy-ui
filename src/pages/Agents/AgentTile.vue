@@ -192,10 +192,10 @@ export default {
 <template>
   <v-card
     :disabled="agent.isDeleting || isDeleting"
-    class="agent-card px-2 pb-3"
+    class="agent-card px-2"
     style="overflow-y: auto;"
     :tile="showAll"
-    :height="showAll ? '380px' : '250px'"
+    :height="showAll ? '380px' : '210px'"
   >
     <CardTitle
       :title="name"
@@ -361,7 +361,7 @@ export default {
               Labels
             </v-list-item-title>
             <v-sheet
-              :height="showAll ? '80px' : '50px'"
+              :height="showAll ? '80px' : '30px'"
               :style="{ overflow: 'auto' }"
             >
               <Label
