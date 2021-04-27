@@ -8,6 +8,7 @@
 "regular": "foo"
 }]
 */
+
 import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -35,34 +36,44 @@ export default {
           id: 3,
           key: 'dev.config.cpu',
           value: '{a: 1, b: 2}'
+        },
+        {
+          id: 4,
+          key: 'prod.config.ram2',
+          value: '9GB'
         }
       ],
-      search: null,
       expandAll: false,
+      search: null,
       json: false,
       secretModifyDialog: false
     }
   },
   computed: {
     queryData() {
-      // return items.map(item => {
-      //   return item.key
-      //     .split('.')
-      //     .reduceRight(
-      //       (o, x) => ({ id: item.id, name: [x][0], children: [o] }),
-      //       {}
-      //     )
+      // return this.items.map(item => {
+      //   return item.key.split('.').reduceRight(
+      //     (o, x) => ({
+      // name: [x][0],
+      // value: item.value,
+      // children: Object.keys(o).length === 0 ? [] : [o]
+      //     }),
+      //     {}
+      //   )
       // })
 
+      //NOTE: this will return the value
       return this.items.map(item => {
         return item.key.split('.').reduceRight(
           (o, x) => ({
             name: [x][0],
-            children: Object.keys(o).length === 0 ? [] : [o]
+            children: Object.keys(o).length === 0 ? [{ name: item.value }] : [o]
           }),
           {}
         )
       })
+
+      // return []
     },
     keyNames() {
       return this.items.map(item => item.key.split('.')[0])
@@ -74,6 +85,23 @@ export default {
     },
     addKey() {
       this.secretModifyDialog = true
+    },
+    filter(array, text) {
+      const getNodes = (result, object) => {
+        if (object.name === text) {
+          result.push(object)
+          return result
+        }
+        if (Array.isArray(object.children)) {
+          const nodes = object.children.reduce(getNodes, [])
+          if (nodes.length) result.push({ ...object, nodes })
+        }
+        return result
+      }
+
+      return array.reduce(getNodes, []).length > 0
+        ? array.reduce(getNodes, [])
+        : this.queryData
     }
   }
 }
@@ -82,7 +110,7 @@ export default {
 <template>
   <div>
     <ManagementLayout :show="true" control-show>
-      <template #title>Key/Value </template>
+      <template #title>Key/Value</template>
 
       <template #subtitle>
         Manage your key/value
@@ -106,7 +134,7 @@ export default {
       <v-sheet class="pa-4">
         <v-text-field
           v-model="search"
-          placeholder="Search  for a key"
+          placeholder="Search for a key"
           flat
           outlined
           hide-details
@@ -148,7 +176,13 @@ export default {
         </div>
       </v-sheet>
       <v-card-text class="pa-0">
-        <v-treeview :items="queryData" expand-icon="expand_more" open-on-click>
+        <v-treeview
+          ref="tree"
+          :items="filter(queryData, search)"
+          open-on-click
+          hoverable
+          expand-icon="expand_more"
+        >
           <template v-slot:append="{ item }">
             <v-icon
               v-if="keyNames.includes(item.name)"
@@ -156,7 +190,7 @@ export default {
               fab
               small
               color="primary"
-              @click="addKey"
+              @click="handleEdit(item)"
               >edit</v-icon
             >
             <v-icon
@@ -175,7 +209,7 @@ export default {
     <ConfirmDialog
       v-model="secretModifyDialog"
       :dialog-props="{ 'max-width': '75vh' }"
-      title="Create New Secret"
+      title="Create New Key"
     >
       <v-text-field
         class="_lr-hide mt-6"
@@ -183,7 +217,7 @@ export default {
         single-line
         outlined
         dense
-        placeholder="Secret Name"
+        placeholder="Key Name"
         prepend-inner-icon="vpn_key"
         validate-on-blur
       />
