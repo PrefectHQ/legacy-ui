@@ -489,7 +489,7 @@ export default {
                     </p>
                     <p>
                       Please note this is only guaranteed to work for Agents
-                      running Prefect Core TODO or later.
+                      running Prefect Core 0.14.17 or later.
                     </p>
                   </MenuTooltip>
                 </div>
