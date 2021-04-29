@@ -7,6 +7,7 @@
 - Adds animated hint for users creating new automations - [#784](https://github.com/PrefectHQ/ui/pull/784)
 - Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
 - Take usage tile off dashboard and add to account page - [#782](https://github.com/PrefectHQ/ui/pull/782)
+- Add dropdown to specify logging level on flow runs [#769](https://github.com/PrefectHQ/ui/pull/769)
 
 ### Bugfixes
 
