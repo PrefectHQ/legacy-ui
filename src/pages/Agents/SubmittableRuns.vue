@@ -7,12 +7,14 @@ import ExternalLink from '@/components/ExternalLink'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import Alert from '@/components/Alert'
 
 export default {
   components: {
     CardTitle,
     DurationSpan,
-    ExternalLink
+    ExternalLink,
+    Alert
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin, formatTime],
   props: {
@@ -137,6 +139,11 @@ export default {
       if (this.lateRuns?.length <= 0) {
         this.tab = 'submittable'
       }
+    },
+    flowRuns() {
+      console.log('called')
+      this.submittable = []
+      this.labelsAlign
     }
   },
   beforeDestroy() {
@@ -353,6 +360,15 @@ export default {
           </v-list-item>
         </v-lazy>
       </v-list>
+
+      <Alert
+        v-model="showAlert"
+        :type="alertType"
+        :message="alertMessage"
+        :alert-link="alertLink"
+        :timeout="12000"
+      >
+      </Alert>
 
       <div
         v-if="submittableRuns && submittableRuns.length > 3"
