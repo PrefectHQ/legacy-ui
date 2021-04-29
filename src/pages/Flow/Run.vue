@@ -42,6 +42,17 @@ export default {
     return {
       stickyActions: false,
 
+      // Logging Level
+      loggingLevel: 'DEFAULT',
+      loggingLevels: [
+        { text: 'Default', value: 'DEFAULT' },
+        { text: 'Debug', value: 'DEBUG' },
+        { text: 'Info', value: 'INFO' },
+        { text: 'Warn', value: 'WARN' },
+        { text: 'Error', value: 'ERROR' },
+        { text: 'Critical', value: 'CRITICAL' }
+      ],
+
       // Parameters
       parameters: null,
 
@@ -149,7 +160,9 @@ export default {
 
       try {
         this.loading = true
-
+        // if the user has specified a logging level, pass it
+        // to the run config as an env var
+        this.overrideLoggingEnvironmentVariable()
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
@@ -209,6 +222,14 @@ export default {
         alertMessage: errorMessage,
         alertType: 'error'
       })
+    },
+    overrideLoggingEnvironmentVariable() {
+      if (this.loggingLevel !== 'DEFAULT') {
+        this.runConfig.env = {
+          ...this.runConfig.env,
+          PREFECT__LOGGING__LEVEL: this.loggingLevel
+        }
+      }
     },
     validContext() {
       if (!this.$refs.contextRef) {
@@ -442,6 +463,64 @@ export default {
               @input="handleLabelInput"
             />
           </v-col>
+        </v-row>
+
+        <v-row v-if="showAdvanced" class="my-2 py-8 row-divider" no-gutters>
+          <v-row class="my-2 py-8" no-gutters>
+            <v-col cols="12" md="3">
+              <div
+                class="py-0"
+                :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }"
+              >
+                <div class="text-h5">
+                  Logging Level
+                  <MenuTooltip>
+                    <p>
+                      Logging level for the flow run. If none is specified,
+                      default agent logging level will be used.
+                    </p>
+                    <p>
+                      This can also be controlled by providing an environment
+                      variable, "PREFECT__LOGGING__LEVEL".
+                    </p>
+                    <p>
+                      Any dropdown selection besides "Default" will override the
+                      environment variable.
+                    </p>
+                    <p>
+                      Please note this is only guaranteed to work for Agents
+                      running Prefect Core 0.14.17 or later.
+                    </p>
+                  </MenuTooltip>
+                </div>
+              </div>
+            </v-col>
+
+            <v-col cols="12" md="9" class="mt-n4 mt-md-0">
+              <v-select v-model="loggingLevel" outlined :items="loggingLevels">
+                <template #item="{ item }">
+                  <div>
+                    <v-chip
+                      class="ma-2 debuglevel cursor-pointer"
+                      :class="item.text.toLowerCase()"
+                    >
+                      {{ item.text }}
+                    </v-chip>
+                  </div>
+                </template>
+                <template #selection="{ item }">
+                  <div>
+                    <v-chip
+                      class="ma-2 debuglevel cursor-pointer"
+                      :class="item.text.toLowerCase()"
+                    >
+                      {{ item.text }}
+                    </v-chip>
+                  </div>
+                </template>
+              </v-select>
+            </v-col>
+          </v-row>
         </v-row>
 
         <v-row v-if="showAdvanced" class="my-2 py-8 row-divider" no-gutters>
@@ -758,6 +837,37 @@ export default {
     margin: auto;
     position: absolute;
     width: 100%;
+  }
+}
+
+.ma-2.debuglevel {
+  color: var(--v-primaryLight-lighten5);
+  font-weight: bold;
+  justify-content: center;
+  width: 75px;
+
+  &.default {
+    background: var(--v-success-lighten2);
+  }
+
+  &.error {
+    background: var(--v-error-lighten2);
+  }
+
+  &.warn {
+    background: var(--v-warning-lighten1);
+  }
+
+  &.info {
+    background: var(--v-info-lighten2);
+  }
+
+  &.debug {
+    background: var(--v-Looped-lighten2);
+  }
+
+  &.critical {
+    background: var(--v-failRed-base);
   }
 }
 </style>
