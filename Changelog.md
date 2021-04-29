@@ -12,6 +12,7 @@
 ### Bugfixes
 
 - Fix issue with Server check on startup - [#788](https://github.com/PrefectHQ/ui/pull/788)
+- Fix issue with User API Keys screen and no default tenants on keys - [#802](https://github.com/PrefectHQ/ui/pull/802)
 
 ## 2021-04-21
 
