@@ -84,11 +84,11 @@ export default {
   },
   methods: {
     handleEdit(item) {
-      console.log(item)
+      //console.log(item)
       this.secretModifyDialog = true
     },
     handleDelete(item) {
-      console.log(item)
+      //console.log(item)
       this.secretDeleteDialog = true
     },
     addKey() {
