@@ -12,12 +12,14 @@
 import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import Alert from '@/components/Alert'
 
 export default {
   components: {
     JsonInput,
     ManagementLayout,
-    ConfirmDialog
+    ConfirmDialog,
+    Alert
   },
   data() {
     return {
@@ -46,7 +48,8 @@ export default {
       expandAll: false,
       search: null,
       json: false,
-      secretModifyDialog: false
+      secretModifyDialog: false,
+      secretDeleteDialog: false
     }
   },
   computed: {
@@ -82,6 +85,11 @@ export default {
   methods: {
     handleEdit(item) {
       console.log(item)
+      this.secretModifyDialog = true
+    },
+    handleDelete(item) {
+      console.log(item)
+      this.secretDeleteDialog = true
     },
     addKey() {
       this.secretModifyDialog = true
@@ -199,6 +207,7 @@ export default {
               fab
               small
               color="error"
+              @click="handleDelete(item)"
               >delete</v-icon
             >
           </template>
@@ -222,7 +231,11 @@ export default {
         validate-on-blur
       />
 
-      <JsonInput ref="secretRef" prepend-icon="lock" class="text-body-1">
+      <JsonInput
+        ref="secretRef"
+        class="text-body-1"
+        placeholder-text="Enter your value"
+      >
         <!-- <v-menu top offset-y>
           <template #activator="{ on }">
             <v-btn
@@ -249,5 +262,21 @@ export default {
         </v-menu> -->
       </JsonInput>
     </ConfirmDialog>
+
+    <ConfirmDialog
+      v-model="secretDeleteDialog"
+      type="error"
+      confirm-text="Delete"
+      :dialog-props="{ 'max-width': '500' }"
+      title="Are you sure you want to delete this key?"
+    >
+      This action cannot be undone.
+    </ConfirmDialog>
+
+    <Alert
+      type="error"
+      message="message"
+      :offset-x="$vuetify.breakpoint.mdAndUp ? 256 : 56"
+    ></Alert>
   </div>
 </template>
