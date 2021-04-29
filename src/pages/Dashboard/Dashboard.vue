@@ -1,8 +1,6 @@
 <script>
 import Calendar from '@/pages/Calendar/Calendar-View'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
-import CommittedUsageTile from '@/pages/Dashboard/UsageTiles/CommittedUsage-Tile'
-import CycleUsageTile from '@/pages/Dashboard/UsageTiles/CycleUsage-Tile'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
@@ -57,8 +55,6 @@ export default {
     Calendar,
     Automations,
     AgentsTile,
-    CommittedUsageTile,
-    CycleUsageTile,
     BreadCrumbs,
     FailedFlowsTile,
     FlowTableTile,
@@ -123,24 +119,6 @@ export default {
     },
     tabs() {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
-    },
-    usageTile() {
-      if (!this.isCloud) return null
-      if (!this.license) return 'loading'
-      const isSelfServe = this.license.terms.is_self_serve
-      const isUsageBased = this.license.terms.is_usage_based
-
-      // Legacy license, not self-serve (so no upgrade)
-      if (!isSelfServe && !isUsageBased) return null
-
-      // Legacy license, self-serve (so can upgrade)
-      if (isSelfServe && !isUsageBased) return 'UpgradeUsageTile'
-
-      // Usage license, not self-serve (show committed runs)
-      if (!isSelfServe && isUsageBased) return 'CommittedUsageTile'
-
-      // Usage license && self-serve
-      return 'CycleUsageTile'
     },
     includeProjects() {
       return this.tab != 'automations' && this.tab != 'calendar'
@@ -361,7 +339,7 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            v-if="usageTile"
+            v-if="license.terms.is_self_serve && !license.terms.is_usage_based"
             :loading="loadedTiles < 6 || usageTile == 'loading'"
             type="image"
             height="100%"
@@ -369,7 +347,7 @@ export default {
             class="tile-container span-row-1"
             tile
           >
-            <component :is="usageTile" />
+            <UpgradeUsageTile />
           </v-skeleton-loader>
 
           <v-skeleton-loader
