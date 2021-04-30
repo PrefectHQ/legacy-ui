@@ -252,11 +252,14 @@ export default {
 import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import MenuTooltip from '@/components/MenuTooltip'
+
 export default {
   components: {
     JsonInput,
     ManagementLayout,
-    ConfirmDialog
+    ConfirmDialog,
+    MenuTooltip
   },
   data() {
     return {
@@ -359,7 +362,7 @@ export default {
       </template>
 
       <template #cta>
-        <v-btn color="primary" class="white--text" large @click="addKey">
+        <v-btn color="primary" class="white--text" large>
           <v-icon left>
             add
           </v-icon>
@@ -407,6 +410,22 @@ export default {
         <!-- TABLE -->
         <v-data-table :headers="headers" :items="items" :search="search">
           <!-- ACTIONS -->
+          <template #item.value="{item}">
+            <div class="d-flex">
+              <div
+                class="text-truncate"
+                style="
+          width: 30vw;
+        "
+              >
+                {{ item.value }}
+              </div>
+
+              <MenuTooltip v-if="item.value.length > 150" maxWidth="50%">
+                {{ item.value }}
+              </MenuTooltip>
+            </div>
+          </template>
           <template #item.actions>
             <v-tooltip bottom>
               <template #activator="{ on }">
