@@ -3,6 +3,7 @@ import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import MenuTooltip from '@/components/MenuTooltip'
+import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
@@ -11,6 +12,7 @@ export default {
     ConfirmDialog,
     MenuTooltip
   },
+  mixins: [formatTime],
   data() {
     return {
       search: '',
@@ -178,6 +180,9 @@ export default {
                 {{ item.value }}
               </MenuTooltip>
             </div>
+          </template>
+          <template #item.updated="{item}">
+            {{ formatTime(item.updated) }}
           </template>
           <template #item.actions>
             <v-tooltip bottom>
