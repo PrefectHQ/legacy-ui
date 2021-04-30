@@ -100,7 +100,7 @@ export default {
 <template>
   <div>
     <ManagementLayout :show="true" control-show>
-      <template #title>Key/Value</template>
+      <template #title>KV Store</template>
 
       <template #subtitle>
         Manage your key/value
@@ -116,7 +116,7 @@ export default {
           <v-icon left>
             add
           </v-icon>
-          Add Key
+          Add KV
         </v-btn>
       </template>
     </ManagementLayout>
