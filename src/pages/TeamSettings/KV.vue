@@ -18,7 +18,7 @@ export default {
         { text: 'Key', value: 'key' },
         { text: 'Value', value: 'value' },
         { text: 'Created By', value: 'created' },
-        { text: 'Updated', value: 'updated' },
+        { text: 'Last Used', value: 'updated' },
         {
           text: '',
           value: 'actions',
@@ -30,13 +30,13 @@ export default {
         {
           key: 'prod.config.ram',
           value: '8gb',
-          created: '2021-04-29T23:34:12.488Z',
+          created: 'jane@gmail.com',
           updated: '2021-04-29T23:36:48.494Z'
         },
         {
           key: 'prod.config.ram2',
           value: '16gb',
-          created: '2021-04-29T23:34:12.488Z',
+          created: 'john@gmail.com',
           updated: '2021-04-29T23:36:48.494Z'
         },
         {
@@ -81,13 +81,13 @@ export default {
               favoriteFruit: 'banana'
             }
           ]),
-          created: '2021-01-17T11:24:00.000Z',
+          created: 'mary@gmail.com',
           updated: '2021-01-18T11:24:00.000Z'
         },
         {
           key: 'foo',
           value: 'bar',
-          created: '2021-04-17T10:24:00.000Z',
+          created: 'james@gmail.com',
           updated: '2021-04-17T10:24:00.000Z'
         }
       ],
@@ -188,6 +188,15 @@ export default {
                 </v-btn>
               </template>
               Delete key
+            </v-tooltip>
+
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <v-btn text fab x-small color="primary" v-on="on">
+                  <v-icon>content_copy</v-icon>
+                </v-btn>
+              </template>
+              Copy value
             </v-tooltip>
           </template>
         </v-data-table>
