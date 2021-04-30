@@ -91,7 +91,9 @@ export default {
           updated: '2021-04-17T10:24:00.000Z'
         }
       ],
-      json: false
+      json: false,
+      keyModifyDialog: false,
+      keyDeleteDialog: false
     }
   }
 }
@@ -112,7 +114,12 @@ export default {
       </template>
 
       <template #cta>
-        <v-btn color="primary" class="white--text" large>
+        <v-btn
+          color="primary"
+          class="white--text"
+          large
+          @click="keyModifyDialog = true"
+        >
           <v-icon left>
             add
           </v-icon>
@@ -161,7 +168,7 @@ export default {
               <div
                 class="text-truncate"
                 style="
-          width: 30vw;
+          width: 15vw;
         "
               >
                 {{ item.value }}
@@ -175,7 +182,14 @@ export default {
           <template #item.actions>
             <v-tooltip bottom>
               <template #activator="{ on }">
-                <v-btn text fab x-small color="primary" v-on="on">
+                <v-btn
+                  text
+                  fab
+                  x-small
+                  color="primary"
+                  v-on="on"
+                  @click="keyModifyDialog = true"
+                >
                   <v-icon>edit</v-icon>
                 </v-btn>
               </template>
@@ -183,7 +197,14 @@ export default {
             </v-tooltip>
             <v-tooltip bottom>
               <template #activator="{ on }">
-                <v-btn text fab x-small color="error" v-on="on">
+                <v-btn
+                  text
+                  fab
+                  x-small
+                  color="error"
+                  v-on="on"
+                  @click="keyDeleteDialog = true"
+                >
                   <v-icon>delete</v-icon>
                 </v-btn>
               </template>
@@ -204,6 +225,7 @@ export default {
     </v-card>
 
     <ConfirmDialog
+      v-model="keyModifyDialog"
       :dialog-props="{ 'max-width': '75vh' }"
       title="Create New Key"
     >
@@ -227,6 +249,7 @@ export default {
     </ConfirmDialog>
 
     <ConfirmDialog
+      v-model="keyDeleteDialog"
       type="error"
       confirm-text="Delete"
       :dialog-props="{ 'max-width': '500' }"
