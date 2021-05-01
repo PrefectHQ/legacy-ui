@@ -237,8 +237,7 @@ export default {
     },
     keys: {
       query() {
-        // TODO - why isn't this.isCloud true for local dev?
-        return require('@/graphql/Tokens/api-keys.js').default(true)
+        return require('@/graphql/Tokens/api-keys.js').default(this.isCloud)
       },
       fetchPolicy: 'network-only',
       error() {
@@ -248,7 +247,6 @@ export default {
         )
       },
       result({ data }) {
-        console.log(data)
         this.keys = data.auth_api_key.map(key => {
           return {
             id: key.id,
@@ -256,7 +254,7 @@ export default {
             created_at: key.created,
             expires: key.expires_at,
             user_id: key.user_id,
-            created_by: key.created_by.username
+            created_by: this.isCloud ? key.created_by.username : ''
           }
         })
         this.isFetchingKeys = false
