@@ -158,6 +158,22 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item :disabled="!isCloud" :to="'/team/kv'">
+          <v-list-item-avatar tile>
+            <v-icon large color="primaryDark">
+              store
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              KV
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Create and manage team-wide key/values used by your flows
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :disabled="!isCloud" :to="'/team/service-accounts'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-user-hard-hat fa-2x" />
