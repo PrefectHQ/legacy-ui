@@ -42,22 +42,38 @@ Paste the code above into an interactive Python REPL session. You should see the
 
 If you're running into issues, check that your Python environment is properly set up to run Prefect. Refer to the [Prefect Core Installation](https://docs.prefect.io/core/getting_started/installation.html) documentation for further details.
 
-# Log into Prefect Cloud from the CLI
+# Authenticating with Prefect Cloud
 
-To authenticate, you'll need to create an [API Key](/user/keys) and configure it with the [Prefect Command Line Interface](https://docs.prefect.io/orchestration/concepts/cli.html#cli).
+To authenticate, you'll need to create an [API Key](/user/keys) and save it.
 
 - In the user menu in the top right corner go to **Account Settings -> API Keys -> Create An API Key**.
 - Copy the created key
-- Configure the CLI to use the key by running
+- Save the key locally either in your `~/.prefect/config.toml` config file, or as an environment variable:
 
 ```bash
-prefect auth login -t <COPIED_KEY>
+# ~/.prefect/config.toml
+[cloud]
+auth_token = <API_KEY>
 ```
 
-You'll need this key again later in the tutorial. You can save it in your local configuration either as an environment variable or by storing it in `~/.prefect/config.toml`:
+```bash
+export PREFECT__CLOUD__AUTH_TOKEN=<API_KEY>
+```
+
+# Create a Service Account Key
+
+Running deployed Flows with an [Agent](https://docs.prefect.io/orchestration/agents/overview.html) also requires an API key for the Agent. You can create one in the [Service Accounts](/team/service-accounts) page of the UI.
+
+You'll need this token later in the tutorial. You can save it locally either in your `~/.prefect/config.toml` config file, or as an environment variable:
 
 ```bash
-export PREFECT__CLOUD__AGENT__AUTH_TOKEN=<COPIED_KEY>
+# ~/.prefect/config.toml
+[cloud.agent]
+auth_token = <SERVICE_ACCOUNT_API_KEY>
+```
+
+```bash
+export PREFECT__CLOUD__AGENT__AUTH_TOKEN=<SERVICE_ACCOUNT_API_KEY>
 ```
 
 # Creating a project
@@ -95,10 +111,10 @@ flow.register(project_name="tester")
 flow.run_agent()
 ```
 
-Click `"Copy"` above to copy the updated flow code. Paste the code into your interactive Python REPL session. If all goes well, you should see the local agent process start to run. If you're seeing the error message `"No agent API token provided"`, try passing your API key explicitly to the `run_agent()` method:
+Paste the code into your interactive Python REPL session. If all goes well, you should see the local agent process start to run. If you're seeing the error message `"No agent API token provided"`, try passing your API key explicitly to the `run_agent()` method:
 
 ```python
-flow.run_agent(token="<COPIED_KEY>")
+flow.run_agent(token="<SERVICE_ACCOUNT_API_KEY>")
 ```
 
 And that's it! Your flow is now registered with Prefect Cloud, and an agent process is running on your local machine waiting to execute your flow runs. For now, your flow is stored on your local machine in your `~/.prefect directory`. You can configure this later through the use of Storage.
