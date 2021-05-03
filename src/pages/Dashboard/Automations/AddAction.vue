@@ -133,6 +133,7 @@ export default {
     },
     disableNext() {
       if (this.step.name === 'openToConfig') {
+        if (this.isWebhook && this.webhookURL) return false
         if (!this.actionConfigArray.length) return true
         else return false
       } else {
@@ -167,7 +168,7 @@ export default {
       get() {
         const whoTo = this.actionConfigArray.length
           ? this.actionConfigArray
-          : this.secretName
+          : this.secretName || this.webhookURL
         return `${this.actionType.verb} ${whoTo}`
       },
       set(x) {

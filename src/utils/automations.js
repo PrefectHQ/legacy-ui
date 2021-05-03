@@ -100,6 +100,7 @@ export const actionTypes = [
   {
     title: 'Web',
     sendText: 'Send a',
+    verb: 'webhook',
     type: 'WEBHOOK',
     icon: 'fas fa-desktop',
     config: { to: null },
