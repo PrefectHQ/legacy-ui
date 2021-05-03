@@ -96,6 +96,14 @@ export const actionTypes = [
     icon: 'fab fa-microsoft',
     config: { webhook_url_secret: null, message: null, title: null },
     requiresCloud: true
+  },
+  {
+    title: 'Web',
+    sendText: 'Send a',
+    type: 'WEBHOOK',
+    icon: 'fas fa-desktop',
+    config: { to: null },
+    requiresCloud: false
   }
 ]
 

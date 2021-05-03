@@ -10,7 +10,7 @@ import {
 import ConfirmDialog from '@/components/ConfirmDialog'
 import UpgradeBadge from '@/components/UpgradeBadge'
 
-const systemActions = ['CancelFlowRunAction']
+const systemActions = ['CancelFlowRunAction', 'PauseScheduleAction']
 
 export default {
   components: {
@@ -121,14 +121,46 @@ export default {
       return this.actions
         ? this.agentOrFlow === 'agent'
           ? this.actions.filter(
-              action => action.action_type !== 'CancelFlowRunAction'
+              action =>
+                action.action_type !== 'CancelFlowRunAction' &&
+                action.action_type !== 'PauseScheduleAction'
             )
           : this.actions.find(
               action => action.action_type === 'CancelFlowRunAction'
+            ) &&
+            this.actions.find(
+              action => action.action_type === 'PauseScheduleAction'
             )
           ? this.actions
+          : this.actions.find(
+              action => action.action_type === 'PauseScheduleAction'
+            )
+          ? [
+              ...this.actions,
+              {
+                name: 'cancel run',
+                value: 'CANCEL_RUN',
+                action_type: 'CancelFlowRunAction'
+              }
+            ]
+          : this.actions.find(
+              action => action.action_type === 'CancelFlowRunAction'
+            )
+          ? [
+              ...this.actions,
+              {
+                name: 'pause schedule',
+                value: 'PAUSE_SCHEDULE',
+                action_type: 'PauseScheduleAction'
+              }
+            ]
           : [
               ...this.actions,
+              {
+                name: 'pause schedule',
+                value: 'PAUSE_SCHEDULE',
+                action_type: 'PauseScheduleAction'
+              },
               {
                 name: 'cancel run',
                 value: 'CANCEL_RUN',
@@ -139,7 +171,14 @@ export default {
             {
               name: 'cancel run',
               value: 'CANCEL_RUN',
+              id: 1,
               action_type: 'CancelFlowRunAction'
+            },
+            {
+              name: 'pause schedule',
+              value: 'PAUSE_SCHEDULE',
+              id: 2,
+              action_type: 'PauseScheduleAction'
             }
           ]
     },
@@ -535,6 +574,13 @@ export default {
           action = await this.createAction({
             config: cancelConfig,
             name: 'cancel that run'
+          })
+        }
+        if (action?.value === 'PAUSE_SCHEDULE') {
+          const pauseConfig = { pause_schedule: { flow_group_id: flow } }
+          action = await this.createAction({
+            config: pauseConfig,
+            name: 'pause schedule'
           })
         }
         if (flow) {

@@ -40,6 +40,7 @@ export default {
       apiToken: '',
       routingKey: '',
       webhookUrlSecret: null,
+      webhookURL: '',
       severity: '',
       severityLevels: [
         { text: 'Info', value: 'info' },
@@ -55,6 +56,7 @@ export default {
         SLACK_WEBHOOK: () => true,
         PAGERDUTY: () => true,
         MS_TEAMS: () => true,
+        WEBHOOK: () => true,
         EMAIL: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           if (!val) return 'Email is required.'
@@ -92,9 +94,10 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['user']),
     messageConfigLabel() {
-      return this.actionType?.type === 'EMAIL' ||
-        this.actionType.type === 'WEBHOOK'
+      return this.actionType?.type === 'EMAIL'
         ? 'Email address(es)'
+        : this.actionType?.type === 'WEBHOOK'
+        ? 'URL'
         : this.actionType?.type === 'TWILIO'
         ? 'Twilio Phone Numbers'
         : this.actionType?.type === 'SLACK_WEBHOOK'
@@ -150,6 +153,8 @@ export default {
           this.accountSid
         : this.isMSTeams
         ? !!this.webhookUrlSecret
+        : this.isWebhook
+        ? !!this.webhookURL
         : !!this.actionType &&
           (!!this.secretName ||
             (!!this.actionConfigArray.length &&
@@ -177,7 +182,7 @@ export default {
       return this.actionType?.type === 'EMAIL'
         ? configTo || this.actionType?.config?.to || 'to this email address.'
         : this.actionType.type === 'WEBHOOK'
-        ? this.actionType?.config?.to || 'to this web address.'
+        ? this.actionType?.config?.to || 'to this URL.'
         : this.actionType?.type === 'TWILIO'
         ? configTo ||
           this.actionType?.config?.to?.toString() ||
@@ -195,6 +200,9 @@ export default {
     },
     isPagerDuty() {
       return this.actionType.type === 'PAGERDUTY'
+    },
+    isWebhook() {
+      return this.actionType.type === 'WEBHOOK'
     },
     isMSTeams() {
       return this.actionType.type === 'MS_TEAMS'
@@ -342,7 +350,6 @@ export default {
                   severity: this.severity
                 }
                 if (this.messageText) {
-                  //TO DO - Don't think this is working - need to fix!
                   this.actionConfig.message = this.bothMessages
                     ? `{} ${this.messageText}`
                     : this.messageText
@@ -361,6 +368,16 @@ export default {
                 }
               }
               break
+            case 'WEBHOOK': {
+              this.actionConfig = {
+                webhook_url_secret: this.webhookUrlSecret
+              }
+              if (this.messageText) {
+                this.actionConfig.message = this.bothMessages
+                  ? `{} ${this.messageText}`
+                  : this.messageText
+              }
+            }
           }
         }
       } else {
@@ -414,6 +431,11 @@ export default {
         case 'MS_TEAMS':
           config = {
             teams_webhook_notification: this.actionConfig
+          }
+          break
+        case 'WEBHOOK':
+          config = {
+            url: this.actionConfig
           }
           break
         default:
@@ -728,6 +750,22 @@ export default {
               @change="handleWebHookURLSecretInput"
             />
           </v-col>
+        </v-row>
+      </div>
+      <div v-else-if="actionType.type === 'WEBHOOK'">
+        <div>
+          <span>
+            Prefect Cloud will send a message via the URL you provide.
+          </span>
+        </div>
+
+        <v-row class="mt-2">
+          <v-text-field
+            v-model="webhookURL"
+            outlined
+            :rules="[rules.required]"
+            label="URL"
+          />
         </v-row>
       </div>
     </v-card-text>
