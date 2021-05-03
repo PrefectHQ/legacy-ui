@@ -350,8 +350,9 @@ const setup = async () => {
   }
 
   if (
-    !store.getters['auth/isAuthenticated'] ||
-    !store.getters['auth/isAuthorized']
+    store.getters['api/isCloud'] &&
+    (!store.getters['auth/isAuthenticated'] ||
+      !store.getters['auth/isAuthorized'])
   ) {
     throw new Error('Missing authorization')
   }
