@@ -181,7 +181,6 @@ export default {
             }
           })
         } else {
-          console.log(this.clocks)
           result = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/set-flow-group-schedule.gql'),
             variables: {
