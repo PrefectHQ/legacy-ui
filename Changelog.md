@@ -4,11 +4,8 @@
 
 ### Features and Improvements
 
-<<<<<<< HEAD
 - Populate JSON editor with only checked parameters - [#787](https://github.com/PrefectHQ/ui/pull/787)
-=======
 - Update Universal-Deploy.md to include the latest authentication steps - [#806](https://github.com/PrefectHQ/ui/pull/806)
->>>>>>> 169fa8771423f12f05ffe547e3169fcc520e3c2a
 - Adds animated hint for users creating new automations - [#784](https://github.com/PrefectHQ/ui/pull/784)
 - Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
 - Take usage tile off dashboard and add to account page - [#782](https://github.com/PrefectHQ/ui/pull/782)
