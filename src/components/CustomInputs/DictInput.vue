@@ -72,7 +72,7 @@ export default {
       this.keys.forEach((k, i) => {
         if (
           (k && (!this.includeCheckbox || this.includedKeys.includes(k))) ||
-          Object.keys(JSON.parse(this.jsonInput)).includes(k)
+          (this.json && Object.keys(JSON.parse(this.jsonInput)).includes(k))
         ) {
           dict[k] = this.values[i]
         }
