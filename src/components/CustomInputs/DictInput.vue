@@ -122,10 +122,13 @@ export default {
             let i = this.keys.indexOf(k)
 
             if (i > -1) {
-              this.values[i] = json[k]
+              this.values[i] =
+                typeof json[k] === 'string' ? json[k] : JSON.stringify(json[k])
             } else {
               this.keys.push(k)
-              this.values.push(json[k])
+              this.values.push(
+                typeof json[k] === 'string' ? json[k] : JSON.stringify(json[k])
+              )
             }
           })
         } else {
