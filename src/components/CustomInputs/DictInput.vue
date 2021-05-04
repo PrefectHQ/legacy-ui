@@ -72,7 +72,7 @@ export default {
       this.keys.forEach((k, i) => {
         if (
           (k && (!this.includeCheckbox || this.includedKeys.includes(k))) ||
-          Object.keys(JSON.parse(this.jsonInput)).includes(k)
+          (this.json && Object.keys(JSON.parse(this.jsonInput)).includes(k))
         ) {
           dict[k] = this.values[i]
         }
@@ -96,7 +96,11 @@ export default {
           this.$refs['json-input'].validateJson()
         })
       } else {
-        this.includedKeys = Object.keys(this.value)
+        try {
+          this.includedKeys = Object.keys(JSON.parse(this.jsonInput))
+        } catch {
+          this.includedKeys = Object.keys(this.value)
+        }
       }
     },
     includedKeys(val) {
@@ -267,7 +271,10 @@ export default {
               outlined
               dense
               :placeholder="keyLabel"
-              :readonly="disabledKeys.includes(keys[i])"
+              :readonly="
+                disabledKeys.includes(keys[i]) ||
+                  Object.keys(JSON.parse(jsonInput)).includes(keys[i])
+              "
               @keyup="_handleKeypress"
             />
           </v-col>
