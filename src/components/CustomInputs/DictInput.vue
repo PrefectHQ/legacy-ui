@@ -70,7 +70,10 @@ export default {
     value() {
       const dict = {}
       this.keys.forEach((k, i) => {
-        if (k && (!this.includeCheckbox || this.includedKeys.includes(k))) {
+        if (
+          (k && (!this.includeCheckbox || this.includedKeys.includes(k))) ||
+          Object.keys(JSON.parse(this.jsonInput)).includes(k)
+        ) {
           dict[k] = this.values[i]
         }
       })
@@ -92,11 +95,13 @@ export default {
         this.$nextTick(() => {
           this.$refs['json-input'].validateJson()
         })
+      } else {
+        this.includedKeys = Object.keys(this.value)
       }
     },
-    includedKeys() {
+    includedKeys(val) {
+      this.jsonInput = val.length > 0 ? JSON.stringify(this.value) : '{}'
       this.$emit('input', { ...this.value })
-      this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
     }
   },
   mounted() {
@@ -108,10 +113,23 @@ export default {
       try {
         const json = JSON.parse(this.jsonInput)
 
-        this.keys = Object.keys(json)
-        this.values = Object.values(json).map(value =>
-          typeof value === 'string' ? value : JSON.stringify(value)
-        )
+        if (this.includeCheckbox) {
+          Object.keys(json).forEach(k => {
+            let i = this.keys.indexOf(k)
+
+            if (i > -1) {
+              this.values[i] = json[k]
+            } else {
+              this.keys.push(k)
+              this.values.push(json[k])
+            }
+          })
+        } else {
+          this.keys = Object.keys(json)
+          this.values = Object.values(json).map(value =>
+            typeof value === 'string' ? value : JSON.stringify(value)
+          )
+        }
         this.$emit('input', { ...this.value })
       } catch {
         this.$refs['json-input'].validateJson()
@@ -142,7 +160,6 @@ export default {
             .filter(entry => entry.disabled == true)
             .map(entry => entry.key)
         : []
-
       if (this.includeCheckbox && this.includedKeys.length === 0) {
         this.jsonInput = '{}'
       } else if (
@@ -262,7 +279,7 @@ export default {
               outlined
               dense
               :placeholder="
-                inputIsArray && dict[i].value
+                inputIsArray && dict[i] && dict[i].value
                   ? dict[i].value.toString()
                   : valueLabel
               "
