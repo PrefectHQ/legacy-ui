@@ -96,7 +96,11 @@ export default {
           this.$refs['json-input'].validateJson()
         })
       } else {
-        this.includedKeys = Object.keys(this.value)
+        try {
+          this.includedKeys = Object.keys(JSON.parse(this.jsonInput))
+        } catch {
+          this.includedKeys = Object.keys(this.value)
+        }
       }
     },
     includedKeys(val) {
