@@ -72,8 +72,8 @@ export default {
       this.keys.forEach((k, i) => {
         if (
           !this.includeCheckbox ||
-          this.includedKeys.includes(k) ||
-          Object.keys(JSON.parse(this.jsonInput)).includes(k)
+          (this.json && Object.keys(JSON.parse(this.jsonInput)).includes(k)) ||
+          (!this.json && this.includedKeys.includes(k))
         ) {
           dict[k] = this.values[i]
         }
@@ -81,22 +81,6 @@ export default {
       return dict
     }
   },
-  // value() {
-  //   const dict = {}
-  //   console.log('included keys', this.includedKeys)
-  //   console.log('json keys', Object.keys(JSON.parse(this.jsonInput)))
-  //   this.keys.forEach((k, i) => {
-  //     if (
-  //       (k && (!this.includeCheckbox || this.includedKeys.includes(k))) ||
-  //       (this.json && Object.keys(JSON.parse(this.jsonInput)).includes(k))
-  //     ) {
-  //       dict[k] = this.values[i]
-  //     }
-  //   })
-
-  //   console.log('returned dict', dict)
-  //   return dict
-  // }
 
   watch: {
     // Allows swapping between json input and key value pairs
@@ -122,19 +106,9 @@ export default {
       }
     },
     includedKeys(val) {
-      console.log('jsoninput', val, this.jsonInput, this.value)
-      const newVal = {}
-      this.keys.forEach((k, i) => {
-        if (val.includes(k)) newVal[k] = this.values[i]
-      })
-      console.log(newVal)
-      this.jsonInput = val.length > 0 ? JSON.stringify(newVal) : '{}'
-      this.$emit('input', { ...newVal })
+      this.jsonInput = val.length > 0 ? JSON.stringify(this.value) : '{}'
+      this.$emit('input', { ...this.value })
     }
-    // includedKeys(val) {
-    //   this.jsonInput = val.length > 0 ? JSON.stringify(this.value) : '{}'
-    //   this.$emit('input', { ...this.value })
-    // }
   },
   mounted() {
     this.reset()
