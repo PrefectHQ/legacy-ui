@@ -236,9 +236,7 @@ export default {
       }
     },
     keys: {
-      query() {
-        return require('@/graphql/Tokens/api-keys.js').default(this.isCloud)
-      },
+      query: require('@/graphql/Tokens/api-keys.gql'),
       fetchPolicy: 'network-only',
       error() {
         this.handleAlert(
@@ -254,7 +252,7 @@ export default {
             created_at: key.created,
             expires: key.expires_at,
             user_id: key.user_id,
-            created_by: this.isCloud ? key.created_by.username : ''
+            created_by: key.created_by ? key.created_by.username : ''
           }
         })
         this.isFetchingKeys = false
