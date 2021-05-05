@@ -144,7 +144,7 @@ export default {
             errorPolicy: 'all'
           })
           if (customer.data.update_stripe_customer.id) {
-            if (this.planType('FREE_2021')) {
+            if (this.planType('FREE')) {
               await this.$apollo.mutate({
                 mutation: require('@/graphql/License/create-usage-based-license.gql'),
                 variables: {

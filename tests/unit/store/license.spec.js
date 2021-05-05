@@ -102,8 +102,8 @@ describe('license Vuex Module', () => {
         expect(store.getters.planType()).toBe(undefined)
       })
 
-      it('should return false when the planType getter is called with parameters', () => {
-        expect(store.getters.planType('STARTER_2021')).toBe(false)
+      it('should return undefined when the planType getter is called with parameters', () => {
+        expect(store.getters.planType('STARTER')).toBe(undefined)
       })
 
       it('should return undefined when the hasPermission getter is called with  no parameters', () => {

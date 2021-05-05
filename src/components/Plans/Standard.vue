@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     select() {
-      if (this.planType('STANDARD_2021') || this.disabled) return
+      if (this.planType('STANDARD') || this.disabled) return
       this.$emit('click')
     }
   }
@@ -204,7 +204,7 @@ export default {
       </div>
       <div v-if="hideDetails" class="py-7 mt-8 mt-md-6 mt-lg-8 o-0">
         {{
-          planType('STANDARD_2021')
+          planType('STANDARD')
             ? 'Current'
             : disabled
             ? 'Contact your team admin to upgrade'
@@ -215,11 +215,11 @@ export default {
       <div
         v-else
         class="plan-cta py-7 mt-8 mt-md-6 mt-lg-8"
-        :class="{ 'cursor-pointer': !planType('STANDARD_2021') }"
+        :class="{ 'cursor-pointer': !planType('STANDARD') }"
         @click="select"
       >
         {{
-          planType('STANDARD_2021')
+          planType('STANDARD')
             ? 'Current'
             : disabled
             ? 'Contact your team admin to upgrade'

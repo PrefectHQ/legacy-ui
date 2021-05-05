@@ -21,8 +21,8 @@ const getters = {
     return state.tempLicenseType
   },
   planType: state => type => {
-    if (type !== undefined) {
-      return state.license?.terms?.plan === type
+    if (type) {
+      return state.license?.terms?.plan.includes(type)
     }
     return state.license?.terms?.plan
   },
