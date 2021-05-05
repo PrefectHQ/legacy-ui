@@ -1,4 +1,5 @@
 import { login, switchTenant } from '@/auth/login.js'
+import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
 
@@ -9,18 +10,14 @@ export const logOut = async () => {
 }
 
 export const commitTokens = tokens => {
-  console.log('got tokens', tokens)
-
   const authToken = tokens.authorizationTokens.access_token
   const expiry = new Date(tokens.authorizationTokens.expires_at).getTime()
   const idToken = tokens.idToken
   const refreshToken = tokens.authorizationTokens.refresh_token
 
-  console.log('auth token', jwt_decode(authToken))
-
   if (idToken) {
     store.commit('auth/idToken', idToken.value)
-    store.commit('auth/idTokenExpiry', idToken.expiresAt)
+    store.commit('auth/idTokenExpiry', idToken.expiresAt * 1000)
     store.commit('auth/user', idToken.claims)
     store.commit('user/setOktaUser', idToken.claims)
   }
@@ -42,15 +39,16 @@ export const setStartupTenant = async () => {
     .tenant_id
   const tenants = store.getters['tenant/tenants']
   const tokenTenant = tenants.find(t => t.id == tokenTenantId)
+  const slugTenant = tenants.find(t => t.slug == slug)
 
   // If there's no slug in the URL or the token
   // tenant matches the intended tenant, we can set the current tenant
   // to the token tenant
   let tenant
-  if (!slug || tokenTenant.slug == slug) {
+  if (!slug || tokenTenant.slug == slug || !slugTenant) {
     tenant = tokenTenant
   } else {
-    tenant = tenants.find(t => t.slug == slug)
+    tenant = slugTenant
     const tokens = await switchTenant(tenant.id)
     commitTokens(tokens)
   }
@@ -58,8 +56,6 @@ export const setStartupTenant = async () => {
   store.commit('tenant/setTenant', tenant)
 
   await store.dispatch('license/getLicense')
-
-  console.log(path, split, slug, tokenTenant)
 }
 
 const start = async () => {
@@ -78,14 +74,14 @@ const start = async () => {
       .then(data => data)
   }
 
-  const res = await Promise.all([
+  await Promise.all([
     store.dispatch('user/getUser'),
     store.dispatch('tenant/getTenants')
   ])
 
-  setStartupTenant()
+  await setStartupTenant()
 
-  console.log(res)
+  CreatePrefectUI()
 }
 
 start()

@@ -43,8 +43,6 @@ const mutations = {
 
 const actions = {
   async getLicense({ commit }) {
-    commit('unsetLicense')
-    commit('unsetPermissions')
     try {
       const { data } = await fallbackApolloClient.query({
         query: require('@/graphql/License/license.gql'),
@@ -58,6 +56,10 @@ const actions = {
         commit('setPermissions', data.auth_info.permissions)
       }
     } catch (error) {
+      commit('unsetLicense')
+      commit('unsetPermissions')
+      // eslint-disable-next-line no-console
+      console.log(error)
       LogRocket.captureException(error, {
         extra: {
           pageName: 'LicenseStore',
