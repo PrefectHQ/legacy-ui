@@ -5,11 +5,48 @@
 ### Features and Improvements
 
 - Add new states to the license store - [#763](https://github.com/PrefectHQ/ui/pull/763)
+
+### Bugfixes
+
+- Populate JSON editor with only checked parameters - [#787](https://github.com/PrefectHQ/ui/pull/787)
+
+## 2021-05-04
+
+### Features and Improvements
+
+- Update Universal-Deploy.md to include the latest authentication steps - [#806](https://github.com/PrefectHQ/ui/pull/806)
+- Adds animated hint for users creating new automations - [#784](https://github.com/PrefectHQ/ui/pull/784)
+- Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
+- Take usage tile off dashboard and add to account page - [#782](https://github.com/PrefectHQ/ui/pull/782)
+- Add dropdown to specify logging level on flow runs [#769](https://github.com/PrefectHQ/ui/pull/769)
+
+### Bugfixes
+
+- Fix issue with Server check on startup - [#788](https://github.com/PrefectHQ/ui/pull/788)
+- Fix issue with User API Keys screen and no default tenants on keys - [#802](https://github.com/PrefectHQ/ui/pull/802)
+
+## 2021-04-21
+
+### Bugfixes
+
+- Fix auth loop - [#783](https://github.com/PrefectHQ/ui/pull/783)
+
+## 2021-04-15
+
+### Features and Improvements
+
+- Adds breadcrumb to allow easy access to current flow version and spawning flow version from a flow run screen [#759](https://github.com/PrefectHQ/ui/pull/759)
 - Add loading state to sign out method - [#766](https://github.com/PrefectHQ/ui/pull/766)
 
 ### Bugfixes
 
+- Update tutorial to reference API keys instead of personal access and runner tokens - [#770](https://github.com/PrefectHQ/ui/pull/770)
+- Update user menu for API keys - [#778](https://github.com/PrefectHQ/ui/pull/778)
+- Fix JSON stringification error - [#777](https://github.com/PrefectHQ/ui/pull/777)
+- Fix weird rounding display bug - [#768](https://github.com/PrefectHQ/ui/pull/768)
 - Make team creation error text more legible - [#767](https://github.com/PrefectHQ/ui/pull/767)
+- Fix auth checks when returning to the application - [#774](https://github.com/PrefectHQ/ui/pull/774)
+- Don't allow non-Cloud users to get stuck in a redirect loop if they try out the toggle - [#772](https://github.com/PrefectHQ/ui/pull/772)
 
 ## 2021-04-09a
 

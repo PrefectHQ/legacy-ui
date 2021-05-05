@@ -16,6 +16,7 @@ import router from '@/router'
 import VueMeta from 'vue-meta'
 
 import LogRocket from 'logrocket'
+import jwt_decode from 'jwt-decode'
 
 // Filters
 import duration from '@/filters/duration'
@@ -54,13 +55,17 @@ if (
   Vue.config.performance = true
 }
 
-const blockedResponses = ['CreateAPIToken', 'APITokens', 'CreateRunnerToken']
+const blockedResponses = [
+  'CreateAPIToken',
+  'APITokens',
+  'CreateRunnerToken',
+  'CreateAPIKey'
+]
 const blockedRequests = ['SetSecret']
 
 if (
-  process.env.NODE_ENV === 'production' &&
   process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
-  process.env.VUE_APP_BASE_URL?.includes('cloud.prefect.io')
+  process.env.VUE_APP_BACKEND === 'CLOUD'
 ) {
   LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID, {
     release: process.env.VUE_APP_BASE_URL,
@@ -186,12 +191,31 @@ if (TokenWorker?.port) {
     const type = e.data?.type
     const payload = e.data?.payload
 
+    if (
+      process.env.VUE_APP_ENVIRONMENT == 'staging' ||
+      process.env.VUE_APP_ENVIRONMENT == 'dev'
+    ) {
+      // eslint-disable-next-line no-console
+      console.log('type', type, payload)
+    }
+
     switch (type) {
       case 'authentication':
         store.dispatch('auth/updateAuthenticationTokens', payload)
         break
       case 'authorization':
-        store.dispatch('auth/updateAuthorizationTokens', payload)
+        if (payload) {
+          const authorizationToken = jwt_decode(payload.access_token)
+          store.dispatch('auth/updateAuthorizationTokens', payload)
+
+          if (
+            store.getters['tenant/tenant']?.id !== authorizationToken.tenant_id
+          ) {
+            store.dispatch('tenant/getTenants')
+          }
+        } else {
+          store.dispatch('auth/authorize')
+        }
         break
       case 'authentication-expiration':
         store.dispatch('auth/authenticate')
@@ -211,6 +235,10 @@ if (TokenWorker?.port) {
       case 'logout':
         store.dispatch('auth/logout', false)
         break
+      case 'error':
+      default:
+        LogRocket.captureException(payload)
+        break
     }
   }
 
@@ -218,6 +246,7 @@ if (TokenWorker?.port) {
   TokenWorker.port.onmessageerror = e => {
     // eslint-disable-next-line no-console
     console.log('Error message received from Token Worker', e)
+    LogRocket.captureException(e)
   }
 
   TokenWorker.port.start()
@@ -311,7 +340,35 @@ Vue.mixin({
   }
 })
 
+const setup = async () => {
+  if (
+    (store.getters['api/isCloud'] && !store.getters['auth/isAuthenticated']) ||
+    !store.getters['auth/isAuthorized']
+  ) {
+    await store.dispatch('auth/authenticate')
+    await store.dispatch('auth/authorize')
+  }
+
+  if (
+    !store.getters['auth/isAuthenticated'] ||
+    !store.getters['auth/isAuthorized']
+  ) {
+    throw new Error('Missing authorization')
+  }
+
+  const tenants = store.dispatch('tenant/getTenants')
+
+  if (store.getters['api/isCloud']) {
+    const user = store.dispatch('user/getUser') // Also sets the default tenant
+    await user
+  }
+
+  await tenants
+  await store.dispatch('tenant/setCurrentTenant')
+}
+
 let PrefectUI
+let setupComplete = false
 
 const initialize = async () => {
   try {
@@ -320,16 +377,41 @@ const initialize = async () => {
       .then(data => data)
   } finally {
     // Let this fail silently
+    let retries = 15
 
-    // Create application
-    // eslint-disable-next-line no-unused-vars
-    PrefectUI = new Vue({
-      vuetify,
-      router,
-      store,
-      apolloProvider: defaultApolloProvider,
-      render: h => h(App)
-    }).$mount('#app')
+    try {
+      while (retries-- > 0) {
+        try {
+          await setup()
+
+          break
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.log('Error in setup', e)
+          LogRocket.captureException(e)
+
+          await new Promise(res => {
+            setTimeout(() => {
+              res()
+            }, 500)
+          })
+        }
+      }
+    } finally {
+      setupComplete = true
+      // Create application
+      // eslint-disable-next-line no-unused-vars
+      PrefectUI = new Vue({
+        vuetify,
+        router,
+        store,
+        apolloProvider: defaultApolloProvider,
+        render: h => h(App)
+      }).$mount('#app')
+
+      const loader = document.querySelector('div.loading')
+      loader.style.display = 'none'
+    }
   }
 }
 initialize()
@@ -356,6 +438,8 @@ try {
 let hidden, visibilityChange
 
 const handleVisibilityChange = () => {
+  if (store.getters['api/isServer'] || !setupComplete) return
+
   const now = new Date()
   const authorizationExpiration = new Date(
     store.getters['auth/authorizationTokenExpiry']
@@ -364,16 +448,15 @@ const handleVisibilityChange = () => {
 
   if (!document[hidden]) {
     if (
-      store.getters['auth/isAuthorized'] &&
-      now >= authorizationExpiration &&
-      now < authenticationExpiration
-    ) {
-      store.dispatch('auth/authorize')
-    } else if (
-      store.getters['auth/isAuthenticatd'] &&
+      !store.getters['auth/isAuthenticated'] ||
       now >= authenticationExpiration
     ) {
       store.dispatch('auth/authenticate')
+    } else if (
+      !store.getters['auth/isAuthorized'] ||
+      now >= authorizationExpiration
+    ) {
+      store.dispatch('auth/authorize')
     }
   }
 }

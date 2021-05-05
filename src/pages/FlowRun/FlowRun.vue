@@ -272,9 +272,19 @@ export default {
             {
               route: {
                 name: 'flow',
-                params: { id: flowRun.flow.id }
+                params: { id: flowRun.flow.flow_group_id }
               },
               text: flowRun.flow.name
+            },
+            {
+              route: {
+                name: 'flow',
+                params: { id: flowRun.flow.id }
+              },
+              text:
+                flowRun.flow.version == flowRun.version
+                  ? `Version ${flowRun.flow.version} (Current)`
+                  : `Version ${flowRun.flow.version}`
             }
           ]"
         />

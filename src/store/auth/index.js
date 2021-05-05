@@ -8,7 +8,6 @@ const state = {
   error: null,
   idToken: null,
   idTokenExpiry: null,
-  isAuthenticated: false,
   isAuthorizingUser: false,
   isLoggingInUser: false,
   isRefreshingAuthentication: false,
@@ -22,7 +21,7 @@ const state = {
 
 const getters = {
   isAuthenticated(state) {
-    return !!state.isAuthenticated
+    return !!state.idToken && new Date().getTime() < state.idTokenExpiry
   },
   isAuthorized(state) {
     return (
@@ -83,14 +82,6 @@ const getters = {
 const mutations = {
   error(state, error) {
     state.error = error
-  },
-  isAuthenticated(state, isAuthenticated) {
-    if (typeof isAuthenticated !== 'boolean' || isAuthenticated == null)
-      throw new TypeError(
-        `isAuthenticated must be a boolean, got ${typeof isAuthenticated} instead`
-      )
-
-    state.isAuthenticated = isAuthenticated
   },
   user(state, user) {
     if (typeof user !== 'object' || user == null)

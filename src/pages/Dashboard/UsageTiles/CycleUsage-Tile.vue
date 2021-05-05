@@ -28,7 +28,7 @@ export default {
     freeUsage() {
       if (isNaN(this.usage)) return null
       const percentage = this.usage / 10000
-      return percentage > 1 ? 100 : percentage * 100
+      return percentage > 1 ? 100 : (percentage * 100).toFixed()
     },
     usageLoading() {
       return this.usageLoadingKey > 0
@@ -90,10 +90,12 @@ export default {
     style="height: 100%;"
     tile
   >
-    <v-card-text
-      class="pa-0 px-3 pt-3 d-flex align-start justify-center flex-column mb-auto"
+    <v-card-title class="text-h4 font-weight-light"
+      >Usage this cycle</v-card-title
     >
-      <div class="text-h6 utilGrayDark--text">Usage this cycle</div>
+    <v-card-text
+      class="pa-3 pt-0 d-flex align-start justify-center flex-column mb-auto"
+    >
       <div class="text-h3">
         <v-skeleton-loader
           :loading="!usage && (invoiceLoading || usageLoading)"
@@ -140,10 +142,9 @@ export default {
       >
     </v-card-text>
     <v-spacer />
-    <v-card-actions class="mt-auto">
+    <v-card-actions v-if="planType('FREE')" class="mt-auto">
       <v-spacer />
       <v-btn
-        v-if="planType('FREE')"
         color="accentPink"
         depressed
         dark
@@ -152,9 +153,6 @@ export default {
         :to="'/plans'"
       >
         Get more runs
-      </v-btn>
-      <v-btn small color="primary" text :to="'/team/account'">
-        Details
       </v-btn>
     </v-card-actions>
   </v-card>

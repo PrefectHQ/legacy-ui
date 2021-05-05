@@ -7,6 +7,11 @@ export default {
     JsonInput
   },
   props: {
+    includeCheckbox: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     addLabel: {
       type: String,
       requird: false,
@@ -38,6 +43,11 @@ export default {
       type: String,
       requird: false,
       default: 'Value'
+    },
+    defaultCheckedKeys: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data() {
@@ -46,7 +56,8 @@ export default {
       json: false,
       jsonInput: '{}',
       keys: [],
-      values: []
+      values: [],
+      includedKeys: this.defaultCheckedKeys
     }
   },
   computed: {
@@ -58,12 +69,19 @@ export default {
     },
     value() {
       const dict = {}
-      this.keys
-        .filter(k => k !== null)
-        .map((k, i) => (dict[k] = this.values[i]))
+      this.keys.forEach((k, i) => {
+        if (
+          !this.includeCheckbox ||
+          (this.json && Object.keys(JSON.parse(this.jsonInput)).includes(k)) ||
+          (!this.json && this.includedKeys.includes(k))
+        ) {
+          dict[k] = this.values[i]
+        }
+      })
       return dict
     }
   },
+
   watch: {
     // Allows swapping between json input and key value pairs
     json(val) {
@@ -79,7 +97,17 @@ export default {
         this.$nextTick(() => {
           this.$refs['json-input'].validateJson()
         })
+      } else {
+        try {
+          this.includedKeys = Object.keys(JSON.parse(this.jsonInput))
+        } catch {
+          this.includedKeys = Object.keys(this.value)
+        }
       }
+    },
+    includedKeys(val) {
+      this.jsonInput = val.length > 0 ? JSON.stringify(this.value) : '{}'
+      this.$emit('input', { ...this.value })
     }
   },
   mounted() {
@@ -91,8 +119,26 @@ export default {
       try {
         const json = JSON.parse(this.jsonInput)
 
-        this.keys = Object.keys(json)
-        this.values = Object.values(json).map(value => JSON.stringify(value))
+        if (this.includeCheckbox) {
+          Object.keys(json).forEach(k => {
+            let i = this.keys.indexOf(k)
+
+            if (i > -1) {
+              this.values[i] =
+                typeof json[k] === 'string' ? json[k] : JSON.stringify(json[k])
+            } else {
+              this.keys.push(k)
+              this.values.push(
+                typeof json[k] === 'string' ? json[k] : JSON.stringify(json[k])
+              )
+            }
+          })
+        } else {
+          this.keys = Object.keys(json)
+          this.values = Object.values(json).map(value =>
+            typeof value === 'string' ? value : JSON.stringify(value)
+          )
+        }
         this.$emit('input', { ...this.value })
       } catch {
         this.$refs['json-input'].validateJson()
@@ -123,18 +169,33 @@ export default {
             .filter(entry => entry.disabled == true)
             .map(entry => entry.key)
         : []
+      if (this.includeCheckbox && this.includedKeys.length === 0) {
+        this.jsonInput = '{}'
+      } else if (
+        this.includeCheckbox &&
+        this.includedKeys.length > 0 &&
+        this.inputIsArray
+      ) {
+        const v = this.dict.filter(i => this.includedKeys.includes(i.key))
 
-      this.jsonInput = this.inputIsArray
-        ? JSON.stringify(
-            Object.fromEntries(this.dict.map(entry => [entry.key, entry.value]))
-          )
-        : this.dict
-        ? JSON.stringify(this.dict)
-        : `
-{
+        this.jsonInput = JSON.stringify(
+          Object.fromEntries(v.map(entry => [entry.key, entry.value]))
+        )
+      } else {
+        this.jsonInput = this.inputIsArray
+          ? JSON.stringify(
+              Object.fromEntries(
+                this.dict.map(entry => [entry.key, entry.value])
+              )
+            )
+          : this.dict
+          ? JSON.stringify(this.dict)
+          : `
+        {
 
-}
-      `
+        }
+              `
+      }
 
       this.keys = this.inputIsArray
         ? this.dict.map(entry => entry.key)
@@ -200,7 +261,14 @@ export default {
           class="my-4 position-relative"
           :class="{ 'pr-8': !disableEdit }"
         >
-          <v-col cols="4" class="pr-3">
+          <v-col v-if="includeCheckbox" cols="1">
+            <v-checkbox
+              v-model="includedKeys"
+              multiple
+              :value="keys[i]"
+            ></v-checkbox>
+          </v-col>
+          <v-col :cols="includeCheckbox ? 3 : 4" class="pr-3">
             <v-text-field
               v-model="keys[i]"
               class="text-body-1"
@@ -208,7 +276,10 @@ export default {
               outlined
               dense
               :placeholder="keyLabel"
-              :readonly="disabledKeys.includes(keys[i])"
+              :readonly="
+                disabledKeys.includes(keys[i]) ||
+                  Object.keys(JSON.parse(jsonInput)).includes(keys[i])
+              "
               @keyup="_handleKeypress"
             />
           </v-col>
@@ -220,9 +291,12 @@ export default {
               outlined
               dense
               :placeholder="
-                inputIsArray && dict[i].value
+                inputIsArray && dict[i] && dict[i].value
                   ? dict[i].value.toString()
                   : valueLabel
+              "
+              :readonly="
+                includeCheckbox ? !includedKeys.includes(keys[i]) : false
               "
               @keyup="_handleKeypress"
             />

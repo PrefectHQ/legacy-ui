@@ -76,7 +76,6 @@ const tenantNavGuard = async (to, from, next) => {
   // Otherwise, we direct to the get started page because we are either not
   // connected to an API or we have no access to a tenant
   // Note: this should only be possible in Server
-
   return next({
     name: 'home'
   })
