@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-05-04
+
+### Features and Improvements
+
 - Update Universal-Deploy.md to include the latest authentication steps - [#806](https://github.com/PrefectHQ/ui/pull/806)
 - Adds animated hint for users creating new automations - [#784](https://github.com/PrefectHQ/ui/pull/784)
 - Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
