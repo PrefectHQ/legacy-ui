@@ -98,7 +98,7 @@ export const actionTypes = [
     requiresCloud: true
   },
   {
-    title: 'Web',
+    title: 'Webhook',
     sendText: 'Send a',
     verb: 'send webhook to',
     type: 'WEBHOOK',

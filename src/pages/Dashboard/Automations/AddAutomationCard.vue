@@ -118,6 +118,7 @@ export default {
       return 'has'
     },
     editedActions() {
+      // Most actions are independent and can be used across flows but PauseScheduleAction requires an flow group id so need to filter here
       const actions = this.actions.filter(
         action =>
           action.action_type !== 'PauseScheduleAction' ||

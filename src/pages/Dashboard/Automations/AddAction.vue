@@ -490,7 +490,7 @@ export default {
               :class="format('openMessageText')"
               @click="switchStep('openMessageText')"
             >
-              message</v-btn
+              <span v-if="isWebhook" class="mr-1"> JSON </span> message</v-btn
             >
             <v-tooltip v-else top>
               <template #activator="{ on, attrs }">
