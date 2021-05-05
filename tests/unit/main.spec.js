@@ -1,7 +1,14 @@
 import { logIn, logOut, start } from '@/main.js'
 
-describe('logIn', () => {
-  it('attempts to retreive tokens from the token worker', async () => {
-    await logIn()
+describe('Main', () => {
+  describe('Service worker', () => {
+    it('installs the shared service worker if enabled in the browser', () => {})
+    it('falls back if unavailable', () => {})
   })
 })
+
+// describe('logIn', () => {
+//   it('attempts to retrieve an id token from the auth worker', async () => {
+//     await logIn()
+//   })
+// })

@@ -240,8 +240,7 @@ const mutations = {
   }
 }
 
-let actions
-let worker
+const actions = {}
 
 export default {
   state,
@@ -250,5 +249,3 @@ export default {
   actions,
   namespaced: true
 }
-
-export { worker }
