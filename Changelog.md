@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Populate JSON editor with only checked parameters - [#787](https://github.com/PrefectHQ/ui/pull/787)
 
 ## 2021-05-04
 
