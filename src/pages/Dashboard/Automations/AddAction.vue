@@ -40,7 +40,6 @@ export default {
       apiToken: '',
       routingKey: '',
       webhookUrlSecret: null,
-      webhookURL: '',
       severity: '',
       severityLevels: [
         { text: 'Info', value: 'info' },
@@ -155,7 +154,7 @@ export default {
         : this.isMSTeams
         ? !!this.webhookUrlSecret
         : this.isWebhook
-        ? !!this.webhookURL
+        ? !!this.webhookUrlSecret
         : !!this.actionType &&
           (!!this.secretName ||
             (!!this.actionConfigArray.length &&
@@ -371,7 +370,7 @@ export default {
               break
             case 'WEBHOOK': {
               this.actionConfig = {
-                webhook_url_secret: this.webhookUrlSecret
+                url: this.webhookUrlSecret
               }
               if (this.messageText) {
                 this.actionConfig.message = this.bothMessages
@@ -436,7 +435,7 @@ export default {
           break
         case 'WEBHOOK':
           config = {
-            url: this.actionConfig
+            webhook: this.actionConfig
           }
           break
         default:
@@ -723,8 +722,17 @@ export default {
         ></ListInput>
       </div>
 
-      <div v-else-if="actionType.type === 'MS_TEAMS'">
-        <div>
+      <div
+        v-else-if="
+          actionType.type === 'MS_TEAMS' || actionType.type === 'WEBHOOK'
+        "
+      >
+        <div v-if="actionType.type === 'WEBHOOK'">
+          <span>
+            Prefect Cloud will send a message via the URL you provide.
+          </span>
+        </div>
+        <div v-else-if="actionType.type === 'MS_TEAMS'">
           <span>
             Prefect Cloud will send a message via the
             <a
@@ -751,22 +759,6 @@ export default {
               @change="handleWebHookURLSecretInput"
             />
           </v-col>
-        </v-row>
-      </div>
-      <div v-else-if="actionType.type === 'WEBHOOK'">
-        <div>
-          <span>
-            Prefect Cloud will send a message via the URL you provide.
-          </span>
-        </div>
-
-        <v-row class="mt-2">
-          <v-text-field
-            v-model="webhookURL"
-            outlined
-            :rules="[rules.required]"
-            label="URL"
-          />
         </v-row>
       </div>
     </v-card-text>
