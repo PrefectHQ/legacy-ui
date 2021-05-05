@@ -151,7 +151,7 @@ export default {
             <li>
               You have {{ taskRunsLeft | numFormat }} task runs left until
               {{ subscriptionPeriodEnd }}.
-              <span v-if="planType('STARTER_2021')">
+              <span v-if="planType('STARTER')">
                 You will then be charged ${{ plan.additionalCost }}/task
                 run.</span
               >
