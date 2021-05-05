@@ -2,10 +2,12 @@
 import { actionTypes } from '@/utils/automations'
 import { mapGetters } from 'vuex'
 import ListInput from '@/components/CustomInputs/ListInput'
+import JsonInput from '@/components/CustomInputs/JsonInput'
 
 export default {
   components: {
-    ListInput
+    ListInput,
+    JsonInput
   },
   props: {
     eventType: {
@@ -38,6 +40,7 @@ export default {
       authToken: '',
       accountSid: '',
       apiToken: '',
+      jsonPayload: null,
       routingKey: '',
       webhookUrlSecret: null,
       severity: '',
@@ -372,10 +375,8 @@ export default {
               this.actionConfig = {
                 url: this.webhookUrlSecret
               }
-              if (this.messageText) {
-                this.actionConfig.message = this.bothMessages
-                  ? `{} ${this.messageText}`
-                  : this.messageText
+              if (this.jsonPayload) {
+                this.actionConfig.payload = this.jsonPayload
               }
             }
           }
@@ -575,59 +576,71 @@ export default {
       >
     </v-card-text>
     <v-card-text v-else-if="step.name === 'openMessageText'" class="pt-0">
-      <span class="primary--text"
-        >Type your message here or leave blank to send a default message.</span
-      ><v-menu
-        v-model="menu"
-        :close-on-content-click="false"
-        :open-on-hover="true"
-      >
-        <template #activator="{ on, attrs }">
-          <v-btn icon small v-bind="attrs" v-on="on">
-            <v-icon color="primary" small>info</v-icon>
-          </v-btn>
-        </template>
+      <div v-if="!isWebhook">
+        <span class="primary--text"
+          >Type your message here or leave blank to send a default
+          message.</span
+        ><v-menu
+          v-model="menu"
+          :close-on-content-click="false"
+          :open-on-hover="true"
+        >
+          <template #activator="{ on, attrs }">
+            <v-btn icon small v-bind="attrs" v-on="on">
+              <v-icon color="primary" small>info</v-icon>
+            </v-btn>
+          </template>
 
-        <v-card width="30vW">
-          <v-card-text
-            ><div class="mb-2"
-              >The default message varies depending on what type of action you
-              attach the config to.
-            </div>
-            <div>
-              For a state change event the message would be:
-              <span class="font-weight-light"
-                >"Run {flow_run_name} of flow {flow_name} entered state {state}
-                with message {state_message}. See {flow_run_link} for more
-                details."</span
-              ></div
+          <v-card width="30vW">
+            <v-card-text
+              ><div class="mb-2"
+                >The default message varies depending on what type of action you
+                attach the config to.
+              </div>
+              <div>
+                For a state change event the message would be:
+                <span class="font-weight-light"
+                  >"Run {flow_run_name} of flow {flow_name} entered state
+                  {state} with message {state_message}. See {flow_run_link} for
+                  more details."</span
+                ></div
+              >
+              <div
+                >For a flow SLA event the default message would be:
+                <span class="font-weight-light"
+                  >"Run {flow_run_name} ({flow_run_id}) of flow {flow_name}
+                  failed {kind} SLA ({flow_sla_config_id}) after
+                  {duration_seconds} seconds. See {flow_run_link} for more
+                  details."</span
+                ></div
+              >
+              <div
+                >For an agent SLA event, the default message would be:
+                <span class="font-weight-light"
+                  >"Agents sharing the config {agent_config_id} have failed the
+                  minimum healthy count of {sla_min_healthy}. The following
+                  agents are unhealthy: {agent_ids}"</span
+                ></div
+              ></v-card-text
             >
-            <div
-              >For a flow SLA event the default message would be:
-              <span class="font-weight-light"
-                >"Run {flow_run_name} ({flow_run_id}) of flow {flow_name} failed
-                {kind} SLA ({flow_sla_config_id}) after {duration_seconds}
-                seconds. See {flow_run_link} for more details."</span
-              ></div
-            >
-            <div
-              >For an agent SLA event, the default message would be:
-              <span class="font-weight-light"
-                >"Agents sharing the config {agent_config_id} have failed the
-                minimum healthy count of {sla_min_healthy}. The following agents
-                are unhealthy: {agent_ids}"</span
-              ></div
-            ></v-card-text
-          >
-        </v-card>
-      </v-menu>
-      <v-textarea
-        v-model="messageText"
-        class="pt-0"
-        outlined
-        :placeholder="messagePlaceholder"
-        @keydown.enter="saveMessage"
-      />
+          </v-card>
+        </v-menu>
+        <v-textarea
+          v-model="messageText"
+          class="pt-0"
+          outlined
+          :placeholder="messagePlaceholder"
+          @keydown.enter="saveMessage"
+        />
+      </div>
+      <div v-else>
+        <span
+          >Enter custom JSON payload to send as part of your webhook or leave
+          blank to send data from the event that triggers the
+          notification.</span
+        >
+        <JsonInput v-model="jsonPayload" selected-type="json" />
+      </div>
     </v-card-text>
     <v-card-text v-else-if="step.name === 'openToConfig'">
       <v-row v-if="actionType.type === 'SLACK_WEBHOOK'" class="py-3 px-1">
