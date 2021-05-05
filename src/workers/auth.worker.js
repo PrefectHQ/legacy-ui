@@ -84,6 +84,11 @@ const setAuthorizationToken = token => {
     payload: state.authorizationToken
   })
 
+  postToConnections({
+    type: 'authorizationToken',
+    payload: state.authorizationToken
+  })
+
   try {
     const expiration = new Date(token.expires_at)
     const timeout = ((expiration - Date.now()) * 3) / 4

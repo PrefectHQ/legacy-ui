@@ -359,9 +359,15 @@ export default {
 
       context.save()
       context.lineWidth = 2
-      context.strokeStyle = this.computedStyle.getPropertyValue(
-        '--v-appBackground-base'
-      )
+      try {
+        context.strokeStyle = this.computedStyle.getPropertyValue(
+          '--v-appBackground-base'
+        )
+      } catch {
+        cancelAnimationFrame(this.drawCanvas)
+        this.timer.stop()
+        this.bars = []
+      }
 
       context.clearRect(0, 0, this.chartWidth, this.chartHeight)
 

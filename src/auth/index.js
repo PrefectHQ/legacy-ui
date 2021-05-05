@@ -4,6 +4,8 @@ import { authorize, authorizeTenant } from '@/auth/authorization.js'
 
 import store from '@/store'
 
+import jwt_decode from 'jwt-decode'
+
 let TokenWorker
 if (typeof window.SharedWorker !== 'undefined') {
   // // Initializes the shared service worker that handles token refresh
@@ -27,7 +29,10 @@ if (TokenWorker?.port) {
 
     switch (type) {
       case 'idToken':
-        store.commit('auth/idToken', payload)
+        commitTokens({ idToken: payload })
+        break
+      case 'authorizationToken':
+        commitTokens({ authorizationTokens: payload })
         break
       default:
         break
@@ -45,6 +50,28 @@ if (TokenWorker?.port) {
 }
 
 export { TokenWorker }
+
+export const commitTokens = tokens => {
+  const authToken = tokens.authorizationTokens.access_token
+  const expiry = new Date(tokens.authorizationTokens.expires_at).getTime()
+  const idToken = tokens.idToken
+  const refreshToken = tokens.authorizationTokens.refresh_token
+
+  if (idToken) {
+    store.commit('auth/idToken', idToken.value)
+    store.commit('auth/idTokenExpiry', idToken.expiresAt * 1000)
+    store.commit('auth/user', idToken.claims)
+    store.commit('user/setOktaUser', idToken.claims)
+  }
+
+  if (tokens.authorizationTokens) {
+    store.commit('auth/authorizationToken', authToken)
+    store.commit('auth/refreshToken', refreshToken)
+
+    store.commit('auth/authorizationTokenExpiry', expiry)
+    store.commit('auth/refreshTokenExpiry', jwt_decode(refreshToken).exp * 1000)
+  }
+}
 
 export const login = async () => {
   // try getting a token from the service worker

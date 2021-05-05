@@ -1,4 +1,4 @@
-import { login, switchTenant } from '@/auth/login.js'
+import { login, switchTenant, commitTokens } from '@/auth/index.js'
 import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
@@ -7,28 +7,6 @@ export const logOut = async () => {
   // try sending the request to the token worker
   // if we have a service worker, ping that for a token
   // otherwise we go through the okta logout process directly
-}
-
-export const commitTokens = tokens => {
-  const authToken = tokens.authorizationTokens.access_token
-  const expiry = new Date(tokens.authorizationTokens.expires_at).getTime()
-  const idToken = tokens.idToken
-  const refreshToken = tokens.authorizationTokens.refresh_token
-
-  if (idToken) {
-    store.commit('auth/idToken', idToken.value)
-    store.commit('auth/idTokenExpiry', idToken.expiresAt * 1000)
-    store.commit('auth/user', idToken.claims)
-    store.commit('user/setOktaUser', idToken.claims)
-  }
-
-  if (tokens.authorizationTokens) {
-    store.commit('auth/authorizationToken', authToken)
-    store.commit('auth/refreshToken', refreshToken)
-
-    store.commit('auth/authorizationTokenExpiry', expiry)
-    store.commit('auth/refreshTokenExpiry', jwt_decode(refreshToken).exp * 1000)
-  }
 }
 
 export const setStartupTenant = async () => {
