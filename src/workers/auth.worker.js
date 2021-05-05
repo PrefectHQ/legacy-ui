@@ -1,4 +1,8 @@
-import { authorize, refreshTokens } from '@/auth/authorization.js'
+import {
+  authorize,
+  refreshTokens,
+  authorizeTenant
+} from '@/auth/authorization.js'
 
 const ports = []
 const channelPorts = []
@@ -52,6 +56,22 @@ const refreshAuthorizationToken = async () => {
   console.connect(authorizationResponse)
 
   setAuthorizationToken(authorizationResponse)
+}
+
+const handleSwitchTenant = async tenantId => {
+  const authorizationResponse = await authorizeTenant(
+    state.authorizationToken.access_token,
+    tenantId
+  )
+
+  console.connect(authorizationResponse)
+
+  setAuthorizationToken(authorizationResponse)
+
+  postToConnections({
+    type: 'switch-tenant',
+    payload: state.authorizationToken
+  })
 }
 
 let authorizationTimeout = null
@@ -116,6 +136,11 @@ const connect = c => {
       if (!authorizing) {
         handleAuthorize(payload)
       }
+    }
+
+    if (type == 'switch-tenant') {
+      channelPorts.push(channelPort)
+      handleSwitchTenant(payload)
     }
   }
 

@@ -40,3 +40,21 @@ export const refreshTokens = async (accessToken, refreshToken) => {
 
   return res?.data?.refresh_token
 }
+
+export const authorizeTenant = async (accessToken, tenantId) => {
+  const res = await client.mutate({
+    mutation: require('@/graphql/Tenant/tenant-token.gql'),
+    variables: {
+      tenantId: tenantId
+    },
+    context: {
+      headers: {
+        ...headers,
+        authorization: `Bearer ${accessToken}`
+      }
+    },
+    fetchPolicy: 'no-cache'
+  })
+
+  return res?.data?.switch_tenant
+}

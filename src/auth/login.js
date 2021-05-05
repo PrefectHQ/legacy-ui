@@ -1,6 +1,8 @@
 import { promiseChannel } from '@/workers/util/worker-interface.js'
 import { authenticate } from '@/auth/authentication.js'
-import { authorize } from '@/auth/authorization.js'
+import { authorize, authorizeTenant } from '@/auth/authorization.js'
+
+import store from '@/store'
 
 let TokenWorker
 if (typeof window.SharedWorker !== 'undefined') {
@@ -21,7 +23,15 @@ if (TokenWorker?.port) {
     const type = e.data?.type
     const payload = e.data?.payload
 
-    console.log(type, payload)
+    // console.log(type, payload)
+
+    switch (type) {
+      case 'idToken':
+        store.commit('auth/idToken', payload)
+        break
+      default:
+        break
+    }
   }
 
   // TODO: Implement error handling from the token worker
@@ -73,6 +83,27 @@ export const login = async () => {
 
   return {
     idToken: idToken,
+    authorizationTokens: authorizationTokens
+  }
+}
+
+export const switchTenant = async tenantId => {
+  let authorizationTokens
+
+  if (TokenWorker) {
+    authorizationTokens = await promiseChannel(
+      TokenWorker,
+      'switch-tenant',
+      tenantId
+    )
+  } else {
+    authorizationTokens = await authorizeTenant(
+      store.getters['auth/authorizationToken'],
+      tenantId
+    )
+  }
+
+  return {
     authorizationTokens: authorizationTokens
   }
 }
