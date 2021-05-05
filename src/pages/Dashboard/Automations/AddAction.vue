@@ -41,6 +41,7 @@ export default {
       accountSid: '',
       apiToken: '',
       jsonPayload: null,
+      validJson: true,
       routingKey: '',
       webhookUrlSecret: null,
       severity: '',
@@ -135,10 +136,10 @@ export default {
     },
     disableNext() {
       if (this.step.name === 'openToConfig') {
-        if (this.isWebhook && this.webhookURL) return false
         if (!this.actionConfigArray.length) return true
         else return false
       } else {
+        if (!this.validJson) return true
         return false
       }
     },
@@ -246,6 +247,9 @@ export default {
       if (this.step.name === 'openMessageText')
         this.steps['openMessageText'].complete = true
       this.step = this.steps[selectedStep]
+    },
+    handleJsonValidation(event) {
+      this.validJson = !event
     },
     handleNext() {
       if (this.step.name === 'openMessageText') {
@@ -376,7 +380,7 @@ export default {
                 url: this.webhookUrlSecret
               }
               if (this.jsonPayload) {
-                this.actionConfig.payload = this.jsonPayload
+                this.actionConfig.payload = JSON.parse(this.jsonPayload)
               }
             }
           }
@@ -639,7 +643,11 @@ export default {
           blank to send data from the event that triggers the
           notification.</span
         >
-        <JsonInput v-model="jsonPayload" selected-type="json" />
+        <JsonInput
+          v-model="jsonPayload"
+          selected-type="json"
+          @invalid-secret="handleJsonValidation"
+        />
       </div>
     </v-card-text>
     <v-card-text v-else-if="step.name === 'openToConfig'">
@@ -742,7 +750,10 @@ export default {
       >
         <div v-if="actionType.type === 'WEBHOOK'">
           <span>
-            Prefect Cloud will send a message via the URL you provide.
+            Prefect Cloud will send a message via the URL you provide. To
+            securely store your webhook URL, create a
+            <router-link :to="{ name: 'secrets' }"> Prefect secret</router-link
+            >.
           </span>
         </div>
         <div v-else-if="actionType.type === 'MS_TEAMS'">
