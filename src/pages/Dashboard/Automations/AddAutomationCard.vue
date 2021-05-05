@@ -118,36 +118,41 @@ export default {
       return 'has'
     },
     editedActions() {
-      return this.actions
+      const actions = this.actions.filter(
+        action =>
+          action.action_type !== 'PauseScheduleAction' ||
+          action.action_config.flow_group_id ===
+            this.selectedFlows[0].flow_group_id
+      )
+      return actions
         ? this.agentOrFlow === 'agent'
-          ? this.actions.filter(
+          ? actions.filter(
               action =>
                 action.action_type !== 'CancelFlowRunAction' &&
                 action.action_type !== 'PauseScheduleAction'
             )
-          : this.actions.find(
+          : actions.find(
               action => action.action_type === 'CancelFlowRunAction'
             ) &&
-            this.actions.find(
-              action => action.action_type === 'PauseScheduleAction'
+            actions.find(
+              action =>
+                action.action_type === 'PauseScheduleAction' &&
+                action.action_config.flow_group_id ===
+                  this.selectedFlows[0].flow_group_id
             )
-          ? this.actions
-          : this.actions.find(
-              action => action.action_type === 'PauseScheduleAction'
-            )
+          ? actions
+          : actions.find(action => action.action_type === 'PauseScheduleAction')
           ? [
-              ...this.actions,
+              ...actions,
               {
                 name: 'cancel run',
                 value: 'CANCEL_RUN',
                 action_type: 'CancelFlowRunAction'
               }
             ]
-          : this.actions.find(
-              action => action.action_type === 'CancelFlowRunAction'
-            )
+          : actions.find(action => action.action_type === 'CancelFlowRunAction')
           ? [
-              ...this.actions,
+              ...actions,
               {
                 name: 'pause schedule',
                 value: 'PAUSE_SCHEDULE',
@@ -155,7 +160,7 @@ export default {
               }
             ]
           : [
-              ...this.actions,
+              ...actions,
               {
                 name: 'pause schedule',
                 value: 'PAUSE_SCHEDULE',
@@ -568,6 +573,7 @@ export default {
       let data
       try {
         const flow = this.selectedFlows[0]?.flow_group_id
+        const name = this.selectedFlows[0]?.name
         let action = this.chosenAction || this.hookDetails?.hook?.action
         if (action?.value === 'CANCEL_RUN') {
           const cancelConfig = { cancel_flow_run: {} }
@@ -580,7 +586,7 @@ export default {
           const pauseConfig = { pause_schedule: { flow_group_id: flow } }
           action = await this.createAction({
             config: pauseConfig,
-            name: 'pause schedule'
+            name: `pause ${name}'s schedule`
           })
         }
         if (flow) {
@@ -677,13 +683,14 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
+        this.saving = false
       } finally {
         this.hookDetails = null
         this.$emit('refetch-hooks')
         if (data) {
           this.setAlert({
             alertShow: true,
-            alertMessage: 'Hook created',
+            alertMessage: 'Automation created',
             alertType: 'success'
           })
           this.saving = false
