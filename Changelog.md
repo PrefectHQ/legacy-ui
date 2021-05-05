@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Fix the issue where the key fields for the context and environment are disabled after typing on the run page - [#810](https://github.com/PrefectHQ/ui/pull/810)
 
 ### Bugfixes
 
