@@ -4,10 +4,11 @@
 
 ### Features and Improvements
 
-- Fix the issue where the key fields for the context and environment are disabled after typing on the run page - [#810](https://github.com/PrefectHQ/ui/pull/810)
+- None
 
 ### Bugfixes
 
+- Fix the issue where the key fields for the context and environment are disabled after typing on the run page - [#810](https://github.com/PrefectHQ/ui/pull/810)
 - Populate JSON editor with only checked parameters - [#787](https://github.com/PrefectHQ/ui/pull/787)
 
 ## 2021-05-04
