@@ -95,6 +95,7 @@ export default {
     },
     labelsAlign() {
       if (!this.flowRuns?.length) {
+        console.log('no runs')
         this.labelMessage('You have no flowRuns')
         return false
       }
@@ -102,6 +103,7 @@ export default {
         !this.agent?.labels?.length &&
         this.flowRuns.every(flowRun => flowRun.labels.length > 0)
       ) {
+        console.log('no match')
         this.labelMessage(
           "You have no currently registered flowRuns that match this agent's labels.  You will need to edit your flowRuns' labels"
         )
@@ -114,17 +116,12 @@ export default {
               this.agent.labels.every(label => flowRun?.labels?.includes(label))
             ) {
               this.addMatchingflowRun(flowRun)
-              matchingLabels++
             }
           })
         }
         if (matchingLabels > 0) {
-          this.labelMessage('Your flowRun and agent labels look good.')
           return true
         } else {
-          this.labelMessage(
-            "It looks like no currently running Agent has this agent's full set of labels."
-          )
           return false
         }
       }
@@ -170,6 +167,7 @@ export default {
       query: require('@/graphql/Agent/FlowRuns.gql'),
       loadingKey: 'loading',
       update: data => {
+        console.log('data', data)
         return data.flow_run
       }
     }

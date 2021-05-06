@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import CardTitle from '@/components/Card-Title'
+// import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
 import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -17,7 +17,7 @@ const AGENT_TYPES = [
 
 export default {
   components: {
-    CardTitle,
+    // CardTitle,
     Label
   },
   filters: {
@@ -56,7 +56,9 @@ export default {
       interval: null,
       isDeleting: false,
       showConfirmDialog: false,
-      showLastQuery: true
+      showLastQuery: true,
+      submittable: [],
+      newStatus: ''
     }
   },
   computed: {
@@ -90,6 +92,7 @@ export default {
       )
     },
     status() {
+      if (this.lateRuns?.length) return 'late'
       if (this.secondsSinceLastQuery < 60 * this.staleThreshold)
         return 'healthy'
       if (this.secondsSinceLastQuery < 60 * this.unhealthyThreshold)
@@ -98,13 +101,14 @@ export default {
       return 'unhealthy'
     },
     statusColor() {
-      return (
+      const color =
         {
+          late: 'deepRed',
           healthy: 'success',
           stale: 'warning',
           unhealthy: 'error'
         }[this.status] || 'secondaryGray'
-      )
+      return color
     },
     timer() {
       if (!this.agent?.last_queried) return null
@@ -118,9 +122,55 @@ export default {
     },
     type() {
       return this.agent?.type ? this.agent.type : 'Agent type unknown'
+    },
+    submittableRuns() {
+      if (!this.submittable) return null
+      const filtered = this.submittable?.filter(run => {
+        return this.getTimeOverdue(run.scheduled_start_time) <= 20000
+      })
+      return filtered
+    },
+    lateRuns() {
+      if (!this.submittable.length) return null
+      return this.submittable?.filter(run => {
+        return this.getTimeOverdue(run.scheduled_start_time) > 20000
+      })
+    },
+    labelsAlign() {
+      if (
+        !this.agent?.labels?.length &&
+        this.flowRuns?.every(flowRun => flowRun?.labels?.length > 0)
+      ) {
+        return false
+      } else {
+        if (this.flowRuns?.length) {
+          this.flowRuns.forEach(flowRun => {
+            if (
+              this.agent.labels.every(label => flowRun?.labels?.includes(label))
+            ) {
+              this.addMatchingflowRun(flowRun)
+            }
+          })
+        }
+        return true
+      }
     }
   },
   watch: {
+    submittable(val) {
+      if (!val) return
+      if (this.lateRuns?.length > 0) {
+        this.newStatus = 'late'
+        this.tab = 'late'
+      }
+      if (this.lateRuns?.length <= 0) {
+        this.tab = 'submittable'
+      }
+    },
+    flowRuns() {
+      this.submittable = []
+      this.labelsAlign
+    },
     secondsSinceLastQuery(newVal, oldVal) {
       if (newVal > oldVal || !this.agent?.last_queried) return
 
@@ -141,6 +191,9 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    getTimeOverdue(time) {
+      return new Date() - new Date(time)
+    },
     agentIcon(type) {
       return AGENT_TYPES.find(a => a.type == type)?.icon || 'fad fa-globe'
     },
@@ -184,6 +237,19 @@ export default {
     },
     labelSelected(label) {
       return this.selectedLabels.includes(label)
+    },
+    addMatchingflowRun(flowRun) {
+      if (!this.submittable.filter(item => item.id === flowRun.id).length)
+        this.submittable.push(flowRun)
+    }
+  },
+  apollo: {
+    flowRuns: {
+      query: require('@/graphql/Agent/FlowRuns.gql'),
+      loadingKey: 'loading',
+      update: data => {
+        return data.flow_run
+      }
     }
   }
 }
@@ -195,16 +261,30 @@ export default {
     class="agent-card px-2"
     style="overflow-y: auto;"
     :tile="showAll"
-    :height="showAll ? '380px' : '210px'"
+    :height="showAll ? '380px' : '280px'"
   >
-    <CardTitle
-      :title="name"
-      :subtitle="type"
-      :icon="agent.type ? agentIcon(agent.type) : 'fas fa-robot'"
-      :icon-color="statusColor"
-      icon-class="fa-2x pi-2x"
-    >
-    </CardTitle>
+    <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
+
+    <div>
+      <v-list-item dense class="px-0">
+        <v-list-item-avatar class="mr-2" tile>
+          <v-icon class="fa-2x pi-2x">
+            {{ agent.type ? agentIcon(agent.type) : 'fas fa-robot' }}
+          </v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content class="position: relative;">
+          <v-list-item-title class="text-h6 pb-1">
+            <div>
+              <div :color="lateRuns ? 'deepRed' : statusColor">
+                {{ name }}
+              </div>
+            </div>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider class="ml-12 mr-2"></v-divider>
+    </div>
 
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
@@ -238,7 +318,12 @@ export default {
       <v-list>
         <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
           <v-list-item-content min-height="10px" class="pa-0">
-            <v-list-item-title>Last Query </v-list-item-title>
+            <v-list-item-title
+              :class="
+                status === 'unhealthy' || status === 'late' ? 'red--text' : ''
+              "
+              >Last Query
+            </v-list-item-title>
             <v-list-item-subtitle>
               <span class="font-weight-bold">{{
                 agent.last_queried | formatDateTime
@@ -259,6 +344,26 @@ export default {
             <v-list-item-title>Core Version</v-list-item-title>
             <v-list-item-subtitle>
               {{ agent.core_version || 'Unknown' }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
+          <v-list-item-content class="pa-0">
+            <v-list-item-title
+              :class="lateRuns && lateRuns.length ? 'red--text' : ''"
+              >{{
+                lateRuns && lateRuns.length ? 'Late Submittable' : 'Submittable'
+              }}
+              Runs</v-list-item-title
+            >
+            <v-list-item-subtitle>
+              <span v-if="lateRuns && lateRuns.length">
+                {{ lateRuns ? lateRuns.length : 0 }}</span
+              >
+              <span v-else>
+                {{ submittableRuns ? submittableRuns.length : 0 }}</span
+              >
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>

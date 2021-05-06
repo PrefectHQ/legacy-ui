@@ -1,5 +1,5 @@
 <script>
-import difference from 'lodash.difference'
+// import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
 import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
@@ -81,17 +81,24 @@ export default {
       return this.loading > 0
     },
     filteredAgents() {
-      if (!this.agents) return []
-
-      return this.computedAgents.filter(agent => {
-        if (this.showUnlabeledAgentsOnly) {
-          return agent.labels.length === 0
-        }
-
-        if (!this.statusInput.includes(this.status(agent))) return false
-
-        return difference(this.labelInput, agent.labels).length === 0
+      if (!this.agents) return
+      const newList = this.agents.map(agent => {
+        if (this.status(agent) !== 'unhealthy' || this.labelsAlign(agent))
+          console.log('agents', agent)
+        return agent
       })
+
+      return newList
+
+      // return this.computedAgents.filter(agent => {
+      //   if (this.showUnlabeledAgentsOnly) {
+      //     return agent.labels.length === 0
+      //   }
+
+      //   if (!this.statusInput.includes(this.status(agent))) return false
+
+      //   return difference(this.labelInput, agent.labels).length === 0
+      // })
     },
     filtersApplied() {
       return (
@@ -214,6 +221,34 @@ export default {
         return 'stale'
 
       return 'unhealthy'
+    },
+    labelsAlign(agent) {
+      if (
+        !agent?.labels?.length &&
+        this.flowRuns?.every(flowRun => flowRun?.labels?.length > 0)
+      ) {
+        return false
+      } else {
+        if (this.flowRuns?.length) {
+          this.flowRuns.forEach(flowRun => {
+            if (agent.labels.every(label => flowRun?.labels?.includes(label))) {
+              // this.addMatchingflowRun(flowRun)
+
+              return true
+            }
+          })
+        }
+        return false
+      }
+    }
+  },
+  apollo: {
+    flowRuns: {
+      query: require('@/graphql/Agent/FlowRuns.gql'),
+      loadingKey: 'loading',
+      update: data => {
+        return data.flow_run
+      }
     }
   }
 }
