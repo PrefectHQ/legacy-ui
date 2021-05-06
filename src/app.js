@@ -240,8 +240,13 @@ Vue.mixin({
           }
         })
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Error in destroyed garbage collector mixin', e)
+        if (
+          process.env.VUE_APP_ENVIRONMENT == 'staging' ||
+          process.env.VUE_APP_ENVIRONMENT == 'dev'
+        ) {
+          // eslint-disable-next-line no-console
+          console.error('Error in destroyed garbage collector mixin', e)
+        }
       }
     }
 
