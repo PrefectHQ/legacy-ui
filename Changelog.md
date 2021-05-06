@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Turn the status indicator warning yellow when cloud is in maintenance mode - [#815](https://github.com/PrefectHQ/ui/pull/815)
+- Add new states to the license store - [#763](https://github.com/PrefectHQ/ui/pull/763)
 
 ### Bugfixes
 

@@ -80,9 +80,9 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'permissions']),
+    ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
     allowedUsers() {
-      return this.license?.terms?.users ?? Infinity
+      return this.allowedUsers() ?? Infinity
     },
     insufficientUsers() {
       return this.users >= this.allowedUsers
@@ -111,9 +111,6 @@ export default {
     },
     totalUsers() {
       return this.users + this.invitations
-    },
-    hasRBAC() {
-      return this.permissions?.includes('feature:basic-rbac')
     }
   },
   watch: {
@@ -438,7 +435,7 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
-          :disabled="!hasRBAC"
+          :disabled="!hasPermission('feature', 'basic-rbac')"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
           :items="roleSelectionMap"
@@ -449,7 +446,10 @@ export default {
         >
         </v-select>
 
-        <div v-if="!hasRBAC" class="text-caption">
+        <div
+          v-if="!hasPermission('feature', 'basic-rbac')"
+          class="text-caption"
+        >
           Looking for role-based access controls? This feature is only available
           on Enterprise plans; check out our
           <ExternalLink href="https://prefect.io/pricing"
