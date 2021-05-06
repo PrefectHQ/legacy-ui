@@ -20,6 +20,7 @@ export const authClient = new OktaAuth({
   tokenManager: {
     autoRenew: true
   },
+  pkce: OktaAuth.features.isPKCESupported(),
   storageManager: {
     token: {
       storageType: 'memory',
@@ -38,12 +39,15 @@ export const authClient = new OktaAuth({
 })
 
 export const authenticate = async () => {
+  console.log('authenticating')
   const isLoginRedirect = await authClient.isLoginRedirect()
 
   if (isLoginRedirect) {
-    const { tokens } = await authClient.token.parseFromUrl()
-    authClient.tokenManager.setTokens(tokens)
-    return tokens
+    console.log('is login redirect')
+    await authClient.handleLoginRedirect()
+    // const { tokens } = await authClient.token.parseFromUrl()
+    // authClient.tokenManager.setTokens(tokens)
+    // return tokens
   }
 
   const tokens = await authClient.tokenManager.getTokens()

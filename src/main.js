@@ -43,14 +43,17 @@ export const setStartupTenant = async () => {
   await store.dispatch('license/getLicense')
 }
 
+// let loading = false
 const start = async () => {
   if (process.env.VUE_APP_BACKEND === 'CLOUD') {
     // we run this when the application starts or a user returns to the page after some time away
     // this logs into the default tenant so that we can fetch information we need
     // if the user is requesting a different tenant (indicated by the URL),
     // we swap out these tokens later
+    // loading = true
     const tokens = await login()
     commitTokens(tokens)
+    // loading = false
   } else {
     // If we're on Server we fetch settings
     window.prefect_ui_settings = await fetch('/settings.json')
@@ -71,37 +74,37 @@ const start = async () => {
 start()
 
 // Visibility change properties vary between browsers
-let hidden, visibilityChange, loading
+// let hidden, visibilityChange
 
-const handleVisibilityChange = async () => {
-  if (store.getters['api/isServer'] || loading) return
+// const handleVisibilityChange = async () => {
+//   if (store.getters['api/isServer'] || loading) return
 
-  loading = true
+//   loading = true
 
-  if (!document[hidden]) {
-    if (
-      !store.getters['auth/isAuthenticated'] ||
-      !store.getters['auth/isAuthorized']
-    ) {
-      const tokens = await login()
-      commitTokens(tokens)
-    }
-  }
+//   if (!document[hidden]) {
+//     if (
+//       !store.getters['auth/isAuthenticated'] ||
+//       !store.getters['auth/isAuthorized']
+//     ) {
+//       const tokens = await login()
+//       commitTokens(tokens)
+//     }
+//   }
 
-  loading = false
-}
+//   loading = false
+// }
 
-if (window) {
-  if (typeof document.hidden !== 'undefined') {
-    // Opera 12.10 and Firefox 18 and later
-    hidden = 'hidden'
-    visibilityChange = 'visibilitychange'
-  } else if (typeof document.msHidden !== 'undefined') {
-    hidden = 'msHidden'
-    visibilityChange = 'msvisibilitychange'
-  } else if (typeof document.webkitHidden !== 'undefined') {
-    hidden = 'webkitHidden'
-    visibilityChange = 'webkitvisibilitychange'
-  }
-  window.addEventListener(visibilityChange, handleVisibilityChange, false)
-}
+// if (window) {
+//   if (typeof document.hidden !== 'undefined') {
+//     // Opera 12.10 and Firefox 18 and later
+//     hidden = 'hidden'
+//     visibilityChange = 'visibilitychange'
+//   } else if (typeof document.msHidden !== 'undefined') {
+//     hidden = 'msHidden'
+//     visibilityChange = 'msvisibilitychange'
+//   } else if (typeof document.webkitHidden !== 'undefined') {
+//     hidden = 'webkitHidden'
+//     visibilityChange = 'webkitvisibilitychange'
+//   }
+//   window.addEventListener(visibilityChange, handleVisibilityChange, false)
+// }
