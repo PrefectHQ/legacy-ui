@@ -43,10 +43,11 @@ export default {
 
       const computedStyle = getComputedStyle(document.documentElement)
 
-      return this.flowRuns
+      const prepped = this.flowRuns
         .filter(
           run => run.flow_id == this.flowId || run.agent_id === this.agentId
         )
+
         .reverse()
         .map(d => {
           if (d.start_time && d.end_time) {
@@ -63,6 +64,8 @@ export default {
           d.opacity = 1
           return d
         })
+
+      return prepped.slice(0, 10)
     }
   },
   mounted() {
@@ -138,7 +141,7 @@ export default {
       },
       loadingKey: 'loadingKey',
       update: data => {
-        console.log('data', data)
+        console.log('last runs data', data)
         return data.flow_run
       }
     }

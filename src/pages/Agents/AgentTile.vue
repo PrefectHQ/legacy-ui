@@ -5,6 +5,7 @@ import { mapGetters, mapActions } from 'vuex'
 import Label from '@/components/Label'
 import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import LastTenRuns from '@/components/LastTenRuns'
 
 const AGENT_TYPES = [
   { type: 'DockerAgent', icon: 'fab fa-docker pa-1', name: 'Docker' },
@@ -18,6 +19,7 @@ const AGENT_TYPES = [
 export default {
   components: {
     // CardTitle,
+    LastTenRuns,
     Label
   },
   filters: {
@@ -261,7 +263,7 @@ export default {
     class="agent-card px-2"
     style="overflow-y: auto;"
     :tile="showAll"
-    :height="showAll ? '380px' : '280px'"
+    :height="showAll ? '380px' : '320px'"
   >
     <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
 
@@ -285,7 +287,6 @@ export default {
 
       <v-divider class="ml-12 mr-2"></v-divider>
     </div>
-    <LastTenRuns :agent-id="agent.id" />
 
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
@@ -317,6 +318,15 @@ export default {
 
     <v-card-text class="py-0">
       <v-list>
+        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
+          <v-list-item-content class="pa-0">
+            <v-list-item-title>Last Runs</v-list-item-title>
+            <v-list-item-subtitle>
+              <LastTenRuns :agent-id="agent.id" />
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
           <v-list-item-content min-height="10px" class="pa-0">
             <v-list-item-title
