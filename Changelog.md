@@ -5,6 +5,22 @@
 ### Features and Improvements
 
 - Adds created by information to service account api keys list - [#808](https://github.com/PrefectHQ/ui/pull/808)
+
+### Bugfixes
+
+- None
+
+## 2021-05-05
+
+### Bugfixes
+
+- Fix the issue where the key fields for the context and environment are disabled after typing on the run page - [#810](https://github.com/PrefectHQ/ui/pull/810)
+- Populate JSON editor with only checked parameters - [#787](https://github.com/PrefectHQ/ui/pull/787)
+
+## 2021-05-04
+
+### Features and Improvements
+
 - Update Universal-Deploy.md to include the latest authentication steps - [#806](https://github.com/PrefectHQ/ui/pull/806)
 - Adds animated hint for users creating new automations - [#784](https://github.com/PrefectHQ/ui/pull/784)
 - Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
