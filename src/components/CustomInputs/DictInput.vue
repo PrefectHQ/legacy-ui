@@ -276,10 +276,7 @@ export default {
               outlined
               dense
               :placeholder="keyLabel"
-              :readonly="
-                disabledKeys.includes(keys[i]) ||
-                  Object.keys(JSON.parse(jsonInput)).includes(keys[i])
-              "
+              :readonly="disabledKeys.includes(keys[i])"
               @keyup="_handleKeypress"
             />
           </v-col>
