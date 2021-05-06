@@ -15,12 +15,15 @@ export default {
   mixins: [formatTime],
   data() {
     return {
+      jsonInput: '{}',
+      keyInput: '',
       search: '',
+      expanded: [],
       headers: [
         { text: 'Key', value: 'key' },
         { text: 'Value', value: 'value' },
         { text: 'Created By', value: 'created' },
-        { text: 'Last Used', value: 'updated' },
+        { text: 'Last Updated', value: 'updated' },
         {
           text: '',
           value: 'actions',
@@ -30,18 +33,21 @@ export default {
       ],
       items: [
         {
+          id: 1,
           key: 'prod.config.ram',
           value: '8gb',
           created: 'jane@gmail.com',
           updated: '2021-04-29T23:36:48.494Z'
         },
         {
+          id: 2,
           key: 'prod.config.ram2',
           value: '16gb',
           created: 'john@gmail.com',
           updated: '2021-04-29T23:36:48.494Z'
         },
         {
+          id: 3,
           key: 'dev.config',
           value: JSON.stringify([
             {
@@ -87,6 +93,7 @@ export default {
           updated: '2021-01-18T11:24:00.000Z'
         },
         {
+          id: 4,
           key: 'foo',
           value: 'bar',
           created: 'james@gmail.com',
@@ -96,6 +103,30 @@ export default {
       json: false,
       keyModifyDialog: false,
       keyDeleteDialog: false
+    }
+  },
+  mounted() {
+    // this.jsonInput = JSON.stringify(this.items)
+    // this.jsonInput = JSON.parse(this.items)
+  },
+  methods: {
+    convertJSON(item) {
+      const dict = {}
+      dict[item.key] = item.value
+      return dict
+    },
+    setKey() {
+      // set loader
+      // validate key and json
+      // possible mutation
+      // const kvResult = await this.$apollo.mutate({
+      //   mutation: require('@/graphql/KV/set-KV.gql'),
+      //   variables: {
+      //     key: this.keyInput,
+      //     value: this.jsonInput || []
+      //   }
+      // })
+      // check if the mutation was successful or not and display the accroding message
     }
   }
 }
@@ -142,7 +173,7 @@ export default {
         ></v-text-field>
       </v-card-title>
 
-      <div class="d-flex justify-end align-end mb-1 mt-4" style="width: 100%;">
+      <!-- <div class="d-flex justify-end align-end mb-1 mt-4" style="width: 100%;">
         <v-switch
           v-model="json"
           inset
@@ -159,12 +190,30 @@ export default {
           prepend-icon-label="JSON"
           selected-type="json"
         />
-      </div>
+      </div> -->
 
       <v-card-text class="pa-0">
         <!-- TABLE -->
-        <v-data-table :headers="headers" :items="items" :search="search">
+        <v-data-table
+          :headers="headers"
+          :items="items"
+          :search="search"
+          :expanded="expanded"
+          show-expand
+          :single-expand="true"
+        >
           <!-- ACTIONS -->
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              <JsonInput
+                :value="JSON.stringify(convertJSON(item))"
+                ref="json-input"
+                prepend-icon="fad fa-file-code"
+                prepend-icon-label="JSON"
+                selected-type="json"
+              />
+            </td>
+          </template>
           <template #item.value="{item}">
             <div class="d-flex">
               <div
@@ -231,10 +280,12 @@ export default {
 
     <ConfirmDialog
       v-model="keyModifyDialog"
+      @confirm="setKey"
       :dialog-props="{ 'max-width': '75vh' }"
       title="Create New Key"
     >
       <v-text-field
+        v-model="keyInput"
         class="_lr-hide mt-6"
         data-private
         single-line
@@ -246,6 +297,7 @@ export default {
       />
 
       <JsonInput
+        v-model="jsonInput"
         ref="secretRef"
         class="text-body-1"
         placeholder-text="Enter your value"
