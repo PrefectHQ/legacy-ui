@@ -45,6 +45,7 @@ export const setStartupTenant = async () => {
 
 // let loading = false
 const start = async () => {
+  const start0 = performance.now()
   if (process.env.VUE_APP_BACKEND === 'CLOUD') {
     // we run this when the application starts or a user returns to the page after some time away
     // this logs into the default tenant so that we can fetch information we need
@@ -68,6 +69,9 @@ const start = async () => {
 
   await setStartupTenant()
 
+  const start1 = performance.now()
+
+  console.log('Start: ', start1 - start0)
   CreatePrefectUI()
 }
 

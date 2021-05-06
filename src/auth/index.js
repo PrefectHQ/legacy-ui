@@ -64,7 +64,7 @@ export const commitTokens = tokens => {
   const refreshToken = tokens.authorizationTokens.refresh_token
 
   if (idToken) {
-    store.commit('auth/idToken', idToken.value)
+    store.commit('auth/idToken', idToken.idToken)
     store.commit('auth/idTokenExpiry', idToken.expiresAt * 1000)
     store.commit('auth/user', idToken.claims)
     store.commit('user/setOktaUser', idToken.claims)
@@ -106,12 +106,12 @@ export const login = async () => {
     if (!idToken) {
       const loginResponse = await authenticate()
 
+      idToken = loginResponse?.idToken
+
       TokenWorker.port.postMessage({
         type: 'idToken',
         payload: idToken
       })
-
-      idToken = loginResponse?.idToken
 
       if (!idToken) return
     }

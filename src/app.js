@@ -274,6 +274,7 @@ try {
   console.info('Unable to apply platform-specific scrollbar styles.')
 }
 
+// eslint-disable-next-line no-unused-vars
 let PrefectUI
 export const CreatePrefectUI = () => {
   const loader = document.querySelector('div.loading')

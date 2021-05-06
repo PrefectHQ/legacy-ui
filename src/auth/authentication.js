@@ -32,26 +32,34 @@ export const authClient = new OktaAuth({
       storageTypes: storageTypes
     },
     transaction: {
-      storageType: 'memory',
+      storageType: 'sessionStorage',
       storageTypes: storageTypes
     }
   }
 })
 
 export const authenticate = async () => {
-  console.log('authenticating')
   const isLoginRedirect = await authClient.isLoginRedirect()
+  const redirectRoute = sessionStorage.getItem('redirectRoute')
 
   if (isLoginRedirect) {
-    console.log('is login redirect')
-    await authClient.handleLoginRedirect()
-    // const { tokens } = await authClient.token.parseFromUrl()
-    // authClient.tokenManager.setTokens(tokens)
-    // return tokens
+    const { tokens } = await authClient.token.parseFromUrl()
+    authClient.tokenManager.setTokens(tokens)
+    if (redirectRoute) {
+      history.replaceState(null, null, redirectRoute)
+    }
+
+    return tokens
+  } else {
+    if (window.location?.pathname && !redirectRoute) {
+      sessionStorage.setItem(
+        'redirectRoute',
+        window.location.pathname + window.location.search
+      )
+    }
   }
 
   const tokens = await authClient.tokenManager.getTokens()
-
   if (tokens?.idToken) {
     authClient.tokenManager.setTokens(tokens)
     return tokens
