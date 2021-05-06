@@ -36,6 +36,7 @@ export default {
       if (this.apiMode == 'maintenance') return 'var(--v-warning-base)'
       if (this.connected) return 'var(--v-accentGreen-base)'
       if (this.connecting) return 'var(--v-warning-base)'
+      if (this.apiMode == 'maintenance') return 'var(--v-warning-base)'
       return 'var(--v-Failed-base)'
     }
   },
