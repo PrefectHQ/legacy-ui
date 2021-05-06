@@ -285,6 +285,7 @@ export default {
 
       <v-divider class="ml-12 mr-2"></v-divider>
     </div>
+    <LastTenRuns :agent-id="agent.id" />
 
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
