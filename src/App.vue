@@ -73,13 +73,7 @@ export default {
     ]),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('data', ['projects']),
-    ...mapGetters('auth', [
-      'isAuthenticated',
-      'isAuthorized',
-      'isAuthenticatingUser',
-      'isAuthorizingUser',
-      'isLoggingInUser'
-    ]),
+    ...mapGetters('auth', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', [
       'tenant',
       'tenants',
@@ -101,13 +95,7 @@ export default {
       return fullPageRoutes.includes(this.$route.name)
     },
     loading() {
-      return (
-        this.isAuthenticated &&
-        (this.isAuthorizingUser ||
-          this.isLoggingInUser ||
-          this.connecting ||
-          this.isLoadingTenant)
-      )
+      return this.isAuthenticated && (this.connecting || this.isLoadingTenant)
     },
     showNav() {
       if (
