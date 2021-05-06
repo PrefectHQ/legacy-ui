@@ -31,6 +31,13 @@ export const setStartupTenant = async () => {
     commitTokens(tokens)
   }
 
+  tenant.role =
+    process.env.VUE_APP_BACKEND === 'CLOUD'
+      ? store.getters['user/memberships'].find(
+          membership => membership.tenant.id == tenant.id
+        )?.role_detail?.name
+      : 'TENANT_ADMIN'
+
   store.commit('tenant/setTenant', tenant)
 
   await store.dispatch('license/getLicense')
