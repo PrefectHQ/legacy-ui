@@ -248,7 +248,10 @@ export default {
                   </span>
                 </router-link>
               </template>
-              <span v-if="item.name">{{ item.name }}</span>
+              <span v-if="item.name"
+                >{{ flowRun.name }} - {{ item.task.name }} -
+                {{ item.name }}</span
+              >
               <span v-else>
                 {{ flowRun.name }} - {{ item.task.name
                 }}<span v-if="item.map_index > -1">
