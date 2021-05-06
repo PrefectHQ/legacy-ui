@@ -20,7 +20,6 @@ export const authClient = new OktaAuth({
   tokenManager: {
     autoRenew: true
   },
-  pkce: false,
   storageManager: {
     token: {
       storageType: 'memory',

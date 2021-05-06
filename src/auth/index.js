@@ -56,6 +56,8 @@ if (TokenWorker?.port) {
 export { TokenWorker }
 
 export const commitTokens = tokens => {
+  if (!tokens) return
+
   const authToken = tokens.authorizationTokens.access_token
   const expiry = new Date(tokens.authorizationTokens.expires_at).getTime()
   const idToken = tokens.idToken
