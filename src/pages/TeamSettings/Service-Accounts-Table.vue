@@ -308,7 +308,7 @@ export default {
               <v-list-item-title>{{ key.name }}</v-list-item-title>
               <v-list-item-subtitle
                 >Created {{ key.created_at ? formDate(key.created_at) : '' }}
-                {{ key.created_by ? ' by '.concat(key.created_by) : '' }}
+                <span v-if="key.created_by">by {{ key.created_by }}</span>
               </v-list-item-subtitle>
               <v-list-item-subtitle>
                 {{
