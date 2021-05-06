@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Turn the status indicator warning yellow when cloud is in maintenance mode - [#815](https://github.com/PrefectHQ/ui/pull/815)
 
 ### Bugfixes
 
