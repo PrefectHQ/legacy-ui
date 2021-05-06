@@ -11,8 +11,7 @@ export default {
       backendTimeout: null,
       loading: false,
       model: false,
-      value: this.backend,
-      apiMode: 'maintenance'
+      value: this.backend
     }
   },
   computed: {
@@ -178,9 +177,11 @@ export default {
           <span v-else>Couldn't connect</span>
           to
           <span class="font-weight-bold">
-            <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
-            <span v-if="apiMode === 'maintenance'" class="primary--text">
-              - In Maintenance</span
+            <span v-if="isCloud" class="primary--text"
+              >Prefect Cloud
+              <span v-if="apiMode === 'maintenance'" class="primary--text">
+                - In Maintenance</span
+              ></span
             >
             <span v-else class="utilGrayDark--text">Prefect Server</span>
           </span>
