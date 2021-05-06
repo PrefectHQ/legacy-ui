@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add a tooltip for task run names in the flow run task table - [#814](https://github.com/PrefectHQ/ui/pull/814)
 
 ### Bugfixes
 
