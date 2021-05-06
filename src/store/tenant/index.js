@@ -1,7 +1,6 @@
 import { fallbackApolloClient } from '@/vue-apollo'
 import { prefectTenants } from '@/middleware/prefectAuth'
-import { switchTenant } from '@/auth/index.js'
-import { commitTokens } from '@/main.js'
+import { switchTenant, commitTokens } from '@/auth/index.js'
 
 const state = {
   defaultTenant: null,
