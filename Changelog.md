@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add webhook and pause schedule actions to automation - [#818](https://github.com/PrefectHQ/ui/pull/818)
 
 ### Bugfixes
 

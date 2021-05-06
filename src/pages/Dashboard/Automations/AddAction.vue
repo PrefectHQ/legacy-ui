@@ -100,7 +100,7 @@ export default {
       return this.actionType?.type === 'EMAIL'
         ? 'Email address(es)'
         : this.actionType?.type === 'WEBHOOK'
-        ? 'URL'
+        ? 'Web address'
         : this.actionType?.type === 'TWILIO'
         ? 'Twilio Phone Numbers'
         : this.actionType?.type === 'SLACK_WEBHOOK'
@@ -186,7 +186,7 @@ export default {
       return this.actionType?.type === 'EMAIL'
         ? configTo || this.actionType?.config?.to || 'to this email address.'
         : this.actionType.type === 'WEBHOOK'
-        ? this.actionType?.config?.to || 'to this URL.'
+        ? this.actionType?.config?.to || 'to this web address.'
         : this.actionType?.type === 'TWILIO'
         ? configTo ||
           this.actionType?.config?.to?.toString() ||
