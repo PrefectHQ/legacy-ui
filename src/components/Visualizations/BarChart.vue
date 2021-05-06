@@ -364,6 +364,7 @@ export default {
           '--v-appBackground-base'
         )
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.log(e)
         cancelAnimationFrame(this.drawCanvas)
         this.timer.stop()

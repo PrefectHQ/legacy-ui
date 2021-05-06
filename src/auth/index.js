@@ -1,6 +1,10 @@
 import { promiseChannel } from '@/workers/util/worker-interface.js'
 import { authenticate } from '@/auth/authentication.js'
-import { authorize, authorizeTenant } from '@/auth/authorization.js'
+import {
+  authorize,
+  authorizeTenant,
+  refreshTokens
+} from '@/auth/authorization.js'
 
 import store from '@/store'
 
@@ -73,6 +77,21 @@ export const commitTokens = tokens => {
   }
 }
 
+let refreshTimeout
+const refresh = tokens => {
+  clearTimeout(refreshTimeout)
+  const expiration = new Date(tokens.expires_at)
+  const timeout = ((expiration - Date.now()) * 3) / 4
+  refreshTimeout = setTimeout(async () => {
+    const refreshedTokens = await refreshTokens(
+      tokens.access_token,
+      tokens.refresh_token
+    )
+    commitTokens({ authorizationTokens: refreshedTokens })
+    refresh(refreshedTokens)
+  }, timeout || 15000)
+}
+
 export const login = async () => {
   // try getting a token from the service worker
   // if we have a service worker, ping that for a token
@@ -106,6 +125,7 @@ export const login = async () => {
     idToken = loginResponse.idToken
 
     authorizationTokens = await authorize(idToken.value)
+    refresh(authorizationTokens)
   }
 
   return {
