@@ -17,8 +17,14 @@ export default {
       default: () => false
     },
     flowId: {
-      required: true,
-      type: String
+      required: false,
+      type: String,
+      default: null
+    },
+    agentId: {
+      required: false,
+      type: String,
+      default: null
     }
   },
   data() {
@@ -29,6 +35,7 @@ export default {
   },
   computed: {
     pollInterval() {
+      console.log('poll')
       return this.archived ? 0 : 60000
     },
     preppedFlowRuns() {
@@ -37,7 +44,9 @@ export default {
       const computedStyle = getComputedStyle(document.documentElement)
 
       return this.flowRuns
-        .filter(run => run.flow_id == this.flowId)
+        .filter(
+          run => run.flow_id == this.flowId || run.agent_id === this.agentId
+        )
         .reverse()
         .map(d => {
           if (d.start_time && d.end_time) {
@@ -123,11 +132,15 @@ export default {
       query: require('@/graphql/Dashboard/last-flow-runs.gql'),
       variables() {
         return {
-          flowId: this.flowId
+          flowId: this.flowId || null,
+          agentId: this.agentId || null
         }
       },
       loadingKey: 'loadingKey',
-      update: data => data?.flow_run
+      update: data => {
+        console.log('data', data)
+        return data.flow_run
+      }
     }
   }
 }
