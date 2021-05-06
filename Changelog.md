@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add "Task" to the "Runs Today" to make it clear it's "Task runs today" - [#816](https://github.com/PrefectHQ/ui/pull/816)
 
 ### Bugfixes
 
