@@ -153,8 +153,6 @@ export default {
         }
       ],
 
-      json: false,
-
       // Dialogs
       keyModifyDialog: false,
       keyDeleteDialog: false
@@ -393,25 +391,6 @@ export default {
           clear-icon="close"
         ></v-text-field>
       </v-card-title>
-
-      <!-- <div class="d-flex justify-end align-end mb-1 mt-4" style="width: 100%;">
-        <v-switch
-          v-model="json"
-          inset
-          label="JSON"
-          class="mt-0 small-switch v-input--reverse"
-          hide-details
-        ></v-switch>
-      </div>
-
-      <div v-if="json" style="padding: 10px;">
-        <JsonInput
-          ref="json-input"
-          prepend-icon="fad fa-file-code"
-          prepend-icon-label="JSON"
-          selected-type="json"
-        />
-      </div> -->
 
       <v-card-text class="pa-0">
         <!-- TABLE -->
