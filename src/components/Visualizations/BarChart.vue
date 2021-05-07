@@ -365,7 +365,7 @@ export default {
 
       context.clearRect(0, 0, this.chartWidth, this.chartHeight)
 
-      let len = this.bars.length
+      let len = this.bars?.length
       for (let i = 0; i < len; ++i) {
         const bar = this.bars[i]
 
@@ -556,12 +556,12 @@ export default {
       let domainItems = this.computedItems.map((d, i) => (d.id ? d.id : i))
 
       let domain = this.minBands
-        ? domainItems.length > this.minBands
+        ? domainItems?.length > this.minBands
           ? domainItems
           : [
               ...domainItems,
               ...Array.from(
-                { length: this.minBands - domainItems.length },
+                { length: this.minBands - domainItems?.length },
                 (d, i) => i
               )
             ]
@@ -675,7 +675,7 @@ export default {
                 .duration(this.animationDuration)
                 .attr('x', d => x(d.id) + x.bandwidth() / 2)
                 .style('opacity', d =>
-                  'warningOpacity' in d ? d.warningOpacity : 1
+                  'warningOpacity' in d ? d.warningOpacity : 0
                 )
             ),
           exit =>

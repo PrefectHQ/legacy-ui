@@ -27,7 +27,8 @@ export default {
     return {
       submittable: [],
       loadingKey: 0,
-      tab: 'submittable'
+      tab: 'submittable',
+      show: true
     }
   },
   computed: {
@@ -95,7 +96,6 @@ export default {
     },
     labelsAlign() {
       if (!this.flowRuns?.length) {
-        console.log('no runs')
         this.labelMessage('You have no flowRuns')
         return false
       }
@@ -103,7 +103,6 @@ export default {
         !this.agent?.labels?.length &&
         this.flowRuns.every(flowRun => flowRun.labels.length > 0)
       ) {
-        console.log('no match')
         this.labelMessage(
           "You have no currently registered flowRuns that match this agent's labels.  You will need to edit your flowRuns' labels"
         )
@@ -113,7 +112,7 @@ export default {
         if (this.flowRuns) {
           this.flowRuns.forEach(flowRun => {
             if (
-              this.agent.labels.every(label => flowRun?.labels?.includes(label))
+              flowRun.labels.every(label => this.agent?.labels?.includes(label))
             ) {
               this.addMatchingflowRun(flowRun)
             }
@@ -138,7 +137,6 @@ export default {
       }
     },
     flowRuns() {
-      console.log('called')
       this.submittable = []
       this.labelsAlign
     }
@@ -167,7 +165,6 @@ export default {
       query: require('@/graphql/Agent/FlowRuns.gql'),
       loadingKey: 'loading',
       update: data => {
-        console.log('data', data)
         return data.flow_run
       }
     }
@@ -176,7 +173,12 @@ export default {
 </script>
 
 <template>
-  <v-card v-if="labelsAlign" class="py-2" tile :style="{ height: '330px' }">
+  <v-card
+    v-if="labelsAlign || show"
+    class="py-2"
+    tile
+    :style="{ height: '330px' }"
+  >
     <v-system-bar
       :color="
         loading || !submittable

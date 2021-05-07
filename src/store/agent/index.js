@@ -31,13 +31,15 @@ const mutations = {
       state.agents = null
       return
     }
-    state.agents = agents.map(agent => ({
-      ...agent,
-      secondsSinceLastQuery: moment().diff(
+    state.agents = agents.map(agent => {
+      const secondsSinceLastQuery = moment().diff(
         moment(agent.last_queried),
         'seconds'
       )
-    }))
+      agent.secondsSinceLastQuery = secondsSinceLastQuery
+      agent.status = secondsSinceLastQuery < 60 * state.thresholds.stale
+      return agent
+    })
   }
 }
 

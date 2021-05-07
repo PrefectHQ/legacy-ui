@@ -82,15 +82,24 @@ export default {
     },
     filteredAgents() {
       if (!this.agents) return
-      const newList = this.agents.filter(agent => {
-        console.log('align?', this.labelsAlign(agent))
-        return (
-          agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold ||
-          this.labelsAlign(agent)
-        )
+      const lateList = []
+      const newList = []
+      const oldList = []
+
+      this.agents.forEach(agent => {
+        if (this.labelsAlign(agent)) {
+          lateList.push(agent)
+        } else if (agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold) {
+          newList.push(agent)
+        } else {
+          agent.status = 'old'
+          oldList.push(agent)
+        }
       })
 
-      return newList
+      const fullList = [...lateList, ...newList, ...oldList]
+
+      return fullList
 
       // return this.computedAgents.filter(agent => {
       //   if (this.showUnlabeledAgentsOnly) {
@@ -137,7 +146,7 @@ export default {
             agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold ||
             isNaN(agent.secondsSinceLastQuery)
         )
-        if (unhealthyAgents.length === 0) {
+        if (unhealthyAgents?.length === 0) {
           LogRocket.captureMessage('Clean Up button open but no agents found')
           this.setAlert({
             alertShow: true,
@@ -235,8 +244,8 @@ export default {
           const check = this.flowRuns.filter(flowRun =>
             flowRun.labels.every(label => agent?.labels?.includes(label))
           )
-          console.log('check', check)
-          return check.length ? true : false
+
+          return check?.length ? true : false
         }
       }
     }

@@ -12,7 +12,7 @@ const AGENT_TYPES = [
   { type: 'ECSAgent', icon: 'fab fa-aws pa-1', name: 'ECS' },
   { type: 'FargateAgent', icon: 'fab fa-aws pa-1', name: 'Fargate' },
   { type: 'KubernetesAgent', icon: 'pi-kubernetes', name: 'Kubernetes' },
-  { type: 'LocalAgent', icon: 'fad fa-laptop-house pa-1', name: 'Local' },
+  { type: 'LocalAgent', icon: 'far fa-home pa-1', name: 'Local' },
   { type: 'NomadAgent', icon: '$nomad', name: 'Nomad' }
 ]
 
@@ -60,7 +60,9 @@ export default {
       showConfirmDialog: false,
       showLastQuery: true,
       submittable: [],
-      newStatus: ''
+      newStatus: '',
+      showIcon: false,
+      failedRuns: []
     }
   },
   computed: {
@@ -94,6 +96,7 @@ export default {
       )
     },
     status() {
+      if (this.agent.status === 'old') return 'old'
       if (this.hasFailedRuns()?.length) return 'failed'
       if (this.lateRuns?.length) return 'late'
       if (this.secondsSinceLastQuery < 60 * this.staleThreshold)
@@ -104,12 +107,12 @@ export default {
       return 'unhealthy'
     },
     statusColor() {
-      console.log('status color', this.status)
       const color =
         {
+          old: 'Gray',
           failed: 'error',
-          late: 'error',
-          healthy: 'success',
+          late: 'deepRed',
+          healthy: 'green',
           stale: 'warning',
           unhealthy: 'error'
         }[this.status] || 'secondaryGray'
@@ -172,6 +175,12 @@ export default {
     }
   },
   watch: {
+    statusColor() {
+      this.showIcon = false
+      this.$nextTick(() => {
+        this.showIcon = true
+      })
+    },
     submittable(val) {
       if (!val) return
       if (this.lateRuns?.length > 0) {
@@ -254,8 +263,8 @@ export default {
       return this.selectedLabels.includes(label)
     },
     addMatchingflowRun(flowRun) {
-      if (!this.submittable?.filter(item => item.id === flowRun.id)?.length)
-        this.submittable.push(flowRun)
+      const matching = this.submittable?.filter(item => item.id === flowRun.id)
+      if (!matching?.length) this.submittable.push(flowRun)
     },
     hasFailedRuns() {
       const badRuns = this.LastRuns?.filter(
@@ -263,6 +272,9 @@ export default {
       )
         .slice(0, 10)
         .filter(run => ['Failed', 'TriggerFailed'].includes(run.state))
+
+      this.failedRuns = badRuns
+
       return badRuns
     }
   },
@@ -298,12 +310,19 @@ export default {
     <div>
       <v-list-item dense class="px-0">
         <v-list-item-avatar class="mr-2" tile>
-          <v-icon class="fa-2x pi-2x">
-            {{ agent.type ? agentIcon(agent.type) : 'fas fa-robot' }}
+          <v-icon v-if="showIcon" :color="statusColor" class="fa-2x pi-2x">
+            {{ agentIcon(agent.type) || 'fas fa-robot' }}
+          </v-icon>
+          <v-icon
+            v-if="status === 'old' || status === 'healthy'"
+            :color="statusColor"
+            class="fa-2x pi-2x"
+          >
+            {{ agentIcon(agent.type) || 'fas fa-robot' }}
           </v-icon>
         </v-list-item-avatar>
         <v-list-item-content class="position: relative;">
-          <v-list-item-title class="text-h6 pb-1">
+          <v-list-item-title class="text-h6">
             <div>
               <div>
                 {{ name }}
@@ -347,6 +366,30 @@ export default {
     <v-card-text class="py-0">
       <v-list>
         <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
+          <v-list-item-content class="pa-0">
+            <v-list-item-title
+              ><v-icon
+                small
+                class="mr-1"
+                :color="lateRuns && lateRuns.length ? 'deepRed' : 'success'"
+                >adjust</v-icon
+              >{{
+                lateRuns && lateRuns.length ? 'Late Submittable' : 'Submittable'
+              }}
+              Runs</v-list-item-title
+            >
+            <v-list-item-subtitle>
+              <span v-if="lateRuns && lateRuns.length">
+                {{ lateRuns ? lateRuns.length : 0 }}</span
+              >
+              <span v-else>
+                {{ submittableRuns ? submittableRuns.length : 0 }}</span
+              >
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
           <v-list-item-content min-height="10px" class="pa-0">
             <v-list-item-title
               ><v-icon small class="mr-1" :color="queryColor">adjust</v-icon
@@ -376,41 +419,32 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
-          <v-list-item-content class="pa-0">
+        <v-list-item
+          v-if="!showAll"
+          :style="{ 'min-height': '45px' }"
+          two-line
+          class="pa-0"
+        >
+          <v-list-item-content class="py-0 pt-1">
             <v-list-item-title
               ><v-icon
                 small
                 class="mr-1"
-                :color="lateRuns && lateRuns.length ? 'error' : 'success'"
-                >adjust</v-icon
-              >{{
-                lateRuns && lateRuns.length ? 'Late Submittable' : 'Submittable'
-              }}
-              Runs</v-list-item-title
-            >
-            <v-list-item-subtitle>
-              <span v-if="lateRuns && lateRuns.length">
-                {{ lateRuns ? lateRuns.length : 0 }}</span
-              >
-              <span v-else>
-                {{ submittableRuns ? submittableRuns.length : 0 }}</span
-              >
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
-          <v-list-item-content class="pa-0">
-            <v-list-item-title
-              ><v-icon
-                small
-                class="mr-1"
-                :color="hasFailedRuns().length ? 'error' : 'success'"
+                :color="
+                  lateRuns && lateRuns.length
+                    ? 'grey'
+                    : hasFailedRuns() && hasFailedRuns().length
+                    ? 'error'
+                    : 'success'
+                "
                 >adjust</v-icon
               >Last Runs</v-list-item-title
             >
             <v-list-item-subtitle>
-              <LastTenRuns :agent-id="agent.id" />
+              <LastTenRuns
+                :agent-id="agent.id"
+                :fake-load="!!lateRuns && !!lateRuns.length"
+              />
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -513,7 +547,7 @@ export default {
               Labels
             </v-list-item-title>
             <v-sheet
-              :height="showAll ? '80px' : '30px'"
+              :height="showAll ? '80px' : '40px'"
               :style="{ overflow: 'auto' }"
             >
               <Label
@@ -526,9 +560,9 @@ export default {
               >
                 {{ label }}
               </Label>
-              <span v-if="!agentModified.labels.length">
+              <!-- <span v-if="!agentModified.labels.length">
                 None
-              </span>
+              </span> -->
             </v-sheet>
           </v-list-item-content>
         </v-list-item>

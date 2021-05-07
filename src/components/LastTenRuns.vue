@@ -25,6 +25,11 @@ export default {
       required: false,
       type: String,
       default: null
+    },
+    fakeLoad: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -60,7 +65,10 @@ export default {
           }
 
           d.color = computedStyle.getPropertyValue(`--v-${d.state}-base`)
+          if (this.fakeLoad)
+            d.color = computedStyle.getPropertyValue('secondaryGray')
           d.opacity = 1
+          d.warningOpacity = 0
           return d
         })
 
@@ -152,7 +160,7 @@ export default {
     <BarChart
       :items="preppedFlowRuns"
       :loading="loadingKey > 0"
-      :height="50"
+      :height="30"
       :min-bands="10"
       normalize
       :padding="0"
