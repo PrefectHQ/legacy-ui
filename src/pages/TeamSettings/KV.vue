@@ -18,34 +18,57 @@ export default {
   mixins: [formatTime],
   data() {
     return {
+      // loading states
       isFetchingKV: true,
       isDeletingKV: false,
+      isSettingKV: false,
+
       // Store previous kv name when modifying kv
       // This is used to delete the kv with that name and create a new kv with a separate value
       previousKVName: null,
-      selectedKV: '',
+
+      // KV selected for modification/deletion
+      selectedKV: null,
+
       // Alert data
       alertShow: false,
       alertMessage: '',
       alertType: null,
-      errorMessage: '',
+
+      // Input rules
       rules: {
         required: val => !!val || 'This field is required.'
       },
-      KvValueInput: '',
-      isKvUpdate: false,
+      errorMessage: '',
+      invalidKV: false,
+
+      // Types
       selectedTypeIndex: 0,
       kvTypes: [
         { value: 'auto', text: 'Auto' },
         { value: 'string', text: 'String' },
         { value: 'json', text: 'JSON' }
       ],
-      invalidKV: false,
-      isSettingKV: false,
-      jsonInput: '',
+
+      // JsonInput
+      placeholderText:
+        "Enter your KV value here...\n\nClick on 'Type' to select a type validation",
+
+      // Create/modify kv key & value input
       keyInput: null,
+      KvValueInput: '',
+
+      // Distinguish between creating & modifying KV
+      isKvUpdate: false,
+
+      jsonInput: '',
+
+      // table search
       search: '',
+
       expanded: [],
+
+      //table headers
       headers: [
         { text: 'Key', value: 'key' },
         { text: 'Value', value: 'value' },
@@ -58,6 +81,8 @@ export default {
           sortable: false
         }
       ],
+
+      // fake data
       items: [
         {
           id: 1,
@@ -127,7 +152,10 @@ export default {
           updated: '2021-04-17T10:24:00.000Z'
         }
       ],
+
       json: false,
+
+      // Dialogs
       keyModifyDialog: false,
       keyDeleteDialog: false
     }
@@ -543,8 +571,8 @@ export default {
         v-model="KvValueInput"
         ref="kvRef"
         class="text-body-1"
+        :placeholder-text="placeholderText"
         :selected-type="kvTypes[selectedTypeIndex].value"
-        placeholder-text="Enter your value"
         @invalid-secret="setInvalidKV"
       >
         <v-menu top offset-y>
