@@ -83,6 +83,7 @@ export default {
       ],
 
       // fake data
+
       items: [
         {
           id: 1,
@@ -168,6 +169,20 @@ export default {
     }
   },
   methods: {
+    isJSON(str) {
+      try {
+        return !!(JSON.parse(str) && str)
+      } catch (e) {
+        return false
+      }
+    },
+    jsonEditorType(item) {
+      if (this.isJSON(item.value)) {
+        return 2
+      } else {
+        return 0
+      }
+    },
     openKVModifyDialog(item) {
       this.selectedKV = item
       this.isKvUpdate = true
@@ -208,7 +223,7 @@ export default {
       let value = this.KvValueInput
       if (this.selectedTypeIndex === 0) {
         try {
-          value = JSON.parse(this.KvValueInput)
+          value = JSON.stringify(JSON.parse(this.KvValueInput))
         } catch {
           try {
             value = String.raw`${this.KvValueInput}`
@@ -220,6 +235,13 @@ export default {
       if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
 
       // call muatation
+      //  const kvResult = await this.$apollo.mutate({
+      //   mutation: require('@/graphql/KV/set-kv.gql'),
+      //   variables: {
+      //     name: this.keyInput,
+      //     value: value || []
+      //   }
+      // })
       const fakeResult = new Promise(resolve => {
         setTimeout(() => {
           resolve({
@@ -245,7 +267,7 @@ export default {
           // this.$apollo.queries.kv.refetch()
           this.keyModifyDialog = false
           this.items.push(res?.data?.set_kv?.result)
-          this.resetSelectedKV()
+          // this.resetSelectedKV()
           this.handleAlert(
             'success',
             `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
@@ -401,6 +423,8 @@ export default {
           :expanded="expanded"
           show-expand
           :single-expand="true"
+          no-results-text="No keys found. Try expanding your search?"
+          no-data-text="Your team does not have any keys yet."
         >
           <!-- ACTIONS -->
           <template v-slot:expanded-item="{ headers, item }">
@@ -424,10 +448,35 @@ export default {
                 :value="item.value"
                 ref="kvRef"
                 class="text-body-1 mt-2 mb-5"
-                :selected-type="kvTypes[selectedTypeIndex].value"
+                :selected-type="
+                  selectedTypeIndex > 0
+                    ? kvTypes[selectedTypeIndex].value
+                    : kvTypes[jsonEditorType(item)].value
+                "
                 placeholder-text="Enter your value"
                 @invalid-secret="setInvalidKV"
               >
+                <v-menu top offset-y>
+                  <template #activator="{ on }">
+                    <v-btn
+                      text
+                      small
+                      class="position-absolute"
+                      :style="{
+                        bottom: '25px',
+                        right: '140px',
+                        'z-index': 3
+                      }"
+                      color="accent"
+                      :loading="isSettingKV"
+                      :disabled="!disableConfirm"
+                      v-on="on"
+                      @click="setKV"
+                    >
+                      Save
+                    </v-btn>
+                  </template>
+                </v-menu>
                 <v-menu top offset-y>
                   <template #activator="{ on }">
                     <v-btn
@@ -597,7 +646,6 @@ export default {
       v-model="alertShow"
       :type="alertType"
       :message="alertMessage"
-      :offset-x="$vuetify.breakpoint.mdAndUp ? 256 : 56"
     ></Alert>
   </div>
 </template>
