@@ -94,6 +94,7 @@ export default {
       )
     },
     status() {
+      if (this.hasFailedRuns()?.length) return 'failed'
       if (this.lateRuns?.length) return 'late'
       if (this.secondsSinceLastQuery < 60 * this.staleThreshold)
         return 'healthy'
@@ -103,14 +104,24 @@ export default {
       return 'unhealthy'
     },
     statusColor() {
+      console.log('status color', this.status)
       const color =
         {
-          late: 'deepRed',
+          failed: 'error',
+          late: 'error',
           healthy: 'success',
           stale: 'warning',
           unhealthy: 'error'
         }[this.status] || 'secondaryGray'
       return color
+    },
+    queryColor() {
+      if (this.secondsSinceLastQuery < 60 * this.staleThreshold)
+        return 'success'
+      if (this.secondsSinceLastQuery < 60 * this.unhealthyThreshold)
+        return 'warning'
+
+      return 'error'
     },
     timer() {
       if (!this.agent?.last_queried) return null
@@ -133,7 +144,7 @@ export default {
       return filtered
     },
     lateRuns() {
-      if (!this.submittable.length) return null
+      if (!this.submittable?.length) return null
       return this.submittable?.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) > 20000
       })
@@ -148,7 +159,9 @@ export default {
         if (this.flowRuns?.length) {
           this.flowRuns.forEach(flowRun => {
             if (
-              this.agent.labels.every(label => flowRun?.labels?.includes(label))
+              flowRun?.labels.every(label =>
+                this.agent?.labels?.includes(label)
+              )
             ) {
               this.addMatchingflowRun(flowRun)
             }
@@ -241,14 +254,29 @@ export default {
       return this.selectedLabels.includes(label)
     },
     addMatchingflowRun(flowRun) {
-      if (!this.submittable.filter(item => item.id === flowRun.id).length)
+      if (!this.submittable?.filter(item => item.id === flowRun.id)?.length)
         this.submittable.push(flowRun)
+    },
+    hasFailedRuns() {
+      const badRuns = this.LastRuns?.filter(
+        run => run.agent_id === this.agent?.id
+      )
+        .slice(0, 10)
+        .filter(run => ['Failed', 'TriggerFailed'].includes(run.state))
+      return badRuns
     }
   },
   apollo: {
     flowRuns: {
       query: require('@/graphql/Agent/FlowRuns.gql'),
       loadingKey: 'loading',
+      update: data => {
+        return data.flow_run
+      }
+    },
+    LastRuns: {
+      query: require('@/graphql/Dashboard/last-flow-runs.gql'),
+      loadingKey: 'loadingKey',
       update: data => {
         return data.flow_run
       }
@@ -277,7 +305,7 @@ export default {
         <v-list-item-content class="position: relative;">
           <v-list-item-title class="text-h6 pb-1">
             <div>
-              <div :color="lateRuns ? 'deepRed' : statusColor">
+              <div>
                 {{ name }}
               </div>
             </div>
@@ -319,20 +347,9 @@ export default {
     <v-card-text class="py-0">
       <v-list>
         <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
-          <v-list-item-content class="pa-0">
-            <v-list-item-title>Last Runs</v-list-item-title>
-            <v-list-item-subtitle>
-              <LastTenRuns :agent-id="agent.id" />
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
           <v-list-item-content min-height="10px" class="pa-0">
             <v-list-item-title
-              :class="
-                status === 'unhealthy' || status === 'late' ? 'red--text' : ''
-              "
+              ><v-icon small class="mr-1" :color="queryColor">adjust</v-icon
               >Last Query
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -362,7 +379,11 @@ export default {
         <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
           <v-list-item-content class="pa-0">
             <v-list-item-title
-              :class="lateRuns && lateRuns.length ? 'red--text' : ''"
+              ><v-icon
+                small
+                class="mr-1"
+                :color="lateRuns && lateRuns.length ? 'error' : 'success'"
+                >adjust</v-icon
               >{{
                 lateRuns && lateRuns.length ? 'Late Submittable' : 'Submittable'
               }}
@@ -375,6 +396,21 @@ export default {
               <span v-else>
                 {{ submittableRuns ? submittableRuns.length : 0 }}</span
               >
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
+          <v-list-item-content class="pa-0">
+            <v-list-item-title
+              ><v-icon
+                small
+                class="mr-1"
+                :color="hasFailedRuns().length ? 'error' : 'success'"
+                >adjust</v-icon
+              >Last Runs</v-list-item-title
+            >
+            <v-list-item-subtitle>
+              <LastTenRuns :agent-id="agent.id" />
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>

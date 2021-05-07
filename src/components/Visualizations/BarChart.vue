@@ -665,7 +665,7 @@ export default {
                   .delay((d, i) => i * 10)
                   .duration(this.animationDuration)
                   .style('opacity', d =>
-                    'warningOpacity' in d ? d.warningOpacity : 1
+                    'warningOpacity' in d ? d.warningOpacity : 0
                   )
               ),
           update =>

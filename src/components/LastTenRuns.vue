@@ -35,7 +35,6 @@ export default {
   },
   computed: {
     pollInterval() {
-      console.log('poll')
       return this.archived ? 0 : 60000
     },
     preppedFlowRuns() {
@@ -141,7 +140,6 @@ export default {
       },
       loadingKey: 'loadingKey',
       update: data => {
-        console.log('last runs data', data)
         return data.flow_run
       }
     }

@@ -82,10 +82,12 @@ export default {
     },
     filteredAgents() {
       if (!this.agents) return
-      const newList = this.agents.map(agent => {
-        if (this.status(agent) !== 'unhealthy' || this.labelsAlign(agent))
-          console.log('agents', agent)
-        return agent
+      const newList = this.agents.filter(agent => {
+        console.log('align?', this.labelsAlign(agent))
+        return (
+          agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold ||
+          this.labelsAlign(agent)
+        )
       })
 
       return newList
@@ -230,15 +232,12 @@ export default {
         return false
       } else {
         if (this.flowRuns?.length) {
-          this.flowRuns.forEach(flowRun => {
-            if (agent.labels.every(label => flowRun?.labels?.includes(label))) {
-              // this.addMatchingflowRun(flowRun)
-
-              return true
-            }
-          })
+          const check = this.flowRuns.filter(flowRun =>
+            flowRun.labels.every(label => agent?.labels?.includes(label))
+          )
+          console.log('check', check)
+          return check.length ? true : false
         }
-        return false
       }
     }
   },
@@ -498,7 +497,7 @@ export default {
         reverse-transition="tab-fade"
       >
         <v-row
-          v-if="filteredAgents.length > 0"
+          v-if="filteredAgents && filteredAgents.length > 0"
           :style="{
             'padding-top': $vuetify.breakpoint.smOnly ? '10px' : '1px',
             'padding-bottom': $vuetify.breakpoint.smOnly ? '10px' : '10px'
