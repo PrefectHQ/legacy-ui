@@ -124,7 +124,7 @@ export const login = async () => {
   } else {
     const loginResponse = await authenticate()
 
-    idToken = loginResponse.idToken
+    idToken = loginResponse?.idToken
 
     authorizationTokens = await authorize(idToken.value)
     refresh(authorizationTokens)
