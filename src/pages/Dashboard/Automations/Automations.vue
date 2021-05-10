@@ -33,13 +33,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['permissions']),
-    noAccess() {
-      return !this.permissions?.find(item => item === 'read:hook')
-    },
-    canEdit() {
-      return !!this.permissions?.find(item => item === 'create:hook')
-    }
+    ...mapGetters('license', ['permissions', 'hasPermission'])
   },
   watch: {
     hooks() {
@@ -88,7 +82,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="noAccess">
+  <div v-if="!hasPermission('read', 'hook')">
     <v-row>
       <v-col cols="12" class="text-center text-h6 pa-12">
         You do not have access to Automations. If you'd like to be able to
@@ -106,7 +100,7 @@ export default {
 
       <v-col cols="12">
         <AddAutoCard
-          v-if="canEdit && !closeCard"
+          v-if="!!hasPermission('create', 'hook') && !closeCard"
           @refresh="handleRefresh"
           @saving="loadCards = true"
           @done="handleDone"
@@ -136,7 +130,7 @@ export default {
         ><AutoCard
           v-else
           :hook="hook"
-          :can-edit="canEdit"
+          :can-edit="!!hasPermission('create', 'hook')"
           @open-edit="handleEdit(hook, i)"
           @refetch="handleRefetch"
           @done="handleDone"

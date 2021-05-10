@@ -70,13 +70,18 @@ export default {
     value() {
       const dict = {}
       this.keys.forEach((k, i) => {
-        if (k && (!this.includeCheckbox || this.includedKeys.includes(k))) {
+        if (
+          !this.includeCheckbox ||
+          (this.json && Object.keys(JSON.parse(this.jsonInput)).includes(k)) ||
+          (!this.json && this.includedKeys.includes(k))
+        ) {
           dict[k] = this.values[i]
         }
       })
       return dict
     }
   },
+
   watch: {
     // Allows swapping between json input and key value pairs
     json(val) {
@@ -92,11 +97,17 @@ export default {
         this.$nextTick(() => {
           this.$refs['json-input'].validateJson()
         })
+      } else {
+        try {
+          this.includedKeys = Object.keys(JSON.parse(this.jsonInput))
+        } catch {
+          this.includedKeys = Object.keys(this.value)
+        }
       }
     },
-    includedKeys() {
+    includedKeys(val) {
+      this.jsonInput = val.length > 0 ? JSON.stringify(this.value) : '{}'
       this.$emit('input', { ...this.value })
-      this.jsonInput = this.keys.length > 0 ? JSON.stringify(this.value) : '{}'
     }
   },
   mounted() {
@@ -108,10 +119,26 @@ export default {
       try {
         const json = JSON.parse(this.jsonInput)
 
-        this.keys = Object.keys(json)
-        this.values = Object.values(json).map(value =>
-          typeof value === 'string' ? value : JSON.stringify(value)
-        )
+        if (this.includeCheckbox) {
+          Object.keys(json).forEach(k => {
+            let i = this.keys.indexOf(k)
+
+            if (i > -1) {
+              this.values[i] =
+                typeof json[k] === 'string' ? json[k] : JSON.stringify(json[k])
+            } else {
+              this.keys.push(k)
+              this.values.push(
+                typeof json[k] === 'string' ? json[k] : JSON.stringify(json[k])
+              )
+            }
+          })
+        } else {
+          this.keys = Object.keys(json)
+          this.values = Object.values(json).map(value =>
+            typeof value === 'string' ? value : JSON.stringify(value)
+          )
+        }
         this.$emit('input', { ...this.value })
       } catch {
         this.$refs['json-input'].validateJson()
@@ -142,18 +169,33 @@ export default {
             .filter(entry => entry.disabled == true)
             .map(entry => entry.key)
         : []
+      if (this.includeCheckbox && this.includedKeys.length === 0) {
+        this.jsonInput = '{}'
+      } else if (
+        this.includeCheckbox &&
+        this.includedKeys.length > 0 &&
+        this.inputIsArray
+      ) {
+        const v = this.dict.filter(i => this.includedKeys.includes(i.key))
 
-      this.jsonInput = this.inputIsArray
-        ? JSON.stringify(
-            Object.fromEntries(this.dict.map(entry => [entry.key, entry.value]))
-          )
-        : this.dict
-        ? JSON.stringify(this.dict)
-        : `
-{
+        this.jsonInput = JSON.stringify(
+          Object.fromEntries(v.map(entry => [entry.key, entry.value]))
+        )
+      } else {
+        this.jsonInput = this.inputIsArray
+          ? JSON.stringify(
+              Object.fromEntries(
+                this.dict.map(entry => [entry.key, entry.value])
+              )
+            )
+          : this.dict
+          ? JSON.stringify(this.dict)
+          : `
+        {
 
-}
-      `
+        }
+              `
+      }
 
       this.keys = this.inputIsArray
         ? this.dict.map(entry => entry.key)
@@ -246,7 +288,7 @@ export default {
               outlined
               dense
               :placeholder="
-                inputIsArray && dict[i].value
+                inputIsArray && dict[i] && dict[i].value
                   ? dict[i].value.toString()
                   : valueLabel
               "

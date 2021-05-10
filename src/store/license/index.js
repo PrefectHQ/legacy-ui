@@ -19,6 +19,21 @@ const getters = {
   },
   tempLicenseType(state) {
     return state.tempLicenseType
+  },
+  planType: state => type => {
+    if (type) {
+      return state.license?.terms?.plan.includes(type)
+    }
+    return state.license?.terms?.plan
+  },
+  hasPermission: state => (operation, ref) => {
+    return state.permissions?.includes(`${operation}:${ref}`)
+  },
+  allowedUsers: state => type => {
+    if (type === 'read') {
+      return state.license?.terms?.read_only_users
+    }
+    return state.license?.terms?.users
   }
 }
 

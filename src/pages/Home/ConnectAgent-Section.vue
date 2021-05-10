@@ -26,20 +26,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'connected', 'isServer'])
+    ...mapGetters('api', ['isCloud', 'connected', 'isServer']),
+    ...mapGetters('user', ['user'])
   },
   async mounted() {
     if (this.isCloud) {
       try {
         const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/create-runner-token.gql'),
+          mutation: require('@/graphql/Tokens/create-api-key.gql'),
           variables: {
-            name: `default-agent-${Date.now()}`
+            name: `default-agent-${Date.now()}`,
+            user_id: this.user?.id
           }
         })
 
-        this.tokenId = data.create_api_token.id
-        this.token = data.create_api_token.token
+        this.tokenId = data.create_api_key.id
+        this.token = data.create_api_key.key
       } catch {
         //
       }
