@@ -40,9 +40,6 @@ const getters = {
   },
   authorizationTokenExpiry(state) {
     return state.authorizationTokenExpiry
-  },
-  redirectRoute(state) {
-    return state.redirectRoute
   }
 }
 
