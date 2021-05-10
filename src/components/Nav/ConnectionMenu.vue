@@ -177,12 +177,7 @@ export default {
           <span v-else>Couldn't connect</span>
           to
           <span class="font-weight-bold">
-            <span v-if="isCloud" class="primary--text"
-              >Prefect Cloud
-              <span v-if="apiMode === 'maintenance'" class="primary--text">
-                - In Maintenance</span
-              ></span
-            >
+            <span v-if="isCloud" class="primary--text">Prefect Cloud </span>
             <span v-else class="utilGrayDark--text">Prefect Server</span>
           </span>
           <span v-if="isServer">
