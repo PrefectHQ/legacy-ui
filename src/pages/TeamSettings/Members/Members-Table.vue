@@ -111,7 +111,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['permissions']),
+    ...mapGetters('license', ['permissions', 'hasPermission']),
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
@@ -274,7 +274,7 @@ export default {
 
       <!-- ACTIONS -->
       <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip v-if="hasRBAC" bottom>
+        <v-tooltip v-if="hasPermission('feature', 'basic-rbac')" bottom>
           <template #activator="{ on }">
             <v-btn
               text
