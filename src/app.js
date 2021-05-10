@@ -277,6 +277,21 @@ try {
 // eslint-disable-next-line no-unused-vars
 let PrefectUI
 export const CreatePrefectUI = () => {
+  try {
+    if (
+      process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
+      process.env.VUE_APP_BACKEND === 'CLOUD'
+    ) {
+      LogRocket.identify(store.getters['auth/user'].sub, {
+        name: store.getters['auth/user'].user.fullName,
+        email: store.getters['auth/user'].email
+      })
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log(e)
+  }
+
   const loader = document.querySelector('div.loading')
   loader.style.display = 'none'
 
