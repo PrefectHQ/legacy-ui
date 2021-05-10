@@ -59,7 +59,7 @@ export default {
     </div>
 
     <div class="text-center">
-      <div class="text-subtitle-1 text--disabled">Runs today</div>
+      <div class="text-subtitle-1 text--disabled">Task runs today</div>
 
       <v-skeleton-loader
         :loading="loading"
