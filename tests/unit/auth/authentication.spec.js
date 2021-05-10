@@ -2,13 +2,11 @@ jest.mock('@okta/okta-auth-js')
 import {
   isLoginRedirect,
   parseFromUrl,
-  MOCK_TOKEN_PAYLOAD
-} from '@okta/okta-auth-js'
-import {
   getTokens,
   getWithRedirect,
-  setTokens
-} from '../../__mocks__/@okta/okta-auth-js'
+  setTokens,
+  MOCK_TOKEN_PAYLOAD
+} from '@okta/okta-auth-js'
 
 describe('the authentication module', () => {
   it('exports the auth client', async () => {
