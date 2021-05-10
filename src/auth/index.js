@@ -1,5 +1,5 @@
 import { promiseChannel } from '@/workers/util/worker-interface.js'
-import { authenticate } from '@/auth/authentication.js'
+import { authenticate, authClient } from '@/auth/authentication.js'
 import {
   authorize,
   authorizeTenant,
@@ -58,12 +58,9 @@ export { TokenWorker }
 export const commitTokens = tokens => {
   if (!tokens) return
 
-  const authToken = tokens.authorizationTokens.access_token
-  const expiry = new Date(tokens.authorizationTokens.expires_at).getTime()
-  const idToken = tokens.idToken
-  const refreshToken = tokens.authorizationTokens.refresh_token
+  if (tokens.idToken) {
+    const idToken = tokens.idToken
 
-  if (idToken) {
     store.commit('auth/idToken', idToken.idToken)
     store.commit('auth/idTokenExpiry', idToken.expiresAt * 1000)
     store.commit('auth/user', idToken.claims)
@@ -71,6 +68,10 @@ export const commitTokens = tokens => {
   }
 
   if (tokens.authorizationTokens) {
+    const authToken = tokens.authorizationTokens.access_token
+    const expiry = new Date(tokens.authorizationTokens.expires_at).getTime()
+    const refreshToken = tokens.authorizationTokens.refresh_token
+
     store.commit('auth/authorizationToken', authToken)
     store.commit('auth/refreshToken', refreshToken)
 
@@ -93,6 +94,19 @@ const refresh = tokens => {
     refresh(refreshedTokens)
   }, timeout || 15000)
 }
+
+authClient.tokenManager.on('renewed', (key, idToken) => {
+  if (key === 'idToken' && idToken) {
+    commitTokens({ idToken: idToken })
+
+    if (TokenWorker) {
+      TokenWorker.port.postMessage({
+        type: 'idToken',
+        payload: idToken
+      })
+    }
+  }
+})
 
 export const login = async () => {
   // try getting a token from the service worker
