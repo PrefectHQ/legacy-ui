@@ -81,11 +81,8 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
-    allowedUsers() {
-      return this.allowedUsers() ?? Infinity
-    },
     insufficientUsers() {
-      return this.users >= this.allowedUsers
+      return this.users >= this.allowedUsers() ?? Infinity
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
@@ -401,7 +398,7 @@ export default {
     >
       <v-form ref="invite-user-form" v-model="inviteFormValid">
         <v-alert
-          v-if="totalUsers >= allowedUsers"
+          v-if="totalUsers >= allowedUsers ? allowedUsers : Infinity"
           class="mx-auto my-4 mb-12"
           border="left"
           colored-border
