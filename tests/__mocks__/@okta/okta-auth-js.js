@@ -43,7 +43,7 @@ export const accessToken = {
   value: raw_jwt
 }
 
-const MOCK_TOKEN_PAYLOAD = {
+export const MOCK_TOKEN_PAYLOAD = {
   tokens: { idToken: idToken, accessToken: accessToken }
 }
 
@@ -56,8 +56,14 @@ export const isLoginRedirect = jest.fn().mockReturnValue(false)
 export const getUser = jest.fn().mockReturnValue({})
 export const setTokens = jest.fn()
 export const signOut = jest.fn()
+export const on = jest.fn()
+export const isPKCESupported = jest.fn().mockReturnValue(true)
 
 export class OktaAuth {
+  static features = {
+    isPKCESupported: isPKCESupported
+  }
+
   constructor() {
     this.__exists = true
 
@@ -69,7 +75,8 @@ export class OktaAuth {
     this.tokenManager = {
       getTokens: getTokens,
       get: getTokenByKey,
-      setTokens: setTokens
+      setTokens: setTokens,
+      on: on
     }
 
     this.isLoginRedirect = isLoginRedirect
