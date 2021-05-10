@@ -102,6 +102,7 @@ export default {
         this.$route.name == 'plans' ||
         this.$route.name == 'not-found' ||
         this.$route.name == 'team-switched' ||
+        this.$route.name == 'logout' ||
         onboardRoutes.includes(this.$route.name)
       )
         return false
@@ -307,7 +308,11 @@ export default {
       this.$vuetify.theme.dark = false
     }
 
-    if (this.isCloud && !this.tenant.settings.teamNamed) {
+    if (
+      this.isCloud &&
+      !this.tenant.settings.teamNamed &&
+      !window.location.pathname?.includes('logout')
+    ) {
       this.$router.push({
         name: 'welcome',
         params: {

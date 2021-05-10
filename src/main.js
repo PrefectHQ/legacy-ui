@@ -3,12 +3,6 @@ import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
 
-export const logOut = async () => {
-  // try sending the request to the token worker
-  // if we have a service worker, ping that for a token
-  // otherwise we go through the okta logout process directly
-}
-
 export const setStartupTenant = async () => {
   const path = window.location.pathname
   const split = path.split('/')
@@ -45,6 +39,12 @@ export const setStartupTenant = async () => {
 
 let loading = false
 const start = async () => {
+  console.log(window.location.pathname)
+  if (window.location.pathname?.includes('logout')) {
+    CreatePrefectUI()
+    return
+  }
+
   const start0 = performance.now()
   if (process.env.VUE_APP_BACKEND === 'CLOUD') {
     // we run this when the application starts or a user returns to the page after some time away
@@ -78,6 +78,10 @@ const start = async () => {
 }
 
 start()
+
+// ******************************************************************************************
+// Browser visibility API handler for auth
+// ******************************************************************************************
 
 // Visibility change properties vary between browsers
 let hidden, visibilityChange

@@ -280,7 +280,8 @@ export const CreatePrefectUI = () => {
   try {
     if (
       process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
-      process.env.VUE_APP_BACKEND === 'CLOUD'
+      process.env.VUE_APP_BACKEND === 'CLOUD' &&
+      store.getters['auth/user']
     ) {
       LogRocket.identify(store.getters['auth/user'].sub, {
         name: store.getters['auth/user'].user.fullName,

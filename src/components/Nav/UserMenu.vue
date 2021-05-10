@@ -1,6 +1,7 @@
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { logout } from '@/auth/index.js'
 
 export default {
   mixins: [formatTime],
@@ -39,13 +40,12 @@ export default {
     }, 1000)
   },
   methods: {
-    ...mapActions('auth', ['logout']),
     ...mapMutations('user', ['setUserSettings']),
     async wipeClientAndLogout() {
       this.loading = true
 
       try {
-        await this.logout(true) // Pass true here to propagate this to all clients
+        await logout() // Pass true here to propagate this to all clients
         document.querySelector('.router-view').style.opacity = 0
       } catch {
         this.loading = false

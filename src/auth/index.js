@@ -38,6 +38,10 @@ if (TokenWorker?.port) {
       case 'authorizationToken':
         commitTokens({ authorizationTokens: payload })
         break
+      case 'logout':
+        authClient.signOut()
+        unsetTokens()
+        break
       default:
         break
     }
@@ -78,6 +82,17 @@ export const commitTokens = tokens => {
     store.commit('auth/authorizationTokenExpiry', expiry)
     store.commit('auth/refreshTokenExpiry', jwt_decode(refreshToken).exp * 1000)
   }
+}
+
+export const unsetTokens = () => {
+  store.commit('auth/unsetIdToken')
+  store.commit('auth/unsetIdTokenExpiry')
+  store.commit('auth/unsetOktaUser')
+  store.commit('auth/unsetUser')
+  store.commit('auth/unsetAuthorizationToken')
+  store.commit('auth/unsetAuthorizationTokenExpiry')
+  store.commit('auth/unsetRefreshToken')
+  store.commit('auth/unsetRefreshTokenExpiry')
 }
 
 let refreshTimeout
@@ -168,5 +183,21 @@ export const switchTenant = async tenantId => {
 
   return {
     authorizationTokens: authorizationTokens
+  }
+}
+
+export const logout = async () => {
+  if (TokenWorker) {
+    TokenWorker.port.postMessage({
+      type: 'logout'
+    })
+  } else {
+    try {
+      await authClient.signOut()
+      unsetTokens()
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e)
+    }
   }
 }
