@@ -207,123 +207,125 @@ export default {
       this.selectedTypeIndex = 0
       this.invalidKV = false
     },
-    setKV() {
-      this.isSettingKV = true
+    setKV(item) {
+      console.log(item)
+      console.log(this.KvValueInput)
+      //   this.isSettingKV = true
 
-      if (this.selectedTypeIndex === 2 && !this.validKVJSON()) {
-        this.isSettingKV = false
-        this.invalidKV = true
-        return
-      }
-      if (this.isKvUpdate) {
-        // modifying
-        this.deleteKV({ name: this.previousKVName }, { isModifying: true })
-      }
-
-      let value = this.KvValueInput
-      if (this.selectedTypeIndex === 0) {
-        try {
-          value = JSON.stringify(JSON.parse(this.KvValueInput))
-        } catch {
-          try {
-            value = String.raw`${this.KvValueInput}`
-          } catch {
-            value = JSON.stringify(this.KvValueInput)
-          }
-        }
-      }
-      if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
-
-      // call muatation
-      //  const kvResult = await this.$apollo.mutate({
-      //   mutation: require('@/graphql/KV/set-kv.gql'),
-      //   variables: {
-      //     name: this.keyInput,
-      //     value: value || []
+      //   if (this.selectedTypeIndex === 2 && !this.validKVJSON()) {
+      //     this.isSettingKV = false
+      //     this.invalidKV = true
+      //     return
       //   }
-      // })
-      const fakeResult = new Promise(resolve => {
-        setTimeout(() => {
-          resolve({
-            data: {
-              set_kv: {
-                success: true,
-                result: {
-                  id: Math.floor(Math.random() * 100 + 1),
-                  key: this.keyInput,
-                  value: value || [],
-                  created: this.tenant.name,
-                  updated: new Date(
-                    +new Date() - Math.floor(Math.random() * 10000000000)
-                  )
-                }
-              }
-            }
-          })
-        }, 2000)
-      })
-      fakeResult.then(res => {
-        if (res?.data?.set_kv?.success) {
-          // this.$apollo.queries.kv.refetch()
-          this.keyModifyDialog = false
-          this.items.push(res?.data?.set_kv?.result)
-          // this.resetSelectedKV()
-          this.handleAlert(
-            'success',
-            `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
-          )
-        } else {
-          this.handleAlert(
-            'error',
-            `Something went wrong when ${
-              this.isKvUpdate ? 'updating' : 'creating'
-            } this KV. Please try again. If this error persists, please contact help@prefect.io.`
-          )
-        }
-      })
-
-      // this.isSettingKV = false
-      // this.keyInput = null
-      // this.KvValueInput = null
-    },
-
-    deleteKV(kv, opts = {}) {
-      this.isDeletingKV = true
-      //  mutation
-      // const KvResult = await this.$apollo.mutate({
-      //   mutation: require('@/graphql/KV/delete-kv.gql'),
-      //   variables: {
-      //     name: kv.name
+      //   if (this.isKvUpdate) {
+      //     // modifying
+      //     this.deleteKV({ name: this.previousKVName }, { isModifying: true })
       //   }
-      // })
+      //   console.log(this.KvValueInput)
+      //   let value = this.KvValueInput
+      //   if (this.selectedTypeIndex === 0) {
+      //     try {
+      //       value = JSON.stringify(JSON.parse(this.KvValueInput))
+      //     } catch {
+      //       try {
+      //         value = String.raw`${this.KvValueInput}`
+      //       } catch {
+      //         value = JSON.stringify(this.KvValueInput)
+      //       }
+      //     }
+      //   }
+      //   if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
 
-      const fakeResult = new Promise(resolve => {
-        setTimeout(() => {
-          resolve({
-            data: {
-              delete_kv: {
-                success: true,
-                result: kv
-              }
-            }
-          })
-        }, 2000)
-      })
+      //   // call muatation
+      //   //  const kvResult = await this.$apollo.mutate({
+      //   //   mutation: require('@/graphql/KV/set-kv.gql'),
+      //   //   variables: {
+      //   //     name: this.keyInput,
+      //   //     value: value || []
+      //   //   }
+      //   // })
+      //   const fakeResult = new Promise(resolve => {
+      //     setTimeout(() => {
+      //       resolve({
+      //         data: {
+      //           set_kv: {
+      //             success: true,
+      //             result: {
+      //               id: Math.floor(Math.random() * 100 + 1),
+      //               key: this.keyInput,
+      //               value: value || [],
+      //               created: this.tenant.name,
+      //               updated: new Date(
+      //                 +new Date() - Math.floor(Math.random() * 10000000000)
+      //               )
+      //             }
+      //           }
+      //         }
+      //       })
+      //     }, 2000)
+      //   })
+      //   fakeResult.then(res => {
+      //     if (res?.data?.set_kv?.success) {
+      //       // this.$apollo.queries.kv.refetch()
+      //       this.keyModifyDialog = false
+      //       this.items.push(res?.data?.set_kv?.result)
+      //       // this.resetSelectedKV()
+      //       this.handleAlert(
+      //         'success',
+      //         `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
+      //       )
+      //     } else {
+      //       this.handleAlert(
+      //         'error',
+      //         `Something went wrong when ${
+      //           this.isKvUpdate ? 'updating' : 'creating'
+      //         } this KV. Please try again. If this error persists, please contact help@prefect.io.`
+      //       )
+      //     }
+      //   })
 
-      fakeResult.then(res => {
-        if (res?.data?.delete_kv?.success) {
-          if (!opts.isModifying) {
-            // this.$apollo.queries.kv.refetch()
-            this.keyDeleteDialog = false
-            this.handleAlert('success', 'KV deleted.')
-          }
-        } else {
-          this.handleAlert(
-            'error',
-            'Something went wrong while trying to delete this kv. Please try again. If this error persists, reach out to help@prefect.io.'
-          )
-        }
-      })
+      //   // this.isSettingKV = false
+      //   // this.keyInput = null
+      //   // this.KvValueInput = null
+      // },
+
+      // deleteKV(kv, opts = {}) {
+      //   this.isDeletingKV = true
+      //   //  mutation
+      //   // const KvResult = await this.$apollo.mutate({
+      //   //   mutation: require('@/graphql/KV/delete-kv.gql'),
+      //   //   variables: {
+      //   //     name: kv.name
+      //   //   }
+      //   // })
+
+      //   const fakeResult = new Promise(resolve => {
+      //     setTimeout(() => {
+      //       resolve({
+      //         data: {
+      //           delete_kv: {
+      //             success: true,
+      //             result: kv
+      //           }
+      //         }
+      //       })
+      //     }, 2000)
+      //   })
+
+      //   fakeResult.then(res => {
+      //     if (res?.data?.delete_kv?.success) {
+      //       if (!opts.isModifying) {
+      //         // this.$apollo.queries.kv.refetch()
+      //         this.keyDeleteDialog = false
+      //         this.handleAlert('success', 'KV deleted.')
+      //       }
+      //     } else {
+      //       this.handleAlert(
+      //         'error',
+      //         'Something went wrong while trying to delete this kv. Please try again. If this error persists, reach out to help@prefect.io.'
+      //       )
+      //     }
+      //   })
 
       // this.isDeletingKV = false
     },
@@ -444,8 +446,11 @@ export default {
                   <v-icon small>refresh</v-icon>
                 </v-btn>
               </div>
+              <div> old {{ item.value }}</div>
+              <div>new {{ KvValueInput }}</div>
+
               <JsonInput
-                :value="item.value"
+                v-model="KvValueInput"
                 ref="kvRef"
                 class="text-body-1 mt-2 mb-5"
                 :selected-type="
@@ -453,7 +458,7 @@ export default {
                     ? kvTypes[selectedTypeIndex].value
                     : kvTypes[jsonEditorType(item)].value
                 "
-                placeholder-text="Enter your value"
+                :placeholder-text="item.value"
                 @invalid-secret="setInvalidKV"
               >
                 <v-menu top offset-y>
@@ -469,9 +474,8 @@ export default {
                       }"
                       color="accent"
                       :loading="isSettingKV"
-                      :disabled="!disableConfirm"
                       v-on="on"
-                      @click="setKV"
+                      @click="setKV(item)"
                     >
                       Save
                     </v-btn>
