@@ -38,7 +38,7 @@ export const setStartupTenant = async () => {
 }
 
 let loading = false
-const start = async () => {
+export const start = async () => {
   if (window.location.pathname?.includes('logout')) {
     CreatePrefectUI()
     return
