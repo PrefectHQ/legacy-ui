@@ -1,3 +1,5 @@
+/* global jest */
+
 export const query = jest.fn()
 export const mutate = jest.fn()
 
