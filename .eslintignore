@@ -1,5 +1,4 @@
 tests/__coverage__
 src/graphql
 node_modules
-src/workers/token.worker.js
 src/workers/auth.worker.js
