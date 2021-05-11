@@ -4,7 +4,7 @@ import uniq from 'lodash.uniq'
 import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
 import SubPageNav from '@/layouts/SubPageNav'
-
+import { formatTime } from '@/mixins/formatTimeMixin.js'
 import moment from '@/utils/moment'
 
 import AgentTile from '@/pages/Agents/AgentTile'
@@ -16,6 +16,7 @@ export default {
     AgentTile,
     SubPageNav
   },
+  mixins: [formatTime],
   data() {
     return {
       projectId: this.$route.params.id,
@@ -82,13 +83,13 @@ export default {
     },
     filteredAgents() {
       if (!this.agents) return
-      const lateList = []
+      const runsList = []
       const newList = []
       const oldList = []
 
       this.agents.forEach(agent => {
         if (this.labelsAlign(agent)) {
-          lateList.push(agent)
+          runsList.push(agent)
         } else if (agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold) {
           newList.push(agent)
         } else {
@@ -97,7 +98,7 @@ export default {
         }
       })
 
-      const fullList = [...lateList, ...newList, ...oldList]
+      const fullList = [...runsList, ...newList, ...oldList]
 
       return fullList
 
@@ -225,27 +226,27 @@ export default {
       this.statusInput = STATUSES
       this.showUnlabeledAgentsOnly = false
     },
-    status(agent) {
-      if (agent.secondsSinceLastQuery < 60 * this.staleThreshold)
-        return 'healthy'
-      if (agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold)
-        return 'stale'
+    // status(agent) {
+    //   if (agent.secondsSinceLastQuery < 60 * this.staleThreshold)
+    //     return 'healthy'
+    //   if (agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold)
+    //     return 'stale'
 
-      return 'unhealthy'
-    },
+    //   return 'unhealthy'
+    // },
     labelsAlign(agent) {
       if (
         !agent?.labels?.length &&
         this.flowRuns?.every(flowRun => flowRun?.labels?.length > 0)
       ) {
-        return false
+        agent.submittableRuns = false
+        return
       } else {
         if (this.flowRuns?.length) {
           const check = this.flowRuns.filter(flowRun =>
             flowRun.labels.every(label => agent?.labels?.includes(label))
           )
-
-          return check?.length ? true : false
+          agent.submittableRuns = !!check?.length
         }
       }
     }
@@ -255,6 +256,19 @@ export default {
       query: require('@/graphql/Agent/FlowRuns.gql'),
       loadingKey: 'loading',
       update: data => {
+        return data.flow_run
+      }
+    },
+    LastRuns: {
+      query: require('@/graphql/Dashboard/last-flow-runs.gql'),
+      loadingKey: 'loadingKey',
+      variables() {
+        return {
+          day: this.subtractDay(Date.now)
+        }
+      },
+      update: data => {
+        console.log('last runs', data)
         return data.flow_run
       }
     }

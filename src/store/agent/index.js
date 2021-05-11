@@ -40,7 +40,9 @@ const mutations = {
       agent.status =
         secondsSinceLastQuery < 60 * state.thresholds.stale
           ? 'healthy'
-          : 'stale'
+          : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
+          ? 'stale'
+          : 'unhealthy'
       return agent
     })
   }
