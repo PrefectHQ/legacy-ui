@@ -8,6 +8,10 @@ const headers = {
 }
 
 export const authorize = async idToken => {
+  if (!idToken) {
+    throw new Error('No ID token passed to authorize')
+  }
+
   const res = await client.mutate({
     mutation: require('@/graphql/log-in.gql'),
     variables: {
@@ -24,6 +28,10 @@ export const authorize = async idToken => {
 }
 
 export const refreshTokens = async (accessToken, refreshToken) => {
+  if (!accessToken || !refreshToken) {
+    throw new Error('No access or refresh token passed to refreshTokens')
+  }
+
   const res = await client.mutate({
     mutation: require('@/graphql/refresh-token.gql'),
     variables: {
@@ -42,6 +50,10 @@ export const refreshTokens = async (accessToken, refreshToken) => {
 }
 
 export const authorizeTenant = async (accessToken, tenantId) => {
+  if (!accessToken || !tenantId) {
+    throw new Error('No access token or no tenant id passed to authorizeTenant')
+  }
+
   const res = await client.mutate({
     mutation: require('@/graphql/Tenant/tenant-token.gql'),
     variables: {

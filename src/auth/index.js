@@ -1,6 +1,10 @@
 import { promiseChannel } from '@/workers/util/worker-interface.js'
-import { authenticate } from '@/auth/authentication.js'
-import { authorize, authorizeTenant } from '@/auth/authorization.js'
+import { authenticate, authClient } from '@/auth/authentication.js'
+import {
+  authorize,
+  authorizeTenant,
+  refreshTokens
+} from '@/auth/authorization.js'
 
 import store from '@/store'
 
@@ -34,6 +38,10 @@ if (TokenWorker?.port) {
       case 'authorizationToken':
         commitTokens({ authorizationTokens: payload })
         break
+      case 'logout':
+        authClient.signOut()
+        unsetTokens()
+        break
       default:
         break
     }
@@ -52,19 +60,22 @@ if (TokenWorker?.port) {
 export { TokenWorker }
 
 export const commitTokens = tokens => {
-  const authToken = tokens.authorizationTokens.access_token
-  const expiry = new Date(tokens.authorizationTokens.expires_at).getTime()
-  const idToken = tokens.idToken
-  const refreshToken = tokens.authorizationTokens.refresh_token
+  if (!tokens) return
 
-  if (idToken) {
-    store.commit('auth/idToken', idToken.value)
+  if (tokens.idToken) {
+    const idToken = tokens.idToken
+
+    store.commit('auth/idToken', idToken.idToken)
     store.commit('auth/idTokenExpiry', idToken.expiresAt * 1000)
     store.commit('auth/user', idToken.claims)
     store.commit('user/setOktaUser', idToken.claims)
   }
 
   if (tokens.authorizationTokens) {
+    const authToken = tokens.authorizationTokens.access_token
+    const expiry = new Date(tokens.authorizationTokens.expires_at).getTime()
+    const refreshToken = tokens.authorizationTokens.refresh_token
+
     store.commit('auth/authorizationToken', authToken)
     store.commit('auth/refreshToken', refreshToken)
 
@@ -72,6 +83,45 @@ export const commitTokens = tokens => {
     store.commit('auth/refreshTokenExpiry', jwt_decode(refreshToken).exp * 1000)
   }
 }
+
+export const unsetTokens = () => {
+  store.commit('auth/unsetIdToken')
+  store.commit('auth/unsetIdTokenExpiry')
+  store.commit('auth/unsetOktaUser')
+  store.commit('auth/unsetUser')
+  store.commit('auth/unsetAuthorizationToken')
+  store.commit('auth/unsetAuthorizationTokenExpiry')
+  store.commit('auth/unsetRefreshToken')
+  store.commit('auth/unsetRefreshTokenExpiry')
+}
+
+let refreshTimeout
+const refresh = tokens => {
+  clearTimeout(refreshTimeout)
+  const expiration = new Date(tokens.expires_at)
+  const timeout = ((expiration - Date.now()) * 3) / 4
+  refreshTimeout = setTimeout(async () => {
+    const refreshedTokens = await refreshTokens(
+      tokens.access_token,
+      tokens.refresh_token
+    )
+    commitTokens({ authorizationTokens: refreshedTokens })
+    refresh(refreshedTokens)
+  }, timeout || 15000)
+}
+
+authClient.tokenManager.on('renewed', (key, idToken) => {
+  if (key === 'idToken' && idToken) {
+    commitTokens({ idToken: idToken })
+
+    if (TokenWorker) {
+      TokenWorker.port.postMessage({
+        type: 'idToken',
+        payload: idToken
+      })
+    }
+  }
+})
 
 export const login = async () => {
   // try getting a token from the service worker
@@ -85,12 +135,12 @@ export const login = async () => {
     if (!idToken) {
       const loginResponse = await authenticate()
 
+      idToken = loginResponse?.idToken
+
       TokenWorker.port.postMessage({
         type: 'idToken',
         payload: idToken
       })
-
-      idToken = loginResponse?.idToken
 
       if (!idToken) return
     }
@@ -103,9 +153,10 @@ export const login = async () => {
   } else {
     const loginResponse = await authenticate()
 
-    idToken = loginResponse.idToken
+    idToken = loginResponse?.idToken
 
     authorizationTokens = await authorize(idToken.value)
+    refresh(authorizationTokens)
   }
 
   return {
@@ -132,5 +183,21 @@ export const switchTenant = async tenantId => {
 
   return {
     authorizationTokens: authorizationTokens
+  }
+}
+
+export const logout = async () => {
+  if (TokenWorker) {
+    TokenWorker.port.postMessage({
+      type: 'logout'
+    })
+  } else {
+    try {
+      await authClient.signOut()
+      unsetTokens()
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e)
+    }
   }
 }

@@ -107,6 +107,12 @@ const handleLogin = async () => {
   postToChannelPorts({ payload: state.idToken })
 }
 
+const handleLogout = async () => {
+  state.idToken = null
+  state.authorizationToken = null
+  postToConnections({ type: 'logout' })
+}
+
 let authorizing = false
 const handleAuthorize = async idToken => {
   authorizing = true
@@ -134,6 +140,10 @@ const connect = c => {
     if (type == 'login') {
       channelPorts.push(channelPort)
       handleLogin()
+    }
+
+    if (type == 'logout') {
+      handleLogout()
     }
 
     if (type == 'authorize') {

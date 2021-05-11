@@ -363,7 +363,9 @@ export default {
         context.strokeStyle = this.computedStyle.getPropertyValue(
           '--v-appBackground-base'
         )
-      } catch {
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log(e)
         cancelAnimationFrame(this.drawCanvas)
         this.timer.stop()
         this.bars = []
@@ -611,9 +613,9 @@ export default {
               .attr('id', d => `click-area-${d.id}`)
               .style('fill', 'transparent')
               .attr('height', this.barStart)
-              .attr('width', x.bandwidth())
+              .attr('width', x.bandwidth() || 0)
               .attr('y', 0)
-              .attr('x', (d, i) => x(d.id ? d.id : i))
+              .attr('x', (d, i) => x(d.id ? d.id : i) || 0)
               .call(enter =>
                 enter
                   .on('click', this.click)
@@ -624,9 +626,9 @@ export default {
             update
               .attr('id', d => `click-area-${d.id}`)
               .attr('height', this.barStart)
-              .attr('width', x.bandwidth())
+              .attr('width', x.bandwidth() || 0)
               .attr('y', 0)
-              .attr('x', (d, i) => x(d.id ? d.id : i))
+              .attr('x', (d, i) => x(d.id ? d.id : i) || 0)
               .call(update =>
                 update
                   .on('click', this.click)
@@ -664,7 +666,7 @@ export default {
               .attr('text-anchor', 'middle')
               .text('timelapse')
               .attr('y', this.barStart / 1.5 - 3)
-              .attr('x', d => x(d.id) + x.bandwidth() / 2)
+              .attr('x', d => x(d.id) + x.bandwidth() / 2 || 0)
               .call(enter =>
                 enter
                   .transition('enter')
@@ -703,7 +705,7 @@ export default {
             .attr('class', 'x-axis')
             .attr('stroke', 'rgba(0, 0, 0, 0.12)')
             .attr('stroke-width', 1)
-            .attr('d', `M0,${this.barStart}L0,${this.barStart}`)
+            .attr('d', `M0,${this.barStart || 0}L0,${this.barStart || 0}`)
             .call(enter =>
               enter
                 .transition('enter')

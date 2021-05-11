@@ -4,10 +4,19 @@
 
 ### Features and Improvements
 
-- None
+- Add new states to the license store - [#763](https://github.com/PrefectHQ/ui/pull/763)
+- Add a tooltip for task run names in the flow run task table - [#814](https://github.com/PrefectHQ/ui/pull/814)
+- Add "Task" to the "Runs Today" to make it clear it's "Task runs today" - [#816](https://github.com/PrefectHQ/ui/pull/816)
 
 ### Bugfixes
 
+- None
+
+## 2021-05-05
+
+### Bugfixes
+
+- Fix the issue where the key fields for the context and environment are disabled after typing on the run page - [#810](https://github.com/PrefectHQ/ui/pull/810)
 - Populate JSON editor with only checked parameters - [#787](https://github.com/PrefectHQ/ui/pull/787)
 
 ## 2021-05-04

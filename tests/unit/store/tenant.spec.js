@@ -1,10 +1,4 @@
-jest.mock('@/main', () => {
-  return {
-    TokenWorker: {
-      postMessage: jest.fn()
-    }
-  }
-})
+jest.mock('@/auth/index.js')
 
 import tenant from '@/store/tenant'
 import { createLocalVue } from '@vue/test-utils'

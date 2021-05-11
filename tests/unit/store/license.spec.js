@@ -97,6 +97,22 @@ describe('license Vuex Module', () => {
       it('should return null when the permissions getter is called', () => {
         expect(store.getters.permissions).toBe(null)
       })
+
+      it('should return undefined when the planType getter is called with no parameters', () => {
+        expect(store.getters.planType()).toBe(undefined)
+      })
+
+      it('should return undefined when the planType getter is called with parameters', () => {
+        expect(store.getters.planType('STARTER')).toBe(undefined)
+      })
+
+      it('should return undefined when the hasPermission getter is called with  no parameters', () => {
+        expect(store.getters.hasPermission()).toBe(undefined)
+      })
+
+      it('should return undefined when the hasPermission getter is called with parameters', () => {
+        expect(store.getters.hasPermission('read', 'flow')).toBe(undefined)
+      })
     })
 
     describe('when licenses are set', () => {
@@ -118,6 +134,21 @@ describe('license Vuex Module', () => {
 
       it('should return permissions when the permissions getter is called', () => {
         expect(store.getters.permissions).toStrictEqual(activePermissions())
+      })
+
+      it('should return the current planType when the planType getter is called with no parameters', () => {
+        expect(store.getters.planType()).toBe('SELF_SERVE')
+      })
+      it('should return true if the planType is equal to the parameter', () => {
+        expect(store.getters.planType('SELF_SERVE')).toBe(true)
+      })
+
+      it('should return false when the hasPermission getter is called with no parameters', () => {
+        expect(store.getters.hasPermission()).toBe(false)
+      })
+
+      it('should return true when the hasPermission getter is called with parameters', () => {
+        expect(store.getters.hasPermission('read', 'flow')).toBe(true)
       })
     })
   })

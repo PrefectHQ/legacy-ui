@@ -131,7 +131,7 @@ const actions = {
 
     const user = await prefectUser()
     commit('user', user)
-    await dispatch('setDefaultTenant')
+    dispatch('setDefaultTenant')
     return getters['user']
   }
 }

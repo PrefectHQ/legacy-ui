@@ -40,7 +40,7 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['permissions']),
+    ...mapGetters('license', ['permissions', 'hasPermission']),
     sortedProjects() {
       if (!this.projects) return []
       return [...this.projects].sort((a, b) =>
@@ -385,7 +385,7 @@ export default {
                   :loading="loading.versionLocking"
                   :disabled="
                     isReadOnlyUser ||
-                      !versionLockingPermitted ||
+                      !hasPermission('feature', 'version-locking') ||
                       loading.versionLocking
                   "
                   @change="_handleVersionLockingChange"
@@ -411,7 +411,7 @@ export default {
             <span v-if="isReadOnlyUser">
               Read-only users cannot modify flow settings.
             </span>
-            <span v-if="!versionLockingPermitted">
+            <span v-if="!hasPermission('feature', 'version-locking')">
               Your team doesn't have access to version locking.
             </span>
             <span v-else>

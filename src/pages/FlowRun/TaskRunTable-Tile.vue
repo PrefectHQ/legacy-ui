@@ -237,7 +237,7 @@ export default {
                   :data-cy="'task-run-table-link|' + item.task.name"
                   :to="{ name: 'task-run', params: { id: item.id } }"
                 >
-                  <span v-if="item.name">{{ item.name }}</span>
+                  <span v-if="item.name" v-on="on">{{ item.name }}</span>
                   <span v-else v-on="on"
                     >{{ item.task.name
                     }}<span v-if="item.map_index > -1">
@@ -248,7 +248,11 @@ export default {
                   </span>
                 </router-link>
               </template>
-              <span>
+              <span v-if="item.name"
+                >{{ flowRun.name }} - {{ item.task.name }} -
+                {{ item.name }}</span
+              >
+              <span v-else>
                 {{ flowRun.name }} - {{ item.task.name
                 }}<span v-if="item.map_index > -1">
                   (Mapped Child {{ item.map_index }})</span
