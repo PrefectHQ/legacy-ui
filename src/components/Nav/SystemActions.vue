@@ -4,12 +4,16 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 
 import CancelAll from '@/components/Nav/SystemActionsTiles/CancelAll'
 import ClearLate from '@/components/Nav/SystemActionsTiles/ClearLate'
+import TenantInfo from '@/components/Nav/SystemActionsTiles/TenantInfo'
+import RecentFlows from '@/components/Nav/SystemActionsTiles/RecentFlows'
 import WorkQueue from '@/components/Nav/SystemActionsTiles/WorkQueue'
 
 export default {
   components: {
     CancelAll,
     ClearLate,
+    TenantInfo,
+    RecentFlows,
     WorkQueue
   },
   mixins: [formatTime],
@@ -88,27 +92,51 @@ export default {
 
 <template>
   <div class="system-grid">
+    <TenantInfo />
     <CancelAll />
     <ClearLate />
     <WorkQueue />
+    <RecentFlows />
   </div>
 </template>
 
 <style lang="scss" scoped>
 $cellsize: 200px;
+$guttersize: 16px;
 
 .system-grid {
-  max-width: 764px;
+  column-gap: $guttersize;
+  display: grid;
+  grid-auto-flow: row dense;
+  grid-auto-rows: minmax($cellsize, auto);
+  grid-template-columns: repeat(auto-fit, minmax($cellsize, 1fr));
+  height: max-content;
+  margin: 104px auto;
+  max-height: calc(100% - 136px);
+  max-width: 1600px;
+  overflow-y: scroll;
+  padding: 0 16px;
+  row-gap: $guttersize;
   text-align: center;
 
   .system-action-container {
     background-color: #455a64;
-    display: inline-block;
-    margin: 16px;
-    height: $cellsize;
+    grid-column: span 1;
+    grid-row: span 1;
+    height: 100%;
+    margin: auto;
     position: relative;
     transition: transform 150ms ease-in-out;
-    width: $cellsize;
+    width: 100%;
+
+    &.system-action-container-large {
+      grid-column: span 2;
+      grid-row: span 2;
+
+      &.wide {
+        grid-column: 1/-1;
+      }
+    }
 
     &:focus {
       outline: none;
@@ -125,5 +153,12 @@ $cellsize: 200px;
       cursor: not-allowed;
     }
   }
+}
+</style>
+
+<style lang="scss">
+// stylelint-disable-next-line
+.v-overlay__content {
+  width: 100%;
 }
 </style>
