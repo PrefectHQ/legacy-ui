@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Adds created by information to service account api keys list - [#808](https://github.com/PrefectHQ/ui/pull/808)
 - Turn the status indicator warning yellow when cloud is in maintenance mode - [#815](https://github.com/PrefectHQ/ui/pull/815)
 - Add new states to the license store - [#763](https://github.com/PrefectHQ/ui/pull/763)
 - Add a tooltip for task run names in the flow run task table - [#814](https://github.com/PrefectHQ/ui/pull/814)

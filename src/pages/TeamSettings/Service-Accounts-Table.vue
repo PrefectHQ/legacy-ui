@@ -251,7 +251,8 @@ export default {
             name: key.name,
             created_at: key.created,
             expires: key.expires_at,
-            user_id: key.user_id
+            user_id: key.user_id,
+            created_by: key.created_by ? key.created_by.username : ''
           }
         })
         this.isFetchingKeys = false
@@ -306,11 +307,9 @@ export default {
             >
               <v-list-item-title>{{ key.name }}</v-list-item-title>
               <v-list-item-subtitle
-                >Created
-                {{
-                  key.created_at ? formDate(key.created_at) : ''
-                }}</v-list-item-subtitle
-              >
+                >Created {{ key.created_at ? formDate(key.created_at) : '' }}
+                <span v-if="key.created_by">by {{ key.created_by }}</span>
+              </v-list-item-subtitle>
               <v-list-item-subtitle>
                 {{
                   !key.expires
