@@ -21,7 +21,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'planType', 'allowedUsers']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
@@ -36,21 +36,18 @@ export default {
       return PLANS_2021['free'].users
     },
     plan() {
-      return this.plans.find(planType => planType.value === this.planType)
+      return this.plans.find(planType => planType.value === this.planType())
     },
     planName() {
       if (this.isLegacy)
         return `${
           this.isSelfServe
             ? 'Developer'
-            : this.planType
-            ? this.planType.toLowerCase()
+            : this.planType()
+            ? this.planType().toLowerCase()
             : ''
         }`
       return this.plan.name
-    },
-    planType() {
-      return this.license?.terms?.plan
     },
     runCost() {
       return this.plan?.price
@@ -59,10 +56,10 @@ export default {
       return 'primary'
     },
     readNum() {
-      return this.license?.terms?.read_only_users?.toLocaleString()
+      return this.allowedUsers('read').toLocaleString()
     },
     userNum() {
-      return this.license?.terms?.users?.toLocaleString()
+      return this.allowedUsers().toLocaleString()
     },
     readOnlyUserOrUsers() {
       return !this.license?.terms?.read_only_users
@@ -72,9 +69,9 @@ export default {
         : 'user'
     },
     userOrUsers() {
-      return !this.license?.terms?.users
+      return !this.allowedUsers()
         ? 'users'
-        : this.license?.terms?.users > 1
+        : this.allowedUsers() > 1
         ? 'users'
         : 'user'
     },
@@ -85,7 +82,7 @@ export default {
       return this.license?.terms?.flow_concurrency
     },
     memberOrMembers() {
-      return this.license?.terms?.users > 1 ? 'members' : 'member'
+      return this.allowedUsers() > 1 ? 'members' : 'member'
     },
     flowOrFlows() {
       return !this.license?.terms?.flow_concurrency
@@ -194,7 +191,7 @@ export default {
         <v-spacer />
 
         <v-btn
-          v-if="isSelfServe && planType !== 'FREE_2021'"
+          v-if="isSelfServe && !planType('FREE')"
           class="mr-1 blue-grey--text"
           text
           small
@@ -261,9 +258,7 @@ export default {
 
           <div
             v-if="
-              planType === 'FREE_2021' ||
-                planType === 'STARTER_2021' ||
-                planType === 'STANDARD_2021'
+              planType('FREE') || planType('STARTER') || planType('STANDARD')
             "
             class="d-flex justify-start align-start py-4 px-8 my-2"
             style="width: 50%;"
@@ -275,7 +270,7 @@ export default {
               <div class="text-h6 font-weight-regular utilGrayMid--text">
                 10,000 free runs / month
               </div>
-              <div v-if="planType !== 'FREE_2021'" class="text-body-1">
+              <div v-if="!planType('FREE')" class="text-body-1">
                 Your first 10,000 successful runs per month are on us!
               </div>
               <div v-else class="text-body-1">
