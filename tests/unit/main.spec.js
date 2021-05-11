@@ -15,10 +15,7 @@ Object.defineProperty(window, 'location', {
   }
 })
 
-import store from '@/store'
-
 import { CreatePrefectUI } from '@/app.js'
-import { login, switchTenant, commitTokens } from '@/auth/index.js'
 
 describe('Main', () => {
   it('exports the setStartupTenant method', () => {
