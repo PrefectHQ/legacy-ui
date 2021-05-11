@@ -3,11 +3,13 @@ import { mapActions, mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 import CancelAll from '@/components/Nav/SystemActionsTiles/CancelAll'
+import ClearLate from '@/components/Nav/SystemActionsTiles/ClearLate'
 import WorkQueue from '@/components/Nav/SystemActionsTiles/WorkQueue'
 
 export default {
   components: {
     CancelAll,
+    ClearLate,
     WorkQueue
   },
   mixins: [formatTime],

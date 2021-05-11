@@ -390,10 +390,28 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
 }
 
 .system-icon {
-  font-size: 64px;
+  font-size: 64px !important;
   height: 64px !important;
-  line-height: 64px;
+  line-height: 64px !important;
   width: 80px !important;
+
+  &.fa-stack {
+    position: relative !important;
+
+    .fa-stack-1x,
+    .fa-stack-2x {
+      height: inherit !important;
+      position: relative;
+      width: inherit !important;
+    }
+
+    .svg-inline--fa.fa-stack-1x {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -25%);
+    }
+  }
 
   .svg-inline--fa {
     --fa-primary-color: #444;
@@ -409,6 +427,10 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
     &.fa-align-slash {
       --fa-primary-color: var(--v-error-base);
       --fa-secondary-opacity: 1;
+    }
+
+    &.fa-slash {
+      color: var(--v-error-base);
     }
   }
 

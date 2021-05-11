@@ -36,7 +36,7 @@ export default {
               .mutate({
                 mutation: mutation,
                 variables: {
-                  flowRunId: run.id
+                  id: run.id
                 }
               })
               .then(() => {
@@ -71,13 +71,16 @@ export default {
         if (this.errors > 0) {
           this.setAlert({
             alertShow: true,
-            alertMessage: `${this.errors} could not be stopped.`,
+            alertMessage: `${this.errors} run could not be removed.`,
             alertType: 'error'
           })
 
           this.errors = 0
         }
       }
+    },
+    getTimeOverdue(time) {
+      return new Date() - new Date(time)
     }
   },
   apollo: {
@@ -92,8 +95,14 @@ export default {
       skip() {
         return this.loading
       },
-      pollInterval: 3000,
-      update: data => data?.flow_run || []
+      pollInterval: 10000,
+      update(data) {
+        return (
+          data?.flow_run.filter(run => {
+            return this.getTimeOverdue(run.scheduled_start_time) > 20000
+          }) || []
+        )
+      }
     }
   }
 }
@@ -105,17 +114,18 @@ export default {
     :disabled="loading || !flowRuns || flowRuns.length === 0"
     @click="clearLate"
   >
-    <div class="system-icon mx-auto" :class="{ active: !loading }">
-      <i class="fad fa-align-slash" />
+    <div class="mx-auto fa-stack system-icon" :class="{ active: !loading }">
+      <i class="fas fa-alarm-exclamation fa-stack-2x"></i>
+      <i class="fas fa-slash fa-4x fa-stack-1x" />
     </div>
 
-    <div class="text-h6 white--text mt-2 ">
+    <div class="text-h6 white--text mt-2">
       <v-fade-transition mode="out-in">
         <div v-if="finished" style="transition-delay: 1.5s">Complete!</div>
         <div v-else-if="loading" style="transition-delay: 1.5s"
-          >Stopping...</div
+          >Clearing...</div
         >
-        <div v-else style="transition-delay: 1.5s">Stop all runs</div>
+        <div v-else style="transition-delay: 1.5s">Clear late runs</div>
       </v-fade-transition>
     </div>
 
@@ -133,9 +143,11 @@ export default {
       </div>
       <div v-else class="action-container mb-2">
         <span v-if="flowRuns && flowRuns.length > 0">
-          {{ flowRuns.length }} runs can be stopped</span
-        >
-        <span v-else>No runs to stop</span>
+          {{ flowRuns.length.toLocaleString() }} late run{{
+            flowRuns.length == 1 ? '' : 's'
+          }}
+        </span>
+        <span v-else>No late runs</span>
       </div>
     </v-scroll-y-transition>
   </button>
@@ -147,10 +159,5 @@ export default {
   left: 10%;
   position: absolute;
   width: 80%;
-
-  // div {
-  //   flex-grow: 1;
-  //   transition: flex-grow 1000ms linear;
-  // }
 }
 </style>

@@ -92,7 +92,7 @@ export default {
       skip() {
         return this.loading
       },
-      pollInterval: 3000,
+      pollInterval: 10000,
       update: data => data?.flow_run || []
     }
   }
@@ -133,7 +133,8 @@ export default {
       </div>
       <div v-else class="action-container mb-2">
         <span v-if="flowRuns && flowRuns.length > 0">
-          {{ flowRuns.length }} runs can be stopped</span
+          {{ flowRuns.length }} run{{ flowRuns.length == 1 ? '' : 's' }} can be
+          stopped</span
         >
         <span v-else>No runs to stop</span>
       </div>
