@@ -327,6 +327,7 @@ export default {
           <v-menu
             v-if="isAgent"
             v-model="menu"
+            eager
             :close-on-content-click="false"
             :open-on-hover="true"
           >
@@ -349,7 +350,9 @@ export default {
                       <span
                         class="cursor-pointer show-icon-hover-focus-only pa-2px"
                         role="button"
-                        @click="copyToClipboard(agentConfigId)"
+                        @click="
+                          copyToClipboard(`--agent-config--id ${agentConfigId}`)
+                        "
                         v-on="on"
                       >
                         --agent-config--id {{ agentConfigId }}

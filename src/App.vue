@@ -468,6 +468,7 @@ export default {
       :alert-link="getAlert.alertLink"
       :link-text="getAlert.linkText"
       :timeout="12000"
+      :alert-copy="getAlert.alertCopy"
     />
   </v-app>
 </template>

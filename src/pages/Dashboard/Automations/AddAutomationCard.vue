@@ -72,7 +72,8 @@ export default {
         required: val => !!val || 'Required',
         notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
       },
-      animated: false
+      animated: false,
+      agentConfigId: ''
     }
   },
   computed: {
@@ -122,8 +123,8 @@ export default {
       const actions = this.actions.filter(
         action =>
           action.action_type !== 'PauseScheduleAction' ||
-          action.action_config.flow_group_id ===
-            this.selectedFlows[0].flow_group_id
+          action?.action_config?.flow_group_id ===
+            this.selectedFlows[0]?.flow_group_id
       )
       return actions
         ? this.agentOrFlow === 'agent'
@@ -657,6 +658,7 @@ export default {
               }
             })
             agentConfig = data?.create_agent_config
+            this.agentConfigId = agentConfig.id
           }
           const agentHook = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create-agent-sla-failed-hook.gql'),
@@ -689,10 +691,14 @@ export default {
         this.hookDetails = null
         this.$emit('refetch-hooks')
         if (data) {
+          const agentConfigString = `Your agent config ID is ${this.agentConfigId}.  You can find this in the info button on your automation`
           this.setAlert({
             alertShow: true,
-            alertMessage: 'Automation created',
-            alertType: 'success'
+            alertMessage: this.agentConfigId
+              ? agentConfigString
+              : 'Automation created',
+            alertType: 'success',
+            alertCopy: this.agentConfigId
           })
           this.saving = false
           this.closeCard()

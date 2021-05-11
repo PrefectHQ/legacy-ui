@@ -37,6 +37,11 @@ export default {
       required: false,
       default: 'See Details'
     },
+    alertCopy: {
+      type: String,
+      required: false,
+      default: ''
+    },
     // Move snackbar in the X direction by updating left/right margins.
     offsetX: {
       type: Number,
@@ -112,6 +117,16 @@ export default {
     // This method is what allows us to set v-model on this component.
     handleInput() {
       this.emitInternalValue()
+    },
+    copyText(value) {
+      this.copiedText = {}
+      this.copiedText[value] = true
+      navigator.clipboard.writeText(value)
+
+      setTimeout(() => {
+        this.copiedText = {}
+        this.copiedText[value] = false
+      }, 600)
     }
   }
 }
@@ -139,6 +154,9 @@ export default {
     <template #action>
       <v-btn v-if="alertLink" color="pink" text :to="alertLink">
         <span>{{ linkText }}</span>
+      </v-btn>
+      <v-btn v-if="alertCopy" color="pink" text @click="copyText(alertCopy)">
+        Copy
       </v-btn>
       <v-btn :color="type" text @click="handleDismiss">
         Dismiss

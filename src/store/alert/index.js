@@ -4,7 +4,8 @@ const state = {
     alertMessage: '',
     alertType: null,
     alertLink: null,
-    linkText: ''
+    linkText: '',
+    alertCopy: ''
   }
 }
 
@@ -24,7 +25,8 @@ const mutations = {
       alertMessage: '',
       alertType: null,
       alertLink: null,
-      linkText: ''
+      linkText: '',
+      alertCopy: ''
     }
   }
 }
