@@ -5,7 +5,7 @@ import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
 import SubPageNav from '@/layouts/SubPageNav'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
-import moment from '@/utils/moment'
+// import moment from '@/utils/moment'
 
 import AgentTile from '@/pages/Agents/AgentTile'
 
@@ -19,7 +19,7 @@ export default {
   mixins: [formatTime],
   data() {
     return {
-      projectId: this.$route.params.id,
+      // projectId: this.$route.params.id,
       cleanUpDialog: false,
       filterMenuOpen: false,
       queryFailed: false,
@@ -33,39 +33,43 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('data', ['activeProject']),
+    // ...mapGetters('data', ['activeProject']),
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
-    project() {
-      return this.activeProject
+    // project() {
+    //   return this.activeProject
+    // },
+    oldAgents() {
+      return !!this.filteredAgents.find(agent => agent.status === 'old')
     },
 
-    agentTracker() {
-      return this.agents?.reduce(
-        (tracker, agent) => {
-          const secondsSinceLastQuery = moment().diff(
-            moment(agent.last_queried),
-            'seconds'
-          )
+    // agentTracker() {
 
-          if (secondsSinceLastQuery < 60 * this.staleThreshold) {
-            tracker.healthy++
-          } else if (secondsSinceLastQuery < 60 * this.unhealthyThreshold) {
-            tracker.stale++
-          } else {
-            tracker.unhealthy++
-          }
+    // return this.agents?.reduce(
+    //   (tracker, agent) => {
+    //     const secondsSinceLastQuery = moment().diff(
+    //       moment(agent.last_queried),
+    //       'seconds'
+    //     )
 
-          return tracker
-        },
-        {
-          healthy: 0,
-          stale: 0,
-          unhealthy: 0
-        }
-      )
-    },
+    //     if (secondsSinceLastQuery < 60 * this.staleThreshold) {
+    //       tracker.healthy++
+    //     } else if (secondsSinceLastQuery < 60 * this.unhealthyThreshold) {
+    //       tracker.stale++
+    //     } else {
+    //       tracker.unhealthy++
+    //     }
+
+    //     return tracker
+    //   },
+    //   {
+    //     healthy: 0,
+    //     stale: 0,
+    //     unhealthy: 0
+    //   }
+    // )
+    // },
     allLabels() {
       if (!this.agents) return []
       return this.agents.reduce(
@@ -90,16 +94,18 @@ export default {
       const oldList = []
 
       agents.forEach(agent => {
-        if (agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold) {
+        if (this.labelsAlign(agent) && agent.status != 'unhealthy') {
+          runsList.push(agent)
+        } else if (agent.status != 'unhealthy') {
+          newList.push(agent)
+        } else {
           agent.status = 'old'
           oldList.push(agent)
-        } else if (this.labelsAlign(agent)) {
-          runsList.push(agent)
-        } else if (agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold) {
-          newList.push(agent)
         }
       })
-
+      runsList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
+      newList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
+      oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
       const fullList = [...runsList, ...newList, ...oldList]
 
       return fullList.filter(agent => {
@@ -135,7 +141,7 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    ...mapActions('data', ['activateProject', 'resetActiveData']),
+    // ...mapActions('data', ['activateProject', 'resetActiveData']),
 
     async clearUnhealthyAgents() {
       try {
@@ -321,7 +327,7 @@ export default {
         <v-dialog v-model="cleanUpDialog">
           <template #activator="{ on }">
             <v-btn
-              v-if="agentTracker.unhealthy > 0"
+              v-if="oldAgents"
               class="vertical-button py-1 "
               color="red"
               text
@@ -449,6 +455,19 @@ export default {
                 persistent-hint
                 value="unhealthy"
                 color="error"
+              ></v-checkbox>
+              <v-checkbox
+                v-model="statusInput"
+                label="Show old agents"
+                value="old"
+                :hint="
+                  `Old agents have not queried for flows in the last ${
+                    unhealthyThreshold === 1
+                      ? 'minute'
+                      : `${unhealthyThreshold} minutes and have no submittable runs`
+                  }.`
+                "
+                color="grey"
               ></v-checkbox>
             </v-card-text>
 
