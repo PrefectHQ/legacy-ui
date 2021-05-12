@@ -113,11 +113,23 @@ export default {
       if (this.lateRuns?.length <= 0) {
         this.tab = 'upcoming'
       }
+    },
+    ['tenant.settings.work_queue_paused'](val) {
+      if (!val) {
+        setTimeout(() => {
+          this.hideOverlay()
+        }, 1500)
+      }
     }
   },
   beforeDestroy() {
     this.upcoming = []
     this.tab = 'upcoming'
+  },
+  mounted() {
+    if (this.paused) {
+      this.showOverlay('queue')
+    }
   },
   methods: {
     getTimeOverdue(time) {

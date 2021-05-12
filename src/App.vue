@@ -8,6 +8,7 @@ import moment from 'moment'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
+import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
 
@@ -44,7 +45,8 @@ export default {
     ApplicationNavBar,
     Footer,
     GlobalSearch,
-    TeamSideNav
+    TeamSideNav,
+    WorkQueueBanner
   },
   mixins: [eventsMixin],
   data() {
@@ -423,6 +425,8 @@ export default {
   <v-app class="app">
     <v-main :class="{ 'pt-0': isWelcome }">
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
+
+      <WorkQueueBanner />
 
       <v-slide-y-transition>
         <ApplicationNavBar v-if="showNav" />

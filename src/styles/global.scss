@@ -389,6 +389,24 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   }
 }
 
+.banner-icon {
+  color: transparent;
+  font-size: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  width: 60px !important;
+
+  .svg-inline--fa {
+    transition: all 150ms linear;
+
+    &.fa-list-ul {
+      --fa-primary-color: var(--v-warning-base);
+      --fa-secondary-color: var(--v-utilGrayLight-base);
+      --fa-secondary-opacity: 1;
+    }
+  }
+}
+
 .system-icon {
   font-size: 64px !important;
   height: 64px !important;
