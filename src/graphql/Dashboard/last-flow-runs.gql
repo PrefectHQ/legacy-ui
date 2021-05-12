@@ -2,7 +2,7 @@ query LastFlowRuns($flowId: uuid, $agentId: uuid) {
   flow_run(
     where: { state: { _neq: "Scheduled" }, _or: [{flow_id: { _eq: $flowId }}, {agent_id: {_eq: $agentId}}]}
     order_by: { start_time: desc_nulls_last }
-    # limit: 10
+    limit: 10
   ) {
     id
     end_time

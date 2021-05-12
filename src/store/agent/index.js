@@ -5,7 +5,7 @@ const state = {
     // Time before an agent becomes stale
     stale: 5, // minutes since last query
     // Time before an agent becomes unhealthy
-    unhealthy: 10 // minutes since last query,
+    unhealthy: 120 // minutes since last query,
   },
   agents: null
 }

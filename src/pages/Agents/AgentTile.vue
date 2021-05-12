@@ -59,7 +59,7 @@ export default {
       isDeleting: false,
       showConfirmDialog: false,
       showLastQuery: true,
-      submittable: [],
+      submittable: this.agent.submittableRuns,
       newStatus: '',
       showIcon: false,
       failedRuns: []
@@ -69,6 +69,9 @@ export default {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
+    dayAgo() {
+      return this.subtractDay(Date.now())
+    },
     agentModified() {
       return {
         ...this.agent,
@@ -151,28 +154,28 @@ export default {
       return this.submittable?.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) > 20000
       })
-    },
-    labelsAlign() {
-      if (
-        !this.agent?.labels?.length &&
-        this.flowRuns?.every(flowRun => flowRun?.labels?.length > 0)
-      ) {
-        return false
-      } else {
-        if (this.flowRuns?.length) {
-          this.flowRuns.forEach(flowRun => {
-            if (
-              flowRun?.labels.every(label =>
-                this.agent?.labels?.includes(label)
-              )
-            ) {
-              this.addMatchingflowRun(flowRun)
-            }
-          })
-        }
-        return true
-      }
     }
+    // labelsAlign() {
+    //   if (
+    //     !this.agent?.labels?.length &&
+    //     this.flowRuns?.every(flowRun => flowRun?.labels?.length > 0)
+    //   ) {
+    //     return false
+    //   } else {
+    //     if (this.flowRuns?.length) {
+    //       this.flowRuns.forEach(flowRun => {
+    //         if (
+    //           flowRun?.labels.every(label =>
+    //             this.agent?.labels?.includes(label)
+    //           )
+    //         ) {
+    //           this.addMatchingflowRun(flowRun)
+    //         }
+    //       })
+    //     }
+    //     return true
+    //   }
+    // }
   },
   watch: {
     statusColor() {
@@ -191,10 +194,10 @@ export default {
         this.tab = 'submittable'
       }
     },
-    flowRuns() {
-      this.submittable = []
-      this.labelsAlign
-    },
+    // flowRuns() {
+    //   this.submittable = []
+    //   this.labelsAlign
+    // },
     secondsSinceLastQuery(newVal, oldVal) {
       if (newVal > oldVal || !this.agent?.last_queried) return
 
@@ -279,17 +282,23 @@ export default {
     }
   },
   apollo: {
-    flowRuns: {
-      query: require('@/graphql/Agent/FlowRuns.gql'),
-      loadingKey: 'loading',
-      update: data => {
-        return data.flow_run
-      }
-    },
+    // flowRuns: {
+    //   query: require('@/graphql/Agent/FlowRuns.gql'),
+    //   loadingKey: 'loading',
+    //   update: data => {
+    //     return data.flow_run
+    //   }
+    // },
     LastRuns: {
-      query: require('@/graphql/Dashboard/last-flow-runs.gql'),
+      query: require('@/graphql/Agent/recent-runs.gql'),
       loadingKey: 'loadingKey',
+      variables() {
+        return {
+          day: this.dayAgo
+        }
+      },
       update: data => {
+        console.log('last runs', data)
         return data.flow_run
       }
     }

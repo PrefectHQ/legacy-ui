@@ -1,5 +1,5 @@
 <script>
-// import difference from 'lodash.difference'
+import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
 import { mapGetters, mapActions } from 'vuex'
 import LogRocket from 'logrocket'
@@ -9,7 +9,7 @@ import moment from '@/utils/moment'
 
 import AgentTile from '@/pages/Agents/AgentTile'
 
-const STATUSES = ['healthy', 'stale', 'unhealthy']
+const STATUSES = ['healthy', 'stale', 'unhealthy', 'old']
 
 export default {
   components: {
@@ -40,6 +40,7 @@ export default {
     project() {
       return this.activeProject
     },
+
     agentTracker() {
       return this.agents?.reduce(
         (tracker, agent) => {
@@ -83,34 +84,31 @@ export default {
     },
     filteredAgents() {
       if (!this.agents) return
+      const agents = [...this.agents]
       const runsList = []
       const newList = []
       const oldList = []
 
-      this.agents.forEach(agent => {
-        if (this.labelsAlign(agent)) {
+      agents.forEach(agent => {
+        if (agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold) {
+          agent.status = 'old'
+          oldList.push(agent)
+        } else if (this.labelsAlign(agent)) {
           runsList.push(agent)
         } else if (agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold) {
           newList.push(agent)
-        } else {
-          agent.status = 'old'
-          oldList.push(agent)
         }
       })
 
       const fullList = [...runsList, ...newList, ...oldList]
 
-      return fullList
-
-      // return this.computedAgents.filter(agent => {
-      //   if (this.showUnlabeledAgentsOnly) {
-      //     return agent.labels.length === 0
-      //   }
-
-      //   if (!this.statusInput.includes(this.status(agent))) return false
-
-      //   return difference(this.labelInput, agent.labels).length === 0
-      // })
+      return fullList.filter(agent => {
+        if (this.showUnlabeledAgentsOnly) {
+          return agent.labels.length === 0
+        }
+        if (!this.statusInput.includes(agent.status)) return false
+        return difference(this.labelInput, agent.labels).length === 0
+      })
     },
     filtersApplied() {
       return (
@@ -142,10 +140,8 @@ export default {
     async clearUnhealthyAgents() {
       try {
         this.clearingAgents = true
-        const unhealthyAgents = this.agents.filter(
-          agent =>
-            agent.secondsSinceLastQuery > 60 * this.unhealthyThreshold ||
-            isNaN(agent.secondsSinceLastQuery)
+        const unhealthyAgents = this.filteredAgents.filter(
+          agent => agent.status === 'old'
         )
         if (unhealthyAgents?.length === 0) {
           LogRocket.captureMessage('Clean Up button open but no agents found')
@@ -155,6 +151,7 @@ export default {
             alertType: 'error'
           })
         }
+        console.log('unhealthy', unhealthyAgents)
         await unhealthyAgents.forEach(agent => {
           agent.isDeleting = true
           this.$apollo
@@ -180,7 +177,7 @@ export default {
         LogRocket.captureException(e)
         this.setAlert({
           alertShow: true,
-          alertMessage: 'Error clearing agents',
+          alertMessage: `${e}`,
           alertType: 'error'
         })
       } finally {
@@ -235,19 +232,22 @@ export default {
     //   return 'unhealthy'
     // },
     labelsAlign(agent) {
-      if (
-        !agent?.labels?.length &&
-        this.flowRuns?.every(flowRun => flowRun?.labels?.length > 0)
-      ) {
-        agent.submittableRuns = false
-        return
+      agent.submittableRuns = []
+
+      if (!agent.labels?.length) {
+        const noLabels = this.flowRuns?.filter(flowRun => {
+          return !flowRun?.labels?.length
+        })
+        agent.submittableRuns = noLabels
+        return !!noLabels?.length
       } else {
-        if (this.flowRuns?.length) {
-          const check = this.flowRuns.filter(flowRun =>
+        const match = this.flowRuns?.filter(
+          flowRun =>
+            flowRun?.labels?.length &&
             flowRun.labels.every(label => agent?.labels?.includes(label))
-          )
-          agent.submittableRuns = !!check?.length
-        }
+        )
+        agent.submittableRuns = match
+        return !!match?.length
       }
     }
   },
@@ -256,19 +256,6 @@ export default {
       query: require('@/graphql/Agent/FlowRuns.gql'),
       loadingKey: 'loading',
       update: data => {
-        return data.flow_run
-      }
-    },
-    LastRuns: {
-      query: require('@/graphql/Dashboard/last-flow-runs.gql'),
-      loadingKey: 'loadingKey',
-      variables() {
-        return {
-          day: this.subtractDay(Date.now)
-        }
-      },
-      update: data => {
-        console.log('last runs', data)
         return data.flow_run
       }
     }

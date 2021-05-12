@@ -1,6 +1,6 @@
 query RecentRuns($agentId: uuid, $day: timestamptz) {
   flow_run(
-    where: { state: { _neq: "Scheduled" }, {agent_id: {_eq: $agentId}}, {start_time: {_gte: $day}}}
+    where: { state: { _neq: "Scheduled" }, agent_id: {_eq: $agentId}, start_time: {_gte: $day}}
     order_by: { start_time: desc_nulls_last }
     # limit: 10
   ) {
