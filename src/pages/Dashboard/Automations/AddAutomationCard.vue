@@ -476,12 +476,14 @@ export default {
         : this.chosenStates.push(state)
       this.steps['selectState'].complete = this.chosenStates.length > 0
     },
-    async handleSaveAgentConfig() {
+    async handleSaveAgentConfig(config) {
+      this.agentConfigId = config.id
       this.$apollo.queries.agentConfigs.refetch()
       this.showAgentConfigForm = false
     },
     selectAgentConfig(config) {
       this.steps['chooseAgentConfig'].complete = true
+      this.agentConfigId = config.id
       this.selectedAgentConfig = config
     },
     selectAction(action) {
@@ -649,8 +651,8 @@ export default {
         } else if (this.agentOrFlow === 'agent') {
           let agentConfig
           if (this.hookDetails?.agentConfig) {
-            agentConfig = this.hookDetails?.agentConfig
-          } else {
+            this.agentConfigId = this.hookDetails?.agentConfig?.id
+          } else if (!this.agentConfigId) {
             const { data } = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create-agent-config.gql'),
               variables: {
@@ -665,7 +667,7 @@ export default {
             variables: {
               input: {
                 action_id: action.id,
-                agent_config_ids: [agentConfig.id]
+                agent_config_ids: [this.agentConfigId]
               }
             }
           })

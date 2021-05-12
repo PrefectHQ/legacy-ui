@@ -31,11 +31,10 @@ export default {
         })
 
         this.$emit('save', data?.create_agent_config)
-      } catch {
+      } catch (e) {
         this.setAlert({
           alertShow: true,
-          alertMessage:
-            'Something went wrong when creating your agent config, please try again.',
+          alertMessage: `${e}`,
           alertType: 'error'
         })
       } finally {
