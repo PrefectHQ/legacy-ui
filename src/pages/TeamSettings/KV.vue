@@ -3,6 +3,8 @@ import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Alert from '@/components/Alert'
+import ExternalLink from '@/components/ExternalLink'
+
 import MenuTooltip from '@/components/MenuTooltip'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters } from 'vuex'
@@ -13,7 +15,8 @@ export default {
     Alert,
     ManagementLayout,
     ConfirmDialog,
-    MenuTooltip
+    MenuTooltip,
+    ExternalLink
   },
   mixins: [formatTime],
   data() {
@@ -194,7 +197,7 @@ export default {
       if (this.isJSON(item.value)) {
         return 2
       } else {
-        return 0
+        return 1
       }
     },
     openKVModifyDialog(item) {
@@ -394,12 +397,8 @@ export default {
       <template #title>KV Store</template>
 
       <template #subtitle>
-        Manage your key/value
-        <sup>
-          <v-icon x-small>
-            open_in_new
-          </v-icon>
-        </sup>
+        Manage your
+        <ExternalLink href="https://docs.prefect.io/">key/value</ExternalLink>
       </template>
 
       <template #cta>
