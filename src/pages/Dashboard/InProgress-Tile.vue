@@ -40,19 +40,20 @@ export default {
       return this.flowRuns
     },
     running() {
-      if (!this.flowRuns) return []
-      return this.flowRuns.filter(
+      if (!this.all) return []
+      return this.all.filter(
         run => run.state == 'Running' || run.state == 'Cancelling'
       )
     },
     submitted() {
-      if (!this.flowRuns) return []
-      return this.flowRuns.filter(run => run.state == 'Submitted')
+      if (!this.all) return []
+      return this.all.filter(run => run.state == 'Submitted')
     },
     cancellable() {
+      if (!this.all) return []
       if (this.tab == 'submitted') return this.submitted
       if (this.tab == 'running') return this.running
-      return this.flowRuns.filter(run => run.state !== 'Cancelling')
+      return this.all.filter(run => run.state !== 'Cancelling')
     },
     runs() {
       if (this.tab == 'submitted') return this.submitted
@@ -131,7 +132,7 @@ export default {
       },
       loadingKey: 'loadingKey',
       pollInterval: 3000,
-      update: ({ flow_run }) => flow_run
+      update: ({ flow_run }) => flow_run || []
     }
   }
 }
