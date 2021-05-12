@@ -4,7 +4,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      loading: true
+      loading: false
     }
   },
   computed: {
