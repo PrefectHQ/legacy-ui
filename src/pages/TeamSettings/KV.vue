@@ -169,6 +169,20 @@ export default {
     }
   },
   methods: {
+    handleReset(item) {
+      this.KvValueInput = item.value
+    },
+    async copyValue(item) {
+      try {
+        await navigator.clipboard.writeText(item.value)
+        this.handleAlert('success', 'Value copied to clipboard')
+      } catch (err) {
+        this.handleAlert(
+          'error',
+          'Something went wrong trying to copy your value to the clipboard'
+        )
+      }
+    },
     isJSON(str) {
       try {
         return !!(JSON.parse(str) && str)
@@ -207,11 +221,8 @@ export default {
       this.selectedTypeIndex = 0
       this.invalidKV = false
     },
-    setKV(item) {
-      console.log(item)
-      console.log(this.KvValueInput)
+    setKV() {
       //   this.isSettingKV = true
-
       //   if (this.selectedTypeIndex === 2 && !this.validKVJSON()) {
       //     this.isSettingKV = false
       //     this.invalidKV = true
@@ -235,7 +246,6 @@ export default {
       //     }
       //   }
       //   if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
-
       //   // call muatation
       //   //  const kvResult = await this.$apollo.mutate({
       //   //   mutation: require('@/graphql/KV/set-kv.gql'),
@@ -283,12 +293,10 @@ export default {
       //       )
       //     }
       //   })
-
       //   // this.isSettingKV = false
       //   // this.keyInput = null
       //   // this.KvValueInput = null
       // },
-
       // deleteKV(kv, opts = {}) {
       //   this.isDeletingKV = true
       //   //  mutation
@@ -298,7 +306,6 @@ export default {
       //   //     name: kv.name
       //   //   }
       //   // })
-
       //   const fakeResult = new Promise(resolve => {
       //     setTimeout(() => {
       //       resolve({
@@ -311,7 +318,6 @@ export default {
       //       })
       //     }, 2000)
       //   })
-
       //   fakeResult.then(res => {
       //     if (res?.data?.delete_kv?.success) {
       //       if (!opts.isModifying) {
@@ -326,7 +332,6 @@ export default {
       //       )
       //     }
       //   })
-
       // this.isDeletingKV = false
     },
 
@@ -346,6 +351,9 @@ export default {
     },
     setInvalidKV(event) {
       this.invalidKV = event
+    },
+    handleKVExpand(kv) {
+      this.KvValueInput = kv.item.value
     }
   }
   //  apollo: {
@@ -424,6 +432,7 @@ export default {
           :search="search"
           :expanded="expanded"
           show-expand
+          @item-expanded="handleKVExpand"
           :single-expand="true"
           no-results-text="No keys found. Try expanding your search?"
           no-data-text="Your team does not have any keys yet."
@@ -441,13 +450,12 @@ export default {
                   depressed
                   color="utilGrayLight"
                   title="Reset"
+                  @click="handleReset(item)"
                 >
                   Reset
                   <v-icon small>refresh</v-icon>
                 </v-btn>
               </div>
-              <div> old {{ item.value }}</div>
-              <div>new {{ KvValueInput }}</div>
 
               <JsonInput
                 v-model="KvValueInput"
@@ -475,7 +483,7 @@ export default {
                       color="accent"
                       :loading="isSettingKV"
                       v-on="on"
-                      @click="setKV(item)"
+                      @click="setKV"
                     >
                       Save
                     </v-btn>
@@ -567,7 +575,14 @@ export default {
 
             <v-tooltip bottom>
               <template #activator="{ on }">
-                <v-btn text fab x-small color="primary" v-on="on">
+                <v-btn
+                  text
+                  fab
+                  x-small
+                  color="primary"
+                  v-on="on"
+                  @click="copyValue(item)"
+                >
                   <v-icon>content_copy</v-icon>
                 </v-btn>
               </template>
@@ -653,5 +668,3 @@ export default {
     ></Alert>
   </div>
 </template>
-
-<style></style>
