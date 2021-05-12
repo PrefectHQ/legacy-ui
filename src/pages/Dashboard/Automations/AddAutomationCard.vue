@@ -195,6 +195,7 @@ export default {
       )
     },
     systemActions() {
+      if (this.selectedFlows?.length > 1) return []
       return this.editedActions.filter(a =>
         systemActions.includes(a.action_type)
       )
