@@ -2,6 +2,13 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
+  props: {
+    flowRuns: {
+      type: Array,
+      required: false,
+      default: () => []
+    }
+  },
   data() {
     return {
       finished: false,
@@ -62,7 +69,9 @@ export default {
         })
       } finally {
         this.finished = true
-        this.$apollo.queries['flowRuns'].refetch()
+        setTimeout(() => {
+          this.$emit('finish')
+        }, 1500)
         setTimeout(() => {
           this.loadingKey = 0
           this.finished = false
@@ -79,29 +88,13 @@ export default {
         }
       }
     }
-  },
-  apollo: {
-    flowRuns: {
-      query: require('@/graphql/Nav/flow-runs.gql'),
-      variables() {
-        return {
-          tenantId: this.tenant?.id,
-          states: ['Running', 'Submitted', 'Queued']
-        }
-      },
-      skip() {
-        return this.loading
-      },
-      pollInterval: 10000,
-      update: data => data?.flow_run || []
-    }
   }
 }
 </script>
 
 <template>
   <button
-    class="rounded-lg system-action-container d-flex flex-column align-center justify-center"
+    class="rounded-lg action-container d-flex flex-column align-center justify-center"
     :disabled="loading || !flowRuns || flowRuns.length === 0"
     @click="cancelAll"
   >
@@ -120,7 +113,7 @@ export default {
     </div>
 
     <v-scroll-y-transition mode="out-in">
-      <div v-if="loading" class="action-container">
+      <div v-if="loading" class="action-text">
         <v-progress-linear
           :active="loading"
           height="25"
@@ -131,7 +124,7 @@ export default {
           {{ loaded }} / {{ loadingKey }}
         </v-progress-linear>
       </div>
-      <div v-else class="action-container mb-2">
+      <div v-else class="action-text mb-2">
         <span v-if="flowRuns && flowRuns.length > 0">
           {{ flowRuns.length }} run{{ flowRuns.length == 1 ? '' : 's' }} can be
           stopped</span
@@ -144,14 +137,34 @@ export default {
 
 <style lang="scss" scoped>
 .action-container {
+  background-color: #455a64;
+  height: 100%;
+  margin: auto;
+  padding: 36px 36px 52px 36px;
+  position: relative;
+  transition: transform 150ms ease-in-out;
+  width: 180px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    outline: none;
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    background-color: #90a4ae;
+    color: #eee;
+    cursor: not-allowed;
+  }
+}
+
+.action-text {
   bottom: 20px;
   left: 10%;
   position: absolute;
   width: 80%;
-
-  // div {
-  //   flex-grow: 1;
-  //   transition: flex-grow 1000ms linear;
-  // }
 }
 </style>

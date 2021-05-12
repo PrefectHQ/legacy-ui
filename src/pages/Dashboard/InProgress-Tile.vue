@@ -1,5 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
+import CancelAll from '@/components/Nav/SystemActionsTiles/CancelAll'
 import CardTitle from '@/components/Card-Title'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
@@ -7,6 +8,7 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
+    CancelAll,
     CardTitle,
     ConcurrencyInfo,
     DurationSpan
@@ -22,6 +24,7 @@ export default {
   data() {
     return {
       loadingKey: 0,
+      overlay: false,
       tab: 'all'
     }
   },
@@ -45,6 +48,11 @@ export default {
     submitted() {
       if (!this.flowRuns) return []
       return this.flowRuns.filter(run => run.state == 'Submitted')
+    },
+    cancellable() {
+      if (this.tab == 'submitted') return this.submitted
+      if (this.tab == 'running') return this.running
+      return this.flowRuns.filter(run => run.state !== 'Cancelling')
     },
     runs() {
       if (this.tab == 'submitted') return this.submitted
@@ -104,7 +112,15 @@ export default {
       }
     }
   },
-  methods: {},
+  methods: {
+    refetch() {
+      this.$apollo.queries['flowRuns'].refetch()
+      this.overlay = false
+    },
+    toggleOverlay() {
+      this.overlay = !this.overlay
+    }
+  },
   apollo: {
     flowRuns: {
       query: require('@/graphql/Dashboard/in-progress-flow-runs.gql'),
@@ -115,17 +131,18 @@ export default {
       },
       loadingKey: 'loadingKey',
       pollInterval: 3000,
-      update({ flow_run }) {
-        if (!flow_run) return
-        return flow_run
-      }
+      update: ({ flow_run }) => flow_run
     }
   }
 }
 </script>
 
 <template>
-  <v-card class="pb-2" tile style="height: 100%;">
+  <v-card
+    tile
+    class="pb-2 position-relative d-flex flex-column"
+    style="height: 100%;"
+  >
     <v-progress-linear
       striped
       active
@@ -207,7 +224,11 @@ export default {
     </CardTitle>
 
     <v-card-text class="pa-0">
-      <v-skeleton-loader v-if="loading" type="list-item-three-line">
+      <v-overlay v-if="overlay" absolute z-index="1">
+        <CancelAll :flow-runs="cancellable" @finish="refetch" />
+      </v-overlay>
+
+      <v-skeleton-loader v-else-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
       <v-list v-else-if="!loading && runs.length === 0" class="card-content">
@@ -246,6 +267,7 @@ export default {
             }"
             min-height="40px"
             transition="fade"
+            :class="run.state == 'Cancelling' ? 'blue-grey lighten-5' : ''"
           >
             <div>
               <v-list-item>
@@ -256,6 +278,9 @@ export default {
                       style="max-width: 50%;"
                     >
                       <router-link
+                        :class="
+                          run.state == 'Cancelling' ? 'text--disabled' : ''
+                        "
                         :to="{
                           name: 'flow',
                           params: { id: run.flow.flow_group_id }
@@ -271,17 +296,23 @@ export default {
                     </div>
 
                     <div
-                      class="text-truncate d-inline-block"
+                      class="text-truncate d-inline-block text--disabled"
                       style="max-width: 35%;"
                     >
                       <router-link
+                        :class="
+                          run.state == 'Cancelling' ? 'text--disabled' : ''
+                        "
                         :to="{ name: 'flow-run', params: { id: run.id } }"
                       >
                         {{ run.name }}
                       </router-link>
                     </div>
                   </v-list-item-title>
-                  <v-list-item-subtitle v-if="run.start_time">
+                  <v-list-item-subtitle v-if="run.state == 'Cancelling'">
+                    Cancelling...
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle v-else-if="run.start_time">
                     Running for
                     <DurationSpan
                       class="font-weight-bold"
@@ -302,6 +333,25 @@ export default {
 
       <div v-if="runs && runs.length > 3" class="pa-0 card-footer"> </div>
     </v-card-text>
+
+    <v-spacer />
+
+    <v-card-actions class="py-0">
+      <v-spacer />
+      <v-btn
+        v-if="overlay || (cancellable && cancellable.length > 0)"
+        small
+        depressed
+        :plain="overlay"
+        :color="overlay ? 'white' : 'primary'"
+        width="74"
+        text
+        style="z-index: 2;"
+        @click="toggleOverlay"
+      >
+        {{ overlay ? 'Close' : 'Stop all' }}
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -319,7 +369,8 @@ a {
 }
 
 .card-content {
-  max-height: 254px;
+  height: 100%;
+  max-height: 210px;
   overflow-y: auto;
 }
 

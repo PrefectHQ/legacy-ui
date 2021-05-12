@@ -7,7 +7,6 @@ import moment from 'moment'
 // import { authMixin } from '@/mixins/authMixin'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
-import SystemActions from '@/components/Nav/SystemActions'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
@@ -45,7 +44,6 @@ export default {
     ApplicationNavBar,
     Footer,
     GlobalSearch,
-    SystemActions,
     TeamSideNav
   },
   mixins: [eventsMixin],
@@ -55,7 +53,6 @@ export default {
       loadedComponents: 0,
       loadingKey: 0,
       numberOfComponents: 1,
-      overlay: false,
       refreshTimeout: null,
       reset: false,
       shown: true,
@@ -367,9 +364,6 @@ export default {
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
     },
-    handleOverlayChange() {
-      this.overlay = !this.overlay
-    },
     handleScroll: debounce(
       function() {
         if (this.$route.name == 'plans') return (this.showFooter = true)
@@ -431,11 +425,7 @@ export default {
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
       <v-slide-y-transition>
-        <ApplicationNavBar
-          v-if="showNav"
-          :overlay="overlay"
-          @overlay-change="handleOverlayChange"
-        />
+        <ApplicationNavBar v-if="showNav" />
       </v-slide-y-transition>
 
       <TeamSideNav
@@ -462,10 +452,6 @@ export default {
           <v-card-text>{{ error }}</v-card-text>
         </v-card>
       </v-container>
-
-      <v-overlay :value="overlay" z-index="7">
-        <SystemActions @close="overlay = false" />
-      </v-overlay>
 
       <GlobalSearch v-if="$vuetify.breakpoint.xsOnly && showNav" />
 
