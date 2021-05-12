@@ -4,7 +4,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      loading: false
+      loading: true
     }
   },
   computed: {
@@ -47,7 +47,7 @@ export default {
 
 <template>
   <button
-    class="rounded-lg system-action-container d-flex flex-column align-center justify-center"
+    class="rounded-lg action-container d-flex flex-column align-center justify-center"
     :disabled="loading"
     @click="haltWork"
   >
@@ -59,7 +59,7 @@ export default {
       Work queue
     </div>
 
-    <div class="action-container">
+    <div>
       <input
         ref="checkbox"
         class="large-switch work-queue"
@@ -179,6 +179,31 @@ export default {
         left: 2px !important;
       }
     }
+  }
+}
+
+.action-container {
+  background-color: #455a64;
+  height: 100%;
+  margin: auto;
+  padding: 36px;
+  position: relative;
+  transition: transform 150ms ease-in-out;
+  width: 220px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    outline: none;
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    background-color: #90a4ae;
+    color: #eee;
+    cursor: not-allowed;
   }
 }
 </style>
