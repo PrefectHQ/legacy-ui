@@ -1,5 +1,7 @@
 <script>
 import CardTitle from '@/components/Card-Title'
+import RetriesEdit from '@/components/RetriesEdit'
+
 import Parameters from '@/components/Parameters'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -9,7 +11,8 @@ export default {
   },
   components: {
     CardTitle,
-    Parameters
+    Parameters,
+    RetriesEdit
   },
   mixins: [formatTime],
   props: {
@@ -123,7 +126,8 @@ export default {
                 <v-skeleton-loader v-else type="text" />
               </v-col>
             </v-row>
-            <v-row no-gutters>
+
+            <!-- <v-row no-gutters>
               <v-col cols="6">
                 Max Retries
               </v-col>
@@ -139,10 +143,12 @@ export default {
               <v-col cols="6" class="text-right font-weight-bold">
                 {{ task.retry_delay }}
               </v-col>
-            </v-row>
+            </v-row> -->
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
+
+      <RetriesEdit :task="task" />
 
       <v-list-item
         v-if="!loading && $options.filters.typeClass(task.type) == 'Parameter'"
