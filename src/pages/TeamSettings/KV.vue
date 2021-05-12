@@ -487,6 +487,9 @@ export default {
                       }"
                       color="accent"
                       :loading="isSettingKV"
+                      :disabled="
+                        !KvValueInput || KvValueInput == item.value || invalidKV
+                      "
                       v-on="on"
                       @click="setKV"
                     >
