@@ -9,6 +9,7 @@ import DurationSpan from '@/components/DurationSpan'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
 import LabelWarning from '@/components/LabelWarning'
+import WorkQueue from '@/components/Nav/SystemActionsTiles/WorkQueue'
 
 export default {
   components: {
@@ -16,7 +17,8 @@ export default {
     CardTitle,
     ConcurrencyInfo,
     DurationSpan,
-    LabelWarning
+    LabelWarning,
+    WorkQueue
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin],
   props: {
@@ -39,11 +41,12 @@ export default {
     }
   },
   data() {
-    return { loading: 0, tab: 'upcoming', setToRun: [] }
+    return { loading: 0, overlay: null, tab: 'upcoming', setToRun: [] }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['timezone']),
+    ...mapGetters('tenant', ['tenant']),
     lateRuns() {
       if (!this.upcoming) return null
       return this.upcoming.filter(run => {
@@ -55,6 +58,9 @@ export default {
       return this.upcoming.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) <= 20000
       })
+    },
+    paused() {
+      return this.tenant?.settings?.work_queue_paused
     },
     pollInterval() {
       return this.flow.archived ? 0 : 10000
@@ -120,9 +126,19 @@ export default {
       } else {
         this.$apollo.queries.upcoming.refetch()
       }
+    },
+    ['tenant.settings.work_queue_paused'](val) {
+      if (!val) {
+        setTimeout(() => {
+          this.hideOverlay()
+        }, 1500)
+      }
     }
   },
   mounted() {
+    if (this.paused) {
+      this.showOverlay('queue')
+    }
     if (this.pollInterval > 0) {
       this.$apollo.queries.upcoming.startPolling(this.pollInterval)
     }
@@ -159,6 +175,12 @@ export default {
     },
     getTimeOverdue(time) {
       return new Date() - new Date(time)
+    },
+    showOverlay(kind) {
+      this.overlay = kind
+    },
+    hideOverlay() {
+      this.overlay = null
     }
   },
   apollo: {
@@ -283,7 +305,16 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text v-if="tab == 'upcoming'" class="pa-0">
+    <v-card-text v-if="overlay" class="pa-0">
+      <v-overlay v-if="overlay == 'late'" absolute z-index="1">
+        <ClearLate :flow-runs="lateRuns" @finish="refetch" />
+      </v-overlay>
+      <v-overlay v-if="overlay == 'queue'" absolute z-index="1">
+        <WorkQueue />
+      </v-overlay>
+    </v-card-text>
+
+    <v-card-text v-else-if="tab == 'upcoming'" class="pa-0">
       <v-skeleton-loader v-if="loading > 0" type="list-item-three-line">
       </v-skeleton-loader>
 
