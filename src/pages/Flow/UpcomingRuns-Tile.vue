@@ -9,7 +9,7 @@ import DurationSpan from '@/components/DurationSpan'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
 import LabelWarning from '@/components/LabelWarning'
-import WorkQueue from '@/components/Nav/SystemActionsTiles/WorkQueue'
+import WorkQueue from '@/components/SystemActions/WorkQueue'
 
 export default {
   components: {

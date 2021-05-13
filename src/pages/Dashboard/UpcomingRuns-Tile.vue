@@ -2,11 +2,11 @@
 // import moment from 'moment-timezone'
 import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
-import ClearLate from '@/components/Nav/SystemActionsTiles/ClearLate'
+import ClearLate from '@/components/SystemActions/ClearLate'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
 import LabelWarning from '@/components/LabelWarning'
-import WorkQueue from '@/components/Nav/SystemActionsTiles/WorkQueue'
+import WorkQueue from '@/components/SystemActions/WorkQueue'
 
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
 import { formatTime } from '@/mixins/formatTimeMixin'

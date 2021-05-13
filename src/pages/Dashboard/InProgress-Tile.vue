@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import CancelAll from '@/components/Nav/SystemActionsTiles/CancelAll'
+import CancelAll from '@/components/SystemActions/CancelAll'
 import CardTitle from '@/components/Card-Title'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
 import DurationSpan from '@/components/DurationSpan'
