@@ -367,6 +367,7 @@ const setup = async () => {
   await store.dispatch('tenant/setCurrentTenant')
 }
 
+// eslint-disable-next-line no-unused-vars
 let PrefectUI
 let setupComplete = false
 
