@@ -85,77 +85,7 @@ export default {
         }
       ],
 
-      // fake data
-
-      items: [
-        {
-          id: 1,
-          key: 'prod.config.ram',
-          value: '8gb',
-          created: 'jane@gmail.com',
-          updated: '2021-04-29T23:36:48.494Z'
-        },
-        {
-          id: 2,
-          key: 'prod.config.ram2',
-          value: '16gb',
-          created: 'john@gmail.com',
-          updated: '2021-04-29T23:36:48.494Z'
-        },
-        {
-          id: 3,
-          key: 'dev.config',
-          value: JSON.stringify([
-            {
-              _id: '608b43a3e8451372b62f0ebe',
-              index: 0,
-              guid: '8fddc0d3-47f9-4335-a543-849341986864',
-              isActive: false,
-              balance: '$2,441.60',
-              picture: 'http://placehold.it/32x32',
-              age: 33,
-              eyeColor: 'blue',
-              name: 'Robles Dawson',
-              gender: 'male',
-              company: 'MANUFACT',
-              email: 'roblesdawson@manufact.com',
-              phone: '+1 (900) 520-2622',
-              address: '991 Osborn Street, Tyro, District Of Columbia, 1328',
-              about:
-                'Cillum sunt adipisicing eiusmod minim qui fugiat. Reprehenderit mollit cupidatat occaecat est. Velit nulla nostrud id incididunt dolor in magna nisi commodo consequat voluptate. Non adipisicing ea minim cupidatat sint ipsum. Commodo in ipsum fugiat non laborum dolore dolor pariatur cillum laborum. Aute ex elit ex culpa Lorem in do cillum sit. Deserunt eu consectetur fugiat enim et mollit.\r\n',
-              registered: '2018-08-10T07:57:29 +07:00',
-              latitude: 24.154272,
-              longitude: -160.265207,
-              tags: ['aliquip', 'anim', 'eu', 'ex', 'qui', 'officia', 'irure'],
-              friends: [
-                {
-                  id: 0,
-                  name: 'Wright Rhodes'
-                },
-                {
-                  id: 1,
-                  name: 'Nadine Payne'
-                },
-                {
-                  id: 2,
-                  name: 'Solis Mccullough'
-                }
-              ],
-              greeting: 'Hello, Robles Dawson! You have 1 unread messages.',
-              favoriteFruit: 'banana'
-            }
-          ]),
-          created: 'mary@gmail.com',
-          updated: '2021-01-18T11:24:00.000Z'
-        },
-        {
-          id: 4,
-          key: 'foo',
-          value: 'bar',
-          created: 'james@gmail.com',
-          updated: '2021-04-17T10:24:00.000Z'
-        }
-      ],
+      items: [],
 
       // Dialogs
       keyModifyDialog: false,
@@ -224,7 +154,7 @@ export default {
       this.selectedTypeIndex = 0
       this.invalidKV = false
     },
-    setKV() {
+    async setKV() {
       this.isSettingKV = true
       if (this.selectedTypeIndex === 2 && !this.validKVJSON()) {
         this.isSettingKV = false
@@ -248,92 +178,51 @@ export default {
         }
       }
       if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
-      // call muatation
-      //  const kvResult = await this.$apollo.mutate({
-      //   mutation: require('@/graphql/KV/set-kv.gql'),
-      //   variables: {
-      //     name: this.keyInput,
-      //     value: value || []
-      //   }
-      // })
-      const fakeResult = new Promise(resolve => {
-        setTimeout(() => {
-          resolve({
-            data: {
-              set_kv: {
-                success: true,
-                result: {
-                  id: Math.floor(Math.random() * 100 + 1),
-                  key: this.keyInput,
-                  value: value || [],
-                  created: this.tenant.name,
-                  updated: new Date(
-                    +new Date() - Math.floor(Math.random() * 10000000000)
-                  )
-                }
-              }
-            }
-          })
-        }, 2000)
-      })
-      fakeResult.then(res => {
-        if (res?.data?.set_kv?.success) {
-          // this.$apollo.queries.kv.refetch()
-          this.keyModifyDialog = false
-          this.items.push(res?.data?.set_kv?.result)
-          // this.resetSelectedKV()
-          this.handleAlert(
-            'success',
-            `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
-          )
-        } else {
-          this.handleAlert(
-            'error',
-            `Something went wrong when ${
-              this.isKvUpdate ? 'updating' : 'creating'
-            } this KV. Please try again. If this error persists, please contact help@prefect.io.`
-          )
+
+      const kvResult = await this.$apollo.mutate({
+        mutation: require('@/graphql/KV/set-key-value.gql'),
+        variables: {
+          key: this.keyInput,
+          value: value || []
         }
       })
+
+      if (this.isKvUpdate) this.isSettingKV = false
+
+      console.log(kvResult)
+
+      if (kvResult?.data?.set_key_value?.success) {
+        //this.$apollo.queries.secretNames.refetch()
+        this.openKVModifyDialog = false
+        // this.resetSelectedSecret()
+        this.handleAlert(
+          'success',
+          `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
+        )
+      } else {
+        this.handleAlert(
+          'error',
+          `Something went wrong when ${
+            this.isKvUpdate ? 'updating' : 'creating'
+          } this kv. Please try again. If this error persists, please contact help@prefect.io.`
+        )
+      }
+
       // this.isSettingKV = false
       // this.keyInput = null
       // this.KvValueInput = null
     },
     deleteKV(kv, opts = {}) {
       this.isDeletingKV = true
+      console.log(kv, opts)
       //  mutation
       // const KvResult = await this.$apollo.mutate({
-      //   mutation: require('@/graphql/KV/delete-kv.gql'),
+      //   mutation: require('@/graphql/KV/delete-key-value.gql'),
       //   variables: {
-      //     name: kv.name
+      //     id: kv.id
       //   }
       // })
-      const fakeResult = new Promise(resolve => {
-        setTimeout(() => {
-          resolve({
-            data: {
-              delete_kv: {
-                success: true,
-                result: kv
-              }
-            }
-          })
-        }, 2000)
-      })
-      fakeResult.then(res => {
-        if (res?.data?.delete_kv?.success) {
-          if (!opts.isModifying) {
-            // this.$apollo.queries.kv.refetch()
-            this.keyDeleteDialog = false
-            this.handleAlert('success', 'KV deleted.')
-          }
-        } else {
-          this.handleAlert(
-            'error',
-            'Something went wrong while trying to delete this kv. Please try again. If this error persists, reach out to help@prefect.io.'
-          )
-        }
-      })
+
       this.isDeletingKV = false
     },
 

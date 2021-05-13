@@ -1,0 +1,6 @@
+mutation DeleteKV($id: UUID!) {
+  delete_secret(input: { id: $id }) {
+    success
+    error
+  }
+}
