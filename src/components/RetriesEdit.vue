@@ -9,7 +9,25 @@ export default {
   },
   data() {
     return {
-      menu: false
+      menu: false,
+      interval: 'minute',
+      intervalOptions: [
+        {
+          value: 'minute',
+          min: 1,
+          max: 720
+        },
+        {
+          value: 'hour',
+          min: 1,
+          max: 168
+        },
+        {
+          value: 'day',
+          min: 1,
+          max: 45
+        }
+      ]
     }
   }
 }
@@ -92,18 +110,42 @@ export default {
               <v-text-field
                 label="Max Retries"
                 type="number"
+                outlined
+                dense
+                class="mt-5 mb-5"
+                hide-details
                 min="0"
                 max="2147483647"
               ></v-text-field>
             </v-list-item>
 
             <v-list-item>
+              <v-select
+                v-model="interval"
+                :items="intervalOptions"
+                class="text-h5 mr-2"
+                outlined
+                dense
+                hide-details
+                style="max-width: 150px;"
+                item-text="value"
+                item-value="value"
+              />
+
               <v-text-field
+                type="number"
+                class="text-h5"
+                outlined
+                dense
+                hide-details
+              />
+
+              <!-- <v-text-field
                 label="Retry Delay (Seconds)"
                 type="number"
                 min="60"
                 max="2147483647"
-              />
+              /> -->
             </v-list-item>
           </v-list>
 
