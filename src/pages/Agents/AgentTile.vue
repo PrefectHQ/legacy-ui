@@ -72,20 +72,20 @@ export default {
     dayAgo() {
       return this.subtractDay(Date.now())
     },
-    agentModified() {
-      return {
-        ...this.agent,
-        labels: this.agent.labels.slice().sort((labelA, labelB) => {
-          if (labelA.toLowerCase() < labelB.toLowerCase()) {
-            return -1
-          } else if (labelA.toLowerCase() > labelB.toLowerCase()) {
-            return 1
-          } else {
-            return 0
-          }
-        })
-      }
-    },
+    // agentModified() {
+    //   return {
+    //     ...this.agent,
+    //     labels: this.agent.labels.slice().sort((labelA, labelB) => {
+    //       if (labelA.toLowerCase() < labelB.toLowerCase()) {
+    //         return -1
+    //       } else if (labelA.toLowerCase() > labelB.toLowerCase()) {
+    //         return 1
+    //       } else {
+    //         return 0
+    //       }
+    //     })
+    //   }
+    // },
 
     name() {
       return this.agent?.name && this.agent.name !== 'agent'
@@ -93,21 +93,13 @@ export default {
         : AGENT_TYPES.find(a => a.type == this.agent?.type)?.name || 'Agent'
     },
     secondsSinceLastQuery() {
-      return moment(this.currentDateTime).diff(
-        moment(this.agent.last_queried),
-        'seconds'
-      )
+      return this.agent.secondsSinceLastQuery
     },
     status() {
       if (this.agent.status === 'old') return 'old'
       if (this.hasFailedRuns()?.length) return 'failed'
       if (this.lateRuns?.length) return 'late'
-      if (this.secondsSinceLastQuery < 60 * this.staleThreshold)
-        return 'healthy'
-      if (this.secondsSinceLastQuery < 60 * this.unhealthyThreshold)
-        return 'stale'
-
-      return 'unhealthy'
+      return this.agent.status
     },
     statusColor() {
       const color =
@@ -122,11 +114,8 @@ export default {
       return color
     },
     queryColor() {
-      if (this.secondsSinceLastQuery < 60 * this.staleThreshold)
-        return 'success'
-      if (this.secondsSinceLastQuery < 60 * this.unhealthyThreshold)
-        return 'warning'
-
+      if (this.agent.status === 'healthy') return 'success'
+      if (this.agent.status === 'stale') return 'warning'
       return 'error'
     },
     timer() {
@@ -265,11 +254,12 @@ export default {
     labelSelected(label) {
       return this.selectedLabels.includes(label)
     },
-    addMatchingflowRun(flowRun) {
-      const matching = this.submittable?.filter(item => item.id === flowRun.id)
-      if (!matching?.length) this.submittable.push(flowRun)
-    },
+    // addMatchingflowRun(flowRun) {
+    //   const matching = this.submittable?.filter(item => item.id === flowRun.id)
+    //   if (!matching?.length) this.submittable.push(flowRun)
+    // },
     hasFailedRuns() {
+      console.log('load', this.loadingKey)
       const badRuns = this.LastRuns?.filter(
         run => run.agent_id === this.agent?.id
       )
@@ -294,9 +284,13 @@ export default {
       loadingKey: 'loadingKey',
       variables() {
         return {
+          agentId: this.agent?.id,
           day: this.dayAgo
         }
       },
+      // skip() {
+      //   return this.agent.status === 'old'
+      // },
       update: data => {
         console.log('last runs', data)
         return data.flow_run
@@ -333,9 +327,7 @@ export default {
         <v-list-item-content class="position: relative;">
           <v-list-item-title class="text-h6">
             <div>
-              <div>
-                {{ name }}
-              </div>
+              <div> {{ name }} Hello </div>
             </div>
           </v-list-item-title>
         </v-list-item-content>
@@ -560,7 +552,7 @@ export default {
               :style="{ overflow: 'auto' }"
             >
               <Label
-                v-for="label in agentModified.labels"
+                v-for="label in agent.labels"
                 :key="label"
                 class="mr-1 mt-1"
                 :outlined="!labelSelected(label)"
