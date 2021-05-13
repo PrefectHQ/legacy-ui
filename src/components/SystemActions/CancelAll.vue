@@ -29,7 +29,7 @@ export default {
       if (!this.flowRuns?.length) return
 
       try {
-        const mutation = require('@/graphql/Nav/cancel-flow-run.gql')
+        const mutation = require('@/graphql/Mutations/cancel-flow-run.gql')
 
         this.loaded = 0
 
