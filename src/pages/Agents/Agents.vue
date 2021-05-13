@@ -277,6 +277,7 @@ export default {
       update(data) {
         if (!data) return
         this.setSortedAgents(data.flow_run)
+        return data.flow_run
       }
     }
   }

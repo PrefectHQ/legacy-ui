@@ -132,15 +132,16 @@ export default {
       return this.agent?.type ? this.agent.type : 'Agent type unknown'
     },
     submittableRuns() {
-      if (!this.submittable) return null
-      const filtered = this.submittable?.filter(run => {
+      // console.log(this.agent, this.submittable)
+      if (!this.agent?.submittableRuns) return null
+      const filtered = this.agent?.submittableRuns?.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) <= 20000
       })
       return filtered
     },
     lateRuns() {
-      if (!this.submittable?.length) return null
-      return this.submittable?.filter(run => {
+      if (!this.agent?.submittableRuns?.length) return null
+      return this.agent?.submittableRuns?.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) > 20000
       })
     }
@@ -259,10 +260,14 @@ export default {
     //   if (!matching?.length) this.submittable.push(flowRun)
     // },
     hasFailedRuns() {
-      // console.log('load', this.loadingKey)
-      const badRuns = this.LastRuns?.filter(
-        run => run.agent_id === this.agent?.id
+      if (
+        this.agent.type === 'KubernetesAgent' &&
+        this.agent.status === 'healthy'
       )
+        console.log(this.agent, this.recentRuns)
+      // console.log('load', this.loadingKey)
+      const badRuns = this.recentRuns
+        ?.filter(run => run.agent_id === this.agent?.id)
         .slice(0, 10)
         .filter(run => ['Failed', 'TriggerFailed'].includes(run.state))
 
@@ -279,12 +284,12 @@ export default {
     //     return data.flow_run
     //   }
     // },
-    LastRuns: {
+    recentRuns: {
       query: require('@/graphql/Agent/recent-runs.gql'),
       loadingKey: 'loadingKey',
       variables() {
         return {
-          agentId: this.agent?.id,
+          agentId: this.agent.id,
           day: this.dayAgo
         }
       },
@@ -439,10 +444,11 @@ export default {
                     : 'success'
                 "
                 >adjust</v-icon
-              >Last Runs</v-list-item-title
+              >Recent Runs</v-list-item-title
             >
             <v-list-item-subtitle>
               <LastTenRuns
+                :runs="recentRuns"
                 :agent-id="agent.id"
                 :fake-load="!!lateRuns && !!lateRuns.length"
               />

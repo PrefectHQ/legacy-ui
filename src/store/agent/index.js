@@ -52,6 +52,7 @@ const mutations = {
             flowRun?.labels?.length &&
             flowRun.labels.every(label => agent?.labels?.includes(label))
         )
+        console.log('mathc', match, flowRuns)
         agent.submittableRuns = match
         return !!match?.length
       }
