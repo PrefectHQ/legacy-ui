@@ -17,8 +17,19 @@ export default {
       default: () => false
     },
     flowId: {
-      required: true,
-      type: String
+      required: false,
+      type: String,
+      default: null
+    },
+    agentId: {
+      required: false,
+      type: String,
+      default: null
+    },
+    fakeLoad: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -36,8 +47,11 @@ export default {
 
       const computedStyle = getComputedStyle(document.documentElement)
 
-      return this.flowRuns
-        .filter(run => run.flow_id == this.flowId)
+      const prepped = this.flowRuns
+        .filter(
+          run => run.flow_id == this.flowId || run.agent_id === this.agentId
+        )
+
         .reverse()
         .map(d => {
           if (d.start_time && d.end_time) {
@@ -51,9 +65,14 @@ export default {
           }
 
           d.color = computedStyle.getPropertyValue(`--v-${d.state}-base`)
+          if (this.fakeLoad)
+            d.color = computedStyle.getPropertyValue('secondaryGray')
           d.opacity = 1
+          d.warningOpacity = 0
           return d
         })
+
+      return prepped.slice(0, 10)
     }
   },
   mounted() {
@@ -123,11 +142,14 @@ export default {
       query: require('@/graphql/Dashboard/last-flow-runs.gql'),
       variables() {
         return {
-          flowId: this.flowId
+          flowId: this.flowId || null,
+          agentId: this.agentId || null
         }
       },
       loadingKey: 'loadingKey',
-      update: data => data?.flow_run
+      update: data => {
+        return data.flow_run
+      }
     }
   }
 }
@@ -138,7 +160,7 @@ export default {
     <BarChart
       :items="preppedFlowRuns"
       :loading="loadingKey > 0"
-      :height="50"
+      :height="30"
       :min-bands="10"
       normalize
       :padding="0"

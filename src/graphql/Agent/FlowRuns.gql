@@ -1,0 +1,17 @@
+query AgentFlowRuns {
+    flow_run (where: {state: {_eq: "Scheduled"}}) {
+    id
+    name
+    state
+    labels
+    scheduled_start_time
+    version
+    flow {
+      id
+      name
+      schedule
+      environment
+      is_schedule_active
+  }
+    }
+}

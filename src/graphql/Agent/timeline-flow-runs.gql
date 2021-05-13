@@ -1,0 +1,16 @@
+query AgentTimelineFlowRuns($agent_id: uuid) {
+  flow_run(
+    where: {
+       agent_id: { _eq: $agent_id } 
+    }
+    limit: 100
+    order_by: { scheduled_start_time: desc }
+  ) {
+    id
+    name
+    end_time
+    start_time
+    scheduled_start_time
+    state
+  }
+}
