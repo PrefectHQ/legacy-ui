@@ -5,6 +5,7 @@ import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import HelpMenu from '@/components/Nav/HelpMenu'
 import NotificationMenu from '@/components/Nav/NotificationMenu'
 import Links from '@/components/Nav/Links'
+import SystemActions from '@/components/Nav/SystemActions'
 import TeamSideNavButton from '@/components/Nav/TeamSideNavButton'
 import UserMenu from '@/components/Nav/UserMenu'
 
@@ -15,12 +16,14 @@ export default {
     HelpMenu,
     Links,
     NotificationMenu,
+    SystemActions,
     TeamSideNavButton,
     UserMenu
   },
   data() {
     return {
       active: false,
+      showSystemActions: true,
       menu: false
     }
   },
@@ -75,8 +78,13 @@ export default {
     <!-- We can't use a v-if-else chain here; -->
     <!-- For some reason the default slot never renders if we do. -->
     <!-- (likely a Vuetify bug) -->
-    <template v-if="$vuetify.breakpoint.mdAndDown" #extension>
-      <Links />
+    <template
+      v-if="$vuetify.breakpoint.mdAndDown || showSystemActions"
+      #extension
+    >
+      <Links v-if="$vuetify.breakpoint.mdAndDown" />
+
+      <SystemActions v-if="showSystemActions" />
     </template>
 
     <Links v-if="!$vuetify.breakpoint.mdAndDown" />
@@ -90,6 +98,19 @@ export default {
     <NotificationMenu />
 
     <ConnectionMenu />
+
+    <v-btn
+      class="navbar-icon mx-1"
+      :class="{ active: showSystemActions }"
+      icon
+      title="Open the global actions bar"
+      :input-value="showSystemActions"
+      @click="showSystemActions = !showSystemActions"
+    >
+      <i
+        class="fad fa-sliders-v-square nav-bar-duotone-icon fa-2x white--text"
+      />
+    </v-btn>
 
     <UserMenu v-if="isCloud" />
   </v-app-bar>
@@ -114,6 +135,11 @@ export default {
     .v-toolbar__content {
       padding: 0 !important;
     }
+  }
+
+  /* stylelint-disable-next-line */
+  .v-toolbar__extension {
+    background-color: var(--v-secondaryGrayLight-base);
   }
 }
 </style>

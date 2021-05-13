@@ -381,6 +381,45 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
       --fa-primary-color: var(--v-accentPink-base);
     }
   }
+
+  &.active {
+    .svg-inline--fa.fa-sliders-v-square {
+      --fa-primary-color: var(--v-accentPink-base);
+    }
+  }
+}
+
+.systembar-icon {
+  font-size: 0.75rem;
+  height: 28px !important;
+  width: 28px !important;
+
+  /* stylelint-disable */
+  .svg-inline--fa {
+    --fa-primary-color: #fff;
+    --fa-secondary-color: #efefef;
+    transition: all 150ms linear;
+
+    &.fa-stop-circle {
+      --fa-primary-color: var(--v-error-darken1);
+      --fa-secondary-color: #fff;
+      --fa-secondary-opacity: 1;
+    }
+  }
+  /* stylelint-enable */
+
+  // &:hover,
+  // &:focus {
+  //   .svg-inline--fa {
+  //     --fa-primary-color: var(--v-accentPink-base);
+  //   }
+  // }
+
+  // &.active {
+  //   .svg-inline--fa.fa-sliders-v-square {
+  //     --fa-primary-color: var(--v-accentPink-base);
+  //   }
+  // }
 }
 
 .fa-stack {

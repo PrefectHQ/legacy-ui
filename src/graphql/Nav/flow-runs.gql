@@ -1,0 +1,10 @@
+query FlowRuns($flowIds: [uuid!]) {
+  flow_run(
+    where: {
+      state: { _in: ["Running", "Submitted"] }
+      flow_id: { _in: $flowIds }
+    }
+  ) {
+    id
+  }
+}
