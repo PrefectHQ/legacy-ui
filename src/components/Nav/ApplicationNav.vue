@@ -18,13 +18,6 @@ export default {
     TeamSideNavButton,
     UserMenu
   },
-  props: {
-    overlay: {
-      type: Boolean,
-      required: false,
-      default: false
-    }
-  },
   data() {
     return {
       active: false,
@@ -54,11 +47,6 @@ export default {
     },
     slug() {
       return this.tenant?.slug
-    }
-  },
-  methods: {
-    toggleOverlay() {
-      this.$emit('overlay-change')
     }
   }
 }
@@ -110,19 +98,6 @@ export default {
     <NotificationMenu />
 
     <ConnectionMenu />
-
-    <v-btn
-      class="navbar-icon mx-1"
-      :class="{ active: overlay }"
-      icon
-      title="Open the global actions bar"
-      :input-value="overlay"
-      @click="toggleOverlay"
-    >
-      <i
-        class="fad fa-sliders-v-square nav-bar-duotone-icon fa-2x white--text"
-      />
-    </v-btn>
 
     <UserMenu v-if="isCloud" />
   </v-app-bar>
