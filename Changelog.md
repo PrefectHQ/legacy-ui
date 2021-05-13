@@ -12,7 +12,7 @@
 
 ### Bugfixes
 
-- None
+- Fix issue setting default tenant in server and bypassing auth - [#828](https://github.com/PrefectHQ/ui/pull/828)
 
 ## 2021-05-05
 
