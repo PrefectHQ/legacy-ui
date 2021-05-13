@@ -259,7 +259,7 @@ export default {
     //   if (!matching?.length) this.submittable.push(flowRun)
     // },
     hasFailedRuns() {
-      console.log('load', this.loadingKey)
+      // console.log('load', this.loadingKey)
       const badRuns = this.LastRuns?.filter(
         run => run.agent_id === this.agent?.id
       )
@@ -292,7 +292,7 @@ export default {
       //   return this.agent.status === 'old'
       // },
       update: data => {
-        console.log('last runs', data)
+        // console.log('last runs', data)
         return data.flow_run
       }
     }

@@ -7,7 +7,8 @@ const state = {
     // Time before an agent becomes unhealthy
     unhealthy: 120 // minutes since last query,
   },
-  agents: null
+  agents: null,
+  sortedAgents: null
 }
 
 const getters = {
@@ -20,12 +21,60 @@ const getters = {
   agents(state) {
     return state.agents
   },
+  sortedAgents(state) {
+    return state.sortedAgents
+  },
   agent: state => id => {
     return state.agents.filter(agent => agent.id === id)[0]
   }
 }
 
 const mutations = {
+  setSortedAgents(state, flowRuns) {
+    if (!state.agents) return
+    const labelsAlign = agent => {
+      agent.submittableRuns = []
+
+      if (!agent.labels?.length) {
+        const noLabels = flowRuns?.filter(flowRun => {
+          return !flowRun?.labels?.length
+        })
+        agent.submittableRuns = noLabels
+        return !!noLabels?.length
+      } else {
+        const match = flowRuns?.filter(
+          flowRun =>
+            flowRun?.labels?.length &&
+            flowRun.labels.every(label => agent?.labels?.includes(label))
+        )
+        agent.submittableRuns = match
+        return !!match?.length
+      }
+    }
+    const agents = [...state.agents]
+    const runsList = []
+    const newList = []
+    const oldList = []
+    agents.forEach(agent => {
+      if (
+        labelsAlign(agent) &&
+        agent.status != 'unhealthy' &&
+        agent.status != 'old'
+      ) {
+        runsList.push(agent)
+      } else if (agent.status != 'unhealthy') {
+        newList.push(agent)
+      } else {
+        agent.status = 'old'
+        oldList.push(agent)
+      }
+    })
+    // runsList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
+    // newList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
+    oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
+    const fullList = [...runsList, ...newList, ...oldList]
+    state.sortedAgents = fullList
+  },
   setAgents(state, agents) {
     if (!agents) {
       state.agents = null

@@ -1,11 +1,11 @@
 <script>
-// import difference from 'lodash.difference'
 import uniq from 'lodash.uniq'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import LogRocket from 'logrocket'
 import SubPageNav from '@/layouts/SubPageNav'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 // import moment from '@/utils/moment'
+import difference from 'lodash.difference'
 
 import AgentTile from '@/pages/Agents/AgentTile'
 
@@ -34,14 +34,19 @@ export default {
   },
   computed: {
     // ...mapGetters('data', ['activeProject']),
-    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
+    ...mapGetters('agent', [
+      'staleThreshold',
+      'unhealthyThreshold',
+      'agents',
+      'sortedAgents'
+    ]),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
     // project() {
     //   return this.activeProject
     // },
     oldAgents() {
-      return !!this.filteredAgents.find(agent => agent.status === 'old')
+      return !!this.filteredAgents?.find(agent => agent.status === 'old')
     },
 
     // agentTracker() {
@@ -87,7 +92,13 @@ export default {
       return this.loading > 0
     },
     filteredAgents() {
-      return this.agents
+      return this.sortedAgents.filter(agent => {
+        if (this.showUnlabeledAgentsOnly) {
+          return agent.labels.length === 0
+        }
+        if (!this.statusInput.includes(agent.status)) return false
+        return difference(this.labelInput, agent.labels).length === 0
+      })
       // if (!this.agents) return
       // const agents = [...this.agents]
       // const runsList = []
@@ -126,6 +137,9 @@ export default {
     }
   },
   watch: {
+    agents() {
+      this.setSortedAgents(this.flowRuns)
+    }
     // tenant(val) {
     //   this.labelInput = []
     //   this.queryFailed = false
@@ -139,6 +153,7 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    ...mapMutations('agent', ['setSortedAgents']),
     // ...mapActions('data', ['activateProject', 'resetActiveData']),
 
     async clearUnhealthyAgents() {
@@ -258,8 +273,9 @@ export default {
     flowRuns: {
       query: require('@/graphql/Agent/FlowRuns.gql'),
       loadingKey: 'loading',
-      update: data => {
-        return data.flow_run
+      update(data) {
+        if (!data) return
+        this.setSortedAgents(data.flow_run)
       }
     }
   }
@@ -272,7 +288,7 @@ export default {
   </v-sheet>
 
   <v-sheet
-    v-else-if="!agents && queryFailed"
+    v-else-if="!sortedAgents && queryFailed"
     class="text-subtitle-1 font-weight-light"
   >
     <v-alert
@@ -293,7 +309,10 @@ export default {
     </v-alert>
   </v-sheet>
 
-  <v-sheet v-else-if="agents && agents.length > 0" color="appBackground">
+  <v-sheet
+    v-else-if="sortedAgents && sortedAgents.length > 0"
+    color="appBackground"
+  >
     <SubPageNav icon="pi-agent" page-type="Agents">
       <span
         slot="page-title"
