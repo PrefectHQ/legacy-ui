@@ -38,7 +38,8 @@ export default {
       'staleThreshold',
       'unhealthyThreshold',
       'agents',
-      'sortedAgents'
+      'sortedAgents',
+      'sorting'
     ]),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
@@ -89,7 +90,7 @@ export default {
     //   )
     // },
     isLoading() {
-      return this.loading > 0
+      return this.loading > 0 || this.sorting
     },
     filteredAgents() {
       return this.sortedAgents.filter(agent => {
@@ -240,7 +241,7 @@ export default {
       this.labelInput = []
       this.statusInput = STATUSES
       this.showUnlabeledAgentsOnly = false
-    },
+    }
     // status(agent) {
     //   if (agent.secondsSinceLastQuery < 60 * this.staleThreshold)
     //     return 'healthy'
@@ -249,25 +250,25 @@ export default {
 
     //   return 'unhealthy'
     // },
-    labelsAlign(agent) {
-      agent.submittableRuns = []
+    // labelsAlign(agent) {
+    //   agent.submittableRuns = []
 
-      if (!agent.labels?.length) {
-        const noLabels = this.flowRuns?.filter(flowRun => {
-          return !flowRun?.labels?.length
-        })
-        agent.submittableRuns = noLabels
-        return !!noLabels?.length
-      } else {
-        const match = this.flowRuns?.filter(
-          flowRun =>
-            flowRun?.labels?.length &&
-            flowRun.labels.every(label => agent?.labels?.includes(label))
-        )
-        agent.submittableRuns = match
-        return !!match?.length
-      }
-    }
+    //   if (!agent.labels?.length) {
+    //     const noLabels = this.flowRuns?.filter(flowRun => {
+    //       return !flowRun?.labels?.length
+    //     })
+    //     agent.submittableRuns = noLabels
+    //     return !!noLabels?.length
+    //   } else {
+    //     const match = this.flowRuns?.filter(
+    //       flowRun =>
+    //         flowRun?.labels?.length &&
+    //         flowRun.labels.every(label => agent?.labels?.includes(label))
+    //     )
+    //     agent.submittableRuns = match
+    //     return !!match?.length
+    //   }
+    // }
   },
   apollo: {
     flowRuns: {

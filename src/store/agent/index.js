@@ -8,7 +8,8 @@ const state = {
     unhealthy: 120 // minutes since last query,
   },
   agents: null,
-  sortedAgents: null
+  sortedAgents: null,
+  sorting: true
 }
 
 const getters = {
@@ -26,11 +27,15 @@ const getters = {
   },
   agent: state => id => {
     return state.agents.filter(agent => agent.id === id)[0]
+  },
+  sorting(state) {
+    return state.sorting
   }
 }
 
 const mutations = {
   setSortedAgents(state, flowRuns) {
+    this.sorting = true
     if (!state.agents) return
     const labelsAlign = agent => {
       agent.submittableRuns = []
@@ -74,6 +79,7 @@ const mutations = {
     oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
     const fullList = [...runsList, ...newList, ...oldList]
     state.sortedAgents = fullList
+    state.sorting = false
   },
   setAgents(state, agents) {
     if (!agents) {
