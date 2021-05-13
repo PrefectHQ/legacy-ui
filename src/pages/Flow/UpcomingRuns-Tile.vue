@@ -176,7 +176,7 @@ export default {
         return variables
       },
       loadingKey: 'loading',
-      pollInterval: 50000,
+      pollInterval: 10000,
       update: data => data?.flow_run
     }
   }

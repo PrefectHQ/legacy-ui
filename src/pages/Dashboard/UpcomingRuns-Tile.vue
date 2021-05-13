@@ -35,6 +35,7 @@ export default {
   },
   data() {
     return {
+      lateInterval: null,
       loadingKey: 0,
       overlay: null,
       tab: 'upcoming'
@@ -124,12 +125,19 @@ export default {
   },
   beforeDestroy() {
     this.upcoming = []
+    clearInterval(this.lateInterval)
     this.tab = 'upcoming'
   },
   mounted() {
     if (this.paused) {
       this.showOverlay('queue')
     }
+
+    this.lateInterval = setInterval(() => {
+      // This ensures that the lateRuns always recomputes
+      // even if the upcoming runs don't return new data
+      this.upcoming = [...this.upcoming]
+    }, 10000)
   },
   methods: {
     getTimeOverdue(time) {
@@ -142,7 +150,7 @@ export default {
       this.overlay = null
     },
     refetch() {
-      this.$apollo.queries['upcoming'].refetch()
+      this.$apollo.queries.upcoming.refresh()
       this.overlay = null
     }
   },
@@ -445,18 +453,6 @@ export default {
       <v-spacer />
 
       <v-btn
-        v-if="!overlay"
-        small
-        depressed
-        color="primary"
-        text
-        style="z-index: 2;"
-        @click="showOverlay('queue')"
-      >
-        Pause work
-      </v-btn>
-
-      <v-btn
         v-if="!overlay && lateRuns && lateRuns.length > 0"
         small
         depressed
@@ -466,6 +462,18 @@ export default {
         @click="showOverlay('late')"
       >
         Clear late
+      </v-btn>
+
+      <v-btn
+        v-if="!overlay"
+        small
+        depressed
+        color="primary"
+        text
+        style="z-index: 2;"
+        @click="showOverlay('queue')"
+      >
+        Options
       </v-btn>
 
       <v-btn
@@ -500,7 +508,7 @@ a {
 
 .card-content {
   height: 100%;
-  max-height: 229px;
+  max-height: 226px;
   overflow-y: auto;
   position: relative;
 }
