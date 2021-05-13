@@ -308,11 +308,7 @@ export default {
               <v-list-item-title>{{ key.name }}</v-list-item-title>
               <v-list-item-subtitle
                 >Created {{ key.created_at ? formDate(key.created_at) : '' }}
-                <<<<<<< HEAD
                 <span v-if="key.created_by">by {{ key.created_by }}</span>
-                =======
-                {{ key.created_by ? ' by '.concat(key.created_by) : '' }}
-                >>>>>>> 877f69d6 (Add created_by to service accounts)
               </v-list-item-subtitle>
               <v-list-item-subtitle>
                 {{
