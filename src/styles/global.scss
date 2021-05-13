@@ -389,22 +389,17 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   }
 }
 
-.systembar-icon {
-  font-size: 0.75rem;
-  height: 28px !important;
-  width: 28px !important;
+.system-icon {
+  font-size: 64px;
+  height: 64px !important;
+  width: 64px !important;
 
   /* stylelint-disable */
   .svg-inline--fa {
-    --fa-primary-color: #fff;
-    --fa-secondary-color: #efefef;
-    transition: all 150ms linear;
+    --fa-primary-color: #444;
+    --fa-secondary-opacity: 0.75;
 
-    &.fa-stop-circle {
-      --fa-primary-color: var(--v-error-darken1);
-      --fa-secondary-color: #fff;
-      --fa-secondary-opacity: 1;
-    }
+    transition: all 150ms linear;
   }
   /* stylelint-enable */
 
@@ -415,11 +410,11 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   //   }
   // }
 
-  // &.active {
-  //   .svg-inline--fa.fa-sliders-v-square {
-  //     --fa-primary-color: var(--v-accentPink-base);
-  //   }
-  // }
+  &.active {
+    .svg-inline--fa.fa-film {
+      --fa-secondary-color: var(--v-primary-base);
+    }
+  }
 }
 
 .fa-stack {
@@ -456,7 +451,7 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   &.v-tabs > .v-tabs-bar,
   &.v-text-field--solo > .v-input__control > .v-input__slot,
   &.v-toolbar.v-sheet:not(header) {
-    background-color: var(--v-appForeground-base) !important;
+    background-color: var(--v-appForeground-base);
   }
 
   &.v-data-table

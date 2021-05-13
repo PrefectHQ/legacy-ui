@@ -5,7 +5,6 @@ import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import HelpMenu from '@/components/Nav/HelpMenu'
 import NotificationMenu from '@/components/Nav/NotificationMenu'
 import Links from '@/components/Nav/Links'
-import SystemActions from '@/components/Nav/SystemActions'
 import TeamSideNavButton from '@/components/Nav/TeamSideNavButton'
 import UserMenu from '@/components/Nav/UserMenu'
 
@@ -16,14 +15,19 @@ export default {
     HelpMenu,
     Links,
     NotificationMenu,
-    SystemActions,
     TeamSideNavButton,
     UserMenu
+  },
+  props: {
+    overlay: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
   data() {
     return {
       active: false,
-      showSystemActions: true,
       menu: false
     }
   },
@@ -50,6 +54,11 @@ export default {
     },
     slug() {
       return this.tenant?.slug
+    }
+  },
+  methods: {
+    toggleOverlay() {
+      this.$emit('overlay-change')
     }
   }
 }
@@ -78,13 +87,8 @@ export default {
     <!-- We can't use a v-if-else chain here; -->
     <!-- For some reason the default slot never renders if we do. -->
     <!-- (likely a Vuetify bug) -->
-    <template
-      v-if="$vuetify.breakpoint.mdAndDown || showSystemActions"
-      #extension
-    >
+    <template v-if="$vuetify.breakpoint.mdAndDown" #extension>
       <Links v-if="$vuetify.breakpoint.mdAndDown" />
-
-      <SystemActions v-if="showSystemActions" />
     </template>
 
     <Links v-if="!$vuetify.breakpoint.mdAndDown" />
@@ -101,11 +105,11 @@ export default {
 
     <v-btn
       class="navbar-icon mx-1"
-      :class="{ active: showSystemActions }"
+      :class="{ active: overlay }"
       icon
       title="Open the global actions bar"
-      :input-value="showSystemActions"
-      @click="showSystemActions = !showSystemActions"
+      :input-value="overlay"
+      @click="toggleOverlay"
     >
       <i
         class="fad fa-sliders-v-square nav-bar-duotone-icon fa-2x white--text"
@@ -137,9 +141,6 @@ export default {
     }
   }
 
-  /* stylelint-disable-next-line */
-  .v-toolbar__extension {
-    background-color: var(--v-secondaryGrayLight-base);
-  }
+  z-index: 8 !important;
 }
 </style>
