@@ -66,7 +66,15 @@ export default {
 
 <template>
   <v-app-bar app elevate-on-scroll fixed :color="navBarColor">
-    <router-link :to="`/${slug}`" exact>
+    <router-link
+      :to="{
+        name: 'dashboard',
+        params: {
+          tenant: slug
+        }
+      }"
+      exact
+    >
       <v-btn
         icon
         :x-large="$vuetify.breakpoint.smAndUp"

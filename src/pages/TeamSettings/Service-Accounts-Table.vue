@@ -236,7 +236,10 @@ export default {
       }
     },
     keys: {
-      query: require('@/graphql/Tokens/api-keys.gql'),
+      query() {
+        // TODO - why isn't this.isCloud true for local dev?
+        return require('@/graphql/Tokens/api-keys.js').default(true)
+      },
       fetchPolicy: 'network-only',
       error() {
         this.handleAlert(
@@ -245,6 +248,7 @@ export default {
         )
       },
       result({ data }) {
+        console.log(data)
         this.keys = data.auth_api_key.map(key => {
           return {
             id: key.id,
@@ -252,7 +256,7 @@ export default {
             created_at: key.created,
             expires: key.expires_at,
             user_id: key.user_id,
-            created_by: key.created_by ? key.created_by.username : ''
+            created_by: key.created_by.username
           }
         })
         this.isFetchingKeys = false
@@ -308,7 +312,11 @@ export default {
               <v-list-item-title>{{ key.name }}</v-list-item-title>
               <v-list-item-subtitle
                 >Created {{ key.created_at ? formDate(key.created_at) : '' }}
+                <<<<<<< HEAD
                 <span v-if="key.created_by">by {{ key.created_by }}</span>
+                =======
+                {{ key.created_by ? ' by '.concat(key.created_by) : '' }}
+                >>>>>>> 877f69d6 (Add created_by to service accounts)
               </v-list-item-subtitle>
               <v-list-item-subtitle>
                 {{
