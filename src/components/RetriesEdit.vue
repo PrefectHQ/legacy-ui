@@ -10,8 +10,13 @@ export default {
   data() {
     return {
       menu: false,
-      interval: 'minute',
+      interval: 'second',
       intervalOptions: [
+        {
+          value: 'second',
+          min: 1,
+          max: 720
+        },
         {
           value: 'minute',
           min: 1,
@@ -21,11 +26,6 @@ export default {
           value: 'hour',
           min: 1,
           max: 168
-        },
-        {
-          value: 'day',
-          min: 1,
-          max: 45
         }
       ]
     }
@@ -108,6 +108,7 @@ export default {
           <v-list>
             <v-list-item>
               <v-text-field
+                v-model="maxRetries"
                 label="Max Retries"
                 type="number"
                 outlined
@@ -133,7 +134,9 @@ export default {
               />
 
               <v-text-field
+                v-model="retryDelay"
                 type="number"
+                label="Retry Delay"
                 class="text-h5"
                 outlined
                 dense
