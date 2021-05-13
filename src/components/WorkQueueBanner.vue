@@ -20,7 +20,7 @@ export default {
 
       try {
         const { data } = await this.$apollo.mutate({
-          mutation: require('@/graphql/Nav/resume-tenant-work-queue.gql'),
+          mutation: require('@/graphql/Mutations/resume-tenant-work-queue.gql'),
           variables: {
             tenantId: this.tenant.id
           }
