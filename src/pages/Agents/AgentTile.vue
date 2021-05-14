@@ -73,6 +73,9 @@ export default {
       const day = this.subtractDay(today, 2)
       return day
     },
+    hasLateRuns() {
+      return !!this.lateRuns?.length
+    },
     // agentModified() {
     //   return {
     //     ...this.agent,
@@ -99,7 +102,7 @@ export default {
     status() {
       if (this.agent.status === 'old') return 'old'
       if (this.failedRuns) return 'failed'
-      if (this.lateRuns?.length) return 'late'
+      if (this.hasLateRuns) return 'late'
       return this.agent.status
     },
     statusColor() {
@@ -179,16 +182,16 @@ export default {
       this.$nextTick(() => {
         this.showIcon = true
       })
-    },
-    submittable(val) {
-      if (!val) return
-      if (this.lateRuns?.length > 0) {
-        this.tab = 'late'
-      }
-      if (this.lateRuns?.length <= 0) {
-        this.tab = 'submittable'
-      }
     }
+    // submittable(val) {
+    //   if (!val) return
+    //   if (this.lateRuns?.length > 0) {
+    //     this.tab = 'late'
+    //   }
+    //   if (this.hasLateRuns <= 0) {
+    //     this.tab = 'submittable'
+    //   }
+    // }
   },
   // flowRuns() {
   //   this.submittable = []
@@ -353,22 +356,27 @@ export default {
 
     <v-card-text class="py-0">
       <v-list>
-        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
+        <v-list-item
+          v-if="!showAll || this.hasLateRuns"
+          :style="{ 'min-height': '45px' }"
+          two-line
+          class="pa-0"
+        >
           <v-list-item-content class="pa-0">
             <v-list-item-title
               ><v-icon
                 small
                 class="mr-1"
-                :color="lateRuns && lateRuns.length ? 'deepRed' : 'success'"
+                :color="hasLateRuns ? 'deepRed' : 'success'"
                 >adjust</v-icon
               >{{
-                lateRuns && lateRuns.length ? 'Late Submittable' : 'Submittable'
+                hasLateRuns ? 'Late Submittable' : 'Submittable'
               }}
               Runs</v-list-item-title
             >
             <v-list-item-subtitle>
-              <span v-if="lateRuns && lateRuns.length">
-                {{ lateRuns ? lateRuns.length : 0 }}</span
+              <span v-if="hasLateRuns">
+                {{ hasLateRuns ? lateRuns.length : 0 }}</span
               >
               <span v-else>
                 {{ submittableRuns ? submittableRuns.length : 0 }}</span
@@ -419,7 +427,7 @@ export default {
                 small
                 class="mr-1"
                 :color="
-                  lateRuns && lateRuns.length
+                  hasLateRuns
                     ? 'grey'
                     : failedRuns
                     ? 'error'
@@ -434,7 +442,7 @@ export default {
               <LastTenRuns
                 :runs="recentRuns"
                 :agent-id="agent.id"
-                :disable-view="!!lateRuns && !!lateRuns.length"
+                :disable-view="hasLateRuns"
               />
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -476,14 +484,14 @@ export default {
                     @click="copyTextToClipboard(agent.token_id)"
                   >
                     <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
-                      {{ agent.token_name }}
+                      {{ agent.token_name || agent.token_id }}
                     </span>
                   </div>
                 </template>
 
                 <span>
                   <v-icon
-                    v-if="agent.token_name && agent.token_id"
+                    v-if="agent.token_name || agent.token_id"
                     x-small
                     class="mb-2px mr-2"
                     tabindex="0"
@@ -492,7 +500,7 @@ export default {
                     {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
                   </v-icon>
                   {{
-                    agent.token_name
+                    agent.token_name || agent.token_id
                       ? 'Click to copy token id'
                       : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
                   }}</span
@@ -538,7 +546,7 @@ export default {
               Labels
             </v-list-item-title>
             <v-sheet
-              :height="showAll ? '80px' : '40px'"
+              :height="showAll ? '60px' : '40px'"
               :style="{ overflow: 'auto' }"
             >
               <Label

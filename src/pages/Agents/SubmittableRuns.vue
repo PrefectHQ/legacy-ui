@@ -25,10 +25,9 @@ export default {
   },
   data() {
     return {
-      submittable: [],
+      submittable: this.agent.submittableRuns,
       loadingKey: 0,
-      tab: 'submittable',
-      show: true
+      tab: 'submittable'
     }
   },
   computed: {
@@ -93,38 +92,38 @@ export default {
         : this.lateRuns?.length > 0
         ? 'deepRed'
         : 'Success'
-    },
-    labelsAlign() {
-      if (!this.flowRuns?.length) {
-        this.labelMessage('You have no flowRuns')
-        return false
-      }
-      if (
-        !this.agent?.labels?.length &&
-        this.flowRuns.every(flowRun => flowRun.labels.length > 0)
-      ) {
-        this.labelMessage(
-          "You have no currently registered flowRuns that match this agent's labels.  You will need to edit your flowRuns' labels"
-        )
-        return false
-      } else {
-        let matchingLabels = 0
-        if (this.flowRuns) {
-          this.flowRuns.forEach(flowRun => {
-            if (
-              flowRun.labels.every(label => this.agent?.labels?.includes(label))
-            ) {
-              this.addMatchingflowRun(flowRun)
-            }
-          })
-        }
-        if (matchingLabels > 0) {
-          return true
-        } else {
-          return false
-        }
-      }
     }
+    // labelsAlign() {
+    //   if (!this.flowRuns?.length) {
+    //     this.labelMessage('You have no flowRuns')
+    //     return false
+    //   }
+    //   if (
+    //     !this.agent?.labels?.length &&
+    //     this.flowRuns.every(flowRun => flowRun.labels.length > 0)
+    //   ) {
+    //     this.labelMessage(
+    //       "You have no currently registered flowRuns that match this agent's labels.  You will need to edit your flowRuns' labels"
+    //     )
+    //     return false
+    //   } else {
+    //     let matchingLabels = 0
+    //     if (this.flowRuns) {
+    //       this.flowRuns.forEach(flowRun => {
+    //         if (
+    //           flowRun.labels.every(label => this.agent?.labels?.includes(label))
+    //         ) {
+    //           this.addMatchingflowRun(flowRun)
+    //         }
+    //       })
+    //     }
+    //     if (matchingLabels > 0) {
+    //       return true
+    //     } else {
+    //       return false
+    //     }
+    //   }
+    // }
   },
   watch: {
     submittable(val) {
@@ -135,11 +134,11 @@ export default {
       if (this.lateRuns?.length <= 0) {
         this.tab = 'submittable'
       }
-    },
-    flowRuns() {
-      this.submittable = []
-      this.labelsAlign
     }
+    // flowRuns() {
+    //   this.submittable = []
+    //   this.labelsAlign
+    // }
   },
   beforeDestroy() {
     this.submittable = []
@@ -149,36 +148,31 @@ export default {
     getTimeOverdue(time) {
       return new Date() - new Date(time)
     },
-    labelMessage(text) {
-      this.labelMessageText = text
-    },
-    addMatchingflowRun(flowRun) {
-      if (!this.submittable.filter(item => item.id === flowRun.id).length)
-        this.submittable.push(flowRun)
-    },
+    // labelMessage(text) {
+    //   this.labelMessageText = text
+    // },
+    // addMatchingflowRun(flowRun) {
+    //   if (!this.submittable.filter(item => item.id === flowRun.id).length)
+    //     this.submittable.push(flowRun)
+    // },
     flowRunName(flowRun) {
       return flowRun?.name
     }
   },
   apollo: {
-    flowRuns: {
-      query: require('@/graphql/Agent/FlowRuns.gql'),
-      loadingKey: 'loading',
-      update: data => {
-        return data.flow_run
-      }
-    }
+    // flowRuns: {
+    //   query: require('@/graphql/Agent/FlowRuns.gql'),
+    //   loadingKey: 'loading',
+    //   update: data => {
+    //     return data.flow_run
+    //   }
+    // }
   }
 }
 </script>
 
 <template>
-  <v-card
-    v-if="labelsAlign || show"
-    class="py-2"
-    tile
-    :style="{ height: '330px' }"
-  >
+  <v-card class="py-2" tile :style="{ height: '330px' }">
     <v-system-bar
       :color="
         loading || !submittable

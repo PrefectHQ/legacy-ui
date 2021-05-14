@@ -236,6 +236,25 @@ export default {
       }
     })
 
+    this.$globalApolloQueries['flowRuns'] = this.$apollo.addSmartQuery(
+      'flowRuns',
+      {
+        query: require('@/graphql/Agent/recent-runs.gql'),
+
+        skip() {
+          return (this.isCloud && !this.isAuthorized) || !this.connected
+        },
+        pollInterval: 3000,
+        // Without this, server UI with no actual server shows results
+        fetchPolicy: 'no-cache',
+        update(data) {
+          if (!data?.flow_run || this.isLoadingTenant) return null
+          this.setAgents(data.flow_run)
+          return data.flow_run
+        }
+      }
+    )
+
     this.$globalApolloQueries['projects'] = this.$apollo.addSmartQuery(
       'projects',
       {
@@ -330,7 +349,7 @@ export default {
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
-    ...mapMutations('agent', ['setAgents']),
+    ...mapMutations('agent', ['setAgents', 'setSortedAgents']),
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth', ['authenticate', 'authorize']),
     ...mapActions('data', ['resetData']),
