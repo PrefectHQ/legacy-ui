@@ -1,5 +1,5 @@
 mutation DeleteKV($id: UUID!) {
-  delete_secret(input: { id: $id }) {
+  delete_key_value(input: { key_value_id: $id }) {
     success
     error
   }

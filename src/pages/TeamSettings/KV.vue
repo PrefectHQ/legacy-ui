@@ -75,7 +75,8 @@ export default {
       headers: [
         { text: 'Key', value: 'key' },
         { text: 'Value', value: 'value' },
-        { text: 'Created By', value: 'created' },
+        { text: 'Created By', value: 'tenant.name' },
+        { text: 'Created', value: 'created' },
         { text: 'Last Updated', value: 'updated' },
         {
           text: '',
@@ -156,14 +157,15 @@ export default {
     },
     async setKV() {
       this.isSettingKV = true
+
       if (this.selectedTypeIndex === 2 && !this.validKVJSON()) {
         this.isSettingKV = false
         this.invalidKV = true
         return
       }
+
       if (this.isKvUpdate) {
-        // modifying
-        this.deleteKV({ name: this.previousKVName }, { isModifying: true })
+        this.deleteKV({ id: this.selectedKV.id }, { isModifying: true })
       }
       let value = this.KvValueInput
       if (this.selectedTypeIndex === 0) {
@@ -183,22 +185,20 @@ export default {
         mutation: require('@/graphql/KV/set-key-value.gql'),
         variables: {
           key: this.keyInput,
-          value: value || []
+          value: value
         }
       })
 
       if (this.isKvUpdate) this.isSettingKV = false
 
-      console.log(kvResult)
-
-      if (kvResult?.data?.set_key_value?.success) {
-        //this.$apollo.queries.secretNames.refetch()
-        this.openKVModifyDialog = false
-        // this.resetSelectedSecret()
+      if (kvResult?.data?.set_key_value?.id) {
+        this.$apollo.queries.kv.refetch()
+        this.keyModifyDialog = false
         this.handleAlert(
           'success',
           `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
         )
+        this.resetSelectedKV()
       } else {
         this.handleAlert(
           'error',
@@ -208,20 +208,32 @@ export default {
         )
       }
 
-      // this.isSettingKV = false
-      // this.keyInput = null
-      // this.KvValueInput = null
+      this.isSettingKV = false
+      this.keyInput = null
+      this.KvValueInput = ''
     },
-    deleteKV(kv, opts = {}) {
+    async deleteKV(kv, opts = {}) {
       this.isDeletingKV = true
-      console.log(kv, opts)
-      //  mutation
-      // const KvResult = await this.$apollo.mutate({
-      //   mutation: require('@/graphql/KV/delete-key-value.gql'),
-      //   variables: {
-      //     id: kv.id
-      //   }
-      // })
+
+      const deleteKVResult = await this.$apollo.mutate({
+        mutation: require('@/graphql/KV/delete-key-value.gql'),
+        variables: {
+          id: kv.id
+        }
+      })
+
+      if (deleteKVResult?.data?.delete_key_value?.success) {
+        if (!opts.isModifying) {
+          this.$apollo.queries.kv.refetch()
+          this.keyDeleteDialog = false
+          this.handleAlert('success', 'KV deleted.')
+        }
+      } else {
+        this.handleAlert(
+          'error',
+          'Something went wrong while trying to delete this kv. Please try again. If this error persists, reach out to help@prefect.io.'
+        )
+      }
 
       this.isDeletingKV = false
     },
@@ -244,39 +256,37 @@ export default {
       this.invalidKV = event
     },
     handleKVExpand(kv) {
-      // this.KvValueInput = kv.item.value
-
       this.selectedKV = kv.item
       this.isKvUpdate = true
       this.previousKVName = kv.item.key
       this.keyInput = kv.item.key
       this.KvValueInput = kv.item.value
     }
+  },
+  apollo: {
+    kv: {
+      query: require('@/graphql/KV/get-key-value.gql'),
+      result() {
+        this.isFetchingKV = false
+      },
+      update(data) {
+        return data?.key_value
+      },
+      // skip() {
+      //   return this.isReadOnlyUser
+      // },
+      error(e) {
+        this.isFetchingKV = false
+        if (e) {
+          this.handleAlert(
+            'error',
+            'Something went wrong while trying to fetch the kv. Please try again. If this error persists, please contact help@prefect.io.'
+          )
+        }
+      },
+      fetchPolicy: 'network-only'
+    }
   }
-  //  apollo: {
-  //   kv: {
-  //     query: require('@/graphql/Tenant/get-kv.gql'),
-  //     result() {
-  //       this.isFetchingKV = false
-  //     },
-  //     update(data) {
-  //       return data?.kv?.map(item => ({ key: item.key, value: null }))
-  //     },
-  //     // skip() {
-  //     //   return this.isReadOnlyUser
-  //     // },
-  //     error() {
-  //       this.isFetchingKV = false
-  //       if (!this.isReadOnlyUser) {
-  //         this.handleAlert(
-  //           'error',
-  //           'Something went wrong while trying to fetch kv. Please try again. If this error persists, please contact help@prefect.io.'
-  //         )
-  //       }
-  //     },
-  //     fetchPolicy: 'network-only'
-  //   }
-  // }
 }
 </script>
 
@@ -321,8 +331,10 @@ export default {
         <!-- TABLE -->
         <v-data-table
           :headers="headers"
-          :items="items"
+          :items="kv"
+          :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :search="search"
+          :loading="$apollo.queries.kv.loading"
           :expanded="expanded"
           show-expand
           @item-expanded="handleKVExpand"
@@ -433,6 +445,9 @@ export default {
                 {{ item.value }}
               </MenuTooltip>
             </div>
+          </template>
+          <template #item.created="{item}">
+            {{ formatTime(item.created) }}
           </template>
           <template #item.updated="{item}">
             {{ formatTime(item.updated) }}
