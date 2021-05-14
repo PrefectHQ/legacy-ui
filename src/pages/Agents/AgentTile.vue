@@ -303,29 +303,18 @@ export default {
     class="agent-card px-2"
     style="overflow-y: auto;"
     :tile="showAll"
-    :height="showAll ? '380px' : '320px'"
+    :height="showAll ? '380px' : '300px'"
   >
-    <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
+    <v-card-title>
+      <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
 
-    <div>
-      <v-list-item dense class="px-0">
-        <v-list-item-avatar class="mr-2" tile>
-          <v-icon v-if="showIcon" :color="statusColor" class="fa-2x pi-2x">
-            {{ agentIcon(agent.type) || 'fas fa-robot' }}
-          </v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content class="position: relative;">
-          <v-list-item-title class="text-h6">
-            <div>
-              <div> {{ name }} </div>
-            </div>
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-divider class="ml-12 mr-2"></v-divider>
-    </div>
-
+      <div>
+        <v-icon v-if="showIcon" :color="statusColor" class="fa-2x pi-2x">
+          {{ agentIcon(agent.type) || 'fas fa-robot' }}
+        </v-icon>
+        <span class="ml-2">{{ name }}</span>
+      </div>
+    </v-card-title>
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
         <v-card-title class="word-break-normal">
@@ -355,99 +344,50 @@ export default {
     </v-dialog>
 
     <v-card-text class="py-0">
+      <div v-if="!showAll || hasLateRuns" class="my-2">
+        <v-icon small class="mr-1" :color="hasLateRuns ? 'deepRed' : 'success'">
+          adjust
+        </v-icon>
+        <span v-if="hasLateRuns">
+          {{ hasLateRuns ? lateRuns.length : 0 }}
+        </span>
+        <span v-else>
+          {{ submittableRuns ? submittableRuns.length : 0 }}
+        </span>
+        {{ hasLateRuns ? 'Late submittable' : 'submittable' }}
+        runs
+      </div>
+      <div class="my-2">
+        <v-icon small class="mr-1" :color="queryColor">adjust</v-icon>
+        <span v-if="agent.last_queried">Last queried {{ timer }}</span>
+        <span v-else> No recent queries</span>
+      </div>
+      <div v-if="showAll" class="my-2">
+        Core Version:
+        {{ agent.core_version || 'Unknown' }}
+      </div>
+      <div v-if="!showAll" :style="{ 'min-height': '45px' }" class="pa-0">
+        <v-icon
+          small
+          class="mr-1"
+          :color="
+            hasLateRuns
+              ? 'grey'
+              : failedRuns
+              ? 'error'
+              : recentRuns && recentRuns.length
+              ? 'success'
+              : 'grey'
+          "
+          >adjust</v-icon
+        >Recent Runs
+        <LastTenRuns
+          :runs="recentRuns"
+          :agent-id="agent.id"
+          :disable-view="hasLateRuns"
+        />
+      </div>
       <v-list>
-        <v-list-item
-          v-if="!showAll || this.hasLateRuns"
-          :style="{ 'min-height': '45px' }"
-          two-line
-          class="pa-0"
-        >
-          <v-list-item-content class="pa-0">
-            <v-list-item-title
-              ><v-icon
-                small
-                class="mr-1"
-                :color="hasLateRuns ? 'deepRed' : 'success'"
-                >adjust</v-icon
-              >{{
-                hasLateRuns ? 'Late Submittable' : 'Submittable'
-              }}
-              Runs</v-list-item-title
-            >
-            <v-list-item-subtitle>
-              <span v-if="hasLateRuns">
-                {{ hasLateRuns ? lateRuns.length : 0 }}</span
-              >
-              <span v-else>
-                {{ submittableRuns ? submittableRuns.length : 0 }}</span
-              >
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :style="{ 'min-height': '45px' }" two-line class="pa-0">
-          <v-list-item-content min-height="10px" class="pa-0">
-            <v-list-item-title
-              ><v-icon small class="mr-1" :color="queryColor">adjust</v-icon
-              >Last Query
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              <span class="font-weight-bold">{{
-                agent.last_queried | formatDateTime
-              }}</span>
-              <span v-if="agent.last_queried">|</span>
-              {{ timer }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
-          v-if="showAll"
-          :style="{ 'min-height': '45px' }"
-          two-line
-          class="pa-0"
-        >
-          <v-list-item-content class="pa-0">
-            <v-list-item-title>Core Version</v-list-item-title>
-            <v-list-item-subtitle>
-              {{ agent.core_version || 'Unknown' }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
-          v-if="!showAll"
-          :style="{ 'min-height': '45px' }"
-          two-line
-          class="pa-0"
-        >
-          <v-list-item-content class="py-0 pt-1">
-            <v-list-item-title
-              ><v-icon
-                small
-                class="mr-1"
-                :color="
-                  hasLateRuns
-                    ? 'grey'
-                    : failedRuns
-                    ? 'error'
-                    : recentRuns && recentRuns.length
-                    ? 'success'
-                    : 'grey'
-                "
-                >adjust</v-icon
-              >Recent Runs</v-list-item-title
-            >
-            <v-list-item-subtitle>
-              <LastTenRuns
-                :runs="recentRuns"
-                :agent-id="agent.id"
-                :disable-view="hasLateRuns"
-              />
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
         <v-list-item
           v-if="showAll"
           :style="{ 'min-height': '45px' }"

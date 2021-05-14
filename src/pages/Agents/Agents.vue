@@ -553,7 +553,7 @@ export default {
           <v-col
             v-for="agent in filteredAgents"
             :key="agent.id"
-            cols="6"
+            cols="12"
             sm="4"
             lg="3"
           >
