@@ -22,12 +22,12 @@ export default {
     LastTenRuns,
     Label
   },
-  filters: {
-    formatDateTime(value) {
-      if (!value) return 'None'
-      return moment(value).format('h:mma z')
-    }
-  },
+  // filters: {
+  //   formatDateTime(value) {
+  //     if (!value) return 'None'
+  //     return moment(value).format('h:mma z')
+  //   }
+  // },
   mixins: [formatTime],
   props: {
     agent: {
@@ -358,10 +358,18 @@ export default {
         runs
       </div>
       <div class="my-2">
-        <v-icon small class="mr-1" :color="queryColor">adjust</v-icon>
-        <span v-if="agent.last_queried">Last queried {{ timer }}</span>
+        <v-icon v-if="!showAll" small class="mr-1" :color="queryColor"
+          >adjust</v-icon
+        >
+        <v-tooltip v-if="agent.last_queried" top>
+          <template #activator="{ on }">
+            <span v-on="on"> Last queried {{ timer }}</span>
+          </template>
+          <span>{{ formatDateTime(agent.last_queried) }}</span>
+        </v-tooltip>
         <span v-else> No recent queries</span>
       </div>
+
       <div v-if="showAll" class="my-2">
         Core Version:
         {{ agent.core_version || 'Unknown' }}
@@ -387,99 +395,83 @@ export default {
           :disable-view="hasLateRuns"
         />
       </div>
+      <div
+        v-if="showAll"
+        :style="{ 'min-height': '45px' }"
+        two-line
+        class="pa-0"
+      >
+        Created at
+
+        {{ formatDateTime(agent.created) || 'Unknown' }}
+      </div>
+
+      <div
+        v-if="showAll"
+        :style="{ 'min-height': '45px' }"
+        two-line
+        class="pa-0"
+      >
+        Token {{ agent.token_name ? 'Name' : 'ID' }}:
+        <v-tooltip top>
+          <template #activator="{ on }">
+            <span
+              class="text-truncate"
+              :class="{
+                pointer: agent.token_name,
+                'bg-gray-transition': copiedText[agent.token_id],
+                'bg-white-transition': !copiedText[agent.token_id]
+              }"
+              v-on="on"
+              @click="copyTextToClipboard(agent.token_id)"
+            >
+              <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
+                {{ agent.token_name || agent.token_id }}
+              </span>
+            </span>
+          </template>
+
+          <span>
+            <v-icon
+              v-if="agent.token_name || agent.token_id"
+              x-small
+              class="mb-2px mr-2"
+              tabindex="0"
+              color="white"
+            >
+              {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
+            </v-icon>
+            {{
+              agent.token_name || agent.token_id
+                ? 'Click to copy token id'
+                : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
+            }}</span
+          >
+        </v-tooltip>
+      </div>
+
+      <div v-if="showAll" :style="{ 'min-height': '45px' }" class="pa-0">
+        Agent ID:
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <span
+              class="cursor-pointer show-icon-hover-focus-only pa-2px"
+              role="button"
+              @click="copyTextToClipboard(agent.id)"
+              v-on="on"
+            >
+              <v-icon x-small class="mb-2px mr-2" tabindex="0">
+                {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
+              </v-icon>
+              {{ agent.id || 'Unknown' }}
+            </span>
+          </template>
+          <span>
+            {{ agent.id || 'Unknown' }}
+          </span>
+        </v-tooltip>
+      </div>
       <v-list>
-        <v-list-item
-          v-if="showAll"
-          :style="{ 'min-height': '45px' }"
-          two-line
-          class="pa-0"
-        >
-          <v-list-item-content class="pa-0">
-            <v-list-item-title>Created</v-list-item-title>
-            <v-list-item-subtitle>
-              {{ agent.created || 'Unknown' }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
-          v-if="showAll"
-          :style="{ 'min-height': '45px' }"
-          two-line
-          class="pa-0"
-        >
-          <v-list-item-content class="pa-0">
-            <v-list-item-title>Token</v-list-item-title>
-            <v-list-item-subtitle>
-              <v-tooltip top>
-                <template #activator="{ on }">
-                  <div
-                    class="text-truncate"
-                    :class="{
-                      pointer: agent.token_name,
-                      'bg-gray-transition': copiedText[agent.token_id],
-                      'bg-white-transition': !copiedText[agent.token_id]
-                    }"
-                    v-on="on"
-                    @click="copyTextToClipboard(agent.token_id)"
-                  >
-                    <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
-                      {{ agent.token_name || agent.token_id }}
-                    </span>
-                  </div>
-                </template>
-
-                <span>
-                  <v-icon
-                    v-if="agent.token_name || agent.token_id"
-                    x-small
-                    class="mb-2px mr-2"
-                    tabindex="0"
-                    color="white"
-                  >
-                    {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
-                  </v-icon>
-                  {{
-                    agent.token_name || agent.token_id
-                      ? 'Click to copy token id'
-                      : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
-                  }}</span
-                >
-              </v-tooltip>
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
-          v-if="showAll"
-          :style="{ 'min-height': '45px' }"
-          class="pa-0"
-        >
-          <v-list-item-content min-height="45px" class="pa-0">
-            <v-list-item-title>Agent Id</v-list-item-title>
-            <v-list-item-subtitle>
-              <v-tooltip bottom>
-                <template #activator="{ on }">
-                  <span
-                    class="cursor-pointer show-icon-hover-focus-only pa-2px"
-                    role="button"
-                    @click="copyTextToClipboard(agent.id)"
-                    v-on="on"
-                  >
-                    <v-icon x-small class="mb-2px mr-2" tabindex="0">
-                      {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
-                    </v-icon>
-                    {{ agent.id || 'Unknown' }}
-                  </span>
-                </template>
-                <span>
-                  {{ agent.id || 'Unknown' }}
-                </span>
-              </v-tooltip>
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
         <v-list-item class="pa-0 mt-2">
           <v-list-item-content class="pa-0">
             <v-list-item-title>

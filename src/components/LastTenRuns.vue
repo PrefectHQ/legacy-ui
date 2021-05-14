@@ -78,7 +78,6 @@ export default {
           d.warningOpacity = 0
           return d
         })
-
       return prepped.slice(0, 10)
     }
   },
@@ -91,7 +90,22 @@ export default {
     _barMouseout() {
       this.tooltip = null
     },
-    _barMouseover(d) {
+    async _barMouseover(d) {
+      console.log('d', d)
+      if (this.runs) {
+        try {
+          const { data } = await this.$apollo.query({
+            query: require('@/graphql/Dashboard/timeline-flow.gql'),
+            variables: {
+              flowId: d.data?.flow_id
+            }
+          })
+          console.log('data', data)
+          d.data.flow = data.flow_by_pk
+        } catch (e) {
+          console.log(e)
+        }
+      }
       if (d.data.end_time) {
         d.data.display_end_time = this.formatTime(d.data.end_time)
       }
