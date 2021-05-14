@@ -151,7 +151,7 @@ export default {
     resetSelectedKV() {
       this.selectedKV = null
       this.keyInput = null
-      this.KvValueInput = null
+      this.KvValueInput = ''
       this.selectedTypeIndex = 0
       this.invalidKV = false
     },
@@ -194,11 +194,11 @@ export default {
       if (kvResult?.data?.set_key_value?.id) {
         this.$apollo.queries.kv.refetch()
         this.keyModifyDialog = false
+        this.resetSelectedKV()
         this.handleAlert(
           'success',
           `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
         )
-        this.resetSelectedKV()
       } else {
         this.handleAlert(
           'error',
@@ -259,8 +259,8 @@ export default {
       this.selectedKV = kv.item
       this.isKvUpdate = true
       this.previousKVName = kv.item.key
-      this.keyInput = kv.item.key
       this.KvValueInput = kv.item.value
+      this.keyInput = kv.item.key
     }
   },
   apollo: {
@@ -300,12 +300,22 @@ export default {
         <ExternalLink href="https://docs.prefect.io/">key/value</ExternalLink>
       </template>
 
+      <h1>prev: {{ previousKVName }}</h1>
+      <h1>key input: {{ keyInput }}</h1>
+      <h1>key value input: {{ KvValueInput }}</h1>
+
       <template #cta>
         <v-btn
           color="primary"
           class="white--text"
           large
-          @click="keyModifyDialog = true"
+          @click="
+            previousKVName = null
+            keyInput = null
+            KvValueInput = ''
+            isKvUpdate = false
+            keyModifyDialog = true
+          "
         >
           <v-icon left>
             add
