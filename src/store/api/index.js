@@ -14,7 +14,10 @@ const state = {
   apiMode: null,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
-  serverUrl: localStorage.getItem(SERVER_KEY),
+  serverUrl:
+    localStorage.getItem(SERVER_KEY) ||
+    window.prefect_ui_settings?.server_url ||
+    process.env.VUE_APP_SERVER_URL,
   version: null,
   core_version: null
 }
