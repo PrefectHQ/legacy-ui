@@ -3,7 +3,7 @@ import moment from '@/utils/moment'
 const state = {
   thresholds: {
     // Time before an agent becomes stale
-    stale: 5, // minutes since last query
+    stale: 3, // minutes since last query
     // Time before an agent becomes unhealthy
     unhealthy: 120 // minutes since last query,
   },
@@ -52,7 +52,6 @@ const mutations = {
             flowRun?.labels?.length &&
             flowRun.labels.every(label => agent?.labels?.includes(label))
         )
-        console.log('mathc', match, flowRuns)
         agent.submittableRuns = match
         return !!match?.length
       }

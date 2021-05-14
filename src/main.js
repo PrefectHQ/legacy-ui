@@ -52,6 +52,7 @@ export const start = async () => {
     // we swap out these tokens later
     loading = true
     const tokens = await login()
+    console.log('tokens in main', tokens)
     commitTokens(tokens)
     loading = false
   } else {

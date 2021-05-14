@@ -61,7 +61,7 @@ export default {
       showLastQuery: true,
       submittable: this.agent.submittableRuns,
       newStatus: '',
-      showIcon: false,
+      showIcon: true,
       failedRuns: []
     }
   },
@@ -70,7 +70,9 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     dayAgo() {
-      return this.subtractDay(Date.now())
+      const today = this.formatCalendarDate(new Date())
+      const day = this.subtractDay(today, 2)
+      return day
     },
     // agentModified() {
     //   return {
@@ -97,7 +99,7 @@ export default {
     },
     status() {
       if (this.agent.status === 'old') return 'old'
-      if (this.hasFailedRuns()?.length) return 'failed'
+      if (this.hasFailedRuns()) return 'failed'
       if (this.lateRuns?.length) return 'late'
       return this.agent.status
     },
@@ -132,7 +134,6 @@ export default {
       return this.agent?.type ? this.agent.type : 'Agent type unknown'
     },
     submittableRuns() {
-      // console.log(this.agent, this.submittable)
       if (!this.agent?.submittableRuns) return null
       const filtered = this.agent?.submittableRuns?.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) <= 20000
@@ -260,20 +261,11 @@ export default {
     //   if (!matching?.length) this.submittable.push(flowRun)
     // },
     hasFailedRuns() {
-      if (
-        this.agent.type === 'KubernetesAgent' &&
-        this.agent.status === 'healthy'
+      const badRuns = this.recentRuns?.filter(run =>
+        ['Failed', 'TriggerFailed'].includes(run.state)
       )
-        console.log(this.agent, this.recentRuns)
-      // console.log('load', this.loadingKey)
-      const badRuns = this.recentRuns
-        ?.filter(run => run.agent_id === this.agent?.id)
-        .slice(0, 10)
-        .filter(run => ['Failed', 'TriggerFailed'].includes(run.state))
-
       this.failedRuns = badRuns
-
-      return badRuns
+      return !!badRuns?.length
     }
   },
   apollo: {
@@ -297,7 +289,6 @@ export default {
       //   return this.agent.status === 'old'
       // },
       update: data => {
-        // console.log('last runs', data)
         return data.flow_run
       }
     }
@@ -319,13 +310,6 @@ export default {
       <v-list-item dense class="px-0">
         <v-list-item-avatar class="mr-2" tile>
           <v-icon v-if="showIcon" :color="statusColor" class="fa-2x pi-2x">
-            {{ agentIcon(agent.type) || 'fas fa-robot' }}
-          </v-icon>
-          <v-icon
-            v-if="status === 'old' || status === 'healthy'"
-            :color="statusColor"
-            class="fa-2x pi-2x"
-          >
             {{ agentIcon(agent.type) || 'fas fa-robot' }}
           </v-icon>
         </v-list-item-avatar>
@@ -439,9 +423,11 @@ export default {
                 :color="
                   lateRuns && lateRuns.length
                     ? 'grey'
-                    : hasFailedRuns() && hasFailedRuns().length
+                    : hasFailedRuns()
                     ? 'error'
-                    : 'success'
+                    : recentRuns && recentRuns.length
+                    ? 'success'
+                    : 'grey'
                 "
                 >adjust</v-icon
               >Recent Runs</v-list-item-title
@@ -450,7 +436,7 @@ export default {
               <LastTenRuns
                 :runs="recentRuns"
                 :agent-id="agent.id"
-                :fake-load="!!lateRuns && !!lateRuns.length"
+                :disable-view="!!lateRuns && !!lateRuns.length"
               />
             </v-list-item-subtitle>
           </v-list-item-content>

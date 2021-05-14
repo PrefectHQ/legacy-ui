@@ -13,6 +13,7 @@ const prefectAuth = async idToken => {
     if (result?.data?.log_in) {
       return result.data.log_in
     } else if (result?.errors) {
+      console.error('error in auth', result)
       if (
         result.errors[0].message ===
         "We get it, you're reeaally interested. Unfortunately, the timing isn't quite Prefect yet."
@@ -23,6 +24,7 @@ const prefectAuth = async idToken => {
       }
     }
   } catch (error) {
+    console.error('error in auth', error)
     throw new Error('Error authorizing prefectAuth', error)
   }
 }
@@ -39,11 +41,13 @@ const prefectRefresh = async accessToken => {
     if (result?.data?.refresh_token) {
       return result.data.refresh_token
     } else if (result.error) {
+      console.log('refresh error', result)
       throw new Error(result.error)
     } else {
       throw new Error('No token returned')
     }
   } catch (error) {
+    console.log('refresh error', error)
     throw new Error('Error refreshing token in prefectRefresh', error)
   }
 }
@@ -56,6 +60,7 @@ const prefectUser = async () => {
     })
     return user.data.user[0]
   } catch (error) {
+    console.error(`error in user ${error}`)
     throw new Error('Error retrieving user in prefectUser', error)
   }
 }

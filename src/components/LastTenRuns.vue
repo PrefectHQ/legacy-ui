@@ -26,10 +26,15 @@ export default {
       type: String,
       default: null
     },
-    fakeLoad: {
+    disableView: {
       required: false,
       type: Boolean,
       default: false
+    },
+    runs: {
+      required: false,
+      type: Array,
+      default: null
     }
   },
   data() {
@@ -43,11 +48,11 @@ export default {
       return this.archived ? 0 : 60000
     },
     preppedFlowRuns() {
-      if (!this.flowRuns) return []
+      if (!this.flowRuns && !this.runs) return []
 
       const computedStyle = getComputedStyle(document.documentElement)
-
-      const prepped = this.flowRuns
+      const runs = this.runs || this.flowRuns
+      const prepped = runs
         .filter(
           run => run.flow_id == this.flowId || run.agent_id === this.agentId
         )
@@ -65,8 +70,10 @@ export default {
           }
 
           d.color = computedStyle.getPropertyValue(`--v-${d.state}-base`)
-          if (this.fakeLoad)
-            d.color = computedStyle.getPropertyValue('secondaryGray')
+          // if (this.disableView)
+          //   d.color = computedStyle.getPropertyValue(
+          //     '--v-${d.state}-lighten--2'
+          //   )
           d.opacity = 1
           d.warningOpacity = 0
           return d
@@ -98,7 +105,7 @@ export default {
           d.data.scheduled_start_time
         )
       }
-
+      d.limited_view = !!this.runs
       d.status_style = this.statusStyle(d.data.state)
 
       this.tooltip = d
@@ -145,6 +152,9 @@ export default {
           flowId: this.flowId || null,
           agentId: this.agentId || null
         }
+      },
+      skip() {
+        return !!this.recentRuns
       },
       loadingKey: 'loadingKey',
       update: data => {
