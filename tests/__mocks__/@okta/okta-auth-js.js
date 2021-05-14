@@ -21,6 +21,26 @@ export const idToken = {
   value: raw_jwt
 }
 
+export const expiredIdToken = {
+  authorizeUrl: 'https://some.authorization.url/oauth2/authorize',
+  claims: {
+    sub: 'abc123',
+    name: 'Marvin',
+    email: 'marvin@theship.com',
+    ver: 1,
+    iss: 'https://some.issuer.url/oauth2',
+    exp: 1305389672,
+    iat: 1305389671,
+    nonce: 'abc123'
+  },
+  clientId: '789xyz',
+  expiresAt: 1305389672,
+  idToken: raw_jwt,
+  issuer: 'https://some.issuer.url/oauth2',
+  scopes: ['openid', 'profile', 'email'],
+  value: raw_jwt
+}
+
 export const accessToken = {
   authorizeUrl:
     'https://universal.prefect.io/oauth2/aus9ej78aeaYy8Lcf1d6/v1/authorize',
@@ -58,6 +78,10 @@ export const setTokens = jest.fn()
 export const signOut = jest.fn()
 export const on = jest.fn()
 export const isPKCESupported = jest.fn().mockReturnValue(true)
+export const hasExpired = jest.fn(
+  token => token.expiresAt * 1000 < new Date().getTime()
+)
+export const renew = jest.fn().mockReturnValue(idToken)
 
 export class OktaAuth {
   static features = {
@@ -73,8 +97,10 @@ export class OktaAuth {
     }
 
     this.tokenManager = {
+      hasExpired: hasExpired,
       getTokens: getTokens,
       get: getTokenByKey,
+      renew: renew,
       setTokens: setTokens,
       on: on
     }

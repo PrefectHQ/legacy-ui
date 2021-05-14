@@ -5,7 +5,9 @@ import {
   getTokens,
   getWithRedirect,
   setTokens,
-  MOCK_TOKEN_PAYLOAD
+  MOCK_TOKEN_PAYLOAD,
+  expiredIdToken,
+  renew
 } from '@okta/okta-auth-js'
 
 describe('the authentication module', () => {
@@ -27,6 +29,7 @@ describe('the authentication module', () => {
       parseFromUrl.mockClear()
       setTokens.mockClear()
       getTokens.mockClear()
+      renew.mockClear()
       getWithRedirect.mockClear()
       sessionStorage.setItem.mockClear()
       sessionStorage.getItem.mockClear()
@@ -143,6 +146,27 @@ describe('the authentication module', () => {
 
       it('gets tokens with redirect if none are returned from the token manager', async () => {
         getTokens.mockReturnValueOnce(null)
+
+        await mod.authenticate()
+
+        expect(getWithRedirect).toHaveBeenCalledTimes(1)
+      })
+
+      it('attempts to renew expired id tokens', async () => {
+        const tokens = { accessToken: 'bar', idToken: expiredIdToken }
+        getTokens.mockReturnValueOnce(tokens)
+
+        await mod.authenticate()
+
+        expect(renew).toHaveBeenCalledTimes(1)
+      })
+
+      it('calls get with redirect if token renewal throws an error', async () => {
+        const tokens = { accessToken: 'bar', idToken: expiredIdToken }
+        getTokens.mockReturnValueOnce(tokens)
+        renew.mockImplementation(() => {
+          throw new Error('I fail on purpose')
+        })
 
         await mod.authenticate()
 

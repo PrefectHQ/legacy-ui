@@ -7,22 +7,28 @@ export const setStartupTenant = async () => {
   const path = window.location.pathname
   const split = path.split('/')
   const slug = split?.[1]
-  const tokenTenantId = jwt_decode(store.getters['auth/authorizationToken'])
-    .tenant_id
   const tenants = store.getters['tenant/tenants']
-  const tokenTenant = tenants.find(t => t.id == tokenTenantId)
   const slugTenant = tenants.find(t => t.slug == slug)
 
-  // If there's no slug in the URL or the token
-  // tenant matches the intended tenant, we can set the current tenant
-  // to the token tenant
   let tenant
-  if (!slug || tokenTenant.slug == slug || !slugTenant) {
-    tenant = tokenTenant
+
+  if (process.env.VUE_APP_BACKEND === 'SERVER') {
+    if (slugTenant) tenant = slugTenant
+    else tenant = tenants[0]
   } else {
-    tenant = slugTenant
-    const tokens = await switchTenant(tenant.id)
-    commitTokens(tokens)
+    const tokenTenantId = jwt_decode(store.getters['auth/authorizationToken'])
+      .tenant_id
+    const tokenTenant = tenants.find(t => t.id == tokenTenantId)
+    // If there's no slug in the URL or the token
+    // tenant matches the intended tenant, we can set the current tenant
+    // to the token tenant
+    if (!slug || tokenTenant.slug == slug || !slugTenant) {
+      tenant = tokenTenant
+    } else {
+      tenant = slugTenant
+      const tokens = await switchTenant(tenant.id)
+      commitTokens(tokens)
+    }
   }
 
   tenant.role =
@@ -34,7 +40,9 @@ export const setStartupTenant = async () => {
 
   store.commit('tenant/setTenant', tenant)
 
-  await store.dispatch('license/getLicense')
+  if (process.env.VUE_APP_BACKEND === 'CLOUD') {
+    await store.dispatch('license/getLicense')
+  }
 }
 
 let loading = false
@@ -61,13 +69,18 @@ export const start = async () => {
       .then(data => data)
   }
 
-  // This is a good place to implement browser-side InnoDB or other caching
-  await Promise.all([
-    store.dispatch('user/getUser'),
-    store.dispatch('tenant/getTenants')
-  ])
+  try {
+    // This is a good place to implement browser-side InnoDB or other caching
+    await Promise.all([
+      store.dispatch('user/getUser'),
+      store.dispatch('tenant/getTenants')
+    ])
 
-  await setStartupTenant()
+    await setStartupTenant()
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log(e)
+  }
 
   const start1 = performance.now()
 

@@ -60,11 +60,22 @@ export const authenticate = async () => {
   }
 
   const tokens = await authClient.tokenManager.getTokens()
+
   if (tokens?.idToken) {
+    if (authClient.tokenManager.hasExpired(tokens.idToken)) {
+      try {
+        const idToken = await authClient.tokenManager.renew('idToken')
+        tokens.idToken = idToken
+      } catch {
+        await authClient.token.getWithRedirect({
+          responseType: ['token', 'id_token']
+        })
+      }
+    }
+
     authClient.tokenManager.setTokens(tokens)
     return tokens
   }
-
   await authClient.token.getWithRedirect({
     responseType: ['token', 'id_token']
   })
