@@ -3,7 +3,7 @@ import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Alert from '@/components/Alert'
-import ExternalLink from '@/components/ExternalLink'
+// import ExternalLink from '@/components/ExternalLink'
 
 import MenuTooltip from '@/components/MenuTooltip'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -15,8 +15,7 @@ export default {
     Alert,
     ManagementLayout,
     ConfirmDialog,
-    MenuTooltip,
-    ExternalLink
+    MenuTooltip
   },
   mixins: [formatTime],
   data() {
@@ -125,7 +124,10 @@ export default {
       }
     },
     jsonEditorType(item) {
-      if (this.isJSON(item.value)) {
+      let value =
+        typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
+
+      if (this.isJSON(value)) {
         return 2
       } else {
         return 1
@@ -170,7 +172,7 @@ export default {
       let value = this.KvValueInput
       if (this.selectedTypeIndex === 0) {
         try {
-          value = JSON.stringify(JSON.parse(this.KvValueInput))
+          value = JSON.parse(this.KvValueInput)
         } catch {
           try {
             value = String.raw`${this.KvValueInput}`
@@ -259,7 +261,13 @@ export default {
       this.selectedKV = kv.item
       this.isKvUpdate = true
       this.previousKVName = kv.item.key
-      this.KvValueInput = kv.item.value
+
+      let value =
+        typeof kv.item.value == 'object'
+          ? JSON.stringify(kv.item.value)
+          : kv.item.value
+
+      this.KvValueInput = value
       this.keyInput = kv.item.key
     }
   },
@@ -296,13 +304,14 @@ export default {
       <template #title>KV Store</template>
 
       <template #subtitle>
-        Manage your
-        <ExternalLink href="https://docs.prefect.io/">key/value</ExternalLink>
-      </template>
+        <!-- Manage your
+        <ExternalLink href="https://docs.prefect.io/">key/value</ExternalLink> -->
 
-      <h1>prev: {{ previousKVName }}</h1>
-      <h1>key input: {{ keyInput }}</h1>
-      <h1>key value input: {{ KvValueInput }}</h1>
+        Prefect KV Store is your own metadata database, hosted by Prefect. KV
+        Store enables you to store pieces of tenant-wide metadata, like the last
+        record processed by a flow. Metadata item count and size are tiered
+        based on Cloud license.
+      </template>
 
       <template #cta>
         <v-btn
@@ -381,7 +390,7 @@ export default {
                     ? kvTypes[selectedTypeIndex].value
                     : kvTypes[jsonEditorType(item)].value
                 "
-                :placeholder-text="item.value"
+                :placeholder-text="JSON.stringify(item.value)"
                 @invalid-secret="setInvalidKV"
               >
                 <v-menu top offset-y>
@@ -450,8 +459,10 @@ export default {
               >
                 {{ item.value }}
               </div>
-
-              <MenuTooltip v-if="item.value.length > 150" maxWidth="50%">
+              <MenuTooltip
+                v-if="JSON.stringify(item.value).length > 150"
+                maxWidth="50%"
+              >
                 {{ item.value }}
               </MenuTooltip>
             </div>
