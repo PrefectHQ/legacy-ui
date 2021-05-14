@@ -91,7 +91,6 @@ export default {
       this.tooltip = null
     },
     async _barMouseover(d) {
-      console.log('d', d)
       if (this.runs) {
         try {
           const { data } = await this.$apollo.query({
@@ -100,10 +99,10 @@ export default {
               flowId: d.data?.flow_id
             }
           })
-          console.log('data', data)
+
           d.data.flow = data.flow_by_pk
         } catch (e) {
-          console.log(e)
+          throw new Error(e)
         }
       }
       if (d.data.end_time) {

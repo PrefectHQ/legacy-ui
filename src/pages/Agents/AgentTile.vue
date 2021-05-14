@@ -182,6 +182,12 @@ export default {
       this.$nextTick(() => {
         this.showIcon = true
       })
+    },
+    agent() {
+      console.log('agent', this.agent)
+      if (this.hasLateRuns) {
+        this.agent.status === 'late'
+      }
     }
     // submittable(val) {
     //   if (!val) return
@@ -395,52 +401,27 @@ export default {
           :disable-view="hasLateRuns"
         />
       </div>
-      <div
-        v-if="showAll"
-        :style="{ 'min-height': '45px' }"
-        two-line
-        class="pa-0"
-      >
-        Created at
-
-        {{ formatDateTime(agent.created) || 'Unknown' }}
+      <div v-if="showAll" class="my-2">
+        Created at {{ formatDateTime(agent.created) || 'Unknown' }}
       </div>
 
-      <div
-        v-if="showAll"
-        :style="{ 'min-height': '45px' }"
-        two-line
-        class="pa-0"
-      >
+      <div v-if="showAll" class="my-2">
         Token {{ agent.token_name ? 'Name' : 'ID' }}:
-        <v-tooltip top>
+        <v-tooltip bottom>
           <template #activator="{ on }">
             <span
-              class="text-truncate"
-              :class="{
-                pointer: agent.token_name,
-                'bg-gray-transition': copiedText[agent.token_id],
-                'bg-white-transition': !copiedText[agent.token_id]
-              }"
+              class="cursor"
               v-on="on"
               @click="copyTextToClipboard(agent.token_id)"
             >
-              <span v-if="$vuetify.breakpoint.smAndUp" v-on="on">
-                {{ agent.token_name || agent.token_id }}
-              </span>
+              <v-icon x-small class="mb-2px">
+                {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
+              </v-icon>
+              {{ agent.token_name || agent.token_id }}
             </span>
           </template>
 
           <span>
-            <v-icon
-              v-if="agent.token_name || agent.token_id"
-              x-small
-              class="mb-2px mr-2"
-              tabindex="0"
-              color="white"
-            >
-              {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
-            </v-icon>
             {{
               agent.token_name || agent.token_id
                 ? 'Click to copy token id'
@@ -450,24 +431,23 @@ export default {
         </v-tooltip>
       </div>
 
-      <div v-if="showAll" :style="{ 'min-height': '45px' }" class="pa-0">
+      <div v-if="showAll" class="my-2">
         Agent ID:
         <v-tooltip bottom>
           <template #activator="{ on }">
             <span
-              class="cursor-pointer show-icon-hover-focus-only pa-2px"
-              role="button"
+              class="cursor"
               @click="copyTextToClipboard(agent.id)"
               v-on="on"
             >
-              <v-icon x-small class="mb-2px mr-2" tabindex="0">
+              <v-icon x-small class="mb-2px">
                 {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
               </v-icon>
               {{ agent.id || 'Unknown' }}
             </span>
           </template>
           <span>
-            {{ agent.id || 'Unknown' }}
+            Click to copy agent id
           </span>
         </v-tooltip>
       </div>

@@ -36,7 +36,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     lateRuns() {
-      if (!this.submittable.length) return null
+      if (!this.submittable?.length) return null
       return this.submittable?.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) > 20000
       })
