@@ -1,4 +1,6 @@
 <script>
+/* eslint-disable no-debugger, no-console */
+
 export default {
   props: {
     task: {
@@ -11,6 +13,8 @@ export default {
     return {
       menu: false,
       interval: 'second',
+      maxRetries: this.task.max_retries,
+      retryDelay: this.task.retry_delay,
       intervalOptions: [
         {
           value: 'second',
@@ -36,34 +40,47 @@ export default {
 <template>
   <v-list-item dense class="px-0">
     <v-list-item-content style="overflow-x: auto;">
-      <v-list-item-subtitle class="text-caption">
+      <v-list-item-title>
+        Max Retries:
+        <v-text-field
+          v-model="maxRetries"
+          style="width: 50px;"
+          type="number"
+          dense
+          class="mt-5 mb-5"
+          hide-details
+          min="0"
+          max="2147483647"
+        ></v-text-field>
+      </v-list-item-title>
+
+      <!-- <v-select
+              v-model="interval"
+              :items="intervalOptions"
+              class="text-h5 mr-2"
+              outlined
+              dense
+              hide-details
+              style="max-width: 150px;"
+              item-text="value"
+              item-value="value"
+            /> -->
+
+      <v-text-field
+        v-model="retryDelay"
+        type="number"
+        label="Retry Delay"
+        class="text-h5"
+        outlined
+        dense
+        hide-details
+      />
+      <!-- <v-list-item-subtitle class="text-caption">
         Retries
+      </v-list-item-subtitle> -->
 
-        <v-menu :close-on-content-click="false" offset-y open-on-hover>
-          <template #activator="{ on }">
-            <v-btn text icon x-small class="mr-2" v-on="on">
-              <v-icon>
-                info
-              </v-icon>
-            </v-btn>
-          </template>
-          <v-card tile class="pa-0" max-width="320">
-            <v-card-title class="subtitle pb-1">Retries</v-card-title>
-
-            <v-card-text class="pt-0">
-              Information regarding retries
-
-              <a
-                href="https://docs.prefect.io/orchestration/execution/overview.html#labels"
-                target="_blank"
-                >the docs on retries</a
-              >.
-            </v-card-text>
-          </v-card>
-        </v-menu>
-
-        <v-list class="pa-0 border-left border-radius-0">
-          <v-list-item class="px-3">
+      <!-- <v-list class="pa-0 border-left border-radius-0">
+        <v-list-item class="px-3">
             <v-list-item-content>
               <v-list-item-subtitle>
                 Max Retries: {{ task.max_retries }}
@@ -74,8 +91,11 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-        </v-list>
-      </v-list-item-subtitle>
+
+        <v-list-item>
+          
+        </v-list-item>
+      </v-list> -->
     </v-list-item-content>
 
     <v-list-item-action class="ma-0 mb-11">
