@@ -127,7 +127,7 @@ const actions = {
     return getters['tenants']
   },
   async setCurrentTenant({ commit, dispatch, getters, rootGetters }, slug) {
-    slug = slug || getters['defaultTenant']?.slug
+    slug = slug || getters['defaultTenant']?.slug || getters['tenants'][0]?.slug
 
     if (!slug) {
       throw new Error(
