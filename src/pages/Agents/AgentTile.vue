@@ -53,16 +53,15 @@ export default {
   data() {
     return {
       copiedText: {},
-      currentDateTime: moment().format(),
+      // currentDateTime: moment().format(),
       labelMenuOpen: false,
-      interval: null,
+      // interval: null,
       isDeleting: false,
       showConfirmDialog: false,
-      showLastQuery: true,
+      // showLastQuery: true,
       submittable: this.agent.submittableRuns,
-      newStatus: '',
-      showIcon: true,
-      failedRuns: []
+      // newStatus: '',
+      showIcon: true
     }
   },
   computed: {
@@ -99,7 +98,7 @@ export default {
     },
     status() {
       if (this.agent.status === 'old') return 'old'
-      if (this.hasFailedRuns()) return 'failed'
+      if (this.failedRuns) return 'failed'
       if (this.lateRuns?.length) return 'late'
       return this.agent.status
     },
@@ -145,6 +144,12 @@ export default {
       return this.agent?.submittableRuns?.filter(run => {
         return this.getTimeOverdue(run.scheduled_start_time) > 20000
       })
+    },
+    failedRuns() {
+      const badRuns = this.recentRuns?.filter(run =>
+        ['Failed', 'TriggerFailed'].includes(run.state)
+      )
+      return !!badRuns?.length
     }
     // labelsAlign() {
     //   if (
@@ -178,35 +183,35 @@ export default {
     submittable(val) {
       if (!val) return
       if (this.lateRuns?.length > 0) {
-        this.newStatus = 'late'
         this.tab = 'late'
       }
       if (this.lateRuns?.length <= 0) {
         this.tab = 'submittable'
       }
-    },
-    // flowRuns() {
-    //   this.submittable = []
-    //   this.labelsAlign
-    // },
-    secondsSinceLastQuery(newVal, oldVal) {
-      if (newVal > oldVal || !this.agent?.last_queried) return
-
-      this.showLastQuery = false
-
-      setTimeout(() => {
-        this.showLastQuery = true
-      }, 150) // should match fade transition duration
     }
   },
-  mounted() {
-    this.interval = setInterval(() => {
-      this.currentDateTime = moment().format()
-    }, 1000)
-  },
-  beforeDestroy() {
-    clearInterval(this.interval)
-  },
+  // flowRuns() {
+  //   this.submittable = []
+  //   this.labelsAlign
+  // },
+  //   secondsSinceLastQuery(newVal, oldVal) {
+  //     if (newVal > oldVal || !this.agent?.last_queried) return
+
+  //     this.showLastQuery = false
+
+  //     setTimeout(() => {
+  //       this.showLastQuery = true
+  //     }, 150) // should match fade transition duration
+  //   }
+  // },
+  // mounted() {
+  //   this.interval = setInterval(() => {
+  //     this.currentDateTime = moment().format()
+  //   }, 1000)
+  // },
+  // beforeDestroy() {
+  //   clearInterval(this.interval)
+  // },
   methods: {
     ...mapActions('alert', ['setAlert']),
     getTimeOverdue(time) {
@@ -255,18 +260,11 @@ export default {
     },
     labelSelected(label) {
       return this.selectedLabels.includes(label)
-    },
+    }
     // addMatchingflowRun(flowRun) {
     //   const matching = this.submittable?.filter(item => item.id === flowRun.id)
     //   if (!matching?.length) this.submittable.push(flowRun)
     // },
-    hasFailedRuns() {
-      const badRuns = this.recentRuns?.filter(run =>
-        ['Failed', 'TriggerFailed'].includes(run.state)
-      )
-      this.failedRuns = badRuns
-      return !!badRuns?.length
-    }
   },
   apollo: {
     // flowRuns: {
@@ -423,7 +421,7 @@ export default {
                 :color="
                   lateRuns && lateRuns.length
                     ? 'grey'
-                    : hasFailedRuns()
+                    : failedRuns
                     ? 'error'
                     : recentRuns && recentRuns.length
                     ? 'success'
