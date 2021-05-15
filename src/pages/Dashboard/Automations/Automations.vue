@@ -108,6 +108,7 @@ export default {
         <AddAutoCard
           v-if="canEdit && !closeCard"
           @refresh="handleRefresh"
+          @refetch="handleRefetch"
           @saving="loadCards = true"
           @done="handleDone"
         />

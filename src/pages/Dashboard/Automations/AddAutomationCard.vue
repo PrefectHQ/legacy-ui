@@ -691,7 +691,7 @@ export default {
         this.saving = false
       } finally {
         this.hookDetails = null
-        this.$emit('refetch-hooks')
+        this.$emit('refetch')
         if (data) {
           const agentConfigString = `Your agent config ID is ${this.agentConfigId}.  You can find this in the info button on your automation`
           this.setAlert({
