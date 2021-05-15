@@ -103,11 +103,15 @@ export default {
   },
   methods: {
     handleReset(item) {
-      this.KvValueInput = item.value
+      let value =
+        typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
+      this.KvValueInput = value
     },
     async copyValue(item) {
+      let value =
+        typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
       try {
-        await navigator.clipboard.writeText(item.value)
+        await navigator.clipboard.writeText(value)
         this.handleAlert('success', 'Value copied to clipboard')
       } catch (err) {
         this.handleAlert(
@@ -134,11 +138,13 @@ export default {
       }
     },
     openKVModifyDialog(item) {
+      let value =
+        typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
       this.selectedKV = item
       this.isKvUpdate = true
       this.previousKVName = item.key
       this.keyInput = item.key
-      this.KvValueInput = item.value
+      this.KvValueInput = value
       this.keyModifyDialog = true
     },
     openKVDeleteDialog(item) {
@@ -156,6 +162,7 @@ export default {
       this.KvValueInput = ''
       this.selectedTypeIndex = 0
       this.invalidKV = false
+      this.expanded = []
     },
     async setKV() {
       this.isSettingKV = true
@@ -202,6 +209,7 @@ export default {
           `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
         )
       } else {
+        this.expanded = []
         this.handleAlert(
           'error',
           `Something went wrong when ${
@@ -354,7 +362,7 @@ export default {
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :search="search"
           :loading="$apollo.queries.kv.loading"
-          :expanded="expanded"
+          :expanded.sync="expanded"
           show-expand
           @item-expanded="handleKVExpand"
           :single-expand="true"
