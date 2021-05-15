@@ -130,6 +130,13 @@ export default {
     },
     disableNext() {
       if (this.step.name === 'openToConfig') {
+        if (
+          this.isPagerDuty &&
+          this.apiToken &&
+          this.routingKey &&
+          this.severity
+        )
+          return false
         if (!this.actionConfigArray.length) return true
         else return false
       } else {
