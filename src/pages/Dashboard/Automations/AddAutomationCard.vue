@@ -119,7 +119,7 @@ export default {
       return 'has'
     },
     editedActions() {
-      // Most actions are independent and can be used across flows but PauseScheduleAction requires an flow group id so need to filter here
+      // Most actions are independent and can be used across flows but PauseScheduleAction can take a flow group id so need to filter here
       const actions = this.actions.filter(
         action =>
           action.action_type !== 'PauseScheduleAction' ||
@@ -578,7 +578,6 @@ export default {
       let data
       try {
         const flow = this.selectedFlows[0]?.flow_group_id
-        const name = this.selectedFlows[0]?.name
         let action = this.chosenAction || this.hookDetails?.hook?.action
         if (action?.value === 'CANCEL_RUN') {
           const cancelConfig = { cancel_flow_run: {} }
@@ -588,10 +587,10 @@ export default {
           })
         }
         if (action?.value === 'PAUSE_SCHEDULE') {
-          const pauseConfig = { pause_schedule: { flow_group_id: flow } }
+          const pauseConfig = { pause_schedule: {} }
           action = await this.createAction({
             config: pauseConfig,
-            name: `pause ${name}'s schedule`
+            name: 'pause the schedule'
           })
         }
         if (flow) {
