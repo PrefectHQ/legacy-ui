@@ -327,7 +327,6 @@ export default {
           <v-menu
             v-if="isAgent"
             v-model="menu"
-            eager
             :close-on-content-click="false"
             :open-on-hover="true"
           >
