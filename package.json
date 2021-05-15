@@ -91,7 +91,7 @@
     "node-sass": "^5.0.0",
     "postcss-scss": "^3.0.5",
     "sass": "^1.32.8",
-    "sass-loader": "^10.1.1",
+    "sass-loader": "^11.1.1",
     "sinon": "^9.2.4",
     "start-server-and-test": "^1.12.1",
     "style-loader": "^2.0.0",
