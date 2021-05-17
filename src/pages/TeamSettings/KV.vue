@@ -105,16 +105,19 @@ export default {
     }
   },
   methods: {
+    checkValue(value) {
+      return typeof value == 'object' ? JSON.stringify(value) : value
+    },
     handleReset(item) {
-      let value =
-        typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
-      this.KvValueInput = value
+      // let value =
+      //   typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
+      this.KvValueInput = this.checkValue(item.value)
     },
     async copyValue(item) {
-      let value =
-        typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
+      // let value =
+      //   typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
       try {
-        await navigator.clipboard.writeText(value)
+        await navigator.clipboard.writeText(this.checkValue(item.value))
         this.handleAlert('success', 'Value copied to clipboard')
       } catch (err) {
         this.handleAlert(
@@ -131,23 +134,23 @@ export default {
       }
     },
     jsonEditorType(item) {
-      let value =
-        typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
+      // let value =
+      //   typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
 
-      if (this.isJSON(value)) {
+      if (this.isJSON(this.checkValue(item.value))) {
         return 2
       } else {
         return 1
       }
     },
     openKVModifyDialog(item) {
-      let value =
-        typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
+      // let value =
+      //   typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
       this.selectedKV = item
       this.isKvUpdate = true
       this.previousKVName = item.key
       this.keyInput = item.key
-      this.KvValueInput = value
+      this.KvValueInput = this.checkValue(item.value)
       this.keyModifyDialog = true
     },
     openKVDeleteDialog(item) {
@@ -207,7 +210,15 @@ export default {
       if (this.isKvUpdate) this.isSettingKV = false
       console.log('kvResult', kvResult)
 
-      if (kvResult?.data?.set_key_value?.id) {
+      if (!kvResult) {
+        this.expanded = []
+        this.handleAlert(
+          'error',
+          `Something went wrong when ${
+            this.isKvUpdate ? 'updating' : 'creating'
+          } this kv. Please try again. If this error persists, please contact help@prefect.io.`
+        )
+      } else if (kvResult?.data?.set_key_value?.id) {
         this.$apollo.queries.kv.refetch()
         this.keyModifyDialog = false
         this.resetSelectedKV()
@@ -281,13 +292,12 @@ export default {
       this.selectedKV = kv.item
       this.isKvUpdate = true
       this.previousKVName = kv.item.key
+      // let value =
+      //   typeof kv.item.value == 'object'
+      //     ? JSON.stringify(kv.item.value)
+      //     : kv.item.value
 
-      let value =
-        typeof kv.item.value == 'object'
-          ? JSON.stringify(kv.item.value)
-          : kv.item.value
-
-      this.KvValueInput = value
+      this.KvValueInput = this.checkValue(kv.item.value)
       this.keyInput = kv.item.key
     }
   },
@@ -449,7 +459,11 @@ export default {
                       }"
                       color="accent"
                       :loading="isSettingKV"
-                      :disabled="!KvValueInput"
+                      :disabled="
+                        !KvValueInput ||
+                          KvValueInput == checkValue(item.value) ||
+                          invalidKV
+                      "
                       v-on="on"
                       @click="setKV"
                     >
