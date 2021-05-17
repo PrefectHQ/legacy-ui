@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix issues with pre-populating and resetting job templates and task definitions for run configs - [#839](https://github.com/PrefectHQ/ui/pull/839)
 
 ## 2021-05-14
 
