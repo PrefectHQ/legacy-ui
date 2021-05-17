@@ -24,7 +24,7 @@ export default {
         this is an error, contact us at help@prefect.io
       </div>
 
-      <v-btn color="white" class="primary--text" depressed href="/" exact>
+      <v-btn color="white" class="primary--text" depressed :to="'/'" exact>
         <v-icon>arrow_back_ios</v-icon>
         Back to the dashboard
       </v-btn>
