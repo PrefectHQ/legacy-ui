@@ -27,6 +27,7 @@
     "graphiql": "^1.4.0",
     "graphql": "^15.5.0",
     "js-beautify": "^1.13.5",
+    "json-to-pretty-yaml": "^1.2.2",
     "jwt-decode": "^3.1.2",
     "lodash.debounce": ">=4.0.8",
     "lodash.difference": ">=4.5.0",
@@ -61,7 +62,8 @@
     "vue-router-multiguard": ">=1.0.3",
     "vue-scrollto": "^2.20.0",
     "vuetify": "^2.4.8",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "yaml": "2.0.0-5"
   },
   "devDependencies": {
     "@babel/core": "^7.13.14",

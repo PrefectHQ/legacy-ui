@@ -118,6 +118,11 @@ export default {
       return runConfigs[this.runConfig.type]
     }
   },
+  watch: {
+    runConfig(val) {
+      console.log('runconfig watcher', val)
+    }
+  },
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll)
   },
@@ -127,6 +132,8 @@ export default {
       return acc
     }, {})
     this.runConfig = { ...this.flow.run_config }
+    console.log(this.runConfig)
+    this.showAdvanced = true
 
     // run config > flow group > flow group run config > flow run config > flow > flow environment ?
     if (this.flowGroup.labels?.length > 0) {

@@ -3,13 +3,15 @@ import JsonInput from '@/components/CustomInputs/JsonInput'
 import YamlInput from '@/components/CustomInputs/YamlInput'
 import jsBeautify from 'js-beautify'
 
+import YAML from 'json-to-pretty-yaml'
+
 export default {
   components: {
     JsonInput,
     YamlInput
   },
   props: {
-    input: {
+    value: {
       type: [Object, String],
       required: false,
       default: () => {
@@ -25,7 +27,7 @@ export default {
     }
   },
   computed: {
-    value() {
+    internalValue() {
       if (this.mode == 'yaml') return this.yamlInput
       if (this.mode == 'json') {
         try {
@@ -51,7 +53,29 @@ export default {
         this.$nextTick(() => {
           this.$refs['json-input'].validateJson()
         })
+      } else {
+        this.yamlInput = YAML.stringify(JSON.parse(this.jsonInput))
       }
+
+      this.$emit('input', this.internalValue)
+    }
+  },
+  mounted() {
+    if (typeof this.value == 'object') {
+      this.mode = 'json'
+
+      const val = JSON.stringify(this.value)
+
+      this.jsonInput = jsBeautify(val, {
+        indent_size: 4,
+        space_in_empty_paren: true,
+        preserve_newlines: false
+      })
+
+      this.yamlInput = YAML.stringify(this.value)
+    } else if (this.value) {
+      this.mode = 'yaml'
+      this.yamlInput = YAML.stringify(this.value)
     }
   },
   methods: {
@@ -67,7 +91,7 @@ export default {
       }
     },
     _handleKeypress() {
-      this.$emit('input', this.value)
+      this.$emit('input', this.internalValue)
     },
     _handleYamlInput() {},
     switchMode() {
