@@ -193,6 +193,9 @@ export default {
       }
       if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
 
+      console.log('key: ', this.keyInput)
+      console.log('value: ', value)
+
       const kvResult = await this.$apollo.mutate({
         mutation: require('@/graphql/KV/set-key-value.gql'),
         variables: {
@@ -202,6 +205,7 @@ export default {
       })
 
       if (this.isKvUpdate) this.isSettingKV = false
+      console.log('kvResult', kvResult)
 
       if (kvResult?.data?.set_key_value?.id) {
         this.$apollo.queries.kv.refetch()
@@ -228,12 +232,17 @@ export default {
     async deleteKV(kv, opts = {}) {
       this.isDeletingKV = true
 
+      console.log('kv', kv)
+      console.log('opts', opts)
+
       const deleteKVResult = await this.$apollo.mutate({
         mutation: require('@/graphql/KV/delete-key-value.gql'),
         variables: {
           id: kv.id
         }
       })
+
+      console.log('deleteKVResult', deleteKVResult)
 
       if (deleteKVResult?.data?.delete_key_value?.success) {
         if (!opts.isModifying) {
@@ -294,6 +303,7 @@ export default {
         this.isFetchingKV = false
       },
       update(data) {
+        console.log('data returned from query', data?.key_value)
         return data?.key_value
       },
       // skip() {
