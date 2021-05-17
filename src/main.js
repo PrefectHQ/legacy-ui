@@ -342,16 +342,18 @@ Vue.mixin({
 
 const setup = async () => {
   if (
-    (store.getters['api/isCloud'] && !store.getters['auth/isAuthenticated']) ||
-    !store.getters['auth/isAuthorized']
+    store.getters['api/isCloud'] &&
+    (!store.getters['auth/isAuthenticated'] ||
+      !store.getters['auth/isAuthorized'])
   ) {
     await store.dispatch('auth/authenticate')
     await store.dispatch('auth/authorize')
   }
 
   if (
-    !store.getters['auth/isAuthenticated'] ||
-    !store.getters['auth/isAuthorized']
+    store.getters['api/isCloud'] &&
+    (!store.getters['auth/isAuthenticated'] ||
+      !store.getters['auth/isAuthorized'])
   ) {
     throw new Error('Missing authorization')
   }
@@ -367,6 +369,7 @@ const setup = async () => {
   await store.dispatch('tenant/setCurrentTenant')
 }
 
+// eslint-disable-next-line no-unused-vars
 let PrefectUI
 let setupComplete = false
 
