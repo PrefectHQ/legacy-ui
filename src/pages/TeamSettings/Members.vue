@@ -18,6 +18,8 @@ export default {
   },
   data() {
     return {
+      users: 0,
+      invitations: 0,
       // Current tab
       tab: 'members',
 
@@ -145,13 +147,13 @@ export default {
     },
     handleUpdateInvitations(event) {
       if (event) {
-        this.invitations = event
+        this.invitations = event.length
       }
     },
     handleUpdateUsers(event) {
       this.isLoadingMembersTable = false
       if (event) {
-        this.users = event
+        this.users = event.length
       }
     },
     async inviteUser() {
@@ -392,7 +394,9 @@ export default {
       confirm-text="Send"
       :error="inviteError"
       :loading="isInvitingUser"
-      :disabled="!inviteFormValid || isInvitingUser"
+      :disabled="
+        totalUsers >= allowedUsers || !inviteFormValid || isInvitingUser
+      "
       :dialog-props="{
         'max-width': '600'
       }"
