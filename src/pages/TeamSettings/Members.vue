@@ -395,7 +395,7 @@ export default {
       :error="inviteError"
       :loading="isInvitingUser"
       :disabled="
-        totalUsers >= allowedUsers || !inviteFormValid || isInvitingUser
+        totalUsers >= totalAllowedUsers || !inviteFormValid || isInvitingUser
       "
       :dialog-props="{
         'max-width': '600'
