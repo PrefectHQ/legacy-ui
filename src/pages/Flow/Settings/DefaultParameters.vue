@@ -3,6 +3,7 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import CardTitle from '@/components/Card-Title'
 import ParametersForm from '@/components/ParametersForm'
 import JsonInput from '@/components/CustomInputs/JsonInput'
+import jsBeautify from 'js-beautify'
 
 export default {
   components: { JsonInput, CardTitle, ParametersForm },
@@ -47,6 +48,24 @@ export default {
         return a.name > b.name ? 1 : -1
       })
       return sorted
+    }
+  },
+  watch: {
+    editAll(val) {
+      // Allows swapping to jsonInput
+      if (val) {
+        this.parameterInput = jsBeautify(this.parameterInput, {
+          indent_size: 4,
+          space_in_empty_paren: true,
+          preserve_newlines: true,
+          indent_empty_lines: true
+        })
+
+        // Use next tick to make sure the json input element exists
+        this.$nextTick(() => {
+          this.$refs['parameterRef'].validateJson()
+        })
+      }
     }
   },
   methods: {
@@ -185,6 +204,7 @@ export default {
                     <JsonInput
                       ref="parameterRef"
                       v-model="parameterInput"
+                      selected-type="json"
                       :new-parameter-input="newParameterInput"
                       :disabled="selectedFlow.archived"
                       data-cy="flow-group-parameter-input"

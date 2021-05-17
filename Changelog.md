@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Beautify json and add json type to default parameters json edit option to stop value flicker - [#837](https://github.com/PrefectHQ/ui/pull/837)
 
 ## 2021-05-14
 
