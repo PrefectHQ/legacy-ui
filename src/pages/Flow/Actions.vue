@@ -118,10 +118,10 @@ export default {
           errorPolicy: 'all'
         })
         if (data?.create_flow_run?.id) {
-          this.$router.push({
-            name: 'flow-run',
-            params: { id: data?.create_flow_run?.id, tenant: this.tenant?.slug }
-          })
+          // this.$router.push({
+          //   name: 'flow-run',
+          //   params: { id: data?.create_flow_run?.id, tenant: this.tenant?.slug }
+          // })
         }
         if (errors) {
           this.quickRunErrorAlert(errors[0]?.message)
