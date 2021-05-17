@@ -3,7 +3,7 @@ import JsonInput from '@/components/CustomInputs/JsonInput'
 import YamlInput from '@/components/CustomInputs/YamlInput'
 import jsBeautify from 'js-beautify'
 
-import YAML from 'json-to-pretty-yaml'
+import { parse, stringify } from 'yaml'
 
 export default {
   components: {
@@ -33,7 +33,7 @@ export default {
         try {
           return JSON.parse(this.jsonInput)
         } catch {
-          this.jsonInput
+          return this.jsonInput
         }
       }
       return null
@@ -43,11 +43,14 @@ export default {
     // Allows swapping between json input and yaml inputs
     mode(val) {
       if (val == 'json') {
-        this.jsonInput = jsBeautify(this.jsonInput, {
-          indent_size: 4,
-          space_in_empty_paren: true,
-          preserve_newlines: false
-        })
+        this.jsonInput = jsBeautify(
+          JSON.stringify(parse(this.yamlInput) || {}),
+          {
+            indent_size: 4,
+            space_in_empty_paren: true,
+            preserve_newlines: false
+          }
+        )
 
         // Use next tick to make sure the json input element exists
         this.$nextTick(() => {
@@ -57,7 +60,7 @@ export default {
         if (this.jsonInput === '{}') {
           this.yamlInput = ''
         } else {
-          this.yamlInput = YAML.stringify(JSON.parse(this.jsonInput))
+          this.yamlInput = stringify(JSON.parse(this.jsonInput))
         }
       }
 
@@ -76,10 +79,10 @@ export default {
         preserve_newlines: false
       })
 
-      this.yamlInput = YAML.stringify(this.value)
+      this.yamlInput = stringify(this.value)
     } else if (this.value) {
       this.mode = 'yaml'
-      this.yamlInput = YAML.stringify(this.value)
+      this.yamlInput = stringify(this.value)
     }
   },
   methods: {
