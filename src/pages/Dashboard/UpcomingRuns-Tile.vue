@@ -276,16 +276,16 @@ export default {
       </div>
     </CardTitle>
 
-    <v-card-text v-if="overlay" class="pa-0">
-      <v-overlay v-if="overlay == 'late'" absolute z-index="1">
+    <v-card-text v-show="overlay" class="pa-0">
+      <v-overlay v-show="overlay == 'late'" absolute z-index="1">
         <ClearLate :flow-runs="lateRuns" @finish="refetch" />
       </v-overlay>
-      <v-overlay v-if="overlay == 'queue'" absolute z-index="1">
+      <v-overlay v-show="overlay == 'queue'" absolute z-index="1">
         <WorkQueue />
       </v-overlay>
     </v-card-text>
 
-    <v-card-text v-if="!overlay && tab == 'upcoming'" class="pa-0 card-content">
+    <v-card-text v-show="tab == 'upcoming'" class="pa-0 card-content">
       <v-skeleton-loader
         v-if="loading || !upcoming"
         type="list-item-three-line"
@@ -372,7 +372,7 @@ export default {
       </v-list>
     </v-card-text>
 
-    <v-card-text v-if="!overlay && tab == 'late'" class="pa-0 card-content">
+    <v-card-text v-show="tab == 'late'" class="pa-0 card-content">
       <v-skeleton-loader v-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
