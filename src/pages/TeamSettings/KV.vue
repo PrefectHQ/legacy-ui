@@ -93,12 +93,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'role']),
     disableConfirm() {
       if (!this.keyInput) return false
       if (!this.KvValueInput) return false
       if (this.invalidKV) return false
       return true
+    },
+    isReadOnlyUser() {
+      return this.role === 'READ_ONLY_USER'
     }
   },
   methods: {
@@ -279,6 +282,11 @@ export default {
       this.keyInput = kv.item.key
     }
   },
+  watch: {
+    tenant() {
+      this.$apollo.queries.kv.refetch()
+    }
+  },
   apollo: {
     kv: {
       query: require('@/graphql/KV/get-key-value.gql'),
@@ -291,9 +299,10 @@ export default {
       // skip() {
       //   return this.isReadOnlyUser
       // },
-      error(e) {
+      error() {
         this.isFetchingKV = false
-        if (e) {
+
+        if (!this.isReadOnlyUser) {
           this.handleAlert(
             'error',
             'Something went wrong while trying to fetch the kv. Please try again. If this error persists, please contact help@prefect.io.'
@@ -308,7 +317,7 @@ export default {
 
 <template>
   <div>
-    <ManagementLayout :show="true" control-show>
+    <ManagementLayout :show="!isFetchingKV" control-show>
       <template #title>KV Store</template>
 
       <template #subtitle>
@@ -321,7 +330,7 @@ export default {
         based on Cloud license.
       </template>
 
-      <template #cta>
+      <template v-if="!isReadOnlyUser" #cta>
         <v-btn
           color="primary"
           class="white--text"
@@ -340,6 +349,21 @@ export default {
           Add KV
         </v-btn>
       </template>
+
+      <template v-if="isReadOnlyUser" #alerts>
+        <v-alert
+          class="mx-auto"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="380"
+        >
+          Read-only users cannot manage kv.
+        </v-alert>
+      </template>
     </ManagementLayout>
     <v-card tile class="mx-auto">
       <v-card-title>
@@ -357,6 +381,7 @@ export default {
       <v-card-text class="pa-0">
         <!-- TABLE -->
         <v-data-table
+          v-if="!isReadOnlyUser"
           :headers="headers"
           :items="kv"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
@@ -414,9 +439,7 @@ export default {
                       }"
                       color="accent"
                       :loading="isSettingKV"
-                      :disabled="
-                        !KvValueInput || KvValueInput == item.value || invalidKV
-                      "
+                      :disabled="!KvValueInput"
                       v-on="on"
                       @click="setKV"
                     >
