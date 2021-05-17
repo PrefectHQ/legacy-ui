@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Covert this.allowedUsers in the Members component to a computed property to use the nullish coalescing operator/check for total allowed users -[#841](https://github.com/PrefectHQ/ui/pull/841)
 
 ## 2021-05-14
 
