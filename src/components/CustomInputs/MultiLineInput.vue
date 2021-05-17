@@ -54,14 +54,18 @@ export default {
           this.$refs['json-input'].validateJson()
         })
       } else {
-        this.yamlInput = YAML.stringify(JSON.parse(this.jsonInput))
+        if (this.jsonInput === '{}') {
+          this.yamlInput = ''
+        } else {
+          this.yamlInput = YAML.stringify(JSON.parse(this.jsonInput))
+        }
       }
 
       this.$emit('input', this.internalValue)
     }
   },
   mounted() {
-    if (typeof this.value == 'object') {
+    if (this.value && typeof this.value == 'object') {
       this.mode = 'json'
 
       const val = JSON.stringify(this.value)
