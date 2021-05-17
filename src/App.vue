@@ -134,6 +134,9 @@ export default {
         this.$route.name === 'name-team' ||
         this.$route.name === 'accept'
       )
+    },
+    paused() {
+      return this.tenant?.settings?.work_queue_paused
     }
   },
   watch: {
@@ -471,6 +474,7 @@ export default {
       :message="getAlert.alertMessage"
       :alert-link="getAlert.alertLink"
       :link-text="getAlert.linkText"
+      :nudge-bottom="paused"
       :timeout="12000"
     />
   </v-app>

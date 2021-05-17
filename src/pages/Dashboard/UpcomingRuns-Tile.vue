@@ -166,7 +166,7 @@ export default {
       loadingKey: 'loadingKey',
       pollInterval: 10000,
       fetchPolicy: 'no-cache',
-      update: data => data?.flow_run
+      update: data => data?.flow_run || []
     }
   }
 }
