@@ -53,8 +53,6 @@ const refreshAuthorizationToken = async () => {
     state.authorizationToken.refresh_token
   )
 
-  console.connect(authorizationResponse)
-
   setAuthorizationToken(authorizationResponse)
 }
 
@@ -63,8 +61,6 @@ const handleSwitchTenant = async tenantId => {
     state.authorizationToken.access_token,
     tenantId
   )
-
-  console.connect(authorizationResponse)
 
   setAuthorizationToken(authorizationResponse)
 
@@ -118,12 +114,10 @@ const handleAuthorize = async idToken => {
   authorizing = true
   if (!state.authorizationToken) {
     const authorizationResponse = await authorize(idToken)
-    console.connect(authorizationResponse)
 
     setAuthorizationToken(authorizationResponse)
   }
 
-  console.connect(state.authorizationToken)
   postToChannelPorts({ payload: state.authorizationToken })
   authorizing = false
 }
