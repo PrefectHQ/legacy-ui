@@ -342,6 +342,7 @@ export default {
           <v-skeleton-loader
             v-if="
               isCloud &&
+                license &&
                 license.terms.is_self_serve &&
                 !license.terms.is_usage_based
             "

@@ -70,7 +70,7 @@ const handleSwitchTenant = async tenantId => {
 
   postToConnections({
     type: 'switch-tenant',
-    payload: state.authorizationToken
+    payload: { token: state.authorizationToken, tenantId: tenantId }
   })
 }
 

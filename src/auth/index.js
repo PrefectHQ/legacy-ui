@@ -42,6 +42,19 @@ if (TokenWorker?.port) {
         authClient.signOut()
         unsetTokens()
         break
+      case 'switch-tenant':
+        if (
+          store.getters['tenant/tenant']?.id !== payload.tenantId &&
+          !store.getters['tenant/isLoadingTenant'] &&
+          !window.location.pathname?.includes('team-switched')
+        ) {
+          window.location.href = '/team-switched'
+        } else {
+          if (process.env.VUE_APP_BACKEND === 'CLOUD') {
+            store.dispatch('license/getLicense')
+          }
+        }
+        break
       default:
         break
     }
