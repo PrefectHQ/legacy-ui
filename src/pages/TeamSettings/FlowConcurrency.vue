@@ -113,7 +113,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['permissions']),
+    ...mapGetters('license', ['permissions', 'hasPermission']),
     // Determine if user has permission to add, edit, and delete concurrency limits
     hasManagementPermission() {
       return this.isTenantAdmin
@@ -127,7 +127,7 @@ export default {
       // If permissions are still loading...
       if (!this.permissions) return true
 
-      return this.permissions.includes('feature:concurrency-limit')
+      return this.hasPermission('feature', 'concurrency-limit')
     },
     // Merge usage details into labels array
     labelsWithUsage() {

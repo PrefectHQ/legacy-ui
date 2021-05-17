@@ -11,7 +11,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'planType']),
     projectedCost() {
       if (!this.invoice) return 0
       return this.invoice.total * 100
@@ -46,9 +46,6 @@ export default {
           this.freeUsage >= 80 && this.freeUsage < 100,
         'primary--text': true
       }
-    },
-    planType() {
-      return this.license?.terms?.plan
     }
   },
   apollo: {
@@ -111,7 +108,7 @@ export default {
         >
           <span>
             {{ !usage ? 0 : usage.toLocaleString()
-            }}<span v-if="planType === 'FREE_2021'" class="text-h5 ml-1"
+            }}<span v-if="planType('FREE')" class="text-h5 ml-1"
               >/10,000</span
             ></span
           >
@@ -136,7 +133,7 @@ export default {
           </span> </v-skeleton-loader
         ><span class="font-weight-medium" :class="freeUsageStyle">% </span>
         <span
-          v-if="planType === 'FREE_2021'"
+          v-if="planType('FREE')"
           class="text-normal text--disabled font-weight-light"
           >of runs used</span
         ><span v-else class="text-normal text--disabled font-weight-light"
@@ -145,7 +142,7 @@ export default {
       >
     </v-card-text>
     <v-spacer />
-    <v-card-actions v-if="planType === 'FREE_2021'" class="mt-auto">
+    <v-card-actions v-if="planType('FREE')" class="mt-auto">
       <v-spacer />
       <v-btn
         color="accentPink"
