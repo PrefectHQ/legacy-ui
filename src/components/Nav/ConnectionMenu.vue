@@ -27,11 +27,13 @@ export default {
     ]),
     ...mapGetters('tenant', ['tenant']),
     iconClass() {
+      if (this.apiMode == 'maintenance') return ['maintenance']
       if (this.connected) return ['connected']
       if (this.connecting) return ['connecting', 'connecting-animate']
       return ['disconnected']
     },
     statusColor() {
+      if (this.apiMode == 'maintenance') return 'var(--v-warning-base)'
       if (this.connected) return 'var(--v-accentGreen-base)'
       if (this.connecting) return 'var(--v-warning-base)'
       return 'var(--v-Failed-base)'
@@ -175,7 +177,7 @@ export default {
           <span v-else>Couldn't connect</span>
           to
           <span class="font-weight-bold">
-            <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
+            <span v-if="isCloud" class="primary--text">Prefect Cloud </span>
             <span v-else class="utilGrayDark--text">Prefect Server</span>
           </span>
           <span v-if="isServer">
@@ -216,6 +218,7 @@ $secondary-base: var(--v-secondaryGrayLight-base);
 $statuses: (
   'connected': var(--v-accentGreen-base),
   'connecting': var(--v-warning-base),
+  'maintenance': var(--v-warning-base),
   'disconnected': var(--v-Failed-base)
 );
 

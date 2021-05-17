@@ -339,7 +339,12 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            v-if="license.terms.is_self_serve && !license.terms.is_usage_based"
+            v-if="
+              isCloud &&
+                license &&
+                license.terms.is_self_serve &&
+                !license.terms.is_usage_based
+            "
             :loading="loadedTiles < 6 || usageTile == 'loading'"
             type="image"
             height="100%"
