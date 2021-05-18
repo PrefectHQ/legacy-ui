@@ -114,13 +114,9 @@ export default {
       return typeof value == 'object' ? JSON.stringify(value) : value
     },
     handleReset(item) {
-      // let value =
-      //   typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
       this.KvValueInput = this.checkValue(item.value)
     },
     async copyValue(item) {
-      // let value =
-      //   typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
       try {
         await navigator.clipboard.writeText(this.checkValue(item.value))
         this.handleAlert('success', 'Value copied to clipboard')
@@ -139,9 +135,6 @@ export default {
       }
     },
     jsonEditorType(item) {
-      // let value =
-      //   typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
-
       if (this.isJSON(this.checkValue(item.value))) {
         return 2
       } else {
@@ -149,8 +142,6 @@ export default {
       }
     },
     openKVModifyDialog(item) {
-      // let value =
-      //   typeof item.value == 'object' ? JSON.stringify(item.value) : item.value
       this.selectedKV = item
       this.isKvUpdate = true
       this.previousKVName = item.key
@@ -201,9 +192,6 @@ export default {
       }
       if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
 
-      console.log('key: ', this.keyInput)
-      console.log('value: ', value)
-
       const kvResult = await this.$apollo.mutate({
         mutation: require('@/graphql/KV/set-key-value.gql'),
         variables: {
@@ -213,7 +201,6 @@ export default {
       })
 
       if (this.isKvUpdate) this.isSettingKV = false
-      console.log('kvResult', kvResult)
 
       if (!kvResult) {
         this.expanded = []
@@ -248,17 +235,12 @@ export default {
     async deleteKV(kv, opts = {}) {
       this.isDeletingKV = true
 
-      console.log('kv', kv)
-      console.log('opts', opts)
-
       const deleteKVResult = await this.$apollo.mutate({
         mutation: require('@/graphql/KV/delete-key-value.gql'),
         variables: {
           id: kv.id
         }
       })
-
-      console.log('deleteKVResult', deleteKVResult)
 
       if (deleteKVResult?.data?.delete_key_value?.success) {
         if (!opts.isModifying) {
@@ -297,10 +279,6 @@ export default {
       this.selectedKV = kv.item
       this.isKvUpdate = true
       this.previousKVName = kv.item.key
-      // let value =
-      //   typeof kv.item.value == 'object'
-      //     ? JSON.stringify(kv.item.value)
-      //     : kv.item.value
 
       this.KvValueInput = this.checkValue(kv.item.value)
       this.keyInput = kv.item.key
@@ -314,7 +292,6 @@ export default {
         this.isFetchingKV = false
       },
       update(data) {
-        console.log('data returned from query', data?.key_value)
         return data?.key_value
       },
       // skip() {
