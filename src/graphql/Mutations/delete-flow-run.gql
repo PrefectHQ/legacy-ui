@@ -1,0 +1,5 @@
+mutation DeleteFlowRun($id: UUID!) {
+  delete_flow_run(input: { flow_run_id: $id }) {
+    success
+  }
+}

@@ -1,5 +1,6 @@
 <script>
 import TutorialBanner from '@/components/TutorialBanner'
+
 export default {
   components: { TutorialBanner },
   props: {
