@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
 
 ### Bugfixes
 
