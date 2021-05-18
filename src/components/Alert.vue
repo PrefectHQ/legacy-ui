@@ -32,6 +32,11 @@ export default {
       required: false,
       default: null
     },
+    nudgeBottom: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     linkText: {
       type: String,
       required: false,
@@ -143,7 +148,8 @@ export default {
     color="appBackground"
     :style="{
       'margin-left': offsetX > 0 ? `${offsetX}px` : '0',
-      'margin-right': offsetX < 0 ? `${Math.abs(offsetX)}px` : '0'
+      'margin-right': offsetX < 0 ? `${Math.abs(offsetX)}px` : '0',
+      'margin-bottom': nudgeBottom ? '64px' : '0'
     }"
     @input="handleInput"
   >

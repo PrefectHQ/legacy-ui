@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 const quotes = [
   '"The first ten million years were the worst," said Marvin, "and the second ten million years, they were the worst too. The third ten million years I didn\'t enjoy at all. After that I went into a bit of a decline."',
@@ -31,11 +31,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('auth', ['login']),
     redirectToLogin() {
       this.redirecting = true
       setTimeout(() => {
-        this.login()
+        window.location.href = '/'
       }, 1500)
     }
   }
