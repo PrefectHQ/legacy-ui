@@ -1,0 +1,7 @@
+mutation ResumeTenantWorkQueue($tenantId: UUID!) {
+  tenant_work_queue_result: resume_tenant_work_queue(
+    input: { tenant_id: $tenantId }
+  ) {
+    success
+  }
+}
