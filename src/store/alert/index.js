@@ -1,3 +1,5 @@
+import uniqueId from 'lodash.uniqueid'
+
 const state = {
   alert: {
     alertShow: false,
@@ -6,11 +8,8 @@ const state = {
     alertLink: null,
     linkText: ''
   },
-  notifications: [
-    { id: 1, text: 'foo' },
-    { id: 2, text: 'bar' },
-    { id: 3, text: 'batz' }
-  ]
+  notifications: [],
+  notificationTimeouts: {}
 }
 
 const getters = {
@@ -19,6 +18,9 @@ const getters = {
   },
   notifications(state) {
     return state.notifications
+  },
+  notificationTimeouts(state) {
+    return state.notificationTimeouts
   }
 }
 
@@ -35,11 +37,11 @@ const mutations = {
       linkText: ''
     }
   },
-  dismiss(state, notification) {
-    const index = state.notifications.indexOf(
-      n => n.text == notification.text && notification.id === n.id
-    )
-    state.notifications.splice(index, 1)
+  setNotifications(state, notifications = []) {
+    state.notifications = notifications
+  },
+  setNotificationTimeout(state, { id, timeoutId }) {
+    state.notificationTimeouts[id] = timeoutId
   }
 }
 
@@ -47,6 +49,56 @@ const actions = {
   setAlert({ commit }, alert, timeout = 6000) {
     commit('setAl', alert)
     setTimeout(commit, timeout, 'setEmpty')
+  },
+  addNotification({ getters, commit, dispatch }, notification) {
+    const id = uniqueId('notification-')
+    const notifications = [...getters['notifications']]
+    notifications.push({ id: id, ...notification })
+
+    commit('setNotifications', notifications)
+
+    if (notification?.timeout) {
+      const timeoutId = setTimeout(() => {
+        dispatch('dismissNotification', { id })
+      }, notification.timeout)
+
+      commit('setNotificationTimeout', { id, timeoutId })
+    }
+
+    return id
+  },
+  dismissNotification({ getters, commit }, { id }) {
+    const notifications = [...getters['notifications']]
+    const index = notifications.findIndex(n => n.id == id)
+
+    if (index > -1) {
+      notifications.splice(index, 1)
+
+      commit('setNotifications', notifications)
+    }
+  },
+  updateNotification({ getters, commit, dispatch }, { id, notification }) {
+    const notifications = [...getters['notifications']]
+    const index = notifications.findIndex(n => n.id == id)
+
+    if (index > -1) {
+      notifications[index] = {
+        ...notifications[index],
+        ...notification
+      }
+
+      commit('setNotifications', notifications)
+
+      if (notification.timeout) {
+        clearTimeout(getters['notificationTimeouts'][notification.id])
+
+        const timeoutId = setTimeout(() => {
+          dispatch('dismissNotification', { id })
+        }, notification.timeout)
+
+        commit('setNotificationTimeout', { id: notification.id, timeoutId })
+      }
+    }
   }
 }
 
