@@ -334,6 +334,7 @@ export default {
           class="white--text"
           large
           @click="
+            expanded = []
             previousKVName = null
             keyInput = null
             KvValueInput = ''
