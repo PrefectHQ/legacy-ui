@@ -191,7 +191,8 @@ const actions = {
         },
         error(error) {
           throw error
-        }
+        },
+        fetchPolicy: 'network-only'
       })
       await dispatch('getTenants')
     } catch (e) {

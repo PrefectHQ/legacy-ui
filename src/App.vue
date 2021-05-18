@@ -8,6 +8,7 @@ import moment from 'moment'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
+import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
 import VSnackbars from '@/components/Snackbars/Snackbars'
@@ -46,7 +47,8 @@ export default {
     Footer,
     GlobalSearch,
     TeamSideNav,
-    VSnackbars
+    VSnackbars,
+    WorkQueueBanner
   },
   mixins: [eventsMixin],
   data() {
@@ -123,6 +125,9 @@ export default {
         this.$route.name === 'name-team' ||
         this.$route.name === 'accept'
       )
+    },
+    paused() {
+      return this.tenant?.settings?.work_queue_paused
     }
   },
   watch: {
@@ -419,6 +424,8 @@ export default {
     <v-main :class="{ 'pt-0': isWelcome }">
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
+      <WorkQueueBanner />
+
       <v-slide-y-transition>
         <ApplicationNavBar v-if="showNav" />
       </v-slide-y-transition>
@@ -462,6 +469,7 @@ export default {
       :message="getAlert.alertMessage"
       :alert-link="getAlert.alertLink"
       :link-text="getAlert.linkText"
+      :nudge-bottom="paused"
       :timeout="12000"
     />
 
@@ -532,5 +540,9 @@ html {
 
 .tab-full-height {
   min-height: 100%;
+}
+
+.v-overlay.v-overlay--active {
+  backdrop-filter: blur(10px);
 }
 </style>
