@@ -580,10 +580,14 @@ export default {
       >
     </v-card-text>
     <v-card-text v-else-if="step.name === 'openMessageText'" class="pt-0">
-      <div v-if="!isWebhook">
-        <span class="primary--text"
-          >Type your message here or leave blank to send a default
-          message.</span
+      <div>
+        <span v-if="!isWebhook" class="primary--text"
+          >Type your message here or leave blank to send a default message.
+        </span>
+        <span v-else class="primary--text"
+          >Enter custom JSON payload to send as part of your webhook or leave
+          blank to send data from the event that triggers the
+          notification.</span
         ><v-menu
           v-model="menu"
           :close-on-content-click="false"
@@ -598,8 +602,8 @@ export default {
           <v-card width="30vW">
             <v-card-text
               ><div class="mb-2"
-                >The default message varies depending on what type of action you
-                attach the config to.
+                >The default message varies depending on what type of event you
+                attach the action to.
               </div>
               <div>
                 For a state change event the message would be:
@@ -630,22 +634,19 @@ export default {
           </v-card>
         </v-menu>
         <v-textarea
+          v-if="!isWebhook"
           v-model="messageText"
           class="pt-0"
           outlined
           :placeholder="messagePlaceholder"
           @keydown.enter="saveMessage"
         />
-      </div>
-      <div v-else>
-        <span
-          >Enter custom JSON payload to send as part of your webhook or leave
-          blank to send data from the event that triggers the
-          notification.</span
-        >
+
         <JsonInput
+          v-else
           v-model="jsonPayload"
           selected-type="json"
+          :placeholder-text="messagePlaceholder"
           @invalid-secret="handleJsonValidation"
         />
       </div>
