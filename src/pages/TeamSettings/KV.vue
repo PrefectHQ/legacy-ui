@@ -104,6 +104,11 @@ export default {
       return this.role === 'READ_ONLY_USER'
     }
   },
+  watch: {
+    tenant() {
+      this.$apollo.queries.kv.refetch()
+    }
+  },
   methods: {
     checkValue(value) {
       return typeof value == 'object' ? JSON.stringify(value) : value
@@ -301,11 +306,7 @@ export default {
       this.keyInput = kv.item.key
     }
   },
-  watch: {
-    tenant() {
-      this.$apollo.queries.kv.refetch()
-    }
-  },
+
   apollo: {
     kv: {
       query: require('@/graphql/KV/get-key-value.gql'),
@@ -409,13 +410,13 @@ export default {
           :loading="$apollo.queries.kv.loading"
           :expanded.sync="expanded"
           show-expand
-          @item-expanded="handleKVExpand"
           :single-expand="true"
           no-results-text="No keys found. Try expanding your search?"
           no-data-text="Your team does not have any keys yet."
+          @item-expanded="handleKVExpand"
         >
           <!-- ACTIONS -->
-          <template v-slot:expanded-item="{ headers, item }">
+          <template #expanded-item="{ headers, item }">
             <td :colspan="headers.length">
               <div
                 class="d-flex justify-end align-end mt-5"
@@ -435,8 +436,8 @@ export default {
               </div>
 
               <JsonInput
-                v-model="KvValueInput"
                 ref="kvRef"
+                v-model="KvValueInput"
                 class="text-body-1 mt-2 mb-5"
                 :selected-type="
                   selectedTypeIndex > 0
@@ -516,7 +517,7 @@ export default {
               </div>
               <MenuTooltip
                 v-if="JSON.stringify(item.value).length > 150"
-                maxWidth="50%"
+                max-width="50%"
               >
                 {{ item.value }}
               </MenuTooltip>
@@ -602,8 +603,8 @@ export default {
       />
 
       <JsonInput
-        v-model="KvValueInput"
         ref="kvRef"
+        v-model="KvValueInput"
         class="text-body-1"
         :placeholder-text="placeholderText"
         :selected-type="kvTypes[selectedTypeIndex].value"
