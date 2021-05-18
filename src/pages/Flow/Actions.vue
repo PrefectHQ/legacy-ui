@@ -118,9 +118,18 @@ export default {
           errorPolicy: 'all'
         })
         if (data?.create_flow_run?.id) {
-          this.$router.push({
-            name: 'flow-run',
-            params: { id: data?.create_flow_run?.id, tenant: this.tenant?.slug }
+          // this.$router.push({
+          //   name: 'flow-run',
+          //   params: { id: data?.create_flow_run?.id, tenant: this.tenant?.slug }
+          // })
+          this.setAlert({
+            alertShow: true,
+            alertMessage: 'Run created.',
+            alertType: 'info',
+            alertLink: {
+              name: 'flow-run',
+              params: { id: data.create_flow_run.id, tenant: this.tenant?.slug }
+            }
           })
         }
         if (errors) {

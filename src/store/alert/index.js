@@ -5,12 +5,20 @@ const state = {
     alertType: null,
     alertLink: null,
     linkText: ''
-  }
+  },
+  notifications: [
+    { id: 1, text: 'foo' },
+    { id: 2, text: 'bar' },
+    { id: 3, text: 'batz' }
+  ]
 }
 
 const getters = {
   getAlert(state) {
     return state.alert
+  },
+  notifications(state) {
+    return state.notifications
   }
 }
 
@@ -26,6 +34,12 @@ const mutations = {
       alertLink: null,
       linkText: ''
     }
+  },
+  dismiss(state, notification) {
+    const index = state.notifications.indexOf(
+      n => n.text == notification.text && notification.id === n.id
+    )
+    state.notifications.splice(index, 1)
   }
 }
 

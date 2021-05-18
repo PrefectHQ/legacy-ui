@@ -10,6 +10,7 @@ import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
+import VSnackbars from '@/components/Snackbars/Snackbars'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
@@ -44,7 +45,8 @@ export default {
     ApplicationNavBar,
     Footer,
     GlobalSearch,
-    TeamSideNav
+    TeamSideNav,
+    VSnackbars
   },
   mixins: [eventsMixin],
   data() {
@@ -454,7 +456,7 @@ export default {
     </v-main>
 
     <Alert
-      v-if="getAlert.alertShow"
+      v-if="false && getAlert.alertShow"
       v-model="getAlert.alertShow"
       :type="getAlert.alertType"
       :message="getAlert.alertMessage"
@@ -462,6 +464,8 @@ export default {
       :link-text="getAlert.linkText"
       :timeout="12000"
     />
+
+    <VSnackbars />
   </v-app>
 </template>
 
