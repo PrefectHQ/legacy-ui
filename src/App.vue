@@ -463,7 +463,7 @@ export default {
     </v-main>
 
     <Alert
-      v-if="false && getAlert.alertShow"
+      v-if="getAlert.alertShow"
       v-model="getAlert.alertShow"
       :type="getAlert.alertType"
       :message="getAlert.alertMessage"
