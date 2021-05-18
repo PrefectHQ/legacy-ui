@@ -497,7 +497,7 @@ export default {
                 v-if="JSON.stringify(item.value).length > 150"
                 max-width="50%"
               >
-                {{ item.value }}
+                <pre>{{ JSON.stringify(item.value, null, '\t') }}</pre>
               </MenuTooltip>
             </div>
           </template>
