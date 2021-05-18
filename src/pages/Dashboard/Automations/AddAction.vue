@@ -194,7 +194,6 @@ export default {
           : this.isTwilio && this.actionType?.config?.to.length
           ? this.actionType?.config?.to.toString()
           : false
-      console.log(config, this.actionType?.config?.to)
       return this.actionType?.type === 'EMAIL'
         ? configTo || config || 'to this email address.'
         : this.actionType.type === 'WEBHOOK'
