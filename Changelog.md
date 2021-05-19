@@ -8,7 +8,10 @@
 
 ### Bugfixes
 
-- None
+<<<<<<< HEAD
+- Fix issues with pre-populating and resetting job templates and task definitions for run configs - [#839](https://github.com/PrefectHQ/ui/pull/839)
+=======
+- Check for the correct values when disabling next for the Pager Duty action - [#835](https://github.com/PrefectHQ/ui/pull/835)
 
 ## 2021-05-17
 
@@ -16,6 +19,7 @@
 
 - Covert this.allowedUsers in the Members component to a computed property to use the nullish coalescing operator/check for total allowed users -[#841](https://github.com/PrefectHQ/ui/pull/841)
 - Beautify json and add json type to default parameters json edit option to stop value flicker - [#837](https://github.com/PrefectHQ/ui/pull/837)
+>>>>>>> 7e68094dbf76510039632e0317a6d9c1ee435f8b
 
 ## 2021-05-14
 
