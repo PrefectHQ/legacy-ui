@@ -638,12 +638,16 @@ export default {
                     <li>flow_run_link</li>
                   </ul>
                 </div>
-                <div class="mt-2">
+                <div v-if="!isWebhook" class="mt-2">
                   For example:
                   <div>{{
                     `"Run {flow_run_name} from flow {flow_name} needs
                 your attention! See: {flow_run_link}"`
                   }}</div>
+                </div>
+                <div v-else class="mt-2">
+                  For example:
+                  <div>{{ `{"flow": "{flow_name}"}` }}</div>
                 </div>
               </div>
             </v-card-text>
