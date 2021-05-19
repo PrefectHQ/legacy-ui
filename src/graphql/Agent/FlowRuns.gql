@@ -1,4 +1,4 @@
-query AgentFlowRuns {
+query AgentSubmittableRuns {
     flow_run (where: {state: {_eq: "Scheduled"}}) {
     id
     name

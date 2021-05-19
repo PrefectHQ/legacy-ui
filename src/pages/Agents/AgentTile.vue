@@ -100,9 +100,6 @@ export default {
       return this.agent.secondsSinceLastQuery
     },
     status() {
-      if (this.agent.status === 'old') return 'old'
-      if (this.failedRuns) return 'failed'
-      if (this.hasLateRuns) return 'late'
       return this.agent.status
     },
     statusColor() {
@@ -136,17 +133,19 @@ export default {
       return this.agent?.type ? this.agent.type : 'Agent type unknown'
     },
     submittableRuns() {
-      if (!this.agent?.submittableRuns) return null
-      const filtered = this.agent?.submittableRuns?.filter(run => {
-        return this.getTimeOverdue(run.scheduled_start_time) <= 20000
-      })
-      return filtered
+      // if (!this.agent?.submittableRuns) return null
+      // const filtered = this.agent?.submittableRuns?.filter(run => {
+      //   return this.getTimeOverdue(run.scheduled_start_time) <= 20000
+      // })
+      // return filtered
+      return this.agent.submittableRuns
     },
     lateRuns() {
-      if (!this.agent?.submittableRuns?.length) return null
-      return this.agent?.submittableRuns?.filter(run => {
-        return this.getTimeOverdue(run.scheduled_start_time) > 20000
-      })
+      return this.agent.lateRuns
+      // if (!this.agent?.submittableRuns?.length) return null
+      // return this.agent?.submittableRuns?.filter(run => {
+      //   return this.getTimeOverdue(run.scheduled_start_time) > 20000
+      // })
     },
     failedRuns() {
       const badRuns = this.recentRuns?.filter(run =>
@@ -182,13 +181,13 @@ export default {
       this.$nextTick(() => {
         this.showIcon = true
       })
-    },
-    agent() {
-      console.log('agent', this.agent)
-      if (this.hasLateRuns) {
-        this.agent.status === 'late'
-      }
     }
+    // agent() {
+    //   console.log('agent', this.agent)
+    //   if (this.hasLateRuns) {
+    //     this.agent.status === 'late'
+    //   }
+    // }
     // submittable(val) {
     //   if (!val) return
     //   if (this.lateRuns?.length > 0) {
@@ -223,9 +222,9 @@ export default {
   // },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    getTimeOverdue(time) {
-      return new Date() - new Date(time)
-    },
+    // getTimeOverdue(time) {
+    //   return new Date() - new Date(time)
+    // },
     agentIcon(type) {
       return AGENT_TYPES.find(a => a.type == type)?.icon || 'fad fa-globe'
     },
@@ -495,7 +494,7 @@ export default {
       </v-btn>
       <v-spacer />
       <v-btn
-        v-show="status !== 'healthy'"
+        v-show="agent && agent.status != 'healthy'"
         small
         color="primary"
         text

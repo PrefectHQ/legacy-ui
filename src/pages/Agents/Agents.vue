@@ -9,7 +9,7 @@ import difference from 'lodash.difference'
 
 import AgentTile from '@/pages/Agents/AgentTile'
 
-const STATUSES = ['healthy', 'stale', 'unhealthy', 'old']
+const STATUSES = ['healthy', 'stale', 'unhealthy', 'old', 'late']
 
 export default {
   components: {
@@ -93,6 +93,7 @@ export default {
       return this.loading > 0 || this.sorting
     },
     filteredAgents() {
+      console.log(this.sortedAgents)
       return this.sortedAgents.filter(agent => {
         if (this.showUnlabeledAgentsOnly) {
           return agent.labels.length === 0
@@ -138,9 +139,9 @@ export default {
     }
   },
   watch: {
-    agents() {
-      this.setSortedAgents(this.flowRuns)
-    }
+    // agents() {
+    //   this.setSortedAgents(this.flowRuns)
+    // }
     // tenant(val) {
     //   this.labelInput = []
     //   this.queryFailed = false
@@ -269,18 +270,18 @@ export default {
     //     return !!match?.length
     //   }
     // }
-  },
-  apollo: {
-    flowRuns: {
-      query: require('@/graphql/Agent/FlowRuns.gql'),
-      loadingKey: 'loading',
-      update(data) {
-        if (!data) return
-        this.setSortedAgents(data.flow_run)
-        return data.flow_run
-      }
-    }
   }
+  // apollo: {
+  //   flowRuns: {
+  //     query: require('@/graphql/Agent/FlowRuns.gql'),
+  //     loadingKey: 'loading',
+  //     update(data) {
+  //       if (!data) return
+  //       this.setSortedAgents(data.flow_run)
+  //       return data.flow_run
+  //     }
+  //   }
+  // }
 }
 </script>
 

@@ -35,16 +35,24 @@ const getters = {
 
 const mutations = {
   setSortedAgents(state, flowRuns) {
+    // console.log('flowRuns in vuex', flowRuns)
     this.sorting = true
     if (!state.agents) return
+    const getTimeOverdue = time => new Date() - new Date(time)
     const labelsAlign = agent => {
       agent.submittableRuns = []
+      agent.lateRuns = []
 
       if (!agent.labels?.length) {
         const noLabels = flowRuns?.filter(flowRun => {
           return !flowRun?.labels?.length
         })
-        agent.submittableRuns = noLabels
+        agent.submittableRuns = noLabels?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+        )
+        agent.lateRuns = noLabels?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+        )
         return !!noLabels?.length
       } else {
         const match = flowRuns?.filter(
@@ -52,7 +60,13 @@ const mutations = {
             flowRun?.labels?.length &&
             flowRun.labels.every(label => agent?.labels?.includes(label))
         )
-        agent.submittableRuns = match
+        agent.submittableRuns = match?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+        )
+        agent.lateRuns = match?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+        )
+        // console.log('agent', agent)
         return !!match?.length
       }
     }
@@ -61,24 +75,27 @@ const mutations = {
     const newList = []
     const oldList = []
     agents.forEach(agent => {
-      if (
-        labelsAlign(agent) &&
-        agent.status != 'unhealthy' &&
-        agent.status != 'old'
-      ) {
+      labelsAlign(agent)
+      if (agent.lateRuns?.length) {
+        // console.log('ate agent', agent)
+        agent.status = 'late'
         runsList.push(agent)
-      } else if (agent.status != 'unhealthy') {
+      } else if (agent.submittableRuns?.length) {
+        runsList.push(agent)
+      } else if (agent.status != 'unhealthy' && agent.status != 'old') {
         newList.push(agent)
       } else {
         agent.status = 'old'
         oldList.push(agent)
       }
     })
+    // console.log('runsList', runsList)
     // runsList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
     // newList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
     oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
     const fullList = [...runsList, ...newList, ...oldList]
     state.sortedAgents = fullList
+    // console.log('fullList', fullList)
     state.sorting = false
   },
   setAgents(state, agents) {

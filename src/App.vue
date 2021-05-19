@@ -244,7 +244,7 @@ export default {
     this.$globalApolloQueries['flowRuns'] = this.$apollo.addSmartQuery(
       'flowRuns',
       {
-        query: require('@/graphql/Agent/recent-runs.gql'),
+        query: require('@/graphql/Agent/FlowRuns.gql'),
 
         skip() {
           return (this.isCloud && !this.isAuthorized) || !this.connected
@@ -254,7 +254,7 @@ export default {
         fetchPolicy: 'no-cache',
         update(data) {
           if (!data?.flow_run || this.isLoadingTenant) return null
-          this.setAgents(data.flow_run)
+          this.setSortedAgents(data.flow_run)
           return data.flow_run
         }
       }
