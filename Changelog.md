@@ -5,9 +5,12 @@
 ### Features and Improvements
 
 - Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
+- Remove auth layer from the application and improve support for webkit browsers - [#811](https://github.com/PrefectHQ/ui/pull/811)
+- Remove Server/Cloud switcher - [#844](https://github.com/PrefectHQ/ui/pull/844)
 
 ### Bugfixes
 
+- Fix issues with pre-populating and resetting job templates and task definitions for run configs - [#839](https://github.com/PrefectHQ/ui/pull/839)
 - Check for the correct values when disabling next for the Pager Duty action - [#835](https://github.com/PrefectHQ/ui/pull/835)
 
 ## 2021-05-17
