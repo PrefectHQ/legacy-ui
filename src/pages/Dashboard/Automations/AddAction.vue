@@ -42,7 +42,7 @@ export default {
       apiToken: '',
       jsonPayload: null,
       validJson: true,
-      jsonPlaceholder: { 'event-id': '{event.id}' },
+      jsonPlaceholder: JSON.stringify({ 'event-id': '{event.id}' }),
       routingKey: '',
       webhookUrlSecret: null,
       severity: '',
@@ -581,9 +581,10 @@ export default {
         <v-col
           v-for="type in actionTypes()"
           :key="type.title"
-          cols="6"
-          sm="4"
-          md="2"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="2"
         >
           <div
             v-ripple
@@ -622,34 +623,30 @@ export default {
             <v-card-text
               ><div class="mb-2"
                 >The default message varies depending on what type of event you
-                attach the action to.
+                attach the action to. You can also send a custom message.
+
+                <div class="mt-2">
+                  Attributes you can include in a custom message include:
+                  <ul
+                    ><li>event_id</li>
+                    <li>flow_name</li
+                    ><li> flow_run_name</li>
+                    <li>flow_run_id</li>
+                    <li>agent_ids</li>
+                    <li>state</li>
+                    <li>state_message</li>
+                    <li>flow_run_link</li>
+                  </ul>
+                </div>
+                <div class="mt-2">
+                  For example:
+                  <div>{{
+                    `"Run {flow_run_name} from flow {flow_name} needs
+                your attention! See: {flow_run_link}"`
+                  }}</div>
+                </div>
               </div>
-              <div>
-                For a state change event the message would be:
-                <span class="font-weight-light"
-                  >"Run {flow_run_name} of flow {flow_name} entered state
-                  {state} with message {state_message}. See {flow_run_link} for
-                  more details."</span
-                ></div
-              >
-              <div
-                >For a flow SLA event the default message would be:
-                <span class="font-weight-light"
-                  >"Run {flow_run_name} ({flow_run_id}) of flow {flow_name}
-                  failed {kind} SLA ({flow_sla_config_id}) after
-                  {duration_seconds} seconds. See {flow_run_link} for more
-                  details."</span
-                ></div
-              >
-              <div
-                >For an agent SLA event, the default message would be:
-                <span class="font-weight-light"
-                  >"Agents sharing the config {agent_config_id} have failed the
-                  minimum healthy count of {sla_min_healthy}. The following
-                  agents are unhealthy: {agent_ids}"</span
-                ></div
-              ></v-card-text
-            >
+            </v-card-text>
           </v-card>
         </v-menu>
         <v-textarea
@@ -665,6 +662,7 @@ export default {
           v-else
           v-model="jsonPayload"
           selected-type="json"
+          skip-required
           :placeholder-text="jsonPlaceholder"
           @invalid-secret="handleJsonValidation"
         />

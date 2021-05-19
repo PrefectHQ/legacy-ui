@@ -58,6 +58,11 @@ export default {
       type: String,
       default: '',
       required: false
+    },
+    skipRequired: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   },
   data() {
@@ -142,6 +147,7 @@ export default {
       try {
         // Treat empty or null inputs as valid
         if (!input || (input && input.trim() === '')) {
+          if (this.skipRequired) return
           this.jsonError = 'Please enter a value.'
           this.$emit('invalid-secret', true)
           return 'MissingError'
