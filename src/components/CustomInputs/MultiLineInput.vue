@@ -3,13 +3,15 @@ import JsonInput from '@/components/CustomInputs/JsonInput'
 import YamlInput from '@/components/CustomInputs/YamlInput'
 import jsBeautify from 'js-beautify'
 
+import { parse, stringify } from 'yaml'
+
 export default {
   components: {
     JsonInput,
     YamlInput
   },
   props: {
-    input: {
+    value: {
       type: [Object, String],
       required: false,
       default: () => {
@@ -25,13 +27,13 @@ export default {
     }
   },
   computed: {
-    value() {
+    internalValue() {
       if (this.mode == 'yaml') return this.yamlInput
       if (this.mode == 'json') {
         try {
           return JSON.parse(this.jsonInput)
         } catch {
-          this.jsonInput
+          return this.jsonInput
         }
       }
       return null
@@ -41,7 +43,15 @@ export default {
     // Allows swapping between json input and yaml inputs
     mode(val) {
       if (val == 'json') {
-        this.jsonInput = jsBeautify(this.jsonInput, {
+        let jsonInput
+
+        try {
+          jsonInput = JSON.stringify(parse(this.yamlInput))
+        } catch {
+          jsonInput = this.yamlInput
+        }
+
+        this.jsonInput = jsBeautify(jsonInput || {}, {
           indent_size: 4,
           space_in_empty_paren: true,
           preserve_newlines: false
@@ -51,7 +61,40 @@ export default {
         this.$nextTick(() => {
           this.$refs['json-input'].validateJson()
         })
+      } else {
+        if (this.jsonInput === '{}') {
+          this.yamlInput = ''
+        } else {
+          let yamlInput
+
+          try {
+            yamlInput = stringify(JSON.parse(this.jsonInput))
+          } catch {
+            yamlInput = this.jsonInput
+          }
+          this.yamlInput = yamlInput
+        }
       }
+
+      this.$emit('input', this.internalValue)
+    }
+  },
+  mounted() {
+    if (this.value && typeof this.value == 'object') {
+      this.mode = 'json'
+
+      const val = JSON.stringify(this.value)
+
+      this.jsonInput = jsBeautify(val, {
+        indent_size: 4,
+        space_in_empty_paren: true,
+        preserve_newlines: false
+      })
+
+      this.yamlInput = stringify(this.value)
+    } else if (this.value) {
+      this.mode = 'yaml'
+      this.yamlInput = stringify(this.value)
     }
   },
   methods: {
@@ -67,7 +110,7 @@ export default {
       }
     },
     _handleKeypress() {
-      this.$emit('input', this.value)
+      this.$emit('input', this.internalValue)
     },
     _handleYamlInput() {},
     switchMode() {

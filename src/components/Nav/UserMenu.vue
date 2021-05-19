@@ -34,7 +34,7 @@ export default {
     ...mapGetters('user', ['user', 'oktaUser', 'isDark'])
   },
   mounted() {
-    clearInterval(this.clock)
+    clearInterval(this.clockInterval)
     this.clockInterval = setInterval(() => {
       this.time = Date.now()
     }, 1000)

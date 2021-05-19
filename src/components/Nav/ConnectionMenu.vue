@@ -126,7 +126,10 @@ export default {
           </div>
         </template>
 
-        <div class="mb-4 text-h5 d-flex align-bottom justify-start">
+        <div
+          v-if="false"
+          class="mb-4 text-h5 d-flex align-bottom justify-start"
+        >
           <v-btn
             color="primary lighten-1"
             class="px-3 white--text font-weight-bold text-subtitle-1"
@@ -169,9 +172,7 @@ export default {
           </v-btn>
         </div>
 
-        <v-divider class="grey lighten-3 my-5" style="width: 50%;" />
-
-        <div class="mb-2 text-h6 font-weight-light">
+        <div class="text-h6 font-weight-light">
           <span v-if="connected">Connected</span>
           <span v-else-if="connecting">Connecting</span>
           <span v-else>Couldn't connect</span>
@@ -185,6 +186,8 @@ export default {
             <span class="font-weight-bold">{{ url }}</span>
           </span>
         </div>
+
+        <v-divider class="grey lighten-3 my-3" style="width: 50%;" />
 
         <!-- If the user is having trouble connecting to Server -->
         <div v-if="isServer && (!connected || connecting)">
