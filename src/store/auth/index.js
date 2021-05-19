@@ -3,17 +3,8 @@ import jwt_decode from 'jwt-decode'
 const state = {
   authorizationToken: null,
   authorizationTokenExpiry: null,
-  accessToken: null,
-  accessTokenExpiry: null,
-  error: null,
   idToken: null,
   idTokenExpiry: null,
-  isAuthorizingUser: false,
-  isLoggingInUser: false,
-  isRefreshingAuthentication: false,
-  isRefreshingAuthorization: false,
-  legacy: false,
-  redirectRoute: sessionStorage.getItem('redirectRoute'),
   refreshToken: null,
   refreshTokenExpiry: null,
   user: null
@@ -32,18 +23,6 @@ const getters = {
   user(state) {
     return state.user
   },
-  legacy(state) {
-    return state.legacy
-  },
-  accessToken(state) {
-    return state.accessToken
-  },
-  accessTokenExpiry(state) {
-    return state.accessTokenExpiry
-  },
-  error(state) {
-    return state.error
-  },
   idToken(state) {
     return state.idToken
   },
@@ -61,21 +40,6 @@ const getters = {
   },
   authorizationTokenExpiry(state) {
     return state.authorizationTokenExpiry
-  },
-  isRefreshingAuthentication(state) {
-    return state.isRefreshingAuthentication
-  },
-  isRefreshingAuthorization(state) {
-    return state.isRefreshingAuthorization
-  },
-  isAuthorizingUser(state) {
-    return state.isAuthorizingUser
-  },
-  isLoggingInUser(state) {
-    return state.isLoggingInUser
-  },
-  redirectRoute(state) {
-    return state.redirectRoute
   }
 }
 
@@ -102,20 +66,6 @@ const mutations = {
     }
 
     state.accessToken = accessToken
-  },
-  unsetAccessToken(state) {
-    state.accessToken = null
-  },
-  accessTokenExpiry(state, accessTokenExpiry) {
-    if (typeof accessTokenExpiry !== 'number' || accessTokenExpiry == null)
-      throw new TypeError(
-        `accessTokenExpiry must be an number, got ${typeof accessTokenExpiry} instead`
-      )
-
-    state.accessTokenExpiry = accessTokenExpiry
-  },
-  unsetAccessTokenExpiry(state) {
-    state.idTokenExpiry = null
   },
   idToken(state, idToken) {
     try {
@@ -192,56 +142,10 @@ const mutations = {
   },
   unsetRefreshTokenExpiry(state) {
     state.refreshTokenExpiry = null
-  },
-  isRefreshingAuthentication(state, refreshing) {
-    if (typeof refreshing !== 'boolean' || refreshing == null)
-      throw new TypeError(
-        `isRefreshingAuthentication must be a boolean, got ${typeof refreshing} instead`
-      )
-
-    state.isRefreshingAuthentication = refreshing
-  },
-  isRefreshingAuthorization(state, refreshing) {
-    if (typeof refreshing !== 'boolean' || refreshing == null)
-      throw new TypeError(
-        `isRefreshingAuthorization must be a boolean, got ${typeof refreshing} instead`
-      )
-
-    state.isRefreshingAuthorization = refreshing
-  },
-  isAuthorizingUser(state, authorizingUser) {
-    if (typeof authorizingUser !== 'boolean' || authorizingUser == null)
-      throw new TypeError(
-        `isAuthorizingUser must be a boolean, got ${typeof authorizingUser} instead`
-      )
-
-    state.isAuthorizingUser = authorizingUser
-  },
-  isLoggingInUser(state, loggingInUser) {
-    if (typeof loggingInUser !== 'boolean' || loggingInUser == null)
-      throw new TypeError(
-        `isLoggingInUser must be a boolean, got ${typeof loggingInUser} instead`
-      )
-
-    state.isLoggingInUser = loggingInUser
-  },
-  redirectRoute(state, redirectRoute) {
-    if (typeof redirectRoute !== 'string' || redirectRoute == null)
-      throw new TypeError(
-        `redirectRoute must be a string, got ${typeof redirectRoute} instead`
-      )
-
-    sessionStorage.setItem('redirectRoute', redirectRoute)
-    state.redirectRoute = redirectRoute
-  },
-  unsetRedirectRoute(state) {
-    state.redirectRoute = null
-    sessionStorage.removeItem('redirectRoute')
   }
 }
 
-let actions
-let worker
+const actions = {}
 
 export default {
   state,
@@ -250,5 +154,3 @@ export default {
   actions,
   namespaced: true
 }
-
-export { worker }

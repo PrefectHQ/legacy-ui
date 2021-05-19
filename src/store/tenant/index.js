@@ -1,25 +1,6 @@
 import { fallbackApolloClient } from '@/vue-apollo'
 import { prefectTenants } from '@/middleware/prefectAuth'
-import { TokenWorker } from '@/main'
-
-const getTenantTokens = (id, slug) =>
-  new Promise((res, rej) => {
-    const channel = new MessageChannel()
-
-    channel.port1.onmessage = data => {
-      channel.port1.close()
-      if (data.type == 'error') {
-        rej(data)
-      } else {
-        res(data.data.payload)
-      }
-    }
-
-    TokenWorker.port.postMessage(
-      { type: 'switch-tenant', payload: { tenantId: id, slug: slug } },
-      [channel.port2]
-    )
-  })
+import { switchTenant, commitTokens } from '@/auth/index.js'
 
 const state = {
   defaultTenant: null,
@@ -176,30 +157,8 @@ const actions = {
         // already - otherwise tokens are fetched through the initial
         // authorization process
         if (getters['tenantIsSet']) {
-          let tokens
-          if (typeof window.SharedWorker !== 'undefined') {
-            tokens = await getTenantTokens(tenant.id, slug)
-
-            // Set our new auth token
-            await dispatch('auth/updateAuthorizationTokens', tokens, {
-              root: true
-            })
-          } else {
-            // Get our new auth token
-            const tenantToken = await fallbackApolloClient.mutate({
-              mutation: require('@/graphql/Tenant/tenant-token.gql'),
-              variables: {
-                tenantId: tenant.id
-              },
-              fetchPolicy: 'no-cache'
-            })
-
-            tokens = tenantToken.data.switch_tenant
-            // Set our new auth token
-            await dispatch('auth/updateAuthorization', tokens, {
-              root: true
-            })
-          }
+          const tokens = await switchTenant(tenant.id)
+          commitTokens(tokens)
         }
 
         // Get the current license
@@ -232,7 +191,8 @@ const actions = {
         },
         error(error) {
           throw error
-        }
+        },
+        fetchPolicy: 'network-only'
       })
       await dispatch('getTenants')
     } catch (e) {

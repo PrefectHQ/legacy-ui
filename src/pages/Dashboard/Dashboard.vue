@@ -136,8 +136,8 @@ export default {
     $route() {
       this.tab = this.getTab()
     },
-    tenant(val) {
-      if (val?.id) {
+    'tenant.id'(val, old) {
+      if (val && val !== old) {
         this.loadedTiles = 0
         clearTimeout(this.refreshTimeout)
         this.refresh()
@@ -342,6 +342,7 @@ export default {
           <v-skeleton-loader
             v-if="
               isCloud &&
+                license &&
                 license.terms.is_self_serve &&
                 !license.terms.is_usage_based
             "
