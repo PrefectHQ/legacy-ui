@@ -41,6 +41,7 @@ const mutations = {
     state.notifications = notifications
   },
   setNotificationTimeout(state, { id, timeoutId }) {
+    clearTimeout(state['notificationTimeouts'][id])
     state.notificationTimeouts[id] = timeoutId
   }
 }
@@ -90,8 +91,6 @@ const actions = {
       commit('setNotifications', notifications)
 
       if (notification.timeout) {
-        clearTimeout(getters['notificationTimeouts'][notification.id])
-
         const timeoutId = setTimeout(() => {
           dispatch('dismissNotification', { id })
         }, notification.timeout)
