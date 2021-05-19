@@ -42,6 +42,7 @@ export default {
       apiToken: '',
       jsonPayload: null,
       validJson: true,
+      jsonPlaceholder: { 'event-id': '{event.id}' },
       routingKey: '',
       webhookUrlSecret: null,
       severity: '',
@@ -136,10 +137,22 @@ export default {
     },
     disableNext() {
       if (this.step.name === 'openToConfig') {
+        if (
+          this.isPagerDuty &&
+          this.apiToken &&
+          this.routingKey &&
+          this.severity
+        )
+          return false
         if (!this.actionConfigArray.length) return true
         else return false
       } else {
-        if (!this.validJson) return true
+        if (this.jsonPayload && !this.validJson) return true
+        if (this.step.name === 'addTwilioConfig') {
+          if (!!this.authToken && !!this.messagingService && !!this.accountSid)
+            return false
+          return true
+        }
         return false
       }
     },
@@ -181,18 +194,24 @@ export default {
     to() {
       const configTo =
         this.actionConfigArray.length > 0
-          ? this.actionConfigArray.toString()
-          : this.secretName || ''
+          ? `to ${this.actionConfigArray.toString()}`
+          : this.secretName
+          ? `to ${this.secretName}`
+          : ''
+      const config =
+        !this.isTwilio && this.actionType?.config?.to
+          ? `to ${this.actionType?.config?.to}`
+          : this.isTwilio && this.actionType?.config?.to.length
+          ? this.actionType?.config?.to.toString()
+          : false
       return this.actionType?.type === 'EMAIL'
-        ? configTo || this.actionType?.config?.to || 'to this email address.'
+        ? configTo || config || 'to this email address.'
         : this.actionType.type === 'WEBHOOK'
-        ? this.actionType?.config?.to || 'to this web address.'
+        ? config || 'to this web address.'
         : this.actionType?.type === 'TWILIO'
-        ? configTo ||
-          this.actionType?.config?.to?.toString() ||
-          'to this phone number'
+        ? configTo || config || 'to this phone number'
         : this.actionType?.type === 'SLACK_WEBHOOK'
-        ? configTo || this.actionType?.config?.url || 'here.'
+        ? configTo || config || 'here.'
         : this.actionType.type === 'PAGERDUTY'
         ? 'using this config.'
         : this.actionType.type === 'MS_TEAMS'
@@ -646,7 +665,7 @@ export default {
           v-else
           v-model="jsonPayload"
           selected-type="json"
-          :placeholder-text="messagePlaceholder"
+          :placeholder-text="jsonPlaceholder"
           @invalid-secret="handleJsonValidation"
         />
       </div>
