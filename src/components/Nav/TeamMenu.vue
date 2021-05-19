@@ -169,7 +169,7 @@ export default {
               KV
             </v-list-item-title>
             <v-list-item-subtitle>
-              Create and manage team-wide key/values used by your flows
+              Manage your team's key/value store
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>

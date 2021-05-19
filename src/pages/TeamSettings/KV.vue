@@ -3,9 +3,10 @@ import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Alert from '@/components/Alert'
+import MenuTooltip from '@/components/MenuTooltip'
 // import ExternalLink from '@/components/ExternalLink'
 
-import MenuTooltip from '@/components/MenuTooltip'
+import jsBeautify from 'js-beautify'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters } from 'vuex'
 
@@ -20,6 +21,7 @@ export default {
   mixins: [formatTime],
   data() {
     return {
+      isEditable: false,
       // loading states
       isFetchingKV: true,
       isDeletingKV: false,
@@ -85,15 +87,15 @@ export default {
         }
       ],
 
-      items: [],
-
       // Dialogs
       keyModifyDialog: false,
       keyDeleteDialog: false
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['hasPermission']),
+
     disableConfirm() {
       if (!this.keyInput) return false
       if (!this.KvValueInput) return false
@@ -101,24 +103,39 @@ export default {
       return true
     },
     isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
+      return !this.hasPermission('create', 'key-value')
     }
   },
   watch: {
     tenant() {
       this.$apollo.queries.kv.refetch()
+    },
+    selectedTypeIndex() {
+      this.validKVJSON()
     }
   },
   methods: {
-    checkValue(value) {
-      return typeof value == 'object' ? JSON.stringify(value) : value
+    stringifyValue(value) {
+      return typeof value == 'object' ? JSON.stringify(value) : String(value)
+    },
+    formatValue(value) {
+      return jsBeautify(value, {
+        indent_size: 4,
+        space_in_empty_paren: true,
+        preserve_newlines: false
+      })
+    },
+    selectedType(type) {
+      return this.selectedTypeIndex > 0
+        ? this.kvTypes[this.selectedTypeIndex].value
+        : this.kvTypes[this.jsonEditorType(type)].value
     },
     handleReset(item) {
-      this.KvValueInput = this.checkValue(item.value)
+      this.KvValueInput = this.formatValue(this.stringifyValue(item.value))
     },
     async copyValue(item) {
       try {
-        await navigator.clipboard.writeText(this.checkValue(item.value))
+        await navigator.clipboard.writeText(JSON.stringify(item.value))
         this.handleAlert('success', 'Value copied to clipboard')
       } catch (err) {
         this.handleAlert(
@@ -127,27 +144,25 @@ export default {
         )
       }
     },
-    isJSON(str) {
-      try {
-        return !!(JSON.parse(str) && str)
-      } catch (e) {
-        return false
-      }
-    },
     jsonEditorType(item) {
-      if (this.isJSON(this.checkValue(item.value))) {
+      if (typeof item.value == 'object') {
         return 2
       } else {
         return 1
       }
     },
-    openKVModifyDialog(item) {
+    openKVEdit(item) {
       this.selectedKV = item
       this.isKvUpdate = true
       this.previousKVName = item.key
       this.keyInput = item.key
-      this.KvValueInput = this.checkValue(item.value)
-      this.keyModifyDialog = true
+
+      this.KvValueInput = this.formatValue(this.stringifyValue(item.value))
+      if (this.isEditable) {
+        this.expanded = [item]
+      } else {
+        this.expanded = []
+      }
     },
     openKVDeleteDialog(item) {
       this.selectedKV = item
@@ -165,6 +180,7 @@ export default {
       this.selectedTypeIndex = 0
       this.invalidKV = false
       this.expanded = []
+      this.isEditable = false
     },
     async setKV() {
       this.isSettingKV = true
@@ -280,7 +296,8 @@ export default {
       this.isKvUpdate = true
       this.previousKVName = kv.item.key
 
-      this.KvValueInput = this.checkValue(kv.item.value)
+      this.KvValueInput = this.formatValue(this.stringifyValue(kv.item.value))
+
       this.keyInput = kv.item.key
     }
   },
@@ -322,10 +339,7 @@ export default {
         <!-- Manage your
         <ExternalLink href="https://docs.prefect.io/">key/value</ExternalLink> -->
 
-        Prefect KV Store is your own metadata database, hosted by Prefect. KV
-        Store enables you to store pieces of tenant-wide metadata, like the last
-        record processed by a flow. Metadata item count and size are tiered
-        based on Cloud license.
+        Manage your team's key/value store
       </template>
 
       <template v-if="!isReadOnlyUser" #cta>
@@ -406,6 +420,9 @@ export default {
                   depressed
                   color="utilGrayLight"
                   title="Reset"
+                  :disabled="
+                    KvValueInput == formatValue(stringifyValue(item.value))
+                  "
                   @click="handleReset(item)"
                 >
                   Reset
@@ -417,11 +434,8 @@ export default {
                 ref="kvRef"
                 v-model="KvValueInput"
                 class="text-body-1 mt-2 mb-5"
-                :selected-type="
-                  selectedTypeIndex > 0
-                    ? kvTypes[selectedTypeIndex].value
-                    : kvTypes[jsonEditorType(item)].value
-                "
+                prepend-icon="create"
+                :selected-type="selectedType(item)"
                 :placeholder-text="JSON.stringify(item.value)"
                 @invalid-secret="setInvalidKV"
               >
@@ -440,7 +454,8 @@ export default {
                       :loading="isSettingKV"
                       :disabled="
                         !KvValueInput ||
-                          KvValueInput == checkValue(item.value) ||
+                          KvValueInput ==
+                            formatValue(stringifyValue(item.value)) ||
                           invalidKV
                       "
                       v-on="on"
@@ -472,10 +487,10 @@ export default {
                       color="primary"
                     >
                       <v-list-item
-                        v-for="(item, index) in kvTypes"
+                        v-for="(type, index) in kvTypes"
                         :key="index"
                       >
-                        <v-list-item-title>{{ item.text }} </v-list-item-title>
+                        <v-list-item-title>{{ type.text }} </v-list-item-title>
                       </v-list-item>
                     </v-list-item-group>
                   </v-list>
@@ -516,7 +531,10 @@ export default {
                   x-small
                   color="primary"
                   v-on="on"
-                  @click="openKVModifyDialog(item)"
+                  @click="
+                    isEditable = !isEditable
+                    openKVEdit(item)
+                  "
                 >
                   <v-icon>edit</v-icon>
                 </v-btn>
@@ -566,11 +584,13 @@ export default {
       :loading="isSettingKV"
       :title="isKvUpdate ? 'Modify KV' : 'Create New KV'"
       @confirm="setKV"
+      @cancel="resetSelectedKV"
     >
       <v-text-field
         v-model="keyInput"
         :rules="[rules.required]"
         class="_lr-hide mt-6"
+        autofocus
         data-private
         single-line
         outlined
@@ -583,6 +603,7 @@ export default {
       <JsonInput
         ref="kvRef"
         v-model="KvValueInput"
+        prepend-icon="create"
         class="text-body-1"
         :placeholder-text="placeholderText"
         :selected-type="kvTypes[selectedTypeIndex].value"
