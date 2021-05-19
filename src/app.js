@@ -301,7 +301,7 @@ export const CreatePrefectUI = () => {
     vuetify,
     router: createRouter(),
     store,
-    publicPath: window.prefect_ui_settings?.base_url || '',
+    publicPath: './',
     apolloProvider: defaultApolloProvider,
     render: h => h(App)
   }).$mount('#app')
