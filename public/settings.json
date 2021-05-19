@@ -1,4 +1,4 @@
 {
     "server_url": "http://localhost:4200/graphql",
-     "base_url": "/"
+    "base_url": "/"
 }
