@@ -99,5 +99,10 @@ module.exports = {
   // Adding this package specically because
   // the source has 2 nullish coalscent references
   // that babel isn't transpiling correctly otherwise
-  transpileDependencies: ['@d3fc/d3fc-axis']
+  transpileDependencies: [
+    '@d3fc/d3fc-axis',
+    'graphql-language-service-interface',
+    'graphql-language-service-parser',
+    'graphql-language-service'
+  ]
 }

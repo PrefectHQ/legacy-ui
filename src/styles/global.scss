@@ -381,6 +381,85 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
       --fa-primary-color: var(--v-accentPink-base);
     }
   }
+
+  &.active {
+    .svg-inline--fa.fa-sliders-v-square {
+      --fa-primary-color: var(--v-accentPink-base);
+    }
+  }
+}
+
+.banner-icon {
+  color: transparent;
+  font-size: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  width: 60px !important;
+
+  .svg-inline--fa {
+    transition: all 150ms linear;
+
+    &.fa-list-ul {
+      --fa-primary-color: var(--v-warning-base);
+      --fa-secondary-color: var(--v-utilGrayLight-base);
+      --fa-secondary-opacity: 1;
+    }
+  }
+}
+
+.system-icon {
+  font-size: 64px !important;
+  height: 64px !important;
+  line-height: 64px !important;
+  width: 80px !important;
+
+  &.fa-stack {
+    position: relative !important;
+
+    .fa-stack-1x,
+    .fa-stack-2x {
+      height: inherit !important;
+      position: relative;
+      width: inherit !important;
+    }
+
+    .svg-inline--fa.fa-stack-1x {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -25%);
+    }
+  }
+
+  .svg-inline--fa {
+    --fa-primary-color: #444;
+    --fa-secondary-opacity: 0.75;
+
+    transition: all 150ms linear;
+
+    &.fa-list-alt {
+      --fa-primary-color: var(--v-warning-base);
+      --fa-secondary-opacity: 1;
+    }
+
+    &.fa-align-slash {
+      --fa-primary-color: var(--v-error-base);
+      --fa-secondary-opacity: 1;
+    }
+
+    &.fa-slash {
+      color: var(--v-error-base);
+    }
+  }
+
+  &.active {
+    .svg-inline--fa {
+      &.fa-list-alt {
+        --fa-primary-color: var(--v-primary-base);
+        --fa-secondary-opacity: 1;
+      }
+    }
+  }
 }
 
 .fa-stack {
@@ -417,7 +496,7 @@ $percents: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100;
   &.v-tabs > .v-tabs-bar,
   &.v-text-field--solo > .v-input__control > .v-input__slot,
   &.v-toolbar.v-sheet:not(header) {
-    background-color: var(--v-appForeground-base) !important;
+    background-color: var(--v-appForeground-base);
   }
 
   &.v-data-table
