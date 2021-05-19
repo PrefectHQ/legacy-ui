@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Check for the correct values when disabling next for the Pager Duty action - [#835](https://github.com/PrefectHQ/ui/pull/835)
 
 ## 2021-05-17
 
