@@ -460,7 +460,7 @@ export default {
       </v-btn>
 
       <v-btn
-        v-if="!overlay"
+        v-if="!overlay && isCloud"
         small
         depressed
         color="primary"
