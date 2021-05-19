@@ -1,0 +1,8 @@
+query Logs($where: log_bool_exp!, $limit: Int, $offset: Int) {
+  log(where: $where, limit: $limit, offset: $offset) {
+    id
+    message
+    object_table
+    object_id
+  }
+}
