@@ -136,11 +136,9 @@ const mutations = {
     state.version = null
   },
   setCoreVersion(state, version) {
-    console.log(version)
     state.coreVersion = version
   },
   unsetCoreVersion(state) {
-    console.log('unsetting core version')
     state.coreVersion = null
   }
 }
@@ -158,7 +156,6 @@ const actions = {
       commit('setConnected', true)
       commit('setApiMode', data.api.mode)
     } catch (error) {
-      console.log(error)
       commit('unsetReleaseTimetamp')
       commit('unsetVersion')
       commit('unsetCoreVersion')
