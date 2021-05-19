@@ -337,6 +337,12 @@ export const routes = [
       )
   },
   {
+    name: 'logs',
+    path: '/logs',
+    component: () =>
+      import(/* webpackChunkName: "logs" */ '@/pages/Logs/Logs.vue')
+  },
+  {
     name: 'home',
     path: '/home',
     component: () =>

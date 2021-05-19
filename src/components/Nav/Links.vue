@@ -84,6 +84,21 @@ export default {
       Calendar
     </v-btn>
 
+    <v-btn
+      :to="{
+        name: 'logs',
+        params: { tenant: slug }
+      }"
+      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
+      dark
+      small
+      depressed
+      color="transparent"
+      title="View logs across the system"
+    >
+      System Log
+    </v-btn>
+
     <TeamMenu />
   </div>
 </template>
