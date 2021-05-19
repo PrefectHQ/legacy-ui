@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('agent', ['sortedAgent']),
+    ...mapGetters('agent', ['sorting', 'sortedAgent']),
     agentId() {
       return this.$route.params.id
     },
@@ -37,7 +37,8 @@ export default {
 }
 </script>
 <template>
-  <v-sheet color="appBackground">
+  <div v-if="sorting">Sorting!</div>
+  <v-sheet v-else color="appBackground">
     <SubPageNav icon="pi-agent" page-type="Agent" m>
       <span slot="page-title">
         <span>
