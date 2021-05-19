@@ -31,28 +31,35 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
+    ...mapGetters('agent', [
+      'staleThreshold',
+      'unhealthyThreshold',
+      'sortedAgents'
+    ]),
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     lateRuns() {
-      if (!this.submittable?.length) return null
-      return this.submittable?.filter(run => {
-        return this.getTimeOverdue(run.scheduled_start_time) > 20000
-      })
+      // if (!this.submittable?.length) return null
+      // return this.submittable?.filter(run => {
+      //   return this.getTimeOverdue(run.scheduled_start_time) > 20000
+      // })
+      return this.agent.lateRuns
     },
     loading() {
       return this.loadingKey > 0
     },
     submittableRuns() {
-      if (!this.submittable) return null
-      const filtered = this.submittable?.filter(run => {
-        return this.getTimeOverdue(run.scheduled_start_time) <= 20000
-      })
-      return filtered
+      console.log('submittable agent', this.agent)
+      // if (!this.submittable) return null
+      // const filtered = this.submittable?.filter(run => {
+      //   return this.getTimeOverdue(run.scheduled_start_time) <= 20000
+      // })
+      // return filtered
+      return this.agent.submittableRuns
     },
     title() {
-      if (!this.submittable) return
+      // if (!this.submittable) return
       let title = ''
 
       if (this.tab == 'submittable') {
@@ -175,7 +182,7 @@ export default {
   <v-card class="py-2" tile :style="{ height: '330px' }">
     <v-system-bar
       :color="
-        loading || !submittable
+        loading
           ? 'secondaryGray'
           : lateRuns && lateRuns.length > 0
           ? 'deepRed'
@@ -191,11 +198,7 @@ export default {
         <v-col cols="8">
           <div>
             <div
-              v-if="
-                loading ||
-                  (tab === 'late' && isClearingLateRuns) ||
-                  !submittable
-              "
+              v-if="loading || (tab === 'late' && isClearingLateRuns)"
               style="
                 display: inline-block;
                 height: 20px;
@@ -272,10 +275,7 @@ export default {
     </CardTitle>
 
     <v-card-text v-if="tab == 'submittable'" class="pa-0">
-      <v-skeleton-loader
-        v-if="loading || !submittable"
-        type="list-item-three-line"
-      >
+      <v-skeleton-loader v-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
       <v-list-item

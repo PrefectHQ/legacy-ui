@@ -26,7 +26,10 @@ const getters = {
     return state.sortedAgents
   },
   agent: state => id => {
-    return state.agents.filter(agent => agent.id === id)[0]
+    return state.agents?.filter(agent => agent.id === id)[0]
+  },
+  sortedAgent: state => id => {
+    return state.sortedAgents?.filter(agent => agent.id === id)[0]
   },
   sorting(state) {
     return state.sorting
@@ -48,10 +51,10 @@ const mutations = {
           return !flowRun?.labels?.length
         })
         agent.submittableRuns = noLabels?.filter(
-          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
         )
         agent.lateRuns = noLabels?.filter(
-          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
         )
         return !!noLabels?.length
       } else {
@@ -61,10 +64,10 @@ const mutations = {
             flowRun.labels.every(label => agent?.labels?.includes(label))
         )
         agent.submittableRuns = match?.filter(
-          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
         )
         agent.lateRuns = match?.filter(
-          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
         )
         // console.log('agent', agent)
         return !!match?.length

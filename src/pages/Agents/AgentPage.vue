@@ -25,12 +25,12 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('agent', ['agent']),
+    ...mapGetters('agent', ['sortedAgent']),
     agentId() {
       return this.$route.params.id
     },
     agentDetails() {
-      const agent = this.agent(this.agentId)
+      const agent = this.sortedAgent(this.agentId)
       return agent
     }
   }
@@ -38,7 +38,7 @@ export default {
 </script>
 <template>
   <v-sheet color="appBackground">
-    <SubPageNav icon="pi-agent" page-type="Agent">
+    <SubPageNav icon="pi-agent" page-type="Agent" m>
       <span slot="page-title">
         <span>
           {{ agentId }}
