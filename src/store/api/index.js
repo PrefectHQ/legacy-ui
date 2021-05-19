@@ -10,6 +10,7 @@ const state = {
   connected: true,
   connectionMessage: null,
   connectionTimeout: null,
+  coreVersion: null,
   releaseTimestamp: null,
   apiMode: null,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
@@ -18,8 +19,7 @@ const state = {
     localStorage.getItem(SERVER_KEY) ||
     window.prefect_ui_settings?.server_url ||
     process.env.VUE_APP_SERVER_URL,
-  version: null,
-  core_version: null
+  version: null
 }
 
 const getters = {
@@ -136,9 +136,11 @@ const mutations = {
     state.version = null
   },
   setCoreVersion(state, version) {
+    console.log(version)
     state.coreVersion = version
   },
   unsetCoreVersion(state) {
+    console.log('unsetting core version')
     state.coreVersion = null
   }
 }
@@ -156,6 +158,7 @@ const actions = {
       commit('setConnected', true)
       commit('setApiMode', data.api.mode)
     } catch (error) {
+      console.log(error)
       commit('unsetReleaseTimetamp')
       commit('unsetVersion')
       commit('unsetCoreVersion')
