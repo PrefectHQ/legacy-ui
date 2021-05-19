@@ -95,7 +95,14 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('license', ['hasPermission']),
+    kvExists() {
+      if (!this.kv) return false
 
+      if (this.selectedKV?.key === this.keyInput) {
+        return false
+      }
+      return this.kv?.map(kv => kv.key).includes(this.keyInput)
+    },
     disableConfirm() {
       if (!this.keyInput) return false
       if (!this.KvValueInput) return false
@@ -127,15 +134,15 @@ export default {
     },
     selectedType(type) {
       return this.selectedTypeIndex > 0
-        ? this.kvTypes[this.selectedTypeIndex].value
-        : this.kvTypes[this.jsonEditorType(type)].value
+        ? this.kvTypes[this.selectedTypeIndex]?.value
+        : this.kvTypes[this.jsonEditorType(type)]?.value
     },
     handleReset(item) {
-      this.KvValueInput = this.formatValue(this.stringifyValue(item.value))
+      this.KvValueInput = this.formatValue(this.stringifyValue(item?.value))
     },
     async copyValue(item) {
       try {
-        await navigator.clipboard.writeText(JSON.stringify(item.value))
+        await navigator.clipboard.writeText(JSON.stringify(item?.value))
         this.handleAlert('success', 'Value copied to clipboard')
       } catch (err) {
         this.handleAlert(
@@ -154,10 +161,10 @@ export default {
     openKVEdit(item) {
       this.selectedKV = item
       this.isKvUpdate = true
-      this.previousKVName = item.key
-      this.keyInput = item.key
+      this.previousKVName = item?.key
+      this.keyInput = item?.key
 
-      this.KvValueInput = this.formatValue(this.stringifyValue(item.value))
+      this.KvValueInput = this.formatValue(this.stringifyValue(item?.value))
       if (this.isEditable) {
         this.expanded = [item]
       } else {
@@ -192,7 +199,7 @@ export default {
       }
 
       if (this.isKvUpdate) {
-        this.deleteKV({ id: this.selectedKV.id }, { isModifying: true })
+        this.deleteKV({ id: this.selectedKV?.id }, { isModifying: true })
       }
       let value = this.KvValueInput
       if (this.selectedTypeIndex === 0) {
@@ -254,7 +261,7 @@ export default {
       const deleteKVResult = await this.$apollo.mutate({
         mutation: require('@/graphql/KV/delete-key-value.gql'),
         variables: {
-          id: kv.id
+          id: kv?.id
         }
       })
 
@@ -292,13 +299,13 @@ export default {
       this.invalidKV = event
     },
     handleKVExpand(kv) {
-      this.selectedKV = kv.item
+      this.selectedKV = kv?.item
       this.isKvUpdate = true
-      this.previousKVName = kv.item.key
+      this.previousKVName = kv?.item?.key
 
-      this.KvValueInput = this.formatValue(this.stringifyValue(kv.item.value))
+      this.KvValueInput = this.formatValue(this.stringifyValue(kv?.item?.value))
 
-      this.keyInput = kv.item.key
+      this.keyInput = kv?.item?.key
     }
   },
 
@@ -589,6 +596,11 @@ export default {
       <v-text-field
         v-model="keyInput"
         :rules="[rules.required]"
+        :messages="
+          kvExists
+            ? 'A key with this this name already exists. Clicking CONFIRM will overwrite it.'
+            : null
+        "
         class="_lr-hide mt-6"
         autofocus
         data-private
@@ -627,8 +639,8 @@ export default {
           </template>
           <v-list>
             <v-list-item-group v-model="selectedTypeIndex" color="primary">
-              <v-list-item v-for="(item, index) in kvTypes" :key="index">
-                <v-list-item-title>{{ item.text }} </v-list-item-title>
+              <v-list-item v-for="(type, index) in kvTypes" :key="index">
+                <v-list-item-title>{{ type.text }} </v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list>
