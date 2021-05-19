@@ -4,7 +4,8 @@
 
 ### Features and Improvements
 
-- None
+- Remove auth layer from the application and improve support for webkit browsers - [#811](https://github.com/PrefectHQ/ui/pull/811)
+- Remove Server/Cloud switcher - [#844](https://github.com/PrefectHQ/ui/pull/844)
 
 ### Bugfixes
 
