@@ -22,7 +22,8 @@ const fullPageRoutes = [
   'access-denied',
   'team-switched',
   'logout',
-  'welcome'
+  'welcome',
+  'logs'
 ]
 
 const onboardRoutes = ['welcome', 'name-team', 'onboard-resources', 'accept']

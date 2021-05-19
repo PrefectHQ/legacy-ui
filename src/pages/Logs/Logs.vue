@@ -3,7 +3,7 @@ export default {}
 </script>
 
 <template>
-  <div></div>
+  <div>Hello</div>
 </template>
 
 <style lang="scss" scoped>
