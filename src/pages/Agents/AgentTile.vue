@@ -152,6 +152,12 @@ export default {
         ['Failed', 'TriggerFailed'].includes(run.state)
       )
       return !!badRuns?.length
+    },
+    agentIcon() {
+      return (
+        AGENT_TYPES.find(a => a.type == this.agent?.type)?.icon ||
+        'fad fa-globe'
+      )
     }
     // labelsAlign() {
     //   if (
@@ -176,12 +182,14 @@ export default {
     // }
   },
   watch: {
-    // statusColor() {
-    //   this.showIcon = false
-    //   this.$nextTick(() => {
-    //     this.showIcon = true
-    //   })
-    // }
+    statusColor(val) {
+      //make sure icon color updates
+      console.log('statusColor', val)
+      this.showIcon = false
+      setTimeout(() => {
+        this.showIcon = true
+      }, 150)
+    }
     // agent() {
     //   console.log('agent', this.agent)
     //   if (this.hasLateRuns) {
@@ -226,9 +234,6 @@ export default {
     // getTimeOverdue(time) {
     //   return new Date() - new Date(time)
     // },
-    agentIcon(type) {
-      return AGENT_TYPES.find(a => a.type == type)?.icon || 'fad fa-globe'
-    },
     anyLabelsSelected(labels) {
       return labels.reduce((result, label) => this.labelSelected(label), false)
     },
@@ -316,8 +321,8 @@ export default {
       <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
 
       <div>
-        <v-icon v-if="showIcon" :color="statusColor" class="fa-2x pi-2x">
-          {{ agentIcon(agent.type) || 'fas fa-robot' }}
+        <v-icon :color="statusColor" class="fa-2x pi-2x">
+          {{ agentIcon || 'fas fa-robot' }}
         </v-icon>
         <span class="ml-2">{{ name }}</span>
       </div>
