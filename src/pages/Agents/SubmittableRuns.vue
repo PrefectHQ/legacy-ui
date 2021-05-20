@@ -44,7 +44,10 @@ export default {
       // return this.submittable?.filter(run => {
       //   return this.getTimeOverdue(run.scheduled_start_time) > 20000
       // })
-      return this.agent.lateRuns
+      return [...this.agent.lateRuns].sort(
+        (a, b) =>
+          new Date(a.scheduled_start_time) - new Date(b.scheduled_start_time)
+      )
     },
     // tab() {
     //   return this.agent?.lateRuns?.length ? 'late' : 'submittable'
@@ -59,7 +62,10 @@ export default {
       //   return this.getTimeOverdue(run.scheduled_start_time) <= 20000
       // })
       // return filtered
-      return this.agent.submittableRuns
+      return [...this.agent.submittableRuns].sort(
+        (a, b) =>
+          new Date(a.scheduled_start_time) - new Date(b.scheduled_start_time)
+      )
     },
     title() {
       // if (!this.submittable) return
@@ -185,7 +191,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2" tile :style="{ height: '330px' }">
+  <v-card class="py-2" tile :style="{ height: '380px' }">
     <v-system-bar
       :color="
         loading
