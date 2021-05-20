@@ -64,8 +64,8 @@ export default {
         <TileLayout>
           <AgentFlowRunHistory slot="row-0" :agent="agentDetails" />
           <AgentTile slot="row-1-col-1-tile-1" show-all :agent="agentDetails" />
-          <AgentConfigCard slot="row-1-col-2-tile-1" :agent="agentDetails" />
-          <SubmittableRuns slot="row-1-col-3-tile-1" :agent="agentDetails" />
+          <SubmittableRuns slot="row-1-col-2-tile-1" :agent="agentDetails" />
+          <AgentConfigCard slot="row-1-col-3-tile-1" :agent="agentDetails" />
         </TileLayout>
       </v-tab-item>
     </v-tabs-items>

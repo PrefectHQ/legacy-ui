@@ -26,12 +26,12 @@ export default {
         ?.filter(
           hook =>
             hook.event_tags?.agent_config_id?.filter(id => {
-              console.log(id)
+              // console.log(id)
               return id === this.agent?.agent_config_id
             }).length > 0
         )
         .map(hook => hook.action)
-      console.log('hook', hook)
+      // console.log('hook', hook)
       return hook
     }
   },
@@ -41,7 +41,7 @@ export default {
       query: require('@/graphql/Agent/agent-hooks.gql'),
       loadingKey: 'loading',
       update: data => {
-        console.log(data)
+        // console.log(data)
         return data.hook
       }
     }
@@ -54,15 +54,26 @@ export default {
     <CardTitle title="Agent Config" icon="pi-agent"> </CardTitle>
 
     <v-card-text class="my-2">
-      <div v-if="!agentHook"> No agent config attached to this agent.</div>
+      <div v-if="!agentHook || !agentHook.length">
+        No agent config attached to this agent.</div
+      >
       <div v-else>
         <truncate :content="agent.id">
           Agent Config Id: {{ agent.agent_config_id || unknown }}</truncate
         >
-
-        <div class="my-2">
-          Config Action:
-          {{ agentHook }}
+        <div v-for="(action, index) in agentHook" :key="index">
+          <div class="my-2">
+            Connected Action Name{{
+              agentHook && agentHook.length > 1 ? ` ${index}` : ''
+            }}:
+            {{ action.name }}
+          </div>
+          <div class="my-2">
+            Connected Action Type{{
+              agentHook && agentHook.length > 1 ? ` ${index}` : ''
+            }}:
+            {{ action.action_type }}
+          </div>
         </div>
       </div>
     </v-card-text>
