@@ -38,8 +38,8 @@ export default {
       currentFirst: null,
       previousFirst: null,
       currentScrollPosition: 0,
-      freezeScrollEvents: false,
-      hasScrolled: false,
+      firstLoad: false,
+      ignoreNextScroll: false,
       loadingKey: 0,
       logs: [],
       logIds: [],
@@ -59,9 +59,9 @@ export default {
     }
   },
   watch: {
-    sortedLogs(val) {
-      this.previousFirst = this.currentFirst
-      this.currentFirst = val[0]?.id
+    sortedLogs() {
+      //   this.previousFirst = this.currentFirst
+      //   this.currentFirst = val[0]?.id
     }
   },
   mounted() {
@@ -86,33 +86,20 @@ export default {
   //   },
   methods: {
     handleScroll(e) {
-      if (this.freezeScrollEvents) return
-      this.hasScrolled = true
+      if (this.ignoreNextScroll) {
+        this.ignoreNextScroll = false
+        return
+      }
       const el = e.currentTarget || e.target
       if (el?.scrollTop <= 100 && !this.loading) {
         console.log('scroll triggered')
         this.offset += 50
       }
     },
-    toggleShow() {
-      this.show = !this.show
-
-      if (this.show) {
-        this.$nextTick(() => {
-          this.scrollToBottom()
-        })
-      }
-    },
     scrollToBottom() {
       this.$refs['virtual-scroller'].scrollToBottom()
-
-      this.freezeScrollEvents = true
-      setTimeout(() => {
-        this.freezeScrollEvents = false
-      }, 1000)
     },
     handleTopOfLogs() {
-      console.log('hello')
       this.offset += 50
     }
   },
@@ -130,7 +117,7 @@ export default {
       loadingKey: 'loadingKey',
       result({ data, loading }) {
         if (data?.log && !loading) {
-          this.freezeScrollEvents = true
+          this.ignoreNextScroll = true
 
           data?.log.forEach(log => {
             if (!this.logIds.includes(log.id)) {
@@ -140,44 +127,28 @@ export default {
             }
           })
 
-          const height =
-            this.virtualContainer.scrollHeight -
-            this.virtualContainer.clientHeight
+          const height = this.virtualContainer.scrollHeight
           const scroll = this.virtualContainer.scrollTop
 
-          console.dir(this.virtualContainer)
-          console.log(
-            this.virtualContainer.scrollHeight,
-            this.virtualContainer.clientHeight,
-            this.virtualContainer.scrollTop
-          )
+          if (!this.firstLoad) {
+            this.firstLoad = true
+            this.ignoreNextScroll = true
+            this.scrollToBottom()
+          } else {
+            setTimeout(() => {
+              const newHeight = this.virtualContainer.scrollHeight
 
-          this.$nextTick(() => {
-            if (!this.hasScrolled) {
-              this.hasScrolled = true
-              this.scrollToBottom()
-            } else {
-              const newHeight =
-                this.virtualContainer.scrollHeight -
-                this.virtualContainer.clientHeight
-
-              console.log(
-                this.virtualContainer.scrollHeight,
-                this.virtualContainer.clientHeight,
-                this.virtualContainer.scrollTop
-              )
-
-              console.log(scroll, height, newHeight)
-              // The 500 here is pretty hacky; the client height seems to be
-              // an inaccurate way of determining scroll positioning
-              // even though the heights themselves are accurate
               this.$refs['virtual-scroller'].$el.scrollTop =
                 scroll + (newHeight - height)
+
               setTimeout(() => {
-                this.freezeScrollEvents = false
-              }, 1000)
-            }
-          })
+                this.$refs['virtual-scroller'].$el.scrollBy({
+                  top: -160,
+                  behavior: 'smooth'
+                })
+              }, 150)
+            }, 50)
+          }
         }
 
         return data
@@ -189,21 +160,27 @@ export default {
 
 <template>
   <div class="logs-container">
-    <div @click="toggleShow">click me</div>
-    <div>
-      <span class="mr-2">loading: {{ loading }}</span>
-    </div>
+    <transition name="appear-y">
+      <v-progress-circular
+        v-if="loading"
+        color="primary"
+        class="loader"
+        :size="50"
+        :width="5"
+        indeterminate
+      />
+    </transition>
 
     <DynamicScroller
       v-if="show"
       ref="virtual-scroller"
       class="virtual-scroller"
+      :class="{ blur: loading }"
       :min-item-size="40"
       :items="sortedLogs"
       key-field="id"
       @scroll.native="handleScroll"
     >
-      <!-- @scroll.native="handleScroll" -->
       <template #default="{ item, index, active }">
         <DynamicScrollerItem
           :item="item"
@@ -225,15 +202,15 @@ export default {
             class="text-truncate"
           >
             <span class="text-caption text--disabled">
-              {{ index }} {{ item.formattedTimestamp }}
+              {{ item.formattedTimestamp }}
             </span>
             {{ item.message }}
           </div>
         </DynamicScrollerItem>
       </template>
       <template #after>
-        <div id="bottom">
-          Hey! I'm a message displayed before the items!
+        <div>
+          Hey! I'm a message displayed after items!
         </div>
       </template>
     </DynamicScroller>
@@ -243,7 +220,13 @@ export default {
 <style lang="scss" scoped>
 .logs-container {
   height: 100%;
-  overscroll-behavior-y: none;
+  overflow: hidden;
+}
+
+.loader {
+  left: 50%;
+  position: absolute;
+  top: 25px;
 }
 
 .virtual-scroller {
@@ -251,9 +234,22 @@ export default {
   // for scrolling methods to work properly
   height: 100%;
   max-height: calc(100vh - 80px);
-  //   max-height: calc(100vh - 64px);
   overflow-y: auto;
   overscroll-behavior-y: contain;
-  //   scroll-behavior: smooth;
+
+  &.blur {
+    filter: blur(1px);
+  }
+}
+
+.appear-y-enter-active,
+.appear-y-leave-active {
+  transition: all 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.appear-y-enter,
+.appear-y-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
 }
 </style>
