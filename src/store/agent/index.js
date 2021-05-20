@@ -40,7 +40,10 @@ const mutations = {
   setSortedAgents(state, flowRuns) {
     // console.log('flowRuns in vuex', flowRuns)
     this.sorting = true
-    if (!state.agents) return
+    if (!state.agents) {
+      state.sortedAgents = null
+      return
+    }
     const getTimeOverdue = time => new Date() - new Date(time)
     const labelsAlign = agent => {
       agent.submittableRuns = []
@@ -102,6 +105,7 @@ const mutations = {
     state.sorting = false
   },
   setAgents(state, agents) {
+    state.sorting = true
     if (!agents) {
       state.agents = null
       return
@@ -120,6 +124,7 @@ const mutations = {
           : 'unhealthy'
       return agent
     })
+    state.sorting = false
   }
 }
 

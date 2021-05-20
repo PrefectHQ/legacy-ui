@@ -146,6 +146,7 @@ export default {
         clearTimeout(this.refreshTimeout)
       }, 1000)
       this.setAgents(null)
+      this.setSortedAgents(null)
     },
     async connected(val) {
       if (val) {

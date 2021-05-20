@@ -142,20 +142,22 @@ export default {
     // agents() {
     //   this.setSortedAgents(this.flowRuns)
     // }
-    // tenant(val) {
-    //   this.labelInput = []
-    //   this.queryFailed = false
-    //   this.showUnlabeledAgentsOnly = false
-    //   if (!val) return
-    //   this.loading = 1
-    //   setTimeout(async () => {
-    //     await this.$apollo.queries.agents.refetch(), (this.loading = 0)
-    //   }, 1000)
-    // }
+    tenant(val) {
+      this.labelInput = []
+      this.queryFailed = false
+      this.showUnlabeledAgentsOnly = false
+      this.setAgents(null)
+      this.setSortedAgents(null)
+      if (!val) return
+      this.loading = 1
+      setTimeout(() => {
+        this.loading = 0
+      }, 5000)
+    }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    ...mapMutations('agent', ['setSortedAgents']),
+    ...mapMutations('agent', ['setAgents', 'setSortedAgents']),
     // ...mapActions('data', ['activateProject', 'resetActiveData']),
 
     async clearUnhealthyAgents() {

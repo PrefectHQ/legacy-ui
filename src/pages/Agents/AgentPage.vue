@@ -6,7 +6,7 @@ import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
 import AgentConfigCard from '@/pages/Agents/AgentConfigCard'
 import SubmittableRuns from '@/pages/Agents/SubmittableRuns'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   components: {
@@ -20,7 +20,8 @@ export default {
   data() {
     return {
       tab: 'overview',
-      tabs: [{ name: 'overview', target: 'overview' }]
+      tabs: [{ name: 'overview', target: 'overview' }],
+      loading: false
     }
   },
   computed: {
@@ -33,11 +34,24 @@ export default {
       const agent = this.sortedAgent(this.agentId)
       return agent
     }
+  },
+  watch: {
+    tenant() {
+      this.loading = true
+      this.setAgents(null)
+      setTimeout(() => {
+        this.$router.push({ name: 'agents' })
+        this.loading = false
+      }, 5000)
+    }
+  },
+  methods: {
+    ...mapMutations('agent', ['setAgents'])
   }
 }
 </script>
 <template>
-  <v-sheet v-if="sorting" color="appBackground">
+  <v-sheet v-if="sorting || loading" color="appBackground">
     <v-progress-linear indeterminate color="primary"></v-progress-linear>
   </v-sheet>
   <v-sheet v-else color="appBackground">
