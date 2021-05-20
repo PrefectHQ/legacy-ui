@@ -37,7 +37,9 @@ export default {
 }
 </script>
 <template>
-  <div v-if="sorting">Sorting!</div>
+  <v-sheet v-if="sorting" color="appBackground">
+    <v-progress-linear indeterminate color="primary"></v-progress-linear>
+  </v-sheet>
   <v-sheet v-else color="appBackground">
     <SubPageNav icon="pi-agent" page-type="Agent" m>
       <span slot="page-title">
