@@ -344,7 +344,7 @@ export default {
 
       <template #subtitle>
         <!-- Manage your
-        <ExternalLink href="https://docs.prefect.io/">key/value</ExternalLink> -->
+        <ExternalLink href="https://docs.prefect.io/">key:value</ExternalLink> -->
 
         Manage your team's key/value store
       </template>
