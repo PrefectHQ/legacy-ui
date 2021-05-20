@@ -170,6 +170,7 @@ export default {
         this.$apollo.queries.agents.refresh()
         this.$apollo.queries.projects.refresh()
         this.$apollo.queries.flows.refresh()
+        this.$apollo.queries.flowRuns.refresh()
       }
     },
     async $route(new_route, old_route) {

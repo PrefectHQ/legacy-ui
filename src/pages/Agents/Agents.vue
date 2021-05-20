@@ -187,7 +187,7 @@ export default {
               this.cleanUpDialog = false
               setTimeout(() => {
                 agent.isDeleting = false
-              }, 10000)
+              }, 5000)
             })
             .catch(e => {
               LogRocket.captureException(e)
@@ -203,6 +203,7 @@ export default {
           alertType: 'error'
         })
       } finally {
+        // this.setAgents(null)
         setTimeout(() => {
           this.clearingAgents = false
         }, 500)
