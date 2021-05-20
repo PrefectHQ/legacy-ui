@@ -59,6 +59,7 @@ export default {
         }, 3000)
       })
       result.then(res => {
+        console.log(res)
         this.isLoading = false
       })
     },
@@ -107,30 +108,32 @@ export default {
 
     <div>
       <v-row no-gutters align="center" class="my-4 position-relative">
-        <v-col cols="6" class="pr-3">
-          Max Retries
+        <v-col cols="6" class="pr-3 text-caption">
+          Max retries
         </v-col>
         <v-col cols="6" class="pl-3">
           <v-text-field
             v-model="maxRetries"
-            type="number"
-            class="text-body-1"
-            hide-details
+            placeholder="Max retries"
             outlined
+            type="number"
+            class="text-caption"
+            hide-details
             dense
             :readonly="isReadOnly"
           />
         </v-col>
 
-        <v-col cols="6" class="pr-3 mt-5">
-          Retry Delay
+        <v-col cols="6" class="pr-3 mt-5 text-caption">
+          Retry delay
         </v-col>
         <v-col cols="6" class="pl-3 mt-5">
           <v-text-field
             v-model="retryDelay"
-            class="text-body-1"
-            hide-details
             outlined
+            placeholder="Retry delay"
+            class="text-caption"
+            hide-details
             dense
             :readonly="isReadOnly"
           />
