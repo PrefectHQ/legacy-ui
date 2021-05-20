@@ -1,20 +1,22 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
-import ExternalLink from '@/components/ExternalLink'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
 import { runFlowNowMixin } from '@/mixins/runFlowNow'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import Alert from '@/components/Alert'
+import ClearLate from '@/components/SystemActions/ClearLate'
+import WorkQueue from '@/components/SystemActions/WorkQueue'
 
 export default {
   components: {
     CardTitle,
     DurationSpan,
-    ExternalLink,
-    Alert
+    Alert,
+    ClearLate,
+    WorkQueue
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin, formatTime],
   props: {
@@ -27,7 +29,8 @@ export default {
     return {
       // submittable: this.agent.submittableRuns
       // loadingKey: 0
-      tab: 'submittable'
+      tab: 'submittable',
+      overlay: null
     }
   },
   computed: {
@@ -39,6 +42,9 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
+    paused() {
+      return this.tenant?.settings?.work_queue_paused
+    },
     lateRuns() {
       // if (!this.submittable?.length) return null
       // return this.submittable?.filter(run => {
@@ -150,6 +156,13 @@ export default {
       if (val.lateRuns?.length <= 0) {
         this.tab = 'submittable'
       }
+    },
+    ['tenant.settings.work_queue_paused'](val) {
+      if (!val) {
+        setTimeout(() => {
+          this.hideOverlay()
+        }, 1500)
+      }
     }
     // flowRuns() {
     //   this.submittable = []
@@ -164,6 +177,7 @@ export default {
   // this.tab = 'submittable'
   // },
   methods: {
+    ...mapMutations('agent', ['setSortedAgents']),
     // getTimeOverdue(time) {
     //   return new Date() - new Date(time)
     // },
@@ -176,6 +190,16 @@ export default {
     // },
     flowRunName(flowRun) {
       return flowRun?.name
+    },
+    showOverlay(kind) {
+      this.overlay = kind
+    },
+    hideOverlay() {
+      this.overlay = null
+    },
+    refetch() {
+      this.setSortedAgents(null)
+      this.overlay = null
     }
   },
   apollo: {
@@ -285,6 +309,15 @@ export default {
         </v-btn>
       </div>
     </CardTitle>
+
+    <v-card-text v-show="overlay" class="pa-0">
+      <v-overlay v-show="overlay == 'late'" absolute z-index="1">
+        <ClearLate :flow-runs="lateRuns" @finish="refetch" />
+      </v-overlay>
+      <v-overlay v-show="overlay == 'queue'" absolute z-index="1">
+        <WorkQueue />
+      </v-overlay>
+    </v-card-text>
 
     <v-card-text v-if="tab == 'submittable'" class="pa-0">
       <v-skeleton-loader v-if="loading" type="list-item-three-line">
@@ -458,21 +491,51 @@ export default {
             </v-list-item-avatar>
           </v-list-item>
         </v-lazy>
+      </v-list>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+        v-if="!overlay && lateRuns && lateRuns.length > 0"
+        small
+        depressed
+        color="primary"
+        text
+        style="z-index: 2;"
+        @click="showOverlay('late')"
+      >
+        Clear late
+      </v-btn>
 
-        <v-btn
-          text
-          color="deepRed"
-          small
-          class="position-absolute"
-          :style="{ bottom: '8px', right: '4px' }"
-          tile
-          :loading="isClearingLateRuns"
-          @click="handleOpenDialog"
-        >
-          Clear
-        </v-btn>
+      <!-- We don't need to show this option -->
+      <!-- <v-btn
+        v-if="!overlay"
+        small
+        depressed
+        color="primary"
+        text
+        style="z-index: 2;"
+        @click="showOverlay('queue')"
+      >
+        Options
+      </v-btn> -->
 
-        <v-dialog v-model="showClearLateRunsDialog" max-width="480">
+      <v-btn
+        v-if="overlay && !paused"
+        small
+        depressed
+        plain
+        color="white"
+        width="74"
+        text
+        style="z-index: 2;"
+        @click="hideOverlay"
+      >
+        Close
+      </v-btn>
+    </v-card-actions>
+
+    <!-- <v-dialog v-model="showClearLateRunsDialog" max-width="480">
           <v-card flat>
             <v-card-title class="text-h6 word-break-normal">
               Are you sure you want to clear all late runs?
@@ -506,12 +569,7 @@ export default {
               </v-btn>
             </v-card-actions>
           </v-card>
-        </v-dialog>
-      </v-list>
-
-      <div v-if="lateRuns && lateRuns.length > 3" class="pa-0 card-footer">
-      </div>
-    </v-card-text>
+        </v-dialog> -->
   </v-card>
 </template>
 
