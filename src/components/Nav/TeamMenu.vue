@@ -166,7 +166,7 @@ export default {
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="text-subtitle-1">
-              KV
+              KV Store
             </v-list-item-title>
             <v-list-item-subtitle>
               Manage your team's key/value store
