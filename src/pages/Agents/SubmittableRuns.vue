@@ -177,7 +177,7 @@ export default {
   // this.tab = 'submittable'
   // },
   methods: {
-    ...mapMutations('agent', ['setSortedAgents']),
+    ...mapMutations('agent', ['setRefetch']),
     // getTimeOverdue(time) {
     //   return new Date() - new Date(time)
     // },
@@ -198,7 +198,7 @@ export default {
       this.overlay = null
     },
     refetch() {
-      this.setSortedAgents(null)
+      this.setRefetch(true)
       this.overlay = null
     }
   },
