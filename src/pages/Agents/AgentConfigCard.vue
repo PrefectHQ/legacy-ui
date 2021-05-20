@@ -20,9 +20,32 @@ export default {
   computed: {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('tenant', ['tenant']),
+    agentHook() {
+      const hook = this.agentHooks
+        ?.filter(
+          hook =>
+            hook.event_tags?.agent_config_id?.filter(id => {
+              console.log(id)
+              return id === this.agent?.agent_config_id
+            }).length > 0
+        )
+        .map(hook => hook.action)
+      console.log('hook', hook)
+      return hook
+    }
   },
-  methods: {}
+  methods: {},
+  apollo: {
+    agentHooks: {
+      query: require('@/graphql/Agent/agent-hooks.gql'),
+      loadingKey: 'loading',
+      update: data => {
+        console.log(data)
+        return data.hook
+      }
+    }
+  }
 }
 </script>
 
@@ -30,33 +53,19 @@ export default {
   <v-card tile class="agent-card px-2 pb-3" style="overflow-y: auto;">
     <CardTitle title="Agent Config" icon="pi-agent"> </CardTitle>
 
-    <v-card-text class="py-0">
-      <v-list>
-        <v-list-item class="pa-0">
-          <v-list-item-content class="pa-0">
-            <v-list-item-title>
-              Agent Config Id
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              <!-- <truncate :content="agent.id">
-                {{ agent.config.id || unknown }}</truncate
-              > -->
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
+    <v-card-text class="my-2">
+      <div v-if="!agentHook"> No agent config attached to this agent.</div>
+      <div v-else>
+        <truncate :content="agent.id">
+          Agent Config Id: {{ agent.agent_config_id || unknown }}</truncate
+        >
 
-        <v-list-item two-line class="pa-0">
-          <v-list-item-content class="pa-0 overflow-scroll">
-            <v-list-item-title>
-              Config Details
-            </v-list-item-title>
-            {{ agent.config }}
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+        <div class="my-2">
+          Config Action:
+          {{ agentHook }}
+        </div>
+      </div>
     </v-card-text>
-
-    <v-card-actions class="pa-0"> </v-card-actions>
   </v-card>
 </template>
 

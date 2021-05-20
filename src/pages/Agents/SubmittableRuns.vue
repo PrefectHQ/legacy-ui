@@ -25,8 +25,8 @@ export default {
   },
   data() {
     return {
-      submittable: this.agent.submittableRuns,
-      loadingKey: 0,
+      // submittable: this.agent.submittableRuns
+      // loadingKey: 0
       tab: 'submittable'
     }
   },
@@ -46,11 +46,14 @@ export default {
       // })
       return this.agent.lateRuns
     },
+    // tab() {
+    //   return this.agent?.lateRuns?.length ? 'late' : 'submittable'
+    // },
     loading() {
       return this.loadingKey > 0
     },
     submittableRuns() {
-      console.log('submittable agent', this.agent)
+      // console.log('submittable agent', this.agent)
       // if (!this.submittable) return null
       // const filtered = this.submittable?.filter(run => {
       //   return this.getTimeOverdue(run.scheduled_start_time) <= 20000
@@ -133,12 +136,12 @@ export default {
     // }
   },
   watch: {
-    submittable(val) {
+    agent(val) {
       if (!val) return
-      if (this.lateRuns?.length > 0) {
+      if (val.lateRuns?.length > 0) {
         this.tab = 'late'
       }
-      if (this.lateRuns?.length <= 0) {
+      if (val.lateRuns?.length <= 0) {
         this.tab = 'submittable'
       }
     }
@@ -147,14 +150,17 @@ export default {
     //   this.labelsAlign
     // }
   },
-  beforeDestroy() {
-    this.submittable = []
-    this.tab = 'submittable'
+  mounted() {
+    if (this.agent.lateRuns?.length) this.tab = 'late'
   },
+  // beforeDestroy() {
+  // this.submittable = []
+  // this.tab = 'submittable'
+  // },
   methods: {
-    getTimeOverdue(time) {
-      return new Date() - new Date(time)
-    },
+    // getTimeOverdue(time) {
+    //   return new Date() - new Date(time)
+    // },
     // labelMessage(text) {
     //   this.labelMessageText = text
     // },
