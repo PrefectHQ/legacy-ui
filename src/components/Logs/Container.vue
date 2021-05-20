@@ -40,6 +40,7 @@ export default {
       currentScrollPosition: 0,
       firstLoad: false,
       ignoreNextScroll: false,
+      lastScroll: 0,
       loadingKey: 0,
       logs: [],
       logIds: [],
@@ -58,32 +59,15 @@ export default {
       return this.loadingKey > 0
     }
   },
-  watch: {
-    sortedLogs() {
-      //   this.previousFirst = this.currentFirst
-      //   this.currentFirst = val[0]?.id
-    }
-  },
+  watch: {},
   mounted() {
     this.$nextTick(() => {
       this.virtualContainer = document.querySelector(
         '.vue-recycle-scroller__item-wrapper'
       )
-
-      console.log(this.virtualContainer)
-      //   this.virtualContainer.addEventListener('scroll', this.handleScroll)
     })
   },
-  beforeDestroy() {
-    // this.virtualContainer.removeEventListener('scroll', this.handleScroll)
-  },
-  //   updated() {
-  //     this.show = false
-
-  //     setTimeout(() => {
-  //       this.show = true
-  //     }, 1000)
-  //   },
+  beforeDestroy() {},
   methods: {
     handleScroll(e) {
       if (this.ignoreNextScroll) {
@@ -91,10 +75,16 @@ export default {
         return
       }
       const el = e.currentTarget || e.target
-      if (el?.scrollTop <= 100 && !this.loading) {
-        console.log('scroll triggered')
+
+      if (
+        el?.scrollTop <= 5 &&
+        !this.loading &&
+        el?.scrollTop < this.lastScroll
+      ) {
         this.offset += 50
       }
+
+      this.lastScroll = el?.scrollTop || 0
     },
     scrollToBottom() {
       this.$refs['virtual-scroller'].scrollToBottom()
