@@ -340,7 +340,7 @@ export const routes = [
     name: 'logs',
     path: '/logs',
     component: () =>
-      import(/* webpackChunkName: "logs" */ '@/pages/Logs/Logs.vue')
+      import(/* webpackChunkName: "logs" */ '@/pages/SystemLogs/SystemLogs.vue')
   },
   {
     name: 'home',

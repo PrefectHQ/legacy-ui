@@ -1,8 +1,14 @@
 query Logs($where: log_bool_exp!, $limit: Int, $offset: Int) {
-  log(where: $where, limit: $limit, offset: $offset) {
+  log(
+    where: $where
+    limit: $limit
+    offset: $offset
+    order_by: { timestamp: desc }
+  ) {
     id
     message
     object_table
     object_id
+    timestamp
   }
 }

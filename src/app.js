@@ -37,6 +37,11 @@ import TransitionHeight from '@/components/Functional/Transition-Height'
 import TruncatedSpan from '@/components/Functional/TruncatedSpan'
 import GetCloud from '@/components/GetCloud'
 
+import VueVirtualScroller from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
+Vue.use(VueVirtualScroller)
+
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
 
@@ -193,7 +198,8 @@ const blockedProps = [
   'expansionPanels',
   'tabsBar',
   'listItemGroup',
-  'btnToggle'
+  'btnToggle',
+  'vscrollParent'
 ]
 
 Vue.mixin({
@@ -210,7 +216,7 @@ Vue.mixin({
         // this.options = null // Unsetting this throws internal Vue errors
         this.$options = null
         this.$vnode = null
-        this.listeners = null
+        // this.listeners = null
         // this.$listeners = null // Unsetting this throws internal Vue errors
         this._vnode = null
         this._watcher = null
