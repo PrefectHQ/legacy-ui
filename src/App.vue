@@ -83,6 +83,7 @@ export default {
       'tenantIsSet',
       'isLoadingTenant'
     ]),
+    ...mapGetters('agent', ['refetchAgents']),
     ...mapGetters('user', [
       'isDark',
       'memberships',
@@ -131,6 +132,12 @@ export default {
   watch: {
     isDark(val) {
       this.$vuetify.theme.dark = val
+    },
+    refetchAgents(val) {
+      if (val) {
+        this.$apollo.queries.agents.refresh()
+        this.$apollo.queries.flowRuns.refresh()
+      }
     },
     backend() {
       this.loadedComponents = 0

@@ -38,7 +38,7 @@ export default {
   watch: {
     tenant() {
       this.loading = true
-      this.setAgents(null)
+      this.setRefetch(true)
       setTimeout(() => {
         this.$router.push({ name: 'agents' })
         this.loading = false
@@ -46,7 +46,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('agent', ['setAgents'])
+    ...mapMutations('agent', ['setAgents', 'setRefetch'])
   }
 }
 </script>

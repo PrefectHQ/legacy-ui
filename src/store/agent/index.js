@@ -9,7 +9,8 @@ const state = {
   },
   agents: null,
   sortedAgents: null,
-  sorting: true
+  sorting: true,
+  refetch: false
 }
 
 const getters = {
@@ -33,10 +34,16 @@ const getters = {
   },
   sorting(state) {
     return state.sorting
+  },
+  refetchAgents(state) {
+    return state.refetch
   }
 }
 
 const mutations = {
+  setRefetch(state, bool) {
+    state.refetch = bool
+  },
   setSortedAgents(state, flowRuns) {
     // console.log('flowRuns in vuex', flowRuns)
     this.sorting = true
@@ -102,6 +109,7 @@ const mutations = {
     const fullList = [...runsList, ...newList, ...oldList]
     state.sortedAgents = fullList
     // console.log('fullList', fullList)
+    state.refetch = false
     state.sorting = false
   },
   setAgents(state, agents) {
@@ -124,6 +132,7 @@ const mutations = {
           : 'unhealthy'
       return agent
     })
+    state.refetch = false
     state.sorting = false
   }
 }

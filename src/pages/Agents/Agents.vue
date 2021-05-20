@@ -146,8 +146,7 @@ export default {
       this.labelInput = []
       this.queryFailed = false
       this.showUnlabeledAgentsOnly = false
-      this.setAgents(null)
-      this.setSortedAgents(null)
+      this.setRefetch(true)
       if (!val) return
       this.loading = 1
       setTimeout(() => {
@@ -157,7 +156,7 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    ...mapMutations('agent', ['setAgents', 'setSortedAgents']),
+    ...mapMutations('agent', ['setAgents', 'setSortedAgents', 'setRefetch']),
     // ...mapActions('data', ['activateProject', 'resetActiveData']),
 
     async clearUnhealthyAgents() {
@@ -203,7 +202,7 @@ export default {
           alertType: 'error'
         })
       } finally {
-        // this.setAgents(null)
+        this.setRefetch(true)
         setTimeout(() => {
           this.clearingAgents = false
         }, 500)

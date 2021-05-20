@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 // import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
@@ -176,12 +176,12 @@ export default {
     // }
   },
   watch: {
-    statusColor() {
-      this.showIcon = false
-      this.$nextTick(() => {
-        this.showIcon = true
-      })
-    }
+    // statusColor() {
+    //   this.showIcon = false
+    //   this.$nextTick(() => {
+    //     this.showIcon = true
+    //   })
+    // }
     // agent() {
     //   console.log('agent', this.agent)
     //   if (this.hasLateRuns) {
@@ -222,6 +222,7 @@ export default {
   // },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    ...mapMutations('agent', ['setRefetch']),
     // getTimeOverdue(time) {
     //   return new Date() - new Date(time)
     // },
@@ -253,6 +254,7 @@ export default {
             agentId: this.agent.id
           }
         })
+        this.setRefetch(true)
         setTimeout(() => {
           this.isDeleting = false
         }, 10000)
