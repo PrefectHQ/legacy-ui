@@ -369,6 +369,11 @@ export default {
   overflow: auto;
   top: 64px !important;
 
+  @media screen and (max-width: 1264px) {
+    height: calc(100vh - 104px) !important;
+    top: 104px !important;
+  }
+
   /* stylelint-disable */
   .focusable {
     &:focus {
