@@ -6,7 +6,7 @@ import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
 import AgentConfigCard from '@/pages/Agents/AgentConfigCard'
 import SubmittableRuns from '@/pages/Agents/SubmittableRuns'
 
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -21,7 +21,8 @@ export default {
     return {
       tab: 'overview',
       tabs: [{ name: 'overview', target: 'overview' }],
-      loading: false
+      loading: false,
+      showConfirmDialog: false
     }
   },
   computed: {
@@ -46,7 +47,27 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('agent', ['setAgents', 'setRefetch'])
+    ...mapMutations('agent', ['setAgents', 'setRefetch']),
+    ...mapActions('alert', ['setAlert']),
+    async deleteAgent() {
+      try {
+        this.showConfirmDialog = false
+        const { data } = await this.$apollo.mutate({
+          mutation: require('@/graphql/Agent/delete-agent.gql'),
+          variables: {
+            agentId: this.agentDetails.id
+          }
+        })
+        this.setRefetch(true)
+        if (data.delete_agent?.success) this.$router.push({ name: 'agents' })
+      } catch (error) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `${error}`,
+          alertType: 'error'
+        })
+      }
+    }
   }
 }
 </script>
@@ -60,6 +81,58 @@ export default {
         <span>
           {{ agentId }}
         </span>
+      </span>
+      <span
+        slot="page-actions"
+        :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
+      >
+        <v-btn
+          :disabled="agentDetails.status != 'old'"
+          text
+          tile
+          small
+          color="error"
+          class="vertical-button py-1"
+          :title="
+            agentDetails.status != 'old'
+              ? 'This agent is healthy'
+              : 'Remove agent'
+          "
+          @click="showConfirmDialog = true"
+        >
+          <v-icon>
+            delete
+          </v-icon>
+          <div class="mb-1">Remove</div>
+        </v-btn>
+
+        <v-dialog v-model="showConfirmDialog" max-width="480">
+          <v-card>
+            <v-card-title class="word-break-normal">
+              Are you sure you want to stop displaying this agent?
+            </v-card-title>
+
+            <v-card-text class="my-4 text-body-2">
+              <strong>
+                This action will not stop the agent process if it is still
+                running in your infrastructure.</strong
+              >
+              It will only stop displaying the agent in Cloud.
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn text @click="showConfirmDialog = false">
+                Cancel
+              </v-btn>
+
+              <v-btn color="error lighten-1" text @click="deleteAgent">
+                Confirm
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </span>
     </SubPageNav>
 
