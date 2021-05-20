@@ -1,5 +1,5 @@
 <script>
-/* eslint-disable no-debugger, no-console */
+import moment from '@/utils/moment'
 
 export default {
   props: {
@@ -11,10 +11,11 @@ export default {
   },
   data() {
     return {
-      menu: false,
-      interval: 'second',
+      isLoading: false,
+      isReadOnly: true,
       maxRetries: this.task.max_retries,
       retryDelay: this.task.retry_delay,
+      interval: 'second',
       intervalOptions: [
         {
           value: 'second',
@@ -33,157 +34,126 @@ export default {
         }
       ]
     }
+  },
+
+  computed: {
+    disableSave() {
+      return Number(this.maxRetries) !== this.task.max_retries ||
+        this.retryDelay !== this.task.retry_delay
+        ? false
+        : true
+    }
+  },
+  methods: {
+    handleSave() {
+      this.isLoading = true
+      this.isReadOnly = true
+      const result = new Promise(resolve => {
+        setTimeout(() => {
+          resolve({
+            task: {
+              maxRetries: this.maxRetries,
+              retryDelay: moment.duration(this.retryDelay).asSeconds()
+            }
+          })
+        }, 3000)
+      })
+      result.then(res => {
+        this.isLoading = false
+      })
+    },
+    handleEdit() {
+      this.isReadOnly = !this.isReadOnly
+
+      if (
+        this.retryDelay !== this.task.retry_delay ||
+        this.maxRetries !== this.task.max_retries
+      ) {
+        this.retryDelay = this.task.retry_delay
+        this.maxRetries = this.task.max_retries
+      }
+    }
   }
 }
 </script>
 
 <template>
-  <v-list-item dense class="px-0">
-    <v-list-item-content style="overflow-x: auto;">
-      <v-list-item-title>
-        Max Retries:
-        <v-text-field
-          v-model="maxRetries"
-          style="width: 50px;"
-          type="number"
-          dense
-          class="mt-5 mb-5"
-          hide-details
-          min="0"
-          max="2147483647"
-        ></v-text-field>
-      </v-list-item-title>
+  <div class="position-relative  mt-5">
+    <div class="d-flex justify-end align-end mb-1" style="width: 100%;">
+      <v-btn
+        x-small
+        class="text-normal mr-2"
+        depressed
+        color="utilGrayLight"
+        title="Edit"
+        @click="handleEdit"
+      >
+        {{ !isReadOnly ? 'Cancel' : 'Edit' }}
+      </v-btn>
 
-      <!-- <v-select
-              v-model="interval"
-              :items="intervalOptions"
-              class="text-h5 mr-2"
-              outlined
-              dense
-              hide-details
-              style="max-width: 150px;"
-              item-text="value"
-              item-value="value"
-            /> -->
+      <v-btn
+        x-small
+        class="text-normal mr-2"
+        depressed
+        color="utilGrayLight"
+        title="Edit"
+        :disabled="disableSave"
+        @click="handleSave"
+        :loading="isLoading"
+      >
+        Save
+      </v-btn>
+    </div>
 
-      <v-text-field
-        v-model="retryDelay"
-        type="number"
-        label="Retry Delay"
-        class="text-h5"
-        outlined
-        dense
-        hide-details
-      />
-      <!-- <v-list-item-subtitle class="text-caption">
-        Retries
-      </v-list-item-subtitle> -->
+    <div>
+      <v-row no-gutters align="center" class="my-4 position-relative">
+        <v-col cols="6" class="pr-3">
+          Max Retries
+        </v-col>
+        <v-col cols="6" class="pl-3">
+          <v-text-field
+            v-model="maxRetries"
+            type="number"
+            class="text-body-1"
+            hide-details
+            outlined
+            dense
+            :readonly="isReadOnly"
+          />
+        </v-col>
 
-      <!-- <v-list class="pa-0 border-left border-radius-0">
-        <v-list-item class="px-3">
-            <v-list-item-content>
-              <v-list-item-subtitle>
-                Max Retries: {{ task.max_retries }}
-              </v-list-item-subtitle>
+        <v-col cols="6" class="pr-3 mt-5">
+          Retry Delay
+        </v-col>
+        <v-col cols="6" class="pl-3 mt-5">
+          <v-text-field
+            v-model="retryDelay"
+            class="text-body-1"
+            hide-details
+            outlined
+            dense
+            :readonly="isReadOnly"
+          />
+        </v-col>
 
-              <v-list-item-subtitle v-if="task.max_retries">
-                Retry Delay: {{ task.retry_delay }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-
-        <v-list-item>
-          
-        </v-list-item>
-      </v-list> -->
-    </v-list-item-content>
-
-    <v-list-item-action class="ma-0 mb-11">
-      <v-menu v-model="menu" :close-on-content-click="false" offset-x>
-        <template #activator="{ on: menu, attrs }">
-          <v-tooltip top>
-            <template #activator="{ on: tooltip }">
-              <div v-on="tooltip">
-                <v-btn
-                  x-small
-                  icon
-                  aria-label="Add label"
-                  color="primary"
-                  v-bind="attrs"
-                  v-on="menu"
-                >
-                  <v-icon>
-                    edit
-                  </v-icon>
-                </v-btn>
-              </div>
-            </template>
-
-            <span>Edit retries</span>
-          </v-tooltip>
-        </template>
-        <v-card style="width: 400px;">
-          <v-divider></v-divider>
-
-          <v-list>
-            <v-list-item>
-              <v-text-field
-                v-model="maxRetries"
-                label="Max Retries"
-                type="number"
-                outlined
-                dense
-                class="mt-5 mb-5"
-                hide-details
-                min="0"
-                max="2147483647"
-              ></v-text-field>
-            </v-list-item>
-
-            <v-list-item>
-              <v-select
-                v-model="interval"
-                :items="intervalOptions"
-                class="text-h5 mr-2"
-                outlined
-                dense
-                hide-details
-                style="max-width: 150px;"
-                item-text="value"
-                item-value="value"
-              />
-
-              <v-text-field
-                v-model="retryDelay"
-                type="number"
-                label="Retry Delay"
-                class="text-h5"
-                outlined
-                dense
-                hide-details
-              />
-
-              <!-- <v-text-field
-                label="Retry Delay (Seconds)"
-                type="number"
-                min="60"
-                max="2147483647"
-              /> -->
-            </v-list-item>
-          </v-list>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-
-            <v-btn text @click="menu = false">
-              Cancel
-            </v-btn>
-            <v-btn color="primary" text @click="menu = false">
-              Save
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-menu>
-    </v-list-item-action>
-  </v-list-item>
+        <!-- <v-col cols="3" class="pl-3 mt-5">
+          <v-select
+            v-model="interval"
+            :items="intervalOptions"
+            outlined
+            dense
+            hide-details
+            item-text="value"
+            item-value="value"
+          />
+        </v-col> -->
+      </v-row>
+    </div>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.v-input--is-readonly {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+</style>
