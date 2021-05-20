@@ -11,6 +11,7 @@
 
 - Fix issues with pre-populating and resetting job templates and task definitions for run configs - [#839](https://github.com/PrefectHQ/ui/pull/839)
 - Check for the correct values when disabling next for the Pager Duty action - [#835](https://github.com/PrefectHQ/ui/pull/835)
+- Don't show work queue option in Server - [#848](https://github.com/PrefectHQ/ui/pull/848)
 - Fix issue with overlapping sidebar/application nav on small screens - [#850](https://github.com/PrefectHQ/ui/pull/850)
 
 ## 2021-05-17
