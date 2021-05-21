@@ -3,6 +3,7 @@ import { actionTypes } from '@/utils/automations'
 import { mapGetters } from 'vuex'
 import ListInput from '@/components/CustomInputs/ListInput'
 import JsonInput from '@/components/CustomInputs/JsonInput'
+import jsBeautify from 'js-beautify'
 
 export default {
   components: {
@@ -42,7 +43,6 @@ export default {
       apiToken: '',
       jsonPayload: null,
       validJson: true,
-      jsonPlaceholder: JSON.stringify({ 'event-id': '{event.id}' }),
       routingKey: '',
       webhookUrlSecret: null,
       severity: '',
@@ -107,6 +107,9 @@ export default {
         : this.actionType?.type === 'SLACK_WEBHOOK'
         ? 'Slack Webhook Secret Name'
         : 'config details'
+    },
+    jsonPlaceholder() {
+      return jsBeautify('{ "event-id": "{event.id}" }')
     },
     messagePlaceholder() {
       let messageText
@@ -647,7 +650,11 @@ export default {
                 </div>
                 <div v-else class="mt-2">
                   For example:
-                  <div>{{ `{"flow": "{flow_name}"}` }}</div>
+                  <div
+                    >{{ `{` }}
+                    <div class="ml-3">{{ `"flow": "{flow_name}"` }}</div>
+                    <div>{{ `}` }}</div>
+                  </div>
                 </div>
               </div>
             </v-card-text>
