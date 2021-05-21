@@ -1,6 +1,6 @@
-query LastFlowRuns($flowId: uuid, $agentId: uuid) {
+query LastFlowRuns($flowId: uuid) {
   flow_run(
-    where: { state: { _neq: "Scheduled" }, _or: [{flow_id: { _eq: $flowId }}, {agent_id: {_eq: $agentId}}]}
+    where: { flow_id: { _eq: $flowId }, state: { _neq: "Scheduled" } }
     order_by: { start_time: desc_nulls_last }
     limit: 10
   ) {
@@ -9,6 +9,6 @@ query LastFlowRuns($flowId: uuid, $agentId: uuid) {
     flow_id
     start_time
     state
-    agent_id
+   
   }
 }
