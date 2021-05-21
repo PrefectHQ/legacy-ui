@@ -66,7 +66,7 @@ export default {
         </v-list-item-title>
         <div
           v-if="$slots['subtitle'] || subtitle"
-          class="text-subtitle-2 utilGrayDark--text text-caption position-absolute font-weight-light"
+          class="text-subtitle-2 utilGrayDark--text text-caption position-absolute font-weight-medium"
           style="bottom: 2px;"
         >
           <slot v-if="$slots['subtitle']" name="subtitle" />
