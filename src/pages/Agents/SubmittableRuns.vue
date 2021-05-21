@@ -1,6 +1,5 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import { cancelLateRunsMixin } from '@/mixins/cancelLateRunsMixin'
@@ -27,8 +26,6 @@ export default {
   },
   data() {
     return {
-      // submittable: this.agent.submittableRuns
-      // loadingKey: 0
       tab: 'submittable',
       overlay: null
     }
@@ -46,37 +43,22 @@ export default {
       return this.tenant?.settings?.work_queue_paused
     },
     lateRuns() {
-      // if (!this.submittable?.length) return null
-      // return this.submittable?.filter(run => {
-      //   return this.getTimeOverdue(run.scheduled_start_time) > 20000
-      // })
       return [...this.agent.lateRuns].sort(
         (a, b) =>
           new Date(a.scheduled_start_time) - new Date(b.scheduled_start_time)
       )
     },
-    // tab() {
-    //   return this.agent?.lateRuns?.length ? 'late' : 'submittable'
-    // },
     loading() {
       return this.loadingKey > 0
     },
     submittableRuns() {
-      // console.log('submittable agent', this.agent)
-      // if (!this.submittable) return null
-      // const filtered = this.submittable?.filter(run => {
-      //   return this.getTimeOverdue(run.scheduled_start_time) <= 20000
-      // })
-      // return filtered
       return [...this.agent.submittableRuns].sort(
         (a, b) =>
           new Date(a.scheduled_start_time) - new Date(b.scheduled_start_time)
       )
     },
     title() {
-      // if (!this.submittable) return
       let title = ''
-
       if (this.tab == 'submittable') {
         title =
           this.loading > 0
@@ -103,7 +85,6 @@ export default {
       if (this.tab == 'late') {
         icon = 'timelapse'
       }
-
       return icon
     },
     titleIconColor() {
@@ -115,37 +96,6 @@ export default {
         ? 'deepRed'
         : 'Success'
     }
-    // labelsAlign() {
-    //   if (!this.flowRuns?.length) {
-    //     this.labelMessage('You have no flowRuns')
-    //     return false
-    //   }
-    //   if (
-    //     !this.agent?.labels?.length &&
-    //     this.flowRuns.every(flowRun => flowRun.labels.length > 0)
-    //   ) {
-    //     this.labelMessage(
-    //       "You have no currently registered flowRuns that match this agent's labels.  You will need to edit your flowRuns' labels"
-    //     )
-    //     return false
-    //   } else {
-    //     let matchingLabels = 0
-    //     if (this.flowRuns) {
-    //       this.flowRuns.forEach(flowRun => {
-    //         if (
-    //           flowRun.labels.every(label => this.agent?.labels?.includes(label))
-    //         ) {
-    //           this.addMatchingflowRun(flowRun)
-    //         }
-    //       })
-    //     }
-    //     if (matchingLabels > 0) {
-    //       return true
-    //     } else {
-    //       return false
-    //     }
-    //   }
-    // }
   },
   watch: {
     agent(val) {
@@ -164,30 +114,12 @@ export default {
         }, 1500)
       }
     }
-    // flowRuns() {
-    //   this.submittable = []
-    //   this.labelsAlign
-    // }
   },
   mounted() {
     if (this.agent.lateRuns?.length) this.tab = 'late'
   },
-  // beforeDestroy() {
-  // this.submittable = []
-  // this.tab = 'submittable'
-  // },
   methods: {
     ...mapMutations('agent', ['setRefetch']),
-    // getTimeOverdue(time) {
-    //   return new Date() - new Date(time)
-    // },
-    // labelMessage(text) {
-    //   this.labelMessageText = text
-    // },
-    // addMatchingflowRun(flowRun) {
-    //   if (!this.submittable.filter(item => item.id === flowRun.id).length)
-    //     this.submittable.push(flowRun)
-    // },
     flowRunName(flowRun) {
       return flowRun?.name
     },
@@ -202,15 +134,7 @@ export default {
       this.overlay = null
     }
   },
-  apollo: {
-    // flowRuns: {
-    //   query: require('@/graphql/Agent/FlowRuns.gql'),
-    //   loadingKey: 'loading',
-    //   update: data => {
-    //     return data.flow_run
-    //   }
-    // }
-  }
+  apollo: {}
 }
 </script>
 
@@ -408,15 +332,13 @@ export default {
         :timeout="12000"
       >
       </Alert>
-
-      <div
-        v-if="submittableRuns && submittableRuns.length > 3"
-        class="pa-0 card-footer"
-      >
-      </div>
     </v-card-text>
 
-    <v-card-text v-if="tab == 'late'" class="pa-0 card-content">
+    <v-card-text
+      v-if="tab == 'late'"
+      class="pa-0"
+      :style="{ height: '270px', 'overflow-y': 'auto' }"
+    >
       <v-skeleton-loader
         v-if="loading || isClearingLateRuns"
         type="list-item-three-line"
@@ -440,7 +362,7 @@ export default {
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-else dense class="card-content">
+      <v-list v-else dense>
         <v-lazy
           v-for="item in lateRuns"
           :key="item.id"
@@ -507,19 +429,6 @@ export default {
         Clear late
       </v-btn>
 
-      <!-- We don't need to show this option -->
-      <!-- <v-btn
-        v-if="!overlay"
-        small
-        depressed
-        color="primary"
-        text
-        style="z-index: 2;"
-        @click="showOverlay('queue')"
-      >
-        Options
-      </v-btn> -->
-
       <v-btn
         v-if="overlay && !paused"
         small
@@ -534,42 +443,6 @@ export default {
         Close
       </v-btn>
     </v-card-actions>
-
-    <!-- <v-dialog v-model="showClearLateRunsDialog" max-width="480">
-          <v-card flat>
-            <v-card-title class="text-h6 word-break-normal">
-              Are you sure you want to clear all late runs?
-            </v-card-title>
-
-            <v-card-text v-if="scheduledRunIds.length > 1">
-              This will toggle the schedule for all flows with late runs. If you
-              did not set a
-              <ExternalLink
-                href="https://docs.prefect.io/core/concepts/schedules.html#schedules"
-                >start time</ExternalLink
-              >
-              for your schedule,
-              <strong
-                >it may affect the scheduled start times for your submittable
-                runs.</strong
-              >
-            </v-card-text>
-            <v-card-text v-else>
-              This will set your late flow runs into a
-              <strong>cancelled</strong> state.
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn text tile @click="showClearLateRunsDialog = false">
-                Cancel
-              </v-btn>
-              <v-btn dark color="deepRed" depressed @click="clearLateRuns">
-                Confirm
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog> -->
   </v-card>
 </template>
 
@@ -587,16 +460,7 @@ a {
 }
 
 .card-content {
-  max-height: 254px;
+  max-height: 310px;
   overflow-y: auto;
-}
-
-.card-footer {
-  background-image: linear-gradient(transparent, 60%, rgba(0, 0, 0, 0.1));
-  bottom: 6px;
-  height: 6px !important;
-  pointer-events: none;
-  position: absolute;
-  width: 100%;
 }
 </style>

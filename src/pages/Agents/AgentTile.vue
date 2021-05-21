@@ -209,10 +209,12 @@ export default {
     <v-card-title>
       <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
 
-      <div>
-        <v-icon :color="statusColor" class="fa-2x pi-2x">
-          {{ agentIcon || 'fas fa-robot' }}
-        </v-icon>
+      <div
+        ><span>
+          <v-icon :color="statusColor" class="fa-2x pi-2x fa-font">
+            {{ agentIcon || 'fas fa-robot' }}
+          </v-icon></span
+        >
         <span class="ml-2">{{ name }}</span>
       </div>
     </v-card-title>
@@ -405,9 +407,12 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.fa-robot {
-  color: var(--v-secondaryGray-base);
-  float: right;
-  font-size: 1.8em;
+.fa-font {
+  font-family: fontAwesome;
 }
+// .fa-robot {
+//   color: var(--v-secondaryGray-base);
+//   float: right;
+//   font-size: 1.8em;
+// }
 </style>
