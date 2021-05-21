@@ -1,7 +1,6 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
-// import CardTitle from '@/components/Card-Title'
 import Label from '@/components/Label'
 import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -18,16 +17,9 @@ const AGENT_TYPES = [
 
 export default {
   components: {
-    // CardTitle,
     LastTenRuns,
     Label
   },
-  // filters: {
-  //   formatDateTime(value) {
-  //     if (!value) return 'None'
-  //     return moment(value).format('h:mma z')
-  //   }
-  // },
   mixins: [formatTime],
   props: {
     agent: {
@@ -53,14 +45,10 @@ export default {
   data() {
     return {
       copiedText: {},
-      // currentDateTime: moment().format(),
       labelMenuOpen: false,
-      // interval: null,
       isDeleting: false,
       showConfirmDialog: false,
-      // showLastQuery: true,
       submittable: this.agent.submittableRuns,
-      // newStatus: '',
       showIcon: true
     }
   },
@@ -76,21 +64,6 @@ export default {
     hasLateRuns() {
       return !!this.lateRuns?.length
     },
-    // agentModified() {
-    //   return {
-    //     ...this.agent,
-    //     labels: this.agent.labels.slice().sort((labelA, labelB) => {
-    //       if (labelA.toLowerCase() < labelB.toLowerCase()) {
-    //         return -1
-    //       } else if (labelA.toLowerCase() > labelB.toLowerCase()) {
-    //         return 1
-    //       } else {
-    //         return 0
-    //       }
-    //     })
-    //   }
-    // },
-
     name() {
       return this.agent?.name && this.agent.name !== 'agent'
         ? this.agent.name
@@ -133,19 +106,10 @@ export default {
       return this.agent?.type ? this.agent.type : 'Agent type unknown'
     },
     submittableRuns() {
-      // if (!this.agent?.submittableRuns) return null
-      // const filtered = this.agent?.submittableRuns?.filter(run => {
-      //   return this.getTimeOverdue(run.scheduled_start_time) <= 20000
-      // })
-      // return filtered
       return this.agent.submittableRuns
     },
     lateRuns() {
       return this.agent.lateRuns
-      // if (!this.agent?.submittableRuns?.length) return null
-      // return this.agent?.submittableRuns?.filter(run => {
-      //   return this.getTimeOverdue(run.scheduled_start_time) > 20000
-      // })
     },
     failedRuns() {
       const badRuns = this.recentRuns?.filter(run =>
@@ -159,81 +123,20 @@ export default {
         'fad fa-globe'
       )
     }
-    // labelsAlign() {
-    //   if (
-    //     !this.agent?.labels?.length &&
-    //     this.flowRuns?.every(flowRun => flowRun?.labels?.length > 0)
-    //   ) {
-    //     return false
-    //   } else {
-    //     if (this.flowRuns?.length) {
-    //       this.flowRuns.forEach(flowRun => {
-    //         if (
-    //           flowRun?.labels.every(label =>
-    //             this.agent?.labels?.includes(label)
-    //           )
-    //         ) {
-    //           this.addMatchingflowRun(flowRun)
-    //         }
-    //       })
-    //     }
-    //     return true
-    //   }
-    // }
   },
   watch: {
     statusColor(val) {
-      //make sure icon color updates
+      //attempt to make icon color update - not working
       console.log('statusColor', val)
       this.showIcon = false
       setTimeout(() => {
         this.showIcon = true
       }, 150)
     }
-    // agent() {
-    //   console.log('agent', this.agent)
-    //   if (this.hasLateRuns) {
-    //     this.agent.status === 'late'
-    //   }
-    // }
-    // submittable(val) {
-    //   if (!val) return
-    //   if (this.lateRuns?.length > 0) {
-    //     this.tab = 'late'
-    //   }
-    //   if (this.hasLateRuns <= 0) {
-    //     this.tab = 'submittable'
-    //   }
-    // }
   },
-  // flowRuns() {
-  //   this.submittable = []
-  //   this.labelsAlign
-  // },
-  //   secondsSinceLastQuery(newVal, oldVal) {
-  //     if (newVal > oldVal || !this.agent?.last_queried) return
-
-  //     this.showLastQuery = false
-
-  //     setTimeout(() => {
-  //       this.showLastQuery = true
-  //     }, 150) // should match fade transition duration
-  //   }
-  // },
-  // mounted() {
-  //   this.interval = setInterval(() => {
-  //     this.currentDateTime = moment().format()
-  //   }, 1000)
-  // },
-  // beforeDestroy() {
-  //   clearInterval(this.interval)
-  // },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapMutations('agent', ['setRefetch']),
-    // getTimeOverdue(time) {
-    //   return new Date() - new Date(time)
-    // },
     anyLabelsSelected(labels) {
       return labels.reduce((result, label) => this.labelSelected(label), false)
     },
@@ -276,19 +179,8 @@ export default {
     labelSelected(label) {
       return this.selectedLabels.includes(label)
     }
-    // addMatchingflowRun(flowRun) {
-    //   const matching = this.submittable?.filter(item => item.id === flowRun.id)
-    //   if (!matching?.length) this.submittable.push(flowRun)
-    // },
   },
   apollo: {
-    // flowRuns: {
-    //   query: require('@/graphql/Agent/FlowRuns.gql'),
-    //   loadingKey: 'loading',
-    //   update: data => {
-    //     return data.flow_run
-    //   }
-    // },
     recentRuns: {
       query: require('@/graphql/Agent/recent-runs.gql'),
       loadingKey: 'loadingKey',
@@ -298,9 +190,6 @@ export default {
           day: this.dayAgo
         }
       },
-      // skip() {
-      //   return this.agent.status === 'old'
-      // },
       update: data => {
         return data.flow_run
       }
@@ -516,37 +405,9 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.bottom-right-loaded {
-  bottom: 4px;
-  right: -2px;
-}
-
-.bottom-right-loading {
-  bottom: 12px;
-  right: -16px;
-}
-
-.pointer {
-  cursor: pointer;
-}
-
 .fa-robot {
   color: var(--v-secondaryGray-base);
   float: right;
   font-size: 1.8em;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 150ms;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.overflow-scroll {
-  overflow: scroll;
 }
 </style>
