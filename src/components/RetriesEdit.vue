@@ -1,7 +1,11 @@
 <script>
 import moment from '@/utils/moment'
+import EditableTextField from '@/components/EditableTextField'
 
 export default {
+  components: {
+    EditableTextField
+  },
   props: {
     task: {
       type: Object,
@@ -79,8 +83,35 @@ export default {
 </script>
 
 <template>
-  <div class="position-relative  mt-5">
-    <div class="d-flex justify-end align-end mb-1" style="width: 100%;">
+  <div class="mt-4">
+    <v-row no-gutters>
+      <v-col cols="9">
+        Max retries
+      </v-col>
+      <v-col cols="3" class="text-right font-weight-bold">
+        <EditableTextField
+          :content="task.max_retries"
+          label="Max retries"
+          required
+        />
+      </v-col>
+    </v-row>
+
+    <v-row no-gutters>
+      <v-col cols="9">
+        Retry Delay
+      </v-col>
+      <v-col cols="3" class="text-right font-weight-bold">
+        <EditableTextField
+          :content="task.retry_delay"
+          label="retry delay"
+          required
+        />
+      </v-col>
+    </v-row>
+  </div>
+  <!-- <div class="position-relative  mt-5">
+    <div class="d-flex justify-end align-end " style="width: 100%;">
       <v-btn
         x-small
         class="text-normal mr-2"
@@ -94,7 +125,7 @@ export default {
 
       <v-btn
         x-small
-        class="text-normal mr-2"
+        class="text-normal"
         depressed
         color="utilGrayLight"
         title="Edit"
@@ -108,14 +139,13 @@ export default {
 
     <div>
       <v-row no-gutters align="center" class="my-4 position-relative">
-        <v-col cols="6" class="pr-3 text-caption">
+        <v-col cols="10" class=" mt-2 text-caption">
           Max retries
         </v-col>
-        <v-col cols="6" class="pl-3">
+        <v-col cols="2" class="pl-3">
           <v-text-field
             v-model="maxRetries"
             placeholder="Max retries"
-            outlined
             type="number"
             class="text-caption"
             hide-details
@@ -124,13 +154,12 @@ export default {
           />
         </v-col>
 
-        <v-col cols="6" class="pr-3 mt-5 text-caption">
+        <v-col cols="10" class="pr-3 mt-5 text-caption">
           Retry delay
         </v-col>
-        <v-col cols="6" class="pl-3 mt-5">
+        <v-col cols="2" class="pl-3 mt-5">
           <v-text-field
             v-model="retryDelay"
-            outlined
             placeholder="Retry delay"
             class="text-caption"
             hide-details
@@ -139,24 +168,14 @@ export default {
           />
         </v-col>
 
-        <!-- <v-col cols="3" class="pl-3 mt-5">
-          <v-select
-            v-model="interval"
-            :items="intervalOptions"
-            outlined
-            dense
-            hide-details
-            item-text="value"
-            item-value="value"
-          />
-        </v-col> -->
+       
       </v-row>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <style lang="scss" scoped>
-.v-input--is-readonly {
-  background-color: rgba(0, 0, 0, 0.03) !important;
-}
+// .v-input--is-readonly {
+//   background-color: rgba(0, 0, 0, 0.03) !important;
+// }
 </style>
