@@ -318,9 +318,7 @@ export default {
         <div class="flex-grow-0 flex-shrink-0 mt-6 pb-6">
           <v-divider class="mx-10 mb-4" />
 
-          <div
-            class="text-caption d-flex align-end justify-space-between mx-10"
-          >
+          <div class="text-caption d-flex align-end justify-space-between mx-8">
             <div
               v-if="lastDeployment_UI"
               class="text-right"
@@ -332,7 +330,7 @@ export default {
               <div>{{ lastDeployment_UI }}</div>
             </div>
             <div class="flex-grow-1">
-              <div v-show="coreVersion" class="text-center">
+              <div v-show="coreVersion" class="text-center mb-2">
                 <div class="utilGrayMid--text font-weight-light">
                   Core Version
                 </div>
@@ -368,6 +366,11 @@ export default {
   height: calc(100vh - 64px) !important;
   overflow: auto;
   top: 64px !important;
+
+  @media screen and (max-width: 1264px) {
+    height: calc(100vh - 104px) !important;
+    top: 104px !important;
+  }
 
   /* stylelint-disable */
   .focusable {

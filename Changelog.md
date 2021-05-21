@@ -5,13 +5,16 @@
 ### Features and Improvements
 
 - Add webhook and pause schedule actions to automations - [#818](https://github.com/PrefectHQ/ui/pull/818)
+- Remove auth layer from the application and improve support for webkit browsers - [#811](https://github.com/PrefectHQ/ui/pull/811)
+- Remove Server/Cloud switcher - [#844](https://github.com/PrefectHQ/ui/pull/844)
 
 ### Bugfixes
 
-<<<<<<< HEAD
+- Fix broken api store core version ref - [#847](https://github.com/PrefectHQ/ui/pull/847)
 - Fix issues with pre-populating and resetting job templates and task definitions for run configs - [#839](https://github.com/PrefectHQ/ui/pull/839)
-=======
 - Check for the correct values when disabling next for the Pager Duty action - [#835](https://github.com/PrefectHQ/ui/pull/835)
+- Don't show work queue option in Server - [#848](https://github.com/PrefectHQ/ui/pull/848)
+- Fix issue with overlapping sidebar/application nav on small screens - [#850](https://github.com/PrefectHQ/ui/pull/850)
 
 ## 2021-05-17
 
@@ -19,7 +22,6 @@
 
 - Covert this.allowedUsers in the Members component to a computed property to use the nullish coalescing operator/check for total allowed users -[#841](https://github.com/PrefectHQ/ui/pull/841)
 - Beautify json and add json type to default parameters json edit option to stop value flicker - [#837](https://github.com/PrefectHQ/ui/pull/837)
->>>>>>> 7e68094dbf76510039632e0317a6d9c1ee435f8b
 
 ## 2021-05-14
 
