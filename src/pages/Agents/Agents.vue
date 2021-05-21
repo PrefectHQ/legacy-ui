@@ -4,7 +4,6 @@ import { mapGetters, mapActions, mapMutations } from 'vuex'
 import LogRocket from 'logrocket'
 import SubPageNav from '@/layouts/SubPageNav'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
-// import moment from '@/utils/moment'
 import difference from 'lodash.difference'
 
 import AgentTile from '@/pages/Agents/AgentTile'
@@ -19,7 +18,6 @@ export default {
   mixins: [formatTime],
   data() {
     return {
-      // projectId: this.$route.params.id,
       cleanUpDialog: false,
       filterMenuOpen: false,
       queryFailed: false,
@@ -33,7 +31,6 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters('data', ['activeProject']),
     ...mapGetters('agent', [
       'staleThreshold',
       'unhealthyThreshold',
@@ -43,39 +40,10 @@ export default {
     ]),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
-    // project() {
-    //   return this.activeProject
-    // },
+
     oldAgents() {
       return !!this.filteredAgents?.find(agent => agent.status === 'old')
     },
-
-    // agentTracker() {
-
-    // return this.agents?.reduce(
-    //   (tracker, agent) => {
-    //     const secondsSinceLastQuery = moment().diff(
-    //       moment(agent.last_queried),
-    //       'seconds'
-    //     )
-
-    //     if (secondsSinceLastQuery < 60 * this.staleThreshold) {
-    //       tracker.healthy++
-    //     } else if (secondsSinceLastQuery < 60 * this.unhealthyThreshold) {
-    //       tracker.stale++
-    //     } else {
-    //       tracker.unhealthy++
-    //     }
-
-    //     return tracker
-    //   },
-    //   {
-    //     healthy: 0,
-    //     stale: 0,
-    //     unhealthy: 0
-    //   }
-    // )
-    // },
     allLabels() {
       if (!this.agents) return []
       return this.agents.reduce(
@@ -83,17 +51,10 @@ export default {
         []
       )
     },
-    // computedAgents() {
-    //   if (!this.agents) return []
-    //   return [...this.agents].sort((agentA, agentB) =>
-    //     agentA.id < agentB.id ? -1 : 1
-    //   )
-    // },
     isLoading() {
       return this.loading > 0 || this.sorting
     },
     filteredAgents() {
-      // console.log(this.sortedAgents)
       return this.sortedAgents.filter(agent => {
         if (this.showUnlabeledAgentsOnly) {
           return agent.labels.length === 0
@@ -101,34 +62,6 @@ export default {
         if (!this.statusInput.includes(agent.status)) return false
         return difference(this.labelInput, agent.labels).length === 0
       })
-      // if (!this.agents) return
-      // const agents = [...this.agents]
-      // const runsList = []
-      // const newList = []
-      // const oldList = []
-
-      // agents.forEach(agent => {
-      //   if (this.labelsAlign(agent) && agent.status != 'unhealthy') {
-      //     runsList.push(agent)
-      //   } else if (agent.status != 'unhealthy') {
-      //     newList.push(agent)
-      //   } else {
-      //     agent.status = 'old'
-      //     oldList.push(agent)
-      //   }
-      // })
-      // runsList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
-      // newList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
-      // oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
-      // const fullList = [...runsList, ...newList, ...oldList]
-
-      // return fullList.filter(agent => {
-      //   if (this.showUnlabeledAgentsOnly) {
-      //     return agent.labels.length === 0
-      //   }
-      //   if (!this.statusInput.includes(agent.status)) return false
-      //   return difference(this.labelInput, agent.labels).length === 0
-      // })
     },
     filtersApplied() {
       return (
@@ -139,9 +72,6 @@ export default {
     }
   },
   watch: {
-    // agents() {
-    //   this.setSortedAgents(this.flowRuns)
-    // }
     tenant(val) {
       this.labelInput = []
       this.queryFailed = false
@@ -157,8 +87,6 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapMutations('agent', ['setAgents', 'setSortedAgents', 'setRefetch']),
-    // ...mapActions('data', ['activateProject', 'resetActiveData']),
-
     async clearUnhealthyAgents() {
       try {
         this.clearingAgents = true
@@ -245,45 +173,7 @@ export default {
       this.statusInput = STATUSES
       this.showUnlabeledAgentsOnly = false
     }
-    // status(agent) {
-    //   if (agent.secondsSinceLastQuery < 60 * this.staleThreshold)
-    //     return 'healthy'
-    //   if (agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold)
-    //     return 'stale'
-
-    //   return 'unhealthy'
-    // },
-    // labelsAlign(agent) {
-    //   agent.submittableRuns = []
-
-    //   if (!agent.labels?.length) {
-    //     const noLabels = this.flowRuns?.filter(flowRun => {
-    //       return !flowRun?.labels?.length
-    //     })
-    //     agent.submittableRuns = noLabels
-    //     return !!noLabels?.length
-    //   } else {
-    //     const match = this.flowRuns?.filter(
-    //       flowRun =>
-    //         flowRun?.labels?.length &&
-    //         flowRun.labels.every(label => agent?.labels?.includes(label))
-    //     )
-    //     agent.submittableRuns = match
-    //     return !!match?.length
-    //   }
-    // }
   }
-  // apollo: {
-  //   flowRuns: {
-  //     query: require('@/graphql/Agent/FlowRuns.gql'),
-  //     loadingKey: 'loading',
-  //     update(data) {
-  //       if (!data) return
-  //       this.setSortedAgents(data.flow_run)
-  //       return data.flow_run
-  //     }
-  //   }
-  // }
 }
 </script>
 

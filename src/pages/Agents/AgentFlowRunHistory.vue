@@ -36,17 +36,6 @@ export default {
         this.tooltip = exists ? this.tooltip : null
       }
     }
-    // watch: {
-    //   flow() {
-    //     this.$apollo.queries.flowRuns.stopPolling()
-
-    //     if (this.pollInterval > 0) {
-    //       this.$apollo.queries.flowRuns.startPolling(this.pollInterval)
-    //     } else {
-    //       this.$apollo.queries.flowRuns.refetch()
-    //     }
-    //   }
-    // }
   },
   mounted() {
     if (this.pollInterval > 0) {

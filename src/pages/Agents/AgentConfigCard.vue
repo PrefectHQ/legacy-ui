@@ -26,12 +26,11 @@ export default {
         ?.filter(
           hook =>
             hook.event_tags?.agent_config_id?.filter(id => {
-              // console.log(id)
               return id === this.agent?.agent_config_id
             }).length > 0
         )
         .map(hook => hook.action)
-      // console.log('hook', hook)
+
       return hook
     }
   },
