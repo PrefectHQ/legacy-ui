@@ -405,6 +405,8 @@ export default {
           :headers="headers"
           :items="kv"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+          sort-by="created"
+          sort-desc
           :search="search"
           :loading="$apollo.queries.kv.loading"
           :expanded.sync="expanded"
