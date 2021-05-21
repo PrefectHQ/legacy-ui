@@ -70,15 +70,11 @@ export default {
           }
 
           d.color = computedStyle.getPropertyValue(`--v-${d.state}-base`)
-          // if (this.disableView)
-          //   d.color = computedStyle.getPropertyValue(
-          //     '--v-${d.state}-lighten--2'
-          //   )
           d.opacity = 1
           d.warningOpacity = 0
           return d
         })
-      return prepped.slice(0, 10)
+      return prepped
     }
   },
   mounted() {
@@ -162,17 +158,11 @@ export default {
       query: require('@/graphql/Dashboard/last-flow-runs.gql'),
       variables() {
         return {
-          flowId: this.flowId || null,
-          agentId: this.agentId || null
+          flowId: this.flowId || null
         }
       },
-      skip() {
-        return !!this.recentRuns
-      },
       loadingKey: 'loadingKey',
-      update: data => {
-        return data.flow_run
-      }
+      update: data => data.flow_run
     }
   }
 }
