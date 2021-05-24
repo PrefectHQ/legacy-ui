@@ -220,20 +220,13 @@ export default {
         variables: {
           key: this.keyInput,
           value: value
-        }
+        },
+        errorPolicy: 'all'
       })
 
       if (this.isKvUpdate) this.isSettingKV = false
 
-      if (!kvResult) {
-        this.expanded = []
-        this.handleAlert(
-          'error',
-          `Something went wrong when ${
-            this.isKvUpdate ? 'updating' : 'creating'
-          } this kv. Please try again. If this error persists, please contact help@prefect.io.`
-        )
-      } else if (kvResult?.data?.set_key_value?.id) {
+      if (kvResult?.data?.set_key_value?.id) {
         this.$apollo.queries.kv.refetch()
         this.keyModifyDialog = false
         this.resetSelectedKV()
@@ -241,8 +234,15 @@ export default {
           'success',
           `KV ${this.isKvUpdate ? 'updated' : 'added'}.`
         )
+      } else if (kvResult?.errors) {
+        this.expanded = []
+        this.keyModifyDialog = false
+        this.resetSelectedKV()
+        this.handleAlert('error', kvResult?.errors[0]?.message)
       } else {
         this.expanded = []
+        this.keyModifyDialog = false
+        this.resetSelectedKV()
         this.handleAlert(
           'error',
           `Something went wrong when ${
@@ -262,7 +262,8 @@ export default {
         mutation: require('@/graphql/KV/delete-key-value.gql'),
         variables: {
           id: kv?.id
-        }
+        },
+        errorPolicy: 'all'
       })
 
       if (deleteKVResult?.data?.delete_key_value?.success) {
@@ -272,10 +273,8 @@ export default {
           this.handleAlert('success', 'KV deleted.')
         }
       } else {
-        this.handleAlert(
-          'error',
-          'Something went wrong while trying to delete this kv. Please try again. If this error persists, reach out to help@prefect.io.'
-        )
+        this.keyDeleteDialog = false
+        this.handleAlert('error', deleteKVResult?.errors[0]?.message)
       }
 
       this.isDeletingKV = false
