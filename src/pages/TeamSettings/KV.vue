@@ -342,8 +342,7 @@ export default {
       <template #title>KV Store</template>
 
       <template #subtitle>
-        <!-- Manage your
-        <ExternalLink href="https://docs.prefect.io/">key:value</ExternalLink> -->
+        <!-- <ExternalLink href="https://docs.prefect.io/orchestration/concepts/kv_store.html">key:value</ExternalLink> -->
 
         Manage your team's key/value store
       </template>
@@ -383,21 +382,41 @@ export default {
           Read-only users cannot manage kv.
         </v-alert>
       </template>
+
+      <v-text-field
+        v-if="!$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+        v-model="search"
+        class="rounded-0 elevation-1 mb-1"
+        solo
+        dense
+        hide-details
+        single-line
+        placeholder="Search for a key"
+        prepend-inner-icon="search"
+      ></v-text-field>
     </ManagementLayout>
     <v-card tile class="mx-auto">
-      <v-card-title>
-        <v-text-field
-          v-model="search"
-          placeholder="Search for a key"
-          flat
-          hide-details
-          clearable
-          prepend-inner-icon="search"
-          clear-icon="close"
-        ></v-text-field>
-      </v-card-title>
-
       <v-card-text class="pa-0">
+        <!-- SEARCH (DESKTOP) -->
+        <div
+          v-if="$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+          class="py-1 mr-2 d-flex justify-end"
+        >
+          <v-text-field
+            v-if="!isReadOnlyUser"
+            v-model="search"
+            class="rounded-0 elevation-1"
+            solo
+            dense
+            hide-details
+            single-line
+            placeholder="Search for a key"
+            prepend-inner-icon="search"
+            :style="{
+              'max-width': $vuetify.breakpoint.mdAndUp ? '360px' : null
+            }"
+          ></v-text-field>
+        </div>
         <!-- TABLE -->
         <v-data-table
           v-if="!isReadOnlyUser"
