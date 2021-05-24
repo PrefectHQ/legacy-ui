@@ -160,9 +160,9 @@ export default {
 
         <v-list-item :disabled="!isCloud" :to="'/team/kv'">
           <v-list-item-avatar tile>
-            <v-icon large color="primaryDark">
-              store
-            </v-icon>
+            <span style="color: Dodgerblue;">
+              <i class="fad fa-brackets-curly fa-2x"></i>
+            </span>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="text-subtitle-1">
