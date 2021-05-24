@@ -10,9 +10,9 @@ describe('Agent Vuex Module', () => {
     return {
       thresholds: {
         // Time before an agent becomes stale
-        stale: 1, // minutes since last query
+        stale: 3, // minutes since last query
         // Time before an agent becomes unhealthy
-        unhealthy: 5 // minutes since last query
+        unhealthy: 120 // minutes since last query
       },
       agents: null
     }
@@ -21,8 +21,8 @@ describe('Agent Vuex Module', () => {
   describe('initial state', () => {
     it('should have a stale threshold and unhealthy threshold', () => {
       const state = agent.state
-      expect(state.thresholds.stale).toBe(1)
-      expect(state.thresholds.unhealthy).toBe(5)
+      expect(state.thresholds.stale).toBe(3)
+      expect(state.thresholds.unhealthy).toBe(120)
     })
     it('should have no agents', () => {
       const state = agent.state
@@ -61,7 +61,7 @@ describe('Agent Vuex Module', () => {
       expect(store.getters.agents).toBe(null)
       store.commit('setAgents', [{ id: '12345' }])
       expect(store.getters.agents).toEqual([
-        { id: '12345', secondsSinceLastQuery: 0 }
+        { id: '12345', secondsSinceLastQuery: 0, status: 'healthy' }
       ])
     })
   })
