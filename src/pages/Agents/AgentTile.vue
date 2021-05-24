@@ -127,7 +127,6 @@ export default {
   watch: {
     statusColor(val) {
       //attempt to make icon color update - not working
-      console.log('statusColor', val)
       this.showIcon = false
       setTimeout(() => {
         this.showIcon = true
