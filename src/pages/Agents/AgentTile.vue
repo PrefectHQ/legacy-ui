@@ -125,7 +125,7 @@ export default {
     }
   },
   watch: {
-    statusColor(val) {
+    statusColor() {
       //attempt to make icon color update - not working
       this.showIcon = false
       setTimeout(() => {
