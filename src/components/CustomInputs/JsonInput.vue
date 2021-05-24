@@ -63,6 +63,11 @@ export default {
       type: Boolean,
       default: false,
       required: false
+    },
+    addCorners: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   },
   data() {
@@ -79,6 +84,11 @@ export default {
   computed: {
     cmInstance() {
       return this.$refs.cmRef && this.$refs.cmRef.codemirror
+    },
+    updateBorder() {
+      if (this.prependIcon) return true
+      if (this.addCorners) return true
+      return false
     },
     iconColor() {
       if (this.jsonError) return 'error'
@@ -200,12 +210,12 @@ export default {
       :value="internalValue"
       class="pt-2 cm-style json-input"
       :class="{
-        'pl-9': prependIcon,
+        'pl-9': updateBorder,
         'pl-12': prependIconLabel,
-        'blue-border': prependIcon && focussed && !jsonError,
-        'red-border': prependIcon && jsonError,
-        'plain-border': prependIcon && !focussed && !jsonError,
-        'original-border': !prependIcon,
+        'blue-border': updateBorder && focussed && !jsonError,
+        'red-border': updateBorder && jsonError,
+        'plain-border': updateBorder && !focussed && !jsonError,
+        'original-border': !updateBorder,
         [backgroundColor]: true
       }"
       :options="editorOptions"

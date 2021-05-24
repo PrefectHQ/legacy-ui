@@ -674,6 +674,7 @@ export default {
           v-model="jsonPayload"
           selected-type="json"
           skip-required
+          add-corners
           :placeholder-text="jsonPlaceholder"
           @invalid-secret="handleJsonValidation"
         />
