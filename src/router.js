@@ -406,29 +406,32 @@ function scrollToHash(to) {
   }
 }
 
-const router = new Router({
-  mode: 'history',
-  routes,
-  scrollBehavior(to) {
-    if (to.hash) {
-      scrollToHash(to)
+export const createRouter = () => {
+  const router = new Router({
+    mode: 'history',
+    base: window.prefect_ui_settings?.base_url || '',
+    routes,
+    scrollBehavior(to) {
+      if (to.hash) {
+        scrollToHash(to)
+      }
     }
-  }
-})
+  })
 
-router.beforeEach((to, from, next) => {
-  if (
-    'tenant' in to?.params &&
-    !to?.params?.tenant &&
-    store.getters['tenant/tenant']?.slug
-  ) {
-    return next({
-      name: to.name,
-      replace: true,
-      params: { ...to.params, tenant: store.getters['tenant/tenant'].slug },
-      query: to.query
-    })
-  } else next()
-})
+  router.beforeEach((to, from, next) => {
+    if (
+      'tenant' in to?.params &&
+      !to?.params?.tenant &&
+      store.getters['tenant/tenant']?.slug
+    ) {
+      return next({
+        name: to.name,
+        replace: true,
+        params: { ...to.params, tenant: store.getters['tenant/tenant'].slug },
+        query: to.query
+      })
+    } else next()
+  })
 
-export default router
+  return router
+}

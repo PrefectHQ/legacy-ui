@@ -7,6 +7,7 @@
 - Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
 - Remove auth layer from the application and improve support for webkit browsers - [#811](https://github.com/PrefectHQ/ui/pull/811)
 - Remove Server/Cloud switcher - [#844](https://github.com/PrefectHQ/ui/pull/844)
+- Allow configurable base url and relative public assets path - [#849](https://github.com/PrefectHQ/ui/pull/849)
 
 ### Bugfixes
 
