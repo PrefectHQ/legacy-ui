@@ -47,7 +47,8 @@ export default {
       previousContainerHeight: 0,
       search: null,
       show: true,
-      virtualContainer: null
+      virtualContainer: null,
+      where: {}
     }
   },
   computed: {
@@ -59,7 +60,16 @@ export default {
       return this.loadingKey > 0
     }
   },
-  watch: {},
+  watch: {
+    where: {
+      handler(val) {
+        console.log(val)
+        this.logs = []
+        this.logIds = []
+      },
+      deep: true
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       this.virtualContainer = document.querySelector(
@@ -99,7 +109,7 @@ export default {
       variables() {
         return {
           //   is_audit_log: { _eq: true }
-          where: {},
+          where: this.where,
           limit: 100,
           offset: this.offset
         }
@@ -149,8 +159,8 @@ export default {
 </script>
 
 <template>
-  <div class="logs-container white px-12 pt-10 ">
-    <Toolbar />
+  <div class="logs-container white px-12 pt-6">
+    <Toolbar v-model="where" />
 
     <div class="virtual-scroller-container">
       <transition name="appear-y">
