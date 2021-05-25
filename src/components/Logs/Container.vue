@@ -1,9 +1,19 @@
 <script>
 import { formatTime } from '@/mixins/formatTimeMixin.js'
-import Toolbar from '@/components/Logs/Toolbar'
 // import Row from '@/components/Logs/Row'
 
 export default {
+  mixins: [formatTime],
+
+  props: {
+    where: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {}
+      }
+    }
+  },
   //   props: {
   //     auditLogs: {
   //       type: Boolean,
@@ -30,8 +40,7 @@ export default {
   //       default: null
   //     }
   //   }
-  components: { Toolbar },
-  mixins: [formatTime],
+  // components: { Toolbar },
   data() {
     return {
       currentFirst: null,
@@ -47,8 +56,7 @@ export default {
       previousContainerHeight: 0,
       search: null,
       show: true,
-      virtualContainer: null,
-      where: {}
+      virtualContainer: null
     }
   },
   computed: {
@@ -159,10 +167,17 @@ export default {
 </script>
 
 <template>
-  <div class="logs-container white px-12 pt-6">
-    <Toolbar v-model="where" />
-
-    <div class="virtual-scroller-container">
+  <DynamicScroller
+    v-if="show"
+    ref="virtual-scroller"
+    class="align-self-stretch px-8"
+    :class="{ blur: loading }"
+    :min-item-size="40"
+    :items="sortedLogs"
+    key-field="id"
+    @scroll.native="handleScroll"
+  >
+    <template #before>
       <transition name="appear-y">
         <div v-if="loading" class="rounded-circle white loader pa-2">
           <v-progress-circular
@@ -173,94 +188,48 @@ export default {
           />
         </div>
       </transition>
+    </template>
 
-      <DynamicScroller
-        v-if="show"
-        ref="virtual-scroller"
-        class="virtual-scroller"
-        :class="{ blur: loading }"
-        :min-item-size="40"
-        :items="sortedLogs"
-        key-field="id"
-        @scroll.native="handleScroll"
+    <template #default="{ item, index, active }">
+      <DynamicScrollerItem
+        :item="item"
+        :active="active"
+        :size-dependencies="[item.message]"
+        :data-index="index"
       >
-        <template #default="{ item, index, active }">
-          <DynamicScrollerItem
-            :item="item"
-            :active="active"
-            :size-dependencies="[item.message]"
-            :data-index="index"
-          >
-            <div
-              :key="item.id"
-              style="height: 30px;"
-              :style="{
-                color:
-                  currentFirst == item.id
-                    ? '#FF5733'
-                    : previousFirst == item.id
-                    ? '#85C1E9'
-                    : '#00'
-              }"
-              class="text-truncate"
-            >
-              <span class="text-caption text--disabled">
-                {{ item.formattedTimestamp }}
-              </span>
-              {{ item.message }}
-            </div>
-          </DynamicScrollerItem>
-        </template>
-        <template #after>
-          <div>
-            Hey! I'm a message displayed after items!
-          </div>
-        </template>
-      </DynamicScroller>
-    </div>
-  </div>
+        <div
+          :key="item.id"
+          style="height: 30px;"
+          :style="{
+            color:
+              currentFirst == item.id
+                ? '#FF5733'
+                : previousFirst == item.id
+                ? '#85C1E9'
+                : '#00'
+          }"
+          class="text-truncate"
+        >
+          <span class="text-caption text--disabled">
+            {{ item.formattedTimestamp }}
+          </span>
+          {{ item.message }}
+        </div>
+      </DynamicScrollerItem>
+    </template>
+    <template #after>
+      <div>
+        Hey! I'm a message displayed after items!
+      </div>
+    </template>
+  </DynamicScroller>
 </template>
 
 <style lang="scss" scoped>
-.logs-container {
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior-y: contain;
-  position: relative;
-  width: 100%;
-}
-
-.virtual-scroller-container {
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-.logs-toolbar {
-  left: 50%;
-  position: absolute;
-  transform: translate(-50%);
-  width: calc(100% - 96px);
-  z-index: 1;
-}
-
 .loader {
   left: 50%;
   position: absolute;
   top: 25px;
-}
-
-.virtual-scroller {
-  // The virtual scroller requires an explicit height or max-height
-  // for scrolling methods to work properly
-  height: 100%;
-  max-height: calc(100vh - 80px);
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-
-  &.blur {
-    filter: blur(1px);
-  }
 }
 
 .appear-y-enter-active,

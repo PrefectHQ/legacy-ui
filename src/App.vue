@@ -527,7 +527,6 @@ html {
   margin-bottom: 123px;
   max-width: 100% !important;
   min-height: calc(100vh - 64px - 123px);
-  padding-bottom: 18px;
   transition: height none, opacity 250ms !important;
 
   &.full-page {

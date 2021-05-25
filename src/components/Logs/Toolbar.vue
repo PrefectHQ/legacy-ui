@@ -99,7 +99,7 @@ export default {
 </script>
 
 <template>
-  <div class="logs-toolbar blue-grey lighten-2 py-3 px-2 rounded elevation-1">
+  <div class="logs-toolbar blue-grey lighten-4 py-3 px-2 rounded elevation-1">
     <div class="d-flex align-center justify-start">
       <div>
         <v-icon class="d-inline-block" large color="white">
