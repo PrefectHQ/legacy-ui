@@ -55,7 +55,6 @@ export default {
       ],
       messagingService: '',
       menu: false,
-      bothMessages: false,
       errorMessage: '',
       rules: {
         SLACK_WEBHOOK: () => true,
@@ -342,9 +341,7 @@ export default {
                   webhook_url_secret: this.secretName
                 }
                 if (this.messageText) {
-                  this.actionConfig.message = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.message = this.messageText
                 }
               }
               break
@@ -352,9 +349,7 @@ export default {
               {
                 this.actionConfig = { to_emails: this.actionConfigArray }
                 if (this.messageText) {
-                  this.actionConfig.body = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.body = this.messageText
                 }
               }
               break
@@ -367,9 +362,7 @@ export default {
                   messaging_service_sid: this.messagingService
                 }
                 if (this.messageText) {
-                  this.actionConfig.message = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.message = this.messageText
                 }
               }
               break
@@ -381,9 +374,7 @@ export default {
                   severity: this.severity
                 }
                 if (this.messageText) {
-                  this.actionConfig.message = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.message = this.messageText
                 }
               }
               break
@@ -393,9 +384,7 @@ export default {
                   webhook_url_secret: this.webhookURLString
                 }
                 if (this.messageText) {
-                  this.actionConfig.message = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.message = this.messageText
                 }
               }
               break
