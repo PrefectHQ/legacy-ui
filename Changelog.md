@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Remove bad fetchPolicy on tenant settings mutation - [#858](https://github.com/PrefectHQ/ui/pull/858)
 
 ## 2021-05-24
 
