@@ -1,5 +1,5 @@
 <script>
-import { actionTypes } from '@/utils/automations'
+import { actionTypes, jsonPlacehold } from '@/utils/automations'
 import { mapGetters } from 'vuex'
 import ListInput from '@/components/CustomInputs/ListInput'
 import JsonInput from '@/components/CustomInputs/JsonInput'
@@ -19,6 +19,7 @@ export default {
   },
   data() {
     return {
+      jsonPlacehold: jsonPlacehold.jsonBlob,
       steps: {
         selectActionType: { name: 'selectActionType', complete: false },
         openMessageText: { name: 'openMessageText', complete: false },
@@ -44,7 +45,7 @@ export default {
       jsonPayload: null,
       validJson: true,
       routingKey: '',
-      webhookUrlSecret: null,
+      webhookURLString: null,
       severity: '',
       severityLevels: [
         { text: 'Info', value: 'info' },
@@ -108,9 +109,6 @@ export default {
         ? 'Slack Webhook Secret Name'
         : 'config details'
     },
-    jsonPlaceholder() {
-      return jsBeautify('{ "event-id": "{event.id}" }')
-    },
     messagePlaceholder() {
       let messageText
       switch (this.eventType) {
@@ -172,9 +170,9 @@ export default {
           !!this.messagingService &&
           this.accountSid
         : this.isMSTeams
-        ? !!this.webhookUrlSecret
+        ? !!this.webhookURLString
         : this.isWebhook
-        ? !!this.webhookUrlSecret
+        ? !!this.webhookURLString
         : !!this.actionType &&
           (!!this.secretName ||
             (!!this.actionConfigArray.length &&
@@ -187,7 +185,7 @@ export default {
       get() {
         const whoTo = this.actionConfigArray.length
           ? this.actionConfigArray
-          : this.secretName || this.webhookUrlSecret
+          : this.secretName || this.webhookURLString
         return `${this.actionType.verb} ${whoTo}`
       },
       set(x) {
@@ -253,6 +251,10 @@ export default {
     this.step = this.steps['selectActionType']
   },
   methods: {
+    jsonPlaceholder() {
+      this.jsonPlacehold.message = this.messagePlaceholder
+      return jsBeautify(JSON.stringify(this.jsonPlacehold))
+    },
     buttonColor(selectedStep) {
       return this.step.name === selectedStep ? 'codePink' : 'utilGrayDark'
     },
@@ -319,7 +321,7 @@ export default {
       this.actionConfigArray = val
       this.steps['openToConfig'].complete = true
     },
-    handleWebHookURLSecretInput(val) {
+    handleWebhookURLInput(val) {
       this.actionConfigArray = val
       this.steps['openToConfig'].complete = true
     },
@@ -388,7 +390,7 @@ export default {
             case 'MS_TEAMS':
               {
                 this.actionConfig = {
-                  webhook_url_secret: this.webhookUrlSecret
+                  webhook_url_secret: this.webhookURLString
                 }
                 if (this.messageText) {
                   this.actionConfig.message = this.bothMessages
@@ -399,7 +401,7 @@ export default {
               break
             case 'WEBHOOK': {
               this.actionConfig = {
-                url: this.webhookUrlSecret
+                url: this.webhookURLString
               }
               if (this.jsonPayload) {
                 this.actionConfig.payload = JSON.parse(this.jsonPayload)
@@ -675,7 +677,7 @@ export default {
           selected-type="json"
           skip-required
           add-corners
-          :placeholder-text="jsonPlaceholder"
+          :placeholder-text="jsonPlaceholder()"
           @invalid-secret="handleJsonValidation"
         />
       </div>
@@ -804,13 +806,13 @@ export default {
 
         <v-row class="mt-2">
           <v-col cols="12" md="4">
-            <v-select
-              v-model="webhookUrlSecret"
+            <v-text-field
+              v-model="webhookURLString"
+              :rules="[rules.required]"
+              label="Webhook URL"
               outlined
-              :items="secretNames"
-              label="Webhook URL Secret"
-              no-data-text="You will need to create a secret with your Webhook URL"
-              @change="handleWebHookURLSecretInput"
+              class="mb-8"
+              @input="handleWebhookURLInput"
             />
           </v-col>
         </v-row>

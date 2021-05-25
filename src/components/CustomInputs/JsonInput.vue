@@ -270,6 +270,7 @@ export default {
 
   .CodeMirror-placeholder {
     color: var(--v-utilGrayMid-base) !important;
+    height: fit-content !important;
   }
 
   .json-input-height-auto {
