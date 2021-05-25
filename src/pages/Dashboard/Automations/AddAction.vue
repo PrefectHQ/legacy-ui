@@ -805,7 +805,7 @@ export default {
         </div>
 
         <v-row class="mt-2">
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="8">
             <v-text-field
               v-model="webhookURLString"
               :rules="[rules.required]"
