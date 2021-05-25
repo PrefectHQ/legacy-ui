@@ -12,7 +12,7 @@ import { defaultApolloProvider } from '@/vue-apollo'
 // eslint-disable-next-line
 // import okta from '@/plugins/okta'
 
-import router from '@/router'
+import { createRouter } from '@/router'
 import VueMeta from 'vue-meta'
 
 import LogRocket from 'logrocket'
@@ -305,8 +305,9 @@ export const CreatePrefectUI = () => {
   // eslint-disable-next-line no-unused-vars
   PrefectUI = new Vue({
     vuetify,
-    router,
+    router: createRouter(),
     store,
+    publicPath: './',
     apolloProvider: defaultApolloProvider,
     render: h => h(App)
   }).$mount('#app')

@@ -4,13 +4,33 @@
 
 ### Features and Improvements
 
-- Remove auth layer from the application and improve support for webkit browsers - [#811](https://github.com/PrefectHQ/ui/pull/811)
-- Remove Server/Cloud switcher - [#844](https://github.com/PrefectHQ/ui/pull/844)
+- None
 
 ### Bugfixes
 
+- None
+
+## 2021-05-25
+
+### Bugfixes
+
+- Remove bad fetchPolicy on tenant settings mutation - [#858](https://github.com/PrefectHQ/ui/pull/858)
+
+## 2021-05-24
+
+### Features and Improvements
+
+- Remove auth layer from the application and improve support for webkit browsers - [#811](https://github.com/PrefectHQ/ui/pull/811)
+- Remove Server/Cloud switcher - [#844](https://github.com/PrefectHQ/ui/pull/844)
+- Allow configurable base url and relative public assets path - [#849](https://github.com/PrefectHQ/ui/pull/849)
+
+### Bugfixes
+
+- Fix broken api store core version ref - [#847](https://github.com/PrefectHQ/ui/pull/847)
 - Fix issues with pre-populating and resetting job templates and task definitions for run configs - [#839](https://github.com/PrefectHQ/ui/pull/839)
 - Check for the correct values when disabling next for the Pager Duty action - [#835](https://github.com/PrefectHQ/ui/pull/835)
+- Don't show work queue option in Server - [#848](https://github.com/PrefectHQ/ui/pull/848)
+- Fix issue with overlapping sidebar/application nav on small screens - [#850](https://github.com/PrefectHQ/ui/pull/850)
 
 ## 2021-05-17
 

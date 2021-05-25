@@ -1,0 +1,6 @@
+query FlowRunByPK($id: uuid!) {
+  flow_run_by_pk(id: $id) {
+    id
+    name
+  }
+}
