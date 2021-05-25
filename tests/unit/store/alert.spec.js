@@ -40,21 +40,24 @@ describe('Alert Vuex Module', () => {
           alertMessage: '',
           alertType: null,
           alertLink: null,
-          linkText: ''
+          linkText: '',
+          alertCopy: ''
         })
         store.commit('alert/setAl', {
           alertShow: true,
           alertMessage: 'Testing testing 123',
           alertType: 'error',
           alertLink: null,
-          linkText: ''
+          linkText: '',
+          alertCopy: ''
         })
         expect(store.getters['alert/getAlert']).toStrictEqual({
           alertShow: true,
           alertMessage: 'Testing testing 123',
           alertType: 'error',
           alertLink: null,
-          linkText: ''
+          linkText: '',
+          alertCopy: ''
         })
       })
       it('empties the state when setEmpty is called', () => {
@@ -63,14 +66,16 @@ describe('Alert Vuex Module', () => {
           alertMessage: 'Testing testing 123',
           alertType: 'error',
           alertLink: null,
-          linkText: ''
+          linkText: '',
+          alertCopy: ''
         })
         expect(store.getters['alert/getAlert']).toStrictEqual({
           alertShow: true,
           alertMessage: 'Testing testing 123',
           alertType: 'error',
           alertLink: null,
-          linkText: ''
+          linkText: '',
+          alertCopy: ''
         })
         store.commit('alert/setEmpty')
         expect(store.getters['alert/getAlert']).toStrictEqual({
@@ -78,7 +83,8 @@ describe('Alert Vuex Module', () => {
           alertMessage: '',
           alertType: null,
           alertLink: null,
-          linkText: ''
+          linkText: '',
+          alertCopy: ''
         })
       })
     })
@@ -90,14 +96,16 @@ describe('Alert Vuex Module', () => {
           alertMessage: 'Testing testing 234',
           alertType: 'error',
           alertLink: null,
-          linkText: ''
+          linkText: '',
+          alertCopy: ''
         })
         expect(store.getters['alert/getAlert']).toStrictEqual({
           alertShow: true,
           alertMessage: 'Testing testing 234',
           alertType: 'error',
           alertLink: null,
-          linkText: ''
+          linkText: '',
+          alertCopy: ''
         })
         expect(setTimeout).toHaveBeenCalledTimes(1)
         expect(setTimeout).toHaveBeenLastCalledWith(
