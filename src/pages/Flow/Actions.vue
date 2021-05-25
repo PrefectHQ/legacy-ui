@@ -85,7 +85,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions('alert', ['setAlert']),
+    ...mapActions('alert', [
+      'setAlert',
+      'addNotification',
+      'updateNotification'
+    ]),
     _changeVersion(val) {
       if (val) {
         let query = { ...this.$route.query, version: val }
@@ -109,6 +113,13 @@ export default {
     },
     async quickRunFlow() {
       this.isRunning = true
+      const notificationId = await this.addNotification({
+        color: 'primaryLight',
+        loading: true,
+        text: 'Creating run...',
+        dismissable: false
+      })
+
       try {
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
@@ -117,44 +128,57 @@ export default {
           },
           errorPolicy: 'all'
         })
+
+        if (errors) throw new Error(errors?.[0]?.message)
+
+        this.isRunning = false
+
         if (data?.create_flow_run?.id) {
-          this.$router.push({
-            name: 'flow-run',
-            params: { id: data?.create_flow_run?.id, tenant: this.tenant?.slug }
+          const run = await this.$apollo.query({
+            query: require('@/graphql/Flow/flow-run-by-pk.gql'),
+            variables: {
+              id: data.create_flow_run.id
+            },
+            errorPolicy: 'all'
+          })
+
+          await this.updateNotification({
+            id: notificationId,
+            notification: {
+              color: 'primary',
+              loading: false,
+              linkText: 'Visit',
+              to: {
+                name: 'flow-run',
+                params: {
+                  id: data.create_flow_run.id,
+                  tenant: this.tenant?.slug
+                }
+              },
+              text: 'Run created!',
+              subtext: run?.data?.flow_run_by_pk?.name,
+              dismissable: true,
+              timeout: 20000
+            }
           })
         }
-        if (errors) {
-          this.quickRunErrorAlert(errors[0]?.message)
-        }
       } catch (err) {
-        this.quickRunErrorAlert()
+        await this.updateNotification({
+          id: notificationId,
+          notification: {
+            color: 'error',
+            loading: false,
+            text: 'There was a problem creating your run',
+            subtext: err?.message?.includes('archived')
+              ? 'This flow version is archived - you likely have a newer version of your flow'
+              : 'Error',
+            dismissable: true,
+            timeout: 10000
+          }
+        })
         LogRocket.captureException(err)
       }
       this.isRunning = false
-    },
-    quickRunErrorAlert(err) {
-      if (err && err?.includes('archived')) {
-        this.alertShow = true
-        this.alertMessage =
-          'This flow version is now archived.  You have a newer version of your flow.'
-        this.alertLink = {
-          name: 'flow',
-          params: { id: this.flow.id, tenant: this.tenant?.slug },
-          query: { versions: '' }
-        }
-        this.alertType = 'error'
-      } else {
-        this.alertShow = true
-        this.alertMessage = 'There was a problem running your flow'
-        this.alertType = 'error'
-      }
-
-      this.setAlert({
-        alertShow: this.alertShow,
-        alertMessage: this.alertMessage,
-        alertType: this.alertType,
-        alertLink: this.alertLink
-      })
     },
     async scheduleFlow() {
       this.scheduleLoading = true
