@@ -80,6 +80,7 @@ export default {
     ...mapActions('alert', ['addNotification', 'updateNotification']),
     ...mapActions('data', ['resetData']),
     ...mapActions('tenant', ['setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     async handleAcceptPendingInvitation(id, name, slug) {
       this.loading = true
       const notificationId = await this.addNotification({
@@ -98,6 +99,7 @@ export default {
         error = e
       } finally {
         await this.$globalApolloQueries['membershipInvitations']?.refetch()
+        await this.getUser()
         await this.$globalApolloQueries['tenants']?.refetch()
 
         await this.updateNotification({
@@ -137,6 +139,7 @@ export default {
         error = e
       } finally {
         await this.$globalApolloQueries['membershipInvitations']?.refetch()
+        await this.getUser()
         await this.$globalApolloQueries['tenants']?.refetch()
 
         await this.addNotification({
