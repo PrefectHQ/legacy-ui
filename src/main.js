@@ -36,6 +36,7 @@ export const setStartupTenant = async () => {
       needNewTokens = true
     } else {
       // redirect to help screen
+      window.location.href = '/access-denied'
     }
 
     // We want to make sure the URL slug matches
@@ -66,7 +67,10 @@ export const setStartupTenant = async () => {
 
 let loading = false
 export const start = async () => {
-  if (window.location.pathname?.includes('logout')) {
+  if (
+    window.location.pathname?.includes('logout') ||
+    window.location.pathname?.includes('access-denied')
+  ) {
     CreatePrefectUI()
     return
   }

@@ -361,7 +361,8 @@ export default {
     if (
       this.isCloud &&
       !this.tenant.settings.teamNamed &&
-      !window.location.pathname?.includes('logout')
+      !window.location.pathname?.includes('logout') &&
+      !window.location.pathname?.includes('access-denied')
     ) {
       this.$router.push({
         name: 'welcome',
