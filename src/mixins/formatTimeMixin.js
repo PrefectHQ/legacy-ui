@@ -233,6 +233,16 @@ export const formatTime = {
       })
       return `${formatted} ${shortenedTz}`
     },
+    formatDateLong(timestamp) {
+      if (!timestamp) return
+      let t = moment(timestamp).tz(this.timezone)
+      let timeObj = t ? t : moment(timestamp)
+      const now = moment().tz(this.timezone) || moment()
+
+      return timeObj.year() === now.year()
+        ? timeObj.format('MMMM D')
+        : timeObj.format('MMMM D, YYYY')
+    },
     formatLongDate(timestamp) {
       if (!timestamp) return
 

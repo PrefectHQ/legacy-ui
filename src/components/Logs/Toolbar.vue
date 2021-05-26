@@ -1,5 +1,10 @@
 <script>
+import { formatTime } from '@/mixins/formatTimeMixin.js'
+import DateTimePicker from '@/components/DateTimePicker'
+
 export default {
+  components: { DateTimePicker },
+  mixins: [formatTime],
   props: {
     value: {
       type: Object,
@@ -12,10 +17,20 @@ export default {
   data() {
     return {
       menu: false,
-      date: null,
+      date: [],
       input: null,
       internalValue: {},
       terms: []
+    }
+  },
+  computed: {
+    formattedDate() {
+      if (!this.date) return
+      console.log(this.date)
+      const dates = this.date
+        .map(d => d)
+        .sort((a, b) => new Date(a) - new Date(b))
+      return dates.map(date => this.formatDateLong(date)).join(' - ')
     }
   },
   watch: {
@@ -75,14 +90,12 @@ export default {
         clauses.push(clause)
       })
 
-      const value = {}
-
       clauses.forEach(c => {
         let clause = Object.keys(c)[0]
-        value[clause] = c[clause]
+        this.internalValue[clause] = c[clause]
       })
 
-      this.$emit('input', value)
+      this.$emit('input', this.internalValue)
     }
   },
   methods: {
@@ -93,13 +106,45 @@ export default {
     },
     removeTerm(i) {
       this.terms.splice(i, 1)
+    },
+    updateDateRange() {
+      this.menu = false
+      if (!this.date || this.date.length === 0) return
+      if (this.date.length === 1) {
+        const date0 = new Date(this.date[0])
+        date0.setHours(0)
+        date0.setMinutes(0)
+        date0.setMilliseconds(0)
+        const date1 = new Date(this.date[0])
+        date1.setHours(23)
+        date1.setMinutes(59)
+        date1.setMilliseconds(999)
+        this.internalValue['timestamp'] = {
+          _gte: date0.toISOString(),
+          _lte: date1.toISOString()
+        }
+      } else {
+        const date0 = new Date(this.date[0])
+        date0.setHours(0)
+        date0.setMinutes(0)
+        date0.setMilliseconds(0)
+        const date1 = new Date(this.date[1])
+        date1.setHours(23)
+        date1.setMinutes(59)
+        date1.setMilliseconds(999)
+        this.internalValue['timestamp'] = {
+          _gte: date0.toISOString(),
+          _lte: date1.toISOString()
+        }
+      }
+      this.$emit('input', this.internalValue)
     }
   }
 }
 </script>
 
 <template>
-  <div class="logs-toolbar blue-grey lighten-4 py-3 px-2 rounded elevation-1">
+  <div class="logs-toolbar blue-grey lighten-4 py-3 px-2 elevation-1">
     <div class="d-flex align-center justify-start">
       <div>
         <v-icon class="d-inline-block" large color="white">
@@ -125,12 +170,14 @@ export default {
         :close-on-content-click="false"
         :return-value.sync="date"
         transition="scale-transition"
+        origin="top center"
         offset-y
+        left
         min-width="auto"
       >
         <template #activator="{ on, attrs }">
           <v-text-field
-            v-model="date"
+            v-model="formattedDate"
             prepend-icon="date_range"
             class="rounded text-body-1"
             filled
@@ -138,23 +185,27 @@ export default {
             dense
             readonly
             hide-details
+            style="max-width: 200px;"
             v-bind="attrs"
             v-on="on"
           />
         </template>
+
+        <!-- <div style="width: 650px; max-width: 100%;"></div>
 
         <v-date-picker v-model="date" no-title range scrollable>
           <v-spacer></v-spacer>
           <v-btn text color="primary" @click="menu = false">
             Cancel
           </v-btn>
-          <v-btn text color="primary" @click="$refs.menu.save(date)">
+          <v-btn text color="primary" @click="updateDateRange">
             OK
           </v-btn>
-        </v-date-picker>
+        </v-date-picker> -->
+        <DateTimePicker />
       </v-menu>
     </div>
-    <div class="d-flex align-center justify-start">
+    <div class="d-flex align-center justify-start mt-3">
       <div v-for="(term, i) in terms" :key="term">
         <v-chip class="ma-2" close @click:close="removeTerm(i)">
           {{ term }}

@@ -10,5 +10,10 @@ query Logs($where: log_bool_exp!, $limit: Int, $offset: Int) {
     object_table
     object_id
     timestamp
+    flow_run_id
+    task_run_id
+    level
+    name
+    tenant_id
   }
 }

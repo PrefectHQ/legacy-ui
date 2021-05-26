@@ -9,7 +9,15 @@ export default {
   },
   data() {
     return {
-      where: {}
+      filter: {}
+      // where: {
+      //   is_audit_log: { _eq: true }
+      // }
+    }
+  },
+  computed: {
+    where() {
+      return { ...this.filter, is_audit_log: { _eq: true } }
     }
   }
 }
@@ -17,7 +25,7 @@ export default {
 
 <template>
   <div class="d-flex flex-column system-logs">
-    <Toolbar v-model="where" />
+    <Toolbar v-model="filter" />
     <Container :where="where" />
   </div>
 </template>

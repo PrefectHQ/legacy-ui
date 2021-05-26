@@ -1,10 +1,10 @@
 <script>
 import { formatTime } from '@/mixins/formatTimeMixin.js'
-// import Row from '@/components/Logs/Row'
+import Row from '@/components/Logs/Row'
 
 export default {
+  components: { Row },
   mixins: [formatTime],
-
   props: {
     where: {
       type: Object,
@@ -40,7 +40,6 @@ export default {
   //       default: null
   //     }
   //   }
-  // components: { Toolbar },
   data() {
     return {
       currentFirst: null,
@@ -170,7 +169,7 @@ export default {
   <DynamicScroller
     v-if="show"
     ref="virtual-scroller"
-    class="align-self-stretch px-8"
+    class="scroller align-self-stretch px-8 py-4"
     :class="{ blur: loading }"
     :min-item-size="40"
     :items="sortedLogs"
@@ -197,24 +196,7 @@ export default {
         :size-dependencies="[item.message]"
         :data-index="index"
       >
-        <div
-          :key="item.id"
-          style="height: 30px;"
-          :style="{
-            color:
-              currentFirst == item.id
-                ? '#FF5733'
-                : previousFirst == item.id
-                ? '#85C1E9'
-                : '#00'
-          }"
-          class="text-truncate"
-        >
-          <span class="text-caption text--disabled">
-            {{ item.formattedTimestamp }}
-          </span>
-          {{ item.message }}
-        </div>
+        <Row :index="index" :item="item" />
       </DynamicScrollerItem>
     </template>
     <template #after>
@@ -226,6 +208,14 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.scroller {
+  max-height: calc(100vh - 64px);
+
+  @media screen and (max-width: 1264px) {
+    max-height: calc(100vh - 104px);
+  }
+}
+
 .loader {
   left: 50%;
   position: absolute;
