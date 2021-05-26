@@ -41,12 +41,12 @@ export const authClient = new OktaAuth({
 export const authenticate = async () => {
   const isLoginRedirect = await authClient.isLoginRedirect()
   const redirectRoute = sessionStorage.getItem('redirectRoute')
-
   if (isLoginRedirect) {
     const { tokens } = await authClient.token.parseFromUrl()
     authClient.tokenManager.setTokens(tokens)
     if (redirectRoute) {
       history.replaceState(null, null, redirectRoute)
+      sessionStorage.removeItem('redirectRoute')
     }
 
     return tokens

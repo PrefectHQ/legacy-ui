@@ -150,7 +150,8 @@ export default {
       fetchPolicy: 'no-cache',
       skip() {
         return !this.tenant
-      }
+      },
+      pollInterval: 15000
     }
   }
 }

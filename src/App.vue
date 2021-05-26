@@ -234,7 +234,7 @@ export default {
           return (this.isCloud && !this.isAuthorized) || !this.connected
         },
         fetchPolicy: 'no-cache',
-        pollInterval: 30000,
+        pollInterval: 60000,
         update(data) {
           if (!data?.tenant) return []
           this.setTenants(data.tenant)
@@ -292,6 +292,31 @@ export default {
         return data.flow
       }
     })
+
+    this.$globalApolloQueries['memberships'] = this.$apollo.addSmartQuery(
+      'memberships',
+      {
+        query: require('@/graphql/User/user.gql'),
+        skip() {
+          return (
+            !this.isCloud ||
+            !this.isAuthorized ||
+            !this.memberships ||
+            !this.user ||
+            !this.user.email ||
+            !this.tenantIsSet
+          )
+        },
+        fetchPolicy: 'no-cache',
+        pollInterval: 60000,
+        update(data) {
+          if (!data?.user?.[0]) return []
+          this.setUser(data.user[0])
+
+          return data.user[0]
+        }
+      }
+    )
 
     this.$globalApolloQueries[
       'membershipInvitations'
@@ -373,6 +398,7 @@ export default {
       'unsetInvitations',
       'unsetUser'
     ]),
+    ...mapMutations({ setUser: 'user/user' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
         this.closeSideNav()
