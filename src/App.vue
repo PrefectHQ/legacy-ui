@@ -226,6 +226,23 @@ export default {
       }
     }
 
+    this.$globalApolloQueries['tenants'] = this.$apollo.addSmartQuery(
+      'tenants',
+      {
+        query: require('@/graphql/Tenant/tenants.js').default(this.isCloud),
+        skip() {
+          return (this.isCloud && !this.isAuthorized) || !this.connected
+        },
+        fetchPolicy: 'no-cache',
+        pollInterval: 30000,
+        update(data) {
+          if (!data?.tenant) return []
+          this.setTenants(data.tenant)
+          return data.tenant
+        }
+      }
+    )
+
     this.$globalApolloQueries['agents'] = this.$apollo.addSmartQuery('agents', {
       query() {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
@@ -288,6 +305,7 @@ export default {
       skip() {
         return (
           !this.isCloud ||
+          !this.isAuthorized ||
           !this.memberships ||
           !this.user ||
           !this.user.email ||
@@ -295,7 +313,7 @@ export default {
         )
       },
       fetchPolicy: 'network-only',
-      pollInterval: 60000,
+      pollInterval: 10000,
       update(data) {
         if (!data?.pendingInvitations || this.isLoadingTenant) return []
         this.setInvitations(data.pendingInvitations)
@@ -344,7 +362,11 @@ export default {
     ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
-    ...mapMutations('tenant', ['setDefaultTenant', 'unsetTenants']),
+    ...mapMutations('tenant', [
+      'setDefaultTenant',
+      'unsetTenants',
+      'setTenants'
+    ]),
     ...mapActions('user', ['getUser']),
     ...mapMutations('user', [
       'setInvitations',
