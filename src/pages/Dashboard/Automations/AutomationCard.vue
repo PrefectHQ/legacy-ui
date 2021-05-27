@@ -350,11 +350,11 @@ export default {
                         class="cursor-pointer show-icon-hover-focus-only pa-2px"
                         role="button"
                         @click="
-                          copyToClipboard(`--agent-config--id ${agentConfigId}`)
+                          copyToClipboard(`--agent-config-id ${agentConfigId}`)
                         "
                         v-on="on"
                       >
-                        --agent-config--id {{ agentConfigId }}
+                        --agent-config-id {{ agentConfigId }}
                       </span>
                     </template>
                     <span>
