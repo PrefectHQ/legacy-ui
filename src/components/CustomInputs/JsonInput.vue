@@ -210,7 +210,8 @@ export default {
       :value="internalValue"
       class="pt-2 cm-style json-input"
       :class="{
-        'pl-9': updateBorder,
+        'pl-9': prependIcon,
+        'pl-4': addCorners,
         'pl-12': prependIconLabel,
         'blue-border': updateBorder && focussed && !jsonError,
         'red-border': updateBorder && jsonError,
