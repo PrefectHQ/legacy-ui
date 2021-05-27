@@ -71,16 +71,12 @@ describe('Agent Vuex Module', () => {
       const recentDate = new Date().toISOString()
       store.commit('setAgents', [
         { id: '12345', last_queried: recentDate },
-        { id: '67890', last_queried: '2021-04-20T23:36:24.278841+00:00' }
+        { id: '67890', last_queried: '2021-04-20T23:36:24.278841+00:00' },
+        { id: '09876', last_queried: NaN }
       ])
-      expect(store.getters.agents).toEqual([
-        { id: '12345', status: 'healthy' },
-        {
-          id: '67890',
-          status: 'unhealthy',
-          last_queried: '2021-04-20T23:36:24.278841+00:00'
-        }
-      ])
+      expect(store.getters.agents[0].status).toEqual('healthy')
+      expect(store.getters.agents[1].status).toEqual('unhealthy')
+      expect(store.getters.agents[2].status).toEqual('unhealthy')
     })
   })
 })
