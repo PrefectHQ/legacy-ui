@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Display task run name in Schematic - [#863](https://github.com/PrefectHQ/ui/pull/863)
 
 ## 2021-05-25
 
