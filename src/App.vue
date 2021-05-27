@@ -520,6 +520,7 @@ export default {
       :link-text="getAlert.linkText"
       :nudge-bottom="paused"
       :timeout="12000"
+      :alert-copy="getAlert.alertCopy"
     />
 
     <VSnackbars />

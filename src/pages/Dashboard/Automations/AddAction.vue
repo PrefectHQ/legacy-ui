@@ -1,11 +1,14 @@
 <script>
-import { actionTypes } from '@/utils/automations'
+import { actionTypes, jsonPlacehold } from '@/utils/automations'
 import { mapGetters } from 'vuex'
 import ListInput from '@/components/CustomInputs/ListInput'
+import JsonInput from '@/components/CustomInputs/JsonInput'
+import jsBeautify from 'js-beautify'
 
 export default {
   components: {
-    ListInput
+    ListInput,
+    JsonInput
   },
   props: {
     eventType: {
@@ -16,6 +19,7 @@ export default {
   },
   data() {
     return {
+      jsonPlacehold: jsonPlacehold.jsonBlob,
       steps: {
         selectActionType: { name: 'selectActionType', complete: false },
         openMessageText: { name: 'openMessageText', complete: false },
@@ -38,8 +42,10 @@ export default {
       authToken: '',
       accountSid: '',
       apiToken: '',
+      jsonPayload: null,
+      validJson: true,
       routingKey: '',
-      webhookUrlSecret: null,
+      webhookURLString: null,
       severity: '',
       severityLevels: [
         { text: 'Info', value: 'info' },
@@ -49,12 +55,12 @@ export default {
       ],
       messagingService: '',
       menu: false,
-      bothMessages: false,
       errorMessage: '',
       rules: {
         SLACK_WEBHOOK: () => true,
         PAGERDUTY: () => true,
         MS_TEAMS: () => true,
+        WEBHOOK: () => true,
         EMAIL: val => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           if (!val) return 'Email is required.'
@@ -92,9 +98,10 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['user']),
     messageConfigLabel() {
-      return this.actionType?.type === 'EMAIL' ||
-        this.actionType.type === 'WEBHOOK'
+      return this.actionType?.type === 'EMAIL'
         ? 'Email address(es)'
+        : this.actionType?.type === 'WEBHOOK'
+        ? 'Web address'
         : this.actionType?.type === 'TWILIO'
         ? 'Twilio Phone Numbers'
         : this.actionType?.type === 'SLACK_WEBHOOK'
@@ -140,6 +147,7 @@ export default {
         if (!this.actionConfigArray.length) return true
         else return false
       } else {
+        if (this.jsonPayload && !this.validJson) return true
         if (this.step.name === 'addTwilioConfig') {
           if (!!this.authToken && !!this.messagingService && !!this.accountSid)
             return false
@@ -161,7 +169,9 @@ export default {
           !!this.messagingService &&
           this.accountSid
         : this.isMSTeams
-        ? !!this.webhookUrlSecret
+        ? !!this.webhookURLString
+        : this.isWebhook
+        ? !!this.webhookURLString
         : !!this.actionType &&
           (!!this.secretName ||
             (!!this.actionConfigArray.length &&
@@ -174,7 +184,7 @@ export default {
       get() {
         const whoTo = this.actionConfigArray.length
           ? this.actionConfigArray
-          : this.secretName
+          : this.secretName || this.webhookURLString
         return `${this.actionType.verb} ${whoTo}`
       },
       set(x) {
@@ -214,6 +224,9 @@ export default {
     isPagerDuty() {
       return this.actionType.type === 'PAGERDUTY'
     },
+    isWebhook() {
+      return this.actionType.type === 'WEBHOOK'
+    },
     isMSTeams() {
       return this.actionType.type === 'MS_TEAMS'
     }
@@ -237,6 +250,10 @@ export default {
     this.step = this.steps['selectActionType']
   },
   methods: {
+    jsonPlaceholder() {
+      this.jsonPlacehold.message = this.messagePlaceholder
+      return jsBeautify(JSON.stringify(this.jsonPlacehold))
+    },
     buttonColor(selectedStep) {
       return this.step.name === selectedStep ? 'codePink' : 'utilGrayDark'
     },
@@ -253,6 +270,9 @@ export default {
       if (this.step.name === 'openMessageText')
         this.steps['openMessageText'].complete = true
       this.step = this.steps[selectedStep]
+    },
+    handleJsonValidation(event) {
+      this.validJson = !event
     },
     handleNext() {
       if (this.step.name === 'openMessageText') {
@@ -300,7 +320,7 @@ export default {
       this.actionConfigArray = val
       this.steps['openToConfig'].complete = true
     },
-    handleWebHookURLSecretInput(val) {
+    handleWebhookURLInput(val) {
       this.actionConfigArray = val
       this.steps['openToConfig'].complete = true
     },
@@ -321,9 +341,7 @@ export default {
                   webhook_url_secret: this.secretName
                 }
                 if (this.messageText) {
-                  this.actionConfig.message = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.message = this.messageText
                 }
               }
               break
@@ -331,9 +349,7 @@ export default {
               {
                 this.actionConfig = { to_emails: this.actionConfigArray }
                 if (this.messageText) {
-                  this.actionConfig.body = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.body = this.messageText
                 }
               }
               break
@@ -346,9 +362,7 @@ export default {
                   messaging_service_sid: this.messagingService
                 }
                 if (this.messageText) {
-                  this.actionConfig.message = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.message = this.messageText
                 }
               }
               break
@@ -360,25 +374,28 @@ export default {
                   severity: this.severity
                 }
                 if (this.messageText) {
-                  //TO DO - Don't think this is working - need to fix!
-                  this.actionConfig.message = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.message = this.messageText
                 }
               }
               break
             case 'MS_TEAMS':
               {
                 this.actionConfig = {
-                  webhook_url_secret: this.webhookUrlSecret
+                  webhook_url_secret: this.webhookURLString
                 }
                 if (this.messageText) {
-                  this.actionConfig.message = this.bothMessages
-                    ? `{} ${this.messageText}`
-                    : this.messageText
+                  this.actionConfig.message = this.messageText
                 }
               }
               break
+            case 'WEBHOOK': {
+              this.actionConfig = {
+                url: this.webhookURLString
+              }
+              if (this.jsonPayload) {
+                this.actionConfig.payload = JSON.parse(this.jsonPayload)
+              }
+            }
           }
         }
       } else {
@@ -434,6 +451,11 @@ export default {
             teams_webhook_notification: this.actionConfig
           }
           break
+        case 'WEBHOOK':
+          config = {
+            webhook: this.actionConfig
+          }
+          break
         default:
           config = {}
       }
@@ -481,7 +503,7 @@ export default {
               :class="format('openMessageText')"
               @click="switchStep('openMessageText')"
             >
-              message</v-btn
+              <span v-if="isWebhook" class="mr-1"> JSON </span> message</v-btn
             >
             <v-tooltip v-else top>
               <template #activator="{ on, attrs }">
@@ -553,9 +575,10 @@ export default {
         <v-col
           v-for="type in actionTypes()"
           :key="type.title"
-          cols="6"
-          sm="4"
-          md="2"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="2"
         >
           <div
             v-ripple
@@ -571,59 +594,82 @@ export default {
       >
     </v-card-text>
     <v-card-text v-else-if="step.name === 'openMessageText'" class="pt-0">
-      <span class="primary--text"
-        >Type your message here or leave blank to send a default message.</span
-      ><v-menu
-        v-model="menu"
-        :close-on-content-click="false"
-        :open-on-hover="true"
-      >
-        <template #activator="{ on, attrs }">
-          <v-btn icon small v-bind="attrs" v-on="on">
-            <v-icon color="primary" small>info</v-icon>
-          </v-btn>
-        </template>
+      <div>
+        <span v-if="!isWebhook" class="primary--text"
+          >Type your message here or leave blank to send a default message.
+        </span>
+        <span v-else class="primary--text"
+          >Enter custom JSON payload to send as part of your webhook or leave
+          blank to send data from the event that triggers the
+          notification.</span
+        ><v-menu
+          v-model="menu"
+          :close-on-content-click="false"
+          :open-on-hover="true"
+        >
+          <template #activator="{ on, attrs }">
+            <v-btn icon small v-bind="attrs" v-on="on">
+              <v-icon color="primary" small>info</v-icon>
+            </v-btn>
+          </template>
 
-        <v-card width="30vW">
-          <v-card-text
-            ><div class="mb-2"
-              >The default message varies depending on what type of action you
-              attach the config to.
-            </div>
-            <div>
-              For a state change event the message would be:
-              <span class="font-weight-light"
-                >"Run {flow_run_name} of flow {flow_name} entered state {state}
-                with message {state_message}. See {flow_run_link} for more
-                details."</span
-              ></div
-            >
-            <div
-              >For a flow SLA event the default message would be:
-              <span class="font-weight-light"
-                >"Run {flow_run_name} ({flow_run_id}) of flow {flow_name} failed
-                {kind} SLA ({flow_sla_config_id}) after {duration_seconds}
-                seconds. See {flow_run_link} for more details."</span
-              ></div
-            >
-            <div
-              >For an agent SLA event, the default message would be:
-              <span class="font-weight-light"
-                >"Agents sharing the config {agent_config_id} have failed the
-                minimum healthy count of {sla_min_healthy}. The following agents
-                are unhealthy: {agent_ids}"</span
-              ></div
-            ></v-card-text
-          >
-        </v-card>
-      </v-menu>
-      <v-textarea
-        v-model="messageText"
-        class="pt-0"
-        outlined
-        :placeholder="messagePlaceholder"
-        @keydown.enter="saveMessage"
-      />
+          <v-card width="30vW">
+            <v-card-text
+              ><div class="mb-2"
+                >The default message varies depending on what type of event you
+                attach the action to. You can also send a custom message.
+
+                <div class="mt-2">
+                  Attributes you can include in a custom message include:
+                  <ul
+                    ><li>event_id</li>
+                    <li>flow_name</li
+                    ><li> flow_run_name</li>
+                    <li>flow_run_id</li>
+                    <li>agent_ids</li>
+                    <li>state</li>
+                    <li>state_message</li>
+                    <li>flow_run_link</li>
+                  </ul>
+                </div>
+                <div v-if="!isWebhook" class="mt-2">
+                  For example:
+                  <div>{{
+                    `"Run {flow_run_name} from flow {flow_name} needs
+                your attention! See: {flow_run_link}"`
+                  }}</div>
+                </div>
+                <div v-else class="mt-2">
+                  For example:
+                  <div
+                    >{{ `{` }}
+                    <div class="ml-3">{{ `"flow": "{flow_name}"` }}</div>
+                    <div>{{ `}` }}</div>
+                  </div>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+        <v-textarea
+          v-if="!isWebhook"
+          v-model="messageText"
+          class="pt-0"
+          outlined
+          :placeholder="messagePlaceholder"
+          @keydown.enter="saveMessage"
+        />
+
+        <JsonInput
+          v-else
+          v-model="jsonPayload"
+          selected-type="json"
+          skip-required
+          add-corners
+          :placeholder-text="jsonPlaceholder()"
+          @invalid-secret="handleJsonValidation"
+        />
+      </div>
     </v-card-text>
     <v-card-text v-else-if="step.name === 'openToConfig'">
       <v-row v-if="actionType.type === 'SLACK_WEBHOOK'" class="py-3 px-1">
@@ -718,8 +764,20 @@ export default {
         ></ListInput>
       </div>
 
-      <div v-else-if="actionType.type === 'MS_TEAMS'">
-        <div>
+      <div
+        v-else-if="
+          actionType.type === 'MS_TEAMS' || actionType.type === 'WEBHOOK'
+        "
+      >
+        <div v-if="actionType.type === 'WEBHOOK'">
+          <span>
+            Prefect Cloud will send a message via the URL you provide. To
+            securely store your webhook URL, create a
+            <router-link :to="{ name: 'secrets' }"> Prefect secret</router-link
+            >.
+          </span>
+        </div>
+        <div v-else-if="actionType.type === 'MS_TEAMS'">
           <span>
             Prefect Cloud will send a message via the
             <a
@@ -736,14 +794,14 @@ export default {
         </div>
 
         <v-row class="mt-2">
-          <v-col cols="12" md="4">
-            <v-select
-              v-model="webhookUrlSecret"
+          <v-col cols="12" md="8">
+            <v-text-field
+              v-model="webhookURLString"
+              :rules="[rules.required]"
+              label="Webhook URL"
               outlined
-              :items="secretNames"
-              label="Webhook URL Secret"
-              no-data-text="You will need to create a secret with your Webhook URL"
-              @change="handleWebHookURLSecretInput"
+              class="mb-8"
+              @input="handleWebhookURLInput"
             />
           </v-col>
         </v-row>
