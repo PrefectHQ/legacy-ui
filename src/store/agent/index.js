@@ -45,7 +45,6 @@ const mutations = {
     state.refetch = bool
   },
   setSortedAgents(state, flowRuns) {
-    // console.log('flowRuns in vuex', flowRuns)
     this.sorting = true
     if (!state.agents) {
       state.sortedAgents = null
@@ -79,7 +78,6 @@ const mutations = {
         agent.lateRuns = match?.filter(
           flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
         )
-        // console.log('agent', agent)
         return !!match?.length
       }
     }
@@ -90,7 +88,6 @@ const mutations = {
     agents.forEach(agent => {
       labelsAlign(agent)
       if (agent.lateRuns?.length) {
-        // console.log('ate agent', agent)
         agent.status = 'late'
         runsList.push(agent)
       } else if (agent.submittableRuns?.length) {
@@ -102,13 +99,11 @@ const mutations = {
         oldList.push(agent)
       }
     })
-    // console.log('runsList', runsList)
-    // runsList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
-    // newList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
+
     oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
     const fullList = [...runsList, ...newList, ...oldList]
     state.sortedAgents = fullList
-    // console.log('fullList', fullList)
+
     state.refetch = false
     state.sorting = false
   },
@@ -119,17 +114,21 @@ const mutations = {
       return
     }
     state.agents = agents.map(agent => {
-      const secondsSinceLastQuery = moment().diff(
-        moment(agent.last_queried),
-        'seconds'
-      )
-      agent.secondsSinceLastQuery = secondsSinceLastQuery
-      agent.status =
-        secondsSinceLastQuery < 60 * state.thresholds.stale
-          ? 'healthy'
-          : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
-          ? 'stale'
-          : 'unhealthy'
+      if (agent.lastQueried) {
+        const secondsSinceLastQuery = moment().diff(
+          moment(agent.last_queried),
+          'seconds'
+        )
+        agent.secondsSinceLastQuery = secondsSinceLastQuery
+        agent.status =
+          secondsSinceLastQuery < 60 * state.thresholds.stale
+            ? 'healthy'
+            : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
+            ? 'stale'
+            : 'unhealthy'
+      } else {
+        agent.status = 'unhealthy'
+      }
       return agent
     })
     state.refetch = false

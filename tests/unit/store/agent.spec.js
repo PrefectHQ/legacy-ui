@@ -1,5 +1,6 @@
 import agent from '@/store/agent'
 import { createLocalVue } from '@vue/test-utils'
+import { now } from 'moment'
 import Vuex from 'vuex'
 
 const localVue = createLocalVue()
@@ -14,7 +15,8 @@ describe('Agent Vuex Module', () => {
         // Time before an agent becomes unhealthy
         unhealthy: 120 // minutes since last query
       },
-      agents: null
+      agents: null,
+      sortedAgents: null
     }
   }
 
@@ -27,6 +29,10 @@ describe('Agent Vuex Module', () => {
     it('should have no agents', () => {
       const state = agent.state
       expect(state.agents).toBe(null)
+    })
+    it('should have no sorted agents', () => {
+      const state = agent.state
+      expect(state.sortedAgents).toBe(null)
     })
   })
 
@@ -48,6 +54,9 @@ describe('Agent Vuex Module', () => {
     it('should return agents when the agents getters is called', () => {
       expect(store.getters.agents).toBe(null)
     })
+    it('should return sorted agents when the sorted agents getters is called', () => {
+      expect(store.getters.sortedAgents).toBe(null)
+    })
   })
 
   describe('mutations', () => {
@@ -59,9 +68,18 @@ describe('Agent Vuex Module', () => {
 
     it('should add new agents, and update seconds since last query, when the setAgents mutation is called', () => {
       expect(store.getters.agents).toBe(null)
-      store.commit('setAgents', [{ id: '12345' }])
+      const recentDate = new Date().toISOString()
+      store.commit('setAgents', [
+        { id: '12345', last_queried: recentDate },
+        { id: '67890', last_queried: '2021-04-20T23:36:24.278841+00:00' }
+      ])
       expect(store.getters.agents).toEqual([
-        { id: '12345', secondsSinceLastQuery: 0, status: 'healthy' }
+        { id: '12345', status: 'healthy' },
+        {
+          id: '67890',
+          status: 'unhealthy',
+          last_queried: '2021-04-20T23:36:24.278841+00:00'
+        }
       ])
     })
   })
