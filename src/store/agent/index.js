@@ -114,7 +114,6 @@ const mutations = {
       return
     }
     state.agents = agents.map(agent => {
-      console.log('lq', agent.last_queried)
       if (agent.last_queried) {
         const secondsSinceLastQuery = moment().diff(
           moment(agent.last_queried),

@@ -55,7 +55,7 @@ export default {
       return this.loading > 0 || this.sorting
     },
     filteredAgents() {
-      return this.sortedAgents.filter(agent => {
+      return this.sortedAgents?.filter(agent => {
         if (this.showUnlabeledAgentsOnly) {
           return agent.labels.length === 0
         }
