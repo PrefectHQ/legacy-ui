@@ -228,7 +228,10 @@ export default {
           exact
         >
           <v-list-item-action>
-            <v-icon>store</v-icon>
+            <i
+              class="fad fa-brackets-curly"
+              style="width: 24px; height: 24px;"
+            ></i>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>KV Store</v-list-item-title>
