@@ -18,6 +18,8 @@ export default {
   },
   data() {
     return {
+      users: 0,
+      invitations: 0,
       // Current tab
       tab: 'members',
 
@@ -81,8 +83,11 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
+    totalAllowedUsers() {
+      return this.allowedUsers() ?? Infinity
+    },
     insufficientUsers() {
-      return this.users >= this.allowedUsers() ?? Infinity
+      return this.users >= this.totalAllowedUsers
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
@@ -142,13 +147,13 @@ export default {
     },
     handleUpdateInvitations(event) {
       if (event) {
-        this.invitations = event
+        this.invitations = event.length
       }
     },
     handleUpdateUsers(event) {
       this.isLoadingMembersTable = false
       if (event) {
-        this.users = event
+        this.users = event.length
       }
     },
     async inviteUser() {
@@ -389,7 +394,9 @@ export default {
       confirm-text="Send"
       :error="inviteError"
       :loading="isInvitingUser"
-      :disabled="!inviteFormValid || isInvitingUser"
+      :disabled="
+        totalUsers >= totalAllowedUsers || !inviteFormValid || isInvitingUser
+      "
       :dialog-props="{
         'max-width': '600'
       }"
@@ -398,7 +405,7 @@ export default {
     >
       <v-form ref="invite-user-form" v-model="inviteFormValid">
         <v-alert
-          v-if="totalUsers >= allowedUsers ? allowedUsers : Infinity"
+          v-if="totalUsers >= totalAllowedUsers"
           class="mx-auto my-4 mb-12"
           border="left"
           colored-border
