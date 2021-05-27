@@ -202,7 +202,7 @@ export default {
             >R</span
           >
         </v-avatar>
-        {{ nodeData.data.name }}
+        {{ nodeData.data.name || nodeData.data.task.name }}
       </div>
       <div
         v-if="showDetails && nodeData.data.start_time"
