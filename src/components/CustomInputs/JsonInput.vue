@@ -187,7 +187,9 @@ export default {
 <template>
   <div
     class="position-relative json-input-empty-text"
-    :class="{ 'json-input-height-auto': heightAuto }"
+    :class="{
+      'json-input-height-auto': heightAuto
+    }"
   >
     <div
       class="position-absolute text-center"
@@ -273,10 +275,9 @@ export default {
     color: var(--v-utilGrayMid-base) !important;
   }
 
-  .CodeMirror-lines {
-    height: 400px;
+  .CodeMirror-scroll {
+    padding-bottom: 0px;
   }
-
   .json-input-height-auto {
     .CodeMirror {
       height: auto;
