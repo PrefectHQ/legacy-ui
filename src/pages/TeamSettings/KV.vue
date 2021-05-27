@@ -3,7 +3,6 @@ import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Alert from '@/components/Alert'
-import MenuTooltip from '@/components/MenuTooltip'
 // import ExternalLink from '@/components/ExternalLink'
 
 import jsBeautify from 'js-beautify'
@@ -15,8 +14,7 @@ export default {
     JsonInput,
     Alert,
     ManagementLayout,
-    ConfirmDialog,
-    MenuTooltip
+    ConfirmDialog
   },
   mixins: [formatTime],
   data() {
@@ -54,10 +52,6 @@ export default {
         { value: 'json', text: 'JSON' }
       ],
 
-      // JsonInput
-      placeholderText:
-        "Enter your KV value here...\n\nClick on 'Type' to select a type validation",
-
       // Create/modify kv key & value input
       keyInput: null,
       KvValueInput: '',
@@ -76,7 +70,6 @@ export default {
       headers: [
         { text: 'Key', value: 'key' },
         { text: 'Value', value: 'value' },
-        { text: 'Created By', value: 'tenant.name' },
         { text: 'Created', value: 'created' },
         { text: 'Last Updated', value: 'updated' },
         {
@@ -94,7 +87,10 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['hasPermission']),
+    ...mapGetters('license', ['license', 'hasPermission']),
+    maxkvCount() {
+      return this.license?.terms?.key_value_pairs
+    },
     kvExists() {
       if (!this.kv) return false
 
@@ -204,7 +200,11 @@ export default {
       let value = this.KvValueInput
       if (this.selectedTypeIndex === 0) {
         try {
-          value = JSON.parse(this.KvValueInput)
+          if (value === 'null') {
+            value = JSON.stringify(JSON.parse(this.KvValueInput))
+          } else {
+            value = JSON.parse(this.KvValueInput)
+          }
         } catch {
           try {
             value = String.raw`${this.KvValueInput}`
@@ -314,7 +314,9 @@ export default {
       result() {
         this.isFetchingKV = false
       },
+      pollInterval: 30000,
       update(data) {
+        if (!data) return
         return data?.key_value
       },
       // skip() {
@@ -352,6 +354,7 @@ export default {
           color="primary"
           class="white--text"
           large
+          :disabled="kv ? kv.length >= maxkvCount : false"
           @click="
             expanded = []
             previousKVName = null
@@ -463,7 +466,6 @@ export default {
                 class="text-body-1 mt-2 mb-5"
                 prepend-icon="create"
                 :selected-type="selectedType(item)"
-                :placeholder-text="JSON.stringify(item.value)"
                 @invalid-secret="setInvalidKV"
               >
                 <v-menu top offset-y>
@@ -535,12 +537,6 @@ export default {
               >
                 {{ item.value }}
               </div>
-              <MenuTooltip
-                v-if="JSON.stringify(item.value).length > 150"
-                max-width="50%"
-              >
-                <pre>{{ JSON.stringify(item.value, null, '\t') }}</pre>
-              </MenuTooltip>
             </div>
           </template>
           <template #item.created="{item}">
@@ -600,6 +596,12 @@ export default {
               Copy value
             </v-tooltip>
           </template>
+
+          <template #footer.page-text>
+            <div class="text-caption"
+              >{{ kv ? kv.length : 0 }} out of {{ maxkvCount }} keys left</div
+            >
+          </template>
         </v-data-table>
       </v-card-text>
     </v-card>
@@ -609,7 +611,8 @@ export default {
       :dialog-props="{ 'max-width': '75vh' }"
       :disabled="!disableConfirm"
       :loading="isSettingKV"
-      :title="isKvUpdate ? 'Modify KV' : 'Create New KV'"
+      confirm-text="Save"
+      title="Create KV"
       @confirm="setKV"
       @cancel="resetSelectedKV"
     >
@@ -627,7 +630,7 @@ export default {
         single-line
         outlined
         dense
-        placeholder="Key Name"
+        placeholder="Key"
         prepend-inner-icon="vpn_key"
         validate-on-blur
       />
@@ -637,7 +640,7 @@ export default {
         v-model="KvValueInput"
         prepend-icon="create"
         class="text-body-1"
-        :placeholder-text="placeholderText"
+        placeholder-text="Value"
         :selected-type="kvTypes[selectedTypeIndex].value"
         @invalid-secret="setInvalidKV"
       >

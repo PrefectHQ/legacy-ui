@@ -5,8 +5,5 @@ query {
     updated
     created
     id
-    tenant {
-      name
-    }
   }
 }
