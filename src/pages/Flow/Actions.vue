@@ -45,6 +45,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission']),
     isQuickRunnable() {
       if (!this.flow.parameters) return true
 
@@ -56,7 +57,10 @@ export default {
       }, true)
     },
     isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('create', 'run')
+      )
     },
     isScheduled: {
       get() {

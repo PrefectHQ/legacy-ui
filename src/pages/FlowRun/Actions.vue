@@ -38,8 +38,12 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission']),
     isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('create', 'run')
+      )
     },
     isScheduled() {
       return this.flowRun?.state === 'Scheduled'

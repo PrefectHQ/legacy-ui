@@ -1,11 +1,21 @@
 <script>
 import { changeStateMixin } from '@/mixins/changeStateMixin'
+import { mapGetters } from 'vuex'
 
 export default {
   mixins: [changeStateMixin],
   data() {
     return {
       childTasks: false
+    }
+  },
+  computed: {
+    ...mapGetters('license', ['hasPermissions']),
+    isReadOnlyUser() {
+      return (
+        !this.hasPermissions('create', 'role') &&
+        !this.hasPermissions('create', 'flow')
+      )
     }
   },
   apollo: {
@@ -41,7 +51,7 @@ export default {
                 text
                 small
                 depressed
-                :disabled="role === 'READ_ONLY_USER'"
+                :disabled="isReadOnlyUser"
                 color="utilGrayMid"
               >
                 <v-icon>label_important</v-icon>
@@ -150,7 +160,7 @@ export default {
       </v-card>
     </v-dialog>
   </div>
-  <div v-else-if="role == 'READ_ONLY_USER' && dialogType == 'flow run'">
+  <div v-else-if="isReadOnlyUser && dialogType == 'flow run'">
     <v-tooltip bottom>
       <template #activator="{ on }">
         <div v-on="on">
@@ -189,7 +199,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="role === 'READ_ONLY_USER'">
+      <span v-if="isReadOnlyUser">
         Read-only users cannot change states
       </span>
       <span v-else>

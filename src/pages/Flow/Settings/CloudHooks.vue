@@ -30,12 +30,15 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['permissions']),
+    ...mapGetters('license', ['hasPermission']),
     containerClass() {
       return !this.cloudHooks ? ['py-12', 'text-center'] : []
     },
     isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('create', 'cloud-hook')
+      )
     }
   },
   methods: {

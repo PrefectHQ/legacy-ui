@@ -58,6 +58,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('user', ['user']),
     activeClearScreen() {
@@ -67,7 +68,7 @@ export default {
       return 'form'
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'role')
     },
     confirmDisabled() {
       return (

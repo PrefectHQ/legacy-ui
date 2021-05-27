@@ -21,13 +21,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     existingCard() {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'role')
     },
     isSelfServe() {
       return (

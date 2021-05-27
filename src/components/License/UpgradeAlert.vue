@@ -7,8 +7,7 @@ export default {
     ExternalLink
   },
   computed: {
-    ...mapGetters('license', ['license']),
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
@@ -16,7 +15,7 @@ export default {
       return this.license?.terms?.is_usage_based
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'role')
     }
   }
 }

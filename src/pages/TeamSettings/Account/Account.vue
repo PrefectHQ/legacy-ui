@@ -45,12 +45,12 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['license', 'planType']),
+    ...mapGetters('license', ['license', 'planType', 'hasPermission']),
     needAlert() {
       return !location.href.includes('prefect.io')
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'role')
     },
     isUsageBased() {
       return this.license?.terms?.is_usage_based

@@ -57,7 +57,10 @@ export default {
       return this.flowGroup.settings.lazarus_enabled
     },
     isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('create', 'flow')
+      )
     },
     projectHasChanged() {
       return this.selected.projectId !== this.flow.project.id

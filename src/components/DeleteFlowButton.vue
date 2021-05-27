@@ -34,6 +34,13 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['role']),
+    ...mapGetters('license', ['hasPermission']),
+    isReadOnly() {
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('delete', 'flow')
+      )
+    },
     all() {
       if (this.allFlows) return true
       if (this.type === 'group') return true
@@ -115,7 +122,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="role !== 'READ_ONLY_USER'" class="text-center">
+  <div v-if="!isReadOnly" class="text-center">
     <v-dialog v-model="deleteDialog" width="500" @click:outside="reset">
       <template #activator="{ on: dialog }">
         <v-tooltip bottom>
@@ -200,7 +207,7 @@ export default {
       >
     </v-dialog>
   </div>
-  <div v-else-if="role == 'READ_ONLY_USER'">
+  <div v-else-if="isReadOnly">
     <v-tooltip top>
       <template #activator="{ on }">
         <div v-on="on">

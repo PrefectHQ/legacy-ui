@@ -119,7 +119,7 @@ export default {
       return this.isTenantAdmin
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'role')
     },
     // Determine if user has the proper permissions to access TCLs
     // - They are on a license that grants explicit permission to access this feature

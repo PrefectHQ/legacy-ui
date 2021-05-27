@@ -130,7 +130,7 @@ export default {
       return this.hasPermission('feature', 'concurrency-limit')
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'role')
     },
     // Merge usage details into tags array
     tagsWithUsage() {

@@ -78,8 +78,12 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission']),
     isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('create', 'cloud-hook')
+      )
     },
     isLoadingTable() {
       return this.hooksLoaded

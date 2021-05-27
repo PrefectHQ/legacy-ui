@@ -20,11 +20,15 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermissions']),
     archived() {
       return this.flow.archived
     },
     isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
+      return (
+        !this.hasPermissions('create', 'role') &&
+        !this.hasPermissions('create', 'flow')
+      )
     },
     isScheduled() {
       if (this.archived) return false

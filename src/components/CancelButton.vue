@@ -1,8 +1,18 @@
 <script>
 import { changeStateMixin } from '@/mixins/changeStateMixin'
+import { mapGetters } from 'vuex'
 
 export default {
-  mixins: [changeStateMixin]
+  mixins: [changeStateMixin],
+  computed: {
+    ...mapGetters('license', ['hasPermission']),
+    isReadOnly() {
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('create', 'flow')
+      )
+    }
+  }
 }
 </script>
 
@@ -15,9 +25,7 @@ export default {
             color="red darken-3"
             class="vertical-button white--text"
             :style="{ height: '46px' }"
-            :disabled="
-              !checkVersion || role === 'READ_ONLY_USER' || isFinishing
-            "
+            :disabled="!checkVersion || isReadOnly || isFinishing"
             text
             small
             depressed
@@ -29,7 +37,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="role === 'READ_ONLY_USER'">
+      <span v-if="isReadOnly">
         Read-only users can't cancel flows.
       </span>
       <span v-else-if="!checkVersion">

@@ -28,7 +28,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['role', 'tenant'])
+    ...mapGetters('tenant', ['role', 'tenant']),
+    ...mapGetters('license', ['hasPermission']),
+
+    isReadOnly() {
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('create', 'project')
+      )
+    }
   },
   watch: {
     show() {
@@ -106,7 +114,7 @@ export default {
       <v-card-title v-else-if="projectSuccess">
         Success!
       </v-card-title>
-      <v-card-title v-else-if="role === 'READ_ONLY_USER'">
+      <v-card-title v-else-if="isReadOnly">
         You are a Read-only user.
       </v-card-title>
 
@@ -116,7 +124,7 @@ export default {
       <v-card-text v-if="specificProjectErrorMessage">
         {{ specificProjectErrorMessage }}
       </v-card-text>
-      <v-card-text v-else-if="role === 'READ_ONLY_USER'">
+      <v-card-text v-else-if="isReadOnly">
         Read-only users cannot create projects.
       </v-card-text>
       <v-card-text v-else-if="projectError">

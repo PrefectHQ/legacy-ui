@@ -1,5 +1,6 @@
 <script>
 import { changeStateMixin } from '@/mixins/changeStateMixin'
+import { mapGetters } from 'vuex'
 
 export default {
   mixins: [changeStateMixin],
@@ -11,6 +12,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['hasPermission']),
+    isReadOnly() {
+      return (
+        !this.hasPermission('create', 'role') &&
+        !this.hasPermission('create', 'run')
+      )
+    },
     loading() {
       if (this.resumeLoad == this.taskRun.id) return true
       if (this.taskRunApproved && this.taskRun.state === 'Paused') return true
@@ -31,7 +39,7 @@ export default {
           text
           depressed
           small
-          :disabled="role === 'READ_ONLY_USER'"
+          :disabled="isReadOnly"
           color="accentOrange"
           :loading="loading"
           @click="resumeRun"

@@ -84,6 +84,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
 
@@ -112,7 +113,7 @@ export default {
       return this.loadingKey > 0
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'role')
     },
     items() {
       if (!(this.versionGroups && this.flows)) return []

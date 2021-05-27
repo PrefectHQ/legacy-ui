@@ -67,11 +67,12 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission']),
     isReadOnlyUser() {
       return this.role === 'READ_ONLY_USER'
     },
     isTenantAdmin() {
-      return this.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'role')
     }
   },
 
