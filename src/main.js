@@ -41,7 +41,7 @@ export const setStartupTenant = async () => {
 
     // We want to make sure the URL slug matches
     // the tenant slug
-    if (slug && slug !== tenant.slug) {
+    if (slug && slug !== tenant.slug && slugTenant) {
       window.history.pushState('', '', tenant.slug)
     }
 
