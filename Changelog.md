@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Various bugfixes related to null tenants and team invitaitons - [#862](https://github.com/PrefectHQ/ui/pull/862)
 
 ## 2021-05-25
 
