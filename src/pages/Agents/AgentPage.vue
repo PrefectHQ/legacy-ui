@@ -87,14 +87,14 @@ export default {
         :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
       >
         <v-btn
-          :disabled="agentDetails.status != 'old'"
+          :disabled="agentDetails.status != 'unhealthy'"
           text
           tile
           small
           color="error"
           class="vertical-button py-1"
           :title="
-            agentDetails.status != 'old'
+            agentDetails.status != 'unhealthy'
               ? 'This agent is healthy'
               : 'Remove agent'
           "

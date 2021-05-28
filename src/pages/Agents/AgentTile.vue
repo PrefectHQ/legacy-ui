@@ -78,12 +78,11 @@ export default {
     statusColor() {
       const color =
         {
-          old: 'Gray',
+          unhealthy: 'Gray',
           failed: 'error',
           late: 'deepRed',
           healthy: 'green',
-          stale: 'warning',
-          unhealthy: 'error'
+          stale: 'warning'
         }[this.status] || 'secondaryGray'
       return color
     },
@@ -138,7 +137,7 @@ export default {
       this.setUpdate()
     }
   },
-  destroyed() {
+  beforeDestroy() {
     this.endUpdate()
   },
   methods: {

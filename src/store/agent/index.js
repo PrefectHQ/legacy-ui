@@ -93,7 +93,7 @@ const mutations = {
         runsList.push(agent)
       } else if (agent.submittableRuns?.length && agent.status === 'healthy') {
         runsList.push(agent)
-      } else if (agent.status != 'unhealthy' && agent.status != 'old') {
+      } else if (agent.status != 'unhealthy') {
         newList.push(agent)
       } else {
         oldList.push(agent)
@@ -133,14 +133,18 @@ const mutations = {
     })
     state.refetch = false
     state.sorting = false
+  },
+  setIntervalId(state, id) {
+    state.intervalId = id
   }
 }
 
 const actions = {
   setUpdate({ commit }) {
-    state.intervalId = setInterval(() => {
+    const intervalId = setInterval(() => {
       commit('setRefetch', true)
     }, 1000)
+    commit('setIntervalId', intervalId)
   },
   endUpdate({ commit }) {
     clearInterval(commit('setRefetch', false))

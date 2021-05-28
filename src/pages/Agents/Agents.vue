@@ -8,7 +8,7 @@ import difference from 'lodash.difference'
 
 import AgentTile from '@/pages/Agents/AgentTile'
 
-const STATUSES = ['healthy', 'stale', 'unhealthy', 'old', 'late']
+const STATUSES = ['healthy', 'stale', 'unhealthy', 'late']
 
 export default {
   components: {
@@ -42,9 +42,7 @@ export default {
     ...mapGetters('api', ['isCloud']),
 
     oldAgents() {
-      return !!this.filteredAgents?.find(
-        agent => agent.status === 'old' || agent.status === 'unhealthy'
-      )
+      return !!this.filteredAgents?.find(agent => agent.status === 'unhealthy')
     },
     allLabels() {
       if (!this.agents) return []
@@ -93,7 +91,7 @@ export default {
       try {
         this.clearingAgents = true
         const unhealthyAgents = this.filteredAgents.filter(
-          agent => agent.status === 'old' || agent.status === 'unhealthy'
+          agent => agent.status === 'unhealthy'
         )
         if (unhealthyAgents?.length === 0) {
           LogRocket.captureMessage('Clean Up button open but no agents found')
