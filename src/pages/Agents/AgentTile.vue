@@ -284,21 +284,10 @@ export default {
         Core Version:
         {{ agent.core_version || 'Unknown' }}
       </div>
-      <div v-if="!showAll" :style="{ 'min-height': '45px' }" class="pa-0">
-        <v-icon
-          small
-          class="mr-1"
-          :color="
-            hasLateRuns
-              ? 'grey'
-              : failedRuns
-              ? 'error'
-              : recentRuns && recentRuns.length
-              ? 'success'
-              : 'grey'
-          "
-          >adjust</v-icon
-        >Recent Runs
+      <div v-if="!showAll" :style="{ 'min-height': '45px' }">
+        <div>
+          Recent runs
+        </div>
         <LastTenRuns
           :runs="recentRuns"
           :agent-id="agent.id"
@@ -355,33 +344,29 @@ export default {
           </span>
         </v-tooltip>
       </div>
-      <v-list>
-        <v-list-item class="pa-0 mt-2">
-          <v-list-item-content class="pa-0">
-            <v-list-item-title>
-              Labels
-            </v-list-item-title>
-            <v-sheet
-              :height="showAll ? '60px' : '40px'"
-              :style="{ overflow: 'auto' }"
-            >
-              <Label
-                v-for="label in agent.labels"
-                :key="label"
-                class="mr-1 mt-1"
-                :outlined="!labelSelected(label)"
-                size="x-small"
-                @click="$emit('label-click', $event)"
-              >
-                {{ label }}
-              </Label>
-              <!-- <span v-if="!agentModified.labels.length">
+      <div>
+        <div>
+          Labels
+        </div>
+        <v-sheet
+          :height="showAll ? '60px' : '40px'"
+          :style="{ overflow: 'auto' }"
+        >
+          <Label
+            v-for="label in agent.labels"
+            :key="label"
+            class="mr-1 mt-1"
+            :outlined="!labelSelected(label)"
+            size="x-small"
+            @click="$emit('label-click', $event)"
+          >
+            {{ label }}
+          </Label>
+          <!-- <span v-if="!agentModified.labels.length">
                 None
               </span> -->
-            </v-sheet>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+        </v-sheet>
+      </div>
     </v-card-text>
 
     <v-card-actions v-if="!showAll" class="pa-0">
