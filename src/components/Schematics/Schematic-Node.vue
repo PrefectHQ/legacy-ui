@@ -97,21 +97,15 @@ export default {
       })
     },
     subtitleStyle() {
-      let size = 54 * (1 / this.transform.k)
-      size = size < 54 ? 64 : size > 84 ? 84 : size
+      let size = 64 * (1 / this.transform.k)
+      size = size < 64 ? 64 : size > 84 ? 84 : size
       return {
         color: this.disabled
           ? 'var(--v-navIcons-base)'
           : 'var(--v-utilGrayDark-base)',
         'font-size': `${size}px !important`,
-        'line-height': `${size + 10}px !important`
+        'line-height': `${size}px !important`
       }
-      // return {
-      //   'background-color': 'var(--v-accentOrange-base)',
-      //   color: 'var(--v-appForeground-base) !important',
-      //   'font-size': `${size}px !important`,
-      //   'line-height': `${size}px !important`
-      // }
     },
     titleStyle() {
       let size = 84 * (1 / this.transform.k)
@@ -197,7 +191,7 @@ export default {
   >
     <div class="ml-12 node-content" style="width: calc(100% - 6rem);">
       <div
-        class="text-h6 text-truncate font-weight-bold"
+        class="text-subtitle-2 text-truncate font-weight-light"
         :style="subtitleStyle"
       >
         <v-avatar
@@ -212,7 +206,23 @@ export default {
             >R</span
           >
         </v-avatar>
-        {{ nodeData.data.name || nodeData.data.task.name }}
+        {{ nodeData.data.task.name }}
+      </div>
+
+      <div class="text-h6 text-truncate font-weight-bold" :style="titleStyle">
+        <v-avatar
+          v-if="isResource || isParameter"
+          color="accentOrange"
+          size="0.75em"
+        >
+          <span v-if="isParameter" class="text-h2 white--text font-weight-black"
+            >P</span
+          >
+          <span v-if="isResource" class="text-h2 white--text font-weight-black"
+            >R</span
+          >
+        </v-avatar>
+        {{ nodeData.data.name }}
       </div>
       <div
         v-if="showDetails && nodeData.data.start_time"
