@@ -61,6 +61,9 @@ export default {
       const day = this.subtractDay(today, 2)
       return day
     },
+    labelHeight() {
+      return this.showAll ? '60px' : '40px'
+    },
     hasLateRuns() {
       return !!this.lateRuns?.length
     },
@@ -349,6 +352,7 @@ export default {
           Labels
         </div>
         <v-sheet
+          v-if="agent.labels && agent.labels.length"
           :height="showAll ? '60px' : '40px'"
           :style="{ overflow: 'auto' }"
         >
@@ -366,6 +370,9 @@ export default {
                 None
               </span> -->
         </v-sheet>
+        <div v-else class="text--disabled" :style="{ height: labelHeight }">
+          None
+        </div>
       </div>
     </v-card-text>
 
