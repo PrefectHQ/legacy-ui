@@ -42,7 +42,9 @@ export default {
     ...mapGetters('api', ['isCloud']),
 
     oldAgents() {
-      return !!this.filteredAgents?.find(agent => agent.status === 'old')
+      return !!this.filteredAgents?.find(
+        agent => agent.status === 'old' || agent.status === 'unhealthy'
+      )
     },
     allLabels() {
       if (!this.agents) return []
@@ -91,7 +93,7 @@ export default {
       try {
         this.clearingAgents = true
         const unhealthyAgents = this.filteredAgents.filter(
-          agent => agent.status === 'old'
+          agent => agent.status === 'old' || agent.status === 'unhealthy'
         )
         if (unhealthyAgents?.length === 0) {
           LogRocket.captureMessage('Clean Up button open but no agents found')

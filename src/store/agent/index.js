@@ -10,7 +10,8 @@ const state = {
   agents: null,
   sortedAgents: null,
   sorting: true,
-  refetch: false
+  refetch: false,
+  intervalId: null
 }
 
 const getters = {
@@ -42,7 +43,6 @@ const getters = {
 
 const mutations = {
   setRefetch(state, bool) {
-    console.log('setRefetch')
     state.refetch = bool
   },
   setSortedAgents(state, flowRuns) {
@@ -91,12 +91,11 @@ const mutations = {
       if (agent.lateRuns?.length) {
         agent.status = 'late'
         runsList.push(agent)
-      } else if (agent.submittableRuns?.length) {
+      } else if (agent.submittableRuns?.length && agent.status === 'healthy') {
         runsList.push(agent)
       } else if (agent.status != 'unhealthy' && agent.status != 'old') {
         newList.push(agent)
       } else {
-        agent.status = 'old'
         oldList.push(agent)
       }
     })
@@ -137,9 +136,21 @@ const mutations = {
   }
 }
 
+const actions = {
+  setUpdate({ commit }) {
+    state.intervalId = setInterval(() => {
+      commit('setRefetch', true)
+    }, 1000)
+  },
+  endUpdate({ commit }) {
+    clearInterval(commit('setRefetch', false))
+  }
+}
+
 export default {
   getters,
   mutations,
   state,
+  actions,
   namespaced: true
 }

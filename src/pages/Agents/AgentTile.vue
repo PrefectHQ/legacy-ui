@@ -135,14 +135,16 @@ export default {
   },
   mounted() {
     if (this.agent?.status === 'healthy') {
-      setInterval(() => {
-        this.setRefetch(true)
-      }, 1000)
+      this.setUpdate()
     }
+  },
+  destroyed() {
+    this.endUpdate()
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapMutations('agent', ['setRefetch']),
+    ...mapActions('agent', ['setUpdate', 'endUpdate']),
     anyLabelsSelected(labels) {
       return labels.reduce((result, label) => this.labelSelected(label), false)
     },
