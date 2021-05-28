@@ -367,19 +367,6 @@ export default {
                 value="unhealthy"
                 color="error"
               ></v-checkbox>
-              <v-checkbox
-                v-model="statusInput"
-                label="Show old agents"
-                value="old"
-                :hint="
-                  `Old agents have not queried for flows in the last ${
-                    unhealthyThreshold === 1
-                      ? 'minute'
-                      : `${unhealthyThreshold} minutes and have no submittable runs`
-                  }.`
-                "
-                color="grey"
-              ></v-checkbox>
             </v-card-text>
 
             <v-card-actions>
@@ -572,7 +559,7 @@ export default {
 .filter-alert-position {
   position: absolute;
   right: 16px;
-  top: 50px;
+  top: 80px;
   z-index: 10;
 }
 
