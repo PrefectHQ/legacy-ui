@@ -133,6 +133,13 @@ export default {
       }, 150)
     }
   },
+  mounted() {
+    if (this.agent?.status === 'healthy') {
+      setInterval(() => {
+        this.setRefetch(true)
+      }, 1000)
+    }
+  },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapMutations('agent', ['setRefetch']),

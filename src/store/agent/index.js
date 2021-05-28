@@ -42,6 +42,7 @@ const getters = {
 
 const mutations = {
   setRefetch(state, bool) {
+    console.log('setRefetch')
     state.refetch = bool
   },
   setSortedAgents(state, flowRuns) {
@@ -113,7 +114,7 @@ const mutations = {
       state.agents = null
       return
     }
-    state.agents = agents.map(agent => {
+    state.agents = agents?.map(agent => {
       if (agent.last_queried) {
         const secondsSinceLastQuery = moment().diff(
           moment(agent.last_queried),
