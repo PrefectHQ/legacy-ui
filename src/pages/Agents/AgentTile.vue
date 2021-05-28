@@ -5,6 +5,7 @@ import Label from '@/components/Label'
 import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import LastTenRuns from '@/components/LastTenRuns'
+import CardTitle from '@/components/Card-Title'
 
 const AGENT_TYPES = [
   { type: 'DockerAgent', icon: 'fab fa-docker pa-1', name: 'Docker' },
@@ -18,7 +19,8 @@ const AGENT_TYPES = [
 export default {
   components: {
     LastTenRuns,
-    Label
+    Label,
+    CardTitle
   },
   mixins: [formatTime],
   props: {
@@ -49,7 +51,8 @@ export default {
       isDeleting: false,
       showConfirmDialog: false,
       submittable: this.agent.submittableRuns,
-      showIcon: true
+      showIcon: true,
+      tab: 'overview'
     }
   },
   computed: {
@@ -124,6 +127,17 @@ export default {
         AGENT_TYPES.find(a => a.type == this.agent?.type)?.icon ||
         'fad fa-globe'
       )
+    },
+    agentHook() {
+      const hook = this.agentHooks
+        ?.filter(
+          hook =>
+            hook.event_tags?.agent_config_id?.filter(id => {
+              return id === this.agent?.agent_config_id
+            }).length > 0
+        )
+        .map(hook => hook.action)
+      return hook
     }
   },
   watch: {
@@ -203,6 +217,13 @@ export default {
       update: data => {
         return data.flow_run
       }
+    },
+    agentHooks: {
+      query: require('@/graphql/Agent/agent-hooks.gql'),
+      loadingKey: 'loading',
+      update: data => {
+        return data.hook
+      }
     }
   }
 }
@@ -211,23 +232,58 @@ export default {
 <template>
   <v-card
     :disabled="agent.isDeleting || isDeleting"
-    class="agent-card px-2"
+    class="agent-card py-2"
     style="overflow-y: auto;"
     :tile="showAll"
     :height="showAll ? '380px' : '300px'"
   >
-    <v-card-title>
-      <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
-
-      <div
-        ><span>
-          <v-icon :color="statusColor" class="fa-2x pi-2x fa-font">
-            {{ agentIcon || 'fas fa-robot' }}
-          </v-icon></span
+    <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
+    <CardTitle :title="name" :icon="agentIcon" :icon-color="statusColor">
+      <div v-if="showAll" slot="action" class="d-flex align-end flex-column">
+        <v-btn
+          depressed
+          small
+          tile
+          icon
+          class="button-transition w-100 d-flex justify-end"
+          :color="tab == 'overview' ? 'primary' : ''"
+          :style="{
+            'border-right': `3px solid ${
+              tab == 'overview'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
+            }`,
+            'box-sizing': 'content-box',
+            'min-width': '100px'
+          }"
+          @click="tab = 'overview'"
         >
-        <span class="ml-2">{{ name }}</span>
+          Overview
+          <v-icon small>calendar_view_day</v-icon>
+        </v-btn>
+        <v-btn
+          depressed
+          small
+          tile
+          icon
+          class="button-transition w-100 d-flex justify-end"
+          :color="tab == 'config' ? 'primary' : ''"
+          :style="{
+            'border-right': `3px solid ${
+              tab == 'config'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
+            }`,
+            'box-sizing': 'content-box',
+            'min-width': '100px'
+          }"
+          @click="tab = 'config'"
+        >
+          Config
+          <v-icon small>details</v-icon>
+        </v-btn>
       </div>
-    </v-card-title>
+    </CardTitle>
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
         <v-card-title class="word-break-normal">
@@ -256,7 +312,7 @@ export default {
       </v-card>
     </v-dialog>
 
-    <v-card-text class="py-0">
+    <v-card-text v-if="tab == 'overview' || !showAll" class="py-2">
       <div v-if="!showAll || hasLateRuns" class="my-2">
         <v-icon small class="mr-1" :color="hasLateRuns ? 'deepRed' : 'success'">
           adjust
@@ -372,6 +428,30 @@ export default {
         </v-sheet>
         <div v-else class="text--disabled" :style="{ height: labelHeight }">
           None
+        </div>
+      </div>
+    </v-card-text>
+    <v-card-text v-else
+      ><div v-if="!agentHook || !agentHook.length">
+        No agent config attached to this agent.</div
+      >
+      <div v-else>
+        <truncate :content="agent.id">
+          Agent Config Id: {{ agent.agent_config_id || unknown }}</truncate
+        >
+        <div v-for="(action, index) in agentHook" :key="index">
+          <div class="my-2">
+            Action Name{{
+              agentHook && agentHook.length > 1 ? ` ${index}` : ''
+            }}:
+            {{ action.name }}
+          </div>
+          <div class="my-2">
+            Action Type{{
+              agentHook && agentHook.length > 1 ? ` ${index}` : ''
+            }}:
+            {{ action.action_type }}
+          </div>
         </div>
       </div>
     </v-card-text>
