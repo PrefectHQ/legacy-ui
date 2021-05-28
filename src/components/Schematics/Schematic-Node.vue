@@ -97,14 +97,21 @@ export default {
       })
     },
     subtitleStyle() {
-      let size = 64 * (1 / this.transform.k)
-      size = size < 64 ? 64 : size > 84 ? 84 : size
+      let size = 54 * (1 / this.transform.k)
+      size = size < 54 ? 64 : size > 84 ? 84 : size
       return {
-        'background-color': 'var(--v-accentOrange-base)',
-        color: 'var(--v-appForeground-base) !important',
+        color: this.disabled
+          ? 'var(--v-navIcons-base)'
+          : 'var(--v-utilGrayDark-base)',
         'font-size': `${size}px !important`,
-        'line-height': `${size}px !important`
+        'line-height': `${size + 10}px !important`
       }
+      // return {
+      //   'background-color': 'var(--v-accentOrange-base)',
+      //   color: 'var(--v-appForeground-base) !important',
+      //   'font-size': `${size}px !important`,
+      //   'line-height': `${size}px !important`
+      // }
     },
     titleStyle() {
       let size = 84 * (1 / this.transform.k)
@@ -189,7 +196,10 @@ export default {
     @mousewheel="wheelEvent"
   >
     <div class="ml-12 node-content" style="width: calc(100% - 6rem);">
-      <div class="text-h6 text-truncate font-weight-bold" :style="titleStyle">
+      <div
+        class="text-h6 text-truncate font-weight-bold"
+        :style="subtitleStyle"
+      >
         <v-avatar
           v-if="isResource || isParameter"
           color="accentOrange"
