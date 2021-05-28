@@ -34,6 +34,11 @@ export default {
     agentDetails() {
       const agent = this.sortedAgent(this.agentId)
       return agent
+    },
+    agentName() {
+      return this.agentDetails?.name != 'agent'
+        ? this.agentDetails?.name
+        : this.agentDetails?.type
     }
   },
   watch: {
@@ -79,7 +84,7 @@ export default {
     <SubPageNav icon="pi-agent" page-type="Agent" m>
       <span slot="page-title">
         <span>
-          {{ agentId }}
+          {{ agentName }}
         </span>
       </span>
       <span
@@ -87,17 +92,13 @@ export default {
         :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
       >
         <v-btn
-          :disabled="agentDetails.status != 'unhealthy'"
+          v-if="agentDetails.status === 'unhealthy'"
           text
           tile
           small
           color="error"
           class="vertical-button py-1"
-          :title="
-            agentDetails.status != 'unhealthy'
-              ? 'This agent is healthy'
-              : 'Remove agent'
-          "
+          :title="'Remove agent'"
           @click="showConfirmDialog = true"
         >
           <v-icon>
@@ -141,7 +142,7 @@ export default {
       class="px-6 mx-auto tabs-border-bottom tab-full-height"
       style="max-width: 1440px;"
       :style="{
-        'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
+        'padding-top': $vuetify.breakpoint.smOnly ? '30px' : '80px'
       }"
     >
       <v-tab-item
