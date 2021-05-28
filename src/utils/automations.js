@@ -96,6 +96,15 @@ export const actionTypes = [
     icon: 'fab fa-microsoft',
     config: { webhook_url_secret: null, message: null, title: null },
     requiresCloud: true
+  },
+  {
+    title: 'Webhook',
+    sendText: 'Send a',
+    verb: 'send webhook to',
+    type: 'WEBHOOK',
+    icon: 'fas fa-desktop',
+    config: { to: null },
+    requiresCloud: false
   }
 ]
 
@@ -152,4 +161,28 @@ export const AUTOMATIONSTATES = {
   ],
   Success: ['Success', 'Cached', 'Mapped', 'Skipped'],
   Custom: []
+}
+
+export const jsonPlacehold = {
+  jsonBlob: {
+    event_name: '{event_type}',
+    message: '',
+    tenant_id: '{tenant_id}',
+    tenant_slug: '{tenant_slug}',
+    timestamp: '',
+    id: '{event_id}',
+    flow_id: '{flow_id}',
+    flow_name: '{flow_name}',
+    flow_group_id: '{flow_group_id}',
+    flow_link: '{flow_link}',
+    flow_run_id: '{flow_run_id}',
+    flow_run_name: '{flow_run_name}',
+    state: '{state}',
+    state_message: '{state_message}',
+    flow_run_link: '{flow_run_link}',
+    flow_sla_config_id: '{flow_sla_config_id}',
+    kind: '{flow_sla_type}',
+    duration_seconds: '{duration}',
+    event_type: '{event_type}'
+  }
 }
