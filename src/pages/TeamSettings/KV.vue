@@ -88,7 +88,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('license', ['license', 'hasPermission']),
-    maxkvCount() {
+    maxKVCount() {
       return this.license?.terms?.key_value_pairs
     },
     kvExists() {
@@ -354,7 +354,7 @@ export default {
           color="primary"
           class="white--text"
           large
-          :disabled="kv ? kv.length >= maxkvCount : false"
+          :disabled="kv ? kv.length >= maxKVCount : false"
           @click="
             expanded = []
             previousKVName = null
@@ -598,9 +598,9 @@ export default {
           </template>
 
           <template #footer.page-text>
-            <div class="text-caption"
-              >{{ kv ? kv.length : 0 }} out of {{ maxkvCount }} keys left</div
-            >
+            <div class="text-caption">
+              {{ kv ? kv.length : 0 }} out of {{ maxKVCount }} keys used
+            </div>
           </template>
         </v-data-table>
       </v-card-text>
