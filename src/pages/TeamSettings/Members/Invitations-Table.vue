@@ -120,7 +120,7 @@ export default {
       watchLoading(isLoading) {
         this.isFetchingInvitations = isLoading
       },
-      result({ data }) {
+      update(data) {
         if (!data) return
 
         // We filter this because we don't want to show invitations
@@ -147,7 +147,7 @@ export default {
         )
         this.$emit('load-end')
       },
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'network-only',
       skip() {
         return !this.tenant
       },
