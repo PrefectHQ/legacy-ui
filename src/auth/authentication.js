@@ -41,15 +41,21 @@ export const authClient = new OktaAuth({
 export const authenticate = async () => {
   const isLoginRedirect = await authClient.isLoginRedirect()
   const redirectRoute = sessionStorage.getItem('redirectRoute')
-
   if (isLoginRedirect) {
-    const { tokens } = await authClient.token.parseFromUrl()
-    authClient.tokenManager.setTokens(tokens)
-    if (redirectRoute) {
-      history.replaceState(null, null, redirectRoute)
-    }
+    try {
+      const { tokens } = await authClient.token.parseFromUrl()
 
-    return tokens
+      authClient.tokenManager.setTokens(tokens)
+      if (redirectRoute) {
+        history.replaceState(null, null, redirectRoute)
+        sessionStorage.removeItem('redirectRoute')
+      }
+
+      return tokens
+    } catch (e) {
+      window.location.assign('/access-denied')
+      throw new Error(e)
+    }
   } else {
     if (window.location?.pathname && !redirectRoute) {
       sessionStorage.setItem(
