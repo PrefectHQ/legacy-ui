@@ -235,7 +235,7 @@ export default {
         slot="page-actions"
         :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
       >
-        <v-dialog v-model="cleanUpDialog">
+        <v-dialog v-model="cleanUpDialog" width="25%">
           <template #activator="{ on }">
             <v-btn
               v-if="oldAgents"
