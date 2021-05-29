@@ -77,59 +77,81 @@ export default {
     }
   },
   methods: {
-    ...mapActions('alert', ['setAlert']),
+    ...mapActions('alert', ['addNotification', 'updateNotification']),
     ...mapActions('data', ['resetData']),
     ...mapActions('tenant', ['setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     async handleAcceptPendingInvitation(id, name, slug) {
       this.loading = true
-      let success
+      const notificationId = await this.addNotification({
+        color: 'primaryLight',
+        loading: true,
+        text: `Joining ${name}...`,
+        dismissable: false
+      })
+
+      let success, error
       try {
         await this.acceptMembershipInvitation(id)
         success = true
       } catch (e) {
         success = false
+        error = e
       } finally {
-        this.setAlert(
-          {
-            alertShow: true,
-            alertMessage: success
-              ? `You joined ${name}... hurrah!`
-              : `Something went wrong trying to accept your invitation to ${name}... please wait a few moments and try again.`,
-            alertType: success ? 'success' : 'error',
-            alertLink: success
+        await this.$globalApolloQueries['membershipInvitations']?.refetch()
+        await this.getUser()
+        await this.$globalApolloQueries['tenants']?.refetch()
+
+        await this.updateNotification({
+          id: notificationId,
+          notification: {
+            color: success ? 'accentGreen' : 'error',
+            loading: false,
+            linkText: success ? 'Visit' : null,
+            to: success
               ? {
                   name: 'dashboard',
-                  params: { tenant: slug }
+                  params: {
+                    tenant: slug
+                  }
                 }
               : null,
-            linkText: success ? 'Take me to my new tenant!' : ''
-          },
-          3000
-        )
-        await this.$globalApolloQueries['membershipInvitations']?.refetch()
+            text: success
+              ? `You've joined ${name}!`
+              : `Something went wrong trying to accept your invitation to ${name}... please wait a few moments and try again.`,
+            subtext: error,
+            dismissable: true,
+            timeout: 10000
+          }
+        })
+
         this.loading = false
       }
     },
     async handleDeclinePendingInvitation(id, name) {
       this.loading = true
-      let success
+      let success, error
       try {
         await this.declineMembershipInvitation(id)
         success = true
       } catch (e) {
         success = false
+        error = e
       } finally {
-        this.setAlert(
-          {
-            alertShow: true,
-            alertMessage: success
-              ? `Invitation to join ${name} declined.`
-              : `Something went wrong trying to decline your invitation to ${name}... please wait a few moments and try again.`,
-            alertType: success ? 'success' : 'error'
-          },
-          3000
-        )
         await this.$globalApolloQueries['membershipInvitations']?.refetch()
+        await this.getUser()
+        await this.$globalApolloQueries['tenants']?.refetch()
+
+        await this.addNotification({
+          color: success ? 'accentGreen' : 'error',
+          text: success
+            ? `Invitation to join ${name} removed.`
+            : `Something went wrong trying to decline your invitation to ${name}... please wait a few moments and try again.`,
+          subtext: error,
+          dismissable: true,
+          timeout: 10000
+        })
+
         this.loading = false
       }
     },

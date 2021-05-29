@@ -1,5 +1,7 @@
 <script>
 import { mapActions } from 'vuex'
+import { logout } from '@/auth/index.js'
+
 export default {
   data() {
     return {
@@ -8,8 +10,8 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['login']),
-    redirectToLogin() {
-      this.login()
+    async logOut() {
+      await logout()
     }
   }
 }
@@ -47,10 +49,10 @@ export default {
         color="white"
         class="primary--text"
         depressed
-        @click="redirectToLogin"
+        @click="logOut"
       >
         <v-icon>arrow_back_ios</v-icon>
-        Back to login
+        Sign out
       </v-btn>
     </div>
   </div>

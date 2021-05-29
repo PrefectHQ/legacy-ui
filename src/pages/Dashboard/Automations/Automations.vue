@@ -102,6 +102,7 @@ export default {
         <AddAutoCard
           v-if="!!hasPermission('create', 'hook') && !closeCard"
           @refresh="handleRefresh"
+          @refetch="handleRefetch"
           @saving="loadCards = true"
           @done="handleDone"
         />

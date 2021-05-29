@@ -176,8 +176,8 @@ export default {
       </div>
     </transition-group>
 
-    <transition name="fade" mode="out-in"
-      ><router-view class="router-view" style="z-index: 3;" />
+    <transition name="fade" mode="out-in">
+      <router-view class="router-view" style="z-index: 3;" />
     </transition>
   </v-container>
 </template>

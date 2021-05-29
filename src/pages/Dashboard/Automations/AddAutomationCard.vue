@@ -10,7 +10,7 @@ import {
 import ConfirmDialog from '@/components/ConfirmDialog'
 import UpgradeBadge from '@/components/UpgradeBadge'
 
-const systemActions = ['CancelFlowRunAction']
+const systemActions = ['CancelFlowRunAction', 'PauseScheduleAction']
 
 export default {
   components: {
@@ -72,7 +72,8 @@ export default {
         required: val => !!val || 'Required',
         notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
       },
-      animated: false
+      animated: false,
+      agentConfigId: ''
     }
   },
   computed: {
@@ -118,17 +119,55 @@ export default {
       return 'has'
     },
     editedActions() {
-      return this.actions
+      // Most actions are independent and can be used across flows but PauseScheduleAction can take a flow group id so need to filter here
+      const actions = this.actions.filter(
+        action =>
+          action.action_type !== 'PauseScheduleAction' ||
+          action?.action_config?.flow_group_id ===
+            this.selectedFlows[0]?.flow_group_id
+      )
+      return actions
         ? this.agentOrFlow === 'agent'
-          ? this.actions.filter(
-              action => action.action_type !== 'CancelFlowRunAction'
+          ? actions.filter(
+              action =>
+                action.action_type !== 'CancelFlowRunAction' &&
+                action.action_type !== 'PauseScheduleAction'
             )
-          : this.actions.find(
+          : actions.find(
               action => action.action_type === 'CancelFlowRunAction'
+            ) &&
+            actions.find(
+              action =>
+                action.action_type === 'PauseScheduleAction' &&
+                action.action_config.flow_group_id ===
+                  this.selectedFlows[0].flow_group_id
             )
-          ? this.actions
+          ? actions
+          : actions.find(action => action.action_type === 'PauseScheduleAction')
+          ? [
+              ...actions,
+              {
+                name: 'cancel run',
+                value: 'CANCEL_RUN',
+                action_type: 'CancelFlowRunAction'
+              }
+            ]
+          : actions.find(action => action.action_type === 'CancelFlowRunAction')
+          ? [
+              ...actions,
+              {
+                name: 'pause schedule',
+                value: 'PAUSE_SCHEDULE',
+                action_type: 'PauseScheduleAction'
+              }
+            ]
           : [
-              ...this.actions,
+              ...actions,
+              {
+                name: 'pause schedule',
+                value: 'PAUSE_SCHEDULE',
+                action_type: 'PauseScheduleAction'
+              },
               {
                 name: 'cancel run',
                 value: 'CANCEL_RUN',
@@ -139,7 +178,14 @@ export default {
             {
               name: 'cancel run',
               value: 'CANCEL_RUN',
+              id: 1,
               action_type: 'CancelFlowRunAction'
+            },
+            {
+              name: 'pause schedule',
+              value: 'PAUSE_SCHEDULE',
+              id: 2,
+              action_type: 'PauseScheduleAction'
             }
           ]
     },
@@ -149,6 +195,7 @@ export default {
       )
     },
     systemActions() {
+      if (this.selectedFlows?.length > 1) return []
       return this.editedActions.filter(a =>
         systemActions.includes(a.action_type)
       )
@@ -430,12 +477,14 @@ export default {
         : this.chosenStates.push(state)
       this.steps['selectState'].complete = this.chosenStates.length > 0
     },
-    async handleSaveAgentConfig() {
+    async handleSaveAgentConfig(config) {
+      this.agentConfigId = config.id
       this.$apollo.queries.agentConfigs.refetch()
       this.showAgentConfigForm = false
     },
     selectAgentConfig(config) {
       this.steps['chooseAgentConfig'].complete = true
+      this.agentConfigId = config.id
       this.selectedAgentConfig = config
     },
     selectAction(action) {
@@ -537,6 +586,13 @@ export default {
             name: 'cancel that run'
           })
         }
+        if (action?.value === 'PAUSE_SCHEDULE') {
+          const pauseConfig = { pause_schedule: {} }
+          action = await this.createAction({
+            config: pauseConfig,
+            name: 'pause the schedule'
+          })
+        }
         if (flow) {
           if (this.includeTo) {
             const flowGroupIds = this.selectedFlows?.map(
@@ -595,8 +651,8 @@ export default {
         } else if (this.agentOrFlow === 'agent') {
           let agentConfig
           if (this.hookDetails?.agentConfig) {
-            agentConfig = this.hookDetails?.agentConfig
-          } else {
+            this.agentConfigId = this.hookDetails?.agentConfig?.id
+          } else if (!this.agentConfigId) {
             const { data } = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create-agent-config.gql'),
               variables: {
@@ -604,13 +660,14 @@ export default {
               }
             })
             agentConfig = data?.create_agent_config
+            this.agentConfigId = agentConfig.id
           }
           const agentHook = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create-agent-sla-failed-hook.gql'),
             variables: {
               input: {
                 action_id: action.id,
-                agent_config_ids: [agentConfig.id]
+                agent_config_ids: [this.agentConfigId]
               }
             }
           })
@@ -631,14 +688,19 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
+        this.saving = false
       } finally {
         this.hookDetails = null
-        this.$emit('refetch-hooks')
+        this.$emit('refetch')
         if (data) {
+          const agentConfigString = `Your agent config ID is ${this.agentConfigId}.  You can find this in the info button on your automation`
           this.setAlert({
             alertShow: true,
-            alertMessage: 'Hook created',
-            alertType: 'success'
+            alertMessage: this.agentConfigId
+              ? agentConfigString
+              : 'Automation created',
+            alertType: 'success',
+            alertCopy: this.agentConfigId
           })
           this.saving = false
           this.closeCard()

@@ -113,10 +113,9 @@ export default {
 <template>
   <v-container
     v-if="!loadingPage"
-    class="position-absolute onboard-content text-center pa-0"
-    fluid
+    class="position-absolute text-center d-flex flex-row align-center justify-center"
   >
-    <v-row v-if="invitationError" align="center">
+    <div v-if="invitationError">
       <v-col class="grey--text text--lighten-5 mx-12">
         <div class="text-h4">
           <span> {{ mutationErrorMessage || errorMessage }} </span>
@@ -128,8 +127,8 @@ export default {
           </v-btn>
         </div>
       </v-col>
-    </v-row>
-    <v-row v-else align="center">
+    </div>
+    <div v-else>
       <v-col>
         <div class="text-h4 grey--text text--lighten-5">
           You've been invited to join
@@ -196,21 +195,7 @@ export default {
           </v-dialog>
         </div>
       </v-col>
-    </v-row>
-    <v-row align="center">
-      <v-col>
-        <div class="ma-12 white--text text-body-1">
-          For more information about teams in Prefect Cloud, check out
-          <a
-            href="https://docs.prefect.io/orchestration/ui/team-settings.html"
-            target="_blank"
-            class="link-color"
-          >
-            our docs</a
-          >.
-        </div>
-      </v-col>
-    </v-row>
+    </div>
   </v-container>
 </template>
 

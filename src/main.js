@@ -11,7 +11,6 @@ export const setStartupTenant = async () => {
   const slugTenant = tenants.find(t => t.slug == slug)
 
   let tenant
-
   if (process.env.VUE_APP_BACKEND === 'SERVER') {
     if (slugTenant) tenant = slugTenant
     else tenant = tenants[0]
@@ -19,13 +18,34 @@ export const setStartupTenant = async () => {
     const tokenTenantId = jwt_decode(store.getters['auth/authorizationToken'])
       .tenant_id
     const tokenTenant = tenants.find(t => t.id == tokenTenantId)
+    let needNewTokens = false
+
     // If there's no slug in the URL or the token
     // tenant matches the intended tenant, we can set the current tenant
-    // to the token tenant
-    if (!slug || tokenTenant.slug == slug || !slugTenant) {
-      tenant = tokenTenant
-    } else {
+    // to the token tenant; if the token tenant is undefined,
+    // we fallback to the user's first tenant. If all of these fail,
+    // we redirect to a help screen cause the user can't create a tenant
+    // with this token atm
+    if (slugTenant) {
+      if (tokenTenant?.slug !== slug) needNewTokens = true
       tenant = slugTenant
+    } else if (tokenTenant) {
+      tenant = tokenTenant
+    } else if (tenants?.[0]) {
+      tenant = tenants?.[0]
+      needNewTokens = true
+    } else {
+      // redirect to help screen
+      window.location.href = '/access-denied'
+    }
+
+    // We want to make sure the URL slug matches
+    // the tenant slug
+    if (slug && slug !== tenant.slug && slugTenant) {
+      window.history.pushState('', '', tenant.slug)
+    }
+
+    if (needNewTokens) {
       const tokens = await switchTenant(tenant.id)
       commitTokens(tokens)
     }
@@ -47,7 +67,10 @@ export const setStartupTenant = async () => {
 
 let loading = false
 export const start = async () => {
-  if (window.location.pathname?.includes('logout')) {
+  if (
+    window.location.pathname?.includes('logout') ||
+    window.location.pathname?.includes('access-denied')
+  ) {
     CreatePrefectUI()
     return
   }
