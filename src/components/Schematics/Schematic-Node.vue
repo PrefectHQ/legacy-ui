@@ -191,6 +191,7 @@ export default {
   >
     <div class="ml-12 node-content" style="width: calc(100% - 6rem);">
       <div
+        v-if="nodeData.data.task"
         class="text-subtitle-2 text-truncate font-weight-light"
         :style="subtitleStyle"
       >
@@ -208,7 +209,6 @@ export default {
         </v-avatar>
         {{ nodeData.data.task.name }}
       </div>
-
       <div class="text-h6 text-truncate font-weight-bold" :style="titleStyle">
         <v-avatar
           v-if="isResource || isParameter"
