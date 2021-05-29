@@ -280,7 +280,7 @@ export default {
           @click="tab = 'config'"
         >
           Config
-          <v-icon small>details</v-icon>
+          <v-icon x-small>inventory_2</v-icon>
         </v-btn>
       </div>
     </CardTitle>
