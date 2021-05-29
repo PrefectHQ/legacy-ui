@@ -3,7 +3,7 @@ import SubPageNav from '@/layouts/SubPageNav'
 import TileLayout from '@/layouts/TileLayout'
 import AgentTile from '@/pages/Agents/AgentTile'
 import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
-import AgentRunsInProgress from '@/pages/Agents/AgentRunsInProgress'
+import AgentRunsInProgress from '@/pages/Dashboard/InProgress-Tile.vue'
 import SubmittableRuns from '@/pages/Agents/SubmittableRuns'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
@@ -157,7 +157,8 @@ export default {
           <SubmittableRuns slot="row-1-col-2-tile-1" :agent="agentDetails" />
           <AgentRunsInProgress
             slot="row-1-col-3-tile-1"
-            :agent="agentDetails"
+            :agent-id="agentDetails.id"
+            agent-runs
           />
         </TileLayout>
       </v-tab-item>

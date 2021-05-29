@@ -1,0 +1,24 @@
+query InProgressFlowRuns($agentId: uuid) {
+  flow_run(
+    where: {
+      agent_id: { _eq: $agentId },
+      state: { _in: ["Running", "Submitted", "Cancelling"] }
+    }
+    order_by: { start_time: desc }
+  ) {
+    id
+    name
+    start_time
+    state
+    state_timestamp
+
+    flow {
+      id
+      name
+
+      flow_group_id
+    }
+
+    updated
+  }
+}
