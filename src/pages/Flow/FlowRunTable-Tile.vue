@@ -12,8 +12,19 @@ export default {
       default: () => false
     },
     flow: {
-      required: true,
-      type: Object
+      required: false,
+      type: Object,
+      default: () => {}
+    },
+    agent: {
+      required: false,
+      type: Object,
+      default: () => {}
+    },
+    agentRuns: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -66,7 +77,7 @@ export default {
       return `%${this.searchTerm}%`
     },
     pollInterval() {
-      return this.flow.archived ? 0 : 5000
+      return this.flow?.archived && !this.agentRuns ? 0 : 5000
     }
   },
   watch: {
@@ -87,6 +98,9 @@ export default {
     if (this.pollInterval > 0) {
       this.$apollo.queries.flowRuns.startPolling(this.pollInterval)
       this.$apollo.queries.flowRunsCount.startPolling(this.pollInterval)
+    } else if (this.agentRuns) {
+      this.$apollo.queries.agentFlowRuns.startPolling(this.pollInterval)
+      this.$apollo.queries.agentFlowRunsCount.startPolling(this.pollInterval)
     }
   },
   apollo: {
@@ -112,6 +126,9 @@ export default {
 
         return variables
       },
+      skip() {
+        return this.agentRuns
+      },
       update: data => data.flow_run
     },
     flowRunsCount: {
@@ -129,6 +146,52 @@ export default {
         }
 
         return variables
+      },
+      skip() {
+        return this.agentRuns
+      },
+      update: data =>
+        data && data.flow_run_aggregate
+          ? data.flow_run_aggregate.aggregate.count
+          : null
+    },
+    agentFlowRuns: {
+      query: require('@/graphql/Flow/table-flow-runs.gql'),
+      variables() {
+        const orderBy = {}
+        orderBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
+
+        let variables = {
+          limit: this.itemsPerPage,
+          name: this.searchFormatted,
+          offset: this.offset,
+          state: this.state.length === 0 ? null : this.state,
+          orderBy
+        }
+
+        variables.agent_id = this.agent.id
+
+        return variables
+      },
+      skip() {
+        return !this.agentRuns
+      },
+      update: data => data.flow_run
+    },
+    agentFlowRunsCount: {
+      query: require('@/graphql/Agent/table-flow-runs-count.gql'),
+      variables() {
+        let variables = {
+          name: this.searchFormatted,
+          state: this.state.length === 0 ? null : this.state
+        }
+
+        variables.agent_id = this.agent.id
+
+        return variables
+      },
+      skip() {
+        return !this.agentRuns
       },
       update: data =>
         data && data.flow_run_aggregate
@@ -211,12 +274,15 @@ export default {
         class="truncate-table"
         :headers="headers"
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-        :items="flowRuns || []"
+        :items="flowRuns || agentFlowRuns || []"
         :items-per-page.sync="itemsPerPage"
-        :loading="$apollo.queries.flowRuns.loading"
+        :loading="
+          $apollo.queries.flowRuns.loading ||
+            $apollo.queries.agentFlowRuns.loading
+        "
         must-sort
         :page.sync="page"
-        :server-items-length="flowRunsCount"
+        :server-items-length="flowRunsCount || agentFlowRunsCount"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
         :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"

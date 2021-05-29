@@ -5,6 +5,7 @@ import AgentTile from '@/pages/Agents/AgentTile'
 import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
 import AgentRunsInProgress from '@/pages/Dashboard/InProgress-Tile.vue'
 import SubmittableRuns from '@/pages/Agents/SubmittableRuns'
+import FlowRunTableTile from '@/pages/Flow/FlowRunTable-Tile'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
@@ -15,7 +16,8 @@ export default {
     AgentTile,
     AgentFlowRunHistory,
     AgentRunsInProgress,
-    SubmittableRuns
+    SubmittableRuns,
+    FlowRunTableTile
   },
   data() {
     return {
@@ -159,6 +161,11 @@ export default {
             slot="row-1-col-3-tile-1"
             :agent-id="agentDetails.id"
             agent-runs
+          />
+          <FlowRunTableTile
+            slot="row-2-col-1-row-2-tile-a"
+            agent-runs
+            :agent="agentDetails"
           />
         </TileLayout>
       </v-tab-item>
