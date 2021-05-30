@@ -12,7 +12,7 @@ const AGENT_TYPES = [
   { type: 'ECSAgent', icon: 'fab fa-aws pa-1', name: 'ECS' },
   { type: 'FargateAgent', icon: 'fab fa-aws pa-1', name: 'Fargate' },
   { type: 'KubernetesAgent', icon: 'pi-kubernetes', name: 'Kubernetes' },
-  { type: 'LocalAgent', icon: 'far fa-home pa-1', name: 'Local' },
+  { type: 'LocalAgent', icon: 'fas fa-home', name: 'Local' },
   { type: 'NomadAgent', icon: '$nomad', name: 'Nomad' }
 ]
 
@@ -84,12 +84,21 @@ export default {
     statusColor() {
       const color =
         {
-          unhealthy: 'Gray',
-          failed: 'error',
+          unhealthy: 'utilGrayLight',
           late: 'deepRed',
           healthy: 'green',
           stale: 'warning'
         }[this.status] || 'secondaryGray'
+      return color
+    },
+    iconClass() {
+      const color =
+        {
+          unhealthy: 'unhealthy',
+          late: 'late',
+          healthy: 'healthy',
+          stale: 'stale'
+        }[this.status] || 'plain'
       return color
     },
     queryColor() {
@@ -238,7 +247,10 @@ export default {
     :height="showAll ? '380px' : '300px'"
   >
     <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
-    <CardTitle :title="name" :icon="agentIcon" :icon-color="statusColor">
+    <CardTitle :title="name">
+      <div slot="icon" :class="iconClass" class="ml-2" icon>
+        <i class="fa-2x pi-2x nav-bar-duotone-icon" :class="agentIcon"
+      /></div>
       <div v-if="showAll" slot="action" class="d-flex align-end flex-column">
         <v-btn
           depressed
@@ -486,12 +498,20 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.fa-font {
-  font-family: fontAwesome;
+.late {
+  color: var(--v-deepRed-base);
+  --fa-primary-color: var(--v-deepRed-base);
 }
-// .fa-robot {
-//   color: var(--v-secondaryGray-base);
-//   float: right;
-//   font-size: 1.8em;
-// }
+.healthy {
+  color: var(--v-success-base);
+  --fa-primary-color: var(--v-success-base);
+}
+.stale {
+  color: var(--v-warning-base);
+  --fa-primary-color: var(--v-warning-base);
+}
+.unhealthy {
+  color: var(--v-utilGrayLight-base);
+  --fa-primary-color: var(--v-utilGrayLight-base);
+}
 </style>
