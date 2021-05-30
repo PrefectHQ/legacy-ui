@@ -13,6 +13,7 @@ export default {
     return {
       search: null,
       loading: 0,
+      expanded: [],
       headers: [
         {
           text: 'Name',
@@ -25,11 +26,6 @@ export default {
         {
           text: 'Updated',
           value: 'updated'
-        },
-        {
-          text: 'Permissions',
-          value: 'permissions',
-          width: '20%'
         }
       ]
     }
@@ -101,6 +97,9 @@ export default {
       :search="search"
       :items="roles"
       :items-per-page="10"
+      show-expand
+      :expanded.sync="expanded"
+      item-key="name"
       class="elevation-2 rounded-0 truncate-table"
       :footer-props="{
         showFirstLastPage: true,
@@ -131,6 +130,7 @@ export default {
       <template #header.scope="{ header }">
         <span class="text-subtitle-2">{{ header.text }}</span>
       </template>
+
       <template #item.updated="{ item }">
         <v-tooltip top>
           <template #activator="{ on }">
@@ -159,6 +159,15 @@ export default {
         <truncate :content="item.permissions.toString()">{{
           item.permissions
         }}</truncate>
+      </template>
+      <template #expanded-item="{ item }">
+        <td colspan="100%" width="80vW">
+          <div>
+            <truncate :content="item.permissions.toString()">{{
+              item.permissions
+            }}</truncate>
+          </div>
+        </td>
       </template>
     </v-data-table>
   </ManagementLayout>
