@@ -93,23 +93,24 @@ export default {
       return this.tenant.role === 'TENANT_ADMIN'
     },
     roleSelectionMap() {
-      return [
-        {
-          role: 'TENANT_ADMIN',
-          label: 'Administrator',
-          color: 'cloudUIPrimaryBlue'
-        },
-        {
-          role: 'USER',
-          label: 'User',
-          color: 'codeBlueBright'
-        },
-        {
-          role: 'READ_ONLY_USER',
-          label: 'Read-Only',
-          color: 'cloudUIPrimaryDark'
-        }
-      ]
+      return this.roles
+      // return [
+      //   {
+      //     role: 'TENANT_ADMIN',
+      //     label: 'Administrator',
+      //     color: 'cloudUIPrimaryBlue'
+      //   },
+      //   {
+      //     role: 'USER',
+      //     label: 'User',
+      //     color: 'codeBlueBright'
+      //   },
+      //   {
+      //     role: 'READ_ONLY_USER',
+      //     label: 'Read-Only',
+      //     color: 'cloudUIPrimaryDark'
+      //   }
+      // ]
     },
     totalUsers() {
       return this.users + this.invitations
@@ -212,6 +213,17 @@ export default {
         this.inviteError = null
         this.roleInput = 'TENANT_ADMIN'
       })
+    }
+  },
+  apollo: {
+    roles: {
+      query: require('@/graphql/TeamSettings/roles.gql'),
+      loadingKey: 'loading',
+      variables() {
+        return {}
+      },
+      pollInterval: 10000,
+      update: data => data.auth_role
     }
   }
 }
@@ -439,13 +451,12 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
-          :disabled="!hasPermission('feature', 'basic-rbac')"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
           :items="roleSelectionMap"
           :rules="[rules.required]"
-          item-text="label"
-          item-value="role"
+          item-text="name"
+          item-value="name"
           item-disabled="disabled"
         >
         </v-select>

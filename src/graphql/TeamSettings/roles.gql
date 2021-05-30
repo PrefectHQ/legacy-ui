@@ -1,0 +1,8 @@
+query AuthRoles {
+  auth_role {
+    name
+    permissions
+    created
+    updated
+  }
+}
