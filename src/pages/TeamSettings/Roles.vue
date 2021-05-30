@@ -93,12 +93,8 @@ export default {
             Create Role
           </v-btn>
         </template>
-        <v-card>
-          <v-card-title> Select permissions</v-card-title>
-          <v-card-text>
-            <CreateRoleTable />
-          </v-card-text>
-        </v-card>
+
+        <CreateRoleTable />
       </v-dialog>
     </template>
 
