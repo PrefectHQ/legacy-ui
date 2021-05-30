@@ -2,18 +2,22 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import ManagementLayout from '@/layouts/ManagementLayout'
+import CreateRoleTable from '@/pages/TeamSettings/CreateRoleTable'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
-    ManagementLayout
+    ManagementLayout,
+    CreateRoleTable
   },
   mixins: [formatTime],
   data() {
     return {
-      search: null,
+      searchInput: null,
+      search: '',
       loading: 0,
       expanded: [],
+      createRoleDialog: false,
       headers: [
         {
           text: 'Name',
@@ -26,6 +30,10 @@ export default {
         {
           text: 'Updated',
           value: 'updated'
+        },
+        {
+          text: 'Actions',
+          value: 'actions'
         }
       ]
     }
@@ -70,12 +78,28 @@ export default {
     </template>
 
     <template #cta>
-      <v-btn color="primary" class="white--text" large>
-        <v-icon left>
-          person_add
-        </v-icon>
-        Create Role
-      </v-btn>
+      <v-dialog v-model="createRoleDialog" width="500">
+        <template #activator="{ on, attrs }">
+          <v-btn
+            color="primary"
+            class="white--text"
+            large
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon left>
+              person_add
+            </v-icon>
+            Create Role
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-title> Select permissions</v-card-title>
+          <v-card-text>
+            <CreateRoleTable />
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </template>
 
     <v-text-field
@@ -168,6 +192,24 @@ export default {
             }}</truncate>
           </div>
         </td>
+      </template>
+      <template #item.actions="{item}">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn text fab x-small color="primary" v-on="on">
+              <v-icon>edit</v-icon>
+            </v-btn>
+          </template>
+          Create new custom role from {{ item.name }}
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn text fab x-small color="error" v-on="on">
+              <v-icon>delete</v-icon>
+            </v-btn>
+          </template>
+          Remove role
+        </v-tooltip>
       </template>
     </v-data-table>
   </ManagementLayout>
