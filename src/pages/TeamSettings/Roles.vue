@@ -19,6 +19,7 @@ export default {
       createRoleDialog: false,
       clearDialog: false,
       template: null,
+      deletingRole: null,
       headers: [
         {
           text: 'Name',
@@ -65,8 +66,34 @@ export default {
       this.template = role
       this.createRoleDialog = true
     },
-    deleteRole(role) {
-      console.log('role to delete', role)
+    async deleteRole(role) {
+      this.deletingRole = role.id
+      try {
+        const res = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/delete_custom-role.gql'),
+          variables: {
+            input: {
+              role_id: role.id
+            }
+          }
+        })
+        if (res?.data?.delete_custom_role) {
+          this.setAlert({
+            alertShow: true,
+            alertMessage: 'Role deleted',
+            alertType: 'Success'
+          })
+        }
+      } catch (e) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `${e}`,
+          alertType: 'error'
+        })
+      } finally {
+        this.deletingRole = null
+        this.$apollo.queries.role.refetch()
+      }
     }
   },
   apollo: {
@@ -234,6 +261,7 @@ export default {
           <template #activator="{ on }">
             <v-btn
               text
+              :loading="deletingRole === item.id"
               fab
               x-small
               color="error"
