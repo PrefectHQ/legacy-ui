@@ -165,10 +165,11 @@ export default {
 
 <template>
   <v-card>
-    <v-card-title> Select permissions</v-card-title>
+    <v-card-title> Add name and permissions</v-card-title>
     <v-card-subtitle class="mt-4 pb-0">
       <v-text-field
         v-model="roleName"
+        :disabled="!!template"
         outlined
         required
         placeholder="Role Name"
