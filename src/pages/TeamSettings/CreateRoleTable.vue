@@ -36,6 +36,9 @@ export default {
     }
   },
   computed: {
+    itemsPerPage() {
+      return this.$vuetify.breakpoint.lgAndUp ? 10 : 5
+    },
     permissions() {
       const list = this.allPermissions
         ? [
@@ -172,6 +175,7 @@ export default {
       ></v-text-field>
     </v-card-subtitle>
     <v-card-text>
+      <!-- <v-sheet height="300px" :style="{ overflow: 'auto' }"> -->
       <v-text-field
         v-model="searchInput"
         class="rounded-0 elevation-1 mb-1"
@@ -191,12 +195,12 @@ export default {
         :items="permissions"
         item-key="key"
         :loading="loading"
-        :items-per-page="10"
+        :items-per-page="itemsPerPage"
         show-select
         class="elevation-2 rounded-0 truncate-table"
         :footer-props="{
           showFirstLastPage: true,
-          itemsPerPageOptions: [10, 15, 20, -1],
+          itemsPerPageOptions: [5, 10, 15, 20, -1],
           firstIcon: 'first_page',
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',
@@ -215,6 +219,7 @@ export default {
           ></v-switch>
         </template>
       </v-data-table>
+      <!-- </v-sheet> -->
     </v-card-text>
     <v-card-actions>
       <v-spacer />

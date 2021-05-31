@@ -128,6 +128,18 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item :disabled="!isCloud" :to="'/team/roles'">
+          <v-list-item-avatar tile>
+            <v-icon large color="navIcons">face</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">Roles</v-list-item-title>
+            <v-list-item-subtitle>
+              Create and Update Team Roles
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :to="'/team/projects'">
           <v-list-item-avatar tile>
             <v-icon large color="navIcons">

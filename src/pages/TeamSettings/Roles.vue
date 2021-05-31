@@ -96,7 +96,7 @@ export default {
     <template #cta>
       <v-dialog
         v-model="createRoleDialog"
-        width="500"
+        width="70vW"
         @click:outside="closeDialog"
       >
         <template #activator="{ on, attrs }">
