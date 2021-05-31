@@ -94,7 +94,6 @@ export default {
   },
   computed: {
     headers() {
-      console.log(this.membersItems)
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
         : this.allHeaders.filter(header => header.mobile)
@@ -213,7 +212,6 @@ export default {
       },
       result({ data }) {
         if (!data) return
-        console.log(data)
         this.membersItems = data.tenantUsers
           .filter(user =>
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
@@ -221,7 +219,6 @@ export default {
           .filter(user => user.account_type === 'SERVICE')
           .map(user => {
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
-            console.log('user', user)
             return {
               id: user.id,
               firstName: user.first_name,
