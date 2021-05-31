@@ -62,7 +62,6 @@ export default {
       })
     },
     async addServiceAccount() {
-      console.log('role', this.roleInput)
       this.isCreatingServiceUser = true
       this.accountCreationError = null
 
@@ -102,10 +101,7 @@ export default {
         return {}
       },
       pollInterval: 10000,
-      update: data => {
-        console.log(data)
-        return data.auth_role
-      }
+      update: data => data.auth_role
     }
   }
 }

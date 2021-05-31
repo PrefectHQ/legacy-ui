@@ -78,6 +78,8 @@ export default {
           }
         })
         if (res?.data?.delete_custom_role) {
+          this.$apollo.queries.roles.refetch()
+
           this.setAlert({
             alertShow: true,
             alertMessage: 'Role deleted',
@@ -92,7 +94,6 @@ export default {
         })
       } finally {
         this.deletingRole = null
-        this.$apollo.queries.role.refetch()
       }
     }
   },
