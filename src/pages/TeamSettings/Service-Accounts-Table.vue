@@ -48,6 +48,11 @@ export default {
         },
         {
           mobile: true,
+          text: 'Role',
+          value: 'role'
+        },
+        {
+          mobile: true,
           text: '',
           value: 'create',
           align: 'center',
@@ -89,6 +94,7 @@ export default {
   },
   computed: {
     headers() {
+      console.log(this.membersItems)
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
         : this.allHeaders.filter(header => header.mobile)
@@ -207,7 +213,7 @@ export default {
       },
       result({ data }) {
         if (!data) return
-
+        console.log(data)
         this.membersItems = data.tenantUsers
           .filter(user =>
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
@@ -215,10 +221,11 @@ export default {
           .filter(user => user.account_type === 'SERVICE')
           .map(user => {
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
-
+            console.log('user', user)
             return {
               id: user.id,
-              firstName: user.first_name
+              firstName: user.first_name,
+              role: user?.memberships[0]?.role_detail?.name
             }
           })
         return data
@@ -340,6 +347,9 @@ export default {
             </v-list-item>
           </v-list>
         </td>
+      </template>
+      <template #item.role="{ item }">
+        {{ item.role }}
       </template>
 
       <template v-if="isTenantAdmin" #item.create="{ item }">
