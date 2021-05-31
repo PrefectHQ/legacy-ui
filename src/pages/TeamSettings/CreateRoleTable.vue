@@ -73,7 +73,7 @@ export default {
     ...mapActions('alert', ['setAlert']),
     handleCreateUpdateClick() {
       this.loadingRole = true
-      if (this.template) this.updateNewRole()
+      if (this.template) this.updateRole()
       else this.createNewRole()
     },
     async createNewRole() {
@@ -108,8 +108,37 @@ export default {
         this.cancel()
       }
     },
-    updateNewRole() {
-      console.log('role', this.roleName, this.includedPermissions)
+    async updateRole() {
+      try {
+        const permissions = this.includedPermissions.map(
+          permission => permission.value
+        )
+        const res = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/update-custom-role.gql'),
+          variables: {
+            input: {
+              role_id: this.template.id,
+              permissions: permissions
+            }
+          }
+        })
+        if (res?.data?.update_custom_role) {
+          this.setAlert({
+            alertShow: true,
+            alertMessage: 'Role created',
+            alertType: 'Success'
+          })
+        }
+      } catch (e) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `${e}`,
+          alertType: 'error'
+        })
+      } finally {
+        this.loadingRole = false
+        this.cancel()
+      }
     },
     cancel() {
       this.includedPermissions = []
