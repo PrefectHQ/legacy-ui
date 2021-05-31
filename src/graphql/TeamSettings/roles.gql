@@ -4,5 +4,6 @@ query AuthRoles {
     permissions
     created
     updated
+    id
   }
 }

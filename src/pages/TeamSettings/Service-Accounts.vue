@@ -35,13 +35,14 @@ export default {
 
       // Signal passed as prop to ServiceAccountsTable
       // MembersTable watches this data attribute & refetches members every time this value changes.
-      serviceAccountsSignal: 0
+      serviceAccountsSignal: 0,
+      roleInput: null
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
     }
@@ -61,6 +62,7 @@ export default {
       })
     },
     async addServiceAccount() {
+      console.log('role', this.roleInput)
       this.isCreatingServiceUser = true
       this.accountCreationError = null
 
@@ -69,7 +71,8 @@ export default {
           mutation: require('@/graphql/User/create-service-account.gql'),
           variables: {
             tenant_id: this.tenant.id,
-            name: this.serviceAccountNameInput
+            name: this.serviceAccountNameInput,
+            role_id: this.roleInput
           }
         })
 
@@ -89,6 +92,20 @@ export default {
       this.serviceAccountNameInput = null
       this.accountCreationError = null
       this.$refs['service-user-form'].reset()
+    }
+  },
+  apollo: {
+    roles: {
+      query: require('@/graphql/TeamSettings/roles.gql'),
+      loadingKey: 'loading',
+      variables() {
+        return {}
+      },
+      pollInterval: 10000,
+      update: data => {
+        console.log(data)
+        return data.auth_role
+      }
     }
   }
 }
@@ -179,6 +196,20 @@ export default {
           :rules="[rules.required]"
           @keydown.enter="addServiceAccount"
         />
+        <v-select
+          v-model="roleInput"
+          outlined
+          :menu-props="{ offsetY: true }"
+          label="Role"
+          data-cy="invite-role"
+          prepend-icon="supervised_user_circle"
+          :items="roles"
+          :rules="[rules.required]"
+          item-text="name"
+          item-value="id"
+          item-disabled="disabled"
+        >
+        </v-select>
       </v-form>
     </ConfirmDialog>
   </ManagementLayout>

@@ -14,10 +14,11 @@ export default {
   data() {
     return {
       searchInput: null,
-      search: '',
       loading: 0,
       expanded: [],
       createRoleDialog: false,
+      clearDialog: false,
+      template: null,
       headers: [
         {
           text: 'Name',
@@ -51,6 +52,21 @@ export default {
         alertMessage: message,
         alertType: type
       })
+    },
+    closeDialog() {
+      this.clearDialog = true
+      this.createRoleDialog = false
+      this.template = null
+    },
+    resetClear() {
+      this.clearDialog = false
+    },
+    editRole(role) {
+      this.template = role
+      this.createRoleDialog = true
+    },
+    deleteRole(role) {
+      console.log('role to delete', role)
     }
   },
   apollo: {
@@ -78,7 +94,11 @@ export default {
     </template>
 
     <template #cta>
-      <v-dialog v-model="createRoleDialog" width="500">
+      <v-dialog
+        v-model="createRoleDialog"
+        width="500"
+        @click:outside="closeDialog"
+      >
         <template #activator="{ on, attrs }">
           <v-btn
             color="primary"
@@ -94,7 +114,12 @@ export default {
           </v-btn>
         </template>
 
-        <CreateRoleTable />
+        <CreateRoleTable
+          :clear="clearDialog"
+          :template="template"
+          @reset="resetClear"
+          @close="closeDialog"
+        />
       </v-dialog>
     </template>
 
@@ -114,7 +139,7 @@ export default {
       fixed-header
       :headers="headers"
       :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-      :search="search"
+      :search="searchInput"
       :items="roles"
       :items-per-page="10"
       show-expand
@@ -192,15 +217,29 @@ export default {
       <template #item.actions="{item}">
         <v-tooltip bottom>
           <template #activator="{ on }">
-            <v-btn text fab x-small color="primary" v-on="on">
+            <v-btn
+              text
+              fab
+              x-small
+              color="primary"
+              v-on="on"
+              @click="editRole(item)"
+            >
               <v-icon>edit</v-icon>
             </v-btn>
           </template>
-          Create new custom role from {{ item.name }}
+          Update Role
         </v-tooltip>
         <v-tooltip bottom>
           <template #activator="{ on }">
-            <v-btn text fab x-small color="error" v-on="on">
+            <v-btn
+              text
+              fab
+              x-small
+              color="error"
+              v-on="on"
+              @click="deleteRole(item)"
+            >
               <v-icon>delete</v-icon>
             </v-btn>
           </template>
