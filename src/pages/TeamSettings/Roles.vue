@@ -228,17 +228,17 @@ export default {
           </span>
         </v-tooltip>
       </template>
-      <template #item.permissions="{ item }">
-        <truncate :content="item.permissions.toString()">{{
-          item.permissions
-        }}</truncate>
-      </template>
+
       <template #expanded-item="{ item }">
-        <td colspan="100%" width="80vW">
-          <div>
-            <truncate :content="item.permissions.toString()">{{
-              item.permissions
-            }}</truncate>
+        <td :colspan="headers.length">
+          <div
+            :style="{
+              width: '70vW',
+              overflow: 'auto',
+              'overflow-wrap': 'break-word'
+            }"
+          >
+            <div width="80%">{{ item.permissions.toString() }}</div>
           </div>
         </td>
       </template>
