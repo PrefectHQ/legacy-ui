@@ -1,6 +1,6 @@
 import agent from '@/store/agent'
 import { createLocalVue } from '@vue/test-utils'
-import { now } from 'moment'
+
 import Vuex from 'vuex'
 
 const localVue = createLocalVue()
