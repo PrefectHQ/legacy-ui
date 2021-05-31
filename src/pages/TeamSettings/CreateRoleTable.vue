@@ -1,4 +1,5 @@
 <script>
+import { mapActions } from 'vuex'
 export default {
   components: {},
   props: {
@@ -30,7 +31,8 @@ export default {
       searchInput: '',
       roleName: '',
       loadingKey: 0,
-      allPermissions: false
+      allPermissions: false,
+      loadingRole: false
     }
   },
   computed: {
@@ -68,12 +70,43 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['setAlert']),
     handleCreateUpdateClick() {
+      this.loadingRole = true
       if (this.template) this.updateNewRole()
       else this.createNewRole()
     },
-    createNewRole() {
-      console.log('role', this.roleName, this.includedPermissions)
+    async createNewRole() {
+      try {
+        const permissions = this.includedPermissions.map(
+          permission => permission.value
+        )
+        const res = await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/create-custom-role.gql'),
+          variables: {
+            input: {
+              name: this.roleName,
+              permissions: permissions
+            }
+          }
+        })
+        if (res?.data?.create_custom_role) {
+          this.setAlert({
+            alertShow: true,
+            alertMessage: 'Role created',
+            alertType: 'Success'
+          })
+        }
+      } catch (e) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `${e}`,
+          alertType: 'error'
+        })
+      } finally {
+        this.loadingRole = false
+        this.cancel()
+      }
     },
     updateNewRole() {
       console.log('role', this.roleName, this.includedPermissions)
@@ -161,6 +194,7 @@ export default {
       </v-btn>
       <v-btn
         color="primary"
+        :loading="loadingRole"
         :disabled="!roleName"
         @click.stop="handleCreateUpdateClick"
       >
