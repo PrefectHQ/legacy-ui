@@ -202,6 +202,9 @@ export default {
       this.isRemovingUser = false
       this.dialogRemoveUser = false
       this.selectedUser = null
+    },
+    updateRole(account) {
+      this.$emit('update', account)
     }
   },
   apollo: {
@@ -221,6 +224,7 @@ export default {
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
             return {
               id: user.id,
+              membershipID: user.memberships[0].id,
               firstName: user.first_name,
               role: user?.memberships[0]?.role_detail?.name
             }
@@ -367,6 +371,21 @@ export default {
 
       <!-- ACTIONS -->
       <template v-if="isTenantAdmin" #item.actions="{ item }">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn
+              text
+              fab
+              x-small
+              color="primary"
+              v-on="on"
+              @click="updateRole(item)"
+            >
+              <v-icon>edit</v-icon>
+            </v-btn>
+          </template>
+          Change Service Account role
+        </v-tooltip>
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
