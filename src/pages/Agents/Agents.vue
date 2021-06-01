@@ -434,8 +434,8 @@ export default {
             v-for="agent in filteredAgents"
             :key="agent.id"
             cols="12"
-            sm="4"
-            lg="3"
+            md="6"
+            lg="4"
           >
             <AgentTile
               :agent="agent"

@@ -3,9 +3,9 @@ import moment from '@/utils/moment'
 const state = {
   thresholds: {
     // Time before an agent becomes stale
-    stale: 3, // minutes since last query
+    stale: 60, // minutes since last query
     // Time before an agent becomes unhealthy
-    unhealthy: 120 // minutes since last query,
+    unhealthy: 720 // minutes since last query,
   },
   agents: null,
   sortedAgents: null,
