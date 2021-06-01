@@ -209,7 +209,10 @@ export default {
         </v-avatar>
         {{ nodeData.data.task.name }}
       </div>
-      <div class="text-h6 text-truncate font-weight-bold" :style="titleStyle">
+      <div
+        class="text-h6 text-truncate font-weight-bold mt-4"
+        :style="titleStyle"
+      >
         <v-avatar
           v-if="isResource || isParameter"
           color="accentOrange"
