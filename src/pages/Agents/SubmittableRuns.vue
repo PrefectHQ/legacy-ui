@@ -70,7 +70,8 @@ export default {
         title =
           this.loading || this.isClearingLateRuns
             ? 'Late runs'
-            : `${this.lateRuns?.length || 0} late runs`
+            : `${this.lateRuns?.length +
+                (this.lateRuns?.length >= 1000 ? '+' : '') || 0} late runs`
       }
 
       return title
