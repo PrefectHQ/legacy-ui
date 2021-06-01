@@ -5,6 +5,15 @@
 ### Features and Improvements
 
 - Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
+
+### Bugfixes
+
+- None
+
+## 2021-06-01
+
+### Features and Improvements
+
 - Add webhook and pause schedule actions to automations - [#818](https://github.com/PrefectHQ/ui/pull/818)
 
 ### Bugfixes
