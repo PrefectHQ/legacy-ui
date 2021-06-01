@@ -67,6 +67,15 @@ export default {
     },
     pollInterval() {
       return this.flow.archived ? 0 : 5000
+    },
+    jsonBRes() {
+      try {
+        const bob = JSON.parse(this.searchTerm)
+        return bob
+      } catch {
+        console.log('no')
+        return null
+      }
     }
   },
   watch: {
@@ -93,15 +102,17 @@ export default {
     flowRuns: {
       query: require('@/graphql/Flow/table-flow-runs.gql'),
       variables() {
+        console.log(this.jsonBRes)
         const orderBy = {}
         orderBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
 
         let variables = {
           limit: this.itemsPerPage,
-          name: this.searchFormatted,
+          // name: this.searchFormatted,
           offset: this.offset,
           state: this.state.length === 0 ? null : this.state,
-          orderBy
+          orderBy,
+          jsonB: this.jsonBRes
         }
 
         if (this.aggregate) {
@@ -118,7 +129,7 @@ export default {
       query: require('@/graphql/Flow/table-flow-runs-count.gql'),
       variables() {
         let variables = {
-          name: this.searchFormatted,
+          // name: this.searchFormatted,
           state: this.state.length === 0 ? null : this.state
         }
 

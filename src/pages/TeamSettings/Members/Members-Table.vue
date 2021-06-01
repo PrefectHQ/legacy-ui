@@ -274,8 +274,8 @@ export default {
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip v-if="hasPermission('feature', 'basic-rbac')" bottom>
+      <template #item.actions="{ item }">
+        <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
               text
