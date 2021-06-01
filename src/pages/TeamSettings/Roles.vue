@@ -47,6 +47,10 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    permissionList(list) {
+      console.log(list)
+      return list.permissions.splice(',')
+    },
     handleAlert(type, message) {
       this.setAlert({
         alertShow: true,
@@ -234,11 +238,12 @@ export default {
           <div
             :style="{
               width: '70vW',
-              overflow: 'auto',
+              height: '20vH',
+              'overflow-y': 'auto',
               'overflow-wrap': 'break-word'
             }"
           >
-            <div width="80%">{{ item.permissions.toString() }}</div>
+            <div width="80%">{{ permissionList(item) }}</div>
           </div>
         </td>
       </template>
