@@ -2,17 +2,15 @@
 import JsonInput from '@/components/CustomInputs/JsonInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import Alert from '@/components/Alert'
 // import ExternalLink from '@/components/ExternalLink'
 
 import jsBeautify from 'js-beautify'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     JsonInput,
-    Alert,
     ManagementLayout,
     ConfirmDialog
   },
@@ -31,11 +29,6 @@ export default {
 
       // KV selected for modification/deletion
       selectedKV: null,
-
-      // Alert data
-      alertShow: false,
-      alertMessage: '',
-      alertType: null,
 
       // Input rules
       rules: {
@@ -118,6 +111,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alert', ['addNotification']),
     stringifyValue(value) {
       return typeof value == 'object' ? JSON.stringify(value) : String(value)
     },
@@ -171,10 +165,22 @@ export default {
       this.selectedKV = item
       this.keyDeleteDialog = true
     },
-    handleAlert(type, message) {
-      this.alertType = type
-      this.alertMessage = message
-      this.alertShow = true
+    async handleAlert(type, message) {
+      if (type == 'success') {
+        await this.addNotification({
+          color: 'accentGreen',
+          text: message,
+          dismissable: true,
+          timeout: 5000
+        })
+      } else {
+        await this.addNotification({
+          color: 'error',
+          text: message,
+          dismissable: true,
+          timeout: 5000
+        })
+      }
     },
     resetSelectedKV() {
       this.selectedKV = null
@@ -195,7 +201,15 @@ export default {
       }
 
       if (this.isKvUpdate) {
-        this.deleteKV({ id: this.selectedKV?.id }, { isModifying: true })
+        const deleteKVResult = await this.deleteKV(
+          { id: this.selectedKV?.id },
+          { isModifying: true }
+        )
+        if (deleteKVResult?.errors) {
+          this.isSettingKV = false
+          this.resetSelectedKV()
+          return
+        }
       }
       let value = this.KvValueInput
       if (this.selectedTypeIndex === 0) {
@@ -214,7 +228,6 @@ export default {
         }
       }
       if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
-
       const kvResult = await this.$apollo.mutate({
         mutation: require('@/graphql/KV/set-key-value.gql'),
         variables: {
@@ -272,12 +285,19 @@ export default {
           this.keyDeleteDialog = false
           this.handleAlert('success', 'KV deleted.')
         }
-      } else {
+      } else if (deleteKVResult?.errors) {
         this.keyDeleteDialog = false
         this.handleAlert('error', deleteKVResult?.errors[0]?.message)
+      } else {
+        this.keyDeleteDialog = false
+        this.handleAlert(
+          'error',
+          'Something went wrong while trying to delete this KV. Please try again. If this error persists, reach out to help@prefect.io.'
+        )
       }
 
       this.isDeletingKV = false
+      return deleteKVResult
     },
 
     validKVJSON() {
@@ -340,7 +360,7 @@ export default {
 
 <template>
   <div>
-    <ManagementLayout :show="!isFetchingKV" control-show>
+    <ManagementLayout :show="!isFetchingKV">
       <template #title>KV Store</template>
 
       <template #subtitle>
@@ -349,7 +369,7 @@ export default {
         Manage your team's key/value store
       </template>
 
-      <template v-if="!isReadOnlyUser" #cta>
+      <template v-if="!isReadOnlyUser && maxKVCount" #cta>
         <v-btn
           color="primary"
           class="white--text"
@@ -371,8 +391,9 @@ export default {
         </v-btn>
       </template>
 
-      <template v-if="isReadOnlyUser" #alerts>
+      <template #alerts>
         <v-alert
+          v-if="isReadOnlyUser"
           class="mx-auto"
           border="left"
           colored-border
@@ -383,6 +404,21 @@ export default {
           max-width="380"
         >
           Read-only users cannot manage kv.
+        </v-alert>
+
+        <v-alert
+          v-if="!maxKVCount"
+          class="mx-auto"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="380"
+        >
+          Your team's license does not include this feature. Please contact
+          help@prefect.io for more information.
         </v-alert>
       </template>
 
@@ -398,7 +434,7 @@ export default {
         prepend-inner-icon="search"
       ></v-text-field>
     </ManagementLayout>
-    <v-card tile class="mx-auto">
+    <v-card tile class="mx-auto" v-if="!isReadOnlyUser && maxKVCount">
       <v-card-text class="pa-0">
         <!-- SEARCH (DESKTOP) -->
         <div
@@ -422,7 +458,6 @@ export default {
         </div>
         <!-- TABLE -->
         <v-data-table
-          v-if="!isReadOnlyUser"
           :headers="headers"
           :items="kv"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
@@ -682,11 +717,5 @@ export default {
     >
       This action cannot be undone.
     </ConfirmDialog>
-
-    <Alert
-      v-model="alertShow"
-      :type="alertType"
-      :message="alertMessage"
-    ></Alert>
   </div>
 </template>
