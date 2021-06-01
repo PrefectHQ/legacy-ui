@@ -51,6 +51,8 @@ export default {
       itemsPerPage: 15,
       page: 1,
       searchTerm: null,
+      parameterSearchTerm: null,
+      badJson: '',
       sortBy: 'scheduled_start_time',
       sortDesc: true,
       state: [],
@@ -70,11 +72,14 @@ export default {
     },
     jsonBRes() {
       try {
-        const bob = JSON.parse(this.searchTerm)
+        const bob = JSON.parse(this.parameterSearchTerm)
+        this.setBadJson('')
         return bob
       } catch {
-        console.log('no')
-        return null
+        this.setBadJson(
+          'You need to use JSON format for your search e.g. {"a":5}'
+        )
+        return this.parameterSearchTerm
       }
     }
   },
@@ -98,6 +103,11 @@ export default {
       this.$apollo.queries.flowRunsCount.startPolling(this.pollInterval)
     }
   },
+  methods: {
+    setBadJson(message) {
+      this.badJson = message
+    }
+  },
   apollo: {
     flowRuns: {
       query: require('@/graphql/Flow/table-flow-runs.gql'),
@@ -108,7 +118,7 @@ export default {
 
         let variables = {
           limit: this.itemsPerPage,
-          // name: this.searchFormatted,
+          name: this.searchFormatted,
           offset: this.offset,
           state: this.state.length === 0 ? null : this.state,
           orderBy,
@@ -129,7 +139,7 @@ export default {
       query: require('@/graphql/Flow/table-flow-runs-count.gql'),
       variables() {
         let variables = {
-          // name: this.searchFormatted,
+          name: this.searchFormatted,
           state: this.state.length === 0 ? null : this.state
         }
 
@@ -202,6 +212,20 @@ export default {
           prepend-inner-icon="search"
           hide-details
           placeholder="Search for a Flow Run"
+          flat
+          style="min-width: 200px;"
+        >
+        </v-text-field>
+        <v-text-field
+          slot="action"
+          v-model="parameterSearchTerm"
+          class="search"
+          dense
+          solo
+          :hide-details="!badJson"
+          :error-messages="badJson"
+          prepend-inner-icon="search"
+          placeholder="Search by parameter key:value"
           flat
           style="min-width: 200px;"
         >

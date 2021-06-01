@@ -1,5 +1,5 @@
 query TableFlowRuns(
-  # $name: String
+  $name: String
   $limit: Int
   $offset: Int
   $orderBy: [flow_run_order_by!]
@@ -11,7 +11,7 @@ query TableFlowRuns(
   flow_run(
     where: {
       flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
-     
+      name: { _ilike: $name }
       state: { _in: $state, _neq: "Scheduled" }
       parameters: {_contains: $jsonB}
     }
