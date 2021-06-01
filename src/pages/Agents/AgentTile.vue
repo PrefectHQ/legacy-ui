@@ -327,7 +327,7 @@ export default {
     <v-card-text v-if="tab == 'overview' || !showAll" class="py-2">
       <div
         v-if="!showAll || hasLateRuns"
-        class="my-2 text-subtitle-1 font-weight-light"
+        class="my-2 text-subtitle-1 font-weight-light black--text"
       >
         <v-icon small class="mr-1" :color="hasLateRuns ? 'deepRed' : 'success'">
           adjust
@@ -341,7 +341,7 @@ export default {
         {{ hasLateRuns ? 'Late submittable' : 'submittable' }}
         runs
       </div>
-      <div class="my-2 text-subtitle-1 font-weight-light">
+      <div class="my-2 text-subtitle-1 font-weight-light black--text">
         <v-icon v-if="!showAll" small class="mr-1" :color="queryColor"
           >adjust</v-icon
         >
@@ -354,12 +354,15 @@ export default {
         <span v-else> No recent queries</span>
       </div>
 
-      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light">
+      <div
+        v-if="showAll"
+        class="my-2 text-subtitle-1 font-weight-light black--text"
+      >
         Core Version:
         {{ agent.core_version || 'Unknown' }}
       </div>
       <div v-if="!showAll" :style="{ 'min-height': '45px' }">
-        <div class="my-2 text-subtitle-1 font-weight-light">
+        <div class="my-2 text-subtitle-1 font-weight-light black--text">
           Recent runs
         </div>
         <LastTenRuns
@@ -368,11 +371,17 @@ export default {
           :disable-view="hasLateRuns"
         />
       </div>
-      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light">
+      <div
+        v-if="showAll"
+        class="my-2 text-subtitle-1 font-weight-light black--text"
+      >
         Created at {{ formatDateTime(agent.created) || 'Unknown' }}
       </div>
 
-      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light">
+      <div
+        v-if="showAll"
+        class="my-2 text-subtitle-1 font-weight-light black--text"
+      >
         Token {{ agent.token_name ? 'Name' : 'ID' }}:
         <v-tooltip bottom>
           <template #activator="{ on }">
@@ -398,7 +407,10 @@ export default {
         </v-tooltip>
       </div>
 
-      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light">
+      <div
+        v-if="showAll"
+        class="my-2 text-subtitle-1 font-weight-light black--text"
+      >
         Agent ID:
         <v-tooltip bottom>
           <template #activator="{ on }">
@@ -419,7 +431,7 @@ export default {
         </v-tooltip>
       </div>
       <div>
-        <div class="my-2 text-subtitle-1 font-weight-light">
+        <div class="my-2 text-subtitle-1 font-weight-light black--text">
           Labels
         </div>
         <v-sheet
@@ -441,16 +453,23 @@ export default {
                 None
               </span> -->
         </v-sheet>
-        <div v-else class="text--disabled" :style="{ height: labelHeight }">
+        <div
+          v-else
+          class="text--disabled my-2 text-subtitle-1 font-weight-light black--text"
+          :style="{ height: labelHeight }"
+        >
           None
         </div>
       </div>
     </v-card-text>
     <v-card-text v-else
-      ><div v-if="!agentHook || !agentHook.length">
+      ><div
+        v-if="!agentHook || !agentHook.length"
+        class="my-2 text-subtitle-1 font-weight-light black--text"
+      >
         No agent config attached to this agent.</div
       >
-      <div v-else>
+      <div v-else class="my-2 text-subtitle-1 font-weight-light black--text">
         <truncate :content="agent.id">
           Agent Config Id: {{ agent.agent_config_id || unknown }}</truncate
         >
@@ -461,7 +480,7 @@ export default {
             }}:
             {{ action.name }}
           </div>
-          <div class="my-2">
+          <div class="my-2 text-subtitle-1 font-weight-light black--text">
             Action Type{{
               agentHook && agentHook.length > 1 ? ` ${index}` : ''
             }}:

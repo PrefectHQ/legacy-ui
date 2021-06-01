@@ -277,13 +277,7 @@ export default {
         >
           <v-list-item dense :disabled="setToRun.includes(item.id)">
             <v-list-item-content>
-              <span class="text-caption mb-0 ml-n1 d-flex align-end">
-                <span class="ml-1">
-                  Scheduled for
-                  {{ formatDateTime(item.scheduled_start_time) }}
-                </span>
-              </span>
-              <v-list-item-subtitle class="font-weight-light">
+              <v-list-item-subtitle class="text-body-1 font-weight-regular">
                 <router-link
                   :to="{ name: 'flow', params: { id: item.flow.id } }"
                 >
@@ -300,6 +294,13 @@ export default {
                   {{ item.name }}
                 </router-link>
               </v-list-item-subtitle>
+
+              <span class="text-caption mb-0 ml-n1 d-flex align-center">
+                <span class="ml-1">
+                  Scheduled for
+                  {{ formatDateTime(item.scheduled_start_time) }}
+                </span>
+              </span>
             </v-list-item-content>
 
             <v-list-item-action tile min-width="5" class="text-body-2">
@@ -363,7 +364,7 @@ export default {
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-else dense>
+      <v-list v-else dense class="card-content">
         <v-lazy
           v-for="item in lateRuns"
           :key="item.id"
@@ -373,20 +374,9 @@ export default {
           min-height="40px"
           transition="fade"
         >
-          <v-list-item
-            dense
-            three-line
-            :to="{ name: 'flow-run', params: { id: item.id } }"
-          >
+          <v-list-item dense three-line>
             <v-list-item-content>
-              <span class="text-caption mb-0 ml-n1 d-flex align-end">
-                <span class="ml-1">
-                  Scheduled for
-                  {{ formatDateTime(item.scheduled_start_time) }}
-                </span>
-              </span>
-
-              <v-list-item-title class="text-body-2">
+              <v-list-item-subtitle class="text-body-1 font-weight-regular">
                 <router-link
                   :to="{ name: 'flow', params: { id: item.flow.id } }"
                 >
@@ -402,16 +392,21 @@ export default {
                 >
                   {{ item.name }}
                 </router-link>
-              </v-list-item-title>
+              </v-list-item-subtitle>
+
+              <span class="text-caption mb-0 ml-n1 d-flex align-center">
+                <LabelWarning :flow="item.flow" :flow-run="item" />
+                <span class="ml-1">
+                  Scheduled for
+                  {{ formatDateTime(item.scheduled_start_time) }}
+                </span>
+              </span>
+
               <v-list-item-subtitle class="text-caption">
                 <DurationSpan :start-time="item.scheduled_start_time" />
                 behind schedule
               </v-list-item-subtitle>
             </v-list-item-content>
-
-            <v-list-item-avatar class="text-body-2">
-              <v-icon class="grey--text">arrow_right</v-icon>
-            </v-list-item-avatar>
           </v-list-item>
         </v-lazy>
       </v-list>
