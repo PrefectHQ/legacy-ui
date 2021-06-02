@@ -131,6 +131,14 @@ export const routes = [
           )
       },
       {
+        name: 'kv',
+        path: 'kv',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--kv" */ '@/pages/TeamSettings/KV.vue'
+          )
+      },
+      {
         name: 'secrets',
         path: 'secrets',
         component: () =>
