@@ -128,7 +128,7 @@ export default {
 
           data?.log.forEach(log => {
             if (!this.logIds.includes(log.id)) {
-              log.formattedTimestamp = this.formatDateTime(log.timestamp)
+              log.formattedTimestamp = this.logsDateTime(log.timestamp)
               this.logIds.push(log.id)
               this.logs.push(log)
             }
@@ -232,4 +232,12 @@ export default {
   transform: translateY(-100%);
   opacity: 0;
 }
+</style>
+
+<style lang="scss">
+// .scroller {
+//   .vue-recycle-scroller__item-view:nth-child(even) {
+//     background-color: var(--v-accentGreen-base);
+//   }
+// }
 </style>

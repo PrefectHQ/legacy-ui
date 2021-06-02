@@ -1,6 +1,7 @@
 <script>
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 import DateTimePicker from '@/components/DateTimePicker'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { DateTimePicker },
@@ -24,6 +25,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     formattedDate() {
       if (!this.date) return
       console.log(this.date)
@@ -90,12 +92,16 @@ export default {
         clauses.push(clause)
       })
 
+      clauses.push({
+        tenant_id: { _eq: this.tenant.id }
+      })
+
       clauses.forEach(c => {
         let clause = Object.keys(c)[0]
         this.internalValue[clause] = c[clause]
       })
 
-      this.$emit('input', this.internalValue)
+      this.$emit('input', { ...this.internalValue })
     }
   },
   methods: {

@@ -265,6 +265,19 @@ export const formatTime = {
         sameElse: 'MMMM D, YYYY [at] h:mma z'
       })
       return formatted
+    },
+    logsDateTime(timestamp) {
+      if (!timestamp) return
+
+      let t = moment(timestamp).tz(this.timezone),
+        shortenedTz = moment()
+          .tz(this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone)
+          .zoneAbbr()
+
+      let timeObj = t ? t : moment(timestamp)
+
+      let formatted = timeObj.format('YYYY-MM-DD hh:mm:ss')
+      return `${formatted} ${shortenedTz}`
     }
   }
 }

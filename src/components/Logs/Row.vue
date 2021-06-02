@@ -2,6 +2,39 @@
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 import { IdState } from 'vue-virtual-scroller'
 
+const logLevels = {
+  DEFAULT: {
+    text: 'Default',
+    color: '#85e783',
+    icon: 'radio_button_checked'
+  },
+  DEBUG: {
+    text: 'Debug',
+    color: '#937eff',
+    icon: 'bug_report'
+  },
+  INFO: {
+    text: 'Info',
+    color: '#2196f3',
+    icon: 'info'
+  },
+  WARN: {
+    text: 'Warn',
+    color: '#ffdd37',
+    icon: 'report_problem'
+  },
+  ERROR: {
+    text: 'Error',
+    color: '#ff5252',
+    icon: 'warning_amber'
+  },
+  CRITICAL: {
+    text: 'Critical',
+    color: '#d50000',
+    icon: 'warning'
+  }
+}
+
 export default {
   mixins: [
     IdState({
@@ -26,6 +59,15 @@ export default {
     return {
       active: false
     }
+  },
+  computed: {
+    logLevelIcon() {
+      return logLevels[this.item.level].icon
+    },
+    logLevelColor() {
+      if (!this.idState.active) return 'grey'
+      return logLevels[this.item.level].color
+    }
   }
 }
 </script>
@@ -33,17 +75,33 @@ export default {
 <template>
   <div class="row-container" :class="{ active: idState.active }">
     <div
-      class="row-header text-truncate"
+      class="row-header text-truncate d-flex justify-start align-center py-1 px-2"
+      :class="{ striped: index % 2 === 0 }"
+      tabindex="0"
       @click="idState.active = !idState.active"
+      @keyup.enter="idState.active = !idState.active"
     >
-      <span class="text-caption text--disabled">
+      <span class="mr-3">
+        <v-icon :color="logLevelColor" small>
+          {{ logLevelIcon }}
+        </v-icon>
+      </span>
+
+      <span class="text-truncate mr-4">
+        {{ item.message }}
+      </span>
+
+      <span class="text-caption text--disabled ml-auto">
         {{ item.formattedTimestamp }}
       </span>
-      {{ item.message }}
     </div>
 
     <transition name="expand-y">
-      <div v-if="idState.active" class="row-content px-4">
+      <div
+        v-if="idState.active"
+        class="row-content px-4"
+        :style="{ 'border-color': logLevelColor }"
+      >
         <div class="py-6">
           <div class="text-body-1">{{ item.message }}</div>
           <div class="text-caption text-capitalize">Log</div>
@@ -80,19 +138,37 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+$highlight-color: rgba(224, 224, 255, 0.5);
+
 .row-container {
-  .row-header:hover {
-    background-color: #eee;
-    cursor: pointer;
-    transition: all 50ms;
+  &:hover,
+  &:focus {
+    outline: none;
+
+    .row-header {
+      background-color: $highlight-color;
+    }
   }
 
-  &.active {
-    // background-color: #284;
+  &.active .row-header {
+    background-color: $highlight-color !important;
   }
 
   .row-content {
-    border-left: 4px solid var(--v-primary-base);
+    border-left: 4px solid;
+    margin-left: 14px;
+  }
+
+  .row-header {
+    cursor: pointer;
+
+    &.striped {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    &:hover {
+      background-color: $highlight-color !important;
+    }
   }
 }
 
@@ -100,7 +176,7 @@ export default {
 .expand-y-leave-active {
   max-height: 200px;
   overflow: hidden;
-  transition: max-height 500ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  transition: max-height 200ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
 }
 
 .expand-y-enter,

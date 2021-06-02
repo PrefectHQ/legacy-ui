@@ -10,14 +10,11 @@ export default {
   data() {
     return {
       filter: {}
-      // where: {
-      //   is_audit_log: { _eq: true }
-      // }
     }
   },
   computed: {
     where() {
-      return { ...this.filter, is_audit_log: { _eq: true } }
+      return { ...this.filter }
     }
   }
 }
