@@ -158,6 +158,7 @@ export default {
       }
     },
     async inviteUser() {
+      console.log(this.roleInput)
       this.isInvitingUser = true
       this.inviteError = null
 
@@ -448,7 +449,6 @@ export default {
         <v-select
           v-model="roleInput"
           outlined
-          :disabled="!hasPermission('feature', 'basic-rbac')"
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"

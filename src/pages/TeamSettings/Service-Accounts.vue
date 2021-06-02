@@ -73,6 +73,7 @@ export default {
       })
     },
     async addServiceAccount() {
+      console.log(this.roleInput)
       this.isCreatingServiceUser = true
       this.accountCreationError = null
 
@@ -82,7 +83,7 @@ export default {
           variables: {
             tenant_id: this.tenant.id,
             name: this.serviceAccountNameInput,
-            role_id: this.roleInput
+            role: this.roleInput
           }
         })
 
@@ -114,7 +115,7 @@ export default {
           mutation: require('@/graphql/Mutations/set-membership-role.gql'),
           variables: {
             input: {
-              role_id: this.roleInput,
+              role: this.roleInput,
               membership_id: this.serviceAccountID
             }
           }
@@ -262,7 +263,7 @@ export default {
           :items="roles"
           :rules="[rules.required]"
           item-text="name"
-          item-value="id"
+          item-value="name"
           item-disabled="disabled"
         >
         </v-select>
