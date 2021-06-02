@@ -71,15 +71,29 @@ export default {
       return this.flow.archived ? 0 : 5000
     },
     jsonBRes() {
+      if (!this.parameterSearchTerm) {
+        this.setBadJson(null)
+        return
+      }
       try {
         const bob = JSON.parse(this.parameterSearchTerm)
         this.setBadJson('')
         return bob
       } catch {
-        this.setBadJson(
-          'You need to use JSON format for your search e.g. {"a":5}'
-        )
-        return this.parameterSearchTerm
+        try {
+          const terms = this.parameterSearchTerm.split(':')
+          const d = Number(terms[1].replace(/"/g, '')) || terms[1]
+          console.log(d, typeof d)
+          const b = { [terms[0]]: d }
+          console.log(b)
+          this.setBadJson('')
+          return b
+        } catch {
+          this.setBadJson(
+            'You need to use JSON format for your search e.g. {"a":5}'
+          )
+          return this.parameterSearchTerm
+        }
       }
     }
   },
@@ -221,7 +235,8 @@ export default {
           class="search"
           dense
           solo
-          :hide-details="!badJson"
+          :hint="badJson"
+          hide-details
           :error-messages="badJson"
           prepend-inner-icon="search"
           placeholder="Search by parameter key:value"
