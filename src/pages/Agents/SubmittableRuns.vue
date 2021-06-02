@@ -395,7 +395,6 @@ export default {
               </v-list-item-subtitle>
 
               <span class="text-caption mb-0 ml-n1 d-flex align-center">
-                <LabelWarning :flow="item.flow" :flow-run="item" />
                 <span class="ml-1">
                   Scheduled for
                   {{ formatDateTime(item.scheduled_start_time) }}

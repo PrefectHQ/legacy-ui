@@ -6,6 +6,7 @@ import moment from '@/utils/moment'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import LastTenRuns from '@/components/LastTenRuns'
 import CardTitle from '@/components/Card-Title'
+import DurationSpan from '@/components/DurationSpan'
 
 const AGENT_TYPES = [
   { type: 'DockerAgent', icon: 'fab fa-docker pa-1', name: 'Docker' },
@@ -20,7 +21,8 @@ export default {
   components: {
     LastTenRuns,
     Label,
-    CardTitle
+    CardTitle,
+    DurationSpan
   },
   mixins: [formatTime],
   props: {
@@ -108,12 +110,6 @@ export default {
     },
     timer() {
       if (!this.agent?.last_queried) return null
-      if (this.secondsSinceLastQuery < 60) {
-        return `${
-          this.secondsSinceLastQuery < 0 ? 0 : this.secondsSinceLastQuery
-        } seconds ago`
-      }
-
       return moment(this.agent.last_queried).fromNow()
     },
     type() {
@@ -158,18 +154,18 @@ export default {
       }, 150)
     }
   },
-  mounted() {
-    if (this.agent?.status === 'healthy') {
-      this.setUpdate()
-    }
-  },
+  // mounted() {
+  //   if (this.agent?.status === 'healthy') {
+  //     this.setUpdate()
+  //   }
+  // },
   beforeDestroy() {
     this.endUpdate()
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapMutations('agent', ['setRefetch']),
-    ...mapActions('agent', ['setUpdate', 'endUpdate']),
+    // ...mapActions('agent', ['setUpdate', 'endUpdate']),
     anyLabelsSelected(labels) {
       return labels.reduce((result, label) => this.labelSelected(label), false)
     },
@@ -347,7 +343,13 @@ export default {
         >
         <v-tooltip v-if="agent.last_queried" top>
           <template #activator="{ on }">
-            <span v-on="on"> Last queried {{ timer }}</span>
+            <span v-on="on">
+              Last queried
+              <span v-if="secondsSinceLastQuery < 60">
+                <DurationSpan :start-time="agent.last_queried" /> ago
+              </span>
+              <span v-else>{{ timer }}</span>
+            </span>
           </template>
           <span>{{ formatDateTime(agent.last_queried) }}</span>
         </v-tooltip>

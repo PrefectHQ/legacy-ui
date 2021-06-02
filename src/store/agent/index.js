@@ -1,4 +1,6 @@
 import moment from '@/utils/moment'
+// import { dispatch } from 'd3-dispatch'
+// import { Store } from 'vuex'
 
 const state = {
   thresholds: {
@@ -11,7 +13,8 @@ const state = {
   sortedAgents: null,
   sorting: true,
   refetch: false,
-  intervalId: null
+  intervalId: null,
+  flowRuns: null
 }
 
 const getters = {
@@ -45,19 +48,36 @@ const mutations = {
   setRefetch(state, bool) {
     state.refetch = bool
   },
-  setSortedAgents(state, flowRuns) {
-    this.sorting = true
-    if (!state.agents) {
-      state.sortedAgents = null
-      return
+  setSortedAgents(state, data) {
+    console.log('called')
+    if (data?.agent) {
+      state.agents = data?.agent?.map(agent => {
+        if (agent.last_queried) {
+          const secondsSinceLastQuery = moment().diff(
+            moment(agent.last_queried),
+            'seconds'
+          )
+          agent.secondsSinceLastQuery = secondsSinceLastQuery
+          agent.status =
+            secondsSinceLastQuery < 60 * state.thresholds.stale
+              ? 'healthy'
+              : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
+              ? 'stale'
+              : 'unhealthy'
+        } else {
+          agent.status = 'unhealthy'
+        }
+        return agent
+      })
     }
+    if (data?.flow_run) state.flowRuns = data?.flow_run
     const getTimeOverdue = time => new Date() - new Date(time)
     const labelsAlign = agent => {
       agent.submittableRuns = []
       agent.lateRuns = []
 
       if (!agent.labels?.length) {
-        const noLabels = flowRuns?.filter(flowRun => {
+        const noLabels = state.flowRuns?.filter(flowRun => {
           return !flowRun?.labels?.length
         })
         agent.submittableRuns = noLabels?.filter(
@@ -68,7 +88,7 @@ const mutations = {
         )
         return !!noLabels?.length
       } else {
-        const match = flowRuns?.filter(
+        const match = state.flowRuns?.filter(
           flowRun =>
             flowRun?.labels?.length &&
             flowRun.labels.every(label => agent?.labels?.includes(label))
@@ -106,55 +126,53 @@ const mutations = {
 
     state.refetch = false
     state.sorting = false
-  },
-  setAgents(state, agents) {
-    state.sorting = true
-    if (!agents) {
-      state.agents = null
-      return
-    }
-    state.agents = agents?.map(agent => {
-      if (agent.last_queried) {
-        const secondsSinceLastQuery = moment().diff(
-          moment(agent.last_queried),
-          'seconds'
-        )
-        agent.secondsSinceLastQuery = secondsSinceLastQuery
-        agent.status =
-          secondsSinceLastQuery < 60 * state.thresholds.stale
-            ? 'healthy'
-            : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
-            ? 'stale'
-            : 'unhealthy'
-      } else {
-        agent.status = 'unhealthy'
-      }
-      return agent
-    })
-    state.refetch = false
-    state.sorting = false
-  },
-  setIntervalId(state, id) {
-    state.intervalId = id
   }
-}
+  //   setAgents(state, agents) {
+  //     console.log('agents called')
+  //     if (!agents) {
+  //       state.agents = null
+  //       return
+  //     }
+  //     state.agents = agents?.map(agent => {
+  //       if (agent.last_queried) {
+  //         const secondsSinceLastQuery = moment().diff(
+  //           moment(agent.last_queried),
+  //           'seconds'
+  //         )
+  //         agent.secondsSinceLastQuery = secondsSinceLastQuery
+  //         agent.status =
+  //           secondsSinceLastQuery < 60 * state.thresholds.stale
+  //             ? 'healthy'
+  //             : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
+  //             ? 'stale'
+  //             : 'unhealthy'
+  //       } else {
+  //         agent.status = 'unhealthy'
+  //       }
+  //       return agent
+  //     })
 
-const actions = {
-  setUpdate({ commit }) {
-    const intervalId = setInterval(() => {
-      commit('setRefetch', true)
-    }, 1000)
-    commit('setIntervalId', intervalId)
-  },
-  endUpdate({ commit }) {
-    clearInterval(commit('setRefetch', false))
-  }
+  //     state.refetch = false
+  //   }
+  // }
+
+  // const actions = {
+  //   setUpdate({ commit }) {
+  //     const intervalId = setInterval(() => {
+  //       commit('setRefetch', true)
+  //     }, 1000)
+  //     commit('setIntervalId', intervalId)
+  //   },
+  //   endUpdate({ commit }) {
+  //     clearInterval(commit('setRefetch', false))
+  //   }
+  // }
 }
 
 export default {
   getters,
   mutations,
   state,
-  actions,
+  // actions,
   namespaced: true
 }

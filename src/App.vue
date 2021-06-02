@@ -259,12 +259,12 @@ export default {
       skip() {
         return (this.isCloud && !this.isAuthorized) || !this.connected
       },
-      pollInterval: 3000,
+      pollInterval: 1000,
       // Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
       update(data) {
         if (!data?.agent || this.isLoadingTenant) return null
-        this.setAgents(data.agent)
+        this.setSortedAgents(data)
         return data.agent
       }
     })
@@ -277,12 +277,12 @@ export default {
         skip() {
           return (this.isCloud && !this.isAuthorized) || !this.connected
         },
-        pollInterval: 3000,
+        pollInterval: 1000,
         // Without this, server UI with no actual server shows results
         fetchPolicy: 'no-cache',
         update(data) {
           if (!data?.flow_run || this.isLoadingTenant) return null
-          this.setSortedAgents(data.flow_run)
+          this.setSortedAgents(data)
           return data.flow_run
         }
       }
