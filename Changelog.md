@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-06-02
+
+### Features and Improvements
+
 - Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
 
 ### Bugfixes
