@@ -54,7 +54,9 @@ export default {
       sortBy: 'scheduled_start_time',
       sortDesc: true,
       state: [],
-      states: STATE_NAMES.slice(1).sort()
+      states: STATE_NAMES.slice(1).sort(),
+      parameterSearchTerm: null,
+      badJson: ''
     }
   },
   computed: {
@@ -67,6 +69,18 @@ export default {
     },
     pollInterval() {
       return this.flow.archived ? 0 : 5000
+    },
+    jsonBRes() {
+      try {
+        const bob = JSON.parse(this.parameterSearchTerm)
+        this.setBadJson('')
+        return bob
+      } catch {
+        this.setBadJson(
+          'You need to use JSON format for your search e.g. {"a":5}'
+        )
+        return this.parameterSearchTerm
+      }
     }
   },
   watch: {
@@ -89,6 +103,11 @@ export default {
       this.$apollo.queries.flowRunsCount.startPolling(this.pollInterval)
     }
   },
+  methods: {
+    setBadJson(message) {
+      this.badJson = message
+    }
+  },
   apollo: {
     flowRuns: {
       query: require('@/graphql/Flow/table-flow-runs.gql'),
@@ -101,7 +120,8 @@ export default {
           name: this.searchFormatted,
           offset: this.offset,
           state: this.state.length === 0 ? null : this.state,
-          orderBy
+          orderBy,
+          jsonB: this.jsonBRes
         }
 
         if (this.aggregate) {
@@ -191,6 +211,20 @@ export default {
           prepend-inner-icon="search"
           hide-details
           placeholder="Search for a Flow Run"
+          flat
+          style="min-width: 200px;"
+        >
+        </v-text-field>
+        <v-text-field
+          slot="action"
+          v-model="parameterSearchTerm"
+          class="search"
+          dense
+          solo
+          :hide-details="!badJson"
+          :error-messages="badJson"
+          prepend-inner-icon="search"
+          placeholder="Search by parameter key:value"
           flat
           style="min-width: 200px;"
         >
