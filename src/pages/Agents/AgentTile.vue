@@ -104,8 +104,10 @@ export default {
       return color
     },
     queryColor() {
-      if (this.agent.status === 'healthy') return 'success'
-      if (this.agent.status === 'stale') return 'warning'
+      if (this.agent.secondsSinceLastQuery < 60 * this.staleThreshold)
+        return 'success'
+      if (this.agent.secondsSinceLastQuery < 60 * this.unhealthyThreshold)
+        return 'warning'
       return 'error'
     },
     timer() {
@@ -159,9 +161,9 @@ export default {
   //     this.setUpdate()
   //   }
   // },
-  beforeDestroy() {
-    this.endUpdate()
-  },
+  // beforeDestroy() {
+  //   this.endUpdate()
+  // },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapMutations('agent', ['setRefetch']),

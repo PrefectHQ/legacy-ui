@@ -1,6 +1,53 @@
 import moment from '@/utils/moment'
-// import { dispatch } from 'd3-dispatch'
-// import { Store } from 'vuex'
+
+//helper functions for sorting agents
+const getTimeOverdue = time => new Date() - new Date(time)
+const agentHealth = agent => {
+  if (agent.last_queried) {
+    const secondsSinceLastQuery = moment().diff(
+      moment(agent.last_queried),
+      'seconds'
+    )
+    agent.secondsSinceLastQuery = secondsSinceLastQuery
+    agent.status =
+      secondsSinceLastQuery < 60 * state.thresholds.stale
+        ? 'healthy'
+        : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
+        ? 'stale'
+        : 'unhealthy'
+  } else {
+    agent.status = 'unhealthy'
+  }
+  return agent
+}
+const labelsAlign = (agent, flowRuns) => {
+  agent.submittableRuns = []
+  agent.lateRuns = []
+
+  if (!agent.labels?.length) {
+    const noLabels = flowRuns?.filter(flowRun => {
+      return !flowRun?.labels?.length
+    })
+    agent.submittableRuns = noLabels?.filter(
+      flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+    )
+    agent.lateRuns = noLabels?.filter(
+      flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+    )
+  } else {
+    const match = flowRuns?.filter(
+      flowRun =>
+        flowRun?.labels?.length &&
+        flowRun.labels.every(label => agent?.labels?.includes(label))
+    )
+    agent.submittableRuns = match?.filter(
+      flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+    )
+    agent.lateRuns = match?.filter(
+      flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+    )
+  }
+}
 
 const state = {
   thresholds: {
@@ -49,76 +96,27 @@ const mutations = {
     state.refetch = bool
   },
   setSortedAgents(state, data) {
-    if (data?.agent) {
-      state.agents = data?.agent?.map(agent => {
-        if (agent.last_queried) {
-          const secondsSinceLastQuery = moment().diff(
-            moment(agent.last_queried),
-            'seconds'
-          )
-          agent.secondsSinceLastQuery = secondsSinceLastQuery
-          agent.status =
-            secondsSinceLastQuery < 60 * state.thresholds.stale
-              ? 'healthy'
-              : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
-              ? 'stale'
-              : 'unhealthy'
-        } else {
-          agent.status = 'unhealthy'
-        }
-        return agent
-      })
-    }
+    if (data?.agent) state.agents = data?.agent
     if (data?.flow_run) state.flowRuns = data?.flow_run
-    const getTimeOverdue = time => new Date() - new Date(time)
-    const labelsAlign = agent => {
-      agent.submittableRuns = []
-      agent.lateRuns = []
 
-      if (!agent.labels?.length) {
-        const noLabels = state.flowRuns?.filter(flowRun => {
-          return !flowRun?.labels?.length
-        })
-        agent.submittableRuns = noLabels?.filter(
-          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
-        )
-        agent.lateRuns = noLabels?.filter(
-          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
-        )
-        return !!noLabels?.length
-      } else {
-        const match = state.flowRuns?.filter(
-          flowRun =>
-            flowRun?.labels?.length &&
-            flowRun.labels.every(label => agent?.labels?.includes(label))
-        )
-        agent.submittableRuns = match?.filter(
-          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
-        )
-        agent.lateRuns = match?.filter(
-          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
-        )
-        return !!match?.length
-      }
-    }
     const agents = [...state.agents]
     const runsList = []
     const newList = []
     const oldList = []
     agents.forEach(agent => {
-      labelsAlign(agent)
-      if (agent.lateRuns?.length) {
+      labelsAlign(agent, state.flowRuns)
+      agentHealth(agent)
+      if (agent.lateRuns?.length && agent.status != 'unhealthy') {
         agent.status = 'late'
         runsList.push(agent)
       } else if (agent.submittableRuns?.length && agent.status === 'healthy') {
         runsList.push(agent)
-      } else if (agent.status != 'unhealthy') {
+      } else if (agent.status === 'healthy') {
         newList.push(agent)
       } else {
         oldList.push(agent)
       }
     })
-
     oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
     const fullList = [...runsList, ...newList, ...oldList]
     state.sortedAgents = fullList
@@ -126,52 +124,11 @@ const mutations = {
     state.refetch = false
     state.sorting = false
   }
-  //   setAgents(state, agents) {
-  //     console.log('agents called')
-  //     if (!agents) {
-  //       state.agents = null
-  //       return
-  //     }
-  //     state.agents = agents?.map(agent => {
-  //       if (agent.last_queried) {
-  //         const secondsSinceLastQuery = moment().diff(
-  //           moment(agent.last_queried),
-  //           'seconds'
-  //         )
-  //         agent.secondsSinceLastQuery = secondsSinceLastQuery
-  //         agent.status =
-  //           secondsSinceLastQuery < 60 * state.thresholds.stale
-  //             ? 'healthy'
-  //             : secondsSinceLastQuery < 60 * state.thresholds.unhealthy
-  //             ? 'stale'
-  //             : 'unhealthy'
-  //       } else {
-  //         agent.status = 'unhealthy'
-  //       }
-  //       return agent
-  //     })
-
-  //     state.refetch = false
-  //   }
-  // }
-
-  // const actions = {
-  //   setUpdate({ commit }) {
-  //     const intervalId = setInterval(() => {
-  //       commit('setRefetch', true)
-  //     }, 1000)
-  //     commit('setIntervalId', intervalId)
-  //   },
-  //   endUpdate({ commit }) {
-  //     clearInterval(commit('setRefetch', false))
-  //   }
-  // }
 }
 
 export default {
   getters,
   mutations,
   state,
-  // actions,
   namespaced: true
 }
