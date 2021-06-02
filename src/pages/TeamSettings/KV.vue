@@ -60,7 +60,7 @@ export default {
       expanded: [],
 
       //table headers
-      headers: [
+      kvHeaders: [
         { text: 'Key', value: 'key' },
         { text: 'Value', value: 'value' },
         { text: 'Created', value: 'created' },
@@ -113,14 +113,20 @@ export default {
   methods: {
     ...mapActions('alert', ['addNotification']),
     stringifyValue(value) {
-      return typeof value == 'object' ? JSON.stringify(value) : String(value)
+      return typeof value == 'object'
+        ? { type: 'object', value: JSON.stringify(value) }
+        : { type: 'string', value: String(value) }
     },
-    formatValue(value) {
-      return jsBeautify(value, {
-        indent_size: 4,
-        space_in_empty_paren: true,
-        preserve_newlines: false
-      })
+    formatValue(kv) {
+      if (kv.type == 'object') {
+        return jsBeautify(kv.value, {
+          indent_size: 4,
+          space_in_empty_paren: true,
+          preserve_newlines: false
+        })
+      } else {
+        return kv.value
+      }
     },
     selectedType(type) {
       return this.selectedTypeIndex > 0
@@ -434,7 +440,7 @@ export default {
         prepend-inner-icon="search"
       ></v-text-field>
     </ManagementLayout>
-    <v-card tile class="mx-auto" v-if="!isReadOnlyUser && maxKVCount">
+    <v-card v-if="!isReadOnlyUser && maxKVCount" tile class="mx-auto">
       <v-card-text class="pa-0">
         <!-- SEARCH (DESKTOP) -->
         <div
@@ -458,7 +464,7 @@ export default {
         </div>
         <!-- TABLE -->
         <v-data-table
-          :headers="headers"
+          :headers="kvHeaders"
           :items="kv"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           sort-by="created"
