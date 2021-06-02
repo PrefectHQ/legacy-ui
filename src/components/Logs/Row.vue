@@ -67,6 +67,9 @@ export default {
     logLevelColor() {
       if (!this.idState.active) return 'grey'
       return logLevels[this.item.level].color
+    },
+    logLevelText() {
+      return logLevels[this.item.level].text
     }
   }
 }
@@ -81,6 +84,12 @@ export default {
       @click="idState.active = !idState.active"
       @keyup.enter="idState.active = !idState.active"
     >
+      <span class="mr-1">
+        <v-icon small>
+          {{ idState.active ? 'expand_more' : 'chevron_right' }}
+        </v-icon>
+      </span>
+
       <span class="mr-3">
         <v-icon :color="logLevelColor" small>
           {{ logLevelIcon }}
@@ -109,13 +118,17 @@ export default {
 
         <div>
           <span class="mr-4 d-inline-block">
-            <div class="text-body-2">{{ item.level }}</div>
+            <div class="text-body-2" :style="{ color: logLevelColor }">
+              <v-chip :color="logLevelColor" small dark>
+                {{ logLevelText }}
+              </v-chip>
+            </div>
             <div class="text-caption text-capitalize">Level</div>
           </span>
 
           <span class="d-inline-block">
             <div class="text-body-2">{{ item.formattedTimestamp }}</div>
-            <div class="text-caption text-capitalize">Time</div>
+            <div class="text-caption text-capitalize">Timestamp</div>
           </span>
         </div>
 
