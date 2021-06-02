@@ -184,7 +184,7 @@ export default {
       watchLoading(isLoading) {
         this.isFetchingMembers = isLoading
       },
-      result({ data }) {
+      update(data) {
         if (!data) return
 
         this.membersItems = data.tenantUsers
@@ -218,10 +218,11 @@ export default {
         )
         this.$emit('load-end')
       },
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'network-only',
       skip() {
         return !this.tenant
-      }
+      },
+      pollInterval: 15000
     }
   }
 }
