@@ -49,7 +49,6 @@ const mutations = {
     state.refetch = bool
   },
   setSortedAgents(state, data) {
-    console.log('called')
     if (data?.agent) {
       state.agents = data?.agent?.map(agent => {
         if (agent.last_queried) {
