@@ -14,7 +14,7 @@ export default {
   },
   computed: {
     where() {
-      return { ...this.filter }
+      return { ...this.filter, is_audit_log: { _eq: true } }
     }
   }
 }

@@ -199,8 +199,8 @@ export default {
       </DynamicScrollerItem>
     </template>
     <template #after>
-      <div>
-        Hey! I'm a message displayed after items!
+      <div class="ml-8 my-4 text--disabled text-caption">
+        End of logs
       </div>
     </template>
   </DynamicScroller>

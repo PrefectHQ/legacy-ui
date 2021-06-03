@@ -216,12 +216,14 @@ export default {
             <div class="text-caption text-capitalize">Team</div>
           </span>
 
-          <span v-if="item.object_table" class="px-4 d-inline-block">
+          <!-- TODO: Route to specific pages here -->
+          <!-- e.g. the account page for license changes, a new USER page for users (members page for now), etc -->
+          <!-- <span v-if="item.object_table" class="px-4 d-inline-block">
             <div class="text-body-2">{{ item.object_id }}</div>
             <div class="text-caption text-capitalize">
               {{ item.object_table }}
             </div>
-          </span>
+          </span> -->
 
           <span v-if="item.flow_run_id && flow" class="px-4 d-inline-block">
             <div class="text-body-2">
@@ -311,6 +313,16 @@ $highlight-color: rgba(224, 224, 255, 0.5);
     }
   }
 }
+
+// TODO: Tweak exit transitions or remove them altogether
+// when the component is recycled
+// .expand-y-enter-active {
+//   transition: max-height 200ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+// }
+
+// .expand-y-leave-active {
+//   transition: max-height 50ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+// }
 
 .expand-y-enter-active,
 .expand-y-leave-active {
