@@ -67,16 +67,9 @@ export default {
           >
             <slot name="row-1-col-3-tile-1" />
           </v-col>
-
-          <!-- This col is just used to push col-4 to the right -->
-          <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="4"> </v-col>
-
-          <v-col cols="12" md="8">
-            <slot name="row-1-col-4-tile-1" />
-          </v-col>
         </v-row>
       </v-col>
-      <v-row v-if="$slots['row-2-col-1-row-2-tile-a']">
+      <v-row v-if="$slots['row-2-col-1-row-2-tile-a']" class="pt-1">
         <v-col cols="12">
           <slot name="row-2-col-1-row-2-tile-a" />
         </v-col>
