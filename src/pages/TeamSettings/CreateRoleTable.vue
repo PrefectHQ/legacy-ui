@@ -12,6 +12,11 @@ export default {
       type: Object,
       required: false,
       default: null
+    },
+    tableOnly: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -20,12 +25,12 @@ export default {
       headers: [
         {
           text: 'Type',
-          value: 'type'
-        },
-        {
-          text: 'Permission',
           value: 'name'
-        }
+        },
+        { text: 'Read', value: 'read' },
+        { text: 'Create', value: 'create' },
+        { text: 'Update', value: 'update' },
+        { text: 'Delete', value: 'delete' }
       ],
       includedPermissions: [],
       searchInput: '',
@@ -37,21 +42,76 @@ export default {
   },
   computed: {
     itemsPerPage() {
-      return this.$vuetify.breakpoint.lgAndUp ? 10 : 5
+      return this.permissions?.length
+    },
+    permissionsList() {
+      return this.auth?.auth_info?.permissions
+      // return this.allPermissions
+      //   ? [
+      //       ...this.template?.permissions,
+      //       ...this.auth?.permissions.filter(
+      //         permission => !this.template.permissions.includes(permission)
+      //       )
+      //     ]
+      //   : this.template?.permissions || this.auth?.permissions
+    },
+    authPermissionObject() {
+      return this.auth?.permissions?.reduce((permissionsObj, item) => {
+        const sections = item.split(':')
+        if (!permissionsObj[sections[1]]) {
+          permissionsObj[sections[1]] = {
+            disableCreate: sections[0] !== 'create',
+            disableUpdate: sections[0] !== 'update',
+            disableRead: sections[0] !== 'read',
+            disableDelete: sections[0] !== 'delete',
+            includeUpdate: false,
+            includeCreate: false,
+            includeDelete: false,
+            includeRead: false,
+            name: sections[1],
+            key: item,
+            value: item
+          }
+          if (!['create', 'delete', 'update', 'read'].includes(sections[0])) {
+            permissionsObj[sections[1]].name = item
+            permissionsObj[sections[1]].noCrud = true
+          }
+        } else {
+          if (sections[0] === 'create')
+            permissionsObj[sections[1]].disableCreate = false
+          if (sections[0] === 'read')
+            permissionsObj[sections[1]].disableRead = false
+          if (sections[0] === 'update')
+            permissionsObj[sections[1]].disableUpdate = false
+          if (sections[0] === 'delete')
+            permissionsObj[sections[1]].disableDelete = false
+        }
+        return permissionsObj
+      }, {})
+    },
+    templatePermissionObject() {
+      if (!this.authPermissionObject) return
+      const permissionsObj = this.authPermissionObject
+      this.template?.permissions.map(item => {
+        const sections = item.split(':')
+        if (sections[0] === 'create')
+          permissionsObj[sections[1]].includeCreate = true
+        if (sections[0] === 'read')
+          permissionsObj[sections[1]].includeRead = true
+        if (sections[0] === 'update')
+          permissionsObj[sections[1]].includeUpdate = true
+        if (sections[0] === 'delete')
+          permissionsObj[sections[1]].includeDelete = true
+      })
+      return permissionsObj
     },
     permissions() {
-      const list = this.allPermissions
-        ? [
-            ...this.template?.permissions,
-            ...this.auth?.permissions.filter(
-              permission => !this.template.permissions.includes(permission)
-            )
-          ]
-        : this.template?.permissions || this.auth?.permissions
-      return list?.map((item, index) => {
-        const sections = item.split(':')
-        return { type: sections[0], name: sections[1], key: index, value: item }
-      })
+      if (!this.authPermissionObject && !this.templatePermissionObject)
+        return []
+      const permissionObject = this.template
+        ? this.templatePermissionObject
+        : this.authPermissionObject
+      return Object.values(permissionObject)
     },
     loading() {
       return this.loadingKey > 0
@@ -81,15 +141,24 @@ export default {
     },
     async createNewRole() {
       try {
-        const permissions = this.includedPermissions.map(
-          permission => permission.value
-        )
+        const includedPermissions = []
+        this.permissions.forEach(permission => {
+          if (permission.includeCreate)
+            includedPermissions.push(`create:${permission.name}`)
+          if (permission.includeDelete)
+            includedPermissions.push(`delete:${permission.name}`)
+          if (permission.includeRead)
+            includedPermissions.push(`read:${permission.name}`)
+          if (permission.includeUpdate)
+            includedPermissions.push(`update:${permission.name}`)
+        })
+        console.log(includedPermissions)
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-custom-role.gql'),
           variables: {
             input: {
               name: this.roleName,
-              permissions: permissions
+              permissions: includedPermissions
             }
           }
         })
@@ -113,15 +182,26 @@ export default {
     },
     async updateRole() {
       try {
-        const permissions = this.includedPermissions.map(
-          permission => permission.value
-        )
+        const includedPermissions = []
+        this.permissions.forEach(permission => {
+          if (permission.includeCreate)
+            includedPermissions.push(`create:${permission.name}`)
+          if (permission.includeDelete)
+            includedPermissions.push(`delete:${permission.name}`)
+          if (permission.includeRead)
+            includedPermissions.push(`read:${permission.name}`)
+          if (permission.includeUpdate)
+            includedPermissions.push(`update:${permission.name}`)
+        })
+        // const permissions = this.includedPermissions.map(
+        //   permission => permission.value
+        // )
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/update-custom-role.gql'),
           variables: {
             input: {
               role_id: this.template.id,
-              permissions: permissions
+              permissions: includedPermissions
             }
           }
         })
@@ -153,10 +233,7 @@ export default {
     auth: {
       query: require('@/graphql/TeamSettings/permissions.gql'),
       loadingKey: 'loadingKey',
-      variables() {
-        return {}
-      },
-      pollInterval: 10000,
+      // pollInterval: 1000,
       update: data => data.auth_info
     }
   }
@@ -164,9 +241,9 @@ export default {
 </script>
 
 <template>
-  <v-card>
-    <v-card-title> Add name and permissions</v-card-title>
-    <v-card-subtitle class="mt-4 pb-0">
+  <v-card width="100%">
+    <v-card-title v-if="!tableOnly"> Add name and permissions</v-card-title>
+    <v-card-subtitle v-if="!tableOnly" class="mt-4 pb-0">
       <v-text-field
         v-model="roleName"
         :disabled="!!template"
@@ -176,53 +253,76 @@ export default {
       ></v-text-field>
     </v-card-subtitle>
     <v-card-text>
-      <!-- <v-sheet height="300px" :style="{ overflow: 'auto' }"> -->
-      <v-text-field
-        v-model="searchInput"
-        class="rounded-0 elevation-1 mb-1"
-        solo
-        dense
-        hide-details
-        single-line
-        placeholder="Search by type or name"
-        prepend-inner-icon="search"
-        autocomplete="new-password"
-      ></v-text-field>
-      <v-data-table
-        v-model="includedPermissions"
-        fixed-header
-        :headers="headers"
-        :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-        :items="permissions"
-        item-key="key"
-        :loading="loading"
-        :items-per-page="itemsPerPage"
-        show-select
-        class="elevation-2 rounded-0 truncate-table"
-        :footer-props="{
-          showFirstLastPage: true,
-          itemsPerPageOptions: [5, 10, 15, 20, -1],
-          firstIcon: 'first_page',
-          lastIcon: 'last_page',
-          prevIcon: 'keyboard_arrow_left',
-          nextIcon: 'keyboard_arrow_right'
-        }"
-        :search="searchInput"
-        no-results-text="No permissions found. Try expanding your search?"
-        no-data-text="No data."
-      >
-        <!-- HEADERS -->
-        <template v-if="template" #top>
-          <v-switch
-            v-model="allPermissions"
-            label="Show all permissions"
-            class="pa-3"
-          ></v-switch>
-        </template>
-      </v-data-table>
-      <!-- </v-sheet> -->
+      <v-sheet height="300px" :style="{ overflow: 'auto' }">
+        <v-text-field
+          v-if="!tableOnly"
+          v-model="searchInput"
+          class="rounded-0 elevation-1 mb-1"
+          solo
+          dense
+          hide-details
+          single-line
+          placeholder="Search by type or name"
+          prepend-inner-icon="search"
+          autocomplete="new-password"
+        ></v-text-field>
+        <v-data-table
+          fixed-header
+          :headers="headers"
+          :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+          :items="permissions"
+          item-key="key"
+          :loading="loading"
+          :items-per-page="itemsPerPage"
+          class="elevation-2 rounded-0 truncate-table"
+          :footer-props="{
+            showFirstLastPage: true,
+
+            firstIcon: 'first_page',
+            lastIcon: 'last_page',
+            prevIcon: 'keyboard_arrow_left',
+            nextIcon: 'keyboard_arrow_right'
+          }"
+          :search="searchInput"
+          no-results-text="No permissions found. Try expanding your search?"
+          no-data-text="No data."
+        >
+          <!-- HEADERS -->
+          <template v-if="template" #top>
+            <v-switch
+              v-model="allPermissions"
+              label="Show all permissions"
+              class="pa-3"
+            ></v-switch>
+          </template>
+          <template #item.create="{item}">
+            <v-checkbox
+              v-model="item.includeCreate"
+              :disabled="item.disableCreate"
+            />
+          </template>
+          <template #item.read="{item}">
+            <v-checkbox
+              v-model="item.includeRead"
+              :disabled="item.disableRead"
+            />
+          </template>
+          <template #item.update="{item}">
+            <v-checkbox
+              v-model="item.includeUpdate"
+              :disabled="item.disableUpdate"
+            />
+          </template>
+          <template #item.delete="{item}">
+            <v-checkbox
+              v-model="item.includeDelete"
+              :disabled="item.disableDelete"
+            />
+          </template>
+        </v-data-table>
+      </v-sheet>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions v-if="!tableOnly">
       <v-spacer />
       <v-btn text color="error" @click.stop="cancel">
         Cancel

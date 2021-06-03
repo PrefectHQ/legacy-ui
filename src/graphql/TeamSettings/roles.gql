@@ -4,6 +4,7 @@ query AuthRoles {
     permissions
     created
     updated
+    tenant_id
     id
   }
 }

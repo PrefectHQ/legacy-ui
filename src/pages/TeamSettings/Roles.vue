@@ -5,6 +5,8 @@ import ManagementLayout from '@/layouts/ManagementLayout'
 import CreateRoleTable from '@/pages/TeamSettings/CreateRoleTable'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
+const DEFAULT_ROLES = ['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']
+
 export default {
   components: {
     ManagementLayout,
@@ -20,6 +22,7 @@ export default {
       clearDialog: false,
       template: null,
       deletingRole: null,
+      defaultRoles: DEFAULT_ROLES,
       headers: [
         {
           text: 'Name',
@@ -43,7 +46,17 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers'])
+    ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
+    editedRoles() {
+      if (!this.roles) return []
+      const defaultRoles = this.roles?.filter(role =>
+        this.defaultRoles.includes(role.name)
+      )
+      const tenantRoles = this.roles?.filter(
+        role => role.tenant_id === this.tenant.id
+      )
+      return [...defaultRoles, ...tenantRoles]
+    }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
@@ -171,7 +184,7 @@ export default {
       :headers="headers"
       :header-props="{ 'sort-icon': 'arrow_drop_up' }"
       :search="searchInput"
-      :items="roles"
+      :items="editedRoles"
       :items-per-page="10"
       show-expand
       :expanded.sync="expanded"
@@ -233,18 +246,7 @@ export default {
       </template>
 
       <template #expanded-item="{ item }">
-        <td :colspan="headers.length">
-          <div
-            :style="{
-              width: '70vW',
-              height: '20vH',
-              'overflow-y': 'auto',
-              'overflow-wrap': 'break-word'
-            }"
-          >
-            <div width="80%">{{ item.permissions }}</div>
-          </div>
-        </td>
+        <CreateRoleTable :template="item" table-only />
       </template>
       <template #item.actions="{item}">
         <v-tooltip bottom>
@@ -252,6 +254,7 @@ export default {
             <v-btn
               text
               fab
+              :disabled="defaultRoles.includes(item.name)"
               x-small
               color="primary"
               v-on="on"
@@ -265,6 +268,7 @@ export default {
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
+              :disabled="defaultRoles.includes(item.name)"
               text
               :loading="deletingRole === item.id"
               fab
