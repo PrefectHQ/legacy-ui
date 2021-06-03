@@ -322,7 +322,11 @@ export default {
       </v-card>
     </v-dialog>
 
-    <v-card-text v-if="tab == 'overview' || !showAll" class="py-2">
+    <v-card-text
+      v-if="tab == 'overview' || !showAll"
+      class="py-2"
+      :style="showAll ? '' : { height: '250px' }"
+    >
       <div
         v-if="!showAll || hasLateRuns"
         class="my-2 text-subtitle-1 font-weight-light black--text"

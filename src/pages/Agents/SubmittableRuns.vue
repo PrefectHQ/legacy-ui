@@ -244,7 +244,7 @@ export default {
       </v-overlay>
     </v-card-text>
 
-    <v-card-text v-if="tab == 'submittable'" class="pa-0">
+    <v-card-text v-if="tab == 'submittable'" class="pa-0 card-content">
       <v-skeleton-loader v-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
@@ -265,7 +265,7 @@ export default {
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-else dense class="card-content">
+      <v-list v-else dense>
         <v-lazy
           v-for="item in submittableRuns"
           :key="item.id"
@@ -336,11 +336,7 @@ export default {
       </Alert>
     </v-card-text>
 
-    <v-card-text
-      v-if="tab == 'late'"
-      class="pa-0"
-      :style="{ height: '270px', 'overflow-y': 'auto' }"
-    >
+    <v-card-text v-if="tab == 'late'" class="pa-0 card-content">
       <v-skeleton-loader
         v-if="loading || isClearingLateRuns"
         type="list-item-three-line"
@@ -364,7 +360,7 @@ export default {
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-else dense class="card-content">
+      <v-list v-else dense>
         <v-lazy
           v-for="item in lateRuns"
           :key="item.id"
@@ -410,7 +406,7 @@ export default {
         </v-lazy>
       </v-list>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="pb-0">
       <v-spacer />
       <v-btn
         v-if="!overlay && lateRuns && lateRuns.length > 0"
@@ -455,7 +451,7 @@ a {
 }
 
 .card-content {
-  max-height: 310px;
+  height: 330px;
   overflow-y: auto;
 }
 </style>
