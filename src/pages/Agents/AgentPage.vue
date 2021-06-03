@@ -5,7 +5,7 @@ import AgentTile from '@/pages/Agents/AgentTile'
 import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
 import AgentRunsInProgress from '@/pages/Dashboard/InProgress-Tile.vue'
 import SubmittableRuns from '@/pages/Agents/SubmittableRuns'
-import FlowRunTableTile from '@/pages/Flow/FlowRunTable-Tile'
+import FlowRunTableTile from '@/pages/Agents/AgentFlowRunTable-Tile'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 

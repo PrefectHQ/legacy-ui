@@ -264,7 +264,7 @@ export default {
       fetchPolicy: 'no-cache',
       update(data) {
         if (!data?.agent || this.isLoadingTenant) return null
-        this.setSortedAgents(data)
+        this.setSortedAgents(data.agent ? data : [])
         return data.agent
       }
     })
@@ -282,7 +282,7 @@ export default {
         fetchPolicy: 'no-cache',
         update(data) {
           if (!data?.flow_run || this.isLoadingTenant) return null
-          this.setSortedAgents(data)
+          this.setSortedAgents(data.flow_run ? data : [])
           return data.flow_run
         }
       }

@@ -1,6 +1,6 @@
 import moment from '@/utils/moment'
 
-//helper functions for sorting agents
+//helper functions for sorting
 const getTimeOverdue = time => new Date() - new Date(time)
 const agentHealth = agent => {
   if (agent.last_queried) {
@@ -60,7 +60,6 @@ const state = {
   sortedAgents: null,
   sorting: true,
   refetch: false,
-  intervalId: null,
   flowRuns: null
 }
 

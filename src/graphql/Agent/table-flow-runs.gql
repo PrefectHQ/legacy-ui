@@ -22,5 +22,9 @@ query TableFlowRuns(
     scheduled_start_time
     start_time
     state
+    flow {
+      name
+      id
+    }
   }
 }
