@@ -240,9 +240,9 @@ export default {
   <v-card
     :disabled="agent.isDeleting || isDeleting"
     class="agent-card py-2"
-    style="overflow-y: auto;"
+    :style="showAll ? { 'overflow-y': 'auto' } : ''"
     :tile="showAll"
-    :height="showAll ? '380px' : '350px'"
+    :height="showAll ? '100%' : '350px'"
   >
     <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
     <CardTitle :title="name">
@@ -379,7 +379,7 @@ export default {
         v-if="showAll"
         class="my-2 text-subtitle-1 font-weight-light black--text"
       >
-        Created at {{ formatDateTime(agent.created) || 'Unknown' }}
+        Created {{ formatDateTime(agent.created) || 'Unknown' }}
       </div>
 
       <div
@@ -494,7 +494,7 @@ export default {
       </div>
     </v-card-text>
 
-    <v-card-actions v-if="!showAll">
+    <v-card-actions v-if="!showAll" class="pt-0">
       <v-btn
         small
         text

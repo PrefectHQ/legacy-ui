@@ -1,6 +1,6 @@
 <script>
 import SubPageNav from '@/layouts/SubPageNav'
-import TileLayout from '@/layouts/TileLayout'
+import TileLayout from '@/layouts/AgentLayout'
 import AgentTile from '@/pages/Agents/AgentTile'
 import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
 import AgentRunsInProgress from '@/pages/Dashboard/InProgress-Tile.vue'
