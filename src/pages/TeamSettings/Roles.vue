@@ -80,7 +80,7 @@ export default {
     },
     editRole(role) {
       this.template = role
-      this.createRoleDialog = true
+      this.expanded.push(role)
     },
     async deleteRole(role) {
       this.deletingRole = role.id
@@ -246,7 +246,9 @@ export default {
       </template>
 
       <template #expanded-item="{ item }">
-        <CreateRoleTable :template="item" table-only />
+        <td :colspan="headers.length + 1">
+          <CreateRoleTable :template="item" table-only />
+        </td>
       </template>
       <template #item.actions="{item}">
         <v-tooltip bottom>

@@ -268,6 +268,8 @@ export default {
         ></v-text-field>
         <v-data-table
           fixed-header
+          height="100vH"
+          :hide-default-footer="!!template"
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
           :items="permissions"
@@ -288,13 +290,13 @@ export default {
           no-data-text="No data."
         >
           <!-- HEADERS -->
-          <template v-if="template" #top>
+          <!-- <template v-if="template" #top>
             <v-switch
               v-model="allPermissions"
               label="Show all permissions"
               class="pa-3"
             ></v-switch>
-          </template>
+          </template> -->
           <template #item.create="{item}">
             <v-checkbox
               v-model="item.includeCreate"
