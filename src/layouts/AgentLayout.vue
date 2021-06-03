@@ -2,7 +2,6 @@
 export default {
   computed: {
     extendedSlots() {
-      console.log('slots', this.$slots)
       return Object.keys(this.$slots).filter(key => key.includes('extended'))
     }
   }
