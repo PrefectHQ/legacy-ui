@@ -52,7 +52,7 @@ const labelsAlign = (agent, flowRuns) => {
 const state = {
   thresholds: {
     // Time before an agent becomes stale
-    stale: 60, // minutes since last query
+    stale: 5, // minutes since last query
     // Time before an agent becomes unhealthy
     unhealthy: 720 // minutes since last query,
   },
