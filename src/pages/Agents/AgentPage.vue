@@ -155,8 +155,15 @@ export default {
       >
         <TileLayout>
           <AgentFlowRunHistory slot="row-0" :agent="agentDetails" />
-          <AgentTile slot="row-1-col-1-tile-1" show-all :agent="agentDetails" />
-          <SubmittableRuns slot="row-1-col-2-tile-1" :agent="agentDetails" />
+          <AgentTile
+            slot="row-1-col-1-tile-1"
+            show-all
+            :raw-agent="agentDetails"
+          />
+          <SubmittableRuns
+            slot="row-1-col-2-tile-1"
+            :raw-agent="agentDetails"
+          />
           <AgentRunsInProgress
             slot="row-1-col-3-tile-1"
             :agent-id="agentDetails.id"

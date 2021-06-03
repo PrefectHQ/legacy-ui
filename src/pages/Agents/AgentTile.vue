@@ -26,7 +26,7 @@ export default {
   },
   mixins: [formatTime],
   props: {
-    agent: {
+    rawAgent: {
       type: Object,
       required: true
     },
@@ -52,7 +52,7 @@ export default {
       labelMenuOpen: false,
       isDeleting: false,
       showConfirmDialog: false,
-      submittable: this.agent.submittableRuns,
+
       showIcon: true,
       tab: 'overview'
     }
@@ -61,6 +61,37 @@ export default {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
+    agent() {
+      const agent = { ...this.rawAgent }
+      const getTimeOverdue = time => new Date() - new Date(time)
+      agent.submittableRuns = []
+      agent.lateRuns = []
+
+      if (!agent.labels?.length) {
+        const noLabels = this.flowRuns?.filter(flowRun => {
+          return !flowRun?.labels?.length
+        })
+        agent.submittableRuns = noLabels?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+        )
+        agent.lateRuns = noLabels?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+        )
+      } else {
+        const match = this.flowRuns?.filter(
+          flowRun =>
+            flowRun?.labels?.length &&
+            flowRun.labels.every(label => agent?.labels?.includes(label))
+        )
+        agent.submittableRuns = match?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+        )
+        agent.lateRuns = match?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+        )
+      }
+      return agent
+    },
     dayAgo() {
       const today = this.formatCalendarDate(new Date())
       const day = this.subtractDay(today, 2)
@@ -162,6 +193,7 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapMutations('agent', ['setRefetch']),
+
     anyLabelsSelected(labels) {
       return labels.reduce((result, label) => this.labelSelected(label), false)
     },
@@ -211,7 +243,7 @@ export default {
       loadingKey: 'loadingKey',
       variables() {
         return {
-          agentId: this.agent.id,
+          agentId: this.rawAgent?.id,
           day: this.dayAgo
         }
       },
@@ -224,6 +256,14 @@ export default {
       loadingKey: 'loading',
       update: data => {
         return data.hook
+      }
+    },
+    flowRuns: {
+      query: require('@/graphql/Agent/FlowRuns.gql'),
+      pollInterval: 1000,
+      fetchPolicy: 'no-cache',
+      update(data) {
+        return data.flow_run
       }
     }
   }

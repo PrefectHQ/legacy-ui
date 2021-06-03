@@ -138,7 +138,6 @@ export default {
     refetchAgents(val) {
       if (val) {
         this.$apollo.queries.agents.refresh()
-        this.$apollo.queries.flowRuns.refresh()
       }
     },
     backend() {
@@ -179,7 +178,6 @@ export default {
         this.$apollo.queries.agents.refresh()
         this.$apollo.queries.projects.refresh()
         this.$apollo.queries.flows.refresh()
-        this.$apollo.queries.flowRuns.refresh()
       }
     },
     async $route(new_route, old_route) {
@@ -264,29 +262,10 @@ export default {
       fetchPolicy: 'no-cache',
       update(data) {
         if (!data?.agent || this.isLoadingTenant) return null
-        this.setSortedAgents(data.agent ? data : [])
+        this.setSortedAgents(data.agent)
         return data.agent
       }
     })
-
-    this.$globalApolloQueries['flowRuns'] = this.$apollo.addSmartQuery(
-      'flowRuns',
-      {
-        query: require('@/graphql/Agent/FlowRuns.gql'),
-
-        skip() {
-          return (this.isCloud && !this.isAuthorized) || !this.connected
-        },
-        pollInterval: 1000,
-        // Without this, server UI with no actual server shows results
-        fetchPolicy: 'no-cache',
-        update(data) {
-          if (!data?.flow_run || this.isLoadingTenant) return null
-          this.setSortedAgents(data.flow_run ? data : [])
-          return data.flow_run
-        }
-      }
-    )
 
     this.$globalApolloQueries['projects'] = this.$apollo.addSmartQuery(
       'projects',

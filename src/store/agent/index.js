@@ -1,7 +1,7 @@
 import moment from '@/utils/moment'
 
 //helper functions for sorting
-const getTimeOverdue = time => new Date() - new Date(time)
+
 const agentHealth = agent => {
   if (agent.last_queried) {
     const secondsSinceLastQuery = moment().diff(
@@ -19,34 +19,6 @@ const agentHealth = agent => {
     agent.status = 'unhealthy'
   }
   return agent
-}
-const labelsAlign = (agent, flowRuns) => {
-  agent.submittableRuns = []
-  agent.lateRuns = []
-
-  if (!agent.labels?.length) {
-    const noLabels = flowRuns?.filter(flowRun => {
-      return !flowRun?.labels?.length
-    })
-    agent.submittableRuns = noLabels?.filter(
-      flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
-    )
-    agent.lateRuns = noLabels?.filter(
-      flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
-    )
-  } else {
-    const match = flowRuns?.filter(
-      flowRun =>
-        flowRun?.labels?.length &&
-        flowRun.labels.every(label => agent?.labels?.includes(label))
-    )
-    agent.submittableRuns = match?.filter(
-      flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
-    )
-    agent.lateRuns = match?.filter(
-      flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
-    )
-  }
 }
 
 const state = {
@@ -94,32 +66,29 @@ const mutations = {
   setRefetch(state, bool) {
     state.refetch = bool
   },
-  setSortedAgents(state, data) {
-    if (data?.agent) state.agents = data?.agent
-    if (data?.flow_run) state.flowRuns = data?.flow_run
+  setSortedAgents(state, agents) {
+    if (!agents) {
+      state.sortedAgent = null
+      return
+    }
 
-    const agents = [...state.agents]
-    const runsList = []
-    const newList = []
+    const healthyList = []
+    const staleList = []
     const oldList = []
     agents.forEach(agent => {
-      labelsAlign(agent, state.flowRuns)
       agentHealth(agent)
-      if (agent.lateRuns?.length && agent.status != 'unhealthy') {
-        agent.status = 'late'
-        runsList.push(agent)
-      } else if (agent.submittableRuns?.length && agent.status === 'healthy') {
-        runsList.push(agent)
-      } else if (agent.status === 'healthy') {
-        newList.push(agent)
+      if (agent.status === 'healthy') {
+        healthyList.push(agent)
+      } else if (agent.status === 'stale') {
+        staleList.push(agent)
       } else {
         oldList.push(agent)
       }
     })
+    state.agents = agents
     oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
-    const fullList = [...runsList, ...newList, ...oldList]
+    const fullList = [...healthyList, ...staleList, ...oldList]
     state.sortedAgents = fullList
-
     state.refetch = false
     state.sorting = false
   }

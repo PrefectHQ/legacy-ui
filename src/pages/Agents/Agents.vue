@@ -439,7 +439,7 @@ export default {
             lg="3"
           >
             <AgentTile
-              :agent="agent"
+              :raw-agent="agent"
               :selected-labels="labelInput"
               @label-click="handleLabelClick"
             ></AgentTile>

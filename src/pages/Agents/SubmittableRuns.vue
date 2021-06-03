@@ -19,7 +19,7 @@ export default {
   },
   mixins: [cancelLateRunsMixin, runFlowNowMixin, formatTime],
   props: {
-    agent: {
+    rawAgent: {
       type: Object,
       required: true
     }
@@ -27,7 +27,8 @@ export default {
   data() {
     return {
       tab: 'submittable',
-      overlay: null
+      overlay: null,
+      loadingKey: 0
     }
   },
   computed: {
@@ -39,10 +40,42 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
+    agent() {
+      const agent = { ...this.rawAgent }
+      const getTimeOverdue = time => new Date() - new Date(time)
+      agent.submittableRuns = []
+      agent.lateRuns = []
+
+      if (!agent.labels?.length) {
+        const noLabels = this.flowRuns?.filter(flowRun => {
+          return !flowRun?.labels?.length
+        })
+        agent.submittableRuns = noLabels?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+        )
+        agent.lateRuns = noLabels?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+        )
+      } else {
+        const match = this.flowRuns?.filter(
+          flowRun =>
+            flowRun?.labels?.length &&
+            flowRun.labels.every(label => agent?.labels?.includes(label))
+        )
+        agent.submittableRuns = match?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) <= 20000
+        )
+        agent.lateRuns = match?.filter(
+          flowRun => getTimeOverdue(flowRun.scheduled_start_time) > 20000
+        )
+      }
+      return agent
+    },
     paused() {
       return this.tenant?.settings?.work_queue_paused
     },
     lateRuns() {
+      if (!this.agent.lateRuns) return []
       return [...this.agent.lateRuns].sort(
         (a, b) =>
           new Date(a.scheduled_start_time) - new Date(b.scheduled_start_time)
@@ -52,7 +85,8 @@ export default {
       return this.loadingKey > 0
     },
     submittableRuns() {
-      return [...this.agent.submittableRuns].sort(
+      if (!this.agent.submittableRuns) return []
+      return [...this.agent?.submittableRuns].sort(
         (a, b) =>
           new Date(a.scheduled_start_time) - new Date(b.scheduled_start_time)
       )
@@ -117,7 +151,7 @@ export default {
     }
   },
   mounted() {
-    if (this.agent.lateRuns?.length) this.tab = 'late'
+    if (this.agent?.lateRuns?.length) this.tab = 'late'
   },
   methods: {
     ...mapMutations('agent', ['setRefetch']),
@@ -135,7 +169,17 @@ export default {
       this.overlay = null
     }
   },
-  apollo: {}
+  apollo: {
+    flowRuns: {
+      query: require('@/graphql/Agent/FlowRuns.gql'),
+      pollInterval: 1000,
+      loading: 'loadingKey',
+      fetchPolicy: 'no-cache',
+      update(data) {
+        return data.flow_run
+      }
+    }
+  }
 }
 </script>
 
@@ -452,6 +496,7 @@ a {
 
 .card-content {
   min-height: 330px;
+  max-height: 330px;
   overflow-y: auto;
 }
 </style>
