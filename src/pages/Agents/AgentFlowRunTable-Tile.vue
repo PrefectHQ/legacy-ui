@@ -224,6 +224,17 @@ export default {
           </truncate>
         </template>
 
+        <template #item.flow.name="{ item }">
+          <truncate :content="item.flow.name">
+            <router-link
+              class="link text-truncate"
+              :to="{ name: 'flow', params: { id: item.flow.id } }"
+            >
+              {{ item.flow.name }}
+            </router-link>
+          </truncate>
+        </template>
+
         <template #item.scheduled_start_time="{ item }">
           <truncate :content="formatTime(item.scheduled_start_time)">
             {{ formDate(item.scheduled_start_time) }}
