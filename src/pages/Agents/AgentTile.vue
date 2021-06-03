@@ -112,7 +112,7 @@ export default {
       return this.agent.secondsSinceLastQuery
     },
     status() {
-      return this.agent.status
+      return this.agent?.lateRuns?.length ? 'late' : this.agent.status
     },
     statusColor() {
       const color =
