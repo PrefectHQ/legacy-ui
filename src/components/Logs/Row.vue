@@ -207,7 +207,9 @@ export default {
 
           <span v-if="item.tenant_id" class="px-4 d-inline-block">
             <div class="text-body-2">
-              <router-link :to="{ name: 'dashboard', tenant: team.slug }">
+              <router-link
+                :to="{ name: 'dashboard', params: { tenant: team.slug } }"
+              >
                 {{ team.name }}
               </router-link>
             </div>
