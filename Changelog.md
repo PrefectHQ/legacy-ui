@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add agent screens - [#852](https://github.com/PrefectHQ/ui/pull/852)
 
 ### Bugfixes
 
