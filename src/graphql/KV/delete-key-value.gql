@@ -1,0 +1,6 @@
+mutation DeleteKV($id: UUID!) {
+  delete_key_value(input: { key_value_id: $id }) {
+    success
+    error
+  }
+}

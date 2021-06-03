@@ -1,0 +1,5 @@
+mutation SetKV($key: String!, $value: JSON!) {
+  set_key_value(input: { key: $key, value: $value }) {
+    id
+  }
+}

@@ -1,0 +1,9 @@
+query {
+  key_value {
+    key
+    value
+    updated
+    created
+    id
+  }
+}

@@ -4,6 +4,26 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-06-02
+
+### Features and Improvements
+
+- Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
+
+### Bugfixes
+
+- Fix KV Store space formatting issue for certain characters
+
+## 2021-06-01
+
+### Features and Improvements
+
 - Add webhook and pause schedule actions to automations - [#818](https://github.com/PrefectHQ/ui/pull/818)
 
 ### Bugfixes
