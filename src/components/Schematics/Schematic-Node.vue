@@ -97,8 +97,8 @@ export default {
       })
     },
     subtitleStyle() {
-      let size = 64 * (1 / this.transform.k)
-      size = size < 64 ? 64 : size > 84 ? 84 : size
+      let size = 74 * (1 / this.transform.k)
+      size = size < 74 ? 74 : size > 84 ? 84 : size
       return {
         color: this.disabled
           ? 'var(--v-navIcons-base)'
@@ -209,10 +209,7 @@ export default {
         </v-avatar>
         {{ nodeData.data.task.name }}
       </div>
-      <div
-        class="text-h6 text-truncate font-weight-bold mt-4"
-        :style="titleStyle"
-      >
+      <div class="text-h6 text-truncate font-weight-bold" :style="titleStyle">
         <v-avatar
           v-if="isResource || isParameter"
           color="accentOrange"
@@ -227,6 +224,17 @@ export default {
         </v-avatar>
         {{ nodeData.data.name }}
       </div>
+
+      <div v-if="mappedChildren" :style="durationStyle">
+        Finished runs: {{ mappedChildren.state_counts['Success'] }} / Total
+        runs:
+        {{
+          Object.values(mappedChildren.state_counts).reduce(function(a, b) {
+            return a + b
+          }, 0)
+        }}
+      </div>
+
       <div
         v-if="showDetails && nodeData.data.start_time"
         :style="durationStyle"
@@ -256,7 +264,7 @@ export default {
 
 <style lang="scss" scoped>
 .node {
-  height: 300px;
+  height: 350px;
   left: -425px;
   pointer-events: auto;
   position: absolute;
