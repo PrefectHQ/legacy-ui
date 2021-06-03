@@ -264,11 +264,11 @@ export default {
 
 <style lang="scss" scoped>
 .node {
-  height: 350px;
+  height: 400px;
   left: -425px;
   pointer-events: auto;
   position: absolute;
-  top: -150px;
+  top: -160px;
   width: 850px;
 
   .node-content {
