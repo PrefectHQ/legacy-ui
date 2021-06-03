@@ -77,16 +77,6 @@ export default {
             <slot name="row-1-col-4-tile-1" />
           </v-col>
         </v-row>
-        <v-row class="mt-4">
-          <v-col
-            cols="12"
-            :class="{
-              'pt-8': $slots['row-0']
-            }"
-          >
-            <slot name="row-2-col-1-row-2-tile-a" />
-          </v-col>
-        </v-row>
       </v-col>
     </v-row>
 
