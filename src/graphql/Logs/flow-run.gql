@@ -1,0 +1,7 @@
+query FlowRun($id: uuid!) {
+  flow_run(where: { id: { _eq: $id } }) {
+    id
+    name
+    flow_id
+  }
+}

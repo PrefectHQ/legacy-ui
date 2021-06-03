@@ -69,8 +69,7 @@ export default {
   },
   watch: {
     where: {
-      handler(val) {
-        console.log(val)
+      handler() {
         this.logs = []
         this.logIds = []
       },

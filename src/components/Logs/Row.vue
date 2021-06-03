@@ -1,6 +1,7 @@
 <script>
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 import { IdState } from 'vue-virtual-scroller'
+import { mapGetters } from 'vuex'
 
 const logLevels = {
   DEFAULT: {
@@ -57,10 +58,18 @@ export default {
   },
   idState() {
     return {
-      active: false
+      active: false,
+      flowRunLoadingKey: 0,
+      taskRunLoadingKey: 0,
+      taskLoadingKey: 0
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenants']),
+    ...mapGetters('data', ['flows']),
+    flow() {
+      return this.flows?.find(f => f.id == this.flowRun?.flow_id)
+    },
     logLevelIcon() {
       return logLevels[this.item.level].icon
     },
@@ -70,6 +79,71 @@ export default {
     },
     logLevelText() {
       return logLevels[this.item.level].text
+    },
+    team() {
+      return this.tenants.find(t => t.id == this.item.tenant_id)
+    }
+  },
+  apollo: {
+    flowRun: {
+      query: require('@/graphql/Logs/flow-run.gql'),
+      variables() {
+        return {
+          id: this.item.object_id || this.item.flow_run_id
+        }
+      },
+      skip() {
+        return (
+          !this.active &&
+          this.item.object_table !== 'flow_run' &&
+          !this.item.flow_run_id
+        )
+      },
+      update(data) {
+        return data?.flow_run?.[0]
+      },
+      loadingKey: 'flowRunLoadingKey',
+      fetchPolicy: 'cache-first'
+    },
+    taskRun: {
+      query: require('@/graphql/Logs/task-run.gql'),
+      variables() {
+        return {
+          id: this.item.object_id || this.item.task_run_id
+        }
+      },
+      skip() {
+        return (
+          !this.active &&
+          this.item.object_table !== 'task_run' &&
+          !this.item.task_run_id
+        )
+      },
+      update(data) {
+        return data?.task_run?.[0]
+      },
+      loadingKey: 'taskRunLoadingKey',
+      fetchPolicy: 'cache-first'
+    },
+    task: {
+      query: require('@/graphql/Logs/task.gql'),
+      variables() {
+        return {
+          id: this.taskRun.task_id
+        }
+      },
+      skip() {
+        return (
+          !this.active &&
+          this.item.object_table !== 'task_run' &&
+          !this.taskRun?.task_id
+        )
+      },
+      update(data) {
+        return data?.task?.[0]
+      },
+      loadingKey: 'taskLoadingKey',
+      fetchPolicy: 'cache-first'
     }
   }
 }
@@ -116,33 +190,77 @@ export default {
           <div class="text-caption text-capitalize">Log</div>
         </div>
 
-        <div>
-          <span class="mr-4 d-inline-block">
+        <div class="pb-6 log-data">
+          <span v-if="item.level" class="pr-4 d-inline-block">
             <div class="text-body-2" :style="{ color: logLevelColor }">
-              <v-chip :color="logLevelColor" small dark>
+              <v-chip :color="logLevelColor" x-small dark class="px-2 rounded">
                 {{ logLevelText }}
               </v-chip>
             </div>
             <div class="text-caption text-capitalize">Level</div>
           </span>
 
-          <span class="d-inline-block">
+          <span v-if="item.formattedTimestamp" class="px-4 d-inline-block">
             <div class="text-body-2">{{ item.formattedTimestamp }}</div>
             <div class="text-caption text-capitalize">Timestamp</div>
           </span>
-        </div>
 
-        <div class="py-6">
-          <span class="mr-4 d-inline-block">
-            <div class="text-body-2">{{ item.tenant_id }}</div>
+          <span v-if="item.tenant_id" class="px-4 d-inline-block">
+            <div class="text-body-2">
+              <router-link :to="{ name: 'dashboard', tenant: team.slug }">
+                {{ team.name }}
+              </router-link>
+            </div>
             <div class="text-caption text-capitalize">Team</div>
           </span>
 
-          <span class="d-inline-block">
+          <span v-if="item.object_table" class="px-4 d-inline-block">
             <div class="text-body-2">{{ item.object_id }}</div>
             <div class="text-caption text-capitalize">
               {{ item.object_table }}
             </div>
+          </span>
+
+          <span v-if="item.flow_run_id && flow" class="px-4 d-inline-block">
+            <div class="text-body-2">
+              <router-link
+                :to="{
+                  name: 'flow',
+                  params: { tenant: team.slug, id: flow.id }
+                }"
+              >
+                {{ flow.name }}
+              </router-link>
+            </div>
+            <div class="text-caption text-capitalize">Flow</div>
+          </span>
+
+          <span v-if="item.flow_run_id" class="px-4 d-inline-block">
+            <div class="text-body-2">
+              <router-link
+                :to="{
+                  name: 'flow-run',
+                  params: { tenant: team.slug, id: item.flow_run_id }
+                }"
+              >
+                {{ flowRun.name }}
+              </router-link>
+            </div>
+            <div class="text-caption text-capitalize">Flow run</div>
+          </span>
+
+          <span v-if="item.task_run_id && task" class="px-4 d-inline-block">
+            <div class="text-body-2">
+              <router-link
+                :to="{
+                  name: 'task-run',
+                  params: { tenant: team.slug, id: item.task_run_id }
+                }"
+              >
+                {{ taskRun.name || task.name }}
+              </router-link>
+            </div>
+            <div class="text-caption text-capitalize">Task run</div>
           </span>
         </div>
       </div>
@@ -168,8 +286,15 @@ $highlight-color: rgba(224, 224, 255, 0.5);
   }
 
   .row-content {
+    background-color: rgba(0, 0, 0, 0.02);
     border-left: 4px solid;
     margin-left: 14px;
+
+    .log-data {
+      span:not(:last-child) {
+        border-right: 1px solid rgba(0, 0, 0, 0.15);
+      }
+    }
   }
 
   .row-header {
