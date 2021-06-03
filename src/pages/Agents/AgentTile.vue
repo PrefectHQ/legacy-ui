@@ -145,29 +145,23 @@ export default {
         )
         .map(hook => hook.action)
       return hook
+    },
+    getDateTime() {
+      if (this.agent?.created) {
+        const time = this.formatDateTime(this.agent.created)
+        const formattedTime = time.charAt(0).toLowerCase() + time.slice(1)
+        return `Created ${formattedTime}`
+      }
+      return 'No creation time recorded'
     }
   },
-  watch: {
-    statusColor() {
-      //attempt to make icon color update - not working
-      this.showIcon = false
-      setTimeout(() => {
-        this.showIcon = true
-      }, 150)
-    }
+
+  mounted() {
+    this.setRefetch()
   },
-  // mounted() {
-  //   if (this.agent?.status === 'healthy') {
-  //     this.setUpdate()
-  //   }
-  // },
-  // beforeDestroy() {
-  //   this.endUpdate()
-  // },
   methods: {
     ...mapActions('alert', ['setAlert']),
     ...mapMutations('agent', ['setRefetch']),
-    // ...mapActions('agent', ['setUpdate', 'endUpdate']),
     anyLabelsSelected(labels) {
       return labels.reduce((result, label) => this.labelSelected(label), false)
     },
@@ -383,7 +377,7 @@ export default {
         v-if="showAll"
         class="my-2 text-subtitle-1 font-weight-light black--text"
       >
-        Created {{ formatDateTime(agent.created) || 'Unknown' }}
+        {{ getDateTime }}
       </div>
 
       <div

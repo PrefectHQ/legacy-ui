@@ -451,7 +451,7 @@ a {
 }
 
 .card-content {
-  height: 330px;
+  min-height: 330px;
   overflow-y: auto;
 }
 </style>
