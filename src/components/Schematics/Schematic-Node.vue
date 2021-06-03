@@ -191,7 +191,7 @@ export default {
   >
     <div class="ml-12 node-content" style="width: calc(100% - 6rem);">
       <div
-        v-if="nodeData.data.task"
+        v-if="nodeData.data.task && !nodeData.data.mapped"
         class="text-subtitle-2 text-truncate font-weight-light"
         :style="subtitleStyle"
       >
