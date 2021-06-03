@@ -11,7 +11,7 @@ describe('Agent Vuex Module', () => {
     return {
       thresholds: {
         // Time before an agent becomes stale
-        stale: 60, // minutes since last query
+        stale: 5, // minutes since last query
         // Time before an agent becomes unhealthy
         unhealthy: 720 // minutes since last query
       },
@@ -23,8 +23,8 @@ describe('Agent Vuex Module', () => {
   describe('initial state', () => {
     it('should have a stale threshold and unhealthy threshold', () => {
       const state = agent.state
-      expect(state.thresholds.stale).toBe(3)
-      expect(state.thresholds.unhealthy).toBe(120)
+      expect(state.thresholds.stale).toBe(5)
+      expect(state.thresholds.unhealthy).toBe(720)
     })
     it('should have no agents', () => {
       const state = agent.state
@@ -66,10 +66,10 @@ describe('Agent Vuex Module', () => {
       mutations: agent.mutations
     })
 
-    it('should add new agents, and update status, when the setAgents mutation is called', () => {
+    it('should add new agents, and update status, when the setSortedAgents mutation is called', () => {
       expect(store.getters.agents).toBe(null)
       const recentDate = new Date().toISOString()
-      store.commit('setAgents', [
+      store.commit('setSortedAgents', [
         { id: '12345', last_queried: recentDate },
         { id: '67890', last_queried: '2021-04-20T23:36:24.278841+00:00' },
         { id: '09876', last_queried: NaN }
@@ -77,33 +77,6 @@ describe('Agent Vuex Module', () => {
       expect(store.getters.agents[0].status).toEqual('healthy')
       expect(store.getters.agents[1].status).toEqual('unhealthy')
       expect(store.getters.agents[2].status).toEqual('unhealthy')
-    })
-
-    it('should add submittable runs, and update status and runs, when the setSortedAgents mutation is called', () => {
-      const recentDate = new Date().toISOString()
-      store.commit('setAgents', [
-        { id: '09876', last_queried: recentDate, labels: ['dev'] },
-        { id: '12345', labels: ['prod'], last_queried: NaN }
-      ])
-      store.commit('setSortedAgents', [
-        { id: '12345', labels: ['dev'], scheduled_start_time: recentDate },
-        {
-          id: '12345',
-          labels: ['prod'],
-          scheduled_start_time: '2021-04-20T23:36:24.278841+00:00'
-        }
-      ])
-      expect(store.getters.agents[0].submittableRuns).toEqual([
-        { id: '12345', labels: ['dev'], scheduled_start_time: recentDate }
-      ])
-      expect(store.getters.agents[0].lateRuns).toEqual([])
-      expect(store.getters.agents[1].lateRuns).toEqual([
-        {
-          id: '12345',
-          labels: ['prod'],
-          scheduled_start_time: '2021-04-20T23:36:24.278841+00:00'
-        }
-      ])
     })
   })
 })
