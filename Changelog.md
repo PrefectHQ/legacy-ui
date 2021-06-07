@@ -4,11 +4,21 @@
 
 ### Features and Improvements
 
-- Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
+- None
 
 ### Bugfixes
 
 - None
+
+## 2021-06-02
+
+### Features and Improvements
+
+- Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
+
+### Bugfixes
+
+- Fix KV Store space formatting issue for certain characters
 
 ## 2021-06-01
 
