@@ -73,7 +73,6 @@ export default {
       })
     },
     async addServiceAccount() {
-      console.log(this.roleInput)
       this.isCreatingServiceUser = true
       this.accountCreationError = null
 
@@ -81,9 +80,11 @@ export default {
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/User/create-service-account.gql'),
           variables: {
-            tenant_id: this.tenant.id,
-            name: this.serviceAccountNameInput,
-            role: this.roleInput
+            input: {
+              tenant_id: this.tenant.id,
+              name: this.serviceAccountNameInput,
+              role_id: this.roleInput
+            }
           }
         })
 
@@ -115,7 +116,7 @@ export default {
           mutation: require('@/graphql/Mutations/set-membership-role.gql'),
           variables: {
             input: {
-              role: this.roleInput,
+              role_id: this.roleInput,
               membership_id: this.serviceAccountID
             }
           }
@@ -263,7 +264,7 @@ export default {
           :items="roles"
           :rules="[rules.required]"
           item-text="name"
-          item-value="name"
+          item-value="id"
           item-disabled="disabled"
         >
         </v-select>
