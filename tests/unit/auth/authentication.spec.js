@@ -91,6 +91,20 @@ describe('the authentication module', () => {
         // The parseFromUrl method is mocked to return the MOCK_TOKEN_PAYLOAD by default
         expect(history.replaceState).toHaveBeenCalledWith(null, null, '/foo')
       })
+
+      it('redirects to access denied if we fail to get tokens', async () => {
+        window.location.assign = jest.fn()
+
+        parseFromUrl.mockImplementation(() => {
+          throw new Error('access denied')
+        })
+
+        const authenticate = mod.authenticate()
+        await expect(authenticate).rejects.toThrow('Error: access denied')
+
+        expect(window.location.assign).toHaveBeenCalledWith('/access-denied')
+        window.location.assign.mockRestore()
+      })
     })
 
     describe('(not login redirect)', () => {
