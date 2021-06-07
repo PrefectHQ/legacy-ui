@@ -61,7 +61,8 @@ export default {
       active: false,
       flowRunLoadingKey: 0,
       taskRunLoadingKey: 0,
-      taskLoadingKey: 0
+      taskLoadingKey: 0,
+      linkCopied: false
     }
   },
   computed: {
@@ -82,6 +83,19 @@ export default {
     },
     team() {
       return this.tenants.find(t => t.id == this.item.tenant_id)
+    }
+  },
+  methods: {
+    copyLink() {
+      navigator.clipboard.writeText(
+        `${window.location.origin}${this.$route.path}?id=${this.item.id}`
+      )
+
+      this.idState.linkCopied = true
+
+      setTimeout(() => {
+        this.idState.linkCopied = false
+      }, 3000)
     }
   },
   apollo: {
@@ -177,6 +191,12 @@ export default {
       <span class="text-caption text--disabled ml-auto">
         {{ item.formattedTimestamp }}
       </span>
+
+      <span class="ml-2 copy-link" @click.stop="copyLink">
+        <v-icon small>
+          {{ idState.linkCopied ? 'check' : 'link' }}
+        </v-icon>
+      </span>
     </div>
 
     <transition name="expand-y">
@@ -188,6 +208,11 @@ export default {
         <div class="py-6">
           <div class="text-body-1">{{ item.message }}</div>
           <div class="text-caption text-capitalize">Log</div>
+        </div>
+
+        <div class="pb-6">
+          <div class="text-body-1">{{ item.id }}</div>
+          <div class="text-caption text-capitalize">Id</div>
         </div>
 
         <div class="pb-6 log-data">
@@ -287,6 +312,10 @@ $highlight-color: rgba(224, 224, 255, 0.5);
 
   &.active .row-header {
     background-color: $highlight-color !important;
+
+    .copy-link {
+      opacity: 1;
+    }
   }
 
   .row-content {
@@ -308,9 +337,18 @@ $highlight-color: rgba(224, 224, 255, 0.5);
       background-color: rgba(0, 0, 0, 0.02);
     }
 
-    &:hover {
+    &:hover,
+    &:focus {
       background-color: $highlight-color !important;
+
+      .copy-link {
+        opacity: 1;
+      }
     }
+  }
+
+  .copy-link {
+    opacity: 0;
   }
 }
 

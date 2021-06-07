@@ -49,6 +49,7 @@ export default {
       ignoreNextScroll: false,
       lastScroll: 0,
       loadingKey: 0,
+      logByPkLoadingKey: 0,
       logs: [],
       logIds: [],
       offset: 0,
@@ -121,6 +122,9 @@ export default {
         }
       },
       loadingKey: 'loadingKey',
+      skip() {
+        return this.logByPkLoadingKey > 0
+      },
       result({ data, loading }) {
         if (data?.log && !loading) {
           this.ignoreNextScroll = true
@@ -157,6 +161,22 @@ export default {
           }
         }
 
+        return data
+      }
+    },
+    logByPk: {
+      query: require('@/graphql/Logs/log-by-pk.gql'),
+      variables() {
+        return {
+          id: this.$route.query?.id
+        }
+      },
+      loadingKey: 'logByPkLoadingKey',
+      skip() {
+        return !this.$route.query?.id
+      },
+      result({ data, loading }) {
+        console.log(data, loading)
         return data
       }
     }

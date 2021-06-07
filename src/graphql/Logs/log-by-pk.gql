@@ -1,0 +1,9 @@
+query LogByPk($id: uuid!) {
+  log_by_pk(id: $id) {
+    id
+    object_table
+    object_id
+    timestamp
+    tenant_id
+  }
+}

@@ -14,7 +14,7 @@ export default {
   },
   computed: {
     where() {
-      return { ...this.filter, is_audit_log: { _eq: true } }
+      return { ...this.filter }
     }
   }
 }
@@ -22,7 +22,7 @@ export default {
 
 <template>
   <div class="d-flex flex-column system-logs">
-    <Toolbar v-model="filter" />
+    <Toolbar v-if="false" v-model="filter" />
     <Container :where="where" />
   </div>
 </template>
