@@ -27,6 +27,7 @@ export default {
           text: 'Type',
           value: 'name'
         },
+        { text: '', value: 'all' },
         { text: 'Read', value: 'read' },
         { text: 'Create', value: 'create' },
         { text: 'Update', value: 'update' },
@@ -37,7 +38,8 @@ export default {
       roleName: '',
       loadingKey: 0,
       allPermissions: false,
-      loadingRole: false
+      loadingRole: false,
+      showTenantAdmin: false
     }
   },
   computed: {
@@ -56,9 +58,31 @@ export default {
       //   : this.template?.permissions || this.auth?.permissions
     },
     authPermissionObject() {
-      return this.auth?.permissions?.reduce((permissionsObj, item) => {
+      let saveTenant
+      let obj = this.auth?.permissions?.reduce((permissionsObj, item) => {
         const sections = item.split(':')
+        if (!['create', 'delete', 'update', 'read'].includes(sections[0])) {
+          if (item === 'tenant:admin') this.showTenantAdmin = true
+          return permissionsObj
+        }
         if (!permissionsObj[sections[1]]) {
+          if (sections[1] === 'tenant') {
+            saveTenant = {
+              disableCreate: sections[0] !== 'create',
+              disableUpdate: sections[0] !== 'update',
+              disableRead: sections[0] !== 'read',
+              disableDelete: sections[0] !== 'delete',
+              includeUpdate: false,
+              includeCreate: false,
+              includeDelete: false,
+              includeRead: false,
+              includeAll: false,
+              name: sections[1],
+              key: item,
+              value: item
+            }
+            return permissionsObj
+          }
           permissionsObj[sections[1]] = {
             disableCreate: sections[0] !== 'create',
             disableUpdate: sections[0] !== 'update',
@@ -68,13 +92,10 @@ export default {
             includeCreate: false,
             includeDelete: false,
             includeRead: false,
+            includeAll: false,
             name: sections[1],
             key: item,
             value: item
-          }
-          if (!['create', 'delete', 'update', 'read'].includes(sections[0])) {
-            permissionsObj[sections[1]].name = item
-            permissionsObj[sections[1]].noCrud = true
           }
         } else {
           if (sections[0] === 'create')
@@ -88,20 +109,37 @@ export default {
         }
         return permissionsObj
       }, {})
+      if (saveTenant) {
+        obj = { saveTenant, ...obj }
+      }
+      if (this.showTenantAdmin) {
+        obj = {
+          TenantAdmin: {
+            name: 'Tenant Admin',
+            includeAll: false,
+            value: 'tenant:admin',
+            hideCheck: true
+          },
+          ...obj
+        }
+      }
+      return obj
     },
     templatePermissionObject() {
       if (!this.authPermissionObject) return
       const permissionsObj = this.authPermissionObject
       this.template?.permissions.map(item => {
         const sections = item.split(':')
-        if (sections[0] === 'create')
-          permissionsObj[sections[1]].includeCreate = true
-        if (sections[0] === 'read')
-          permissionsObj[sections[1]].includeRead = true
-        if (sections[0] === 'update')
-          permissionsObj[sections[1]].includeUpdate = true
-        if (sections[0] === 'delete')
-          permissionsObj[sections[1]].includeDelete = true
+        if (permissionsObj[sections[1]]) {
+          if (sections[0] === 'create')
+            permissionsObj[sections[1]].includeCreate = true
+          if (sections[0] === 'read')
+            permissionsObj[sections[1]].includeRead = true
+          if (sections[0] === 'update')
+            permissionsObj[sections[1]].includeUpdate = true
+          if (sections[0] === 'delete')
+            permissionsObj[sections[1]].includeDelete = true
+        }
       })
       return permissionsObj
     },
@@ -134,6 +172,12 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    handleAll(item) {
+      item.includeRead = item.includeAll
+      item.includeCreate = item.includeAll
+      item.includeDelete = item.includeAll
+      item.includeUpdate = item.includeAll
+    },
     handleCreateUpdateClick() {
       this.loadingRole = true
       if (this.template) this.updateRole()
@@ -152,7 +196,6 @@ export default {
           if (permission.includeUpdate)
             includedPermissions.push(`update:${permission.name}`)
         })
-        console.log(includedPermissions)
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-custom-role.gql'),
           variables: {
@@ -253,7 +296,7 @@ export default {
       ></v-text-field>
     </v-card-subtitle>
     <v-card-text>
-      <v-sheet height="300px" :style="{ overflow: 'auto' }">
+      <v-sheet height="70vh" :style="{ overflow: 'auto' }">
         <v-text-field
           v-if="!tableOnly"
           v-model="searchInput"
@@ -297,26 +340,37 @@ export default {
               class="pa-3"
             ></v-switch>
           </template> -->
+          <template #item.all="{item}">
+            <v-checkbox
+              v-model="item.includeAll"
+              :disabled="item.disableRead"
+              @click="handleAll(item)"
+            />
+          </template>
           <template #item.create="{item}">
             <v-checkbox
+              v-if="!item.hideCheck"
               v-model="item.includeCreate"
               :disabled="item.disableCreate"
             />
           </template>
           <template #item.read="{item}">
             <v-checkbox
+              v-if="!item.hideCheck"
               v-model="item.includeRead"
               :disabled="item.disableRead"
             />
           </template>
           <template #item.update="{item}">
             <v-checkbox
+              v-if="!item.hideCheck"
               v-model="item.includeUpdate"
               :disabled="item.disableUpdate"
             />
           </template>
           <template #item.delete="{item}">
             <v-checkbox
+              v-if="!item.hideCheck"
               v-model="item.includeDelete"
               :disabled="item.disableDelete"
             />
@@ -324,7 +378,7 @@ export default {
         </v-data-table>
       </v-sheet>
     </v-card-text>
-    <v-card-actions v-if="!tableOnly">
+    <v-card-actions>
       <v-spacer />
       <v-btn text color="error" @click.stop="cancel">
         Cancel
