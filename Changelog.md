@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix KV copy button issue - [#887](https://github.com/PrefectHQ/ui/pull/887)
 
 ## 2021-06-02
 
