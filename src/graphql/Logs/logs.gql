@@ -1,4 +1,45 @@
-query Logs($where: log_bool_exp!, $limit: Int, $offset: Int) {
+query Logs(
+  $where: log_bool_exp!
+  # $whereBefore: log_bool_exp!
+  # $whereAfter: log_bool_exp!
+  $limit: Int
+  $offset: Int
+) {
+  # before: log(
+  #   where: $whereBefore
+  #   limit: $limit
+  #   offset: $offset
+  #   order_by: { timestamp: desc }
+  # ) {
+  #   id
+  #   message
+  #   object_table
+  #   object_id
+  #   timestamp
+  #   flow_run_id
+  #   task_run_id
+  #   level
+  #   name
+  #   tenant_id
+  # }
+
+  # after: log(
+  #   where: $whereAfter
+  #   limit: $limit
+  #   offset: $offset
+  #   order_by: { timestamp: desc }
+  # ) {
+  #   id
+  #   message
+  #   object_table
+  #   object_id
+  #   timestamp
+  #   flow_run_id
+  #   task_run_id
+  #   level
+  #   name
+  #   tenant_id
+  # }
   log(
     where: $where
     limit: $limit

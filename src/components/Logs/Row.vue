@@ -192,11 +192,11 @@ export default {
         {{ item.formattedTimestamp }}
       </span>
 
-      <span class="ml-2 copy-link" @click.stop="copyLink">
-        <v-icon small>
+      <div class="ml-2 copy-link" :class="{ active: idState.linkCopied }">
+        <v-icon v-ripple small @click.stop="copyLink">
           {{ idState.linkCopied ? 'check' : 'link' }}
         </v-icon>
-      </span>
+      </div>
     </div>
 
     <transition name="expand-y">
@@ -349,6 +349,11 @@ $highlight-color: rgba(224, 224, 255, 0.5);
 
   .copy-link {
     opacity: 0;
+    transition: opacity 50ms;
+
+    &.active {
+      opacity: 1;
+    }
   }
 }
 

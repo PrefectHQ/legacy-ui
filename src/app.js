@@ -271,6 +271,66 @@ Vue.mixin({
   }
 })
 
+Vue.directive('longpress', {
+  bind: function(el, binding, vNode) {
+    if (typeof binding.value !== 'function') {
+      const component = vNode.context.name
+      let warn = `[longpress:] provided expression '${binding.expression}' is not a function`
+      if (component) {
+        warn += ` (found in component '${component}')`
+      }
+
+      // eslint-disable-next-line no-console
+      console.warn(warn)
+    }
+
+    let pressTimer = null
+
+    let timeout = 150
+
+    let start = e => {
+      if (e.buttons !== 1) return
+
+      if (pressTimer === null) {
+        // Run handler immediately for single clicks
+        handler()
+
+        const fn = () => {
+          timeout = timeout <= 50 ? 50 : timeout * 0.91
+          pressTimer = setTimeout(() => {
+            handler()
+            if (pressTimer) {
+              fn()
+            }
+          }, timeout)
+        }
+
+        fn()
+      }
+    }
+
+    let cancel = () => {
+      if (pressTimer !== null) {
+        clearTimeout(pressTimer)
+        pressTimer = null
+        timeout = 150
+      }
+    }
+    // Run Function
+    const handler = e => {
+      binding.value(e)
+    }
+
+    el.addEventListener('mousedown', start)
+    el.addEventListener('touchstart', start)
+
+    el.addEventListener('click', cancel)
+    el.addEventListener('mouseout', cancel)
+    el.addEventListener('touchend', cancel)
+    el.addEventListener('touchcancel', cancel)
+  }
+})
+
 try {
   if (navigator?.platform !== 'MacIntel') {
     document.body.classList.add('not-mac')

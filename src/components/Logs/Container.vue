@@ -42,6 +42,7 @@ export default {
   //   }
   data() {
     return {
+      centerTimestamp: null,
       currentFirst: null,
       previousFirst: null,
       currentScrollPosition: 0,
@@ -117,7 +118,9 @@ export default {
         return {
           //   is_audit_log: { _eq: true }
           where: this.where,
-          limit: 100,
+          // whereBefore: {...this.where, timestamp: { _gte: this.centerTimestamp }},
+          // whereAfter: {...this.where, timestamp: { _gte: this.centerTimestamp }},
+          limit: 50,
           offset: this.offset
         }
       },
@@ -176,8 +179,9 @@ export default {
         return !this.$route.query?.id
       },
       result({ data, loading }) {
-        console.log(data, loading)
-        return data
+        if (!data?.log_by_pk || loading) return
+        this.centerTimestamp = data.log_by_pk.timestamp
+        return data.log_by_pk
       }
     }
   }
