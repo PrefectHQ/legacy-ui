@@ -229,7 +229,12 @@ export default {
         <div class="text-body-1 utilGrayMid--text">{{ role }}</div>
       </div>
     </div>
-    <v-menu v-model="model" offset-x :close-on-content-click="false">
+    <v-menu
+      v-model="model"
+      offset-x
+      :close-on-content-click="false"
+      max-height="60vh"
+    >
       <template #activator="{ on }">
         <v-list-item
           class="py-0"
