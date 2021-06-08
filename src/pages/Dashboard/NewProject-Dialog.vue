@@ -76,13 +76,15 @@ export default {
       }
     },
     goToProject() {
-      this.$router.push({
-        name: 'project',
-        params: {
-          id: this.projectId,
-          tenant: this.tenant.slug
-        }
-      })
+      this.$router
+        .push({
+          name: 'project',
+          params: {
+            id: this.projectId,
+            tenant: this.tenant.slug
+          }
+        })
+        .catch(e => e)
       this.reset()
     },
     reset() {
