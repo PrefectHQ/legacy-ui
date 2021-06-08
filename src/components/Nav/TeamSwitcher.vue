@@ -276,7 +276,7 @@ export default {
           <v-btn
             class="mx-auto"
             :disabled="loading"
-            :to="{ name: 'new-team' }"
+            :to="{ name: 'admin' }"
             block
             color="primary"
             depressed

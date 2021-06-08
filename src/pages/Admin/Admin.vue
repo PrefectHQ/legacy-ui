@@ -41,11 +41,16 @@ export default {
         />
       </span>
 
-      <span slot="page-title">New team</span>
+      <span slot="page-title">{{ $route.name }}</span>
     </SubPageNav>
+
+    <router-view class="container-body" />
   </v-sheet>
 </template>
 
 <style lang="scss" scoped>
-/* */
+.container-body {
+  max-width: 1440px;
+  padding-top: 80px;
+}
 </style>

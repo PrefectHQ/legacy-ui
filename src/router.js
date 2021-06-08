@@ -221,7 +221,9 @@ export const routes = [
     name: 'calendar',
     path: '/:tenant?/calendar',
     component: () =>
-      import(/*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View')
+      import(
+        /* webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
+      )
   },
   // --------------------------- //
   //
@@ -351,10 +353,19 @@ export const routes = [
       import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue')
   },
   {
-    name: 'new-team',
-    path: '/new-team',
+    name: 'admin',
+    path: '/admin',
+    redirect: { name: 'new-team' },
     component: () =>
-      import(/* webpackChunkName: "new-team" */ '@/pages/NewTeam.vue')
+      import(/* webpackChunkName: "admin" */ '@/pages/Admin/Admin.vue'),
+    children: [
+      {
+        name: 'new-team',
+        path: 'new-team',
+        component: () =>
+          import(/* webpackChunkName: "new-team" */ '@/pages/Admin/NewTeam.vue')
+      }
+    ]
   },
   {
     name: 'team-switched',

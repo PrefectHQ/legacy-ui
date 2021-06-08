@@ -67,7 +67,7 @@ export default {
               <slot v-if="$slots['page-type']" name="page-type"></slot>
               <span v-else class="text-overline">{{ pageType }}</span>
             </div>
-            <div class="text-h5">
+            <div class="text-h5 mt-n1">
               <slot name="page-title"></slot>
             </div>
           </div>
