@@ -38,8 +38,7 @@ query { hello }
         'task_tag_limit',
         'taskTagUsage',
         'task_tag_usage',
-        'mapped_children',
-        'permissions_info'
+        'mapped_children'
       ]
     }
   },
