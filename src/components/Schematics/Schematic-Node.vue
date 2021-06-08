@@ -96,6 +96,11 @@ export default {
         }
       })
     },
+    finishedStates() {
+      return this.segments
+        .filter(s => FINISHED_STATES.includes(s.label))
+        .reduce((accum, item) => accum + item.value, 0)
+    },
     subtitleStyle() {
       let size = 64 * (1 / this.transform.k)
       size = size < 64 ? 64 : size > 84 ? 84 : size
@@ -117,17 +122,6 @@ export default {
         'font-size': `${size}px !important`,
         'line-height': `${size + 10}px !important`
       }
-    },
-    totalRuns() {
-      if (!this.mappedChildren) return
-
-      return Object.values(this.mappedChildren.state_counts).reduce(function(
-        a,
-        b
-      ) {
-        return a + b
-      },
-      0)
     }
   },
   methods: {
@@ -226,15 +220,13 @@ export default {
 
       <div v-if="mappedChildren" :style="durationStyle">
         <div v-if="showDetails">
-          {{
-            mappedChildren.state_counts['Success']
-              ? mappedChildren.state_counts['Success']
-              : 0
-          }}/{{ totalRuns }} {{ totalRuns > 1 ? 'runs' : 'run' }} complete
+          {{ finishedStates }}/{{ nodeData.data.serialized_state.n_map_states }}
+          {{ nodeData.data.serialized_state.n_map_states > 1 ? 'runs' : 'run' }}
+          complete
         </div>
 
         <div v-else class="mt-2">
-          {{ mappedChildren.state_counts['Success'] }}/{{ totalRuns }}
+          {{ finishedStates }}/{{ nodeData.data.serialized_state.n_map_states }}
         </div>
       </div>
 
