@@ -117,6 +117,17 @@ export default {
         'font-size': `${size}px !important`,
         'line-height': `${size + 10}px !important`
       }
+    },
+    totalRuns() {
+      if (!this.mappedChildren) return
+
+      return Object.values(this.mappedChildren.state_counts).reduce(function(
+        a,
+        b
+      ) {
+        return a + b
+      },
+      0)
     }
   },
   methods: {
@@ -195,6 +206,9 @@ export default {
         class="text-subtitle-2 text-truncate font-weight-light"
         :style="subtitleStyle"
       >
+        {{ nodeData.data.task.name }}
+      </div>
+      <div class="text-h6 text-truncate font-weight-bold" :style="titleStyle">
         <v-avatar
           v-if="isResource || isParameter"
           color="accentOrange"
@@ -207,14 +221,21 @@ export default {
             >R</span
           >
         </v-avatar>
-        {{ nodeData.data.task.name }}
-      </div>
-      <div class="text-h6 text-truncate font-weight-bold" :style="titleStyle">
         {{ nodeData.data.name }}
       </div>
 
-      <div v-if="showDetails && mappedChildren" :style="durationStyle">
-        Current/total: {{ mappedChildren.state_counts['Success'] }}
+      <div v-if="mappedChildren" :style="durationStyle">
+        <div v-if="showDetails">
+          {{
+            mappedChildren.state_counts['Success']
+              ? mappedChildren.state_counts['Success']
+              : 0
+          }}/{{ totalRuns }} {{ totalRuns > 1 ? 'runs' : 'run' }} complete
+        </div>
+
+        <div v-else class="mt-2">
+          {{ mappedChildren.state_counts['Success'] }}/{{ totalRuns }}
+        </div>
       </div>
 
       <div
