@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Fix KV copy button issue - [#887](https://github.com/PrefectHQ/ui/pull/887)
+- Check explicitly for map index of 0 to avoid falsey in restart button []()
 
 ## 2021-06-02
 
