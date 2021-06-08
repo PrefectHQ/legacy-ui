@@ -351,6 +351,12 @@ export const routes = [
       import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue')
   },
   {
+    name: 'new-team',
+    path: '/new-team',
+    component: () =>
+      import(/* webpackChunkName: "new-team" */ '@/pages/NewTeam.vue')
+  },
+  {
     name: 'team-switched',
     path: '/team-switched',
     component: () =>
