@@ -46,7 +46,12 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
+    ...mapGetters('license', [
+      'license',
+      'hasPermission',
+      'allowedUsers',
+      'role'
+    ]),
     editedRoles() {
       if (!this.roles) return []
       const defaultRoles = this.roles?.filter(role =>
@@ -58,11 +63,18 @@ export default {
       return [...defaultRoles, ...tenantRoles]
     }
   },
+  created() {
+    this.template = this.editedRoles?.filter(role => role.id === this.role)[0]
+  },
   methods: {
     ...mapActions('alert', ['setAlert']),
     // permissionList(list) {
     //   return list.permissions.splice(',')
     // },
+    handleRoleSelect(role) {
+      console.log('role Select', this.defaultRole)
+      this.template = role
+    },
     handleAlert(type, message) {
       this.setAlert({
         alertShow: true,
@@ -142,16 +154,18 @@ export default {
         <v-divider></v-divider>
 
         <v-list dense nav>
-          <v-list-item v-for="item in roles" :key="item.value" link>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+          <v-list-item-group v-model="template" color="primary">
+            <v-list-item v-for="item in editedRoles" :key="item.value" link>
+              <v-list-item-content @click="handleRoleSelect(item)">
+                <v-list-item-title>{{ item.name }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
         </v-list>
       </v-navigation-drawer>
     </v-col>
     <v-col cols="9" class="pa-0">
-      <CreateRoleTable />
+      <CreateRoleTable table-only :template="template" />
     </v-col>
   </v-row>
 </template>
