@@ -3,11 +3,11 @@ import { mapActions } from 'vuex'
 export default {
   components: {},
   props: {
-    clear: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
+    // clear: {
+    //   type: Boolean,
+    //   required: false,
+    //   default: false
+    // },
     template: {
       type: Object,
       required: false,
@@ -125,8 +125,34 @@ export default {
       }
       return obj
     },
+
+    permissions() {
+      if (!this.authPermissionObject && !this.templatePermissionObject)
+        return []
+      const permissionObject = this.templatePermissionObject()
+
+      return Object.values(permissionObject)
+    },
+    loading() {
+      return this.loadingKey > 0
+    }
+  },
+  watch: {
+    // clear(val) {
+    //   if (val) {
+    //     this.includedPermissions = []
+    //     this.roleName = ''
+    //     this.$emit('reset')
+    //   }
+    // }
+    // template(val) {
+    //   this.roleName = val.name
+    //   this.includedPermissions = this.permissions
+    // }
+  },
+  methods: {
+    ...mapActions('alert', ['setAlert']),
     templatePermissionObject() {
-      console.log('heelo')
       if (!this.authPermissionObject) return
       const permissionsObj = this.authPermissionObject
       Object.values(permissionsObj).map(obj => {
@@ -135,7 +161,6 @@ export default {
         obj.includeUpdate = false
         obj.includeDelete = false
       })
-      console.log('template', this.template, permissionsObj)
       this.template?.permissions?.map(item => {
         const sections = item.split(':')
         if (permissionsObj[sections[1]]) {
@@ -151,32 +176,6 @@ export default {
       })
       return permissionsObj
     },
-    permissions() {
-      if (!this.authPermissionObject && !this.templatePermissionObject)
-        return []
-      const permissionObject = this.templatePermissionObject
-
-      return Object.values(permissionObject)
-    },
-    loading() {
-      return this.loadingKey > 0
-    }
-  },
-  watch: {
-    clear(val) {
-      if (val) {
-        this.includedPermissions = []
-        this.roleName = ''
-        this.$emit('reset')
-      }
-    },
-    template(val) {
-      this.roleName = val.name
-      this.includedPermissions = this.permissions
-    }
-  },
-  methods: {
-    ...mapActions('alert', ['setAlert']),
     handleAll(item) {
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
@@ -225,7 +224,7 @@ export default {
         })
       } finally {
         this.loadingRole = false
-        this.cancel()
+        this.reset()
       }
     },
     async updateRole() {
@@ -268,11 +267,11 @@ export default {
         })
       } finally {
         this.loadingRole = false
-        this.cancel()
+        this.reset()
       }
     },
-    cancel() {
-      this.includedPermissions = []
+    reset() {
+      this.templatePermissionObject()
       this.roleName = ''
       this.$emit('close')
     }
@@ -383,15 +382,14 @@ export default {
         </v-data-table>
       </v-sheet>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions v-if="!template.default">
       <v-spacer />
-      <v-btn text color="error" @click.stop="cancel">
-        Cancel
+      <v-btn text @click.stop="reset">
+        Reset
       </v-btn>
       <v-btn
         color="primary"
         :loading="loadingRole"
-        :disabled="!roleName"
         @click.stop="handleCreateUpdateClick"
       >
         {{ template ? 'Update' : 'Create' }} Role

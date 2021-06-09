@@ -76,7 +76,6 @@ export default {
           )[0]
         this.template = role
       }
-      console.log('watch', this.template)
     }
   },
   methods: {
@@ -88,12 +87,13 @@ export default {
         .map(
           word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
         )
-      console.log(newName.join(' '))
       return newName.join(' ')
     },
-    handleRoleSelect(role) {
+    handleRoleSelect(role, roleType) {
       this.useDefault = false
-      console.log('role Select', role, this.template)
+      if (roleType === 'default') {
+        role = { ...role, default: true }
+      }
       this.template = role
     },
     handleAlert(type, message) {
@@ -179,7 +179,7 @@ export default {
             :key="item.name"
             link
           >
-            <v-list-item-content @click="handleRoleSelect(item)">
+            <v-list-item-content @click="handleRoleSelect(item, 'default')">
               <v-list-item-title
                 :class="
                   template && template.name == item.name ? 'blue--text' : ''
@@ -213,7 +213,7 @@ export default {
             :key="item.value"
             link
           >
-            <v-list-item-content @click="handleRoleSelect(item)">
+            <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
               <v-list-item-title
                 :class="
                   template && template.name == item.name ? 'blue--text' : ''
