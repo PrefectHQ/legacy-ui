@@ -28,6 +28,7 @@ export default {
       v-if="!multitenancy"
       class="text-h5 text-center blue-grey--text d-flex align-center justify-center"
       style="height: 400px;"
+      fluid
     >
       <div>
         <i class="fad fa-lock-alt fa-3x" />
@@ -47,18 +48,49 @@ export default {
       </div>
     </v-container>
 
-    <v-container v-else>
-      <div class="d-flex justify-space-around align-center">
-        <div>(1) Create team</div>
-        <v-divider />
-        <div>(2) Invite users</div>
+    <v-container v-else fluid>
+      <div
+        class="d-flex justify-center align-center mx-auto mb-4"
+        style="max-width: 400px;"
+      >
+        <div
+          class="rounded-circle d-flex align-center justify-center step text-h5"
+          :class="{ active: step == 1 }"
+        >
+          <v-icon>people_alt</v-icon>
+        </div>
+        <v-divider
+          style="border-width: 1px;"
+          :style="{
+            'border-color': step == 2 ? 'var(--v-primary-base)' : null
+          }"
+        />
+        <div
+          class="rounded-circle d-flex align-center justify-center step text-h5"
+          :class="{ active: step == 2 }"
+        >
+          <v-icon>person_add_alt_1</v-icon>
+        </div>
       </div>
-      <TeamForm />
-      <InviteUsers />
+
+      <transition name="quick-fade" mode="out-in">
+        <TeamForm v-if="step === 1" :key="1" />
+        <InviteUsers v-else-if="step === 2" :key="2" />
+      </transition>
     </v-container>
   </div>
 </template>
 
 <style lang="scss" scoped>
-/* */
+.step {
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  height: 34px;
+  transition: all 200ms;
+  width: 34px;
+
+  &.active {
+    border-color: var(--v-primary-base);
+    border-width: 3px;
+  }
+}
 </style>

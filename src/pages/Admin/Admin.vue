@@ -52,11 +52,7 @@ export default {
     </SubPageNav>
 
     <div class="container-body mx-auto">
-      <v-card class="utilGrayDark--text mx-4 " flat outlined>
-        <v-card-text>
-          <router-view />
-        </v-card-text>
-      </v-card>
+      <router-view />
     </div>
   </v-sheet>
 </template>

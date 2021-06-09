@@ -1,0 +1,6 @@
+mutation DeleteEnterpriseTenant($input: delete_enterprise_tenant_input!) {
+  delete_enterprise_tenant(input: $input) {
+    success
+    error
+  }
+}

@@ -8,14 +8,20 @@ const animalsLength = animals.length
 export default {
   data() {
     return {
+      loading: false,
       teamName: this.generateRandomName(),
-      teamSlug: null
+      teamSlug: null,
+      slugErrors: [],
+
+      // Regexes to check if a slug is invalid
+      slugCharRegex: /^[a-z0-9|-]*$/,
+      dashPositionRegex: /^(-)|-{2,}|(-)$/
     }
   },
   watch: {
     teamName(val) {
       try {
-        this.teamSlug = this.slugifyTeamName(val)
+        this.teamSlug = this.slugifyString(val)
       } catch {
         /* */
       }
@@ -44,72 +50,165 @@ export default {
           .replace(/[^a-zA-Z0-9-_]/g, '')
           .toLowerCase()
       )
+    },
+    checkSlug(slug) {
+      this.slugErrors = []
+
+      // If slug is not provided, reset to original value
+      //
+      // Make this field required if there is no original value
+      if (slug === '') {
+        if (!this.tenant.slug) {
+          this.slugErrors = ['A URL slug for your team is required.']
+        } else {
+          this.tenantChanges.slug = this.tenant.slug
+        }
+        return
+      }
+
+      if (slug.length < 3) {
+        this.slugErrors = ['URL slug must contain a minimum of 3 characters.']
+        return
+      }
+
+      if (!this.slugCharRegex.test(slug)) {
+        this.slugErrors = [
+          'URL slugs can only contain lowercase letters, numbers, and dashes.'
+        ]
+        return
+      }
+
+      if (this.dashPositionRegex.test(slug)) {
+        this.slugErrors = [
+          'URL slugs cannot begin or end with a dash or contain more than 1 dash in a row.'
+        ]
+      }
+    },
+    async createTenant() {
+      this.loading = true
+      try {
+        const res = await this.$apollo.mutate({
+          mutation: require('@/graphql/Tenant/create-enterprise-tenant.gql'),
+          variables: {
+            input: {
+              name: this.teamName,
+              slug: this.teamSlug
+            }
+          }
+        })
+
+        console.log(res)
+        this.$globalApolloQueries['tenants'].refetch()
+      } catch (e) {
+        if (e?.toString().includes('Uniqueness violation')) {
+          this.slugErrors = ['Sorry, that URL slug is already in use.']
+        }
+      } finally {
+        this.loading = false
+      }
     }
   }
 }
 </script>
 
 <template>
-  <v-container fluid>
-    <v-row class="my-2 pb-8" no-gutters>
-      <v-col cols="12" md="3">
-        <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
-          <div class="text-h5">
-            Name
-          </div>
-        </div>
-      </v-col>
+  <v-card class="utilGrayDark--text mx-4 " flat outlined>
+    <v-card-text>
+      <v-container fluid>
+        <v-row class="my-2 pb-8" no-gutters>
+          <v-col cols="12">
+            <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
+              <div class="text-h4 font-weight-light">
+                Create your team
+              </div>
+            </div>
+          </v-col>
+        </v-row>
 
-      <v-col cols="12" md="9">
-        <div class=" mt-4 mt-md-0 d-flex align-center">
-          <v-btn
-            color="primary"
-            fab
-            depressed
-            x-small
-            title="Randomize team name"
-            @click="teamName = generateRandomName()"
-          >
-            <v-icon>fad fa-random</v-icon>
-          </v-btn>
+        <v-row class="my-2 pb-8" no-gutters>
+          <v-col cols="12" md="3">
+            <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
+              <div class="text-h5">
+                Name
+              </div>
+            </div>
+          </v-col>
 
-          <v-text-field
-            v-model="teamName"
-            placeholder="Team name"
-            class="ml-2 text-h5"
-            hide-details
-            outlined
-            dense
-          />
-        </div>
-      </v-col>
-    </v-row>
+          <v-col cols="12" md="9">
+            <div class=" mt-4 mt-md-0 d-flex align-center">
+              <v-btn
+                color="primary"
+                fab
+                depressed
+                x-small
+                title="Randomize team name"
+                @click="teamName = generateRandomName()"
+              >
+                <v-icon>fad fa-random</v-icon>
+              </v-btn>
 
-    <v-row class="my-2 pb-8" no-gutters>
-      <v-col cols="12" md="3">
-        <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
-          <div class="text-h5">
-            Slug
-          </div>
-        </div>
-      </v-col>
+              <v-text-field
+                v-model="teamName"
+                placeholder="Team name"
+                class="ml-2 text-h5"
+                hide-details
+                outlined
+                dense
+              />
+            </div>
+          </v-col>
+        </v-row>
 
-      <v-col cols="12" md="9">
-        <div class=" mt-4 mt-md-0 d-flex align-center">
-          <v-text-field
-            v-model="teamSlug"
-            placeholder="URL slug"
-            class="ml-2 text-h5"
-            hide-details
-            outlined
-            dense
-          />
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
+        <v-row class="my-2 pb-8" no-gutters>
+          <v-col cols="12" md="3">
+            <div class="py-0" :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }">
+              <div class="text-h5">
+                Slug
+              </div>
+            </div>
+          </v-col>
+
+          <v-col cols="12" md="9">
+            <div class=" mt-4 mt-md-0 d-flex align-center">
+              <v-text-field
+                v-model="teamSlug"
+                placeholder="URL slug"
+                class="ml-2 text-h5"
+                outlined
+                :error-messages="slugErrors"
+                dense
+                @change="checkSlug"
+              />
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+
+    <v-card-actions class="create-tenant-actions px-4 d-flex align-center">
+      <v-spacer></v-spacer>
+
+      <v-btn
+        class="text-none text-h5 px-4"
+        color="primary"
+        depressed
+        x-large
+        :loading="loading"
+        :disabled="teamName && teamSlug && slugErrors.length > 0"
+        @click="createTenant"
+      >
+        Create
+        <!-- <i class="fad fa-rocket ml-2" /> -->
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <style lang="scss" scoped>
-/* */
+.create-tenant-actions {
+  background-color: var(--v-appForeground-base);
+  border-top: 1px solid var(--v-utilGrayLight-base);
+  height: 86px;
+  width: 100%;
+}
 </style>
