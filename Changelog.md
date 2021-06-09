@@ -29,6 +29,7 @@
 
 ### Bugfixes
 
+- Display task run name in Schematic - [#863](https://github.com/PrefectHQ/ui/pull/863)
 - Various bugfixes related to null tenants and team invitaitons - [#862](https://github.com/PrefectHQ/ui/pull/862)
 
 ## 2021-05-25
