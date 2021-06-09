@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Replaces everywhere we are using this.tenant.role with the hasPermission check - [#892](https://github.com/PrefectHQ/ui/pull/892)
 
 ### Bugfixes
 
