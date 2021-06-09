@@ -60,11 +60,19 @@ export default {
       const tenantRoles = this.roles?.filter(
         role => role.tenant_id === this.tenant.id
       )
-      return [...defaultRoles, ...tenantRoles]
+      return { defaultRoles, tenantRoles }
     }
   },
-  created() {
-    this.template = this.editedRoles?.filter(role => role.id === this.role)[0]
+  watch: {
+    editedRoles() {
+      const role =
+        this.editedRoles?.tenantRoles?.filter(
+          role => role.id === this.role
+        )[0] ||
+        this.editedRoles?.defaultRoles?.filter(role => role.id === this.role)[0]
+      console.log(role)
+      this.template = role
+    }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
@@ -72,7 +80,7 @@ export default {
     //   return list.permissions.splice(',')
     // },
     handleRoleSelect(role) {
-      console.log('role Select', this.defaultRole)
+      console.log('role Select', role, this.template)
       this.template = role
     },
     handleAlert(type, message) {
@@ -143,19 +151,55 @@ export default {
   <v-row>
     <v-col cols="3" class="pa-0 ma-0">
       <v-navigation-drawer permanent class="ma-0" width="100%">
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title class="text-h6">
-              Roles
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-divider></v-divider>
-
         <v-list dense nav>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>
+                Default Roles
+              </v-list-item-title>
+              <v-divider></v-divider>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item
+            v-for="item in editedRoles.defaultRoles"
+            :key="item.name"
+            link
+          >
+            <v-list-item-content @click="handleRoleSelect(item)">
+              <v-list-item-title
+                :class="
+                  template && template.name == item.name ? 'blue--text' : ''
+                "
+                >{{ item.name }}</v-list-item-title
+              >
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+
+        <v-list
+          v-if="
+            editedRoles &&
+              editedRoles.tenantRoles &&
+              editedRoles.tenantRoles.length
+          "
+          dense
+          nav
+        >
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>
+                Custom Roles
+              </v-list-item-title>
+              <v-divider></v-divider>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item-group v-model="template" color="primary">
-            <v-list-item v-for="item in editedRoles" :key="item.value" link>
+            <v-list-item
+              v-for="item in editedRoles.tenantRoles"
+              :key="item.value"
+              link
+            >
               <v-list-item-content @click="handleRoleSelect(item)">
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
               </v-list-item-content>

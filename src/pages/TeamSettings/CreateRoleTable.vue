@@ -128,7 +128,13 @@ export default {
     templatePermissionObject() {
       if (!this.authPermissionObject) return
       const permissionsObj = this.authPermissionObject
-      this.template?.permissions.map(item => {
+      Object.values(permissionsObj).map(obj => {
+        obj.includeCreate = false
+        obj.includeRead = false
+        obj.includeUpdate = false
+        obj.includeDelete = false
+      })
+      this.template?.permissions?.map(item => {
         const sections = item.split(':')
         if (permissionsObj[sections[1]]) {
           if (sections[0] === 'create')
