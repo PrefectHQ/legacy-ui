@@ -3,10 +3,14 @@ import { mapGetters } from 'vuex'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import SubPageNav from '@/layouts/SubPageNav'
 
+const pageTitles = {
+  'new-team': 'New team'
+}
+
 export default {
   metaInfo() {
     return {
-      titleTemplate: '%s - New team'
+      titleTemplate: `%s - Admin | ${this.pageTitle}`
     }
   },
   components: {
@@ -14,14 +18,17 @@ export default {
     SubPageNav
   },
   computed: {
-    ...mapGetters('tenant', ['tenant'])
+    ...mapGetters('tenant', ['tenant']),
+    pageTitle() {
+      return pageTitles[this.$route.name]
+    }
   }
 }
 </script>
 
 <template>
   <v-sheet color="appBackground" class="position-relative">
-    <SubPageNav icon="groups" page-type="New team">
+    <SubPageNav icon="groups" :page-type="pageTitle">
       <span
         slot="breadcrumbs"
         :style="
@@ -41,16 +48,22 @@ export default {
         />
       </span>
 
-      <span slot="page-title">{{ $route.name }}</span>
+      <span slot="page-title">{{ pageTitle }}</span>
     </SubPageNav>
 
-    <router-view class="container-body" />
+    <div class="container-body mx-auto">
+      <v-card class="utilGrayDark--text mx-4 " flat outlined>
+        <v-card-text>
+          <router-view />
+        </v-card-text>
+      </v-card>
+    </div>
   </v-sheet>
 </template>
 
 <style lang="scss" scoped>
 .container-body {
   max-width: 1440px;
-  padding-top: 80px;
+  padding-top: 85px;
 }
 </style>
