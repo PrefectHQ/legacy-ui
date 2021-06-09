@@ -24,6 +24,8 @@ export default {
       deletingRole: null,
       defaultRoles: DEFAULT_ROLES,
       useDefault: true,
+      roleName: '',
+      addRole: false,
       headers: [
         {
           text: 'Name',
@@ -93,6 +95,11 @@ export default {
       this.useDefault = false
       if (roleType === 'default') {
         role = { ...role, default: true }
+      }
+      if (roleType === 'new') {
+        this.addRole = true
+      } else {
+        this.addRole = false
       }
       this.template = role
     },
@@ -222,13 +229,25 @@ export default {
               >
             </v-list-item-content>
           </v-list-item>
+          <v-list-item v-if="addRole">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-text-field
+                  v-model="roleName"
+                  required
+                  placeholder="Role Name"
+                ></v-text-field
+              ></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
+
         <div class="text-center mt-8">
           <v-btn
             color="primary"
             class="white--text"
             large
-            @click="handleRoleSelect(null)"
+            @click="handleRoleSelect(null, 'new')"
           >
             <v-icon left>
               person_add
@@ -239,7 +258,7 @@ export default {
       </v-navigation-drawer>
     </v-col>
     <v-col cols="9" class="pa-0">
-      <CreateRoleTable table-only :template="template" />
+      <CreateRoleTable table-only :template="template" :role-name="roleName" />
     </v-col>
   </v-row>
 </template>

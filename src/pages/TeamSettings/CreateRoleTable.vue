@@ -8,6 +8,11 @@ export default {
     //   required: false,
     //   default: false
     // },
+    roleName: {
+      type: String,
+      required: false,
+      default: ''
+    },
     template: {
       type: Object,
       required: false,
@@ -35,7 +40,7 @@ export default {
       ],
       includedPermissions: [],
       searchInput: '',
-      roleName: '',
+      // roleName: '',
       loadingKey: 0,
       allPermissions: false,
       loadingRole: false,
@@ -137,25 +142,14 @@ export default {
       return this.loadingKey > 0
     }
   },
-  watch: {
-    // clear(val) {
-    //   if (val) {
-    //     this.includedPermissions = []
-    //     this.roleName = ''
-    //     this.$emit('reset')
-    //   }
-    // }
-    // template(val) {
-    //   this.roleName = val.name
-    //   this.includedPermissions = this.permissions
-    // }
-  },
+  watch: {},
   methods: {
     ...mapActions('alert', ['setAlert']),
     templatePermissionObject() {
+      console.log('temp', this.template)
       if (!this.authPermissionObject) return
       const permissionsObj = this.authPermissionObject
-      Object.values(permissionsObj).map(obj => {
+      Object?.values(permissionsObj).map(obj => {
         obj.includeCreate = false
         obj.includeRead = false
         obj.includeUpdate = false
@@ -272,7 +266,7 @@ export default {
     },
     reset() {
       this.templatePermissionObject()
-      this.roleName = ''
+      // this.roleName = ''
       this.$emit('close')
     }
   },
@@ -291,13 +285,13 @@ export default {
   <v-card width="100%">
     <v-card-title v-if="!tableOnly"> Add name and permissions</v-card-title>
     <v-card-subtitle v-if="!tableOnly" class="mt-4 pb-0">
-      <v-text-field
+      <!-- <v-text-field
         v-model="roleName"
         :disabled="!!template"
         outlined
         required
         placeholder="Role Name"
-      ></v-text-field>
+      ></v-text-field> -->
     </v-card-subtitle>
     <v-card-text>
       <v-sheet height="70vh" :style="{ overflow: 'auto' }">
@@ -382,7 +376,7 @@ export default {
         </v-data-table>
       </v-sheet>
     </v-card-text>
-    <v-card-actions v-if="!template.default">
+    <v-card-actions v-if="!template || !template.default">
       <v-spacer />
       <v-btn text @click.stop="reset">
         Reset
