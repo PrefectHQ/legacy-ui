@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add the `mapped_children` route to the IAPI allow-list - [#891](https://github.com/PrefectHQ/ui/pull/891)
 
 ### Bugfixes
 
