@@ -66,23 +66,23 @@ export default {
           return permissionsObj
         }
         if (!permissionsObj[sections[1]]) {
-          if (sections[1] === 'tenant') {
-            saveTenant = {
-              disableCreate: sections[0] !== 'create',
-              disableUpdate: sections[0] !== 'update',
-              disableRead: sections[0] !== 'read',
-              disableDelete: sections[0] !== 'delete',
-              includeUpdate: false,
-              includeCreate: false,
-              includeDelete: false,
-              includeRead: false,
-              includeAll: false,
-              name: sections[1],
-              key: item,
-              value: item
-            }
-            return permissionsObj
-          }
+          // if (sections[1] === 'tenant') {
+          //   saveTenant = {
+          //     disableCreate: sections[0] !== 'create',
+          //     disableUpdate: sections[0] !== 'update',
+          //     disableRead: sections[0] !== 'read',
+          //     disableDelete: sections[0] !== 'delete',
+          //     includeUpdate: false,
+          //     includeCreate: false,
+          //     includeDelete: false,
+          //     includeRead: false,
+          //     includeAll: false,
+          //     name: sections[1],
+          //     key: item,
+          //     value: item
+          //   }
+          //   return permissionsObj
+          // }
           permissionsObj[sections[1]] = {
             disableCreate: sections[0] !== 'create',
             disableUpdate: sections[0] !== 'update',
@@ -126,6 +126,7 @@ export default {
       return obj
     },
     templatePermissionObject() {
+      console.log('heelo')
       if (!this.authPermissionObject) return
       const permissionsObj = this.authPermissionObject
       Object.values(permissionsObj).map(obj => {
@@ -134,6 +135,7 @@ export default {
         obj.includeUpdate = false
         obj.includeDelete = false
       })
+      console.log('template', this.template, permissionsObj)
       this.template?.permissions?.map(item => {
         const sections = item.split(':')
         if (permissionsObj[sections[1]]) {
@@ -152,9 +154,8 @@ export default {
     permissions() {
       if (!this.authPermissionObject && !this.templatePermissionObject)
         return []
-      const permissionObject = this.template
-        ? this.templatePermissionObject
-        : this.authPermissionObject
+      const permissionObject = this.templatePermissionObject
+
       return Object.values(permissionObject)
     },
     loading() {
@@ -170,10 +171,8 @@ export default {
       }
     },
     template(val) {
-      if (val) {
-        this.roleName = val.name
-        this.includedPermissions = this.permissions
-      }
+      this.roleName = val.name
+      this.includedPermissions = this.permissions
     }
   },
   methods: {

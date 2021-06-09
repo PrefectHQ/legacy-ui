@@ -23,6 +23,7 @@ export default {
       template: null,
       deletingRole: null,
       defaultRoles: DEFAULT_ROLES,
+      useDefault: true,
       headers: [
         {
           text: 'Name',
@@ -65,21 +66,33 @@ export default {
   },
   watch: {
     editedRoles() {
-      const role =
-        this.editedRoles?.tenantRoles?.filter(
-          role => role.id === this.role
-        )[0] ||
-        this.editedRoles?.defaultRoles?.filter(role => role.id === this.role)[0]
-      console.log(role)
-      this.template = role
+      if (this.useDefault) {
+        const role =
+          this.editedRoles?.tenantRoles?.filter(
+            role => role.id === this.role
+          )[0] ||
+          this.editedRoles?.defaultRoles?.filter(
+            role => role.id === this.role
+          )[0]
+        this.template = role
+      }
+      console.log('watch', this.template)
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    // permissionList(list) {
-    //   return list.permissions.splice(',')
-    // },
+    //We could update to use same formatting as in members page?
+    formatName(name) {
+      const newName = name
+        .split('_')
+        .map(
+          word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
+        )
+      console.log(newName.join(' '))
+      return newName.join(' ')
+    },
     handleRoleSelect(role) {
+      this.useDefault = false
       console.log('role Select', role, this.template)
       this.template = role
     },
@@ -171,7 +184,7 @@ export default {
                 :class="
                   template && template.name == item.name ? 'blue--text' : ''
                 "
-                >{{ item.name }}</v-list-item-title
+                >{{ formatName(item.name) }}</v-list-item-title
               >
             </v-list-item-content>
           </v-list-item>
@@ -194,18 +207,35 @@ export default {
               <v-divider></v-divider>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item-group v-model="template" color="primary">
-            <v-list-item
-              v-for="item in editedRoles.tenantRoles"
-              :key="item.value"
-              link
-            >
-              <v-list-item-content @click="handleRoleSelect(item)">
-                <v-list-item-title>{{ item.name }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
+
+          <v-list-item
+            v-for="item in editedRoles.tenantRoles"
+            :key="item.value"
+            link
+          >
+            <v-list-item-content @click="handleRoleSelect(item)">
+              <v-list-item-title
+                :class="
+                  template && template.name == item.name ? 'blue--text' : ''
+                "
+                >{{ item.name }}</v-list-item-title
+              >
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
+        <div class="text-center mt-8">
+          <v-btn
+            color="primary"
+            class="white--text"
+            large
+            @click="handleRoleSelect(null)"
+          >
+            <v-icon left>
+              person_add
+            </v-icon>
+            Create Role
+          </v-btn>
+        </div>
       </v-navigation-drawer>
     </v-col>
     <v-col cols="9" class="pa-0">
