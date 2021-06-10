@@ -978,8 +978,35 @@ export default {
     <div
       class="d-flex align-center justify-space-between py-2 ml-n2 px-5 card-title"
     >
-      <div class="text-h4 font-weight-light">
-        Usage
+      <div class="d-flex">
+        <div class="text-h4 font-weight-light">
+          Usage
+        </div>
+
+        <div>
+          <v-select
+            dense
+            hide-details
+            outlined
+            style="width: 200px;"
+            class="ml-6"
+            :items="[
+              { id: 1, text: 'Prefect' },
+              { id: 2, text: 'Dev Ops' }
+            ]"
+          >
+            <template #item="{ item }">
+              <div class="text-subtitle-2 font-weight-light">
+                {{ item.text }}
+              </div>
+            </template>
+            <template #selection="{ item }">
+              <div class="text-subtitle-2 font-weight-light">
+                {{ item.text }}
+              </div>
+            </template>
+          </v-select>
+        </div>
       </div>
 
       <div

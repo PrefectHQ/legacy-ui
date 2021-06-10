@@ -5,7 +5,7 @@ import SubPageNav from '@/layouts/SubPageNav'
 
 const pageTitles = {
   'new-team': 'New team',
-  account: 'Account'
+  account: 'Prefect Technologies Inc.'
 }
 
 export default {
@@ -29,7 +29,7 @@ export default {
 
 <template>
   <v-sheet color="appBackground" class="position-relative">
-    <SubPageNav icon="groups" page-type="Admin" hide-banners>
+    <SubPageNav icon="groups" page-type="Account" hide-banners>
       <span
         slot="breadcrumbs"
         :style="
