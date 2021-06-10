@@ -204,10 +204,7 @@ export default {
     </v-alert>
   </v-sheet>
 
-  <v-sheet
-    v-else-if="sortedAgents && sortedAgents.length > 0"
-    color="appBackground"
-  >
+  <v-sheet v-else color="appBackground">
     <SubPageNav icon="pi-agent" page-type="Agents">
       <span
         slot="page-title"
@@ -290,6 +287,7 @@ export default {
         </v-dialog>
 
         <v-menu
+          v-if="sortedAgents && sortedAgents.length"
           v-model="filterMenuOpen"
           :close-on-content-click="false"
           bottom
@@ -445,56 +443,50 @@ export default {
             ></AgentTile>
           </v-col>
         </v-row>
+        <v-row v-else-if="filtersApplied">
+          <v-alert
+            outlined
+            width="100%"
+            type="info"
+            class="ma-4"
+            prominent
+            border="left"
+          >
+            <p class="pl-2">
+              No agents. Try removing a filter.
+            </p>
+          </v-alert>
+        </v-row>
         <v-row v-else>
           <v-alert
+            outlined
+            width="100%"
+            type="info"
+            class="ma-4"
+            prominent
             border="left"
-            colored-border
-            elevation="2"
-            type="warning"
-            max-width="420"
-            class="ma-3"
           >
-            No agents found. Try expanding your search?
+            <p>
+              You have no agents querying for runs.
+            </p>
+
+            <p class="mb-0">
+              For help setting up an agent, check out the agent
+              <a
+                href="https://docs.prefect.io/orchestration/agents/overview.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                >docs</a
+              >
+              or
+              <router-link class="link" :to="'/tutorial/Universal-Deploy'">
+                <u>tutorial</u> </router-link
+              >.
+            </p>
           </v-alert>
         </v-row>
       </v-tab-item>
     </v-tabs-items>
-  </v-sheet>
-
-  <v-sheet
-    v-else
-    class="text-subtitle-1 font-weight-light"
-    color="appBackground"
-  >
-    <v-alert
-      border="left"
-      colored-border
-      elevation="2"
-      type="warning"
-      class="ma-4"
-    >
-      <p>
-        You do not have any agents querying for flow runs.
-      </p>
-
-      <p class="mb-0">
-        Refer to the Prefect documentation on
-        <a
-          href="https://docs.prefect.io/orchestration/agents/overview.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          >agents</a
-        >
-        to understand their role in your infrastructure.
-        <span v-if="isCloud">
-          You can also go through the
-          <router-link class="link" :to="'/tutorial/Universal-Deploy'">
-            <u>Universal Deploy</u>
-          </router-link>
-          tutorial for guidance on running agents in Cloud.</span
-        >
-      </p>
-    </v-alert>
   </v-sheet>
 </template>
 
