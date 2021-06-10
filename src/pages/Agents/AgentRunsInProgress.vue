@@ -49,12 +49,7 @@ export default {
 </script>
 
 <template>
-  <v-card
-    tile
-    class="agent-card px-2 pb-3"
-    style="overflow-y: auto;"
-    height="380px"
-  >
+  <v-card tile class="agent-card px-2 pb-3" style="overflow-y: auto;">
     <CardTitle title="Agent Config" icon="pi-agent"> </CardTitle>
 
     <v-card-text class="my-2">

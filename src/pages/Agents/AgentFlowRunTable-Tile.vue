@@ -131,7 +131,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile>
+  <v-card tile>
     <CardTitle icon="pi-task-run">
       <div :slot="$vuetify.breakpoint.lgAndUp && 'title'">
         Flow Runs

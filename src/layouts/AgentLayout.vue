@@ -41,7 +41,7 @@ export default {
             cols="12"
             md="4"
             :class="{
-              'pt-1': $slots['row-0']
+              'pt-2': $slots['row-0']
             }"
           >
             <slot name="row-1-col-1-tile-1" />
@@ -51,7 +51,7 @@ export default {
             md="4"
             sm="6"
             :class="{
-              'pt-1': $slots['row-0']
+              'pt-2': $slots['row-0']
             }"
           >
             <slot name="row-1-col-2-tile-1" />
@@ -61,14 +61,14 @@ export default {
             md="4"
             sm="6"
             :class="{
-              'pt-1': $slots['row-0']
+              'pt-2': $slots['row-0']
             }"
           >
             <slot name="row-1-col-3-tile-1" />
           </v-col>
         </v-row>
       </v-col>
-      <v-row v-if="$slots['row-2-col-1-row-2-tile-a']" class="pt-1">
+      <v-row v-if="$slots['row-2-col-1-row-2-tile-a']" class="pt-2 mt-0">
         <v-col cols="12">
           <slot name="row-2-col-1-row-2-tile-a" />
         </v-col>
