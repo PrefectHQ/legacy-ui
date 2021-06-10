@@ -399,17 +399,17 @@ export default {
         Core Version:
         {{ agent.core_version || 'Unknown' }}
       </div>
-      <v-divider v-if="!showAll"></v-divider>
+
       <div v-if="!showAll" :style="{ height: '60px' }">
-        <div class="my-2 text-subtitle-1 font-weight-light ">
+        <div class="my-2 text-subtitle-1 ">
           Recent runs
         </div>
         <div v-if="!recentRuns || !recentRuns.length">
-          <div class="text-caption grey--text ">No run history</div>
-          <v-divider></v-divider>
+          <div class="text-caption grey--text timeline-no-runs"
+            >No run history</div
+          >
         </div>
         <LastTenRuns
-          v-else
           :runs="recentRuns"
           :agent-id="agent.id"
           :disable-view="hasLateRuns"
@@ -466,7 +466,7 @@ export default {
         </v-tooltip>
       </div>
       <div>
-        <div class="my-2 text-subtitle-1 font-weight-light ">
+        <div class="my-2 text-subtitle-1 ">
           Labels
         </div>
         <v-sheet
@@ -570,5 +570,12 @@ export default {
 .unhealthy {
   color: var(--v-utilGrayLight-base);
   --fa-primary-color: var(--v-utilGrayLight-base);
+}
+
+.timeline-no-runs {
+  left: 50%;
+  position: absolute;
+  top: 52%;
+  transform: translate(-50%, -50%);
 }
 </style>
