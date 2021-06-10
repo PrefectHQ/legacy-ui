@@ -1,3 +1,7 @@
+//Neaten Role names //Check that role setting works - seems not to like role_id
+- may be the gql query not the backend //Figure out clear and cancel and error
+handling
+
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { mapGetters } from 'vuex'
@@ -40,6 +44,10 @@ export default {
     // Current user information
     user: {
       type: Object,
+      required: true
+    },
+    roles: {
+      type: Array,
       required: true
     }
   },
@@ -113,6 +121,7 @@ export default {
   computed: {
     ...mapGetters('license', ['permissions', 'hasPermission']),
     headers() {
+      console.log(this.roles, this.roleInput)
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
         : this.allHeaders.filter(header => header.mobile)
@@ -155,12 +164,12 @@ export default {
       this.dialogRemoveUser = false
       this.selectedUser = null
     },
-    async updateRole(membershipId, role) {
+    async updateRole(membership_id, role_id) {
       this.isSettingRole = true
 
       const res = await this.$apollo.mutate({
         mutation: require('@/graphql/Tenant/set-membership-role.gql'),
-        variables: { membershipId, role }
+        variables: { input: { membership_id, role_id } }
       })
 
       if (res?.data?.set_membership_role?.id) {
@@ -269,7 +278,7 @@ export default {
       <!-- ROLE -->
       <template #item.role="{ item }">
         <v-chip small dark :color="roleColorMap[item.role] || 'secondaryLight'">
-          {{ roleMap[item.role] || 'Unknown' }}
+          {{ roleMap[item.role] || item.role }}
         </v-chip>
       </template>
 
@@ -336,14 +345,16 @@ export default {
         label="Role"
         :color="roleColorMap[roleInput]"
         prepend-icon="supervised_user_circle"
-        :items="['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']"
+        :items="roles"
+        item-text="name"
+        item-value="id"
       >
-        <template #item="{ item }">
+        <!-- <template #item="{ item }">
           {{ roleMap[item] }}
         </template>
         <template #selection="{ item }">
           {{ roleMap[item] }}
-        </template>
+        </template> -->
       </v-select>
     </ConfirmDialog>
 

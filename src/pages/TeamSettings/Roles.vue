@@ -1,4 +1,12 @@
 <script>
+//TO DO
+//Better handle refecth roles and clear after save - so addName and text field no longer show
+//Clean up dialog code
+//Disable add/updateand rest if no actual changes
+//spacing and fonts for sidebar?
+//Loading states and default tenant load
+//fix include all click/responsiveness
+
 import { mapActions, mapGetters } from 'vuex'
 
 // import ManagementLayout from '@/layouts/ManagementLayout'
@@ -93,7 +101,7 @@ export default {
     },
     handleRoleSelect(role, roleType) {
       this.useDefault = false
-      if (roleType === 'default') {
+      if (roleType === 'default' && role) {
         role = { ...role, default: true }
       }
       if (roleType === 'new') {
@@ -189,7 +197,7 @@ export default {
             <v-list-item-content @click="handleRoleSelect(item, 'default')">
               <v-list-item-title
                 :class="
-                  template && template.name == item.name ? 'blue--text' : ''
+                  template && template.name == item.name ? 'primary--text' : ''
                 "
                 >{{ formatName(item.name) }}</v-list-item-title
               >
@@ -225,9 +233,29 @@ export default {
                 :class="
                   template && template.name == item.name ? 'blue--text' : ''
                 "
-                >{{ item.name }}</v-list-item-title
-              >
+                >{{ item.name }}
+              </v-list-item-title>
             </v-list-item-content>
+
+            <v-list-item-icon>
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-btn
+                    :disabled="defaultRoles.includes(item.name)"
+                    text
+                    :loading="deletingRole === item.id"
+                    fab
+                    x-small
+                    color="error"
+                    v-on="on"
+                    @click="deleteRole(item)"
+                  >
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </template>
+                Remove role
+              </v-tooltip>
+            </v-list-item-icon>
           </v-list-item>
           <v-list-item v-if="addRole">
             <v-list-item-content>
@@ -249,10 +277,8 @@ export default {
             large
             @click="handleRoleSelect(null, 'new')"
           >
-            <v-icon left>
-              person_add
-            </v-icon>
-            Create Role
+            <v-icon left>face</v-icon>
+            New Role
           </v-btn>
         </div>
       </v-navigation-drawer>

@@ -63,7 +63,7 @@ export default {
       //   : this.template?.permissions || this.auth?.permissions
     },
     authPermissionObject() {
-      let saveTenant
+      // let saveTenant
       let obj = this.auth?.permissions?.reduce((permissionsObj, item) => {
         const sections = item.split(':')
         if (!['create', 'delete', 'update', 'read'].includes(sections[0])) {
@@ -114,20 +114,20 @@ export default {
         }
         return permissionsObj
       }, {})
-      if (saveTenant) {
-        obj = { saveTenant, ...obj }
-      }
-      if (this.showTenantAdmin) {
-        obj = {
-          TenantAdmin: {
-            name: 'Tenant Admin',
-            includeAll: false,
-            value: 'tenant:admin',
-            hideCheck: true
-          },
-          ...obj
-        }
-      }
+      // if (saveTenant) {
+      //   obj = { saveTenant, ...obj }
+      // }
+      // if (this.showTenantAdmin) {
+      //   obj = {
+      //     TenantAdmin: {
+      //       name: 'Tenant Admin',
+      //       includeAll: false,
+      //       value: 'tenant:admin',
+      //       hideCheck: true
+      //     },
+      //     ...obj
+      //   }
+      // }
       return obj
     },
 
@@ -146,7 +146,6 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     templatePermissionObject() {
-      console.log('temp', this.template)
       if (!this.authPermissionObject) return
       const permissionsObj = this.authPermissionObject
       Object?.values(permissionsObj).map(obj => {

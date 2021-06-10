@@ -1,5 +1,5 @@
-mutation SetMembershipRole($membershipId: UUID!, $role: membership_role!) {
-  set_membership_role(input: {role: $role, membership_id: $membershipId }) {
+mutation SetMembershipRole($input: set_membership_role_input!) {
+  set_membership_role(input: $input) {
     id
   }
 }
