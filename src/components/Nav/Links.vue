@@ -72,6 +72,21 @@ export default {
       Calendar
     </v-btn>
 
+    <v-btn
+      :to="{
+        name: 'account',
+        params: { tenant: slug }
+      }"
+      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
+      dark
+      small
+      depressed
+      color="transparent"
+      title="Manage your account, usage, and data"
+    >
+      Account
+    </v-btn>
+
     <TeamMenu />
   </div>
 </template>

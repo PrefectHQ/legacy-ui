@@ -72,16 +72,8 @@ export const routes = [
       import(
         /* webpackChunkName: "team-settings" */ '@/pages/TeamSettings/TeamSettings.vue'
       ),
-    redirect: { name: 'account' },
+    redirect: { name: 'members' },
     children: [
-      {
-        name: 'account',
-        path: 'account',
-        component: () =>
-          import(
-            /* webpackChunkName: "team-settings--account" */ '@/pages/TeamSettings/Account/Account.vue'
-          )
-      },
       {
         name: 'projects',
         path: 'projects',
@@ -357,15 +349,25 @@ export const routes = [
   {
     name: 'admin',
     path: '/admin',
-    redirect: { name: 'new-team' },
+    redirect: { name: 'account' },
     component: () =>
       import(/* webpackChunkName: "admin" */ '@/pages/Admin/Admin.vue'),
     children: [
       {
+        name: 'account',
+        path: 'account',
+        component: () =>
+          import(
+            /* webpackChunkName: "admin--account" */ '@/pages/Admin/Account/Account.vue'
+          )
+      },
+      {
         name: 'new-team',
         path: 'new-team',
         component: () =>
-          import(/* webpackChunkName: "new-team" */ '@/pages/Admin/NewTeam.vue')
+          import(
+            /* webpackChunkName: "admin--new-team" */ '@/pages/Admin/NewTeam.vue'
+          )
       }
     ]
   },
