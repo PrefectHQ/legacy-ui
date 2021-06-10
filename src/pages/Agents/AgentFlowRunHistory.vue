@@ -88,7 +88,12 @@ export default {
       @bar-mouseout="_barMouseout"
       @bar-mouseover="_barMouseover"
     >
-      <TimelineTooltip v-if="tooltip" slot="tooltip" :tooltip="tooltip" />
+      <TimelineTooltip
+        v-if="tooltip"
+        slot="tooltip"
+        :tooltip="tooltip"
+        :loading="tooltipLoading"
+      />
     </BarChart>
   </v-card>
 </template>

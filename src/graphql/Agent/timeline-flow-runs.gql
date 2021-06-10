@@ -8,6 +8,7 @@ query AgentTimelineFlowRuns($agent_id: uuid) {
   ) {
     id
     name
+    flow_id
     end_time
     start_time
     scheduled_start_time
