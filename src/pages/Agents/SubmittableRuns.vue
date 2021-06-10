@@ -184,7 +184,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2" tile :style="{ height: '100%' }">
+  <v-card class="py-2" tile height="380px">
     <v-system-bar
       :color="
         loading

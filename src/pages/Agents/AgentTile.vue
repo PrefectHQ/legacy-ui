@@ -276,7 +276,7 @@ export default {
     class="agent-card py-2"
     :style="showAll ? { 'overflow-y': 'auto' } : ''"
     :tile="showAll"
-    :height="showAll ? '100%' : '350px'"
+    :height="showAll ? '380px' : '350px'"
   >
     <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
     <CardTitle :title="name">
