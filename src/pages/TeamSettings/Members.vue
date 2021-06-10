@@ -158,7 +158,6 @@ export default {
       }
     },
     async inviteUser() {
-      console.log(this.roleInput)
       this.isInvitingUser = true
       this.inviteError = null
 
@@ -224,7 +223,7 @@ export default {
         return {}
       },
       pollInterval: 10000,
-      update: data => data.auth_role
+      update: data => data.auth_role || []
     }
   }
 }
@@ -373,6 +372,7 @@ export default {
           :is-tenant-admin="isTenantAdmin"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
+          :roles="roles"
           :search="searchInput"
           :tenant="tenant"
           :user="user"

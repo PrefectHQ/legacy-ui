@@ -3,10 +3,15 @@ import { mapActions } from 'vuex'
 export default {
   components: {},
   props: {
-    clear: {
-      type: Boolean,
+    // clear: {
+    //   type: Boolean,
+    //   required: false,
+    //   default: false
+    // },
+    roleName: {
+      type: String,
       required: false,
-      default: false
+      default: ''
     },
     template: {
       type: Object,
@@ -35,7 +40,7 @@ export default {
       ],
       includedPermissions: [],
       searchInput: '',
-      roleName: '',
+      // roleName: '',
       loadingKey: 0,
       allPermissions: false,
       loadingRole: false,
@@ -58,7 +63,7 @@ export default {
       //   : this.template?.permissions || this.auth?.permissions
     },
     authPermissionObject() {
-      let saveTenant
+      // let saveTenant
       let obj = this.auth?.permissions?.reduce((permissionsObj, item) => {
         const sections = item.split(':')
         if (!['create', 'delete', 'update', 'read'].includes(sections[0])) {
@@ -66,23 +71,23 @@ export default {
           return permissionsObj
         }
         if (!permissionsObj[sections[1]]) {
-          if (sections[1] === 'tenant') {
-            saveTenant = {
-              disableCreate: sections[0] !== 'create',
-              disableUpdate: sections[0] !== 'update',
-              disableRead: sections[0] !== 'read',
-              disableDelete: sections[0] !== 'delete',
-              includeUpdate: false,
-              includeCreate: false,
-              includeDelete: false,
-              includeRead: false,
-              includeAll: false,
-              name: sections[1],
-              key: item,
-              value: item
-            }
-            return permissionsObj
-          }
+          // if (sections[1] === 'tenant') {
+          //   saveTenant = {
+          //     disableCreate: sections[0] !== 'create',
+          //     disableUpdate: sections[0] !== 'update',
+          //     disableRead: sections[0] !== 'read',
+          //     disableDelete: sections[0] !== 'delete',
+          //     includeUpdate: false,
+          //     includeCreate: false,
+          //     includeDelete: false,
+          //     includeRead: false,
+          //     includeAll: false,
+          //     name: sections[1],
+          //     key: item,
+          //     value: item
+          //   }
+          //   return permissionsObj
+          // }
           permissionsObj[sections[1]] = {
             disableCreate: sections[0] !== 'create',
             disableUpdate: sections[0] !== 'update',
@@ -109,26 +114,47 @@ export default {
         }
         return permissionsObj
       }, {})
-      if (saveTenant) {
-        obj = { saveTenant, ...obj }
-      }
-      if (this.showTenantAdmin) {
-        obj = {
-          TenantAdmin: {
-            name: 'Tenant Admin',
-            includeAll: false,
-            value: 'tenant:admin',
-            hideCheck: true
-          },
-          ...obj
-        }
-      }
+      // if (saveTenant) {
+      //   obj = { saveTenant, ...obj }
+      // }
+      // if (this.showTenantAdmin) {
+      //   obj = {
+      //     TenantAdmin: {
+      //       name: 'Tenant Admin',
+      //       includeAll: false,
+      //       value: 'tenant:admin',
+      //       hideCheck: true
+      //     },
+      //     ...obj
+      //   }
+      // }
       return obj
     },
+
+    permissions() {
+      if (!this.authPermissionObject && !this.templatePermissionObject)
+        return []
+      const permissionObject = this.templatePermissionObject()
+
+      return Object.values(permissionObject)
+    },
+    loading() {
+      return this.loadingKey > 0
+    }
+  },
+  watch: {},
+  methods: {
+    ...mapActions('alert', ['setAlert']),
     templatePermissionObject() {
       if (!this.authPermissionObject) return
       const permissionsObj = this.authPermissionObject
-      this.template?.permissions.map(item => {
+      Object?.values(permissionsObj).map(obj => {
+        obj.includeCreate = false
+        obj.includeRead = false
+        obj.includeUpdate = false
+        obj.includeDelete = false
+      })
+      this.template?.permissions?.map(item => {
         const sections = item.split(':')
         if (permissionsObj[sections[1]]) {
           if (sections[0] === 'create')
@@ -143,35 +169,6 @@ export default {
       })
       return permissionsObj
     },
-    permissions() {
-      if (!this.authPermissionObject && !this.templatePermissionObject)
-        return []
-      const permissionObject = this.template
-        ? this.templatePermissionObject
-        : this.authPermissionObject
-      return Object.values(permissionObject)
-    },
-    loading() {
-      return this.loadingKey > 0
-    }
-  },
-  watch: {
-    clear(val) {
-      if (val) {
-        this.includedPermissions = []
-        this.roleName = ''
-        this.$emit('reset')
-      }
-    },
-    template(val) {
-      if (val) {
-        this.roleName = val.name
-        this.includedPermissions = this.permissions
-      }
-    }
-  },
-  methods: {
-    ...mapActions('alert', ['setAlert']),
     handleAll(item) {
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
@@ -220,7 +217,7 @@ export default {
         })
       } finally {
         this.loadingRole = false
-        this.cancel()
+        this.reset()
       }
     },
     async updateRole() {
@@ -263,12 +260,12 @@ export default {
         })
       } finally {
         this.loadingRole = false
-        this.cancel()
+        this.reset()
       }
     },
-    cancel() {
-      this.includedPermissions = []
-      this.roleName = ''
+    reset() {
+      this.templatePermissionObject()
+      // this.roleName = ''
       this.$emit('close')
     }
   },
@@ -287,13 +284,13 @@ export default {
   <v-card width="100%">
     <v-card-title v-if="!tableOnly"> Add name and permissions</v-card-title>
     <v-card-subtitle v-if="!tableOnly" class="mt-4 pb-0">
-      <v-text-field
+      <!-- <v-text-field
         v-model="roleName"
         :disabled="!!template"
         outlined
         required
         placeholder="Role Name"
-      ></v-text-field>
+      ></v-text-field> -->
     </v-card-subtitle>
     <v-card-text>
       <v-sheet height="70vh" :style="{ overflow: 'auto' }">
@@ -378,15 +375,14 @@ export default {
         </v-data-table>
       </v-sheet>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions v-if="!template || !template.default">
       <v-spacer />
-      <v-btn text color="error" @click.stop="cancel">
-        Cancel
+      <v-btn text @click.stop="reset">
+        Reset
       </v-btn>
       <v-btn
         color="primary"
         :loading="loadingRole"
-        :disabled="!roleName"
         @click.stop="handleCreateUpdateClick"
       >
         {{ template ? 'Update' : 'Create' }} Role

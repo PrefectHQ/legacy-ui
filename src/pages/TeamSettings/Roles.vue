@@ -1,7 +1,15 @@
 <script>
+//TO DO
+//Better handle refecth roles and clear after save - so addName and text field no longer show
+//Clean up dialog code
+//Disable add/updateand rest if no actual changes
+//spacing and fonts for sidebar?
+//Loading states and default tenant load
+//fix include all click/responsiveness
+
 import { mapActions, mapGetters } from 'vuex'
 
-import ManagementLayout from '@/layouts/ManagementLayout'
+// import ManagementLayout from '@/layouts/ManagementLayout'
 import CreateRoleTable from '@/pages/TeamSettings/CreateRoleTable'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -9,7 +17,7 @@ const DEFAULT_ROLES = ['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']
 
 export default {
   components: {
-    ManagementLayout,
+    // ManagementLayout,
     CreateRoleTable
   },
   mixins: [formatTime],
@@ -23,6 +31,9 @@ export default {
       template: null,
       deletingRole: null,
       defaultRoles: DEFAULT_ROLES,
+      useDefault: true,
+      roleName: '',
+      addRole: false,
       headers: [
         {
           text: 'Name',
@@ -46,7 +57,12 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
+    ...mapGetters('license', [
+      'license',
+      'hasPermission',
+      'allowedUsers',
+      'role'
+    ]),
     editedRoles() {
       if (!this.roles) return []
       const defaultRoles = this.roles?.filter(role =>
@@ -55,14 +71,46 @@ export default {
       const tenantRoles = this.roles?.filter(
         role => role.tenant_id === this.tenant.id
       )
-      return [...defaultRoles, ...tenantRoles]
+      return { defaultRoles, tenantRoles }
+    }
+  },
+  watch: {
+    editedRoles() {
+      if (this.useDefault) {
+        const role =
+          this.editedRoles?.tenantRoles?.filter(
+            role => role.id === this.role
+          )[0] ||
+          this.editedRoles?.defaultRoles?.filter(
+            role => role.id === this.role
+          )[0]
+        this.template = role
+      }
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    // permissionList(list) {
-    //   return list.permissions.splice(',')
-    // },
+    //We could update to use same formatting as in members page?
+    formatName(name) {
+      const newName = name
+        .split('_')
+        .map(
+          word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
+        )
+      return newName.join(' ')
+    },
+    handleRoleSelect(role, roleType) {
+      this.useDefault = false
+      if (roleType === 'default' && role) {
+        role = { ...role, default: true }
+      }
+      if (roleType === 'new') {
+        this.addRole = true
+      } else {
+        this.addRole = false
+      }
+      this.template = role
+    },
     handleAlert(type, message) {
       this.setAlert({
         alertShow: true,
@@ -128,163 +176,115 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout :show="!loading" control-show>
-    <template #title>Roles</template>
+  <v-row>
+    <v-col cols="3" class="pa-0 ma-0">
+      <v-navigation-drawer permanent class="ma-0" width="100%">
+        <v-list dense nav>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>
+                Default Roles
+              </v-list-item-title>
+              <v-divider></v-divider>
+            </v-list-item-content>
+          </v-list-item>
 
-    <template #subtitle>
-      <span>
-        Create Custom Roles
-      </span>
-    </template>
+          <v-list-item
+            v-for="item in editedRoles.defaultRoles"
+            :key="item.name"
+            link
+          >
+            <v-list-item-content @click="handleRoleSelect(item, 'default')">
+              <v-list-item-title
+                :class="
+                  template && template.name == item.name ? 'primary--text' : ''
+                "
+                >{{ formatName(item.name) }}</v-list-item-title
+              >
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
 
-    <template #cta>
-      <v-dialog
-        v-model="createRoleDialog"
-        width="70vW"
-        @click:outside="closeDialog"
-      >
-        <template #activator="{ on, attrs }">
+        <v-list
+          v-if="
+            editedRoles &&
+              editedRoles.tenantRoles &&
+              editedRoles.tenantRoles.length
+          "
+          dense
+          nav
+        >
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>
+                Custom Roles
+              </v-list-item-title>
+              <v-divider></v-divider>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item
+            v-for="item in editedRoles.tenantRoles"
+            :key="item.value"
+            link
+          >
+            <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
+              <v-list-item-title
+                :class="
+                  template && template.name == item.name ? 'blue--text' : ''
+                "
+                >{{ item.name }}
+              </v-list-item-title>
+            </v-list-item-content>
+
+            <v-list-item-icon>
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-btn
+                    :disabled="defaultRoles.includes(item.name)"
+                    text
+                    :loading="deletingRole === item.id"
+                    fab
+                    x-small
+                    color="error"
+                    v-on="on"
+                    @click="deleteRole(item)"
+                  >
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </template>
+                Remove role
+              </v-tooltip>
+            </v-list-item-icon>
+          </v-list-item>
+          <v-list-item v-if="addRole">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-text-field
+                  v-model="roleName"
+                  required
+                  placeholder="Role Name"
+                ></v-text-field
+              ></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+
+        <div class="text-center mt-8">
           <v-btn
             color="primary"
             class="white--text"
             large
-            v-bind="attrs"
-            v-on="on"
+            @click="handleRoleSelect(null, 'new')"
           >
-            <v-icon left>
-              person_add
-            </v-icon>
-            Create Role
+            <v-icon left>face</v-icon>
+            New Role
           </v-btn>
-        </template>
-
-        <CreateRoleTable
-          :clear="clearDialog"
-          :template="template"
-          @reset="resetClear"
-          @close="closeDialog"
-        />
-      </v-dialog>
-    </template>
-
-    <v-text-field
-      v-if="!$vuetify.breakpoint.mdAndUp"
-      v-model="searchInput"
-      class="rounded-0 elevation-1 mb-1"
-      solo
-      dense
-      hide-details
-      single-line
-      placeholder="Search by role or permission"
-      prepend-inner-icon="search"
-      autocomplete="new-password"
-    ></v-text-field>
-    <v-data-table
-      fixed-header
-      :headers="headers"
-      :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-      :search="searchInput"
-      :items="editedRoles"
-      :items-per-page="10"
-      show-expand
-      :expanded.sync="expanded"
-      item-key="name"
-      class="elevation-2 rounded-0 truncate-table"
-      :footer-props="{
-        showFirstLastPage: true,
-        itemsPerPageOptions: [10, 15, 20, -1],
-        firstIcon: 'first_page',
-        lastIcon: 'last_page',
-        prevIcon: 'keyboard_arrow_left',
-        nextIcon: 'keyboard_arrow_right'
-      }"
-      no-results-text=" No roles found. Try expanding your search?"
-    >
-      <!-- HEADERS -->
-      <template #header.name="{ header }">
-        <span class="text-subtitle-2">{{ header.text }}</span>
-      </template>
-      <template #header.created_by="{ header }">
-        <span class="text-subtitle-2">{{ header.text }}</span>
-      </template>
-      <template #header.created="{ header }">
-        <span class="text-subtitle-2">{{ header.text }}</span>
-      </template>
-      <template #header.last_used="{ header }">
-        <span class="text-subtitle-2">{{ header.text }}</span>
-      </template>
-      <template #header.expires_at="{ header }">
-        <span class="text-subtitle-2">{{ header.text }}</span>
-      </template>
-      <template #header.scope="{ header }">
-        <span class="text-subtitle-2">{{ header.text }}</span>
-      </template>
-
-      <template #item.updated="{ item }">
-        <v-tooltip top>
-          <template #activator="{ on }">
-            <span v-on="on">
-              {{ item.updated ? formDate(item.updated) : '' }}
-            </span>
-          </template>
-          <span>
-            {{ item.updated ? formatTime(item.updated) : '' }}
-          </span>
-        </v-tooltip>
-      </template>
-      <template #item.created="{ item }">
-        <v-tooltip top>
-          <template #activator="{ on }">
-            <span v-on="on">
-              {{ item.created ? formDate(item.created) : '' }}
-            </span>
-          </template>
-          <span>
-            {{ item.created ? formatTime(item.created) : '' }}
-          </span>
-        </v-tooltip>
-      </template>
-
-      <template #expanded-item="{ item }">
-        <td :colspan="headers.length + 1">
-          <CreateRoleTable :template="item" table-only />
-        </td>
-      </template>
-      <template #item.actions="{item}">
-        <v-tooltip bottom>
-          <template #activator="{ on }">
-            <v-btn
-              text
-              fab
-              :disabled="defaultRoles.includes(item.name)"
-              x-small
-              color="primary"
-              v-on="on"
-              @click="editRole(item)"
-            >
-              <v-icon>edit</v-icon>
-            </v-btn>
-          </template>
-          Update Role
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template #activator="{ on }">
-            <v-btn
-              :disabled="defaultRoles.includes(item.name)"
-              text
-              :loading="deletingRole === item.id"
-              fab
-              x-small
-              color="error"
-              v-on="on"
-              @click="deleteRole(item)"
-            >
-              <v-icon>delete</v-icon>
-            </v-btn>
-          </template>
-          Remove role
-        </v-tooltip>
-      </template>
-    </v-data-table>
-  </ManagementLayout>
+        </div>
+      </v-navigation-drawer>
+    </v-col>
+    <v-col cols="9" class="pa-0">
+      <CreateRoleTable table-only :template="template" :role-name="roleName" />
+    </v-col>
+  </v-row>
 </template>
