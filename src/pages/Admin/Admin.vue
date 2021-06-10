@@ -4,7 +4,8 @@ import BreadCrumbs from '@/components/BreadCrumbs'
 import SubPageNav from '@/layouts/SubPageNav'
 
 const pageTitles = {
-  'new-team': 'New team'
+  'new-team': 'New team',
+  account: 'Account'
 }
 
 export default {
@@ -28,7 +29,7 @@ export default {
 
 <template>
   <v-sheet color="appBackground" class="position-relative">
-    <SubPageNav icon="groups" :page-type="pageTitle">
+    <SubPageNav icon="groups" page-type="Admin">
       <span
         slot="breadcrumbs"
         :style="
@@ -38,14 +39,7 @@ export default {
           }
         "
       >
-        <BreadCrumbs
-          :crumbs="[
-            {
-              text: 'Dashboard',
-              route: { name: 'dashboard', params: { tenant: tenant.slug } }
-            }
-          ]"
-        />
+        <BreadCrumbs :crumbs="[]" />
       </span>
 
       <span slot="page-title">{{ pageTitle }}</span>
@@ -60,6 +54,6 @@ export default {
 <style lang="scss" scoped>
 .container-body {
   max-width: 1440px;
-  padding-top: 85px;
+  padding-top: 73px;
 }
 </style>
