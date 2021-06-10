@@ -363,7 +363,7 @@ export default {
                 "
                 persistent-hint
                 value="unhealthy"
-                color="error"
+                color="utilGrayLight"
               ></v-checkbox>
             </v-card-text>
 
@@ -443,35 +443,24 @@ export default {
             ></AgentTile>
           </v-col>
         </v-row>
-        <v-row v-else-if="filtersApplied">
-          <v-alert
-            outlined
-            width="100%"
-            type="info"
-            class="ma-4"
-            prominent
-            border="left"
-          >
-            <p class="pl-2">
-              No agents. Try removing a filter.
-            </p>
-          </v-alert>
+        <v-row v-else-if="filtersApplied" class="ma-8">
+          <v-col cols="12">
+            <div
+              class="text-center position-absolute center-absolute text-h5 utilGrayDark--text"
+              style="z-index: 1;"
+            >
+              No agents found. Try removing a filter.
+            </div>
+          </v-col>
         </v-row>
-        <v-row v-else>
-          <v-alert
-            outlined
-            width="100%"
-            type="info"
-            class="ma-4"
-            prominent
-            border="left"
-          >
-            <p>
-              You have no agents querying for runs.
-            </p>
-
-            <p class="mb-0">
-              For help setting up an agent, check out the agent
+        <v-row v-else class="ma-8">
+          <v-col cols="12">
+            <div
+              class="text-center position-absolute center-absolute text-h5 utilGrayDark--text"
+              style="z-index: 1;"
+            >
+              You have no agents querying for runs. For help setting up an
+              agent, check out the agent
               <a
                 href="https://docs.prefect.io/orchestration/agents/overview.html"
                 target="_blank"
@@ -482,8 +471,8 @@ export default {
               <router-link class="link" :to="'/tutorial/Universal-Deploy'">
                 <u>tutorial</u> </router-link
               >.
-            </p>
-          </v-alert>
+            </div>
+          </v-col>
         </v-row>
       </v-tab-item>
     </v-tabs-items>
@@ -563,5 +552,11 @@ export default {
 .label-switch-position {
   position: relative;
   top: -16px;
+}
+
+.center-absolute {
+  left: 50%;
+  top: 80%;
+  transform: translate(-50%, -50%);
 }
 </style>
