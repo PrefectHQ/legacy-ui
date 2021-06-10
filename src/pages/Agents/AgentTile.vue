@@ -240,7 +240,7 @@ export default {
   apollo: {
     recentRuns: {
       query: require('@/graphql/Agent/recent-runs.gql'),
-      loadingKey: 'loadingKey',
+      loadingKey: 'loading',
       variables() {
         return {
           agentId: this.rawAgent?.id,
@@ -427,7 +427,7 @@ export default {
         <div class="my-2 text-subtitle-1 ">
           Recent runs
         </div>
-        <div v-if="!recentRuns || !recentRuns.length">
+        <div v-if="loading > 0 && (!recentRuns || !recentRuns.length)">
           <div class="text-subtitle-1 grey--text timeline-no-runs"
             >No run history</div
           >
@@ -466,28 +466,26 @@ export default {
             :cols="agent.token_name ? 8 : 10"
             class="text-right font-weight-bold"
           >
-            <div class="text-truncate">
+            <div class="text-truncate show-icon">
               <v-tooltip bottom>
                 <template #activator="{ on }">
                   <span
-                    class="cursor block"
-                    v-on="on"
+                    class="cursor"
                     @click="copyTextToClipboard(agent.token_id)"
+                    v-on="on"
                   >
-                    <v-icon x-small class="mb-2px hover">
+                    <v-icon x-small class="mb-2px hidden-icon">
                       {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
                     </v-icon>
-                    {{ agent.token_name || agent.token_id }}
+                    <span>{{ agent.token_name || agent.token_id }}</span>
                   </span>
                 </template>
-
-                <span>
-                  {{
-                    agent.token_name || agent.token_id
-                      ? 'Click to copy token id'
-                      : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
-                  }}</span
-                >
+                <span v-if="agent.token_id">
+                  Click to copy token id {{ agent.id }}
+                </span>
+                <span v-else>
+                  No token id.
+                </span>
               </v-tooltip>
             </div>
           </v-col>
@@ -500,7 +498,7 @@ export default {
             Agent ID:
           </v-col>
           <v-col cols="9" class="text-right font-weight-bold">
-            <div class="text-truncate">
+            <div class="text-truncate show-icon">
               <v-tooltip bottom>
                 <template #activator="{ on }">
                   <span
@@ -508,7 +506,7 @@ export default {
                     @click="copyTextToClipboard(agent.id)"
                     v-on="on"
                   >
-                    <v-icon x-small class="mb-2px">
+                    <v-icon x-small class="mb-2px hidden-icon">
                       {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
                     </v-icon>
                     <span>{{ agent.id || 'Unknown' }}</span>
@@ -635,11 +633,11 @@ export default {
   transform: translate(-50%, -50%);
 }
 
-.hover {
+.hidden-icon {
   display: none;
 }
 
-.hover:hover + .id {
-  display: block;
+.show-icon:hover .hidden-icon {
+  display: inline;
 }
 </style>
