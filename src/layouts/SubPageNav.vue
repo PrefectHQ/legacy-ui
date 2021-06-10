@@ -4,6 +4,11 @@ import TutorialBanner from '@/components/TutorialBanner'
 export default {
   components: { TutorialBanner },
   props: {
+    hideBanners: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    },
     icon: {
       type: String,
       required: false,
@@ -30,7 +35,7 @@ export default {
 
 <template>
   <div>
-    <TutorialBanner :page-scroll="pageScrolled" />
+    <TutorialBanner v-if="!hideBanners" :page-scroll="pageScrolled" />
     <v-toolbar
       v-scroll="scrolled"
       :elevation="

@@ -29,7 +29,7 @@ export default {
 
 <template>
   <v-sheet color="appBackground" class="position-relative">
-    <SubPageNav icon="groups" page-type="Admin">
+    <SubPageNav icon="groups" page-type="Admin" hide-banners>
       <span
         slot="breadcrumbs"
         :style="
