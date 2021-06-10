@@ -470,11 +470,11 @@ export default {
               <v-tooltip bottom>
                 <template #activator="{ on }">
                   <span
-                    class="cursor"
+                    class="cursor block"
                     v-on="on"
                     @click="copyTextToClipboard(agent.token_id)"
                   >
-                    <v-icon x-small class="mb-2px">
+                    <v-icon x-small class="mb-2px hover">
                       {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
                     </v-icon>
                     {{ agent.token_name || agent.token_id }}
@@ -633,5 +633,13 @@ export default {
   position: absolute;
   top: 52%;
   transform: translate(-50%, -50%);
+}
+
+.hover {
+  display: none;
+}
+
+.hover:hover + .id {
+  display: block;
 }
 </style>
