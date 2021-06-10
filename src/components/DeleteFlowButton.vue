@@ -36,10 +36,7 @@ export default {
     ...mapGetters('tenant', ['role']),
     ...mapGetters('license', ['hasPermission']),
     isReadOnly() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('delete', 'flow')
-      )
+      return !this.hasPermission('update', 'run')
     },
     all() {
       if (this.allFlows) return true
@@ -217,7 +214,9 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span>Read-only users cannot delete flows.</span>
+      <span>
+        You don't have permission to delete flows.
+      </span>
     </v-tooltip>
   </div>
 </template>

@@ -36,7 +36,7 @@ export const teamProfileMixin = {
     ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return this.hasPermission('update', 'tenant')
     },
     isUpdatable() {
       // Tenant cannot be updated during any kind of load state

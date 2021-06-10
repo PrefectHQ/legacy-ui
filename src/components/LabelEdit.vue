@@ -49,10 +49,7 @@ export default {
     ...mapGetters('tenant', ['role']),
     ...mapGetters('license', ['hasPermission']),
     isReadOnly() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'flow')
-      )
+      return !this.hasPermission('update', 'run')
     },
     labels() {
       const labels =
@@ -232,8 +229,8 @@ export default {
                   </div>
                 </template>
                 <span v-if="isReadOnly">
-                  Read-only users cannot edit labels</span
-                >
+                  You don't have permission to edit labels
+                </span>
                 <span v-else>Add a label</span>
               </v-tooltip>
             </template>
@@ -353,7 +350,9 @@ export default {
                 </v-btn>
               </div>
             </template>
-            <span v-if="isReadOnly"> Read-only users cannot edit labels</span>
+            <span v-if="isReadOnly">
+              You don't have permission to edit labels</span
+            >
             <span v-else>Add a label</span>
           </v-tooltip>
         </template>

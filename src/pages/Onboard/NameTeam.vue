@@ -66,7 +66,7 @@ export default {
       return this.loading > 0 || !this.revealConfirm
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return this.hasPermission('update', 'tenant')
     },
     shuffledOptions() {
       let optionsCopy = [...this.options]

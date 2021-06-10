@@ -56,12 +56,6 @@ export default {
         return result
       }, true)
     },
-    isReadOnlyUser() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'run')
-      )
-    },
     isScheduled: {
       get() {
         if (this.archived) return false
@@ -243,7 +237,19 @@ export default {
         }
       }
     },
-    unarchiveFlow() {}
+    unarchiveFlow() {},
+    isReadOnlyUser(action) {
+      if (action == 'quick-run') {
+        return !this.hasPermission('create', 'run')
+      } else {
+        return (
+          (this.hasPermission('create', 'run') &&
+            !this.hasPermission('delete', 'run')) ||
+          (!this.hasPermission('create', 'run') &&
+            !this.hasPermission('delete', 'run'))
+        )
+      }
+    }
   }
 }
 </script>
@@ -270,7 +276,9 @@ export default {
     <v-tooltip
       bottom
       max-width="340"
-      :open-delay="isReadOnlyUser || !isQuickRunnable || archived ? 0 : 750"
+      :open-delay="
+        isReadOnlyUser('quick-run') || !isQuickRunnable || archived ? 0 : 750
+      "
     >
       <template #activator="{ on }">
         <div v-on="on">
@@ -282,7 +290,9 @@ export default {
             tile
             small
             data-cy="start-flow-quick-run"
-            :disabled="isReadOnlyUser || !isQuickRunnable || archived"
+            :disabled="
+              isReadOnlyUser('quick-run') || !isQuickRunnable || archived
+            "
             :loading="isRunning"
             @click="quickRunFlow"
           >
@@ -302,8 +312,8 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
-        Read-only users cannot run flows.
+      <span v-if="isReadOnlyUser('quick-run')">
+        You don't have permission to run flows
       </span>
       <span v-else-if="!isQuickRunnable">
         This flow has required parameters that must be set before a run. Set a
@@ -345,7 +355,7 @@ export default {
                 class="mr-1 v-input--vertical"
                 color="primary"
                 :loading="scheduleLoading"
-                :disabled="isReadOnlyUser || archived"
+                :disabled="isReadOnlyUser('schedule') || archived"
                 @change="scheduleFlow"
               >
                 <template #label>
@@ -358,8 +368,8 @@ export default {
           </v-badge>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
-        Read-only users cannot schedule flows.
+      <span v-if="isReadOnlyUser('schedule')">
+        You don't have permission to schedule flows
       </span>
       <span v-else-if="schedule == null && isScheduled">
         This flow is trying to schedule runs but has no schedules! Visit this

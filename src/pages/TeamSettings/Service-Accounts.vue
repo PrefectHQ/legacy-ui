@@ -43,7 +43,11 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license', 'hasPermission']),
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return (
+        this.hasPermission('create', 'service-account') &&
+        this.hasPermission('update', 'service-account') &&
+        this.hasPermission('delete', 'service-account')
+      )
     }
   },
   watch: {

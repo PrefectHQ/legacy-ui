@@ -57,10 +57,7 @@ export default {
       return this.flowGroup.settings.lazarus_enabled
     },
     isReadOnlyUser() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'flow')
-      )
+      return !this.hasPermission('update', 'flow')
     },
     projectHasChanged() {
       return this.selected.projectId !== this.flow.project.id
@@ -316,7 +313,7 @@ export default {
                   </div>
                 </template>
                 <span v-if="isReadOnlyUser">
-                  Read-only users cannot move flows between projects.
+                  You don't have permission to move flows between projects.
                 </span>
                 <span v-else>
                   Move this flow to a new project.
@@ -342,7 +339,7 @@ export default {
                   </div>
                 </template>
                 <span v-if="isReadOnlyUser">
-                  Read-only users cannot move flows between projects.
+                  You don't have permission to move flows between projects.
                 </span>
                 <span v-else>
                   Move this flow to a new project.
@@ -412,7 +409,7 @@ export default {
               </div>
             </template>
             <span v-if="isReadOnlyUser">
-              Read-only users cannot modify flow settings.
+              You don't have permission to modify flow settings.
             </span>
             <span v-if="!hasPermission('feature', 'version-locking')">
               Your team doesn't have access to version locking.
@@ -480,7 +477,7 @@ export default {
               </div>
             </template>
             <span v-if="isReadOnlyUser">
-              Read-only users cannot modify flow settings.
+              You don't have permission to modify flow settings.
             </span>
             <span v-else>
               {{ isHeartbeatEnabled ? 'Disable' : 'Enable' }} heartbeats for
@@ -560,7 +557,7 @@ export default {
               </div>
             </template>
             <span v-if="isReadOnlyUser">
-              Read-only users cannot modify flow settings.
+              You don't have permission to modify flow settings.
             </span>
             <span v-else>
               {{ isLazarusEnabled ? 'Disable' : 'Enable' }} Lazarus for this

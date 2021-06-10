@@ -28,9 +28,8 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['hasPermission']),
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return this.role == 'TENANT_ADMIN'
     }
   },
   watch: {

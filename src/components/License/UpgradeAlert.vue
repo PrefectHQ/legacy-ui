@@ -15,7 +15,7 @@ export default {
       return this.license?.terms?.is_usage_based
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return this.hasPermission('create', 'license')
     }
   }
 }

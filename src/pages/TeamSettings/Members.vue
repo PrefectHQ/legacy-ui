@@ -90,7 +90,11 @@ export default {
       return this.users >= this.totalAllowedUsers
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return (
+        this.hasPermission('create', 'membership') &&
+        this.hasPermission('update', 'membership') &&
+        this.hasPermission('delete', 'membership')
+      )
     },
     roleSelectionMap() {
       return [

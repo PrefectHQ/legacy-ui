@@ -25,10 +25,7 @@ export default {
     ...mapGetters('tenant', ['role']),
     ...mapGetters('license', ['hasPermission']),
     isReadOnly() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'run')
-      )
+      return !this.hasPermission('update', 'run')
     },
     message() {
       return `Flow run restarted by ${this.user.username}`

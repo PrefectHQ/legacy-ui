@@ -12,10 +12,7 @@ export default {
   computed: {
     ...mapGetters('license', ['hasPermissions']),
     isReadOnlyUser() {
-      return (
-        !this.hasPermissions('create', 'role') &&
-        !this.hasPermissions('create', 'flow')
-      )
+      return !this.hasPermissions('update', 'run')
     }
   },
   apollo: {
@@ -178,7 +175,9 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span>Read-only users cannot change flow run states</span>
+      <span>
+        You don't have permission to change flow run states
+      </span>
     </v-tooltip>
   </div>
   <div v-else-if="dialogType == 'task run'">
@@ -200,7 +199,7 @@ export default {
         </div>
       </template>
       <span v-if="isReadOnlyUser">
-        Read-only users cannot change states
+        You don't have permission to change states
       </span>
       <span v-else>
         You can only change the marked state of a finished task-run

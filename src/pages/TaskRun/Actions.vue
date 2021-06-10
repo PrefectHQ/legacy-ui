@@ -22,10 +22,7 @@ export default {
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['hasPermission']),
     isReadOnly() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'run')
-      )
+      return !this.hasPermission('update', 'run')
     }
   },
   methods: {}
@@ -64,7 +61,7 @@ export default {
         </div>
       </template>
       <span v-if="isReadOnly">
-        Read-only users cannot restart flow runs
+        You don't have permission to restart flow runs
       </span>
       <span v-else>Restart flow run from this task</span>
     </v-tooltip>

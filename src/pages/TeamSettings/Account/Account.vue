@@ -45,12 +45,9 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['license', 'planType', 'hasPermission']),
+    ...mapGetters('license', ['license', 'planType']),
     needAlert() {
       return !location.href.includes('prefect.io')
-    },
-    isTenantAdmin() {
-      return this.hasPermission('create', 'role')
     },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
@@ -184,7 +181,6 @@ export default {
             </v-col>
             <v-col cols="12">
               <v-skeleton-loader
-                v-if="isTenantAdmin"
                 :loading="loadedTiles < 7"
                 type="image"
                 height="282"

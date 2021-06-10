@@ -40,10 +40,7 @@ export default {
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['hasPermission']),
     isReadOnlyUser() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'run')
-      )
+      return !this.hasPermission('update', 'run')
     },
     isScheduled() {
       return this.flowRun?.state === 'Scheduled'
@@ -160,7 +157,7 @@ export default {
         </div>
       </template>
       <span v-if="isReadOnlyUser">
-        Read-only users cannot run flows
+        You don't have permission to run flows
       </span>
       <span v-else-if="runFlowNowClicked">
         This flow run has been scheduled to start as soon as possible.
@@ -189,7 +186,7 @@ export default {
         </div>
       </template>
       <span v-if="isReadOnlyUser">
-        Read-only users cannot restart flow runs
+        You don't have permission to restart flow runs
       </span>
       <span v-else-if="!canRestart"
         >You can only restart non-archived flow runs from a failed or cancelled
@@ -237,7 +234,7 @@ export default {
         </div>
       </template>
       <span v-if="isReadOnlyUser">
-        Read-only users cannot delete flows
+        You don't have permission to delete flows
       </span>
       <span v-else>Coming Soon!</span>
     </v-tooltip>

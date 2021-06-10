@@ -7,10 +7,7 @@ export default {
   computed: {
     ...mapGetters('license', ['hasPermission']),
     isReadOnly() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'flow')
-      )
+      return !this.hasPermission('update', 'run')
     }
   }
 }
@@ -38,7 +35,7 @@ export default {
         </div>
       </template>
       <span v-if="isReadOnly">
-        Read-only users can't cancel flows.
+        You don't have permission to modify runs.
       </span>
       <span v-else-if="!checkVersion">
         Your Flow was registered with version {{ flowRun.flow.core_version }} of

@@ -79,12 +79,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['hasPermission']),
-    isReadOnlyUser() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'cloud-hook')
-      )
-    },
     isLoadingTable() {
       return this.hooksLoaded
     },
@@ -264,7 +258,7 @@ export default {
   <ManagementLayout :show="!isLoadingTable" control-show>
     <template #title>Cloud Hooks</template>
     <template #subtitle>
-      <div v-if="isReadOnlyUser">
+      <div v-if="!hasPermission('create', 'cloud-hook')">
         View your team's
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/cloud_hooks.html"
@@ -281,7 +275,7 @@ export default {
       </div>
     </template>
 
-    <template v-if="!isReadOnlyUser" #cta>
+    <template v-if="hasPermission('create', 'cloud-hook')" #cta>
       <v-dialog v-model="createNewCloudHook" max-width="700">
         <template #activator="{ onD }">
           <v-tooltip top>
@@ -298,7 +292,7 @@ export default {
                 </v-btn>
               </div>
             </template>
-            <span v-if="isReadOnlyUser">
+            <span v-if="!hasPermission('create', 'cloud-hook')">
               Read-only users cannot create new Cloud Hooks.
             </span>
             <span v-else>
@@ -313,7 +307,10 @@ export default {
           <v-card-text class="pl-12">
             <CloudHookForm
               v-if="createNewCloudHook"
-              :editable="!isReadOnlyUser"
+              :editable="
+                hasPermission('create', 'cloud-hook') &&
+                  hasPermission('delete', 'cloud-hook')
+              "
               edit-on-render
               @close="createNewCloudHook = false"
               @update="$apollo.queries.cloudHooks.refetch()"
@@ -445,7 +442,11 @@ export default {
                     class="v-input--vertical mt-0"
                     color="primary"
                     :loading="item.loading"
-                    :disabled="isReadOnlyUser || item.loading"
+                    :disabled="
+                      (!hasPermission('create', 'cloud-hook') &&
+                        !hasPermission('delete', 'cloud-hook')) ||
+                        item.loading
+                    "
                     @change="_handleSetCloudHookStatusChange($event, item)"
                   >
                     <template #label>
@@ -457,7 +458,7 @@ export default {
                 </div>
               </div>
             </template>
-            <span v-if="isReadOnlyUser">
+            <span v-if="!hasPermission('update', 'cloud-hook')">
               Read-only users cannot change Cloud Hook states.
             </span>
             <span v-else>
@@ -484,7 +485,13 @@ export default {
             <span class="capitalize">{{ formatStates(item.states) }}</span>
           </v-tooltip>
         </template>
-        <template v-if="!isReadOnlyUser" #item.action="{ item }">
+        <template
+          v-if="
+            hasPermission('create', 'cloud-hook') &&
+              hasPermission('delete', 'cloud-hook')
+          "
+          #item.action="{ item }"
+        >
           <v-tooltip bottom>
             <template #activator="{ on }">
               <div style="display: inline-block;" v-on="on">
@@ -566,7 +573,10 @@ export default {
           <v-card-text class="pl-12">
             <CloudHookForm
               v-if="dialogEditHook"
-              :editable="!isReadOnlyUser"
+              :editable="
+                hasPermission('create', 'cloud-hook') &&
+                  hasPermission('delete', 'cloud-hook')
+              "
               edit-on-render
               :hook="selectHook"
               show-controls

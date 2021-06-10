@@ -14,10 +14,7 @@ export default {
   computed: {
     ...mapGetters('license', ['hasPermission']),
     isReadOnly() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('create', 'run')
-      )
+      return !this.hasPermission('update', 'run')
     },
     loading() {
       if (this.resumeLoad == this.taskRun.id) return true

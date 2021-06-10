@@ -38,7 +38,7 @@ export default {
       return this.license?.terms?.is_self_serve
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return this.hasPermission('update', 'license')
     },
     payment() {
       return this.tenant?.stripe_customer?.sources?.data?.find(

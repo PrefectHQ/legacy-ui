@@ -93,10 +93,7 @@ export default {
     ...mapGetters('license', ['hasPermission']),
 
     isReadOnlyUser() {
-      return (
-        !this.hasPermission('create', 'role') &&
-        !this.hasPermission('update', 'secret')
-      )
+      return !this.hasPermission('update', 'secret')
     },
     secretExists() {
       if (!this.secretNames) return false
@@ -325,7 +322,7 @@ export default {
         icon="lock"
         max-width="380"
       >
-        Read-only users cannot manage secrets.
+        You don't have permission to manage secrets
       </v-alert>
     </template>
 

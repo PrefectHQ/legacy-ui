@@ -113,7 +113,10 @@ export default {
       return this.loadingKey > 0
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return (
+        this.hasPermission('update', 'run') &&
+        this.hasPermission('delete', 'run')
+      )
     },
     items() {
       if (!(this.versionGroups && this.flows)) return []

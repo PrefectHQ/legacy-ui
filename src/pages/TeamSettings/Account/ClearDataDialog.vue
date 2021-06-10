@@ -68,7 +68,12 @@ export default {
       return 'form'
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return (
+        this.hasPermission('delete', 'project') &&
+        this.hasPermission('delete', 'membership') &&
+        this.hasPermission('delete', 'api-key') &&
+        this.hasPermission('delete', 'secret')
+      )
     },
     confirmDisabled() {
       return (

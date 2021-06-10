@@ -121,10 +121,14 @@ export default {
         : this.headers.filter(header => header.mobile)
     },
     isReadOnlyUser() {
-      return !this.isTenantAdmin && !this.hasPermission('create', 'project')
+      return !this.isTenantAdmin
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return (
+        this.hasPermission('create', 'project') &&
+        this.hasPermission('update', 'project') &&
+        this.hasPermission('delete', 'project')
+      )
     },
     // If the user decides to move flows to a new project before deletion,
     // provide a list of candidate projects to take these flows

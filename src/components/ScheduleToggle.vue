@@ -26,8 +26,10 @@ export default {
     },
     isReadOnlyUser() {
       return (
-        !this.hasPermissions('create', 'role') &&
-        !this.hasPermissions('create', 'flow')
+        (!this.hasPermissions('create', 'run') &&
+          !this.hasPermissions('delete', 'run')) ||
+        (this.hasPermissions('create', 'run') &&
+          !this.hasPermissions('delete', 'run'))
       )
     },
     isScheduled() {

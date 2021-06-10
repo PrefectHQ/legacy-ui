@@ -29,7 +29,7 @@ export default {
     ]),
     ...mapGetters('tenant', ['tenant']),
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return this.hasPermission('update', 'license')
     },
     isSelfServe() {
       return this.license?.terms?.is_self_serve
