@@ -360,10 +360,7 @@ export default {
       class="py-2"
       :style="showAll ? '' : { height: '250px' }"
     >
-      <div
-        v-if="!showAll || hasLateRuns"
-        class="my-2 text-subtitle-1 font-weight-light "
-      >
+      <div v-if="!showAll" class="my-2 text-subtitle-1 font-weight-light ">
         <v-icon small class="mr-1" :color="hasLateRuns ? 'deepRed' : 'success'">
           adjust
         </v-icon>
@@ -376,10 +373,9 @@ export default {
         {{ hasLateRuns ? 'Late submittable' : 'submittable' }}
         runs
       </div>
-      <div class="my-2 text-subtitle-1 font-weight-light ">
-        <v-icon v-if="!showAll" small class="mr-1" :color="queryColor"
-          >adjust</v-icon
-        >
+
+      <div v-if="!showAll" class="my-2 text-subtitle-1 font-weight-light ">
+        <v-icon small class="mr-1" :color="queryColor">adjust</v-icon>
         <v-tooltip v-if="agent.last_queried" top>
           <template #activator="{ on }">
             <span v-on="on">
@@ -394,10 +390,37 @@ export default {
         </v-tooltip>
         <span v-else> No recent queries</span>
       </div>
+      <div v-else class="my-2 text-caption">
+        <v-row no-gutters>
+          <v-col cols="4">
+            Last queried:
+          </v-col>
+          <v-col cols="8" class="text-right font-weight-bold">
+            <v-tooltip v-if="agent.last_queried" top>
+              <template #activator="{ on }">
+                <span v-on="on">
+                  <span v-if="secondsSinceLastQuery < 60">
+                    <DurationSpan :start-time="agent.last_queried" /> ago
+                  </span>
+                  <span v-else>{{ timer }}</span>
+                </span>
+              </template>
+              <span>{{ formatDateTime(agent.last_queried) }}</span>
+            </v-tooltip>
+            <span v-else> No recent queries</span>
+          </v-col>
+        </v-row>
+      </div>
 
-      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light ">
-        Core Version:
-        {{ agent.core_version || 'Unknown' }}
+      <div v-if="showAll" class="my-2 text-caption">
+        <v-row no-gutters>
+          <v-col cols="4">
+            Core Version:
+          </v-col>
+          <v-col cols="8" class="text-right font-weight-bold">
+            {{ agent.core_version || 'Unknown' }}
+          </v-col>
+        </v-row>
       </div>
 
       <div v-if="!showAll" :style="{ height: '60px' }">
@@ -415,58 +438,91 @@ export default {
           :disable-view="hasLateRuns"
         />
       </div>
-      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light ">
-        {{ getDateTime }}
+      <div v-if="showAll" class="my-2 text-caption">
+        <v-row no-gutters>
+          <v-col cols="4">
+            Created At:
+          </v-col>
+          <v-col cols="8" class="text-right font-weight-bold">
+            <v-tooltip top>
+              <template #activator="{ on }">
+                <span v-on="on">
+                  {{ formatTime(agent.created) }}
+                </span>
+              </template>
+              <div>
+                {{ formatDateTime(agent.created) }}
+              </div>
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </div>
-
-      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light ">
-        Token {{ agent.token_name ? 'Name' : 'ID' }}:
-        <v-tooltip bottom>
-          <template #activator="{ on }">
-            <span
-              class="cursor"
-              v-on="on"
-              @click="copyTextToClipboard(agent.token_id)"
-            >
-              <v-icon x-small class="mb-2px">
-                {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
-              </v-icon>
-              {{ agent.token_name || agent.token_id }}
-            </span>
-          </template>
-
-          <span>
-            {{
-              agent.token_name || agent.token_id
-                ? 'Click to copy token id'
-                : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
-            }}</span
+      <div v-if="showAll" class="my-2 text-caption">
+        <v-row no-gutters>
+          <v-col :cols="agent.token_name ? 4 : 2">
+            Token {{ agent.token_name ? 'Name' : 'ID' }}:
+          </v-col>
+          <v-col
+            :cols="agent.token_name ? 8 : 10"
+            class="text-right font-weight-bold"
           >
-        </v-tooltip>
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <span
+                  class="cursor"
+                  v-on="on"
+                  @click="copyTextToClipboard(agent.token_id)"
+                >
+                  <v-icon x-small class="mb-2px">
+                    {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
+                  </v-icon>
+                  {{ agent.token_name || agent.token_id }}
+                </span>
+              </template>
+
+              <span>
+                {{
+                  agent.token_name || agent.token_id
+                    ? 'Click to copy token id'
+                    : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
+                }}</span
+              >
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </div>
 
-      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light ">
-        Agent ID:
-        <v-tooltip bottom>
-          <template #activator="{ on }">
-            <span
-              class="cursor"
-              @click="copyTextToClipboard(agent.id)"
-              v-on="on"
-            >
-              <v-icon x-small class="mb-2px">
-                {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
-              </v-icon>
-              {{ agent.id || 'Unknown' }}
-            </span>
-          </template>
-          <span>
-            Click to copy agent id
-          </span>
-        </v-tooltip>
+      <div v-if="showAll" class="my-2 text-caption">
+        <v-row no-gutters>
+          <v-col cols="2">
+            Agent ID:
+          </v-col>
+          <v-col cols="10" class="text-right font-weight-bold">
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <span
+                  class="cursor"
+                  @click="copyTextToClipboard(agent.id)"
+                  v-on="on"
+                >
+                  <v-icon x-small class="mb-2px">
+                    {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
+                  </v-icon>
+                  {{ agent.id || 'Unknown' }}
+                </span>
+              </template>
+              <span>
+                Click to copy agent id
+              </span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </div>
       <div>
-        <div class="my-2 text-subtitle-1 ">
+        <div
+          class="my-2 "
+          :class="showAll ? 'text-caption' : 'text-subtitle-1'"
+        >
           Labels
         </div>
         <v-sheet
@@ -490,7 +546,8 @@ export default {
         </v-sheet>
         <div
           v-else
-          class="text--disabled my-2 text-subtitle-1 font-weight-light "
+          class="text--disabled my-2"
+          :class="showAll ? 'text-caption' : 'text-subtitle-1'"
           :style="{ height: labelHeight }"
         >
           None
