@@ -288,7 +288,13 @@ export default {
       </v-overlay>
     </v-card-text>
 
-    <v-card-text v-if="tab == 'submittable'" class="pa-0 card-content">
+    <v-card-text
+      v-if="tab == 'submittable'"
+      class="pa-0"
+      :class="
+        lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
+      "
+    >
       <v-skeleton-loader v-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
@@ -380,7 +386,13 @@ export default {
       </Alert>
     </v-card-text>
 
-    <v-card-text v-if="tab == 'late'" class="pa-0 card-content">
+    <v-card-text
+      v-if="tab == 'late'"
+      class="pa-0"
+      :class="
+        lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
+      "
+    >
       <v-skeleton-loader
         v-if="loading || isClearingLateRuns"
         type="list-item-three-line"
@@ -494,9 +506,15 @@ a {
   width: 100% !important;
 }
 
+.late-card-content {
+  min-height: 280px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
 .card-content {
-  min-height: 330px;
-  max-height: 330px;
+  min-height: 300px;
+  max-height: 300px;
   overflow-y: auto;
 }
 </style>
