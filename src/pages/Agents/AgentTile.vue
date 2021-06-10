@@ -274,7 +274,6 @@ export default {
   <v-card
     :disabled="agent.isDeleting || isDeleting"
     class="agent-card py-2"
-    :style="showAll ? { 'overflow-y': 'auto' } : ''"
     :tile="showAll"
     :height="showAll ? '380px' : '350px'"
   >
@@ -363,7 +362,7 @@ export default {
     >
       <div
         v-if="!showAll || hasLateRuns"
-        class="my-2 text-subtitle-1 font-weight-light black--text"
+        class="my-2 text-subtitle-1 font-weight-light "
       >
         <v-icon small class="mr-1" :color="hasLateRuns ? 'deepRed' : 'success'">
           adjust
@@ -377,7 +376,7 @@ export default {
         {{ hasLateRuns ? 'Late submittable' : 'submittable' }}
         runs
       </div>
-      <div class="my-2 text-subtitle-1 font-weight-light black--text">
+      <div class="my-2 text-subtitle-1 font-weight-light ">
         <v-icon v-if="!showAll" small class="mr-1" :color="queryColor"
           >adjust</v-icon
         >
@@ -396,16 +395,13 @@ export default {
         <span v-else> No recent queries</span>
       </div>
 
-      <div
-        v-if="showAll"
-        class="my-2 text-subtitle-1 font-weight-light black--text"
-      >
+      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light ">
         Core Version:
         {{ agent.core_version || 'Unknown' }}
       </div>
       <v-divider v-if="!showAll"></v-divider>
       <div v-if="!showAll" :style="{ height: '60px' }">
-        <div class="my-2 text-subtitle-1 font-weight-light black--text">
+        <div class="my-2 text-subtitle-1 font-weight-light ">
           Recent runs
         </div>
         <div
@@ -421,17 +417,11 @@ export default {
           :disable-view="hasLateRuns"
         />
       </div>
-      <div
-        v-if="showAll"
-        class="my-2 text-subtitle-1 font-weight-light black--text"
-      >
+      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light ">
         {{ getDateTime }}
       </div>
 
-      <div
-        v-if="showAll"
-        class="my-2 text-subtitle-1 font-weight-light black--text"
-      >
+      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light ">
         Token {{ agent.token_name ? 'Name' : 'ID' }}:
         <v-tooltip bottom>
           <template #activator="{ on }">
@@ -457,10 +447,7 @@ export default {
         </v-tooltip>
       </div>
 
-      <div
-        v-if="showAll"
-        class="my-2 text-subtitle-1 font-weight-light black--text"
-      >
+      <div v-if="showAll" class="my-2 text-subtitle-1 font-weight-light ">
         Agent ID:
         <v-tooltip bottom>
           <template #activator="{ on }">
@@ -481,7 +468,7 @@ export default {
         </v-tooltip>
       </div>
       <div>
-        <div class="my-2 text-subtitle-1 font-weight-light black--text">
+        <div class="my-2 text-subtitle-1 font-weight-light ">
           Labels
         </div>
         <v-sheet
@@ -505,7 +492,7 @@ export default {
         </v-sheet>
         <div
           v-else
-          class="text--disabled my-2 text-subtitle-1 font-weight-light black--text"
+          class="text--disabled my-2 text-subtitle-1 font-weight-light "
           :style="{ height: labelHeight }"
         >
           None
@@ -515,11 +502,11 @@ export default {
     <v-card-text v-else
       ><div
         v-if="!agentHook || !agentHook.length"
-        class="my-2 text-subtitle-1 font-weight-light black--text"
+        class="my-2 text-subtitle-1 font-weight-light "
       >
         No config.</div
       >
-      <div v-else class="my-2 text-subtitle-1 font-weight-light black--text">
+      <div v-else class="my-2 text-subtitle-1 font-weight-light ">
         <truncate :content="agent.id">
           Agent Config Id: {{ agent.agent_config_id || unknown }}</truncate
         >
@@ -530,7 +517,7 @@ export default {
             }}:
             {{ action.name }}
           </div>
-          <div class="my-2 text-subtitle-1 font-weight-light black--text">
+          <div class="my-2 text-subtitle-1 font-weight-light ">
             Action Type{{
               agentHook && agentHook.length > 1 ? ` ${index}` : ''
             }}:
