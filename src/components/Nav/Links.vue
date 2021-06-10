@@ -43,18 +43,6 @@ export default {
     </v-btn>
 
     <v-btn
-      :to="'/home'"
-      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
-      dark
-      small
-      depressed
-      color="transparent"
-      title="Learn how to get started with Prefect"
-    >
-      Getting Started
-    </v-btn>
-
-    <v-btn
       :to="{
         name: 'api',
         params: { tenant: slug }

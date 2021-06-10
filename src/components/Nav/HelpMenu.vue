@@ -42,6 +42,20 @@ export default {
       </div>
 
       <v-list class="text-left">
+        <v-list-item :to="'/getting-started'">
+          <v-list-item-avatar tile class="d-flex justify-center align-center">
+            <i class="o-100 fad fa-laptop-code fa-2x" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Getting started
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Installing Prefect, starting your first agent and more
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item href="https://docs.prefect.io" target="_blank">
           <v-list-item-avatar tile class="d-flex justify-center align-center">
             <i class="o-100 fad fa-books fa-2x fa-flip-horizontal" />
@@ -135,7 +149,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-$dark-grey-icon: var(--v-navIcons-base);
+$dark-grey-icon: var(--v-utilGrayMid-base);
 $dark-blue-icon: var(--v-primaryDark-base);
 
 .o-100 {
@@ -156,6 +170,11 @@ $dark-blue-icon: var(--v-primaryDark-base);
 }
 
 .fa-graduation-cap {
+  --fa-secondary-color: #{$dark-blue-icon};
+  --fa-primary-color: #{$dark-grey-icon};
+}
+
+.fa-laptop-code {
   --fa-secondary-color: #{$dark-blue-icon};
   --fa-primary-color: #{$dark-grey-icon};
 }

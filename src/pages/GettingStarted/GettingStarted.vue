@@ -1,8 +1,8 @@
 <script>
 // Infrastructure components
-import ConnectAgentSection from '@/pages/Home/ConnectAgent-Section'
-import CreateTenantSection from '@/pages/Home/CreateTenant-Section'
-import StartPrefectServerSection from '@/pages/Home/StartPrefectServer-Section'
+import ConnectAgentSection from '@/pages/GettingStarted/ConnectAgent-Section'
+import CreateTenantSection from '@/pages/GettingStarted/CreateTenant-Section'
+import StartPrefectServerSection from '@/pages/GettingStarted/StartPrefectServer-Section'
 
 import ExternalLink from '@/components/ExternalLink'
 import { mapGetters } from 'vuex'

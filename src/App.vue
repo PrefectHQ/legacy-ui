@@ -222,7 +222,7 @@ export default {
       await this.getApi()
 
       if (!this.connected && this.isServer) {
-        this.$router.push({ name: 'home' })
+        this.$router.push({ name: 'getting-started' })
       }
     }
 

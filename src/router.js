@@ -347,10 +347,12 @@ export const routes = [
       )
   },
   {
-    name: 'home',
-    path: '/home',
+    name: 'getting-started',
+    path: '/getting-started',
     component: () =>
-      import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue')
+      import(
+        /* webpackChunkName: "getting-started" */ '@/pages/GettingStarted/GettingStarted.vue'
+      )
   },
   {
     name: 'admin',
