@@ -404,11 +404,9 @@ export default {
         <div class="my-2 text-subtitle-1 font-weight-light ">
           Recent runs
         </div>
-        <div
-          v-if="!recentRuns || !recentRuns.length"
-          class="text-caption text-center grey--text"
-        >
-          No run history
+        <div v-if="!recentRuns || !recentRuns.length">
+          <div class="text-caption grey--text ">No run history</div>
+          <v-divider></v-divider>
         </div>
         <LastTenRuns
           v-else
