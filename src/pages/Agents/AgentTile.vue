@@ -404,11 +404,18 @@ export default {
         {{ agent.core_version || 'Unknown' }}
       </div>
       <v-divider v-if="!showAll"></v-divider>
-      <div v-if="!showAll" :style="{ 'min-height': '45px' }">
+      <div v-if="!showAll" :style="{ height: '60px' }">
         <div class="my-2 text-subtitle-1 font-weight-light black--text">
           Recent runs
         </div>
+        <div
+          v-if="!recentRuns || !recentRuns.length"
+          class="text-caption text-center grey--text"
+        >
+          No run history
+        </div>
         <LastTenRuns
+          v-else
           :runs="recentRuns"
           :agent-id="agent.id"
           :disable-view="hasLateRuns"
