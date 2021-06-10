@@ -403,7 +403,7 @@ export default {
         Core Version:
         {{ agent.core_version || 'Unknown' }}
       </div>
-      <v-divider></v-divider>
+      <v-divider v-if="!showAll"></v-divider>
       <div v-if="!showAll" :style="{ 'min-height': '45px' }">
         <div class="my-2 text-subtitle-1 font-weight-light black--text">
           Recent runs
