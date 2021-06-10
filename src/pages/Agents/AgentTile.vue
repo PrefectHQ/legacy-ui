@@ -390,7 +390,7 @@ export default {
         </v-tooltip>
         <span v-else> No recent queries</span>
       </div>
-      <div v-else class="my-2 text-caption">
+      <div v-else class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col cols="4">
             Last queried:
@@ -412,7 +412,7 @@ export default {
         </v-row>
       </div>
 
-      <div v-if="showAll" class="my-2 text-caption">
+      <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col cols="4">
             Core Version:
@@ -428,7 +428,7 @@ export default {
           Recent runs
         </div>
         <div v-if="!recentRuns || !recentRuns.length">
-          <div class="text-caption grey--text timeline-no-runs"
+          <div class="text-subtitle-1 grey--text timeline-no-runs"
             >No run history</div
           >
         </div>
@@ -438,7 +438,7 @@ export default {
           :disable-view="hasLateRuns"
         />
       </div>
-      <div v-if="showAll" class="my-2 text-caption">
+      <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col cols="4">
             Created At:
@@ -457,7 +457,7 @@ export default {
           </v-col>
         </v-row>
       </div>
-      <div v-if="showAll" class="my-2 text-caption">
+      <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col :cols="agent.token_name ? 4 : 2">
             Token {{ agent.token_name ? 'Name' : 'ID' }}:
@@ -466,63 +466,62 @@ export default {
             :cols="agent.token_name ? 8 : 10"
             class="text-right font-weight-bold"
           >
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <span
-                  class="cursor"
-                  v-on="on"
-                  @click="copyTextToClipboard(agent.token_id)"
-                >
-                  <v-icon x-small class="mb-2px">
-                    {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
-                  </v-icon>
-                  {{ agent.token_name || agent.token_id }}
-                </span>
-              </template>
+            <div class="text-truncate">
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <span
+                    class="cursor"
+                    v-on="on"
+                    @click="copyTextToClipboard(agent.token_id)"
+                  >
+                    <v-icon x-small class="mb-2px">
+                      {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
+                    </v-icon>
+                    {{ agent.token_name || agent.token_id }}
+                  </span>
+                </template>
 
-              <span>
-                {{
-                  agent.token_name || agent.token_id
-                    ? 'Click to copy token id'
-                    : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
-                }}</span
-              >
-            </v-tooltip>
+                <span>
+                  {{
+                    agent.token_name || agent.token_id
+                      ? 'Click to copy token id'
+                      : 'No token name found; you may have registered the agent with an older version of Prefect Core.'
+                  }}</span
+                >
+              </v-tooltip>
+            </div>
           </v-col>
         </v-row>
       </div>
 
-      <div v-if="showAll" class="my-2 text-caption">
+      <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
-          <v-col cols="2">
+          <v-col cols="3">
             Agent ID:
           </v-col>
-          <v-col cols="10" class="text-right font-weight-bold">
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <span
-                  class="cursor"
-                  @click="copyTextToClipboard(agent.id)"
-                  v-on="on"
-                >
-                  <v-icon x-small class="mb-2px">
-                    {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
-                  </v-icon>
-                  {{ agent.id || 'Unknown' }}
-                </span>
-              </template>
-              <span>
-                Click to copy agent id
-              </span>
-            </v-tooltip>
+          <v-col cols="9" class="text-right font-weight-bold">
+            <div class="text-truncate">
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <span
+                    class="cursor"
+                    @click="copyTextToClipboard(agent.id)"
+                    v-on="on"
+                  >
+                    <v-icon x-small class="mb-2px">
+                      {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
+                    </v-icon>
+                    <span>{{ agent.id || 'Unknown' }}</span>
+                  </span>
+                </template>
+                <span> Click to copy agent id {{ agent.id }} </span>
+              </v-tooltip>
+            </div>
           </v-col>
         </v-row>
       </div>
       <div>
-        <div
-          class="my-2 "
-          :class="showAll ? 'text-caption' : 'text-subtitle-1'"
-        >
+        <div class="my-2 " :class="showAll ? 'subtitle-1' : 'text-subtitle-1'">
           Labels
         </div>
         <v-sheet
@@ -547,7 +546,7 @@ export default {
         <div
           v-else
           class="text--disabled my-2"
-          :class="showAll ? 'text-caption' : 'text-subtitle-1'"
+          :class="showAll ? 'subtitle-1' : 'text-subtitle-1'"
           :style="{ height: labelHeight }"
         >
           None
