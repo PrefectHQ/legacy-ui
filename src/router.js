@@ -230,7 +230,7 @@ export const routes = [
   // ----------------------------//
   {
     name: 'agents',
-    path: '/:tenant?/agents',
+    path: '/:tenant?/agent',
     component: () =>
       import(/*webpackChunkName: "calendar" */ '@/pages/Agents/Agents')
   },

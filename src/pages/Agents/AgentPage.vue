@@ -1,5 +1,6 @@
 <script>
 import SubPageNav from '@/layouts/SubPageNav'
+import BreadCrumbs from '@/components/BreadCrumbs'
 import TileLayout from '@/layouts/AgentLayout'
 import AgentTile from '@/pages/Agents/AgentTile'
 import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
@@ -12,6 +13,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 export default {
   components: {
     SubPageNav,
+    BreadCrumbs,
     TileLayout,
     AgentTile,
     AgentFlowRunHistory,
@@ -53,6 +55,11 @@ export default {
       }, 5000)
     }
   },
+  mounted() {
+    if (!this.agentDetails) {
+      this.$router.push({ name: 'agents' })
+    }
+  },
   methods: {
     ...mapMutations('agent', ['setAgents', 'setRefetch']),
     ...mapActions('alert', ['setAlert']),
@@ -88,6 +95,26 @@ export default {
         <span>
           {{ agentName }}
         </span>
+      </span>
+      <span
+        slot="breadcrumbs"
+        :style="
+          $vuetify.breakpoint.smAndDown && {
+            display: 'inline',
+            'font-size': '0.875rem'
+          }
+        "
+      >
+        <BreadCrumbs
+          :crumbs="[
+            {
+              route: {
+                name: 'agents'
+              },
+              text: 'Agents'
+            }
+          ]"
+        />
       </span>
       <span
         slot="page-actions"
