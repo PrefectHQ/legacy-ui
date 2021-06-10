@@ -263,7 +263,7 @@ export default {
                 This will remove any agents that haven't queried
                 <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
                 <span v-else class="secondaryGray--text">Prefect Server</span>
-                in the last {{ unhealthyThreshold }} minutes.
+                in the last {{ unhealthyThreshold / 60 }} hours.
               </p>
               <p>
                 Note: These agents will appear again if they become healthy by
