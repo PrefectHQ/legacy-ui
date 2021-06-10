@@ -509,7 +509,7 @@ export default {
         v-if="!agentHook || !agentHook.length"
         class="my-2 text-subtitle-1 font-weight-light black--text"
       >
-        No agent config attached to this agent.</div
+        No config.</div
       >
       <div v-else class="my-2 text-subtitle-1 font-weight-light black--text">
         <truncate :content="agent.id">
