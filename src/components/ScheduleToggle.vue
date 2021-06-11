@@ -24,14 +24,6 @@ export default {
     archived() {
       return this.flow.archived
     },
-    isReadOnlyUser() {
-      return (
-        (!this.hasPermissions('create', 'run') &&
-          !this.hasPermissions('delete', 'run')) ||
-        (this.hasPermissions('create', 'run') &&
-          !this.hasPermissions('delete', 'run'))
-      )
-    },
     isScheduled() {
       if (this.archived) return false
       return this.optimisticIsScheduled
@@ -124,7 +116,11 @@ export default {
               class="small-switch"
               color="primary"
               :loading="loading"
-              :disabled="isReadOnlyUser || archived"
+              :disabled="
+                !hasPermission('create', 'run') ||
+                  (isScheduled && !hasPermission('delete', 'run')) ||
+                  archived
+              "
               inset
               dense
               hide-details
@@ -134,8 +130,8 @@ export default {
           </v-badge>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
-        Read-only users cannot schedule flows.
+      <span v-if="!hasPermission('create', 'run')">
+        You don't have permission to schedule flows.
       </span>
       <span v-else-if="schedule == null && isScheduled">
         This flow is trying to schedule runs but has no schedules! Visit this

@@ -237,19 +237,7 @@ export default {
         }
       }
     },
-    unarchiveFlow() {},
-    isReadOnlyUser(action) {
-      if (action == 'quick-run') {
-        return !this.hasPermission('create', 'run')
-      } else {
-        return (
-          (this.hasPermission('create', 'run') &&
-            !this.hasPermission('delete', 'run')) ||
-          (!this.hasPermission('create', 'run') &&
-            !this.hasPermission('delete', 'run'))
-        )
-      }
-    }
+    unarchiveFlow() {}
   }
 }
 </script>
@@ -277,7 +265,9 @@ export default {
       bottom
       max-width="340"
       :open-delay="
-        isReadOnlyUser('quick-run') || !isQuickRunnable || archived ? 0 : 750
+        !hasPermission('create', 'run') || !isQuickRunnable || archived
+          ? 0
+          : 750
       "
     >
       <template #activator="{ on }">
@@ -291,7 +281,7 @@ export default {
             small
             data-cy="start-flow-quick-run"
             :disabled="
-              isReadOnlyUser('quick-run') || !isQuickRunnable || archived
+              !hasPermission('create', 'run') || !isQuickRunnable || archived
             "
             :loading="isRunning"
             @click="quickRunFlow"
@@ -312,7 +302,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnlyUser('quick-run')">
+      <span v-if="!hasPermission('create', 'run')">
         You don't have permission to run flows
       </span>
       <span v-else-if="!isQuickRunnable">
@@ -355,7 +345,11 @@ export default {
                 class="mr-1 v-input--vertical"
                 color="primary"
                 :loading="scheduleLoading"
-                :disabled="isReadOnlyUser('schedule') || archived"
+                :disabled="
+                  !hasPermission('create', 'run') ||
+                    (isScheduled && !hasPermission('delete', 'run')) ||
+                    archived
+                "
                 @change="scheduleFlow"
               >
                 <template #label>
@@ -368,8 +362,8 @@ export default {
           </v-badge>
         </div>
       </template>
-      <span v-if="isReadOnlyUser('schedule')">
-        You don't have permission to schedule flows
+      <span v-if="!hasPermission('create', 'run')">
+        You don't have permission to schedule flows.
       </span>
       <span v-else-if="schedule == null && isScheduled">
         This flow is trying to schedule runs but has no schedules! Visit this
