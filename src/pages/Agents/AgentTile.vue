@@ -52,7 +52,7 @@ export default {
       labelMenuOpen: false,
       isDeleting: false,
       showConfirmDialog: false,
-
+      loading: 0,
       showIcon: true,
       tab: 'overview'
     }
