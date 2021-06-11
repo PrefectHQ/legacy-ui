@@ -428,7 +428,7 @@ export default {
           Recent runs
         </div>
         <div v-if="loading < 1 && (!recentRuns || !recentRuns.length)">
-          <div class="text-subtitle-1 grey--text timeline-no-runs"
+          <div class="text-xs-subtitle-1 grey--text timeline-no-runs"
             >No run history
           </div>
         </div>
