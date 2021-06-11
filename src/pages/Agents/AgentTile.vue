@@ -444,16 +444,7 @@ export default {
             Created At
           </v-col>
           <v-col cols="8" class="text-right font-weight-bold">
-            <v-tooltip top>
-              <template #activator="{ on }">
-                <span v-on="on">
-                  {{ formatTime(agent.created) }}
-                </span>
-              </template>
-              <div>
-                {{ formatDateTime(agent.created) }}
-              </div>
-            </v-tooltip>
+            {{ formatTime(agent.created) }}
           </v-col>
         </v-row>
       </div>
@@ -467,26 +458,12 @@ export default {
             class="text-right font-weight-bold"
           >
             <div class="text-truncate show-icon">
-              <v-tooltip bottom>
-                <template #activator="{ on }">
-                  <span
-                    class="cursor"
-                    @click="copyTextToClipboard(agent.token_id)"
-                    v-on="on"
-                  >
-                    <v-icon x-small class="mb-2px hidden-icon">
-                      {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
-                    </v-icon>
-                    <span>{{ agent.token_name || agent.token_id }}</span>
-                  </span>
-                </template>
-                <span v-if="agent.token_id">
-                  Click to copy token id {{ agent.id }}
-                </span>
-                <span v-else>
-                  No token id.
-                </span>
-              </v-tooltip>
+              <span class="cursor" @click="copyTextToClipboard(agent.token_id)">
+                <v-icon x-small class="mb-2px hidden-icon mr-1">
+                  {{ copiedText[agent.token_id] ? 'check' : 'file_copy' }}
+                </v-icon>
+                <span>{{ agent.token_name || agent.token_id }}</span>
+              </span>
             </div>
           </v-col>
         </v-row>
@@ -499,21 +476,12 @@ export default {
           </v-col>
           <v-col cols="9" class="text-right font-weight-bold">
             <div class="text-truncate show-icon">
-              <v-tooltip bottom>
-                <template #activator="{ on }">
-                  <span
-                    class="cursor"
-                    @click="copyTextToClipboard(agent.id)"
-                    v-on="on"
-                  >
-                    <v-icon x-small class="mb-2px hidden-icon">
-                      {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
-                    </v-icon>
-                    <span>{{ agent.id || 'Unknown' }}</span>
-                  </span>
-                </template>
-                <span> Click to copy agent id {{ agent.id }} </span>
-              </v-tooltip>
+              <span class="cursor" @click="copyTextToClipboard(agent.id)">
+                <v-icon x-small class="mb-2px hidden-icon mr-1">
+                  {{ copiedText[agent.id] ? 'check' : 'file_copy' }}
+                </v-icon>
+                <span>{{ agent.id || 'Unknown' }}</span>
+              </span>
             </div>
           </v-col>
         </v-row>
