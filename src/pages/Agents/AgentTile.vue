@@ -393,7 +393,7 @@ export default {
       <div v-else class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col cols="4">
-            Last queried:
+            Last queried
           </v-col>
           <v-col cols="8" class="text-right font-weight-bold">
             <v-tooltip v-if="agent.last_queried" top>
@@ -415,7 +415,7 @@ export default {
       <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col cols="4">
-            Core Version:
+            Core Version
           </v-col>
           <v-col cols="8" class="text-right font-weight-bold">
             {{ agent.core_version || 'Unknown' }}
@@ -427,10 +427,10 @@ export default {
         <div class="my-2 text-subtitle-1 ">
           Recent runs
         </div>
-        <div v-if="loading > 0 && (!recentRuns || !recentRuns.length)">
+        <div v-if="loading < 0 && (!recentRuns || !recentRuns.length)">
           <div class="text-subtitle-1 grey--text timeline-no-runs"
-            >No run history</div
-          >
+            >No run history {{ loading }}
+          </div>
         </div>
         <LastTenRuns
           :runs="recentRuns"
@@ -441,7 +441,7 @@ export default {
       <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col cols="4">
-            Created At:
+            Created At
           </v-col>
           <v-col cols="8" class="text-right font-weight-bold">
             <v-tooltip top>
@@ -460,7 +460,7 @@ export default {
       <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col :cols="agent.token_name ? 4 : 2">
-            Token {{ agent.token_name ? 'Name' : 'ID' }}:
+            Token {{ agent.token_name ? 'Name' : 'ID' }}
           </v-col>
           <v-col
             :cols="agent.token_name ? 8 : 10"
@@ -495,7 +495,7 @@ export default {
       <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col cols="3">
-            Agent ID:
+            Agent ID
           </v-col>
           <v-col cols="9" class="text-right font-weight-bold">
             <div class="text-truncate show-icon">
@@ -554,11 +554,11 @@ export default {
     <v-card-text v-else
       ><div
         v-if="!agentHook || !agentHook.length"
-        class="my-2 text-subtitle-1 font-weight-light "
+        class="my-2 text-subtitle-1 font-weight-light text-center"
       >
-        No config.</div
+        No config</div
       >
-      <div v-else class="my-2 text-subtitle-1 font-weight-light ">
+      <div v-else class="my-2 text-subtitle-1 font-weight-dark">
         <truncate :content="agent.id">
           Agent Config Id: {{ agent.agent_config_id || unknown }}</truncate
         >
