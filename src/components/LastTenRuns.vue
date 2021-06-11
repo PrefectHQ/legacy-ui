@@ -161,8 +161,11 @@ export default {
           flowId: this.flowId || null
         }
       },
+      skip() {
+        return !!this.runs
+      },
       loadingKey: 'loadingKey',
-      update: data => data.flow_run
+      update: data => data?.flow_run
     }
   }
 }
@@ -173,7 +176,7 @@ export default {
     <BarChart
       :items="preppedFlowRuns"
       :loading="loadingKey > 0"
-      :height="30"
+      :height="runs ? 30 : 50"
       :min-bands="10"
       normalize
       :padding="0"
