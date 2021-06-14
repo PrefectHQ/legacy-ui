@@ -4,12 +4,6 @@ import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import SubPageNav from '@/layouts/SubPageNav'
 
-const pageTitles = {
-  '/admin/teams/new': 'New team',
-  '/admin/account': 'Prefect Technologies Inc.',
-  '/admin/teams': 'Teams'
-}
-
 export default {
   metaInfo() {
     return {
@@ -25,6 +19,14 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('license', ['planType', 'license']),
     pageTitle() {
+      const pageTitles = {
+        '/admin/teams/new': 'New team',
+        '/admin/account': this.license.account_name || 'Account',
+        '/admin/teams': `${
+          this.license.account_name ? this.license.account_name + ' ' : ''
+        }Teams`
+      }
+
       return pageTitles[this.$route.path]
     },
     tabs() {
@@ -49,7 +51,7 @@ export default {
       ]
     },
     multitenancy() {
-      return this.license?.terms.tenants > 3
+      return this.license?.terms.tenants > 1
     }
   }
 }
