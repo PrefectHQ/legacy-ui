@@ -153,6 +153,7 @@ export default {
         obj.includeRead = false
         obj.includeUpdate = false
         obj.includeDelete = false
+        obj.includeAll = false
       })
       this.template?.permissions?.map(item => {
         const sections = item.split(':')
@@ -165,6 +166,11 @@ export default {
             permissionsObj[sections[1]].includeUpdate = true
           if (sections[0] === 'delete')
             permissionsObj[sections[1]].includeDelete = true
+          permissionsObj[sections[1]].includeAll =
+            permissionsObj[sections[1]].includeDelete &&
+            permissionsObj[sections[1]].includeUpdate &&
+            permissionsObj[sections[1]].includeRead &&
+            permissionsObj[sections[1]].includeCreate
         }
       })
       return permissionsObj
