@@ -379,8 +379,8 @@ export const routes = [
               )
           },
           {
-            name: 'new-team',
-            path: 'new-team',
+            name: 'new',
+            path: 'new',
             component: () =>
               import(
                 /* webpackChunkName: "admin--new-team" */ '@/pages/Admin/Teams/NewTeam.vue'

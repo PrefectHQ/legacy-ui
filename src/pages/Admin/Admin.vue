@@ -5,9 +5,9 @@ import NavTabBar from '@/components/NavTabBar'
 import SubPageNav from '@/layouts/SubPageNav'
 
 const pageTitles = {
-  'new-team': 'New team',
-  account: 'Prefect Technologies Inc.',
-  teams: 'Teams'
+  '/admin/teams/new': 'New team',
+  '/admin/account': 'Prefect Technologies Inc.',
+  '/admin/teams': 'Teams'
 }
 
 const tabs = [
@@ -37,7 +37,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     pageTitle() {
-      return pageTitles[this.$route.name]
+      return pageTitles[this.$route.path]
     },
     tabs() {
       return [...tabs]

@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       id: uniqueId('usage'),
+      selectedTeam: null,
       format: null,
       ticks: null,
       period: 'Year',
@@ -69,7 +70,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
+    ...mapGetters('license', ['license']),
+    teams() {
+      return [
+        { id: null, name: 'All' },
+        ...this.tenants?.filter(t => t.license_id == this.license?.id)
+      ]
+    },
     predictedItems() {
       if (!this.usage || !this.predict) return []
       const from = new Date(this.from)
@@ -263,6 +271,9 @@ export default {
     offset() {
       this.updateItems()
       this.updateScales()
+    },
+    selectedTeam() {
+      this.$apollo.queries['usage'].refresh()
     }
   },
   mounted() {
@@ -958,11 +969,7 @@ export default {
     usage: {
       query: require('@/graphql/TeamSettings/usage.gql'),
       variables() {
-        return {
-          from: startDate,
-          to: this.to,
-          tenant_id: this.tenant.id
-        }
+        return { from: startDate, to: this.to, tenant_id: this.selectedTeam }
       },
       skip() {
         return !this.from || !this.to
@@ -985,24 +992,23 @@ export default {
 
         <div>
           <v-select
+            v-model="selectedTeam"
             dense
             hide-details
             outlined
             style="width: 200px;"
             class="ml-6"
-            :items="[
-              { id: 1, text: 'Prefect' },
-              { id: 2, text: 'Dev Ops' }
-            ]"
+            :items="teams"
+            item-value="id"
           >
             <template #item="{ item }">
               <div class="text-subtitle-2 font-weight-light">
-                {{ item.text }}
+                {{ item.name }}
               </div>
             </template>
             <template #selection="{ item }">
               <div class="text-subtitle-2 font-weight-light">
-                {{ item.text }}
+                {{ item.name }}
               </div>
             </template>
           </v-select>

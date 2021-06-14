@@ -15,6 +15,7 @@ export default function(isCloud) {
             ? `
               prefectAdminSettings: prefect_admin_settings
               stripe_customer
+              license_id
             `
             : ''
         }
