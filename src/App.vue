@@ -135,11 +135,6 @@ export default {
     isDark(val) {
       this.$vuetify.theme.dark = val
     },
-    refetchAgents(val) {
-      if (val) {
-        this.$apollo.queries.agents.refresh()
-      }
-    },
     backend() {
       this.loadedComponents = 0
       clearCache()
