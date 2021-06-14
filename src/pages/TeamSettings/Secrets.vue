@@ -322,7 +322,7 @@ export default {
         icon="lock"
         max-width="380"
       >
-        You don't have permission to manage secrets
+        You don't have permission to manage secrets.
       </v-alert>
     </template>
 

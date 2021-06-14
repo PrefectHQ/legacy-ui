@@ -459,7 +459,7 @@ export default {
               </div>
             </template>
             <span v-if="!hasPermission('update', 'cloud-hook')">
-              Read-only users cannot change Cloud Hook states.
+              You don't have permission to change Cloud Hook states.
             </span>
             <span v-else>
               {{ item.active ? 'Deactivate' : 'Activate' }}
