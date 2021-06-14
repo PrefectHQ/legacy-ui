@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add the `mapped_children` route to the IAPI allow-list - [#891](https://github.com/PrefectHQ/ui/pull/891)
+- Improve expired auth and id token handling - [#896](https://github.com/PrefectHQ/ui/pull/896)
 
 ### Bugfixes
 
