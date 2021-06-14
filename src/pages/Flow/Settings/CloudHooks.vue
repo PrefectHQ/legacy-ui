@@ -218,10 +218,15 @@ export default {
                                                 color="primary"
                                                 :loading="item.loading"
                                                 :disabled="
-                                                  !hasPermission(
+                                                  (!hasPermission(
                                                     'create',
                                                     'cloud-hook'
-                                                  ) || item.loading
+                                                  ) &&
+                                                    !hasPermission(
+                                                      'delete',
+                                                      'cloud-hook'
+                                                    )) ||
+                                                    item.loading
                                                 "
                                                 @change="
                                                   _handleSetCloudHookStatusChange(

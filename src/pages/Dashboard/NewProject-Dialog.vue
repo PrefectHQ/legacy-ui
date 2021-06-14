@@ -112,7 +112,7 @@ export default {
         Success!
       </v-card-title>
       <v-card-title v-else-if="isReadOnly">
-        You are a Read-only user.
+        You don't have permission.
       </v-card-title>
 
       <v-card-title v-else>

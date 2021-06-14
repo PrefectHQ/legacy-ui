@@ -7,15 +7,12 @@ export default {
     ExternalLink
   },
   computed: {
-    ...mapGetters('license', ['license', 'hasPermission']),
+    ...mapGetters('license', ['license']),
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
-    },
-    isTenantAdmin() {
-      return this.hasPermission('create', 'license')
     }
   }
 }

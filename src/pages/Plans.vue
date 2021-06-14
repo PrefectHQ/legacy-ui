@@ -74,7 +74,7 @@ export default {
       }
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return this.hasPermission('create', 'license')
     }
   },
   methods: {

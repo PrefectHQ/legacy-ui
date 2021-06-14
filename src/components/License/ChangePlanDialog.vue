@@ -27,7 +27,7 @@ export default {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
     },
     isTenantAdmin() {
-      return this.hasPermission('create', 'role')
+      return this.hasPermission('create', 'license')
     },
     isSelfServe() {
       return (

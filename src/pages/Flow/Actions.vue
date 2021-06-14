@@ -67,6 +67,50 @@ export default {
     },
     schedule() {
       return this.flow.schedule?.clocks[0] || this.flowGroup.schedule?.clocks[0]
+    },
+    disableToggle() {
+      let isDisabled = false
+      if (
+        this.hasPermission('create', 'run') &&
+        this.hasPermission('delete', 'run')
+      ) {
+        isDisabled = false
+      }
+      if (
+        !this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run')
+      ) {
+        isDisabled = true
+      }
+      if (
+        this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run') &&
+        !this.isScheduled
+      ) {
+        isDisabled = false
+      } else if (
+        this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run') &&
+        this.isScheduled
+      ) {
+        isDisabled = true
+      }
+
+      if (
+        this.hasPermission('delete', 'run') &&
+        !this.hasPermission('create', 'run') &&
+        this.isScheduled
+      ) {
+        isDisabled = false
+      } else if (
+        this.hasPermission('delete', 'run') &&
+        !this.hasPermission('create', 'run') &&
+        !this.isScheduled
+      ) {
+        isDisabled = true
+      }
+
+      return isDisabled
     }
   },
   watch: {
@@ -345,11 +389,7 @@ export default {
                 class="mr-1 v-input--vertical"
                 color="primary"
                 :loading="scheduleLoading"
-                :disabled="
-                  !hasPermission('create', 'run') ||
-                    (isScheduled && !hasPermission('delete', 'run')) ||
-                    archived
-                "
+                :disabled="disableToggle || archived"
                 @change="scheduleFlow"
               >
                 <template #label>

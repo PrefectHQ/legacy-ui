@@ -258,7 +258,7 @@ export default {
   <ManagementLayout :show="!isLoadingTable" control-show>
     <template #title>Cloud Hooks</template>
     <template #subtitle>
-      <div v-if="!hasPermission('create', 'cloud-hook')">
+      <div v-if="!hasPermission('update', 'cloud-hook')">
         View your team's
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/cloud_hooks.html"

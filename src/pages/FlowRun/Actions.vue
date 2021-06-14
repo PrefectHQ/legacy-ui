@@ -39,9 +39,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['hasPermission']),
-    isReadOnlyUser() {
-      return !this.hasPermission('update', 'run')
-    },
     isScheduled() {
       return this.flowRun?.state === 'Scheduled'
     },
@@ -147,7 +144,11 @@ export default {
             text
             depressed
             :loading="runFlowNowLoading"
-            :disabled="runFlowNowLoading || runFlowNowClicked || isReadOnlyUser"
+            :disabled="
+              runFlowNowLoading ||
+                runFlowNowClicked ||
+                !hasPermission('create', 'run')
+            "
             small
             @click="runFlowNow"
           >
@@ -156,7 +157,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
+      <span v-if="!hasPermission('create', 'run')">
         You don't have permission to run flows
       </span>
       <span v-else-if="runFlowNowClicked">
@@ -176,7 +177,7 @@ export default {
             depressed
             style="height: 46px;"
             small
-            :disabled="isReadOnlyUser || !canRestart"
+            :disabled="!hasPermission('update', 'run') || !canRestart"
             color="info"
             @click="handleRestartClick"
           >
@@ -185,7 +186,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
+      <span v-if="!hasPermission('update', 'run')">
         You don't have permission to restart flow runs
       </span>
       <span v-else-if="!canRestart"
@@ -233,7 +234,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
+      <span v-if="!hasPermission('delete', 'run')">
         You don't have permission to delete flows
       </span>
       <span v-else>Coming Soon!</span>

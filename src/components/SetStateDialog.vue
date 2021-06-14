@@ -10,9 +10,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['hasPermissions']),
+    ...mapGetters('license', ['hasPermission']),
     isReadOnlyUser() {
-      return !this.hasPermissions('update', 'run')
+      return !this.hasPermission('update', 'run')
     }
   },
   apollo: {

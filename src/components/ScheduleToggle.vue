@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['hasPermissions']),
+    ...mapGetters('license', ['hasPermission']),
     archived() {
       return this.flow.archived
     },
@@ -32,6 +32,50 @@ export default {
       return (
         this.flow.schedule?.clocks?.[0] || this.flowGroup.schedule?.clocks?.[0]
       )
+    },
+    disableToggle() {
+      let isDisabled = false
+      if (
+        this.hasPermission('create', 'run') &&
+        this.hasPermission('delete', 'run')
+      ) {
+        isDisabled = false
+      }
+      if (
+        !this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run')
+      ) {
+        isDisabled = true
+      }
+      if (
+        this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run') &&
+        !this.isScheduled
+      ) {
+        isDisabled = false
+      } else if (
+        this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run') &&
+        this.isScheduled
+      ) {
+        isDisabled = true
+      }
+
+      if (
+        this.hasPermission('delete', 'run') &&
+        !this.hasPermission('create', 'run') &&
+        this.isScheduled
+      ) {
+        isDisabled = false
+      } else if (
+        this.hasPermission('delete', 'run') &&
+        !this.hasPermission('create', 'run') &&
+        !this.isScheduled
+      ) {
+        isDisabled = true
+      }
+
+      return isDisabled
     }
   },
   methods: {
@@ -116,11 +160,7 @@ export default {
               class="small-switch"
               color="primary"
               :loading="loading"
-              :disabled="
-                !hasPermission('create', 'run') ||
-                  (isScheduled && !hasPermission('delete', 'run')) ||
-                  archived
-              "
+              :disabled="disableToggle || archived"
               inset
               dense
               hide-details

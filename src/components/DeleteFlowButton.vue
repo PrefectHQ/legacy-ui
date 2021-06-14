@@ -36,7 +36,7 @@ export default {
     ...mapGetters('tenant', ['role']),
     ...mapGetters('license', ['hasPermission']),
     isReadOnly() {
-      return !this.hasPermission('update', 'run')
+      return !this.hasPermission('delete', 'flow')
     },
     all() {
       if (this.allFlows) return true
