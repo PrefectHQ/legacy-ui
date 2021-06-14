@@ -10,19 +10,6 @@ const pageTitles = {
   '/admin/teams': 'Teams'
 }
 
-const tabs = [
-  {
-    name: 'Account',
-    to: { path: '/admin/account' },
-    icon: 'fad fa-abacus'
-  },
-  {
-    name: 'Teams',
-    to: { path: '/admin/teams' },
-    icon: 'groups'
-  }
-]
-
 export default {
   metaInfo() {
     return {
@@ -36,11 +23,33 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['planType', 'license']),
     pageTitle() {
       return pageTitles[this.$route.path]
     },
     tabs() {
-      return [...tabs]
+      return [
+        {
+          name: 'Account',
+          to: { path: '/admin/account' },
+          icon: 'fad fa-abacus'
+        },
+        {
+          name: 'Teams',
+          to: { path: '/admin/teams' },
+          icon: 'groups',
+          disabled: !this.multitenancy,
+          badgeText: this.multitenancy ? null : 'Upgrade',
+          cardText: this.multitenancy
+            ? null
+            : 'Multi-team accounts are an enterprise feature; for more information',
+          cardLink: 'https://www.prefect.io/pricing#contact',
+          cardLinkText: this.multitenancy ? null : 'contact sales'
+        }
+      ]
+    },
+    multitenancy() {
+      return this.license?.terms.tenants > 3
     }
   }
 }
