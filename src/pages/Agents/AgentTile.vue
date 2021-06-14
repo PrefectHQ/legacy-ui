@@ -420,8 +420,8 @@ export default {
         </v-row>
       </div>
 
-      <div v-if="!showAll" :style="{ height: '60px' }">
-        <div class="my-2 text-subtitle-1 ">
+      <div v-if="!showAll" :style="{ height: '70px' }">
+        <div class="mt-2 text-subtitle-1">
           Recent runs
         </div>
         <div v-if="loading < 1 && (!recentRuns || !recentRuns.length)">
