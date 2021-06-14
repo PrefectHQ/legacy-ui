@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable vue/no-v-html */
 import { mapGetters } from 'vuex'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
@@ -16,7 +17,7 @@ export default {
     SubPageNav
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('license', ['planType', 'license']),
     pageTitle() {
       const pageTitles = {
@@ -24,7 +25,9 @@ export default {
         '/admin/account': this.license.account_name || 'Account',
         '/admin/teams': `${
           this.license.account_name ? this.license.account_name + ' ' : ''
-        }Teams`
+        }Teams <span class="font-weight-light text-h6">(${
+          this.teams.length
+        })</span>`
       }
 
       return pageTitles[this.$route.path]
@@ -50,6 +53,9 @@ export default {
         }
       ]
     },
+    teams() {
+      return [...this.tenants?.filter(t => t.license_id == this.license?.id)]
+    },
     multitenancy() {
       return this.license?.terms.tenants > 1
     }
@@ -72,7 +78,7 @@ export default {
         <BreadCrumbs :crumbs="[]" />
       </span>
 
-      <span slot="page-title">{{ pageTitle }}</span>
+      <span slot="page-title" v-html="pageTitle" />
 
       <span slot="tabs" style="width: 100%;">
         <NavTabBar :tabs="tabs" page="Account" paths />
