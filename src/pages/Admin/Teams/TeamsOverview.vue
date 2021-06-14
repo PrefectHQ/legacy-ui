@@ -15,7 +15,7 @@ export default {
     teams() {
       return [
         ...this.tenants?.filter(t => t.license_id == this.license?.id)
-      ].sort((a, b) => a.name > b.name)
+      ].sort((a, b) => new Date(a.created) > new Date(b.created))
     }
   },
   methods: {
@@ -34,7 +34,7 @@ export default {
       </v-btn>
     </div>
 
-    <transition-group name="teams-wrapper" mode="out-in">
+    <transition-group name="teams-wrapper" mode="out-in" class="d-flex">
       <TeamListItem
         v-for="team in teams"
         :key="team.id"
