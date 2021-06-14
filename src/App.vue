@@ -85,7 +85,6 @@ export default {
       'tenantIsSet',
       'isLoadingTenant'
     ]),
-    ...mapGetters('agent', ['refetchAgents']),
     ...mapGetters('user', [
       'isDark',
       'memberships',

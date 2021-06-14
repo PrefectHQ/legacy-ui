@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import Label from '@/components/Label'
 import moment from '@/utils/moment'
@@ -186,14 +186,11 @@ export default {
       return 'No creation time recorded'
     }
   },
-
   mounted() {
-    this.setRefetch()
+    this.$globalApolloQueries['agents'].refetch()
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    ...mapMutations('agent', ['setRefetch']),
-
     anyLabelsSelected(labels) {
       return labels.reduce((result, label) => this.labelSelected(label), false)
     },
@@ -219,7 +216,7 @@ export default {
             agentId: this.agent.id
           }
         })
-        this.setRefetch(true)
+        this.$globalApolloQueries['agents'].refetch()
         setTimeout(() => {
           this.isDeleting = false
         }, 10000)

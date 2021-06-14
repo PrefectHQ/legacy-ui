@@ -31,7 +31,6 @@ const state = {
   agents: null,
   sortedAgents: null,
   sorting: true,
-  refetch: false,
   flowRuns: null
 }
 
@@ -56,16 +55,10 @@ const getters = {
   },
   sorting(state) {
     return state.sorting
-  },
-  refetchAgents(state) {
-    return state.refetch
   }
 }
 
 const mutations = {
-  setRefetch(state, bool) {
-    state.refetch = bool
-  },
   setSortedAgents(state, agents) {
     if (!agents) {
       state.sortedAgent = null
@@ -89,7 +82,6 @@ const mutations = {
     oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
     const fullList = [...healthyList, ...staleList, ...oldList]
     state.sortedAgents = fullList
-    state.refetch = false
     state.sorting = false
   }
 }

@@ -76,7 +76,6 @@ export default {
       this.labelInput = []
       this.queryFailed = false
       this.showUnlabeledAgentsOnly = false
-      this.setRefetch(true)
       if (!val) return
       this.loading = 1
       setTimeout(() => {
@@ -86,7 +85,7 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    ...mapMutations('agent', ['setAgents', 'setSortedAgents', 'setRefetch']),
+    ...mapMutations('agent', ['setAgents', 'setSortedAgents']),
     async clearUnhealthyAgents() {
       try {
         this.clearingAgents = true
@@ -130,7 +129,7 @@ export default {
           alertType: 'error'
         })
       } finally {
-        this.setRefetch(true)
+        this.$globalApolloQueries['agents'].refetch()
         setTimeout(() => {
           this.clearingAgents = false
         }, 500)
