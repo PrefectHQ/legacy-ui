@@ -232,13 +232,13 @@ export const routes = [
     name: 'agents',
     path: '/:tenant?/agent',
     component: () =>
-      import(/*webpackChunkName: "calendar" */ '@/pages/Agents/Agents')
+      import(/*webpackChunkName: "agents" */ '@/pages/Agents/Agents')
   },
   {
     name: 'agent',
     path: '/:tenant?/agent/:id',
     component: () =>
-      import(/* webpackChunkName: "flow" */ '@/pages/Agents/AgentPage.vue')
+      import(/* webpackChunkName: "agent" */ '@/pages/Agents/AgentPage.vue')
   },
   // --------------------------- //
   //
