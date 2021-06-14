@@ -376,6 +376,7 @@ export default {
         let task = taskMap[node.id]
         // This ensures the id isn't incorrectly overwritten
         let parsedTask = task.task ? { ...task, ...task.task } : task
+        parsedTask.name = task?.name ? task.name : parsedTask.name
 
         node.data = parsedTask
       })
