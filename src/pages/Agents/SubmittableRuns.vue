@@ -40,6 +40,7 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
+    ...mapGetters('data', ['flows']),
     agent() {
       const agent = { ...this.rawAgent }
       const getTimeOverdue = time => new Date() - new Date(time)
@@ -155,6 +156,10 @@ export default {
   },
   methods: {
     ...mapMutations('agent', ['setRefetch']),
+    flowName(flowRun) {
+      const flow = this.flows?.filter(flow => flow?.id === flowRun.flow_id)[0]
+      return flow?.name
+    },
     flowRunName(flowRun) {
       return flowRun?.name
     },
@@ -329,9 +334,9 @@ export default {
             <v-list-item-content>
               <v-list-item-subtitle class="text-body-1 font-weight-regular">
                 <router-link
-                  :to="{ name: 'flow', params: { id: item.flow.id } }"
+                  :to="{ name: 'flow', params: { id: item.flow_id } }"
                 >
-                  {{ item.flow.name }}
+                  {{ flowName(item) }}}
                 </router-link>
                 <span class="font-weight-bold">
                   <v-icon style="font-size: 12px;">
@@ -430,9 +435,9 @@ export default {
             <v-list-item-content>
               <v-list-item-subtitle class="text-body-1 font-weight-regular">
                 <router-link
-                  :to="{ name: 'flow', params: { id: item.flow.id } }"
+                  :to="{ name: 'flow', params: { id: item.flow_id } }"
                 >
-                  {{ item.flow.name }}
+                  {{ flowName(item) }}
                 </router-link>
                 <span class="font-weight-bold">
                   <v-icon style="font-size: 12px;">

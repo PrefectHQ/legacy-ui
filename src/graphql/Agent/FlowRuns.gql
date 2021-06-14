@@ -6,12 +6,6 @@ query AgentSubmittableRuns {
     labels
     scheduled_start_time
     version
-    flow {
-      id
-      name
-      schedule
-      environment
-      is_schedule_active
-  }
+    flow_id
     }
 }
