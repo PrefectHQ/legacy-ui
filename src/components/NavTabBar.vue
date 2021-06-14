@@ -14,6 +14,11 @@ export default {
       type: String,
       required: false,
       default: ''
+    },
+    paths: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -32,6 +37,7 @@ export default {
   },
   watch: {
     tab(val) {
+      if (this.paths) return
       let query = {}
       if (val) {
         if (this.$route.params.id) {
@@ -54,9 +60,16 @@ export default {
   },
   methods: {
     getTab() {
+      const route = this.tabs.find(
+        t => t.to?.path == this.$route.path || t.to?.name == this.$route.name
+      )
+
       if (Object.keys(this.$route.query).length != 0) {
         return Object.keys(this.$route.query)[0]
+      } else if (route) {
+        return route.to.path || route.to.name
       }
+
       return 'overview'
     },
     scrolled() {
@@ -81,7 +94,7 @@ export default {
     <template v-for="tb in mainTabs">
       <v-menu
         v-if="tb.cardText"
-        :key="tb.target"
+        :key="tb.target || (tb.to && (tb.to.name || tb.to.path))"
         open-on-hover
         :close-on-click="false"
         :open-on-click="false"
@@ -96,7 +109,8 @@ export default {
           >
             <v-tab
               :data-cy="`${page}-${tb.target}-tab`"
-              :href="`#${tb.target}`"
+              :href="tb.target ? `#${tb.target}` : null"
+              :to="tb.to ? tb.to : null"
               :class="{
                 'tabs-hidden': $vuetify.breakpoint.smAndDown,
                 'pr-2': tb.badgeText
@@ -146,9 +160,10 @@ export default {
       </v-menu>
       <v-tab
         v-else
-        :key="tb.target"
+        :key="tb.target || (tb.to && (tb.to.name || tb.to.path))"
         :data-cy="`${page}-${tb.target}-tab`"
-        :href="`#${tb.target}`"
+        :href="tb.target ? `#${tb.target}` : null"
+        :to="tb.to ? tb.to : null"
         :class="{
           'tabs-hidden': $vuetify.breakpoint.smAndDown,
           'pr-2': tb.badgeText

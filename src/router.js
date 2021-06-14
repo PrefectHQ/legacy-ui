@@ -362,12 +362,31 @@ export const routes = [
           )
       },
       {
-        name: 'new-team',
-        path: 'new-team',
+        name: 'teams',
+        path: 'teams',
         component: () =>
           import(
-            /* webpackChunkName: "admin--new-team" */ '@/pages/Admin/NewTeam.vue'
-          )
+            /* webpackChunkName: "admin--teams" */ '@/pages/Admin/Teams/Teams.vue'
+          ),
+        redirect: { name: 'overview' },
+        children: [
+          {
+            name: 'overview',
+            path: '',
+            component: () =>
+              import(
+                /* webpackChunkName: "admin--teams-overview" */ '@/pages/Admin/Teams/TeamsOverview.vue'
+              )
+          },
+          {
+            name: 'new-team',
+            path: 'new-team',
+            component: () =>
+              import(
+                /* webpackChunkName: "admin--new-team" */ '@/pages/Admin/Teams/NewTeam.vue'
+              )
+          }
+        ]
       }
     ]
   },

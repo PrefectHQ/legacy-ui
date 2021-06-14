@@ -1,8 +1,8 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import InviteUsers from '@/pages/Admin/InviteUsers'
-import TeamForm from '@/pages/Admin/TeamForm'
+import InviteUsers from '@/pages/Admin/Teams/InviteUsers'
+import TeamForm from '@/pages/Admin/Teams/TeamForm'
 
 export default {
   components: { TeamForm, InviteUsers },

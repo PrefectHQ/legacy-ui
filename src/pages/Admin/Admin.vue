@@ -1,12 +1,27 @@
 <script>
 import { mapGetters } from 'vuex'
 import BreadCrumbs from '@/components/BreadCrumbs'
+import NavTabBar from '@/components/NavTabBar'
 import SubPageNav from '@/layouts/SubPageNav'
 
 const pageTitles = {
   'new-team': 'New team',
-  account: 'Prefect Technologies Inc.'
+  account: 'Prefect Technologies Inc.',
+  teams: 'Teams'
 }
+
+const tabs = [
+  {
+    name: 'Account',
+    to: { path: '/admin/account' },
+    icon: 'fad fa-abacus'
+  },
+  {
+    name: 'Teams',
+    to: { path: '/admin/teams' },
+    icon: 'groups'
+  }
+]
 
 export default {
   metaInfo() {
@@ -16,12 +31,16 @@ export default {
   },
   components: {
     BreadCrumbs,
+    NavTabBar,
     SubPageNav
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
     pageTitle() {
       return pageTitles[this.$route.name]
+    },
+    tabs() {
+      return [...tabs]
     }
   }
 }
@@ -43,9 +62,18 @@ export default {
       </span>
 
       <span slot="page-title">{{ pageTitle }}</span>
+
+      <span slot="tabs" style="width: 100%;">
+        <NavTabBar :tabs="tabs" page="Account" paths />
+      </span>
     </SubPageNav>
 
-    <div class="container-body mx-auto">
+    <div
+      class="container-body mx-auto"
+      :style="{
+        'padding-top': $vuetify.breakpoint.smOnly ? '73px' : '123px'
+      }"
+    >
       <router-view />
     </div>
   </v-sheet>
@@ -54,6 +82,5 @@ export default {
 <style lang="scss" scoped>
 .container-body {
   max-width: 1440px;
-  padding-top: 73px;
 }
 </style>
