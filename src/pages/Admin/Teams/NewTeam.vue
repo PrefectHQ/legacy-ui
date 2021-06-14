@@ -49,6 +49,16 @@ export default {
     </v-container>
 
     <v-container v-else fluid>
+      <v-btn
+        class="text-capitalize text-h6 font-weight-light ml-4"
+        :to="'/admin/teams'"
+        text
+        color="transparent"
+      >
+        <v-icon color="blue-grey lighten-3" left>chevron_left</v-icon>
+        <span class="blue-grey--text">Back</span>
+      </v-btn>
+
       <div
         class="d-flex justify-center align-center mx-auto mb-4"
         style="max-width: 400px;"

@@ -362,7 +362,7 @@ export const routes = [
           )
       },
       {
-        name: 'teams',
+        name: 'admin-teams',
         path: 'teams',
         component: () =>
           import(

@@ -32,6 +32,19 @@ export default {
 
       return pageTitles[this.$route.path]
     },
+    pageType() {
+      return this.$route.path == '/admin/teams/new' ? 'New team' : 'Account'
+    },
+    crumbs() {
+      return this.$route.path == '/admin/teams/new'
+        ? [
+            {
+              text: 'Teams',
+              route: { path: '/admin/teams' }
+            }
+          ]
+        : []
+    },
     tabs() {
       return [
         {
@@ -65,7 +78,7 @@ export default {
 
 <template>
   <v-sheet color="appBackground" class="position-relative">
-    <SubPageNav icon="groups" page-type="Account" hide-banners>
+    <SubPageNav icon="groups" :page-type="pageType" hide-banners>
       <span
         slot="breadcrumbs"
         :style="
@@ -75,7 +88,7 @@ export default {
           }
         "
       >
-        <BreadCrumbs :crumbs="[]" />
+        <BreadCrumbs :crumbs="crumbs" />
       </span>
 
       <span slot="page-title" v-html="pageTitle" />
@@ -91,7 +104,9 @@ export default {
         'padding-top': $vuetify.breakpoint.smOnly ? '73px' : '123px'
       }"
     >
-      <router-view />
+      <transition name="quick-fade" mode="out-in">
+        <router-view />
+      </transition>
     </div>
   </v-sheet>
 </template>

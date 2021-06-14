@@ -1,26 +1,11 @@
 <script>
-import TeamListItem from '@/components/TeamListItem'
 import { mapGetters } from 'vuex'
 
 export default {
-  components: {
-    TeamListItem
-  },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('license', ['permissions', 'license', 'planType']),
     multitenancy() {
       return this.license?.terms?.tenants > 1
-    },
-    teams() {
-      return [
-        ...this.tenants?.filter(t => t.license_id == this.license?.id)
-      ].sort((a, b) => a.name > b.name)
-    }
-  },
-  methods: {
-    refetch() {
-      this.$globalApolloQueries['tenants']?.refetch()
     }
   }
 }
@@ -52,28 +37,9 @@ export default {
       </div>
     </v-container>
 
-    <v-container v-else fluid>
-      <v-card
-        class="utilGrayDark--text mx-auto new-team-button text-center mb-4"
-        flat
-        outlined
-      >
-        <v-card-text class="text-h6 font-weight-light">
-          <v-icon>add</v-icon>
-          New team
-        </v-card-text>
-      </v-card>
-
-      <transition-group name="teams-wrapper" mode="out-in">
-        <TeamListItem
-          v-for="team in teams"
-          :key="team.id"
-          :team="team"
-          class="mb-4"
-          @refetch="refetch"
-        />
-      </transition-group>
-    </v-container>
+    <transition v-else name="quick-fade" mode="out-in">
+      <router-view />
+    </transition>
   </div>
 </template>
 
