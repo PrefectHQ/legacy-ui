@@ -25,6 +25,36 @@ export default {
   <div class="links-container">
     <v-btn
       :to="{
+        name: 'account',
+        params: { tenant: slug }
+      }"
+      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
+      dark
+      small
+      depressed
+      color="transparent"
+      title="Manage your account, usage, and data"
+    >
+      Account
+    </v-btn>
+
+    <v-btn
+      :to="{
+        name: 'agents',
+        params: { tenant: slug }
+      }"
+      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
+      dark
+      small
+      depressed
+      color="transparent"
+      title="Manage your team's agents"
+    >
+      Agents
+    </v-btn>
+
+    <v-btn
+      :to="{
         name: 'dashboard',
         params: {
           tenant: slug
@@ -55,36 +85,6 @@ export default {
       title="Experiment with GraphQL queries using the Interactive API"
     >
       Interactive API
-    </v-btn>
-
-    <v-btn
-      :to="{
-        name: 'calendar',
-        params: { tenant: slug }
-      }"
-      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
-      dark
-      small
-      depressed
-      color="transparent"
-      title="View your flow runs in a calendar view"
-    >
-      Calendar
-    </v-btn>
-
-    <v-btn
-      :to="{
-        name: 'account',
-        params: { tenant: slug }
-      }"
-      class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
-      dark
-      small
-      depressed
-      color="transparent"
-      title="Manage your account, usage, and data"
-    >
-      Account
     </v-btn>
 
     <TeamMenu />
