@@ -176,7 +176,7 @@ export default {
     <BarChart
       :items="preppedFlowRuns"
       :loading="loadingKey > 0"
-      :height="runs ? 25 : 50"
+      :height="50"
       :min-bands="10"
       normalize
       :padding="0"
