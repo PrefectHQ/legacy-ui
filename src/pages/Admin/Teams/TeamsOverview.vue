@@ -15,6 +15,9 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('license', ['permissions', 'license', 'planType']),
+    atTeamLimit() {
+      return this.license?.terms?.tenants <= this.teams.length
+    },
     multitenancy() {
       return this.license?.terms?.tenants > 1
     },
@@ -49,12 +52,21 @@ export default {
 <template>
   <v-container fluid>
     <div class="mx-4 mb-4 d-flex align-center justify-end">
-      <v-btn :to="{ path: '/admin/teams/new' }" color="primary" depressed>
+      <div class="mr-auto text-h5 font-weight-light">
+        {{ teams.length }}/{{ license.terms.tenants }} team slots used
+      </div>
+
+      <v-btn
+        :to="{ path: '/admin/teams/new' }"
+        color="primary"
+        depressed
+        :disabled="atTeamLimit"
+      >
         <v-icon class="mr-2" small>add</v-icon>New
       </v-btn>
     </div>
 
-    <transition-group name="teams-wrapper" mode="out-in" class="d-flex">
+    <transition-group name="teams-wrapper" mode="out-in" class="grid-container">
       <TeamListItem
         v-for="team in teams"
         :key="team.id"
@@ -76,11 +88,6 @@ export default {
   width: 100%;
   z-index: 1000;
 
-  .snackbars-snack {
-    pointer-events: auto;
-    transition: all 0.5s;
-  }
-
   &-enter,
   &-leave-to,
   &-leave-active {
@@ -97,5 +104,18 @@ export default {
   border-style: dotted;
   border-width: 2px;
   max-width: 400px;
+}
+
+$cellsize: 300px;
+$guttersize: 24px;
+
+.grid-container {
+  column-gap: $guttersize;
+  display: grid;
+  grid-auto-flow: dense;
+  grid-auto-rows: $cellsize;
+  grid-template-columns: repeat(auto-fill, $cellsize);
+  justify-content: center;
+  row-gap: $guttersize;
 }
 </style>

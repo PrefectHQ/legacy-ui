@@ -119,6 +119,8 @@ export default {
         await this.updateTenantSettings({
           teamNamed: true
         })
+
+        this.$emit('team-created')
       } catch (e) {
         if (e?.toString().includes('Uniqueness violation')) {
           this.slugErrors = ['Sorry, that URL slug is already in use.']

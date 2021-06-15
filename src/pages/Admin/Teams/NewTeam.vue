@@ -84,7 +84,7 @@ export default {
       </div>
 
       <transition name="quick-fade" mode="out-in">
-        <TeamForm v-if="step === 1" :key="1" />
+        <TeamForm v-if="step === 1" :key="1" @team-created="step = 2" />
         <InviteUsers v-else-if="step === 2" :key="2" />
       </transition>
     </v-container>
