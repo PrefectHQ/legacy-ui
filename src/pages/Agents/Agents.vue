@@ -357,7 +357,7 @@ export default {
                   `Unhealthy agents have not queried for flows in the last ${
                     unhealthyThreshold === 1
                       ? 'minute'
-                      : `${unhealthyThreshold} minutes`
+                      : `${unhealthyThreshold / 60} hours`
                   }.`
                 "
                 persistent-hint
