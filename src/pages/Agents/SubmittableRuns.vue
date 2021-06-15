@@ -336,7 +336,7 @@ export default {
                 <router-link
                   :to="{ name: 'flow', params: { id: item.flow_id } }"
                 >
-                  {{ flowName(item) }}}
+                  {{ flowName(item) }}
                 </router-link>
                 <span class="font-weight-bold">
                   <v-icon style="font-size: 12px;">
