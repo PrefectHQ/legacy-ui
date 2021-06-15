@@ -71,7 +71,7 @@ export default {
 
     <v-btn
       :to="{
-        name: 'calendar',
+        name: 'agents',
         params: { tenant: slug }
       }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
@@ -79,9 +79,9 @@ export default {
       small
       depressed
       color="transparent"
-      title="View your flow runs in a calendar view"
+      title="View your team's agents"
     >
-      Calendar
+      Agents
     </v-btn>
 
     <TeamMenu />
