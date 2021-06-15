@@ -156,6 +156,10 @@ export default {
       }
     },
     tenant(val, oldVal) {
+      if (sessionStorage.getItem('haltTenantRouting')) {
+        sessionStorage.removeItem('haltTenantRouting')
+        return
+      }
       if (val?.id !== oldVal?.id) {
         if (this.isCloud && !this.tenant.settings.teamNamed) {
           this.$router.push({

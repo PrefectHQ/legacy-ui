@@ -1,4 +1,7 @@
 <script>
+import { mapActions, mapGetters } from 'vuex'
+import { clearCache } from '@/vue-apollo'
+
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
 
@@ -18,6 +21,9 @@ export default {
       dashPositionRegex: /^(-)|-{2,}|(-)$/
     }
   },
+  computed: {
+    ...mapGetters('tenant', ['tenants'])
+  },
   watch: {
     teamName(val) {
       try {
@@ -31,6 +37,9 @@ export default {
     this.teamSlug = this.slugifyString(this.teamName)
   },
   methods: {
+    ...mapActions('data', ['resetData']),
+    ...mapActions('tenant', ['setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     generateRandomName() {
       const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
       const animal = animals[Math.floor(Math.random() * animalsLength)]
@@ -87,7 +96,7 @@ export default {
     async createTenant() {
       this.loading = true
       try {
-        const res = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: require('@/graphql/Tenant/create-enterprise-tenant.gql'),
           variables: {
             input: {
@@ -97,8 +106,19 @@ export default {
           }
         })
 
-        console.log(res)
-        this.$globalApolloQueries['tenants'].refetch()
+        await this.getUser()
+        await this.$globalApolloQueries['tenants']?.refetch()
+
+        this.resetData()
+
+        clearCache()
+        sessionStorage.setItem('haltTenantRouting', true)
+
+        await this.setCurrentTenant(this.teamSlug)
+
+        await this.updateTenantSettings({
+          teamNamed: true
+        })
       } catch (e) {
         if (e?.toString().includes('Uniqueness violation')) {
           this.slugErrors = ['Sorry, that URL slug is already in use.']
