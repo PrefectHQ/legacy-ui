@@ -15,8 +15,8 @@ export default {
 <template>
   <v-card class="utilGrayDark--text mx-4 team-card" flat outlined>
     <v-card-title>
-      <v-avatar color="primary" size="56">
-        {{ team.name[1] }}
+      <v-avatar color="primary" size="36" class="rounded-circle white--text">
+        {{ team.name[0] }}
       </v-avatar>
       {{ team.name }}
     </v-card-title>
