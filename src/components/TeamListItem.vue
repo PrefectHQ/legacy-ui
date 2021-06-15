@@ -13,7 +13,12 @@ export default {
 </script>
 
 <template>
-  <v-card class="utilGrayDark--text mx-4 team-card" flat outlined>
+  <v-card
+    class="utilGrayDark--text mx-4 team-card"
+    flat
+    outlined
+    @click="$emit('click')"
+  >
     <v-card-title>
       <v-avatar color="primary" size="36" class="rounded-circle white--text">
         {{ team.name[0] }}

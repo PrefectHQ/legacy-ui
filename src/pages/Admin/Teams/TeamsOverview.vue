@@ -1,10 +1,16 @@
 <script>
 import TeamListItem from '@/components/TeamListItem'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import { clearCache } from '@/vue-apollo'
 
 export default {
   components: {
     TeamListItem
+  },
+  data() {
+    return {
+      loading: false
+    }
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
@@ -19,6 +25,20 @@ export default {
     }
   },
   methods: {
+    ...mapActions('data', ['resetData']),
+    ...mapActions('tenant', ['setCurrentTenant']),
+    async handleSwitchTenant(tenant) {
+      if (tenant.slug == this.tenant.slug) return
+
+      this.loading = true
+
+      this.resetData()
+
+      await this.setCurrentTenant(tenant.slug)
+
+      clearCache()
+      this.loading = false
+    },
     refetch() {
       this.$globalApolloQueries['tenants']?.refetch()
     }
@@ -39,7 +59,9 @@ export default {
         v-for="team in teams"
         :key="team.id"
         :team="team"
+        :loading="loading"
         class="mb-4"
+        @click="handleSwitchTenant(team)"
         @refetch="refetch"
       />
     </transition-group>
