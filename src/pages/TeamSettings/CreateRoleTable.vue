@@ -68,7 +68,16 @@ export default {
           login: { name: 'Login', value: 'login' }
         },
         Admin: {
-          usage: { name: 'Usage', value: 'usage' }
+          usage: { name: 'Usage', value: 'usage' },
+          user: { name: 'User', value: 'user' },
+          tenant: { name: 'Team', value: 'tenant' },
+          license: { name: 'License', value: 'license' },
+          role: { name: 'Role', value: 'role' },
+          membership: { name: 'Membership', value: 'membership' },
+          ['membership-invitation']: {
+            name: 'Membership Invitation',
+            value: 'membership-invitation'
+          }
         }
       },
       // Table headers
@@ -146,7 +155,7 @@ export default {
           }
           return permissionsObj
         }, permissionGroup)
-        console.log(permissionGroup)
+        // console.log(permissionGroup)
         return permissionGroup
       })
       // console.log(obj)
@@ -206,6 +215,7 @@ export default {
       return permissionsObj
     },
     handleAll(item) {
+      console.log(item)
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
       item.includeDelete = item.includeAll

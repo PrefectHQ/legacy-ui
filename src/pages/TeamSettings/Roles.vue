@@ -1,11 +1,14 @@
 <script>
 //TO DO
 //Better handle refecth roles and clear after save - so addName and text field no longer show
-//Clean up dialog code
-//Disable add/updateand rest if no actual changes
+
+//Disable add/update and reset if no actual changes
 //spacing and fonts for sidebar?
 //Loading states and default tenant load
 //fix include all click/responsiveness
+//disable checkboxes if default role
+//Add v-sheet and scroll for side navbar and permissions table
+//See also slack notes
 
 import { mapActions, mapGetters } from 'vuex'
 
@@ -13,7 +16,12 @@ import { mapActions, mapGetters } from 'vuex'
 import CreateRoleTable from '@/pages/TeamSettings/CreateRoleTable'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
-const DEFAULT_ROLES = ['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']
+const DEFAULT_ROLES = [
+  'TENANT_ADMIN',
+  'USER',
+  'READ_ONLY_USER',
+  'ENTERPRISE_LICENSE_ADMIN'
+]
 
 export default {
   components: {
