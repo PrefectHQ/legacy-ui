@@ -215,7 +215,7 @@ export default {
       return permissionsObj
     },
     handleAll(item) {
-      console.log(item)
+      // console.log('click', item)
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
       item.includeDelete = item.includeAll
