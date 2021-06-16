@@ -1,3 +1,9 @@
+const permissionGroups = { Auth: {api-key: {name: "User API Key", value:
+'api-key'}, service-account: {name: 'Service Account', value:
+'service-account'}, 'service-api-key': {name: "Service API Key", value:
+'service-api-key'}}, Flows: {run: {name "Run", value: "run"}, project:
+{name:'project', value: 'project'}, logs: {name: 'Logs', value: 'logs'}}}
+
 <script>
 import { mapActions } from 'vuex'
 export default {
@@ -26,6 +32,45 @@ export default {
   },
   data() {
     return {
+      permissionGroups: {
+        Auth: {
+          'api-key': { name: 'User API Key', value: 'api-key' },
+          'service-account': {
+            name: 'Service Account',
+            value: 'service-account'
+          },
+          'service-api-key': {
+            name: 'Service API Key',
+            value: 'service-api-key'
+          }
+        },
+        Flows: {
+          run: { name: 'Run', value: 'run' },
+          project: { name: 'Project', value: 'project' },
+          log: { name: 'Logs', value: 'log' }
+        },
+        Secrets: {
+          secret: { name: 'Secret', value: 'secret' },
+          ['secret-value']: { name: 'Secret Value', value: 'secret-value' }
+        },
+        Features: {
+          ['cloud-hook']: { name: 'Cloud Hooks', value: 'cloud-hook' },
+          hook: { name: 'Automations', value: 'hook' },
+          ['flow-sla']: { name: 'Flow SLA', value: 'flow-sla' },
+          ['key-value']: { name: 'Key Value', value: 'key-value' },
+          ['concurrency-limit']: {
+            name: 'Concurrency Limit',
+            value: 'concurrency-limit'
+          },
+          ['audit-trail']: { name: 'Audit Trail', value: 'audit-trail' }
+        },
+        User: {
+          login: { name: 'Login', value: 'login' }
+        },
+        Admin: {
+          usage: { name: 'Usage', value: 'usage' }
+        }
+      },
       // Table headers
       headers: [
         {
@@ -63,74 +108,50 @@ export default {
       //   : this.template?.permissions || this.auth?.permissions
     },
     authPermissionObject() {
-      // let saveTenant
-      let obj = this.auth?.permissions?.reduce((permissionsObj, item) => {
-        const sections = item.split(':')
-        if (!['create', 'delete', 'update', 'read'].includes(sections[0])) {
-          if (item === 'tenant:admin') this.showTenantAdmin = true
-          return permissionsObj
-        }
-        if (!permissionsObj[sections[1]]) {
-          // if (sections[1] === 'tenant') {
-          //   saveTenant = {
-          //     disableCreate: sections[0] !== 'create',
-          //     disableUpdate: sections[0] !== 'update',
-          //     disableRead: sections[0] !== 'read',
-          //     disableDelete: sections[0] !== 'delete',
-          //     includeUpdate: false,
-          //     includeCreate: false,
-          //     includeDelete: false,
-          //     includeRead: false,
-          //     includeAll: false,
-          //     name: sections[1],
-          //     key: item,
-          //     value: item
-          //   }
+      let obj = Object.values(this.permissionGroups).map(permissionGroup => {
+        // console.log('group', permissionGroup)
+        this.auth?.permissions?.reduce((permissionsObj, item) => {
+          const sections = item.split(':')
+          // if (!['create', 'delete', 'update', 'read'].includes(sections[0])) {
+          //   if (item === 'tenant:admin') this.showTenantAdmin = true
           //   return permissionsObj
           // }
-          permissionsObj[sections[1]] = {
-            disableCreate: sections[0] !== 'create',
-            disableUpdate: sections[0] !== 'update',
-            disableRead: sections[0] !== 'read',
-            disableDelete: sections[0] !== 'delete',
-            includeUpdate: false,
-            includeCreate: false,
-            includeDelete: false,
-            includeRead: false,
-            includeAll: false,
-            name: sections[1],
-            key: item,
-            value: item
+          // console.log('name', permissionsObj)
+          if (permissionsObj[sections[1]]?.includeMore) {
+            if (sections[0] === 'create')
+              permissionsObj[sections[1]].disableCreate = false
+            if (sections[0] === 'read')
+              permissionsObj[sections[1]].disableRead = false
+            if (sections[0] === 'update')
+              permissionsObj[sections[1]].disableUpdate = false
+            if (sections[0] === 'delete')
+              permissionsObj[sections[1]].disableDelete = false
+          } else if (permissionsObj[sections[1]]) {
+            permissionsObj[sections[1]] = {
+              ...permissionsObj[sections[1]],
+              includeMore: true,
+              disableCreate: sections[0] !== 'create',
+              disableUpdate: sections[0] !== 'update',
+              disableRead: sections[0] !== 'read',
+              disableDelete: sections[0] !== 'delete',
+              includeUpdate: false,
+              includeCreate: false,
+              includeDelete: false,
+              includeRead: false,
+              includeAll: false,
+              shortName: sections[1],
+              key: item,
+              value: item
+            }
           }
-        } else {
-          if (sections[0] === 'create')
-            permissionsObj[sections[1]].disableCreate = false
-          if (sections[0] === 'read')
-            permissionsObj[sections[1]].disableRead = false
-          if (sections[0] === 'update')
-            permissionsObj[sections[1]].disableUpdate = false
-          if (sections[0] === 'delete')
-            permissionsObj[sections[1]].disableDelete = false
-        }
-        return permissionsObj
-      }, {})
-      // if (saveTenant) {
-      //   obj = { saveTenant, ...obj }
-      // }
-      // if (this.showTenantAdmin) {
-      //   obj = {
-      //     TenantAdmin: {
-      //       name: 'Tenant Admin',
-      //       includeAll: false,
-      //       value: 'tenant:admin',
-      //       hideCheck: true
-      //     },
-      //     ...obj
-      //   }
-      // }
+          return permissionsObj
+        }, permissionGroup)
+        console.log(permissionGroup)
+        return permissionGroup
+      })
+      // console.log(obj)
       return obj
     },
-
     permissions() {
       if (!this.authPermissionObject && !this.templatePermissionObject)
         return []
@@ -145,33 +166,42 @@ export default {
   watch: {},
   methods: {
     ...mapActions('alert', ['setAlert']),
+    permissionList(item) {
+      return Object.values(item)
+    },
+    groupName(index) {
+      return Object.keys(this.permissionGroups)[index]
+    },
     templatePermissionObject() {
+      // console.log(this.authPermissionObject)
       if (!this.authPermissionObject) return
-      const permissionsObj = this.authPermissionObject
-      Object?.values(permissionsObj).map(obj => {
-        obj.includeCreate = false
-        obj.includeRead = false
-        obj.includeUpdate = false
-        obj.includeDelete = false
-        obj.includeAll = false
-      })
-      this.template?.permissions?.map(item => {
-        const sections = item.split(':')
-        if (permissionsObj[sections[1]]) {
-          if (sections[0] === 'create')
-            permissionsObj[sections[1]].includeCreate = true
-          if (sections[0] === 'read')
-            permissionsObj[sections[1]].includeRead = true
-          if (sections[0] === 'update')
-            permissionsObj[sections[1]].includeUpdate = true
-          if (sections[0] === 'delete')
-            permissionsObj[sections[1]].includeDelete = true
-          permissionsObj[sections[1]].includeAll =
-            permissionsObj[sections[1]].includeDelete &&
-            permissionsObj[sections[1]].includeUpdate &&
-            permissionsObj[sections[1]].includeRead &&
-            permissionsObj[sections[1]].includeCreate
-        }
+      const permissionsObj = this.authPermissionObject.map(group => {
+        Object?.values(group).map(obj => {
+          obj.includeCreate = false
+          obj.includeRead = false
+          obj.includeUpdate = false
+          obj.includeDelete = false
+          obj.includeAll = false
+        })
+        // console.log('group', group)
+        this.template?.permissions?.map(item => {
+          const sections = item.split(':')
+          if (group[sections[1]]) {
+            if (sections[0] === 'create')
+              group[sections[1]].includeCreate = true
+            if (sections[0] === 'read') group[sections[1]].includeRead = true
+            if (sections[0] === 'update')
+              group[sections[1]].includeUpdate = true
+            if (sections[0] === 'delete')
+              group[sections[1]].includeDelete = true
+            group[sections[1]].includeAll =
+              group[sections[1]].includeDelete &&
+              group[sections[1]].includeUpdate &&
+              group[sections[1]].includeRead &&
+              group[sections[1]].includeCreate
+          }
+        })
+        return group
       })
       return permissionsObj
     },
@@ -288,19 +318,19 @@ export default {
 
 <template>
   <v-card width="100%">
-    <v-card-title v-if="!tableOnly"> Add name and permissions</v-card-title>
+    <!-- <v-card-title v-if="!tableOnly"> Add name and permissions</v-card-title>
     <v-card-subtitle v-if="!tableOnly" class="mt-4 pb-0">
-      <!-- <v-text-field
+      <v-text-field
         v-model="roleName"
         :disabled="!!template"
         outlined
         required
         placeholder="Role Name"
-      ></v-text-field> -->
-    </v-card-subtitle>
-    <v-card-text>
-      <v-sheet height="70vh" :style="{ overflow: 'auto' }">
-        <v-text-field
+      ></v-text-field>
+    </v-card-subtitle> -->
+    <v-card-text class="font-weight-light">
+      <!-- <v-sheet height="70vh" :style="{ overflow: 'auto' }"> -->
+      <!-- <v-text-field
           v-if="!tableOnly"
           v-model="searchInput"
           class="rounded-0 elevation-1 mb-1"
@@ -311,75 +341,88 @@ export default {
           placeholder="Search by type or name"
           prepend-inner-icon="search"
           autocomplete="new-password"
-        ></v-text-field>
-        <v-data-table
-          fixed-header
-          height="100vH"
-          :hide-default-footer="!!template"
-          :headers="headers"
-          :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-          :items="permissions"
-          item-key="key"
-          :loading="loading"
-          :items-per-page="itemsPerPage"
-          class="elevation-2 rounded-0 truncate-table"
-          :footer-props="{
-            showFirstLastPage: true,
+        ></v-text-field> -->
 
-            firstIcon: 'first_page',
-            lastIcon: 'last_page',
-            prevIcon: 'keyboard_arrow_left',
-            nextIcon: 'keyboard_arrow_right'
-          }"
-          :search="searchInput"
-          no-results-text="No permissions found. Try expanding your search?"
-          no-data-text="No data."
-        >
-          <!-- HEADERS -->
-          <!-- <template v-if="template" #top>
-            <v-switch
-              v-model="allPermissions"
-              label="Show all permissions"
-              class="pa-3"
-            ></v-switch>
-          </template> -->
-          <template #item.all="{item}">
-            <v-checkbox
-              v-model="item.includeAll"
-              :disabled="item.disableRead"
-              @click="handleAll(item)"
-            />
-          </template>
-          <template #item.create="{item}">
-            <v-checkbox
-              v-if="!item.hideCheck"
-              v-model="item.includeCreate"
-              :disabled="item.disableCreate"
-            />
-          </template>
-          <template #item.read="{item}">
-            <v-checkbox
-              v-if="!item.hideCheck"
-              v-model="item.includeRead"
-              :disabled="item.disableRead"
-            />
-          </template>
-          <template #item.update="{item}">
-            <v-checkbox
-              v-if="!item.hideCheck"
-              v-model="item.includeUpdate"
-              :disabled="item.disableUpdate"
-            />
-          </template>
-          <template #item.delete="{item}">
-            <v-checkbox
-              v-if="!item.hideCheck"
-              v-model="item.includeDelete"
-              :disabled="item.disableDelete"
-            />
-          </template>
-        </v-data-table>
-      </v-sheet>
+      <!-- <v-container fluid> -->
+      <div v-for="(group, index) in permissions" :key="index">
+        <v-row class="mb-4 text-body-1" no-gutters>
+          <v-col cols="4" class="text-h5 run-body">
+            {{ groupName(index) }}
+          </v-col>
+          <v-col class="text-left" cols="1">All</v-col>
+          <v-col class="text-left" cols="1">Create</v-col>
+          <v-col class="text-left" cols="1">Read</v-col>
+          <v-col class="text-left" cols="1">Update</v-col>
+          <v-col class="text-left" cols="1">Delete</v-col>
+        </v-row>
+        <div v-for="(item, indexa) in permissionList(group)" :key="indexa">
+          <v-row no-gutters class="pa-0 ma-0">
+            <v-col cols="4">
+              <span class="text-body-1"> {{ item.name }} </span>
+            </v-col>
+
+            <v-col class="ma-0" cols="1">
+              <v-checkbox
+                v-model="item.includeAll"
+                hide-details
+                :style="{ 'margin-top': '0px' }"
+                @click="handleAll(item)"
+              />
+            </v-col>
+            <v-col cols="1" class="ma-0">
+              <!-- </template> -->
+              <!-- <template #item.create="{item}"> -->
+              <v-checkbox
+                v-if="!item.hideCheck"
+                v-model="item.includeCreate"
+                hide-details
+                :style="{ 'margin-top': '0px' }"
+                :disabled="item.disableCreate"
+              />
+            </v-col>
+            <v-col cols="1" class="ma-0">
+              <!-- </template> -->
+              <!-- <template #item.read="{item}"> -->
+              <v-checkbox
+                v-if="!item.hideCheck"
+                v-model="item.includeRead"
+                hide-details
+                :style="{ 'margin-top': '0px' }"
+                :disabled="item.disableRead"
+              />
+            </v-col>
+            <v-col cols="1" class="ma-0">
+              <!-- </template>
+            <template #item.update="{item}"> -->
+              <v-checkbox
+                v-if="!item.hideCheck"
+                v-model="item.includeUpdate"
+                hide-details
+                :style="{ 'margin-top': '0px' }"
+                :disabled="item.disableUpdate"
+              />
+            </v-col>
+            <v-col cols="1" class="ma-0">
+              <!-- </template>
+            <template #item.delete="{item}"> -->
+              <v-checkbox
+                v-if="!item.hideCheck"
+                v-model="item.includeDelete"
+                hide-details
+                :style="{ 'margin-top': '0px' }"
+                :disabled="item.disableDelete"
+              />
+            </v-col>
+          </v-row>
+        </div>
+        <v-row>
+          <v-col class="my-4" cols="12"><v-divider></v-divider></v-col>
+        </v-row>
+        <!-- </template> -->
+        <!-- </v-data-table> -->
+      </div>
+      <!-- </v-container>
+      </v-sheet> -->
     </v-card-text>
     <v-card-actions v-if="!template || !template.default">
       <v-spacer />
