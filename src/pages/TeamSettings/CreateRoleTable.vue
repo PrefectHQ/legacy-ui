@@ -383,44 +383,40 @@ export default {
               <!-- </template> -->
               <!-- <template #item.create="{item}"> -->
               <v-checkbox
-                v-if="!item.hideCheck"
+                v-if="!item.disableCreate"
                 v-model="item.includeCreate"
                 hide-details
                 :style="{ 'margin-top': '0px' }"
-                :disabled="item.disableCreate"
               />
             </v-col>
             <v-col cols="1" class="ma-0">
               <!-- </template> -->
               <!-- <template #item.read="{item}"> -->
               <v-checkbox
-                v-if="!item.hideCheck"
+                v-if="!item.disableRead"
                 v-model="item.includeRead"
                 hide-details
                 :style="{ 'margin-top': '0px' }"
-                :disabled="item.disableRead"
               />
             </v-col>
             <v-col cols="1" class="ma-0">
               <!-- </template>
             <template #item.update="{item}"> -->
               <v-checkbox
-                v-if="!item.hideCheck"
+                v-if="!item.disableUpdate"
                 v-model="item.includeUpdate"
                 hide-details
                 :style="{ 'margin-top': '0px' }"
-                :disabled="item.disableUpdate"
               />
             </v-col>
             <v-col cols="1" class="ma-0">
               <!-- </template>
             <template #item.delete="{item}"> -->
               <v-checkbox
-                v-if="!item.hideCheck"
+                v-if="!item.disableDelete"
                 v-model="item.includeDelete"
                 hide-details
                 :style="{ 'margin-top': '0px' }"
-                :disabled="item.disableDelete"
               />
             </v-col>
           </v-row>
