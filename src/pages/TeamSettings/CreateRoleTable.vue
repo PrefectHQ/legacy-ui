@@ -339,8 +339,8 @@ export default {
       ></v-text-field>
     </v-card-subtitle> -->
     <v-card-text class="font-weight-light">
-      <!-- <v-sheet height="70vh" :style="{ overflow: 'auto' }"> -->
-      <!-- <v-text-field
+      <v-sheet height="70vh" :style="{ overflow: 'auto' }">
+        <!-- <v-text-field
           v-if="!tableOnly"
           v-model="searchInput"
           class="rounded-0 elevation-1 mb-1"
@@ -353,82 +353,82 @@ export default {
           autocomplete="new-password"
         ></v-text-field> -->
 
-      <!-- <v-container fluid> -->
-      <div v-for="(group, index) in permissions" :key="index">
-        <v-row class="mb-4 text-body-1" no-gutters>
-          <v-col cols="4" class="text-h5 run-body">
-            {{ groupName(index) }}
-          </v-col>
-          <v-col class="text-left" cols="1">All</v-col>
-          <v-col class="text-left" cols="1">Create</v-col>
-          <v-col class="text-left" cols="1">Read</v-col>
-          <v-col class="text-left" cols="1">Update</v-col>
-          <v-col class="text-left" cols="1">Delete</v-col>
-        </v-row>
-        <div v-for="(item, indexa) in permissionList(group)" :key="indexa">
-          <v-row no-gutters class="pa-0 ma-0">
-            <v-col cols="4">
-              <span class="text-body-1"> {{ item.name }} </span>
+        <!-- <v-container fluid> -->
+        <div v-for="(group, index) in permissions" :key="index">
+          <v-row class="mb-4 text-body-1" no-gutters>
+            <v-col cols="4" class="text-h5 run-body">
+              {{ groupName(index) }}
             </v-col>
-
-            <v-col class="ma-0" cols="1">
-              <v-checkbox
-                v-model="item.includeAll"
-                hide-details
-                :style="{ 'margin-top': '0px' }"
-                @click="handleAll(item)"
-              />
-            </v-col>
-            <v-col cols="1" class="ma-0">
-              <!-- </template> -->
-              <!-- <template #item.create="{item}"> -->
-              <v-checkbox
-                v-if="!item.disableCreate"
-                v-model="item.includeCreate"
-                hide-details
-                :style="{ 'margin-top': '0px' }"
-              />
-            </v-col>
-            <v-col cols="1" class="ma-0">
-              <!-- </template> -->
-              <!-- <template #item.read="{item}"> -->
-              <v-checkbox
-                v-if="!item.disableRead"
-                v-model="item.includeRead"
-                hide-details
-                :style="{ 'margin-top': '0px' }"
-              />
-            </v-col>
-            <v-col cols="1" class="ma-0">
-              <!-- </template>
-            <template #item.update="{item}"> -->
-              <v-checkbox
-                v-if="!item.disableUpdate"
-                v-model="item.includeUpdate"
-                hide-details
-                :style="{ 'margin-top': '0px' }"
-              />
-            </v-col>
-            <v-col cols="1" class="ma-0">
-              <!-- </template>
-            <template #item.delete="{item}"> -->
-              <v-checkbox
-                v-if="!item.disableDelete"
-                v-model="item.includeDelete"
-                hide-details
-                :style="{ 'margin-top': '0px' }"
-              />
-            </v-col>
+            <v-col class="text-left" cols="1">All</v-col>
+            <v-col class="text-left" cols="1">Create</v-col>
+            <v-col class="text-left" cols="1">Read</v-col>
+            <v-col class="text-left" cols="1">Update</v-col>
+            <v-col class="text-left" cols="1">Delete</v-col>
           </v-row>
+          <div v-for="(item, indexa) in permissionList(group)" :key="indexa">
+            <v-row no-gutters class="pa-0 ma-0">
+              <v-col cols="4">
+                <span class="text-body-1"> {{ item.name }} </span>
+              </v-col>
+
+              <v-col class="ma-0" cols="1">
+                <v-checkbox
+                  v-model="item.includeAll"
+                  hide-details
+                  :style="{ 'margin-top': '0px' }"
+                  @click="handleAll(item)"
+                />
+              </v-col>
+              <v-col cols="1" class="ma-0">
+                <!-- </template> -->
+                <!-- <template #item.create="{item}"> -->
+                <v-checkbox
+                  v-if="!item.disableCreate"
+                  v-model="item.includeCreate"
+                  hide-details
+                  :style="{ 'margin-top': '0px' }"
+                />
+              </v-col>
+              <v-col cols="1" class="ma-0">
+                <!-- </template> -->
+                <!-- <template #item.read="{item}"> -->
+                <v-checkbox
+                  v-if="!item.disableRead"
+                  v-model="item.includeRead"
+                  hide-details
+                  :style="{ 'margin-top': '0px' }"
+                />
+              </v-col>
+              <v-col cols="1" class="ma-0">
+                <!-- </template>
+            <template #item.update="{item}"> -->
+                <v-checkbox
+                  v-if="!item.disableUpdate"
+                  v-model="item.includeUpdate"
+                  hide-details
+                  :style="{ 'margin-top': '0px' }"
+                />
+              </v-col>
+              <v-col cols="1" class="ma-0">
+                <!-- </template>
+            <template #item.delete="{item}"> -->
+                <v-checkbox
+                  v-if="!item.disableDelete"
+                  v-model="item.includeDelete"
+                  hide-details
+                  :style="{ 'margin-top': '0px' }"
+                />
+              </v-col>
+            </v-row>
+          </div>
+          <v-row>
+            <v-col class="my-4" cols="12"><v-divider></v-divider></v-col>
+          </v-row>
+          <!-- </template> -->
+          <!-- </v-data-table> -->
         </div>
-        <v-row>
-          <v-col class="my-4" cols="12"><v-divider></v-divider></v-col>
-        </v-row>
-        <!-- </template> -->
-        <!-- </v-data-table> -->
-      </div>
-      <!-- </v-container>
-      </v-sheet> -->
+        <!-- </v-container> --->
+      </v-sheet>
     </v-card-text>
     <v-card-actions v-if="!template || !template.default">
       <v-spacer />
