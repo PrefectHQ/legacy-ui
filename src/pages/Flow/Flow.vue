@@ -236,7 +236,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet color="appBackground">
+  <v-sheet  color="appBackground">
     <SubPageNav icon="pi-flow" page-type="Flow">
       <span
         slot="page-title"

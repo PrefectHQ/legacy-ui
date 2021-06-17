@@ -17,8 +17,24 @@ export default {
       default: () => false
     },
     flowId: {
-      required: true,
-      type: String
+      required: false,
+      type: String,
+      default: null
+    },
+    agentId: {
+      required: false,
+      type: String,
+      default: null
+    },
+    disableView: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    runs: {
+      required: false,
+      type: Array,
+      default: null
     }
   },
   data() {
@@ -32,12 +48,15 @@ export default {
       return this.archived ? 0 : 60000
     },
     preppedFlowRuns() {
-      if (!this.flowRuns) return []
+      if (!this.flowRuns && !this.runs) return []
 
       const computedStyle = getComputedStyle(document.documentElement)
+      const runs = this.runs || this.flowRuns
+      const prepped = runs
+        .filter(
+          run => run.flow_id == this.flowId || run.agent_id === this.agentId
+        )
 
-      return this.flowRuns
-        .filter(run => run.flow_id == this.flowId)
         .reverse()
         .map(d => {
           if (d.start_time && d.end_time) {
@@ -52,8 +71,10 @@ export default {
 
           d.color = computedStyle.getPropertyValue(`--v-${d.state}-base`)
           d.opacity = 1
+          d.warningOpacity = 0
           return d
         })
+      return prepped
     }
   },
   mounted() {
@@ -65,7 +86,21 @@ export default {
     _barMouseout() {
       this.tooltip = null
     },
-    _barMouseover(d) {
+    async _barMouseover(d) {
+      if (this.runs) {
+        try {
+          const { data } = await this.$apollo.query({
+            query: require('@/graphql/Dashboard/timeline-flow.gql'),
+            variables: {
+              flowId: d.data?.flow_id
+            }
+          })
+
+          d.data.flow = data.flow_by_pk
+        } catch (e) {
+          throw new Error(e)
+        }
+      }
       if (d.data.end_time) {
         d.data.display_end_time = this.formatTime(d.data.end_time)
       }
@@ -79,7 +114,7 @@ export default {
           d.data.scheduled_start_time
         )
       }
-
+      d.limited_view = !!this.runs
       d.status_style = this.statusStyle(d.data.state)
 
       this.tooltip = d
@@ -123,8 +158,11 @@ export default {
       query: require('@/graphql/Dashboard/last-flow-runs.gql'),
       variables() {
         return {
-          flowId: this.flowId
+          flowId: this.flowId || null
         }
+      },
+      skip() {
+        return !!this.runs
       },
       loadingKey: 'loadingKey',
       update: data => data?.flow_run

@@ -1,0 +1,12 @@
+query AgentHooks{
+  hook (where: {event_type: {_eq: "AgentSLAFailedEvent"}}){
+    event_tags 
+      action {
+        id
+        name
+        action_type
+      }
+    event_type
+    
+  }
+}
