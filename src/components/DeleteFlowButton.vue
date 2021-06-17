@@ -35,7 +35,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['role']),
     ...mapGetters('license', ['hasPermission']),
-    isReadOnly() {
+    permissionsCheck() {
       return !this.hasPermission('delete', 'flow')
     },
     all() {
@@ -119,7 +119,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="!isReadOnly" class="text-center">
+  <div v-if="!permissionsCheck" class="text-center">
     <v-dialog v-model="deleteDialog" width="500" @click:outside="reset">
       <template #activator="{ on: dialog }">
         <v-tooltip bottom>
@@ -204,7 +204,7 @@ export default {
       >
     </v-dialog>
   </div>
-  <div v-else-if="isReadOnly">
+  <div v-else-if="permissionsCheck">
     <v-tooltip top>
       <template #activator="{ on }">
         <div v-on="on">

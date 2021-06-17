@@ -120,10 +120,7 @@ export default {
         ? this.headers
         : this.headers.filter(header => header.mobile)
     },
-    isReadOnlyUser() {
-      return !this.isTenantAdmin
-    },
-    isTenantAdmin() {
+    permissionsCheck() {
       return (
         this.hasPermission('create', 'project') &&
         this.hasPermission('update', 'project') &&
@@ -464,7 +461,7 @@ export default {
     <template #title>Projects</template>
 
     <template #subtitle>
-      <span v-if="isTenantAdmin">
+      <span v-if="permissionsCheck">
         View and manage your team's
         <ExternalLink
           href="https://docs.prefect.io/cloud/concepts/projects.html#projects"
@@ -481,7 +478,7 @@ export default {
       >
     </template>
 
-    <template v-if="!isReadOnlyUser" #cta>
+    <template v-if="permissionsCheck" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -640,7 +637,7 @@ export default {
           </template>
 
           <!-- PROJECT ACTIONS -->
-          <template v-if="isTenantAdmin" #item.actions="{ item }">
+          <template v-if="permissionsCheck" #item.actions="{ item }">
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn

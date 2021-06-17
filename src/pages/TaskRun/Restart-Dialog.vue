@@ -24,7 +24,7 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['role']),
     ...mapGetters('license', ['hasPermission']),
-    isReadOnly() {
+    permissionsCheck() {
       return !this.hasPermission('update', 'run')
     },
     message() {
@@ -171,7 +171,7 @@ export default {
     <v-card-actions>
       <v-spacer></v-spacer>
 
-      <v-btn :disabled="isReadOnly" color="primary" @click="restart">
+      <v-btn :disabled="permissionsCheck" color="primary" @click="restart">
         Confirm
       </v-btn>
 

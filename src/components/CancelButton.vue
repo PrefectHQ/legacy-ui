@@ -6,7 +6,7 @@ export default {
   mixins: [changeStateMixin],
   computed: {
     ...mapGetters('license', ['hasPermission']),
-    isReadOnly() {
+    permissionsCheck() {
       return !this.hasPermission('update', 'run')
     }
   }
@@ -22,7 +22,7 @@ export default {
             color="red darken-3"
             class="vertical-button white--text"
             :style="{ height: '46px' }"
-            :disabled="!checkVersion || isReadOnly || isFinishing"
+            :disabled="!checkVersion || permissionsCheck || isFinishing"
             text
             small
             depressed
@@ -34,7 +34,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnly">
+      <span v-if="permissionsCheck">
         You don't have permission to modify runs.
       </span>
       <span v-else-if="!checkVersion">

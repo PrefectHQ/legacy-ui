@@ -73,7 +73,7 @@ export default {
         'flex-column': this.$vuetify.breakpoint.smAndDown
       }
     },
-    isTenantAdmin() {
+    permissionsCheck() {
       return this.hasPermission('create', 'license')
     }
   },
@@ -133,7 +133,7 @@ export default {
               v-if="(!plan || plan == 'starter') && !complete"
               key="starter"
               :hide-details="!!plan"
-              :disabled="!isTenantAdmin"
+              :disabled="!permissionsCheck"
               @click="handlePlanSelection('starter')"
             />
 
@@ -141,7 +141,7 @@ export default {
               v-if="(!plan || plan == 'standard') && !complete"
               key="standard"
               :hide-details="!!plan"
-              :disabled="!isTenantAdmin"
+              :disabled="!permissionsCheck"
               @click="handlePlanSelection('standard')"
             />
 

@@ -11,7 +11,7 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['hasPermission']),
-    isReadOnlyUser() {
+    permissionsCheck() {
       return !this.hasPermission('update', 'run')
     }
   },
@@ -48,7 +48,7 @@ export default {
                 text
                 small
                 depressed
-                :disabled="isReadOnlyUser"
+                :disabled="permissionsCheck"
                 color="utilGrayMid"
               >
                 <v-icon>label_important</v-icon>
@@ -157,7 +157,7 @@ export default {
       </v-card>
     </v-dialog>
   </div>
-  <div v-else-if="isReadOnlyUser && dialogType == 'flow run'">
+  <div v-else-if="permissionsCheck && dialogType == 'flow run'">
     <v-tooltip bottom>
       <template #activator="{ on }">
         <div v-on="on">
@@ -198,7 +198,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
+      <span v-if="permissionsCheck">
         You don't have permission to change states
       </span>
       <span v-else>

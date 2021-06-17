@@ -58,7 +58,7 @@ export default {
     },
     showPay() {
       return (
-        this.show && this.isSelfServe && this.isTenantAdmin && !this.loading
+        this.show && this.isSelfServe && this.permissionsCheck && !this.loading
       )
     },
     disableButton() {
@@ -179,7 +179,7 @@ export default {
     </v-card-subtitle>
     <v-card-text>
       <v-alert
-        v-if="!isTenantAdmin & !loading"
+        v-if="!permissionsCheck & !loading"
         class="mx-auto mb-12"
         border="left"
         colored-border
@@ -212,7 +212,7 @@ export default {
         v-if="isSelfServe"
         data-cy="user-slider"
         :value="users"
-        :readonly="!isTenantAdmin"
+        :readonly="!permissionsCheck"
         :max="max"
         :tick-size="5"
         :tick-labels="numArr"
@@ -260,7 +260,7 @@ export default {
       </v-list>
     </div>
     <v-alert
-      v-if="!existingCard && isSelfServe && isTenantAdmin && !loading"
+      v-if="!existingCard && isSelfServe && permissionsCheck && !loading"
       class="mx-auto mb-12"
       border="left"
       colored-border
@@ -272,7 +272,7 @@ export default {
       >Please enter payment details before adding users
     </v-alert>
 
-    <v-card-actions v-if="isTenantAdmin && isSelfServe">
+    <v-card-actions v-if="permissionsCheck && isSelfServe">
       <v-spacer></v-spacer>
 
       <v-btn

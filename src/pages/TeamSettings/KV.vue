@@ -98,7 +98,7 @@ export default {
       if (this.invalidKV) return false
       return true
     },
-    isReadOnlyUser() {
+    permissionsCheck() {
       return !this.hasPermission('create', 'key-value')
     }
   },
@@ -350,12 +350,12 @@ export default {
         return data?.key_value
       },
       // skip() {
-      //   return this.isReadOnlyUser
+      //   return this.permissionsCheck
       // },
       error() {
         this.isFetchingKV = false
 
-        if (!this.isReadOnlyUser) {
+        if (!this.permissionsCheck) {
           this.handleAlert(
             'error',
             'Something went wrong while trying to fetch the kv. Please try again. If this error persists, please contact help@prefect.io.'
@@ -379,7 +379,7 @@ export default {
         Manage your team's key/value store
       </template>
 
-      <template v-if="!isReadOnlyUser && maxKVCount" #cta>
+      <template v-if="!permissionsCheck && maxKVCount" #cta>
         <v-btn
           color="primary"
           class="white--text"
@@ -403,7 +403,7 @@ export default {
 
       <template #alerts>
         <v-alert
-          v-if="isReadOnlyUser"
+          v-if="permissionsCheck"
           class="mx-auto"
           border="left"
           colored-border
@@ -433,7 +433,7 @@ export default {
       </template>
 
       <v-text-field
-        v-if="!$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+        v-if="!$vuetify.breakpoint.mdAndUp && !permissionsCheck"
         v-model="search"
         class="rounded-0 elevation-1 mb-1"
         solo
@@ -444,15 +444,15 @@ export default {
         prepend-inner-icon="search"
       ></v-text-field>
     </ManagementLayout>
-    <v-card v-if="!isReadOnlyUser && maxKVCount" tile class="mx-auto">
+    <v-card v-if="!permissionsCheck && maxKVCount" tile class="mx-auto">
       <v-card-text class="pa-0">
         <!-- SEARCH (DESKTOP) -->
         <div
-          v-if="$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+          v-if="$vuetify.breakpoint.mdAndUp && !permissionsCheck"
           class="py-1 mr-2 d-flex justify-end"
         >
           <v-text-field
-            v-if="!isReadOnlyUser"
+            v-if="!permissionsCheck"
             v-model="search"
             class="rounded-0 elevation-1"
             solo
