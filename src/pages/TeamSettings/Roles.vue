@@ -66,6 +66,9 @@ export default {
           )[0]
         this.template = role
       }
+    },
+    tenant() {
+      this.$apollo.queries.roles.refetch()
     }
   },
   methods: {
@@ -159,23 +162,22 @@ export default {
           <v-list dense nav>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title class="text-subtitle-1">
+                <v-list-item-title class="text-subtitle-1 mb-2 mt-4">
                   Default Roles
                 </v-list-item-title>
-                <v-divider></v-divider>
+                <div v-if="loading" class="text-center">
+                  <v-progress-linear
+                    :width="5"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-linear>
+                </div>
+                <v-divider v-else></v-divider>
               </v-list-item-content>
             </v-list-item>
-            <div v-if="loading" class="text-center">
-              <v-progress-circular
-                :size="70"
-                :width="5"
-                color="primary"
-                indeterminate
-              ></v-progress-circular>
-            </div>
+
             <v-list-item
               v-for="item in editedRoles.defaultRoles"
-              v-else
               :key="item.name"
               link
             >
@@ -204,8 +206,8 @@ export default {
                   Custom Roles
                   <v-btn
                     color="primary"
-                    class="white--text"
                     icon
+                    small
                     @click="handleRoleSelect(null, 'new')"
                   >
                     <v-icon>add</v-icon>
@@ -215,18 +217,17 @@ export default {
               </v-list-item-content>
             </v-list-item>
             <div v-if="loading" class="text-center">
-              <v-progress-circular
-                :size="70"
-                :width="5"
+              <v-progress-linear
                 color="primary"
                 indeterminate
-              ></v-progress-circular>
+              ></v-progress-linear>
             </div>
 
             <v-sheet v-else :style="{ overflow: 'auto' }" height="40vH">
               <v-list-item
                 v-for="item in editedRoles.tenantRoles"
                 :key="item.value"
+                class="show-icon"
                 link
               >
                 <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
@@ -237,24 +238,16 @@ export default {
                   </v-list-item-title>
                 </v-list-item-content>
 
-                <v-list-item-icon>
-                  <v-tooltip bottom>
-                    <template #activator="{ on }">
-                      <v-btn
-                        :disabled="defaultRoles.includes(item.name)"
-                        text
-                        :loading="deletingRole === item.id"
-                        fab
-                        x-small
-                        color="blue-grey"
-                        v-on="on"
-                        @click="deleteRole(item)"
-                      >
-                        <v-icon>delete</v-icon>
-                      </v-btn>
-                    </template>
-                    Remove role
-                  </v-tooltip>
+                <v-list-item-icon class="hidden-icon">
+                  <v-btn
+                    :disabled="defaultRoles.includes(item.name)"
+                    icon
+                    :loading="deletingRole === item.id"
+                    x-small
+                    color="error"
+                    @click="deleteRole(item)"
+                    ><v-icon>delete</v-icon></v-btn
+                  >
                 </v-list-item-icon>
               </v-list-item>
               <v-list-item v-if="addRole">
@@ -297,3 +290,13 @@ export default {
     </v-row>
   </v-sheet>
 </template>
+
+<style scoped>
+.hidden-icon {
+  display: none;
+}
+
+.show-icon:hover .hidden-icon {
+  display: inline;
+}
+</style>

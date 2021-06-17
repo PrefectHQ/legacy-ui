@@ -1,9 +1,4 @@
 <script>
-// make sure includeCreate etc is not included in includedpermissions if they
-//don't exist/are disabled
-//Remove permission if no includeREAD/Update/Delete or Create maybe remove includeAll for readonly too?
-//Check what's going on with create secret...
-
 import { mapActions } from 'vuex'
 import _ from 'lodash'
 
@@ -309,8 +304,8 @@ export default {
         indeterminate
         class="ma-12"
         color="primary"
-        :size="300"
-        :width="6"
+        :size="200"
+        :width="8"
       ></v-progress-circular>
     </v-card-text>
     <v-card-text v-else class="font-weight-light">
