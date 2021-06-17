@@ -181,6 +181,11 @@ export default {
               v-for="item in editedRoles.defaultRoles"
               :key="item.name"
               link
+              :style="
+                selectedRole === item.id
+                  ? { 'background-color': 'whiteSmoke' }
+                  : ''
+              "
             >
               <v-list-item-content @click="handleRoleSelect(item, 'default')">
                 <v-list-item-title
