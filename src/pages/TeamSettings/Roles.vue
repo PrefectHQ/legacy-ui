@@ -207,7 +207,7 @@ export default {
                   icon
                   @click="handleRoleSelect(null, 'new')"
                 >
-                  <v-icon left>add</v-icon>
+                  <v-icon>add</v-icon>
                 </v-btn>
               </v-list-item-title>
               <v-divider></v-divider>
