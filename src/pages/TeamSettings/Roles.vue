@@ -115,7 +115,7 @@ export default {
         role = { ...role, default: true }
       }
       if (roleType === 'new') {
-        this.addRole = true
+        this.addRole = !this.addRole
       } else {
         this.addRole = false
       }
@@ -192,7 +192,7 @@ export default {
         <v-list dense nav>
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title>
+              <v-list-item-title class="text-subtitle-1">
                 Default Roles
               </v-list-item-title>
               <v-divider></v-divider>
@@ -209,6 +209,7 @@ export default {
                 :class="
                   template && template.name == item.name ? 'primary--text' : ''
                 "
+                class="text-body-2"
                 >{{ formatName(item.name) }}</v-list-item-title
               >
             </v-list-item-content>
@@ -226,71 +227,71 @@ export default {
         >
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title>
+              <v-list-item-title class="text-subtitle-1">
                 Custom Roles
+                <v-btn
+                  color="primary"
+                  class="white--text"
+                  icon
+                  @click="handleRoleSelect(null, 'new')"
+                >
+                  <v-icon left>add</v-icon>
+                </v-btn>
               </v-list-item-title>
               <v-divider></v-divider>
             </v-list-item-content>
           </v-list-item>
+          <v-sheet :style="{ overflow: 'auto' }" height="200px">
+            <v-list-item
+              v-for="item in editedRoles.tenantRoles"
+              :key="item.value"
+              link
+            >
+              <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
+                <v-list-item-title
+                  :class="
+                    template && template.name == item.name
+                      ? 'primary--text'
+                      : ''
+                  "
+                  class="text-body-2"
+                  >{{ item.name }}
+                </v-list-item-title>
+              </v-list-item-content>
 
-          <v-list-item
-            v-for="item in editedRoles.tenantRoles"
-            :key="item.value"
-            link
-          >
-            <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
-              <v-list-item-title
-                :class="
-                  template && template.name == item.name ? 'blue--text' : ''
-                "
-                >{{ item.name }}
-              </v-list-item-title>
-            </v-list-item-content>
-
-            <v-list-item-icon>
-              <v-tooltip bottom>
-                <template #activator="{ on }">
-                  <v-btn
-                    :disabled="defaultRoles.includes(item.name)"
-                    text
-                    :loading="deletingRole === item.id"
-                    fab
-                    x-small
-                    color="error"
-                    v-on="on"
-                    @click="deleteRole(item)"
-                  >
-                    <v-icon>delete</v-icon>
-                  </v-btn>
-                </template>
-                Remove role
-              </v-tooltip>
-            </v-list-item-icon>
-          </v-list-item>
-          <v-list-item v-if="addRole">
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-text-field
-                  v-model="roleName"
-                  required
-                  placeholder="Role Name"
-                ></v-text-field
-              ></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item-icon>
+                <v-tooltip bottom>
+                  <template #activator="{ on }">
+                    <v-btn
+                      :disabled="defaultRoles.includes(item.name)"
+                      text
+                      :loading="deletingRole === item.id"
+                      fab
+                      x-small
+                      color="error"
+                      v-on="on"
+                      @click="deleteRole(item)"
+                    >
+                      <v-icon>delete</v-icon>
+                    </v-btn>
+                  </template>
+                  Remove role
+                </v-tooltip>
+              </v-list-item-icon>
+            </v-list-item>
+            <v-list-item v-if="addRole">
+              <v-list-item-content>
+                <v-list-item-title>
+                  <v-text-field
+                    v-model="roleName"
+                    required
+                    placeholder="Role Name"
+                  ></v-text-field
+                ></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-sheet>
         </v-list>
-
-        <div class="text-center mt-8">
-          <v-btn
-            color="primary"
-            class="white--text"
-            large
-            @click="handleRoleSelect(null, 'new')"
-          >
-            <v-icon left>face</v-icon>
-            New Role
-          </v-btn>
-        </div>
       </v-navigation-drawer>
     </v-col>
     <v-col cols="9" class="pa-0">
