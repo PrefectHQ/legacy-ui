@@ -5,6 +5,8 @@ const permissionGroups = { Auth: {api-key: {name: "User API Key", value:
 {name:'project', value: 'project'}, logs: {name: 'Logs', value: 'logs'}}}
 
 <script>
+// make sure includeCreate etc is not included in includedpermissions if they
+//don't exist/are disabled
 import { mapActions } from 'vuex'
 export default {
   components: {},
@@ -281,7 +283,7 @@ export default {
     async updateRole() {
       try {
         const includedPermissions = []
-        console.log(this.permissions)
+        // console.log(this.permissions)
         this.permissions.forEach(group => {
           Object.values(group).forEach(permission => {
             if (permission.includeCreate)
@@ -307,7 +309,8 @@ export default {
             }
           }
         })
-        if (res?.data?.update_custom_role) {
+        // console.log('res', res)
+        if (res?.data?.update_custom_role_permissions) {
           this.setAlert({
             alertShow: true,
             alertMessage: 'Role updated',
@@ -327,7 +330,7 @@ export default {
       }
     },
     reset() {
-      this.templatePermissionObject()
+      // this.templatePermissionObject()
       // this.roleName = ''
       this.$emit('close')
     }

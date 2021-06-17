@@ -147,6 +147,7 @@ export default {
       this.expanded.push(role)
     },
     refetch() {
+      console.log('ref')
       this.$apollo.queries.roles.refetch()
     },
     async deleteRole(role) {
