@@ -86,7 +86,8 @@ export default {
       this.useDefault = false
       this.roleId = null
       if (roleType === 'new') {
-        this.addRole = !this.addRole
+        if (this.addRole) this.cancelAddName()
+        else this.addRole = true
       } else {
         this.addRole = false
       }
@@ -269,7 +270,7 @@ export default {
                     fab
                     x-small
                     color="blue-grey"
-                    @click="cancelAddName"
+                    @click.stop="cancelAddName"
                   >
                     <v-icon>clear</v-icon>
                   </v-btn>
