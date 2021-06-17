@@ -187,6 +187,9 @@ export default {
       this.templatePermissions = copiedPermissionsArr
       return permissionsArr
     },
+    reset() {
+      this.permissions = Object.values(this.templatePermissionObject())
+    },
     handleAll(item) {
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
