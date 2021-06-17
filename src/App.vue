@@ -147,7 +147,6 @@ export default {
         this.refresh()
         clearTimeout(this.refreshTimeout)
       }, 1000)
-      this.setAgents(null)
       this.setSortedAgents(null)
     },
     async connected(val) {
@@ -396,7 +395,7 @@ export default {
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
-    ...mapMutations('agent', ['setAgents', 'setSortedAgents']),
+    ...mapMutations('agent', ['setSortedAgents']),
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth', ['authenticate', 'authorize']),
     ...mapActions('data', ['resetData']),
