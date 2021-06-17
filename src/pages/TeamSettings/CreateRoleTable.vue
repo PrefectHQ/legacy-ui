@@ -7,6 +7,8 @@
 //Read only user can't read automations?
 
 import { mapActions } from 'vuex'
+import _ from 'lodash'
+
 export default {
   components: {},
   props: {
@@ -23,6 +25,8 @@ export default {
   },
   data() {
     return {
+      isChanged: false,
+      templatePermissions: null,
       permissions: null,
       defaultRole: false,
       permissionGroups: {
@@ -126,6 +130,12 @@ export default {
     template(val) {
       this.defaultRole = val?.default ? true : false
       this.permissions = Object.values(this.templatePermissionObject())
+    },
+    permissions: {
+      handler: function(val) {
+        if (val) this.hasChanges()
+      },
+      deep: true
     }
   },
   created() {
@@ -133,6 +143,10 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    hasChanges() {
+      const equal = _.isEqual(this.permissions, this.templatePermissions)
+      this.isChanged = !equal
+    },
     permissionList(item) {
       return Object.values(item)
     },
@@ -140,8 +154,9 @@ export default {
       return Object.keys(this.permissionGroups)[index]
     },
     templatePermissionObject() {
+      let copiedPermissionsArr = []
       if (!this.authPermissionObject) return
-      const permissionsObj = this.authPermissionObject.map(group => {
+      const permissionsArr = this.authPermissionObject.map(group => {
         Object?.values(group).map(obj => {
           obj.includeCreate = false
           obj.includeRead = false
@@ -166,9 +181,11 @@ export default {
               group[sections[1]].includeCreate
           }
         })
+        copiedPermissionsArr.push(JSON.parse(JSON.stringify(group)))
         return group
       })
-      return permissionsObj
+      this.templatePermissions = copiedPermissionsArr
+      return permissionsArr
     },
     handleAll(item) {
       item.includeRead = item.includeAll
@@ -290,6 +307,7 @@ export default {
         <v-btn
           color="primary"
           :loading="loadingRole"
+          :disabled="!isChanged"
           @click.stop="handleCreateUpdateClick"
         >
           {{ template ? 'Update' : 'Create' }} Role
