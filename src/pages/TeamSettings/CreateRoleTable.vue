@@ -176,7 +176,6 @@ export default {
   },
   watch: {
     template(val) {
-      console.log('template switch', val)
       this.defaultRole = val?.default ? true : false
       this.permissions = Object.values(this.templatePermissionObject())
     }
@@ -226,12 +225,12 @@ export default {
       return permissionsObj
     },
     handleAll(item) {
-      console.log('click', item.includeAll, item)
+      // console.log('click', item.includeAll, item)
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
       item.includeDelete = item.includeAll
       item.includeUpdate = item.includeAll
-      console.log('click2', item.includeAll, item.includeAll, item)
+      // console.log('click2', item.includeAll, item.includeAll, item)
     },
     handleCreateUpdateClick() {
       this.loadingRole = true

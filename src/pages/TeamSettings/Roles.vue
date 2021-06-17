@@ -81,7 +81,6 @@ export default {
       const tenantRoles = this.roles?.filter(
         role => role.tenant_id === this.tenant.id
       )
-      console.log(defaultRoles)
       return { defaultRoles, tenantRoles }
     }
   },
