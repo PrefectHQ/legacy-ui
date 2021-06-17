@@ -31,6 +31,12 @@ export default {
   mixins: [formatTime],
   data() {
     return {
+      attrs: {
+        class: 'mb-6',
+        boilerplate: true,
+        elevation: 2
+      },
+      formatting: false,
       searchInput: null,
       loading: 0,
       expanded: [],
@@ -199,8 +205,14 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
+          <v-skeleton-loader
+            v-if="loading"
+            v-bind="attrs"
+            type="list-item-three-line"
+          ></v-skeleton-loader>
           <v-list-item
             v-for="item in editedRoles.defaultRoles"
+            v-else
             :key="item.name"
             link
           >
