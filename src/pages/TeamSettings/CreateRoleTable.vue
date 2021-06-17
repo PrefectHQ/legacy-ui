@@ -32,6 +32,7 @@ export default {
   },
   data() {
     return {
+      permissions: null,
       permissionGroups: {
         Auth: {
           'api-key': { name: 'User API Key', value: 'api-key' },
@@ -161,18 +162,26 @@ export default {
       // console.log(obj)
       return obj
     },
-    permissions() {
-      if (!this.authPermissionObject && !this.templatePermissionObject)
-        return []
-      const permissionObject = this.templatePermissionObject()
+    // permissions() {
+    //   if (!this.authPermissionObject && !this.templatePermissionObject)
+    //     return []
+    //   const permissionObject = this.templatePermissionObject()
 
-      return Object.values(permissionObject)
-    },
+    //   return Object.values(permissionObject)
+    // },
     loading() {
       return this.loadingKey > 0
     }
   },
-  watch: {},
+  watch: {
+    template() {
+      console.log('template switch')
+      this.permissions = Object.values(this.templatePermissionObject())
+    }
+  },
+  created() {
+    this.permissions = Object.values(this.templatePermissionObject())
+  },
   methods: {
     ...mapActions('alert', ['setAlert']),
     permissionList(item) {
@@ -215,11 +224,12 @@ export default {
       return permissionsObj
     },
     handleAll(item) {
-      // console.log('click', item)
+      console.log('click', item.includeAll, item)
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
       item.includeDelete = item.includeAll
       item.includeUpdate = item.includeAll
+      console.log('click2', item.includeAll, item.includeAll, item)
     },
     handleCreateUpdateClick() {
       this.loadingRole = true
