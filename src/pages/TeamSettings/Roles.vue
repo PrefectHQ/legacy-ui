@@ -149,6 +149,8 @@ export default {
     refetch() {
       console.log('ref')
       this.$apollo.queries.roles.refetch()
+      this.roleName = ''
+      this.addRole = false
     },
     async deleteRole(role) {
       this.deletingRole = role.id
@@ -284,7 +286,7 @@ export default {
                       :loading="deletingRole === item.id"
                       fab
                       x-small
-                      color="error"
+                      color="blue-grey"
                       v-on="on"
                       @click="deleteRole(item)"
                     >

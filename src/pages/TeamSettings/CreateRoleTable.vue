@@ -7,6 +7,7 @@ const permissionGroups = { Auth: {api-key: {name: "User API Key", value:
 <script>
 // make sure includeCreate etc is not included in includedpermissions if they
 //don't exist/are disabled
+//Fix reset/clear
 import { mapActions } from 'vuex'
 export default {
   components: {},
@@ -243,15 +244,17 @@ export default {
       try {
         const includedPermissions = []
 
-        this.permissions.forEach(permission => {
-          if (permission.includeCreate)
-            includedPermissions.push(`create:${permission.shortName}`)
-          if (permission.includeDelete)
-            includedPermissions.push(`delete:${permission.shortName}`)
-          if (permission.includeRead)
-            includedPermissions.push(`read:${permission.shortName}`)
-          if (permission.includeUpdate)
-            includedPermissions.push(`update:${permission.shortName}`)
+        this.permissions.forEach(group => {
+          Object.values(group).forEach(permission => {
+            if (permission.includeCreate)
+              includedPermissions.push(`create:${permission.shortName}`)
+            if (permission.includeDelete)
+              includedPermissions.push(`delete:${permission.shortName}`)
+            if (permission.includeRead)
+              includedPermissions.push(`read:${permission.shortName}`)
+            if (permission.includeUpdate)
+              includedPermissions.push(`update:${permission.shortName}`)
+          })
         })
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-custom-role.gql'),
