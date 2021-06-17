@@ -1,18 +1,17 @@
 import Router from 'vue-router'
 
 //  Nav guards
-import authNavGuard from '@/middleware/authNavGuard'
 import flowNavGuard from '@/middleware/flowNavGuard'
 import multiguard from 'vue-router-multiguard'
-import tenantNavGuard from '@/middleware/tenantNavGuard'
+
+import store from '@/store/index'
 
 export const routes = [
   {
     name: 'not-found',
     path: '/404',
     component: () =>
-      import(/* webpackChunkName: "not-found" */ '@/pages/NotFoundPage.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/* webpackChunkName: "not-found" */ '@/pages/NotFoundPage.vue')
   },
   {
     name: 'api',
@@ -20,15 +19,13 @@ export const routes = [
     component: () =>
       import(
         /* webpackChunkName: "interactive-api" */ '@/pages/InteractiveAPI/InteractiveAPI.vue'
-      ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      )
   },
   {
     name: 'help',
     path: '/help',
     component: () =>
-      import(/* webpackChunkName: "support" */ '@/pages/Support.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/* webpackChunkName: "support" */ '@/pages/Support.vue')
   },
   {
     name: 'project',
@@ -36,36 +33,32 @@ export const routes = [
     component: () =>
       import(
         /* webpackChunkName: "project" */ '@/pages/Dashboard/Dashboard.vue'
-      ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      )
   },
   {
     name: 'flow',
     path: '/:tenant?/flow/:id',
     component: () =>
       import(/* webpackChunkName: "flow" */ '@/pages/Flow/Flow.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard, flowNavGuard])
+    beforeEnter: multiguard([flowNavGuard])
   },
   {
     name: 'flow-run',
     path: '/:tenant?/flow-run/:id',
     component: () =>
-      import(/* webpackChunkName: "flow-run" */ '@/pages/FlowRun/FlowRun.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/* webpackChunkName: "flow-run" */ '@/pages/FlowRun/FlowRun.vue')
   },
   {
     name: 'task',
     path: '/:tenant?/task/:id',
     component: () =>
-      import(/* webpackChunkName: "task" */ '@/pages/Task/Task.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/* webpackChunkName: "task" */ '@/pages/Task/Task.vue')
   },
   {
     name: 'task-run',
     path: '/:tenant?/task-run/:id',
     component: () =>
-      import(/* webpackChunkName: "task-run" */ '@/pages/TaskRun/TaskRun.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/* webpackChunkName: "task-run" */ '@/pages/TaskRun/TaskRun.vue')
   },
   // --------------------------- //
   //
@@ -79,7 +72,6 @@ export const routes = [
       import(
         /* webpackChunkName: "team-settings" */ '@/pages/TeamSettings/TeamSettings.vue'
       ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard]),
     redirect: { name: 'account' },
     children: [
       {
@@ -139,6 +131,14 @@ export const routes = [
           )
       },
       {
+        name: 'kv',
+        path: 'kv',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--kv" */ '@/pages/TeamSettings/KV.vue'
+          )
+      },
+      {
         name: 'secrets',
         path: 'secrets',
         component: () =>
@@ -176,7 +176,6 @@ export const routes = [
       import(
         /* webpackChunkName: "user-settings" */ '@/pages/UserSettings/UserSettings.vue'
       ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard]),
     redirect: { name: 'profile' },
     children: [
       {
@@ -222,10 +221,7 @@ export const routes = [
     name: 'calendar',
     path: '/:tenant?/calendar',
     component: () =>
-      import(
-        /*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
-      ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View')
   },
   // --------------------------- //
   //
@@ -238,7 +234,6 @@ export const routes = [
       import(
         /* webpackChunkName: "onboard" */ '@/pages/Onboard/Onboard-Page.vue'
       ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard]),
     children: [
       {
         name: 'welcome',
@@ -270,8 +265,7 @@ export const routes = [
         component: () =>
           import(
             /* webpackChunkName: "accept" */ '@/pages/Onboard/AcceptInvitationPage.vue'
-          ),
-        beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+          )
       }
     ]
   },
@@ -283,9 +277,7 @@ export const routes = [
   {
     name: 'plans',
     path: '/plans',
-    component: () =>
-      import(/* webpackChunkName: "plans" */ '@/pages/Plans.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+    component: () => import(/* webpackChunkName: "plans" */ '@/pages/Plans.vue')
   },
   // --------------------------- //
   //
@@ -342,8 +334,7 @@ export const routes = [
     component: () =>
       import(
         /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
-      ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      )
   },
   {
     name: 'notifications',
@@ -351,15 +342,13 @@ export const routes = [
     component: () =>
       import(
         /* webpackChunkName: "notifications" */ '@/pages/Notifications/Notifications.vue'
-      ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      )
   },
   {
     name: 'home',
     path: '/home',
     component: () =>
-      import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue'),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue')
   },
   {
     name: 'team-switched',
@@ -380,8 +369,7 @@ export const routes = [
     component: () =>
       import(
         /* webpackChunkName: "dashboard" */ '@/pages/Dashboard/Dashboard.vue'
-      ),
-    beforeEnter: multiguard([authNavGuard, tenantNavGuard])
+      )
   },
   {
     path: '*',
@@ -418,14 +406,32 @@ function scrollToHash(to) {
   }
 }
 
-const router = new Router({
-  mode: 'history',
-  routes,
-  scrollBehavior(to) {
-    if (to.hash) {
-      scrollToHash(to)
+export const createRouter = () => {
+  const router = new Router({
+    mode: 'history',
+    base: window.prefect_ui_settings?.base_url || '',
+    routes,
+    scrollBehavior(to) {
+      if (to.hash) {
+        scrollToHash(to)
+      }
     }
-  }
-})
+  })
 
-export default router
+  router.beforeEach((to, from, next) => {
+    if (
+      'tenant' in to?.params &&
+      !to?.params?.tenant &&
+      store.getters['tenant/tenant']?.slug
+    ) {
+      return next({
+        name: to.name,
+        replace: true,
+        params: { ...to.params, tenant: store.getters['tenant/tenant'].slug },
+        query: to.query
+      })
+    } else next()
+  })
+
+  return router
+}

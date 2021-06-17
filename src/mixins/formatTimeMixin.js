@@ -31,9 +31,7 @@ export const formatTime = {
     datePartHour(timestamp) {
       if (!timestamp) return
       let timeObj = moment(timestamp).tz(this.timezone)
-      return `${
-        timeObj ? timeObj.format('hh') : moment(timestamp).format('hh')
-      }`
+      return `${timeObj ? timeObj.format('h') : moment(timestamp).format('h')}`
     },
     datePartMinute(timestamp) {
       if (!timestamp) return

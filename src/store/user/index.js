@@ -125,10 +125,13 @@ const actions = {
     })
   },
 
-  async getUser({ commit, getters, dispatch }) {
+  async getUser({ commit, getters, dispatch, rootGetters }) {
+    // If this is Server, we don't continue, since this will fail
+    if (rootGetters['api/isServer']) return
+
     const user = await prefectUser()
     commit('user', user)
-    await dispatch('setDefaultTenant')
+    dispatch('setDefaultTenant')
     return getters['user']
   }
 }

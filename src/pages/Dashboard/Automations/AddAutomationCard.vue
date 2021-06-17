@@ -10,7 +10,7 @@ import {
 import ConfirmDialog from '@/components/ConfirmDialog'
 import UpgradeBadge from '@/components/UpgradeBadge'
 
-const systemActions = ['CancelFlowRunAction']
+const systemActions = ['CancelFlowRunAction', 'PauseScheduleAction']
 
 export default {
   components: {
@@ -71,7 +71,9 @@ export default {
       rules: {
         required: val => !!val || 'Required',
         notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
-      }
+      },
+      animated: false,
+      agentConfigId: ''
     }
   },
   computed: {
@@ -117,17 +119,55 @@ export default {
       return 'has'
     },
     editedActions() {
-      return this.actions
+      // Most actions are independent and can be used across flows but PauseScheduleAction can take a flow group id so need to filter here
+      const actions = this.actions.filter(
+        action =>
+          action.action_type !== 'PauseScheduleAction' ||
+          action?.action_config?.flow_group_id ===
+            this.selectedFlows[0]?.flow_group_id
+      )
+      return actions
         ? this.agentOrFlow === 'agent'
-          ? this.actions.filter(
-              action => action.action_type !== 'CancelFlowRunAction'
+          ? actions.filter(
+              action =>
+                action.action_type !== 'CancelFlowRunAction' &&
+                action.action_type !== 'PauseScheduleAction'
             )
-          : this.actions.find(
+          : actions.find(
               action => action.action_type === 'CancelFlowRunAction'
+            ) &&
+            actions.find(
+              action =>
+                action.action_type === 'PauseScheduleAction' &&
+                action.action_config.flow_group_id ===
+                  this.selectedFlows[0].flow_group_id
             )
-          ? this.actions
+          ? actions
+          : actions.find(action => action.action_type === 'PauseScheduleAction')
+          ? [
+              ...actions,
+              {
+                name: 'cancel run',
+                value: 'CANCEL_RUN',
+                action_type: 'CancelFlowRunAction'
+              }
+            ]
+          : actions.find(action => action.action_type === 'CancelFlowRunAction')
+          ? [
+              ...actions,
+              {
+                name: 'pause schedule',
+                value: 'PAUSE_SCHEDULE',
+                action_type: 'PauseScheduleAction'
+              }
+            ]
           : [
-              ...this.actions,
+              ...actions,
+              {
+                name: 'pause schedule',
+                value: 'PAUSE_SCHEDULE',
+                action_type: 'PauseScheduleAction'
+              },
               {
                 name: 'cancel run',
                 value: 'CANCEL_RUN',
@@ -138,7 +178,14 @@ export default {
             {
               name: 'cancel run',
               value: 'CANCEL_RUN',
+              id: 1,
               action_type: 'CancelFlowRunAction'
+            },
+            {
+              name: 'pause schedule',
+              value: 'PAUSE_SCHEDULE',
+              id: 2,
+              action_type: 'PauseScheduleAction'
             }
           ]
     },
@@ -148,6 +195,7 @@ export default {
       )
     },
     systemActions() {
+      if (this.selectedFlows?.length > 1) return []
       return this.editedActions.filter(a =>
         systemActions.includes(a.action_type)
       )
@@ -288,6 +336,14 @@ export default {
     actionIcon(type) {
       return actionTypes.find(a => a.actionType == type)?.icon
     },
+    addHint() {
+      clearTimeout(this.animationTimeout)
+      this.animated = true
+
+      this.animationTimeout = setTimeout(() => {
+        this.animated = false
+      }, 1500)
+    },
     buttonColor(selectedStep, otherStep) {
       // const stepComplete = this.steps[selectedStep]
       // const otherComplete = this.steps[otherStep]
@@ -323,6 +379,12 @@ export default {
       return this[`stateGroup${group}`]
     },
     switchStep(selectedStep) {
+      if (this.step.name == selectedStep) {
+        this.addHint()
+      } else {
+        clearTimeout(this.animationTimeout)
+      }
+
       this.previousStep = this.step.name
 
       if (this.step.name === 'openDuration')
@@ -415,12 +477,14 @@ export default {
         : this.chosenStates.push(state)
       this.steps['selectState'].complete = this.chosenStates.length > 0
     },
-    async handleSaveAgentConfig() {
+    async handleSaveAgentConfig(config) {
+      this.agentConfigId = config.id
       this.$apollo.queries.agentConfigs.refetch()
       this.showAgentConfigForm = false
     },
     selectAgentConfig(config) {
       this.steps['chooseAgentConfig'].complete = true
+      this.agentConfigId = config.id
       this.selectedAgentConfig = config
     },
     selectAction(action) {
@@ -522,6 +586,13 @@ export default {
             name: 'cancel that run'
           })
         }
+        if (action?.value === 'PAUSE_SCHEDULE') {
+          const pauseConfig = { pause_schedule: {} }
+          action = await this.createAction({
+            config: pauseConfig,
+            name: 'pause the schedule'
+          })
+        }
         if (flow) {
           if (this.includeTo) {
             const flowGroupIds = this.selectedFlows?.map(
@@ -580,8 +651,8 @@ export default {
         } else if (this.agentOrFlow === 'agent') {
           let agentConfig
           if (this.hookDetails?.agentConfig) {
-            agentConfig = this.hookDetails?.agentConfig
-          } else {
+            this.agentConfigId = this.hookDetails?.agentConfig?.id
+          } else if (!this.agentConfigId) {
             const { data } = await this.$apollo.mutate({
               mutation: require('@/graphql/Mutations/create-agent-config.gql'),
               variables: {
@@ -589,13 +660,14 @@ export default {
               }
             })
             agentConfig = data?.create_agent_config
+            this.agentConfigId = agentConfig.id
           }
           const agentHook = await this.$apollo.mutate({
             mutation: require('@/graphql/Mutations/create-agent-sla-failed-hook.gql'),
             variables: {
               input: {
                 action_id: action.id,
-                agent_config_ids: [agentConfig.id]
+                agent_config_ids: [this.agentConfigId]
               }
             }
           })
@@ -616,14 +688,19 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
+        this.saving = false
       } finally {
         this.hookDetails = null
-        this.$emit('refetch-hooks')
+        this.$emit('refetch')
         if (data) {
+          const agentConfigString = `Your agent config ID is ${this.agentConfigId}.  You can find this in the info button on your automation`
           this.setAlert({
             alertShow: true,
-            alertMessage: 'Hook created',
-            alertType: 'success'
+            alertMessage: this.agentConfigId
+              ? agentConfigString
+              : 'Automation created',
+            alertType: 'success',
+            alertCopy: this.agentConfigId
           })
           this.saving = false
           this.closeCard()
@@ -724,6 +801,19 @@ export default {
               <span>{{ flowNames }}</span>
             </truncate>
             <span v-else>{{ flowNames }}</span>
+          </v-btn>
+
+          <v-btn
+            v-else-if="agentOrFlow === 'this'"
+            :style="{ 'text-transform': 'none', 'min-width': '0px' }"
+            color="accentPink"
+            class="px-0 pb-1 ml-1 text-h5 d-inline-block text-truncate"
+            text
+            :disabled="addAction"
+            max-width="500px"
+            @click="addHint"
+          >
+            <span>this</span>
           </v-btn>
 
           <v-btn
@@ -852,7 +942,7 @@ export default {
       <!-- OPEN AGENT OR FLOW -->
       <div v-if="step.name === 'openAgentOrFlow'" key="openAgentOrFlow">
         <div>
-          <div class="mb-2 text-subtitle-1 font-weight-light">
+          <div class="mb-2 text-subtitle-1 accentPink--text font-weight-light">
             Choose an automation:
           </div>
           <v-row>
@@ -866,6 +956,7 @@ export default {
                   agentOrFlow === item.type ? 'accentPink' : 'utilGrayMid'
                 "
                 class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
+                :class="{ flash: animated }"
                 :disabled="!hasPermission(item.permission)"
                 :input-value="agentOrFlow === item.type"
                 @click="selectAgentOrFlow(item.type)"
@@ -922,6 +1013,7 @@ export default {
                 small
                 elevation="0"
                 color="primary"
+                :class="{ flash: animated }"
                 @click="showAgentConfigForm = true"
               >
                 <v-icon small class="mr-2">fa-plus</v-icon>
@@ -937,7 +1029,8 @@ export default {
                   :class="{
                     active:
                       selectedAgentConfig &&
-                      selectedAgentConfig.id === config.id
+                      selectedAgentConfig.id === config.id,
+                    flash: animated
                   }"
                   @click="selectAgentConfig(config)"
                 >
@@ -1029,7 +1122,7 @@ export default {
                   <div
                     v-ripple
                     class="chip-bigger d-flex align-center justify-start pa-2 cursor-pointer"
-                    :class="{ active: includesFlow(item) }"
+                    :class="{ active: includesFlow(item), flash: animated }"
                     @click="selectFlow(item)"
                   >
                     <div style="width: auto;" class="text-body-1 text-truncate">
@@ -1086,6 +1179,7 @@ export default {
                     ? 'accentPink'
                     : 'utilGrayMid'
                 "
+                :class="{ flash: animated }"
                 class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
                 :input-value="flowEventType.name === item.name"
                 :disabled="!hasPermission(item.permission)"
@@ -1136,8 +1230,10 @@ export default {
               v-model="seconds"
               type="number"
               :rules="[rules.required, rules.notNull]"
+              :class="{ flash: animated }"
               persistent-hint
               outlined
+              hide-details
               @keydown.enter="closeSeconds"
             ></v-text-field>
           </v-col>
@@ -1182,7 +1278,7 @@ export default {
               : `Select ${item} and all connected states`
           "
           class="mr-2"
-          :class="{ 'white--text': dynamicStateGroup(item) }"
+          :class="{ 'white--text': dynamicStateGroup(item), flash: animated }"
           @click="selectStateGroup(item)"
         >
           {{ item }}
@@ -1194,7 +1290,7 @@ export default {
             :key="item"
             v-ripple
             class="d-inline-block chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1"
-            :class="{ active: chosenStates.includes(item) }"
+            :class="{ active: chosenStates.includes(item), flash: animated }"
             @click="selectStates(item)"
           >
             {{ item }}
@@ -1272,7 +1368,8 @@ export default {
               class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1 d-inline-block"
               :class="{
                 active: chosenAction && chosenAction.id === item.id,
-                disabled: !hasPermission('feature:api-action')
+                disabled: !hasPermission('feature:api-action'),
+                flash: animated
               }"
               @click="selectAction(item)"
             >
@@ -1295,7 +1392,10 @@ export default {
               :key="item.id"
               v-ripple
               class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1 d-inline-block"
-              :class="{ active: chosenAction && chosenAction.id === item.id }"
+              :class="{
+                active: chosenAction && chosenAction.id === item.id,
+                flash: animated
+              }"
               @click="selectAction(item)"
             >
               <v-icon small class="mr-2">{{
@@ -1355,6 +1455,7 @@ export default {
 
 <style lang="scss" scoped>
 .chip-bigger {
+  border-radius: 5px;
   height: 60px;
   position: relative;
   transition: all 50ms;
@@ -1385,6 +1486,7 @@ export default {
 }
 
 .chip-small {
+  border-radius: 5px;
   max-width: fit-content;
   position: relative;
   transition: all 50ms;
@@ -1428,6 +1530,27 @@ export default {
       position: absolute;
       width: 100%;
     }
+  }
+}
+
+.flash {
+  &:not(:disabled):not(.disabled) {
+    animation: flash 1.5s;
+  }
+}
+
+@keyframes flash {
+  0%,
+  50%,
+  100% {
+    background-color: transparent;
+    border-color: currentColor !important;
+  }
+
+  25%,
+  75% {
+    background-color: rgba(59, 141, 255, 0.2);
+    border-color: var(--v-primary-base) !important;
   }
 }
 </style>

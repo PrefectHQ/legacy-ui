@@ -35,7 +35,7 @@ export default {
     return {
       internalValue: { type: 'UniversalRun', ...this.value },
       shownArgs: {},
-      storedValues: {},
+      initialValue: { ...this.value },
       templateType: this.value?.type || 'UniversalRun'
     }
   },
@@ -103,13 +103,18 @@ export default {
             }
           }
 
-          arg.options?.forEach(option => {
+          arg.options?.forEach((option, i) => {
             if (option.arg) {
               try {
                 dict[option.arg] =
-                  JSON.parse(this.value?.[arg]) || nullValues[arg.type]
-              } catch {
-                dict[option.arg] = this.value?.[arg] || nullValues[arg.type]
+                  JSON.parse(this.value?.[option.arg]) || nullValues[arg.type]
+              } catch (e) {
+                dict[option.arg] =
+                  this.value?.[option.arg] || nullValues[arg.type]
+              }
+
+              if (this.value?.[option.arg]) {
+                this.shownArgs[arg.ref] = i
               }
             }
           })
@@ -118,11 +123,13 @@ export default {
       this.internalValue = { type: this.templateType, ...dict }
     },
     handleArgOptionClick(arg) {
-      arg.options.forEach(o => {
+      arg.options.forEach((o, i) => {
         if (!o.arg || !this.template) return
         // If the option arg is defined (not a "default" option), set it to its null value
         this.internalValue[o.arg] =
-          nullValues[this.template.args.find(a => a.arg == o.arg)?.type]
+          this.shownArgs[arg.ref] === i
+            ? this.value?.[o.arg] || this.initialValue?.[o.arg]
+            : nullValues[this.template.args.find(a => a.arg == o.arg)?.type]
       })
     },
     handleInput(arg, val) {
@@ -270,6 +277,7 @@ export default {
               />
               <MultiLineInput
                 v-else-if="option.input_type == 'multiline'"
+                v-model="internalValue[option.arg]"
                 @input="handleInput(option.arg, $event)"
               />
               <DictInput

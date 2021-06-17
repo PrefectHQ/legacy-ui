@@ -18,6 +18,8 @@ export default {
   },
   data() {
     return {
+      users: 0,
+      invitations: 0,
       // Current tab
       tab: 'members',
 
@@ -80,12 +82,12 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'permissions']),
-    allowedUsers() {
-      return this.license?.terms?.users ?? Infinity
+    ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
+    totalAllowedUsers() {
+      return this.allowedUsers() ?? Infinity
     },
     insufficientUsers() {
-      return this.users >= this.allowedUsers
+      return this.users >= this.totalAllowedUsers
     },
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
@@ -111,9 +113,6 @@ export default {
     },
     totalUsers() {
       return this.users + this.invitations
-    },
-    hasRBAC() {
-      return this.permissions?.includes('feature:basic-rbac')
     }
   },
   watch: {
@@ -148,13 +147,13 @@ export default {
     },
     handleUpdateInvitations(event) {
       if (event) {
-        this.invitations = event
+        this.invitations = event.length
       }
     },
     handleUpdateUsers(event) {
       this.isLoadingMembersTable = false
       if (event) {
-        this.users = event
+        this.users = event.length
       }
     },
     async inviteUser() {
@@ -395,7 +394,9 @@ export default {
       confirm-text="Send"
       :error="inviteError"
       :loading="isInvitingUser"
-      :disabled="!inviteFormValid || isInvitingUser"
+      :disabled="
+        totalUsers >= totalAllowedUsers || !inviteFormValid || isInvitingUser
+      "
       :dialog-props="{
         'max-width': '600'
       }"
@@ -404,7 +405,7 @@ export default {
     >
       <v-form ref="invite-user-form" v-model="inviteFormValid">
         <v-alert
-          v-if="totalUsers >= allowedUsers"
+          v-if="totalUsers >= totalAllowedUsers"
           class="mx-auto my-4 mb-12"
           border="left"
           colored-border
@@ -438,7 +439,7 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
-          :disabled="!hasRBAC"
+          :disabled="!hasPermission('feature', 'basic-rbac')"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
           :items="roleSelectionMap"
@@ -449,7 +450,10 @@ export default {
         >
         </v-select>
 
-        <div v-if="!hasRBAC" class="text-caption">
+        <div
+          v-if="!hasPermission('feature', 'basic-rbac')"
+          class="text-caption"
+        >
           Looking for role-based access controls? This feature is only available
           on Enterprise plans; check out our
           <ExternalLink href="https://prefect.io/pricing"

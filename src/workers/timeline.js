@@ -7,8 +7,8 @@ export function GenerateRows(items) {
   itemLoop: for (let i = 0; i < items.length; ++i) {
     const item = items[i]
 
-  // If the item hasn't started yet, we distribute
-  // it to the row with the least items already
+    // If the item hasn't started yet, we distribute
+    // it to the row with the least items already
     if (!item.start_time) {
       const lengths = grid.map(row => row.length)
       let row = lengths.indexOf(Math.min(...lengths))
@@ -20,16 +20,12 @@ export function GenerateRows(items) {
       } else {
         grid[row].push([start, end])
       }
-      
+
       continue itemLoop
     }
 
-    const start_ = item.start_time
-      ? new Date(item.start_time).getTime()
-      : null
-    const end_ = item.end_time
-      ? new Date(item.end_time).getTime()
-      : Date.now()
+    const start_ = item.start_time ? new Date(item.start_time).getTime() : null
+    const end_ = item.end_time ? new Date(item.end_time).getTime() : Date.now()
 
     for (let row = 0; row <= grid.length; ++row) {
       // If the current row doesn't exist, create it, put this item on it,

@@ -10,6 +10,9 @@ import UsageToday from '@/pages/TeamSettings/Account/Usage/UsageToday'
 import CurrentUsers from '@/pages/TeamSettings/Account/Usage/CurrentUsers'
 import UsageCycle from '@/pages/TeamSettings/Account/Usage/UsageCycle'
 import UsageTimeline from '@/pages/TeamSettings/Account/Usage/UsageTimeline'
+import UpgradeUsageTile from '@/pages/Dashboard/UsageTiles/UpgradeUsage-Tile'
+import CommittedUsageTile from '@/pages/Dashboard/UsageTiles/CommittedUsage-Tile'
+import CycleUsageTile from '@/pages/Dashboard/UsageTiles/CycleUsage-Tile'
 
 export default {
   components: {
@@ -21,7 +24,10 @@ export default {
     UsageTimeline,
     CurrentUsers,
     UsageCycle,
-    UsageToday
+    UsageToday,
+    CommittedUsageTile,
+    CycleUsageTile,
+    UpgradeUsageTile
   },
   mixins: [teamProfileMixin],
   data() {
@@ -39,7 +45,7 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'planType']),
     needAlert() {
       return !location.href.includes('prefect.io')
     },
@@ -48,6 +54,24 @@ export default {
     },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
+    },
+    usageTile() {
+      if (!this.isCloud) return null
+      if (!this.license) return 'loading'
+      const isSelfServe = this.license.terms.is_self_serve
+      const isUsageBased = this.license.terms.is_usage_based
+
+      // Legacy license, not self-serve (so no upgrade)
+      if (!isSelfServe && !isUsageBased) return null
+
+      // Legacy license, self-serve (so can upgrade)
+      if (isSelfServe && !isUsageBased) return 'UpgradeUsageTile'
+
+      // Usage license, not self-serve (show committed runs)
+      if (!isSelfServe && isUsageBased) return 'CommittedUsageTile'
+
+      // Usage license && self-serve
+      return 'CycleUsageTile'
     }
   },
   watch: {
@@ -176,9 +200,7 @@ export default {
         <v-col cols="12" md="6">
           <v-row>
             <v-col
-              v-if="
-                isUsageBased && license && license.terms.plan !== 'FREE_2021'
-              "
+              v-if="isUsageBased && license && !planType('FREE')"
               cols="12"
             >
               <v-skeleton-loader
@@ -190,6 +212,19 @@ export default {
                 tile
               >
                 <UsageCycle />
+              </v-skeleton-loader>
+            </v-col>
+            <v-col v-if="usageTile" cols="12">
+              <v-skeleton-loader
+                v-if="usageTile"
+                :loading="loadedTiles < 6 || usageTile == 'loading'"
+                type="image"
+                height="100%"
+                transition="quick-fade"
+                class="tile-container span-row-1"
+                tile
+              >
+                <component :is="usageTile" />
               </v-skeleton-loader>
             </v-col>
             <v-col cols="12">

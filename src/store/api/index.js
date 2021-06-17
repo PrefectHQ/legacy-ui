@@ -10,13 +10,16 @@ const state = {
   connected: true,
   connectionMessage: null,
   connectionTimeout: null,
+  coreVersion: null,
   releaseTimestamp: null,
   apiMode: null,
   cloudUrl: process.env.VUE_APP_CLOUD_URL,
   retries: 0,
-  serverUrl: localStorage.getItem(SERVER_KEY),
-  version: null,
-  core_version: null
+  serverUrl:
+    localStorage.getItem(SERVER_KEY) ||
+    window.prefect_ui_settings?.server_url ||
+    process.env.VUE_APP_SERVER_URL,
+  version: null
 }
 
 const getters = {

@@ -27,11 +27,13 @@ export default {
     ]),
     ...mapGetters('tenant', ['tenant']),
     iconClass() {
+      if (this.apiMode == 'maintenance') return ['maintenance']
       if (this.connected) return ['connected']
       if (this.connecting) return ['connecting', 'connecting-animate']
       return ['disconnected']
     },
     statusColor() {
+      if (this.apiMode == 'maintenance') return 'var(--v-warning-base)'
       if (this.connected) return 'var(--v-accentGreen-base)'
       if (this.connecting) return 'var(--v-warning-base)'
       return 'var(--v-Failed-base)'
@@ -124,7 +126,10 @@ export default {
           </div>
         </template>
 
-        <div class="mb-4 text-h5 d-flex align-bottom justify-start">
+        <div
+          v-if="false"
+          class="mb-4 text-h5 d-flex align-bottom justify-start"
+        >
           <v-btn
             color="primary lighten-1"
             class="px-3 white--text font-weight-bold text-subtitle-1"
@@ -167,15 +172,13 @@ export default {
           </v-btn>
         </div>
 
-        <v-divider class="grey lighten-3 my-5" style="width: 50%;" />
-
-        <div class="mb-2 text-h6 font-weight-light">
+        <div class="text-h6 font-weight-light">
           <span v-if="connected">Connected</span>
           <span v-else-if="connecting">Connecting</span>
           <span v-else>Couldn't connect</span>
           to
           <span class="font-weight-bold">
-            <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
+            <span v-if="isCloud" class="primary--text">Prefect Cloud </span>
             <span v-else class="utilGrayDark--text">Prefect Server</span>
           </span>
           <span v-if="isServer">
@@ -183,6 +186,8 @@ export default {
             <span class="font-weight-bold">{{ url }}</span>
           </span>
         </div>
+
+        <v-divider class="grey lighten-3 my-3" style="width: 50%;" />
 
         <!-- If the user is having trouble connecting to Server -->
         <div v-if="isServer && (!connected || connecting)">
@@ -216,6 +221,7 @@ $secondary-base: var(--v-secondaryGrayLight-base);
 $statuses: (
   'connected': var(--v-accentGreen-base),
   'connecting': var(--v-warning-base),
+  'maintenance': var(--v-warning-base),
   'disconnected': var(--v-Failed-base)
 );
 

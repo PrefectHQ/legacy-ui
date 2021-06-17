@@ -8,8 +8,10 @@ import moment from 'moment'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
 import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
+import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
+import VSnackbars from '@/components/Snackbars/Snackbars'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
@@ -44,7 +46,9 @@ export default {
     ApplicationNavBar,
     Footer,
     GlobalSearch,
-    TeamSideNav
+    TeamSideNav,
+    VSnackbars,
+    WorkQueueBanner
   },
   mixins: [eventsMixin],
   data() {
@@ -73,13 +77,7 @@ export default {
     ]),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('data', ['projects']),
-    ...mapGetters('auth', [
-      'isAuthenticated',
-      'isAuthorized',
-      'isAuthenticatingUser',
-      'isAuthorizingUser',
-      'isLoggingInUser'
-    ]),
+    ...mapGetters('auth', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', [
       'tenant',
       'tenants',
@@ -101,19 +99,14 @@ export default {
       return fullPageRoutes.includes(this.$route.name)
     },
     loading() {
-      return (
-        this.isAuthenticated &&
-        (this.isAuthorizingUser ||
-          this.isLoggingInUser ||
-          this.connecting ||
-          this.isLoadingTenant)
-      )
+      return this.isAuthenticated && (this.connecting || this.isLoadingTenant)
     },
     showNav() {
       if (
         this.$route.name == 'plans' ||
         this.$route.name == 'not-found' ||
         this.$route.name == 'team-switched' ||
+        this.$route.name == 'logout' ||
         onboardRoutes.includes(this.$route.name)
       )
         return false
@@ -132,6 +125,9 @@ export default {
         this.$route.name === 'name-team' ||
         this.$route.name === 'accept'
       )
+    },
+    paused() {
+      return this.tenant?.settings?.work_queue_paused
     }
   },
   watch: {
@@ -230,6 +226,23 @@ export default {
       }
     }
 
+    this.$globalApolloQueries['tenants'] = this.$apollo.addSmartQuery(
+      'tenants',
+      {
+        query: require('@/graphql/Tenant/tenants.js').default(this.isCloud),
+        skip() {
+          return (this.isCloud && !this.isAuthorized) || !this.connected
+        },
+        fetchPolicy: 'no-cache',
+        pollInterval: 60000,
+        update(data) {
+          if (!data?.tenant) return []
+          this.setTenants(data.tenant)
+          return data.tenant
+        }
+      }
+    )
+
     this.$globalApolloQueries['agents'] = this.$apollo.addSmartQuery('agents', {
       query() {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
@@ -280,6 +293,31 @@ export default {
       }
     })
 
+    this.$globalApolloQueries['memberships'] = this.$apollo.addSmartQuery(
+      'memberships',
+      {
+        query: require('@/graphql/User/user.gql'),
+        skip() {
+          return (
+            !this.isCloud ||
+            !this.isAuthorized ||
+            !this.memberships ||
+            !this.user ||
+            !this.user.email ||
+            !this.tenantIsSet
+          )
+        },
+        fetchPolicy: 'no-cache',
+        pollInterval: 60000,
+        update(data) {
+          if (!data?.user?.[0]) return []
+          this.setUser(data.user[0])
+
+          return data.user[0]
+        }
+      }
+    )
+
     this.$globalApolloQueries[
       'membershipInvitations'
     ] = this.$apollo.addSmartQuery('membershipInvitations', {
@@ -292,6 +330,7 @@ export default {
       skip() {
         return (
           !this.isCloud ||
+          !this.isAuthorized ||
           !this.memberships ||
           !this.user ||
           !this.user.email ||
@@ -299,7 +338,7 @@ export default {
         )
       },
       fetchPolicy: 'network-only',
-      pollInterval: 60000,
+      pollInterval: 10000,
       update(data) {
         if (!data?.pendingInvitations || this.isLoadingTenant) return []
         this.setInvitations(data.pendingInvitations)
@@ -319,6 +358,20 @@ export default {
       this.$vuetify.theme.dark = false
     }
 
+    if (
+      this.isCloud &&
+      !this.tenant.settings.teamNamed &&
+      !window.location.pathname?.includes('logout') &&
+      !window.location.pathname?.includes('access-denied')
+    ) {
+      this.$router.push({
+        name: 'welcome',
+        params: {
+          tenant: this.tenant.slug
+        }
+      })
+    }
+
     // document.addEventListener(
     //   'visibilitychange',
     //   this.handleVisibilityChange,
@@ -335,13 +388,18 @@ export default {
     ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),
-    ...mapMutations('tenant', ['setDefaultTenant', 'unsetTenants']),
+    ...mapMutations('tenant', [
+      'setDefaultTenant',
+      'unsetTenants',
+      'setTenants'
+    ]),
     ...mapActions('user', ['getUser']),
     ...mapMutations('user', [
       'setInvitations',
       'unsetInvitations',
       'unsetUser'
     ]),
+    ...mapMutations({ setUser: 'user/user' }),
     handleKeydown(e) {
       if (e.key === 'Escape') {
         this.closeSideNav()
@@ -415,6 +473,8 @@ export default {
     <v-main :class="{ 'pt-0': isWelcome }">
       <v-progress-linear absolute :active="loading" indeterminate height="5" />
 
+      <WorkQueueBanner />
+
       <v-slide-y-transition>
         <ApplicationNavBar v-if="showNav" />
       </v-slide-y-transition>
@@ -458,8 +518,12 @@ export default {
       :message="getAlert.alertMessage"
       :alert-link="getAlert.alertLink"
       :link-text="getAlert.linkText"
+      :nudge-bottom="paused"
       :timeout="12000"
+      :alert-copy="getAlert.alertCopy"
     />
+
+    <VSnackbars />
   </v-app>
 </template>
 
@@ -526,5 +590,9 @@ html {
 
 .tab-full-height {
   min-height: 100%;
+}
+
+.v-overlay.v-overlay--active {
+  backdrop-filter: blur(10px);
 }
 </style>

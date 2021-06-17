@@ -168,7 +168,7 @@ export default {
               name: key.name,
               created_at: key.created,
               expires: key.expires_at,
-              tenant: defaultTenant.name,
+              tenant: defaultTenant?.name,
               user_id: key.user_id
             }
           })

@@ -4,6 +4,108 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-06-02
+
+### Features and Improvements
+
+- Add KV Store - [#804](https://github.com/PrefectHQ/ui/pull/804)
+
+### Bugfixes
+
+- Fix KV Store space formatting issue for certain characters
+
+## 2021-06-01
+
+### Features and Improvements
+
+- Add webhook and pause schedule actions to automations - [#818](https://github.com/PrefectHQ/ui/pull/818)
+
+### Bugfixes
+
+- Various bugfixes related to null tenants and team invitaitons - [#862](https://github.com/PrefectHQ/ui/pull/862)
+
+## 2021-05-25
+
+### Bugfixes
+
+- Remove bad fetchPolicy on tenant settings mutation - [#858](https://github.com/PrefectHQ/ui/pull/858)
+
+## 2021-05-24
+
+### Features and Improvements
+
+- Remove auth layer from the application and improve support for webkit browsers - [#811](https://github.com/PrefectHQ/ui/pull/811)
+- Remove Server/Cloud switcher - [#844](https://github.com/PrefectHQ/ui/pull/844)
+- Allow configurable base url and relative public assets path - [#849](https://github.com/PrefectHQ/ui/pull/849)
+
+### Bugfixes
+
+- Fix broken api store core version ref - [#847](https://github.com/PrefectHQ/ui/pull/847)
+- Fix issues with pre-populating and resetting job templates and task definitions for run configs - [#839](https://github.com/PrefectHQ/ui/pull/839)
+- Check for the correct values when disabling next for the Pager Duty action - [#835](https://github.com/PrefectHQ/ui/pull/835)
+- Don't show work queue option in Server - [#848](https://github.com/PrefectHQ/ui/pull/848)
+- Fix issue with overlapping sidebar/application nav on small screens - [#850](https://github.com/PrefectHQ/ui/pull/850)
+
+## 2021-05-17
+
+### Bugfixes
+
+- Covert this.allowedUsers in the Members component to a computed property to use the nullish coalescing operator/check for total allowed users -[#841](https://github.com/PrefectHQ/ui/pull/841)
+- Beautify json and add json type to default parameters json edit option to stop value flicker - [#837](https://github.com/PrefectHQ/ui/pull/837)
+
+## 2021-05-14
+
+### Features and Improvements
+
+- Adds created by information to service account api keys list - [#808](https://github.com/PrefectHQ/ui/pull/808)
+- Turn the status indicator warning yellow when cloud is in maintenance mode - [#815](https://github.com/PrefectHQ/ui/pull/815)
+- Add new states to the license store - [#763](https://github.com/PrefectHQ/ui/pull/763)
+- Add a tooltip for task run names in the flow run task table - [#814](https://github.com/PrefectHQ/ui/pull/814)
+- Add "Task" to the "Runs Today" to make it clear it's "Task runs today" - [#816](https://github.com/PrefectHQ/ui/pull/816)
+- Add cancel all and work queue paused system actions, VU for clear late runs on the dashboard - [#825](https://github.com/PrefectHQ/ui/pull/825)
+
+### Bugfixes
+
+- Fix issue setting default tenant in server and bypassing auth - [#828](https://github.com/PrefectHQ/ui/pull/828)
+
+## 2021-05-05
+
+### Bugfixes
+
+- Fix the issue where the key fields for the context and environment are disabled after typing on the run page - [#810](https://github.com/PrefectHQ/ui/pull/810)
+- Populate JSON editor with only checked parameters - [#787](https://github.com/PrefectHQ/ui/pull/787)
+
+## 2021-05-04
+
+### Features and Improvements
+
+- Update Universal-Deploy.md to include the latest authentication steps - [#806](https://github.com/PrefectHQ/ui/pull/806)
+- Adds animated hint for users creating new automations - [#784](https://github.com/PrefectHQ/ui/pull/784)
+- Adds a loading indicator for inital page load - [#789](https://github.com/PrefectHQ/ui/pull/789)
+- Take usage tile off dashboard and add to account page - [#782](https://github.com/PrefectHQ/ui/pull/782)
+- Add dropdown to specify logging level on flow runs [#769](https://github.com/PrefectHQ/ui/pull/769)
+
+### Bugfixes
+
+- Fix issue with Server check on startup - [#788](https://github.com/PrefectHQ/ui/pull/788)
+- Fix issue with User API Keys screen and no default tenants on keys - [#802](https://github.com/PrefectHQ/ui/pull/802)
+
+## 2021-04-21
+
+### Bugfixes
+
+- Fix auth loop - [#783](https://github.com/PrefectHQ/ui/pull/783)
+
+## 2021-04-15
+
+### Features and Improvements
+
 - Adds breadcrumb to allow easy access to current flow version and spawning flow version from a flow run screen [#759](https://github.com/PrefectHQ/ui/pull/759)
 - Add loading state to sign out method - [#766](https://github.com/PrefectHQ/ui/pull/766)
 

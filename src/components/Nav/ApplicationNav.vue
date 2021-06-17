@@ -54,7 +54,15 @@ export default {
 
 <template>
   <v-app-bar app elevate-on-scroll fixed :color="navBarColor">
-    <router-link :to="`/${slug}`" exact>
+    <router-link
+      :to="{
+        name: 'dashboard',
+        params: {
+          tenant: slug
+        }
+      }"
+      exact
+    >
       <v-btn
         icon
         :x-large="$vuetify.breakpoint.smAndUp"
@@ -76,7 +84,7 @@ export default {
     <!-- For some reason the default slot never renders if we do. -->
     <!-- (likely a Vuetify bug) -->
     <template v-if="$vuetify.breakpoint.mdAndDown" #extension>
-      <Links />
+      <Links v-if="$vuetify.breakpoint.mdAndDown" />
     </template>
 
     <Links v-if="!$vuetify.breakpoint.mdAndDown" />
@@ -115,5 +123,7 @@ export default {
       padding: 0 !important;
     }
   }
+
+  z-index: 8 !important;
 }
 </style>

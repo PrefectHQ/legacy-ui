@@ -111,7 +111,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['permissions']),
+    ...mapGetters('license', ['permissions', 'hasPermission']),
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
@@ -184,7 +184,7 @@ export default {
       watchLoading(isLoading) {
         this.isFetchingMembers = isLoading
       },
-      result({ data }) {
+      update(data) {
         if (!data) return
 
         this.membersItems = data.tenantUsers
@@ -218,10 +218,11 @@ export default {
         )
         this.$emit('load-end')
       },
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'network-only',
       skip() {
         return !this.tenant
-      }
+      },
+      pollInterval: 15000
     }
   }
 }
@@ -274,7 +275,7 @@ export default {
 
       <!-- ACTIONS -->
       <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip v-if="hasRBAC" bottom>
+        <v-tooltip v-if="hasPermission('feature', 'basic-rbac')" bottom>
           <template #activator="{ on }">
             <v-btn
               text

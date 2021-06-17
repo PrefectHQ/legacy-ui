@@ -58,6 +58,16 @@ export default {
       type: String,
       default: '',
       required: false
+    },
+    skipRequired: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    addCorners: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   },
   data() {
@@ -74,6 +84,11 @@ export default {
   computed: {
     cmInstance() {
       return this.$refs.cmRef && this.$refs.cmRef.codemirror
+    },
+    updateBorder() {
+      if (this.prependIcon) return true
+      if (this.addCorners) return true
+      return false
     },
     iconColor() {
       if (this.jsonError) return 'error'
@@ -142,6 +157,7 @@ export default {
       try {
         // Treat empty or null inputs as valid
         if (!input || (input && input.trim() === '')) {
+          if (this.skipRequired) return
           this.jsonError = 'Please enter a value.'
           this.$emit('invalid-secret', true)
           return 'MissingError'
@@ -171,7 +187,9 @@ export default {
 <template>
   <div
     class="position-relative json-input-empty-text"
-    :class="{ 'json-input-height-auto': heightAuto }"
+    :class="{
+      'json-input-height-auto': heightAuto
+    }"
   >
     <div
       class="position-absolute text-center"
@@ -195,11 +213,12 @@ export default {
       class="pt-2 cm-style json-input"
       :class="{
         'pl-9': prependIcon,
+        'pl-4': addCorners,
         'pl-12': prependIconLabel,
-        'blue-border': prependIcon && focussed && !jsonError,
-        'red-border': prependIcon && jsonError,
-        'plain-border': prependIcon && !focussed && !jsonError,
-        'original-border': !prependIcon,
+        'blue-border': updateBorder && focussed && !jsonError,
+        'red-border': updateBorder && jsonError,
+        'plain-border': updateBorder && !focussed && !jsonError,
+        'original-border': !updateBorder,
         [backgroundColor]: true
       }"
       :options="editorOptions"
@@ -256,6 +275,9 @@ export default {
     color: var(--v-utilGrayMid-base) !important;
   }
 
+  .CodeMirror-scroll {
+    padding-bottom: 0px;
+  }
   .json-input-height-auto {
     .CodeMirror {
       height: auto;

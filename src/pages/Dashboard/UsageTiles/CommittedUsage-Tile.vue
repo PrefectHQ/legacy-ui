@@ -56,26 +56,26 @@ export default {
     style="height: 100%;"
     tile
   >
+    <v-card-title class="text-h4 font-weight-light"
+      >Run balance
+
+      <MenuTooltip v-if="usage && usage < 0" hide-close>
+        <template #activator>
+          <v-icon class="pl-2">error_outline</v-icon>
+        </template>
+        <div>
+          <div class="text-h5 font-weight-light">
+            You're out of runs!
+          </div>
+          <div class="text-subtitle-1">
+            Please contact sales@prefect.io to refresh your committed runs.
+          </div>
+        </div>
+      </MenuTooltip>
+    </v-card-title>
     <v-card-text
       class="pa-0 px-3 pt-3 d-flex align-start justify-center flex-column mb-auto"
     >
-      <div class="text-h6 utilGrayDark--text"
-        >Run balance
-
-        <MenuTooltip v-if="usage && usage < 0" hide-close>
-          <template #activator>
-            <v-icon>error_outline</v-icon>
-          </template>
-          <div>
-            <div class="text-h5 font-weight-light">
-              You're out of runs!
-            </div>
-            <div class="text-subtitle-1">
-              Please contact sales@prefect.io to refresh your committed runs.
-            </div>
-          </div>
-        </MenuTooltip>
-      </div>
       <div class="text-h3">
         <v-skeleton-loader
           :loading="!usage && usageLoading"
@@ -103,9 +103,6 @@ export default {
         href="https://www.prefect.io/pricing/#contact"
       >
         Add more runs
-      </v-btn>
-      <v-btn small color="primary" text :to="'/team/account'">
-        Details
       </v-btn>
     </v-card-actions>
   </v-card>
