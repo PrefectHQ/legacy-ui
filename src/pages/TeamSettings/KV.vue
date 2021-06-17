@@ -138,11 +138,7 @@ export default {
     },
     async copyValue(item) {
       try {
-        if (typeof item?.value == 'object') {
-          await navigator.clipboard.writeText(JSON.stringify(item?.value))
-        } else {
-          await navigator.clipboard.writeText(item?.value)
-        }
+        await navigator.clipboard.writeText(JSON.stringify(item?.value))
         this.handleAlert('success', 'Value copied to clipboard')
       } catch (err) {
         this.handleAlert(

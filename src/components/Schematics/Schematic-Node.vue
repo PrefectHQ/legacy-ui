@@ -96,18 +96,12 @@ export default {
         }
       })
     },
-    finishedStates() {
-      return this.segments
-        .filter(s => FINISHED_STATES.includes(s.label))
-        .reduce((accum, item) => accum + item.value, 0)
-    },
     subtitleStyle() {
       let size = 64 * (1 / this.transform.k)
       size = size < 64 ? 64 : size > 84 ? 84 : size
       return {
-        color: this.disabled
-          ? 'var(--v-navIcons-base)'
-          : 'var(--v-utilGrayDark-base)',
+        'background-color': 'var(--v-accentOrange-base)',
+        color: 'var(--v-appForeground-base) !important',
         'font-size': `${size}px !important`,
         'line-height': `${size}px !important`
       }
@@ -195,13 +189,6 @@ export default {
     @mousewheel="wheelEvent"
   >
     <div class="ml-12 node-content" style="width: calc(100% - 6rem);">
-      <div
-        v-if="nodeData.data.task && !nodeData.data.mapped"
-        class="text-subtitle-2 text-truncate font-weight-light"
-        :style="subtitleStyle"
-      >
-        {{ nodeData.data.task.name }}
-      </div>
       <div class="text-h6 text-truncate font-weight-bold" :style="titleStyle">
         <v-avatar
           v-if="isResource || isParameter"
@@ -217,19 +204,6 @@ export default {
         </v-avatar>
         {{ nodeData.data.name }}
       </div>
-
-      <div v-if="mappedChildren" :style="durationStyle">
-        <div v-if="showDetails">
-          {{ finishedStates }}/{{ nodeData.data.serialized_state.n_map_states }}
-          {{ nodeData.data.serialized_state.n_map_states > 1 ? 'runs' : 'run' }}
-          complete
-        </div>
-
-        <div v-else class="mt-2">
-          {{ finishedStates }}/{{ nodeData.data.serialized_state.n_map_states }}
-        </div>
-      </div>
-
       <div
         v-if="showDetails && nodeData.data.start_time"
         :style="durationStyle"

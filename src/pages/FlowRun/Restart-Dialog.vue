@@ -63,8 +63,7 @@ export default {
         const taskRunStates = this.utilityDownstreamTasks
           .map(task =>
             task.task.task_runs.map(run => {
-              const noIndex = !run.map_index && run.map_index != 0
-              if (noIndex || failedRunIds.includes(run.id)) {
+              if (!run.map_index || failedRunIds.includes(run.id)) {
                 return {
                   version: run.version,
                   task_run_id: run.id,

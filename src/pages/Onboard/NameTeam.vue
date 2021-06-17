@@ -52,8 +52,6 @@ export default {
         'Colleague',
         'Conference',
         'Meetup',
-        'Webinar',
-        'Blog Post',
         'Other'
       ],
       selectedOption: '',
