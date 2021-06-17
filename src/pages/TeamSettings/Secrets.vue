@@ -92,7 +92,7 @@ export default {
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['hasPermission']),
 
-    isReadOnlyUser() {
+    permissionsCheck() {
       return !this.hasPermission('update', 'secret')
     },
     secretExists() {
@@ -256,11 +256,11 @@ export default {
         return data?.secret_names?.map(name => ({ name: name, value: null }))
       },
       // skip() {
-      //   return this.isReadOnlyUser
+      //   return this.permissionsCheck
       // },
       error() {
         this.isFetchingSecrets = false
-        if (!this.isReadOnlyUser) {
+        if (!this.permissionsCheck) {
           this.handleAlert(
             'error',
             'Something went wrong while trying to fetch secrets. Please try again. If this error persists, please contact help@prefect.io.'
@@ -293,7 +293,7 @@ export default {
       required by your team's flow executions
     </template>
 
-    <template v-if="!isReadOnlyUser" #cta>
+    <template v-if="!permissionsCheck" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -311,7 +311,7 @@ export default {
       </v-btn>
     </template>
 
-    <template v-if="isReadOnlyUser" #alerts>
+    <template v-if="permissionsCheck" #alerts>
       <v-alert
         class="mx-auto"
         border="left"
@@ -328,7 +328,7 @@ export default {
 
     <!-- SEARCH (MOBILE) -->
     <v-text-field
-      v-if="!$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+      v-if="!$vuetify.breakpoint.mdAndUp && !permissionsCheck"
       v-model="search"
       class="rounded-0 elevation-1 mb-1"
       solo
@@ -344,11 +344,11 @@ export default {
       <v-card-text class="pa-0">
         <!-- SEARCH (DESKTOP) -->
         <div
-          v-if="$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+          v-if="$vuetify.breakpoint.mdAndUp && !permissionsCheck"
           class="py-1 mr-2 flex"
         >
           <v-text-field
-            v-if="!isReadOnlyUser"
+            v-if="!permissionsCheck"
             v-model="search"
             class="rounded-0 elevation-1"
             solo
@@ -366,7 +366,7 @@ export default {
 
         <!-- TABLE -->
         <v-data-table
-          v-if="!isReadOnlyUser"
+          v-if="!permissionsCheck"
           fixed-header
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"

@@ -21,16 +21,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', [
-      'license',
-      'planType',
-      'allowedUsers',
-      'hasPermission'
-    ]),
+    ...mapGetters('license', ['license', 'planType', 'allowedUsers']),
     ...mapGetters('tenant', ['tenant']),
-    isTenantAdmin() {
-      return this.hasPermission('update', 'license')
-    },
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },

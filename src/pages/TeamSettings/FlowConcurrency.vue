@@ -116,9 +116,9 @@ export default {
     ...mapGetters('license', ['permissions', 'hasPermission']),
     // Determine if user has permission to add, edit, and delete concurrency limits
     hasManagementPermission() {
-      return this.isTenantAdmin
+      return this.permissionsCheck
     },
-    isTenantAdmin() {
+    permissionsCheck() {
       return (
         this.hasPermission('create', 'concurrency-limit') &&
         this.hasPermission('update', 'concurrency-limit') &&
@@ -318,7 +318,7 @@ export default {
       </v-alert>
     </template>
 
-    <template v-else-if="!isTenantAdmin" #alerts>
+    <template v-else-if="!permissionsCheck" #alerts>
       <v-alert
         class="mx-auto"
         border="left"

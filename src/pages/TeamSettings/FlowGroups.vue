@@ -112,7 +112,7 @@ export default {
     isLoadingTable() {
       return this.loadingKey > 0
     },
-    isTenantAdmin() {
+    permissionsCheck() {
       return (
         this.hasPermission('update', 'run') &&
         this.hasPermission('delete', 'run')
@@ -250,7 +250,7 @@ export default {
     <template #title>Flow Groups</template>
 
     <template #subtitle>
-      <span v-if="isTenantAdmin">
+      <span v-if="permissionsCheck">
         View and manage your team's flows by
         <ExternalLink
           href="https://docs.prefect.io/cloud/concepts/flows.html#versioning"
@@ -408,7 +408,7 @@ export default {
           </template>
 
           <!-- FVG ACTIONS -->
-          <template v-if="isTenantAdmin" #item.action="{ item }">
+          <template v-if="permissionsCheck" #item.action="{ item }">
             <v-btn
               color="error"
               text

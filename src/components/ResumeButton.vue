@@ -13,7 +13,7 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['hasPermission']),
-    isReadOnly() {
+    permissionsCheck() {
       return !this.hasPermission('update', 'run')
     },
     loading() {
@@ -36,7 +36,7 @@ export default {
           text
           depressed
           small
-          :disabled="isReadOnly"
+          :disabled="permissionsCheck"
           color="accentOrange"
           :loading="loading"
           @click="resumeRun"

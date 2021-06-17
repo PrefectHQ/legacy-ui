@@ -56,7 +56,7 @@ export default {
     isLazarusEnabled() {
       return this.flowGroup.settings.lazarus_enabled
     },
-    isReadOnlyUser() {
+    permissionsCheck() {
       return !this.hasPermission('update', 'flow')
     },
     projectHasChanged() {
@@ -308,11 +308,11 @@ export default {
                       single-line
                       :menu-props="{ contentClass: 'custom-list-item' }"
                       prepend-inner-icon="pi-project mr-1"
-                      :disabled="isReadOnlyUser || loading.project"
+                      :disabled="permissionsCheck || loading.project"
                     />
                   </div>
                 </template>
-                <span v-if="isReadOnlyUser">
+                <span v-if="permissionsCheck">
                   You don't have permission to move flows between projects.
                 </span>
                 <span v-else>
@@ -326,7 +326,9 @@ export default {
                   <div style="display: inline-block;" v-on="on">
                     <v-btn
                       :disabled="
-                        isReadOnlyUser || !projectHasChanged || loading.project
+                        permissionsCheck ||
+                          !projectHasChanged ||
+                          loading.project
                       "
                       :loading="loading.project"
                       small
@@ -338,7 +340,7 @@ export default {
                     </v-btn>
                   </div>
                 </template>
-                <span v-if="isReadOnlyUser">
+                <span v-if="permissionsCheck">
                   You don't have permission to move flows between projects.
                 </span>
                 <span v-else>
@@ -384,7 +386,7 @@ export default {
                   color="primary"
                   :loading="loading.versionLocking"
                   :disabled="
-                    isReadOnlyUser ||
+                    permissionsCheck ||
                       !hasPermission('feature', 'version-locking') ||
                       loading.versionLocking
                   "
@@ -408,7 +410,7 @@ export default {
                 </v-switch>
               </div>
             </template>
-            <span v-if="isReadOnlyUser">
+            <span v-if="permissionsCheck">
               You don't have permission to modify flow settings.
             </span>
             <span v-if="!hasPermission('feature', 'version-locking')">
@@ -455,7 +457,7 @@ export default {
                   hide-details
                   color="primary"
                   :loading="loading.heartbeat"
-                  :disabled="isReadOnlyUser || loading.heartbeat"
+                  :disabled="permissionsCheck || loading.heartbeat"
                   @change="_handleHeartbeatChange"
                 >
                   <template #label>
@@ -476,7 +478,7 @@ export default {
                 </v-switch>
               </div>
             </template>
-            <span v-if="isReadOnlyUser">
+            <span v-if="permissionsCheck">
               You don't have permission to modify flow settings.
             </span>
             <span v-else>
@@ -535,7 +537,7 @@ export default {
                   hide-details
                   color="primary"
                   :loading="loading.lazarus"
-                  :disabled="isReadOnlyUser || loading.lazarus"
+                  :disabled="permissionsCheck || loading.lazarus"
                   @change="_handleLazarusChange"
                 >
                   <template #label>
@@ -556,7 +558,7 @@ export default {
                 </v-switch>
               </div>
             </template>
-            <span v-if="isReadOnlyUser">
+            <span v-if="permissionsCheck">
               You don't have permission to modify flow settings.
             </span>
             <span v-else>

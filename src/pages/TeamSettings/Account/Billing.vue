@@ -37,7 +37,7 @@ export default {
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
-    isTenantAdmin() {
+    permissionsCheck() {
       return this.hasPermission('update', 'license')
     },
     payment() {
@@ -77,7 +77,7 @@ export default {
       </div>
       <v-spacer />
       <v-btn
-        v-if="!editCardDetails && isSelfServe && isTenantAdmin"
+        v-if="!editCardDetails && isSelfServe && permissionsCheck"
         data-cy="add-payment-card"
         color="primary"
         depressed
@@ -238,7 +238,7 @@ export default {
       </transition>
     </v-card-text>
 
-    <!-- <v-card-actions v-if="isTenantAdmin" class="mt-auto px-4"> </v-card-actions> -->
+    <!-- <v-card-actions v-if="permissionsCheck" class="mt-auto px-4"> </v-card-actions> -->
   </v-card>
 </template>
 

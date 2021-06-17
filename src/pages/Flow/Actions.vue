@@ -439,7 +439,7 @@ export default {
           </div>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
+      <span v-if="permissionsCheck">
         Read-only users cannot archive flows.
       </span>
       <span v-else>Coming Soon!</span>

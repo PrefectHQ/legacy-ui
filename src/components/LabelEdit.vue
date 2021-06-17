@@ -48,7 +48,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['role']),
     ...mapGetters('license', ['hasPermission']),
-    isReadOnly() {
+    permissionsCheck() {
       return !this.hasPermission('update', 'run')
     },
     labels() {
@@ -218,7 +218,7 @@ export default {
                     <v-btn
                       small
                       icon
-                      :disabled="isReadOnly"
+                      :disabled="permissionsCheck"
                       aria-label="Add label"
                       color="primary"
                       v-bind="attrs"
@@ -228,7 +228,7 @@ export default {
                     </v-btn>
                   </div>
                 </template>
-                <span v-if="isReadOnly">
+                <span v-if="permissionsCheck">
                   You don't have permission to edit labels
                 </span>
                 <span v-else>Add a label</span>
@@ -340,7 +340,7 @@ export default {
                 <v-btn
                   small
                   icon
-                  :disabled="isReadOnly"
+                  :disabled="permissionsCheck"
                   aria-label="Add label"
                   color="primary"
                   v-bind="attrs"
@@ -350,7 +350,7 @@ export default {
                 </v-btn>
               </div>
             </template>
-            <span v-if="isReadOnly">
+            <span v-if="permissionsCheck">
               You don't have permission to edit labels</span
             >
             <span v-else>Add a label</span>

@@ -21,7 +21,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['hasPermission']),
-    isReadOnly() {
+    permissionsCheck() {
       return !this.hasPermission('update', 'run')
     }
   },
@@ -51,7 +51,7 @@ export default {
             text
             depressed
             small
-            :disabled="isReadOnly"
+            :disabled="permissionsCheck"
             color="primary"
             @click="restartDialog = true"
           >
@@ -60,7 +60,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnly">
+      <span v-if="permissionsCheck">
         You don't have permission to restart flow runs
       </span>
       <span v-else>Restart flow run from this task</span>

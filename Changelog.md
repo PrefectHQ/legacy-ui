@@ -7,11 +7,11 @@
 - Add agent screens - [#852](https://github.com/PrefectHQ/ui/pull/852)
 - Replaces everywhere we are using this.tenant.role with the hasPermission check - [#892](https://github.com/PrefectHQ/ui/pull/892)
 - Add the `mapped_children` route to the IAPI allow-list - [#891](https://github.com/PrefectHQ/ui/pull/891)
+- Improve expired auth and id token handling - [#896](https://github.com/PrefectHQ/ui/pull/896)
 
 ### Bugfixes
 
-- Fix KV copy button issue - [#887](https://github.com/PrefectHQ/ui/pull/887)
-- Check explicitly for map index of 0 to avoid falsey in restart button [#890](https://github.com/PrefectHQ/ui/pull/890)
+- None
 
 ## 2021-06-02
 
@@ -31,7 +31,6 @@
 
 ### Bugfixes
 
-- Display task run name in Schematic - [#863](https://github.com/PrefectHQ/ui/pull/863)
 - Various bugfixes related to null tenants and team invitaitons - [#862](https://github.com/PrefectHQ/ui/pull/862)
 
 ## 2021-05-25

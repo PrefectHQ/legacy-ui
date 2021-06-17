@@ -35,7 +35,7 @@ export const teamProfileMixin = {
   computed: {
     ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant']),
-    isTenantAdmin() {
+    permissionsCheck() {
       return this.hasPermission('update', 'tenant')
     },
     isUpdatable() {

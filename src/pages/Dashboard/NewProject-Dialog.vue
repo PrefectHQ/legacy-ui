@@ -31,7 +31,7 @@ export default {
     ...mapGetters('tenant', ['role', 'tenant']),
     ...mapGetters('license', ['hasPermission']),
 
-    isReadOnly() {
+    permissionsCheck() {
       return !this.hasPermission('create', 'project')
     }
   },
@@ -111,7 +111,7 @@ export default {
       <v-card-title v-else-if="projectSuccess">
         Success!
       </v-card-title>
-      <v-card-title v-else-if="isReadOnly">
+      <v-card-title v-else-if="permissionsCheck">
         You don't have permission.
       </v-card-title>
 
@@ -121,7 +121,7 @@ export default {
       <v-card-text v-if="specificProjectErrorMessage">
         {{ specificProjectErrorMessage }}
       </v-card-text>
-      <v-card-text v-else-if="isReadOnly">
+      <v-card-text v-else-if="permissionsCheck">
         You don't have permission to create projects.
       </v-card-text>
       <v-card-text v-else-if="projectError">
