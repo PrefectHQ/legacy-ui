@@ -44,7 +44,10 @@ export default {
   <div>
     <v-list-item dense class="px-0" :to="params">
       <v-list-item-avatar class="mr-2" tile>
-        <v-icon :color="iconColor" :class="iconClass">
+        <div v-if="$slots['icon']">
+          <slot name="icon" />
+        </div>
+        <v-icon v-else :color="iconColor" :class="iconClass">
           {{ icon }}
         </v-icon>
       </v-list-item-avatar>

@@ -231,6 +231,23 @@ export const routes = [
     component: () =>
       import(/*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View')
   },
+  // ---------------------------//
+  //
+  // Agents
+  //
+  // ----------------------------//
+  {
+    name: 'agents',
+    path: '/:tenant?/agent',
+    component: () =>
+      import(/*webpackChunkName: "agents" */ '@/pages/Agents/Agents')
+  },
+  {
+    name: 'agent',
+    path: '/:tenant?/agent/:id',
+    component: () =>
+      import(/* webpackChunkName: "agent" */ '@/pages/Agents/AgentPage.vue')
+  },
   // --------------------------- //
   //
   // Onboarding
