@@ -205,8 +205,9 @@ export default {
               <router-link
                 class="link"
                 :to="{
-                  name: 'agent',
-                  params: { tenant: tenant.slug, id: flowRun.agent_id }
+                  name: 'dashboard',
+                  params: { tenant: tenant.slug },
+                  query: { agents: '' }
                 }"
               >
                 {{ flowRun.agent_id }}

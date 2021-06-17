@@ -19,16 +19,6 @@ export default {
       required: false,
       type: String,
       default: () => null
-    },
-    agentRuns: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    agentId: {
-      type: String,
-      required: false,
-      default: null
     }
   },
   data() {
@@ -46,24 +36,24 @@ export default {
       return this.loadingKey > 0
     },
     all() {
-      if (!this.flowRuns && !this.agentFlowRuns) return []
-      return this.flowRuns || this.agentFlowRuns
+      if (!this.flowRuns) return []
+      return this.flowRuns
     },
     running() {
       if (!this.all) return []
-      return this.all?.filter(
+      return this.all.filter(
         run => run.state == 'Running' || run.state == 'Cancelling'
       )
     },
     submitted() {
       if (!this.all) return []
-      return this.all?.filter(run => run.state == 'Submitted')
+      return this.all.filter(run => run.state == 'Submitted')
     },
     cancellable() {
       if (!this.all) return []
       if (this.tab == 'submitted') return this.submitted
       if (this.tab == 'running') return this.running
-      return this.all?.filter(run => run.state !== 'Cancelling')
+      return this.all.filter(run => run.state !== 'Cancelling')
     },
     runs() {
       if (this.tab == 'submitted') return this.submitted
@@ -120,14 +110,12 @@ export default {
     async tenant(val) {
       if (val) {
         await this.$apollo.queries.flowRuns.refetch()
-        await this.$apollo.queries.agentFlowRuns.refetch()
       }
     }
   },
   methods: {
     refetch() {
       this.$apollo.queries['flowRuns'].refetch()
-      this.$apollo.queries['agentFlowRuns'].refetch()
       this.overlay = false
     },
     toggleOverlay() {
@@ -141,23 +129,6 @@ export default {
         return {
           projectId: this.projectId ? this.projectId : null
         }
-      },
-      skip() {
-        return this.agentRuns
-      },
-      loadingKey: 'loadingKey',
-      pollInterval: 3000,
-      update: ({ flow_run }) => flow_run || []
-    },
-    agentFlowRuns: {
-      query: require('@/graphql/Agent/in-progress-flow-runs.gql'),
-      variables() {
-        return {
-          agentId: this.agentId
-        }
-      },
-      skip() {
-        return !this.agentRuns
       },
       loadingKey: 'loadingKey',
       pollInterval: 3000,

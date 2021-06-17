@@ -145,7 +145,7 @@ export const login = async () => {
   if (TokenWorker) {
     idToken = await promiseChannel(TokenWorker, 'login')
 
-    if (!idToken || idToken.expiresAt * 1000 < Date.now()) {
+    if (!idToken) {
       const loginResponse = await authenticate()
 
       idToken = loginResponse?.idToken

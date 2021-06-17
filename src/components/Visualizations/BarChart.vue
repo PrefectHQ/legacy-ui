@@ -336,12 +336,12 @@ export default {
       const y1 = 18
       const offset = 32
 
-      context.fillStyle = this.computedStyle?.getPropertyValue(
+      context.fillStyle = this.computedStyle.getPropertyValue(
         '--v-ScheduledAlt-base'
       )
       context.fillRect(0, 0, x, x)
 
-      context.strokeStyle = this.computedStyle?.getPropertyValue(
+      context.strokeStyle = this.computedStyle.getPropertyValue(
         '--v-Scheduled-base'
       )
       context.lineWidth = 6
@@ -373,7 +373,7 @@ export default {
 
       context.clearRect(0, 0, this.chartWidth, this.chartHeight)
 
-      let len = this.bars?.length
+      let len = this.bars.length
       for (let i = 0; i < len; ++i) {
         const bar = this.bars[i]
 
@@ -382,7 +382,7 @@ export default {
         context.fillStyle = bar.usePattern
           ? context.createPattern(this.pattern, 'repeat')
           : bar.color ||
-            this.computedStyle?.getPropertyValue('--v-secondaryGrayLight-base')
+            this.computedStyle.getPropertyValue('--v-secondaryGrayLight-base')
 
         context.rect(bar.x, bar.y, bar.width, bar.height)
         context.fill()
@@ -399,14 +399,14 @@ export default {
       let computedStyle = window.getComputedStyle(parent._groups[0][0], null)
 
       let paddingLeft = parseFloat(
-          computedStyle?.getPropertyValue('padding-left')
+          computedStyle.getPropertyValue('padding-left')
         ),
         paddingRight = parseFloat(
-          computedStyle?.getPropertyValue('padding-right')
+          computedStyle.getPropertyValue('padding-right')
         ),
-        paddingTop = parseFloat(computedStyle?.getPropertyValue('padding-top')),
+        paddingTop = parseFloat(computedStyle.getPropertyValue('padding-top')),
         paddingBottom = parseFloat(
-          computedStyle?.getPropertyValue('padding-bottom')
+          computedStyle.getPropertyValue('padding-bottom')
         )
 
       this.boundingClientRect = this.$refs['parent']?.getBoundingClientRect()
@@ -455,7 +455,7 @@ export default {
             g.append('path')
               .attr(
                 'stroke',
-                this.computedStyle?.getPropertyValue('--v-utilGrayMid-base')
+                this.computedStyle.getPropertyValue('--v-utilGrayMid-base')
               )
               .attr('stroke-width', 1)
               .attr('stroke-dasharray', 5)
@@ -467,7 +467,7 @@ export default {
               .style('pointer-events', 'none')
               .attr(
                 'fill',
-                this.computedStyle?.getPropertyValue('--v-utilGrayMid-base')
+                this.computedStyle.getPropertyValue('--v-utilGrayMid-base')
               )
               .attr('text-anchor', d => d.anchor || 'middle')
               .text(d => d.label)
@@ -564,12 +564,12 @@ export default {
       let domainItems = this.computedItems.map((d, i) => (d.id ? d.id : i))
 
       let domain = this.minBands
-        ? domainItems?.length > this.minBands
+        ? domainItems.length > this.minBands
           ? domainItems
           : [
               ...domainItems,
               ...Array.from(
-                { length: this.minBands - domainItems?.length },
+                { length: this.minBands - domainItems.length },
                 (d, i) => i
               )
             ]
@@ -673,7 +673,7 @@ export default {
                   .delay((d, i) => i * 10)
                   .duration(this.animationDuration)
                   .style('opacity', d =>
-                    'warningOpacity' in d ? d.warningOpacity : 0
+                    'warningOpacity' in d ? d.warningOpacity : 1
                   )
               ),
           update =>
@@ -683,7 +683,7 @@ export default {
                 .duration(this.animationDuration)
                 .attr('x', d => x(d.id) + x.bandwidth() / 2)
                 .style('opacity', d =>
-                  'warningOpacity' in d ? d.warningOpacity : 0
+                  'warningOpacity' in d ? d.warningOpacity : 1
                 )
             ),
           exit =>

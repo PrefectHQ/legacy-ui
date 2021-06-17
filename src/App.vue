@@ -148,7 +148,6 @@ export default {
         clearTimeout(this.refreshTimeout)
       }, 1000)
       this.setAgents(null)
-      this.setSortedAgents(null)
     },
     async connected(val) {
       if (val) {
@@ -251,12 +250,12 @@ export default {
       skip() {
         return (this.isCloud && !this.isAuthorized) || !this.connected
       },
-      pollInterval: 1000,
+      pollInterval: 3000,
       // Without this, server UI with no actual server shows results
       fetchPolicy: 'no-cache',
       update(data) {
         if (!data?.agent || this.isLoadingTenant) return null
-        this.setSortedAgents(data.agent)
+        this.setAgents(data.agent)
         return data.agent
       }
     })
@@ -359,32 +358,18 @@ export default {
       this.$vuetify.theme.dark = false
     }
 
-    if (this.isCloud) {
-      if (
-        window.location.pathname?.includes('logout') ||
-        window.location.pathname?.includes('access-denied')
-      )
-        return
-
-      // If the application has loaded but the user isn't authenticated, authorized, or has no tenant
-      // redirect them to the help screen
-      if (!this.isAuthorized || !this.isAuthenticated || !this.tenant?.id) {
-        this.$router.push({
-          name: 'access-denied',
-          params: {
-            tenant: this.tenant.slug
-          }
-        })
-
-        // otherwise, if they haven't gone through onboarding, route them there
-      } else if (!this.tenant.settings.teamNamed) {
-        this.$router.push({
-          name: 'welcome',
-          params: {
-            tenant: this.tenant.slug
-          }
-        })
-      }
+    if (
+      this.isCloud &&
+      !this.tenant.settings.teamNamed &&
+      !window.location.pathname?.includes('logout') &&
+      !window.location.pathname?.includes('access-denied')
+    ) {
+      this.$router.push({
+        name: 'welcome',
+        params: {
+          tenant: this.tenant.slug
+        }
+      })
     }
 
     // document.addEventListener(
@@ -396,7 +381,7 @@ export default {
     // window.addEventListener('focus', this.handleVisibilityChange, false)
   },
   methods: {
-    ...mapMutations('agent', ['setAgents', 'setSortedAgents']),
+    ...mapMutations('agent', ['setAgents']),
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth', ['authenticate', 'authorize']),
     ...mapActions('data', ['resetData']),

@@ -35,40 +35,36 @@ export default {
     </div>
 
     <div class="divider"></div>
-    <div v-if="!props.tooltip.limited_view">
-      <div
-        v-if="props.tooltip.data.state == 'Scheduled'"
-        class="text-subtitle-1"
-      >
-        Scheduled for:
-        <span class="font-weight-black">
-          {{ props.tooltip.data.display_scheduled_start_time }}
-        </span>
-      </div>
 
-      <div v-if="props.tooltip.data.start_time" class="text-subtitle-1">
-        Started:
-        <span class="font-weight-black">
-          {{ props.tooltip.data.display_start_time }}
-        </span>
-      </div>
+    <div v-if="props.tooltip.data.state == 'Scheduled'" class="text-subtitle-1">
+      Scheduled for:
+      <span class="font-weight-black">
+        {{ props.tooltip.data.display_scheduled_start_time }}
+      </span>
+    </div>
 
-      <div v-if="props.tooltip.data.end_time" class="text-subtitle-1">
-        Ended:
-        <span class="font-weight-black">
-          {{ props.tooltip.data.display_end_time }}
-        </span>
-      </div>
+    <div v-if="props.tooltip.data.start_time" class="text-subtitle-1">
+      Started:
+      <span class="font-weight-black">
+        {{ props.tooltip.data.display_start_time }}
+      </span>
+    </div>
 
-      <div v-if="props.tooltip.data.start_time" class="text-subtitle-1">
-        Duration:
-        <component
-          :is="$options.components.DurationSpan"
-          class="font-weight-bold"
-          :start-time="props.tooltip.data.start_time"
-          :end-time="props.tooltip.data.end_time"
-        />
-      </div>
+    <div v-if="props.tooltip.data.end_time" class="text-subtitle-1">
+      Ended:
+      <span class="font-weight-black">
+        {{ props.tooltip.data.display_end_time }}
+      </span>
+    </div>
+
+    <div v-if="props.tooltip.data.start_time" class="text-subtitle-1">
+      Duration:
+      <component
+        :is="$options.components.DurationSpan"
+        class="font-weight-bold"
+        :start-time="props.tooltip.data.start_time"
+        :end-time="props.tooltip.data.end_time"
+      />
     </div>
   </div>
 </template>

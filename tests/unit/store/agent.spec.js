@@ -1,6 +1,5 @@
 import agent from '@/store/agent'
 import { createLocalVue } from '@vue/test-utils'
-
 import Vuex from 'vuex'
 
 const localVue = createLocalVue()
@@ -11,28 +10,23 @@ describe('Agent Vuex Module', () => {
     return {
       thresholds: {
         // Time before an agent becomes stale
-        stale: 5, // minutes since last query
+        stale: 1, // minutes since last query
         // Time before an agent becomes unhealthy
-        unhealthy: 720 // minutes since last query
+        unhealthy: 5 // minutes since last query
       },
-      agents: null,
-      sortedAgents: null
+      agents: null
     }
   }
 
   describe('initial state', () => {
     it('should have a stale threshold and unhealthy threshold', () => {
       const state = agent.state
-      expect(state.thresholds.stale).toBe(5)
-      expect(state.thresholds.unhealthy).toBe(720)
+      expect(state.thresholds.stale).toBe(1)
+      expect(state.thresholds.unhealthy).toBe(5)
     })
     it('should have no agents', () => {
       const state = agent.state
       expect(state.agents).toBe(null)
-    })
-    it('should have no sorted agents', () => {
-      const state = agent.state
-      expect(state.sortedAgents).toBe(null)
     })
   })
 
@@ -54,9 +48,6 @@ describe('Agent Vuex Module', () => {
     it('should return agents when the agents getters is called', () => {
       expect(store.getters.agents).toBe(null)
     })
-    it('should return sorted agents when the sorted agents getters is called', () => {
-      expect(store.getters.sortedAgents).toBe(null)
-    })
   })
 
   describe('mutations', () => {
@@ -66,17 +57,12 @@ describe('Agent Vuex Module', () => {
       mutations: agent.mutations
     })
 
-    it('should add new agents, and update status, when the setSortedAgents mutation is called', () => {
+    it('should add new agents, and update seconds since last query, when the setAgents mutation is called', () => {
       expect(store.getters.agents).toBe(null)
-      const recentDate = new Date().toISOString()
-      store.commit('setSortedAgents', [
-        { id: '12345', last_queried: recentDate },
-        { id: '67890', last_queried: '2021-04-20T23:36:24.278841+00:00' },
-        { id: '09876', last_queried: NaN }
+      store.commit('setAgents', [{ id: '12345' }])
+      expect(store.getters.agents).toEqual([
+        { id: '12345', secondsSinceLastQuery: 0 }
       ])
-      expect(store.getters.agents[0].status).toEqual('healthy')
-      expect(store.getters.agents[1].status).toEqual('unhealthy')
-      expect(store.getters.agents[2].status).toEqual('unhealthy')
     })
   })
 })

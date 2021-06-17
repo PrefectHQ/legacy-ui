@@ -1,5 +1,5 @@
 <script>
-import Calendar from '@/pages/Calendar/Calendar-View'
+import Agents from '@/components/Agents/Agents'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
@@ -29,9 +29,9 @@ const serverTabs = [
     icon: 'pi-flow'
   },
   {
-    name: 'Calendar',
-    target: 'calendar',
-    icon: 'event',
+    name: 'Agents',
+    target: 'agents',
+    icon: 'pi-agent',
     iconSize: 'small'
   }
 ]
@@ -52,7 +52,7 @@ export default {
     }
   },
   components: {
-    Calendar,
+    Agents,
     Automations,
     AgentsTile,
     BreadCrumbs,
@@ -121,7 +121,7 @@ export default {
       return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
     },
     includeProjects() {
-      return this.tab != 'automations' && this.tab != 'calendar'
+      return this.tab != 'automations'
     }
   },
   watch: {
@@ -163,8 +163,9 @@ export default {
     ...mapActions('data', ['activateProject', 'resetActiveData']),
     handleAgentDetailsClick() {
       this.$router.push({
-        name: 'agents',
-        params: { tenant: this.tenant.slug, id: this.projectId }
+        name: this.projectId ? 'project' : 'dashboard',
+        params: { tenant: this.tenant.slug, id: this.projectId },
+        query: { agents: null }
       })
     },
     handleProjectSelect(val) {
@@ -173,7 +174,7 @@ export default {
     },
     getTab() {
       if ('flows' in this.$route.query) return 'flows'
-      if ('calendar' in this.$route.query) return 'calendar'
+      if ('agents' in this.$route.query) return 'agents'
       if ('automations' in this.$route.query) return 'automations'
       return 'overview'
     },
@@ -408,11 +409,11 @@ export default {
 
       <v-tab-item
         class="tab-full-height"
-        value="calendar"
+        value="agents"
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <Calendar v-if="loadedTiles > 9" class="mx-3 my-6" />
+        <Agents v-if="loadedTiles > 9" class="mx-3 my-6" />
       </v-tab-item>
 
       <v-tab-item
