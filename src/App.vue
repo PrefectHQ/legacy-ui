@@ -368,7 +368,7 @@ export default {
 
       // If the application has loaded but the user isn't authenticated, authorized, or has no tenant
       // redirect them to the help screen
-      if (!this.isAuthorized || !this.isAuthenticated || !this.tenant) {
+      if (!this.isAuthorized || !this.isAuthenticated || !this.tenant?.id) {
         this.$router.push({
           name: 'access-denied',
           params: {
