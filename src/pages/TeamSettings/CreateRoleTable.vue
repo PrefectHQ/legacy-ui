@@ -8,6 +8,10 @@ const permissionGroups = { Auth: {api-key: {name: "User API Key", value:
 // make sure includeCreate etc is not included in includedpermissions if they
 //don't exist/are disabled
 //Fix reset/clear
+//Remove permission if no includeREAD/Update/Delete or Create maybe remove includeAll for readonly too?
+//Check what's going on with create secret...
+//Read only user can't read automations?
+
 import { mapActions } from 'vuex'
 export default {
   components: {},

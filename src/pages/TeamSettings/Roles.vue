@@ -31,41 +31,41 @@ export default {
   mixins: [formatTime],
   data() {
     return {
-      attrs: {
-        class: 'mb-6',
-        boilerplate: true,
-        elevation: 2
-      },
-      formatting: false,
-      searchInput: null,
+      // attrs: {
+      //   class: 'mb-6',
+      //   boilerplate: true,
+      //   elevation: 2
+      // },
+      // formatting: false,
+      // searchInput: null,
       loading: 0,
-      expanded: [],
-      createRoleDialog: false,
-      clearDialog: false,
+      // expanded: [],
+      // createRoleDialog: false,
+      // clearDialog: false,
       template: null,
       deletingRole: null,
       defaultRoles: DEFAULT_ROLES,
       useDefault: true,
       roleName: '',
-      addRole: false,
-      headers: [
-        {
-          text: 'Name',
-          value: 'name'
-        },
-        {
-          text: 'Created',
-          value: 'created'
-        },
-        {
-          text: 'Updated',
-          value: 'updated'
-        },
-        {
-          text: 'Actions',
-          value: 'actions'
-        }
-      ]
+      addRole: false
+      // headers: [
+      //   {
+      //     text: 'Name',
+      //     value: 'name'
+      //   },
+      //   {
+      //     text: 'Created',
+      //     value: 'created'
+      //   },
+      //   {
+      //     text: 'Updated',
+      //     value: 'updated'
+      //   },
+      //   {
+      //     text: 'Actions',
+      //     value: 'actions'
+      //   }
+      // ]
     }
   },
   computed: {
@@ -106,7 +106,7 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    //We could update to use same formatting as in members page?
+    //We should update to use same formatting as in members page?
     formatName(name) {
       const newName = name
         .split('_')
@@ -117,9 +117,6 @@ export default {
     },
     handleRoleSelect(role, roleType) {
       this.useDefault = false
-      if (roleType === 'default' && role) {
-        role = { ...role, default: true }
-      }
       if (roleType === 'new') {
         this.addRole = !this.addRole
       } else {
@@ -127,27 +124,27 @@ export default {
       }
       this.template = role
     },
-    handleAlert(type, message) {
-      this.setAlert({
-        alertShow: true,
-        alertMessage: message,
-        alertType: type
-      })
-    },
-    closeDialog() {
-      this.clearDialog = true
-      this.createRoleDialog = false
-      this.template = null
-    },
-    resetClear() {
-      this.clearDialog = false
-    },
-    editRole(role) {
-      this.template = role
-      this.expanded.push(role)
-    },
+    // handleAlert(type, message) {
+    //   this.setAlert({
+    //     alertShow: true,
+    //     alertMessage: message,
+    //     alertType: type
+    //   })
+    // },
+    // closeDialog() {
+    //   this.clearDialog = true
+    //   this.createRoleDialog = false
+    //   this.template = null
+    // },
+    // resetClear() {
+    //   this.clearDialog = false
+    // },
+    // editRole(role) {
+    //   this.template = role
+    //   this.expanded.push(role)
+    // },
     refetch() {
-      console.log('ref')
+      // console.log('ref')
       this.$apollo.queries.roles.refetch()
       this.roleName = ''
       this.addRole = false
@@ -210,12 +207,14 @@ export default {
               <v-divider></v-divider>
             </v-list-item-content>
           </v-list-item>
-
-          <v-skeleton-loader
-            v-if="loading"
-            v-bind="attrs"
-            type="list-item-three-line"
-          ></v-skeleton-loader>
+          <div v-if="loading" class="text-center">
+            <v-progress-circular
+              :size="70"
+              :width="5"
+              color="primary"
+              indeterminate
+            ></v-progress-circular>
+          </div>
           <v-list-item
             v-for="item in editedRoles.defaultRoles"
             v-else
