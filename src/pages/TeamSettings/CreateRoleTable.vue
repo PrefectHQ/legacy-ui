@@ -240,15 +240,16 @@ export default {
     async createNewRole() {
       try {
         const includedPermissions = []
+
         this.permissions.forEach(permission => {
           if (permission.includeCreate)
-            includedPermissions.push(`create:${permission.name}`)
+            includedPermissions.push(`create:${permission.shortName}`)
           if (permission.includeDelete)
-            includedPermissions.push(`delete:${permission.name}`)
+            includedPermissions.push(`delete:${permission.shortName}`)
           if (permission.includeRead)
-            includedPermissions.push(`read:${permission.name}`)
+            includedPermissions.push(`read:${permission.shortName}`)
           if (permission.includeUpdate)
-            includedPermissions.push(`update:${permission.name}`)
+            includedPermissions.push(`update:${permission.shortName}`)
         })
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-custom-role.gql'),
@@ -280,16 +281,20 @@ export default {
     async updateRole() {
       try {
         const includedPermissions = []
-        this.permissions.forEach(permission => {
-          if (permission.includeCreate)
-            includedPermissions.push(`create:${permission.name}`)
-          if (permission.includeDelete)
-            includedPermissions.push(`delete:${permission.name}`)
-          if (permission.includeRead)
-            includedPermissions.push(`read:${permission.name}`)
-          if (permission.includeUpdate)
-            includedPermissions.push(`update:${permission.name}`)
+        console.log(this.permissions)
+        this.permissions.forEach(group => {
+          Object.values(group).forEach(permission => {
+            if (permission.includeCreate)
+              includedPermissions.push(`create:${permission.shortName}`)
+            if (permission.includeDelete)
+              includedPermissions.push(`delete:${permission.shortName}`)
+            if (permission.includeRead)
+              includedPermissions.push(`read:${permission.shortName}`)
+            if (permission.includeUpdate)
+              includedPermissions.push(`update:${permission.shortName}`)
+          })
         })
+
         // const permissions = this.includedPermissions.map(
         //   permission => permission.value
         // )
@@ -305,7 +310,7 @@ export default {
         if (res?.data?.update_custom_role) {
           this.setAlert({
             alertShow: true,
-            alertMessage: 'Role created',
+            alertMessage: 'Role updated',
             alertType: 'Success'
           })
         }
@@ -317,6 +322,7 @@ export default {
         })
       } finally {
         this.loadingRole = false
+        this.$apollo.queries.auth.refetch()
         this.reset()
       }
     },
@@ -350,6 +356,19 @@ export default {
       ></v-text-field>
     </v-card-subtitle> -->
     <v-card-text class="font-weight-light">
+      <v-card-actions v-if="!template || !template.default">
+        <v-spacer />
+        <v-btn text @click.stop="reset">
+          Reset
+        </v-btn>
+        <v-btn
+          color="primary"
+          :loading="loadingRole"
+          @click.stop="handleCreateUpdateClick"
+        >
+          {{ template ? 'Update' : 'Create' }} Role
+        </v-btn>
+      </v-card-actions>
       <v-sheet height="70vh" :style="{ overflow: 'auto' }">
         <!-- <v-text-field
           v-if="!tableOnly"
@@ -376,7 +395,7 @@ export default {
             <v-col class="text-left" cols="1">Update</v-col>
             <v-col class="text-left" cols="1">Delete</v-col>
           </v-row>
-          <div v-for="(item, indexa) in permissionList(group)" :key="indexa">
+          <div v-for="(item, indexa) in group" :key="indexa">
             <v-row no-gutters class="pa-0 ma-0">
               <v-col cols="4">
                 <span class="text-body-1"> {{ item.name }} </span>
@@ -446,18 +465,5 @@ export default {
         <!-- </v-container> --->
       </v-sheet>
     </v-card-text>
-    <v-card-actions v-if="!template || !template.default">
-      <v-spacer />
-      <v-btn text @click.stop="reset">
-        Reset
-      </v-btn>
-      <v-btn
-        color="primary"
-        :loading="loadingRole"
-        @click.stop="handleCreateUpdateClick"
-      >
-        {{ template ? 'Update' : 'Create' }} Role
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>

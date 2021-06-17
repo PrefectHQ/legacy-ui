@@ -146,6 +146,9 @@ export default {
       this.template = role
       this.expanded.push(role)
     },
+    refetch() {
+      this.$apollo.queries.roles.refetch()
+    },
     async deleteRole(role) {
       this.deletingRole = role.id
       try {
@@ -307,7 +310,12 @@ export default {
       </v-navigation-drawer>
     </v-col>
     <v-col cols="9" class="pa-0">
-      <CreateRoleTable table-only :template="template" :role-name="roleName" />
+      <CreateRoleTable
+        table-only
+        :template="template"
+        :role-name="roleName"
+        @close="refetch"
+      />
     </v-col>
   </v-row>
 </template>
