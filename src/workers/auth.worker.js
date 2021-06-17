@@ -112,7 +112,10 @@ const handleLogout = async () => {
 let authorizing = false
 const handleAuthorize = async idToken => {
   authorizing = true
-  if (!state.authorizationToken) {
+  if (
+    !state.authorizationToken ||
+    state.authorizationToken.expires_at <= Date.now()
+  ) {
     const authorizationResponse = await authorize(idToken)
 
     setAuthorizationToken(authorizationResponse)

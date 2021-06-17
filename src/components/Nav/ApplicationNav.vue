@@ -25,7 +25,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
+    ...mapGetters('api', ['isCloud', 'isServer']),
+    ...mapGetters('auth', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', ['tenant']),
     isTransparent() {
       return this.$route.name === 'not-found'
@@ -55,12 +56,18 @@ export default {
 <template>
   <v-app-bar app elevate-on-scroll fixed :color="navBarColor">
     <router-link
-      :to="{
-        name: 'dashboard',
-        params: {
-          tenant: slug
-        }
-      }"
+      :to="
+        isServer || isAuthorized
+          ? {
+              name: 'dashboard',
+              params: {
+                tenant: slug
+              }
+            }
+          : {
+              name: 'access-denied'
+            }
+      "
       exact
     >
       <v-btn
@@ -76,7 +83,7 @@ export default {
       </v-btn>
     </router-link>
 
-    <TeamSideNavButton />
+    <TeamSideNavButton v-if="isServer || isAuthorized" />
 
     <v-divider vertical class="white vertical-divider my-auto mx-2" />
 
@@ -84,18 +91,24 @@ export default {
     <!-- For some reason the default slot never renders if we do. -->
     <!-- (likely a Vuetify bug) -->
     <template v-if="$vuetify.breakpoint.mdAndDown" #extension>
-      <Links v-if="$vuetify.breakpoint.mdAndDown" />
+      <Links
+        v-if="$vuetify.breakpoint.mdAndDown && (isServer || isAuthorized)"
+      />
     </template>
 
-    <Links v-if="!$vuetify.breakpoint.mdAndDown" />
+    <Links
+      v-if="!$vuetify.breakpoint.mdAndDown && (isServer || isAuthorized)"
+    />
 
     <v-spacer></v-spacer>
 
-    <GlobalSearch v-if="$vuetify.breakpoint.smAndUp" />
+    <GlobalSearch
+      v-if="$vuetify.breakpoint.smAndUp && (isServer || isAuthorized)"
+    />
 
     <HelpMenu />
 
-    <NotificationMenu />
+    <NotificationMenu v-if="isServer || isAuthorized" />
 
     <ConnectionMenu />
 
