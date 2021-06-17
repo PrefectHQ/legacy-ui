@@ -1,15 +1,4 @@
 <script>
-//TO DO
-//Better handle refecth roles and clear after save - so addName and text field no longer show
-
-//Disable add/update and reset if no actual changes
-//spacing and fonts for sidebar?
-//Loading states and default tenant load
-//fix include all click/responsiveness
-//disable checkboxes if default role
-//Add v-sheet and scroll for side navbar and permissions table
-//See also slack notes
-
 import { mapActions, mapGetters } from 'vuex'
 import CreateRoleTable from '@/pages/TeamSettings/CreateRoleTable'
 import { formatTime } from '@/mixins/formatTimeMixin'
@@ -34,7 +23,8 @@ export default {
       defaultRoles: DEFAULT_ROLES,
       useDefault: true,
       roleName: '',
-      addRole: false
+      addRole: false,
+      roleId: null
     }
   },
   computed: {
@@ -46,6 +36,11 @@ export default {
       'allowedUsers',
       'role'
     ]),
+    selectedRole() {
+      if (this.roleId) return this.roleId
+      if (this.template) return this.template.id
+      return null
+    },
     editedRoles() {
       if (!this.roles) return []
       const defaultRoles = this.roles?.reduce((arr, role) => {
@@ -86,6 +81,7 @@ export default {
     },
     handleRoleSelect(role, roleType) {
       this.useDefault = false
+      this.roleId = null
       if (roleType === 'new') {
         this.addRole = !this.addRole
       } else {
@@ -93,10 +89,14 @@ export default {
       }
       this.template = role
     },
-    refetch() {
-      this.$apollo.queries.roles.refetch()
+    cancelAddName() {
       this.roleName = ''
       this.addRole = false
+    },
+    refetch(id) {
+      this.$apollo.queries.roles.refetch()
+      this.cancelAddName()
+      if (id) this.roleId = id
     },
     async deleteRole(role) {
       this.deletingRole = role.id
@@ -126,6 +126,14 @@ export default {
         })
       } finally {
         this.deletingRole = null
+        if (this.template.id === role.id)
+          this.template =
+            this.editedRoles?.tenantRoles?.filter(
+              role => role.id === this.role
+            )[0] ||
+            this.editedRoles?.defaultRoles?.filter(
+              role => role.id === this.role
+            )[0]
       }
     }
   },
@@ -172,9 +180,7 @@ export default {
           >
             <v-list-item-content @click="handleRoleSelect(item, 'default')">
               <v-list-item-title
-                :class="
-                  template && template.name == item.name ? 'primary--text' : ''
-                "
+                :class="selectedRole === item.id ? 'primary--text' : ''"
                 class="text-body-2"
                 >{{ formatName(item.name) }}</v-list-item-title
               >
@@ -207,7 +213,16 @@ export default {
               <v-divider></v-divider>
             </v-list-item-content>
           </v-list-item>
-          <v-sheet :style="{ overflow: 'auto' }" height="200px">
+          <div v-if="loading" class="text-center">
+            <v-progress-circular
+              :size="70"
+              :width="5"
+              color="primary"
+              indeterminate
+            ></v-progress-circular>
+          </div>
+
+          <v-sheet v-else :style="{ overflow: 'auto' }" height="200px">
             <v-list-item
               v-for="item in editedRoles.tenantRoles"
               :key="item.value"
@@ -215,11 +230,7 @@ export default {
             >
               <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
                 <v-list-item-title
-                  :class="
-                    template && template.name == item.name
-                      ? 'primary--text'
-                      : ''
-                  "
+                  :class="selectedRole === item.id ? 'primary--text' : ''"
                   class="text-body-2"
                   >{{ item.name }}
                 </v-list-item-title>
@@ -250,11 +261,25 @@ export default {
                 <v-list-item-title>
                   <v-text-field
                     v-model="roleName"
+                    class="text-body-2 pa-0"
                     required
+                    autofocus
+                    hide-details
                     placeholder="Role Name"
-                  ></v-text-field
-                ></v-list-item-title>
+                  ></v-text-field>
+                </v-list-item-title>
               </v-list-item-content>
+              <v-list-item-icon>
+                <v-btn
+                  text
+                  fab
+                  x-small
+                  color="blue-grey"
+                  @click="cancelAddName"
+                >
+                  <v-icon>clear</v-icon>
+                </v-btn>
+              </v-list-item-icon>
             </v-list-item>
           </v-sheet>
         </v-list>

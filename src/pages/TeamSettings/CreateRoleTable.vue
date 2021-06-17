@@ -1,7 +1,7 @@
 <script>
 // make sure includeCreate etc is not included in includedpermissions if they
 //don't exist/are disabled
-//Fix reset/clear
+//Fix reset/clear/Disable add/update and reset if no actual changes
 //Remove permission if no includeREAD/Update/Delete or Create maybe remove includeAll for readonly too?
 //Check what's going on with create secret...
 //Read only user can't read automations?
@@ -182,9 +182,9 @@ export default {
       else this.createNewRole()
     },
     async createNewRole() {
+      let id = null
       try {
         const includedPermissions = []
-
         this.permissions.forEach(group => {
           Object.values(group).forEach(permission => {
             if (permission.includeCreate)
@@ -207,6 +207,7 @@ export default {
           }
         })
         if (res?.data?.create_custom_role) {
+          id = res?.data?.create_custom_role.id
           this.setAlert({
             alertShow: true,
             alertMessage: 'Role created',
@@ -221,7 +222,7 @@ export default {
         })
       } finally {
         this.loadingRole = false
-        this.reset()
+        this.$emit('close', id)
       }
     },
     async updateRole() {
@@ -264,11 +265,8 @@ export default {
       } finally {
         this.loadingRole = false
         this.$apollo.queries.auth.refetch()
-        this.reset()
+        this.$emit('close')
       }
-    },
-    reset() {
-      this.$emit('close')
     }
   },
   apollo: {
