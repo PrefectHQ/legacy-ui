@@ -111,6 +111,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user', 'timezone']),
     // Surface table headers based on viewport (mobile vs. desktop)
@@ -120,10 +121,14 @@ export default {
         : this.headers.filter(header => header.mobile)
     },
     isReadOnlyUser() {
-      return this.tenant.role === 'READ_ONLY_USER'
+      return !this.isTenantAdmin
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return (
+        this.hasPermission('create', 'project') &&
+        this.hasPermission('update', 'project') &&
+        this.hasPermission('delete', 'project')
+      )
     },
     // If the user decides to move flows to a new project before deletion,
     // provide a list of candidate projects to take these flows

@@ -28,7 +28,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['role', 'tenant'])
+    ...mapGetters('tenant', ['role', 'tenant']),
+    ...mapGetters('license', ['hasPermission']),
+
+    isReadOnly() {
+      return !this.hasPermission('create', 'project')
+    }
   },
   watch: {
     show() {
@@ -106,8 +111,8 @@ export default {
       <v-card-title v-else-if="projectSuccess">
         Success!
       </v-card-title>
-      <v-card-title v-else-if="role === 'READ_ONLY_USER'">
-        You are a Read-only user.
+      <v-card-title v-else-if="isReadOnly">
+        You don't have permission.
       </v-card-title>
 
       <v-card-title v-else>
@@ -116,8 +121,8 @@ export default {
       <v-card-text v-if="specificProjectErrorMessage">
         {{ specificProjectErrorMessage }}
       </v-card-text>
-      <v-card-text v-else-if="role === 'READ_ONLY_USER'">
-        Read-only users cannot create projects.
+      <v-card-text v-else-if="isReadOnly">
+        You don't have permission to create projects.
       </v-card-text>
       <v-card-text v-else-if="projectError">
         It looks like your project wasn't added. Please try again. If you still

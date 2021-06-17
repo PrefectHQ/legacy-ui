@@ -413,7 +413,7 @@ export default {
           icon="lock"
           max-width="380"
         >
-          Read-only users cannot manage kv.
+          You don't have permission to manage kv.
         </v-alert>
 
         <v-alert

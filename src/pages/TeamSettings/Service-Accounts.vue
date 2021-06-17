@@ -41,9 +41,13 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return (
+        this.hasPermission('create', 'service-account') &&
+        this.hasPermission('update', 'service-account') &&
+        this.hasPermission('delete', 'service-account')
+      )
     }
   },
   watch: {

@@ -57,8 +57,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license', 'tempLicenseType']),
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['license', 'tempLicenseType', 'hasPermission']),
     planClass() {
       return {
         'scale-100': this.$vuetify.breakpoint.lgAndUp,
@@ -75,7 +74,7 @@ export default {
       }
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('create', 'license')
     }
   },
   methods: {

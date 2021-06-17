@@ -30,12 +30,9 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['permissions']),
+    ...mapGetters('license', ['hasPermission']),
     containerClass() {
       return !this.cloudHooks ? ['py-12', 'text-center'] : []
-    },
-    isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
     }
   },
   methods: {
@@ -101,7 +98,7 @@ export default {
                           color="primary"
                           :small="!!cloudHooks"
                           :large="!cloudHooks"
-                          :disabled="isReadOnlyUser"
+                          :disabled="!hasPermission('create', 'cloud-hook')"
                           @click="createNewCloudHook = true"
                           v-on="onD"
                         >
@@ -113,8 +110,8 @@ export default {
                         </div>
                       </div>
                     </template>
-                    <span v-if="isReadOnlyUser">
-                      Read-only users cannot create new Cloud Hooks.
+                    <span v-if="!hasPermission('create', 'cloud-hook')">
+                      You don't have permission to create new Cloud Hooks.
                     </span>
                     <span v-else>
                       Create a new Cloud Hook for this Flow
@@ -128,7 +125,10 @@ export default {
                   <v-card-text class="pl-12">
                     <CloudHookForm
                       v-if="createNewCloudHook"
-                      :editable="!isReadOnlyUser"
+                      :editable="
+                        hasPermission('create', 'cloud-hook') &&
+                          hasPermission('delete', 'cloud-hook')
+                      "
                       edit-on-render
                       :version-group-id-prop="flow.version_group_id"
                       @close="createNewCloudHook = false"
@@ -218,7 +218,15 @@ export default {
                                                 color="primary"
                                                 :loading="item.loading"
                                                 :disabled="
-                                                  isReadOnlyUser || item.loading
+                                                  (!hasPermission(
+                                                    'create',
+                                                    'cloud-hook'
+                                                  ) &&
+                                                    !hasPermission(
+                                                      'delete',
+                                                      'cloud-hook'
+                                                    )) ||
+                                                    item.loading
                                                 "
                                                 @change="
                                                   _handleSetCloudHookStatusChange(
@@ -244,9 +252,16 @@ export default {
                                             </div>
                                           </div>
                                         </template>
-                                        <span v-if="isReadOnlyUser">
-                                          Read-only users cannot change Cloud
-                                          Hook states.
+                                        <span
+                                          v-if="
+                                            !hasPermission(
+                                              'update',
+                                              'cloud-hook'
+                                            )
+                                          "
+                                        >
+                                          You don't have permission to change
+                                          Cloud Hook states.
                                         </span>
                                         <span v-else>
                                           {{
@@ -291,7 +306,10 @@ export default {
                         <v-expansion-panel-content>
                           <CloudHookForm
                             :hook="item"
-                            :editable="!isReadOnlyUser"
+                            :editable="
+                              hasPermission('create', 'cloud-hook') &&
+                                hasPermission('delete', 'cloud-hook')
+                            "
                             show-controls
                             :version-group-id-prop="flow.version_group_id"
                             :loading.sync="item.loading"

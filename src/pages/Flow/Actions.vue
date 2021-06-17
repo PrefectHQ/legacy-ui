@@ -45,6 +45,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission']),
     isQuickRunnable() {
       if (!this.flow.parameters) return true
 
@@ -54,9 +55,6 @@ export default {
           return false
         return result
       }, true)
-    },
-    isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
     },
     isScheduled: {
       get() {
@@ -69,6 +67,50 @@ export default {
     },
     schedule() {
       return this.flow.schedule?.clocks[0] || this.flowGroup.schedule?.clocks[0]
+    },
+    disableToggle() {
+      let isDisabled = false
+      if (
+        this.hasPermission('create', 'run') &&
+        this.hasPermission('delete', 'run')
+      ) {
+        isDisabled = false
+      }
+      if (
+        !this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run')
+      ) {
+        isDisabled = true
+      }
+      if (
+        this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run') &&
+        !this.isScheduled
+      ) {
+        isDisabled = false
+      } else if (
+        this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run') &&
+        this.isScheduled
+      ) {
+        isDisabled = true
+      }
+
+      if (
+        this.hasPermission('delete', 'run') &&
+        !this.hasPermission('create', 'run') &&
+        this.isScheduled
+      ) {
+        isDisabled = false
+      } else if (
+        this.hasPermission('delete', 'run') &&
+        !this.hasPermission('create', 'run') &&
+        !this.isScheduled
+      ) {
+        isDisabled = true
+      }
+
+      return isDisabled
     }
   },
   watch: {
@@ -266,7 +308,11 @@ export default {
     <v-tooltip
       bottom
       max-width="340"
-      :open-delay="isReadOnlyUser || !isQuickRunnable || archived ? 0 : 750"
+      :open-delay="
+        !hasPermission('create', 'run') || !isQuickRunnable || archived
+          ? 0
+          : 750
+      "
     >
       <template #activator="{ on }">
         <div v-on="on">
@@ -278,7 +324,9 @@ export default {
             tile
             small
             data-cy="start-flow-quick-run"
-            :disabled="isReadOnlyUser || !isQuickRunnable || archived"
+            :disabled="
+              !hasPermission('create', 'run') || !isQuickRunnable || archived
+            "
             :loading="isRunning"
             @click="quickRunFlow"
           >
@@ -298,8 +346,8 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
-        Read-only users cannot run flows.
+      <span v-if="!hasPermission('create', 'run')">
+        You don't have permission to run flows
       </span>
       <span v-else-if="!isQuickRunnable">
         This flow has required parameters that must be set before a run. Set a
@@ -341,7 +389,7 @@ export default {
                 class="mr-1 v-input--vertical"
                 color="primary"
                 :loading="scheduleLoading"
-                :disabled="isReadOnlyUser || archived"
+                :disabled="disableToggle || archived"
                 @change="scheduleFlow"
               >
                 <template #label>
@@ -354,8 +402,8 @@ export default {
           </v-badge>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
-        Read-only users cannot schedule flows.
+      <span v-if="!hasPermission('create', 'run')">
+        You don't have permission to schedule flows.
       </span>
       <span v-else-if="schedule == null && isScheduled">
         This flow is trying to schedule runs but has no schedules! Visit this

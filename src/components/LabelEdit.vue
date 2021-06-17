@@ -47,6 +47,10 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['role']),
+    ...mapGetters('license', ['hasPermission']),
+    isReadOnly() {
+      return !this.hasPermission('update', 'run')
+    },
     labels() {
       const labels =
         this.newLabels ||
@@ -214,7 +218,7 @@ export default {
                     <v-btn
                       small
                       icon
-                      :disabled="role == 'READ_ONLY_USER'"
+                      :disabled="isReadOnly"
                       aria-label="Add label"
                       color="primary"
                       v-bind="attrs"
@@ -224,9 +228,9 @@ export default {
                     </v-btn>
                   </div>
                 </template>
-                <span v-if="role == 'READ_ONLY_USER'">
-                  Read-only users cannot edit labels</span
-                >
+                <span v-if="isReadOnly">
+                  You don't have permission to edit labels
+                </span>
                 <span v-else>Add a label</span>
               </v-tooltip>
             </template>
@@ -336,7 +340,7 @@ export default {
                 <v-btn
                   small
                   icon
-                  :disabled="role == 'READ_ONLY_USER'"
+                  :disabled="isReadOnly"
                   aria-label="Add label"
                   color="primary"
                   v-bind="attrs"
@@ -346,8 +350,8 @@ export default {
                 </v-btn>
               </div>
             </template>
-            <span v-if="role == 'READ_ONLY_USER'">
-              Read-only users cannot edit labels</span
+            <span v-if="isReadOnly">
+              You don't have permission to edit labels</span
             >
             <span v-else>Add a label</span>
           </v-tooltip>

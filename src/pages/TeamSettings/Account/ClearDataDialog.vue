@@ -58,6 +58,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('user', ['user']),
     activeClearScreen() {
@@ -67,7 +68,12 @@ export default {
       return 'form'
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return (
+        this.hasPermission('delete', 'project') &&
+        this.hasPermission('delete', 'membership') &&
+        this.hasPermission('delete', 'api-key') &&
+        this.hasPermission('delete', 'secret')
+      )
     },
     confirmDisabled() {
       return (

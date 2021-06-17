@@ -63,12 +63,12 @@ export default {
   computed: {
     ...mapGetters('auth', ['user']),
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
     },
     isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+      return this.hasPermission('update', 'tenant')
     },
     shuffledOptions() {
       let optionsCopy = [...this.options]
@@ -454,8 +454,7 @@ export default {
                 </v-icon>
               </Truncate>
             </div>
-            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="text-h5 medium">
-            </div>
+            <div v-if="!isTenantAdmin" class="text-h5 medium"> </div>
             <v-text-field
               v-if="isTenantAdmin"
               v-model="slug"

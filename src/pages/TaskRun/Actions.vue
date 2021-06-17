@@ -19,7 +19,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'role'])
+    ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission']),
+    isReadOnly() {
+      return !this.hasPermission('update', 'run')
+    }
   },
   methods: {}
 }
@@ -47,7 +51,7 @@ export default {
             text
             depressed
             small
-            :disabled="role === 'READ_ONLY_USER'"
+            :disabled="isReadOnly"
             color="primary"
             @click="restartDialog = true"
           >
@@ -56,8 +60,8 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="role === 'READ_ONLY_USER'">
-        Read-only users cannot restart flow runs
+      <span v-if="isReadOnly">
+        You don't have permission to restart flow runs
       </span>
       <span v-else>Restart flow run from this task</span>
     </v-tooltip>

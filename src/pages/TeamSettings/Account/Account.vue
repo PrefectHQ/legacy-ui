@@ -49,9 +49,6 @@ export default {
     needAlert() {
       return !location.href.includes('prefect.io')
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
-    },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
     },
@@ -184,7 +181,6 @@ export default {
             </v-col>
             <v-col cols="12">
               <v-skeleton-loader
-                v-if="isTenantAdmin"
                 :loading="loadedTiles < 7"
                 type="image"
                 height="282"

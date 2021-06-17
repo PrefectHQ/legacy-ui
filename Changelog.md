@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add agent screens - [#852](https://github.com/PrefectHQ/ui/pull/852)
+- Replaces everywhere we are using this.tenant.role with the hasPermission check - [#892](https://github.com/PrefectHQ/ui/pull/892)
 - Add the `mapped_children` route to the IAPI allow-list - [#891](https://github.com/PrefectHQ/ui/pull/891)
 
 ### Bugfixes

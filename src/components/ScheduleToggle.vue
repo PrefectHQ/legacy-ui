@@ -20,11 +20,9 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission']),
     archived() {
       return this.flow.archived
-    },
-    isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
     },
     isScheduled() {
       if (this.archived) return false
@@ -34,6 +32,50 @@ export default {
       return (
         this.flow.schedule?.clocks?.[0] || this.flowGroup.schedule?.clocks?.[0]
       )
+    },
+    disableToggle() {
+      let isDisabled = false
+      if (
+        this.hasPermission('create', 'run') &&
+        this.hasPermission('delete', 'run')
+      ) {
+        isDisabled = false
+      }
+      if (
+        !this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run')
+      ) {
+        isDisabled = true
+      }
+      if (
+        this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run') &&
+        !this.isScheduled
+      ) {
+        isDisabled = false
+      } else if (
+        this.hasPermission('create', 'run') &&
+        !this.hasPermission('delete', 'run') &&
+        this.isScheduled
+      ) {
+        isDisabled = true
+      }
+
+      if (
+        this.hasPermission('delete', 'run') &&
+        !this.hasPermission('create', 'run') &&
+        this.isScheduled
+      ) {
+        isDisabled = false
+      } else if (
+        this.hasPermission('delete', 'run') &&
+        !this.hasPermission('create', 'run') &&
+        !this.isScheduled
+      ) {
+        isDisabled = true
+      }
+
+      return isDisabled
     }
   },
   methods: {
@@ -118,7 +160,7 @@ export default {
               class="small-switch"
               color="primary"
               :loading="loading"
-              :disabled="isReadOnlyUser || archived"
+              :disabled="disableToggle || archived"
               inset
               dense
               hide-details
@@ -128,8 +170,8 @@ export default {
           </v-badge>
         </div>
       </template>
-      <span v-if="isReadOnlyUser">
-        Read-only users cannot schedule flows.
+      <span v-if="!hasPermission('create', 'run')">
+        You don't have permission to schedule flows.
       </span>
       <span v-else-if="schedule == null && isScheduled">
         This flow is trying to schedule runs but has no schedules! Visit this
