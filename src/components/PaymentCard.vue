@@ -241,7 +241,7 @@ export default {
         </div>
       </v-form>
     </v-card-text>
-    <v-card-actions v-if="isTenantAdmin">
+    <v-card-actions v-if="permissionsCheck">
       <v-spacer></v-spacer>
       <v-btn text @click="reset">Cancel</v-btn>
       <v-btn

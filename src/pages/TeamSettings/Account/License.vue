@@ -23,9 +23,6 @@ export default {
   computed: {
     ...mapGetters('license', ['license', 'planType', 'allowedUsers']),
     ...mapGetters('tenant', ['tenant']),
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
-    },
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
