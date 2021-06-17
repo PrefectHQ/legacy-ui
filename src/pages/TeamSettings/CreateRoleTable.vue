@@ -1,10 +1,8 @@
 <script>
 // make sure includeCreate etc is not included in includedpermissions if they
 //don't exist/are disabled
-//Fix reset/clear/Disable add/update and reset if no actual changes
 //Remove permission if no includeREAD/Update/Delete or Create maybe remove includeAll for readonly too?
 //Check what's going on with create secret...
-//Read only user can't read automations?
 
 import { mapActions } from 'vuex'
 import _ from 'lodash'
@@ -191,6 +189,7 @@ export default {
       this.permissions = Object.values(this.templatePermissionObject())
     },
     handleAll(item) {
+      if (this.defaultRole) return
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
       item.includeDelete = item.includeAll
@@ -207,16 +206,20 @@ export default {
         const includedPermissions = []
         this.permissions.forEach(group => {
           Object.values(group).forEach(permission => {
-            if (permission.includeCreate)
+            // if (permission.includeCreate && !permission.disableCreate) {
+            //   console.log(permission)
+            // }
+            if (permission.includeCreate && !permission.disableCreate)
               includedPermissions.push(`create:${permission.shortName}`)
-            if (permission.includeDelete)
+            if (permission.includeDelete && !permission.disableDelete)
               includedPermissions.push(`delete:${permission.shortName}`)
-            if (permission.includeRead)
+            if (permission.includeRead && !permission.disableRead)
               includedPermissions.push(`read:${permission.shortName}`)
-            if (permission.includeUpdate)
+            if (permission.includeUpdate && !permission.disableUpdate)
               includedPermissions.push(`update:${permission.shortName}`)
           })
         })
+        // console.log(includedPermissions)
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-custom-role.gql'),
           variables: {
@@ -250,13 +253,13 @@ export default {
         const includedPermissions = []
         this.permissions.forEach(group => {
           Object.values(group).forEach(permission => {
-            if (permission.includeCreate)
+            if (permission.includeCreate && !permission.disableCreate)
               includedPermissions.push(`create:${permission.shortName}`)
-            if (permission.includeDelete)
+            if (permission.includeDelete && !permission.disableDelete)
               includedPermissions.push(`delete:${permission.shortName}`)
-            if (permission.includeRead)
+            if (permission.includeRead && !permission.disableRead)
               includedPermissions.push(`read:${permission.shortName}`)
-            if (permission.includeUpdate)
+            if (permission.includeUpdate && !permission.disableUpdate)
               includedPermissions.push(`update:${permission.shortName}`)
           })
         })
@@ -300,8 +303,17 @@ export default {
 </script>
 
 <template>
-  <v-card width="100%">
-    <v-card-text class="font-weight-light">
+  <v-card elevation="0" width="100%">
+    <v-card-text v-if="loading" :style="{ height: '80vH' }" class="text-center">
+      <v-progress-circular
+        indeterminate
+        class="ma-12"
+        color="primary"
+        :size="300"
+        :width="6"
+      ></v-progress-circular>
+    </v-card-text>
+    <v-card-text v-else class="font-weight-light">
       <v-card-actions v-if="!template || !template.default">
         <v-spacer />
         <v-btn text @click.stop="reset">
@@ -316,7 +328,7 @@ export default {
           {{ template ? 'Update' : 'Create' }} Role
         </v-btn>
       </v-card-actions>
-      <v-sheet height="70vh" :style="{ overflow: 'auto' }">
+      <v-sheet height="80vh" :style="{ overflow: 'auto' }">
         <div v-for="(group, index) in permissions" :key="index">
           <v-row class="mb-4 text-body-1" no-gutters>
             <v-col cols="4" class="text-h5 run-body">

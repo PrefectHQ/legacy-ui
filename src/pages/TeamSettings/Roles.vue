@@ -152,146 +152,148 @@ export default {
 </script>
 
 <template>
-  <v-row>
-    <v-col cols="3" class="pa-0 ma-0">
-      <v-navigation-drawer permanent class="ma-0" width="100%">
-        <v-list dense nav>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title class="text-subtitle-1">
-                Default Roles
-              </v-list-item-title>
-              <v-divider></v-divider>
-            </v-list-item-content>
-          </v-list-item>
-          <div v-if="loading" class="text-center">
-            <v-progress-circular
-              :size="70"
-              :width="5"
-              color="primary"
-              indeterminate
-            ></v-progress-circular>
-          </div>
-          <v-list-item
-            v-for="item in editedRoles.defaultRoles"
-            v-else
-            :key="item.name"
-            link
-          >
-            <v-list-item-content @click="handleRoleSelect(item, 'default')">
-              <v-list-item-title
-                :class="selectedRole === item.id ? 'primary--text' : ''"
-                class="text-body-2"
-                >{{ formatName(item.name) }}</v-list-item-title
-              >
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-
-        <v-list
-          v-if="
-            editedRoles &&
-              editedRoles.tenantRoles &&
-              editedRoles.tenantRoles.length
-          "
-          dense
-          nav
-        >
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title class="text-subtitle-1">
-                Custom Roles
-                <v-btn
-                  color="primary"
-                  class="white--text"
-                  icon
-                  @click="handleRoleSelect(null, 'new')"
-                >
-                  <v-icon>add</v-icon>
-                </v-btn>
-              </v-list-item-title>
-              <v-divider></v-divider>
-            </v-list-item-content>
-          </v-list-item>
-          <div v-if="loading" class="text-center">
-            <v-progress-circular
-              :size="70"
-              :width="5"
-              color="primary"
-              indeterminate
-            ></v-progress-circular>
-          </div>
-
-          <v-sheet v-else :style="{ overflow: 'auto' }" height="200px">
+  <v-sheet height="85vH" class="app-background">
+    <v-row>
+      <v-col cols="3" class="pa-0 ma-0">
+        <v-navigation-drawer permanent class="ma-0" width="100%">
+          <v-list dense nav>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="text-subtitle-1">
+                  Default Roles
+                </v-list-item-title>
+                <v-divider></v-divider>
+              </v-list-item-content>
+            </v-list-item>
+            <div v-if="loading" class="text-center">
+              <v-progress-circular
+                :size="70"
+                :width="5"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+            </div>
             <v-list-item
-              v-for="item in editedRoles.tenantRoles"
-              :key="item.value"
+              v-for="item in editedRoles.defaultRoles"
+              v-else
+              :key="item.name"
               link
             >
-              <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
+              <v-list-item-content @click="handleRoleSelect(item, 'default')">
                 <v-list-item-title
                   :class="selectedRole === item.id ? 'primary--text' : ''"
                   class="text-body-2"
-                  >{{ item.name }}
-                </v-list-item-title>
-              </v-list-item-content>
-
-              <v-list-item-icon>
-                <v-tooltip bottom>
-                  <template #activator="{ on }">
-                    <v-btn
-                      :disabled="defaultRoles.includes(item.name)"
-                      text
-                      :loading="deletingRole === item.id"
-                      fab
-                      x-small
-                      color="blue-grey"
-                      v-on="on"
-                      @click="deleteRole(item)"
-                    >
-                      <v-icon>delete</v-icon>
-                    </v-btn>
-                  </template>
-                  Remove role
-                </v-tooltip>
-              </v-list-item-icon>
-            </v-list-item>
-            <v-list-item v-if="addRole">
-              <v-list-item-content>
-                <v-list-item-title>
-                  <v-text-field
-                    v-model="roleName"
-                    class="text-body-2 pa-0"
-                    required
-                    autofocus
-                    hide-details
-                    placeholder="Role Name"
-                  ></v-text-field>
-                </v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-icon>
-                <v-btn
-                  text
-                  fab
-                  x-small
-                  color="blue-grey"
-                  @click="cancelAddName"
+                  >{{ formatName(item.name) }}</v-list-item-title
                 >
-                  <v-icon>clear</v-icon>
-                </v-btn>
-              </v-list-item-icon>
+              </v-list-item-content>
             </v-list-item>
-          </v-sheet>
-        </v-list>
-      </v-navigation-drawer>
-    </v-col>
-    <v-col cols="9" class="pa-0">
-      <CreateRoleTable
-        table-only
-        :template="template"
-        :role-name="roleName"
-        @close="refetch"
-      />
-    </v-col>
-  </v-row>
+          </v-list>
+
+          <v-list
+            v-if="
+              editedRoles &&
+                editedRoles.tenantRoles &&
+                editedRoles.tenantRoles.length
+            "
+            dense
+            nav
+          >
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="text-subtitle-1">
+                  Custom Roles
+                  <v-btn
+                    color="primary"
+                    class="white--text"
+                    icon
+                    @click="handleRoleSelect(null, 'new')"
+                  >
+                    <v-icon>add</v-icon>
+                  </v-btn>
+                </v-list-item-title>
+                <v-divider></v-divider>
+              </v-list-item-content>
+            </v-list-item>
+            <div v-if="loading" class="text-center">
+              <v-progress-circular
+                :size="70"
+                :width="5"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+            </div>
+
+            <v-sheet v-else :style="{ overflow: 'auto' }" height="40vH">
+              <v-list-item
+                v-for="item in editedRoles.tenantRoles"
+                :key="item.value"
+                link
+              >
+                <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
+                  <v-list-item-title
+                    :class="selectedRole === item.id ? 'primary--text' : ''"
+                    class="text-body-2"
+                    >{{ item.name }}
+                  </v-list-item-title>
+                </v-list-item-content>
+
+                <v-list-item-icon>
+                  <v-tooltip bottom>
+                    <template #activator="{ on }">
+                      <v-btn
+                        :disabled="defaultRoles.includes(item.name)"
+                        text
+                        :loading="deletingRole === item.id"
+                        fab
+                        x-small
+                        color="blue-grey"
+                        v-on="on"
+                        @click="deleteRole(item)"
+                      >
+                        <v-icon>delete</v-icon>
+                      </v-btn>
+                    </template>
+                    Remove role
+                  </v-tooltip>
+                </v-list-item-icon>
+              </v-list-item>
+              <v-list-item v-if="addRole">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-text-field
+                      v-model="roleName"
+                      class="text-body-2 pa-0"
+                      required
+                      autofocus
+                      hide-details
+                      placeholder="Role Name"
+                    ></v-text-field>
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-btn
+                    text
+                    fab
+                    x-small
+                    color="blue-grey"
+                    @click="cancelAddName"
+                  >
+                    <v-icon>clear</v-icon>
+                  </v-btn>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-sheet>
+          </v-list>
+        </v-navigation-drawer>
+      </v-col>
+      <v-col cols="9" class="pa-0">
+        <CreateRoleTable
+          table-only
+          :template="template"
+          :role-name="roleName"
+          @close="refetch"
+        />
+      </v-col>
+    </v-row>
+  </v-sheet>
 </template>
