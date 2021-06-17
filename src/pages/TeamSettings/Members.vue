@@ -33,7 +33,7 @@ export default {
 
       // Inputs
       inviteEmailInput: null,
-      roleInput: 'TENANT_ADMIN',
+      roleInput: '',
       searchInput: '',
 
       // Forms
@@ -167,7 +167,7 @@ export default {
           variables: {
             input: {
               email: this.inviteEmailInput,
-              role: this.roleInput
+              role_id: this.roleInput
             }
           }
         })
@@ -211,7 +211,7 @@ export default {
       this.$nextTick(() => {
         this.inviteEmailInput = null
         this.inviteError = null
-        this.roleInput = 'TENANT_ADMIN'
+        this.roleInput = ''
       })
     }
   },
@@ -453,11 +453,11 @@ export default {
           label="Role"
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
-          :color="roleColorMap[roleInput]"
+          :color="roleColorMap[roleInput.name]"
           :items="roleSelectionMap"
           :rules="[rules.required]"
           item-text="name"
-          item-value="name"
+          item-value="id"
           item-disabled="disabled"
         >
         </v-select>

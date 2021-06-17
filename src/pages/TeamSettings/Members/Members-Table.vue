@@ -111,7 +111,7 @@ export default {
       isSettingRole: false,
 
       // Inputs
-      roleInput: 'USER',
+      roleInput: '',
 
       // Selected user
       // Set when modifying a user's role or removing user membership
@@ -121,7 +121,6 @@ export default {
   computed: {
     ...mapGetters('license', ['permissions', 'hasPermission']),
     headers() {
-      console.log(this.roles, this.roleInput)
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
         : this.allHeaders.filter(header => header.mobile)
