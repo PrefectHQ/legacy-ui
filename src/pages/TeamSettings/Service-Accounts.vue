@@ -39,7 +39,20 @@ export default {
       serviceAccountsSignal: 0,
       roleInput: null,
       updateAccountRole: false,
-      serviceAccountID: null
+      serviceAccountID: null,
+      // Role maps
+      roleMap: {
+        USER: 'User',
+        READ_ONLY_USER: 'Read-Only',
+        TENANT_ADMIN: 'Administrator',
+        PENDING: 'Pending'
+      },
+      roleColorMap: {
+        USER: 'codeBlueBright',
+        READ_ONLY_USER: 'cloudUIPrimaryDark',
+        TENANT_ADMIN: 'cloudUIPrimaryBlue',
+        PENDING: 'accentOrange'
+      }
     }
   },
   computed: {
@@ -147,6 +160,25 @@ export default {
       this.serviceAccountNameInput = event.firstName
       this.serviceAccountID = event.membershipID
       this.dialogAddServiceAccount = true
+    },
+    formatName(roles) {
+      if (!roles) return []
+      const defaultRoles = roles
+        ?.filter(role => this.roleMap[role.name])
+        .map(
+          word =>
+            word.name.charAt(0).toUpperCase() +
+            word.name
+              .substr(1)
+              .toLowerCase()
+              .split('_')
+              .join(' ')
+        )
+      const tenantRoles = roles
+        ?.filter(role => role.tenant_id === this.tenant.id)
+        .map(word => word.name)
+
+      return defaultRoles.concat(tenantRoles)
     }
   },
   apollo: {
@@ -254,6 +286,7 @@ export default {
           :rules="[rules.required]"
           @keydown.enter="addServiceAccount"
         />
+        <!-- {{ formatName(roles) }} -->
         <v-select
           v-model="roleInput"
           outlined
@@ -261,11 +294,8 @@ export default {
           label="Role"
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
-          :items="roles"
+          :items="formatName(roles)"
           :rules="[rules.required]"
-          item-text="name"
-          item-value="id"
-          item-disabled="disabled"
         >
         </v-select>
       </v-form>

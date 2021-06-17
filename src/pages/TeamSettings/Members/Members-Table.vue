@@ -1,6 +1,6 @@
 //Neaten Role names //Check that role setting works - seems not to like role_id
-- may be the gql query not the backend //Figure out clear and cancel and error
-handling
+- may be the gql query not the backend //Figure out clear and cancel and error -
+updating role does not refresh automatically handling
 
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -277,7 +277,13 @@ export default {
 
       <!-- ROLE -->
       <template #item.role="{ item }">
-        <v-chip small dark :color="roleColorMap[item.role] || 'secondaryLight'">
+        <v-chip
+          small
+          dark
+          :color="
+            !roleColorMap[item.role] ? 'accentPink' : roleColorMap[item.role]
+          "
+        >
           {{ roleMap[item.role] || item.role }}
         </v-chip>
       </template>

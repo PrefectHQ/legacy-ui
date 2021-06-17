@@ -89,7 +89,21 @@ export default {
       newAPIKey: '',
       newKeyName: '',
       keyToDelete: null,
-      dialogRemoveKey: false
+      dialogRemoveKey: false,
+
+      // Role maps
+      roleMap: {
+        USER: 'User',
+        READ_ONLY_USER: 'Read-Only',
+        TENANT_ADMIN: 'Administrator',
+        PENDING: 'Pending'
+      },
+      roleColorMap: {
+        USER: 'codeBlueBright',
+        READ_ONLY_USER: 'cloudUIPrimaryDark',
+        TENANT_ADMIN: 'cloudUIPrimaryBlue',
+        PENDING: 'accentOrange'
+      }
     }
   },
   computed: {
@@ -350,7 +364,17 @@ export default {
         </td>
       </template>
       <template #item.role="{ item }">
-        {{ item.role }}
+        <!-- {{ item.role }} -->
+
+        <v-chip
+          small
+          dark
+          :color="
+            !roleColorMap[item.role] ? 'accentPink' : roleColorMap[item.role]
+          "
+        >
+          {{ roleMap[item.role] || item.role }}
+        </v-chip>
       </template>
 
       <template v-if="isTenantAdmin" #item.create="{ item }">

@@ -69,10 +69,12 @@ export default {
         USER: 'User',
         READ_ONLY_USER: 'Read-Only',
         TENANT_ADMIN: 'Administrator',
-        PENDING: 'Pending'
+        PENDING: 'Pending',
+        ENTERPRISE_LICENSE_ADMIN: 'Enterprise License Admin'
       },
       roleColorMap: {
         USER: 'codeBlueBright',
+        ENTERPRISE_LICENSE_ADMIN: 'cloudUIPrimaryBlue',
         READ_ONLY_USER: 'cloudUIPrimaryDark',
         TENANT_ADMIN: 'cloudUIPrimaryBlue',
         PENDING: 'accentOrange'
