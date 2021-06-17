@@ -125,7 +125,7 @@ export const flowRunHistoryMixin = {
 
         d.ignore = d.state == 'Scheduled'
 
-        d.color = computedStyle.getPropertyValue(`--v-${d.state}-base`)
+        d.color = computedStyle?.getPropertyValue(`--v-${d.state}-base`)
 
         d.usePattern = d.state == 'Scheduled' && future <= 0
 

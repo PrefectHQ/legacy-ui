@@ -1,0 +1,18 @@
+query TableFlowRunsCount(
+ 
+  $agent_id: uuid
+  $name: String
+  $state: [String!]
+) {
+  flow_run_aggregate(
+    where: {
+      agent_id: {_eq: $agent_id}
+      name: { _ilike: $name }
+      state: { _in: $state, _neq: "Scheduled" }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+}
