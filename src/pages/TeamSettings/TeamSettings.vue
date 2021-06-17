@@ -27,10 +27,7 @@ export default {
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('tenant', ['tenant', 'role']),
-    isTenantAdmin() {
-      return this.role == 'TENANT_ADMIN'
-    }
+    ...mapGetters('tenant', ['tenant', 'role'])
   },
   watch: {
     tenant() {
@@ -273,7 +270,7 @@ export default {
 
       <template #append>
         <v-list dense>
-          <v-list-item v-if="false && isTenantAdmin" :ripple="false">
+          <v-list-item v-if="false && role == 'TENANT_ADMIN'" :ripple="false">
             <v-list-item-content v-if="$vuetify.breakpoint.mdAndUp">
               <v-btn
                 color="red"
@@ -304,7 +301,7 @@ export default {
       </v-fade-transition>
     </div>
 
-    <template v-if="false && isTenantAdmin">
+    <template v-if="false && role == 'TENANT_ADMIN'">
       <v-dialog v-model="deleteTeamDialog" max-width="600">
         <v-card>
           <v-card-title class="text-h5 word-break-normal mb-3">
@@ -325,7 +322,7 @@ export default {
               </div>
               <v-form v-model="deleteTeamFormValid">
                 <v-text-field
-                  v-if="isTenantAdmin"
+                  v-if="tenant.role == 'TENANT_ADMIN'"
                   v-model="teamName"
                   autocomplete="off"
                   :label="tenant.name"
