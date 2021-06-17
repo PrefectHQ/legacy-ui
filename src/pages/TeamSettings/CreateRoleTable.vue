@@ -10,11 +10,6 @@ import { mapActions } from 'vuex'
 export default {
   components: {},
   props: {
-    // clear: {
-    //   type: Boolean,
-    //   required: false,
-    //   default: false
-    // },
     roleName: {
       type: String,
       required: false,
@@ -25,11 +20,6 @@ export default {
       required: false,
       default: null
     }
-    // tableOnly: {
-    //   type: Boolean,
-    //   required: false,
-    //   default: false
-    // }
   },
   data() {
     return {
@@ -83,52 +73,18 @@ export default {
           }
         }
       },
-      // Table headers
-      // headers: [
-      //   {
-      //     text: 'Type',
-      //     value: 'name'
-      //   },
-      //   { text: '', value: 'all' },
-      //   { text: 'Read', value: 'read' },
-      //   { text: 'Create', value: 'create' },
-      //   { text: 'Update', value: 'update' },
-      //   { text: 'Delete', value: 'delete' }
-      // ],
-      // includedPermissions: [],
-      // searchInput: '',
-      // roleName: '',
       loadingKey: 0,
-      // allPermissions: false,
       loadingRole: false
-      // showTenantAdmin: false
     }
   },
   computed: {
-    // itemsPerPage() {
-    //   return this.permissions?.length
-    // },
     permissionsList() {
       return this.auth?.auth_info?.permissions
-      // return this.allPermissions
-      //   ? [
-      //       ...this.template?.permissions,
-      //       ...this.auth?.permissions.filter(
-      //         permission => !this.template.permissions.includes(permission)
-      //       )
-      //     ]
-      //   : this.template?.permissions || this.auth?.permissions
     },
     authPermissionObject() {
       let obj = Object.values(this.permissionGroups).map(permissionGroup => {
-        // console.log('group', permissionGroup)
         this.auth?.permissions?.reduce((permissionsObj, item) => {
           const sections = item.split(':')
-          // if (!['create', 'delete', 'update', 'read'].includes(sections[0])) {
-          //   if (item === 'tenant:admin') this.showTenantAdmin = true
-          //   return permissionsObj
-          // }
-          // console.log('name', permissionsObj)
           if (permissionsObj[sections[1]]?.includeMore) {
             if (sections[0] === 'create')
               permissionsObj[sections[1]].disableCreate = false
@@ -158,19 +114,10 @@ export default {
           }
           return permissionsObj
         }, permissionGroup)
-        // console.log(permissionGroup)
         return permissionGroup
       })
-      // console.log(obj)
       return obj
     },
-    // permissions() {
-    //   if (!this.authPermissionObject && !this.templatePermissionObject)
-    //     return []
-    //   const permissionObject = this.templatePermissionObject()
-
-    //   return Object.values(permissionObject)
-    // },
     loading() {
       return this.loadingKey > 0
     }
@@ -193,7 +140,6 @@ export default {
       return Object.keys(this.permissionGroups)[index]
     },
     templatePermissionObject() {
-      // console.log(this.authPermissionObject)
       if (!this.authPermissionObject) return
       const permissionsObj = this.authPermissionObject.map(group => {
         Object?.values(group).map(obj => {
@@ -203,7 +149,6 @@ export default {
           obj.includeDelete = false
           obj.includeAll = false
         })
-        // console.log('group', group)
         this.template?.permissions?.map(item => {
           const sections = item.split(':')
           if (group[sections[1]]) {
@@ -226,12 +171,10 @@ export default {
       return permissionsObj
     },
     handleAll(item) {
-      // console.log('click', item.includeAll, item)
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
       item.includeDelete = item.includeAll
       item.includeUpdate = item.includeAll
-      // console.log('click2', item.includeAll, item.includeAll, item)
     },
     handleCreateUpdateClick() {
       this.loadingRole = true
@@ -284,7 +227,6 @@ export default {
     async updateRole() {
       try {
         const includedPermissions = []
-        // console.log(this.permissions)
         this.permissions.forEach(group => {
           Object.values(group).forEach(permission => {
             if (permission.includeCreate)
@@ -297,10 +239,6 @@ export default {
               includedPermissions.push(`update:${permission.shortName}`)
           })
         })
-
-        // const permissions = this.includedPermissions.map(
-        //   permission => permission.value
-        // )
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/update-custom-role.gql'),
           variables: {
@@ -310,7 +248,6 @@ export default {
             }
           }
         })
-        // console.log('res', res)
         if (res?.data?.update_custom_role_permissions) {
           this.setAlert({
             alertShow: true,
@@ -331,8 +268,6 @@ export default {
       }
     },
     reset() {
-      // this.templatePermissionObject()
-      // this.roleName = ''
       this.$emit('close')
     }
   },
@@ -340,7 +275,6 @@ export default {
     auth: {
       query: require('@/graphql/TeamSettings/permissions.gql'),
       loadingKey: 'loadingKey',
-      // pollInterval: 1000,
       update: data => data.auth_info
     }
   }
@@ -349,16 +283,6 @@ export default {
 
 <template>
   <v-card width="100%">
-    <!-- <v-card-title v-if="!tableOnly"> Add name and permissions</v-card-title>
-    <v-card-subtitle v-if="!tableOnly" class="mt-4 pb-0">
-      <v-text-field
-        v-model="roleName"
-        :disabled="!!template"
-        outlined
-        required
-        placeholder="Role Name"
-      ></v-text-field>
-    </v-card-subtitle> -->
     <v-card-text class="font-weight-light">
       <v-card-actions v-if="!template || !template.default">
         <v-spacer />
@@ -374,20 +298,6 @@ export default {
         </v-btn>
       </v-card-actions>
       <v-sheet height="70vh" :style="{ overflow: 'auto' }">
-        <!-- <v-text-field
-          v-if="!tableOnly"
-          v-model="searchInput"
-          class="rounded-0 elevation-1 mb-1"
-          solo
-          dense
-          hide-details
-          single-line
-          placeholder="Search by type or name"
-          prepend-inner-icon="search"
-          autocomplete="new-password"
-        ></v-text-field> -->
-
-        <!-- <v-container fluid> -->
         <div v-for="(group, index) in permissions" :key="index">
           <v-row class="mb-4 text-body-1" no-gutters>
             <v-col cols="4" class="text-h5 run-body">
@@ -415,8 +325,6 @@ export default {
                 />
               </v-col>
               <v-col cols="1" class="ma-0">
-                <!-- </template> -->
-                <!-- <template #item.create="{item}"> -->
                 <v-checkbox
                   v-if="!item.disableCreate"
                   v-model="item.includeCreate"
@@ -426,8 +334,6 @@ export default {
                 />
               </v-col>
               <v-col cols="1" class="ma-0">
-                <!-- </template> -->
-                <!-- <template #item.read="{item}"> -->
                 <v-checkbox
                   v-if="!item.disableRead"
                   v-model="item.includeRead"
@@ -437,8 +343,6 @@ export default {
                 />
               </v-col>
               <v-col cols="1" class="ma-0">
-                <!-- </template>
-            <template #item.update="{item}"> -->
                 <v-checkbox
                   v-if="!item.disableUpdate"
                   v-model="item.includeUpdate"
@@ -448,8 +352,6 @@ export default {
                 />
               </v-col>
               <v-col cols="1" class="ma-0">
-                <!-- </template>
-            <template #item.delete="{item}"> -->
                 <v-checkbox
                   v-if="!item.disableDelete"
                   v-model="item.includeDelete"
@@ -463,10 +365,7 @@ export default {
           <v-row>
             <v-col class="my-4" cols="12"><v-divider></v-divider></v-col>
           </v-row>
-          <!-- </template> -->
-          <!-- </v-data-table> -->
         </div>
-        <!-- </v-container> --->
       </v-sheet>
     </v-card-text>
   </v-card>

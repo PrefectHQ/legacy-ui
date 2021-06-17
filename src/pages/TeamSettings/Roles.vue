@@ -11,8 +11,6 @@
 //See also slack notes
 
 import { mapActions, mapGetters } from 'vuex'
-
-// import ManagementLayout from '@/layouts/ManagementLayout'
 import CreateRoleTable from '@/pages/TeamSettings/CreateRoleTable'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
@@ -25,47 +23,18 @@ const DEFAULT_ROLES = [
 
 export default {
   components: {
-    // ManagementLayout,
     CreateRoleTable
   },
   mixins: [formatTime],
   data() {
     return {
-      // attrs: {
-      //   class: 'mb-6',
-      //   boilerplate: true,
-      //   elevation: 2
-      // },
-      // formatting: false,
-      // searchInput: null,
       loading: 0,
-      // expanded: [],
-      // createRoleDialog: false,
-      // clearDialog: false,
       template: null,
       deletingRole: null,
       defaultRoles: DEFAULT_ROLES,
       useDefault: true,
       roleName: '',
       addRole: false
-      // headers: [
-      //   {
-      //     text: 'Name',
-      //     value: 'name'
-      //   },
-      //   {
-      //     text: 'Created',
-      //     value: 'created'
-      //   },
-      //   {
-      //     text: 'Updated',
-      //     value: 'updated'
-      //   },
-      //   {
-      //     text: 'Actions',
-      //     value: 'actions'
-      //   }
-      // ]
     }
   },
   computed: {
@@ -124,27 +93,7 @@ export default {
       }
       this.template = role
     },
-    // handleAlert(type, message) {
-    //   this.setAlert({
-    //     alertShow: true,
-    //     alertMessage: message,
-    //     alertType: type
-    //   })
-    // },
-    // closeDialog() {
-    //   this.clearDialog = true
-    //   this.createRoleDialog = false
-    //   this.template = null
-    // },
-    // resetClear() {
-    //   this.clearDialog = false
-    // },
-    // editRole(role) {
-    //   this.template = role
-    //   this.expanded.push(role)
-    // },
     refetch() {
-      // console.log('ref')
       this.$apollo.queries.roles.refetch()
       this.roleName = ''
       this.addRole = false
