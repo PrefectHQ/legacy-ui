@@ -281,7 +281,9 @@ export default {
           small
           dark
           :color="
-            !roleColorMap[item.role] ? 'accentPink' : roleColorMap[item.role]
+            !roleColorMap[item.role]
+              ? 'accentPink'
+              : roleColorMap[item.role] || 'secondaryLight'
           "
         >
           {{ roleMap[item.role] || item.role }}
@@ -352,7 +354,7 @@ export default {
         :color="roleColorMap[roleInput]"
         prepend-icon="supervised_user_circle"
         :items="roles"
-        item-text="name"
+        item-text="value"
         item-value="id"
       >
         <!-- <template #item="{ item }">

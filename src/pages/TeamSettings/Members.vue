@@ -70,7 +70,7 @@ export default {
         READ_ONLY_USER: 'Read-Only',
         TENANT_ADMIN: 'Administrator',
         PENDING: 'Pending',
-        ENTERPRISE_LICENSE_ADMIN: 'Enterprise License Admin'
+        ENTERPRISE_LICENSE_ADMIN: 'License Administrator'
       },
       roleColorMap: {
         USER: 'codeBlueBright',
@@ -215,6 +215,30 @@ export default {
         this.inviteError = null
         this.roleInput = 'TENANT_ADMIN'
       })
+    },
+    titleCase(str) {
+      return str.replace(/\b\S/g, t => t.toUpperCase())
+    },
+    formatRole(roles) {
+      if (!roles) return []
+
+      const defaultRoles = roles
+        ?.filter(role => this.roleMap[role.name])
+        .map(item => ({
+          ...item,
+          value: this.titleCase(
+            item.name
+              .split('_')
+              .join(' ')
+              .toLowerCase()
+          )
+        }))
+
+      const tenantRoles = roles
+        ?.filter(role => role.tenant_id === this.tenant.id)
+        .map(word => ({ ...word, value: word.name }))
+
+      return defaultRoles.concat(tenantRoles)
     }
   },
   apollo: {
@@ -374,7 +398,7 @@ export default {
           :is-tenant-admin="isTenantAdmin"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
-          :roles="roles"
+          :roles="formatRole(roles)"
           :search="searchInput"
           :tenant="tenant"
           :user="user"
@@ -456,9 +480,9 @@ export default {
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
-          :items="roleSelectionMap"
+          :items="formatRole(roles)"
           :rules="[rules.required]"
-          item-text="name"
+          item-text="value"
           item-value="name"
           item-disabled="disabled"
         >

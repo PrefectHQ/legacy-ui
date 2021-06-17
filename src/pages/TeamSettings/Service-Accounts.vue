@@ -45,10 +45,12 @@ export default {
         USER: 'User',
         READ_ONLY_USER: 'Read-Only',
         TENANT_ADMIN: 'Administrator',
-        PENDING: 'Pending'
+        PENDING: 'Pending',
+        ENTERPRISE_LICENSE_ADMIN: 'License Administrator'
       },
       roleColorMap: {
         USER: 'codeBlueBright',
+        ENTERPRISE_LICENSE_ADMIN: 'cloudUIPrimaryBlue',
         READ_ONLY_USER: 'cloudUIPrimaryDark',
         TENANT_ADMIN: 'cloudUIPrimaryBlue',
         PENDING: 'accentOrange'
@@ -161,25 +163,48 @@ export default {
       this.serviceAccountID = event.membershipID
       this.dialogAddServiceAccount = true
     },
+    titleCase(str) {
+      return str.replace(/\b\S/g, t => t.toUpperCase())
+    },
     formatName(roles) {
       if (!roles) return []
       const defaultRoles = roles
         ?.filter(role => this.roleMap[role.name])
-        .map(
-          word =>
-            word.name.charAt(0).toUpperCase() +
-            word.name
-              .substr(1)
-              .toLowerCase()
+        .map(item => ({
+          ...item,
+          value: this.titleCase(
+            item.name
               .split('_')
               .join(' ')
-        )
+              .toLowerCase()
+          )
+        }))
+
       const tenantRoles = roles
         ?.filter(role => role.tenant_id === this.tenant.id)
-        .map(word => word.name)
+        .map(word => ({ ...word, value: word.name }))
 
       return defaultRoles.concat(tenantRoles)
     }
+    // formatName(roles) {
+    //   if (!roles) return []
+    //   const defaultRoles = roles
+    //     ?.filter(role => this.roleMap[role.name])
+    //     .map(
+    //       word =>
+    //         word.name.charAt(0).toUpperCase() +
+    //         word.name
+    //           .substr(1)
+    //           .toLowerCase()
+    //           .split('_')
+    //           .join(' ')
+    //     )
+    //   const tenantRoles = roles
+    //     ?.filter(role => role.tenant_id === this.tenant.id)
+    //     .map(word => word.name)
+
+    //   return defaultRoles.concat(tenantRoles)
+    // }
   },
   apollo: {
     roles: {
@@ -286,7 +311,6 @@ export default {
           :rules="[rules.required]"
           @keydown.enter="addServiceAccount"
         />
-        <!-- {{ formatName(roles) }} -->
         <v-select
           v-model="roleInput"
           outlined
@@ -296,6 +320,8 @@ export default {
           prepend-icon="supervised_user_circle"
           :items="formatName(roles)"
           :rules="[rules.required]"
+          item-text="value"
+          item-value="id"
         >
         </v-select>
       </v-form>

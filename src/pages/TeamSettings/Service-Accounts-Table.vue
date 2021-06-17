@@ -370,7 +370,9 @@ export default {
           small
           dark
           :color="
-            !roleColorMap[item.role] ? 'accentPink' : roleColorMap[item.role]
+            !roleColorMap[item.role]
+              ? 'accentPink'
+              : roleColorMap[item.role] || 'secondaryLight'
           "
         >
           {{ roleMap[item.role] || item.role }}
