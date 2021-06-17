@@ -33,6 +33,7 @@ export default {
   data() {
     return {
       permissions: null,
+      defaultRole: false,
       permissionGroups: {
         Auth: {
           'api-key': { name: 'User API Key', value: 'api-key' },
@@ -174,8 +175,9 @@ export default {
     }
   },
   watch: {
-    template() {
-      console.log('template switch')
+    template(val) {
+      console.log('template switch', val)
+      this.defaultRole = val?.default ? true : false
       this.permissions = Object.values(this.templatePermissionObject())
     }
   },
@@ -385,6 +387,7 @@ export default {
                 <v-checkbox
                   v-model="item.includeAll"
                   hide-details
+                  :readonly="defaultRole"
                   :style="{ 'margin-top': '0px' }"
                   @click="handleAll(item)"
                 />
@@ -395,6 +398,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableCreate"
                   v-model="item.includeCreate"
+                  :readonly="defaultRole"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -405,6 +409,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableRead"
                   v-model="item.includeRead"
+                  :readonly="defaultRole"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -415,6 +420,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableUpdate"
                   v-model="item.includeUpdate"
+                  :readonly="defaultRole"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -425,6 +431,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableDelete"
                   v-model="item.includeDelete"
+                  :readonly="defaultRole"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />

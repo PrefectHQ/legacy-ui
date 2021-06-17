@@ -73,12 +73,15 @@ export default {
     ]),
     editedRoles() {
       if (!this.roles) return []
-      const defaultRoles = this.roles?.filter(role =>
-        this.defaultRoles.includes(role.name)
-      )
+      const defaultRoles = this.roles?.reduce((arr, role) => {
+        if (this.defaultRoles.includes(role.name))
+          arr.push({ ...role, default: true })
+        return arr
+      }, [])
       const tenantRoles = this.roles?.filter(
         role => role.tenant_id === this.tenant.id
       )
+      console.log(defaultRoles)
       return { defaultRoles, tenantRoles }
     }
   },
