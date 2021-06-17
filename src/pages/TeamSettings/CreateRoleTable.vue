@@ -1,9 +1,3 @@
-const permissionGroups = { Auth: {api-key: {name: "User API Key", value:
-'api-key'}, service-account: {name: 'Service Account', value:
-'service-account'}, 'service-api-key': {name: "Service API Key", value:
-'service-api-key'}}, Flows: {run: {name "Run", value: "run"}, project:
-{name:'project', value: 'project'}, logs: {name: 'Logs', value: 'logs'}}}
-
 <script>
 // make sure includeCreate etc is not included in includedpermissions if they
 //don't exist/are disabled
@@ -30,12 +24,12 @@ export default {
       type: Object,
       required: false,
       default: null
-    },
-    tableOnly: {
-      type: Boolean,
-      required: false,
-      default: false
     }
+    // tableOnly: {
+    //   type: Boolean,
+    //   required: false,
+    //   default: false
+    // }
   },
   data() {
     return {
@@ -90,30 +84,30 @@ export default {
         }
       },
       // Table headers
-      headers: [
-        {
-          text: 'Type',
-          value: 'name'
-        },
-        { text: '', value: 'all' },
-        { text: 'Read', value: 'read' },
-        { text: 'Create', value: 'create' },
-        { text: 'Update', value: 'update' },
-        { text: 'Delete', value: 'delete' }
-      ],
-      includedPermissions: [],
-      searchInput: '',
+      // headers: [
+      //   {
+      //     text: 'Type',
+      //     value: 'name'
+      //   },
+      //   { text: '', value: 'all' },
+      //   { text: 'Read', value: 'read' },
+      //   { text: 'Create', value: 'create' },
+      //   { text: 'Update', value: 'update' },
+      //   { text: 'Delete', value: 'delete' }
+      // ],
+      // includedPermissions: [],
+      // searchInput: '',
       // roleName: '',
       loadingKey: 0,
-      allPermissions: false,
-      loadingRole: false,
-      showTenantAdmin: false
+      // allPermissions: false,
+      loadingRole: false
+      // showTenantAdmin: false
     }
   },
   computed: {
-    itemsPerPage() {
-      return this.permissions?.length
-    },
+    // itemsPerPage() {
+    //   return this.permissions?.length
+    // },
     permissionsList() {
       return this.auth?.auth_info?.permissions
       // return this.allPermissions
