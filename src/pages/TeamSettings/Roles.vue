@@ -77,12 +77,7 @@ export default {
     ...mapActions('alert', ['setAlert']),
     //We should update to use same formatting as in members page?
     formatName(name) {
-      const newName = name
-        .split('_')
-        .map(
-          word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
-        )
-      return newName.join(' ')
+      return this.roleMap[name]
     },
     handleRoleSelect(role, roleType) {
       this.useDefault = false
