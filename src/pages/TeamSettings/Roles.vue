@@ -2,6 +2,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import CreateRoleTable from '@/pages/TeamSettings/CreateRoleTable'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { ROLE_MAP } from '@/utils/roles.js'
 
 const DEFAULT_ROLES = [
   'TENANT_ADMIN',
@@ -24,7 +25,8 @@ export default {
       useDefault: true,
       roleName: '',
       addRole: false,
-      roleId: null
+      roleId: null,
+      roleMap: ROLE_MAP
     }
   },
   computed: {
