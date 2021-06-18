@@ -50,7 +50,7 @@ export default {
       },
       roleColorMap: {
         USER: 'codeBlueBright',
-        ENTERPRISE_LICENSE_ADMIN: 'cloudUIPrimaryBlue',
+        ENTERPRISE_LICENSE_ADMIN: 'accent',
         READ_ONLY_USER: 'cloudUIPrimaryDark',
         TENANT_ADMIN: 'cloudUIPrimaryBlue',
         PENDING: 'accentOrange'
@@ -75,6 +75,26 @@ export default {
       return this.updateAccountRole
         ? 'Update service account role'
         : 'Add a new service account'
+    },
+    formatName() {
+      if (!this.roles) return []
+      const defaultRoles = this.roles
+        ?.filter(role => this.roleMap[role.name])
+        .map(item => ({
+          ...item,
+          value: this.titleCase(
+            item.name
+              .split('_')
+              .join(' ')
+              .toLowerCase()
+          )
+        }))
+
+      const tenantRoles = this.roles
+        ?.filter(role => role.tenant_id === this.tenant.id)
+        .map(word => ({ ...word, value: word.name }))
+
+      return defaultRoles.concat(tenantRoles)
     }
   },
   watch: {
@@ -168,46 +188,7 @@ export default {
     },
     titleCase(str) {
       return str.replace(/\b\S/g, t => t.toUpperCase())
-    },
-    formatName(roles) {
-      if (!roles) return []
-      const defaultRoles = roles
-        ?.filter(role => this.roleMap[role.name])
-        .map(item => ({
-          ...item,
-          value: this.titleCase(
-            item.name
-              .split('_')
-              .join(' ')
-              .toLowerCase()
-          )
-        }))
-
-      const tenantRoles = roles
-        ?.filter(role => role.tenant_id === this.tenant.id)
-        .map(word => ({ ...word, value: word.name }))
-
-      return defaultRoles.concat(tenantRoles)
     }
-    // formatName(roles) {
-    //   if (!roles) return []
-    //   const defaultRoles = roles
-    //     ?.filter(role => this.roleMap[role.name])
-    //     .map(
-    //       word =>
-    //         word.name.charAt(0).toUpperCase() +
-    //         word.name
-    //           .substr(1)
-    //           .toLowerCase()
-    //           .split('_')
-    //           .join(' ')
-    //     )
-    //   const tenantRoles = roles
-    //     ?.filter(role => role.tenant_id === this.tenant.id)
-    //     .map(word => word.name)
-
-    //   return defaultRoles.concat(tenantRoles)
-    // }
   },
   apollo: {
     roles: {
@@ -268,6 +249,8 @@ export default {
 
         <ServiceAccountsTable
           :permissions-check="permissionsCheck"
+          :role-color-map="roleColorMap"
+          :role-map="roleMap"
           :search="searchInput"
           :tenant="tenant"
           :refetch-signal="serviceAccountsSignal"
@@ -321,7 +304,7 @@ export default {
           label="Role"
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
-          :items="formatName(roles)"
+          :items="formatName"
           :rules="[rules.required]"
           item-text="value"
           item-value="id"

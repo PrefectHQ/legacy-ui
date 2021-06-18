@@ -11,6 +11,16 @@ export default {
   },
   mixins: [formatTime],
   props: {
+    // Mapping between role & role color
+    roleColorMap: {
+      type: Object,
+      required: true
+    },
+    // Mapping between role & displayed role text
+    roleMap: {
+      type: Object,
+      required: true
+    },
     // Check admin privileges
     permissionsCheck: {
       type: Boolean,
@@ -89,21 +99,7 @@ export default {
       newAPIKey: '',
       newKeyName: '',
       keyToDelete: null,
-      dialogRemoveKey: false,
-
-      // Role maps
-      roleMap: {
-        USER: 'User',
-        READ_ONLY_USER: 'Read-Only',
-        TENANT_ADMIN: 'Administrator',
-        PENDING: 'Pending'
-      },
-      roleColorMap: {
-        USER: 'codeBlueBright',
-        READ_ONLY_USER: 'cloudUIPrimaryDark',
-        TENANT_ADMIN: 'cloudUIPrimaryBlue',
-        PENDING: 'accentOrange'
-      }
+      dialogRemoveKey: false
     }
   },
   computed: {

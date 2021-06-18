@@ -74,7 +74,7 @@ export default {
       },
       roleColorMap: {
         USER: 'codeBlueBright',
-        ENTERPRISE_LICENSE_ADMIN: 'cloudUIPrimaryBlue',
+        ENTERPRISE_LICENSE_ADMIN: 'accent',
         READ_ONLY_USER: 'cloudUIPrimaryDark',
         TENANT_ADMIN: 'cloudUIPrimaryBlue',
         PENDING: 'accentOrange'
@@ -117,6 +117,27 @@ export default {
       //     color: 'cloudUIPrimaryDark'
       //   }
       // ]
+    },
+    formatRole() {
+      if (!this.roles) return []
+
+      const defaultRoles = this.roles
+        ?.filter(role => this.roleMap[role.name])
+        .map(item => ({
+          ...item,
+          value: this.titleCase(
+            item.name
+              .split('_')
+              .join(' ')
+              .toLowerCase()
+          )
+        }))
+
+      const tenantRoles = this.roles
+        ?.filter(role => role.tenant_id === this.tenant.id)
+        .map(word => ({ ...word, value: word.name }))
+
+      return defaultRoles.concat(tenantRoles)
     },
     totalUsers() {
       return this.users + this.invitations
@@ -222,27 +243,6 @@ export default {
     },
     titleCase(str) {
       return str.replace(/\b\S/g, t => t.toUpperCase())
-    },
-    formatRole(roles) {
-      if (!roles) return []
-
-      const defaultRoles = roles
-        ?.filter(role => this.roleMap[role.name])
-        .map(item => ({
-          ...item,
-          value: this.titleCase(
-            item.name
-              .split('_')
-              .join(' ')
-              .toLowerCase()
-          )
-        }))
-
-      const tenantRoles = roles
-        ?.filter(role => role.tenant_id === this.tenant.id)
-        .map(word => ({ ...word, value: word.name }))
-
-      return defaultRoles.concat(tenantRoles)
     }
   },
   apollo: {
@@ -402,7 +402,7 @@ export default {
           :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
-          :roles="formatRole(roles)"
+          :roles="formatRole"
           :search="searchInput"
           :tenant="tenant"
           :user="user"
@@ -484,7 +484,7 @@ export default {
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
-          :items="formatRole(roles)"
+          :items="formatRole"
           :rules="[rules.required]"
           item-text="value"
           item-value="name"
