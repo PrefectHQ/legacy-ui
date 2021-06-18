@@ -163,19 +163,25 @@ export default {
                 <v-list-item-title class="text-subtitle-1 mb-2 mt-4">
                   Default Roles
                 </v-list-item-title>
-                <div v-if="loading" class="text-center">
-                  <v-progress-linear
-                    :width="5"
-                    color="primary"
-                    indeterminate
-                  ></v-progress-linear>
-                </div>
-                <v-divider v-else></v-divider>
+                <v-divider></v-divider>
               </v-list-item-content>
             </v-list-item>
+            <div v-if="loading">
+              <v-list-item
+                v-for="(name, index) in Object.values(roleMap)"
+                :key="index"
+                class="text-body-2"
+                link
+              >
+                <v-list-item-content>
+                  <v-list-item-title>{{ name }} </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </div>
 
             <v-list-item
               v-for="item in editedRoles.defaultRoles"
+              v-else
               :key="item.name"
               link
               :style="
@@ -219,14 +225,12 @@ export default {
                 <v-divider></v-divider>
               </v-list-item-content>
             </v-list-item>
-            <div v-if="loading" class="text-center">
-              <v-progress-linear
-                color="primary"
-                indeterminate
-              ></v-progress-linear>
-            </div>
 
-            <v-sheet v-else :style="{ overflow: 'auto' }" height="40vH">
+            <v-sheet
+              v-if="!loading"
+              :style="{ overflow: 'auto' }"
+              height="40vH"
+            >
               <v-list-item
                 v-for="item in editedRoles.tenantRoles"
                 :key="item.value"
