@@ -146,7 +146,6 @@ export default {
       }
     },
     updateRole(event) {
-      console.log('event', event)
       this.updateAccountRole = true
       this.serviceAccountNameInput = event.firstName
       this.serviceAccountID = event.membershipID
