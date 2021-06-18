@@ -303,6 +303,7 @@ export default {
       <v-progress-circular
         indeterminate
         class="ma-12"
+        :disabled="!isChanged"
         color="primary"
         :size="200"
         :width="8"
