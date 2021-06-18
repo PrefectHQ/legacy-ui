@@ -467,7 +467,7 @@ export default {
       </v-btn>
 
       <v-btn
-        v-if="!overlay && isCloud"
+        v-if="!overlay && isCloud && hasPermission('update', 'run')"
         small
         depressed
         color="primary"

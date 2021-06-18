@@ -32,6 +32,8 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('agent', ['sorting', 'sortedAgent']),
+    ...mapGetters('license', ['hasPermission']),
+
     agentId() {
       return this.$route.params.id
     },
@@ -120,7 +122,10 @@ export default {
         :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
       >
         <v-btn
-          v-if="agentDetails.status === 'unhealthy'"
+          v-if="
+            agentDetails.status === 'unhealthy' &&
+              hasPermission('delete', 'agent')
+          "
           text
           tile
           small
