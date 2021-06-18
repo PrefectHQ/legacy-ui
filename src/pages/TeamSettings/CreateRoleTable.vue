@@ -18,6 +18,11 @@ export default {
   },
   data() {
     return {
+      attrs: {
+        class: 'mb-0',
+        boilerplate: true,
+        elevation: 0
+      },
       isChanged: false,
       templatePermissions: null,
       permissions: null,
@@ -55,9 +60,6 @@ export default {
           },
           ['audit-trail']: { name: 'Audit Trail', value: 'audit-trail' }
         },
-        // User: {
-        //   login: { name: 'Login', value: 'login' }
-        // },
         Admin: {
           usage: { name: 'Usage', value: 'usage' },
           user: { name: 'User', value: 'user' },
@@ -307,14 +309,29 @@ export default {
 <template>
   <v-card elevation="0" width="100%">
     <v-card-text v-if="loading" :style="{ height: '80vH' }" class="text-center">
-      <v-progress-circular
-        indeterminate
-        class="ma-12"
-        :disabled="!isChanged"
-        color="primary"
-        :size="200"
-        :width="8"
-      ></v-progress-circular>
+      <v-row>
+        <v-col cols="12">
+          <v-skeleton-loader v-bind="attrs" type="actions"></v-skeleton-loader>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="4">
+          <v-skeleton-loader v-bind="attrs" type="text"></v-skeleton-loader>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="4">
+          <v-skeleton-loader
+            v-for="n in 4"
+            :key="n"
+            v-bind="attrs"
+            type="list-item"
+          ></v-skeleton-loader>
+        </v-col>
+        <v-col cols="8">
+          <v-skeleton-loader v-bind="attrs" type="image"></v-skeleton-loader>
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-card-text v-else class="font-weight-light">
       <v-card-actions v-if="!template || !template.default">
