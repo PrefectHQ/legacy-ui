@@ -21,13 +21,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     existingCard() {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return this.hasPermission('create', 'license')
     },
     isSelfServe() {
       return (
@@ -51,7 +51,9 @@ export default {
       const type = this.tempPlanName || this.license?.terms?.plan
       const planName = type === 'STARTER_2021' ? 'FREE_2021' : type
       return (
-        !this.isTenantAdmin || !this.isSelfServe || this.plan.value === planName
+        !this.permissionsCheck ||
+        !this.isSelfServe ||
+        this.plan.value === planName
       )
     }
   },
@@ -117,7 +119,7 @@ export default {
       </v-card-title>
       <v-card-text>
         <v-alert
-          v-if="!isTenantAdmin & !loading"
+          v-if="!permissionsCheck & !loading"
           class="mx-auto mb-12"
           border="left"
           colored-border
@@ -163,14 +165,14 @@ export default {
       <v-card-actions class="py-4">
         <v-spacer />
         <v-btn
-          v-if="isSelfServe && isTenantAdmin"
+          v-if="isSelfServe && permissionsCheck"
           text
           @click="changePlanDialog = false"
         >
           Cancel
         </v-btn>
         <v-btn
-          v-if="isSelfServe && isTenantAdmin"
+          v-if="isSelfServe && permissionsCheck"
           :loading="loading"
           color="primary"
           @click="changePlan"

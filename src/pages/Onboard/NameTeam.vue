@@ -63,12 +63,12 @@ export default {
   computed: {
     ...mapGetters('auth', ['user']),
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return this.hasPermission('update', 'tenant')
     },
     shuffledOptions() {
       let optionsCopy = [...this.options]
@@ -350,7 +350,7 @@ export default {
       <div ref="main-row">
         <transition-group name="fade">
           <v-col v-if="revealNote" key="name" cols="12" class="pb-0">
-            <div v-if="isTenantAdmin" class="text-h4 text-center">
+            <div v-if="permissionsCheck" class="text-h4 text-center">
               Let's start by creating your team
               <v-menu
                 :close-on-content-click="false"
@@ -391,7 +391,7 @@ export default {
           </v-col>
 
           <v-col v-if="revealNote" key="revealNote" cols="12">
-            <div v-if="isTenantAdmin" class="text-body-2 text--darken-1">
+            <div v-if="permissionsCheck" class="text-body-2 text--darken-1">
               (You can always change this later)
             </div>
             <div v-else class="text-body-2 text--darken-1">
@@ -408,11 +408,11 @@ export default {
             <div class="text-overline">
               Team Name
             </div>
-            <div v-if="!isTenantAdmin" class="text-h5">
+            <div v-if="!permissionsCheck" class="text-h5">
               {{ tenant.name }}
             </div>
             <v-text-field
-              v-if="isTenantAdmin"
+              v-if="permissionsCheck"
               v-model="name"
               data-cy="team-name"
               :disabled="disabled"
@@ -454,10 +454,9 @@ export default {
                 </v-icon>
               </Truncate>
             </div>
-            <div v-if="tenant.role !== 'TENANT_ADMIN'" class="text-h5 medium">
-            </div>
+            <div v-if="!permissionsCheck" class="text-h5 medium"> </div>
             <v-text-field
-              v-if="isTenantAdmin"
+              v-if="permissionsCheck"
               v-model="slug"
               data-cy="team-slug"
               :disabled="disabled"
@@ -562,7 +561,7 @@ export default {
           >
             <div>
               <v-btn
-                v-if="isTenantAdmin"
+                v-if="permissionsCheck"
                 color="primary"
                 width="200"
                 data-cy="submit-team-info"

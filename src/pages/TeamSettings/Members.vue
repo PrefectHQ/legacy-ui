@@ -91,8 +91,12 @@ export default {
     insufficientUsers() {
       return this.users >= this.totalAllowedUsers
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return (
+        this.hasPermission('create', 'membership') &&
+        this.hasPermission('update', 'membership') &&
+        this.hasPermission('delete', 'membership')
+      )
     },
     roleSelectionMap() {
       return this.roles
@@ -260,7 +264,7 @@ export default {
     <template #title>Team Members</template>
 
     <template #subtitle>
-      <span v-if="isTenantAdmin">
+      <span v-if="permissionsCheck">
         View your team's members, manage permissions, and send invitations
       </span>
       <span v-else data-cy="non-admin-message">
@@ -268,7 +272,7 @@ export default {
       </span>
     </template>
 
-    <template v-if="isTenantAdmin" #cta>
+    <template v-if="permissionsCheck" #cta>
       <v-btn
         :disabled="insufficientUsers"
         color="primary"
@@ -395,7 +399,7 @@ export default {
       <!-- MEMBERS TABLE -->
       <v-tab-item value="members">
         <MembersTable
-          :is-tenant-admin="isTenantAdmin"
+          :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :roles="formatRole(roles)"
@@ -412,7 +416,7 @@ export default {
       <!-- PENDING INVITATIONS TABLE -->
       <v-tab-item value="pending" eager>
         <InvitationsTable
-          :is-tenant-admin="isTenantAdmin"
+          :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :search="searchInput"

@@ -12,7 +12,7 @@ export default {
   },
   props: {
     // Check admin privileges
-    isTenantAdmin: {
+    permissionsCheck: {
       type: Boolean,
       required: true
     },
@@ -291,8 +291,8 @@ export default {
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip bottom>
+      <template v-if="permissionsCheck" #item.actions="{ item }">
+        <v-tooltip v-if="hasPermission('feature', 'basic-rbac')" bottom>
           <template #activator="{ on }">
             <v-btn
               text

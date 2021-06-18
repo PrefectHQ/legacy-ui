@@ -58,6 +58,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('user', ['user']),
     activeClearScreen() {
@@ -66,8 +67,13 @@ export default {
       if (this.error) return 'error'
       return 'form'
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return (
+        this.hasPermission('delete', 'project') &&
+        this.hasPermission('delete', 'membership') &&
+        this.hasPermission('delete', 'api-key') &&
+        this.hasPermission('delete', 'secret')
+      )
     },
     confirmDisabled() {
       return (
@@ -279,7 +285,7 @@ export default {
     </v-card-subtitle>
     <v-card-text>
       <v-alert
-        v-if="!isTenantAdmin"
+        v-if="!permissionsCheck"
         class="mx-auto mb-12"
         border="left"
         colored-border
@@ -389,7 +395,7 @@ export default {
           </div>
           <v-form v-model="formValid">
             <v-text-field
-              v-if="isTenantAdmin"
+              v-if="permissionsCheck"
               v-model="confirmInput"
               autocomplete="off"
               class="my-1"
@@ -492,7 +498,7 @@ export default {
     <v-card-actions>
       <v-spacer />
       <v-btn
-        v-if="!show && isTenantAdmin"
+        v-if="!show && permissionsCheck"
         color="primary"
         :disabled="noDataToClear"
         depressed

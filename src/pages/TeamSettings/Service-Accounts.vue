@@ -71,6 +71,13 @@ export default {
       return this.updateAccountRole
         ? 'Update service account role'
         : 'Add a new service account'
+    },
+    permissionsCheck() {
+      return (
+        this.hasPermission('create', 'service-account') &&
+        this.hasPermission('update', 'service-account') &&
+        this.hasPermission('delete', 'service-account')
+      )
     }
   },
   watch: {
@@ -225,7 +232,7 @@ export default {
     <template #title>Service Accounts</template>
 
     <template #subtitle>
-      <span v-if="isTenantAdmin">
+      <span v-if="permissionsCheck">
         Manage service accounts and their API keys
       </span>
       <span v-else
@@ -233,7 +240,7 @@ export default {
       >
     </template>
 
-    <template v-if="isTenantAdmin" #cta>
+    <template v-if="permissionsCheck" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -248,7 +255,7 @@ export default {
       </v-btn>
     </template>
 
-    <v-card v-if="isTenantAdmin" tile>
+    <v-card v-if="permissionsCheck" tile>
       <v-card-text class="pa-0">
         <v-text-field
           v-if="!$vuetify.breakpoint.mdAndUp"
@@ -264,7 +271,7 @@ export default {
         ></v-text-field>
 
         <ServiceAccountsTable
-          :is-tenant-admin="isTenantAdmin"
+          :permissions-check="permissionsCheck"
           :search="searchInput"
           :tenant="tenant"
           :refetch-signal="serviceAccountsSignal"
@@ -277,7 +284,7 @@ export default {
 
     <!-- SERVICE ACCOUNT ADD DIALOG -->
     <ConfirmDialog
-      v-if="isTenantAdmin"
+      v-if="permissionsCheck"
       v-model="dialogAddServiceAccount"
       :title="titleText"
       :confirm-text="confirmText"

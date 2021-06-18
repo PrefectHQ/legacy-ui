@@ -21,7 +21,7 @@ export default {
     <v-card-subtitle> See and edit your team profile.</v-card-subtitle>
     <v-card-text class="align-self-stretch">
       <v-alert
-        v-if="!isTenantAdmin"
+        v-if="!permissionsCheck"
         class="mx-auto mb-12"
         border="left"
         colored-border
@@ -44,7 +44,7 @@ export default {
         :disabled="isUpdatingTenant"
         :loading="isCheckingName"
         prepend-inner-icon="supervised_user_circle"
-        :readonly="!isTenantAdmin"
+        :readonly="!permissionsCheck"
         @blur="checkName(name)"
         @input="resetNameMetadata"
       >
@@ -67,7 +67,7 @@ export default {
         :error-messages="slugErrors"
         :loading="isCheckingSlug"
         prepend-inner-icon="language"
-        :readonly="!isTenantAdmin"
+        :readonly="!permissionsCheck"
         @blur="checkSlug(slug)"
         @input="resetSlugMetadata"
       >
@@ -82,7 +82,7 @@ export default {
 
     <v-spacer />
 
-    <v-card-actions v-if="isTenantAdmin" class="mt-auto">
+    <v-card-actions v-if="permissionsCheck" class="mt-auto">
       <v-spacer></v-spacer>
       <v-btn
         :disabled="!isUpdatable"
