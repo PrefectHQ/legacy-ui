@@ -40,7 +40,7 @@ export default {
     ]),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('api', ['isCloud']),
-
+    ...mapGetters('license', ['hasPermission']),
     oldAgents() {
       return !!this.filteredAgents?.find(agent => agent.status === 'unhealthy')
     },
@@ -234,7 +234,7 @@ export default {
         <v-dialog v-model="cleanUpDialog" width="25%">
           <template #activator="{ on }">
             <v-btn
-              v-if="oldAgents"
+              v-if="oldAgents && hasPermission('delete', 'agent')"
               class="vertical-button py-1 "
               color="red"
               text

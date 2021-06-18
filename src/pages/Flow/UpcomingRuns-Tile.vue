@@ -52,6 +52,8 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
+    ...mapGetters('license', ['hasPermission']),
+
     lateRuns() {
       if (!this.upcoming) return null
       return this.upcoming.filter(run => {
@@ -356,6 +358,7 @@ export default {
               <v-tooltip top>
                 <template #activator="{ on }">
                   <v-btn
+                    v-show="hasPermission('create', 'run')"
                     text
                     x-small
                     aria-label="Run Now"
@@ -441,7 +444,12 @@ export default {
       <v-spacer />
 
       <v-btn
-        v-if="!overlay && lateRuns && lateRuns.length > 0"
+        v-if="
+          !overlay &&
+            lateRuns &&
+            lateRuns.length > 0 &&
+            hasPermission('delete', 'run')
+        "
         small
         depressed
         color="primary"

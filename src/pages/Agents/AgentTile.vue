@@ -61,6 +61,7 @@ export default {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['hasPermission']),
     agent() {
       const agent = { ...this.rawAgent }
       const getTimeOverdue = time => new Date() - new Date(time)
@@ -559,7 +560,9 @@ export default {
       </v-btn>
       <v-spacer />
       <v-btn
-        v-show="agent && agent.status != 'healthy'"
+        v-show="
+          agent && agent.status != 'healthy' && hasPermission('delete', 'agent')
+        "
         small
         color="primary"
         text

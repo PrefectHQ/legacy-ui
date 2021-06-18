@@ -362,6 +362,7 @@ export default {
               <v-tooltip top>
                 <template #activator="{ on }">
                   <v-btn
+                    v-show="hasPermission('create', 'run')"
                     text
                     x-small
                     aria-label="Run Now"
@@ -470,7 +471,12 @@ export default {
     <v-card-actions class="pb-0">
       <v-spacer />
       <v-btn
-        v-if="!overlay && lateRuns && lateRuns.length > 0"
+        v-if="
+          !overlay &&
+            lateRuns &&
+            lateRuns.length > 0 &&
+            hasPermission('delete', 'run')
+        "
         small
         depressed
         color="primary"

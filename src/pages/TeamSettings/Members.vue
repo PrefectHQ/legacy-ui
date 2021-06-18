@@ -93,7 +93,8 @@ export default {
       return (
         this.hasPermission('create', 'membership') &&
         this.hasPermission('update', 'membership') &&
-        this.hasPermission('delete', 'membership')
+        this.hasPermission('delete', 'membership') &&
+        this.hasPermission('feature', 'basic-rbac')
       )
     },
     roleSelectionMap() {
