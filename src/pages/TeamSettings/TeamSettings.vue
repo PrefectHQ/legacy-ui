@@ -198,6 +198,21 @@ export default {
         </v-list-item>
 
         <v-list-item
+          :disabled="!isCloud"
+          :to="{ name: 'roles', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+          data-cy="flow-concurrency"
+        >
+          <v-list-item-action>
+            <v-icon>face</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Roles</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
           :to="{ name: 'projects', params: { tenant: tenant.slug } }"
           ripple
           exact

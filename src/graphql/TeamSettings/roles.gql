@@ -1,0 +1,10 @@
+query AuthRoles {
+  auth_role {
+    name
+    permissions
+    created
+    updated
+    tenant_id
+    id
+  }
+}

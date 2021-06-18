@@ -48,6 +48,11 @@ export default {
         },
         {
           mobile: true,
+          text: 'Role',
+          value: 'role'
+        },
+        {
+          mobile: true,
           text: '',
           value: 'create',
           align: 'center',
@@ -197,6 +202,9 @@ export default {
       this.isRemovingUser = false
       this.dialogRemoveUser = false
       this.selectedUser = null
+    },
+    updateRole(account) {
+      this.$emit('update', account)
     }
   },
   apollo: {
@@ -207,7 +215,6 @@ export default {
       },
       result({ data }) {
         if (!data) return
-
         this.membersItems = data.tenantUsers
           .filter(user =>
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
@@ -215,10 +222,11 @@ export default {
           .filter(user => user.account_type === 'SERVICE')
           .map(user => {
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
-
             return {
               id: user.id,
-              firstName: user.first_name
+              membershipID: user.memberships[0].id,
+              firstName: user.first_name,
+              role: user?.memberships[0]?.role_detail?.name
             }
           })
         return data
@@ -341,6 +349,9 @@ export default {
           </v-list>
         </td>
       </template>
+      <template #item.role="{ item }">
+        {{ item.role }}
+      </template>
 
       <template v-if="permissionsCheck" #item.create="{ item }">
         <v-btn
@@ -360,6 +371,21 @@ export default {
 
       <!-- ACTIONS -->
       <template v-if="permissionsCheck" #item.actions="{ item }">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn
+              text
+              fab
+              x-small
+              color="primary"
+              v-on="on"
+              @click="updateRole(item)"
+            >
+              <v-icon>edit</v-icon>
+            </v-btn>
+          </template>
+          Change Service Account role
+        </v-tooltip>
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn

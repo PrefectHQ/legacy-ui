@@ -33,7 +33,7 @@ export default {
 
       // Inputs
       inviteEmailInput: null,
-      roleInput: 'TENANT_ADMIN',
+      roleInput: '',
       searchInput: '',
 
       // Forms
@@ -97,23 +97,24 @@ export default {
       )
     },
     roleSelectionMap() {
-      return [
-        {
-          role: 'TENANT_ADMIN',
-          label: 'Administrator',
-          color: 'cloudUIPrimaryBlue'
-        },
-        {
-          role: 'USER',
-          label: 'User',
-          color: 'codeBlueBright'
-        },
-        {
-          role: 'READ_ONLY_USER',
-          label: 'Read-Only',
-          color: 'cloudUIPrimaryDark'
-        }
-      ]
+      return this.roles
+      // return [
+      //   {
+      //     role: 'TENANT_ADMIN',
+      //     label: 'Administrator',
+      //     color: 'cloudUIPrimaryBlue'
+      //   },
+      //   {
+      //     role: 'USER',
+      //     label: 'User',
+      //     color: 'codeBlueBright'
+      //   },
+      //   {
+      //     role: 'READ_ONLY_USER',
+      //     label: 'Read-Only',
+      //     color: 'cloudUIPrimaryDark'
+      //   }
+      // ]
     },
     totalUsers() {
       return this.users + this.invitations
@@ -170,7 +171,7 @@ export default {
           variables: {
             input: {
               email: this.inviteEmailInput,
-              role: this.roleInput
+              role_id: this.roleInput
             }
           }
         })
@@ -214,8 +215,19 @@ export default {
       this.$nextTick(() => {
         this.inviteEmailInput = null
         this.inviteError = null
-        this.roleInput = 'TENANT_ADMIN'
+        this.roleInput = ''
       })
+    }
+  },
+  apollo: {
+    roles: {
+      query: require('@/graphql/TeamSettings/roles.gql'),
+      loadingKey: 'loading',
+      variables() {
+        return {}
+      },
+      pollInterval: 10000,
+      update: data => data.auth_role || []
     }
   }
 }
@@ -364,6 +376,7 @@ export default {
           :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
+          :roles="roles"
           :search="searchInput"
           :tenant="tenant"
           :user="user"
@@ -443,13 +456,12 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
-          :disabled="!hasPermission('feature', 'basic-rbac')"
           prepend-icon="supervised_user_circle"
-          :color="roleColorMap[roleInput]"
+          :color="roleColorMap[roleInput.name]"
           :items="roleSelectionMap"
           :rules="[rules.required]"
-          item-text="label"
-          item-value="role"
+          item-text="name"
+          item-value="id"
           item-disabled="disabled"
         >
         </v-select>

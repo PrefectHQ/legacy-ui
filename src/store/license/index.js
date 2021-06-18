@@ -4,7 +4,8 @@ import LogRocket from 'logrocket'
 const state = {
   license: null,
   permissions: null,
-  tempLicenseType: null
+  tempLicenseType: null,
+  role: null
 }
 
 const getters = {
@@ -34,6 +35,9 @@ const getters = {
       return state.license?.terms?.read_only_users
     }
     return state.license?.terms?.users
+  },
+  role(state) {
+    return state.role
   }
 }
 
@@ -41,6 +45,9 @@ const mutations = {
   setLicense(state, license) {
     state.license = license
     state.tempLicenseType = null
+  },
+  setRole(state, role) {
+    state.role = role
   },
   setTempLicenseType(state, type) {
     state.tempLicenseType = type
@@ -66,6 +73,9 @@ const actions = {
 
       if (data?.auth_info?.license) {
         commit('setLicense', data.auth_info.license)
+      }
+      if (data?.auth_info?.role_id) {
+        commit('setRole', data.auth_info.role_id)
       }
       if (data?.auth_info?.permissions) {
         commit('setPermissions', data.auth_info.permissions)
