@@ -172,9 +172,7 @@ export default {
               {{ agentTracker.stale === 1 ? 'has' : 'have' }}
               not queried for flow runs in the last
               {{
-                staleThreshold === 1
-                  ? 'minute'
-                  : `${staleThreshold / 60} hours`
+                staleThreshold === 1 ? 'minute' : `${staleThreshold} minutes`
               }}.
             </div>
           </v-list-item-content>
@@ -205,7 +203,7 @@ export default {
                 {{
                   unhealthyThreshold === 1
                     ? 'minute'
-                    : `${unhealthyThreshold} minutes`
+                    : `${unhealthyThreshold / 60} hours`
                 }}.
               </span>
             </div>
