@@ -20,7 +20,9 @@ export default {
     return {
       attrs: {
         class: 'mb-0',
-        boilerplate: true,
+        elevation: 0
+      },
+      attra: {
         elevation: 0
       },
       isChanged: false,
@@ -310,13 +312,12 @@ export default {
   <v-card elevation="0" width="100%">
     <v-card-text v-if="loading" :style="{ height: '80vH' }" class="text-center">
       <v-row>
-        <v-col cols="12">
-          <v-skeleton-loader v-bind="attrs" type="actions"></v-skeleton-loader>
-        </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="4">
-          <v-skeleton-loader v-bind="attrs" type="text"></v-skeleton-loader>
+          <v-skeleton-loader v-bind="attra" type="text"></v-skeleton-loader>
+        </v-col>
+        <v-col cols="1"></v-col>
+        <v-col v-for="n in 5" :key="n" cols="1">
+          <v-skeleton-loader v-bind="attra" type="text"></v-skeleton-loader>
         </v-col>
       </v-row>
       <v-row>
