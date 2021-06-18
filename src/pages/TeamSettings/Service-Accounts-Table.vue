@@ -360,8 +360,6 @@ export default {
         </td>
       </template>
       <template #item.role="{ item }">
-        <!-- {{ item.role }} -->
-
         <v-chip
           small
           dark

@@ -1,7 +1,3 @@
-//Neaten Role names //Check that role setting works - seems not to like role_id
-- may be the gql query not the backend //Figure out clear and cancel and error -
-updating role does not refresh automatically handling
-
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { mapGetters } from 'vuex'
