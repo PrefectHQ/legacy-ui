@@ -22,6 +22,7 @@ export default {
       templatePermissions: null,
       permissions: null,
       defaultRole: false,
+      enableEdit: false,
       permissionGroups: {
         Auth: {
           'api-key': { name: 'User API Key', value: 'api-key' },
@@ -75,6 +76,11 @@ export default {
     }
   },
   computed: {
+    disableEdit() {
+      if (this.defaultRole) return true
+      if (this.enableEdit) return false
+      return true
+    },
     permissionsList() {
       return this.auth?.auth_info?.permissions
     },
@@ -182,9 +188,10 @@ export default {
     },
     reset() {
       this.permissions = Object.values(this.templatePermissionObject())
+      this.enableEdit = false
     },
     handleAll(item) {
-      if (this.defaultRole) return
+      if (this.disableEdit) return
       item.includeRead = item.includeAll
       item.includeCreate = item.includeAll
       item.includeDelete = item.includeAll
@@ -312,16 +319,27 @@ export default {
     <v-card-text v-else class="font-weight-light">
       <v-card-actions v-if="!template || !template.default">
         <v-spacer />
-        <v-btn text @click.stop="reset">
-          Reset
+        <v-btn v-if="enableEdit" small text @click.stop="reset">
+          Cancel
         </v-btn>
         <v-btn
+          v-if="enableEdit"
+          small
           color="primary"
           :loading="loadingRole"
           :disabled="!isChanged"
           @click.stop="handleCreateUpdateClick"
         >
           {{ template ? 'Update' : 'Create' }} Role
+        </v-btn>
+        <v-btn
+          v-else
+          small
+          icon
+          color="primary"
+          @click.stop="enableEdit = true"
+        >
+          <v-icon>edit</v-icon>
         </v-btn>
       </v-card-actions>
       <v-sheet height="80vh" :style="{ overflow: 'auto' }">
@@ -346,7 +364,7 @@ export default {
                 <v-checkbox
                   v-model="item.includeAll"
                   hide-details
-                  :disabled="defaultRole"
+                  :disabled="disableEdit"
                   :style="{ 'margin-top': '0px' }"
                   @click="handleAll(item)"
                 />
@@ -355,7 +373,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableCreate"
                   v-model="item.includeCreate"
-                  :disabled="defaultRole"
+                  :disabled="disableEdit"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -364,7 +382,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableRead"
                   v-model="item.includeRead"
-                  :disabled="defaultRole"
+                  :disabled="disableEdit"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -373,7 +391,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableUpdate"
                   v-model="item.includeUpdate"
-                  :disabled="defaultRole"
+                  :disabled="disableEdit"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -382,7 +400,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableDelete"
                   v-model="item.includeDelete"
-                  :disabled="defaultRole"
+                  :disabled="disableEdit"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
