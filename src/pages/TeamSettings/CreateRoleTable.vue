@@ -346,7 +346,7 @@ export default {
                 <v-checkbox
                   v-model="item.includeAll"
                   hide-details
-                  :readonly="defaultRole"
+                  :disabled="defaultRole"
                   :style="{ 'margin-top': '0px' }"
                   @click="handleAll(item)"
                 />
@@ -355,7 +355,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableCreate"
                   v-model="item.includeCreate"
-                  :readonly="defaultRole"
+                  :disabled="defaultRole"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -364,7 +364,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableRead"
                   v-model="item.includeRead"
-                  :readonly="defaultRole"
+                  :disabled="defaultRole"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -373,7 +373,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableUpdate"
                   v-model="item.includeUpdate"
-                  :readonly="defaultRole"
+                  :disabled="defaultRole"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -382,7 +382,7 @@ export default {
                 <v-checkbox
                   v-if="!item.disableDelete"
                   v-model="item.includeDelete"
-                  :readonly="defaultRole"
+                  :disabled="defaultRole"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
