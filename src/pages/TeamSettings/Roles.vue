@@ -1,57 +1,30 @@
 <script>
-//TO DO
-//Better handle refecth roles and clear after save - so addName and text field no longer show
-//Clean up dialog code
-//Disable add/updateand rest if no actual changes
-//spacing and fonts for sidebar?
-//Loading states and default tenant load
-//fix include all click/responsiveness
-
 import { mapActions, mapGetters } from 'vuex'
-
-// import ManagementLayout from '@/layouts/ManagementLayout'
 import CreateRoleTable from '@/pages/TeamSettings/CreateRoleTable'
 import { formatTime } from '@/mixins/formatTimeMixin'
 
-const DEFAULT_ROLES = ['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']
+const DEFAULT_ROLES = [
+  'TENANT_ADMIN',
+  'USER',
+  'READ_ONLY_USER',
+  'ENTERPRISE_LICENSE_ADMIN'
+]
 
 export default {
   components: {
-    // ManagementLayout,
     CreateRoleTable
   },
   mixins: [formatTime],
   data() {
     return {
-      searchInput: null,
       loading: 0,
-      expanded: [],
-      createRoleDialog: false,
-      clearDialog: false,
       template: null,
       deletingRole: null,
       defaultRoles: DEFAULT_ROLES,
       useDefault: true,
       roleName: '',
       addRole: false,
-      headers: [
-        {
-          text: 'Name',
-          value: 'name'
-        },
-        {
-          text: 'Created',
-          value: 'created'
-        },
-        {
-          text: 'Updated',
-          value: 'updated'
-        },
-        {
-          text: 'Actions',
-          value: 'actions'
-        }
-      ]
+      roleId: null
     }
   },
   computed: {
@@ -63,11 +36,18 @@ export default {
       'allowedUsers',
       'role'
     ]),
+    selectedRole() {
+      if (this.roleId) return this.roleId
+      if (this.template) return this.template.id
+      return null
+    },
     editedRoles() {
       if (!this.roles) return []
-      const defaultRoles = this.roles?.filter(role =>
-        this.defaultRoles.includes(role.name)
-      )
+      const defaultRoles = this.roles?.reduce((arr, role) => {
+        if (this.defaultRoles.includes(role.name))
+          arr.push({ ...role, default: true })
+        return arr
+      }, [])
       const tenantRoles = this.roles?.filter(
         role => role.tenant_id === this.tenant.id
       )
@@ -86,11 +66,14 @@ export default {
           )[0]
         this.template = role
       }
+    },
+    tenant() {
+      this.$apollo.queries.roles.refetch()
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    //We could update to use same formatting as in members page?
+    //We should update to use same formatting as in members page?
     formatName(name) {
       const newName = name
         .split('_')
@@ -101,34 +84,23 @@ export default {
     },
     handleRoleSelect(role, roleType) {
       this.useDefault = false
-      if (roleType === 'default' && role) {
-        role = { ...role, default: true }
-      }
+      this.roleId = null
       if (roleType === 'new') {
-        this.addRole = true
+        if (this.addRole) this.cancelAddName()
+        else this.addRole = true
       } else {
         this.addRole = false
       }
       this.template = role
     },
-    handleAlert(type, message) {
-      this.setAlert({
-        alertShow: true,
-        alertMessage: message,
-        alertType: type
-      })
+    cancelAddName() {
+      this.roleName = ''
+      this.addRole = false
     },
-    closeDialog() {
-      this.clearDialog = true
-      this.createRoleDialog = false
-      this.template = null
-    },
-    resetClear() {
-      this.clearDialog = false
-    },
-    editRole(role) {
-      this.template = role
-      this.expanded.push(role)
+    refetch(id) {
+      this.$apollo.queries.roles.refetch()
+      this.cancelAddName()
+      if (id) this.roleId = id
     },
     async deleteRole(role) {
       this.deletingRole = role.id
@@ -158,6 +130,14 @@ export default {
         })
       } finally {
         this.deletingRole = null
+        if (this.template.id === role.id)
+          this.template =
+            this.editedRoles?.tenantRoles?.filter(
+              role => role.id === this.role
+            )[0] ||
+            this.editedRoles?.defaultRoles?.filter(
+              role => role.id === this.role
+            )[0]
       }
     }
   },
@@ -176,115 +156,153 @@ export default {
 </script>
 
 <template>
-  <v-row>
-    <v-col cols="3" class="pa-0 ma-0">
-      <v-navigation-drawer permanent class="ma-0" width="100%">
-        <v-list dense nav>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>
-                Default Roles
-              </v-list-item-title>
-              <v-divider></v-divider>
-            </v-list-item-content>
-          </v-list-item>
+  <v-sheet height="85vH" class="app-background">
+    <v-row>
+      <v-col cols="3" class="pa-0 ma-0">
+        <v-navigation-drawer permanent class="ma-0" width="100%">
+          <v-list dense nav>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="text-subtitle-1 mb-2 mt-4">
+                  Default Roles
+                </v-list-item-title>
+                <div v-if="loading" class="text-center">
+                  <v-progress-linear
+                    :width="5"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-linear>
+                </div>
+                <v-divider v-else></v-divider>
+              </v-list-item-content>
+            </v-list-item>
 
-          <v-list-item
-            v-for="item in editedRoles.defaultRoles"
-            :key="item.name"
-            link
+            <v-list-item
+              v-for="item in editedRoles.defaultRoles"
+              :key="item.name"
+              link
+              :style="
+                selectedRole === item.id
+                  ? { 'background-color': 'whiteSmoke' }
+                  : ''
+              "
+            >
+              <v-list-item-content @click="handleRoleSelect(item, 'default')">
+                <v-list-item-title
+                  :class="selectedRole === item.id ? 'primary--text' : ''"
+                  class="text-body-2"
+                  >{{ formatName(item.name) }}</v-list-item-title
+                >
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+
+          <v-list
+            v-if="
+              editedRoles &&
+                editedRoles.tenantRoles &&
+                editedRoles.tenantRoles.length
+            "
+            dense
+            nav
           >
-            <v-list-item-content @click="handleRoleSelect(item, 'default')">
-              <v-list-item-title
-                :class="
-                  template && template.name == item.name ? 'primary--text' : ''
-                "
-                >{{ formatName(item.name) }}</v-list-item-title
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="text-subtitle-1">
+                  Custom Roles
+                  <v-btn
+                    color="primary"
+                    icon
+                    small
+                    @click="handleRoleSelect(null, 'new')"
+                  >
+                    <v-icon>add</v-icon>
+                  </v-btn>
+                </v-list-item-title>
+                <v-divider></v-divider>
+              </v-list-item-content>
+            </v-list-item>
+            <div v-if="loading" class="text-center">
+              <v-progress-linear
+                color="primary"
+                indeterminate
+              ></v-progress-linear>
+            </div>
+
+            <v-sheet v-else :style="{ overflow: 'auto' }" height="40vH">
+              <v-list-item
+                v-for="item in editedRoles.tenantRoles"
+                :key="item.value"
+                class="show-icon"
+                link
               >
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+                <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
+                  <v-list-item-title
+                    :class="selectedRole === item.id ? 'primary--text' : ''"
+                    class="text-body-2"
+                    >{{ item.name }}
+                  </v-list-item-title>
+                </v-list-item-content>
 
-        <v-list
-          v-if="
-            editedRoles &&
-              editedRoles.tenantRoles &&
-              editedRoles.tenantRoles.length
-          "
-          dense
-          nav
-        >
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>
-                Custom Roles
-              </v-list-item-title>
-              <v-divider></v-divider>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-list-item
-            v-for="item in editedRoles.tenantRoles"
-            :key="item.value"
-            link
-          >
-            <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
-              <v-list-item-title
-                :class="
-                  template && template.name == item.name ? 'blue--text' : ''
-                "
-                >{{ item.name }}
-              </v-list-item-title>
-            </v-list-item-content>
-
-            <v-list-item-icon>
-              <v-tooltip bottom>
-                <template #activator="{ on }">
+                <v-list-item-icon class="hidden-icon">
                   <v-btn
                     :disabled="defaultRoles.includes(item.name)"
-                    text
+                    icon
                     :loading="deletingRole === item.id"
-                    fab
                     x-small
                     color="error"
-                    v-on="on"
                     @click="deleteRole(item)"
+                    ><v-icon>delete</v-icon></v-btn
                   >
-                    <v-icon>delete</v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+              <v-list-item v-if="addRole">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-text-field
+                      v-model="roleName"
+                      class="text-body-2 pa-0"
+                      required
+                      autofocus
+                      hide-details
+                      placeholder="Role Name"
+                    ></v-text-field>
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-btn
+                    text
+                    fab
+                    x-small
+                    color="blue-grey"
+                    @click.stop="cancelAddName"
+                  >
+                    <v-icon>clear</v-icon>
                   </v-btn>
-                </template>
-                Remove role
-              </v-tooltip>
-            </v-list-item-icon>
-          </v-list-item>
-          <v-list-item v-if="addRole">
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-text-field
-                  v-model="roleName"
-                  required
-                  placeholder="Role Name"
-                ></v-text-field
-              ></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-
-        <div class="text-center mt-8">
-          <v-btn
-            color="primary"
-            class="white--text"
-            large
-            @click="handleRoleSelect(null, 'new')"
-          >
-            <v-icon left>face</v-icon>
-            New Role
-          </v-btn>
-        </div>
-      </v-navigation-drawer>
-    </v-col>
-    <v-col cols="9" class="pa-0">
-      <CreateRoleTable table-only :template="template" :role-name="roleName" />
-    </v-col>
-  </v-row>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-sheet>
+          </v-list>
+        </v-navigation-drawer>
+      </v-col>
+      <v-col cols="9" class="pa-0">
+        <CreateRoleTable
+          table-only
+          :template="template"
+          :role-name="roleName"
+          @close="refetch"
+        />
+      </v-col>
+    </v-row>
+  </v-sheet>
 </template>
+
+<style scoped>
+.hidden-icon {
+  display: none;
+}
+
+.show-icon:hover .hidden-icon {
+  display: inline;
+}
+</style>

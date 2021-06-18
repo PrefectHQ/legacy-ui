@@ -61,8 +61,12 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license', 'hasPermission']),
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return (
+        this.hasPermission('create', 'service-account') &&
+        this.hasPermission('update', 'service-account') &&
+        this.hasPermission('delete', 'service-account')
+      )
     },
     confirmText() {
       return this.updateAccountRole ? 'Update' : 'Add'
@@ -71,13 +75,6 @@ export default {
       return this.updateAccountRole
         ? 'Update service account role'
         : 'Add a new service account'
-    },
-    permissionsCheck() {
-      return (
-        this.hasPermission('create', 'service-account') &&
-        this.hasPermission('update', 'service-account') &&
-        this.hasPermission('delete', 'service-account')
-      )
     }
   },
   watch: {
@@ -164,7 +161,6 @@ export default {
       }
     },
     updateRole(event) {
-      console.log('event', event)
       this.updateAccountRole = true
       this.serviceAccountNameInput = event.firstName
       this.serviceAccountID = event.membershipID

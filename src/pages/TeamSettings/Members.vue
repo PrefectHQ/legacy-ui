@@ -33,7 +33,7 @@ export default {
 
       // Inputs
       inviteEmailInput: null,
-      roleInput: 'TENANT_ADMIN',
+      roleInput: '',
       searchInput: '',
 
       // Forms
@@ -173,7 +173,7 @@ export default {
           variables: {
             input: {
               email: this.inviteEmailInput,
-              role: this.roleInput
+              role_id: this.roleInput
             }
           }
         })
@@ -217,7 +217,7 @@ export default {
       this.$nextTick(() => {
         this.inviteEmailInput = null
         this.inviteError = null
-        this.roleInput = 'TENANT_ADMIN'
+        this.roleInput = ''
       })
     },
     titleCase(str) {
