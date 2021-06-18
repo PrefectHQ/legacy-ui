@@ -6,12 +6,14 @@
 
 - Add agent screens - [#852](https://github.com/PrefectHQ/ui/pull/852)
 - Add the `mapped_children` route to the IAPI allow-list - [#891](https://github.com/PrefectHQ/ui/pull/891)
+- Add the netlify script to the csp - [#897](https://github.com/PrefectHQ/ui/pull/897)
 - Improve expired auth and id token handling - [#896](https://github.com/PrefectHQ/ui/pull/896)
 
 ### Bugfixes
 
 - Fix KV copy button issue - [#887](https://github.com/PrefectHQ/ui/pull/887)
 - Check explicitly for map index of 0 to avoid falsey in restart button [#890](https://github.com/PrefectHQ/ui/pull/890)
+- Remove setAgents from app.vue - [#898](https://github.com/PrefectHQ/ui/pull/898)
 
 ## 2021-06-02
 
