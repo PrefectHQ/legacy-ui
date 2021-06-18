@@ -54,9 +54,9 @@ export default {
           },
           ['audit-trail']: { name: 'Audit Trail', value: 'audit-trail' }
         },
-        User: {
-          login: { name: 'Login', value: 'login' }
-        },
+        // User: {
+        //   login: { name: 'Login', value: 'login' }
+        // },
         Admin: {
           usage: { name: 'Usage', value: 'usage' },
           user: { name: 'User', value: 'user' },
