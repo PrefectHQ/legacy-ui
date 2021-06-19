@@ -159,6 +159,7 @@ export default {
           }
         })
         if (res?.data?.set_membership_role) {
+          this.serviceAccountsSignal++
           this.setAlert({
             alertShow: true,
             alertMessage: 'Role updated',
