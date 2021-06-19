@@ -98,25 +98,6 @@ export default {
         this.hasPermission('delete', 'membership')
       )
     },
-    formatRole() {
-      if (!this.roles) return []
-
-      const defaultRoles = this.roles
-        ?.filter(role => this.roleMap[role.name])
-        .map(({ ...item }) => {
-          item.value = this.titleCase(item.name)
-          return item
-        })
-
-      const tenantRoles = this.roles
-        ?.filter(role => role.tenant_id === this.tenant.id)
-        .map(({ ...item }) => {
-          item.value = item.name
-          return item
-        })
-
-      return defaultRoles.concat(tenantRoles)
-    },
     totalUsers() {
       return this.users + this.invitations
     }
@@ -218,14 +199,6 @@ export default {
         this.inviteError = null
         this.roleInput = ''
       })
-    },
-    titleCase(str) {
-      return str
-        .split('_')
-        .map(
-          word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
-        )
-        .join(' ')
     }
   },
   apollo: {
@@ -385,7 +358,7 @@ export default {
           :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
-          :roles="formatRole"
+          :roles="roles || []"
           :search="searchInput"
           :tenant="tenant"
           :user="user"
@@ -467,12 +440,15 @@ export default {
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
-          :items="formatRole"
+          :items="roles || []"
           :rules="[rules.required]"
-          item-text="value"
-          item-value="name"
+          item-text="name"
+          item-value="id"
           item-disabled="disabled"
         >
+          <template #item="{item}">
+            {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
+          </template>
         </v-select>
 
         <div

@@ -349,15 +349,12 @@ export default {
         :color="roleColorMap[roleInput]"
         prepend-icon="supervised_user_circle"
         :items="roles"
-        item-text="value"
+        item-text="name"
         item-value="id"
       >
-        <!-- <template #item="{ item }">
-          {{ roleMap[item] }}
+        <template #item="{item}">
+          {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
         </template>
-        <template #selection="{ item }">
-          {{ roleMap[item] }}
-        </template> -->
       </v-select>
     </ConfirmDialog>
 

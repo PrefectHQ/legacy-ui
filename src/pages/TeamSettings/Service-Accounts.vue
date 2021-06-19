@@ -75,24 +75,6 @@ export default {
       return this.updateAccountRole
         ? 'Update service account role'
         : 'Add a new service account'
-    },
-    formatRole() {
-      if (!this.roles) return []
-      const defaultRoles = this.roles
-        ?.filter(role => this.roleMap[role.name])
-        .map(({ ...item }) => {
-          item.value = this.titleCase(item.name)
-          return item
-        })
-
-      const tenantRoles = this.roles
-        ?.filter(role => role.tenant_id === this.tenant.id)
-        .map(({ ...item }) => {
-          item.value = item.name
-          return item
-        })
-
-      return defaultRoles.concat(tenantRoles)
     }
   },
   watch: {
@@ -308,11 +290,14 @@ export default {
           label="Role"
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
-          :items="formatRole"
+          :items="roles || []"
           :rules="[rules.required]"
           item-text="value"
           item-value="id"
         >
+          <template #item="{item}">
+            {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
+          </template>
         </v-select>
       </v-form>
     </ConfirmDialog>
