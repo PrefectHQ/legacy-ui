@@ -284,7 +284,7 @@ export default {
           prepend-icon="supervised_user_circle"
           :items="roles || []"
           :rules="[rules.required]"
-          item-text="value"
+          item-text="name"
           item-value="id"
         >
           <template #item="{item}">
