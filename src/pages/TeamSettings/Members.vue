@@ -98,44 +98,22 @@ export default {
         this.hasPermission('delete', 'membership')
       )
     },
-    roleSelectionMap() {
-      return this.roles
-      // return [
-      //   {
-      //     role: 'TENANT_ADMIN',
-      //     label: 'Administrator',
-      //     color: 'cloudUIPrimaryBlue'
-      //   },
-      //   {
-      //     role: 'USER',
-      //     label: 'User',
-      //     color: 'codeBlueBright'
-      //   },
-      //   {
-      //     role: 'READ_ONLY_USER',
-      //     label: 'Read-Only',
-      //     color: 'cloudUIPrimaryDark'
-      //   }
-      // ]
-    },
     formatRole() {
       if (!this.roles) return []
 
       const defaultRoles = this.roles
         ?.filter(role => this.roleMap[role.name])
-        .map(item => ({
-          ...item,
-          value: this.titleCase(
-            item.name
-              .split('_')
-              .join(' ')
-              .toLowerCase()
-          )
-        }))
+        .map(({ ...item }) => {
+          item.value = this.titleCase(item.name)
+          return item
+        })
 
       const tenantRoles = this.roles
         ?.filter(role => role.tenant_id === this.tenant.id)
-        .map(word => ({ ...word, value: word.name }))
+        .map(({ ...item }) => {
+          item.value = item.name
+          return item
+        })
 
       return defaultRoles.concat(tenantRoles)
     },
@@ -242,7 +220,12 @@ export default {
       })
     },
     titleCase(str) {
-      return str.replace(/\b\S/g, t => t.toUpperCase())
+      return str
+        .split('_')
+        .map(
+          word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
+        )
+        .join(' ')
     }
   },
   apollo: {

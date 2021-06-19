@@ -76,23 +76,21 @@ export default {
         ? 'Update service account role'
         : 'Add a new service account'
     },
-    formatName() {
+    formatRole() {
       if (!this.roles) return []
       const defaultRoles = this.roles
         ?.filter(role => this.roleMap[role.name])
-        .map(item => ({
-          ...item,
-          value: this.titleCase(
-            item.name
-              .split('_')
-              .join(' ')
-              .toLowerCase()
-          )
-        }))
+        .map(({ ...item }) => {
+          item.value = this.titleCase(item.name)
+          return item
+        })
 
       const tenantRoles = this.roles
         ?.filter(role => role.tenant_id === this.tenant.id)
-        .map(word => ({ ...word, value: word.name }))
+        .map(({ ...item }) => {
+          item.value = item.name
+          return item
+        })
 
       return defaultRoles.concat(tenantRoles)
     }
@@ -187,7 +185,12 @@ export default {
       this.dialogAddServiceAccount = true
     },
     titleCase(str) {
-      return str.replace(/\b\S/g, t => t.toUpperCase())
+      return str
+        .split('_')
+        .map(
+          word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
+        )
+        .join(' ')
     }
   },
   apollo: {
@@ -304,7 +307,7 @@ export default {
           label="Role"
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
-          :items="formatName"
+          :items="formatRole"
           :rules="[rules.required]"
           item-text="value"
           item-value="id"
