@@ -291,6 +291,9 @@ export default {
           <template #item="{item}">
             {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
           </template>
+          <template #selection="{item}">
+            {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
+          </template>
         </v-select>
       </v-form>
     </ConfirmDialog>
