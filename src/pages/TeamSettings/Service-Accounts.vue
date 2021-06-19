@@ -286,6 +286,7 @@ export default {
           :rules="[rules.required]"
           item-text="name"
           item-value="id"
+          item-disabled="disabled"
         >
           <template #item="{item}">
             {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
