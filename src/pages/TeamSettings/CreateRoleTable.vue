@@ -83,7 +83,11 @@ export default {
     disableEdit() {
       if (this.defaultRole) return true
       if (this.enableEdit) return false
+      if (!this.template) return false
       return true
+    },
+    noName() {
+      return !this.template && !this.roleName
     },
     permissionsList() {
       return this.auth?.auth_info?.permissions
@@ -346,7 +350,7 @@ export default {
           >Default Roles can not be modified.</div
         >
         <div v-else class="text-right">
-          <div v-if="enableEdit">
+          <div v-if="enableEdit || !template">
             <v-btn small text class="mr-2" @click.stop="reset">
               Cancel
             </v-btn>
@@ -354,7 +358,7 @@ export default {
               small
               color="primary"
               :loading="loadingRole"
-              :disabled="!isChanged"
+              :disabled="!isChanged || noName"
               @click.stop="handleCreateUpdateClick"
             >
               {{ template ? 'Update' : 'Create' }} Role
