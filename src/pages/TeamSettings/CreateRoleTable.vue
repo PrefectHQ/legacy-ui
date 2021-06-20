@@ -193,6 +193,7 @@ export default {
     reset() {
       this.permissions = Object.values(this.templatePermissionObject())
       this.enableEdit = false
+      this.$emit('close')
     },
     handleAll(item) {
       if (this.disableEdit) return

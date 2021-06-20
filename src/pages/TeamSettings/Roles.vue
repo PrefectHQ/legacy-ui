@@ -26,7 +26,8 @@ export default {
       roleName: '',
       addRole: false,
       roleId: null,
-      roleMap: ROLE_MAP
+      roleMap: ROLE_MAP,
+      defaultRole: null
     }
   },
   computed: {
@@ -66,6 +67,7 @@ export default {
           this.editedRoles?.defaultRoles?.filter(
             role => role.id === this.role
           )[0]
+        this.defaultRole = role
         this.template = role
       }
     },
@@ -83,16 +85,17 @@ export default {
       this.useDefault = false
       this.roleId = null
       if (roleType === 'new') {
-        if (this.addRole) this.cancelAddName()
+        if (this.addRole) this.cancelAddName(false)
         else this.addRole = true
       } else {
         this.addRole = false
       }
       this.template = role
     },
-    cancelAddName() {
+    cancelAddName(changeRole = true) {
       this.roleName = ''
       this.addRole = false
+      if (changeRole) this.template = this.defaultRole
     },
     refetch(id) {
       this.$apollo.queries.roles.refetch()
