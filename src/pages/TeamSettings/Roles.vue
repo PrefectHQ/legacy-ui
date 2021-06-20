@@ -217,6 +217,7 @@ export default {
                 <v-list-item-title class="text-subtitle-1">
                   Custom Roles
                   <v-btn
+                    v-if="!addRole"
                     color="primary"
                     icon
                     small
@@ -234,6 +235,31 @@ export default {
               :style="{ overflow: 'auto' }"
               height="40vH"
             >
+              <v-list-item v-if="addRole" link>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-text-field
+                      v-model="roleName"
+                      class="text-body-2 pa-0"
+                      required
+                      autofocus
+                      hide-details
+                      placeholder="Role Name"
+                    ></v-text-field>
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-btn
+                    text
+                    fab
+                    x-small
+                    color="blue-grey"
+                    @click.stop="cancelAddName"
+                  >
+                    <v-icon>clear</v-icon>
+                  </v-btn>
+                </v-list-item-icon>
+              </v-list-item>
               <v-list-item
                 v-for="item in editedRoles.tenantRoles"
                 :key="item.value"
@@ -258,31 +284,6 @@ export default {
                     @click="deleteRole(item)"
                     ><v-icon>delete</v-icon></v-btn
                   >
-                </v-list-item-icon>
-              </v-list-item>
-              <v-list-item v-if="addRole">
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <v-text-field
-                      v-model="roleName"
-                      class="text-body-2 pa-0"
-                      required
-                      autofocus
-                      hide-details
-                      placeholder="Role Name"
-                    ></v-text-field>
-                  </v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-icon>
-                  <v-btn
-                    text
-                    fab
-                    x-small
-                    color="blue-grey"
-                    @click.stop="cancelAddName"
-                  >
-                    <v-icon>clear</v-icon>
-                  </v-btn>
                 </v-list-item-icon>
               </v-list-item>
             </v-sheet>
