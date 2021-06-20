@@ -212,7 +212,7 @@ export default {
       else this.createNewRole()
     },
     async createNewRole() {
-      let id = null
+      let role = null
       try {
         const includedPermissions = []
         this.permissions.forEach(group => {
@@ -241,7 +241,7 @@ export default {
           }
         })
         if (res?.data?.create_custom_role) {
-          id = res?.data?.create_custom_role.id
+          role = res?.data?.create_custom_role
           this.setAlert({
             alertShow: true,
             alertMessage: 'Role created',
@@ -256,7 +256,8 @@ export default {
         })
       } finally {
         this.loadingRole = false
-        this.$emit('close', id)
+        this.enableEdit = false
+        this.$emit('close', role)
       }
     },
     async updateRole() {
@@ -298,6 +299,7 @@ export default {
         })
       } finally {
         this.loadingRole = false
+        this.enableEdit = false
         this.$apollo.queries.auth.refetch()
         this.$emit('close')
       }

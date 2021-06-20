@@ -36,7 +36,7 @@ export default {
     <div v-if="!confirm" class="d-flex align-center justify-space-between">
       <div class="text-truncate" v-html="label"></div>
       <div class="text-right">
-        <v-tooltip :disabled="!tooltips" bottom
+        <!-- <v-tooltip :disabled="!tooltips" bottom
           ><template #activator="{on}"
             ><v-btn
               color="primary"
@@ -50,7 +50,7 @@ export default {
               </v-icon>
             </v-btn></template
           >Accept team invite</v-tooltip
-        >
+        > -->
 
         <v-tooltip :disabled="!tooltips" bottom
           ><template #activator="{on}"

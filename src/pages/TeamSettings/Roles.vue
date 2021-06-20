@@ -18,6 +18,7 @@ export default {
   mixins: [formatTime],
   data() {
     return {
+      deleteSelected: null,
       loading: 0,
       template: null,
       deletingRole: null,
@@ -97,10 +98,14 @@ export default {
       this.addRole = false
       if (changeRole) this.template = this.defaultRole
     },
-    refetch(id) {
+    refetch(role) {
       this.$apollo.queries.roles.refetch()
-      this.cancelAddName()
-      if (id) this.roleId = id
+      if (role) {
+        this.template = role
+        this.cancelAddName(false)
+        return
+      }
+      if (this.addName) this.cancelAddName()
     },
     async deleteRole(role) {
       this.deletingRole = role.id
@@ -275,13 +280,28 @@ export default {
                 </v-list-item-content>
 
                 <v-list-item-icon class="hidden-icon">
+                  <div v-if="deleteSelected === item.id">
+                    <v-btn
+                      :disabled="defaultRoles.includes(item.name)"
+                      outlined
+                      :loading="deletingRole === item.id"
+                      x-small
+                      color="error"
+                      @click="deleteRole(item)"
+                      >Delete</v-btn
+                    >
+                    <v-btn icon x-small text @click="deleteSelected = null">
+                      <v-icon small>close</v-icon>
+                    </v-btn>
+                  </div>
                   <v-btn
+                    v-else
                     :disabled="defaultRoles.includes(item.name)"
                     icon
-                    :loading="deletingRole === item.id"
                     x-small
+                    class="ml-1"
                     color="error"
-                    @click="deleteRole(item)"
+                    @click="deleteSelected = item.id"
                     ><v-icon>delete</v-icon></v-btn
                   >
                 </v-list-item-icon>
