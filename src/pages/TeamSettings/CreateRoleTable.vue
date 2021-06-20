@@ -380,11 +380,11 @@ export default {
             <v-col cols="4" class="text-h5 run-body">
               {{ groupName(index) }}
             </v-col>
-            <v-col class="text-left" cols="1">All</v-col>
-            <v-col class="text-left" cols="1">Create</v-col>
-            <v-col class="text-left" cols="1">Read</v-col>
-            <v-col class="text-left" cols="1">Update</v-col>
-            <v-col class="text-left" cols="1">Delete</v-col>
+            <v-col class="text-center mr-4" cols="1">All</v-col>
+            <v-col class="text-center mx-2" cols="1">Create</v-col>
+            <v-col class="text-center mx-2" cols="1">Read</v-col>
+            <v-col class="text-center mx-2" cols="1">Update</v-col>
+            <v-col class="text-center mx-2" cols="1">Delete</v-col>
           </v-row>
           <div v-for="(item, indexa) in group" :key="indexa">
             <v-row no-gutters class="pa-0 ma-0">
@@ -392,48 +392,53 @@ export default {
                 <span class="text-body-1"> {{ item.name }} </span>
               </v-col>
 
-              <v-col class="ma-0" cols="1">
-                <v-checkbox
+              <v-col class="my-0 ml-0 mr-4 text-center" cols="1">
+                <v-simple-checkbox
                   v-model="item.includeAll"
                   hide-details
+                  color="primary"
                   :disabled="disableEdit"
                   :style="{ 'margin-top': '0px' }"
                   @click="handleAll(item)"
                 />
               </v-col>
-              <v-col cols="1" class="ma-0">
-                <v-checkbox
+              <v-col cols="1" class=" mx-2 text-center">
+                <v-simple-checkbox
                   v-if="!item.disableCreate"
                   v-model="item.includeCreate"
                   :disabled="disableEdit"
+                  color="primary"
                   hide-details
                   :style="{ 'margin-top': '0px' }"
                 />
               </v-col>
-              <v-col cols="1" class="ma-0">
-                <v-checkbox
+              <v-col cols="1" class=" mx-2 text-center">
+                <v-simple-checkbox
                   v-if="!item.disableRead"
                   v-model="item.includeRead"
                   :disabled="disableEdit"
                   hide-details
+                  color="primary"
                   :style="{ 'margin-top': '0px' }"
                 />
               </v-col>
-              <v-col cols="1" class="ma-0">
-                <v-checkbox
+              <v-col cols="1" class=" mx-2 text-center">
+                <v-simple-checkbox
                   v-if="!item.disableUpdate"
                   v-model="item.includeUpdate"
                   :disabled="disableEdit"
                   hide-details
+                  color="primary"
                   :style="{ 'margin-top': '0px' }"
                 />
               </v-col>
-              <v-col cols="1" class="ma-0">
-                <v-checkbox
+              <v-col cols="1" class="mx-2 text-center">
+                <v-simple-checkbox
                   v-if="!item.disableDelete"
                   v-model="item.includeDelete"
                   :disabled="disableEdit"
                   hide-details
+                  color="primary"
                   :style="{ 'margin-top': '0px' }"
                 />
               </v-col>
