@@ -310,7 +310,12 @@ export default {
 
 <template>
   <v-card elevation="0" width="100%">
-    <v-card-text v-if="loading" :style="{ height: '80vH' }" class="text-center">
+    <div v-if="loading" :style="{ height: '80vH' }" class="text-center pa-4">
+      <v-row>
+        <v-col cols="5">
+          <v-skeleton-loader v-bind="attra" type="text"></v-skeleton-loader>
+        </v-col>
+      </v-row>
       <v-row>
         <v-col cols="4">
           <v-skeleton-loader v-bind="attra" type="text"></v-skeleton-loader>
@@ -333,34 +338,36 @@ export default {
           <v-skeleton-loader v-bind="attrs" type="image"></v-skeleton-loader>
         </v-col>
       </v-row>
-    </v-card-text>
-    <v-card-text v-else class="font-weight-light">
-      <v-card-actions v-if="!template || !template.default">
-        <v-spacer />
-        <v-btn v-if="enableEdit" small text @click.stop="reset">
-          Cancel
-        </v-btn>
-        <v-btn
-          v-if="enableEdit"
-          small
-          color="primary"
-          :loading="loadingRole"
-          :disabled="!isChanged"
-          @click.stop="handleCreateUpdateClick"
+    </div>
+    <div v-else class="font-weight-light">
+      <div height="35px" class="ma-2">
+        <div v-if="defaultRole" class="pl-2"
+          >Default Roles can not be modified.</div
         >
-          {{ template ? 'Update' : 'Create' }} Role
-        </v-btn>
-        <v-btn
-          v-else
-          small
-          icon
-          color="primary"
-          @click.stop="enableEdit = true"
-        >
-          <v-icon>edit</v-icon>
-        </v-btn>
-      </v-card-actions>
-      <v-sheet height="80vh" :style="{ overflow: 'auto' }">
+        <div v-else class="text-right">
+          <div v-if="enableEdit">
+            <v-btn small text class="mr-2" @click.stop="reset">
+              Cancel
+            </v-btn>
+            <v-btn
+              small
+              color="primary"
+              :loading="loadingRole"
+              :disabled="!isChanged"
+              @click.stop="handleCreateUpdateClick"
+            >
+              {{ template ? 'Update' : 'Create' }} Role
+            </v-btn>
+          </div>
+          <div v-else class="mr-2">
+            <v-btn small icon color="primary" @click.stop="enableEdit = true">
+              <v-icon>edit</v-icon>
+            </v-btn>
+          </div>
+        </div>
+        <v-divider class="mt-2"></v-divider>
+      </div>
+      <v-sheet height="80vh" :style="{ overflow: 'auto' }" class="pa-4">
         <div v-for="(group, index) in permissions" :key="index">
           <v-row class="mb-4 text-body-1" no-gutters>
             <v-col cols="4" class="text-h5 run-body">
@@ -430,6 +437,6 @@ export default {
           </v-row>
         </div>
       </v-sheet>
-    </v-card-text>
+    </div>
   </v-card>
 </template>
