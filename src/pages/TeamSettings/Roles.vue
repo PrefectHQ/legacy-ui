@@ -205,15 +205,7 @@ export default {
             </v-list-item>
           </v-list>
 
-          <v-list
-            v-if="
-              editedRoles &&
-                editedRoles.tenantRoles &&
-                editedRoles.tenantRoles.length
-            "
-            dense
-            nav
-          >
+          <v-list v-if="hasPermission('feature', 'custom-role')" dense nav>
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title

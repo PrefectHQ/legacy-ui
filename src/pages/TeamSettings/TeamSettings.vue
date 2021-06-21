@@ -1,8 +1,10 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-
+import UpgradeBadge from '@/components/UpgradeBadge'
 export default {
-  components: {},
+  components: {
+    UpgradeBadge
+  },
   data() {
     return {
       // Delete team
@@ -27,7 +29,8 @@ export default {
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('tenant', ['tenant', 'role'])
+    ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission'])
   },
   watch: {
     tenant() {
@@ -195,17 +198,25 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="!isCloud || !hasPermission('feature', 'custom-role')"
           :to="{ name: 'roles', params: { tenant: tenant.slug } }"
           ripple
           exact
-          data-cy="flow-concurrency"
         >
           <v-list-item-action>
             <v-icon>face</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Roles</v-list-item-title>
+            <v-list-item-title
+              >Roles
+              <UpgradeBadge
+                v-if="!hasPermission('feature:custom-roles')"
+                inline
+              >
+                <span class="font-weight-medium">Custom Roles</span> are only
+                available on Enterprise plans.
+              </UpgradeBadge>
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
