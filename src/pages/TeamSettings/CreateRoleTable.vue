@@ -212,7 +212,6 @@ export default {
       else this.createNewRole()
     },
     async createNewRole() {
-      let role = null
       try {
         const includedPermissions = []
         this.permissions.forEach(group => {
