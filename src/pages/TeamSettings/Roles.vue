@@ -265,6 +265,11 @@ export default {
                 :key="item.value"
                 class="show-icon"
                 link
+                :style="
+                  selectedRole === item.id
+                    ? { 'background-color': 'whiteSmoke' }
+                    : ''
+                "
               >
                 <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
                   <v-list-item-title
