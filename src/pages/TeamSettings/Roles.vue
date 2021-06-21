@@ -163,7 +163,9 @@ export default {
           <v-list dense nav>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title class="text-subtitle-1 mb-2 mt-4">
+                <v-list-item-title
+                  class="text-h5 font-weight-light text--secondary mb-2 pt-4"
+                >
                   Default Roles
                 </v-list-item-title>
                 <v-divider></v-divider>
@@ -173,7 +175,7 @@ export default {
               <v-list-item
                 v-for="(name, index) in Object.values(roleMap)"
                 :key="index"
-                class="text-body-2"
+                class="text-body-1 font-weight-regular text--secondary"
                 link
               >
                 <v-list-item-content>
@@ -196,7 +198,7 @@ export default {
               <v-list-item-content @click="handleRoleSelect(item, 'default')">
                 <v-list-item-title
                   :class="selectedRole === item.id ? 'primary--text' : ''"
-                  class="text-body-2"
+                  class="text-body-1 font-weight-regular text--secondary"
                   >{{ formatName(item.name) }}</v-list-item-title
                 >
               </v-list-item-content>
@@ -214,7 +216,9 @@ export default {
           >
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title class="text-subtitle-1">
+                <v-list-item-title
+                  class="text-h5 font-weight-light text--secondary"
+                >
                   Custom Roles
                   <v-btn
                     v-if="!addRole"
@@ -240,7 +244,7 @@ export default {
                   <v-list-item-title>
                     <v-text-field
                       v-model="roleName"
-                      class="text-body-2 pa-0"
+                      class="text-body-1 font-weight-regular text--secondary pa-0"
                       required
                       autofocus
                       hide-details
@@ -274,7 +278,7 @@ export default {
                 <v-list-item-content @click="handleRoleSelect(item, 'tenant')">
                   <v-list-item-title
                     :class="selectedRole === item.id ? 'primary--text' : ''"
-                    class="text-body-2"
+                    class="text-body-1 font-weight-regular text--secondary"
                     >{{ item.name }}
                   </v-list-item-title>
                 </v-list-item-content>

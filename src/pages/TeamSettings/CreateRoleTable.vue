@@ -23,6 +23,13 @@ export default {
         elevation: 0
       },
       attra: {
+        height: '20px',
+        width: '30%',
+        elevation: 0
+      },
+      attrb: {
+        height: '20px',
+        width: '80%',
         elevation: 0
       },
       isChanged: false,
@@ -312,18 +319,19 @@ export default {
 <template>
   <v-card elevation="0" width="100%">
     <div v-if="loading" :style="{ height: '80vH' }" class="text-center pa-4">
-      <v-row>
-        <v-col cols="5">
+      <v-row style="{height: '35px'}">
+        <v-col cols="12">
           <v-skeleton-loader v-bind="attra" type="text"></v-skeleton-loader>
+          <v-divider></v-divider>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="4">
-          <v-skeleton-loader v-bind="attra" type="text"></v-skeleton-loader>
+        <v-col cols="5">
+          <v-skeleton-loader v-bind="attrb" type="text"></v-skeleton-loader>
         </v-col>
         <v-col cols="1"></v-col>
         <v-col v-for="n in 5" :key="n" cols="1">
-          <v-skeleton-loader v-bind="attra" type="text"></v-skeleton-loader>
+          <v-skeleton-loader v-bind="attrb" type="text"></v-skeleton-loader>
         </v-col>
       </v-row>
       <v-row>
@@ -370,20 +378,28 @@ export default {
       </div>
       <v-sheet height="80vh" :style="{ overflow: 'auto' }" class="pa-4">
         <div v-for="(group, index) in permissions" :key="index">
-          <v-row class="mb-4 text-body-1" no-gutters>
-            <v-col cols="4" class="text-h5 run-body">
+          <v-row class="mb-4" no-gutters>
+            <v-col cols="4" class="text-h5 font-weight-light text--secondary">
               {{ groupName(index) }}
             </v-col>
-            <v-col class="text-center mr-4" cols="1">All</v-col>
-            <v-col class="text-center mx-2" cols="1">Create</v-col>
-            <v-col class="text-center mx-2" cols="1">Read</v-col>
-            <v-col class="text-center mx-2" cols="1">Update</v-col>
-            <v-col class="text-center mx-2" cols="1">Delete</v-col>
+            <v-col class="text-center mr-4 text--secondary" cols="1">All</v-col>
+            <v-col class="text-center mx-2 text--secondary" cols="1"
+              >Create</v-col
+            >
+            <v-col class="text-center mx-2 text--secondary" cols="1"
+              >Read</v-col
+            >
+            <v-col class="text-center mx-2 text--secondary" cols="1"
+              >Update</v-col
+            >
+            <v-col class="text-center mx-2 text--secondary" cols="1"
+              >Delete</v-col
+            >
           </v-row>
           <div v-for="(item, indexa) in group" :key="indexa">
             <v-row no-gutters class="pa-0 ma-0">
               <v-col cols="4">
-                <span class="text-body-1"> {{ item.name }} </span>
+                <span> {{ item.name }} </span>
               </v-col>
 
               <v-col class="my-0 ml-0 mr-4 text-center" cols="1">
