@@ -8,7 +8,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['hasPermission']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     loading() {
       return this.loadingKey > 0 || (!this.count && this.count !== 0)
     }
@@ -16,15 +16,15 @@ export default {
   apollo: {
     memberships: {
       query() {
-        return this.hasPermission('license', 'admin')
+        return this.hasPermission('license', 'admin') && this.license
           ? require('@/graphql/Account/license-users.gql')
           : require('@/graphql/TeamSettings/memberships.gql')
       },
       loadingKey: 'loadingKey',
       result({ data }) {
         if (!data) return
-        if (this.hasPermission('license', 'admin')) {
-          this.count = data.license_users.length
+        if (this.hasPermission('license', 'admin') && this.license) {
+          this.count = data.license_users?.length
         } else {
           this.count =
             data.memberships.filter(m => m.account_type !== 'SERVICE').length +
