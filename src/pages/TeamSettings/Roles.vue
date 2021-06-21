@@ -98,14 +98,9 @@ export default {
       this.addRole = false
       if (changeRole) this.template = this.defaultRole
     },
-    refetch(role) {
-      this.$apollo.queries.roles.refetch()
-      if (role) {
-        this.template = role
-        this.cancelAddName(false)
-        return
-      }
-      if (this.addName) this.cancelAddName()
+    async refetch() {
+      await this.$apollo.queries.roles.refetch()
+      if (this.addRole) this.cancelAddName()
     },
     async deleteRole(role) {
       this.deletingRole = role.id

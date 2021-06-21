@@ -194,7 +194,7 @@ export default {
       this.templatePermissions = copiedPermissionsArr
       return permissionsArr
     },
-    reset() {
+    cancel() {
       this.permissions = Object.values(this.templatePermissionObject())
       this.enableEdit = false
       this.$emit('close')
@@ -237,7 +237,6 @@ export default {
           }
         })
         if (res?.data?.create_custom_role) {
-          role = res?.data?.create_custom_role
           this.setAlert({
             alertShow: true,
             alertMessage: 'Role created',
@@ -253,7 +252,7 @@ export default {
       } finally {
         this.loadingRole = false
         this.enableEdit = false
-        this.$emit('close', role)
+        this.$emit('close')
       }
     },
     async updateRole() {
@@ -349,7 +348,7 @@ export default {
         >
         <div v-else class="text-right">
           <div v-if="enableEdit || !template">
-            <v-btn small text class="mr-2" @click.stop="reset">
+            <v-btn small text class="mr-2" @click.stop="cancel">
               Cancel
             </v-btn>
             <v-btn
