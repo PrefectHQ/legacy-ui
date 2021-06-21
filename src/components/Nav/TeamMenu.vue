@@ -144,7 +144,7 @@ export default {
             <v-list-item-title class="text-subtitle-1"
               >Roles
               <UpgradeBadge
-                v-if="!hasPermission('feature:custom-roles')"
+                v-if="!hasPermission('feature', 'custom-role')"
                 inline
               >
                 <span class="font-weight-medium">Custom Roles</span> are only
