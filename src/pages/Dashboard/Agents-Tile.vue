@@ -203,7 +203,7 @@ export default {
                 {{
                   unhealthyThreshold === 1
                     ? 'minute'
-                    : `${unhealthyThreshold} minutes`
+                    : `${unhealthyThreshold / 60} hours`
                 }}.
               </span>
             </div>
