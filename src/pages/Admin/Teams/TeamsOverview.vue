@@ -120,6 +120,14 @@ export default {
     refetch() {
       this.getUser()
       this.$globalApolloQueries['tenants']?.refetch()
+    },
+    randomColor() {
+      const letters = '0123456789ABCDEF'.split('')
+      let color = '#'
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.round(Math.random() * 15)]
+      }
+      return color
     }
   },
   apollo: {
@@ -131,7 +139,9 @@ export default {
       },
       update(data) {
         if (!data) return
-        return data.license_users
+        return data.license_users.map(u => {
+          return { ...u, avatar_color: this.randomColor() }
+        })
       },
       fetchPolicy: 'no-cache'
     }

@@ -26,7 +26,8 @@ export default {
   },
   mounted() {
     console.log(this.team)
-  }
+  },
+  methods: {}
 }
 </script>
 
@@ -50,7 +51,7 @@ export default {
       <v-avatar
         v-for="u in users.slice(0, 3)"
         :key="u.id"
-        :color="'#' + Math.floor(Math.random() * 16777215).toString(16)"
+        :color="u.avatar_color"
         size="32"
         class="white--text rounded-circle text-uppercase ml-n3"
         style="border: thin solid #fff;"
