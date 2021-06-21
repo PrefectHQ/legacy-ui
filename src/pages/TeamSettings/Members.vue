@@ -100,6 +100,11 @@ export default {
     },
     totalUsers() {
       return this.users + this.invitations
+    },
+    filteredRoles() {
+      if (!this.roles) return []
+      const rolesToRM = ['RUNNER']
+      return this.roles.filter(role => !rolesToRM.includes(role.name))
     }
   },
   watch: {
@@ -358,7 +363,7 @@ export default {
           :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
-          :roles="roles || []"
+          :roles="filteredRoles"
           :search="searchInput"
           :tenant="tenant"
           :user="user"
@@ -440,7 +445,7 @@ export default {
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
-          :items="roles || []"
+          :items="filteredRoles"
           :rules="[rules.required]"
           item-text="name"
           item-value="id"

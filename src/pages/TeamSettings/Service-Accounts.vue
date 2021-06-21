@@ -75,6 +75,11 @@ export default {
       return this.updateAccountRole
         ? 'Update service account role'
         : 'Add a new service account'
+    },
+    filteredRoles() {
+      if (!this.roles) return []
+      const rolesToRM = ['RUNNER']
+      return this.roles.filter(role => !rolesToRM.includes(role.name))
     }
   },
   watch: {
@@ -282,7 +287,7 @@ export default {
           label="Role"
           data-cy="invite-role"
           prepend-icon="supervised_user_circle"
-          :items="roles || []"
+          :items="filteredRoles"
           :rules="[rules.required]"
           item-text="name"
           item-value="id"
