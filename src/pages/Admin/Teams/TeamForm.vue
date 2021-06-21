@@ -98,6 +98,7 @@ export default {
       }
     },
     async createTenant() {
+      let error
       this.loading = true
 
       const notificationId = await this.addNotification({
@@ -153,27 +154,30 @@ export default {
           }
         })
       } catch (e) {
+        error = e
+
         if (e?.toString().includes('Uniqueness violation')) {
           this.slugErrors = ['Sorry, that URL slug is already in use.']
         } else {
-          await this.updateNotification({
-            id: notificationId,
-            notification: {
-              color: 'error',
-              loading: false,
-              text:
-                'There was a problem creating your team. If the issue persists, contact help@prefect.io.',
-              subtext: e,
-              dismissable: true,
-              timeout: 10000
-            }
-          })
           LogRocket.captureException(e)
         }
         // eslint-disable-next-line no-console
         console.error(e)
       } finally {
         this.loading = false
+        await this.updateNotification({
+          id: notificationId,
+          notification: {
+            color: error ? 'error' : 'primary',
+            text: error
+              ? 'There was a problem creating your team. If the issue persists, contact help@prefect.io.'
+              : 'Team created!',
+            loading: false,
+            subtext: error ? error : this.teamName,
+            dismissable: true,
+            timeout: 10000
+          }
+        })
       }
     }
   }
