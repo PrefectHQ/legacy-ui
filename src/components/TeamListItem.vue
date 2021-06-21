@@ -47,31 +47,37 @@ export default {
       <div v-show="selected" class="text-overline mt-n2">Current</div>
     </div>
 
-    <div class="ml-8">
+    <router-link
+      class="ml-8 d-flex align-center justify-start text-decoration-none"
+      :to="{ name: 'members', params: { tenant: team.slug } }"
+    >
       <v-avatar
         v-for="u in users.slice(0, 3)"
         :key="u.id"
         :color="u.avatar_color"
         size="32"
-        class="white--text rounded-circle text-uppercase ml-n3"
+        class="white--text rounded-circle text-uppercase ml-n3 user-select-none"
         style="border: thin solid #fff;"
-        >{{
-          u.first_name && u.last_name
-            ? u.first_name[0] + u.last_name[1]
-            : u.username[0] + u.username[1]
-        }}</v-avatar
       >
+        <truncate :content="u.username">
+          {{
+            u.first_name && u.last_name
+              ? u.first_name[0] + u.last_name[1]
+              : u.username[0] + u.username[1]
+          }}
+        </truncate>
+      </v-avatar>
 
       <v-avatar
         v-if="users.length > 3"
         color="grey lighten-3"
         size="32"
-        class="rounded-circle text-uppercase ml-n3"
+        class="rounded-circle text-uppercase ml-n3 user-select-none utilGrayDark--text"
         style="border: thin solid #fff;"
       >
         +{{ users.length - 3 }}
       </v-avatar>
-    </div>
+    </router-link>
 
     <v-spacer />
 
