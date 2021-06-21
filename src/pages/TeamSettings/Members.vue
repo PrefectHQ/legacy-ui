@@ -230,7 +230,7 @@ export default {
       </span>
     </template>
 
-    <template v-if="isTenantAdmin" #cta>
+    <template #cta>
       <v-btn
         :disabled="insufficientUsers"
         color="primary"

@@ -118,19 +118,24 @@ export default {
           }
         })
 
+        // This makes sure we don't route to the welcome screen
+        // after switching to the tenant
+        sessionStorage.setItem('haltTenantRouting', true)
+
         await this.getUser()
         await this.$globalApolloQueries['tenants']?.refetch()
 
         this.resetData()
 
         clearCache()
-        sessionStorage.setItem('haltTenantRouting', true)
 
         await this.setCurrentTenant(this.teamSlug)
 
         await this.updateTenantSettings({
           teamNamed: true
         })
+
+        sessionStorage.setItem('haltTenantRouting', true)
 
         await this.setCurrentTenant(this.currentTeam)
 
