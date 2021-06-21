@@ -115,7 +115,6 @@ export default {
       >
       Existing tokens will continue to work, but new ones cannot be created.
       <br />
-      All tokens here will be migrated to API keys on May 1st, 2021
     </template>
 
     <v-text-field
