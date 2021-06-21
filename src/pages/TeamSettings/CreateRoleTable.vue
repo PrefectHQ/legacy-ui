@@ -369,8 +369,8 @@ export default {
             </v-btn>
           </div>
           <div v-else class="mr-2">
-            <v-btn small icon color="primary" @click.stop="enableEdit = true">
-              <v-icon>edit</v-icon>
+            <v-btn small color="primary" @click.stop="enableEdit = true">
+              Edit
             </v-btn>
           </div>
         </div>
@@ -382,7 +382,9 @@ export default {
             <v-col cols="4" class="text-h5 font-weight-light text--secondary">
               {{ groupName(index) }}
             </v-col>
-            <v-col class="text-center mr-4 text--secondary" cols="1">All</v-col>
+            <v-col class="text-center mr-4 text--secondary" cols="1"
+              ><span>All</span></v-col
+            >
             <v-col class="text-center mx-2 text--secondary" cols="1"
               >Create</v-col
             >
@@ -408,6 +410,7 @@ export default {
                   hide-details
                   :ripple="false"
                   color="primary"
+                  class="deep"
                   :disabled="disableEdit"
                   :style="{ 'margin-top': '0px' }"
                   @click="handleAll(item)"
@@ -419,6 +422,7 @@ export default {
                   v-model="item.includeCreate"
                   :disabled="disableEdit"
                   color="primary"
+                  class="deep"
                   hide-details
                   :ripple="false"
                   :style="{ 'margin-top': '0px' }"
@@ -430,6 +434,7 @@ export default {
                   v-model="item.includeRead"
                   :disabled="disableEdit"
                   hide-details
+                  class="deep"
                   :ripple="false"
                   color="primary"
                   :style="{ 'margin-top': '0px' }"
@@ -441,6 +446,7 @@ export default {
                   v-model="item.includeUpdate"
                   :disabled="disableEdit"
                   hide-details
+                  class="deep"
                   :ripple="false"
                   color="primary"
                   :style="{ 'margin-top': '0px' }"
@@ -452,6 +458,7 @@ export default {
                   v-model="item.includeDelete"
                   :disabled="disableEdit"
                   hide-details
+                  class="deep"
                   :ripple="false"
                   color="primary"
                   :style="{ 'margin-top': '0px' }"
@@ -467,3 +474,9 @@ export default {
     </div>
   </v-card>
 </template>
+
+<style scoped>
+.deep >>> div {
+  margin-right: 0px;
+}
+</style>
