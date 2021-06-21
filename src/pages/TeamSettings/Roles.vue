@@ -156,7 +156,14 @@ export default {
 </script>
 
 <template>
-  <v-sheet height="85vH" class="app-background">
+  <v-sheet
+    v-if="!hasPermission('read', 'role')"
+    height="85vH"
+    class="app-background"
+  >
+    You do not have permission to access roles.
+  </v-sheet>
+  <v-sheet v-else height="85vH" class="app-background">
     <v-row>
       <v-col cols="3" class="pa-0 ma-0">
         <v-navigation-drawer permanent class="ma-0" width="100%">
@@ -209,11 +216,11 @@ export default {
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title
-                  class="text-h5 font-weight-light text--secondary"
+                  class="text-h5 font-weight-light text--secondary pt-2"
                 >
                   Custom Roles
                   <v-btn
-                    v-if="!addRole"
+                    v-if="!addRole && hasPermission('create', 'role')"
                     color="primary"
                     icon
                     small
