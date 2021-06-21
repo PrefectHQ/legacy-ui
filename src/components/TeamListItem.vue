@@ -48,17 +48,28 @@ export default {
 
     <div class="ml-8">
       <v-avatar
-        v-for="u in users"
+        v-for="u in users.slice(0, 3)"
         :key="u.id"
-        color="primary"
+        :color="'#' + Math.floor(Math.random() * 16777215).toString(16)"
         size="32"
-        class="white--text rounded-circle text-uppercase"
+        class="white--text rounded-circle text-uppercase ml-n3"
+        style="border: thin solid #fff;"
         >{{
           u.first_name && u.last_name
             ? u.first_name[0] + u.last_name[1]
             : u.username[0] + u.username[1]
         }}</v-avatar
       >
+
+      <v-avatar
+        v-if="users.length > 3"
+        color="grey lighten-3"
+        size="32"
+        class="rounded-circle text-uppercase ml-n3"
+        style="border: thin solid #fff;"
+      >
+        +{{ users.length - 3 }}
+      </v-avatar>
     </div>
 
     <v-spacer />
