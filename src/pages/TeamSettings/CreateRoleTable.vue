@@ -89,42 +89,42 @@ export default {
     noName() {
       return !this.template && !this.roleName
     },
-    permissionsList() {
-      return this.auth?.auth_info?.permissions
-    },
     authPermissionObject() {
       let obj = Object.values(this.permissionGroups).map(permissionGroup => {
-        this.auth?.permissions?.reduce((permissionsObj, item) => {
-          const sections = item.split(':')
-          if (permissionsObj[sections[1]]?.includeMore) {
-            if (sections[0] === 'create')
-              permissionsObj[sections[1]].disableCreate = false
-            if (sections[0] === 'read')
-              permissionsObj[sections[1]].disableRead = false
-            if (sections[0] === 'update')
-              permissionsObj[sections[1]].disableUpdate = false
-            if (sections[0] === 'delete')
-              permissionsObj[sections[1]].disableDelete = false
-          } else if (permissionsObj[sections[1]]) {
-            permissionsObj[sections[1]] = {
-              ...permissionsObj[sections[1]],
-              includeMore: true,
-              disableCreate: sections[0] !== 'create',
-              disableUpdate: sections[0] !== 'update',
-              disableRead: sections[0] !== 'read',
-              disableDelete: sections[0] !== 'delete',
-              includeUpdate: false,
-              includeCreate: false,
-              includeDelete: false,
-              includeRead: false,
-              includeAll: false,
-              shortName: sections[1],
-              key: item,
-              value: item
+        this.auth?.user_permissions_filtered_by_license_features?.reduce(
+          (permissionsObj, item) => {
+            const sections = item.split(':')
+            if (permissionsObj[sections[1]]?.includeMore) {
+              if (sections[0] === 'create')
+                permissionsObj[sections[1]].disableCreate = false
+              if (sections[0] === 'read')
+                permissionsObj[sections[1]].disableRead = false
+              if (sections[0] === 'update')
+                permissionsObj[sections[1]].disableUpdate = false
+              if (sections[0] === 'delete')
+                permissionsObj[sections[1]].disableDelete = false
+            } else if (permissionsObj[sections[1]]) {
+              permissionsObj[sections[1]] = {
+                ...permissionsObj[sections[1]],
+                includeMore: true,
+                disableCreate: sections[0] !== 'create',
+                disableUpdate: sections[0] !== 'update',
+                disableRead: sections[0] !== 'read',
+                disableDelete: sections[0] !== 'delete',
+                includeUpdate: false,
+                includeCreate: false,
+                includeDelete: false,
+                includeRead: false,
+                includeAll: false,
+                shortName: sections[1],
+                key: item,
+                value: item
+              }
             }
-          }
-          return permissionsObj
-        }, permissionGroup)
+            return permissionsObj
+          },
+          permissionGroup
+        )
         return permissionGroup
       })
       return obj
@@ -217,9 +217,6 @@ export default {
         const includedPermissions = []
         this.permissions.forEach(group => {
           Object.values(group).forEach(permission => {
-            // if (permission.includeCreate && !permission.disableCreate) {
-            //   console.log(permission)
-            // }
             if (permission.includeCreate && !permission.disableCreate)
               includedPermissions.push(`create:${permission.shortName}`)
             if (permission.includeDelete && !permission.disableDelete)
@@ -230,7 +227,6 @@ export default {
               includedPermissions.push(`update:${permission.shortName}`)
           })
         })
-        // console.log(includedPermissions)
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-custom-role.gql'),
           variables: {
@@ -309,7 +305,7 @@ export default {
     auth: {
       query: require('@/graphql/TeamSettings/permissions.gql'),
       loadingKey: 'loadingKey',
-      update: data => data.auth_info
+      update: data => data.permissions_info
     }
   }
 }
@@ -396,6 +392,7 @@ export default {
                 <v-simple-checkbox
                   v-model="item.includeAll"
                   hide-details
+                  :ripple="false"
                   color="primary"
                   :disabled="disableEdit"
                   :style="{ 'margin-top': '0px' }"
@@ -409,6 +406,7 @@ export default {
                   :disabled="disableEdit"
                   color="primary"
                   hide-details
+                  :ripple="false"
                   :style="{ 'margin-top': '0px' }"
                 />
               </v-col>
@@ -418,6 +416,7 @@ export default {
                   v-model="item.includeRead"
                   :disabled="disableEdit"
                   hide-details
+                  :ripple="false"
                   color="primary"
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -428,6 +427,7 @@ export default {
                   v-model="item.includeUpdate"
                   :disabled="disableEdit"
                   hide-details
+                  :ripple="false"
                   color="primary"
                   :style="{ 'margin-top': '0px' }"
                 />
@@ -438,6 +438,7 @@ export default {
                   v-model="item.includeDelete"
                   :disabled="disableEdit"
                   hide-details
+                  :ripple="false"
                   color="primary"
                   :style="{ 'margin-top': '0px' }"
                 />
