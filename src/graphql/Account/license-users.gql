@@ -1,0 +1,14 @@
+query LicenseUsers {
+  license_users {
+    id
+    first_name
+    last_name
+    username
+
+    memberships {
+      tenant_id
+      membership_id
+      role_id
+    }
+  }
+}

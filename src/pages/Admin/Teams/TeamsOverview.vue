@@ -24,12 +24,19 @@ export default {
     teams() {
       return [
         ...this.tenants?.filter(t => t.license_id == this.license?.id)
-      ].sort((a, b) => new Date(a.created) > new Date(b.created))
+      ].sort((a, b) =>
+        a.id == this.tenant.id
+          ? -1
+          : b.id == this.tenant.id
+          ? 1
+          : new Date(a.created) > new Date(b.created)
+      )
     }
   },
   methods: {
     ...mapActions('data', ['resetData']),
     ...mapActions('tenant', ['setCurrentTenant']),
+    ...mapActions('user', ['getUser']),
     async handleSwitchTenant(tenant) {
       if (tenant.slug == this.tenant.slug) return
 
@@ -42,7 +49,37 @@ export default {
       clearCache()
       this.loading = false
     },
+    async handleRemoveTenant(tenant) {
+      this.loading = true
+      try {
+        console.log(tenant)
+        const res = await this.$apollo.mutate({
+          mutation: require('@/graphql/Tenant/delete-enterprise-tenant.gql'),
+          variables: {
+            input: {
+              tenant_id: tenant.id,
+              confirm: true
+            }
+          }
+        })
+
+        console.log(res)
+
+        await this.getUser()
+        await this.$globalApolloQueries['tenants']?.refetch()
+
+        this.resetData()
+
+        clearCache()
+        sessionStorage.setItem('haltTenantRouting', true)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     refetch() {
+      this.getUser()
       this.$globalApolloQueries['tenants']?.refetch()
     }
   }
@@ -52,7 +89,7 @@ export default {
 <template>
   <v-container fluid>
     <div class="mx-4 mb-4 d-flex align-center justify-end">
-      <div class="mr-auto text-h5 font-weight-light">
+      <div class="mr-auto text-h5 font-weight-light" @click="refetch">
         {{ teams.length }}/{{ license.terms.tenants }} team slots used
       </div>
 
@@ -66,7 +103,7 @@ export default {
       </v-btn>
     </div>
 
-    <transition-group name="teams-wrapper" mode="out-in" class="grid-container">
+    <transition-group name="teams-wrapper" mode="out-in">
       <TeamListItem
         v-for="team in teams"
         :key="team.id"
@@ -75,6 +112,7 @@ export default {
         class="mb-4"
         @click="handleSwitchTenant(team)"
         @refetch="refetch"
+        @remove="handleRemoveTenant(team)"
       />
     </transition-group>
   </v-container>
@@ -104,18 +142,5 @@ export default {
   border-style: dotted;
   border-width: 2px;
   max-width: 400px;
-}
-
-$cellsize: 300px;
-$guttersize: 24px;
-
-.grid-container {
-  column-gap: $guttersize;
-  display: grid;
-  grid-auto-flow: dense;
-  grid-auto-rows: $cellsize;
-  grid-template-columns: repeat(auto-fill, $cellsize);
-  justify-content: center;
-  row-gap: $guttersize;
 }
 </style>

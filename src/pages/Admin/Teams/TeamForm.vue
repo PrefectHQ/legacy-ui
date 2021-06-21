@@ -1,4 +1,5 @@
 <script>
+import LogRocket from 'logrocket'
 import { mapActions, mapGetters } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 
@@ -11,6 +12,7 @@ const animalsLength = animals.length
 export default {
   data() {
     return {
+      currentTeam: null,
       loading: false,
       teamName: this.generateRandomName(),
       teamSlug: null,
@@ -22,7 +24,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenants'])
+    ...mapGetters('tenant', ['tenant', 'tenants'])
   },
   watch: {
     teamName(val) {
@@ -35,10 +37,12 @@ export default {
   },
   mounted() {
     this.teamSlug = this.slugifyString(this.teamName)
+    this.currentTeam = this.tenant.slug
   },
   methods: {
+    ...mapActions('alert', ['addNotification', 'updateNotification']),
     ...mapActions('data', ['resetData']),
-    ...mapActions('tenant', ['setCurrentTenant']),
+    ...mapActions('tenant', ['setCurrentTenant', 'updateTenantSettings']),
     ...mapActions('user', ['getUser']),
     generateRandomName() {
       const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
@@ -95,6 +99,14 @@ export default {
     },
     async createTenant() {
       this.loading = true
+
+      const notificationId = await this.addNotification({
+        color: 'primaryLight',
+        loading: true,
+        text: 'Creating team...',
+        dismissable: false
+      })
+
       try {
         await this.$apollo.mutate({
           mutation: require('@/graphql/Tenant/create-enterprise-tenant.gql'),
@@ -120,11 +132,41 @@ export default {
           teamNamed: true
         })
 
+        await this.setCurrentTenant(this.currentTeam)
+
         this.$emit('team-created')
+
+        await this.updateNotification({
+          id: notificationId,
+          notification: {
+            color: 'primary',
+            text: 'Team created!',
+            loading: false,
+            subtext: this.teamName,
+            dismissable: true,
+            timeout: 20000
+          }
+        })
       } catch (e) {
         if (e?.toString().includes('Uniqueness violation')) {
           this.slugErrors = ['Sorry, that URL slug is already in use.']
+        } else {
+          await this.updateNotification({
+            id: notificationId,
+            notification: {
+              color: 'error',
+              loading: false,
+              text:
+                'There was a problem creating your team. If the issue persists, contact help@prefect.io.',
+              subtext: e,
+              dismissable: true,
+              timeout: 10000
+            }
+          })
+          LogRocket.captureException(e)
         }
+        // eslint-disable-next-line no-console
+        console.error(e)
       } finally {
         this.loading = false
       }

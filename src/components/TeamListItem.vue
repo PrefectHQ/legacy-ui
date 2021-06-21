@@ -1,9 +1,22 @@
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   props: {
     team: {
       required: true,
       type: Object
+    },
+    loading: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
+  },
+  computed: {
+    ...mapGetters('tenant', ['tenant']),
+    selected() {
+      return this.team.id == this.tenant.id
     }
   },
   mounted() {
@@ -13,25 +26,60 @@ export default {
 </script>
 
 <template>
-  <v-card
-    class="utilGrayDark--text mx-4 team-card"
+  <div
+    class="utilGrayDark--text mx-4 team-card d-flex align-center justify-start px-6 rounded"
+    :class="{ selected: selected }"
     flat
     outlined
-    @click="$emit('click')"
+    :disabled="loading"
   >
-    <v-card-title>
-      <v-avatar color="primary" size="36" class="rounded-circle white--text">
-        {{ team.name[0] }}
-      </v-avatar>
-      {{ team.name }}
-    </v-card-title>
-    <v-card-text> </v-card-text>
-  </v-card>
+    <div>
+      <div class="text-truncate font-weight-light text-h5">
+        {{ team.name }}
+      </div>
+
+      <div v-show="selected" class="text-overline mt-n2">Current</div>
+    </div>
+
+    <div class="ml-8">
+      <span class="">
+        <v-icon color="primary">
+          fad fa-users
+        </v-icon>
+      </span>
+      <span>
+        5
+      </span>
+    </div>
+
+    <v-spacer />
+
+    <div v-if="!selected" class="actions d-flex align-center justify-center">
+      <v-btn icon @click.stop="$emit('click')">
+        <v-icon>sync_alt</v-icon>
+      </v-btn>
+      <v-btn icon @click.stop="$emit('remove')">
+        <v-icon>delete</v-icon>
+      </v-btn>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .team-card {
-  height: 300px;
-  width: 350px;
+  background-color: var(--v-appForeground-base);
+  border: thin solid rgba(0, 0, 0, 0.12);
+  height: 78px;
+  transition: all 150ms;
+
+  .actions {
+    opacity: 0;
+  }
+
+  &:hover {
+    .actions {
+      opacity: 1;
+    }
+  }
 }
 </style>
