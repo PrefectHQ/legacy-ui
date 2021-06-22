@@ -52,7 +52,8 @@ export default {
         Flows: {
           run: { name: 'Run', value: 'run' },
           project: { name: 'Project', value: 'project' },
-          log: { name: 'Logs', value: 'log' }
+          log: { name: 'Logs', value: 'log' },
+          flow: { name: 'Flow', value: 'flow' }
         },
         Agents: {
           agent: { name: 'Agent', value: 'agent' }
