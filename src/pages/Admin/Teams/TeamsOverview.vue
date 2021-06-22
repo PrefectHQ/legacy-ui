@@ -31,11 +31,11 @@ export default {
       return [
         ...this.tenants?.filter(t => t.license_id == this.license?.id)
       ].sort((a, b) =>
-        a.id == this.tenant.id
+        a.stripe_customer
           ? -1
-          : b.id == this.tenant.id
+          : b.stripe_customer
           ? 1
-          : new Date(a.created) > new Date(b.created)
+          : new Date(a.created) - new Date(b.created)
       )
     }
   },
@@ -156,9 +156,9 @@ export default {
             You don't have permission to view license teams; contact your
             license administrator to get access.
           </span>
-          <span v-else
-            >Multi-tenancy is only available on Enterprise plans.</span
-          >
+          <span v-else>
+            Multi-tenancy is only available on Enterprise plans.
+          </span>
         </div>
       </div>
     </v-container>

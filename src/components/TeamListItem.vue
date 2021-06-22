@@ -20,12 +20,13 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['license']),
     selected() {
       return this.team.id == this.tenant.id
+    },
+    isRoot() {
+      return !!this.team.stripe_customer
     }
-  },
-  mounted() {
-    console.log(this.team)
   },
   methods: {}
 }
@@ -34,17 +35,20 @@ export default {
 <template>
   <div
     class="utilGrayDark--text team-card d-flex align-center justify-start px-6 rounded"
-    :class="{ selected: selected, disabled: loading }"
+    :class="{ selected: selected, disabled: loading, root: isRoot }"
     flat
     outlined
     :disabled="loading"
   >
-    <div style="max-width: 200px; width: 100%;">
+    <div
+      class="pr-8"
+      style="border-right: thin solid #eee; max-width: 350px; width: 100%;"
+    >
       <div class="text-truncate font-weight-light text-h5">
         {{ team.name }}
       </div>
 
-      <div v-show="selected" class="text-overline mt-n2">Current</div>
+      <div v-show="isRoot" class="text-overline mt-n2">Root</div>
     </div>
 
     <router-link
@@ -71,7 +75,7 @@ export default {
       <v-avatar
         v-if="users.length > 3"
         color="grey lighten-3"
-        size="32"
+        :size="users.length - 3 > 100 ? '42' : '32'"
         class="rounded-circle text-uppercase ml-n3 user-select-none utilGrayDark--text"
         style="border: thin solid #fff;"
       >
@@ -81,23 +85,32 @@ export default {
 
     <v-spacer />
 
-    <div v-if="!selected" class="actions d-flex align-center justify-center">
-      <v-btn
-        icon
-        :disabled="loading"
-        title="Switch team"
-        @click.stop="$emit('click')"
+    <div class="actions d-flex align-center justify-center">
+      <truncate
+        :content="selected ? 'You\'re logged in to this team.' : 'Switch team'"
       >
-        <v-icon>sync_alt</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        :disabled="loading"
-        title="Remove team"
-        @click.stop="$emit('remove')"
+        <v-btn
+          icon
+          :disabled="selected || loading"
+          title="Switch team"
+          @click.stop="$emit('click')"
+        >
+          <v-icon>sync_alt</v-icon>
+        </v-btn>
+      </truncate>
+
+      <truncate
+        :content="isRoot ? 'The root team can\'t be deleted.' : 'Remove team'"
       >
-        <v-icon>delete</v-icon>
-      </v-btn>
+        <v-btn
+          icon
+          :disabled="isRoot || loading"
+          :title="isRoot ? 'The root team can\'t be deleted.' : 'Remove team'"
+          @click.stop="$emit('remove')"
+        >
+          <v-icon>delete</v-icon>
+        </v-btn>
+      </truncate>
     </div>
   </div>
 </template>
@@ -106,9 +119,14 @@ export default {
 .team-card {
   background-color: var(--v-appForeground-base);
   border: thin solid rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
   height: 78px;
   transition: all 150ms;
   width: 100%;
+
+  &.selected {
+    border-left: 6px solid var(--v-primary-base);
+  }
 
   &.disabled {
     backdrop-filter: blur(10px);
