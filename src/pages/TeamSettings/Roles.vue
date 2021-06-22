@@ -264,18 +264,21 @@ export default {
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title
-                  class="text-h5 font-weight-light text--secondary pt-2"
+                  class="text-h5 font-weight-light text--secondary"
                 >
-                  Custom Roles
-                  <v-btn
-                    v-if="!addRole && hasPermission('create', 'role')"
-                    color="primary"
-                    icon
-                    small
-                    @click="handleRoleSelect(null, 'new')"
+                  <span
+                    >Custom Roles
+                    <v-btn
+                      v-if="hasPermission('create', 'role')"
+                      :disabled="addRole"
+                      color="primary"
+                      icon
+                      small
+                      @click="handleRoleSelect(null, 'new')"
+                    >
+                      <v-icon v-if="!addRole">add</v-icon>
+                    </v-btn></span
                   >
-                    <v-icon>add</v-icon>
-                  </v-btn>
                 </v-list-item-title>
                 <v-divider></v-divider>
               </v-list-item-content>
