@@ -364,10 +364,11 @@ export default {
         >
         <div v-else class="text-right">
           <div v-if="enableEdit || !template">
-            <v-btn small text class="mr-2" @click.stop="cancel">
+            <v-btn small elevation="0" text class="mr-2" @click.stop="cancel">
               Cancel
             </v-btn>
             <v-btn
+              elevation="0"
               small
               color="primary"
               :loading="loadingRole"
@@ -378,7 +379,12 @@ export default {
             </v-btn>
           </div>
           <div v-else class="mr-2">
-            <v-btn small color="primary" @click.stop="enableEdit = true">
+            <v-btn
+              elevation="0"
+              small
+              color="primary"
+              @click.stop="enableEdit = true"
+            >
               Edit
             </v-btn>
           </div>
