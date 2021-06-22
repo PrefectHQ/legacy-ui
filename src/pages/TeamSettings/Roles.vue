@@ -102,6 +102,11 @@ export default {
       await this.$apollo.queries.roles.refetch()
       if (this.addRole) this.cancelAddName()
     },
+    roleInUse(role) {
+      return !!this.rolesInUse.filter(
+        membershipRole => membershipRole.role_id === role.id
+      ).length
+    },
     async deleteRole(role) {
       this.deletingRole = role.id
       try {
@@ -150,6 +155,18 @@ export default {
       },
       pollInterval: 10000,
       update: data => data.auth_role
+    },
+    rolesInUse: {
+      query: require('@/graphql/TeamSettings/membership-roles.gql'),
+      loadingKey: 'loading',
+      variables() {
+        return {}
+      },
+      pollInterval: 10000,
+      update: data => {
+        console.log('dat', data)
+        return data.membership
+      }
     }
   }
 }
@@ -182,11 +199,13 @@ export default {
               <v-list-item
                 v-for="(name, index) in Object.values(roleMap)"
                 :key="index"
-                class="text-body-1 font-weight-regular text--secondary"
                 link
               >
                 <v-list-item-content>
-                  <v-list-item-title>{{ name }} </v-list-item-title>
+                  <v-list-item-title
+                    class="text-body-1 font-weight-regular text--secondary"
+                    >{{ name }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </div>
@@ -299,7 +318,9 @@ export default {
                   </div>
                   <v-btn
                     v-else
-                    :disabled="defaultRoles.includes(item.name)"
+                    :disabled="
+                      defaultRoles.includes(item.name) || roleInUse(item)
+                    "
                     icon
                     x-small
                     class="ml-1"
