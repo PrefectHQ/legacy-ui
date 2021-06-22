@@ -327,7 +327,7 @@ export default {
 
 <template>
   <v-card elevation="0" width="100%">
-    <div v-if="loading" :style="{ height: '80vH' }" class="text-center pa-4">
+    <div v-if="loading" :style="{ height: '100vH' }" class="text-center pa-4">
       <v-row style="{height: '35px'}">
         <v-col cols="12">
           <v-skeleton-loader v-bind="attra" type="text"></v-skeleton-loader>
@@ -391,7 +391,7 @@ export default {
         </div>
         <v-divider class="mt-2"></v-divider>
       </div>
-      <v-sheet height="80vh" :style="{ overflow: 'auto' }" class="pa-4">
+      <v-sheet height="95vh" :style="{ overflow: 'auto' }" class="pa-4">
         <div v-for="(group, index) in permissions" :key="index">
           <v-row class="mb-4" no-gutters>
             <v-col cols="4" class="text-h5 font-weight-light text--secondary">
