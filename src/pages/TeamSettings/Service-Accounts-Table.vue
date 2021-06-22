@@ -333,7 +333,10 @@ export default {
                     : `Expires ${formatTimeRelative(key.expires)}`
                 }}</v-list-item-subtitle
               >
-              <v-tooltip bottom>
+              <v-tooltip
+                v-if="hasPermission('delete', 'service-api-key')"
+                bottom
+              >
                 <template #activator="{ on }">
                   <v-btn
                     text
