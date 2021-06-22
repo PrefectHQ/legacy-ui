@@ -54,6 +54,9 @@ export default {
           project: { name: 'Project', value: 'project' },
           log: { name: 'Logs', value: 'log' }
         },
+        Agents: {
+          agent: { name: 'Agent', value: 'agent' }
+        },
         Secrets: {
           secret: { name: 'Secret', value: 'secret' },
           ['secret-value']: { name: 'Secret Value', value: 'secret-value' }
@@ -68,6 +71,9 @@ export default {
             value: 'concurrency-limit'
           },
           ['audit-trail']: { name: 'Audit Trail', value: 'audit-trail' }
+        },
+        User: {
+          login: { name: 'Login', value: 'login' }
         },
         Admin: {
           usage: { name: 'Usage', value: 'usage' },
