@@ -119,28 +119,23 @@ export default {
           }
         })
 
-        // This makes sure we don't route to the welcome screen
-        // after switching to the tenant
-        sessionStorage.setItem('haltTenantRouting', true)
-
         await this.getUser()
         await this.$globalApolloQueries['tenants']?.refetch()
 
-        this.resetData()
-
-        clearCache()
-
+        // This makes sure we don't route to the welcome screen
+        // after switching to the tenant
+        localStorage.setItem('haltTenantRouting', true)
         await this.setCurrentTenant(this.teamSlug)
 
         await this.updateTenantSettings({
           teamNamed: true
         })
 
-        sessionStorage.setItem('haltTenantRouting', true)
-
-        await this.setCurrentTenant(this.currentTeam)
-
         this.$emit('team-created')
+
+        this.resetData()
+
+        clearCache()
 
         await this.updateNotification({
           id: notificationId,
@@ -150,7 +145,7 @@ export default {
             loading: false,
             subtext: this.teamName,
             dismissable: true,
-            timeout: 20000
+            timeout: 10000
           }
         })
       } catch (e) {

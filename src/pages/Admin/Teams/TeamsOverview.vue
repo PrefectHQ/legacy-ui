@@ -67,9 +67,7 @@ export default {
       })
 
       try {
-        console.log(tenant)
-
-        const res = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: require('@/graphql/Tenant/delete-enterprise-tenant.gql'),
           variables: {
             input: {
@@ -79,15 +77,10 @@ export default {
           }
         })
 
-        console.log(res)
-
+        this.resetData()
+        clearCache()
         await this.getUser()
         await this.$globalApolloQueries['tenants']?.refetch()
-
-        this.resetData()
-
-        clearCache()
-        sessionStorage.setItem('haltTenantRouting', true)
 
         await this.updateNotification({
           id: notificationId,
@@ -96,11 +89,10 @@ export default {
             text: `${tenant.name} deleted.`,
             loading: false,
             dismissable: true,
-            timeout: 15000
+            timeout: 10000
           }
         })
       } catch (e) {
-        console.log(e)
         await this.updateNotification({
           id: notificationId,
           notification: {
@@ -108,7 +100,7 @@ export default {
             loading: false,
             text:
               'There was a problem deleting your team. If the issue persists, contact help@prefect.io.',
-            subtext: e,
+            subtext: e.toString(),
             dismissable: true,
             timeout: 10000
           }

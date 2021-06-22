@@ -82,10 +82,20 @@ export default {
     <v-spacer />
 
     <div v-if="!selected" class="actions d-flex align-center justify-center">
-      <v-btn icon :disabled="loading">
+      <v-btn
+        icon
+        :disabled="loading"
+        title="Switch team"
+        @click.stop="$emit('click')"
+      >
         <v-icon>sync_alt</v-icon>
       </v-btn>
-      <v-btn icon :disabled="loading" @click.stop="$emit('remove')">
+      <v-btn
+        icon
+        :disabled="loading"
+        title="Remove team"
+        @click.stop="$emit('remove')"
+      >
         <v-icon>delete</v-icon>
       </v-btn>
     </div>
@@ -98,6 +108,7 @@ export default {
   border: thin solid rgba(0, 0, 0, 0.12);
   height: 78px;
   transition: all 150ms;
+  width: 100%;
 
   &.disabled {
     backdrop-filter: blur(10px);
