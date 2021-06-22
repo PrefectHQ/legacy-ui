@@ -11,8 +11,18 @@ export default {
   },
   mixins: [formatTime],
   props: {
+    // Mapping between role & role color
+    roleColorMap: {
+      type: Object,
+      required: true
+    },
+    // Mapping between role & displayed role text
+    roleMap: {
+      type: Object,
+      required: true
+    },
     // Check admin privileges
-    isTenantAdmin: {
+    permissionsCheck: {
       type: Boolean,
       required: true
     },
@@ -45,6 +55,11 @@ export default {
           mobile: true,
           text: 'Name',
           value: 'firstName'
+        },
+        {
+          mobile: true,
+          text: 'Role',
+          value: 'role'
         },
         {
           mobile: true,
@@ -197,6 +212,9 @@ export default {
       this.isRemovingUser = false
       this.dialogRemoveUser = false
       this.selectedUser = null
+    },
+    updateRole(account) {
+      this.$emit('update', account)
     }
   },
   apollo: {
@@ -207,7 +225,6 @@ export default {
       },
       result({ data }) {
         if (!data) return
-
         this.membersItems = data.tenantUsers
           .filter(user =>
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
@@ -215,10 +232,11 @@ export default {
           .filter(user => user.account_type === 'SERVICE')
           .map(user => {
             user.memberships.find(mem => mem.tenant_id == this.tenant.id)
-
             return {
               id: user.id,
-              firstName: user.first_name
+              membershipID: user.memberships[0].id,
+              firstName: user.first_name,
+              role: user?.memberships[0]?.role_detail?.name
             }
           })
         return data
@@ -266,7 +284,7 @@ export default {
 <template>
   <div>
     <v-data-table
-      v-if="isTenantAdmin"
+      v-if="permissionsCheck"
       fixed-header
       show-expand
       :expanded.sync="expanded"
@@ -341,8 +359,21 @@ export default {
           </v-list>
         </td>
       </template>
+      <template #item.role="{ item }">
+        <v-chip
+          small
+          dark
+          :color="
+            !roleColorMap[item.role]
+              ? 'accentPink'
+              : roleColorMap[item.role] || 'secondaryLight'
+          "
+        >
+          {{ roleMap[item.role] || item.role }}
+        </v-chip>
+      </template>
 
-      <template v-if="isTenantAdmin" #item.create="{ item }">
+      <template v-if="permissionsCheck" #item.create="{ item }">
         <v-btn
           small
           color="primary"
@@ -359,7 +390,22 @@ export default {
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="isTenantAdmin" #item.actions="{ item }">
+      <template v-if="permissionsCheck" #item.actions="{ item }">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn
+              text
+              fab
+              x-small
+              color="primary"
+              v-on="on"
+              @click="updateRole(item)"
+            >
+              <v-icon>edit</v-icon>
+            </v-btn>
+          </template>
+          Change Service Account role
+        </v-tooltip>
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
