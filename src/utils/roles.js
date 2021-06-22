@@ -1,9 +1,9 @@
 export const ROLE_MAP = {
-  USER: 'User',
   READ_ONLY_USER: 'Read only',
+  ENTERPRISE_LICENSE_ADMIN: 'License administrator',
+  USER: 'User',
   TENANT_ADMIN: 'Administrator',
-  PENDING: 'Pending',
-  ENTERPRISE_LICENSE_ADMIN: 'License administrator'
+  PENDING: 'Pending'
 }
 
 export const ROLE_COLOR_MAP = {

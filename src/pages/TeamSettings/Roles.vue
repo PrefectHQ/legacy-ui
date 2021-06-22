@@ -40,6 +40,9 @@ export default {
       'allowedUsers',
       'role'
     ]),
+    loadingRoles() {
+      return Object.values(this.roleMap).filter(role => role !== 'Pending')
+    },
     selectedRole() {
       if (this.roleId) return this.roleId
       if (this.template) return this.template.id
@@ -196,7 +199,7 @@ export default {
             </v-list-item>
             <div v-if="loading">
               <v-list-item
-                v-for="(name, index) in Object.values(roleMap)"
+                v-for="(name, index) in loadingRoles"
                 :key="index"
                 link
               >
