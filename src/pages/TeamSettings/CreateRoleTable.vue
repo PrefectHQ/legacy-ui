@@ -371,7 +371,7 @@ export default {
               small
               color="primary"
               :loading="loadingRole"
-              :disabled="!isChanged || noName"
+              :disabled="(!isChanged && template) || noName"
               @click.stop="handleCreateUpdateClick"
             >
               {{ template ? 'Update' : 'Create' }} Role
