@@ -163,10 +163,7 @@ export default {
         return {}
       },
       pollInterval: 10000,
-      update: data => {
-        console.log('dat', data)
-        return data.membership
-      }
+      update: data => data.membership
     }
   }
 }
