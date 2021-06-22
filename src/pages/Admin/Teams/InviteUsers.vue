@@ -162,7 +162,10 @@ export default {
       loadingKey: 'loadingKey',
       update(data) {
         if (!data) return []
-        this.invitations = data.membership_invitation
+        this.invitations = data.membership_invitation.sort(
+          (a, b) => new Date(b.created) - new Date(a.created)
+        )
+
         this.addedUsers = []
         this.removedInvitations = []
         return data.membership_invitation
@@ -312,56 +315,74 @@ export default {
 
         <v-divider class="my-8" />
 
-        <div v-if="filteredUsers.length > 0">
-          <div class="text-h5 font-weight-light">
-            Suggested
-          </div>
+        <transition name="fade" mode="out-in">
+          <div v-if="filteredUsers.length > 0">
+            <div class="text-h5 font-weight-light">
+              Suggested
+            </div>
 
-          <div v-if="filteredUsers.length > 0" class="mt-4">
-            <transition-group name="user-wrapper" mode="out-in">
-              <div
-                v-for="u in filteredUsers"
-                :key="u.id"
-                class="utilGrayDark--text user-card d-inline-flex align-center justify-space-between px-3 mr-4 my-2 text-body-1"
-                :class="{
-                  disabled: addedUsers.includes(u.id)
-                }"
-              >
-                <div class="text-truncate">
-                  {{
-                    u.first_name || u.last_name
-                      ? u.first_name + ' ' + u.last_name
-                      : u.username
-                  }}
-                </div>
+            <div v-if="filteredUsers.length > 0" class="mt-4">
+              <transition-group name="user-wrapper" mode="out-in">
+                <div
+                  v-for="u in filteredUsers"
+                  :key="u.id"
+                  class="utilGrayDark--text user-card d-inline-flex align-center justify-space-between px-3 mr-4 my-2 text-body-1"
+                  :class="{
+                    disabled: addedUsers.includes(u.id)
+                  }"
+                >
+                  <div class="text-truncate">
+                    {{
+                      u.first_name || u.last_name
+                        ? u.first_name + ' ' + u.last_name
+                        : u.username
+                    }}
+                  </div>
 
-                <div class="actions d-flex align-center justify-end ml-auto">
-                  <v-autocomplete
-                    v-model="u.role"
-                    outlined
-                    dense
-                    class="actions-role"
-                    hide-details
-                    :allow-overflow="false"
-                    auto-select-first
-                    single-line
-                    label="Role"
-                    :items="roles"
-                    item-text="label"
-                    item-value="name"
-                    :disabled="addedUsers.includes(u.id)"
-                    style="width: 200px;"
-                  >
-                  </v-autocomplete>
-                  <v-btn small depressed color="primary" @click="inviteUser(u)">
-                    Invite
-                  </v-btn>
+                  <div class="actions d-flex align-center justify-end ml-auto">
+                    <v-autocomplete
+                      v-model="u.role"
+                      outlined
+                      dense
+                      class="actions-role"
+                      hide-details
+                      :allow-overflow="false"
+                      auto-select-first
+                      single-line
+                      label="Role"
+                      :items="roles"
+                      item-text="label"
+                      item-value="name"
+                      :disabled="addedUsers.includes(u.id)"
+                      style="width: 200px;"
+                    >
+                    </v-autocomplete>
+                    <v-btn
+                      small
+                      depressed
+                      color="primary"
+                      @click="inviteUser(u)"
+                    >
+                      Invite
+                    </v-btn>
+                  </div>
                 </div>
-              </div>
-            </transition-group>
+              </transition-group>
+            </div>
           </div>
-        </div>
+        </transition>
       </v-card-text>
+
+      <v-card-actions class="d-flex align-center justify-center mt-8">
+        <v-btn
+          :to="'/admin/teams'"
+          depressed
+          color="primary"
+          style="width: 300px;"
+        >
+          Close
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </div>
 </template>

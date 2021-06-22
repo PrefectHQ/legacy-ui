@@ -8,7 +8,7 @@ export default {
   components: { TeamForm, InviteUsers },
   data() {
     return {
-      step: 2
+      step: 1
     }
   },
   computed: {
