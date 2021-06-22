@@ -369,7 +369,10 @@ export default {
         </v-chip>
       </template>
 
-      <template v-if="permissionsCheck" #item.create="{ item }">
+      <template
+        v-if="hasPermission('create', 'service-api-key')"
+        #item.create="{ item }"
+      >
         <v-btn
           small
           color="primary"
