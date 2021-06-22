@@ -54,6 +54,7 @@ export default {
       if (!this.roles) return []
       const defaultRoles = this.roles?.reduce((arr, role) => {
         if (this.defaultRoles.includes(role.name)) {
+          //Check that only license admins are shown license admin role
           if (
             role.id !== '55375f15-fdae-4a2f-b15a-afb6477522cb' ||
             this.role == '55375f15-fdae-4a2f-b15a-afb6477522cb'
@@ -92,7 +93,6 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    //We should update to use same formatting as in members page?
     formatName(name) {
       return this.roleMap[name]
     },
@@ -116,6 +116,7 @@ export default {
       await this.$apollo.queries.roles.refetch()
       if (this.addRole) this.cancelAddName()
     },
+    //Can not delete a role if it's being used in a membership or invitation
     roleInUse(role) {
       return (
         !!this.rolesInUse.filter(
@@ -363,7 +364,6 @@ export default {
       </v-col>
       <v-col cols="9" class="pa-0">
         <CreateRoleTable
-          table-only
           :template="template"
           :role-name="roleName"
           @close="refetch"

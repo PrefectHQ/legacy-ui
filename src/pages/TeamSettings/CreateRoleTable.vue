@@ -18,6 +18,7 @@ export default {
   },
   data() {
     return {
+      //Skeleton loaders
       attrs: {
         class: 'mb-0',
         elevation: 0
@@ -32,6 +33,8 @@ export default {
         width: '80%',
         elevation: 0
       },
+      loadingKey: 0,
+      loadingRole: false,
       isChanged: false,
       templatePermissions: null,
       permissions: null,
@@ -85,9 +88,7 @@ export default {
             value: 'membership-invitation'
           }
         }
-      },
-      loadingKey: 0,
-      loadingRole: false
+      }
     }
   },
   computed: {
@@ -150,6 +151,7 @@ export default {
       this.permissions = Object.values(this.templatePermissionObject())
     },
     permissions: {
+      //need a deep handler here to make sure we check the whole nested permissions object
       handler: function(val) {
         if (val) this.hasChanges()
       },
@@ -199,6 +201,7 @@ export default {
               group[sections[1]].includeCreate
           }
         })
+        //Using JSON here to create a deep clone of nested object
         copiedPermissionsArr.push(JSON.parse(JSON.stringify(group)))
         return group
       })
