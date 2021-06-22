@@ -42,7 +42,7 @@ export default {
     ]),
     loadingRoles() {
       return Object.values(this.roleMap).filter(
-        role => role !== 'Pending' && role !== 'License adminstrator'
+        role => role !== 'Pending' && role !== 'License administrator'
       )
     },
     selectedRole() {
