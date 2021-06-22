@@ -41,7 +41,9 @@ export default {
       'role'
     ]),
     loadingRoles() {
-      return Object.values(this.roleMap).filter(role => role !== 'Pending')
+      return Object.values(this.roleMap).filter(
+        role => role !== 'Pending' && role !== 'License adminstrator'
+      )
     },
     selectedRole() {
       if (this.roleId) return this.roleId
@@ -51,8 +53,13 @@ export default {
     editedRoles() {
       if (!this.roles) return []
       const defaultRoles = this.roles?.reduce((arr, role) => {
-        if (this.defaultRoles.includes(role.name))
-          arr.push({ ...role, default: true })
+        if (this.defaultRoles.includes(role.name)) {
+          if (
+            role.id !== '55375f15-fdae-4a2f-b15a-afb6477522cb' ||
+            this.role == '55375f15-fdae-4a2f-b15a-afb6477522cb'
+          )
+            arr.push({ ...role, default: true })
+        }
         return arr
       }, [])
       const tenantRoles = this.roles?.filter(
