@@ -288,7 +288,13 @@ export default {
 
       <!-- ACTIONS -->
       <template v-if="permissionsCheck" #item.actions="{ item }">
-        <v-tooltip v-if="hasPermission('feature', 'basic-rbac')" bottom>
+        <v-tooltip
+          v-if="
+            hasPermission('feature', 'basic-rbac') &&
+              hasPermission('update', 'membership')
+          "
+          bottom
+        >
           <template #activator="{ on }">
             <v-btn
               text
@@ -307,7 +313,13 @@ export default {
           </template>
           Modify this user's role
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip
+          v-if="
+            hasPermission('feature', 'basic-rbac') &&
+              hasPermission('delete', 'membership')
+          "
+          bottom
+        >
           <template #activator="{ on }">
             <v-btn
               text

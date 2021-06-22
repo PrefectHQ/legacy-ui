@@ -122,7 +122,7 @@ export default {
       } finally {
         this.isCreatingServiceUser = false
         this.serviceAccountID = null
-        this.serviceAccountNameInput = ''
+        this.serviceAccountNameInput = null
         this.dialogAddServiceAccount = false
         this.roleInput = null
         this.updateAccountRole = false
@@ -175,7 +175,7 @@ export default {
       } finally {
         this.isUpdatingServiceUser = false
         this.serviceAccountID = null
-        this.serviceAccountNameInput = ''
+        this.serviceAccountNameInput = null
         this.dialogAddServiceAccount = false
         this.roleInput = null
         this.updateAccountRole = false
@@ -295,7 +295,6 @@ export default {
           :rules="[rules.required]"
           @keydown.enter="addServiceAccount"
         />
-
         <v-select
           v-model="roleInput"
           outlined
