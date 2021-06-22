@@ -357,7 +357,7 @@ export default {
       </v-row>
     </div>
     <div v-else class="font-weight-light">
-      <div height="35px" class="ma-2">
+      <div height="35px" class="pa-2">
         <div v-if="defaultRole" class="pl-2 pt-2"
           >Default Roles can not be modified.</div
         >
