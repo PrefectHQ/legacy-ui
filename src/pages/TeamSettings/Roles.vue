@@ -173,11 +173,13 @@ export default {
   <v-sheet
     v-if="!hasPermission('read', 'role')"
     height="85vH"
-    class="app-background"
+    class="appBackground"
   >
-    You do not have permission to access roles.
+    <div class="text-h4 text-center appBackground pt-8">
+      You do not have permission to access roles.
+    </div>
   </v-sheet>
-  <v-sheet v-else height="85vH" class="app-background">
+  <v-sheet v-else height="85vH" class="appBackground">
     <v-row>
       <v-col cols="3" class="pa-0 ma-0">
         <v-navigation-drawer permanent class="ma-0" width="100%">
