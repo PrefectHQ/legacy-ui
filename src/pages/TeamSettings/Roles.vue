@@ -84,6 +84,10 @@ export default {
     },
     tenant() {
       this.$apollo.queries.roles.refetch()
+    },
+    license() {
+      if (!this.hasPermission('feature', 'custom-role'))
+        this.$router.push({ name: 'dashboard' })
     }
   },
   methods: {
