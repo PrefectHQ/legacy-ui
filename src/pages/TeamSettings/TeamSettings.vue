@@ -210,7 +210,7 @@ export default {
             <v-list-item-title
               >Roles
               <UpgradeBadge
-                v-if="!hasPermission('feature', 'custom-role')"
+                v-if="isCloud && !hasPermission('feature', 'custom-role')"
                 inline
               >
                 <span class="font-weight-medium">Custom Roles</span> are only
