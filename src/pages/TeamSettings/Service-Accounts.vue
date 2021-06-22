@@ -50,13 +50,6 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['license', 'hasPermission']),
-    permissionsCheck() {
-      return (
-        this.hasPermission('create', 'service-account') &&
-        this.hasPermission('update', 'service-account') &&
-        this.hasPermission('delete', 'service-account')
-      )
-    },
     confirmText() {
       return this.updateAccountRole ? 'Update' : 'Add'
     },
@@ -207,7 +200,7 @@ export default {
     <template #title>Service Accounts</template>
 
     <template #subtitle>
-      <span v-if="permissionsCheck">
+      <span v-if="hasPermission('create', 'service-account')">
         Manage service accounts and their API keys
       </span>
       <span v-else>
@@ -215,7 +208,7 @@ export default {
       </span>
     </template>
 
-    <template v-if="permissionsCheck" #cta>
+    <template v-if="hasPermission('create', 'service-account')" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -260,7 +253,7 @@ export default {
 
     <!-- SERVICE ACCOUNT ADD DIALOG -->
     <ConfirmDialog
-      v-if="permissionsCheck"
+      v-if="hasPermission('create', 'service-account')"
       v-model="dialogAddServiceAccount"
       :title="titleText"
       :confirm-text="confirmText"
