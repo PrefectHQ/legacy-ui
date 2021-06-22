@@ -348,18 +348,26 @@ export default {
                       <v-icon small>close</v-icon>
                     </v-btn>
                   </div>
-                  <v-btn
-                    v-else
-                    :disabled="
-                      defaultRoles.includes(item.name) || roleInUse(item)
-                    "
-                    icon
-                    x-small
-                    class="ml-1"
-                    color="error"
-                    @click="deleteSelected = item.id"
-                    ><v-icon>delete</v-icon></v-btn
-                  >
+                  <v-tooltip v-else bottom>
+                    <template #activator="{ on }">
+                      <div v-on="on">
+                        <v-btn
+                          :disabled="
+                            defaultRoles.includes(item.name) || roleInUse(item)
+                          "
+                          icon
+                          x-small
+                          class="ml-1"
+                          color="error"
+                          @click="deleteSelected = item.id"
+                          ><v-icon>delete</v-icon></v-btn
+                        >
+                      </div>
+                    </template>
+                    <span>{{
+                      roleInUse(item) ? 'Role in use' : 'Delete role'
+                    }}</span>
+                  </v-tooltip>
                 </v-list-item-icon>
               </v-list-item>
             </v-sheet>
