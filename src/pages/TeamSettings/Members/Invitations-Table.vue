@@ -9,7 +9,7 @@ export default {
   mixins: [formatTime],
   props: {
     // Check admin privileges
-    isTenantAdmin: {
+    permissionsCheck: {
       type: Boolean,
       required: true
     },
@@ -210,7 +210,7 @@ export default {
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="isTenantAdmin" #item.action="{ item }">
+      <template v-if="permissionsCheck" #item.action="{ item }">
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn

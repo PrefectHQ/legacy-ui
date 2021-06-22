@@ -374,7 +374,7 @@ export default {
       <!-- MEMBERS TABLE -->
       <v-tab-item value="members">
         <MembersTable
-          :is-tenant-admin="permissionsCheck"
+          :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :roles="filteredRoles"
@@ -391,7 +391,7 @@ export default {
       <!-- PENDING INVITATIONS TABLE -->
       <v-tab-item value="pending" eager>
         <InvitationsTable
-          :is-tenant-admin="permissionsCheck"
+          :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :search="searchInput"
