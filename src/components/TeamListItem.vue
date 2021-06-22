@@ -33,7 +33,7 @@ export default {
 
 <template>
   <div
-    class="utilGrayDark--text mx-4 team-card d-flex align-center justify-start px-6 rounded"
+    class="utilGrayDark--text team-card d-flex align-center justify-start px-6 rounded"
     :class="{ selected: selected, disabled: loading }"
     flat
     outlined

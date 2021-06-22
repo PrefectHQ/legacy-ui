@@ -1,0 +1,7 @@
+query AccountMembershipInvitations {
+  membership_invitation {
+    id
+    email
+    role
+  }
+}

@@ -4,6 +4,7 @@ query LicenseUsers {
     first_name
     last_name
     username
+    email
 
     memberships {
       tenant_id

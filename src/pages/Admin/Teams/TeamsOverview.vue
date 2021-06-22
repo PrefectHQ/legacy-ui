@@ -77,10 +77,7 @@ export default {
           }
         })
 
-        this.resetData()
-        clearCache()
-        await this.getUser()
-        await this.$globalApolloQueries['tenants']?.refetch()
+        await this.refetch()
 
         await this.updateNotification({
           id: notificationId,
@@ -110,6 +107,9 @@ export default {
       }
     },
     refetch() {
+      this.resetData()
+      clearCache()
+
       this.getUser()
       this.$globalApolloQueries['tenants']?.refetch()
     },

@@ -222,6 +222,7 @@ export default {
                 hide-details
                 outlined
                 dense
+                :disabled="loading"
               />
             </div>
           </v-col>
@@ -245,6 +246,7 @@ export default {
                 outlined
                 :error-messages="slugErrors"
                 dense
+                :disabled="loading"
                 @change="checkSlug"
               />
             </div>
