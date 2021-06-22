@@ -1,7 +1,3 @@
-//Neaten Role names //Check that role setting works - seems not to like role_id
-- may be the gql query not the backend //Figure out clear and cancel and error
-handling
-
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { mapGetters } from 'vuex'
@@ -44,10 +40,6 @@ export default {
     // Current user information
     user: {
       type: Object,
-      required: true
-    },
-    roles: {
-      type: Array,
       required: true
     }
   },
@@ -111,7 +103,7 @@ export default {
       isSettingRole: false,
 
       // Inputs
-      roleInput: '',
+      roleInput: 'USER',
 
       // Selected user
       // Set when modifying a user's role or removing user membership
@@ -163,12 +155,12 @@ export default {
       this.dialogRemoveUser = false
       this.selectedUser = null
     },
-    async updateRole(membership_id, role_id) {
+    async updateRole(membershipId, role) {
       this.isSettingRole = true
 
       const res = await this.$apollo.mutate({
         mutation: require('@/graphql/Tenant/set-membership-role.gql'),
-        variables: { input: { membership_id, role_id } }
+        variables: { membershipId, role }
       })
 
       if (res?.data?.set_membership_role?.id) {
@@ -277,13 +269,13 @@ export default {
       <!-- ROLE -->
       <template #item.role="{ item }">
         <v-chip small dark :color="roleColorMap[item.role] || 'secondaryLight'">
-          {{ roleMap[item.role] || item.role }}
+          {{ roleMap[item.role] || 'Unknown' }}
         </v-chip>
       </template>
 
       <!-- ACTIONS -->
       <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip v-if="hasPermission('feature', 'basic-rbac')" bottom>
           <template #activator="{ on }">
             <v-btn
               text
@@ -344,16 +336,14 @@ export default {
         label="Role"
         :color="roleColorMap[roleInput]"
         prepend-icon="supervised_user_circle"
-        :items="roles"
-        item-text="name"
-        item-value="id"
+        :items="['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']"
       >
-        <!-- <template #item="{ item }">
+        <template #item="{ item }">
           {{ roleMap[item] }}
         </template>
         <template #selection="{ item }">
           {{ roleMap[item] }}
-        </template> -->
+        </template>
       </v-select>
     </ConfirmDialog>
 

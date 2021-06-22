@@ -32,30 +32,18 @@ export default {
 
       // Loading states
       isCreatingServiceUser: false,
-      isUpdatingServiceUser: false,
 
       // Signal passed as prop to ServiceAccountsTable
       // MembersTable watches this data attribute & refetches members every time this value changes.
-      serviceAccountsSignal: 0,
-      roleInput: null,
-      updateAccountRole: false,
-      serviceAccountID: null
+      serviceAccountsSignal: 0
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'hasPermission']),
+    ...mapGetters('license', ['license']),
     isTenantAdmin() {
       return this.tenant.role === 'TENANT_ADMIN'
-    },
-    confirmText() {
-      return this.updateAccountRole ? 'Update' : 'Add'
-    },
-    titleText() {
-      return this.updateAccountRole
-        ? 'Update service account role'
-        : 'Add a new service account'
     }
   },
   watch: {
@@ -80,11 +68,8 @@ export default {
         const res = await this.$apollo.mutate({
           mutation: require('@/graphql/User/create-service-account.gql'),
           variables: {
-            input: {
-              tenant_id: this.tenant.id,
-              name: this.serviceAccountNameInput,
-              role_id: this.roleInput
-            }
+            tenant_id: this.tenant.id,
+            name: this.serviceAccountNameInput
           }
         })
 
@@ -104,59 +89,6 @@ export default {
       this.serviceAccountNameInput = null
       this.accountCreationError = null
       this.$refs['service-user-form'].reset()
-    },
-    handleAddOrUpdate() {
-      if (this.updateAccountRole) this.updateServiceAccount()
-      else this.addServiceAccount()
-    },
-    async updateServiceAccount() {
-      this.isUpdatingServiceUser = true
-      try {
-        const res = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/set-membership-role.gql'),
-          variables: {
-            input: {
-              role_id: this.roleInput,
-              membership_id: this.serviceAccountID
-            }
-          }
-        })
-        if (res?.data?.set_membership_role) {
-          this.setAlert({
-            alertShow: true,
-            alertMessage: 'Role updated',
-            alertType: 'Success'
-          })
-        }
-      } catch (e) {
-        this.setAlert({
-          alertShow: true,
-          alertMessage: `${e}`,
-          alertType: 'error'
-        })
-      } finally {
-        this.isUpdatingServiceUser = false
-        this.serviceAccountID = null
-        this.serviceAccountNameInput = ''
-        this.dialogAddServiceAccount = false
-      }
-    },
-    updateRole(event) {
-      this.updateAccountRole = true
-      this.serviceAccountNameInput = event.firstName
-      this.serviceAccountID = event.membershipID
-      this.dialogAddServiceAccount = true
-    }
-  },
-  apollo: {
-    roles: {
-      query: require('@/graphql/TeamSettings/roles.gql'),
-      loadingKey: 'loading',
-      variables() {
-        return {}
-      },
-      pollInterval: 10000,
-      update: data => data.auth_role
     }
   }
 }
@@ -212,7 +144,6 @@ export default {
           :refetch-signal="serviceAccountsSignal"
           @successful-action="handleAlert('success', $event)"
           @failed-action="handleAlert('error', $event)"
-          @update="updateRole"
         ></ServiceAccountsTable>
       </v-card-text>
     </v-card>
@@ -221,20 +152,16 @@ export default {
     <ConfirmDialog
       v-if="isTenantAdmin"
       v-model="dialogAddServiceAccount"
-      :title="titleText"
-      :confirm-text="confirmText"
+      title="Add a new service account"
+      confirm-text="Add"
       :error="accountCreationError"
-      :loading="isCreatingServiceUser || isUpdatingServiceUser"
-      :disabled="
-        !serviceAccountFormValid ||
-          isCreatingServiceUser ||
-          isUpdatingServiceUser
-      "
+      :loading="isCreatingServiceUser"
+      :disabled="!serviceAccountFormValid || isCreatingServiceUser"
       :dialog-props="{
         'max-width': '600'
       }"
       @cancel="resetServiceAccountDialog"
-      @confirm="handleAddOrUpdate"
+      @confirm="addServiceAccount"
     >
       <v-form
         ref="service-user-form"
@@ -245,7 +172,6 @@ export default {
           v-model="serviceAccountNameInput"
           class="mb-3"
           autofocus
-          :disabled="updateAccountRole"
           label="Account Name"
           data-cy="service-account"
           prepend-icon="engineering"
@@ -253,20 +179,6 @@ export default {
           :rules="[rules.required]"
           @keydown.enter="addServiceAccount"
         />
-        <v-select
-          v-model="roleInput"
-          outlined
-          :menu-props="{ offsetY: true }"
-          label="Role"
-          data-cy="invite-role"
-          prepend-icon="supervised_user_circle"
-          :items="roles"
-          :rules="[rules.required]"
-          item-text="name"
-          item-value="id"
-          item-disabled="disabled"
-        >
-        </v-select>
       </v-form>
     </ConfirmDialog>
   </ManagementLayout>

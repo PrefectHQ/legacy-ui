@@ -197,7 +197,7 @@ export default {
       <!-- ROLE -->
       <template #item.role="{ item }">
         <v-chip small dark :color="roleColorMap[item.role] || 'secondaryLight'">
-          {{ roleMap[item.role] || item.role }}
+          {{ roleMap[item.role] || 'Unknown' }}
         </v-chip>
       </template>
 
