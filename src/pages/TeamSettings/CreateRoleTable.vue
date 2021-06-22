@@ -149,6 +149,7 @@ export default {
     template(val) {
       this.defaultRole = val?.default ? true : false
       this.permissions = Object.values(this.templatePermissionObject())
+      this.enableEdit = false
     },
     permissions: {
       //need a deep handler here to make sure we check the whole nested permissions object
