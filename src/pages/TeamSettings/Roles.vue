@@ -342,8 +342,17 @@ export default {
                     x-small
                     color="error"
                     @click="deleteRole(item)"
-                    >Delete</v-btn
-                  >
+                    >Delete
+                    <template #loader>
+                      <span
+                        ><v-progress-circular
+                          indeterminate
+                          color="error"
+                          :width="2"
+                          :size="18"
+                      /></span>
+                    </template>
+                  </v-btn>
                   <v-btn icon x-small text @click="deleteSelected = null">
                     <v-icon small>close</v-icon>
                   </v-btn>
