@@ -78,10 +78,10 @@ export default {
         },
         Admin: {
           usage: { name: 'Usage', value: 'usage' },
-          user: { name: 'User', value: 'user' },
-          tenant: { name: 'Team', value: 'tenant' },
-          license: { name: 'License', value: 'license' },
-          role: { name: 'Role', value: 'role' },
+          user: { name: 'User', value: 'user', defaultInclude: true },
+          tenant: { name: 'Team', value: 'tenant', defaultInclude: true },
+          license: { name: 'License', value: 'license', defaultInclude: true },
+          role: { name: 'Role', value: 'role', defaultInclude: true },
           membership: { name: 'Membership', value: 'membership' },
           ['membership-invitation']: {
             name: 'Membership Invitation',
@@ -183,6 +183,7 @@ export default {
           obj.includeUpdate = false
           obj.includeDelete = false
           obj.includeAll = false
+          if (obj.defaultInclude) obj.includeRead = true
         })
         this.template?.permissions?.map(item => {
           const sections = item.split(':')
