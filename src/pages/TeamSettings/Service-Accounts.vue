@@ -210,9 +210,9 @@ export default {
       <span v-if="permissionsCheck">
         Manage service accounts and their API keys
       </span>
-      <span v-else
-        >Service Accounts are only available to Administrator accounts</span
-      >
+      <span v-else>
+        You don't have permission to manage Service Accounts
+      </span>
     </template>
 
     <template v-if="permissionsCheck" #cta>
@@ -230,7 +230,7 @@ export default {
       </v-btn>
     </template>
 
-    <v-card v-if="permissionsCheck" tile>
+    <v-card tile>
       <v-card-text class="pa-0">
         <v-text-field
           v-if="!$vuetify.breakpoint.mdAndUp"
@@ -246,7 +246,6 @@ export default {
         ></v-text-field>
 
         <ServiceAccountsTable
-          :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :search="searchInput"

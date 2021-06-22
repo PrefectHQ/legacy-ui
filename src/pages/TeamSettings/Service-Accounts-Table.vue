@@ -2,7 +2,7 @@
 import ConfirmDialog from '@/components/ConfirmDialog'
 import DateTime from '@/components/DateTime'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -21,11 +21,7 @@ export default {
       type: Object,
       required: true
     },
-    // Check admin privileges
-    permissionsCheck: {
-      type: Boolean,
-      required: true
-    },
+
     // Number that updates every time tenantUsers should be refetched
     refetchSignal: {
       type: Number,
@@ -103,6 +99,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['hasPermission']),
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
@@ -284,7 +281,6 @@ export default {
 <template>
   <div>
     <v-data-table
-      v-if="permissionsCheck"
       fixed-header
       show-expand
       :expanded.sync="expanded"
@@ -390,9 +386,12 @@ export default {
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="permissionsCheck" #item.actions="{ item }">
+      <template #item.actions="{ item }">
         <v-tooltip bottom>
-          <template #activator="{ on }">
+          <template
+            v-if="hasPermission('update', 'service-account')"
+            #activator="{ on }"
+          >
             <v-btn
               text
               fab
@@ -406,7 +405,7 @@ export default {
           </template>
           Change Service Account role
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip v-if="hasPermission('delete', 'service-account')" bottom>
           <template #activator="{ on }">
             <v-btn
               text
