@@ -104,6 +104,7 @@ export default {
         else this.addRole = true
       } else {
         this.addRole = false
+        this.cancelAddName(false)
       }
       this.template = role
     },
