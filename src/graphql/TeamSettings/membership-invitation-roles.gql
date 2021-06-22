@@ -1,0 +1,5 @@
+query MembershipInvitationRoles {
+    membership_invitation {
+        role_id
+    }
+}

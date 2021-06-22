@@ -117,9 +117,14 @@ export default {
       if (this.addRole) this.cancelAddName()
     },
     roleInUse(role) {
-      return !!this.rolesInUse.filter(
-        membershipRole => membershipRole.role_id === role.id
-      ).length
+      return (
+        !!this.rolesInUse.filter(
+          membershipRole => membershipRole.role_id === role.id
+        ).length ||
+        !!this.rolesInvited.filter(
+          invitationRole => invitationRole.role_id === role.id
+        ).length
+      )
     },
     async deleteRole(role) {
       this.deletingRole = role.id
@@ -178,6 +183,15 @@ export default {
       },
       pollInterval: 10000,
       update: data => data.membership
+    },
+    rolesInvited: {
+      query: require('@/graphql/TeamSettings/membership-invitation-roles.gql'),
+      loadingKey: 'loading',
+      variables() {
+        return {}
+      },
+      pollInterval: 10000,
+      update: data => data.membership_invitation
     }
   }
 }
