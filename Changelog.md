@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Improve agents tile for server - [#901](https://github.com/PrefectHQ/ui/pull/901)
 
 ### Bugfixes
 

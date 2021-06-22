@@ -251,6 +251,9 @@ export default {
     agentHooks: {
       query: require('@/graphql/Agent/agent-hooks.gql'),
       loadingKey: 'loading',
+      skip() {
+        return !this.isCloud
+      },
       update: data => {
         return data.hook
       }
@@ -302,6 +305,7 @@ export default {
           <v-icon small>calendar_view_day</v-icon>
         </v-btn>
         <v-btn
+          v-if="isCloud"
           depressed
           small
           tile
@@ -445,7 +449,7 @@ export default {
           </v-col>
         </v-row>
       </div>
-      <div v-if="showAll" class="my-2 text-subtitle-1">
+      <div v-if="showAll && isCloud" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col :cols="agent.token_name ? 4 : 2">
             Token {{ agent.token_name ? 'Name' : 'ID' }}

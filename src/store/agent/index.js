@@ -61,7 +61,8 @@ const getters = {
 const mutations = {
   setSortedAgents(state, agents) {
     if (!agents) {
-      state.sortedAgent = null
+      state.sortedAgents = null
+      state.agents = []
       return
     }
 
