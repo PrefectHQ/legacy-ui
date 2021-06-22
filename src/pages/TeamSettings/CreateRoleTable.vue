@@ -74,7 +74,8 @@ export default {
             name: 'Concurrency Limit',
             value: 'concurrency-limit'
           },
-          ['audit-trail']: { name: 'Audit Trail', value: 'audit-trail' }
+          ['audit-trail']: { name: 'Audit Trail', value: 'audit-trail' },
+          message: { name: 'Notifications', value: 'message' }
         },
         Admin: {
           usage: { name: 'Usage', value: 'usage' },
@@ -372,7 +373,7 @@ export default {
               small
               color="primary"
               :loading="loadingRole"
-              :disabled="(!isChanged && template) || noName"
+              :disabled="(!isChanged && !!template) || noName"
               @click.stop="handleCreateUpdateClick"
             >
               {{ template ? 'Update' : 'Create' }} Role
