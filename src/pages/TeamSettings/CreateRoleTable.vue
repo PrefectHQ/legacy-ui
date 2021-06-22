@@ -74,20 +74,20 @@ export default {
             name: 'Concurrency Limit',
             value: 'concurrency-limit'
           },
-          ['audit-trail']: { name: 'Audit Trail', value: 'audit-trail' },
-          message: { name: 'Notifications', value: 'message' }
+          ['audit-trail']: { name: 'Audit Trail', value: 'audit-trail' }
         },
         Admin: {
           usage: { name: 'Usage', value: 'usage' },
-          user: { name: 'User', value: 'user', defaultInclude: true },
-          tenant: { name: 'Team', value: 'tenant', defaultInclude: true },
-          license: { name: 'License', value: 'license', defaultInclude: true },
-          role: { name: 'Role', value: 'role', defaultInclude: true },
+          user: { name: 'User', value: 'user', defaultRead: true },
+          tenant: { name: 'Team', value: 'tenant', defaultRead: true },
+          license: { name: 'License', value: 'license', defaultRead: true },
+          role: { name: 'Role', value: 'role', defaultRead: true },
           membership: { name: 'Membership', value: 'membership' },
           ['membership-invitation']: {
             name: 'Membership Invitation',
             value: 'membership-invitation'
-          }
+          },
+          message: { name: 'Notifications', value: 'message', defaultAll: true }
         }
       }
     }
@@ -180,12 +180,20 @@ export default {
       if (!this.authPermissionObject) return
       const permissionsArr = this.authPermissionObject.map(group => {
         Object?.values(group).map(obj => {
-          obj.includeCreate = false
-          obj.includeRead = false
-          obj.includeUpdate = false
-          obj.includeDelete = false
-          obj.includeAll = false
-          if (obj.defaultInclude) obj.includeRead = true
+          if (obj.defaultAll) {
+            obj.includeCreate = true
+            obj.includeRead = true
+            obj.includeUpdate = true
+            obj.includeDelete = true
+            obj.includeAll = true
+          } else {
+            obj.includeCreate = false
+            obj.includeRead = false
+            obj.includeUpdate = false
+            obj.includeDelete = false
+            obj.includeAll = false
+            if (obj.defaultRead) obj.includeRead = true
+          }
         })
         this.template?.permissions?.map(item => {
           const sections = item.split(':')
