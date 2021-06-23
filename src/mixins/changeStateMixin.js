@@ -158,6 +158,8 @@ export const changeStateMixin = {
         })
       }
 
+      this.$emit('update')
+
       this.cancelLoad = false
     },
     async changeState() {
@@ -257,6 +259,7 @@ export const changeStateMixin = {
         this.setAllTaskRuns(this.selectedState)
       }
       setTimeout(() => this.reset(), 500)
+      this.$emit('update')
     },
     async setAllTaskRuns(type) {
       try {
@@ -293,6 +296,7 @@ export const changeStateMixin = {
           alertType: 'error'
         })
       }
+      this.$emit('update')
     },
     checkContinue() {
       if (this.selectedState) {

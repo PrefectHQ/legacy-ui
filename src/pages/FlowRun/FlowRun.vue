@@ -290,7 +290,12 @@ export default {
         />
       </span>
 
-      <Actions slot="page-actions" style="height: 55px;" :flow-run="flowRun" />
+      <Actions
+        slot="page-actions"
+        style="height: 55px;"
+        :flow-run="flowRun"
+        @update="$apollo.queries['flowRun'].refetch()"
+      />
       <span slot="tabs" style="width: 100%;">
         <NavTabBar :tabs="tabs" page="flow-run" />
       </span>
