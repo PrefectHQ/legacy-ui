@@ -1,0 +1,6 @@
+query Permissions {
+  permissions_info {
+      user_permissions_filtered_by_license_features
+      all_permissions_filtered_by_license_features
+    }
+  }

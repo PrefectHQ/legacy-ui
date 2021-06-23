@@ -2,5 +2,6 @@ query License {
   auth_info {
     license
     permissions
+    role_id
   }
 }

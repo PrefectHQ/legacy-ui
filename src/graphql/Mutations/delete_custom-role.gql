@@ -1,0 +1,5 @@
+mutation DeleteCustomRole ($input: delete_custom_role_input!){
+    delete_custom_role (input: $input) {
+        success
+    }
+}
