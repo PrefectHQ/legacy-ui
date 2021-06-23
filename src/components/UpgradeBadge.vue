@@ -9,6 +9,11 @@ export default {
       type: Boolean,
       default: false,
       required: false
+    },
+    depressed: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   }
 }
@@ -29,6 +34,7 @@ export default {
           origin="center"
           :inline="inline"
           class="pa-0 upgrade-badge"
+          :class="{ elevate: !depressed }"
         >
           <template #badge>
             <div class="white--text d-flex align-center justify-center px-1">
@@ -56,10 +62,15 @@ export default {
 
 <style lang="scss">
 .upgrade-badge {
+  &.elevate {
+    .v-badge__badge {
+      box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+        0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%) !important;
+    }
+  }
+
   /* stylelint-disable */
   .v-badge__badge {
-    box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
-      0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%) !important;
     left: unset;
     max-width: 31px;
     right: 0;
