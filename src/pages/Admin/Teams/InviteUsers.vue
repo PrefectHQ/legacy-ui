@@ -108,7 +108,7 @@ export default {
               : `<span class="font-weight-medium">${user.email}</span> invited.`,
             loading: false,
             dismissable: true,
-            timeout: 5000
+            timeout: 10000
           }
         })
 
@@ -149,7 +149,7 @@ export default {
               : `Invitation for <span class="font-weight-medium">${invitation.email}</span> removed.`,
             loading: false,
             dismissable: true,
-            timeout: 5000
+            timeout: 10000
           }
         })
       }
