@@ -67,7 +67,8 @@ export const changeStateMixin = {
   },
   computed: {
     ...mapGetters('user', ['user']),
-    ...mapGetters('tenant', ['role']),
+    ...mapGetters('license', ['hasPermission']),
+
     isFinished() {
       return FINISHED_STATES.includes(this.flowRun.state)
     },
@@ -109,7 +110,7 @@ export const changeStateMixin = {
       }
     },
     activeButton() {
-      if (this.role === 'READ_ONLY_USER') return false
+      if (this.hasPermission('update', 'run')) return false
       return true
     },
     async writeLogs() {

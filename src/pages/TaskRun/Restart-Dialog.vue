@@ -23,6 +23,10 @@ export default {
   computed: {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['role']),
+    ...mapGetters('license', ['hasPermission']),
+    permissionsCheck() {
+      return !this.hasPermission('update', 'run')
+    },
     message() {
       return `Flow run restarted by ${this.user.username}`
     }
@@ -167,11 +171,7 @@ export default {
     <v-card-actions>
       <v-spacer></v-spacer>
 
-      <v-btn
-        :disabled="role === 'READ_ONLY_USER'"
-        color="primary"
-        @click="restart"
-      >
+      <v-btn :disabled="permissionsCheck" color="primary" @click="restart">
         Confirm
       </v-btn>
 

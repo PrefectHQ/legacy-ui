@@ -34,6 +34,10 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['role']),
+    ...mapGetters('license', ['hasPermission']),
+    permissionsCheck() {
+      return !this.hasPermission('delete', 'flow')
+    },
     all() {
       if (this.allFlows) return true
       if (this.type === 'group') return true
@@ -115,7 +119,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="role !== 'READ_ONLY_USER'" class="text-center">
+  <div v-if="!permissionsCheck" class="text-center">
     <v-dialog v-model="deleteDialog" width="500" @click:outside="reset">
       <template #activator="{ on: dialog }">
         <v-tooltip bottom>
@@ -200,7 +204,7 @@ export default {
       >
     </v-dialog>
   </div>
-  <div v-else-if="role == 'READ_ONLY_USER'">
+  <div v-else-if="permissionsCheck">
     <v-tooltip top>
       <template #activator="{ on }">
         <div v-on="on">
@@ -210,7 +214,9 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span>Read-only users cannot delete flows.</span>
+      <span>
+        You don't have permission to delete flows.
+      </span>
     </v-tooltip>
   </div>
 </template>

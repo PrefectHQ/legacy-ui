@@ -57,7 +57,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license', 'tempLicenseType']),
+    ...mapGetters('license', ['license', 'tempLicenseType', 'hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     planClass() {
       return {
@@ -74,8 +74,8 @@ export default {
         'flex-column': this.$vuetify.breakpoint.smAndDown
       }
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return this.hasPermission('create', 'license')
     }
   },
   methods: {
@@ -134,7 +134,7 @@ export default {
               v-if="(!plan || plan == 'starter') && !complete"
               key="starter"
               :hide-details="!!plan"
-              :disabled="!isTenantAdmin"
+              :disabled="!permissionsCheck"
               @click="handlePlanSelection('starter')"
             />
 
@@ -142,7 +142,7 @@ export default {
               v-if="(!plan || plan == 'standard') && !complete"
               key="standard"
               :hide-details="!!plan"
-              :disabled="!isTenantAdmin"
+              :disabled="!permissionsCheck"
               @click="handlePlanSelection('standard')"
             />
 

@@ -66,13 +66,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant', 'role']),
-    isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
-    },
-    isTenantAdmin() {
-      return this.role === 'TENANT_ADMIN'
-    }
+    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['hasPermission'])
   },
 
   watch: {
@@ -140,7 +135,7 @@ export default {
   <ManagementLayout :show="!isFetchingTokens" control-show>
     <template #title>API Tokens</template>
 
-    <template v-if="isTenantAdmin" #subtitle>
+    <template v-if="hasPermission('create', 'service-account')" #subtitle>
       <h4 class="error--text"
         ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
       >
@@ -153,7 +148,7 @@ export default {
       Existing tokens will continue to work, but new ones cannot be created.
       <br />
     </template>
-    <template v-else-if="isReadOnlyUser" #subtitle>
+    <template v-else-if="!hasPermission('create', 'service-account')" #subtitle>
       Manage
       <a
         href="https://docs.prefect.io/cloud/concepts/api.html#runner"
@@ -196,7 +191,7 @@ export default {
       tokens.
     </template>
 
-    <template v-if="isReadOnlyUser" #alerts>
+    <template v-if="!hasPermission('create', 'service-account')" #alerts>
       <v-alert
         class="mx-auto"
         border="left"
@@ -207,13 +202,16 @@ export default {
         icon="lock"
         max-width="380"
       >
-        Read-only users cannot manage API tokens.
+        You don't have permission to manage API tokens.
       </v-alert>
     </template>
 
     <!-- SEARCH (MOBILE) -->
     <v-text-field
-      v-if="!$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+      v-if="
+        !$vuetify.breakpoint.mdAndUp &&
+          hasPermission('create', 'service-account')
+      "
       v-model="search"
       class="rounded-0 elevation-1 mb-1"
       solo
@@ -228,7 +226,10 @@ export default {
     <v-card tile>
       <v-card-text class="pa-0">
         <div
-          v-if="$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+          v-if="
+            $vuetify.breakpoint.mdAndUp &&
+              hasPermission('create', 'service-account')
+          "
           class="py-1 mr-2 flex"
         >
           <v-text-field
@@ -249,7 +250,7 @@ export default {
 
         <!-- TOKENS TABLE -->
         <v-data-table
-          v-if="!isReadOnlyUser"
+          v-if="hasPermission('update', 'service-account')"
           fixed-header
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
@@ -322,7 +323,10 @@ export default {
           </template>
 
           <!-- TOKEN ACTIONS -->
-          <template v-if="!isReadOnlyUser" #item.actions="{ item }">
+          <template
+            v-if="hasPermission('delete', 'service-account')"
+            #item.actions="{ item }"
+          >
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn
