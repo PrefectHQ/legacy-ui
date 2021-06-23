@@ -87,7 +87,7 @@ export default {
 
     <div class="actions d-flex align-center justify-center">
       <truncate
-        :content="selected ? 'You\'re logged in to this team.' : 'Switch team'"
+        :content="selected ? 'You\'re logged in to this team' : 'Switch team'"
       >
         <v-btn
           icon
@@ -100,12 +100,12 @@ export default {
       </truncate>
 
       <truncate
-        :content="isRoot ? 'The root team can\'t be deleted.' : 'Remove team'"
+        :content="isRoot ? 'The root team can\'t be deleted' : 'Remove team'"
       >
         <v-btn
           icon
           :disabled="isRoot || loading"
-          :title="isRoot ? 'The root team can\'t be deleted.' : 'Remove team'"
+          :title="isRoot ? 'The root team can\'t be deleted' : 'Remove team'"
           @click.stop="$emit('remove')"
         >
           <v-icon>delete</v-icon>
