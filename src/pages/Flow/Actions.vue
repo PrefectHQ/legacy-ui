@@ -57,8 +57,8 @@ export default {
       }, true)
     },
     disableToggle() {
-      const c = this.hasPermission('create', 'run')
-      const d = this.hasPermission('delete', 'run')
+      const c = !this.hasPermission('create', 'run')
+      const d = !this.hasPermission('delete', 'run')
       const scheduled = this.isScheduled
 
       return (c && d) || (!scheduled && c) || (scheduled && d)
