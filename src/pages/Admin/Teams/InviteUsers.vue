@@ -28,14 +28,6 @@ export default {
           EMAIL_REGEX.test(value) || 'Please enter a valid email address.',
         required: value => !!value || 'This field is is required.'
       },
-
-      roleColorMap: {
-        CUSTOM: 'codePink',
-        USER: 'codeBlueBright',
-        READ_ONLY_USER: 'cloudUIPrimaryDark',
-        TENANT_ADMIN: 'cloudUIPrimaryBlue',
-        PENDING: 'accentOrange'
-      },
       loadingKey: 0,
       loading: false,
       disabled: false,
@@ -77,7 +69,7 @@ export default {
           variables: {
             input: {
               email: user.email,
-              role: user.role
+              role_id: user.role
             }
           }
         })
@@ -183,7 +175,7 @@ export default {
         const users = data.license_users.map(u => {
           return {
             ...u,
-            role: this.roles.find(r => r.name == 'USER').name
+            role: this.roles.find(r => r.name == 'USER').id
           }
         })
         this.users = users
@@ -202,7 +194,7 @@ export default {
           return { ...r, label: defaultRoles[r.name] || r.name }
         })
         this.roles = roles
-        this.invitation.role = data.auth_role?.find(r => r.name == 'USER').name
+        this.invitation.role = data.auth_role?.find(r => r.name == 'USER').id
         return roles
       }
     }
@@ -249,7 +241,7 @@ export default {
                 :items="roles"
                 :rules="[rules.required]"
                 item-text="label"
-                item-value="name"
+                item-value="id"
                 :disabled="loading"
               >
               </v-autocomplete>
@@ -351,7 +343,7 @@ export default {
                       label="Role"
                       :items="roles"
                       item-text="label"
-                      item-value="name"
+                      item-value="id"
                       :disabled="addedUsers.includes(u.id)"
                       style="width: 200px;"
                     >
