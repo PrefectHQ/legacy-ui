@@ -1,0 +1,5 @@
+mutation CreateEnterpriseTenant($input: create_enterprise_tenant_input!) {
+  create_enterprise_tenant(input: $input) {
+    id
+  }
+}

@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       id: uniqueId('usage'),
+      selectedTeam: null,
       format: null,
       ticks: null,
       period: 'Year',
@@ -69,7 +70,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('tenant', ['tenant', 'tenants']),
+    ...mapGetters('license', ['license']),
+    teams() {
+      return [
+        { id: null, name: 'All' },
+        ...this.tenants?.filter(t => t.license_id == this.license?.id)
+      ]
+    },
+    multitenancy() {
+      return this.license?.terms?.tenants > 1
+    },
     predictedItems() {
       if (!this.usage || !this.predict) return []
       const from = new Date(this.from)
@@ -263,6 +274,9 @@ export default {
     offset() {
       this.updateItems()
       this.updateScales()
+    },
+    selectedTeam() {
+      this.$apollo.queries['usage'].refresh()
     }
   },
   mounted() {
@@ -958,11 +972,7 @@ export default {
     usage: {
       query: require('@/graphql/TeamSettings/usage.gql'),
       variables() {
-        return {
-          from: startDate,
-          to: this.to,
-          tenant_id: this.tenant.id
-        }
+        return { from: startDate, to: this.to, tenant_id: this.selectedTeam }
       },
       skip() {
         return !this.from || !this.to
@@ -978,8 +988,36 @@ export default {
     <div
       class="d-flex align-center justify-space-between py-2 ml-n2 px-5 card-title"
     >
-      <div class="text-h4 font-weight-light">
-        Usage
+      <div class="d-flex">
+        <div class="text-h4 font-weight-light">
+          Usage
+        </div>
+
+        <div>
+          <v-select
+            v-if="multitenancy"
+            v-model="selectedTeam"
+            dense
+            hide-details
+            outlined
+            style="width: 200px;"
+            class="ml-6"
+            single-line
+            :items="teams"
+            item-value="id"
+          >
+            <template #item="{ item }">
+              <div class="text-subtitle-2 font-weight-light">
+                {{ item.name }}
+              </div>
+            </template>
+            <template #selection="{ item }">
+              <div class="text-subtitle-2 font-weight-light text-truncate">
+                {{ item.name }}
+              </div>
+            </template>
+          </v-select>
+        </div>
       </div>
 
       <div

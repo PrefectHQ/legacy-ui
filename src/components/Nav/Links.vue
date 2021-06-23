@@ -43,15 +43,18 @@ export default {
     </v-btn>
 
     <v-btn
-      :to="'/home'"
+      :to="{
+        name: 'agents',
+        params: { tenant: slug }
+      }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
       dark
       small
       depressed
       color="transparent"
-      title="Learn how to get started with Prefect"
+      title="Manage your team's agents"
     >
-      Getting Started
+      Agents
     </v-btn>
 
     <v-btn
@@ -71,7 +74,7 @@ export default {
 
     <v-btn
       :to="{
-        name: 'agents',
+        name: 'account',
         params: { tenant: slug }
       }"
       class="text-subtitle-1 text-capitalize mx-1 font-weight-medium"
@@ -79,9 +82,9 @@ export default {
       small
       depressed
       color="transparent"
-      title="View your team's agents"
+      title="Manage your account, usage, and data"
     >
-      Agents
+      Account
     </v-btn>
 
     <TeamMenu />

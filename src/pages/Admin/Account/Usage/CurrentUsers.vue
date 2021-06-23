@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -7,19 +8,28 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['license', 'hasPermission']),
     loading() {
       return this.loadingKey > 0 || (!this.count && this.count !== 0)
     }
   },
   apollo: {
     memberships: {
-      query: require('@/graphql/TeamSettings/memberships.gql'),
+      query() {
+        return this.hasPermission('license', 'admin') && this.license
+          ? require('@/graphql/Account/license-users.gql')
+          : require('@/graphql/TeamSettings/memberships.gql')
+      },
       loadingKey: 'loadingKey',
-      result({ data }) {
+      update(data) {
         if (!data) return
-        this.count =
-          data.memberships.filter(m => m.account_type !== 'SERVICE').length +
-          data.membershipInvitations.length
+        if (this.hasPermission('license', 'admin') && this.license) {
+          this.count = data.license_users?.length
+        } else {
+          this.count =
+            data.memberships.filter(m => m.account_type !== 'SERVICE').length +
+            data.membershipInvitations.length
+        }
       },
       fetchPolicy: 'no-cache'
     }

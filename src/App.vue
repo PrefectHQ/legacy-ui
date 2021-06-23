@@ -157,6 +157,11 @@ export default {
     },
     tenant(val, oldVal) {
       if (val?.id !== oldVal?.id) {
+        if (localStorage.getItem('haltTenantRouting')) {
+          localStorage.removeItem('haltTenantRouting')
+          return
+        }
+
         if (this.isCloud && !this.tenant.settings.teamNamed) {
           this.$router.push({
             name: 'welcome',
@@ -223,7 +228,7 @@ export default {
       await this.getApi()
 
       if (!this.connected && this.isServer) {
-        this.$router.push({ name: 'home' })
+        this.$router.push({ name: 'getting-started' })
       }
     }
 

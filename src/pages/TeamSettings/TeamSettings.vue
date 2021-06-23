@@ -112,20 +112,6 @@ export default {
 
       <v-list dense>
         <v-list-item
-          :to="{ name: 'account', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-          data-cy="account"
-        >
-          <v-list-item-action>
-            <v-icon>contacts</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Account</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
           :disabled="!isCloud"
           :to="{ name: 'tokens', params: { tenant: tenant.slug } }"
           data-cy="team-settings-api-tokens"

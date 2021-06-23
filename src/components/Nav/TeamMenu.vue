@@ -42,23 +42,6 @@ export default {
 
     <v-sheet width="400" class="white">
       <v-list>
-        <v-list-item :to="'/team/account'">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-abacus fa-2x" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Account
-            </v-list-item-title>
-            <v-list-item-subtitle v-if="isCloud">
-              Manage your team's plan, profile, and data
-            </v-list-item-subtitle>
-            <v-list-item-subtitle v-else>
-              Manage your team's profile and data
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
         <v-list-item :disabled="!isCloud" :to="'/team/tokens'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-exchange-alt fa-2x" />

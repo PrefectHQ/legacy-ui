@@ -72,16 +72,8 @@ export const routes = [
       import(
         /* webpackChunkName: "team-settings" */ '@/pages/TeamSettings/TeamSettings.vue'
       ),
-    redirect: { name: 'account' },
+    redirect: { name: 'members' },
     children: [
-      {
-        name: 'account',
-        path: 'account',
-        component: () =>
-          import(
-            /* webpackChunkName: "team-settings--account" */ '@/pages/TeamSettings/Account/Account.vue'
-          )
-      },
       {
         name: 'projects',
         path: 'projects',
@@ -229,7 +221,9 @@ export const routes = [
     name: 'calendar',
     path: '/:tenant?/calendar',
     component: () =>
-      import(/*webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View')
+      import(
+        /* webpackChunkName: "calendar" */ '@/pages/Calendar/Calendar-View'
+      )
   },
   // ---------------------------//
   //
@@ -370,10 +364,56 @@ export const routes = [
       )
   },
   {
-    name: 'home',
-    path: '/home',
+    name: 'getting-started',
+    path: '/getting-started',
     component: () =>
-      import(/* webpackChunkName: "home" */ '@/pages/Home/Home.vue')
+      import(
+        /* webpackChunkName: "getting-started" */ '@/pages/GettingStarted/GettingStarted.vue'
+      )
+  },
+  {
+    name: 'admin',
+    path: '/admin',
+    redirect: { name: 'account' },
+    component: () =>
+      import(/* webpackChunkName: "admin" */ '@/pages/Admin/Admin.vue'),
+    children: [
+      {
+        name: 'account',
+        path: 'account',
+        component: () =>
+          import(
+            /* webpackChunkName: "admin--account" */ '@/pages/Admin/Account/Account.vue'
+          )
+      },
+      {
+        name: 'admin-teams',
+        path: 'teams',
+        component: () =>
+          import(
+            /* webpackChunkName: "admin--teams" */ '@/pages/Admin/Teams/Teams.vue'
+          ),
+        redirect: { name: 'overview' },
+        children: [
+          {
+            name: 'overview',
+            path: '',
+            component: () =>
+              import(
+                /* webpackChunkName: "admin--teams-overview" */ '@/pages/Admin/Teams/TeamsOverview.vue'
+              )
+          },
+          {
+            name: 'new',
+            path: 'new',
+            component: () =>
+              import(
+                /* webpackChunkName: "admin--new-team" */ '@/pages/Admin/Teams/NewTeam.vue'
+              )
+          }
+        ]
+      }
+    ]
   },
   {
     name: 'team-switched',
