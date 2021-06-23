@@ -10,9 +10,9 @@ export default {
       default: false,
       required: false
     },
-    elevate: {
+    depressed: {
       type: Boolean,
-      default: true,
+      default: false,
       required: false
     }
   }
@@ -34,7 +34,7 @@ export default {
           origin="center"
           :inline="inline"
           class="pa-0 upgrade-badge"
-          :class="{ elevate: elevate }"
+          :class="{ elevate: !depressed }"
         >
           <template #badge>
             <div class="white--text d-flex align-center justify-center px-1">
