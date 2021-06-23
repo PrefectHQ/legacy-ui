@@ -83,11 +83,17 @@ describe('license Vuex Module', () => {
   describe('getters', () => {
     describe('when no license is set', () => {
       let store
-      store = new Vuex.Store({
-        state: initialLicenseState(),
-        getters: license.getters,
-        mutations: license.mutations
+
+      beforeEach(() => {
+        process.env.VUE_APP_BACKEND = 'CLOUD'
+        const license = require('@/store/license').default
+        store = new Vuex.Store({
+          state: license.state,
+          getters: license.getters,
+          mutations: license.mutations
+        })
       })
+
       it('should return null when the license getter is called', () => {
         expect(store.getters.license).toBe(null)
       })
@@ -120,10 +126,15 @@ describe('license Vuex Module', () => {
     describe('when licenses are set', () => {
       // testing this works in both types of state
       let store
-      store = new Vuex.Store({
-        state: { license: activeLicense(), permissions: activePermissions() },
-        getters: license.getters,
-        mutations: license.mutations
+
+      beforeEach(() => {
+        process.env.VUE_APP_BACKEND = 'CLOUD'
+        const license = require('@/store/license').default
+        store = new Vuex.Store({
+          state: { license: activeLicense(), permissions: activePermissions() },
+          getters: license.getters,
+          mutations: license.mutations
+        })
       })
 
       it('should return the license when the license getter is called', () => {
@@ -151,6 +162,26 @@ describe('license Vuex Module', () => {
 
       it('should return true when the hasPermission getter is called with parameters', () => {
         expect(store.getters.hasPermission('read', 'flow')).toBe(true)
+      })
+    })
+
+    describe('permissions in Server', () => {
+      let store
+
+      beforeEach(() => {
+        process.env.VUE_APP_BACKEND = 'SERVER'
+        const license = require('@/store/license').default
+        store = new Vuex.Store({
+          state: license.state,
+          getters: license.getters,
+          mutations: license.mutations
+        })
+      })
+
+      it('should return true when the hasPermission getter is called with any args', () => {
+        expect(process.env.VUE_APP_BACKEND).toBe('SERVER')
+        expect(store.getters.hasPermission('read', 'flow')).toBe(true)
+        expect(store.getters.hasPermission('foo', 'bar')).toBe(true)
       })
     })
   })
