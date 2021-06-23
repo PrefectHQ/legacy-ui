@@ -28,6 +28,7 @@ const getters = {
     return state.license?.terms?.plan
   },
   hasPermission: state => (operation, ref) => {
+    if (process.env.VUE_APP_BACKEND !== 'CLOUD') return true
     return state.permissions?.includes(`${operation}:${ref}`)
   },
   allowedUsers: state => type => {
