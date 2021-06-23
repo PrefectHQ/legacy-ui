@@ -136,7 +136,7 @@ export default {
       this.isUpdatingServiceUser = true
       try {
         const res = await this.$apollo.mutate({
-          mutation: require('@/graphql/Mutations/set-membership-role.gql'),
+          mutation: require('@/graphql/Tenant/set-membership-role.gql'),
           variables: {
             input: {
               role_id: this.roleInput,

@@ -1,5 +1,0 @@
-mutation SetMembershipRole($input: set_membership_role_input!) {
-  set_membership_role(input: $input) {
-    id
-  }
-}
