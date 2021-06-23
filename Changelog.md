@@ -10,7 +10,7 @@
 
 ### Bugfixes
 
-- None
+- Add permission bypass for Server - [#912](https://github.com/PrefectHQ/ui/pull/912)
 
 ## 2021-06-17
 

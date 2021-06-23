@@ -128,6 +128,7 @@ export default {
               >Roles
               <UpgradeBadge
                 v-if="isCloud && !hasPermission('feature', 'custom-role')"
+                depressed
                 inline
               >
                 <span class="font-weight-medium">Custom Roles</span> are only

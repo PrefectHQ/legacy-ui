@@ -8,8 +8,7 @@ export default {
   },
   mixins: [formatTime],
   props: {
-    // Check admin privileges
-    isTenantAdmin: {
+    permissionsCheck: {
       type: Boolean,
       required: true
     },
@@ -196,13 +195,21 @@ export default {
 
       <!-- ROLE -->
       <template #item.role="{ item }">
-        <v-chip small dark :color="roleColorMap[item.role] || 'secondaryLight'">
-          {{ roleMap[item.role] || 'Unknown' }}
+        <v-chip
+          small
+          dark
+          :color="
+            !roleColorMap[item.role]
+              ? 'accentPink'
+              : roleColorMap[item.role] || 'secondaryLight'
+          "
+        >
+          {{ roleMap[item.role] || item.role }}
         </v-chip>
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="isTenantAdmin" #item.action="{ item }">
+      <template v-if="permissionsCheck" #item.action="{ item }">
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn

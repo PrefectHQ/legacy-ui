@@ -20,7 +20,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license']),
+    ...mapGetters('license', ['license', 'hasPermission']),
     isBank() {
       return (
         this.payment?.type == 'ach_credit_transfer' ||
@@ -37,8 +37,8 @@ export default {
     isSelfServe() {
       return this.license?.terms?.is_self_serve
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return this.hasPermission('update', 'license')
     },
     payment() {
       return this.tenant?.stripe_customer?.sources?.data?.find(
@@ -77,7 +77,7 @@ export default {
       </div>
       <v-spacer />
       <v-btn
-        v-if="!editCardDetails && isSelfServe && isTenantAdmin"
+        v-if="!editCardDetails && isSelfServe && permissionsCheck"
         data-cy="add-payment-card"
         color="primary"
         depressed
@@ -238,7 +238,7 @@ export default {
       </transition>
     </v-card-text>
 
-    <!-- <v-card-actions v-if="isTenantAdmin" class="mt-auto px-4"> </v-card-actions> -->
+    <!-- <v-card-actions v-if="permissionsCheck" class="mt-auto px-4"> </v-card-actions> -->
   </v-card>
 </template>
 

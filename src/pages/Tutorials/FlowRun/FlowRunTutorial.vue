@@ -30,7 +30,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tenant', ['role'])
+    ...mapGetters('license', ['hasPermission'])
   },
   watch: {
     state: {
@@ -115,8 +115,12 @@ export default {
     </template>
 
     <template #alert>
-      <span v-if="role === 'READ_ONLY_USER'">
-        As a read-only user, you will not be able to complete this tutorial.
+      <span
+        v-if="
+          !hasPermission('create', 'run') && !hasPermission('create', 'project')
+        "
+      >
+        You don't have the required permissions to complete this tutorial.
       </span>
     </template>
 

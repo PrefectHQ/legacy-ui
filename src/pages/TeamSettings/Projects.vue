@@ -113,17 +113,19 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user', 'timezone']),
+    ...mapGetters('license', ['hasPermission']),
     // Surface table headers based on viewport (mobile vs. desktop)
     headersByViewport() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.headers
         : this.headers.filter(header => header.mobile)
     },
-    isReadOnlyUser() {
-      return this.tenant.role === 'READ_ONLY_USER'
-    },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return (
+        this.hasPermission('create', 'project') &&
+        this.hasPermission('update', 'project') &&
+        this.hasPermission('delete', 'project')
+      )
     },
     // If the user decides to move flows to a new project before deletion,
     // provide a list of candidate projects to take these flows
@@ -459,7 +461,7 @@ export default {
     <template #title>Projects</template>
 
     <template #subtitle>
-      <span v-if="isTenantAdmin">
+      <span v-if="permissionsCheck">
         View and manage your team's
         <ExternalLink
           href="https://docs.prefect.io/cloud/concepts/projects.html#projects"
@@ -476,7 +478,7 @@ export default {
       >
     </template>
 
-    <template v-if="!isReadOnlyUser" #cta>
+    <template v-if="permissionsCheck" #cta>
       <v-btn
         color="primary"
         class="white--text"
@@ -635,7 +637,7 @@ export default {
           </template>
 
           <!-- PROJECT ACTIONS -->
-          <template v-if="isTenantAdmin" #item.actions="{ item }">
+          <template v-if="permissionsCheck" #item.actions="{ item }">
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn

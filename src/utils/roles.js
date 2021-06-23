@@ -8,7 +8,7 @@ export const ROLE_MAP = {
 
 export const ROLE_COLOR_MAP = {
   USER: 'codeBlueBright',
-  ENTERPRISE_LICENSE_ADMIN: 'cloudUIPrimaryBlue',
+  ENTERPRISE_LICENSE_ADMIN: 'accent',
   READ_ONLY_USER: 'cloudUIPrimaryDark',
   TENANT_ADMIN: 'cloudUIPrimaryBlue',
   PENDING: 'accentOrange'
