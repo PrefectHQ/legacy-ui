@@ -7,11 +7,6 @@ export default {
     ConfirmDialog
   },
   props: {
-    // Check admin privileges
-    permissionsCheck: {
-      type: Boolean,
-      required: true
-    },
     // Number that updates every time tenantUsers should be refetched
     refetchSignal: {
       type: Number,
@@ -287,14 +282,8 @@ export default {
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="permissionsCheck" #item.actions="{ item }">
-        <v-tooltip
-          v-if="
-            hasPermission('feature', 'basic-rbac') &&
-              hasPermission('update', 'membership')
-          "
-          bottom
-        >
+      <template #item.actions="{ item }">
+        <v-tooltip v-if="hasPermission('update', 'membership')" bottom>
           <template #activator="{ on }">
             <v-btn
               text
@@ -313,13 +302,7 @@ export default {
           </template>
           Modify this user's role
         </v-tooltip>
-        <v-tooltip
-          v-if="
-            hasPermission('feature', 'basic-rbac') &&
-              hasPermission('delete', 'membership')
-          "
-          bottom
-        >
+        <v-tooltip v-if="hasPermission('delete', 'membership')" bottom>
           <template #activator="{ on }">
             <v-btn
               text

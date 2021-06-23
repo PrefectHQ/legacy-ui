@@ -86,7 +86,7 @@ export default {
         this.hasPermission('create', 'membership') &&
         this.hasPermission('update', 'membership') &&
         this.hasPermission('delete', 'membership') &&
-        this.hasPermission('feature', 'basic-rbac')
+        this.hasPermission('feature', 'custom-role')
       )
     },
     roleSelectionMap() {
@@ -247,7 +247,7 @@ export default {
       </span>
     </template>
 
-    <template v-if="permissionsCheck" #cta>
+    <template v-if="hasPermission('create', 'membership-invitation')" #cta>
       <v-btn
         :disabled="insufficientUsers"
         color="primary"
@@ -374,7 +374,6 @@ export default {
       <!-- MEMBERS TABLE -->
       <v-tab-item value="members">
         <MembersTable
-          :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :roles="filteredRoles"
@@ -391,7 +390,6 @@ export default {
       <!-- PENDING INVITATIONS TABLE -->
       <v-tab-item value="pending" eager>
         <InvitationsTable
-          :permissions-check="permissionsCheck"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :search="searchInput"
@@ -457,7 +455,7 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
-          :disabled="!hasPermission('feature', 'basic-rbac')"
+          :disabled="!hasPermission('feature', 'custom-role')"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
           :items="filteredRoles"
@@ -475,7 +473,7 @@ export default {
         </v-select>
 
         <div
-          v-if="!hasPermission('feature', 'basic-rbac')"
+          v-if="!hasPermission('feature', 'custom-role')"
           class="text-caption"
         >
           Looking for role-based access controls? This feature is only available
