@@ -6,6 +6,7 @@
 
 - Improve agents tile for server - [#901](https://github.com/PrefectHQ/ui/pull/901)
 - Improve account management experience and add multi-tenancy tenant management - [#909](https://github.com/PrefectHQ/ui/pull/909)
+- Add a custom roles page - [#881](https://github.com/PrefectHQ/ui/pull/881)
 
 ### Bugfixes
 

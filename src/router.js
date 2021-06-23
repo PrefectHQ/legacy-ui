@@ -115,6 +115,14 @@ export const routes = [
           )
       },
       {
+        name: 'roles',
+        path: 'roles',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--members" */ '@/pages/TeamSettings/Roles.vue'
+          )
+      },
+      {
         name: 'service-accounts',
         path: 'service-accounts',
         component: () =>

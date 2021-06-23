@@ -1,14 +1,19 @@
 <script>
 import { mapGetters } from 'vuex'
+import UpgradeBadge from '@/components/UpgradeBadge'
 
 export default {
+  components: {
+    UpgradeBadge
+  },
   data() {
     return {
       model: false
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud'])
+    ...mapGetters('api', ['isCloud']),
+    ...mapGetters('license', ['hasPermission'])
   }
 }
 </script>
@@ -107,6 +112,30 @@ export default {
             </v-list-item-title>
             <v-list-item-subtitle>
               Invite people to your team and manage permissions
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :disabled="!isCloud || !hasPermission('feature', 'custom-role')"
+          :to="'/team/roles'"
+        >
+          <v-list-item-avatar tile>
+            <v-icon large color="navIcons">face</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1"
+              >Roles
+              <UpgradeBadge
+                v-if="isCloud && !hasPermission('feature', 'custom-role')"
+                inline
+              >
+                <span class="font-weight-medium">Custom Roles</span> are only
+                available on Enterprise plans.
+              </UpgradeBadge></v-list-item-title
+            >
+            <v-list-item-subtitle>
+              Manage Team Roles
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
