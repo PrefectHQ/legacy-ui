@@ -120,7 +120,7 @@ export default {
           !hasPermission('create', 'run') && !hasPermission('create', 'project')
         "
       >
-        You don't have permissions to to complete this tutorial.
+        You don't have the required permissions to complete this tutorial.
       </span>
     </template>
 

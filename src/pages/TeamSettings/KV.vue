@@ -346,9 +346,6 @@ export default {
         if (!data) return
         return data?.key_value
       },
-      // skip() {
-      //   return this.hasPermission()
-      // },
       error() {
         this.isFetchingKV = false
 

@@ -25,47 +25,13 @@ export default {
       return this.flow.archived
     },
     disableToggle() {
-      let isDisabled = false
-      if (
-        this.hasPermission('create', 'run') &&
-        this.hasPermission('delete', 'run')
-      ) {
-        isDisabled = false
-      }
-      if (
-        !this.hasPermission('create', 'run') &&
-        !this.hasPermission('delete', 'run')
-      ) {
-        isDisabled = true
-      }
-      if (
-        this.hasPermission('create', 'run') &&
-        !this.hasPermission('delete', 'run') &&
-        !this.isScheduled
-      ) {
-        isDisabled = false
-      } else if (
-        this.hasPermission('create', 'run') &&
-        !this.hasPermission('delete', 'run') &&
-        this.isScheduled
-      ) {
-        isDisabled = true
-      }
-      if (
-        this.hasPermission('delete', 'run') &&
-        !this.hasPermission('create', 'run') &&
-        this.isScheduled
-      ) {
-        isDisabled = false
-      } else if (
-        this.hasPermission('delete', 'run') &&
-        !this.hasPermission('create', 'run') &&
-        !this.isScheduled
-      ) {
-        isDisabled = true
-      }
-      return isDisabled
+      const c = this.hasPermission('create', 'run')
+      const d = this.hasPermission('delete', 'run')
+      const scheduled = this.isScheduled
+
+      return (c && d) || (!scheduled && c) || (scheduled && d)
     },
+
     isScheduled() {
       if (this.archived) return false
       return this.optimisticIsScheduled
