@@ -209,9 +209,17 @@ export default {
       />
     </v-dialog>
 
-    <SetStateDialog dialog-type="flow run" :flow-run="flowRun" />
+    <SetStateDialog
+      dialog-type="flow run"
+      :flow-run="flowRun"
+      @update="$emit('update')"
+    />
 
-    <CancelButton dialog-type="flow run" :flow-run="flowRun" />
+    <CancelButton
+      dialog-type="flow run"
+      :flow-run="flowRun"
+      @update="$emit('update')"
+    />
 
     <v-tooltip bottom>
       <template #activator="{ on }">

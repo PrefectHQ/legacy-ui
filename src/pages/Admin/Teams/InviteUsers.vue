@@ -36,7 +36,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['hasPermission']),
+    ...mapGetters('license', ['hasPermission', 'permissions']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
     filteredUsers() {
@@ -89,6 +89,8 @@ export default {
             error = e?.toString()
             break
         }
+
+        this.addedUsers = []
       } finally {
         this.loading = false
         await this.updateNotification({
@@ -130,6 +132,7 @@ export default {
         await this.$apollo.queries['invitationsQuery']?.refetch()
       } catch (e) {
         error = e?.toString()
+        this.removedInvitations = []
       } finally {
         this.loading = false
         await this.updateNotification({

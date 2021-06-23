@@ -36,7 +36,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="activeButton()">
+  <div v-if="activeButton">
     <v-dialog v-model="setStateDialog" max-width="600" @click:outside="reset">
       <template #activator="{ on: dialog }">
         <v-tooltip bottom>
