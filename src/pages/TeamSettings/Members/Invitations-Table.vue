@@ -1,7 +1,6 @@
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -9,6 +8,10 @@ export default {
   },
   mixins: [formatTime],
   props: {
+    permissionsCheck: {
+      type: Boolean,
+      required: true
+    },
     // Number that updates every time pendingInvitations should be refetched
     refetchSignal: {
       type: Number,
@@ -85,9 +88,6 @@ export default {
     refetchSignal() {
       this.$apollo.queries.pendingInvitations.refetch()
     }
-  },
-  computed: {
-    ...mapGetters('license', ['hasPermission'])
   },
   methods: {
     async revokeInvitation(membershipInvitationId) {
@@ -209,10 +209,7 @@ export default {
       </template>
 
       <!-- ACTIONS -->
-      <template
-        v-if="hasPermission('delete', 'membership-invitation')"
-        #item.action="{ item }"
-      >
+      <template v-if="permissionsCheck" #item.action="{ item }">
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn

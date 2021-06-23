@@ -253,7 +253,6 @@ export default {
 
     <!-- SERVICE ACCOUNT ADD DIALOG -->
     <ConfirmDialog
-      v-if="hasPermission('create', 'service-account')"
       v-model="dialogAddServiceAccount"
       :title="titleText"
       :confirm-text="confirmText"

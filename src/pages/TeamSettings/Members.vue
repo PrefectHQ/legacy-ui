@@ -390,6 +390,7 @@ export default {
       <!-- PENDING INVITATIONS TABLE -->
       <v-tab-item value="pending" eager>
         <InvitationsTable
+          :permissions-check="hasPermission('delete', 'membership-invitation')"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :search="searchInput"
