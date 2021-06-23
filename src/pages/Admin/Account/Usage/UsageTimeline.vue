@@ -998,6 +998,7 @@ export default {
             outlined
             style="width: 200px;"
             class="ml-6"
+            single-line
             :items="teams"
             item-value="id"
           >
@@ -1007,7 +1008,7 @@ export default {
               </div>
             </template>
             <template #selection="{ item }">
-              <div class="text-subtitle-2 font-weight-light">
+              <div class="text-subtitle-2 font-weight-light text-truncate">
                 {{ item.name }}
               </div>
             </template>
