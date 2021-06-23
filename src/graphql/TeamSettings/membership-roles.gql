@@ -1,0 +1,6 @@
+query RolesInUse {
+    membership {
+        id
+        role_id
+    }
+}
