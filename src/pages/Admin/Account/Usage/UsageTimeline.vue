@@ -78,6 +78,9 @@ export default {
         ...this.tenants?.filter(t => t.license_id == this.license?.id)
       ]
     },
+    multitenancy() {
+      return this.license?.terms?.tenants > 1
+    },
     predictedItems() {
       if (!this.usage || !this.predict) return []
       const from = new Date(this.from)
@@ -992,6 +995,7 @@ export default {
 
         <div>
           <v-select
+            v-if="multitenancy"
             v-model="selectedTeam"
             dense
             hide-details
