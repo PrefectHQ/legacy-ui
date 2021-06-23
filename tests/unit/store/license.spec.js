@@ -1,3 +1,5 @@
+process.env.VUE_APP_BACKEND = 'CLOUD'
+
 import license from '@/store/license'
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
