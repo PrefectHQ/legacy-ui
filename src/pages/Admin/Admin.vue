@@ -72,9 +72,6 @@ export default {
     multitenancy() {
       return this.license?.terms.tenants > 1
     }
-  },
-  mounted() {
-    console.log(this.license)
   }
 }
 </script>

@@ -21,7 +21,7 @@ export default {
           : require('@/graphql/TeamSettings/memberships.gql')
       },
       loadingKey: 'loadingKey',
-      result({ data }) {
+      update(data) {
         if (!data) return
         if (this.hasPermission('license', 'admin') && this.license) {
           this.count = data.license_users?.length

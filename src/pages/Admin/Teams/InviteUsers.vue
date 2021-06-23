@@ -62,7 +62,6 @@ export default {
       this.loading = true
       let error
 
-      console.log(user)
       this.addedUsers.push(user.id)
 
       const notificationId = await this.addNotification({
