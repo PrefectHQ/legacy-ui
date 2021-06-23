@@ -272,19 +272,6 @@ export default {
       </template>
 
       <v-card class="team-switcher-list elevation-4 text-truncate">
-        <div class="my-4 px-6">
-          <v-btn
-            class="mx-auto"
-            :disabled="loading"
-            :to="{ name: 'admin' }"
-            block
-            color="primary"
-            depressed
-          >
-            <v-icon class="mr-2" small>add</v-icon>New team
-          </v-btn>
-        </div>
-
         <v-list :disabled="loading">
           <v-subheader>
             <v-icon x-small class="mr-2">
