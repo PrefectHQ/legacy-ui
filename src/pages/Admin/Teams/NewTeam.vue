@@ -16,9 +16,7 @@ export default {
     multitenancy() {
       return this.license?.terms?.tenants > 1
     }
-  },
-  watch: {},
-  methods: {}
+  }
 }
 </script>
 
