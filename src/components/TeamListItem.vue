@@ -100,11 +100,17 @@ export default {
       </truncate>
 
       <truncate
-        :content="isRoot ? 'The root team can\'t be deleted' : 'Remove team'"
+        :content="
+          isRoot
+            ? 'The root team can\'t be deleted'
+            : selected
+            ? 'You can\'t remove the team you\'re logged into. Switch to another team to remove.'
+            : 'Remove team'
+        "
       >
         <v-btn
           icon
-          :disabled="isRoot || loading"
+          :disabled="selected || isRoot || loading"
           :title="isRoot ? 'The root team can\'t be deleted' : 'Remove team'"
           @click.stop="$emit('remove')"
         >

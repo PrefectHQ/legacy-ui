@@ -1,16 +1,21 @@
 <script>
+import ConfirmDialog from '@/components/ConfirmDialog'
+
 import TeamListItem from '@/components/TeamListItem'
 import { mapActions, mapGetters } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 
 export default {
   components: {
+    ConfirmDialog,
     TeamListItem
   },
   data() {
     return {
+      confirmDeleteDialog: false,
       loading: false,
-      loadingKey: 0
+      loadingKey: 0,
+      teamToDelete: null
     }
   },
   computed: {
@@ -56,13 +61,18 @@ export default {
       clearCache()
       this.loading = false
     },
-    async handleRemoveTenant(tenant) {
+    handleShowDeleteDialog(tenant) {
+      this.teamToDelete = tenant
+      this.confirmDeleteDialog = true
+    },
+    async handleRemoveTenant() {
+      const tenant = this.teamToDelete
       this.loading = true
 
       const notificationId = await this.addNotification({
         color: 'primaryLight',
         loading: true,
-        text: 'Deleting team...',
+        text: `Deleting <span class="font-weight-medium">${tenant.name}</span>...`,
         dismissable: false
       })
 
@@ -83,7 +93,7 @@ export default {
           id: notificationId,
           notification: {
             color: 'primary',
-            text: `${tenant.name} deleted.`,
+            text: `<span class="font-weight-medium">${tenant.name}</span> deleted.`,
             loading: false,
             dismissable: true,
             timeout: 10000
@@ -104,6 +114,8 @@ export default {
         })
       } finally {
         this.loading = false
+        this.teamToDelete = null
+        this.confirmDeleteDialog = false
       }
     },
     refetch() {
@@ -195,10 +207,30 @@ export default {
           class="mb-4"
           @click="handleSwitchTenant(team)"
           @refetch="refetch"
-          @remove="handleRemoveTenant(team)"
+          @remove="handleShowDeleteDialog(team)"
         />
       </transition-group>
     </v-container>
+
+    <ConfirmDialog
+      v-model="confirmDeleteDialog"
+      type="error"
+      :dialog-props="{ 'max-width': '500' }"
+      confirm-text="I understand"
+      :loading="loading"
+      @confirm="handleRemoveTenant"
+    >
+      <template slot="title">
+        <div class="text-h5 font-weight-light">
+          Are you sure?
+        </div>
+      </template>
+
+      <div class="text-subtitle-1">
+        This will delete your team and all associated flows, tasks, logs, and
+        runs.
+      </div>
+    </ConfirmDialog>
   </div>
 </template>
 
