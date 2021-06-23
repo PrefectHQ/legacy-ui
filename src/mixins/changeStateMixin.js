@@ -68,7 +68,9 @@ export const changeStateMixin = {
   computed: {
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['hasPermission']),
-
+    activeButton() {
+      return this.hasPermission('update', 'run')
+    },
     isFinished() {
       return FINISHED_STATES.includes(this.flowRun.state)
     },
@@ -108,10 +110,6 @@ export const changeStateMixin = {
         return `${this.user.username || 'User'} marked ${this.dialogType} 
         as ${this.selectedState}`
       }
-    },
-    activeButton() {
-      if (this.hasPermission('update', 'run')) return false
-      return true
     },
     async writeLogs() {
       const { data } = await this.$apollo.mutate({
