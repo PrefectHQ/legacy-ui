@@ -1,6 +1,17 @@
 # Changelog
 
+
 ## Unreleased
+
+### Features and Improvements
+
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-06-23
 
 ### Features and Improvements
 
