@@ -118,9 +118,6 @@ export default {
     },
     deleteSelfWarning() {
       return this.user.email === this.selectedUser.email
-    },
-    hasRBAC() {
-      return this.permissions?.includes('feature:basic-rbac')
     }
   },
   watch: {
@@ -308,13 +305,7 @@ export default {
           </template>
           Modify this user's role
         </v-tooltip>
-        <v-tooltip
-          v-if="
-            hasPermission('delete', 'membership') &&
-              hasPermission('feature', 'basic-rbac')
-          "
-          bottom
-        >
+        <v-tooltip v-if="hasPermission('delete', 'membership')" bottom>
           <template #activator="{ on }">
             <v-btn
               text
