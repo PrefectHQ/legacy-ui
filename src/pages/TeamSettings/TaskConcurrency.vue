@@ -119,7 +119,7 @@ export default {
     ...mapGetters('license', ['permissions', 'hasPermission']),
     // Determine if user has permission to add, edit, and delete concurrency limits
     hasManagementPermission() {
-      return this.isEligible && this.isTenantAdmin
+      return this.isEligible && this.permissionsCheck
     },
     // Determine if user has the proper permissions to access TCLs
     // - They are on a license that grants explicit permission to access this feature
@@ -129,8 +129,12 @@ export default {
 
       return this.hasPermission('feature', 'concurrency-limit')
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return (
+        this.hasPermission('create', 'concurrency-limit') &&
+        this.hasPermission('update', 'concurrency-limit') &&
+        this.hasPermission('delete', 'concurrency-limit')
+      )
     },
     // Merge usage details into tags array
     tagsWithUsage() {
@@ -324,7 +328,7 @@ export default {
       </v-alert>
     </template>
 
-    <template v-else-if="!isTenantAdmin" #alerts>
+    <template v-else-if="!permissionsCheck" #alerts>
       <v-alert
         class="mx-auto"
         border="left"

@@ -97,9 +97,6 @@ export default {
       if (!this.KvValueInput) return false
       if (this.invalidKV) return false
       return true
-    },
-    isReadOnlyUser() {
-      return !this.hasPermission('create', 'key-value')
     }
   },
   watch: {
@@ -350,17 +347,15 @@ export default {
         return data?.key_value
       },
       // skip() {
-      //   return this.isReadOnlyUser
+      //   return this.hasPermission()
       // },
       error() {
         this.isFetchingKV = false
 
-        if (!this.isReadOnlyUser) {
-          this.handleAlert(
-            'error',
-            'Something went wrong while trying to fetch the kv. Please try again. If this error persists, please contact help@prefect.io.'
-          )
-        }
+        this.handleAlert(
+          'error',
+          'Something went wrong while trying to fetch the kv. Please try again. If this error persists, please contact help@prefect.io.'
+        )
       },
       fetchPolicy: 'network-only'
     }
@@ -379,7 +374,7 @@ export default {
         Manage your team's key/value store
       </template>
 
-      <template v-if="!isReadOnlyUser && maxKVCount" #cta>
+      <template v-if="hasPermission('create', 'key-value') && maxKVCount" #cta>
         <v-btn
           color="primary"
           class="white--text"
@@ -403,7 +398,7 @@ export default {
 
       <template #alerts>
         <v-alert
-          v-if="isReadOnlyUser"
+          v-if="!hasPermission('create', 'key-value')"
           class="mx-auto"
           border="left"
           colored-border
@@ -413,7 +408,7 @@ export default {
           icon="lock"
           max-width="380"
         >
-          Read-only users cannot manage kv.
+          You don't have permission to manage kv.
         </v-alert>
 
         <v-alert
@@ -433,7 +428,9 @@ export default {
       </template>
 
       <v-text-field
-        v-if="!$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+        v-if="
+          !$vuetify.breakpoint.mdAndUp && !hasPermission('create', 'key-value')
+        "
         v-model="search"
         class="rounded-0 elevation-1 mb-1"
         solo
@@ -444,15 +441,14 @@ export default {
         prepend-inner-icon="search"
       ></v-text-field>
     </ManagementLayout>
-    <v-card v-if="!isReadOnlyUser && maxKVCount" tile class="mx-auto">
+    <v-card v-if="maxKVCount" tile class="mx-auto">
       <v-card-text class="pa-0">
         <!-- SEARCH (DESKTOP) -->
         <div
-          v-if="$vuetify.breakpoint.mdAndUp && !isReadOnlyUser"
+          v-if="$vuetify.breakpoint.mdAndUp"
           class="py-1 mr-2 d-flex justify-end"
         >
           <v-text-field
-            v-if="!isReadOnlyUser"
             v-model="search"
             class="rounded-0 elevation-1"
             solo
@@ -516,6 +512,7 @@ export default {
                 <v-menu top offset-y>
                   <template #activator="{ on }">
                     <v-btn
+                      v-if="hasPermission('create', 'key-value')"
                       text
                       small
                       class="position-absolute"
@@ -594,6 +591,7 @@ export default {
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn
+                  v-if="hasPermission('update', 'key-value')"
                   text
                   fab
                   x-small
@@ -612,6 +610,7 @@ export default {
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn
+                  v-if="hasPermission('delete', 'key-value')"
                   text
                   fab
                   x-small

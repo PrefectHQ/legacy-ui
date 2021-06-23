@@ -29,6 +29,7 @@ export const parametersMixin = {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['hasPermission']),
     parameterInput: {
       get() {
         const sorted = Object.fromEntries(
@@ -47,8 +48,8 @@ export const parametersMixin = {
         return accum
       }, [])
     },
-    isReadOnlyUser() {
-      return this.role === 'READ_ONLY_USER'
+    permissionsCheck() {
+      return !this.hasPermission('update', 'run')
     },
     selectedFlow() {
       return this.flow || this.flowGroup.flows.find(flow => !flow.archived)
@@ -91,7 +92,11 @@ export const parametersMixin = {
           this.selectedFlow?.parameters.filter(
             paramObj => paramObj.name == key && paramObj.required
           ).length > 0
-        paramifiedArray.push({ name: key, default: value, required: required })
+        paramifiedArray.push({
+          name: key,
+          default: value,
+          required: required
+        })
       }
       const sorted = paramifiedArray.sort((a, b) => {
         return a.name > b.name ? 1 : -1
