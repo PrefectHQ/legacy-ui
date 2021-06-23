@@ -212,6 +212,7 @@ export default {
               <UpgradeBadge
                 v-if="isCloud && !hasPermission('feature', 'custom-role')"
                 inline
+                depressed
               >
                 <span class="font-weight-medium">Custom Roles</span> are only
                 available on Enterprise plans.
