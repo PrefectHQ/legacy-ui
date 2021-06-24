@@ -35,7 +35,7 @@ export default {
 
       // Inputs
       inviteEmailInput: null,
-      roleInput: 'TENANT_ADMIN',
+      roleInput: null,
       searchInput: '',
 
       // Forms
@@ -216,7 +216,7 @@ export default {
       this.$nextTick(() => {
         this.inviteEmailInput = null
         this.inviteError = null
-        this.roleInput = 'TENANT_ADMIN'
+        this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
       })
     }
   },
@@ -228,7 +228,11 @@ export default {
         return {}
       },
       pollInterval: 10000,
-      update: data => data.auth_role || []
+      update(data) {
+        if (!data) return
+        this.roleInput = data.auth_role?.find(r => r.name == 'TENANT_ADMIN').id
+        return data.auth_role
+      }
     }
   }
 }
