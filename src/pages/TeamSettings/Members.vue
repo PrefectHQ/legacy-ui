@@ -35,7 +35,7 @@ export default {
 
       // Inputs
       inviteEmailInput: null,
-      roleInput: 'TENANT_ADMIN',
+      roleInput: null,
       searchInput: '',
 
       // Forms
@@ -86,7 +86,7 @@ export default {
         this.hasPermission('create', 'membership') &&
         this.hasPermission('update', 'membership') &&
         this.hasPermission('delete', 'membership') &&
-        this.hasPermission('feature', 'custom-role')
+        this.hasPermission('feature', 'basic-rbac')
       )
     },
     roleSelectionMap() {
@@ -216,7 +216,7 @@ export default {
       this.$nextTick(() => {
         this.inviteEmailInput = null
         this.inviteError = null
-        this.roleInput = 'TENANT_ADMIN'
+        this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
       })
     }
   },
@@ -228,7 +228,11 @@ export default {
         return {}
       },
       pollInterval: 10000,
-      update: data => data.auth_role || []
+      update(data) {
+        if (!data) return
+        this.roleInput = data.auth_role?.find(r => r.name == 'TENANT_ADMIN').id
+        return data.auth_role
+      }
     }
   }
 }
@@ -456,7 +460,7 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
-          :disabled="!hasPermission('feature', 'custom-role')"
+          :disabled="!hasPermission('feature', 'basic-rbac')"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
           :items="filteredRoles"
@@ -472,13 +476,23 @@ export default {
             {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
           </template>
         </v-select>
-
         <div
-          v-if="!hasPermission('feature', 'custom-role')"
+          v-if="!hasPermission('feature', 'basic-rbac')"
           class="text-caption"
         >
-          Looking for role-based access controls? This feature is only available
-          on Enterprise plans; check out our
+          Looking for role-based access controls? This feature is available on
+          Standard plans; check out our
+          <ExternalLink href="https://prefect.io/pricing"
+            >pricing page</ExternalLink
+          >
+          for more details.
+        </div>
+        <div
+          v-else-if="!hasPermission('feature', 'custom-role')"
+          class="text-caption"
+        >
+          Looking for custom role-based access controls? This feature is only
+          available on Enterprise plans; check out our
           <ExternalLink href="https://prefect.io/pricing"
             >pricing page</ExternalLink
           >
