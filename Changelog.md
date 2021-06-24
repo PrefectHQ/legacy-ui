@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Switch permissions check on members page to be basic-rbac instead of custom-role - []()
 
 ## 2021-06-23a
 
