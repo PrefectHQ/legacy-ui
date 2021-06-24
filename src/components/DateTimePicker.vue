@@ -19,12 +19,11 @@ export default {
     value: {
       type: Date,
       required: true
-      // default: () => new Date()
     }
   },
   data() {
     return {
-      date: null,
+      date: new Date(this.value).toISOString().substr(0, 10),
       menu: false,
       tab: 'date',
       timestamp: new Date(this.value)
@@ -35,23 +34,11 @@ export default {
       if (!val) return
       const [year, month, day] = this.date.split('-')
       this.timestamp.setYear(year)
-      this.timestamp.setMonth(month)
+      this.timestamp.setMonth(month - 1)
       this.timestamp.setDate(day)
 
       this.$emit('input', this.timestamp)
-    },
-    timestamp(val) {
-      console.log(val)
     }
-  },
-  mounted() {
-    const year = this.value.getFullYear()
-    const month = this.value.getMonth()
-    const day = this.value.getDate()
-
-    this.date = `${year}-${month > 9 ? month : '0' + month}-${
-      day > 9 ? day : '0' + day
-    }`
   }
 }
 </script>
@@ -66,6 +53,7 @@ export default {
       origin="top right"
       offset-y
       min-width="460"
+      eager
     >
       <template #activator="{ on, attrs }">
         <v-text-field
@@ -87,7 +75,7 @@ export default {
           Time
         </v-tab>
 
-        <v-tab-item href="date" transition="quick-fade">
+        <v-tab-item href="date" transition="quick-fade" eager>
           <v-date-picker
             v-model="date"
             landscape
@@ -96,7 +84,7 @@ export default {
           />
         </v-tab-item>
 
-        <v-tab-item href="time" transition="quick-fade">
+        <v-tab-item href="time" transition="quick-fade" eager>
           <TimePicker v-model="timestamp" style="min-height: 286px" />
         </v-tab-item>
       </v-tabs>
