@@ -8,6 +8,12 @@
 
 ### Bugfixes
 
+- None
+
+## 2021-06-23a
+
+### Bugfixes
+
 - Disable schedule toggle only if a user does not have create or delete run permission - [#916](https://github.com/PrefectHQ/ui/pull/916)
 
 ## 2021-06-23
