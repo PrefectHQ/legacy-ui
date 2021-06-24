@@ -328,17 +328,6 @@ export default {
   height: 100%;
 }
 
-.striped {
-  background: repeating-linear-gradient(
-    135deg,
-    var(--v-ScheduledAlt-base),
-    var(--v-ScheduledAlt-base) 5px,
-    var(--v-Scheduled-base) 5px,
-    var(--v-Scheduled-base) 10px
-  );
-  color: #333; //true for light and dark
-}
-
 .darker {
   color: var(--v-utilGrayDark-base);
 }
@@ -381,6 +370,17 @@ export default {
 
   .v-calendar-daily__intervals-head {
     max-width: 45px !important;
+  }
+
+  .striped {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--v-ScheduledAlt-base),
+      var(--v-ScheduledAlt-base) 5px,
+      var(--v-Scheduled-base) 5px,
+      var(--v-Scheduled-base) 10px
+    );
+    color: #333; //true for light and dark
   }
 }
 

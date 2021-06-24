@@ -49,14 +49,18 @@ import '@/assets/fonts/prefect-icons/style.scss'
 import '@/styles/global.scss'
 
 Vue.config.productionTip = false
-Vue.config.devtools = true
-Vue.config.performance = true
+
 if (
   process.env.VUE_APP_ENVIRONMENT == 'staging' ||
   process.env.VUE_APP_ENVIRONMENT == 'dev'
 ) {
+  // eslint-disable-next-line no-console
+  console.log(`Application environment: ${process.env.VUE_APP_ENVIRONMENT}`)
   Vue.config.devtools = true
   Vue.config.performance = true
+} else {
+  Vue.config.devtools = false
+  Vue.config.performance = false
 }
 
 const blockedResponses = [

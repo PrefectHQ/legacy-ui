@@ -115,6 +115,7 @@ export default {
     log: {
       query: require('@/graphql/Logs/logs.gql'),
       variables() {
+        console.log(this.where)
         return {
           //   is_audit_log: { _eq: true }
           where: this.where,

@@ -38,7 +38,10 @@ export default {
       this.timestamp.setMonth(month)
       this.timestamp.setDate(day)
 
-      this.$emit('update', this.timestamp)
+      this.$emit('input', this.timestamp)
+    },
+    timestamp(val) {
+      console.log(val)
     }
   },
   mounted() {
