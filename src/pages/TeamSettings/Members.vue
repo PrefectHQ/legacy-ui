@@ -474,11 +474,11 @@ export default {
         </v-select>
 
         <div
-          v-if="!hasPermission('feature', 'basic-rbac')"
+          v-if="!hasPermission('feature', 'custom-role')"
           class="text-caption"
         >
-          Looking for role-based access controls? This feature is only available
-          on Standard plans; check out our
+          Looking for custom role-based access controls? This feature is only
+          available on Enterprise plans; check out our
           <ExternalLink href="https://prefect.io/pricing"
             >pricing page</ExternalLink
           >
