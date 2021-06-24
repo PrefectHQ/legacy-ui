@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Show current team name on account page if no account name is found - [#923](https://github.com/PrefectHQ/ui/pull/923)
 
 ### Bugfixes
 
