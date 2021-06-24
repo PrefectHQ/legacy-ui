@@ -43,6 +43,8 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
+    ...mapGetters('license', ['hasPermission']),
+
     flowClocks() {
       return this.flow.schedule?.clocks.map(c => {
         // This is so we know where each clock originates while allowing us to put them in a single array
@@ -303,6 +305,7 @@ export default {
         :class="{ 'grid-container-large': selectedClock === -1 }"
       >
         <v-card
+          v-if="hasPermission('create', 'run')"
           class="clock-card"
           :class="{ 'clock-card-large': selectedClock === -1 }"
           :style="{ 'pointer-events': selectedClock === -1 ? 'none' : 'auto' }"
@@ -613,6 +616,7 @@ export default {
                   >
                     <template #activator="{ on }">
                       <v-btn
+                        v-if="hasPermission('update', 'run')"
                         icon
                         fab
                         class="my-1"
@@ -637,6 +641,7 @@ export default {
                   >
                     <template #activator="{ on }">
                       <v-btn
+                        v-if="hasPermission('delete', 'run')"
                         icon
                         fab
                         class="mt-1"

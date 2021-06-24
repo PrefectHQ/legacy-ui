@@ -7,11 +7,6 @@ export default {
     ConfirmDialog
   },
   props: {
-    // Check admin privileges
-    isTenantAdmin: {
-      type: Boolean,
-      required: true
-    },
     // Number that updates every time tenantUsers should be refetched
     refetchSignal: {
       type: Number,
@@ -40,6 +35,10 @@ export default {
     // Current user information
     user: {
       type: Object,
+      required: true
+    },
+    roles: {
+      type: Array,
       required: true
     }
   },
@@ -119,9 +118,6 @@ export default {
     },
     deleteSelfWarning() {
       return this.user.email === this.selectedUser.email
-    },
-    hasRBAC() {
-      return this.permissions?.includes('feature:basic-rbac')
     }
   },
   watch: {
@@ -135,7 +131,8 @@ export default {
 
       const res = await this.$apollo.mutate({
         mutation: require('@/graphql/Tenant/delete-membership.gql'),
-        variables: { membershipId }
+        variables: { membershipId },
+        errorPolicy: 'all'
       })
 
       if (res?.data?.delete_membership?.success) {
@@ -155,24 +152,24 @@ export default {
       this.dialogRemoveUser = false
       this.selectedUser = null
     },
-    async updateRole(membershipId, role) {
+    async updateRole(membership_id, role_id) {
       this.isSettingRole = true
-
       const res = await this.$apollo.mutate({
         mutation: require('@/graphql/Tenant/set-membership-role.gql'),
-        variables: { membershipId, role }
+        variables: { input: { membership_id, role_id } }
       })
 
       if (res?.data?.set_membership_role?.id) {
         this.$emit('successful-action', "The user's role has been updated")
         this.$apollo.queries.tenantUsers.refetch()
+      } else if (res?.errors) {
+        this.$emit('failed-action', res?.errors[0]?.message)
       } else {
         this.$emit(
           'failed-action',
           'Something went wrong while trying to update your role. Please try again.'
         )
       }
-
       this.isSettingRole = false
       this.dialogModifyRole = false
       this.selectedUser = null
@@ -268,14 +265,28 @@ export default {
 
       <!-- ROLE -->
       <template #item.role="{ item }">
-        <v-chip small dark :color="roleColorMap[item.role] || 'secondaryLight'">
-          {{ roleMap[item.role] || 'Unknown' }}
+        <v-chip
+          small
+          dark
+          :color="
+            !roleColorMap[item.role]
+              ? 'accentPink'
+              : roleColorMap[item.role] || 'secondaryLight'
+          "
+        >
+          {{ roleMap[item.role] || item.role }}
         </v-chip>
       </template>
 
       <!-- ACTIONS -->
-      <template v-if="isTenantAdmin" #item.actions="{ item }">
-        <v-tooltip v-if="hasPermission('feature', 'basic-rbac')" bottom>
+      <template #item.actions="{ item }">
+        <v-tooltip
+          v-if="
+            hasPermission('update', 'membership') &&
+              hasPermission('feature', 'basic-rbac')
+          "
+          bottom
+        >
           <template #activator="{ on }">
             <v-btn
               text
@@ -294,7 +305,7 @@ export default {
           </template>
           Modify this user's role
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip v-if="hasPermission('delete', 'membership')" bottom>
           <template #activator="{ on }">
             <v-btn
               text
@@ -336,13 +347,15 @@ export default {
         label="Role"
         :color="roleColorMap[roleInput]"
         prepend-icon="supervised_user_circle"
-        :items="['TENANT_ADMIN', 'USER', 'READ_ONLY_USER']"
+        :items="roles"
+        item-text="name"
+        item-value="id"
       >
-        <template #item="{ item }">
-          {{ roleMap[item] }}
+        <template #item="{item}">
+          {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
         </template>
-        <template #selection="{ item }">
-          {{ roleMap[item] }}
+        <template #selection="{item}">
+          {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
         </template>
       </v-select>
     </ConfirmDialog>

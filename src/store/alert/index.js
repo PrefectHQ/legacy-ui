@@ -97,7 +97,7 @@ const actions = {
           dispatch('dismissNotification', { id })
         }, notification.timeout)
 
-        commit('setNotificationTimeout', { id: notification.id, timeoutId })
+        commit('setNotificationTimeout', { id: id, timeoutId })
       }
     }
   }

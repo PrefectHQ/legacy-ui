@@ -170,7 +170,7 @@ export default {
                             !!defaultParameters && !!defaultParameters.length
                           "
                           color="primary"
-                          :disabled="isReadOnlyUser"
+                          :disabled="permissionsCheck"
                           @click="editAll = true"
                           v-on="onD"
                         >
@@ -179,8 +179,8 @@ export default {
                         </v-btn>
                       </div>
                     </template>
-                    <span v-if="isReadOnlyUser">
-                      Read-only users cannot create or edit parameters.
+                    <span v-if="permissionsCheck">
+                      You don't have permission to create or edit parameters.
                     </span>
                     <span v-else>
                       Use JSON to edit parameters for this flow group.
@@ -285,8 +285,8 @@ export default {
                     </v-btn>
                   </div>
                 </template>
-                <span v-if="isReadOnlyUser">
-                  Read-only users cannot create or edit parameters.
+                <span v-if="permissionsCheck">
+                  You don't have permission to create or edit parameters.
                 </span>
                 <span v-else>
                   Edit this parameter.

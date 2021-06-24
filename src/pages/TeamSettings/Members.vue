@@ -6,6 +6,8 @@ import InvitationsTable from '@/pages/TeamSettings/Members/Invitations-Table'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import MembersTable from '@/pages/TeamSettings/Members/Members-Table'
 import { EMAIL_REGEX } from '@/utils/regEx'
+import { ROLE_MAP, ROLE_COLOR_MAP } from '@/utils/roles.js'
+
 import ExternalLink from '@/components/ExternalLink.vue'
 
 export default {
@@ -33,7 +35,7 @@ export default {
 
       // Inputs
       inviteEmailInput: null,
-      roleInput: 'TENANT_ADMIN',
+      roleInput: null,
       searchInput: '',
 
       // Forms
@@ -65,18 +67,8 @@ export default {
       inviteSignal: 0,
 
       // Role maps
-      roleMap: {
-        USER: 'User',
-        READ_ONLY_USER: 'Read-Only',
-        TENANT_ADMIN: 'Administrator',
-        PENDING: 'Pending'
-      },
-      roleColorMap: {
-        USER: 'codeBlueBright',
-        READ_ONLY_USER: 'cloudUIPrimaryDark',
-        TENANT_ADMIN: 'cloudUIPrimaryBlue',
-        PENDING: 'accentOrange'
-      }
+      roleMap: ROLE_MAP,
+      roleColorMap: ROLE_COLOR_MAP
     }
   },
   computed: {
@@ -89,8 +81,13 @@ export default {
     insufficientUsers() {
       return this.users >= this.totalAllowedUsers
     },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
+    permissionsCheck() {
+      return (
+        this.hasPermission('create', 'membership') &&
+        this.hasPermission('update', 'membership') &&
+        this.hasPermission('delete', 'membership') &&
+        this.hasPermission('feature', 'basic-rbac')
+      )
     },
     roleSelectionMap() {
       return [
@@ -113,6 +110,14 @@ export default {
     },
     totalUsers() {
       return this.users + this.invitations
+    },
+    filteredRoles() {
+      if (!this.roles) return []
+      let rolesToRM = ['RUNNER']
+      if (!this.hasPermission('license', 'admin')) {
+        rolesToRM = ['ENTERPRISE_LICENSE_ADMIN', 'RUNNER']
+      }
+      return this.roles.filter(role => !rolesToRM.includes(role.name))
     }
   },
   watch: {
@@ -159,16 +164,16 @@ export default {
     async inviteUser() {
       this.isInvitingUser = true
       this.inviteError = null
-
       const res = await this.$apollo
         .mutate({
           mutation: require('@/graphql/Tenant/create-membership-invitation.gql'),
           variables: {
             input: {
               email: this.inviteEmailInput,
-              role: this.roleInput
+              role_id: this.roleInput
             }
-          }
+          },
+          errorPolicy: 'all'
         })
         .catch(({ graphQLErrors }) => {
           let error
@@ -179,14 +184,12 @@ export default {
               if (this.readOnlyInvitations > 0 || this.fullInvitations > 0)
                 this.tab = 'pending'
               break
-
             case 'This tenant already has the maximum number of read-only users.':
               this.inviteError =
                 'Your team already has the maximum number of read-only users.'
               if (this.readOnlyInvitations > 0 || this.fullInvitations > 0)
                 this.tab = 'pending'
               break
-
             case `A user with email "${this.inviteEmailInput}" has already been invited to tenant ${this.tenant.id}.`:
               this.inviteError = 'This user has already been invited.'
               break
@@ -201,8 +204,11 @@ export default {
         this.dialogInviteUser = false
         this.inviteEmailInput = null
         this.tab = 'pending'
+      } else if (res?.errors) {
+        this.handleAlert('error', res?.errors[0]?.message)
+        this.dialogInviteUser = false
+        this.inviteEmailInput = null
       }
-
       this.isInvitingUser = false
     },
     resetInviteUserDialog() {
@@ -210,8 +216,23 @@ export default {
       this.$nextTick(() => {
         this.inviteEmailInput = null
         this.inviteError = null
-        this.roleInput = 'TENANT_ADMIN'
+        this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
       })
+    }
+  },
+  apollo: {
+    roles: {
+      query: require('@/graphql/TeamSettings/roles.gql'),
+      loadingKey: 'loading',
+      variables() {
+        return {}
+      },
+      pollInterval: 10000,
+      update(data) {
+        if (!data) return
+        this.roleInput = data.auth_role?.find(r => r.name == 'TENANT_ADMIN').id
+        return data.auth_role
+      }
     }
   }
 }
@@ -222,7 +243,7 @@ export default {
     <template #title>Team Members</template>
 
     <template #subtitle>
-      <span v-if="isTenantAdmin">
+      <span v-if="permissionsCheck">
         View your team's members, manage permissions, and send invitations
       </span>
       <span v-else data-cy="non-admin-message">
@@ -230,7 +251,7 @@ export default {
       </span>
     </template>
 
-    <template v-if="isTenantAdmin" #cta>
+    <template v-if="hasPermission('create', 'membership-invitation')" #cta>
       <v-btn
         :disabled="insufficientUsers"
         color="primary"
@@ -357,9 +378,9 @@ export default {
       <!-- MEMBERS TABLE -->
       <v-tab-item value="members">
         <MembersTable
-          :is-tenant-admin="isTenantAdmin"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
+          :roles="filteredRoles"
           :search="searchInput"
           :tenant="tenant"
           :user="user"
@@ -373,7 +394,7 @@ export default {
       <!-- PENDING INVITATIONS TABLE -->
       <v-tab-item value="pending" eager>
         <InvitationsTable
-          :is-tenant-admin="isTenantAdmin"
+          :permissions-check="hasPermission('delete', 'membership-invitation')"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :search="searchInput"
@@ -442,20 +463,36 @@ export default {
           :disabled="!hasPermission('feature', 'basic-rbac')"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
-          :items="roleSelectionMap"
+          :items="filteredRoles"
           :rules="[rules.required]"
-          item-text="label"
-          item-value="role"
+          item-text="name"
+          item-value="id"
           item-disabled="disabled"
         >
+          <template #item="{item}">
+            {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
+          </template>
+          <template #selection="{item}">
+            {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
+          </template>
         </v-select>
-
         <div
           v-if="!hasPermission('feature', 'basic-rbac')"
           class="text-caption"
         >
-          Looking for role-based access controls? This feature is only available
-          on Enterprise plans; check out our
+          Looking for role-based access controls? This feature is available on
+          Standard plans; check out our
+          <ExternalLink href="https://prefect.io/pricing"
+            >pricing page</ExternalLink
+          >
+          for more details.
+        </div>
+        <div
+          v-else-if="!hasPermission('feature', 'custom-role')"
+          class="text-caption"
+        >
+          Looking for custom role-based access controls? This feature is only
+          available on Enterprise plans; check out our
           <ExternalLink href="https://prefect.io/pricing"
             >pricing page</ExternalLink
           >

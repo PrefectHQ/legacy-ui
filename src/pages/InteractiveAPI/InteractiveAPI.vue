@@ -37,7 +37,10 @@ query { hello }
         'reference_data',
         'task_tag_limit',
         'taskTagUsage',
-        'task_tag_usage'
+        'task_tag_usage',
+        'mapped_children',
+        'permissions_info',
+        'users'
       ]
     }
   },

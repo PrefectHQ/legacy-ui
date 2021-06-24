@@ -8,7 +8,41 @@
 
 ### Bugfixes
 
-- None
+- Switch permissions check on members page to be basic-rbac instead of custom-role - [#920](https://github.com/PrefectHQ/ui/pull/920)
+- Fix membership invitation role selection - [#918](https://github.com/PrefectHQ/ui/pull/918)
+
+## 2021-06-23a
+
+### Bugfixes
+
+- Disable schedule toggle only if a user does not have create or delete run permission - [#916](https://github.com/PrefectHQ/ui/pull/916)
+
+## 2021-06-23
+
+### Features and Improvements
+
+- Improve agents tile for server - [#901](https://github.com/PrefectHQ/ui/pull/901)
+- Improve account management experience and add multi-tenancy tenant management - [#909](https://github.com/PrefectHQ/ui/pull/909)
+- Add a custom roles page - [#881](https://github.com/PrefectHQ/ui/pull/881)
+
+### Bugfixes
+
+- Add permission bypass for Server - [#912](https://github.com/PrefectHQ/ui/pull/912)
+
+## 2021-06-17
+
+### Features and Improvements
+
+- Add agent screens - [#852](https://github.com/PrefectHQ/ui/pull/852)
+- Add the `mapped_children` route to the IAPI allow-list - [#891](https://github.com/PrefectHQ/ui/pull/891)
+- Add the netlify script to the csp - [#897](https://github.com/PrefectHQ/ui/pull/897)
+- Improve expired auth and id token handling - [#896](https://github.com/PrefectHQ/ui/pull/896)
+
+### Bugfixes
+
+- Fix KV copy button issue - [#887](https://github.com/PrefectHQ/ui/pull/887)
+- Check explicitly for map index of 0 to avoid falsey in restart button [#890](https://github.com/PrefectHQ/ui/pull/890)
+- Remove setAgents from app.vue - [#898](https://github.com/PrefectHQ/ui/pull/898)
 
 ## 2021-06-02
 
@@ -28,6 +62,7 @@
 
 ### Bugfixes
 
+- Display task run name in Schematic - [#863](https://github.com/PrefectHQ/ui/pull/863)
 - Various bugfixes related to null tenants and team invitaitons - [#862](https://github.com/PrefectHQ/ui/pull/862)
 
 ## 2021-05-25

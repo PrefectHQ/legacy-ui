@@ -1,11 +1,18 @@
 <script>
 import { changeStateMixin } from '@/mixins/changeStateMixin'
+import { mapGetters } from 'vuex'
 
 export default {
   mixins: [changeStateMixin],
   data() {
     return {
       childTasks: false
+    }
+  },
+  computed: {
+    ...mapGetters('license', ['hasPermission']),
+    permissionsCheck() {
+      return !this.hasPermission('update', 'run')
     }
   },
   apollo: {
@@ -29,7 +36,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="activeButton()">
+  <div v-if="activeButton">
     <v-dialog v-model="setStateDialog" max-width="600" @click:outside="reset">
       <template #activator="{ on: dialog }">
         <v-tooltip bottom>
@@ -41,7 +48,7 @@ export default {
                 text
                 small
                 depressed
-                :disabled="role === 'READ_ONLY_USER'"
+                :disabled="permissionsCheck"
                 color="utilGrayMid"
               >
                 <v-icon>label_important</v-icon>
@@ -150,7 +157,7 @@ export default {
       </v-card>
     </v-dialog>
   </div>
-  <div v-else-if="role == 'READ_ONLY_USER' && dialogType == 'flow run'">
+  <div v-else-if="permissionsCheck && dialogType == 'flow run'">
     <v-tooltip bottom>
       <template #activator="{ on }">
         <div v-on="on">
@@ -168,7 +175,9 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span>Read-only users cannot change flow run states</span>
+      <span>
+        You don't have permission to change flow run states
+      </span>
     </v-tooltip>
   </div>
   <div v-else-if="dialogType == 'task run'">
@@ -189,8 +198,8 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="role === 'READ_ONLY_USER'">
-        Read-only users cannot change states
+      <span v-if="permissionsCheck">
+        You don't have permission to change states
       </span>
       <span v-else>
         You can only change the marked state of a finished task-run

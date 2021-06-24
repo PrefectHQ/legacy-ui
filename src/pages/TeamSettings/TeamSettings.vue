@@ -1,8 +1,10 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-
+import UpgradeBadge from '@/components/UpgradeBadge'
 export default {
-  components: {},
+  components: {
+    UpgradeBadge
+  },
   data() {
     return {
       // Delete team
@@ -27,7 +29,8 @@ export default {
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('tenant', ['tenant', 'role'])
+    ...mapGetters('tenant', ['tenant', 'role']),
+    ...mapGetters('license', ['hasPermission'])
   },
   watch: {
     tenant() {
@@ -109,20 +112,6 @@ export default {
 
       <v-list dense>
         <v-list-item
-          :to="{ name: 'account', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-          data-cy="account"
-        >
-          <v-list-item-action>
-            <v-icon>contacts</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Account</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
           :disabled="!isCloud"
           :to="{ name: 'tokens', params: { tenant: tenant.slug } }"
           data-cy="team-settings-api-tokens"
@@ -191,6 +180,30 @@ export default {
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Members</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :disabled="!isCloud || !hasPermission('feature', 'custom-role')"
+          :to="{ name: 'roles', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>face</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title
+              >Roles
+              <UpgradeBadge
+                v-if="isCloud && !hasPermission('feature', 'custom-role')"
+                inline
+                depressed
+              >
+                <span class="font-weight-medium">Custom Roles</span> are only
+                available on Enterprise plans.
+              </UpgradeBadge>
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -270,7 +283,10 @@ export default {
 
       <template #append>
         <v-list dense>
-          <v-list-item v-if="false && role == 'TENANT_ADMIN'" :ripple="false">
+          <v-list-item
+            v-if="false && hasPermission('delete', 'tenant')"
+            :ripple="false"
+          >
             <v-list-item-content v-if="$vuetify.breakpoint.mdAndUp">
               <v-btn
                 color="red"
@@ -301,7 +317,7 @@ export default {
       </v-fade-transition>
     </div>
 
-    <template v-if="false && role == 'TENANT_ADMIN'">
+    <template v-if="false && hasPermission('delete', 'tenant')">
       <v-dialog v-model="deleteTeamDialog" max-width="600">
         <v-card>
           <v-card-title class="text-h5 word-break-normal mb-3">
@@ -322,7 +338,7 @@ export default {
               </div>
               <v-form v-model="deleteTeamFormValid">
                 <v-text-field
-                  v-if="tenant.role == 'TENANT_ADMIN'"
+                  v-if="hasPermission('delete', 'tenant')"
                   v-model="teamName"
                   autocomplete="off"
                   :label="tenant.name"

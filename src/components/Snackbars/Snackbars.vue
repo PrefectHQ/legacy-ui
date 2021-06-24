@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable vue/no-v-html */
 import { mapGetters, mapActions } from 'vuex'
 export default {
   computed: {
@@ -44,7 +45,7 @@ export default {
             </transition>
 
             <transition name="quick-fade" mode="out-in" tag="div">
-              <div :key="item.text" class="text-body-1">{{ item.text }}</div>
+              <div :key="item.text" class="text-body-1" v-html="item.text" />
             </transition>
 
             <transition name="quick-fade" mode="out-in" tag="div">

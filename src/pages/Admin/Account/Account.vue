@@ -2,14 +2,14 @@
 import { mapGetters, mapActions } from 'vuex'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
-import Profile from '@/pages/TeamSettings/Account/Profile'
-import License from '@/pages/TeamSettings/Account/License'
-import Billing from '@/pages/TeamSettings/Account/Billing'
-import ClearDataDialog from '@/pages/TeamSettings/Account/ClearDataDialog'
-import UsageToday from '@/pages/TeamSettings/Account/Usage/UsageToday'
-import CurrentUsers from '@/pages/TeamSettings/Account/Usage/CurrentUsers'
-import UsageCycle from '@/pages/TeamSettings/Account/Usage/UsageCycle'
-import UsageTimeline from '@/pages/TeamSettings/Account/Usage/UsageTimeline'
+import Profile from '@/pages/Admin/Account/Profile'
+import License from '@/pages/Admin/Account/License'
+import Billing from '@/pages/Admin/Account/Billing'
+import ClearDataDialog from '@/pages/Admin/Account/ClearDataDialog'
+import UsageToday from '@/pages/Admin/Account/Usage/UsageToday'
+import CurrentUsers from '@/pages/Admin/Account/Usage/CurrentUsers'
+import UsageCycle from '@/pages/Admin/Account/Usage/UsageCycle'
+import UsageTimeline from '@/pages/Admin/Account/Usage/UsageTimeline'
 import UpgradeUsageTile from '@/pages/Dashboard/UsageTiles/UpgradeUsage-Tile'
 import CommittedUsageTile from '@/pages/Dashboard/UsageTiles/CommittedUsage-Tile'
 import CycleUsageTile from '@/pages/Dashboard/UsageTiles/CycleUsage-Tile'
@@ -48,9 +48,6 @@ export default {
     ...mapGetters('license', ['license', 'planType']),
     needAlert() {
       return !location.href.includes('prefect.io')
-    },
-    isTenantAdmin() {
-      return this.tenant.role === 'TENANT_ADMIN'
     },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
@@ -116,19 +113,6 @@ export default {
 <template>
   <div>
     <v-container v-if="isCloud" fluid>
-      <v-row>
-        <v-col cols="12" class="text-center pb-2 ">
-          <h1 class="text-h4">Account & Usage</h1>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" class="text-center py-0">
-          <div class="text-subtitle-1">
-            Manage data associated with your team
-          </div>
-        </v-col>
-      </v-row>
-
       <v-row class="usage-row">
         <v-col cols="12" class="usage-grid">
           <v-skeleton-loader
@@ -184,7 +168,6 @@ export default {
             </v-col>
             <v-col cols="12">
               <v-skeleton-loader
-                v-if="isTenantAdmin"
                 :loading="loadedTiles < 7"
                 type="image"
                 height="282"
@@ -257,12 +240,6 @@ export default {
     </v-container>
 
     <ManagementLayout v-else>
-      <template #title>Account</template>
-
-      <template v-if="isCloud" #subtitle>
-        Update your team profile.
-      </template>
-
       <Profile />
       <ClearDataDialog />
     </ManagementLayout>

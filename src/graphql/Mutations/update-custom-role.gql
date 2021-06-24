@@ -1,0 +1,5 @@
+mutation UpdateCustomRole ($input: update_custom_role_permissions_input!){
+    update_custom_role_permissions (input: $input) {
+        success
+    }
+}
