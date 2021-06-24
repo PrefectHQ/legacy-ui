@@ -8,7 +8,8 @@
 
 ### Bugfixes
 
-- Switch permissions check on members page to be basic-rbac instead of custom-role - []()
+- Switch permissions check on members page to be basic-rbac instead of custom-role - [#920](https://github.com/PrefectHQ/ui/pull/920)
+- Fix membership invitation role selection - [#918](https://github.com/PrefectHQ/ui/pull/918)
 
 ## 2021-06-23a
 
