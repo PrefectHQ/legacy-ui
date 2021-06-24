@@ -98,6 +98,7 @@ export default {
       } else {
         isNew = true
         this.clocks.push({ ...val, scheduleType: 'flow-group' })
+        this.clocks = this.clocks.reverse()
       }
 
       await this.modifySchedules({ new: isNew })
@@ -238,7 +239,10 @@ export default {
       }
     },
     timezoneVal(clock) {
-      let tz = this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+      let tz =
+        clock.scheduleType == 'flow'
+          ? 'UTC'
+          : this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
       if (clock?.timezone) {
         tz = clock?.timezone
       } else if (clock?.start_date?.tz) {
