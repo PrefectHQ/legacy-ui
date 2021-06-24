@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix membership invitation role selection - [#918](https://github.com/PrefectHQ/ui/pull/918)
 
 ## 2021-06-23a
 
