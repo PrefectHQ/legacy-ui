@@ -476,8 +476,8 @@ export default {
           v-if="!hasPermission('feature', 'basic-rbac')"
           class="text-caption"
         >
-          Looking for role-based access controls? This feature is only available
-          on Standard plans; check out our
+          Looking for role-based access controls? This feature is available on
+          Standard plans; check out our
           <ExternalLink href="https://prefect.io/pricing"
             >pricing page</ExternalLink
           >
