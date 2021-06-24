@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Defaults to UTC if a timezone is not provided and defaults to the latest timezone when creating/modifying - [#922](https://github.com/PrefectHQ/ui/pull/922)
 
 ## 2021-06-24
 
