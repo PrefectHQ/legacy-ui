@@ -477,14 +477,14 @@ export default {
           class="text-caption"
         >
           Looking for role-based access controls? This feature is only available
-          on Enterprise plans; check out our
+          on Standard plans; check out our
           <ExternalLink href="https://prefect.io/pricing"
             >pricing page</ExternalLink
           >
           for more details.
         </div>
         <div
-          v-if="!hasPermission('feature', 'custom-role')"
+          v-else-if="!hasPermission('feature', 'custom-role')"
           class="text-caption"
         >
           Looking for custom role-based access controls? This feature is only
