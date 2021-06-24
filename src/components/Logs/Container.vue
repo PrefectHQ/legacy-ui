@@ -71,9 +71,10 @@ export default {
   },
   watch: {
     where: {
-      handler() {
+      handler(val) {
         this.logs = []
         this.logIds = []
+        console.log('where watcher', val)
       },
       deep: true
     }
@@ -117,10 +118,7 @@ export default {
       variables() {
         console.log(this.where)
         return {
-          //   is_audit_log: { _eq: true }
           where: this.where,
-          // whereBefore: {...this.where, timestamp: { _gte: this.centerTimestamp }},
-          // whereAfter: {...this.where, timestamp: { _gte: this.centerTimestamp }},
           limit: 50,
           offset: this.offset
         }

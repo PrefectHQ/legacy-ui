@@ -5,8 +5,18 @@ export default {
   components: {
     DateTimePicker
   },
+  props: {
+    value: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {}
+      }
+    }
+  },
   data() {
     return {
+      filter: { ...this.value },
       end: null,
       start: null
     }
@@ -26,6 +36,22 @@ export default {
 
     this.start = start
     this.end = end
+
+    this.$watch(
+      vm => [vm.start, vm.end],
+      val => {
+        const [start, end] = val
+        this.filter.timestamp = { _gte: start, _lte: end }
+
+        console.log('start or end changed', start, end)
+
+        this.$emit('input', this.filter)
+      },
+      {
+        deep: true,
+        immediate: true
+      }
+    )
   }
 }
 </script>
