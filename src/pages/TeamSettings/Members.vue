@@ -86,7 +86,7 @@ export default {
         this.hasPermission('create', 'membership') &&
         this.hasPermission('update', 'membership') &&
         this.hasPermission('delete', 'membership') &&
-        this.hasPermission('feature', 'custom-role')
+        this.hasPermission('feature', 'basic-rbac')
       )
     },
     roleSelectionMap() {
@@ -456,7 +456,7 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
-          :disabled="!hasPermission('feature', 'custom-role')"
+          :disabled="!hasPermission('feature', 'basic-rbac')"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
           :items="filteredRoles"
@@ -474,11 +474,11 @@ export default {
         </v-select>
 
         <div
-          v-if="!hasPermission('feature', 'custom-role')"
+          v-if="!hasPermission('feature', 'basic-rbac')"
           class="text-caption"
         >
           Looking for role-based access controls? This feature is only available
-          on Enterprise plans; check out our
+          on Standard plans; check out our
           <ExternalLink href="https://prefect.io/pricing"
             >pricing page</ExternalLink
           >
