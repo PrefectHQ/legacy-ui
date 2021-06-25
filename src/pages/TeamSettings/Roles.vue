@@ -246,7 +246,7 @@ export default {
             link
             :style="
               selectedRole === item.id
-                ? { 'background-color': 'whiteSmoke' }
+                ? { 'background-color': 'var(--v-appBackground-darken1)' }
                 : ''
             "
           >
@@ -321,7 +321,7 @@ export default {
               link
               :style="
                 selectedRole === item.id
-                  ? { 'background-color': 'whiteSmoke' }
+                  ? { 'background-color': 'var(--v-appBackground-darken1)' }
                   : ''
               "
             >
