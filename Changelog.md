@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Add missing indentation to the tutorial code sample -  [#924](https://github.com/PrefectHQ/ui/pull/924)
 
 ## 2021-06-24
 
