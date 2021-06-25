@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- Fix role highlight in dark mode - []()
+- Fix role highlight in dark mode - [#925](https://github.com/PrefectHQ/ui/pull/925)
 
 ## 2021-06-24
 
