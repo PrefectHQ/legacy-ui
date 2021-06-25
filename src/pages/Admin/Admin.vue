@@ -22,7 +22,8 @@ export default {
     pageTitle() {
       const pageTitles = {
         '/admin/teams/new': 'New team',
-        '/admin/account': this.license?.account_name || 'Account',
+        '/admin/account':
+          this.license?.account_name || this.tenant?.name || 'Account',
         '/admin/teams': `${
           this.license?.account_name ? this.license.account_name + ' ' : ''
         }Teams <span class="font-weight-light text-h6">(${
