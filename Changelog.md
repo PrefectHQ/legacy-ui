@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix role highlight in dark mode - []()
 
 ## 2021-06-24
 
