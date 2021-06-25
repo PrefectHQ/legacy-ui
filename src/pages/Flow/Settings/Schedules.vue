@@ -336,6 +336,10 @@ export default {
                 <div v-show="selectedTab === 0">
                   <ClockForm
                     :param="parameter"
+                    :timezone="
+                      this.timezone ||
+                        Intl.DateTimeFormat().resolvedOptions().timeZone
+                    "
                     @cancel="selectedClock = null"
                     @confirm="createClock"
                   />
