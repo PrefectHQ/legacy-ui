@@ -43,9 +43,7 @@ export default {
         const [start, end] = val
         this.filter.timestamp = { _gte: start, _lte: end }
 
-        console.log('start or end changed', start, end)
-
-        this.$emit('input', this.filter)
+        this.$emit('input', { ...this.filter })
       },
       {
         deep: true,

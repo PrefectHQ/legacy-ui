@@ -37,7 +37,7 @@ export default {
       this.timestamp.setMonth(month - 1)
       this.timestamp.setDate(day)
 
-      this.$emit('input', this.timestamp)
+      this.$emit('input', new Date(this.timestamp))
     }
   }
 }

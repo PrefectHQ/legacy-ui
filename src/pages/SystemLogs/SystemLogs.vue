@@ -9,53 +9,13 @@ export default {
   },
   data() {
     return {
-      filter: null,
-      where: { is_audit_log: { _eq: true } }
+      filter: null
     }
   },
   computed: {
-    // where() {
-    //   const str = this.filter.toString()
-    //   console.log(str)
-    //   // const start = new Date()
-    //   // const end = new Date()
-    //   // start.setHours(0)
-    //   // start.setMinutes(0)
-    //   // start.setSeconds(0)
-    //   // start.setMilliseconds(0)
-    //   // end.setHours(23)
-    //   // end.setMinutes(59)
-    //   // end.setSeconds(59)
-    //   // end.setMilliseconds(999)
-    //   console.log(this.filter)
-    //   return {
-    //     ...this.filter,
-    //     is_audit_log: { _eq: true }
-    //     // timestamp: { _gte: start, _lte: end }
-    //   }
-    // }
-    // where: {
-    //   get() {},
-    //   set(val) {},
-    // }
-  },
-  watch: {
-    filter: {
-      handler(val) {
-        console.log(val)
-        this.where = {
-          ...val,
-          is_audit_log: { _eq: true }
-        }
-      },
-      deep: true
-    }
-  },
-  methods: {
-    handleInput(val) {
-      console.log('input')
-      this.where = {
-        ...val,
+    where() {
+      return {
+        ...this.filter,
         is_audit_log: { _eq: true }
       }
     }
@@ -65,7 +25,7 @@ export default {
 
 <template>
   <div class="d-flex flex-column system-logs">
-    <Toolbar v-model="filter" @input="handleInput" />
+    <Toolbar v-model="filter" />
     <Container :where="where" />
   </div>
 </template>

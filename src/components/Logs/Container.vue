@@ -71,10 +71,9 @@ export default {
   },
   watch: {
     where: {
-      handler(val) {
+      handler() {
         this.logs = []
         this.logIds = []
-        console.log('where watcher', val)
       },
       deep: true
     }
@@ -116,7 +115,6 @@ export default {
     log: {
       query: require('@/graphql/Logs/logs.gql'),
       variables() {
-        console.log(this.where)
         return {
           where: this.where,
           limit: 50,
