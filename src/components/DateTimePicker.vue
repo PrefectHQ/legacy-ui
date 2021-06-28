@@ -44,64 +44,52 @@ export default {
 </script>
 
 <template>
-  <div class="px-4 py-2 d-flex">
-    <v-menu
-      v-model="menu"
-      :close-on-content-click="false"
-      left
-      transition="scale-transition"
-      origin="top right"
-      offset-y
-      min-width="460"
-      eager
-    >
-      <template #activator="{ on, attrs }">
-        <v-text-field
-          v-model="timestamp"
-          :prepend-inner-icon="icon"
-          outlined
-          readonly
-          :label="label"
-          hide-details
-          dense
-          v-bind="attrs"
-          v-on="on"
+  <v-menu
+    v-model="menu"
+    :close-on-content-click="false"
+    left
+    transition="scale-transition"
+    origin="top right"
+    offset-y
+    min-width="460"
+    eager
+  >
+    <template #activator="{ on, attrs }">
+      <v-text-field
+        v-model="timestamp"
+        :prepend-inner-icon="icon"
+        outlined
+        readonly
+        :label="label"
+        hide-details
+        dense
+        v-bind="attrs"
+        v-on="on"
+      />
+    </template>
+
+    <v-tabs v-model="tab" background-color="primary" dark centered>
+      <v-tab key="date" class="ml-auto">Date</v-tab>
+      <v-tab key="time">
+        Time
+      </v-tab>
+
+      <v-tab-item href="date" transition="quick-fade" eager>
+        <v-date-picker
+          v-model="date"
+          landscape
+          class="rounded-0"
+          color="primary"
         />
-      </template>
+      </v-tab-item>
 
-      <v-tabs v-model="tab" background-color="primary" dark centered>
-        <v-tab key="date" class="ml-auto">Date</v-tab>
-        <v-tab key="time">
-          Time
-        </v-tab>
-
-        <v-tab-item href="date" transition="quick-fade" eager>
-          <v-date-picker
-            v-model="date"
-            landscape
-            class="rounded-0"
-            color="primary"
-          />
-        </v-tab-item>
-
-        <v-tab-item href="time" transition="quick-fade" eager>
-          <TimePicker v-model="timestamp" style="min-height: 286px" />
-        </v-tab-item>
-      </v-tabs>
-    </v-menu>
-  </div>
+      <v-tab-item href="time" transition="quick-fade" eager>
+        <TimePicker v-model="timestamp" style="min-height: 286px" />
+      </v-tab-item>
+    </v-tabs>
+  </v-menu>
 </template>
 
 <style lang="scss">
-// /* Chrome, Safari, Edge, Opera */
-// input::-webkit-outer-spin-button,
-// input::-webkit-inner-spin-button {
-//   -webkit-appearance: none;
-//   margin: 0;
-// }
-
-// /* Firefox */
-// input[type='number'] {
-//   -moz-appearance: textfield;
-// }
+/* // */
 </style>

@@ -18,7 +18,16 @@ export default {
     return {
       filter: { ...this.value },
       end: null,
-      start: null
+      start: null,
+      table: 'user',
+      tableOptions: [
+        { text: 'Team', value: 'tenant' },
+        { text: 'User', value: 'user' },
+        { text: 'Flow', value: 'flow' },
+        { text: 'Flow fun', value: 'flow_run' },
+        { text: 'Task', value: 'task' },
+        { text: 'Task run', value: 'task_run' }
+      ]
     }
   },
   mounted() {
@@ -50,6 +59,18 @@ export default {
         immediate: true
       }
     )
+
+    this.$watch(
+      'table',
+      val => {
+        this.filter.object_table = { _eq: val }
+
+        this.$emit('input', { ...this.filter })
+      },
+      {
+        immediate: true
+      }
+    )
   }
 }
 </script>
@@ -63,6 +84,15 @@ export default {
       icon="today"
     />
     <DateTimePicker v-if="end" v-model="end" label="End date" icon="event" />
+
+    <v-select
+      v-model="table"
+      outlined
+      label="Type"
+      :items="tableOptions"
+      dense
+      hide-details
+    />
   </div>
 </template>
 
