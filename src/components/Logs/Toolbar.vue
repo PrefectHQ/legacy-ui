@@ -56,10 +56,23 @@ export default {
       logLevelOptions: logLevels,
       table: 'user',
       tableOptions: [
-        { text: 'Account', value: 'license' },
-        { text: 'Flow', value: 'flow' },
-        { text: 'Team', value: 'tenant' },
-        { text: 'User', value: 'user' }
+        {
+          text: 'Account',
+          value: 'license',
+          subtext: 'Account, license, and usage-related logs'
+        },
+        {
+          text: 'Flow',
+          value: 'flow',
+          subtext:
+            'Flow related logs, including schedules and flow settings updates'
+        },
+        {
+          text: 'User',
+          value: 'user',
+          subtext: 'Login, role, and membership-related logs'
+        }
+        // { text: 'Team', value: 'tenant', subtext: '' },
         // I don't think we'll be populating these yet for this table
         // { text: 'Flow run', value: 'flow_run' },
         // { text: 'Task', value: 'task' },
@@ -176,10 +189,22 @@ export default {
         v-model="table"
         outlined
         label="Type"
+        menu-props="auto, offsetY"
         :items="tableOptions"
         dense
         hide-details
-      />
+      >
+        <template #item="{ item }">
+          <v-list-item-content>
+            <v-list-item-title class="text-body-1 font-weight-light">
+              {{ item.text }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-light">
+              {{ item.subtext }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </template>
+      </v-select>
     </div>
 
     <div class="mr-4" style="max-width: 300px;">
