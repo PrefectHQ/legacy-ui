@@ -230,6 +230,7 @@ export default {
 <style lang="scss" scoped>
 .scroller {
   max-height: calc(100vh - 64px);
+  min-height: 400px;
 
   @media screen and (max-width: 1264px) {
     max-height: calc(100vh - 104px);

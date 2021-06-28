@@ -1,6 +1,39 @@
 <script>
 import DateTimePicker from '@/components/DateTimePicker'
 
+const logLevels = [
+  {
+    text: 'Critical',
+    color: '#d50000',
+    icon: 'warning',
+    value: 'CRITICAL'
+  },
+  {
+    text: 'Error',
+    color: '#ff5252',
+    icon: 'warning_amber',
+    value: 'ERROR'
+  },
+  {
+    text: 'Debug',
+    color: '#937eff',
+    icon: 'bug_report',
+    value: 'DEBUG'
+  },
+  {
+    text: 'Warn',
+    color: '#ffdd37',
+    icon: 'report_problem',
+    value: 'WARN'
+  },
+  {
+    text: 'Info',
+    color: '#2196f3',
+    icon: 'info',
+    value: 'INFO'
+  }
+]
+
 export default {
   components: {
     DateTimePicker
@@ -19,11 +52,14 @@ export default {
       filter: { ...this.value },
       end: null,
       start: null,
+      logLevel: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL'],
+      logLevelOptions: logLevels,
       table: 'user',
       tableOptions: [
+        { text: 'Account', value: 'license' },
+        { text: 'Flow', value: 'flow' },
         { text: 'Team', value: 'tenant' },
-        { text: 'User', value: 'user' },
-        { text: 'Flow', value: 'flow' }
+        { text: 'User', value: 'user' }
         // I don't think we'll be populating these yet for this table
         // { text: 'Flow run', value: 'flow_run' },
         // { text: 'Task', value: 'task' },
@@ -93,6 +129,15 @@ export default {
       this.previousSearch = this.textSearch
 
       this.$emit('input', { ...this.filter })
+    },
+    updateLogLevel() {
+      if (this.logLevel.length === 1) {
+        this.filter.level = { _eq: this.logLevel[0] }
+      } else {
+        this.filter.level = { _in: this.logLevel }
+      }
+
+      this.$emit('input', { ...this.filter })
     }
   }
 }
@@ -135,6 +180,52 @@ export default {
         dense
         hide-details
       />
+    </div>
+
+    <div class="mr-4" style="max-width: 300px;">
+      <v-select
+        v-model="logLevel"
+        outlined
+        label="Level"
+        :items="logLevelOptions"
+        dense
+        offset-y
+        multiple
+        menu-props="auto, offsetY"
+        hide-details
+        style="width: 300px;"
+        @blur="updateLogLevel"
+      >
+        <template #item="{ item, attrs }">
+          <v-chip
+            :color="attrs.inputValue ? item.color : 'grey'"
+            small
+            :outlined="!attrs.inputValue"
+          >
+            <v-icon :color="attrs.inputValue ? 'white' : item.color" small>
+              {{ item.icon }}
+            </v-icon>
+            <span class="ml-1" :class="{ 'white--text': attrs.inputValue }">{{
+              item.text
+            }}</span>
+          </v-chip>
+        </template>
+
+        <template #selection="{ item, index }">
+          <v-chip v-if="index < 2" :color="item.color" small>
+            <v-icon color="white" small>
+              {{ item.icon }}
+            </v-icon>
+            <span class="white--text ml-1">{{ item.text }}</span>
+          </v-chip>
+
+          <span v-if="index === 2" class="utilGrayDark--text text-caption">
+            (+{{ logLevel.length - 2 }} other{{
+              logLevel.length - 2 == 1 ? '' : 's'
+            }})
+          </span>
+        </template>
+      </v-select>
     </div>
 
     <div class="d-inline-flex align-center justify-center">
