@@ -123,7 +123,6 @@ export default {
     log: {
       query: require('@/graphql/Logs/logs.gql'),
       variables() {
-        console.log(this.where)
         return {
           where: this.where,
           limit: 50,
