@@ -24,18 +24,26 @@ export default {
 </script>
 
 <template>
-  <div class="d-flex flex-column system-logs">
+  <div v-if="true" class="system-logs">
     <Toolbar v-model="filter" />
     <Container :where="where" />
   </div>
+  <div v-else class="system-logs">hello</div>
 </template>
 
 <style lang="scss" scoped>
 .system-logs {
-  max-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  overflow-y: hidden !important;
 
   @media screen and (max-width: 1264px) {
-    max-height: calc(100vh - 104px);
+    height: calc(100vh - 112px);
   }
+}
+</style>
+
+<style lang="scss">
+html {
+  overscroll-behavior: none !important;
 }
 </style>

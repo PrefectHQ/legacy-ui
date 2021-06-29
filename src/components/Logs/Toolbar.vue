@@ -72,9 +72,13 @@ export default {
           value: 'user',
           subtext: 'Login, role, and membership-related logs'
         }
-        // { text: 'Team', value: 'tenant', subtext: '' },
         // I don't think we'll be populating these yet for this table
-        // { text: 'Flow run', value: 'flow_run' },
+        // { text: 'Team', value: 'tenant', subtext: '' },
+        // {
+        //   text: 'Flow run',
+        //   value: null,
+        //   subtext: 'Logs generated when running flows'
+        // }
         // { text: 'Task', value: 'task' },
         // { text: 'Task run', value: 'task_run' }
       ],
@@ -157,7 +161,7 @@ export default {
 </script>
 
 <template>
-  <div class="d-flex align-middle justify-end pa-4">
+  <div class="d-flex align-middle justify-end pa-4 position-sticky">
     <div
       class="mr-auto d-flex align-center justify-center"
       style="max-width: 350px;"
@@ -230,9 +234,9 @@ export default {
             <v-icon :color="attrs.inputValue ? 'white' : item.color" small>
               {{ item.icon }}
             </v-icon>
-            <span class="ml-1" :class="{ 'white--text': attrs.inputValue }">{{
-              item.text
-            }}</span>
+            <span class="ml-1" :class="{ 'white--text': attrs.inputValue }">
+              {{ item.text }}
+            </span>
           </v-chip>
         </template>
 
@@ -269,4 +273,8 @@ export default {
 
 <style lang="scss">
 /*  */
+.position-sticky {
+  position: sticky;
+  top: 0;
+}
 </style>

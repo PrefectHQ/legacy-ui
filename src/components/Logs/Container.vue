@@ -1,6 +1,7 @@
 <script>
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 import Row from '@/components/Logs/Row'
+import debounce from 'lodash.debounce'
 
 export default {
   components: { Row },
@@ -14,32 +15,6 @@ export default {
       }
     }
   },
-  //   props: {
-  //     auditLogs: {
-  //       type: Boolean,
-  //       default: false
-  //     },
-  //     taskRunId: {
-  //       type: String,
-  //       default: null
-  //     },
-  //     flowRunId: {
-  //       type: String,
-  //       default: null
-  //     },
-  //     objectTable: {
-  //       type: String,
-  //       default: null
-  //     },
-  //     objectId: {
-  //       type: String,
-  //       default: null
-  //     },
-  //     tenantId: {
-  //       type: String,
-  //       default: null
-  //     }
-  //   }
   data() {
     return {
       centerTimestamp: null,
@@ -67,6 +42,15 @@ export default {
     },
     loading() {
       return this.loadingKey > 0
+    },
+    handleScroll: function() {
+      return debounce(
+        e => {
+          requestAnimationFrame(() => this.rawHandleScroll(e))
+        },
+        32,
+        { leading: true, trailing: true }
+      )
     }
   },
   watch: {
@@ -87,22 +71,24 @@ export default {
   },
   beforeDestroy() {},
   methods: {
-    handleScroll(e) {
+    rawHandleScroll(e) {
       if (this.ignoreNextScroll) {
         this.ignoreNextScroll = false
         return
       }
-      const el = e.currentTarget || e.target
+      const st = this.$refs['virtual-scroller'].$el.scrollTop
 
+      // MDN says that using the deltaY attribute isn't always the best indicator of
+      // scroll direction. We use it here in the edge case where the aren't enough logs on the page
+      // but we still want to fetch more logs if the user scrolls up
       if (
-        el?.scrollTop <= 5 &&
-        !this.loading &&
-        el?.scrollTop < this.lastScroll
+        (st <= 0 && !this.loading && st < this.lastScroll) ||
+        (e.deltaY < 0 && st === 0 && this.lastScroll === 0 && !this.loading)
       ) {
         this.offset += 50
       }
 
-      this.lastScroll = el?.scrollTop || 0
+      this.lastScroll = st
     },
     scrollToBottom() {
       this.$refs['virtual-scroller'].scrollToBottom()
@@ -117,7 +103,7 @@ export default {
       variables() {
         return {
           where: this.where,
-          limit: 50,
+          limit: 10,
           offset: this.offset
         }
       },
@@ -186,15 +172,19 @@ export default {
 </script>
 
 <template>
+  <!-- Using wheel.native event here because the scroll event doesn't work if the container
+    height is larger than its content (since no scroll event is fired in that case)
+    It should be safe to use on all browsers we support. For more info see: https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event
+  -->
   <DynamicScroller
     v-if="show"
     ref="virtual-scroller"
-    class="scroller align-self-stretch px-8 py-4"
+    class="scroller"
     :class="{ blur: loading }"
-    :min-item-size="40"
+    :min-item-size="30"
     :items="sortedLogs"
     key-field="id"
-    @scroll.native="handleScroll"
+    @wheel.native="handleScroll"
   >
     <template #before>
       <transition name="appear-y">
@@ -220,8 +210,17 @@ export default {
       </DynamicScrollerItem>
     </template>
     <template #after>
-      <div class="ml-8 my-4 text--disabled text-caption">
+      <div
+        v-if="sortedLogs.length > 0"
+        class="ml-8 my-4 text--disabled text-caption"
+      >
         End of logs
+      </div>
+      <div
+        v-else-if="!loading"
+        class="ml-8 my-4 text--disabled text-h6 font-weight-light"
+      >
+        No logs found; try expanding your search?
       </div>
     </template>
   </DynamicScroller>
@@ -229,12 +228,9 @@ export default {
 
 <style lang="scss" scoped>
 .scroller {
-  max-height: calc(100vh - 64px);
-  min-height: 400px;
-
-  @media screen and (max-width: 1264px) {
-    max-height: calc(100vh - 104px);
-  }
+  height: 100%;
+  max-height: calc(100% - 64px);
+  width: 100%;
 }
 
 .loader {
@@ -253,12 +249,4 @@ export default {
   transform: translateY(-100%);
   opacity: 0;
 }
-</style>
-
-<style lang="scss">
-// .scroller {
-//   .vue-recycle-scroller__item-view:nth-child(even) {
-//     background-color: var(--v-accentGreen-base);
-//   }
-// }
 </style>
