@@ -114,7 +114,7 @@ export default {
           { opacity: 0, height: 0 },
           { complete: done, duration: 250 }
         )
-      }, 150)
+      }, 0)
     }
   },
   apollo: {
@@ -123,7 +123,7 @@ export default {
       variables() {
         return {
           where: this.where,
-          limit: 10,
+          limit: 50,
           offset: this.offset
         }
       },
