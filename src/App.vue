@@ -12,7 +12,6 @@ import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import debounce from 'lodash.debounce'
 import VSnackbars from '@/components/Snackbars/Snackbars'
-import SystemLogs from '@/pages/SystemLogs/SystemLogs'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
@@ -51,8 +50,7 @@ export default {
     GlobalSearch,
     TeamSideNav,
     VSnackbars,
-    WorkQueueBanner,
-    SystemLogs
+    WorkQueueBanner
   },
   mixins: [eventsMixin],
   data() {
@@ -512,14 +510,13 @@ export default {
       />
 
       <v-fade-transition mode="out-in">
-        <!-- <router-view
+        <router-view
           class="router-view"
           :class="{
             'full-page': fullPageRoute,
             'sm-and-down-bottom-padding': $vuetify.breakpoint.smAndDown
           }"
-        /> -->
-        <SystemLogs />
+        />
       </v-fade-transition>
 
       <v-container v-if="error" class="fill-height" fluid justify-center>

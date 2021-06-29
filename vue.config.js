@@ -51,7 +51,7 @@ module.exports = {
         },
         parallel: 4, // This should be changed if we modify the resource class of the Circle jobs running the build step
         cache: true,
-        sourceMap: false,
+        sourceMap: true,
         extractComments: false
       }
       return args
