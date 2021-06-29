@@ -53,9 +53,11 @@ export default {
   },
   watch: {
     where: {
-      handler() {
+      handler(val, oldVal) {
+        if (JSON.stringify(val) === JSON.stringify(oldVal)) return
         this.logs = []
         this.logIds = []
+        this.$apollo.queries['log'].refetch()
       },
       deep: true
     }
@@ -121,6 +123,7 @@ export default {
     log: {
       query: require('@/graphql/Logs/logs.gql'),
       variables() {
+        console.log(this.where)
         return {
           where: this.where,
           limit: 50,
