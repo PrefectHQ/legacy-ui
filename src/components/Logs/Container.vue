@@ -1,7 +1,7 @@
 <script>
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 import Row from '@/components/Logs/Row'
-import debounce from 'lodash.debounce'
+import throttle from 'lodash.throttle'
 import Velocity from 'velocity-animate'
 
 export default {
@@ -45,13 +45,10 @@ export default {
       return this.loadingKey > 0
     },
     handleScroll: function() {
-      return debounce(
-        e => {
-          requestAnimationFrame(() => this.rawHandleScroll(e))
-        },
-        16,
-        { leading: true, trailing: true }
-      )
+      return throttle(e => this.rawHandleScroll(e), 1500, {
+        leading: true,
+        trailing: false
+      })
     }
   },
   watch: {
@@ -103,12 +100,20 @@ export default {
     },
     enter: function(el, done) {
       setTimeout(function() {
-        Velocity(el, { opacity: 1, height: '50px' }, { complete: done })
+        Velocity(
+          el,
+          { opacity: 1, height: '68px' },
+          { complete: done, duration: 250 }
+        )
       }, 0)
     },
     leave: function(el, done) {
       setTimeout(function() {
-        Velocity(el, { opacity: 0, height: 0 }, { complete: done })
+        Velocity(
+          el,
+          { opacity: 0, height: 0 },
+          { complete: done, duration: 250 }
+        )
       }, 150)
     }
   },
@@ -129,6 +134,7 @@ export default {
       result({ data, loading }) {
         if (data?.log && !loading) {
           this.ignoreNextScroll = true
+          this.handleScroll.cancel()
 
           data?.log.forEach(log => {
             if (!this.logIds.includes(log.id)) {
@@ -209,7 +215,11 @@ export default {
         @enter="enter"
         @leave="leave"
       >
-        <div v-if="loading" key="1" class="loader mx-auto">
+        <div
+          v-if="loading"
+          key="1"
+          class="loader d-flex align-center justify-center"
+        >
           <v-progress-circular
             color="primary"
             :size="50"
@@ -255,7 +265,6 @@ export default {
 }
 
 .loader {
-  height: 54px;
-  width: 54px;
+  height: 74px;
 }
 </style>
