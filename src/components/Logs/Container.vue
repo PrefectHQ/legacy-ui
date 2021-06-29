@@ -200,7 +200,7 @@ export default {
   <DynamicScroller
     v-if="show"
     ref="virtual-scroller"
-    class="scroller"
+    class="scroller pb-8"
     :class="{ blur: loading }"
     :min-item-size="30"
     :items="sortedLogs"
@@ -242,14 +242,8 @@ export default {
     </template>
     <template #after>
       <div
-        v-if="sortedLogs.length > 0"
-        class="ml-8 my-4 text--disabled text-caption"
-      >
-        End of logs
-      </div>
-      <div
-        v-else-if="!loading"
-        class="ml-8 my-4 text--disabled text-h6 font-weight-light"
+        v-if="!loading && sortedLogs.length == 0"
+        class="ml-5 my-4 text--disabled text-h6 font-weight-light"
       >
         No logs found; try expanding your search?
       </div>
