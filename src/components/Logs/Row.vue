@@ -211,7 +211,11 @@ export default {
         </div>
 
         <div class="pb-6">
-          <div class="text-body-1">{{ item.id }}</div>
+          <div
+            class="text-body-2 rounded d-inline-block utilGrayMid lighten-1 white--text px-2"
+          >
+            {{ item.id }}
+          </div>
           <div class="text-caption text-capitalize">Id</div>
         </div>
 
