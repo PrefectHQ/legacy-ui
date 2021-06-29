@@ -2,6 +2,7 @@
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 import Row from '@/components/Logs/Row'
 import debounce from 'lodash.debounce'
+import Velocity from 'velocity-animate'
 
 export default {
   components: { Row },
@@ -48,7 +49,7 @@ export default {
         e => {
           requestAnimationFrame(() => this.rawHandleScroll(e))
         },
-        32,
+        16,
         { leading: true, trailing: true }
       )
     }
@@ -95,6 +96,20 @@ export default {
     },
     handleTopOfLogs() {
       this.offset += 50
+    },
+    beforeEnter: function(el) {
+      el.style.opacity = 0
+      el.style.height = 0
+    },
+    enter: function(el, done) {
+      setTimeout(function() {
+        Velocity(el, { opacity: 1, height: '50px' }, { complete: done })
+      }, 0)
+    },
+    leave: function(el, done) {
+      setTimeout(function() {
+        Velocity(el, { opacity: 0, height: 0 }, { complete: done })
+      }, 150)
     }
   },
   apollo: {
@@ -187,8 +202,14 @@ export default {
     @wheel.native="handleScroll"
   >
     <template #before>
-      <transition name="appear-y">
-        <div v-if="loading" class="rounded-circle white loader pa-2">
+      <transition
+        tag="div"
+        :css="false"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <div v-if="loading" key="1" class="loader mx-auto">
           <v-progress-circular
             color="primary"
             :size="50"
@@ -234,19 +255,7 @@ export default {
 }
 
 .loader {
-  left: 50%;
-  position: absolute;
-  top: 25px;
-}
-
-.appear-y-enter-active,
-.appear-y-leave-active {
-  transition: all 300ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.appear-y-enter,
-.appear-y-leave-to {
-  transform: translateY(-100%);
-  opacity: 0;
+  height: 54px;
+  width: 54px;
 }
 </style>
