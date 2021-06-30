@@ -49,11 +49,13 @@ export default {
   },
   data() {
     return {
+      applyDisabled: true,
       filter: { ...this.value },
       end: null,
       start: null,
       logLevel: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL'],
       logLevelOptions: logLevels,
+      menu: false,
       table: 'user',
       tableOptions: [
         {
@@ -92,28 +94,14 @@ export default {
     }
   },
   mounted() {
-    const start = new Date()
-    const end = new Date()
-    start.setHours(0)
-    start.setMinutes(0)
-    start.setSeconds(0)
-    start.setMilliseconds(0)
-
-    end.setHours(23)
-    end.setMinutes(59)
-    end.setSeconds(59)
-    end.setMilliseconds(999)
-
-    this.start = start
-    this.end = end
+    this.initializeStartAndEnd()
 
     this.$watch(
       vm => [vm.start, vm.end],
       val => {
         const [start, end] = val
         this.filter.timestamp = { _gte: start, _lte: end }
-
-        this.$emit('input', { ...this.filter })
+        this.filter = { ...this.filter }
       },
       {
         deep: true,
@@ -125,14 +113,51 @@ export default {
       'table',
       val => {
         this.filter.object_table = { _eq: val }
-        this.$emit('input', { ...this.filter })
+        this.filter = { ...this.filter }
       },
       {
         immediate: true
       }
     )
+
+    this.$watch(
+      vm => [vm.value, vm.filter],
+      val => {
+        const [value, filter] = val
+        this.applyDisabled = JSON.stringify(value) === JSON.stringify(filter)
+      },
+      {
+        deep: true
+      }
+    )
   },
   methods: {
+    applyChanges() {
+      this.$emit('input', { ...this.filter })
+    },
+    resetChanges() {
+      this.initializeStartAndEnd()
+      this.table = 'user'
+      this.logLevel = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL']
+      this.textSearch = null
+      this.previousSearch = null
+    },
+    initializeStartAndEnd() {
+      const start = new Date()
+      const end = new Date()
+      start.setHours(0)
+      start.setMinutes(0)
+      start.setSeconds(0)
+      start.setMilliseconds(0)
+
+      end.setHours(23)
+      end.setMinutes(59)
+      end.setSeconds(59)
+      end.setMilliseconds(999)
+
+      this.start = start
+      this.end = end
+    },
     updateTextSearch() {
       if (this.searchDisabled) return
 
@@ -143,9 +168,9 @@ export default {
         delete this.filter.message
       }
 
-      this.previousSearch = this.textSearch
+      this.filter = { ...this.filter }
 
-      this.$emit('input', { ...this.filter })
+      this.previousSearch = this.textSearch
     },
     updateLogLevel() {
       if (this.logLevel.length === 1) {
@@ -154,120 +179,157 @@ export default {
         this.filter.level = { _in: this.logLevel }
       }
 
-      this.$emit('input', { ...this.filter })
+      this.filter = { ...this.filter }
     }
   }
 }
 </script>
 
 <template>
-  <div class="d-flex align-middle justify-end pa-4 position-sticky">
-    <div
-      class="mr-auto d-flex align-center justify-center"
-      style="max-width: 350px;"
-    >
-      <v-text-field
-        v-model="textSearch"
-        label="Search"
-        outlined
-        hide-details
-        dense
-        append-icon="search"
-        clearable
-        @keyup.enter="updateTextSearch"
-      />
-      <v-btn
-        class="ml-2"
-        color="primary"
-        depressed
-        small
-        :disabled="searchDisabled"
-        @click="updateTextSearch"
-      >
-        Search
-      </v-btn>
-    </div>
+  <div
+    class="white elevation-1 py-1 px-4 d-flex align-middle justify-end position-sticky"
+  >
+    <v-menu v-model="menu" :close-on-content-click="false" offset-y>
+      <template #activator="{ on, attrs }">
+        <v-btn class="ml-auto" icon depressed v-bind="attrs" v-on="on">
+          <v-icon>filter_list</v-icon>
+        </v-btn>
+      </template>
 
-    <div class="mr-4" style="max-width: 200px;">
-      <v-select
-        v-model="table"
-        outlined
-        label="Type"
-        menu-props="auto, offsetY"
-        :items="tableOptions"
-        dense
-        hide-details
-      >
-        <template #item="{ item }">
-          <v-list-item-content>
-            <v-list-item-title class="text-body-1 font-weight-light">
-              {{ item.text }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="font-weight-light">
-              {{ item.subtext }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </template>
-      </v-select>
-    </div>
+      <div class="white elevation-1 pa-4">
+        <div class="font-weight-light text-h5">Filter logs</div>
+        <div
+          class="d-flex align-center justify-center mt-4"
+          style="max-width: 350px;"
+        >
+          <v-text-field
+            v-model="textSearch"
+            label="Search"
+            outlined
+            hide-details
+            dense
+            append-icon="search"
+            clearable
+            @input="updateTextSearch"
+            @keyup.enter="updateTextSearch"
+          />
+        </div>
 
-    <div class="mr-4" style="max-width: 300px;">
-      <v-select
-        v-model="logLevel"
-        outlined
-        label="Level"
-        :items="logLevelOptions"
-        dense
-        offset-y
-        multiple
-        menu-props="auto, offsetY"
-        hide-details
-        style="width: 300px;"
-        @blur="updateLogLevel"
-      >
-        <template #item="{ item, attrs }">
-          <v-chip
-            :color="attrs.inputValue ? item.color : 'grey'"
-            small
-            :outlined="!attrs.inputValue"
+        <div class="mt-4" style="max-width: 200px;">
+          <v-select
+            v-model="table"
+            outlined
+            label="Type"
+            menu-props="auto, offsetY"
+            :items="tableOptions"
+            dense
+            hide-details
           >
-            <v-icon :color="attrs.inputValue ? 'white' : item.color" small>
-              {{ item.icon }}
-            </v-icon>
-            <span class="ml-1" :class="{ 'white--text': attrs.inputValue }">
-              {{ item.text }}
-            </span>
-          </v-chip>
-        </template>
+            <template #item="{ item }">
+              <v-list-item-content>
+                <v-list-item-title class="text-body-1 font-weight-light">
+                  {{ item.text }}
+                </v-list-item-title>
+                <v-list-item-subtitle class="font-weight-light">
+                  {{ item.subtext }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </template>
+          </v-select>
+        </div>
 
-        <template #selection="{ item, index }">
-          <v-chip v-if="index < 2" :color="item.color" small>
-            <v-icon color="white" small>
-              {{ item.icon }}
-            </v-icon>
-            <span class="white--text ml-1">{{ item.text }}</span>
-          </v-chip>
+        <div class="mt-4" style="max-width: 300px;">
+          <v-select
+            v-model="logLevel"
+            outlined
+            label="Level"
+            :items="logLevelOptions"
+            dense
+            offset-y
+            multiple
+            menu-props="auto, offsetY"
+            hide-details
+            style="width: 300px;"
+            @blur="updateLogLevel"
+          >
+            <template #item="{ item, attrs }">
+              <v-chip
+                :color="attrs.inputValue ? item.color : 'grey'"
+                small
+                :outlined="!attrs.inputValue"
+              >
+                <v-icon :color="attrs.inputValue ? 'white' : item.color" small>
+                  {{ item.icon }}
+                </v-icon>
+                <span class="ml-1" :class="{ 'white--text': attrs.inputValue }">
+                  {{ item.text }}
+                </span>
+              </v-chip>
+            </template>
 
-          <span v-if="index === 2" class="utilGrayDark--text text-caption">
-            (+{{ logLevel.length - 2 }} other{{
-              logLevel.length - 2 == 1 ? '' : 's'
-            }})
-          </span>
-        </template>
-      </v-select>
-    </div>
+            <template #selection="{ item, index }">
+              <v-chip v-if="index < 2" :color="item.color" small>
+                <v-icon color="white" small>
+                  {{ item.icon }}
+                </v-icon>
+                <span class="white--text ml-1">{{ item.text }}</span>
+              </v-chip>
 
-    <div class="d-inline-flex align-center justify-center">
-      <div class="mr-4">
-        <DateTimePicker
-          v-if="start"
-          v-model="start"
-          label="Start date"
-          icon="today"
-        />
+              <span v-if="index === 2" class="utilGrayDark--text text-caption">
+                (+{{ logLevel.length - 2 }} other{{
+                  logLevel.length - 2 == 1 ? '' : 's'
+                }})
+              </span>
+            </template>
+          </v-select>
+        </div>
+
+        <div class="mt-4 d-inline-flex align-center justify-center">
+          <div class="mr-4">
+            <DateTimePicker
+              v-if="start"
+              v-model="start"
+              label="Start date"
+              icon="today"
+            />
+          </div>
+          <DateTimePicker
+            v-if="end"
+            v-model="end"
+            label="End date"
+            icon="event"
+          />
+        </div>
+
+        <div class="mt-4 d-flex align-center justify-end">
+          <v-btn class="ml-2" depressed small text @click="menu = false">
+            Close
+          </v-btn>
+
+          <v-btn
+            class="ml-2"
+            depressed
+            small
+            text
+            :disabled="applyDisabled"
+            @click="resetChanges"
+          >
+            Reset
+          </v-btn>
+
+          <v-btn
+            class="ml-2"
+            color="primary"
+            depressed
+            small
+            :disabled="applyDisabled"
+            @click="applyChanges"
+          >
+            Apply
+          </v-btn>
+        </div>
       </div>
-      <DateTimePicker v-if="end" v-model="end" label="End date" icon="event" />
-    </div>
+    </v-menu>
   </div>
 </template>
 
