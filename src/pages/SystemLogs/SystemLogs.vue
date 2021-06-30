@@ -30,7 +30,7 @@ export default {
     <div
       class="appForeground elevation-1 py-1 px-4 d-flex align-middle justify-end position-sticky"
     >
-      <DownloadMenu :filter="filter" />
+      <DownloadMenu :filter="where" />
       <FilterMenu v-model="filter" button-class="ml-2" />
     </div>
 

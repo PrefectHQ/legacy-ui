@@ -1,4 +1,7 @@
 <script>
+import jsBeautify from 'js-beautify'
+import { mapActions } from 'vuex'
+
 export default {
   props: {
     filter: {
@@ -28,7 +31,107 @@ export default {
     }
   },
   methods: {
-    download() {}
+    ...mapActions('alert', ['addNotification', 'updateNotification']),
+    createCsvFromLogs(logs) {
+      const headers =
+        'Timestamp,Level,Message,Tenant ID,Object,Object ID,Log ID\n'
+      const content = logs
+        .map(log => {
+          return `${log.timestamp},${log.level},${log.message},${log.tenant_id},${log.object_table},${log.object_id},${log.id}\n`
+        })
+        .join('')
+
+      return headers + content
+    },
+    createJsonFromLogs(logs) {
+      return jsBeautify(
+        JSON.stringify(
+          logs.map(log => ({
+            id: log.id,
+            timestamp: log.timestamp,
+            level: log.level,
+            message: log.message,
+            tenant_id: log.tenant_id,
+            object: log.object_table,
+            object_id: log.object_id
+          }))
+        )
+      )
+    },
+    createTextFromLogs(logs) {
+      const headers =
+        'Timestamp\tLevel\tMessage\tTenant ID\tObject\tObject ID\tLog ID\n'
+      const content = logs
+        .map(log => {
+          return `${log.timestamp}\t${log.level}\t${log.message}\t${log.tenant_id}\t${log.object_table}\t${log.object_id}\t${log.id}\n`
+        })
+        .join('')
+
+      return headers + content
+    },
+    async download() {
+      this.loading = true
+      let error, mimeType, fileExtension, content
+      const notificationId = await this.addNotification({
+        color: 'primaryLight',
+        loading: true,
+        text: 'Downloading...',
+        dismissable: false
+      })
+
+      try {
+        const { data } = await this.$apollo.query({
+          query: require('@/graphql/Logs/logs.gql'),
+          variables: {
+            where: this.filter,
+            limit: null,
+            offset: null
+          }
+        })
+
+        switch (this.outputType) {
+          case 'csv':
+            content = this.createCsvFromLogs(data.log)
+            mimeType = 'text/csv'
+            fileExtension = 'csv'
+            break
+          case 'json':
+            content = this.createJsonFromLogs(data.log)
+            mimeType = 'application/json'
+            fileExtension = 'json'
+            break
+          case 'text':
+            content = this.createTextFromLogs(data.log)
+            mimeType = 'text/plain'
+            fileExtension = 'txt'
+            break
+          default:
+            throw new Error('Unexpected file type found when downloading logs')
+        }
+
+        this.menu = false
+      } catch (e) {
+        error = e
+      } finally {
+        this.loading = false
+        await this.updateNotification({
+          id: notificationId,
+          notification: {
+            color: error ? 'error' : 'primary',
+            text: error ? error : 'Finished!',
+            loading: false,
+            dismissable: true,
+            timeout: 7000
+          }
+        })
+
+        const blob = new Blob([content], { type: mimeType })
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.setAttribute('download', `logs.${fileExtension}`)
+        link.click()
+      }
+    }
   }
 }
 </script>
@@ -51,7 +154,6 @@ export default {
         :items="outputOptions"
         dense
         offset-y
-        multiple
         menu-props="auto, offsetY"
         hide-details
         class="mt-4"
