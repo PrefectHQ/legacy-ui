@@ -99,7 +99,7 @@ export default {
       color="transparent"
       title="View logs across the system"
     >
-      System Log
+      Audit Logs
     </v-btn>
 
     <TeamMenu />
