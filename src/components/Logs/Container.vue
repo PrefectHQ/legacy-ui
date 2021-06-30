@@ -132,8 +132,8 @@ export default {
       skip() {
         return this.logByPkLoadingKey > 0 || !this.virtualContainer
       },
+      fetchPolicy: 'cache-and-network',
       result({ data }) {
-        console.log(data)
         if (data?.log) {
           this.ignoreNextScroll = true
           this.handleScroll.cancel()
@@ -248,6 +248,12 @@ export default {
         class="ml-5 my-4 text--disabled text-h6 font-weight-light"
       >
         No logs found; try expanding your search?
+      </div>
+      <div
+        v-else-if="!loading"
+        class="ml-5 my-4 text--disabled text-h6 font-weight-light"
+      >
+        --- End of logs ---
       </div>
     </template>
   </DynamicScroller>

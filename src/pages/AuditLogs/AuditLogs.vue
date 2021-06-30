@@ -31,10 +31,11 @@ export default {
       <div class="mb-4 text-h4 font-weight-light text-center">
         Audit Logs
       </div>
-      <div class="py-1 px-4 d-flex align-center justify-center position-sticky">
-        <DownloadMenu :filter="where" />
-        <FilterMenu v-model="filter" button-class="ml-2" />
-      </div>
+    </div>
+
+    <div class="py-1 px-4 d-flex align-center justify-center position-sticky">
+      <DownloadMenu :filter="where" />
+      <FilterMenu v-model="filter" button-class="ml-2" />
     </div>
 
     <div class="system-logs">
