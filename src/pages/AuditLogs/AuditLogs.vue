@@ -1,12 +1,14 @@
 <script>
 import Container from '@/components/Logs/Container'
 import DownloadMenu from '@/components/Logs/DownloadMenu'
+import Filters from '@/components/Logs/Filters'
 import FilterMenu from '@/components/Logs/FilterMenu'
 
 export default {
   components: {
     Container,
     DownloadMenu,
+    Filters,
     FilterMenu
   },
   data() {
@@ -34,6 +36,7 @@ export default {
     </div>
 
     <div class="py-1 px-4 d-flex align-center justify-end toolbar">
+      <Filters class="mr-auto" :filter="filter" />
       <DownloadMenu :filter="where" />
       <FilterMenu v-model="filter" button-class="ml-2" />
     </div>
