@@ -45,6 +45,11 @@ export default {
       default: () => {
         return {}
       }
+    },
+    buttonClass: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -192,12 +197,12 @@ export default {
 <template>
   <v-menu v-model="menu" :close-on-content-click="false" offset-y>
     <template #activator="{ on, attrs }">
-      <v-btn class="ml-auto" icon depressed v-bind="attrs" v-on="on">
-        <v-icon>filter_list</v-icon>
+      <v-btn icon depressed :class="buttonClass" v-bind="attrs" v-on="on">
+        <v-icon class="fad fa-filter utilGrayDark--text" />
       </v-btn>
     </template>
 
-    <div class="white elevation-1 pa-4">
+    <div class="appForeground elevation-1 pa-4">
       <div class="font-weight-light text-h5">Filter logs</div>
       <div
         class="d-flex align-center justify-center mt-4"

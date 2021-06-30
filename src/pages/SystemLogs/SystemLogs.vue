@@ -1,10 +1,12 @@
 <script>
 import Container from '@/components/Logs/Container'
+import DownloadMenu from '@/components/Logs/DownloadMenu'
 import FilterMenu from '@/components/Logs/FilterMenu'
 
 export default {
   components: {
     Container,
+    DownloadMenu,
     FilterMenu
   },
   data() {
@@ -26,9 +28,10 @@ export default {
 <template>
   <div v-if="true" class="system-logs">
     <div
-      class="white elevation-1 py-1 px-4 d-flex align-middle justify-end position-sticky"
+      class="appForeground elevation-1 py-1 px-4 d-flex align-middle justify-end position-sticky"
     >
-      <FilterMenu v-model="filter" />
+      <DownloadMenu :filter="filter" />
+      <FilterMenu v-model="filter" button-class="ml-2" />
     </div>
 
     <Container :where="where" />
