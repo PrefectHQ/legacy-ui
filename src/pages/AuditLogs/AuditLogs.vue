@@ -26,14 +26,14 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="audit-logs">
     <div class="mt-4">
-      <div class="mb-4 text-h4 font-weight-light text-center">
+      <div class="mb-4 text-h4 font-weight-light text-left pl-8">
         Audit Logs
       </div>
     </div>
 
-    <div class="py-1 px-4 d-flex align-center justify-center position-sticky">
+    <div class="py-1 px-4 d-flex align-center justify-end toolbar">
       <DownloadMenu :filter="where" />
       <FilterMenu v-model="filter" button-class="ml-2" />
     </div>
@@ -45,14 +45,21 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.audit-logs {
+  .toolbar {
+    box-sizing: content-box;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+}
+
 .system-logs {
   box-shadow: inset 0px 2px 1px -1px rgb(0 0 0 / 20%),
     0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-  height: calc(100vh - 176px);
+  height: calc(100vh - 177px);
   overflow-y: hidden !important;
 
   @media screen and (max-width: 1264px) {
-    height: calc(100vh - 224px);
+    height: calc(100vh - 225px);
   }
 }
 </style>
