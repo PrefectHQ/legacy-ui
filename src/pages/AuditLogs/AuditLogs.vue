@@ -26,26 +26,32 @@ export default {
 </script>
 
 <template>
-  <div v-if="true" class="system-logs">
-    <div
-      class="appForeground elevation-1 py-1 px-4 d-flex align-middle justify-end position-sticky"
-    >
-      <DownloadMenu :filter="where" />
-      <FilterMenu v-model="filter" button-class="ml-2" />
+  <div>
+    <div class="mt-4">
+      <div class="mb-4 text-h4 font-weight-light text-center">
+        Audit Logs
+      </div>
+      <div class="py-1 px-4 d-flex align-center justify-center position-sticky">
+        <DownloadMenu :filter="where" />
+        <FilterMenu v-model="filter" button-class="ml-2" />
+      </div>
     </div>
 
-    <Container :where="where" />
+    <div class="system-logs">
+      <Container :where="where" />
+    </div>
   </div>
-  <div v-else class="system-logs">hello</div>
 </template>
 
 <style lang="scss" scoped>
 .system-logs {
-  height: calc(100vh - 64px);
+  box-shadow: inset 0px 2px 1px -1px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+  height: calc(100vh - 176px);
   overflow-y: hidden !important;
 
   @media screen and (max-width: 1264px) {
-    height: calc(100vh - 112px);
+    height: calc(100vh - 224px);
   }
 }
 </style>

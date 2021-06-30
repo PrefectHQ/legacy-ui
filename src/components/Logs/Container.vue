@@ -133,6 +133,7 @@ export default {
         return this.logByPkLoadingKey > 0 || !this.virtualContainer
       },
       result({ data }) {
+        console.log(data)
         if (data?.log) {
           this.ignoreNextScroll = true
           this.handleScroll.cancel()
@@ -201,7 +202,7 @@ export default {
   <DynamicScroller
     v-if="show"
     ref="virtual-scroller"
-    class="scroller pb-8"
+    class="scroller pb-4"
     :class="{ blur: loading }"
     :min-item-size="30"
     :items="sortedLogs"
@@ -255,7 +256,7 @@ export default {
 <style lang="scss" scoped>
 .scroller {
   height: 100%;
-  max-height: calc(100% - 64px);
+  max-height: 100%;
   width: 100%;
 }
 
