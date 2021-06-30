@@ -239,16 +239,13 @@ export default {
       }
     },
     timezoneVal(clock) {
-      let tz =
-        clock.scheduleType == 'flow'
-          ? 'UTC'
-          : this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
-      if (clock?.timezone) {
-        tz = clock?.timezone
-      } else if (clock?.start_date?.tz) {
-        tz = clock?.start_date?.tz
+      if (clock.scheduleType == 'flow') {
+        return clock?.start_date?.tz || 'UTC'
+      } else if (this.clocks[0] && clock.scheduleType == 'flow-group') {
+        return this.clocks[0]?.timezone || this.clocks[0]?.start_date?.tz
       }
-      return tz
+
+      return this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
     },
     paramVal(clock) {
       if (!clock) {
@@ -335,6 +332,7 @@ export default {
 
                 <div v-show="selectedTab === 0">
                   <ClockForm
+                    :flow-group-clocks="flowGroupClocks"
                     :param="parameter"
                     :timezone="
                       this.timezone ||
@@ -426,6 +424,7 @@ export default {
 
               <div v-show="selectedTab === 0">
                 <ClockForm
+                  :flow-group-clocks="flowGroupClocks"
                   :cron="clock.cron"
                   :param="parameter"
                   :interval="clock.interval"
@@ -506,13 +505,19 @@ export default {
                     </v-tooltip>
 
                     <v-tooltip
-                      v-if="'parameter_defaults' in clock"
+                      v-if="
+                        clock.parameter_defaults &&
+                          Object.keys(clock.parameter_defaults).length !== 0
+                      "
                       max-width="200"
                       top
                     >
                       <template #activator="{ on }">
                         <v-chip
-                          v-if="'parameter_defaults' in clock"
+                          v-if="
+                            clock.parameter_defaults &&
+                              Object.keys(clock.parameter_defaults).length !== 0
+                          "
                           class="px-2 rounded-sm mr-1"
                           label
                           color="codeBlue lighten-1"
@@ -524,6 +529,29 @@ export default {
                         </v-chip>
                       </template>
                       This schedule overrides default parameters.
+                    </v-tooltip>
+
+                    <v-tooltip
+                      v-if="
+                        flowGroupClocks &&
+                          flowGroupClocks.length > 0 &&
+                          clock.scheduleType == 'flow'
+                      "
+                      max-width="300"
+                      top
+                    >
+                      <template #activator="{ on }">
+                        <v-chip
+                          class="px-2 rounded-sm mr-1"
+                          label
+                          x-small
+                          v-on="on"
+                        >
+                          Not scheduled
+                        </v-chip>
+                      </template>
+                      The existing flow group schedule will overide this
+                      schedule
                     </v-tooltip>
                   </div>
                 </v-col>
@@ -565,6 +593,20 @@ export default {
                           >
                             This schedule was set in your Flow's code so it
                             can't be modifed.
+                          </v-alert>
+
+                          <v-alert
+                            v-if="flowGroupClocks && flowGroupClocks.length > 0"
+                            border="left"
+                            colored-border
+                            elevation="0"
+                            type="warning"
+                            tile
+                            icon="warning"
+                            max-width="500"
+                          >
+                            The existing flow group schedule will overide this
+                            schedule
                           </v-alert>
                         </p>
                         <p>

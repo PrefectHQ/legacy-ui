@@ -41,6 +41,11 @@ export default {
       type: Object,
       required: false,
       default: () => null
+    },
+    flowGroupClocks: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data() {
@@ -141,7 +146,7 @@ export default {
 
           <v-fade-transition mode="out-in">
             <div v-if="advancedType == 'cron'" key="Cron">
-              <CronForm v-model="cronModel" :valid.sync="valid" class="mt-4" />
+              <CronForm v-model="cronModel" :valid.sync="valid" class="mt-2" />
               <v-autocomplete
                 v-model="selectedTimezone"
                 :items="tzs"
@@ -151,6 +156,21 @@ export default {
                 prepend-inner-icon="access_time"
                 :menu-props="{ contentClass: 'tz' }"
               />
+
+              <v-alert
+                v-if="flowGroupClocks.length > 0"
+                border="left"
+                colored-border
+                elevation="0"
+                type="warning"
+                dense
+                icon="warning"
+              >
+                <span class="text-body-2 ma-0">
+                  Setting the timezone here will take precedence over existing
+                  flow group schedule timezones
+                </span>
+              </v-alert>
             </div>
             <div v-else-if="advancedType == 'interval'" key="Interval">
               <IntervalForm v-model="intervalModel" class="mt-4" />
