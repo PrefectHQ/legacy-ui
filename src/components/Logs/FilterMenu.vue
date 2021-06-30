@@ -197,8 +197,21 @@ export default {
 <template>
   <v-menu v-model="menu" :close-on-content-click="false" offset-y>
     <template #activator="{ on, attrs }">
-      <v-btn icon depressed :class="buttonClass" v-bind="attrs" v-on="on">
-        <v-icon class="fad fa-filter utilGrayDark--text" />
+      <v-btn
+        depressed
+        text
+        :icon="!$vuetify.breakpoint.mdAndUp"
+        :class="buttonClass"
+        v-bind="attrs"
+        v-on="on"
+      >
+        <span v-if="$vuetify.breakpoint.mdAndUp" class="text-overline"
+          >Filter</span
+        >
+
+        <span :class="{ 'ml-2': $vuetify.breakpoint.mdAndUp }">
+          <v-icon class="fad fa-filter utilGrayDark--text" />
+        </span>
       </v-btn>
     </template>
 

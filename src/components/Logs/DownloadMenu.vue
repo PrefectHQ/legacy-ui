@@ -139,8 +139,20 @@ export default {
 <template>
   <v-menu v-model="menu" :close-on-content-click="false" offset-y>
     <template #activator="{ on, attrs }">
-      <v-btn icon depressed :class="buttonClass" v-bind="attrs" v-on="on">
-        <v-icon class="fad fa-file-download" />
+      <v-btn
+        depressed
+        :icon="!$vuetify.breakpoint.mdAndUp"
+        text
+        :class="buttonClass"
+        v-bind="attrs"
+        v-on="on"
+      >
+        <span v-if="$vuetify.breakpoint.mdAndUp" class="text-overline">
+          Download
+        </span>
+        <span :class="{ 'ml-2': $vuetify.breakpoint.mdAndUp }">
+          <v-icon class="fad fa-file-download utilGrayDark--text" />
+        </span>
       </v-btn>
     </template>
 
