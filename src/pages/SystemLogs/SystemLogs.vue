@@ -1,11 +1,11 @@
 <script>
 import Container from '@/components/Logs/Container'
-import Toolbar from '@/components/Logs/Toolbar'
+import FilterMenu from '@/components/Logs/FilterMenu'
 
 export default {
   components: {
     Container,
-    Toolbar
+    FilterMenu
   },
   data() {
     return {
@@ -25,7 +25,12 @@ export default {
 
 <template>
   <div v-if="true" class="system-logs">
-    <Toolbar v-model="filter" />
+    <div
+      class="white elevation-1 py-1 px-4 d-flex align-middle justify-end position-sticky"
+    >
+      <FilterMenu v-model="filter" />
+    </div>
+
     <Container :where="where" />
   </div>
   <div v-else class="system-logs">hello</div>
