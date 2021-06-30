@@ -136,6 +136,8 @@ export default {
       }
     )
 
+    this.filter.level = { _in: this.logLevel }
+
     this.applyChanges()
   },
   methods: {
@@ -261,7 +263,7 @@ export default {
         <v-select
           v-model="logLevel"
           outlined
-          label="Level"
+          label="Levels"
           :items="logLevelOptions"
           dense
           offset-y

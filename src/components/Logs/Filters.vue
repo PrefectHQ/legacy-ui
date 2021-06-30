@@ -3,28 +3,56 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 const objectTables = [
   {
     text: 'Account',
-    value: 'billing.license',
-    subtext: 'Account, license, and usage-related logs'
+    value: 'billing.license'
   },
   {
     text: 'Flow',
-    value: 'flow',
-    subtext: 'Flow-related logs, including schedules and flow settings updates'
+    value: 'flow'
   },
   {
     text: 'User',
-    value: 'user',
-    subtext: 'Login, role, and membership-related logs'
+    value: 'user'
   },
-  { text: 'Team', value: 'tenant', subtext: 'Team-related logs' }
-  // I don't think we'll be populating these yet for this table
+  { text: 'Team', value: 'tenant' }
   // {
   //   text: 'Flow run',
-  //   value: null,
-  //   subtext: 'Logs generated when running flows'
+  //   value: null
   // }
   // { text: 'Task', value: 'task' },
   // { text: 'Task run', value: 'task_run' }
+]
+
+const logLevels = [
+  {
+    text: 'Critical',
+    color: '#d50000',
+    icon: 'warning',
+    value: 'CRITICAL'
+  },
+  {
+    text: 'Error',
+    color: '#ff5252',
+    icon: 'warning_amber',
+    value: 'ERROR'
+  },
+  {
+    text: 'Debug',
+    color: '#937eff',
+    icon: 'bug_report',
+    value: 'DEBUG'
+  },
+  {
+    text: 'Warn',
+    color: '#ffdd37',
+    icon: 'report_problem',
+    value: 'WARN'
+  },
+  {
+    text: 'Info',
+    color: '#2196f3',
+    icon: 'info',
+    value: 'INFO'
+  }
 ]
 
 export default {
@@ -51,6 +79,13 @@ export default {
     },
     endTimestampDisplay() {
       return this.formatTime(this.filter?.timestamp?._lte)
+    },
+    logLevels() {
+      return logLevels.filter(
+        l =>
+          this.filter?.level._in?.includes(l.value) ||
+          this.filter?.level?._eq == l.value
+      )
     }
   },
   methods: {
@@ -84,6 +119,25 @@ export default {
         <span class="font-weight-medium ml-1">{{ endTimestampDisplay }}</span>
       </v-chip>
     </span>
+
+    <!-- We don't need to display these because they're all enabled by default -->
+    <!-- <span v-if="filter.level" class="ml-2">
+      <span class="mr-1">Log levels:</span>
+      <v-chip
+        v-for="level in logLevels"
+        :key="level.value"
+        :color="level.color"
+        small
+        class="ml-1"
+      >
+        <v-icon color="white" small>
+          {{ level.icon }}
+        </v-icon>
+        <span class="ml-1 white--text">
+          {{ level.text }}
+        </span>
+      </v-chip>
+    </span> -->
   </div>
 </template>
 
