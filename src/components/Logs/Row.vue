@@ -72,14 +72,14 @@ export default {
       return this.flows?.find(f => f.id == this.flowRun?.flow_id)
     },
     logLevelIcon() {
-      return logLevels[this.item.level].icon
+      return logLevels[this.item.level]?.icon
     },
     logLevelColor() {
       if (!this.idState.active) return 'grey'
-      return logLevels[this.item.level].color
+      return logLevels[this.item.level]?.color
     },
     logLevelText() {
-      return logLevels[this.item.level].text
+      return logLevels[this.item.level]?.text
     },
     team() {
       return this.tenants.find(t => t.id == this.item.tenant_id)
@@ -220,10 +220,18 @@ export default {
         </div>
 
         <div class="pb-6 log-data">
-          <span v-if="item.level" class="pr-4 d-inline-block">
-            <div class="text-body-2" :style="{ color: logLevelColor }">
-              <v-chip :color="logLevelColor" x-small dark class="px-2 rounded">
-                {{ logLevelText }}
+          <span class="pr-4 d-inline-block">
+            <div
+              class="text-body-2"
+              :style="{ color: logLevelColor || 'grey' }"
+            >
+              <v-chip
+                :color="logLevelColor || 'grey'"
+                x-small
+                dark
+                class="px-2 rounded"
+              >
+                {{ logLevelText || 'Unknown' }}
               </v-chip>
             </div>
             <div class="text-caption text-capitalize">Level</div>

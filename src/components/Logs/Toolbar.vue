@@ -60,22 +60,22 @@ export default {
       tableOptions: [
         {
           text: 'Account',
-          value: 'license',
+          value: 'billing.license',
           subtext: 'Account, license, and usage-related logs'
         },
         {
           text: 'Flow',
           value: 'flow',
           subtext:
-            'Flow related logs, including schedules and flow settings updates'
+            'Flow-related logs, including schedules and flow settings updates'
         },
         {
           text: 'User',
           value: 'user',
           subtext: 'Login, role, and membership-related logs'
-        }
+        },
+        { text: 'Team', value: 'tenant', subtext: 'Team-related logs' }
         // I don't think we'll be populating these yet for this table
-        // { text: 'Team', value: 'tenant', subtext: '' },
         // {
         //   text: 'Flow run',
         //   value: null,
@@ -130,6 +130,8 @@ export default {
         deep: true
       }
     )
+
+    this.applyChanges()
   },
   methods: {
     applyChanges() {
@@ -173,7 +175,9 @@ export default {
       this.previousSearch = this.textSearch
     },
     updateLogLevel() {
-      if (this.logLevel.length === 1) {
+      if (this.logLevel.length === 0) {
+        this.filter.level = { _eq: null }
+      } else if (this.logLevel.length === 1) {
         this.filter.level = { _eq: this.logLevel[0] }
       } else {
         this.filter.level = { _in: this.logLevel }
@@ -215,7 +219,7 @@ export default {
           />
         </div>
 
-        <div class="mt-4" style="max-width: 200px;">
+        <div class="mt-6" style="max-width: 200px;">
           <v-select
             v-model="table"
             outlined
@@ -238,7 +242,7 @@ export default {
           </v-select>
         </div>
 
-        <div class="mt-4" style="max-width: 300px;">
+        <div class="mt-6" style="max-width: 300px;">
           <v-select
             v-model="logLevel"
             outlined
@@ -284,21 +288,16 @@ export default {
           </v-select>
         </div>
 
-        <div class="mt-4 d-inline-flex align-center justify-center">
+        <div class="mt-6 d-inline-flex align-center justify-center">
           <div class="mr-4">
             <DateTimePicker
               v-if="start"
               v-model="start"
-              label="Start date"
+              label="Start"
               icon="today"
             />
           </div>
-          <DateTimePicker
-            v-if="end"
-            v-model="end"
-            label="End date"
-            icon="event"
-          />
+          <DateTimePicker v-if="end" v-model="end" label="End" icon="event" />
         </div>
 
         <div class="mt-4 d-flex align-center justify-end">

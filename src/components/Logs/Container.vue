@@ -57,7 +57,6 @@ export default {
         if (JSON.stringify(val) === JSON.stringify(oldVal)) return
         this.logs = []
         this.logIds = []
-        this.$apollo.queries['log'].refetch()
       },
       deep: true
     }
@@ -131,10 +130,10 @@ export default {
       },
       loadingKey: 'loadingKey',
       skip() {
-        return this.logByPkLoadingKey > 0
+        return this.logByPkLoadingKey > 0 || !this.virtualContainer
       },
-      result({ data, loading }) {
-        if (data?.log && !loading) {
+      result({ data }) {
+        if (data?.log) {
           this.ignoreNextScroll = true
           this.handleScroll.cancel()
 
@@ -196,7 +195,7 @@ export default {
 
 <template>
   <!-- Using wheel.native event here because the scroll event doesn't work if the container
-    height is larger than its content (since no scroll event is fired in that case)
+    height is larger than its contents (since no scroll event is fired in that case)
     It should be safe to use on all browsers we support. For more info see: https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event
   -->
   <DynamicScroller
