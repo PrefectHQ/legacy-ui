@@ -4,7 +4,8 @@ import AgentsTile from '@/pages/Dashboard/Agents-Tile'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
-import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
+// import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
+import FlowTab from '@/pages/Dashboard/FlowTab'
 import Automations from '@/pages/Dashboard/Automations/Automations'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import NavTabBar from '@/components/NavTabBar'
@@ -57,7 +58,8 @@ export default {
     AgentsTile,
     BreadCrumbs,
     FailedFlowsTile,
-    FlowTableTile,
+    FlowTab,
+    // FlowTableTile,
     InProgressTile,
     NavTabBar,
     NotificationsTile,
@@ -399,7 +401,12 @@ export default {
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <FlowTableTile
+        <!-- <FlowTableTile
+          v-if="loadedTiles > 8"
+          class="mx-3 my-6"
+          :project-id="projectId"
+        /> -->
+        <FlowTab
           v-if="loadedTiles > 8"
           class="mx-3 my-6"
           :project-id="projectId"

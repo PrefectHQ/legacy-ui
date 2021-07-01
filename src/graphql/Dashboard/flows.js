@@ -3,16 +3,10 @@ import gql from 'graphql-tag'
 export default function(isCloud) {
   return gql`
     query Flows(
-      $limit: Int
-      $offset: Int
-      $orderBy: [flow_order_by!]
-      $searchParams: flow_bool_exp
+      $where: flow_bool_exp
     ) {
     flow(
-        where: $searchParams
-        limit: $limit
-        offset: $offset
-        order_by: $orderBy
+        where: $where
       ) {
 
       id
