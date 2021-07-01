@@ -191,6 +191,9 @@ export default {
       }
 
       this.filter = { ...this.filter }
+    },
+    openMenu() {
+      this.menu = true
     }
   }
 }

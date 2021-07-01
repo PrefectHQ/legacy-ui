@@ -36,9 +36,13 @@ export default {
     </div>
 
     <div class="py-1 px-4 d-flex align-center justify-end toolbar">
-      <Filters class="mr-auto" :filter="filter" />
+      <Filters
+        class="mr-auto"
+        :filter="filter"
+        @filter-click="$refs['filter-menu'].openMenu()"
+      />
       <DownloadMenu :filter="where" />
-      <FilterMenu v-model="filter" button-class="ml-2" />
+      <FilterMenu ref="filter-menu" v-model="filter" button-class="ml-2" />
     </div>
 
     <div class="system-logs">

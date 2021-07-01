@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Audit logs - [#930](https://github.com/PrefectHQ/ui/pull/930)
 - Show current team name on account page if no account name is found - [#923](https://github.com/PrefectHQ/ui/pull/923)
 
 ### Bugfixes
