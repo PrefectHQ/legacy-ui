@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix indentation error in doc code snippet - [#932](https://github.com/PrefectHQ/ui/pull/932)
 
 ## 2021-06-24
 
