@@ -98,8 +98,8 @@ export default {
 
 <template>
   <div
-    v-if="filter"
-    class="d-flex align-center justify-start"
+    v-if="filter && $vuetify.breakpoint.mdAndUp"
+    class="d-flex align-center justify-start cursor-pointer"
     @click="handleClickFilter"
   >
     <v-chip v-if="filter.object_table" class="font-weight-light" small>
@@ -135,6 +135,14 @@ export default {
         </span>
       </v-chip>
     </span>
+  </div>
+  <div v-else-if="filter">
+    <v-btn text small @click="handleClickFilter">
+      <span class="mr-2 utilGrayMid--text">
+        <v-icon class="fas fa-filter" x-small />
+      </span>
+      Filters applied
+    </v-btn>
   </div>
 </template>
 
