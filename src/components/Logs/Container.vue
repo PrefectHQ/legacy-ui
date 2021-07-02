@@ -157,11 +157,15 @@ export default {
               const itemIndex = this.sortedLogs.findIndex(
                 l => l.id == this.$route.query.id
               )
-              this.$refs['virtual-scroller'].scrollToItem(itemIndex)
+              if (itemIndex > -1) {
+                this.$refs['virtual-scroller'].scrollToItem(itemIndex)
 
-              this.$refs['virtual-scroller'].$el.scrollBy({
-                top: -150
-              })
+                this.$refs['virtual-scroller'].$el.scrollBy({
+                  top: -150
+                })
+              } else {
+                this.scrollToBottom()
+              }
             })
           } else {
             this.scrollToBottom()
