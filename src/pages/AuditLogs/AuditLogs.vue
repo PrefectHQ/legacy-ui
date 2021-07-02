@@ -28,6 +28,12 @@ export default {
         is_audit_log: { _eq: true },
         tenant_id: { _eq: this.tenant.id }
       }
+    },
+    licenseHasFeature() {
+      return this.hasPermission('feature', 'audit-trail')
+    },
+    userHasPermission() {
+      return this.hasPermission('read', 'audit-trail')
     }
   }
 }
@@ -42,7 +48,7 @@ export default {
     <div class="spacer" />
 
     <div
-      v-if="hasPermission('read', 'audit-trail')"
+      v-if="licenseHasFeature && userHasPermission"
       class="py-1 px-4 d-flex align-center justify-end toolbar"
     >
       <Filters
@@ -54,7 +60,7 @@ export default {
       <DownloadMenu :filter="where" />
     </div>
 
-    <div v-if="hasPermission('read', 'audit-trail')" class="system-logs">
+    <div v-if="licenseHasFeature && userHasPermission" class="system-logs">
       <Container :where="where" />
     </div>
     <v-container
@@ -65,8 +71,18 @@ export default {
     >
       <div>
         <i class="fad fa-lock-alt fa-3x" />
-        <div class="mt-6">
+        <div v-if="licenseHasFeature" class="mt-6">
           You don't have permission to view audit logs
+        </div>
+        <div v-else class="mt-6">
+          <span>
+            Your plan doesn't include audit trail;
+          </span>
+          <br />contact
+          <a class="font-weight-medium" href="sales@prefect.io"
+            >sales@prefect.io</a
+          >
+          to get access
         </div>
       </div>
     </v-container>
