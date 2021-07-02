@@ -401,7 +401,6 @@ export default {
         :class="{ 'grid-container-large': selectedClock === i }"
       >
         <v-card
-          :disabled="hasFlowGroupSchedule && clock.scheduleType == 'flow'"
           class="clock-card text-truncate"
           :class="{ 'clock-card-large': selectedClock === i }"
           color="appForeground"
@@ -410,7 +409,9 @@ export default {
               clock.scheduleType == 'flow'
                 ? '4px solid var(--v-primary-base) !important'
                 : '',
-            'border-left-color': 'var(--v-primary-base) !important'
+            'border-left-color': 'var(--v-primary-base) !important',
+            opacity:
+              hasFlowGroupSchedule && clock.scheduleType == 'flow' ? '0.5' : ''
           }"
           tile
         >
@@ -558,7 +559,7 @@ export default {
                         </v-chip>
                       </template>
                       The existing flow group schedule will overide this
-                      schedule
+                      schedule.
                     </v-tooltip>
                   </div>
                 </v-col>
@@ -594,16 +595,21 @@ export default {
                             colored-border
                             elevation="0"
                             type="warning"
-                            tile
+                            dense
                             icon="warning"
                             max-width="500"
                           >
-                            This schedule was set in your Flow's code so it
-                            can't be modifed.
+                            <div class="text-body-2 ma-0"
+                              >This schedule was set in your Flow's code so it
+                              can't be modifed.</div
+                            >
 
-                            <div v-if="hasFlowGroupSchedule" class="mt-2">
+                            <div
+                              v-if="hasFlowGroupSchedule"
+                              class="text-body-2 ma-0 mt-2"
+                            >
                               The existing flow group schedule will overide this
-                              schedule
+                              schedule.
                             </div>
                           </v-alert>
                         </p>
