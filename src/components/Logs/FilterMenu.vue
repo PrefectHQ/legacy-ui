@@ -204,18 +204,24 @@ export default {
     <template #activator="{ on, attrs }">
       <v-btn
         depressed
-        text
-        :icon="!$vuetify.breakpoint.mdAndUp"
         :class="buttonClass"
+        class="px-2"
+        color="primary"
+        small
         v-bind="attrs"
         v-on="on"
       >
-        <span v-if="$vuetify.breakpoint.mdAndUp" class="text-overline"
-          >Filter</span
-        >
+        <span class="mr-2 white--text">
+          <v-icon class="fas fa-filter" small />
+        </span>
 
-        <span :class="{ 'ml-2': $vuetify.breakpoint.mdAndUp }">
-          <v-icon class="fad fa-filter utilGrayDark--text" />
+        <span class="text-overline">
+          Filter
+        </span>
+        <span>
+          <v-icon small>
+            {{ menu ? 'arrow_drop_up' : 'arrow_drop_down' }}
+          </v-icon>
         </span>
       </v-btn>
     </template>

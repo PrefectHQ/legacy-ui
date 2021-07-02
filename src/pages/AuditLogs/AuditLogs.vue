@@ -41,8 +41,8 @@ export default {
         :filter="filter"
         @filter-click="$refs['filter-menu'].openMenu()"
       />
+      <FilterMenu ref="filter-menu" v-model="filter" button-class="mr-2" />
       <DownloadMenu :filter="where" />
-      <FilterMenu ref="filter-menu" v-model="filter" button-class="ml-2" />
     </div>
 
     <div class="system-logs">

@@ -141,17 +141,25 @@ export default {
     <template #activator="{ on, attrs }">
       <v-btn
         depressed
-        :icon="!$vuetify.breakpoint.mdAndUp"
+        class="px-2"
+        small
         text
         :class="buttonClass"
         v-bind="attrs"
         v-on="on"
       >
-        <span v-if="$vuetify.breakpoint.mdAndUp" class="text-overline">
+        <span class="mr-2 primary--text">
+          <v-icon class="fad fa-file-download" small />
+        </span>
+
+        <span class="text-overline">
           Download
         </span>
-        <span :class="{ 'ml-2': $vuetify.breakpoint.mdAndUp }">
-          <v-icon class="fad fa-file-download utilGrayDark--text" />
+
+        <span>
+          <v-icon small>
+            {{ menu ? 'arrow_drop_up' : 'arrow_drop_down' }}
+          </v-icon>
         </span>
       </v-btn>
     </template>
