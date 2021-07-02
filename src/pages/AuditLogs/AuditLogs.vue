@@ -71,11 +71,11 @@ export default {
 .system-logs {
   box-shadow: inset 0px 2px 1px -1px rgb(0 0 0 / 20%),
     0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-  height: calc(100vh - 177px);
+  height: calc(100vh - 185px);
   overflow-y: hidden !important;
 
   @media screen and (max-width: 1264px) {
-    height: calc(100vh - 225px);
+    height: calc(100vh - 233px);
   }
 }
 </style>
