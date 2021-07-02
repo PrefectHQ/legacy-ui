@@ -59,7 +59,7 @@ export default {
         this.logIds = []
         this.offset = 0
         this.firstLoad = true
-        if (this.$route.query) {
+        if (Object.keys(this.$route.query)?.length > 0) {
           this.$router.replace({ query: null })
         }
       },

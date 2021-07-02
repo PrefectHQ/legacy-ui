@@ -61,6 +61,8 @@ export default {
       logLevel: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL'],
       logLevelOptions: logLevels,
       menu: false,
+      resetDisabled: true,
+      stringifiedInitialFilter: null,
       table: 'user',
       tableOptions: [
         {
@@ -130,6 +132,8 @@ export default {
       val => {
         const [value, filter] = val
         this.applyDisabled = JSON.stringify(value) === JSON.stringify(filter)
+        this.resetDisabled =
+          this.stringifiedInitialFilter === JSON.stringify(filter)
       },
       {
         deep: true
@@ -137,6 +141,8 @@ export default {
     )
 
     this.filter.level = { _in: this.logLevel }
+
+    this.stringifiedInitialFilter = JSON.stringify(this.filter)
 
     this.applyChanges()
   },
@@ -337,7 +343,7 @@ export default {
           depressed
           small
           text
-          :disabled="applyDisabled"
+          :disabled="resetDisabled"
           @click="resetChanges"
         >
           Reset

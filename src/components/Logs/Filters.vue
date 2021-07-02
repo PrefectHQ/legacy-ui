@@ -102,7 +102,6 @@ export default {
     class="d-flex align-center justify-start"
     @click="handleClickFilter"
   >
-    <span class="mr-2">Filters:</span>
     <v-chip v-if="filter.object_table" class="font-weight-light" small>
       Type:
       <span class="font-weight-medium ml-1">{{ objectTableDisplay }}</span>
@@ -120,9 +119,7 @@ export default {
       </v-chip>
     </span>
 
-    <!-- We don't need to display these because they're all enabled by default -->
-    <!-- <span v-if="filter.level" class="ml-2">
-      <span class="mr-1">Log levels:</span>
+    <span v-if="filter.level" class="ml-2">
       <v-chip
         v-for="level in logLevels"
         :key="level.value"
@@ -137,7 +134,7 @@ export default {
           {{ level.text }}
         </span>
       </v-chip>
-    </span> -->
+    </span>
   </div>
 </template>
 
