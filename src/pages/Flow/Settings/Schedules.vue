@@ -98,6 +98,11 @@ export default {
           ...this.clocks[this.selectedClock],
           ...val
         }
+
+        let shifted = [...this.clocks]
+        shifted.unshift(shifted.splice(this.selectedClock, 1)[0])
+
+        this.clocks = shifted
       } else {
         isNew = true
         this.clocks.push({ ...val, scheduleType: 'flow-group' })
