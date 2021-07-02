@@ -8,7 +8,9 @@
 
 ### Bugfixes
 
-- Defaults to UTC if a timezone is not provided and defaults to the latest timezone when creating/modifying - [#922](https://github.com/PrefectHQ/ui/pull/922)
+- Should include a fix for [#929](https://github.com/PrefectHQ/ui/issues/929), [#928](https://github.com/PrefectHQ/ui/issues/928), [#885](https://github.com/PrefectHQ/ui/issues/885), and [#813](https://github.com/PrefectHQ/ui/issues/813) - [#922](https://github.com/PrefectHQ/ui/pull/922)
+- Fix role highlight in dark mode - [#925](https://github.com/PrefectHQ/ui/pull/925)
+- Fix indentation error in doc code snippet - [#932](https://github.com/PrefectHQ/ui/pull/932)
 
 ## 2021-06-24
 
