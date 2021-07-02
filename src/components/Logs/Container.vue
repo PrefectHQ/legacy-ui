@@ -59,7 +59,9 @@ export default {
         this.logIds = []
         this.offset = 0
         this.firstLoad = true
-        this.$router.replace({ query: null })
+        if (this.$route.query) {
+          this.$router.replace({ query: null })
+        }
       },
       deep: true
     }
