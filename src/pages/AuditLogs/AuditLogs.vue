@@ -20,6 +20,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     where() {
       return {
@@ -40,7 +41,10 @@ export default {
 
     <div class="spacer" />
 
-    <div class="py-1 px-4 d-flex align-center justify-end toolbar">
+    <div
+      v-if="hasPermission('read', 'audit-trail')"
+      class="py-1 px-4 d-flex align-center justify-end toolbar"
+    >
       <Filters
         class="mr-auto"
         :filter="filter"
@@ -50,9 +54,22 @@ export default {
       <DownloadMenu :filter="where" />
     </div>
 
-    <div class="system-logs">
+    <div v-if="hasPermission('read', 'audit-trail')" class="system-logs">
       <Container :where="where" />
     </div>
+    <v-container
+      v-else
+      class="text-h5 text-center blue-grey--text d-flex align-center justify-center"
+      style="height: 400px;"
+      fluid
+    >
+      <div>
+        <i class="fad fa-lock-alt fa-3x" />
+        <div class="mt-6">
+          You don't have permission to view audit logs
+        </div>
+      </div>
+    </v-container>
   </div>
 </template>
 
