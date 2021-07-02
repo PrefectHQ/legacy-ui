@@ -4,6 +4,7 @@ import DownloadMenu from '@/components/Logs/DownloadMenu'
 import Filters from '@/components/Logs/Filters'
 import FilterMenu from '@/components/Logs/FilterMenu'
 import SubPageNav from '@/layouts/SubPageNav'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -19,10 +20,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tenant', ['tenant']),
     where() {
       return {
         ...this.filter,
-        is_audit_log: { _eq: true }
+        is_audit_log: { _eq: true },
+        tenant_id: { _eq: this.tenant.id }
       }
     }
   }
