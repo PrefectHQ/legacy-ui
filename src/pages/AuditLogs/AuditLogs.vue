@@ -3,13 +3,15 @@ import Container from '@/components/Logs/Container'
 import DownloadMenu from '@/components/Logs/DownloadMenu'
 import Filters from '@/components/Logs/Filters'
 import FilterMenu from '@/components/Logs/FilterMenu'
+import SubPageNav from '@/layouts/SubPageNav'
 
 export default {
   components: {
     Container,
     DownloadMenu,
     Filters,
-    FilterMenu
+    FilterMenu,
+    SubPageNav
   },
   data() {
     return {
@@ -29,11 +31,11 @@ export default {
 
 <template>
   <div class="audit-logs">
-    <div class="mt-4">
-      <div class="mb-4 text-h4 font-weight-light text-left pl-8">
-        Audit Logs
-      </div>
-    </div>
+    <SubPageNav icon="notes" page-type="Logs" hide-banners full-width>
+      <span slot="page-title">Audit Logs</span>
+    </SubPageNav>
+
+    <div class="spacer" />
 
     <div class="py-1 px-4 d-flex align-center justify-end toolbar">
       <Filters
@@ -53,6 +55,10 @@ export default {
 
 <style lang="scss" scoped>
 .audit-logs {
+  .spacer {
+    padding-top: 84px;
+  }
+
   .toolbar {
     box-sizing: content-box;
     border-top: 1px solid rgba(0, 0, 0, 0.08);

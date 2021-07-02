@@ -18,6 +18,11 @@ export default {
       type: String,
       required: false,
       default: () => null
+    },
+    fullWidth: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -57,8 +62,8 @@ export default {
         :class="{
           'justify-center': $vuetify.breakpoint.smAndDown
         }"
-        style="height: 64px;
-      max-width: 1440px;"
+        style="height: 64px;"
+        :style="fullWidth ? '' : 'max-width: 1440px;'"
       >
         <v-col :sm="$slots['page-actions'] ? 6 : 12" class="d-flex align-end">
           <div class="mr-2">
