@@ -68,6 +68,9 @@ export default {
         {}
       )
       return this.paramVal(paramObj)
+    },
+    hasFlowGroupSchedule() {
+      return this.flowGroupClocks && this.flowGroupClocks.length > 0
     }
   },
   watch: {
@@ -393,6 +396,7 @@ export default {
         :class="{ 'grid-container-large': selectedClock === i }"
       >
         <v-card
+          :disabled="hasFlowGroupSchedule && clock.scheduleType == 'flow'"
           class="clock-card text-truncate"
           :class="{ 'clock-card-large': selectedClock === i }"
           color="appForeground"
@@ -533,9 +537,7 @@ export default {
 
                     <v-tooltip
                       v-if="
-                        flowGroupClocks &&
-                          flowGroupClocks.length > 0 &&
-                          clock.scheduleType == 'flow'
+                        hasFlowGroupSchedule && clock.scheduleType == 'flow'
                       "
                       max-width="300"
                       top
@@ -593,20 +595,11 @@ export default {
                           >
                             This schedule was set in your Flow's code so it
                             can't be modifed.
-                          </v-alert>
 
-                          <v-alert
-                            v-if="flowGroupClocks && flowGroupClocks.length > 0"
-                            border="left"
-                            colored-border
-                            elevation="0"
-                            type="warning"
-                            tile
-                            icon="warning"
-                            max-width="500"
-                          >
-                            The existing flow group schedule will overide this
-                            schedule
+                            <div v-if="hasFlowGroupSchedule" class="mt-2">
+                              The existing flow group schedule will overide this
+                              schedule
+                            </div>
                           </v-alert>
                         </p>
                         <p>

@@ -52,6 +52,7 @@ export default {
     return {
       tzs: timezones,
       selectedTimezone: this.timezone,
+      simpleSelectedTimezone: this.timezone,
       advanced: false,
       // Sets the default advanced tab
       // if a certain type was specific
@@ -97,7 +98,9 @@ export default {
           this.clockToAdd
         ],
         parameter_defaults: this.param ? parseObject(this.param) : {},
-        timezone: this.selectedTimezone
+        timezone: this.advanced
+          ? this.selectedTimezone
+          : this.simpleSelectedTimezone
       }
       this.$emit('confirm', clock)
     }
@@ -179,6 +182,31 @@ export default {
         </div>
         <div v-else key="2" class="mt-4 d-block" style="max-width: 100%;">
           <SimpleForm v-model="simpleModel" />
+
+          <v-autocomplete
+            v-if="typeof simpleModel !== 'number'"
+            v-model="simpleSelectedTimezone"
+            :items="tzs"
+            outlined
+            label="Time Zone"
+            prepend-inner-icon="access_time"
+            :menu-props="{ contentClass: 'tz' }"
+          />
+
+          <v-alert
+            v-if="flowGroupClocks.length > 0"
+            border="left"
+            colored-border
+            elevation="0"
+            type="warning"
+            dense
+            icon="warning"
+          >
+            <span class="text-body-2 ma-0">
+              Setting the timezone here will take precedence over existing flow
+              group schedule timezones
+            </span>
+          </v-alert>
         </div>
       </v-fade-transition>
     </v-card-text>
