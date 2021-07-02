@@ -250,19 +250,16 @@ export default {
           v-model="table"
           outlined
           label="Type"
-          menu-props="auto, offsetY"
+          menu-props="offsetY"
           :items="tableOptions"
           dense
           hide-details
         >
           <template #item="{ item }">
             <v-list-item-content>
-              <v-list-item-title class="text-body-1 font-weight-light">
+              <v-list-item-title class="text-body-1 font-weight-regular">
                 {{ item.text }}
               </v-list-item-title>
-              <v-list-item-subtitle class="font-weight-light">
-                {{ item.subtext }}
-              </v-list-item-subtitle>
             </v-list-item-content>
           </template>
         </v-select>
@@ -277,7 +274,7 @@ export default {
           dense
           offset-y
           multiple
-          menu-props="auto, offsetY"
+          menu-props="offsetY"
           hide-details
           style="width: 300px;"
           @blur="updateLogLevel"
