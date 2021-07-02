@@ -57,6 +57,7 @@ export default {
         if (JSON.stringify(val) === JSON.stringify(oldVal)) return
         this.logs = []
         this.logIds = []
+        this.offset = 0
       },
       deep: true
     }
