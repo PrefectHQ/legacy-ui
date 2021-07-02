@@ -9,7 +9,8 @@
 
 ### Bugfixes
 
-- None
+- Fix role highlight in dark mode - [#925](https://github.com/PrefectHQ/ui/pull/925)
+- Fix indentation error in doc code snippet - [#932](https://github.com/PrefectHQ/ui/pull/932)
 
 ## 2021-06-24
 
