@@ -154,6 +154,10 @@ export default {
     initializeStartAndEnd() {
       const start = new Date()
       const end = new Date()
+
+      start.setMonth(1)
+      start.setDate(1)
+
       start.setHours(0)
       start.setMinutes(0)
       start.setSeconds(0)

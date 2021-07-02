@@ -58,6 +58,7 @@ export default {
         this.logs = []
         this.logIds = []
         this.offset = 0
+        this.firstLoad = true
       },
       deep: true
     }
@@ -124,9 +125,9 @@ export default {
       query: require('@/graphql/Logs/logs.gql'),
       variables() {
         return {
-          where: this.where,
-          limit: 50,
-          offset: this.offset
+          where: this.where
+          // limit: 50,
+          // offset: this.offset
         }
       },
       loadingKey: 'loadingKey',
@@ -134,8 +135,8 @@ export default {
         return this.logByPkLoadingKey > 0 || !this.virtualContainer
       },
       fetchPolicy: 'cache-and-network',
-      result({ data }) {
-        if (data?.log) {
+      result({ data, loading }) {
+        if (data?.log && !loading) {
           this.ignoreNextScroll = true
           this.handleScroll.cancel()
 
@@ -147,48 +148,44 @@ export default {
             }
           })
 
-          const height = this.virtualContainer.scrollHeight
-          const scroll = this.virtualContainer.scrollTop
+          // Removing the first load logic for now
+          // if (!this.firstLoad) {
+          // this.firstLoad = true
+          this.ignoreNextScroll = true
+          if (this.$route?.query?.id) {
+            this.$nextTick(() => {
+              const itemIndex = this.sortedLogs.findIndex(
+                l => l.id == this.$route.query.id
+              )
+              this.$refs['virtual-scroller'].scrollToItem(itemIndex)
 
-          if (!this.firstLoad) {
-            this.firstLoad = true
-            this.ignoreNextScroll = true
-            this.scrollToBottom()
+              this.$refs['virtual-scroller'].$el.scrollBy({
+                top: -150
+              })
+            })
           } else {
-            setTimeout(() => {
-              const newHeight = this.virtualContainer.scrollHeight
-
-              this.$refs['virtual-scroller'].$el.scrollTop =
-                scroll + (newHeight - height)
-
-              setTimeout(() => {
-                this.$refs['virtual-scroller'].$el.scrollBy({
-                  top: -160,
-                  behavior: 'smooth'
-                })
-              }, 150)
-            }, 50)
+            this.scrollToBottom()
           }
+          // }
+          //
+          // else {
+          // const height = this.virtualContainer.scrollHeight
+          // const scroll = this.virtualContainer.scrollTop
+          //   setTimeout(() => {
+          //     const newHeight = this.virtualContainer.scrollHeight
+          //     this.$refs['virtual-scroller'].$el.scrollTop =
+          //       scroll + (newHeight - height)
+          //     setTimeout(() => {
+          //       this.$refs['virtual-scroller'].$el.scrollBy({
+          //         top: -160,
+          //         behavior: 'smooth'
+          //       })
+          //     }, 150)
+          //   }, 50)
+          // }
         }
 
         return data
-      }
-    },
-    logByPk: {
-      query: require('@/graphql/Logs/log-by-pk.gql'),
-      variables() {
-        return {
-          id: this.$route.query?.id
-        }
-      },
-      loadingKey: 'logByPkLoadingKey',
-      skip() {
-        return !this.$route.query?.id
-      },
-      result({ data, loading }) {
-        if (!data?.log_by_pk || loading) return
-        this.centerTimestamp = data.log_by_pk.timestamp
-        return data.log_by_pk
       }
     }
   }
@@ -208,8 +205,8 @@ export default {
     :min-item-size="30"
     :items="sortedLogs"
     key-field="id"
-    @wheel.native="handleScroll"
   >
+    <!-- @wheel.native="handleScroll" -->
     <template #before>
       <transition
         tag="div"
@@ -263,7 +260,7 @@ export default {
 <style lang="scss" scoped>
 .scroller {
   height: 100%;
-  max-height: 100%;
+  max-height: calc(100% - 2px);
   width: 100%;
 }
 

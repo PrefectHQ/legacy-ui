@@ -58,7 +58,7 @@ export default {
   },
   idState() {
     return {
-      active: false,
+      active: this.$route?.query.id == this.item.id,
       flowRunLoadingKey: 0,
       taskRunLoadingKey: 0,
       taskLoadingKey: 0,
@@ -164,7 +164,12 @@ export default {
 </script>
 
 <template>
-  <div class="row-container" :class="{ active: idState.active }">
+  <div
+    class="row-container"
+    :class="{
+      active: idState.active
+    }"
+  >
     <div
       class="row-header text-truncate d-flex justify-start align-center py-1 px-2"
       :class="{ striped: index % 2 === 0 }"
