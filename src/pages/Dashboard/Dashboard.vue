@@ -172,10 +172,7 @@ export default {
       if (this.projectId?.length > 0) this.activateProject(this.projectId)
     },
     getTab() {
-      if ('flows' in this.$route.query) return 'flows'
-      if ('calendar' in this.$route.query) return 'calendar'
-      if ('automations' in this.$route.query) return 'automations'
-      return 'overview'
+      return this.$route.query?.['tab'] || 'overview'
     },
     refresh() {
       let start

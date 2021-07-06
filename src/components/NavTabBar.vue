@@ -43,7 +43,6 @@ export default {
         query.tab = val
       }
 
-      console.log(query)
       this.$router
         .replace({
           query: query
