@@ -12,6 +12,12 @@ export default {
     Filters,
     FilterMenu
   },
+  props: {
+    run: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       filter: null

@@ -170,8 +170,6 @@ export default {
     initializeStartAndEnd() {
       if (!this.start) {
         const start = new Date()
-        start.setMonth(1)
-        start.setDate(1)
 
         start.setHours(0)
         start.setMinutes(0)
@@ -339,13 +337,13 @@ export default {
       <div class="mt-6 d-inline-flex align-center justify-center">
         <div class="mr-4">
           <DateTimePicker
-            v-if="start"
+            v-if="start_"
             v-model="start_"
             label="Start"
             icon="today"
           />
         </div>
-        <DateTimePicker v-if="end" v-model="end_" label="End" icon="event" />
+        <DateTimePicker v-if="end_" v-model="end_" label="End" icon="event" />
       </div>
 
       <div class="mt-4 d-flex align-center justify-end">

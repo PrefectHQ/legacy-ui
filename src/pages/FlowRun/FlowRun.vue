@@ -374,7 +374,7 @@ export default {
             query-key="flow_run_by_pk"
             :variables="{ id: $route.params.id }"
           />
-          <Logs slot="row-2-tile" class="mt-4" />
+          <Logs slot="row-2-tile" class="mt-4" :run="flowRun" />
         </TileLayoutFull>
       </v-tab-item>
 
