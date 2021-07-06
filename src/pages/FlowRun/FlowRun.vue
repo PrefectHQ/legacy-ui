@@ -122,7 +122,7 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     getTab() {
-      return this.$route.query ? this.$route.query['tab'] : 'overview'
+      return this.$route.query?.['tab'] || 'overview'
     },
     parseMarkdown(md) {
       return parser(md)

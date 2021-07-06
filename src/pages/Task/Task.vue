@@ -118,11 +118,7 @@ export default {
   methods: {
     ...mapActions('data', ['activateTask', 'resetActiveData']),
     getTab() {
-      if (Object.keys(this.$route.query).length != 0) {
-        let target = Object.keys(this.$route.query)[0]
-        if (this.tabs?.find(tab => tab.target == target)) return target
-      }
-      return 'overview'
+      return this.$route.query?.['tab'] || 'overview'
     }
   },
   apollo: {
