@@ -16,6 +16,9 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     slug() {
       return this.tenant?.slug
+    },
+    showAuditLogs() {
+      return this.tenant.prefectAdminSettings?.auditTrail
     }
   }
 }
@@ -88,6 +91,7 @@ export default {
     </v-btn>
 
     <v-btn
+      v-if="showAuditLogs"
       :to="{
         name: 'logs',
         params: { tenant: slug }
