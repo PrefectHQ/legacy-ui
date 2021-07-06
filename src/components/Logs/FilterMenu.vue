@@ -51,6 +51,11 @@ export default {
       required: false,
       default: null
     },
+    hideType: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     start: {
       type: Date,
       required: false,
@@ -126,16 +131,18 @@ export default {
       }
     )
 
-    this.$watch(
-      'table',
-      val => {
-        this.filter.object_table = { _eq: val }
-        this.filter = { ...this.filter }
-      },
-      {
-        immediate: true
-      }
-    )
+    if (!this.hideType) {
+      this.$watch(
+        'table',
+        val => {
+          this.filter.object_table = { _eq: val }
+          this.filter = { ...this.filter }
+        },
+        {
+          immediate: true
+        }
+      )
+    }
 
     this.$watch(
       vm => [vm.value, vm.filter],
@@ -268,7 +275,7 @@ export default {
         />
       </div>
 
-      <div class="mt-6" style="max-width: 200px;">
+      <div v-if="!hideType" class="mt-6" style="max-width: 200px;">
         <v-select
           v-model="table"
           outlined

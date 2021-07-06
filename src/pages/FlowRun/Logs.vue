@@ -52,7 +52,12 @@ export default {
         :filter="filter"
         @filter-click="$refs['filter-menu'].openMenu()"
       />
-      <FilterMenu ref="filter-menu" v-model="filter" button-class="mr-2" />
+      <FilterMenu
+        ref="filter-menu"
+        v-model="filter"
+        button-class="mr-2"
+        hide-type
+      />
       <DownloadMenu :filter="where" />
     </div>
 
