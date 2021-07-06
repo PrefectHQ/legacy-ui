@@ -196,11 +196,7 @@ export default {
   methods: {
     ...mapActions('data', ['activateFlow', 'resetActiveData']),
     getTab() {
-      if (Object.keys(this.$route.query).length != 0) {
-        let target = Object.keys(this.$route.query)[0]
-        if (this.tabs?.find(tab => tab.target == target)) return target
-      }
-      return 'overview'
+      return this.$route.query?.['tab'] || 'overview'
     }
   },
   apollo: {
@@ -236,7 +232,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet  color="appBackground">
+  <v-sheet color="appBackground">
     <SubPageNav icon="pi-flow" page-type="Flow">
       <span
         slot="page-title"
