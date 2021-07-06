@@ -50,14 +50,24 @@ export default {
       type: String,
       required: false,
       default: null
+    },
+    start: {
+      type: Date,
+      required: false,
+      default: null
+    },
+    end: {
+      type: Date,
+      required: false,
+      default: null
     }
   },
   data() {
     return {
       applyDisabled: true,
       filter: { ...this.value },
-      end: null,
-      start: null,
+      end_: null,
+      start_: null,
       logLevel: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL'],
       logLevelOptions: logLevels,
       menu: false,
@@ -158,24 +168,29 @@ export default {
       this.previousSearch = null
     },
     initializeStartAndEnd() {
-      const start = new Date()
-      const end = new Date()
+      if (!this.start) {
+        const start = new Date()
+        start.setMonth(1)
+        start.setDate(1)
 
-      start.setMonth(1)
-      start.setDate(1)
+        start.setHours(0)
+        start.setMinutes(0)
+        start.setSeconds(0)
+        start.setMilliseconds(0)
 
-      start.setHours(0)
-      start.setMinutes(0)
-      start.setSeconds(0)
-      start.setMilliseconds(0)
+        this.start_ = start
+      }
 
-      end.setHours(23)
-      end.setMinutes(59)
-      end.setSeconds(59)
-      end.setMilliseconds(999)
+      if (!this.end) {
+        const end = new Date()
 
-      this.start = start
-      this.end = end
+        end.setHours(23)
+        end.setMinutes(59)
+        end.setSeconds(59)
+        end.setMilliseconds(999)
+
+        this.end_ = end
+      }
     },
     updateTextSearch() {
       if (this.searchDisabled) return
@@ -325,12 +340,12 @@ export default {
         <div class="mr-4">
           <DateTimePicker
             v-if="start"
-            v-model="start"
+            v-model="start_"
             label="Start"
             icon="today"
           />
         </div>
-        <DateTimePicker v-if="end" v-model="end" label="End" icon="event" />
+        <DateTimePicker v-if="end" v-model="end_" label="End" icon="event" />
       </div>
 
       <div class="mt-4 d-flex align-center justify-end">
