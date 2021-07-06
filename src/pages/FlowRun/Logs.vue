@@ -60,7 +60,7 @@ export default {
   <div class="run-logs">
     <div
       v-if="userHasPermission"
-      class="py-1 px-4 d-flex align-center justify-end toolbar"
+      class="py-1 px-2 d-flex align-center justify-end toolbar"
     >
       <Filters
         class="mr-auto"
@@ -103,19 +103,23 @@ export default {
   }
 
   .toolbar {
+    background-color: var(--v-appForeground-base);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     box-sizing: content-box;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin-left: -2px;
+    // sets the width on the toolbar accounting for 2px of border (1px each side) and 16px of inner padding (8px each side)
+    width: calc(100% + 2px - 16px);
   }
 
   .logs {
     background-color: var(--v-appForeground-base);
     box-shadow: inset 0px 2px 1px -1px rgb(0 0 0 / 20%),
       0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-    height: calc(100vh - 255px);
+    max-height: calc(100vh - 255px);
     overflow-y: hidden !important;
 
     @media screen and (max-width: 1264px) {
-      height: calc(100vh - 233px);
+      max-height: calc(100vh - 233px);
     }
   }
 }

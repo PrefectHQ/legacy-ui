@@ -292,7 +292,7 @@ export default {
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom tab-full-height"
       :style="{
-        'max-width': tab == 'chart' ? 'auto' : '1440px',
+        'max-width': tab == 'logs' ? 'auto' : '1440px',
         'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
       }"
       mandatory
@@ -346,26 +346,19 @@ export default {
         transition="tab-fade"
         reverse-transition="tab-fade"
       >
-        <TileLayoutFull>
-          <LogsCard
-            v-if="false"
-            slot="row-2-tile"
-            class="py-2 mt-4"
-            entity="flow"
-            :query="require('@/graphql/Logs/flow-run-logs.gql')"
-            :query-for-scoping="
-              require('@/graphql/Logs/flow-run-logs-scoping.gql')
-            "
-            query-key="flow_run_by_pk"
-            :variables="{ id: $route.params.id }"
-          />
-          <Logs
-            slot="row-2-tile"
-            class="mt-4"
-            :run-id="flowRunId"
-            :run-start="runStart"
-          />
-        </TileLayoutFull>
+        <LogsCard
+          v-if="false"
+          slot="row-2-tile"
+          class="py-2 mt-4"
+          entity="flow"
+          :query="require('@/graphql/Logs/flow-run-logs.gql')"
+          :query-for-scoping="
+            require('@/graphql/Logs/flow-run-logs-scoping.gql')
+          "
+          query-key="flow_run_by_pk"
+          :variables="{ id: $route.params.id }"
+        />
+        <Logs class="mt-4" :run-id="flowRunId" :run-start="runStart" />
       </v-tab-item>
 
       <v-tab-item
