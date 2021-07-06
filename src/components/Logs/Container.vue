@@ -64,10 +64,10 @@ export default {
         this.logIds = []
         this.offset = 0
         this.firstLoad = true
-        if (Object.keys(this.$route.query)?.length > 0) {
-          let query = this.$route.query
+        if (this.$route.query?.['id']) {
+          let query = { ...this.$route.query }
           delete query.id
-          this.$router.replace({ query: { ...query } }).catch(e => e)
+          this.$router.replace({ query: query }).catch(e => e)
         }
       },
       deep: true
