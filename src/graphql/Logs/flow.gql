@@ -1,0 +1,7 @@
+query Flow($id: uuid!) {
+  flow(where: { id: { _eq: $id } }) {
+    id
+    name
+    flow_group_id
+  }
+}

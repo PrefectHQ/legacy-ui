@@ -51,6 +51,7 @@ export default {
     },
     item: {
       type: Object,
+      required: true,
       default() {
         return {}
       }
@@ -59,6 +60,7 @@ export default {
   idState() {
     return {
       active: this.$route?.query?.log_id == this.item.id,
+      flowLoadingKey: 0,
       flowRunLoadingKey: 0,
       taskRunLoadingKey: 0,
       taskLoadingKey: 0,
@@ -68,9 +70,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenants']),
     ...mapGetters('data', ['flows']),
-    flow() {
-      return this.flows?.find(f => f.id == this.flowRun?.flow_id)
-    },
     logLevelIcon() {
       return logLevels[this.item.level]?.icon
     },
@@ -87,7 +86,6 @@ export default {
   },
   methods: {
     copyLink() {
-      console.log(this.$route)
       const path = this.$route.fullPath
       const queryParams = path.split('?')[1]
       const queryPartsWithoutId = queryParams.split('id=')?.[0]
@@ -116,15 +114,32 @@ export default {
       },
       skip() {
         return (
-          !this.active &&
-          this.item.object_table !== 'flow_run' &&
-          !this.item.flow_run_id
+          !this.idState?.active ||
+          (this.item.object_table !== 'flow_run' && !this.item.flow_run_id)
         )
       },
       update(data) {
         return data?.flow_run?.[0]
       },
       loadingKey: 'flowRunLoadingKey',
+      fetchPolicy: 'cache-first'
+    },
+    // We use a separate query here instead of using the store because
+    // we don't load archived versions of flows into the store
+    flow: {
+      query: require('@/graphql/Logs/flow.gql'),
+      variables() {
+        return {
+          id: this.flowRun?.flow_id
+        }
+      },
+      skip() {
+        return !this.idState?.active || !this.flowRun?.flow_id
+      },
+      update(data) {
+        return data?.flow?.[0]
+      },
+      loadingKey: 'flowLoadingKey',
       fetchPolicy: 'cache-first'
     },
     taskRun: {
@@ -136,9 +151,8 @@ export default {
       },
       skip() {
         return (
-          !this.active &&
-          this.item.object_table !== 'task_run' &&
-          !this.item.task_run_id
+          !this.idState?.active ||
+          (this.item.object_table !== 'task_run' && !this.item.task_run_id)
         )
       },
       update(data) {
@@ -156,9 +170,8 @@ export default {
       },
       skip() {
         return (
-          !this.active &&
-          this.item.object_table !== 'task_run' &&
-          !this.taskRun?.task_id
+          !this.idState?.active ||
+          (this.item.object_table !== 'task_run' && !this.taskRun?.task_id)
         )
       },
       update(data) {
@@ -275,9 +288,11 @@ export default {
             </div>
           </span> -->
 
-          <span v-if="item.flow_run_id && flow" class="px-4 d-inline-block">
+          <span v-if="item.flow_run_id" class="px-4 d-inline-block">
             <div class="text-body-2">
+              <v-skeleton-loader v-if="!flow" type="text" />
               <router-link
+                v-else
                 :to="{
                   name: 'flow',
                   params: { tenant: team.slug, id: flow.id }
@@ -289,9 +304,11 @@ export default {
             <div class="text-caption text-capitalize">Flow</div>
           </span>
 
-          <span v-if="item.flow_run_id && flowRun" class="px-4 d-inline-block">
+          <span v-if="item.flow_run_id" class="px-4 d-inline-block">
             <div class="text-body-2">
+              <v-skeleton-loader v-if="!flowRun" type="text" />
               <router-link
+                v-else
                 :to="{
                   name: 'flow-run',
                   params: { tenant: team.slug, id: item.flow_run_id }
@@ -303,9 +320,11 @@ export default {
             <div class="text-caption text-capitalize">Flow run</div>
           </span>
 
-          <span v-if="item.task_run_id && task" class="px-4 d-inline-block">
+          <span v-if="item.task_run_id" class="px-4 d-inline-block">
             <div class="text-body-2">
+              <v-skeleton-loader v-if="!taskRun || !task" type="text" />
               <router-link
+                v-else
                 :to="{
                   name: 'task-run',
                   params: { tenant: team.slug, id: item.task_run_id }
