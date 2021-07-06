@@ -38,16 +38,12 @@ export default {
   watch: {
     tab(val) {
       if (this.paths) return
-      let query = {}
+      let query = { ...this.$route.query }
       if (val) {
-        if (this.$route.params.id) {
-          query[val] = this.$route.params.id // schematic uses this
-        }
-        if (this.$route.query.version) {
-          query.version = this.$route.query.version
-        }
-        query[val] = ''
+        query.tab = val
       }
+
+      console.log(query)
       this.$router
         .replace({
           query: query
@@ -64,13 +60,12 @@ export default {
         t => t.to?.path == this.$route.path || t.to?.name == this.$route.name
       )
 
-      if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
-      } else if (route) {
-        return route.to.path || route.to.name
-      }
-
-      return 'overview'
+      return (
+        this.$route.query?.tab ||
+        route?.to?.path ||
+        route?.to?.name ||
+        'overview'
+      )
     },
     scrolled() {
       this.pageScrolled = window.scrollY > 30

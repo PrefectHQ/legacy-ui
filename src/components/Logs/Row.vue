@@ -58,7 +58,7 @@ export default {
   },
   idState() {
     return {
-      active: this.$route?.query.id == this.item.id,
+      active: this.$route?.query?.log_id == this.item.id,
       flowRunLoadingKey: 0,
       taskRunLoadingKey: 0,
       taskLoadingKey: 0,
@@ -87,6 +87,7 @@ export default {
   },
   methods: {
     copyLink() {
+      console.log(this.$route)
       const path = this.$route.fullPath
       const queryParams = path.split('?')[1]
       const queryPartsWithoutId = queryParams.split('id=')?.[0]
@@ -95,7 +96,7 @@ export default {
           queryPartsWithoutId && queryPartsWithoutId.slice(-1) !== '&'
             ? '&'
             : ''
-        }id=${this.item.id}`
+        }log_id=${this.item.id}`
       )
 
       this.idState.linkCopied = true
@@ -288,7 +289,7 @@ export default {
             <div class="text-caption text-capitalize">Flow</div>
           </span>
 
-          <span v-if="item.flow_run_id" class="px-4 d-inline-block">
+          <span v-if="item.flow_run_id && flowRun" class="px-4 d-inline-block">
             <div class="text-body-2">
               <router-link
                 :to="{

@@ -114,26 +114,6 @@ export default {
   watch: {
     $route() {
       this.tab = this.getTab()
-    },
-    tab(val) {
-      let query = { ...this.$route.query }
-      switch (val) {
-        case 'schematic':
-          query = 'schematic'
-          break
-        case 'logs':
-          query = 'logId'
-          break
-        case 'chart':
-          query = { chart: '' }
-          break
-        case 'artifacts':
-          /* eslint-disable-next-line */
-          query = 'artifacts'
-          break
-        default:
-          break
-      }
     }
   },
   beforeMount() {
@@ -142,10 +122,7 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     getTab() {
-      if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
-      }
-      return 'overview'
+      return this.$route.query ? this.$route.query['tab'] : 'overview'
     },
     parseMarkdown(md) {
       return parser(md)
