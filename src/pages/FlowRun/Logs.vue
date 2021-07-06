@@ -115,11 +115,11 @@ export default {
     background-color: var(--v-appForeground-base);
     box-shadow: inset 0px 2px 1px -1px rgb(0 0 0 / 20%),
       0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-    max-height: calc(100vh - 255px);
+    height: calc(100vh - 255px);
     overflow-y: hidden !important;
 
     @media screen and (max-width: 1264px) {
-      max-height: calc(100vh - 233px);
+      height: calc(100vh - 233px);
     }
   }
 }
