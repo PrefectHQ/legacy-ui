@@ -87,8 +87,15 @@ export default {
   },
   methods: {
     copyLink() {
+      const path = this.$route.fullPath
+      const queryParams = path.split('?')[1]
+      const queryPartsWithoutId = queryParams.split('id=')?.[0]
       navigator.clipboard.writeText(
-        `${window.location.origin}${this.$route.path}?id=${this.item.id}`
+        `${window.location.origin}${this.$route.path}?${queryPartsWithoutId}${
+          queryPartsWithoutId && queryPartsWithoutId.slice(-1) !== '&'
+            ? '&'
+            : ''
+        }id=${this.item.id}`
       )
 
       this.idState.linkCopied = true
