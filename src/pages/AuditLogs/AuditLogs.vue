@@ -29,6 +29,9 @@ export default {
         tenant_id: { _eq: this.tenant.id }
       }
     },
+    showAuditLogs() {
+      return this.tenant.prefectAdminSettings?.auditTrail
+    },
     licenseHasFeature() {
       return this.hasPermission('feature', 'audit-trail')
     },
@@ -48,7 +51,7 @@ export default {
     <div class="spacer" />
 
     <div
-      v-if="licenseHasFeature && userHasPermission"
+      v-if="licenseHasFeature && userHasPermission && showAuditLogs"
       class="py-1 px-4 d-flex align-center justify-end toolbar"
     >
       <Filters
@@ -60,7 +63,10 @@ export default {
       <DownloadMenu :filter="where" />
     </div>
 
-    <div v-if="licenseHasFeature && userHasPermission" class="system-logs">
+    <div
+      v-if="licenseHasFeature && userHasPermission && showAuditLogs"
+      class="system-logs"
+    >
       <Container :where="where" />
     </div>
     <v-container
