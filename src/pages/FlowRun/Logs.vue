@@ -27,6 +27,7 @@ export default {
     ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     where() {
+      console.log(this.filter)
       return {
         ...this.filter,
         is_audit_log: { _eq: false },

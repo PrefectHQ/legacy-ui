@@ -114,7 +114,7 @@ export default {
     this.initializeStartAndEnd()
 
     this.$watch(
-      vm => [vm.start, vm.end],
+      vm => [vm.start_, vm.end_],
       val => {
         const [start, end] = val
         this.filter.timestamp = { _gte: start, _lte: end }

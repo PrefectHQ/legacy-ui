@@ -60,7 +60,9 @@ export default {
         this.offset = 0
         this.firstLoad = true
         if (Object.keys(this.$route.query)?.length > 0) {
-          this.$router.replace({ query: null })
+          let query = this.$route.query
+          delete query.id
+          this.$router.replace({ query: { ...query } }).catch(e => e)
         }
       },
       deep: true
