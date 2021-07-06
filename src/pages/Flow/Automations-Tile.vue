@@ -30,7 +30,6 @@ export default {
     sortHooks() {
       this.loadCards = true
       const hooks = this.hooks ? [...this.hooks] : []
-      console.log(hooks)
       const filtered = hooks.filter(
         hook => hook.event_tags.flow_group_id == this.flow.flow_group_id
       )
@@ -62,6 +61,13 @@ export default {
     <CardTitle title="Automations" icon="fa-random" />
 
     <v-card-text class="full-height position-relative">
+      <div
+        >Displaying automations for this flow. To see all automations or manage
+        automations go to the main
+        <router-link :to="{ name: 'dashboard', query: { automations: '' } }"
+          >dashboard</router-link
+        >.</div
+      >
       <v-row>
         <v-col cols="12" class="pb-0"> </v-col>
         <v-progress-circular
