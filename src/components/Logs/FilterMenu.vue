@@ -184,7 +184,7 @@ export default {
         start.setMilliseconds(0)
 
         this.start_ = start
-      }
+      } else this.start_ = this.start
 
       if (!this.end) {
         const end = new Date()
@@ -195,7 +195,7 @@ export default {
         end.setMilliseconds(999)
 
         this.end_ = end
-      }
+      } else this.end_ = this.end
     },
     updateTextSearch() {
       if (this.searchDisabled) return

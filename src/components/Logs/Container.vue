@@ -14,6 +14,11 @@ export default {
       default: () => {
         return {}
       }
+    },
+    pauseQuery: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -137,7 +142,11 @@ export default {
       },
       loadingKey: 'loadingKey',
       skip() {
-        return this.logByPkLoadingKey > 0 || !this.virtualContainer
+        return (
+          this.pauseUpdates ||
+          this.logByPkLoadingKey > 0 ||
+          !this.virtualContainer
+        )
       },
       fetchPolicy: 'cache-and-network',
       result({ data, loading }) {

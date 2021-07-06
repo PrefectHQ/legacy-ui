@@ -13,9 +13,18 @@ export default {
     FilterMenu
   },
   props: {
-    run: {
-      type: Object,
+    runId: {
+      type: String,
       required: true
+    },
+    runStart: {
+      type: String,
+      required: true
+    },
+    state: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -27,15 +36,21 @@ export default {
     ...mapGetters('license', ['hasPermission']),
     ...mapGetters('tenant', ['tenant']),
     where() {
-      console.log(this.filter)
       return {
         ...this.filter,
         is_audit_log: { _eq: false },
-        tenant_id: { _eq: this.tenant.id }
+        tenant_id: { _eq: this.tenant.id },
+        flow_run_id: { _eq: this.runId }
       }
     },
     userHasPermission() {
       return this.hasPermission('read', 'log')
+    },
+    start() {
+      return new Date(this.runStart)
+    },
+    pauseQuery() {
+      return !('logs' in this.$route.query)
     }
   }
 }
@@ -57,12 +72,13 @@ export default {
         v-model="filter"
         button-class="mr-2"
         hide-type
+        :start="start"
       />
       <DownloadMenu :filter="where" />
     </div>
 
     <div v-if="userHasPermission" class="logs">
-      <Container :where="where" />
+      <Container :where="where" :pause-query="pauseQuery" />
     </div>
     <v-container
       v-else

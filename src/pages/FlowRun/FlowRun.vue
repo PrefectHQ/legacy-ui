@@ -101,6 +101,14 @@ export default {
     },
     loading() {
       return this.loadingKey > 0
+    },
+    runStart() {
+      if (!this.flowRun) return null
+      const scheduledStates = this.flowRun.states
+        ?.filter(s => s.state == 'Scheduled')
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+      if (!scheduledStates?.length) return null
+      return scheduledStates[0].timestamp
     }
   },
   watch: {
@@ -374,7 +382,12 @@ export default {
             query-key="flow_run_by_pk"
             :variables="{ id: $route.params.id }"
           />
-          <Logs slot="row-2-tile" class="mt-4" :run="flowRun" />
+          <Logs
+            slot="row-2-tile"
+            class="mt-4"
+            :run-id="flowRunId"
+            :run-start="runStart"
+          />
         </TileLayoutFull>
       </v-tab-item>
 
