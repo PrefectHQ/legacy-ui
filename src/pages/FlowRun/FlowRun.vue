@@ -13,6 +13,7 @@ import SchematicTile from '@/pages/FlowRun/Schematic-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import TaskRunHeartbeatTile from '@/pages/FlowRun/TaskRunHeartbeat-Tile'
 import TaskRunTableTile from '@/pages/FlowRun/TaskRunTable-Tile'
+import Logs from '@/pages/FlowRun/Logs'
 import TileLayout from '@/layouts/TileLayout'
 import TileLayoutFull from '@/layouts/TileLayout-Full'
 import { parser } from '@/utils/markdownParser'
@@ -43,6 +44,7 @@ export default {
     DetailsTile,
     EditableTextField,
     TimelineTile,
+    Logs,
     LogsCard,
     NavTabBar,
     SchematicTile,
@@ -361,6 +363,7 @@ export default {
       >
         <TileLayoutFull>
           <LogsCard
+            v-if="false"
             slot="row-2-tile"
             class="py-2 mt-4"
             entity="flow"
@@ -371,6 +374,7 @@ export default {
             query-key="flow_run_by_pk"
             :variables="{ id: $route.params.id }"
           />
+          <Logs slot="row-2-tile" class="mt-4" />
         </TileLayoutFull>
       </v-tab-item>
 
