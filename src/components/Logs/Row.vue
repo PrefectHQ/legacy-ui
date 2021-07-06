@@ -74,7 +74,7 @@ export default {
       return logLevels[this.item.level]?.icon
     },
     logLevelColor() {
-      if (!this.idState.active) return 'grey'
+      if (!this.idState.active && this.item.level == 'INFO') return 'grey'
       return logLevels[this.item.level]?.color
     },
     logLevelText() {
