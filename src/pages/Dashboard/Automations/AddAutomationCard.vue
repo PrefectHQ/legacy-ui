@@ -690,6 +690,7 @@ export default {
         })
         this.saving = false
       } finally {
+        const updated = !!this.hookDetails
         this.hookDetails = null
         this.$emit('refetch')
         if (data) {
@@ -698,6 +699,8 @@ export default {
             alertShow: true,
             alertMessage: this.agentConfigId
               ? agentConfigString
+              : updated
+              ? 'Automation updated'
               : 'Automation created',
             alertType: 'success',
             alertCopy: this.agentConfigId
