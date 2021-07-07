@@ -192,7 +192,7 @@ export default {
     }"
   >
     <div
-      class="row-header text-truncate d-flex justify-start align-center py-1 px-2"
+      class="row-header text-truncate d-flex justify-start align-center px-2"
       :class="{ striped: index % 2 === 0 }"
       tabindex="0"
       @click="idState.active = !idState.active"
@@ -376,6 +376,8 @@ $highlight-color: rgba(224, 224, 255, 0.5);
 
   .row-header {
     cursor: pointer;
+    padding-bottom: 2px;
+    padding-top: 2px;
 
     &.striped {
       background-color: rgba(0, 0, 0, 0.02);
