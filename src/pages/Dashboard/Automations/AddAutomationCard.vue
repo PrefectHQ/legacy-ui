@@ -61,7 +61,7 @@ export default {
         this.hookDetail?.hook?.event_tags?.state || AUTOMATIONSTATES['All'],
       disableClick: false,
       chosenAction: this.hookDetail?.hook?.action || null,
-      seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
+      seconds: this.hookDetail?.flowConfig?.duration_seconds || 60,
       addAction: false,
       flowEventType: null,
       flowEventTypes: flowEventTypes,
@@ -690,6 +690,7 @@ export default {
         })
         this.saving = false
       } finally {
+        const updated = !!this.hookDetails
         this.hookDetails = null
         this.$emit('refetch')
         if (data) {
@@ -698,6 +699,8 @@ export default {
             alertShow: true,
             alertMessage: this.agentConfigId
               ? agentConfigString
+              : updated
+              ? 'Automation updated'
               : 'Automation created',
             alertType: 'success',
             alertCopy: this.agentConfigId
