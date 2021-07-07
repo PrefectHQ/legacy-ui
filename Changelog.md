@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Show current team name on account page if no account name is found - [#923](https://github.com/PrefectHQ/ui/pull/923)
+- Move logrocket initialization to its own plugin - [#940](https://github.com/PrefectHQ/ui/pull/940)
 
 ### Bugfixes
 
