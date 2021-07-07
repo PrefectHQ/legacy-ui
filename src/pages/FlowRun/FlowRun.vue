@@ -341,7 +341,6 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        class="tab-full-height"
         value="logs"
         transition="tab-fade"
         reverse-transition="tab-fade"
