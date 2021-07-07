@@ -98,22 +98,26 @@ export default {
 
 <template>
   <div
-    v-if="filter && $vuetify.breakpoint.mdAndUp"
-    class="d-flex align-center justify-start cursor-pointer"
+    v-if="filter && $vuetify.breakpoint.lgAndUp"
+    class="d-flex align-center justify-start"
     @click="handleClickFilter"
   >
-    <v-chip v-if="filter.object_table" class="font-weight-light" small>
+    <v-chip
+      v-if="filter.object_table"
+      class="font-weight-light cursor-pointer"
+      small
+    >
       Type:
       <span class="font-weight-medium ml-1">{{ objectTableDisplay }}</span>
     </v-chip>
 
     <span v-if="filter.timestamp" class="font-weight-light ml-1">
-      <v-chip small>
+      <v-chip class="cursor-pointer" small>
         Start:
         <span class="font-weight-medium ml-1">{{ startTimestampDisplay }}</span>
       </v-chip>
 
-      <v-chip class="ml-1" small>
+      <v-chip class="ml-1 cursor-pointer" small>
         End:
         <span class="font-weight-medium ml-1">{{ endTimestampDisplay }}</span>
       </v-chip>
@@ -125,7 +129,7 @@ export default {
         :key="level.value"
         :color="level.color"
         small
-        class="ml-1"
+        class="ml-1 cursor-pointer"
       >
         <v-icon color="white" small>
           {{ level.icon }}
