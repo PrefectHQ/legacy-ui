@@ -191,7 +191,6 @@ export default {
           Object.fromEntries(v.map(entry => [entry.key, entry.value]))
         )
       } else {
-        // console.log()
         this.jsonInput = this.inputIsArray
           ? JSON.stringify(
               Object.fromEntries(
