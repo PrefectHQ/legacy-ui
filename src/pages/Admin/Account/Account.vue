@@ -239,10 +239,16 @@ export default {
       </v-row>
     </v-container>
 
-    <ManagementLayout v-else>
-      <Profile />
-      <ClearDataDialog />
-    </ManagementLayout>
+    <v-container v-else>
+      <v-row>
+        <v-col cols="12">
+          <Profile />
+        </v-col>
+        <v-col cols="12">
+          <ClearDataDialog />
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
