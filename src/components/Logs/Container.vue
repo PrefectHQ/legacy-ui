@@ -15,7 +15,7 @@ export default {
         return {}
       }
     },
-    pauseQuery: {
+    live: {
       type: Boolean,
       required: false,
       default: false
@@ -71,6 +71,13 @@ export default {
         }
       },
       deep: true
+    },
+    live(val) {
+      if (val) {
+        this.$apollo.queries['log'].startPolling(5000)
+      } else {
+        this.$apollo.queries['log'].stopPolling()
+      }
     }
   },
   mounted() {
@@ -79,6 +86,12 @@ export default {
         '.vue-recycle-scroller__item-wrapper'
       )
     })
+
+    if (this.live) {
+      this.$apollo.queries['log'].startPolling(5000)
+    } else {
+      this.$apollo.queries['log'].stopPolling()
+    }
   },
   beforeDestroy() {},
   methods: {
@@ -101,8 +114,15 @@ export default {
 
       this.lastScroll = st
     },
-    scrollToBottom() {
-      this.$refs['virtual-scroller'].scrollToBottom()
+    scrollToBottom(behavior) {
+      if (behavior) {
+        requestAnimationFrame(() => {
+          this.$refs['virtual-scroller'].$el.scrollTo({
+            top: this.$refs['virtual-scroller'].$el.scrollHeight,
+            behavior: 'smooth'
+          })
+        })
+      } else this.$refs['virtual-scroller'].scrollToBottom()
     },
     handleTopOfLogs() {
       this.offset += 50
@@ -142,14 +162,11 @@ export default {
       },
       loadingKey: 'loadingKey',
       skip() {
-        return (
-          this.pauseUpdates ||
-          this.logByPkLoadingKey > 0 ||
-          !this.virtualContainer
-        )
+        return this.logByPkLoadingKey > 0 || !this.virtualContainer
       },
+      pollInterval: 5000,
       fetchPolicy: 'cache-and-network',
-      result({ data, loading }) {
+      update(data, loading) {
         if (data?.log && !loading) {
           this.ignoreNextScroll = true
           this.handleScroll.cancel()
@@ -178,11 +195,11 @@ export default {
                   top: -150
                 })
               } else {
-                this.scrollToBottom()
+                this.scrollToBottom(true)
               }
             })
           } else {
-            this.scrollToBottom()
+            this.scrollToBottom(true)
           }
           // }
           //

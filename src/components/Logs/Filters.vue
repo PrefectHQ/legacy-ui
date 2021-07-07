@@ -112,12 +112,12 @@ export default {
     </v-chip>
 
     <span v-if="filter.timestamp" class="font-weight-light ml-1">
-      <v-chip class="cursor-pointer" small>
+      <v-chip v-if="filter.timestamp._gte" class="cursor-pointer" small>
         Start:
         <span class="font-weight-medium ml-1">{{ startTimestampDisplay }}</span>
       </v-chip>
 
-      <v-chip class="ml-1 cursor-pointer" small>
+      <v-chip v-if="filter.timestamp._lte" class="ml-1 cursor-pointer" small>
         End:
         <span class="font-weight-medium ml-1">{{ endTimestampDisplay }}</span>
       </v-chip>

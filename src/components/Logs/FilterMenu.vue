@@ -65,6 +65,11 @@ export default {
       type: Date,
       required: false,
       default: null
+    },
+    noEnd: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -186,7 +191,7 @@ export default {
         this.start_ = start
       } else this.start_ = this.start
 
-      if (!this.end) {
+      if (!this.end && !this.noEnd) {
         const end = new Date()
 
         end.setHours(23)
@@ -195,7 +200,7 @@ export default {
         end.setMilliseconds(999)
 
         this.end_ = end
-      } else this.end_ = this.end
+      } else if (!this.noEnd) this.end_ = this.end
     },
     updateTextSearch() {
       if (this.searchDisabled) return

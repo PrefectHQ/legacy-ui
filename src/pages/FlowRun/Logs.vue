@@ -4,6 +4,7 @@ import DownloadMenu from '@/components/Logs/DownloadMenu'
 import Filters from '@/components/Logs/Filters'
 import FilterMenu from '@/components/Logs/FilterMenu'
 import { mapGetters } from 'vuex'
+import { FINISHED_STATES } from '@/utils/states'
 
 export default {
   components: {
@@ -20,6 +21,11 @@ export default {
     runStart: {
       type: String,
       required: true
+    },
+    runEnd: {
+      type: String,
+      required: false,
+      default: null
     },
     state: {
       type: String,
@@ -49,8 +55,13 @@ export default {
     start() {
       return new Date(this.runStart)
     },
-    pauseQuery() {
-      return !('logs' in this.$route.query)
+    end() {
+      return this.runEnd ? new Date(this.runEnd) : null
+    },
+    live() {
+      return (
+        'logs' in this.$route.query && !FINISHED_STATES.includes(this.state)
+      )
     }
   }
 }
@@ -73,12 +84,14 @@ export default {
         button-class="mr-2"
         hide-type
         :start="start"
+        :end="end"
+        no-end
       />
       <DownloadMenu :filter="where" />
     </div>
 
     <div v-if="userHasPermission" class="logs">
-      <Container :where="where" :pause-query="pauseQuery" />
+      <Container :where="where" :live="live" />
     </div>
     <v-container
       v-else
