@@ -74,7 +74,8 @@ export default {
       return logLevels[this.item.level]?.icon
     },
     logLevelColor() {
-      if (!this.idState.active && this.item.level == 'INFO') return 'grey'
+      if (!this.idState.active && this.item.level == 'INFO')
+        return 'blue-grey lighten-3'
       return logLevels[this.item.level]?.color
     },
     logLevelText() {
@@ -205,7 +206,13 @@ export default {
       </span>
 
       <span class="mr-3">
-        <v-icon :color="logLevelColor" small>
+        <v-icon
+          :color="logLevelColor"
+          small
+          :class="{
+            'material-icons-outlined': !idState.active && item.level == 'INFO'
+          }"
+        >
           {{ logLevelIcon }}
         </v-icon>
       </span>
