@@ -1,6 +1,5 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ManagementLayout from '@/layouts/ManagementLayout'
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import Profile from '@/pages/Admin/Account/Profile'
 import License from '@/pages/Admin/Account/License'
@@ -16,7 +15,6 @@ import CycleUsageTile from '@/pages/Dashboard/UsageTiles/CycleUsage-Tile'
 
 export default {
   components: {
-    ManagementLayout,
     Profile,
     ClearDataDialog,
     License,
