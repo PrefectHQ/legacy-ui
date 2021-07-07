@@ -32,23 +32,7 @@ export default {
       projects: [],
       secrets: [],
       tokens: [],
-      dataMapping: {
-        projects: {
-          label: 'Project',
-          count: null,
-          icon: 'pi-project'
-        },
-        flows: {
-          label: 'Flow',
-          count: null,
-          icon: 'pi-flow'
-        },
-        memberships: {
-          label: 'User',
-          count: null,
-          icon: 'people'
-        }
-      },
+      dataMapping: {},
 
       // Form rules
       rules: {
@@ -58,6 +42,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('user', ['user']),
     ...mapGetters('license', ['hasPermission']),
@@ -112,7 +97,9 @@ export default {
       this.dataLoading = true
 
       const { data } = await this.$apollo.query({
-        query: require('@/graphql/TeamSettings/data-to-clear.gql'),
+        query: require('@/graphql/TeamSettings/data-to-clear.js').default(
+          this.isCloud
+        ),
         fetchPolicy: 'no-cache'
       })
       this.timeout = setTimeout(() => {
@@ -139,6 +126,28 @@ export default {
       }, 1500)
     }
   },
+  mounted() {
+    const projects = {
+      label: 'Project',
+      count: null,
+      icon: 'pi-project'
+    }
+    const flows = {
+      label: 'Flow',
+      count: null,
+      icon: 'pi-flow'
+    }
+    const memberships = {
+      label: 'User',
+      count: null,
+      icon: 'people'
+    }
+    if (this.isCloud) {
+      this.dataMapping = { projects, flows, memberships }
+    } else {
+      this.dataMapping = { projects, flows }
+    }
+  },
   methods: {
     _close() {
       this.show = false
@@ -160,7 +169,7 @@ export default {
     clearMutation() {
       let mutation = ''
 
-      this.memberships.map((membership, i) => {
+      this.memberships?.map((membership, i) => {
         mutation += `
           delete_membership_${i}: delete_membership(input: { membership_id: "${membership.memberships[0]?.id}" }) {
             success
@@ -168,7 +177,7 @@ export default {
         `
       })
 
-      this.membershipInvitations.map((invitation, i) => {
+      this.membershipInvitations?.map((invitation, i) => {
         mutation += `
           delete_membership_invitation_${i}: delete_membership_invitation(input: { invitation_id: "${invitation.id}" }) {
             success
@@ -184,7 +193,7 @@ export default {
         `
       })
 
-      this.tokens.map((token, i) => {
+      this.tokens?.map((token, i) => {
         mutation += `
           delete_api_token_${i}: delete_api_token(input: { token_id: "${token.id}" }) {
             success
@@ -192,7 +201,7 @@ export default {
         `
       })
 
-      this.secrets.map((secret, i) => {
+      this.secrets?.map((secret, i) => {
         mutation += `
           delete_secret_${i}: delete_secret(input: { name: "${secret}" }) {
             success
@@ -252,7 +261,11 @@ export default {
   },
   apollo: {
     data: {
-      query: require('@/graphql/TeamSettings/data-to-clear.gql'),
+      query() {
+        return require('@/graphql/TeamSettings/data-to-clear.js').default(
+          this.isCloud
+        )
+      },
       result({ data }) {
         if (!data) return
       },
@@ -263,8 +276,13 @@ export default {
         this.flows = data?.flow
         this.secrets = data?.secret_names
         this.tokens = data?.api_token
-        this.dataMapping.memberships.count =
-          this.memberships?.filter(m => m.account_type !== 'SERVICE').length + 1
+
+        if (this.memberships) {
+          this.dataMapping.memberships.count =
+            this.memberships?.filter(m => m.account_type !== 'SERVICE').length +
+            1
+        }
+
         this.dataMapping.projects.count = this.projects?.length
         this.dataMapping.flows.count = this.flows?.length
       },
