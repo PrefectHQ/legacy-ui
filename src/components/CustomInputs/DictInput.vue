@@ -75,7 +75,14 @@ export default {
           (this.json && Object.keys(JSON.parse(this.jsonInput)).includes(k)) ||
           (!this.json && this.includedKeys.includes(k))
         ) {
-          dict[k] = this.values[i]
+          try {
+            dict[k] =
+              typeof this.values[i] == 'string'
+                ? JSON.parse(this.values[i])
+                : this.values[i]
+          } catch {
+            dict[k] = this.values[i]
+          }
         }
       })
       return dict
@@ -104,6 +111,8 @@ export default {
           this.includedKeys = Object.keys(this.value)
         }
       }
+
+      this.$emit('toggle-json-editor', val)
     },
     includedKeys(val) {
       this.jsonInput = val.length > 0 ? JSON.stringify(this.value) : '{}'
@@ -182,6 +191,7 @@ export default {
           Object.fromEntries(v.map(entry => [entry.key, entry.value]))
         )
       } else {
+        // console.log()
         this.jsonInput = this.inputIsArray
           ? JSON.stringify(
               Object.fromEntries(
@@ -204,7 +214,11 @@ export default {
         : [null]
 
       this.values = this.inputIsArray
-        ? this.dict.map(entry => JSON.stringify(entry.value))
+        ? this.dict.map(entry =>
+            typeof entry.value == 'string'
+              ? entry.value
+              : JSON.stringify(entry.value)
+          )
         : this.dict
         ? Object.values(this.dict).map(value => JSON.stringify(value))
         : [null]
