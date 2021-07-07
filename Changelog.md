@@ -11,6 +11,7 @@
 - Should include a fix for [#929](https://github.com/PrefectHQ/ui/issues/929), [#928](https://github.com/PrefectHQ/ui/issues/928), [#885](https://github.com/PrefectHQ/ui/issues/885), and [#813](https://github.com/PrefectHQ/ui/issues/813) - [#922](https://github.com/PrefectHQ/ui/pull/922)
 - Fix role highlight in dark mode - [#925](https://github.com/PrefectHQ/ui/pull/925)
 - Fix indentation error in doc code snippet - [#932](https://github.com/PrefectHQ/ui/pull/932)
+- Fix layout issues with the account page in Server - [#938](https://github.com/PrefectHQ/ui/pull/938)
 
 ## 2021-06-24
 
