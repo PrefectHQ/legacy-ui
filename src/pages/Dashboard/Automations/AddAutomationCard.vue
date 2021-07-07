@@ -93,7 +93,6 @@ export default {
       return this.$vuetuify?.breakpoint?.smAndUp ? '35vh' : '25vh'
     },
     agentOrFlow() {
-      console.log('hook details', this.hookDetails)
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
         return 'agent'
