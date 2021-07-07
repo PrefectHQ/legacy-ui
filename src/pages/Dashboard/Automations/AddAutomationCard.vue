@@ -61,7 +61,7 @@ export default {
         this.hookDetail?.hook?.event_tags?.state || AUTOMATIONSTATES['All'],
       disableClick: false,
       chosenAction: this.hookDetail?.hook?.action || null,
-      seconds: this.hookDetails?.flowConfig?.duration_seconds || 60,
+      seconds: this.hookDetail?.flowConfig?.duration_seconds || 60,
       addAction: false,
       flowEventType: null,
       flowEventTypes: flowEventTypes,
@@ -93,6 +93,7 @@ export default {
       return this.$vuetuify?.breakpoint?.smAndUp ? '35vh' : '25vh'
     },
     agentOrFlow() {
+      console.log('hook details', this.hookDetails)
       if (this.agentFlowOrSomethingElse) return this.agentFlowOrSomethingElse
       if (this.hookDetails?.hook?.event_type === 'AgentSLAFailedEvent')
         return 'agent'
