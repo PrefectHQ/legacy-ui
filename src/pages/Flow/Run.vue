@@ -78,6 +78,7 @@ export default {
       showAdvanced: false,
       showParameters: this.flow.parameters?.length > 0,
       parameterDefaults: this.flow.parameters,
+      parameterJsonMode: false,
 
       when: 'now'
     }
@@ -150,7 +151,9 @@ export default {
         if (!obj) return
         Object.keys(obj).forEach(key => {
           try {
-            obj[key] = JSON.parse(obj[key])
+            if (typeof obj[key] == 'string') {
+              obj[key] = JSON.parse(obj[key])
+            }
           } catch {
             //
           }
@@ -169,7 +172,9 @@ export default {
             context: parseObject(this.context),
             id: this.flow.id,
             flowRunName: this.flowRunName,
-            parameters: parseObject(this.parameters),
+            parameters: this.parameterJsonMode
+              ? this.parameters
+              : parseObject(this.parameters),
             scheduledStartTime: this.scheduledStartDateTime,
             runConfig: this.runConfig?.type
               ? { ...this.runConfig, labels: [] }
@@ -190,6 +195,9 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    handleToggleJsonEditor(val) {
+      this.parameterJsonMode = val
     },
     handleLabelInput(val) {
       this.labels = val
@@ -426,6 +434,7 @@ export default {
               :dict="parameterItems"
               disable-edit
               allow-reset
+              @toggle-json-editor="handleToggleJsonEditor"
             />
           </v-col>
         </v-row>
