@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Show current team name on account page if no account name is found - [#923](https://github.com/PrefectHQ/ui/pull/923)
+- Add Automations tab to Flow pages - [#941](https://github.com/PrefectHQ/ui/pull/941)
 
 ### Bugfixes
 
