@@ -12,6 +12,8 @@
 - Fix role highlight in dark mode - [#925](https://github.com/PrefectHQ/ui/pull/925)
 - Fix indentation error in doc code snippet - [#932](https://github.com/PrefectHQ/ui/pull/932)
 - Fix layout issues with the account page in Server - [#938](https://github.com/PrefectHQ/ui/pull/938)
+- Improve type handling when passing parameters to create flow run mutation - [#936](https://github.com/PrefectHQ/ui/pull/936)
+- Fix the default duration seconds when editing an automation - [#937](https://github.com/PrefectHQ/ui/pull/937)
 
 ## 2021-06-24
 
