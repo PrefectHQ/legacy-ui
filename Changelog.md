@@ -6,11 +6,16 @@
 
 - Show current team name on account page if no account name is found - [#923](https://github.com/PrefectHQ/ui/pull/923)
 - Add Automations tab to Flow pages - [#941](https://github.com/PrefectHQ/ui/pull/941)
+- Move logrocket initialization to its own plugin - [#940](https://github.com/PrefectHQ/ui/pull/940)
 
 ### Bugfixes
 
+- Should include a fix for [#929](https://github.com/PrefectHQ/ui/issues/929), [#928](https://github.com/PrefectHQ/ui/issues/928), [#885](https://github.com/PrefectHQ/ui/issues/885), and [#813](https://github.com/PrefectHQ/ui/issues/813) - [#922](https://github.com/PrefectHQ/ui/pull/922)
 - Fix role highlight in dark mode - [#925](https://github.com/PrefectHQ/ui/pull/925)
 - Fix indentation error in doc code snippet - [#932](https://github.com/PrefectHQ/ui/pull/932)
+- Fix layout issues with the account page in Server - [#938](https://github.com/PrefectHQ/ui/pull/938)
+- Improve type handling when passing parameters to create flow run mutation - [#936](https://github.com/PrefectHQ/ui/pull/936)
+- Fix the default duration seconds when editing an automation - [#937](https://github.com/PrefectHQ/ui/pull/937)
 
 ## 2021-06-24
 
