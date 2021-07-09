@@ -40,47 +40,49 @@ export default {
 </script>
 
 <template>
-  <v-card>
-    <div
-      v-if="flowRun.run_config == null"
-      class="text-center text-h5 utilGrayDark--text"
-    >
-      This run has no
-      <span class="font-weight-medium">
-        <v-icon small color="primary" class="ml-1">
-          fa-cogs
-        </v-icon>
-        Run Config</span
-      >! You can learn how to set a run config in the
-      <a
-        href="https://docs.prefect.io/orchestration/ui/flow.html#run"
-        target="_blank"
+  <v-row v-if="flowRun.run_config == null" no-gutters
+    ><v-col>
+      <div
+        class="text-center position-absolute center-absolute text-h5 utilGrayDark--text"
+        style="z-index: 1;"
       >
-        Flow Run Docs</a
-      >.
-    </div>
-    <div v-else>
-      <div class="config-type py-2 d-flex align-center justify-start px-4 my-2">
-        <div class="text-center" style="width: 50px;">
-          <i :class="runConfig.icon" class="fa-2x pi-2x"> </i>
-        </div>
-
-        <div class="w-100 ml-2">
-          <span class="text-h6 mr-2"> {{ runConfig.label }}</span>
-        </div>
+        This run has no
+        <span class="font-weight-medium">
+          <v-icon small color="primary" class="ml-1">
+            fa-cogs
+          </v-icon>
+          Run Config</span
+        >! You can learn how to set a run config in the
+        <a
+          href="https://docs.prefect.io/orchestration/ui/flow.html#run"
+          target="_blank"
+        >
+          Flow Run Docs</a
+        >.
+      </div></v-col
+    ></v-row
+  >
+  <v-card v-else>
+    <div class="config-type py-2 d-flex align-center justify-start px-4 my-2">
+      <div class="text-center" style="width: 50px;">
+        <i :class="runConfig.icon" class="fa-2x pi-2x"> </i>
       </div>
-      <v-row class="row-divider" no-gutters>
-        <v-col>
-          <div
-            v-for="(arg, i) of Object.keys(argList)"
-            :key="i"
-            class="config-container py-2"
-          >
-            <v-card-subtitle class="text-h5">{{ arg }}</v-card-subtitle>
-            <div class="text-subtitle-1 utilGrayDark--text">{{
-              argList[arg]
-            }}</div>
-          </div>
+
+      <div class="ml-2">
+        <span class="text-h6 mr-2"> {{ runConfig.label }}</span>
+      </div>
+    </div>
+    <div
+      v-for="(arg, i) of Object.keys(argList)"
+      :key="i"
+      class="row-divider py-2"
+    >
+      <v-row>
+        <v-col cols="6">
+          <v-card-subtitle class="text-h5">{{ arg }}</v-card-subtitle>
+        </v-col>
+        <v-col cols="6">
+          <v-card-text class="text-subtitle-1">{{ argList[arg] }}</v-card-text>
         </v-col>
       </v-row>
     </div>
@@ -92,11 +94,6 @@ export default {
   border: 2px solid;
   border-color: var(--v-utilGrayLight-base) !important;
   height: 80px;
-}
-.config-container {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 400px));
 }
 
 .row-divider:not(:last-child) {
@@ -111,5 +108,10 @@ export default {
     position: absolute;
     width: 100%;
   }
+}
+.center-absolute {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
