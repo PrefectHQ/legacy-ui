@@ -1,6 +1,10 @@
 <script>
 import { runConfigs } from '@/utils/runConfigs'
+import Label from '@/components/Label'
 export default {
+  components: {
+    Label
+  },
   props: {
     flowRun: {
       required: true,
@@ -29,7 +33,7 @@ export default {
           )
           argList[override.label] = this.flowRun.run_config[arg]
         } else if (arg === 'labels') {
-          argList['Labels'] = arg['labels']
+          argList['Labels'] = this.flowRun.labels
         }
       }
       return argList
@@ -82,7 +86,14 @@ export default {
           <v-card-subtitle class="text-h5">{{ arg }}</v-card-subtitle>
         </v-col>
         <v-col cols="6">
-          <v-card-text class="text-subtitle-1">{{ argList[arg] }}</v-card-text>
+          <v-card-text v-if="arg === 'Labels'">
+            <span v-for="(label, j) in argList[arg]" :key="j"
+              ><Label disabled>{{ label }}</Label></span
+            ></v-card-text
+          >
+          <v-card-text v-else class="text-subtitle-1">{{
+            argList[arg]
+          }}</v-card-text>
         </v-col>
       </v-row>
     </div>
