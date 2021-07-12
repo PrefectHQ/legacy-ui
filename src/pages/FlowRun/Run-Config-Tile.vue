@@ -32,7 +32,7 @@ export default {
             a => a.arg === arg
           )
           argList[override.label] = this.flowRun.run_config[arg]
-        } else if (arg === 'labels') {
+        } else if (arg === 'labels' && this.flowRun.labels.length) {
           argList['Labels'] = this.flowRun.labels
         }
       }
@@ -44,69 +44,82 @@ export default {
 </script>
 
 <template>
-  <v-row v-if="flowRun.run_config == null" no-gutters
-    ><v-col>
-      <div
-        class="text-center position-absolute center-absolute text-h5 utilGrayDark--text"
-        style="z-index: 1;"
-      >
-        This run has no
-        <span class="font-weight-medium">
-          <v-icon small color="primary" class="ml-1">
-            fa-cogs
-          </v-icon>
-          Run Config</span
-        >! You can learn how to set a run config in the
-        <a
-          href="https://docs.prefect.io/orchestration/ui/flow.html#run"
-          target="_blank"
-        >
-          Flow Run Docs</a
-        >.
-      </div></v-col
-    ></v-row
-  >
-  <v-card v-else>
-    <div class="config-type py-2 d-flex align-center justify-start px-4 my-2">
-      <div class="text-center" style="width: 50px;">
-        <i :class="runConfig.icon" class="fa-2x pi-2x"> </i>
-      </div>
-
-      <div class="ml-2">
-        <span class="text-h6 mr-2"> {{ runConfig.label }}</span>
-      </div>
-    </div>
+  <v-card class="px-8">
+    <div class="text-h5 py-8">Custom Run Configurations</div>
     <div
-      v-for="(arg, i) of Object.keys(argList)"
-      :key="i"
-      class="row-divider py-2"
+      v-if="flowRun.run_config == null"
+      class="text-center position-absolute center-absolute text-h5 utilGrayDark--text"
+      style="z-index: 1;"
     >
-      <v-row>
-        <v-col cols="6">
-          <v-card-subtitle class="text-h5">{{ arg }}</v-card-subtitle>
-        </v-col>
-        <v-col cols="6">
-          <v-card-text v-if="arg === 'Labels'">
-            <span v-for="(label, j) in argList[arg]" :key="j"
-              ><Label disabled>{{ label }}</Label></span
-            ></v-card-text
-          >
-          <v-card-text v-else class="text-subtitle-1">{{
-            argList[arg]
-          }}</v-card-text>
-        </v-col>
-      </v-row>
+      This run has no
+      <span class="font-weight-medium">
+        <v-icon small color="primary" class="ml-1">
+          fa-cogs
+        </v-icon>
+        Run Config</span
+      >! You can learn how to set a run config in the
+      <a
+        href="https://docs.prefect.io/orchestration/ui/flow.html#run"
+        target="_blank"
+      >
+        Flow Run Docs</a
+      >.
     </div>
+    <span v-else>
+      <div class="row-divider pt-2 pb-8">
+        <v-row>
+          <v-col cols="4">
+            <v-card-subtitle class="text-h6">Agent</v-card-subtitle>
+          </v-col>
+          <v-col cols="8">
+            <div class="d-flex align-center agent-type">
+              <div class="text-center" style="width: 50px;">
+                <i :class="runConfig.icon" class="fa-2x pi-2x"> </i>
+              </div>
+              <div>
+                <v-card-text class="config-value">{{
+                  runConfig.label
+                }}</v-card-text>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+      </div>
+      <div
+        v-for="(arg, i) of Object.keys(argList)"
+        :key="i"
+        class="row-divider pt-2 pb-8"
+      >
+        <v-row>
+          <v-col cols="4">
+            <v-card-subtitle class="text-h6">{{ arg }}</v-card-subtitle>
+          </v-col>
+          <v-col cols="8">
+            <v-card-text v-if="arg === 'Labels'">
+              <span v-for="(label, j) in argList[arg]" :key="j"
+                ><Label disabled>{{ label }}</Label></span
+              ></v-card-text
+            >
+            <v-card-text
+              v-for="(val, k) of Object.keys(argList[arg])"
+              v-else-if="typeof argList[arg] === 'object'"
+              :key="k"
+              class="config-value"
+            >
+              <span class="pr-2">{{ val }}:</span>
+              <span class="font-italic">{{ argList[arg][val] }}</span>
+            </v-card-text>
+            <v-card-text v-else class="config-value">{{
+              argList[arg]
+            }}</v-card-text>
+          </v-col>
+        </v-row>
+      </div>
+    </span>
   </v-card>
 </template>
 
-<style lang="scss">
-.config-type {
-  border: 2px solid;
-  border-color: var(--v-utilGrayLight-base) !important;
-  height: 80px;
-}
-
+<style lang="scss" scoped>
 .row-divider:not(:last-child) {
   position: relative;
 
@@ -124,5 +137,9 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+.config-value {
+  font-size: 1.1em;
 }
 </style>
