@@ -1,4 +1,5 @@
 import { login, switchTenant, commitTokens } from '@/auth/index.js'
+import { initializeLogrocket } from '@/plugins/logrocket.js'
 import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
@@ -112,6 +113,7 @@ export const start = async () => {
   CreatePrefectUI()
 }
 
+initializeLogrocket()
 start()
 
 // ******************************************************************************************

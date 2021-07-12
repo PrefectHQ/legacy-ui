@@ -68,6 +68,9 @@ export default {
         {}
       )
       return this.paramVal(paramObj)
+    },
+    hasFlowGroupSchedule() {
+      return this.flowGroupClocks && this.flowGroupClocks.length > 0
     }
   },
   watch: {
@@ -95,9 +98,15 @@ export default {
           ...this.clocks[this.selectedClock],
           ...val
         }
+
+        let shifted = [...this.clocks]
+        shifted.unshift(shifted.splice(this.selectedClock, 1)[0])
+
+        this.clocks = shifted
       } else {
         isNew = true
         this.clocks.push({ ...val, scheduleType: 'flow-group' })
+        this.clocks = this.clocks.reverse()
       }
 
       await this.modifySchedules({ new: isNew })
@@ -238,13 +247,13 @@ export default {
       }
     },
     timezoneVal(clock) {
-      let tz = this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
-      if (clock?.timezone) {
-        tz = clock?.timezone
-      } else if (clock?.start_date?.tz) {
-        tz = clock?.start_date?.tz
+      if (clock.scheduleType == 'flow') {
+        return clock?.start_date?.tz || 'UTC'
+      } else if (this.clocks[0] && clock.scheduleType == 'flow-group') {
+        return this.clocks[0]?.timezone || this.clocks[0]?.start_date?.tz
       }
-      return tz
+
+      return this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
     },
     paramVal(clock) {
       if (!clock) {
@@ -331,7 +340,12 @@ export default {
 
                 <div v-show="selectedTab === 0">
                   <ClockForm
+                    :flow-group-clocks="flowGroupClocks"
                     :param="parameter"
+                    :timezone="
+                      this.timezone ||
+                        Intl.DateTimeFormat().resolvedOptions().timeZone
+                    "
                     @cancel="selectedClock = null"
                     @confirm="createClock"
                   />
@@ -395,7 +409,9 @@ export default {
               clock.scheduleType == 'flow'
                 ? '4px solid var(--v-primary-base) !important'
                 : '',
-            'border-left-color': 'var(--v-primary-base) !important'
+            'border-left-color': 'var(--v-primary-base) !important',
+            opacity:
+              hasFlowGroupSchedule && clock.scheduleType == 'flow' ? '0.5' : ''
           }"
           tile
         >
@@ -418,6 +434,7 @@ export default {
 
               <div v-show="selectedTab === 0">
                 <ClockForm
+                  :flow-group-clocks="flowGroupClocks"
                   :cron="clock.cron"
                   :param="parameter"
                   :interval="clock.interval"
@@ -498,13 +515,19 @@ export default {
                     </v-tooltip>
 
                     <v-tooltip
-                      v-if="'parameter_defaults' in clock"
+                      v-if="
+                        clock.parameter_defaults &&
+                          Object.keys(clock.parameter_defaults).length !== 0
+                      "
                       max-width="200"
                       top
                     >
                       <template #activator="{ on }">
                         <v-chip
-                          v-if="'parameter_defaults' in clock"
+                          v-if="
+                            clock.parameter_defaults &&
+                              Object.keys(clock.parameter_defaults).length !== 0
+                          "
                           class="px-2 rounded-sm mr-1"
                           label
                           color="codeBlue lighten-1"
@@ -516,6 +539,27 @@ export default {
                         </v-chip>
                       </template>
                       This schedule overrides default parameters.
+                    </v-tooltip>
+
+                    <v-tooltip
+                      v-if="
+                        hasFlowGroupSchedule && clock.scheduleType == 'flow'
+                      "
+                      max-width="300"
+                      top
+                    >
+                      <template #activator="{ on }">
+                        <v-chip
+                          class="px-2 rounded-sm mr-1"
+                          label
+                          x-small
+                          v-on="on"
+                        >
+                          Not scheduled
+                        </v-chip>
+                      </template>
+                      The existing flow group schedule will overide this
+                      schedule.
                     </v-tooltip>
                   </div>
                 </v-col>
@@ -551,12 +595,22 @@ export default {
                             colored-border
                             elevation="0"
                             type="warning"
-                            tile
+                            dense
                             icon="warning"
                             max-width="500"
                           >
-                            This schedule was set in your Flow's code so it
-                            can't be modifed.
+                            <div class="text-body-2 ma-0"
+                              >This schedule was set in your Flow's code so it
+                              can't be modifed.</div
+                            >
+
+                            <div
+                              v-if="hasFlowGroupSchedule"
+                              class="text-body-2 ma-0 mt-2"
+                            >
+                              The existing flow group schedule will overide this
+                              schedule.
+                            </div>
                           </v-alert>
                         </p>
                         <p>
