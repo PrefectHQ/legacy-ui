@@ -1,10 +1,8 @@
 <script>
-import CardTitle from '@/components/Card-Title'
 import AutoCard from '@/pages/Dashboard/Automations/AutomationCard'
 
 export default {
   components: {
-    CardTitle,
     AutoCard
   },
   props: {
@@ -29,8 +27,8 @@ export default {
     async sortHooks() {
       this.loadCards = true
       const hooks = this.hooks ? [...this.hooks] : []
-      let filtered = hooks.filter(
-        hook => hook.event_tags.flow_group_id === this.flow.flow_group_id
+      let filtered = hooks.filter(hook =>
+        hook.event_tags.flow_group_id?.includes(this.flow.flow_group_id)
       )
       const slaFlows = hooks.filter(
         hook => hook.event_tags.flow_sla_config_id != null
@@ -59,7 +57,7 @@ export default {
   apollo: {
     hooks: {
       query() {
-        return require('@/graphql/Automations/hooks.gql')
+        return require('@/graphql/Automations/flow-only-hooks.gql')
       },
       variables() {
         return {}
@@ -73,7 +71,21 @@ export default {
 
 <template>
   <v-card class="pa-2 mt-2" tile>
-    <CardTitle title="Automations" icon="fa-random" />
+    <v-list-item dense class="px-0" :to="params">
+      <v-list-item-avatar class="mr-2" tile>
+        <v-icon class="icon">
+          fad fa-random
+        </v-icon>
+      </v-list-item-avatar>
+      <v-list-item-content class="position: relative;">
+        <v-list-item-title class="text-h6 pb-1">
+          <div>
+            Automations
+          </div>
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-divider class="ml-12 mr-2"></v-divider>
 
     <v-card-text class="full-height position-relative">
       <v-row>
@@ -92,6 +104,11 @@ export default {
           indeterminate
           color="primary"
         />
+        <v-col
+          v-if="!sortedHooks.length && loadingHook == 0"
+          class="text-center text-h6 py-8"
+          >There are no automations associated with this flow.</v-col
+        >
         <v-col v-for="(hook, i) in sortedHooks" :key="i" cols="12">
           <v-skeleton-loader
             v-if="loadingHook > 0 || loadCards"
@@ -108,5 +125,8 @@ export default {
 <style lang="scss" scoped>
 .full-height {
   min-height: 68vh;
+}
+.icon {
+  height: 24px;
 }
 </style>

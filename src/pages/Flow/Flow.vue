@@ -96,7 +96,7 @@ export default {
         {
           name: 'Automations',
           target: 'automations',
-          icon: 'fa-random'
+          icon: 'fad fa-random'
         },
         // {
         //   name: 'Versions',
@@ -504,7 +504,7 @@ export default {
 
       <v-btn :input-value="tab == 'automations'" @click="tab = 'automations'">
         Automations
-        <v-icon>fa-random</v-icon>
+        <v-icon>fad fa-random</v-icon>
       </v-btn>
 
       <v-btn :input-value="tab == 'versions'" @click="tab = 'description'">
