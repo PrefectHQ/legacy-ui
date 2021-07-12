@@ -44,7 +44,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="px-8">
+  <v-card class="px-8 full-height">
     <div class="text-h5 py-8">Custom Run Configurations</div>
     <div
       v-if="flowRun.run_config == null"
@@ -120,6 +120,9 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.full-height {
+  min-height: 68vh;
+}
 .row-divider:not(:last-child) {
   position: relative;
 
