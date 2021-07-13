@@ -1,5 +1,5 @@
 query Actions {
-  hook{
+  hook(where: { event_type: { _neq: "AgentSLAFailedEvent" } }) {
     id
     event_tags
     created

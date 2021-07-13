@@ -71,7 +71,7 @@ export default {
 
 <template>
   <v-card class="pa-2 mt-2" tile>
-    <v-list-item dense class="px-0" :to="params">
+    <v-list-item dense class="px-0">
       <v-list-item-avatar class="mr-2" tile>
         <v-icon class="icon">
           fad fa-random
@@ -105,7 +105,7 @@ export default {
           color="primary"
         />
         <v-col
-          v-if="!sortedHooks.length && loadingHook == 0"
+          v-if="!sortedHooks.length && loadingHook == 0 && !loadCards"
           class="text-center text-h6 py-8"
           >There are no automations associated with this flow.</v-col
         >
