@@ -320,7 +320,7 @@ export default {
       <v-fade-transition hide-on-leave>
         <div
           v-if="tab === 'parameters'"
-          class="text-body-2 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-5 code-block"
+          class="text-body-2 appForeground rounded-sm pa-5 code-block"
         >
           {{ formatJson(flowRunParams) }}
         </div>
@@ -329,7 +329,7 @@ export default {
       <v-fade-transition hide-on-leave>
         <div
           v-if="tab === 'context'"
-          class="text-body-2 grey lighten-5 blue-grey--text text--darken-2 rounded-sm pa-5 code-block"
+          class="text-body-2 appForeground rounded-sm pa-5 code-block"
         >
           {{ formatJson(flowRun.context) }}
         </div>
