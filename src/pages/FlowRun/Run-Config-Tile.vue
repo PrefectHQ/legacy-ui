@@ -96,7 +96,7 @@ export default {
           </v-col>
           <v-col cols="8">
             <v-card-text v-if="arg === 'Labels'">
-              <span v-for="(label, j) in argList[arg]" :key="j"
+              <span v-for="(label, j) in argList[arg]" :key="j" class="pr-2"
                 ><Label disabled>{{ label }}</Label></span
               ></v-card-text
             >
