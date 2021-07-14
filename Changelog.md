@@ -4,7 +4,18 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-07-13
+
+### Features and Improvements
+
 - Show current team name on account page if no account name is found - [#923](https://github.com/PrefectHQ/ui/pull/923)
+- Adjusts text and background colors on the parameters and context views on the flow run details tile - [#939](https://github.com/PrefectHQ/ui/pull/939)
 - Move logrocket initialization to its own plugin - [#940](https://github.com/PrefectHQ/ui/pull/940)
 - Add Run Config tab to flow run page - [#942](https://github.com/PrefectHQ/ui/pull/942)
 
