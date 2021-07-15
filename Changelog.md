@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Setup Ngnix to run on rootless mode
 
 ### Bugfixes
 
