@@ -65,7 +65,7 @@ export default {
           mutation: require('@/graphql/support/send-feedback.gql'),
           variables: {
             type: this.selectedCategory,
-            message: this.message
+            message: this.messageWithLogRocketSession
           }
         })
         this.success = data?.send_feedback?.success
