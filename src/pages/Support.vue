@@ -36,6 +36,16 @@ export default {
     },
     mdScreen() {
       return this.$vuetify?.breakpoint?.mdAndUp
+    },
+    messageWithLogRocketSession() {
+      let url = ''
+      LogRocket.getSessionURL(sessionURL => {
+        url = sessionURL
+      })
+      return this.selectedCategory === 'I need help' ||
+        this.selectedCategory === "I've found a bug"
+        ? `${this.message} Relevant LogRocket URL: ${url}`
+        : this.message
     }
   },
   methods: {
