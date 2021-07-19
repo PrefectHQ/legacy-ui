@@ -9,6 +9,7 @@
 ### Bugfixes
 
 - Add secret name and value routes to limit and offset exceptions - [#955](https://github.com/PrefectHQ/ui/pull/955)
+- Add sort to healthy agent list - [#947](https://github.com/PrefectHQ/ui/pull/947)
 
 ## 2021-07-13
 
