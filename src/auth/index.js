@@ -58,7 +58,6 @@ if (TokenWorker?.port) {
         break
       case 'console':
       case 'error':
-        // eslint-disable-next-line no-console
         LogRocket.track('TokenWorker Message', payload)
         break
       default:
@@ -193,7 +192,11 @@ export const login = async () => {
     // If this session fails to get idTokens, we call the logout method
     // to post messages to all other sessions that they need to sign out
     // This also clears all stored tokens for sessions
-    logout()
+    TokenWorker.port.postMessage({
+      type: 'clear'
+    })
+    // await authClient.signOut()
+    unsetTokens()
   }
 }
 

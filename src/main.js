@@ -3,6 +3,7 @@ import { initializeLogrocket } from '@/plugins/logrocket.js'
 import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
+import LogRocket from 'logrocket'
 
 export const setStartupTenant = async () => {
   const path = window.location.pathname
@@ -85,6 +86,16 @@ export const start = async () => {
     loading = true
     const tokens = await login()
     commitTokens(tokens)
+
+    if (tokens) {
+      LogRocket.track('Tokens', {
+        source: tokens.source,
+        idTokenExpiration: tokens.idToken.expiresAt * 1000 || 'No id token',
+        authorizationTokenExpiration:
+          tokens?.authorizationTokens?.expires_at || 'No authorization token'
+      })
+    }
+
     loading = false
   } else {
     // If we're on Server we fetch settings
@@ -110,6 +121,7 @@ export const start = async () => {
 
   // eslint-disable-next-line no-console
   console.log('Start total: ', start1 - start0)
+  LogRocket.track('Start', { timeToStart: start1 - start0 })
   CreatePrefectUI()
 }
 

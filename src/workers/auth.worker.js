@@ -74,7 +74,7 @@ const handleSwitchTenant = async tenantId => {
     message: 'handleSwitchTenant',
     token: state.authorizationToken,
     tenantId: tenantId,
-    currentTime: new Date()
+    currentTime: Date.now()
   })
 }
 
@@ -99,8 +99,8 @@ const setAuthorizationToken = token => {
 
     console.connect({
       message: 'setAuthorizationToken',
-      token: token,
-      currentTime: new Date()
+      token: token.expires_at || 'No token',
+      currentTime: new Date().toString()
     })
     authorizationTimeout = setTimeout(() => {
       refreshAuthorizationToken()
@@ -114,8 +114,8 @@ const setAuthorizationToken = token => {
 const handleLogin = async () => {
   console.connect({
     message: 'handleLogin',
-    token: state.idToken,
-    currentTime: new Date()
+    tokenExpiration: state.idToken?.expires_at * 1000 || 'No Token',
+    currentTime: new Date().toString()
   })
   postToChannelPorts({ payload: state.idToken })
 }
@@ -126,8 +126,18 @@ const handleLogout = async () => {
   postToConnections({ type: 'logout' })
   console.connect({
     message: 'handleLogout',
-    token: state.tenantId,
-    currentTime: new Date()
+    tenantId: state.tenantId,
+    currentTime: new Date().toString()
+  })
+}
+
+const handleClear = () => {
+  state.idToken = null
+  state.authorizationToken = null
+  console.connect({
+    message: 'handleClear',
+    tenantId: state.tenantId || 'No tenant',
+    currentTime: new Date().toString()
   })
 }
 
@@ -182,11 +192,7 @@ const connect = c => {
     }
 
     if (type == 'clear') {
-      console.connect({
-        message: 'Clearing session from Auth Worker',
-        currentTime: new Date()
-      })
-      handleLogout()
+      handleClear()
     }
   }
 
