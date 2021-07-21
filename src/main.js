@@ -113,7 +113,11 @@ export const start = async () => {
   CreatePrefectUI()
 }
 
-initializeLogrocket()
+try {
+  initializeLogrocket()
+} catch (e) {
+  console.error('Failed to initialize LogRocket: ', e)
+}
 start()
 
 // ******************************************************************************************
