@@ -22,7 +22,7 @@ RUN npm ci
 # Build static files
 RUN npm run build
 
-FROM nginx:stable
+FROM nginxinc/nginx-unprivileged:stable
 
 # Update package list and install the jq package
 # which we use for manipulating settings JSON blobs
