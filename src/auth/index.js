@@ -39,6 +39,11 @@ if (TokenWorker?.port) {
       case 'authorizationToken':
         commitTokens({ authorizationTokens: payload })
         break
+      case 'clear':
+        authClient.tokenManager.clear()
+        unsetTokens()
+        authClient.signOut()
+        break
       case 'logout':
         authClient.signOut()
         unsetTokens()
@@ -69,7 +74,7 @@ if (TokenWorker?.port) {
   TokenWorker.port.onmessageerror = e => {
     // eslint-disable-next-line no-console
     console.log('Error message received from Token Worker', e)
-    // LogRocket.captureException(e)
+    LogRocket.captureException(e)
   }
 
   TokenWorker.port.start()
@@ -180,6 +185,7 @@ export const login = async () => {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Login error', e)
+    LogRocket.captureException(e)
   }
 
   if (idToken && authorizationTokens) {
@@ -195,8 +201,6 @@ export const login = async () => {
     TokenWorker.port.postMessage({
       type: 'clear'
     })
-    // await authClient.signOut()
-    unsetTokens()
   }
 }
 
@@ -233,6 +237,7 @@ export const logout = async () => {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log(e)
+      LogRocket.captureException(e)
     }
   }
 }
