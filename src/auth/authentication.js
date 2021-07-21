@@ -38,6 +38,8 @@ export const authClient = new OktaAuth({
   }
 })
 
+authClient.start()
+
 export const authenticate = async () => {
   const isLoginRedirect = await authClient.isLoginRedirect()
   const redirectRoute = sessionStorage.getItem('redirectRoute')

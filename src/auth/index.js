@@ -162,11 +162,11 @@ export const login = async () => {
         })
       }
 
-      if (idToken) {
+      if (idToken && (idToken.idToken || idToken.value)) {
         authorizationTokens = await promiseChannel(
           TokenWorker,
           'authorize',
-          idToken.value
+          idToken.idToken || idToken.value
         )
       }
     } else {
