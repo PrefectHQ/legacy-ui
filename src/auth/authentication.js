@@ -73,6 +73,8 @@ export const authenticate = async () => {
         const idToken = await authClient.tokenManager.renew('idToken')
         tokens.idToken = idToken
       } catch {
+        // Remove all tokens from the token manager before we redirect
+        await authClient.tokenManager.clear()
         await authClient.token.getWithRedirect({
           responseType: ['token', 'id_token']
         })
@@ -82,6 +84,8 @@ export const authenticate = async () => {
     authClient.tokenManager.setTokens(tokens)
     return tokens
   }
+  // Remove all tokens from the token manager before we redirect
+  await authClient.tokenManager.clear()
   await authClient.token.getWithRedirect({
     responseType: ['token', 'id_token']
   })
