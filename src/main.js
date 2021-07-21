@@ -107,6 +107,7 @@ export const start = async () => {
     window.prefect_ui_settings = await fetch('/settings.json')
       .then(response => response.json())
       .then(data => data)
+      .catch(e => e)
   }
 
   try {
