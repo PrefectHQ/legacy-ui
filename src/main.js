@@ -87,12 +87,16 @@ export const start = async () => {
     const tokens = await login()
 
     if (tokens) {
-      LogRocket.track('Tokens', {
-        source: tokens.source || 'No source',
-        idTokenExpiration: tokens.idToken?.expiresAt * 1000 || 'No id token',
-        authorizationTokenExpiration:
-          tokens.authorizationTokens?.expires_at || 'No authorization token'
-      })
+      try {
+        LogRocket.track('Tokens', {
+          source: tokens.source || 'No source',
+          idTokenExpiration: tokens.idToken?.expiresAt * 1000 || 'No id token',
+          authorizationTokenExpiration:
+            tokens.authorizationTokens?.expires_at || 'No authorization token'
+        })
+      } catch {
+        // do nothing if this fails
+      }
     }
 
     commitTokens(tokens)
