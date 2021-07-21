@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Add sort to healthy agent list - [#947](https://github.com/PrefectHQ/ui/pull/947)
 
 ## 2021-07-13
 
