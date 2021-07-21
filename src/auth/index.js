@@ -195,9 +195,9 @@ export const login = async () => {
       source: source
     }
   } else {
-    // If this session fails to get idTokens, we call the logout method
+    // If this session fails to get idTokens, we call the clear method
     // to post messages to all other sessions that they need to sign out
-    // This also clears all stored tokens for sessions
+    // This also clears all stored tokens for these sessions
     TokenWorker.port.postMessage({
       type: 'clear'
     })
