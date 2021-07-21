@@ -85,16 +85,17 @@ export const start = async () => {
     // we swap out these tokens later
     loading = true
     const tokens = await login()
-    commitTokens(tokens)
 
     if (tokens) {
       LogRocket.track('Tokens', {
-        source: tokens.source,
-        idTokenExpiration: tokens.idToken.expiresAt * 1000 || 'No id token',
+        source: tokens.source || 'No source',
+        idTokenExpiration: tokens.idToken?.expiresAt * 1000 || 'No id token',
         authorizationTokenExpiration:
-          tokens?.authorizationTokens?.expires_at || 'No authorization token'
+          tokens.authorizationTokens?.expires_at || 'No authorization token'
       })
     }
+
+    commitTokens(tokens)
 
     loading = false
   } else {
