@@ -44,7 +44,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="px-8 full-height">
+  <div class="px-8 full-height">
     <div class="text-h5 py-8">Custom Run Configurations</div>
     <div
       v-if="flowRun.run_config == null"
@@ -66,10 +66,10 @@ export default {
       >.
     </div>
     <span v-else>
-      <div class="row-divider pt-2 pb-8">
+      <div class="row-divider py-4">
         <v-row>
           <v-col cols="4">
-            <v-card-subtitle class="text-h6">Agent</v-card-subtitle>
+            <v-card-subtitle>Run Configuration</v-card-subtitle>
           </v-col>
           <v-col cols="8">
             <div class="d-flex align-center agent-type">
@@ -88,11 +88,11 @@ export default {
       <div
         v-for="(arg, i) of Object.keys(argList)"
         :key="i"
-        class="row-divider pt-2 pb-8"
+        class="row-divider py-4"
       >
         <v-row>
           <v-col cols="4">
-            <v-card-subtitle class="text-h6">{{ arg }}</v-card-subtitle>
+            <v-card-subtitle>{{ arg }}</v-card-subtitle>
           </v-col>
           <v-col cols="8">
             <v-card-text v-if="arg === 'Labels'">
@@ -100,15 +100,26 @@ export default {
                 ><Label disabled>{{ label }}</Label></span
               ></v-card-text
             >
+            <!-- pull secrets list -->
             <v-card-text
-              v-for="(val, k) of Object.keys(argList[arg])"
+              v-for="(item, j) in argList[arg]"
+              v-else-if="Array.isArray(argList[arg])"
+              :key="j"
+              class="config-value"
+            >
+              {{ item }}</v-card-text
+            >
+            <!-- json and KV pairs -->
+            <v-card-text
+              v-for="(val, j) of Object.keys(argList[arg])"
               v-else-if="typeof argList[arg] === 'object'"
-              :key="k"
+              :key="j"
               class="config-value"
             >
               <span class="pr-2">{{ val }}:</span>
               <span class="font-italic">{{ argList[arg][val] }}</span>
             </v-card-text>
+            <!-- regular strings -->
             <v-card-text v-else class="config-value">{{
               argList[arg]
             }}</v-card-text>
@@ -116,7 +127,7 @@ export default {
         </v-row>
       </div>
     </span>
-  </v-card>
+  </div>
 </template>
 
 <style lang="scss" scoped>
