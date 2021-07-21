@@ -7,6 +7,7 @@ import {
 } from '@/auth/authorization.js'
 
 import store from '@/store'
+import LogRocket from 'logrocket'
 
 import jwt_decode from 'jwt-decode'
 
@@ -58,7 +59,7 @@ if (TokenWorker?.port) {
       case 'console':
       case 'error':
         // eslint-disable-next-line no-console
-        console.log(payload)
+        LogRocket.track('TokenWorker Message', payload)
         break
       default:
         break

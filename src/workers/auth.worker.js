@@ -69,6 +69,13 @@ const handleSwitchTenant = async tenantId => {
     type: 'switch-tenant',
     payload: { token: state.authorizationToken, tenantId: tenantId }
   })
+
+  console.connect({
+    message: 'handleSwitchTenant',
+    token: state.authorizationToken,
+    tenantId: tenantId,
+    currentTime: new Date()
+  })
 }
 
 let authorizationTimeout = null
@@ -91,8 +98,8 @@ const setAuthorizationToken = token => {
     const timeout = ((expiration - Date.now()) * 3) / 4
 
     console.connect({
-      message: 'Auth worker',
-      expiration: expiration,
+      message: 'setAuthorizationToken',
+      token: token,
       currentTime: new Date()
     })
     authorizationTimeout = setTimeout(() => {
@@ -105,6 +112,11 @@ const setAuthorizationToken = token => {
 }
 
 const handleLogin = async () => {
+  console.connect({
+    message: 'handleLogin',
+    token: state.idToken,
+    currentTime: new Date()
+  })
   postToChannelPorts({ payload: state.idToken })
 }
 
@@ -112,6 +124,11 @@ const handleLogout = async () => {
   state.idToken = null
   state.authorizationToken = null
   postToConnections({ type: 'logout' })
+  console.connect({
+    message: 'handleLogout',
+    token: state.tenantId,
+    currentTime: new Date()
+  })
 }
 
 let authorizing = false
