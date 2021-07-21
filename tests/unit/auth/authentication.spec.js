@@ -92,18 +92,13 @@ describe('the authentication module', () => {
         expect(history.replaceState).toHaveBeenCalledWith(null, null, '/foo')
       })
 
-      it('redirects to access denied if we fail to get tokens', async () => {
-        window.location.assign = jest.fn()
-
+      it('throws error if we fail to get tokens', async () => {
         parseFromUrl.mockImplementation(() => {
           throw new Error('access denied')
         })
 
         const authenticate = mod.authenticate()
-        await expect(authenticate).rejects.toThrow('Error: access denied')
-
-        expect(window.location.assign).toHaveBeenCalledWith('/access-denied')
-        window.location.assign.mockRestore()
+        await expect(authenticate).rejects.toThrow('access denied')
       })
     })
 
@@ -146,16 +141,6 @@ describe('the authentication module', () => {
         await mod.authenticate()
 
         expect(getTokens).toHaveBeenCalledTimes(1)
-      })
-
-      it('calls the set tokens method when get tokens from the token manager', async () => {
-        const tokens = { idToken: 'foo', accessToken: 'bar' }
-        getTokens.mockReturnValueOnce(tokens)
-
-        await mod.authenticate()
-
-        expect(getTokens).toHaveBeenCalledTimes(1)
-        expect(setTokens).toHaveBeenCalledWith(tokens)
       })
 
       it('gets tokens with redirect if none are returned from the token manager', async () => {

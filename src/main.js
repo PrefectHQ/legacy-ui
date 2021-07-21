@@ -133,6 +133,7 @@ export const start = async () => {
 try {
   initializeLogrocket()
 } catch (e) {
+  // eslint-disable-next-line no-console
   console.error('Failed to initialize LogRocket: ', e)
 }
 start()

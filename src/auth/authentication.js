@@ -44,21 +44,15 @@ export const authenticate = async () => {
   const isLoginRedirect = await authClient.isLoginRedirect()
   const redirectRoute = sessionStorage.getItem('redirectRoute')
   if (isLoginRedirect) {
-    try {
-      const { tokens } = await authClient.token.parseFromUrl()
+    const { tokens } = await authClient.token.parseFromUrl()
 
-      authClient.tokenManager.setTokens(tokens)
-      if (redirectRoute) {
-        history.replaceState(null, null, redirectRoute)
-        sessionStorage.removeItem('redirectRoute')
-      }
-
-      return tokens
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Authentication error', e)
-      window.location.assign('/access-denied')
+    authClient.tokenManager.setTokens(tokens)
+    if (redirectRoute) {
+      history.replaceState(null, null, redirectRoute)
+      sessionStorage.removeItem('redirectRoute')
     }
+
+    return tokens
   } else {
     if (window.location?.pathname && !redirectRoute) {
       sessionStorage.setItem(
