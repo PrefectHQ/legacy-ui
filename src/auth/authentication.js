@@ -55,6 +55,7 @@ export const authenticate = async () => {
 
       return tokens
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('Authentication error', e)
       window.location.assign('/access-denied')
     }
