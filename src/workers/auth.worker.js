@@ -3,6 +3,7 @@ import {
   refreshTokens,
   authorizeTenant
 } from '@/auth/authorization.js'
+import jwt_decode from 'jwt-decode'
 
 const ports = []
 const channelPorts = []
@@ -89,7 +90,11 @@ const setAuthorizationToken = token => {
     const expiration = new Date(token.expires_at)
     const timeout = ((expiration - Date.now()) * 3) / 4
 
-    console.connect(expiration, timeout)
+    console.connect({
+      message: 'Auth worker',
+      expiration: expiration,
+      currentTime: new Date()
+    })
     authorizationTimeout = setTimeout(() => {
       refreshAuthorizationToken()
     }, timeout || 15000)
@@ -139,6 +144,10 @@ const connect = c => {
       handleLogin()
     }
 
+    if (type == 'idToken') {
+      state.idToken = payload
+    }
+
     if (type == 'logout') {
       handleLogout()
     }
@@ -153,6 +162,14 @@ const connect = c => {
     if (type == 'switch-tenant') {
       channelPorts.push(channelPort)
       handleSwitchTenant(payload)
+    }
+
+    if (type == 'clear') {
+      console.connect({
+        message: 'Clearing session from Auth Worker',
+        currentTime: new Date()
+      })
+      handleLogout()
     }
   }
 

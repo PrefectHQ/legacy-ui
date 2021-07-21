@@ -53,8 +53,8 @@ export const authenticate = async () => {
 
       return tokens
     } catch (e) {
+      console.error('Authentication error', e)
       window.location.assign('/access-denied')
-      throw new Error(e)
     }
   } else {
     if (window.location?.pathname && !redirectRoute) {

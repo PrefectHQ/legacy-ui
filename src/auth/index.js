@@ -55,6 +55,11 @@ if (TokenWorker?.port) {
           }
         }
         break
+      case 'console':
+      case 'error':
+        // eslint-disable-next-line no-console
+        console.log(payload)
+        break
       default:
         break
     }
@@ -100,7 +105,6 @@ export const commitTokens = tokens => {
 export const unsetTokens = () => {
   store.commit('auth/unsetIdToken')
   store.commit('auth/unsetIdTokenExpiry')
-  store.commit('auth/unsetOktaUser')
   store.commit('auth/unsetUser')
   store.commit('auth/unsetAuthorizationToken')
   store.commit('auth/unsetAuthorizationTokenExpiry')
@@ -140,41 +144,55 @@ export const login = async () => {
   // try getting a token from the service worker
   // if we have a service worker, ping that for a token
   // otherwise we go through the okta login process directly
-  let idToken, authorizationTokens
+  let idToken, authorizationTokens, source
+  try {
+    if (TokenWorker) {
+      idToken = await promiseChannel(TokenWorker, 'login')
+      source = 'TokenWorker'
 
-  if (TokenWorker) {
-    idToken = await promiseChannel(TokenWorker, 'login')
+      if (!idToken || idToken.expiresAt * 1000 < Date.now()) {
+        const loginResponse = await authenticate()
 
-    if (!idToken || idToken.expiresAt * 1000 < Date.now()) {
+        idToken = loginResponse?.idToken
+        source = 'AuthClient'
+
+        TokenWorker.port.postMessage({
+          type: 'idToken',
+          payload: idToken
+        })
+      }
+
+      if (idToken) {
+        authorizationTokens = await promiseChannel(
+          TokenWorker,
+          'authorize',
+          idToken.value
+        )
+      }
+    } else {
       const loginResponse = await authenticate()
-
+      source = 'AuthClient'
       idToken = loginResponse?.idToken
 
-      TokenWorker.port.postMessage({
-        type: 'idToken',
-        payload: idToken
-      })
-
-      if (!idToken) return
+      authorizationTokens = await authorize(idToken.value)
+      refresh(authorizationTokens)
     }
-
-    authorizationTokens = await promiseChannel(
-      TokenWorker,
-      'authorize',
-      idToken.value
-    )
-  } else {
-    const loginResponse = await authenticate()
-
-    idToken = loginResponse?.idToken
-
-    authorizationTokens = await authorize(idToken.value)
-    refresh(authorizationTokens)
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Login error', e)
   }
 
-  return {
-    idToken: idToken,
-    authorizationTokens: authorizationTokens
+  if (idToken && authorizationTokens) {
+    return {
+      idToken: idToken,
+      authorizationTokens: authorizationTokens,
+      source: source
+    }
+  } else {
+    // If this session fails to get idTokens, we call the logout method
+    // to post messages to all other sessions that they need to sign out
+    // This also clears all stored tokens for sessions
+    logout()
   }
 }
 

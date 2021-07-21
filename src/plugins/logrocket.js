@@ -14,7 +14,7 @@ export const initializeLogrocket = () => {
     process.env.VUE_APP_BACKEND === 'CLOUD'
   ) {
     LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID, {
-      release: process.env.VUE_APP_BASE_URL,
+      release: process.env.VUE_APP_RELEASE_TIMESTAMP,
       network: {
         // Requests in the blockedRequests list
         // will be sanitized from analytics
