@@ -153,8 +153,10 @@ const handleVisibilityChange = async () => {
 
   if (!document[hidden]) {
     if (
-      !store.getters['auth/isAuthenticated'] ||
-      !store.getters['auth/isAuthorized']
+      (!store.getters['auth/isAuthenticated'] ||
+        !store.getters['auth/isAuthorized']) &&
+      !window.location.pathname?.includes('logout') &&
+      !window.location.pathname?.includes('access-denied')
     ) {
       const tokens = await login()
       commitTokens(tokens)
