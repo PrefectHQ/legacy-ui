@@ -8,6 +8,12 @@
 
 ### Bugfixes
 
+- None
+
+## 2021-07-22
+
+### Bugfixes
+
 - Fix an issue with non-ShareWorker-enabled browsers that were accessing the id token value incorrectly - [#960](https://github.com/PrefectHQ/ui/pull/960)
 
 ## 2021-07-21
