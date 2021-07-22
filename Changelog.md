@@ -9,7 +9,18 @@
 ### Bugfixes
 
 - Add secret name and value routes to limit and offset exceptions - [#955](https://github.com/PrefectHQ/ui/pull/955)
+
+## 2021-07-21
+
+### Features and Improvements
+
+- Setup Ngnix to run on rootless mode - [#946](https://github.com/PrefectHQ/ui/pull/946)
+
+### Bugfixes
+
 - Add sort to healthy agent list - [#947](https://github.com/PrefectHQ/ui/pull/947)
+- Fix an issue where id tokens weren't being added to worker memory properly - [#957](https://github.com/PrefectHQ/ui/pull/957)
+- Update okta-auth-js to 5.x - [#957](https://github.com/PrefectHQ/ui/pull/957)
 
 ## 2021-07-13
 
