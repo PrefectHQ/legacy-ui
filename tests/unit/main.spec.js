@@ -7,6 +7,7 @@ jest.mock('@/auth/index.js', () => ({
   switchTenant: jest.fn(),
   commitTokens: jest.fn()
 }))
+jest.mock('logrocket')
 
 const url = 'https://cloud.prefect.io'
 Object.defineProperty(window, 'location', {
@@ -18,11 +19,16 @@ Object.defineProperty(window, 'location', {
 import { CreatePrefectUI } from '@/app.js'
 
 describe('Main', () => {
+  it('says hello', () => {
+    expect('hello').toEqual('hello')
+  })
+
   it('exports the setStartupTenant method', () => {
     const mod = require('@/main.js')
 
     expect(mod.setStartupTenant).toBeDefined()
   })
+
   it('exports the start method', () => {
     const mod = require('@/main.js')
 

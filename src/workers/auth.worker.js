@@ -3,6 +3,7 @@ import {
   refreshTokens,
   authorizeTenant
 } from '@/auth/authorization.js'
+import jwt_decode from 'jwt-decode'
 
 const ports = []
 const channelPorts = []
@@ -68,6 +69,13 @@ const handleSwitchTenant = async tenantId => {
     type: 'switch-tenant',
     payload: { token: state.authorizationToken, tenantId: tenantId }
   })
+
+  console.connect({
+    message: 'handleSwitchTenant',
+    token: state.authorizationToken,
+    tenantId: tenantId,
+    currentTime: Date.now()
+  })
 }
 
 let authorizationTimeout = null
@@ -89,7 +97,11 @@ const setAuthorizationToken = token => {
     const expiration = new Date(token.expires_at)
     const timeout = ((expiration - Date.now()) * 3) / 4
 
-    console.connect(expiration, timeout)
+    console.connect({
+      message: 'setAuthorizationToken',
+      token: token.expires_at || 'No token',
+      currentTime: new Date().toString()
+    })
     authorizationTimeout = setTimeout(() => {
       refreshAuthorizationToken()
     }, timeout || 15000)
@@ -100,6 +112,11 @@ const setAuthorizationToken = token => {
 }
 
 const handleLogin = async () => {
+  console.connect({
+    message: 'handleLogin',
+    tokenExpiration: state.idToken?.expires_at * 1000 || 'No Token',
+    currentTime: new Date().toString()
+  })
   postToChannelPorts({ payload: state.idToken })
 }
 
@@ -107,6 +124,21 @@ const handleLogout = async () => {
   state.idToken = null
   state.authorizationToken = null
   postToConnections({ type: 'logout' })
+  console.connect({
+    message: 'handleLogout',
+    tenantId: state.tenantId,
+    currentTime: new Date().toString()
+  })
+}
+
+const handleClear = () => {
+  state.idToken = null
+  state.authorizationToken = null
+  console.connect({
+    message: 'handleClear',
+    tenantId: state.tenantId || 'No tenant',
+    currentTime: new Date().toString()
+  })
 }
 
 let authorizing = false
@@ -139,6 +171,10 @@ const connect = c => {
       handleLogin()
     }
 
+    if (type == 'idToken') {
+      state.idToken = payload
+    }
+
     if (type == 'logout') {
       handleLogout()
     }
@@ -153,6 +189,10 @@ const connect = c => {
     if (type == 'switch-tenant') {
       channelPorts.push(channelPort)
       handleSwitchTenant(payload)
+    }
+
+    if (type == 'clear') {
+      handleClear()
     }
   }
 

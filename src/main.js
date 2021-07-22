@@ -3,6 +3,7 @@ import { initializeLogrocket } from '@/plugins/logrocket.js'
 import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
+import LogRocket from 'logrocket'
 
 export const setStartupTenant = async () => {
   const path = window.location.pathname
@@ -84,13 +85,29 @@ export const start = async () => {
     // we swap out these tokens later
     loading = true
     const tokens = await login()
+
+    if (tokens) {
+      try {
+        LogRocket.track('Tokens', {
+          source: tokens.source || 'No source',
+          idTokenExpiration: tokens.idToken?.expiresAt * 1000 || 'No id token',
+          authorizationTokenExpiration:
+            tokens.authorizationTokens?.expires_at || 'No authorization token'
+        })
+      } catch {
+        // do nothing if this fails
+      }
+    }
+
     commitTokens(tokens)
+
     loading = false
   } else {
     // If we're on Server we fetch settings
     window.prefect_ui_settings = await fetch('/settings.json')
       .then(response => response.json())
       .then(data => data)
+      .catch(e => e)
   }
 
   try {
@@ -110,10 +127,16 @@ export const start = async () => {
 
   // eslint-disable-next-line no-console
   console.log('Start total: ', start1 - start0)
+  LogRocket.track('Start', { timeToStart: start1 - start0 })
   CreatePrefectUI()
 }
 
-initializeLogrocket()
+try {
+  initializeLogrocket()
+} catch (e) {
+  // eslint-disable-next-line no-console
+  console.error('Failed to initialize LogRocket: ', e)
+}
 start()
 
 // ******************************************************************************************
@@ -130,8 +153,10 @@ const handleVisibilityChange = async () => {
 
   if (!document[hidden]) {
     if (
-      !store.getters['auth/isAuthenticated'] ||
-      !store.getters['auth/isAuthorized']
+      (!store.getters['auth/isAuthenticated'] ||
+        !store.getters['auth/isAuthorized']) &&
+      !window.location.pathname?.includes('logout') &&
+      !window.location.pathname?.includes('access-denied')
     ) {
       const tokens = await login()
       commitTokens(tokens)
