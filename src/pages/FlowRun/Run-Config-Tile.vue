@@ -1,9 +1,14 @@
 <script>
 import { runConfigs } from '@/utils/runConfigs'
 import Label from '@/components/Label'
+import JsonInput from '@/components/CustomInputs/JsonInput'
+import YamlInput from '@/components/CustomInputs/YamlInput'
+
 export default {
   components: {
-    Label
+    Label,
+    JsonInput,
+    YamlInput
   },
   props: {
     flowRun: {
@@ -109,15 +114,19 @@ export default {
             >
               {{ item }}</v-card-text
             >
-            <!-- json and KV pairs -->
+            <!-- json or KV inputs -->
             <v-card-text
-              v-for="(val, j) of Object.keys(argList[arg])"
               v-else-if="typeof argList[arg] === 'object'"
-              :key="j"
               class="config-value"
             >
-              <span class="pr-2">{{ val }}:</span>
-              <span class="font-italic">{{ argList[arg][val] }}</span>
+              <JsonInput disabled :value="JSON.stringify(argList[arg])" />
+            </v-card-text>
+            <!-- yaml input (only relevant for templates) -->
+            <v-card-text
+              v-else-if="arg === 'Template' && typeof argList[arg] === 'string'"
+              class="config-value"
+            >
+              <YamlInput disabled :value="argList[arg]" />
             </v-card-text>
             <!-- regular strings -->
             <v-card-text v-else class="config-value">{{
