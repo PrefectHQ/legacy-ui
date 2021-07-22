@@ -176,10 +176,11 @@ export const login = async () => {
       }
     } else {
       const loginResponse = await authenticate()
+
       source = 'AuthClient'
       idToken = loginResponse?.idToken
 
-      authorizationTokens = await authorize(idToken.value)
+      authorizationTokens = await authorize(idToken.idToken || idToken.value)
       refresh(authorizationTokens)
     }
   } catch (e) {
@@ -198,9 +199,11 @@ export const login = async () => {
     // If this session fails to get idTokens, we call the clear method
     // to post messages to all other sessions that they need to sign out
     // This also clears all stored tokens for these sessions
-    TokenWorker.port.postMessage({
-      type: 'clear'
-    })
+    if (TokenWorker) {
+      TokenWorker.port.postMessage({
+        type: 'clear'
+      })
+    }
   }
 }
 
