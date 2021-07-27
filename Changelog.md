@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Allow hash characters in cron form validation - [#966](https://github.com/PrefectHQ/ui/pull/966)
 
 ### Bugfixes
 
