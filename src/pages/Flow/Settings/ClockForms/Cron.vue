@@ -64,7 +64,7 @@ export default {
       return month.test(this.month)
     },
     dayWeekValid() {
-      return true || dayWeek.test(this.dayWeek)
+      return dayWeek.test(this.dayWeek)
     }
   },
   watch: {
