@@ -38,24 +38,21 @@ export const authClient = new OktaAuth({
   }
 })
 
+authClient.start()
+
 export const authenticate = async () => {
   const isLoginRedirect = await authClient.isLoginRedirect()
   const redirectRoute = sessionStorage.getItem('redirectRoute')
   if (isLoginRedirect) {
-    try {
-      const { tokens } = await authClient.token.parseFromUrl()
+    const { tokens } = await authClient.token.parseFromUrl()
 
-      authClient.tokenManager.setTokens(tokens)
-      if (redirectRoute) {
-        history.replaceState(null, null, redirectRoute)
-        sessionStorage.removeItem('redirectRoute')
-      }
-
-      return tokens
-    } catch (e) {
-      window.location.assign('/access-denied')
-      throw new Error(e)
+    authClient.tokenManager.setTokens(tokens)
+    if (redirectRoute) {
+      history.replaceState(null, null, redirectRoute)
+      sessionStorage.removeItem('redirectRoute')
     }
+
+    return tokens
   } else {
     if (window.location?.pathname && !redirectRoute) {
       sessionStorage.setItem(
@@ -73,15 +70,15 @@ export const authenticate = async () => {
         const idToken = await authClient.tokenManager.renew('idToken')
         tokens.idToken = idToken
       } catch {
-        await authClient.token.getWithRedirect({
+        return await authClient.token.getWithRedirect({
           responseType: ['token', 'id_token']
         })
       }
     }
 
-    authClient.tokenManager.setTokens(tokens)
     return tokens
   }
+
   await authClient.token.getWithRedirect({
     responseType: ['token', 'id_token']
   })

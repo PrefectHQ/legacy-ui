@@ -7,6 +7,7 @@ import {
 } from '@/auth/authorization.js'
 
 import store from '@/store'
+import LogRocket from 'logrocket'
 
 import jwt_decode from 'jwt-decode'
 
@@ -38,6 +39,11 @@ if (TokenWorker?.port) {
       case 'authorizationToken':
         commitTokens({ authorizationTokens: payload })
         break
+      case 'clear':
+        authClient.tokenManager.clear()
+        unsetTokens()
+        authClient.signOut()
+        break
       case 'logout':
         authClient.signOut()
         unsetTokens()
@@ -55,6 +61,10 @@ if (TokenWorker?.port) {
           }
         }
         break
+      case 'console':
+      case 'error':
+        LogRocket.track('TokenWorker Message', payload)
+        break
       default:
         break
     }
@@ -64,7 +74,7 @@ if (TokenWorker?.port) {
   TokenWorker.port.onmessageerror = e => {
     // eslint-disable-next-line no-console
     console.log('Error message received from Token Worker', e)
-    // LogRocket.captureException(e)
+    LogRocket.captureException(e)
   }
 
   TokenWorker.port.start()
@@ -100,7 +110,6 @@ export const commitTokens = tokens => {
 export const unsetTokens = () => {
   store.commit('auth/unsetIdToken')
   store.commit('auth/unsetIdTokenExpiry')
-  store.commit('auth/unsetOktaUser')
   store.commit('auth/unsetUser')
   store.commit('auth/unsetAuthorizationToken')
   store.commit('auth/unsetAuthorizationTokenExpiry')
@@ -140,41 +149,61 @@ export const login = async () => {
   // try getting a token from the service worker
   // if we have a service worker, ping that for a token
   // otherwise we go through the okta login process directly
-  let idToken, authorizationTokens
+  let idToken, authorizationTokens, source
+  try {
+    if (TokenWorker) {
+      idToken = await promiseChannel(TokenWorker, 'login')
+      source = 'TokenWorker'
 
-  if (TokenWorker) {
-    idToken = await promiseChannel(TokenWorker, 'login')
+      if (!idToken || idToken.expiresAt * 1000 < Date.now()) {
+        const loginResponse = await authenticate()
 
-    if (!idToken || idToken.expiresAt * 1000 < Date.now()) {
+        idToken = loginResponse?.idToken
+        source = 'AuthClient'
+
+        TokenWorker.port.postMessage({
+          type: 'idToken',
+          payload: idToken
+        })
+      }
+
+      if (idToken && (idToken.idToken || idToken.value)) {
+        authorizationTokens = await promiseChannel(
+          TokenWorker,
+          'authorize',
+          idToken.idToken || idToken.value
+        )
+      }
+    } else {
       const loginResponse = await authenticate()
 
+      source = 'AuthClient'
       idToken = loginResponse?.idToken
 
-      TokenWorker.port.postMessage({
-        type: 'idToken',
-        payload: idToken
-      })
-
-      if (!idToken) return
+      authorizationTokens = await authorize(idToken.idToken || idToken.value)
+      refresh(authorizationTokens)
     }
-
-    authorizationTokens = await promiseChannel(
-      TokenWorker,
-      'authorize',
-      idToken.value
-    )
-  } else {
-    const loginResponse = await authenticate()
-
-    idToken = loginResponse?.idToken
-
-    authorizationTokens = await authorize(idToken.value)
-    refresh(authorizationTokens)
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Login error', e)
+    LogRocket.captureException(e)
   }
 
-  return {
-    idToken: idToken,
-    authorizationTokens: authorizationTokens
+  if (idToken && authorizationTokens) {
+    return {
+      idToken: idToken,
+      authorizationTokens: authorizationTokens,
+      source: source
+    }
+  } else {
+    // If this session fails to get idTokens, we call the clear method
+    // to post messages to all other sessions that they need to sign out
+    // This also clears all stored tokens for these sessions
+    if (TokenWorker) {
+      TokenWorker.port.postMessage({
+        type: 'clear'
+      })
+    }
   }
 }
 
@@ -211,6 +240,7 @@ export const logout = async () => {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log(e)
+      LogRocket.captureException(e)
     }
   }
 }

@@ -75,6 +75,8 @@ export const isAuthenticated = jest.fn().mockReturnValue(false)
 export const isLoginRedirect = jest.fn().mockReturnValue(false)
 export const getUser = jest.fn().mockReturnValue({})
 export const setTokens = jest.fn()
+export const start = jest.fn()
+export const clear = jest.fn()
 export const signOut = jest.fn()
 export const on = jest.fn()
 export const isPKCESupported = jest.fn().mockReturnValue(true)
@@ -102,7 +104,8 @@ export class OktaAuth {
       get: getTokenByKey,
       renew: renew,
       setTokens: setTokens,
-      on: on
+      on: on,
+      clear: clear
     }
 
     this.isLoginRedirect = isLoginRedirect
@@ -111,6 +114,8 @@ export class OktaAuth {
     this.getUser = getUser
 
     this.signOut = signOut
+
+    this.start = start
   }
 }
 

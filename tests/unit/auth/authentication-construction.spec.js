@@ -9,7 +9,11 @@
 */
 
 jest.mock('@okta/okta-auth-js', () => {
-  const OktaAuth = jest.fn().mockImplementation()
+  const OktaAuth = jest.fn().mockImplementation(() => {
+    return {
+      start: jest.fn()
+    }
+  })
 
   OktaAuth.features = { isPKCESupported: jest.fn() }
 
