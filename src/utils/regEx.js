@@ -23,7 +23,7 @@ const CRON_MONTH_REGEX = /^(\*{1})$|(^(1[0-2]|[1-9])(?:[,-/](1[0-2]|[1-9]))*$)|(
 
 // [0-6]
 // Tests: https://regex101.com/r/G4cbea/1
-const CRON_DAY_WEEK_REGEX = /^(\*{1})$|(^([0-6])(?:[,-/]([0-6]))*$)|(^(sun|mon|tue|wed|thu|fri|sat)(?:[,-/](sun|mon|tue|wed|thu|fri|sat))*$)/i
+const CRON_DAY_WEEK_REGEX = /^(\*{1})$|(^([0-6])(?:[,-/#]([0-6]))*$)|(^(sun|mon|tue|wed|thu|fri|sat)(?:[,-/#](sun|mon|tue|wed|thu|fri|sat))*$)/i
 
 export {
   EMAIL_REGEX,
