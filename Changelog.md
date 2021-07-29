@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-07-29
+
+### Features and Improvements
+
 - Allow hash characters in cron form validation - [#966](https://github.com/PrefectHQ/ui/pull/966)
 - Add Automations tab to Flow pages - [#941](https://github.com/PrefectHQ/ui/pull/941)
 
