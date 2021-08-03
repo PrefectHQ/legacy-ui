@@ -14,8 +14,8 @@ then
     PREFECT_SERVER__BASE_URL="/"
 fi
 
-sed -i /var/www/settings.json "s/PREFECT_SERVER__APOLLO_URL/$PREFECT_SERVER__APOLLO_URL/g"
-sed -i /var/www/settings.json "s/PREFECT_SERVER__BASE_URL/$PREFECT_SERVER__BASE_URL/g"
+sed -i "s,PREFECT_SERVER__APOLLO_URL,$PREFECT_SERVER__APOLLO_URL," /var/www/settings.json 
+sed -i "s,PREFECT_SERVER__BASE_URL,$PREFECT_SERVER__BASE_URL," /var/www/settings.json
 
 echo "👾👾👾 UI running at localhost:8080 👾👾👾"
 
