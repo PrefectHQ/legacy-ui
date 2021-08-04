@@ -59,6 +59,8 @@ const initializeLogrocket = () => {
         }
       }
     })
+
+    LogRocket.identify('Initialized no user')
   }
 }
 

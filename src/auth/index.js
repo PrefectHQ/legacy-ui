@@ -62,16 +62,24 @@ if (TokenWorker?.port) {
         }
         break
       case 'console':
+        // eslint-disable-next-line no-console
+        console.log('TokenWorker console', payload)
+        LogRocket.track('TokenWorker console', payload)
+        break
       case 'error':
-        LogRocket.track('TokenWorker Message', payload)
+        // eslint-disable-next-line no-console
+        console.log('TokenWorker error', payload)
+        LogRocket.captureException(payload)
         break
       default:
+        // eslint-disable-next-line no-console
+        console.log('default', payload)
+        LogRocket.track('TokenWorker Message', payload)
         break
     }
   }
 
-  // TODO: Implement error handling from the token worker
-  TokenWorker.port.onmessageerror = e => {
+  TokenWorker.onerror = e => {
     // eslint-disable-next-line no-console
     console.log('Error message received from Token Worker', e)
     LogRocket.captureException(e)
