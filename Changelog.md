@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Initialize logrocket first - [#980](https://github.com/PrefectHQ/ui/pull/980)
 
 ### Bugfixes
 
