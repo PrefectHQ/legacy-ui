@@ -119,7 +119,7 @@ describe('the auth module', () => {
       beforeEach(clearMocks)
 
       it('calls the promiseChannel method when a token worker exists', async () => {
-        await mod.login('foo')
+        await mod.login()
         expect(promiseChannel).toHaveBeenCalledWith(TokenWorker, 'login')
       })
 
@@ -133,7 +133,7 @@ describe('the auth module', () => {
             expiresAt: expiration
           }
           promiseChannel.mockReturnValueOnce(idToken)
-          await mod.login('bar')
+          await mod.login()
 
           expect(expiration).toBeLessThan(Date.now())
           expect(authenticate).toHaveBeenCalledTimes(1)
@@ -146,7 +146,7 @@ describe('the auth module', () => {
         it('calls the authenticate method', async () => {
           const idToken = undefined
           promiseChannel.mockReturnValueOnce(idToken)
-          await mod.login('bar')
+          await mod.login()
           expect(authenticate).toHaveBeenCalledTimes(1)
         })
       })
@@ -156,7 +156,7 @@ describe('the auth module', () => {
         promiseChannel.mockReturnValueOnce(undefined)
         authenticate.mockReturnValueOnce({ idToken: idToken })
 
-        await mod.login('bar')
+        await mod.login()
 
         expect(authenticate).toHaveBeenCalledTimes(1)
         expect(postMessage).toHaveBeenCalledWith({
