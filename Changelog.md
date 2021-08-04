@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix token worker error handling - [#981](https://github.com/PrefectHQ/ui/pull/981)
 
 ## 2021-07-29
 
