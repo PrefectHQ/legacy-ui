@@ -1,4 +1,4 @@
-query Flows($id: uuid) {
+query Flow($id: uuid) {
   flow(
     where: { _or: [{ id: { _eq: $id } }, { flow_group_id: { _eq: $id } }] }
   ) {
