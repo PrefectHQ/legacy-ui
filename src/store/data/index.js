@@ -146,9 +146,17 @@ const actions = {
       id = flow?.id || id
 
       const { data } = await fallbackApolloClient.query({
-        query: require('@/graphql/Nav/flows.gql')
+        query: require('@/graphql/Nav/flow.gql'),
+        variables: {
+          id: id
+        }
       })
-      commit('setFlows', data.flow)
+
+      // Dedupes incoming flows
+      const flows =
+        getters['flows']?.filter(f => !data.flow.find(_f => _f.id == f.id)) ||
+        []
+      commit('setFlows', [...flows, ...data.flow])
 
       flow = getters['flows']?.find(f => f.id == id || f.flow_group_id == id)
     }

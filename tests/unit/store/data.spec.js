@@ -45,6 +45,7 @@ jest.mock('@/vue-apollo', () => {
 })
 
 jest.mock('@/graphql/Nav/flows.gql', () => 'flows query string')
+jest.mock('@/graphql/Nav/flow.gql', () => 'flow query string')
 jest.mock('@/graphql/Nav/projects.gql', () => 'projects query string')
 jest.mock('@/graphql/Nav/task.gql', () => 'tasks query string')
 
