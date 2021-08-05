@@ -210,4 +210,40 @@ describe('the auth module', () => {
       expect(authenticate).toHaveBeenCalledWith()
     })
   })
+
+  describe('login uses fallback', () => {
+    let mod, promiseChannel, authenticate, authorize, TokenWorker
+    const clearMocks = () => {
+      global.SharedWorker = SharedWorker
+      jest.resetModules()
+      promiseChannel?.mockClear()
+      authenticate?.mockClear()
+
+      promiseChannel = require('@/workers/util/worker-interface.js')
+        .promiseChannel
+
+      authenticate = require('@/auth/authentication.js').authenticate
+      authorize = require('@/auth/authorization.js').authorize
+
+      mod = require('@/auth/index.js')
+      TokenWorker = mod.TokenWorker
+    }
+
+    beforeEach(clearMocks)
+
+    it('does not use the token worker if fallback is defined', async () => {
+      const idToken = { value: 'foo.bar' }
+      authenticate.mockReturnValueOnce({ idToken: idToken })
+      authorize.mockReturnValueOnce({
+        expires_at: Date.now() + 5000,
+        access_token: null,
+        refresh_token: null
+      })
+      await mod.login(true)
+
+      expect(TokenWorker).toBeDefined()
+      expect(promiseChannel).not.toHaveBeenCalled()
+      expect(authenticate).toHaveBeenCalledWith()
+    })
+  })
 })
