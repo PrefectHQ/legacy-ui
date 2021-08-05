@@ -70,7 +70,6 @@ export const setStartupTenant = async () => {
 const timeout = async (main, fallback, fallbackargs, time) =>
   Promise.race([main, new Promise((_r, rej) => setTimeout(rej, time))]).catch(
     () => {
-      console.log('promise did not return in time')
       localStorage.setItem('prefect_fallback_auth', Date.now())
       return fallback(...fallbackargs)
     }
