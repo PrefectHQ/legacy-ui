@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add new login logic to browser visibility handler - [#986](https://github.com/PrefectHQ/ui/pull/986)
 
 ### Bugfixes
 
