@@ -12,6 +12,7 @@ import { ApolloLink, Observable } from 'apollo-link'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
+import { HttpLink } from '@apollo/client'
 import LogRocket from 'logrocket'
 
 // Install the vue plugin
@@ -32,10 +33,12 @@ let errors = 0,
   apiErrors = 0
 
 const batchLink = new BatchHttpLink({
-  batchMax: 20,
-  batchInterval: 1000,
+  batchMax: 25,
+  batchInterval: 2000,
   uri: () => store.getters['api/url']
 })
+
+const httpLink = new HttpLink({ uri: () => store.getters['api/url'] })
 
 // Resets the cache and stops requests if
 // the backend has changed
@@ -200,6 +203,15 @@ const link = ApolloLink.from([
   batchLink
 ])
 
+const fallbackLink = ApolloLink.from([
+  authMiddleware,
+  headerMiddleware,
+  backendMiddleware,
+  errorAfterware,
+  terminalRequestLink,
+  httpLink
+])
+
 export const cache = new InMemoryCache({
   resultCaching: false
 })
@@ -278,7 +290,10 @@ defaultApolloClient = defaultApolloProvider.defaultClient
 export { defaultApolloClient }
 
 // This is the client we use that is not subject to the stop/restarts of the application
-export const fallbackApolloProvider = createApolloProvider()
+export const fallbackApolloProvider = createApolloProvider({
+  ...defaultOptions,
+  link: fallbackLink
+})
 fallbackApolloClient = fallbackApolloProvider.defaultClient
 export { fallbackApolloClient }
 
