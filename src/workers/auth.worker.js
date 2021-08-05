@@ -38,13 +38,18 @@ const postToChannelPorts = payload => {
 }
 
 console.connect = payload => {
+  // eslint-disable
   console.groupCollapsed('Auth worker trace', payload)
   console.log(payload)
   console.trace()
   console.groupEnd()
+  // eslint-enable
 
   for (let i = 0; i < ports.length; ++i) {
-    ports[i].postMessage({ type: 'console', payload: payload })
+    ports[i].postMessage({
+      type: 'console',
+      payload: payload
+    })
   }
 }
 
@@ -114,13 +119,16 @@ const setAuthorizationToken = token => {
 const handleLogin = async () => {
   console.connect({
     message: 'handleLogin',
-    tokenExpiration: state.idToken?.expires_at * 1000 || 'No Token',
+    tokenExpiration: state.idToken?.expiresAt
+      ? state.idToken.expiresAt * 1000
+      : 'No Token',
     currentTime: new Date().toString()
   })
+
   postToChannelPorts({ payload: state.idToken })
 }
 
-const handleLogout = async () => {
+const handleLogout = () => {
   state.idToken = null
   state.authorizationToken = null
   postToConnections({ type: 'logout' })
@@ -161,38 +169,42 @@ const connect = c => {
   const port = c.ports[0]
   ports.push(port)
 
-  port.onmessage = e => {
-    const type = e.data?.type
-    const channelPort = e.ports[0]
-    const payload = e.data?.payload
+  port.onmessage = async e => {
+    try {
+      const type = e.data?.type
+      const channelPort = e.ports[0]
+      const payload = e.data?.payload
 
-    if (type == 'login') {
-      channelPorts.push(channelPort)
-      handleLogin()
-    }
-
-    if (type == 'idToken') {
-      state.idToken = payload
-    }
-
-    if (type == 'logout') {
-      handleLogout()
-    }
-
-    if (type == 'authorize') {
-      channelPorts.push(channelPort)
-      if (!authorizing) {
-        handleAuthorize(payload)
+      if (type == 'login') {
+        channelPorts.push(channelPort)
+        await handleLogin()
       }
-    }
 
-    if (type == 'switch-tenant') {
-      channelPorts.push(channelPort)
-      handleSwitchTenant(payload)
-    }
+      if (type == 'idToken') {
+        state.idToken = payload
+      }
 
-    if (type == 'clear') {
-      handleClear()
+      if (type == 'logout') {
+        handleLogout()
+      }
+
+      if (type == 'authorize') {
+        channelPorts.push(channelPort)
+        if (!authorizing) {
+          await handleAuthorize(payload)
+        }
+      }
+
+      if (type == 'switch-tenant') {
+        channelPorts.push(channelPort)
+        await handleSwitchTenant(payload)
+      }
+
+      if (type == 'clear') {
+        handleClear()
+      }
+    } catch (e) {
+      postToConnections({ type: 'error', payload: e })
     }
   }
 
@@ -200,3 +212,12 @@ const connect = c => {
 }
 
 self.onconnect = connect
+
+self.onerror = e => {
+  // eslint-disable-next-line no-console
+  console.log('in error handler', e)
+  console.connect({
+    message: 'error',
+    error: e
+  })
+}
