@@ -116,8 +116,6 @@ export const start = async () => {
           authorizationTokenExpiration:
             tokens.authorizationTokens?.expires_at || 'No authorization token'
         })
-
-        console.log('TOKEN SOURCE: ', tokens.source)
       } catch (e) {
         LogRocket.captureException(e)
       }
