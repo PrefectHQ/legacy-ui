@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Separate primary and secondary Apollo client links - [#987](https://github.com/PrefectHQ/ui/pull/987)
 
 ### Bugfixes
 
