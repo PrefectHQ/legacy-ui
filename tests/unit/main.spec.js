@@ -7,7 +7,11 @@ jest.mock('@/auth/index.js', () => ({
   switchTenant: jest.fn(),
   commitTokens: jest.fn()
 }))
+jest.mock('@/store')
+jest.mock('@/plugins/logrocket.js')
 jest.mock('logrocket')
+
+import { login } from '@/auth/index.js'
 
 const url = 'https://cloud.prefect.io'
 Object.defineProperty(window, 'location', {
@@ -36,12 +40,16 @@ describe('Main', () => {
   })
 
   describe('the start method', () => {
-    const clearMocks = () => {}
+    const clearMocks = () => {
+      login.mockClear()
+    }
 
     let mod
 
     beforeEach(() => {
       mod = require('@/main.js')
+      window.location.pathname = null
+      localStorage.clear()
 
       // This is required before each test after import
       // because the script calls the start method
@@ -58,21 +66,41 @@ describe('Main', () => {
       expect(CreatePrefectUI).toHaveBeenCalledTimes(1)
     })
 
-    // TODO: Add more tests for the next steps in startup
-    // This is complicated because of all the dependencies that stem from this method
-    // it('calls the login method when the backend is CLOUD', async () => {
-    //   window.location.pathname = 'https://cloud.prefect.io'
-    //   process.env.VUE_APP_BACKEND = 'CLOUD'
-    //   store.commit('auth/authorizationToken', {
-    //     value: 'foo',
-    //     tenant_id: 'bar'
-    //   })
+    it('calls the fallback login method if login throws an error', async () => {
+      process.env.VUE_APP_BACKEND = 'CLOUD'
+      login.mockRejectedValueOnce()
+      await mod.start()
 
-    //   expect(process.env.VUE_APP_BACKEND).toEqual('CLOUD')
+      expect(login).toHaveBeenCalledTimes(2)
+      expect(login).toHaveBeenNthCalledWith(1)
+      expect(login).toHaveBeenNthCalledWith(2, true)
+    })
 
-    //   await mod.start()
+    it('calls the fallback login method if login takes more than 10 seconds', async () => {
+      process.env.VUE_APP_BACKEND = 'CLOUD'
+      login.mockImplementationOnce(
+        () => new Promise(res => setTimeout(() => res('i was rejected'), 50000))
+      )
+      const startPromise = mod.start()
+      jest.runAllTimers()
 
-    //   expect(login).toHaveBeenCalledTimes(1)
-    // })
+      await startPromise
+
+      expect(login).toHaveBeenCalledTimes(2)
+      expect(login).toHaveBeenNthCalledWith(1)
+      expect(login).toHaveBeenNthCalledWith(2, true)
+    })
+
+    it('calls the fallback login method if local storage item is set', async () => {
+      process.env.VUE_APP_BACKEND = 'CLOUD'
+      localStorage.setItem('prefect_fallback_auth', Date.now())
+      const startPromise = mod.start()
+      jest.runAllTimers()
+
+      await startPromise
+
+      expect(login).toHaveBeenCalledTimes(1)
+      expect(login).toHaveBeenNthCalledWith(1, true)
+    })
   })
 })
