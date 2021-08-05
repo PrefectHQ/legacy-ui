@@ -1,0 +1,11 @@
+query Flows($id: uuid) {
+  flow(
+    where: { _or: [{ id: { _eq: $id } }, { flow_group_id: { _eq: $id } }] }
+  ) {
+    id
+    flow_group_id
+    name
+    project_id
+    is_schedule_active
+  }
+}

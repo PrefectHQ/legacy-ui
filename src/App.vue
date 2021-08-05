@@ -77,7 +77,7 @@ export default {
       'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('data', ['projects']),
+    ...mapGetters('data', ['projects', 'flows']),
     ...mapGetters('auth', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', [
       'tenant',
@@ -294,7 +294,10 @@ export default {
       pollInterval: 10000,
       update(data) {
         if (!data?.flow || this.isLoadingTenant) return []
-        this.setFlows(data.flow)
+        // Dedupes incoming flows
+        const flows =
+          this.flows?.filter(f => !data.flow.find(_f => _f.id == f.id)) || []
+        this.setFlows([...flows, ...data.flow])
         return data.flow
       }
     })
