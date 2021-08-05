@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-08-05
+
+### Features and Improvements
+
 - Initialize logrocket first - [#980](https://github.com/PrefectHQ/ui/pull/980)
 
 ### Bugfixes
