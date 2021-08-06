@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Add hsot config to the docker run config - [#988](https://github.com/PrefectHQ/ui/pull/988)
 
 ## 2021-08-05
 
