@@ -103,6 +103,18 @@ export default {
       this.$emit('input', val)
     }
   },
+  mounted() {
+    if (!this.value) return
+    console.log(this.value)
+    if (typeof this.value == 'number') {
+      this.interval = 'minute'
+      this.intervalValue = this.value / 60000000
+      return
+    }
+    const [minute, hour, day, month, dayWeek] = this.value.split(' ')
+
+    console.log(minute, hour, day, month, dayWeek)
+  },
   methods: {
     ordinal(val) {
       return ordinal(val)

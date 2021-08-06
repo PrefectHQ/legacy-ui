@@ -435,6 +435,7 @@ export default {
               <div v-show="selectedTab === 0">
                 <ClockForm
                   :flow-group-clocks="flowGroupClocks"
+                  :clock="clock"
                   :cron="clock.cron"
                   :param="parameter"
                   :interval="clock.interval"

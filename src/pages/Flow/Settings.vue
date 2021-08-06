@@ -23,7 +23,7 @@ export default {
   },
   data() {
     return {
-      tab: 0
+      tab: 2
     }
   },
   computed: {
