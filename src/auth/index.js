@@ -62,16 +62,26 @@ if (TokenWorker?.port) {
         }
         break
       case 'console':
+        // This should only be used for debugging
+        // eslint-disable-next-line no-console
+        // console.log('TokenWorker console', payload)
+        LogRocket.track('TokenWorker console', payload)
+        break
       case 'error':
-        LogRocket.track('TokenWorker Message', payload)
+        // eslint-disable-next-line no-console
+        console.log('TokenWorker error', payload)
+        LogRocket.captureException(payload)
         break
       default:
+        // This should only be used for debugging
+        // eslint-disable-next-line no-console
+        // console.log('default', payload)
+        LogRocket.track('TokenWorker Message', payload)
         break
     }
   }
 
-  // TODO: Implement error handling from the token worker
-  TokenWorker.port.onmessageerror = e => {
+  TokenWorker.onerror = e => {
     // eslint-disable-next-line no-console
     console.log('Error message received from Token Worker', e)
     LogRocket.captureException(e)
@@ -145,13 +155,13 @@ authClient.tokenManager.on('renewed', (key, idToken) => {
   }
 })
 
-export const login = async () => {
+export const login = async (fallback = false) => {
   // try getting a token from the service worker
   // if we have a service worker, ping that for a token
   // otherwise we go through the okta login process directly
   let idToken, authorizationTokens, source
   try {
-    if (TokenWorker) {
+    if (TokenWorker && !fallback) {
       idToken = await promiseChannel(TokenWorker, 'login')
       source = 'TokenWorker'
 
@@ -159,7 +169,7 @@ export const login = async () => {
         const loginResponse = await authenticate()
 
         idToken = loginResponse?.idToken
-        source = 'AuthClient'
+        source = 'AuthClient <> TokenWorker'
 
         TokenWorker.port.postMessage({
           type: 'idToken',
@@ -176,11 +186,14 @@ export const login = async () => {
       }
     } else {
       const loginResponse = await authenticate()
-      source = 'AuthClient'
+
+      source = 'AuthClient <> InMemory'
       idToken = loginResponse?.idToken
 
-      authorizationTokens = await authorize(idToken.value)
-      refresh(authorizationTokens)
+      if (idToken && (idToken.idToken || idToken.value)) {
+        authorizationTokens = await authorize(idToken.idToken || idToken.value)
+        refresh(authorizationTokens)
+      }
     }
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -198,9 +211,11 @@ export const login = async () => {
     // If this session fails to get idTokens, we call the clear method
     // to post messages to all other sessions that they need to sign out
     // This also clears all stored tokens for these sessions
-    TokenWorker.port.postMessage({
-      type: 'clear'
-    })
+    if (TokenWorker) {
+      TokenWorker.port.postMessage({
+        type: 'clear'
+      })
+    }
   }
 }
 

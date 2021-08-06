@@ -1,4 +1,4 @@
 {
-    "server_url": "http://localhost:4200/graphql",
-    "base_url": "/"
+    "server_url": "PREFECT_SERVER__APOLLO_URL",
+    "base_url": "PREFECT_SERVER__BASE_URL"
 }

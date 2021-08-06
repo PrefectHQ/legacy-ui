@@ -8,7 +8,7 @@ const blockedResponses = [
 ]
 const blockedRequests = ['SetSecret']
 
-export const initializeLogrocket = () => {
+const initializeLogrocket = () => {
   if (
     process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
     process.env.VUE_APP_BACKEND === 'CLOUD'
@@ -59,5 +59,14 @@ export const initializeLogrocket = () => {
         }
       }
     })
+
+    LogRocket.identify('Initialized no user')
   }
+}
+
+try {
+  initializeLogrocket()
+} catch (e) {
+  // eslint-disable-next-line no-console
+  console.error('Failed to initialize LogRocket: ', e)
 }

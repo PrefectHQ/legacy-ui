@@ -119,7 +119,7 @@ describe('the auth module', () => {
       beforeEach(clearMocks)
 
       it('calls the promiseChannel method when a token worker exists', async () => {
-        await mod.login('foo')
+        await mod.login()
         expect(promiseChannel).toHaveBeenCalledWith(TokenWorker, 'login')
       })
 
@@ -133,7 +133,7 @@ describe('the auth module', () => {
             expiresAt: expiration
           }
           promiseChannel.mockReturnValueOnce(idToken)
-          await mod.login('bar')
+          await mod.login()
 
           expect(expiration).toBeLessThan(Date.now())
           expect(authenticate).toHaveBeenCalledTimes(1)
@@ -146,7 +146,7 @@ describe('the auth module', () => {
         it('calls the authenticate method', async () => {
           const idToken = undefined
           promiseChannel.mockReturnValueOnce(idToken)
-          await mod.login('bar')
+          await mod.login()
           expect(authenticate).toHaveBeenCalledTimes(1)
         })
       })
@@ -156,7 +156,7 @@ describe('the auth module', () => {
         promiseChannel.mockReturnValueOnce(undefined)
         authenticate.mockReturnValueOnce({ idToken: idToken })
 
-        await mod.login('bar')
+        await mod.login()
 
         expect(authenticate).toHaveBeenCalledTimes(1)
         expect(postMessage).toHaveBeenCalledWith({
@@ -207,6 +207,42 @@ describe('the auth module', () => {
       await mod.login()
 
       expect(TokenWorker).toBeUndefined()
+      expect(authenticate).toHaveBeenCalledWith()
+    })
+  })
+
+  describe('login uses fallback', () => {
+    let mod, promiseChannel, authenticate, authorize, TokenWorker
+    const clearMocks = () => {
+      global.SharedWorker = SharedWorker
+      jest.resetModules()
+      promiseChannel?.mockClear()
+      authenticate?.mockClear()
+
+      promiseChannel = require('@/workers/util/worker-interface.js')
+        .promiseChannel
+
+      authenticate = require('@/auth/authentication.js').authenticate
+      authorize = require('@/auth/authorization.js').authorize
+
+      mod = require('@/auth/index.js')
+      TokenWorker = mod.TokenWorker
+    }
+
+    beforeEach(clearMocks)
+
+    it('does not use the token worker if fallback is defined', async () => {
+      const idToken = { value: 'foo.bar' }
+      authenticate.mockReturnValueOnce({ idToken: idToken })
+      authorize.mockReturnValueOnce({
+        expires_at: Date.now() + 5000,
+        access_token: null,
+        refresh_token: null
+      })
+      await mod.login(true)
+
+      expect(TokenWorker).toBeDefined()
+      expect(promiseChannel).not.toHaveBeenCalled()
       expect(authenticate).toHaveBeenCalledWith()
     })
   })

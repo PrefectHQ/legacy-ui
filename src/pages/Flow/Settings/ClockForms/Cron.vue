@@ -103,7 +103,7 @@ export default {
       this.lastPosition = e.target.selectionStart
     },
     _handleKeypress(e) {
-      const regex = /[0-9]|[a-zA-z]|[-]|[/]|[,]|[*]/i
+      const regex = /[0-9]|[a-zA-z]|[-]|[/]|[,]|[*]|[#]/i
       !regex.test(e.key) && e.preventDefault()
     },
     _handleKeyup(e, source) {

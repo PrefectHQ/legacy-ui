@@ -1,5 +1,5 @@
+import '@/plugins/logrocket.js'
 import { login, switchTenant, commitTokens } from '@/auth/index.js'
-import { initializeLogrocket } from '@/plugins/logrocket.js'
 import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
@@ -67,6 +67,14 @@ export const setStartupTenant = async () => {
   }
 }
 
+const timeout = async (main, fallback, fallbackargs, time) =>
+  Promise.race([main, new Promise((_r, rej) => setTimeout(rej, time))]).catch(
+    () => {
+      localStorage.setItem('prefect_fallback_auth', Date.now())
+      return fallback(...fallbackargs)
+    }
+  )
+
 let loading = false
 export const start = async () => {
   if (
@@ -84,7 +92,20 @@ export const start = async () => {
     // if the user is requesting a different tenant (indicated by the URL),
     // we swap out these tokens later
     loading = true
-    const tokens = await login()
+
+    let tokens
+
+    // We check local storage for a fallback token and compare it against
+    // the curent timestamp - 1 minute. If it falls outside that window
+    // we attempt the normal flow
+    const fallbackTimestamp = localStorage.getItem('prefect_fallback_auth')
+
+    // We coerce the timestamp because localstorage stores it as a string
+    if (fallbackTimestamp && +fallbackTimestamp > Date.now() - 60000) {
+      tokens = await login(true)
+    } else {
+      tokens = await timeout(login(), login, [true], 10000)
+    }
 
     if (tokens) {
       try {
@@ -94,10 +115,10 @@ export const start = async () => {
           authorizationTokenExpiration:
             tokens.authorizationTokens?.expires_at || 'No authorization token'
         })
-      } catch {
-        // do nothing if this fails
+      } catch (e) {
+        LogRocket.captureException(e)
       }
-    }
+    } else return
 
     commitTokens(tokens)
 
@@ -131,12 +152,6 @@ export const start = async () => {
   CreatePrefectUI()
 }
 
-try {
-  initializeLogrocket()
-} catch (e) {
-  // eslint-disable-next-line no-console
-  console.error('Failed to initialize LogRocket: ', e)
-}
 start()
 
 // ******************************************************************************************

@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 
-# Pipes configured environment variables into the 
-# server settings.json file
-if [[ -z PREFECT_SERVER__APOLLO_URL || -z PREFECT_SERVER__BASE_URL ]]; then echo "missing PREFECT_SERVER__APOLLO_URL or PREFECT_SERVER__BASE_URL" && exit 1
-echo "{\n  \"server_url\": \"$PREFECT_SERVER__APOLLO_URL\",\n  \"base_url\": \"$PREFECT_SERVER__BASE_URL\"\n}" > /var/www/settings.json
+# Set default prefect_ui_settings if
+# env vars not present
+if [[ -z ${PREFECT_SERVER__APOLLO_URL} ]]
+then
+    echo "Missing the PREFECT_SERVER__APOLLO_URL environment variable.  Using default"
+    PREFECT_SERVER__APOLLO_URL="http://localhost:4200/graphql"
+fi
+
+if [[ -z ${PREFECT_SERVER__BASE_URL} ]]
+then
+    echo "Missing the PREFECT_SERVER__BASE_URL environment variable.  Using default"
+    PREFECT_SERVER__BASE_URL="/"
+fi
+
+sed -i "s,PREFECT_SERVER__APOLLO_URL,$PREFECT_SERVER__APOLLO_URL," /var/www/settings.json 
+sed -i "s,PREFECT_SERVER__BASE_URL,$PREFECT_SERVER__BASE_URL," /var/www/settings.json
 
 echo "👾👾👾 UI running at localhost:8080 👾👾👾"
 

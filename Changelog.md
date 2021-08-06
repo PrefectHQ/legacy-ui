@@ -10,6 +10,33 @@
 
 - Add secret name and value routes to limit and offset exceptions - [#955](https://github.com/PrefectHQ/ui/pull/955)
 
+## 2021-08-05
+
+### Features and Improvements
+
+- Initialize logrocket first - [#980](https://github.com/PrefectHQ/ui/pull/980)
+
+### Bugfixes
+
+- Fix token worker error handling - [#981](https://github.com/PrefectHQ/ui/pull/981)
+
+## 2021-07-29
+
+### Features and Improvements
+
+- Allow hash characters in cron form validation - [#966](https://github.com/PrefectHQ/ui/pull/966)
+- Add Automations tab to Flow pages - [#941](https://github.com/PrefectHQ/ui/pull/941)
+
+### Bugfixes
+
+- Fix issue with Bash script - [#964](https://github.com/PrefectHQ/ui/pull/964)
+
+## 2021-07-22
+
+### Bugfixes
+
+- Fix an issue with non-ShareWorker-enabled browsers that were accessing the id token value incorrectly - [#960](https://github.com/PrefectHQ/ui/pull/960)
+
 ## 2021-07-21
 
 ### Features and Improvements
