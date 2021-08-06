@@ -1,5 +1,5 @@
 import '@/plugins/logrocket.js'
-import { login, switchTenant, commitTokens } from '@/auth/index.js'
+import { login, switchTenant, commitTokens, logout } from '@/auth/index.js'
 import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
@@ -173,8 +173,22 @@ const handleVisibilityChange = async () => {
       !window.location.pathname?.includes('logout') &&
       !window.location.pathname?.includes('access-denied')
     ) {
-      const tokens = await login()
-      commitTokens(tokens)
+      let tokens
+
+      // We check local storage for a fallback token and compare it against
+      // the curent timestamp - 1 minute. If it falls outside that window
+      // we attempt the normal flow
+      const fallbackTimestamp = localStorage.getItem('prefect_fallback_auth')
+
+      // We coerce the timestamp because localstorage stores it as a string
+      if (fallbackTimestamp && +fallbackTimestamp > Date.now() - 60000) {
+        tokens = await login(true)
+      } else {
+        tokens = await timeout(login(), login, [true], 10000)
+      }
+
+      if (tokens) commitTokens(tokens)
+      else logout()
     }
   }
 
