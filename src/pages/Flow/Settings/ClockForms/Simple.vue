@@ -104,7 +104,6 @@ export default {
   },
   mounted() {
     if (!this.value) return
-    console.log(this.value)
     if (typeof this.value == 'number') {
       this.interval = 'minute'
       this.intervalValue = this.value / 60000000
@@ -137,8 +136,6 @@ export default {
       this.dayMonthValue = day.split(',').map(v => parseInt(v))
       this.intervalValue = parseInt(month.split('1/')[1])
     }
-
-    console.log(minute, hour, day, month, dayWeek)
   },
   methods: {
     ordinal(val) {
