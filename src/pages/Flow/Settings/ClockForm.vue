@@ -20,7 +20,9 @@ export default {
     clock: {
       type: Object,
       required: false,
-      default: {}
+      default: () => {
+        return {}
+      }
     },
     cron: {
       type: String,
