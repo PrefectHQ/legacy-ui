@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Auto-populate schedules form - [#989](https://github.com/PrefectHQ/ui/pull/989)
 
 ### Bugfixes
 
