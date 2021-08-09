@@ -276,7 +276,6 @@ workflows:
     jobs:
       - slack/on-hold:
           mentions: 'nicholas,chris'
-          message: 'Release Prod'
           filters:
             branches:
               ignore:
