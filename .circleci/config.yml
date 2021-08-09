@@ -161,7 +161,7 @@ jobs:
       - attach_workspace:
           at: .
       - deploy_env:
-          GCP_CREDS: ${GCP_SERVICE_KEY}
+          GCP_CREDS: ${GCP_SERVICE_ACCOUNT_KEY__DEV}
           BUCKET_NAME: ${GCS_BUCKET__DEV}
   build-staging:
     resource_class: large
@@ -190,7 +190,7 @@ jobs:
       - attach_workspace:
           at: .
       - deploy_env:
-          GCP_CREDS: ${GCP_SERVICE_KEY__STAGING}
+          GCP_CREDS: ${GCP_SERVICE_ACCOUNT_KEY__STAGING}
           BUCKET_NAME: ${GCS_BUCKET__STAGING}
   build-prod:
     resource_class: large
@@ -219,7 +219,7 @@ jobs:
       - attach_workspace:
           at: .
       - deploy_env:
-          GCP_CREDS: ${GCP_SERVICE_KEY__PROD}
+          GCP_CREDS: ${GCP_SERVICE_ACCOUNT_KEY__PROD}
           BUCKET_NAME: ${GCS_BUCKET__PROD}
 
 workflows:
