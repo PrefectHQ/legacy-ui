@@ -5,10 +5,11 @@
 ### Features and Improvements
 
 - Separate primary and secondary Apollo client links - [#987](https://github.com/PrefectHQ/ui/pull/987)
+- Add new login logic to browser visibility handler - [#986](https://github.com/PrefectHQ/ui/pull/986)
 
 ### Bugfixes
 
-- None
+- Add secret name and value routes to limit and offset exceptions - [#955](https://github.com/PrefectHQ/ui/pull/955)
 
 ## 2021-08-05
 
