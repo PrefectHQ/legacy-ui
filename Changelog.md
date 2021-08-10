@@ -4,11 +4,12 @@
 
 ### Features and Improvements
 
-- None
+- Add new login logic to browser visibility handler - [#986](https://github.com/PrefectHQ/ui/pull/986)
 
 ### Bugfixes
 
 - Add host config to the docker run config - [#988](https://github.com/PrefectHQ/ui/pull/988)
+- Add secret name and value routes to limit and offset exceptions - [#955](https://github.com/PrefectHQ/ui/pull/955)
 
 ## 2021-08-05
 
