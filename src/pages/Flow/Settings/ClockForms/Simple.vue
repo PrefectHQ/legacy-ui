@@ -34,7 +34,6 @@ export default {
   computed: {
     clock() {
       let cron = ''
-
       switch (this.interval) {
         case 'minute':
           cron = this.intervalValue * 60000000
@@ -103,6 +102,41 @@ export default {
       this.$emit('input', val)
     }
   },
+  mounted() {
+    if (!this.value) return
+    if (typeof this.value == 'number') {
+      this.interval = 'minute'
+      this.intervalValue = this.value / 60000000
+      return
+    }
+
+    const [minute, hour, day, month, dayWeek] = this.value.split(' ')
+
+    if (hour.includes('*/')) {
+      this.minuteValue = parseInt(minute)
+      this.interval = 'hour'
+      this.intervalValue = parseInt(hour.split('*/')[1])
+    }
+
+    if (day.includes('*/')) {
+      this.interval = 'day'
+      this.hourValue = parseInt(hour)
+
+      this.intervalValue = parseInt(day.split('*/')[1])
+    }
+
+    if (dayWeek !== '*') {
+      this.interval = 'week'
+      this.dayWeekValue = dayWeek.split(',').map(v => parseInt(v))
+      this.intervalValue = 1
+    }
+
+    if (month.includes('1/')) {
+      this.interval = 'month'
+      this.dayMonthValue = day.split(',').map(v => parseInt(v))
+      this.intervalValue = parseInt(month.split('1/')[1])
+    }
+  },
   methods: {
     ordinal(val) {
       return ordinal(val)
@@ -139,9 +173,10 @@ export default {
       <div>Run every</div>
 
       <v-text-field
+        v-if="interval !== 'week'"
         v-model.number="intervalValue"
         type="number"
-        class="text-h5 mx-2"
+        class="text-h5 ml-2"
         outlined
         dense
         hide-details
@@ -153,7 +188,7 @@ export default {
       <v-select
         v-model="interval"
         :items="intervalOptions"
-        class="text-h5"
+        class="text-h5 ml-2"
         outlined
         dense
         hide-details
