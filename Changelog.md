@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Auto-populate schedules form - [#989](https://github.com/PrefectHQ/ui/pull/989)
 - Separate primary and secondary Apollo client links - [#987](https://github.com/PrefectHQ/ui/pull/987)
 - Add new login logic to browser visibility handler - [#986](https://github.com/PrefectHQ/ui/pull/986)
 
