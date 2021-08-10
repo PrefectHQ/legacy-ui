@@ -17,6 +17,13 @@ export default {
     SimpleForm
   },
   props: {
+    clock: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {}
+      }
+    },
     cron: {
       type: String,
       required: false,
@@ -65,7 +72,7 @@ export default {
       advancedTypes: ['cron', 'interval'],
       cronModel: this.cron,
       intervalModel: this.interval,
-      simpleModel: '0 * * * *',
+      simpleModel: this.clock.cron || this.clock.interval || '0 * * * *',
       valid: true
     }
   },
