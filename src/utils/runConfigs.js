@@ -55,6 +55,12 @@ export const DockerRun = {
       input_type: 'object',
       label: 'Environment variables',
       description: 'Additional environment variables to set in the container.'
+    },
+    {
+      arg: 'host_config',
+      input_type: 'object',
+      label: 'Host Config',
+      description: 'Runtime arguments to pass to the Docker Agent.'
     }
   ]
 }
