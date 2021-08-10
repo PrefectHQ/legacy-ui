@@ -60,8 +60,7 @@ export const DockerRun = {
       arg: 'host_config',
       input_type: 'object',
       label: 'Host Config',
-      description:
-        'Runtime arguments to pass to the Docker Agent.'
+      description: 'Runtime arguments to pass to the Docker Agent.'
     }
   ]
 }
