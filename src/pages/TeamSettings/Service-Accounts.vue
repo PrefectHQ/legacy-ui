@@ -61,8 +61,13 @@ export default {
     filteredRoles() {
       if (!this.roles) return []
       let rolesToRM = ['RUNNER']
-      if (!this.hasPermission('license', 'admin')) {
-        rolesToRM = ['ENTERPRISE_LICENSE_ADMIN', 'RUNNER']
+      if (!this.hasPermission('feature', 'basic-rbac')) {
+        rolesToRM = [
+          'ENTERPRISE_LICENSE_ADMIN',
+          'RUNNER',
+          'READ_ONLY_USER',
+          'USER'
+        ]
       }
       return this.roles.filter(role => !rolesToRM.includes(role.name))
     }
