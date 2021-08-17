@@ -330,7 +330,7 @@ export default {
               <div>{{ lastDeployment_UI }}</div>
             </div>
             <div class="flex-grow-1">
-              <div v-show="coreVersion" class="text-center mb-2">
+              <div v-show="coreVersion && isServer" class="text-center mb-2">
                 <div class="utilGrayMid--text font-weight-light">
                   Core Version
                 </div>

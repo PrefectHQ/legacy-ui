@@ -9,6 +9,9 @@
 - Add new login logic to browser visibility handler - [#986](https://github.com/PrefectHQ/ui/pull/986)
 
 ### Bugfixes
+
+- Expose restart from failed button for archived flows - [#1002](https://github.com/PrefectHQ/ui/pull/1002)
+- Only display Core Version for Server deploys - [#1002](https://github.com/PrefectHQ/ui/pull/1002)
 - Don't show user and read only for accounts without RBAC -[#1001](https://github.com/PrefectHQ/ui/pull/1001)
 - Add host config to the docker run config - [#988](https://github.com/PrefectHQ/ui/pull/988)
 - Add secret name and value routes to limit and offset exceptions - [#955](https://github.com/PrefectHQ/ui/pull/955)
