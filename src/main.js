@@ -111,7 +111,8 @@ export const start = async () => {
       try {
         LogRocket.track('Tokens', {
           source: tokens.source || 'No source',
-          idTokenExpiration: tokens.idToken?.expiresAt * 1000 || 'No id token',
+          idTokenExpiration:
+            new Date(tokens.idToken?.expiresAt)?.toString() || 'No id token',
           authorizationTokenExpiration:
             tokens.authorizationTokens?.expires_at || 'No authorization token'
         })
