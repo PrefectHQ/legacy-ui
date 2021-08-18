@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix an issue where the authorization token expiration wasn't being converted properly on initial check - [#1006](https://github.com/PrefectHQ/ui/pull/1006)
 
 ## 2021-08-17
 

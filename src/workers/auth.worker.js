@@ -154,7 +154,7 @@ const handleAuthorize = async idToken => {
   authorizing = true
   if (
     !state.authorizationToken ||
-    state.authorizationToken.expires_at <= Date.now()
+    new Date(state.authorizationToken.expires_at) <= Date.now()
   ) {
     const authorizationResponse = await authorize(idToken)
 
