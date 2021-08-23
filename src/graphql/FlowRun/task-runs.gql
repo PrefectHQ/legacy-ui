@@ -13,7 +13,6 @@ query TaskRuns(
     task {
       id
       name
-      mapped
     }
     name
   }
