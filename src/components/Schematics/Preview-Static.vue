@@ -40,15 +40,6 @@ export default {
     <v-card-text class="pb-0 pl-3 pr-2 text-caption">
       <v-row>
         <v-col cols="6" class="pt-0">
-          <span class="utilGrayDark--text">Mapped:</span>
-        </v-col>
-        <v-col cols="6" class="text-right pt-0">
-          {{ task.mapped ? 'Yes' : 'No' }}
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="6" class="pt-0">
           <span class="utilGrayDark--text">Max retries:</span>
         </v-col>
         <v-col cols="6" class="text-right pt-0">

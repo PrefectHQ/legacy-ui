@@ -19,7 +19,6 @@ query FlowRun($id: uuid!) {
 
       task {
         id
-        mapped
         name
         max_retries
         retry_delay

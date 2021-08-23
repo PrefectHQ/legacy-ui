@@ -63,10 +63,10 @@ export default {
     },
     // Is this the correct definition? Can a mapped task run have siblings and children?
     mappedParent() {
-      return this.taskRun?.task.mapped && this.taskRun?.map_index === -1
+      return this.taskRun?.map_index === -1
     },
     mappedChild() {
-      return this.taskRun?.task.mapped && this.taskRun?.map_index > -1
+      return this.taskRun?.map_index > -1
     },
     tabs() {
       return [
