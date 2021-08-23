@@ -10,16 +10,12 @@ query Task($id: uuid!) {
       id
       upstream_task_id
     }
-    mapped
     slug
     tags
     type
     trigger
     description
     auto_generated
-    is_root_task
-    is_reference_task
-    is_terminal_task
     __typename
   }
 }
