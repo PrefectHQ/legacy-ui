@@ -95,8 +95,7 @@ module.exports = {
       analyzerMode: 'disabled'
     }
   },
-  assetsDir: '',
-  publicPath: '',
+  publicPath: 'auto',
 
   // Adding this package specically because
   // the source has 2 nullish coalscent references
