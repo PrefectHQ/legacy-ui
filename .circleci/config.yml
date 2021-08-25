@@ -22,14 +22,7 @@ commands:
       - restore_cache:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
       - run:
-          name: NPM Setup
-          command: |
-            echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
-            echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> .npmrc
-      - run:
           name: NPM Install
-          environment:
-            FA_TOKEN: $FA_TOKEN
           command: npm install
       - save_cache:
           key: npm-dependencies-{{ arch }}-{{ checksum "package.json" }}
@@ -37,8 +30,6 @@ commands:
             - node_modules
   build:
     parameters:
-      FA_TOKEN:
-        type: string
       VUE_APP_OKTA_DOMAIN:
         type: string
       VUE_APP_PUBLIC_CLIENT_ID:
@@ -62,7 +53,6 @@ commands:
           environment:
             FA_TOKEN: ${FA_TOKEN}
           command: |
-            export FA_TOKEN=<< parameters.FA_TOKEN >>
             export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
             export VUE_APP_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_PUBLIC_CLIENT_ID >>
             export VUE_APP_PUBLIC_ISSUER=<< parameters.VUE_APP_PUBLIC_ISSUER >>
@@ -118,9 +108,7 @@ jobs:
       - run:
           name: Docker Build
           command: |
-            echo "@fortawesome:registry=https://npm.fontawesome.com/" > .NPMRC_DOCKER
-            echo "//npm.fontawesome.com/:_authToken=${FA_TOKEN}" >> .NPMRC_DOCKER
-            DOCKER_BUILDKIT=1 docker build --no-cache -t prefecthq/ui:master --secret id=FA_TOKEN,src=.NPMRC_DOCKER --progress=plain .
+            DOCKER_BUILDKIT=1 docker build --no-cache -t prefecthq/ui:master --progress=plain .
       - run:
           name: Docker Push
           command: |
@@ -140,7 +128,6 @@ jobs:
       - image: node:14.7
     steps:
       - build:
-          FA_TOKEN: ${FA_TOKEN}
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__DEV}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__DEV}
           VUE_APP_PUBLIC_ISSUER: ${VUE_APP_PUBLIC_ISSUER__DEV}
@@ -169,7 +156,6 @@ jobs:
       - image: node:14.7
     steps:
       - build:
-          FA_TOKEN: ${FA_TOKEN}
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__STAGING}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__STAGING}
           VUE_APP_PUBLIC_ISSUER: ${VUE_APP_PUBLIC_ISSUER__STAGING}
@@ -198,7 +184,6 @@ jobs:
       - image: node:14.7
     steps:
       - build:
-          FA_TOKEN: ${FA_TOKEN}
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__PROD}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__PROD}
           VUE_APP_PUBLIC_ISSUER: ${VUE_APP_PUBLIC_ISSUER__PROD}
