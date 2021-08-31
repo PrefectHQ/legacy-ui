@@ -220,6 +220,9 @@ export default {
       })
     }
   },
+  created() {
+    this.roleInput = this.roles?.find(r => r.name == 'TENANT_ADMIN').id
+  },
   apollo: {
     roles: {
       query: require('@/graphql/TeamSettings/roles.gql'),
@@ -230,7 +233,6 @@ export default {
       pollInterval: 10000,
       update(data) {
         if (!data) return
-        this.roleInput = data.auth_role?.find(r => r.name == 'TENANT_ADMIN').id
         return data.auth_role
       }
     }
