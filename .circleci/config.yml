@@ -50,8 +50,6 @@ commands:
       - prep
       - run:
           name: NPM Build
-          environment:
-            FA_TOKEN: ${FA_TOKEN}
           command: |
             export VUE_APP_OKTA_DOMAIN=<< parameters.VUE_APP_OKTA_DOMAIN >>
             export VUE_APP_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_PUBLIC_CLIENT_ID >>
