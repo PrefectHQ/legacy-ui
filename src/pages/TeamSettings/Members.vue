@@ -203,11 +203,13 @@ export default {
         this.inviteSignal++
         this.dialogInviteUser = false
         this.inviteEmailInput = null
+        this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
         this.tab = 'pending'
       } else if (res?.errors) {
         this.handleAlert('error', res?.errors[0]?.message)
         this.dialogInviteUser = false
         this.inviteEmailInput = null
+        this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
       }
       this.isInvitingUser = false
     },
