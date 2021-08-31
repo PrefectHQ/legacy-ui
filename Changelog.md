@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Stop role reset in the team member invite dialog - [#1019](https://github.com/PrefectHQ/ui/pull/1019)
 
 ## 2021-08-18
 
