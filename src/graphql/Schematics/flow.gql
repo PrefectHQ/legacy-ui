@@ -9,7 +9,6 @@ query Flow($id: uuid!) {
     }
     tasks {
       id
-      mapped
       name
       max_retries
       retry_delay
