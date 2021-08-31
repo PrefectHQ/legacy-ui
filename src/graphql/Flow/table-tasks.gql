@@ -13,7 +13,6 @@ query TableTasks(
   ) {
     id
     name
-    mapped
     max_retries
     retry_delay
     type

@@ -17,7 +17,6 @@ export default {
     return {
       headers: [
         { text: 'Name', value: 'name', width: '20%' },
-        { text: 'Mapped', value: 'mapped', width: '10%' },
         { text: 'Max Retries', value: 'max_retries', width: '15%' },
         { text: 'Retry Delay', value: 'retry_delay', width: '15%' },
         { text: 'Class', value: 'type', width: '20%' },
@@ -128,15 +127,6 @@ export default {
               {{ item.name }}
             </router-link>
           </truncate>
-        </template>
-
-        <template #item.mapped="{ item }">
-          <v-icon v-if="item.mapped" color="primary">
-            check
-          </v-icon>
-          <span v-else>
-            -
-          </span>
         </template>
 
         <template #item.retry_delay="{ item }">
