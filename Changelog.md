@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Increase default number of flows shown in the flow table - [#1027](https://github.com/PrefectHQ/ui/pull/1027)
 - Remove references to unused task attributes - [#1011](https://github.com/PrefectHQ/ui/pull/1011)
 
 ### Bugfixes
