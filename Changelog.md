@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Route to task run page on timeline click - [#1024](https://github.com/PrefectHQ/ui/pull/1024)
 - Remove references to unused task attributes - [#1011](https://github.com/PrefectHQ/ui/pull/1011)
 
 ### Bugfixes
