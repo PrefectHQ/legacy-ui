@@ -16,7 +16,6 @@ COPY ./LICENSE LICENSE
 WORKDIR /app
 
 # Install dependencies
-RUN --mount=type=secret,id=FA_TOKEN cp /run/secrets/FA_TOKEN .npmrc
 RUN npm ci
 
 # Build static files
