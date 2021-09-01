@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add a copy method to task run result locations - [#1033](https://github.com/PrefectHQ/ui/pull/1033)
+- Route to task run page on timeline click - [#1024](https://github.com/PrefectHQ/ui/pull/1024
 - Remove references to unused task attributes - [#1011](https://github.com/PrefectHQ/ui/pull/1011)
 
 ### Bugfixes
