@@ -91,7 +91,7 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('user', ['timezone']),
+    ...mapGetters('user', ['timezone', 'settings']),
     headers() {
       return [
         ...(this.showArchived
@@ -147,7 +147,24 @@ export default {
       this.$router.replace({
         query: query
       })
+    },
+    async limit(val) {
+      if (val && val !== this.settings?.flowTableTileLimit) {
+        try {
+          await this.$apollo.mutate({
+            mutation: require('@/graphql/User/update-user-settings.gql'),
+            variables: {
+              input: { flowTableTileLimit: val }
+            }
+          })
+        } catch (error) {
+          return
+        }
+      }
     }
+  },
+  mounted() {
+    this.limit = this.settings?.flowTableTileLimit || 30
   },
   methods: {
     async handleTableSearchInput(e) {
