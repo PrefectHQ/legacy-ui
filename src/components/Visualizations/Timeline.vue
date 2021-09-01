@@ -360,6 +360,7 @@ export default {
           hovered.data.push(bar)
 
           this.canvas._groups[0][0].style.cursor = 'pointer'
+          break
         }
       }
 
