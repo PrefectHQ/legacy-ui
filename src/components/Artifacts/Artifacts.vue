@@ -168,7 +168,7 @@ export default {
           transition="quick-fade"
           reverse-transition="quick-fade"
         >
-          <v-card class="artifact-card pa-0" tile>
+          <v-card class="artifact-card pa-0" flat outlined>
             <v-card-title class="artifact-card-title">
               <div class="position-relative">
                 <v-icon x-large color="primary">fiber_manual_record</v-icon>
