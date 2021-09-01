@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Expand quick runnable flows for code-set parameter defaults - [#1031](https://github.com/PrefectHQ/ui/pull/1031)
 - Remove references to unused task attributes - [#1011](https://github.com/PrefectHQ/ui/pull/1011)
 
 ### Bugfixes
