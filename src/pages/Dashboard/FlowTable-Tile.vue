@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       flows: [],
-      limit: 15,
+      limit: 30,
       loading: 0,
       page: 1,
       search:
@@ -296,7 +296,7 @@ export default {
         :footer-props="{
           showFirstLastPage: true,
           firstIcon: 'first_page',
-          itemsPerPageOptions: [10, 15, 25, 50],
+          itemsPerPageOptions: [15, 30, 50, 75, 100],
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
