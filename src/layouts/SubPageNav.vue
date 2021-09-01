@@ -57,8 +57,7 @@ export default {
         :class="{
           'justify-center': $vuetify.breakpoint.smAndDown
         }"
-        style="height: 64px;
-      max-width: 1440px;"
+        style="height: 64px;"
       >
         <v-col :sm="$slots['page-actions'] ? 6 : 12" class="d-flex align-end">
           <div class="mr-2">
