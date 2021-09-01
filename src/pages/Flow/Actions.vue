@@ -51,7 +51,11 @@ export default {
 
       return this.flow.parameters.reduce((result, param) => {
         const parameterKey = param.name
-        if (param.required && !this.flowGroup.default_parameters[parameterKey])
+        if (
+          param.required &&
+          !this.flowGroup.default_parameters[parameterKey] &&
+          !param.default
+        )
           return false
         return result
       }, true)
