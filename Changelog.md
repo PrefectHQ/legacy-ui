@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- Filter dashboard failed flow tile on start_time instead of updated timestamp - [#1028](https://github.com/PrefectHQ/ui/pull/1028)
 - Stop role reset in the team member invite dialog - [#1019](https://github.com/PrefectHQ/ui/pull/1019)
 
 ## 2021-08-18
