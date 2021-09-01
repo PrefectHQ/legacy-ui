@@ -313,7 +313,7 @@ export default {
         :footer-props="{
           showFirstLastPage: true,
           firstIcon: 'first_page',
-          itemsPerPageOptions: [15, 30, 50, 75, 100],
+          itemsPerPageOptions: [15, 30, 50],
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
