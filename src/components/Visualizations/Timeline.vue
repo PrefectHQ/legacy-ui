@@ -344,7 +344,12 @@ export default {
     },
     click(e) {
       const context = this.canvas.node().getContext('2d')
-      let hoveredId
+      let hoveredId,
+        hovered = {
+          data: [],
+          x: e.offsetX,
+          y: this.height
+        }
       let x = (e.offsetX - this.transform.x) * (1 / this.transform.k)
       let y = e.offsetY * (1 / this.transform.k)
 
@@ -352,7 +357,9 @@ export default {
         const bar = this.bars[i]
         if (context.isPointInPath(bar.path2D, x, y)) {
           hoveredId = bar.id
-          break
+          hovered.data.push(bar)
+
+          this.canvas._groups[0][0].style.cursor = 'pointer'
         }
       }
 
@@ -361,6 +368,7 @@ export default {
       }
 
       this.hoveredItemId = hoveredId
+      this.$emit('click', { id: hoveredId, ...hovered })
     },
     breaklineMouseout() {
       this.hoveredBreakpoints = null
