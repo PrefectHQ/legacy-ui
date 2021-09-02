@@ -10,6 +10,7 @@
 ### Bugfixes
 
 - Filter dashboard failed flow tile on start_time instead of updated timestamp - [#1028](https://github.com/PrefectHQ/ui/pull/1028)
+- Fix issue where Skipped flow runs incorrectly displayed end_time and duration data - [#1030](https://github.com/PrefectHQ/ui/pull/1030)
 - Stop role reset in the team member invite dialog - [#1019](https://github.com/PrefectHQ/ui/pull/1019)
 
 ## 2021-08-18

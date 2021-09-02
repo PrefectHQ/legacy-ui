@@ -101,7 +101,7 @@ export const flowRunHistoryMixin = {
           let end = new Date(d.end_time),
             start = new Date(d.start_time)
           d.duration = end - start
-        } else if (d.start_time) {
+        } else if (d.start_time && notPastRunStates.includes(d.state)) {
           let now = new Date(),
             start = new Date(d.start_time)
           d.duration = now - start
@@ -113,10 +113,13 @@ export const flowRunHistoryMixin = {
         if (
           !d.end_time &&
           d.start_time &&
-          !notPastRunStates.includes(d.state)
+          !notPastRunStates.includes(d.state) &&
+          d.state !== 'Skipped'
         ) {
           d.end_time = new Date()
         }
+
+        d.finished = !notPastRunStates.includes(d.state)
 
         // We do the same for running flows without start_time
         if (!d.start_time && d.state == 'Running') {
