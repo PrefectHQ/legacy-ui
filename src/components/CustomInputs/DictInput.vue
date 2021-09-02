@@ -70,6 +70,8 @@ export default {
     value() {
       const dict = {}
       this.keys.forEach((k, i) => {
+        // Ignore null key/val pairs
+        if (k == null && this.values[i] == null) return
         if (
           !this.includeCheckbox ||
           (this.json && Object.keys(JSON.parse(this.jsonInput)).includes(k)) ||
