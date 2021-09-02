@@ -123,7 +123,7 @@ export default {
         </CardTitle>
       </template>
       <span>
-        Filter on flow run start time
+        Filter on flow run scheduled start time
       </span>
     </v-tooltip>
 

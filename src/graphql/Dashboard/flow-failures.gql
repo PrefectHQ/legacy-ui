@@ -4,10 +4,10 @@ query FlowFailures($projectId: uuid, $heartbeat: timestamptz, $tenantId: uuid) {
       tenant_id: { _eq: $tenantId }
       flow: { project_id: { _eq: $projectId } }
       state: { _eq: "Failed" }
-      start_time: { _gte: $heartbeat }
+      scheduled_start_time: { _gte: $heartbeat }
     }
     distinct_on: flow_id
-    order_by: { flow_id: asc, start_time: desc }
+    order_by: { flow_id: asc, scheduled_start_time: desc }
   ) {
     flow_id
     state_timestamp
@@ -18,6 +18,6 @@ query FlowFailures($projectId: uuid, $heartbeat: timestamptz, $tenantId: uuid) {
       flow_group_id
     }
 
-    start_time
+    scheduled_start_time
   }
 }
