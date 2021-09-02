@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       flows: [],
-      limit: 15,
+      limit: 30,
       loading: 0,
       page: 1,
       search:
@@ -91,7 +91,7 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('user', ['timezone']),
+    ...mapGetters('user', ['timezone', 'settings']),
     headers() {
       return [
         ...(this.showArchived
@@ -147,7 +147,24 @@ export default {
       this.$router.replace({
         query: query
       })
+    },
+    async limit(val) {
+      if (val && val !== this.settings?.flowTableTileLimit) {
+        try {
+          await this.$apollo.mutate({
+            mutation: require('@/graphql/User/update-user-settings.gql'),
+            variables: {
+              input: { flowTableTileLimit: val }
+            }
+          })
+        } catch (error) {
+          return
+        }
+      }
     }
+  },
+  mounted() {
+    this.limit = this.settings?.flowTableTileLimit || 30
   },
   methods: {
     async handleTableSearchInput(e) {
@@ -296,7 +313,7 @@ export default {
         :footer-props="{
           showFirstLastPage: true,
           firstIcon: 'first_page',
-          itemsPerPageOptions: [10, 15, 25, 50],
+          itemsPerPageOptions: [15, 30, 50],
           lastIcon: 'last_page',
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
