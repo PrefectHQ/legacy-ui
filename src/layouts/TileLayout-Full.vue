@@ -1,5 +1,5 @@
 <template>
-  <v-container style="max-width: 1440px;" class="pt-0 pb-12">
+  <v-sheet color="transparent" class="pt-0 pb-12">
     <v-row v-if="$slots['row-1-tile']" no-gutters>
       <v-col cols="12" class="pb-0">
         <v-row>
@@ -21,5 +21,5 @@
         </v-row>
       </v-col>
     </v-row>
-  </v-container>
+  </v-sheet>
 </template>
