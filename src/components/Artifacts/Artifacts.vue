@@ -168,7 +168,7 @@ export default {
           transition="quick-fade"
           reverse-transition="quick-fade"
         >
-          <v-card class="artifact-card pa-0" tile>
+          <v-card class="artifact-card pa-0" flat outlined>
             <v-card-title class="artifact-card-title">
               <div class="position-relative">
                 <v-icon x-large color="primary">fiber_manual_record</v-icon>
@@ -192,7 +192,7 @@ export default {
                 </div>
               </div>
             </v-card-title>
-            <v-card-text>
+            <v-card-text class="pt-10">
               <v-fade-transition mode="out-in">
                 <Artifact :artifact="a" />
               </v-fade-transition>
@@ -218,9 +218,12 @@ export default {
   transition: height 250ms ease-in-out;
 
   .artifact-card-title {
+    background-color: var(--v-appForeground-base);
     position: sticky;
     top: 0;
     z-index: 2;
+    box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%),
+      0 1px 10px 0 rgb(0 0 0 / 12%) !important;
   }
 }
 
