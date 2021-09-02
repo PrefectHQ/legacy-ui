@@ -5,11 +5,14 @@
 ### Features and Improvements
 
 - Increase default number of flows shown in the flow table - [#1027](https://github.com/PrefectHQ/ui/pull/1027)
+- Remove global max width on dashboard etc screens - [#1026](https://github.com/PrefectHQ/ui/pull/1026)
 - Route to task run page on timeline click - [#1024](https://github.com/PrefectHQ/ui/pull/1024)
 - Remove references to unused task attributes - [#1011](https://github.com/PrefectHQ/ui/pull/1011)
 
 ### Bugfixes
 
+- Remove parent query from task run page - [#1025](https://github.com/PrefectHQ/ui/pull/1025)
+- Fix issue where Skipped flow runs incorrectly displayed end_time and duration data - [#1030](https://github.com/PrefectHQ/ui/pull/1030)
 - Stop role reset in the team member invite dialog - [#1019](https://github.com/PrefectHQ/ui/pull/1019)
 
 ## 2021-08-18
