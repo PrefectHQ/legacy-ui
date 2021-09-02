@@ -123,7 +123,7 @@ export default {
         </CardTitle>
       </template>
       <span>
-        Filter by when flows were last updated
+        Filter on flow run scheduled start time
       </span>
     </v-tooltip>
 
