@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid style="max-width: 1440px;" class="mx-auto pt-0 px-3 pb-12">
+  <v-sheet fluid color="transparent" class="mx-auto pt-0 px-3 pb-12">
     <v-row no-gutters>
       <v-col cols="12" md="4" class="py-0">
         <v-row v-if="$slots['col-1-tile-1']" class="justify-start">
@@ -87,5 +87,5 @@
         </v-row>
       </v-col>
     </v-row>
-  </v-container>
+  </v-sheet>
 </template>
