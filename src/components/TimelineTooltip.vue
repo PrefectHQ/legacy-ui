@@ -60,7 +60,13 @@ export default {
         </span>
       </div>
 
-      <div v-if="props.tooltip.data.start_time" class="text-subtitle-1">
+      <div
+        v-if="
+          props.tooltip.data.start_time &&
+            (props.tooltip.data.end_time || !props.tooltip.data.finished)
+        "
+        class="text-subtitle-1"
+      >
         Duration:
         <component
           :is="$options.components.DurationSpan"
