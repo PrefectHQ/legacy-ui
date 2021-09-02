@@ -771,10 +771,7 @@ export default {
       >
         <div v-if="actionType.type === 'WEBHOOK'">
           <span>
-            Prefect Cloud will send a message via the URL you provide. To
-            securely store your webhook URL, create a
-            <router-link :to="{ name: 'secrets' }"> Prefect secret</router-link
-            >.
+            Prefect Cloud will send a payload to the URL you provide.
           </span>
         </div>
         <div v-else-if="actionType.type === 'MS_TEAMS'">
