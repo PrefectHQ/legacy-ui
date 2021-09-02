@@ -88,7 +88,6 @@ export default {
       $vuetify.breakpoint.smAndDown ? 'tabs-hidden' : '',
       pageScrolled ? 'elevation-4' : ''
     ]"
-    style="max-width: 1440px;"
   >
     <v-tabs-slider color="blue"></v-tabs-slider>
     <template v-for="tb in mainTabs">

@@ -322,7 +322,6 @@ export default {
       v-model="tab"
       v-if="flowGroup"
       class="px-6 mx-auto tabs-border-bottom tab-full-height"
-      style="max-width: 1440px;"
       :style="{
         'padding-top': $vuetify.breakpoint.smOnly ? '80px' : '130px'
       }"

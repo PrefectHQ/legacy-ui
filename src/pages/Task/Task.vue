@@ -225,7 +225,6 @@ export default {
     <v-tabs-items
       v-model="tab"
       class="px-6 mx-auto tabs-border-bottom tab-full-height"
-      style="max-width: 1440px;"
       :style="
         $vuetify.breakpoint.mdAndUp ? 'padding-top: 130px' : 'padding-top: 80px'
       "
