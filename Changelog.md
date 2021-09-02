@@ -12,6 +12,7 @@
 
 ### Bugfixes
 
+- Remove reference to secrets in the automation webhook url input - [#1036](https://github.com/PrefectHQ/ui/pull/1036)
 - Update the dict component to ignore null k/v pairs - [#1029](https://github.com/PrefectHQ/ui/pull/1029)
 - Remove parent query from task run page - [#1025](https://github.com/PrefectHQ/ui/pull/1025)
 - Fix issue where Skipped flow runs incorrectly displayed end_time and duration data - [#1030](https://github.com/PrefectHQ/ui/pull/1030)
