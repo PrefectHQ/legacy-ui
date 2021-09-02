@@ -9,6 +9,7 @@
 
 ### Bugfixes
 
+- Remove parent query from task run page - [#1025](https://github.com/PrefectHQ/ui/pull/1025)
 - Fix issue where Skipped flow runs incorrectly displayed end_time and duration data - [#1030](https://github.com/PrefectHQ/ui/pull/1030)
 - Stop role reset in the team member invite dialog - [#1019](https://github.com/PrefectHQ/ui/pull/1019)
 
