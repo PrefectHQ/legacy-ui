@@ -253,7 +253,12 @@ export default {
                       "
                       v-on="on"
                     >
-                      <v-icon x-small class="mb-2px mr-2" tabindex="0">
+                      <v-icon
+                        v-if="taskRun.serialized_state._result.location"
+                        x-small
+                        class="mb-2px mr-2"
+                        tabindex="0"
+                      >
                         {{
                           copiedText[taskRun.serialized_state._result.location]
                             ? 'check'
