@@ -4,6 +4,8 @@
 
 ### Features and Improvements
 
+- Add a copy method to task run result locations - [#1033](https://github.com/PrefectHQ/ui/pull/1033)
+- Route to task run page on timeline click - [#1024](https://github.com/PrefectHQ/ui/pull/1024
 - Fix artifact title overlap - [#1032](https://github.com/PrefectHQ/ui/pull/1032)
 - Increase default number of flows shown in the flow table - [#1027](https://github.com/PrefectHQ/ui/pull/1027)
 - Remove global max width on dashboard etc screens - [#1026](https://github.com/PrefectHQ/ui/pull/1026)
