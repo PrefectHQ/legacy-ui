@@ -771,7 +771,7 @@ export default {
       >
         <div v-if="actionType.type === 'WEBHOOK'">
           <span>
-            Prefect Cloud will send a message via the URL you provide.
+            Prefect Cloud will send a payload to the URL you provide.
           </span>
         </div>
         <div v-else-if="actionType.type === 'MS_TEAMS'">
